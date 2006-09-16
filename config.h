@@ -373,7 +373,7 @@
    size argument and has a proper return value. */
 #define HAVE_WORKING_VSNPRINTF 1
 
-/* Define to 1 if you have the `\' function. */
+/* Define to 1 if you have the `\' function. */
 /* #undef HAVE___ */
 
 /* Define to 1 if you have the `__argz_count' function. */
