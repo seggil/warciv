@@ -271,11 +271,12 @@ static void shuffle_start_positions(int *start_pos)
     best_score = calculate_current_score(start_pos);        
     printf("Current best score is %i\n",best_score);
     
-    if(game.nplayers<=16) {//brute force for small number of players
+/*    if(game.nplayers<=16) {//brute force for small number of players
         for (i = 0; i < game.nplayers - 1; i++ ) {//with 2 players shuffling doesnt make sense
             shuffle_start_positions_brute_force(start_pos,i);
         }
-    } else shuffle_start_positions_by_iter(start_pos);    
+    } else */
+    shuffle_start_positions_by_iter(start_pos);    
 
     printf("Iterations: %i\n",repeat);
     for (i = 0; i < game.nplayers; i++ ) {//restore best solution
