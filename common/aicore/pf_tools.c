@@ -403,6 +403,9 @@ static bool trireme_is_pos_dangerous(const struct tile *ptile,
 				     enum known_type known,
 				     struct pf_parameter *param)
 {
+  /*hack for warclient*/
+  return FALSE;
+  
   /* Assume that unknown tiles are unsafe. */
   if (known == TILE_UNKNOWN) {
     return TRUE;
@@ -422,6 +425,9 @@ static bool trireme_is_pos_dangerous(const struct tile *ptile,
 static bool is_pos_dangerous(const struct tile *ptile, enum known_type known,
 			     struct pf_parameter *param)
 {
+  /*hack for warclient*/
+  return FALSE;
+  
   /* Unsafe tiles without cities are dangerous. */
   return (terrain_has_flag(ptile->terrain, TER_UNSAFE)
 	  && ptile->city == NULL);
