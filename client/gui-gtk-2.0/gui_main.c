@@ -440,6 +440,14 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
       case GDK_Escape:
         key_cancel_action();
         break;
+
+      case GDK_n: /* shared by MENU_VIEW_SHOW_CITY_NAMES */
+        if (tiles_hilited_cities && (ev->state & GDK_CONTROL_MASK)) {
+          normalize_names_in_selected_cities();
+        } else {
+          return FALSE;
+        }
+        break;
   
       case GDK_t:
          /* Workaround for conflict with menu shortcuts. If you add other

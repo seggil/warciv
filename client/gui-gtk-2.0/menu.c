@@ -367,9 +367,7 @@ static void view_menu_callback(gpointer callback_data, guint callback_action,
     }
     break;
   case MENU_VIEW_SHOW_CITY_NAMES:
-    if (tiles_hilited_cities) {
-      normalize_names_in_selected_cities();
-    } else {
+    if (!tiles_hilited_cities) {
       if (draw_city_names ^ GTK_CHECK_MENU_ITEM(widget)->active) {
         key_city_names_toggle();
         menus_set_sensitive("<main>/_View/City G_rowth", draw_city_names);

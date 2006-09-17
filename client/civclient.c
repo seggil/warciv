@@ -474,7 +474,7 @@ void client_game_init()
   game_init();
   attribute_init();
   agents_init();
-  city_name_counters_init();
+  city_autonaming_init();
   control_queues_init();
 }
 
@@ -487,6 +487,7 @@ void client_game_free()
   free_help_texts();
   attribute_free();
   agents_free();
+  city_autonaming_free();
   game_free();
   control_queues_free();
 }

@@ -416,6 +416,7 @@ void handle_city_info(struct packet_city_info *packet)
   pcity=find_city_by_id(packet->id);
 
   if (pcity && (pcity->owner != packet->owner)) {
+    city_autonaming_remove_used_name (pcity->name);
     client_remove_city(pcity);
     pcity = NULL;
     city_has_changed_owner = TRUE;
@@ -429,11 +430,17 @@ void handle_city_info(struct packet_city_info *packet)
     pcity->id=packet->id;
     idex_register_city(pcity);
     update_descriptions = TRUE;
+    city_autonaming_add_used_name (packet->name);
   }
   else {
     city_is_new = FALSE;
 
     name_changed = (strcmp(pcity->name, packet->name) != 0);
+
+    if (name_changed) {
+      city_autonaming_remove_used_name (pcity->name);
+      city_autonaming_add_used_name (packet->name);
+    }
 
     /* Check if city desciptions should be updated */
     if (draw_city_names && name_changed) {
@@ -563,9 +570,6 @@ void handle_city_info(struct packet_city_info *packet)
 
   if (city_is_new && !city_has_changed_owner) {
     agents_city_new(pcity);
-    pcity->client.name_format_index = 0;
-    pcity->client.name_counter = 0;
-    pcity->client.continent_name_counter = 0;
   } else {
     agents_city_changed(pcity);
   }
@@ -687,11 +691,12 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 {
   struct city *pcity;
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
-  bool update_descriptions = FALSE;
+  bool update_descriptions = FALSE, name_changed = FALSE;
 
   pcity=find_city_by_id(packet->id);
 
   if (pcity && (pcity->owner != packet->owner)) {
+    city_autonaming_remove_used_name (pcity->name);
     client_remove_city(pcity);
     pcity = NULL;
     city_has_changed_owner = TRUE;
@@ -702,13 +707,20 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     pcity=fc_malloc(sizeof(struct city));
     pcity->id=packet->id;
     idex_register_city(pcity);
+    city_autonaming_add_used_name (packet->name);
   }
   else {
     city_is_new = FALSE;
 
+    name_changed = strcmp (pcity->name, packet->name) != 0;
     /* Check if city desciptions should be updated */
-    if (draw_city_names && strcmp(pcity->name, packet->name) != 0) {
+    if (draw_city_names && name_changed) {
       update_descriptions = TRUE;
+    }
+
+    if (name_changed) {
+      city_autonaming_remove_used_name (pcity->name);
+      city_autonaming_add_used_name (packet->name);
     }
     
     assert(pcity->id == packet->id);
@@ -798,9 +810,6 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 
   if (city_is_new && !city_has_changed_owner) {
     agents_city_new(pcity);
-    pcity->client.name_format_index = 0;
-    pcity->client.name_counter = 0;
-    pcity->client.continent_name_counter = 0;
   } else {
     agents_city_changed(pcity);
   }

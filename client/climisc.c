@@ -31,9 +31,11 @@ used throughout the client.
 #include "diptreaty.h"
 #include "fcintl.h"
 #include "game.h"
+#include "hash.h"
 #include "log.h"
 #include "map.h"
 #include "packets.h"
+#include "shared.h"
 #include "spaceship.h"
 #include "support.h"
 
@@ -55,8 +57,50 @@ used throughout the client.
 
 #include "climisc.h"
 
-static int global_city_name_counter = 0;
-static int continent_counters[256];
+
+#define SPECLIST_TAG city_name
+#define SPECLIST_TYPE char
+#include "speclist.h"
+#define city_name_list_iterate(alist, pitem)\
+  TYPED_LIST_ITERATE(char, alist, pitem)
+#define city_name_list_iterate_end  LIST_ITERATE_END
+
+static struct city_name_list *an_city_name_formats = NULL;
+static struct hash_table *an_continent_counter_table = NULL;
+static struct hash_table *an_city_name_table = NULL;
+static struct hash_table *an_city_autoname_data_table = NULL;
+static int an_global_city_number_counter = 0;
+
+struct autoname_data {
+  char original_name[MAX_LEN_NAME];
+  int city_id;
+  int continent_id;
+  int format_index;
+  int global_city_number;
+  int continent_city_number;
+};
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void city_autonaming_add_used_name (const char *city_name)
+{
+  char *cn = mystrdup (city_name);
+  freelog (LOG_DEBUG, "city_autonaming_add_used_name \"%s\"", city_name);
+  if (!hash_insert (an_city_name_table, cn, NULL))
+    free (cn);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+void city_autonaming_remove_used_name (const char *city_name)
+{
+  void *key = NULL;
+  freelog (LOG_DEBUG, "city_autonaming_remove_used_name \"%s\"", city_name);
+  hash_delete_entry_full (an_city_name_table, city_name, &key);
+  if (key)
+    free (key);
+}
 
 /**************************************************************************
   ...
@@ -1007,91 +1051,79 @@ enum known_type map_get_known(const struct tile *ptile,
   assert(pplayer == game.player_ptr);
   return tile_get_known(ptile);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static const char *get_name_format_for_city (struct city *pcity)
+static int an_make_city_name (const char *format, char *buf, int buflen,
+                              struct autoname_data *ad)
 {
-  const char *p = city_name_formats;
-  int i;
+  const char *in = format;
+  char *out = buf, tmp[32];
+  int rem = buflen, len, fw = 0;
+  
+  int *pcontinent_counter;
 
-  for (i = 1; i <= pcity->client.name_format_index; i++) {
-    while (*p && *p != ';')
-      p++;
-    if (*p)
-      p++;
-    else
-      break;
+  assert (buflen > 0);
+
+  freelog (LOG_DEBUG, "amcn an_make_city_name format=\"%s\" ad=%p", format, ad);
+
+  if (!*format) {
+    mystrlcpy (buf, ad->original_name, buflen);
+    return strlen (ad->original_name) + 1;
   }
-  if (!*p) {
-    p = city_name_formats;
-    pcity->client.name_format_index = 1;
-  } else {
-    pcity->client.name_format_index++;
+
+  pcontinent_counter = hash_lookup_data (an_continent_counter_table,
+                                         INT_TO_PTR (ad->continent_id));
+  if (!pcontinent_counter) {
+    pcontinent_counter = fc_malloc (sizeof (int));
+    *pcontinent_counter = 0;
+    hash_insert (an_continent_counter_table, INT_TO_PTR (ad->continent_id),
+                 pcontinent_counter);
   }
 
-  return p;    
-}
-/**************************************************************************
-  ...
-**************************************************************************/
-void city_name_counters_init (void)
-{
-  global_city_name_counter = 0;
-  memset (continent_counters, 0, sizeof (continent_counters));
-}
-/**************************************************************************
-  ...
-**************************************************************************/
-static int generate_city_name (char *buf, int buflen, struct city *pcity)
-{
-  const char *in;
-  char *out = buf, fmt[32];
-  int rem = buflen, len, conti, i, fw = 0;
+  freelog (LOG_DEBUG, "amcn   *pcontinent_counter = %d", *pcontinent_counter);
 
-  in = get_name_format_for_city (pcity);
-  if (!*in)
-    return 0;
+  if (ad->global_city_number <= 0) {
+    ad->global_city_number = ++an_global_city_number_counter;
+    freelog (LOG_DEBUG, "amcn   assigned new global_city_number (%d)", ad->global_city_number);
+  }
+  if (ad->continent_city_number <= 0) {
+    ad->continent_city_number = ++(*pcontinent_counter);
+    freelog (LOG_DEBUG, "amcn   assigned new continent_city_number (%d)", ad->continent_city_number);
+  }
 
   while (rem > 1 && *in != '\0' && *in != ';') {
     if (*in == '%') {
       in++;
+      
       fw = 0;
       while (my_isdigit (*in)) {
-        fw = (*in - '0') + 10 * fw;
-        in++;
+        fw = (*in++ - '0') + 10 * fw;
       }
-      if (!fw)
+      if (fw <= 0)
         fw = 1;
-      my_snprintf (fmt, sizeof (fmt), "%%0%dd", fw);
+      my_snprintf (tmp, sizeof (tmp), "%%0%dd", fw);
+      
       switch (*in) {
-      case 'c':
-        len = my_snprintf (out, rem, fmt, pcity->tile->continent);
+      case 'c': /* continent id */
+        len = my_snprintf (out, rem, tmp, ad->continent_id);
         break;
-      case 'g':
-        if (pcity->client.name_counter > 0) {
-          i = pcity->client.name_counter;
-        } else {
-          i = ++global_city_name_counter;
-          pcity->client.name_counter = i;
-        }
-        len = my_snprintf (out, rem, fmt, i);
+        
+      case 'g': /* global city counter */
+        len = my_snprintf (out, rem, tmp, ad->global_city_number);
         break;
-      case 'n':
-        conti = pcity->tile->continent & 0xff;
-        if (pcity->client.continent_name_counter > 0) {
-          i = pcity->client.continent_name_counter;
-        } else {
-          i = ++continent_counters[conti];
-          pcity->client.continent_name_counter = i;
-        }
-        len = my_snprintf (out, rem, fmt, i);
+        
+      case 'n': /* per continent city counter */
+        len = my_snprintf (out, rem, tmp, ad->continent_city_number);
         break;
-      case '%':
+        
+      case '%': /* a single percent sign */
         *out = '%';
         len = 1;
         break;
-      default:
+        
+      default: /* everything else */
         if (rem > 2) {
           *out = '%';
           out[1] = *in;
@@ -1101,6 +1133,7 @@ static int generate_city_name (char *buf, int buflen, struct city *pcity)
         }
         break;
       }
+      
       out += len;
       rem -= len;
       if (*in == '\0')
@@ -1111,8 +1144,11 @@ static int generate_city_name (char *buf, int buflen, struct city *pcity)
       rem--;
     }
   }
-  if (rem == buflen)
+  
+  if (rem == buflen) {
+    buf[0] = 0;
     return 0;
+  }
 
   if (rem > 0) {
     *out++ = '\0';
@@ -1121,24 +1157,229 @@ static int generate_city_name (char *buf, int buflen, struct city *pcity)
 
   return out - buf;
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int an_generate_city_name (char *buf, int buflen,
+                                  struct city *pcity,
+                                  char *err, int errlen)
+{
+  struct autoname_data *ad;
+  int num_formats, len = -1, start_format_index;
+  char last_generated_name[MAX_LEN_NAME];
+  const char *format = NULL;
+  bool name_exists = FALSE;
+
+  assert (an_city_name_formats != NULL);
+
+  freelog (LOG_DEBUG, "agcn an_generate_city_name pcity->id=%d \"%s\"", pcity->id, pcity->name);
+
+  num_formats = city_name_list_size (an_city_name_formats);
+
+  if (num_formats <= 1) {
+    my_snprintf (err, errlen, _("There are no city name formats defined. "
+                 "Try adding some to Local Options."));
+    return 0;
+  }
+
+  ad = hash_lookup_data (an_city_autoname_data_table, INT_TO_PTR (pcity->id));
+  if (!ad) {
+    ad = fc_malloc (sizeof (struct autoname_data));
+    freelog (LOG_DEBUG, "agcn   new ad %p", ad);
+    sz_strlcpy (ad->original_name, pcity->name);
+    ad->city_id = pcity->id;
+    ad->continent_id = pcity->tile->continent;
+    ad->format_index = 1;
+    ad->global_city_number = 0;
+    ad->continent_city_number = 0;
+    hash_insert (an_city_autoname_data_table, INT_TO_PTR (pcity->id), ad);
+  } else {
+    ad->format_index++;
+    ad->format_index %= num_formats;
+  }
+
+  start_format_index = ad->format_index;
+  last_generated_name[0] = 0;
+
+  for (;;) {
+    format = city_name_list_get (an_city_name_formats, ad->format_index);
+    freelog (LOG_DEBUG, "agcn   trying format \"%s\" [%d]", format, ad->format_index);
+    
+    len = an_make_city_name (format, buf, buflen, ad);
+    if (len <= 0)
+      break;
+    
+    if (!strcmp (buf, last_generated_name))
+      break;
+    
+    sz_strlcpy (last_generated_name, buf);
+
+    name_exists = hash_key_exists (an_city_name_table, buf)
+      || !strcmp (pcity->name, buf);
+    
+    if (!name_exists)
+      break;
+    
+    ad->format_index++;
+    ad->format_index %= num_formats;
+    
+    if (ad->format_index == start_format_index)
+      break;
+  }
+
+  if (name_exists) {
+    my_snprintf (err, errlen, _("A new name was not generated from "
+                                "the format \"%s\"."), format);
+    return 0;
+  }
+
+  if (len <= 0) {
+    my_snprintf (err, errlen, _("Failed to generate name from "
+                                "format \"%s\"."), format);
+    return 0;
+  }
+  
+  return len;
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static void an_parse_city_name_formats (void)
+{
+  char *p, *q, buf[1024];
+  
+  freelog (LOG_DEBUG, "apcnf an_parse_city_name_formats");
+
+  assert (an_city_name_formats != NULL);
+  
+  city_name_list_iterate (*an_city_name_formats, fmt) {
+    free (fmt);
+  } city_name_list_iterate_end;
+  city_name_list_unlink_all (an_city_name_formats);
+  
+  sz_strlcpy (buf, city_name_formats);
+
+  freelog (LOG_DEBUG, "apcnf   adding special first format");
+  city_name_list_insert_back (an_city_name_formats, mystrdup (""));
+
+  freelog (LOG_DEBUG, "apcnf   parsing \"%s\"", city_name_formats);
+  
+  for (p = buf; p && *p; p = q) {
+    if ((q = strchr (p, ';'))) {
+      *q++ = 0;
+    }
+    remove_leading_trailing_spaces (p);
+    if (!*p && !q) {
+      break;
+    }
+    if (*p) {
+      freelog (LOG_DEBUG, "apcnf   adding format to list \"%s\"", p);
+      city_name_list_insert_back (an_city_name_formats, mystrdup (p));
+    }
+  }
+
+  freelog (LOG_DEBUG, "apcnf   parsed %d formats", city_name_list_size (an_city_name_formats));
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+void city_autonaming_init (void)
+{
+  freelog (LOG_DEBUG, "cai city_autonaming_init");
+  if (!an_city_name_table)
+    an_city_name_table = hash_new (hash_fval_string2, hash_fcmp_string);
+  if (!an_continent_counter_table)
+    an_continent_counter_table = hash_new (hash_fval_int, hash_fcmp_int);
+  if (!an_city_autoname_data_table)
+    an_city_autoname_data_table = hash_new (hash_fval_int, hash_fcmp_int);
+  
+  if (!an_city_name_formats) {
+    an_city_name_formats = fc_malloc (sizeof (struct city_name_list));
+    city_name_list_init (an_city_name_formats);    
+    an_global_city_number_counter = 0;
+  }
+}
+  
+/**************************************************************************
+  ...
+**************************************************************************/
+void city_autonaming_free (void)
+{
+  freelog (LOG_DEBUG, "caf city_autonaming_free");
+
+  /* NB we can't iterate over the hash entries and free the
+     keys at the same time */
+  while (hash_num_entries (an_city_name_table) > 0) {
+    char *name = (char *) hash_key_by_number (an_city_name_table, 0);
+    hash_delete_entry (an_city_name_table, name);
+    freelog (LOG_DEBUG, "caf   freeing \"%s\"", name);
+    free (name);
+  }
+  hash_free (an_city_name_table);
+  an_city_name_table = NULL;
+
+  hash_iterate (an_continent_counter_table, void *, key, int *, pcc) {
+    int id = PTR_TO_INT (key);
+    freelog (LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id, *pcc);
+    free (pcc);
+  } hash_iterate_end;
+  freelog (LOG_DEBUG, "caf   deleting all in an_continent_counter_table");
+  hash_delete_all_entries (an_continent_counter_table);  
+  hash_free (an_continent_counter_table);
+  an_continent_counter_table = NULL;
+
+  hash_iterate (an_city_autoname_data_table, void *, key,
+                struct autoname_data *, ad)
+  {
+    int id = PTR_TO_INT (key);
+    freelog (LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
+    free (ad);
+  } hash_iterate_end;
+  freelog (LOG_DEBUG, "caf   deleting all in an_city_autoname_data_table");
+  hash_delete_all_entries (an_city_autoname_data_table);
+  hash_free (an_city_autoname_data_table);
+  an_city_autoname_data_table = NULL;
+
+  an_global_city_number_counter = 0;
+
+  city_name_list_iterate (*an_city_name_formats, fmt) {
+    free (fmt);
+  } city_list_iterate_end;
+  city_name_list_unlink_all (an_city_name_formats);
+  free (an_city_name_formats);
+  an_city_name_formats = NULL;
+}
+        
 /**************************************************************************
   ...
 **************************************************************************/
 void normalize_names_in_selected_cities (void)
 {
-  char buf[MAX_LEN_NAME];
+  char buf[512], err[256];
+
+  freelog (LOG_DEBUG, "normalize_names_in_selected_cities");
   
   if (!tiles_hilited_cities)
     return;
+
+  an_parse_city_name_formats();
 
   connection_do_buffer (&aconnection);
   city_list_iterate (game.player_ptr->cities, pcity) {
     if (!is_city_hilited (pcity))
       continue;
     
-    if (generate_city_name (buf, sizeof (buf), pcity)) {
-      if (0 != strcmp (buf, pcity->name))
-        city_rename (pcity, buf);
+    if (an_generate_city_name (buf, sizeof (buf), pcity,
+                               err, sizeof (err)) > 0)
+    {
+      city_autonaming_add_used_name (buf);
+      city_rename (pcity, buf);
+    } else {
+      my_snprintf (buf, sizeof (buf),
+          _("Warclient: Could not auto-rename city %s! %s"),
+          pcity->name, err);
+      append_output_window (buf);
     }
   } city_list_iterate_end;
   connection_do_unbuffer (&aconnection);

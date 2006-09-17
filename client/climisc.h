@@ -123,7 +123,10 @@ int buy_production_in_selected_cities (void);
 
 void city_clear_worklist (struct city *pcity);
 void clear_worklists_in_selected_cities (void);
-void city_name_counters_init (void);
+void city_autonaming_init (void);
+void city_autonaming_free (void);
+void city_autonaming_add_used_name (const char *city_name);
+void city_autonaming_remove_used_name (const char *city_name);
 void normalize_names_in_selected_cities (void);
 
 #endif  /* FC__CLIMISC_H */

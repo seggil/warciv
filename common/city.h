@@ -277,14 +277,6 @@ struct city {
     /* Used by traderoute drawing code to avoid drawing
        internal traderoutes twice */
     bool traderoute_drawn[NUM_TRADEROUTES];
-
-    /* Which name format is currently used. */
-    int name_format_index;
-
-    /* Name counters, so that city always has the same
-       numbers after name normalization. */
-    int name_counter;
-    int continent_name_counter;
   } client;
 
   int steal;		      /* diplomats steal once; for spies, gets harder */

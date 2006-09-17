@@ -24477,7 +24477,7 @@ Wed Oct 22 11:42:48 2003  Christian Knoke <chrisk@cknoke.de>:
 
 	* po/de.po:
 
-	3002  bersetzte Meldungen. Complete.
+	3002  bersetzte Meldungen. Complete.
 
 Wed Oct 22 07:12:14 2003  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
@@ -25045,7 +25045,7 @@ Thu Oct 02 22:53:46 2003  Christian Knoke <chrisk@cknoke.de>:
 
 	* po/de.po:
 
-	3001  bersetzte Meldungen.
+	3001  bersetzte Meldungen.
 
 Thu Oct 02 21:37:45 2003  Rafal Bursig <bursig@poczta.fm>:
 
@@ -32030,7 +32030,7 @@ Thu Mar 27 13:13:57 2003  Christian Knoke <chrisk@cknoke.de>:
 
 	* po/de.po:
 
-	3 un bersetzte Meldungen
+	3 un bersetzte Meldungen
 
 Wed Mar 26 23:08:35 2003  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -37852,7 +37852,7 @@ Tue Nov 26 03:12:43 2002  Egbert Hinzen <egbert@hinzen-koeln.de>:
 
 	* po/de.po:
 
-	updated (21 un bersetzt)
+	updated (21 un bersetzt)
 
 Tue Nov 26 01:19:03 2002  Per I. Mathisen <per@leftist.net>:
 
@@ -42133,7 +42133,7 @@ Wed Aug 28 04:56:15 2002  Egbert Hinzen <egbert@hinzen-koeln.de>:
 	* po/de.po:
 
 	de.po updated (de.po is now 'msgfmt -c' conform). 'citizen' jetzt
-	einheitlich mit 'B rger'  bersetzt.
+	einheitlich mit 'B rger'  bersetzt.
 
 Tue Aug 27 22:03:29 2002  Per I. Mathisen <per@leftist.net>:
 
@@ -46417,7 +46417,7 @@ Sat May 25 15:05:53 2002  Raimar Falke <rf13@inf.tu-dresden.de>:
 	"may_pillage" may suggest. Change the call and the signature of
 	the function to reflect this.
 
-	Reported by Markus B chele <Markus.Buechele@web.de>. Patch from
+	Reported by Markus B chele <Markus.Buechele@web.de>. Patch from
 	Mike Kaufman <kaufman@orion.physics.wisc.edu> and me.
 
 Sat May 25 14:55:08 2002  Raimar Falke <rf13@inf.tu-dresden.de>:
@@ -56612,7 +56612,7 @@ Thu Jun 14 19:26:03 2001  Thue Janus Kristensen <thue@diku.dk>:
 
 	* data/nation/turk.ruleset:
 
-	Mehmed -> MehMet Murad -> Murat suleyman -> s leyman remove
+	Mehmed -> MehMet Murad -> Murat suleyman -> s leyman remove
 	"Galatarasay", "Smyrna", "Bandirma" add "Kocaeli","Samsun" and
 	"Kirklareli"
 

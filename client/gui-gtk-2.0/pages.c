@@ -332,6 +332,7 @@ static void server_list_created_callback (struct server_list *new_server_list,
 static bool get_meta_list(char *errbuf, int n_errbuf)
 {
   int id;
+  char buf[1024];
 
   if (!adns_is_available()) {
     if (internet_server_list)
@@ -363,8 +364,9 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
 
   /* request in progress! */
   server_list_request_id = id;
-  append_output_window (_("Requesting server list from the %s..."),
-                        metaserver);
+  my_snprintf (buf, sizeof (buf),
+      _("Requesting server list from %s..."), metaserver);
+  append_output_window (buf);
   return TRUE;
 }
 

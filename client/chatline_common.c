@@ -106,15 +106,9 @@ void output_window_force_thaw()
 /**************************************************************************
   Add a line of text to the output ("chatline") window.
 **************************************************************************/
-void append_output_window (const char *fmt, ...)
+void append_output_window (const char *msg)
 {
-  char buf[1024];
-  va_list ap;
-
-  va_start (ap, fmt);
-  my_vsnprintf (buf, sizeof (buf), fmt, ap);
-  va_end (ap);
-  append_output_window_full (buf, -1);
+  append_output_window_full (msg, -1);
 }
 
 /**************************************************************************
