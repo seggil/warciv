@@ -19009,7 +19009,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile data/Makefile data/flags/Makefile data/misc/Makefile data/trident/Makefile data/isophex/Makefile data/isotrident/Makefile data/default/Makefile data/civ1/Makefile data/civ2/Makefile data/scenario/Makefile data/nation/Makefile data/history/Makefile utility/Makefile utility/ftwl/Makefile common/Makefile common/aicore/Makefile ai/Makefile tests/Makefile client/Makefile client/agents/Makefile client/include/Makefile client/gui-sdl/Makefile client/gui-gtk/Makefile client/gui-gtk-2.0/Makefile client/gui-xaw/Makefile client/gui-win32/Makefile client/gui-ftwl/Makefile client/gui-stub/Makefile server/Makefile server/generator/Makefile manual/Makefile intl/Makefile po/Makefile.in doc/Makefile doc/man/Makefile doc/de/Makefile doc/fr/Makefile doc/it/Makefile doc/ja/Makefile doc/nl/Makefile doc/sv/Makefile freeciv.spec:bootstrap/freeciv.spec.in bootstrap/undep.sh data/Freeciv client/freeciv.desktop:bootstrap/freeciv.desktop.in"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile data/Makefile data/flags/Makefile data/misc/Makefile data/trident/Makefile data/isophex/Makefile data/isotrident/Makefile data/default/Makefile data/civ1/Makefile data/civ2/Makefile data/scenario/Makefile data/nation/Makefile data/history/Makefile utility/Makefile utility/ftwl/Makefile common/Makefile common/aicore/Makefile ai/Makefile tests/Makefile client/Makefile client/agents/Makefile client/include/Makefile client/gui-sdl/Makefile client/gui-gtk/Makefile client/gui-gtk-2.0/Makefile client/gui-xaw/Makefile client/gui-win32/Makefile client/gui-ftwl/Makefile client/gui-stub/Makefile server/Makefile server/generator/Makefile manual/Makefile intl/Makefile po/Makefile.in doc/Makefile doc/man/Makefile doc/de/Makefile doc/fr/Makefile doc/it/Makefile doc/ja/Makefile doc/nl/Makefile doc/sv/Makefile freeciv.spec:bootstrap/freeciv.spec.in bootstrap/undep.sh data/Freeciv client/freeciv.desktop:bootstrap/freeciv.desktop.in"
 
           ac_config_files="$ac_config_files civ:bootstrap/civ.in"
 
@@ -19725,51 +19725,51 @@ for ac_config_target in $ac_config_targets
 do
   case "$ac_config_target" in
   # Handling of arguments.
-  "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-  "data/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
-  "data/flags/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/flags/Makefile" ;;
-  "data/misc/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/misc/Makefile" ;;
-  "data/trident/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/trident/Makefile" ;;
-  "data/isophex/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/isophex/Makefile" ;;
-  "data/isotrident/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/isotrident/Makefile" ;;
-  "data/default/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/default/Makefile" ;;
-  "data/civ1/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/civ1/Makefile" ;;
-  "data/civ2/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/civ2/Makefile" ;;
-  "data/scenario/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/scenario/Makefile" ;;
-  "data/nation/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/nation/Makefile" ;;
-  "data/history/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/history/Makefile" ;;
-  "utility/Makefile" ) CONFIG_FILES="$CONFIG_FILES utility/Makefile" ;;
-  "utility/ftwl/Makefile" ) CONFIG_FILES="$CONFIG_FILES utility/ftwl/Makefile" ;;
-  "common/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/Makefile" ;;
-  "common/aicore/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/aicore/Makefile" ;;
-  "ai/Makefile" ) CONFIG_FILES="$CONFIG_FILES ai/Makefile" ;;
-  "tests/Makefile" ) CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
-  "client/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/Makefile" ;;
-  "client/agents/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/agents/Makefile" ;;
-  "client/include/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/include/Makefile" ;;
-  "client/gui-sdl/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-sdl/Makefile" ;;
-  "client/gui-gtk/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-gtk/Makefile" ;;
-  "client/gui-gtk-2.0/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-gtk-2.0/Makefile" ;;
-  "client/gui-xaw/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-xaw/Makefile" ;;
-  "client/gui-win32/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-win32/Makefile" ;;
-  "client/gui-ftwl/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-ftwl/Makefile" ;;
-  "client/gui-stub/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-stub/Makefile" ;;
-  "server/Makefile" ) CONFIG_FILES="$CONFIG_FILES server/Makefile" ;;
-  "server/generator/Makefile" ) CONFIG_FILES="$CONFIG_FILES server/generator/Makefile" ;;
-  "manual/Makefile" ) CONFIG_FILES="$CONFIG_FILES manual/Makefile" ;;
-  "intl/Makefile" ) CONFIG_FILES="$CONFIG_FILES intl/Makefile" ;;
-  "po/Makefile.in" ) CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
-  "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  "doc/man/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/man/Makefile" ;;
-  "doc/de/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/de/Makefile" ;;
-  "doc/fr/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/fr/Makefile" ;;
-  "doc/it/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/it/Makefile" ;;
-  "doc/ja/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/ja/Makefile" ;;
-  "doc/nl/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/nl/Makefile" ;;
-  "doc/sv/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/sv/Makefile" ;;
-  "freeciv.spec" ) CONFIG_FILES="$CONFIG_FILES freeciv.spec:bootstrap/freeciv.spec.in" ;;
-  "bootstrap/undep.sh" ) CONFIG_FILES="$CONFIG_FILES bootstrap/undep.sh" ;;
-  "data/Freeciv" ) CONFIG_FILES="$CONFIG_FILES data/Freeciv" ;;
+  "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "data/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
+  "data/flags/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/flags/Makefile" ;;
+  "data/misc/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/misc/Makefile" ;;
+  "data/trident/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/trident/Makefile" ;;
+  "data/isophex/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/isophex/Makefile" ;;
+  "data/isotrident/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/isotrident/Makefile" ;;
+  "data/default/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/default/Makefile" ;;
+  "data/civ1/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/civ1/Makefile" ;;
+  "data/civ2/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/civ2/Makefile" ;;
+  "data/scenario/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/scenario/Makefile" ;;
+  "data/nation/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/nation/Makefile" ;;
+  "data/history/Makefile" ) CONFIG_FILES="$CONFIG_FILES data/history/Makefile" ;;
+  "utility/Makefile" ) CONFIG_FILES="$CONFIG_FILES utility/Makefile" ;;
+  "utility/ftwl/Makefile" ) CONFIG_FILES="$CONFIG_FILES utility/ftwl/Makefile" ;;
+  "common/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/Makefile" ;;
+  "common/aicore/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/aicore/Makefile" ;;
+  "ai/Makefile" ) CONFIG_FILES="$CONFIG_FILES ai/Makefile" ;;
+  "tests/Makefile" ) CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
+  "client/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/Makefile" ;;
+  "client/agents/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/agents/Makefile" ;;
+  "client/include/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/include/Makefile" ;;
+  "client/gui-sdl/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-sdl/Makefile" ;;
+  "client/gui-gtk/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-gtk/Makefile" ;;
+  "client/gui-gtk-2.0/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-gtk-2.0/Makefile" ;;
+  "client/gui-xaw/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-xaw/Makefile" ;;
+  "client/gui-win32/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-win32/Makefile" ;;
+  "client/gui-ftwl/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-ftwl/Makefile" ;;
+  "client/gui-stub/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/gui-stub/Makefile" ;;
+  "server/Makefile" ) CONFIG_FILES="$CONFIG_FILES server/Makefile" ;;
+  "server/generator/Makefile" ) CONFIG_FILES="$CONFIG_FILES server/generator/Makefile" ;;
+  "manual/Makefile" ) CONFIG_FILES="$CONFIG_FILES manual/Makefile" ;;
+  "intl/Makefile" ) CONFIG_FILES="$CONFIG_FILES intl/Makefile" ;;
+  "po/Makefile.in" ) CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
+  "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
+  "doc/man/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/man/Makefile" ;;
+  "doc/de/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/de/Makefile" ;;
+  "doc/fr/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/fr/Makefile" ;;
+  "doc/it/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/it/Makefile" ;;
+  "doc/ja/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/ja/Makefile" ;;
+  "doc/nl/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/nl/Makefile" ;;
+  "doc/sv/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/sv/Makefile" ;;
+  "freeciv.spec" ) CONFIG_FILES="$CONFIG_FILES freeciv.spec:bootstrap/freeciv.spec.in" ;;
+  "bootstrap/undep.sh" ) CONFIG_FILES="$CONFIG_FILES bootstrap/undep.sh" ;;
+  "data/Freeciv" ) CONFIG_FILES="$CONFIG_FILES data/Freeciv" ;;
   "client/freeciv.desktop" ) CONFIG_FILES="$CONFIG_FILES client/freeciv.desktop:bootstrap/freeciv.desktop.in" ;;
   "civ" ) CONFIG_FILES="$CONFIG_FILES civ:bootstrap/civ.in" ;;
   "ser" ) CONFIG_FILES="$CONFIG_FILES ser:bootstrap/ser.in" ;;

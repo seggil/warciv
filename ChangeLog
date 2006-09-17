@@ -1440,7 +1440,7 @@ Mon Jun 27 14:27:13 2005  Per I. Mathisen <per@leftist.net>:
 	* server/stdinhand.c:
 
 	Do not allow observers to vote. Fixes bug reported by Thomas
-	MÃ¼ller <lists@elfstone.de> in PR#13008. Fix from patch in
+	M  ller <lists@elfstone.de> in PR#13008. Fix from patch in
 	PR#12604 (backported).
 
 Sun Jun 26 11:15:08 2005  Mateusz Stefek <mstefek@poczta.fm>:
@@ -2574,7 +2574,7 @@ Sun Feb 13 15:26:36 2005  Mateusz Stefek <mstefek@poczta.fm>:
 	* server/unittools.c:
 
 	(Backport) Stop irrigating when somebody mined last irigated
-	adjacent tile. Reported by Steffen Jobbagy-Felsö in #11497
+	adjacent tile. Reported by Steffen Jobbagy-Fels  in #11497
 
 Sat Feb 12 17:41:36 2005  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -2880,7 +2880,7 @@ Wed Feb 02 03:11:48 2005  Jason Short <jdorje@users.sourceforge.net>:
 
 	Remove an incorrect assertion that prevented ocean cities.
 
-	Reported by Andreas Røsdal <andrearo@stud.ntnu.no> in PR#12056.
+	Reported by Andreas R sdal <andrearo@stud.ntnu.no> in PR#12056.
 
 Wed Feb 02 03:04:34 2005  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -3633,7 +3633,7 @@ Thu Dec 30 17:36:53 2004  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 
 	Backport: Add missing newlines, so gettext doesn't choke on it.
 
-	Patch by GeneviÃ¨ve Gracian,
+	Patch by Genevi  ve Gracian,
 
 Wed Dec 29 17:33:23 2004  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 
@@ -3726,7 +3726,7 @@ Sat Dec 25 19:50:24 2004  Jason Short <jdorje@users.sourceforge.net>:
 	each sprite that is drawn fogged, a separate fogged pixmap is
 	created using alpha-blending to achieve good quality fog.
 
-	Patch by Andreas Røsdal <andrearo@stud.ntnu.no> and myself in
+	Patch by Andreas R sdal <andrearo@stud.ntnu.no> and myself in
 	PR#11433.
 
 Fri Dec 24 23:40:13 2004  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
@@ -9862,7 +9862,7 @@ Fri Sep 24 15:33:31 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
 	Add gnome menu item. The .desktop file is installed in
 	prefix/share/applications iff client is enabled. Patch by me in
-	PR#9977 freeciv.desktop by JÃ©rÃ´me Warnier
+	PR#9977 freeciv.desktop by J  r  me Warnier
 
 Fri Sep 24 15:33:31 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
@@ -9870,7 +9870,7 @@ Fri Sep 24 15:33:31 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
 	branches: 1.2.2; Add gnome menu item. The .desktop file is
 	installed in prefix/share/applications iff client is enabled.
-	Patch by me in PR#9977 freeciv.desktop by JÃ©rÃ´me Warnier
+	Patch by me in PR#9977 freeciv.desktop by J  r  me Warnier
 
 Fri Sep 24 15:33:31 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
@@ -9878,7 +9878,7 @@ Fri Sep 24 15:33:31 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
 	Add gnome menu item. The .desktop file is installed in
 	prefix/share/applications iff client is enabled. Patch by me in
-	PR#9977 freeciv.desktop by JÃ©rÃ´me Warnier
+	PR#9977 freeciv.desktop by J  r  me Warnier
 
 Fri Sep 24 13:51:02 2004  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 
@@ -10140,7 +10140,7 @@ Wed Sep 22 07:17:57 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
 	Don't resend all ex-allied city in remove_allied_visibility(),
 	send only those known and seen. Reported by Marek Baczek
-	BaczyÅ„ski in PR#10236; patch by me
+	Baczy  ski in PR#10236; patch by me
 
 Wed Sep 22 02:30:32 2004  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -12019,7 +12019,7 @@ Thu Sep 09 19:15:32 2004  Mateusz Stefek <mstefek@poczta.fm>:
 	* po/pl.po:
 
 	Change the encoding of pl.po to UTF-8 and use U00E5 in Harald
-	BlÃ¥tland
+	Bl  tland
 
 Thu Sep 09 18:07:28 2004  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -13048,7 +13048,7 @@ Mon Aug 30 08:17:02 2004  Mateusz Stefek <mstefek@poczta.fm>:
 
 	* data/nation/danish.ruleset:
 
-	Change the spelling of "Ã…rhus" and "Ã…lborg" to "Aarhus" and
+	Change the spelling of "  rhus" and "  lborg" to "Aarhus" and
 	"Aalborg". These forms are also correct and don't cause charsets
 	problems. See PR#9838
 
@@ -18825,7 +18825,7 @@ Sun May 02 12:40:47 2004  Per I. Mathisen <per@leftist.net>:
 	* m4/alsa.m4:
 
 	Make alsa autoconf check look for alsa version 1.0 or higher.
-	ReÃÃported by Mike.
+	Re  ported by Mike.
 
 Sun May 02 12:33:29 2004  Per I. Mathisen <per@leftist.net>:
 
@@ -19881,7 +19881,7 @@ Wed Apr 07 17:32:01 2004  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
 	Give the PACKET_AUTHENTICATION_REQ packet the dsend flag.
 
-	Reported by Andreas Røsdal <andrearo@stud.ntnu.no> in PR#8409.
+	Reported by Andreas R sdal <andrearo@stud.ntnu.no> in PR#8409.
 	Patch from me.
 
 Wed Apr 07 17:29:16 2004  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
@@ -19890,7 +19890,7 @@ Wed Apr 07 17:29:16 2004  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
 	Change auth code to use the correct field of struct connection.
 
-	Reported by Andreas Røsdal <andrearo@stud.ntnu.no> in PR#8409.
+	Reported by Andreas R sdal <andrearo@stud.ntnu.no> in PR#8409.
 	Patch from me.
 
 Tue Apr 06 21:39:05 2004  Andreas Kemnade <akemnade@informatik.uni-bremen.de>:
@@ -20052,7 +20052,7 @@ Fri Apr 02 10:40:00 2004  Per I. Mathisen <per@leftist.net>:
 	* server/stdinhand.c:
 
 	Fix crash in stdinhand.c, where a user with no player could try
-	to start a vote. Found by Andreas RÃ¸sda l<andrearo@stud.ntnu.no.
+	to start a vote. Found by Andreas R  sda l<andrearo@stud.ntnu.no.
 
 Thu Apr 01 23:46:26 2004  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -23797,7 +23797,7 @@ Sat Nov 15 12:16:22 2003  Per I. Mathisen <per@leftist.net>:
 	Make sure that we do not attempt to attack players we are not at
 	war with but that we want to go to war against in fstk. We now
 	call pplayers_at_war when passing real units to fstk instead of
-	calling HOSTILE_PLÃAYER. Bug reported by Greg.
+	calling HOSTILE_PL AYER. Bug reported by Greg.
 
 Sat Nov 15 11:32:45 2003  Per I. Mathisen <per@leftist.net>:
 
@@ -24477,7 +24477,7 @@ Wed Oct 22 11:42:48 2003  Christian Knoke <chrisk@cknoke.de>:
 
 	* po/de.po:
 
-	3002 übersetzte Meldungen. Complete.
+	3002 Êbersetzte Meldungen. Complete.
 
 Wed Oct 22 07:12:14 2003  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
@@ -25045,7 +25045,7 @@ Thu Oct 02 22:53:46 2003  Christian Knoke <chrisk@cknoke.de>:
 
 	* po/de.po:
 
-	3001 übersetzte Meldungen.
+	3001 Êbersetzte Meldungen.
 
 Thu Oct 02 21:37:45 2003  Rafal Bursig <bursig@poczta.fm>:
 
@@ -26566,7 +26566,7 @@ Mon Sep 08 16:33:28 2003  Per I. Mathisen <per@leftist.net>:
 
 	* autogen.sh:
 
-	Fix bug where autogen.sh's sed magic would fall over with Ãpackag
+	Fix bug where autogen.sh's sed magic would fall over with  packag
 	names containing a '-' character. Patch by Crossbow/Miyo
 	<pajuma@iki.fi>
 
@@ -27948,7 +27948,7 @@ Mon Jul 28 01:16:06 2003  Mike Kaufman <kaufman@orion.physics.wisc.edu>:
 
 	add a CMA dialog to the XAW client.
 
-	Patch by Andreas Røsdal <andrearo@stud.ntnu.no>
+	Patch by Andreas R sdal <andrearo@stud.ntnu.no>
 
 Sat Jul 26 15:07:58 2003  Mike Kaufman <kaufman@orion.physics.wisc.edu>:
 
@@ -28069,7 +28069,7 @@ Thu Jul 24 12:23:55 2003  Erik Sigra <sigra@home.se>:
 
 	* po/sv.po:
 
-	rättelser
+	r ttelser
 
 Wed Jul 23 20:24:36 2003  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -30572,7 +30572,7 @@ Sat May 03 20:20:16 2003  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 
 	For now GTK+ 2.0 only. The rest of the clients get stubs.
 
-	Patch by Andreas RÃ¸sdal <andrearo@stud.ntnu.no> with changes by
+	Patch by Andreas R  sdal <andrearo@stud.ntnu.no> with changes by
 	me.
 
 Sat May 03 13:28:48 2003  Gregory Berkolaiko <Gregory.Berkolaiko@math.tamu.edu>:
@@ -32001,7 +32001,7 @@ Thu Mar 27 19:15:26 2003  Genevieve Gracian <ggracian@free.fr>:
 
 	* po/fr.po:
 
-	mise à jour du 28 mars
+	mise   jour du 28 mars
 
 Thu Mar 27 17:50:35 2003  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
@@ -32030,7 +32030,7 @@ Thu Mar 27 13:13:57 2003  Christian Knoke <chrisk@cknoke.de>:
 
 	* po/de.po:
 
-	3 unübersetzte Meldungen
+	3 unÊbersetzte Meldungen
 
 Wed Mar 26 23:08:35 2003  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -32672,7 +32672,7 @@ Sun Mar 02 17:43:16 2003  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 
 	Patch to scroll main_message_area on PgUp/PgDown keypress.
 
-	Bug reported by Janus N. TÃ¸nderin <janus@bananus.dk>.
+	Bug reported by Janus N. T  nderin <janus@bananus.dk>.
 
 	Changed kludge to stop emission of the default widget focus
 	movement events on Up/Down/Left/Right keypress. The old kludge
@@ -33606,7 +33606,7 @@ Fri Feb 14 17:43:56 2003  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 	Remove space in text to ease translation and to make it
 	conforming to the other texts.
 
-	Reported by Andreas Røsdal <andrearo@stud.ntnu.no> as PR#3416.
+	Reported by Andreas R sdal <andrearo@stud.ntnu.no> as PR#3416.
 
 Fri Feb 14 17:16:23 2003  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
@@ -33817,7 +33817,7 @@ Tue Feb 11 01:16:55 2003  Davide Pagnin <nightmare@freeciv.it>:
 
 	* po/da.po:
 
-	branches: 1.11.2; Updated da.po, file supplied by Keld Jørn
+	branches: 1.11.2; Updated da.po, file supplied by Keld J rn
 	Simonsen <keld@dkuug.dk> with update made by me.
 
 Tue Feb 11 01:15:00 2003  Mike Kaufman <kaufman@orion.physics.wisc.edu>:
@@ -34328,7 +34328,7 @@ Sat Feb 01 15:59:51 2003  Anthony Ferrand <Anthony.Ferrand@wanadoo.fr>:
 
 	* doc/fr/HOWTOPLAY.fr:
 
-	mise à jour des liens
+	mise   jour des liens
 
 Sat Feb 01 12:10:33 2003  Rafal Bursig <bursig@poczta.fm>:
 
@@ -34621,7 +34621,7 @@ Thu Jan 30 17:09:27 2003  Davide Pagnin <nightmare@freeciv.it>:
 	* po/nl.po:
 
 	Fixes PR#2886, just a typo in the nl translation. Reported by
-	Jordi Mallach Pérez jordi@debian.org
+	Jordi Mallach P rez jordi@debian.org
 
 Thu Jan 30 12:19:15 2003  Rafal Bursig <bursig@poczta.fm>:
 
@@ -34945,7 +34945,7 @@ Sun Jan 26 18:31:06 2003  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 	Add chance for unit to win information to map tile info popup
 	(PR#2911).
 
-	Patch by Andreas RÃ¸sdal <andrearo@stud.ntnu.no> with some
+	Patch by Andreas R  sdal <andrearo@stud.ntnu.no> with some
 	changes by me.
 
 Sun Jan 26 11:39:52 2003  Christian Knoke <chrisk@cknoke.de>:
@@ -35390,7 +35390,7 @@ Tue Jan 14 03:55:12 2003  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 	Add city style names to GTK+ 1.2 and pictures to GTK+ 2.0
 	(PR#2810).
 
-	Patch by FrÃ©dÃ©ric Rodrigo <f.rodrigo@tuxfamily.or with changes
+	Patch by Fr  d  ric Rodrigo <f.rodrigo@tuxfamily.or with changes
 	by me.
 
 Mon Jan 13 23:27:12 2003  Jason Short <jdorje@users.sourceforge.net>:
@@ -36779,7 +36779,7 @@ Tue Dec 17 15:56:57 2002  Erik Sigra <sigra@home.se>:
 
 	* po/sv.po, po/sv.po:
 
-	rättelse
+	r ttelse
 
 Tue Dec 17 15:14:48 2002  Raimar Falke <i-freeciv-forward@rf.risimo.net>:
 
@@ -36862,7 +36862,7 @@ Mon Dec 16 03:28:01 2002  Erik Sigra <sigra@home.se>:
 
 	* po/sv.po, po/sv.po, po/sv.po, po/sv.po, po/sv.po, po/sv.po:
 
-	rättelse
+	r ttelse
 
 Mon Dec 16 02:50:38 2002  Erik Sigra <sigra@home.se>:
 
@@ -36874,7 +36874,7 @@ Mon Dec 16 02:48:08 2002  Erik Sigra <sigra@home.se>:
 
 	* po/sv.po, po/sv.po:
 
-	rättelse
+	r ttelse
 
 Mon Dec 16 01:09:48 2002  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
 
@@ -37637,7 +37637,7 @@ Sat Nov 30 20:42:01 2002  Per I. Mathisen <per@leftist.net>:
 	Add compile support for a new client: gui-sdl
 
 	Patch by Jason Dorje Short <jdorje@users.sourceforge.net> and
-	Rafa³ Bursig <bursig@poczta.fm>
+	Rafa  Bursig <bursig@poczta.fm>
 
 Sat Nov 30 20:06:49 2002  Jason Short <jdorje@users.sourceforge.net>:
 
@@ -37808,13 +37808,13 @@ Tue Nov 26 14:27:48 2002  Davide Pagnin <nightmare@freeciv.it>:
 
 	* po/da.po:
 
-	da.po update supply by Keld Jørn Simonsen <keld@dkuug.dk>
+	da.po update supply by Keld J rn Simonsen <keld@dkuug.dk>
 
 Tue Nov 26 13:43:10 2002  Davide Pagnin <nightmare@freeciv.it>:
 
 	* po/da.po:
 
-	Update for 1.14.0 Release, supplied by Keld Jørn Simonsen
+	Update for 1.14.0 Release, supplied by Keld J rn Simonsen
 	<keld@dkuug.dk>
 
 Tue Nov 26 12:24:56 2002  Per I. Mathisen <per@leftist.net>:
@@ -37852,7 +37852,7 @@ Tue Nov 26 03:12:43 2002  Egbert Hinzen <egbert@hinzen-koeln.de>:
 
 	* po/de.po:
 
-	updated (21 unübersetzt)
+	updated (21 unÊbersetzt)
 
 Tue Nov 26 01:19:03 2002  Per I. Mathisen <per@leftist.net>:
 
@@ -37893,14 +37893,14 @@ Mon Nov 25 17:52:00 2002  Davide Pagnin <nightmare@freeciv.it>:
 
 	* po/da.po:
 
-	Updated da.po file. Updated .po file from: Keld Jørn Simonsen
+	Updated da.po file. Updated .po file from: Keld J rn Simonsen
 	<keld@dkuug.dk>
 
 Mon Nov 25 17:41:07 2002  Davide Pagnin <nightmare@freeciv.it>:
 
 	* po/da.po:
 
-	Updated da.po for 1.14.0 release. File from: Keld Jørn Simonsen
+	Updated da.po for 1.14.0 release. File from: Keld J rn Simonsen
 	<keld@dkuug.dk>
 
 Mon Nov 25 02:54:01 2002  Vasco Alexandre Da Silva Costa <vasc@rnl.ist.utl.pt>:
@@ -39718,7 +39718,7 @@ Wed Oct 23 09:16:43 2002  Erik Sigra <sigra@home.se>:
 
 	* po/sv.po:
 
-	rättelse
+	r ttelse
 
 Mon Oct 21 15:35:55 2002  Erik Sigra <sigra@home.se>:
 
@@ -42020,7 +42020,7 @@ Sat Aug 31 16:04:59 2002  Per I. Mathisen <per@leftist.net>:
 	- I removed some crutch logic that would remove errors created
 	elsewhere in the code (yeah, start switching production in the
 	function where you try to buy stuff, that's consistent!). This
-	could mean reduced performance by the AI, but what the #"=¤)(,
+	could mean reduced performance by the AI, but what the #"= )(,
 	this cleanup is necessary! The code should now be readable and
 	can be improved further by anyone. - The AI will no longer raise
 	taxes to buy wonders and buildings. - The AI will raise taxes for
@@ -42133,7 +42133,7 @@ Wed Aug 28 04:56:15 2002  Egbert Hinzen <egbert@hinzen-koeln.de>:
 	* po/de.po:
 
 	de.po updated (de.po is now 'msgfmt -c' conform). 'citizen' jetzt
-	einheitlich mit 'Bürger' übersetzt.
+	einheitlich mit 'BÊrger' Êbersetzt.
 
 Tue Aug 27 22:03:29 2002  Per I. Mathisen <per@leftist.net>:
 
@@ -46417,7 +46417,7 @@ Sat May 25 15:05:53 2002  Raimar Falke <rf13@inf.tu-dresden.de>:
 	"may_pillage" may suggest. Change the call and the signature of
 	the function to reflect this.
 
-	Reported by Markus Büchele <Markus.Buechele@web.de>. Patch from
+	Reported by Markus BÊchele <Markus.Buechele@web.de>. Patch from
 	Mike Kaufman <kaufman@orion.physics.wisc.edu> and me.
 
 Sat May 25 14:55:08 2002  Raimar Falke <rf13@inf.tu-dresden.de>:
@@ -49042,7 +49042,7 @@ Mon Mar  4 08:33:48 2002  Raimar Falke <rf13@inf.tu-dresden.de>:
 	message. Print a warning if more than 90% of the combinations are
 	used.
 
-	Reported from Martin Schröder <martin@oneiros.de>.
+	Reported from Martin Schr der <martin@oneiros.de>.
 
 Sun Mar  3 22:23:29 2002  Pieter J. Kersten <kersten@dia.eur.nl>:
 
@@ -49910,7 +49910,7 @@ Wed Feb 13 08:55:55 2002  Anthony Ferrand <Anthony.Ferrand@wanadoo.fr>:
 
 	* po/fr.po:
 
-	début de mise à jour
+	d but de mise   jour
 
 Wed Feb 13 05:55:24 2002  Mike Kaufman <kaufman@orion.physics.wisc.edu>:
 
@@ -50550,7 +50550,7 @@ Mon Feb  4 11:59:37 2002  Anthony Ferrand <Anthony.Ferrand@wanadoo.fr>:
 
 	* po/fr.po:
 
-	mise à jour
+	mise   jour
 
 Mon Feb  4 10:18:33 2002  Pieter J. Kersten <kersten@dia.eur.nl>:
 
@@ -51478,7 +51478,7 @@ Thu Jan 10 11:07:59 2002  Raimar Falke <rf13@inf.tu-dresden.de>:
 	correct estimation of the "turns-till-city-grow" at the client
 	side.
 
-	Reported from Daniel Sjölie <deepone@acc.umu.se> as (PR#1134).
+	Reported from Daniel Sj lie <deepone@acc.umu.se> as (PR#1134).
 	Patch from me.
 
 Thu Jan 10 10:21:21 2002  Pieter J. Kersten <kersten@dia.eur.nl>:
@@ -52245,7 +52245,7 @@ Tue Nov 20 22:03:36 2001  Anthony Ferrand <Anthony.Ferrand@wanadoo.fr>:
 	* po/fr.po:
 
 	remplacement de / par | dans le menu ordres, ligne
-	Aller/Aéroporter vers une ville Anthony
+	Aller/A roporter vers une ville Anthony
 
 Tue Nov 20 22:02:41 2001  Erik Sigra <sigra@home.se>:
 
@@ -52455,7 +52455,7 @@ Tue Oct 30 11:29:34 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
 
 	Translate strings in the new city dialog.
 
-	Patch from Daniel Sjölie <deepone@acc.umu.se> and Michael
+	Patch from Daniel Sj lie <deepone@acc.umu.se> and Michael
 	Stefaniuc <mstefani@redhat.de> with changes from me.
 
 Tue Oct 30 11:19:35 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
@@ -52474,7 +52474,7 @@ Tue Oct 30 11:12:04 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
 	keyboard shortcut. Defaults to the old behavior which requires the
 	meta key. Currently GTK-only.
 
-	Patch from Daniel Sjölie <deepone@acc.umu.se>.
+	Patch from Daniel Sj lie <deepone@acc.umu.se>.
 
 Tue Oct 30 10:59:20 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
 
@@ -52560,7 +52560,7 @@ Fri Oct 26 08:07:10 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
 	was also completely overhauled. Add a new entry in the help system
 	for the worklist editor.
 
-	Patch from Tuomas Airaksinen, Mike Kaufman and Daniel Sjölie. With
+	Patch from Tuomas Airaksinen, Mike Kaufman and Daniel Sj lie. With
 	contributions from Raimar Falke,Christian Knoke and Thue Janus
 	Kristensen.
 
@@ -53371,7 +53371,7 @@ Tue Sep 18 20:42:05 2001  Gaute B Strokkenes <gs234@cam.ac.uk>:
 
 	* po/da.po:
 
-	Add Danish translation.  Patch by Keld Jørn Simonsen
+	Add Danish translation.  Patch by Keld J rn Simonsen
 	<keld@dkuug.dk>.
 
 Tue Sep 18 17:27:13 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
@@ -53734,7 +53734,7 @@ Sun Sep  9 06:48:13 2001  Egbert Hinzen <egbert@hinzen-koeln.de>:
 	* po/de.po:
 
 	de.po updated.  HINWEIS: Die Originaltexte enthalten Fehler. 
-	Diese sind in der "Übersetzung" mit dem Wort FEHLER markiert.
+	Diese sind in der " bersetzung" mit dem Wort FEHLER markiert.
 
 Sat Sep  8 22:53:25 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
 
@@ -54032,7 +54032,7 @@ Thu Aug 30 19:35:21 2001  Raimar Falke <rf13@inf.tu-dresden.de>:
 	mentioned in the trade array exists. This error was introduced in
 	the recent id-to-pointer patch.
 
-	Bug found by Daniel Sjölie <deepone@acc.umu.se>. Patch by me.
+	Bug found by Daniel Sj lie <deepone@acc.umu.se>. Patch by me.
 
 Thu Aug 30 14:47:01 2001  Pieter J. Kersten <kersten@dia.eur.nl>:
 
@@ -54613,7 +54613,7 @@ Tue Aug 14 13:16:17 2001  Thue Janus Kristensen <thue@diku.dk>:
 
 	Add history to the gtk chatline.
 
-	Patch by Janus N. Tøndering <j@nus.person.dk>
+	Patch by Janus N. T ndering <j@nus.person.dk>
 
 Tue Aug 14 11:04:22 2001  Thue Janus Kristensen <thue@diku.dk>:
 
@@ -55424,7 +55424,7 @@ Sat Jul 21 17:45:37 2001  Thue Janus Kristensen <thue@diku.dk>:
 	When transferring a city, move non-allied units on the city square
 	away.
 
-	Fixes (PR#841) reported by Hjalmar Böhm <hjr.boehm@gmx.net>
+	Fixes (PR#841) reported by Hjalmar B hm <hjr.boehm@gmx.net>
 
 Fri Jul 20 14:09:37 2001  Thue Janus Kristensen <thue@diku.dk>:
 
@@ -56612,7 +56612,7 @@ Thu Jun 14 19:26:03 2001  Thue Janus Kristensen <thue@diku.dk>:
 
 	* data/nation/turk.ruleset:
 
-	Mehmed -> MehMet Murad -> Murat suleyman -> süleyman remove
+	Mehmed -> MehMet Murad -> Murat suleyman -> sÊleyman remove
 	"Galatarasay", "Smyrna", "Bandirma" add "Kocaeli","Samsun" and
 	"Kirklareli"
 
@@ -57416,7 +57416,7 @@ Mon Apr 16 17:43:28 2001  Thue Janus Kristensen <thue@diku.dk>:
 	a worklist, which should make it safe most of the time.  Note: it
 	is positively known to still bug in some cases.
 
-	Bug reported by Heikki Kniivilä <heikkikk@bestlinuxmail.com>
+	Bug reported by Heikki Kniivil  <heikkikk@bestlinuxmail.com>
 
 Sun Apr 15 18:46:30 2001  Thue Janus Kristensen <thue@diku.dk>:
 
@@ -57526,7 +57526,7 @@ Tue Apr 10 22:41:00 2001  Anthony Stuckey <stuckey@jaka.ece.uiuc.edu>:
 
 	* po/hu.po:
 
-	Updating Hungarian translation.  Patch submitted by Gábor Dukai
+	Updating Hungarian translation.  Patch submitted by G bor Dukai
 	<dukai@EUnet.yu>.
 
 Tue Apr 10 20:59:35 2001  Thue Janus Kristensen <thue@diku.dk>:
@@ -58305,7 +58305,7 @@ Sun Feb 11 00:16:06 2001  Thue Janus Kristensen <thue@diku.dk>:
 
 	Oil towers were not shown in overhead view.
 
-	Bug reported by Jan Felix Heidefuß <Jan_Heidefuss@yahoo.de>
+	Bug reported by Jan Felix Heidefu  <Jan_Heidefuss@yahoo.de>
 
 Sat Feb 10 20:49:42 2001  Vasco Alexandre da Silva Costa <vasc@rnl.ist.utl.pt>:
 
@@ -58464,7 +58464,7 @@ Sat Feb  3 19:09:33 2001  Thue Janus Kristensen <thue@diku.dk>:
 	Don't report "wonder soon build" if the wonder is already build
 	elsewhere.
 
-	Bug reported by Jan Felix Heidefuß <Jan_Heidefuss@yahoo.de>
+	Bug reported by Jan Felix Heidefu  <Jan_Heidefuss@yahoo.de>
 
 Sat Feb  3 18:33:01 2001  Thue Janus Kristensen <thue@diku.dk>:
 
@@ -59341,7 +59341,7 @@ Tue Jan  9 00:17:26 2001  Thue Janus Kristensen <thue@diku.dk>:
 	under the focus unit is destroyed.
 
 	The two last cases suggested by Marko Lindqvist <caz@cc.tut.fi>
-	Bug reported by Jan Felix Heidefuß <Jan_Heidefuss@yahoo.de>
+	Bug reported by Jan Felix Heidefu  <Jan_Heidefuss@yahoo.de>
 
 Mon Jan  8 23:44:30 2001  Thue Janus Kristensen <thue@diku.dk>:
 
@@ -60712,8 +60712,8 @@ Sun Sep  3 12:14:34 2000  Nicolas Brunel <brunel@ham.esil.univ-mrs.fr>:
 
 	* data/nation/misc_cities.ruleset, data/nation/swedish.ruleset:
 
-	Change 'Trollhaetten' to 'Trollättan', correct the spelling of
-	'Viborg' and 'Holmgård' and add 'Orsa'.
+	Change 'Trollhaetten' to 'Troll ttan', correct the spelling of
+	'Viborg' and 'Holmg rd' and add 'Orsa'.
 
 	Patch by Erik Sigra <freeciv@home.se> after a mail by "Gaute (B)
 	Strokkenes" <gs234@cam.ac.uk>
@@ -61548,7 +61548,7 @@ Wed Aug 16 16:31:47 2000  Nicolas Brunel <brunel@ham.esil.univ-mrs.fr>:
 
 	* data/nation/misc_cities.ruleset:
 
-	'Trollhaetten' should be 'Trollätten'.
+	'Trollhaetten' should be 'Troll tten'.
 
 	Patch submitted by "Gaute (B) Strokkenes" <gs234@cam.ac.uk>
 
@@ -64124,7 +64124,7 @@ Sat Jul  1 18:41:58 2000  Thue Janus Kristensen <thue@diku.dk>:
 	Fix bug that you could paradrop into cities you were at war with
 	even if they contained enemy units.
 
-	Bug reported by Jan Felix Heidefuß <Jan_Heidefuss@yahoo.de>
+	Bug reported by Jan Felix Heidefu  <Jan_Heidefuss@yahoo.de>
 
 Sat Jul  1 15:10:06 2000  David Pfitzner <dwp@mso.anu.edu.au>:
 
@@ -66757,7 +66757,7 @@ Sun Apr 23 22:53:13 2000  Thue Janus Kristensen <thue@diku.dk>:
 	send_city_info, to make sure the effects are send to the clients.
 	Fixes bugs where palace and shield stock were percieved to not be
 	erazed.  Bug reported by Cameron Morland <cjmorlan@uwaterloo.ca>
-	and Jan Felix Heidefuß
+	and Jan Felix Heidefu 
 
 Sun Apr 23 11:31:49 2000  David Pfitzner <dwp@mso.anu.edu.au>:
 
