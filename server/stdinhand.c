@@ -5071,13 +5071,60 @@ static bool show_help(struct connection *caller, char *arg)
   freelog(LOG_ERROR, "Bug in show_help!");
   return FALSE;
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void show_teams (struct connection *caller)
+{
+  bool listed[MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS];
+  int i, teamid = -1, count = 0, tc = 0;
+  struct player *pplayer;
+  char buf[1024], buf2[1024];
+
+  memset (listed, 0, sizeof (bool) * (MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS));
+
+  cmd_reply (CMD_LIST, caller, C_COMMENT, _("List of teams:"));
+  cmd_reply (CMD_LIST, caller, C_COMMENT, horiz_line);
+  
+  while (count < game.nplayers) {
+    for (i = 0; i < game.nplayers; i++) {
+      if (listed[i])
+        continue;
+      pplayer = get_player (i);
+      if (teamid == -1) {
+        teamid = pplayer->team;
+        tc = 0;
+        buf2[0] = 0;
+      }
+      if (teamid == pplayer->team) {
+        count++;
+        listed[i] = TRUE;
+        tc++;
+        cat_snprintf (buf2, sizeof (buf2), "%s ", pplayer->is_connected ?
+                      pplayer->username : pplayer->name);
+      }
+    }
+    if (teamid != -1) {
+      const char *teamname = teamid == TEAM_NONE
+          ? _("Unassigned") : team_get_by_id (teamid)->name;
+      
+      my_snprintf (buf, sizeof (buf), "%s (%d): %s",
+                   teamname, tc, buf2);
+      cmd_reply (CMD_LIST, caller, C_COMMENT, "%s", buf);
+      teamid = -1;
+    }
+  }
+  cmd_reply (CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
 /**************************************************************************
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-		 LIST_ARG_NUM /* Must be last */ };
+		 LIST_TEAMS, LIST_ARG_NUM /* Must be last */ };
 static const char * const list_args[] = {
-  "players", "connections", "actionlist", NULL
+  "players", "connections", "actionlist", "teams", NULL
 };
 static const char *listarg_accessor(int i) {
   return list_args[i];
@@ -5115,6 +5162,9 @@ static bool show_list (struct connection *caller, char *arg)
     return TRUE;
   case LIST_ACTIONLIST:
     show_actionlist (caller);
+    return TRUE;
+  case LIST_TEAMS:
+    show_teams (caller);
     return TRUE;
   default:
     cmd_reply (CMD_LIST, caller, C_FAIL,
