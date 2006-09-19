@@ -92,6 +92,14 @@ static void put_tag_pattern_into_store (GtkListStore *store,
                                         GtkTreeIter *iter,
                                         struct tag_pattern *ptagpat);
 
+enum tag_link_types {
+  LINK_LOCATION = 1,
+  LINK_CITY,
+};
+
+static gboolean hovering_over_link = FALSE;
+static GdkCursor *hand_cursor = NULL;
+static GdkCursor *regular_cursor = NULL;
 
 /**************************************************************************
 ...
@@ -127,6 +135,323 @@ static bool tag_pattern_is_control_only (struct tag_pattern *ptagpat)
     return ptagpat->flags & TPF_IS_CONTROL_ONLY;
 }
 /**************************************************************************
+  ...
+**************************************************************************/
+static void
+follow_if_link (GtkWidget   *text_view, 
+                GtkTextIter *iter)
+{
+  GSList *tags = NULL, *tagp = NULL;
+  gpointer data;
+  gint link_type;
+  int x, y;
+  char buf[128];
+  const char *city_name;
+  struct city *pcity;
+  struct tile *ptile;
+
+  tags = gtk_text_iter_get_tags (iter);
+  for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
+    GtkTextTag *tag = tagp->data;
+    data = g_object_get_data (G_OBJECT (tag), "link_type");
+    if (!data)
+      continue;
+
+    link_type = GPOINTER_TO_INT (data);
+
+    switch (link_type) {
+    case LINK_CITY:
+      data = g_object_get_data (G_OBJECT (tag), "city_name");
+      city_name = (const char *) data;
+      pcity = find_city_by_name_fast (city_name);
+      if (!pcity) {
+        my_snprintf (buf, sizeof (buf), _("Warclient: \"%s\" is not the name "
+            "of any city I know about :("), city_name);
+        append_output_window (buf);
+      } else {
+        center_tile_mapcanvas (pcity->tile);
+      }
+      break;
+
+    case LINK_LOCATION: 
+      x = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (tag), "x"));
+      y = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (tag), "y"));
+      ptile = map_pos_to_tile (x, y);
+      if (!ptile) {
+        my_snprintf (buf, sizeof (buf), _("Warclient: (%d, %d) is not a valid "
+            "location on this map!"), x, y);
+        append_output_window (buf);
+      } else {
+        center_tile_mapcanvas (ptile);
+      }
+      break;
+
+    default:
+      break;
+    }
+  }
+
+  if (tags) 
+    g_slist_free (tags);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static gboolean
+event_after (GtkWidget *text_view,
+             GdkEvent  *ev)
+{
+  GtkTextIter start, end, iter;
+  GtkTextBuffer *buffer;
+  GdkEventButton *event;
+  gint x, y;
+
+  if (ev->type != GDK_BUTTON_RELEASE)
+    return FALSE;
+
+  event = (GdkEventButton *) ev;
+
+  if (event->button != 1)
+    return FALSE;
+
+  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text_view));
+
+  /* we shouldn't follow a link if the user has selected something */
+  gtk_text_buffer_get_selection_bounds (buffer, &start, &end);
+  if (gtk_text_iter_get_offset (&start)
+      != gtk_text_iter_get_offset (&end))
+  {
+    return FALSE;
+  }
+
+  gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (text_view), 
+                                         GTK_TEXT_WINDOW_WIDGET,
+                                         event->x, event->y, &x, &y);
+
+  gtk_text_view_get_iter_at_location (GTK_TEXT_VIEW (text_view),
+                                      &iter, x, y);
+
+  follow_if_link (text_view, &iter);
+
+  return FALSE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void
+set_cursor_if_appropriate (GtkTextView    *text_view,
+                           gint            x,
+                           gint            y)
+{
+  GSList *tags = NULL, *tagp = NULL;
+  GtkTextBuffer *buffer;
+  GtkTextIter iter;
+  gboolean hovering = FALSE;
+  gint link_type;
+  gpointer *data;
+
+  if (!hand_cursor)
+    hand_cursor = gdk_cursor_new (GDK_HAND2);
+  if (!regular_cursor)
+    regular_cursor = gdk_cursor_new (GDK_XTERM);
+  
+  buffer = gtk_text_view_get_buffer (text_view);
+
+  gtk_text_view_get_iter_at_location (text_view, &iter, x, y);
+  
+  tags = gtk_text_iter_get_tags (&iter);
+  for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
+    GtkTextTag *tag = tagp->data;
+    data = g_object_get_data (G_OBJECT (tag), "link_type");
+    link_type = GPOINTER_TO_INT (data);
+    
+    if (data != 0) {
+      hovering = TRUE;
+      break;
+    }
+  }
+
+  if (hovering != hovering_over_link) {
+    hovering_over_link = hovering;
+
+    if (hovering_over_link) {
+      gdk_window_set_cursor (gtk_text_view_get_window (text_view,
+          GTK_TEXT_WINDOW_TEXT), hand_cursor);
+    } else {
+      gdk_window_set_cursor (gtk_text_view_get_window (text_view,
+          GTK_TEXT_WINDOW_TEXT), regular_cursor);
+    }
+  }
+
+  if (tags) 
+    g_slist_free (tags);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static gboolean
+motion_notify_event (GtkWidget      *text_view,
+                     GdkEventMotion *event)
+{
+  gint x, y;
+
+  gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (text_view), 
+                                         GTK_TEXT_WINDOW_WIDGET,
+                                         event->x, event->y, &x, &y);
+
+  set_cursor_if_appropriate (GTK_TEXT_VIEW (text_view), x, y);
+
+  gdk_window_get_pointer (text_view->window, NULL, NULL, NULL);
+  return FALSE;
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static gboolean
+visibility_notify_event (GtkWidget          *text_view,
+                         GdkEventVisibility *event)
+{
+  gint wx, wy, bx, by;
+  
+  gdk_window_get_pointer (text_view->window, &wx, &wy, NULL);
+  
+  gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (text_view), 
+                                         GTK_TEXT_WINDOW_WIDGET,
+                                         wx, wy, &bx, &by);
+
+  set_cursor_if_appropriate (GTK_TEXT_VIEW (text_view), bx, by);
+
+  return FALSE;
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+void set_message_buffer_view_link_handlers (GtkTextView *view)
+{
+  g_signal_connect (view, "event-after",
+                    G_CALLBACK (event_after), NULL);
+  g_signal_connect (view, "motion-notify-event",
+                    G_CALLBACK (motion_notify_event), NULL);
+  g_signal_connect (view, "visibility-notify-event",
+                    G_CALLBACK (visibility_notify_event), NULL);
+
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static int parse_city_link (const char *str, 
+                            GtkTextBuffer *buf,
+                            GtkTextTag **tag,
+                            char *newtext,
+                            int newtextlen)
+{
+  const char *p = str;
+  char city_name[MAX_LEN_NAME], *q;
+  
+  if (*p != '@' || p[1] != 'C' || p[2] != '"')
+    return 0;
+  p += 3;
+  q = city_name;
+  while (*p && *p != '"') {
+    if (q >= city_name + sizeof (city_name))
+      return 0;
+    *q++ = *p++;
+  }
+  p++;
+  *q = 0;
+
+  if (!find_city_by_name_fast (city_name))
+    return 0;
+  
+  *tag = gtk_text_buffer_create_tag (buf, NULL,
+                                     "foreground", "blue",
+                                     "underline", PANGO_UNDERLINE_SINGLE,
+                                     NULL);
+  g_object_set_data (G_OBJECT (*tag), "link_type",
+                     GINT_TO_POINTER (LINK_CITY));
+  g_object_set_data (G_OBJECT (*tag), "city_name",
+                     mystrdup (city_name)); 
+
+  my_snprintf (newtext, newtextlen, "%s", city_name);
+  
+  return (int) (p - str);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static int parse_location_link (const char *str,
+                                GtkTextBuffer *buf,
+                                GtkTextTag **tag,
+                                char *newtext,
+                                int newtextlen)
+{
+  const char *p;
+  int x, y;
+  
+  if (2 != sscanf (str, "@L%d,%d", &x, &y))
+    return 0;
+    
+  p = str + 2;
+  while (my_isdigit (*p) || *p == ',')
+    p++;
+  
+  *tag = gtk_text_buffer_create_tag (buf, NULL,
+                                     "foreground", "blue",
+                                     "underline", PANGO_UNDERLINE_SINGLE,
+                                     NULL);
+  g_object_set_data (G_OBJECT (*tag), "link_type",
+                     GINT_TO_POINTER (LINK_LOCATION));
+  g_object_set_data (G_OBJECT (*tag), "x", GINT_TO_POINTER (x)); 
+  g_object_set_data (G_OBJECT (*tag), "y", GINT_TO_POINTER (y));
+
+  my_snprintf (newtext, newtextlen, "(%d, %d)", x, y);
+  
+  return (int) (p - str);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void append_text_with_links (GtkTextBuffer *buf,
+                                    const char *astring)
+{
+  const char *p, *q, *s;
+  char newtext[256];
+  int n;
+  GtkTextIter iter;
+  GtkTextTag *tag = NULL;
+
+  gtk_text_buffer_get_end_iter (buf, &iter);
+
+  for (s = p = astring; *p && (q = strchr (p, '@')); p = q) {
+    switch (q[1]) {
+    case 'L':
+      n = parse_location_link (q, buf, &tag, newtext, sizeof (newtext));
+      break;
+    case 'C':
+      n = parse_city_link (q, buf, &tag, newtext, sizeof (newtext));
+      break;
+    default:
+      n = 0;
+      break;
+    }
+
+    if (n > 0) {
+      if (s < q)
+        gtk_text_buffer_insert (buf, &iter, s, (int) (q - s));
+      gtk_text_buffer_insert_with_tags (buf, &iter, newtext, -1, tag, NULL);
+      q += n;
+      s = q;
+    } else {
+      q++;
+    }
+  } 
+  
+  if (*s)
+    gtk_text_buffer_insert (buf, &iter, s, -1);
+}
+/**************************************************************************
   Appends the string to the chat output window.  The string should be
   inserted on its own line, although it will have no newline.
 **************************************************************************/
@@ -152,7 +477,11 @@ void real_append_output_window (const char *astring, int conn_id)
   textbuf_insert_time (buf, &iter);
 
   text_start = gtk_text_buffer_create_mark (buf, NULL, &iter, TRUE);
-  gtk_text_buffer_insert (buf, &iter, astring, -1);
+  if (get_client_state() == CLIENT_GAME_RUNNING_STATE) {
+    append_text_with_links (buf, astring);
+  } else {
+    gtk_text_buffer_insert (buf, &iter, astring, -1);
+  }
 
   match_result_list_init (&matches);
   

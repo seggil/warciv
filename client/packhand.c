@@ -440,6 +440,8 @@ void handle_city_info(struct packet_city_info *packet)
     if (name_changed) {
       city_autonaming_remove_used_name (pcity->name);
       city_autonaming_add_used_name (packet->name);
+      
+      idex_unregister_city_name (pcity);
     }
 
     /* Check if city desciptions should be updated */
@@ -464,6 +466,7 @@ void handle_city_info(struct packet_city_info *packet)
   pcity->owner=packet->owner;
   pcity->tile = map_pos_to_tile(packet->x, packet->y);
   sz_strlcpy(pcity->name, packet->name);
+  idex_register_city_name (pcity);
   
   pcity->size = packet->size;
   for (i = 0; i < 5; i++) {
@@ -721,6 +724,8 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     if (name_changed) {
       city_autonaming_remove_used_name (pcity->name);
       city_autonaming_add_used_name (packet->name);
+
+      idex_unregister_city_name (pcity);
     }
     
     assert(pcity->id == packet->id);
@@ -729,6 +734,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   pcity->owner=packet->owner;
   pcity->tile = map_pos_to_tile(packet->x, packet->y);
   sz_strlcpy(pcity->name, packet->name);
+  idex_register_city_name (pcity);
   
   pcity->size=packet->size;
   pcity->tile_trade = packet->tile_trade;

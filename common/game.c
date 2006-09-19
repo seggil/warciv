@@ -105,6 +105,13 @@ struct city *find_city_by_id(int id)
   return idex_lookup_city(id);
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+struct city *find_city_by_name_fast(const char *name)
+{
+  return idex_lookup_city_by_name(name);
+}
 
 /**************************************************************************
   Find unit out of all units in game: now uses fast idex method,

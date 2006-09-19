@@ -286,6 +286,7 @@ struct city *game_find_city_by_name(const char *name);
 
 struct unit *find_unit_by_id(int id);
 struct city *find_city_by_id(int id);
+struct city *find_city_by_name_fast(const char *name);
 
 void game_remove_player(struct player *pplayer);
 void game_renumber_players(int plrno);

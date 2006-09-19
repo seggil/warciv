@@ -279,6 +279,16 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     if (ev->state & GDK_CONTROL_MASK) {
       wakeup_button_pressed(ev->x, ev->y);
     }
+    /* <ALT> + MMB: Insert @locX,Y into entry. */
+    else if (ptile && (ev->state & GDK_MOD1_MASK)) {
+      char buf[256];
+      if (ptile->city) {
+        my_snprintf (buf, sizeof (buf), "@C\"%s\"", ptile->city->name);
+      } else {
+        my_snprintf (buf, sizeof (buf), "@L%d,%d", ptile->x, ptile->y);
+      }
+      chatline_entry_append_text (buf);
+    }
     /* Plain Middle click. */
     else if (ptile) {
       popit(ev, ptile);

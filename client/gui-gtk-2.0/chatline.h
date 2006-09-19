@@ -83,4 +83,6 @@ void secfile_load_message_buffer_tag_patterns (struct section_file *file);
 
 void popup_chatline_config_dialog (void);
 
+void set_message_buffer_view_link_handlers (GtkTextView *view);
+
 #endif  /* FC__CHATLINE_H */

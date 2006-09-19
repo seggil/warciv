@@ -262,6 +262,25 @@ static gboolean toplevel_focus(GtkWidget *w, GtkDirectionType arg)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+void chatline_entry_append_text (const char *text)
+{
+  char buf[1024];
+  const char *old;
+  int len;
+
+  if (!inputline)
+    return;
+
+  old = gtk_entry_get_text (GTK_ENTRY (inputline));
+  len = strlen (old);
+  my_snprintf (buf, sizeof (buf), "%s%s%s", old,
+               len > 0 ? (old[len-1] == ' ' ? "": " ") : "", text);
+  gtk_entry_set_text (GTK_ENTRY (inputline), buf);
+}
+
+/**************************************************************************
 ...
 **************************************************************************/
 gboolean inputline_handler(GtkWidget *w, GdkEventKey *ev)
@@ -1036,6 +1055,7 @@ static void setup_widgets(void)
   gtk_notebook_append_page(GTK_NOTEBOOK(bottom_notebook), vbox, label);
 
   text = gtk_text_view_new_with_buffer(message_buffer);
+  set_message_buffer_view_link_handlers (GTK_TEXT_VIEW (text));
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
   gtk_container_add(GTK_CONTAINER(sw), text);
 

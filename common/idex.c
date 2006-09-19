@@ -52,6 +52,8 @@
 static struct hash_table *idex_city_hash = NULL;
 static struct hash_table *idex_unit_hash = NULL;
 
+static struct hash_table *idex_city_name_hash = NULL;
+
 /**************************************************************************
    Initialize.  Should call this at the start before use.
 ***************************************************************************/
@@ -62,6 +64,7 @@ void idex_init(void)
 
   idex_city_hash = hash_new(hash_fval_ptr_int, hash_fcmp_ptr_int);
   idex_unit_hash = hash_new(hash_fval_ptr_int, hash_fcmp_ptr_int);
+  idex_city_name_hash = hash_new(hash_fval_string2, hash_fcmp_string);
 }
 
 /**************************************************************************
@@ -74,6 +77,9 @@ void idex_free(void)
 
   hash_free(idex_unit_hash);
   idex_unit_hash = NULL;
+
+  hash_free(idex_city_name_hash);
+  idex_city_name_hash = NULL;
 }
 
 /**************************************************************************
@@ -93,6 +99,8 @@ void idex_register_city(struct city *pcity)
       die("byebye");
     }
   }
+
+  hash_replace(idex_city_name_hash, pcity->name, pcity);
 }
 
 /**************************************************************************
@@ -139,6 +147,8 @@ void idex_unregister_city(struct city *pcity)
       die("byebye");
     }
   }
+  
+  hash_delete_entry(idex_city_name_hash, pcity->name);
 }
 
 /**************************************************************************
@@ -185,3 +195,28 @@ struct unit *idex_lookup_unit(int id)
 {
   return (struct unit *)hash_lookup_data(idex_unit_hash, &id);
 }
+
+/**************************************************************************
+  ...
+***************************************************************************/
+struct city *idex_lookup_city_by_name(const char *name)
+{
+  return (struct city *)hash_lookup_data(idex_city_name_hash, name);
+}
+
+/**************************************************************************
+  ...
+***************************************************************************/
+void idex_register_city_name(struct city *pcity)
+{
+  hash_replace(idex_city_name_hash, pcity->name, pcity);
+}
+  
+/**************************************************************************
+  ...
+***************************************************************************/
+void idex_unregister_city_name(struct city *pcity)
+{
+  hash_delete_entry(idex_city_name_hash, pcity->name);
+}
+  

@@ -1141,9 +1141,9 @@ static void update_start_page(void)
 **************************************************************************/
 GtkWidget *create_start_page(void)
 {
-  GtkWidget *box, *sbox, *bbox, *table, *align, *vbox, *vbox2;
+  GtkWidget *box, *sbox, *bbox, *table, *entry, *align, *vbox, *vbox2;
 
-  GtkWidget *view, *sw, *text, *entry, *button, *spin, *option;
+  GtkWidget *view, *sw, *text, *button, *spin, *option;
   GtkWidget *label, *menu, *item;
   GtkCellRenderer *rend;
 
