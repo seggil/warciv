@@ -147,8 +147,12 @@ struct civ_game {
   int num_impr_types;
   int num_tech_types;  /* including A_NONE */
   
-  //WARSERVER settings
-  int caravanrevenuepct;
+  //=========== WARSERVER settings ================
+  int trademindist;
+  int traderevenuepct;
+  int traderevenuestyle;
+  int caravanbonusstyle;
+  bool futuretechsscore;
   bool improvedautoattack;
   bool stackbribing;
   bool experimentalbribingcost;
@@ -160,8 +164,8 @@ struct civ_game {
   bool teamplacement;
   bool globalwarmingon;
   bool nuclearwinteron;
-  int caravanrevenuestyle;
   int maxconnections;
+  //=========== WARSERVER settings END ================
   
 
   int government_count;
@@ -306,6 +310,10 @@ const char *population_to_text(int thousand_citizen);
 extern struct civ_game game;
 extern bool is_server;
 
+#define GAME_DEFAULT_TRADEMINDIST        8
+#define GAME_DEFAULT_CARAVANBONUSSTYLE  1
+#define GAME_DEFAULT_TRADEREVENUESTYLE    1
+#define GAME_DEFAULT_TRADEREVENUEPCT    100
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST        1
 #define GAME_DEFAULT_IGNORERULESET        0
 #define GAME_DEFAULT_IMPROVEDAUTOATTACK        0
@@ -320,10 +328,8 @@ extern bool is_server;
 #define GAME_DEFAULT_GLOBALWARMINGON  1
 #define GAME_DEFAULT_NUCLEARWINTERON  1
 #define GAME_DEFAULT_KILLSTACK        1
-#define GAME_DEFAULT_CARAVANREVENUESTYLE    1
-#define GAME_DEFAULT_CARAVANREVENUEPCT    100
 #define GAME_DEFAULT_MAXCONNECTIONS    0
-
+#define GAME_DEFAULT_FUTURETECHSSCORE 0
 
 #define GAME_DEFAULT_SEED        0
 #define GAME_MIN_SEED            0

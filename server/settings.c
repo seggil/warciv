@@ -1072,19 +1072,44 @@ struct settings_s settings[] = {
              "If turned off, nuclear winter will not occur\n"
              "as a result of nuclear war."), NULL,
           GAME_DEFAULT_NUCLEARWINTERON)
-  GEN_INT("caravanrevenuestyle", game.caravanrevenuestyle,
+  GEN_INT("traderevenuestyle", game.traderevenuestyle,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-	  N_("Caravan revenue style"),
+	  N_("Trade revenue style"),
 	  N_("0 - standard freeciv 2.0.8\n"
-      "1 - experimental"),
+      "1 - experimental\n"
+      "2 - jp's trade routes\n"
+      "This setting affects how much trade cities"
+      "generate after trade routes were established."),
 	  NULL,
-	  0, 1, GAME_DEFAULT_CARAVANREVENUESTYLE)
-  GEN_INT("caravanrevenuepercentage", game.caravanrevenuepct,
+	  0, 2, GAME_DEFAULT_TRADEREVENUESTYLE)
+  GEN_INT("traderevenuepercentage", game.traderevenuepct,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-	  N_("Caravan revenue percentage"),
+	  N_("Trade revenue percentage"),
 	  N_("100 - default value"),
 	  NULL,
-	  1, 200, GAME_DEFAULT_CARAVANREVENUEPCT)
+	  1, 200, GAME_DEFAULT_TRADEREVENUEPCT)
+  GEN_INT("caravanbonusstyle", game.caravanbonusstyle,
+	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  N_("Caravan bonus style"),
+	  N_("0 - standard freeciv 2.0.8\n"
+      "1 - experimental\n"
+      "This setting affects how much gold and science"
+      "you get when caravan arrives into city."),
+	  NULL,
+	  0, 1, GAME_DEFAULT_CARAVANBONUSSTYLE)
+  GEN_INT("trademindist", game.trademindist,
+	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  N_("Minimum trade distance"),
+	  N_("Minimum distance to establish trade route.\n"
+      "8 is default"),
+	  NULL,
+	  1, 999, GAME_DEFAULT_TRADEMINDIST)
+  GEN_BOOL("futuretechsscore", game.futuretechsscore, SSET_RULES,
+	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+          N_("Score for future techs"),
+          N_("0 - off\n"
+             "1 - on"), NULL,
+          GAME_DEFAULT_FUTURETECHSSCORE)
   GEN_BOOL("improvedautoattack", game.improvedautoattack, SSET_RULES,
 	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
           N_("Improved autoattack"),

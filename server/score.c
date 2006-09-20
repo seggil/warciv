@@ -442,6 +442,8 @@ void calc_civ_score(struct player *pplayer)
     }
   } tech_type_iterate_end;
   
+  if(game.futuretechsscore)pplayer->score.techs += pplayer->future_tech * 5 / 2;
+  
   unit_list_iterate(pplayer->units, punit) {
     if (is_military_unit(punit)) {
       pplayer->score.units++;

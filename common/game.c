@@ -188,6 +188,7 @@ void game_init(void)
   game.nuclearwinter = 0;
   game.coolinglevel  = 8;
   //WARSERVER settings
+  game.futuretechsscore   = GAME_DEFAULT_FUTURETECHSSCORE;
   game.maxconnections   = GAME_DEFAULT_MAXCONNECTIONS;
   game.ignoreruleset   = GAME_DEFAULT_IGNORERULESET;
   game.slow_invasions =  GAME_DEFAULT_SLOWINVASIONS;
@@ -203,8 +204,10 @@ void game_init(void)
   game.teamplacement   = GAME_DEFAULT_TEAMPLACEMENT;
   game.globalwarmingon = GAME_DEFAULT_GLOBALWARMINGON;
   game.nuclearwinteron = GAME_DEFAULT_NUCLEARWINTERON;
-  game.caravanrevenuestyle = GAME_DEFAULT_CARAVANREVENUESTYLE;
-  game.caravanrevenuepct = GAME_DEFAULT_CARAVANREVENUEPCT;
+  game.traderevenuestyle = GAME_DEFAULT_TRADEREVENUESTYLE;
+  game.traderevenuepct = GAME_DEFAULT_TRADEREVENUEPCT;
+  game.caravanbonusstyle = GAME_DEFAULT_CARAVANBONUSSTYLE;
+  game.trademindist = GAME_DEFAULT_TRADEMINDIST;
 
   game.gold          = GAME_DEFAULT_GOLD;
   game.tech          = GAME_DEFAULT_TECHLEVEL;

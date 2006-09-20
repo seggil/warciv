@@ -897,7 +897,7 @@ bool can_cities_trade(const struct city *pc1, const struct city *pc2)
    * helptext_unit(). */
   return (pc1 && pc2 && pc1 != pc2
           && (pc1->owner != pc2->owner
-	      || map_distance(pc1->tile, pc2->tile) > 8));
+	      || map_distance(pc1->tile, pc2->tile) > game.trademindist));
 }
 
 /**************************************************************************
@@ -970,8 +970,8 @@ bool can_establish_trade_route(const struct city *pc1, const struct city *pc2)
 int trade_between_cities(const struct city *pc1, const struct city *pc2)
 {
   int bonus = 0;
-
-  if(game.caravanrevenuestyle==0) {
+// classic 2.0.8
+  if(game.traderevenuestyle==0) {
       if (pc1 && pc2) {
         bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
 
@@ -984,12 +984,19 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
           bonus /= 2;
         }
     }
-  } else if(game.caravanrevenuestyle==1) {
+  } // experimental revenue style
+  else if(game.traderevenuestyle==1) {
       if (pc1 && pc2) {
         bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 4;
       }        
+  }//jp's trade routes
+  else if(game.traderevenuestyle == 2) {
+      if (pc1 && pc2) {
+        bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
+    }
   }
-  return ((bonus*game.caravanrevenuepct)/100);
+
+  return ((bonus*game.traderevenuepct)/100);
 }
 
 /**************************************************************************
@@ -1018,8 +1025,8 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
 {
   int i, tb = 0;
   double bonus = 0;
-
-  if(game.caravanrevenuestyle==0) {
+//classic 2.0.8
+  if(game.caravanbonusstyle==0) {
       /* Should this be real_map_distance? */
       tb = map_distance(pc1->tile, pc2->tile) + 10;
       tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
@@ -1033,12 +1040,12 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
 					   TF_TRADE_REVENUE_REDUCE); i++) {
         tb = (tb * 2) / 3;
       }
-  }else if (game.caravanrevenuestyle==1) {
+  }//experimental logarithmic bonus
+  else if (game.caravanbonusstyle==1) {
         bonus = pow(log(real_map_distance(pc1->tile, pc2->tile) + 20 +
          pc1->trade_prod + pc2->trade_prod)*2,2);
         tb = (int)bonus;
   }
-
   return tb;
 }
 

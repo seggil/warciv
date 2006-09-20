@@ -39,8 +39,9 @@
 
 #define CHALLENGE_ROOT "challenge"
 
-int **are_team_players;//this is to determine team mates quickly
+int are_team_players[32][32];//this is to determine team mates quickly
 int best_start_pos[32];
+int player_used[32];
 int best_score = 0;
 int repeat = 0;
 
@@ -161,22 +162,6 @@ static int calculate_potential_score(int *start_pos,int a, int b)
 }
 
 /****************************************************************************
-   Calculate score for the current starting positions with regard to teams
-****************************************************************************/
-static int calculate_current_score(int *start_pos)//if nobody is in team, score is 0
-{
-    int score = 0;
-    int x, y;
-    for (x = 0; x < game.nplayers; x++ ) {
-        for (y = x + 1; y < game.nplayers; y++ ) {
-            if(are_team_players[x][y]) {
-                score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[y]].tile);
-            }
-        }
-    }
-    return score;
-}
-/****************************************************************************
     Shuffle positions so that team players end up close
     Always try to exchange 2 positions
 ****************************************************************************/
@@ -224,43 +209,103 @@ static void shuffle_start_positions_by_iter(int *start_pos)
     }    
 }
 
-static void shuffle_start_positions_brute_force(int *start_pos, int a)
+/****************************************************************************
+   Calculate score for the best starting positions with regard to teams
+****************************************************************************/
+static int calculate_score(int *start_pos)//if nobody is in team, score is 0
 {
-    int i,p;
-    int tmp, score;
-
-    repeat++;
-    score = calculate_current_score(start_pos);
-    if(score < best_score) {//remember new best score
-        for (p = 0; p < game.nplayers; p++ ) {
-            best_start_pos[p] = start_pos[p];
+    int score = 0;
+    int x, y;
+    for (x = 0; x < game.nplayers; x++ ) {
+        for (y = x + 1; y < game.nplayers; y++ ) {
+            if(are_team_players[x][y]) {
+                score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[y]].tile);
+            }
         }
-        best_score = score;
-        printf("New best score %i\n",best_score);
     }
-    for (i = a + 1; i < game.nplayers; i++ ) {//we will exchage (a,i)
-        tmp = start_pos[a];//swap (i,a)
-        start_pos[a] = start_pos[i];
-        start_pos[i] = tmp;
-        shuffle_start_positions_brute_force(start_pos, i);
-        tmp = start_pos[a];//swap (i,a) back
-        start_pos[a] = start_pos[i];
-        start_pos[i] = tmp;        
-    }    
+    return score;
 }
+
+/****************************************************************************
+   Calculate score for the current starting positions with regard to teams
+****************************************************************************/
+static int calculate_delta_score(int *start_pos, int depth)//if nobody is in team, score is 0
+{
+    int score = 0;
+    static int x;
+    for (x = 0; x < depth; x++) {
+        if(are_team_players[x][depth]) {
+            score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[depth]].tile);
+        }
+    }
+    return score;
+}
+
+/****************************************************************************
+   Pruning brute force algorithm
+****************************************************************************/
+static void find_pos_by_brute_force(int *start_pos, int a)
+{
+    static int depth = 0;
+    static int score = 0;
+    int tmpscore;
+    int i,p;
+
+//add player to pos [depth]
+    start_pos[depth] = a;
+    player_used[a] = 1;
+    tmpscore = calculate_delta_score(start_pos, depth);
+    score+= tmpscore;
+    
+    if(depth == (game.nplayers - 1)) {//enough players
+        repeat++;    
+        if (score < best_score) {
+            for (p = 0; p < game.nplayers; p++ ) {
+                best_start_pos[p] = start_pos[p];
+            }
+            best_score = score;
+            printf("New best score %i\n",best_score);            
+        }
+    } else {    //we continue adding players
+        depth++;
+    
+        if(score < best_score) {
+            //choose next player for [depth+1] position
+            for (i = 0; i < game.nplayers; i++ ) {
+                if(player_used[i])continue;
+                find_pos_by_brute_force(start_pos, i);
+            }
+        }
+    
+        depth--;
+    }
+
+//remove player from pos [depth]
+    start_pos[depth] = 0;
+    player_used[a] = 0;
+    score-= tmpscore;    
+
+}
+
+/****************************************************************************
+   Cleans start positions for brute force algorithm
+****************************************************************************/
+static void clean_start_pos(int *start_pos)
+{
+  memset(start_pos, 0, sizeof(int) * game.nplayers);
+}
+
 /****************************************************************************
     Shuffle start positions so team players are close
 ****************************************************************************/
 static void shuffle_start_positions(int *start_pos)
 {
     int i,x,y;
-    //allocate dynamic arrays
-    are_team_players = (int **)malloc(game.nplayers * sizeof(int *));
     for (i = 0; i < game.nplayers; i++ ) {
+        printf("Start pos %i = %i\n",i,start_pos[i]);
         best_start_pos[i] = start_pos[i];
-        are_team_players[i] = (int *)malloc(game.nplayers * sizeof(int));
     }
-    //initialize dynamic arrays with data
+    //initialize arrays with data
     for (x = 0; x < game.nplayers; x++ ) {
         for (y = 0; y < game.nplayers; y++ ) {
             if(players_on_same_team(get_player(x),get_player(y))) {
@@ -268,25 +313,21 @@ static void shuffle_start_positions(int *start_pos)
             } else are_team_players[x][y] = 0;
         }
     }
-    best_score = calculate_current_score(start_pos);        
+    best_score = calculate_score(start_pos);        
     printf("Current best score is %i\n",best_score);
     
-/*    if(game.nplayers<=16) {//brute force for small number of players
-        for (i = 0; i < game.nplayers - 1; i++ ) {//with 2 players shuffling doesnt make sense
-            shuffle_start_positions_brute_force(start_pos,i);
-        }
-    } else */
-    shuffle_start_positions_by_iter(start_pos);    
+    if(game.nplayers<=12) {//brute force for small number of players
+      clean_start_pos(start_pos);
+      for (i = 0; i < game.nplayers; i++ ) {//with 2 players shuffling doesnt make sense
+          find_pos_by_brute_force(start_pos,i);
+      }
+    } else 
+          shuffle_start_positions_by_iter(start_pos);    
 
     printf("Iterations: %i\n",repeat);
     for (i = 0; i < game.nplayers; i++ ) {//restore best solution
         start_pos[i] = best_start_pos[i];
     }        
-    //free dynamic arrays
-    for (i = 0; i < game.nplayers; i++ ) {
-        free(are_team_players[i]);
-    }
-    free(are_team_players);    
 }
 /****************************************************************************
   Initialize a new game: place the players' units onto the map, etc.
