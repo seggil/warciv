@@ -98,6 +98,8 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "fciconv.h"
+#include "fcintl.h"
 #include "log.h"
 #include "mem.h"
 #include "shared.h" /* ARRAY_SIZE */
@@ -110,6 +112,13 @@
 
 /* Calculate hash value given hash_table ptr and key: */
 #define HASH_VAL(h,k) (((h)->fval)((k), ((h)->num_buckets)))
+
+static struct hash_bucket *internal_lookup(const struct hash_table *h,
+                                           const void *key,
+                                           unsigned int hash_val);
+
+#define KEY_AS_STR(h,key) \
+  ((h)->fcmp == hash_fcmp_string ? (const char *) (key) : "N/A")
 
 /**************************************************************************
   Initialize a hash bucket to "zero" data:
@@ -223,9 +232,9 @@ int hash_fcmp_int (const void *vkey1, const void *vkey2)
 **************************************************************************/
 unsigned int hash_fval_uint16_t (const void *vkey, unsigned int num_buckets)
 {
-  int key = PTR_TO_UINT16_T (vkey);
+  uint16_t key = PTR_TO_UINT16_T (vkey);
   return (SuperFastHash ((const char *) &key,
-                         sizeof (int)) % num_buckets);
+                         sizeof (uint16_t)) % num_buckets);
 }
 
 /**************************************************************************
@@ -233,8 +242,8 @@ unsigned int hash_fval_uint16_t (const void *vkey, unsigned int num_buckets)
 **************************************************************************/
 int hash_fcmp_uint16_t (const void *vkey1, const void *vkey2)
 {
-  int key1 = PTR_TO_UINT16_T (vkey1);
-  int key2 = PTR_TO_UINT16_T (vkey2);
+  uint16_t key1 = PTR_TO_UINT16_T (vkey1);
+  uint16_t key2 = PTR_TO_UINT16_T (vkey2);
   return (key1 < key2) ? -1 : (key1 > key2 ? 1 : 0);
 }
 
@@ -243,9 +252,9 @@ int hash_fcmp_uint16_t (const void *vkey1, const void *vkey2)
 **************************************************************************/
 unsigned int hash_fval_uint32_t (const void *vkey, unsigned int num_buckets)
 {
-  int key = PTR_TO_UINT32_T (vkey);
+  uint32_t key = PTR_TO_UINT32_T (vkey);
   return (SuperFastHash ((const char *) &key,
-                         sizeof (int)) % num_buckets);
+                         sizeof (uint32_t)) % num_buckets);
 }
 
 /**************************************************************************
@@ -253,8 +262,8 @@ unsigned int hash_fval_uint32_t (const void *vkey, unsigned int num_buckets)
 **************************************************************************/
 int hash_fcmp_uint32_t (const void *vkey1, const void *vkey2)
 {
-  int key1 = PTR_TO_UINT32_T (vkey1);
-  int key2 = PTR_TO_UINT32_T (vkey2);
+  uint32_t key1 = PTR_TO_UINT32_T (vkey1);
+  uint32_t key2 = PTR_TO_UINT32_T (vkey2);
   return (key1 < key2) ? -1 : (key1 > key2 ? 1 : 0);
 }
 
@@ -398,15 +407,17 @@ static unsigned int calc_appropriate_nbuckets(unsigned int num_entries)
   Internal constructor, specifying exact number of buckets:
 **************************************************************************/
 static struct hash_table *hash_new_nbuckets(hash_val_fn_t fval,
-					    hash_cmp_fn_t fcmp,
-					    unsigned int nbuckets)
+                                            hash_cmp_fn_t fcmp,
+                                            unsigned int nbuckets)
 {
   struct hash_table *h;
   unsigned i;
 
-  freelog(LOG_DEBUG, "New hash table with %u buckets", nbuckets);
-  
   h = (struct hash_table *)fc_malloc(sizeof(struct hash_table));
+  
+  freelog (LOG_DEBUG, "hash_new_nbuckets %p fval=%p fcmp=%p nbuckets=%u",
+           h, fval, fcmp, nbuckets);
+  
   zero_htable(h);
 
   h->num_buckets = nbuckets;
@@ -415,7 +426,7 @@ static struct hash_table *hash_new_nbuckets(hash_val_fn_t fval,
   h->fcmp = fcmp;
 
   h->buckets = (struct hash_bucket *)
-      	       fc_malloc(h->num_buckets*sizeof(struct hash_bucket));
+                     fc_malloc(h->num_buckets*sizeof(struct hash_bucket));
 
   for(i=0; i<h->num_buckets; i++) {
     zero_hbucket(&h->buckets[i]);
@@ -427,7 +438,7 @@ static struct hash_table *hash_new_nbuckets(hash_val_fn_t fval,
   Constructor specifying number of entries:
 **************************************************************************/
 struct hash_table *hash_new_nentries(hash_val_fn_t fval, hash_cmp_fn_t fcmp,
-				     unsigned int nentries)
+                                     unsigned int nentries)
 {
   return hash_new_nbuckets(fval, fcmp, calc_appropriate_nbuckets(nentries));
 }
@@ -464,6 +475,29 @@ void hash_free(struct hash_table *h)
   hash_free_contents(h);
   free(h);
 }
+/**************************************************************************
+  ...
+**************************************************************************/
+static void hash_dump (struct hash_table *h)
+{
+  fc_fprintf (stderr, "dump of hash_table %p:\n", h);
+  fc_fprintf (stderr, "  buckets=%p:\n", h->buckets);
+  fc_fprintf (stderr, "  fval=%p:\n", h->fval);
+  fc_fprintf (stderr, "  fcmp=%p:\n", h->fcmp);
+  fc_fprintf (stderr, "  num_buckets=%d:\n", h->num_buckets);
+  fc_fprintf (stderr, "  num_entries=%d:\n", h->num_entries);
+  fc_fprintf (stderr, "  num_deleted=%d:\n", h->num_deleted);
+  fc_fprintf (stderr, "  frozen=%d:\n", h->frozen);
+  unsigned i;
+  for (i = 0; i < h->num_buckets; i++) {
+    struct hash_bucket *bucket = h->buckets + i;
+    fc_fprintf (stderr, "    bucket[%d] (%p):\n", i, bucket);
+    fc_fprintf (stderr, "      used=%d\n", bucket->used); 
+    fc_fprintf (stderr, "      key=%p (\"%s\")\n", bucket->key, KEY_AS_STR (h, bucket->key));
+    fc_fprintf (stderr, "      data=%p\n", bucket->data); 
+    fc_fprintf (stderr, "      hash_val=%u\n", bucket->hash_val); 
+  }
+}
 
 /**************************************************************************
   Resize the hash table: create a new table, insert, then remove
@@ -478,13 +512,29 @@ static void hash_resize_table(struct hash_table *h, unsigned int new_nbuckets)
 
   h_new = hash_new_nbuckets(h->fval, h->fcmp, new_nbuckets);
   h_new->frozen = TRUE;
+
+  freelog (LOG_DEBUG, "hash_resize_table h=%p new_nbuckets=%d (from %d)",
+          h, new_nbuckets, h->num_buckets);
+  if (fc_log_level >= LOG_DEBUG)
+    hash_dump (h);
   
   for(i=0; i<h->num_buckets; i++) {
-    struct hash_bucket *bucket = &h->buckets[i];
+    struct hash_bucket *bucket = h->buckets + i;
 
     if (bucket->used == BUCKET_USED) {
+      freelog (LOG_DEBUG, "  reinserting key %p \"%s\" bucket %i @ %p", bucket->key,
+              KEY_AS_STR (h, bucket->key),
+              i, bucket);
+
       if (!hash_insert(h_new, bucket->key, bucket->data)) {
-	assert(0);
+        unsigned hval = HASH_VAL(h_new, bucket->key);
+        struct hash_bucket *b = internal_lookup (h_new, bucket->key, hval);
+        
+        freelog (LOG_ERROR, _("Hash collision during resize in table %p, "
+                              "on key %p (\"%s\") data %p --> hval=%u (already "
+                              "used for key %p (\"%s\") data %p)"),
+                 h, bucket->key, KEY_AS_STR (h, bucket->key), bucket->data,
+                 hval, b->key, KEY_AS_STR (h_new, b->key), b->data);
       }
     }
   }
@@ -508,33 +558,39 @@ static void hash_maybe_resize(struct hash_table *h, bool expandingp)
 {
   unsigned int num_used, limit, new_nbuckets;
 
+  freelog (LOG_DEBUG, "hash_maybe_resize h=%p expandingp=%d", h, expandingp);
+
   if (h->frozen) {
+    freelog (LOG_DEBUG, "  frozen");
     return;
   }
   num_used = h->num_entries + h->num_deleted;
   if (expandingp) {
     limit = FULL_RATIO * h->num_buckets;
     if (num_used < limit) {
+      freelog (LOG_DEBUG, "  num_used %d < limit %d", num_used, limit);
       return;
     }
   } else {
     if (h->num_buckets <= MIN_BUCKETS) {
+      freelog (LOG_DEBUG, "  h->num_buckets %d <= MIN_BUCKETS %d", h->num_buckets, MIN_BUCKETS);
       return;
     }
     limit = MIN_RATIO * h->num_buckets;
     if (h->num_entries > limit) {
+      freelog (LOG_DEBUG, "  h->num_entries %d > limit %d", h->num_entries, limit);
       return;
     }
   }
   
   new_nbuckets = calc_appropriate_nbuckets(h->num_entries);
   
-  freelog(LOG_DEBUG, "%s hash table "
-	  "(entry %u del %u used %u nbuck %u new %u %slimit %u)",
-	  (new_nbuckets<h->num_buckets) ? "Shrinking" :
-	  (new_nbuckets>h->num_buckets) ? "Expanding" : "Rehashing",
-	  h->num_entries, h->num_deleted, num_used, 
-	  h->num_buckets, new_nbuckets, expandingp?"up":"dn", limit);
+  freelog(LOG_DEBUG, "%s hash table %p "
+          "(entry %u del %u used %u nbuck %u new %u %slimit %u)",
+          new_nbuckets < h->num_buckets ? "Shrinking" :
+          new_nbuckets > h->num_buckets ? "Expanding" : "Rehashing",
+          h, h->num_entries, h->num_deleted, num_used, 
+          h->num_buckets, new_nbuckets, expandingp?"up":"dn", limit);
   hash_resize_table(h, new_nbuckets);
 }
 
@@ -548,27 +604,33 @@ static void hash_maybe_resize(struct hash_table *h, bool expandingp)
   to speed subsequent lookups on that key.)
 **************************************************************************/
 static struct hash_bucket *internal_lookup(const struct hash_table *h,
-					   const void *key,
-					   unsigned int hash_val)
+                                           const void *key,
+                                           unsigned int hash_val)
 {
   struct hash_bucket *bucket;
   struct hash_bucket *deleted = NULL;
   unsigned int i = hash_val;
 
+  freelog (LOG_DEBUG, "internal_lookup h=%p key=%p hash_val=%u",
+           h, key, hash_val);
+
   do {
-    bucket = &h->buckets[i];
+    bucket = h->buckets + i;
     switch (bucket->used) {
     case BUCKET_UNUSED:
+      freelog (LOG_DEBUG, "  found unused bucket %d", i);
       return deleted ? deleted : bucket;
     case BUCKET_USED:
       if (bucket->hash_val==hash_val
-	  && h->fcmp(bucket->key, key)==0) { /* match */
-	return bucket;
+          && h->fcmp(bucket->key, key)==0) /* match */
+      { 
+        freelog (LOG_DEBUG, "  found matching USED bucket %d", i);
+        return bucket;
       }
       break;
     case BUCKET_DELETED:
       if (!deleted) {
-	deleted = bucket;
+        deleted = bucket;
       }
       break;
     default:
@@ -578,7 +640,7 @@ static struct hash_bucket *internal_lookup(const struct hash_table *h,
     if (i==h->num_buckets) {
       i=0;
     }
-  } while (i!=hash_val);	/* catch loop all the way round  */
+  } while (i!=hash_val);        /* catch loop all the way round  */
 
   if (deleted) {
     return deleted;
@@ -596,10 +658,14 @@ bool hash_insert(struct hash_table *h, const void *key, const void *data)
   struct hash_bucket *bucket;
   int hash_val;
 
+  freelog (LOG_DEBUG, "hash_insert h=%p key=%p (\"%s\") data=%p", h, key,
+           KEY_AS_STR (h, key), data);
+
   hash_maybe_expand(h);
   hash_val = HASH_VAL(h, key);
   bucket = internal_lookup(h, key, hash_val);
   if (bucket->used == BUCKET_USED) {
+    freelog (LOG_DEBUG, "  failed");
     return FALSE;
   }
   if (bucket->used == BUCKET_DELETED) {
@@ -611,6 +677,7 @@ bool hash_insert(struct hash_table *h, const void *key, const void *data)
   bucket->used = BUCKET_USED;
   bucket->hash_val = hash_val;
   h->num_entries++;
+  freelog (LOG_DEBUG, "  succeeded");
   return TRUE;
 }
 
@@ -624,6 +691,10 @@ void *hash_replace(struct hash_table *h, const void *key, const void *data)
   struct hash_bucket *bucket;
   int hash_val;
   const void *ret;
+
+  freelog (LOG_DEBUG, "hash_replace h=%p key=%p (\"%s\") data=%p",
+           h, key, KEY_AS_STR (h, key),
+           data);
     
   hash_maybe_expand(h);
   hash_val = HASH_VAL(h, key);
@@ -661,7 +732,7 @@ void *hash_delete_entry(struct hash_table *h, const void *key)
   value).
 **************************************************************************/
 void *hash_delete_entry_full(struct hash_table *h, const void *key,
-			     void **old_key)
+                             void **old_key)
 {
   struct hash_bucket *bucket;
 
@@ -737,7 +808,7 @@ unsigned int hash_num_deleted(const struct hash_table *h)
   random order.
 **************************************************************************/
 const void *hash_key_by_number(const struct hash_table *h,
-			       unsigned int entry_number)
+                               unsigned int entry_number)
 {
   unsigned int bucket_nr, counter = 0;
   assert(entry_number < h->num_entries);
@@ -760,7 +831,7 @@ const void *hash_key_by_number(const struct hash_table *h,
   Enumeration: returns the pointer to a value. 
 **************************************************************************/
 const void *hash_value_by_number(const struct hash_table *h,
-				 unsigned int entry_number)
+                                 unsigned int entry_number)
 {
   return hash_lookup_data(h, hash_key_by_number(h, entry_number));
 }

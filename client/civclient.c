@@ -483,13 +483,13 @@ void client_game_init()
 **************************************************************************/
 void client_game_free()
 {
+  city_autonaming_free();
+  control_queues_free();
   free_client_goto();
   free_help_texts();
   attribute_free();
   agents_free();
-  city_autonaming_free();
   game_free();
-  control_queues_free();
 }
 
 /**************************************************************************

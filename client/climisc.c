@@ -86,9 +86,13 @@ struct autoname_data {
 void city_autonaming_add_used_name (const char *city_name)
 {
   char *cn = mystrdup (city_name);
+  void *old;
+  
   freelog (LOG_DEBUG, "city_autonaming_add_used_name \"%s\"", city_name);
-  if (!hash_insert (an_city_name_table, cn, NULL))
-    free (cn);
+
+  old = hash_replace (an_city_name_table, cn, NULL);
+  if (old)
+    free (old);
 }
 /**************************************************************************
   ...

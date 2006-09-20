@@ -99,8 +99,6 @@ void idex_register_city(struct city *pcity)
       die("byebye");
     }
   }
-
-  hash_replace(idex_city_name_hash, pcity->name, pcity);
 }
 
 /**************************************************************************
@@ -147,8 +145,6 @@ void idex_unregister_city(struct city *pcity)
       die("byebye");
     }
   }
-  
-  hash_delete_entry(idex_city_name_hash, pcity->name);
 }
 
 /**************************************************************************
@@ -199,24 +195,37 @@ struct unit *idex_lookup_unit(int id)
 /**************************************************************************
   ...
 ***************************************************************************/
-struct city *idex_lookup_city_by_name(const char *name)
+struct city *idex_lookup_city_by_name (const char *name)
 {
+  if (!name || !name[0])
+    return NULL;
+  
   return (struct city *)hash_lookup_data(idex_city_name_hash, name);
 }
 
 /**************************************************************************
   ...
 ***************************************************************************/
-void idex_register_city_name(struct city *pcity)
+void idex_register_city_name (struct city *pcity)
 {
-  hash_replace(idex_city_name_hash, pcity->name, pcity);
+  if (!pcity || !pcity->name || !pcity->name[0])
+    return;
+
+  freelog (LOG_DEBUG, "idex_register_city_name pcity=%p pcity->id=%d pcity->name=\"%s\"",
+           pcity, pcity->id, pcity->name);
+  hash_replace (idex_city_name_hash, pcity->name, pcity);
 }
   
 /**************************************************************************
   ...
 ***************************************************************************/
-void idex_unregister_city_name(struct city *pcity)
+void idex_unregister_city_name (struct city *pcity)
 {
-  hash_delete_entry(idex_city_name_hash, pcity->name);
+  if (!pcity || !pcity->name || !pcity->name[0])
+    return;
+
+  freelog (LOG_DEBUG, "idex_unregister_city_name pcity=%p pcity->id=%d pcity->name=\"%s\"",
+           pcity, pcity->id, pcity->name);
+  hash_delete_entry (idex_city_name_hash, pcity->name);
 }
   
