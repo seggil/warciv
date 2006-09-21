@@ -25,10 +25,11 @@ void add_net_input(int);
 void remove_net_input(void);
 
 enum input_flags {
-  INPUT_READ = 0x1,
-  INPUT_WRITE = 0x2,
-  INPUT_ERROR = 0x4,
-  INPUT_CLOSED = 0x8,
+  INPUT_READ        = 0x01,
+  INPUT_WRITE       = 0x02,
+  INPUT_ERROR       = 0x04,
+  INPUT_CLOSED      = 0x08,
+  INPUT_CONNECTED   = 0x10,
 };
 typedef bool (*input_ready_callback_t) (int sock, int flags, void *data);
 int add_net_input_callback (int sock, int flags, input_ready_callback_t cb,
