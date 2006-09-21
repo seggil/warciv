@@ -192,20 +192,13 @@ static gint timer_callback(gpointer data);
 gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data);
 static gboolean quit_dialog_callback(void);
 
-#define NET_INPUT_CHECK_BYTES 0xfad2beef
-
 /* used by add_net_input_callback and related functions */
 struct net_input_context {
-  unsigned long check_bytes;
   input_ready_callback_t callback;
   int sock;
   void *userdata;
   data_free_func_t datafree;
 };
-
-#ifdef WIN32_NATIVE
-#define MY_SOCKET_MSG   WM_USER + 100
-#endif
 
 
 /**************************************************************************
@@ -1634,88 +1627,8 @@ static void nicfree (gpointer data)
     return;
   if (ctx->datafree)
     (*ctx->datafree) (ctx->userdata);
-  ctx->check_bytes = 0;
   free (ctx);
 }
-/**************************************************************************
-  ...
-**************************************************************************/
-#ifdef WIN32_NATIVE
-static gboolean gioc_window_msg (GIOChannel  *channel,
-                                 GIOCondition cond,
-                                 gpointer    data)
-{
-  GIOError gioerr;
-  MSG msg;
-  guint nb;
-  struct net_input_context *ctx;
-  long err, event;
-  int flags = 0;
-
-  freelog (LOG_DEBUG, "gwm gioc_window_msg channel=%p cond=%d data=%p", /*ASYNCDEBUG*/
-           channel, cond, data); /*ASYNCDEBUG*/
-  
-  ctx = data;
-  assert (ctx != NULL);
-
-  /* Check for evil... */
-  if (ctx->check_bytes != NET_INPUT_CHECK_BYTES)
-    return FALSE;
-
-  while (1) {
-    gioerr = g_io_channel_read (channel, &msg, sizeof (MSG), &nb);
-    
-    if (gioerr != G_IO_ERROR_NONE) {
-      if (gioerr == G_IO_ERROR_AGAIN)
-        continue;
-      freelog (LOG_ERROR, _("IO error reading windows message: "),
-          (gioerr == G_IO_ERROR_AGAIN ? "EAGAIN" :
-          (gioerr == G_IO_ERROR_INVAL ? "EINVAL" :
-          (gioerr == G_IO_ERROR_UNKNOWN ? "UNKNOWN" : "Unrecognized :("))));
-      return TRUE;
-    }
-
-    break;
-  }
-  freelog (LOG_DEBUG, "gwm   msg.message=%d msg.lParam=%d", /*ASYNCDEBUG*/
-           msg.message, msg.lParam);
-
-  if (msg.message != MY_SOCKET_MSG)
-    return TRUE;
-
-  err = WSAGETSELECTERROR (msg.lParam);
-  event = WSAGETSELECTEVENT (msg.lParam);
-
-  if (err) {
-    freelog (LOG_ERROR, _("Winsock socket select error: %d"), err);
-    flags |= INPUT_ERROR;
-  }
-  
-  if (event == FD_READ)
-    flags |= INPUT_READ; 
-  if (event == FD_WRITE)
-    flags |= INPUT_WRITE; 
-  if (event == FD_CONNECT)
-    flags |= INPUT_CONNECTED; 
-  if (event == FD_CLOSE)
-    flags |= INPUT_CLOSED; 
-    
-  freelog (LOG_DEBUG, "gwm   calling cb=%p with flags=%d", /*ASYNCDEBUG*/
-           ctx->callback, flags); /*ASYNCDEBUG*/
-  keep = (*ctx->callback) (ctx->sock, flags,
-                           ctx->userdata);
-  freelog (LOG_DEBUG, "gwm   callback returned %d", keep); /*ASYNCDEBUG*/
-
-  if (keep == TRUE && event == FD_CONNECT) {
-    freelog (LOG_ERROR, _("Net input callback tried to keep an "
-                          "INPUT_CONNECTED event after connection "
-                          "already occurred, which is impossible."));
-    keep = FALSE;
-  }
-
-  return keep;
-}
-#endif
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1726,31 +1639,13 @@ int add_net_input_callback (int sock,
                             data_free_func_t datafree)
 {
   int id;
-  struct net_input_context *ctx;
-#ifdef WIN32_NATIVE
-  HWND hwnd;
-  long event;
-#else
   GIOCondition cond = 0;
-#endif
+  struct net_input_context *ctx;
   GIOChannel *gioc;
 
   freelog (LOG_DEBUG, "anic add_net_input_callback sock=%d flags=%d cb=%p" /*ASYNCDEBUG*/
            " data=%p datafree=%p", sock, flags, cb, data, datafree); /*ASYNCDEBUG*/
 
-#ifdef WIN32_NATIVE
-  if (flags & INPUT_CONNECTED)
-    event |= FD_CONNECT;
-  if (flags & INPUT_READ)
-    event |= FD_READ;
-  if (flags & INPUT_WRITE)
-    event |= FD_WRITE;
-
-  event |= FD_CLOSE;
-
-#else
-  if (flags & INPUT_CONNECTED)
-    cond |= G_IO_OUT;
   if (flags & INPUT_READ)
     cond |= G_IO_IN;
   if (flags & INPUT_WRITE)
@@ -1758,29 +1653,23 @@ int add_net_input_callback (int sock,
 
   cond |= G_IO_ERR;
   cond |= G_IO_HUP;
-#endif
   
   ctx = fc_malloc (sizeof (struct net_input_context));
-  ctx->check_bytes = NET_INPUT_CHECK_BYTES;
   ctx->sock = sock;
   ctx->callback = cb;
   ctx->userdata = data;
   ctx->datafree = datafree;
 
 #ifdef WIN32_NATIVE
-  hwnd = GetForegroundWindow();
-  WSAAsyncSelect (sock, hwnd, MY_SOCKET_MSG, event);
-  gioc = g_io_channel_win32_new_messages (hwnd);
-  id = g_io_add_watch_full (gioc, G_PRIORITY_DEFAULT, G_IO_IN, 
-                            gioc_window_msg, ctx, nicfree);
+  gioc = g_io_channel_win32_new_socket (sock);
 #else
   gioc = g_io_channel_unix_new (sock);
+#endif
+  freelog (LOG_DEBUG, "anic   gioc=%p", gioc);
   id = g_io_add_watch_full (gioc, G_PRIORITY_DEFAULT, cond, 
                             gioc_input_ready, ctx, nicfree);
-#endif
-  freelog (LOG_DEBUG, "anic   gioc=%p", gioc); /*ASYNCDEBUG*/
   freelog (LOG_DEBUG, "anic   g_io_add_watch_full id=%d", id); /*ASYNCDEBUG*/
-  
+
   return id;
 }
 

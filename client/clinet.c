@@ -122,6 +122,8 @@ static struct hash_table *async_server_list_request_table = NULL;
 static int async_server_list_request_id = 0;
 
 
+static bool metaserver_input_ready_cb (int sock, int flags, void *data);
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -809,21 +811,120 @@ process_metaserver_response (struct async_server_list_context *ctx)
   freelog (LOG_DEBUG, "pmr   free asl ctx=%p", ctx); /*ASYNCDEBUG*/
   free (ctx);
 }
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool
+handle_metaserver_write_ready (struct async_server_list_context *ctx,
+                               int flags)
+{
+  int len, nb;
+  
+  freelog (LOG_DEBUG, "hmwr handle_metaserver_write_ready " /*ASYNCDEBUG*/
+           "ctx=%p flags=%d", ctx, flags);
+  
+  if (!ctx->connected) {
+    if (flags & INPUT_ERROR) {
+      async_server_list_request_error (ctx,
+          _("Failed to connect to metaserver."));
+      return FALSE; /* remove input callback */
+    }
+    
+    if (flags & INPUT_CLOSED) {
+      async_server_list_request_error (ctx, _("Metaserver closed "
+          "the connection before it was even established!"));
+      return FALSE; /* remove input callback */
+    }
+
+    freelog (LOG_DEBUG, "hmwr   connection to metaserver succeeded"); /*ASYNCDEBUG*/
+    
+    ctx->connected = TRUE;
+    ctx->have_data_to_write = TRUE;
+    len = generate_server_list_http_request (ctx->buf, sizeof (ctx->buf),
+                                             ctx->urlpath,
+                                             ctx->metaname,
+                                             ctx->metaport);
+    ctx->buflen = len;
+    freelog (LOG_DEBUG, "hmwr   %d byte generated request copied to " /*ASYNCDEBUG*/
+               "write buffer", len); /*ASYNCDEBUG*/
+  
+    /* Workaround for win32: re-add the write callback :/ */
+    ctx->input_id = add_net_input_callback (ctx->sock, INPUT_WRITE,
+                                            metaserver_input_ready_cb,
+                                            ctx, NULL);
+      
+    freelog (LOG_DEBUG, "hmwr   waiting for socket to become writable..."); /*ASYNCDEBUG*/
+    return FALSE;
+  }
+
+  if (!ctx->have_data_to_write) {
+    freelog (LOG_DEBUG, "hmwr   unexpected write ready, removing callback"); /*ASYNCDEBUG*/
+    return FALSE;
+  }
+
+  if (flags & INPUT_ERROR) {
+    async_server_list_request_error (ctx,
+        _("Error while waiting to write metaserver request: "),
+        mystrerror());
+    return FALSE; /* remove input callback */
+  }
+  
+  if (flags & INPUT_CLOSED) {
+    async_server_list_request_error (ctx, _("Metaserver closed "
+        "the connection before we finised sending the request."));
+    return FALSE; /* remove input callback */
+  }
+  
+  while (ctx->buflen > 0) {
+    freelog (LOG_DEBUG, "hwmr   errorstr before " /*ASYNCDEBUG*/
+             "my_writesocket is \"%s\" (%d)", /*ASYNCDEBUG*/
+             mystrerror(), my_errno()); /*ASYNCDEBUG*/
+    nb = my_writesocket (ctx->sock, ctx->buf, ctx->buflen);
+    freelog (LOG_DEBUG, "hmwr   my_writesocket nb=%d errno=%d", /*ASYNCDEBUG*/
+             nb, my_errno()); /*ASYNCDEBUG*/
+    if (nb < 0) {
+      if (my_socket_would_block()) {
+        freelog (LOG_DEBUG, "hmwr   socket write would block");
+        return TRUE;
+      }
+        async_server_list_request_error (ctx,
+          _("Write error during send of metaserver request: %s"),
+            mystrerror());
+      return FALSE;
+      }
+    if (nb == 0) {
+      return TRUE; /* XXX is this ok? */
+    }
+    assert (ctx->buflen >= nb);
+    ctx->buflen -= nb;
+    if (nb > 0 && ctx->buflen > 0)
+      memmove (ctx->buf, ctx->buf + nb, ctx->buflen);
+  }
+  
+  ctx->have_data_to_write = FALSE;      
+
+  ctx->input_id = add_net_input_callback (ctx->sock, INPUT_READ,
+                                          metaserver_input_ready_cb,
+                                          ctx, NULL);
+
+  freelog (LOG_DEBUG, "hmwr   added read callback"); /*ASYNCDEBUG*/
+  return FALSE;
+}
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool metaserver_read_cb (int sock, int flags, void *data)
+static bool
+handle_metaserver_read_ready (struct async_server_list_context *ctx,
+                               int flags)
 {
-  char *buf;
-  int nb = 0, count = 0, rem = 0;
-  static const int READSZ = 4096;
-  struct async_server_list_context *ctx;
+   char *buf;
+   int nb = 0, count = 0, rem = 0;
+   static const int READSZ = 4096;
  
-  freelog (LOG_DEBUG, "mrc metaserver_read_cb sock=%d " /*ASYNCDEBUG*/
-           "flags=%d data=%p", sock, flags, data); /*ASYNCDEBUG*/
-  
-  ctx = (struct async_server_list_context *) data;
+   freelog (LOG_DEBUG, "hmrr handle_metaserver_read_ready ctx=%p flags=%d", /*ASYNCDEBUG*/
+            ctx, flags); /*ASYNCDEBUG*/
+            
 
   if (flags & INPUT_ERROR) {
     async_server_list_request_error (ctx,
@@ -832,22 +933,19 @@ static bool metaserver_read_cb (int sock, int flags, void *data)
   }
   
   if (flags & INPUT_CLOSED) {
-    if (ctx->buflen > 0)
-      goto CONNECTION_CLOSED;
-    
     async_server_list_request_error (ctx, _("Metaserver closed "
         "the connection while we were waiting for a response."));
     return FALSE; /* remove input callback */
   }
 
-  freelog (LOG_DEBUG, "mrc   reading response..."); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "hmrr   reading response..."); /*ASYNCDEBUG*/
     
   buf = ctx->buf + ctx->buflen;
   rem = sizeof (ctx->buf) - ctx->buflen - 1;
   
   while (rem > 0) {
     nb = my_readsocket (ctx->sock, buf, rem > READSZ ? READSZ : rem);
-    freelog (LOG_DEBUG, "mrc   my_readsocket nb=%d", nb); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "hmrr   my_readsocket nb=%d", nb); /*ASYNCDEBUG*/
     if (nb == -1)
       break;
     rem -= nb;
@@ -857,10 +955,10 @@ static bool metaserver_read_cb (int sock, int flags, void *data)
       break;
   }
   ctx->buflen += count;
-  freelog (LOG_DEBUG, "mrc   count=%d (buflen=%d)", count, ctx->buflen); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "hmrr   count=%d (buflen=%d)", count, ctx->buflen); /*ASYNCDEBUG*/
 
-  if (nb == -1 && my_socket_would_block()) {
-    freelog (LOG_DEBUG, "mrc   socket read would block"); /*ASYNCDEBUG*/
+  if (my_socket_would_block()) {
+    freelog (LOG_DEBUG, "hmrr   socket read would block"); /*ASYNCDEBUG*/
     return TRUE;
   }
 
@@ -877,10 +975,7 @@ static bool metaserver_read_cb (int sock, int flags, void *data)
   }
     
   if (count == 0) { /* connection closed */
-    
-CONNECTION_CLOSED:
-    
-    freelog (LOG_DEBUG, "mrc   connection closed, we are done reading"); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "hmrr   connection closed, we are done reading"); /*ASYNCDEBUG*/
     ctx->buf[ctx->buflen] = '\0';
     my_closesocket (ctx->sock);
     ctx->sock = -1;
@@ -889,120 +984,32 @@ CONNECTION_CLOSED:
     return FALSE; /* we are done reading */
   }
 
-  freelog (LOG_DEBUG, "mrc   waiting for more data..."); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "hmrr   waiting for more data..."); /*ASYNCDEBUG*/
   return TRUE; /* keep reading */
 
 }
 /**************************************************************************
   ...
 **************************************************************************/
-static bool metaserver_write_cb (int sock, int flags, void *data)
-{
-  int nb;
-  struct async_server_list_context *ctx;
-  
-  freelog (LOG_DEBUG, "mwc metaserver_write_cb " /*ASYNCDEBUG*/
-           "sock=%d flags=%d data=%p", sock, flags, data); /*ASYNCDEBUG*/
-  
-  ctx = (struct async_server_list_context *) data;
-
-  if (flags & INPUT_ERROR) {
-    async_server_list_request_error (ctx,
-        _("Error while waiting to write metaserver request: %s (%d)"),
-        mystrerror(), my_errno());
-    return FALSE; /* remove input callback */
-  }
-  
-  if (flags & INPUT_CLOSED) {
-    async_server_list_request_error (ctx, _("Metaserver closed "
-        "the connection before we finised sending the request."));
-    return FALSE; /* remove input callback */
-  }
-
-  if (!ctx->have_data_to_write) {
-    freelog (LOG_DEBUG, "mwc   no data to write, removing callback"); /*ASYNCDEBUG*/
-    return FALSE;
-  }
-  
-  while (ctx->buflen > 0) {
-    freelog (LOG_DEBUG, "hwmr   errorstr before " /*ASYNCDEBUG*/
-             "my_writesocket is \"%s\" (%d)", /*ASYNCDEBUG*/
-             mystrerror(), my_errno()); /*ASYNCDEBUG*/
-    nb = my_writesocket (ctx->sock, ctx->buf, ctx->buflen);
-    freelog (LOG_DEBUG, "mwc   my_writesocket nb=%d errno=%d", /*ASYNCDEBUG*/
-             nb, my_errno()); /*ASYNCDEBUG*/
-    if (nb < 0) {
-      if (my_socket_would_block()) {
-        freelog (LOG_DEBUG, "mwc   socket write would block");
-        return TRUE;
-      }
-      async_server_list_request_error (ctx, ("Write error during "
-          "send of metaserver request: %s (%d)"), mystrerror(),
-          my_errno());
-      return FALSE;
-    }
-    if (nb == 0) {
-      return TRUE; /* XXX is this ok? */
-    }
-    assert (ctx->buflen >= nb);
-    ctx->buflen -= nb;
-    if (nb > 0 && ctx->buflen > 0)
-      memmove (ctx->buf, ctx->buf + nb, ctx->buflen);
-  }
-  
-  ctx->have_data_to_write = FALSE;
-  ctx->buflen = 0;
-  ctx->input_id = add_net_input_callback (ctx->sock, INPUT_READ,
-                                          metaserver_read_cb,
-                                          ctx, NULL);
-
-  freelog (LOG_DEBUG, "mwc   added read callback"); /*ASYNCDEBUG*/
-  return FALSE;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static bool metaserver_connected_cb (int sock, int flags, void *data)
+static bool metaserver_input_ready_cb (int sock, int flags, void *data)
 {
   struct async_server_list_context *ctx = data;
-  int len;
 
-  freelog (LOG_DEBUG, "mirc metaserver_connected_cb: sock=%d flags=%d data=%p", /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "mirc metaserver_input_ready_cb: sock=%d flags=%d data=%p", /*ASYNCDEBUG*/
            sock, flags, data); /*ASYNCDEBUG*/
 
   assert (ctx != NULL);
   assert (sock == ctx->sock);
 
-  if (flags & INPUT_ERROR) {
-    async_server_list_request_error (ctx,
-        _("Failed to connect to metaserver."));
-    return FALSE;
-  }
-  
-  if (flags & INPUT_CLOSED) {
-    async_server_list_request_error (ctx, _("Metaserver closed "
-        "the connection before it was even established!"));
-    return FALSE;
+  if (flags & INPUT_WRITE) {
+    return handle_metaserver_write_ready (ctx, flags);
   }
 
-  freelog (LOG_DEBUG, "mcc   connection to metaserver succeeded"); /*ASYNCDEBUG*/
+  if (flags & INPUT_READ) {
+    return handle_metaserver_read_ready (ctx, flags);
+  }
   
-  len = generate_server_list_http_request (ctx->buf, sizeof (ctx->buf),
-                                           ctx->urlpath,
-                                           ctx->metaname,
-                                           ctx->metaport);
-  ctx->buflen = len;
-  ctx->have_data_to_write = TRUE;
-
-  freelog (LOG_DEBUG, "mcc   %d byte generated request copied to " /*ASYNCDEBUG*/
-      "write buffer", len); /*ASYNCDEBUG*/
-
-  ctx->input_id = add_net_input_callback (ctx->sock, INPUT_WRITE,
-                                          metaserver_write_cb,
-                                          ctx, NULL);
-    
-  freelog (LOG_DEBUG, "mcc   waiting for socket to become writable..."); /*ASYNCDEBUG*/
+  assert (0);
 
   return FALSE;
 }
@@ -1058,9 +1065,13 @@ metaserver_name_lookup_callback (union my_sockaddr *addr_result,
   }
 
   ctx->sock = sock;
-  ctx->input_id = add_net_input_callback (sock, INPUT_CONNECTED,
-                                          metaserver_connected_cb,
+  ctx->connected = FALSE;
+  ctx->have_data_to_write = FALSE;
+  ctx->input_id = add_net_input_callback (sock, INPUT_WRITE,
+                                          metaserver_input_ready_cb,
                                           ctx, NULL);
+
+  /* continued in metaserver_input_ready_cb */
 }
 /**************************************************************************
   Cancels an asynchronous server list request in progress. id is the
