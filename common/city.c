@@ -989,10 +989,28 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
       if (pc1 && pc2) {
         bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 4;
       }        
-  }//jp's trade routes
+  }//civ2 trade routes according to http://www.civfanatics.com/civ2/strategy/scrolls/#Trade
   else if(game.traderevenuestyle == 2) {
       if (pc1 && pc2) {
         bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
+        
+        if(pc1->owner == pc2->owner) {
+          bonus = bonus / 1.5;
+        }
+        
+        if(map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+          bonus *= 2;
+        }
+        if(city_got_building(pc1,find_improvement_by_name_orig(_("Airport"))) &&
+          city_got_building(pc2,find_improvement_by_name_orig(_("Airport")))) {
+            bonus *= 1.5;
+        }
+        
+        if(city_got_building(pc1,find_improvement_by_name_orig(_("Super Highways")))) {
+            bonus *= 1.5;
+        }
+//  cities will always be connected by roads
+        bonus *= 1.5;
     }
   }
 
@@ -1028,7 +1046,7 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
 //classic 2.0.8
   if(game.caravanbonusstyle==0) {
       /* Should this be real_map_distance? */
-      tb = map_distance(pc1->tile, pc2->tile) + 10;
+      tb = real_map_distance(pc1->tile, pc2->tile) + 10;
       tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
 
       /*  fudge factor to more closely approximate Civ2 behavior (Civ2 is

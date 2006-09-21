@@ -1077,7 +1077,7 @@ struct settings_s settings[] = {
 	  N_("Trade revenue style"),
 	  N_("0 - standard freeciv 2.0.8\n"
       "1 - experimental\n"
-      "2 - jp's trade routes\n"
+      "2 - civ2 trade routes\n"
       "This setting affects how much trade cities"
       "generate after trade routes were established."),
 	  NULL,
