@@ -24,9 +24,9 @@ enum cursor_hover_state {
   HOVER_PARADROP,
   HOVER_CONNECT,
   HOVER_PATROL,
+  HOVER_MYPATROL,
   HOVER_AIRLIFT_SOURCE,
   HOVER_AIRLIFT_DEST,
-  HOVER_MYPATROL
 };
 
 #define  FILTER_ALL 1
@@ -69,7 +69,8 @@ void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
 void do_airlift(struct tile *ptile);
 void show_cities_in_airlift_queue(void);
-void request_myunit_patrol(void);
+void key_set_patrol_position(struct tile *ptile);
+void key_select_patrol_tile(void);
 void request_clear_patrol_queue(void);
 void request_execute_patrol(void);
 void key_unit_delayed_airlift(void);

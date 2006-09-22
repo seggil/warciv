@@ -20,6 +20,7 @@
 #include <memory.h>
 
 #include "fcintl.h"
+#include "hash.h"
 #include "log.h"
 #include "map.h"
 #include "mem.h"
@@ -57,16 +58,9 @@ struct delayed_goto_data {
 #define delayed_goto_data_list_iterate_end  LIST_ITERATE_END
 
 struct patrol_data {
-	int unit_id;
-	struct tile target_tile;
+  int unit_id;
+  int x, y;
 };
-
-#define SPECLIST_TAG patrol_data
-#define SPECLIST_TYPE struct patrol_data
-#include "speclist.h"
-#define patrol_data_list_iterate(alist, pitem)\
-  TYPED_LIST_ITERATE(struct patrol_data, alist, pitem)
-#define patrol_data_list_iterate_end  LIST_ITERATE_END
 
 #define SPECLIST_TAG tile
 #define SPECLIST_TYPE struct tile
@@ -81,8 +75,8 @@ static struct delayed_goto_data_list DGqueue;
 /* Airlist source tile list */
 static struct tile_list ALqueue;
 
-/* Patrol queue */
-static struct patrol_data_list Pqueue;
+/* Patrol "queue" */
+static struct hash_table *patrol_table = NULL;
 
 int autowakeup_state = 1;
 int goto_mode = 0;
@@ -127,7 +121,6 @@ static struct unit *punit_defending = NULL;
 bool non_ai_unit_focus;
 
 /*************************************************************************/
-static void add_unit_to_patrol_queue (struct tile *ptile);
 static struct unit *find_best_focus_candidate (bool accept_current);
 static void store_focus (void);
 static struct unit *quickselect (struct tile *ptile,
@@ -138,10 +131,10 @@ static void do_mass_order (enum unit_activity activity);
 **************************************************************************/
 void control_queues_free (void)
 {
-  patrol_data_list_iterate (Pqueue, pd) {
+  hash_iterate (patrol_table, void *, key, struct patrol_data *, pd) {
     free (pd);
-  } patrol_data_list_iterate_end;
-  patrol_data_list_unlink_all (&Pqueue);
+  } hash_iterate_end;
+  hash_delete_all_entries (patrol_table);
 
   delayed_goto_data_list_iterate (DGqueue, dgd) {
     free (dgd);
@@ -156,7 +149,7 @@ void control_queues_free (void)
 **************************************************************************/
 void control_queues_init (void)
 {
-  patrol_data_list_init (&Pqueue);
+  patrol_table = hash_new (hash_fval_int, hash_fcmp_int);
   delayed_goto_data_list_init (&DGqueue);
   tile_list_init (&ALqueue);
 }
@@ -769,48 +762,73 @@ bool unit_satisfies_filter(struct unit *punit)
     return result;
 }
 /**************************************************************************
- player requested patrol, so we change hover state directly (which shouldn't be probably done)
- and create new queue if old one is NULL
+  ...
 **************************************************************************/
-void request_myunit_patrol(void)
+void key_select_patrol_tile (void)
 {
+  if (!get_unit_in_focus())
+    return;
   hover_state = HOVER_MYPATROL;
 }
 /**************************************************************************
-player selected a unit and pressed shift+ctrl+z and clicked on a tile
-so we add this unit to patrol queue, remembering unitid and target tile
-if unit is killed afterwards queue isnt updated
+  Set the patrol tile for the currently focused unit to be the given tile,
+  or the the tile it is currently on (if target_tile is NULL).
 **************************************************************************/
-static void add_unit_to_patrol_queue (struct tile *ptile)
+void key_set_patrol_position (struct tile *target_tile)
 {
-  struct unit *punit = punit_focus;
-  struct unit *tunit;
-  struct patrol_data *pd = NULL;
+  struct unit *punit;
+  struct tile *ptile;
+  struct patrol_data *pd = NULL, *old;
   char txt[255];
 
-  tunit = NULL;
-  if (punit == NULL || hover_state != HOVER_MYPATROL)return;
+  punit = get_unit_in_focus();
+
+  if (!punit || !punit->tile)
+    return;
   
-  my_snprintf(txt,sizeof(txt), _("Game: Adding unit to patrol queue : unit.id %i,  target.x = %i, target.y = %i"),punit->id, ptile->x, ptile->y);
-  append_output_window(txt);
+  ptile = target_tile ? target_tile : punit->tile;
+  
+  my_snprintf (txt, sizeof (txt), _("Warclient: %s %d patrolling "
+                                    "(%d, %d)."),
+               get_unit_type (punit->type)->name, punit->id, ptile->x,
+               ptile->y);
   pd = fc_malloc (sizeof (struct patrol_data));
-  pd->unit_id=punit->id;
-  memcpy(&pd->target_tile, ptile, sizeof(struct tile));
-  patrol_data_list_insert_back(&Pqueue, pd);
-  hover_state = HOVER_NONE;  
+  pd->unit_id = punit->id;
+  pd->x = ptile->x;
+  pd->y = ptile->y;
+
+  old = hash_replace (patrol_table, INT_TO_PTR (punit->id), pd);
+  if (old) {
+    if (old->x == ptile->x && old->y == ptile->y) {
+      my_snprintf (txt, sizeof (txt), _("Warclient: %s %d stopped "
+                                        "patrolling (%d, %d)."),
+                   get_unit_type (punit->type)->name, punit->id,
+                   ptile->x, ptile->y);
+      hash_delete_entry (patrol_table, INT_TO_PTR (punit->id));
+      free (pd);
+    } else {
+      my_snprintf (txt, sizeof (txt), _("Warclient: %s %d patrolling "
+                                        "(%d, %d) instead of (%d, %d)."),
+                   get_unit_type (punit->type)->name, punit->id,
+                   ptile->x, ptile->y, old->x, old->y);
+    }
+    free (old);
+  }
+  
+  append_output_window (txt);
 }
 /**************************************************************************
 player wants to clear the queue
 so we pop all items from the queue, free memory and at the end free the whole queue
 **************************************************************************/
-void request_clear_patrol_queue(void)
+void request_clear_patrol_queue (void)
 {
-  patrol_data_list_iterate (Pqueue, pd) {
+  hash_iterate (patrol_table, void *, key, struct patrol_data *, pd) {
     free (pd);
-  } patrol_data_list_iterate_end;
-  patrol_data_list_unlink_all (&Pqueue);
+  } hash_iterate_end;
+  hash_delete_all_entries (patrol_table);
   
-  append_output_window (_("Game: Patrol queue cleared"));
+  append_output_window (_("Warclient: Patrol queue cleared."));
 }
 /**************************************************************************
   ...
@@ -819,18 +837,21 @@ void request_execute_patrol(void)
 {
   struct unit *punit = NULL;
   
-  if (patrol_data_list_size (&Pqueue) <= 0)
+  if (hash_num_entries (patrol_table) <= 0)
     return;
   
-  append_output_window (_("Game: Executing patrol"));
-  patrol_data_list_iterate (Pqueue, pd) {
+  append_output_window (_("Warclient: Executing patrol."));
+  hash_iterate (patrol_table, void *, key, struct patrol_data *, pd) {
     punit = player_find_unit_by_id (game.player_ptr, pd->unit_id);
 
     if (punit) {
-      send_goto_unit (punit, &pd->target_tile);
+      struct tile *ptile = map_pos_to_tile (pd->x, pd->y);
+      if (!ptile)
+        continue;
+      send_goto_unit (punit, ptile);
       punit->is_new = FALSE;
     }
-  } patrol_data_list_iterate_end;
+  } hash_iterate_end;
 }
 
 /**************************************************************************
@@ -849,6 +870,9 @@ void schedule_delayed_airlift(struct tile *ptile)
   delayed_goto_data_list_insert_back (&DGqueue, dgd);
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
 void add_unit_to_delayed_goto(struct tile *ptile)
 {
   struct unit *punit = punit_focus;
@@ -1933,18 +1957,16 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       add_city_to_auto_airlift_queue(ptile);       
       hover_state = HOVER_NONE;
       return;
-  }
-  else if(ptile && hover_state==HOVER_AIRLIFT_DEST) {
+  }else if(ptile && hover_state==HOVER_AIRLIFT_DEST) {
       do_airlift(ptile);
       hover_state = HOVER_NONE;
       return;
-  }  
-  else if(ptile && hover_state==HOVER_DELAYED_GOTO) {
-       add_unit_to_delayed_goto(ptile);
+  }else if(ptile && hover_state==HOVER_MYPATROL) {
+       key_set_patrol_position (ptile);
        hover_state = HOVER_NONE;
        return;
-  }else if(ptile && hover_state==HOVER_MYPATROL) {
-       add_unit_to_patrol_queue(ptile);
+  }else if(ptile && hover_state==HOVER_DELAYED_GOTO) {
+       add_unit_to_delayed_goto(ptile);
        hover_state = HOVER_NONE;
        return;
   }else if(ptile && hover_state==HOVER_DELAYED_AIRLIFT) {
@@ -2268,9 +2290,12 @@ void key_cancel_action(void)
     keyboardless_goto_active = FALSE;
     keyboardless_goto_start_tile = NULL;
   }
-  if ((hover_state == HOVER_DELAYED_GOTO) ||(hover_state == HOVER_AIRLIFT_SOURCE) 
-     ||(hover_state == HOVER_AIRLIFT_DEST)||(hover_state == HOVER_MYPATROL)||
-     (hover_state == HOVER_DELAYED_AIRLIFT)) {
+  if (hover_state == HOVER_DELAYED_GOTO
+      || hover_state == HOVER_AIRLIFT_SOURCE
+      || hover_state == HOVER_AIRLIFT_DEST
+      || hover_state == HOVER_MYPATROL
+      || hover_state == HOVER_DELAYED_AIRLIFT)
+  {
       hover_state = HOVER_NONE;
   }
 }

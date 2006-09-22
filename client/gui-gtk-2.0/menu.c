@@ -182,6 +182,7 @@ enum MenuID {
   MENU_WARCLIENT_AIRLIFT_PARAS,
   MENU_WARCLIENT_AIRLIFT_MUSKETEERS,
   MENU_WARCLIENT_PATROL,
+  MENU_WARCLIENT_PATROL_SELECT_TILE,
   MENU_WARCLIENT_CLEAR_PATROL,
   MENU_WARCLIENT_CARAVAN_POPUP,
   MENU_WARCLIENT_CARAVAN_TRADE,
@@ -489,7 +490,12 @@ static void orders_menu_callback(gpointer callback_data,
     }
     break;
    case MENU_ORDER_AIRBASE:
-    key_unit_airbase(); 
+    if (get_unit_in_focus()) {
+      if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
+        key_unit_airbase(); 
+      else
+        key_set_patrol_position (NULL);
+    }
     break;
    case MENU_ORDER_POLLUTION:
     if (get_unit_in_focus()) {
@@ -688,9 +694,17 @@ static void warclient_menu_callback(gpointer callback_data,
    case MENU_WARCLIENT_AIRLIFT_MUSKETEERS:
         airliftunittype = find_unit_type_by_name_orig("Musketeers");
         break;
-   case MENU_WARCLIENT_PATROL:
-        request_myunit_patrol();
+   case MENU_WARCLIENT_PATROL_SELECT_TILE:
+        key_select_patrol_tile();
         break;
+   case MENU_WARCLIENT_PATROL:
+    if (get_unit_in_focus()) {
+      if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
+        key_unit_airbase(); 
+      else
+        key_set_patrol_position (NULL);
+    }
+    break;
    case MENU_WARCLIENT_CLEAR_PATROL:
         request_clear_patrol_queue();
         break;
@@ -1252,7 +1266,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	warclient_menu_callback,	MENU_WARCLIENT_SET_AIRLIFT_DEST						},
   { "/" N_("Warclient") "/" N_("Set airlift source"),			"<shift>z",
 	warclient_menu_callback,	MENU_WARCLIENT_SET_AIRLIFT_SRC						},
-  { "/" N_("Warclient") "/" N_("Clear airlift queue"),			"<shift>u",
+  { "/" N_("Warclient") "/" N_("Clear airlift queue"),			NULL,
 	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_AIRLIFT_QUEUE						},
   { "/" N_("Warclient") "/" N_("Show cities in airlift queue"),			"",
 	warclient_menu_callback,	MENU_WARCLIENT_SHOW_CITIES_IN_AIRLIFT_QUEUE						},
@@ -1302,9 +1316,11 @@ static GtkItemFactoryEntry menu_items[]	=
 	warclient_menu_callback,	MENU_WARCLIENT_AIRLIFT_MUSKETEERS,		"<main>/Warclient/Airlift unit type/Engineers"	},
   { "/" N_("Warclient") "/sep4",				NULL,
 	NULL,			0,					"<Separator>"	},
-  { "/" N_("Warclient") "/" N_("Airplane patrol"),			"<ctrl><shift>z",
+  { "/" N_("Warclient") "/" N_("Airplane patrol"),			"e",
 	warclient_menu_callback,	MENU_WARCLIENT_PATROL						},
-  { "/" N_("Warclient") "/" N_("Clear patrol queue"),			"<ctrl><shift>u",
+  { "/" N_("Warclient") "/" N_("Airplane patrol destination"),			"<ctrl>e",
+	warclient_menu_callback,	MENU_WARCLIENT_PATROL_SELECT_TILE						},
+  { "/" N_("Warclient") "/" N_("Clear patrol queue"),			NULL,
 	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_PATROL						},
 
   /* Reports menu ... */

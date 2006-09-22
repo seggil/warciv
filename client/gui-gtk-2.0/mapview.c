@@ -211,8 +211,8 @@ void update_unit_info_label(struct unit *punit)
       break;
     case HOVER_AIRLIFT_SOURCE:
     case HOVER_AIRLIFT_DEST:
-    case HOVER_DELAYED_GOTO:
     case HOVER_MYPATROL:
+    case HOVER_DELAYED_GOTO:
     case HOVER_DELAYED_AIRLIFT:
       gdk_window_set_cursor(root_window, NULL);
     }

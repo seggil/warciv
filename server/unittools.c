@@ -372,9 +372,6 @@ void player_restore_units(struct player *pplayer)
 	    punit->goto_tile = itr_tile;
 	    set_unit_activity(punit, ACTIVITY_GOTO);
 	    (void) do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
-	    notify_player_ex(pplayer, punit->tile, E_NOEVENT, 
-			     _("Game: Your %s has returned to refuel."),
-			     unit_name(punit->type));
 	    goto OUT;
 	  }
 	} iterate_outward_end;
