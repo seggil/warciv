@@ -197,10 +197,16 @@ struct unit *idex_lookup_unit(int id)
 ***************************************************************************/
 struct city *idex_lookup_city_by_name (const char *name)
 {
+  int id;
+  
   if (!name || !name[0])
     return NULL;
   
-  return (struct city *)hash_lookup_data(idex_city_name_hash, name);
+  id = PTR_TO_INT (hash_lookup_data (idex_city_name_hash, name));
+  if (!id)
+    return NULL;
+
+  return idex_lookup_city (id);
 }
 
 /**************************************************************************
@@ -208,12 +214,16 @@ struct city *idex_lookup_city_by_name (const char *name)
 ***************************************************************************/
 void idex_register_city_name (struct city *pcity)
 {
+  void *old;
   if (!pcity || !pcity->name || !pcity->name[0])
     return;
 
   freelog (LOG_DEBUG, "idex_register_city_name pcity=%p pcity->id=%d pcity->name=\"%s\"",
            pcity, pcity->id, pcity->name);
-  hash_replace (idex_city_name_hash, pcity->name, pcity);
+  if (hash_delete_entry_full (idex_city_name_hash, pcity->name, &old))
+    free (old);
+  hash_insert (idex_city_name_hash, mystrdup (pcity->name),
+               INT_TO_PTR (pcity->id));
 }
   
 /**************************************************************************
@@ -221,11 +231,14 @@ void idex_register_city_name (struct city *pcity)
 ***************************************************************************/
 void idex_unregister_city_name (struct city *pcity)
 {
+  void *old;
+
   if (!pcity || !pcity->name || !pcity->name[0])
     return;
 
   freelog (LOG_DEBUG, "idex_unregister_city_name pcity=%p pcity->id=%d pcity->name=\"%s\"",
            pcity, pcity->id, pcity->name);
-  hash_delete_entry (idex_city_name_hash, pcity->name);
+  if (hash_delete_entry_full (idex_city_name_hash, pcity->name, &old))
+    free (old);
 }
   

@@ -95,6 +95,7 @@ static void put_tag_pattern_into_store (GtkListStore *store,
 enum tag_link_types {
   LINK_LOCATION = 1,
   LINK_CITY,
+  LINK_CITY_ID,
 };
 
 static gboolean hovering_over_link = FALSE;
@@ -144,7 +145,7 @@ follow_if_link (GtkWidget   *text_view,
   GSList *tags = NULL, *tagp = NULL;
   gpointer data;
   gint link_type;
-  int x, y;
+  int x, y, id;
   char buf[128];
   const char *city_name;
   struct city *pcity;
@@ -172,6 +173,20 @@ follow_if_link (GtkWidget   *text_view,
         center_tile_mapcanvas (pcity->tile);
       }
       break;
+
+    case LINK_CITY_ID:
+      data = g_object_get_data (G_OBJECT (tag), "city_id");
+      id = GPOINTER_TO_INT (data);
+      pcity = find_city_by_id (id);
+      if (!pcity) {
+        my_snprintf (buf, sizeof (buf), _("Warclient: %d is not the ID "
+            "of any city I know about :("), id);
+        append_output_window (buf);
+      } else {
+        center_tile_mapcanvas (pcity->tile);
+      }
+      break;
+      
 
     case LINK_LOCATION: 
       x = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (tag), "x"));
@@ -340,11 +355,57 @@ void set_message_buffer_view_link_handlers (GtkTextView *view)
 /**************************************************************************
   ...
 **************************************************************************/
+static int parse_city_id_link (const char *str, 
+                               GtkTextBuffer *buf,
+                               GtkTextTag **tag,
+                               char *newtext,
+                               int newtext_maxlen)
+{
+  const char *p = str;
+  char *q, idbuf[32];
+  int id;
+  struct city *pcity;
+  
+  if (*p != '@' || p[1] != 'I')
+    return 0;
+  p += 2;
+  q = idbuf;
+  while (*p && my_isdigit (*p)) {
+    if (q >= idbuf + sizeof (idbuf))
+      return 0;
+    *q++ = *p++;
+  }
+  *q = 0;
+
+  id = atoi (idbuf);
+  if (id < 0)
+    return 0;
+
+  pcity = find_city_by_id (id);
+  if (!pcity)
+    return 0;
+  
+  *tag = gtk_text_buffer_create_tag (buf, NULL,
+                                     "foreground", "blue",
+                                     "underline", PANGO_UNDERLINE_SINGLE,
+                                     NULL);
+  g_object_set_data (G_OBJECT (*tag), "link_type",
+                     GINT_TO_POINTER (LINK_CITY_ID));
+  g_object_set_data (G_OBJECT (*tag), "city_id",
+                     GINT_TO_POINTER (id)); 
+
+  my_snprintf (newtext, newtext_maxlen, "%s", pcity->name);
+  
+  return (int) (p - str);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
 static int parse_city_link (const char *str, 
                             GtkTextBuffer *buf,
                             GtkTextTag **tag,
                             char *newtext,
-                            int newtextlen)
+                            int newtext_maxlen)
 {
   const char *p = str;
   char city_name[MAX_LEN_NAME], *q;
@@ -373,7 +434,7 @@ static int parse_city_link (const char *str,
   g_object_set_data (G_OBJECT (*tag), "city_name",
                      mystrdup (city_name)); 
 
-  my_snprintf (newtext, newtextlen, "%s", city_name);
+  my_snprintf (newtext, newtext_maxlen, "%s", city_name);
   
   return (int) (p - str);
 }
@@ -384,7 +445,7 @@ static int parse_location_link (const char *str,
                                 GtkTextBuffer *buf,
                                 GtkTextTag **tag,
                                 char *newtext,
-                                int newtextlen)
+                                int newtext_maxlen)
 {
   const char *p;
   int x, y;
@@ -405,7 +466,7 @@ static int parse_location_link (const char *str,
   g_object_set_data (G_OBJECT (*tag), "x", GINT_TO_POINTER (x)); 
   g_object_set_data (G_OBJECT (*tag), "y", GINT_TO_POINTER (y));
 
-  my_snprintf (newtext, newtextlen, "(%d, %d)", x, y);
+  my_snprintf (newtext, newtext_maxlen, "(%d, %d)", x, y);
   
   return (int) (p - str);
 }
@@ -431,6 +492,9 @@ static void append_text_with_links (GtkTextBuffer *buf,
       break;
     case 'C':
       n = parse_city_link (q, buf, &tag, newtext, sizeof (newtext));
+      break;
+    case 'I':
+      n = parse_city_id_link (q, buf, &tag, newtext, sizeof (newtext));
       break;
     default:
       n = 0;

@@ -283,7 +283,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     else if (ptile && (ev->state & GDK_MOD1_MASK)) {
       char buf[256];
       if (ptile->city) {
-        my_snprintf (buf, sizeof (buf), "@C\"%s\"", ptile->city->name);
+        my_snprintf (buf, sizeof (buf), "@I%d", ptile->city->id);
       } else {
         my_snprintf (buf, sizeof (buf), "@L%d,%d", ptile->x, ptile->y);
       }
