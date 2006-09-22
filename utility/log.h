@@ -57,8 +57,9 @@ void log_init(const char *filename, int initial_level,
 void log_set_level(int level);
 void log_set_callback(log_callback_fn callback);
 
-void real_freelog(int level, const char *message, ...)
-                  fc__attribute((__format__ (__printf__, 2, 3)));
+void real_freelog(int level, const char *file, int line, const char *fncname, const char *message, ...);
+//        fc__attribute((__format__ (__printf__, 2, 3)));
+
 void vreal_freelog(int level, const char *message, va_list ap);
 
 
@@ -84,14 +85,14 @@ static inline int logdebug_check(const char *file, int line)
 #  define freelog(level, ...)                                             \
   do {                                                                      \
     if ((level) != LOG_DEBUG || logdebug_check(__FILE__, __LINE__)) {       \
-      real_freelog((level), __VA_ARGS__);                                   \
+      real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__);                                   \
     }                                                                       \
   } while(FALSE)
 #else
 #  define freelog(level, ...)                                             \
   do {                                                                      \
     if ((level) != LOG_DEBUG) {                                             \
-      real_freelog((level), __VA_ARGS__);                                   \
+      real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__);                                   \
     }                                                                       \
   } while(FALSE) 
 #endif  /* DEBUG */

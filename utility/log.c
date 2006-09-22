@@ -27,8 +27,13 @@
 
 #include "log.h"
 
+char *loglevelstr[5] = {"FATAL","ERROR","NORMAL","VERBOSE","DEBUG"};
+
 static const char *log_filename;
 static log_callback_fn log_callback;
+char *l_file;
+int l_line;
+char *l_fncname;
 
 int logd_init_counter = 1;
 int fc_log_level;
@@ -240,7 +245,7 @@ static void log_write(FILE *fs, int level, char *message)
     log_callback(level, message);
   }
   if (log_filename || (!log_callback)) {
-    fc_fprintf(fs, "%d: %s\n", level, message);
+    fc_fprintf(fs, "%-8s:%-12s:line %-5i:%-24s:  %s\n", loglevelstr[level],l_file, l_line, l_fncname, message);
     fflush(fs);
   }
 }
@@ -326,8 +331,11 @@ void vreal_freelog(int level, const char *message, va_list ap)
     }
   }
 }
-void real_freelog(int level, const char *message, ...)
+void real_freelog(int level, const char *file, int line, const char *fncname, const char *message, ...)
 {
+  l_file = file;
+  l_line = line;
+  l_fncname = fncname;
   va_list ap;
   va_start(ap, message);
   vreal_freelog(level, message, ap);
