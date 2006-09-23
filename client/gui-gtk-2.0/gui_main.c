@@ -61,6 +61,7 @@
 #include "mapview.h"
 #include "menu.h"
 #include "messagewin.h"
+#include "netintf.h"
 #include "optiondlg.h"
 #include "options.h"
 #include "pages.h"
@@ -1591,11 +1592,10 @@ static gboolean gioc_input_ready (GIOChannel *source,
   int flags = 0;
   gboolean keep;
 
-  freelog (LOG_DEBUG, "gir gioc_input_ready source=%p cond=%d data=%p", /*ASYNCDEBUG*/
-           source, cond, data); /*ASYNCDEBUG*/
-
   ctx = data;
   assert (ctx != NULL);
+  freelog (LOG_DEBUG, "gir gioc_input_ready source=%p cond=%d data=%p, sock=%i", /*ASYNCDEBUG*/
+           source, cond, data,ctx->sock); /*ASYNCDEBUG*/
 
   if (cond & G_IO_IN)
     flags |= INPUT_READ;
@@ -1605,6 +1605,7 @@ static gboolean gioc_input_ready (GIOChannel *source,
     flags |= INPUT_ERROR;
   if (cond & G_IO_HUP)
     flags |= INPUT_CLOSED;
+
   
   freelog (LOG_DEBUG, "gir   calling cb=%p with flags=%d", /*ASYNCDEBUG*/
            ctx->callback, flags); /*ASYNCDEBUG*/
@@ -1621,13 +1622,13 @@ static void nicfree (gpointer data)
 {
   struct net_input_context *ctx = data;
 
-  freelog (LOG_DEBUG, "nicfree: data=%p", data); /*ASYNCDEBUG*/
-  
+  freelog (LOG_DEBUG, "nicfree: data=%p, socket=%i", data,ctx->sock); /*ASYNCDEBUG*/
   if (!ctx)
     return;
   if (ctx->datafree)
     (*ctx->datafree) (ctx->userdata);
   free (ctx);
+  freelog (LOG_DEBUG, "nicfree: data=%p, socket=%i freed", data,ctx->sock); /*ASYNCDEBUG*/
 }
 /**************************************************************************
   ...
@@ -1642,7 +1643,7 @@ int add_net_input_callback (int sock,
   GIOCondition cond = 0;
   struct net_input_context *ctx;
   GIOChannel *gioc;
-
+  
   freelog (LOG_DEBUG, "anic add_net_input_callback sock=%d flags=%d cb=%p" /*ASYNCDEBUG*/
            " data=%p datafree=%p", sock, flags, cb, data, datafree); /*ASYNCDEBUG*/
 

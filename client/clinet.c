@@ -56,6 +56,7 @@
 #endif
 #ifdef HAVE_WINSOCK
 #include <winsock.h>
+#include <winsock2.h>
 #endif
 
 #include "capstr.h"
@@ -823,7 +824,6 @@ handle_metaserver_write_ready (struct async_server_list_context *ctx,
   freelog (LOG_DEBUG, "hmwr handle_metaserver_write_ready " /*ASYNCDEBUG*/
            "ctx=%p flags=%d", ctx, flags);
   
-  if (!ctx->connected) {
     if (flags & INPUT_ERROR) {
       async_server_list_request_error (ctx,
           _("Failed to connect to metaserver."));
@@ -848,15 +848,6 @@ handle_metaserver_write_ready (struct async_server_list_context *ctx,
     freelog (LOG_DEBUG, "hmwr   %d byte generated request copied to " /*ASYNCDEBUG*/
                "write buffer", len); /*ASYNCDEBUG*/
   
-    /* Workaround for win32: re-add the write callback :/ */
-    ctx->input_id = add_net_input_callback (ctx->sock, INPUT_WRITE,
-                                            metaserver_input_ready_cb,
-                                            ctx, NULL);
-      
-    freelog (LOG_DEBUG, "hmwr   waiting for socket to become writable..."); /*ASYNCDEBUG*/
-    return FALSE;
-  }
-
   if (!ctx->have_data_to_write) {
     freelog (LOG_DEBUG, "hmwr   unexpected write ready, removing callback"); /*ASYNCDEBUG*/
     return FALSE;
@@ -876,12 +867,9 @@ handle_metaserver_write_ready (struct async_server_list_context *ctx,
   }
   
   while (ctx->buflen > 0) {
-    freelog (LOG_DEBUG, "hwmr   errorstr before " /*ASYNCDEBUG*/
-             "my_writesocket is \"%s\" (%d)", /*ASYNCDEBUG*/
-             mystrerror(), my_errno()); /*ASYNCDEBUG*/
     nb = my_writesocket (ctx->sock, ctx->buf, ctx->buflen);
-    freelog (LOG_DEBUG, "hmwr   my_writesocket nb=%d errno=%d", /*ASYNCDEBUG*/
-             nb, my_errno()); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "hmwr   my_writesocket nb=%d,socket=%i, msg=%s, errno=%d", /*ASYNCDEBUG*/
+             nb, (int)ctx->sock, mystrerror(), my_errno()); /*ASYNCDEBUG*/
     if (nb < 0) {
       if (my_socket_would_block()) {
         freelog (LOG_DEBUG, "hmwr   socket write would block");
@@ -988,6 +976,39 @@ handle_metaserver_read_ready (struct async_server_list_context *ctx,
   return TRUE; /* keep reading */
 
 }
+#ifdef HAVE_WINSOCK
+/**************************************************************************
+  ...
+**************************************************************************/
+static void wait_for_socket_readyness(int sock, int flags)
+{
+    int counter = 0;
+    int ret = 0;
+    fd_set fdsr,fdsw,fdse;
+    
+    struct timeval ywait;
+    ywait.tv_sec = 0;
+    ywait.tv_usec = 1000;
+
+  do {
+    counter++;
+    _sleep(5);
+    FD_ZERO(&fdsr);
+    FD_ZERO(&fdsw);
+    FD_ZERO(&fdse);
+    if(flags & INPUT_WRITE) {
+      FD_SET(sock,&fdsw);
+    } else if (flags & INPUT_READ) FD_SET(sock,&fdsr);
+    ret = select(0, &fdsr, &fdsw, &fdse, &ywait);
+  }while(!ret);
+  if(ret==SOCKET_ERROR) {
+    int error = WSAGetLastError();
+      freelog(LOG_ERROR, "socket readyness loop - returnval = %i, counter = %i, error=%i",ret,counter,error);
+  } else 
+    freelog(LOG_DEBUG, "readyness loop - returnval = %i, counter = %i",ret,counter);
+}
+#endif
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1002,13 +1023,39 @@ static bool metaserver_input_ready_cb (int sock, int flags, void *data)
   assert (sock == ctx->sock);
 
   if (flags & INPUT_WRITE) {
+    #ifdef HAVE_WINSOCK
+    wait_for_socket_readyness(sock, flags);
+    #endif
     return handle_metaserver_write_ready (ctx, flags);
   }
 
   if (flags & INPUT_READ) {
+    #ifdef HAVE_WINSOCK
+    wait_for_socket_readyness(sock, flags);
+    #endif
     return handle_metaserver_read_ready (ctx, flags);
   }
   
+  if(flags & INPUT_ERROR) {
+    freelog (LOG_DEBUG, "hmrr   connection INPUT_ERROR"); /*ASYNCDEBUG*/
+    ctx->buf[ctx->buflen] = '\0';
+    my_closesocket (ctx->sock);
+    ctx->sock = -1;
+    ctx->input_id = -1;
+    process_metaserver_response (ctx);
+    return FALSE; /* we are done reading */    
+  }
+  
+  if(flags & INPUT_CLOSED) {
+    freelog (LOG_DEBUG, "hmrr   connection INPUT_CLOSED"); /*ASYNCDEBUG*/
+    ctx->buf[ctx->buflen] = '\0';
+    my_closesocket (ctx->sock);
+    ctx->sock = -1;
+    ctx->input_id = -1;
+    process_metaserver_response (ctx);
+    return FALSE; /* we are done reading */    
+  }
+
   assert (0);
 
   return FALSE;
