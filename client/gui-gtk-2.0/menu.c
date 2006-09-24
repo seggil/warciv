@@ -184,6 +184,7 @@ enum MenuID {
   MENU_WARCLIENT_PATROL,
   MENU_WARCLIENT_PATROL_SELECT_TILE,
   MENU_WARCLIENT_CLEAR_PATROL,
+  MENU_WARCLIENT_SET_RALLIES,
   MENU_WARCLIENT_CLEAR_RALLIES,
   MENU_WARCLIENT_CARAVAN_POPUP,
   MENU_WARCLIENT_CARAVAN_TRADE,
@@ -708,6 +709,9 @@ static void warclient_menu_callback(gpointer callback_data,
     break;
    case MENU_WARCLIENT_CLEAR_PATROL:
         request_clear_patrol_queue();
+        break;
+   case MENU_WARCLIENT_SET_RALLIES:
+        key_select_rally_point();
         break;
    case MENU_WARCLIENT_CLEAR_RALLIES:
         key_clear_rally_point_for_selected_cities();
@@ -1328,6 +1332,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_PATROL						},
   { "/" N_("Warclient") "/sep4",				NULL,
 	NULL,			0,					"<Separator>"	},
+  { "/" N_("Warclient") "/" N_("Set rallies for selected cities"),			"",
+	warclient_menu_callback,	MENU_WARCLIENT_SET_RALLIES						},
   { "/" N_("Warclient") "/" N_("Clear rallies in selected cities"),			"<shift>r",
 	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_RALLIES						},
 
@@ -1783,6 +1789,8 @@ void update_menus(void)
     menus_set_active("<main>/Warclient/Inclusive filter/All units", inclusive_dgoto_filter & FILTER_ALL);
     menus_set_active("<main>/Warclient/Exclusive filter/Off", exclusive_dgoto_filter & FILTER_OFF);
     menus_set_active("<main>/Warclient/Unit limit/Unlimited units", !unit_limit);
+/*  This should be done in a future version for all warclient menu items
+    menus_set_sensitive("<main>/Warclient/Set rallies for selected cities", tiles_hilited_cities); */
     /* Remaining part of this function: Update Orders menu */
 
     if (!can_client_issue_orders()) {
