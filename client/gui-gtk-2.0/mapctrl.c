@@ -274,7 +274,6 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     break;
 
   case 2: /* MIDDLE mouse button */
-
     /* <CONTROL> + MMB: Wake up sentries. */
     if (ev->state & GDK_CONTROL_MASK) {
       wakeup_button_pressed(ev->x, ev->y);

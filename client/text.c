@@ -190,10 +190,11 @@ const char *popup_info_text(struct tile *ptile)
      Q_("?city:Friendly(team)")};
   INIT;
 
-#ifdef DEBUG
   add_line(_("Location: (%d, %d) [%d]"), 
 	   ptile->x, ptile->y, ptile->continent); 
-#endif /*DEBUG*/
+  add_line(_("Native coordinates: (%d, %d)"), 
+	   ptile->nat_x, ptile->nat_y); 
+
   add_line(_("Terrain: %s"),  map_get_tile_info_text(ptile));
   add_line(_("Food/Prod/Trade: %s"),
 	   map_get_tile_fpt_text(ptile));
