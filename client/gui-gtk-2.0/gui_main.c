@@ -1648,15 +1648,17 @@ int add_net_input_callback (int sock,
            " data=%p datafree=%p", sock, flags, cb, data, datafree); /*ASYNCDEBUG*/
 
   if (flags & INPUT_READ)
-    cond |= G_IO_IN;
+    cond |= G_IO_IN;    
   if (flags & INPUT_WRITE)
     cond |= G_IO_OUT;
 
-  cond |= G_IO_ERR;
-  cond |= G_IO_HUP;
-  
+  if (flags & INPUT_ERROR)
+    cond |= G_IO_ERR;
+  if (flags & INPUT_CLOSED) 
+    cond |= G_IO_HUP; 
+
   ctx = fc_malloc (sizeof (struct net_input_context));
-  ctx->sock = sock;
+  ctx->sock = sock; 
   ctx->callback = cb;
   ctx->userdata = data;
   ctx->datafree = datafree;
@@ -1666,6 +1668,7 @@ int add_net_input_callback (int sock,
 #else
   gioc = g_io_channel_unix_new (sock);
 #endif
+  
   freelog (LOG_DEBUG, "anic   gioc=%p", gioc);
   id = g_io_add_watch_full (gioc, G_PRIORITY_DEFAULT, cond, 
                             gioc_input_ready, ctx, nicfree);

@@ -79,9 +79,9 @@
 #include "climisc.h"
 #include "connectdlg_common.h"
 #include "connectdlg_g.h"
-#include "dialogs_g.h"		/* popdown_races_dialog() */
-#include "gui_main_g.h"		/* add_net_input(), remove_net_input() */
-#include "mapview_common.h"	/* unqueue_mapview_update */
+#include "dialogs_g.h"                /* popdown_races_dialog() */
+#include "gui_main_g.h"                /* add_net_input(), remove_net_input() */
+#include "mapview_common.h"        /* unqueue_mapview_update */
 #include "menu_g.h"
 #include "messagewin_g.h"
 #include "options.h"
@@ -122,8 +122,6 @@ struct async_server_list_context {
 static struct hash_table *async_server_list_request_table = NULL;
 static int async_server_list_request_id = 0;
 
-
-static bool metaserver_input_ready_cb (int sock, int flags, void *data);
 
 /**************************************************************************
   ...
@@ -173,7 +171,7 @@ static void close_socket_callback(struct connection *pc)
   return 0; on failure, put an error message in ERRBUF and return -1.
 **************************************************************************/
 int connect_to_server(const char *username, const char *hostname, int port,
-		      char *errbuf, int errbufsize)
+                      char *errbuf, int errbufsize)
 {
   if (get_server_address(hostname, port, errbuf, errbufsize) != 0) {
     return -1;
@@ -194,7 +192,7 @@ int connect_to_server(const char *username, const char *hostname, int port,
      or put an error message in ERRBUF and return -1 on failure
 **************************************************************************/
 int get_server_address(const char *hostname, int port, char *errbuf,
-		       int errbufsize)
+                       int errbufsize)
 {
   if (port == 0)
     port = DEFAULT_SOCK_PORT;
@@ -215,8 +213,8 @@ int get_server_address(const char *hostname, int port, char *errbuf,
   Try to connect to a server (get_server_address() must be called first!):
    - try to create a TCP socket and connect it to `server_addr'
    - if successful:
-	  - start monitoring the socket for packets from the server
-	  - send a "login request" packet to the server
+          - start monitoring the socket for packets from the server
+          - send a "login request" packet to the server
       and - return 0
    - if unable to create the connection, close the socket, put an error
      message in ERRBUF and return the Unix error code (ie., errno, which
@@ -313,7 +311,7 @@ static int read_from_connection(struct connection *pc, bool block)
     fd_set readfs, writefs, exceptfs;
     int socket_fd = pc->sock;
     bool have_data_for_server = (pc->used && pc->send_buffer
-				&& pc->send_buffer->ndata > 0);
+                                && pc->send_buffer->ndata > 0);
     int n;
     struct timeval tv;
 
@@ -330,12 +328,12 @@ static int read_from_connection(struct connection *pc, bool block)
       MY_FD_ZERO(&writefs);
       FD_SET(socket_fd, &writefs);
       n =
-	  select(socket_fd + 1, &readfs, &writefs, &exceptfs,
-		 block ? NULL : &tv);
+          select(socket_fd + 1, &readfs, &writefs, &exceptfs,
+                 block ? NULL : &tv);
     } else {
       n =
-	  select(socket_fd + 1, &readfs, NULL, &exceptfs,
-		 block ? NULL : &tv);
+          select(socket_fd + 1, &readfs, NULL, &exceptfs,
+                 block ? NULL : &tv);
     }
 
     /* the socket is neither readable, writeable nor got an
@@ -346,14 +344,14 @@ static int read_from_connection(struct connection *pc, bool block)
 
     if (n == -1) {
       if (errno == EINTR) {
-	/* EINTR can happen sometimes, especially when compiling with -pg.
-	 * Generally we just want to run select again. */
-	freelog(LOG_DEBUG, "select() returned EINTR");
-	continue;
+        /* EINTR can happen sometimes, especially when compiling with -pg.
+         * Generally we just want to run select again. */
+        freelog(LOG_DEBUG, "select() returned EINTR");
+        continue;
       }
 
       freelog(LOG_NORMAL, "error in select() return=%d errno=%d (%s)",
-	      n, errno, mystrerror());
+              n, errno, mystrerror());
       return -1;
     }
 
@@ -385,15 +383,15 @@ void input_from_server(int fd)
     while (TRUE) {
       bool result;
       void *packet = get_packet_from_connection(&aconnection,
-						&type, &result);
+                                                &type, &result);
 
       if (result) {
-	assert(packet != NULL);
-	handle_packet_input(packet, type);
-	free(packet);
+        assert(packet != NULL);
+        handle_packet_input(packet, type);
+        free(packet);
       } else {
-	assert(packet == NULL);
-	break;
+        assert(packet == NULL);
+        break;
       }
     }
   } else {
@@ -410,42 +408,42 @@ void input_from_server(int fd)
  received.
 **************************************************************************/
 void input_from_server_till_request_got_processed(int fd, 
-						  int expected_request_id)
+                                                  int expected_request_id)
 {
   assert(expected_request_id);
   assert(fd == aconnection.sock);
 
   freelog(LOG_DEBUG,
-	  "input_from_server_till_request_got_processed("
-	  "expected_request_id=%d)", expected_request_id);
+          "input_from_server_till_request_got_processed("
+          "expected_request_id=%d)", expected_request_id);
 
   while (TRUE) {
     if (read_from_connection(&aconnection, TRUE) >= 0) {
       enum packet_type type;
 
       while (TRUE) {
-	bool result;
-	void *packet = get_packet_from_connection(&aconnection,
-						  &type, &result);
-	if (!result) {
-	  assert(packet == NULL);
-	  break;
-	}
+        bool result;
+        void *packet = get_packet_from_connection(&aconnection,
+                                                  &type, &result);
+        if (!result) {
+          assert(packet == NULL);
+          break;
+        }
 
-	assert(packet != NULL);
-	handle_packet_input(packet, type);
-	free(packet);
+        assert(packet != NULL);
+        handle_packet_input(packet, type);
+        free(packet);
 
-	if (type == PACKET_PROCESSING_FINISHED) {
-	  freelog(LOG_DEBUG, "ifstrgp: expect=%d, seen=%d",
-		  expected_request_id,
-		  aconnection.client.last_processed_request_id_seen);
-	  if (aconnection.client.last_processed_request_id_seen >=
-	      expected_request_id) {
-	    freelog(LOG_DEBUG, "ifstrgp: got it; returning");
-	    goto out;
-	  }
-	}
+        if (type == PACKET_PROCESSING_FINISHED) {
+          freelog(LOG_DEBUG, "ifstrgp: expect=%d, seen=%d",
+                  expected_request_id,
+                  aconnection.client.last_processed_request_id_seen);
+          if (aconnection.client.last_processed_request_id_seen >=
+              expected_request_id) {
+            freelog(LOG_DEBUG, "ifstrgp: got it; returning");
+            goto out;
+          }
+        }
       }
     } else {
       close_socket_callback(&aconnection);
@@ -485,7 +483,7 @@ static char *win_uname()
       case  0: osname = "Win95";    break;
       case 10: osname = "Win98";    break;
       case 90: osname = "WinME";    break;
-      default:			    break;
+      default:                            break;
       }
     }
     break;
@@ -496,8 +494,8 @@ static char *win_uname()
     if (osvi.dwMajorVersion == 5) {
       switch (osvi.dwMinorVersion) {
       case 0: osname = "Win2000";   break;
-      case 1: osname = "WinXP";	    break;
-      default:			    break;
+      case 1: osname = "WinXP";            break;
+      default:                            break;
       }
     }
     break;
@@ -511,15 +509,15 @@ static char *win_uname()
   switch (sysinfo.wProcessorArchitecture) {
     case PROCESSOR_ARCHITECTURE_INTEL:
       {
-	unsigned int ptype;
-	if (sysinfo.wProcessorLevel < 3) /* Shouldn't happen. */
-	  ptype = 3;
-	else if (sysinfo.wProcessorLevel > 9) /* P4 */
-	  ptype = 6;
-	else
-	  ptype = sysinfo.wProcessorLevel;
-	
-	my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
+        unsigned int ptype;
+        if (sysinfo.wProcessorLevel < 3) /* Shouldn't happen. */
+          ptype = 3;
+        else if (sysinfo.wProcessorLevel > 9) /* P4 */
+          ptype = 6;
+        else
+          ptype = sysinfo.wProcessorLevel;
+        
+        my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
       }
       break;
 
@@ -544,8 +542,8 @@ static char *win_uname()
       break;
   }
   my_snprintf(uname_buf, sizeof(uname_buf),
-	      "%s %ld.%ld [%s]", osname, osvi.dwMajorVersion, osvi.dwMinorVersion,
-	      cpuname);
+              "%s %ld.%ld [%s]", osname, osvi.dwMajorVersion, osvi.dwMinorVersion,
+              cpuname);
   return uname_buf;
 }
 #endif
@@ -712,33 +710,33 @@ static void aslcfree (void *data)
 {
   struct async_server_list_context *ctx = data;
 
-  freelog (LOG_DEBUG, "af aslcfree: data=%p", data); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "aslcfree: data=%p", data); 
   
   if (!ctx)
     return;
   if (ctx->sock != -1) {
-    freelog (LOG_DEBUG, "af   closing socket %d", ctx->sock); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "closing socket %d", ctx->sock); 
     my_closesocket (ctx->sock);
     ctx->sock = -1;
   }
   if (ctx->nlsa_id > 0) {
-    freelog (LOG_DEBUG, "af   cancelling net_lookup id=%d", ctx->nlsa_id); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "cancelling net_lookup id=%d", ctx->nlsa_id); 
     cancel_net_lookup_service (ctx->nlsa_id);
     ctx->nlsa_id = -1;
   }
   if (ctx->input_id > 0) {
-    freelog (LOG_DEBUG, "af   removing net input id%d", ctx->input_id); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "removing net input id%d", ctx->input_id); 
     remove_net_input_callback (ctx->input_id);
     ctx->input_id = -1;
   }
 
   if (ctx->req_id > 0) {
-    freelog (LOG_DEBUG, "af   deleting ctx=%p req_id=%d from aslr table", /*ASYNCDEBUG*/
-             ctx, ctx->req_id); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "deleting ctx=%p req_id=%d from aslr table", 
+             ctx, ctx->req_id); 
     hash_delete_entry (async_server_list_request_table, 
                        INT_TO_PTR (ctx->req_id));
   }
-  freelog (LOG_DEBUG, "af   free async_server_list_context %p", ctx); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "free async_server_list_context %p", ctx); 
   free (ctx);
 }
 /**************************************************************************
@@ -751,7 +749,7 @@ async_server_list_request_error (struct async_server_list_context *ctx,
   va_list ap;
   char errbuf[256];
 
-  freelog (LOG_DEBUG, "aslre async_server_list_request_error: ctx=%p", ctx); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "async_server_list_request_error: ctx=%p", ctx); 
   
   assert (ctx != NULL);
 
@@ -759,10 +757,10 @@ async_server_list_request_error (struct async_server_list_context *ctx,
   my_vsnprintf (errbuf, sizeof (errbuf), fmt, ap);
   va_end (ap);
 
-  freelog (LOG_DEBUG, "aslre   error=\"%s\" ctx->callback=%p", errbuf, ctx->callback); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "error=\"%s\" ctx->callback=%p", errbuf, ctx->callback); 
   
   if (ctx->callback) {
-    freelog (LOG_DEBUG, "aslre   calling %p userdata=%p", ctx->callback, ctx->userdata); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "calling %p userdata=%p", ctx->callback, ctx->userdata); 
     (*ctx->callback) (NULL, errbuf, ctx->userdata);
   }
 
@@ -783,7 +781,7 @@ process_metaserver_response (struct async_server_list_context *ctx)
   fz_FILE *f;
   char errbuf[256];
   
-  freelog (LOG_DEBUG, "pmr process_metaserver_response: ctx=%p", ctx); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "process_metaserver_response: ctx=%p", ctx); 
 
   if (!(fp = my_tmpfile())) {
     async_server_list_request_error (ctx,
@@ -803,60 +801,115 @@ process_metaserver_response (struct async_server_list_context *ctx)
   /* fp assumed to be closed by parse_metaserver_data */
   f = fz_from_stream (fp);
   sl = parse_metaserver_http_data (f, errbuf, sizeof (errbuf));
-  freelog (LOG_DEBUG, "pmr   calling %p userdata=%p", ctx->callback, ctx->userdata); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "calling %p userdata=%p", ctx->callback, ctx->userdata); 
   (*ctx->callback) (sl, errbuf, ctx->userdata);
-  freelog (LOG_DEBUG, "pmr   deleting ctx=%p req_id=%d from aslr table", /*ASYNCDEBUG*/
-           ctx, ctx->req_id); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "deleting ctx=%p req_id=%d from aslr table", 
+           ctx, ctx->req_id); 
   hash_delete_entry (async_server_list_request_table, 
                      INT_TO_PTR (ctx->req_id));
-  freelog (LOG_DEBUG, "pmr   free asl ctx=%p", ctx); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "free asl ctx=%p", ctx); 
   free (ctx);
 }
 /**************************************************************************
   ...
 **************************************************************************/
-static bool
-handle_metaserver_write_ready (struct async_server_list_context *ctx,
-                               int flags)
+static bool metaserver_read_cb (int sock, int flags, void *data)
 {
-  int len, nb;
-  
-  freelog (LOG_DEBUG, "hmwr handle_metaserver_write_ready " /*ASYNCDEBUG*/
-           "ctx=%p flags=%d", ctx, flags);
-  
-    if (flags & INPUT_ERROR) {
-      async_server_list_request_error (ctx,
-          _("Failed to connect to metaserver."));
-      return FALSE; /* remove input callback */
-    }
-    
-    if (flags & INPUT_CLOSED) {
-      async_server_list_request_error (ctx, _("Metaserver closed "
-          "the connection before it was even established!"));
-      return FALSE; /* remove input callback */
-    }
+  char *buf;
+  int nb = 0, count = 0, rem = 0;
+  static const int READSZ = 4096;
+  struct async_server_list_context *ctx = data;
 
-    freelog (LOG_DEBUG, "hmwr   connection to metaserver succeeded"); /*ASYNCDEBUG*/
-    
-    ctx->connected = TRUE;
-    ctx->have_data_to_write = TRUE;
-    len = generate_server_list_http_request (ctx->buf, sizeof (ctx->buf),
-                                             ctx->urlpath,
-                                             ctx->metaname,
-                                             ctx->metaport);
-    ctx->buflen = len;
-    freelog (LOG_DEBUG, "hmwr   %d byte generated request copied to " /*ASYNCDEBUG*/
-               "write buffer", len); /*ASYNCDEBUG*/
-  
-  if (!ctx->have_data_to_write) {
-    freelog (LOG_DEBUG, "hmwr   unexpected write ready, removing callback"); /*ASYNCDEBUG*/
-    return FALSE;
-  }
+  assert (data != NULL);
+  assert (ctx->sock == sock);
+ 
+  freelog (LOG_DEBUG, "ctx=%p flags=%d", ctx, flags); 
 
   if (flags & INPUT_ERROR) {
     async_server_list_request_error (ctx,
-        _("Error while waiting to write metaserver request: "),
-        mystrerror());
+        _("Error while waiting for metaserver response."));
+    return FALSE; /* remove input callback */
+  }
+  
+  if ((flags & INPUT_CLOSED) && !(flags & INPUT_READ)) {
+    if(ctx->buflen > 0) { /* we received some data before, it might be all*/
+      ctx->buf[ctx->buflen] = '\0';
+      my_closesocket (ctx->sock);
+      ctx->sock = -1;
+      ctx->input_id = -1;
+      process_metaserver_response (ctx);      
+    } else {/* this is definitely an error */
+      async_server_list_request_error (ctx, _("Metaserver closed "
+        "the connection while we were waiting for a response."));
+    }
+    return FALSE; /* remove input callback */
+  }
+
+  freelog (LOG_DEBUG, "reading response..."); 
+    
+  buf = ctx->buf + ctx->buflen;
+  rem = sizeof (ctx->buf) - ctx->buflen - 1;
+  
+  while (rem > 0) {
+    nb = my_readsocket (ctx->sock, buf, rem > READSZ ? READSZ : rem);
+    freelog (LOG_DEBUG, "my_readsocket nb=%d", nb); 
+    if (nb <= 0)
+      break;
+    rem -= nb;
+    buf += nb;
+    count += nb;
+    if (nb < READSZ)
+      break;
+  }
+  ctx->buflen += count;
+  freelog (LOG_DEBUG, "count=%d (buflen=%d)", count, ctx->buflen); 
+
+  if (nb == -1) { /* read error */
+    if (my_socket_would_block()) {
+      freelog (LOG_DEBUG, "socket read would block"); 
+      return TRUE;
+    }
+    async_server_list_request_error (ctx,
+        _("Read from socket failed: %s."), mystrerror());
+    return FALSE;
+  }
+
+  if (rem == 0) { /* buffer capacity exceeded */
+    async_server_list_request_error (ctx,
+        _("Metaserver response exceeds buffer capacity."));
+    return FALSE;
+  }
+    
+  if (count == 0 || nb == 0 || flags & INPUT_CLOSED) { /* connection closed */
+    freelog (LOG_DEBUG, "connection closed, we are done reading"); 
+    ctx->buf[ctx->buflen] = '\0';
+    my_closesocket (ctx->sock);
+    ctx->sock = -1;
+    ctx->input_id = -1;
+    process_metaserver_response (ctx);
+    return FALSE; /* we are done reading */
+  }
+
+  freelog (LOG_DEBUG, "waiting for more data..."); 
+  return !(flags & INPUT_CLOSED); /* keep reading, until INPUT_CLOSED*/
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool metaserver_write_cb (int sock, int flags, void *data)
+{
+  int nb = 0;
+  struct async_server_list_context *ctx = data;
+
+  assert (data != NULL);
+  assert (ctx->sock == sock);
+  
+  freelog (LOG_DEBUG, "ctx=%p flags=%d", ctx, flags);
+  
+  if (flags & INPUT_ERROR) {
+    async_server_list_request_error (ctx,
+        _("Error while waiting to write server list request: %s (%d)"),
+        mystrerror(), my_errno());
     return FALSE; /* remove input callback */
   }
   
@@ -868,196 +921,122 @@ handle_metaserver_write_ready (struct async_server_list_context *ctx,
   
   while (ctx->buflen > 0) {
     nb = my_writesocket (ctx->sock, ctx->buf, ctx->buflen);
-    freelog (LOG_DEBUG, "hmwr   my_writesocket nb=%d,socket=%i, msg=%s, errno=%d", /*ASYNCDEBUG*/
-             nb, (int)ctx->sock, mystrerror(), my_errno()); /*ASYNCDEBUG*/
-    if (nb < 0) {
-      if (my_socket_would_block()) {
-        freelog (LOG_DEBUG, "hmwr   socket write would block");
-        return TRUE;
-      }
-        async_server_list_request_error (ctx,
-          _("Write error during send of metaserver request: %s"),
-            mystrerror());
-      return FALSE;
-      }
-    if (nb == 0) {
-      return TRUE; /* XXX is this ok? */
-    }
+    freelog (LOG_DEBUG, "my_writesocket nb=%d sock=%d msg=\"%s\" errno=%d", 
+             nb, ctx->sock, mystrerror(), my_errno()); 
+    if (nb <= 0)
+      break;
+
     assert (ctx->buflen >= nb);
     ctx->buflen -= nb;
     if (nb > 0 && ctx->buflen > 0)
       memmove (ctx->buf, ctx->buf + nb, ctx->buflen);
   }
   
+  if (nb < 0) {
+    if (my_socket_would_block()) {
+      freelog (LOG_DEBUG, "socket write would block");
+      return TRUE;
+    }
+    async_server_list_request_error (ctx,
+        _("Write error during send of metaserver request: %s (%d)"),
+        mystrerror(), my_errno());
+    return FALSE;
+  }
+  
+  if (nb == 0) {
+    freelog (LOG_DEBUG, "my_writesocket wrote 0 bytes :(");
+    return TRUE;
+  }
+  
   ctx->have_data_to_write = FALSE;      
-
-  ctx->input_id = add_net_input_callback (ctx->sock, INPUT_READ,
-                                          metaserver_input_ready_cb,
+  ctx->input_id = add_net_input_callback (ctx->sock, INPUT_READ | INPUT_ERROR | INPUT_CLOSED,
+                                          metaserver_read_cb,
                                           ctx, NULL);
 
-  freelog (LOG_DEBUG, "hmwr   added read callback"); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "added read callback"); 
   return FALSE;
 }
 
-/**************************************************************************
-  ...
-**************************************************************************/
-static bool
-handle_metaserver_read_ready (struct async_server_list_context *ctx,
-                               int flags)
-{
-   char *buf;
-   int nb = 0, count = 0, rem = 0;
-   static const int READSZ = 4096;
- 
-   freelog (LOG_DEBUG, "hmrr handle_metaserver_read_ready ctx=%p flags=%d", /*ASYNCDEBUG*/
-            ctx, flags); /*ASYNCDEBUG*/
-            
-
-  if (flags & INPUT_ERROR) {
-    async_server_list_request_error (ctx,
-        _("Error while waiting for metaserver response."));
-    return FALSE; /* remove input callback */
-  }
-  
-  if (flags & INPUT_CLOSED) {
-    async_server_list_request_error (ctx, _("Metaserver closed "
-        "the connection while we were waiting for a response."));
-    return FALSE; /* remove input callback */
-  }
-
-  freelog (LOG_DEBUG, "hmrr   reading response..."); /*ASYNCDEBUG*/
-    
-  buf = ctx->buf + ctx->buflen;
-  rem = sizeof (ctx->buf) - ctx->buflen - 1;
-  
-  while (rem > 0) {
-    nb = my_readsocket (ctx->sock, buf, rem > READSZ ? READSZ : rem);
-    freelog (LOG_DEBUG, "hmrr   my_readsocket nb=%d", nb); /*ASYNCDEBUG*/
-    if (nb == -1)
-      break;
-    rem -= nb;
-    buf += nb;
-    count += nb;
-    if (nb < READSZ)
-      break;
-  }
-  ctx->buflen += count;
-  freelog (LOG_DEBUG, "hmrr   count=%d (buflen=%d)", count, ctx->buflen); /*ASYNCDEBUG*/
-
-  if (my_socket_would_block()) {
-    freelog (LOG_DEBUG, "hmrr   socket read would block"); /*ASYNCDEBUG*/
-    return TRUE;
-  }
-
-  if (nb == -1) { /* read error */
-    async_server_list_request_error (ctx,
-        _("Read from socket failed: %s."), mystrerror());
-    return FALSE; /* remove callback */
-  }
-
-  if (rem == 0) { /* buffer capacity exceeded */
-    async_server_list_request_error (ctx,
-        _("Metaserver response exceeds buffer capacity."));
-    return FALSE; /* remove callback */
-  }
-    
-  if (count == 0) { /* connection closed */
-    freelog (LOG_DEBUG, "hmrr   connection closed, we are done reading"); /*ASYNCDEBUG*/
-    ctx->buf[ctx->buflen] = '\0';
-    my_closesocket (ctx->sock);
-    ctx->sock = -1;
-    ctx->input_id = -1;
-    process_metaserver_response (ctx);
-    return FALSE; /* we are done reading */
-  }
-
-  freelog (LOG_DEBUG, "hmrr   waiting for more data..."); /*ASYNCDEBUG*/
-  return TRUE; /* keep reading */
-
-}
 #ifdef HAVE_WINSOCK
 /**************************************************************************
   ...
 **************************************************************************/
-static void wait_for_socket_readyness(int sock, int flags)
+static int check_really_connected (int sock)
 {
-    int counter = 0;
-    int ret = 0;
-    fd_set fdsr,fdsw,fdse;
+  int counter = 0;
+  int ret = 0;
+  fd_set fdsw;
     
-    struct timeval ywait;
-    ywait.tv_sec = 0;
-    ywait.tv_usec = 1000;
+  struct timeval ywait;
+  ywait.tv_sec = 0;
+  ywait.tv_usec = 0; /* Do not block, just check */
 
-  do {
-    counter++;
-    _sleep(5);
-    FD_ZERO(&fdsr);
-    FD_ZERO(&fdsw);
-    FD_ZERO(&fdse);
-    if(flags & INPUT_WRITE) {
-      FD_SET(sock,&fdsw);
-    } else if (flags & INPUT_READ) FD_SET(sock,&fdsr);
-    ret = select(0, &fdsr, &fdsw, &fdse, &ywait);
-  }while(!ret);
-  if(ret==SOCKET_ERROR) {
+  FD_ZERO (&fdsw);
+  FD_SET (sock, &fdsw);
+  ret = select (sock + 1, NULL, &fdsw, NULL, &ywait);
+  
+  freelog (LOG_DEBUG, "sock=%d ret=%d", sock, ret);
+  if (ret == SOCKET_ERROR) {
     int error = WSAGetLastError();
-      freelog(LOG_ERROR, "socket readyness loop - returnval = %i, counter = %i, error=%i",ret,counter,error);
-  } else 
-    freelog(LOG_DEBUG, "readyness loop - returnval = %i, counter = %i",ret,counter);
+    freelog (LOG_ERROR, _("Winsock error during select: %d"), error);
+    return -1;
+  } 
+
+  return ret;
 }
 #endif
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool metaserver_input_ready_cb (int sock, int flags, void *data)
+static bool metaserver_connected_cb (int sock, int flags, void *data)
 {
   struct async_server_list_context *ctx = data;
+  int len;
 
-  freelog (LOG_DEBUG, "mirc metaserver_input_ready_cb: sock=%d flags=%d data=%p", /*ASYNCDEBUG*/
-           sock, flags, data); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "sock=%d flags=%d data=%p", 
+           sock, flags, data); 
 
   assert (ctx != NULL);
   assert (sock == ctx->sock);
 
-  if (flags & INPUT_WRITE) {
-    #ifdef HAVE_WINSOCK
-    wait_for_socket_readyness(sock, flags);
-    #endif
-    return handle_metaserver_write_ready (ctx, flags);
-  }
-
-  if (flags & INPUT_READ) {
-    #ifdef HAVE_WINSOCK
-    wait_for_socket_readyness(sock, flags);
-    #endif
-    return handle_metaserver_read_ready (ctx, flags);
+  if (flags & INPUT_ERROR) {
+    async_server_list_request_error (ctx,
+        _("Failed to connect to metaserver."));
+    return FALSE;
   }
   
-  if(flags & INPUT_ERROR) {
-    freelog (LOG_DEBUG, "hmrr   connection INPUT_ERROR"); /*ASYNCDEBUG*/
-    ctx->buf[ctx->buflen] = '\0';
-    my_closesocket (ctx->sock);
-    ctx->sock = -1;
-    ctx->input_id = -1;
-    process_metaserver_response (ctx);
-    return FALSE; /* we are done reading */    
+  if (flags & INPUT_CLOSED) {
+    async_server_list_request_error (ctx, _("Metaserver closed "
+        "the connection before it was even established!"));
+    return FALSE;
   }
+
+#ifdef WIN32_NATIVE
+  if (check_really_connected (sock) <= 0) {
+    freelog (LOG_DEBUG, "got connection callback, but not really connected!"
+             " waiting some more..."); 
+    return TRUE;
+  }
+#endif
+
+  freelog (LOG_DEBUG, "connection to metaserver succeeded"); 
   
-  if(flags & INPUT_CLOSED) {
-    freelog (LOG_DEBUG, "hmrr   connection INPUT_CLOSED"); /*ASYNCDEBUG*/
-    ctx->buf[ctx->buflen] = '\0';
-    my_closesocket (ctx->sock);
-    ctx->sock = -1;
-    ctx->input_id = -1;
-    process_metaserver_response (ctx);
-    return FALSE; /* we are done reading */    
-  }
+  ctx->connected = TRUE;
+  ctx->have_data_to_write = TRUE;
+  len = generate_server_list_http_request (ctx->buf, sizeof (ctx->buf),
+                                           ctx->urlpath,
+                                           ctx->metaname,
+                                           ctx->metaport);
+  ctx->buflen = len;
+  freelog (LOG_DEBUG, "%d byte generated request copied to " 
+           "write buffer", len); 
 
-  assert (0);
-
+  ctx->input_id = add_net_input_callback (sock, INPUT_WRITE,
+                                          metaserver_write_cb,
+                                          ctx, NULL);
+    
+  freelog (LOG_DEBUG, "waiting for socket %d to become writable", sock);
   return FALSE;
 }
 /**************************************************************************
@@ -1071,8 +1050,8 @@ metaserver_name_lookup_callback (union my_sockaddr *addr_result,
   struct async_server_list_context *ctx = data;
   struct sockaddr *addr;
 
-  freelog (LOG_DEBUG, "mnlc metaserver_name_lookup_callback: " /*ASYNCDEBUG*/
-           "addr_result=%p data=%p", addr_result, data); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "mnlc metaserver_name_lookup_callback: " 
+           "addr_result=%p data=%p", addr_result, data); 
 
   ctx->nlsa_id = -1;
 
@@ -1115,10 +1094,8 @@ metaserver_name_lookup_callback (union my_sockaddr *addr_result,
   ctx->connected = FALSE;
   ctx->have_data_to_write = FALSE;
   ctx->input_id = add_net_input_callback (sock, INPUT_WRITE,
-                                          metaserver_input_ready_cb,
+                                          metaserver_connected_cb,
                                           ctx, NULL);
-
-  /* continued in metaserver_input_ready_cb */
 }
 /**************************************************************************
   Cancels an asynchronous server list request in progress. id is the
@@ -1129,27 +1106,27 @@ void *cancel_async_server_list_request (int id)
   struct async_server_list_context *ctx;
   void *ret = NULL;
 
-  freelog (LOG_DEBUG, "caslr cancel_async_server_list_request: id=%d", id); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "caslr cancel_async_server_list_request: id=%d", id); 
 
   assert (id > 0);
   
   check_init_async_tables();
 
-  freelog (LOG_DEBUG, "caslr   deleting id=%d from aslr table", id); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "caslr   deleting id=%d from aslr table", id); 
   ctx = hash_delete_entry (async_server_list_request_table,
                            INT_TO_PTR (id));
 
   if (ctx) {
-    freelog (LOG_DEBUG, "caslr   id=%d found in table ctx=%p", id, ctx); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "caslr   id=%d found in table ctx=%p", id, ctx); 
     if (ctx->datafree) {
-      freelog (LOG_DEBUG, "caslr    calling datafree %p on %p", ctx->datafree, ctx->userdata); /*ASYNCDEBUG*/
+      freelog (LOG_DEBUG, "caslr    calling datafree %p on %p", ctx->datafree, ctx->userdata); 
       (*ctx->datafree) (ctx->userdata);
     } else {
       ret = ctx->userdata;
     }
     aslcfree (ctx);
   } else {
-    freelog (LOG_DEBUG, "caslr   id=%d not in table!", id); /*ASYNCDEBUG*/
+    freelog (LOG_DEBUG, "caslr   id=%d not in table!", id); 
   }
   return ret;
 }
@@ -1181,8 +1158,8 @@ int create_server_list_async (char *errbuf, int n_errbuf,
   int metaport, nlsa_id;
   struct async_server_list_context *ctx;
 
-  freelog (LOG_DEBUG, "csla create_server_list_async: cb=%p data=%p datafree=%p", /*ASYNCDEBUG*/
-           cb, data, datafree); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "csla create_server_list_async: cb=%p data=%p datafree=%p", 
+           cb, data, datafree); 
 
   check_init_async_tables();
 
@@ -1198,7 +1175,7 @@ int create_server_list_async (char *errbuf, int n_errbuf,
   }
 
   ctx = fc_malloc (sizeof (struct async_server_list_context));
-  freelog (LOG_DEBUG, "csla   new async_server_list_context %p", ctx); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "csla   new async_server_list_context %p", ctx); 
   mystrlcpy (ctx->urlpath, urlpath, strlen (urlpath) + 1);
   mystrlcpy (ctx->metaname, metaname, strlen (metaname) + 1);
   ctx->metaport = metaport;
@@ -1212,7 +1189,7 @@ int create_server_list_async (char *errbuf, int n_errbuf,
   
   nlsa_id = net_lookup_service_async (metaname, metaport,
       metaserver_name_lookup_callback, ctx, NULL);
-  freelog (LOG_DEBUG, "csla   got nlsa_id = %d", nlsa_id); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "csla   got nlsa_id = %d", nlsa_id); 
   
   if (nlsa_id == -1) {
     my_snprintf (errbuf, n_errbuf,
@@ -1234,17 +1211,17 @@ int create_server_list_async (char *errbuf, int n_errbuf,
   
   ctx->nlsa_id = nlsa_id;
   ctx->req_id = ++async_server_list_request_id;
-  freelog (LOG_DEBUG, "csla   asl req_id = %d", ctx->req_id); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "csla   asl req_id = %d", ctx->req_id); 
 
-  freelog (LOG_DEBUG, "csla   about to insert key %d into table...", ctx->req_id); /*ASYNCDEBUG*/
-  freelog (LOG_DEBUG, "csla   table: entries=%d buckets=%d deleted=%d", /*ASYNCDEBUG*/
-          hash_num_entries (async_server_list_request_table), /*ASYNCDEBUG*/
-          hash_num_buckets (async_server_list_request_table), /*ASYNCDEBUG*/
-          hash_num_deleted (async_server_list_request_table)); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "csla   about to insert key %d into table...", ctx->req_id); 
+  freelog (LOG_DEBUG, "csla   table: entries=%d buckets=%d deleted=%d", 
+          hash_num_entries (async_server_list_request_table), 
+          hash_num_buckets (async_server_list_request_table), 
+          hash_num_deleted (async_server_list_request_table)); 
   hash_insert (async_server_list_request_table,
                INT_TO_PTR (ctx->req_id), ctx);
-  freelog (LOG_DEBUG, "csla   inserted ctx=%p req_id=%d into aslr table", /*ASYNCDEBUG*/
-           ctx, ctx->req_id); /*ASYNCDEBUG*/
+  freelog (LOG_DEBUG, "csla   inserted ctx=%p req_id=%d into aslr table", 
+           ctx, ctx->req_id); 
 
   /* continued in metaserver_name_lookup_callback */
   
@@ -1497,7 +1474,7 @@ struct server_list *get_lan_server_list(void)
 
     if (!mystrcasecmp("none", servername)) {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
-			   sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
+                           sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
       sz_strlcpy(servername, inet_ntoa(fromend.sockaddr_in.sin_addr));
     }
 
@@ -1505,7 +1482,7 @@ struct server_list *get_lan_server_list(void)
     server_list_iterate(*lan_servers, aserver) {
       if (!mystrcasecmp(aserver->host, servername) 
           && !mystrcasecmp(aserver->port, port)) {
-	goto again;
+        goto again;
       } 
     } server_list_iterate_end;
 
