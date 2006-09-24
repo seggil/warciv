@@ -72,6 +72,8 @@
 
 #include "freeciv.ico"
 
+#define WARCLIENT_VERSION "0.8.10a"
+
 const char *client_string = "gui-gtk-2.0";
 
 GtkWidget *map_canvas;                  /* GtkDrawingArea */
@@ -1173,7 +1175,7 @@ void ui_main(int argc, char **argv)
     gtk_window_fullscreen(GTK_WINDOW(toplevel));
   }
   
-  gtk_window_set_title(GTK_WINDOW (toplevel), _("Freeciv war client 0.8.7a devel"));
+  gtk_window_set_title(GTK_WINDOW (toplevel), _("Freeciv war client "WARCLIENT_VERSION));
 
   g_signal_connect(toplevel, "delete_event",
       G_CALLBACK(quit_dialog_callback), NULL);
