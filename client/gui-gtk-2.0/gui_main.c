@@ -72,7 +72,7 @@
 
 #include "freeciv.ico"
 
-#define WARCLIENT_VERSION "0.8.10a"
+#define WARCLIENT_VERSION "0.8.11a devel"
 
 const char *client_string = "gui-gtk-2.0";
 

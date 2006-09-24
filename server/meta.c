@@ -63,7 +63,7 @@ static char  metaname[MAX_LEN_ADDR];
 static int   metaport;
 static char *metaserver_path;
 
-static char meta_patches[256] = "warserver 0.8.10a";
+static char meta_patches[256] = "warserver 0.8.11a devel";
 static char meta_topic[256] = "NEW GAME";
 static char meta_message[256] = "NEW GAME";
 
