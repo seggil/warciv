@@ -213,6 +213,7 @@ void update_unit_info_label(struct unit *punit)
     case HOVER_AIRLIFT_DEST:
     case HOVER_MYPATROL:
     case HOVER_DELAYED_GOTO:
+    case HOVER_RALLY_POINT:
     case HOVER_DELAYED_AIRLIFT:
       gdk_window_set_cursor(root_window, NULL);
     }

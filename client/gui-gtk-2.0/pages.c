@@ -74,6 +74,7 @@ static int num_lanservers_timer = 0;
 
 static GtkWidget *statusbar, *statusbar_frame;
 static GtkWidget *network_message_dialog = NULL;
+static GtkWidget *start_page_entry = NULL;
 
 static struct server_list *internet_server_list = NULL;
 static int server_list_request_id = -1;
@@ -1278,6 +1279,7 @@ GtkWidget *create_start_page(void)
       G_CALLBACK(inputline_handler), NULL);
   g_signal_connect(entry, "activate",
       G_CALLBACK(inputline_return), NULL);
+  start_page_entry = entry;
 
   bbox = gtk_hbutton_box_new();
   gtk_box_set_spacing(GTK_BOX(bbox), 12);
@@ -1875,7 +1877,10 @@ void set_client_page(enum client_pages page)
 
   switch (new_page) {
   case PAGE_MAIN:
+    break;
   case PAGE_START:
+    if (start_page_entry)
+      gtk_widget_grab_focus (start_page_entry);
     break;
   case PAGE_NATION:
     gtk_tree_view_focus(gtk_tree_selection_get_tree_view(nation_selection));

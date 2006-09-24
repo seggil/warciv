@@ -91,6 +91,7 @@ extern GtkWidget *	top_notebook;
 extern GtkWidget *	bottom_notebook;
 extern GtkTextBuffer *	message_buffer;
 extern GtkTextBuffer *	network_message_buffer;
+extern GtkWidget *      inputline;
 
 void enable_menus(bool enable);
 

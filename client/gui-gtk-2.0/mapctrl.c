@@ -288,6 +288,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         my_snprintf (buf, sizeof (buf), "@L%d,%d", ptile->x, ptile->y);
       }
       chatline_entry_append_text (buf);
+      gtk_widget_grab_focus (inputline);
     }
     /* Plain Middle click. */
     else if (ptile) {

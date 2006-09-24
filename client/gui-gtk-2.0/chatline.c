@@ -149,7 +149,7 @@ follow_if_link (GtkWidget   *text_view,
   char buf[128];
   const char *city_name;
   struct city *pcity;
-  struct tile *ptile;
+  struct tile *ptile = NULL;
 
   tags = gtk_text_iter_get_tags (iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
@@ -170,7 +170,7 @@ follow_if_link (GtkWidget   *text_view,
             "of any city I know about :("), city_name);
         append_output_window (buf);
       } else {
-        center_tile_mapcanvas (pcity->tile);
+        ptile = pcity->tile;
       }
       break;
 
@@ -183,7 +183,7 @@ follow_if_link (GtkWidget   *text_view,
             "of any city I know about :("), id);
         append_output_window (buf);
       } else {
-        center_tile_mapcanvas (pcity->tile);
+        ptile = pcity->tile;
       }
       break;
       
@@ -196,13 +196,15 @@ follow_if_link (GtkWidget   *text_view,
         my_snprintf (buf, sizeof (buf), _("Warclient: (%d, %d) is not a valid "
             "location on this map!"), x, y);
         append_output_window (buf);
-      } else {
-        center_tile_mapcanvas (ptile);
       }
       break;
 
     default:
       break;
+    }
+    if (ptile) {
+      center_tile_mapcanvas (ptile);
+      gtk_widget_grab_focus (GTK_WIDGET (map_canvas));
     }
   }
 
@@ -541,7 +543,9 @@ void real_append_output_window (const char *astring, int conn_id)
   textbuf_insert_time (buf, &iter);
 
   text_start = gtk_text_buffer_create_mark (buf, NULL, &iter, TRUE);
-  if (get_client_state() == CLIENT_GAME_RUNNING_STATE) {
+  if (get_client_state() == CLIENT_GAME_RUNNING_STATE
+      || get_client_state() == CLIENT_GAME_OVER_STATE)
+  {
     append_text_with_links (buf, astring);
   } else {
     gtk_text_buffer_insert (buf, &iter, astring, -1);
