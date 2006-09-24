@@ -27,6 +27,7 @@ enum cursor_hover_state {
   HOVER_MYPATROL,
   HOVER_AIRLIFT_SOURCE,
   HOVER_AIRLIFT_DEST,
+  HOVER_RALLY_POINT,
 };
 
 #define  FILTER_ALL 1
@@ -69,6 +70,9 @@ void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
 void do_airlift(struct tile *ptile);
 void show_cities_in_airlift_queue(void);
+void key_select_rally_point(void);
+void key_clear_rally_point_for_selected_cities(void);
+void check_rally_points(struct city *pcity, struct unit *punit);
 void key_set_patrol_position(struct tile *ptile);
 void key_select_patrol_tile(void);
 void request_clear_patrol_queue(void);
@@ -227,5 +231,7 @@ extern int num_units_below;
 
 void control_queues_init (void);
 void control_queues_free (void);
+
+void check_dead_rally_sources (void);
 
 #endif  /* FC__CONTROL_H */

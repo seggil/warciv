@@ -184,6 +184,7 @@ enum MenuID {
   MENU_WARCLIENT_PATROL,
   MENU_WARCLIENT_PATROL_SELECT_TILE,
   MENU_WARCLIENT_CLEAR_PATROL,
+  MENU_WARCLIENT_CLEAR_RALLIES,
   MENU_WARCLIENT_CARAVAN_POPUP,
   MENU_WARCLIENT_CARAVAN_TRADE,
   MENU_WARCLIENT_CARAVAN_BUILD,
@@ -465,13 +466,13 @@ static void orders_menu_callback(gpointer callback_data,
      key_unit_build(); 
      break;
    case MENU_ORDER_ROAD:
-    if (get_unit_in_focus()) {
-      if (unit_can_est_traderoute_here(get_unit_in_focus()))
-	key_unit_traderoute();
-      else
-	key_unit_road();
-    }
-    break;
+     if (get_unit_in_focus()) {
+       if (unit_can_est_traderoute_here(get_unit_in_focus()))
+         key_unit_traderoute();
+       else
+         key_unit_road();
+     }
+     break;
    case MENU_ORDER_IRRIGATE:
     key_unit_irrigate();
     break;
@@ -707,6 +708,9 @@ static void warclient_menu_callback(gpointer callback_data,
     break;
    case MENU_WARCLIENT_CLEAR_PATROL:
         request_clear_patrol_queue();
+        break;
+   case MENU_WARCLIENT_CLEAR_RALLIES:
+        key_clear_rally_point_for_selected_cities();
         break;
    case MENU_WARCLIENT_CARAVAN_POPUP:
         default_caravan_action = 0;
@@ -998,7 +1002,7 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Government") "/" N_("_Change Government"),           NULL,
 	NULL,			0,					"<Branch>"	},
   { "/" N_("Government") "/" N_("_Change Government") "/" N_("_Revolution..."),
-                                                        "<shift>r",
+                                                        NULL,
 	government_menu_callback,	MENU_GOVERNMENT_REVOLUTION			},
   { "/" N_("_Government") "/" N_("_Change Government") "/sep1", NULL,
 	NULL,			0,					"<Separator>"	},
@@ -1322,6 +1326,10 @@ static GtkItemFactoryEntry menu_items[]	=
 	warclient_menu_callback,	MENU_WARCLIENT_PATROL_SELECT_TILE						},
   { "/" N_("Warclient") "/" N_("Clear patrol queue"),			NULL,
 	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_PATROL						},
+  { "/" N_("Warclient") "/sep4",				NULL,
+	NULL,			0,					"<Separator>"	},
+  { "/" N_("Warclient") "/" N_("Clear rallies in selected cities"),			"<shift>r",
+	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_RALLIES						},
 
   /* Reports menu ... */
   { "/" N_("_Reports"),					NULL,

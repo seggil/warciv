@@ -262,7 +262,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       popit(ev, ptile);
     }
     /* LMB in Area Selection mode. */
-    else if(tiles_hilited_cities) {
+    else if(tiles_hilited_cities && hover_state == HOVER_NONE) {
       if (ptile) {
         toggle_tile_hilite(ptile);
       }
@@ -279,7 +279,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     if (ev->state & GDK_CONTROL_MASK) {
       wakeup_button_pressed(ev->x, ev->y);
     }
-    /* <ALT> + MMB: Insert @locX,Y into entry. */
+    /* <ALT> + MMB: Insert links into entry. */
     else if (ptile && (ev->state & GDK_MOD1_MASK)) {
       char buf[256];
       if (ptile->city) {
@@ -312,11 +312,13 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
        *  release it on another widget, and return to canvas
        *  to find rectangle still active.
        */
+
       if (rectangle_active) {
         release_right_button(ev->x, ev->y);
         return TRUE;
       }
-      cancel_tile_hiliting();
+      if (hover_state != HOVER_RALLY_POINT)
+        cancel_tile_hiliting();
       if (hover_state == HOVER_NONE) {
         anchor_selection_rectangle(ev->x, ev->y);
         rbutton_down = TRUE; /* causes rectangle updates */

@@ -44,6 +44,15 @@
 #include "control.h"
 #include "support.h"
 
+struct rally_point {
+  int x, y;
+  int refcount;
+};
+static int rally_point_ref (struct rally_point *rp);
+static int rally_point_unref (struct rally_point *rp);
+
+struct hash_table *rally_table = NULL;
+
 struct delayed_goto_data {
 	int unit_id;
 	int type;
@@ -131,10 +140,14 @@ static void do_mass_order (enum unit_activity activity);
 **************************************************************************/
 void control_queues_free (void)
 {
-  hash_iterate (patrol_table, void *, key, struct patrol_data *, pd) {
-    free (pd);
-  } hash_iterate_end;
-  hash_delete_all_entries (patrol_table);
+  if (patrol_table) {
+    hash_iterate (patrol_table, void *, key, struct patrol_data *, pd) {
+      free (pd);
+    } hash_iterate_end;
+    hash_delete_all_entries (patrol_table);
+    hash_free (patrol_table);
+    patrol_table = NULL;
+  }
 
   delayed_goto_data_list_iterate (DGqueue, dgd) {
     free (dgd);
@@ -142,6 +155,15 @@ void control_queues_free (void)
   delayed_goto_data_list_unlink_all (&DGqueue);
 
   tile_list_unlink_all (&ALqueue);
+
+  if (rally_table) {
+    hash_iterate (rally_table, void *, key, struct rally_point *, rp) {
+      rally_point_unref (rp);
+    } hash_iterate_end;
+    hash_delete_all_entries (rally_table);
+    hash_free (rally_table);
+    rally_table = NULL;
+  }
 }
   
 /**************************************************************************
@@ -149,9 +171,14 @@ void control_queues_free (void)
 **************************************************************************/
 void control_queues_init (void)
 {
-  patrol_table = hash_new (hash_fval_int, hash_fcmp_int);
+  if (!patrol_table) {
+    patrol_table = hash_new (hash_fval_int, hash_fcmp_int);
+  }
   delayed_goto_data_list_init (&DGqueue);
   tile_list_init (&ALqueue);
+  if (!rally_table) {
+    rally_table = hash_new (hash_fval_int, hash_fcmp_int);
+  }
 }
 /**************************************************************************
 ...
@@ -972,6 +999,74 @@ void request_unit_clear_delayed_orders(void)
   delayed_goto_data_list_unlink_all (&DGqueue);
   
   append_output_window(_("Game: Delayed orders queue cleared"));
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static int rally_point_ref (struct rally_point *rp)
+{
+  freelog (LOG_DEBUG, "incrementing refcount for rally_point %p"
+           " refcount=%d", rp, rp->refcount);
+  assert (rp->refcount >= 0);
+  rp->refcount++;
+  return rp->refcount;
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static int rally_point_unref (struct rally_point *rp)
+{
+  freelog (LOG_DEBUG, "decrementing refcount for rally_point %p"
+           " refcount=%d", rp, rp->refcount);
+  assert (rp->refcount > 0);
+  rp->refcount--;
+  if (rp->refcount == 0) {
+    freelog (LOG_DEBUG, "refcount for rally_point %p reached 0, freeing",
+             rp);
+    free (rp);
+    return 0;
+  }
+  return rp->refcount;
+}
+/**************************************************************************
+  Decrement the refcount for rallypoints whose cities no longer exist
+  (or the player no longer controls).
+**************************************************************************/
+void check_dead_rally_sources (void)
+{
+  struct city *pcity;
+  hash_iterate (rally_table, void *, key, struct rally_point *, rp) {
+    int id = PTR_TO_INT (key);
+    pcity = find_city_by_id (id);
+    if (!pcity || pcity->owner != game.player_idx) {
+      if (0 == rally_point_unref (rp))
+        hash_delete_entry (rally_table, key);
+    }
+  } hash_iterate_end;
+}
+/**************************************************************************
+  ... 
+**************************************************************************/
+void key_select_rally_point (void)
+{
+  int n = 0;
+  if (!tiles_hilited_cities)
+    return;
+  
+  city_list_iterate (game.player_ptr->cities, pcity) {
+    if (is_city_hilited (pcity))
+      n++;
+  } city_list_iterate_end;
+  
+  if (n > 0) {
+    char buf[128];
+    my_snprintf (buf, sizeof (buf),
+        _("Warclient: Select rally point for %d %s."),
+        n, PL_("city", "cities", n));
+    append_output_window (buf);
+    
+    hover_state = HOVER_RALLY_POINT;
+  }
 }
 /**************************************************************************
 ... automatic airlifting destination selection
@@ -1943,7 +2038,102 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 
   if (punit_focus == punit) update_menus();
 }
+/**************************************************************************
+  ...
+**************************************************************************/
+void key_clear_rally_point_for_selected_cities (void)
+{
+  struct rally_point *rp;
+  char buf[1024];
+  int count = 0;
+  
+  assert (rally_table != NULL);
 
+  if (!tiles_hilited_cities)
+    return;
+  
+  my_snprintf (buf, sizeof (buf), _("Warclient: Removed rally points: "));
+
+  city_list_iterate (game.player_ptr->cities, pcity) {
+    if (!is_city_hilited (pcity))
+      continue;
+    rp = hash_delete_entry (rally_table, INT_TO_PTR (pcity->id));
+    if (!rp)
+      continue;
+    rally_point_unref (rp);
+    count++;
+    cat_snprintf (buf, sizeof (buf), "%s%s (%d, %d)",
+                  count == 1 ? "" : ", ",
+                  pcity->name, rp->x, rp->y);
+  } city_list_iterate_end;
+
+  if (count > 0) {
+    cat_snprintf (buf, sizeof (buf), ".");
+    append_output_window (buf);
+  }
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+void check_rally_points (struct city *pcity, struct unit *punit)
+{
+  struct rally_point *rp;
+  
+  assert (rally_table != NULL);
+
+  if (!pcity || !punit || !punit->is_new)
+    return;
+  
+  rp = hash_lookup_data (rally_table, INT_TO_PTR (pcity->id));
+  if (rp) {
+    struct tile *ptile = map_pos_to_tile (rp->x, rp->y);
+    if (ptile) {
+      send_goto_unit (punit, ptile);
+    }
+  }
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static void set_rally_point_for_selected_cities (struct tile *ptile)
+{
+  struct rally_point *rp, *oldrp;
+  char buf[1024];
+  
+  assert (rally_table != NULL);
+
+  if (!tiles_hilited_cities || !ptile)
+    return;
+    
+  rp = fc_malloc (sizeof (struct rally_point));
+  rp->x = ptile->x;
+  rp->y = ptile->y;
+  rp->refcount = 0;
+  freelog (LOG_DEBUG, "new rally_point %p refcount=%d\n", rp, rp->refcount);
+  rally_point_ref (rp);
+
+  my_snprintf (buf, sizeof (buf), _("Warclient: Rallying to (%d, %d) "
+                                    "from: "),
+               rp->x, rp->y);
+  
+  city_list_iterate (game.player_ptr->cities, pcity) {
+    if (!is_city_hilited (pcity))
+      continue;
+    oldrp = hash_replace (rally_table, INT_TO_PTR (pcity->id), rp);
+    rally_point_ref (rp);
+    if (oldrp) {
+      rally_point_unref (oldrp);
+    }
+    cat_snprintf (buf, sizeof (buf), "%s%s",
+                  rp->refcount == 1 ? "" : ", ",
+                  pcity->name);
+  } city_list_iterate_end;
+
+  if (rally_point_unref (rp) > 0) {
+    cat_snprintf (buf, sizeof (buf), ".");
+    append_output_window (buf);
+  }
+}
 /**************************************************************************
  Handles everything when the user clicked a tile
 **************************************************************************/
@@ -1969,6 +2159,10 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
        add_unit_to_delayed_goto(ptile);
        hover_state = HOVER_NONE;
        return;
+  } else if (ptile && hover_state == HOVER_RALLY_POINT) {
+    set_rally_point_for_selected_cities (ptile);
+    hover_state = HOVER_NONE;
+    return;
   }else if(ptile && hover_state==HOVER_DELAYED_AIRLIFT) {
        schedule_delayed_airlift(ptile);
        hover_state = HOVER_NONE;
@@ -2294,6 +2488,7 @@ void key_cancel_action(void)
       || hover_state == HOVER_AIRLIFT_SOURCE
       || hover_state == HOVER_AIRLIFT_DEST
       || hover_state == HOVER_MYPATROL
+      || hover_state == HOVER_RALLY_POINT
       || hover_state == HOVER_DELAYED_AIRLIFT)
   {
       hover_state = HOVER_NONE;

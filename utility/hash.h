@@ -100,8 +100,14 @@ struct hash_table {
 
 
 /**************************************************************************
-  Iterates over all keys, values in the hash table. It is safe to delete
-  entries in the table while iterating.
+  Iterates over all keys, values in the hash table. It is now safe to
+  delete entries in the table while iterating.
+  NB If the key type is not a pointer (e.g. it is "int") be sure to use a
+     conversion macro (e.g. PTR_TO_INT) instead of just setting key_type
+     to int below.
+  NB It is not safe to insert or replace hash entries while iterating since
+     those functions might cause the table to resize resulting in all
+     manner of mayhem.
 ***************************************************************************/
 #define hash_iterate(phash_table, key_type, keyvar, value_type, valuevar)\
 {\
@@ -119,5 +125,8 @@ struct hash_table {
   }\
 }
     
+#define hash_maybe_expand(htab) hash_maybe_resize((htab), TRUE)
+#define hash_maybe_shrink(htab) hash_maybe_resize((htab), FALSE)
+void hash_maybe_resize (struct hash_table *h, bool expandingp);
 
 #endif  /* FC__HASH_H */

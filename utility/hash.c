@@ -554,7 +554,7 @@ static void hash_resize_table(struct hash_table *h, unsigned int new_nbuckets)
 **************************************************************************/
 #define hash_maybe_expand(htab) hash_maybe_resize((htab), TRUE)
 #define hash_maybe_shrink(htab) hash_maybe_resize((htab), FALSE)
-static void hash_maybe_resize(struct hash_table *h, bool expandingp)
+void hash_maybe_resize(struct hash_table *h, bool expandingp)
 {
   unsigned int num_used, limit, new_nbuckets;
 
@@ -736,7 +736,10 @@ void *hash_delete_entry_full(struct hash_table *h, const void *key,
 {
   struct hash_bucket *bucket;
 
-  hash_maybe_shrink(h);  
+  /* By not potentially resizing here, it is safe to call this function
+     in a has_iterate loop */
+  /* hash_maybe_shrink(h); */
+
   bucket = internal_lookup(h, key, HASH_VAL(h,key));
   if (bucket->used == BUCKET_USED) {
     const void *ret = bucket->data;

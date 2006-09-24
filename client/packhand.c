@@ -873,6 +873,8 @@ void handle_new_year(int year, int turn)
   }
 
   agents_new_turn();
+
+  check_dead_rally_sources();
 }
 
 /**************************************************************************
@@ -1290,6 +1292,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       /* The unit is in a city - obviously it's occupied. */
       pcity->client.occupied = TRUE;
     }
+
+    check_rally_points (pcity, punit);
   } /*** End of Create new unit ***/
 
   assert(punit != NULL);

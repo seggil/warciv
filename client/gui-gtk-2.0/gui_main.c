@@ -468,7 +468,13 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
           return FALSE;
         }
         break;
-  
+      case GDK_r:  /* shared by MENU_ORDER_ROAD */
+        if (tiles_hilited_cities) {
+          key_select_rally_point();
+        } else {
+          return FALSE;
+        }
+        break;
       case GDK_t:
          /* Workaround for conflict with menu shortcuts. If you add other
           key handlers here be sure to check menu.c for conflicts otherwise
