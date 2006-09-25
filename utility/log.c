@@ -24,6 +24,7 @@
 #include "mem.h"
 #include "shared.h"
 #include "support.h"
+#include "time.h"
 
 #include "log.h"
 
@@ -241,11 +242,18 @@ Let the callback do its own level formating and add a '\n' if it wants.
 **************************************************************************/
 static void log_write(FILE *fs, int level, char *message)
 {
+	static time_t ltime;
+	char *timebuf;
+
   if ((!log_filename) && log_callback) {
     log_callback(level, message);
   }
   if (log_filename || (!log_callback)) {
-    fc_fprintf(fs, "%-8s:%-12s:line %-5i:%-24s:  %s\n", loglevelstr[level],l_file, l_line, l_fncname, message);
+    time(&ltime);
+    timebuf = ctime(&ltime);
+    timebuf[24]='\0';
+
+    fc_fprintf(fs, "%-8s: %-26s: %-12s: line %-5i: %-25s - %s\n", loglevelstr[level],timebuf,l_file, l_line, l_fncname, message);
     fflush(fs);
   }
 }
