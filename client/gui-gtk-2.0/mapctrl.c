@@ -262,10 +262,10 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       popit(ev, ptile);
     }
     /* LMB in Area Selection mode. */
-    else if(tiles_hilited_cities && hover_state == HOVER_NONE) {
-      if (ptile) {
-        toggle_tile_hilite(ptile);
-      }
+    else if (tiles_hilited_cities && ptile
+             && hover_state == HOVER_NONE)
+    {
+      toggle_tile_hilite (ptile);
     }
     /* Plain LMB click. */
     else {

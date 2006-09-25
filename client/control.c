@@ -900,47 +900,58 @@ void schedule_delayed_airlift(struct tile *ptile)
 /**************************************************************************
   ...
 **************************************************************************/
-void add_unit_to_delayed_goto(struct tile *ptile)
+void add_unit_to_delayed_goto (struct tile *ptile)
 {
   struct unit *punit = punit_focus;
-  struct unit *tunit;
   struct unit_list *ulist;
   struct delayed_goto_data *dgd = NULL;
-  char txt[255];
+  int count = 0;
 
-  tunit = NULL;
   if (punit == NULL || hover_state != HOVER_DELAYED_GOTO)
     return;
 
-  if (goto_mode)
-  {//goto for all units of the selected unit type on the same tile
-    if(goto_mode==3)ulist = &game.player_ptr->units;
-            else ulist = &punit->tile->units;
-    unit_list_iterate(*ulist, tunit)
-    {
-       if((goto_mode == 2 || tunit->type == punit->type)&&(tunit->tile->continent == punit->tile->continent))
-       {
-          if(unit_satisfies_filter(tunit)) {
-         	  my_snprintf(txt,sizeof(txt), _("Game: Adding unit to goto queue : unit.id %i,  target.x = %i, target.y = %i"),tunit->id, ptile->x, ptile->y);
-           	  append_output_window(txt);
-              dgd = fc_malloc (sizeof (struct delayed_goto_data));
-              dgd->unit_id=tunit->id;
-           	  dgd->type = delayed_para_or_nuke;
-           	  memcpy(&dgd->target_tile, ptile, sizeof(struct tile));
-              delayed_goto_data_list_insert_back(&DGqueue, dgd);
-           }
-       }
-    }unit_list_iterate_end; 
-  }else //goto_mode==0 - single unit
-  {//standard goto
-     my_snprintf(txt,sizeof(txt), _("Game: Adding unit to goto queue : unit.id %i,  target.x = %i, target.y = %i"),punit->id, ptile->x, ptile->y);
-     append_output_window(txt);
-     dgd = fc_malloc (sizeof (struct delayed_goto_data));
-     dgd->unit_id=punit->id;
-     dgd->type = delayed_para_or_nuke;
-     memcpy(&dgd->target_tile, ptile, sizeof(struct tile));
-     delayed_goto_data_list_insert_back (&DGqueue, dgd);
+  if (goto_mode != 0) {
+    /* goto for all units of the selected unit type on the same tile */
+    
+    if (goto_mode == 3) {
+      ulist = &game.player_ptr->units;
+    } else {
+      ulist = &punit->tile->units;
+    }
+    
+    unit_list_iterate (*ulist, tunit) {
+      if (!((goto_mode == 2 || tunit->type == punit->type)
+          && tunit->tile->continent == punit->tile->continent
+          && unit_satisfies_filter (tunit)))
+        continue;
+        
+      dgd = fc_malloc (sizeof (struct delayed_goto_data));
+      dgd->unit_id = tunit->id;
+      dgd->type = delayed_para_or_nuke;
+      memcpy (&dgd->target_tile, ptile, sizeof (struct tile));
+      delayed_goto_data_list_insert_back (&DGqueue, dgd);
+      count++;
+    } unit_list_iterate_end;
+    
+  } else { 
+    /* single unit goto */
+
+    dgd = fc_malloc (sizeof (struct delayed_goto_data));
+    dgd->unit_id = punit->id;
+    dgd->type = delayed_para_or_nuke;
+    memcpy (&dgd->target_tile, ptile, sizeof (struct tile));
+    delayed_goto_data_list_insert_back (&DGqueue, dgd);
+    count++;
   }
+  
+  if (count) {
+    char txt[255];
+    my_snprintf (txt, sizeof (txt),
+        _("Warclient: Adding %d unit goto (%d, %d) to queue."),
+        count, ptile->x, ptile->y);
+    append_output_window (txt);
+  }
+  
   hover_state = HOVER_NONE;
 }
 /**************************************************************************
@@ -2125,7 +2136,7 @@ static void set_rally_point_for_selected_cities (struct tile *ptile)
       rally_point_unref (oldrp);
     }
     cat_snprintf (buf, sizeof (buf), "%s%s",
-                  rp->refcount == 1 ? "" : ", ",
+                  rp->refcount == 2 ? "" : ", ",
                   pcity->name);
   } city_list_iterate_end;
 
