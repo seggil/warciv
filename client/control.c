@@ -45,11 +45,13 @@
 #include "support.h"
 
 struct rally_point {
+  int check_bytes;
   int x, y;
   int refcount;
 };
 static int rally_point_ref (struct rally_point *rp);
 static int rally_point_unref (struct rally_point *rp);
+#define RALLY_POINT_CHECK_BYTES 0xf5e4d3b2
 
 struct hash_table *rally_table = NULL;
 
@@ -1016,10 +1018,17 @@ void request_unit_clear_delayed_orders(void)
 **************************************************************************/
 static int rally_point_ref (struct rally_point *rp)
 {
+  if (rp->check_bytes != RALLY_POINT_CHECK_BYTES) {
+    freelog (LOG_ERROR, _("Invalid rally point %p passed to "
+                          "rally_point_ref! This is a programming error "
+                          "and should be reported."), rp);
+    return 0;
+  }
+  
   freelog (LOG_DEBUG, "incrementing refcount for rally_point %p"
            " refcount=%d", rp, rp->refcount);
-  assert (rp->refcount >= 0);
   rp->refcount++;
+  
   return rp->refcount;
 }
 /**************************************************************************
@@ -1027,16 +1036,33 @@ static int rally_point_ref (struct rally_point *rp)
 **************************************************************************/
 static int rally_point_unref (struct rally_point *rp)
 {
+  if (rp->check_bytes != RALLY_POINT_CHECK_BYTES) {
+    freelog (LOG_ERROR, _("Invalid rally point %p passed to "
+                          "rally_point_unref! This is a programming error "
+                          "and should be reported."), rp);
+    return 0;
+  }
+  
+  if (rp->refcount <= 0) {
+    freelog (LOG_ERROR, _("Attempt to call rally_point_unref on a rally "
+                          "point %p with refcount %d! This is a "
+                          "programming error and should be reported."),
+             rp, rp->refcount);
+    return 0;
+  }
+  
   freelog (LOG_DEBUG, "decrementing refcount for rally_point %p"
            " refcount=%d", rp, rp->refcount);
-  assert (rp->refcount > 0);
   rp->refcount--;
+  
   if (rp->refcount == 0) {
     freelog (LOG_DEBUG, "refcount for rally_point %p reached 0, freeing",
              rp);
+    memset (&rp->check_bytes, 0, sizeof (rp->check_bytes));
     free (rp);
     return 0;
   }
+  
   return rp->refcount;
 }
 /**************************************************************************
@@ -2117,6 +2143,7 @@ static void set_rally_point_for_selected_cities (struct tile *ptile)
     return;
     
   rp = fc_malloc (sizeof (struct rally_point));
+  rp->check_bytes = RALLY_POINT_CHECK_BYTES;
   rp->x = ptile->x;
   rp->y = ptile->y;
   rp->refcount = 0;
