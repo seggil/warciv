@@ -839,14 +839,20 @@ static bool metamessage_command(struct connection *caller,
   
   if (is_metaserver_open()) {
     send_server_info_to_metaserver(META_INFO);
+  }
+
+  if (caller) {
     cmd_reply(CMD_METAMESSAGE, caller, C_OK,
               _("%s sets the metaserver message string "
-                "to '%s'."), caller->username, buf);
+                "to '%s'%s."), caller->username, buf,
+              is_metaserver_open() ? ""
+              : _(" (not reporting to metaserver)"));
   } else {
     cmd_reply(CMD_METAMESSAGE, caller, C_OK,
-              _("%s sets the metaserver message string "
-                "to '%s' (not reporting to metaserver)."),
-              caller->username, buf);
+              _("Metaserver message string set "
+                "to '%s'%s."),
+              buf, is_metaserver_open() ? ""
+              : _(" (not reporting to metaserver)"));
   }
 
   return TRUE;
