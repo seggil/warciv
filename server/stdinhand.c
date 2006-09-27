@@ -426,7 +426,7 @@ static void cmd_reply_line(enum command_id cmd, struct connection *caller,
     conn_list_iterate(game.est_connections, pconn) {
       /* Do not tell caller, since he was told above! */
       if (pconn != caller) {
-        notify_conn(&pconn->self, _("Game: %s"), line);
+        notify_conn(&pconn->self, _("Server: %s"), line);
       }
     } conn_list_iterate_end;
   }
@@ -819,17 +819,34 @@ static bool welcome_file_command(struct connection *caller,
 static bool metamessage_command(struct connection *caller, 
                                 char *arg, bool check)
 {
+  char buf[1024];
+  
   if (check) {
     return TRUE;
   }
 
-  set_meta_message_string(arg);
+  sz_strlcpy(buf, arg);
+  remove_leading_trailing_spaces(buf);
+
+  if (!buf || !buf[0]) {
+    cmd_reply(CMD_METAMESSAGE, caller, C_COMMENT,
+              _("Metaserver message string is \"%s\"."),
+              get_meta_message_string());
+    return TRUE;
+  }
+
+  set_meta_message_string(buf);
+  
   if (is_metaserver_open()) {
     send_server_info_to_metaserver(META_INFO);
-    notify_conn(NULL, _("Metaserver message string set to '%s'."), arg);
+    cmd_reply(CMD_METAMESSAGE, caller, C_OK,
+              _("%s sets the metaserver message string "
+                "to '%s'."), caller->username, buf);
   } else {
-    notify_conn(NULL, _("Metaserver message string set to '%s', "
-			"not reporting to metaserver."), arg);
+    cmd_reply(CMD_METAMESSAGE, caller, C_OK,
+              _("%s sets the metaserver message string "
+                "to '%s' (not reporting to metaserver)."),
+              caller->username, buf);
   }
 
   return TRUE;
@@ -1373,7 +1390,7 @@ void notify_if_first_access_level_is_available(void)
 {
   if (first_access_level > default_access_level
       && !first_access_level_is_taken()) {
-    notify_conn(NULL, _("Game: Anyone can assume command access level "
+    notify_conn(NULL, _("Server: Anyone can assume command access level "
 			"'%s' now by issuing the 'firstlevel' command."),
 		cmdlevel_name(first_access_level));
   }
@@ -4251,6 +4268,13 @@ static bool start_command(struct connection *caller, char *name, bool check)
        * until someone presses it again.  Also you can press start more
        * than once to remind other people to start (which is a good thing
        * until somebody does it too much and it gets labeled as spam). */
+      /* Spam is bad. Use chat to remind others to start. */
+      if (caller->player->is_started) {
+        cmd_reply(CMD_START_GAME, caller, C_COMMENT, 
+                  _("You have already notified others that you are ready"
+                    " to start."));
+        return TRUE;
+      }
       caller->player->is_started = TRUE;
       players_iterate(pplayer) {
 	if (pplayer->is_connected) {
@@ -4262,11 +4286,12 @@ static bool start_command(struct connection *caller, char *name, bool check)
 	}
       } players_iterate_end;
       if (started * 100 < (started + notstarted) * percent_required) {
-	notify_conn(NULL, _("%s is ready. %d out of %d players are ready to start."),
+	notify_conn(NULL, _("Game: %s is ready. %d out of %d players are "
+                            "ready to start."),
 		    caller->username, started, started + notstarted);
 	return TRUE;
       }
-      notify_conn(NULL, _("All players are ready; starting game."));
+      notify_conn(NULL, _("Game: All players are ready; starting game."));
       start_game();
       return TRUE;
     }
@@ -5182,7 +5207,8 @@ void show_players(struct connection *caller)
   char buf[MAX_LEN_CONSOLE_LINE], buf2[MAX_LEN_CONSOLE_LINE];
   int n;
 
-  cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of players:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of players (%d):"),
+            game.nplayers);
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
 
