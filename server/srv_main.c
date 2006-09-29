@@ -180,6 +180,7 @@ void srv_init(void)
 
   srvarg.metaserver_no_send = DEFAULT_META_SERVER_NO_SEND;
   sz_strlcpy(srvarg.metaserver_addr, DEFAULT_META_SERVER_ADDR);
+  srvarg.metaserver_fail_wait_time = DEFAULT_META_SERVER_FAIL_WAIT_TIME;
 
   srvarg.bind_addr = NULL;
   srvarg.port = DEFAULT_SOCK_PORT;

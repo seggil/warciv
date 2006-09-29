@@ -20,6 +20,11 @@
 #define METASERVER_REFRESH_INTERVAL   (60)
 #define METASERVER_MIN_UPDATE_INTERVAL 7   /* not too short, not too long */
 
+/* Wait 5 minutes on failure. Note that setting this value less
+   than METASERVER_REFRESH_INTERVAL will have no effect; it will
+   always wait at least METASERVER_REFRESH_INTERVAL seconds. */
+#define DEFAULT_META_SERVER_FAIL_WAIT_TIME 300
+
 enum meta_flag {
   META_INFO,
   META_REFRESH,

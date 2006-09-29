@@ -67,6 +67,8 @@ static char meta_patches[256] = "warserver 0.8.11a devel";
 static char meta_topic[256] = "NEW GAME";
 static char meta_message[256] = "NEW GAME";
 
+static time_t last_metaserver_fail = 0;
+
 /*************************************************************************
  the default metaserver patches for this server
 *************************************************************************/
@@ -162,7 +164,16 @@ char *meta_addr_port(void)
 *************************************************************************/
 static void metaserver_failed(void)
 {
-  con_puts(C_METAERROR, _("Not reporting to the metaserver in this game."));
+  if (srvarg.metaserver_fail_wait_time <= 0) {
+    freelog (LOG_VERBOSE, _("Not reporting to the metaserver in this "
+                            "game."));
+  } else {
+    freelog (LOG_VERBOSE,
+        _("Waiting for at least %d seconds before attempting to "
+          "communicate with the metaserver again."),
+        srvarg.metaserver_fail_wait_time);
+    last_metaserver_fail = time(NULL);
+  }
   con_flush();
 
   server_close_meta();
@@ -182,6 +193,21 @@ static bool send_to_metaserver(enum meta_flag flag)
   char state[20];
   int sock;
 
+  if (!server_is_open
+      && !srvarg.metaserver_no_send
+      && srvarg.metaserver_fail_wait_time > 0
+      && last_metaserver_fail > 0)
+  {
+    time_t now = time(NULL);
+    if (now - last_metaserver_fail > srvarg.metaserver_fail_wait_time) {
+      freelog (LOG_VERBOSE,
+         _("Reopening connection to metaserver after waiting for %d "
+            "seconds since the last failure."),
+          (int) (now - last_metaserver_fail));
+      server_open_meta();
+    }
+  }
+  
   if (!server_is_open) {
     return FALSE;
   }
@@ -396,13 +422,16 @@ void server_close_meta(void)
 void server_open_meta(void)
 {
   const char *path;
- 
+
   if (metaserver_path) {
     free(metaserver_path);
     metaserver_path = NULL;
   }
   
   if (!(path = my_lookup_httpd(metaname, &metaport, srvarg.metaserver_addr))) {
+    freelog(LOG_ERROR, _("Metaserver: bad http server url: %s."),
+            srvarg.metaserver_addr);
+    metaserver_failed();
     return;
   }
   

@@ -26,6 +26,9 @@ struct server_arguments {
   bool metaserver_no_send;
   char metaserver_addr[256];
   unsigned short int metaserver_port;
+  /* how long to wait before retrying to connect to the
+     metaserver, if a connection attempt fails */
+  int metaserver_fail_wait_time;
   /* address this server is to listen on (NULL => INADDR_ANY) */
   char *bind_addr;
   /* this server's listen port */
