@@ -575,7 +575,7 @@ int my_nonblock(int sockfd)
   }
 #else
   /* It would be bad, if we got here. */
-#error NONBLOCKING_SOCKETS defined, but I don't know how to use them :(
+#error NONBLOCKING_SOCKETS defined, but I do not know how to use them :(
 #endif 
 
 #else /* i.e. ! NONBLOCKING_SOCKETS */
