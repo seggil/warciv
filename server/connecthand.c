@@ -51,7 +51,8 @@ struct user_action_list on_connect_user_actions;
 char *user_action_strs[NUM_ACTIONS] = {
   "ban",
   "none",
-  "info",
+  "observer",
+  "basic",
   "ctrl",
   "admin",
   "hack"
@@ -135,8 +136,11 @@ void grant_access_level (struct connection *pconn)
   case ACTION_GIVE_NONE:
 				pconn->access_level = ALLOW_NONE;
     break;
-  case ACTION_GIVE_INFO:
-				pconn->access_level = ALLOW_INFO;
+  case ACTION_GIVE_OBSERVER:
+				pconn->access_level = ALLOW_OBSERVER;
+    break;
+  case ACTION_GIVE_BASIC:
+				pconn->access_level = ALLOW_BASIC;
     break;
   case ACTION_GIVE_CTRL:
 				pconn->access_level = ALLOW_CTRL;

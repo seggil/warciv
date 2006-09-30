@@ -48,7 +48,8 @@ struct timer_list;
 ***************************************************************************/
 enum cmdlevel_id {    /* access levels for users to issue commands        */
   ALLOW_NONE = 0,     /* user may issue no commands at all                */
-  ALLOW_INFO,         /* user may issue informational commands            */
+  ALLOW_OBSERVER,         /* user may issue observer commands            */
+  ALLOW_BASIC,         /* user may issue basic commands            */
   ALLOW_CTRL,         /* user may issue commands that affect game & users */
   ALLOW_ADMIN,         /* admin user */
   ALLOW_HACK,         /* user may issue *all* commands - dangerous!       */
@@ -138,6 +139,7 @@ struct connection {
    * corresponding to this connection.
    */
   enum cmdlevel_id access_level;
+  enum cmdlevel_id previous_access_level;/* access level before we started observing*/
 
   /* 
    * Something has occurred that means the connection should be

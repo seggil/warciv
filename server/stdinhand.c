@@ -75,8 +75,8 @@
 /* Import */
 #include "stdinhand_info.h"
 
-static enum cmdlevel_id default_access_level = ALLOW_INFO;
-static enum cmdlevel_id   first_access_level = ALLOW_INFO;//ALLOW_CTRL
+static enum cmdlevel_id default_access_level = ALLOW_BASIC;
+static enum cmdlevel_id   first_access_level = ALLOW_BASIC;//ALLOW_CTRL
 
 static bool cut_client_connection(struct connection *caller, char *name,
                                   bool check);
@@ -2364,10 +2364,10 @@ static bool vote_command(struct connection *caller, char *str,
   if (caller == NULL || caller->player == NULL) {
     cmd_reply(CMD_VOTE, caller, C_FAIL, _("This command is client only."));
     return FALSE;
-  } else if (caller->player->is_observer || caller->observer) {
+  }/* else if (caller->player->is_observer || caller->observer) {
     cmd_reply(CMD_VOTE, caller, C_FAIL, _("Observers cannot vote."));
     return FALSE;
-  } else if (!str || strlen(str) == 0) {
+  }*/else if (!str || strlen(str) == 0) {
     int j = 0;
 
     for (i = 0; i < MAX_NUM_PLAYERS; i++) {
@@ -3020,6 +3020,11 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE; /* do this before attach! */
+  if(pconn->access_level < ALLOW_ADMIN) {/* Only connections below admin get demoted*/
+    pconn->previous_access_level = pconn->access_level;
+    pconn->access_level = ALLOW_OBSERVER;
+  }
+
   attach_connection_to_player(pconn, pplayer);
   send_conn_info(&pconn->self, &game.est_connections);
 
@@ -3133,7 +3138,11 @@ static bool take_command(struct connection *caller, char *str, bool check)
   if (check) {
     goto end;
   }
-
+  
+  if(pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
+    pconn->access_level = pconn->previous_access_level;
+  }
+  
   /* if we want to switch players, reset the client if the game is running */
   if (pconn->player && server_state == RUN_GAME_STATE) {
     send_game_state(&pconn->self, CLIENT_PRE_GAME_STATE);
@@ -3291,6 +3300,10 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     send_conn_info(&game.est_connections, &pconn->self);
   }
 
+/* Restore previous priviledges*/
+  if(pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
+    pconn->access_level = pconn->previous_access_level;
+  }
   /* actually do the detaching */
   unattach_connection_from_player(pconn);
   send_conn_info(&pconn->self, &game.est_connections);
@@ -3953,7 +3966,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
       && caller->player
       && !check
       && !caller->player->is_observer
-      && caller->access_level == ALLOW_INFO
+      && caller->access_level == ALLOW_BASIC
       && access_level(cmd) == ALLOW_CTRL) {
     int idx = caller->player->player_no;
 
@@ -3985,7 +3998,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     }
   }
   if (caller
-      && !(check && caller->access_level >= ALLOW_INFO 
+      && !(check && caller->access_level >= ALLOW_BASIC 
            && access_level(cmd) == ALLOW_CTRL)
       && caller->access_level < access_level(cmd)) {
     cmd_reply(cmd, caller, C_FAIL,
@@ -4006,7 +4019,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
   while(i>0 && my_isspace(arg[i]))
     arg[i--]='\0';
 
-  if (!check && commands[cmd].game_level > ALLOW_INFO) {
+  if (!check && commands[cmd].game_level > ALLOW_OBSERVER) {
     /*
      * this command will affect the game - inform all players.
      * We quite purposely do not use access_level() here.

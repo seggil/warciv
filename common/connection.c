@@ -64,7 +64,8 @@ struct connection *current_connection;
 **************************************************************************/
 static const char *levelnames[] = {
   "none",
-  "info",
+  "observer",
+  "basic",
   "ctrl",
   "admin",
   "hack"
@@ -627,7 +628,8 @@ void connection_common_init(struct connection *pconn)
   pconn->buffer = new_socket_packet_buffer();
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
-
+  pconn->previous_access_level = ALLOW_NONE;
+  
   init_packet_hashs(pconn);
 
 #ifdef USE_COMPRESSION
