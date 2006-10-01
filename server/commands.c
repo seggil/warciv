@@ -131,7 +131,7 @@ const struct command commands[] = {
    N_("vote yes|no [vote number]"),
    N_("Cast a vote."),
       /* xgettext:no-c-format */
-   N_("A player with info level access issuing a control level command "
+   N_("A player with basic level access issuing a control level command "
       "starts a new vote for the command.  The /vote command followed by "
       "\"yes\" or \"no\", and optionally a vote number, "
       "gives your vote.  If you do not add a vote number, your vote applies "
@@ -481,8 +481,8 @@ const struct command commands[] = {
     N_("Add a user access action."),
     N_("Adds the given action to the list of user actions applied "
        "to newly connecting users. <action> is either ban, or an "
-       "access level name to give that connection (e.g. none, info, "
-       "etc.). The optional type determines what the <pattern> string "
+       "access level name to give that connection (see /help cmdlev). "
+       "The optional type determines what the <pattern> string "
        "will be applied to, it may be address, hostname, or username. "
        "The pattern supports unix glob style wildcards, i.e. * matches "
        "zero or more character, ? exactly one character, [abc] exactly "

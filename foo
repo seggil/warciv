@@ -1,7 +1,0 @@
-version=1
-ban hostname=84.57.84.58
-ban hostname=dslb-084-057-084-058.pools.arcor-ip.net
-admin hostname=70.25.239.165
-admin hostname=147.32.120.53
-admin hostname=88.212.31.23
-info hostname=*
