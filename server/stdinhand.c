@@ -4831,7 +4831,6 @@ static int load_action_list_v1(const char *filename)
 
   while (fgets(line, sizeof(line), file)) {
     lc++;
-    printf ("parsing line %d \"%s\"\n", lc, line);
 
     if ((p = strchr(line, '#')))
       *p = 0;
