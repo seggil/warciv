@@ -1045,10 +1045,18 @@ static void setup_widgets(void)
   gtk_paned_pack2(GTK_PANED(paned), sbox, TRUE, TRUE);
   avbox = detached_widget_fill(sbox, FALSE);
 
+  hbox = gtk_hbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(avbox), hbox, TRUE, TRUE, 4);
+
+  /* split message window */
+  gtk_box_pack_end(GTK_BOX(hbox), get_split_message_area(),
+                   FALSE, FALSE, 4);
+  
+  /* botton notebook */
   bottom_notebook = gtk_notebook_new();
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(bottom_notebook), GTK_POS_TOP);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(bottom_notebook), TRUE);
-  gtk_box_pack_start(GTK_BOX(avbox), bottom_notebook, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(hbox), bottom_notebook, TRUE, TRUE, 0);
 
   vbox = gtk_vbox_new(FALSE, 0);
 
@@ -1057,7 +1065,6 @@ static void setup_widgets(void)
 				      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
   				 GTK_POLICY_ALWAYS);
-  gtk_widget_set_size_request(sw, 600, 100);
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
   label = gtk_label_new_with_mnemonic(_("_Chat"));

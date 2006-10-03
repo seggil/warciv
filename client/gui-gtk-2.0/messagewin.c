@@ -52,6 +52,8 @@ static void meswin_row_activated_callback(GtkTreeView *view,
 					  gpointer data);
 static void meswin_response_callback(struct gui_dialog *dlg, int response);
 
+static GtkWidget *split_message_widget = NULL;
+
 enum {
   CMD_GOTO = 1, CMD_POPCITY
 };
@@ -145,6 +147,16 @@ static void meswin_cell_data_func(GtkTreeViewColumn *col,
 		 "weight", PANGO_WEIGHT_BOLD, NULL);
   }
 }
+
+/****************************************************************
+...
+*****************************************************************/
+static void create_meswin_store(void)
+{
+  meswin_store = gtk_list_store_new(2,
+                                    G_TYPE_STRING,
+                                    G_TYPE_BOOLEAN);
+}
 					     
 /****************************************************************
 ...
@@ -158,7 +170,8 @@ static void create_meswin_dialog(void)
   gui_dialog_new(&meswin_shell, GTK_NOTEBOOK(bottom_notebook));
   gui_dialog_set_title(meswin_shell, _("Messages"));
 
-  meswin_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_BOOLEAN);
+  if (!meswin_store)
+    create_meswin_store();
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
@@ -169,7 +182,6 @@ static void create_meswin_dialog(void)
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(meswin_store));
   meswin_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-  g_object_unref(meswin_store);
   gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
 
@@ -313,3 +325,86 @@ static void meswin_response_callback(struct gui_dialog *dlg, int response)
   }
 }
 
+/**************************************************************************
+...
+**************************************************************************/
+static gboolean split_message_button_press(GtkWidget *treeview,
+                                           GdkEventButton *event,
+                                           gpointer data)
+{
+  GtkTreePath *path = NULL;
+  gint row;
+
+  if (event->type != GDK_BUTTON_PRESS)
+    return FALSE;
+
+  if (event->button != 1 && event->button != 3)
+    return FALSE;
+
+  if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview),
+                                     (gint) event->x, 
+                                     (gint) event->y,
+                                     &path, NULL, NULL, NULL))
+  {
+    return TRUE;
+  }
+
+  row = gtk_tree_path_get_indices(path)[0];
+  gtk_tree_path_free(path);
+
+  if (event->button == 1)
+    meswin_goto(row);
+  else
+    meswin_popup_city(row);
+
+  return TRUE;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+GtkWidget *get_split_message_area(void)
+{
+  GtkWidget *sw, *vbox, *label, *view;
+  GtkCellRenderer *renderer;
+  GtkTreeViewColumn *col;
+  
+  if (split_message_widget)
+    return split_message_widget;
+
+  vbox = gtk_vbox_new(FALSE, 4);
+
+  label = gtk_label_new(_("Messages"));
+
+  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+
+  sw = gtk_scrolled_window_new(NULL, NULL);
+  
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+				      GTK_SHADOW_ETCHED_IN);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
+  				 GTK_POLICY_AUTOMATIC);
+  gtk_widget_set_size_request(sw, 300, -1);
+
+  if (!meswin_store)
+    create_meswin_store();
+
+  view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(meswin_store));
+  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
+  
+  renderer = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
+  	"text", 0, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+  gtk_container_add(GTK_CONTAINER(sw), view);
+
+  g_signal_connect(view, "button-press-event",
+                   G_CALLBACK(split_message_button_press), NULL);
+
+  gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+
+  split_message_widget = vbox;
+  
+  return split_message_widget;
+}

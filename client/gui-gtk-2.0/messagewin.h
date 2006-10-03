@@ -15,9 +15,8 @@
 
 #include "messagewin_g.h"
 
-GtkWidget *create_meswin_area(void);
-
 void raise_meswin_dialog(void);
 void popdown_meswin_dialog(void);
 
+GtkWidget *get_split_message_area(void);
 #endif  /* FC__MESSAGEWIN_H */
