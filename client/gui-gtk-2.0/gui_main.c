@@ -740,7 +740,7 @@ void enable_menus(bool enable)
 static void setup_widgets(void)
 {
   GtkWidget *box, *ebox, *hbox, *sbox, *align, *label;
-  GtkWidget *frame, *table, *table2, *paned, *sw, *text;
+  GtkWidget *frame, *table, *table2, *paned, *sw, *text, *splitmsgs;
   GtkStyle *style;
   int i;
   char buf[256];
@@ -1045,18 +1045,19 @@ static void setup_widgets(void)
   gtk_paned_pack2(GTK_PANED(paned), sbox, TRUE, TRUE);
   avbox = detached_widget_fill(sbox, FALSE);
 
-  hbox = gtk_hbox_new(FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(avbox), hbox, TRUE, TRUE, 4);
+  paned = gtk_hpaned_new();
+  gtk_box_pack_start(GTK_BOX(avbox), paned, TRUE, TRUE, 4);
 
   /* split message window */
-  gtk_box_pack_end(GTK_BOX(hbox), get_split_message_area(),
-                   FALSE, FALSE, 4);
+  splitmsgs = get_split_message_area();
+  gtk_widget_set_size_request(splitmsgs, 80, -1);
+  gtk_paned_pack2(GTK_PANED(paned), splitmsgs, TRUE, TRUE);
   
   /* botton notebook */
   bottom_notebook = gtk_notebook_new();
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(bottom_notebook), GTK_POS_TOP);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(bottom_notebook), TRUE);
-  gtk_box_pack_start(GTK_BOX(hbox), bottom_notebook, TRUE, TRUE, 0);
+  gtk_paned_pack1(GTK_PANED(paned), bottom_notebook, TRUE, TRUE);
 
   vbox = gtk_vbox_new(FALSE, 0);
 
