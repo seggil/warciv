@@ -18,5 +18,6 @@
 void raise_meswin_dialog(void);
 void popdown_meswin_dialog(void);
 
-GtkWidget *get_split_message_area(void);
+GtkWidget *get_split_message_window(void);
+
 #endif  /* FC__MESSAGEWIN_H */

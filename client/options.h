@@ -50,6 +50,7 @@ extern bool keyboardless_goto;
 extern bool show_task_icons;
 extern char chat_time_format[128];
 extern char city_name_formats[128];
+extern bool show_split_message_window;
 
 enum client_option_type {
   COT_BOOL,

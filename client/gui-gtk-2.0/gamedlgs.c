@@ -37,6 +37,7 @@
 #include "clinet.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
+#include "messagewin.h"
 #include "options.h"
 
 #include "ratesdlg.h"
@@ -413,6 +414,11 @@ static void option_ok_command_callback(GtkWidget *widget, gpointer data)
     gtk_window_fullscreen(GTK_WINDOW(toplevel));
   } else {
     gtk_window_unfullscreen(GTK_WINDOW(toplevel));
+  }
+  if (show_split_message_window) {
+    gtk_widget_show(get_split_message_window());
+  } else {
+    gtk_widget_hide(get_split_message_window());
   }
   option_dialog_shell = NULL;
 }

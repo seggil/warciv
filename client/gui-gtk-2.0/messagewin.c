@@ -52,7 +52,8 @@ static void meswin_row_activated_callback(GtkTreeView *view,
 					  gpointer data);
 static void meswin_response_callback(struct gui_dialog *dlg, int response);
 
-static GtkWidget *split_message_widget = NULL;
+static GtkWidget *split_message_window = NULL;
+static GtkWidget *split_message_view = NULL;
 
 enum {
   CMD_GOTO = 1, CMD_POPCITY
@@ -65,13 +66,17 @@ popup the dialog 10% inside the main-window
 *****************************************************************/
 void popup_meswin_dialog(void)
 {
-  if (!meswin_shell) {
-    create_meswin_dialog();
+  if (show_split_message_window) {
+    update_meswin_dialog();
+  } else {
+    if (!meswin_shell) {
+      create_meswin_dialog();
+    }
+
+    update_meswin_dialog();
+
+    gui_dialog_present(meswin_shell);
   }
-
-  update_meswin_dialog();
-
-  gui_dialog_present(meswin_shell);
 }
 
 /****************************************************************
@@ -79,8 +84,10 @@ void popup_meswin_dialog(void)
 ****************************************************************/
 void raise_meswin_dialog(void)
 {
-  popup_meswin_dialog();
-  gui_dialog_raise(meswin_shell);
+  if (!show_split_message_window) {
+    popup_meswin_dialog();
+    gui_dialog_raise(meswin_shell);
+  }
 }
 
 /**************************************************************************
@@ -98,7 +105,7 @@ void popdown_meswin_dialog(void)
 *****************************************************************/
 bool is_meswin_open(void)
 {
-  return (meswin_shell != NULL);
+  return meswin_shell != NULL || show_split_message_window;
 }
 
 /****************************************************************
@@ -244,11 +251,20 @@ void real_update_meswin_dialog(void)
     }
   }
 
-  gui_dialog_set_response_sensitive(meswin_shell, CMD_GOTO, FALSE);
-  gui_dialog_set_response_sensitive(meswin_shell, CMD_POPCITY, FALSE);
+  if (!show_split_message_window) {
+    gui_dialog_set_response_sensitive(meswin_shell, CMD_GOTO, FALSE);
+    gui_dialog_set_response_sensitive(meswin_shell, CMD_POPCITY, FALSE);
 
-  if (num_not_visited > 0) {
-    gui_dialog_alert(meswin_shell);
+    if (num_not_visited > 0) {
+      gui_dialog_alert(meswin_shell);
+    }
+  } else {
+    if (split_message_view && num > 0) {
+      GtkTreePath *path = gtk_tree_path_new_from_indices(num - 1, -1);
+      gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(split_message_view),
+                                   path, NULL, FALSE, 0, 0);
+      gtk_tree_path_free(path);
+    }
   }
 }
 
@@ -363,14 +379,14 @@ static gboolean split_message_button_press(GtkWidget *treeview,
 /**************************************************************************
 ...
 **************************************************************************/
-GtkWidget *get_split_message_area(void)
+GtkWidget *get_split_message_window(void)
 {
   GtkWidget *sw, *vbox, *label, *view;
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *col;
   
-  if (split_message_widget)
-    return split_message_widget;
+  if (split_message_window)
+    return split_message_window;
 
   vbox = gtk_vbox_new(FALSE, 4);
 
@@ -379,12 +395,10 @@ GtkWidget *get_split_message_area(void)
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
-  
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 				      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
   				 GTK_POLICY_AUTOMATIC);
-  gtk_widget_set_size_request(sw, 300, -1);
 
   if (!meswin_store)
     create_meswin_store();
@@ -392,6 +406,7 @@ GtkWidget *get_split_message_area(void)
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(meswin_store));
   gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
+  split_message_view = view;
   
   renderer = gtk_cell_renderer_text_new();
   col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
@@ -404,7 +419,8 @@ GtkWidget *get_split_message_area(void)
 
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
-  split_message_widget = vbox;
+  gtk_widget_set_size_request(vbox, 80, -1);
+  split_message_window = vbox;
   
-  return split_message_widget;
+  return split_message_window;
 }

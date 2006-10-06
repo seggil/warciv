@@ -538,6 +538,7 @@ void set_client_state(enum client_states newstate)
       precalc_tech_data();
       update_research(game.player_ptr);
       role_unit_precalcs();
+      clear_notify_window();
       boot_help_texts();	/* reboot */
       can_slide = FALSE;
       update_unit_focus();

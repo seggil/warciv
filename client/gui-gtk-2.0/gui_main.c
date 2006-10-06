@@ -1049,8 +1049,7 @@ static void setup_widgets(void)
   gtk_box_pack_start(GTK_BOX(avbox), paned, TRUE, TRUE, 4);
 
   /* split message window */
-  splitmsgs = get_split_message_area();
-  gtk_widget_set_size_request(splitmsgs, 80, -1);
+  splitmsgs = get_split_message_window();
   gtk_paned_pack2(GTK_PANED(paned), splitmsgs, TRUE, TRUE);
   
   /* botton notebook */
@@ -1102,6 +1101,10 @@ static void setup_widgets(void)
 
   gtk_widget_show_all(gtk_bin_get_child(GTK_BIN(toplevel)));
   gtk_widget_hide(more_arrow_pixmap);
+
+  if (!show_split_message_window) {
+    gtk_widget_hide(splitmsgs);
+  }
 
   if (enable_tabs) {
     popup_meswin_dialog();
