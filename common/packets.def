@@ -1322,3 +1322,11 @@ PACKET_RULESET_CACHE_EFFECT=121;sc,lsend
   SINT32 group_id;
 end
 
+/************** "extroutes" capability packet **********************/
+
+PACKET_TRADEROUTE_INFO=122;sc,is-info,handle-via-packet
+  UINT32 trademindist;
+  UINT8 traderevenuepct;
+  UINT8 traderevenuestyle;
+  UINT8 caravanbonusstyle;
+end

@@ -161,14 +161,14 @@ static bool maxplayers_callback(int value, const char **error_string)
 #define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,	\
 		 short_help, extra_help, func, default)			\
   {name, sclass, to_client, short_help, extra_help, SSET_BOOL,		\
-      scateg, slevel, &value, default, func,				\
+      scateg, slevel, "", &value, default, func,			\
       NULL, 0, NULL, 0, 0,						\
       NULL, NULL, NULL, 0},
 
 #define GEN_INT(name, value, sclass, scateg, slevel, to_client,		\
 		short_help, extra_help, func, min, max, default)	\
   {name, sclass, to_client, short_help, extra_help, SSET_INT,		\
-      scateg, slevel,							\
+      scateg, slevel, "",						\
       NULL, FALSE, NULL,						\
       &value, default, func, min, max,					\
       NULL, NULL, NULL, 0},
@@ -176,18 +176,27 @@ static bool maxplayers_callback(int value, const char **error_string)
 #define GEN_STRING(name, value, sclass, scateg, slevel, to_client,	\
 		   short_help, extra_help, func, default)		\
   {name, sclass, to_client, short_help, extra_help, SSET_STRING,	\
-      scateg, slevel,							\
+      scateg, slevel, "",						\
       NULL, FALSE, NULL,						\
       NULL, 0, NULL, 0, 0,						\
       value, default, func, sizeof(value)},
 
 #define GEN_END							\
   {NULL, SSET_LAST, SSET_SERVER_ONLY, NULL, NULL, SSET_INT,	\
-      SSET_NUM_CATEGORIES, SSET_NONE,				\
+      SSET_NUM_CATEGORIES, SSET_NONE, "",			\
       NULL, FALSE, NULL,					\
       NULL, 0, NULL, 0, 0,					\
       NULL, NULL, NULL},
 
+#define GEN_INT_EXT(name, value, sclass, scateg, slevel, to_client, \
+                    reqcap,short_help, extra_help, func, min,       \
+                    max, default)                                   \
+  {name, sclass, to_client, short_help, extra_help, SSET_INT,	    \
+      scateg, slevel, reqcap,					    \
+      NULL, FALSE, NULL,					    \
+      &value, default, func, min, max,				    \
+      NULL, NULL, NULL, 0},
+      
 struct settings_s settings[] = {
 
   /* These should be grouped by sclass */
@@ -1072,36 +1081,40 @@ struct settings_s settings[] = {
              "If turned off, nuclear winter will not occur\n"
              "as a result of nuclear war."), NULL,
           GAME_DEFAULT_NUCLEARWINTERON)
-  GEN_INT("traderevenuestyle", game.traderevenuestyle,
+  GEN_INT_EXT("traderevenuestyle", game.traderevenuestyle,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+          "extroutes", /* required capability for non-default */
 	  N_("Trade revenue style"),
 	  N_("0 - standard freeciv 2.0.8\n"
       "1 - experimental\n"
       "2 - civ2 trade routes\n"
       "This setting affects how much trade cities"
-      "generate after trade routes were established."),
+      "generate after trade routes are established."),
 	  NULL,
 	  0, 2, GAME_DEFAULT_TRADEREVENUESTYLE)
-  GEN_INT("traderevenuepercentage", game.traderevenuepct,
+  GEN_INT_EXT("traderevenuepercentage", game.traderevenuepct,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+          "extroutes", /* required capability for non-default */
 	  N_("Trade revenue percentage"),
 	  N_("100 - default value"),
 	  NULL,
 	  1, 200, GAME_DEFAULT_TRADEREVENUEPCT)
-  GEN_INT("caravanbonusstyle", game.caravanbonusstyle,
+  GEN_INT_EXT("caravanbonusstyle", game.caravanbonusstyle,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+          "extroutes", /* required capability for non-default */
 	  N_("Caravan bonus style"),
 	  N_("0 - standard freeciv 2.0.8\n"
       "1 - experimental\n"
       "This setting affects how much gold and science"
-      "you get when caravan arrives into city."),
+      "you get when a caravan arrives in a city."),
 	  NULL,
 	  0, 1, GAME_DEFAULT_CARAVANBONUSSTYLE)
-  GEN_INT("trademindist", game.trademindist,
+  GEN_INT_EXT("trademindist", game.trademindist,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+          "extroutes", /* required capability for non-default */
 	  N_("Minimum trade distance"),
 	  N_("Minimum distance to establish trade route.\n"
-      "8 is default"),
+             "8 is default"),
 	  NULL,
 	  1, 999, GAME_DEFAULT_TRADEMINDIST)
   GEN_BOOL("futuretechsscore", game.futuretechsscore, SSET_RULES,

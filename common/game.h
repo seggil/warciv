@@ -147,7 +147,7 @@ struct civ_game {
   int num_impr_types;
   int num_tech_types;  /* including A_NONE */
   
-  //=========== WARSERVER settings ================
+  /*=========== WARSERVER settings ================*/
   int trademindist;
   int traderevenuepct;
   int traderevenuestyle;
@@ -165,7 +165,7 @@ struct civ_game {
   bool globalwarmingon;
   bool nuclearwinteron;
   int maxconnections;
-  //=========== WARSERVER settings END ================
+  /*=========== WARSERVER settings END ================*/
   
 
   int government_count;
@@ -311,8 +311,8 @@ extern struct civ_game game;
 extern bool is_server;
 
 #define GAME_DEFAULT_TRADEMINDIST        8
-#define GAME_DEFAULT_CARAVANBONUSSTYLE  1
-#define GAME_DEFAULT_TRADEREVENUESTYLE    1
+#define GAME_DEFAULT_CARAVANBONUSSTYLE  0
+#define GAME_DEFAULT_TRADEREVENUESTYLE    0
 #define GAME_DEFAULT_TRADEREVENUEPCT    100
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST        1
 #define GAME_DEFAULT_IGNORERULESET        0

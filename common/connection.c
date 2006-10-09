@@ -515,8 +515,13 @@ const char *conn_description(const struct connection *pconn)
   buffer[0] = '\0';
 
   if (*pconn->username != '\0') {
-    my_snprintf(buffer, sizeof(buffer), _("%s from %s, ip %s"),
-		pconn->username, pconn->addr, pconn->server.ipaddr); 
+    if (!strcmp(pconn->addr, pconn->server.ipaddr)) {
+      my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
+                  pconn->username, pconn->addr); 
+    } else {
+      my_snprintf(buffer, sizeof(buffer), _("%s from %s, ip %s"),
+                  pconn->username, pconn->addr, pconn->server.ipaddr); 
+    }
   } else {
     sz_strlcpy(buffer, "server");
   }

@@ -86,8 +86,12 @@ const char * const our_capability = our_capability_internal;
  *   - Avoid adding a new manditory capbility to the development branch for
  *     as long as possible.  We want to maintain network compatibility with
  *     the stable branch for as long as possible.
+ *
+ * "extroutes" means the client or server supports configurable traderoute
+ * parameters (e.g. trademindist, traderevenuestyle, etc.). This is
+ * currently only supported by warserver 0.8.11a and above.
  */
-#define CAPABILITY "+2.0 conn_ping_info username_info new_hack"
+#define CAPABILITY "+2.0 conn_ping_info username_info new_hack extroutes"
 
 void init_our_capability(void)
 {

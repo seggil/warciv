@@ -94,6 +94,12 @@ struct settings_s {
   enum sset_category category;
   enum sset_level level;
 
+  /* If the setting is changed from the default, print a warning for
+     all connections that don't have the required_capability. Hence
+     settings should be setup in such a way that the default value
+     is compatible with all (or as many) clients as possible. */
+  const char *required_capability;
+
   /* 
    * About the *_validate functions: If the function is non-NULL, it
    * is called with the new value, and returns whether the change is

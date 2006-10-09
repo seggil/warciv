@@ -495,6 +495,7 @@ void send_game_state(struct conn_list *dest, int state)
 void send_game_info(struct conn_list *dest)
 {
   struct packet_game_info ginfo;
+  struct packet_traderoute_info tinfo;
   int i;
 
   if (!dest)
@@ -540,10 +541,18 @@ void send_game_info(struct conn_list *dest)
     ginfo.seconds_to_turndone = -1;
   }
 
+  tinfo.trademindist = game.trademindist;
+  tinfo.traderevenuepct = game.traderevenuepct;
+  tinfo.traderevenuestyle = game.traderevenuestyle;
+  tinfo.caravanbonusstyle = game.caravanbonusstyle;
+
   conn_list_iterate(*dest, pconn) {
     /* ? fixme: check for non-players: */
     ginfo.player_idx = (pconn->player ? pconn->player->player_no : -1);
     send_packet_game_info(pconn, &ginfo);
+    if (has_capability("extroutes", pconn->capability)) {
+      send_packet_traderoute_info(pconn, &tinfo);
+    }
   }
   conn_list_iterate_end;
 }

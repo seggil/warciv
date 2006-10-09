@@ -1361,8 +1361,7 @@ static bool set_cmdlevel(struct connection *caller,
      * and thus this clause is never used.
      */
     cmd_reply(CMD_CMDLEVEL, caller, C_FAIL,
-	      _
-	      ("Cannot decrease command access level '%s' for connection '%s';"
+	      _("Cannot decrease command access level '%s' for connection '%s';"
 	       " you only have '%s'."), cmdlevel_name(ptarget->access_level),
 	      ptarget->username, cmdlevel_name(caller->access_level));
     return FALSE;
@@ -1527,8 +1526,7 @@ static bool cmdlevel_command(struct connection *caller, char *str,
 	      cmdlevel_name(level));
     first_access_level = level;
     cmd_reply(CMD_CMDLEVEL, caller, C_OK,
-	      _
-	      ("Command access level set to '%s' for first player to grab it."),
+	      _("Command access level set to '%s' for first player to grab it."),
 	      cmdlevel_name(level));
   } else if (strcmp(arg_name, "new") == 0) {
     default_access_level = level;
@@ -1538,15 +1536,13 @@ static bool cmdlevel_command(struct connection *caller, char *str,
     if (level > first_access_level) {
       first_access_level = level;
       cmd_reply(CMD_CMDLEVEL, caller, C_OK,
-		_
-		("Command access level set to '%s' for first player to grab it."),
+		_("Command access level set to '%s' for first player to grab it."),
 		cmdlevel_name(level));
     }
   } else if (strcmp(arg_name, "first") == 0) {
     first_access_level = level;
     cmd_reply(CMD_CMDLEVEL, caller, C_OK,
-	      _
-	      ("Command access level set to '%s' for first player to grab it."),
+	      _("Command access level set to '%s' for first player to grab it."),
 	      cmdlevel_name(level));
     if (level < default_access_level) {
       default_access_level = level;
@@ -2635,6 +2631,49 @@ cleanup:
 }
 
 /******************************************************************
+  NB Currently used for int options only.
+******************************************************************/
+static void check_option_capability(struct connection *caller,
+                                    struct settings_s *op)
+{
+  char buf[1024];
+  int n = 0;
+  struct connection *pconn;
+  
+  if (!op->required_capability || !op->required_capability[0])
+    return;
+
+  if (*op->int_value == op->int_default_value)
+    return;
+  
+  my_snprintf(buf, sizeof(buf),
+      _("Server: Warning, the setting %s requires the \"%s\" "
+        "capability to function correctly when not set to the "
+        "default value of %d. The following players do not have "
+        "this capability: "),
+      op->name, op->required_capability, op->int_default_value);
+
+  /* NB We only check player's capabilities. */
+  players_iterate(pplayer) {
+    pconn = find_conn_by_user(pplayer->username);
+    if (!pconn)
+      continue;
+    if (has_capability(op->required_capability,
+                       pconn->capability))
+    {
+      continue;
+    }
+    n++;
+    cat_snprintf(buf, sizeof(buf), "%s%s", n == 1 ? "" : ", ",
+                 pplayer->username);
+  } players_iterate_end;
+
+  if (n > 0) {
+    notify_conn(&game.est_connections, "%s.", buf);
+  }
+}
+
+/******************************************************************
   ...
 ******************************************************************/
 static bool set_command(struct connection *caller, char *str, bool check)
@@ -2682,8 +2721,7 @@ static bool set_command(struct connection *caller, char *str, bool check)
   }
   if (!sset_is_changeable(cmd)) {
     cmd_reply(CMD_SET, caller, C_BOUNCE,
-	      _
-	      ("This setting can't be modified after the game has started."));
+	      _("This setting can't be modified after the game has started."));
     return FALSE;
   }
 
@@ -2694,9 +2732,8 @@ static bool set_command(struct connection *caller, char *str, bool check)
 
   if (map.is_fixed == TRUE && op->category == SSET_GEOLOGY) {
     cmd_reply(CMD_SET, caller, C_BOUNCE,
-	      _
-	      ("A fixed Map is loaded, geological settings can't be modified.\n"
-	       "Type /unloadmap in order to unfix mapsettings"));
+	      _("A fixed Map is loaded, geological settings can't be modified.\n"
+                "Type /unloadmap in order to unfix mapsettings"));
   } else {
     switch (op->type) {
     case SSET_BOOL:
@@ -2746,6 +2783,7 @@ static bool set_command(struct connection *caller, char *str, bool check)
 	  my_snprintf(buffer, sizeof(buffer),
 		      _("Option: %s has been set to %d."), op->name,
 		      *(op->int_value));
+          check_option_capability(caller, op);
 	  do_update = TRUE;
 	}
       }
@@ -3863,8 +3901,8 @@ static bool showmaplist_command(struct connection *caller)
   int i;
   int mapnum = secfile_lookup_int(&file, "list.number");
   cmd_reply(CMD_SHOWMAPLIST, caller, C_COMMENT,
-	    _
-	    ("You can load the following %d maps with the command /loadmap <number of map in list>"),
+	    _("You can load the following %d maps with the command"
+              " /loadmap <number of map in list>"),
 	    mapnum);
   for (i = 0; i < mapnum; i++) {
     char mapname[512];
@@ -4991,19 +5029,22 @@ static void show_help_intro(struct connection *caller,
 {
   /* This is formated like extra_help entries for settings and commands: */
   const char *help =
-      _
-      ("Welcome - this is the introductory help text for the Freeciv server.\n\n"
-       "Two important server concepts are Commands and Options.\n"
-       "Commands, such as 'help', are used to interact with the server.\n"
-       "Some commands take one or more arguments, separated by spaces.\n"
-       "In many cases commands and command arguments may be abbreviated.\n"
-       "Options are settings which control the server as it is running.\n\n"
-       "To find out how to get more information about commands and options,\n"
-       "use 'help help'.\n\n"
-       "For the impatient, the main commands to get going are:\n"
-       "  show   -  to see current options\n" "  set    -  to set options\n"
-       "  start  -  to start the game once players have connected\n"
-       "  save   -  to save the current game\n" "  quit   -  to exit");
+      _("Welcome - this is the introductory help text for the Freeciv"
+        "server.\n\n"
+        "Two important server concepts are Commands and Options.\n"
+        "Commands, such as 'help', are used to interact with the server.\n"
+        "Some commands take one or more arguments, separated by spaces.\n"
+        "In many cases commands and command arguments may be abbreviated.\n"
+        "Options are settings which control the server as it is "
+        "running.\n\n"
+        "To find out how to get more information about commands and "
+        "options,\n"
+        "use 'help help'.\n\n"
+        "For the impatient, the main commands to get going are:\n"
+        "  show   -  to see current options\n" "  set    -  to set "
+        "options\n"
+        "  start  -  to start the game once players have connected\n"
+        "  save   -  to save the current game\n" "  quit   -  to exit");
 
   static struct astring abuf = ASTRING_INIT;
 
@@ -5366,8 +5407,7 @@ void show_players(struct connection *caller)
 	  continue;
 	}
 	my_snprintf(buf, sizeof(buf),
-		    _
-		    ("  %s from %s (command access level %s), bufsize=%dkb"),
+		    _("  %s from %s (%s access), bufsize=%dkb"),
 		    pconn->username, pconn->addr,
 		    cmdlevel_name(pconn->access_level),
 		    (pconn->send_buffer->nsize >> 10));
@@ -5387,21 +5427,25 @@ void show_players(struct connection *caller)
 static void show_connections(struct connection *caller)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
+  int n;
 
+  n = conn_list_size(&game.all_connections);
   cmd_reply(CMD_LIST, caller, C_COMMENT,
-	    _("List of connections to server:"));
+	    _("List of connections to server (%d):"), n);
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
-  if (conn_list_size(&game.all_connections) == 0) {
+  if (n == 0) {
     cmd_reply(CMD_LIST, caller, C_WARNING, _("<no connections>"));
   } else {
     conn_list_iterate(game.all_connections, pconn) {
       sz_strlcpy(buf, conn_description(pconn));
       if (pconn->established) {
-	cat_snprintf(buf, sizeof(buf), " command access level %s",
+	cat_snprintf(buf, sizeof(buf), " %s access",
 		     cmdlevel_name(pconn->access_level));
       }
       cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "  capabilities: %s",
+                pconn->capability);
     } conn_list_iterate_end;
   }
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);

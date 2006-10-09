@@ -1427,6 +1427,17 @@ void handle_map_info(int xsize, int ysize, int topology_id)
 /**************************************************************************
 ...
 **************************************************************************/
+void handle_traderoute_info(struct packet_traderoute_info *packet)
+{
+  game.trademindist = packet->trademindist;
+  game.traderevenuestyle = packet->traderevenuestyle;
+  game.traderevenuepct = packet->traderevenuepct;
+  game.caravanbonusstyle = packet->caravanbonusstyle;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
 void handle_game_info(struct packet_game_info *pinfo)
 {
   int i;
