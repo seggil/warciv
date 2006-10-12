@@ -66,17 +66,33 @@ fc__attribute((__format__(__printf__, 3, 4)));
 #define RETURN	return out;
 
 /****************************************************************************
+  AI names are prefixed with "AI, ".
+****************************************************************************/
+static inline const char *get_name_prefix(struct player *plr)
+{
+  return plr->ai.control ? "AI, " : "";
+}
+
+/****************************************************************************
+  
+****************************************************************************/
+static inline const char *get_proper_username(struct player *plr)
+{
+  return plr->ai.control ? plr->name : plr->username;
+}
+
+/****************************************************************************
   Formats the parameters and appends them. Grows the buffer if
   required.
 ****************************************************************************/
-static void grow_printf(char **buffer, size_t *buffer_size,
+static void grow_printf(char **buffer, size_t * buffer_size,
 			const char *format, va_list ap)
 {
   size_t new_len;
   static char buf[GROW_TMP_SIZE];
 
   if (my_vsnprintf(buf, sizeof(buf), format, ap) == -1) {
-    die("Formatted string bigger than %lu", (unsigned long)sizeof(buf));
+    die("Formatted string bigger than %lu", (unsigned long) sizeof(buf));
   }
 
   new_len = strlen(*buffer) + strlen(buf) + 1;
@@ -87,7 +103,7 @@ static void grow_printf(char **buffer, size_t *buffer_size,
     size_t new_size = MAX(new_len, *buffer_size * 2);
 
     freelog(LOG_VERBOSE, "expand from %lu to %lu to add '%s'",
-	    (unsigned long)*buffer_size, (unsigned long)new_size, buf);
+	    (unsigned long) *buffer_size, (unsigned long) new_size, buf);
 
     *buffer_size = new_size;
     *buffer = fc_realloc(*buffer, *buffer_size);
@@ -135,9 +151,9 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   char shields[16];
   char trade[16];
   int x, before_penalty;
-  
+
   struct government *gov = get_gov_pplayer(game.player_ptr);
-  
+
   x = get_food_tile(ptile);
   before_penalty = gov->food_before_penalty;
 
@@ -164,7 +180,7 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   } else {
     my_snprintf(trade, sizeof(trade), "%d", x);
   }
-  
+
   my_snprintf(s, sizeof(s), "%s/%s/%s", food, shields, trade);
   return s;
 }
@@ -179,25 +195,25 @@ const char *popup_info_text(struct tile *ptile)
   struct unit *punit = find_visible_unit(ptile);
   struct unit *pfocus_unit = get_unit_in_focus();
   const char *diplo_nation_plural_adjectives[DS_LAST] =
-    {Q_("?nation:Neutral"), Q_("?nation:Hostile"),
-     "" /* unused, DS_CEASEFIRE*/,
-     Q_("?nation:Peaceful"), Q_("?nation:Friendly"), 
-     Q_("?nation:Mysterious"), Q_("?nation:Friendly(team)")};
+      { Q_("?nation:Neutral"), Q_("?nation:Hostile"),
+    "" /* unused, DS_CEASEFIRE */ ,
+    Q_("?nation:Peaceful"), Q_("?nation:Friendly"),
+    Q_("?nation:Mysterious"), Q_("?nation:Friendly(team)")
+  };
   const char *diplo_city_adjectives[DS_LAST] =
-    {Q_("?city:Neutral"), Q_("?city:Hostile"),
-     "" /*unused, DS_CEASEFIRE */,
-     Q_("?city:Peaceful"), Q_("?city:Friendly"), Q_("?city:Mysterious"),
-     Q_("?city:Friendly(team)")};
+      { Q_("?city:Neutral"), Q_("?city:Hostile"),
+    "" /*unused, DS_CEASEFIRE */ ,
+    Q_("?city:Peaceful"), Q_("?city:Friendly"), Q_("?city:Mysterious"),
+    Q_("?city:Friendly(team)")
+  };
   INIT;
 
-  add_line(_("Location: (%d, %d) [%d]"), 
-	   ptile->x, ptile->y, ptile->continent); 
-  add_line(_("Native coordinates: (%d, %d)"), 
-	   ptile->nat_x, ptile->nat_y); 
+  add_line(_("Location: (%d, %d) [%d]"),
+	   ptile->x, ptile->y, ptile->continent);
+  add_line(_("Native coordinates: (%d, %d)"), ptile->nat_x, ptile->nat_y);
 
-  add_line(_("Terrain: %s"),  map_get_tile_info_text(ptile));
-  add_line(_("Food/Prod/Trade: %s"),
-	   map_get_tile_fpt_text(ptile));
+  add_line(_("Terrain: %s"), map_get_tile_info_text(ptile));
+  add_line(_("Food/Prod/Trade: %s"), map_get_tile_fpt_text(ptile));
   if (tile_has_special(ptile, S_HUT)) {
     add_line(_("Minor Tribe Village"));
   }
@@ -205,22 +221,26 @@ const char *popup_info_text(struct tile *ptile)
     struct player *owner = map_get_owner(ptile);
     struct player_diplstate *ds = game.player_ptr->diplstates;
 
-    if (owner == game.player_ptr){
+    if (owner == game.player_ptr) {
       add_line(_("Our Territory"));
     } else if (owner) {
       if (ds[owner->player_no].type == DS_CEASEFIRE) {
 	int turns = ds[owner->player_no].turns_left;
 
-	/* TRANS: "Polish territory (5 turn ceasefire)" */
-	add_line(PL_("%s territory (%d turn ceasefire)",
-		     "%s territory (%d turn ceasefire)",
+	/* TRANS: "Territory of Username (Polish) (5 turn ceasefire)" */
+	add_line(PL_("Territory of %s%s (%s) (%d turn ceasefire)",
+		     "Territory of %s%s (%s) (%d turn ceasefire)",
 		     turns),
+		 get_name_prefix(owner),
+		 get_proper_username(owner),
 		 get_nation_name(owner->nation), turns);
       } else {
-	/* TRANS: "Territory of the friendly Polish".  See the
+	/* TRANS: "Territory of friendly Username (Polish)".  See the
 	 * ?nation adjectives. */
-	add_line(_("Territory of the %s %s"),
+	add_line(_("Territory of %s %s%s (%s)"),
 		 diplo_nation_plural_adjectives[ds[owner->player_no].type],
+		 get_name_prefix(owner),
+		 get_proper_username(owner),
 		 get_nation_name_plural(owner->nation));
       }
     } else {
@@ -233,7 +253,7 @@ const char *popup_info_text(struct tile *ptile)
     struct player *owner = city_owner(pcity);
     struct player_diplstate *ds = game.player_ptr->diplstates;
 
-    if (owner == game.player_ptr){
+    if (owner == game.player_ptr) {
       /* TRANS: "City: Warsaw (Polish)" */
       add_line(_("City: %s (%s)"), pcity->name,
 	       get_nation_name(owner->nation));
@@ -241,23 +261,26 @@ const char *popup_info_text(struct tile *ptile)
       if (ds[owner->player_no].type == DS_CEASEFIRE) {
 	int turns = ds[owner->player_no].turns_left;
 
-	/* TRANS:  "City: Warsaw (Polish, 5 turn ceasefire)" */
-        add_line(PL_("City: %s (%s, %d turn ceasefire)",
-				       "City: %s (%s, %d turn ceasefire)",
-				       turns),
+	/* TRANS:  "City: Warsaw | Username (5 turn ceasefire, Polish)" */
+	add_line(PL_("City: %s | %s%s (%d turn ceasefire, %s)",
+		     "City: %s | %s%s (%d turn ceasefire, %s)",
+		     turns),
 		 pcity->name,
-		 get_nation_name(owner->nation),
-		 turns);
+		 get_name_prefix(owner),
+		 get_proper_username(owner),
+		 turns, get_nation_name(owner->nation));
       } else {
-        /* TRANS: "City: Warsaw (Polish,friendly)" */
-        add_line(_("City: %s (%s,%s)"), pcity->name,
-		 get_nation_name(owner->nation),
-		 diplo_city_adjectives[ds[owner->player_no].type]);
+	/* TRANS: "City: Warsaw | Username (friendly, Polish)" */
+	add_line(_("City: %s | %s%s (%s, %s)"), pcity->name,
+		 get_name_prefix(owner),
+		 get_proper_username(owner),
+		 diplo_city_adjectives[ds[owner->player_no].type],
+		 get_nation_name(owner->nation));
       }
     }
     if (city_got_citywalls(pcity)) {
       /* TRANS: previous lines gave other information about the city. */
-      add("%s",_(" with City Walls"));
+      add("%s", _(" with City Walls"));
     }
 
     if (pfocus_unit) {
@@ -270,8 +293,8 @@ const char *popup_info_text(struct tile *ptile)
 	add_line(_("Trade from %s: %d"),
 		 hcity->name, trade_between_cities(hcity, pcity));
       }
-    } 
-  } 
+    }
+  }
   if (get_tile_infrastructure_set(ptile)) {
     add_line(_("Infrastructure: %s"),
 	     map_get_infrastructure_text(ptile->special));
@@ -286,9 +309,9 @@ const char *popup_info_text(struct tile *ptile)
     struct unit_type *ptype = unit_type(punit);
     char vet[1024] = "";
 
-    if (owner == game.player_ptr){
+    if (owner == game.player_ptr) {
       struct city *pcity;
-      char tmp[64] = {0};
+      char tmp[64] = { 0 };
 
       pcity = player_find_city_by_id(game.player_ptr, punit->homecity);
       if (pcity) {
@@ -296,24 +319,26 @@ const char *popup_info_text(struct tile *ptile)
       }
       /* TRANS: "Unit: Musketeers (Polish/Warsaw)" */
       add_line(_("Unit: %s (%s%s)"), ptype->name,
-	  get_nation_name(owner->nation),
-	  tmp);
+	       get_nation_name(owner->nation), tmp);
     } else if (owner) {
       if (ds[owner->player_no].type == DS_CEASEFIRE) {
 	int turns = ds[owner->player_no].turns_left;
 
-	/* TRANS:  "Unit: Musketeers (Polish, 5 turn ceasefire)" */
-        add_line(PL_("Unit: %s (%s, %d turn ceasefire)",
-				       "Unit: %s (%s, %d turn ceasefire)",
-				       turns),
+	/* TRANS:  "Unit: Musketeers | Username (5 turn ceasefire, Polish)" */
+	add_line(PL_("Unit: %s | %s%s (%d turn ceasefire, %s)",
+		     "Unit: %s | %s%s (%d turn ceasefire, %s)",
+		     turns),
 		 ptype->name,
-		 get_nation_name(owner->nation),
-		 turns);
+		 get_name_prefix(owner),
+		 get_proper_username(owner),
+		 turns, get_nation_name(owner->nation));
       } else {
-	/* TRANS: "Unit: Musketeers (Polish,friendly)" */
-	add_line(_("Unit: %s (%s,%s)"), ptype->name,
-		 get_nation_name(owner->nation),
-		 diplo_city_adjectives[ds[owner->player_no].type]);
+	/* TRANS: "Unit: Musketeers | Username (friendly, Polish)" */
+	add_line(_("Unit: %s | %s%s (%s, %s)"), ptype->name,
+		 get_name_prefix(owner),
+		 get_proper_username(owner),
+		 diplo_city_adjectives[ds[owner->player_no].type],
+		 get_nation_name(owner->nation));
       }
     }
 
@@ -336,8 +361,7 @@ const char *popup_info_text(struct tile *ptile)
 
       if (found) {
 	/* TRANS: "Chance to win: A:95% D:46%" */
-	add_line(_("Chance to win: A:%d%% D:%d%%"),
-		 att_chance, def_chance);
+	add_line(_("Chance to win: A:%d%% D:%d%%"), att_chance, def_chance);
       }
     }
 
@@ -347,15 +371,14 @@ const char *popup_info_text(struct tile *ptile)
     /* TRANS: A is attack power, D is defense power, FP is firepower,
      * HP is hitpoints (current and max). */
     add_line(_("A:%d D:%d FP:%d HP:%d/%d%s"),
-	     ptype->attack_strength, 
-	     ptype->defense_strength, ptype->firepower, punit->hp, 
+	     ptype->attack_strength,
+	     ptype->defense_strength, ptype->firepower, punit->hp,
 	     ptype->hp, vet);
-    if (owner == game.player_ptr
-	&& unit_list_size(&ptile->units) >= 2) {
+    if (owner == game.player_ptr && unit_list_size(&ptile->units) >= 2) {
       /* TRANS: "5 more" units on this tile */
       add(_("  (%d more)"), unit_list_size(&ptile->units) - 1);
     }
-  } 
+  }
   RETURN;
 }
 
@@ -463,7 +486,7 @@ const char *science_dialog_text(void)
 {
   int turns_to_advance;
   struct player *plr = game.player_ptr;
-  int ours = 0, theirs = 0;
+  int ours = 0, theirs = -1;
   INIT;
 
   /* Sum up science */
@@ -472,32 +495,29 @@ const char *science_dialog_text(void)
 
     if (plr == pplayer) {
       city_list_iterate(pplayer->cities, pcity) {
-        ours += pcity->science_total;
+	ours += pcity->science_total;
       } city_list_iterate_end;
     } else if (ds == DS_TEAM) {
+      if (theirs == -1)
+        theirs = 0;
       theirs += pplayer->research.bulbs_last_turn;
     }
   } players_iterate_end;
 
-  if (ours == 0 && theirs == 0) {
-    add(_("Progress: no research"));
-    RETURN;
+  if (ours <= 0) {
+    turns_to_advance = 0;
+  } else {
+    turns_to_advance = (total_bulbs_required(plr) + ours - 1) / ours;
   }
-  assert(ours >= 0 && theirs >= 0);
-  turns_to_advance = (total_bulbs_required(plr) + ours + theirs - 1)
-                     / (ours + theirs);
-  if (theirs == 0) {
-    /* Simple version, no techpool */
-    add(PL_("Progress: %d turn/advance (%d pts/turn)",
-	    "Progress: %d turns/advance (%d pts/turn)",
+  if (ours > 0) {
+    add(PL_("Progress: %d turn/advance, %d pts/turn",
+	    "Progress: %d turns/advance, %d pts/turn",
 	    turns_to_advance), turns_to_advance, ours);
   } else {
-    /* Techpool version */
-    add(PL_("Progress: %d turn/advance (%d pts/turn, "
-	    "%d pts/turn from team)",
-	    "Progress: %d turns/advance (%d pts/turn, "
-	    "%d pts/turn from team)",
-	    turns_to_advance), turns_to_advance, ours, theirs);
+    add(_("Progress: Never"));
+  }
+  if (theirs >= 0) {
+    add(_(" (%d pts/turn by team)"), theirs);
   }
   RETURN;
 }
@@ -511,8 +531,8 @@ const char *get_info_label_text(void)
   INIT;
 
   add_line(_("Population: %s"),
-	     population_to_text(civ_population(game.player_ptr)));
-  add_line(_("Year: %s - T%d"), textyear(game.year), game.turn); 
+	   population_to_text(civ_population(game.player_ptr)));
+  add_line(_("Year: %s - T%d"), textyear(game.year), game.turn);
   add_line(_("Gold: %d"), game.player_ptr->economic.gold);
   add_line(_("Tax: %d Lux: %d Sci: %d"), game.player_ptr->economic.tax,
 	   game.player_ptr->economic.luxury,
@@ -528,7 +548,7 @@ const char *get_info_label_text(void)
 const char *get_unit_info_label_text1(struct unit *punit)
 {
   INIT;
-  
+
   if (punit) {
     struct unit_type *ptype = unit_type(punit);
 
@@ -551,8 +571,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
   if (punit) {
     struct city *pcity =
 	player_find_city_by_id(game.player_ptr, punit->homecity);
-    int infrastructure =
-	get_tile_infrastructure_set(punit->tile);
+    int infrastructure = get_tile_infrastructure_set(punit->tile);
 
     if (hover_unit == punit->id) {
       add_line(_("Turns to target: %d"), get_goto_turns());
@@ -655,8 +674,7 @@ const char *get_spaceship_descr(struct player_spaceship *pship)
 	   (int) (pship->support_rate * 100.0));
 
   /* TRANS: spaceship text; should have constant width. */
-  add_line(_("Energy:          %5d %%"),
-	   (int) (pship->energy_rate * 100.0));
+  add_line(_("Energy:          %5d %%"), (int) (pship->energy_rate * 100.0));
 
   /* TRANS: spaceship text; should have constant width. */
   add_line(PL_("Mass:            %5d ton",
