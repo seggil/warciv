@@ -1110,7 +1110,7 @@ static void setup_widgets(void)
                    G_CALLBACK(inputline_handler), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), inputline, TRUE, TRUE, 0);
 
-  button = gtk_toggle_button_new_with_label(_("Auto-scroll"));
+  button = gtk_toggle_button_new_with_label(_("Auto-Scroll"));
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
                                auto_scroll_to_bottom);
   g_signal_connect(button, "toggled",

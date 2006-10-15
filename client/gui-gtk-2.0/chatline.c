@@ -792,6 +792,8 @@ void real_append_output_window (const char *astring, int conn_id)
   if (auto_scroll_to_bottom) {
     gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(main_message_area),
                                  end_mark, 0.0, TRUE, 0.0, 1.0);
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(start_message_area),
+                                 end_mark, 0.0, TRUE, 0.0, 1.0);
   }
 }
 

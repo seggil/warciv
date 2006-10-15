@@ -40,6 +40,7 @@
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
+#include "optiondlg.h"
 #include "packhand.h"
 #include "pages.h"
 
@@ -1227,6 +1228,12 @@ GtkWidget *create_start_page(void)
       G_CALLBACK(configure_chatline_colors_callback), NULL);
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
 
+  button = gtk_stockbutton_new (GTK_STOCK_PREFERENCES,
+      _("_Local Options"));
+  g_signal_connect(button, "clicked",
+      G_CALLBACK(popup_option_dialog), NULL);
+  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
+
   align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
   gtk_container_add(GTK_CONTAINER(align), vbox2);
   gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, FALSE, 8);
@@ -1270,7 +1277,7 @@ GtkWidget *create_start_page(void)
   gtk_container_add(GTK_CONTAINER(sw), text);
 
 
-  sbox = gtk_hbox_new(FALSE, 12);
+  sbox = gtk_hbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(box), sbox, FALSE, FALSE, 0);
 
   entry = gtk_entry_new();
