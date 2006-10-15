@@ -875,6 +875,8 @@ void handle_new_year(int year, int turn)
   agents_new_turn();
 
   check_dead_rally_sources();
+
+  decrease_link_mark_ttl();
 }
 
 /**************************************************************************

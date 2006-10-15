@@ -80,6 +80,9 @@ struct autoname_data {
   int continent_city_number;
 };
 
+static struct hash_table *mark_table = NULL;
+
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1516,5 +1519,151 @@ int buy_production_in_selected_cities (void)
   connection_do_unbuffer (&aconnection);
   
   return 1;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void check_init_mark_table(void)
+{
+  if (mark_table)
+    return;
+  mark_table = hash_new(hash_fval_keyval, hash_fcmp_keyval);
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+void clear_link_marks(void)
+{
+  check_init_mark_table();
+  
+  hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
+    if (!ptile)
+      continue;
+    ptile->client.mark_ttl = 0;
+  } hash_iterate_end;
+
+  hash_delete_all_entries(mark_table);
+
+  update_map_canvas_visible();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void decrease_link_mark_ttl(void)
+{
+  check_init_mark_table();
+
+  hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
+    if (!ptile)
+      continue;
+    if (--ptile->client.mark_ttl <= 0)
+      hash_delete_entry(mark_table, ptile);
+  } hash_iterate_end;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void add_link_mark(struct tile *ptile)
+{
+  check_init_mark_table();
+
+  if (!ptile)
+    return;
+
+  hash_insert(mark_table, ptile, NULL);
+  draw_link_mark(ptile);
+
+  update_map_canvas_visible();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void draw_link_mark(struct tile *ptile)
+{
+  int canvas_x, canvas_y, xlen, ylen;
+  if (!tile_visible_mapcanvas(ptile))
+    return;
+    
+  tile_to_canvas_pos(&canvas_x, &canvas_y, ptile);
+
+#if 0
+  canvas_put_sprite_full(mapview_canvas.store, canvas_x, canvas_y,
+                         sprites.user.attention);
+  
+  canvas_x += NORMAL_TILE_WIDTH / 2;
+  canvas_y += NORMAL_TILE_HEIGHT / 2;
+  canvas_put_rectangle(mapview_canvas.store, COLOR_STD_YELLOW,
+                       canvas_x-2, canvas_y-2, 4, 4);
+#endif
+  
+  xlen = NORMAL_TILE_WIDTH / 3;
+  ylen = NORMAL_TILE_HEIGHT / 3;
+  
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x,
+                  canvas_y,
+                  xlen, 0);
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x,
+                  canvas_y,
+                  0, ylen);
+  
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x + NORMAL_TILE_WIDTH,
+                  canvas_y,
+                  -xlen, 0);
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x + NORMAL_TILE_WIDTH,
+                  canvas_y,
+                  0, ylen);
+  
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x,
+                  canvas_y + NORMAL_TILE_HEIGHT,
+                  xlen, 0);
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x,
+                  canvas_y + NORMAL_TILE_HEIGHT,
+                  0, -ylen);
+  
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x + NORMAL_TILE_WIDTH,
+                  canvas_y + NORMAL_TILE_HEIGHT,
+                  -xlen, 0);
+  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
+                  LINE_TILE_FRAME,
+                  canvas_x + NORMAL_TILE_WIDTH,
+                  canvas_y + NORMAL_TILE_HEIGHT,
+                  0, -ylen);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void draw_link_marks(void)
+{
+  check_init_mark_table();
+
+  hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
+    if (!ptile)
+      continue;
+    if (ptile->client.mark_ttl <= 0) {
+      hash_delete_entry(mark_table, ptile);
+      continue;
+    }
+    draw_link_mark(ptile);
+  } hash_iterate_end;
 }
 

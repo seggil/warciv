@@ -735,11 +735,21 @@ void enable_menus(bool enable)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void auto_scroll_button_toggled(GtkToggleButton *button,
+                                       gpointer user_data)
+{
+  auto_scroll_to_bottom
+      = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
+}
+
+/**************************************************************************
  do the heavy lifting for the widget setup.
 **************************************************************************/
 static void setup_widgets(void)
 {
-  GtkWidget *box, *ebox, *hbox, *sbox, *align, *label;
+  GtkWidget *box, *ebox, *hbox, *sbox, *align, *label, *button;
   GtkWidget *frame, *table, *table2, *paned, *sw, *text, *splitmsgs;
   GtkStyle *style;
   int i;
@@ -1063,7 +1073,7 @@ static void setup_widgets(void)
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 				      GTK_SHADOW_ETCHED_IN);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER,
   				 GTK_POLICY_ALWAYS);
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
@@ -1073,6 +1083,7 @@ static void setup_widgets(void)
   text = gtk_text_view_new_with_buffer(message_buffer);
   set_message_buffer_view_link_handlers (GTK_TEXT_VIEW (text));
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
+  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD_CHAR);
   gtk_container_add(GTK_CONTAINER(sw), text);
 
   gtk_widget_set_name(text, "chatline");
@@ -1089,13 +1100,22 @@ static void setup_widgets(void)
       " menu.\nNow.. Go give'em hell!") );
 
   /* the chat line */
+  hbox = gtk_hbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 3);
+  
   inputline = gtk_entry_new();
-  gtk_box_pack_start(GTK_BOX(vbox), inputline, FALSE, FALSE, 3);
-
   g_signal_connect(inputline, "activate",
 		   G_CALLBACK(inputline_return), NULL);
   g_signal_connect(inputline, "key_press_event",
                    G_CALLBACK(inputline_handler), NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), inputline, TRUE, TRUE, 0);
+
+  button = gtk_toggle_button_new_with_label(_("Auto-scroll"));
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+                               auto_scroll_to_bottom);
+  g_signal_connect(button, "toggled",
+                   G_CALLBACK(auto_scroll_button_toggled), NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   /* Other things to take care of */
 

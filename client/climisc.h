@@ -129,4 +129,10 @@ void city_autonaming_add_used_name (const char *city_name);
 void city_autonaming_remove_used_name (const char *city_name);
 void normalize_names_in_selected_cities (void);
 
+void clear_link_marks(void);
+void decrease_link_mark_ttl(void);
+void add_link_mark(struct tile *ptile);
+void draw_link_marks(void);
+void draw_link_mark(struct tile *ptile);
+
 #endif  /* FC__CLIMISC_H */

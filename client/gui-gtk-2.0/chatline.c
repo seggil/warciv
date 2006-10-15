@@ -96,11 +96,76 @@ enum tag_link_types {
   LINK_LOCATION = 1,
   LINK_CITY,
   LINK_CITY_ID,
+  LINK_CITY_ID_AND_NAME,
 };
 
 static gboolean hovering_over_link = FALSE;
 static GdkCursor *hand_cursor = NULL;
 static GdkCursor *regular_cursor = NULL;
+
+static GtkTextMark *end_mark = NULL;
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void link_escape_city_name(char *buf, int buflen, const char *name)
+{
+  const char *end = buf + buflen - 1;
+  while (buf < end) {
+    if (*name == '"' || *name == '\\') {
+      *buf++ = '\\';
+      if (buf == end)
+        break;
+      *buf++ = '"';
+      name++;
+    } else {
+      *buf++ = *name++;
+    }
+  }
+  *buf++ = 0;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int insert_city_name_and_id_link(char *buf, int buflen,
+                                        struct tile *ptile)
+{
+  char safename[256];
+  int nb;
+  
+  assert (ptile != NULL);
+  assert (ptile->city != NULL);
+
+  link_escape_city_name(safename, sizeof(safename), ptile->city->name);
+  nb = my_snprintf(buf, buflen, "@F%d\"%s\"", ptile->city->id, safename);
+  return nb;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int insert_location_link(char *buf, int buflen, struct tile *ptile)
+{
+  assert (ptile != NULL);
+
+  return my_snprintf(buf, buflen, "@L%d,%d", ptile->x, ptile->y);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void insert_chat_link(struct tile *ptile)
+{
+  char buf[256];
+  if (ptile->city) {
+    insert_city_name_and_id_link(buf, sizeof(buf), ptile);
+  } else {
+    insert_location_link(buf, sizeof(buf), ptile);
+  }
+  chatline_entry_append_text(buf);
+  gtk_widget_grab_focus(inputline);
+}
 
 /**************************************************************************
 ...
@@ -175,6 +240,7 @@ follow_if_link (GtkWidget   *text_view,
       break;
 
     case LINK_CITY_ID:
+    case LINK_CITY_ID_AND_NAME:
       data = g_object_get_data (G_OBJECT (tag), "city_id");
       id = GPOINTER_TO_INT (data);
       pcity = find_city_by_id (id);
@@ -186,7 +252,6 @@ follow_if_link (GtkWidget   *text_view,
         ptile = pcity->tile;
       }
       break;
-      
 
     case LINK_LOCATION: 
       x = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (tag), "x"));
@@ -203,6 +268,7 @@ follow_if_link (GtkWidget   *text_view,
       break;
     }
     if (ptile) {
+      draw_link_mark(ptile);      
       center_tile_mapcanvas (ptile);
       gtk_widget_grab_focus (GTK_WIDGET (map_canvas));
     }
@@ -354,6 +420,75 @@ void set_message_buffer_view_link_handlers (GtkTextView *view)
                     G_CALLBACK (visibility_notify_event), NULL);
 
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int parse_city_id_and_name_link (const char *str, 
+                                        GtkTextBuffer *buf,
+                                        GtkTextTag **tag,
+                                        char *newtext,
+                                        int newtext_maxlen)
+{
+  const char *p = str;
+  char *q, idbuf[32];
+  int id;
+  struct city *pcity;
+  struct tile *ptile;
+  
+  if (*p != '@' || p[1] != 'F')
+    return 0;
+  p += 2;
+  q = idbuf;
+  while (*p && my_isdigit (*p)) {
+    if (q >= idbuf + sizeof (idbuf))
+      return 0;
+    *q++ = *p++;
+  }
+  *q = 0;
+
+  if (*p != '"')
+    return 0;
+  while (*p) {
+    if (*p == '\\') {
+      p++;
+      if (!*p)
+        break;
+    }
+    p++;
+    if (*p == '"')
+      break;
+  }
+
+  if (*p++ != '"')
+    return 0;
+
+  id = atoi (idbuf);
+  if (id < 0)
+    return 0;
+
+  pcity = find_city_by_id (id);
+  if (!pcity)
+    return 0;
+  
+  *tag = gtk_text_buffer_create_tag (buf, NULL,
+                                     "foreground", "blue",
+                                     "underline", PANGO_UNDERLINE_SINGLE,
+                                     NULL);
+  g_object_set_data (G_OBJECT (*tag), "link_type",
+                     GINT_TO_POINTER (LINK_CITY_ID));
+  g_object_set_data (G_OBJECT (*tag), "city_id",
+                     GINT_TO_POINTER (id)); 
+
+  if ((ptile = pcity->tile)) {
+    ptile->client.mark_ttl = 2;
+    add_link_mark(ptile);
+  }
+
+  my_snprintf (newtext, newtext_maxlen, "%s", pcity->name);
+  
+  return (int) (p - str);
+}
 /**************************************************************************
   ...
 **************************************************************************/
@@ -367,6 +502,7 @@ static int parse_city_id_link (const char *str,
   char *q, idbuf[32];
   int id;
   struct city *pcity;
+  struct tile *ptile;
   
   if (*p != '@' || p[1] != 'I')
     return 0;
@@ -396,6 +532,11 @@ static int parse_city_id_link (const char *str,
   g_object_set_data (G_OBJECT (*tag), "city_id",
                      GINT_TO_POINTER (id)); 
 
+  if ((ptile = pcity->tile)) {
+    ptile->client.mark_ttl = 2;
+    add_link_mark(ptile);
+  }
+
   my_snprintf (newtext, newtext_maxlen, "%s", pcity->name);
   
   return (int) (p - str);
@@ -411,6 +552,8 @@ static int parse_city_link (const char *str,
 {
   const char *p = str;
   char city_name[MAX_LEN_NAME], *q;
+  struct city *pcity;
+  struct tile *ptile;
   
   if (*p != '@' || p[1] != 'C' || p[2] != '"')
     return 0;
@@ -424,7 +567,7 @@ static int parse_city_link (const char *str,
   p++;
   *q = 0;
 
-  if (!find_city_by_name_fast (city_name))
+  if (!(pcity = find_city_by_name_fast (city_name)))
     return 0;
   
   *tag = gtk_text_buffer_create_tag (buf, NULL,
@@ -435,6 +578,11 @@ static int parse_city_link (const char *str,
                      GINT_TO_POINTER (LINK_CITY));
   g_object_set_data (G_OBJECT (*tag), "city_name",
                      mystrdup (city_name)); 
+  
+  if ((ptile = pcity->tile)) {
+    ptile->client.mark_ttl = 2;
+    add_link_mark(ptile);
+  }
 
   my_snprintf (newtext, newtext_maxlen, "%s", city_name);
   
@@ -451,6 +599,7 @@ static int parse_location_link (const char *str,
 {
   const char *p;
   int x, y;
+  struct tile *ptile;
   
   if (2 != sscanf (str, "@L%d,%d", &x, &y))
     return 0;
@@ -469,6 +618,11 @@ static int parse_location_link (const char *str,
   g_object_set_data (G_OBJECT (*tag), "y", GINT_TO_POINTER (y));
 
   my_snprintf (newtext, newtext_maxlen, "(%d, %d)", x, y);
+  
+  if ((ptile = map_pos_to_tile(x, y))) {
+    ptile->client.mark_ttl = 2;
+    add_link_mark(ptile);
+  }
   
   return (int) (p - str);
 }
@@ -498,6 +652,9 @@ static void append_text_with_links (GtkTextBuffer *buf,
     case 'I':
       n = parse_city_id_link (q, buf, &tag, newtext, sizeof (newtext));
       break;
+    case 'F':
+      n = parse_city_id_and_name_link (q, buf, &tag, newtext, sizeof (newtext));
+      break;
     default:
       n = 0;
       break;
@@ -517,16 +674,14 @@ static void append_text_with_links (GtkTextBuffer *buf,
   if (*s)
     gtk_text_buffer_insert (buf, &iter, s, -1);
 }
+
 /**************************************************************************
   Appends the string to the chat output window.  The string should be
   inserted on its own line, although it will have no newline.
 **************************************************************************/
 void real_append_output_window (const char *astring, int conn_id)
 {
-  GtkWidget *sw;
-  GtkAdjustment *slider;
-  bool scroll, previous_matched = FALSE, switch_next = FALSE,
-    do_stop = FALSE;
+  bool previous_matched = FALSE, switch_next = FALSE, do_stop = FALSE;
   char *jump_target = "";
   struct match_result_list matches;
   const char *text;
@@ -534,7 +689,7 @@ void real_append_output_window (const char *astring, int conn_id)
 
   GtkTextBuffer *buf;
   GtkTextIter iter, start, end;
-  GtkTextMark *mark, *insert_start, *text_start;
+  GtkTextMark *insert_start, *text_start;
 
   buf = message_buffer;
   gtk_text_buffer_get_end_iter (buf, &iter);
@@ -629,39 +784,15 @@ void real_append_output_window (const char *astring, int conn_id)
   gtk_text_buffer_delete_mark (buf, insert_start);
   gtk_text_buffer_delete_mark (buf, text_start);
 
-
-  /* have to use a mark, or this won't work properly */
-  gtk_text_buffer_get_end_iter(buf, &iter);
-  mark = gtk_text_buffer_create_mark(buf, NULL, &iter, FALSE);
-
-
-  sw = gtk_widget_get_parent(GTK_WIDGET(main_message_area));
-  slider = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw));
-
-  /* scroll forward only if slider is near the bottom */
-  scroll = ((slider->value + slider->page_size) >=
-      (slider->upper - slider->step_increment));
-  if (scroll) {
-    gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (main_message_area),
-                                        mark);
+  if (!end_mark) {
+    gtk_text_buffer_get_end_iter(buf, &iter);
+    end_mark = gtk_text_buffer_create_mark(buf, "end", &iter, FALSE);
   }
 
-  sw = gtk_widget_get_parent (GTK_WIDGET (start_message_area));
-  slider = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sw));
-
-  /* scroll forward only if slider is near the bottom */
-  scroll = ((slider->value + slider->page_size) >=
-      (slider->upper - slider->step_increment));
-  if (scroll) {
-    gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (start_message_area),
-                                        mark);
+  if (auto_scroll_to_bottom) {
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(main_message_area),
+                                 end_mark, 0.0, TRUE, 0.0, 1.0);
   }
-
-
-  gtk_text_buffer_delete_mark (buf, mark);
-
-
-  append_network_statusbar (astring);
 }
 
 /**************************************************************************
