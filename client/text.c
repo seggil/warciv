@@ -191,7 +191,7 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
 const char *popup_info_text(struct tile *ptile)
 {
   const char *activity_text;
-  struct city *pcity = ptile->city;
+  struct city *pcity = ptile->city; 
   struct unit *punit = find_visible_unit(ptile);
   struct unit *pfocus_unit = get_unit_in_focus();
   const char *diplo_nation_plural_adjectives[DS_LAST] =

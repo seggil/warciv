@@ -4010,7 +4010,7 @@ static bool quit_game(struct connection *caller, bool check)
 
   If check is TRUE, then do nothing, just check syntax.
 **************************************************************************/
-bool handle_stdin_input(struct connection * caller, char *str, bool check)
+bool handle_stdin_input(struct connection *caller, char *str, bool check)
 {
   char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE],
       allargs[MAX_LEN_CONSOLE_LINE], full_command[MAX_LEN_CONSOLE_LINE],
@@ -4130,17 +4130,42 @@ bool handle_stdin_input(struct connection * caller, char *str, bool check)
   while (i > 0 && my_isspace(arg[i]))
     arg[i--] = '\0';
 
-  if (!check && commands[cmd].game_level > ALLOW_OBSERVER) {
-    /*
-     * this command will affect the game - inform all players.
-     * We quite purposely do not use access_level() here.
-     *
-     * use command,arg instead of str because of the trailing
-     * newline in str when it comes from the server command line
-     */
-    notify_conn(NULL, "%s: '%s %s'",
-		caller ? caller->username : _("(server prompt)"), command,
-		arg);
+  if (!check) {
+    struct conn_list notifylist;
+    conn_list_init(&notifylist);
+    
+    switch (commands[cmd].notify) {
+    case NOTIFY_NONE:
+      break;
+    case NOTIFY_USER:
+      if (caller)
+        conn_list_insert(&notifylist, caller);
+      break;
+    case NOTIFY_PLAYERS:
+    case NOTIFY_ADMINS:
+    case NOTIFY_ALL:
+      conn_list_iterate(game.est_connections, pconn) {
+        if ((commands[cmd].notify == NOTIFY_PLAYERS
+             && pconn->access_level < ALLOW_BASIC)
+            || (commands[cmd].notify == NOTIFY_ADMINS
+                && pconn->access_level < ALLOW_ADMIN)) {
+          continue;
+        }
+        conn_list_insert(&notifylist, pconn);
+      } conn_list_iterate_end;
+      break;
+    default:
+      break;
+    }
+    if (conn_list_size(&notifylist) > 0) {
+      notify_conn(&notifylist, "%s: '%s %s'", caller ? caller->username
+                  : _("(server prompt)"), command, arg);
+    }
+    if (caller == NULL) {
+      notify_conn(NULL, "%s: '%s %s'", caller ? caller->username
+                  : _("(server prompt)"), command, arg);
+    }
+    conn_list_unlink_all(&notifylist);
   }
 
   switch (cmd) {

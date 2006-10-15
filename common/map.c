@@ -351,6 +351,7 @@ static void tile_init(struct tile *ptile)
   ptile->assigned = 0; /* bitvector */
   ptile->owner    = NULL; /* Tile not claimed by any nation. */
   ptile->client.hilite = HILITE_NONE; /* Area Selection in client. */
+  ptile->client.mark_ttl = 0;
   ptile->spec_sprite = NULL;
 }
 

@@ -60,6 +60,7 @@ struct tile {
   struct {
     /* Area Selection in client. */
     enum tile_hilite hilite;
+    int mark_ttl;
   } client;
   char *spec_sprite;
 };

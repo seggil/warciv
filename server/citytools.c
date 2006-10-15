@@ -242,6 +242,18 @@ static char *search_for_city_name(struct tile *ptile, struct city_name *city_nam
 }
 
 /**************************************************************************
+  Returns true is the string is empty or all white space.
+**************************************************************************/
+static bool is_white_space_str(const char *s)
+{
+  while (*s) {
+    if (!my_isspace(*s++))
+      return FALSE;
+  }
+  return TRUE;
+}
+
+/**************************************************************************
 Checks, if a city name is allowed for a player. If not, reports a
 reason for rejection. There's 4 different modes:
 0: no restrictions,
@@ -257,6 +269,13 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
 			  char *error_buf, size_t bufsz)
 {
   struct connection *pconn = find_conn_by_user(pplayer->username);
+
+  if (is_white_space_str(city_name)) {
+    if (error_buf) {
+      my_snprintf(error_buf, bufsz, _("The city name cannot be empty!"));
+    }
+    return FALSE;
+  }
 
   /* Mode 1: A city name has to be unique for each player. */
   if (game.allowed_city_names == 1 &&
