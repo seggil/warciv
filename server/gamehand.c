@@ -172,7 +172,7 @@ static void shuffle_start_positions_by_iter(int *start_pos)
     int tmp;
     int score, best_local_score = 0, best_local_x = 0, best_local_y = 0;
 
-    while(found && repeat < game.nplayers*1000) {//limit # of iterations
+    while(found && (repeat < game.nplayers*game.iterplacementcoefficient)) {//limit # of iterations
         repeat++;
         found = 0;
         best_local_score = 99999999;
@@ -316,7 +316,7 @@ static void shuffle_start_positions(int *start_pos)
     best_score = calculate_score(start_pos);        
     printf("Current best score is %i\n",best_score);
     
-    if(game.nplayers<=12) {//brute force for small number of players
+    if(game.nplayers<=game.bruteforcethreshold) {//brute force for small number of players
       clean_start_pos(start_pos);
       for (i = 0; i < game.nplayers; i++ ) {//with 2 players shuffling doesnt make sense
           find_pos_by_brute_force(start_pos,i);

@@ -325,6 +325,10 @@ bool client_handle_packet(enum packet_type type, void *packet)
     handle_ruleset_cache_effect(packet);
     return TRUE;
 
+  case PACKET_TRADEROUTE_INFO:
+    handle_traderoute_info(packet);
+    return TRUE;
+
   default:
     return FALSE;
   }

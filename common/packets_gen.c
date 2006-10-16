@@ -386,6 +386,9 @@ void *get_packet_from_connection_helper(struct connection *pc,
   case PACKET_RULESET_CACHE_EFFECT:
     return receive_packet_ruleset_cache_effect(pc, type);
 
+  case PACKET_TRADEROUTE_INFO:
+    return receive_packet_traderoute_info(pc, type);
+
   default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
 	    type, conn_description(pc));
@@ -739,6 +742,9 @@ const char *get_packet_name(enum packet_type type)
 
   case PACKET_RULESET_CACHE_EFFECT:
     return "PACKET_RULESET_CACHE_EFFECT";
+
+  case PACKET_TRADEROUTE_INFO:
+    return "PACKET_TRADEROUTE_INFO";
 
   default:
     return "unknown";
@@ -28303,5 +28309,203 @@ void lsend_packet_ruleset_cache_effect(struct conn_list *dest, const struct pack
   conn_list_iterate(*dest, pconn) {
     send_packet_ruleset_cache_effect(pconn, packet);
   } conn_list_iterate_end;
+}
+
+#define hash_packet_traderoute_info_100 hash_const
+
+#define cmp_packet_traderoute_info_100 cmp_const
+
+BV_DEFINE(packet_traderoute_info_100_fields, 4);
+
+static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct connection *pc, enum packet_type type)
+{
+  packet_traderoute_info_100_fields fields;
+  struct packet_traderoute_info *old;
+  struct hash_table **hash = &pc->phs.received[type];
+  struct packet_traderoute_info *clone;
+  RECEIVE_PACKET_START(packet_traderoute_info, real_packet);
+
+  DIO_BV_GET(&din, fields);
+
+
+  if (!*hash) {
+    *hash = hash_new(hash_packet_traderoute_info_100, cmp_packet_traderoute_info_100);
+  }
+  old = hash_delete_entry(*hash, real_packet);
+
+  if (old) {
+    *real_packet = *old;
+  } else {
+    memset(real_packet, 0, sizeof(*real_packet));
+  }
+
+  if (BV_ISSET(fields, 0)) {
+    {
+      int readin;
+    
+      dio_get_uint32(&din, &readin);
+      real_packet->trademindist = readin;
+    }
+  }
+  if (BV_ISSET(fields, 1)) {
+    {
+      int readin;
+    
+      dio_get_uint8(&din, &readin);
+      real_packet->traderevenuepct = readin;
+    }
+  }
+  if (BV_ISSET(fields, 2)) {
+    {
+      int readin;
+    
+      dio_get_uint8(&din, &readin);
+      real_packet->traderevenuestyle = readin;
+    }
+  }
+  if (BV_ISSET(fields, 3)) {
+    {
+      int readin;
+    
+      dio_get_uint8(&din, &readin);
+      real_packet->caravanbonusstyle = readin;
+    }
+  }
+
+  clone = fc_malloc(sizeof(*clone));
+  *clone = *real_packet;
+  if (old) {
+    free(old);
+  }
+  hash_insert(*hash, clone, clone);
+
+  RECEIVE_PACKET_END(real_packet);
+}
+
+static int send_packet_traderoute_info_100(struct connection *pc, const struct packet_traderoute_info *packet)
+{
+  const struct packet_traderoute_info *real_packet = packet;
+  packet_traderoute_info_100_fields fields;
+  struct packet_traderoute_info *old, *clone;
+  bool differ, old_from_hash, force_send_of_unchanged = FALSE;
+  struct hash_table **hash = &pc->phs.sent[PACKET_TRADEROUTE_INFO];
+  int different = 0;
+  SEND_PACKET_START(PACKET_TRADEROUTE_INFO);
+
+  if (!*hash) {
+    *hash = hash_new(hash_packet_traderoute_info_100, cmp_packet_traderoute_info_100);
+  }
+  BV_CLR_ALL(fields);
+
+  old = hash_lookup_data(*hash, real_packet);
+  old_from_hash = (old != NULL);
+  if (!old) {
+    old = fc_malloc(sizeof(*old));
+    memset(old, 0, sizeof(*old));
+    force_send_of_unchanged = TRUE;
+  }
+
+  differ = (old->trademindist != real_packet->trademindist);
+  if(differ) {different++;}
+  if(differ) {BV_SET(fields, 0);}
+
+  differ = (old->traderevenuepct != real_packet->traderevenuepct);
+  if(differ) {different++;}
+  if(differ) {BV_SET(fields, 1);}
+
+  differ = (old->traderevenuestyle != real_packet->traderevenuestyle);
+  if(differ) {different++;}
+  if(differ) {BV_SET(fields, 2);}
+
+  differ = (old->caravanbonusstyle != real_packet->caravanbonusstyle);
+  if(differ) {different++;}
+  if(differ) {BV_SET(fields, 3);}
+
+  if (different == 0 && !force_send_of_unchanged) {
+    return 0;
+  }
+
+  DIO_BV_PUT(&dout, fields);
+
+  if (BV_ISSET(fields, 0)) {
+    dio_put_uint32(&dout, real_packet->trademindist);
+  }
+  if (BV_ISSET(fields, 1)) {
+    dio_put_uint8(&dout, real_packet->traderevenuepct);
+  }
+  if (BV_ISSET(fields, 2)) {
+    dio_put_uint8(&dout, real_packet->traderevenuestyle);
+  }
+  if (BV_ISSET(fields, 3)) {
+    dio_put_uint8(&dout, real_packet->caravanbonusstyle);
+  }
+
+
+  if (old_from_hash) {
+    hash_delete_entry(*hash, old);
+  }
+
+  clone = old;
+
+  *clone = *real_packet;
+  hash_insert(*hash, clone, clone);
+  SEND_PACKET_END;
+}
+
+static void ensure_valid_variant_packet_traderoute_info(struct connection *pc)
+{
+  int variant = -1;
+
+  if(pc->phs.variant[PACKET_TRADEROUTE_INFO] != -1) {
+    return;
+  }
+
+  if(FALSE) {
+  } else if(TRUE) {
+    variant = 100;
+  } else {
+    die("unknown variant");
+  }
+  pc->phs.variant[PACKET_TRADEROUTE_INFO] = variant;
+}
+
+struct packet_traderoute_info *receive_packet_traderoute_info(struct connection *pc, enum packet_type type)
+{
+  if(!pc->used) {
+    freelog(LOG_ERROR,
+	    "WARNING: trying to read data from the closed connection %s",
+	    conn_description(pc));
+    return NULL;
+  }
+  assert(pc->phs.variant != NULL);
+  if(is_server) {
+    freelog(LOG_ERROR, "Receiving packet_traderoute_info at the server.");
+  }
+  ensure_valid_variant_packet_traderoute_info(pc);
+
+  switch(pc->phs.variant[PACKET_TRADEROUTE_INFO]) {
+    case 100: return receive_packet_traderoute_info_100(pc, type);
+    default: die("unknown variant"); return NULL;
+  }
+}
+
+int send_packet_traderoute_info(struct connection *pc, const struct packet_traderoute_info *packet)
+{
+  if(!pc->used) {
+    freelog(LOG_ERROR,
+	    "WARNING: trying to send data to the closed connection %s",
+	    conn_description(pc));
+    return -1;
+  }
+  assert(pc->phs.variant != NULL);
+  if(!is_server) {
+    freelog(LOG_ERROR, "Sending packet_traderoute_info from the client.");
+  }
+  ensure_valid_variant_packet_traderoute_info(pc);
+
+  switch(pc->phs.variant[PACKET_TRADEROUTE_INFO]) {
+    case 100: return send_packet_traderoute_info_100(pc, packet);
+    default: die("unknown variant"); return -1;
+  }
 }
 

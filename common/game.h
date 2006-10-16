@@ -165,6 +165,8 @@ struct civ_game {
   bool globalwarmingon;
   bool nuclearwinteron;
   int maxconnections;
+  int bruteforcethreshold;
+  int iterplacementcoefficient;
   /*=========== WARSERVER settings END ================*/
   
 
@@ -310,6 +312,8 @@ const char *population_to_text(int thousand_citizen);
 extern struct civ_game game;
 extern bool is_server;
 
+#define GAME_DEFAULT_BRUTEFORCETHRESHOLD        11
+#define GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT        800
 #define GAME_DEFAULT_TRADEMINDIST        8
 #define GAME_DEFAULT_CARAVANBONUSSTYLE  0
 #define GAME_DEFAULT_TRADEREVENUESTYLE    0

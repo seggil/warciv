@@ -1064,6 +1064,27 @@ struct settings_s settings[] = {
              "1 - on\n"
              "If turned off, team players are placed randomly."), NULL,
           GAME_DEFAULT_TEAMPLACEMENT)
+  GEN_INT("bruteforcethreshold", game.bruteforcethreshold,
+	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+    N_("Brute force team placement algorithm threshold"),
+	  N_("Brute force team placement algorithm will be used\n"
+      "if the number of players is less or equal than this value.\n"
+      "This algorithm guarantees that team players will be placed\n"
+      "as close as possible. Combinatorial explosion occurs if\n"
+      "the value is greater than 12. Default value is 11."),
+	  NULL,
+	  0, 12, GAME_DEFAULT_BRUTEFORCETHRESHOLD)
+  GEN_INT("iterplacementcoefficient", game.iterplacementcoefficient,
+	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+    N_("Iterative team placement algorithm coefficient."),
+	  N_("This value is the upper bound of the number of\n"
+	    "iterations the iterative tabu search performs.\n"
+      "Iterative alrogithm is much faster than brute force\n"
+      "and provies acceptable team placement. Allied players\n"
+      "will be placed very close, but a slighly better solution\n"
+      "might exist. Default value is 800."),
+	  NULL,
+	  100, 5000, GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT)
   GEN_BOOL("globalwarming", game.globalwarmingon, SSET_RULES,
 	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
           N_("Global warming"),

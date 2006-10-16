@@ -188,6 +188,8 @@ void game_init(void)
   game.nuclearwinter = 0;
   game.coolinglevel  = 8;
   //WARSERVER settings
+  game.bruteforcethreshold   = GAME_DEFAULT_BRUTEFORCETHRESHOLD;
+  game.iterplacementcoefficient   = GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT;
   game.futuretechsscore   = GAME_DEFAULT_FUTURETECHSSCORE;
   game.maxconnections   = GAME_DEFAULT_MAXCONNECTIONS;
   game.ignoreruleset   = GAME_DEFAULT_IGNORERULESET;

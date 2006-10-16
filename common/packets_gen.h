@@ -1039,6 +1039,13 @@ struct packet_ruleset_cache_effect {
   int group_id;
 };
 
+struct packet_traderoute_info {
+  int trademindist;
+  int traderevenuepct;
+  int traderevenuestyle;
+  int caravanbonusstyle;
+};
+
 enum packet_type {
   PACKET_PROCESSING_STARTED,             /* 0 */
   PACKET_PROCESSING_FINISHED,
@@ -1154,6 +1161,7 @@ enum packet_type {
   PACKET_SELECT_RACES,
   PACKET_RULESET_CACHE_GROUP = 120,      /* 120 */
   PACKET_RULESET_CACHE_EFFECT,
+  PACKET_TRADEROUTE_INFO,
 
   PACKET_LAST  /* leave this last */
 };
@@ -1623,6 +1631,9 @@ void lsend_packet_ruleset_cache_group(struct conn_list *dest, const struct packe
 struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect(struct connection *pc, enum packet_type type);
 int send_packet_ruleset_cache_effect(struct connection *pc, const struct packet_ruleset_cache_effect *packet);
 void lsend_packet_ruleset_cache_effect(struct conn_list *dest, const struct packet_ruleset_cache_effect *packet);
+
+struct packet_traderoute_info *receive_packet_traderoute_info(struct connection *pc, enum packet_type type);
+int send_packet_traderoute_info(struct connection *pc, const struct packet_traderoute_info *packet);
 
 
 void delta_stats_report(void);

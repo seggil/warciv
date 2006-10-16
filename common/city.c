@@ -897,7 +897,7 @@ bool can_cities_trade(const struct city *pc1, const struct city *pc2)
    * helptext_unit(). */
   return (pc1 && pc2 && pc1 != pc2
           && (pc1->owner != pc2->owner
-	      || map_distance(pc1->tile, pc2->tile) > game.trademindist));
+	      || map_distance(pc1->tile, pc2->tile) >= game.trademindist));
 }
 
 /**************************************************************************
