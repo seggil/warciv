@@ -167,6 +167,7 @@ struct civ_game {
   int maxconnections;
   int bruteforcethreshold;
   int iterplacementcoefficient;
+  int teamplacementtype;
   /*=========== WARSERVER settings END ================*/
   
 
@@ -334,6 +335,7 @@ extern bool is_server;
 #define GAME_DEFAULT_KILLSTACK        1
 #define GAME_DEFAULT_MAXCONNECTIONS    0
 #define GAME_DEFAULT_FUTURETECHSSCORE 0
+#define GAME_DEFAULT_TEAMPLACEMENTTYPE 0
 
 #define GAME_DEFAULT_SEED        0
 #define GAME_MIN_SEED            0

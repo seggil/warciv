@@ -1064,6 +1064,14 @@ struct settings_s settings[] = {
              "1 - on\n"
              "If turned off, team players are placed randomly."), NULL,
           GAME_DEFAULT_TEAMPLACEMENT)
+  GEN_INT("teamplacementtype", game.teamplacementtype,
+	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+    N_("Type of team placement"),
+	  N_("0 - team players are placed as close as possible\n"
+	     "    regardless of continents.\n"
+       "1 - team players are placed on the same continent."),
+	  NULL,
+	  0, 1, GAME_DEFAULT_TEAMPLACEMENTTYPE)
   GEN_INT("bruteforcethreshold", game.bruteforcethreshold,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
     N_("Brute force team placement algorithm threshold"),

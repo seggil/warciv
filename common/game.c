@@ -210,6 +210,7 @@ void game_init(void)
   game.traderevenuepct = GAME_DEFAULT_TRADEREVENUEPCT;
   game.caravanbonusstyle = GAME_DEFAULT_CARAVANBONUSSTYLE;
   game.trademindist = GAME_DEFAULT_TRADEMINDIST;
+  game.teamplacementtype = GAME_DEFAULT_TEAMPLACEMENTTYPE;
 
   game.gold          = GAME_DEFAULT_GOLD;
   game.tech          = GAME_DEFAULT_TECHLEVEL;
