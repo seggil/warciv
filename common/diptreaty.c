@@ -188,7 +188,7 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
   pclause->from=pfrom;
   pclause->value=val;
   
-  clause_list_insert_back(&ptreaty->clauses, pclause);
+  clause_list_append(&ptreaty->clauses, pclause);
 
   ptreaty->accept0 = FALSE;
   ptreaty->accept1 = FALSE;

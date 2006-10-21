@@ -1060,7 +1060,7 @@ static void setup_widgets(void)
 
   /* split message window */
   splitmsgs = get_split_message_window();
-  gtk_paned_pack2(GTK_PANED(paned), splitmsgs, TRUE, TRUE);
+  gtk_paned_pack2(GTK_PANED(paned), splitmsgs, TRUE, FALSE);
   
   /* botton notebook */
   bottom_notebook = gtk_notebook_new();

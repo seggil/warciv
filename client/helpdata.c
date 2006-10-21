@@ -248,7 +248,7 @@ void boot_help_texts(void)
 	      my_snprintf(name, sizeof(name), " %s", unit_name(i));
 	      pitem->topic = mystrdup(name);
 	      pitem->text = mystrdup("");
-	      help_list_insert_back(&category_nodes, pitem);
+	      help_list_append(&category_nodes, pitem);
 	    }
 	  } unit_type_iterate_end;
 	} else if (current_type == HELP_TECH) {
@@ -259,7 +259,7 @@ void boot_help_texts(void)
 			  get_tech_name(game.player_ptr, i));
 	      pitem->topic = mystrdup(name);
 	      pitem->text = mystrdup("");
-	      help_list_insert_back(&category_nodes, pitem);
+	      help_list_append(&category_nodes, pitem);
 	    }
 	  } tech_type_iterate_end;
 	} else if (current_type == HELP_TERRAIN) {
@@ -272,7 +272,7 @@ void boot_help_texts(void)
 			  ptype->terrain_name);
 	      pitem->topic = mystrdup(name);
 	      pitem->text = mystrdup("");
-	      help_list_insert_back(&category_nodes, pitem);
+	      help_list_append(&category_nodes, pitem);
 	    }
 	  }
 	  /* Add special Civ2-style river help text if it's supplied. */
@@ -283,7 +283,7 @@ void boot_help_texts(void)
 	    strcpy(long_buffer, _(terrain_control.river_help_text));
 	    wordwrap_string(long_buffer, 68);
 	    pitem->text = mystrdup(long_buffer);
-	    help_list_insert_back(&category_nodes, pitem);
+	    help_list_append(&category_nodes, pitem);
 	  }
 	} else if (current_type == HELP_GOVERNMENT) {
 	  government_iterate(gov) {
@@ -291,7 +291,7 @@ void boot_help_texts(void)
 	    my_snprintf(name, sizeof(name), " %s", gov->name);
 	    pitem->topic = mystrdup(name);
 	    pitem->text = mystrdup("");
-	    help_list_insert_back(&category_nodes, pitem);
+	    help_list_append(&category_nodes, pitem);
 	  } government_iterate_end;
 	} else if (current_type == HELP_IMPROVEMENT) {
 	  impr_type_iterate(i) {
@@ -301,7 +301,7 @@ void boot_help_texts(void)
 			  improvement_types[i].name);
 	      pitem->topic = mystrdup(name);
 	      pitem->text = mystrdup("");
-	      help_list_insert_back(&category_nodes, pitem);
+	      help_list_append(&category_nodes, pitem);
 	    }
 	  } impr_type_iterate_end;
 	} else if (current_type == HELP_WONDER) {
@@ -312,7 +312,7 @@ void boot_help_texts(void)
 			  improvement_types[i].name);
 	      pitem->topic = mystrdup(name);
 	      pitem->text = mystrdup("");
-	      help_list_insert_back(&category_nodes, pitem);
+	      help_list_append(&category_nodes, pitem);
 	    }
 	  } impr_type_iterate_end;
 	} else {
@@ -320,7 +320,7 @@ void boot_help_texts(void)
 	}
 	help_list_sort(&category_nodes, help_item_compar);
 	help_list_iterate(category_nodes, ptmp) {
-	  help_list_insert_back(&help_nodes, ptmp);
+	  help_list_append(&help_nodes, ptmp);
 	} help_list_iterate_end;
 	help_list_unlink_all(&category_nodes);
 	continue;
@@ -350,7 +350,7 @@ void boot_help_texts(void)
     paras = NULL;
     wordwrap_string(long_buffer, 68);
     pitem->text=mystrdup(long_buffer);
-    help_list_insert_back(&help_nodes, pitem);
+    help_list_append(&help_nodes, pitem);
   }
 
   free(sec);

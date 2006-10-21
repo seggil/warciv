@@ -896,7 +896,7 @@ void schedule_delayed_airlift(struct tile *ptile)
   dgd = fc_malloc (sizeof (struct delayed_goto_data));
   dgd->type = 2;//1 is delayed nuke, 2 is delayed airlift
   memcpy(&dgd->target_tile, ptile, sizeof(struct tile));
-  delayed_goto_data_list_insert_back (&DGqueue, dgd);
+  delayed_goto_data_list_append (&DGqueue, dgd);
 }
 
 /**************************************************************************
@@ -931,7 +931,7 @@ void add_unit_to_delayed_goto (struct tile *ptile)
       dgd->unit_id = tunit->id;
       dgd->type = delayed_para_or_nuke;
       memcpy (&dgd->target_tile, ptile, sizeof (struct tile));
-      delayed_goto_data_list_insert_back (&DGqueue, dgd);
+      delayed_goto_data_list_append (&DGqueue, dgd);
       count++;
     } unit_list_iterate_end;
     
@@ -942,7 +942,7 @@ void add_unit_to_delayed_goto (struct tile *ptile)
     dgd->unit_id = punit->id;
     dgd->type = delayed_para_or_nuke;
     memcpy (&dgd->target_tile, ptile, sizeof (struct tile));
-    delayed_goto_data_list_insert_back (&DGqueue, dgd);
+    delayed_goto_data_list_append (&DGqueue, dgd);
     count++;
   }
   

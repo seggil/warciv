@@ -891,7 +891,7 @@ static int server_accept_connection(int sockfd)
 	  pconn->username, pconn->addr, !from && pconn->adns_id > 0
 	  ? "hostname lookup in progress" : pconn->server.ipaddr);
 
-  conn_list_insert_back(&game.all_connections, pconn);
+  conn_list_append(&game.all_connections, pconn);
   ping_connection(pconn);
 
   return 0;
@@ -1036,7 +1036,7 @@ static void ping_connection(struct connection *pconn)
   freelog(LOG_DEBUG, "sending ping to %s (open=%d)",
 	  conn_description(pconn),
 	  timer_list_size(pconn->server.ping_timers));
-  timer_list_insert_back(pconn->server.ping_timers,
+  timer_list_append(pconn->server.ping_timers,
 			 new_timer_start(TIMER_USER, TIMER_ACTIVE));
   send_packet_conn_ping(pconn);
 }

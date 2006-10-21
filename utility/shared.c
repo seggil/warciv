@@ -1129,7 +1129,7 @@ struct datafile_list datafilelist_infix(const char *subpath,
 	  file->fullname = mystrdup(fullname);
 	  file->mtime = buf.st_mtime;
 
-	  datafile_list_insert_back(&res, file);
+	  datafile_list_append(&res, file);
 	  num_matches++;
 	}
 

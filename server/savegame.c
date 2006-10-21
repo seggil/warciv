@@ -1590,7 +1590,7 @@ static void load_player_units(struct player *plr, int plrno,
 		 unit_type(punit)->vision_range);
     }
 
-    unit_list_insert_back(&plr->units, punit);
+    unit_list_append(&plr->units, punit);
 
     unit_list_insert(&punit->tile->units, punit);
   }
@@ -2183,7 +2183,7 @@ static void player_load(struct player *plr, int plrno,
 
     map_set_city(pcity->tile, pcity);
 
-    city_list_insert_back(&plr->cities, pcity);
+    city_list_append(&plr->cities, pcity);
   }
 
   load_player_units(plr, plrno, file);

@@ -102,6 +102,38 @@ struct socket_packet_buffer {
 #define SPECVEC_TYPE unsigned char
 #include "specvec.h"
 
+enum conn_pattern_type {
+  CPT_ADDRESS = 0,
+  CPT_HOSTNAME,
+  CPT_USERNAME,
+
+  NUM_CONN_PATTERN_TYPES
+};
+
+struct conn_pattern {
+  char *pattern;
+  int type;
+};
+
+extern char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES];
+
+bool parse_conn_pattern(const char *str, char *patbuf,
+                        int patbuflen, int *type,
+                        char *errbuf, int errbuflen);
+struct conn_pattern *conn_pattern_new(const char *pattern,
+                                      int type);
+void conn_pattern_free(struct conn_pattern *cp);
+int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen);
+bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn,
+                        char *username);
+
+#define SPECLIST_TAG ignore
+#define SPECLIST_TYPE struct conn_pattern
+#include "speclist.h"
+#define ignore_list_iterate(alist, ap) \
+    TYPED_LIST_ITERATE(struct conn_pattern, alist, ap)
+#define ignore_list_iterate_end  LIST_ITERATE_END
+
 /***********************************************************
   The connection struct represents a single client or server
   at the other end of a network connection.
@@ -203,6 +235,8 @@ struct connection {
     
     unsigned int packets_received;
     unsigned int delay_counter;
+
+    struct ignore_list *ignore_list;
   } server;
 
   /*

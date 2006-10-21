@@ -412,6 +412,7 @@ GtkWidget *get_split_message_window(void)
   col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
   	"text", 0, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+  gtk_widget_set_size_request(view, 100, -1);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
   g_signal_connect(view, "button-press-event",
@@ -419,7 +420,6 @@ GtkWidget *get_split_message_window(void)
 
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
-  gtk_widget_set_size_request(vbox, 80, -1);
   split_message_window = vbox;
   
   return split_message_window;

@@ -18,30 +18,29 @@
 #include "fc_types.h"
 
 enum action_type {
-	ACTION_BAN = 0,
-	ACTION_GIVE_NONE,
-	ACTION_GIVE_OBSERVER,
-	ACTION_GIVE_BASIC,
-	ACTION_GIVE_CTRL,
-	ACTION_GIVE_ADMIN,
-	ACTION_GIVE_HACK,
+  ACTION_BAN = 0,
+  ACTION_GIVE_NONE,
+  ACTION_GIVE_OBSERVER,
+  ACTION_GIVE_BASIC,
+  ACTION_GIVE_CTRL,
+  ACTION_GIVE_ADMIN,
+  ACTION_GIVE_HACK,
   
-	NUM_ACTIONS
+  NUM_ACTION_TYPES,
 };
 
-enum action_pattern_type {
-  APT_ADDRESS = 0,
-  APT_HOSTNAME,
-  APT_USERNAME,
-
-  NUM_ACTION_PATTERN_TYPES
-};
+struct conn_pattern;
 
 struct user_action {
-  char *pattern;
-  enum action_pattern_type type;
+  struct conn_pattern *conpat;
   enum action_type action;	
 };
+
+struct user_action *user_action_new(const char *pattern, int type,
+                                    int action);
+void user_action_free(struct user_action *pua);
+int user_action_as_str(struct user_action *pua,
+                       char *buf, int buflen);
 
 #define SPECLIST_TAG user_action
 #define SPECLIST_TYPE struct user_action
@@ -52,8 +51,7 @@ struct user_action {
 #define user_action_list_iterate_end LIST_ITERATE_END
 
 extern struct user_action_list on_connect_user_actions;
-extern char *user_action_strs[NUM_ACTIONS];
-extern char *user_action_pattern_type_strs[NUM_ACTION_PATTERN_TYPES];
+extern char *user_action_type_strs[NUM_ACTION_TYPES];
 
 struct connection;
 struct conn_list;

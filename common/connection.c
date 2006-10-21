@@ -42,6 +42,7 @@
 #include "netintf.h"
 #include "packets.h"
 #include "support.h"		/* mystr(n)casecmp */
+#include "wildcards.h"
 
 #include "connection.h"
 
@@ -58,6 +59,14 @@ int delayed_disconnect = 0;
 
 struct connection *current_connection;
   
+/* NB Must match enum conn_pattern_type
+   in common/connection.h */
+char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
+  "address",
+  "hostname",
+  "username"
+};
+
 /**************************************************************************
   Command access levels for client-side use; at present, they are only
   used to control access to server commands typed at the client chatline.
@@ -634,6 +643,12 @@ void connection_common_init(struct connection *pconn)
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
   pconn->previous_access_level = ALLOW_NONE;
+  if (is_server) {
+    pconn->server.ignore_list = fc_malloc(sizeof(struct ignore_list));
+    ignore_list_init(pconn->server.ignore_list);
+  } else {
+    pconn->server.ignore_list = NULL;
+  }
   
   init_packet_hashs(pconn);
 
@@ -666,6 +681,15 @@ void connection_common_close(struct connection *pconn)
 
     free_compression_queue(pconn);
     free_packet_hashes(pconn);
+
+    if (pconn->server.ignore_list) {
+      ignore_list_iterate(*pconn->server.ignore_list, cp) {
+        conn_pattern_free(cp);
+      } ignore_list_iterate_end;
+      ignore_list_unlink_all(pconn->server.ignore_list);
+      free(pconn->server.ignore_list);
+      pconn->server.ignore_list = NULL;
+    }
   }
 }
 
@@ -695,4 +719,108 @@ void conn_clear_packet_cache(struct connection *pc)
       }
     }
   }
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+bool parse_conn_pattern(const char *pattern, char *buf,
+                        int buflen, int *ptype,
+                        char *errbuf, int errbuflen)
+{
+  char tmp[1024], *p;
+  int type, i;
+
+  if (!pattern)
+    return FALSE;
+
+  sz_strlcpy(tmp, pattern);
+  remove_leading_trailing_spaces(tmp);
+
+  if (!tmp[0]) {
+    my_snprintf(errbuf, errbuflen, _("The pattern must not be empty"));
+    return FALSE;
+  }
+
+  type = CPT_HOSTNAME;
+  if (ptype && *ptype != NUM_CONN_PATTERN_TYPES)
+    type = *ptype;
+
+  if ((p = strchr(tmp, '='))) {
+    *p++ = 0;
+    type = NUM_CONN_PATTERN_TYPES;
+    for (i = 0; i < NUM_CONN_PATTERN_TYPES; i++) {
+      if (!mystrcasecmp(tmp, conn_pattern_type_strs[i])) {
+	type = i;
+	break;
+      }
+    }
+    if (type == NUM_CONN_PATTERN_TYPES) {
+      my_snprintf(errbuf, errbuflen, _("Invalid pattern type \"%s\""), tmp);
+      return FALSE;
+    }
+  } else {
+    p = tmp;
+  }
+  if (ptype)
+    *ptype = type;
+  mystrlcpy(buf, p, buflen);
+
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct conn_pattern *conn_pattern_new(const char *pattern,
+                                      int type)
+{
+  struct conn_pattern *cp;
+  
+  assert(pattern != NULL);
+  
+  cp = fc_malloc(sizeof(struct conn_pattern));
+  cp->pattern = mystrdup(pattern);
+  cp->type = type;
+
+  return cp;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void conn_pattern_free(struct conn_pattern *cp)
+{
+  if (cp->pattern) {
+    free(cp->pattern);
+    cp->pattern = NULL;
+  }
+  free(cp);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen)
+{
+  return my_snprintf(buf, buflen, "%s=%s",
+                     conn_pattern_type_strs[cp->type],
+                     cp->pattern);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn,
+                        char *username)
+{
+  if (cp->type == CPT_ADDRESS) {
+    return wildcardfit (cp->pattern, pconn->server.ipaddr);
+  } else if (cp->type == CPT_HOSTNAME) {
+    return wildcardfit (cp->pattern, pconn->addr);
+  } else if (cp->type == CPT_USERNAME) {
+    return wildcardfit (cp->pattern, username ? username
+                        : pconn->username);
+  }
+  return FALSE;
 }

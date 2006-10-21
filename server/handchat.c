@@ -81,6 +81,21 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static bool is_ignored(struct connection *pconn, struct connection *dest)
+{
+  if (pconn == dest)
+    return FALSE;
+
+  ignore_list_iterate(*dest->server.ignore_list, cp) {
+    if (conn_pattern_match(cp, pconn, NULL))
+      return TRUE;
+  } ignore_list_iterate_end;
+  return FALSE;
+}
+
+/**************************************************************************
   Send private message to single connection.
 **************************************************************************/
 static void chat_msg_to_conn(struct connection *sender,
@@ -90,10 +105,18 @@ static void chat_msg_to_conn(struct connection *sender,
   char message[MAX_LEN_MSG];
   
   msg = skip_leading_spaces(msg);
-  
+
   form_chat_name(sender, sender_name, sizeof(sender_name));
   form_chat_name(dest, dest_name, sizeof(dest_name));
 
+  if (is_ignored(sender, dest)) {
+    my_snprintf(message, sizeof(message),
+        _("Server: You cannot send messages to %s; you are ignored."),
+        dest_name);
+    dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
+    return;
+  }
+  
   my_snprintf(message, sizeof(message), "->*%s* %s", dest_name, msg);
   dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
 
@@ -111,11 +134,24 @@ static void chat_msg_to_player_multi(struct connection *sender,
 				     struct player *pdest, char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], message[MAX_LEN_MSG];
+  struct connection *dest;
 
   msg = skip_leading_spaces(msg);
   
   form_chat_name(sender, sender_name, sizeof(sender_name));
 
+  dest = find_conn_by_user(pdest->username);
+  if (dest && is_ignored(sender, dest)) {
+    char dest_name[MAX_LEN_CHAT_NAME];
+    form_chat_name(dest, dest_name, sizeof(dest_name));
+
+    my_snprintf(message, sizeof(message),
+        _("Server: You cannot send messages to %s; you are ignored."),
+        dest_name);
+    dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
+    return;
+  }
+  
   my_snprintf(message, sizeof(message), "->[%s] %s", pdest->name, msg);
   dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
 
@@ -187,7 +223,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     /* this won't work if we aren't attached to a player */
     if (!pconn->player) {
       my_snprintf(chat, sizeof(chat),
-                  _("Game: You are not attached to a player."));
+                  _("Server: You are not attached to a player."));
       dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
       return;
     }
@@ -204,8 +240,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
       if (!pplayers_allied(pconn->player, aplayer)) {
         continue;
       }
-      dlsend_packet_chat_msg(&aplayer->connections, chat, -1, -1,
-			     E_NOEVENT, pconn->id);
+      conn_list_iterate(aplayer->connections, dest) {
+        if (is_ignored(pconn, dest))
+          continue;
+        dsend_packet_chat_msg(dest, chat, -1, -1,
+                              E_NOEVENT, pconn->id);
+      } conn_list_iterate_end;
     } players_iterate_end;
     return;
   }
@@ -317,6 +357,9 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   my_snprintf(chat, sizeof(chat),
 	      "<%s> %s", sender_name, message);
   con_puts (C_COMMENT, chat);
-  dlsend_packet_chat_msg(&game.est_connections, chat,
-			 -1, -1, E_NOEVENT, pconn->id);
+  conn_list_iterate(game.est_connections, dest) {
+    if (is_ignored(pconn, dest))
+      continue;
+    dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
+  } conn_list_iterate_end;
 }

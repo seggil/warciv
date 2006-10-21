@@ -34,7 +34,7 @@
       int  foo_list_size(struct foo_list *This);
       foo_t *foo_list_get(struct foo_list *This, int index);
       void foo_list_insert(struct foo_list *This, foo_t *pfoo);
-      void foo_list_insert_back(struct foo_list *This, foo_t *pfoo);
+      void foo_list_append(struct foo_list *This, foo_t *pfoo);
       void foo_list_insert_at(struct foo_list *This, foo_t *pfoo, int index);
       void foo_list_unlink(struct foo_list *This, foo_t *pfoo);
       void foo_list_unlink_all(struct foo_list *This);
@@ -102,7 +102,7 @@ static inline SPECLIST_TYPE *SPECLIST_FOO(_list_get) (const SPECLIST_LIST *tthis
   return genlist_get(&tthis->list, index);
 }
 
-static inline void SPECLIST_FOO(_list_insert_back) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+static inline void SPECLIST_FOO(_list_append) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
 {
   genlist_insert(&tthis->list, pfoo, -1);
 }

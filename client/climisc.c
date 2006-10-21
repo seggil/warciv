@@ -1266,7 +1266,7 @@ static void an_parse_city_name_formats (void)
   sz_strlcpy (buf, city_name_formats);
 
   freelog (LOG_DEBUG, "apcnf   adding special first format");
-  city_name_list_insert_back (an_city_name_formats, mystrdup (""));
+  city_name_list_append (an_city_name_formats, mystrdup (""));
 
   freelog (LOG_DEBUG, "apcnf   parsing \"%s\"", city_name_formats);
   
@@ -1280,7 +1280,7 @@ static void an_parse_city_name_formats (void)
     }
     if (*p) {
       freelog (LOG_DEBUG, "apcnf   adding format to list \"%s\"", p);
-      city_name_list_insert_back (an_city_name_formats, mystrdup (p));
+      city_name_list_append (an_city_name_formats, mystrdup (p));
     }
   }
 

@@ -32,9 +32,9 @@ char *loglevelstr[5] = {"FATAL","ERROR","NORMAL","VERBOSE","DEBUG"};
 
 static const char *log_filename;
 static log_callback_fn log_callback;
-char *l_file;
-int l_line;
-char *l_fncname;
+static const char *l_file;
+static int l_line;
+static const char *l_fncname;
 
 int logd_init_counter = 1;
 int fc_log_level;

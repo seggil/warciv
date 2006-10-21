@@ -918,7 +918,7 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
 
 #define MK_TAG_PATTERN(name, pat, flags, jump, fg, bg) do{\
     ptagpat = tag_pattern_new (name, pat, flags, jump, fg, bg);\
-    tag_pattern_list_insert_back (tpl, ptagpat);\
+    tag_pattern_list_append (tpl, ptagpat);\
   } while (0)
 
 
@@ -1078,7 +1078,7 @@ static bool match_tag_pattern (struct tag_pattern *ptagpat,
       pmres = fc_malloc (sizeof (struct match_result));
       pmres->start = 0;
       pmres->end = textlen;
-      match_result_list_insert_back (matches, pmres);
+      match_result_list_append (matches, pmres);
     }
     return res;
   }
@@ -1091,7 +1091,7 @@ static bool match_tag_pattern (struct tag_pattern *ptagpat,
     res = TRUE;
 
     pmres = fc_malloc (sizeof (struct match_result));
-    match_result_list_insert_back (matches, pmres);
+    match_result_list_append (matches, pmres);
     if (ptagpat->flags & TPF_APPLY_TO_MATCH) {
       pmres->start = p - text;
       pmres->end = pmres->start + patlen;
@@ -1110,7 +1110,7 @@ static bool match_tag_pattern (struct tag_pattern *ptagpat,
     pmres = fc_malloc (sizeof (struct match_result));
     pmres->start = 0;
     pmres->end = textlen;
-    match_result_list_insert_back (matches, pmres);
+    match_result_list_append (matches, pmres);
   }
   return res;
 }
@@ -1346,7 +1346,7 @@ void secfile_load_message_buffer_tag_patterns (struct section_file *file)
     ptagpat->background_color = secfile_lookup_color (file,
         "chatline.tagpat%d.background_color", i);
 
-    tag_pattern_list_insert_back (&tagpats, ptagpat);
+    tag_pattern_list_append (&tagpats, ptagpat);
   }
 }
 /**************************************************************************
@@ -1544,7 +1544,7 @@ static void apply_callback (GtkWidget *w,
       /* key is freed by the hash table */
       g_hash_table_remove (tags_to_delete, key);
     }
-    tag_pattern_list_insert_back (&tagpats, tag_pattern_clone (ptagpat));
+    tag_pattern_list_append (&tagpats, tag_pattern_clone (ptagpat));
   } tag_pattern_list_iterate_end; 
     
   refresh_message_buffer_tag_patterns (tags_to_delete);
@@ -1861,7 +1861,7 @@ struct tag_pattern_list *tag_pattern_list_clone (struct tag_pattern_list *old)
   new = fc_malloc (sizeof (struct tag_pattern_list));
   tag_pattern_list_init (new);
   tag_pattern_list_iterate (*old, ptagpat) {
-    tag_pattern_list_insert_back (new, tag_pattern_clone (ptagpat));
+    tag_pattern_list_append (new, tag_pattern_clone (ptagpat));
   } tag_pattern_list_iterate_end;
 
   return new;
@@ -1962,7 +1962,7 @@ static void move_tag_patterns (GtkWidget *w,
   } tag_pattern_list_iterate_end;
   tag_pattern_list_unlink_all (tmptagpats);
   for (i = 0; i < len; i++) {
-    tag_pattern_list_insert_back (tmptagpats, tpv[i]);
+    tag_pattern_list_append (tmptagpats, tpv[i]);
   }
   free (tpv);
   
@@ -2020,7 +2020,7 @@ static void add_tag_pattern (struct tag_pattern *ptagpat,
     tag_pattern_list_insert_at (tmptagpats, ptagpat, i+1);
   } else {
     gtk_list_store_append (GTK_LIST_STORE (model), &iter);
-    tag_pattern_list_insert_back (tmptagpats, ptagpat);
+    tag_pattern_list_append (tmptagpats, ptagpat);
   }
   g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
   g_list_free (rows);

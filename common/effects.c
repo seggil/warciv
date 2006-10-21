@@ -393,7 +393,7 @@ struct effect_group *effect_group_new(const char *name)
   effect_group_element_list_init(&group->elements);
 
   /* Add this group to the global list of groups. */
-  effect_group_list_insert_back(&groups, group);
+  effect_group_list_append(&groups, group);
 
   return group;
 }
@@ -414,7 +414,7 @@ void effect_group_add_element(struct effect_group *group,
   elt->survives = survives;
 
   /* Append it to the group. */
-  effect_group_element_list_insert_back(&group->elements, elt);
+  effect_group_element_list_append(&group->elements, elt);
 }
 
 /**************************************************************************
@@ -601,7 +601,7 @@ void ruleset_cache_add(Impr_Type_id source, enum effect_type effect_type,
   }
 
   /* Now add the effect to the ruleset cache. */
-  effect_list_insert_back(get_building_effects(source, effect_type),
+  effect_list_append(get_building_effects(source, effect_type),
 			  peffect);
 
   /* Add building type to the effect type's buildings vector. */

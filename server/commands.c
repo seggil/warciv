@@ -61,11 +61,13 @@ const struct command commands[] = {
    "list players\n"
    "list connections\n"
    "list actionlist\n"
-   "list teams",
+   "list teams\n"
+   "list ignore",
    N_("Show a list of various things."),
    N_("Show a list of players, list of connections to the server, the "
-      "action list, or the teams and the players in them. The argument "
-      "may be abbreviated, and defaults to 'players' if absent."),
+      "action list, the teams and the players in them, or your ignore "
+      "list. The argument may be abbreviated, and defaults to "
+      "'players' if absent."),
    NOTIFY_NONE
   },
   {"quit",	ALLOW_HACK, ALLOW_HACK,
@@ -88,7 +90,7 @@ const struct command commands[] = {
    N_("ban [type=]<pattern>"),
    N_("Ban a client connection."),
    N_("The given pattern with optional type will be added to the action "
-      "list with action 'ban'. See /help action for a description of "
+      "list with action 'ban'. See /help addaction for a description of "
       "valid type and pattern values."),
    NOTIFY_ALL
   },
@@ -365,6 +367,28 @@ const struct command commands[] = {
       "concert with the option \"timeout\". Defaults are 0 0 0 1"),
    NOTIFY_ALL
   },
+  {"ignore", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> and [] only */
+   N_("ignore [type=]<pattern>"), 
+   N_("Block all messages from users matching the pattern."),
+   N_("The given pattern will be added to your ignore "
+      "list; you will not receive any messages from this users matching "
+      "this pattern. The default type (if ommited) is to match against "
+      "the username. Read /help addaction for other pattern types."),
+   NOTIFY_NONE
+  },
+  {"unignore", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("unignore <range>"), 
+   N_("Remove ignore list entries."),
+   N_("The ignore list entries in the given range will be removed; "
+      "you will be able to receive messages from the respective users. "
+      "The range argument may be a single number or a pair of numbers "
+      "separated by a dash '-'. If the first number is ommitted, it is "
+      "assumed to be 1, if the last is ommitted, it is assumed to be "
+      "the last valid ignore list index."),
+   NOTIFY_NONE
+  },
 #ifdef HAVE_AUTH
   {"authdb",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
@@ -533,7 +557,7 @@ const struct command commands[] = {
     N_("Adds the given action to the list of user actions applied "
        "to newly connecting users. <action> is either ban, or an "
        "access level name to give that connection (see /help cmdlev). "
-       "The optional type determines what the <pattern> string "
+       "The optional type determines what the pattern string "
        "will be applied to, it may be address, hostname, or username. "
        "The pattern supports unix glob style wildcards, i.e. * matches "
        "zero or more character, ? exactly one character, [abc] exactly "

@@ -79,6 +79,8 @@ enum command_id {
   CMD_CMDLEVEL,
   CMD_FIRSTLEVEL,
   CMD_TIMEOUT,
+  CMD_IGNORE,
+  CMD_UNIGNORE,
 
   /* potentially harmful: */
 #ifdef HAVE_AUTH

@@ -1702,7 +1702,7 @@ void handle_player_info(struct packet_player_info *pinfo)
       if (pconn->player == pplayer) {
         /* insert the controller into first position */
         if (pconn->observer) {
-          conn_list_insert_back(&pplayer->connections, pconn);
+          conn_list_append(&pplayer->connections, pconn);
         } else {
           conn_list_insert(&pplayer->connections, pconn);
         }
@@ -1766,13 +1766,13 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       pconn->send_buffer = NULL;
       pconn->ping_time = -1.0;
       if (pplayer) {
-    	conn_list_insert_back(&pplayer->connections, pconn);
+    	conn_list_append(&pplayer->connections, pconn);
         if((conn_list_size(&pplayer->connections)==1)
          && (!game_state_flag))game.nplayers++;
       }
-      conn_list_insert_back(&game.all_connections, pconn);
-      conn_list_insert_back(&game.est_connections, pconn);
-      conn_list_insert_back(&game.game_connections, pconn);
+      conn_list_append(&game.all_connections, pconn);
+      conn_list_append(&game.est_connections, pconn);
+      conn_list_append(&game.game_connections, pconn);
     } else {
       freelog(LOG_DEBUG, "Server reports updated connection %d %s",
 	      pinfo->id, pinfo->username);
@@ -1781,7 +1781,7 @@ void handle_conn_info(struct packet_conn_info *pinfo)
 	  conn_list_unlink(&pconn->player->connections, pconn);
 	}
 	if (pplayer) {
-	  conn_list_insert_back(&pplayer->connections, pconn);
+	  conn_list_append(&pplayer->connections, pconn);
 	}
       }
     }

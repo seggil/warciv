@@ -1630,6 +1630,174 @@ static const char *olvlname_accessor(int i)
 }
 #endif
 
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool ignore_command(struct connection *caller,
+                           char *str,
+                           bool check)
+{
+  char buf[128], pat[128], err[64];
+  int type, n;
+  struct conn_pattern *ap;
+
+  if (!caller) {
+    cmd_reply(CMD_IGNORE, caller, C_FAIL,
+        _("That would be rather silly, since you are not a player."));
+    return FALSE;
+  }
+
+  sz_strlcpy(buf, str);
+  remove_leading_trailing_spaces(buf);
+  
+  type = CPT_USERNAME;
+  if (!parse_conn_pattern(buf, pat, sizeof(pat), &type,
+                          err, sizeof(err))) {
+    cmd_reply(CMD_IGNORE, caller, C_SYNTAX,
+	      _("Incorrect pattern syntax: %s. Try /help ignore."), err);
+    return FALSE;
+  }
+
+  if (check)
+    return TRUE;
+  
+  ap = conn_pattern_new(pat, type);
+  ignore_list_append(caller->server.ignore_list, ap);
+  n = ignore_list_size(caller->server.ignore_list);
+
+  conn_pattern_as_str(ap, buf, sizeof(buf));
+
+  cmd_reply(CMD_IGNORE, caller, C_COMMENT,
+            _("Added pattern %s as entry %d to your ignore list."),
+            buf, n);
+  
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool parse_range(const char *s, int *first, int *last, char *err,
+                        int errlen)
+{
+  char buf[128], *p;
+  const char *numstr;
+  int a = 0, b;
+
+  assert(s != NULL);
+  
+  for (p = buf; *s && *s != '-'; *p++ = *s++) {
+    if (my_isspace(*s))
+      continue;
+    if (!my_isdigit(*s)) {
+      my_snprintf(err, errlen, "not a number '%c'", *s);
+      return FALSE;
+    }
+  }
+  *p++ = 0;
+
+  if (my_isdigit(buf[0])) {
+    a = atoi(buf);
+    if (first)
+      *first = a;
+  }
+  if (!*s) {
+    if (my_isdigit(buf[0]) && last)
+      *last = a;
+    return TRUE;
+  }
+  numstr = ++s;
+  while (*numstr && my_isspace(*numstr))
+    numstr++;
+
+  for (s = numstr; *s; s++) {
+    if (my_isspace(*s)) {
+      continue;
+    }
+    if (!my_isdigit(*s)) {
+      my_snprintf(err, errlen, "not a number '%c'", *s);
+      return FALSE;
+    }
+  }
+
+  if (my_isdigit(*numstr)) {
+    b = atoi(numstr);
+    if (last)
+      *last = b;
+  }
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool unignore_command(struct connection *caller,
+                             char *str,
+                             bool check)
+{
+  char arg[128], err[64];
+  int first, last, n;
+  struct ignore_list *saved;
+
+  if (!caller) {
+    cmd_reply(CMD_IGNORE, caller, C_FAIL,
+        _("That would be rather silly, since you are not a player."));
+    return FALSE;
+  }
+
+  sz_strlcpy(arg, str);
+  remove_leading_trailing_spaces(arg);
+
+  n = ignore_list_size(caller->server.ignore_list);
+  if (n == 0) {
+    cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
+              _("Your ignore list is empty."));
+    return FALSE;
+  }
+
+  first = 1;
+  last = n;
+
+  if (!parse_range(arg, &first, &last, err, sizeof(err))) {
+    cmd_reply(CMD_UNIGNORE, caller, C_SYNTAX,
+              _("Range syntax error: %s."), err);
+    return FALSE;
+  }
+
+  if (!(1 <= first && first <= last && last <= n)) {
+    cmd_reply(CMD_UNIGNORE, caller, C_FAIL,
+              _("Invalid range: %d to %d."), first, last);
+    return FALSE;
+  }
+
+  if (check)
+    return TRUE;
+
+  saved = fc_malloc(sizeof(struct ignore_list));
+  ignore_list_init(saved);
+  n = 1;
+  ignore_list_iterate(*caller->server.ignore_list, ap) {
+    if (!(first <= n && n <= last)) {
+      ignore_list_append(saved, ap);
+    } else {
+      char buf[128];
+      conn_pattern_as_str(ap, buf, sizeof(buf));
+      cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
+                _("Removed pattern %d (%s) from your ignore list."),
+                n, buf);
+      conn_pattern_free(ap);
+    }
+    n++;
+  } ignore_list_iterate_end;
+  
+  ignore_list_unlink_all(caller->server.ignore_list);
+  free(caller->server.ignore_list);
+  caller->server.ignore_list = saved;
+
+  return TRUE;
+}
+
 /**************************************************************************
   Set timeout options.
 **************************************************************************/
@@ -4285,6 +4453,10 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return firstlevel_command(caller, check);
   case CMD_TIMEOUT:
     return timeout_command(caller, allargs, check);
+  case CMD_IGNORE:
+    return ignore_command(caller, allargs, check);
+  case CMD_UNIGNORE:
+    return unignore_command(caller, allargs, check);
   case CMD_START_GAME:
     return start_command(caller, arg, check);
   case CMD_END_GAME:
@@ -4477,50 +4649,6 @@ static bool start_command(struct connection *caller, char *name, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool parse_action_pattern(const char *pattern, char *buf,
-				 int buflen, int *ptype,
-				 char *errbuf, int errbuflen)
-{
-  char tmp[1024], *p;
-  int type, i;
-
-  if (!pattern)
-    return FALSE;
-
-  sz_strlcpy(tmp, pattern);
-  remove_leading_trailing_spaces(tmp);
-
-  if (!tmp[0]) {
-    my_snprintf(errbuf, errbuflen, _("The pattern must not be empty"));
-    return FALSE;
-  }
-
-  type = APT_HOSTNAME;
-  if ((p = strchr(tmp, '='))) {
-    *p++ = 0;
-    type = NUM_ACTION_PATTERN_TYPES;
-    for (i = 0; i < NUM_ACTION_PATTERN_TYPES; i++) {
-      if (!mystrcasecmp(tmp, user_action_pattern_type_strs[i])) {
-	type = i;
-	break;
-      }
-    }
-    if (type == NUM_ACTION_PATTERN_TYPES) {
-      my_snprintf(errbuf, errbuflen, _("Invalid pattern type \"%s\""), tmp);
-      return FALSE;
-    }
-  } else {
-    p = tmp;
-  }
-  *ptype = type;
-  strncpy(buf, p, buflen);
-
-  return TRUE;
-}
-
-/**************************************************************************
-...
-**************************************************************************/
 static bool addaction_command(struct connection *caller,
 			      char *pattern, bool check)
 {
@@ -4543,22 +4671,23 @@ static bool addaction_command(struct connection *caller,
     return FALSE;
   }
 
-  *p++ = 0;			/* Mark end of <action> string */
+  *p++ = 0; /* Mark end of <action> string */
 
-  action = NUM_ACTIONS;
-  for (i = 0; i < NUM_ACTIONS; i++) {
-    if (!mystrcasecmp(buf, user_action_strs[i])) {
+  action = NUM_ACTION_TYPES;
+  for (i = 0; i < NUM_ACTION_TYPES; i++) {
+    if (!mystrcasecmp(buf, user_action_type_strs[i])) {
       action = i;
       break;
     }
   }
-  if (action == NUM_ACTIONS) {
+  if (action == NUM_ACTION_TYPES) {
     cmd_reply(CMD_ADDACTION, caller, C_SYNTAX,
 	      _("Invalid action. Try /help action."));
     return FALSE;
   }
 
-  if (!parse_action_pattern(p, buf, sizeof(buf), &type, err, sizeof(err))) {
+  type = CPT_HOSTNAME;
+  if (!parse_conn_pattern(p, buf, sizeof(buf), &type, err, sizeof(err))) {
     cmd_reply(CMD_ADDACTION, caller, C_SYNTAX,
 	      _("Incorrect syntax: %s. Try /help action."), err);
     return FALSE;
@@ -4574,17 +4703,25 @@ static bool addaction_command(struct connection *caller,
   if (check)
     return TRUE;
 
-  pua = fc_malloc(sizeof(struct user_action));
-  pua->pattern = mystrdup(buf);
-  pua->action = action;
-  pua->type = type;
+  pua = user_action_new(buf, type, action);
   user_action_list_insert(&on_connect_user_actions, pua);
 
+  user_action_as_str(pua, buf, sizeof(buf));
   cmd_reply(CMD_ADDACTION, caller, C_COMMENT,
-	    _("Added [%s %s=%s] to the action list."),
-	    user_action_strs[pua->action],
-	    user_action_pattern_type_strs[pua->type], pua->pattern);
+	    _("Added %s to the action list."), buf);
   return TRUE;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+void user_action_free(struct user_action *pua)
+{
+  if (pua->conpat) {
+    conn_pattern_free(pua->conpat);
+    pua->conpat = NULL;
+  }
+  free(pua);
 }
 
 /**************************************************************************
@@ -4618,13 +4755,12 @@ static bool delaction_command(struct connection *caller,
     return TRUE;
 
   pua = user_action_list_get(&on_connect_user_actions, n - 1);
+  user_action_as_str(pua, buf, sizeof(buf));
   user_action_list_unlink(&on_connect_user_actions, pua);
+  user_action_free(pua);
+  
   cmd_reply(CMD_UNBAN, caller, C_COMMENT,
-	    _("Entry %d removed from the action list (%s %s=%s)."),
-	    n, user_action_strs[pua->action],
-	    user_action_pattern_type_strs[pua->type], pua->pattern);
-  free(pua->pattern);
-  free(pua);
+	    _("Entry %d removed from the action list %s."), n, buf);
 
   return TRUE;
 }
@@ -4635,7 +4771,7 @@ static bool delaction_command(struct connection *caller,
 static bool ban_command(struct connection *caller, char *pattern, bool check)
 {
   struct user_action *pua;
-  int type = APT_HOSTNAME;
+  int type = CPT_HOSTNAME;
   char buf[1024], err[256];
 
   if (pattern) {
@@ -4649,7 +4785,7 @@ static bool ban_command(struct connection *caller, char *pattern, bool check)
     return FALSE;
   }
 
-  if (!parse_action_pattern(pattern, buf, sizeof(buf), &type,
+  if (!parse_conn_pattern(pattern, buf, sizeof(buf), &type,
 			    err, sizeof(err))) {
     cmd_reply(CMD_BAN, caller, C_SYNTAX,
 	      _("Incorrect syntax: %s. Try /help ban."), err);
@@ -4659,15 +4795,11 @@ static bool ban_command(struct connection *caller, char *pattern, bool check)
   if (check)
     return TRUE;
 
-  pua = fc_malloc(sizeof(struct user_action));
-  pua->pattern = mystrdup(buf);
-  pua->action = ACTION_BAN;
-  pua->type = type;
+  pua = user_action_new(buf, type, ACTION_BAN);
   user_action_list_insert(&on_connect_user_actions, pua);
 
-  cmd_reply(CMD_BAN, caller, C_COMMENT,
-	    _("%s=%s has been banned."),
-	    user_action_pattern_type_strs[pua->type], pua->pattern);
+  conn_pattern_as_str(pua->conpat, buf, sizeof(buf));
+  cmd_reply(CMD_BAN, caller, C_COMMENT, _("%s has been banned."), buf);
   return TRUE;
 }
 
@@ -4687,7 +4819,8 @@ static bool unban_command(struct connection *caller,
     return FALSE;
   }
 
-  if (!parse_action_pattern(pattern, buf, sizeof(buf), &type,
+  type = CPT_HOSTNAME;
+  if (!parse_conn_pattern(pattern, buf, sizeof(buf), &type,
 			    err, sizeof(err))) {
     cmd_reply(CMD_UNBAN, caller, C_SYNTAX,
 	      _("Incorrect syntax: %s. Try /help unban."), err);
@@ -4698,12 +4831,11 @@ static bool unban_command(struct connection *caller,
     return TRUE;
 
   user_action_list_iterate(on_connect_user_actions, pua) {
-    if (pua->action == ACTION_BAN &&
-	pua->type == type && 0 == mystrcasecmp(buf, pua->pattern)) {
+    if (pua->action == ACTION_BAN && pua->conpat->type == type
+        && 0 == mystrcasecmp(buf, pua->conpat->pattern)) {
       found = TRUE;
       user_action_list_unlink(&on_connect_user_actions, pua);
-      free(pua->pattern);
-      free(pua);
+      user_action_free(pua);
       break;
     }
   } user_action_list_iterate_end;
@@ -4711,7 +4843,7 @@ static bool unban_command(struct connection *caller,
   if (found) {
     cmd_reply(CMD_UNBAN, caller, C_COMMENT,
 	      _("%s=%s has been unbanned."),
-	      user_action_pattern_type_strs[type], buf);
+	      conn_pattern_type_strs[type], buf);
   } else {
     cmd_reply(CMD_UNBAN, caller, C_FAIL,
 	      _("Ban pattern '%s' was not found in the list of "
@@ -4841,17 +4973,14 @@ static int load_action_list_v0(const char *filename)
     if (*p == '#')
       continue;
     if (sscanf(p, "%s %d", addr, &actionid) == 2) {
-      struct user_action *aptr;
-      if (actionid < 0 || actionid >= NUM_ACTIONS)
+      struct user_action *pua;
+      
+      if (actionid < 0 || actionid >= NUM_ACTION_TYPES)
 	continue;
-      aptr = fc_malloc(sizeof(struct user_action));
-      if (!strcmp(addr, "ALL"))
-	aptr->pattern = mystrdup("*");
-      else
-	aptr->pattern = mystrdup(addr);
-      aptr->action = actionid;
-      aptr->type = APT_HOSTNAME;
-      user_action_list_insert_back(&on_connect_user_actions, aptr);
+      
+      pua = user_action_new(!strcmp(addr, "ALL") ? "*" : addr,
+                            CPT_HOSTNAME, actionid);
+      user_action_list_append(&on_connect_user_actions, pua);
     } else
       continue;
     count++;
@@ -4909,7 +5038,8 @@ static int load_action_list_v1(const char *filename)
     }
     *p++ = 0;
     
-    if (!parse_action_pattern(p, pat, sizeof(pat), &type,
+    type = CPT_HOSTNAME;
+    if (!parse_conn_pattern(p, pat, sizeof(pat), &type,
                               err, sizeof(err)))
     {
       freelog(LOG_ERROR, _("Syntax error on line %d of "
@@ -4918,31 +5048,28 @@ static int load_action_list_v1(const char *filename)
       continue;
     }
     
-    action = NUM_ACTIONS;
+    action = NUM_ACTION_TYPES;
     remove_trailing_spaces(line);
     if (my_isdigit(*line)) {
       action = atoi(line);
     } else {
-      for (i = 0; i < NUM_ACTIONS; i++) {
-	if (!mystrcasecmp(line, user_action_strs[i])) {
+      for (i = 0; i < NUM_ACTION_TYPES; i++) {
+	if (!mystrcasecmp(line, user_action_type_strs[i])) {
 	  action = i;
 	  break;
 	}
       }
     }
 
-    if (action < 0 || action >= NUM_ACTIONS) {
+    if (action < 0 || action >= NUM_ACTION_TYPES) {
       freelog(LOG_ERROR, _("Syntax error on line %d of "
 			   "action list file %s: unrecognized action \"%s\"."),
 	      lc, filename, line);
       continue;
     }
 
-    pua = fc_malloc(sizeof(struct user_action));
-    pua->pattern = mystrdup(pat);
-    pua->action = action;
-    pua->type = type;
-    user_action_list_insert_back(&on_connect_user_actions, pua);
+    pua = user_action_new(pat, type, action);
+    user_action_list_append(&on_connect_user_actions, pua);
     count++;
   }
 
@@ -5000,8 +5127,9 @@ static int save_action_list(const char *filename)
   fprintf(file, "version=%d\n", ACTION_LIST_FILE_VERSION);
   user_action_list_iterate(on_connect_user_actions, pua) {
     fprintf(file, "%s %s=%s\n",
-	    user_action_strs[pua->action],
-	    user_action_pattern_type_strs[pua->type], pua->pattern);
+	    user_action_type_strs[pua->action],
+	    conn_pattern_type_strs[pua->conpat->type],
+            pua->conpat->pattern);
     len++;
   } user_action_list_iterate_end;
 
@@ -5253,6 +5381,27 @@ static bool show_help(struct connection *caller, char *arg)
 /**************************************************************************
   ...
 **************************************************************************/
+static void show_ignore(struct connection *caller)
+{
+  int n = 1;
+  char buf[128];
+  if (ignore_list_size(caller->server.ignore_list) <= 0) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT,
+              _("Your ignore list is empty."));
+    return;
+  }
+  cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  ignore_list_iterate(*caller->server.ignore_list, cp) {
+    conn_pattern_as_str(cp, buf, sizeof(buf));
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", n++, buf);
+  } ignore_list_iterate_end;
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 static void show_teams(struct connection *caller)
 {
   bool listed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
@@ -5299,10 +5448,10 @@ static void show_teams(struct connection *caller)
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-  LIST_TEAMS, LIST_ARG_NUM /* Must be last */
+  LIST_TEAMS, LIST_IGNORE, LIST_ARG_NUM /* Must be last */
 };
 static const char *const list_args[] = {
-  "players", "connections", "actionlist", "teams", NULL
+  "players", "connections", "actionlist", "teams", "ignore", NULL
 };
 static const char *listarg_accessor(int i)
 {
@@ -5344,6 +5493,9 @@ static bool show_list(struct connection *caller, char *arg)
     return TRUE;
   case LIST_TEAMS:
     show_teams(caller);
+    return TRUE;
+  case LIST_IGNORE:
+    show_ignore(caller);
     return TRUE;
   default:
     cmd_reply(CMD_LIST, caller, C_FAIL,
@@ -5481,10 +5633,9 @@ static void show_connections(struct connection *caller)
 **************************************************************************/
 static void show_actionlist(struct connection *caller)
 {
-  char line[1024];
-  int n, i, soffset;
-  static const char *spaces = "          ";
-
+  int n, i = 1;
+  char buf[256];
+  
   /* NB caller == NULL implies the command was requested
      from the server console */
   if (caller && caller->access_level < ALLOW_ADMIN) {
@@ -5492,25 +5643,20 @@ static void show_actionlist(struct connection *caller)
 	      _("You are not allowed to use this command."));
     return;
   }
+  
   n = user_action_list_size(&on_connect_user_actions);
-
   if (n == 0) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, _("The action list is empty."));
     return;
   }
 
-  my_snprintf(line, sizeof(line), _("Action list contents (%d):"), n);
-  cmd_reply(CMD_LIST, caller, C_COMMENT, line);
+  cmd_reply(CMD_LIST, caller, C_COMMENT,
+            _("Action list contents (%d):"), n);
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
-  i = 1;
   user_action_list_iterate(on_connect_user_actions, pua) {
-    soffset = strlen(user_action_strs[pua->action]);
-    my_snprintf(line, sizeof(line), "%d %s%s%s=%s", i++,
-		user_action_strs[pua->action],
-		spaces + soffset,
-		user_action_pattern_type_strs[pua->type], pua->pattern);
-    cmd_reply(CMD_LIST, caller, C_COMMENT, line);
+    user_action_as_str(pua, buf, sizeof(buf));
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d %s", i++, buf);
   } user_action_list_iterate_end;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);

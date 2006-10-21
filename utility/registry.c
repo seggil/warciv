@@ -438,7 +438,7 @@ static bool section_file_read_dup(struct section_file *sf,
 	psection = sbuf_malloc(sb, sizeof(struct section));
 	psection->name = sbuf_strdup(sb, tok);
 	entry_list_init(&psection->entries);
-	section_list_insert_back(sf->sections, psection);
+	section_list_append(sf->sections, psection);
       }
       (void) inf_token_required(inf, INF_TOK_EOL);
       continue;
@@ -480,7 +480,7 @@ static bool section_file_read_dup(struct section_file *sf,
 		      (int) (i - num_columns + 1));
 	}
 	pentry = new_entry(sb, entry_name.str, tok);
-	entry_list_insert_back(&psection->entries, pentry);
+	entry_list_append(&psection->entries, pentry);
 	sf->num_entries++;
       } while(inf_token(inf, INF_TOK_COMMA));
       
@@ -548,7 +548,7 @@ static bool section_file_read_dup(struct section_file *sf,
 		    "%s,%d", base_name.str, i);
 	pentry = new_entry(sb, entry_name.str, tok);
       }
-      entry_list_insert_back(&psection->entries, pentry);
+      entry_list_append(&psection->entries, pentry);
       sf->num_entries++;
     } while(inf_token(inf, INF_TOK_COMMA));
     (void) inf_token_required(inf, INF_TOK_EOL);
@@ -1300,18 +1300,18 @@ section_file_insert_internal(struct section_file *my_section_file,
      */
     pentry = sbuf_malloc(sb, sizeof(struct entry));
     pentry->name = sbuf_strdup(sb, ent_name);
-    entry_list_insert_back(&psection->entries, pentry);
+    entry_list_append(&psection->entries, pentry);
     return pentry;
   }
 
   psection = sbuf_malloc(sb, sizeof(struct section));
   psection->name = sbuf_strdup(sb, sec_name);
   entry_list_init(&psection->entries);
-  section_list_insert_back(my_section_file->sections, psection);
+  section_list_append(my_section_file->sections, psection);
   
   pentry = sbuf_malloc(sb, sizeof(struct entry));
   pentry->name = sbuf_strdup(sb, ent_name);
-  entry_list_insert_back(&psection->entries, pentry);
+  entry_list_append(&psection->entries, pentry);
 
   return pentry;
 }
