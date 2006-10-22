@@ -1262,7 +1262,7 @@ GtkWidget *create_start_page(void)
   text = gtk_text_view_new_with_buffer(message_buffer);
   start_message_area = text;
   gtk_widget_set_name(text, "chatline");
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD);
+  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD_CHAR);
   gtk_text_view_set_left_margin(GTK_TEXT_VIEW(text), 5);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
   gtk_container_add(GTK_CONTAINER(sw), text);
@@ -1868,6 +1868,7 @@ void set_client_page(enum client_pages page)
   case PAGE_START:
     if (start_page_entry)
       gtk_widget_grab_focus(start_page_entry);
+    clear_allied_chat_only();
     break;
   case PAGE_NATION:
     gtk_tree_view_focus(gtk_tree_selection_get_tree_view(nation_selection));

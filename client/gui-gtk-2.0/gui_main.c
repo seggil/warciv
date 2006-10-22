@@ -94,6 +94,9 @@ bool enable_tabs = TRUE;
 bool solid_unit_icon_bg = FALSE;
 bool better_fog = TRUE;
 
+bool allied_chat_only = FALSE;
+GtkWidget *allied_chat_toggle_button = NULL;
+
 GtkWidget *toplevel;
 GdkWindow *root_window;
 GtkWidget *toplevel_tabs;
@@ -203,6 +206,15 @@ struct net_input_context {
   data_free_func_t datafree;
 };
 
+/**************************************************************************
+...
+**************************************************************************/
+void clear_allied_chat_only(void)
+{
+  allied_chat_only = FALSE;
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(allied_chat_toggle_button),
+                               FALSE);
+}
 
 /**************************************************************************
 ...
@@ -737,10 +749,10 @@ void enable_menus(bool enable)
 /**************************************************************************
   ...
 **************************************************************************/
-static void auto_scroll_button_toggled(GtkToggleButton *button,
+static void allied_chat_button_toggled(GtkToggleButton *button,
                                        gpointer user_data)
 {
-  auto_scroll_to_bottom
+  allied_chat_only
       = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button));
 }
 
@@ -1111,11 +1123,12 @@ static void setup_widgets(void)
                    G_CALLBACK(inputline_handler), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), inputline, TRUE, TRUE, 0);
 
-  button = gtk_toggle_button_new_with_label(_("Auto-Scroll"));
+  button = gtk_toggle_button_new_with_label(_("Allies Only"));
+  allied_chat_toggle_button = button;
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-                               auto_scroll_to_bottom);
+                               allied_chat_only);
   g_signal_connect(button, "toggled",
-                   G_CALLBACK(auto_scroll_button_toggled), NULL);
+                   G_CALLBACK(allied_chat_button_toggled), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   /* Other things to take care of */

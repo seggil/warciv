@@ -76,7 +76,6 @@ bool show_task_icons = TRUE;
 char chat_time_format[128] = "[%H:%M:%S]";
 char city_name_formats[128] = "island%c-city%2n;city%3g";
 bool show_split_message_window = TRUE;
-bool auto_scroll_to_bottom = TRUE;
 
 /* This option is currently set by the client - not by the user. */
 bool update_city_text_in_refresh_tile = TRUE;
@@ -117,7 +116,6 @@ static client_option common_options[] = {
   GEN_STR_OPTION(chat_time_format,  N_("Time format for chat messages"), NULL, NULL),
   GEN_STR_OPTION(city_name_formats,  N_("City name formats"), NULL, NULL),
   GEN_BOOL_OPTION(show_split_message_window,N_("Split chat and message window")),
-  GEN_BOOL_OPTION(auto_scroll_to_bottom, N_("Scroll to the bottom of the chat window on new text")),
 };
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION

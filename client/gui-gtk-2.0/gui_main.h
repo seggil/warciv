@@ -45,6 +45,9 @@ extern bool fullscreen_mode;
 extern bool enable_tabs;
 extern bool solid_unit_icon_bg;
 extern bool better_fog;
+extern bool allied_chat_only;
+
+void clear_allied_chat_only(void);
 
 extern GdkGC *          civ_gc;
 extern GdkGC *          mask_fg_gc;

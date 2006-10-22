@@ -103,8 +103,6 @@ static gboolean hovering_over_link = FALSE;
 static GdkCursor *hand_cursor = NULL;
 static GdkCursor *regular_cursor = NULL;
 
-static GtkTextMark *end_mark = NULL;
-
 /**************************************************************************
   ...
 **************************************************************************/
@@ -170,6 +168,24 @@ void insert_chat_link(struct tile *ptile)
 /**************************************************************************
 ...
 **************************************************************************/
+static bool is_public_message(const char *s)
+{
+  const char *p;
+  
+  if (s[0] == '/' || s[0] == '.')
+    return FALSE;
+  for (p = s; *p; p++) {
+    if (my_isspace(*p))
+      return TRUE;
+    if (*p == ':')
+      return FALSE;
+  }
+  return TRUE;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
 void inputline_return(GtkEntry *w, gpointer data)
 {
   const char *theinput;
@@ -177,7 +193,13 @@ void inputline_return(GtkEntry *w, gpointer data)
   theinput = gtk_entry_get_text(w);
   
   if (*theinput) {
-    send_chat(theinput);
+    if (allied_chat_only && is_public_message(theinput)) {
+      char buf[1024];
+      my_snprintf(buf, sizeof(buf), ". %s", theinput);
+      send_chat(buf);
+    } else {
+      send_chat(theinput);
+    }
 
     if (genlist_size(&history_list) >= MAX_CHATLINE_HISTORY) {
       void *data;
@@ -676,6 +698,28 @@ static void append_text_with_links (GtkTextBuffer *buf,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void scroll_if_necessary(GtkTextView *w,
+                                GtkTextMark *scroll_target)
+{
+  GtkWidget *sw;
+  GtkAdjustment *vadj;
+  gdouble val, max, upper, page_size;
+
+  sw = gtk_widget_get_parent(GTK_WIDGET(w));
+  vadj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw));
+  val = gtk_adjustment_get_value(GTK_ADJUSTMENT(vadj));
+  g_object_get(G_OBJECT(vadj), "upper", &upper,
+               "page-size", &page_size, NULL);
+  max = upper - page_size;
+  if (max - val < 10.0) {
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(w), scroll_target,
+                                 0.0, TRUE, 1.0, 0.0);
+  }
+}
+
+/**************************************************************************
   Appends the string to the chat output window.  The string should be
   inserted on its own line, although it will have no newline.
 **************************************************************************/
@@ -689,12 +733,13 @@ void real_append_output_window (const char *astring, int conn_id)
 
   GtkTextBuffer *buf;
   GtkTextIter iter, start, end;
-  GtkTextMark *insert_start, *text_start;
+  GtkTextMark *insert_start, *text_start, *scroll_target;
 
   buf = message_buffer;
   gtk_text_buffer_get_end_iter (buf, &iter);
   insert_start = gtk_text_buffer_create_mark (buf, NULL, &iter, TRUE);
   gtk_text_buffer_insert (buf, &iter, "\n", -1);
+  scroll_target = gtk_text_buffer_create_mark (buf, NULL, &iter, TRUE);
   textbuf_insert_time (buf, &iter);
 
   text_start = gtk_text_buffer_create_mark (buf, NULL, &iter, TRUE);
@@ -781,20 +826,14 @@ void real_append_output_window (const char *astring, int conn_id)
 
   } tag_pattern_list_iterate_end;
 
+  if (main_message_area)
+    scroll_if_necessary(GTK_TEXT_VIEW(main_message_area), scroll_target);
+  if (start_message_area)
+    scroll_if_necessary(GTK_TEXT_VIEW(start_message_area), scroll_target);
+
   gtk_text_buffer_delete_mark (buf, insert_start);
+  gtk_text_buffer_delete_mark (buf, scroll_target);
   gtk_text_buffer_delete_mark (buf, text_start);
-
-  if (!end_mark) {
-    gtk_text_buffer_get_end_iter(buf, &iter);
-    end_mark = gtk_text_buffer_create_mark(buf, "end", &iter, FALSE);
-  }
-
-  if (auto_scroll_to_bottom) {
-    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(main_message_area),
-                                 end_mark, 0.0, TRUE, 0.0, 1.0);
-    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(start_message_area),
-                                 end_mark, 0.0, TRUE, 0.0, 1.0);
-  }
 }
 
 /**************************************************************************
