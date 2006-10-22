@@ -391,14 +391,15 @@ GtkWidget *get_split_message_window(void)
   vbox = gtk_vbox_new(FALSE, 4);
 
   label = gtk_label_new(_("Messages"));
+  gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 				      GTK_SHADOW_ETCHED_IN);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC,
-  				 GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_ALWAYS,
+  				 GTK_POLICY_ALWAYS);
 
   if (!meswin_store)
     create_meswin_store();
@@ -412,14 +413,12 @@ GtkWidget *get_split_message_window(void)
   col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
   	"text", 0, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
-  gtk_widget_set_size_request(view, 100, -1);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
   g_signal_connect(view, "button-press-event",
                    G_CALLBACK(split_message_button_press), NULL);
 
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-
   split_message_window = vbox;
   
   return split_message_window;

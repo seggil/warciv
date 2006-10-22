@@ -1060,7 +1060,7 @@ static void setup_widgets(void)
 
   /* split message window */
   splitmsgs = get_split_message_window();
-  gtk_paned_pack2(GTK_PANED(paned), splitmsgs, TRUE, FALSE);
+  gtk_paned_pack2(GTK_PANED(paned), splitmsgs, TRUE, TRUE);
   
   /* botton notebook */
   bottom_notebook = gtk_notebook_new();
@@ -1084,6 +1084,7 @@ static void setup_widgets(void)
   set_message_buffer_view_link_handlers (GTK_TEXT_VIEW (text));
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
   gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD_CHAR);
+  gtk_widget_set_size_request(text, 100, 60);
   gtk_container_add(GTK_CONTAINER(sw), text);
 
   gtk_widget_set_name(text, "chatline");
