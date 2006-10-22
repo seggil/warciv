@@ -141,7 +141,7 @@ const char *mystrsocketerror(void)
 
   error = WSAGetLastError();
   if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		     NULL, error, MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US), buf, sizeof(buf), NULL)) {
+		     NULL, error, 0, buf, sizeof(buf), NULL)) {
     my_snprintf(buf, sizeof(buf),
 		_("error %ld (failed FormatMessage)"), error);
   }
