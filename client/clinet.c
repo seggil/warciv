@@ -1207,7 +1207,7 @@ int create_server_list_async(char *errbuf, int n_errbuf,
     return -1;
   }
 
-  if (nlsa_id == 0 && ctx->input_id == 0) {
+  if (nlsa_id == 0 && ctx->input_id <= 0) {
     /* cb already called directly (from metaserver_name_lookup_callback),
        i.e. we need to free ctx */
     aslcfree(ctx);
