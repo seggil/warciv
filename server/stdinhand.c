@@ -4329,10 +4329,6 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
       notify_conn(&notifylist, "%s: '%s %s'", caller ? caller->username
                   : _("(server prompt)"), command, arg);
     }
-    if (caller == NULL) {
-      notify_conn(NULL, "%s: '%s %s'", caller ? caller->username
-                  : _("(server prompt)"), command, arg);
-    }
     conn_list_unlink_all(&notifylist);
   }
 
