@@ -214,13 +214,13 @@ static bool send_to_metaserver(enum meta_flag flag)
 
   if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     freelog(LOG_ERROR, "Metaserver: can't open stream socket: %s",
-	    mystrerror());
+	    mystrsocketerror());
     metaserver_failed();
     return FALSE;
   }
 
   if (connect(sock, (struct sockaddr *) &meta_addr, sizeof(meta_addr)) == -1) {
-    freelog(LOG_ERROR, "Metaserver: connect failed: %s", mystrerror());
+    freelog(LOG_ERROR, "Metaserver: connect failed: %s", mystrsocketerror());
     metaserver_failed();
     my_closesocket(sock);
     return FALSE;

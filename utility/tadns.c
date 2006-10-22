@@ -217,13 +217,13 @@ struct dns *dns_init (void)
   dns->sock = -1;
   
   if ((dns->sock = socket (PF_INET, SOCK_DGRAM, 0)) == -1) {
-    freelog (LOG_ERROR, _("Failed to create UDP socket: %s"), mystrerror());
+    freelog (LOG_ERROR, _("Failed to create UDP socket: %s"), mystrsocketerror());
     goto FAILED;
   }
   
   if (my_nonblock (dns->sock) == -1) {
     freelog (LOG_ERROR, _("Failed to set non-blocking mode on UDP socket: %s"),
-             mystrerror());
+             mystrsocketerror());
     goto FAILED;
   }
   
@@ -240,7 +240,7 @@ struct dns *dns_init (void)
                         &rcvbufsiz, sizeof (rcvbufsiz)))
   {
     freelog (LOG_ERROR, _("Failed to set UDP socket receive buffer size:"
-                          " setsockopt: %s"), mystrerror());
+                          " setsockopt: %s"), mystrsocketerror());
     goto FAILED;
   }
 
@@ -516,7 +516,7 @@ void dns_poll (struct dns *dns)
       freelog (LOG_DEBUG, "dp   recvfrom would block"); /*ASYNCDEBUG*/
     } else {
       freelog (LOG_ERROR, _("Failed reading DNS response: recvfrom: %s"),
-               mystrerror());
+               mystrsocketerror());
     }
   }
   
@@ -662,7 +662,7 @@ dns_queue (struct dns *dns, void *ctx, const char *name,
   if (nb != n) {
     if (nb == -1) {
       freelog (LOG_ERROR, _("Failed to send DNS query: sendto: %s."),
-               mystrerror());
+               mystrsocketerror());
     } else {
       freelog (LOG_ERROR, _("Function sendto failed to send entire DNS query."));
     }

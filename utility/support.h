@@ -37,6 +37,7 @@ int mystrcasecmp(const char *str0, const char *str1);
 int mystrncasecmp(const char *str0, const char *str1, size_t n);
 
 const char *mystrerror(void);
+const char *mystrsocketerror(void);
 void myusleep(unsigned long usec);
 
 size_t mystrlcpy(char *dest, const char *src, size_t n);

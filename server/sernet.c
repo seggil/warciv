@@ -823,7 +823,7 @@ static int server_accept_connection(int sockfd)
   /*ASYNCDEBUG*/ fromlen = sizeof(fromend);
 
   if ((new_sock = accept(sockfd, &fromend.sockaddr, &fromlen)) == -1) {
-    freelog(LOG_ERROR, "accept failed: %s", mystrerror());
+    freelog(LOG_ERROR, "accept failed: %s", mystrsocketerror());
     return -1;
   }
 
@@ -912,13 +912,13 @@ int server_open_socket(void)
 
   /* Create socket for client connections. */
   if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    die("socket failed: %s", mystrerror());
+    die("socket failed: %s", mystrsocketerror());
   }
 
   opt = 1;
   if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
 		 (char *) &opt, sizeof(opt)) == -1) {
-    freelog(LOG_ERROR, "SO_REUSEADDR failed: %s", mystrerror());
+    freelog(LOG_ERROR, "SO_REUSEADDR failed: %s", mystrsocketerror());
   }
 
   if (!net_lookup_service(srvarg.bind_addr, srvarg.port, &src)) {
@@ -928,23 +928,23 @@ int server_open_socket(void)
   }
 
   if (bind(sock, &src.sockaddr, sizeof(src)) == -1) {
-    freelog(LOG_FATAL, "bind failed: %s", mystrerror());
+    freelog(LOG_FATAL, "bind failed: %s", mystrsocketerror());
     exit(EXIT_FAILURE);
   }
 
   if (listen(sock, MAX_NUM_CONNECTIONS) == -1) {
-    freelog(LOG_FATAL, "listen failed: %s", mystrerror());
+    freelog(LOG_FATAL, "listen failed: %s", mystrsocketerror());
     exit(EXIT_FAILURE);
   }
 
   /* Create socket for server LAN announcements */
   if ((socklan = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    freelog(LOG_ERROR, "socket failed: %s", mystrerror());
+    freelog(LOG_ERROR, "socket failed: %s", mystrsocketerror());
   }
 
   if (setsockopt(socklan, SOL_SOCKET, SO_REUSEADDR,
 		 (char *) &opt, sizeof(opt)) == -1) {
-    freelog(LOG_ERROR, "SO_REUSEADDR failed: %s", mystrerror());
+    freelog(LOG_ERROR, "SO_REUSEADDR failed: %s", mystrsocketerror());
   }
 
   my_nonblock(socklan);
@@ -957,7 +957,7 @@ int server_open_socket(void)
   addr.sockaddr_in.sin_port = htons(SERVER_LAN_PORT);
 
   if (bind(socklan, &addr.sockaddr, sizeof(addr)) < 0) {
-    freelog(LOG_ERROR, "bind failed: %s", mystrerror());
+    freelog(LOG_ERROR, "bind failed: %s", mystrsocketerror());
   }
 
   mreq.imr_multiaddr.s_addr = inet_addr(group);
@@ -965,7 +965,7 @@ int server_open_socket(void)
 
   if (setsockopt(socklan, IPPROTO_IP, IP_ADD_MEMBERSHIP,
 		 (const char *) &mreq, sizeof(mreq)) < 0) {
-    freelog(LOG_ERROR, "setsockopt failed: %s", mystrerror());
+    freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
   }
 
   close_socket_set_callback(close_socket_callback);
@@ -1120,7 +1120,7 @@ static void get_lanserver_announcement(void)
 
   while (select(socklan + 1, &readfs, NULL, &exceptfs, &tv) == -1) {
     if (errno != EINTR) {
-      freelog(LOG_ERROR, "select failed: %s", mystrerror());
+      freelog(LOG_ERROR, "select failed: %s", mystrsocketerror());
       return;
     }
     /* EINTR can happen sometimes, especially when compiling with -pg.
@@ -1163,7 +1163,7 @@ static void send_lanserver_response(void)
 
   /* Create a socket to broadcast to client. */
   if ((socksend = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    freelog(LOG_ERROR, "socket failed: %s", mystrerror());
+    freelog(LOG_ERROR, "socket failed: %s", mystrsocketerror());
     return;
   }
 
@@ -1178,13 +1178,13 @@ static void send_lanserver_response(void)
   ttl = SERVER_LAN_TTL;
   if (setsockopt(socksend, IPPROTO_IP, IP_MULTICAST_TTL,
 		 (const char *) &ttl, sizeof(ttl))) {
-    freelog(LOG_ERROR, "setsockopt failed: %s", mystrerror());
+    freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
     return;
   }
 
   if (setsockopt(socksend, SOL_SOCKET, SO_BROADCAST,
 		 (const char *) &setting, sizeof(setting))) {
-    freelog(LOG_ERROR, "setsockopt failed: %s", mystrerror());
+    freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
     return;
   }
 
@@ -1226,7 +1226,7 @@ static void send_lanserver_response(void)
 
   /* Sending packet to client with the information gathered above. */
   if (sendto(socksend, buffer, size, 0, &addr.sockaddr, sizeof(addr)) < 0) {
-    freelog(LOG_ERROR, "sendto failed: %s", mystrerror());
+    freelog(LOG_ERROR, "sendto failed: %s", mystrsocketerror());
     return;
   }
 
