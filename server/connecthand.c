@@ -206,7 +206,7 @@ void establish_new_connection(struct connection *pconn)
 
     /* Send the welcome message line by line. This way we don't
        run into the MAX_LEN_MSG limit notify_conn has (at least
-       not easily. */
+       not easily). */
     for (line = buf; line;) {
       if ((p = strchr(line, '\n')))
 	*p++ = '\0';
@@ -257,7 +257,7 @@ void establish_new_connection(struct connection *pconn)
 
   } else if (server_state == PRE_GAME_STATE && game.is_new_game) {
     if (!attach_connection_to_player(pconn, NULL)) {
-      notify_conn(dest, _("Couldn't attach your connection to new player."));
+      notify_conn(dest, _("Server: Couldn't attach your connection to new player."));
       freelog(LOG_VERBOSE, "%s is not attached to a player",
 	      pconn->username);
     } else {
@@ -267,13 +267,13 @@ void establish_new_connection(struct connection *pconn)
 
   /* remind the connection who he is */
   if (!pconn->player) {
-    notify_conn(dest, _("You are logged in as '%s' connected to no player."),
+    notify_conn(dest, _("Server: You are logged in as '%s' connected to no player."),
 		pconn->username);
   } else if (strcmp(pconn->player->name, ANON_PLAYER_NAME) == 0) {
-    notify_conn(dest, _("You are logged in as '%s' connected to an "
+    notify_conn(dest, _("Server: You are logged in as '%s' connected to an "
 			"anonymous player."), pconn->username);
   } else {
-    notify_conn(dest, _("You are logged in as '%s' connected to %s."),
+    notify_conn(dest, _("Server: You are logged in as '%s' connected to %s."),
 		pconn->username, pconn->player->name);
   }
 
@@ -281,7 +281,7 @@ void establish_new_connection(struct connection *pconn)
   if (server_state == RUN_GAME_STATE && game.turnblock) {
     players_iterate(cplayer) {
       if (cplayer->is_alive && !cplayer->ai.control && !cplayer->turn_done && cplayer != pconn->player) {	/* skip current player */
-	notify_conn(dest, _("Turn-blocking game play: "
+	notify_conn(dest, _("Game: Turn-blocking game play: "
 			    "waiting on %s to finish turn..."),
 		    cplayer->name);
       }

@@ -59,6 +59,8 @@
 
 #include "genlist.h"
 
+#include <assert.h>
+
 #ifndef SPECLIST_TAG
 #error Must define a SPECLIST_TAG to use this header
 #endif
@@ -73,52 +75,69 @@
 #define SPECLIST_LIST struct SPECLIST_PASTE(SPECLIST_TAG, _list)
 #define SPECLIST_FOO(suffix) SPECLIST_PASTE(SPECLIST_TAG, suffix)
 
+#define INIT_MAGIC 0xA1B1C1D1
+#define CHECK_INIT(p) do {\
+  assert((p) != NULL);\
+  assert((p)->init_magic == INIT_MAGIC);\
+} while(0)
+
 SPECLIST_LIST {
+  int init_magic;
   struct genlist list;
 };
 
 static inline void SPECLIST_FOO(_list_init) (SPECLIST_LIST *tthis)
 {
+  assert(tthis != NULL);
   genlist_init(&tthis->list);
+  tthis->init_magic = INIT_MAGIC;
 }
 
 static inline void SPECLIST_FOO(_list_insert) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
 {
+  CHECK_INIT(tthis);
   genlist_insert(&tthis->list, pfoo, 0);
 }
 
 static inline void SPECLIST_FOO(_list_unlink) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
 {
+  CHECK_INIT(tthis);
   genlist_unlink(&tthis->list, pfoo);
 }
 
 static inline int SPECLIST_FOO(_list_size) (const SPECLIST_LIST *tthis)
 {
+  CHECK_INIT(tthis);
   return genlist_size(&tthis->list);
 }
 
 static inline SPECLIST_TYPE *SPECLIST_FOO(_list_get) (const SPECLIST_LIST *tthis, int index)
 {
+  CHECK_INIT(tthis);
   return genlist_get(&tthis->list, index);
 }
 
 static inline void SPECLIST_FOO(_list_append) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
 {
+  CHECK_INIT(tthis);
   genlist_insert(&tthis->list, pfoo, -1);
 }
 
 static inline void SPECLIST_FOO(_list_insert_at) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo, int index)
 {
+  CHECK_INIT(tthis);
   genlist_insert(&tthis->list, pfoo, index);
 }
 
 static inline void SPECLIST_FOO(_list_unlink_all) (SPECLIST_LIST *tthis)
 {
+  CHECK_INIT(tthis);
   genlist_unlink_all(&tthis->list);
 }
 
 static inline void SPECLIST_FOO(_list_sort) (SPECLIST_LIST * tthis, int (*compar) (const void *, const void *))
 {
+  CHECK_INIT(tthis);
   genlist_sort(&tthis->list, compar);
 }
 

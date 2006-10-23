@@ -1767,14 +1767,17 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       pconn->ping_time = -1.0;
       if (pplayer) {
     	conn_list_append(&pplayer->connections, pconn);
-        if((conn_list_size(&pplayer->connections)==1)
-         && (!game_state_flag))game.nplayers++;
+        if ((conn_list_size(&pplayer->connections) == 1)
+            && (!game_state_flag))
+        {
+          game.nplayers++;
+        }
       }
       conn_list_append(&game.all_connections, pconn);
       conn_list_append(&game.est_connections, pconn);
       conn_list_append(&game.game_connections, pconn);
     } else {
-      freelog(LOG_DEBUG, "Server reports updated connection %d %s",
+      freelog(LOG_VERBOSE, "Server reports updated connection %d %s",
 	      pinfo->id, pinfo->username);
       if (pplayer != pconn->player) {
 	if (pconn->player) {
