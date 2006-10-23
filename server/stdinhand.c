@@ -4253,7 +4253,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
      * vote command. You can only have one vote at a time. */
     if (votes[idx].command[0] != '\0') {
       cmd_reply(CMD_VOTE, caller, C_COMMENT,
-		_("Your new vote cancelled your " "previous vote."));
+		_("Your new vote cancelled your previous vote."));
       votes[idx].command[0] = '\0';
     }
 
@@ -4299,37 +4299,44 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     arg[i--] = '\0';
 
   if (!check) {
-    struct conn_list notifylist;
-    conn_list_init(&notifylist);
-    
-    switch (commands[cmd].notify) {
-    case NOTIFY_NONE:
+    struct conn_list echolist;
+    conn_list_init(&echolist);
+
+    switch (commands[cmd].echo_mode) {
+    case ECHO_NONE:
       break;
-    case NOTIFY_USER:
+    case ECHO_USER:
       if (caller)
-        conn_list_insert(&notifylist, caller);
+        conn_list_insert(&echolist, caller);
       break;
-    case NOTIFY_PLAYERS:
-    case NOTIFY_ADMINS:
-    case NOTIFY_ALL:
+    case ECHO_PLAYERS:
       conn_list_iterate(game.est_connections, pconn) {
-        if ((commands[cmd].notify == NOTIFY_PLAYERS
-             && pconn->access_level < ALLOW_BASIC)
-            || (commands[cmd].notify == NOTIFY_ADMINS
-                && pconn->access_level < ALLOW_ADMIN)) {
+        if (pconn->access_level < ALLOW_BASIC)
           continue;
-        }
-        conn_list_insert(&notifylist, pconn);
+        conn_list_insert(&echolist, pconn);
+      } conn_list_iterate_end;
+      break;
+    case ECHO_ADMINS:
+      conn_list_iterate(game.est_connections, pconn) {
+        if (pconn->access_level < ALLOW_ADMIN)
+          continue;
+        conn_list_insert(&echolist, pconn);
+      } conn_list_iterate_end;
+      break;
+    case ECHO_ALL:
+      conn_list_iterate(game.est_connections, pconn) {
+        conn_list_insert(&echolist, pconn);
       } conn_list_iterate_end;
       break;
     default:
+      assert(0 /* should not happend */);
       break;
     }
-    if (conn_list_size(&notifylist) > 0) {
-      notify_conn(&notifylist, "%s: '%s %s'", caller ? caller->username
+    if (conn_list_size(&echolist) > 0) {
+      notify_conn(&echolist, "%s: '%s %s'", caller ? caller->username
                   : _("(server prompt)"), command, arg);
     }
-    conn_list_unlink_all(&notifylist);
+    conn_list_unlink_all(&echolist);
   }
 
   switch (cmd) {

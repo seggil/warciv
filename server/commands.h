@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-enum notify_type {
-  NOTIFY_NONE = 0,
-  NOTIFY_USER,
-  NOTIFY_PLAYERS, /* i.e. all with basic access and above */
-  NOTIFY_ADMINS, /* i.e. all with admin access and above */
-  NOTIFY_ALL,
+enum echo_type {
+  ECHO_NONE = 0,
+  ECHO_USER,
+  ECHO_PLAYERS, /* i.e. all with basic access and above */
+  ECHO_ADMINS, /* i.e. all with admin access and above */
+  ECHO_ALL,
 };
 
 /**************************************************************************
@@ -29,7 +29,7 @@ struct command {
   const char *synopsis;	  /* one or few-line summary of usage */
   const char *short_help; /* one line (about 70 chars) description */
   const char *extra_help; /* extra help information; will be line-wrapped */
-  int notify; /* who to tell when used (enum notify_type) */
+  int echo_mode; /* who to tell when used (enum echo_type) */
 };
 
 /* Order here is important: for ambiguous abbreviations the first
