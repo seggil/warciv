@@ -2370,19 +2370,24 @@ static void center_tile_overviewcanvas(struct tile *ptile)
   /* The overview coordinates are equivalent to (scaled) natural
    * coordinates. */
   do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
-    /* NOTE: this embeds the map wrapping in the overview code.  This is
-     * basically necessary for the overview to be efficiently
-     * updated. */
-    if (topo_has_flag(TF_WRAPX)) {
-      overview.map_x0 = FC_WRAP(ntl_x - NATURAL_WIDTH / 2, NATURAL_WIDTH);
-    } else {
+    if (do_not_recenter_overview) {
       overview.map_x0 = 0;
-    }
-    if (topo_has_flag(TF_WRAPY)) {
-      overview.map_y0 = FC_WRAP(ntl_y - NATURAL_HEIGHT / 2, NATURAL_HEIGHT);
-    } else {
       overview.map_y0 = 0;
-    }
+    } else {
+      /* NOTE: this embeds the map wrapping in the overview code.  This is
+       * basically necessary for the overview to be efficiently
+       * updated. */
+      if (topo_has_flag(TF_WRAPX)) {
+        overview.map_x0 = FC_WRAP(ntl_x - NATURAL_WIDTH / 2, NATURAL_WIDTH);
+      } else {
+        overview.map_x0 = 0;
+      }
+      if (topo_has_flag(TF_WRAPY)) {
+        overview.map_y0 = FC_WRAP(ntl_y - NATURAL_HEIGHT / 2, NATURAL_HEIGHT);
+      } else {
+        overview.map_y0 = 0;
+      }
+    } 
     redraw_overview();
   } do_in_natural_pos_end;
 }

@@ -51,6 +51,7 @@ extern bool show_task_icons;
 extern char chat_time_format[128];
 extern char city_name_formats[128];
 extern bool show_split_message_window;
+extern bool do_not_recenter_overview;
 
 enum client_option_type {
   COT_BOOL,
