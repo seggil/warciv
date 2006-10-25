@@ -3880,8 +3880,8 @@ bool load_command(struct connection * caller, char *filename, bool check)
 static bool loadmap_command(struct connection *caller, char *str, bool check)
 {
   struct section_file secfile;
-  char buf[512];
-  const char *p, *dfilename, *comment;
+  char buf[512], name[256];
+  const char *p, *comment;
   bool isnumber = TRUE;
 
   if (server_state != PRE_GAME_STATE) {
@@ -3924,7 +3924,8 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
     datafile_list_iterate(*files, pfile) {
       counter++;
       if (counter == mapnum) {
-	my_snprintf(buf, sizeof(buf), "maps/%s.map", pfile->name);
+        sz_strlcpy(buf, pfile->fullname);
+        sz_strlcpy(name, pfile->name);
 	map_found = TRUE;
 	break;
       }
@@ -3944,18 +3945,6 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
     }
   }
 
-  dfilename = datafilename(buf);
-
-  if (!dfilename) {
-    /* This should never happen. */
-    cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-        _("Could not load the mapfile %s because it does not exist."), buf);
-    return FALSE;
-  }
-
-  /* Make a copy since idiotic datafilename uses static data >:( */
-  sz_strlcpy(buf, dfilename);
-  
   /* attempt to parse the file */
   if (!section_file_load_nodup(&secfile, buf)) {
     cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Couldn't load mapfile: %s"),
@@ -3979,7 +3968,7 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
   sanity_check();
   
   notify_conn(&game.est_connections, _("Server: %s loaded: %s"),
-              buf, comment);
+              name, comment);
   
   return TRUE;
 }
