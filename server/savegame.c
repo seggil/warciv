@@ -3836,54 +3836,53 @@ void game_save(struct section_file *file)
   }
 }
 
+/***************************************************************
+...
+***************************************************************/
 void game_loadmap(struct section_file *file)
 {
-  freelog(LOG_NORMAL, _("Starting Mapload"));
-  int mapversion = secfile_lookup_int_default(file, 0, "game.mapversion");
-  freelog(LOG_NORMAL, _("mapversion %d"),mapversion);  
-  if (mapversion >= 1)
-  {     
+  int mapversion;
+  
+  freelog(LOG_DEBUG, _("Starting Mapload"));
+  mapversion = secfile_lookup_int_default(file, 0, "game.mapversion");
+  freelog(LOG_DEBUG, _("mapversion %d"), mapversion);  
+  if (mapversion >= 1) {     
     map_init();
     map.generator = 0;
     map.is_fixed = TRUE;
     
     set_meta_topic_string(secfile_lookup_str_default(file, 
-                                                default_meta_topic_string(),
-                                                "game.metatopic"));
+        default_meta_topic_string(), "game.metatopic"));
     set_meta_message_string(secfile_lookup_str_default(file, 
-                                                default_meta_message_string(),
-                                                "game.metamessage"));
+        default_meta_message_string(), "game.metamessage"));
     
     sz_strlcpy(game.start_units,secfile_lookup_str_default(file,
-						"wwwxxxccc",
-						"game.start_units"));
-    game.dispersion = secfile_lookup_int_default(file, 0,
-				     "game.dispersion");
-    game.max_players = secfile_lookup_int(file,"game.max_players");
+        "wwwxxxccc", "game.start_units"));
+    game.dispersion = secfile_lookup_int_default(file, 0, "game.dispersion");
+    game.max_players = secfile_lookup_int(file, "game.max_players");
 
-    map.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
-					           "map.topology_id");
-    //map.seed = secfile_lookup_int_default(file, "map.seed");
+    map.topology_id = secfile_lookup_int_default(file,
+        MAP_ORIGINAL_TOPO, "map.topology_id");
+    /* map.seed = secfile_lookup_int_default(file, "map.seed"); */
 
-    map.startpos = secfile_lookup_int_default(file,4,"map.startpos");
+    map.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
   
     map.xsize = secfile_lookup_int(file, "map.width");
     map.ysize = secfile_lookup_int(file, "map.height");
       
-    freelog(LOG_NORMAL, _("Starting loading rulesets"));
+    freelog(LOG_DEBUG, _("Starting loading rulesets"));
     load_rulesets();
-    freelog(LOG_NORMAL, _("Starting loading maptiles"));
+    freelog(LOG_DEBUG, _("Starting loading maptiles"));
     map.have_specials = TRUE;
     map_tiles_load(file);
-    freelog(LOG_NORMAL, _("Starting loading startpositions"));
-    if(map.startpos == 5)
-    {
+    freelog(LOG_DEBUG, _("Starting loading startpositions"));
+    if (map.startpos == 5) {
       map_startpos_load(file);
-      freelog(LOG_NORMAL, _("Starting loading startpositions"));
-      }
+      freelog(LOG_DEBUG, _("Starting loading startpositions"));
+    }
     
-    freelog(LOG_NORMAL, _("Starting loading specials"));
-  /* get 4-bit segments of 16-bit "special" field. */
+    freelog(LOG_DEBUG, _("Starting loading specials"));
+    /* get 4-bit segments of 16-bit "special" field. */
     LOAD_MAP_DATA(ch, nat_y, ptile,
 		secfile_lookup_str(file, "map.l%03d", nat_y),
 		ptile->special = ascii_hex2bin(ch, 0));
@@ -3896,10 +3895,8 @@ void game_loadmap(struct section_file *file)
     LOAD_MAP_DATA(ch, nat_y, ptile,
 		secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
 		ptile->special |= ascii_hex2bin(ch, 3));
-  }
-  else
-  {
-    freelog(LOG_NORMAL, _("No mapfile! loaded nothing."));
+  } else {
+    freelog(LOG_ERROR, _("Not a mapfile! Loaded nothing."));
   }    
   return;
 }

@@ -177,9 +177,9 @@ void game_remove_city(struct city *pcity)
 }
 
 /***************************************************************
-...
+  ...
 ***************************************************************/
-void game_init(void)
+void game_init(bool clear_players)
 {
   int i;
   game.is_new_game   = TRUE;
@@ -187,7 +187,8 @@ void game_init(void)
   game.warminglevel  = 8;
   game.nuclearwinter = 0;
   game.coolinglevel  = 8;
-  //WARSERVER settings
+
+  /* WARSERVER settings */
   game.bruteforcethreshold   = GAME_DEFAULT_BRUTEFORCETHRESHOLD;
   game.iterplacementcoefficient   = GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT;
   game.futuretechsscore   = GAME_DEFAULT_FUTURETECHSSCORE;
@@ -233,7 +234,10 @@ void game_init(void)
   game.min_players   = GAME_DEFAULT_MIN_PLAYERS;
   game.max_players  = GAME_DEFAULT_MAX_PLAYERS;
   game.aifill      = GAME_DEFAULT_AIFILL;
-  game.nplayers=0;
+
+  if (clear_players)
+    game.nplayers = 0;
+
   game.researchcost = GAME_DEFAULT_RESEARCHCOST;
   game.diplcost    = GAME_DEFAULT_DIPLCOST;
   game.diplchance  = GAME_DEFAULT_DIPLCHANCE;
@@ -263,7 +267,7 @@ void game_init(void)
   game.fogofwar_old= game.fogofwar;
   game.borders     = GAME_DEFAULT_BORDERS;
   game.happyborders = GAME_DEFAULT_HAPPYBORDERS;
-//  game.slow_invasions = GAME_DEFAULT_SLOW_INVASIONS;
+  /* game.slow_invasions = GAME_DEFAULT_SLOW_INVASIONS; */
   game.auto_ai_toggle = GAME_DEFAULT_AUTO_AI_TOGGLE;
   game.notradesize    = GAME_DEFAULT_NOTRADESIZE;
   game.fulltradesize  = GAME_DEFAULT_FULLTRADESIZE;
@@ -317,14 +321,17 @@ void game_init(void)
   idex_init();
   cm_init();
   
-  for(i=0; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++)
-    player_init(&game.players[i]);
+  if (clear_players) {
+    for(i=0; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++)
+      player_init(&game.players[i]);
+  }
   for (i=0; i<A_LAST; i++)      /* game.num_tech_types = 0 here */
     game.global_advances[i]=0;
   for (i=0; i<B_LAST; i++)      /* game.num_impr_types = 0 here */
     game.global_wonders[i]=0;
   game.player_idx=0;
   game.player_ptr=&game.players[0];
+
   terrain_control.river_help_text[0] = '\0';
 }
 
@@ -347,9 +354,10 @@ static void game_remove_all_players(void)
 /***************************************************************
   Frees all memory of the game.
 ***************************************************************/
-void game_free(void)
+void game_free(bool map_unloading)
 {
-  game_remove_all_players();
+  if (!map_unloading)
+    game_remove_all_players();
   map_free();
   idex_free();
   ruleset_data_free();

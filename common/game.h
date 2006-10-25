@@ -281,8 +281,8 @@ enum sset_type {
   SSET_BOOL, SSET_INT, SSET_STRING
 };
 
-void game_init(void);
-void game_free(void);
+void game_init(bool clear_players);
+void game_free(bool map_unloading);
 void ruleset_data_free(void);
 
 int game_next_year(int);

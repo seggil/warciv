@@ -59,8 +59,7 @@ static struct hash_table *idex_city_name_hash = NULL;
 ***************************************************************************/
 void idex_init(void)
 {
-  assert(idex_city_hash == NULL);
-  assert(idex_unit_hash == NULL);
+  idex_free();
 
   idex_city_hash = hash_new(hash_fval_ptr_int, hash_fcmp_ptr_int);
   idex_unit_hash = hash_new(hash_fval_ptr_int, hash_fcmp_ptr_int);
@@ -72,14 +71,24 @@ void idex_init(void)
 ***************************************************************************/
 void idex_free(void)
 {
-  hash_free(idex_city_hash);
-  idex_city_hash = NULL;
+  if (idex_city_hash) {
+    hash_free(idex_city_hash);
+    idex_city_hash = NULL;
+  }
 
-  hash_free(idex_unit_hash);
-  idex_unit_hash = NULL;
+  if (idex_unit_hash) {
+    hash_free(idex_unit_hash);
+    idex_unit_hash = NULL;
+  }
 
-  hash_free(idex_city_name_hash);
-  idex_city_name_hash = NULL;
+  if (idex_city_name_hash) {
+    hash_iterate(idex_city_name_hash, void *, key, void *, val) {
+      if (key)
+        free(key);
+    } hash_iterate_end;
+    hash_free(idex_city_name_hash);
+    idex_city_name_hash = NULL;
+  }
 }
 
 /**************************************************************************

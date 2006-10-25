@@ -266,10 +266,12 @@ void cm_init(void)
 #ifdef GATHER_TIME_STATS
   memset(&performance, 0, sizeof(performance));
 
-  performance.greedy.wall_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
+  if (!performance.greedy.wall_timer)
+    performance.greedy.wall_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
   performance.greedy.name = "greedy";
 
-  performance.opt.wall_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
+  if (!performance.opt.wall_timer)
+    performance.opt.wall_timer = new_timer(TIMER_USER, TIMER_ACTIVE);
   performance.opt.name = "opt";
 #endif
 }

@@ -1068,6 +1068,28 @@ static int compare_file_name_ptrs(const void *a, const void *b)
 }
 
 /**************************************************************************
+  To be called on the return value of datafilelist_infix when it is no
+  longer needed.
+**************************************************************************/
+void free_datafile_list(struct datafile_list *pdl)
+{
+  if (!pdl)
+    return;
+  
+  datafile_list_iterate(*pdl, pfile) {
+    if (pfile) {
+      if (pfile->name)
+        free(pfile->name);
+      if (pfile->fullname)
+        free(pfile->fullname);
+      free(pfile);
+    }
+  } datafile_list_iterate_end;
+  datafile_list_unlink_all(pdl);
+  free(pdl);
+}
+
+/**************************************************************************
   Search for filenames with the "infix" substring in the "subpath"
   subdirectory of the data path.
   "nodups" removes duplicate names.
@@ -1075,15 +1097,16 @@ static int compare_file_name_ptrs(const void *a, const void *b)
   second. Returned "name"s will be truncated starting at the "infix"
   substring. The returned list must be freed.
 **************************************************************************/
-struct datafile_list datafilelist_infix(const char *subpath,
+struct datafile_list *datafilelist_infix(const char *subpath,
     const char *infix, bool nodups)
 {
   const char **dirs = get_data_dirs(NULL);
   int num_matches = 0;
   int dir_num;
-  struct datafile_list res;
+  struct datafile_list *res;
 
-  datafile_list_init(&res);
+  res = fc_malloc(sizeof(struct datafile_list));
+  datafile_list_init(res);
 
   /* First assemble a full list of names. */
   for (dir_num = 0; dirs[dir_num]; dir_num++) {
@@ -1114,53 +1137,55 @@ struct datafile_list datafilelist_infix(const char *subpath,
       if ((ptr = strstr(filename, infix))) {
 	struct stat buf;
 	char *fullname;
-	size_t len = strlen(path) + strlen(filename) + 2;
+	int len = strlen(path) + strlen(filename) + 2;
 
 	fullname = fc_malloc(len);
 	my_snprintf(fullname, len, "%s/%s", path, filename);
 
 	if (stat(fullname, &buf) == 0) {
-	  file = fc_malloc(sizeof(*file));
+	  file = fc_malloc(sizeof(struct datafile));
 
 	  /* Clip the suffix. */
 	  *ptr = '\0';
 
-	  file->name = mystrdup(filename);
-	  file->fullname = mystrdup(fullname);
+	  file->name = filename; /* ownership passed */
+	  file->fullname = fullname; /* ownership passed */
 	  file->mtime = buf.st_mtime;
 
-	  datafile_list_append(&res, file);
+	  datafile_list_append(res, file);
 	  num_matches++;
-	}
-
-	free(fullname);
+	} else {
+          free(fullname);
+          free(filename);
+        }
+      } else {
+        free(filename);
       }
-
-      free(filename);
     }
 
     closedir(dir);
   }
 
   /* Sort the list by name. */
-  datafile_list_sort(&res, compare_file_name_ptrs);
+  datafile_list_sort(res, compare_file_name_ptrs);
 
   if (nodups) {
     char *name = "";
 
-    datafile_list_iterate(res, pfile) {
+    datafile_list_iterate(*res, pfile) {
       if (compare_strings(name, pfile->name) != 0) {
 	name = pfile->name;
       } else {
 	free(pfile->name);
 	free(pfile->fullname);
-	datafile_list_unlink(&res, pfile);
+	datafile_list_unlink(res, pfile);
+        free(pfile);
       }
     } datafile_list_iterate_end;
   }
 
   /* Sort the list by last modification time. */
-  datafile_list_sort(&res, compare_file_mtime_ptrs);
+  datafile_list_sort(res, compare_file_mtime_ptrs);
 
   return res;
 }

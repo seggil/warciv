@@ -1211,7 +1211,7 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
 /**************************************************************************
   Returns FALSE iff there was an error.
 **************************************************************************/
-bool read_init_script(struct connection * caller, char *script_filename)
+bool read_init_script(struct connection *caller, char *script_filename)
 {
   FILE *script_file;
   char real_filename[1024];
@@ -1242,7 +1242,7 @@ bool read_init_script(struct connection * caller, char *script_filename)
 static bool read_command(struct connection *caller, char *arg, bool check)
 {
   if (check) {
-    return TRUE;		/* FIXME: no actual checks done */
+    return TRUE; /* FIXME: no actual checks done */
   }
   /* warning: there is no recursion check! */
   return read_init_script(caller, arg);
@@ -3656,19 +3656,6 @@ static void send_load_game_info(bool load_successful)
   lsend_packet_game_load(&game.est_connections, &packet);
 }
 
-static void send_loadmap_game_info(bool load_successful)
-{
-  char buffer[500];
-  buffer[0] = '\0';
-
-  if (load_successful)
-    my_snprintf(buffer, sizeof(buffer),
-		_("Mapload: map %s has been sucsessfully loaded"),
-		srvarg.load_filename);
-
-
-}
-
 #ifdef HAVE_AUTH
 /**************************************************************************
   'authdb' arguments
@@ -3848,9 +3835,9 @@ bool load_command(struct connection * caller, char *filename, bool check)
   }
 
   /* we found it, free all structures */
-  server_game_free();
+  server_game_free(FALSE);
 
-  game_init();
+  game_init(TRUE);
 
   loadtimer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
   uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
@@ -3887,168 +3874,147 @@ bool load_command(struct connection * caller, char *filename, bool check)
   return TRUE;
 }
 
-/******************************************************************
-  Which characters are allowed within option values: (for 'set')
-******************************************************************/
-static bool is_ok_mapfilename_char(char c)
-{
-  return (c == '-') || (c == '_') || (c == '.') || my_isalnum(c);
-}
-
 /**************************************************************************
   used to load maps in pregamestate
 **************************************************************************/
 static bool loadmap_command(struct connection *caller, char *str, bool check)
 {
+  struct section_file secfile;
+  char buf[512];
+  const char *p, *dfilename, *comment;
+  bool isnumber = TRUE;
+
   if (server_state != PRE_GAME_STATE) {
     cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-	      _("Can't load a new map while a game " "is running."));
-    send_loadmap_game_info(FALSE);
+        _("Can't load a new map while a game is running."));
     return FALSE;
   }
-  struct timer *loadtimer, *uloadtimer;
-  struct section_file file;
 
-  /*implementation of using mapnumbers for mapfilelist insteat of mapfilenames,
-     and if someone used a filename checking if it includes some "../"s */
-
-  /* We make a local copy because the parameter might be a pointer to 
-   * srvarg.load_filename, which we edit down below. */
-
-  char _arg[512], *cpstr_a, *cpstr_b;
-  int i = 0, l = 0, arglen = 0;
-  int strlength = strlen(str);
-  bool isnumber = TRUE;
-  for (cpstr_a = str; *cpstr_a != '\n' && !is_ok_mapfilename_char(*cpstr_a);
-       cpstr_a++) {
-    l++;
-  }
-
-  for (cpstr_b = _arg; *cpstr_a != '\n' && is_ok_mapfilename_char(*cpstr_a);
-       cpstr_a++, cpstr_b++) {
-    *cpstr_b = *cpstr_a;
-    arglen++;
-    l++;
-  }
-  *cpstr_b = '\n';
-  for (; *cpstr_a == ' '; cpstr_a++, l++) {
-  }
-
-  if (l < strlength) {
-    my_snprintf(_arg, sizeof(_arg), "%s", str);
+  if (map.is_fixed) { /* FIXME: Perhaps there is a better test? */
     cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-	      _("There are some unallowed chars or to many "
-		"words in the argument of loadmap , see help loadmap"));
+        _("Can't load a new map when one is already loaded."));
     return FALSE;
   }
 
-  for (i = 0; i < arglen; i++) {
-    if (!my_isdigit(_arg[i])) {
+  
+  if (!str || str[0] == '\0') {
+    cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
+        _("Usage: loadmap <filename> or loadmap <number>"));
+    return FALSE;
+  }
+  
+  sz_strlcpy(buf, str);
+
+  for (p = buf; *p; p++) {
+    if (!my_isdigit(*p)) {
       isnumber = FALSE;
       break;
     }
   }
-  char mapname[512];
+
   if (isnumber) {
-    char maplistname[32] = "data/maps/map.list";
-
-    struct section_file maplistfile;
-
-    if (!section_file_load_nodup(&maplistfile, maplistname)) {
-      cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-		_("There is no Maplistfile %s, you can't "
-		  "use mapnumbers to load a map"), maplistname);
-      return FALSE;
-    }
     int mapnum;
-    int maxmapnum = secfile_lookup_int(&maplistfile, "list.number");
+    struct datafile_list *files;
+    bool map_found = FALSE;
+    int counter = 0;
+    
+    sscanf(buf, "%d", &mapnum);
 
-    if (!sscanf(_arg, "%d", &mapnum)) {
+    files = datafilelist_infix("maps", ".map", TRUE);
+    datafile_list_iterate(*files, pfile) {
+      counter++;
+      if (counter == mapnum) {
+	my_snprintf(buf, sizeof(buf), "maps/%s.map", pfile->name);
+	map_found = TRUE;
+	break;
+      }
+    } datafile_list_iterate_end;
+    free_datafile_list(files);
+
+    if (mapnum > counter && !map_found) {
       cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-		_("somehow system thought %s is a number, "
-		  "so it could not load the map"), _arg);
+          _("There are only %d maps in the maplist."), counter);
       return FALSE;
     }
-    if (mapnum >= maxmapnum) {
-      cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-		_("There are only %d maps in the maplist, "
-		  "you tried to load map number %d"), maxmapnum, mapnum);
+
+    if (!map_found){
+      cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("There is no map %d."),
+                mapnum);
       return FALSE;
     }
-    sz_strlcpy(mapname,
-	       secfile_lookup_str(&maplistfile, "list.m%03d", mapnum));
-  } else {
-    sz_strlcpy(mapname, str);
   }
-  char filename[512];
-  char *dfilename;
-  my_snprintf(filename, sizeof(filename), "%s/%s", "maps", mapname);
-  dfilename = datafilename(filename);
 
-  if (dfilename) {
-    char arg[strlen(dfilename) + 1];
-    sz_strlcpy(arg, dfilename);
+  dfilename = datafilename(buf);
 
-    if (!arg || arg[0] == '\0') {
-      cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Usage: loadmap <filename>"));
-      send_loadmap_game_info(FALSE);
-      return FALSE;
-    }
-    /* attempt to parse the file */
-    if (!section_file_load_nodup(&file, arg)) {
-      cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Couldn't load mapfile: %s"),
-		arg);
-      send_loadmap_game_info(FALSE);
-      return FALSE;
-    }
-
-    if (check) {
-      return TRUE;
-    }
-
-    /* we dont need to free structures, we only load mapdata and startpos */
-    /* we found it, free all structures */
-    /*server_game_free();
-       game_init(); */
-
-    loadtimer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
-    uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
-
-    sz_strlcpy(srvarg.load_filename, arg);
-
-    game_loadmap(&file);
-    section_file_check_unused(&file, arg);
-    section_file_free(&file);
-
-    freelog(LOG_VERBOSE, "Load time: %g seconds (%g apparent)",
-	    read_timer_seconds_free(loadtimer),
-	    read_timer_seconds_free(uloadtimer));
-
-    sanity_check();
-
-    /* Everything seemed to load ok; spread the good news. */
-    send_loadmap_game_info(TRUE);
-    cmd_reply(CMD_LOADMAP, caller, C_OK, _("Server: loaded mapfile: %s"),
-	      arg);
-    return TRUE;
-  } else {
-    char arg[strlen(filename) + 1];
-    sz_strlcpy(arg, filename);
+  if (!dfilename) {
+    /* This should never happen. */
     cmd_reply(CMD_LOADMAP, caller, C_FAIL,
-	      _("Server could not load the mapfile: %s, "
-		"there isn't such a file"), arg);
+        _("Could not load the mapfile %s because it does not exist."), buf);
     return FALSE;
   }
+
+  /* Make a copy since idiotic datafilename uses static data >:( */
+  sz_strlcpy(buf, dfilename);
+  
+  /* attempt to parse the file */
+  if (!section_file_load_nodup(&secfile, buf)) {
+    cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Couldn't load mapfile: %s"),
+              buf);
+    return FALSE;
+  }
+  
+  if (check) {
+    section_file_free(&secfile);
+    return TRUE;
+  }
+  
+  sz_strlcpy(srvarg.load_filename, buf);
+  
+  game_loadmap(&secfile);
+  section_file_check_unused(&secfile, buf);
+  comment = secfile_lookup_str_default(&secfile,
+      "No comment available", "game.comment");
+  section_file_free(&secfile);
+  
+  sanity_check();
+  
+  notify_conn(&game.est_connections, _("Server: %s loaded: %s"),
+              buf, comment);
+  
+  return TRUE;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool unloadmap_command(struct connection *caller)
+static bool unloadmap_command(struct connection *caller, bool check)
 {
-  map_init();
-  cmd_reply(CMD_UNLOADMAP, caller, C_OK, _("Reseted map, unloaded map"));
-  return true;
+  if (server_state != PRE_GAME_STATE) {
+    cmd_reply(CMD_UNLOADMAP, caller, C_FAIL,
+        _("Can't unload a map while a game is running."));
+    return FALSE;
+  }
+  
+  if (!map.is_fixed) { /* FIXME: Perhaps there is a better test? */
+    cmd_reply(CMD_UNLOADMAP, caller, C_FAIL, _("No map loaded."));
+    return FALSE;
+  }
+
+  if (check)
+    return TRUE;
+
+  server_game_free(TRUE);
+  game_init(FALSE);
+  
+  if (srvarg.script_filename) {
+    notify_conn(&game.est_connections,
+        _("Server: Re-reading initialization script on map unload."));
+    read_init_script(NULL, srvarg.script_filename);
+  }
+  
+  notify_conn(&game.est_connections, _("Server: Map unloaded."));
+
+  return TRUE;
 }
 
 /**************************************************************************
@@ -4056,53 +4022,54 @@ static bool unloadmap_command(struct connection *caller)
 **************************************************************************/
 static bool showmaplist_command(struct connection *caller)
 {
-  char filename[32] = "data/maps/map.list";
 
-  struct section_file file, mapfile;
+  struct datafile_list *files;
+  struct section_file mapfile;
+  const char *comment;
+  int i;
+  files = datafilelist_infix("maps", ".map", TRUE);
+  
+  i = files ? datafile_list_size(files) : 0;
 
-
-  if (!section_file_load_nodup(&file, filename)) {
-    cmd_reply(CMD_SHOWMAPLIST, caller, C_FAIL,
-	      _("There is no Maplistfile %s"), filename);
+  if (i <= 0) {
+    cmd_reply(CMD_LIST, caller, C_FAIL,
+        _("There are no maps in the maps directory."));
+    free_datafile_list(files);
     return FALSE;
   }
-  int i;
-  int mapnum = secfile_lookup_int(&file, "list.number");
-  cmd_reply(CMD_SHOWMAPLIST, caller, C_COMMENT,
-	    _("You can load the following %d maps with the command"
-              " /loadmap <number of map in list>"),
-	    mapnum);
-  for (i = 0; i < mapnum; i++) {
-    char mapname[512];
-    char comment[1024];
-    sz_strlcpy(mapname, secfile_lookup_str(&file, "list.m%03d", i));
-    cmd_reply(CMD_SHOWMAPLIST, caller, C_COMMENT, _("Map %d : %s"), i,
-	      mapname);
+  
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_LIST, caller, C_COMMENT,
+      _("You can load the following %d map(s) with the command"), i);
+  cmd_reply(CMD_LIST, caller, C_COMMENT,
+      /* TRANS: do not translate "/loadmap" */
+      _("/loadmap <mapnumber> or /loadmap <mapfile-name>:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
-    char mapfilename[512];
-    char *dfilename;
-    my_snprintf(mapfilename, sizeof(mapfilename), "%s/%s", "maps", mapname);
-    dfilename = datafilename(mapfilename);
+  i = 0;
+  datafile_list_iterate(*files, pfile) {
+    i++;
 
-    if (dfilename) {
-      char arg[strlen(dfilename) + 1];
-      sz_strlcpy(arg, dfilename);
-      if (!section_file_load_nodup(&mapfile, arg)) {
-	cmd_reply(CMD_SHOWMAPLIST, caller, C_FAIL, _("Map is not there"));
-      }
-      sz_strlcpy(comment,
-		 secfile_lookup_str_default(&mapfile, "No comment available",
-					    "game.comment"));
-      cmd_reply(CMD_SHOWMAPLIST, caller, C_COMMENT,
-		_("Comment of map %d : %s"), i, comment);
-    } else {
-      cmd_reply(CMD_SHOWMAPLIST, caller, C_FAIL, _("Map is not there"));
+    if (!section_file_load_nodup(&mapfile, pfile->fullname)) {
+      cmd_reply(CMD_LIST, caller, C_FAIL,
+                _("%d: (Failed to open secfile %s.)"),
+                i, pfile->fullname);
+      continue;
     }
+    
+    comment = secfile_lookup_str_default(&mapfile,
+        "No comment available", "game.comment");
 
-  }
-  return true;
+    cmd_reply(CMD_LIST, caller, C_COMMENT, _("%d: %s"),
+              i, pfile->name);
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "  %s", comment);
+  } datafile_list_iterate_end;
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+
+  free_datafile_list(files);
+
+  return TRUE;
 }
-
 
 /**************************************************************************
   ...
@@ -4349,9 +4316,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
   case CMD_LOADMAP:
     return loadmap_command(caller, arg, check);
   case CMD_UNLOADMAP:
-    return unloadmap_command(caller);
-  case CMD_SHOWMAPLIST:
-    return showmaplist_command(caller);
+    return unloadmap_command(caller, check);
   case CMD_METAPATCHES:
     return metapatches_command(caller, arg, check);
   case CMD_METATOPIC:
@@ -5451,10 +5416,10 @@ static void show_teams(struct connection *caller)
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-  LIST_TEAMS, LIST_IGNORE, LIST_ARG_NUM /* Must be last */
+  LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_ARG_NUM /* Must be last */
 };
 static const char *const list_args[] = {
-  "players", "connections", "actionlist", "teams", "ignore", NULL
+  "players", "connections", "actionlist", "teams", "ignore", "maps", NULL
 };
 static const char *listarg_accessor(int i)
 {
@@ -5499,6 +5464,9 @@ static bool show_list(struct connection *caller, char *arg)
     return TRUE;
   case LIST_IGNORE:
     show_ignore(caller);
+    return TRUE;
+  case LIST_MAPS:
+    showmaplist_command(caller);
     return TRUE;
   default:
     cmd_reply(CMD_LIST, caller, C_FAIL,

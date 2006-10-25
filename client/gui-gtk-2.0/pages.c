@@ -1343,38 +1343,26 @@ static void load_browse_callback(GtkWidget * w, gpointer data)
 **************************************************************************/
 static void update_saves_store(GtkListStore * store)
 {
-  struct datafile_list files;
+  struct datafile_list *files;
 
   gtk_list_store_clear(store);
 
   /* search for user saved games. */
   files = datafilelist_infix("saves", ".sav", FALSE);
-  datafile_list_iterate(files, pfile) {
+  datafile_list_iterate(*files, pfile) {
     GtkTreeIter it;
-
     gtk_list_store_append(store, &it);
     gtk_list_store_set(store, &it, 0, pfile->name, 1, pfile->fullname, -1);
-
-    free(pfile->name);
-    free(pfile->fullname);
-    free(pfile);
   } datafile_list_iterate_end;
-
-  datafile_list_unlink_all(&files);
+  free_datafile_list(files);
 
   files = datafilelist_infix(NULL, ".sav", FALSE);
-  datafile_list_iterate(files, pfile) {
+  datafile_list_iterate(*files, pfile) {
     GtkTreeIter it;
-
     gtk_list_store_append(store, &it);
     gtk_list_store_set(store, &it, 0, pfile->name, 1, pfile->fullname, -1);
-
-    free(pfile->name);
-    free(pfile->fullname);
-    free(pfile);
   } datafile_list_iterate_end;
-
-  datafile_list_unlink_all(&files);
+  free_datafile_list(files);
 }
 
 /**************************************************************************
@@ -1494,25 +1482,20 @@ static void scenario_browse_callback(GtkWidget * w, gpointer data)
 **************************************************************************/
 static void update_scenario_page(void)
 {
-  struct datafile_list files;
+  struct datafile_list *files;
 
   gtk_list_store_clear(scenario_store);
 
   /* search for scenario files. */
   files = datafilelist_infix("scenario", ".sav", TRUE);
-  datafile_list_iterate(files, pfile) {
+  datafile_list_iterate(*files, pfile) {
     GtkTreeIter it;
 
     gtk_list_store_append(scenario_store, &it);
     gtk_list_store_set(scenario_store, &it,
 		       0, pfile->name, 1, pfile->fullname, -1);
-
-    free(pfile->name);
-    free(pfile->fullname);
-    free(pfile);
   } datafile_list_iterate_end;
-
-  datafile_list_unlink_all(&files);
+  free_datafile_list(files);
 }
 
 /**************************************************************************

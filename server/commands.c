@@ -62,12 +62,13 @@ const struct command commands[] = {
    "list connections\n"
    "list actionlist\n"
    "list teams\n"
-   "list ignore",
+   "list ignore\n"
+   "list maps",
    N_("Show a list of various things."),
    N_("Show a list of players, list of connections to the server, the "
-      "action list, the teams and the players in them, or your ignore "
-      "list. The argument may be abbreviated, and defaults to "
-      "'players' if absent."),
+      "action list, the teams and the players in them, your ignore "
+      "list, or all maps on the server. "
+      "The argument may be abbreviated, and defaults to 'players' if absent."),
    ECHO_NONE
   },
   {"quit",	ALLOW_HACK, ALLOW_HACK,
@@ -455,9 +456,9 @@ const struct command commands[] = {
    N_("Load map from file."),
    N_("Load a map from <mapfile-name>. Only mapdata+startpos are loaded, use only " 
       "in pregame, rulesets and options have to be set seperatly.\n"
-      "You can get a list of the available maps with /showmaplist.\n" 
+      "You can get a list of the available maps with /list maps.\n" 
       "<mapfile-name> can be the name of the mapfile or the number in the \n"
-      "showmaplist."),
+      "list of maps."),
    ECHO_ALL
   },
   {"unloadmap",      ALLOW_CTRL, ALLOW_BASIC,
@@ -468,15 +469,6 @@ const struct command commands[] = {
    N_("Unload a map, that was loaded from a file (with /loadmap)."
       "Use it if you want to play without a map after you have loaded a mapfile.\n"),
    ECHO_ALL
-  },
-  {"showmaplist",      ALLOW_CTRL, ALLOW_BASIC,
-   /* TRANS: translate text between <> only */
-   N_("showmaplist\n"
-      "showmaplist"),
-   N_("Shows a list of all maps on the server"),
-   N_("Shows a list of all maps on the server and a comment about the map\n"
-      "you can load a map with /loadmap <mapfile-name> or /loadmap <mapnumber>"),
-   ECHO_NONE
   },
   {"read",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
