@@ -3904,6 +3904,7 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
   }
   
   sz_strlcpy(buf, str);
+  remove_leading_trailing_spaces(buf);
 
   for (p = buf; *p; p++) {
     if (!my_isdigit(*p)) {
@@ -3942,6 +3943,16 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
       cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("There is no map %d."),
                 mapnum);
       return FALSE;
+    }
+  } else {
+    char datapath[512];
+    const char *fullname;
+    
+    my_snprintf(datapath, sizeof(datapath), "maps/%s.map", buf);
+    sz_strlcpy(name, buf);
+    fullname = datafilename(datapath);
+    if (fullname) {
+      sz_strlcpy(buf, fullname);
     }
   }
 
