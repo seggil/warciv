@@ -108,4 +108,7 @@ enum ocean_land_change check_terrain_ocean_land_change(struct tile *ptile,
 int get_continent_size(Continent_id id);
 int get_ocean_size(Continent_id id);
 
+void assign_continent_flood(struct tile *ptile, bool is_land,
+                            int nr, bool skip_unsafe);
+
 #endif  /* FC__MAPHAND_H */

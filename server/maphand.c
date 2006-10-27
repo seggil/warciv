@@ -59,8 +59,8 @@ static int ocean_sizes[MAP_NCONT];
   if skip_unsafe is specified then "unsafe" terrains are skipped.  This
   is useful for mapgen algorithms.
 **************************************************************************/
-static void assign_continent_flood(struct tile *ptile, bool is_land,
-				   int nr, bool skip_unsafe)
+void assign_continent_flood(struct tile *ptile, bool is_land,
+                            int nr, bool skip_unsafe)
 {
   if (map_get_continent(ptile) != 0) {
     return;

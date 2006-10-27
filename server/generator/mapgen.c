@@ -53,6 +53,7 @@ static void add_specials(int prob);
 static void mapgenerator2(void);
 static void mapgenerator3(void);
 static void mapgenerator4(void);
+static void mapgenerator67(bool make_roads);
 static void adjust_terrain_param(void);
 
 #define RIVERS_MAXTRIES 32767
@@ -1044,6 +1045,12 @@ void map_fractal_generate(bool autosize)
     adjust_terrain_param();
     /* if one mapgenerator fails, it will choose another mapgenerator */
     /* with a lower number to try again */
+
+    if (map.generator == 5) {
+      mapgenerator67(TRUE);
+    } else if (map.generator == 4) {
+      mapgenerator67(FALSE);
+    }
     
     if (map.generator == 3) {
       /* 2 or 3 players per isle? */
@@ -1992,3 +1999,538 @@ static void mapgenerator4(void)
 }
 
 #undef DMSIS
+
+
+
+/****************************************************************************
+Overview of how Generator 6/7 works:
+
+Basically, the goal of the below enumeration and much of the code is
+to make land that is reasonably interesting, but can be constrained to
+have certain aspects that are carefully chosen.
+
+T6_PERM_LAND is land that is forced to be land and will not be changed by 
+any transformations.
+T6_PERM_OCEAN is land that is forced to be ocean and will not be changed by 
+any transformations. 
+T6_TEMP_LAND is currently land, but may be changed by later transformations.
+T6_TEMP_OCEAN is currently ocean, but may be change by later transformations.
+
+The first step is to build up all the perm land and perm ocean.  This is 
+done in the functions create_peninsula and mapgenerator6.  These create the
+basic peninsula structure and create permanent ocean seperating each 
+peninsula.  mapgenerator6 also creates the polar land and the connecting 
+isthmus out of permanent land (note that none of the transforms touch 
+the polar land so it is actually made out of what it will finally be).
+
+The second step is to add in randomness.  Basically this step first of 
+all creates quite a few seed islands randomly about the map in places with
+T6_TEMP_OCEAN.  Then, it uses random_new_land to place new land around the 
+map.  random_new_land is biased to place new land next to old land.   
+
+The third step is to make the map's coastlines more smooth.  This is 
+accomplished by applying a dilate_map, two erode_map and another dilate_map.
+The dilate/erode is sometimes called an closing and the erode/dilate is
+sometimes called a opening.  
+
+The dilate basically increases every beach by one tile.  I.e. if 
+old land is # and new land is + then the effect will be to add the new land:
+   ++
+  +##+
+  +#+#+
+ +#####+
+  ++#++
+    +
+
+The erode basically decreases every beach by one tile.  I.e. The # land 
+will stay, but the - land will be 'eroded' away:
+
+   --
+  -##-
+  -###-
+ -#####-
+  --#--
+    -
+
+So a dilate followed by an erode will result in the change of eliminating 
+the center ocean.  In the map generator, the dilate/erode will remove small
+oceans and small bays, and the erode/dilate will remove small islands.
+
+The last step is to relace all temp land with T_GRASSLAND and all 
+temp ocean with T_OCEAN and then let the standard map creation functions 
+create mountains, deserts etc.
+
+****************************************************************************/
+enum gen6_terrain { T6_PERM_LAND = T_GRASSLAND, T6_TEMP_LAND = T_SWAMP, 
+		    T6_PERM_OCEAN = T_OCEAN, T6_TEMP_OCEAN = T_ARCTIC, 
+		    T6_ERODE_LAND = T_DESERT, T6_DILATE_LAND = T_JUNGLE};
+
+/****************************************************************************
+ returns true if the terrain is generator 6 ocean. 
+****************************************************************************/
+static int g6_ocean(int terrain) 
+{
+  return terrain == T6_PERM_OCEAN || terrain == T6_TEMP_OCEAN;
+}
+
+/****************************************************************************
+ returns true if the terrain at point x,y is land. 
+****************************************************************************/
+static int land_terrain(int x, int y)
+{
+  normalize_map_pos(&x, &y);
+  int terrain = map_get_terrain(map_pos_to_tile(x, y));
+  return !g6_ocean(terrain);
+}
+
+/****************************************************************************
+ returns true if a neighboring point should be eroded. 
+****************************************************************************/
+static int erode_terrain(int x, int y)
+{
+  normalize_map_pos(&x, &y);
+  int terrain = map_get_terrain(map_pos_to_tile(x, y));
+  return g6_ocean(terrain);
+}
+
+/****************************************************************************
+ returns true if the terrain at point x,y should be eroded.  
+****************************************************************************/
+static int should_erode(int x, int y)
+{
+  int terrain = map_get_terrain(map_pos_to_tile(x, y));
+  if(g6_ocean(terrain) || terrain == T6_PERM_LAND) {
+    return FALSE;
+  }
+  if (erode_terrain(x - 1, y) 
+      || erode_terrain(x + 1, y)
+      || erode_terrain(x, y - 1)
+      || erode_terrain(x, y + 1)) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
+
+/****************************************************************************
+ removes all temporary shores.      (I.e. shrink the land by one tile.)
+****************************************************************************/
+static void erode_map(int polar_height) 
+{
+  int x, y;
+  for (x = 0; x < map.xsize; x++) {
+    for (y = polar_height; y < map.ysize - polar_height; y++) {
+      if (should_erode(x, y)) {
+	map_set_terrain(map_pos_to_tile(x, y), T6_ERODE_LAND);
+      }
+    }
+  }
+  
+  for (x = 0; x < map.xsize; x++) {
+    for (y = polar_height; y < map.ysize - polar_height; y++) {
+      if (map_get_terrain(map_pos_to_tile(x, y)) == T6_ERODE_LAND) {
+	map_set_terrain(map_pos_to_tile(x, y), T6_TEMP_OCEAN);
+      }
+    }
+  }
+}
+
+/****************************************************************************
+ returns true if a neighboring point should be dilated. 
+****************************************************************************/
+static int dilate_terrain(int x, int y)
+{
+  normalize_map_pos(&x, &y);
+  int terrain = map_get_terrain(map_pos_to_tile(x, y));
+  return !g6_ocean(terrain) && terrain != T6_DILATE_LAND;
+}
+
+/****************************************************************************
+ returns true if the terrain at point x,y should be dilated.  
+****************************************************************************/
+static int should_dilate(int x, int y)
+{
+  int terrain = map_get_terrain(map_pos_to_tile(x, y));
+  if(!g6_ocean(terrain) || terrain == T6_PERM_OCEAN) {
+    return FALSE;
+  }
+  if (dilate_terrain(x - 1, y) 
+      || dilate_terrain(x + 1, y)
+      || dilate_terrain(x, y - 1)
+      || dilate_terrain(x, y + 1)) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
+
+/****************************************************************************
+ removes all temporary beaches.   (I.e. shrink the ocean by one tile.) 
+****************************************************************************/
+static void dilate_map(int polar_height) 
+{
+  int x, y;
+  for (x = 0; x < map.xsize; x++) {
+    for (y = polar_height; y < map.ysize - polar_height; y++) {
+      if (should_dilate(x, y)) {
+	map_set_terrain(map_pos_to_tile(x, y), T6_DILATE_LAND);
+      }
+    }
+  }
+  
+  for (x = 0; x < map.xsize; x++) {
+    for (y = polar_height; y < map.ysize - polar_height; y++) {
+      if (map_get_terrain(map_pos_to_tile(x, y)) == T6_DILATE_LAND) {
+	map_set_terrain(map_pos_to_tile(x, y), T6_TEMP_LAND);
+      }
+    }
+  }
+}
+
+
+/****************************************************************************
+ returns a score based on the amount of land surrounding the point x,y. 
+ No land is 0.  All eight neighbors is 12
+ ***************************************************************************/
+static int border_score(int x, int y)
+{
+  int adj_score = 2;
+  int diag_score = 1;
+  int score = 0;
+  score += land_terrain(x - 1, y) ? adj_score : 0;
+  score += land_terrain(x + 1, y) ? adj_score : 0;
+  score += land_terrain(x, y - 1) ? adj_score : 0;
+  score += land_terrain(x, y + 1) ? adj_score : 0;
+  score += land_terrain(x - 1, y - 1) ? diag_score : 0;
+  score += land_terrain(x + 1, y - 1) ? diag_score : 0;
+  score += land_terrain(x - 1, y + 1) ? diag_score : 0;
+  score += land_terrain(x + 1, y + 1) ? diag_score : 0;
+  return score;
+}
+
+enum terrain_status { TS_OCEAN, TS_LAND, TS_NEW_LAND};
+
+/*************************************************************************
+  Returns TS_NEW_LAND if the point is not already land and 
+  the random number is less than the border score.
+  More likely to return TS_NEW_LAND on a location that has
+  more land around it.  Will never return TS_NEW_LAND on a
+  location that has no land in any of the eight neighbors.
+ *************************************************************************/
+static int random_new_land(int x, int y)
+{
+  int score;
+  int random;
+  if (land_terrain(x, y)) {
+    return TS_LAND;
+  }
+  if (map_get_terrain(map_pos_to_tile(x, y)) == T6_PERM_OCEAN) {
+    return TS_OCEAN;
+  }
+  score = border_score(x, y);
+  random = myrand(4 * 2 + 4 * 1);
+  return random + 1 > score ? TS_OCEAN : TS_NEW_LAND;
+
+}
+
+/*************************************************************************
+ Creates a peninsula and put the player's starting position
+ on it. The direction is either +1 or -1 depending on which 
+ direction the peninsula should go from the y position.
+ The remaining_count is the number of tiles to  fill with 
+ land.
+ *************************************************************************/
+static void create_peninsula(int x, int y, int player_number,
+			     int width, int height, int direction,
+			     int neck_height,int neck_width,
+			     int neck_displacement)
+{
+  int cx, cy;
+  int head_height = height-neck_height;
+  int neck_start = x + neck_displacement;
+  int ocean_distance = neck_height / 2;
+
+  /* make perm ocean */
+  { 
+    int top_location = y - (ocean_distance + 1) * direction;
+    int bottom_location = y + (height - ocean_distance) * direction;
+    int left_location = x - ocean_distance - 1;
+    int right_location = x + width + ocean_distance;
+    
+    /* top and bottom */
+    for (cx = left_location; cx < right_location + 1; cx++) {
+      map_set_terrain(map_pos_to_tile(cx, top_location), T6_PERM_OCEAN);
+      map_set_terrain(map_pos_to_tile(cx, bottom_location), T6_PERM_OCEAN);
+    }
+
+    /* left and right */
+    for (cy = top_location; cy != bottom_location + direction;
+	 cy += direction) {
+      map_set_terrain(map_pos_to_tile(left_location, cy), T6_PERM_OCEAN);
+      map_set_terrain(map_pos_to_tile(right_location, cy), T6_PERM_OCEAN);
+    }
+
+    /* connect to central ocean */
+    for (cy = map.ysize / 2; cy != top_location; cy += direction) {
+      map_set_terrain(map_pos_to_tile(x + width / 2, cy), T6_PERM_OCEAN);
+    }
+  }
+
+  /* make head */
+  for (cx = x; cx < x + width; cx++) {
+    for (cy = y; cy != y + (head_height + 1) * direction; cy += direction) {
+      map_set_terrain(map_pos_to_tile(cx, cy), T6_PERM_LAND);
+      hmap(map_pos_to_tile(cx, cy)) = myrand(7000) - 2000;
+    }
+  }
+
+  /* make neck */
+  for (cx = neck_start; cx < neck_start + neck_width; cx++) {
+    for (cy = y + (head_height + 1) * direction; 
+	 cy != y + (height + 1) * direction; cy += direction ) {
+      map_set_terrain(map_pos_to_tile(cx, cy), T6_PERM_LAND);
+      hmap(map_pos_to_tile(cx, cy)) = myrand(7000) - 2000;
+    }
+  }
+
+  map.start_positions[player_number].tile = map_pos_to_tile(x + width / 2, y);
+}
+
+/*************************************************************************
+  This generator creates a map with one penisula for each 
+   player and an isthmus between.  It creates a central
+   ocean and puts the peninsulas around the edges.  It is 
+   intented for quicker games. Should look something like this:
+   *****************************
+   ****  *****  *****  *****    
+    **    ***    ***    ***     
+    **                          
+    **                           
+    **       ***    ***             
+   ****     *****  *****           
+   *****************************
+
+  If make_roads is true, it will generate roads on the polar regions and 
+   on the isthmus.
+ *************************************************************************/
+static void mapgenerator67(bool make_roads)
+{
+  int peninsulas = game.nplayers;
+  int peninsulas_on_one_side = (peninsulas + 1) / 2;
+  int isthmus_width = 10;
+  int neck_height = (map.ysize / 8) | 1; 
+  int polar_height = 3;
+  int peninsula_separation = neck_height;
+  int max_peninsula_width = (map.xsize - isthmus_width - peninsula_separation)
+    / (peninsulas_on_one_side) - peninsula_separation;
+  int max_peninsula_height = map.ysize / 2 - polar_height - neck_height;
+  int neck_width = MIN(6,max_peninsula_width - 1);
+  int min_peninsula_width = neck_width;
+  int min_peninsula_height = neck_height;
+  int peninsula_area = MAX((max_peninsula_width * max_peninsula_height * 
+			    map.landpercent) / 100, 
+			   min_peninsula_width * min_peninsula_height);
+  int i, x, y;
+  int isle = 1;
+
+  if(min_peninsula_width > max_peninsula_width 
+     || min_peninsula_height > max_peninsula_height
+     || min_peninsula_width < 2 || min_peninsula_height < 2)
+  {
+    freelog(LOG_ERROR, 
+	    _("mapgenerator67: Unable to use generator with the "
+              "given map parameters (mw %d Mw %d mh %d Mh %d area %d). "
+              "Falling back to generator 3."),
+	    min_peninsula_width, max_peninsula_width,
+	    min_peninsula_height, max_peninsula_height, peninsula_area);
+    map.generator = 3;
+    return;
+  }
+
+  height_map = fc_malloc(sizeof(int) * map.xsize * map.ysize);
+
+  /* initialize everything to temp ocean */
+  for (y = 0; y < map.ysize; y++)
+    for (x = 0; x < map.xsize; x++) {
+      map_set_terrain(map_pos_to_tile(x, y), T6_TEMP_OCEAN);
+      hmap(map_pos_to_tile(x, y)) = 0;
+    }
+
+  /* create central perm ocean */
+  y = map.ysize / 2;
+  for (x = isthmus_width; x < map.xsize; x++) {
+    map_set_terrain(map_pos_to_tile(x, y), T6_PERM_OCEAN);
+    hmap(map_pos_to_tile(x, y)) = 0;
+  }
+
+#if 0
+  /* create polar regions */
+  for (x = 0; x < map.xsize; x++) {
+    for (y = 0; y < polar_height; y++) {
+      int rand_num = myrand(9);
+      map_set_terrain(map_pos_to_tile(x, y), rand_num > 7 ? T_ARCTIC :
+		      (rand_num < 2 ? T_MOUNTAINS : T_TUNDRA));
+      rand_num = myrand(9);
+      map_set_terrain(map_pos_to_tile(x, map.ysize - 1 - y), rand_num > 7 ? T_ARCTIC :
+		      (rand_num < 2 ? T_MOUNTAINS : T_TUNDRA));
+    }
+  }
+#endif
+
+  /* build polar regions road */
+  if (make_roads) {
+    for (x = 0; x < map.xsize; x++) {
+      y = polar_height - 1;
+      if (map_build_road_time(map_pos_to_tile(x, y - 1)) < map_build_road_time(map_pos_to_tile(x, y))) {
+	map_set_special(map_pos_to_tile(x, y - 1), S_ROAD);
+      } else {
+	map_set_special(map_pos_to_tile(x, y), S_ROAD);
+      }
+      y = map.ysize - polar_height;
+      if (map_build_road_time(map_pos_to_tile(x, y + 1)) < map_build_road_time(map_pos_to_tile(x, y))) {
+	map_set_special(map_pos_to_tile(x, y + 1), S_ROAD);
+      } else {
+	map_set_special(map_pos_to_tile(x, y), S_ROAD);
+      }
+    }
+  } /* make_roads */
+
+  map.num_continents = 1;
+
+  /* create isthmus centeral strip */
+  x = isthmus_width / 2;
+  for (y = polar_height; y < map.ysize - polar_height; y++) {
+    map_set_terrain(map_pos_to_tile(x, y), T6_PERM_LAND);
+    hmap(map_pos_to_tile(x, y)) = 100 * x * (isthmus_width - x) + (myrand(400) - 200);
+  }
+
+  assign_continent_numbers(TRUE);
+  map.start_positions = fc_realloc(map.start_positions,
+				   game.nplayers
+				   * sizeof(*map.start_positions));
+
+  /* setup peninsulas */
+  for (i = 0; i < game.nplayers; i++) {
+    /* direction is the direction to increment from the x and y location */
+    int direction = (i < peninsulas_on_one_side) ? -1 : 1;
+    int index = (direction == -1) ? i : i - peninsulas_on_one_side;
+    int width = min_peninsula_width + 
+      myrand(max_peninsula_width - min_peninsula_width + 1);
+    int height = CLIP(min_peninsula_height,
+		      peninsula_area / width + neck_height,
+		      max_peninsula_height);
+    int neck_displacement = myrand(width - neck_width + 1);
+    int x_displacement = myrand(max_peninsula_width - width + 1);
+    if(index == 0) {
+      x = peninsula_separation + isthmus_width;
+      if(direction == 1 && game.nplayers & 1) {
+	/* center the thing */
+	x = x + max_peninsula_width / 2;
+      } 
+    } 
+    y = (direction == -1)
+	? height + polar_height : map.ysize - 1 - height - polar_height;
+    create_peninsula(x + x_displacement, y, i, width, height, direction,
+		     neck_height,neck_width,neck_displacement);
+    x = x + peninsula_separation + max_peninsula_width;
+  }
+
+  map.num_start_positions = game.nplayers;
+
+  { 
+    int consider_height = map.ysize - 2 * polar_height;
+    int desired_squares = 
+      (consider_height * map.xsize * map.landpercent) / 200;
+    int bailout_number = desired_squares * 30;
+    int seed = MIN(20, desired_squares / 20); /* seed islands */
+    desired_squares = MAX(0, desired_squares - seed);
+    while (bailout_number > 0 && seed > 0) {
+      x = myrand(map.xsize);
+      y = myrand(consider_height) + polar_height;
+      if (map_get_terrain(map_pos_to_tile(x, y)) == T6_TEMP_OCEAN) {
+	map_set_terrain(map_pos_to_tile(x, y), T6_TEMP_LAND);
+	hmap(map_pos_to_tile(x, y)) = myrand(7000) - 2000;
+	seed--;
+      }
+      bailout_number--;
+    }
+    while (bailout_number > 0 && desired_squares > 0) {
+      x = myrand(map.xsize);
+      y = myrand(consider_height) + polar_height;
+      if (random_new_land(x, y) == TS_NEW_LAND) {
+	map_set_terrain(map_pos_to_tile(x, y), T6_TEMP_LAND);
+	hmap(map_pos_to_tile(x, y)) = myrand(7000) - 2000;
+	desired_squares--;
+      }
+      bailout_number--;
+    }
+  }
+
+  /* remove small oceans  */
+  dilate_map(polar_height);
+  erode_map(polar_height);
+  /* remove small islands */
+  erode_map(polar_height);
+  dilate_map(polar_height);
+
+  /* translate to real terrain */
+  for (x = 0; x < map.xsize; x++) {
+    for (y = polar_height; y < map.ysize - polar_height; y++) {
+      int terrain = map_get_terrain(map_pos_to_tile(x, y));
+      if (terrain == T6_TEMP_LAND) {
+	map_set_terrain(map_pos_to_tile(x, y), T_GRASSLAND);
+      } else if(terrain == T6_TEMP_OCEAN) {
+	map_set_terrain(map_pos_to_tile(x, y), T_OCEAN);
+      }
+    }
+  }
+
+  whole_map_iterate(ptile) {
+    map_set_continent(ptile, 0);
+  } whole_map_iterate_end;
+  
+  assign_continent_flood(map_pos_to_tile(0, 0), TRUE, isle++, FALSE);
+
+  whole_map_iterate(ptile) {
+    if (map_get_continent(ptile) == 0 
+        && !is_ocean(map_get_terrain(map_pos_to_tile(x, y)))) {
+      assign_continent_flood(ptile, TRUE, isle++, FALSE);
+    }
+  } whole_map_iterate_end;
+
+  map.num_continents = isle-1;
+
+  /* setup terrain */
+  smooth_int_map(height_map, FALSE);
+  
+  create_placed_map();
+  set_all_ocean_tiles_placed();
+  create_tmap(FALSE);
+  make_relief();
+  make_terrains();
+  destroy_placed_map();
+
+  make_rivers();
+
+  /* create isthmus road */
+  if (make_roads) {
+    int last_x, middle_x = isthmus_width / 2;
+    last_x = middle_x;
+    for (y = polar_height - 1; y < map.ysize - polar_height + 1; y++) {
+      int best_x = middle_x;
+      int min_build = map_build_road_time(map_pos_to_tile(middle_x, y));
+      for (x = MAX(last_x - 1, middle_x - 1);
+	   x != MIN(last_x + 1, middle_x + 1) + 1; x++) {
+	if (land_terrain(x, y) && map_build_road_time(map_pos_to_tile(x, y)) < min_build) {
+	  best_x = x;
+	  min_build = map_build_road_time(map_pos_to_tile(x, y));
+	}
+      }
+      map_set_special(map_pos_to_tile(best_x, y), S_ROAD);
+      last_x = best_x;
+    }
+  }
+
+  free(height_map);
+  height_map = NULL;
+}

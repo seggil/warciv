@@ -653,7 +653,7 @@ extern const int DIR_DY[8];
 
 #define MAP_DEFAULT_GENERATOR    3
 #define MAP_MIN_GENERATOR        1
-#define MAP_MAX_GENERATOR        3
+#define MAP_MAX_GENERATOR        5
 
 #define MAP_DEFAULT_STARTPOS     4
 #define MAP_MIN_STARTPOS         0
