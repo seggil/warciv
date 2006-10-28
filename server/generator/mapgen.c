@@ -2357,8 +2357,8 @@ static void mapgenerator67(bool make_roads)
 {
   int peninsulas = game.nplayers;
   int peninsulas_on_one_side = (peninsulas + 1) / 2;
-  int isthmus_width = 8;
-  int neck_height = (map.ysize / 10) | 1; 
+  int isthmus_width = 10;
+  int neck_height = (map.ysize / 8) | 1; 
   int polar_height = 3;
   int max_peninsula_width_with_ocean = (map.xsize - isthmus_width) / (peninsulas_on_one_side);
   int max_peninsula_width = max_peninsula_width_with_ocean / 1.4f;

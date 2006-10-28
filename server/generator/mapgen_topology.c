@@ -253,9 +253,13 @@ void generator_init_topology(bool autosize)
     const int id = 0x3 & map.topology_id;
 
     assert(TF_WRAPX == 0x1 && TF_WRAPY == 0x2);
-
-    /* Set map.xsize and map.ysize based on map.size. */
-    set_sizes(map.size, default_ratios[id][0], default_ratios[id][1]);
+    
+    if(map.generator >= 4) {
+      set_sizes(map.size, 2, 1);
+    } else {
+      /* Set map.xsize and map.ysize based on map.size. */
+      set_sizes(map.size, default_ratios[id][0], default_ratios[id][1]);
+    }
   }
 
   /* initialize the ICE_BASE_LEVEL */
