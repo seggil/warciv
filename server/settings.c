@@ -1073,9 +1073,12 @@ struct settings_s settings[] = {
     N_("Type of team placement"),
 	  N_("0 - team players are placed as close as possible\n"
 	     "    regardless of continents.\n"
-       "1 - team players are placed on the same continent."),
+       "1 - team players are placed on the same continent.\n"
+       "2 - team players are placed horizontally. This is for\n"
+       "    generator 4/5.\n"
+       "3 - team players are placed vertically."),
 	  NULL,
-	  0, 1, GAME_DEFAULT_TEAMPLACEMENTTYPE)
+	  0, 3, GAME_DEFAULT_TEAMPLACEMENTTYPE)
   GEN_INT("bruteforcethreshold", game.bruteforcethreshold,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
     N_("Brute force team placement algorithm threshold"),

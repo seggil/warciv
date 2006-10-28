@@ -154,12 +154,24 @@ static int calculate_potential_score(int *start_pos,int a, int b)
             if(are_team_players[x][y]) {
                 c = (x == a) ? b : x;
                 d = (y == b) ? a : y;
-                score += real_map_distance(map.start_positions[start_pos[c]].tile,map.start_positions[start_pos[d]].tile);
-                if(game.teamplacementtype == 1) {
-                  if(map_get_continent(map.start_positions[start_pos[c]].tile) != map_get_continent(map.start_positions[start_pos[d]].tile)) {
-                    score += NATIVE_WIDTH + NATIVE_HEIGHT;
-                  }
-                }                
+                switch(game.teamplacementtype) {
+                  case 1:
+                    if(map_get_continent(map.start_positions[start_pos[c]].tile) != map_get_continent(map.start_positions[start_pos[d]].tile)) {
+                      score += NATIVE_WIDTH + NATIVE_HEIGHT;
+                    }
+                    //break is not missing here!
+                  case 0:
+                    score += real_map_distance(map.start_positions[start_pos[c]].tile,map.start_positions[start_pos[d]].tile);
+                    break;
+                  case 2:
+                    score += abs(map.start_positions[start_pos[c]].tile->nat_y - map.start_positions[start_pos[d]].tile->nat_y);
+                    break;
+                  case 3:
+                    score += abs(map.start_positions[start_pos[c]].tile->nat_x - map.start_positions[start_pos[d]].tile->nat_x);
+                    break;
+                  default:
+                    ;
+                }
             }
         }
     }
@@ -224,12 +236,24 @@ static int calculate_score(int *start_pos)//if nobody is in team, score is 0
     for (x = 0; x < game.nplayers; x++ ) {
         for (y = x + 1; y < game.nplayers; y++ ) {
             if(are_team_players[x][y]) {
-              score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[y]].tile);
-              if(game.teamplacementtype == 1) {
-                if(map_get_continent(map.start_positions[start_pos[x]].tile) != map_get_continent(map.start_positions[start_pos[y]].tile)) {
-                  score += NATIVE_WIDTH + NATIVE_HEIGHT;
+                switch(game.teamplacementtype) {
+                  case 1:
+                    if(map_get_continent(map.start_positions[start_pos[x]].tile) != map_get_continent(map.start_positions[start_pos[y]].tile)) {
+                      score += NATIVE_WIDTH + NATIVE_HEIGHT;
+                    }
+                    //break is not missing here!
+                  case 0:
+                    score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[y]].tile);
+                    break;
+                  case 2:
+                    score += abs(map.start_positions[start_pos[x]].tile->nat_y - map.start_positions[start_pos[y]].tile->nat_y);
+                    break;
+                  case 3:
+                    score += abs(map.start_positions[start_pos[x]].tile->nat_x - map.start_positions[start_pos[y]].tile->nat_x);
+                    break;
+                  default:
+                    ;
                 }
-              }                
             }
         }
     }
@@ -245,12 +269,24 @@ static int calculate_delta_score(int *start_pos, int depth)//if nobody is in tea
     static int x;
     for (x = 0; x < depth; x++) {
         if(are_team_players[x][depth]) {
-            score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[depth]].tile);
-            if(game.teamplacementtype == 1) {
-              if(map_get_continent(map.start_positions[start_pos[x]].tile) != map_get_continent(map.start_positions[start_pos[depth]].tile)) {
-                score += NATIVE_WIDTH + NATIVE_HEIGHT;
-              }
-            }
+                switch(game.teamplacementtype) {
+                  case 1:
+                    if(map_get_continent(map.start_positions[start_pos[x]].tile) != map_get_continent(map.start_positions[start_pos[depth]].tile)) {
+                      score += NATIVE_WIDTH + NATIVE_HEIGHT;
+                    }
+                    //break is not missing here!
+                  case 0:
+                    score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[depth]].tile);
+                    break;
+                  case 2:
+                    score += abs(map.start_positions[start_pos[x]].tile->nat_y - map.start_positions[start_pos[depth]].tile->nat_y);
+                    break;
+                  case 3:
+                    score += abs(map.start_positions[start_pos[x]].tile->nat_x - map.start_positions[start_pos[depth]].tile->nat_x);
+                    break;
+                  default:
+                    ;
+                }
         }
     }
     return score;
