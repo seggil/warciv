@@ -3835,7 +3835,11 @@ bool load_command(struct connection * caller, char *filename, bool check)
   }
 
   /* we found it, free all structures */
-  server_game_free(FALSE);
+/* !! very bad idea, as it frees ruleset cache which is created after ruleset is loaded,
+   so at this point ruleset cache is uninitialized
+   
+  server_game_free(FALSE);*/
+  server_basic_game_free(FALSE);
 
   game_init(TRUE);
 
@@ -3987,7 +3991,7 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool unloadmap_command(struct connection *caller, bool check)
+bool unloadmap_command(struct connection *caller, bool check)
 {
   if (server_state != PRE_GAME_STATE) {
     cmd_reply(CMD_UNLOADMAP, caller, C_FAIL,
@@ -4003,7 +4007,7 @@ static bool unloadmap_command(struct connection *caller, bool check)
   if (check)
     return TRUE;
 
-  server_game_free(TRUE);
+  server_basic_game_free(FALSE);
   game_init(FALSE);
   
   if (srvarg.script_filename) {

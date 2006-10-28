@@ -354,9 +354,9 @@ static void game_remove_all_players(void)
 /***************************************************************
   Frees all memory of the game.
 ***************************************************************/
-void game_free(bool map_unloading)
+void game_free(bool remove_players)
 {
-  if (!map_unloading)
+  if (remove_players)
     game_remove_all_players();
   map_free();
   idex_free();

@@ -3870,8 +3870,9 @@ void game_loadmap(struct section_file *file)
     map.xsize = secfile_lookup_int(file, "map.width");
     map.ysize = secfile_lookup_int(file, "map.height");
       
+/*   !! very bad, rulesets are loaded in srv_main just after game is started
     freelog(LOG_DEBUG, _("Starting loading rulesets"));
-    load_rulesets();
+    load_rulesets();*/
     freelog(LOG_DEBUG, _("Starting loading maptiles"));
     map.have_specials = TRUE;
     map_tiles_load(file);

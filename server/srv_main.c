@@ -799,7 +799,7 @@ void start_game(void)
 **************************************************************************/
 void server_quit(void)
 {
-  server_game_free(FALSE);
+  server_game_free();
   close_connections_and_socket();
   exit(EXIT_SUCCESS);
 }
@@ -1686,7 +1686,7 @@ void srv_main(void)
     }
 
     /* Reset server */
-    server_game_free(FALSE);
+    server_game_free();
     game_init(TRUE);
     game.is_new_game = TRUE;
     server_state = PRE_GAME_STATE;
@@ -1935,17 +1935,24 @@ main_start_players:
 /**************************************************************************
  ...
 **************************************************************************/
-void server_game_free(bool map_unloading)
+void server_basic_game_free(bool remove_players)
 {
   players_iterate(pplayer) {
     player_map_free(pplayer);
   } players_iterate_end;
   diplhand_free();
-  game_free(map_unloading);
+  game_free(remove_players);
   stdinhand_free();
-  ruleset_cache_free();
   BV_CLR_ALL(srvarg.draw);
-  if (!map_unloading && welcome_message) {
+}
+/**************************************************************************
+ ...
+**************************************************************************/
+void server_game_free()
+{
+  server_basic_game_free(TRUE);
+  ruleset_cache_free();
+  if (welcome_message) {
     free(welcome_message);
   }
 }
