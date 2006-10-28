@@ -85,7 +85,7 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 **************************************************************************/
 static bool is_ignored(struct connection *pconn, struct connection *dest)
 {
-  if (pconn == dest)
+  if (pconn == dest || pconn == NULL || dest == NULL)
     return FALSE;
 
   ignore_list_iterate(*dest->server.ignore_list, cp) {
