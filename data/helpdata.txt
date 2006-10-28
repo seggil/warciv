@@ -766,6 +766,204 @@ in the field and supported by that city are also transferred \
 other player isn't getting a better deal than you expect.\
 ")
 
+[help_warclient]
+name = _("Warclient")
+text = _("\
+Autowakeup \
+\n\n\
+Press 'v' key to disable the auto wake-up (default is \
+on). If disabled, client automatically sentries units \
+activated by enemy units without moving the view. \
+\n\n\
+This is useful during attack with lots of air units and \
+ships sentried in single city if attacker doesn't want any \
+defender's units to unsentry the whole army in the city, \
+or when one player is under attack by two players. The same \
+result can be achieved by disabling warclient->autowakeup \
+sentried units. \
+\n\n\
+Autodiplomats \
+\n\n\
+Autodiplomat feature is disabled by default. To enable it, \
+go to warclient->diplomat action upon arrival and choose \
+the desired action. Then when you send a diplomat to enemy \
+unit or a city, the diplomat will automatically carry \
+out the selected action without prompt. When autoattack \
+is enabled, diplomats having bribe as the default action \
+will bribe units automatically. \
+\n\n\
+Autocaravans \
+\n\n\
+Autocaravans are disabled by default. To enable them go \
+to warclient->caravan action upon arrival and choose the \
+desired action. From now on, caravans won't prompt for \
+action when they arrive in a city but will carry out the \
+selected action automatically. \
+\n\n\
+Delayed goto \
+\n\n\
+Delayed goto operates in 4 modes: \
+1.) single unit - like classic goto \n\
+2.) all units of the same type - giving order to one unit \
+gives the same order to all units of the same type on the \
+same tile. \n\
+3.) all units - giving order to one unit gives the same \
+order to all units on the same tile. \n\
+4.) all units of the same type on the same continent - \
+giving order to one unit gives the same order to all units \
+of the same type on current continent \n\
+\n\n\
+Choose the apropriate mode before pressing 'z' from \
+warclient->delayed goto mode. Change of mode affects only \
+future delayed goto orders. \
+\n\n\
+Select the desired filters. Filters are 'check items' so \
+multiple choices can be selected from a single menu. Client \
+first takes into account inclusive filters, and then \
+exclusive filters. \
+\n\n\
+For example if inclusive filter is set to all, and exlusive \
+to sentried, and delayed goto mode is all units of the \
+same type on the same continent then when you give delayed \
+order to single unit, the same order will be given to \
+all units of the same type on the same continent except \
+sentried units. \
+\n\n\
+Select a unit, press 'z' and click on a destination \
+tile. Note that mouse cursor won't change after you press \
+'z'. This goto order will be added to the delayed orders \
+queue and will remain there until all orders are executed \
+or cleared. It is possible to give multiple commands to the \
+same unit - this works properly only if all destinations \
+can be reached in one turn. No units will move until \
+you press 'y'. Delayed orders can be executed any number \
+of turns after they were created. So you can prepare a \
+massive assault and press 'y' even several turns later, \
+all units will remain in the queue until it is cleared or \
+order is executed. \
+\n\n\
+If you do not want to execute all delayed orders at once \
+when you press y, you can limit the number of units that \
+will move in unit limit menu. You can select 2, 5, 10 and \
+unlimited number of units. Then press y repeatedly. \
+\n\n\
+If you press 'ctrl'+'z' instead of 'z' and selected unit \
+is a paratrooper, it will be paradropped, if it's a nuke \
+it will go to destination tile and detonate 'manually' - \
+killing any steath fighters. \
+\n\n\
+To clear the queue press 'u'. \
+\n\n\
+Side effect of delayed goto is that if the path to \
+destination is blocked by invisible stealth unit, order \
+will be canceled by server and no units will move. \
+\n\n\
+Delayed airlift \
+\n\n\
+First setup standard airlift - select source cities, \
+and unit type. Then go to warclient->delayed airlift \
+and click on a destination tile. When you press y, units \
+will airlift into destination city. This can be used in \
+combination with delayed goto for bombers, paratroopers, \
+with airlifted units reinforcing the captured city. \
+\n\n\
+Inclusive and exlusive filters \
+\n\n\
+Before a unit is added to delayed goto queue or carries out \
+a mass order, client checks whether it fulfills delayed \
+goto mode, inclusive and exlusive filters. Inclusive \
+filters specify which units should be selected. Exclusive \
+filters specify which units should not be selected. \
+\n\n\
+Filters are applied in the following order: \n\
+1. Delayed goto mode \n\
+2. Inclusive filters \n\
+3. Exclusive filters \n\
+\n\n\
+Following filters are available: \n\
+1. all units - selects all units \n\
+2. new units - selects units which have never moved in \
+the game \n\
+3. fortified units \n\
+4. sentried units \n\
+5. veteran units \n\
+6. idle units - units not carrying out an action (like \
+fortifying, sentried, mining, building roads etc) \n\
+7. units able to move - units which have more than 0 \
+movement points left \n\
+\n\n\
+Automated airlifting \
+\n\n\
+Automated airlifting works only on standard 2.0.7 server \
+or 0.8.xb warserver. It doesn't work on standard 2.0.8 \
+server as you would expect since you can only airlift one \
+unit between 2 cities with an airport. \
+\n\n\
+First of all select unit type from warclient->airlift \
+unit type. \
+\n\n\
+Then press 'shift'+'z' and click on a city on the map to \
+add it to airlift queue. Note that mouse cursor won't \
+change after you press 'shift'+'z'. Add any number of \
+cities you want to airlift from to the airlift queue. You \
+need to do this only once. \
+\n\n\
+Clear the queue using 'shift'+'u'. \
+\n\n\
+Press 'shift'+'y' and click on a destination city on the \
+map and units will airlift to the destination city. From \
+now on, just keep pressing 'shift'+'y' and clicking on a \
+destination city and units will be airlifted. There is no \
+need to select source cities again! \
+\n\n\
+Patrol \
+\n\n\
+Select an airplane and press 'ctrl'+'shift'+'z' and \
+click on a destination tile. Note that mouse cursor won't \
+change. That unit will go to that tile as soon as client \
+receives new turn packet (as soon as new turn begins). \
+\n\n\
+Air units return to cities to refuel automatically, so \
+there is no need to tell the unit where to return at the \
+end of turn. \
+\n\n\
+Air units will keep going to their destination tiles at \
+the beginning of each turn. \
+\n\n\
+Press 'ctrl'+'shift'+'u' to clear the patrol queue. \
+\n\n\
+Very useful for AWACS patrolling far away protected by \
+AEGIS or stealth fighters blocking every mountain and hill \
+during attack or defence. \
+\n\n\
+Mass orders \
+\n\n\
+Select proper delayed goto mode from warclient->delayed \
+goto mode. Delayed goto mode affects the number of units \
+selected for a given mass order. \
+\n\n\
+Press 'q' or 'Q' followed by a key shortcut for one of \
+the following orders: \n\
+- build_airbase \n\
+- auto_explore \n\
+- clean_fallout \n\
+- fortify \n\
+- build_fortress \n\
+- irrigate \n\
+- build_mine \n\
+- pillage \n\
+- clean_pollution \n\
+- sentry \n\
+- terraform (transform) \n\
+- load unit on a ship \n\
+- help build wonder (caravan or freight) while in a city \n\
+- autoattack \n\
+\n\n\
+Orders like build road or airlift are not supported. Do \
+a mass airlift using delayed goto. \
+")
+
+
 [help_cma]
 name = _("Citizen Management Agent")
 text = _("\

@@ -245,6 +245,7 @@ enum MenuID {
   MENU_HELP_GOVERNMENT,
   MENU_HELP_HAPPINESS,
   MENU_HELP_SPACE_RACE,
+  MENU_HELP_WARCLIENT,
   MENU_HELP_COPYING,
   MENU_HELP_ABOUT
 };
@@ -878,6 +879,9 @@ static void help_menu_callback(gpointer callback_data,
   case MENU_HELP_PLAYING:
     popup_help_dialog_string(HELP_PLAYING_ITEM);
     break;
+  case MENU_HELP_WARCLIENT:
+    popup_help_dialog_string(HELP_WARCLIENT_ITEM);
+    break;
   case MENU_HELP_IMPROVEMENTS:
     popup_help_dialog_string(HELP_IMPROVEMENTS_ITEM);
     break;
@@ -1328,7 +1332,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	warclient_menu_callback,	MENU_WARCLIENT_PATROL						},
   { "/" N_("Warclient") "/" N_("Airplane patrol destination"),			"<ctrl>e",
 	warclient_menu_callback,	MENU_WARCLIENT_PATROL_SELECT_TILE						},
-  { "/" N_("Warclient") "/" N_("Clear patrol queue"),			NULL,
+  { "/" N_("Warclient") "/" N_("Clear patrol queue"),			"<ctrl><shift>e",
 	warclient_menu_callback,	MENU_WARCLIENT_CLEAR_PATROL						},
   { "/" N_("Warclient") "/sep4",				NULL,
 	NULL,			0,					"<Separator>"	},
@@ -1383,6 +1387,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	help_menu_callback,	MENU_HELP_CMA						},
   { "/" N_("Help") "/" N_("_Playing"),			NULL,
 	help_menu_callback,	MENU_HELP_PLAYING					},
+  { "/" N_("Help") "/" N_("Warclient"),                 NULL,
+	help_menu_callback,	MENU_HELP_WARCLIENT					},
   { "/" N_("Help") "/sep1",				NULL,
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Help") "/" N_("City _Improvements"),        NULL,
