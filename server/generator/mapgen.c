@@ -1040,6 +1040,12 @@ void map_fractal_generate(bool autosize)
   /* don't generate tiles with mapgen==0 as we've loaded them from file */
   /* also, don't delete (the handcrafted!) tiny islands in a scenario */
   if (map.generator != 0) {
+    
+    if (map.generator == 4 || map.generator == 5) {
+      /* Other topologies would break the gen. */
+      map.topology_id = TF_WRAPX;
+    }
+
     generator_init_topology(autosize);
     map_allocate();
     adjust_terrain_param();

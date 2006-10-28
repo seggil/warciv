@@ -3980,7 +3980,8 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
       "No comment available", "game.comment");
   section_file_free(&secfile);
   
-  sanity_check();
+  /* Assume that the map is ok since the admin included it. */
+  /* sanity_check(); */
   
   notify_conn(&game.est_connections, _("Server: %s loaded: %s"),
               name, comment);
