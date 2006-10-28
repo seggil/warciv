@@ -419,7 +419,7 @@ const struct command commands[] = {
       "if any, with winning it."),
    ECHO_ALL
   },
-  {"remove",	ALLOW_ADMIN, ALLOW_ADMIN,
+  {"remove",	ALLOW_CTRL, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
    N_("remove <player-name>"),
    N_("Fully remove player from game."),
@@ -449,7 +449,7 @@ const struct command commands[] = {
       "rulesets and server options are lost.\n"),
    ECHO_ALL
   },
-    {"loadmap",      ALLOW_CTRL, ALLOW_BASIC,
+    {"loadmap",      ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("loadmap\n"
       "loadmap <mapfile-name>"),
@@ -461,7 +461,7 @@ const struct command commands[] = {
       "list of maps."),
    ECHO_ALL
   },
-  {"unloadmap",      ALLOW_CTRL, ALLOW_BASIC,
+  {"unloadmap",      ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("unloadmap\n"
       "unloadmap"),
