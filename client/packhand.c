@@ -1788,36 +1788,42 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       pconn->buffer = NULL;
       pconn->send_buffer = NULL;
       pconn->ping_time = -1.0;
-    freelog(LOG_VERBOSE,"5");
+      freelog(LOG_VERBOSE,"5");
       if (pplayer) {
+        conn_list_check_init(&pplayer->connections);
     	conn_list_append(&pplayer->connections, pconn);
-    freelog(LOG_VERBOSE,"6");
+        freelog(LOG_VERBOSE,"6");
         if ((conn_list_size(&pplayer->connections) == 1)
             && (!game_state_flag))
         {
           game.nplayers++;
         }
       }
-    freelog(LOG_VERBOSE,"7");
+      freelog(LOG_VERBOSE,"7");
+      conn_list_check_init(&game.all_connections);
       conn_list_append(&game.all_connections, pconn);
-    freelog(LOG_VERBOSE,"8");
+      freelog(LOG_VERBOSE,"8");
+      conn_list_check_init(&game.est_connections);
       conn_list_append(&game.est_connections, pconn);
-    freelog(LOG_VERBOSE,"9");
+      freelog(LOG_VERBOSE,"9");
+      conn_list_check_init(&game.game_connections);
       conn_list_append(&game.game_connections, pconn);
-    freelog(LOG_VERBOSE,"10");
+      freelog(LOG_VERBOSE,"10");
     } else {
       freelog(LOG_VERBOSE, "Server reports updated connection %d %s",
 	      pinfo->id, pinfo->username);
       if (pplayer != pconn->player) {
 	if (pconn->player) {
-    freelog(LOG_VERBOSE,"11");
+          freelog(LOG_VERBOSE,"11");
+          conn_list_check_init(&pconn->player->connections);
 	  conn_list_unlink(&pconn->player->connections, pconn);
-    freelog(LOG_VERBOSE,"12");
+          freelog(LOG_VERBOSE,"12");
 	}
 	if (pplayer) {
-    freelog(LOG_VERBOSE,"13");
+          freelog(LOG_VERBOSE,"13");
+          conn_list_check_init(&pplayer->connections);
 	  conn_list_append(&pplayer->connections, pconn);
-    freelog(LOG_VERBOSE,"14");
+          freelog(LOG_VERBOSE,"14");
 	}
       }
     }
@@ -1839,11 +1845,11 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       aconnection.player = pplayer;
     }
   }
-    freelog(LOG_VERBOSE,"16");
+  freelog(LOG_VERBOSE,"16");
   update_players_dialog();
-    freelog(LOG_VERBOSE,"17");
+  freelog(LOG_VERBOSE,"17");
   update_conn_list_dialog();
-    freelog(LOG_VERBOSE,"Random bug tracking end");
+  freelog(LOG_VERBOSE,"Random bug tracking end");
 }
 
 /*************************************************************************

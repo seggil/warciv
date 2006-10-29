@@ -63,6 +63,7 @@ struct genlist_link {
    of the list.
 */
 struct genlist {
+  int init_magic; /* initialization check */
   int nelements;
   struct genlist_link *head_link;
   struct genlist_link *tail_link;
@@ -71,6 +72,7 @@ struct genlist {
 int genlist_size(const struct genlist *pgenlist);
 void *genlist_get(const struct genlist *pgenlist, int idx);
 void genlist_init(struct genlist *pgenlist);
+void genlist_check_init(struct genlist *pgenlist);
 void genlist_unlink_all(struct genlist *pgenlist);
 void genlist_insert(struct genlist *pgenlist, void *data, int pos);
 void genlist_unlink(struct genlist *pgenlist, void *punlink);

@@ -16,13 +16,39 @@
 #endif
 
 #include <stdlib.h>
+#include <assert.h>
 
+#include "fcintl.h"
+#include "log.h"
 #include "mem.h"
 
 #include "genlist.h"
 
+#define INIT_MAGIC 0xA1B1C1D1
+#define CHECK_INIT(p) do {\
+  assert((p) != NULL);\
+  assert((p)->init_magic == INIT_MAGIC);\
+} while(0)
+
 static struct genlist_link *find_genlist_position(const struct genlist *pgenlist,
 						  int pos);
+
+/************************************************************************
+  Checks that genlist_init has been called.
+  If it hasn't, it prints an error message and
+  initializes the genlist. Used to thwart evil.
+************************************************************************/
+void genlist_check_init(struct genlist *pgenlist)
+{
+  assert(pgenlist != NULL);
+  if (pgenlist->init_magic != INIT_MAGIC) {
+    freelog(LOG_ERROR, _("Caught use of an uninitialized genlist!!! "
+                         "This is a programming error and should be "
+                         "reported (though there is no immediate "
+                         "danger, for now)."));
+    genlist_init(pgenlist);
+  }
+}
 
 /************************************************************************
   Initialize a genlist.
@@ -30,7 +56,9 @@ static struct genlist_link *find_genlist_position(const struct genlist *pgenlist
 ************************************************************************/
 void genlist_init(struct genlist *pgenlist)
 {
-  pgenlist->nelements=0;
+  assert(pgenlist != NULL);
+  pgenlist->init_magic = INIT_MAGIC;
+  pgenlist->nelements = 0;
   pgenlist->head_link = NULL;
   pgenlist->tail_link = NULL;
 }
@@ -41,6 +69,7 @@ void genlist_init(struct genlist *pgenlist)
 ************************************************************************/
 int genlist_size(const struct genlist *pgenlist)
 {
+  CHECK_INIT(pgenlist);
   return pgenlist->nelements;
 }
 
@@ -53,6 +82,7 @@ int genlist_size(const struct genlist *pgenlist)
 ************************************************************************/
 void *genlist_get(const struct genlist *pgenlist, int idx)
 {
+  CHECK_INIT(pgenlist);
   struct genlist_link *link=find_genlist_position(pgenlist, idx);
 
   if (link) {
@@ -70,6 +100,7 @@ void *genlist_get(const struct genlist *pgenlist, int idx)
 ************************************************************************/
 void genlist_unlink_all(struct genlist *pgenlist)
 {
+  CHECK_INIT(pgenlist);
   if(pgenlist->nelements > 0) {
     struct genlist_link *plink=pgenlist->head_link, *plink2;
 
@@ -93,6 +124,7 @@ void genlist_unlink_all(struct genlist *pgenlist)
 ************************************************************************/
 void genlist_unlink(struct genlist *pgenlist, void *punlink)
 {
+  CHECK_INIT(pgenlist);
   if(pgenlist->nelements > 0) {
     struct genlist_link *plink=pgenlist->head_link;
     
@@ -127,6 +159,7 @@ void genlist_unlink(struct genlist *pgenlist, void *punlink)
 ************************************************************************/
 void genlist_insert(struct genlist *pgenlist, void *data, int pos)
 {
+  CHECK_INIT(pgenlist);
   if(pgenlist->nelements == 0) { /*list is empty, ignore pos */
     
     struct genlist_link *plink = fc_malloc(sizeof(*plink));
@@ -179,6 +212,7 @@ void genlist_insert(struct genlist *pgenlist, void *data, int pos)
 static struct genlist_link *find_genlist_position(const struct genlist *pgenlist,
 						  int pos)
 {
+  CHECK_INIT(pgenlist);
   struct genlist_link *plink;
 
   if (pos == 0) {
@@ -220,6 +254,8 @@ void genlist_sort(struct genlist *pgenlist,
   struct genlist_link *myiter;
   int i;
 
+  CHECK_INIT(pgenlist);
+  
   if (n <= 1) {
     return;
   }
