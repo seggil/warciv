@@ -175,20 +175,24 @@ bool authenticate_user(struct connection *pconn, char *username)
       }
       break;
     case AUTH_DB_SUCCESS:
+      freelog(LOG_VERBOSE, "AUTH_DB_SUCCESS: About to send authentification packet to %s",pconn->username);
       /* we found a user */
       my_snprintf(buffer, sizeof(buffer), _("Enter password for %s:"),
                   pconn->username);
       dsend_packet_authentication_req(pconn, AUTH_LOGIN_FIRST, buffer);
       pconn->server.auth_settime = time(NULL);
       pconn->server.status = AS_REQUESTING_OLD_PASS;
+      freelog(LOG_VERBOSE, "Auth packet %s sent",pconn->username);
       break;
     case AUTH_DB_NOT_FOUND:
       /* we couldn't find the user, he is new */
       if (srvarg.auth_allow_newusers) {
+        freelog(LOG_VERBOSE, "AUTH_DB_NOT_FOUND: About to send authentification packet to %s",pconn->username);
         sz_strlcpy(buffer, _("Enter a new password (and remember it)."));
         dsend_packet_authentication_req(pconn, AUTH_NEWUSER_FIRST, buffer);
         pconn->server.auth_settime = time(NULL);
         pconn->server.status = AS_REQUESTING_NEW_PASS;
+        freelog(LOG_VERBOSE, "Auth packet %s sent",pconn->username);
       } else {
         reject_new_connection(_("This server allows only preregistered "
                                 "users. Sorry."), pconn);
