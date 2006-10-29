@@ -1346,6 +1346,24 @@ void handle_unit_short_info(struct packet_unit_short_info *packet)
 {
   struct city *pcity;
   struct unit *punit;
+  
+  freelog(LOG_VERBOSE, "Client recieved short unit packet from server");
+  freelog(LOG_VERBOSE, "id: %i", packet->id);
+  freelog(LOG_VERBOSE, "owner: %i", packet->owner);
+  freelog(LOG_VERBOSE, "x: %i", packet->x);
+  freelog(LOG_VERBOSE, "y: %i", packet->y);
+  freelog(LOG_VERBOSE, "type: %i", packet->type);
+  freelog(LOG_VERBOSE, "veteran: %i", packet->veteran);
+  freelog(LOG_VERBOSE, "occupied: %i", packet->occupied);
+  freelog(LOG_VERBOSE, "goes_out_of_sight: %i", packet->goes_out_of_sight);
+  freelog(LOG_VERBOSE, "transported: %i", packet->transported);
+  freelog(LOG_VERBOSE, "hp: %i", packet->hp);
+  freelog(LOG_VERBOSE, "activity: %i", packet->activity);
+  freelog(LOG_VERBOSE, "transported_by: %i", packet->transported_by);
+  freelog(LOG_VERBOSE, "packet_use: %i", packet->packet_use);
+  freelog(LOG_VERBOSE, "info_city_id: %i", packet->info_city_id);
+  freelog(LOG_VERBOSE, "serial_num: %i", packet->serial_num);
+  freelog(LOG_VERBOSE, "Packet end");
 
   if (packet->goes_out_of_sight) {
     punit = find_unit_by_id(packet->id);

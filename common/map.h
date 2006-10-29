@@ -636,7 +636,7 @@ extern const int DIR_DY[8];
 #define MAP_MAX_SEED             (MAX_UINT32 >> 1)
 
 #define MAP_DEFAULT_LANDMASS     25
-#define MAP_MIN_LANDMASS         10
+#define MAP_MIN_LANDMASS         5
 #define MAP_MAX_LANDMASS         90
 
 #define MAP_DEFAULT_RICHES       350
