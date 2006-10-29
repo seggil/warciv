@@ -2361,7 +2361,7 @@ static void mapgenerator67(bool make_roads)
   int neck_height = (map.ysize / 8) | 1; 
   int polar_height = 3;
   int max_peninsula_width_with_ocean = (map.xsize - isthmus_width) / (peninsulas_on_one_side);
-  int max_peninsula_width = max_peninsula_width_with_ocean / 1.4f;
+  int max_peninsula_width = max_peninsula_width_with_ocean / 1.5f;
   int peninsula_separation = max_peninsula_width_with_ocean - max_peninsula_width;
   
   int max_peninsula_height = map.ysize / 2 - polar_height - neck_height;
@@ -2420,25 +2420,6 @@ static void mapgenerator67(bool make_roads)
     }
   }
 
-  freelog(LOG_VERBOSE, "Building polar regions road");
-  /* build polar regions road */
-  if (make_roads) {
-    for (x = 0; x < map.xsize; x++) {
-      y = polar_height - 1;
-      if (map_build_road_time(native_pos_to_tile(x, y - 1)) < map_build_road_time(native_pos_to_tile(x, y))) {
-	map_set_special(native_pos_to_tile(x, y - 1), S_ROAD);
-      } else {
-	map_set_special(native_pos_to_tile(x, y), S_ROAD);
-      }
-      y = map.ysize - polar_height;
-      if (map_build_road_time(native_pos_to_tile(x, y + 1)) < map_build_road_time(native_pos_to_tile(x, y))) {
-	map_set_special(native_pos_to_tile(x, y + 1), S_ROAD);
-      } else {
-	map_set_special(native_pos_to_tile(x, y), S_ROAD);
-      }
-    }
-  } /* make_roads */
-
   map.num_continents = 1;
   map.start_positions = fc_realloc(map.start_positions,
 				   game.nplayers
@@ -2451,26 +2432,6 @@ static void mapgenerator67(bool make_roads)
   for (y = polar_height; y < map.ysize - polar_height; y++) {
     map_set_terrain(native_pos_to_tile(x, y), T6_PERM_LAND);
     hmap(native_pos_to_tile(x, y)) = myrand((hmap_max_level * map.steepness)/100) + hmap_shore_level;
-  }
-
-  freelog(LOG_VERBOSE, "Creating isthmus road");
-  /* create isthmus road */
-  if (make_roads) {
-    int last_x, middle_x = isthmus_width / 2;
-    last_x = middle_x;
-    for (y = polar_height - 1; y < map.ysize - polar_height + 1; y++) {
-      int best_x = middle_x;
-      int min_build = map_build_road_time(native_pos_to_tile(middle_x, y));
-      for (x = MAX(last_x - 1, middle_x - 1);
-	   x < MIN(last_x + 1, middle_x + 1) + 1; x++) {
-	if (land_terrain(x, y) && map_build_road_time(native_pos_to_tile(x, y)) < min_build) {
-	  best_x = x;
-	  min_build = map_build_road_time(native_pos_to_tile(x, y));
-	}
-      }
-      map_set_special(native_pos_to_tile(best_x, y), S_ROAD);
-      last_x = best_x;
-    }
   }
 
   freelog(LOG_VERBOSE, "Creating peninsulas");
@@ -2500,14 +2461,6 @@ static void mapgenerator67(bool make_roads)
 		     neck_height,neck_width,neck_offset);
     x = x + peninsula_separation + max_peninsula_width;
   }
-
-  freelog(LOG_VERBOSE, "Removing small oceans");
-  /* remove small oceans  */
-  dilate_map(polar_height);
-  erode_map(polar_height);
-  /* do not remove small islands */
-  erode_map(polar_height);
-  dilate_map(polar_height);
 
   freelog(LOG_VERBOSE, "Creating random islands");
 /* create some 1x1 islands and add random land near existing land */
@@ -2546,6 +2499,14 @@ static void mapgenerator67(bool make_roads)
     }
   }
 
+  freelog(LOG_VERBOSE, "Removing small oceans");
+  /* remove small oceans  */
+  dilate_map(polar_height);
+  erode_map(polar_height);
+  /* do not remove small islands */
+/*  erode_map(polar_height);
+  dilate_map(polar_height);*/
+
   freelog(LOG_VERBOSE, "Converting temporary terrain to real terrain");
   /* translate temp terrain to real terrain */
   for (x = 0; x < map.xsize; x++) {
@@ -2571,6 +2532,45 @@ static void mapgenerator67(bool make_roads)
   destroy_placed_map();
 
   make_rivers();
+
+  freelog(LOG_VERBOSE, "Building polar regions road");
+  /* build polar regions road */
+  if (make_roads) {
+    for (x = 0; x < map.xsize; x++) {
+      y = polar_height - 1;
+      if (map_build_road_time(native_pos_to_tile(x, y - 1)) < map_build_road_time(native_pos_to_tile(x, y))) {
+	map_set_special(native_pos_to_tile(x, y - 1), S_ROAD);
+      } else {
+	map_set_special(native_pos_to_tile(x, y), S_ROAD);
+      }
+      y = map.ysize - polar_height;
+      if (map_build_road_time(native_pos_to_tile(x, y + 1)) < map_build_road_time(native_pos_to_tile(x, y))) {
+	map_set_special(native_pos_to_tile(x, y + 1), S_ROAD);
+      } else {
+	map_set_special(native_pos_to_tile(x, y), S_ROAD);
+      }
+    }
+  } /* make_roads */
+
+  freelog(LOG_VERBOSE, "Creating isthmus road");
+  /* create isthmus road */
+  if (make_roads) {
+    int last_x, middle_x = isthmus_width / 2;
+    last_x = middle_x;
+    for (y = polar_height - 1; y < map.ysize - polar_height + 1; y++) {
+      int best_x = middle_x;
+      int min_build = map_build_road_time(native_pos_to_tile(middle_x, y));
+      for (x = MAX(last_x - 1, middle_x - 1);
+	   x < MIN(last_x + 1, middle_x + 1) + 1; x++) {
+	if (land_terrain(x, y) && map_build_road_time(native_pos_to_tile(x, y)) < min_build) {
+	  best_x = x;
+	  min_build = map_build_road_time(native_pos_to_tile(x, y));
+	}
+      }
+      map_set_special(native_pos_to_tile(best_x, y), S_ROAD);
+      last_x = best_x;
+    }
+  }
 
 /* assign continent numbers to land */
   assign_continent_numbers(TRUE);
