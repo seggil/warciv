@@ -1865,6 +1865,7 @@ static void select_random_leader(void)
     unique = TRUE;
   }
 
+  items = g_list_append(items, user_name);
   leaders = get_nation_leaders(selected_nation, &nleaders);
   for (i = 0; i < nleaders; i++) {
     items = g_list_append(items, leaders[i].name);
@@ -1882,8 +1883,8 @@ static void select_random_leader(void)
   if (unique) {
     gtk_entry_set_text(GTK_ENTRY(text), name);
   } else {
-    i = myrand(nleaders);
-    gtk_entry_set_text(GTK_ENTRY(text), g_list_nth_data(items, i));
+    /*i = myrand(nleaders); */
+    gtk_entry_set_text(GTK_ENTRY(text), g_list_nth_data(items, 0));
   }
 
   g_free(name);
