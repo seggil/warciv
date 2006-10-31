@@ -608,9 +608,8 @@ static const char *get_token(struct inputfile *inf,
       freelog(LOG_DEBUG, "inputfile: found %s '%s'", name, inf->token.str);
     }
   } else if (required) {
-    freelog(LOG_FATAL, "Did not find token %s in %s line %d", 
+    freelog(LOG_ERROR, "Did not find token %s in %s line %d", 
             name, inf->filename, inf->line_num);
-    exit(EXIT_FAILURE);
   }
   return c;
 }
