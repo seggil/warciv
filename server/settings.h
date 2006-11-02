@@ -63,14 +63,16 @@ extern const char *sset_category_names[];
 /* Levels allow options to be subdivided and thus easier to navigate */
 enum sset_level {
   SSET_NONE,
-  SSET_ALL,
+  SSET_ALL, /* NB code assumes this to be 1 */
   SSET_VITAL,
   SSET_SITUATIONAL,
-  SSET_RARE
+  SSET_RARE,
+  SSET_CHANGED,
+
+  SSET_NUM_LEVELS
 };
 
-extern const char *sset_level_names[];
-extern const int OLEVELS_NUM;
+extern const char *sset_level_names[SSET_NUM_LEVELS];
 
 struct settings_s {
   const char *name;

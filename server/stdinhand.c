@@ -1622,10 +1622,10 @@ static const char *optname_accessor(int i)
 static const char *olvlname_accessor(int i)
 {
   /* for 0->4, uses option levels, otherwise returns a setting name */
-  if (i < OLEVELS_NUM) {
+  if (i < SSET_NUM_LEVELS) {
     return sset_level_names[i];
   } else {
-    return settings[i - OLEVELS_NUM].name;
+    return settings[i - SSET_NUM_LEVELS].name;
   }
 }
 #endif
@@ -1850,7 +1850,7 @@ static enum sset_level lookup_option_level(const char *name)
 {
   enum sset_level i;
 
-  for (i = SSET_ALL; i <= SSET_RARE; i++) {
+  for (i = SSET_ALL; i < SSET_NUM_LEVELS; i++) {
     if (0 == mystrcasecmp(name, sset_level_names[i])) {
       return i;
     }
@@ -2295,6 +2295,27 @@ static bool set_away(struct connection *caller, char *name, bool check)
 }
 
 /******************************************************************
+  ...
+******************************************************************/
+static bool option_changed(struct settings_s *op)
+{
+  switch (op->type) {
+  case SSET_BOOL:
+    return *op->bool_value != op->bool_default_value;
+    break;
+  case SSET_INT:
+    return *op->int_value != op->int_default_value;
+    break;
+  case SSET_STRING:
+    return strcmp(op->string_value, op->string_default_value);
+    break;
+  default:
+    break;
+  }
+  return FALSE;
+}
+
+/******************************************************************
 Print a summary of the settings and their values.
 Note that most values are at most 4 digits, except seeds,
 which we let overflow their columns, plus a sign character.
@@ -2304,9 +2325,10 @@ static bool show_command(struct connection *caller, char *str, bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
   char command[MAX_LEN_CONSOLE_LINE], *cptr_s, *cptr_d;
-  int cmd, i, len1;
+  int cmd, i, len1, len = 0;
   enum sset_level level = SSET_VITAL;
   size_t clen = 0;
+  struct settings_s *op = NULL;
 
   for (cptr_s = str; *cptr_s != '\0' && !my_isalnum(*cptr_s); cptr_s++) {
     /* nothing */
@@ -2369,9 +2391,15 @@ static bool show_command(struct connection *caller, char *str, bool check)
   case SSET_RARE:
     cmd_reply_show(_("Rarely used options"));
     break;
+  case SSET_CHANGED:
+    cmd_reply_show(_("Options changed from the default value"));
+    break;
+  default:
+    break;
   }
   cmd_reply_show(_("+ means you may change the option"));
-  cmd_reply_show(_("= means the option is on its default value"));
+  if (level != SSET_CHANGED)
+    cmd_reply_show(_("= means the option is on its default value"));
   cmd_reply_show(horiz_line);
   len1 = my_snprintf(buf, sizeof(buf),
 		     _("%-*s value   (min,max)      "), OPTION_NAME_SPACE,
@@ -2385,64 +2413,69 @@ static bool show_command(struct connection *caller, char *str, bool check)
   buf[0] = '\0';
 
   for (i = 0; settings[i].name; i++) {
-    if (may_view_option(caller, i)
+    if (!(may_view_option(caller, i)
 	&& (cmd == -1 || cmd == -3 || cmd == i
 	    || (cmd == -2
-		&& mystrncasecmp(settings[i].name, command, clen) == 0))) {
-      /* in the cmd==i case, this loop is inefficient. never mind - rp */
-      struct settings_s *op = &settings[i];
-      int len = 0;
-
-      if (level == SSET_ALL || op->level == level || cmd >= 0) {
-	switch (op->type) {
-	case SSET_BOOL:
-	  len = my_snprintf(buf, sizeof(buf),
-			    "%-*s %c%c%-5d (0,1)", OPTION_NAME_SPACE,
-			    op->name, may_set_option_now(caller,
-							 i) ? '+' : ' ',
-			    ((*op->bool_value ==
-			      op->bool_default_value) ? '=' : ' '),
-			    (*op->bool_value) ? 1 : 0);
-	  break;
-
-	case SSET_INT:
-	  len = my_snprintf(buf, sizeof(buf),
-			    "%-*s %c%c%-5d (%d,%d)", OPTION_NAME_SPACE,
-			    op->name, may_set_option_now(caller,
-							 i) ? '+' : ' ',
-			    ((*op->int_value == op->int_default_value) ?
-			     '=' : ' '),
-			    *op->int_value, op->int_min_value,
-			    op->int_max_value);
-	  break;
-
-	case SSET_STRING:
-	  len = my_snprintf(buf, sizeof(buf),
-			    "%-*s %c%c\"%s\"", OPTION_NAME_SPACE, op->name,
-			    may_set_option_now(caller, i) ? '+' : ' ',
-			    ((strcmp(op->string_value,
-				     op->string_default_value) == 0) ?
-			     '=' : ' '), op->string_value);
-	  break;
-	}
-	if (len == -1) {
-	  len = sizeof(buf) - 1;
-	}
-	/* Line up the descriptions: */
-	if (len < len1) {
-	  cat_snprintf(buf, sizeof(buf), "%*s", (len1 - len), " ");
-	} else {
-	  sz_strlcat(buf, " ");
-	}
-	sz_strlcat(buf, _(op->short_help));
-	cmd_reply_show(buf);
-      }
+		&& !mystrncasecmp(settings[i].name, command, clen))))) {
+      continue;
     }
+    
+    op = &settings[i];
+
+    if (!(level == SSET_ALL || op->level == level || cmd >= 0
+        || (level == SSET_CHANGED && option_changed(op)))) {
+      continue;
+    }
+
+    len = 0;
+    
+    switch (op->type) {
+    case SSET_BOOL:
+      len = my_snprintf(buf, sizeof(buf),
+                        "%-*s %c%c%-5d (0,1)", OPTION_NAME_SPACE,
+                        op->name, may_set_option_now(caller,
+                                                     i) ? '+' : ' ',
+                        ((*op->bool_value ==
+                          op->bool_default_value) ? '=' : ' '),
+                        (*op->bool_value) ? 1 : 0);
+      break;
+
+    case SSET_INT:
+      len = my_snprintf(buf, sizeof(buf),
+                        "%-*s %c%c%-5d (%d,%d)", OPTION_NAME_SPACE,
+                        op->name, may_set_option_now(caller,
+                                                     i) ? '+' : ' ',
+                        ((*op->int_value == op->int_default_value) ?
+                         '=' : ' '),
+                        *op->int_value, op->int_min_value,
+                        op->int_max_value);
+      break;
+
+    case SSET_STRING:
+      len = my_snprintf(buf, sizeof(buf),
+                        "%-*s %c%c\"%s\"", OPTION_NAME_SPACE, op->name,
+                        may_set_option_now(caller, i) ? '+' : ' ',
+                        ((strcmp(op->string_value,
+                                 op->string_default_value) == 0) ?
+                         '=' : ' '), op->string_value);
+      break;
+    }
+    if (len == -1) {
+      len = sizeof(buf) - 1;
+    }
+    /* Line up the descriptions: */
+    if (len < len1) {
+      cat_snprintf(buf, sizeof(buf), "%*s", (len1 - len), " ");
+    } else {
+      sz_strlcat(buf, " ");
+    }
+    sz_strlcat(buf, _(op->short_help));
+    cmd_reply_show(buf);
   }
   cmd_reply_show(horiz_line);
   if (level == SSET_VITAL) {
     cmd_reply_show(_("Try 'show situational' or 'show rare' to show "
-		     "more options"));
+                     "more options"));
     cmd_reply_show(horiz_line);
   }
   return TRUE;
@@ -3992,7 +4025,7 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
 /**************************************************************************
   ...
 **************************************************************************/
-bool unloadmap_command(struct connection *caller, bool check)
+static bool unloadmap_command(struct connection *caller, bool check)
 {
   if (server_state != PRE_GAME_STATE) {
     cmd_reply(CMD_UNLOADMAP, caller, C_FAIL,
@@ -5711,7 +5744,7 @@ static char *option_generator(const char *text, int state)
 **************************************************************************/
 static char *olevel_generator(const char *text, int state)
 {
-  return generic_generator(text, state, SETTINGS_NUM + OLEVELS_NUM,
+  return generic_generator(text, state, SETTINGS_NUM + SSET_NUM_LEVELS,
 			   olvlname_accessor);
 }
 

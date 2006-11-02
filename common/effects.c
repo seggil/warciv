@@ -33,6 +33,8 @@
 #include "packets.h"
 #include "player.h"
 #include "tech.h"
+
+static bool ruleset_cache_initialized = FALSE;
  
 /* Names of effect ranges.
  * (These must correspond to enum effect_range_id in effects.h.)
@@ -460,6 +462,8 @@ void ruleset_cache_init(void)
       effect_list_init(get_building_effects(j, i));
     }
   }
+
+  ruleset_cache_initialized = TRUE;
 }
 
 /**************************************************************************
@@ -469,6 +473,9 @@ void ruleset_cache_init(void)
 void ruleset_cache_free(void)
 {
   int i, j;
+
+  if (!ruleset_cache_initialized)
+    return;
 
   for (i = 0; i < ARRAY_SIZE(ruleset_cache.buildings); i++) {
     effect_type_vector_free(get_building_effect_types(i));
@@ -485,6 +492,8 @@ void ruleset_cache_free(void)
       effect_list_unlink_all(get_building_effects(j, i));
     }
   }
+
+  ruleset_cache_initialized = FALSE;
 }
 
 /**************************************************************************

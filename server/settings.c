@@ -35,12 +35,14 @@ const char *sset_category_names[] = {N_("Geological"),
 				     N_("Networking")};
 
 /* Level names must match the values in enum sset_level. */
-const char *sset_level_names[] = {N_("None"),
-				  N_("All"),
-				  N_("Vital"),
-				  N_("Situational"),
-				  N_("Rare")};
-const int OLEVELS_NUM = ARRAY_SIZE(sset_level_names);
+const char *sset_level_names[SSET_NUM_LEVELS] = {
+  N_("None"),
+  N_("All"),
+  N_("Vital"),
+  N_("Situational"),
+  N_("Rare"),
+  N_("Changed")
+};
 
 
 /**************************************************************************
