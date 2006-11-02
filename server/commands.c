@@ -119,12 +119,18 @@ const struct command commands[] = {
   {"show",	ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("show\n"
+      "show all\n"
+      "show vital\n"
+      "show situational\n"
+      "show rare\n"
+      "show changed\n"
       "show <option-name>\n"
       "show <option-prefix>"),
    N_("Show server options."),
    N_("With no arguments, shows all server options (or available options, when "
       "used by clients).  With an argument, show only the named option, "
-      "or options with that prefix."),
+      "or options with that prefix. The argument \"changed\" will show only "
+      "options that have been changed from the default value."),
    ECHO_NONE
   },
   {"score",	ALLOW_CTRL, ALLOW_CTRL,
@@ -419,7 +425,7 @@ const struct command commands[] = {
       "if any, with winning it."),
    ECHO_ALL
   },
-  {"remove",	ALLOW_CTRL, ALLOW_ADMIN,
+  {"remove",	ALLOW_ADMIN, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("remove <player-name>"),
    N_("Fully remove player from game."),
