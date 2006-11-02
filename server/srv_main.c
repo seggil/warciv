@@ -114,9 +114,7 @@ static void end_turn(void);
 static void ai_start_turn(void);
 static bool is_game_over(void);
 static void generate_ai_players(void);
-static void mark_nation_as_used(Nation_Type_id nation);
 static void announce_ai_player(struct player *pplayer);
-static void send_select_nation(struct player *pplayer);
 static void srv_loop(void);
 
 
@@ -1134,7 +1132,6 @@ void handle_nation_select_req(struct player *pplayer,
 			      Nation_Type_id nation_no, bool is_male,
 			      char *name, int city_style)
 {
-  int nation_used_count;
   char message[1024];
 
   if (server_state != SELECT_RACES_STATE) {
@@ -1169,42 +1166,13 @@ void handle_nation_select_req(struct player *pplayer,
   /* inform player his choice was ok */
   lsend_packet_nation_select_ok(&pplayer->connections);
 
-  pplayer->nation = nation_no;
-  sz_strlcpy(pplayer->name, name);
-  pplayer->is_male = is_male;
-  pplayer->city_style = city_style;
-
-  /* tell the other players, that the nation is now unavailable */
-  nation_used_count = 0;
-
-  players_iterate(other_player) {
-    if (other_player->nation == NO_NATION_SELECTED) {
-      send_select_nation(other_player);
-    } else {
-      nation_used_count++;	/* count used nations */
-    }
-  } players_iterate_end;
-
-  mark_nation_as_used(nation_no);
-
-  /* if there's no nation left, reject remaining players, sorry */
-  if( nation_used_count == game.playable_nation_count ) {   /* barb */
-    players_iterate(other_player) {
-      if (other_player->nation == NO_NATION_SELECTED) {
-	freelog(LOG_NORMAL, _("No nations left: Removing player %s."),
-		other_player->name);
-	notify_player(other_player,
-		      _("Game: Sorry, there are no nations left."));
-	server_remove_player(other_player);
-      }
-    } players_iterate_end;
-  }
+  server_assign_nation(pplayer, nation_no, name, is_male, city_style);
 }
 
 /**************************************************************************
  Sends the currently collected selected nations to the given player.
 **************************************************************************/
-static void send_select_nation(struct player *pplayer)
+void send_select_nation(struct player *pplayer)
 {
   struct packet_nation_unavailable packet;
   Nation_Type_id nation;
@@ -1251,7 +1219,7 @@ static char* find_common_class(void)
   Select a random available nation.  If 'class' is non-NULL, then choose
   a nation from that class if possible.
 **************************************************************************/
-static Nation_Type_id select_random_nation(const char* class)
+Nation_Type_id select_random_nation(const char* class)
 {
   Nation_Type_id i, available[game.playable_nation_count];
   int count = 0;
@@ -1492,7 +1460,7 @@ void pick_ai_player_name(Nation_Type_id nation, char *newname)
 /*************************************************************************
   Simply mark the nation as unavailable.
 *************************************************************************/
-static void mark_nation_as_used (Nation_Type_id nation) 
+void mark_nation_as_used (Nation_Type_id nation) 
 {
   assert(nations_available[nation]);
   nations_available[nation] = FALSE;
@@ -1614,6 +1582,7 @@ void srv_main(void)
     srv_init();
   }
 
+  mysrand(time(NULL));
   my_init_network();
 
   con_log_init(srvarg.log_filename, srvarg.loglevel);

@@ -26,6 +26,7 @@
 #include "mem.h"
 #include "packets.h"
 #include "player.h"
+#include "rand.h"
 #include "shared.h"
 #include "support.h"
 #include "version.h"
@@ -417,6 +418,69 @@ bool handle_login_request(struct connection *pconn,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+bool server_assign_random_nation(struct player *pplayer)
+{
+  Nation_Type_id nation_no = select_random_nation(NULL);
+  if (nation_no == NO_NATION_SELECTED) {
+    freelog(LOG_NORMAL,
+            _("Ran out of nations for random assignment for %s!"),
+            pplayer->username);
+    return FALSE;
+  }
+
+  server_assign_nation(pplayer, nation_no, pplayer->username,
+                       myrand(2) == 1, get_nation_city_style(nation_no));
+
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void server_assign_nation(struct player *pplayer,                          
+                          Nation_Type_id nation_no,
+                          const char *name,
+                          bool is_male,
+                          int city_style)
+{
+  int nation_used_count;
+
+  pplayer->nation = nation_no;
+  sz_strlcpy(pplayer->name, name);
+  pplayer->name[0] = my_toupper(pplayer->name[0]);
+  pplayer->is_male = is_male;
+  pplayer->city_style = city_style;
+
+  mark_nation_as_used(nation_no);
+
+  /* tell the other players, that the nation is now unavailable */
+  nation_used_count = 0;
+
+  players_iterate(other_player) {
+    if (other_player->nation == NO_NATION_SELECTED) {
+      send_select_nation(other_player);
+    } else {
+      nation_used_count++;	/* count used nations */
+    }
+  } players_iterate_end;
+
+  /* if there's no nation left, reject remaining players, sorry */
+  if (nation_used_count == game.playable_nation_count) {   /* barb */
+    players_iterate(other_player) {
+      if (other_player->nation == NO_NATION_SELECTED) {
+	freelog(LOG_NORMAL, _("No nations left: Removing player %s."),
+		other_player->name);
+	notify_player(other_player,
+		      _("Game: Sorry, there are no nations left."));
+	server_remove_player(other_player);
+      }
+    } players_iterate_end;
+  }
+}
+
+/**************************************************************************
   High-level server stuff when connection to client is closed or lost.
   Reports loss to log, and to other players if the connection was a
   player.  Also removes player if in pregame, applies auto_toggle, and
@@ -470,7 +534,22 @@ void lost_connection_to_client(struct connection *pconn)
       && !pplayer->ai.control	/* eg created AI player */
       && (server_state == PRE_GAME_STATE
 	  || server_state == SELECT_RACES_STATE)) {
-    server_remove_player(pplayer);
+    if (server_state == SELECT_RACES_STATE) {
+      if (server_assign_random_nation(pplayer)) {
+        notify_conn(&game.est_connections,
+                    _("Game: %s has been made leader of the %s."),
+                    pplayer->name,
+                    get_nation_name_plural(pplayer->nation));
+        sz_strlcpy(pplayer->username, _("Unassigned"));
+      } else {
+        notify_conn(&game.est_connections,
+                    _("Server: Could not assign %s to a nation. :("),
+                    pplayer->username);
+        server_remove_player(pplayer);
+      }
+    } else {
+      server_remove_player(pplayer);
+    }
   } else {
     if (game.auto_ai_toggle
 	&& !pplayer->ai.control

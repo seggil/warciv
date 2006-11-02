@@ -76,4 +76,11 @@ bool unattach_connection_from_player(struct connection *pconn);
 bool is_banned (char *username, struct connection *pconn);
 void clear_all_on_connect_user_actions (void);
 
+void server_assign_nation(struct player *pplayer,
+                          Nation_Type_id nation_no,
+                          const char *name,
+                          bool is_male,
+                          int city_style);
+bool server_assign_random_nation(struct player *pplayer);
+
 #endif /* FC__CONNECTHAND_H */

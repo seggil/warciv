@@ -90,4 +90,8 @@ extern bool force_end_of_sniff;
 /* May be NULL, in which case the default welcome message is used. */
 extern char *welcome_message;
 
+Nation_Type_id select_random_nation(const char* class);
+void send_select_nation(struct player *pplayer);
+void mark_nation_as_used(Nation_Type_id nation);
+
 #endif /* FC__SRV_MAIN_H */
