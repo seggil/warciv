@@ -396,6 +396,16 @@ const struct command commands[] = {
       "the last valid ignore list index."),
    ECHO_NONE
   },
+  {"autoteam", ALLOW_HACK, ALLOW_CTRL, /* require vote in pregame */
+   /* TRANS: translate text between <> only */
+   N_("autoteam <number of teams> <best player; 2nd best; 3rd; etc.>"), 
+   N_("Assign teams automatically."),
+   N_("Generate the given number of teams assuming that players' "
+      "relative strength is as ordered in the supplied list. Players "
+      "not listed will be assumed to have an equal, lowest skill level. "
+      "Names may be abbreviated so long as they are not ambiguous."),
+   ECHO_ALL
+  },
 #ifdef HAVE_AUTH
   {"authdb",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */

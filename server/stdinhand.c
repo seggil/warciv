@@ -41,6 +41,7 @@
 #include "mem.h"
 #include "packets.h"
 #include "player.h"
+#include "rand.h"
 #include "registry.h"
 #include "shared.h"		/* fc__attribute, bool type, etc. */
 #include "support.h"
@@ -84,6 +85,7 @@ static bool show_help(struct connection *caller, char *arg);
 static bool show_list(struct connection *caller, char *arg);
 static void show_connections(struct connection *caller);
 static void show_actionlist(struct connection *caller);
+static void show_teams(struct connection *caller, bool send_to_all);
 static bool set_ai_level(struct connection *caller, char *name, int level,
 			 bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
@@ -120,6 +122,45 @@ bool saveactionlist_command(struct connection *caller,
 bool clearactionlist_command(struct connection *caller,
 			     char *filename, bool check);
 
+struct two_team_names {
+  char *first;
+  char *second;
+};
+
+static struct two_team_names two_team_suggestions[] = {
+  { "ALPHA", "BETA" },
+  { "GOOD", "EVIL" },
+  { "CAPULETS", "MONTAGUES" },
+  { "BLACK", "WHITE" },
+  { "GREY", "GREYER" },
+  { "FAT", "SLIM" },
+  { "NAUGHTY", "NICE" },
+  { "COPS", "ROBBERS" },
+  { "ZERG", "PROTOSS" },
+  { "ORCS", "HUMANS" },
+  { "LILLIPUT", "BLEFUSCU" },
+  { "HALF_FULL", "HALF_EMPTY" },
+  { "SHEEP", "WOLVES" },
+  { "FANATICS", "HERETICS" },
+  { "TITANS", "OLYMPIANS" },
+  { "BOURGEOISIE", "PROLETERIAT" },
+  { "VOTERS", "POLITCIANS" },
+  { "A", "B" },
+  { "OPTIMATES", "POPULARES" },
+  { "BLOODS", "CRIPS" },
+  { "TRIADS", "YAKUZA" },
+  { "SCIENTOLOGISTS", "AUM_SHINRIKYO" },
+  { "PEOPLES_TEMPLE", "HEAVENS_GATE" },
+  { "DARK", "LIGHT" },
+  { "YOUNG", "OLD" },
+  { "KITTENS", "PUPPIES" },
+  { "FRUITS", "VEGETABLES" },
+  { "POINTERS", "REFERENCES" },
+  { "CLASSES", "STRUCTS" },
+  { "INTS", "FLOATS" },
+  { "LEGS", "BREASTS" },
+  { "BOYS", "GIRLS" },
+};
 
 enum vote_type {
   VOTE_NONE, VOTE_UNUSED, VOTE_YES, VOTE_NO
@@ -1794,6 +1835,162 @@ static bool unignore_command(struct connection *caller,
   ignore_list_unlink_all(caller->server.ignore_list);
   free(caller->server.ignore_list);
   caller->server.ignore_list = saved;
+
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void free_team_names(char **p, int n)
+{
+  int i;
+  if (!p)
+    return;
+  
+  for (i = 0; i < n; i++) {
+    if (p[i])
+      free(p[i]);
+  }
+  free(p);
+}
+
+/**************************************************************************
+  Result must be freed with free_team_names.
+**************************************************************************/
+static char **create_team_names(int n)
+{
+  int i, r;
+  char buf[256];
+  char **p = fc_malloc(n * sizeof(char *));
+
+  if (n == 2) {
+    r = myrand(sizeof(two_team_suggestions)/sizeof(struct two_team_names));
+    p[0] = mystrdup(two_team_suggestions[r].first);
+    p[1] = mystrdup(two_team_suggestions[r].second);
+  } else {
+    for (i = 0; i < n; i++) {
+      my_snprintf(buf, sizeof(buf), "T%02d", i);
+      p[i] = mystrdup(buf);
+    }
+  }
+  return p;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool autoteam_command(struct connection *caller, char *str,
+                             bool check)
+{
+  char *p, *q, buf[512], **team_names;
+  int n, i, no, t;
+  enum m_pre_result result;
+  struct player *pplayer;
+  struct player *player_ordering[MAX_NUM_PLAYERS];
+  bool player_ordered[MAX_NUM_PLAYERS];
+
+  if (server_state != PRE_GAME_STATE || !game.is_new_game) {
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+	      _("Cannot change teams once game has begun."));
+    return FALSE;
+  }
+  
+  p = str;
+  while (*p && my_isspace(*p))
+    p++;
+
+  for (q = buf; *p; ) {
+    if (my_isspace(*p)) {
+      break;
+    }
+    if (!my_isdigit(*p)) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+                _("The first argument must be an integer."));
+      return FALSE;
+    }
+    *q++ = *p++;
+  }
+  *q++ = 0;
+  
+  if (!*p && !*buf) {
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+              _("Missing number argument. See /help autoteam."));
+    return FALSE;
+  }
+  n = atoi(buf);
+  if (n <= 0 || n > game.nplayers) {
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+              _("Invalid number argument. See /help autoteam."));
+    return FALSE;
+  }
+
+  memset(player_ordered, 0, sizeof(player_ordered));
+
+  for (i = 0, no = 0; *p && i < MAX_NUM_PLAYERS; i++) {
+    while (*p && my_isspace(*p))
+      p++;
+    for (q = buf; *p && *p != ';';)
+      *q++ = *p++;
+    if (*p == ';')
+      p++;
+    *q++ = 0;
+    if (!*buf)
+      break;
+    pplayer = find_player_by_name_prefix(buf, &result);
+    if (!pplayer) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
+                _("There is no player corresponding to \"%s\"."),
+                buf);
+      return FALSE;
+    }
+    assert(0 <= pplayer->player_no);
+    assert(pplayer->player_no < MAX_NUM_PLAYERS);
+
+    if (player_ordered[pplayer->player_no]) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
+                _("%s is in the list more than once!"),
+                pplayer->username);
+      return FALSE;
+    }
+    if (pplayer->is_observer) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
+                _("You may not assign observers to a team (%s)."),
+                pplayer->username);
+      return FALSE;
+    }
+      
+    player_ordering[i] = pplayer;
+    player_ordered[pplayer->player_no] = TRUE;
+    no++;
+  }
+
+  players_iterate(pplayer1) {
+    assert(0 <= pplayer1->player_no);
+    assert(pplayer1->player_no < MAX_NUM_PLAYERS);
+
+    if (player_ordered[pplayer1->player_no])
+      continue;
+    player_ordering[i++] = pplayer1;
+    no++;
+  } players_iterate_end;
+
+  if (check)
+    return TRUE;
+
+  notify_conn(&game.est_connections,
+              _("Server: Assigning all players to %d teams."), n);
+
+  team_names = create_team_names(n);
+
+  for (i = 0, t = 0; i < no; i++) {
+    team_add_player(player_ordering[i], team_names[t]);
+    t = (t + 1) % n;
+  }
+
+  free_team_names(team_names, n);
+
+  show_teams(caller, TRUE);
 
   return TRUE;
 }
@@ -4463,6 +4660,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return ignore_command(caller, allargs, check);
   case CMD_UNIGNORE:
     return unignore_command(caller, allargs, check);
+  case CMD_AUTOTEAM:
+    return autoteam_command(caller, allargs, check);
   case CMD_START_GAME:
     return start_command(caller, arg, check);
   case CMD_END_GAME:
@@ -5408,7 +5607,7 @@ static void show_ignore(struct connection *caller)
 /**************************************************************************
   ...
 **************************************************************************/
-static void show_teams(struct connection *caller)
+static void show_teams(struct connection *caller, bool send_to_all)
 {
   bool listed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   int i, teamid = -1, count = 0, tc = 0;
@@ -5417,8 +5616,12 @@ static void show_teams(struct connection *caller)
 
   memset(listed, 0, sizeof(bool) * (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS));
 
-  cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of teams:"));
-  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  if (send_to_all) {
+    notify_conn(&game.est_connections, _("Server: List of teams:"));
+  } else {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of teams:"));
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  }
 
   while (count < game.nplayers) {
     for (i = 0; i < game.nplayers; i++) {
@@ -5443,11 +5646,16 @@ static void show_teams(struct connection *caller)
 	  ? _("Unassigned") : team_get_by_id(teamid)->name;
 
       my_snprintf(buf, sizeof(buf), "%s (%d): %s", teamname, tc, buf2);
-      cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
+      if (send_to_all) {
+        notify_conn(&game.est_connections, "  %s", buf);
+      } else {
+        cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
+      }
       teamid = -1;
     }
   }
-  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  if (!send_to_all)
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
 
 /**************************************************************************
@@ -5498,7 +5706,7 @@ static bool show_list(struct connection *caller, char *arg)
     show_actionlist(caller);
     return TRUE;
   case LIST_TEAMS:
-    show_teams(caller);
+    show_teams(caller, FALSE);
     return TRUE;
   case LIST_IGNORE:
     show_ignore(caller);

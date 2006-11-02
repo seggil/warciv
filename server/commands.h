@@ -81,6 +81,7 @@ enum command_id {
   CMD_TIMEOUT,
   CMD_IGNORE,
   CMD_UNIGNORE,
+  CMD_AUTOTEAM,
 
   /* potentially harmful: */
 #ifdef HAVE_AUTH
