@@ -122,12 +122,7 @@ bool saveactionlist_command(struct connection *caller,
 bool clearactionlist_command(struct connection *caller,
 			     char *filename, bool check);
 
-struct two_team_names {
-  char *first;
-  char *second;
-};
-
-static struct two_team_names two_team_suggestions[] = {
+static char *two_team_suggestions[][2] = {
   { "ALPHA", "BETA" },
   { "GOOD", "EVIL" },
   { "CAPULETS", "MONTAGUES" },
@@ -143,9 +138,8 @@ static struct two_team_names two_team_suggestions[] = {
   { "SHEEP", "WOLVES" },
   { "FANATICS", "HERETICS" },
   { "TITANS", "OLYMPIANS" },
-  { "BOURGEOISIE", "PROLETERIAT" },
+  { "BOURGEOISIE", "PROLETARIAT" },
   { "VOTERS", "POLITCIANS" },
-  { "A", "B" },
   { "OPTIMATES", "POPULARES" },
   { "BLOODS", "CRIPS" },
   { "TRIADS", "YAKUZA" },
@@ -160,7 +154,67 @@ static struct two_team_names two_team_suggestions[] = {
   { "INTS", "FLOATS" },
   { "LEGS", "BREASTS" },
   { "BOYS", "GIRLS" },
+  { "PLUS", "MINUS" },
+  { "POSITIVE", "NEGATIVE" },
+  { "YIN", "YANG" },
+  { "CATS", "DOGS" },
+  { "ARM", "CORE" },
+  { "NOD", "GDI" },
+  { "FELLOWSHIP", "MORDOR" },
+  { "GALACTIC_EMPIRE", "REBEL_ALLIANCE" },
+  { "AXIS", "ALLIES" },
+  { "NATO", "WARZAW_PACT" },
+  { "DEMOCRATS", "REPUBLICANS" },
+  { "TORIES", "LABOUR" },
+  { "CIA", "KGB" },
+  { "MACS", "PCS" },
+  { "LEFT", "RIGHT" },
+  { "NORTH", "SOUTH" },
+  { "EAST", "WEST" },
+  { "ANGELS", "DEMONS" },
+  { "ATREIDES", "HARKONNEN" },
+  { "INDULGENCE", "ABSTINENCE" },
+  { "PIMPS", "DEALERS" },
+  { "APPLES", "ORANGES" },
+  { "FOO", "BAR" },
+  { "CATHODES", "ANODES" },
+  { "SEEDERS", "LEECHERS" },
+  { "FIRE", "WATER" },
+  { "ELVES", "TROLLS" },
+  { "DRAGONS", "KNIGHTS" },
+  { "BEAUTY", "TRUTH" },
+  { "POLAR", "RECTANGULAR" },
+  { "SINES", "COSINES" },
+  { "DOCTORS", "PATIENTS" },
+  { "EUKARYOTES", "PROKARYOTES" },
 };
+
+static char *three_team_suggestions[][3] = {
+  { "HERBIVORES", "CARNIVORES", "OMNIVORES" },
+  { "RED", "GREEN", "BLUE" },
+  { "ALPHA", "BETA", "GAMMA" },
+  { "YES", "NO", "MAYBE" },
+  { "ABORT", "RETRY", "FAIL" },
+  { "READY", "SET", "GO" },
+  { "BREAKFAST", "LUNCH", "DINNER" },
+  { "SUBJECT", "OBJECT", "VERB" },
+  { "ROCK", "PAPER", "SCISSORS" },
+  { "LEFT", "RIGHT", "CENTER" },
+  { "ENDOMORPHS", "MESOMORPHS", "ECTOMORPHS" },
+  { "ID", "EGO", "SUPEREGO" },
+  { "REPTILES", "MAMMALS", "INSECTS" },
+};
+  
+static char *four_team_suggestions[][4] = {
+  { "ATREIDES", "HARKONNEN", "ORDOS", "CORRINO" },
+  { "NORTH", "SOUTH", "WEST", "EAST" },
+  { "CYAN", "MAGENTA", "YELLOW", "BLACK" },
+  { "UP", "DOWN", "LEFT", "RIGHT" },
+  { "ELECTROMAGNETISM", "GRAVITY", "STRONG", "WEAK" },
+  { "EARTH", "WIND", "FIRE", "WATER" },
+  { "GUANINE", "CYTOSINE", "THYMINE", "ADENINE" },
+};
+
 
 enum vote_type {
   VOTE_NONE, VOTE_UNUSED, VOTE_YES, VOTE_NO
@@ -1864,13 +1918,24 @@ static char **create_team_names(int n)
   char buf[256];
   char **p = fc_malloc(n * sizeof(char *));
 
+  if (n <= 0)
+    return NULL;
+
   if (n == 2) {
-    r = myrand(sizeof(two_team_suggestions)/sizeof(struct two_team_names));
-    p[0] = mystrdup(two_team_suggestions[r].first);
-    p[1] = mystrdup(two_team_suggestions[r].second);
+    r = myrand(sizeof(two_team_suggestions)/(n * sizeof(char *)));
+    for (i = 0; i < n; i++) 
+      p[i] = mystrdup(two_team_suggestions[r][i]);
+  } else if (n == 3) {
+    r = myrand(sizeof(three_team_suggestions)/(n * sizeof(char *)));
+    for (i = 0; i < n; i++) 
+      p[i] = mystrdup(three_team_suggestions[r][i]);
+  } else if (n == 4) {
+    r = myrand(sizeof(four_team_suggestions)/(n * sizeof(char *)));
+    for (i = 0; i < n; i++) 
+      p[i] = mystrdup(four_team_suggestions[r][i]);
   } else {
     for (i = 0; i < n; i++) {
-      my_snprintf(buf, sizeof(buf), "T%02d", i);
+      my_snprintf(buf, sizeof(buf), "TEAM-%d", i+1);
       p[i] = mystrdup(buf);
     }
   }
@@ -1883,7 +1948,7 @@ static char **create_team_names(int n)
 static bool autoteam_command(struct connection *caller, char *str,
                              bool check)
 {
-  char *p, *q, buf[512], **team_names;
+  char *p, *q, buf[1024], **team_names = NULL;
   int n, i, no, t;
   enum m_pre_result result;
   struct player *pplayer;
@@ -1919,7 +1984,7 @@ static bool autoteam_command(struct connection *caller, char *str,
     return FALSE;
   }
   n = atoi(buf);
-  if (n <= 0 || n > game.nplayers) {
+  if (n < 0 || n > game.nplayers) {
     cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
               _("Invalid number argument. See /help autoteam."));
     return FALSE;
@@ -1927,7 +1992,7 @@ static bool autoteam_command(struct connection *caller, char *str,
 
   memset(player_ordered, 0, sizeof(player_ordered));
 
-  for (i = 0, no = 0; *p && i < MAX_NUM_PLAYERS; i++) {
+  for (i = 0, no = 0; n > 0 && *p && i < MAX_NUM_PLAYERS; i++) {
     while (*p && my_isspace(*p))
       p++;
     for (q = buf; *p && *p != ';';)
@@ -1978,19 +2043,27 @@ static bool autoteam_command(struct connection *caller, char *str,
   if (check)
     return TRUE;
 
-  notify_conn(&game.est_connections,
-              _("Server: Assigning all players to %d teams."), n);
-
-  team_names = create_team_names(n);
-
-  for (i = 0, t = 0; i < no; i++) {
-    team_add_player(player_ordering[i], team_names[t]);
-    t = (t + 1) % n;
+  if (n > 0) {
+    notify_conn(&game.est_connections,
+                _("Server: Assigning all players to %d teams."), n);
+    team_names = create_team_names(n);
   }
 
-  free_team_names(team_names, n);
+  for (i = 0, t = 0; i < no; i++) {
+    team_remove_player(player_ordering[i]);
+    if (n > 0) {
+      team_add_player(player_ordering[i], team_names[t]);
+      t = (t + 1) % n;
+    }
+  }
 
-  show_teams(caller, TRUE);
+  if (n > 0) {
+    free_team_names(team_names, n);
+    show_teams(caller, TRUE);
+  } else {
+    notify_conn(&game.est_connections,
+                _("Server: Teams cleared."));
+  }
 
   return TRUE;
 }
