@@ -316,8 +316,8 @@ extern bool is_server;
 #define GAME_DEFAULT_BRUTEFORCETHRESHOLD        11
 #define GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT        800
 #define GAME_DEFAULT_TRADEMINDIST        8
-#define GAME_DEFAULT_CARAVANBONUSSTYLE  0
-#define GAME_DEFAULT_TRADEREVENUESTYLE    0
+#define GAME_DEFAULT_CARAVANBONUSSTYLE  1
+#define GAME_DEFAULT_TRADEREVENUESTYLE    1
 #define GAME_DEFAULT_TRADEREVENUEPCT    100
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST        1
 #define GAME_DEFAULT_IGNORERULESET        0
@@ -389,7 +389,7 @@ extern bool is_server;
 
 /* 0 means no national borders.  Performance dropps quickly as the border
  * distance increases (o(n^2) or worse). */
-#define GAME_DEFAULT_BORDERS         7
+#define GAME_DEFAULT_BORDERS         0
 #define GAME_MIN_BORDERS             0
 #define GAME_MAX_BORDERS             24
 
