@@ -4885,7 +4885,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
        * than once to remind other people to start (which is a good thing
        * until somebody does it too much and it gets labeled as spam). */
       /* Spam is bad. Use chat to remind others to start. */
-      if (caller->player->is_started && started < game.nplayers) {
+      if (caller->player->is_started && started < started + notstarted) {
         cmd_reply(CMD_START_GAME, caller, C_COMMENT,
         _("You have already notified others that you are ready"
         " to start."));
@@ -4894,12 +4894,13 @@ static bool start_command(struct connection *caller, char *name, bool check)
       if(!caller->player->is_started) { 
         caller->player->is_started = TRUE;
         started++;
+        notstarted--;
       }
             
-      if (started < game.nplayers) {
+      if (started < started + notstarted) {
 	notify_conn(NULL, _("Game: %s is ready. %d out of %d players are "
 			    "ready to start."),
-		    caller->username, started, game.nplayers);
+		    caller->username, started, started + notstarted);
 	return TRUE;
       }
       notify_conn(NULL, _("Game: All players are ready; starting game."));

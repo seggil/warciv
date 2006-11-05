@@ -431,7 +431,7 @@ static void shuffle_start_positions(int *start_pos)
         assert(pplayer != NULL);
         pplayer->team_placement_flag = FALSE;
     }
-    //initialize arrays with data
+    //initialize arrays with data - this is only needed by iterative algorithm
     for (x = 0; x < game.nplayers; x++ ) {
         for (y = 0; y < game.nplayers; y++ ) {
             if(players_on_same_team(get_player(x),get_player(y))) {
@@ -450,6 +450,7 @@ static void shuffle_start_positions(int *start_pos)
         if(mapping[i].member_count > 0) {
             find_pos_by_brute_force(team_pos,i);
         }
+	notify_conn(NULL, _("Brute force team placement in progress, %i%% complete"), (int)((i+1)/(float)mappings*100));
       }
       if(brute_force_found_solution) {
         assign_players_to_positions(best_team_pos, best_start_pos);
