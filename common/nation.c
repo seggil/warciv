@@ -408,12 +408,12 @@ void team_remove_player(struct player *pplayer)
 
   assert(pplayer->team < MAX_NUM_TEAMS && pplayer->team >= 0);
 
-  pplayer->team = TEAM_NONE;
   teams[pplayer->team].member_count--;
   /* no other team members left? remove team! */
   if(teams[pplayer->team].member_count == 0) {
     teams[pplayer->team].id = TEAM_NONE;
   }  
+  pplayer->team = TEAM_NONE;
 }
 
 /***************************************************************

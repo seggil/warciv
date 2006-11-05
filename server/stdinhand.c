@@ -122,6 +122,11 @@ bool saveactionlist_command(struct connection *caller,
 bool clearactionlist_command(struct connection *caller,
 			     char *filename, bool check);
 
+
+/* Team names contributed by book, Pendragon, hima,
+   Not Logged In, Zachron and many more from the
+   multiplayer freeciv community. Thanks people! */
+
 static char *two_team_suggestions[][2] = {
   { "ALPHA", "BETA" },
   { "GOOD", "EVIL" },
@@ -136,6 +141,7 @@ static char *two_team_suggestions[][2] = {
   { "LILLIPUT", "BLEFUSCU" },
   { "HALF_FULL", "HALF_EMPTY" },
   { "SHEEP", "WOLVES" },
+  { "BIG_ENDIAN", "LITLE_ENDIAN" },
   { "FANATICS", "HERETICS" },
   { "TITANS", "OLYMPIANS" },
   { "BOURGEOISIE", "PROLETARIAT" },
@@ -187,6 +193,33 @@ static char *two_team_suggestions[][2] = {
   { "SINES", "COSINES" },
   { "DOCTORS", "PATIENTS" },
   { "EUKARYOTES", "PROKARYOTES" },
+  { "COBOL", "FORTRAN" },
+  { "FERMIONS", "BOSONS" },
+  { "NINJAS", "PIRATES" },
+  { "WEYL", "RICCI" },
+  { "HARD", "SOFT" },
+  { "ANARCHISTS", "COMMUNISTS" },
+  { "LOYALISTS", "FASCISTS" },
+  { "MODS", "ROCKERS" },
+  { "GUNS", "ROSES" },
+  { "TOP", "BOTTOM" },
+  { "UP", "DOWN" },
+  { "BEER", "LAGER" },
+  { "ORANGE", "BLUE" },
+  { "BLUNT", "SHARP" },
+  { "TRUTH", "BEAUTY" },
+  { "SWORDS", "PLOUGHSHARES" },
+  { "CHICKENS", "EGGS" },
+  { "HIPPIES", "YUPPIES" },
+  { "HALLOWEEN", "CHRISTMAS" },
+  { "FINAL_FANTASY", "DRAGON_QUEST" },
+  { "TREKKIES", "JEDIS" },
+  { "SALT", "PEPPER" },
+  { "EAST_COAST", "WEST_COAST" },
+  { "PEPSI", "COKE" },
+  { "BOOKS", "MOVIES" },
+  { "NARNIA", "MIDDLE_EARTH" },
+  { "THE_SIMPSONS", "SOUTHPARK" },
 };
 
 static char *three_team_suggestions[][3] = {
@@ -203,6 +236,12 @@ static char *three_team_suggestions[][3] = {
   { "ENDOMORPHS", "MESOMORPHS", "ECTOMORPHS" },
   { "ID", "EGO", "SUPEREGO" },
   { "REPTILES", "MAMMALS", "INSECTS" },
+  { "DEMOCRATS", "REPUBLICANS", "INDEPENDANTS" },
+  { "TERRAN", "ZERG", "PROTOSS" },
+  { "HALLOWEEN", "CHRISTMAS", "THANKSGIVING" },
+  { "KETCHUP", "MUSTARD", "MAYONAISE" },
+  { "CHOCOLATE", "VANILLA", "STRAWBERRY" },
+  { "STREET_FIGHTER", "MORTAL_KOMBAT", "DEAD_OR_ALIVE" },
 };
   
 static char *four_team_suggestions[][4] = {
@@ -213,6 +252,11 @@ static char *four_team_suggestions[][4] = {
   { "ELECTROMAGNETISM", "GRAVITY", "STRONG", "WEAK" },
   { "EARTH", "WIND", "FIRE", "WATER" },
   { "GUANINE", "CYTOSINE", "THYMINE", "ADENINE" },
+  { "ORCS", "HUMANS", "UNDEAD", "NIGHT_ELVES" },
+  { "PEACHES", "PLUMS", "APRICOTS", "POMAGRANATES" },
+  { "COTTON", "WOOL", "SILK", "POLYESTER" },
+  { "GRYFFINDOR", "HUFFLEPUFF", "RAVENCLAW", "SLITHERYN" },
+  { "VINYL", "8TRACK", "CASSETTE", "CD" },
 };
 
 
