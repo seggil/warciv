@@ -189,9 +189,9 @@ const char *get_ruler_title(int gov, bool male, int nation)
 ***************************************************************/
 int get_government_max_rate(int type)
 {
-  if(type == G_MAGIC)
+  if (type == G_MAGIC)
     return 100;
-  if(type >= 0 && type < game.government_count)
+  if (governments && type >= 0 && type < game.government_count)
     return governments[type].max_rate;
   return 50;
 }
