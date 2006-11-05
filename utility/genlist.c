@@ -46,7 +46,9 @@ void genlist_check_init(struct genlist *pgenlist)
                          "This is a programming error and should be "
                          "reported (though there is no immediate "
                          "danger, for now)."));
-    genlist_init(pgenlist);
+    assert(FALSE);
+/*    This is definitely not a good way to fix bugs!
+      genlist_init(pgenlist); */
   }
 }
 
