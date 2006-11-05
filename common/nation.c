@@ -348,6 +348,22 @@ int team_count_members_alive(Team_Type_id id)
   return count;
 }
 
+
+/***************************************************************
+  Count members of given team including players with TEAM_NONE
+  - used in team placement algorithm
+***************************************************************/
+int team_count_members(Team_Type_id id)
+{
+    int count = 0;
+    players_iterate(pplayer)
+        if (pplayer->team == id) {
+        count++;    
+        }
+    players_iterate_end
+    return count;
+}
+
 /***************************************************************
   Set a player to a team. Removes previous team affiliation,
   creates a new team if it does not exist.
@@ -377,6 +393,7 @@ void team_add_player(struct player *pplayer, const char *team_name)
     sz_strlcpy(teams[team_id].name, team_name);
   }
   pplayer->team = team_id;
+  teams[team_id].member_count++;
 }
 
 /***************************************************************
@@ -385,27 +402,18 @@ void team_add_player(struct player *pplayer, const char *team_name)
 ***************************************************************/
 void team_remove_player(struct player *pplayer)
 {
-  bool others = FALSE;
-
   if (pplayer->team == TEAM_NONE) {
     return;
   }
 
   assert(pplayer->team < MAX_NUM_TEAMS && pplayer->team >= 0);
 
-  /* anyone else using my team? */
-  players_iterate(aplayer) {
-    if (aplayer->team == pplayer->team && aplayer != pplayer) {
-      others = TRUE;
-      break;
-    }
-  } players_iterate_end;
-
-  /* no other team members left? remove team! */
-  if (!others) {
-    teams[pplayer->team].id = TEAM_NONE;
-  }
   pplayer->team = TEAM_NONE;
+  teams[pplayer->team].member_count--;
+  /* no other team members left? remove team! */
+  if(teams[pplayer->team].member_count == 0) {
+    teams[pplayer->team].id = TEAM_NONE;
+  }  
 }
 
 /***************************************************************
@@ -421,5 +429,6 @@ void team_init()
     /* mark as unused */
     teams[i].id = TEAM_NONE;
     teams[i].name[0] = '\0';
+    teams[i].member_count = 0;
   }
 }

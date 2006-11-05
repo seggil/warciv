@@ -104,6 +104,7 @@ struct nation_type {
 
 struct team {
   char name[MAX_LEN_NAME];
+  int member_count;
   Team_Type_id id; /* equal to array index if active, else TEAM_NONE */
 };
 
@@ -129,6 +130,7 @@ struct team *team_get_by_id(Team_Type_id id);
 void team_add_player(struct player *pplayer, const char *team_name);
 void team_remove_player(struct player *pplayer);
 int team_count_members_alive(Team_Type_id id);
+int team_count_members(Team_Type_id id);
 
 #define team_iterate(PI_team)                                                 \
 {                                                                             \

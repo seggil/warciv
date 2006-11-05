@@ -1087,10 +1087,9 @@ struct settings_s settings[] = {
 	  N_("Brute force team placement algorithm will be used\n"
       "if the number of players is less or equal than this value.\n"
       "This algorithm guarantees that team players will be placed\n"
-      "as close as possible. Combinatorial explosion occurs if\n"
-      "the value is greater than 12. Default value is 11."),
+      "as close as possible. Default value is 11."),
 	  NULL,
-	  0, 12, GAME_DEFAULT_BRUTEFORCETHRESHOLD)
+	  0, 32, GAME_DEFAULT_BRUTEFORCETHRESHOLD)
   GEN_INT("iterplacementcoefficient", game.iterplacementcoefficient,
 	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
     N_("Iterative team placement algorithm coefficient."),

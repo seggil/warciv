@@ -230,6 +230,7 @@ struct player {
     void *data;
   } attribute_block_buffer;
   
+  bool team_placement_flag;
   bool debug;
 };
 

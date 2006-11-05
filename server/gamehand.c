@@ -39,9 +39,21 @@
 
 #define CHALLENGE_ROOT "challenge"
 
-int are_team_players[32][32];//this is to determine team mates quickly
-int best_start_pos[32];
-int player_used[32];
+int are_team_players[MAX_NUM_PLAYERS][MAX_NUM_PLAYERS];//this is to determine team mates quickly
+
+typedef struct team_mapping_s {
+    Team_Type_id team_id;
+    int member_count;
+}team_mapping_t;
+
+team_mapping_t mapping[MAX_NUM_TEAMS+1];
+int mappings = 1;
+bool brute_force_found_solution = FALSE;
+int best_team_pos[MAX_NUM_PLAYERS];
+int team_pos[MAX_NUM_PLAYERS];
+
+int best_start_pos[MAX_NUM_PLAYERS];
+int player_used[MAX_NUM_PLAYERS];
 int best_score = 0;
 int repeat = 0;
 
@@ -210,7 +222,7 @@ static void shuffle_start_positions_by_iter(int *start_pos)
             start_pos[best_local_x] = start_pos[best_local_y];
             start_pos[best_local_y] = tmp;
             best_score = best_local_score;
-            printf("Exchanging (%i,%i) with score %i\n",best_local_x,best_local_y,best_score);
+            freelog(LOG_VERBOSE, "Exchanging (%i,%i) with score %i",best_local_x,best_local_y,best_score);
             tabtabu[best_local_x][best_local_y] += game.nplayers;
             for (i = 0; i < game.nplayers; i++ ) {//remember new best solution
                 best_start_pos[i] = start_pos[i];
@@ -262,27 +274,30 @@ static int calculate_score(int *start_pos)//if nobody is in team, score is 0
 
 /****************************************************************************
    Calculate score for the current starting positions with regard to teams
+   - optimized variant
+   - used in brute force
 ****************************************************************************/
 static int calculate_delta_score(int *start_pos, int depth)//if nobody is in team, score is 0
 {
     int score = 0;
     static int x;
+    assert(start_pos != NULL && depth >= 0 && depth < MAX_NUM_PLAYERS);
     for (x = 0; x < depth; x++) {
-        if(are_team_players[x][depth]) {
+        if(start_pos[x] == start_pos[depth]) {//then they are on the same team
                 switch(game.teamplacementtype) {
                   case 1:
-                    if(map_get_continent(map.start_positions[start_pos[x]].tile) != map_get_continent(map.start_positions[start_pos[depth]].tile)) {
+                    if(map_get_continent(map.start_positions[x].tile) != map_get_continent(map.start_positions[depth].tile)) {
                       score += NATIVE_WIDTH + NATIVE_HEIGHT;
                     }
                     //break is not missing here!
                   case 0:
-                    score += real_map_distance(map.start_positions[start_pos[x]].tile,map.start_positions[start_pos[depth]].tile);
+                    score += real_map_distance(map.start_positions[x].tile,map.start_positions[depth].tile);
                     break;
                   case 2:
-                    score += abs(map.start_positions[start_pos[x]].tile->nat_y - map.start_positions[start_pos[depth]].tile->nat_y);
+                    score += abs(map.start_positions[x].tile->nat_y - map.start_positions[depth].tile->nat_y);
                     break;
                   case 3:
-                    score += abs(map.start_positions[start_pos[x]].tile->nat_x - map.start_positions[start_pos[depth]].tile->nat_x);
+                    score += abs(map.start_positions[x].tile->nat_x - map.start_positions[depth].tile->nat_x);
                     break;
                   default:
                     ;
@@ -295,66 +310,126 @@ static int calculate_delta_score(int *start_pos, int depth)//if nobody is in tea
 /****************************************************************************
    Pruning brute force algorithm
 ****************************************************************************/
-static void find_pos_by_brute_force(int *start_pos, int a)
+static void find_pos_by_brute_force(int *positions, int a)
 {
     static int depth = 0;
     static int score = 0;
     int tmpscore;
     int i,p;
 
-//add player to pos [depth]
-    start_pos[depth] = a;
-    player_used[a] = 1;
-    tmpscore = calculate_delta_score(start_pos, depth);
+    assert(positions != NULL && a >= 0 && a < MAX_NUM_TEAMS+1);
+//add team to pos [depth]
+    positions[depth] = a;
+    mapping[a].member_count--;
+    
+    tmpscore = calculate_delta_score(positions, depth);
     score+= tmpscore;
     
     if(depth == (game.nplayers - 1)) {//enough players
         repeat++;    
         if (score < best_score) {
             for (p = 0; p < game.nplayers; p++ ) {
-                best_start_pos[p] = start_pos[p];
+                best_team_pos[p] = positions[p];
             }
             best_score = score;
-            printf("New best score %i\n",best_score);            
+            freelog(LOG_VERBOSE, "New best score %i",best_score);
+            brute_force_found_solution = TRUE;
         }
     } else {    //we continue adding players
         depth++;
     
         if(score < best_score) {
-            //choose next player for [depth+1] position
-            for (i = 0; i < game.nplayers; i++ ) {
-                if(player_used[i])continue;
-                find_pos_by_brute_force(start_pos, i);
+            //choose next team for [depth+1] position
+            for (i = 0; i < mappings; i++ ) {
+                if(mapping[i].member_count > 0) {
+                    find_pos_by_brute_force(positions, i);
+                }
             }
-        }
-    
+        }    
         depth--;
     }
-
 //remove player from pos [depth]
-    start_pos[depth] = 0;
-    player_used[a] = 0;
+    positions[depth] = -1;
+    mapping[a].member_count++;
     score-= tmpscore;    
-
 }
 
 /****************************************************************************
    Cleans start positions for brute force algorithm
 ****************************************************************************/
-static void clean_start_pos(int *start_pos)
+static void clean_start_pos(int *positions)
 {
-  memset(start_pos, 0, sizeof(int) * game.nplayers);
+    assert(positions != NULL);
+    memset(positions, -1, sizeof(int) * game.nplayers);
 }
 
+/****************************************************************************
+   Assigns players to team start positions by using team mapping
+****************************************************************************/
+static void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
+{
+    int i;
+    bool error = FALSE;
+    Team_Type_id team_id;
+    
+    freelog(LOG_VERBOSE, "entry");
+    /*starting positions were assigned to team indexes
+      in team mapping*/
+    for (i = 0; i < game.nplayers; i++ ) {
+        assert(best_team_pos[i] >= 0 && best_team_pos[i] < MAX_NUM_TEAMS+1);
+        team_id = mapping[best_team_pos[i]].team_id;
+        freelog(LOG_VERBOSE, "Assigning position %i to team index %i, team_id %i",i,best_team_pos[i],mapping[best_team_pos[i]].team_id);
+        error = TRUE;
+        players_iterate(pplayer)
+            if(pplayer->team == team_id && pplayer->team_placement_flag == FALSE) {
+                freelog(LOG_VERBOSE, "Assigning position %i to player %i",i,pplayer->player_no);
+                pplayer->team_placement_flag = TRUE;
+                best_start_pos[pplayer->player_no] = i;
+                error = FALSE;
+                break;
+            }
+        players_iterate_end
+        assert(!error);
+    }
+    freelog(LOG_VERBOSE, "exit");    
+}
+/****************************************************************************
+   Calculate team mapping for brute force placement algorithm.
+   Team mapping is needed because we want to consider players with TEAM_NONE
+   to be in the same team and thus greatly improving algorithm speed.
+****************************************************************************/
+static void calculate_teams()
+{
+    freelog(LOG_DEBUG, "entry");
+    mapping[0].team_id = TEAM_NONE;
+    mapping[0].member_count = team_count_members(TEAM_NONE);
+    freelog(LOG_VERBOSE, "Team TEAM_NONE has %i members",mapping[0].member_count);
+    
+    team_iterate(pteam)
+        mapping[mappings].team_id = pteam->id;
+        mapping[mappings].member_count = pteam->member_count;
+        freelog(LOG_VERBOSE, "Team %i has %i members",pteam->id, pteam->member_count);
+        mappings++;
+    team_iterate_end
+    freelog(LOG_VERBOSE, "Total mappings %i",mappings);
+    freelog(LOG_DEBUG, "exit");
+}
 /****************************************************************************
     Shuffle start positions so team players are close
 ****************************************************************************/
 static void shuffle_start_positions(int *start_pos)
 {
     int i,x,y;
+    struct player *pplayer;
+    assert(start_pos != NULL);
+
     for (i = 0; i < game.nplayers; i++ ) {
-        printf("Start pos %i = %i\n",i,start_pos[i]);
-        best_start_pos[i] = start_pos[i];
+        freelog(LOG_VERBOSE, "Resetting start pos %i = %i",i,i);
+        best_start_pos[i] = i;
+        
+        pplayer = get_player(i);
+        assert(pplayer != NULL);
+        pplayer->team_placement_flag = FALSE;
     }
     //initialize arrays with data
     for (x = 0; x < game.nplayers; x++ ) {
@@ -365,17 +440,25 @@ static void shuffle_start_positions(int *start_pos)
         }
     }
     best_score = calculate_score(start_pos);        
-    printf("Current best score is %i\n",best_score);
+    freelog(LOG_VERBOSE, "Current best score is %i",best_score);
     
     if(game.nplayers<=game.bruteforcethreshold) {//brute force for small number of players
-      clean_start_pos(start_pos);
-      for (i = 0; i < game.nplayers; i++ ) {//with 2 players shuffling doesnt make sense
-          find_pos_by_brute_force(start_pos,i);
+      freelog(LOG_VERBOSE, "Using brute force algorithm");
+      clean_start_pos(team_pos);
+      calculate_teams();
+      for (i = 0; i < mappings; i++ ) {
+        if(mapping[i].member_count > 0) {
+            find_pos_by_brute_force(team_pos,i);
+        }
+      }
+      if(brute_force_found_solution) {
+        assign_players_to_positions(best_team_pos, best_start_pos);
       }
     } else 
           shuffle_start_positions_by_iter(start_pos);    
 
-    printf("Iterations: %i\n",repeat);
+    freelog(LOG_VERBOSE, "Iterations: %i",repeat);
+    freelog(LOG_VERBOSE, "Final score checked: %i",calculate_score(best_start_pos));      
     for (i = 0; i < game.nplayers; i++ ) {//restore best solution
         start_pos[i] = best_start_pos[i];
     }        

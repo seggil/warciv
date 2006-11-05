@@ -313,7 +313,7 @@ const char *population_to_text(int thousand_citizen);
 extern struct civ_game game;
 extern bool is_server;
 
-#define GAME_DEFAULT_BRUTEFORCETHRESHOLD        11
+#define GAME_DEFAULT_BRUTEFORCETHRESHOLD        16
 #define GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT        800
 #define GAME_DEFAULT_TRADEMINDIST        8
 #define GAME_DEFAULT_CARAVANBONUSSTYLE  1
