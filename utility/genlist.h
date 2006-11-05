@@ -91,8 +91,10 @@ void genlist_sort(struct genlist *pgenlist,
    Eg, see speclist.h, which is what this is really for.
 */
 #define TYPED_LIST_ITERATE(atype, typed_list, var) {       \
-  struct genlist_link *myiter = (typed_list).list.head_link;\
+  struct genlist_link *myiter;                             \
   atype *var;                                              \
+  genlist_check_init(&(typed_list).list);                  \
+  myiter = (typed_list).list.head_link;                    \
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
     ITERATOR_NEXT(myiter);
@@ -103,8 +105,10 @@ void genlist_sort(struct genlist *pgenlist,
 
 /* Same, but iterate backwards: */
 #define TYPED_LIST_ITERATE_REV(atype, typed_list, var) {   \
-  struct genlist_link *myiter = (typed_list).list.tail_link;\
+  struct genlist_link *myiter;                             \
   atype *var;                                              \
+  genlist_check_init(&(typed_list).list);                  \
+  myiter = (typed_list).list.tail_link;                    \
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
     ITERATOR_PREV(myiter);
