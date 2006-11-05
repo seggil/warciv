@@ -4867,23 +4867,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
       return TRUE;
     } else {
       int started = 0, notstarted = 0;
-      const int percent_required = 100;
 
-      /* Note this is called even if the player has pressed /start once
-       * before.  This is a good thing given that no other code supports
-       * is_started yet.  For instance if a player leaves everyone left
-       * might have pressed /start already but the start won't happen
-       * until someone presses it again.  Also you can press start more
-       * than once to remind other people to start (which is a good thing
-       * until somebody does it too much and it gets labeled as spam). */
-      /* Spam is bad. Use chat to remind others to start. */
-      if (caller->player->is_started) {
-	cmd_reply(CMD_START_GAME, caller, C_COMMENT,
-		  _("You have already notified others that you are ready"
-		    " to start."));
-	return TRUE;
-      }
-      caller->player->is_started = TRUE;
       players_iterate(pplayer) {
 	if (pplayer->is_connected) {
 	  if (pplayer->is_started) {
@@ -4893,10 +4877,29 @@ static bool start_command(struct connection *caller, char *name, bool check)
 	  }
 	}
       } players_iterate_end;
-      if (started * 100 < (started + notstarted) * percent_required) {
+      /* Note this is called even if the player has pressed /start once
+       * before.  This is a good thing given that no other code supports
+       * is_started yet.  For instance if a player leaves everyone left
+       * might have pressed /start already but the start won't happen
+       * until someone presses it again.  Also you can press start more
+       * than once to remind other people to start (which is a good thing
+       * until somebody does it too much and it gets labeled as spam). */
+      /* Spam is bad. Use chat to remind others to start. */
+      if (caller->player->is_started && started < game.nplayers) {
+        cmd_reply(CMD_START_GAME, caller, C_COMMENT,
+        _("You have already notified others that you are ready"
+        " to start."));
+        return TRUE;
+      }
+      if(!caller->player->is_started) { 
+        caller->player->is_started = TRUE;
+        started++;
+      }
+            
+      if (started < game.nplayers) {
 	notify_conn(NULL, _("Game: %s is ready. %d out of %d players are "
 			    "ready to start."),
-		    caller->username, started, started + notstarted);
+		    caller->username, started, game.nplayers);
 	return TRUE;
       }
       notify_conn(NULL, _("Game: All players are ready; starting game."));
