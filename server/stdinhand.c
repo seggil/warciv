@@ -3931,7 +3931,6 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     /* actually do the removal */
     game_remove_player(pplayer);
     game_renumber_players(pplayer->player_no);
-    player_init(&game.players[game.nplayers]);
   }
 
   if (!pplayer->is_connected) {

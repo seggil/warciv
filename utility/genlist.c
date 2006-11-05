@@ -44,8 +44,7 @@ void genlist_check_init(struct genlist *pgenlist)
   if (pgenlist->init_magic != INIT_MAGIC) {
     freelog(LOG_ERROR, _("Caught use of an uninitialized genlist!!! "
                          "This is a programming error and should be "
-                         "reported (though there is no immediate "
-                         "danger, for now)."));
+                         "reported."));
     assert(FALSE);
 /*    This is definitely not a good way to fix bugs!
       genlist_init(pgenlist); */
