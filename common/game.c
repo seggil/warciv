@@ -476,6 +476,10 @@ void game_advance_year(void)
 ***************************************************************/
 void game_remove_player(struct player *pplayer)
 {
+  /* what a shit, players werent removed from teams before
+  and team array got inconsistent */
+  team_remove_player(pplayer);
+  
   if (pplayer->attribute_block.data) {
     free(pplayer->attribute_block.data);
     pplayer->attribute_block.data = NULL;
