@@ -212,7 +212,7 @@ void shuffle_start_positions_by_iter(int *start_pos)
     while(found && (repeat < game.nplayers*game.iterplacementcoefficient)) {//limit # of iterations
         repeat++;
         if(repeat % (game.nplayers*game.iterplacementcoefficient/8)==0) {
-    	   notify_conn(NULL, _("Iterative team placement in progress, %i%% complete"), repeat*100/game.nplayers*game.iterplacementcoefficient);
+    	   notify_conn(NULL, _("Iterative team placement in progress, %i%% complete"), repeat*100/(game.nplayers*game.iterplacementcoefficient));
         }
         found = 0;
         best_local_score = 99999999;
