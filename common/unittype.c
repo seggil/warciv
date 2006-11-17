@@ -87,7 +87,10 @@ bool unit_type_exists(Unit_Type_id id)
 **************************************************************************/
 struct unit_type *get_unit_type(Unit_Type_id id)
 {
-  assert(id >= 0 && id < U_LAST && id < game.num_unit_types);
+	if(!(id >= 0 && id < U_LAST && id < game.num_unit_types)) {
+		freelog(LOG_ERROR, "Fatal error occured, unit type id is out of range - %i",  id);
+		assert(false);
+	}
   return &unit_types[id];
 }
 
