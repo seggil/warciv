@@ -329,6 +329,10 @@ bool client_handle_packet(enum packet_type type, void *packet)
     handle_traderoute_info(packet);
     return TRUE;
 
+  case PACKET_EXTGAME_INFO:
+    handle_extgame_info(packet);
+    return TRUE;
+
   default:
     return FALSE;
   }

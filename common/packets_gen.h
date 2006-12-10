@@ -1046,6 +1046,21 @@ struct packet_traderoute_info {
   int caravanbonusstyle;
 };
 
+struct packet_extgame_info {
+  bool futuretechsscore;
+  bool improvedautoattack;
+  bool stackbribing;
+  bool experimentalbribingcost;
+  bool techtrading;
+  bool ignoreruleset;
+  bool goldtrading;
+  bool citytrading;
+  bool alliedairlifting;
+  bool teamplacement;
+  bool globalwarmingon;
+  bool nuclearwinteron;
+};
+
 enum packet_type {
   PACKET_PROCESSING_STARTED,             /* 0 */
   PACKET_PROCESSING_FINISHED,
@@ -1162,6 +1177,7 @@ enum packet_type {
   PACKET_RULESET_CACHE_GROUP = 120,      /* 120 */
   PACKET_RULESET_CACHE_EFFECT,
   PACKET_TRADEROUTE_INFO,
+  PACKET_EXTGAME_INFO,
 
   PACKET_LAST  /* leave this last */
 };
@@ -1634,6 +1650,9 @@ void lsend_packet_ruleset_cache_effect(struct conn_list *dest, const struct pack
 
 struct packet_traderoute_info *receive_packet_traderoute_info(struct connection *pc, enum packet_type type);
 int send_packet_traderoute_info(struct connection *pc, const struct packet_traderoute_info *packet);
+
+struct packet_extgame_info *receive_packet_extgame_info(struct connection *pc, enum packet_type type);
+int send_packet_extgame_info(struct connection *pc, const struct packet_extgame_info *packet);
 
 
 void delta_stats_report(void);

@@ -107,5 +107,7 @@ struct packet_ruleset_cache_effect;
 void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet);
 struct packet_traderoute_info;
 void handle_traderoute_info(struct packet_traderoute_info *packet);
+struct packet_extgame_info;
+void handle_extgame_info(struct packet_extgame_info *packet);
 
 #endif /* FC__PACKHAND_GEN_H */

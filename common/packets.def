@@ -1330,3 +1330,20 @@ PACKET_TRADEROUTE_INFO=122;sc,is-info,handle-via-packet
   UINT8 traderevenuestyle;
   UINT8 caravanbonusstyle;
 end
+
+/************** "extgameinfo" capability packet **********************/
+
+PACKET_EXTGAME_INFO=123;sc,is-info,handle-via-packet
+  BOOL futuretechsscore;
+  BOOL improvedautoattack;
+  BOOL stackbribing;
+  BOOL experimentalbribingcost;
+  BOOL techtrading;
+  BOOL ignoreruleset;
+  BOOL goldtrading;
+  BOOL citytrading;
+  BOOL alliedairlifting;
+  BOOL teamplacement;
+  BOOL globalwarmingon;
+  BOOL nuclearwinteron;
+end

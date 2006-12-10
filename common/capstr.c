@@ -90,8 +90,11 @@ const char * const our_capability = our_capability_internal;
  * "extroutes" means the client or server supports configurable traderoute
  * parameters (e.g. trademindist, traderevenuestyle, etc.). This is
  * currently only supported by warserver 0.8.11a and above.
+ *
+ * "extgameinfo" was added to inform client of some warserver settings it
+ * was unaware of before.
  */
-#define CAPABILITY "+2.0 conn_ping_info username_info new_hack extroutes"
+#define CAPABILITY "+2.0 conn_ping_info username_info new_hack extroutes extgameinfo"
 
 void init_our_capability(void)
 {

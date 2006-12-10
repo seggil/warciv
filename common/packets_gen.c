@@ -389,6 +389,9 @@ void *get_packet_from_connection_helper(struct connection *pc,
   case PACKET_TRADEROUTE_INFO:
     return receive_packet_traderoute_info(pc, type);
 
+  case PACKET_EXTGAME_INFO:
+    return receive_packet_extgame_info(pc, type);
+
   default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
 	    type, conn_description(pc));
@@ -745,6 +748,9 @@ const char *get_packet_name(enum packet_type type)
 
   case PACKET_TRADEROUTE_INFO:
     return "PACKET_TRADEROUTE_INFO";
+
+  case PACKET_EXTGAME_INFO:
+    return "PACKET_EXTGAME_INFO";
 
   default:
     return "unknown";
@@ -28505,6 +28511,216 @@ int send_packet_traderoute_info(struct connection *pc, const struct packet_trade
 
   switch(pc->phs.variant[PACKET_TRADEROUTE_INFO]) {
     case 100: return send_packet_traderoute_info_100(pc, packet);
+    default: die("unknown variant"); return -1;
+  }
+}
+
+#define hash_packet_extgame_info_100 hash_const
+
+#define cmp_packet_extgame_info_100 cmp_const
+
+BV_DEFINE(packet_extgame_info_100_fields, 12);
+
+static struct packet_extgame_info *receive_packet_extgame_info_100(struct connection *pc, enum packet_type type)
+{
+  packet_extgame_info_100_fields fields;
+  struct packet_extgame_info *old;
+  struct hash_table **hash = &pc->phs.received[type];
+  struct packet_extgame_info *clone;
+  RECEIVE_PACKET_START(packet_extgame_info, real_packet);
+
+  DIO_BV_GET(&din, fields);
+
+
+  if (!*hash) {
+    *hash = hash_new(hash_packet_extgame_info_100, cmp_packet_extgame_info_100);
+  }
+  old = hash_delete_entry(*hash, real_packet);
+
+  if (old) {
+    *real_packet = *old;
+  } else {
+    memset(real_packet, 0, sizeof(*real_packet));
+  }
+
+  real_packet->futuretechsscore = BV_ISSET(fields, 0);
+  real_packet->improvedautoattack = BV_ISSET(fields, 1);
+  real_packet->stackbribing = BV_ISSET(fields, 2);
+  real_packet->experimentalbribingcost = BV_ISSET(fields, 3);
+  real_packet->techtrading = BV_ISSET(fields, 4);
+  real_packet->ignoreruleset = BV_ISSET(fields, 5);
+  real_packet->goldtrading = BV_ISSET(fields, 6);
+  real_packet->citytrading = BV_ISSET(fields, 7);
+  real_packet->alliedairlifting = BV_ISSET(fields, 8);
+  real_packet->teamplacement = BV_ISSET(fields, 9);
+  real_packet->globalwarmingon = BV_ISSET(fields, 10);
+  real_packet->nuclearwinteron = BV_ISSET(fields, 11);
+
+  clone = fc_malloc(sizeof(*clone));
+  *clone = *real_packet;
+  if (old) {
+    free(old);
+  }
+  hash_insert(*hash, clone, clone);
+
+  RECEIVE_PACKET_END(real_packet);
+}
+
+static int send_packet_extgame_info_100(struct connection *pc, const struct packet_extgame_info *packet)
+{
+  const struct packet_extgame_info *real_packet = packet;
+  packet_extgame_info_100_fields fields;
+  struct packet_extgame_info *old, *clone;
+  bool differ, old_from_hash, force_send_of_unchanged = FALSE;
+  struct hash_table **hash = &pc->phs.sent[PACKET_EXTGAME_INFO];
+  int different = 0;
+  SEND_PACKET_START(PACKET_EXTGAME_INFO);
+
+  if (!*hash) {
+    *hash = hash_new(hash_packet_extgame_info_100, cmp_packet_extgame_info_100);
+  }
+  BV_CLR_ALL(fields);
+
+  old = hash_lookup_data(*hash, real_packet);
+  old_from_hash = (old != NULL);
+  if (!old) {
+    old = fc_malloc(sizeof(*old));
+    memset(old, 0, sizeof(*old));
+    force_send_of_unchanged = TRUE;
+  }
+
+  differ = (old->futuretechsscore != real_packet->futuretechsscore);
+  if(differ) {different++;}
+  if(packet->futuretechsscore) {BV_SET(fields, 0);}
+
+  differ = (old->improvedautoattack != real_packet->improvedautoattack);
+  if(differ) {different++;}
+  if(packet->improvedautoattack) {BV_SET(fields, 1);}
+
+  differ = (old->stackbribing != real_packet->stackbribing);
+  if(differ) {different++;}
+  if(packet->stackbribing) {BV_SET(fields, 2);}
+
+  differ = (old->experimentalbribingcost != real_packet->experimentalbribingcost);
+  if(differ) {different++;}
+  if(packet->experimentalbribingcost) {BV_SET(fields, 3);}
+
+  differ = (old->techtrading != real_packet->techtrading);
+  if(differ) {different++;}
+  if(packet->techtrading) {BV_SET(fields, 4);}
+
+  differ = (old->ignoreruleset != real_packet->ignoreruleset);
+  if(differ) {different++;}
+  if(packet->ignoreruleset) {BV_SET(fields, 5);}
+
+  differ = (old->goldtrading != real_packet->goldtrading);
+  if(differ) {different++;}
+  if(packet->goldtrading) {BV_SET(fields, 6);}
+
+  differ = (old->citytrading != real_packet->citytrading);
+  if(differ) {different++;}
+  if(packet->citytrading) {BV_SET(fields, 7);}
+
+  differ = (old->alliedairlifting != real_packet->alliedairlifting);
+  if(differ) {different++;}
+  if(packet->alliedairlifting) {BV_SET(fields, 8);}
+
+  differ = (old->teamplacement != real_packet->teamplacement);
+  if(differ) {different++;}
+  if(packet->teamplacement) {BV_SET(fields, 9);}
+
+  differ = (old->globalwarmingon != real_packet->globalwarmingon);
+  if(differ) {different++;}
+  if(packet->globalwarmingon) {BV_SET(fields, 10);}
+
+  differ = (old->nuclearwinteron != real_packet->nuclearwinteron);
+  if(differ) {different++;}
+  if(packet->nuclearwinteron) {BV_SET(fields, 11);}
+
+  if (different == 0 && !force_send_of_unchanged) {
+    return 0;
+  }
+
+  DIO_BV_PUT(&dout, fields);
+
+  /* field 0 is folded into the header */
+  /* field 1 is folded into the header */
+  /* field 2 is folded into the header */
+  /* field 3 is folded into the header */
+  /* field 4 is folded into the header */
+  /* field 5 is folded into the header */
+  /* field 6 is folded into the header */
+  /* field 7 is folded into the header */
+  /* field 8 is folded into the header */
+  /* field 9 is folded into the header */
+  /* field 10 is folded into the header */
+  /* field 11 is folded into the header */
+
+
+  if (old_from_hash) {
+    hash_delete_entry(*hash, old);
+  }
+
+  clone = old;
+
+  *clone = *real_packet;
+  hash_insert(*hash, clone, clone);
+  SEND_PACKET_END;
+}
+
+static void ensure_valid_variant_packet_extgame_info(struct connection *pc)
+{
+  int variant = -1;
+
+  if(pc->phs.variant[PACKET_EXTGAME_INFO] != -1) {
+    return;
+  }
+
+  if(FALSE) {
+  } else if(TRUE) {
+    variant = 100;
+  } else {
+    die("unknown variant");
+  }
+  pc->phs.variant[PACKET_EXTGAME_INFO] = variant;
+}
+
+struct packet_extgame_info *receive_packet_extgame_info(struct connection *pc, enum packet_type type)
+{
+  if(!pc->used) {
+    freelog(LOG_ERROR,
+	    "WARNING: trying to read data from the closed connection %s",
+	    conn_description(pc));
+    return NULL;
+  }
+  assert(pc->phs.variant != NULL);
+  if(is_server) {
+    freelog(LOG_ERROR, "Receiving packet_extgame_info at the server.");
+  }
+  ensure_valid_variant_packet_extgame_info(pc);
+
+  switch(pc->phs.variant[PACKET_EXTGAME_INFO]) {
+    case 100: return receive_packet_extgame_info_100(pc, type);
+    default: die("unknown variant"); return NULL;
+  }
+}
+
+int send_packet_extgame_info(struct connection *pc, const struct packet_extgame_info *packet)
+{
+  if(!pc->used) {
+    freelog(LOG_ERROR,
+	    "WARNING: trying to send data to the closed connection %s",
+	    conn_description(pc));
+    return -1;
+  }
+  assert(pc->phs.variant != NULL);
+  if(!is_server) {
+    freelog(LOG_ERROR, "Sending packet_extgame_info from the client.");
+  }
+  ensure_valid_variant_packet_extgame_info(pc);
+
+  switch(pc->phs.variant[PACKET_EXTGAME_INFO]) {
+    case 100: return send_packet_extgame_info_100(pc, packet);
     default: die("unknown variant"); return -1;
   }
 }

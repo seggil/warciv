@@ -620,6 +620,7 @@ void send_game_info(struct conn_list *dest)
 {
   struct packet_game_info ginfo;
   struct packet_traderoute_info tinfo;
+  struct packet_extgame_info extgameinfo;
   int i;
 
   if (!dest)
@@ -669,6 +670,20 @@ void send_game_info(struct conn_list *dest)
   tinfo.traderevenuepct = game.traderevenuepct;
   tinfo.traderevenuestyle = game.traderevenuestyle;
   tinfo.caravanbonusstyle = game.caravanbonusstyle;
+/* send extra game info */
+  extgameinfo.futuretechsscore = game.futuretechsscore;
+  extgameinfo.improvedautoattack = game.improvedautoattack;
+  extgameinfo.stackbribing = game.stackbribing;
+  extgameinfo.experimentalbribingcost = game.experimentalbribingcost;
+  extgameinfo.techtrading = game.techtrading;
+  extgameinfo.ignoreruleset = game.ignoreruleset;
+  extgameinfo.goldtrading = game.goldtrading;
+  extgameinfo.citytrading = game.citytrading;
+  extgameinfo.alliedairlifting = game.alliedairlifting;
+  extgameinfo.teamplacement = game.teamplacement;
+  extgameinfo.globalwarmingon = game.globalwarmingon;
+  extgameinfo.nuclearwinteron = game.nuclearwinteron;
+  
 
   conn_list_iterate(*dest, pconn) {
     /* ? fixme: check for non-players: */
@@ -676,6 +691,9 @@ void send_game_info(struct conn_list *dest)
     send_packet_game_info(pconn, &ginfo);
     if (has_capability("extroutes", pconn->capability)) {
       send_packet_traderoute_info(pconn, &tinfo);
+    }
+    if (has_capability("extgameinfo", pconn->capability)) {
+      send_packet_extgame_info(pconn, &extgameinfo);
     }
   }
   conn_list_iterate_end;
