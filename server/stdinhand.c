@@ -1332,6 +1332,7 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
     cmd_reply(CMD_REMOVE, caller, C_OK,
 	      _("Removed player %s from the game."), name);
     pplayer->is_dying = TRUE;
+    kill_player(pplayer);
     return TRUE;
   }
   if (check) {
