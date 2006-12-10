@@ -250,7 +250,6 @@ void shuffle_start_positions_by_iter(int *start_pos)
             tabtabu[best_local_x][best_local_y] += game.nplayers;            
         }
     }    
-    notify_conn(NULL, _("Iterative team placement in progress, 100%% complete"));
 }
 
 
