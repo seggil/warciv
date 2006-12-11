@@ -2266,7 +2266,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  > punit->moves_left) {
 	append_output_window(_("Game: Too far for this unit."));
       } else {
-	do_unit_goto(ptile);
+	send_goto_unit(punit,ptile);
 	/* note that this will be executed by the server after the goto */
 	if (!pcity)
 	  do_unit_nuke(punit);
@@ -2451,7 +2451,7 @@ void do_unit_goto(struct tile *ptile)
 {
   struct unit *punit = player_find_unit_by_id(game.player_ptr, hover_unit);
 
-  if (hover_unit == 0 || hover_state != HOVER_GOTO)
+  if (hover_unit == 0 || (hover_state != HOVER_GOTO))
     return;
 
   if (punit) {

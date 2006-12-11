@@ -343,7 +343,7 @@ extern bool is_server;
 
 #define GAME_DEFAULT_GOLD        50
 #define GAME_MIN_GOLD            0
-#define GAME_MAX_GOLD            5000
+#define GAME_MAX_GOLD            50000
 
 #define GAME_DEFAULT_START_UNITS  "cccwwwxxx"
 
@@ -353,7 +353,7 @@ extern bool is_server;
 
 #define GAME_DEFAULT_TECHLEVEL   0
 #define GAME_MIN_TECHLEVEL       0
-#define GAME_MAX_TECHLEVEL       50
+#define GAME_MAX_TECHLEVEL       88
 
 #define GAME_DEFAULT_UNHAPPYSIZE 4
 #define GAME_MIN_UNHAPPYSIZE     1
@@ -401,7 +401,7 @@ extern bool is_server;
 #define GAME_MIN_DIPLOMACY           0
 #define GAME_MAX_DIPLOMACY           4
 
-#define GAME_DEFAULT_DIPLCHANCE      80
+#define GAME_DEFAULT_DIPLCHANCE      60
 #define GAME_MIN_DIPLCHANCE          1
 #define GAME_MAX_DIPLCHANCE          99
 
