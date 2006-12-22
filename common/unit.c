@@ -196,9 +196,9 @@ bool unit_can_airlift_to(struct unit *punit, struct city *pcity)
     return FALSE;
   }
   if (punit->tile->city->owner != pcity->owner) {
-    if(!game.alliedairlifting || !pplayers_allied(get_player(punit->owner),get_player(pcity->owner))) return FALSE;
+    if(!(game.airliftingstyle & 2) || !pplayers_allied(get_player(punit->owner),get_player(pcity->owner))) return FALSE;
   }
-  if (!punit->tile->city->airlift) {
+  if (!punit->tile->city->airlift || (!pcity->airlift && (!(game.airliftingstyle & 1)))) {
     return FALSE;
   }
   if (!is_ground_unit(punit))

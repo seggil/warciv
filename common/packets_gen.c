@@ -28551,7 +28551,14 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(struct connec
   real_packet->ignoreruleset = BV_ISSET(fields, 5);
   real_packet->goldtrading = BV_ISSET(fields, 6);
   real_packet->citytrading = BV_ISSET(fields, 7);
-  real_packet->alliedairlifting = BV_ISSET(fields, 8);
+  if (BV_ISSET(fields, 8)) {
+    {
+      int readin;
+    
+      dio_get_uint32(&din, &readin);
+      real_packet->airliftingstyle = readin;
+    }
+  }
   real_packet->teamplacement = BV_ISSET(fields, 9);
   real_packet->globalwarmingon = BV_ISSET(fields, 10);
   real_packet->nuclearwinteron = BV_ISSET(fields, 11);
@@ -28621,9 +28628,9 @@ static int send_packet_extgame_info_100(struct connection *pc, const struct pack
   if(differ) {different++;}
   if(packet->citytrading) {BV_SET(fields, 7);}
 
-  differ = (old->alliedairlifting != real_packet->alliedairlifting);
+  differ = (old->airliftingstyle != real_packet->airliftingstyle);
   if(differ) {different++;}
-  if(packet->alliedairlifting) {BV_SET(fields, 8);}
+  if(differ) {BV_SET(fields, 8);}
 
   differ = (old->teamplacement != real_packet->teamplacement);
   if(differ) {different++;}
@@ -28651,7 +28658,9 @@ static int send_packet_extgame_info_100(struct connection *pc, const struct pack
   /* field 5 is folded into the header */
   /* field 6 is folded into the header */
   /* field 7 is folded into the header */
-  /* field 8 is folded into the header */
+  if (BV_ISSET(fields, 8)) {
+    dio_put_uint32(&dout, real_packet->airliftingstyle);
+  }
   /* field 9 is folded into the header */
   /* field 10 is folded into the header */
   /* field 11 is folded into the header */

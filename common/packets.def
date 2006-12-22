@@ -1342,7 +1342,7 @@ PACKET_EXTGAME_INFO=123;sc,is-info,handle-via-packet
   BOOL ignoreruleset;
   BOOL goldtrading;
   BOOL citytrading;
-  BOOL alliedairlifting;
+  UINT32 airliftingstyle;
   BOOL teamplacement;
   BOOL globalwarmingon;
   BOOL nuclearwinteron;

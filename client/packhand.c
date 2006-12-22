@@ -1468,7 +1468,7 @@ void handle_extgame_info(struct packet_extgame_info *packet)
   game.ignoreruleset = packet->ignoreruleset;
   game.goldtrading = packet->goldtrading;
   game.citytrading = packet->citytrading;
-  game.alliedairlifting = packet->alliedairlifting;
+  game.airliftingstyle = packet->airliftingstyle;
   game.teamplacement = packet->teamplacement;
   game.globalwarmingon = packet->globalwarmingon;
   game.nuclearwinteron = packet->nuclearwinteron;

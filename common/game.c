@@ -203,7 +203,7 @@ void game_init(bool clear_players)
   game.rgame.tech_leakage = GAME_DEFAULT_TECHLEAKAGE;
   game.rgame.killstack = GAME_DEFAULT_KILLSTACK;
   game.citytrading   = GAME_DEFAULT_CITYTRADING;
-  game.alliedairlifting   = GAME_DEFAULT_ALLIEDAIRLIFTING;
+  game.airliftingstyle   = GAME_DEFAULT_AIRLIFTINGSTYLE;
   game.teamplacement   = GAME_DEFAULT_TEAMPLACEMENT;
   game.globalwarmingon = GAME_DEFAULT_GLOBALWARMINGON;
   game.nuclearwinteron = GAME_DEFAULT_NUCLEARWINTERON;

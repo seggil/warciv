@@ -678,7 +678,7 @@ void send_game_info(struct conn_list *dest)
   extgameinfo.ignoreruleset = game.ignoreruleset;
   extgameinfo.goldtrading = game.goldtrading;
   extgameinfo.citytrading = game.citytrading;
-  extgameinfo.alliedairlifting = game.alliedairlifting;
+  extgameinfo.airliftingstyle = game.airliftingstyle;
   extgameinfo.teamplacement = game.teamplacement;
   extgameinfo.globalwarmingon = game.globalwarmingon;
   extgameinfo.nuclearwinteron = game.nuclearwinteron;

@@ -160,7 +160,7 @@ struct civ_game {
   bool ignoreruleset;
   bool goldtrading;
   bool citytrading;
-  bool alliedairlifting;
+  int airliftingstyle;
   bool teamplacement;
   bool globalwarmingon;
   bool nuclearwinteron;
@@ -327,7 +327,7 @@ extern bool is_server;
 #define GAME_DEFAULT_TECHTRADING        0
 #define GAME_DEFAULT_CITYTRADING    0
 #define GAME_DEFAULT_SLOWINVASIONS        1
-#define GAME_DEFAULT_ALLIEDAIRLIFTING   1
+#define GAME_DEFAULT_AIRLIFTINGSTYLE  1
 #define GAME_DEFAULT_TECHLEAKAGE 0
 #define GAME_DEFAULT_TEAMPLACEMENT  1
 #define GAME_DEFAULT_GLOBALWARMINGON  1

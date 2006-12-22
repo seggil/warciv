@@ -1055,7 +1055,7 @@ struct packet_extgame_info {
   bool ignoreruleset;
   bool goldtrading;
   bool citytrading;
-  bool alliedairlifting;
+  int airliftingstyle;
   bool teamplacement;
   bool globalwarmingon;
   bool nuclearwinteron;

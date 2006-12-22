@@ -1055,14 +1055,15 @@ struct settings_s settings[] = {
              "If turned off, trading cities in diplomacy dialog\n"
              "is not allowed."), NULL,
           GAME_DEFAULT_CITYTRADING)
-  GEN_BOOL("alliedairlifting", game.alliedairlifting, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-          N_("Airlifting into allied cities"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, airlifting units into allied cities\n"
-             "is not allowed."), NULL,
-          GAME_DEFAULT_ALLIEDAIRLIFTING)
+  GEN_INT("airliftingstyle", game.airliftingstyle, 
+      SSET_RULES_FLEXIBLE, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+          N_("Airlifting style"),
+          N_("0 - standard 2.0.8, only 1 unit per turn to destination\n"
+             "1 - multiple units can be airlifted into destination\n"
+             "2 - like 0 but airlifts into allied cities are possible\n"
+             "3 - like 1 but airlifts into allied cities are possible"),
+          NULL,
+          0, 3, GAME_DEFAULT_AIRLIFTINGSTYLE)
   GEN_BOOL("teamplacement", game.teamplacement, SSET_RULES,
 	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
           N_("Team placement"),
