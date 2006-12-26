@@ -354,21 +354,27 @@ bool can_build_improvement_direct(const struct city *pcity, Impr_Type_id id)
   const struct impr_type *building = get_improvement_type(id);
 
   if (!can_player_build_improvement_direct(city_owner(pcity), id)) {
+//     freelog(LOG_VERBOSE,"can_player_build_improvement_direct failed for %i",id);
     return FALSE;
   }
 
   if (city_got_building(pcity, id)) {
+//     freelog(LOG_VERBOSE,"city_got_building failed for %i",id);
     return FALSE;
   }
 
   if (!city_has_terr_spec_gate(pcity, id)) {
+//     freelog(LOG_VERBOSE,"city_has_terr_spec_gate failed for %i",id);
     return FALSE;
   }
 
   if (building->bldg_req != B_LAST
       && !city_got_building(pcity, building->bldg_req)) {
+//     freelog(LOG_VERBOSE,"building->bldg_req != B_LAST && !city_got_building failed for %i",id);
     return FALSE;
   }
+
+//  freelog(LOG_VERBOSE,"returning result of improvement_redundant for %i",id);
 
   return !improvement_redundant(city_owner(pcity),pcity, id, TRUE);
 }
@@ -380,9 +386,11 @@ bool can_build_improvement_direct(const struct city *pcity, Impr_Type_id id)
 bool can_build_improvement(const struct city *pcity, Impr_Type_id id)
 {  
   if (!can_build_improvement_direct(pcity, id)) {
-    return FALSE;
+//     freelog(LOG_VERBOSE,"can_build_improvement_direct failed for %i",id);
+     return FALSE;
   }
   if (improvement_obsolete(city_owner(pcity), id)) {
+//     freelog(LOG_VERBOSE,"improvement_obsolete failed for %i",id);
     return FALSE;
   }
   return TRUE;

@@ -483,6 +483,9 @@ void client_game_init()
 **************************************************************************/
 void client_game_free()
 {
+  /* we store pointers to tiles so we have to clear them */
+  clear_link_marks();
+
   city_autonaming_free();
   control_queues_free();
   free_client_goto();

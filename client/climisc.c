@@ -82,6 +82,8 @@ struct autoname_data {
 
 static struct hash_table *mark_table = NULL;
 
+struct tile *ltile = NULL;
+int ltilex, ltiley;
 
 /**************************************************************************
   ...
@@ -1539,14 +1541,15 @@ void clear_link_marks(void)
   check_init_mark_table();
   
   hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
-    if (!ptile)
-      continue;
+    assert(ptile);
     ptile->client.mark_ttl = 0;
   } hash_iterate_end;
 
   hash_delete_all_entries(mark_table);
 
-  update_map_canvas_visible();
+  if(get_client_state() == CLIENT_GAME_RUNNING_STATE) {
+    update_map_canvas_visible();
+  }
 }
 
 /**************************************************************************
@@ -1557,8 +1560,7 @@ void decrease_link_mark_ttl(void)
   check_init_mark_table();
 
   hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
-    if (!ptile)
-      continue;
+    assert(ptile);
     if (--ptile->client.mark_ttl <= 0)
       hash_delete_entry(mark_table, ptile);
   } hash_iterate_end;
@@ -1571,13 +1573,14 @@ void add_link_mark(struct tile *ptile)
 {
   check_init_mark_table();
 
-  if (!ptile)
-    return;
+  assert(ptile);
 
   hash_insert(mark_table, ptile, NULL);
   draw_link_mark(ptile);
 
-  update_map_canvas_visible();
+  if(get_client_state() == CLIENT_GAME_RUNNING_STATE) {
+    update_map_canvas_visible();
+  }
 }
 
 /**************************************************************************
@@ -1655,10 +1658,8 @@ void draw_link_mark(struct tile *ptile)
 void draw_link_marks(void)
 {
   check_init_mark_table();
-
   hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
-    if (!ptile)
-      continue;
+    assert(ptile);
     if (ptile->client.mark_ttl <= 0) {
       hash_delete_entry(mark_table, ptile);
       continue;

@@ -1558,6 +1558,7 @@ void update_map_canvas(int canvas_x, int canvas_y, int width, int height)
   bool full;
   struct canvas *tmp;
 
+  freelog(LOG_VERBOSE, "");
   canvas_x = MAX(canvas_x, 0);
   canvas_y = MAX(canvas_y, 0);
   width = MIN(mapview_canvas.store_width - canvas_x, width);
@@ -1711,6 +1712,7 @@ void update_city_description(struct city *pcity)
 {
   int canvas_x, canvas_y;
 
+  freelog(LOG_VERBOSE, "");
   /* We update the entire map canvas area that this city description
    * might be covering.  This may, for instance, redraw other city
    * descriptions that overlap with this one. */
