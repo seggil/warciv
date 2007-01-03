@@ -230,6 +230,11 @@ void establish_new_connection(struct connection *pconn)
     }
   } conn_list_iterate_end;
 
+  /* if game is in SELECT_RACES_STATE state, we need to send him rulesets */
+  if(server_state == SELECT_RACES_STATE) {
+    send_rulesets(dest);
+  }
+
   /* a player has already been created for this user, reconnect him */
   if ((pplayer = find_player_by_user(pconn->username))) {
     attach_connection_to_player(pconn, pplayer);

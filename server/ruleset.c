@@ -1991,6 +1991,7 @@ static void send_ruleset_control(struct conn_list *dest)
   struct packet_ruleset_control packet;
   int i;
 
+  freelog(LOG_VERBOSE, "Sending ruleset control to clients");
   packet.aqueduct_size = game.aqueduct_size;
   packet.add_to_size_limit = game.add_to_size_limit;
   packet.notradesize = game.notradesize;
@@ -3271,6 +3272,8 @@ void load_rulesets(void)
 **************************************************************************/
 void send_rulesets(struct conn_list *dest)
 {
+  freelog(LOG_VERBOSE,"Sending rulesets to %i connections", conn_list_size(dest));
+	        
   conn_list_do_buffer(dest);
   lsend_packet_freeze_hint(dest);
 
