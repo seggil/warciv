@@ -210,6 +210,7 @@ bool unleash_barbarians(struct tile *ptile)
   }
 
   unit_cnt = 3 + myrand(4);
+  if ( game.barbarianrate > 4 ) unit_cnt += 2 + myrand(game.barbarianrate); 
 
   barbarians = create_barbarian_player(TRUE);
   me = barbarians->player_no;
@@ -337,6 +338,7 @@ static void try_summon_barbarians(void)
   struct tile *ptile, *utile;
   int i, boat, cap, dist, unit;
   int uprise = 1;
+  int superbarb = 0;
   struct city *pc;
   struct player *barbarians, *victim;
 
@@ -358,6 +360,7 @@ static void try_summon_barbarians(void)
   }
 
   victim = city_owner(pc);
+  if ( game.barbarianrate > 4 ) superbarb = 3;
 
   dist = real_map_distance(ptile, pc->tile);
   freelog(LOG_DEBUG,"Closest city to %d %d is %s at %d %d which is %d far", 
@@ -395,7 +398,7 @@ static void try_summon_barbarians(void)
     if (city_list_size(&victim->cities) > UPRISE_CIV_MOST) {
       uprise = 3;
     }
-    for (i = 0; i < myrand(3) + uprise * game.barbarianrate; i++) {
+    for (i = 0; i < myrand(3) + superbarb + uprise * game.barbarianrate; i++) {
       unit = find_a_unit_type(L_BARBARIAN, L_BARBARIAN_TECH);
       (void) create_unit(barbarians, utile, unit, 0, 0, -1);
       freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
@@ -404,20 +407,27 @@ static void try_summon_barbarians(void)
 		       get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0, -1);
   } else {                   /* sea raiders - their units will be veteran */
     struct unit *ptrans;
+    int n_boats = 1;
+    int i_boat;
+
 
     barbarians = create_barbarian_player(FALSE);
-    boat = find_a_unit_type(L_BARBARIAN_BOAT,-1);
-    ptrans = create_unit(barbarians, utile, boat, 0, 0, -1);
-    cap = get_transporter_capacity(unit_list_get(&utile->units, 0));
-    for (i = 0; i < cap-1; i++) {
-      unit = find_a_unit_type(L_BARBARIAN_SEA,L_BARBARIAN_SEA_TECH);
-      (void) create_unit_full(barbarians, utile, unit, 0, 0, -1, -1,
-			      ptrans);
-      freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
+
+    if ( game.barbarianrate > 4 ) n_boats = game.barbarianrate - 3;
+    for ( i_boat = 0; i_boat < n_boats; i_boat++ ) {
+      boat = find_a_unit_type(L_BARBARIAN_BOAT,-1);
+      ptrans = create_unit(barbarians, utile, boat, 0, 0, -1);
+      cap = get_transporter_capacity(unit_list_get(&utile->units, 0));
+      for (i = 0; i < cap-1; i++) {
+        unit = find_a_unit_type(L_BARBARIAN_SEA,L_BARBARIAN_SEA_TECH);
+        (void) create_unit_full(barbarians, utile, unit, 0, 0, -1, -1,
+	  		        ptrans);
+        freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
+        }
+      (void) create_unit_full(barbarians, utile,
+			      get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0,
+			      -1, -1, ptrans);
     }
-    (void) create_unit_full(barbarians, utile,
-			    get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0,
-			    -1, -1, ptrans);
   }
 
   /* Is this necessary?  create_unit_full already sends unit info. */

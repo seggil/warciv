@@ -461,12 +461,12 @@ static int defense_multiplication(Unit_Type_id att_type,
     }
   }
 
-  if (map_has_special(ptile, S_FORTRESS) && !pcity) {
+  if (map_has_special(ptile, S_FORTRESS) && !pcity && is_ground_unittype(def_type)) {
     defensepower +=
 	(defensepower * terrain_control.fortress_defense_bonus) / 100;
   }
 
-  if ((pcity || fortified) && is_ground_unittype(def_type)) {
+  if (fortified && is_ground_unittype(def_type)) {
     defensepower = (defensepower * 3) / 2;
   }
 
