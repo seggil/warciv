@@ -1888,26 +1888,36 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
   static struct timer *anim_timer = NULL; 
   struct unit *losing_unit = (hp0 == 0 ? punit0 : punit1);
   int canvas_x, canvas_y, i;
+  float unit0_hp, unit1_hp;
+  float deltahp0, deltahp1;
+  const int steps = 2;
+  int counter = 0;
 
   set_units_in_combat(punit0, punit1);
-
+  
   /* Make sure we don't start out with fewer HP than we're supposed to
    * end up with (which would cause the following loop to break). */
   punit0->hp = MAX(punit0->hp, hp0);
   punit1->hp = MAX(punit1->hp, hp1);
 
-  while (punit0->hp > hp0 || punit1->hp > hp1) {
-    const int diff0 = punit0->hp - hp0, diff1 = punit1->hp - hp1;
-
+  unit0_hp = punit0->hp;
+  unit1_hp = punit1->hp;
+  
+  deltahp0 = (unit0_hp - hp0) / steps;
+  deltahp1 = (unit1_hp - hp1) / steps;
+  
+  
+  while (counter++ < steps) {
     anim_timer = renew_timer_start(anim_timer, TIMER_USER, TIMER_ACTIVE);
 
-    if (myrand(diff0 + diff1) < diff0) {
-      punit0->hp--;
-      refresh_tile_mapcanvas(punit0->tile, FALSE);
-    } else {
-      punit1->hp--;
-      refresh_tile_mapcanvas(punit1->tile, FALSE);
-    }
+    freelog(LOG_DEBUG, "animating unit combat");
+    unit0_hp -= deltahp0;
+    unit1_hp -= deltahp1;
+    
+    punit0->hp = (int)unit0_hp;
+    punit1->hp = (int)unit1_hp;
+    refresh_tile_mapcanvas(punit0->tile, FALSE);
+    refresh_tile_mapcanvas(punit1->tile, FALSE);
 
     flush_dirty();
     redraw_selection_rectangle();

@@ -2107,7 +2107,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 
     if (do_animation) {
       int dx, dy;
-
+      freelog(LOG_DEBUG,"animating unit movement");
       /* For the duration of the animation the unit exists at neither
        * tile. */
       map_distance_vector(&dx, &dy, punit->tile, target_unit->tile);
