@@ -1031,10 +1031,11 @@ void request_unit_execute_delayed_goto(void)
 	punit->is_new = FALSE;
       }
     }
+    /* it is safe to remove the current item, but can be called only once per iteration */
+    delayed_goto_data_list_unlink(&DGqueue, dgd);
     free(dgd);
   } delayed_goto_data_list_iterate_end;
   connection_do_unbuffer(&aconnection);
-  delayed_goto_data_list_unlink_all(&DGqueue);
 }
 
 /**************************************************************************
