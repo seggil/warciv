@@ -89,6 +89,8 @@ static struct tile_list ALqueue;
 /* Patrol "queue" */
 static struct hash_table *patrol_table = NULL;
 
+int moveandattack_state = 0;
+int ignore_focus_change_for_unit = 0;
 int autowakeup_state = 1;
 int goto_mode = 0;
 int lastactivatedunit = 0;
@@ -309,6 +311,12 @@ void update_unit_focus(void)
 	  && punit_focus->activity != ACTIVITY_GOTO)
       || punit_focus->done_moving
       || punit_focus->moves_left == 0 || punit_focus->ai.control) {
+    if(punit_focus && moveandattack_state == 1) {
+        // ignore focus change for move and attack mode
+        if(ignore_focus_change_for_unit == punit_focus->id && punit_focus->ai.control) {
+            return;
+        }
+    }
     advance_unit_focus();
   }
 }
@@ -2445,6 +2453,20 @@ static struct unit *quickselect(struct tile *ptile,
 }
 
 /**************************************************************************
+
+**************************************************************************/
+void attack_after_move(struct unit *punit)
+{
+    if ((moveandattack_state == 1) && can_unit_do_auto(punit)) {
+       ignore_focus_change_for_unit = punit->id;
+       request_unit_auto(punit);
+       request_new_unit_activity(punit, ACTIVITY_IDLE);
+       set_unit_focus(punit);
+    }
+}
+
+
+/**************************************************************************
  Finish the goto mode and let the unit which is stored in hover_unit move
  to a given location.
 **************************************************************************/
@@ -2459,6 +2481,7 @@ void do_unit_goto(struct tile *ptile)
     punit->is_new = FALSE;
     if (!draw_goto_line) {
       send_goto_unit(punit, ptile);
+      attack_after_move(punit);
     } else {
       struct tile *dest_tile;
 
@@ -2466,6 +2489,7 @@ void do_unit_goto(struct tile *ptile)
       dest_tile = get_line_dest();
       if (ptile == dest_tile) {
 	send_goto_route(punit);
+	attack_after_move(punit);
       } else {
 	append_output_window(_("Game: Didn't find a route to the "
                                "destination!"));
@@ -3221,6 +3245,15 @@ void key_quickselect(enum quickselect_type qtype)
 void key_toggle_autowakeup(void)
 {
   autowakeup_state = 1 ^ autowakeup_state;
+
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+void key_toggle_moveandattack(void)
+{
+  moveandattack_state = 1 ^ moveandattack_state;
 
 }
 

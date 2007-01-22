@@ -50,6 +50,7 @@ extern enum unit_activity connect_activity;
 extern bool draw_goto_line;
 extern bool non_ai_unit_focus;
 extern int autowakeup_state;
+extern int moveandattack_state;
 extern int goto_mode;
 extern int lastactivatedunit;
 extern int airliftunittype;
@@ -222,6 +223,7 @@ void key_unit_delayed_goto(int flg);
 void key_unit_execute_delayed_goto(void);
 void key_unit_clear_delayed_orders(void);
 void key_toggle_autowakeup(void);
+void key_toggle_moveandattack(void);
 void key_set_goto_mode(int mode);
 
 /* don't change this unless you also put more entries in data/Freeciv */

@@ -151,6 +151,7 @@ enum MenuID {
   MENU_WARCLIENT_EXECUTE_DELAYED_GOTO,
   MENU_WARCLIENT_CLEAR_DELAYED_ORDERS,
   MENU_WARCLIENT_TOGGLE_WAKEUP,
+  MENU_WARCLIENT_TOGGLE_MOVEANDATTACK,
   MENU_WARCLIENT_GOTO_SINGLE,
   MENU_WARCLIENT_GOTO_GROUP,
   MENU_WARCLIENT_GOTO_ALL,
@@ -605,19 +606,23 @@ static void warclient_menu_callback(gpointer callback_data,
     break;
    case MENU_WARCLIENT_TOGGLE_WAKEUP:
     if (autowakeup_state ^ GTK_CHECK_MENU_ITEM(widget)->active)
-		key_toggle_autowakeup();
+	key_toggle_autowakeup();
+	break;
+   case MENU_WARCLIENT_TOGGLE_MOVEANDATTACK:
+    if (moveandattack_state ^ GTK_CHECK_MENU_ITEM(widget)->active)
+	key_toggle_moveandattack();
 	break;
    case MENU_WARCLIENT_GOTO_SINGLE:
-		key_set_goto_mode(0);
+	key_set_goto_mode(0);
 	break;
    case MENU_WARCLIENT_GOTO_GROUP:
-		key_set_goto_mode(1);
+	key_set_goto_mode(1);
 	break;
    case MENU_WARCLIENT_GOTO_ALL:
-		key_set_goto_mode(2);
+	key_set_goto_mode(2);
 	break;
    case MENU_WARCLIENT_GOTO_GROUP_CONTINENT:
-		key_set_goto_mode(3);
+	key_set_goto_mode(3);
 	break;        
    case MENU_WARCLIENT_UNIT_LIMIT_TWO:
         unit_limit = 2;
@@ -1230,6 +1235,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Warclient") "/" N_("Autowakeup sentried units"),		"v",
 	warclient_menu_callback,	MENU_WARCLIENT_TOGGLE_WAKEUP,	"<CheckItem>"	},
+  { "/" N_("Warclient") "/" N_("Move and attack mode"),		"",
+	warclient_menu_callback,	MENU_WARCLIENT_TOGGLE_MOVEANDATTACK,	"<CheckItem>"	},
   { "/" N_("Warclient") "/sep2",				NULL,
 	NULL,			0,					"<Separator>"	},
 
@@ -1792,6 +1799,7 @@ void update_menus(void)
     menus_set_sensitive("<main>/_View/Focus Unit", !draw_units);
     menus_set_active("<main>/_View/Fog of War", draw_fog_of_war);
     menus_set_active("<main>/Warclient/Autowakeup sentried units", autowakeup_state);
+    menus_set_active("<main>/Warclient/Move and attack mode", moveandattack_state);
     menus_set_active("<main>/Warclient/Inclusive filter/All units", inclusive_dgoto_filter & FILTER_ALL);
     menus_set_active("<main>/Warclient/Exclusive filter/Off", exclusive_dgoto_filter & FILTER_OFF);
     menus_set_active("<main>/Warclient/Unit limit/Unlimited units", !unit_limit);
