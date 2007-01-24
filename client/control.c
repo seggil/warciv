@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -139,6 +139,7 @@ static void store_focus(void);
 static struct unit *quickselect(struct tile *ptile,
 				enum quickselect_type qtype);
 static void do_mass_order(enum unit_activity activity);
+void attack_after_move(struct unit *punit);
 /**************************************************************************
 ...
 **************************************************************************/
@@ -333,7 +334,7 @@ struct unit *get_unit_in_focus(void)
  This function may be called from packhand.c, via update_unit_focus(),
  as a result of packets indicating change in activity for a unit. Also
  called when user press the "Wait" command.
- 
+
  FIXME: Add feature to focus only units of a certain category.
 **************************************************************************/
 void advance_unit_focus(void)
@@ -363,15 +364,15 @@ void advance_unit_focus(void)
 
   set_unit_focus(candidate);
 
-  /* 
+  /*
    * Is the unit which just lost focus a non-AI unit? If yes this
-   * enables the auto end turn. 
+   * enables the auto end turn.
    */
   if (punit_old_focus && !punit_old_focus->ai.control) {
     non_ai_unit_focus = TRUE;
   }
 
-  /* 
+  /*
    * Handle auto-turn-done mode: If a unit was in focus (did move),
    * but now none are (no more to move) and there was at least one
    * non-AI unit this turn which was focused, then fake a Turn Done
@@ -511,12 +512,12 @@ void blink_active_unit(void)
   Update unit icons (and arrow) in the information display, for specified
   punit as the active unit and other units on the same square.  In practice
   punit is almost always (or maybe strictly always?) the focus unit.
-  
+
   Static vars store some info on current (ie previous) state, to avoid
   unnecessary redraws; initialise to "flag" values to always redraw first
   time.  In principle we _might_ need more info (eg ai.control, connecting),
   but in practice this is enough?
-  
+
   Used to store unit_ids for below units, to use for callbacks (now done
   inside gui-dep set_unit_icon()), but even with ids here they would not
   be enough information to know whether to redraw -- instead redraw every
@@ -625,7 +626,7 @@ void process_caravan_arrival(struct unit *punit)
 	&& (!game.player_ptr->ai.control || ai_popup_windows)) {
       struct city *pcity_dest = map_get_city(punit->tile);
       struct city *pcity_homecity = find_city_by_id(punit->homecity);
-      if (!default_caravan_action && pcity_dest && pcity_homecity) {  
+      if (!default_caravan_action && pcity_dest && pcity_homecity) {
         /* if 0 popup dialog */
 	popup_caravan_dialog(punit, pcity_homecity, pcity_dest);
 	return;
@@ -1130,7 +1131,7 @@ void check_dead_rally_sources(void)
 }
 
 /**************************************************************************
-  ... 
+  ...
 **************************************************************************/
 void key_select_rally_point(void)
 {
@@ -1498,6 +1499,7 @@ void request_move_unit_direction(struct unit *punit, int dir)
   if (punit->moves_left > 0) {
     dsend_packet_unit_move(&aconnection, punit->id,
 			   dest_tile->x, dest_tile->y);
+    attack_after_move(punit);
   } else {
     /* Initiate a "goto" with direction keys for exhausted units. */
     send_goto_unit(punit, dest_tile);
@@ -2461,7 +2463,7 @@ void attack_after_move(struct unit *punit)
        ignore_focus_change_for_unit = punit->id;
        request_unit_auto(punit);
        request_new_unit_activity(punit, ACTIVITY_IDLE);
-       set_unit_focus(punit);
+//       set_unit_focus(punit);
     }
 }
 
@@ -2882,7 +2884,7 @@ void enable_auto_mode(void)
   if (punit_focus == NULL)
     return;
 
-  if (goto_mode && ctrl_state) {      
+  if (goto_mode && ctrl_state) {
     /* ctrl_state is 1 when Q is pressed */
     /* goto for all units of the selected unit type on the same tile */
     if (goto_mode == 3)
@@ -2972,7 +2974,7 @@ static void do_mass_order(enum unit_activity activity)
 	  }
       }
     } unit_list_iterate_end;
-  } else {	
+  } else {
     /* goto_mode==0 - single unit */
 
     if (can_unit_do_activity(punit_focus, activity)) {
@@ -3253,8 +3255,10 @@ void key_toggle_autowakeup(void)
 **************************************************************************/
 void key_toggle_moveandattack(void)
 {
+  static char txt[255];
   moveandattack_state = 1 ^ moveandattack_state;
-
+  my_snprintf(txt, sizeof(txt), _("Warclient: move and attack mode is %s"), moveandattack_state ? "on" : "off");
+  append_output_window(txt);
 }
 
 /**************************************************************************
@@ -3262,8 +3266,13 @@ void key_toggle_moveandattack(void)
 **************************************************************************/
 void key_set_goto_mode(int mode)
 {
-  goto_mode = mode;
+  static char txt[255];
+  static char *description[] = {"single unit","all units of the same type on the tile","all units on the tile","all units of the same type on the continent",NULL};
 
+  assert(mode >= 0 && mode <= 3);
+  goto_mode = mode;
+  my_snprintf(txt, sizeof(txt), _("Warclient: delayed goto mode set to: %s"), description[mode]);
+  append_output_window(txt);
 }
 
 /**************************************************************************

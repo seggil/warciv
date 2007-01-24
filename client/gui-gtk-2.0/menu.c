@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,12 +81,12 @@ enum MenuID {
   MENU_GAME_SERVER_OPTIONS1,
   MENU_GAME_SERVER_OPTIONS2,
   MENU_GAME_SAVE_GAME,
-  MENU_GAME_SAVE_QUICK, 
+  MENU_GAME_SAVE_QUICK,
   MENU_GAME_OUTPUT_LOG,
   MENU_GAME_CLEAR_OUTPUT,
   MENU_GAME_LEAVE,
   MENU_GAME_QUIT,
-  
+
   MENU_GOVERNMENT_TAX_RATE,
   MENU_GOVERNMENT_FIND_CITY,
   MENU_GOVERNMENT_WORKLISTS,
@@ -169,7 +169,7 @@ enum MenuID {
   MENU_WARCLIENT_AIRLIFT_FREIGHT,
   MENU_WARCLIENT_AIRLIFT_CARAVAN,
   MENU_WARCLIENT_AIRLIFT_DIPLOMAT,
-  MENU_WARCLIENT_AIRLIFT_SPY,  
+  MENU_WARCLIENT_AIRLIFT_SPY,
   MENU_WARCLIENT_AIRLIFT_HOWITZER,
   MENU_WARCLIENT_AIRLIFT_ARTILLERY,
   MENU_WARCLIENT_AIRLIFT_CAVALRY,
@@ -314,7 +314,7 @@ static void game_menu_callback(gpointer callback_data,
 	  _("Leaving a local game will end it!"));
       setup_dialog(dialog, toplevel);
       gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-      g_signal_connect(dialog, "response", 
+      g_signal_connect(dialog, "response",
 	  G_CALLBACK(leave_local_game_response), NULL);
       gtk_window_present(GTK_WINDOW(dialog));
     } else {
@@ -466,7 +466,7 @@ static void orders_menu_callback(gpointer callback_data,
   switch(callback_action) {
    case MENU_ORDER_BUILD_CITY:
      /* Also used to build wonder and add to city. */
-     key_unit_build(); 
+     key_unit_build();
      break;
    case MENU_ORDER_ROAD:
      if (get_unit_in_focus()) {
@@ -496,7 +496,7 @@ static void orders_menu_callback(gpointer callback_data,
    case MENU_ORDER_AIRBASE:
     if (get_unit_in_focus()) {
       if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
-        key_unit_airbase(); 
+        key_unit_airbase();
       else
         key_set_patrol_position (NULL);
     }
@@ -623,19 +623,19 @@ static void warclient_menu_callback(gpointer callback_data,
 	break;
    case MENU_WARCLIENT_GOTO_GROUP_CONTINENT:
 	key_set_goto_mode(3);
-	break;        
+	break;
    case MENU_WARCLIENT_UNIT_LIMIT_TWO:
         unit_limit = 2;
-	break;        
+	break;
    case MENU_WARCLIENT_UNIT_LIMIT_FIVE:
         unit_limit = 5;
-	break;        
+	break;
    case MENU_WARCLIENT_UNIT_LIMIT_TEN:
         unit_limit = 10;
-	break;        
+	break;
    case MENU_WARCLIENT_UNIT_LIMIT_UNLIMITED:
         unit_limit = 0;
-	break;        
+	break;
    case MENU_WARCLIENT_SET_AIRLIFT_DEST:
         request_auto_airlift_destination_selection();
         break;
@@ -680,7 +680,7 @@ static void warclient_menu_callback(gpointer callback_data,
         break;
    case MENU_WARCLIENT_AIRLIFT_ARMOR:
         airliftunittype = find_unit_type_by_name_orig("Armor");
-        break;                
+        break;
    case MENU_WARCLIENT_AIRLIFT_MECHINF:
         airliftunittype = find_unit_type_by_name_orig("Mech. Inf.");
         break;
@@ -708,7 +708,7 @@ static void warclient_menu_callback(gpointer callback_data,
    case MENU_WARCLIENT_PATROL:
     if (get_unit_in_focus()) {
       if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
-        key_unit_airbase(); 
+        key_unit_airbase();
       else
         key_set_patrol_position (NULL);
     }
@@ -946,7 +946,7 @@ static void help_menu_callback(gpointer callback_data,
                   <path>             -> path of a radio item to link against
                   "<Separator>"      -> create a separator
                   "<Branch>"         -> create an item to hold sub items
-                  "<LastBranch>"     -> create a right justified branch 
+                  "<LastBranch>"     -> create a right justified branch
 
 Important: The underscore is NOT just for show (see Item 1 above)!
            At the top level, use with "Alt" key to open the menu.
@@ -1230,12 +1230,12 @@ static GtkItemFactoryEntry menu_items[]	=
 	warclient_menu_callback,	MENU_WARCLIENT_EXCLUSIVE_ABLE_TO_MOVE,		"<main>/Warclient/Exclusive filter/All units"	},
   { "/" N_("Warclient") "/" N_("Exclusive filter") "/" N_("Off"), NULL,
 	warclient_menu_callback,	MENU_WARCLIENT_EXCLUSIVE_OFF,		"<main>/Warclient/Exclusive filter/All units"	},
-  
+
   { "/" N_("Warclient") "/sep1",				NULL,
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Warclient") "/" N_("Autowakeup sentried units"),		"v",
 	warclient_menu_callback,	MENU_WARCLIENT_TOGGLE_WAKEUP,	"<CheckItem>"	},
-  { "/" N_("Warclient") "/" N_("Move and attack mode"),		"",
+  { "/" N_("Warclient") "/" N_("Move and attack mode"),		"<shift>a",
 	warclient_menu_callback,	MENU_WARCLIENT_TOGGLE_MOVEANDATTACK,	"<CheckItem>"	},
   { "/" N_("Warclient") "/sep2",				NULL,
 	NULL,			0,					"<Separator>"	},
@@ -1464,7 +1464,7 @@ static gchar *translate_func(const gchar *path, gpointer data)
 {
 #ifndef ENABLE_NLS
     static gchar res[100];
-    
+
     g_strlcpy(res, path, sizeof(res));
 #else
     static struct astring in, out, tmp;   /* these are never free'd */
@@ -1503,7 +1503,7 @@ static gchar *translate_func(const gchar *path, gpointer data)
     } while (next);
     res = out.str;
 #endif
-  
+
   return res;
 }
 
@@ -1515,7 +1515,7 @@ static const char *menu_path_remove_uline(const char *path)
   static char res[100];
   const char *from;
   char *to;
-  
+
   from = path;
   to = res;
 
@@ -1590,16 +1590,16 @@ static void menus_set_active(const char *path, int active)
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), active);
 }
 
-#ifdef UNUSED 
+#ifdef UNUSED
 /****************************************************************
 ...
 *****************************************************************/
 static void menus_set_shown(const char *path, int shown)
 {
   GtkWidget *item;
-  
+
   path = menu_path_remove_uline(path);
-  
+
   if(!(item = gtk_item_factory_get_item(item_factory, path))) {
     freelog(LOG_ERROR, "Can't show non-existent menu %s.", path);
     return;
@@ -1703,9 +1703,9 @@ void update_menus(void)
 		      && get_client_state() >= CLIENT_GAME_RUNNING_STATE);
   menus_set_sensitive("<main>/_Game/_Save Game", can_client_access_hack()
 		      && get_client_state() >= CLIENT_GAME_RUNNING_STATE);
-  menus_set_sensitive("<main>/_Game/Server O_ptions", 
+  menus_set_sensitive("<main>/_Game/Server O_ptions",
 		      aconnection.established);
-  menus_set_sensitive("<main>/_Game/_Initial Server Options", 
+  menus_set_sensitive("<main>/_Game/_Initial Server Options",
 		      get_client_state() >= CLIENT_GAME_RUNNING_STATE);
   menus_set_sensitive("<main>/_Game/L_eave", aconnection.established);
   menus_set_sensitive("<main>/Warclient", TRUE);
@@ -1823,7 +1823,7 @@ void update_menus(void)
       sz_strlcpy(irrtext, _("Build _Irrigation"));
       sz_strlcpy(mintext, _("Build _Mine"));
       sz_strlcpy(transtext, _("Transf_orm Terrain"));
-      
+
       /* Enable the button for adding to a city in all cases, so we
 	 get an eventual error message from the server if we try. */
       menus_set_sensitive("<main>/_Orders/_Build City",
@@ -1865,7 +1865,7 @@ void update_menus(void)
       menus_set_sensitive("<main>/_Orders/_Unload",
 	(can_unit_unload(punit, find_unit_by_id(punit->transported_by))
 	 && can_unit_exist_at_tile(punit, punit->tile)));
-      menus_set_sensitive("<main>/_Orders/Wake up o_thers", 
+      menus_set_sensitive("<main>/_Orders/Wake up o_thers",
 			  is_unit_activity_on_tile(ACTIVITY_SENTRY,
                                                    punit->tile));
       menus_set_sensitive("<main>/_Orders/_Auto Settler",
@@ -1894,19 +1894,19 @@ void update_menus(void)
 	else
 	  menus_rename("<main>/_Orders/_Build City", _("_Build City"));
       }
-      else 
+      else
 	menus_rename("<main>/_Orders/_Build City", _("_Build City"));
- 
+
       if (unit_flag(punit, F_TRADE_ROUTE))
 	menus_rename("<main>/_Orders/Build _Road", _("Make Trade _Route"));
       else if (unit_flag(punit, F_SETTLERS)) {
 	if (map_has_special(punit->tile, S_ROAD)) {
 	  roadtext = _("Build _Railroad");
-	  road_activity=ACTIVITY_RAILROAD;  
-	} 
+	  road_activity=ACTIVITY_RAILROAD;
+	}
 	else {
 	  roadtext = _("Build _Road");
-	  road_activity=ACTIVITY_ROAD;  
+	  road_activity=ACTIVITY_ROAD;
 	}
 	menus_rename("<main>/_Orders/Build _Road", roadtext);
       }
