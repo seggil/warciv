@@ -54,7 +54,7 @@ struct server_arguments {
   bool auth_enabled;            /* defaults to FALSE */
   bool auth_allow_guests;       /* defaults to TRUE */
   bool auth_allow_newusers;     /* defaults to TRUE */
-  
+
   bool no_dns_lookup; /* defaults to FALSE */
 };
 
@@ -75,8 +75,7 @@ void check_for_full_turn_done(void);
 void dealloc_id(int id);
 void alloc_id(int id);
 int get_next_id_number(void);
-void server_game_free(void);
-void server_basic_game_free(bool remove_players);
+void server_game_free(bool remove_players);
 
 void check_for_full_turn_done(void);
 

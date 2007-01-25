@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -213,6 +213,7 @@ void game_init(bool clear_players)
   game.trademindist = GAME_DEFAULT_TRADEMINDIST;
   game.teamplacementtype = GAME_DEFAULT_TEAMPLACEMENTTYPE;
 
+  game.ruleset_loaded= FALSE;
   game.gold          = GAME_DEFAULT_GOLD;
   game.tech          = GAME_DEFAULT_TECHLEVEL;
   game.skill_level   = GAME_DEFAULT_SKILL_LEVEL;
@@ -222,7 +223,7 @@ void game_init(bool clear_players)
   game.timeoutinc    = GAME_DEFAULT_TIMEOUTINC;
   game.timeoutincmult= GAME_DEFAULT_TIMEOUTINCMULT;
   game.timeoutcounter= 1;
-  game.timeoutaddenemymove = GAME_DEFAULT_TIMEOUTADDEMOVE; 
+  game.timeoutaddenemymove = GAME_DEFAULT_TIMEOUTADDEMOVE;
   game.tcptimeout    = GAME_DEFAULT_TCPTIMEOUT;
   game.netwait       = GAME_DEFAULT_NETWAIT;
   game.last_ping     = 0;
@@ -296,7 +297,7 @@ void game_init(bool clear_players)
   game.num_unit_types = 0;
   game.num_impr_types = 0;
   game.num_tech_types = 0;
- 
+
   game.nation_count = 0;
   game.government_count = 0;
   game.default_government = G_MAGIC;        /* flag */
@@ -316,11 +317,11 @@ void game_init(bool clear_players)
   game.save_options.save_starts = TRUE;
   game.save_options.save_private_map = TRUE;
 
-  init_our_capability();    
+  init_our_capability();
   map_init();
   idex_init();
   cm_init();
-  
+
   if (clear_players) {
     for(i=0; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++)
       player_init(&game.players[i]);
@@ -336,7 +337,7 @@ void game_init(bool clear_players)
 }
 
 /***************************************************************
-  Remove all initialized players. This is all player slots, 
+  Remove all initialized players. This is all player slots,
   since we initialize them all on game initialization.
 ***************************************************************/
 static void game_remove_all_players(void)
@@ -403,11 +404,11 @@ int game_next_year(int year)
   if (year == 1) /* hacked it to get rid of year 0 */
     year = 0;
 
-    /* !McFred: 
+    /* !McFred:
        - want year += 1 for spaceship.
     */
 
-  /* test game with 7 normal AI's, gen 4 map, foodbox 10, foodbase 0: 
+  /* test game with 7 normal AI's, gen 4 map, foodbox 10, foodbase 0:
    * Gunpowder about 0 AD
    * Railroad  about 500 AD
    * Electricity about 1000 AD
@@ -454,9 +455,9 @@ int game_next_year(int year)
   else if( year >= -1000 ) /* used this line for tuning (was -1250) */
     year += 25;
   else
-    year += 50; 
+    year += 50;
 
-  if (year == 0) 
+  if (year == 0)
     year = 1;
 
   return year;
@@ -479,7 +480,7 @@ void game_remove_player(struct player *pplayer)
   /* what a shit, players werent removed from teams before
   and team array got inconsistent */
   team_remove_player(pplayer);
-  
+
   if (pplayer->attribute_block.data) {
     free(pplayer->attribute_block.data);
     pplayer->attribute_block.data = NULL;
@@ -499,13 +500,13 @@ void game_remove_player(struct player *pplayer)
 
   conn_list_unlink_all(&pplayer->connections);
 
-  unit_list_iterate(pplayer->units, punit) 
+  unit_list_iterate(pplayer->units, punit)
     game_remove_unit(punit);
   unit_list_iterate_end;
   assert(unit_list_size(&pplayer->units) == 0);
   unit_list_unlink_all(&pplayer->units);
 
-  city_list_iterate(pplayer->cities, pcity) 
+  city_list_iterate(pplayer->cities, pcity)
     game_remove_city(pcity);
   city_list_iterate_end;
   assert(city_list_size(&pplayer->cities) == 0);

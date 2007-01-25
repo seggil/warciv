@@ -4351,11 +4351,7 @@ bool load_command(struct connection * caller, char *filename, bool check)
         return TRUE;
     }
     /* we found it, free all structures */
-    /* !! very bad idea, as it frees ruleset cache which is created after ruleset is loaded,
-       so at this point ruleset cache is uninitialized
-
-      server_game_free(FALSE);*/
-    server_basic_game_free(FALSE);
+    server_game_free(FALSE);
     game_init(TRUE);
     loadtimer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
     uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
@@ -4493,14 +4489,16 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
 
     sz_strlcpy(srvarg.load_filename, buf);
 
+    server_game_free(FALSE);
+    game_init(FALSE);
+
     game_loadmap(&secfile);
     section_file_check_unused(&secfile, buf);
     comment = secfile_lookup_str_default(&secfile,
                                          "No comment available", "game.comment");
     section_file_free(&secfile);
 
-    /* Assume that the map is ok since the admin included it. */
-    /* sanity_check(); */
+    sanity_check();
 
     notify_conn(&game.est_connections, _("Server: %s loaded: %s"),
                 name, comment);
@@ -4526,7 +4524,7 @@ static bool unloadmap_command(struct connection *caller, bool check)
     }
     if (check)
         return TRUE;
-    server_basic_game_free(FALSE);
+    server_game_free(FALSE);
     game_init(FALSE);
 
     if (srvarg.script_filename)
@@ -4615,6 +4613,7 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
                   _("Ruleset directory set to \"%s\""), str);
         sz_strlcpy(game.rulesetdir, str);
     }
+
     return TRUE;
 }
 /**************************************************************************
