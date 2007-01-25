@@ -169,6 +169,7 @@ struct civ_game {
   int iterplacementcoefficient;
   int teamplacementtype;
   /*=========== WARSERVER settings END ================*/
+  /* used in server only */
   bool ruleset_loaded;
 
   int government_count;

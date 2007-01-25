@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - The Freeciv Team
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 #include "tech.h"
 
 static bool ruleset_cache_initialized = FALSE;
- 
+
 /* Names of effect ranges.
  * (These must correspond to enum effect_range_id in effects.h.)
  * do not change these unless you know what you're doing! */
@@ -493,6 +493,7 @@ void ruleset_cache_free(void)
     }
   }
 
+  game.ruleset_loaded = FALSE;
   ruleset_cache_initialized = FALSE;
 }
 
