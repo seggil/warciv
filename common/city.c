@@ -996,7 +996,7 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
   else if(game.traderevenuestyle==1) {
       if (pc1 && pc2) {
         bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 4;
-      }        
+      }
   }//civ2 trade routes according to http://www.civfanatics.com/civ2/strategy/scrolls/#Trade
   else if(game.traderevenuestyle == 2) {
       if (pc1 && pc2) {
@@ -2536,6 +2536,12 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
 
   unit_list_init(&pcity->units_supported);
   pcity->debug = FALSE;
+
+//*pepeto*
+  pcity->rally_point=NULL;
+
+  trade_route_list_init(&pcity->trade_routes);
+  help_wonder_list_init(&pcity->help_wonders);
 
   return pcity;
 }

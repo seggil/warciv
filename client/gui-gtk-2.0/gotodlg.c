@@ -24,6 +24,7 @@
 
 #include "fcintl.h"
 #include "game.h"
+#include "log.h"//*pepeto*
 #include "map.h"
 #include "packets.h"
 #include "player.h"
@@ -37,6 +38,7 @@
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
+#include "multiselect.h"
 #include "options.h"
 
 #include "gotodlg.h"
@@ -76,31 +78,28 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
     break;
 
   case CMD_AIRLIFT:
-    {
+  {
       struct city *pdestcity = get_selected_city();
 
       if (pdestcity) {
-        struct unit *punit = get_unit_in_focus();
-
-        if (punit) {
-          request_unit_airlift(punit, pdestcity);
-        }
-      }
-    }
+		  multi_select_iterate(TRUE,punit)
+		  {
+          	request_unit_airlift(punit, pdestcity);
+		  } multi_select_iterate_end;
+      } 
     break;
-
+  }
   case CMD_GOTO:
-    {
+  {
       struct city *pdestcity = get_selected_city();
 
       if (pdestcity) {
-        struct unit *punit = get_unit_in_focus();
-
-        if (punit) {
-          send_goto_unit(punit, pdestcity->tile);
+		  multi_select_iterate(FALSE,punit)
+		  {
+          	send_goto_unit(punit, pdestcity->tile);
+		  } multi_select_iterate_end;
         }
-      }
-    }
+	}
     break;
 
   default:

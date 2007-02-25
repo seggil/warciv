@@ -51,6 +51,11 @@ static struct rgbtriple {
   {  0, 128, 128},  /* race11 */
   {  0,  64,  64},  /* race12 */
   {198, 198, 198},  /* race13 */
+//*pepeto*
+  { 255,  128,  0},  /* orange */
+  { 255,  198,  0},  /* forange */
+  { 128,  255,  0},  /* green */
+  { 166,  255,  166},  /* fgreen */
 };
 
 GdkColor *colors_standard [COLOR_STD_LAST];

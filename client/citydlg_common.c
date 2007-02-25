@@ -31,6 +31,7 @@
 #include "clinet.h"
 #include "control.h"
 #include "mapview_common.h"
+#include "myai.h"//*pepeto*
 #include "options.h"		/* for concise_city_production */
 #include "tilespec.h"		/* for is_isometric */
 
@@ -458,7 +459,7 @@ void activate_all_units(struct tile *ptile)
     if (game.player_idx == punit->owner) {
       /* Activate this unit. */
       pmyunit = punit;
-      request_new_unit_activity(punit, ACTIVITY_IDLE);
+      request_active_unit(punit);
     }
   } unit_list_iterate_end;
   if (pmyunit) {
@@ -486,6 +487,8 @@ int city_set_worklist(struct city *pcity, struct worklist *pworklist)
   struct worklist copy;
 
   copy_worklist(&copy, pworklist);
+
+  my_ai_worklist_event(pcity);//*pepeto*
 
   /* Don't send the worklist name to the server. */
   copy.name[0] = '\0';
