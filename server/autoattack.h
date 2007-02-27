@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 #define FC__AUTOATTACK_H
 
 void auto_attack(void);
-void auto_attack_with_unit(struct player *pplayer,
+bool auto_attack_with_unit(struct player *pplayer,
 				  struct unit *punit);
 
 #endif  /* FC__AUTOATTACK_H */
