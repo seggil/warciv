@@ -180,7 +180,8 @@
 #define SAVEFILE_OPTIONS "startoptions spacerace2 rulesets" \
 " diplchance_percent worklists2 map_editor known32fix turn " \
 "attributes watchtower rulesetdir client_worklists orders " \
-"startunits turn_last_built improvement_order technology_order"
+"startunits turn_last_built improvement_order technology_order " \
+"warserver_08_13"
 
 static const char hex_chars[] = "0123456789abcdef";
 
@@ -3332,6 +3333,51 @@ void game_load(struct section_file *file)
 				     "game.dispersion");
       }
 
+    if (has_capability("warserver_08_13", savefile_options)) {
+        game.trademindist = secfile_lookup_int_default(file,
+                GAME_DEFAULT_TRADEMINDIST, "game.trademindist");
+        game.traderevenuepct = secfile_lookup_int_default(file,
+                GAME_DEFAULT_TRADEREVENUEPCT, "game.traderevenuepct");
+        game.traderevenuestyle = secfile_lookup_int_default(file,
+                GAME_DEFAULT_TRADEREVENUESTYLE, "game.traderevenuestyle");
+        game.caravanbonusstyle = secfile_lookup_int_default(file,
+                GAME_DEFAULT_CARAVANBONUSSTYLE, "game.caravanbonusstyle");
+        game.futuretechsscore = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_FUTURETECHSSCORE, "game.futuretechsscore");
+        game.improvedautoattack = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_IMPROVEDAUTOATTACK, "game.improvedautoattack");
+        game.stackbribing = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_STACKBRIBING, "game.stackbribing");
+        game.experimentalbribingcost = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_EXPERIMENTALBRIBINGCOST, "game.experimentalbribingcost");
+        game.techtrading = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_TECHTRADING, "game.techtrading");
+        game.ignoreruleset = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_IGNORERULESET, "game.ignoreruleset");
+        game.goldtrading = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_GOLDTRADING, "game.goldtrading");
+        game.citytrading = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_CITYTRADING, "game.citytrading");
+        game.airliftingstyle = secfile_lookup_int_default(file,
+                GAME_DEFAULT_AIRLIFTINGSTYLE, "game.airliftingstyle");
+        game.teamplacement = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_TEAMPLACEMENT, "game.teamplacement");
+        game.globalwarmingon = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_GLOBALWARMINGON, "game.globalwarmingon");
+        game.nuclearwinteron = secfile_lookup_bool_default(file,
+                GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
+        game.maxconnections = secfile_lookup_int_default(file,
+                GAME_DEFAULT_MAXCONNECTIONS, "game.maxconnections");
+        game.bruteforcethreshold = secfile_lookup_int_default(file,
+                GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
+        game.iterplacementcoefficient = secfile_lookup_int_default(file,
+                GAME_DEFAULT_TRADEMINDIST, "game.iterplacementcoefficient");
+        game.teamplacementtype = secfile_lookup_int_default(file,
+                GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
+        sz_strlcpy(game.allow_take, secfile_lookup_str_default(file,
+                GAME_DEFAULT_ALLOW_TAKE, "game.allow_take"));
+	}
+
       map.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
 					           "map.topology_id");
       map.size = secfile_lookup_int_default(file, MAP_DEFAULT_SIZE,
@@ -3723,6 +3769,29 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.watchtower_vision, "game.watchtower_vision");
   secfile_insert_int(file, game.watchtower_extra_vision, "game.watchtower_extra_vision");
   secfile_insert_int(file, game.allowed_city_names, "game.allowed_city_names");
+
+  /* warserver settings (capability warserver_08_13) */
+  secfile_insert_int(file, game.trademindist, "game.trademindist");
+  secfile_insert_int(file, game.traderevenuepct, "game.traderevenuepct");
+  secfile_insert_int(file, game.traderevenuestyle, "game.traderevenuestyle");
+  secfile_insert_int(file, game.caravanbonusstyle, "game.caravanbonusstyle");
+  secfile_insert_bool(file, game.futuretechsscore, "game.futuretechsscore");
+  secfile_insert_bool(file, game.improvedautoattack, "game.improvedautoattack");
+  secfile_insert_bool(file, game.stackbribing, "game.stackbribing");
+  secfile_insert_bool(file, game.experimentalbribingcost, "game.experimentalbribingcost");
+  secfile_insert_bool(file, game.techtrading, "game.techtrading");
+  secfile_insert_bool(file, game.ignoreruleset, "game.ignoreruleset");
+  secfile_insert_bool(file, game.goldtrading, "game.goldtrading");
+  secfile_insert_bool(file, game.citytrading, "game.citytrading");
+  secfile_insert_int(file, game.airliftingstyle, "game.airliftingstyle");
+  secfile_insert_bool(file, game.teamplacement, "game.teamplacement");
+  secfile_insert_bool(file, game.globalwarmingon, "game.globalwarmingon");
+  secfile_insert_bool(file, game.nuclearwinteron, "game.nuclearwinteron");
+  secfile_insert_int(file, game.maxconnections, "game.maxconnections");
+  secfile_insert_int(file, game.bruteforcethreshold, "game.bruteforcethreshold");
+  secfile_insert_int(file, game.iterplacementcoefficient, "game.iterplacementcoefficient");
+  secfile_insert_int(file, game.teamplacementtype, "game.teamplacementtype");
+  secfile_insert_str(file, game.allow_take, "game.allow_take");
 
   /* old (1.14.1) servers need to have these server variables.  The values
    * don't matter, though. */
