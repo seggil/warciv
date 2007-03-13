@@ -56,7 +56,7 @@
 #define CMA_CUSTOM	(-2)
 
 enum city_operation_type {
-  CO_CHANGE, CO_LAST, CO_NEXT, CO_FIRST, CO_NONE
+  CO_CHANGE, CO_LAST, CO_NEXT, CO_FIRST, CO_SELL, CO_NONE
 };
 
 /******************************************************************/
@@ -75,6 +75,7 @@ static void create_change_menu(GtkWidget *item);
 static void create_last_menu(GtkWidget *item);
 static void create_first_menu(GtkWidget *item);
 static void create_next_menu(GtkWidget *item);
+static void create_sell_menu(GtkWidget *item);
 
 static struct gui_dialog *city_dialog_shell = NULL;
 
@@ -93,11 +94,14 @@ static void popup_last_menu(GtkMenuShell *menu, gpointer data);
 static void popup_first_menu(GtkMenuShell *menu, gpointer data);
 static void popup_next_menu(GtkMenuShell *menu, gpointer data);
 
+static void recreate_sell_menu(void);
+struct sell_data { int count, gold, cid; };
+
 static GtkWidget *city_center_command, *city_popup_command, *city_buy_command;
 static GtkWidget *city_change_command, *city_clear_worklist_command;
 static GtkWidget *city_autoarrange_workers_command;
 static GtkWidget *city_last_command, *city_first_command, *city_next_command;
-
+static GtkWidget *city_sell_command;
 
 static GtkWidget *change_improvements_item;
 static GtkWidget *change_units_item;
@@ -115,7 +119,6 @@ static GtkWidget *first_wonders_item;
 static GtkWidget *next_improvements_item;
 static GtkWidget *next_units_item;
 static GtkWidget *next_wonders_item;
-
 
 static GtkWidget *select_island_item;
 
@@ -289,6 +292,9 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
       if (row[i][0] == '\0') {
 	continue;
       }
+      if (city_operation == CO_SELL && i != 0) {
+        continue;
+      }
 
       my_snprintf(txt, ARRAY_SIZE(txt), "<span %s>%s</span>",
 		  markup[i], row[i]);
@@ -405,6 +411,30 @@ static void worklist_next_impr_or_unit_iterate(GtkTreeModel *model,
 /****************************************************************
 ...
 *****************************************************************/
+static void sell_impr_iterate(GtkTreeModel *model, 
+                              GtkTreePath *path,
+                              GtkTreeIter *it, 
+                              gpointer data)
+{
+  struct city *pcity;
+  gint id;
+  int impr_id;
+  struct sell_data *sd = (struct sell_data *)data; 
+
+  gtk_tree_model_get(model, it, 1, &id, -1);
+  pcity = find_city_by_id(id);
+  impr_id = cid_id(sd->cid);
+
+  if (!pcity->did_sell && city_got_building(pcity, impr_id)) {
+    sd->count++;
+    sd->gold += impr_sell_gold(impr_id);
+    city_sell_improvement(pcity, impr_id);
+  }
+}
+
+/****************************************************************
+...
+*****************************************************************/
 static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
 {
   cid cid = GPOINTER_TO_INT(data);
@@ -451,6 +481,28 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
       gtk_tree_selection_selected_foreach(city_selection,
 					  worklist_next_impr_or_unit_iterate,
 					  GINT_TO_POINTER(cid));
+      break;
+    case CO_SELL: {
+        struct sell_data sd = { 0, 0, cid };
+        GtkWidget *w;
+        char buf[128];
+        const char *imprname = get_improvement_name(cid);
+        
+        gtk_tree_selection_selected_foreach(city_selection,
+                                            sell_impr_iterate,
+                                            &sd);
+        if (sd.count > 0) {
+          my_snprintf(buf, sizeof(buf), _("Sold %d %s for %d gold."),
+                      sd.count, imprname, sd.gold);
+        } else {
+          my_snprintf(buf, sizeof(buf), _("No %s could be sold."),
+                      imprname);
+        }
+        w = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
+            GTK_MESSAGE_INFO, GTK_BUTTONS_OK, buf);
+        gtk_dialog_run(GTK_DIALOG(w));
+        gtk_widget_destroy(w);
+      }
       break;
     default:
       assert(FALSE); /* should never get here. */
@@ -698,6 +750,11 @@ static GtkWidget *create_city_report_menubar(void)
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
   city_last_command = item;
   create_last_menu(item);
+
+  item = gtk_menu_item_new_with_mnemonic(_("S_ell"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
+  city_sell_command = item;
+  create_sell_menu(item);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Select"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
@@ -1261,6 +1318,17 @@ static void create_change_menu(GtkWidget *item)
 }
 
 /****************************************************************
+  ...
+*****************************************************************/
+static void create_sell_menu(GtkWidget *item)
+{
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+}
+
+/****************************************************************
 Creates the last menu.
 *****************************************************************/
 static void create_last_menu(GtkWidget *item)
@@ -1412,7 +1480,28 @@ static void popup_next_menu(GtkMenuShell *menu, gpointer data)
 				  G_CALLBACK(select_impr_or_unit_callback), n);
 }
 
+/****************************************************************
+  ...
+*****************************************************************/
+static void recreate_sell_menu(void)
+{
+  int n;
+  GList *children;
+  GtkWidget *menu;
 
+  n = gtk_tree_selection_count_selected_rows(city_selection);
+
+  append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(city_sell_command),
+                                   FALSE, FALSE, CO_SELL,
+                                   city_can_sell_impr,
+                                   G_CALLBACK(select_impr_or_unit_callback), n);
+  
+  menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(city_sell_command));
+  children = gtk_container_get_children(GTK_CONTAINER(menu));
+  
+  n = g_list_length(children);
+  gtk_widget_set_sensitive(city_sell_command, n > 0);
+}
 
 /****************************************************************
 ...
@@ -1620,6 +1709,7 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_buy_command, FALSE);
     gtk_widget_set_sensitive(city_clear_worklist_command, FALSE);
     gtk_widget_set_sensitive(city_autoarrange_workers_command, FALSE);
+    gtk_widget_set_sensitive(city_sell_command, FALSE);
   } else {
     gtk_widget_set_sensitive(city_change_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_last_command, can_client_issue_orders());
@@ -1630,6 +1720,11 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_buy_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_clear_worklist_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_autoarrange_workers_command, can_client_issue_orders());
+    if (can_client_issue_orders()) {
+      recreate_sell_menu();
+    } else {
+      gtk_widget_set_sensitive(city_sell_command, FALSE);
+    }
   }
 }
 

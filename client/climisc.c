@@ -578,6 +578,21 @@ bool city_can_build_impr_or_unit(struct city *pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
+bool city_can_sell_impr(struct city *pcity, cid cid)
+{
+  int id;
+  id = cid_id(cid);
+  
+  if (cid_is_unit(cid))
+    return FALSE;
+  else
+    return !pcity->did_sell && city_got_building(pcity, id)
+      && !is_wonder(id);
+}
+
+/****************************************************************
+...
+*****************************************************************/
 bool city_unit_supported(struct city *pcity, cid cid)
 {
   if (cid_is_unit(cid)) {
