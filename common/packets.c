@@ -577,8 +577,11 @@ void generic_handle_player_attribute_chunk(struct player *pplayer,
 	  chunk->total_length, chunk->chunk_length);
 
   if (chunk->total_length < 0
+      || chunk->chunk_length < 0
       || chunk->total_length >= MAX_ATTRIBUTE_BLOCK
       || chunk->offset < 0
+      || chunk->offset > chunk->total_length /* necessary check on 32 bit systems */
+      || chunk->chunk_length > chunk->total_length
       || chunk->offset + chunk->chunk_length > chunk->total_length
       || (chunk->offset != 0
           && chunk->total_length != pplayer->attribute_block_buffer.length)) {

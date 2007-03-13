@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ void spy_poison(struct player *pplayer, struct unit *pdiplomat,
     return;
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
-  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat, 
+  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat,
                                 pcity->tile)) {
     return;
   }
@@ -111,7 +111,7 @@ void spy_poison(struct player *pplayer, struct unit *pdiplomat,
 		     " of %s."), pplayer->name, pcity->name);
 
   /* Update clients. */
-  city_refresh (pcity);  
+  city_refresh (pcity);
   send_city_info(NULL, pcity);
 
   /* this may cause a diplomatic incident */
@@ -351,7 +351,7 @@ void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
   }
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
-  if (!diplomat_infiltrate_tile(pplayer, uplayer, pdiplomat, 
+  if (!diplomat_infiltrate_tile(pplayer, uplayer, pdiplomat,
                                 pvictim->tile)) {
     return;
   }
@@ -383,7 +383,7 @@ void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
   Bribe an enemy unit.
 
   - Either a Diplomat or Spy can bribe an other players unit.
-  
+
   - Can't bribe a unit if:
     - Owner runs an unbribable government (e.g., democracy).
     - Player doesn't have enough gold.
@@ -399,10 +399,10 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 {
   struct player *uplayer = NULL;
   int diplomat_id;
-//  struct tile *victim_tile;
   bool vet = FALSE;
+  struct unit *gained_unit = NULL;
   int total_cost = 0;
-  
+
 //do some checks for all units on tile first
   unit_list_iterate_safe(ptile->units, pvictim) {
       /* Fetch target unit's player.  Sanity checks. */
@@ -433,7 +433,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
         return;
       }
   }unit_list_iterate_safe_end;
-  
+
   /* If player doesn't have enough gold, can't bribe. */
   if (pplayer->economic.gold < total_cost) {
     notify_player_ex(pplayer, pdiplomat->tile,
@@ -467,16 +467,25 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 
   freelog (LOG_DEBUG, "bribe-unit: succeeded");
 
+
   unit_list_iterate_safe(ptile->units, pvictim) {
       /* This may cause a diplomatic incident */
       maybe_cause_incident(DIPLOMAT_BRIBE, pplayer, pvictim, NULL);
 
       /* Convert the unit to your cause. Fog is lifted in the create algorithm. */
-      (void) create_unit_full(pplayer, pvictim->tile,
-    			  pvictim->type, pvictim->veteran,
-    			  pdiplomat->homecity, pvictim->moves_left,
-    			  pvictim->hp, NULL);
-    
+      gained_unit = create_unit_full(pplayer, pvictim->tile,
+                                     pvictim->type, pvictim->veteran,
+                                     pdiplomat->homecity, pvictim->moves_left,
+                                     pvictim->hp, NULL);
+
+      /* Copy some more unit fields */
+      gained_unit->fuel        = pvictim->fuel;
+      gained_unit->foul        = pvictim->foul;
+      gained_unit->paradropped = pvictim->paradropped;
+
+      /* Inform owner about less than full fuel */
+      send_unit_info(pplayer, gained_unit);
+
       /* This costs! */
       pplayer->economic.gold -= pvictim->bribe_cost;
 
@@ -485,13 +494,12 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 		   unit_name(pvictim->type), pplayer->name);
 
       /* Be sure to wipe the converted unit! */
-//      victim_tile = pvictim->tile;
       wipe_unit(pvictim);
   }unit_list_iterate_safe_end;
 
    /* Check if the unit gained veteran level */
    vet = maybe_make_veteran(pdiplomat);
-  
+
       /* Notify everybody involved. */
   if (vet) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_BRIBE,
@@ -502,7 +510,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_BRIBE,
 		     _("Game: Your %s succeeded in bribing unit(s)."),unit_name(pdiplomat->type));
   }
- 
+
   /* Now, try to move the briber onto the victim's square. */
   diplomat_id = pdiplomat->id;
   if (!handle_unit_move_request(pdiplomat, ptile, FALSE, FALSE)) {
@@ -534,10 +542,10 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 
   - The thief may be captured and executed, or escape to its home town.
 
-  FIXME: It should give a loss of reputaion to steal from a player you are
+  FIXME: It should give a loss of reputation to steal from a player you are
   not at war with
 ****************************************************************************/
-void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat, 
+void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
 		       struct city  *pcity, int technology)
 {
   struct player *cplayer;
@@ -549,7 +557,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   cplayer = city_owner (pcity);
   if (!cplayer || (cplayer == pplayer) || pplayers_allied(pplayer, cplayer))
     return;
-    
+
   freelog (LOG_DEBUG, "steal-tech: unit: %d", pdiplomat->id);
 
   /* If not a Spy, do something random. */
@@ -557,7 +565,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
     technology = game.num_tech_types;
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
-  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat, 
+  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat,
                                 pcity->tile)) {
     return;
   }
@@ -788,7 +796,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   }
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
-  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat, 
+  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat,
                                 pcity->tile)) {
     return;
   }
@@ -860,7 +868,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
 
   /* Update the players gold in the client */
   send_player_info(pplayer, pplayer);
-}  
+}
 
 /**************************************************************************
   Sabotage enemy city's improvement or production.
@@ -887,8 +895,8 @@ void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
   int count, which, target;
   const char *prod;
   /* Twice as difficult if target is specified. */
-  int success_prob = (improvement >= B_LAST ? game.diplchance 
-                      : game.diplchance / 2); 
+  int success_prob = (improvement >= B_LAST ? game.diplchance
+                      : game.diplchance / 2);
 
   /* Fetch target city's player.  Sanity checks. */
   if (!pcity)
@@ -904,7 +912,7 @@ void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
     improvement = B_LAST;
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
-  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat, 
+  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat,
                                 pcity->tile)) {
     return;
   }
@@ -1117,7 +1125,7 @@ static void diplomat_charge_movement (struct unit *pdiplomat, struct tile *ptile
 
   - Return TRUE if the "attacker" succeeds.
 **************************************************************************/
-static bool diplomat_success_vs_defender (struct unit *pattacker, 
+static bool diplomat_success_vs_defender (struct unit *pattacker,
 	struct unit *pdefender, struct tile *pdefender_tile)
 {
   int att = game.diplchance;
@@ -1142,10 +1150,10 @@ static bool diplomat_success_vs_defender (struct unit *pattacker,
   } else {
     if (tile_has_special(pdefender_tile, S_FORTRESS)
        || tile_has_special(pdefender_tile, S_AIRBASE)) {
-	def = (def * 5) / 4;/* +25% */ 
+	def = (def * 5) / 4;/* +25% */
     }
   }
-  
+
   return myrand(att) > myrand(def);
 }
 
@@ -1157,7 +1165,7 @@ static bool diplomat_success_vs_defender (struct unit *pattacker,
 
   - Return TRUE if the infiltrator succeeds.
 **************************************************************************/
-static bool diplomat_infiltrate_tile(struct player *pplayer, 
+static bool diplomat_infiltrate_tile(struct player *pplayer,
                                      struct player *cplayer,
 			             struct unit *pdiplomat,
 				     struct tile *ptile)
@@ -1168,12 +1176,12 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
    * destroyed. */
   unit_list_iterate(ptile->units, punit) {
     if (unit_flag(punit, F_DIPLOMAT) || unit_flag(punit, F_SUPERSPY)) {
-      /* A F_SUPERSPY unit may not acutally be a spy, but a superboss which 
-         we cannot allow puny diplomats from getting the better of. Note that 
+      /* A F_SUPERSPY unit may not acutally be a spy, but a superboss which
+         we cannot allow puny diplomats from getting the better of. Note that
          diplomat_success_vs_defender(punit) is always TRUE if the attacker
          is F_SUPERSPY. Hence F_SUPERSPY vs F_SUPERSPY in a diplomatic contest
          always kills the attacker. */
-      if (diplomat_success_vs_defender(pdiplomat, punit, ptile) 
+      if (diplomat_success_vs_defender(pdiplomat, punit, ptile)
           && !unit_flag(punit, F_SUPERSPY)) {
 	/* Defending Spy/Diplomat dies. */
 
@@ -1192,7 +1200,7 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
       } else {
 	/* Check to see if defending unit became more experienced */
 	bool vet = maybe_make_veteran(punit);
-	
+
 	/* Attacking Spy/Diplomat dies. */
 
 	notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_FAILED,
@@ -1245,7 +1253,7 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
   This determines if a diplomat/spy survives and escapes.
   If "pcity" is NULL, assume action was in the field.
 
-  Spies have a game.diplchance specified chance of survival (better 
+  Spies have a game.diplchance specified chance of survival (better
   if veteran):
     - Diplomats always die.
     - Escapes to home city.
@@ -1260,13 +1268,13 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
   struct city *spyhome;
 
   escapechance = game.diplchance + pdiplomat->veteran * 5;
-  
+
   if (pcity) {
     ptile = pcity->tile;
   } else {
     ptile = pdiplomat->tile;
   }
-  
+
   /* find closest city for escape target */
   spyhome = find_closest_owned_city(unit_owner(pdiplomat), ptile, FALSE, NULL);
 
@@ -1396,10 +1404,12 @@ static void maybe_cause_incident(enum diplomat_actions action, struct player *of
       punishment = GAME_MAX_REPUTATION/10;
       break;
     case DS_ALLIANCE:
+    case DS_TEAM:
       punishment = GAME_MAX_REPUTATION/5;
       break;
-    default:
-      die("Illegal diplstate in maybe_cause_incident.");
+    case DS_LAST:
+      assert(FALSE);
+      break;
     }
     offender->reputation = MAX(offender->reputation - punishment, 0);
     victim_player->diplstates[offender->player_no].has_reason_to_cancel = 2;
@@ -1421,7 +1431,7 @@ static void maybe_cause_incident(enum diplomat_actions action, struct player *of
  Plus, the damage to the unit reduces the price.
 **************************************************************************/
 int unit_bribe_cost(struct unit *punit)
-{  
+{
   struct government *g = get_gov_pplayer(unit_owner(punit));
   int cost;
   struct city *capital;
@@ -1456,13 +1466,13 @@ int unit_bribe_cost(struct unit *punit)
 	  cost *= unit_build_shield_cost(punit->type) / 10;
 
   	/* FIXME: This is a weird one - should be replaced */
-  	if (unit_flag(punit, F_CITIES)) 
+  	if (unit_flag(punit, F_CITIES))
 	    cost/=2;
 
 	  cost = (int)((float)cost/(float)2 + ((float)punit->hp/(float)default_hp) * ((float)cost/(float)2));
 	}
 
-  
+
   return cost;
 }
 

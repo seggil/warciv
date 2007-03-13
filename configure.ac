@@ -162,7 +162,7 @@ fi
 LIBS="$LIBS $LIBICONV"
 
 dnl I18n support
-ALL_LINGUAS="ca cs da de en_GB es et fi fr he_IL hu it ja nl nb no pl pt pt_BR ro ru sv uk"
+ALL_LINGUAS="ar ca cs da de en_GB es et fa fi fr he_IL hu it ja nl nb no pl pt pt_BR ro ru sv uk"
 AM_GNU_GETTEXT(,need-ngettext)
 
 dnl AM_GNU_GETTEXT doesn't have all features we want
@@ -270,8 +270,7 @@ fi
 
 
 dnl note this has to match the path installed by po/Makefile
-FC_EXPAND_DIR(LOCALEDIR, "$datadir/locale")
-AC_DEFINE_UNQUOTED(LOCALEDIR, "$LOCALEDIR", [Locale directory])
+CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
 
 EXTRA_GCC_DEBUG_CFLAGS=""
 
@@ -450,6 +449,7 @@ AM_CONDITIONAL(CLIENT_GUI_FTWL, test "$gui_sources" = "gui-ftwl")
 AM_CONDITIONAL(FTWL, test "$ftwl" != "no")
 AM_CONDITIONAL(FTWL_X11, test "$ftwl" = "x11")
 AM_CONDITIONAL(FTWL_SDL, test "$ftwl" = "sdl")
+AM_CONDITIONAL(MINGW32, test x"$MINGW32" = "xyes")
 
 dnl Checks for additional server libraries:
 if test x$server = xtrue; then
@@ -553,10 +553,11 @@ dnl export where the datadir is going to be installed
 FC_EXPAND_DIR(FREECIV_DATADIR, "$datadir/freeciv")
 
 if test x"$MINGW32" = xyes; then
-  AC_DEFINE_UNQUOTED(DEFAULT_DATA_PATH, ".;data;~/.freeciv;$FREECIV_DATADIR", [Mingw32-specific path])
+  DEFAULT_DATA_PATH=".;data;~/.freeciv;$datadir/freeciv"
 else
-  AC_DEFINE_UNQUOTED(DEFAULT_DATA_PATH, ".:data:~/.freeciv:$FREECIV_DATADIR", [Freeciv data path])
+  DEFAULT_DATA_PATH=".:data:~/.freeciv:$datadir/freeciv"
 fi
+CPPFLAGS="$CPPFLAGS -DDEFAULT_DATA_PATH=\"\\\"$DEFAULT_DATA_PATH\\\"\""
 
 dnl This has to be last library
 if test -n "$WITH_EFENCE"; then
@@ -647,8 +648,8 @@ dnl change so everything gets rebuilt. LDFLAGS is not handled here
 dnl since change in it should not cause recompilation, only relinking.
 dnl Note: Variables are named FC_STORE_* instead of FC_*_STORE in order to make them
 dnl       appear next to each other in config.h.
-AC_DEFINE_UNQUOTED([FC_STORE_CPPFLAGS], ["$CPPFLAGS"], [These are the CPPFLAGS used in compilation])
-AC_DEFINE_UNQUOTED([FC_STORE_CFLAGS], ["$CFLAGS"], [These are the CFLAGS used in compilation])
+AC_DEFINE_UNQUOTED([FC_STORE_CPPFLAGS], ['$CPPFLAGS'], [These are the CPPFLAGS used in compilation])
+AC_DEFINE_UNQUOTED([FC_STORE_CFLAGS], ['$CFLAGS'], [These are the CFLAGS used in compilation])
 
 AC_CONFIG_FILES([Makefile
           data/Makefile
@@ -669,6 +670,7 @@ AC_CONFIG_FILES([Makefile
 	  common/aicore/Makefile
 	  ai/Makefile
 	  tests/Makefile
+  	  win32/Makefile
 	  client/Makefile
 	  client/agents/Makefile
 	  client/include/Makefile
