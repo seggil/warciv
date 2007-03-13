@@ -266,6 +266,8 @@ struct settings_s settings[] = {
              "    an inland sea.  An isthmus connects the polar regions.\n"
              "5 = same as 4 except roads are generated in the polar regions\n"
              "    and on the connecting isthmus.\n"
+             "6 = fair island generator, each player start on the same island\n"
+             "    with the same start position\n"
 	     "\n"
 	     "Numbers in [] give the default values for placement of "
 	     "starting positions.  If the default value of startpos is "

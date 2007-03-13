@@ -254,7 +254,7 @@ void generator_init_topology(bool autosize)
 
     assert(TF_WRAPX == 0x1 && TF_WRAPY == 0x2);
     
-    if(map.generator >= 4) {
+    if(map.generator == 4 || map.generator == 5) {
       set_sizes(map.size, 2, 1);
     } else {
       /* Set map.xsize and map.ysize based on map.size. */
