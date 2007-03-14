@@ -76,6 +76,7 @@ bool city_can_build_impr_or_unit(struct city *pcity, cid cid);
 bool city_unit_supported(struct city *pcity, cid cid);
 bool city_unit_present(struct city *pcity, cid cid);
 bool city_building_present(struct city *pcity, cid cid);
+bool city_can_sell_impr(struct city *pcity, cid cid);
 
 struct item {
   cid cid;

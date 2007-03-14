@@ -59,8 +59,6 @@ struct tag_pattern {
 
 #define SPECLIST_TAG tag_pattern
 #define SPECLIST_TYPE struct tag_pattern
-#define SPECLIST_NO_FREE
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 #define tag_pattern_list_iterate(alist, pitem)\
   TYPED_LIST_ITERATE(struct tag_pattern, alist, pitem)

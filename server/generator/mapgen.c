@@ -54,6 +54,7 @@ static void mapgenerator2(void);
 static void mapgenerator3(void);
 static void mapgenerator4(void);
 static void mapgenerator67(bool make_roads);
+static void mapgenerator8(void);
 static void adjust_terrain_param(void);
 
 #define RIVERS_MAXTRIES 32767
@@ -1056,6 +1057,8 @@ void map_fractal_generate(bool autosize)
       mapgenerator67(TRUE);
     } else if (map.generator == 4) {
       mapgenerator67(FALSE);
+    } else if (map.generator == 6) {
+      mapgenerator8();
     }
     
     if (map.generator == 3) {
@@ -2578,4 +2581,662 @@ static void mapgenerator67(bool make_roads)
   free(height_map);
   height_map = NULL;
   freelog(LOG_VERBOSE, "Generator 6/7 finished");
+}
+
+/*************************************************************************
+  This generator (8) creates a map with the same island for each players and 
+  the same startpos. 
+*************************************************************************/
+#define gen8_terrain_num 11
+static int gen8_chance[gen8_terrain_num];
+
+enum gen8_tile_type {
+  TYPE_UNASSIGNED,
+  TYPE_SEA,
+  TYPE_LAND,
+  TYPE_STARTPOS
+};
+
+struct gen8_tile {
+  enum gen8_tile_type type;
+  int terrain;
+  int spec;
+  bool river;
+};
+
+struct gen8_map {
+  int xsize;
+  int ysize;
+  struct gen8_tile **tiles;
+};
+
+void startpos_init(void);
+void startpos_new(int x, int y);
+
+void terrain_chance_init(void);
+
+void normalize_coord(struct gen8_map *pmap, int *x, int *y);
+struct gen8_tile **create_tiles_buffer(int xsize, int ysize);
+void free_tiles_buffer(struct gen8_tile **buffer, int xsize);
+struct gen8_map *create_map(int xsize, int ysize);
+void free_map(struct gen8_map *pmap);
+void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos);
+
+int fill_land(struct gen8_map *pmap, int *x, int *y);
+struct gen8_map *create_fair_island(int size, bool startpos);
+
+void do_rotation(struct gen8_map *island);
+void do_hsym(struct gen8_map *island);
+void do_vsym(struct gen8_map *island);
+
+bool can_place_island_on_map(struct gen8_map *pmap, int x, int y, struct gen8_map *island);
+bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island);
+
+#define swap(type, data1, data2) {type data0 = data1; data1 = data2; data2 = data0;}
+
+#define adjacent_tiles_pos_iterate(pmap, x, y, tx, ty)	\
+{	\
+  int _tx, _ty, tx, ty;	\
+  for(_tx = x - 1; _tx <= x + 1; _tx++) {	\
+    if(_tx < 0) {	\
+      if(topo_has_flag(TF_WRAPX)) {	\
+        tx = _tx + pmap->xsize;	\
+      } else {	\
+        continue;	\
+      }	\
+    } else if(_tx >= pmap->xsize) {	\
+      if(topo_has_flag(TF_WRAPX)) {	\
+        tx = _tx - pmap->xsize;	\
+      } else {	\
+        continue;	\
+       }	\
+     } else {	\
+       tx = _tx;	\
+     }	\
+     for(_ty = y - 1; _ty <= y + 1; _ty++) {	\
+       if(_ty < 0) {	\
+         if(topo_has_flag(TF_WRAPY)) {	\
+           ty = _ty + pmap->ysize;	\
+         } else {	\
+           continue;	\
+         }	\
+       } else if(_ty >= pmap->ysize) {	\
+         if(topo_has_flag(TF_WRAPY)) {	\
+           ty = _ty - pmap->ysize;	\
+         } else {	\
+           continue;	\
+         }	\
+       } else {	\
+         ty = _ty;	\
+       }
+
+#define adjacent_tiles_pos_iterate_end	\
+    }	\
+  }	\
+}
+
+void startpos_init(void)
+{
+  map.num_start_positions = 0;
+  map.start_positions = fc_realloc(map.start_positions, game.nplayers * sizeof(*map.start_positions));
+}
+
+void startpos_new(int x, int y)
+{
+  map.start_positions[map.num_start_positions].tile = native_pos_to_tile(x, y);
+  map.start_positions[map.num_start_positions].nation = NO_NATION_SELECTED;
+  map.num_start_positions++;
+}
+
+void terrain_chance_init(void)
+{
+  double temp_rate = (double)map.temperature * map.temperature / 500;
+  double steep_rate = (double)map.steepness * map.steepness / 180;
+  double wet_rate = (double)map.wetness * map.wetness / 500;
+  double tropic_rate = (double)(temp_rate + wet_rate) / 2;
+
+  gen8_chance[T_ARCTIC] = 0;
+  gen8_chance[T_DESERT] = temp_rate;
+  gen8_chance[T_FOREST] = 22 - tropic_rate;
+  gen8_chance[T_GRASSLAND] = 0;
+  gen8_chance[T_HILLS] = 3 * steep_rate;
+  gen8_chance[T_JUNGLE] = tropic_rate;
+  gen8_chance[T_MOUNTAINS] = steep_rate;
+  gen8_chance[T_OCEAN] = 0;
+  gen8_chance[T_PLAINS] = 50 - temp_rate - tropic_rate - 2 * steep_rate;
+  gen8_chance[T_SWAMP] = tropic_rate;
+  gen8_chance[T_TUNDRA] = 0;
+}
+
+void normalize_coord(struct gen8_map *pmap, int *x, int *y)
+{
+  while(* x < 0)
+    *x += pmap->xsize;
+  while(*x >= pmap->xsize)
+    * x-= pmap->xsize;
+  while(*y < 0)
+    *y += pmap->ysize;
+  while(*y >= pmap->ysize)
+    *y -= pmap->ysize;
+}
+
+struct gen8_tile **create_tiles_buffer(int xsize, int ysize)
+{
+  struct gen8_tile **buffer = fc_malloc(sizeof(struct gen8_tile *) * xsize);
+  int x, y;
+
+  for(x = 0; x < xsize; x++) {
+    buffer[x] = fc_malloc(sizeof(struct gen8_tile) * ysize);
+    for(y = 0; y < ysize; y++) {
+      buffer[x][y].type = TYPE_UNASSIGNED;
+      buffer[x][y].terrain = T_OCEAN;
+      buffer[x][y].spec = 0;
+      buffer[x][y].river = FALSE;
+    }
+  }
+  return buffer;
+}
+
+void free_tiles_buffer(struct gen8_tile **buffer, int xsize)
+{
+  int i;
+  
+  for(i = 0; i < xsize; i++) {
+    free(buffer[i]);
+  }
+  free(buffer);
+}
+
+struct gen8_map *create_map(int xsize, int ysize)
+{
+  struct gen8_map *pmap = fc_malloc(sizeof(struct gen8_map));
+  
+  pmap->xsize = xsize;
+  pmap->ysize = ysize;
+  pmap->tiles = create_tiles_buffer(xsize, ysize);
+  return pmap;
+}
+
+void free_map(struct gen8_map *pmap)
+{
+  free_tiles_buffer(pmap->tiles, pmap->xsize);
+  free(pmap);
+}
+
+void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos)
+{
+  int xc, yc, xsize = xmax - xmin, ysize = ymax - ymin;
+
+  for(xc = 0; xc < xsize; xc++) {
+    for(yc = 0; yc < ysize; yc++) {
+      int sx = xmin + xc, sy = ymin + yc, dx = x + xc, dy = y + yc;
+
+      normalize_coord(src, &sx, &sy);
+      normalize_coord(dest, &dx, &dy);
+      if(src->tiles[sx][sy].type != TYPE_UNASSIGNED)
+        dest->tiles[dx][dy] = src->tiles[sx][sy];
+      if(src->tiles[sx][sy].type == TYPE_STARTPOS && new_startpos)
+        startpos_new(dx, dy);
+    }
+  }
+}
+
+int fill_land(struct gen8_map *pmap, int *x, int *y)
+{
+  int tx, ty;
+
+  for(tx = 0; tx < pmap->xsize; tx++) {
+    for(ty = 0; ty < pmap->ysize; ty++) {
+      if(pmap->tiles[tx][ty].type != TYPE_UNASSIGNED)
+        continue;
+      int count = 0;
+      adjacent_tiles_pos_iterate(pmap, tx, ty, rx, ry) {
+        if(pmap->tiles[rx][ry].type != TYPE_UNASSIGNED)
+          count++;
+      } adjacent_tiles_pos_iterate_end;
+      if(count >= 8) {
+        *x = tx;
+        *y = ty;
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+struct gen8_map *create_fair_island(int size, bool startpos)
+{
+  struct gen8_map *temp, *island;
+  int i, *x , *y, xmin, xmax, ymin, ymax, fanstaisy = (size * 2) / 5 + 1;
+
+  temp = create_map(size * 2 + 5, size * 2 + 5);
+  x = fc_malloc(sizeof(int) * temp->xsize * temp->ysize);
+  y = fc_malloc(sizeof(int) * temp->xsize * temp->ysize);
+  xmin = xmax = x[0] = size + 3;
+  ymin = ymax = y[0] = size + 3;
+  temp->tiles[x[0]][y[0]].type = startpos ? TYPE_STARTPOS : TYPE_LAND;
+  i = 1;
+  
+  /* make land */
+  while(i < size) {
+    int tile, tx, ty;
+
+    if(i > fanstaisy)
+      tile = i - fanstaisy + myrand(fanstaisy);
+    else
+      tile = myrand(i);
+    tx = x[tile];
+    ty = y[tile];
+
+    switch(myrand(4)) {
+      case 0:
+        tx++;
+        break;
+      case 1:
+        tx--;
+        break;
+      case 2:
+        ty++;
+        break;
+      default://case 3:
+        ty--;
+        break;
+    }
+    if(temp->tiles[tx][ty].type != TYPE_UNASSIGNED)
+      continue;
+
+    temp->tiles[tx][ty].type = TYPE_LAND;
+    x[i] = tx;
+    y[i] = ty;
+    if(tx < xmin)
+      xmin = tx;
+    if(tx > xmax)
+      xmax = tx;
+    if(ty < ymin)
+      ymin = ty;
+    if(ty > ymax)
+      ymax = ty;
+    i++;
+    if(i > (size * 9) / 10)
+      i+=fill_land(temp, &x[i], &y[i]);
+  }
+  size = i;
+
+  /* make terrain */
+  for(i = 0; i < size; i++) {
+    temp->tiles[x[i]][y[i]].terrain = T_GRASSLAND;
+  }
+  int j, c, n, tile;
+  for(j = 0; j < gen8_terrain_num; j++) {
+    if(!gen8_chance[j])
+      continue;
+    n = ((gen8_chance[j] + myrand(gen8_chance[j] / 5) - 1) * size) / 100 + myrand(2);
+    c = 0;
+    i = 0;
+    while(c < n) {
+      i++;
+      if(i > size * 2)
+        break;
+      tile = myrand(size);
+      if(temp->tiles[x[tile]][y[tile]].terrain != T_GRASSLAND)
+        continue;
+      temp->tiles[x[tile]][y[tile]].terrain = j;
+      c++;
+    }
+  }
+  
+  int tx, ty;
+  
+  j = size;
+  for(i = 0; i < size; i++) {
+    for(tx = x[i] - 1; tx <= x[i] + 1; tx++) {
+      for(ty = y[i] - 1; ty <= y[i] + 1; ty++) {
+        if(temp->tiles[tx][ty].type != TYPE_UNASSIGNED)
+          continue;
+        temp->tiles[tx][ty].type = TYPE_SEA;
+        x[j] = tx;
+        y[j] = ty;
+        if(tx < xmin)
+          xmin = tx;
+        if(tx > xmax)
+          xmax = tx;
+        if(ty < ymin)
+          ymin = ty;
+        if(ty > ymax)
+          ymax = ty;
+        j++;
+      }
+    }
+  }
+
+  /* make specials */
+  for(i = 0; i < j; i++) {
+    int terrain = temp->tiles[x[i]][y[i]].terrain;
+    if(!(temp->tiles[x[i]-1][y[i]-1].spec || temp->tiles[x[i]-1][y[i]].spec || temp->tiles[x[i]-1][y[i]+1].spec
+      || temp->tiles[x[i]][y[i]-1].spec || temp->tiles[x[i]][y[i]+1].spec || temp->tiles[x[i]+1][y[i]-1].spec
+      || temp->tiles[x[i]+1][y[i]].spec || temp->tiles[x[i]+1][y[i]+1].spec) && myrand(1000) < map.riches) {
+      if(get_tile_type(terrain)->special_1_name[0] != '\0' && (get_tile_type(terrain)->special_2_name[0] == '\0' || (myrand(100) < 50))) {
+        temp->tiles[x[i]][y[i]].spec = 1;
+      } else if(get_tile_type(terrain)->special_2_name[0] != '\0') {
+        temp->tiles[x[i]][y[i]].spec = 2;
+      }
+    }
+  }
+  
+  /* make river */
+  n = (size * myrand(map.wetness * map.wetness)) / 50000;
+  c = i = 0;
+  while(c < n) {
+    i++;
+    if(i > 10000)
+      break;
+    tile = myrand(size);
+    tx = x[tile];
+    ty = y[tile];
+    if(temp->tiles[tx][ty].river || temp->tiles[tx-1][ty].river + temp->tiles[tx+1][ty].river
+      + temp->tiles[tx][ty-1].river + temp->tiles[tx][ty+1].river > 1)
+      continue;
+    temp->tiles[tx][ty].river = TRUE;
+    c++;
+    i = 0;
+    if(temp->tiles[tx-1][ty].river || temp->tiles[tx+1][ty].river || temp->tiles[tx][ty-1].river || temp->tiles[tx][ty+1].river)
+      continue;
+    while(TRUE) {
+      int nx = tx, ny = ty;
+      i++;
+      if(i > 10000)
+        break;
+      if(temp->tiles[tx-1][ty].terrain == T_OCEAN || temp->tiles[tx+1][ty].terrain == T_OCEAN
+       || temp->tiles[tx][ty-1].terrain == T_OCEAN || temp->tiles[tx][ty+1].terrain == T_OCEAN)
+       break;
+      switch(myrand(4)) {
+        case 0:
+          nx++;
+          break;
+        case 1:
+          nx--;
+          break;
+        case 2:
+          ny++;
+          break;
+        default://case 3:
+          ny--;
+          break;
+      }
+      if(temp->tiles[nx][ny].river || (i < 5000 && temp->tiles[nx-1][ny].river + temp->tiles[nx+1][ny].river + temp->tiles[nx][ny-1].river
+      + temp->tiles[nx][ny+1].river > 1))
+        continue;
+      temp->tiles[nx][ny].river = TRUE;
+      tx = nx;
+      ty = ny;
+      c++;
+    }
+  }
+
+  /* give 2 sea tiles around the island */
+  if(startpos)
+  {
+    int tx, ty;
+    
+    for(i = 0; i < size; i++)
+    {
+      for(tx = x[i] - 2; tx <= x[i] + 2; tx++) {
+        for(ty = y[i] - 2; ty <= y[i] + 2; ty++) {
+          if((abs(x[i] - tx) == 2 && abs(y[i] - ty) == 2) || temp->tiles[tx][ty].type != TYPE_UNASSIGNED)
+            continue;
+          temp->tiles[tx][ty].type = TYPE_SEA;
+          if(tx < xmin)
+            xmin = tx;
+          if(tx > xmax)
+            xmax = tx;
+          if(ty < ymin)
+            ymin = ty;
+          if(ty > ymax)
+            ymax = ty;
+        }
+      }
+    }
+  }
+
+  island = create_map(xmax - xmin +1, ymax - ymin +1);
+  copy_map(island, 0, 0, temp, xmin, xmax +1, ymin, ymax +1, FALSE);
+
+  free(x);
+  free(y);
+  free_map(temp);
+
+  return island;
+}
+
+void do_rotation(struct gen8_map *island)
+{
+  struct gen8_tile **buf = create_tiles_buffer(island->ysize, island->xsize);
+  int x,y;
+  
+  for(x = 0; x < island->xsize; x++) {
+    for(y = 0; y < island->ysize; y++) {
+      buf[y][x] = island->tiles[x][y];
+    }
+  }
+  free_tiles_buffer(island->tiles, island->xsize);
+  swap(int, island->xsize, island->ysize);
+  island->tiles = buf;
+}
+
+void do_hsym(struct gen8_map *island)
+{
+  struct gen8_tile **buf = create_tiles_buffer(island->xsize, island->ysize);
+  int x,y;
+  
+  for(x = 0; x < island->xsize; x++) {
+    for(y = 0; y < island->ysize; y++) {
+      buf[island->xsize-x-1][y] = island->tiles[x][y];
+    }
+  }
+  free_tiles_buffer(island->tiles, island->xsize);
+  island->tiles = buf;
+}
+
+void do_vsym(struct gen8_map *island)
+{
+  struct gen8_tile **buf = create_tiles_buffer(island->xsize, island->ysize);
+  int x,y;
+  
+  for(x = 0; x < island->xsize; x++) {
+    for(y = 0; y < island->ysize; y++) {
+      buf[x][island->ysize-y-1] = island->tiles[x][y];
+    }
+  }
+  free_tiles_buffer(island->tiles, island->xsize);
+  island->tiles = buf;
+}
+
+bool can_place_island_on_map(struct gen8_map *pmap, int x, int y, struct gen8_map *island)
+{
+  int xc, yc;
+
+  for(xc = 0; xc < island->xsize; xc++) {
+    for(yc = 0; yc < island->ysize; yc++) {
+      int dx = x + xc, dy = y + yc;
+
+     normalize_coord(pmap, &dx, &dy);
+     if(island->tiles[xc][yc].type != TYPE_UNASSIGNED && pmap->tiles[dx][dy].type != TYPE_UNASSIGNED)
+       return FALSE;
+    }
+  }
+  return TRUE;
+}
+
+bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
+{
+  int rx, ry, x, y, xmax = pmap->xsize, ymax = pmap->ysize, i;
+
+  if(!topo_has_flag(TF_WRAPX))
+    xmax -= island->xsize;
+  if(!topo_has_flag(TF_WRAPY))
+    ymax -= island->ysize;
+  if(myrand(2))
+    do_rotation(island);
+  if(myrand(2))
+    do_hsym(island);
+  if(myrand(2))
+    do_vsym(island);
+  for(i = 0; i < 10; i++) {
+    rx = myrand(xmax);
+    ry = myrand(ymax);
+    if(can_place_island_on_map(pmap,rx, ry, island)) {
+      copy_map(pmap, rx, ry, island, 0, island->xsize, 0, island->ysize, TRUE);
+      return TRUE;
+    }
+  }
+  rx = myrand(xmax);
+  ry = myrand(ymax);
+  for(x = 0; x < xmax; x++) {
+    for(y = 0; y < ymax; y++) {
+      int tx = rx + x, ty = ry + y;
+      if(tx > xmax)
+        tx -= xmax;
+      if(ty > ymax)
+        ty -= ymax;
+      if(can_place_island_on_map(pmap, tx, ty, island)) {
+        copy_map(pmap, tx, ty, island, 0, island->xsize, 0, island->ysize, TRUE);
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+static void mapgenerator8(void)
+{
+  struct gen8_map *pmap, *island1, *island2, *island3;
+  int i, x , y, iter, playermass, islandmass1 , islandmass2, islandmass3;
+  bool done = FALSE;
+
+  freelog(LOG_VERBOSE, "Generating map with generator 8");
+
+  terrain_chance_init();
+
+  for(iter = 0; iter < 500 && !done; iter++) {
+    done = TRUE;
+
+    /* initialize */
+    startpos_init();
+    pmap = create_map(map.xsize, map.ysize);
+
+    create_placed_map();
+    create_tmap(FALSE);
+
+    whole_map_iterate(ptile) {
+      map_set_terrain(ptile, T_OCEAN);
+      map_set_continent(ptile, 0);
+      map_set_placed(ptile);
+      map_clear_all_specials(ptile);
+      map_set_owner(ptile, NULL);
+    } whole_map_iterate_end;
+  
+    if(HAS_POLES) {
+      make_polar();
+    }
+
+    i = (map.xsize * map.ysize * map.landpercent) / 100;
+    for(x = 0; x < map.xsize; x++) {
+      for(y = 0; y < map.ysize; y++) {
+        struct tile *ptile = native_pos_to_tile(x, y);
+        if(map_get_terrain(ptile) != T_OCEAN) {
+          i--;
+          pmap->tiles[x][y].terrain = map_get_terrain(ptile);
+          pmap->tiles[x][y].type = TYPE_LAND;
+          adjacent_tiles_pos_iterate(pmap, x, y, tx, ty) {
+              if(pmap->tiles[tx][ty].type != TYPE_UNASSIGNED)
+                continue;
+              pmap->tiles[tx][ty].type = TYPE_SEA;
+          } adjacent_tiles_pos_iterate_end;
+        }
+      }
+    }
+  
+    playermass = i / game.nplayers;
+    islandmass1 = (playermass * 7 * (100 - iter)) / 1000;
+    if(islandmass1 < 1)
+      islandmass1 = 1;
+    islandmass2 = (playermass * 2 * (100 - iter)) / 1000;
+    if(islandmass2 < 1)
+      islandmass2 = 1;
+    islandmass3 = (playermass * 1 * (100 - iter)) / 1000;
+    if(islandmass3 < 1)
+      islandmass3 = 1;
+
+    /* make the map */
+    freelog(LOG_VERBOSE, "Making island1");
+    island1 = create_fair_island(islandmass1, TRUE);
+    freelog(LOG_VERBOSE, "Making island2");
+    island2 = create_fair_island(islandmass2, FALSE);
+    freelog(LOG_VERBOSE, "Making island3");
+    island3 = create_fair_island(islandmass3, FALSE);
+
+    freelog(LOG_VERBOSE, "Placing islands on the map");
+    for(i =0; i < game.nplayers; i++) {
+      if(!place_island_on_map(pmap, island1)) {
+        freelog(LOG_VERBOSE, "Cannot place island1 for player %d", i);
+        done = FALSE;
+        break;
+      }
+    }
+    if(done) {
+      for(i =0; i < game.nplayers; i++) {
+        if(!place_island_on_map(pmap, island2)) {
+          freelog(LOG_VERBOSE, "Cannot place island2 for player %d", i);
+          done = FALSE;
+          break;
+        }
+      }
+    }
+    if(done) {
+      for(i =0; i < game.nplayers; i++) {
+        if(!place_island_on_map(pmap, island3)) {
+          freelog(LOG_VERBOSE, "Cannot place island3 for player %d", i);
+          done = FALSE;
+          break;
+        }
+      }
+    }
+    free_map(island1);
+    free_map(island2);
+    free_map(island3);
+    if(!done) {
+      free_map(pmap);
+      destroy_tmap();
+      destroy_placed_map();
+    }
+  }
+  
+  if(!done) {
+    startpos_init();
+    map.generator = 3;
+    return;
+  }
+
+  /* apply to the map */
+  freelog(LOG_VERBOSE, "Setup terrain", i);
+  for(x = 0; x < map.xsize; x++) {
+    for(y = 0; y < map.ysize; y++) {
+      struct tile *ptile = native_pos_to_tile(x, y);
+      map_set_terrain(ptile, pmap->tiles[x][y].terrain);
+      if(pmap->tiles[x][y].spec == 1)
+        map_set_special(ptile, S_SPECIAL_1);
+      if(pmap->tiles[x][y].spec == 2)
+        map_set_special(ptile, S_SPECIAL_2);
+      if(pmap->tiles[x][y].river)
+        map_set_special(ptile, S_RIVER);
+    }
+  }
+  map.have_specials = TRUE;
+
+  assign_continent_numbers(TRUE);
+
+  free_map(pmap);
+  destroy_placed_map();
+
+  freelog(LOG_VERBOSE, "Generator 8 finished");
 }

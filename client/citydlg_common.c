@@ -31,7 +31,6 @@
 #include "clinet.h"
 #include "control.h"
 #include "mapview_common.h"
-#include "myai.h"//*pepeto*
 #include "options.h"		/* for concise_city_production */
 #include "tilespec.h"		/* for is_isometric */
 
@@ -459,7 +458,7 @@ void activate_all_units(struct tile *ptile)
     if (game.player_idx == punit->owner) {
       /* Activate this unit. */
       pmyunit = punit;
-      request_active_unit(punit);
+      request_new_unit_activity(punit, ACTIVITY_IDLE);
     }
   } unit_list_iterate_end;
   if (pmyunit) {
@@ -487,8 +486,6 @@ int city_set_worklist(struct city *pcity, struct worklist *pworklist)
   struct worklist copy;
 
   copy_worklist(&copy, pworklist);
-
-  my_ai_worklist_event(pcity);//*pepeto*
 
   /* Don't send the worklist name to the server. */
   copy.name[0] = '\0';
@@ -579,7 +576,7 @@ void city_get_queue(struct city *pcity, struct worklist *pqueue)
 /**************************************************************************
   Set the city current production and the worklist, like it should be.
 **************************************************************************/
-void city_set_queue(struct city *pcity, struct worklist *pqueue)
+bool city_set_queue(struct city *pcity, struct worklist *pqueue)
 {
   struct worklist copy;
   int id;
@@ -591,6 +588,15 @@ void city_set_queue(struct city *pcity, struct worklist *pqueue)
      worklist API wants it out for reasons unknown. Perhaps someone enjoyed
      making things more complicated than necessary? So I dance around it. */
   if (worklist_peek(&copy, &id, &is_unit)) {
+
+    if (!city_can_change_build(pcity)
+        && (id != pcity->currently_building
+            || is_unit != pcity->is_building_unit)) {
+      /* We cannot change production to one from worklist.
+       * Do not replace old worklist with new one. */
+      return FALSE;
+    }
+
     worklist_advance(&copy);
 
     city_set_worklist(pcity, &copy);
@@ -603,6 +609,8 @@ void city_set_queue(struct city *pcity, struct worklist *pqueue)
       city_set_worklist(pcity, &copy);
     }
   }
+
+  return TRUE;
 }
 
 /**************************************************************************

@@ -81,7 +81,6 @@ enum auth_status {
 struct connection;
 #define SPECLIST_TAG conn
 #define SPECLIST_TYPE struct connection
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define conn_list_iterate(connlist, pconn) \

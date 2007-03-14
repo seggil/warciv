@@ -115,7 +115,6 @@ void user_interrupt_callback();
 
 #define SPECLIST_TAG timer
 #define SPECLIST_TYPE struct timer
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define PROCESSING_TIME_STATISTICS 0

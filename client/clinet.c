@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -284,7 +284,7 @@ void disconnect_from_server(void)
   const bool force = !aconnection.used;
 
   attribute_flush();
-  /* If it's internal server - kill him 
+  /* If it's internal server - kill him
    * We assume that we are always connected to the internal server  */
   if (!force) {
     client_kill_server(FALSE);
@@ -1317,7 +1317,7 @@ void delete_server_list(struct server_list *server_list)
 }
 
 /**************************************************************************
-  Broadcast an UDP package to all servers on LAN, requesting information 
+  Broadcast an UDP package to all servers on LAN, requesting information
   about the server. The packet is send to all Freeciv servers in the same
   multicast group as the client.
 **************************************************************************/
@@ -1417,7 +1417,7 @@ int begin_lanserver_scan(void)
 
 /**************************************************************************
   Listens for UDP packets broadcasted from a server that responded
-  to the request-packet sent from the client. 
+  to the request-packet sent from the client.
 **************************************************************************/
 struct server_list *get_lan_server_list(void)
 {

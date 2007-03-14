@@ -50,8 +50,6 @@ used throughout the client.
 #include "mapctrl_common.h"
 #include "mapview_g.h"
 #include "messagewin_common.h"
-#include "multiselect.h"//*pepeto* for PINT_TO_PTR & PPTR_TO_INT
-#include "myai.h"//*pepeto*
 #include "packhand.h"
 #include "plrdlg_common.h"
 #include "repodlgs_common.h"
@@ -164,8 +162,6 @@ void client_remove_unit(struct unit *punit)
 	  punit->id, get_nation_name(unit_owner(punit)->nation),
 	  unit_name(punit->type), TILE_XY(punit->tile), hc);
 
-  my_ai_orders_free(punit);
-  
   if (punit == ufocus) {
     set_unit_focus(NULL);
     game_remove_unit(punit);
@@ -218,13 +214,11 @@ void client_remove_city(struct city *pcity)
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
 	  get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
 
-  my_ai_city_free(pcity);//*pepeto*
-
-/* Explicitly remove all improvements, to properly remove any global effects
+  /* Explicitly remove all improvements, to properly remove any global effects
      and to handle the preservation of "destroyed" effects. */
   effect_update=FALSE;
 
- built_impr_iterate(pcity, i) {
+  built_impr_iterate(pcity, i) {
     effect_update = TRUE;
     city_remove_improvement(pcity, i);
   } built_impr_iterate_end;
@@ -579,6 +573,21 @@ bool city_can_build_impr_or_unit(struct city *pcity, cid cid)
     return can_build_unit(pcity, cid_id(cid));
   else
     return can_build_improvement(pcity, cid_id(cid));
+}
+
+/****************************************************************
+...
+*****************************************************************/
+bool city_can_sell_impr(struct city *pcity, cid cid)
+{
+  int id;
+  id = cid_id(cid);
+  
+  if (cid_is_unit(cid))
+    return FALSE;
+  else
+    return !pcity->did_sell && city_got_building(pcity, id)
+      && !is_wonder(id);
 }
 
 /****************************************************************
@@ -950,7 +959,11 @@ void handle_event(char *message, struct tile *ptile,
     where = messages_where[event];
   }
 
-  if (BOOL_VAL(where & MW_OUTPUT)) {
+  if (BOOL_VAL(where & MW_OUTPUT)
+      || get_client_state() != CLIENT_GAME_RUNNING_STATE) {
+    /* When the game isn't running, the messages dialog isn't present and
+     * we want to send all messages to the chatline.  There shouldn't be
+     * any problem with server spam in pregame anyway. */
     append_output_window_full(message, conn_id);
   }
   if (BOOL_VAL(where & MW_MESSAGES)) {
@@ -1087,11 +1100,11 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
   }
 
   pcontinent_counter = hash_lookup_data (an_continent_counter_table,
-                                         PINT_TO_PTR (ad->continent_id));
+                                         INT_TO_PTR (ad->continent_id));
   if (!pcontinent_counter) {
     pcontinent_counter = fc_malloc (sizeof (int));
     *pcontinent_counter = 0;
-    hash_insert (an_continent_counter_table, PINT_TO_PTR (ad->continent_id),
+    hash_insert (an_continent_counter_table, INT_TO_PTR (ad->continent_id),
                  pcontinent_counter);
   }
 
@@ -1196,7 +1209,7 @@ static int an_generate_city_name (char *buf, int buflen,
     return 0;
   }
 
-  ad = hash_lookup_data (an_city_autoname_data_table, PINT_TO_PTR (pcity->id));
+  ad = hash_lookup_data (an_city_autoname_data_table, INT_TO_PTR (pcity->id));
   if (!ad) {
     ad = fc_malloc (sizeof (struct autoname_data));
     freelog (LOG_DEBUG, "agcn   new ad %p", ad);
@@ -1206,7 +1219,7 @@ static int an_generate_city_name (char *buf, int buflen,
     ad->format_index = 1;
     ad->global_city_number = 0;
     ad->continent_city_number = 0;
-    hash_insert (an_city_autoname_data_table, PINT_TO_PTR (pcity->id), ad);
+    hash_insert (an_city_autoname_data_table, INT_TO_PTR (pcity->id), ad);
   } else {
     ad->format_index++;
     ad->format_index %= num_formats;
@@ -1333,7 +1346,7 @@ void city_autonaming_free (void)
   an_city_name_table = NULL;
 
   hash_iterate (an_continent_counter_table, void *, key, int *, pcc) {
-    int id = PPTR_TO_INT (key);
+    int id = PTR_TO_INT (key);
     freelog (LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id, *pcc);
     free (pcc);
   } hash_iterate_end;
@@ -1345,7 +1358,7 @@ void city_autonaming_free (void)
   hash_iterate (an_city_autoname_data_table, void *, key,
                 struct autoname_data *, ad)
   {
-    int id = PPTR_TO_INT (key);
+    int id = PTR_TO_INT (key);
     freelog (LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
     free (ad);
   } hash_iterate_end;
@@ -1673,3 +1686,4 @@ void draw_link_marks(void)
     draw_link_mark(ptile);
   } hash_iterate_end;
 }
+

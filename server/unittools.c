@@ -369,6 +369,7 @@ void player_restore_units(struct player *pplayer)
 				      punit->type, FALSE)
 	      &&(air_can_move_between(punit->moves_left / 3, punit->tile,
 				      itr_tile, unit_owner(punit)) >= 0)) {
+	    free_unit_orders(punit);
 	    punit->goto_tile = itr_tile;
 	    set_unit_activity(punit, ACTIVITY_GOTO);
 	    (void) do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
@@ -426,9 +427,9 @@ static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit)
 
   if(is_heli_unit(punit)) {
     struct city *pcity = map_get_city(punit->tile);
-    if(!pcity) {
-      if (!map_has_special(punit->tile, S_AIRBASE))
-        punit->hp-=unit_type(punit)->hp/10;
+    if(!pcity && !map_has_special(punit->tile, S_AIRBASE)
+       && punit->transported_by == -1) {
+      punit->hp-=unit_type(punit)->hp/10;
     }
   }
 
@@ -1423,23 +1424,24 @@ void upgrade_unit(struct unit *punit, Unit_Type_id to_unit, bool is_free)
   conn_list_do_unbuffer(&pplayer->connections);
 }
 
-/*************************************************************************
+/************************************************************************* 
   Wrapper of the below
 *************************************************************************/
-struct unit *create_unit(struct player *pplayer, struct tile *ptile,
-                         Unit_Type_id type, int veteran_level,
+struct unit *create_unit(struct player *pplayer, struct tile *ptile, 
+                         Unit_Type_id type, int veteran_level, 
                          int homecity_id, int moves_left)
 {
-  return create_unit_full(pplayer, ptile, type, veteran_level, homecity_id,
+  return create_unit_full(pplayer, ptile, type, veteran_level, homecity_id, 
                           moves_left, -1, NULL);
 }
 
 /**************************************************************************
-  Creates a unit, and set it's initial values, and put it into the right
+  Creates a unit, and set it's initial values, and put it into the right 
   lists.
+  If moves_left is less than zero, unit will get max moves.
 **************************************************************************/
 struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
-			      Unit_Type_id type, int veteran_level,
+			      Unit_Type_id type, int veteran_level, 
                               int homecity_id, int moves_left, int hp_left,
 			      struct unit *ptrans)
 {
@@ -1964,9 +1966,24 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
 	|| (pplayer && pplayer->player_no == punit->owner)) {
       send_packet_unit_info(pconn, &info);
     } else if (pplayer) {
-      if (can_player_see_unit_at(pplayer, punit, punit->tile)
-	  || can_player_see_unit_at(pplayer, punit, ptile)) {
-	send_packet_unit_short_info(pconn, &sinfo);
+      bool see_in_old;
+      bool see_in_new = can_player_see_unit_at(pplayer, punit, punit->tile);
+
+      if (punit->tile == ptile) {
+	/* This is not about movement */
+	see_in_old = see_in_new;
+      } else {
+	see_in_old = can_player_see_unit_at(pplayer, punit, ptile);
+      }
+
+      if (see_in_new || see_in_old) {
+        /* First send movement */
+        send_packet_unit_short_info(pconn, &sinfo);
+
+        if (!see_in_new) {
+          /* Then remove unit if necessary */
+          unit_goes_out_of_sight(pplayer, punit);
+        }
 	if (pplayers_at_war(pplayer,unit_owner(punit))
 	    && !pplayer->ai.control) {
 	  /* increase_timeout_because_unit_moved(pplayer) possible here */
@@ -2356,6 +2373,15 @@ static void hut_get_city(struct unit *punit)
 		     _("Game: You found a friendly city."));
     create_city(pplayer, punit->tile,
 		city_name_suggestion(pplayer, punit->tile));
+
+    if (unit_flag(punit, F_CITIES) || unit_flag(punit, F_SETTLERS)) {
+      /* In case city was found during autosettler activities */
+      initialize_infrastructure_cache(pplayer);
+    }
+
+    /* Init ai.choice. Handling ferryboats might use it. */
+    init_choice(&punit->tile->city->ai.choice);
+
   } else {
     notify_player_ex(pplayer, punit->tile, E_HUT_SETTLER,
 		     _("Game: Friendly nomads are impressed by you,"
@@ -2786,17 +2812,6 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
   } else {
     fog_area(pplayer, psrctile, unit_type(punit)->vision_range);
   }
-
-  /*
-   * Let the unit goes out of sight for the players which doesn't see
-   * the unit anymore.
-   */
-  players_iterate(pplayer) {
-    if (can_player_see_unit_at(pplayer, punit, psrctile)
-	&& !can_player_see_unit_at(pplayer, punit, pdesttile)) {
-      unit_goes_out_of_sight(pplayer, punit);
-    }
-  } players_iterate_end;
 
   /* Remove hidden units (like submarines) which aren't seen anymore. */
   square_iterate(psrctile, 1, tile1) {

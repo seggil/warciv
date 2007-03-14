@@ -11,12 +11,6 @@ noinst_HEADERS = \
 	nuke_cursor_mask.xbm	\
 	patrol_cursor.xbm	\
 	patrol_cursor_mask.xbm	\
-	source_cursor.xbm	\
-	source_cursor_mask.xbm	\
-	dest_cursor.xbm	\
-	dest_cursor_mask.xbm	\
-	trade_cursor.xbm	\
-	trade_cursor_mask.xbm	\
 	chatline_g.h	\
 	citydlg_g.h	\
 	cityrep_g.h	\

@@ -1738,7 +1738,7 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->debug = FALSE;
   punit->fuel = unit_type(punit)->fuel;
   punit->hp = unit_type(punit)->hp;
-  punit->virtual_moves_left = punit->moves_left = unit_move_rate(punit);//*pepeto*
+  punit->moves_left = unit_move_rate(punit);
   punit->moved = FALSE;
   punit->paradropped = FALSE;
   punit->done_moving = FALSE;
@@ -1755,11 +1755,6 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->ai.passenger = 0;
   punit->ai.bodyguard = 0;
   punit->ai.charge = 0;
-//*pepeto*
-  punit->my_ai.control = FALSE;
-  punit->my_ai.manalloc = FALSE;
-  punit->my_ai.activity = MY_AI_NONE;
-  punit->my_ai.data = NULL;
   punit->bribe_cost = -1; /* flag value */
   punit->transported_by = -1;
   punit->focus_status = FOCUS_AVAIL;

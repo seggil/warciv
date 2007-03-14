@@ -40,7 +40,6 @@
 #include "inputdlg.h"
 #include "mapview.h"
 #include "menu.h"
-#include "multiselect.h"//*pepeto*
 #include "tilespec.h"
 #include "cma_core.h"
 #include "text.h"
@@ -231,7 +230,6 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 **************************************************************************/
 gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
-  static int press_waited=0;//*pepeto*
   struct city *pcity = NULL;
   struct tile *ptile = NULL;
 
@@ -243,15 +241,6 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
   ptile = canvas_pos_to_tile(ev->x, ev->y);
   pcity = ptile ? ptile->city : NULL;
 
-//*pepeto*
-  if(press_waited>0)
-  {
-	  if(ev->type==GDK_2BUTTON_PRESS)
-		  return TRUE;
-	  else if(ev->type==GDK_BUTTON_PRESS)
-		  press_waited--;
-  }
-
   switch (ev->button) {
 
   case 1: /* LEFT mouse button */
@@ -260,40 +249,13 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     if ((ev->state & GDK_SHIFT_MASK) && (ev->state & GDK_CONTROL_MASK)) {
       adjust_workers_button_pressed(ev->x, ev->y);
     }
-    /* <CONTROL> + LMB : Quickselect a sea unit or *pepeto*: select an unit without activation. */
+    /* <CONTROL> + LMB : Quickselect a sea unit. */
     else if (ev->state & GDK_CONTROL_MASK) {
-	  if(pcity)
-		  action_button_pressed(ev->x, ev->y, SELECT_SEA);
-	  else
-	  {
-		  struct unit *punit=find_visible_unit(ptile);
-		  if(punit&&punit->owner==game.player_idx)
-			 set_unit_focus(punit);
-	  }
+      action_button_pressed(ev->x, ev->y, SELECT_SEA);
     }
-    /* <SHIFT> + LMB: *pepeto* select unit(s if double click). */
+    /* <SHIFT> + LMB: Copy Production. */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
-	  if (ev->type == GDK_2BUTTON_PRESS)
-		  multi_select_add_units(&ptile->units);
-	  else
-	  {
-		struct unit *punit = find_visible_unit(ptile);
-		if(punit&&punit->owner==game.player_idx)
-			multi_select_add_or_remove_unit(punit);
-		else
-		{
-			unit_list_iterate(ptile->units,punit)
-			{
-				if(punit->owner==game.player_idx)
-				{
-				      multi_select_add_or_remove_unit(punit);
-					  break;
-				 }
-			 } unit_list_iterate_end;
-		 }
-	  }
-	  update_unit_info_label(get_unit_in_focus());
-	  update_menus();
+      clipboard_copy_production(ptile);
     }
     /* <ALT> + LMB: popit (same as middle-click) */
     else if (ptile && (ev->state & GDK_MOD1_MASK)) {
@@ -305,45 +267,9 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     {
       toggle_tile_hilite (ptile);
     }
-	/* double LMB: *pepeto* select units of the same type. */
-	else if(ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS))
-	{
-		struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
-		if(punit&&punit->owner==game.player_idx)
-		{
-			multi_select_clear(0);
-			set_unit_focus(punit);
-			gui_rect_iterate(mapview_canvas.gui_x0,mapview_canvas.gui_y0,mapview_canvas.store_width,mapview_canvas.store_height,ptile)
-			{
-			   unit_list_iterate(ptile->units,tunit)
-			   {
-				  if(tunit->owner==game.player_idx&&tunit->type==punit->type)
-					  multi_select_add_unit(tunit);
-				  if(unit_satisfies_filter(tunit,multi_select_inclusive_filter,multi_select_exclusive_filter))
-					  nfu=tunit;
-			   } unit_list_iterate_end;
-			} gui_rect_iterate_end;
-		 if(!multi_select_satisfies_filter(0))
-			 multi_select_clear(0);
-		 else if(multi_select_size(0)>1&&!unit_satisfies_filter(punit,multi_select_inclusive_filter,multi_select_exclusive_filter))
-			 set_unit_focus(nfu);
-	     update_unit_info_label(get_unit_in_focus());
-	     update_menus();
-		}
-	}
-    /* Plain LMB click for city triple click for units (*pepeto*). */
-    else
-	{
-		struct unit *punit;
-		if(hover_state==HOVER_NONE&&ptile&&!pcity&&unit_list_size(&ptile->units)>1&&(punit=find_visible_unit(ptile))
-			&&is_unit_in_multi_select(0,punit)&&punit!=get_unit_in_focus()&&punit->owner==game.player_idx&&(ev->type == GDK_BUTTON_PRESS))
-			set_unit_focus(punit);
-		else
-		{
-			if(hover_state!=HOVER_NONE)
-				press_waited=2;
-      		action_button_pressed(ev->x, ev->y, SELECT_POPUP);
-		}
+    /* Plain LMB click. */
+    else {
+      action_button_pressed(ev->x, ev->y, SELECT_POPUP);
     }
     break;
 
@@ -365,17 +291,14 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
              && (ev->state & GDK_CONTROL_MASK)) {
       insert_chat_link(ptile);
     }
-    /* <SHIFT> <CONTROL> + RMB: Paste Production. */
-    else if ((ev->state & GDK_SHIFT_MASK) && (ev->state & GDK_CONTROL_MASK) && pcity) {
-      clipboard_paste_production(pcity);
-      cancel_tile_hiliting();
-    }    /* <CONTROL> + RMB : Quickselect a land unit. */
+    /* <CONTROL> + RMB : Quickselect a land unit. */
     else if (ev->state & GDK_CONTROL_MASK) {
       action_button_pressed(ev->x, ev->y, SELECT_LAND);
     }
-    /* <SHIFT> + RMB: Copy Production. */
-    else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
-      clipboard_copy_production(ptile);
+    /* <SHIFT> + RMB: Paste Production. */
+    else if ((ev->state & GDK_SHIFT_MASK) && pcity) {
+      clipboard_paste_production(pcity);
+      cancel_tile_hiliting();
     }
     /* Plain RMB click. */
     else {

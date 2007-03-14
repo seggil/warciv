@@ -35,9 +35,6 @@
 #include "goto.h"
 #include "mapctrl_g.h"
 #include "mapview_g.h"
-#include "menu_g.h"
-#include "multiselect.h"//*pepeto*
-#include "peptool.h"//*pepeto*
 #include "options.h"
 #include "tilespec.h"
 
@@ -118,8 +115,6 @@ static void define_tiles_within_rectangle(void)
 
   int x, y, x2, y2, xx, yy;
 
-//*pepeto*
-  bool first=TRUE;
   y = rec_corner_y;
   for (yy = 0; yy <= segments_y; yy++, y += inc_y) {
     x = rec_corner_x;
@@ -146,25 +141,6 @@ static void define_tiles_within_rectangle(void)
 	continue;
       }
 
-	  //*pepeto*: select unit too
-	if(multi_select_map_selection)
-	{
-	  unit_list_iterate(ptile->units,punit)
-	  {
-		  if(punit->owner==game.player_idx)
-		  {
-			  if(first)
-			  {
-				  multi_select_clear(0);
-				  set_unit_focus(punit);
-				  first=FALSE;
-			  }
-			  else
-				  multi_select_add_unit(punit);
-		  }
-	  } unit_list_iterate_end;
-	}
-	  
       /*  Tile passed all tests; process it.
        */
       if (ptile->city && ptile->city->owner == game.player_idx) {
@@ -173,8 +149,6 @@ static void define_tiles_within_rectangle(void)
       }
     }
   }
-  update_menus();
-  update_unit_info_label(get_unit_in_focus());
 
   /* Hilite in City List Window */
   if (tiles_hilited_cities) {
@@ -291,7 +265,6 @@ void cancel_tile_hiliting(void)
 
     update_map_canvas_visible();
   }
-  update_menus();
 }
 
 /**************************************************************************
@@ -461,12 +434,12 @@ void release_goto_button(int canvas_x, int canvas_y)
   struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (keyboardless_goto_active && hover_state == HOVER_GOTO && ptile) {
-	  multi_select_iterate(FALSE,punit)//*pepeto*
-	  {
-		send_goto_unit(punit,ptile);
-	  } multi_select_iterate_end;
+    struct unit *punit =
+        player_find_unit_by_id(game.player_ptr, hover_unit);
+
+    do_unit_goto(ptile);
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
-    update_unit_info_label(get_unit_in_focus());
+    update_unit_info_label(punit);
   }
   keyboardless_goto_active = FALSE;
   keyboardless_goto_button_down = FALSE;
@@ -760,3 +733,4 @@ void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list)
   /* Then sort it. */
   qsort(unit_list, i, sizeof(*unit_list), unit_list_compare);
 }
+

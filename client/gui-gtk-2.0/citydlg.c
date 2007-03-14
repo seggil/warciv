@@ -49,7 +49,6 @@
 #include "helpdlg.h"
 #include "inputdlg.h"
 #include "mapview.h"
-#include "multiselect.h"//*pepeto
 #include "options.h"
 #include "repodlgs.h"
 #include "tilespec.h"
@@ -65,7 +64,6 @@ struct city_dialog;
 /* get 'struct dialog_list' and related function */
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct city_dialog
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
@@ -230,7 +228,6 @@ static void unit_center_callback(GtkWidget * w, gpointer data);
 static void unit_activate_callback(GtkWidget * w, gpointer data);
 static void supported_unit_activate_close_callback(GtkWidget * w,
 						   gpointer data);
-static void unit_add_in_focus_callback(GtkWidget * w, gpointer data);//*pepeto*
 static void present_unit_activate_close_callback(GtkWidget * w,
 						 gpointer data);
 static void unit_load_callback(GtkWidget * w, gpointer data);
@@ -1897,13 +1894,6 @@ static gboolean supported_unit_callback(GtkWidget * w, GdkEventButton * ev,
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-//*pepeto*
-    item = gtk_menu_item_new_with_mnemonic(_("Add unit in focus"));
-    g_signal_connect(item, "activate",
-      G_CALLBACK(unit_add_in_focus_callback),
-      GINT_TO_POINTER(punit->id));
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-
     item = gtk_menu_item_new_with_mnemonic(_("_Disband unit"));
     g_signal_connect(item, "activate",
       G_CALLBACK(unit_disband_callback),
@@ -1954,13 +1944,6 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
     item = gtk_menu_item_new_with_mnemonic(_("Activate unit, _close dialog"));
     g_signal_connect(item, "activate",
       G_CALLBACK(present_unit_activate_close_callback),
-      GINT_TO_POINTER(punit->id));
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-
-//*pepeto
-    item = gtk_menu_item_new_with_mnemonic(_("Add unit in focus"));
-    g_signal_connect(item, "activate",
-      G_CALLBACK(unit_add_in_focus_callback),
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
@@ -2053,14 +2036,7 @@ static gboolean present_unit_middle_callback(GtkWidget * w,
       (pcity = map_get_city(punit->tile)) &&
       (pdialog = get_city_dialog(pcity)) && can_client_issue_orders() && 
       (ev->button == 2 || ev->button == 3)) {
-	//*pepeto*
-	if(ev->state&GDK_SHIFT_MASK)
-	{
-		multi_select_add_or_remove_unit(punit);
-		update_unit_info_label(get_unit_in_focus());
-	}
-	else
-		set_unit_focus_and_active(punit);
+    set_unit_focus(punit);
     if (ev->button == 2)
       close_city_dialog(pdialog);
   }
@@ -2083,14 +2059,7 @@ static gboolean supported_unit_middle_callback(GtkWidget * w,
       (pcity = find_city_by_id(punit->homecity)) &&
       (pdialog = get_city_dialog(pcity)) && can_client_issue_orders() && 
       (ev->button == 2 || ev->button == 3)) {
-	//*pepeto*
-	if(ev->state&GDK_SHIFT_MASK)
-	{
-		multi_select_add_or_remove_unit(punit);
-		update_unit_info_label(get_unit_in_focus());
-	}
-	else
-		set_unit_focus_and_active(punit);
+    set_unit_focus(punit);
     if (ev->button == 2)
       close_city_dialog(pdialog);
   }
@@ -2118,7 +2087,7 @@ static void unit_activate_callback(GtkWidget * w, gpointer data)
   struct unit *punit;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    set_unit_focus_and_active(punit);
+    set_unit_focus(punit);
   }
 }
 
@@ -2133,24 +2102,11 @@ static void supported_unit_activate_close_callback(GtkWidget * w,
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    set_unit_focus_and_active(punit);
+    set_unit_focus(punit);
     if ((pcity = player_find_city_by_id(game.player_ptr, punit->homecity)))
       if ((pdialog = get_city_dialog(pcity)))
 	close_city_dialog(pdialog);
   }
-}
-
-/****************************************************************
-... *pepeto*
-*****************************************************************/
-static void unit_add_in_focus_callback(GtkWidget * w, gpointer data)
-{
-  struct unit *punit;
-
-  if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    multi_select_add_or_remove_unit(punit);
-  }
-  update_unit_info_label(get_unit_in_focus());
 }
 
 /****************************************************************
@@ -2164,7 +2120,7 @@ static void present_unit_activate_close_callback(GtkWidget * w,
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    set_unit_focus_and_active(punit);
+    set_unit_focus(punit);
     if ((pcity = map_get_city(punit->tile)))
       if ((pdialog = get_city_dialog(pcity)))
 	close_city_dialog(pdialog);

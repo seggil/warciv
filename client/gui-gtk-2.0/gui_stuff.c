@@ -390,7 +390,9 @@ void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
 	GTK_BUTTONBOX_SPREAD);
   } else {
     vbox = gtk_vbox_new(FALSE, 0);
-    action_area = gtk_hbox_new(FALSE, 0);
+    action_area = gtk_hbutton_box_new();
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(action_area),
+	GTK_BUTTONBOX_END);
   }
 
   gtk_widget_show(vbox);
@@ -506,7 +508,7 @@ static void gui_dialog_pack_button(struct gui_dialog *dlg, GtkWidget *button,
     g_signal_connect_closure_by_id(button, signal_id, 0, closure, FALSE);
   }
 
-  gtk_box_pack_start(GTK_BOX(dlg->action_area), button, TRUE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX(dlg->action_area), button, FALSE, TRUE, 0);
 }
 
 /**************************************************************************

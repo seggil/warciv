@@ -308,7 +308,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP AUTH_CFLAGS AUTH_LIBS SERVER_TRUE SERVER_FALSE CLIENT_TRUE CLIENT_FALSE FTWL_TRUE FTWL_FALSE MAKE_DATA_TRUE MAKE_DATA_FALSE MAKE_CLIENT_INCLUDE_TRUE MAKE_CLIENT_INCLUDE_FALSE CVS_DEPS LN_S RANLIB ac_ct_RANLIB AR ac_ct_AR UNAME LIBICONV ALLOCA GLIBC21 USE_NLS MSGFMT GMSGFMT XGETTEXT INTLBISON BUILD_INCLUDED_LIBINTL USE_INCLUDED_LIBINTL CATALOGS CATOBJEXT GMOFILES INTLLIBS INTLOBJS POFILES POSUB DATADIRNAME INSTOBJEXT GENCAT MKINSTALLDIRS INTL_LIBTOOL_SUFFIX_PREFIX PKG_CONFIG GTK_CFLAGS GTK_LIBS GTK_CONFIG IMLIB_CONFIG GDK_IMLIB_CFLAGS GDK_IMLIB_LIBS SDL_CONFIG SDL_CFLAGS SDL_LIBS FT2_CONFIG FT2_CFLAGS FT2_LIBS X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS ESD_CONFIG ESD_CFLAGS ESD_LIBS gui_sources CLIENT_CFLAGS CLIENT_LIBS CLIENT_LDFLAGS SOUND_CFLAGS SOUND_LIBS VERSION_WITHOUT_LABEL VERSION_LABEL ESD_TRUE ESD_FALSE SDL_TRUE SDL_FALSE ALSA_TRUE ALSA_FALSE WINMM_TRUE WINMM_FALSE CLIENT_GUI_SDL_TRUE CLIENT_GUI_SDL_FALSE CLIENT_GUI_GTK_TRUE CLIENT_GUI_GTK_FALSE CLIENT_GUI_GTK_2_0_TRUE CLIENT_GUI_GTK_2_0_FALSE CLIENT_GUI_XAW_TRUE CLIENT_GUI_XAW_FALSE CLIENT_GUI_BEOS_TRUE CLIENT_GUI_BEOS_FALSE CLIENT_GUI_STUB_TRUE CLIENT_GUI_STUB_FALSE CLIENT_GUI_WIN32_TRUE CLIENT_GUI_WIN32_FALSE CLIENT_GUI_FTWL_TRUE CLIENT_GUI_FTWL_FALSE FTWL_X11_TRUE FTWL_X11_FALSE FTWL_SDL_TRUE FTWL_SDL_FALSE SERVER_LIBS CONFIGURE_DEPENDENCIES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP AUTH_LIBS SERVER_TRUE SERVER_FALSE CLIENT_TRUE CLIENT_FALSE FTWL_TRUE FTWL_FALSE MAKE_DATA_TRUE MAKE_DATA_FALSE MAKE_CLIENT_INCLUDE_TRUE MAKE_CLIENT_INCLUDE_FALSE CVS_DEPS LN_S RANLIB ac_ct_RANLIB AR ac_ct_AR UNAME LIBICONV ALLOCA GLIBC21 USE_NLS MSGFMT GMSGFMT XGETTEXT INTLBISON BUILD_INCLUDED_LIBINTL USE_INCLUDED_LIBINTL CATALOGS CATOBJEXT GMOFILES INTLLIBS INTLOBJS POFILES POSUB DATADIRNAME INSTOBJEXT GENCAT MKINSTALLDIRS INTL_LIBTOOL_SUFFIX_PREFIX PKG_CONFIG GTK_CFLAGS GTK_LIBS GTK_CONFIG IMLIB_CONFIG GDK_IMLIB_CFLAGS GDK_IMLIB_LIBS SDL_CONFIG SDL_CFLAGS SDL_LIBS FT2_CONFIG FT2_CFLAGS FT2_LIBS X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS ESD_CONFIG ESD_CFLAGS ESD_LIBS gui_sources CLIENT_CFLAGS CLIENT_LIBS CLIENT_LDFLAGS SOUND_CFLAGS SOUND_LIBS VERSION_WITHOUT_LABEL VERSION_LABEL ESD_TRUE ESD_FALSE SDL_TRUE SDL_FALSE ALSA_TRUE ALSA_FALSE WINMM_TRUE WINMM_FALSE CLIENT_GUI_SDL_TRUE CLIENT_GUI_SDL_FALSE CLIENT_GUI_GTK_TRUE CLIENT_GUI_GTK_FALSE CLIENT_GUI_GTK_2_0_TRUE CLIENT_GUI_GTK_2_0_FALSE CLIENT_GUI_XAW_TRUE CLIENT_GUI_XAW_FALSE CLIENT_GUI_BEOS_TRUE CLIENT_GUI_BEOS_FALSE CLIENT_GUI_STUB_TRUE CLIENT_GUI_STUB_FALSE CLIENT_GUI_WIN32_TRUE CLIENT_GUI_WIN32_FALSE CLIENT_GUI_FTWL_TRUE CLIENT_GUI_FTWL_FALSE FTWL_X11_TRUE FTWL_X11_FALSE FTWL_SDL_TRUE FTWL_SDL_FALSE MINGW32_TRUE MINGW32_FALSE SERVER_LIBS CONFIGURE_DEPENDENCIES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1464,7 +1464,7 @@ _ACEOF
 
  MAJOR_VERSION="2"
  MINOR_VERSION="0"
- PATCH_VERSION="8"
+ PATCH_VERSION="9"
  VERSION_LABEL=""""
 
 
@@ -5430,7 +5430,7 @@ echo "$as_me: error: Iconv is missing.  You can get it from http://gnu.org/, \
 fi
 LIBS="$LIBS $LIBICONV"
 
-ALL_LINGUAS="ca cs da de en_GB es et fi fr he_IL hu it ja nl nb no pl pt pt_BR ro ru sv uk"
+ALL_LINGUAS="ar ca cs da de en_GB es et fa fi fr he_IL hu it ja nl nb no pl pt pt_BR ro ru sv uk"
 
         echo "$as_me:$LINENO: checking for strerror in -lcposix" >&5
 echo $ECHO_N "checking for strerror in -lcposix... $ECHO_C" >&6
@@ -8268,19 +8268,7 @@ fi
 fi
 
 
-
-        LOCALEDIR="$datadir/locale"
-        LOCALEDIR=`(
-            test "x$prefix" = xNONE && prefix="$ac_default_prefix"
-            test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
-            eval echo \""$LOCALEDIR"\"
-        )`
-
-
-cat >>confdefs.h <<_ACEOF
-#define LOCALEDIR "$LOCALEDIR"
-_ACEOF
-
+CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
 
 EXTRA_GCC_DEBUG_CFLAGS=""
 
@@ -15243,6 +15231,16 @@ else
 fi
 
 
+
+if test x"$MINGW32" = "xyes"; then
+  MINGW32_TRUE=
+  MINGW32_FALSE='#'
+else
+  MINGW32_TRUE='#'
+  MINGW32_FALSE=
+fi
+
+
 if test x$server = xtrue; then
         echo "$as_me:$LINENO: checking for gethostbyaddr in -lbind" >&5
 echo $ECHO_N "checking for gethostbyaddr in -lbind... $ECHO_C" >&6
@@ -18900,18 +18898,11 @@ rm -f conftest.$ac_objext conftest.$ac_ext
 
 
 if test x"$MINGW32" = xyes; then
-
-cat >>confdefs.h <<_ACEOF
-#define DEFAULT_DATA_PATH ".;data;~/.freeciv;$FREECIV_DATADIR"
-_ACEOF
-
+  DEFAULT_DATA_PATH=".;data;~/.freeciv;$datadir/freeciv"
 else
-
-cat >>confdefs.h <<_ACEOF
-#define DEFAULT_DATA_PATH ".:data:~/.freeciv:$FREECIV_DATADIR"
-_ACEOF
-
+  DEFAULT_DATA_PATH=".:data:~/.freeciv:$datadir/freeciv"
 fi
+CPPFLAGS="$CPPFLAGS -DDEFAULT_DATA_PATH=\"\\\"$DEFAULT_DATA_PATH\\\"\""
 
 if test -n "$WITH_EFENCE"; then
   echo "$as_me:$LINENO: checking for malloc in -lefence" >&5
@@ -19000,16 +18991,16 @@ CONFIGURE_DEPENDENCIES="$CONFIGURE_DEPENDENCIES \$(top_srcdir)/version.in"
 
 
 cat >>confdefs.h <<_ACEOF
-#define FC_STORE_CPPFLAGS "$CPPFLAGS"
+#define FC_STORE_CPPFLAGS '$CPPFLAGS'
 _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define FC_STORE_CFLAGS "$CFLAGS"
+#define FC_STORE_CFLAGS '$CFLAGS'
 _ACEOF
 
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile data/Makefile data/flags/Makefile data/misc/Makefile data/trident/Makefile data/isophex/Makefile data/isotrident/Makefile data/default/Makefile data/civ1/Makefile data/civ2/Makefile data/scenario/Makefile data/nation/Makefile data/history/Makefile utility/Makefile utility/ftwl/Makefile common/Makefile common/aicore/Makefile ai/Makefile tests/Makefile client/Makefile client/agents/Makefile client/include/Makefile client/gui-sdl/Makefile client/gui-gtk/Makefile client/gui-gtk-2.0/Makefile client/gui-xaw/Makefile client/gui-win32/Makefile client/gui-ftwl/Makefile client/gui-stub/Makefile server/Makefile server/generator/Makefile manual/Makefile intl/Makefile po/Makefile.in doc/Makefile doc/man/Makefile doc/de/Makefile doc/fr/Makefile doc/it/Makefile doc/ja/Makefile doc/nl/Makefile doc/sv/Makefile freeciv.spec:bootstrap/freeciv.spec.in bootstrap/undep.sh data/Freeciv client/freeciv.desktop:bootstrap/freeciv.desktop.in"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile data/Makefile data/flags/Makefile data/misc/Makefile data/trident/Makefile data/isophex/Makefile data/isotrident/Makefile data/default/Makefile data/civ1/Makefile data/civ2/Makefile data/scenario/Makefile data/nation/Makefile data/history/Makefile utility/Makefile utility/ftwl/Makefile common/Makefile common/aicore/Makefile ai/Makefile tests/Makefile win32/Makefile client/Makefile client/agents/Makefile client/include/Makefile client/gui-sdl/Makefile client/gui-gtk/Makefile client/gui-gtk-2.0/Makefile client/gui-xaw/Makefile client/gui-win32/Makefile client/gui-ftwl/Makefile client/gui-stub/Makefile server/Makefile server/generator/Makefile manual/Makefile intl/Makefile po/Makefile.in doc/Makefile doc/man/Makefile doc/de/Makefile doc/fr/Makefile doc/it/Makefile doc/ja/Makefile doc/nl/Makefile doc/sv/Makefile freeciv.spec:bootstrap/freeciv.spec.in bootstrap/undep.sh data/Freeciv client/freeciv.desktop:bootstrap/freeciv.desktop.in"
 
           ac_config_files="$ac_config_files civ:bootstrap/civ.in"
 
@@ -19273,6 +19264,13 @@ if test -z "${FTWL_SDL_TRUE}" && test -z "${FTWL_SDL_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"FTWL_SDL\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"FTWL_SDL\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${MINGW32_TRUE}" && test -z "${MINGW32_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"MINGW32\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"MINGW32\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -19744,6 +19742,7 @@ do
   "common/aicore/Makefile" ) CONFIG_FILES="$CONFIG_FILES common/aicore/Makefile" ;;
   "ai/Makefile" ) CONFIG_FILES="$CONFIG_FILES ai/Makefile" ;;
   "tests/Makefile" ) CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
+  "win32/Makefile" ) CONFIG_FILES="$CONFIG_FILES win32/Makefile" ;;
   "client/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/Makefile" ;;
   "client/agents/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/agents/Makefile" ;;
   "client/include/Makefile" ) CONFIG_FILES="$CONFIG_FILES client/include/Makefile" ;;
@@ -20014,6 +20013,8 @@ s,@FTWL_X11_TRUE@,$FTWL_X11_TRUE,;t t
 s,@FTWL_X11_FALSE@,$FTWL_X11_FALSE,;t t
 s,@FTWL_SDL_TRUE@,$FTWL_SDL_TRUE,;t t
 s,@FTWL_SDL_FALSE@,$FTWL_SDL_FALSE,;t t
+s,@MINGW32_TRUE@,$MINGW32_TRUE,;t t
+s,@MINGW32_FALSE@,$MINGW32_FALSE,;t t
 s,@SERVER_LIBS@,$SERVER_LIBS,;t t
 s,@CONFIGURE_DEPENDENCIES@,$CONFIGURE_DEPENDENCIES,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t

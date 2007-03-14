@@ -30,9 +30,6 @@
 
 #include "control.h"
 #include "goto.h"
-#include "multiselect.h"//*pepeto*
-#include "myai.h"//*pepeto*
-#include "options.h"//*pepeto*
 #include "text.h"
 
 /*
@@ -555,11 +552,7 @@ const char *get_unit_info_label_text1(struct unit *punit)
   if (punit) {
     struct unit_type *ptype = unit_type(punit);
 
-	int i=(multi_select_label?multi_select_size(0)-1:multi_select_satisfies_filter(0)-1);
-	if(i<=0)//*pepeto*
-		add("%s", ptype->name);
-	else
-		add("%s (+%d unit%s)",ptype->name,i,i>1?"s":"");
+    add("%s", ptype->name);
   }
   RETURN;
 }
@@ -585,9 +578,6 @@ const char *get_unit_info_label_text2(struct unit *punit)
     } else {
       add_line("%s", unit_activity_text(punit));
     }
-	
-	add_line("%s",(punit->my_ai.control?my_ai_unit_activity(punit):""));//*pepeto*
-	add_line("%s",(punit->my_ai.control?my_ai_unit_orders(punit):""));//*pepeto*
 
     add_line("%s", map_get_tile_info_text(punit->tile));
     if (infrastructure) {
@@ -601,7 +591,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
       add_line(" ");
     }
   } else {
-    add("\n\n\n\n\n");
+    add("\n\n\n");
   }
   RETURN;
 }

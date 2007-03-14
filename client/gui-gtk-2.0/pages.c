@@ -121,13 +121,13 @@ static void load_saved_game_callback(GtkWidget * w, gpointer data)
 **************************************************************************/
 static void main_callback(GtkWidget * w, gpointer data)
 {
-  if (aconnection.used) {
-    disconnect_from_server();
     if (server_list_request_id > 0) {
       cancel_async_server_list_request(server_list_request_id);
-      append_network_statusbar("Server list request cancelled.");
+    append_network_statusbar(_("Server list request cancelled."));
       server_list_request_id = -1;
     }
+  if (aconnection.used) {
+    disconnect_from_server();
   } else {
     set_client_page(PAGE_MAIN);
   }
@@ -1851,7 +1851,7 @@ void set_client_page(enum client_pages page)
   case PAGE_START:
     if (start_page_entry)
       gtk_widget_grab_focus(start_page_entry);
-    allied_chat_only = FALSE;
+    clear_allied_chat_only();
     break;
   case PAGE_NATION:
     gtk_tree_view_focus(gtk_tree_selection_get_tree_view(nation_selection));
@@ -1864,7 +1864,6 @@ void set_client_page(enum client_pages page)
 			(scenario_selection));
     break;
   case PAGE_GAME:
-    clear_allied_chat_only();
     break;
   case PAGE_NETWORK:
     update_network_lists();

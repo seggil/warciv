@@ -28,55 +28,58 @@ enum cursor_hover_state {
   HOVER_AIRLIFT_SOURCE,
   HOVER_AIRLIFT_DEST,
   HOVER_RALLY_POINT,
-//*pepeto*
-  HOVER_MY_AI_TRADE,
-  HOVER_MY_AI_TRADE_CITY,
 };
+
+#define  FILTER_ALL 1
+#define  FILTER_NEW 2
+#define  FILTER_FORTIFIED 4
+#define  FILTER_SENTRIED 8
+#define  FILTER_VETERAN 16
+#define  FILTER_IDLE 32
+#define  FILTER_ABLE_TO_MOVE 64
+#define  FILTER_OFF 128
 
 /* Selecting unit from a stack without popup. */
 enum quickselect_type {
   SELECT_POPUP = 0, SELECT_SEA, SELECT_LAND
 };
 
-#define SPECLIST_TAG tile
-#define SPECLIST_TYPE struct tile
-#define SPECLIST_NO_COPY
-#include "speclist.h"
-#define tile_list_iterate(alist, pitem) \
-  TYPED_LIST_ITERATE(struct tile, alist, pitem)
-#define tile_list_iterate_end  LIST_ITERATE_END
-
 extern int hover_unit; /* unit hover_state applies to */
 extern enum cursor_hover_state hover_state;
 extern enum unit_activity connect_activity;
 extern bool draw_goto_line;
 extern bool non_ai_unit_focus;
-extern bool autowakeup_state;
-extern bool moveandattack_state;
+extern int autowakeup_state;
+extern int moveandattack_state;
+extern int goto_mode;
 extern int lastactivatedunit;
 extern int airliftunittype;
+extern int unit_limit;
 extern int look_into_allied_city;
+extern int ctrl_state;
 extern int default_caravan_action;
 extern int default_diplomat_action;
-extern bool focus_turn;//*pepeto*
+extern unsigned int inclusive_dgoto_filter;
+extern unsigned int exclusive_dgoto_filter;
 
+bool unit_satisfies_filter(struct unit *punit);
 bool can_unit_do_connect(struct unit *punit, enum unit_activity activity);
-bool is_tile_in_airlift_queue(void);//*pepeto*
-void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi);//*pepeto*
+void add_unit_to_delayed_goto(struct tile *ptile);
+void add_city_to_auto_airlift_queue(struct tile *ptile);
 void request_clear_auto_airlift_queue(void);
 void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
-void do_airlift(struct tile *ptile,Unit_Type_id utype);
+void do_airlift(struct tile *ptile);
 void show_cities_in_airlift_queue(void);
-struct tile_list *get_airlift_queue(void);//*pepeto*
-
-void key_airplane_patrol(bool force);
-void city_set_rally_point(struct city *pcity,struct tile *ptile);//*pepeto*
-
 void key_select_rally_point(void);
 void key_clear_rally_point_for_selected_cities(void);
 void check_rally_points(struct city *pcity, struct unit *punit);
+void key_set_patrol_position(struct tile *ptile);
+void key_select_patrol_tile(void);
+void request_clear_patrol_queue(void);
+void request_execute_patrol(void);
 void key_unit_delayed_airlift(void);
+void schedule_delayed_airlift(struct tile *ptile);
 void enable_auto_mode(void);
 
 void do_move_unit(struct unit *punit, struct unit *target_unit);
@@ -87,11 +90,9 @@ void do_unit_patrol_to(struct unit *punit, struct tile *ptile);
 void do_unit_connect(struct unit *punit, struct tile *ptile,
 		     enum unit_activity activity);
 void do_map_click(struct tile *ptile, enum quickselect_type qtype);
-void attack_after_move(struct unit *punit);
 
 void set_hover_state(struct unit *punit, enum cursor_hover_state state,
 		     enum unit_activity activity);
-void request_active_unit(struct unit *punit);//*pepeto*
 void request_center_focus_unit(void);
 void request_move_unit_direction(struct unit *punit, int dir);
 void request_new_unit_activity(struct unit *punit, enum unit_activity act);
@@ -108,7 +109,7 @@ void request_unit_connect(enum unit_activity activity);
 void request_unit_disband(struct unit *punit);
 void request_unit_fortify(struct unit *punit);
 void request_unit_goto(void);
-void request_unit_move_done(struct unit *punit);
+void request_unit_move_done(void);
 void request_unit_nuke(struct unit *punit);
 void request_unit_paradrop(struct unit *punit);
 void request_unit_patrol(void);
@@ -121,9 +122,11 @@ void request_unit_upgrade(struct unit *punit);
 void request_unit_wait(struct unit *punit);
 void request_unit_wakeup(struct unit *punit);
 void request_unit_delayed_goto(void);
+void request_unit_execute_delayed_goto(void);
 void request_unit_clear_delayed_orders(void);
 void request_diplomat_action(enum diplomat_actions action, int dipl_id,
 			     int target_id, int value);
+void request_unit_mass_load(struct unit *punit);
 
 void request_toggle_map_grid(void);
 void request_toggle_map_borders(void);
@@ -151,7 +154,6 @@ void auto_center_on_focus_unit(void);
 void advance_unit_focus(void);
 struct unit *get_unit_in_focus(void);
 void set_unit_focus(struct unit *punit);
-void set_unit_focus_and_active(struct unit *punit);//*pepeto*
 void set_unit_focus_and_select(struct unit *punit);
 void update_unit_focus(void);
 struct unit *find_visible_unit(struct tile *ptile);
@@ -204,19 +206,16 @@ void key_unit_fortress(void);
 void key_unit_goto(void);
 void key_unit_homecity(void);
 void key_unit_irrigate(void);
-void key_unit_load(void);
 void key_unit_mine(void);
 void key_unit_nuke(void);
 void key_unit_patrol(void);
 void key_unit_paradrop(void);
 void key_unit_pillage(void);
 void key_unit_pollution(void);
-void key_unit_return(void);
 void key_unit_road(void);
 void key_unit_sentry(void);
 void key_unit_traderoute(void);
 void key_unit_transform(void);
-void key_unit_unload(void);
 void key_unit_unload_all(void);
 void key_unit_wait(void);
 void key_unit_wakeup_others(void);
@@ -225,12 +224,7 @@ void key_unit_execute_delayed_goto(void);
 void key_unit_clear_delayed_orders(void);
 void key_toggle_autowakeup(void);
 void key_toggle_moveandattack(void);
-//*pepeto*
-void key_toggle_spread_airport(void);
-void key_my_ai_trade(void);
-void key_my_ai_trade_city(void);
-
-void update_hover_cursor(void);//*pepeto* /gtk-2.0/mapview.c
+void key_set_goto_mode(int mode);
 
 /* don't change this unless you also put more entries in data/Freeciv */
 #define MAX_NUM_UNITS_BELOW 4
@@ -240,9 +234,6 @@ extern int num_units_below;
 void control_queues_init (void);
 void control_queues_free (void);
 
-//*pepeto*
-void put_unit_focus(struct unit *punit);
-void lie_unit_focus_init(void);
-void put_last_unit_focus(void);
+void check_dead_rally_sources (void);
 
 #endif  /* FC__CONTROL_H */
