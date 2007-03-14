@@ -194,7 +194,13 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	audio.c         \
 	audio.h         \
 	audio_none.c    \
-	audio_none.h
+	audio_none.h	\
+	multiselect.c	\
+	multiselect.h	\
+	myai.c	\
+	myai.h	\
+	peptool.c	\
+	peptool.h
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
 fc_civclient_libs =	../utility/libcivutility.a	\

@@ -40,6 +40,10 @@ extern GdkCursor * goto_cursor;
 extern GdkCursor * drop_cursor;
 extern GdkCursor * nuke_cursor;
 extern GdkCursor * patrol_cursor;
+//*pepeto
+extern GdkCursor * source_cursor;
+extern GdkCursor * dest_cursor;
+extern GdkCursor * trade_cursor;
 
 void gtk_draw_shadowed_string(GdkDrawable *drawable,
 			      GdkGC *black_gc,
@@ -62,4 +66,3 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src);
 GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite);
 
 #endif  /* FC__GRAPHICS_H */
-

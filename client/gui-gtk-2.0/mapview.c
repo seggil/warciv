@@ -168,6 +168,56 @@ void update_info_label( void )
 }
 
 /**************************************************************************
+ ... *pepeto*
+**************************************************************************/
+void update_hover_cursor(void)
+{
+	struct unit *punit=get_unit_in_focus();
+	bool cond=(punit?hover_unit==punit->id:FALSE);
+
+	switch (hover_state)
+	{
+		case HOVER_NONE:
+			gdk_window_set_cursor (root_window, NULL);
+			break;
+		case HOVER_PATROL:
+		case HOVER_MYPATROL:
+			if(cond)
+				gdk_window_set_cursor (root_window, patrol_cursor);
+			break;
+		case HOVER_GOTO:
+		case HOVER_CONNECT:
+		case HOVER_DELAYED_GOTO:
+			if(!cond)
+				break;
+		case HOVER_RALLY_POINT:
+			gdk_window_set_cursor (root_window, goto_cursor);
+			break;
+		case HOVER_NUKE:
+			if(cond)
+				gdk_window_set_cursor (root_window, nuke_cursor);
+			break;
+		case HOVER_PARADROP:
+			if(cond)
+				gdk_window_set_cursor (root_window, drop_cursor);
+			break;
+		case HOVER_AIRLIFT_SOURCE:
+			gdk_window_set_cursor (root_window, source_cursor);
+			break;
+		case HOVER_AIRLIFT_DEST:
+		case HOVER_DELAYED_AIRLIFT:
+			gdk_window_set_cursor (root_window, dest_cursor);
+			break;
+		case HOVER_MY_AI_TRADE:
+			if(!cond)
+				break;
+		case HOVER_MY_AI_TRADE_CITY:
+			gdk_window_set_cursor (root_window, trade_cursor);
+			break;
+	}
+}
+
+/**************************************************************************
   Update the information label which gives info on the current unit and the
   square under the current unit, for specified unit.  Note that in practice
   punit is always the focus unit.
@@ -188,38 +238,11 @@ void update_unit_info_label(struct unit *punit)
   gtk_label_set_text(GTK_LABEL(unit_info_label),
 		     get_unit_info_label_text2(punit));
 
-  if(punit) {
+  if(punit)	{
     if (hover_unit != punit->id)
       set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
-
-    switch (hover_state) {
-    case HOVER_NONE:
-      gdk_window_set_cursor (root_window, NULL);
-      break;
-    case HOVER_PATROL:
-      gdk_window_set_cursor (root_window, patrol_cursor);
-      break;
-    case HOVER_GOTO:
-    case HOVER_CONNECT:
-      gdk_window_set_cursor (root_window, goto_cursor);
-      break;
-    case HOVER_NUKE:
-      gdk_window_set_cursor (root_window, nuke_cursor);
-      break;
-    case HOVER_PARADROP:
-      gdk_window_set_cursor (root_window, drop_cursor);
-      break;
-    case HOVER_AIRLIFT_SOURCE:
-    case HOVER_AIRLIFT_DEST:
-    case HOVER_MYPATROL:
-    case HOVER_DELAYED_GOTO:
-    case HOVER_RALLY_POINT:
-    case HOVER_DELAYED_AIRLIFT:
-      gdk_window_set_cursor(root_window, NULL);
-    }
-  } else {
-    gdk_window_set_cursor(root_window, NULL);
   }
+  update_hover_cursor();
   update_unit_pix_label(punit);
 }
 

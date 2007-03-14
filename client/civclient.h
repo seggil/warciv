@@ -17,6 +17,8 @@
 #include "packets.h"		/* enum report_type */
 #include "shared.h"		/* MAX_LEN_NAME */
 
+#define PEPCLIENT_VERSION "0.8.1"//*pepeto*
+
 /*
  * Every TIMER_INTERVAL milliseconds real_timer_callback is
  * called. TIMER_INTERVAL has to stay 500 because real_timer_callback
@@ -27,6 +29,7 @@
 void handle_packet_input(void *packet, int type);
 
 void send_goto_unit(struct unit *punit, struct tile *dest_tile);
+void send_goto_unit_and_calculate_moves_left(struct unit *punit, struct tile *dest_tile);//*pepeto*
 void send_report_request(enum report_type type);
 void send_attribute_block_request(void);
 void send_turn_done(void);

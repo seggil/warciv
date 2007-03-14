@@ -30,6 +30,7 @@
 #include "shared.h"
 #include "support.h"
 #include "unit.h"
+#include "worklist.h"
 
 #include "chatline.h"
 #include "citydlg_common.h"
@@ -81,7 +82,7 @@ static struct gui_dialog *city_dialog_shell = NULL;
 
 enum {
   CITY_CENTER = 1, CITY_POPUP, CITY_BUY, CITY_CLEAR_WORKLIST,
-  CITY_AUTOARRANGE_WORKERS,
+  CITY_AUTOARRANGE_WORKERS, CITY_REMOVE_CUR_PROD//*pepeto*
 };
 
 static GtkWidget *city_view;
@@ -98,27 +99,31 @@ static void recreate_sell_menu(void);
 struct sell_data { int count, gold, cid; };
 
 static GtkWidget *city_center_command, *city_popup_command, *city_buy_command;
-static GtkWidget *city_change_command, *city_clear_worklist_command;
+static GtkWidget *city_change_command, *city_clear_worklist_command, *city_remove_cur_prod_command;//*pepeto*
 static GtkWidget *city_autoarrange_workers_command;
-static GtkWidget *city_last_command, *city_first_command, *city_next_command;
+static GtkWidget *city_last_command, *city_first_command, *city_next_command, *city_cma_command;//*pepeto*
 static GtkWidget *city_sell_command;
 
 static GtkWidget *change_improvements_item;
 static GtkWidget *change_units_item;
 static GtkWidget *change_wonders_item;
+static GtkWidget *change_worklist_item;//*pepeto*
 static GtkWidget *change_cma_item;
 
 static GtkWidget *last_improvements_item;
 static GtkWidget *last_units_item;
 static GtkWidget *last_wonders_item;
+static GtkWidget *last_worklist_item;//*pepeto*
 
 static GtkWidget *first_improvements_item;
 static GtkWidget *first_units_item;
 static GtkWidget *first_wonders_item;
+static GtkWidget *first_worklist_item;//*pepeto*
 
 static GtkWidget *next_improvements_item;
 static GtkWidget *next_units_item;
 static GtkWidget *next_wonders_item;
+static GtkWidget *next_worklist_item;//*pepeto*
 
 static GtkWidget *select_island_item;
 
@@ -676,6 +681,32 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
   gtk_widget_show_all(menu);
 }
 
+static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
+					     GCallback callback)//*pepeto*
+{
+  struct player *plr = game.player_ptr;
+  GtkWidget *menu, *item;
+  int i;
+  bool sensitive=FALSE;
+
+  gtk_menu_item_remove_submenu(parent_item);
+  menu = gtk_menu_new();
+  gtk_menu_item_set_submenu(parent_item, menu);
+  
+  for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
+    if (plr->worklists[i].is_valid) {
+      item = gtk_menu_item_new_with_label(plr->worklists[i].name);
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+      g_signal_connect(item, "activate",
+		       G_CALLBACK(callback), GINT_TO_POINTER(i));
+		sensitive=TRUE;
+    }
+  }
+  gtk_widget_set_sensitive(GTK_WIDGET(parent_item),sensitive);
+
+  gtk_widget_show_all(menu);
+}
+
 /****************************************************************
 ...
 *****************************************************************/
@@ -731,6 +762,11 @@ static GtkWidget *create_city_report_menubar(void)
 
   menubar = gtk_menu_bar_new();
   
+  change_cma_item = gtk_menu_item_new_with_label(_("CMA"));//*pepeto*
+  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), change_cma_item);
+  city_cma_command = change_cma_item;
+  append_cma_to_menu_item(GTK_MENU_ITEM(change_cma_item),TRUE);
+	
   item = gtk_menu_item_new_with_mnemonic(_("Chan_ge"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
   city_change_command = item;
@@ -856,9 +892,13 @@ static void create_city_report_dialog(bool make_modal)
       _("Arrange Workers"), CITY_AUTOARRANGE_WORKERS);
   city_autoarrange_workers_command = w;
 
+  w = gui_dialog_add_stockbutton (city_dialog_shell, GTK_STOCK_DELETE,
+      _("_Remove Prod."), CITY_REMOVE_CUR_PROD);
+  city_clear_worklist_command = w;//*pepeto*
+  
   w = gui_dialog_add_stockbutton (city_dialog_shell, GTK_STOCK_CLEAR,
       _("_Clear Worklist"), CITY_CLEAR_WORKLIST);
-  city_clear_worklist_command = w;
+  city_remove_cur_prod_command = w;
 
   w = gui_dialog_add_stockbutton(city_dialog_shell, GTK_STOCK_ZOOM_FIT,
       _("Cen_ter"), CITY_CENTER);
@@ -1083,6 +1123,186 @@ static void clear_worklist_iterate (GtkTreeModel *model,
 }
 
 /****************************************************************
+... *pepeto*
+*****************************************************************/
+static void remove_cur_prod_iterate (GtkTreeModel *model,
+                                    GtkTreePath *path,
+                                    GtkTreeIter *it,
+                                    gpointer data)
+{
+  gpointer res;
+  struct city *pcity;
+  gtk_tree_model_get (model, it, 0, &res, -1);
+  pcity = res;
+  if(worklist_is_empty(&pcity->worklist))
+	  return;
+  city_change_production(pcity,pcity->worklist.wlefs[0]==WEF_UNIT,pcity->worklist.wlids[0]);
+  worklist_advance(&pcity->worklist);
+  city_set_worklist(pcity,&pcity->worklist);
+  city_report_dialog_update_city(pcity);
+}
+
+/****************************************************************
+   change production and add a worklist *pepeto*
+*****************************************************************/
+static void worklist_change_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
+			GtkTreeIter *it, gpointer data)
+{
+  int i=GPOINTER_TO_INT(data);
+  if( i < 0 || i >= MAX_NUM_WORKLISTS )
+	  return;
+  struct worklist *pwl=&game.player_ptr->worklists[i];
+  if(!pwl->is_valid)
+	  return;
+  
+  struct city *pcity;
+  gpointer res;
+
+  gtk_tree_model_get(model, it, 0, &res, -1);
+  pcity = res;
+  copy_worklist(&pcity->worklist,pwl);
+  worklist_advance(&pcity->worklist);
+  city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
+  city_set_worklist(pcity, &pcity->worklist);
+  city_report_dialog_update_city(pcity);
+}
+
+static void select_change_worklist_callback(GtkWidget *w, gpointer data)
+{
+    reports_freeze();
+      gtk_tree_selection_selected_foreach(city_selection,
+					  worklist_change_worklist_iterate, data);
+    reports_thaw();
+}
+
+/**************************************************************************
+  Copy a worklist in an another at idx *pepeto*
+**************************************************************************/
+static bool worklist_insert_worklist(struct worklist *dwl,struct worklist *swl,int idx)
+{
+  int lend = worklist_length(dwl) + 1, lens = worklist_length(swl);
+
+  if (lend + lens > MAX_LEN_WORKLIST || idx >= lend)
+    return FALSE;
+
+  memmove(&dwl->wlefs[idx + lens], &dwl->wlefs[idx],
+	  sizeof(dwl->wlefs[0]) * (lend - idx));
+  memmove(&dwl->wlids[idx + lens], &dwl->wlids[idx],
+	  sizeof(dwl->wlids[0]) * (lend - idx));
+
+  memmove(&dwl->wlefs[idx], swl->wlefs,
+      sizeof(swl->wlefs[0]) * lens);
+  memmove(&dwl->wlids[idx], swl->wlids,
+      sizeof(swl->wlids[0]) * lens);
+  
+  return TRUE;
+}
+
+/****************************************************************
+   add a worklist after the current worklist *pepeto*
+*****************************************************************/
+static void worklist_last_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
+			GtkTreeIter *it, gpointer data)
+{
+  int i=GPOINTER_TO_INT(data);
+  if( i < 0 || i >= MAX_NUM_WORKLISTS )
+	  return;
+  struct worklist *pwl=&game.player_ptr->worklists[i];
+  if(!pwl->is_valid)
+	  return;
+  
+  struct city *pcity;
+  gpointer res;
+
+  gtk_tree_model_get(model, it, 0, &res, -1);
+  pcity = res;
+  worklist_insert_worklist(&pcity->worklist,pwl,worklist_length(&pcity->worklist));
+  city_set_worklist(pcity, &pcity->worklist);
+  city_report_dialog_update_city(pcity);
+}
+
+static void select_last_worklist_callback(GtkWidget *w, gpointer data)
+{
+    reports_freeze();
+
+      gtk_tree_selection_selected_foreach(city_selection,
+					  worklist_last_worklist_iterate, data);
+    reports_thaw();
+}
+
+/****************************************************************
+   add a worklist before the current worklist *pepeto*
+*****************************************************************/
+static void worklist_first_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
+			GtkTreeIter *it, gpointer data)
+{
+  int i=GPOINTER_TO_INT(data);
+  if( i < 0 || i >= MAX_NUM_WORKLISTS )
+	  return;
+  struct worklist *pwl=&game.player_ptr->worklists[i];
+  if(!pwl->is_valid)
+	  return;
+  
+  struct city *pcity;
+  gpointer res;
+  int old_id;
+  bool old_is_unit;
+
+  gtk_tree_model_get(model, it, 0, &res, -1);
+  pcity = res;
+ 
+  old_id = pcity->currently_building;
+  old_is_unit = pcity->is_building_unit;
+  if (!worklist_insert(&pcity->worklist, old_id, old_is_unit, 0))
+      return;
+
+  worklist_insert_worklist(&pcity->worklist,pwl,0);
+  worklist_advance(&pcity->worklist);
+  city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
+  city_set_worklist(pcity, &pcity->worklist);
+  city_report_dialog_update_city(pcity);
+}
+
+static void select_first_worklist_callback(GtkWidget *w, gpointer data)
+{
+    reports_freeze();
+      gtk_tree_selection_selected_foreach(city_selection,
+					  worklist_first_worklist_iterate, data);
+    reports_thaw();
+}
+
+/****************************************************************
+   add a worklist after the current production *pepeto*
+*****************************************************************/
+static void worklist_next_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
+			GtkTreeIter *it, gpointer data)
+{
+  int i=GPOINTER_TO_INT(data);
+  if( i < 0 || i >= MAX_NUM_WORKLISTS )
+	  return;
+  struct worklist *pwl=&game.player_ptr->worklists[i];
+  if(!pwl->is_valid)
+	  return;
+  
+  struct city *pcity;
+  gpointer res;
+
+  gtk_tree_model_get(model, it, 0, &res, -1);
+  pcity = res;
+  worklist_insert_worklist(&pcity->worklist,pwl,0);
+  city_set_worklist(pcity, &pcity->worklist);
+  city_report_dialog_update_city(pcity);
+}
+
+static void select_next_worklist_callback(GtkWidget *w, gpointer data)
+{
+    reports_freeze();
+      gtk_tree_selection_selected_foreach(city_selection,
+					  worklist_next_worklist_iterate, data);
+    reports_thaw();
+}
+
+/****************************************************************
 ...
 *****************************************************************/
 static void buy_iterate(GtkTreeModel *model, GtkTreePath *path,
@@ -1147,6 +1367,10 @@ static void city_command_callback(struct gui_dialog *dlg, int response)
     gtk_tree_selection_selected_foreach (city_selection,
         clear_worklist_iterate, NULL);
     break;
+  case CITY_REMOVE_CUR_PROD:
+    gtk_tree_selection_selected_foreach (city_selection,
+       remove_cur_prod_iterate, NULL);
+    break;//*pepeto*
   case CITY_AUTOARRANGE_WORKERS:
     gtk_tree_selection_selected_foreach (city_selection,
         autoarrange_workers_iterate, NULL);
@@ -1313,8 +1537,10 @@ static void create_change_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_improvements_item);
   change_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_wonders_item);
-  change_cma_item = gtk_menu_item_new_with_label(_("CMA"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_cma_item);
+  change_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_worklist_item);
+//  change_cma_item = gtk_menu_item_new_with_label(_("CMA"));*pepeto*
+//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_cma_item);*pepeto*
 }
 
 /****************************************************************
@@ -1345,6 +1571,8 @@ static void create_last_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), last_improvements_item);
   last_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), last_wonders_item);
+  last_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), last_worklist_item);
 }
 
 /****************************************************************
@@ -1364,6 +1592,8 @@ static void create_first_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), first_improvements_item);
   first_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), first_wonders_item);
+  first_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), first_worklist_item);
 }
 
 /****************************************************************
@@ -1383,6 +1613,8 @@ static void create_next_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_improvements_item);
   next_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_wonders_item);
+  next_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_worklist_item);
 }
 
 
@@ -1408,7 +1640,9 @@ static void popup_change_menu(GtkMenuShell *menu, gpointer data)
 				  FALSE, TRUE, CO_CHANGE,
 				  city_can_build_impr_or_unit,
 				  G_CALLBACK(select_impr_or_unit_callback), n);
-  append_cma_to_menu_item(GTK_MENU_ITEM(change_cma_item), TRUE);
+  append_worklist_to_menu_item(GTK_MENU_ITEM(change_worklist_item),
+				  G_CALLBACK(select_change_worklist_callback));//*pepeto*
+//  append_cma_to_menu_item(GTK_MENU_ITEM(change_cma_item), TRUE);*pepeto*
 }
 
 /****************************************************************
@@ -1432,6 +1666,8 @@ static void popup_last_menu(GtkMenuShell *menu, gpointer data)
 				  FALSE, TRUE, CO_LAST,
 				  city_can_build_impr_or_unit,
 				  G_CALLBACK(select_impr_or_unit_callback), n);
+  append_worklist_to_menu_item(GTK_MENU_ITEM(last_worklist_item),
+				  G_CALLBACK(select_last_worklist_callback));//*pepeto*
 }
 
 /****************************************************************
@@ -1455,6 +1691,8 @@ static void popup_first_menu(GtkMenuShell *menu, gpointer data)
 				  FALSE, TRUE, CO_FIRST,
 				  city_can_build_impr_or_unit,
 				  G_CALLBACK(select_impr_or_unit_callback), n);
+  append_worklist_to_menu_item(GTK_MENU_ITEM(first_worklist_item),
+				  G_CALLBACK(select_first_worklist_callback));//*pepeto*
 }
 
 /****************************************************************
@@ -1478,6 +1716,8 @@ static void popup_next_menu(GtkMenuShell *menu, gpointer data)
 				  FALSE, TRUE, CO_NEXT,
 				  city_can_build_impr_or_unit,
 				  G_CALLBACK(select_impr_or_unit_callback), n);
+  append_worklist_to_menu_item(GTK_MENU_ITEM(next_worklist_item),
+				  G_CALLBACK(select_next_worklist_callback));//*pepeto*
 }
 
 /****************************************************************
@@ -1700,6 +1940,7 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
   n = gtk_tree_selection_count_selected_rows(selection);
 
   if (n == 0) {
+    gtk_widget_set_sensitive(city_cma_command, FALSE);//*pepeto*
     gtk_widget_set_sensitive(city_change_command, FALSE);
     gtk_widget_set_sensitive(city_last_command, FALSE);
     gtk_widget_set_sensitive(city_first_command, FALSE);
@@ -1709,8 +1950,10 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_buy_command, FALSE);
     gtk_widget_set_sensitive(city_clear_worklist_command, FALSE);
     gtk_widget_set_sensitive(city_autoarrange_workers_command, FALSE);
+    gtk_widget_set_sensitive(city_remove_cur_prod_command, FALSE);
     gtk_widget_set_sensitive(city_sell_command, FALSE);
   } else {
+    gtk_widget_set_sensitive(city_cma_command, can_client_issue_orders());//*pepeto*
     gtk_widget_set_sensitive(city_change_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_last_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_first_command, can_client_issue_orders());
@@ -1719,6 +1962,7 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_popup_command, TRUE);
     gtk_widget_set_sensitive(city_buy_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_clear_worklist_command, can_client_issue_orders());
+    gtk_widget_set_sensitive(city_remove_cur_prod_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_autoarrange_workers_command, can_client_issue_orders());
     if (can_client_issue_orders()) {
       recreate_sell_menu();

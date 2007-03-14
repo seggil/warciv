@@ -16,6 +16,7 @@
 #endif
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,8 +48,11 @@
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
+#include "menu.h"//*pepeto*
+#include "multiselect.h"//*pepeto*
 #include "options.h"
 #include "packhand.h"
+#include "peptool.h"
 #include "tilespec.h"
 
 #include "dialogs.h"
@@ -83,12 +87,16 @@ static int         sabotage_improvement;
 /******************************************************************/
 #define SELECT_UNIT_READY  1
 #define SELECT_UNIT_SENTRY 2
+//*pepeto*
+#define SELECT_UNIT_SELECT 3
+#define SELECT_UNIT_ADD_TO_FOCUS 4
 
 static GtkWidget *unit_select_dialog_shell;
 static GtkTreeStore *unit_select_store;
 static GtkWidget *unit_select_view;
 static GtkTreePath *unit_select_path;
 static struct tile *unit_select_ptile;
+static GtkTreeSelection *unit_select_selection;//*pepeto*
 
 static void select_random_race(void);
   
@@ -1262,10 +1270,20 @@ static void unit_select_row_activated(GtkTreeView *view, GtkTreePath *path)
   gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store), &it, 0, &id, -1);
  
   if ((punit = player_find_unit_by_id(game.player_ptr, id))) {
-    set_unit_focus(punit);
+    set_unit_focus_and_active(punit);
   }
 
   gtk_widget_destroy(unit_select_dialog_shell);
+}
+
+/****************************************************************
+... *pepeto*
+*****************************************************************/
+static int unit_list_tile_sort(const void *_u1, const void *_u2)
+{
+  struct unit *pu1 = *(struct unit **)_u1, *pu2 = *(struct unit **)_u2;
+
+  return (pu1->owner != game.player_idx && pu2->owner == game.player_idx);
 }
 
 /**************************************************************************
@@ -1276,6 +1294,7 @@ static void unit_select_append(struct unit *punit, GtkTreeIter *it,
 {
   GdkPixbuf *pix;
   struct unit_type *ptype = unit_type(punit);
+  struct city *pcity = player_find_city_by_id(game.player_ptr, punit->homecity);
 
   pix = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
       UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
@@ -1295,6 +1314,8 @@ static void unit_select_append(struct unit *punit, GtkTreeIter *it,
       0, punit->id,
       1, pix,
       2, _(ptype->name),
+  	  3, (pcity?pcity->name:""),
+  	  4, _(ptype->veteran[punit->veteran].name),
       -1);
   g_object_unref(pix);
 
@@ -1309,6 +1330,7 @@ static void unit_select_append(struct unit *punit, GtkTreeIter *it,
 **************************************************************************/
 static void unit_select_recurse(int root_id, GtkTreeIter *it_root)
 {
+  unit_list_sort(&unit_select_ptile->units,unit_list_tile_sort);//*pepeto*
   unit_list_iterate(unit_select_ptile->units, pleaf) {
     GtkTreeIter it_leaf;
 
@@ -1347,6 +1369,29 @@ static void refresh_unit_select_dialog(void)
 static void unit_select_destroy_callback(GtkObject *object, gpointer data)
 {
   unit_select_dialog_shell = NULL;
+  gtk_tree_selection_unselect_all(unit_select_selection);
+}
+
+/****************************************************************
+ ... *pepeto*
+*****************************************************************/
+static void add_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
+			GtkTreeIter *it, gpointer data)
+{
+  gint id;
+  struct unit *punit;
+  bool *focus_change=(bool *)data;
+
+  gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store),it,0,&id,-1);
+  if(!(punit=player_find_unit_by_id(game.player_ptr,id)))
+    return;
+  if(*focus_change)
+  {
+	  set_unit_focus(punit);
+	  *focus_change=FALSE;
+  }
+  else
+	  multi_select_add_or_remove_unit(punit);
 }
 
 /****************************************************************
@@ -1366,15 +1411,8 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
           pmyunit = punit;
 
           /* Activate this unit. */
-	  punit->focus_status = FOCUS_AVAIL;
-	  if (unit_has_orders(punit)) {
-	    request_orders_cleared(punit);
-	  }
-	  if (punit->activity != ACTIVITY_IDLE || punit->ai.control) {
-	    punit->ai.control = FALSE;
-	    request_new_unit_activity(punit, ACTIVITY_IDLE);
-	  }
-        }
+			request_active_unit(punit);
+	  	}
       } unit_list_iterate_end;
 
       if (pmyunit) {
@@ -1398,7 +1436,33 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
     }
     break;
 
-  default:
+//*pepeto*
+	case SELECT_UNIT_SELECT:
+	{
+		if(!gtk_tree_selection_count_selected_rows(unit_select_selection))
+			break;
+
+		bool focus_change=TRUE;
+		multi_select_clear(0);
+		gtk_tree_selection_selected_foreach(unit_select_selection,add_unit_iterate,(gpointer)&focus_change);
+		update_unit_info_label(get_unit_in_focus());
+		update_menus();
+    break;
+	}
+		
+	case SELECT_UNIT_ADD_TO_FOCUS:
+	{
+		if(!gtk_tree_selection_count_selected_rows(unit_select_selection))
+			break;
+
+ 		bool focus_change=FALSE;
+		gtk_tree_selection_selected_foreach(unit_select_selection,add_unit_iterate,(gpointer)&focus_change);
+ 		update_unit_info_label(get_unit_in_focus());
+		update_menus();
+    break;
+	}
+
+	default:
     break;
   }
   
@@ -1408,24 +1472,28 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-#define NUM_UNIT_SELECT_COLUMNS 2
+#define NUM_UNIT_SELECT_COLUMNS 4
 
 void popup_unit_select_dialog(struct tile *ptile)
 {
   if (!unit_select_dialog_shell) {
     GtkTreeStore *store;
     GtkWidget *shell, *view, *sw, *hbox;
-    GtkWidget *ready_cmd, *sentry_cmd, *close_cmd;
+    GtkWidget *ready_cmd, *sentry_cmd, *close_cmd, *select_cmd, *add_to_focus_cmd;//*pepeto*
 
     static const char *titles[NUM_UNIT_SELECT_COLUMNS] = {
       N_("Unit"),
-      N_("Name")
+      N_("Name"),
+	  N_("Homecity"),
+	  N_("Veteran level")
     };
     static bool titles_done;
 
     GType types[NUM_UNIT_SELECT_COLUMNS+1] = {
       G_TYPE_INT,
       GDK_TYPE_PIXBUF,
+      G_TYPE_STRING,
+      G_TYPE_STRING,
       G_TYPE_STRING
     };
     int i;
@@ -1467,6 +1535,7 @@ void popup_unit_select_dialog(struct tile *ptile)
 	  render = gtk_cell_renderer_text_new();
 	  gtk_tree_view_column_pack_start(column, render, TRUE);
 	  gtk_tree_view_column_set_attributes(column, render, "text", i, NULL);
+      gtk_tree_view_column_set_sort_column_id(column, i);//*pepeto*
 	  break;
 	default:
 	  render = gtk_cell_renderer_pixbuf_new();
@@ -1480,6 +1549,9 @@ void popup_unit_select_dialog(struct tile *ptile)
 
     g_signal_connect(view, "row_activated",
 	G_CALLBACK(unit_select_row_activated), NULL);
+//*pepeto*
+	unit_select_selection=gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+	gtk_tree_selection_set_mode(unit_select_selection,GTK_SELECTION_MULTIPLE);
 
 
     sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1507,6 +1579,23 @@ void popup_unit_select_dialog(struct tile *ptile)
     gtk_button_box_set_child_secondary(
       GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
       sentry_cmd, TRUE);
+
+//*pepeto*
+    select_cmd =
+    gtk_dialog_add_button(GTK_DIALOG(shell),
+      _("Select"), SELECT_UNIT_SELECT);
+
+    gtk_button_box_set_child_secondary(
+      GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
+      select_cmd, TRUE);
+
+    add_to_focus_cmd =
+    gtk_dialog_add_button(GTK_DIALOG(shell),
+      _("Add units to focus"), SELECT_UNIT_ADD_TO_FOCUS);
+
+    gtk_button_box_set_child_secondary(
+      GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
+      add_to_focus_cmd, TRUE);
 
     close_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
@@ -1900,6 +1989,45 @@ static void select_random_race(void)
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(races_nation_list));
 
+//*pepeto*
+	int i;
+	const gchar *nn;
+	Nation_Type_id id;
+	
+	id=find_nation_by_name(default_user_nation);
+	if(id==NO_NATION_SELECTED)
+		id=find_nation_by_name_orig(default_user_nation);
+	if(id!=NO_NATION_SELECTED)
+		for(i=0;i<game.playable_nation_count;i++)
+		{
+			GtkTreePath *path;
+			GtkTreeIter it;
+			GValue val = { 0, };
+
+			path = gtk_tree_path_new();
+			gtk_tree_path_append_index(path,i);
+			if(gtk_tree_model_get_iter(model,&it,path))
+			{
+				gtk_tree_model_get_value(model,&it,3,&val);
+				nn=g_value_get_string(&val);
+				if(find_nation_by_name(nn)==id)
+				{
+					gboolean chosen;
+	
+					g_value_unset(&val);
+					gtk_tree_model_get(model,&it,1,&chosen,-1);
+					if (!chosen)
+					{
+						gtk_tree_view_set_cursor(GTK_TREE_VIEW(races_nation_list),path,NULL,FALSE);
+						gtk_tree_path_free(path);
+						return;
+					}
+					g_value_unset(&val);
+				}
+				gtk_tree_path_free(path);
+			}
+		}
+	
   /* This has a possibility of infinite loop in case
    * game.playable_nation_count < game.nplayers. */
   while (TRUE) {
@@ -1907,7 +2035,7 @@ static void select_random_race(void)
     GtkTreeIter it;
     int nation;
 
-    nation = myrand(game.playable_nation_count);
+   nation = myrand(game.playable_nation_count);
 
     path = gtk_tree_path_new();
     gtk_tree_path_append_index(path, nation);
@@ -2162,3 +2290,362 @@ void popdown_all_game_dialogs(void)
   g_list_free(res);
 }
 
+/*************************************************************************
+  PepSettings dialog. *pepeto*
+*************************************************************************/
+struct filter_data
+{
+	filter filter;
+	GtkWidget *widget[FILTER_NUM];
+};
+
+void update_filter_buttons(struct filter_data *pfd);
+void update_autop_buttons(automatic_processus *cap);
+static void pepsetting_changed_callback(GtkWidget *widget,gpointer data) ;
+static void pepfilter_changed_callback(GtkWidget *widget,gpointer data);
+static void pepautop_changed_callback(GtkWidget *widget,gpointer data);
+void set_pepsetting(GtkWidget *w);
+void update_pepsettind_dialog(GtkWidget *w);
+static void pepsetting_callback(GtkWidget *win,gint rid,GtkWidget *w);
+static void pepsetting_destroy(GtkWidget *win,GtkWidget *w);
+
+void update_filter_buttons(struct filter_data *pfd)
+{
+	int i;
+
+	for(i=0;i<FILTER_NUM;i++)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pfd->widget[i]),pfd->filter&(1<<i));
+}
+
+void update_autop_buttons(automatic_processus *cap)
+{
+	int i;
+
+	for(i=0;i<AUTO_VALUES_NUM;i++)
+		if(is_auto_value_allowed(cap,i))
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cap->widget[i]),cap->auto_filter&AV_TO_FV(i));
+}
+
+static void pepsetting_changed_callback(GtkWidget *widget,gpointer data) 
+{
+	g_object_set_data(G_OBJECT(widget),"changed",(gpointer)TRUE); 
+}
+
+static void pepfilter_changed_callback(GtkWidget *widget,gpointer data)
+{
+	GtkWidget *frame=(GtkWidget *)data;
+	struct filter_data *pfd=(struct filter_data *)g_object_get_data(G_OBJECT(frame),"data");
+	int i;
+
+	for(i=0;i<FILTER_NUM;i++)
+		if(widget==pfd->widget[i])
+		{
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))^!!(pfd->filter&(1<<i)))
+			{
+				filter_change(&pfd->filter,1<<i);
+				update_filter_buttons(pfd);
+			}
+			break;
+		}
+	g_object_set_data(G_OBJECT(frame),"changed",(gpointer)TRUE); 
+}
+
+static void pepautop_changed_callback(GtkWidget *widget,gpointer data)
+{
+	GtkWidget *frame=(GtkWidget *)data;
+	automatic_processus *cap=(automatic_processus *)g_object_get_data(G_OBJECT(frame),"ap");
+	int i;
+
+	for(i=0;i<AUTO_VALUES_NUM;i++)
+		if(is_auto_value_allowed(cap,i)&&widget==cap->widget[i])
+		{
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))^!!(cap->auto_filter&AV_TO_FV(i)))
+			{
+				auto_filter_change(cap,i);
+				update_autop_buttons(cap);
+			}
+			break;
+		}
+	g_object_set_data(G_OBJECT(frame),"changed",(gpointer)TRUE); 
+}
+
+void set_pepsetting(GtkWidget *w)
+{
+	GtkWidget *prev;
+
+	if(g_object_get_data(G_OBJECT(w),"changed"))
+	{
+		struct pepsetting *pset=(struct pepsetting *)g_object_get_data(G_OBJECT(w),"setting");
+		automatic_processus *pap,*cap=(automatic_processus *)g_object_get_data(G_OBJECT(w),"ap");
+		int value;
+
+		if(pset)
+		{
+			switch(pset->type)
+			{
+				case TYPE_BOOL:
+					value=(bool)gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));	
+					*((bool *)pset->data)=value;
+					break;
+				case TYPE_INT:
+					value=(int)gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
+					*((int *)pset->data)=value;
+					break;
+				case TYPE_FILTER:
+					value=((struct filter_data *)g_object_get_data(G_OBJECT(w),"data"))->filter;
+					*((filter *)pset->data)=value;
+					break;
+				default:
+					value=0;
+					break;
+			}
+			freelog(LOG_VERBOSE,"settings '%s' set to %d",pset->name,value);
+		}
+		else if(cap&&(pap=find_automatic_processus_by_name(cap->description)))
+			pap->auto_filter=cap->auto_filter;
+	}
+
+	prev=(GtkWidget *)g_object_get_data(G_OBJECT(w),"prev");
+	if(prev)
+		set_pepsetting(prev);
+}
+
+void update_pepsettind_dialog(GtkWidget *w)
+{
+	GtkWidget *prev;
+	struct pepsetting *pset=(struct pepsetting *)g_object_get_data(G_OBJECT(w),"setting");
+	automatic_processus *pap,*cap=(automatic_processus *)g_object_get_data(G_OBJECT(w),"ap");
+
+	if(pset)
+	{
+		switch(pset->type)
+		{
+			case TYPE_BOOL:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w),*((bool *)pset->data));
+				break;
+			case TYPE_INT:
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(w),*((int *)pset->data));
+				break;
+			case TYPE_FILTER:
+			{
+				struct filter_data *pfd=(struct filter_data *)g_object_get_data(G_OBJECT(w),"data");
+				pfd->filter=*((filter *)pset->data);
+				update_filter_buttons(pfd);
+				break;
+			}
+			default:
+				break;
+		}
+		g_object_set_data(G_OBJECT(w),"changed",FALSE);
+	}
+	else if(cap&&(pap=find_automatic_processus_by_name(cap->description)))
+	{
+		cap->auto_filter=pap->auto_filter;
+		update_autop_buttons(cap);
+	}
+
+	prev=(GtkWidget *)g_object_get_data(G_OBJECT(w),"prev");
+	if(prev)
+		update_pepsettind_dialog(prev);
+}
+
+static void pepsetting_callback(GtkWidget *win,gint rid,GtkWidget *w)
+{
+	switch(rid)
+	{
+		case GTK_RESPONSE_OK:
+			set_pepsetting(w);
+			init_menus();
+		case GTK_RESPONSE_CANCEL:
+			gtk_widget_destroy(win);
+			break;
+		case GTK_RESPONSE_APPLY:
+			set_pepsetting(w);
+			init_menus();
+			update_pepsettind_dialog(w);
+			break;
+		case 1://reset
+			init_all_settings();
+			update_pepsettind_dialog(w);
+			break;
+		case 2://load
+			load_all_settings();
+			init_menus();
+			update_pepsettind_dialog(w);
+			break;
+		case 3://save
+			set_pepsetting(w);
+			save_all_settings();
+			update_pepsettind_dialog(w);
+			break;
+		default:
+			break;
+	}
+}
+
+static void pepsetting_destroy(GtkWidget *win,GtkWidget *w)
+{
+	while(w)
+	{
+		struct pepsetting *pset=(struct pepsetting *)g_object_get_data(G_OBJECT(w),"setting");
+		if(pset&&pset->type==TYPE_FILTER)
+		{
+			struct filter_data *pfd=(struct filter_data *)g_object_get_data(G_OBJECT(w),"data");
+			free(pfd);
+		}
+		automatic_processus *cap=(automatic_processus *)g_object_get_data(G_OBJECT(w),"ap");
+		if(cap)
+			free(cap);
+		w=(GtkWidget *)g_object_get_data(G_OBJECT(w),"prev");
+	}
+}
+
+#define add_check_button(idx,desc)	\
+{	\
+	GtkWidget *cb=gtk_check_button_new_with_label(desc);	\
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cb),pfd->filter&(1<<i));	\
+	g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);	\
+	gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);	\
+	pfd->widget[idx]=cb;	\
+}
+
+void create_pepsetting_dialog(void)
+{
+	GtkWidget *win,*book,*vbox[PAGE_NUM],*chbox[PAGE_NUM],*label,*prev_widget=NULL;
+	GtkTooltips *tips;
+	int i;
+
+	tips=gtk_tooltips_new();
+	win=gtk_dialog_new_with_buttons(_("PepClient settings"),NULL,0,"Reset",1,"Load",2,GTK_STOCK_SAVE,3,GTK_STOCK_APPLY,GTK_RESPONSE_APPLY,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_OK,NULL);
+	gtk_dialog_set_has_separator(GTK_DIALOG(win),FALSE);
+	setup_dialog(win,toplevel);
+
+	book=gtk_notebook_new();
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(win)->vbox),book,FALSE,FALSE,2);
+
+	for(i=0;i<PAGE_NUM;i++)
+	{
+		vbox[i]=gtk_vbox_new(FALSE,2);
+		gtk_container_set_border_width(GTK_CONTAINER(vbox[i]),6);
+		label=gtk_label_new(_(get_page_name(i)));
+		gtk_notebook_append_page(GTK_NOTEBOOK(book),vbox[i],label);
+		chbox[i]=NULL;
+	}
+
+	pepsettings_iterate(pset)
+	{
+		GtkWidget *ebox,*hbox,*ent;
+		char buf[256];
+
+		if(pset->type!=TYPE_FILTER)
+		{
+			hbox=gtk_hbox_new(FALSE,0);
+			gtk_box_pack_start(GTK_BOX(vbox[pset->page]),hbox,FALSE,FALSE,0);
+			ebox=gtk_event_box_new();
+			gtk_box_pack_start(GTK_BOX(hbox),ebox,FALSE,FALSE,5);
+			label=gtk_label_new(_(pset->description));
+			gtk_container_add(GTK_CONTAINER(ebox),label);
+			if(pset->help_text)
+				my_snprintf(buf,sizeof(buf),"%s\n\n%s",pset->name,_(pset->help_text));
+			else
+				strcpy(buf,pset->name);
+			gtk_tooltips_set_tip(tips,ebox,buf,NULL);
+			
+			switch(pset->type)
+			{
+				case TYPE_BOOL:
+					ent=gtk_check_button_new();
+					g_signal_connect(ent,"toggled",G_CALLBACK(pepsetting_changed_callback),NULL);
+					break;
+				case TYPE_INT:
+					ent=gtk_spin_button_new_with_range(pset->min,pset->max,1);
+					g_signal_connect(ent,"changed",G_CALLBACK(pepsetting_changed_callback),NULL);
+					break;
+				default:
+					continue;
+			}
+
+			gtk_box_pack_end(GTK_BOX(hbox),ent,FALSE,FALSE,0);
+		}
+		else
+		{
+			if(!chbox[pset->page])
+			{
+				chbox[pset->page]=gtk_hbox_new(TRUE,0);
+				gtk_box_pack_start(GTK_BOX(vbox[pset->page]),chbox[pset->page],FALSE,FALSE,0);
+			}
+			struct filter_data *pfd=fc_malloc(sizeof(struct filter_data));
+			GtkWidget *pbox;
+
+			pfd->filter=*((filter *)pset->data);
+			ent=gtk_frame_new(_(pset->description));
+			pbox=gtk_vbox_new(FALSE,0);
+				
+			add_check_button(0,"All units");
+			add_check_button(1,"New units");
+			add_check_button(2,"Fortified units");
+			add_check_button(3,"Sentried units");
+			add_check_button(4,"Veteran units");
+			add_check_button(5,"Auto units");
+			add_check_button(6,"Idle units");
+			add_check_button(7,"Units able to move");
+			add_check_button(8,"Military unit");
+			add_check_button(9,"Off");
+			gtk_container_add(GTK_CONTAINER(ent),pbox);
+			gtk_box_pack_start(GTK_BOX(chbox[pset->page]),ent,FALSE,TRUE,0);
+			g_object_set_data(G_OBJECT(ent),"data",pfd);
+		}
+		g_object_set_data(G_OBJECT(ent),"prev",prev_widget);
+		g_object_set_data(G_OBJECT(ent),"setting",pset);
+		g_object_set_data(G_OBJECT(ent),"ap",NULL);
+		g_object_set_data(G_OBJECT(ent),"changed",FALSE);
+		prev_widget=ent;
+	} pepsettings_iterate_end;
+
+	for(i=0;i<PAGE_NUM;i++)
+		chbox[i]=NULL;
+
+	automatic_processus_iterate(pap)
+	{
+		if(pap->page>=PAGE_NUM)
+			continue;
+
+		automatic_processus *cap=fc_malloc(sizeof(automatic_processus));
+		GtkWidget *frame,*pbox,*ent;
+		enum automatic_value v;
+
+		*cap=*pap;
+		frame=gtk_frame_new(_(cap->description));
+		pbox=gtk_vbox_new(FALSE,0);
+		for(v=0;v<AUTO_VALUES_NUM;v++)
+		{
+			if(!is_auto_value_allowed(cap,v))
+				continue;
+
+			ent=gtk_check_button_new_with_label(ap_event_name(v));
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ent),cap->auto_filter&AV_TO_FV(i));
+			g_signal_connect(ent,"toggled",G_CALLBACK(pepautop_changed_callback),frame);
+			gtk_box_pack_start(GTK_BOX(pbox),ent,FALSE,FALSE,0);
+			cap->widget[v]=ent;
+		}
+		gtk_container_add(GTK_CONTAINER(frame),pbox);
+		g_object_set_data(G_OBJECT(frame),"prev",prev_widget);
+		g_object_set_data(G_OBJECT(frame),"setting",NULL);
+		g_object_set_data(G_OBJECT(frame),"ap",cap);
+		g_object_set_data(G_OBJECT(frame),"changed",FALSE);
+		prev_widget=frame;
+
+		if(!chbox[cap->page])
+		{
+			chbox[cap->page]=gtk_hbox_new(TRUE,0);
+			gtk_box_pack_end(GTK_BOX(vbox[cap->page]),chbox[cap->page],FALSE,FALSE,0);
+		}
+		gtk_box_pack_end(GTK_BOX(chbox[cap->page]),frame,FALSE,TRUE,0);
+	} automatic_processus_iterate_end;
+
+	update_pepsettind_dialog(prev_widget);
+	g_signal_connect(win,"response",G_CALLBACK(pepsetting_callback),prev_widget);
+	g_signal_connect(win,"destroy",G_CALLBACK(pepsetting_destroy),prev_widget);
+	gtk_widget_show_all(GTK_DIALOG(win)->vbox);
+	gtk_widget_show(win);
+}

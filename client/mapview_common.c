@@ -34,6 +34,7 @@
 #include "control.h"
 #include "goto.h"
 #include "mapview_common.h"
+#include "myai.h"//*pepeto*
 #include "tilespec.h"
 
 struct mapview_canvas mapview_canvas;
@@ -60,7 +61,8 @@ static void dirty_overview(void);
 static void flush_dirty_overview(void);
 
 static void draw_traderoutes_for_city (struct city *src_pcity);
-  
+static void draw_trade_route_list(struct trade_route_list *ptrl,enum color_std color);
+
 /**************************************************************************
  Refreshes a single tile on the map canvas.
 **************************************************************************/
@@ -1613,11 +1615,7 @@ void update_map_canvas(int canvas_x, int canvas_y, int width, int height)
   }
 
   /* Draw trade route lines. */
-  if (draw_city_traderoutes) {
-    city_list_iterate (game.player_ptr->cities, pcity) {
-      draw_traderoutes_for_city (pcity);
-    } city_list_iterate_end;
-  }
+  draw_traderoutes();
 
   draw_link_marks();
 
@@ -2299,9 +2297,9 @@ void get_city_mapview_traderoutes(struct city *pcity,
   }
 
   num_traderoutes = city_num_trade_routes (pcity);
-  
-  my_snprintf (traderoutes_buffer, traderoutes_buffer_len, "[%d/%d]",
-               num_traderoutes, NUM_TRADEROUTES);
+//*pepeto*
+  my_snprintf (traderoutes_buffer, traderoutes_buffer_len, "[%d(+%d)/%d/%d]", num_traderoutes,
+  trade_route_list_size(&pcity->trade_routes)+estimate_non_ai_trade_route_number(pcity),count_trade_routes(pcity), NUM_TRADEROUTES);
   if (num_traderoutes >= NUM_TRADEROUTES) {
     *traderoutes_color = COLOR_STD_GROUND; /* i.e. green */
   } else if (NUM_TRADEROUTES-1 >= num_traderoutes && num_traderoutes > 0) {
@@ -2379,12 +2377,12 @@ static void flush_dirty_overview(void)
 **************************************************************************/
 static void center_tile_overviewcanvas(struct tile *ptile)
 {
-  /* The overview coordinates are equivalent to (scaled) natural
-   * coordinates. */
-  do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
+   /* The overview coordinates are equivalent to (scaled) natural
+    * coordinates. */
+   do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
     if (do_not_recenter_overview) {
-      overview.map_x0 = 0;
-      overview.map_y0 = 0;
+       overview.map_x0 = 0;
+       overview.map_y0 = 0;
     } else {
       /* NOTE: this embeds the map wrapping in the overview code.  This is
        * basically necessary for the overview to be efficiently
@@ -2400,8 +2398,8 @@ static void center_tile_overviewcanvas(struct tile *ptile)
         overview.map_y0 = 0;
       }
     } 
-    redraw_overview();
-  } do_in_natural_pos_end;
+     redraw_overview();
+   } do_in_natural_pos_end;
 }
 
 /**************************************************************************
@@ -2753,6 +2751,31 @@ bool map_canvas_resized(int width, int height)
 void init_mapcanvas_and_overview(void)
 {
 }
+
+//*pepeto*
+#define draw_trade_routes(list,color)	\
+if(list)	\
+{	\
+	trade_route_list_iterate(*(list),ptr)	\
+	{	\
+		if(ptr->pc1!=src_pcity)	\
+			continue;	\
+		dest_pcity=ptr->pc2;	\
+		if(tile_visible_mapcanvas(src_pcity->tile)||tile_visible_mapcanvas(dest_pcity->tile))	\
+  		{	\
+			tile_to_canvas_pos(&canvas_x,&canvas_y,src_pcity->tile);	\
+			canvas_x+=NORMAL_TILE_WIDTH/2;	\
+			canvas_y+=NORMAL_TILE_HEIGHT/2;	\
+	\
+			tile_to_canvas_pos(&canvas_x2,&canvas_y2,dest_pcity->tile);	\
+			canvas_x2+=NORMAL_TILE_WIDTH/2;	\
+			canvas_y2+=NORMAL_TILE_HEIGHT/2;	\
+ 	\
+			canvas_put_line(mapview_canvas.store,color,LINE_BORDER,canvas_x,canvas_y,canvas_x2-canvas_x,canvas_y2-canvas_y);	\
+		}	\
+ 	} trade_route_list_iterate_end;	\
+}
+
 /**************************************************************************
   Draw all outgoing traderoutes for src_pcity (if any), taking into
   account that internal traderoutes may be drawn twice.  Note that this
@@ -2802,5 +2825,65 @@ static void draw_traderoutes_for_city (struct city *src_pcity)
       }
     } /* eww */
   }
-}
   
+  //*pepeto*
+  trade_route_list_iterate(src_pcity->trade_routes,ptr)
+  {
+    if(ptr->pc1!=src_pcity)
+      continue;
+    dest_pcity=ptr->pc2;
+    if(tile_visible_mapcanvas(src_pcity->tile)||tile_visible_mapcanvas(dest_pcity->tile))
+    {
+      tile_to_canvas_pos(&canvas_x,&canvas_y,src_pcity->tile);
+      canvas_x+=NORMAL_TILE_WIDTH/2;
+      canvas_y+=NORMAL_TILE_HEIGHT/2;
+
+      tile_to_canvas_pos(&canvas_x2,&canvas_y2,dest_pcity->tile);
+      canvas_x2+=NORMAL_TILE_WIDTH/2;
+      canvas_y2+=NORMAL_TILE_HEIGHT/2;
+			
+      canvas_put_line(mapview_canvas.store,COLOR_STD_YELLOW,LINE_BORDER,canvas_x,canvas_y,canvas_x2-canvas_x,canvas_y2-canvas_y);
+    }
+  } trade_route_list_iterate_end;
+}
+
+static void draw_trade_route_list(struct trade_route_list *ptrl,enum color_std color)
+{
+  struct tile *pt1, *pt2;
+  int canvas_x, canvas_y, canvas_x2, canvas_y2;
+
+  trade_route_list_iterate(*ptrl,ptr) {
+    if(tile_visible_mapcanvas(ptr->pc1->tile)||tile_visible_mapcanvas(ptr->pc2->tile)) {
+      if(ptr->pc1->id>ptr->pc2->id) {
+        pt1=ptr->pc1->tile;
+        pt2=ptr->pc2->tile;
+      } else {
+        pt1=ptr->pc2->tile;
+        pt2=ptr->pc1->tile;
+      }
+      tile_to_canvas_pos(&canvas_x,&canvas_y,pt1);
+      canvas_x+=NORMAL_TILE_WIDTH/2;
+      canvas_y+=NORMAL_TILE_HEIGHT/2;
+
+      tile_to_canvas_pos(&canvas_x2,&canvas_y2,pt2);
+      canvas_x2+=NORMAL_TILE_WIDTH/2;
+      canvas_y2+=NORMAL_TILE_HEIGHT/2;
+
+      canvas_put_line(mapview_canvas.store,color,LINE_BORDER,canvas_x,canvas_y,canvas_x2-canvas_x,canvas_y2-canvas_y);
+    }
+  } trade_route_list_iterate_end;
+}
+
+void draw_traderoutes(void)
+{
+  if(!draw_city_traderoutes)
+    return;
+
+  city_list_iterate (game.player_ptr->cities, pcity) {
+    draw_traderoutes_for_city (pcity);
+  } city_list_iterate_end;
+
+  draw_trade_route_list(my_ai_trade_plan_get(),COLOR_STD_RED);
+  if(my_ai_trade_manual_trade_route_enable)
+    draw_trade_route_list(estimate_non_ai_trade_route(),COLOR_STD_ORANGE);
+}

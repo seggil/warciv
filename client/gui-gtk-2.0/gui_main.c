@@ -61,6 +61,7 @@
 #include "mapview.h"
 #include "menu.h"
 #include "messagewin.h"
+#include "multiselect.h"
 #include "netintf.h"
 #include "optiondlg.h"
 #include "options.h"
@@ -73,6 +74,7 @@
 #include "freeciv.ico"
 
 #define WARCLIENT_VERSION "0.9.1 devel"
+#define PEPCLIENT_VERSION "0.9.1 devel"
 
 const char *client_string = "gui-gtk-2.0";
 
@@ -210,9 +212,9 @@ struct net_input_context {
 **************************************************************************/
 void clear_allied_chat_only(void)
 {
-  allied_chat_only = FALSE;
+  allied_chat_only = TRUE;
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(allied_chat_toggle_button),
-                               FALSE);
+                               TRUE);
 }
 
 /**************************************************************************
@@ -359,13 +361,21 @@ static gboolean toplevel_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
   return FALSE;
 }
 
+//*pepeto*
+#define CASE1(action) case GDK_ampersand:case GDK_1:action;return TRUE;
+#define CASE2(action) case GDK_eacute:case GDK_2:action;return TRUE;
+#define CASE3(action) case GDK_quotedbl:case GDK_3:action;return TRUE;
+#define CASE4(action) case GDK_apostrophe:case GDK_4:action;return TRUE;
+#define CASE5(action) case GDK_parenleft:case GDK_5:action;return TRUE;
+#define CASE6(action) case GDK_minus:case GDK_6:action;return TRUE;
+#define CASE7(action) case GDK_egrave:case GDK_7:action;return TRUE;
+#define CASE8(action) case GDK_underscore:case GDK_8:action;return TRUE;
+#define CASE9(action) case GDK_ccedilla:case GDK_9:action;return TRUE;
 /**************************************************************************
 ...
 **************************************************************************/
 static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 {
-  ctrl_state |= (ev->keyval == GDK_q)|(ev->keyval == GDK_Q);
-
   /* inputline history code */
   if (!GTK_WIDGET_MAPPED(top_vbox) || GTK_WIDGET_HAS_FOCUS(inputline)) {
     return FALSE;
@@ -384,7 +394,58 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 
   if (!client_is_observer()) {
     if ((ev->state & GDK_SHIFT_MASK)) {
-      switch (ev->keyval) {
+   	 if ((ev->state & GDK_CONTROL_MASK)) {
+		 if ((ev->state & GDK_MOD1_MASK)) {
+      		switch (ev->keyval) {//*pepeto*: <alt><shift><ctrl>
+				CASE1(request_unit_execute_delayed_goto(NULL,1))
+				CASE2(request_unit_execute_delayed_goto(NULL,2))
+				CASE3(request_unit_execute_delayed_goto(NULL,3))
+				CASE4(request_unit_execute_delayed_goto(NULL,4))
+				CASE5(request_unit_execute_delayed_goto(NULL,5))
+				CASE6(request_unit_execute_delayed_goto(NULL,6))
+				CASE7(request_unit_execute_delayed_goto(NULL,7))
+				CASE8(request_unit_execute_delayed_goto(NULL,8))
+				CASE9(request_unit_execute_delayed_goto(NULL,9))
+				default: break;
+			}
+		 }
+      		switch (ev->keyval) {//*pepeto*: <shift><ctrl>
+				CASE1(multi_select_clear(1))
+				CASE2(multi_select_clear(2))
+				CASE3(multi_select_clear(3))
+				CASE4(multi_select_clear(4))
+				CASE5(multi_select_clear(5))
+				CASE6(multi_select_clear(6))
+				CASE7(multi_select_clear(7))
+				CASE8(multi_select_clear(8))
+				CASE9(multi_select_clear(9))
+				default: break;
+			}
+		}
+	if ((ev->state & GDK_MOD1_MASK)) {
+      		switch (ev->keyval) {//*pepeto*: <alt><shift>
+				CASE1(delayed_goto_cat(0,1))
+				CASE2(delayed_goto_cat(0,2))
+				CASE3(delayed_goto_cat(0,3))
+				CASE4(delayed_goto_cat(0,4))
+				CASE5(delayed_goto_cat(0,5))
+				CASE6(delayed_goto_cat(0,6))
+				CASE7(delayed_goto_cat(0,7))
+				CASE8(delayed_goto_cat(0,8))
+				CASE9(delayed_goto_cat(0,9))
+				default: break;
+			}
+	}
+      switch (ev->keyval) {//*pepeto*: <shift>
+				CASE1(multi_select_cat(0,1))
+				CASE2(multi_select_cat(0,2))
+				CASE3(multi_select_cat(0,3))
+				CASE4(multi_select_cat(0,4))
+				CASE5(multi_select_cat(0,5))
+				CASE6(multi_select_cat(0,6))
+				CASE7(multi_select_cat(0,7))
+				CASE8(multi_select_cat(0,8))
+				CASE9(multi_select_cat(0,9))
 	case GDK_Left:
 	  scroll_mapview(DIR8_WEST);
 	  return TRUE;
@@ -415,61 +476,125 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
       }
     }
 
-    switch (ev->keyval) {
+   	 if ((ev->state & GDK_CONTROL_MASK)) {
+		if ((ev->state & GDK_MOD1_MASK)) {
+      		switch (ev->keyval) {//*pepeto*: <alt><ctrl>
+				CASE1(delayed_goto_copy(1,0))
+				CASE2(delayed_goto_copy(2,0))
+				CASE3(delayed_goto_copy(3,0))
+				CASE4(delayed_goto_copy(4,0))
+				CASE5(delayed_goto_copy(5,0))
+				CASE6(delayed_goto_copy(6,0))
+				CASE7(delayed_goto_copy(7,0))
+				CASE8(delayed_goto_copy(8,0))
+				CASE9(delayed_goto_copy(9,0))
+				default: break;
+			}
+		}
+      		switch (ev->keyval) {//*pepeto*: <ctrl>
+				CASE1(multi_select_copy(1,0))
+				CASE2(multi_select_copy(2,0))
+				CASE3(multi_select_copy(3,0))
+				CASE4(multi_select_copy(4,0))
+				CASE5(multi_select_copy(5,0))
+				CASE6(multi_select_copy(6,0))
+				CASE7(multi_select_copy(7,0))
+				CASE8(multi_select_copy(8,0))
+				CASE9(multi_select_copy(9,0))
+				default: break;
+			}
+	 }
+
+		if ((ev->state & GDK_MOD1_MASK)) {
+      		switch (ev->keyval) {//*pepeto*: <alt>
+				CASE1(delayed_goto_copy(0,1))
+				CASE2(delayed_goto_copy(0,2))
+				CASE3(delayed_goto_copy(0,3))
+				CASE4(delayed_goto_copy(0,4))
+				CASE5(delayed_goto_copy(0,5))
+				CASE6(delayed_goto_copy(0,6))
+				CASE7(delayed_goto_copy(0,7))
+				CASE8(delayed_goto_copy(0,8))
+				CASE9(delayed_goto_copy(0,9))
+				default: break;
+			}
+		}
+
+		switch (ev->keyval) {//*pepeto*: <>
+				CASE1(multi_select_copy(0,1))
+				CASE2(multi_select_copy(0,2))
+				CASE3(multi_select_copy(0,3))
+				CASE4(multi_select_copy(0,4))
+				CASE5(multi_select_copy(0,5))
+				CASE6(multi_select_copy(0,6))
+				CASE7(multi_select_copy(0,7))
+				CASE8(multi_select_copy(0,8))
+				CASE9(multi_select_copy(0,9))
+
+      case GDK_F9://for compatibility with Warclient
+		set_delayed_goto_mode("Single unit");
+	return TRUE;
+
+      case GDK_F10:
+		set_delayed_goto_mode("All units on the tile");
+		set_delayed_goto_mode("Only units with the same type");
+	return TRUE;
+
+      case GDK_F11:
+		set_delayed_goto_mode("All units on the tile");
+		set_delayed_goto_mode("All unit types");
+	return TRUE;
+
+      case GDK_F12:
+		set_delayed_goto_mode("All units on the continent");
+		set_delayed_goto_mode("Only units with the same type");
+	return TRUE;
+
       case GDK_KP_Up:
-      case GDK_8:
       case GDK_KP_8:
 	key_unit_move(DIR8_NORTH);
 	break;
 
       case GDK_KP_Page_Up:
-      case GDK_9:
       case GDK_KP_9:
 	key_unit_move(DIR8_NORTHEAST);
 	break;
 
       case GDK_KP_Right:
-      case GDK_6:
       case GDK_KP_6:
 	key_unit_move(DIR8_EAST);
 	break;
 
       case GDK_KP_Page_Down:
-      case GDK_3:
       case GDK_KP_3:
 	key_unit_move(DIR8_SOUTHEAST);
 	break;
 
       case GDK_KP_Down:
-      case GDK_2:
       case GDK_KP_2:
 	key_unit_move(DIR8_SOUTH);
 	break;
 
       case GDK_KP_End:
-      case GDK_1:
       case GDK_KP_1:
 	key_unit_move(DIR8_SOUTHWEST);
 	break;
 
       case GDK_KP_Left:
-      case GDK_4:
       case GDK_KP_4:
 	key_unit_move(DIR8_WEST);
 	break;
 
-      case GDK_KP_Home:
-      case GDK_7:
+      case GDK_KP_Home:		
       case GDK_KP_7:
 	key_unit_move(DIR8_NORTHWEST);
 	break;
 
-      case GDK_5:
-      case GDK_KP_5:
+      case GDK_KP_5: 
       case GDK_KP_Begin:
-        key_recall_previous_focus_unit();
+        key_recall_previous_focus_unit(); 
         break;
-
+  
       case GDK_Escape:
         key_cancel_action();
         break;
@@ -982,8 +1107,8 @@ static void setup_widgets(void)
 
   unit_info_frame = gtk_frame_new("");
   gtk_box_pack_start(GTK_BOX(avbox), unit_info_frame, FALSE, FALSE, 0);
-
-  unit_info_label = gtk_label_new("\n\n\n");
+    
+  unit_info_label = gtk_label_new("\n\n\n\n\n");
   gtk_container_add(GTK_CONTAINER(unit_info_frame), unit_info_label);
 
   box = gtk_hbox_new(FALSE,0);
@@ -1218,8 +1343,8 @@ void ui_main(int argc, char **argv)
   if (fullscreen_mode) {
     gtk_window_fullscreen(GTK_WINDOW(toplevel));
   }
-
-  gtk_window_set_title(GTK_WINDOW (toplevel), _("Freeciv war client "WARCLIENT_VERSION));
+  
+  gtk_window_set_title(GTK_WINDOW (toplevel), _("Freeciv Warclient - PepClient "PEPCLIENT_VERSION));
 
   g_signal_connect(toplevel, "delete_event",
       G_CALLBACK(quit_dialog_callback), NULL);
@@ -1488,7 +1613,7 @@ static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev,
   punit = find_unit_by_id(unit_ids[i]);
   if(punit) { /* should always be true at this point */
     if (punit->owner == game.player_idx) {  /* may be non-true if alliance */
-      set_unit_focus(punit);
+      set_unit_focus_and_active(punit);
     }
   }
 
@@ -1798,4 +1923,3 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
-
