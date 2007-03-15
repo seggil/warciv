@@ -3379,8 +3379,6 @@ void game_load(struct section_file *file)
                 GAME_DEFAULT_TRADEMINDIST, "game.iterplacementcoefficient");
         game.teamplacementtype = secfile_lookup_int_default(file,
                 GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
-        sz_strlcpy(game.allow_take, secfile_lookup_str_default(file,
-                GAME_DEFAULT_ALLOW_TAKE, "game.allow_take"));
 	}
 
       map.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
@@ -3797,7 +3795,6 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.bruteforcethreshold, "game.bruteforcethreshold");
   secfile_insert_int(file, game.iterplacementcoefficient, "game.iterplacementcoefficient");
   secfile_insert_int(file, game.teamplacementtype, "game.teamplacementtype");
-  secfile_insert_str(file, game.allow_take, "game.allow_take");
 
   /* old (1.14.1) servers need to have these server variables.  The values
    * don't matter, though. */
