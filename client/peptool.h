@@ -111,7 +111,7 @@ extern int my_ai_defend_city_power_req;
 #define MIN_SAVE_TURNS 0
 #define MAX_SAVE_TURNS 10
 
-#define DEFAULT_ERRORS_MAX 7
+#define DEFAULT_ERRORS_MAX 20
 #define MIN_ERRORS_MAX 0
 #define MAX_ERRORS_MAX 65535
 

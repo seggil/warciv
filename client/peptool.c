@@ -565,6 +565,40 @@ void load_all_settings(void)
 	/* dynamic settings */
 	if(load_pepsettings_mode&4)
 	{
+		//compatibity test
+		bool compatible=TRUE;
+		i=secfile_lookup_int_default(&sf,-1,"game_info.xsize");
+		if(i!=-1&&i!=map.xsize)
+			compatible=FALSE;
+		i=secfile_lookup_int_default(&sf,-1,"game_info.ysize");
+		if(i!=-1&&i!=map.ysize)
+			compatible=FALSE;
+		i=secfile_lookup_int_default(&sf,-1,"game_info.topology_id");
+		if(i!=-1&&i!=map.topology_id)
+			compatible=FALSE;
+		num=secfile_lookup_int_default(&sf,-1,"game_info.nplayers");
+		if(num!=-1&&num!=game.nplayers)
+			compatible=FALSE;
+		else
+		{
+			for(i=0;i<num;i++)
+			{
+				struct player *pplayer;
+				my_snprintf(buf,sizeof(buf),"game_info.player%d",i);
+				if(load_player(&sf,buf,&pplayer))
+				{
+					compatible=FALSE;
+					break;
+				}
+			}
+		}
+
+		if(!compatible)
+		{
+			freelog(LOG_NORMAL,"Dynamic settings were saved for an other game, they cannot be loaded",buf);
+			goto end;
+		}
+
 		freelog(LOG_DEBUG,"Loading dynamic settings");
 		//initialize
 		int tairliftunittype=0;
@@ -855,6 +889,7 @@ free_datas:
 		unit_list_unlink_all(&tnoners);
 	}
 
+end:
 	section_file_free(&sf);
 
 	append_output_window("PepClient: Settings loaded");
@@ -952,6 +987,19 @@ void save_all_settings(void)
 	} automatic_processus_iterate_end;
 
 	/* dynamic settings */
+	//some game infos, to test the compatibility
+	secfile_insert_int(&sf,map.xsize,"game_info.xsize");
+	secfile_insert_int(&sf,map.ysize,"game_info.ysize");
+	secfile_insert_int(&sf,map.topology_id,"game_info.topology_id");
+	secfile_insert_int(&sf,game.nplayers,"game_info.nplayers");
+	i=0;
+	players_iterate(pplayer)
+	{
+		my_snprintf(buf,sizeof(buf),"game_info.player%d",i);
+		save_player(&sf,buf,pplayer);
+		i++;
+	} players_iterate_end;
+
 	//rally point
 	i=0;
 	city_list_iterate(game.player_ptr->cities,pcity)
