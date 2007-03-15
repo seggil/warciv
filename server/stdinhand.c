@@ -265,6 +265,7 @@ enum vote_type
 };
 struct voting
 {
+    enum command_id command_id;
     char command[MAX_LEN_CONSOLE_LINE];	/* [0] == \0 if none in action */
     enum vote_type votes_cast[MAX_NUM_PLAYERS];	/* see enum above */
     int vote_no;			/* place in the queue */
@@ -406,8 +407,8 @@ static void check_vote(struct voting *vote)
             last_vote = -1;
         }
         if (((vote->yes > vote->no)
-                && (command_named(vote->command, FALSE) != CMD_END_GAME))
-                || (command_named(vote->command, FALSE) == CMD_END_GAME
+                && (vote->command_id != CMD_END_GAME))
+                || (vote->command_id == CMD_END_GAME
                     && (num_cast > num_voters / 2) && vote->yes > 0
                     && vote->no == 0))
         {
@@ -4749,6 +4750,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
             last_vote++;
             notify_conn(NULL, _("New vote, no. %d, by %s: %s."), last_vote,
                         caller->player->name, full_command);
+            votes[idx].command_id = cmd;
             sz_strlcpy(votes[idx].command, full_command);
             votes[idx].vote_no = last_vote;
             votes[idx].full_turn = FALSE;	/* just to be sure */
