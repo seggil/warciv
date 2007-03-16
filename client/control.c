@@ -2555,6 +2555,7 @@ void key_unit_wait(void)
 void key_unit_delayed_goto(int flg)
 {
    if(hover_state == HOVER_DELAYED_GOTO) {
+      delayed_para_or_nuke |= flg;
       add_unit_to_delayed_goto(NULL);
       hover_state = HOVER_NONE;
       update_hover_cursor();
@@ -2966,7 +2967,6 @@ void key_toggle_moveandattack(void)
 void key_toggle_autowakeup(void)
 {
 	autowakeup_state=1 ^ autowakeup_state;
-
 }
 
 /**************************************************************************
@@ -2974,7 +2974,12 @@ void key_toggle_autowakeup(void)
 **************************************************************************/
 void key_unit_delayed_airlift(void)
 {
-  hover_state = HOVER_DELAYED_AIRLIFT;
+  if(hover_state == HOVER_DELAYED_AIRLIFT) {
+    schedule_delayed_airlift(NULL);
+    hover_state = HOVER_NONE;
+  } else {
+    hover_state = HOVER_DELAYED_AIRLIFT;
+  }
   update_hover_cursor();
 }
 

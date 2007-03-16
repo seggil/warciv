@@ -658,7 +658,7 @@ static char *get_tile_info(struct tile *ptile)
 	static char buf[256];
 
 	if(!ptile)
-		buf[0]='\0';
+		my_snprintf(buf,sizeof(buf),_("(unknown tile)"));
 	else if(map_get_city(ptile))
 		my_snprintf(buf,sizeof(buf),"%s",map_get_city(ptile)->name);
 	else
@@ -883,8 +883,8 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 	if(!count)
 		return;
 
-	char buf[256],*tile=get_tile_info(ptile);
-	my_snprintf(buf,sizeof(buf),_("Warclient: Adding %d unit goto %s%sto queue."),count,tile,tile[0]?" ":"");
+	char buf[256];
+	my_snprintf(buf,sizeof(buf),_("Warclient: Adding %d unit goto %s to queue."),count,get_tile_info(ptile));
 	append_output_window(buf);
 	update_menus();
 }
