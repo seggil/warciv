@@ -397,15 +397,15 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
    	 if ((ev->state & GDK_CONTROL_MASK)) {
 		 if ((ev->state & GDK_MOD1_MASK)) {
       		switch (ev->keyval) {//*pepeto*: <alt><shift><ctrl>
-				CASE1(request_unit_execute_delayed_goto(NULL,1))
-				CASE2(request_unit_execute_delayed_goto(NULL,2))
-				CASE3(request_unit_execute_delayed_goto(NULL,3))
-				CASE4(request_unit_execute_delayed_goto(NULL,4))
-				CASE5(request_unit_execute_delayed_goto(NULL,5))
-				CASE6(request_unit_execute_delayed_goto(NULL,6))
-				CASE7(request_unit_execute_delayed_goto(NULL,7))
-				CASE8(request_unit_execute_delayed_goto(NULL,8))
-				CASE9(request_unit_execute_delayed_goto(NULL,9))
+				CASE1(request_unit_execute_delayed_goto(1))
+				CASE2(request_unit_execute_delayed_goto(2))
+				CASE3(request_unit_execute_delayed_goto(3))
+				CASE4(request_unit_execute_delayed_goto(4))
+				CASE5(request_unit_execute_delayed_goto(5))
+				CASE6(request_unit_execute_delayed_goto(6))
+				CASE7(request_unit_execute_delayed_goto(7))
+				CASE8(request_unit_execute_delayed_goto(8))
+				CASE9(request_unit_execute_delayed_goto(9))
 				default: break;
 			}
 		 }

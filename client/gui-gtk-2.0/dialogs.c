@@ -2572,52 +2572,52 @@ void create_pepsetting_dialog(void)
 			ent=gtk_frame_new(_(pset->description));
 			pbox=gtk_vbox_new(FALSE,0);
 				
-			cb=gtk_check_button_new_with_label("All units");
+			cb=gtk_check_button_new_with_label(_("All units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[0]=cb;
 
-			cb=gtk_check_button_new_with_label("New units");
+			cb=gtk_check_button_new_with_label(_("New units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[1]=cb;
 
-			cb=gtk_check_button_new_with_label("Fortified units");
+			cb=gtk_check_button_new_with_label(_("Fortified units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[2]=cb;
 
-			cb=gtk_check_button_new_with_label("Sentried units");
+			cb=gtk_check_button_new_with_label(_("Sentried units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[3]=cb;
 
-			cb=gtk_check_button_new_with_label("Veteran units");
+			cb=gtk_check_button_new_with_label(_("Veteran units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[4]=cb;
 
-			cb=gtk_check_button_new_with_label("Auto units");
+			cb=gtk_check_button_new_with_label(_("Auto units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[5]=cb;
 
-			cb=gtk_check_button_new_with_label("Idle units");
+			cb=gtk_check_button_new_with_label(_("Idle units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[6]=cb;
 
-			cb=gtk_check_button_new_with_label("Units able to move");
+			cb=gtk_check_button_new_with_label(_("Units able to move"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[7]=cb;
 
-			cb=gtk_check_button_new_with_label("Military units");
+			cb=gtk_check_button_new_with_label(_("Military units"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[8]=cb;
 
-			cb=gtk_check_button_new_with_label("Off");
+			cb=gtk_check_button_new_with_label(_("Off"));
 			g_signal_connect(cb,"toggled",G_CALLBACK(pepfilter_changed_callback),ent);
 			gtk_box_pack_start(GTK_BOX(pbox),cb,FALSE,FALSE,0);
 			pfd->widget[9]=cb;

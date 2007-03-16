@@ -1054,7 +1054,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG1_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 1);
+      request_unit_execute_delayed_goto(1);
       break;
    case MENU_WARCLIENT_DG2_SELECT:
       delayed_goto_copy(0, 2);
@@ -1073,7 +1073,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG2_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 2);
+      request_unit_execute_delayed_goto(2);
       break;
    case MENU_WARCLIENT_DG3_SELECT:
       delayed_goto_copy(0, 3);
@@ -1092,7 +1092,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG3_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 3);
+      request_unit_execute_delayed_goto(3);
       break;
    case MENU_WARCLIENT_DG4_SELECT:
       delayed_goto_copy(0, 4);
@@ -1111,7 +1111,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG4_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 4);
+      request_unit_execute_delayed_goto(4);
       break;
    case MENU_WARCLIENT_DG5_SELECT:
       delayed_goto_copy(0, 5);
@@ -1130,7 +1130,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG5_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 5);
+      request_unit_execute_delayed_goto(5);
       break;
    case MENU_WARCLIENT_DG6_SELECT:
       delayed_goto_copy(0, 6);
@@ -1149,7 +1149,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG6_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 6);
+      request_unit_execute_delayed_goto(6);
       break;
    case MENU_WARCLIENT_DG7_SELECT:
       delayed_goto_copy(0, 7);
@@ -1168,7 +1168,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG7_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 7);
+      request_unit_execute_delayed_goto(7);
       break;
    case MENU_WARCLIENT_DG8_SELECT:
       delayed_goto_copy(0, 8);
@@ -1187,7 +1187,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG8_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 8);
+      request_unit_execute_delayed_goto(8);
       break;
    case MENU_WARCLIENT_DG9_SELECT:
       delayed_goto_copy(0, 9);
@@ -1206,7 +1206,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG9_EXECUTE:
-      request_unit_execute_delayed_goto(NULL, 9);
+      request_unit_execute_delayed_goto(9);
       break;
   }
 }

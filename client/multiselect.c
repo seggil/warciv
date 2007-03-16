@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "city.h"
 #include "fcintl.h"
 #include "game.h"
 #include "log.h"
@@ -69,18 +70,8 @@ void filter_change(filter *pfilter,enum filter_value value)
 		*pfilter=FILTER_OFF;
 }
 
-static struct multi_select multi_selection[10];
-bool tunit_satisfies_filter(struct unit *punit,filter inclusive_filter,filter exclusive_filter,const char *file,const int line)
+bool unit_satisfies_filter(struct unit *punit,filter inclusive_filter,filter exclusive_filter)
 {
-if(punit==0x20)
-{
-printf("\nFATAL ERROR: unit_satisfies_filter: called in %s (line %d)\n\nmulti_select[0]: %d units\n -> punit_focus %p\n",file,line,multi_select_size(0),multi_selection[0].punit_focus);
-unit_list_iterate(multi_selection[0].ulist,punit)
-{
-printf(" -> %p\n",punit);
-} unit_list_iterate_end;
-return FALSE;
-}
 	if(!punit)
 		return FALSE;
 	if(inclusive_filter&FILTER_OFF||exclusive_filter&FILTER_ALL)
@@ -299,9 +290,9 @@ automatic_processus *find_automatic_processus_by_name(const char *name)
 }
 
 /* multi-select */
-#define msassert(multi) assert((multi)>=0&&(multi)<=9);
+#define msassert(multi) assert((multi)>=0&&(multi)<MULTI_SELECT_NUM);
 
-//static struct multi_select multi_selection[10];
+static struct multi_select multi_selection[MULTI_SELECT_NUM];
 
 bool is_unit_in_multi_select(int multi,struct unit *punit)
 {
@@ -422,7 +413,7 @@ void multi_select_clear(int multi)
 void multi_select_clear_all(void)
 {
 	int i;
-	for(i=0;i<=9;i++)
+	for(i=0;i<MULTI_SELECT_NUM;i++)
 	{
 		unit_list_unlink_all(&multi_selection[i].ulist);
 		multi_selection[i].punit_focus=NULL;
@@ -482,7 +473,7 @@ struct unit_list *multi_select_get_units_focus(void)
 
 void multi_select_init(int multi)
 {
-//	msassert(multi);
+	msassert(multi);
 
 	unit_list_init(&multi_selection[multi].ulist);
 	multi_selection[multi].punit_focus=NULL;
@@ -491,7 +482,7 @@ void multi_select_init(int multi)
 void multi_select_init_all(void)
 {
 	int i;
-	for(i=0;i<=9;i++)
+	for(i=0;i<MULTI_SELECT_NUM;i++)
 		multi_select_init(i);
 }
 
@@ -662,11 +653,25 @@ void multi_select_select(void)
 }
 
 /* delayed goto */
-#define dgassert(dg) assert((dg)>=0&&(dg)<=9);
+static char *get_tile_info(struct tile *ptile)
+{
+	static char buf[256];
+
+	if(!ptile)
+		buf[0]='\0';
+	else if(map_get_city(ptile))
+		my_snprintf(buf,sizeof(buf),"%s",map_get_city(ptile)->name);
+	else
+		my_snprintf(buf,sizeof(buf),"(%d, %d)",ptile->x,ptile->y);
+	return buf;
+}
+
+#define dgassert(dg) assert((dg)>=0&&(dg)<DELAYED_GOTO_NUM);
 
 int delayed_para_or_nuke=0;//0 normal,1 nuke/para,2 airlift
-int unit_limit=0;//0=unlimited
-static struct delayed_goto delayed_goto_list[10];
+int unit_limit;//0=unlimited
+int need_tile_for=-1;
+static struct delayed_goto delayed_goto_list[DELAYED_GOTO_NUM];
 
 void delayed_goto_add_unit(int dg,int id,int type,struct tile *ptile)
 {
@@ -729,7 +734,7 @@ void delayed_goto_clear(int dg)
 void delayed_goto_clear_all(void)
 {
 	int i;
-	for(i=0;i<=9;i++)
+	for(i=0;i<DELAYED_GOTO_NUM;i++)
 	{
 		delayed_goto_data_list_iterate(delayed_goto_list[i].dglist,dgd)
 		{
@@ -781,18 +786,18 @@ void delayed_goto_init(int dg)
 		char buf[256];
 		my_snprintf(buf,sizeof(buf),"<main>/Warclient/Delayed goto selection %d/Automatic execution",dg);
 		delayed_goto_list[dg].pap=automatic_processus_new(PAGE_NUM,AV_TO_FV(AUTO_WAR_DIPLSTATE),buf,"",dg,
-			AP_MAIN_CONNECT(request_unit_execute_delayed_goto),AP_CONNECT(AUTO_WAR_DIPLSTATE,request_player_execute_delayed_goto),-1);
+			AP_MAIN_CONNECT(request_execute_delayed_goto),AP_CONNECT(AUTO_WAR_DIPLSTATE,request_player_execute_delayed_goto),-1);
 	}
 	else
 		delayed_goto_list[0].pap=automatic_processus_new(PAGE_DG,AV_TO_FV(AUTO_WAR_DIPLSTATE),
 			"<main>/Warclient/Delayed goto auto","Delayed goto automatic execution",0,
-			AP_MAIN_CONNECT(request_unit_execute_delayed_goto),AP_CONNECT(AUTO_WAR_DIPLSTATE,request_player_execute_delayed_goto),-1);
+			AP_MAIN_CONNECT(request_execute_delayed_goto),AP_CONNECT(AUTO_WAR_DIPLSTATE,request_player_execute_delayed_goto),-1);
 }
 
 void delayed_goto_init_all(void)
 {
 	int i;
-	for(i=0;i<=9;i++)
+	for(i=0;i<DELAYED_GOTO_NUM;i++)
 		delayed_goto_init(i);
 }
 
@@ -821,6 +826,8 @@ int delayed_goto_size(int dg)
 
 struct player *get_tile_player(struct tile *ptile)
 {
+	if(!ptile)
+		return NULL;
 	if(ptile->city)
 		return city_owner(ptile->city);
 	int count[game.nplayers],best=-1;
@@ -873,14 +880,12 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 		count++;
 	} unit_list_iterate_end;
 
-	if(count)
-	{
-		char buf[256];
-		my_snprintf(buf,sizeof(buf),_("Warclient: Adding %d unit goto (%d, %d) to queue."),count,ptile->x,ptile->y);
-		append_output_window(buf);
-		update_menus();
-	}
-	hover_state=HOVER_NONE;
+	if(!count)
+		return;
+
+	char buf[256],*tile=get_tile_info(ptile);
+	my_snprintf(buf,sizeof(buf),_("Warclient: Adding %d unit goto %s%sto queue."),count,tile,tile[0]?" ":"");
+	append_output_window(buf);
 	update_menus();
 }
 
@@ -888,19 +893,37 @@ void request_player_execute_delayed_goto(struct player *pplayer,int dg)
 {
 	dgassert(dg);
 	if(delayed_goto_list[dg].pplayer==pplayer)
-		request_unit_execute_delayed_goto(NULL,dg);
+		request_execute_delayed_goto(NULL,dg);
 	update_menus();
 }
 
-void request_unit_execute_delayed_goto(void *data,int dg)
+void request_unit_execute_delayed_goto(int dg)
 {
-	struct unit *punit;
-	int counter=0;
-	char buf[256];
-
 	dgassert(dg);
 	if(!delayed_goto_size(dg))
 		return;
+	delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist,dgd)
+	{
+		if(!dgd->ptile)
+		{
+			hover_state=HOVER_DELAYED_GOTO;
+			need_tile_for=dg;
+			update_hover_cursor();
+			return;
+		}
+	} delayed_goto_data_list_iterate_end;
+	request_execute_delayed_goto(NULL,dg);
+}
+
+void request_execute_delayed_goto(struct tile *ptile,int dg)
+{
+	dgassert(dg);
+	if(!delayed_goto_size(dg))
+		return;
+
+	char buf[256];
+	int counter=0;
+
 	if(dg)
 		my_snprintf(buf,sizeof(buf),_("Warclient: Executing delayed goto selection %d"),dg);
 	else
@@ -909,13 +932,20 @@ void request_unit_execute_delayed_goto(void *data,int dg)
 	connection_do_buffer(&aconnection);
 	delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist,dgd)
 	{
+		if(!dgd->ptile)//no selected target
+		{
+			if(ptile)
+				dgd->ptile=ptile;
+			else
+				continue;
+		}
 		if(unit_limit&&(++counter>unit_limit))
 			break;
 		if(dgd->type==2)
 			do_airlift(dgd->ptile,dgd->id);
 		else
 		{
-			punit=player_find_unit_by_id(game.player_ptr,dgd->id);
+			struct unit *punit=player_find_unit_by_id(game.player_ptr,dgd->id);
 			if(!punit)
 			{
 				delayed_goto_data_list_unlink(&delayed_goto_list[dg].dglist,dgd);
@@ -948,9 +978,8 @@ void schedule_delayed_airlift(struct tile *ptile)
 {
 	char buf[256];
 
-	my_snprintf(buf,sizeof(buf),_("Warclient: Scheduling delayed airlift for : target.x = %i, target.y = %i"),ptile->x,ptile->y);
+	my_snprintf(buf,sizeof(buf),_("Warclient: Scheduling delayed airlift for %s"),get_tile_info(ptile));
 	append_output_window(buf);
-	delayed_para_or_nuke=2;
 	delayed_goto_add_unit(0,airliftunittype,2,ptile);
 	update_menus();
 }

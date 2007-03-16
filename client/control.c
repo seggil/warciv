@@ -1931,9 +1931,14 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  update_hover_cursor();
        return;
   }else if(ptile && hover_state==HOVER_DELAYED_GOTO) {
-       add_unit_to_delayed_goto(ptile);
+       if(need_tile_for >= 0 && need_tile_for < DELAYED_GOTO_NUM) {
+         request_execute_delayed_goto(ptile, need_tile_for);
+         need_tile_for = -1;
+       } else {
+         add_unit_to_delayed_goto(ptile);
+       }
        hover_state = HOVER_NONE;
-	  update_hover_cursor();
+	    update_hover_cursor();
        return;
   } else if (ptile && hover_state == HOVER_RALLY_POINT) {
     set_rally_point_for_selected_cities (ptile);
@@ -2549,8 +2554,14 @@ void key_unit_wait(void)
 **************************************************************************/
 void key_unit_delayed_goto(int flg)
 {
-    delayed_para_or_nuke = flg;
-	request_unit_delayed_goto();
+   if(hover_state == HOVER_DELAYED_GOTO) {
+      add_unit_to_delayed_goto(NULL);
+      hover_state = HOVER_NONE;
+      update_hover_cursor();
+   } else {
+      delayed_para_or_nuke = flg;
+	   request_unit_delayed_goto();
+	}
 }
 
 /**************************************************************************
@@ -2559,7 +2570,7 @@ void key_unit_delayed_goto(int flg)
 
 void key_unit_execute_delayed_goto(void)
 {
-	request_unit_execute_delayed_goto(NULL,0);
+	request_unit_execute_delayed_goto(0);
 }
 /**************************************************************************
 ...

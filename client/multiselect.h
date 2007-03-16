@@ -88,11 +88,9 @@ extern enum place_value delayed_goto_place;
 extern enum utype_value delayed_goto_utype;
 
 void filter_change(filter *pfilter,enum filter_value value);
-#define unit_satisfies_filter(punit,inclusive_filter,exclusive_filter) tunit_satisfies_filter(punit,inclusive_filter,exclusive_filter,__FILE__,__LINE__)
-bool tunit_satisfies_filter(struct unit *punit,filter inclusive_filter,filter exclusive_filter,const char *file,const int line);
-//bool unit_satisfies_filter(struct unit *punit,filter inclusive_filter,filter exclusive_filter);
+bool unit_satisfies_filter(struct unit *punit,filter inclusive_filter,filter exclusive_filter);
 
-/* automatic processus allow to connect functions to signals */
+/* automatic processus allows to connect functions to signals */
 
 /**************************************************************************
  If you want to add a signal:
@@ -173,7 +171,9 @@ automatic_processus *find_automatic_processus_by_name(const char *path);
 automatic_processus *real_automatic_processus_new(const char *file,const int line,enum peppage page,filter default_auto_filter,
 	const char *menu,const char *description,int data,...);
 
-/* multi-select allow a multi units selection */
+/* multi-select allows a multi units selection */
+#define MULTI_SELECT_NUM 10
+
 struct multi_select
 {
 	struct unit_list ulist;
@@ -207,6 +207,8 @@ Unit_Type_id multi_select_unit_type(int multi);
 void multi_select_select(void);
 
 /* delayed goto with 9 selections and automatic processus */
+#define DELAYED_GOTO_NUM 10
+
 struct delayed_goto_data {
 	int id;
 	int type;
@@ -229,6 +231,7 @@ struct delayed_goto
 
 extern int delayed_para_or_nuke;
 extern int unit_limit;
+extern int need_tile_for;
 	
 void delayed_goto_add_unit(int dg,int id,int type,struct tile *ptile);
 void delayed_goto_cat(int dest,int src);
@@ -245,7 +248,8 @@ struct player *get_tile_player(struct tile *ptile);
 
 void add_unit_to_delayed_goto(struct tile *ptile);
 void request_player_execute_delayed_goto(struct player *pplayer,int dg);
-void request_unit_execute_delayed_goto(void *data,int dg);
+void request_unit_execute_delayed_goto(int dg);
+void request_execute_delayed_goto(struct tile *ptile,int dg);
 void schedule_delayed_airlift(struct tile *ptile);
 
 #endif /* _MULTISELECT_H */

@@ -691,11 +691,8 @@ void load_all_settings(void)
 				pdgd->id=secfile_lookup_int_default(&sf,0,buf,"id");
 				pdgd->type=secfile_lookup_int_default(&sf,0,buf,"type");
 				my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data%d.tile",i,j);
-				load(tile,buf,pdgd->ptile);
-				if(pdgd->id&&pdgd->type&&pdgd->ptile)
-					delayed_goto_data_list_append(&tdelayedgoto[i].dglist,pdgd);
-				else
-					free(pdgd);
+				load_tile(&sf,buf,&pdgd->ptile);//ignore the NULL tile
+				delayed_goto_data_list_append(&tdelayedgoto[i].dglist,pdgd);
 			}
 			if(num)
 			{

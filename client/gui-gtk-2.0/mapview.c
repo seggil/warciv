@@ -45,6 +45,7 @@
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapctrl.h"
+#include "multiselect.h"
 #include "options.h"
 #include "tilespec.h"
 #include "text.h"
@@ -172,49 +173,52 @@ void update_info_label( void )
 **************************************************************************/
 void update_hover_cursor(void)
 {
-	struct unit *punit=get_unit_in_focus();
-	bool cond=(punit?hover_unit==punit->id:FALSE);
+  struct unit *punit = get_unit_in_focus();
+  bool cond = (punit ? hover_unit == punit->id : FALSE);
 
-	switch (hover_state)
-	{
-		case HOVER_NONE:
-			gdk_window_set_cursor (root_window, NULL);
-			break;
-		case HOVER_PATROL:
-		case HOVER_MYPATROL:
-			if(cond)
-				gdk_window_set_cursor (root_window, patrol_cursor);
-			break;
-		case HOVER_GOTO:
-		case HOVER_CONNECT:
-		case HOVER_DELAYED_GOTO:
-			if(!cond)
-				break;
-		case HOVER_RALLY_POINT:
-			gdk_window_set_cursor (root_window, goto_cursor);
-			break;
-		case HOVER_NUKE:
-			if(cond)
-				gdk_window_set_cursor (root_window, nuke_cursor);
-			break;
-		case HOVER_PARADROP:
-			if(cond)
-				gdk_window_set_cursor (root_window, drop_cursor);
-			break;
-		case HOVER_AIRLIFT_SOURCE:
-			gdk_window_set_cursor (root_window, source_cursor);
-			break;
-		case HOVER_AIRLIFT_DEST:
-		case HOVER_DELAYED_AIRLIFT:
-			gdk_window_set_cursor (root_window, dest_cursor);
-			break;
-		case HOVER_MY_AI_TRADE:
-			if(!cond)
-				break;
-		case HOVER_MY_AI_TRADE_CITY:
-			gdk_window_set_cursor (root_window, trade_cursor);
-			break;
-	}
+  switch (hover_state)
+  {
+    case HOVER_NONE:
+      gdk_window_set_cursor (root_window, NULL);
+      break;
+    case HOVER_PATROL:
+    case HOVER_MYPATROL:
+      if(cond)
+        gdk_window_set_cursor (root_window, patrol_cursor);
+      break;
+    case HOVER_GOTO:
+    case HOVER_CONNECT:
+      if(!cond)
+        break;
+    case HOVER_RALLY_POINT:
+      gdk_window_set_cursor (root_window, goto_cursor);
+      break;
+    case HOVER_DELAYED_GOTO:
+      if(cond || (need_tile_for >= 0 && need_tile_for < DELAYED_GOTO_NUM))
+        gdk_window_set_cursor (root_window, goto_cursor);
+      break;
+    case HOVER_NUKE:
+      if(cond)
+        gdk_window_set_cursor (root_window, nuke_cursor);
+      break;
+    case HOVER_PARADROP:
+      if(cond)
+        gdk_window_set_cursor (root_window, drop_cursor);
+      break;
+    case HOVER_AIRLIFT_SOURCE:
+      gdk_window_set_cursor (root_window, source_cursor);
+      break;
+    case HOVER_AIRLIFT_DEST:
+    case HOVER_DELAYED_AIRLIFT:
+      gdk_window_set_cursor (root_window, dest_cursor);
+      break;
+    case HOVER_MY_AI_TRADE:
+      if(!cond)
+        break;
+    case HOVER_MY_AI_TRADE_CITY:
+      gdk_window_set_cursor (root_window, trade_cursor);
+      break;
+  }
 }
 
 /**************************************************************************
