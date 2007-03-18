@@ -54,6 +54,7 @@ static void mapgenerator2(void);
 static void mapgenerator3(void);
 static void mapgenerator4(void);
 static void mapgenerator67(bool make_roads);
+static void free_mapgenerator67(bool autosize, int old_topology_id);
 static void mapgenerator8(void);
 static void adjust_terrain_param(void);
 
@@ -1015,6 +1016,15 @@ static void print_mapgen_map(void)
   } terrain_type_iterate_end;
 }
 
+static void free_mapgenerator67(bool autosize, int old_topology_id)
+{
+  map_free();
+  map.topology_id = old_topology_id;
+  generator_init_topology(autosize);
+  map_allocate();
+  adjust_terrain_param();
+}
+
 /**************************************************************************
   See stdinhand.c for information on map generation methods.
 
@@ -1041,6 +1051,7 @@ void map_fractal_generate(bool autosize)
   /* don't generate tiles with mapgen==0 as we've loaded them from file */
   /* also, don't delete (the handcrafted!) tiny islands in a scenario */
   if (map.generator != 0) {
+    int topology_id = map.topology_id;
     
     if (map.generator == 4 || map.generator == 5) {
       /* Other topologies would break the gen. */
@@ -1055,8 +1066,14 @@ void map_fractal_generate(bool autosize)
 
     if (map.generator == 5) {
       mapgenerator67(TRUE);
+      if(map.generator != 5) {
+        free_mapgenerator67(autosize, topology_id);
+      }
     } else if (map.generator == 4) {
       mapgenerator67(FALSE);
+      if(map.generator != 4) {
+        free_mapgenerator67(autosize, topology_id);
+      }
     } else if (map.generator == 6) {
       mapgenerator8();
     }
@@ -2254,6 +2271,13 @@ static int random_new_land(int x, int y)
 
 }
 
+#define map_set_perm_ocean(ptile)	\
+if(map_get_terrain(ptile) != T6_PERM_LAND) {	\
+  map_set_terrain(ptile, T6_PERM_OCEAN);	\
+} else {	\
+  return FALSE;	\
+}
+
 /*************************************************************************
  Creates a peninsula and put the player's starting position
  on it. The direction is either +1 or -1 depending on which 
@@ -2261,7 +2285,7 @@ static int random_new_land(int x, int y)
  The remaining_count is the number of tiles to  fill with 
  land.
  *************************************************************************/
-static void create_peninsula(int x, int y, int player_number,
+static bool create_peninsula(int x, int y, int player_number,
 			     int width, int height, int direction,
 			     int neck_height,int neck_width,
 			     int neck_offset)
@@ -2283,11 +2307,11 @@ static void create_peninsula(int x, int y, int player_number,
     for (cx = left_location; cx < right_location + 1; cx++) {
       ptile = native_pos_to_tile(cx, top_location);
       if(ptile != NULL) {
-        map_set_terrain(ptile, T6_PERM_OCEAN);
+        map_set_perm_ocean(ptile);
       }
       ptile = native_pos_to_tile(cx, bottom_location);
       if(ptile != NULL) {
-        map_set_terrain(ptile, T6_PERM_OCEAN);
+        map_set_perm_ocean(ptile);
       }
     }
 
@@ -2296,11 +2320,11 @@ static void create_peninsula(int x, int y, int player_number,
 	 cy += direction) {
       ptile = native_pos_to_tile(left_location, cy);
       if(ptile != NULL) {
-        map_set_terrain(ptile, T6_PERM_OCEAN);
+        map_set_perm_ocean(ptile);
       }
       ptile = native_pos_to_tile(right_location, cy);
       if(ptile != NULL) {
-        map_set_terrain(ptile, T6_PERM_OCEAN);
+        map_set_perm_ocean(ptile);
       }
     }
 
@@ -2308,7 +2332,7 @@ static void create_peninsula(int x, int y, int player_number,
     for (cy = map.ysize / 2; cy != top_location; cy += direction) {
       ptile = native_pos_to_tile(x + width / 2, cy);
       if(ptile != NULL) {
-        map_set_terrain(ptile, T6_PERM_OCEAN);
+        map_set_perm_ocean(ptile);
       }
     }
   }
@@ -2337,6 +2361,9 @@ static void create_peninsula(int x, int y, int player_number,
   }
 
   map.start_positions[player_number].tile = native_pos_to_tile(x + width / 2, y);
+  map.start_positions[player_number].nation = NO_NATION_SELECTED;
+
+  return TRUE;
 }
 
 /*************************************************************************
@@ -2460,8 +2487,14 @@ static void mapgenerator67(bool make_roads)
     } 
     y = (direction == -1)
 	? height + polar_height : map.ysize - 1 - height - polar_height;
-    create_peninsula(x + x_offset, y, i, width, height, direction,
-		     neck_height,neck_width,neck_offset);
+    if(!create_peninsula(x + x_offset, y, i, width, height, direction, neck_height,neck_width,neck_offset)) {
+      freelog(LOG_ERROR, _("mapgenerator67: create_peninsula failed"));
+      map.generator = 3;
+      map.num_start_positions = 0;
+      free(height_map);
+      height_map = NULL;
+      return;
+    }
     x = x + peninsula_separation + max_peninsula_width;
   }
 
