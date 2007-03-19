@@ -2655,7 +2655,7 @@ struct gen8_map *create_map(int xsize, int ysize);
 void free_map(struct gen8_map *pmap);
 void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos);
 
-int fill_land(struct gen8_map *pmap, int *x, int *y);
+int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y);
 struct gen8_map *create_fair_island(int size, bool startpos);
 
 void do_rotation(struct gen8_map *island);
@@ -2814,27 +2814,26 @@ void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmi
   }
 }
 
-int fill_land(struct gen8_map *pmap, int *x, int *y)
+int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y)
 {
-  int tx, ty;
+  int tile_num = 0;
 
-  for(tx = 0; tx < pmap->xsize; tx++) {
-    for(ty = 0; ty < pmap->ysize; ty++) {
-      if(pmap->tiles[tx][ty].type != TYPE_UNASSIGNED)
-        continue;
-      int count = 0;
-      adjacent_tiles_pos_iterate(pmap, tx, ty, rx, ry) {
-        if(pmap->tiles[rx][ry].type != TYPE_UNASSIGNED)
-          count++;
-      } adjacent_tiles_pos_iterate_end;
-      if(count >= 8) {
-        *x = tx;
-        *y = ty;
-        return 1;
-      }
+  adjacent_tiles_pos_iterate(pmap, tx, ty, rx, ry) {
+    int count = 0;
+    if(pmap->tiles[rx][ry].type != TYPE_UNASSIGNED)
+      continue;
+    adjacent_tiles_pos_iterate(pmap, rx, ry, ox, oy) {
+      if(pmap->tiles[ox][oy].type != TYPE_UNASSIGNED)
+        count++;
+    } adjacent_tiles_pos_iterate_end;
+    if(count >= 8) {
+      pmap->tiles[rx][ry].type = TYPE_LAND;
+      x[tile_num] = rx;
+      y[tile_num] = ry;
+      tile_num++;
     }
-  }
-  return 0;
+  } adjacent_tiles_pos_iterate_end;
+  return tile_num;
 }
 
 struct gen8_map *create_fair_island(int size, bool startpos)
@@ -2890,8 +2889,7 @@ struct gen8_map *create_fair_island(int size, bool startpos)
     if(ty > ymax)
       ymax = ty;
     i++;
-    if(i > (size * 9) / 10)
-      i+=fill_land(temp, &x[i], &y[i]);
+    i+=fill_land(temp, tx, ty, &x[i], &y[i]);
   }
   size = i;
 
@@ -2952,6 +2950,24 @@ struct gen8_map *create_fair_island(int size, bool startpos)
         temp->tiles[x[i]][y[i]].spec = 1;
       } else if(get_tile_type(terrain)->special_2_name[0] != '\0') {
         temp->tiles[x[i]][y[i]].spec = 2;
+      }
+    }
+    /* give extra sea tiles if there is a special */
+    if(temp->tiles[x[i]][y[i]].spec && temp->tiles[x[i]][y[i]].type == TYPE_SEA) {
+      for(tx = x[i] - 1; tx <= x[i] + 1; tx++) {
+        for(ty = y[i] - 1; ty <= y[i] + 1; ty++) {
+          if(temp->tiles[tx][ty].type != TYPE_UNASSIGNED)
+            continue;
+          temp->tiles[tx][ty].type = TYPE_SEA;
+          if(tx < xmin)
+            xmin = tx;
+          if(tx > xmax)
+            xmax = tx;
+          if(ty < ymin)
+            ymin = ty;
+          if(ty > ymax)
+            ymax = ty;
+        }
       }
     }
   }
