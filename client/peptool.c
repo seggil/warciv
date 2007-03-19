@@ -324,7 +324,7 @@ static struct pepsetting static_pepsettings[]=
 	PSGEN_INT(PAGE_PMAIN,load_pepsettings_mode,N_("PepClient setting load mode"),N_("0: Off\n1: Only static settings\n"
 		"2: Only automatic execution values\n3: Static settings and automatic execution values\n4: Only dynamic settings\n"
 		"5: Dynamic and static settings \n6: Dynamic settings and automatic execution values\n7: All"),LOAD_PEPSETTINGS_MODE),
-	PSGEN_INT(PAGE_PMAIN,errors_max,N_("Maxaimum warning before aborting load"),N_("0: Unlimited"),ERRORS_MAX),
+	PSGEN_INT(PAGE_PMAIN,errors_max,N_("Maximum warning before aborting load"),N_("0: Unlimited"),ERRORS_MAX),
 	PSGEN_INT(PAGE_PMAIN,save_turns,N_("Save settings all the x turns"),N_("0: Disable"),SAVE_TURNS),
 	PSGEN_BOOL(PAGE_PMAIN,my_ai_enable,N_("Enable automatics orders"),MY_AI_ENABLE),
 	PSGEN_BOOL(PAGE_PMAIN,autowakeup_state,N_("Autowakeup sentried units"),AUTOWAKEUP),
@@ -395,6 +395,11 @@ void init_all_settings(void)
 				break;
 		}
 	} pepsettings_iterate_end;
+	
+	automatic_processus_iterate(pap)
+	{
+		pap->auto_filter=pap->default_auto_filter;
+	} automatic_processus_iterate_end;
 }
 
 char *pepsettings_file_name(void)

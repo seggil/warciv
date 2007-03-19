@@ -105,10 +105,11 @@ bool unit_satisfies_filter(struct unit *punit,filter inclusive_filter,filter exc
 }
 
 /* automatic processus */
-#define ap_timers_num 3
+#define ap_timers_num 5
 static struct automatic_processus_list automatic_processus_list;
-static const int ap_timer_values[ap_timers_num]={50,80,90};
-static const enum automatic_value ap_timer_event[ap_timers_num]={AUTO_50_TIMEOUT,AUTO_80_TIMEOUT,AUTO_90_TIMEOUT};
+static const int ap_timer_values[ap_timers_num]={50,80,90,95,-5};
+static const enum automatic_value ap_timer_event[ap_timers_num]={AUTO_50_TIMEOUT,AUTO_80_TIMEOUT,
+	AUTO_90_TIMEOUT,AUTO_95_TIMEOUT,AUTO_5_SECONDS};
 static struct ap_timer ap_timers[ap_timers_num];
 static const char *ap_events[]={
 	N_("New Year"),
@@ -117,6 +118,8 @@ static const char *ap_events[]={
 	N_("50% timeout"),
 	N_("80% timeout"),
 	N_("90% timeout"),
+	N_("95% timeout"),
+	N_("5 seconds before end turn"),
 	N_("Unit receives auto orders"),
 	N_("Player cancels diplomacy"),
 	N_("Off")
@@ -128,7 +131,15 @@ void ap_timers_init(void)
 	
 	for(i=0;i<ap_timers_num;i++)
 	{
-		ap_timers[i].seconds=(game.timeout?(game.timeout*(100-ap_timer_values[i]))/100:-1);
+		if(game.timeout)
+		{
+			if(ap_timer_values[i]>=0)
+				ap_timers[i].seconds=(game.timeout*(100-ap_timer_values[i]))/100;
+			else// if(ap_timer_values[i]<0)
+				ap_timers[i].seconds=-ap_timer_values[i];
+		}
+		else
+			ap_timers[i].seconds=-1;
 		ap_timers[i].npassed=TRUE;
 	}
 }
@@ -261,10 +272,11 @@ automatic_processus *real_automatic_processus_new(const char *file,const int lin
 	if(auto_values_allowed!=(default_auto_filter|auto_values_allowed)&&default_auto_filter!=AV_TO_FV(AUTO_OFF))
 	{
 		freelog(LOG_ERROR,"automatic_processus_new: receive a bad default_auto_filter form %s, l.%d",file,line);
-		pap->auto_filter=AV_TO_FV(AUTO_OFF);
+		pap->default_auto_filter=AV_TO_FV(AUTO_OFF);
 	}
 	else
-		pap->auto_filter=default_auto_filter;
+		pap->default_auto_filter=default_auto_filter;
+	pap->auto_filter=pap->default_auto_filter;
 
 	/* append on list */
 	automatic_processus_list_append(&automatic_processus_list,pap);

@@ -108,7 +108,9 @@ enum automatic_value
 	AUTO_NO_UNIT_SELECTED,//signal in advance_unit_focus() (control.c)
 	AUTO_50_TIMEOUT,
 	AUTO_80_TIMEOUT,
-	AUTO_90_TIMEOUT,//signals in ap_timers_update() (multiselect.c)
+	AUTO_90_TIMEOUT,
+	AUTO_95_TIMEOUT,
+	AUTO_5_SECONDS,//signals in ap_timers_update() (multiselect.c)
 	AUTO_ORDERS,//signals in myai.c
 	AUTO_WAR_DIPLSTATE,//signal in handle_player_info() (packhand.c)
 	AUTO_OFF,//no signal
@@ -127,14 +129,16 @@ enum automatic_value
 	AP_CONNECT(AUTO_NO_UNIT_SELECTED,function),	\
 	AP_CONNECT(AUTO_50_TIMEOUT,function),	\
 	AP_CONNECT(AUTO_80_TIMEOUT,function),	\
-	AP_CONNECT(AUTO_90_TIMEOUT,function)
+	AP_CONNECT(AUTO_90_TIMEOUT,function),	\
+	AP_CONNECT(AUTO_95_TIMEOUT,function),	\
+	AP_CONNECT(AUTO_5_SECONDS,function)
 
 typedef void (*ap_callback)(void *arg1,int arg2);
 
 typedef struct
 {
 	enum peppage page;//page for setting dialog
-	filter auto_filter;
+	filter default_auto_filter,auto_filter;
 	char menu[256],description[256];//path to the filter menu or name for setting dialog
 	int data;//value passed on arg2 of each callback;
 	ap_callback callback[AUTO_VALUES_NUM];
