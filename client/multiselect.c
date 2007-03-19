@@ -33,6 +33,9 @@
 #include "menu_g.h"
 #include "multiselect.h"
 
+#define MSDEBUG freelog(LOG_VERBOSE,"%s:%s:%d punit_focus = %p, size = %d",__FILE__,__FUNCTION__,__LINE__,get_unit_in_focus(),multi_select_size(0)); \
+unit_list_iterate(multi_selection[0].ulist,ounit) {freelog(LOG_VERBOSE," -> punit = %p",ounit);} unit_list_iterate_end;
+
 /* filters */
 filter multi_select_inclusive_filter;
 filter multi_select_exclusive_filter;
@@ -320,6 +323,7 @@ void multi_select_active_all(int multi)
 
 void multi_select_add_unit(struct unit *punit)
 {
+MSDEBUG
 	if(punit->owner!=game.player_idx)//only own units
 		return;
 	if(is_unit_in_multi_select(0,punit))//no double units
@@ -334,6 +338,7 @@ void multi_select_add_unit(struct unit *punit)
 			set_unit_focus(punit);
 	}
 	refresh_tile_mapcanvas(punit->tile,FALSE);
+MSDEBUG
 }
 
 void multi_select_add_or_remove_unit(struct unit *punit)
@@ -346,10 +351,12 @@ void multi_select_add_or_remove_unit(struct unit *punit)
 
 void multi_select_add_units(struct unit_list *ulist)
 {
+MSDEBUG
 	unit_list_iterate(*ulist,punit)
 	{
 		multi_select_add_unit(punit);
 	} unit_list_iterate_end;
+MSDEBUG
 }
 
 void multi_select_blink_update(void)
@@ -488,10 +495,10 @@ void multi_select_init_all(void)
 
 void multi_select_remove_unit(struct unit *punit)
 {
+MSDEBUG
 	unit_list_unlink(&multi_selection[0].ulist,punit);
-	if(!unit_list_size(&multi_selection[0].ulist))
-		multi_select_clear(0);
-	else if(punit==get_unit_in_focus())
+	refresh_tile_mapcanvas(punit->tile,FALSE);
+	if(punit==get_unit_in_focus())
 	{
 		struct unit *pnuf=NULL;
 		unit_list_iterate(multi_selection[0].ulist,msunit)
@@ -509,7 +516,7 @@ void multi_select_remove_unit(struct unit *punit)
 		else
 			advance_unit_focus();
 	}
-	refresh_tile_mapcanvas(punit->tile,FALSE);
+MSDEBUG
 }
 
 int multi_select_satisfies_filter(int multi)
@@ -578,14 +585,17 @@ void multi_select_set_unit(int multi,struct unit *punit)
 	multi_selection[multi].punit_focus=punit;
 	if(punit)
 		unit_list_append(&multi_selection[multi].ulist,punit);
+MSDEBUG
 }
 
 void multi_select_set_unit_focus(int multi,struct unit *punit)
 {
 	msassert(multi);
+
 	assert(is_unit_in_multi_select(multi,punit));
 
 	multi_selection[multi].punit_focus=punit;	
+MSDEBUG
 }
 
 int multi_select_size(int multi)
@@ -614,10 +624,12 @@ void multi_select_wipe_up_unit(struct unit *punit)
 	}
 	if(need_update_menus)
 		update_menus();
+MSDEBUG
 }
 
 void multi_select_select(void)
 {
+MSDEBUG
 	struct unit *punit_focus=get_unit_in_focus(),*punf=NULL;
 	struct unit_list *ulist;
 
@@ -650,6 +662,7 @@ void multi_select_select(void)
 	}
 	update_unit_info_label(punit_focus);
 	update_menus();
+MSDEBUG
 }
 
 /* delayed goto */
