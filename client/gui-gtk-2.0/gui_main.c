@@ -479,15 +479,15 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
    	 if ((ev->state & GDK_CONTROL_MASK)) {
 		if ((ev->state & GDK_MOD1_MASK)) {
       		switch (ev->keyval) {//*pepeto*: <alt><ctrl>
-				CASE1(delayed_goto_copy(1,0))
-				CASE2(delayed_goto_copy(2,0))
-				CASE3(delayed_goto_copy(3,0))
-				CASE4(delayed_goto_copy(4,0))
-				CASE5(delayed_goto_copy(5,0))
-				CASE6(delayed_goto_copy(6,0))
-				CASE7(delayed_goto_copy(7,0))
-				CASE8(delayed_goto_copy(8,0))
-				CASE9(delayed_goto_copy(9,0))
+				CASE1(delayed_goto_move(1,0))
+				CASE2(delayed_goto_move(2,0))
+				CASE3(delayed_goto_move(3,0))
+				CASE4(delayed_goto_move(4,0))
+				CASE5(delayed_goto_move(5,0))
+				CASE6(delayed_goto_move(6,0))
+				CASE7(delayed_goto_move(7,0))
+				CASE8(delayed_goto_move(8,0))
+				CASE9(delayed_goto_move(9,0))
 				default: break;
 			}
 		}

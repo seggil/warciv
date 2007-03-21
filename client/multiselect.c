@@ -826,6 +826,15 @@ void delayed_goto_init_all(void)
 		delayed_goto_init(i);
 }
 
+void delayed_goto_move(int dest,int src)
+{
+	dgassert(src);
+	dgassert(dest);
+	
+	delayed_goto_copy(dest,src);
+	delayed_goto_clear(src);
+}
+
 void delayed_goto_set(int dg,struct delayed_goto *pdg)
 {
 	dgassert(dg);

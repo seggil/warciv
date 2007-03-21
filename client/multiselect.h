@@ -245,6 +245,7 @@ void delayed_goto_copy(int dest,int src);
 struct delayed_goto *delayed_goto_get(int dg);
 void delayed_goto_init(int dg);
 void delayed_goto_init_all(void);
+void delayed_goto_move(int dest,int src);
 void delayed_goto_set(int dg,struct delayed_goto *pdg);
 int delayed_goto_size(int dg);
 void delayed_goto_update(int dg);

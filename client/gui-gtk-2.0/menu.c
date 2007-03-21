@@ -1046,7 +1046,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG1_RECORD:
-      delayed_goto_copy(1 ,0);
+      delayed_goto_move(1 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG1_CLEAR:
@@ -1065,7 +1065,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG2_RECORD:
-      delayed_goto_copy(2 ,0);
+      delayed_goto_move(2 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG2_CLEAR:
@@ -1076,7 +1076,7 @@ static void warclient_menu_callback(gpointer callback_data,
       request_unit_execute_delayed_goto(2);
       break;
    case MENU_WARCLIENT_DG3_SELECT:
-      delayed_goto_copy(0, 3);
+      delayed_goto_move(0, 3);
       update_menus();
       break;
    case MENU_WARCLIENT_DG3_ADD:
@@ -1084,7 +1084,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG3_RECORD:
-      delayed_goto_copy(3 ,0);
+      delayed_goto_move(3 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG3_CLEAR:
@@ -1103,7 +1103,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG4_RECORD:
-      delayed_goto_copy(4 ,0);
+      delayed_goto_move(4 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG4_CLEAR:
@@ -1122,7 +1122,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG5_RECORD:
-      delayed_goto_copy(5 ,0);
+      delayed_goto_move(5 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG5_CLEAR:
@@ -1141,7 +1141,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG6_RECORD:
-      delayed_goto_copy(6 ,0);
+      delayed_goto_move(6 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG6_CLEAR:
@@ -1160,7 +1160,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG7_RECORD:
-      delayed_goto_copy(7 ,0);
+      delayed_goto_move(7 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG7_CLEAR:
@@ -1179,7 +1179,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG8_RECORD:
-      delayed_goto_copy(8 ,0);
+      delayed_goto_move(8 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG8_CLEAR:
@@ -1198,7 +1198,7 @@ static void warclient_menu_callback(gpointer callback_data,
       update_menus();
       break;
    case MENU_WARCLIENT_DG9_RECORD:
-      delayed_goto_copy(9 ,0);
+      delayed_goto_move(9 ,0);
       update_menus();
       break;
    case MENU_WARCLIENT_DG9_CLEAR:
