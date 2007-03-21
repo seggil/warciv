@@ -4,6 +4,7 @@
  - automatic processus
  - multi-select
  - delayed goto (from warclient)
+ - airlift queue (from warclient)
 ***********************************************************************/
 #ifndef _MULTISELECT_H
 #define _MULTISELECT_H
@@ -204,14 +205,13 @@ void multi_select_set(int multi,struct multi_select *pms);
 void multi_select_set_unit(int multi,struct unit *punit);
 void multi_select_set_unit_focus(int multi,struct unit *punit);
 int multi_select_size(int multi);
-void multi_select_update(int multi);
 void multi_select_wipe_up_unit(struct unit *punit);
 Unit_Type_id multi_select_unit_type(int multi);
 
 void multi_select_select(void);
 
-/* delayed goto with 9 selections and automatic processus */
-#define DELAYED_GOTO_NUM 10
+/* delayed goto with many selections and automatic processus */
+#define DELAYED_GOTO_NUM 4
 
 struct delayed_goto_data {
 	int id;
@@ -248,7 +248,6 @@ void delayed_goto_init_all(void);
 void delayed_goto_move(int dest,int src);
 void delayed_goto_set(int dg,struct delayed_goto *pdg);
 int delayed_goto_size(int dg);
-void delayed_goto_update(int dg);
 struct player *get_tile_player(struct tile *ptile);
 
 void add_unit_to_delayed_goto(struct tile *ptile);
@@ -256,5 +255,37 @@ void request_player_execute_delayed_goto(struct player *pplayer,int dg);
 void request_unit_execute_delayed_goto(int dg);
 void request_execute_delayed_goto(struct tile *ptile,int dg);
 void schedule_delayed_airlift(struct tile *ptile);
+
+/* airlift queues with many selections */
+#define AIRLIFT_QUEUE_NUM 7
+struct airlift_queue
+{
+	struct tile_list tlist;
+	void *widgets[U_LAST+1];//GtkWidget,for menu.c 
+	int utype;
+};
+
+extern int need_city_for;
+
+void airlift_queue_cat(int dest,int src);
+void airlift_queue_clear(int aq);
+void airlift_queue_clear_all(void);
+void airlift_queue_copy(int dest,int src);
+struct airlift_queue *airlift_queue_get(int aq);
+void *airlift_queue_get_menu_item(int aq,Unit_Type_id utype);
+Unit_Type_id airlift_queue_get_unit_type(int aq);
+void airlift_queue_init(int aq);
+void airlift_queue_init_all(void);
+void airlift_queue_move(int dest,int src);
+void airlift_queue_set(int aq,struct airlift_queue *paq);
+void airlift_queue_set_menu_item(int aq,Unit_Type_id utype,void *widget);
+void airlift_queue_set_unit_type(int aq,Unit_Type_id utype);
+void airlift_queue_show(int aq);
+int airlift_queue_size(int aq);
+
+void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi);
+void request_auto_airlift_source_selection_with_airport(void);
+void do_airlift_for(int aq,struct city *pcity);
+void do_airlift(struct tile *ptile);
 
 #endif /* _MULTISELECT_H */

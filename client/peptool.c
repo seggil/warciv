@@ -606,23 +606,29 @@ void load_all_settings(void)
 
 		freelog(LOG_DEBUG,"Loading dynamic settings");
 		//initialize
-		int tairliftunittype=0;
-		struct tile_list tairlift;
-		struct multi_select tmultiselect[10];
-		struct delayed_goto tdelayedgoto[10];
+		struct multi_select tmultiselect[MULTI_SELECT_NUM];
+		struct delayed_goto tdelayedgoto[DELAYED_GOTO_NUM];
+		struct airlift_queue tairliftqueue[AIRLIFT_QUEUE_NUM];
 		struct trade_route_list ttraders,ttradeplan;
 		struct city_list trallypoint,ttradecities;
 		struct hw_unit_list thelpers;
 		struct unit_list tpatrolers,tnoners;
 
 		city_list_init(&trallypoint);
-		tile_list_init(&tairlift);
-		for(i=0;i<=9;i++)
+		for(i=0;i<MULTI_SELECT_NUM;i++)
 		{
 			unit_list_init(&tmultiselect[i].ulist);
 			tmultiselect[i].punit_focus=NULL;
+		}
+		for(i=0;i<DELAYED_GOTO_NUM;i++)
+		{
 			delayed_goto_data_list_init(&tdelayedgoto[i].dglist);
 			tdelayedgoto[i].pplayer=NULL;
+		}
+		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+		{
+			tile_list_init(&tairliftqueue[i].tlist);
+			tairliftqueue[i].utype=U_LAST;
 		}
 		trade_route_list_init(&ttraders);
 		trade_route_list_init(&ttradeplan);
@@ -650,20 +656,8 @@ void load_all_settings(void)
 				}
 			}
 		}
-		//airlift
-		num=secfile_lookup_int_default(&sf,-1,"dynamic.airlift.tile_num");
-		for(i=0;i<num;i++)
-		{
-			struct tile *ptile;
-			my_snprintf(buf,sizeof(buf),"dynamic.airlift.tile%d",i);
-			load(tile,buf,ptile)
-			{
-				tile_list_append(&tairlift,ptile);
-			}
-		}
-		tairliftunittype=secfile_lookup_int_default(&sf,airliftunittype,"dynamic.airlift.type");
 		//multi-select
-		for(i=0;i<=9;i++)
+		for(i=0;i<MULTI_SELECT_NUM;i++)
 		{
 			my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit_num",i);
 			num=secfile_lookup_int_default(&sf,0,buf);
@@ -684,7 +678,7 @@ void load_all_settings(void)
 			}
 		}
 		//delayed goto
-		for(i=0;i<=9;i++)
+		for(i=0;i<DELAYED_GOTO_NUM;i++)
 		{
 			my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data_num",i);
 			num=secfile_lookup_int_default(&sf,0,buf);
@@ -704,6 +698,24 @@ void load_all_settings(void)
 				my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.player",i);
 				load(player,buf,tdelayedgoto[i].pplayer);
 			}
+		}
+		//airlift
+		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+		{
+			my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile_num",i);
+			num=secfile_lookup_int_default(&sf,0,buf);
+			int j;
+			for(j=0;j<num;j++)
+			{
+				struct tile *ptile;
+				my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile%d",i,j);
+				load(tile,buf,ptile)
+				{
+					tile_list_append(&tairliftqueue[i].tlist,ptile);
+				}
+			}
+			my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.unit_type",i);
+			tairliftqueue[i].utype=secfile_lookup_int_default(&sf,U_LAST,buf);
 		}
 		//my_ai_trade
 		num=secfile_lookup_int_default(&sf,-1,"dynamic.trade_route.unit_num");
@@ -833,16 +845,12 @@ void load_all_settings(void)
 		{
 			city_set_rally_point(player_find_city_by_id(game.player_ptr,ccity->id),ccity->rally_point);
 		} city_list_iterate_end;
-		tile_list_iterate(tairlift,ptile)
-		{
-			add_city_to_auto_airlift_queue(ptile,TRUE);
-		} tile_list_iterate_end;
-		airliftunittype=tairliftunittype;
-		for(i=0;i<=9;i++)
-		{
+		for(i=0;i<MULTI_SELECT_NUM;i++)
 			multi_select_set(i,&tmultiselect[i]);
+		for(i=0;i<DELAYED_GOTO_NUM;i++)
 			delayed_goto_set(i,&tdelayedgoto[i]);
-		}
+		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+			airlift_queue_set(i,&tairliftqueue[i]);
 		city_list_iterate(ttradecities,pcity)
 		{
 			my_ai_add_trade_city(pcity,TRUE);
@@ -878,11 +886,12 @@ void load_all_settings(void)
 free_datas:
 		//free datas
 		city_list_free(&trallypoint);
-		for(i=0;i<=9;i++)
-		{
+		for(i=0;i<MULTI_SELECT_NUM;i++)
 			unit_list_unlink_all(&tmultiselect[i].ulist);
+		for(i=0;i<DELAYED_GOTO_NUM;i++)
 			delayed_goto_data_list_free(&tdelayedgoto[i].dglist);
-		}
+		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+			tile_list_unlink_all(&tairliftqueue[i].tlist);
 		trade_route_list_unlink_all(&ttraders);
 		trade_route_list_free(&ttradeplan);
 		city_list_unlink_all(&ttradecities);
@@ -1021,20 +1030,9 @@ void save_all_settings(void)
 		save_tile(&sf,buf,pcity->rally_point);
 		i++;
 	} city_list_iterate_end;
-	//airlift
-	struct tile_list *ptl=get_airlift_queue();
-	secfile_insert_int_comment(&sf,tile_list_size(ptl),_("don't modify this !"),"dynamic.airlift.tile_num");
-	i=0;
-	tile_list_iterate(*ptl,ptile)
-	{
-		my_snprintf(buf,sizeof(buf),"dynamic.airlift.tile%d",i);
-		save_tile(&sf,buf,ptile);
-		i++;
-	} tile_list_iterate_end;
-	secfile_insert_int(&sf,airliftunittype,"dynamic.airlift.type");
 	//multi-select
 	struct multi_select *pms;
-	for(i=0;i<=9;i++)
+	for(i=0;i<MULTI_SELECT_NUM;i++)
 	{
 		pms=multi_select_get(i);
 		my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit_num",i);
@@ -1054,7 +1052,7 @@ void save_all_settings(void)
 	}
 	//delayed goto
 	struct delayed_goto *pdg;
-	for(i=0;i<=9;i++)
+	for(i=0;i<DELAYED_GOTO_NUM;i++)
 	{
 		pdg=delayed_goto_get(i);
 		my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data_num",i);
@@ -1074,6 +1072,22 @@ void save_all_settings(void)
 			my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.player",i);
 			save_player(&sf,buf,pdg->pplayer);
 		}
+	}
+	//airlift
+	struct airlift_queue *paq;
+	for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+	{
+		paq=airlift_queue_get(i);
+		my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile_num",i);
+		secfile_insert_int_comment(&sf,tile_list_size(&paq->tlist),_("don't modify this !"),buf);
+		int j=0;
+		tile_list_iterate(paq->tlist,ptile)
+		{
+			my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile%d",i,j);
+			save_tile(&sf,buf,ptile);
+			j++;
+		} tile_list_iterate_end;
+		secfile_insert_int(&sf,airlift_queue_get_unit_type(i),"dynamic.airliftqueue%ds.unit_type",i);
 	}
 	//my_ai_trade
 	struct unit_list *pul=my_ai_get_units(MY_AI_TRADE_ROUTE);

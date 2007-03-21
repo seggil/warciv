@@ -64,24 +64,15 @@
 
 #include "menu.h"
 
-struct airlift_menu_data {
-	Unit_Type_id utype;
-	GtkWidget *widget;
-};
-
 void create_automatic_processus_menus(void);
 void update_automatic_processus_filter_menu(automatic_processus *pap);
-
-static struct airlift_menu_data airlift_menu_datas[U_LAST];
-static int airlift_menu_num=0;
-static GSList *group;
 
 static void get_accel_label(GtkWidget *widget,const char *uname);
 static bool can_player_unit_type(Unit_Type_id utype);
 static void airlift_menu_set_sensitive(void);
 static void airlift_menu_set_active(void);
 static void airlift_menu_callback(GtkWidget *widget,gpointer data);
-static void create_airlift_menu(GtkWidget *widget);
+static void create_airlift_menu(int aq,GtkWidget *widget);
 
 static GtkItemFactory *item_factory = NULL;
 static GtkWidget *main_menubar = NULL;
@@ -204,41 +195,47 @@ enum MenuID {
   MENU_WARCLIENT_DG3_RECORD,
   MENU_WARCLIENT_DG3_CLEAR,
   MENU_WARCLIENT_DG3_EXECUTE,
-  MENU_WARCLIENT_DG4_SELECT,
-  MENU_WARCLIENT_DG4_ADD,
-  MENU_WARCLIENT_DG4_RECORD,
-  MENU_WARCLIENT_DG4_CLEAR,
-  MENU_WARCLIENT_DG4_EXECUTE,
-  MENU_WARCLIENT_DG5_SELECT,
-  MENU_WARCLIENT_DG5_ADD,
-  MENU_WARCLIENT_DG5_RECORD,
-  MENU_WARCLIENT_DG5_CLEAR,
-  MENU_WARCLIENT_DG5_EXECUTE,
-  MENU_WARCLIENT_DG6_SELECT,
-  MENU_WARCLIENT_DG6_ADD,
-  MENU_WARCLIENT_DG6_RECORD,
-  MENU_WARCLIENT_DG6_CLEAR,
-  MENU_WARCLIENT_DG6_EXECUTE,
-  MENU_WARCLIENT_DG7_SELECT,
-  MENU_WARCLIENT_DG7_ADD,
-  MENU_WARCLIENT_DG7_RECORD,
-  MENU_WARCLIENT_DG7_CLEAR,
-  MENU_WARCLIENT_DG7_EXECUTE,
-  MENU_WARCLIENT_DG8_SELECT,
-  MENU_WARCLIENT_DG8_ADD,
-  MENU_WARCLIENT_DG8_RECORD,
-  MENU_WARCLIENT_DG8_CLEAR,
-  MENU_WARCLIENT_DG8_EXECUTE,
-  MENU_WARCLIENT_DG9_SELECT,
-  MENU_WARCLIENT_DG9_ADD,
-  MENU_WARCLIENT_DG9_RECORD,
-  MENU_WARCLIENT_DG9_CLEAR,
-  MENU_WARCLIENT_DG9_EXECUTE,
   MENU_WARCLIENT_SET_AIRLIFT_DEST,
   MENU_WARCLIENT_SET_AIRLIFT_SRC,
   MENU_WARCLIENT_AIRLIFT_SELECT_AIRPORT_CITIES,
   MENU_WARCLIENT_CLEAR_AIRLIFT_QUEUE,
   MENU_WARCLIENT_SHOW_CITIES_IN_AIRLIFT_QUEUE,
+  MENU_WARCLIENT_AQ1_SELECT,
+  MENU_WARCLIENT_AQ1_ADD,
+  MENU_WARCLIENT_AQ1_RECORD,
+  MENU_WARCLIENT_AQ1_CLEAR,
+  MENU_WARCLIENT_AQ1_EXECUTE,
+  MENU_WARCLIENT_AQ1_SHOW,
+  MENU_WARCLIENT_AQ2_SELECT,
+  MENU_WARCLIENT_AQ2_ADD,
+  MENU_WARCLIENT_AQ2_RECORD,
+  MENU_WARCLIENT_AQ2_CLEAR,
+  MENU_WARCLIENT_AQ2_EXECUTE,
+  MENU_WARCLIENT_AQ2_SHOW,
+  MENU_WARCLIENT_AQ3_SELECT,
+  MENU_WARCLIENT_AQ3_ADD,
+  MENU_WARCLIENT_AQ3_RECORD,
+  MENU_WARCLIENT_AQ3_CLEAR,
+  MENU_WARCLIENT_AQ3_EXECUTE,
+  MENU_WARCLIENT_AQ3_SHOW,
+  MENU_WARCLIENT_AQ4_SELECT,
+  MENU_WARCLIENT_AQ4_ADD,
+  MENU_WARCLIENT_AQ4_RECORD,
+  MENU_WARCLIENT_AQ4_CLEAR,
+  MENU_WARCLIENT_AQ4_EXECUTE,
+  MENU_WARCLIENT_AQ4_SHOW,
+  MENU_WARCLIENT_AQ5_SELECT,
+  MENU_WARCLIENT_AQ5_ADD,
+  MENU_WARCLIENT_AQ5_RECORD,
+  MENU_WARCLIENT_AQ5_CLEAR,
+  MENU_WARCLIENT_AQ5_EXECUTE,
+  MENU_WARCLIENT_AQ5_SHOW,
+  MENU_WARCLIENT_AQ6_SELECT,
+  MENU_WARCLIENT_AQ6_ADD,
+  MENU_WARCLIENT_AQ6_RECORD,
+  MENU_WARCLIENT_AQ6_CLEAR,
+  MENU_WARCLIENT_AQ6_EXECUTE,
+  MENU_WARCLIENT_AQ6_SHOW,
   MENU_WARCLIENT_PATROL_DEST,
   MENU_WARCLIENT_PATROL_FORCE,
   MENU_WARCLIENT_PATROL_EXECUTE,
@@ -811,10 +808,10 @@ static void warclient_menu_callback(gpointer callback_data,
         request_auto_airlift_source_selection_with_airport();
         break;
    case MENU_WARCLIENT_CLEAR_AIRLIFT_QUEUE:
-        request_clear_auto_airlift_queue();
+        airlift_queue_clear(0);
         break;
    case MENU_WARCLIENT_SHOW_CITIES_IN_AIRLIFT_QUEUE:
-        show_cities_in_airlift_queue();
+        airlift_queue_show(0);
         break;
    case   MENU_WARCLIENT_PATROL_DEST:
       if(hover_state==HOVER_MYPATROL)
@@ -1094,119 +1091,137 @@ static void warclient_menu_callback(gpointer callback_data,
    case MENU_WARCLIENT_DG3_EXECUTE:
       request_unit_execute_delayed_goto(3);
       break;
-   case MENU_WARCLIENT_DG4_SELECT:
-      delayed_goto_copy(0, 4);
+   case MENU_WARCLIENT_AQ1_SELECT:
+      airlift_queue_copy(0, 1);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG4_ADD:
-      delayed_goto_cat(0, 4);
+   case MENU_WARCLIENT_AQ1_ADD:
+      airlift_queue_cat(0, 1);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG4_RECORD:
-      delayed_goto_move(4 ,0);
+   case MENU_WARCLIENT_AQ1_RECORD:
+      airlift_queue_move(1 ,0);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG4_CLEAR:
-      delayed_goto_clear(4);
+   case MENU_WARCLIENT_AQ1_CLEAR:
+      airlift_queue_clear(1);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG4_EXECUTE:
-      request_unit_execute_delayed_goto(4);
+   case MENU_WARCLIENT_AQ1_EXECUTE:
+      do_airlift_for(1,NULL);
       break;
-   case MENU_WARCLIENT_DG5_SELECT:
-      delayed_goto_copy(0, 5);
+   case MENU_WARCLIENT_AQ1_SHOW:
+      airlift_queue_show(1);
+      break;
+   case MENU_WARCLIENT_AQ2_SELECT:
+      airlift_queue_copy(0, 2);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG5_ADD:
-      delayed_goto_cat(0, 5);
+   case MENU_WARCLIENT_AQ2_ADD:
+      airlift_queue_cat(0, 2);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG5_RECORD:
-      delayed_goto_move(5 ,0);
+   case MENU_WARCLIENT_AQ2_RECORD:
+      airlift_queue_move(2 ,0);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG5_CLEAR:
-      delayed_goto_clear(5);
+   case MENU_WARCLIENT_AQ2_CLEAR:
+      airlift_queue_clear(2);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG5_EXECUTE:
-      request_unit_execute_delayed_goto(5);
+   case MENU_WARCLIENT_AQ2_EXECUTE:
+      do_airlift_for(2,NULL);
       break;
-   case MENU_WARCLIENT_DG6_SELECT:
-      delayed_goto_copy(0, 6);
+   case MENU_WARCLIENT_AQ2_SHOW:
+      airlift_queue_show(2);
+      break;
+  case MENU_WARCLIENT_AQ3_SELECT:
+      airlift_queue_copy(0, 3);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG6_ADD:
-      delayed_goto_cat(0, 6);
+   case MENU_WARCLIENT_AQ3_ADD:
+      airlift_queue_cat(0, 3);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG6_RECORD:
-      delayed_goto_move(6 ,0);
+   case MENU_WARCLIENT_AQ3_RECORD:
+      airlift_queue_move(3 ,0);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG6_CLEAR:
-      delayed_goto_clear(6);
+   case MENU_WARCLIENT_AQ3_CLEAR:
+      airlift_queue_clear(3);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG6_EXECUTE:
-      request_unit_execute_delayed_goto(6);
+   case MENU_WARCLIENT_AQ3_EXECUTE:
+      do_airlift_for(3,NULL);
       break;
-   case MENU_WARCLIENT_DG7_SELECT:
-      delayed_goto_copy(0, 7);
+   case MENU_WARCLIENT_AQ3_SHOW:
+      airlift_queue_show(3);
+      break;
+   case MENU_WARCLIENT_AQ4_SELECT:
+      airlift_queue_copy(0, 4);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG7_ADD:
-      delayed_goto_cat(0, 7);
+   case MENU_WARCLIENT_AQ4_ADD:
+      airlift_queue_cat(0, 4);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG7_RECORD:
-      delayed_goto_move(7 ,0);
+   case MENU_WARCLIENT_AQ4_RECORD:
+      airlift_queue_move(4 ,0);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG7_CLEAR:
-      delayed_goto_clear(7);
+   case MENU_WARCLIENT_AQ4_CLEAR:
+      airlift_queue_clear(4);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG7_EXECUTE:
-      request_unit_execute_delayed_goto(7);
+   case MENU_WARCLIENT_AQ4_EXECUTE:
+      do_airlift_for(4,NULL);
       break;
-   case MENU_WARCLIENT_DG8_SELECT:
-      delayed_goto_copy(0, 8);
+   case MENU_WARCLIENT_AQ4_SHOW:
+      airlift_queue_show(4);
+      break;
+   case MENU_WARCLIENT_AQ5_SELECT:
+      airlift_queue_copy(0, 5);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG8_ADD:
-      delayed_goto_cat(0, 8);
+   case MENU_WARCLIENT_AQ5_ADD:
+      airlift_queue_cat(0, 5);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG8_RECORD:
-      delayed_goto_move(8 ,0);
+   case MENU_WARCLIENT_AQ5_RECORD:
+      airlift_queue_move(5 ,0);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG8_CLEAR:
-      delayed_goto_clear(8);
+   case MENU_WARCLIENT_AQ5_CLEAR:
+      airlift_queue_clear(5);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG8_EXECUTE:
-      request_unit_execute_delayed_goto(8);
+   case MENU_WARCLIENT_AQ5_EXECUTE:
+      do_airlift_for(5,NULL);
       break;
-   case MENU_WARCLIENT_DG9_SELECT:
-      delayed_goto_copy(0, 9);
+   case MENU_WARCLIENT_AQ5_SHOW:
+      airlift_queue_show(5);
+      break;
+   case MENU_WARCLIENT_AQ6_SELECT:
+      airlift_queue_copy(0, 6);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG9_ADD:
-      delayed_goto_cat(0, 9);
+   case MENU_WARCLIENT_AQ6_ADD:
+      airlift_queue_cat(0, 6);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG9_RECORD:
-      delayed_goto_move(9 ,0);
+   case MENU_WARCLIENT_AQ6_RECORD:
+      airlift_queue_move(6 ,0);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG9_CLEAR:
-      delayed_goto_clear(9);
+   case MENU_WARCLIENT_AQ6_CLEAR:
+      airlift_queue_clear(6);
       update_menus();
       break;
-   case MENU_WARCLIENT_DG9_EXECUTE:
-      request_unit_execute_delayed_goto(9);
+   case MENU_WARCLIENT_AQ6_EXECUTE:
+      do_airlift_for(6,NULL);
+      break;
+   case MENU_WARCLIENT_AQ6_SHOW:
+      airlift_queue_show(6);
       break;
   }
 }
@@ -2106,120 +2121,6 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Warclient") "/" N_("Delayed goto selection") " 3/" N_("Automatic execution") "/tearoff1",			NULL,
 	NULL,			0,					"<Tearoff>"	},
 
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 4",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Select"),					"<alt>4",
-	warclient_menu_callback,			MENU_WARCLIENT_DG4_SELECT,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Add to current selection"),					"<shift><alt>4",
-	warclient_menu_callback,			MENU_WARCLIENT_DG4_ADD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Record"),					"<ctrl><alt>4",
-	warclient_menu_callback,			MENU_WARCLIENT_DG4_RECORD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Clear"),					NULL,
-	warclient_menu_callback,			MENU_WARCLIENT_DG4_CLEAR,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Execute"),					"<ctrl><shift><alt>4",
-	warclient_menu_callback,			MENU_WARCLIENT_DG4_EXECUTE,				NULL	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 4/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 5",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Select"),					"<alt>5",
-	warclient_menu_callback,			MENU_WARCLIENT_DG5_SELECT,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Add to current selection"),					"<shift><alt>5",
-	warclient_menu_callback,			MENU_WARCLIENT_DG5_ADD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Record"),					"<ctrl><alt>5",
-	warclient_menu_callback,			MENU_WARCLIENT_DG5_RECORD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Clear"),					NULL,
-	warclient_menu_callback,			MENU_WARCLIENT_DG5_CLEAR,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Execute"),					"<ctrl><shift><alt>5",
-	warclient_menu_callback,			MENU_WARCLIENT_DG5_EXECUTE,				NULL	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 5/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 6",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Select"),					"<alt>6",
-	warclient_menu_callback,			MENU_WARCLIENT_DG6_SELECT,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Add to current selection"),					"<shift><alt>6",
-	warclient_menu_callback,			MENU_WARCLIENT_DG6_ADD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Record"),					"<ctrl><alt>6",
-	warclient_menu_callback,			MENU_WARCLIENT_DG6_RECORD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Clear"),					NULL,
-	warclient_menu_callback,			MENU_WARCLIENT_DG6_CLEAR,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Execute"),					"<ctrl><shift><alt>6",
-	warclient_menu_callback,			MENU_WARCLIENT_DG6_EXECUTE,				NULL	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 6/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 7",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Select"),					"<alt>7",
-	warclient_menu_callback,			MENU_WARCLIENT_DG7_SELECT,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Add to current selection"),					"<shift><alt>7",
-	warclient_menu_callback,			MENU_WARCLIENT_DG7_ADD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Record"),					"<ctrl><alt>7",
-	warclient_menu_callback,			MENU_WARCLIENT_DG7_RECORD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Clear"),					NULL,
-	warclient_menu_callback,			MENU_WARCLIENT_DG7_CLEAR,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Execute"),					"<ctrl><shift><alt>7",
-	warclient_menu_callback,			MENU_WARCLIENT_DG7_EXECUTE,				NULL	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 7/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 8",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Select"),					"<alt>8",
-	warclient_menu_callback,			MENU_WARCLIENT_DG8_SELECT,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Add to current selection"),					"<shift><alt>8",
-	warclient_menu_callback,			MENU_WARCLIENT_DG8_ADD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Record"),					"<ctrl><alt>8",
-	warclient_menu_callback,			MENU_WARCLIENT_DG8_RECORD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Clear"),					NULL,
-	warclient_menu_callback,			MENU_WARCLIENT_DG8_CLEAR,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Execute"),					"<ctrl><shift><alt>8",
-	warclient_menu_callback,			MENU_WARCLIENT_DG8_EXECUTE,				NULL	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 8/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 9",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Select"),					"<alt>9",
-	warclient_menu_callback,			MENU_WARCLIENT_DG9_SELECT,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Add to current selection"),					"<shift><alt>9",
-	warclient_menu_callback,			MENU_WARCLIENT_DG9_ADD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Record"),					"<ctrl><alt>9",
-	warclient_menu_callback,			MENU_WARCLIENT_DG9_RECORD,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Clear"),					NULL,
-	warclient_menu_callback,			MENU_WARCLIENT_DG9_CLEAR,				NULL	},
-	{ "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Execute"),					"<ctrl><shift><alt>9",
-	warclient_menu_callback,			MENU_WARCLIENT_DG9_EXECUTE,				NULL	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Warclient") "/" N_("Delayed goto selection") " 9/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-
   { "/" N_("Warclient") "/sep1",				NULL,
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Warclient") "/" N_("Autowakeup sentried units"),		"v",
@@ -2283,8 +2184,136 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Branch>"	},
   { "/" N_("Warclient") "/" N_("Airlift unit type") "/tearoff1",	NULL,
 	NULL,			0,					"<Tearoff>"	},
+
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 4",					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 4/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Select"),					"<alt>4",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ1_SELECT,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Add to current selection"),					"<shift><alt>4",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ1_ADD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Record"),					"<ctrl><alt>4",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ1_RECORD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Clear"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ1_CLEAR,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Execute"),					"<ctrl><shift><alt>4",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ1_EXECUTE,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Show"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ1_SHOW,				NULL	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Airlift unit type"),					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 4/" N_("Airlift unit type") "/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 5",					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 5/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Select"),					"<alt>5",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ2_SELECT,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Add to current selection"),					"<shift><alt>5",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ2_ADD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Record"),					"<ctrl><alt>5",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ2_RECORD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Clear"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ2_CLEAR,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Execute"),					"<ctrl><shift><alt>5",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ2_EXECUTE,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Show"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ2_SHOW,				NULL	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Airlift unit type"),					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 5/" N_("Airlift unit type") "/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 6",					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 6/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Select"),					"<alt>6",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ3_SELECT,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Add to current selection"),					"<shift><alt>6",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ3_ADD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Record"),					"<ctrl><alt>6",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ3_RECORD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Clear"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ3_CLEAR,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Execute"),					"<ctrl><shift><alt>6",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ3_EXECUTE,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Show"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ3_SHOW,				NULL	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Airlift unit type"),					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 6/" N_("Airlift unit type") "/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 7",					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 7/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Select"),					"<alt>7",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ4_SELECT,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Add to current selection"),					"<shift><alt>7",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ4_ADD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Record"),					"<ctrl><alt>7",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ4_RECORD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Clear"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ4_CLEAR,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Execute"),					"<ctrl><shift><alt>7",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ4_EXECUTE,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Show"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ4_SHOW,				NULL	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Airlift unit type"),					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 7/" N_("Airlift unit type") "/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 8",					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 8/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Select"),					"<alt>8",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ5_SELECT,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Add to current selection"),					"<shift><alt>8",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ5_ADD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Record"),					"<ctrl><alt>8",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ5_RECORD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Clear"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ5_CLEAR,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Execute"),					"<ctrl><shift><alt>8",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ5_EXECUTE,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Show"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ5_SHOW,				NULL	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Airlift unit type"),					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 8/" N_("Airlift unit type") "/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 9",					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 9/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Select"),					"<alt>9",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ6_SELECT,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Add to current selection"),					"<shift><alt>9",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ6_ADD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Record"),					"<ctrl><alt>9",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ6_RECORD,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Clear"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ6_CLEAR,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Execute"),					"<ctrl><shift><alt>9",
+	warclient_menu_callback,			MENU_WARCLIENT_AQ6_EXECUTE,				NULL	},
+	{ "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Show"),					NULL,
+	warclient_menu_callback,			MENU_WARCLIENT_AQ6_SHOW,				NULL	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Airlift unit type"),					NULL,
+	NULL,			0,					"<Branch>"	},
+  { "/" N_("Warclient") "/" N_("Airlift queue") " 9/" N_("Airlift unit type") "/tearoff1",			NULL,
+	NULL,			0,					"<Tearoff>"	},
+
   { "/" N_("Warclient") "/sep4",				NULL,
 	NULL,			0,					"<Separator>"	},
+
   { "/" N_("Warclient") "/" N_("Set airplane patrol destination"),			"<ctrl>e",
 	warclient_menu_callback,	MENU_WARCLIENT_PATROL_DEST						},
   { "/" N_("Warclient") "/" N_("Force airplane patrol destination"),			"e",
@@ -2756,15 +2785,14 @@ void get_accel_label(GtkWidget *widget,const char *uname)
  *****************************************************************/
 static bool can_player_unit_type(Unit_Type_id utype)
 {
-	if(can_player_build_unit(game.player_ptr,utype))
-		return TRUE;
+  if(can_player_build_unit(game.player_ptr,utype))
+    return TRUE;
 
-	unit_list_iterate(game.player_ptr->units,punit)
-	{
-		if(punit->type==utype)
-			return TRUE;
-	} unit_list_iterate_end;
-	return FALSE;
+  unit_list_iterate(game.player_ptr->units,punit) {
+    if(punit->type==utype)
+      return TRUE;
+  } unit_list_iterate_end;
+  return FALSE;
 }
 
 /****************************************************************
@@ -2772,10 +2800,15 @@ static bool can_player_unit_type(Unit_Type_id utype)
  *****************************************************************/
 static void airlift_menu_set_sensitive(void)
 {
-	int i;
+  int i, j;
 
-	for(i=0;i<airlift_menu_num;i++)
-		gtk_widget_set_sensitive(airlift_menu_datas[i].widget,can_player_unit_type(airlift_menu_datas[i].utype));
+  for(i = 0; i < U_LAST; i++) {
+    if(!airlift_queue_get_menu_item(0, i))
+      continue;
+    bool sensitive = can_player_unit_type(i);
+    for(j = 0; j < AIRLIFT_QUEUE_NUM; j++)
+      gtk_widget_set_sensitive(airlift_queue_get_menu_item(j, i), sensitive);
+  }
 }
 
 /****************************************************************
@@ -2783,14 +2816,12 @@ static void airlift_menu_set_sensitive(void)
  *****************************************************************/
 static void airlift_menu_set_active(void)
 {
-	int i;
+  int i;
 
-	for(i=0;i<airlift_menu_num;i++)
-		if(airliftunittype==airlift_menu_datas[i].utype)
-		{
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(airlift_menu_datas[i].widget),TRUE);
-			break;
-		}
+  for(i = 0; i < AIRLIFT_QUEUE_NUM; i++)
+  {
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(airlift_queue_get_menu_item(i, airlift_queue_get_unit_type(i))), TRUE);
+  }
 }
 
 /****************************************************************
@@ -2798,31 +2829,39 @@ static void airlift_menu_set_active(void)
  *****************************************************************/
 static void airlift_menu_callback(GtkWidget *widget,gpointer data)
 {
-	airliftunittype=GPOINTER_TO_INT(data);
+  int aq = GPOINTER_TO_INT(data) / (U_LAST + 1);
+  Unit_Type_id utype = GPOINTER_TO_INT(data) % (U_LAST + 1);
+  
+  airlift_queue_set_unit_type(aq, utype);
 }
 
 /****************************************************************
   ... *pepeto*
  *****************************************************************/
-static void create_airlift_menu(GtkWidget *widget)
+static void create_airlift_menu(int aq,GtkWidget *widget)
 {
+  GSList **group = fc_malloc(sizeof(GList *));
   GtkWidget *item;
   int i;
   Tech_Type_id tid = find_tech_by_name_orig("Never");
 
-  group=NULL;
-  for (i=airlift_menu_num=0;i<game.num_unit_types;i++)
+  *group=NULL;
+  item = gtk_radio_menu_item_new_with_label(*group, _("None"));
+  g_signal_connect(item, "activate", G_CALLBACK(airlift_menu_callback), GINT_TO_POINTER(aq * (U_LAST + 1) + U_LAST));
+  *group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
+  gtk_menu_shell_append(GTK_MENU_SHELL(widget), item);
+  airlift_queue_set_menu_item(aq, U_LAST, item);
+  for(i = 0; i < game.num_unit_types; i++)
   {
-	if(unit_types[i].move_type!=LAND_MOVING||unit_types[i].tech_requirement==tid||unit_type_flag(i,F_NOBUILD))
-		continue;
-	item=gtk_radio_menu_item_new_with_label(group,unit_types[i].name);
-	g_signal_connect(item,"activate",G_CALLBACK(airlift_menu_callback),GINT_TO_POINTER(i));
-	group=gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-	get_accel_label(item,unit_name_orig(i));
-	gtk_menu_shell_append(GTK_MENU_SHELL(widget),item);
-	airlift_menu_datas[airlift_menu_num].utype=i;
-	airlift_menu_datas[airlift_menu_num].widget=item;
-	airlift_menu_num++;
+    if(unit_types[i].move_type != LAND_MOVING || unit_types[i].tech_requirement == tid || unit_type_flag(i,F_NOBUILD))
+      continue;
+    item = gtk_radio_menu_item_new_with_label(*group, unit_name(i));
+    g_signal_connect(item, "activate", G_CALLBACK(airlift_menu_callback), GINT_TO_POINTER(aq * (U_LAST + 1) + i));
+    *group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
+    if(!aq)
+    	get_accel_label(item, unit_name_orig(i));
+    gtk_menu_shell_append(GTK_MENU_SHELL(widget), item);
+    airlift_queue_set_menu_item(aq, i, item);
   }
 }
 
@@ -2891,7 +2930,15 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
   g_signal_connect(main_menubar, "destroy",
       G_CALLBACK(gtk_widget_destroyed), &main_menubar);
 
-  create_airlift_menu(gtk_item_factory_get_widget(item_factory, "<main>/Warclient/Airlift unit type"));//*pepeto*
+//*pepeto*
+  int i;
+  char buf[256];
+
+  create_airlift_menu(0, gtk_item_factory_get_widget(item_factory, "<main>/Warclient/Airlift unit type"));
+  for(i = 1; i < AIRLIFT_QUEUE_NUM; i++) {
+    my_snprintf(buf, sizeof(buf), "<main>/Warclient/Airlift queue %d/Airlift unit type", i + DELAYED_GOTO_NUM - 1);
+    create_airlift_menu(i, gtk_item_factory_get_widget(item_factory, buf));
+  }
   create_automatic_processus_menus();//*pepeto*
 
   if (menubar) {
@@ -3317,10 +3364,10 @@ void update_menus(void)
     update_multi_select_exclusive_filter_menu();
     {
       char buf[256], *m;
-      int ms = multi_select_size(0), dg = delayed_goto_size(0), i;
-      for(i = 1; i <= 9; i++)
+      int cs = multi_select_size(0), i;
+      /* update multi-selections */
+      for(i = 1; i < MULTI_SELECT_NUM; i++)
       {
-        /* update multi-selections */
         my_snprintf(buf, sizeof(buf), "<main>/PepClient/Multi-selection %d", i);
         m = buf + strlen(buf);
         if(multi_select_size(i))
@@ -3331,11 +3378,11 @@ void update_menus(void)
           strcpy(m, "/Add to current selection");
           menus_set_sensitive(buf, TRUE);
           strcpy(m, "/Record");
-          menus_set_sensitive(buf, ms);
+          menus_set_sensitive(buf, cs);
           strcpy(m, "/Clear");
           menus_set_sensitive(buf, TRUE);
         }
-        else if(ms)
+        else if(cs)
         {
           menus_set_sensitive(buf, TRUE);
           strcpy(m, "/Select");
@@ -3349,7 +3396,11 @@ void update_menus(void)
         }
         else
           menus_set_sensitive(buf, FALSE);
-        /* update delayed goto selections */
+     }
+     /* update delayed goto selections */
+     cs = delayed_goto_size(0);
+     for(i = 1; i < DELAYED_GOTO_NUM; i++)
+     {
         my_snprintf(buf, sizeof(buf), "<main>/Warclient/Delayed goto selection %d", i);
         m = buf + strlen(buf);
         if(delayed_goto_size(i))
@@ -3360,13 +3411,13 @@ void update_menus(void)
           strcpy(m, "/Add to current selection");
           menus_set_sensitive(buf, TRUE);
           strcpy(m, "/Record");
-          menus_set_sensitive(buf, dg);
+          menus_set_sensitive(buf, cs);
           strcpy(m, "/Clear");
           menus_set_sensitive(buf, TRUE);
           strcpy(m, "/Execute");
           menus_set_sensitive(buf, TRUE);
         }
-        else if(dg)
+        else if(cs)
         {
           menus_set_sensitive(buf, TRUE);
           strcpy(m, "/Select");
@@ -3378,6 +3429,47 @@ void update_menus(void)
           strcpy(m, "/Clear");
           menus_set_sensitive(buf, FALSE);
           strcpy(m, "/Execute");
+          menus_set_sensitive(buf, FALSE);
+        }
+        else
+          menus_set_sensitive(buf, FALSE);
+     }
+     /* update airlift queues */
+     cs = airlift_queue_size(0);
+     for(i = 1; i < AIRLIFT_QUEUE_NUM; i++)
+     {
+        my_snprintf(buf, sizeof(buf), "<main>/Warclient/Airlift queue %d", i + DELAYED_GOTO_NUM - 1);
+        m = buf + strlen(buf);
+        if(airlift_queue_size(i))
+        {
+          menus_set_sensitive(buf, TRUE);
+          strcpy(m, "/Select");
+          menus_set_sensitive(buf, TRUE);
+          strcpy(m, "/Add to current selection");
+          menus_set_sensitive(buf, TRUE);
+          strcpy(m, "/Record");
+          menus_set_sensitive(buf, cs);
+          strcpy(m, "/Clear");
+          menus_set_sensitive(buf, TRUE);
+          strcpy(m, "/Execute");
+          menus_set_sensitive(buf, airlift_queue_get_unit_type(i) != U_LAST);
+          strcpy(m, "/Show");
+          menus_set_sensitive(buf, TRUE);
+        }
+        else if(cs)
+        {
+          menus_set_sensitive(buf, TRUE);
+          strcpy(m, "/Select");
+          menus_set_sensitive(buf, FALSE);
+          strcpy(m, "/Add to current selection");
+          menus_set_sensitive(buf, FALSE);
+          strcpy(m, "/Record");
+          menus_set_sensitive(buf, TRUE);
+          strcpy(m, "/Clear");
+          menus_set_sensitive(buf, FALSE);
+          strcpy(m, "/Execute");
+          menus_set_sensitive(buf, FALSE);
+          strcpy(m, "/Show");
           menus_set_sensitive(buf, FALSE);
         }
         else
@@ -3392,8 +3484,7 @@ void update_menus(void)
     cond = (delayed_goto_size(0));
     menus_set_sensitive("<main>/Warclient/Execute delayed goto", cond);
     menus_set_sensitive("<main>/Warclient/Clear delayed orders", cond);
-    cond = (is_tile_in_airlift_queue());
-    menus_set_sensitive("<main>/Warclient/Set airlift destination", cond);
+    cond = (airlift_queue_size(0));
     menus_set_sensitive("<main>/Warclient/Clear airlift queue", cond);
     menus_set_sensitive("<main>/Warclient/Show cities in airlift queue", cond);
     cond = (tiles_hilited_cities);

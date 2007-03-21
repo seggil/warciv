@@ -4,6 +4,7 @@
  - automatic processus
  - multi-select
  - delayed goto (from warclient)
+ - airlift queue (from warclient)
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -833,6 +834,7 @@ void delayed_goto_move(int dest,int src)
 	
 	delayed_goto_copy(dest,src);
 	delayed_goto_clear(src);
+	update_menus();
 }
 
 void delayed_goto_set(int dg,struct delayed_goto *pdg)
@@ -976,7 +978,7 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 		if(unit_limit&&(++counter>unit_limit))
 			break;
 		if(dgd->type==2)
-			do_airlift(dgd->ptile,dgd->id);
+			do_airlift(dgd->ptile);
 		else
 		{
 			struct unit *punit=player_find_unit_by_id(game.player_ptr,dgd->id);
@@ -1014,6 +1016,292 @@ void schedule_delayed_airlift(struct tile *ptile)
 
 	my_snprintf(buf,sizeof(buf),_("Warclient: Scheduling delayed airlift for %s"),get_tile_info(ptile));
 	append_output_window(buf);
-	delayed_goto_add_unit(0,airliftunittype,2,ptile);
+	delayed_goto_add_unit(0,0,2,ptile);
 	update_menus();
+}
+
+/* airlift queues */
+#define aqassert(aq) assert((aq)>=0&&(aq)<AIRLIFT_QUEUE_NUM);
+
+int need_city_for=-1;
+static struct airlift_queue airlift_queues[AIRLIFT_QUEUE_NUM];
+
+void airlift_queue_cat(int dest,int src)
+{
+	aqassert(src);
+	aqassert(dest);
+	char buf[256];
+
+	if(!airlift_queue_size(src))
+		return;
+	if(!airlift_queue_size(dest))
+	{
+		airlift_queue_copy(dest,src);
+		return;
+	}
+	tile_list_iterate(airlift_queues[src].tlist,ptile)
+	{
+		if(!tile_list_find(&airlift_queues[dest].tlist,ptile))
+			tile_list_append(&airlift_queues[dest].tlist,ptile);
+	} tile_list_iterate_end;
+	if(airlift_queues[dest].utype==U_LAST);
+		airlift_queues[dest].utype=airlift_queues[src].utype;
+	my_snprintf(buf,sizeof(buf),_("Warclient: Adding %d tiles to airlift queue"),airlift_queue_size(src));
+	append_output_window(buf);
+}
+
+void airlift_queue_clear(int aq)
+{
+	aqassert(aq);
+	char buf[256];
+
+	if(!airlift_queue_size(aq))
+		return;
+	tile_list_unlink_all(&airlift_queues[aq].tlist);
+	if(aq)
+		my_snprintf(buf,sizeof(buf),_("Warclient: Airlift queue %d cleared"),airlift_queue_size(aq));
+	else
+		my_snprintf(buf,sizeof(buf),_("Warclient: Airlift queue cleared"));
+	append_output_window(buf);
+	update_menus();
+}
+
+void airlift_queue_clear_all(void)
+{
+	int i;
+
+	for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+		tile_list_unlink_all(&airlift_queues[i].tlist);
+}
+
+void airlift_queue_copy(int dest,int src)
+{
+	aqassert(src);
+	aqassert(dest);
+	char buf[256];
+
+	if(!airlift_queue_size(src))
+		return;
+	airlift_queue_clear(dest);
+	tile_list_iterate(airlift_queues[src].tlist,ptile)
+	{
+		tile_list_append(&airlift_queues[dest].tlist,ptile);
+	} tile_list_iterate_end;
+	airlift_queues[dest].utype=airlift_queues[src].utype;
+	init_menus();
+	if(dest)
+		my_snprintf(buf,sizeof(buf),_("Warclient: Airlift queue %d: %d selected tiles"),dest,airlift_queue_size(dest));
+	else
+		my_snprintf(buf,sizeof(buf),_("Warclient: Set airlift queue %d on current airlift queue (%d tiles)"),src,airlift_queue_size(src));
+	append_output_window(buf);
+}
+
+struct airlift_queue *airlift_queue_get(int aq)
+{
+	aqassert(aq);
+
+	return &airlift_queues[aq];
+}
+
+void *airlift_queue_get_menu_item(int aq,Unit_Type_id utype)
+{
+	aqassert(aq);
+	assert(utype>=0&&utype<=U_LAST);
+	
+	return airlift_queues[aq].widgets[utype];
+}
+
+Unit_Type_id airlift_queue_get_unit_type(int aq)
+{
+	aqassert(aq);
+	
+	return airlift_queues[aq].utype;
+}
+
+void airlift_queue_init(int aq)
+{
+	aqassert(aq);
+	int i;
+
+	tile_list_init(&airlift_queues[aq].tlist);
+	airlift_queues[aq].utype=U_LAST;
+	for(i=0;i<=U_LAST;i++)
+		airlift_queues[aq].widgets[i]=NULL;
+}
+
+void airlift_queue_init_all(void)
+{
+	int i;
+
+	for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
+		airlift_queue_init(i);
+}
+
+void airlift_queue_move(int dest,int src)
+{
+	aqassert(src);
+	aqassert(dest);
+
+	airlift_queue_copy(dest,src);
+	airlift_queue_clear(src);
+	update_menus();
+}
+
+void airlift_queue_set(int aq,struct airlift_queue *paq)
+{
+	aqassert(aq);
+
+	if(tile_list_size(&paq->tlist))
+	{
+		tile_list_unlink_all(&airlift_queues[aq].tlist);
+		tile_list_iterate(paq->tlist,ptile)
+		{
+			tile_list_append(&airlift_queues[aq].tlist,ptile);
+		} tile_list_iterate_end;
+	}
+	airlift_queues[aq].utype=paq->utype;
+}
+
+void airlift_queue_set_menu_item(int aq,Unit_Type_id utype,void *widget)
+{
+	aqassert(aq);
+	assert(utype>=0&&utype<=U_LAST);
+
+	airlift_queues[aq].widgets[utype]=widget;
+}
+
+void airlift_queue_set_unit_type(int aq,Unit_Type_id utype)
+{
+	aqassert(aq);
+	assert(utype>=0&&utype<=U_LAST);
+
+	airlift_queues[aq].utype=utype;
+}
+
+void airlift_queue_show(int aq)
+{
+	aqassert(aq);
+	if(!airlift_queue_size(aq))
+		return;
+	char buf[1024];
+	bool first=TRUE;
+
+	strcpy(buf,_("Warclient: Cities in airlift queue"));
+	if(aq)
+		cat_snprintf(buf,sizeof(buf)," %d:",aq);
+	else
+		strcat(buf,":");
+	tile_list_iterate(airlift_queues[aq].tlist,ptile)
+	{
+		cat_snprintf(buf,sizeof(buf),"%s %s",first?"":",",get_tile_info(ptile));
+		first=FALSE;
+	} tile_list_iterate_end;
+	strcat(buf,".");
+	append_output_window(buf);
+}
+
+int airlift_queue_size(int aq)
+{
+	aqassert(aq);
+
+	return tile_list_size(&airlift_queues[aq].tlist);
+}
+
+void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi)
+{
+	char buf[256]="\0";
+
+	if(!ptile)
+		return;
+
+	if(!ptile->city)
+	{
+		append_output_window(_("Warclient: You need to select a tile with city"));
+		return;
+	}
+
+	if(tile_list_find(&airlift_queues[0].tlist,ptile))
+	{
+		if(!multi)
+		{
+			tile_list_unlink(&airlift_queues[0].tlist,ptile);
+			my_snprintf(buf,sizeof(buf),_("Warclient: Remove city %s to autolift queue"),ptile->city->name);
+		}
+	}
+	else
+	{
+		tile_list_insert(&airlift_queues[0].tlist,ptile);
+		my_snprintf(buf,sizeof(buf),_("Warclient: Adding city %s to autolift queue"),ptile->city->name);
+	}
+	if(buf[0])
+		append_output_window(buf);
+	update_menus();
+}
+
+void request_auto_airlift_source_selection_with_airport(void)
+{
+	Impr_Type_id airport=find_improvement_by_name_orig("Airport");
+
+	city_list_iterate(game.player_ptr->cities,pcity)
+	{
+		if(city_got_building(pcity,airport))
+			add_city_to_auto_airlift_queue(pcity->tile,TRUE);
+	} city_list_iterate_end;
+}
+
+void do_airlift_for(int aq,struct city *pcity)
+{
+	aqassert(aq);
+	
+	if(airlift_queues[aq].utype==U_LAST)
+		return;
+		
+	if(!pcity)
+	{
+		need_city_for = aq;
+		request_auto_airlift_destination_selection();
+		return;
+	}
+
+	tile_list_iterate(airlift_queues[aq].tlist,ptile)
+	{
+		if(!ptile->city)
+			continue;
+		if(ptile->city->owner!=game.player_idx)
+			continue;
+		if(!unit_list_size(&ptile->units))
+			continue;
+		unit_list_iterate(ptile->units,punit)
+		{
+			if(punit->type!=airlift_queues[aq].utype)
+				continue;
+			punit->is_new=FALSE;
+			request_unit_airlift(punit,pcity);
+			break;
+		} unit_list_iterate_end;
+	} tile_list_iterate_end;
+}
+
+void do_airlift(struct tile *ptile)
+{
+	if(!ptile->city)
+	{
+		char buf[256];
+
+		my_snprintf(buf,sizeof(buf),_("Warclient: You cannot airlift there (%d,%d), no city"),ptile->x,ptile->y);
+		append_output_window(buf);
+		return;
+	}
+
+	connection_do_buffer(&aconnection);
+	if(airlift_queue_size(0)&&airlift_queues[0].utype!=U_LAST)
+		do_airlift_for(0,ptile->city);
+	else
+	{
+		int i;
+
+		for(i=1;i<AIRLIFT_QUEUE_NUM;i++)
+			do_airlift_for(i,ptile->city);
+	}
+	connection_do_unbuffer(&aconnection);
 }

@@ -51,11 +51,8 @@ bool moveandattack_state;
 int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
 int lastactivatedunit = 0;
-int airliftunittype;
 int default_caravan_action;
 int default_diplomat_action;
-
-static struct tile_list ALqueue;
 
 //*pepeto*
 static bool force_patrol;
@@ -104,8 +101,8 @@ void control_queues_free(void)
 {
   multi_select_clear_all();//*pepeto*
   delayed_goto_clear_all();//*pepeto*
+  airlift_queue_clear_all();//*pepeto*
   my_ai_free();//*pepeto*
-  tile_list_unlink_all(&ALqueue);
 }
 
 /**************************************************************************
@@ -116,8 +113,8 @@ void control_queues_init(void)
   automatic_processus_init();//*pepeto*
   multi_select_init_all();//*pepeto*
   delayed_goto_init_all();//*pepeto*
+  airlift_queue_init_all();//*pepeto*
   my_ai_init();//*pepeto*
-  tile_list_init(&ALqueue);
 }
 
 /**************************************************************************
@@ -136,6 +133,8 @@ void set_hover_state(struct unit *punit, enum cursor_hover_state state,
   hover_state = state;
   connect_activity = activity;
   exit_goto_state();
+  need_tile_for = -1;
+  need_city_for = -1;
 }
 
 /**************************************************************************
@@ -789,13 +788,6 @@ void key_select_rally_point (void)
 	update_hover_cursor();
   }
 }
-/**************************************************************************
- ... *pepeto* for menus update
-**************************************************************************/
-bool is_tile_in_airlift_queue(void)
-{
-	return (tile_list_size(&ALqueue)>0);
-}
 
 /**************************************************************************
 ... automatic airlifting destination selection
@@ -821,116 +813,6 @@ void request_auto_airlift_source_selection(void)
   hover_state = HOVER_AIRLIFT_SOURCE;
   update_hover_cursor();
   }
-}
-
-/**************************************************************************
-... airlifting source selection: all cities with airport 
-**************************************************************************/
-void request_auto_airlift_source_selection_with_airport(void)
-{
-  Impr_Type_id airport=find_improvement_by_name_orig("Airport");
-
-  city_list_iterate(game.player_ptr->cities, pcity) {
-    if(city_got_building(pcity,airport))
-      add_city_to_auto_airlift_queue(pcity->tile, TRUE);
-  } city_list_iterate_end;
-}
-
-/**************************************************************************
-... add city to queue
-**************************************************************************/
-void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi)
-{
-  char txt[255]="\0";
-  
-  if (!ptile)
-    return;
-  
-  if (!ptile->city) {
-    append_output_window (_("Warclient: You need to select a tile with city"));
-    return;
-  }
-
-  if(tile_list_find (&ALqueue,ptile))
-  {
-	  if(!multi)
-	  {
-		  tile_list_unlink (&ALqueue, ptile);
-		  my_snprintf (txt, sizeof (txt), _("Warclient: Remove city %s to autolift queue"),
-					   ptile->city->name);
-	  }
-  }
-  else
-  {
-	  tile_list_insert (&ALqueue, ptile);
-	  my_snprintf (txt, sizeof (txt), _("Warclient: Adding city %s to autolift queue"),
-				   ptile->city->name);
-  }
-  if(txt[0])
-	  append_output_window (txt);
-  update_menus();
-}
-/**************************************************************************
-  ...
-**************************************************************************/
-void do_airlift (struct tile *ptile,Unit_Type_id utype)
-{
-  if(!ptile->city) {
-    char buf[256];
-
-    my_snprintf(buf, sizeof(buf), _("Warclient: You cannot airlift there (%d,%d), no city"), ptile->x, ptile->y);
-    append_output_window(buf);
-    return;
-  }
-  
-
-  if (tile_list_size (&ALqueue) <= 0)
-    return;
-  
-  tile_list_iterate (ALqueue, srcptile) {
-    if (!srcptile->city)
-      continue;
-    if (!srcptile->city->owner == game.player_idx)
-      continue;
-	  if (unit_list_size (&srcptile->units) <= 0)
-      continue;
-    unit_list_iterate (srcptile->units, punit) {
-      if (punit->type == utype) {
-        punit->is_new = FALSE;
-        request_unit_airlift (punit, ptile->city);
-        break;
-      }
-    } unit_list_iterate_end; 
-  } tile_list_iterate_end;
-}
-/**************************************************************************
-... clear autolift queue
-**************************************************************************/
-void request_clear_auto_airlift_queue(void)
-{
-  tile_list_unlink_all (&ALqueue);
-  append_output_window (_("Warclient: Autolift queue cleared"));
-  update_menus();
-}
-/**************************************************************************
-  show cities in autolift queue
-**************************************************************************/
-void show_cities_in_airlift_queue(void)
-{
-  if (tile_list_size (&ALqueue) <= 0)
-    return;
-  
-  append_output_window (_("Warclient: Cities in airlift queue:"));
-  tile_list_iterate (ALqueue, ttile) {
-    if (!ttile->city)
-      continue;
-    append_output_window (ttile->city->name);
-  } tile_list_iterate_end;
-}
-
-struct tile_list *get_airlift_queue(void)//*pepeto*
-{
-	return &ALqueue;
 }
 
 /**************************************************************************
@@ -1906,21 +1788,17 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  if(pcity)
 	  {
 		  append_output_window (_("Warclient: Airlifting units"));
-        connection_do_buffer(&aconnection);
-		  if(multi_select_size(0)>1||!is_tile_in_airlift_queue())
-		  {
-			  multi_select_iterate(TRUE,punit)
-			  {
-				  request_unit_airlift(punit,pcity);
-			  } multi_select_iterate_end;
+	     if(need_city_for >= 0 && need_city_for < AIRLIFT_QUEUE_NUM) {
+	       do_airlift_for(need_city_for, pcity);
+	     } else {
+		    do_airlift(ptile);
 		  }
-		  do_airlift(ptile,airliftunittype);
-        connection_do_unbuffer(&aconnection);
-	  }
+ 	  }
 	  else
 		  append_output_window (_("Warclient: You need to select a tile with a city"));
+		need_city_for = -1;
       hover_state = HOVER_NONE;
-	  update_hover_cursor();
+	   update_hover_cursor();
       return;
   }else if(ptile && hover_state==HOVER_MYPATROL) {
 			  multi_select_iterate(TRUE,punit)
@@ -2325,8 +2203,10 @@ void key_cancel_action(void)
   	   || hover_state == HOVER_MY_AI_TRADE_CITY)
   {
       hover_state = HOVER_NONE;
-	  update_hover_cursor();
+	   update_hover_cursor();
   }
+  need_tile_for = -1;
+  need_city_for = -1;
 }
 
 /**************************************************************************

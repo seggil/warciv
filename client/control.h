@@ -54,22 +54,14 @@ extern bool non_ai_unit_focus;
 extern bool autowakeup_state;
 extern bool moveandattack_state;
 extern int lastactivatedunit;
-extern int airliftunittype;
 extern int look_into_allied_city;
 extern int default_caravan_action;
 extern int default_diplomat_action;
 extern bool focus_turn;//*pepeto*
 
 bool can_unit_do_connect(struct unit *punit, enum unit_activity activity);
-bool is_tile_in_airlift_queue(void);//*pepeto*
-void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi);//*pepeto*
-void request_clear_auto_airlift_queue(void);
 void request_auto_airlift_source_selection(void);
-void request_auto_airlift_source_selection_with_airport(void);//*pepeto*
 void request_auto_airlift_destination_selection(void);
-void do_airlift(struct tile *ptile,Unit_Type_id utype);
-void show_cities_in_airlift_queue(void);
-struct tile_list *get_airlift_queue(void);//*pepeto*
 
 void key_airplane_patrol(bool force);
 void city_set_rally_point(struct city *pcity,struct tile *ptile);//*pepeto*
