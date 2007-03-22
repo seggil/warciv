@@ -50,11 +50,11 @@
 bool moveandattack_state;
 int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
-int lastactivatedunit = 0;
 int default_caravan_action;
 int default_diplomat_action;
 
 //*pepeto*
+static int *actived_units = NULL, actived_units_num = 0;
 static bool force_patrol;
 bool focus_turn=TRUE;
 static struct unit *plast=NULL;
@@ -99,10 +99,11 @@ static void do_mass_order(enum unit_activity activity);
 **************************************************************************/
 void control_queues_free(void)
 {
-  multi_select_clear_all();//*pepeto*
-  delayed_goto_clear_all();//*pepeto*
-  airlift_queue_clear_all();//*pepeto*
-  my_ai_free();//*pepeto*
+  multi_select_clear_all();
+  delayed_goto_clear_all();
+  airlift_queue_clear_all();
+  my_ai_free();
+  actived_unit_remove_all();
 }
 
 /**************************************************************************
@@ -110,11 +111,12 @@ void control_queues_free(void)
 **************************************************************************/
 void control_queues_init(void)
 {
-  automatic_processus_init();//*pepeto*
-  multi_select_init_all();//*pepeto*
-  delayed_goto_init_all();//*pepeto*
-  airlift_queue_init_all();//*pepeto*
-  my_ai_init();//*pepeto*
+  automatic_processus_init();
+  multi_select_init_all();
+  delayed_goto_init_all();
+  airlift_queue_init_all();
+  my_ai_init();
+  actived_unit_remove_all();
 }
 
 /**************************************************************************
@@ -881,6 +883,37 @@ bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
 }
 
 /**************************************************************************
+ *pepeto*: utilities for active unit
+**************************************************************************/
+bool is_actived_unit(int unit_id)
+{
+  int i;
+
+  for(i = 0; i < actived_units_num; i++) {
+    if(actived_units[i] == unit_id) {
+      actived_units[i] = 0;
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+void actived_unit_new(int unit_id)
+{
+  actived_units_num++;
+  actived_units = fc_realloc(actived_units, sizeof(int) * actived_units_num);
+  actived_units[actived_units_num-1] = unit_id;
+}
+
+void actived_unit_remove_all(void)
+{
+  actived_units_num = 0;
+  if(actived_units)
+    free(actived_units);
+  actived_units = NULL;
+}
+
+/**************************************************************************
  *pepeto*: active an unit
 **************************************************************************/
 void request_active_unit(struct unit *punit)
@@ -893,6 +926,7 @@ void request_active_unit(struct unit *punit)
 		punit->ai.control=FALSE;
 	request_new_unit_activity(punit,ACTIVITY_IDLE);
 	punit->focus_status=FOCUS_AVAIL;
+	actived_unit_new(punit->id);
 }
 
 /**************************************************************************
@@ -1074,7 +1108,6 @@ void request_new_unit_activity(struct unit *punit, enum unit_activity act)
   if (!can_client_issue_orders()) {
     return;
   }
-  lastactivatedunit = punit->id;
   dsend_packet_unit_change_activity(&aconnection, punit->id, act,
 				    S_NO_SPECIAL);
 }
@@ -1280,11 +1313,16 @@ void request_unit_sentry(struct unit *punit)
 *****************************************************************/
 void request_unit_fortify(struct unit *punit)
 {
-  if(punit->activity!=ACTIVITY_FORTIFYING &&
-     can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+  if(punit->activity == ACTIVITY_FORTIFYING)
+    return;
+  if(can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
     punit->is_new = FALSE;
     request_new_unit_activity(punit, ACTIVITY_FORTIFYING);
-  }
+  } else {
+    punit->is_new = FALSE;
+    request_new_unit_activity(punit, ACTIVITY_SENTRY);
+    punit->activity = ACTIVITY_FORTIFYING;
+  } 
 }
 
 /**************************************************************************
@@ -2541,12 +2579,11 @@ static void do_mass_order(enum unit_activity activity)
 {
   if (punit_focus == NULL)return;
 
-  multi_select_iterate(TRUE,punit)
-  {
-	if(can_unit_do_activity(punit, activity)) {
+  multi_select_iterate(TRUE,punit) {
+    if(can_unit_do_activity(punit, activity)) {
 		punit->is_new = FALSE;
 		request_new_unit_activity(punit, activity);
-	}
+    }
   } multi_select_iterate_end;
 }
 
@@ -2555,7 +2592,11 @@ static void do_mass_order(enum unit_activity activity)
 **************************************************************************/
 void key_unit_fortify(void)
 {
-   do_mass_order(ACTIVITY_FORTIFYING);
+  if (punit_focus == NULL)return;
+
+  multi_select_iterate(TRUE,punit) {
+    request_unit_fortify(punit);
+  } multi_select_iterate_end;
 }
 
 /**************************************************************************

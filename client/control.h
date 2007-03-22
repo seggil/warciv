@@ -84,6 +84,9 @@ void attack_after_move(struct unit *punit);
 
 void set_hover_state(struct unit *punit, enum cursor_hover_state state,
 		     enum unit_activity activity);
+bool is_actived_unit(int unit_id);//*pepeto*
+void actived_unit_new(int unit_id);//*pepeto*
+void actived_unit_remove_all(void);//*pepeto*
 void request_active_unit(struct unit *punit);//*pepeto*
 void request_center_focus_unit(void);
 void request_move_unit_direction(struct unit *punit, int dir);

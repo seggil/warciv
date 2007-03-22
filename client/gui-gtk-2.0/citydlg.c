@@ -2013,8 +2013,7 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-    if (punit->activity == ACTIVITY_FORTIFYING
-	|| !can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+    if (punit->activity == ACTIVITY_FORTIFYING) {
       gtk_widget_set_sensitive(item, FALSE);
     }
 
@@ -2214,6 +2213,8 @@ static void unit_sentry_callback(GtkWidget * w, gpointer data)
   struct unit *punit;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
+    if(punit->activity == ACTIVITY_FORTIFYING)
+      request_active_unit(punit);
     request_unit_sentry(punit);
   }
 }
@@ -2227,6 +2228,8 @@ static void unit_fortify_callback(GtkWidget * w, gpointer data)
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
     request_unit_fortify(punit);
+    if(punit->activity == ACTIVITY_FORTIFYING && punit->tile && punit->tile->city)
+      refresh_city_dialog(punit->tile->city);
   }
 }
 

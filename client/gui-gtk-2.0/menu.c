@@ -2123,7 +2123,7 @@ static GtkItemFactoryEntry menu_items[]	=
 
   { "/" N_("Warclient") "/sep1",				NULL,
 	NULL,			0,					"<Separator>"	},
-  { "/" N_("Warclient") "/" N_("Autowakeup sentried units"),		"v",
+  { "/" N_("Warclient") "/" N_("Autowakeup sentried units"),		NULL,
 	warclient_menu_callback,	MENU_WARCLIENT_TOGGLE_WAKEUP,	"<CheckItem>"	},
   { "/" N_("Warclient") "/" N_("Move and attack mode"),		"<ctrl>a",
 	warclient_menu_callback,	MENU_WARCLIENT_TOGGLE_MOVEANDATTACK,	"<CheckItem>"	},
@@ -3526,10 +3526,7 @@ void update_menus(void)
                           can_unit_do_activity(punit, ACTIVITY_MINE));
       menus_set_sensitive("<main>/_Orders/Transf_orm Terrain",
 			  can_unit_do_activity(punit, ACTIVITY_TRANSFORM));
-      menus_set_sensitive("<main>/_Orders/Build _Fortress",
-                          (can_unit_do_activity(punit, ACTIVITY_FORTRESS) ||
-                           can_unit_do_activity(punit, ACTIVITY_FORTIFYING)));
-      menus_set_sensitive("<main>/_Orders/Build Airbas_e",
+     menus_set_sensitive("<main>/_Orders/Build Airbas_e",
 			  can_unit_do_activity(punit, ACTIVITY_AIRBASE));
       menus_set_sensitive("<main>/_Orders/Clean _Pollution",
                           (can_unit_do_activity(punit, ACTIVITY_POLLUTION) ||
@@ -3628,10 +3625,10 @@ void update_menus(void)
       menus_rename("<main>/_Orders/Build _Mine", mintext);
       menus_rename("<main>/_Orders/Transf_orm Terrain", transtext);
 
-      if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
-	menus_rename("<main>/_Orders/Build _Fortress", _("_Fortify"));
-      } else {
+      if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
 	menus_rename("<main>/_Orders/Build _Fortress", _("Build _Fortress"));
+      } else {
+	menus_rename("<main>/_Orders/Build _Fortress", _("_Fortify"));
       }
 
       if (unit_flag(punit, F_PARATROOPERS)) {
