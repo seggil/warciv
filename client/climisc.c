@@ -1726,6 +1726,7 @@ void force_tech_goal(Tech_Type_id goal)
   if(next == A_UNSET)
     return;
 
-  dsend_packet_player_tech_goal(&aconnection, goal);
+  if(game.player_ptr->ai.tech_goal != goal)
+    dsend_packet_player_tech_goal(&aconnection, goal);
   dsend_packet_player_research(&aconnection, next);
 }
