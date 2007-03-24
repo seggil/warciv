@@ -134,6 +134,7 @@ enum MenuID {
   MENU_VIEW_SHOW_FOCUS_UNIT,
   MENU_VIEW_SHOW_FOG_OF_WAR,
   MENU_VIEW_CENTER_VIEW,
+  MENU_VIEW_CLEAR_MARKS,
 
   MENU_ORDER_BUILD_CITY,     /* shared with BUILD_WONDER */
   MENU_ORDER_ROAD,           /* shared with TRADEROUTE */
@@ -602,6 +603,9 @@ static void view_menu_callback(gpointer callback_data, guint callback_action,
     break;
   case MENU_VIEW_CENTER_VIEW:
     center_on_unit();
+    break;
+  case MENU_VIEW_CLEAR_MARKS:
+    clear_link_marks();
     break;
   }
 }
@@ -1832,7 +1836,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Government") "/" N_("_Find City"),		"<shift>f",
 	government_menu_callback,	MENU_GOVERNMENT_FIND_CITY			},
-  { "/" N_("Government") "/" N_("_Worklists"),		"<control>l",
+  { "/" N_("Government") "/" N_("_Worklists"),		NULL	,
 	government_menu_callback,	MENU_GOVERNMENT_WORKLISTS			},
   { "/" N_("Government") "/" N_("_Clear Selected Worklists"),		"<control>w",
 	government_menu_callback,	MENU_GOVERNMENT_CLEAR_SELECTED_WORKLISTS			},
@@ -1899,6 +1903,10 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Separator>"	},
   { "/" N_("View") "/" N_("_Center View"),		"c",
 	view_menu_callback,	MENU_VIEW_CENTER_VIEW					},
+  { "/" N_("View") "/sep3",				NULL,
+	NULL,			0,					"<Separator>"	},
+  { "/" N_("View") "/" N_("Clear all link marks"),		"<ctrl>l",
+	view_menu_callback,	MENU_VIEW_CLEAR_MARKS					},
   /* Orders menu ... */
   { "/" N_("_Orders"),					NULL,
 	NULL,			0,					"<Branch>"	},
