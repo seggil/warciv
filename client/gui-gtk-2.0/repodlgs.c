@@ -59,12 +59,13 @@ static void science_help_callback(GtkTreeView *view,
 				  gpointer data);
 static void science_change_callback(GtkWidget * widget, gpointer data);
 static void science_goal_callback(GtkWidget * widget, gpointer data);
+static void science_update_callback(GtkWidget * widget, gpointer data);
 
 /******************************************************************/
 static struct gui_dialog *science_dialog_shell = NULL;
 static GtkWidget *science_label;
 static GtkWidget *science_current_label, *science_goal_label;
-static GtkWidget *science_change_menu_button, *science_goal_menu_button;
+static GtkWidget *science_change_menu_button, *science_goal_menu_button, *science_update_button;
 static GtkWidget *science_help_toggle;
 static GtkListStore *science_model[3];
 static int science_dialog_shell_is_modal;
@@ -213,6 +214,10 @@ void create_science_dialog(bool make_modal)
   science_help_toggle = gtk_check_button_new_with_label (_("Help"));
   gtk_box_pack_start(GTK_BOX(hbox), science_help_toggle, TRUE, FALSE, 0);
 
+  science_update_button = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
+  gtk_box_pack_start(GTK_BOX(hbox), science_update_button, TRUE, FALSE, 0);
+  g_signal_connect(science_update_button, "clicked", G_CALLBACK(science_update_callback), NULL);
+
   frame = gtk_frame_new( _("Goal"));
   gtk_box_pack_start(GTK_BOX(science_dialog_shell->vbox),
         frame, FALSE, FALSE, 0);
@@ -354,6 +359,14 @@ static void science_help_callback(GtkTreeView *view,
       popup_help_dialog_string(HELP_TECHS_ITEM);
     }
   }
+}
+
+/****************************************************************
+...
+*****************************************************************/
+static void science_update_callback(GtkWidget * widget, gpointer data)
+{
+  force_tech_goal(game.player_ptr->ai.tech_goal);
 }
 
 /****************************************************************
