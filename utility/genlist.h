@@ -72,7 +72,7 @@ struct genlist {
 int genlist_size(const struct genlist *pgenlist);
 void *genlist_get(const struct genlist *pgenlist, int idx);
 void genlist_init(struct genlist *pgenlist);
-void genlist_check_init(struct genlist *pgenlist);
+bool genlist_is_initialized(struct genlist *pgenlist);
 void genlist_unlink_all(struct genlist *pgenlist);
 void genlist_insert(struct genlist *pgenlist, void *data, int pos);
 void genlist_unlink(struct genlist *pgenlist, void *punlink);
@@ -93,7 +93,6 @@ void genlist_sort(struct genlist *pgenlist,
 #define TYPED_LIST_ITERATE(atype, typed_list, var) {       \
   struct genlist_link *myiter;                             \
   atype *var;                                              \
-  genlist_check_init(&(typed_list).list);                  \
   myiter = (typed_list).list.head_link;                    \
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
@@ -107,7 +106,6 @@ void genlist_sort(struct genlist *pgenlist,
 #define TYPED_LIST_ITERATE_REV(atype, typed_list, var) {   \
   struct genlist_link *myiter;                             \
   atype *var;                                              \
-  genlist_check_init(&(typed_list).list);                  \
   myiter = (typed_list).list.tail_link;                    \
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
