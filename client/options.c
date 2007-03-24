@@ -44,6 +44,7 @@
 
 char default_user_name[512] = "\0";
 char default_user_nation[512] = "\0";//*pepeto*
+char default_user_tech_goal[512] = "\0";//*pepeto*
 char default_server_host[512] = "localhost";
 int  default_server_port = DEFAULT_SOCK_PORT;
 char default_metaserver[512] = DEFAULT_METALIST_ADDR;
@@ -89,6 +90,8 @@ static client_option common_options[] = {
 		 NULL, NULL), 
   GEN_STR_OPTION(default_user_nation,        N_("Default player's nation"),//*pepeto*
 		 NULL, NULL), 
+  GEN_STR_OPTION(default_user_tech_goal,        N_("Default player's technology goal"),//*pepeto*
+		 NULL, NULL), 
   GEN_STR_OPTION(default_server_host,       N_("Default server"),
 		 NULL, NULL),
   GEN_INT_OPTION(default_server_port,       N_("Default server's port")),
@@ -123,7 +126,7 @@ static client_option common_options[] = {
   GEN_STR_OPTION(city_name_formats,  N_("City name formats"), NULL, NULL),
   GEN_BOOL_OPTION(show_split_message_window,N_("Split chat and message window")),
   GEN_BOOL_OPTION(do_not_recenter_overview,N_("Do not recenter the overview for wrapped maps")),
-  GEN_BOOL_OPTION(reload_pepsettings, N_("Try to reaload the last PepClient settings file"))//*pepeto*
+  GEN_BOOL_OPTION(reload_pepsettings, N_("Try to reload the last PepClient settings file"))//*pepeto*
 };
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION

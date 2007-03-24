@@ -559,8 +559,12 @@ void set_client_state(enum client_states newstate)
       set_client_page(PAGE_GAME);
 //*pepeto*
       init_all_settings();
-      if(reload_pepsettings&&!client_is_observer())
-        load_all_settings();
+      if(!client_is_observer()) {
+        if(reload_pepsettings)
+          load_all_settings();
+        if(game.turn == 0)
+          set_default_user_tech_goal();
+      }
       init_menus();
     }
     else if (client_state == CLIENT_PRE_GAME_STATE) {

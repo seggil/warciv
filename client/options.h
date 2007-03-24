@@ -18,6 +18,7 @@
 
 extern char default_user_name[512];
 extern char default_user_nation[512];//*pepeto*
+extern char default_user_tech_goal[512];//*pepeto*
 extern char default_server_host[512];
 extern int default_server_port; 
 extern char default_metaserver[512];

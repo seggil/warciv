@@ -1699,3 +1699,33 @@ void draw_link_marks(void)
     draw_link_mark(ptile);
   } hash_iterate_end;
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void set_default_user_tech_goal(void)
+{
+  Tech_Type_id goal;
+  
+  goal = find_tech_by_name(default_user_tech_goal);
+  if(goal == A_LAST)
+    goal = find_tech_by_name_orig(default_user_tech_goal);
+  if(goal != A_LAST)
+    force_tech_goal(goal);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void force_tech_goal(Tech_Type_id goal)
+{
+  if(!tech_exists(goal))
+    return;
+
+  Tech_Type_id next = get_next_tech(game.player_ptr, goal);
+  if(next == A_UNSET)
+    return;
+
+  dsend_packet_player_tech_goal(&aconnection, goal);
+  dsend_packet_player_research(&aconnection, next);
+}
