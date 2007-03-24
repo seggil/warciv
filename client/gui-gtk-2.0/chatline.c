@@ -290,7 +290,7 @@ follow_if_link (GtkWidget   *text_view,
       break;
     }
     if (ptile) {
-      draw_link_mark(ptile);      
+      add_link_mark(ptile);
       center_tile_mapcanvas (ptile);
       gtk_widget_grab_focus (GTK_WIDGET (map_canvas));
     }
@@ -503,7 +503,6 @@ static int parse_city_id_and_name_link (const char *str,
                      GINT_TO_POINTER (id)); 
 
   if ((ptile = pcity->tile)) {
-    ptile->client.mark_ttl = 2;
     add_link_mark(ptile);
   }
 
@@ -555,7 +554,6 @@ static int parse_city_id_link (const char *str,
                      GINT_TO_POINTER (id)); 
 
   if ((ptile = pcity->tile)) {
-    ptile->client.mark_ttl = 2;
     add_link_mark(ptile);
   }
 
@@ -602,7 +600,6 @@ static int parse_city_link (const char *str,
                      mystrdup (city_name)); 
   
   if ((ptile = pcity->tile)) {
-    ptile->client.mark_ttl = 2;
     add_link_mark(ptile);
   }
 
@@ -642,7 +639,6 @@ static int parse_location_link (const char *str,
   my_snprintf (newtext, newtext_maxlen, "(%d, %d)", x, y);
   
   if ((ptile = map_pos_to_tile(x, y))) {
-    ptile->client.mark_ttl = 2;
     add_link_mark(ptile);
   }
   
