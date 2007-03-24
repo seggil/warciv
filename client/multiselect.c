@@ -978,7 +978,10 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 		if(unit_limit&&(++counter>unit_limit))
 			break;
 		if(dgd->type==2)
+		{
+			need_city_for=dgd->id;
 			do_airlift(dgd->ptile);
+		}
 		else
 		{
 			struct unit *punit=player_find_unit_by_id(game.player_ptr,dgd->id);
@@ -1016,8 +1019,9 @@ void schedule_delayed_airlift(struct tile *ptile)
 
 	my_snprintf(buf,sizeof(buf),_("Warclient: Scheduling delayed airlift for %s"),get_tile_info(ptile));
 	append_output_window(buf);
-	delayed_goto_add_unit(0,0,2,ptile);
+	delayed_goto_add_unit(0,need_city_for,2,ptile);
 	update_menus();
+	need_city_for=-1;
 }
 
 /* airlift queues */
@@ -1294,7 +1298,9 @@ void do_airlift(struct tile *ptile)
 	}
 
 	connection_do_buffer(&aconnection);
-	if(airlift_queue_size(0)&&airlift_queues[0].utype!=U_LAST)
+	if(need_city_for>=0&&need_city_for<AIRLIFT_QUEUE_NUM)
+		do_airlift_for(need_city_for,ptile->city);
+	else if(airlift_queue_size(0)&&airlift_queues[0].utype!=U_LAST)
 		do_airlift_for(0,ptile->city);
 	else
 	{
@@ -1303,5 +1309,6 @@ void do_airlift(struct tile *ptile)
 		for(i=1;i<AIRLIFT_QUEUE_NUM;i++)
 			do_airlift_for(i,ptile->city);
 	}
+	need_city_for=-1;
 	connection_do_unbuffer(&aconnection);
 }

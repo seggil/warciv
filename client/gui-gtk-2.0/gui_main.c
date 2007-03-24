@@ -520,7 +520,18 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 			}
 		}
 
-		switch (ev->keyval) {//*pepeto*: <>
+		if (hover_state == HOVER_AIRLIFT_DEST || hover_state == HOVER_DELAYED_AIRLIFT) {
+			switch (ev->keyval) {//*pepeto*: <>
+				CASE4(need_city_for=1)
+				CASE5(need_city_for=2)
+				CASE6(need_city_for=3)
+				CASE7(need_city_for=4)
+				CASE8(need_city_for=5)
+				CASE9(need_city_for=6)
+				default: break;
+			}
+		}
+		switch (ev->keyval) {
 				CASE1(multi_select_copy(0,1))
 				CASE2(multi_select_copy(0,2))
 				CASE3(multi_select_copy(0,3))

@@ -1823,17 +1823,12 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  update_hover_cursor();
       return;
   }else if(ptile && hover_state==HOVER_AIRLIFT_DEST) {
-	  if(pcity)
-	  {
+	  if(pcity) {
 		  append_output_window (_("Warclient: Airlifting units"));
-	     if(need_city_for >= 0 && need_city_for < AIRLIFT_QUEUE_NUM) {
-	       do_airlift_for(need_city_for, pcity);
-	     } else {
 		    do_airlift(ptile);
-		  }
- 	  }
-	  else
+ 	  } else {
 		  append_output_window (_("Warclient: You need to select a tile with a city"));
+		}
 		need_city_for = -1;
       hover_state = HOVER_NONE;
 	   update_hover_cursor();
