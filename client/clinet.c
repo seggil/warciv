@@ -96,7 +96,6 @@ struct connection aconnection;
 static int socklan;
 static struct server_list *lan_servers;
 static union my_sockaddr server_addr;
-extern int game_state_flag;
 extern int tflag;		//from packhand.c
 
 /* used by create_server_list_async */
@@ -225,7 +224,6 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
 {
   struct packet_server_join_req req;
 
-  game_state_flag = 0;
   tflag = 0;
   close_socket_set_callback(close_socket_callback);
 

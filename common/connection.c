@@ -471,7 +471,6 @@ struct connection *find_conn_by_user_prefix(const char *user_name,
 ***************************************************************/
 struct connection *find_conn_by_id(int id)
 {
-  conn_list_check_init(&game.all_connections);
   conn_list_iterate(game.all_connections, pconn) {
     if (pconn->id == id) {
       return pconn;
