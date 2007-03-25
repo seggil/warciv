@@ -1843,6 +1843,8 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Government") "/" N_("_Change Government") "/" N_("_Revolution..."),
                                                         NULL,
 	government_menu_callback,	MENU_GOVERNMENT_REVOLUTION			},
+  { "/" N_("Government") "/" N_("_Change Government") "/sep1",				NULL,
+	NULL,			0,					"<Separator>"	},
   /* View menu ... */
   { "/" N_("_View"),					NULL,
 	NULL,			0,					"<Branch>"	},
@@ -1897,8 +1899,6 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Separator>"	},
   { "/" N_("View") "/" N_("_Center View"),		"c",
 	view_menu_callback,	MENU_VIEW_CENTER_VIEW					},
-  { "/" N_("View") "/sep3",				NULL,
-	NULL,			0,					"<Separator>"	},
   /* Orders menu ... */
   { "/" N_("_Orders"),					NULL,
 	NULL,			0,					"<Branch>"	},

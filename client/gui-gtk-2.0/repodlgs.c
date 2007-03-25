@@ -537,6 +537,8 @@ void science_dialog_update(void)
 	      steps);
   gtk_label_set_text(GTK_LABEL(science_goal_label), text);
 
+  gtk_widget_set_sensitive(science_change_from_goal_button, can_client_issue_orders());
+
   if (game.player_ptr->ai.tech_goal == A_UNSET) {
     item = gtk_menu_item_new_with_label(get_tech_name(game.player_ptr,
 						      A_NONE));
