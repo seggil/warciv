@@ -1605,8 +1605,9 @@ void add_link_mark(struct tile *ptile)
 {
   check_init_mark_table();
 
-  assert(ptile);
+  assert(ptile != NULL);
 
+  ptile->client.mark_ttl = 2;
   hash_insert(mark_table, ptile, NULL);
   draw_link_mark(ptile);
 

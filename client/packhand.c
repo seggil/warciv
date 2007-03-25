@@ -80,7 +80,6 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
 static bool handle_unit_packet_common(struct unit *packet_unit);
 static int *reports_thaw_requests = NULL;
 static int reports_thaw_requests_size = 0;
-int game_state_flag = 0;
 
 /**************************************************************************
   Unpackage the unit information into a newly allocated unit structure.
@@ -1539,7 +1538,6 @@ void handle_game_info(struct packet_game_info *pinfo)
   bool boot_help, need_effect_update = FALSE;
   time_t estime;
     
-  game_state_flag = 1;
   estime = time (NULL);
   game.gold=pinfo->gold;
   game.tech=pinfo->tech;
@@ -1840,7 +1838,6 @@ void handle_player_info(struct packet_player_info *pinfo)
 void handle_conn_info(struct packet_conn_info *pinfo)
 {
   struct connection *pconn = find_conn_by_id(pinfo->id);
- // freelog(LOG_VERBOSE,"Tracking random bug");
 
   freelog(LOG_DEBUG, "conn_info id%d used%d est%d plr%d obs%d acc%d",
 	  pinfo->id, pinfo->used, pinfo->established, pinfo->player_num,
@@ -1850,24 +1847,20 @@ void handle_conn_info(struct packet_conn_info *pinfo)
   
   if (!pinfo->used) {
     /* Forget the connection */
-   // freelog(LOG_VERBOSE,"1");
     if (!pconn) {
       freelog(LOG_VERBOSE, "Server removed unknown connection %d", pinfo->id);
       return;
     }
     client_remove_cli_conn(pconn);
-   // freelog(LOG_VERBOSE,"2");
     pconn = NULL;
   } else {
     /* Add or update the connection.  Note the connection may refer to
      * a player we don't know about yet. */
-  //  freelog(LOG_VERBOSE,"3");
     struct player *pplayer =
       ((pinfo->player_num >= 0 
         && pinfo->player_num < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS)
        ? get_player(pinfo->player_num) : NULL);
     
-   // freelog(LOG_VERBOSE,"4");
     if (!pconn) {
       freelog(LOG_VERBOSE, "Server reports new connection %d %s",
 	      pinfo->id, pinfo->username);
@@ -1876,46 +1869,24 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       pconn->buffer = NULL;
       pconn->send_buffer = NULL;
       pconn->ping_time = -1.0;
-    //  freelog(LOG_VERBOSE,"5");
       if (pplayer) {
-        conn_list_check_init(&pplayer->connections);
     	conn_list_append(&pplayer->connections, pconn);
-    //    freelog(LOG_VERBOSE,"6");
-        if ((conn_list_size(&pplayer->connections) == 1)
-            && (!game_state_flag))
-        {
-          game.nplayers++;
-        }
       }
-    //  freelog(LOG_VERBOSE,"7");
-      conn_list_check_init(&game.all_connections);
       conn_list_append(&game.all_connections, pconn);
-   //   freelog(LOG_VERBOSE,"8");
-      conn_list_check_init(&game.est_connections);
       conn_list_append(&game.est_connections, pconn);
-   //   freelog(LOG_VERBOSE,"9");
-      conn_list_check_init(&game.game_connections);
       conn_list_append(&game.game_connections, pconn);
-  //    freelog(LOG_VERBOSE,"10");
     } else {
       freelog(LOG_VERBOSE, "Server reports updated connection %d %s",
 	      pinfo->id, pinfo->username);
       if (pplayer != pconn->player) {
 	if (pconn->player) {
-     //     freelog(LOG_VERBOSE,"11");
-          conn_list_check_init(&pconn->player->connections);
 	  conn_list_unlink(&pconn->player->connections, pconn);
-  //        freelog(LOG_VERBOSE,"12");
 	}
 	if (pplayer) {
-    //      freelog(LOG_VERBOSE,"13");
-          conn_list_check_init(&pplayer->connections);
 	  conn_list_append(&pplayer->connections, pconn);
-   //       freelog(LOG_VERBOSE,"14");
 	}
       }
     }
- //   freelog(LOG_VERBOSE,"16");
     pconn->id = pinfo->id;
     pconn->established = pinfo->established;
     pconn->observer = pinfo->observer;
@@ -1924,7 +1895,6 @@ void handle_conn_info(struct packet_conn_info *pinfo)
     sz_strlcpy(pconn->username, pinfo->username);
     sz_strlcpy(pconn->addr, pinfo->addr);
     sz_strlcpy(pconn->capability, pinfo->capability);
-  //  freelog(LOG_VERBOSE,"15");
 
     if (pinfo->id == aconnection.id) {
       aconnection.established = pconn->established;
@@ -1933,11 +1903,8 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       aconnection.player = pplayer;
     }
   }
-//  freelog(LOG_VERBOSE,"16");
   update_players_dialog();
- // freelog(LOG_VERBOSE,"17");
   update_conn_list_dialog();
-//  freelog(LOG_VERBOSE,"Random bug tracking end");
 }
 
 /*************************************************************************
@@ -3096,9 +3063,10 @@ void handle_freeze_hint(void)
 {
   freelog(LOG_DEBUG, "handle_freeze_hint");
 
-//  reports_freeze();
-
-//  agents_freeze_hint();
+  /*
+  reports_freeze();
+  agents_freeze_hint();
+  */
 }
 
 /**************************************************************************
@@ -3108,9 +3076,11 @@ void handle_thaw_hint(void)
 {
   freelog(LOG_DEBUG, "handle_thaw_hint");
 
-//  reports_thaw();
+  /*
+  reports_thaw();
+  agents_thaw_hint();
+  */
 
-//  agents_thaw_hint();
   update_turn_done_button_state();
 }
 

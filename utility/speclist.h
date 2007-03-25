@@ -31,7 +31,7 @@
       struct foo_list;
    and prototypes for the following functions:
       void foo_list_init(struct foo_list *This);
-      void foo_list_check_init(struct foo_list *This);
+      bool foo_list_is_initiazlized(struct foo_list *This);
       int  foo_list_size(struct foo_list *This);
       foo_t *foo_list_get(struct foo_list *This, int index);
       void foo_list_insert(struct foo_list *This, foo_t *pfoo);
@@ -88,12 +88,6 @@ static inline void SPECLIST_FOO(_list_init) (SPECLIST_LIST *tthis)
 {
   assert(tthis != NULL);
   genlist_init(&tthis->list);
-}
-
-static inline void SPECLIST_FOO(_list_check_init) (SPECLIST_LIST *tthis)
-{
-  assert(tthis != NULL);
-  genlist_check_init(&tthis->list);
 }
 
 static inline void SPECLIST_FOO(_list_insert) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
@@ -193,6 +187,12 @@ static inline SPECLIST_TYPE *SPECLIST_FOO(_list_find) (SPECLIST_LIST *tthis, SPE
   return NULL;
 }
 #endif
+
+static inline bool SPECLIST_FOO(_list_is_initialized) (SPECLIST_LIST * tthis)
+{
+  assert(tthis != NULL);
+  return genlist_is_initialized(&tthis->list);
+}
 
 #undef SPECLIST_TAG
 #undef SPECLIST_TYPE

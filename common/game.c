@@ -236,8 +236,9 @@ void game_init(bool clear_players)
   game.max_players  = GAME_DEFAULT_MAX_PLAYERS;
   game.aifill      = GAME_DEFAULT_AIFILL;
 
-  if (clear_players)
+  if (clear_players) {
     game.nplayers = 0;
+  }
 
   game.researchcost = GAME_DEFAULT_RESEARCHCOST;
   game.diplcost    = GAME_DEFAULT_DIPLCOST;
@@ -477,8 +478,6 @@ void game_advance_year(void)
 ***************************************************************/
 void game_remove_player(struct player *pplayer)
 {
-  /* what a shit, players werent removed from teams before
-  and team array got inconsistent */
   team_remove_player(pplayer);
 
   if (pplayer->attribute_block.data) {
@@ -525,28 +524,24 @@ void game_renumber_players(int plrno)
   int i;
 
   for (i = plrno; i < game.nplayers - 1; i++) {
-    game.players[i]=game.players[i+1];
-    game.players[i].player_no=i;
-    conn_list_iterate(game.players[i].connections, pconn)
+    game.players[i] = game.players[i+1];
+    game.players[i].player_no = i;
+    conn_list_iterate(game.players[i].connections, pconn) {
       pconn->player = &game.players[i];
-    conn_list_iterate_end;
+    } conn_list_iterate_end;
   }
 
-  if(game.player_idx>plrno) {
+  if (game.player_idx > plrno) {
     game.player_idx--;
-    game.player_ptr=&game.players[game.player_idx];
+    game.player_ptr = &game.players[game.player_idx];
   }
 
+  if (game.nplayers > 0) {
   game.nplayers--;
-  player_init(&game.players[game.nplayers]);/* reinit former last player*/
 
-  /* a bit of cleanup to keep connections sane */
-/*  conn_list_init(&game.players[game.nplayers].connections); done in player init
-  game.players[game.nplayers].is_connected = FALSE;
-  game.players[game.nplayers].was_created = FALSE;
-  game.players[game.nplayers].ai.control = FALSE;
-  sz_strlcpy(game.players[game.nplayers].name, ANON_PLAYER_NAME);
-  sz_strlcpy(game.players[game.nplayers].username, ANON_USER_NAME);*/
+    /* reinit former last player*/
+    player_init(&game.players[game.nplayers]);
+  }
 }
 
 /**************************************************************************
@@ -561,6 +556,7 @@ struct player *get_player(int player_id)
 
 bool is_valid_player_id(int player_id)
 {
+  /* NB game.nplayers is 0 in the client until the game starts. */
   return player_id >= 0 && player_id < game.nplayers;
 }
 

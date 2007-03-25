@@ -329,6 +329,7 @@ static void server_list_created_callback(struct server_list *new_server_list,
   append_network_statusbar(msg);
 
   internet_server_list = new_server_list;
+  
   update_server_list(meta_selection, meta_store, internet_server_list);
 }
 
@@ -663,6 +664,12 @@ static void connect_callback(GtkWidget * w, gpointer data)
 {
   char errbuf[512];
   struct packet_authentication_reply reply;
+
+  if (server_list_request_id > 0) {
+    cancel_async_server_list_request(server_list_request_id);
+    append_network_statusbar(_("Server list request cancelled."));
+    server_list_request_id = -1;
+  }
 
   switch (connection_status) {
   case LOGIN_TYPE:
