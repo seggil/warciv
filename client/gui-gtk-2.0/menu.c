@@ -1843,8 +1843,6 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Government") "/" N_("_Change Government") "/" N_("_Revolution..."),
                                                         NULL,
 	government_menu_callback,	MENU_GOVERNMENT_REVOLUTION			},
-  { "/" N_("_Government") "/" N_("_Change Government") "/sep1", NULL,
-	NULL,			0,					"<Separator>"	},
   /* View menu ... */
   { "/" N_("_View"),					NULL,
 	NULL,			0,					"<Branch>"	},
