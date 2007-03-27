@@ -177,7 +177,7 @@ void popdown_science_dialog(void)
 *****************************************************************/
 void create_science_dialog(bool make_modal)
 {
-  GtkWidget *frame, *hbox, *w;
+  GtkWidget *frame, *hbox;
   int i;
 
   gui_dialog_new(&science_dialog_shell, GTK_NOTEBOOK(top_notebook));
@@ -231,9 +231,6 @@ void create_science_dialog(bool make_modal)
   science_goal_label = gtk_label_new("");
   gtk_box_pack_start(GTK_BOX(hbox), science_goal_label, TRUE, TRUE, 0);
   gtk_widget_set_size_request(science_goal_label, -1, 25);
-
-  w = gtk_label_new("");
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, FALSE, 0);
 
   science_change_from_goal_button = gtk_button_new_with_label(_("Change current technology"));
   gtk_box_pack_start(GTK_BOX(hbox), science_change_from_goal_button, TRUE, FALSE, 0);
