@@ -193,6 +193,9 @@ static void handle_readline_input_callback(char *line)
 *****************************************************************************/
 void close_connection(struct connection *pconn)
 {
+  if(pconn->server.currently_processed_request_id)
+    finish_processing_request(pconn);
+
   while (timer_list_size(pconn->server.ping_timers) > 0) {
     struct timer *timer = timer_list_get(pconn->server.ping_timers, 0);
 
@@ -684,7 +687,8 @@ int sniff_packets(void)
 		    packet = NULL;
 		  }
 
-		  finish_processing_request(pconn);
+		  if(pconn->used)
+		    finish_processing_request(pconn);
 		  connection_do_unbuffer(pconn);
 		  if (!command_ok) {
 		    close_connection(pconn);
