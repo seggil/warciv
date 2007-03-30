@@ -315,8 +315,9 @@ void dns_cancel (struct dns *dns, const void *context)
 {
   freelog (LOG_DEBUG, "dns_cancel dns=%p context=%p", dns, context); /*ASYNCDEBUG*/
   hash_iterate (dns->active, void *, key, struct query *, query) {
-    if (query->ctx == context)
+    if (query->ctx == context) {
       destroy_query (query);
+    }
   } hash_iterate_end;
 }
 

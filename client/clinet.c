@@ -1060,6 +1060,8 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   freelog(LOG_DEBUG, "mnlc metaserver_name_lookup_callback: "
 	  "addr_result=%p data=%p", addr_result, data);
 
+  assert(ctx != NULL);
+
   ctx->nlsa_id = -1;
 
   if (!addr_result) {
