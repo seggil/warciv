@@ -1490,6 +1490,8 @@ static void recreate_sell_menu(void)
   GtkWidget *menu;
 
   n = gtk_tree_selection_count_selected_rows(city_selection);
+  menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(city_sell_command));
+  gtk_menu_popdown(GTK_MENU(menu));
 
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(city_sell_command),
                                    FALSE, FALSE, CO_SELL,
