@@ -335,34 +335,32 @@ static void nlcfree (void *data)
 /***************************************************************************
   ...
 ***************************************************************************/
-static void adns_result_callback (const unsigned char *address,
+static void adns_result_callback(const unsigned char *address,
                                   int addrlen, void *data)
 {
   struct net_lookup_ctx *ctx = data;
   struct sockaddr_in *sock;
 
-  if (address && addrlen > 0) {
-    freelog (LOG_DEBUG, "arc adns_result_callback address=%d.%d.%d.%d" /*ASYNCDEBUG*/
-             " addrelen=%d data=%p", address[0], address[1], address[2], /*ASYNCDEBUG*/
-             address[3], addrlen, data); /*ASYNCDEBUG*/
-  } else {
-    freelog (LOG_DEBUG, "arc adns_result_callback address=NULL" /*ASYNCDEBUG*/
-             " addrelen=%d data=%p", addrlen, data); /*ASYNCDEBUG*/
-  }
+  assert(ctx != NULL);
 
-  freelog (LOG_DEBUG, "arc   callback %p userdata=%p", ctx->callback, ctx->userdata); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "address=%p addrelen=%d data=%p",
+          address, addrlen, data);
+
   if (address && addrlen > 0) {
+    assert(ctx->addr != NULL);
     sock = &ctx->addr->sockaddr_in;
-    memcpy (&sock->sin_addr, address, addrlen);
+    memcpy(&sock->sin_addr, address, addrlen);
+    assert(ctx->callback != NULL);
     (*ctx->callback) (ctx->addr, ctx->userdata);
   } else {
     /* host name could not be resolved */
+    assert(ctx->callback != NULL);
     (*ctx->callback) (NULL, ctx->userdata);
   }
 
   if (ctx->req_id > 0) {
     /* we were called indirectly, so it's ok to free ctx */
-    nlcfree (ctx);
+    nlcfree(ctx);
   }
 }
 
