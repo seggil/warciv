@@ -45,7 +45,7 @@ typedef struct team_mapping_s {
 }team_mapping_t;
 
 team_mapping_t mapping[MAX_NUM_TEAMS+1];
-int mappings = 1;
+int mappings;
 bool brute_force_found_solution = FALSE;
 int best_team_pos[MAX_NUM_PLAYERS];
 int team_pos[MAX_NUM_PLAYERS];
@@ -385,6 +385,7 @@ void calculate_team_mapping()
     mapping[0].team_id = TEAM_NONE;
     mapping[0].member_count = team_count_members(TEAM_NONE);
     freelog(LOG_VERBOSE, "Team TEAM_NONE has %i members",mapping[0].member_count);
+    mappings = 1;
     
     team_iterate(pteam)
         mapping[mappings].team_id = pteam->id;
