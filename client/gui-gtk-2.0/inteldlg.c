@@ -376,10 +376,10 @@ void update_intel_dialog(struct player *p)
 	    } else {
 	      my_snprintf(buf, sizeof(buf), _("(Unknown)"));
 	    }
-	    if (p->ai.tech_goal != A_UNSET) {
-	      cat_snprintf(buf, sizeof(buf), "\n%s(%d steps)",
-		  get_tech_name(p, p->ai.tech_goal),
-		  num_unknown_techs_for_goal(p, p->ai.tech_goal));
+	    if (p->ai.tech_goal != A_UNSET && p->ai.tech_goal != p->research.researching) {
+	      int steps = num_unknown_techs_for_goal(p, p->ai.tech_goal);
+	      cat_snprintf(buf, sizeof(buf), "\n%s", get_tech_name(p, p->ai.tech_goal));
+	      cat_snprintf(buf, sizeof(buf), PL_("(%d step)", "(%d steps)", steps), steps);
 	    }
 	    break;
 	  default:

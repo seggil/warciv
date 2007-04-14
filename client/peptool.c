@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "city.h"
+#include "cm.h"
 #include "fcintl.h"
 #include "game.h"
 #include "hash.h"
@@ -24,6 +25,7 @@
 
 #include "chatline_g.h"
 #include "civclient.h"
+#include "cma_core.h"
 #include "control.h"
 #include "mapview_g.h"
 #include "multiselect.h"
@@ -838,7 +840,30 @@ void load_all_settings(void)
 				unit_list_append(&tnoners,punit);
 			}
 		}
-
+		//CMA
+		num=secfile_lookup_int_default(&sf,-1,"dynamic.cma.city_num");
+		for(i=0;i<num;i++)
+		{
+			struct city *pcity;
+			my_snprintf(buf,sizeof(buf),"dynamic.cma.city%d",i);
+			load_owner(city,buf,pcity)
+			{
+				struct cm_parameter parameter;
+				int j;
+				
+				for(j=0;j<NUM_STATS;j++)
+				{
+					parameter.minimal_surplus[j]=secfile_lookup_int_default(&sf,0,"dynamic.cma.city%d.minimal_surplus%d",i,j);
+					parameter.factor[j]=secfile_lookup_int_default(&sf,1,"dynamic.cma.city%d.factor%d",i,j);
+				}
+				parameter.require_happy=secfile_lookup_bool_default(&sf,FALSE,"dynamic.cma.city%d.require_happy",i);
+				parameter.allow_disorder=secfile_lookup_bool_default(&sf,FALSE,"dynamic.cma.city%d.allow_disorder",i);
+				parameter.allow_specialists=secfile_lookup_bool_default(&sf,TRUE,"dynamic.cma.city%d.allow_specialists",i);
+				parameter.happy_factor=secfile_lookup_int_default(&sf,1,"dynamic.cma.city%d.happy_factor",i);
+				cma_put_city_under_agent(pcity, &parameter);
+			}
+		}
+		
 		//apply
 		freelog(LOG_DEBUG,"Apply dynamic settings");
 		city_list_iterate(trallypoint,ccity)
@@ -1164,6 +1189,34 @@ void save_all_settings(void)
 		save_unit(&sf,buf,punit);
 		i++;
 	} unit_list_iterate_end;
+	//CMA
+	struct cm_parameter parameter;
+	i=0;
+	city_list_iterate(game.player_ptr->cities,pcity)
+	{
+	  if(cma_is_city_under_agent(pcity,&parameter))
+	    i++;
+	} city_list_iterate_end;
+	secfile_insert_int_comment(&sf,i,_("don't modify this !"),"dynamic.cma.city_num");
+	i=0;
+	city_list_iterate(game.player_ptr->cities,pcity)
+	{
+		if(!cma_is_city_under_agent(pcity,&parameter))
+			continue;
+		my_snprintf(buf,sizeof(buf),"dynamic.cma.city%d",i);
+		save_city(&sf,buf,pcity);
+		int j;
+		for(j=0;j<NUM_STATS;j++)
+		{
+			secfile_insert_int(&sf,parameter.minimal_surplus[j],"dynamic.cma.city%d.minimal_surplus%d",i,j);
+			secfile_insert_int(&sf,parameter.factor[j],"dynamic.cma.city%d.factor%d",i,j);
+		}
+		secfile_insert_bool(&sf,parameter.require_happy,"dynamic.cma.city%d.require_happy",i);
+		secfile_insert_bool(&sf,parameter.allow_disorder,"dynamic.cma.city%d.allow_disorder",i);
+		secfile_insert_bool(&sf,parameter.allow_specialists,"dynamic.cma.city%d.allow_specialists",i);
+		secfile_insert_int(&sf,parameter.happy_factor,"dynamic.cma.city%d.happy_factor",i);
+		i++;
+	} city_list_iterate_end;
 
 	/* save to disk */
 	if(!section_file_save(&sf,name,0))
