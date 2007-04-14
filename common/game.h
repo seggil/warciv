@@ -314,7 +314,7 @@ const char *population_to_text(int thousand_citizen);
 extern struct civ_game game;
 extern bool is_server;
 
-#define GAME_DEFAULT_BRUTEFORCETHRESHOLD        16
+#define GAME_DEFAULT_BRUTEFORCETHRESHOLD        20
 #define GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT        400
 #define GAME_DEFAULT_TRADEMINDIST        8
 #define GAME_DEFAULT_CARAVANBONUSSTYLE  0
@@ -335,7 +335,7 @@ extern bool is_server;
 #define GAME_DEFAULT_NUCLEARWINTERON  1
 #define GAME_DEFAULT_KILLSTACK        1
 #define GAME_DEFAULT_MAXCONNECTIONS    0
-#define GAME_DEFAULT_FUTURETECHSSCORE 0
+#define GAME_DEFAULT_FUTURETECHSSCORE 1
 #define GAME_DEFAULT_TEAMPLACEMENTTYPE 0
 
 #define GAME_DEFAULT_SEED        0
