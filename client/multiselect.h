@@ -20,7 +20,6 @@
 
 #define multi_select_iterate(des,punit)	\
 {	\
-	freelog(LOG_DEBUG,"multi_select_iterate for %d units in %s (%s: l.%d)",multi_select_satisfies_filter(0),__FUNCTION__,__FILE__,__LINE__);	\
 	bool _deselect=des;	\
 	struct unit *_punit,*_punit_next_focus=NULL;	\
 	bool _cond=(multi_select_size(0)>1);	\

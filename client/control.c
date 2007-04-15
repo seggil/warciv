@@ -2099,7 +2099,6 @@ void attack_after_move(struct unit *punit)
        ignore_focus_change_for_unit = punit->id;
        request_unit_auto(punit);
        request_new_unit_activity(punit, ACTIVITY_IDLE);
-       set_unit_focus(punit);
     }
 }
 
