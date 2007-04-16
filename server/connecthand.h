@@ -59,6 +59,8 @@ struct packet_authentication_reply;
 struct packet_login_request;
 struct packet_server_join_req;
 
+bool can_control_a_player(struct connection *pconn, bool message);
+
 void establish_new_connection(struct connection *pconn);
 void reject_new_connection(const char *msg, struct connection *pconn);
 

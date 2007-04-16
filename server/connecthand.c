@@ -43,6 +43,7 @@
 #include "sernet.h"
 #include "srv_main.h"
 #include "stdinhand.h"
+#include "stdinhand_info.h"
 
 #include "connecthand.h"
 
@@ -62,6 +63,29 @@ char *user_action_type_strs[NUM_ACTION_TYPES] = {
 static void grant_access_level(struct connection *pconn);
 static int generate_welcome_message(char *buf, int buf_len,
 				    char *welcome_msg);
+
+
+bool can_control_a_player(struct connection *pconn, bool message)
+{
+  char *cap[256];
+  int ntokens = 0, i;
+
+  if(!strlen(srvarg.requiered_cap))
+    return TRUE;
+ 
+  ntokens = get_tokens(srvarg.requiered_cap, cap, 256, TOKEN_DELIMITERS);
+
+  for(i = 0; i < ntokens; i++) {
+    if(!has_capability(cap[i], pconn->capability)) {
+      if(message)
+        notify_conn(&pconn->self, _("Server: Sorry, you haven't got the '%s' capability, "
+        	"which is requiered to play on this server."), cap[i]);
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
 
 /**************************************************************************
   ...
@@ -153,6 +177,10 @@ void grant_access_level(struct connection *pconn)
     break;
   default:
     break;
+  }
+
+  if(pconn->access_level > ALLOW_OBSERVER && !can_control_a_player(pconn, FALSE)) {
+    pconn->access_level = ALLOW_OBSERVER;
   }
 }
 
@@ -640,7 +668,8 @@ bool attach_connection_to_player(struct connection *pconn,
   /* if pplayer is NULL, attach to first non-connected player slot */
   if (!pplayer) {
     if (game.nplayers > game.max_players
-	|| game.nplayers > MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS) {
+	|| game.nplayers > MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
+	|| !can_control_a_player(pconn, TRUE) ) {
       return FALSE;
     } else {
       pplayer = &game.players[game.nplayers];

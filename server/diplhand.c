@@ -177,6 +177,18 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 	  }
 	  break;
 	case CLAUSE_ALLIANCE:
+	  if(game.maxallies) {
+	    if(player_allies_count(pplayer) >= game.maxallies) {
+	      notify_player(pplayer, _("Game: You have already %d/%d alliances."),
+		player_allies_count(pplayer), game.maxallies);
+	      return;
+            }
+	    if(player_allies_count(pother) >= game.maxallies) {
+	      notify_player(pplayer, _("Game: %s has already %d/%d alliances."),
+		pother->name, player_allies_count(pother), game.maxallies);
+	      return;
+            }
+	  } 
           if (!pplayer_can_ally(pplayer, pother)) {
 	    notify_player(pplayer,
 			  _("Game: You are at war with one of %s's "
@@ -281,6 +293,13 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 	case CLAUSE_ALLIANCE:
           /* We need to recheck this way since things might have
            * changed. */
+	  if(game.maxallies && player_allies_count(pother) >= game.maxallies) {
+	    notify_player(pother, _("Game: You have already %d/%d alliances."),
+	      player_allies_count(pother), game.maxallies);
+	    notify_player(pplayer, _("Game: %s has already %d/%d alliances."),
+	      pother->name, player_allies_count(pother), game.maxallies);
+	    goto cleanup;
+	  } 
           if (!pplayer_can_ally(pother, pplayer)) {
 	    notify_player(pplayer,
 			  _("Game: %s is at war with one of your "
@@ -453,6 +472,10 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
         gamelog(GAMELOG_TREATY, GL_ALLIANCE, pgiver, pdest);
 	check_city_workers(pplayer);
 	check_city_workers(pother);
+	if(game.maxallies && player_allies_count(pgiver) >= game.maxallies)
+	  cancel_diplomacy(pgiver);
+	if(game.maxallies && player_allies_count(pdest) >= game.maxallies)
+	  cancel_diplomacy(pdest);
 	break;
       case CLAUSE_VISION:
 	give_shared_vision(pgiver, pdest);
@@ -702,4 +725,39 @@ void cancel_all_meetings(struct player *pplayer)
       really_diplomacy_cancel_meeting(pplayer, pplayer2);
     }
   } players_iterate_end;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+void cancel_diplomacy(struct player *pplayer)
+{
+  notify_player(pplayer, _("Game: You have got %d/%d alliances. Cancelling all other diplomacy..."),
+  	player_allies_count(pplayer), game.maxallies);
+  players_iterate(pplayer2) {
+    if(pplayers_allied(pplayer, pplayer2))
+      continue;
+    if(find_treaty(pplayer, pplayer2))
+      really_diplomacy_cancel_meeting(pplayer, pplayer2);
+    bool message = FALSE;
+    if(gives_shared_vision(pplayer, pplayer2)) {
+      remove_shared_vision(pplayer, pplayer2);
+      message = TRUE;
+    }
+    if(gives_shared_vision(pplayer2, pplayer)) {
+      remove_shared_vision(pplayer2, pplayer);
+      message = TRUE;
+    }
+    if(pplayer_get_diplstate(pplayer, pplayer2)->type != DS_NO_CONTACT) {
+      pplayer->diplstates[pplayer2->player_no].type = DS_WAR;
+      pplayer2->diplstates[pplayer->player_no].type = DS_WAR;
+      message = TRUE;
+    }
+    if(message) {
+      notify_player(pplayer2, _("Game: %s has got %d/%d alliances. All diplomacy canceled."),
+      	pplayer, player_allies_count(pplayer), game.maxallies);
+      send_player_info(pplayer2, NULL);
+    }
+  } players_iterate_end;
+  send_player_info(pplayer, NULL);
 }

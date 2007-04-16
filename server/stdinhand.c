@@ -27,6 +27,7 @@
 #include "fciconv.h"
 #include "astring.h"
 #include "capability.h"
+#include "capstr.h"
 #include "events.h"
 #include "fcintl.h"
 #include "game.h"
@@ -94,6 +95,7 @@ static bool addaction_command(struct connection *caller, char *pattern,
                               bool check);
 static bool delaction_command(struct connection *caller, char *pattern,
                               bool check);
+static bool reset_command(struct connection *caller, bool free_map, bool check);
 #define ACTION_LIST_FILE_VERSION 1
 static int load_action_list_v0(const char *filename);
 static int load_action_list_v1(const char *filename);
@@ -917,6 +919,65 @@ static bool dnslookup_command(struct connection *caller, char *arg,
     cmd_reply(CMD_DNS_LOOKUP, caller, C_COMMENT, _("DNS lookup is %s."),
               srvarg.no_dns_lookup ? _("disabled") : _("enabled"));
     return TRUE;
+}
+/**************************************************************************
+...
+**************************************************************************/
+static bool reset_command(struct connection *caller, bool free_map, bool check)
+{
+  if(server_state != PRE_GAME_STATE) {
+      cmd_reply(CMD_RESET, caller, C_FAIL, _("Can't reset settings while a game is running."));
+    return FALSE;
+  }
+  if(check)
+    return TRUE;
+
+  map_can_be_free = (!map.is_fixed || free_map);
+  server_game_free(FALSE);
+  game_init(FALSE);
+  map_can_be_free = TRUE;
+  if (srvarg.script_filename && !read_init_script(NULL, srvarg.script_filename)) {
+    freelog(LOG_ERROR, "Cannot load the script file '%s'", srvarg.script_filename);
+  }
+  return TRUE;
+}
+/**************************************************************************
+...
+**************************************************************************/
+bool requiere_command(struct connection *caller, char *arg, bool check)
+{
+  char *cap[256], buf[MAX_LEN_CONSOLE_LINE];
+  int ntokens = 0, i;
+  if(arg && strlen(arg) > 0) {
+    sz_strlcpy(buf, arg);
+    ntokens = get_tokens(buf, cap, 256, TOKEN_DELIMITERS);
+  }
+  /* Ensure capability is supported exist */
+  for(i = 0; i < ntokens; i++) {
+    if(!has_capability(cap[i], our_capability)) {
+      cmd_reply(CMD_REQUIERE, caller, C_FAIL, _("You cannot requiere the '%s' capability, "
+      	"which is not supported by the server."), cap[i]);
+      return FALSE;
+    }
+  }
+
+  if(check) {
+    return TRUE;
+  }
+  
+  srvarg.requiered_cap[0] = '\0';
+  for(i = 0; i < ntokens; i++) {
+    cat_snprintf(srvarg.requiered_cap, sizeof(srvarg.requiered_cap), "%s%s", i ? " " : "", cap[i]);
+  }
+
+  /* dettach all bad connections without this capability */
+  conn_list_iterate(game.game_connections, pconn) {
+    if(!pconn->observer && !can_control_a_player(pconn, TRUE)) {
+      detach_command(pconn, "", FALSE);
+    }
+  } conn_list_iterate_end;
+
+  return TRUE;
 }
 /**************************************************************************
 ...
@@ -3775,7 +3836,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
         char name[MAX_LEN_NAME];
         /* if a pconn->player is removed, we'll lose pplayer */
         sz_strlcpy(name, pplayer->name);
-        detach_command(NULL, pconn->username, FALSE);
+        detach_command(pconn, "", FALSE);
         /* find pplayer again, the pointer might have been changed */
         pplayer = find_player_by_name(name);
     }
@@ -3878,6 +3939,9 @@ static bool take_command(struct connection *caller, char *str, bool check)
         pconn = caller;
     }
     /******** PART II: do the attaching ********/
+    if(!can_control_a_player(pconn, TRUE)) {
+      goto end;
+    }
     /* check allowtake for permission */
     if (!is_allowed_to_take(pplayer, FALSE, msg))
     {
@@ -3937,7 +4001,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
         char name[MAX_LEN_NAME];
         /* if a pconn->player is removed, we'll lose pplayer */
         sz_strlcpy(name, pplayer->name);
-        detach_command(NULL, pconn->username, FALSE);
+        detach_command(pconn, "", FALSE);
         /* find pplayer again, the pointer might have been changed */
         pplayer = find_player_by_name(name);
     }
@@ -4525,15 +4589,7 @@ static bool unloadmap_command(struct connection *caller, bool check)
     }
     if (check)
         return TRUE;
-    server_game_free(FALSE);
-    game_init(FALSE);
-
-    if (srvarg.script_filename)
-    {
-        notify_conn(&game.est_connections,
-                    _("Server: Re-reading initialization script on map unload."));
-        read_init_script(NULL, srvarg.script_filename);
-    }
+    reset_command(NULL, TRUE, FALSE);
 
     notify_conn(&game.est_connections, _("Server: Map unloaded."));
     return TRUE;
@@ -4941,6 +4997,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
         return welcome_file_command(caller, arg, check);
     case CMD_DNS_LOOKUP:
         return dnslookup_command(caller, arg, check);
+    case CMD_REQUIERE:
+        return requiere_command(caller, arg, check);
     case CMD_RFCSTYLE:		/* see console.h for an explanation */
         if (!check)
         {

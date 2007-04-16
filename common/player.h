@@ -76,6 +76,7 @@ struct player_research {
    * In addition A_NOINFO is allowed at the client for enemies.
    */
   int researching;        
+  int researching_cost;        
   int changed_from;       /* if the player changed techs, which one
 			     changed from */
   int bulbs_researched_before;  /* if the player changed techs, how
@@ -294,11 +295,13 @@ bool pplayers_non_attack(const struct player *pplayer,
 			const struct player *pplayer2);
 bool players_on_same_team(const struct player *pplayer1,
                           const struct player *pplayer2);
+int player_allies_count(const struct player *pplayer);
 int player_in_territory(struct player *pplayer, struct player *pplayer2);
 
 bool is_barbarian(const struct player *pplayer);
 
 bool gives_shared_vision(struct player *me, struct player *them);
+
 
 #define players_iterate(PI_player)                                            \
 {                                                                             \

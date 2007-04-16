@@ -200,6 +200,8 @@ void srv_init(void)
 
   srvarg.no_dns_lookup = FALSE;
 
+  srvarg.requiered_cap[0] = '\0';
+
   /* initialize teams */
   team_init();
 
@@ -1607,6 +1609,9 @@ void srv_main(void)
   init_connections();
   adns_init();
   server_open_socket();
+  if(!requiere_command(NULL, srvarg.requiered_cap, FALSE)) {
+    exit(EXIT_FAILURE);
+  }
 
   /* load a saved game */
   if (srvarg.load_filename[0] != '\0') {
@@ -1624,14 +1629,14 @@ void srv_main(void)
   /* accept new players, wait for serverop to start..*/
   server_state = PRE_GAME_STATE;
 
-  /* load a script file */
-  if (srvarg.script_filename
-      && !read_init_script(NULL, srvarg.script_filename)) {
-    exit(EXIT_FAILURE);
-  }
-
   /* Run server loop */
   while (TRUE) {
+    /* load a script file */
+    if (srvarg.script_filename
+        && !read_init_script(NULL, srvarg.script_filename)) {
+      exit(EXIT_FAILURE);
+    }
+
     srv_loop();
 
     send_game_state(&game.game_connections, CLIENT_GAME_OVER_STATE);

@@ -27,6 +27,8 @@
 #include "map.h"
 #include "maphand.h" /* assign_continent_numbers(), MAP_NCONT */
 #include "mem.h"
+#include "nation.h"
+#include "player.h"
 #include "rand.h"
 #include "shared.h"
 #include "srv_main.h"
@@ -55,7 +57,7 @@ static void mapgenerator3(void);
 static void mapgenerator4(void);
 static void mapgenerator67(bool make_roads);
 static void free_mapgenerator67(bool autosize, int old_topology_id);
-static void mapgenerator8(void);
+static void mapgenerator89(bool team_placement);
 static void adjust_terrain_param(void);
 
 #define RIVERS_MAXTRIES 32767
@@ -1075,7 +1077,9 @@ void map_fractal_generate(bool autosize)
         free_mapgenerator67(autosize, topology_id);
       }
     } else if (map.generator == 6) {
-      mapgenerator8();
+      mapgenerator89(FALSE);
+    } else if (map.generator == 7) {
+      mapgenerator89(TRUE);
     }
     
     if (map.generator == 3) {
@@ -2620,6 +2624,7 @@ static void mapgenerator67(bool make_roads)
   This generator (8) creates a map with the same island for each players and 
   the same startpos. 
 *************************************************************************/
+#define ISLAND_SIZE_MAX 1000
 #define gen8_terrain_num 11
 static int gen8_chance[gen8_terrain_num];
 
@@ -2643,8 +2648,14 @@ struct gen8_map {
   struct gen8_tile **tiles;
 };
 
+struct team_placement_data {
+  Team_Type_id id;
+  int member_count;
+  int x, y;
+};
+
 void startpos_init(void);
-void startpos_new(int x, int y);
+void startpos_new(int x, int y, Nation_Type_id nation);
 
 void terrain_chance_init(void);
 
@@ -2653,7 +2664,7 @@ struct gen8_tile **create_tiles_buffer(int xsize, int ysize);
 void free_tiles_buffer(struct gen8_tile **buffer, int xsize);
 struct gen8_map *create_map(int xsize, int ysize);
 void free_map(struct gen8_map *pmap);
-void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos);
+void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos, struct player *pplayer);
 
 int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y);
 struct gen8_map *create_fair_island(int size, bool startpos);
@@ -2663,6 +2674,7 @@ void do_hsym(struct gen8_map *island);
 void do_vsym(struct gen8_map *island);
 
 bool can_place_island_on_map(struct gen8_map *pmap, int x, int y, struct gen8_map *island);
+bool place_island_on_map_for_team_player(struct gen8_map *pmap, struct gen8_map *island, int sx, int sy, struct player *pplayer);
 bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island);
 
 #define swap(type, data1, data2) {type data0 = data1; data1 = data2; data2 = data0;}
@@ -2714,10 +2726,10 @@ void startpos_init(void)
   map.start_positions = fc_realloc(map.start_positions, game.nplayers * sizeof(*map.start_positions));
 }
 
-void startpos_new(int x, int y)
+void startpos_new(int x, int y, Nation_Type_id nation)
 {
   map.start_positions[map.num_start_positions].tile = native_pos_to_tile(x, y);
-  map.start_positions[map.num_start_positions].nation = NO_NATION_SELECTED;
+  map.start_positions[map.num_start_positions].nation = nation;
   map.num_start_positions++;
 }
 
@@ -2796,7 +2808,7 @@ void free_map(struct gen8_map *pmap)
   free(pmap);
 }
 
-void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos)
+void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmin, int xmax, int ymin, int ymax, bool new_startpos, struct player *pplayer)
 {
   int xc, yc, xsize = xmax - xmin, ysize = ymax - ymin;
 
@@ -2809,7 +2821,7 @@ void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src, int xmi
       if(src->tiles[sx][sy].type != TYPE_UNASSIGNED)
         dest->tiles[dx][dy] = src->tiles[sx][sy];
       if(src->tiles[sx][sy].type == TYPE_STARTPOS && new_startpos)
-        startpos_new(dx, dy);
+        startpos_new(dx, dy, pplayer ? pplayer->nation : NO_NATION_SELECTED);
     }
   }
 }
@@ -2838,6 +2850,11 @@ int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y)
 
 struct gen8_map *create_fair_island(int size, bool startpos)
 {
+  if(size > ISLAND_SIZE_MAX) {
+    freelog(LOG_NORMAL, "Cannot create a fair island with %d tiles (max = %d)", size, ISLAND_SIZE_MAX);
+    size = ISLAND_SIZE_MAX;
+  }
+
   struct gen8_map *temp, *island;
   int i, *x , *y, xmin, xmax, ymin, ymax, fanstaisy = (size * 2) / 5 + 1;
 
@@ -2982,22 +2999,21 @@ struct gen8_map *create_fair_island(int size, bool startpos)
     tile = myrand(size);
     tx = x[tile];
     ty = y[tile];
-    if(temp->tiles[tx][ty].river || temp->tiles[tx-1][ty].river + temp->tiles[tx+1][ty].river
-      + temp->tiles[tx][ty-1].river + temp->tiles[tx][ty+1].river > 1)
+    if(temp->tiles[tx][ty].river || !(temp->tiles[tx-1][ty].terrain == T_OCEAN ||
+      temp->tiles[tx+1][ty].terrain == T_OCEAN || temp->tiles[tx][ty-1].terrain == T_OCEAN ||
+      temp->tiles[tx][ty+1].terrain == T_OCEAN) || temp->tiles[tx-1][ty].river ||
+      temp->tiles[tx+1][ty].river || temp->tiles[tx][ty-1].river || temp->tiles[tx][ty+1].river)
       continue;
     temp->tiles[tx][ty].river = TRUE;
     c++;
     i = 0;
-    if(temp->tiles[tx-1][ty].river || temp->tiles[tx+1][ty].river || temp->tiles[tx][ty-1].river || temp->tiles[tx][ty+1].river)
-      continue;
-    while(TRUE) {
+    while(c < n) {
       int nx = tx, ny = ty;
       i++;
-      if(i > 10000)
+      if(i > 10000) {
+        i = 0;
         break;
-      if(temp->tiles[tx-1][ty].terrain == T_OCEAN || temp->tiles[tx+1][ty].terrain == T_OCEAN
-       || temp->tiles[tx][ty-1].terrain == T_OCEAN || temp->tiles[tx][ty+1].terrain == T_OCEAN)
-       break;
+      }
       switch(myrand(4)) {
         case 0:
           nx++;
@@ -3012,8 +3028,10 @@ struct gen8_map *create_fair_island(int size, bool startpos)
           ny--;
           break;
       }
-      if(temp->tiles[nx][ny].river || (i < 5000 && temp->tiles[nx-1][ny].river + temp->tiles[nx+1][ny].river + temp->tiles[nx][ny-1].river
-      + temp->tiles[nx][ny+1].river > 1))
+      if(temp->tiles[nx][ny].river || temp->tiles[nx-1][ny].terrain == T_OCEAN ||
+        temp->tiles[nx+1][ny].terrain == T_OCEAN || temp->tiles[nx][ny-1].terrain == T_OCEAN ||
+        temp->tiles[nx][ny+1].terrain == T_OCEAN || temp->tiles[nx-1][ny].river +
+        temp->tiles[nx+1][ny].river + temp->tiles[nx][ny-1].river + temp->tiles[nx][ny+1].river > 1)
         continue;
       temp->tiles[nx][ny].river = TRUE;
       tx = nx;
@@ -3048,7 +3066,7 @@ struct gen8_map *create_fair_island(int size, bool startpos)
   }
 
   island = create_map(xmax - xmin +1, ymax - ymin +1);
-  copy_map(island, 0, 0, temp, xmin, xmax +1, ymin, ymax +1, FALSE);
+  copy_map(island, 0, 0, temp, xmin, xmax +1, ymin, ymax +1, FALSE, NULL);
 
   free(x);
   free(y);
@@ -3116,6 +3134,78 @@ bool can_place_island_on_map(struct gen8_map *pmap, int x, int y, struct gen8_ma
   return TRUE;
 }
 
+bool place_island_on_map_for_team_player(struct gen8_map *pmap, struct gen8_map *island, int sx, int sy, struct player *pplayer)
+{
+  int dx, dy, rsx, rsy, xmax = pmap->xsize, ymax = pmap->ysize;
+
+  if(!topo_has_flag(TF_WRAPX))
+    xmax -= island->xsize;
+  if(!topo_has_flag(TF_WRAPY))
+    ymax -= island->ysize;
+  if(myrand(2))
+    do_rotation(island);
+  if(myrand(2))
+    do_hsym(island);
+  if(myrand(2))
+    do_vsym(island);
+  do {
+    dx = myrand(pmap->xsize / 10) - pmap->xsize / 20;
+    dy = myrand(pmap->ysize / 10) - pmap->ysize / 20;
+    rsx = sx + dx;
+    rsy = sy + dy;
+  } while(rsx < 0 || rsx >= xmax || rsy < 0 || rsy >= ymax);
+
+  /* game.teamplacementtype
+     0 - team players are placed as close as possible regardless of continents.
+     1 - team players are placed on the same continent. (ignored here)
+     2 - team players are placed horizontally.
+     3 - team players are placed vertically. */
+  int x, y, rx, ry;
+
+#define can_copy	\
+  if(rx >= 0 && rx < xmax && ry >= 0 && ry < ymax && can_place_island_on_map(pmap, rx, ry, island)) {	\
+    copy_map(pmap, rx, ry, island, 0, island->xsize, 0, island->ysize, TRUE, pplayer);	\
+    return TRUE;	\
+  }
+
+#define cases_iterate	\
+  rx = rsx + x;	\
+  ry = rsy + y;	\
+  can_copy;	\
+  rx = rsx - x;	\
+  can_copy;	\
+  ry = rsy - y;	\
+  can_copy;	\
+  rx = rsx + x;	\
+  can_copy;
+
+  switch(game.teamplacementtype) {
+    case 2:
+      for(y = 0; y < pmap->ysize; y++) {
+        for(x = 0; x < pmap->xsize; x++) {
+          cases_iterate;
+        }
+      }
+      return FALSE;
+    case 3:
+      for(x = 0; x < pmap->xsize; x++) {
+        for(y = 0; y < pmap->ysize; y++) {
+          cases_iterate;
+        }
+      }
+      return FALSE;
+    default:
+      for(x = 0; x < pmap->xsize; x++) {
+        for(y = 0; y < x; y++) {
+          cases_iterate;
+        }
+      }
+      return FALSE;
+  }
+  return FALSE;
+}
+
+
 bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
 {
   int rx, ry, x, y, xmax = pmap->xsize, ymax = pmap->ysize, i;
@@ -3133,8 +3223,8 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
   for(i = 0; i < 10; i++) {
     rx = myrand(xmax);
     ry = myrand(ymax);
-    if(can_place_island_on_map(pmap,rx, ry, island)) {
-      copy_map(pmap, rx, ry, island, 0, island->xsize, 0, island->ysize, TRUE);
+    if(can_place_island_on_map(pmap, rx, ry, island)) {
+      copy_map(pmap, rx, ry, island, 0, island->xsize, 0, island->ysize, TRUE, NULL);
       return TRUE;
     }
   }
@@ -3148,7 +3238,7 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
       if(ty > ymax)
         ty -= ymax;
       if(can_place_island_on_map(pmap, tx, ty, island)) {
-        copy_map(pmap, tx, ty, island, 0, island->xsize, 0, island->ysize, TRUE);
+        copy_map(pmap, tx, ty, island, 0, island->xsize, 0, island->ysize, TRUE, NULL);
         return TRUE;
       }
     }
@@ -3156,13 +3246,13 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
   return FALSE;
 }
 
-static void mapgenerator8(void)
+static void mapgenerator89(bool team_placement)
 {
   struct gen8_map *pmap, *island1, *island2, *island3;
   int i, x , y, iter, playermass, islandmass1 , islandmass2, islandmass3;
   bool done = FALSE;
 
-  freelog(LOG_VERBOSE, "Generating map with generator 8");
+  freelog(LOG_VERBOSE, "Generating map with generator 8/9");
 
   terrain_chance_init();
 
@@ -3225,15 +3315,97 @@ static void mapgenerator8(void)
     island3 = create_fair_island(islandmass3, FALSE);
 
     freelog(LOG_VERBOSE, "Placing islands on the map");
-    for(i =0; i < game.nplayers; i++) {
-      if(!place_island_on_map(pmap, island1)) {
-        freelog(LOG_VERBOSE, "Cannot place island1 for player %d", i);
-        done = FALSE;
-        break;
+    if(team_placement && game.teamplacement) {
+      freelog(LOG_VERBOSE, "Team placement required");
+
+      int teams = 0, px[MAX_NUM_TEAMS], py[MAX_NUM_TEAMS], dx = 0, dy = 0;
+      struct team_placement_data tpd[MAX_NUM_TEAMS];
+
+      team_iterate(pteam) {
+        tpd[teams].id = pteam->id;
+		tpd[teams].member_count = team_count_members(pteam->id);
+        teams++;
+      } team_iterate_end;
+
+      /* generate start posistions for each team */
+      if(topo_has_flag(TF_WRAPX))
+        dx = myrand(map.xsize);
+      if(topo_has_flag(TF_WRAPY))
+        dy = myrand(map.ysize);
+      for(i = 0; i < teams; i++) {
+        px[i] = (map.xsize * (2 * i + 1)) / (2 * teams) + dx;
+        py[i] = (map.ysize * (2 * i + 1)) / (2 * teams) + dy;
+        normalize_coord(pmap, &px[i], &py[i]);
+      }
+
+      /* assign positions to teams */
+      int pt;
+      for(pt = teams - 1; pt >= 0; pt--) {
+        int ix = myrand(pt + 1), iy = myrand(pt + 1);
+
+        tpd[pt].x = px[ix];
+        tpd[pt].y = py[iy];
+        px[ix] = px[pt];
+        py[iy] = py[pt];
+      }
+
+      /* place team player islands */
+      bool pdone[MAX_NUM_PLAYERS];
+      for(i = 0; i < MAX_NUM_PLAYERS; i++)
+        pdone[i] = FALSE;
+      for(i = 0; i < teams; i++) {
+        while(tpd[i].member_count) {
+          int ri = myrand(tpd[i].member_count);
+
+          players_iterate(pplayer) {
+            if(pplayer->team != tpd[i].id || pdone[pplayer->player_no])
+              continue;
+            if(ri) {
+              ri--;
+              continue;
+            }
+            if(!place_island_on_map_for_team_player(pmap, island1, tpd[i].x, tpd[i].y, pplayer)) {
+              freelog(LOG_VERBOSE, "Cannot place island1 for player %d, team %d (%d, %d)",
+                pplayer->player_no, i, tpd[i].x, tpd[i].y);
+              done = FALSE;
+              break;
+            }
+            pdone[pplayer->player_no] = TRUE;
+            tpd[i].member_count--;
+            break;
+          } players_iterate_end;
+          if(!done)
+            break;
+		}
+        if(!done)
+          break;
+      }
+
+      /* place the others player islands */
+      if(done) {
+        players_iterate(pplayer) {
+          if(pplayer->team != TEAM_NONE)
+            continue;
+          if(!place_island_on_map(pmap, island1)) {
+            freelog(LOG_VERBOSE, "Cannot place island1 for player %d", pplayer->player_no);
+            done = FALSE;
+            break;
+          }
+        } players_iterate_end;
+      }
+
+    } else {
+      freelog(LOG_VERBOSE, "Team placement not required");
+      for(i = 0; i < game.nplayers; i++) {
+        if(!place_island_on_map(pmap, island1)) {
+          freelog(LOG_VERBOSE, "Cannot place island1 for player %d", i);
+          done = FALSE;
+          break;
+        }
       }
     }
     if(done) {
-      for(i =0; i < game.nplayers; i++) {
+      for(i = 0; i < game.nplayers; i++) {
         if(!place_island_on_map(pmap, island2)) {
           freelog(LOG_VERBOSE, "Cannot place island2 for player %d", i);
           done = FALSE;
@@ -3242,7 +3414,7 @@ static void mapgenerator8(void)
       }
     }
     if(done) {
-      for(i =0; i < game.nplayers; i++) {
+      for(i = 0; i < game.nplayers; i++) {
         if(!place_island_on_map(pmap, island3)) {
           freelog(LOG_VERBOSE, "Cannot place island3 for player %d", i);
           done = FALSE;
@@ -3250,6 +3422,7 @@ static void mapgenerator8(void)
         }
       }
     }
+
     free_map(island1);
     free_map(island2);
     free_map(island3);
@@ -3267,7 +3440,7 @@ static void mapgenerator8(void)
   }
 
   /* apply to the map */
-  freelog(LOG_VERBOSE, "Setup terrain", i);
+  freelog(LOG_VERBOSE, "Setup terrain");
   for(x = 0; x < map.xsize; x++) {
     for(y = 0; y < map.ysize; y++) {
       struct tile *ptile = native_pos_to_tile(x, y);
@@ -3282,10 +3455,8 @@ static void mapgenerator8(void)
   }
   map.have_specials = TRUE;
 
-  assign_continent_numbers(TRUE);
-
   free_map(pmap);
   destroy_placed_map();
 
-  freelog(LOG_VERBOSE, "Generator 8 finished");
+  freelog(LOG_VERBOSE, "Generator 8/9 finished");
 }

@@ -1527,6 +1527,13 @@ void handle_extgame_info(struct packet_extgame_info *packet)
   game.teamplacement = packet->teamplacement;
   game.globalwarmingon = packet->globalwarmingon;
   game.nuclearwinteron = packet->nuclearwinteron;
+  if(has_capability("exttechleakage", aconnection.capability)) {
+    game.maxallies = packet->maxallies;
+    game.techleakagerate = packet->techleakagerate;
+  } else {
+    game.maxallies = 0;
+    game.techleakagerate = 100;
+  }
 }
 
 /**************************************************************************
@@ -1746,6 +1753,11 @@ void handle_player_info(struct packet_player_info *pinfo)
   pplayer->research.bulbs_researched = pinfo->bulbs_researched;
   pplayer->research.techs_researched = pinfo->techs_researched;
   pplayer->research.researching=pinfo->researching;
+  if(has_capability("exttechleakage", aconnection.capability)) {
+    pplayer->research.researching_cost = pinfo->researching_cost;
+  } else {
+    pplayer->research.researching_cost = total_bulbs_required(pplayer);
+  }
   pplayer->future_tech=pinfo->future_tech;
   pplayer->ai.tech_goal=pinfo->tech_goal;
   

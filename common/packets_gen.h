@@ -332,6 +332,7 @@ struct packet_player_info {
   int bulbs_researched;
   int techs_researched;
   int researching;
+  int researching_cost;
   int future_tech;
   int tech_goal;
   bool is_connected;
@@ -1059,6 +1060,8 @@ struct packet_extgame_info {
   bool teamplacement;
   bool globalwarmingon;
   bool nuclearwinteron;
+  int maxallies;
+  int techleakagerate;
 };
 
 enum packet_type {

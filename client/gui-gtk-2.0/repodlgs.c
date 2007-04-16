@@ -454,10 +454,10 @@ void science_dialog_update(void)
 
   my_snprintf(text, sizeof(text), "%d/%d",
 	      game.player_ptr->research.bulbs_researched,
-	      total_bulbs_required(game.player_ptr));
+	      game.player_ptr->research.researching_cost);
 
   pct=CLAMP((gdouble) game.player_ptr->research.bulbs_researched /
-	    total_bulbs_required(game.player_ptr), 0.0, 1.0);
+	    game.player_ptr->research.researching_cost, 0.0, 1.0);
 
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(science_current_label), text);
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(science_current_label), pct);

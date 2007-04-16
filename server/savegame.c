@@ -3175,6 +3175,8 @@ void game_load(struct section_file *file)
     /* Diplomacy. */
     game.diplomacy = secfile_lookup_int_default(file, GAME_DEFAULT_DIPLOMACY,
                                                 "game.diplomacy");
+    game.maxallies = secfile_lookup_int_default(file, GAME_DEFAULT_MAXALLIES,
+                                                "game.maxallies");
 
     if (has_capability("watchtower", savefile_options)) {
       game.watchtower_extra_vision =
@@ -3379,6 +3381,8 @@ void game_load(struct section_file *file)
                 GAME_DEFAULT_TRADEMINDIST, "game.iterplacementcoefficient");
         game.teamplacementtype = secfile_lookup_int_default(file,
                 GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
+        game.techleakagerate = secfile_lookup_int_default(file,
+                GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
 	}
 
       map.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
@@ -3770,6 +3774,7 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.borders, "game.borders");
   secfile_insert_bool(file, game.happyborders, "game.happyborders");
   secfile_insert_int(file, game.diplomacy, "game.diplomacy");
+  secfile_insert_int(file, game.maxallies, "game.maxallies");
   secfile_insert_int(file, game.watchtower_vision, "game.watchtower_vision");
   secfile_insert_int(file, game.watchtower_extra_vision, "game.watchtower_extra_vision");
   secfile_insert_int(file, game.allowed_city_names, "game.allowed_city_names");
@@ -3795,6 +3800,7 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.bruteforcethreshold, "game.bruteforcethreshold");
   secfile_insert_int(file, game.iterplacementcoefficient, "game.iterplacementcoefficient");
   secfile_insert_int(file, game.teamplacementtype, "game.teamplacementtype");
+  secfile_insert_int(file, game.techleakagerate, "game.techleakagerate");
 
   /* old (1.14.1) servers need to have these server variables.  The values
    * don't matter, though. */

@@ -56,6 +56,8 @@ struct server_arguments {
   bool auth_allow_newusers;     /* defaults to TRUE */
 
   bool no_dns_lookup; /* defaults to FALSE */
+
+  char requiered_cap[MAX_LEN_CAPSTR];
 };
 
 void init_game_seed(void);

@@ -522,7 +522,8 @@ void init_new_game(void)
     assert(start_pos[pplayer->player_no] != NO_START_POS);
   } players_iterate_end;
 
-  if(game.teamplacement)shuffle_start_positions(start_pos);
+  if(game.teamplacement && map.generator != 7)
+    shuffle_start_positions(start_pos);
 
   /* Loop over all players, creating their initial units... */
   players_iterate(pplayer) {
@@ -685,7 +686,8 @@ void send_game_info(struct conn_list *dest)
   extgameinfo.teamplacement = game.teamplacement;
   extgameinfo.globalwarmingon = game.globalwarmingon;
   extgameinfo.nuclearwinteron = game.nuclearwinteron;
-  
+  extgameinfo.maxallies = game.maxallies;
+  extgameinfo.techleakagerate = game.techleakagerate;
 
   conn_list_iterate(*dest, pconn) {
     /* ? fixme: check for non-players: */

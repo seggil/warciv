@@ -169,6 +169,7 @@ struct civ_map {
   struct iter_index *iterate_outwards_indices;
   int num_iterate_outwards_indices;
   int size; /* used to calculate [xy]size */
+  int autosize; /* used to calculate [xy]size / player number */
   int xsize, ysize; /* native dimensions */
   int seed;
   int riches;
@@ -439,6 +440,8 @@ extern struct civ_map map;
 
 extern struct terrain_misc terrain_control;
 
+extern bool map_can_be_free;
+
 /* This iterates outwards from the starting point. Every tile within max_dist
  * will show up exactly once, in an outward (based on real map distance)
  * order.  The returned values are always real and are normalized.  The
@@ -618,6 +621,10 @@ extern const int DIR_DY[8];
 #define MAP_MIN_SIZE             1
 #define MAP_MAX_SIZE             29
 
+#define MAP_DEFAULT_AUTOSIZE         0
+#define MAP_MIN_AUTOSIZE             0
+#define MAP_MAX_AUTOSIZE             1000
+
 /* This defines the maximum linear size in _map_ coordinates.
  * This must be smaller than 255 because of the way coordinates are sent
  * across the network. */
@@ -627,7 +634,7 @@ extern const int DIR_DY[8];
 #define MAP_MAX_HEIGHT           MAP_MAX_LINEAR_SIZE
 
 #define MAP_ORIGINAL_TOPO        TF_WRAPX
-#define MAP_DEFAULT_TOPO         TF_WRAPX
+#define MAP_DEFAULT_TOPO         (TF_WRAPX|TF_WRAPY)
 #define MAP_MIN_TOPO             0
 #define MAP_MAX_TOPO             15
 
@@ -635,7 +642,7 @@ extern const int DIR_DY[8];
 #define MAP_MIN_SEED             0
 #define MAP_MAX_SEED             (MAX_UINT32 >> 1)
 
-#define MAP_DEFAULT_LANDMASS     25
+#define MAP_DEFAULT_LANDMASS     20
 #define MAP_MIN_LANDMASS         5
 #define MAP_MAX_LANDMASS         90
 
@@ -651,9 +658,9 @@ extern const int DIR_DY[8];
 #define MAP_MIN_WETNESS          0
 #define MAP_MAX_WETNESS          100
 
-#define MAP_DEFAULT_GENERATOR    3
+#define MAP_DEFAULT_GENERATOR    7
 #define MAP_MIN_GENERATOR        1
-#define MAP_MAX_GENERATOR        6
+#define MAP_MAX_GENERATOR        7
 
 #define MAP_DEFAULT_STARTPOS     4
 #define MAP_MIN_STARTPOS         0

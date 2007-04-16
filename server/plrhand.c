@@ -500,13 +500,15 @@ Player has researched a new technology
 **************************************************************************/
 static void tech_researched(struct player* plr)
 {
+  int tech = plr->research.researching;
+
   /* plr will be notified when new tech is chosen */
 
-  if (!is_future_tech(plr->research.researching)) {
+  if (!is_future_tech(tech)) {
     notify_embassies(plr, NULL,
 		     _("Game: The %s have researched %s."), 
 		     get_nation_name_plural(plr->nation),
-		     get_tech_name(plr, plr->research.researching));
+		     get_tech_name(plr, tech));
 
   } else {
     notify_embassies(plr, NULL,
@@ -515,14 +517,23 @@ static void tech_researched(struct player* plr)
 		     plr->future_tech);
   
   }
-  gamelog(GAMELOG_TECH, plr, NULL, plr->research.researching);
+  gamelog(GAMELOG_TECH, plr, NULL, tech);
 
   /* Deduct tech cost */
   plr->research.bulbs_researched = 
       MAX(plr->research.bulbs_researched - total_bulbs_required(plr), 0);
 
   /* do all the updates needed after finding new tech */
-  found_new_tech(plr, plr->research.researching, TRUE, TRUE, A_NONE);
+  found_new_tech(plr, tech, TRUE, TRUE, A_NONE);
+  
+  /* update resarch for all players */
+  if(!is_future_tech(tech) && game.rgame.tech_leakage) {
+    shuffled_players_iterate(pplayer) {
+      if(pplayer->research.researching == tech) {
+        update_tech(pplayer, 0);
+      }
+    } shuffled_players_iterate_end;
+  }
 }
 
 /**************************************************************************
@@ -1671,8 +1682,10 @@ static void package_player_info(struct player *plr,
       || (receiver
 	  && plr->diplstates[receiver->player_no].type == DS_TEAM)) {
     packet->tech_goal       = plr->ai.tech_goal;
+    packet->researching_cost = total_bulbs_required(plr);
   } else {
     packet->tech_goal       = A_UNSET;
+    packet->researching_cost = 0;
   }
 
   /* 

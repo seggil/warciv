@@ -372,7 +372,7 @@ void update_intel_dialog(struct player *p)
 	    if (p->research.researching != A_NOINFO) {
 	      my_snprintf(buf, sizeof(buf), "%s(%d/%d)",
 		  get_tech_name(p, p->research.researching),
-		  p->research.bulbs_researched, total_bulbs_required(p));
+		  p->research.bulbs_researched,  p->research.researching_cost);
 	    } else {
 	      my_snprintf(buf, sizeof(buf), _("(Unknown)"));
 	    }

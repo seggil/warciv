@@ -260,7 +260,7 @@ const struct command commands[] = {
       "other connections to detach from a player."),
    ECHO_ADMINS
   },
-  {"create",	ALLOW_CTRL, ALLOW_BASIC,
+  {"create",	ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("create <player-name>"),
    N_("Create an AI player with a given name."),
@@ -435,7 +435,7 @@ const struct command commands[] = {
       "if any, with winning it."),
    ECHO_ALL
   },
-  {"remove",	ALLOW_ADMIN, ALLOW_BASIC,
+  {"remove",	ALLOW_ADMIN, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("remove <player-name>"),
    N_("Fully remove player from game."),
@@ -497,6 +497,13 @@ const struct command commands[] = {
    N_("write <file-name>"),
    N_("Write current settings as server commands to file."), NULL,
    ECHO_ADMINS
+  },
+  {"reset",	ALLOW_HACK, ALLOW_CTRL,
+   /* TRANS: translate text between <> only */
+   N_("reset"),
+   N_("Reset all settings"), N_("Reset all settings and read the setup file, "
+   "if there is one (run the server with --read <setup-file>)."),
+   ECHO_ALL
   },
   {"wmessage",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
@@ -578,6 +585,14 @@ const struct command commands[] = {
     N_("Delete an action."),
     N_("Remove the <n>th action from the action list."),
    ECHO_ADMINS,
+  },
+  {"requiere", ALLOW_ADMIN, ALLOW_ADMIN,
+   /* TRANS: translate text between <> and [] only */
+    N_("requiere <capabilities>"),
+    N_("Requieres one or many capabilties to play."),
+    N_("The users, who don't have this <capabilities> in their capability string, "
+       "cannot play on this server."),
+   ECHO_ALL,
   },
 
   {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,
