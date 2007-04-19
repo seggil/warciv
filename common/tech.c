@@ -456,7 +456,9 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
 	}
       } players_iterate_end;
 
-      cost = (cost * (100 * players - players_with_tech_and_embassy * game.techleakagerate)) / (100 * players);
+      if (players_with_tech_and_embassy) {
+        cost = (cost * (100 * players - players_with_tech_and_embassy * game.techleakagerate)) / (100 * players);
+      }
     }
     break;
 
@@ -471,7 +473,9 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
 	}
       } players_iterate_end;
 
-      cost = (cost * (100 * players - players_with_tech * game.techleakagerate)) / (100 * players);
+      if (players) {
+        cost = (cost * (100 * players - players_with_tech * game.techleakagerate)) / (100 * players);
+      }
     }
     break;
 
@@ -489,7 +493,9 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
 	}
       } players_iterate_end;
 
-      cost = (cost * (100 * players - players_with_tech * game.techleakagerate)) / (100 * players);
+      if (players) {
+        cost = (cost * (100 * players - players_with_tech * game.techleakagerate)) / (100 * players);
+      }
     }
     break;
 
