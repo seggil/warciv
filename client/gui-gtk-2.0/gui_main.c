@@ -543,7 +543,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 				CASE9(multi_select_copy(0,9))
 
       case GDK_F9://for compatibility with Warclient
-		set_delayed_goto_mode("Single unit");
+		set_delayed_goto_mode("Single Unit");
 	return TRUE;
 
       case GDK_F10:
