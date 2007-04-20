@@ -5004,6 +5004,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
         return read_command(caller, arg, check);
     case CMD_WRITE_SCRIPT:
         return write_command(caller, arg, check);
+    case CMD_RESET:
+        return reset_command(caller, FALSE, check);
     case CMD_WELCOME_MESSAGE:
         return welcome_message_command(caller, arg, check);
     case CMD_WELCOME_FILE:
