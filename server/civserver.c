@@ -150,8 +150,8 @@ int main(int argc, char *argv[])
       sz_strlcpy(srvarg.serverid, option);
     } else if ((option = get_option("--saves", argv, &inx, argc))) {
       srvarg.saves_pathname = option;
-    } else if ((option = get_option("--Requiere", argv, &inx, argc))) {
-      sz_strlcpy(srvarg.requiered_cap, option);
+    } else if ((option = get_option("--Require", argv, &inx, argc))) {
+      sz_strlcpy(srvarg.required_cap, option);
     } else if (is_option("--version", argv[inx]))
       showvers = TRUE;
     else {
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
     fc_fprintf(stderr,
 	     _("  -P, --Ppm\t\tSave ppms of the map when saving the game.\n"));
     fc_fprintf(stderr, _("  -r, --read FILE\tRead startup script FILE\n"));
-    fc_fprintf(stderr, _("  -R, --Requiere CAP\tThe users will need this "
+    fc_fprintf(stderr, _("  -R, --Require CAP\tThe users will need this "
 		      "capability(ies) to be able to play.\n"));
     fc_fprintf(stderr, _("  -v, --version\t\tPrint the version number\n"));
     fc_fprintf(stderr, _("Report bugs to <%s>.\n"), BUG_EMAIL_ADDRESS);

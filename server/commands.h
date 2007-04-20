@@ -104,7 +104,7 @@ enum command_id {
   CMD_CLEARACTIONLIST,
   CMD_ADDACTION,
   CMD_DELACTION,
-  CMD_REQUIERE,
+  CMD_REQUIRE,
 
   /* undocumented */
   CMD_RFCSTYLE,

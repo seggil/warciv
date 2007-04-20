@@ -537,6 +537,7 @@ const struct command commands[] = {
    ECHO_ADMINS,
   },
   {"dnslookup", ALLOW_ADMIN, ALLOW_ADMIN,
+   /* TRANS: translate text between [] only */
    "dnslookup <on|off>",
    N_("Turn DNS hostname lookup on or off."), NULL,
    ECHO_ADMINS,
@@ -586,12 +587,14 @@ const struct command commands[] = {
     N_("Remove the <n>th action from the action list."),
    ECHO_ADMINS,
   },
-  {"requiere", ALLOW_ADMIN, ALLOW_ADMIN,
+  {"require", ALLOW_BASIC, ALLOW_BASIC,
    /* TRANS: translate text between <> and [] only */
-    N_("requiere <capabilities>"),
-    N_("Requieres one or many capabilties to play."),
+    N_("require <capabilities> (require hack level access)\n"
+	   "require ?"),
+    N_("Requires one or many capabilties to play."),
     N_("The users, who don't have this <capabilities> in their capability string, "
-       "cannot play on this server."),
+       "cannot play on this server. Use the '?' argument to see the current\n"
+       "required capabilities."),
    ECHO_ALL,
   },
 
@@ -606,4 +609,3 @@ const struct command commands[] = {
    ECHO_ADMINS,
   }
 };
-

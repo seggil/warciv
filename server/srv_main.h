@@ -57,7 +57,7 @@ struct server_arguments {
 
   bool no_dns_lookup; /* defaults to FALSE */
 
-  char requiered_cap[MAX_LEN_CAPSTR];
+  char required_cap[MAX_LEN_CAPSTR];
 };
 
 void init_game_seed(void);

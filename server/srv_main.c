@@ -200,7 +200,7 @@ void srv_init(void)
 
   srvarg.no_dns_lookup = FALSE;
 
-  srvarg.requiered_cap[0] = '\0';
+  srvarg.required_cap[0] = '\0';
 
   /* initialize teams */
   team_init();
@@ -1609,7 +1609,7 @@ void srv_main(void)
   init_connections();
   adns_init();
   server_open_socket();
-  if(!requiere_command(NULL, srvarg.requiered_cap, FALSE)) {
+  if(!require_command(NULL, srvarg.required_cap, FALSE)) {
     exit(EXIT_FAILURE);
   }
 

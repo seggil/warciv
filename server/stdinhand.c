@@ -944,18 +944,29 @@ static bool reset_command(struct connection *caller, bool free_map, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-bool requiere_command(struct connection *caller, char *arg, bool check)
+bool require_command(struct connection *caller, char *arg, bool check)
 {
   char *cap[256], buf[MAX_LEN_CONSOLE_LINE];
   int ntokens = 0, i;
+
+  if(caller && caller->access_level < ALLOW_ADMIN) {
+    cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Current required capabilities '%s'"), srvarg.required_cap);
+    return TRUE;
+  }
+
   if(arg && strlen(arg) > 0) {
     sz_strlcpy(buf, arg);
     ntokens = get_tokens(buf, cap, 256, TOKEN_DELIMITERS);
   }
+
   /* Ensure capability is supported exist */
   for(i = 0; i < ntokens; i++) {
-    if(!has_capability(cap[i], our_capability)) {
-      cmd_reply(CMD_REQUIERE, caller, C_FAIL, _("You cannot requiere the '%s' capability, "
+    if(!mystrcasecmp(cap[i], "?")) {
+      cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Current required capabilities '%s'"), srvarg.required_cap);
+      return TRUE;
+    }
+    else if(!has_capability(cap[i], our_capability)) {
+      cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("You cannot require the '%s' capability, "
       	"which is not supported by the server."), cap[i]);
       return FALSE;
     }
@@ -965,12 +976,14 @@ bool requiere_command(struct connection *caller, char *arg, bool check)
     return TRUE;
   }
   
-  srvarg.requiered_cap[0] = '\0';
+  srvarg.required_cap[0] = '\0';
   for(i = 0; i < ntokens; i++) {
-    cat_snprintf(srvarg.requiered_cap, sizeof(srvarg.requiered_cap), "%s%s", i ? " " : "", cap[i]);
+    cat_snprintf(srvarg.required_cap, sizeof(srvarg.required_cap), "%s%s", i ? " " : "", cap[i]);
   }
+  
+  cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Required capabilities set to '%s'"), srvarg.required_cap);
 
-  /* dettach all bad connections without this capability */
+  /* detach all bad connections without this capability */
   conn_list_iterate(game.game_connections, pconn) {
     if(!pconn->observer && !can_control_a_player(pconn, TRUE)) {
       detach_command(pconn, "", FALSE);
@@ -4997,8 +5010,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
         return welcome_file_command(caller, arg, check);
     case CMD_DNS_LOOKUP:
         return dnslookup_command(caller, arg, check);
-    case CMD_REQUIERE:
-        return requiere_command(caller, arg, check);
+    case CMD_REQUIRE:
+        return require_command(caller, arg, check);
     case CMD_RFCSTYLE:		/* see console.h for an explanation */
         if (!check)
         {

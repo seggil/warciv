@@ -70,16 +70,16 @@ bool can_control_a_player(struct connection *pconn, bool message)
   char *cap[256];
   int ntokens = 0, i;
 
-  if(!strlen(srvarg.requiered_cap))
+  if(!strlen(srvarg.required_cap))
     return TRUE;
  
-  ntokens = get_tokens(srvarg.requiered_cap, cap, 256, TOKEN_DELIMITERS);
+  ntokens = get_tokens(srvarg.required_cap, cap, 256, TOKEN_DELIMITERS);
 
   for(i = 0; i < ntokens; i++) {
     if(!has_capability(cap[i], pconn->capability)) {
       if(message)
         notify_conn(&pconn->self, _("Server: Sorry, you haven't got the '%s' capability, "
-        	"which is requiered to play on this server."), cap[i]);
+        	"which is required to play on this server."), cap[i]);
       return FALSE;
     }
   }
