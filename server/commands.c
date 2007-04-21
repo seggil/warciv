@@ -590,7 +590,7 @@ const struct command commands[] = {
   {"require", ALLOW_BASIC, ALLOW_BASIC,
    /* TRANS: translate text between <> and [] only */
     N_("require <capabilities> (require hack level access)\n"
-	   "require ?"),
+       "require ?"),
     N_("Requires one or many capabilties to play."),
     N_("The users, who don't have this <capabilities> in their capability string, "
        "cannot play on this server. Use the '?' argument to see the current\n"
