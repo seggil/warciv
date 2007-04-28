@@ -242,8 +242,13 @@ void update_unit_info_label(struct unit *punit)
   gtk_label_set_text(GTK_LABEL(unit_info_label),
 		     get_unit_info_label_text2(punit));
 
-  if(punit)	{
-    if (hover_unit != punit->id)
+  if(punit && hover_unit != punit->id
+    && hover_state != HOVER_NONE
+    && hover_state != HOVER_DELAYED_AIRLIFT
+    && hover_state != HOVER_AIRLIFT_SOURCE
+    && hover_state != HOVER_AIRLIFT_DEST
+    && hover_state != HOVER_RALLY_POINT
+    && hover_state != HOVER_MY_AI_TRADE) {
       set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
   }
   update_hover_cursor();
