@@ -22,6 +22,7 @@
 #include "gamelog.h"
 #include "report.h"
 #include "settings.h"
+#include "srv_main.h"
 #include "stdinhand.h"
 
 /* Category names must match the values in enum sset_category. */
@@ -1267,6 +1268,14 @@ struct settings_s settings[] = {
 			"0 means there is no limit."),
 	  NULL,
 	  0, 100, GAME_DEFAULT_MAXCONNECTIONS)
+
+  GEN_BOOL("multilinechat", srvarg.allow_multi_line_chat, SSET_RULES_FLEXIBLE,
+	  SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
+          N_("Multi line chat"),
+          N_("0 - off\n"
+             "1 - on\n"
+             "If turned on, the user can send many chat lines."), NULL,
+          FALSE)
 
   GEN_END
 };

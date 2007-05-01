@@ -27,6 +27,7 @@
 #include "support.h"
 
 #include "console.h"
+#include "srv_main.h"
 #include "stdinhand.h"
 
 #include "handchat.h"
@@ -197,10 +198,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 
   /* this loop to prevent players from sending multiple lines
    * which can be abused */
-  for (cp = message; *cp != '\0'; cp++) {
-    if (*cp == '\n' || *cp == '\r') {
-      *cp='\0';
-      break;
+  if(!srvarg.allow_multi_line_chat) {
+    for (cp = message; *cp != '\0'; cp++) {
+      if (*cp == '\n' || *cp == '\r') {
+        *cp='\0';
+        break;
+      }
     }
   }
 

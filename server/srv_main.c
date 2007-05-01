@@ -201,6 +201,7 @@ void srv_init(void)
   srvarg.no_dns_lookup = FALSE;
 
   srvarg.required_cap[0] = '\0';
+  srvarg.allow_multi_line_chat = FALSE;
 
   /* initialize teams */
   team_init();
@@ -212,7 +213,7 @@ void srv_init(void)
 
   /* init character encodings. */
   init_character_encodings(FC_DEFAULT_DATA_ENCODING, FALSE);
-
+  
   /* done */
   return;
 }
