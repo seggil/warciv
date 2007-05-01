@@ -1755,7 +1755,7 @@ main_start_players:
     sniff_packets();
 
     players_iterate(pplayer) {
-      if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control) {
+      if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control && pplayer->is_connected) {
 	flag = TRUE;
 	break;
       }

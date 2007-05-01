@@ -258,16 +258,19 @@ void establish_new_connection(struct connection *pconn)
     }
   } conn_list_iterate_end;
 
-  /* if game is in SELECT_RACES_STATE state, we need to send him rulesets */
-  if(server_state == SELECT_RACES_STATE) {
-    send_rulesets(dest);
-  }
-
   /* a player has already been created for this user, reconnect him */
   if ((pplayer = find_player_by_user(pconn->username))) {
     attach_connection_to_player(pconn, pplayer);
 
-    if (server_state == RUN_GAME_STATE) {
+    if(server_state == SELECT_RACES_STATE) {
+      send_packet_freeze_hint(pconn);
+      send_rulesets(dest);		
+      send_player_info(NULL, NULL);
+      send_packet_thaw_hint(pconn);
+      if(pplayer->nation == NO_NATION_SELECTED) {
+        send_select_nation(pplayer);
+      }
+    } else if (server_state == RUN_GAME_STATE) {
       /* Player and other info is only updated when the game is running.
        * See the comment in lost_connection_to_client(). */
       send_packet_freeze_hint(pconn);
@@ -566,23 +569,9 @@ void lost_connection_to_client(struct connection *pconn)
   if (game.is_new_game && !pplayer->is_connected	/* eg multiple controllers */
       && !pplayer->ai.control	/* eg created AI player */
       && (server_state == PRE_GAME_STATE
-	  || server_state == SELECT_RACES_STATE)) {
-    if (server_state == SELECT_RACES_STATE) {
-      if (server_assign_random_nation(pplayer)) {
-        notify_conn(&game.est_connections,
-                    _("Game: %s has been made leader of the %s."),
-                    pplayer->name,
-                    get_nation_name_plural(pplayer->nation));
-        sz_strlcpy(pplayer->username, _("Unassigned"));
-      } else {
-        notify_conn(&game.est_connections,
-                    _("Server: Could not assign %s to a nation. :("),
-                    pplayer->username);
+	  || (server_state == SELECT_RACES_STATE
+              && select_random_nation(NULL) == NO_NATION_SELECTED))) {
         server_remove_player(pplayer);
-      }
-    } else {
-      server_remove_player(pplayer);
-    }
   } else {
     if (game.auto_ai_toggle
 	&& !pplayer->ai.control
