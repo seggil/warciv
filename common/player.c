@@ -710,7 +710,7 @@ int player_allies_count(const struct player *pplayer)
   enum diplstate_type ds;
 
   players_iterate(oplayer) {
-    if(pplayer == oplayer)
+    if(pplayer == oplayer || !oplayer->is_alive)
       continue;
     ds = pplayer_get_diplstate(pplayer, oplayer)->type;
     if(ds == DS_ALLIANCE || ds == DS_TEAM)

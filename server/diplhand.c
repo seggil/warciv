@@ -748,14 +748,14 @@ void cancel_diplomacy(struct player *pplayer)
       remove_shared_vision(pplayer2, pplayer);
       message = TRUE;
     }
-    if(pplayer_get_diplstate(pplayer, pplayer2)->type != DS_NO_CONTACT) {
+    if(pplayer_get_diplstate(pplayer, pplayer2)->type != DS_NO_CONTACT && pplayer_get_diplstate(pplayer, pplayer2)->type != DS_WAR) {
       pplayer->diplstates[pplayer2->player_no].type = DS_WAR;
       pplayer2->diplstates[pplayer->player_no].type = DS_WAR;
       message = TRUE;
     }
     if(message) {
       notify_player(pplayer2, _("Game: %s has got %d/%d alliances. All diplomacy canceled."),
-      	pplayer, player_allies_count(pplayer), game.maxallies);
+      	pplayer->name, player_allies_count(pplayer), game.maxallies);
       send_player_info(pplayer2, NULL);
     }
   } players_iterate_end;
