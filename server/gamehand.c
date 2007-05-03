@@ -30,6 +30,7 @@
 #include "shared.h"
 #include "support.h"
 
+#include "connecthand.h"
 #include "maphand.h"
 #include "plrhand.h"
 #include "unittools.h"
@@ -831,7 +832,8 @@ void handle_single_want_hack_req(struct connection *pc,
   char *token = NULL;
   bool you_have_hack = FALSE;
 
-  if (!has_capability("new_hack", pc->capability)) {
+  if (!has_capability("new_hack", pc->capability)
+      || user_action_list_size(&on_connect_user_actions)) {
     dsend_packet_single_want_hack_reply(pc, FALSE);
     return ;
   }
