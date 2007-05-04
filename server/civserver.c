@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
   }
 
   if (showvers && !showhelp) {
-    fc_fprintf(stderr, "%s \n", freeciv_name_version());
+    fc_fprintf(stderr, "%s Warserver - PepServer 0.9.1 devel\n", freeciv_name_version());
     exit(EXIT_SUCCESS);
   }
   con_write(C_VERSION, _("This is the server for %s"), freeciv_name_version());

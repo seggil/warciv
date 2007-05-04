@@ -56,7 +56,6 @@ char *user_action_type_strs[NUM_ACTION_TYPES] = {
   "observer",
   "basic",
   "ctrl",
-  "admin",
   "hack"
 };
 
