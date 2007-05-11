@@ -201,6 +201,7 @@ void game_init(bool clear_players)
   game.stackbribing   = GAME_DEFAULT_STACKBRIBING;
   game.experimentalbribingcost = GAME_DEFAULT_EXPERIMENTALBRIBINGCOST;
   game.rgame.tech_leakage = GAME_DEFAULT_TECHLEAKAGE;
+  game.rgame.tech_cost_style = GAME_DEFAULT_TECHCOSTSTYLE;
   game.rgame.killstack = GAME_DEFAULT_KILLSTACK;
   game.citytrading   = GAME_DEFAULT_CITYTRADING;
   game.airliftingstyle   = GAME_DEFAULT_AIRLIFTINGSTYLE;
@@ -649,4 +650,3 @@ const char *population_to_text(int thousand_citizen)
   assert(thousand_citizen >= 0);
   return big_int_to_text(thousand_citizen, 3);
 }
-

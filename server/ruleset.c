@@ -2753,8 +2753,10 @@ static void load_ruleset_game()
     game.rgame.granary_food_inc = 100;
   }
 
-  game.rgame.tech_cost_style =
-      secfile_lookup_int(&file, "civstyle.tech_cost_style");
+  tmp = secfile_lookup_int(&file, "civstyle.tech_cost_style");
+  if (!game.ignoreruleset) {//if ignoreruleset is 1, then we ignore ruleset
+        game.rgame.tech_cost_style = tmp;
+  }
   if (game.rgame.tech_cost_style < 0 || game.rgame.tech_cost_style > 2) {
     freelog(LOG_ERROR, "Bad value %i for tech_cost_style. Using 0.",
 	    game.rgame.tech_cost_style);
