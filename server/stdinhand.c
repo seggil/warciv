@@ -4686,20 +4686,39 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
     pfilename = datafilename(filename);
     if (!pfilename)
     {
-        cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
-                  _("Ruleset directory \"%s\" not found"), str);
-        return FALSE;
+        /* maybe an integer */
+        int num, i;
+
+        if (sscanf(str, "%d", &num) != 1) {
+          cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                    _("Ruleset directory \"%s\" not found"), str);
+          return FALSE;
+        }
+        char **rulesets = get_rulesets_list();
+
+        if (num >= 1 && num <= MAX_NUM_RULESETS && rulesets[num - 1]) {
+          sz_strlcpy(filename, rulesets[num - 1]);
+          pfilename = datafilename(filename);
+        }
+        for (i = 0; rulesets[i] && i < MAX_NUM_RULESETS; i++) {
+          free(rulesets[i]);
+        }
+        if (!pfilename) {
+          cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                    _("%d is not a valid ruleset id"), num);
+          return FALSE;
+        }
     }
-    if (!is_valid_ruleset(str, verror, sizeof(verror))) {
+    if (!is_valid_ruleset(filename, verror, sizeof(verror))) {
       cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
-                _("\"%s\" is not a valid directory: %s"), str, verror);
+                _("\"%s\" is not a valid directory: %s"), filename, verror);
       return FALSE;
     }
     if (!check)
     {
         cmd_reply(CMD_RULESETDIR, caller, C_OK,
-                  _("Ruleset directory set to \"%s\""), str);
-        sz_strlcpy(game.rulesetdir, str);
+                  _("Ruleset directory set to \"%s\""), filename);
+        sz_strlcpy(game.rulesetdir, filename);
     }
 
     return TRUE;
@@ -6063,14 +6082,18 @@ static void show_teams(struct connection *caller, bool send_to_all)
 **************************************************************************/
 static void show_rulesets(struct connection *caller)
 {
-  char **rulesets = get_rulesets_list();
+  char **rulesets = get_rulesets_list(), *description;
   int i;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of rulesets available:"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
   for (i = 0; i < MAX_NUM_RULESETS && rulesets[i]; i++) {
-    cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", rulesets[i]);
+    description = get_ruleset_description(rulesets[i]);
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", i + 1, rulesets[i]);
+    if (description[0] != '\0') {
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "  %s", description);
+    }
     free(rulesets[i]);
   }
 

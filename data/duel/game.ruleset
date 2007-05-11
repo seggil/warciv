@@ -121,3 +121,6 @@ slow_invasions = 1
 ;destroyed along with the defender. This is the freeciv default.
 ;If this options is set to 0, only the defender unit is destroyed.
 killstack               = 1
+
+[description]
+description = "A duel ruleset by javier: with more production and trade"

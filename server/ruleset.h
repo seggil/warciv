@@ -22,5 +22,6 @@ void send_rulesets(struct conn_list *dest);
 
 bool is_valid_ruleset(const char *path, char *verror, size_t verror_size);
 char **get_rulesets_list(void);
+char *get_ruleset_description(const char *ruleset);
 
 #endif  /* FC__RULESET_H */

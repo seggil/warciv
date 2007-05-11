@@ -3348,9 +3348,30 @@ char **get_rulesets_list(void)
   }
   free(datafiles);
 
-  if (j < MAX_NUM_RULESETS) {
-    rulesest[j] = NULL;
+  while (j < MAX_NUM_RULESETS) {
+    rulesest[j++] = NULL;
   }
 
   return rulesest;
+}
+
+/**************************************************************************
+  Try do build a list of data subdirectories which could be a ruleset.
+**************************************************************************/
+char *get_ruleset_description(const char *ruleset)
+{
+  static char description[1024], filename[256], *pfilename;
+  struct section_file file;
+
+  description[0] = '\0';
+  my_snprintf(filename, sizeof(filename), "%s/game.ruleset", ruleset);
+  
+  if ((pfilename = datafilename(filename))
+      && section_file_load_nodup(&file, pfilename)) {
+    sz_strlcpy(description, secfile_lookup_str_default(&file, "",
+               "description.description"));
+    section_file_free(&file);
+  }
+
+  return description;
 }
