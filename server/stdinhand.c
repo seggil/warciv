@@ -4544,6 +4544,13 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
         char datapath[512];
         const char *fullname;
 
+        if (caller && caller->access_level != ALLOW_HACK
+            && (strchr(buf, '/') || strchr(buf, '.'))) {
+          cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
+                    _("You are not allowed to use this command."));
+          return FALSE;
+        }
+
         my_snprintf(datapath, sizeof(datapath), "maps/%s.map", buf);
         sz_strlcpy(name, buf);
         fullname = datafilename(datapath);
@@ -4669,6 +4676,11 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
         cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
                   _("Current ruleset directory is \"%s\""), game.rulesetdir);
         return FALSE;
+    } else if (caller && caller->access_level != ALLOW_HACK
+               && (strchr(str, '/') || strchr(str, '.'))) {
+      cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                _("You are not allowed to use this command."));
+      return FALSE;
     }
     my_snprintf(filename, sizeof(filename), "%s", str);
     pfilename = datafilename(filename);
