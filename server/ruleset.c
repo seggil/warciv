@@ -3295,3 +3295,62 @@ void send_rulesets(struct conn_list *dest)
   lsend_packet_thaw_hint(dest);
   conn_list_do_unbuffer(dest);
 }
+
+/**************************************************************************
+  Check if the path contains all required ruleset files.
+**************************************************************************/
+bool is_valid_ruleset(const char *path, char *verror, size_t verror_size)
+{
+  static const char *required_files[] = {
+    "techs",
+    "buildings",
+    "governments",
+    "units",
+    "terrain",
+    "cities",
+    "nations",
+    NULL
+  };
+  char filename[256];
+  int i;
+
+  for (i = 0; required_files[i]; i++) {
+    my_snprintf(filename, sizeof(filename), "%s/%s.ruleset",
+                path, required_files[i]);
+
+    if (!datafilename(filename)) {
+      if (verror) {
+        my_snprintf(verror, verror_size, _("%s file not found"), filename);
+      }
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+/**************************************************************************
+  Try do build a list of data subdirectories which could be a ruleset.
+**************************************************************************/
+char **get_rulesets_list(void)
+{
+  static char *rulesest[MAX_NUM_RULESETS];
+  const char **datafiles = datafilelist("");
+  int i, j;
+
+  for (i = j = 0; datafiles[i] && j < MAX_NUM_RULESETS; i++) {
+    /* ignore hiden files and recursive research */
+    if (datafiles[i][0] != '.' && is_valid_ruleset(datafiles[i], NULL, 0)) {
+      rulesest[j++] = datafiles[i];
+    } else {
+      free(datafiles[i]);
+    }
+  }
+  free(datafiles);
+
+  if (j < MAX_NUM_RULESETS) {
+    rulesest[j] = NULL;
+  }
+
+  return rulesest;
+}

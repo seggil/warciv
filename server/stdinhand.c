@@ -75,6 +75,7 @@ static bool show_list(struct connection *caller, char *arg);
 static void show_connections(struct connection *caller);
 static void show_actionlist(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
+static void show_rulesets(struct connection *caller);
 static bool set_ai_level(struct connection *caller, char *name, int level,
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
@@ -4662,7 +4663,7 @@ static bool showmaplist_command(struct connection *caller)
 **************************************************************************/
 static bool set_rulesetdir(struct connection *caller, char *str, bool check)
 {
-    char filename[512], *pfilename;
+    char filename[512], *pfilename, verror[256];
     if ((str == NULL) || (strlen(str) == 0))
     {
         cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
@@ -4676,6 +4677,11 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
         cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
                   _("Ruleset directory \"%s\" not found"), str);
         return FALSE;
+    }
+    if (!is_valid_ruleset(str, verror, sizeof(verror))) {
+      cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                _("\"%s\" is not a valid directory: %s"), str, verror);
+      return FALSE;
     }
     if (!check)
     {
@@ -6039,15 +6045,37 @@ static void show_teams(struct connection *caller, bool send_to_all)
     if (!send_to_all)
         cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void show_rulesets(struct connection *caller)
+{
+  char **rulesets = get_rulesets_list();
+  int i;
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of rulesets available:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+
+  for (i = 0; i < MAX_NUM_RULESETS && rulesets[i]; i++) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", rulesets[i]);
+    free(rulesets[i]);
+  }
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
 /**************************************************************************
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_ARG_NUM /* Must be last */
+                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_RULESETS,
+                 LIST_ARG_NUM /* Must be last */
                };
 static const char *const list_args[] =
     {
-        "players", "connections", "actionlist", "teams", "ignore", "maps", NULL
+        "players", "connections", "actionlist", "teams", "ignore",
+        "maps", "rulesets", NULL
     };
 static const char *listarg_accessor(int i)
 {
@@ -6093,6 +6121,9 @@ static bool show_list(struct connection *caller, char *arg)
         return TRUE;
     case LIST_MAPS:
         showmaplist_command(caller);
+        return TRUE;
+    case LIST_RULESETS:
+        show_rulesets(caller);
         return TRUE;
     default:
         cmd_reply(CMD_LIST, caller, C_FAIL,
