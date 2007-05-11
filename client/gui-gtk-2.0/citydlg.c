@@ -237,6 +237,7 @@ static void unit_load_callback(GtkWidget * w, gpointer data);
 static void unit_unload_callback(GtkWidget * w, gpointer data);
 static void unit_sentry_callback(GtkWidget * w, gpointer data);
 static void unit_fortify_callback(GtkWidget * w, gpointer data);
+static void unit_sleep_callback(GtkWidget * w, gpointer data);
 static void unit_disband_callback(GtkWidget * w, gpointer data);
 static void unit_homecity_callback(GtkWidget * w, gpointer data);
 static void unit_upgrade_callback(GtkWidget * w, gpointer data);
@@ -2013,9 +2014,15 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-    if (punit->activity == ACTIVITY_FORTIFYING) {
+    if (!can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
       gtk_widget_set_sensitive(item, FALSE);
     }
+
+    item = gtk_menu_item_new_with_mnemonic(_("Sleep unit"));
+    g_signal_connect(item, "activate",
+      G_CALLBACK(unit_sleep_callback),
+      GINT_TO_POINTER(punit->id));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
     item = gtk_menu_item_new_with_mnemonic(_("_Disband unit"));
     g_signal_connect(item, "activate",
@@ -2228,8 +2235,19 @@ static void unit_fortify_callback(GtkWidget * w, gpointer data)
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
     request_unit_fortify(punit);
-    if(punit->activity == ACTIVITY_FORTIFYING && punit->tile && punit->tile->city)
-      refresh_city_dialog(punit->tile->city);
+  }
+}
+
+/****************************************************************
+...
+*****************************************************************/
+static void unit_sleep_callback(GtkWidget * w, gpointer data)
+{
+  struct unit *punit;
+
+  if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
+    request_unit_sleep(punit);
+    refresh_city_dialog(punit->tile->city);
   }
 }
 

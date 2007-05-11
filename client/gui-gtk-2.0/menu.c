@@ -141,6 +141,7 @@ enum MenuID {
   MENU_ORDER_MINE,
   MENU_ORDER_TRANSFORM,
   MENU_ORDER_FORTRESS,       /* shared with FORTIFY */
+  MENU_ORDER_SLEEP,
   MENU_ORDER_AIRBASE,
   MENU_ORDER_POLLUTION,      /* shared with PARADROP */
   MENU_ORDER_FALLOUT,
@@ -642,6 +643,9 @@ static void orders_menu_callback(gpointer callback_data,
       else
 	key_unit_fortify();
     }
+    break;
+   case MENU_ORDER_SLEEP:
+    key_unit_sleep();
     break;
    case MENU_ORDER_AIRBASE:
     if (get_unit_in_focus()) {
@@ -1926,6 +1930,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Orders") "/" N_("_Sentry"),			"s",
 	orders_menu_callback,	MENU_ORDER_SENTRY					},
+  { "/" N_("Orders") "/" N_("Sleep"),			"k",
+	orders_menu_callback,	MENU_ORDER_SLEEP					},
   { "/" N_("Orders") "/" N_("Pillage"),		        "<shift>p",
 	orders_menu_callback,	MENU_ORDER_PILLAGE					},
   { "/" N_("Orders") "/sep2",				NULL,
@@ -3526,6 +3532,9 @@ void update_menus(void)
                           can_unit_do_activity(punit, ACTIVITY_MINE));
       menus_set_sensitive("<main>/_Orders/Transf_orm Terrain",
 			  can_unit_do_activity(punit, ACTIVITY_TRANSFORM));
+      menus_set_sensitive("<main>/_Orders/Build _Fortress",
+                          (can_unit_do_activity(punit, ACTIVITY_FORTRESS) ||
+                           can_unit_do_activity(punit, ACTIVITY_FORTIFYING)));
      menus_set_sensitive("<main>/_Orders/Build Airbas_e",
 			  can_unit_do_activity(punit, ACTIVITY_AIRBASE));
       menus_set_sensitive("<main>/_Orders/Clean _Pollution",

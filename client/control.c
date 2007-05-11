@@ -1318,11 +1318,17 @@ void request_unit_fortify(struct unit *punit)
   if(can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
     punit->is_new = FALSE;
     request_new_unit_activity(punit, ACTIVITY_FORTIFYING);
-  } else {
-    punit->is_new = FALSE;
-    request_new_unit_activity(punit, ACTIVITY_SENTRY);
-    punit->activity = ACTIVITY_FORTIFYING;
-  } 
+  }
+}
+
+/****************************************************************
+...
+*****************************************************************/
+void request_unit_sleep(struct unit *punit)
+{
+  punit->is_new = FALSE;
+  request_new_unit_activity(punit, ACTIVITY_SENTRY);
+  punit->activity = ACTIVITY_FORTIFYING;
 }
 
 /**************************************************************************
@@ -2589,7 +2595,19 @@ void key_unit_fortify(void)
   if (punit_focus == NULL)return;
 
   multi_select_iterate(TRUE,punit) {
-    request_unit_fortify(punit);
+    if(can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+      request_unit_fortify(punit);
+    }
+  } multi_select_iterate_end;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+void key_unit_sleep(void)
+{
+  multi_select_iterate(TRUE,punit) {
+    request_unit_sleep(punit);
   } multi_select_iterate_end;
 }
 
