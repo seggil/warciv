@@ -35,6 +35,8 @@ void clearallactions(void);
 
 bool load_command(struct connection *caller, char *arg, bool check);
 
+bool require_command(struct connection *caller, char *arg, bool check);
+
 void toggle_ai_player_direct(struct connection *caller,
 			     struct player *pplayer);
 

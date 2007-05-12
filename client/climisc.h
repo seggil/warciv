@@ -136,4 +136,7 @@ void add_link_mark(struct tile *ptile);
 void draw_link_marks(void);
 void draw_link_mark(struct tile *ptile);
 
+void set_default_user_tech_goal(void);
+void force_tech_goal(Tech_Type_id goal);
+
 #endif  /* FC__CLIMISC_H */

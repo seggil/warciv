@@ -94,7 +94,7 @@ const char * const our_capability = our_capability_internal;
  * "extgameinfo" was added to inform client of some warserver settings it
  * was unaware of before.
  */
-#define CAPABILITY "+2.0 conn_ping_info username_info new_hack extroutes extgameinfo"
+#define CAPABILITY "+2.0 conn_ping_info username_info new_hack extroutes extgameinfo exttechleakage"
 
 void init_our_capability(void)
 {

@@ -63,11 +63,12 @@ const struct command commands[] = {
    "list actionlist\n"
    "list teams\n"
    "list ignore\n"
-   "list maps",
+   "list maps\n"
+   "list rulesets",
    N_("Show a list of various things."),
    N_("Show a list of players, list of connections to the server, the "
       "action list, the teams and the players in them, your ignore "
-      "list, or all maps on the server. "
+      "list, all maps or all rulesets on the server. "
       "The argument may be abbreviated, and defaults to 'players' if absent."),
    ECHO_NONE
   },
@@ -185,11 +186,13 @@ const struct command commands[] = {
    ECHO_PLAYERS
   },
   {"rulesetdir", ALLOW_CTRL, ALLOW_BASIC,
-   N_("rulesetdir <directory>"),
+   N_("rulesetdir <directory>\n"
+      "rulesetdir <ruleset_id>"),
    N_("Choose new ruleset directory or modpack."),
-   N_("Choose new ruleset directory or modpack. Calling this\n "
-      "without any arguments will show you the currently selected "
-      "ruleset."),
+   N_("Choose new ruleset directory or modpack. Calling this\n"
+      "without any arguments will show you the currently selected\n"
+      "ruleset. Use /list rulesets to get the complete list of\n"
+      "available rulesets."),
    ECHO_ALL
   },
   {"metamessage", ALLOW_BASIC, ALLOW_BASIC,
@@ -260,7 +263,7 @@ const struct command commands[] = {
       "other connections to detach from a player."),
    ECHO_ADMINS
   },
-  {"create",	ALLOW_CTRL, ALLOW_BASIC,
+  {"create",	ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("create <player-name>"),
    N_("Create an AI player with a given name."),
@@ -435,7 +438,7 @@ const struct command commands[] = {
       "if any, with winning it."),
    ECHO_ALL
   },
-  {"remove",	ALLOW_ADMIN, ALLOW_BASIC,
+  {"remove",	ALLOW_ADMIN, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("remove <player-name>"),
    N_("Fully remove player from game."),
@@ -498,6 +501,13 @@ const struct command commands[] = {
    N_("Write current settings as server commands to file."), NULL,
    ECHO_ADMINS
   },
+  {"reset",	ALLOW_HACK, ALLOW_CTRL,
+   /* TRANS: translate text between <> only */
+   N_("reset"),
+   N_("Reset all settings"), N_("Reset all settings and read the setup file, "
+   "if there is one (run the server with --read <setup-file>)."),
+   ECHO_ALL
+  },
   {"wmessage",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("wmessage\n"
@@ -530,6 +540,7 @@ const struct command commands[] = {
    ECHO_ADMINS,
   },
   {"dnslookup", ALLOW_ADMIN, ALLOW_ADMIN,
+   /* TRANS: translate text between [] only */
    "dnslookup <on|off>",
    N_("Turn DNS hostname lookup on or off."), NULL,
    ECHO_ADMINS,
@@ -579,6 +590,16 @@ const struct command commands[] = {
     N_("Remove the <n>th action from the action list."),
    ECHO_ADMINS,
   },
+  {"require", ALLOW_BASIC, ALLOW_BASIC,
+   /* TRANS: translate text between <> and [] only */
+    N_("require <capabilities> (require hack level access)\n"
+       "require ?"),
+    N_("Requires one or many capabilties to play."),
+    N_("The users, who don't have this <capabilities> in their capability string, "
+       "cannot play on this server. Use the '?' argument to see the current\n"
+       "required capabilities."),
+   ECHO_ALL,
+  },
 
   {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,
    "rfcstyle",
@@ -591,4 +612,3 @@ const struct command commands[] = {
    ECHO_ADMINS,
   }
 };
-

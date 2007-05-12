@@ -1,0 +1,23 @@
+[nation_greenland]
+
+name=_("Eskimo")
+plural=_("?plural:Eskimos")
+class=_("Historical")
+legend=_("Greenland is, depending on definition, one of the largest islands in the world, and possibly the largest;\
+it also has the lowest population density.")
+leader= "Margrethe II"
+leader_sex= "Female"
+flag="f.greenland"
+flag_alt = "-"
+city_style = "European" ; i want put "iglu"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder= "Magellan's Expedition"
+government= "Republic"
+civilwar_nations = "english"
+
+cities =
+  "none"

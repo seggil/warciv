@@ -49,6 +49,8 @@
 #include "civclient.h"		/* for get_client_state() */
 #include "climap.h"		/* for tile_get_known() */
 #include "control.h"		/* for fill_xxx */
+#include "multiselect.h"//*pepeto*
+#include "peptool.h"//*pepeto*
 #include "options.h"		/* for fill_xxx */
 
 #include "tilespec.h"
@@ -123,6 +125,7 @@ struct specfile;
 
 #define SPECLIST_TAG specfile
 #define SPECLIST_TYPE struct specfile
+#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define specfile_list_iterate(list, pitem) \
@@ -132,6 +135,7 @@ struct specfile;
 struct small_sprite;
 #define SPECLIST_TAG small_sprite
 #define SPECLIST_TYPE struct small_sprite
+#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define small_sprite_list_iterate(list, pitem) \
@@ -2967,37 +2971,62 @@ enum color_std player_color(struct player *pplayer)
 ***********************************************************************/
 enum color_std overview_tile_color(struct tile *ptile)
 {
-  enum color_std color;
   struct unit *punit;
   struct city *pcity;
 
-  if (tile_get_known(ptile) == TILE_UNKNOWN) {
-    color=COLOR_STD_BLACK;
-  } else if((pcity=map_get_city(ptile))) {
+  if (tile_get_known(ptile) == TILE_UNKNOWN)
+    return COLOR_STD_BLACK;
+  if((pcity=map_get_city(ptile))) {
     if(pcity->owner==game.player_idx)
-      color=COLOR_STD_WHITE;
-    else
-      color=COLOR_STD_CYAN;
+      return COLOR_STD_WHITE;
+    else switch(pplayer_get_diplstate(city_owner(pcity),game.player_ptr)->type)
+	{
+		case DS_NO_CONTACT:
+			if(game.diplomacy>=2)
+				 return COLOR_STD_FORANGE;
+		case DS_NEUTRAL:
+		case DS_PEACE:
+		case DS_CEASEFIRE:
+			return COLOR_STD_CYAN;
+		case DS_ALLIANCE:
+		case DS_TEAM:
+			return COLOR_STD_FGREEN;
+		default://DS_WAR
+		return COLOR_STD_FORANGE;
+	}
   } else if ((punit=find_visible_unit(ptile))) {
     if(punit->owner==game.player_idx)
-      color=COLOR_STD_YELLOW;
-    else
-      color=COLOR_STD_RED;
+      return COLOR_STD_YELLOW;
+    else switch(pplayer_get_diplstate(unit_owner(punit),game.player_ptr)->type)
+	{
+		case DS_NO_CONTACT:
+			if(game.diplomacy>=2)
+				 return COLOR_STD_RED;
+		case DS_NEUTRAL:
+		case DS_PEACE:
+		case DS_CEASEFIRE:
+			return COLOR_STD_ORANGE;
+		case DS_ALLIANCE:
+		case DS_TEAM:
+			return COLOR_STD_GREEN;
+		default://DS_WAR
+		return COLOR_STD_RED;
+	}
   } else if (is_ocean(ptile->terrain)) {
     if (tile_get_known(ptile) == TILE_KNOWN_FOGGED && draw_fog_of_war) {
-      color = COLOR_STD_RACE4;
+      return COLOR_STD_RACE4;
     } else {
-      color = COLOR_STD_OCEAN;
+      return COLOR_STD_OCEAN;
     }
   } else {
     if (tile_get_known(ptile) == TILE_KNOWN_FOGGED && draw_fog_of_war) {
-      color = COLOR_STD_BACKGROUND;
+      return COLOR_STD_BACKGROUND;
     } else {
-      color = COLOR_STD_GROUND;
+      return COLOR_STD_GROUND;
     }
   }
 
-  return color;
+  return COLOR_STD_LAST;
 }
 
 /**********************************************************************
@@ -3014,7 +3043,6 @@ void set_focus_unit_hidden_state(bool hide)
 struct unit *get_drawable_unit(struct tile *ptile, bool citymode)
 {
   struct unit *punit = find_visible_unit(ptile);
-  struct unit *pfocus = get_unit_in_focus();
 
   if (!punit)
     return NULL;
@@ -3022,9 +3050,10 @@ struct unit *get_drawable_unit(struct tile *ptile, bool citymode)
   if (citymode && punit->owner == game.player_idx)
     return NULL;
 
-  if (punit != pfocus
-      || !focus_unit_hidden
-      || !same_pos(punit->tile, pfocus->tile))
+  if (!is_unit_in_multi_select(0,punit)//*pepeto* 
+	  || (!multi_select_blink_all && (punit->focus_status == FOCUS_DONE
+	  || !(punit==get_unit_in_focus() || (multi_select_blink && unit_satisfies_filter(punit, multi_select_inclusive_filter, multi_select_exclusive_filter)))))
+     || !focus_unit_hidden)
     return punit;
   else
     return NULL;

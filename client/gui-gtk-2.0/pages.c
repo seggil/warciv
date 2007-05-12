@@ -1858,7 +1858,7 @@ void set_client_page(enum client_pages page)
   case PAGE_START:
     if (start_page_entry)
       gtk_widget_grab_focus(start_page_entry);
-    clear_allied_chat_only();
+    allied_chat_only = FALSE;
     break;
   case PAGE_NATION:
     gtk_tree_view_focus(gtk_tree_selection_get_tree_view(nation_selection));
@@ -1871,6 +1871,7 @@ void set_client_page(enum client_pages page)
 			(scenario_selection));
     break;
   case PAGE_GAME:
+    clear_allied_chat_only();
     break;
   case PAGE_NETWORK:
     update_network_lists();

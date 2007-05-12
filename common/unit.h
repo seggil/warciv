@@ -104,6 +104,22 @@ enum unit_upgrade_result {
   UR_NOT_ENOUGH_ROOM
 };
     
+//*pepeto*
+enum my_ai_activity {
+	MY_AI_NONE,
+	MY_AI_TRADE_ROUTE,
+	MY_AI_HELP_WONDER,
+	MY_AI_PATROL,//re-written from warclient
+	MY_AI_LAST
+};
+
+struct unit_my_ai {
+	bool control;
+	bool manalloc;
+	enum my_ai_activity activity;
+	void *data;
+};
+
 struct unit_ai {
   bool control; /* 0: not automated    1: automated */
   enum ai_unit_task ai_role;
@@ -127,6 +143,7 @@ struct unit {
   struct tile *tile;
   int homecity;
   int moves_left;
+  int virtual_moves_left;//*pepeto*
   int hp;
   int veteran;
   int unhappiness;
@@ -136,6 +153,7 @@ struct unit {
   int fuel;
   int bribe_cost;
   struct unit_ai ai;
+  struct unit_my_ai my_ai;//*pepeto*
   enum unit_activity activity;
   struct tile *goto_tile; /* May be NULL. */
 
@@ -182,6 +200,8 @@ struct unit {
 /* get 'struct unit_list' and related functions: */
 #define SPECLIST_TAG unit
 #define SPECLIST_TYPE struct unit
+//*pepeto*
+#define SPECLIST_NO_FIND
 #include "speclist.h"
 
 #define unit_list_iterate(unitlist, punit) \

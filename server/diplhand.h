@@ -32,5 +32,6 @@ struct Treaty *find_treaty(struct player *plr0, struct player *plr1);
 
 void send_diplomatic_meetings(struct connection *dest);
 void cancel_all_meetings(struct player *pplayer);
+void cancel_diplomacy(struct player *pplayer);
 
 #endif  /* FC__DIPLHAND_H */

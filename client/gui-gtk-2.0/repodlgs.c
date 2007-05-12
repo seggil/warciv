@@ -59,12 +59,13 @@ static void science_help_callback(GtkTreeView *view,
 				  gpointer data);
 static void science_change_callback(GtkWidget * widget, gpointer data);
 static void science_goal_callback(GtkWidget * widget, gpointer data);
+static void science_change_from_goal_callback(GtkWidget * widget, gpointer data);
 
 /******************************************************************/
 static struct gui_dialog *science_dialog_shell = NULL;
 static GtkWidget *science_label;
 static GtkWidget *science_current_label, *science_goal_label;
-static GtkWidget *science_change_menu_button, *science_goal_menu_button;
+static GtkWidget *science_change_menu_button, *science_goal_menu_button, *science_change_from_goal_button;
 static GtkWidget *science_help_toggle;
 static GtkListStore *science_model[3];
 static int science_dialog_shell_is_modal;
@@ -176,7 +177,7 @@ void popdown_science_dialog(void)
 *****************************************************************/
 void create_science_dialog(bool make_modal)
 {
-  GtkWidget *frame, *hbox, *w;
+  GtkWidget *frame, *hbox;
   int i;
 
   gui_dialog_new(&science_dialog_shell, GTK_NOTEBOOK(top_notebook));
@@ -231,8 +232,9 @@ void create_science_dialog(bool make_modal)
   gtk_box_pack_start(GTK_BOX(hbox), science_goal_label, TRUE, TRUE, 0);
   gtk_widget_set_size_request(science_goal_label, -1, 25);
 
-  w = gtk_label_new("");
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, FALSE, 0);
+  science_change_from_goal_button = gtk_button_new_with_label(_("Change current technology"));
+  gtk_box_pack_start(GTK_BOX(hbox), science_change_from_goal_button, TRUE, FALSE, 0);
+  g_signal_connect(science_change_from_goal_button, "clicked", G_CALLBACK(science_change_from_goal_callback), NULL);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
@@ -359,6 +361,14 @@ static void science_help_callback(GtkTreeView *view,
 /****************************************************************
 ...
 *****************************************************************/
+static void science_change_from_goal_callback(GtkWidget * widget, gpointer data)
+{
+  force_tech_goal(game.player_ptr->ai.tech_goal);
+}
+
+/****************************************************************
+...
+*****************************************************************/
 static gint cmp_func(gconstpointer a_p, gconstpointer b_p)
 {
   const gchar *a_str, *b_str;
@@ -444,10 +454,10 @@ void science_dialog_update(void)
 
   my_snprintf(text, sizeof(text), "%d/%d",
 	      game.player_ptr->research.bulbs_researched,
-	      total_bulbs_required(game.player_ptr));
+	      game.player_ptr->research.researching_cost);
 
   pct=CLAMP((gdouble) game.player_ptr->research.bulbs_researched /
-	    total_bulbs_required(game.player_ptr), 0.0, 1.0);
+	    game.player_ptr->research.researching_cost, 0.0, 1.0);
 
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(science_current_label), text);
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(science_current_label), pct);
@@ -523,6 +533,8 @@ void science_dialog_update(void)
   my_snprintf(text, sizeof(text), PL_("(%d step)", "(%d steps)", steps),
 	      steps);
   gtk_label_set_text(GTK_LABEL(science_goal_label), text);
+
+  gtk_widget_set_sensitive(science_change_from_goal_button, can_client_issue_orders());
 
   if (game.player_ptr->ai.tech_goal == A_UNSET) {
     item = gtk_menu_item_new_with_label(get_tech_name(game.player_ptr,

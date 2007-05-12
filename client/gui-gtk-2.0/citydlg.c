@@ -49,6 +49,7 @@
 #include "helpdlg.h"
 #include "inputdlg.h"
 #include "mapview.h"
+#include "multiselect.h"//*pepeto
 #include "options.h"
 #include "repodlgs.h"
 #include "tilespec.h"
@@ -64,6 +65,7 @@ struct city_dialog;
 /* get 'struct dialog_list' and related function */
 #define SPECLIST_TAG dialog
 #define SPECLIST_TYPE struct city_dialog
+#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define dialog_list_iterate(dialoglist, pdialog) \
@@ -228,12 +230,14 @@ static void unit_center_callback(GtkWidget * w, gpointer data);
 static void unit_activate_callback(GtkWidget * w, gpointer data);
 static void supported_unit_activate_close_callback(GtkWidget * w,
 						   gpointer data);
+static void unit_add_in_focus_callback(GtkWidget * w, gpointer data);//*pepeto*
 static void present_unit_activate_close_callback(GtkWidget * w,
 						 gpointer data);
 static void unit_load_callback(GtkWidget * w, gpointer data);
 static void unit_unload_callback(GtkWidget * w, gpointer data);
 static void unit_sentry_callback(GtkWidget * w, gpointer data);
 static void unit_fortify_callback(GtkWidget * w, gpointer data);
+static void unit_sleep_callback(GtkWidget * w, gpointer data);
 static void unit_disband_callback(GtkWidget * w, gpointer data);
 static void unit_homecity_callback(GtkWidget * w, gpointer data);
 static void unit_upgrade_callback(GtkWidget * w, gpointer data);
@@ -1617,6 +1621,16 @@ static void city_dialog_update_supported_units(struct city_dialog *pdialog)
 }
 
 /****************************************************************
+... *pepeto*
+*****************************************************************/
+static int unit_list_tile_sort(const void *_u1, const void *_u2)
+{
+  struct unit *pu1 = *(struct unit **)_u1, *pu2 = *(struct unit **)_u2;
+
+  return (pu1->owner != game.player_idx && pu2->owner == game.player_idx);
+}
+
+/****************************************************************
 ...
 *****************************************************************/
 static void city_dialog_update_present_units(struct city_dialog *pdialog)
@@ -1675,6 +1689,7 @@ static void city_dialog_update_present_units(struct city_dialog *pdialog)
 
   gtk_tooltips_disable(pdialog->tips);
 
+  unit_list_sort(units,unit_list_tile_sort);//*pepeto*
   i = 0;
   unit_list_iterate(*units, punit) {
     struct unit_node *pnode;
@@ -1894,6 +1909,13 @@ static gboolean supported_unit_callback(GtkWidget * w, GdkEventButton * ev,
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
+//*pepeto*
+    item = gtk_menu_item_new_with_mnemonic(_("Add unit in focus"));
+    g_signal_connect(item, "activate",
+      G_CALLBACK(unit_add_in_focus_callback),
+      GINT_TO_POINTER(punit->id));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
     item = gtk_menu_item_new_with_mnemonic(_("_Disband unit"));
     g_signal_connect(item, "activate",
       G_CALLBACK(unit_disband_callback),
@@ -1947,6 +1969,13 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
+//*pepeto
+    item = gtk_menu_item_new_with_mnemonic(_("Add unit in focus"));
+    g_signal_connect(item, "activate",
+      G_CALLBACK(unit_add_in_focus_callback),
+      GINT_TO_POINTER(punit->id));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
     item = gtk_menu_item_new_with_mnemonic(_("_Load unit"));
     g_signal_connect(item, "activate",
       G_CALLBACK(unit_load_callback),
@@ -1985,10 +2014,15 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
       GINT_TO_POINTER(punit->id));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-    if (punit->activity == ACTIVITY_FORTIFYING
-	|| !can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+    if (!can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
       gtk_widget_set_sensitive(item, FALSE);
     }
+
+    item = gtk_menu_item_new_with_mnemonic(_("Sleep unit"));
+    g_signal_connect(item, "activate",
+      G_CALLBACK(unit_sleep_callback),
+      GINT_TO_POINTER(punit->id));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
     item = gtk_menu_item_new_with_mnemonic(_("_Disband unit"));
     g_signal_connect(item, "activate",
@@ -2036,7 +2070,14 @@ static gboolean present_unit_middle_callback(GtkWidget * w,
       (pcity = map_get_city(punit->tile)) &&
       (pdialog = get_city_dialog(pcity)) && can_client_issue_orders() && 
       (ev->button == 2 || ev->button == 3)) {
-    set_unit_focus(punit);
+	//*pepeto*
+	if(ev->state&GDK_SHIFT_MASK)
+	{
+		multi_select_add_or_remove_unit(punit);
+		update_unit_info_label(get_unit_in_focus());
+	}
+	else
+		set_unit_focus_and_active(punit);
     if (ev->button == 2)
       close_city_dialog(pdialog);
   }
@@ -2059,7 +2100,14 @@ static gboolean supported_unit_middle_callback(GtkWidget * w,
       (pcity = find_city_by_id(punit->homecity)) &&
       (pdialog = get_city_dialog(pcity)) && can_client_issue_orders() && 
       (ev->button == 2 || ev->button == 3)) {
-    set_unit_focus(punit);
+	//*pepeto*
+	if(ev->state&GDK_SHIFT_MASK)
+	{
+		multi_select_add_or_remove_unit(punit);
+		update_unit_info_label(get_unit_in_focus());
+	}
+	else
+		set_unit_focus_and_active(punit);
     if (ev->button == 2)
       close_city_dialog(pdialog);
   }
@@ -2087,7 +2135,7 @@ static void unit_activate_callback(GtkWidget * w, gpointer data)
   struct unit *punit;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    set_unit_focus(punit);
+    set_unit_focus_and_active(punit);
   }
 }
 
@@ -2102,11 +2150,24 @@ static void supported_unit_activate_close_callback(GtkWidget * w,
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    set_unit_focus(punit);
+    set_unit_focus_and_active(punit);
     if ((pcity = player_find_city_by_id(game.player_ptr, punit->homecity)))
       if ((pdialog = get_city_dialog(pcity)))
 	close_city_dialog(pdialog);
   }
+}
+
+/****************************************************************
+... *pepeto*
+*****************************************************************/
+static void unit_add_in_focus_callback(GtkWidget * w, gpointer data)
+{
+  struct unit *punit;
+
+  if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
+    multi_select_add_or_remove_unit(punit);
+  }
+  update_unit_info_label(get_unit_in_focus());
 }
 
 /****************************************************************
@@ -2120,7 +2181,7 @@ static void present_unit_activate_close_callback(GtkWidget * w,
   struct city_dialog *pdialog;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
-    set_unit_focus(punit);
+    set_unit_focus_and_active(punit);
     if ((pcity = map_get_city(punit->tile)))
       if ((pdialog = get_city_dialog(pcity)))
 	close_city_dialog(pdialog);
@@ -2159,6 +2220,8 @@ static void unit_sentry_callback(GtkWidget * w, gpointer data)
   struct unit *punit;
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
+    if(punit->activity == ACTIVITY_FORTIFYING)
+      request_active_unit(punit);
     request_unit_sentry(punit);
   }
 }
@@ -2172,6 +2235,19 @@ static void unit_fortify_callback(GtkWidget * w, gpointer data)
 
   if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
     request_unit_fortify(punit);
+  }
+}
+
+/****************************************************************
+...
+*****************************************************************/
+static void unit_sleep_callback(GtkWidget * w, gpointer data)
+{
+  struct unit *punit;
+
+  if ((punit = player_find_unit_by_id(game.player_ptr, (size_t) data))) {
+    request_unit_sleep(punit);
+    refresh_city_dialog(punit->tile->city);
   }
 }
 

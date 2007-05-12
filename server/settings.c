@@ -22,6 +22,7 @@
 #include "gamelog.h"
 #include "report.h"
 #include "settings.h"
+#include "srv_main.h"
 #include "stdinhand.h"
 
 /* Category names must match the values in enum sset_category. */
@@ -211,6 +212,15 @@ struct settings_s settings[] = {
              "  size = 4 is a normal map of 4,000 tiles (default)\n"
              "  size = 20 is a huge map of 20,000 tiles"), NULL,
           MAP_MIN_SIZE, MAP_MAX_SIZE, MAP_DEFAULT_SIZE)
+  GEN_INT("autosize", map.autosize, SSET_MAP_SIZE,
+	  SSET_GEOLOGY, SSET_VITAL, SSET_TO_CLIENT,
+          N_("Tile number for each player"),
+          N_("This value is used to determine the map dimensions.\n"
+             "It calculs the size from the player number and the\n"
+             "landmass. If this option is set to 0, it will be\n"
+             "ignored. This option is usefull for islands\n"
+             "generators."), NULL,
+          MAP_MIN_AUTOSIZE, MAP_MAX_AUTOSIZE, MAP_DEFAULT_AUTOSIZE)
   GEN_INT("topology", map.topology_id, SSET_MAP_SIZE,
 	  SSET_GEOLOGY, SSET_VITAL, SSET_TO_CLIENT,
 	  N_("Map topology index"),
@@ -268,6 +278,8 @@ struct settings_s settings[] = {
              "    and on the connecting isthmus.\n"
              "6 = fair island generator, each player start on the same island\n"
              "    with the same start position\n"
+             "7 = same as 6 except the map generated with team placement\n"
+             "    if teamplacement is turned to on\n"
 	     "\n"
 	     "Numbers in [] give the default values for placement of "
 	     "starting positions.  If the default value of startpos is "
@@ -410,7 +422,7 @@ struct settings_s settings[] = {
 	  GAME_MIN_MAX_PLAYERS, GAME_MAX_MAX_PLAYERS, GAME_DEFAULT_MAX_PLAYERS)
 
   GEN_INT("aifill", game.aifill,
-	  SSET_PLAYERS, SSET_INTERNAL, SSET_VITAL, SSET_TO_CLIENT,
+	  SSET_PLAYERS, SSET_INTERNAL, SSET_VITAL, SSET_SERVER_ONLY,
 	  N_("Total number of players (including AI players)"),
 	  N_("If there are fewer than this many players when the "
 	     "game starts, extra AI players will be created to "
@@ -699,6 +711,14 @@ struct settings_s settings[] = {
              "4 = diplomacy is disabled for everyone.\n\n"
              "You can always do diplomacy with players on your team."), NULL,
 	  GAME_MIN_DIPLOMACY, GAME_MAX_DIPLOMACY, GAME_DEFAULT_DIPLOMACY)
+
+  GEN_INT("maxallies", game.maxallies,
+	  SSET_RULES, SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
+	  N_("Allies maximum number"),
+	  N_("When you have 'maxallies' allies or more, the diplomacy\n"
+	     "with the other players is canceled.\n\n"
+             "0 = unlimited."), NULL,
+	  GAME_MIN_MAXALLIES, GAME_MAX_MAXALLIES, GAME_DEFAULT_MAXALLIES)
 
   GEN_INT("citynames", game.allowed_city_names,
 	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
@@ -1034,7 +1054,7 @@ struct settings_s settings[] = {
 	  0, 40, 20)
 
   GEN_BOOL("techtrading", game.techtrading, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
           N_("Technology trading"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1042,7 +1062,7 @@ struct settings_s settings[] = {
              "is not allowed."), NULL,
           GAME_DEFAULT_TECHTRADING)
   GEN_BOOL("goldtrading", game.goldtrading, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
           N_("Gold trading"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1050,7 +1070,7 @@ struct settings_s settings[] = {
              "is not allowed."), NULL,
           GAME_DEFAULT_GOLDTRADING)
   GEN_BOOL("citytrading", game.citytrading, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
           N_("City trading"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1058,7 +1078,7 @@ struct settings_s settings[] = {
              "is not allowed."), NULL,
           GAME_DEFAULT_CITYTRADING)
   GEN_INT("airliftingstyle", game.airliftingstyle, 
-      SSET_RULES_FLEXIBLE, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+      SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Airlifting style"),
           N_("0 - standard 2.0.8, only 1 unit per turn to destination\n"
              "1 - multiple units can be airlifted into destination\n"
@@ -1067,14 +1087,14 @@ struct settings_s settings[] = {
           NULL,
           0, 3, GAME_DEFAULT_AIRLIFTINGSTYLE)
   GEN_BOOL("teamplacement", game.teamplacement, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
           N_("Team placement"),
           N_("0 - off\n"
              "1 - on\n"
              "If turned off, team players are placed randomly."), NULL,
           GAME_DEFAULT_TEAMPLACEMENT)
   GEN_INT("teamplacementtype", game.teamplacementtype,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
     N_("Type of team placement"),
 	  N_("0 - team players are placed as close as possible\n"
 	     "    regardless of continents.\n"
@@ -1085,7 +1105,7 @@ struct settings_s settings[] = {
 	  NULL,
 	  0, 3, GAME_DEFAULT_TEAMPLACEMENTTYPE)
   GEN_INT("bruteforcethreshold", game.bruteforcethreshold,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
     N_("Brute force team placement algorithm threshold"),
 	  N_("Brute force team placement algorithm will be used\n"
       "if the number of players is less or equal than this value.\n"
@@ -1094,7 +1114,7 @@ struct settings_s settings[] = {
 	  NULL,
 	  0, 32, GAME_DEFAULT_BRUTEFORCETHRESHOLD)
   GEN_INT("iterplacementcoefficient", game.iterplacementcoefficient,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
     N_("Iterative team placement algorithm coefficient."),
 	  N_("This value is the upper bound of the number of\n"
 	    "iterations the iterative tabu search performs.\n"
@@ -1105,7 +1125,7 @@ struct settings_s settings[] = {
 	  NULL,
 	  100, 5000, GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT)
   GEN_BOOL("globalwarming", game.globalwarmingon, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_ECOLOGY, SSET_RARE, SSET_TO_CLIENT,
           N_("Global warming"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1114,7 +1134,7 @@ struct settings_s settings[] = {
              "affect pollution."), NULL,
           GAME_DEFAULT_GLOBALWARMINGON)
   GEN_BOOL("nuclearwinter", game.nuclearwinteron, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_ECOLOGY, SSET_RARE, SSET_TO_CLIENT,
           N_("Nuclear winter"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1154,17 +1174,17 @@ struct settings_s settings[] = {
           "extroutes", /* required capability for non-default */
 	  N_("Minimum trade distance"),
 	  N_("Minimum distance to establish trade route.\n"
-             "8 is default"),
+             "9 is default"),
 	  NULL,
 	  1, 999, GAME_DEFAULT_TRADEMINDIST)
   GEN_BOOL("futuretechsscore", game.futuretechsscore, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
           N_("Score for future techs"),
           N_("0 - off\n"
              "1 - on"), NULL,
           GAME_DEFAULT_FUTURETECHSSCORE)
   GEN_BOOL("improvedautoattack", game.improvedautoattack, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Improved autoattack"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1172,7 +1192,7 @@ struct settings_s settings[] = {
              "in the middle of turn.\n"), NULL,
           GAME_DEFAULT_IMPROVEDAUTOATTACK)
   GEN_BOOL("stackbribing", game.stackbribing, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Stack bribing"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1180,7 +1200,7 @@ struct settings_s settings[] = {
              "of units.\n"), NULL,
           GAME_DEFAULT_STACKBRIBING)
   GEN_BOOL("experimentalbribingcost", game.experimentalbribingcost, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Experimental bribing cost"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1189,7 +1209,7 @@ struct settings_s settings[] = {
 						 "build cost, veterancy, terrain, fortification."), NULL,
           GAME_DEFAULT_EXPERIMENTALBRIBINGCOST)
   GEN_BOOL("ignoreruleset", game.ignoreruleset, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
           N_("Ignore ruleset"),
           N_("0 - off\n"
              "1 - on\n"
@@ -1198,24 +1218,26 @@ struct settings_s settings[] = {
              "or kill stack is off."), NULL,
           GAME_DEFAULT_IGNORERULESET)
   GEN_BOOL("slowinvasions", game.slow_invasions, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Slow invasions"),
           N_("0 - off\n"
              "1 - on\n"
              "If slow invasions are off, units with 2 movement points\n"
-             "can unload from ship and attack in the same turn."), NULL,
+             "can unload from ship and attack in the same turn. If you\n"
+             "change this setting, turn on 'ignoreruleset'."), NULL,
           GAME_DEFAULT_SLOWINVASIONS)
   GEN_BOOL("killstack", game.rgame.killstack, SSET_RULES,
-	  SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Kill stack"),
           N_("0 - off\n"
              "1 - on\n"
              "If turned off, killing one unit in a stack doesn't\n"
              "kill the whole stack but all units have to be killed\n"
-             "individually."), NULL,
+             "individually. If you change this setting, turn on\n"
+             "'ignoreruleset'."), NULL,
           GAME_DEFAULT_KILLSTACK)
   GEN_INT("techleakage", game.rgame.tech_leakage,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_RULES, SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Technology leak from other civilizations"),
 	  N_("0 - No reduction of the technology cost\n"
       "1 - Technology cost is reduced depending on the number of players\n"
@@ -1223,9 +1245,32 @@ struct settings_s settings[] = {
       "2 - Technology cost is reduced depending on the number of all players\n"
       "    (human, AI and barbarians) which already know the tech.\n"
       "3 - Technology cost is reduced depending on the number of normal\n"
-      "    players (human and AI) which already know the tech."),
+      "    players (human and AI) which already know the tech.\n\n"
+      "If you change this setting, turn on 'ignoreruleset'.\n"),
 	  NULL,
 	  0, 3, GAME_DEFAULT_TECHLEAKAGE)
+  GEN_INT("techleakagerate", game.techleakagerate,
+	  SSET_RULES, SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
+	  N_("Technology leak rate from other civilizations (in percent)"),
+	  N_("The thecnholgy cost is reduced by this rate.\n"
+	  "If this value is 100%, the last player to search a technology\n"
+	  "will have only (technologycost * 1 / playernumber).\n"
+	  "If this value is 0%, all players will have the same technology\n"
+	  "costs."),
+	  NULL,
+	  0, 100, GAME_DEFAULT_TECHLEAKAGERATE)
+  GEN_INT("techcoststyle", game.rgame.tech_cost_style,
+	  SSET_RULES, SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
+	  N_("Technology cost style"),
+	  N_("0 - Civ (I|II) style. Every new tech add game.researchcost\n"
+             "    to the cost of the next tech.\n"
+             "1 - Cost of technology is like default freeciv 2.0.9.\n"
+             "2 - Cost are read from tech.ruleset. Missing costs are\n"
+             "    generated by style 1.\n\n"
+             "If you change this setting, turn on 'ignoreruleset'.\n"),
+	  NULL,
+	  0, 2, GAME_DEFAULT_TECHCOSTSTYLE)
+
 
   GEN_INT("maxconnections", game.maxconnections,
 	  SSET_RULES_FLEXIBLE, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
@@ -1235,6 +1280,13 @@ struct settings_s settings[] = {
 			"0 means there is no limit."),
 	  NULL,
 	  0, 100, GAME_DEFAULT_MAXCONNECTIONS)
+  GEN_BOOL("multilinechat", srvarg.allow_multi_line_chat, SSET_RULES_FLEXIBLE,
+	  SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
+          N_("Multi line chat"),
+          N_("0 - off\n"
+             "1 - on\n"
+             "If turned on, the user can send many chat lines."), NULL,
+          FALSE)
 
   GEN_END
 };

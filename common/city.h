@@ -161,6 +161,9 @@ enum choice_type { CT_NONE = 0, CT_BUILDING = 0, CT_NONMIL, CT_ATTACKER,
 #define ASSERT_REAL_CHOICE_TYPE(type)                                    \
         assert(type >= 0 && type < CT_LAST /* && type != CT_NONE */ );
 
+#include "genlist.h"
+struct trade_route_list {struct genlist list;};//*pepeto*
+struct help_wonder_list {struct genlist list;};//*pepeto*
 
 struct ai_choice {
   int choice;            /* what the advisor wants */
@@ -234,6 +237,10 @@ struct city {
 
   /* trade routes */
   int trade[NUM_TRADEROUTES], trade_value[NUM_TRADEROUTES];
+  struct trade_route_list trade_routes;//*pepeto*
+
+  /* help wonders */
+  struct help_wonder_list help_wonders;//*pepeto*
 
   /* the productions */
   int food_prod, food_surplus;
@@ -310,6 +317,9 @@ struct city {
 
   int turn_founded;		/* In which turn was the city founded? */
 
+//*pepeto* re-written from warclient
+  struct tile *rally_point;
+
   /* info for dipl/spy investigation -- used only in client */
   struct unit_list info_units_supported;
   struct unit_list info_units_present;
@@ -317,6 +327,64 @@ struct city {
   struct ai_city ai;
   bool debug;
 };
+
+enum trade_route_type//*pepeto
+{
+	TR_NONE=0,
+	TR_REMP,
+	TR_NEW
+};
+
+struct trade_route//*pepeto*
+{
+	struct unit *punit;
+	struct city *pc1,*pc2;
+	struct trade_route *ptr0,*ptr1,*ptr2;
+	int move_req,trade;
+	enum trade_route_type tr_type;
+	bool planned;
+};
+
+struct hw_unit//*pepeto*
+{
+	struct unit *punit;
+	int move_req;
+	struct help_wonder *phw;
+};
+
+#define SPECLIST_TAG hw_unit
+#define SPECLIST_TYPE struct hw_unit
+#include "speclist.h"
+#define hw_unit_list_iterate(alist,pitem) \
+    TYPED_LIST_ITERATE(struct hw_unit,alist,pitem)
+#define hw_unit_list_iterate_end  LIST_ITERATE_END
+
+struct help_wonder//*pepeto*
+{
+	struct hw_unit_list units;
+	struct unit *punit0;
+	struct city *pcity;
+	int level;
+	int wonder_cost;
+	int turns;
+	int id;
+};
+
+#define SPECLIST_TAG trade_route
+#define SPECLIST_TYPE struct trade_route
+#define SPECLIST_NO_DEFINE
+#include "speclist.h"
+#define trade_route_list_iterate(alist,pitem) \
+    TYPED_LIST_ITERATE(struct trade_route,alist,pitem)
+#define trade_route_list_iterate_end  LIST_ITERATE_END
+
+#define SPECLIST_TAG help_wonder
+#define SPECLIST_TYPE struct help_wonder
+#define SPECLIST_NO_DEFINE
+#include "speclist.h"
+#define help_wonder_list_iterate(alist,pitem) \
+    TYPED_LIST_ITERATE(struct help_wonder,alist,pitem)
+#define help_wonder_list_iterate_end  LIST_ITERATE_END
 
 /* city drawing styles */
 

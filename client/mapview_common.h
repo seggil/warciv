@@ -226,4 +226,6 @@ void set_overview_dimensions(int width, int height);
 bool map_canvas_resized(int width, int height);
 void init_mapcanvas_and_overview(void);
 
+void draw_traderoutes(void);//*pepeto*
+
 #endif /* FC__MAPVIEW_COMMON_H */

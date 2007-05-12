@@ -50,6 +50,8 @@ used throughout the client.
 #include "mapctrl_common.h"
 #include "mapview_g.h"
 #include "messagewin_common.h"
+#include "multiselect.h"//*pepeto* for PINT_TO_PTR & PPTR_TO_INT
+#include "myai.h"//*pepeto*
 #include "packhand.h"
 #include "plrdlg_common.h"
 #include "repodlgs_common.h"
@@ -162,20 +164,29 @@ void client_remove_unit(struct unit *punit)
 	  punit->id, get_nation_name(unit_owner(punit)->nation),
 	  unit_name(punit->type), TILE_XY(punit->tile), hc);
 
+  my_ai_orders_free(punit);
+
   if (punit == ufocus) {
-    set_unit_focus(NULL);
-    game_remove_unit(punit);
-    punit = ufocus = NULL;
-    advance_unit_focus();
+    multi_select_wipe_up_unit(punit);
+    if(punit == get_unit_in_focus())
+    {
+      set_unit_focus(NULL);
+      game_remove_unit(punit);
+      advance_unit_focus();
+    }
+    else
+      game_remove_unit(punit);
+    punit = NULL;
   } else {
     /* calculate before punit disappears, use after punit removed: */
     bool update = (ufocus
 		   && same_pos(ufocus->tile, punit->tile));
 
+    multi_select_wipe_up_unit(punit);
     game_remove_unit(punit);
     punit = NULL;
     if (update) {
-      update_unit_pix_label(ufocus);
+      update_unit_pix_label(get_unit_in_focus());
     }
   }
 
@@ -214,11 +225,13 @@ void client_remove_city(struct city *pcity)
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
 	  get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
 
-  /* Explicitly remove all improvements, to properly remove any global effects
+  my_ai_city_free(pcity);//*pepeto*
+
+/* Explicitly remove all improvements, to properly remove any global effects
      and to handle the preservation of "destroyed" effects. */
   effect_update=FALSE;
 
-  built_impr_iterate(pcity, i) {
+ built_impr_iterate(pcity, i) {
     effect_update = TRUE;
     city_remove_improvement(pcity, i);
   } built_impr_iterate_end;
@@ -1100,11 +1113,11 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
   }
 
   pcontinent_counter = hash_lookup_data (an_continent_counter_table,
-                                         INT_TO_PTR (ad->continent_id));
+                                         PINT_TO_PTR (ad->continent_id));
   if (!pcontinent_counter) {
     pcontinent_counter = fc_malloc (sizeof (int));
     *pcontinent_counter = 0;
-    hash_insert (an_continent_counter_table, INT_TO_PTR (ad->continent_id),
+    hash_insert (an_continent_counter_table, PINT_TO_PTR (ad->continent_id),
                  pcontinent_counter);
   }
 
@@ -1209,7 +1222,7 @@ static int an_generate_city_name (char *buf, int buflen,
     return 0;
   }
 
-  ad = hash_lookup_data (an_city_autoname_data_table, INT_TO_PTR (pcity->id));
+  ad = hash_lookup_data (an_city_autoname_data_table, PINT_TO_PTR (pcity->id));
   if (!ad) {
     ad = fc_malloc (sizeof (struct autoname_data));
     freelog (LOG_DEBUG, "agcn   new ad %p", ad);
@@ -1219,7 +1232,7 @@ static int an_generate_city_name (char *buf, int buflen,
     ad->format_index = 1;
     ad->global_city_number = 0;
     ad->continent_city_number = 0;
-    hash_insert (an_city_autoname_data_table, INT_TO_PTR (pcity->id), ad);
+    hash_insert (an_city_autoname_data_table, PINT_TO_PTR (pcity->id), ad);
   } else {
     ad->format_index++;
     ad->format_index %= num_formats;
@@ -1346,7 +1359,7 @@ void city_autonaming_free (void)
   an_city_name_table = NULL;
 
   hash_iterate (an_continent_counter_table, void *, key, int *, pcc) {
-    int id = PTR_TO_INT (key);
+    int id = PPTR_TO_INT (key);
     freelog (LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id, *pcc);
     free (pcc);
   } hash_iterate_end;
@@ -1358,7 +1371,7 @@ void city_autonaming_free (void)
   hash_iterate (an_city_autoname_data_table, void *, key,
                 struct autoname_data *, ad)
   {
-    int id = PTR_TO_INT (key);
+    int id = PPTR_TO_INT (key);
     freelog (LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
     free (ad);
   } hash_iterate_end;
@@ -1688,3 +1701,33 @@ void draw_link_marks(void)
   } hash_iterate_end;
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+void set_default_user_tech_goal(void)
+{
+  Tech_Type_id goal;
+  
+  goal = find_tech_by_name(default_user_tech_goal);
+  if(goal == A_LAST)
+    goal = find_tech_by_name_orig(default_user_tech_goal);
+  if(goal != A_LAST)
+    force_tech_goal(goal);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void force_tech_goal(Tech_Type_id goal)
+{
+  if(!tech_exists(goal))
+    return;
+
+  Tech_Type_id next = get_next_tech(game.player_ptr, goal);
+  if(next == A_UNSET)
+    return;
+
+  if(game.player_ptr->ai.tech_goal != goal)
+    dsend_packet_player_tech_goal(&aconnection, goal);
+  dsend_packet_player_research(&aconnection, next);
+}

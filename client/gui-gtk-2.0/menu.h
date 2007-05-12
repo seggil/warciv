@@ -17,6 +17,9 @@
 
 #include "menu_g.h"
 
+void set_delayed_goto_mode(const char *path);//*pepeto*
+void init_menus(void);//*pepeto*
+
 void setup_menus(GtkWidget *window, GtkWidget **menubar);
 
 extern GtkAccelGroup *	toplevel_accel;

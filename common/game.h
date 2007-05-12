@@ -168,6 +168,7 @@ struct civ_game {
   int bruteforcethreshold;
   int iterplacementcoefficient;
   int teamplacementtype;
+  int techleakagerate;
   /*=========== WARSERVER settings END ================*/
   /* used in server only */
   bool ruleset_loaded;
@@ -190,6 +191,7 @@ struct civ_game {
   int borders;		/* distance of border from city; 0=disabled. */
   bool happyborders;
   int diplomacy;        /* who can do it */
+  int maxallies;
   bool slow_invasions;  /* land units lose all movement landing on shores */
 
   char rulesetdir[MAX_LEN_NAME];
@@ -316,20 +318,21 @@ extern bool is_server;
 
 #define GAME_DEFAULT_BRUTEFORCETHRESHOLD        20
 #define GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT        400
-#define GAME_DEFAULT_TRADEMINDIST        8
+#define GAME_DEFAULT_TRADEMINDIST        9
 #define GAME_DEFAULT_CARAVANBONUSSTYLE  0
 #define GAME_DEFAULT_TRADEREVENUESTYLE    0
 #define GAME_DEFAULT_TRADEREVENUEPCT    100
-#define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST        1
+#define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST        0
 #define GAME_DEFAULT_IGNORERULESET        0
 #define GAME_DEFAULT_IMPROVEDAUTOATTACK        0
 #define GAME_DEFAULT_STACKBRIBING        1
-#define GAME_DEFAULT_GOLDTRADING        0
-#define GAME_DEFAULT_TECHTRADING        0
-#define GAME_DEFAULT_CITYTRADING    0
+#define GAME_DEFAULT_GOLDTRADING        1
+#define GAME_DEFAULT_TECHTRADING        1
+#define GAME_DEFAULT_CITYTRADING    1
 #define GAME_DEFAULT_SLOWINVASIONS        1
-#define GAME_DEFAULT_AIRLIFTINGSTYLE  1
+#define GAME_DEFAULT_AIRLIFTINGSTYLE  0
 #define GAME_DEFAULT_TECHLEAKAGE 0
+#define GAME_DEFAULT_TECHCOSTSTYLE 1
 #define GAME_DEFAULT_TEAMPLACEMENT  1
 #define GAME_DEFAULT_GLOBALWARMINGON  1
 #define GAME_DEFAULT_NUCLEARWINTERON  1
@@ -337,6 +340,7 @@ extern bool is_server;
 #define GAME_DEFAULT_MAXCONNECTIONS    0
 #define GAME_DEFAULT_FUTURETECHSSCORE 1
 #define GAME_DEFAULT_TEAMPLACEMENTTYPE 0
+#define GAME_DEFAULT_TECHLEAKAGERATE 100
 
 #define GAME_DEFAULT_SEED        0
 #define GAME_MIN_SEED            0
@@ -346,15 +350,15 @@ extern bool is_server;
 #define GAME_MIN_GOLD            0
 #define GAME_MAX_GOLD            50000
 
-#define GAME_DEFAULT_START_UNITS  "cccwwwxxx"
+#define GAME_DEFAULT_START_UNITS  "cccwwwxxxx"
 
-#define GAME_DEFAULT_DISPERSION  2
+#define GAME_DEFAULT_DISPERSION  0
 #define GAME_MIN_DISPERSION      0
 #define GAME_MAX_DISPERSION      10
 
 #define GAME_DEFAULT_TECHLEVEL   0
 #define GAME_MIN_TECHLEVEL       0
-#define GAME_MAX_TECHLEVEL       88
+#define GAME_MAX_TECHLEVEL       100
 
 #define GAME_DEFAULT_UNHAPPYSIZE 4
 #define GAME_MIN_UNHAPPYSIZE     1
@@ -401,6 +405,10 @@ extern bool is_server;
 #define GAME_DEFAULT_DIPLOMACY       0
 #define GAME_MIN_DIPLOMACY           0
 #define GAME_MAX_DIPLOMACY           4
+
+#define GAME_DEFAULT_MAXALLIES       0 // must be 0, for client compatibilty
+#define GAME_MIN_MAXALLIES           0
+#define GAME_MAX_MAXALLIES           (MAX_NUM_PLAYERS - 1)
 
 #define GAME_DEFAULT_DIPLCHANCE      60
 #define GAME_MIN_DIPLCHANCE          1
@@ -529,7 +537,7 @@ extern bool is_server;
 #define GAME_OLD_DEFAULT_SKILL_LEVEL 5  /* normal; for old save games */
 
 #define GAME_DEFAULT_DEMOGRAPHY      "NASRLPEMOqrb"
-#define GAME_DEFAULT_ALLOW_TAKE      "HAhad"
+#define GAME_DEFAULT_ALLOW_TAKE      "H1A1h1a1d3O3o3"
 
 #define GAME_DEFAULT_COMPRESS_LEVEL 6    /* if we have compression */
 #define GAME_MIN_COMPRESS_LEVEL     0

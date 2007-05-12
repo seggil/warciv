@@ -14,12 +14,14 @@
 #include <config.h>
 #endif
 
-#include "map.h"
+#include "game.h"
 #include "log.h"
+#include "map.h"
 
 #include "mapgen_topology.h"
 
 int ice_base_colatitude = 0 ;
+double req_size;
 
 /****************************************************************************
   Returns the colatitude of this map position.  This is a value in the
@@ -221,9 +223,10 @@ static void set_sizes(double size, int Xratio, int Yratio)
 	    "Requested size of %d is too big for this topology.",
 	    map.size);
   }
+  map.size = (float)(map.xsize * map.ysize) / 1000.0 + 0.5;
   freelog(LOG_VERBOSE,
 	  "Creating a map of size %d x %d = %d tiles (%d requested).",
-	  map.xsize, map.ysize, map.xsize * map.ysize, map.size * 1000);
+	  map.xsize, map.ysize, map.xsize * map.ysize, (int)(req_size * 1000));
 }
 
 /*
@@ -251,17 +254,38 @@ void generator_init_topology(bool autosize)
       {AUTO_RATIO_FLAT, AUTO_RATIO_CLASSIC,
        AUTO_RATIO_URANUS, AUTO_RATIO_TORUS};
     const int id = 0x3 & map.topology_id;
+    req_size = map.size;
 
     assert(TF_WRAPX == 0x1 && TF_WRAPY == 0x2);
-    
+
+    if(map.autosize) {
+      req_size = (double)(game.nplayers * map.autosize) / (10 * map.landpercent);
+      if(req_size < 0.6)
+        req_size = 0.6;
+      map.size = req_size;
+    }
     if(map.generator == 4 || map.generator == 5) {
-      set_sizes(map.size, 2, 1);
+      set_sizes(req_size, 2, 1);
     } else {
       /* Set map.xsize and map.ysize based on map.size. */
-      set_sizes(map.size, default_ratios[id][0], default_ratios[id][1]);
+      set_sizes(req_size, default_ratios[id][0], default_ratios[id][1]);
     }
   }
 
+  /* adjust landmass? */
+  if(map.autosize) {
+    req_size = (double)(map.xsize * map.ysize) / (100 * game.nplayers);
+    while(map.landpercent > MAP_MIN_LANDMASS && abs(map.autosize - req_size * map.landpercent)
+    	> abs(map.autosize - (double)req_size * (map.landpercent - 1))) {
+    	map.landpercent--;
+    } 
+    while(map.landpercent < MAP_MAX_LANDMASS && abs(map.autosize - req_size * map.landpercent)
+    	> abs(map.autosize - (double)req_size * (map.landpercent + 1))) {
+    	map.landpercent++;
+    }
+    freelog(LOG_VERBOSE, "landmass changed for %d", map.landpercent);
+  }
+  
   /* initialize the ICE_BASE_LEVEL */
 
   /*

@@ -17,6 +17,8 @@
 #include "shared.h"		/* bool type */
 
 extern char default_user_name[512];
+extern char default_user_nation[512];//*pepeto*
+extern char default_user_tech_goal[512];//*pepeto*
 extern char default_server_host[512];
 extern int default_server_port; 
 extern char default_metaserver[512];
@@ -52,6 +54,7 @@ extern char chat_time_format[128];
 extern char city_name_formats[128];
 extern bool show_split_message_window;
 extern bool do_not_recenter_overview;
+extern bool reload_pepsettings;//*pepeto*
 
 enum client_option_type {
   COT_BOOL,

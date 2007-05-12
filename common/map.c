@@ -36,6 +36,9 @@ struct civ_map map;
 /* these are initialized from the terrain ruleset */
 struct terrain_misc terrain_control;
 
+/* used by the server for reset settings */
+bool map_can_be_free = TRUE;
+
 /* used to compute neighboring tiles.
  *
  * using
@@ -167,8 +170,12 @@ bool map_is_empty(void)
 ***************************************************************/
 void map_init(void)
 {
+  if(!map_can_be_free)
+    return;
+
   map.topology_id = MAP_DEFAULT_TOPO;
   map.size = MAP_DEFAULT_SIZE;
+  map.autosize = MAP_DEFAULT_AUTOSIZE;
 
   /* The [xy]size values are set in map_init_topology.  It is initialized
    * to a non-zero value because some places erronously use these values
@@ -516,6 +523,9 @@ void map_allocate(void)
 ***************************************************************/
 void map_free(void)
 {
+  if(!map_can_be_free)
+    return;
+
   if (map.tiles) {
     /* it is possible that map_init was called but not map_allocate */
 

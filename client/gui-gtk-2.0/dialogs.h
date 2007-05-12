@@ -27,4 +27,6 @@ GtkWidget *popup_message_dialog(GtkWindow *parent, const gchar *dialogname,
 
 gboolean taxrates_callback(GtkWidget *w, GdkEventButton *ev, gpointer data);
 
+void create_pepsetting_dialog(void);//*pepeto*
+
 #endif  /* FC__DIALOGS_H */

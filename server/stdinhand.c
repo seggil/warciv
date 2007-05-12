@@ -27,6 +27,7 @@
 #include "fciconv.h"
 #include "astring.h"
 #include "capability.h"
+#include "capstr.h"
 #include "events.h"
 #include "fcintl.h"
 #include "game.h"
@@ -74,6 +75,7 @@ static bool show_list(struct connection *caller, char *arg);
 static void show_connections(struct connection *caller);
 static void show_actionlist(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
+static void show_rulesets(struct connection *caller);
 static bool set_ai_level(struct connection *caller, char *name, int level,
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
@@ -94,6 +96,7 @@ static bool addaction_command(struct connection *caller, char *pattern,
                               bool check);
 static bool delaction_command(struct connection *caller, char *pattern,
                               bool check);
+static bool reset_command(struct connection *caller, bool free_map, bool check);
 #define ACTION_LIST_FILE_VERSION 1
 static int load_action_list_v0(const char *filename);
 static int load_action_list_v1(const char *filename);
@@ -917,6 +920,78 @@ static bool dnslookup_command(struct connection *caller, char *arg,
     cmd_reply(CMD_DNS_LOOKUP, caller, C_COMMENT, _("DNS lookup is %s."),
               srvarg.no_dns_lookup ? _("disabled") : _("enabled"));
     return TRUE;
+}
+/**************************************************************************
+...
+**************************************************************************/
+static bool reset_command(struct connection *caller, bool free_map, bool check)
+{
+  if(server_state != PRE_GAME_STATE) {
+      cmd_reply(CMD_RESET, caller, C_FAIL, _("Can't reset settings while a game is running."));
+    return FALSE;
+  }
+  if(check)
+    return TRUE;
+
+  map_can_be_free = (!map.is_fixed || free_map);
+  server_game_free(FALSE);
+  game_init(FALSE);
+  map_can_be_free = TRUE;
+  if (srvarg.script_filename && !read_init_script(NULL, srvarg.script_filename)) {
+    freelog(LOG_ERROR, "Cannot load the script file '%s'", srvarg.script_filename);
+  }
+  return TRUE;
+}
+/**************************************************************************
+...
+**************************************************************************/
+bool require_command(struct connection *caller, char *arg, bool check)
+{
+  char *cap[256], buf[MAX_LEN_CONSOLE_LINE];
+  int ntokens = 0, i;
+
+  if(caller && caller->access_level < ALLOW_ADMIN) {
+    cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Current required capabilities '%s'"), srvarg.required_cap);
+    return TRUE;
+  }
+
+  if(arg && strlen(arg) > 0) {
+    sz_strlcpy(buf, arg);
+    ntokens = get_tokens(buf, cap, 256, TOKEN_DELIMITERS);
+  }
+
+  /* Ensure capability is supported exist */
+  for(i = 0; i < ntokens; i++) {
+    if(!mystrcasecmp(cap[i], "?")) {
+      cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Current required capabilities '%s'"), srvarg.required_cap);
+      return TRUE;
+    }
+    else if(!has_capability(cap[i], our_capability)) {
+      cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("You cannot require the '%s' capability, "
+      	"which is not supported by the server."), cap[i]);
+      return FALSE;
+    }
+  }
+
+  if(check) {
+    return TRUE;
+  }
+  
+  srvarg.required_cap[0] = '\0';
+  for(i = 0; i < ntokens; i++) {
+    cat_snprintf(srvarg.required_cap, sizeof(srvarg.required_cap), "%s%s", i ? " " : "", cap[i]);
+  }
+  
+  cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Required capabilities set to '%s'"), srvarg.required_cap);
+
+  /* detach all bad connections without this capability */
+  conn_list_iterate(game.game_connections, pconn) {
+    if(!pconn->observer && !can_control_a_player(pconn, TRUE)) {
+      detach_command(pconn, "", FALSE);
+    }
+  } conn_list_iterate_end;
+
+  return TRUE;
 }
 /**************************************************************************
 ...
@@ -3775,7 +3850,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
         char name[MAX_LEN_NAME];
         /* if a pconn->player is removed, we'll lose pplayer */
         sz_strlcpy(name, pplayer->name);
-        detach_command(NULL, pconn->username, FALSE);
+        detach_command(pconn, "", FALSE);
         /* find pplayer again, the pointer might have been changed */
         pplayer = find_player_by_name(name);
     }
@@ -3878,6 +3953,9 @@ static bool take_command(struct connection *caller, char *str, bool check)
         pconn = caller;
     }
     /******** PART II: do the attaching ********/
+    if(!can_control_a_player(pconn, TRUE)) {
+      goto end;
+    }
     /* check allowtake for permission */
     if (!is_allowed_to_take(pplayer, FALSE, msg))
     {
@@ -3937,7 +4015,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
         char name[MAX_LEN_NAME];
         /* if a pconn->player is removed, we'll lose pplayer */
         sz_strlcpy(name, pplayer->name);
-        detach_command(NULL, pconn->username, FALSE);
+        detach_command(pconn, "", FALSE);
         /* find pplayer again, the pointer might have been changed */
         pplayer = find_player_by_name(name);
     }
@@ -4466,6 +4544,13 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
         char datapath[512];
         const char *fullname;
 
+        if (caller && caller->access_level != ALLOW_HACK
+            && (strchr(buf, '/') || strchr(buf, '.'))) {
+          cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
+                    _("You are not allowed to use this command."));
+          return FALSE;
+        }
+
         my_snprintf(datapath, sizeof(datapath), "maps/%s.map", buf);
         sz_strlcpy(name, buf);
         fullname = datafilename(datapath);
@@ -4525,15 +4610,7 @@ static bool unloadmap_command(struct connection *caller, bool check)
     }
     if (check)
         return TRUE;
-    server_game_free(FALSE);
-    game_init(FALSE);
-
-    if (srvarg.script_filename)
-    {
-        notify_conn(&game.est_connections,
-                    _("Server: Re-reading initialization script on map unload."));
-        read_init_script(NULL, srvarg.script_filename);
-    }
+    reset_command(NULL, TRUE, FALSE);
 
     notify_conn(&game.est_connections, _("Server: Map unloaded."));
     return TRUE;
@@ -4593,26 +4670,55 @@ static bool showmaplist_command(struct connection *caller)
 **************************************************************************/
 static bool set_rulesetdir(struct connection *caller, char *str, bool check)
 {
-    char filename[512], *pfilename;
+    char filename[512], *pfilename, verror[256];
     if ((str == NULL) || (strlen(str) == 0))
     {
         cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
                   _("Current ruleset directory is \"%s\""), game.rulesetdir);
         return FALSE;
+    } else if (caller && caller->access_level != ALLOW_HACK
+               && (strchr(str, '/') || strchr(str, '.'))) {
+      cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                _("You are not allowed to use this command."));
+      return FALSE;
     }
     my_snprintf(filename, sizeof(filename), "%s", str);
     pfilename = datafilename(filename);
     if (!pfilename)
     {
-        cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
-                  _("Ruleset directory \"%s\" not found"), str);
-        return FALSE;
+        /* maybe an integer */
+        int num, i;
+
+        if (sscanf(str, "%d", &num) != 1) {
+          cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                    _("Ruleset directory \"%s\" not found"), str);
+          return FALSE;
+        }
+        char **rulesets = get_rulesets_list();
+
+        if (num >= 1 && num <= MAX_NUM_RULESETS && rulesets[num - 1]) {
+          sz_strlcpy(filename, rulesets[num - 1]);
+          pfilename = datafilename(filename);
+        }
+        for (i = 0; rulesets[i] && i < MAX_NUM_RULESETS; i++) {
+          free(rulesets[i]);
+        }
+        if (!pfilename) {
+          cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                    _("%d is not a valid ruleset id"), num);
+          return FALSE;
+        }
+    }
+    if (!is_valid_ruleset(filename, verror, sizeof(verror))) {
+      cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
+                _("\"%s\" is not a valid directory: %s"), filename, verror);
+      return FALSE;
     }
     if (!check)
     {
         cmd_reply(CMD_RULESETDIR, caller, C_OK,
-                  _("Ruleset directory set to \"%s\""), str);
-        sz_strlcpy(game.rulesetdir, str);
+                  _("Ruleset directory set to \"%s\""), filename);
+        sz_strlcpy(game.rulesetdir, filename);
     }
 
     return TRUE;
@@ -4935,12 +5041,16 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
         return read_command(caller, arg, check);
     case CMD_WRITE_SCRIPT:
         return write_command(caller, arg, check);
+    case CMD_RESET:
+        return reset_command(caller, FALSE, check);
     case CMD_WELCOME_MESSAGE:
         return welcome_message_command(caller, arg, check);
     case CMD_WELCOME_FILE:
         return welcome_file_command(caller, arg, check);
     case CMD_DNS_LOOKUP:
         return dnslookup_command(caller, arg, check);
+    case CMD_REQUIRE:
+        return require_command(caller, arg, check);
     case CMD_RFCSTYLE:		/* see console.h for an explanation */
         if (!check)
         {
@@ -5966,15 +6076,51 @@ static void show_teams(struct connection *caller, bool send_to_all)
     if (!send_to_all)
         cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void show_rulesets(struct connection *caller)
+{
+  char **rulesets = get_rulesets_list(), *description, *p;
+  int i;
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of rulesets available:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+
+  for (i = 0; i < MAX_NUM_RULESETS && rulesets[i]; i++) {
+    description = get_ruleset_description(rulesets[i]);
+    if (description && (p = strchr(description, '\n'))) {
+      *p++ = '\0';
+    } else {
+      p = NULL;
+    }
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s%s%s", i + 1, rulesets[i],
+              description ? ": " : "", description ? description : "");
+    for (description = p; description; description = p) {
+      if ((p = strchr(description, '\n'))) {
+        *p++ = '\0';
+      }
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "%*s%s", 
+                (int)strlen(rulesets[i]) + 5, "", description);
+    }
+    free(rulesets[i]);
+  }
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
 /**************************************************************************
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_ARG_NUM /* Must be last */
+                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_RULESETS,
+                 LIST_ARG_NUM /* Must be last */
                };
 static const char *const list_args[] =
     {
-        "players", "connections", "actionlist", "teams", "ignore", "maps", NULL
+        "players", "connections", "actionlist", "teams", "ignore",
+        "maps", "rulesets", NULL
     };
 static const char *listarg_accessor(int i)
 {
@@ -6020,6 +6166,9 @@ static bool show_list(struct connection *caller, char *arg)
         return TRUE;
     case LIST_MAPS:
         showmaplist_command(caller);
+        return TRUE;
+    case LIST_RULESETS:
+        show_rulesets(caller);
         return TRUE;
     default:
         cmd_reply(CMD_LIST, caller, C_FAIL,

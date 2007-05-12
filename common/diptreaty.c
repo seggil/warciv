@@ -28,6 +28,9 @@
 **************************************************************************/
 bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
 {
+  if(game.maxallies && !pplayers_allied(pplayer, aplayer) &&
+    (player_allies_count(pplayer) >= game.maxallies || player_allies_count(aplayer) >= game.maxallies))
+    return FALSE;
   return  (game.diplomacy == 0      /* Unlimited diplomacy */
 	   || (game.diplomacy == 1  /* Human diplomacy only */
 	       && !pplayer->ai.control 

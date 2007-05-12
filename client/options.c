@@ -43,6 +43,8 @@
 /** Defaults for options normally on command line **/
 
 char default_user_name[512] = "\0";
+char default_user_nation[512] = "\0";//*pepeto*
+char default_user_tech_goal[512] = "\0";//*pepeto*
 char default_server_host[512] = "localhost";
 int  default_server_port = DEFAULT_SOCK_PORT;
 char default_metaserver[512] = DEFAULT_METALIST_ADDR;
@@ -77,12 +79,18 @@ char chat_time_format[128] = "[%H:%M:%S]";
 char city_name_formats[128] = "island%c-city%2n;city%3g";
 bool show_split_message_window = TRUE;
 bool do_not_recenter_overview = FALSE;
+bool reload_pepsettings = TRUE;//*pepeto*
+
 
 /* This option is currently set by the client - not by the user. */
 bool update_city_text_in_refresh_tile = TRUE;
 
 static client_option common_options[] = {
   GEN_STR_OPTION(default_user_name,        N_("Default player's login name"),
+		 NULL, NULL), 
+  GEN_STR_OPTION(default_user_nation,        N_("Default player's nation"),//*pepeto*
+		 NULL, NULL), 
+  GEN_STR_OPTION(default_user_tech_goal,        N_("Default player's technology goal"),//*pepeto*
 		 NULL, NULL), 
   GEN_STR_OPTION(default_server_host,       N_("Default server"),
 		 NULL, NULL),
@@ -118,6 +126,7 @@ static client_option common_options[] = {
   GEN_STR_OPTION(city_name_formats,  N_("City name formats"), NULL, NULL),
   GEN_BOOL_OPTION(show_split_message_window,N_("Split chat and message window")),
   GEN_BOOL_OPTION(do_not_recenter_overview,N_("Do not recenter the overview for wrapped maps")),
+  GEN_BOOL_OPTION(reload_pepsettings, N_("Try to reload the last PepClient settings file"))//*pepeto*
 };
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION

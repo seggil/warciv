@@ -150,6 +150,8 @@ int main(int argc, char *argv[])
       sz_strlcpy(srvarg.serverid, option);
     } else if ((option = get_option("--saves", argv, &inx, argc))) {
       srvarg.saves_pathname = option;
+    } else if ((option = get_option("--Require", argv, &inx, argc))) {
+      sz_strlcpy(srvarg.required_cap, option);
     } else if (is_option("--version", argv[inx]))
       showvers = TRUE;
     else {
@@ -161,7 +163,7 @@ int main(int argc, char *argv[])
   }
 
   if (showvers && !showhelp) {
-    fc_fprintf(stderr, "%s \n", freeciv_name_version());
+    fc_fprintf(stderr, "%s Warserver - PepServer 0.9.1\n", freeciv_name_version());
     exit(EXIT_SUCCESS);
   }
   con_write(C_VERSION, _("This is the server for %s"), freeciv_name_version());
@@ -212,6 +214,8 @@ int main(int argc, char *argv[])
     fc_fprintf(stderr,
 	     _("  -P, --Ppm\t\tSave ppms of the map when saving the game.\n"));
     fc_fprintf(stderr, _("  -r, --read FILE\tRead startup script FILE\n"));
+    fc_fprintf(stderr, _("  -R, --Require CAP\tThe users will need this "
+		      "capability(ies) to be able to play.\n"));
     fc_fprintf(stderr, _("  -v, --version\t\tPrint the version number\n"));
     fc_fprintf(stderr, _("Report bugs to <%s>.\n"), BUG_EMAIL_ADDRESS);
     exit(EXIT_SUCCESS);

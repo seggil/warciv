@@ -2753,8 +2753,10 @@ static void load_ruleset_game()
     game.rgame.granary_food_inc = 100;
   }
 
-  game.rgame.tech_cost_style =
-      secfile_lookup_int(&file, "civstyle.tech_cost_style");
+  tmp = secfile_lookup_int(&file, "civstyle.tech_cost_style");
+  if (!game.ignoreruleset) {//if ignoreruleset is 1, then we ignore ruleset
+        game.rgame.tech_cost_style = tmp;
+  }
   if (game.rgame.tech_cost_style < 0 || game.rgame.tech_cost_style > 2) {
     freelog(LOG_ERROR, "Bad value %i for tech_cost_style. Using 0.",
 	    game.rgame.tech_cost_style);
@@ -3292,4 +3294,87 @@ void send_rulesets(struct conn_list *dest)
 
   lsend_packet_thaw_hint(dest);
   conn_list_do_unbuffer(dest);
+}
+
+/**************************************************************************
+  Check if the path contains all required ruleset files.
+**************************************************************************/
+bool is_valid_ruleset(const char *path, char *verror, size_t verror_size)
+{
+  static const char *required_files[] = {
+    "techs",
+    "buildings",
+    "governments",
+    "units",
+    "terrain",
+    "cities",
+    "nations",
+    NULL
+  };
+  char filename[256];
+  int i;
+
+  for (i = 0; required_files[i]; i++) {
+    my_snprintf(filename, sizeof(filename), "%s/%s.ruleset",
+                path, required_files[i]);
+
+    if (!datafilename(filename)) {
+      if (verror) {
+        my_snprintf(verror, verror_size, _("%s file not found"), filename);
+      }
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+/**************************************************************************
+  Try do build a list of data subdirectories which could be a ruleset.
+**************************************************************************/
+char **get_rulesets_list(void)
+{
+  static char *rulesest[MAX_NUM_RULESETS];
+  const char **datafiles = datafilelist("");
+  int i, j;
+
+  for (i = j = 0; datafiles[i] && j < MAX_NUM_RULESETS; i++) {
+    /* ignore hiden files and recursive research */
+    if (datafiles[i][0] != '.' && is_valid_ruleset(datafiles[i], NULL, 0)) {
+      rulesest[j++] = datafiles[i];
+    } else {
+      free(datafiles[i]);
+    }
+  }
+  free(datafiles);
+
+  while (j < MAX_NUM_RULESETS) {
+    rulesest[j++] = NULL;
+  }
+
+  return rulesest;
+}
+
+/**************************************************************************
+  Try to find a description for the ruleset.
+**************************************************************************/
+char *get_ruleset_description(const char *ruleset)
+{
+  static char description[1024], filename[256], *pfilename, *desc;
+  struct section_file file;
+
+  my_snprintf(filename, sizeof(filename), "%s/game.ruleset", ruleset);
+  
+  if ((pfilename = datafilename(filename))
+      && section_file_load_nodup(&file, pfilename)) {
+    if ((desc = secfile_lookup_str_default(&file, NULL,
+                                           "description.description"))) {
+      sz_strlcpy(description, desc);
+      section_file_free(&file);
+      return description;
+    }
+    section_file_free(&file);
+  }
+
+  return NULL;
 }

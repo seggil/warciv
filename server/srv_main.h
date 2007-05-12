@@ -56,6 +56,9 @@ struct server_arguments {
   bool auth_allow_newusers;     /* defaults to TRUE */
 
   bool no_dns_lookup; /* defaults to FALSE */
+
+  char required_cap[MAX_LEN_CAPSTR];
+  bool allow_multi_line_chat;
 };
 
 void init_game_seed(void);

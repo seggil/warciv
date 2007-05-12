@@ -76,9 +76,13 @@
 #define SPECLIST_LIST struct SPECLIST_PASTE(SPECLIST_TAG, _list)
 #define SPECLIST_FOO(suffix) SPECLIST_PASTE(SPECLIST_TAG, suffix)
 
+#ifdef SPECLIST_NO_DEFINE
+#undef SPECLIST_NO_DEFINE
+#else
 SPECLIST_LIST {
   struct genlist list;
 };
+#endif
 
 static inline void SPECLIST_FOO(_list_init) (SPECLIST_LIST *tthis)
 {
@@ -133,6 +137,56 @@ static inline void SPECLIST_FOO(_list_sort) (SPECLIST_LIST * tthis, int (*compar
   assert(tthis != NULL);
   genlist_sort(&tthis->list, compar);
 }
+
+//*pepeto*
+#ifdef SPECLIST_NO_FREE
+#undef SPECLIST_NO_FREE
+#else
+static inline void SPECLIST_FOO(_list_free) (SPECLIST_LIST *tthis)
+{
+  assert(tthis);
+
+  TYPED_LIST_ITERATE(SPECLIST_TYPE, *tthis, pitem)
+  {
+    free(pitem);
+  } LIST_ITERATE_END;
+  SPECLIST_FOO(_list_unlink_all(tthis));
+}
+#endif
+
+#ifdef SPECLIST_NO_COPY
+#undef SPECLIST_NO_COPY
+#else
+static inline void SPECLIST_FOO(_list_copy) (SPECLIST_LIST *dest, SPECLIST_LIST *src)
+{
+  assert(src);
+  assert(dest);
+
+  SPECLIST_FOO(_list_free(dest));
+  TYPED_LIST_ITERATE(SPECLIST_TYPE, *src, pitem)
+  {
+    SPECLIST_TYPE *nitem = malloc(sizeof(SPECLIST_TYPE));
+    *nitem = *pitem;
+    SPECLIST_FOO(_list_append(dest, nitem));
+  } LIST_ITERATE_END;
+}
+#endif
+
+#ifdef SPECLIST_NO_FIND
+#undef SPECLIST_NO_FIND
+#else
+static inline SPECLIST_TYPE *SPECLIST_FOO(_list_find) (SPECLIST_LIST *tthis, SPECLIST_TYPE *data)
+{
+  assert(tthis);
+
+  TYPED_LIST_ITERATE(SPECLIST_TYPE, *tthis, pitem)
+  {
+    if(pitem==data)
+      return pitem;
+  } LIST_ITERATE_END;
+  return NULL;
+}
+#endif
 
 static inline bool SPECLIST_FOO(_list_is_initialized) (SPECLIST_LIST * tthis)
 {

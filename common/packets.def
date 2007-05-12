@@ -559,6 +559,7 @@ PACKET_PLAYER_INFO=39; is-info,sc
   UINT32 bulbs_researched;
   UINT32 techs_researched;
   UINT8 researching;
+  UINT32 researching_cost; add-cap(exttechleakage)
 
   UINT16 future_tech;
   UINT8 tech_goal;
@@ -1346,4 +1347,6 @@ PACKET_EXTGAME_INFO=123;sc,is-info,handle-via-packet
   BOOL teamplacement;
   BOOL globalwarmingon;
   BOOL nuclearwinteron;
+  UINT8 maxallies; add-cap(exttechleakage)
+  UINT8 techleakagerate; add-cap(exttechleakage)
 end

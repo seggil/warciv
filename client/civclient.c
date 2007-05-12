@@ -60,9 +60,11 @@
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "messagewin_g.h"
+#include "multiselect.h"//*pepeto* for automatic processus
 #include "options.h"
 #include "packhand.h"
 #include "pages_g.h"
+#include "peptool.h"//*pepeto*
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
 #include "tilespec.h"
@@ -257,7 +259,7 @@ int main(int argc, char *argv[])
 		      "\t\t\tTry \"%s -- --help\" for more.\n"), argv[0]);
     exit(EXIT_SUCCESS);
    } else if (is_option("--version",argv[i])) {
-    fc_fprintf(stderr, "%s %s\n", freeciv_name_version(), client_string);
+    fc_fprintf(stderr, "%s %s "PEPCLIENT_VERSION"\n", freeciv_name_version(), client_string);
     exit(EXIT_SUCCESS);
    } else if ((option = get_option("--log",argv,&i,argc))) {
       logfile = mystrdup(option); /* never free()d */
@@ -444,6 +446,7 @@ void send_turn_done(void)
 
   attribute_flush();
 
+  automatic_processus_event(AUTO_PRESS_TURN_DONE,NULL);
   send_packet_player_turn_done(&aconnection);
 
   update_turn_done_button_state();
@@ -456,6 +459,13 @@ void send_goto_unit(struct unit *punit, struct tile *dest_tile)
 {
   dsend_packet_unit_goto(&aconnection, punit->id,
 			 dest_tile->x, dest_tile->y);
+}
+
+void send_goto_unit_and_calculate_moves_left(struct unit *punit, struct tile *dest_tile)//*pepeto*
+{
+  send_goto_unit(punit,dest_tile);
+  if((punit->virtual_moves_left-=calculate_move_cost(punit,dest_tile))<0)
+    punit->virtual_moves_left=-1;
 }
 
 /**************************************************************************
@@ -547,6 +557,15 @@ void set_client_state(enum client_states newstate)
       update_unit_focus();
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
+//*pepeto*
+      init_all_settings();
+      if(!client_is_observer()) {
+        if(reload_pepsettings)
+          load_all_settings();
+        if(game.turn == 0)
+          set_default_user_tech_goal();
+      }
+      init_menus();
     }
     else if (client_state == CLIENT_PRE_GAME_STATE) {
       popdown_all_city_dialogs();
@@ -564,7 +583,6 @@ void set_client_state(enum client_states newstate)
 	set_client_page(PAGE_START);
       }
     }
-    update_menus();
   }
   if (!aconnection.established && client_state == CLIENT_PRE_GAME_STATE) {
     gui_server_connect();
@@ -684,6 +702,7 @@ void real_timer_callback(void)
   seconds_to_turndone = game.timeout - (int) (curtime - gstime);
   if (seconds_to_turndone < 0)
     seconds_to_turndone = 0;
+  ap_timers_update();//*pepeto*
   update_timeout_label();
 }
 

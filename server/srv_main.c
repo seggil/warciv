@@ -200,6 +200,9 @@ void srv_init(void)
 
   srvarg.no_dns_lookup = FALSE;
 
+  srvarg.required_cap[0] = '\0';
+  srvarg.allow_multi_line_chat = FALSE;
+
   /* initialize teams */
   team_init();
 
@@ -210,7 +213,7 @@ void srv_init(void)
 
   /* init character encodings. */
   init_character_encodings(FC_DEFAULT_DATA_ENCODING, FALSE);
-
+  
   /* done */
   return;
 }
@@ -1607,6 +1610,9 @@ void srv_main(void)
   init_connections();
   adns_init();
   server_open_socket();
+  if(!require_command(NULL, srvarg.required_cap, FALSE)) {
+    exit(EXIT_FAILURE);
+  }
 
   /* load a saved game */
   if (srvarg.load_filename[0] != '\0') {
@@ -1624,14 +1630,14 @@ void srv_main(void)
   /* accept new players, wait for serverop to start..*/
   server_state = PRE_GAME_STATE;
 
-  /* load a script file */
-  if (srvarg.script_filename
-      && !read_init_script(NULL, srvarg.script_filename)) {
-    exit(EXIT_FAILURE);
-  }
-
   /* Run server loop */
   while (TRUE) {
+    /* load a script file */
+    if (srvarg.script_filename
+        && !read_init_script(NULL, srvarg.script_filename)) {
+      exit(EXIT_FAILURE);
+    }
+
     srv_loop();
 
     send_game_state(&game.game_connections, CLIENT_GAME_OVER_STATE);
@@ -1749,7 +1755,7 @@ main_start_players:
     sniff_packets();
 
     players_iterate(pplayer) {
-      if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control) {
+      if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control && pplayer->is_connected) {
 	flag = TRUE;
 	break;
       }
