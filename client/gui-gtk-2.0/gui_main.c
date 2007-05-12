@@ -72,7 +72,7 @@
 
 #include "freeciv.ico"
 
-#define WARCLIENT_VERSION "0.9.1 devel"
+#define WARCLIENT_VERSION "0.9.1"
 
 const char *client_string = "gui-gtk-2.0";
 
@@ -1802,4 +1802,3 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
-
