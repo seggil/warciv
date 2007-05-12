@@ -3356,7 +3356,7 @@ char **get_rulesets_list(void)
 }
 
 /**************************************************************************
-  Try do build a list of data subdirectories which could be a ruleset.
+  Try to find a description for the ruleset.
 **************************************************************************/
 char *get_ruleset_description(const char *ruleset)
 {
@@ -3371,7 +3371,6 @@ char *get_ruleset_description(const char *ruleset)
                                            "description.description"))) {
       sz_strlcpy(description, desc);
       section_file_free(&file);
-printf("%s\n",description);
       return description;
     }
     section_file_free(&file);
