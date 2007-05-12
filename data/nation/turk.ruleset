@@ -1,0 +1,37 @@
+[nation_turk]
+
+name=_("Turk")
+plural=_("?plural:Turks")
+class=_("Modern")
+legend=_("Modern Turkey is the successor state of the Ottoman Empire, which \
+collapsed and was dismembered by the victors in World War I after backing \
+the Central Powers.  The country was subsequently reformed and secularized \
+by Kemal Mustapha, the hero of the defense of Gallipoli.")
+leader="Kemal Atatürk", "Süleyman", "Osman", "Murat",
+       "Selim", "Mehmet"
+leader_sex="Male", "Male", "Male", "Male",
+           "Male", "Male"
+flag="f.turkey"
+flag_alt = "-"
+city_style = "European"
+
+ruler_titles = { "government",      "male_title",      "female_title"
+                 "Monarchy",        _("Sultan"),       _("Sultan")
+               }
+
+init_techs=""
+init_buildings=""
+
+tech_goals = "Monarchy", "Philosophy", "Mathematics", "Chivalry",
+             "Theology", "Railroad"
+wonder="Sun Tzu's War Academy"
+government="Republic"
+civilwar_nations = "slovenian", "czech"
+
+cities =
+ "Ankara", "Istanbul", "Izmir", "Adana", "Antalya",
+ "Bursa", "Edirne", "Erzurum", "Eskisehir", "Trabzon",
+ "Konya", "Ordu", "Iskenderun", "Aydin", "Denizli",
+ "Kutahya", "Nevsehir", "Sivas", "Adiyaman", "Kirsehir",
+ "Elazig", "Malatya", "Tunceli", "Balikesli", "Yozgat",
+ "Diyarbakir", "Giresun", "Kocaeli", "Samsun", "Kirklareli"

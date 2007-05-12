@@ -51,6 +51,7 @@
 #include "timing.h"
 #include "version.h"
 
+#include "civserver.h"
 #include "console.h"
 #include "srv_main.h"
 
@@ -63,7 +64,7 @@ static char  metaname[MAX_LEN_ADDR];
 static int   metaport;
 static char *metaserver_path;
 
-static char meta_patches[256] = "Warserver - PepServer 0.9.1";
+static char meta_patches[256] = PEPSERVER_VERSION;
 static char meta_topic[256] = "NEW GAME";
 static char meta_message[256] = "NEW GAME";
 
