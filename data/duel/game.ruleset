@@ -125,6 +125,6 @@ killstack               = 1
 [description]
 description = _("\
 A duel ruleset by javier:\n\
-  * you begin n monarchy\n\
+  * you begin under monarchy\n\
   * every tile give a shield more\n\
   * every road give +1 trade on the tile")
