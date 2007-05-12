@@ -6082,7 +6082,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
 **************************************************************************/
 static void show_rulesets(struct connection *caller)
 {
-  char **rulesets = get_rulesets_list(), *description;
+  char **rulesets = get_rulesets_list(), *description, *p;
   int i;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of rulesets available:"));
@@ -6090,9 +6090,19 @@ static void show_rulesets(struct connection *caller)
 
   for (i = 0; i < MAX_NUM_RULESETS && rulesets[i]; i++) {
     description = get_ruleset_description(rulesets[i]);
-    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", i + 1, rulesets[i]);
-    if (description[0] != '\0') {
-      cmd_reply(CMD_LIST, caller, C_COMMENT, "  %s", description);
+    if (description && (p = strchr(description, '\n'))) {
+      *p++ = '\0';
+    } else {
+      p = NULL;
+    }
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s%s%s", i + 1, rulesets[i],
+              description ? ": " : "", description ? description : "");
+    for (description = p; description; description = p) {
+      if ((p = strchr(description, '\n'))) {
+        *p++ = '\0';
+      }
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "%*s%s", 
+                (int)strlen(rulesets[i]) + 5, "", description);
     }
     free(rulesets[i]);
   }

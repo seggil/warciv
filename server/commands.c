@@ -186,11 +186,13 @@ const struct command commands[] = {
    ECHO_PLAYERS
   },
   {"rulesetdir", ALLOW_CTRL, ALLOW_BASIC,
-   N_("rulesetdir <directory>"),
+   N_("rulesetdir <directory>\n"
+      "rulesetdir <ruleset_id>"),
    N_("Choose new ruleset directory or modpack."),
-   N_("Choose new ruleset directory or modpack. Calling this\n "
-      "without any arguments will show you the currently selected "
-      "ruleset."),
+   N_("Choose new ruleset directory or modpack. Calling this\n"
+      "without any arguments will show you the currently selected\n"
+      "ruleset. Use /list rulesets to get the complete list of\n"
+      "available rulesets."),
    ECHO_ALL
   },
   {"metamessage", ALLOW_BASIC, ALLOW_BASIC,

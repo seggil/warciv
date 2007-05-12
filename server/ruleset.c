@@ -3360,18 +3360,22 @@ char **get_rulesets_list(void)
 **************************************************************************/
 char *get_ruleset_description(const char *ruleset)
 {
-  static char description[1024], filename[256], *pfilename;
+  static char description[1024], filename[256], *pfilename, *desc;
   struct section_file file;
 
-  description[0] = '\0';
   my_snprintf(filename, sizeof(filename), "%s/game.ruleset", ruleset);
   
   if ((pfilename = datafilename(filename))
       && section_file_load_nodup(&file, pfilename)) {
-    sz_strlcpy(description, secfile_lookup_str_default(&file, "",
-               "description.description"));
+    if ((desc = secfile_lookup_str_default(&file, NULL,
+                                           "description.description"))) {
+      sz_strlcpy(description, desc);
+      section_file_free(&file);
+printf("%s\n",description);
+      return description;
+    }
     section_file_free(&file);
   }
 
-  return description;
+  return NULL;
 }
