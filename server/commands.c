@@ -64,11 +64,12 @@ const struct command commands[] = {
    "list teams\n"
    "list ignore\n"
    "list maps\n"
+   "list scenario\n"
    "list rulesets",
    N_("Show a list of various things."),
    N_("Show a list of players, list of connections to the server, the "
       "action list, the teams and the players in them, your ignore "
-      "list, all maps or all rulesets on the server. "
+      "list, all maps, scenarios or rulesets on the server. "
       "The argument may be abbreviated, and defaults to 'players' if absent."),
    ECHO_NONE
   },
@@ -485,8 +486,17 @@ const struct command commands[] = {
    N_("unloadmap\n"
       "unloadmap"),
    N_("Unload a filemap."),
-   N_("Unload a map, that was loaded from a file (with /loadmap)."
+   N_("Unload a map, that was loaded from a file (with /loadmap or /loadscenarion)."
       "Use it if you want to play without a map after you have loaded a mapfile.\n"),
+   ECHO_ALL
+  },
+    {"loadscenario",      ALLOW_CTRL, ALLOW_CTRL,
+   /* TRANS: translate text between <> only */
+   N_("loadscenario\n"
+      "loadscenario <scenariofile-name>"),
+   N_("Load scenario from file."),
+   N_("Load a scenario from <scenariofile-name>. <scenariofile-name> "
+      "can be the name of the mapfile or the number in the list of scenarios."),
    ECHO_ALL
   },
   {"read",	ALLOW_HACK, ALLOW_HACK,

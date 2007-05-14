@@ -3069,7 +3069,7 @@ void game_load(struct section_file *file)
   }
 
   /* we require at least version 1.9.0 */
-  if (10900 > game.version) {
+  if (REQUIERED_GAME_VERSION > game.version) {
     freelog(LOG_FATAL,
 	    _("Savegame too old, at least version 1.9.0 required."));
     exit(EXIT_FAILURE);
@@ -3983,5 +3983,3 @@ void game_loadmap(struct section_file *file)
   }
   return;
 }
-
-

@@ -76,6 +76,7 @@ static void show_connections(struct connection *caller);
 static void show_actionlist(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
 static void show_rulesets(struct connection *caller);
+static bool show_scenarios(struct connection *caller);
 static bool set_ai_level(struct connection *caller, char *name, int level,
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
@@ -108,6 +109,7 @@ bool saveactionlist_command(struct connection *caller,
                             char *filename, bool check);
 bool clearactionlist_command(struct connection *caller,
                              char *filename, bool check);
+static bool loadscenario_command(struct connection *caller, char *str, bool check);
 
 /* Team names contributed by book, Pendragon, hima,
    Not Logged In, Zachron and many more from the
@@ -4665,6 +4667,146 @@ static bool showmaplist_command(struct connection *caller)
     free_datafile_list(files);
     return TRUE;
 }
+
+/**************************************************************************
+  build the list of the scenarios
+**************************************************************************/
+static struct datafile_list *get_scenario_list(void)
+{
+  struct datafile_list *files = datafilelist_infix("scenario", ".sav", TRUE);
+  struct section_file file;
+
+  datafile_list_iterate(*files, pfile) {
+    if (section_file_load_nodup(&file, pfile->fullname)) {
+      if (secfile_lookup_int_default(&file, 0, "game.version")
+          < REQUIERED_GAME_VERSION) {
+        datafile_list_unlink(files, pfile);
+        free(pfile);
+      }
+      section_file_free(&file);
+    } else {
+      datafile_list_unlink(files, pfile);
+      free(pfile);
+    }
+  } datafile_list_iterate_end;
+
+  return files;
+}
+
+/**************************************************************************
+  used to load scenarios in pregamestate
+**************************************************************************/
+static bool loadscenario_command(struct connection *caller, char *str, bool check)
+{
+    struct section_file secfile;
+    char buf[512], name[256];
+    const char *p;
+    bool isnumber = TRUE;
+    if (server_state != PRE_GAME_STATE)
+    {
+        cmd_reply(CMD_LOADSCERARIO, caller, C_FAIL,
+                  _("Can't load a new scenario while a game is running."));
+        return FALSE;
+    }
+    if (map.is_fixed)
+    { /* FIXME: Perhaps there is a better test? */
+        cmd_reply(CMD_LOADSCERARIO, caller, C_FAIL,
+                  _("Can't load a new scenario when one is already loaded."));
+        return FALSE;
+    }
+
+    if (!str || str[0] == '\0')
+    {
+        cmd_reply(CMD_LOADSCERARIO, caller, C_SYNTAX,
+                  _("Usage: loadscenario <filename> or loadscenario <number>"));
+        return FALSE;
+    }
+
+    sz_strlcpy(buf, str);
+    remove_leading_trailing_spaces(buf);
+    for (p = buf; *p; p++)
+    {
+        if (!my_isdigit(*p))
+        {
+            isnumber = FALSE;
+            break;
+        }
+    }
+    if (isnumber)
+    {
+        int mapnum;
+        struct datafile_list *files;
+        bool map_found = FALSE;
+        int counter = 0;
+
+        sscanf(buf, "%d", &mapnum);
+        files = get_scenario_list();
+        datafile_list_iterate(*files, pfile)
+        {
+            counter++;
+            if (counter == mapnum)
+            {
+                sz_strlcpy(buf, pfile->fullname);
+                sz_strlcpy(name, pfile->name);
+                map_found = TRUE;
+                break;
+            }
+        }
+        datafile_list_iterate_end;
+        free_datafile_list(files);
+        if (mapnum > counter && !map_found)
+        {
+            cmd_reply(CMD_LOADMAP, caller, C_FAIL,
+                      _("There are only %d scenarios in the scenario list."),
+                      counter);
+            return FALSE;
+        }
+        if (!map_found)
+        {
+            cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("There is no scenario %d."),
+                      mapnum);
+            return FALSE;
+        }
+    }
+    else
+    {
+        char datapath[512];
+        const char *fullname;
+
+        if (caller && caller->access_level != ALLOW_HACK
+            && (strchr(buf, '/') || strchr(buf, '.'))) {
+          cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
+                    _("You are not allowed to use this command."));
+          return FALSE;
+        }
+
+        my_snprintf(datapath, sizeof(datapath), "scenario/%s.sav", buf);
+        sz_strlcpy(name, buf);
+        fullname = datafilename(datapath);
+        if (fullname)
+        {
+            sz_strlcpy(buf, fullname);
+        }
+    }
+    /* attempt to parse the file */
+    if (!section_file_load_nodup(&secfile, buf))
+    {
+        cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Couldn't load scenario: %s"),
+                  buf);
+        return FALSE;
+    }
+    section_file_free(&secfile);
+
+    if (check)
+    {
+        return TRUE;
+    }
+
+    load_command(NULL, buf, FALSE);
+
+    return TRUE;
+}
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -4950,6 +5092,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
         return loadmap_command(caller, arg, check);
     case CMD_UNLOADMAP:
         return unloadmap_command(caller, check);
+    case CMD_LOADSCERARIO:
+        return loadscenario_command(caller, arg, check);
     case CMD_METAPATCHES:
         return metapatches_command(caller, arg, check);
     case CMD_METATOPIC:
@@ -6111,16 +6255,54 @@ static void show_rulesets(struct connection *caller)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static bool show_scenarios(struct connection *caller)
+{
+    struct datafile_list *files;
+    int i;
+    files = get_scenario_list();
+
+    i = files ? datafile_list_size(files) : 0;
+    if (i <= 0)
+    {
+        cmd_reply(CMD_LIST, caller, C_FAIL,
+                  _("There are no scernarios in the scernario directory."));
+        free_datafile_list(files);
+        return FALSE;
+    }
+
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+    cmd_reply(CMD_LIST, caller, C_COMMENT,
+              _("You can load the following %d scernario%s with the command"),
+              i, i > 1 ? "s" : "");
+              /* TRANS: do not translate "/loadscenario" */
+    cmd_reply(CMD_LIST, caller, C_COMMENT, _("/loadscenario <scernarionumber> "
+                                      "or /loadscenario <scernariofile-name>"));
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+    i = 0;
+    datafile_list_iterate(*files, pfile)
+    {
+        i++;
+
+        cmd_reply(CMD_LIST, caller, C_COMMENT, _("%d: %s"), i, pfile->name);
+    } datafile_list_iterate_end;
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+    free_datafile_list(files);
+    return TRUE;
+}
+
+/**************************************************************************
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_RULESETS,
-                 LIST_ARG_NUM /* Must be last */
+                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_SCENARIOS,
+                 LIST_RULESETS, LIST_ARG_NUM /* Must be last */
                };
 static const char *const list_args[] =
     {
         "players", "connections", "actionlist", "teams", "ignore",
-        "maps", "rulesets", NULL
+        "maps", "scernarios", "rulesets", NULL
     };
 static const char *listarg_accessor(int i)
 {
@@ -6165,8 +6347,9 @@ static bool show_list(struct connection *caller, char *arg)
         show_ignore(caller);
         return TRUE;
     case LIST_MAPS:
-        showmaplist_command(caller);
-        return TRUE;
+        return showmaplist_command(caller);
+    case LIST_SCENARIOS:
+        return show_scenarios(caller);
     case LIST_RULESETS:
         show_rulesets(caller);
         return TRUE;
