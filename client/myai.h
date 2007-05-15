@@ -13,9 +13,6 @@
 
 #include "multiselect.h"
 
-//#define WATER_DIST_MAX	12
-//#define WATER_DIST_MIN	3
-//#define MAX_TRADE_POINTS (2*NUM_TRADEROUTES)
 #define MAX_ESTIMATED_TURNS	32
 
 struct my_ai_trade_city;

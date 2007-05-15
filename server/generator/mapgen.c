@@ -3188,9 +3188,11 @@ bool can_place_island_on_map(struct gen8_map *pmap, int x, int y,
       if ((island->tiles[xc][yc].type > TYPE_UNASSIGNED_SEA
            && pmap->tiles[dx][dy].type > TYPE_UNASSIGNED_SEA)
           || (pmap->tiles[dx][dy].type == TYPE_UNASSIGNED_SEA
-              && island->tiles[xc][yc].type >= TYPE_LAND)
+              && island->tiles[xc][yc].type >=
+                 (pmap->tiles[dx][dy].spec > 0 ? TYPE_ASSIGNED_SEA: TYPE_LAND))
           || (island->tiles[xc][yc].type == TYPE_UNASSIGNED_SEA
-              && pmap->tiles[dx][dy].type >= TYPE_LAND)
+              && pmap->tiles[dx][dy].type >=
+                (island->tiles[xc][yc].spec > 0 ? TYPE_ASSIGNED_SEA: TYPE_LAND))
           || (pmap->tiles[dx][dy].spec && island->tiles[xc][yc].spec
               && !(pmap->tiles[dx][dy].spec == -1
                    && island->tiles[xc][yc].spec == -1))) {
