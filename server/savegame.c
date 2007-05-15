@@ -3054,6 +3054,9 @@ void game_load(struct section_file *file)
   int technology_order_size = 0;
   const char* name;
 
+  map.generator = 0;
+  map.is_fixed = TRUE;
+
   game.version = secfile_lookup_int_default(file, 0, "game.version");
   tmp_server_state = (enum server_states)
     secfile_lookup_int_default(file, RUN_GAME_STATE, "game.server_state");
