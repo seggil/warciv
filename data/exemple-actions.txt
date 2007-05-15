@@ -1,0 +1,32 @@
+version=1
+
+# comments are ignored (as are blank lines)
+# rules are processed from top to bottom
+# bans have priority
+
+# ban by address
+# example : ban address=1.2.3.4
+
+# ban by hostname
+# example : ban hostname=www.hostname.com
+
+# same as previous
+# example : ban www.hostname.com
+
+# ban a domain
+# example : ban *.evil.org
+
+# ban by username
+# example : ban username=l33td00d
+
+# give admin access by address
+# example : admin address=1.2.3.4
+
+# give hack access by hostname
+# example : hack hostname=foo.bar.com
+
+# ctrl access
+# example : ctrl address=1.2.3.4
+
+# all others get 'basic' access
+# example : basic *

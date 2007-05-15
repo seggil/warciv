@@ -5,12 +5,13 @@ pkgdatadir = $(datadir)/@PACKAGE@/nowonder+1.2
 
 pkgdata_DATA =          \
 	buildings.ruleset \
-	cities.ruleset	\
-	game.ruleset	\
+	cities.ruleset \
+	game.ruleset \
 	governments.ruleset \
-	nations.ruleset	\
-	techs.ruleset	\
-	terrain.ruleset	\
-	units.ruleset
+	nations.ruleset \
+	techs.ruleset \
+	terrain.ruleset \
+	units.ruleset \
+	version.txt
 
 EXTRA_DIST = $(pkgdata_DATA)

@@ -92,3 +92,6 @@ total_factor = 100
 ;destroyed along with the defender. This is the freeciv default.
 ;If this options is set to 0, only the defender unit is destroyed.
 killstack               = 1
+
+[description]
+description = _("History style")

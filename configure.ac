@@ -661,12 +661,16 @@ AC_CONFIG_FILES([Makefile
 	  data/default/Makefile
 	  data/civ1/Makefile
 	  data/civ2/Makefile
-	  data/warruleset1.2/Makefile
+	  data/warruleset-1.2/Makefile
+	  data/warruleset-1.3/Makefile
 	  data/nowonder+1.2/Makefile
+	  data/tournament/Makefile
 	  data/duel/Makefile
+          data/maps/Makefile
 	  data/scenario/Makefile
 	  data/nation/Makefile
 	  data/history/Makefile
+	  data/stdsounds/Makefile
 	  utility/Makefile
 	  utility/ftwl/Makefile
 	  common/Makefile
