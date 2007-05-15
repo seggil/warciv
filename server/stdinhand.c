@@ -4698,6 +4698,7 @@ static struct datafile_list *get_scenario_list(void)
 **************************************************************************/
 static bool loadscenario_command(struct connection *caller, char *str, bool check)
 {
+    struct timer *loadtimer, *uloadtimer;
     struct section_file secfile;
     char buf[512], name[256];
     const char *p;
@@ -4795,14 +4796,28 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
                   buf);
         return FALSE;
     }
-    section_file_free(&secfile);
 
     if (check)
     {
+        section_file_free(&secfile);
         return TRUE;
     }
 
-    load_command(NULL, buf, FALSE);
+    /* we found it, free all structures */
+    int nplayers = game.nplayers;
+    server_game_free(FALSE);
+    game_init(FALSE);
+    loadtimer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
+    uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
+    sz_strlcpy(srvarg.load_filename, buf);
+    game_load(&secfile);
+    section_file_check_unused(&secfile, buf);
+    section_file_free(&secfile);
+    freelog(LOG_VERBOSE, "Load time: %g seconds (%g apparent)",
+            read_timer_seconds_free(loadtimer),
+            read_timer_seconds_free(uloadtimer));
+    sanity_check();
+    game.nplayers = nplayers;
 
     return TRUE;
 }
