@@ -4819,6 +4819,8 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
     sanity_check();
     game.nplayers = nplayers;
 
+    notify_conn(&game.est_connections, _("Server: Scenario %s loaded"), name);
+
     return TRUE;
 }
 

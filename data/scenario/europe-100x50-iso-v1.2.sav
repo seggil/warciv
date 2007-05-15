@@ -62,7 +62,7 @@ randseed=0
 options="1.7 startoptions spacerace2 rulesets diplchance_percent startpos riversoverlay"
 
 [map]
-topology_id=5
+topology_id=4
 width=100
 height=100
 seed=0
