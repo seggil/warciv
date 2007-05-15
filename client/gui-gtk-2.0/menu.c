@@ -353,6 +353,7 @@ enum MenuID {
   MENU_PEPCLIENT_MY_AI_CLEAR_TRADE_CITY,
   MENU_PEPCLIENT_MY_AI_SHOW_TRADE_CITIES,
   MENU_PEPCLIENT_MY_AI_SHOW_FREE_SLOTS,
+  MENU_PEPCLIENT_MY_AI_ESTIMATE_TRADE,
   MENU_PEPCLIENT_MY_AI_TRADE_RECALCULATE,
   MENU_PEPCLIENT_MY_AI_TRADE_WITH,
   MENU_PEPCLIENT_MY_AI_CARAVAN,
@@ -1609,6 +1610,9 @@ static void pepclient_menu_callback(gpointer callback_data,
     case MENU_PEPCLIENT_MY_AI_SHOW_FREE_SLOTS:
       show_free_slots_in_trade_plan();
       break;
+    case MENU_PEPCLIENT_MY_AI_ESTIMATE_TRADE:
+      calculate_trade_estimation();
+      break;
     case MENU_PEPCLIENT_MY_AI_TRADE_RECALCULATE:
       recalculate_trade_plan();
       break;
@@ -2560,6 +2564,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	pepclient_menu_callback,			MENU_PEPCLIENT_MY_AI_SHOW_TRADE_CITIES	},
   { "/" N_("PepClient") "/" N_("Show the trade route free slots"),			NULL,
 	pepclient_menu_callback,			MENU_PEPCLIENT_MY_AI_SHOW_FREE_SLOTS	},
+  { "/" N_("PepClient") "/" N_("Show trade estimation"),			NULL,
+	pepclient_menu_callback,			MENU_PEPCLIENT_MY_AI_ESTIMATE_TRADE	},
   { "/" N_("PepClient") "/" N_("Recalculate trade plan"),			NULL,
 	pepclient_menu_callback,			MENU_PEPCLIENT_MY_AI_TRADE_RECALCULATE	},
   { "/" N_("PepClient") "/" N_("Set caravan destination"),			"h",
@@ -3359,6 +3365,8 @@ void update_menus(void)
     menus_set_sensitive("<main>/PepClient/Clear city list for trade plan", cond);
     menus_set_sensitive("<main>/PepClient/Show cities in trade plan", cond);
     menus_set_sensitive("<main>/PepClient/Show the trade route free slots", cond);
+    menus_set_sensitive("<main>/PepClient/Show trade estimation", (my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE))
+                                              || (my_ai_trade_manual_trade_route_enable && trade_route_list_size(estimate_non_ai_trade_route())));
     menus_set_sensitive("<main>/PepClient/Recalculate trade plan", cond);
     menus_set_sensitive("<main>/PepClient/Execute all automatic orders", my_ai_enable && my_ai_count_activity(MY_AI_LAST));
     menus_set_sensitive("<main>/PepClient/Execute all trade route orders", my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE));

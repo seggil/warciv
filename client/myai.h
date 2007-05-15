@@ -13,9 +13,10 @@
 
 #include "multiselect.h"
 
-#define WATER_DIST_MAX	12
-#define WATER_DIST_MIN	3
-#define MAX_TRADE_POINTS (2*NUM_TRADEROUTES)
+//#define WATER_DIST_MAX	12
+//#define WATER_DIST_MIN	3
+//#define MAX_TRADE_POINTS (2*NUM_TRADEROUTES)
+#define MAX_ESTIMATED_TURNS	32
 
 struct my_ai_trade_city;
 
@@ -77,6 +78,7 @@ void recalculate_trade_plan(void);
 void clear_my_ai_trade_cities(void);
 void show_free_slots_in_trade_plan(void);
 void recalculate_trade_plan(void);
+void calculate_trade_estimation(void);
 
 /* help wonder functions */
 void my_ai_help_wonder_alloc(struct unit *punit,struct help_wonder *phw);

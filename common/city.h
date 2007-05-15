@@ -338,9 +338,9 @@ enum trade_route_type//*pepeto
 struct trade_route//*pepeto*
 {
 	struct unit *punit;
-	struct city *pc1,*pc2;
-	struct trade_route *ptr0,*ptr1,*ptr2;
-	int move_req,trade;
+	struct city *pc1, *pc2;
+	struct trade_route *ptr0, *ptr1, *ptr2;
+	int moves_req, turns_req, trade;
 	enum trade_route_type tr_type;
 	bool planned;
 };
