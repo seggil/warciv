@@ -6302,7 +6302,7 @@ enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
 static const char *const list_args[] =
     {
         "players", "connections", "actionlist", "teams", "ignore",
-        "maps", "scernarios", "rulesets", NULL
+        "maps", "scenarios", "rulesets", NULL
     };
 static const char *listarg_accessor(int i)
 {

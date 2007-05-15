@@ -486,7 +486,7 @@ const struct command commands[] = {
    N_("unloadmap\n"
       "unloadmap"),
    N_("Unload a filemap."),
-   N_("Unload a map, that was loaded from a file (with /loadmap or /loadscenarion)."
+   N_("Unload a map, that was loaded from a file (with /loadmap or /loadscenario)."
       "Use it if you want to play without a map after you have loaded a mapfile.\n"),
    ECHO_ALL
   },
