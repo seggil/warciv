@@ -67,6 +67,8 @@ static Tech_Type_id pick_random_tech(struct player *plr);
 static enum plr_info_level player_info_level(struct player *plr,
 					     struct player *receiver);
 
+bool mute = FALSE;
+                                             
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1365,6 +1367,10 @@ void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
 		     enum event_type event, const char *format,
 		     va_list vargs)
 {
+  if (mute) {
+    return;
+  }
+
   struct packet_chat_msg genmsg;
   
   my_vsnprintf(genmsg.message, sizeof(genmsg.message), format, vargs);

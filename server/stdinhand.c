@@ -939,9 +939,12 @@ static bool reset_command(struct connection *caller, bool free_map, bool check)
   server_game_free(FALSE);
   game_init(FALSE);
   map_can_be_free = TRUE;
+  mute = TRUE;
   if (srvarg.script_filename && !read_init_script(NULL, srvarg.script_filename)) {
     freelog(LOG_ERROR, "Cannot load the script file '%s'", srvarg.script_filename);
   }
+  mute = FALSE;
+  notify_conn(NULL, _("Game: Settings re-initialized."));
   return TRUE;
 }
 /**************************************************************************
@@ -4591,6 +4594,8 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
     notify_conn(&game.est_connections, _("Server: %s loaded: %s"),
                 name, comment);
 
+    reset_command(NULL, FALSE, FALSE);
+
     return TRUE;
 }
 /**************************************************************************
@@ -4862,6 +4867,8 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
     game.nplayers = nplayers;
 
     notify_conn(&game.est_connections, _("Server: Scenario %s loaded"), name);
+
+    reset_command(NULL, FALSE, FALSE);
 
     return TRUE;
 }
