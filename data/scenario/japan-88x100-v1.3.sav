@@ -4,7 +4,6 @@
 version=20006
 server_state=0
 metastring="Scenario: Japan 88x100 v1.3"
-metaserver="meta.freeciv.org"
 gold=50
 tech=3
 skill_level=5

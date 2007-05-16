@@ -2,7 +2,7 @@
 [game]
 version=20006
 server_state=0
-metaserver="meta.freeciv.org"
+metastring="Scenario: Europe v1.2"
 gold=50
 tech=0
 skill_level=5

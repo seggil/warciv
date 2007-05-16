@@ -4669,6 +4669,31 @@ static bool showmaplist_command(struct connection *caller)
 }
 
 /**************************************************************************
+  test if this file a scenario
+**************************************************************************/
+static bool is_scenario(struct section_file *pfile, char *buf, size_t buf_len)
+{
+  if (buf) {
+    buf[0] = '\0';
+  }
+
+  if (secfile_lookup_int_default(pfile, 0, "game.version") < REQUIERED_GAME_VERSION) {
+    if (buf) {
+      my_snprintf(buf, buf_len, _("too old version"));
+    }
+    return FALSE;
+  }
+  if (secfile_lookup_bool_default(pfile, FALSE, "game.save_players")) {
+    if (buf) {
+      my_snprintf(buf, buf_len, _("this is a save game"));
+    }
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**************************************************************************
   build the list of the scenarios
 **************************************************************************/
 static struct datafile_list *get_scenario_list(void)
@@ -4678,8 +4703,7 @@ static struct datafile_list *get_scenario_list(void)
 
   datafile_list_iterate(*files, pfile) {
     if (section_file_load_nodup(&file, pfile->fullname)) {
-      if (secfile_lookup_int_default(&file, 0, "game.version")
-          < REQUIERED_GAME_VERSION) {
+      if (!is_scenario(&file, NULL, 0)) {
         datafile_list_unlink(files, pfile);
         free(pfile);
       }
@@ -4700,7 +4724,7 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
 {
     struct timer *loadtimer, *uloadtimer;
     struct section_file secfile;
-    char buf[512], name[256];
+    char buf[512], name[256], message[256];
     const char *p;
     bool isnumber = TRUE;
     if (server_state != PRE_GAME_STATE)
@@ -4792,8 +4816,15 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
     /* attempt to parse the file */
     if (!section_file_load_nodup(&secfile, buf))
     {
-        cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Couldn't load scenario: %s"),
+        cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Couldn't load scenario: %s."),
                   buf);
+        return FALSE;
+    }
+    if (!is_scenario(&secfile, message, sizeof(message)))
+    {
+        cmd_reply(CMD_LOADMAP, caller, C_FAIL, _("Cannot load %s: %s."),
+                  buf, message);
+        section_file_free(&secfile);
         return FALSE;
     }
 
@@ -4803,7 +4834,7 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
         return TRUE;
     }
 
-    /* we found it, free all structures */
+    /* we found it, free some structures */
     int nplayers = game.nplayers;
     server_game_free(FALSE);
     game_init(FALSE);
@@ -4811,12 +4842,24 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
     uloadtimer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
     sz_strlcpy(srvarg.load_filename, buf);
     game_load(&secfile);
+    if ((p = secfile_lookup_str_default(&secfile, NULL, "game.metastring")))
+    {
+printf("%s\n", p);
+        set_meta_message_string(p);
+        if (is_metaserver_open())
+        {
+            send_server_info_to_metaserver(META_INFO);
+        }
+    }
     section_file_check_unused(&secfile, buf);
     section_file_free(&secfile);
     freelog(LOG_VERBOSE, "Load time: %g seconds (%g apparent)",
             read_timer_seconds_free(loadtimer),
             read_timer_seconds_free(uloadtimer));
     sanity_check();
+
+    /* Restore some datas whiwhi could be wrong */
+    game.is_new_game = TRUE;
     game.nplayers = nplayers;
 
     notify_conn(&game.est_connections, _("Server: Scenario %s loaded"), name);

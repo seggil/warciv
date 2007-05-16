@@ -1686,9 +1686,12 @@ static void srv_loop(void)
 
   (void) send_server_info_to_metaserver(META_INFO);
 
-  if (game.is_new_game && !game.ruleset_loaded) {
+  /* reload ruleset, could be changed, after loading a map or a scenario */
+  if (game.is_new_game) {
+    if (game.ruleset_loaded) {
+      ruleset_cache_free();
+    }
     load_rulesets();
-    /* otherwise rulesets were loaded when savegame was loaded */
   }
 
   nations_available

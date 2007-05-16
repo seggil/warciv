@@ -2,8 +2,7 @@
 [game]
 version=11105
 server_state=2
-metastring=""
-metaserver=":0"
+metastring="Scenario: World map v1.2"
 gold=50
 tech=3
 skill_level=3

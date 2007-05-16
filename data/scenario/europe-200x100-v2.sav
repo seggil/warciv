@@ -3,7 +3,6 @@
 version=11105
 server_state=0
 metastring="Scenario v2: Europe v1.1"
-metaserver="meta.freeciv.org"
 gold=50
 tech=3
 researchcost=20
