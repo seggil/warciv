@@ -4844,7 +4844,6 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
     game_load(&secfile);
     if ((p = secfile_lookup_str_default(&secfile, NULL, "game.metastring")))
     {
-printf("%s\n", p);
         set_meta_message_string(p);
         if (is_metaserver_open())
         {
@@ -4858,7 +4857,7 @@ printf("%s\n", p);
             read_timer_seconds_free(uloadtimer));
     sanity_check();
 
-    /* Restore some datas whiwhi could be wrong */
+    /* Restore some datas which could be wrong */
     game.is_new_game = TRUE;
     game.nplayers = nplayers;
 
