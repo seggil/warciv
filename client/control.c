@@ -55,7 +55,6 @@ int default_diplomat_action;
 
 //*pepeto*
 static int *actived_units = NULL, actived_units_num = 0;
-static bool force_patrol;
 bool focus_turn=TRUE;
 static struct unit *plast=NULL;
 
@@ -1824,29 +1823,29 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       return;
   }
   else if(ptile && hover_state==HOVER_AIRLIFT_SOURCE) {
-      add_city_to_auto_airlift_queue(ptile,FALSE);       
-      hover_state = HOVER_NONE;
-	  update_hover_cursor();
-      return;
+    add_city_to_auto_airlift_queue(ptile,FALSE);       
+    hover_state = HOVER_NONE;
+      update_hover_cursor();
+    return;
   }else if(ptile && hover_state==HOVER_AIRLIFT_DEST) {
-	  if(pcity) {
-		  append_output_window (_("Warclient: Airlifting units"));
-		    do_airlift(ptile);
- 	  } else {
-		  append_output_window (_("Warclient: You need to select a tile with a city"));
-		}
-		need_city_for = -1;
-      hover_state = HOVER_NONE;
-	   update_hover_cursor();
-      return;
+    if(pcity) {
+      append_output_window (_("Warclient: Airlifting units"));
+      do_airlift(ptile);
+    } else {
+      append_output_window (_("Warclient: You need to select a tile with a city"));
+    }
+    need_city_for = -1;
+    hover_state = HOVER_NONE;
+    update_hover_cursor();
+    return;
   }else if(ptile && hover_state==HOVER_MYPATROL) {
-			  multi_select_iterate(TRUE,punit)
-			  {
-				 	my_ai_patrol_alloc(punit,ptile,force_patrol);
-			  } multi_select_iterate_end;
-       hover_state = HOVER_NONE;
-	  update_hover_cursor();
-       return;
+    multi_select_iterate(TRUE,punit)
+    {
+      my_ai_patrol_alloc(punit,ptile);
+    } multi_select_iterate_end;
+    hover_state = HOVER_NONE;
+    update_hover_cursor();
+    return;
   }else if(ptile && hover_state==HOVER_DELAYED_GOTO) {
        if(need_tile_for >= 0 && need_tile_for < DELAYED_GOTO_NUM) {
          request_execute_delayed_goto(ptile, need_tile_for);
@@ -2919,6 +2918,16 @@ void key_unit_delayed_airlift(void)
 /**************************************************************************
 ... *pepeto*
 **************************************************************************/
+void key_unit_air_patrol(void)
+{
+  multi_select_iterate(FALSE, punit) {
+    my_ai_patrol_alloc(punit, punit->tile);
+  } multi_select_iterate_end;
+}
+
+/**************************************************************************
+... *pepeto*
+**************************************************************************/
 void key_toggle_spread_airport(void)
 {
 	spread_airport_cities ^= 1;
@@ -2935,13 +2944,12 @@ void key_toggle_spread_ally(void)
 /**************************************************************************
 ... *pepeto* my_ai hover
 **************************************************************************/
-void key_airplane_patrol(bool force)
+void key_airplane_patrol(void)
 {
-	if(!punit_focus)
-		return;
-	force_patrol=force;
-	set_hover_state(punit_focus,HOVER_MYPATROL,ACTIVITY_LAST);
-	update_unit_info_label(punit_focus);
+  if(!punit_focus)
+    return;
+  set_hover_state(punit_focus,HOVER_MYPATROL,ACTIVITY_LAST);
+  update_unit_info_label(punit_focus);
 }
 
 void key_my_ai_trade(void)

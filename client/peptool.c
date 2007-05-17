@@ -824,7 +824,6 @@ void load_all_settings(void)
 					struct unit *cunit=fc_malloc(sizeof(struct unit));
 					*cunit=*punit;
 					cunit->my_ai.data=(void *)ptile;
-					cunit->my_ai.manalloc=secfile_lookup_bool_default(&sf,FALSE,"dynamic.patrol.unit%d.manalloc",i);
 					unit_list_append(&tpatrolers,cunit);
 				}
 			}
@@ -895,7 +894,7 @@ void load_all_settings(void)
 		{
 			struct unit *punit=player_find_unit_by_id(game.player_ptr,cunit->id);
 			my_ai_orders_free(punit);
-			my_ai_patrol_alloc(punit,(struct tile *)cunit->my_ai.data,cunit->my_ai.manalloc);
+			my_ai_patrol_alloc(punit,(struct tile *)cunit->my_ai.data);
 		} unit_list_iterate_end;
 		unit_list_iterate(tnoners,punit)
 		{
@@ -1176,7 +1175,6 @@ void save_all_settings(void)
 		save_unit(&sf,buf,punit);
 		my_snprintf(buf,sizeof(buf),"dynamic.patrol.unit%d.tile",i);
 		save_tile(&sf,buf,(struct tile *)punit->my_ai.data);
-		secfile_insert_bool(&sf,punit->my_ai.manalloc,"dynamic.patrol.unit%d.manalloc",i);
 		i++;
 	} unit_list_iterate_end;
 	//my_ai_none

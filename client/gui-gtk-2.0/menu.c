@@ -237,8 +237,8 @@ enum MenuID {
   MENU_WARCLIENT_AQ6_CLEAR,
   MENU_WARCLIENT_AQ6_EXECUTE,
   MENU_WARCLIENT_AQ6_SHOW,
-  MENU_WARCLIENT_PATROL_DEST,
-  MENU_WARCLIENT_PATROL_FORCE,
+  MENU_WARCLIENT_AIR_PATROL,
+  MENU_WARCLIENT_AIR_PATROL_DEST,
   MENU_WARCLIENT_PATROL_EXECUTE,
   MENU_WARCLIENT_SET_RALLIES,
   MENU_WARCLIENT_CLEAR_RALLIES,
@@ -652,17 +652,9 @@ static void orders_menu_callback(gpointer callback_data,
     if (get_unit_in_focus()) {
       if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
         key_unit_airbase();
-      else if(hover_state==HOVER_MYPATROL)
-      {
-      	multi_select_iterate(TRUE,punit)
-      	{
-      		my_ai_patrol_alloc(punit,punit->tile,TRUE);
-      	} multi_select_iterate_end;
-      	hover_state=HOVER_NONE;
-      	update_hover_cursor();
+      else {
+        key_unit_air_patrol();
       }
-      else
-        key_airplane_patrol(TRUE);
     }
     break;
    case MENU_ORDER_POLLUTION:
@@ -818,39 +810,21 @@ static void warclient_menu_callback(gpointer callback_data,
    case MENU_WARCLIENT_SHOW_CITIES_IN_AIRLIFT_QUEUE:
         airlift_queue_show(0);
         break;
-   case   MENU_WARCLIENT_PATROL_DEST:
-      if(hover_state==HOVER_MYPATROL)
-      {
-      	multi_select_iterate(TRUE,punit)
-      	{
-      		my_ai_patrol_alloc(punit,punit->tile,FALSE);
-      	} multi_select_iterate_end;
-      	hover_state=HOVER_NONE;
-      	update_hover_cursor();
-      }
-      else
-        key_airplane_patrol(FALSE);
-    break;
-   case   MENU_WARCLIENT_PATROL_FORCE:
-    if (get_unit_in_focus()) {
-      if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
-        key_unit_airbase();
-      else if(hover_state==HOVER_MYPATROL)
-      {
-      	multi_select_iterate(TRUE,punit)
-      	{
-      		my_ai_patrol_alloc(punit,punit->tile,TRUE);
-      	} multi_select_iterate_end;
-      	hover_state=HOVER_NONE;
-      	update_hover_cursor();
-      }
-      else
-        key_airplane_patrol(TRUE);
-    }
-    break;
+   case MENU_WARCLIENT_AIR_PATROL:
+        if (get_unit_in_focus()) {
+            if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
+                key_unit_airbase();
+            else {
+                 key_unit_air_patrol();
+            }
+        }
+        break;
+   case MENU_WARCLIENT_AIR_PATROL_DEST:
+        key_airplane_patrol();
+        break;
    case MENU_WARCLIENT_PATROL_EXECUTE:
-		my_ai_patrol_execute_all();
-    break; 
+        my_ai_patrol_execute_all();
+        break; 
    case MENU_WARCLIENT_SET_RALLIES:
         key_select_rally_point();
         break;
@@ -2324,10 +2298,10 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Warclient") "/sep4",				NULL,
 	NULL,			0,					"<Separator>"	},
 
-  { "/" N_("Warclient") "/" N_("Set airplane patrol destination"),			"<ctrl>e",
-	warclient_menu_callback,	MENU_WARCLIENT_PATROL_DEST						},
-  { "/" N_("Warclient") "/" N_("Force airplane patrol destination"),			"e",
-	warclient_menu_callback,	MENU_WARCLIENT_PATROL_FORCE						},
+  { "/" N_("Warclient") "/" N_("Airplane patrol"),			"e",
+	warclient_menu_callback,	MENU_WARCLIENT_AIR_PATROL						},
+  { "/" N_("Warclient") "/" N_("Airplane patrol destination"),			"<ctrl>e",
+	warclient_menu_callback,	MENU_WARCLIENT_AIR_PATROL_DEST						},
   { "/" N_("Warclient") "/" N_("Execute all patrol orders"),			"<shift>e",
 	warclient_menu_callback,	MENU_WARCLIENT_PATROL_EXECUTE						},
   { "/" N_("Warclient") "/sep4",				NULL,
@@ -3663,8 +3637,8 @@ void update_menus(void)
 	//*pepeto*
 	menus_set_sensitive("<main>/Warclient/Delayed goto", TRUE);
 	menus_set_sensitive("<main>/Warclient/Delayed paradrop or nuke", TRUE);
-	menus_set_sensitive("<main>/Warclient/Set airplane patrol destination", my_ai_enable);
-	menus_set_sensitive("<main>/Warclient/Force airplane patrol destination", my_ai_enable && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
+	menus_set_sensitive("<main>/Warclient/Airplane patrol", my_ai_enable && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
+	menus_set_sensitive("<main>/Warclient/Airplane patrol destination", my_ai_enable);
 	menus_set_sensitive("<main>/PepClient/Multi-selection select", TRUE);
 	menus_set_sensitive("<main>/PepClient/Multi-selection active all units", TRUE);
 	menus_set_sensitive("<main>/PepClient/Multi-selection clear", TRUE);
@@ -3680,8 +3654,8 @@ void update_menus(void)
     } else {
 	menus_set_sensitive("<main>/Warclient/Delayed goto", FALSE);
 	menus_set_sensitive("<main>/Warclient/Delayed paradrop or nuke", FALSE);
-	menus_set_sensitive("<main>/Warclient/Set airplane patrol destination", FALSE);
-	menus_set_sensitive("<main>/Warclient/Force airplane patrol destination", FALSE);
+	menus_set_sensitive("<main>/Warclient/Airplane patrol", FALSE);
+	menus_set_sensitive("<main>/Warclient/Airplane patrol destination", FALSE);
 	menus_set_sensitive("<main>/PepClient/Multi-selection select", FALSE);
 	menus_set_sensitive("<main>/PepClient/Multi-selection active all units", FALSE);
 	menus_set_sensitive("<main>/PepClient/Multi-selection clear", FALSE);

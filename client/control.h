@@ -63,7 +63,7 @@ bool can_unit_do_connect(struct unit *punit, enum unit_activity activity);
 void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
 
-void key_airplane_patrol(bool force);
+void key_airplane_patrol(void);
 void city_set_rally_point(struct city *pcity,struct tile *ptile);//*pepeto*
 
 void key_select_rally_point(void);
@@ -224,6 +224,7 @@ void key_unit_clear_delayed_orders(void);
 void key_toggle_autowakeup(void);
 void key_toggle_moveandattack(void);
 //*pepeto*
+void key_unit_air_patrol(void);
 void key_toggle_spread_airport(void);
 void key_toggle_spread_ally(void);
 void key_my_ai_trade(void);

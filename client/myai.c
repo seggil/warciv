@@ -1,9 +1,8 @@
 /**********************************************************************
  This file was edited by *pepeto*.
  - auto-caravans
- - client auto-attack
- - auto-defend
- - delayed attack
+ - spread
+ - patrol
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -65,7 +64,7 @@ static struct unit_list temp;
 static struct unit *caravan=NULL;
 static bool my_ai_update=FALSE;
 
-static const char *my_ai_activities[]={"Automatic orders","Auto trade route","Auto help wonder","Patrol"};
+static const char *my_ai_activities[]={"Automatic orders","Auto trade route","Auto help wonder","Patrolling"};
 
 struct tile *find_nearest_city(struct unit *punit,bool allies);
 
@@ -1359,14 +1358,33 @@ bool must_return_into_city(struct unit *punit)
 	return (punit->fuel==1);
 }
 
-void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile,bool manalloc)
+void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile)
 {
-	my_ai_orders_free(punit);
+        char buf[1024];
+        struct tile *old_tile=(punit->my_ai.control&&punit->my_ai.activity==MY_AI_PATROL?(struct tile *)punit->my_ai.data:NULL);
+
+        if(old_tile)
+        {
+                my_ai_orders_free(punit);
+                if(ptile==old_tile)
+                {
+                        my_snprintf(buf,sizeof(buf),_("Warclient: %s %d stopped patrolling (%d, %d)."),
+                                    get_unit_type(punit->type)->name,punit->id,ptile->x,ptile->y);
+                        append_output_window(buf);
+                        return;
+                }
+        }
 	unit_list_append(&patrolers,punit);
 	punit->my_ai.control=TRUE;
-	punit->my_ai.manalloc=manalloc;
 	punit->my_ai.data=(void *)ptile;
 	punit->my_ai.activity=MY_AI_PATROL;
+        if(old_tile)
+                my_snprintf(buf,sizeof(buf),_("Warclient: %s %d patrolling (%d, %d) instead of (%d, %d)."),
+		            get_unit_type(punit->type)->name, punit->id,ptile->x,ptile->y,old_tile->x,old_tile->y);
+        else
+                my_snprintf(buf,sizeof(buf),_("Warclient: %s %d patrolling (%d, %d)."),
+	                    get_unit_type(punit->type)->name,punit->id,ptile->x,ptile->y);
+        append_output_window(buf);
 	automatic_processus_event(AUTO_ORDERS,punit);
 }
 
@@ -1376,27 +1394,22 @@ void my_ai_patrol_execute(struct unit *punit)
 		return;
 
 	struct tile *dest=(struct tile*)punit->my_ai.data;
-	if(!punit->my_ai.manalloc)
-	{
-		int move_cost=calculate_move_cost(punit,dest);
+	int move_cost=calculate_move_cost(punit,dest);
 
-		if(must_return_into_city(punit))
-		{
-			struct unit cunit=*punit;
-			cunit.tile=dest;
-			move_cost+=calculate_move_cost(&cunit,find_nearest_city(&cunit,TRUE));
-		}
-		if(move_cost>punit->moves_left)
-		{
-			struct unit cunit=*punit;
-			struct tile *ptile;
-			cunit.tile=dest;
-			ptile=find_nearest_city(&cunit,TRUE);
-			if(ptile&&ptile!=find_nearest_city(punit,TRUE))
-				send_goto_unit(punit,ptile);
-			return;
-		}
-	}
+        if(must_return_into_city(punit))
+        {
+                struct unit cunit=*punit;
+                cunit.tile=dest;
+                move_cost+=calculate_move_cost(&cunit,find_nearest_city(&cunit,TRUE));
+                if(move_cost>punit->moves_left)
+                {
+                        struct tile *ptile;
+                        ptile=find_nearest_city(&cunit,TRUE);
+                        if(ptile&&ptile!=find_nearest_city(punit,TRUE))
+                                send_goto_unit(punit,ptile);
+                        return;
+                }
+        }
 	send_goto_unit(punit,dest);
 }
 
@@ -1416,7 +1429,6 @@ void my_ai_patrol_execute_all(void)
 void my_ai_patrol_free(struct unit *punit)
 {
 	unit_list_unlink(&patrolers,punit);
-	punit->my_ai.manalloc=FALSE;
 	punit->my_ai.data=NULL;
 	punit->my_ai.activity=MY_AI_NONE;
 }
@@ -2034,7 +2046,7 @@ void my_ai_init(void)
 		AP_MAIN_CONNECT(my_ai_trade_route_execute_all),AP_CONNECT(AUTO_ORDERS,my_ai_trade_route_execute),-1);
 	my_ai_wonder_auto_execute=automatic_processus_new(PAGE_WONDER,AV_TO_FV(AUTO_ORDERS),"","Automatic help wonder orders execution",0,
 		AP_MAIN_CONNECT(my_ai_help_wonder_execute_all),AP_CONNECT(AUTO_ORDERS,my_ai_help_wonder_execute),-1);
-	my_ai_patrol_auto_execute=automatic_processus_new(PAGE_PMAIN,AV_TO_FV(AUTO_ORDERS)|AV_TO_FV(AUTO_NEW_YEAR),"","Automatic patrol orders execution",0,
+	my_ai_patrol_auto_execute=automatic_processus_new(PAGE_PMAIN,AV_TO_FV(AUTO_NEW_YEAR),"","Automatic patrol orders execution",0,
 		AP_MAIN_CONNECT(my_ai_patrol_execute_all),AP_CONNECT(AUTO_ORDERS,my_ai_patrol_execute),-1);
 }
 

@@ -1,8 +1,8 @@
 /**********************************************************************
  This file was edited by *pepeto*.
  - auto-caravans
- - patrol
  - spread
+ - patrol
 ***********************************************************************/
 #ifndef _MYAI_H
 #define _MYAI_H
@@ -84,7 +84,7 @@ void my_ai_help_wonder_execute_all(void);
 void my_ai_help_wonder_free(struct unit *punit);
 
 /* patrol functions */
-void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile,bool manalloc);
+void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile);
 void my_ai_patrol_execute(struct unit *punit);
 void my_ai_patrol_execute_all(void);
 void my_ai_patrol_free(struct unit *punit);
