@@ -213,6 +213,8 @@ void close_connection(struct connection *pconn)
   pconn->player = NULL;
   pconn->access_level = ALLOW_NONE;
   connection_common_close(pconn);
+
+  send_conn_info(&pconn->self, &game.est_connections);
 }
 
 /*****************************************************************************
