@@ -2063,6 +2063,11 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<\_ACEOF
+#define BUG_URL "http://bugs.freeciv.org/"
+_ACEOF
+
+
 
 
 

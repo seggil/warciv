@@ -192,7 +192,7 @@ Two cities with Airports can airlift one unit per turn. \
 name		= _("Aqueduct")
 tech_req	= "Construction"
 bldg_req	= "None"
-graphic	= "b.aqueduct"
+graphic	        = "b.aqueduct"
 graphic_alt	= "-"
 ;terr_gate	=
 ;spec_gate	=
@@ -1477,4 +1477,3 @@ cathedral_plus="Theology"
 cathedral_minus="Communism"
 colosseum_plus="Electricity"
 temple_plus="Mysticism"
-
