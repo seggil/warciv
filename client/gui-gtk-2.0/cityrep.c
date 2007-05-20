@@ -1163,8 +1163,9 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model, GtkTreePath *p
   copy_worklist(&pcity->worklist,pwl);
   city_worklist_check(pcity);
   if (!worklist_is_empty(&pcity->worklist)) {
+    city_change_production(pcity, pcity->worklist.wlefs[0] == WEF_UNIT,
+                           pcity->worklist.wlids[0]);
     worklist_advance(&pcity->worklist);
-    city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
   }
   city_set_worklist(pcity, &pcity->worklist);
   city_report_dialog_update_city(pcity);
@@ -1172,10 +1173,11 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model, GtkTreePath *p
 
 static void select_change_worklist_callback(GtkWidget *w, gpointer data)
 {
-    reports_freeze();
-      gtk_tree_selection_selected_foreach(city_selection,
-					  worklist_change_worklist_iterate, data);
-    reports_thaw();
+  reports_freeze();
+  connection_do_buffer(&aconnection);
+  gtk_tree_selection_selected_foreach(city_selection, worklist_change_worklist_iterate, data);
+  connection_do_unbuffer(&aconnection);
+  reports_thaw();
 }
 
 /**************************************************************************
@@ -1204,8 +1206,8 @@ static bool worklist_insert_worklist(struct worklist *dwl,struct worklist *swl,i
 /****************************************************************
    add a worklist after the current worklist *pepeto*
 *****************************************************************/
-static void worklist_last_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
-			GtkTreeIter *it, gpointer data)
+static void worklist_last_worklist_iterate(GtkTreeModel *model,
+                             GtkTreePath *path, GtkTreeIter *it, gpointer data)
 {
   int i=GPOINTER_TO_INT(data);
   if( i < 0 || i >= MAX_NUM_WORKLISTS )
@@ -1226,11 +1228,11 @@ static void worklist_last_worklist_iterate(GtkTreeModel *model, GtkTreePath *pat
 
 static void select_last_worklist_callback(GtkWidget *w, gpointer data)
 {
-    reports_freeze();
-
-      gtk_tree_selection_selected_foreach(city_selection,
-					  worklist_last_worklist_iterate, data);
-    reports_thaw();
+  reports_freeze();
+  connection_do_buffer(&aconnection);
+  gtk_tree_selection_selected_foreach(city_selection, worklist_last_worklist_iterate, data);
+  connection_do_unbuffer(&aconnection);
+  reports_thaw();
 }
 
 /****************************************************************
@@ -1262,8 +1264,9 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model, GtkTreePath *pa
   worklist_insert_worklist(&pcity->worklist,pwl,0);
   city_worklist_check(pcity);
   if (!worklist_is_empty(&pcity->worklist)) {
+    city_change_production(pcity, pcity->worklist.wlefs[0] == WEF_UNIT,
+                           pcity->worklist.wlids[0]);
     worklist_advance(&pcity->worklist);
-    city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
   }
   city_set_worklist(pcity, &pcity->worklist);
   city_report_dialog_update_city(pcity);
@@ -1271,10 +1274,11 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model, GtkTreePath *pa
 
 static void select_first_worklist_callback(GtkWidget *w, gpointer data)
 {
-    reports_freeze();
-      gtk_tree_selection_selected_foreach(city_selection,
-					  worklist_first_worklist_iterate, data);
-    reports_thaw();
+  reports_freeze();
+  connection_do_buffer(&aconnection);
+  gtk_tree_selection_selected_foreach(city_selection, worklist_first_worklist_iterate, data);
+  connection_do_unbuffer(&aconnection);
+  reports_thaw();
 }
 
 /****************************************************************
@@ -1302,10 +1306,11 @@ static void worklist_next_worklist_iterate(GtkTreeModel *model, GtkTreePath *pat
 
 static void select_next_worklist_callback(GtkWidget *w, gpointer data)
 {
-    reports_freeze();
-      gtk_tree_selection_selected_foreach(city_selection,
-					  worklist_next_worklist_iterate, data);
-    reports_thaw();
+  reports_freeze();
+  connection_do_buffer(&aconnection);
+  gtk_tree_selection_selected_foreach(city_selection, worklist_next_worklist_iterate, data);
+  connection_do_unbuffer(&aconnection);
+  reports_thaw();
 }
 
 /****************************************************************
