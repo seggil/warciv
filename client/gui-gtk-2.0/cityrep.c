@@ -1161,8 +1161,11 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model, GtkTreePath *p
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
   copy_worklist(&pcity->worklist,pwl);
-  worklist_advance(&pcity->worklist);
-  city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
+  city_worklist_check(pcity);
+  if (!worklist_is_empty(&pcity->worklist)) {
+    worklist_advance(&pcity->worklist);
+    city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
+  }
   city_set_worklist(pcity, &pcity->worklist);
   city_report_dialog_update_city(pcity);
 }
@@ -1257,8 +1260,11 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model, GtkTreePath *pa
       return;
 
   worklist_insert_worklist(&pcity->worklist,pwl,0);
-  worklist_advance(&pcity->worklist);
-  city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
+  city_worklist_check(pcity);
+  if (!worklist_is_empty(&pcity->worklist)) {
+    worklist_advance(&pcity->worklist);
+    city_change_production(pcity, pwl->wlefs[0] == WEF_UNIT, pwl->wlids[0]);
+  }
   city_set_worklist(pcity, &pcity->worklist);
   city_report_dialog_update_city(pcity);
 }

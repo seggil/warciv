@@ -124,6 +124,8 @@ int buy_production_in_selected_cities (void);
 
 void city_clear_worklist (struct city *pcity);
 void clear_worklists_in_selected_cities (void);
+void city_worklist_check(struct city *pcity);
+  
 void city_autonaming_init (void);
 void city_autonaming_free (void);
 void city_autonaming_add_used_name (const char *city_name);
