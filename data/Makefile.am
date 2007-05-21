@@ -24,14 +24,15 @@ endif
 
 if SERVER
 SERVER_FILES = \
-	civ1.serv \
-	civ2.serv \
-	history.serv \
-	warruleset-1.2.serv \
-	warruleset-1.3.serv \
-	nowonder+1.2.serv \
-	tournament.serv \
-	exemple-actions.txt \
+	civ1.serv	\
+	civ2.serv	\
+	history.serv	\
+	warruleset-1.2.serv	\
+	warruleset-1.3.serv	\
+	nowonder+1.2.serv	\
+	tournament.serv	\
+	warserver.serv	\
+	exemple-actions.txt	\
 	exemple-welcome.txt
 else
 SERVER_FILES =
@@ -44,17 +45,18 @@ EXTRA_DIST = \
 	freeciv.rc	\
 	freeciv.rc-2.0	\
 	isophex.tilespec	\
-	isotrident.tilespec \
+	isotrident.tilespec	\
 	trident.tilespec	\
 	trident_shields.tilespec	\
 	helpdata.txt	\
 	civ1.serv	\
 	civ2.serv	\
-	history.serv    \
-	warruleset-1.2.serv \
-	warruleset-1.3.serv \
-	tournament.serv
-	exemple-actions.txt \
+	history.serv	\
+	warruleset-1.2.serv	\
+	warruleset-1.3.serv	\
+	tournament.serv	\
+	warserver.serv	\
+	exemple-actions.txt	\
 	exemple-welcome.txt
 
 if CLIENT
