@@ -1,1 +1,0 @@
-?package(warclient-client-gtk):needs="x11" section="Games/Strategy" title="Warclient client (GTK version)" command="/usr/games/warclient-gtk" icon="warclient.xpm"
