@@ -961,7 +961,7 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
 
   ctx->have_data_to_write = FALSE;
   ctx->input_id = add_net_input_callback(ctx->sock,
-      INPUT_READ | INPUT_ERROR | INPUT_CLOSED,
+      INPUT_READ | INPUT_ERROR | INPUT_CLOSED | INPUT_WRITE,
       metaserver_read_cb, ctx, NULL);
 
   freelog(LOG_DEBUG, "added read callback");
