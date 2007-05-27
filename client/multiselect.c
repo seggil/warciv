@@ -796,13 +796,13 @@ void delayed_goto_init(int dg)
 	if(dg)
 	{
 		char buf[256];
-		my_snprintf(buf,sizeof(buf),"<main>/Warclient/Delayed goto selection %d/Automatic execution",dg);
+		my_snprintf(buf,sizeof(buf),"<main>/Delayed Goto/Delayed goto selection %d/Automatic execution",dg);
 		delayed_goto_list[dg].pap=automatic_processus_new(PAGE_NUM,AV_TO_FV(AUTO_WAR_DIPLSTATE),buf,"",dg,
 			AP_MAIN_CONNECT(request_execute_delayed_goto),AP_CONNECT(AUTO_WAR_DIPLSTATE,request_player_execute_delayed_goto),-1);
 	}
 	else
 		delayed_goto_list[0].pap=automatic_processus_new(PAGE_DG,AV_TO_FV(AUTO_WAR_DIPLSTATE),
-			"<main>/Warclient/Delayed goto auto","Delayed goto automatic execution",0,
+			"<main>/Delayed Goto/Delayed goto auto","Delayed goto automatic execution",0,
 			AP_MAIN_CONNECT(request_execute_delayed_goto),AP_CONNECT(AUTO_WAR_DIPLSTATE,request_player_execute_delayed_goto),-1);
 }
 
