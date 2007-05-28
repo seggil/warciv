@@ -1344,13 +1344,16 @@ void request_unit_pillage(struct unit *punit)
   enum tile_special_type would =
       what | map_get_infrastructure_prerequisite(what);
 
-  if ((game.rgame.pillage_select) &&
-      ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
-    punit->is_new = FALSE;
-    popup_pillage_dialog(punit, (pspresent & (~psworking)));
-  } else {
-    punit->is_new = FALSE;
-    request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, what);
+  if ( punit->activity != ACTIVITY_PILLAGE &&
+     can_unit_do_activity(punit, ACTIVITY_PILLAGE)) {
+    if ((game.rgame.pillage_select) &&
+	((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
+      punit->is_new = FALSE;
+      popup_pillage_dialog(punit, (pspresent & (~psworking)));
+    } else {
+      punit->is_new = FALSE;
+      request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, what);
+    }
   }
 }
 
@@ -2660,7 +2663,9 @@ void key_unit_mine(void)
 **************************************************************************/
 void key_unit_pillage(void)
 {
-     do_mass_order(ACTIVITY_PILLAGE);
+  multi_select_iterate(TRUE,punit) {
+    request_unit_pillage(punit);
+  } multi_select_iterate_end;
 }
 
 /**************************************************************************
