@@ -17,5 +17,6 @@
 
 void raise_city_report_dialog(void);
 void popdown_city_report_dialog(void);
+void popup_change_cma(void);
 
 #endif  /* FC__CITYREP_H */

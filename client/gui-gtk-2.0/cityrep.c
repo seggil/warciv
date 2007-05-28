@@ -101,14 +101,13 @@ struct sell_data { int count, gold, cid; };
 static GtkWidget *city_center_command, *city_popup_command, *city_buy_command;
 static GtkWidget *city_change_command, *city_clear_worklist_command, *city_remove_cur_prod_command;//*pepeto*
 static GtkWidget *city_autoarrange_workers_command;
-static GtkWidget *city_last_command, *city_first_command, *city_next_command, *city_cma_command;//*pepeto*
+static GtkWidget *city_last_command, *city_first_command, *city_next_command, *city_cma_command = NULL;//*pepeto*
 static GtkWidget *city_sell_command;
 
 static GtkWidget *change_improvements_item;
 static GtkWidget *change_units_item;
 static GtkWidget *change_wonders_item;
 static GtkWidget *change_worklist_item;//*pepeto*
-static GtkWidget *change_cma_item;
 
 static GtkWidget *last_improvements_item;
 static GtkWidget *last_units_item;
@@ -762,11 +761,11 @@ static GtkWidget *create_city_report_menubar(void)
 
   menubar = gtk_menu_bar_new();
   
-  change_cma_item = gtk_menu_item_new_with_label(_("CMA"));//*pepeto*
-  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), change_cma_item);
-  city_cma_command = change_cma_item;
-  append_cma_to_menu_item(GTK_MENU_ITEM(change_cma_item),TRUE);
-	
+  item = gtk_menu_item_new_with_label(_("CMA"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
+  city_cma_command = item;
+  append_cma_to_menu_item(GTK_MENU_ITEM(item), TRUE);
+
   item = gtk_menu_item_new_with_mnemonic(_("Chan_ge"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
   city_change_command = item;
@@ -1550,8 +1549,6 @@ static void create_change_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_wonders_item);
   change_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_worklist_item);
-//  change_cma_item = gtk_menu_item_new_with_label(_("CMA"));*pepeto*
-//  gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_cma_item);*pepeto*
 }
 
 /****************************************************************
@@ -1628,7 +1625,15 @@ static void create_next_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_worklist_item);
 }
 
-
+/****************************************************************
+...
+*****************************************************************/
+void popup_change_cma(void)
+{
+  if (city_cma_command) {
+    append_cma_to_menu_item(GTK_MENU_ITEM(city_cma_command), TRUE);
+  }
+}
 
 /****************************************************************
 ...
@@ -1653,7 +1658,6 @@ static void popup_change_menu(GtkMenuShell *menu, gpointer data)
 				  G_CALLBACK(select_impr_or_unit_callback), n);
   append_worklist_to_menu_item(GTK_MENU_ITEM(change_worklist_item),
 				  G_CALLBACK(select_change_worklist_callback));//*pepeto*
-//  append_cma_to_menu_item(GTK_MENU_ITEM(change_cma_item), TRUE);*pepeto*
 }
 
 /****************************************************************

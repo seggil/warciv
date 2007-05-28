@@ -139,6 +139,8 @@ void cmafec_preset_add(const char *descr_name, struct cm_parameter *pparam)
   ppreset->descr = fc_malloc(MAX_LEN_PRESET_NAME);
   (void) mystrlcpy(ppreset->descr, descr_name, MAX_LEN_PRESET_NAME);
   preset_list_insert(&preset_list, ppreset);
+
+  popup_change_cma();
 }
 
 /**************************************************************************
@@ -155,6 +157,8 @@ void cmafec_preset_remove(int index)
 
   free(ppreset->descr);
   free(ppreset);
+
+  popup_change_cma();
 }
 
 /**************************************************************************

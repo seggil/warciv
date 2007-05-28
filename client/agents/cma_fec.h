@@ -45,4 +45,6 @@ int cmafec_preset_num(void);
 
 void create_default_cma_presets(void);
 
+void popup_change_cma(void);
+
 #endif
