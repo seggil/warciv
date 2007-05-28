@@ -167,76 +167,6 @@ enum MenuID {
   MENU_ORDER_WAIT,
   MENU_ORDER_DONE,
 
-  MENU_MULTI_SELECTION_MS_SELECT,
-  MENU_MULTI_SELECTION_MS_ACTIVE_ALL,
-  MENU_MULTI_SELECTION_MS_CLEAR,
-  MENU_MULTI_SELECTION_INCLUSIVE_ALL,
-  MENU_MULTI_SELECTION_INCLUSIVE_NEW,
-  MENU_MULTI_SELECTION_INCLUSIVE_FORTIFIED,
-  MENU_MULTI_SELECTION_INCLUSIVE_SENTRIED,
-  MENU_MULTI_SELECTION_INCLUSIVE_VETERAN,
-  MENU_MULTI_SELECTION_INCLUSIVE_AUTO,
-  MENU_MULTI_SELECTION_INCLUSIVE_IDLE,
-  MENU_MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE,
-  MENU_MULTI_SELECTION_INCLUSIVE_MILITARY,
-  MENU_MULTI_SELECTION_INCLUSIVE_OFF,
-  MENU_MULTI_SELECTION_EXCLUSIVE_ALL,
-  MENU_MULTI_SELECTION_EXCLUSIVE_NEW,
-  MENU_MULTI_SELECTION_EXCLUSIVE_FORTIFIED,
-  MENU_MULTI_SELECTION_EXCLUSIVE_SENTRIED,
-  MENU_MULTI_SELECTION_EXCLUSIVE_VETERAN,
-  MENU_MULTI_SELECTION_EXCLUSIVE_AUTO,
-  MENU_MULTI_SELECTION_EXCLUSIVE_IDLE,
-  MENU_MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE,
-  MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY,
-  MENU_MULTI_SELECTION_EXCLUSIVE_OFF,
-  MENU_MULTI_SELECTION_MODE_SINGLE_UNIT,
-  MENU_MULTI_SELECTION_MODE_ON_TILE,
-  MENU_MULTI_SELECTION_MODE_ON_CONTINENT,
-  MENU_MULTI_SELECTION_MODE_EVERY_WHERE,
-  MENU_MULTI_SELECTION_MODE_SAME_TYPE,
-  MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE,
-  MENU_MULTI_SELECTION_MODE_ALL,
-  MENU_MULTI_SELECTION_MY_AI_SPREAD,
-  MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT,
-  MENU_MULTI_SELECTION_MY_AI_SPREAD_ALLY,
-  MENU_MULTI_SELECTION_MS1_SELECT,
-  MENU_MULTI_SELECTION_MS1_ADD,
-  MENU_MULTI_SELECTION_MS1_RECORD,
-  MENU_MULTI_SELECTION_MS1_CLEAR,
-  MENU_MULTI_SELECTION_MS2_SELECT,
-  MENU_MULTI_SELECTION_MS2_ADD,
-  MENU_MULTI_SELECTION_MS2_RECORD,
-  MENU_MULTI_SELECTION_MS2_CLEAR,
-  MENU_MULTI_SELECTION_MS3_SELECT,
-  MENU_MULTI_SELECTION_MS3_ADD,
-  MENU_MULTI_SELECTION_MS3_RECORD,
-  MENU_MULTI_SELECTION_MS3_CLEAR,
-  MENU_MULTI_SELECTION_MS4_SELECT,
-  MENU_MULTI_SELECTION_MS4_ADD,
-  MENU_MULTI_SELECTION_MS4_RECORD,
-  MENU_MULTI_SELECTION_MS4_CLEAR,
-  MENU_MULTI_SELECTION_MS5_SELECT,
-  MENU_MULTI_SELECTION_MS5_ADD,
-  MENU_MULTI_SELECTION_MS5_RECORD,
-  MENU_MULTI_SELECTION_MS5_CLEAR,
-  MENU_MULTI_SELECTION_MS6_SELECT,
-  MENU_MULTI_SELECTION_MS6_ADD,
-  MENU_MULTI_SELECTION_MS6_RECORD,
-  MENU_MULTI_SELECTION_MS6_CLEAR,
-  MENU_MULTI_SELECTION_MS7_SELECT,
-  MENU_MULTI_SELECTION_MS7_ADD,
-  MENU_MULTI_SELECTION_MS7_RECORD,
-  MENU_MULTI_SELECTION_MS7_CLEAR,
-  MENU_MULTI_SELECTION_MS8_SELECT,
-  MENU_MULTI_SELECTION_MS8_ADD,
-  MENU_MULTI_SELECTION_MS8_RECORD,
-  MENU_MULTI_SELECTION_MS8_CLEAR,
-  MENU_MULTI_SELECTION_MS9_SELECT,
-  MENU_MULTI_SELECTION_MS9_ADD,
-  MENU_MULTI_SELECTION_MS9_RECORD,
-  MENU_MULTI_SELECTION_MS9_CLEAR,
-
   MENU_DELAYED_GOTO_DELAYED_GOTO,
   MENU_DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE,
   MENU_DELAYED_GOTO_DELAYED_AIRLIFT,
@@ -337,6 +267,76 @@ enum MenuID {
   MENU_AUTO_CARAVAN_MY_AI_CARAVAN,
   MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE,
   MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE,
+
+  MENU_MULTI_SELECTION_MS_SELECT,
+  MENU_MULTI_SELECTION_MS_ACTIVE_ALL,
+  MENU_MULTI_SELECTION_MS_CLEAR,
+  MENU_MULTI_SELECTION_INCLUSIVE_ALL,
+  MENU_MULTI_SELECTION_INCLUSIVE_NEW,
+  MENU_MULTI_SELECTION_INCLUSIVE_FORTIFIED,
+  MENU_MULTI_SELECTION_INCLUSIVE_SENTRIED,
+  MENU_MULTI_SELECTION_INCLUSIVE_VETERAN,
+  MENU_MULTI_SELECTION_INCLUSIVE_AUTO,
+  MENU_MULTI_SELECTION_INCLUSIVE_IDLE,
+  MENU_MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE,
+  MENU_MULTI_SELECTION_INCLUSIVE_MILITARY,
+  MENU_MULTI_SELECTION_INCLUSIVE_OFF,
+  MENU_MULTI_SELECTION_EXCLUSIVE_ALL,
+  MENU_MULTI_SELECTION_EXCLUSIVE_NEW,
+  MENU_MULTI_SELECTION_EXCLUSIVE_FORTIFIED,
+  MENU_MULTI_SELECTION_EXCLUSIVE_SENTRIED,
+  MENU_MULTI_SELECTION_EXCLUSIVE_VETERAN,
+  MENU_MULTI_SELECTION_EXCLUSIVE_AUTO,
+  MENU_MULTI_SELECTION_EXCLUSIVE_IDLE,
+  MENU_MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE,
+  MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY,
+  MENU_MULTI_SELECTION_EXCLUSIVE_OFF,
+  MENU_MULTI_SELECTION_MODE_SINGLE_UNIT,
+  MENU_MULTI_SELECTION_MODE_ON_TILE,
+  MENU_MULTI_SELECTION_MODE_ON_CONTINENT,
+  MENU_MULTI_SELECTION_MODE_EVERY_WHERE,
+  MENU_MULTI_SELECTION_MODE_SAME_TYPE,
+  MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE,
+  MENU_MULTI_SELECTION_MODE_ALL,
+  MENU_MULTI_SELECTION_MY_AI_SPREAD,
+  MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT,
+  MENU_MULTI_SELECTION_MY_AI_SPREAD_ALLY,
+  MENU_MULTI_SELECTION_MS1_SELECT,
+  MENU_MULTI_SELECTION_MS1_ADD,
+  MENU_MULTI_SELECTION_MS1_RECORD,
+  MENU_MULTI_SELECTION_MS1_CLEAR,
+  MENU_MULTI_SELECTION_MS2_SELECT,
+  MENU_MULTI_SELECTION_MS2_ADD,
+  MENU_MULTI_SELECTION_MS2_RECORD,
+  MENU_MULTI_SELECTION_MS2_CLEAR,
+  MENU_MULTI_SELECTION_MS3_SELECT,
+  MENU_MULTI_SELECTION_MS3_ADD,
+  MENU_MULTI_SELECTION_MS3_RECORD,
+  MENU_MULTI_SELECTION_MS3_CLEAR,
+  MENU_MULTI_SELECTION_MS4_SELECT,
+  MENU_MULTI_SELECTION_MS4_ADD,
+  MENU_MULTI_SELECTION_MS4_RECORD,
+  MENU_MULTI_SELECTION_MS4_CLEAR,
+  MENU_MULTI_SELECTION_MS5_SELECT,
+  MENU_MULTI_SELECTION_MS5_ADD,
+  MENU_MULTI_SELECTION_MS5_RECORD,
+  MENU_MULTI_SELECTION_MS5_CLEAR,
+  MENU_MULTI_SELECTION_MS6_SELECT,
+  MENU_MULTI_SELECTION_MS6_ADD,
+  MENU_MULTI_SELECTION_MS6_RECORD,
+  MENU_MULTI_SELECTION_MS6_CLEAR,
+  MENU_MULTI_SELECTION_MS7_SELECT,
+  MENU_MULTI_SELECTION_MS7_ADD,
+  MENU_MULTI_SELECTION_MS7_RECORD,
+  MENU_MULTI_SELECTION_MS7_CLEAR,
+  MENU_MULTI_SELECTION_MS8_SELECT,
+  MENU_MULTI_SELECTION_MS8_ADD,
+  MENU_MULTI_SELECTION_MS8_RECORD,
+  MENU_MULTI_SELECTION_MS8_CLEAR,
+  MENU_MULTI_SELECTION_MS9_SELECT,
+  MENU_MULTI_SELECTION_MS9_ADD,
+  MENU_MULTI_SELECTION_MS9_RECORD,
+  MENU_MULTI_SELECTION_MS9_CLEAR,
 
   MENU_MISCELLANEOUS_AIR_PATROL,
   MENU_MISCELLANEOUS_AIR_PATROL_DEST,
@@ -743,361 +743,6 @@ static void orders_menu_callback(gpointer callback_data,
    case MENU_ORDER_DONE:
     key_unit_done();
     break;
-  }
-}
-
-/****************************************************************
-...
-*****************************************************************/
-static void multi_selection_menu_callback(gpointer callback_data,
-				 guint callback_action, GtkWidget *widget)
-{
-  switch(callback_action) {
-    case MENU_MULTI_SELECTION_MS_SELECT:
-      multi_select_select();
-      break;
-    case MENU_MULTI_SELECTION_MS_ACTIVE_ALL:
-      multi_select_active_all(0);
-      break;
-    case MENU_MULTI_SELECTION_MS_CLEAR:
-      multi_select_clear(0);
-      break;
-    case MENU_MULTI_SELECTION_MODE_SINGLE_UNIT:
-      multi_select_place = PLACE_SINGLE_UNIT;
-      break;
-    case MENU_MULTI_SELECTION_MODE_ON_TILE:
-      multi_select_place = PLACE_ON_TILE;
-      break;
-    case MENU_MULTI_SELECTION_MODE_ON_CONTINENT:
-      multi_select_place = PLACE_ON_CONTINENT;
-      break;
-    case MENU_MULTI_SELECTION_MODE_EVERY_WHERE:
-      multi_select_place = PLACE_EVERY_WHERE;
-      break;
-    case MENU_MULTI_SELECTION_MODE_SAME_TYPE:
-      multi_select_utype = UTYPE_SAME_TYPE;
-      break;
-    case MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE:
-      multi_select_utype = UTYPE_SAME_MOVE_TYPE;
-      break;
-    case MENU_MULTI_SELECTION_MODE_ALL:
-      multi_select_utype = UTYPE_ALL;
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_ALL:
-      if(!!(multi_select_inclusive_filter & FILTER_ALL) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_ALL);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_NEW:
-      if(!!(multi_select_inclusive_filter & FILTER_NEW) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_NEW);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_FORTIFIED:
-      if(!!(multi_select_inclusive_filter & FILTER_FORTIFIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_FORTIFIED);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_SENTRIED:
-      if(!!(multi_select_inclusive_filter & FILTER_SENTRIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_SENTRIED);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_VETERAN:
-      if(!!(multi_select_inclusive_filter & FILTER_VETERAN) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_VETERAN);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_AUTO:
-      if(!!(multi_select_inclusive_filter & FILTER_AUTO) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_AUTO);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_IDLE:
-      if(!!(multi_select_inclusive_filter & FILTER_IDLE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_IDLE);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE:
-      if(!!(multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_ABLE_TO_MOVE);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_MILITARY:
-      if(!!(multi_select_inclusive_filter & FILTER_MILITARY) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_MILITARY);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_INCLUSIVE_OFF:
-      if(!!(multi_select_inclusive_filter & FILTER_OFF) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_inclusive_filter, FILTER_OFF);
-        update_multi_select_inclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_ALL:
-      if(!!(multi_select_exclusive_filter & FILTER_ALL) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_ALL);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_NEW:
-      if(!!(multi_select_exclusive_filter & FILTER_NEW) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_NEW);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_FORTIFIED:
-      if(!!(multi_select_exclusive_filter & FILTER_FORTIFIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_FORTIFIED);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_SENTRIED:
-      if(!!(multi_select_exclusive_filter & FILTER_SENTRIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_SENTRIED);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_VETERAN:
-      if(!!(multi_select_exclusive_filter & FILTER_VETERAN) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_VETERAN);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_AUTO:
-      if(!!(multi_select_exclusive_filter & FILTER_AUTO) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_AUTO);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_IDLE:
-      if(!!(multi_select_exclusive_filter & FILTER_IDLE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_IDLE);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE:
-      if(!!(multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_ABLE_TO_MOVE);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY:
-      if(!!(multi_select_exclusive_filter & FILTER_MILITARY) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_MILITARY);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_EXCLUSIVE_OFF:
-      if(!!(multi_select_exclusive_filter & FILTER_OFF) ^ GTK_CHECK_MENU_ITEM(widget)->active)
-      {
-        filter_change(&multi_select_exclusive_filter, FILTER_OFF);
-        update_multi_select_exclusive_filter_menu();
-        update_unit_info_label(get_unit_in_focus());
-      }
-      break;
-    case MENU_MULTI_SELECTION_MS1_SELECT:
-      multi_select_copy(0, 1);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS1_ADD:
-      multi_select_cat(0, 1);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS1_RECORD:
-      multi_select_copy(1, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS1_CLEAR:
-      multi_select_clear(1);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS2_SELECT:
-      multi_select_copy(0, 2);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS2_ADD:
-      multi_select_cat(0, 2);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS2_RECORD:
-      multi_select_copy(2, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS2_CLEAR:
-      multi_select_clear(2);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS3_SELECT:
-      multi_select_copy(0, 3);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS3_ADD:
-      multi_select_cat(0, 3);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS3_RECORD:
-      multi_select_copy(3, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS3_CLEAR:
-      multi_select_clear(3);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS4_SELECT:
-      multi_select_copy(0, 4);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS4_ADD:
-      multi_select_cat(0, 4);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS4_RECORD:
-      multi_select_copy(4, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS4_CLEAR:
-      multi_select_clear(4);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS5_SELECT:
-      multi_select_copy(0, 5);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS5_ADD:
-      multi_select_cat(0, 5);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS5_RECORD:
-      multi_select_copy(5, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS5_CLEAR:
-      multi_select_clear(5);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS6_SELECT:
-      multi_select_copy(0, 6);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS6_ADD:
-      multi_select_cat(0, 6);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS6_RECORD:
-      multi_select_copy(6, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS6_CLEAR:
-      multi_select_clear(6);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS7_SELECT:
-      multi_select_copy(0, 7);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS7_ADD:
-      multi_select_cat(0, 7);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS7_RECORD:
-      multi_select_copy(7, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS7_CLEAR:
-      multi_select_clear(7);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS8_SELECT:
-      multi_select_copy(0, 8);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS8_ADD:
-      multi_select_cat(0, 8);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS8_RECORD:
-      multi_select_copy(8, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS8_CLEAR:
-      multi_select_clear(8);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS9_SELECT:
-      multi_select_copy(0, 9);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS9_ADD:
-      multi_select_cat(0, 9);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS9_RECORD:
-      multi_select_copy(9, 0);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MS9_CLEAR:
-      multi_select_clear(9);
-      update_menus();
-      break;
-    case MENU_MULTI_SELECTION_MY_AI_SPREAD:
-      my_ai_spread_execute();
-      break;
-    case MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT:
-      if(spread_airport_cities^GTK_CHECK_MENU_ITEM(widget)->active)
-          key_toggle_spread_airport();
-        break;
-    case MENU_MULTI_SELECTION_MY_AI_SPREAD_ALLY:
-      if(spread_allied_cities^GTK_CHECK_MENU_ITEM(widget)->active)
-          key_toggle_spread_ally();
-        break;
   }
 }
 
@@ -1557,6 +1202,361 @@ static void auto_caravan_menu_callback(gpointer callback_data,
 /****************************************************************
 ...
 *****************************************************************/
+static void multi_selection_menu_callback(gpointer callback_data,
+				 guint callback_action, GtkWidget *widget)
+{
+  switch(callback_action) {
+    case MENU_MULTI_SELECTION_MS_SELECT:
+      multi_select_select();
+      break;
+    case MENU_MULTI_SELECTION_MS_ACTIVE_ALL:
+      multi_select_active_all(0);
+      break;
+    case MENU_MULTI_SELECTION_MS_CLEAR:
+      multi_select_clear(0);
+      break;
+    case MENU_MULTI_SELECTION_MODE_SINGLE_UNIT:
+      multi_select_place = PLACE_SINGLE_UNIT;
+      break;
+    case MENU_MULTI_SELECTION_MODE_ON_TILE:
+      multi_select_place = PLACE_ON_TILE;
+      break;
+    case MENU_MULTI_SELECTION_MODE_ON_CONTINENT:
+      multi_select_place = PLACE_ON_CONTINENT;
+      break;
+    case MENU_MULTI_SELECTION_MODE_EVERY_WHERE:
+      multi_select_place = PLACE_EVERY_WHERE;
+      break;
+    case MENU_MULTI_SELECTION_MODE_SAME_TYPE:
+      multi_select_utype = UTYPE_SAME_TYPE;
+      break;
+    case MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE:
+      multi_select_utype = UTYPE_SAME_MOVE_TYPE;
+      break;
+    case MENU_MULTI_SELECTION_MODE_ALL:
+      multi_select_utype = UTYPE_ALL;
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_ALL:
+      if(!!(multi_select_inclusive_filter & FILTER_ALL) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_ALL);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_NEW:
+      if(!!(multi_select_inclusive_filter & FILTER_NEW) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_NEW);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_FORTIFIED:
+      if(!!(multi_select_inclusive_filter & FILTER_FORTIFIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_FORTIFIED);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_SENTRIED:
+      if(!!(multi_select_inclusive_filter & FILTER_SENTRIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_SENTRIED);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_VETERAN:
+      if(!!(multi_select_inclusive_filter & FILTER_VETERAN) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_VETERAN);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_AUTO:
+      if(!!(multi_select_inclusive_filter & FILTER_AUTO) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_AUTO);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_IDLE:
+      if(!!(multi_select_inclusive_filter & FILTER_IDLE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_IDLE);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE:
+      if(!!(multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_ABLE_TO_MOVE);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_MILITARY:
+      if(!!(multi_select_inclusive_filter & FILTER_MILITARY) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_MILITARY);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_INCLUSIVE_OFF:
+      if(!!(multi_select_inclusive_filter & FILTER_OFF) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_inclusive_filter, FILTER_OFF);
+        update_multi_select_inclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_ALL:
+      if(!!(multi_select_exclusive_filter & FILTER_ALL) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_ALL);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_NEW:
+      if(!!(multi_select_exclusive_filter & FILTER_NEW) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_NEW);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_FORTIFIED:
+      if(!!(multi_select_exclusive_filter & FILTER_FORTIFIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_FORTIFIED);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_SENTRIED:
+      if(!!(multi_select_exclusive_filter & FILTER_SENTRIED) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_SENTRIED);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_VETERAN:
+      if(!!(multi_select_exclusive_filter & FILTER_VETERAN) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_VETERAN);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_AUTO:
+      if(!!(multi_select_exclusive_filter & FILTER_AUTO) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_AUTO);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_IDLE:
+      if(!!(multi_select_exclusive_filter & FILTER_IDLE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_IDLE);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE:
+      if(!!(multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_ABLE_TO_MOVE);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY:
+      if(!!(multi_select_exclusive_filter & FILTER_MILITARY) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_MILITARY);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_EXCLUSIVE_OFF:
+      if(!!(multi_select_exclusive_filter & FILTER_OFF) ^ GTK_CHECK_MENU_ITEM(widget)->active)
+      {
+        filter_change(&multi_select_exclusive_filter, FILTER_OFF);
+        update_multi_select_exclusive_filter_menu();
+        update_unit_info_label(get_unit_in_focus());
+      }
+      break;
+    case MENU_MULTI_SELECTION_MS1_SELECT:
+      multi_select_copy(0, 1);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS1_ADD:
+      multi_select_cat(0, 1);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS1_RECORD:
+      multi_select_copy(1, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS1_CLEAR:
+      multi_select_clear(1);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS2_SELECT:
+      multi_select_copy(0, 2);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS2_ADD:
+      multi_select_cat(0, 2);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS2_RECORD:
+      multi_select_copy(2, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS2_CLEAR:
+      multi_select_clear(2);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS3_SELECT:
+      multi_select_copy(0, 3);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS3_ADD:
+      multi_select_cat(0, 3);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS3_RECORD:
+      multi_select_copy(3, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS3_CLEAR:
+      multi_select_clear(3);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS4_SELECT:
+      multi_select_copy(0, 4);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS4_ADD:
+      multi_select_cat(0, 4);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS4_RECORD:
+      multi_select_copy(4, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS4_CLEAR:
+      multi_select_clear(4);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS5_SELECT:
+      multi_select_copy(0, 5);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS5_ADD:
+      multi_select_cat(0, 5);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS5_RECORD:
+      multi_select_copy(5, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS5_CLEAR:
+      multi_select_clear(5);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS6_SELECT:
+      multi_select_copy(0, 6);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS6_ADD:
+      multi_select_cat(0, 6);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS6_RECORD:
+      multi_select_copy(6, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS6_CLEAR:
+      multi_select_clear(6);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS7_SELECT:
+      multi_select_copy(0, 7);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS7_ADD:
+      multi_select_cat(0, 7);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS7_RECORD:
+      multi_select_copy(7, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS7_CLEAR:
+      multi_select_clear(7);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS8_SELECT:
+      multi_select_copy(0, 8);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS8_ADD:
+      multi_select_cat(0, 8);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS8_RECORD:
+      multi_select_copy(8, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS8_CLEAR:
+      multi_select_clear(8);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS9_SELECT:
+      multi_select_copy(0, 9);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS9_ADD:
+      multi_select_cat(0, 9);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS9_RECORD:
+      multi_select_copy(9, 0);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MS9_CLEAR:
+      multi_select_clear(9);
+      update_menus();
+      break;
+    case MENU_MULTI_SELECTION_MY_AI_SPREAD:
+      my_ai_spread_execute();
+      break;
+    case MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT:
+      if(spread_airport_cities^GTK_CHECK_MENU_ITEM(widget)->active)
+          key_toggle_spread_airport();
+        break;
+    case MENU_MULTI_SELECTION_MY_AI_SPREAD_ALLY:
+      if(spread_allied_cities^GTK_CHECK_MENU_ITEM(widget)->active)
+          key_toggle_spread_ally();
+        break;
+  }
+}
+
+/****************************************************************
+...
+*****************************************************************/
 
 static void miscellaneous_menu_callback(gpointer callback_data,
 				 guint callback_action, GtkWidget *widget)
@@ -1792,902 +1792,1180 @@ Important: The underscore is NOT just for show (see Item 1 above)!
 static GtkItemFactoryEntry menu_items[]	=
 {
   /* Game menu ... */
-  { "/" N_("_Game"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Game") "/tearoff1",				NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Game") "/" N_("Local _Options"),		NULL,
-	game_menu_callback,	MENU_GAME_OPTIONS					},
-  { "/" N_("Game") "/" N_("_Message Options"),		NULL,
-	game_menu_callback,	MENU_GAME_MSG_OPTIONS					},
-  { "/" N_("Game") "/" N_("_Chat Colors"),		NULL,
-	game_menu_callback,	MENU_GAME_CHATLINE_COLORS					},
-  { "/" N_("Game") "/" N_("Sa_ve Settings"),		NULL,
-	game_menu_callback,	MENU_GAME_SAVE_SETTINGS					},
-  { "/" N_("Game") "/sep2",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Game") "/" N_("PepClient Settings"),		NULL,
-	game_menu_callback,	MENU_GAME_PEPSETTINGS					},
-  { "/" N_("Game") "/" N_("_Load PepClient Settings"),		NULL,
-	game_menu_callback,	MENU_GAME_PEPSETTINGS_LOAD					},
-  { "/" N_("Game") "/" N_("Save PepClient Settings"),		NULL,
-	game_menu_callback,	MENU_GAME_PEPSETTINGS_SAVE					},
-  { "/" N_("Game") "/sep3",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Game") "/" N_("_Initial Server Options"),NULL,
-	game_menu_callback,	MENU_GAME_SERVER_OPTIONS1				},
-  { "/" N_("Game") "/" N_("Server O_ptions"),	NULL,
-	game_menu_callback,	MENU_GAME_SERVER_OPTIONS2				},
-  { "/" N_("Game") "/sep4",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Game") "/" N_("_Save Game"),		NULL,
-	game_menu_callback,	MENU_GAME_SAVE_QUICK, 			"<StockItem>",
+  { "/" N_("_Game"),						NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Game") "/tearoff1",					NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Game") "/" N_("Local _Options"),			NULL,
+	game_menu_callback,		MENU_GAME_OPTIONS				},
+  { "/" N_("Game") "/" N_("_Message Options"),			NULL,
+	game_menu_callback,		MENU_GAME_MSG_OPTIONS				},
+  { "/" N_("Game") "/" N_("_Chat Colors"),			NULL,
+	game_menu_callback,		MENU_GAME_CHATLINE_COLORS			},
+  { "/" N_("Game") "/" N_("Sa_ve Settings"),			NULL,
+	game_menu_callback,		MENU_GAME_SAVE_SETTINGS				},
+  { "/" N_("Game") "/sep2",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Game") "/" N_("PepClient _Options"),   	    	NULL,
+	game_menu_callback,		MENU_GAME_PEPSETTINGS				},
+  { "/" N_("Game") "/" N_("Lo_ad PepClient Settings"),		NULL,
+	game_menu_callback,		MENU_GAME_PEPSETTINGS_LOAD			},
+  { "/" N_("Game") "/" N_("Sa_ve PepClient Settings"),		NULL,
+	game_menu_callback,		MENU_GAME_PEPSETTINGS_SAVE			},
+  { "/" N_("Game") "/sep3",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Game") "/" N_("_Initial Server Options"),		NULL,
+	game_menu_callback,		MENU_GAME_SERVER_OPTIONS1			},
+  { "/" N_("Game") "/" N_("Server Optio_ns"),			NULL,
+	game_menu_callback,		MENU_GAME_SERVER_OPTIONS2			},
+  { "/" N_("Game") "/sep4",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Game") "/" N_("_Save Game"),			NULL,
+	game_menu_callback,		MENU_GAME_SAVE_QUICK, 		"<StockItem>",
 	GTK_STOCK_SAVE									},
-  { "/" N_("Game") "/" N_("Save Game _As..."),		NULL,
-	game_menu_callback,	MENU_GAME_SAVE_GAME,			"<StockItem>",
+  { "/" N_("Game") "/" N_("Save Game _As..."),			NULL,
+	game_menu_callback,		MENU_GAME_SAVE_GAME,		"<StockItem>",
 	GTK_STOCK_SAVE_AS								},
-  { "/" N_("Game") "/sep5",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Game") "/" N_("E_xport Log"),		NULL,
-	game_menu_callback,	MENU_GAME_OUTPUT_LOG					},
-  { "/" N_("Game") "/" N_("Clear _Log"),		NULL,
-	game_menu_callback,	MENU_GAME_CLEAR_OUTPUT					},
-  { "/" N_("Game") "/sep6",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Game") "/" N_("L_eave"),		NULL,
-	game_menu_callback,	MENU_GAME_LEAVE					},
-  { "/" N_("Game") "/" N_("_Quit"),			NULL,
-	game_menu_callback,	MENU_GAME_QUIT,				"<StockItem>",
-	GTK_STOCK_QUIT									},
+  { "/" N_("Game") "/sep5",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Game") "/" N_("E_xport Log"),			NULL,
+	game_menu_callback,		MENU_GAME_OUTPUT_LOG				},
+  { "/" N_("Game") "/" N_("Clear _Log"),			NULL,
+	game_menu_callback,		MENU_GAME_CLEAR_OUTPUT				},
+  { "/" N_("Game") "/sep6",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Game") "/" N_("L_eave"),				NULL,
+	game_menu_callback,		MENU_GAME_LEAVE					},
+  { "/" N_("Game") "/" N_("_Quit"),				NULL,
+	game_menu_callback,		MENU_GAME_QUIT,			"<StockItem>",
+	GTK_STOCK_QUIT		
+							},
   /* Government menu ... */
-  { "/" N_("Gover_nment"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Government") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Government") "/" N_("_Tax Rates"),		"<shift>t",
+  { "/" N_("Gover_nment"),			   	    	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Government") "/tearoff1",				NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Government") "/" N_("_Tax Rates"),			"<shift>t",
 	government_menu_callback,	MENU_GOVERNMENT_TAX_RATE			},
   { "/" N_("Government") "/sep1",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Government") "/" N_("_Find City"),		"<shift>f",
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Government") "/" N_("_Find City"),			"<shift>f",
 	government_menu_callback,	MENU_GOVERNMENT_FIND_CITY			},
-  { "/" N_("Government") "/" N_("_Worklists"),		"<control>l"	,
+  { "/" N_("Government") "/" N_("_Worklists"),			"<control>l",
 	government_menu_callback,	MENU_GOVERNMENT_WORKLISTS			},
-  { "/" N_("Government") "/" N_("_Clear Selected Worklists"),		"<control>w",
-	government_menu_callback,	MENU_GOVERNMENT_CLEAR_SELECTED_WORKLISTS			},
+  { "/" N_("Government") "/" N_("_Clear Selected Worklists"),	"<control>w",
+	government_menu_callback,	MENU_GOVERNMENT_CLEAR_SELECTED_WORKLISTS	},
   { "/" N_("Government") "/sep2",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Government") "/" N_("_Change Government"),           NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Government") "/" N_("_Change Government") "/" N_("_Revolution..."),
-                                                        NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Government") "/" N_("_Change Government"),		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Government") "/" N_("Change Government") "/" N_("_Revolution..."),
+								NULL,
 	government_menu_callback,	MENU_GOVERNMENT_REVOLUTION			},
-  { "/" N_("Government") "/" N_("_Change Government") "/sep1",				NULL,
-	NULL,			0,					"<Separator>"	},
+  { "/" N_("Government") "/" N_("Change Government") "/sep1",	NULL,
+	NULL,				0,				"<Separator>"	},
+
   /* View menu ... */
-  { "/" N_("_View"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("View") "/tearoff1",				NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("View") "/" N_("Map _Grid"),			"<control>g",
-	view_menu_callback,	MENU_VIEW_SHOW_MAP_GRID,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("National _Borders"),		"<control>b",
-	view_menu_callback,	MENU_VIEW_SHOW_NATIONAL_BORDERS,	"<CheckItem>"	},
-  { "/" N_("View") "/" N_("City _Names"),		"<control>n",
-	view_menu_callback,	MENU_VIEW_SHOW_CITY_NAMES,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("City G_rowth"),		"",
-	view_menu_callback,	MENU_VIEW_SHOW_CITY_GROWTH_TURNS,
-	"<CheckItem>"	},
-  { "/" N_("View") "/" N_("City _Productions"),		"<control>p",
-	view_menu_callback,	MENU_VIEW_SHOW_CITY_PRODUCTIONS,	"<CheckItem>"	},
-  { "/" N_("View") "/" N_("City Production Buy _Cost"),		"",
-	view_menu_callback,	MENU_VIEW_SHOW_CITY_PRODUCTION_BUY_COST,	"<CheckItem>"	},
+  { "/" N_("_View"),						NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("View") "/tearoff1",					NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("View") "/" N_("Map _Grid"),				"<control>g",
+	view_menu_callback,		MENU_VIEW_SHOW_MAP_GRID,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("National _Borders"),			"<control>b",
+	view_menu_callback,		MENU_VIEW_SHOW_NATIONAL_BORDERS,"<CheckItem>"	},
+  { "/" N_("View") "/" N_("City _Names"),			"<control>n",
+	view_menu_callback,		MENU_VIEW_SHOW_CITY_NAMES,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("City G_rowth"),			NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_CITY_GROWTH_TURNS,
+									"<CheckItem>"	},
+  { "/" N_("View") "/" N_("City _Productions"),			"<control>p",
+	view_menu_callback,		MENU_VIEW_SHOW_CITY_PRODUCTIONS,"<CheckItem>"	},
+  { "/" N_("View") "/" N_("City Production Buy _Cost"),		NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_CITY_PRODUCTION_BUY_COST,
+									"<CheckItem>"	},
   { "/" N_("View") "/" N_("City _Trade Routes"),		"<control>t",
-	view_menu_callback,	MENU_VIEW_SHOW_CITY_TRADEROUTES,	"<CheckItem>"	},
-  { "/" N_("View") "/sep1",				NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_CITY_TRADEROUTES,"<CheckItem>"	},
+  { "/" N_("View") "/sep1",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("View") "/" N_("Te_rrain"),				NULL,
+        view_menu_callback,     	MENU_VIEW_SHOW_TERRAIN,		"<CheckItem>"   },
+  { "/" N_("View") "/" N_("C_oastline"),				NULL,
+        view_menu_callback,     	MENU_VIEW_SHOW_COASTLINE,      	"<CheckItem>"   },
+  { "/" N_("View") "/" N_("_Improvements"),			NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("View") "/" N_("Improvements") "/tearoff1",		NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("View") "/" N_("Improvements") "/" N_("_Roads & Rails"),
+								NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_ROADS_RAILS,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("Improvements") "/" N_("_Irrigation"), NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_IRRIGATION,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("Improvements") "/" N_("_Mines"),	NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_MINES,		"<CheckItem>"	},
+  { "/" N_("View") "/" N_("Improvements") "/" N_("_Fortress & Airbase"),
+								NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_FORTRESS_AIRBASE,"<CheckItem>"	},
+  { "/" N_("View") "/" N_("_Specials"),				NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_SPECIALS,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("Poll_ution & Fallout"),		NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_POLLUTION,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("C_ities"),				NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_CITIES,		"<CheckItem>"	},
+  { "/" N_("View") "/" N_("_Units"),				NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_UNITS,		"<CheckItem>"	},
+  { "/" N_("View") "/" N_("_Focus Unit"),			NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_FOCUS_UNIT,	"<CheckItem>"	},
+  { "/" N_("View") "/" N_("Fog of _War"),			NULL,
+	view_menu_callback,		MENU_VIEW_SHOW_FOG_OF_WAR,	"<CheckItem>"	},
+  { "/" N_("View") "/sep2",					NULL,
 	NULL,			0,					"<Separator>"	},
-  { "/" N_("View") "/" N_("Terrain"),                   NULL,
-        view_menu_callback,     MENU_VIEW_SHOW_TERRAIN,	                "<CheckItem>"   },
-  { "/" N_("View") "/" N_("Coastline"),	                NULL,
-        view_menu_callback,     MENU_VIEW_SHOW_COASTLINE,       	"<CheckItem>"   },
-  { "/" N_("View") "/" N_("Improvements"),		NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("View") "/" N_("Improvements") "/tearoff1",	NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("View") "/" N_("Improvements") "/" N_("Roads & Rails"), NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_ROADS_RAILS,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Improvements") "/" N_("Irrigation"), NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_IRRIGATION,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Improvements") "/" N_("Mines"),	NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_MINES,			"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Improvements") "/" N_("Fortress & Airbase"), NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_FORTRESS_AIRBASE,	"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Specials"),			NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_SPECIALS,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Pollution & Fallout"),	NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_POLLUTION,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Cities"),			NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_CITIES,			"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Units"),			NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_UNITS,			"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Focus Unit"),		NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_FOCUS_UNIT,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("Fog of War"),		NULL,
-	view_menu_callback,	MENU_VIEW_SHOW_FOG_OF_WAR,		"<CheckItem>"	},
-  { "/" N_("View") "/sep2",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("View") "/" N_("_Center View"),		"c",
-	view_menu_callback,	MENU_VIEW_CENTER_VIEW					},
+  { "/" N_("View") "/" N_("Center _View"),			"c",
+	view_menu_callback,		MENU_VIEW_CENTER_VIEW				},
+
   /* Orders menu ... */
   { "/" N_("_Orders"),					NULL,
-	NULL,			0,					"<Branch>"	},
+	NULL,				0,				"<Branch>"	},
   { "/" N_("Orders") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Orders") "/" N_("_Build City"),		"b",
-	orders_menu_callback,	MENU_ORDER_BUILD_CITY					},
-  { "/" N_("Orders") "/" N_("Build _Road"),		"r",
-	orders_menu_callback,	MENU_ORDER_ROAD						},
-  { "/" N_("Orders") "/" N_("Build _Irrigation"),	"i",
-	orders_menu_callback,	MENU_ORDER_IRRIGATE					},
-  { "/" N_("Orders") "/" N_("Build _Mine"),		"m",
-	orders_menu_callback,	MENU_ORDER_MINE						},
-  { "/" N_("Orders") "/" N_("Transf_orm Terrain"),	"o",
-	orders_menu_callback,	MENU_ORDER_TRANSFORM					},
-  { "/" N_("Orders") "/" N_("Build _Fortress"),		"f",
-	orders_menu_callback,	MENU_ORDER_FORTRESS					},
-  { "/" N_("Orders") "/" N_("Build Airbas_e"),		"e",
-	orders_menu_callback,	MENU_ORDER_AIRBASE					},
-  { "/" N_("Orders") "/" N_("Clean _Pollution"),	"p",
-	orders_menu_callback,	MENU_ORDER_POLLUTION					},
-  { "/" N_("Orders") "/" N_("Clean _Nuclear Fallout"),	"n",
-	orders_menu_callback,	MENU_ORDER_FALLOUT					},
-  { "/" N_("Orders") "/sep1",			NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Orders") "/" N_("_Sentry"),			"s",
-	orders_menu_callback,	MENU_ORDER_SENTRY					},
-  { "/" N_("Orders") "/" N_("Sleep"),			"k",
-	orders_menu_callback,	MENU_ORDER_SLEEP					},
-  { "/" N_("Orders") "/" N_("Pillage"),		        "<shift>p",
-	orders_menu_callback,	MENU_ORDER_PILLAGE					},
-  { "/" N_("Orders") "/sep2",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Orders") "/" N_("Make _Homecity"),		"h",
-	orders_menu_callback,	MENU_ORDER_HOMECITY					},
-  { "/" N_("Orders") "/" N_("_Load"),			"l",
-    orders_menu_callback, MENU_ORDER_LOAD},
-  { "/" N_("Orders") "/" N_("_Unload Transporter"),	"<shift>u",
-	orders_menu_callback,	MENU_ORDER_UNLOAD_TRANSPORTER					},
-  { "/" N_("Orders") "/" N_("_Unload"),			"u",
-    orders_menu_callback, MENU_ORDER_UNLOAD},
-  { "/" N_("Orders") "/" N_("Wake up o_thers"),		"<shift>w",
-	orders_menu_callback,	MENU_ORDER_WAKEUP_OTHERS				},
-  { "/" N_("Orders") "/sep3",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Orders") "/" N_("_Auto Settler"),		"a",
-	orders_menu_callback,	MENU_ORDER_AUTO_SETTLER					},
-  { "/" N_("Orders") "/" N_("Auto E_xplore"),		"x",
-	orders_menu_callback,	MENU_ORDER_AUTO_EXPLORE					},
-  {"/" N_("Orders") "/" N_("_Connect") "/" N_("_Road"), "<ctrl>r",
-   orders_menu_callback, MENU_ORDER_CONNECT_ROAD},
-  {"/" N_("Orders") "/" N_("_Connect") "/" N_("Rai_l"), "<ctrl>c",
-   orders_menu_callback, MENU_ORDER_CONNECT_RAIL},
-  {"/" N_("Orders") "/" N_("_Connect") "/" N_("_Irrigate"), "<ctrl>i",
-   orders_menu_callback, MENU_ORDER_CONNECT_IRRIGATE},
-  { "/" N_("Orders") "/" N_("Patrol (_Q)"),		"q",
-	orders_menu_callback,	MENU_ORDER_PATROL					},
-  { "/" N_("Orders") "/" N_("_Go to"),			"g",
-	orders_menu_callback,	MENU_ORDER_GOTO						},
-  { "/" N_("Orders") "/" N_("Go\\/Airlift to City"),	"<shift>l",
-	orders_menu_callback,	MENU_ORDER_GOTO_CITY					},
-  { "/" N_("Orders") "/" N_("Return to nearest city"),	"<shift>g",
-	orders_menu_callback,	MENU_ORDER_RETURN },
-  { "/" N_("Orders") "/sep4",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Orders") "/" N_("Disband Unit"),		"<shift>d",
-	orders_menu_callback,	MENU_ORDER_DISBAND					},
-  { "/" N_("Orders") "/" N_("Diplomat\\/Spy Actions"),	"d",
-	orders_menu_callback,	MENU_ORDER_DIPLOMAT_DLG					},
-  { "/" N_("Orders") "/" N_("Explode Nuclear"),        "<shift>n",
-	orders_menu_callback,	MENU_ORDER_NUKE						},
-  { "/" N_("Orders") "/sep5",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Orders") "/" N_("_Wait"),			"w",
-	orders_menu_callback,	MENU_ORDER_WAIT						},
-  { "/" N_("Orders") "/" N_("Done"),			"space",
-	orders_menu_callback,	MENU_ORDER_DONE						},
-
- /* Multi-Selection menu ...*/
-  { "/" N_("Multi-Selection"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Multi-Selection") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Multi-Selection") "/" N_("Multi-selection select"),			"<shift>c",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS_SELECT	},
-  { "/" N_("Multi-Selection") "/" N_("Multi-selection active all units"),			"<shift>b",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS_ACTIVE_ALL	},
-  { "/" N_("Multi-Selection") "/" N_("Multi-selection clear"),			"<shift>v",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS_CLEAR	},
-  { "/" N_("Multi-Selection") "/sep1",					NULL,
-	NULL,			0,					"<Separator>"},
-  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Single Unit"),					"<shift>F1",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_SINGLE_UNIT,				"<RadioItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the tile"),					"<shift>F2",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_ON_TILE,				"<main>/Multi-Selection/Multi-selection mode/Single Unit"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the continent"),					"<shift>F3",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_ON_CONTINENT,				"<main>/Multi-Selection/Multi-selection mode/Single Unit"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units"),					"<shift>F4",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_EVERY_WHERE,				"<main>/Multi-Selection/Multi-selection mode/Single Unit"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/sep1",					NULL,
-	NULL,			0,					"<Separator>"},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Only units with the same type"),					"<shift>F5",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_SAME_TYPE,				"<RadioItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Only units with the same move type"),					"<shift>F6",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE,				"<main>/Multi-Selection/Multi-selection mode/Only units with the same type"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All unit types"),					"<shift>F7",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MODE_ALL,				"<main>/Multi-Selection/Multi-selection mode/Only units with the same type"	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter"),					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection")  "/" N_("Inclusive filter") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("All units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_ALL,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("New units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_NEW,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Fortified units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_FORTIFIED,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Sentried units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_SENTRIED,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Veteran units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_VETERAN,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Auto units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_AUTO,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Idle units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_IDLE,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Units able to move"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Military units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_MILITARY,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Off"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_INCLUSIVE_OFF,				"<CheckItem>"	},
-	
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter"),					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection")  "/" N_("Exclusive filter") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("All units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_ALL,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("New units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_NEW,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Fortified units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_FORTIFIED,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Sentried units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_SENTRIED,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Veteran units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_VETERAN,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Auto units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_AUTO,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Idle units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_IDLE,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Units able to move"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Military units"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY,				"<CheckItem>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Off"),					NULL,
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_EXCLUSIVE_OFF,				"<CheckItem>"	},
-
-	{ "/" N_("Multi-Selection") "/sep2",					NULL,
-	NULL,			0,					"<Separator>"},
-
-        { "/" N_("Multi-Selection") "/" N_("Multi-selection spread"),			"<shift>s",
-		multi_selection_menu_callback,			MENU_MULTI_SELECTION_MY_AI_SPREAD	},
-	{ "/" N_("Multi-Selection") "/" N_("Spread only in cities with airport"),			NULL,
-		multi_selection_menu_callback,			MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT	,		"<CheckItem>"		},
-	{ "/" N_("Multi-Selection") "/" N_("Allow spreading into allied cities"),			NULL,
-		multi_selection_menu_callback,			MENU_MULTI_SELECTION_MY_AI_SPREAD_ALLY	,		"<CheckItem>"		},
-
-	{ "/" N_("Multi-Selection") "/sep3",					NULL,
-	NULL,			0,					"<Separator>"},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("Select"),					"1",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS1_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("Add to current selection"),					"<shift>1",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS1_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("Record"),					"<ctrl>1",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS1_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("Clear"),					"<ctrl><shift>1",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS1_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("Select"),					"2",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS2_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("Add to current selection"),					"<shift>2",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS2_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("Record"),					"<ctrl>2",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS2_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("Clear"),					"<ctrl><shift>2",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS2_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("Select"),					"3",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS3_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("Add to current selection"),					"<shift>3",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS3_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("Record"),					"<ctrl>3",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS3_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("Clear"),					"<ctrl><shift>3",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS3_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("Select"),					"4",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS4_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("Add to current selection"),					"<shift>4",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS4_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("Record"),					"<ctrl>4",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS4_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("Clear"),					"<ctrl><shift>4",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS4_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("Select"),					"5",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS5_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("Add to current selection"),					"<shift>5",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS5_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("Record"),					"<ctrl>5",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS5_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("Clear"),					"<ctrl><shift>5",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS5_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("Select"),					"6",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS6_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("Add to current selection"),					"<shift>6",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS6_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("Record"),					"<ctrl>6",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS6_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("Clear"),					"<ctrl><shift>6",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS6_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("Select"),					"7",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS7_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("Add to current selection"),					"<shift>7",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS7_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("Record"),					"<ctrl>7",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS7_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("Clear"),					"<ctrl><shift>7",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS7_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("Select"),					"8",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS8_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("Add to current selection"),					"<shift>8",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS8_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("Record"),					"<ctrl>8",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS8_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("Clear"),					"<ctrl><shift>8",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS8_CLEAR,				NULL	},
-
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9",					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("Select"),					"9",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS9_SELECT,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("Add to current selection"),					"<shift>9",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS9_ADD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("Record"),					"<ctrl>9",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS9_RECORD,				NULL	},
-	{ "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("Clear"),					"<ctrl><shift>9",
-	multi_selection_menu_callback,			MENU_MULTI_SELECTION_MS9_CLEAR,				NULL	},
-
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Orders") "/" N_("_Build City"),			"b",
+	orders_menu_callback,		MENU_ORDER_BUILD_CITY				},
+  { "/" N_("Orders") "/" N_("Build _Road"),			"r",
+	orders_menu_callback,		MENU_ORDER_ROAD					},
+  { "/" N_("Orders") "/" N_("Build _Irrigation"),		"i",
+	orders_menu_callback,		MENU_ORDER_IRRIGATE				},
+  { "/" N_("Orders") "/" N_("Build _Mine"),			"m",
+	orders_menu_callback,		MENU_ORDER_MINE					},
+  { "/" N_("Orders") "/" N_("Transf_orm Terrain"),		"o",
+	orders_menu_callback,		MENU_ORDER_TRANSFORM				},
+  { "/" N_("Orders") "/" N_("Build _Fortress"),			"f",
+	orders_menu_callback,		MENU_ORDER_FORTRESS				},
+  { "/" N_("Orders") "/" N_("Build Airbas_e"),			"e",
+	orders_menu_callback,		MENU_ORDER_AIRBASE				},
+  { "/" N_("Orders") "/" N_("Clean _Pollution"),		"p",
+	orders_menu_callback,		MENU_ORDER_POLLUTION				},
+  { "/" N_("Orders") "/" N_("Clean _Nuclear Fallout"),		"n",
+	orders_menu_callback,		MENU_ORDER_FALLOUT				},
+  { "/" N_("Orders") "/sep1",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Orders") "/" N_("_Sentry"),				"s",
+	orders_menu_callback,		MENU_ORDER_SENTRY				},
+  { "/" N_("Orders") "/" N_("S_leep"),				"k",
+	orders_menu_callback,		MENU_ORDER_SLEEP				},
+  { "/" N_("Orders") "/" N_("Pi_llage"),				"<shift>p",
+	orders_menu_callback,		MENU_ORDER_PILLAGE				},
+  { "/" N_("Orders") "/sep2",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Orders") "/" N_("Make _Homecity"),			"h",
+	orders_menu_callback,		MENU_ORDER_HOMECITY				},
+  { "/" N_("Orders") "/" N_("_Load"),				"l",
+    orders_menu_callback,		MENU_ORDER_LOAD},
+  { "/" N_("Orders") "/" N_("_Unload Transporter"),		"<shift>u",
+	orders_menu_callback,		MENU_ORDER_UNLOAD_TRANSPORTER			},
+  { "/" N_("Orders") "/" N_("_Unload"),				"u",
+    orders_menu_callback,		MENU_ORDER_UNLOAD				},
+  { "/" N_("Orders") "/" N_("Wake up o_thers"),			"<shift>w",
+	orders_menu_callback,		MENU_ORDER_WAKEUP_OTHERS			},
+  { "/" N_("Orders") "/sep3",					NULL,
+	NULL,				0,			"<Separator>"	},
+  { "/" N_("Orders") "/" N_("_Auto Settler"),			"a",
+	orders_menu_callback,		MENU_ORDER_AUTO_SETTLER				},
+  { "/" N_("Orders") "/" N_("Auto E_xplore"),			"x",
+	orders_menu_callback,		MENU_ORDER_AUTO_EXPLORE				},
+  { "/" N_("Orders") "/" N_("_Connect"),		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Orders") "/" N_("Connect") "/" N_("Road"), 		"<ctrl>r",
+   	orders_menu_callback,		MENU_ORDER_CONNECT_ROAD				},
+  { "/" N_("Orders") "/" N_("Connect") "/" N_("Rail"),	 	"<ctrl>l",
+   	orders_menu_callback,		MENU_ORDER_CONNECT_RAIL				},
+  { "/" N_("Orders") "/" N_("Connect") "/" N_("Irrigate"), 	"<ctrl>i",
+  	orders_menu_callback,		MENU_ORDER_CONNECT_IRRIGATE			},
+  { "/" N_("Orders") "/" N_("Patrol (_Q)"),			"q",
+	orders_menu_callback,		MENU_ORDER_PATROL				},
+  { "/" N_("Orders") "/" N_("_Go to"),				"g",
+	orders_menu_callback,		MENU_ORDER_GOTO					},
+  { "/" N_("Orders") "/" N_("Go\\/_Airlift to City"),		"<shift>l",
+	orders_menu_callback,		MENU_ORDER_GOTO_CITY				},
+  { "/" N_("Orders") "/" N_("Ret_urn to nearest city"),		"<shift>g",
+	orders_menu_callback,		MENU_ORDER_RETURN },
+  { "/" N_("Orders") "/sep4",					NULL,
+	NULL,				0,			"<Separator>"		},
+  { "/" N_("Orders") "/" N_("Disb_and Unit"),			"<shift>d",
+	orders_menu_callback,		MENU_ORDER_DISBAND				},
+  { "/" N_("Orders") "/" N_("D_iplomat\\/Spy Actions"),		"d",
+	orders_menu_callback,		MENU_ORDER_DIPLOMAT_DLG				},
+  { "/" N_("Orders") "/" N_("Explode _Nuclear"),		"<shift>n",
+	orders_menu_callback,		MENU_ORDER_NUKE					},
+  { "/" N_("Orders") "/sep5",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Orders") "/" N_("_Wait"),				"w",
+	orders_menu_callback,		MENU_ORDER_WAIT					},
+  { "/" N_("Orders") "/" N_("Don_e"),				"space",
+	orders_menu_callback,		MENU_ORDER_DONE					},
 
  /* Delayed Goto menu ...*/
-  { "/" N_("Delayed Goto"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto"),			"z",
-	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_GOTO						},
-  { "/" N_("Delayed Goto") "/" N_("Delayed paradrop or nuke"),			"<ctrl>z",
-	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE						},
-  { "/" N_("Delayed Goto") "/" N_("Delayed airlift"),			"<ctrl>y",
-	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_AIRLIFT						},
-  { "/" N_("Delayed Goto") "/" N_("Execute delayed goto"),			"y",
-	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXECUTE_DELAYED_GOTO						},
-  { "/" N_("Delayed Goto") "/" N_("Clear delayed orders"),			"u",
-	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_CLEAR_DELAYED_ORDERS						},
-  { "/" N_("Delayed Goto") "/sep1",					NULL,
-	NULL,			0,					"<Separator>"},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode"),		NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/tearoff1",	NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Single Unit"),					"<alt><shift>F1",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_SINGLE_UNIT,				"<RadioItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the tile"),					"<alt><shift>F2",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_ON_TILE,				"<main>/Delayed Goto/Delayed goto mode/Single Unit"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the continent"),					"<alt><shift>F3",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_ON_CONTINENT,				"<main>/Delayed Goto/Delayed goto mode/Single Unit"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units"),					"<alt><shift>F4",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_EVERY_WHERE,				"<main>/Delayed Goto/Delayed goto mode/Single Unit"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/sep1",					NULL,
-	NULL,			0,					"<Separator>"},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Only units with the same type"),					"<alt><shift>F5",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_SAME_TYPE,				"<RadioItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Only units with the same move type"),					"<alt><shift>F6",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_SAME_MOVE_TYPE,				"<main>/Delayed Goto/Delayed goto mode/Only units with the same type"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All unit types"),					"<alt><shift>F7",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_GOTO_ALL,				"<main>/Delayed Goto/Delayed goto mode/Only units with the same type"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto auto"),                                  NULL,
-	    NULL,                   0,                                      "<Branch>"      },
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto auto") "/tearoff1",                     NULL,
-	    NULL,                   0,                                      "<Tearoff>"     },
+  { "/" N_("_Delayed Goto"),					NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/tearoff1",				NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed go_to"),		"z",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_GOTO			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed pa_radrop or nuke"),	"<ctrl>z",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed _airlift"),		"<ctrl>y",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_AIRLIFT		},
+  { "/" N_("Delayed Goto") "/" N_("_Execute delayed goto"),	"y",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXECUTE_DELAYED_GOTO		},
+  { "/" N_("Delayed Goto") "/" N_("_Clear delayed orders"),	"u",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_CLEAR_DELAYED_ORDERS		},
+  { "/" N_("Delayed Goto") "/sep1",				NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto _mode"),		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("_Single unit"),
+								"<alt><shift>F1",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_SINGLE_UNIT,
+									"<RadioItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the _tile"),
+								"<alt><shift>F2",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_ON_TILE,
+				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the _continent"),
+								"<alt><shift>F3",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_ON_CONTINENT,
+				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("_All units"),
+								"<alt><shift>F4",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_EVERY_WHERE,
+				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/sep1",	NULL,
+	NULL,			0,					"<Separator>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Only units with the _same type"),
+								"<alt><shift>F5",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_SAME_TYPE,
+									"<RadioItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Only units with the same _move type"),
+								"<alt><shift>F6",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_SAME_MOVE_TYPE,
+		"<main>/Delayed Goto/Delayed goto mode/Only units with the same type"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("_All unit types"),
+								"<alt><shift>F7",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_ALL,
+		"<main>/Delayed Goto/Delayed goto mode/Only units with the same type"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto _auto"),		NULL,
+	NULL,				0,				"<Branch>"      },
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto auto") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
-  { "/" N_("Delayed Goto") "/" N_("Inclusive filter"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto")  "/" N_("Inclusive filter") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("All units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_ALL,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("New units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_NEW,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Fortified units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_FORTIFIED,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Sentried units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_SENTRIED,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Veteran units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_VETERAN,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Auto units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_AUTO,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Idle units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_IDLE,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Units able to move"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_ABLE_TO_MOVE,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Military units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_MILITARY,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Off"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_INCLUSIVE_OFF,				"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("_Inclusive filter"),		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto")  "/" N_("Inclusive filter") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_All units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_ALL,"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_New units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_NEW,"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Fortified units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_FORTIFIED,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Sentried units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_SENTRIED,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Veteran units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_VETERAN,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Auto units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_AUTO,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Idle units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_IDLE,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("Units abl_e to move"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_ABLE_TO_MOVE,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Military units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_MILITARY,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Inclusive filter") "/" N_("_Off"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_INCLUSIVE_OFF,"<CheckItem>"	},
 	
-  { "/" N_("Delayed Goto") "/" N_("Exclusive filter"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto")  "/" N_("Exclusive filter") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("All units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_ALL,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("New units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_NEW,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Fortified units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_FORTIFIED,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Sentried units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_SENTRIED,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Veteran units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_VETERAN,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Auto units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_AUTO,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Idle units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_IDLE,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Units able to move"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_ABLE_TO_MOVE,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Military units"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_MILITARY,				"<CheckItem>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Off"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_EXCLUSIVE_OFF,				"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("_Exclusive filter"),		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto")  "/" N_("Exclusive filter") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_All units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_ALL,"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_New units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_NEW,"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Fortified units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_FORTIFIED,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Sentried units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_SENTRIED,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Veteran units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_VETERAN,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Auto units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_AUTO,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Idle units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_IDLE,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("Units abl_e to move"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_ABLE_TO_MOVE,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Military units"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_MILITARY,
+									"<CheckItem>"	},
+  { "/" N_("Delayed Goto") "/" N_("Exclusive filter") "/" N_("_Off"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXCLUSIVE_OFF,
+									"<CheckItem>"	},
 
-  { "/" N_("Delayed Goto") "/sep2",					NULL,
-	NULL,			0,					"<Separator>"},
+  { "/" N_("Delayed Goto") "/sep2",				NULL,
+	NULL,				0,				"<Separator>"	},
 
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Select"),					"<alt>1",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG1_SELECT,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Add to current selection"),					"<shift><alt>1",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG1_ADD,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Record"),					"<ctrl><alt>1",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG1_RECORD,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Clear"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG1_CLEAR,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Execute"),					"<ctrl><shift><alt>1",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG1_EXECUTE,				NULL	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " _1",
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("_Select"),
+								"<alt>1",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG1_SELECT			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("_Add to current selection"),
+								"<shift><alt>1",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG1_ADD			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("_Record"),
+								"<ctrl><alt>1",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG1_RECORD			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("_Clear"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG1_CLEAR			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("_Execute"),
+								"<ctrl><shift><alt>1",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG1_EXECUTE			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("_Automatic execution"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 1/" N_("Automatic execution") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Select"),					"<alt>2",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG2_SELECT,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Add to current selection"),					"<shift><alt>2",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG2_ADD,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Record"),					"<ctrl><alt>2",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG2_RECORD,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Clear"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG2_CLEAR,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Execute"),					"<ctrl><shift><alt>2",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG2_EXECUTE,				NULL	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " _2",
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("_Select"),
+								"<alt>2",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG2_SELECT			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("_Add to current selection"),
+								"<shift><alt>2",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG2_ADD			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("_Record"),
+								"<ctrl><alt>2",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG2_RECORD			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("_Clear"),
+			       					NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG2_CLEAR			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("_Execute"),
+								"<ctrl><shift><alt>2",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG2_EXECUTE			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("_Automatic execution"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 2/" N_("Automatic execution") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Select"),					"<alt>3",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG3_SELECT,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Add to current selection"),					"<shift><alt>3",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG3_ADD,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Record"),					"<ctrl><alt>3",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG3_RECORD,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Clear"),					NULL,
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG3_CLEAR,				NULL	},
-	{ "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Execute"),					"<ctrl><shift><alt>3",
-	delayed_goto_menu_callback,			MENU_DELAYED_GOTO_DG3_EXECUTE,				NULL	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Automatic execution"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Automatic execution") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " _3",
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("_Select"),
+								"<alt>3",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG3_SELECT			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("_Add to current selection"),
+								"<shift><alt>3",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG3_ADD			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("_Record"),
+								"<ctrl><alt>3",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG3_RECORD			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("_Clear"),
+								NULL,
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG3_CLEAR			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("_Execute"),
+								"<ctrl><shift><alt>3",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DG3_EXECUTE			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("_Automatic execution"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto selection") " 3/" N_("Automatic execution") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
  /* Airlift menu ...*/
-  { "/" N_("Airlift"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Airlift") "/" N_("Set airlift destination"),			"<shift>y",
-	airlift_menu_callback,	MENU_AIRLIFT_SET_AIRLIFT_DEST						},
-  { "/" N_("Airlift") "/" N_("Set airlift source"),			"<shift>z",
-	airlift_menu_callback,	MENU_AIRLIFT_SET_AIRLIFT_SRC						},
-  { "/" N_("Airlift") "/" N_("Add all cities with airport in airlift queue"),			"<ctrl><shift>z",
-	airlift_menu_callback,	MENU_AIRLIFT_AIRLIFT_SELECT_AIRPORT_CITIES						},
-  { "/" N_("Airlift") "/" N_("Clear airlift queue"),			NULL,
-	airlift_menu_callback,	MENU_AIRLIFT_CLEAR_AIRLIFT_QUEUE						},
-  { "/" N_("Airlift") "/" N_("Show cities in airlift queue"),			"",
-	airlift_menu_callback,	MENU_AIRLIFT_SHOW_CITIES_IN_AIRLIFT_QUEUE						},
-  { "/" N_("Airlift") "/" N_("Airlift unit type"),		NULL,
-	NULL,			0,					"<Branch>"	},
+  { "/" N_("_Airlift"),						NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/tearoff1",				NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift unit _type"),		NULL,
+	NULL,				0,				"<Branch>"	},
   { "/" N_("Airlift") "/" N_("Airlift unit type") "/tearoff1",	NULL,
-	NULL,			0,					"<Tearoff>"	},
-
+	NULL,				0,				"<Tearoff>"	},
   { "/" N_("Airlift") "/sep1",					NULL,
-	NULL,			0,					"<Separator>"},
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Airlift") "/" N_("Set airlift _destination"),	"<shift>y",
+	airlift_menu_callback,		MENU_AIRLIFT_SET_AIRLIFT_DEST			},
+  { "/" N_("Airlift") "/" N_("Set airlift _source"),		"<shift>z",
+	airlift_menu_callback,		MENU_AIRLIFT_SET_AIRLIFT_SRC			},
+  { "/" N_("Airlift") "/" N_("_Add all cities with airport in airlift queue"),
+								"<ctrl><shift>z",
+	airlift_menu_callback,		MENU_AIRLIFT_AIRLIFT_SELECT_AIRPORT_CITIES	},
+  { "/" N_("Airlift") "/" N_("_Clear airlift queue"),		NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_CLEAR_AIRLIFT_QUEUE		},
+  { "/" N_("Airlift") "/" N_("Show cities in airlift _queue"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_SHOW_CITIES_IN_AIRLIFT_QUEUE	},
 
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 4",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Select"),					"<alt>4",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ1_SELECT,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Add to current selection"),					"<shift><alt>4",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ1_ADD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Record"),					"<ctrl><alt>4",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ1_RECORD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Clear"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ1_CLEAR,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Execute"),					"<ctrl><shift><alt>4",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ1_EXECUTE,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Show"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ1_SHOW,				NULL	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Airlift unit type"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Airlift unit type") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Airlift") "/sep2",					NULL,
+	NULL,				0,				"<Separator>"	},
 
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 5",					NULL,
-	NULL,			0,					"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " _4",		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/tearoff1",	NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("_Select"),
+								"<alt>4",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ1_SELECT				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("_Add to current selection"),
+								"<shift><alt>4",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ1_ADD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("_Record"),
+								"<ctrl><alt>4",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ1_RECORD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("_Clear"),NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ1_CLEAR				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("_Execute"),
+								"<ctrl><shift><alt>4",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ1_EXECUTE			},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("_Show"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ1_SHOW				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Airlift unit _type"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 4/" N_("Airlift unit type") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+
+  { "/" N_("Airlift") "/" N_("Airlift queue") " _5",		NULL,
+	NULL,				0,				"<Branch>"	},
   { "/" N_("Airlift") "/" N_("Airlift queue") " 5/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Select"),					"<alt>5",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ2_SELECT,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Add to current selection"),					"<shift><alt>5",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ2_ADD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Record"),					"<ctrl><alt>5",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ2_RECORD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Clear"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ2_CLEAR,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Execute"),					"<ctrl><shift><alt>5",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ2_EXECUTE,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Show"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ2_SHOW,				NULL	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Airlift unit type"),					NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("_Select"),
+								"<alt>5",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ2_SELECT				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("_Add to current selection"),
+								"<shift><alt>5",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ2_ADD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("_Record"),
+								"<ctrl><alt>5",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ2_RECORD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("_Clear"),NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ2_CLEAR				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("_Execute"),
+								"<ctrl><shift><alt>5",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ2_EXECUTE			},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("_Show"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ2_SHOW				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Airlift unit _type"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Airlift unit type") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+
+  { "/" N_("Airlift") "/" N_("Airlift queue") " _6",		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/tearoff1",	NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("_Select"),
+								"<alt>6",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ3_SELECT				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("_Add to current selection"),
+								"<shift><alt>6",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ3_ADD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("_Record"),
+								"<ctrl><alt>6",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ3_RECORD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("_Clear"),NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ3_CLEAR				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("_Execute"),
+								"<ctrl><shift><alt>6",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ3_EXECUTE			},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("_Show"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ3_SHOW				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Airlift unit _type"),
+								NULL,
 	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 5/" N_("Airlift unit type") "/tearoff1",			NULL,
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Airlift unit type") "/tearoff1",
+								NULL,
 	NULL,			0,					"<Tearoff>"	},
 
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 6",					NULL,
+  { "/" N_("Airlift") "/" N_("Airlift queue") " _7",		NULL,
 	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/tearoff1",			NULL,
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/tearoff1",	NULL,
 	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Select"),					"<alt>6",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ3_SELECT,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Add to current selection"),					"<shift><alt>6",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ3_ADD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Record"),					"<ctrl><alt>6",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ3_RECORD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Clear"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ3_CLEAR,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Execute"),					"<ctrl><shift><alt>6",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ3_EXECUTE,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Show"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ3_SHOW,				NULL	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Airlift unit type"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 6/" N_("Airlift unit type") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("_Select"),
+								"<alt>7",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ4_SELECT				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("_Add to current selection"),
+								"<shift><alt>7",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ4_ADD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("_Record"),
+								"<ctrl><alt>7",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ4_RECORD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("_Clear"),NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ4_CLEAR				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("_Execute"),
+								"<ctrl><shift><alt>7",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ4_EXECUTE			},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("_Show"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ4_SHOW				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Airlift unit _type"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Airlift unit type") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 7",					NULL,
+  { "/" N_("Airlift") "/" N_("Airlift queue") " _8",		NULL,
 	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/tearoff1",			NULL,
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/tearoff1",	NULL,
 	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Select"),					"<alt>7",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ4_SELECT,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Add to current selection"),					"<shift><alt>7",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ4_ADD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Record"),					"<ctrl><alt>7",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ4_RECORD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Clear"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ4_CLEAR,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Execute"),					"<ctrl><shift><alt>7",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ4_EXECUTE,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Show"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ4_SHOW,				NULL	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Airlift unit type"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 7/" N_("Airlift unit type") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("_Select"),
+								"<alt>8",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ5_SELECT			       	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("_Add to current selection"),
+								"<shift><alt>8",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ5_ADD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("_Record"),
+			       					"<ctrl><alt>8",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ5_RECORD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("_Clear"),NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ5_CLEAR				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("_Execute"),
+								"<ctrl><shift><alt>8",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ5_EXECUTE			},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("_Show"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ5_SHOW				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Airlift unit _type"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Airlift unit type") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 8",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Select"),					"<alt>8",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ5_SELECT,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Add to current selection"),					"<shift><alt>8",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ5_ADD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Record"),					"<ctrl><alt>8",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ5_RECORD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Clear"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ5_CLEAR,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Execute"),					"<ctrl><shift><alt>8",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ5_EXECUTE,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Show"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ5_SHOW,				NULL	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Airlift unit type"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 8/" N_("Airlift unit type") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " _9",		NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/tearoff1",	NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("_Select"),
+								"<alt>9",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ6_SELECT				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("_Add to current selection"),
+								"<shift><alt>9",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ6_ADD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("_Record"),
+								"<ctrl><alt>9",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ6_RECORD				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("_Clear"),NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ6_CLEAR				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("_Execute"),
+								"<ctrl><shift><alt>9",
+	airlift_menu_callback,		MENU_AIRLIFT_AQ6_EXECUTE			},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("_Show"),	NULL,
+	airlift_menu_callback,		MENU_AIRLIFT_AQ6_SHOW				},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Airlift unit _type"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Airlift unit type") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
 
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 9",					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Select"),					"<alt>9",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ6_SELECT,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Add to current selection"),					"<shift><alt>9",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ6_ADD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Record"),					"<ctrl><alt>9",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ6_RECORD,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Clear"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ6_CLEAR,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Execute"),					"<ctrl><shift><alt>9",
-	airlift_menu_callback,			MENU_AIRLIFT_AQ6_EXECUTE,				NULL	},
-	{ "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Show"),					NULL,
-	airlift_menu_callback,			MENU_AIRLIFT_AQ6_SHOW,				NULL	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Airlift unit type"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Airlift") "/" N_("Airlift queue") " 9/" N_("Airlift unit type") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
  /* Auto Caravan menu ...*/
-  { "/" N_("Auto Caravan"),					NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Auto Caravan") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Auto Caravan") "/" N_("Add a city in trade plan"),			"<shift>a",
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_TRADE_CITY	},
-  { "/" N_("Auto Caravan") "/" N_("Clear city list for trade plan"),			NULL,
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_CLEAR_TRADE_CITY	},
-  { "/" N_("Auto Caravan") "/sep1",					NULL,
-	NULL,			0,					"<Separator>"},
-  { "/" N_("Auto Caravan") "/" N_("Show cities in trade plan"),			NULL,
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES	},
-  { "/" N_("Auto Caravan") "/" N_("Show the trade route free slots"),			NULL,
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_SHOW_FREE_SLOTS	},
-  { "/" N_("Auto Caravan") "/" N_("Show trade estimation"),			NULL,
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_ESTIMATE_TRADE	},
-  { "/" N_("Auto Caravan") "/" N_("Recalculate trade plan"),			NULL,
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE	},
-  { "/" N_("Auto Caravan") "/sep2",					NULL,
-	NULL,			0,					"<Separator>"},
-  { "/" N_("Auto Caravan") "/" N_("Set caravan destination"),			"h",
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_TRADE_WITH	},
-  { "/" N_("Auto Caravan") "/" N_("Automatic caravan orders"),			"<ctrl>h",
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_CARAVAN	},
-  { "/" N_("Auto Caravan") "/" N_("Execute all trade route orders"),			"<shift>h",
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE	},
-  { "/" N_("Auto Caravan") "/" N_("Execute all help wonder orders"),			"<shift>i",
-	auto_caravan_menu_callback,			MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE	},
+  { "/" N_("Auto _Caravan"),					NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Auto Caravan") "/tearoff1",				NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Auto Caravan") "/" N_("_Add a city in trade plan"),	"<shift>a",
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_CITY		},
+  { "/" N_("Auto Caravan") "/" N_("_Clear city list for trade plan"),
+								NULL,
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_CLEAR_TRADE_CITY	},
+  { "/" N_("Auto Caravan") "/" N_("_Recalculate trade plan"),	NULL,
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE	},
+  { "/" N_("Auto Caravan") "/sep1",				NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Auto Caravan") "/" N_("Show trade _estimation"),	NULL,
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_ESTIMATE_TRADE		},
+  { "/" N_("Auto Caravan") "/" N_("Show the trade route _free slots"),
+								NULL,
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_SHOW_FREE_SLOTS		},
+  { "/" N_("Auto Caravan") "/" N_("Show cities in _trade plan"),	NULL,
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES	},
+  { "/" N_("Auto Caravan") "/sep2",				NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Auto Caravan") "/" N_("_Set caravan destination"),	"h",
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_WITH		},
+  { "/" N_("Auto Caravan") "/" N_("Auto_matic caravan orders"),	"<ctrl>h",
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_CARAVAN	},
+  { "/" N_("Auto Caravan") "/" N_("_Execute all trade route orders"),
+								"<shift>h",
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE	},
+  { "/" N_("Auto Caravan") "/" N_("Execute all help _wonder orders"),
+								"<shift>i",
+	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE	},
+
+ /* Multi-Selection menu ...*/
+  { "/" N_("_Multi-Selection"),					NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/tearoff1",			NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection _select"),	"<shift>c",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS_SELECT	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection _active all units"),
+								"<shift>b",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS_ACTIVE_ALL},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection _clear"),	"<shift>v",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS_CLEAR	},
+  { "/" N_("Multi-Selection") "/sep1",				NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection _mode"),	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("_Single unit"),
+								"<shift>F1",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_SINGLE_UNIT,
+									"<RadioItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the _tile"),
+								"<shift>F2",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_ON_TILE,
+			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the _continent"),
+								"<shift>F3",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_ON_CONTINENT,
+			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("_All units"),
+								"<shift>F4",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_EVERY_WHERE,
+			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/sep1",
+								NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Only units with the same _type"),
+								"<shift>F5",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_SAME_TYPE,
+									"<RadioItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Only units with the same _move type"),
+								"<shift>F6",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE,
+	"<main>/Multi-Selection/Multi-selection mode/Only units with the same type"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("_All unit types"),
+								"<shift>F7",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_ALL,
+	"<main>/Multi-Selection/Multi-selection mode/Only units with the same type"	},
+
+  { "/" N_("Multi-Selection") "/" N_("_Inclusive filter"),	NULL,
+		NULL,			0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_All units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_ALL,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_New units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_NEW,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_Fortified units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_FORTIFIED,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_Sentried units"),
+			       					NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_SENTRIED,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_Veteran units"),
+			       					NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_VETERAN,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Aut_o units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_AUTO,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_Idle units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_IDLE,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("Units abl_e to move"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_Military units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_MILITARY,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Inclusive filter") "/" N_("_Off"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_INCLUSIVE_OFF,
+									"<CheckItem>"	},
+	
+  { "/" N_("Multi-Selection") "/" N_("_Exclusive filter"),	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_All units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_ALL,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_New units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_NEW,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_Fortified units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_FORTIFIED,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_Sentried units"),
+		      						NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_SENTRIED,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_Veteran units"),
+		       						NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_VETERAN,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Aut_o units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_AUTO,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_Idle units"),
+		       						NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_IDLE,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("Units able to mov_e"),
+		       						NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_Military units"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Exclusive filter") "/" N_("_Off"),
+			       					NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_EXCLUSIVE_OFF,
+									"<CheckItem>"	},
+
+  { "/" N_("Multi-Selection") "/sep2",				NULL,
+	NULL,				0,				"<Separator>"	},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection sprea_d"),"<shift>s",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MY_AI_SPREAD},
+  { "/" N_("Multi-Selection") "/" N_("Spread only in cities _with airport"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT,
+									"<CheckItem>"	},
+  { "/" N_("Multi-Selection") "/" N_("Allow spreadi_ng into allied cities"),
+								NULL,
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MY_AI_SPREAD_ALLY,
+									"<CheckItem>"	},
+
+  { "/" N_("Multi-Selection") "/sep3",				NULL,
+	NULL,				0,				"<Separator>"	},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _1",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("_Select"),
+								"1",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS1_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("_Add to current selection"),			
+								"<shift>1",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS1_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("_Record"),
+								"<ctrl>1",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS1_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 1/" N_("_Clear"),
+								"<ctrl><shift>1",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS1_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _2",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("_Select"),
+								"2",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS2_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("_Add to current selection"),
+								"<shift>2",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS2_ADD	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("_Record"),
+								"<ctrl>2",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS2_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 2/" N_("_Clear"),
+								"<ctrl><shift>2",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS2_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _3",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("_Select"),
+							"3",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS3_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("_Add to current selection"),
+								"<shift>3",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS3_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("_Record"),
+								"<ctrl>3",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS3_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 3/" N_("_Clear"),
+								"<ctrl><shift>3",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS3_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _4",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("_Select"),
+								"4",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS4_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("_Add to current selection"),
+								"<shift>4",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS4_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("_Record"),
+								"<ctrl>4",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS4_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 4/" N_("_Clear"),
+								"<ctrl><shift>4",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS4_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _5",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("_Select"),
+								"5",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS5_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("_Add to current selection"),
+								"<shift>5",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS5_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("_Record"),
+								"<ctrl>5",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS5_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 5/" N_("_Clear"),
+								"<ctrl><shift>5",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS5_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _6",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("_Select"),
+								"6",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS6_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("_Add to current selection"),
+								"<shift>6",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS6_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("_Record"),
+								"<ctrl>6",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS6_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 6/" N_("_Clear"),
+								"<ctrl><shift>6",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS6_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _7",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("_Select"),
+								"7",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS7_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("_Add to current selection"),
+								"<shift>7",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS7_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("_Record"),
+								"<ctrl>7",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS7_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 7/" N_("_Clear"),
+								"<ctrl><shift>7",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS7_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _8",	NULL,
+		NULL,			0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("_Select"),
+								"8",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS8_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("_Add to current selection"),
+								"<shift>8",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS8_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("_Record"),
+								"<ctrl>8",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS8_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 8/" N_("_Clear"),
+								"<ctrl><shift>8",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS8_CLEAR			},
+
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " _9",	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("_Select"),
+								"9",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS9_SELECT			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("_Add to current selection"),
+								"<shift>9",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS9_ADD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("_Record"),
+								"<ctrl>9",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS9_RECORD			},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection") " 9/" N_("_Clear"),
+								"<ctrl><shift>9",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MS9_CLEAR			},
 
  /* Miscellaneous menu ...*/
-  { "/" N_("Miscellaneous"),					NULL,
-	NULL,			0,					"<Branch>"	},
+  { "/" N_("Misce_llaneous"),					NULL,
+	NULL,				0,				"<Branch>"	},
   { "/" N_("Miscellaneous") "/tearoff1",			NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Miscellaneous") "/" N_("Airplane patrol"),			"e",
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_AIR_PATROL						},
-  { "/" N_("Miscellaneous") "/" N_("Airplane patrol destination"),			"<ctrl>e",
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_AIR_PATROL_DEST						},
-  { "/" N_("Miscellaneous") "/" N_("Execute all patrol orders"),			"<shift>e",
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_PATROL_EXECUTE						},
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Miscellaneous") "/" N_("Airplane _patrol"),		"e",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_AIR_PATROL			},
+  { "/" N_("Miscellaneous") "/" N_("Airplane patrol _destination"),
+								"<ctrl>e",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_AIR_PATROL_DEST		},
+  { "/" N_("Miscellaneous") "/" N_("_Execute all patrol orders"),
+								"<shift>e",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_PATROL_EXECUTE		},
   { "/" N_("Miscellaneous") "/sep1",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival"),		NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/tearoff1",	NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("Popup dialog"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_POPUP,		"<RadioItem>"	},
-  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("Establish trade route"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_TRADE,		"<main>/Miscellaneous/Caravan action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("Help building wonder"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_BUILD,		"<main>/Miscellaneous/Caravan action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("Keep going"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_NOTHING,		"<main>/Miscellaneous/Caravan action upon arrival/Popup dialog"	},
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Miscellaneous") "/" N_("_Caravan action upon arrival"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("_Popup dialog"),
+								 NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_POPUP,
+									"<RadioItem>"	},
+  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("_Establish trade route"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_TRADE,
+			"<main>/Miscellaneous/Caravan action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("_Help building wonder"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_BUILD,
+			"<main>/Miscellaneous/Caravan action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Caravan action upon arrival") "/" N_("_Keep going"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CARAVAN_NOTHING,
+			"<main>/Miscellaneous/Caravan action upon arrival/Popup dialog"	},
 
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival"),		NULL,
-	NULL,			0,					"<Branch>"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/tearoff1",	NULL,
-	NULL,			0,					"<Tearoff>"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Popup dialog"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_POPUP,		"<RadioItem>"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Bribe unit"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_BRIBE,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Sabotage unit (spy)"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_SABOTAGE_UNIT,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Establish embassy"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_EMBASSY,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Investigate city"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_INVESTIGATE,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Sabotage city"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_SABOTAGE_CITY,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Steal technology"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_STEAL,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Incite revolt"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_INCITE,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Poison city (spy)"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_POISON,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
-  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("Keep going"), NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_NOTHING,		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("_Diplomat action upon arrival"),
+								NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Popup dialog"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_POPUP,
+									"<RadioItem>"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Bribe unit"), 
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_BRIBE,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Sabotage unit (spy)"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_SABOTAGE_UNIT,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Establish embassy"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_EMBASSY,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Investigate city"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_INVESTIGATE,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Sabotage city"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_SABOTAGE_CITY,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Steal technology"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_STEAL,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Incite revolt"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_INCITE,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Poison city (spy)"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_POISON,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Keep going"),NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_NOTHING,
+		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
 
   { "/" N_("Miscellaneous") "/sep2",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Miscellaneous") "/" N_("Autowakeup sentried units"),		NULL,
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_TOGGLE_WAKEUP,	"<CheckItem>"	},
-  { "/" N_("Miscellaneous") "/" N_("Move and attack mode"),		"<ctrl>a",
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_TOGGLE_MOVEANDATTACK,	"<CheckItem>"	},
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Miscellaneous") "/" N_("Autowakeup _sentried units"),NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_TOGGLE_WAKEUP,
+									"<CheckItem>"	},
+  { "/" N_("Miscellaneous") "/" N_("Move and _attack mode"),	NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_TOGGLE_MOVEANDATTACK,
+									"<CheckItem>"	},
   { "/" N_("Miscellaneous") "/sep3",				NULL,
-	NULL,			0,					"<Separator>"	},
-  { "/" N_("Miscellaneous") "/" N_("Set rallies for selected cities"),			"<shift>s",
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_SET_RALLIES						},
-  { "/" N_("Miscellaneous") "/" N_("Clear rallies in selected cities"),			"<shift>r",
-	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CLEAR_RALLIES						},
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Miscellaneous") "/" N_("_Set rallies for selected cities"),
+								"<shift>s",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_SET_RALLIES			},
+  { "/" N_("Miscellaneous") "/" N_("_Clear rallies in selected cities"),
+								"<shift>r",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CLEAR_RALLIES		},
   { "/" N_("Miscellaneous") "/sep4",				NULL,
-	NULL,			0,					"<Separator>"	},
-	{ "/" N_("Miscellaneous") "/" N_("Execute automatic orders"),			"<ctrl>m",
-		miscellaneous_menu_callback,			MENU_MISCELLANEOUS_MY_AI_EXECUTE	},
-	{ "/" N_("Miscellaneous") "/" N_("Free automatic orders"),			"<ctrl>f",
-		miscellaneous_menu_callback,			MENU_MISCELLANEOUS_MY_AI_FREE	},
-	{ "/" N_("Miscellaneous") "/" N_("Execute all automatic orders"),			"<shift>m",
-		miscellaneous_menu_callback,			MENU_MISCELLANEOUS_MY_AI_EXECUTE_ALL	},
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Miscellaneous") "/" N_("E_xecute automatic orders"),	"<ctrl>m",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_MY_AI_EXECUTE		},
+  { "/" N_("Miscellaneous") "/" N_("_Free automatic orders"),	"<ctrl>f",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_MY_AI_FREE			},
+  { "/" N_("Miscellaneous") "/" N_("Execute all automatic _orders"),
+								"<shift>m",
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_MY_AI_EXECUTE_ALL		},
 
 	/* Reports menu ... */
-	{ "/" N_("_Reports"),					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Reports") "/tearoff1",			NULL,
-		NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Reports") "/" N_("_Cities"),		"F1",
-		reports_menu_callback,	MENU_REPORT_CITIES					},
-	{ "/" N_("Reports") "/" N_("_Units"),			"F2",
-		reports_menu_callback,	MENU_REPORT_UNITS					},
-	{ "/" N_("Reports") "/" N_("_Players"),		"F3",
-		reports_menu_callback,	MENU_REPORT_PLAYERS					},
-	{ "/" N_("Reports") "/" N_("_Economy"),		"F5",
-		reports_menu_callback,	MENU_REPORT_ECONOMY					},
-	{ "/" N_("Reports") "/" N_("_Science"),		"F6",
-		reports_menu_callback,	MENU_REPORT_SCIENCE					},
-	{ "/" N_("Reports") "/sep1",				NULL,
-		NULL,			0,					"<Separator>"	},
-	{ "/" N_("Reports") "/" N_("_Wonders of the World"),	"F7",
-		reports_menu_callback,	MENU_REPORT_WOW						},
-	{ "/" N_("Reports") "/" N_("_Top Five Cities"),	"F8",
-		reports_menu_callback,	MENU_REPORT_TOP_CITIES					},
-	{ "/" N_("Reports") "/" N_("_Messages"),		"<ctrl>F9",
-		reports_menu_callback,	MENU_REPORT_MESSAGES					},
-	{ "/" N_("Reports") "/" N_("_Demographics"),		"<ctrl>F11",
-		reports_menu_callback,	MENU_REPORT_DEMOGRAPHIC					},
-	{ "/" N_("Reports") "/" N_("S_paceship"),		"<ctrl>F12",
-		reports_menu_callback,	MENU_REPORT_SPACESHIP					},
-	/* Help menu ... */
-	{ "/" N_("_Help"),					NULL,
-		NULL,			0,					"<Branch>"	},
-	{ "/" N_("Help") "/tearoff1",				NULL,
-		NULL,			0,					"<Tearoff>"	},
-	{ "/" N_("Help") "/" N_("Language_s"),		NULL,
-		help_menu_callback,	MENU_HELP_LANGUAGES					},
-	{ "/" N_("Help") "/" N_("Co_nnecting"),		NULL,
-		help_menu_callback,	MENU_HELP_CONNECTING					},
-	{ "/" N_("Help") "/" N_("C_ontrols"),			NULL,
-		help_menu_callback,	MENU_HELP_CONTROLS					},
-	{ "/" N_("Help") "/" N_("C_hatline"),			NULL,
-		help_menu_callback,	MENU_HELP_CHATLINE					},
-	{ "/" N_("Help") "/" N_("_Worklist Editor"),			NULL,
-		help_menu_callback,	MENU_HELP_WORKLIST_EDITOR				},
-	{ "/" N_("Help") "/" N_("Citizen _Management"),			NULL,
-		help_menu_callback,	MENU_HELP_CMA						},
-	{ "/" N_("Help") "/" N_("_Playing"),			NULL,
-		help_menu_callback,	MENU_HELP_PLAYING					},
-	{ "/" N_("Help") "/" N_("Warclient"),                 NULL,
-		help_menu_callback,	MENU_HELP_WARCLIENT					},
-	{ "/" N_("Help") "/sep1",				NULL,
-		NULL,			0,					"<Separator>"	},
-	{ "/" N_("Help") "/" N_("City _Improvements"),        NULL,
-		help_menu_callback,	MENU_HELP_IMPROVEMENTS					},
-	{ "/" N_("Help") "/" N_("_Units"),			NULL,
-		help_menu_callback,	MENU_HELP_UNITS						},
-	{ "/" N_("Help") "/" N_("Com_bat"),			NULL,
-		help_menu_callback,	MENU_HELP_COMBAT					},
-	{ "/" N_("Help") "/" N_("_ZOC"),			NULL,
-		help_menu_callback,	MENU_HELP_ZOC						},
-	{ "/" N_("Help") "/" N_("Techno_logy"),		NULL,
-		help_menu_callback,	MENU_HELP_TECH						},
-	{ "/" N_("Help") "/" N_("_Terrain"),			NULL,
-		help_menu_callback,	MENU_HELP_TERRAIN					},
-	{ "/" N_("Help") "/" N_("Won_ders"),			NULL,
-		help_menu_callback,	MENU_HELP_WONDERS					},
-	{ "/" N_("Help") "/" N_("_Government"),		NULL,
-		help_menu_callback,	MENU_HELP_GOVERNMENT					},
-	{ "/" N_("Help") "/" N_("Happin_ess"),		NULL,
-		help_menu_callback,	MENU_HELP_HAPPINESS					},
-	{ "/" N_("Help") "/" N_("Space _Race"),		NULL,
-		help_menu_callback,	MENU_HELP_SPACE_RACE					},
-	{ "/" N_("Help") "/sep2",				NULL,
-		NULL,			0,					"<Separator>"	},
-	{ "/" N_("Help") "/" N_("_Copying"),			NULL,
-		help_menu_callback,	MENU_HELP_COPYING					},
-	{ "/" N_("Help") "/" N_("_About"),			NULL,
-	help_menu_callback,	MENU_HELP_ABOUT						}
+  { "/" N_("_Reports"),						NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Reports") "/tearoff1",				NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Reports") "/" N_("_Cities"),			"F1",
+	reports_menu_callback,		MENU_REPORT_CITIES				},
+  { "/" N_("Reports") "/" N_("_Units"),				"F2",
+	reports_menu_callback,		MENU_REPORT_UNITS				},
+  { "/" N_("Reports") "/" N_("_Players"),			"F3",
+	reports_menu_callback,		MENU_REPORT_PLAYERS				},
+  { "/" N_("Reports") "/" N_("_Economy"),			"F5",
+	reports_menu_callback,		MENU_REPORT_ECONOMY				},
+  { "/" N_("Reports") "/" N_("_Science"),			"F6",
+	reports_menu_callback,		MENU_REPORT_SCIENCE				},
+  { "/" N_("Reports") "/sep1",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Reports") "/" N_("_Wonders of the World"),		"F7",
+	reports_menu_callback,		MENU_REPORT_WOW					},
+  { "/" N_("Reports") "/" N_("_Top Five Cities"),		"F8",
+	reports_menu_callback,		MENU_REPORT_TOP_CITIES				},
+  { "/" N_("Reports") "/" N_("_Messages"),			"<ctrl>F9",
+	reports_menu_callback,		MENU_REPORT_MESSAGES				},
+  { "/" N_("Reports") "/" N_("_Demographics"),			"<ctrl>F11",
+	reports_menu_callback,		MENU_REPORT_DEMOGRAPHIC				},
+  { "/" N_("Reports") "/" N_("S_paceship"),			"<ctrl>F12",
+	reports_menu_callback,		MENU_REPORT_SPACESHIP				},
+
+/* Help menu ... */
+  { "/" N_("_Help"),						NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Help") "/tearoff1",					NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Help") "/" N_("Language_s"),			NULL,
+	help_menu_callback,		MENU_HELP_LANGUAGES				},
+  { "/" N_("Help") "/" N_("Co_nnecting"),			NULL,
+	help_menu_callback,		MENU_HELP_CONNECTING				},
+  { "/" N_("Help") "/" N_("C_ontrols"),				NULL,
+	help_menu_callback,		MENU_HELP_CONTROLS				},
+  { "/" N_("Help") "/" N_("C_hatline"),				NULL,
+	help_menu_callback,		MENU_HELP_CHATLINE				},
+  { "/" N_("Help") "/" N_("_Worklist Editor"),			NULL,
+	help_menu_callback,		MENU_HELP_WORKLIST_EDITOR			},
+  { "/" N_("Help") "/" N_("Citizen _Management"),		NULL,
+	help_menu_callback,		MENU_HELP_CMA					},
+  { "/" N_("Help") "/" N_("_Playing"),				NULL,
+	help_menu_callback,		MENU_HELP_PLAYING				},
+  { "/" N_("Help") "/" N_("_Warclient"),            		NULL,
+	help_menu_callback,		MENU_HELP_WARCLIENT				},
+  { "/" N_("Help") "/sep1",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Help") "/" N_("City _Improvements"),		NULL,
+	help_menu_callback,		MENU_HELP_IMPROVEMENTS				},
+  { "/" N_("Help") "/" N_("_Units"),				NULL,
+	help_menu_callback,		MENU_HELP_UNITS					},
+  { "/" N_("Help") "/" N_("Com_bat"),				NULL,
+	help_menu_callback,		MENU_HELP_COMBAT				},
+  { "/" N_("Help") "/" N_("_ZOC"),				NULL,
+	help_menu_callback,		MENU_HELP_ZOC					},
+  { "/" N_("Help") "/" N_("Techno_logy"),			NULL,
+	help_menu_callback,		MENU_HELP_TECH					},
+  { "/" N_("Help") "/" N_("_Terrain"),				NULL,
+	help_menu_callback,		MENU_HELP_TERRAIN				},
+  { "/" N_("Help") "/" N_("Won_ders"),				NULL,
+	help_menu_callback,		MENU_HELP_WONDERS				},
+  { "/" N_("Help") "/" N_("_Government"),			NULL,
+	help_menu_callback,		MENU_HELP_GOVERNMENT				},
+  { "/" N_("Help") "/" N_("Happin_ess"),			NULL,
+	help_menu_callback,		MENU_HELP_HAPPINESS				},
+  { "/" N_("Help") "/" N_("Space _Race"),			NULL,
+	help_menu_callback,		MENU_HELP_SPACE_RACE				},
+  { "/" N_("Help") "/sep2",					NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Help") "/" N_("_Copying"),				NULL,
+	help_menu_callback,		MENU_HELP_COPYING				},
+  { "/" N_("Help") "/" N_("_About"),				NULL,
+	help_menu_callback,		MENU_HELP_ABOUT					}
 };
 
 #ifdef ENABLE_NLS
@@ -3280,7 +3558,7 @@ void init_menus(void)
 
   switch(delayed_goto_place)
   {
-    case PLACE_SINGLE_UNIT: menus_set_active("<main>/Delayed Goto/Delayed goto mode/Single Unit", TRUE); break;
+    case PLACE_SINGLE_UNIT: menus_set_active("<main>/Delayed Goto/Delayed goto mode/Single unit", TRUE); break;
     case PLACE_ON_TILE: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units on the tile", TRUE); break;
     case PLACE_ON_CONTINENT: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units on the continent", TRUE); break;
     case PLACE_EVERY_WHERE: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units", TRUE); break;
@@ -3726,7 +4004,7 @@ void update_menus(void)
 	menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", FALSE);
 	menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", FALSE);
 	menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", FALSE);
-	menus_set_sensitive("<main>/Miscellaneous/Multi-selection spread", FALSE);
+	menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", FALSE);
  	menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", FALSE);
 	menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", FALSE);
 	menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", FALSE);
