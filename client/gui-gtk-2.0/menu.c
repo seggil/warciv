@@ -48,8 +48,8 @@
 #include "mapview.h"
 #include "messagedlg.h"
 #include "messagewin.h"
-#include "multiselect.h"//*pepeto*
-#include "myai.h"//*pepeto*
+#include "multiselect.h"
+#include "myai.h"
 #include "optiondlg.h"
 #include "options.h"
 #include "packhand.h"
@@ -677,15 +677,7 @@ static void orders_menu_callback(gpointer callback_data,
     key_unit_pillage();
     break;
    case MENU_ORDER_HOMECITY:
-		if(unit_flag(get_unit_in_focus(),F_TRADE_ROUTE)&&hover_state!=HOVER_MY_AI_TRADE)
-			key_my_ai_trade();
-		else
-		{
-			hover_state=HOVER_NONE;
-			update_hover_cursor();
-			key_unit_homecity();
-		}
-		break;
+    key_unit_homecity();
     break;
    case MENU_ORDER_UNLOAD_TRANSPORTER:
     key_unit_unload_all();
@@ -1175,14 +1167,7 @@ static void auto_caravan_menu_callback(gpointer callback_data,
       recalculate_trade_plan();
       break;
     case MENU_AUTO_CARAVAN_MY_AI_TRADE_WITH:
-      if(unit_flag(get_unit_in_focus(),F_TRADE_ROUTE)&&hover_state!=HOVER_MY_AI_TRADE)
-        key_my_ai_trade();
-      else
-      {
-        hover_state=HOVER_NONE;
-        update_hover_cursor();
-        key_unit_homecity();
-      }
+      key_my_ai_trade();
       break;
     case MENU_AUTO_CARAVAN_MY_AI_CARAVAN:
       multi_select_iterate(TRUE,punit)
@@ -2446,15 +2431,13 @@ static GtkItemFactoryEntry menu_items[]	=
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES	},
   { "/" N_("Auto Caravan") "/sep2",				NULL,
 	NULL,				0,				"<Separator>"	},
-  { "/" N_("Auto Caravan") "/" N_("_Set caravan destination"),	"h",
+  { "/" N_("Auto Caravan") "/" N_("_Set caravan destination"),	"j",
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_WITH		},
-  { "/" N_("Auto Caravan") "/" N_("Auto_matic caravan orders"),	"<ctrl>h",
+  { "/" N_("Auto Caravan") "/" N_("Auto_matic caravan orders"),	"<ctrl>j",
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_CARAVAN	},
-  { "/" N_("Auto Caravan") "/" N_("_Execute all trade route orders"),
-								"<shift>h",
+  { "/" N_("Auto Caravan") "/" N_("_Execute all trade route orders"), "<shift>j",
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE	},
-  { "/" N_("Auto Caravan") "/" N_("Execute all help _wonder orders"),
-								"<shift>i",
+  { "/" N_("Auto Caravan") "/" N_("Execute all help _wonder orders"), "<shift>i",
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE	},
 
  /* Multi-Selection menu ...*/
@@ -3071,7 +3054,7 @@ static const char *menu_path_remove_uline(const char *path)
 }
 
 /****************************************************************
-  ... *pepeto*
+  ...
  *****************************************************************/
 void get_accel_label(GtkWidget *widget,const char *uname)
 {
@@ -3106,7 +3089,7 @@ void get_accel_label(GtkWidget *widget,const char *uname)
 }
 
 /****************************************************************
- ... *pepeto*
+ ...
  *****************************************************************/
 static bool can_player_unit_type(Unit_Type_id utype)
 {
@@ -3121,7 +3104,7 @@ static bool can_player_unit_type(Unit_Type_id utype)
 }
 
 /****************************************************************
- ... *pepeto*
+ ...
  *****************************************************************/
 static void pep_airlift_menu_set_sensitive(void)
 {
@@ -3137,7 +3120,7 @@ static void pep_airlift_menu_set_sensitive(void)
 }
 
 /****************************************************************
- ... *pepeto*
+ ...
  *****************************************************************/
 static void pep_airlift_menu_set_active(void)
 {
@@ -3150,7 +3133,7 @@ static void pep_airlift_menu_set_active(void)
 }
 
 /****************************************************************
-  ... *pepeto*
+  ...
  *****************************************************************/
 static void pep_airlift_menu_callback(GtkWidget *widget,gpointer data)
 {
@@ -3161,7 +3144,7 @@ static void pep_airlift_menu_callback(GtkWidget *widget,gpointer data)
 }
 
 /****************************************************************
-  ... *pepeto*
+  ...
  *****************************************************************/
 static void create_pep_airlift_menu(int aq,GtkWidget *widget)
 {
@@ -3191,8 +3174,8 @@ static void create_pep_airlift_menu(int aq,GtkWidget *widget)
 }
 
 /****************************************************************
-  ... *pepeto*
- *****************************************************************/
+  ...
+*****************************************************************/
 static void ap_menu_callback(GtkWidget *widget,gpointer data)
 {
 	automatic_processus *pap=(automatic_processus *)data;
@@ -3211,8 +3194,8 @@ static void ap_menu_callback(GtkWidget *widget,gpointer data)
 }
 
 /****************************************************************
-  ... *pepeto*
- *****************************************************************/
+  ...
+*****************************************************************/
 void create_automatic_processus_menus(void)
 {
 	GtkWidget *item,*widget;
@@ -3255,7 +3238,6 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
   g_signal_connect(main_menubar, "destroy",
       G_CALLBACK(gtk_widget_destroyed), &main_menubar);
 
-//*pepeto*
   int i;
   char buf[256];
 
@@ -3264,7 +3246,7 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
     my_snprintf(buf, sizeof(buf), "<main>/Airlift/Airlift queue %d/Airlift unit type", i + DELAYED_GOTO_NUM - 1);
     create_pep_airlift_menu(i, gtk_item_factory_get_widget(item_factory, buf));
   }
-  create_automatic_processus_menus();//*pepeto*
+  create_automatic_processus_menus();
 
   if (menubar) {
     *menubar = main_menubar;
@@ -3405,7 +3387,7 @@ static const char *get_tile_change_menu_text(struct tile *ptile,
 }
 
 /****************************************************************
- ... *pepeto* for compatibility with Warclient for F9-F12
+ ... for compatibility with Warclient for F9-F12
 *****************************************************************/
 void set_delayed_goto_mode(const char *path)
 {
@@ -3475,7 +3457,7 @@ static void update_multi_select_exclusive_filter_menu(void)
 }
 
 /****************************************************************
- ... *pepeto* for automatic processus
+ ... for automatic processus
 *****************************************************************/
 void update_automatic_processus_filter_menu(automatic_processus *pap)
 {
@@ -3489,7 +3471,7 @@ void update_automatic_processus_filter_menu(automatic_processus *pap)
 }
 
 /****************************************************************
- ... *pepeto*
+ ...
 *****************************************************************/
 void init_menus(void)
 {
@@ -3679,7 +3661,6 @@ void update_menus(void)
     menus_set_sensitive("<main>/_View/City G_rowth", draw_city_names);
     menus_set_sensitive("<main>/_View/Coastline", !draw_terrain);
     menus_set_sensitive("<main>/_View/Focus Unit", !draw_units);
-    //*pepeto*
     cond=(my_ai_trade_city_list_size(my_ai_get_trade_cities()));
     menus_set_sensitive("<main>/Auto Caravan/Clear city list for trade plan", cond);
     menus_set_sensitive("<main>/Auto Caravan/Show cities in trade plan", cond);
@@ -3979,7 +3960,6 @@ void update_menus(void)
 	menus_rename("<main>/_Orders/_Auto Settler", _("_Auto Settler"));
       }
 
-	//*pepeto*
 	menus_set_sensitive("<main>/Delayed Goto/Delayed goto", TRUE);
 	menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", TRUE);
 	menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", my_ai_enable && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
