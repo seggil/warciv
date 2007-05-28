@@ -2663,9 +2663,13 @@ void key_unit_mine(void)
 **************************************************************************/
 void key_unit_pillage(void)
 {
-  multi_select_iterate(TRUE,punit) {
-    request_unit_pillage(punit);
-  } multi_select_iterate_end;
+  if (multi_select_satisfies_filter(0) == 1) {
+    request_unit_pillage(punit_focus);
+  } else {
+    multi_select_iterate(TRUE, punit) {
+      request_new_unit_activity(punit, ACTIVITY_PILLAGE);
+    } multi_select_iterate_end;
+  }
 }
 
 /**************************************************************************
