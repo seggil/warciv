@@ -3335,7 +3335,7 @@ bool is_valid_ruleset(const char *path, char *verror, size_t verror_size)
 char **get_rulesets_list(void)
 {
   static char *rulesest[MAX_NUM_RULESETS];
-  const char **datafiles = datafilelist("");
+  char **datafiles = (char **) datafilelist("");
   int i, j;
 
   for (i = j = 0; datafiles[i] && j < MAX_NUM_RULESETS; i++) {

@@ -57,6 +57,21 @@ int best_score = 0;
 int repeat = 0;
 
 /****************************************************************************
+  prototypes
+****************************************************************************/
+int calculate_score(int *start_pos);
+void swap_int(int *a, int *b);
+void shuffle_start_positions_by_iter(int *start_pos);
+int calculate_delta_score(int *start_pos, int depth);
+void find_pos_by_brute_force(int *positions, int a);
+void clean_start_pos(int *positions);
+void assign_players_to_positions(int *best_team_pos, int *best_start_pos);
+void calculate_team_mapping(void);
+int get_team_mapping(Team_Type_id team);
+void shuffle_start_positions(int *start_pos);
+
+
+/****************************************************************************
   Initialize the game.id variable to a random string of characters.
 ****************************************************************************/
 static void init_game_id(void)
@@ -383,7 +398,7 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
    Team mapping is needed because we want to consider players with TEAM_NONE
    to be in the same team and thus greatly improving algorithm speed.
 ****************************************************************************/
-void calculate_team_mapping()
+void calculate_team_mapping(void)
 {
     freelog(LOG_DEBUG, "entry");
     mapping[0].team_id = TEAM_NONE;

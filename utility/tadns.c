@@ -404,7 +404,7 @@ static void parse_udp (struct dns *dns)
   }
 
   /* Skip host name */
-  e = dns->buf + dns->buflen;
+  e = (const unsigned char *) (dns->buf + dns->buflen);
   p = &header->data[0];
   for (nlen = 0; p < e && *p != '\0'; p++)
     nlen++;
@@ -461,12 +461,14 @@ static void parse_udp (struct dns *dns)
       /* Call user */
       if (q->qtype == DNS_MX_RECORD) {
         /* Skip 2 byte preference field */
-        fetch (dns->buf, dns->buflen, p + 2, name, sizeof (name));
+        fetch ((const unsigned char *) (dns->buf), 
+	       dns->buflen, p + 2, name, sizeof (name));
         p = (const unsigned char *) name;
         dlen = strlen (name) + 1;
       } else if (q->qtype == DNS_PTR_RECORD) {
         freelog (LOG_DEBUG, "pu   extracting DNS_PTR_RECORD"); /*ASYNCDEBUG*/
-        fetch (dns->buf, dns->buflen, p, name, sizeof (name));
+        fetch ((const unsigned char *) (dns->buf),
+	       dns->buflen, p, name, sizeof (name));
         p = (const unsigned char *) name;
         dlen = strlen (name) + 1;
         freelog (LOG_DEBUG, "pu   p=\"%s\" dlen=\"%d\"", p, dlen); /*ASYNCDEBUG*/

@@ -91,7 +91,7 @@ typedef void (*adns_result_callback_t) (const unsigned char *addr,
                                         int addrlen,
                                         void *data);
 
-int adns_lookup_full (const unsigned char *query_data,
+int adns_lookup_full (const char *query_data,
                       enum dns_query_type query_type,
                       adns_result_callback_t cb,
                       void *data,

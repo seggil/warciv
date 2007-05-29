@@ -41,6 +41,7 @@ build-all-stamp:
 	(./autogen.sh $(COMMON_CONFIG) && \
 	$(MAKE) CFLAGS="$(CFLAGS)")
 
+	uudecode -o debian/warclient-server.png debian/warclient-server.png.uu
 	uudecode -o debian/warclient.png debian/warclient.png.uu
 
 	touch build-all-stamp
@@ -50,7 +51,7 @@ clean: unpatch
 	dh_testroot
 
 	-rm -f build-all-stamp install-stamp
-	-rm -f debian/civclient.png
+	-rm -f debian/warclient.png debian/warclient-server.png
 	-rm -f config.cache
 	-rm -f config.sub config.guess
 
@@ -79,6 +80,7 @@ install-stamp:  build-all-stamp
 	install -d -m 755 $(CURDIR)/debian/tmp/usr/share/pixmaps
 	cp debian/warclient.png debian/tmp/usr/share/pixmaps
 	cp debian/warclient.xpm debian/tmp/usr/share/pixmaps
+	cp debian/warclient-server.png debian/tmp/usr/share/pixmaps
 	cp debian/warclient-server.xpm debian/tmp/usr/share/pixmaps
 
 	install -d -m 755 $(CURDIR)/debian/tmp/usr/share/man/man6

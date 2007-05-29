@@ -116,7 +116,7 @@ static bool is_game_over(void);
 static void generate_ai_players(void);
 static void announce_ai_player(struct player *pplayer);
 static void srv_loop(void);
-void server_free_final();
+void server_free_final(void);
 
 /* this is used in strange places, and is 'extern'd where
    needed (hence, it is not 'extern'd in srv_main.h) */
@@ -1932,7 +1932,7 @@ void server_game_free(bool remove_players)
 /**************************************************************************
  ...
 **************************************************************************/
-void server_free_final()
+void server_free_final(void)
 {
   if (welcome_message) {
     free(welcome_message);

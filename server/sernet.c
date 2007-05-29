@@ -780,7 +780,7 @@ static void reverse_lookup_cb(const unsigned char *addr,
 			      int addrlen, void *data)
 {
   struct connection *pconn = data;
-  const char *hostname = addr;
+  const char *hostname = (const char *) addr;
 
   assert(pconn != NULL);
 

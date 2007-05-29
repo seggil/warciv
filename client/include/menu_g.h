@@ -14,5 +14,6 @@
 #define FC__MENU_G_H
 
 void update_menus(void);
+void init_menus(void);
 
 #endif  /* FC__MENU_G_H */

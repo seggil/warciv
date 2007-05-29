@@ -291,18 +291,11 @@ long get_file_size (const char *pathname);
 
 typedef void (*data_free_func_t) (void *data);
 
-#define PTR_TO_INT(p) (sizeof(void *) == sizeof(long)\
-                       ? (int)(long)(p) : (int)(p))
-#define INT_TO_PTR(i) (sizeof(void *) == sizeof(long)\
-                       ? (void *)(long)(i) : (void *)(i))
-#define PTR_TO_UINT16_T(p) (sizeof(void *) == sizeof(long)\
-                       ? (uint16_t)(long)(p) : (uint16_t)(int)(p))
-#define UINT16_T_TO_PTR(i) (sizeof(void *) == sizeof(long)\
-                       ? (void *)(long)(i) : (void *)(int)(i))
-#define PTR_TO_UINT32_T(p) (sizeof(void *) == sizeof(long)\
-                       ? (uint32_t)(long)(p) : (uint32_t)(p))
-#define UINT32_T_TO_PTR(i) (sizeof(void *) == sizeof(long)\
-                       ? (void *)(long)(i) : (void *)(i))
+#define PTR_TO_INT(p) ((int)(long)(p))
+#define INT_TO_PTR(i) ((void *)(long)(i))
+#define PTR_TO_UINT16_T(p) ((uint16_t)(long)(p))
+#define UINT16_T_TO_PTR(i) ((void *)(long)(i))
+#define PTR_TO_UINT32_T(p) ((uint32_t)(long)(p))
+#define UINT32_T_TO_PTR(i) ((void *)(long)(i))
   
 #endif  /* FC__SHARED_H */
-

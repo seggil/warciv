@@ -50,7 +50,6 @@ used throughout the client.
 #include "mapctrl_common.h"
 #include "mapview_g.h"
 #include "messagewin_common.h"
-#include "multiselect.h"//*pepeto* for PINT_TO_PTR & PPTR_TO_INT
 #include "myai.h"//*pepeto*
 #include "packhand.h"
 #include "plrdlg_common.h"
@@ -1126,11 +1125,11 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
   }
 
   pcontinent_counter = hash_lookup_data (an_continent_counter_table,
-                                         PINT_TO_PTR (ad->continent_id));
+                                         INT_TO_PTR (ad->continent_id));
   if (!pcontinent_counter) {
     pcontinent_counter = fc_malloc (sizeof (int));
     *pcontinent_counter = 0;
-    hash_insert (an_continent_counter_table, PINT_TO_PTR (ad->continent_id),
+    hash_insert (an_continent_counter_table, INT_TO_PTR (ad->continent_id),
                  pcontinent_counter);
   }
 
@@ -1235,7 +1234,7 @@ static int an_generate_city_name (char *buf, int buflen,
     return 0;
   }
 
-  ad = hash_lookup_data (an_city_autoname_data_table, PINT_TO_PTR (pcity->id));
+  ad = hash_lookup_data (an_city_autoname_data_table, INT_TO_PTR (pcity->id));
   if (!ad) {
     ad = fc_malloc (sizeof (struct autoname_data));
     freelog (LOG_DEBUG, "agcn   new ad %p", ad);
@@ -1245,7 +1244,7 @@ static int an_generate_city_name (char *buf, int buflen,
     ad->format_index = 1;
     ad->global_city_number = 0;
     ad->continent_city_number = 0;
-    hash_insert (an_city_autoname_data_table, PINT_TO_PTR (pcity->id), ad);
+    hash_insert (an_city_autoname_data_table, INT_TO_PTR (pcity->id), ad);
   } else {
     ad->format_index++;
     ad->format_index %= num_formats;
@@ -1372,7 +1371,7 @@ void city_autonaming_free (void)
   an_city_name_table = NULL;
 
   hash_iterate (an_continent_counter_table, void *, key, int *, pcc) {
-    int id = PPTR_TO_INT (key);
+    int id = PTR_TO_INT (key);
     freelog (LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id, *pcc);
     free (pcc);
   } hash_iterate_end;
@@ -1384,7 +1383,7 @@ void city_autonaming_free (void)
   hash_iterate (an_city_autoname_data_table, void *, key,
                 struct autoname_data *, ad)
   {
-    int id = PPTR_TO_INT (key);
+    int id = PTR_TO_INT (key);
     freelog (LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
     free (ad);
   } hash_iterate_end;

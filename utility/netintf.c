@@ -223,7 +223,7 @@ int adns_lookup (const char *hostname,
     >0 - the request is in progress, cb will be called in the future and
          the request may be cancelled with adns_cancel.
 ***************************************************************************/
-int adns_lookup_full (const unsigned char *query_data,
+int adns_lookup_full (const char *query_data,
                       enum dns_query_type query_type,
                       adns_result_callback_t cb,
                       void *data,
@@ -249,7 +249,7 @@ int adns_lookup_full (const unsigned char *query_data,
   ctx->req_id = -1;
 
   /* NB this may call dns_result_callback directly */
-	dns_queue (dns, ctx, query_data, query_type, dns_result_callback);
+  dns_queue (dns, ctx, query_data, query_type, dns_result_callback);
 
   if (ctx->req_id == 0) {
     /* dns_queue called dns_result_callback directly */

@@ -15,9 +15,6 @@
 
 #include "peptool.h"
 
-#define PINT_TO_PTR(i) ((void *)(long)(i))
-#define PPTR_TO_INT(i) ((int)(long)(i))
-
 #define multi_select_iterate(des,punit)	\
 {	\
 	bool _deselect=des;	\
