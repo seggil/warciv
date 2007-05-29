@@ -49,13 +49,14 @@ clean: unpatch
 	dh_testdir
 	dh_testroot
 
-	-rm -rf build-stamp build-gtk build-server 
-	-rm -f install-stamp build-server-stamp build-gtk-stamp
+	-rm -f build-all-stamp install-stamp
 	-rm -f debian/civclient.png
 	-rm -f config.cache
 	-rm -f config.sub config.guess
 
 	dh_clean
+
+	$(MAKE) clean
 
 	-rm -f debian/*~ Makefile Makefile.bak core */Makefile
 
