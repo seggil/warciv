@@ -437,9 +437,13 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
 			}
 		}
 	}
+        /* prevent crahs */
+        ptr->ptr0=NULL;
+        ptr->ptr1=NULL;
+        ptr->ptr2=NULL;
         update_trade_route(ptr);
-        my_snprintf(buf,sizeof(buf),_("PepClient: Sending %s to establish trade route between %s and %s (%d move%s, %d turn%s)"),
-                    unit_type(ptr->punit)->name,ptr->pc1->name,ptr->pc2->name,ptr->moves_req,ptr->moves_req>1?"s":"",ptr->turns_req,ptr->turns_req>1?"s":"");
+        my_snprintf(buf,sizeof(buf),_("PepClient: Sending %s %d to establish trade route between %s and %s (%d move%s, %d turn%s)"),
+                    unit_type(ptr->punit)->name,ptr->punit->id,ptr->pc1->name,ptr->pc2->name,ptr->moves_req,ptr->moves_req>1?"s":"",ptr->turns_req,ptr->turns_req>1?"s":"");
         append_output_window(buf);
 	if(draw_city_traderoutes)
 		update_map_canvas_visible();
@@ -457,7 +461,7 @@ void my_ai_trade_route_alloc_city(struct unit *punit,struct city *pcity)
 	if(!can_cities_trade(hcity,pcity))
 		my_snprintf(buf,sizeof(buf),"PepClient: A trade route is impossible between %s and %s.",hcity->name,pcity->name);
 	else if(have_cities_trade_route(hcity,pcity))
-		my_snprintf(buf,sizeof(buf),"PepClient: %s and %s have alraedy a trade route.",hcity->name,pcity->name);
+		my_snprintf(buf,sizeof(buf),"PepClient: %s and %s have already a trade route.",hcity->name,pcity->name);
 	else if((ptr=trade_route_list_find_cities(&trade_plan,hcity,pcity)))
 	{
 		my_ai_orders_free(punit);
@@ -537,11 +541,14 @@ void my_ai_trade_route_free(struct unit *punit)
 	unit_list_unlink(&traders,punit);
 	trade_route_list_unlink(&ptr->pc1->trade_routes,ptr);
 	trade_route_list_unlink(&ptr->pc2->trade_routes,ptr);
-	if(ptr->planned&&punit->tile!=ptr->pc2->tile)
+        if(punit->tile!=ptr->pc2->tile)
         {
-		trade_route_list_append(&trade_plan,ptr);
-        	my_snprintf(buf,sizeof(buf),_("PepClient: Cancelling trade route between %s and %s"),ptr->pc1->name,ptr->pc2->name);
-                append_output_window(buf);
+          my_snprintf(buf,sizeof(buf),_("PepClient: Cancelling trade route between %s and %s"),ptr->pc1->name,ptr->pc2->name);
+          append_output_window(buf);
+          if(ptr->planned)
+            trade_route_list_append(&trade_plan,ptr);
+          else
+            free(ptr);
         }
 	else
 		free(ptr);
