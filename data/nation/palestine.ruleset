@@ -3,9 +3,10 @@
 name=_("Palestinian")
 plural=_("?plural:Palestinian")
 class=_("Modern")
-legend=_("Palestine (from Latin: Palaestina named after the Philistines; פלשתינה Palestina;\ 
-Arabic: فلسطين Filastīn, Falastīn) is one of several names for the geographic region between the Mediterranean Sea and the\
-Jordan River with various adjoining lands. Many different definitions of the region have been used in the past three\ millennia.")
+legend=_("Palestine (from Latin: Palaestina named after the Philistines; Palestina; Arabic: \
+Filasti, Falasti) is one of several names for the geographic region between \
+the Mediterranean Sea and the Jordan River with various adjoining lands. Many different \
+definitions of the region have been used in the past three millennia.")
 leader="Yasir Arafat","Rauhi Fattouh","Mahmoud Abbas","Ahmad Qurei","Nabil Shaath"
 
 leader_sex="Male","Male","Male","Male","Male"

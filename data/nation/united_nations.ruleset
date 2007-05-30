@@ -3,10 +3,11 @@
 name=_("United-Nation")
 plural=_("?plural:United-Nations")
 class=_("Modern")
-legend=_("The United Nations (UN) is an international organization whose stated aims are to\ 
-facilitate co-operation in international law, international security, economic development,\ 
-social progress and human rights issues. It was founded in 1945 at the signing of the United\ 
-Nations Charter by 50 countries, replacing the League of Nations, founded in 1919.")
+legend=_("The United Nations (UN) is an international organization whose stated aims \
+are to facilitate co-operation in international law, international security, economic \
+development, social progress and human rights issues. It was founded in 1945 at the \
+signing of the United Nations Charter by 50 countries, replacing the League of Nations, \
+founded in 1919.")
 
 leader="Sir Gladwyn Jebb","Trygve Lie","Dag Hammarskjöld","U Thant",
        "Kurt Waldheim","Javier Pérez de Cuéllar","Boutros Boutros-Ghali",
