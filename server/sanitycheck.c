@@ -65,10 +65,6 @@ static void check_fow(void)
   whole_map_iterate(ptile) {
     players_iterate(pplayer) {
       struct player_tile *plr_tile = map_get_player_tile(ptile, pplayer);
-      /* underflow of unsigned int */
-      assert(plr_tile->seen < 6000000);
-      assert(plr_tile->own_seen < 6000000);
-      assert(plr_tile->pending_seen < 6000000);
 
       assert(plr_tile->own_seen <= plr_tile->seen);
       if (map_is_known(ptile, pplayer)) {
