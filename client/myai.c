@@ -145,7 +145,8 @@ struct trade_route *trade_route_new(struct unit *punit,struct city *pc1,struct c
 		ptr->tr_type=TR_NEW;
 		ptr->trade=trade_between_cities(pc1,pc2);
 	}
-	return ptr;
+
+        return ptr;
 }
 
 void update_trade_route(struct trade_route *ptr)
@@ -403,23 +404,28 @@ struct trade_route *best_city_trade_route(struct unit *punit,struct city *pcity)
 void my_ai_trade_route_alloc(struct trade_route *ptr)
 {
         char buf[1024];
+	struct trade_route *ptr0=ptr->ptr0,*ptr1=ptr->ptr1,*ptr2=ptr->ptr2;
+	struct unit *punit=ptr->punit,*punit0=(ptr0?ptr0->punit:NULL),*punit1=(ptr1?ptr1->punit:NULL),*punit2=(ptr2?ptr2->punit:NULL);
 
 	freelog(LOG_VERBOSE,"alloc auto-trade orders for %s (%d/%d)",unit_name(ptr->punit->type),ptr->punit->tile->x,ptr->punit->tile->y);
 
-	ptr->punit->my_ai.control=TRUE;
-	ptr->punit->my_ai.activity=MY_AI_TRADE_ROUTE;
-	ptr->punit->my_ai.data=(void *)ptr;
-	unit_list_append(&traders,ptr->punit);
+	punit->my_ai.control=TRUE;
+	punit->my_ai.activity=MY_AI_TRADE_ROUTE;
+	punit->my_ai.data=(void *)ptr;
+	unit_list_append(&traders,punit);
 	trade_route_list_unlink(&trade_plan,ptr);
 	trade_route_list_append(&ptr->pc1->trade_routes,ptr);
 	trade_route_list_append(&ptr->pc2->trade_routes,ptr);
+        ptr->ptr0=NULL;
+        ptr->ptr1=NULL;
+        ptr->ptr2=NULL;
+        update_trade_route(ptr);
+        my_snprintf(buf,sizeof(buf),_("PepClient: Sending %s %d to establish trade route between %s and %s (%d move%s, %d turn%s)"),
+                    unit_type(punit)->name,punit->id,ptr->pc1->name,ptr->pc2->name,ptr->moves_req,ptr->moves_req>1?"s":"",ptr->turns_req,ptr->turns_req>1?"s":"");
 	if(my_ai_trade_level>LEVEL_ON)
 	{
-		struct trade_route *ptr1=ptr->ptr1,*ptr2=ptr->ptr2;
-		struct unit *punit1=(ptr1?ptr1->punit:NULL),*punit2=(ptr2?ptr2->punit:NULL);
-		if(ptr->ptr0)
+		if(ptr0&&punit0&&punit0->my_ai.data==ptr0)
 		{
-			struct unit *punit0=ptr->ptr0->punit;
 			my_ai_trade_route_free(punit0);
 			my_ai_caravan(punit0);
 		}
@@ -437,14 +443,11 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
 			}
 		}
 	}
-        /* prevent crahs */
-        ptr->ptr0=NULL;
-        ptr->ptr1=NULL;
-        ptr->ptr2=NULL;
-        update_trade_route(ptr);
-        my_snprintf(buf,sizeof(buf),_("PepClient: Sending %s %d to establish trade route between %s and %s (%d move%s, %d turn%s)"),
-                    unit_type(ptr->punit)->name,ptr->punit->id,ptr->pc1->name,ptr->pc2->name,ptr->moves_req,ptr->moves_req>1?"s":"",ptr->turns_req,ptr->turns_req>1?"s":"");
-        append_output_window(buf);
+        /* maybe the route was free */
+        if(punit->my_ai.data==ptr)
+        {
+        	append_output_window(buf);
+        }
 	if(draw_city_traderoutes)
 		update_map_canvas_visible();
 }
