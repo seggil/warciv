@@ -193,8 +193,12 @@ static void handle_readline_input_callback(char *line)
 *****************************************************************************/
 void close_connection(struct connection *pconn)
 {
-  if(pconn->server.currently_processed_request_id)
+  /* prevent strange connections problems */
+  send_packet_thaw_hint(pconn);
+  if(pconn->server.currently_processed_request_id) {
     finish_processing_request(pconn);
+  }
+  flush_connection_send_buffer_all(pconn);
 
   while (timer_list_size(pconn->server.ping_timers) > 0) {
     struct timer *timer = timer_list_get(pconn->server.ping_timers, 0);
