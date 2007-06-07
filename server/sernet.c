@@ -693,8 +693,12 @@ int sniff_packets(void)
 		    packet = NULL;
 		  }
 
-		  if(pconn->used)
-		    finish_processing_request(pconn);
+                  /* Maybe changed */
+		  if(!pconn->used) {
+                    break;
+                  }
+
+                  finish_processing_request(pconn);
 		  connection_do_unbuffer(pconn);
 		  if (!command_ok) {
 		    close_connection(pconn);
