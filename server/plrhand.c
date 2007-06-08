@@ -72,10 +72,10 @@ bool mute = FALSE;
 /**************************************************************************
 ...
 **************************************************************************/
-void do_dipl_cost(struct player *pplayer)
+void do_dipl_cost(struct player *pplayer, Tech_Type_id new_tech)
 {
   pplayer->research.bulbs_researched -=
-      (total_bulbs_required(pplayer) * game.diplcost) / 100;
+      (base_total_bulbs_required(pplayer, new_tech) * game.diplcost) / 100;
   pplayer->research.changed_from = -1;
 }
 
