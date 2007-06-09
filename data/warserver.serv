@@ -30,7 +30,7 @@
 /set rapturedelay 1
 /set borders 0
 /set happyborders 1
-/set diplomacy 0
+/set diplomacy 4
 /set diplchance 60
 /set autotoggle 0
 /set turnblock 0
@@ -84,7 +84,7 @@
 /set traderevenuepercentage 100
 /set caravanbonusstyle 1
 /set trademindist 8
-/set futuretechsscore 0
+/set futuretechsscore 1
 /set improvedautoattack 0
 /set stackbribing 1
 /set experimentalbribingcost 1
@@ -95,9 +95,8 @@
 /set maxconnections 0
 /set autosize 108
 /set techleakagerate 100
-/set maxallies 0
+/set maxallies 1
 /set multilinechat 0
 /set techcoststyle 1
 
 /rulesetdir nowonder+1.2
-
