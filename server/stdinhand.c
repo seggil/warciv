@@ -4550,7 +4550,7 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
         const char *fullname;
 
         if (caller && caller->access_level != ALLOW_HACK
-            && (strchr(buf, '/') || strchr(buf, '.'))) {
+            && (strchr(buf, '/') || buf[0] == '.')) {
           cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
                     _("You are not allowed to use this command."));
           return FALSE;
@@ -4804,7 +4804,7 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
         const char *fullname;
 
         if (caller && caller->access_level != ALLOW_HACK
-            && (strchr(buf, '/') || strchr(buf, '.'))) {
+            && (strchr(buf, '/') || buf[0] == '.')) {
           cmd_reply(CMD_LOADMAP, caller, C_SYNTAX,
                     _("You are not allowed to use this command."));
           return FALSE;
@@ -4879,13 +4879,16 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
 static bool set_rulesetdir(struct connection *caller, char *str, bool check)
 {
     char filename[512], *pfilename, verror[256];
+
+    sz_strlcpy(filename, str);
+    remove_leading_trailing_spaces(filename);
     if ((str == NULL) || (strlen(str) == 0))
     {
         cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
                   _("Current ruleset directory is \"%s\""), game.rulesetdir);
         return FALSE;
     } else if (caller && caller->access_level != ALLOW_HACK
-               && (strchr(str, '/') || strchr(str, '.'))) {
+               && (strchr(filename, '/') || filename[0] == '.')) {
       cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
                 _("You are not allowed to use this command."));
       return FALSE;
