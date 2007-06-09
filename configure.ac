@@ -667,6 +667,7 @@ AC_CONFIG_FILES([Makefile
 	  data/nowonder+1.2/Makefile
 	  data/tournament/Makefile
 	  data/duel/Makefile
+	  data/experimental/Makefile
           data/maps/Makefile
 	  data/scenario/Makefile
 	  data/nation/Makefile

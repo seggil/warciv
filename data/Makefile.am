@@ -66,7 +66,7 @@ CLIENTDATADIRS =
 endif
 
 if SERVER
-SERVERDATADIRS = default civ1 civ2 warruleset-1.2 warruleset-1.3 nowonder+1.2 duel scenario nation history maps tournament
+SERVERDATADIRS = default civ1 civ2 warruleset-1.2 warruleset-1.3 nowonder+1.2 duel experimental scenario nation history maps tournament
 else
 SERVERDATADIRS = 
 endif
