@@ -5990,13 +5990,13 @@ static bool cut_client_connection(struct connection *caller, char *name,
     {
         return TRUE;
     }
-    pplayer = (ptarget->observer ? NULL : ptarget->player);
+    pplayer = ptarget->player;
     cmd_reply(CMD_CUT, caller, C_DISCONNECTED,
               _("Cutting connection %s."), ptarget->username);
     lost_connection_to_client(ptarget);
     close_connection(ptarget);
     /* if we cut the connection, unassign the login name */
-    if (pplayer)
+    if (pplayer && !pplayer->is_connected)
     {
         sz_strlcpy(pplayer->username, ANON_USER_NAME);
     }
