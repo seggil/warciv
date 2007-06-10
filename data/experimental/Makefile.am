@@ -11,7 +11,6 @@ pkgdata_DATA =          \
 	nations.ruleset \
 	techs.ruleset \
 	terrain.ruleset \
-	units.ruleset \
-	version.txt
+	units.ruleset
 
 EXTRA_DIST = $(pkgdata_DATA)
