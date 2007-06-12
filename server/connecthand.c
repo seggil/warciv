@@ -656,8 +656,8 @@ bool attach_connection_to_player(struct connection *pconn,
 {
   /* if pplayer is NULL, attach to first non-connected player slot */
   if (!pplayer) {
-    if (game.nplayers > game.max_players
-	|| game.nplayers > MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
+    if (game.nplayers >= game.max_players
+	|| game.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
 	|| !can_control_a_player(pconn, TRUE) ) {
       return FALSE;
     } else {
