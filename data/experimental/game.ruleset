@@ -28,7 +28,7 @@ min_city_center_trade	= 0
 min_dist_bw_cities	= 2
 
 ; Square of initially visible radius (true distance).
-init_vis_radius_sq	= 7
+init_vis_radius_sq	= 8
 
 ; What happens when a hut is overflown:
 ;   "Nothing"  - Just fly over; hut remains.

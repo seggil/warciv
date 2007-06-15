@@ -1475,13 +1475,21 @@ void ui_main(int argc, char **argv)
 **************************************************************************/
 void update_conn_list_dialog(void)
 {
+  char buf[256];
   GtkTreeIter it;
 
   if (get_client_state() != CLIENT_GAME_RUNNING_STATE) {
     gtk_list_store_clear(conn_model);
     conn_list_iterate(game.est_connections, pconn) {
       gtk_list_store_append(conn_model, &it);
-      gtk_list_store_set(conn_model, &it, 0, pconn->username, -1);
+      if (!pconn->player) {
+        my_snprintf(buf, sizeof(buf), "[%s]", pconn->username);
+      } else if (pconn->observer) {
+        my_snprintf(buf, sizeof(buf), "(%s)", pconn->username);
+      } else {
+        my_snprintf(buf, sizeof(buf), "%s", pconn->username);
+      }
+      gtk_list_store_set(conn_model, &it, 0, buf, -1);
     } conn_list_iterate_end;
   }
 }
