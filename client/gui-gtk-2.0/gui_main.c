@@ -1489,7 +1489,7 @@ void update_conn_list_dialog(void)
       } else {
         my_snprintf(buf, sizeof(buf), "%s", pconn->username);
       }
-      gtk_list_store_set(conn_model, &it, 0, buf, -1);
+      gtk_list_store_set(conn_model, &it, 0, buf, 1, pconn, -1);
     } conn_list_iterate_end;
   }
 }
@@ -1502,7 +1502,7 @@ gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data)
   GtkTreePath *path;
   GtkTreeIter it;
   GtkWidget *popup, *table, *label;
-  gchar *name;
+  gpointer p;
   struct connection *pconn;
 
   /* Get the current selection in the Connected Users list */
@@ -1514,8 +1514,8 @@ gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data)
   gtk_tree_model_get_iter(GTK_TREE_MODEL(conn_model), &it, path);
   gtk_tree_path_free(path);
 
-  gtk_tree_model_get(GTK_TREE_MODEL(conn_model), &it, 0, &name, -1);
-  pconn = find_conn_by_user(name);
+  gtk_tree_model_get(GTK_TREE_MODEL(conn_model), &it, 1, &p, -1);
+  pconn = (struct connection *)p;
 
   /* Show popup. */
   popup = gtk_window_new(GTK_WINDOW_POPUP);

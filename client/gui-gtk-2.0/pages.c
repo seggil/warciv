@@ -1235,7 +1235,7 @@ GtkWidget *create_start_page(void)
   gtk_container_add(GTK_CONTAINER(align), vbox2);
   gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, FALSE, 8);
 
-  conn_model = gtk_list_store_new(1, G_TYPE_STRING);
+  conn_model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(conn_model));
   g_object_unref(conn_model);
