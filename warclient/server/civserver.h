@@ -13,6 +13,6 @@
 #ifndef FC__CIVSERVER_H
 #define FC__CIVSERVER_H
 
-#define PEPSERVER_VERSION "Warserver - PepServer 0.9.4"
+#define PEPSERVER_VERSION "Warserver - PepServer 0.9.5 devel"
 
 #endif /* FC__CIVSERVER_H */

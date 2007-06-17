@@ -57,8 +57,6 @@ clean: unpatch
 
 	dh_clean
 
-	$(MAKE) clean
-
 	-rm -f debian/*~ Makefile Makefile.bak core */Makefile
 
 install: install-stamp
