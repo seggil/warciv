@@ -47,8 +47,8 @@ DIR=freeciv-2.0
 
 cp -a $pwd/freeciv-2.0 $DIR.orig
 cp -a $NEWFREECIV $DIR
-
 rm -fr `find . -name .svn`
+
 diff -urNad $DIR.orig $DIR > freeciv.diff
 
 
@@ -57,6 +57,7 @@ cp -a $DIR/client/gui-gtk-2.0 $DIR/client/gui-warclient-gtk-2.0
 
 DIRWAR=warclient
 cp -a $pwd/$DIRWAR .
+rm -fr `find . -name .svn`
 
 DIRWAR_LIKE=warclient_like
 DIRWAR_UPDATED=warclient_updated
