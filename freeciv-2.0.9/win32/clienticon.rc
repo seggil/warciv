@@ -1,3 +1,0 @@
-#include <windows.h>
-
-client_icon ICON "client.ico"
