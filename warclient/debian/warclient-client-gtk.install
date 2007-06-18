@@ -1,0 +1,4 @@
+debian/tmp/usr/games/warclient-gtk
+debian/tmp/usr/share/applications/warclient.desktop
+debian/tmp/usr/share/pixmaps/warclient.png
+debian/tmp/usr/share/pixmaps/warclient.xpm

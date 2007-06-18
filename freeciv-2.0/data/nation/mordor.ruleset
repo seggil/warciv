@@ -1,0 +1,34 @@
+[nation_mordor]
+
+name=_("Mordor")
+plural=_("?plural:Mordors")
+class=_("Fictional")
+legend=_("The armies of the Dark Lord Sauron, from J.R.R. Tolkien's \
+Middle Earth fantasies.")
+leader="Sauron", "Angmar", "Gorthaur", "Melkor"
+leader_sex="Male", "Male", "Male", "Male"
+flag = "f.mordor"
+flag_alt = "-"
+city_style = "Tropical"
+
+ruler_titles = { "government",      "male_title",      "female_title"
+                 "Despotism",       _("Overlord"),     _("Overlord")
+                 "Monarchy",        _("Dark Lord"),    _("Dark Lord")
+}
+
+init_techs=""
+init_buildings=""
+tech_goals = "Monarchy", "Bronze Working", "Iron Working", "Construction"
+wonder="Sun Tzu's War Academy"
+government="Monarchy"
+civilwar_nations = "dunedain"
+
+cities =
+  "Barad-Dûr", "Durthang", "Orodruin", "Morannon", "Dol Guldur",
+  "Minas Morgul", "Cirith Ungol", "Moria", "Angmar", "Gorgoroth",
+  "Morgai", "Nurn", "Khand", "Rhûn", "Harad", "Dagorlad", "Ephel Dúath",
+  "Ered Lithui", "Emyn Muil", "Núrnen", "Poros", "Harnen", "Lugbúrz",
+  "Angband", "Carn Dûm", "Utumno", "Amon Amarth",  "Thangorodrim", 
+  "Orthanc", "Angrenost", "Mount Fang", "Cirith Gorgor", "Moontower", 
+  "Hells of Iron", "Udûn", "Havens of Umbar", "Phurunargian", "Khand", 
+  "Rhûn", "Sammath Naur"

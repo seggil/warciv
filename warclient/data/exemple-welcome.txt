@@ -1,0 +1,5 @@
+#You should change <your host> to your external ip or hostname, or %h,
+#since there is no escape sequence for that Smile (read /help wm).
+ 
+Welcome to the %v server running at <your host> port %p.
+Blah blah... 

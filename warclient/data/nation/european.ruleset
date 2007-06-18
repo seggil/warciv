@@ -1,0 +1,35 @@
+[nation_european]
+
+name=_("European")
+plural=_("?plural:Europeans")
+class=_("Modern")
+legend=_("The foundation for the European Union was laid in 1957 with the\
+ Treaty of Rome. The EU project has developed since then and is beginning to\
+ resemble a fledgeling super state. But the question remains: Does such a\
+ thing as a common European identity and nation actually exist?.")
+
+leader= "Walter Hallstein", "Jean Rey", "Franco Maria Malfatti","Sicco L. Mansholt","Roy Jenkins"
+
+leader_sex= "Male","Male", "Male","Male","Male"
+	    
+flag="f.europe"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder= ""
+government= "Democracy"
+civilwar_nations = "austrian", "belgian", "czech", "danish", "estonian",
+                 "finnish", "french", "german", "hungarian",
+                 "irish", "italian", "latvian", "lithuanian", "dutch",
+                 "polish", "portuguese", "slovenian", "spanish",
+                 "swedish", "british"
+
+cities =
+ "Luxembourg",
+ "Valletta", ; Capital of Malta
+ "Nicosia"   ; Capital of Cyprus
+; Subsequent cities fetched from city lists of member nations

@@ -1,0 +1,171 @@
+
+Effects can currently be assigned (via rulesets) to buildings.
+
+Some effects are not suitable for certain assignments.
+
+If you have multiple effects of one type their AMOUNTs will be additively
+cumulative.  For many effects this is undesirable.
+
+
+.name may be one of:
+
+"Tech_Parasite"	- gains advances known by AMOUNT other players.
+
+"Airlift"	- allows airlift of units to/from a city (one per turn)
+
+"Any_Government"- allows the choice of any government form
+		  This must be either a "Player" or "World" ranged effect.
+
+"Capital_City"	- marks the capital city of a nation (many special cases)
+
+"Corrupt_Pct"	- Decreases corruption by AMOUNT percent
+
+"Waste_Pct"     - Decreases waste by AMOUNT percent
+
+"Enable_Nuke"	- allows production of nuclear units
+		  This must be either a "Player" or "World" ranged effect.
+
+"Enable_Space"	- allows production of "Space_Part" improvements
+		  This must be either a "Player" or "World" ranged effect.
+
+"Food_Add_Tile"	- each worked tile produces AMOUNT additional food
+
+"Food_Inc_Tile"	- each worked tile that is already producing some
+		  food produces AMOUNT additional food (applied after
+                  Food_Add_Tile)
+
+"Food_Per_Tile"	- increases food generated on each worked tile
+		  by AMOUNT percent
+
+"Force_Content"	- makes AMOUNT unhappy citizens content
+		  (applied *after* martial law and aggressive units;
+		  all Force_Content's are summed before being applied)
+
+"Give_Imm_Tech"	- immediately gain AMOUNT advances when built
+
+"Growth_Food"	- food left after cities grow or shrink is AMOUNT
+		  percent of the capacity of the city's foodbox
+
+"Have_Embassies"- like having embassies with all other players
+
+"Luxury_Bonus"	- luxury production increased by AMOUNT percent
+
+"Make_Content"	- makes AMOUNT unhappy citizens content
+		  (applied *before* martial law and aggressive units;
+		  all Make_Content's are summed before being applied)
+
+"Make_Content_Mil" - makes AMOUNT unhappy citizens caused
+		  by units outside of a city content
+
+"Make_Content_Mil_Per" - makes AMOUNT _per unit_ of unhappy citizens
+		  caused by units outside of a city content
+
+"Make_Happy"	- makes AMOUNT content citizens happy
+		  (all Make_Happy's are summed before being applied)
+
+"No_Anarchy"	- eliminates anarchy period between governments
+
+"No_Sink_Deep"	- prevent certain sea units from sinking in deep sea
+
+"Nuke_Proof"	- nuclear attacks will fail within AMOUNT distance
+
+"Pollu_Pop_Pct"	- increases pollution caused by population by AMOUNT percent
+
+"Pollu_Prod_Pct"- increases pollution caused by shields by AMOUNT percent
+
+"Prod_Add_Tile"	- each worked tile produces AMOUNT additional shield
+		  production
+
+"Prod_Inc_Tile"	- each worked tile that is already producing some
+		  shields produces AMOUNT additional shields
+
+"Prod_Per_Tile"	- increases shield production generated on each worked
+		  tile by AMOUNT percent
+
+"Prod_Bonus"	- shield production is increased by AMOUNT percent
+
+"Prod_To_Gold"	- convert production to gold at 1:1 ratio
+
+"Reveal_Cities"	- make all city tiles known
+
+"Reveal_Map"	- make entire map known
+
+"Incite_Dist_Pct" - multiplies effective distance to the capital by
+		  AMOUNT percent for purpose of computing revolt cost
+
+"Science_Bonus"	- science research is increased by AMOUNT percent
+
+"Size_Adj"      - Increases maximum city size by AMOUNT
+
+"Size_Unlimit"	- Removes maximum city size limitation
+
+"SS_Structural"
+"SS_Component"
+"SS_Module"	- a part of a spaceship;
+                  this is a "Local" ranged effect. It (for now) applies
+                  to improvements which cannot be built unless "Enable_Space"
+                  is felt.  Buildings which have this effect should probably
+                  not be given any other effects.
+
+"Spy_Resistant"	- if a spy specifies a target for sabotage,
+		  then she  has an AMOUNT percent chance to fail.  Also in
+                  diplomatic combat defending diplomatic units in cities will
+                  get an AMOUNT percent bonus.
+		  (all Spy_Resistant's are summed before being applied)
+
+"Tax_Bonus"	- tax revenues are increased by AMOUNT percent
+
+"Trade_Add_Tile"- each worked tile produces AMOUNT additional trade
+
+"Trade_Inc_Tile" - each worked tile that is already producing some
+		  trade produces AMOUNT additional trade
+
+"Trade_Per_Tile" - increases trade generated on each worked tile
+		  by AMOUNT percent
+
+"Trade_Bonus"	- trade generated is increased by AMOUNT percent
+
+"Sea_Move"	- adds AMOUNT of movement points to sea units
+
+"Unit_No_Lose_Pop" - no population lost when a city's defender is lost
+
+"Unit_Recover"	- units recover AMOUNT extra hitpoints per turn
+
+"Upgrade_Unit" - upgrade AMOUNT obsolete units per turn
+
+"Upkeep_Free"	- improvements with AMOUNT or less upkeep cost become
+		  free to upkeep (others are unaffected)
+
+"No_Unhappy"    - No citizens in the city are ever unhappy
+
+"Land_Veteran"
+"Sea_Veteran"
+"Air_Veteran"	- New land units of this type have veteran class 1
+
+"Land_Vet_Combat"
+"Sea_Vet_Combat"
+"Air_Vet_Combat"- Increases the chance of units of this type becoming veteran
+		  after combat by AMOUNT percent
+
+"Gain_AI_Love"  - Increase AI's love for you by AMOUNT units (out of 1000)
+                  per turn
+
+"Regen_Reputation" - Increase your reputation by AMOUNT units (out of 1000)
+                  per turn
+
+
+.range may be one of: 
+             "None", "Local", "City", "Continent", "Player", "World"
+.value	   = integral AMOUNT parameter for many effects
+	    (must be in the range -32767 to 32767)
+.survives  = 1 if effect survives destruction (wonders only)
+	    (if unspecified, 0 (doesn't survive) is assumed)
+.req_type  = The type of the requirement; one of:
+             "None" (default), "Tech", "Gov", "Building", "Special", "Terrain"
+.req       = The requirement.  The effect will not be active unless this
+             requirement is met.  This is a string containing the name of
+             the technology, government, building, tile special, or tile
+             terrain that is required.  The requirement applies to the
+             target of the effect (not the source).
+
+See data/default/buildings.ruleset for examples.

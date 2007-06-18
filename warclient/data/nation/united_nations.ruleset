@@ -1,0 +1,32 @@
+[nation_united_nations]
+
+name=_("United-Nation")
+plural=_("?plural:United-Nations")
+class=_("Modern")
+legend=_("The United Nations (UN) is an international organization whose stated aims \
+are to facilitate co-operation in international law, international security, economic \
+development, social progress and human rights issues. It was founded in 1945 at the \
+signing of the United Nations Charter by 50 countries, replacing the League of Nations, \
+founded in 1919.")
+
+leader="Sir Gladwyn Jebb","Trygve Lie","Dag Hammarskjöld","U Thant",
+       "Kurt Waldheim","Javier Pérez de Cuéllar","Boutros Boutros-Ghali",
+       "Kofi Annan","Ban Ki-moon"
+
+leader_sex="Male","Male", "Male", "Male", "Male", "Male", "Male","Male","Male"
+
+flag="f.united_nations"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Chivalry", "Philosophy", "The Republic",
+             "Monotheism", "Engineering", "Navigation", "Railroad"
+wonder=""
+government="Democracy"
+civilwar_nations = "canadian","soviet","chilean","french"
+
+cities =
+  "New-york", "Lyon", "London", "Lille", "São-Paulo",
+  "Ramallah", "Paris", "Berlin"

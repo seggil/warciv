@@ -1,0 +1,12 @@
+diff -urNad pepclient-2.0.9/configure.ac pepclient-2.0.9.debian/configure.ac
+--- pepclient-2.0.9/configure.ac	2007-05-14 13:14:49.000000000 +0200
++++ pepclient-2.0.9.debian/configure.ac	2007-05-14 13:16:28.000000000 +0200
+@@ -270,7 +270,7 @@
+ 
+ 
+ dnl note this has to match the path installed by po/Makefile
+-CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
++CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$prefix/share/locale\\\"\""
+ 
+ EXTRA_GCC_DEBUG_CFLAGS=""
+ 

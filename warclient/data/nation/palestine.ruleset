@@ -1,0 +1,46 @@
+[nation_patelestine]
+
+name=_("Palestinian")
+plural=_("?plural:Palestinian")
+class=_("Modern")
+legend=_("Palestine (from Latin: Palaestina named after the Philistines; Palestina; Arabic: \
+Filasti, Falasti) is one of several names for the geographic region between \
+the Mediterranean Sea and the Jordan River with various adjoining lands. Many different \
+definitions of the region have been used in the past three millennia.")
+leader="Yasir Arafat","Rauhi Fattouh","Mahmoud Abbas","Ahmad Qurei","Nabil Shaath"
+
+leader_sex="Male","Male","Male","Male","Male"
+flag ="f.palestine"
+flag_alt = "-"
+city_style = "Historical"
+
+ruler_titles = { "government",      "male_title",      "female_title"
+                 "Monarchy",        _("Caliph"),       _("Caliph")
+               }
+
+init_techs=""
+init_buildings=""
+tech_goals="Monarchy", "Philosophy", "Chivalry", "Trade", "Bridge Building",
+           "Railroad"
+wonder=""
+government="Monarchy"
+civilwar_nations = "turk", "persian","israeli"
+
+
+
+cities =
+       "Condor",
+       "Juster",
+       "Klausner",
+       "Benjamin",
+       "Klausner",
+       "Grant", 
+       "Michael",
+       "Baron",  
+       "Salo W"
+
+
+
+
+
+
