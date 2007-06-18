@@ -2,8 +2,8 @@
 
 #default dir where we merge warclient and freeciv
 if [ "$1" == '' ]; then
-    PWD=`pwd`
-    DIRCOMPILE=$PWD/merged/
+    pwd=`pwd`
+    DIRCOMPILE=$pwd/merged/
 else
     DIRCOMPILE=$1
 fi
@@ -24,10 +24,10 @@ mkdir $DIRCOMPILE
 cp -a freeciv-2.0.9/* $DIRCOMPILE/.
 rm -fr $DIRCOMPILE/debian
 
-cp -a warclient/* $DIRCOMPILE/.
+cp -fa warclient/* $DIRCOMPILE/.
 
 #remove .svn/ directory for having clean sources 
-rm -frv `find $DIRCOMPILE -name .svn`
+rm -fr `find $DIRCOMPILE -name .svn`
 
 #set executable 
 chmod u+x $DIRCOMPILE/autogen.sh
