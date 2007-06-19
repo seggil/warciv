@@ -1388,13 +1388,13 @@ static void tilespec_lookup_sprite_tags(void)
   SET_SPRITE(unit.sentry,	"unit.sentry");      
   SET_SPRITE(unit.stack,	"unit.stack");
   sprites.unit.loaded = load_sprite("unit.loaded");
-  SET_SPRITE(unit.trade,        "unit.trade");
+  sprites.unit.trade = load_sprite("unit.trade");
   SET_SPRITE(unit.transform,    "unit.transform");
   SET_SPRITE(unit.connect,      "unit.connect");
   SET_SPRITE(unit.patrol,       "unit.patrol");
   SET_SPRITE(unit.lowfuel,      "unit.lowfuel");
   SET_SPRITE(unit.tired,        "unit.tired");
-  SET_SPRITE(unit.wonder,       "unit.wonder");
+  sprites.unit.wonder = load_sprite("unit.wonder");
 
   for(i=0; i<NUM_TILES_HP_BAR; i++) {
     my_snprintf(buffer, sizeof(buffer), "unit.hp_%d", i*10);
@@ -1409,7 +1409,7 @@ static void tilespec_lookup_sprite_tags(void)
   }
 
   SET_SPRITE(city.disorder, "city.disorder");
-  SET_SPRITE(city.happy,    "city.happy");
+  sprites.city.happy = load_sprite("city.happy");
 
   for(i=0; i<NUM_TILES_DIGITS; i++) {
     char buffer2[512];
