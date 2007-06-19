@@ -3,7 +3,7 @@ and usage of sources, you just need to get this directory.
 Originals Freeciv sources are given separatelly from 
 warclient hacking.
 
-To cleany merge freeciv-2.0.9 and warclient, just run :
+To cleany merge freeciv-2.0 and warclient, just run :
 
 chmod u+x ./run.sh
 ./run.sh <your_merged_dir>
