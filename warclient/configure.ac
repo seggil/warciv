@@ -40,7 +40,6 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 
 AM_MAINTAINER_MODE
 
-dnl checks for mysql, sets AUTH_LIBS, AUTH_CFLAGS
 FC_CHECK_AUTH
 
 dnl  no=do not compile server,  yes=compile server,  *=error
@@ -319,7 +318,6 @@ if test x"$MINGW32" = "xyes"; then
   AC_DEFINE(ALWAYS_ROOT, 1, [Mingw32-specific setting - root])
   AC_DEFINE(WIN32_NATIVE, 1, [Mingw32-specific setting - native])
   AC_DEFINE(HAVE_WINSOCK, 1, [Mingw32-specific setting - winsock])
-  AC_DEFINE(NONBLOCKING_SOCKETS, 1, [nonblocking sockets support])
   LIBS="$LIBS -lwsock32"
 fi
 
@@ -539,9 +537,14 @@ dnl by the fact that the -lsocket is in X_EXTRA_LIBS and/or SERVER_LIBS,
 dnl and not in LIBS.
 
 dnl Now check if non blocking sockets are possible
-dnl (if at least one of fcntl or ioctl exists)
-AC_CHECK_FUNCS(fcntl ioctl,
-               [AC_DEFINE(NONBLOCKING_SOCKETS, 1, [nonblocking sockets support])])
+dnl (if fcntl or ioctl exists)
+
+AC_CHECK_FUNC(fcntl,
+              [AC_DEFINE(HAVE_FCNTL, 1, [fcntl support])
+               AC_DEFINE(NONBLOCKING_SOCKETS, 1, [nonblocking sockets support])],
+               [AC_CHECK_FUNC(ioctl, 
+                             [AC_DEFINE(HAVE_IOCTL, 1, [ioctl support])
+                              AC_DEFINE(NONBLOCKING_SOCKETS, 1, [nonblocking sockets support])])])
 
 dnl Checks if SIGPIPE is usable
 AC_MSG_CHECKING([for SIGPIPE])
@@ -668,11 +671,11 @@ AC_CONFIG_FILES([Makefile
 	  data/tournament/Makefile
 	  data/duel/Makefile
 	  data/experimental/Makefile
-          data/maps/Makefile
+	  data/maps/Makefile
+	  data/stdsounds/Makefile
 	  data/scenario/Makefile
 	  data/nation/Makefile
 	  data/history/Makefile
-	  data/stdsounds/Makefile
 	  utility/Makefile
 	  utility/ftwl/Makefile
 	  common/Makefile
