@@ -1388,11 +1388,13 @@ static void tilespec_lookup_sprite_tags(void)
   SET_SPRITE(unit.sentry,	"unit.sentry");      
   SET_SPRITE(unit.stack,	"unit.stack");
   sprites.unit.loaded = load_sprite("unit.loaded");
+  SET_SPRITE(unit.trade,        "unit.trade");
   SET_SPRITE(unit.transform,    "unit.transform");
   SET_SPRITE(unit.connect,      "unit.connect");
   SET_SPRITE(unit.patrol,       "unit.patrol");
-  SET_SPRITE(unit.lowfuel, "unit.lowfuel");
-  SET_SPRITE(unit.tired, "unit.tired");
+  SET_SPRITE(unit.lowfuel,      "unit.lowfuel");
+  SET_SPRITE(unit.tired,        "unit.tired");
+  SET_SPRITE(unit.wonder,       "unit.wonder");
 
   for(i=0; i<NUM_TILES_HP_BAR; i++) {
     my_snprintf(buffer, sizeof(buffer), "unit.hp_%d", i*10);
@@ -1407,6 +1409,7 @@ static void tilespec_lookup_sprite_tags(void)
   }
 
   SET_SPRITE(city.disorder, "city.disorder");
+  SET_SPRITE(city.happy,    "city.happy");
 
   for(i=0; i<NUM_TILES_DIGITS; i++) {
     char buffer2[512];
@@ -1924,8 +1927,8 @@ static struct Sprite *get_city_occupied_sprite(struct city *pcity)
    sprs->data.sprite.offset_x = x_offset,			\
    sprs->data.sprite.offset_y = y_offset,			\
    sprs++)
-#define ADD_SPRITE_SIMPLE(s) ADD_SPRITE(s, DRAW_NORMAL, TRUE, 0, 0)
-#define ADD_SPRITE_FULL(s) ADD_SPRITE(s, DRAW_FULL, TRUE, 0, 0)
+#define ADD_SPRITE_SIMPLE(s) ADD_SPRITE(s, DRAW_NORMAL, TRUE, 0, 0);
+#define ADD_SPRITE_FULL(s) ADD_SPRITE(s, DRAW_FULL, TRUE, 0, 0);
 
 #define ADD_GRID(ptile, mode)						    \
   (sprs->type = DRAWN_GRID,						    \
@@ -1999,7 +2002,26 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
     ADD_SPRITE_FULL(sprites.unit.loaded);
   }
 
-  if(punit->activity!=ACTIVITY_IDLE) {
+  if (punit->my_ai.control) {
+    struct Sprite *s = NULL;
+    switch(punit->my_ai.activity) {
+      case MY_AI_TRADE_ROUTE:
+        s = sprites.unit.trade;
+        break;
+      case MY_AI_HELP_WONDER:
+        s = sprites.unit.wonder;
+        break;
+      case MY_AI_PATROL:
+        s = sprites.unit.patrol;
+        break;
+      default:
+        break;
+    }
+    if (!s) {
+      s = sprites.unit.auto_settler;
+    }
+    ADD_SPRITE_FULL(s);
+  } else if (punit->activity!=ACTIVITY_IDLE) {
     struct Sprite *s = NULL;
     switch(punit->activity) {
     case ACTIVITY_MINE:
@@ -2764,6 +2786,8 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
     }
     if (pcity->client.unhappy) {
       ADD_SPRITE_FULL(sprites.city.disorder);
+    } else if (city_celebrating(pcity) && sprites.city.happy) {
+      ADD_SPRITE_SIMPLE(sprites.city.happy);
     }
   }
 
