@@ -121,7 +121,7 @@ pkgdata_DATA =\
                 dead_wood.png		\
                 iglu.png		\
                 hezbollah.png		\
-                honduras.png		\
+                hondura.png		\
                 midwayislands.png	\
                 tux.png			\
        		                        \
