@@ -141,8 +141,20 @@ options="1.9"
 *include "nation/hongkong.ruleset"
 *include "nation/chechenia.ruleset"
 *include "nation/iraq.ruleset"
+*include "nation/tux.ruleset"
+*include "nation/midway_islands.ruleset"
+*include "nation/deadwood.ruleset"
+*include "nation/hezbollah.ruleset"
+*include "nation/iglu.ruleset"
+*include "nation/hradeckralove.ruleset"
+*include "nation/revolution.ruleset"
+*include "nation/hondura.ruleset"
+*include "nation/krev.ruleset"
+*include "nation/marshall_islands.ruleset"
+*include "nation/slovakia.ruleset"
 ;
 ; observer and barbarians MUST go last in THIS order
 ;
 *include "nation/observer.ruleset"
 *include "nation/barbarian.ruleset"
+

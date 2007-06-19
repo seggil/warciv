@@ -109,10 +109,18 @@ pkgdata_DATA =\
 		vietnam.png		\
 		palestine.png		\
 		chechenia.png		\
-		Hong_Kong.png 		\
+		hong_kong.png 		\
 		sudan.png		\
- 		iraq.png		\
-					\
+                hradeckralove.png	\
+                iraq.png		\
+                revolution.png		\
+                hondura.png		\
+                laos.png		\
+                marshallislands.png	\
+		slovakia.png		\
+                iglu.png		\
+                hezbollah.png		\
+       		                        \
 		afghanistan-shield.png	\
 		assyria-shield.png	\
 		bosnia-shield.png	\

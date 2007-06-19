@@ -28,7 +28,7 @@ leader="Khun Lo",
 
 leader_sex= "Male", "Male", "Male","Male","Male","Male", "Male", "Male","Male","Male","Male"
 	    
-flag="f.krev"
+flag="f.laos"
 flag_alt = "-"
 city_style = "Asian"
 

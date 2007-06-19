@@ -1,0 +1,24 @@
+[nation_tux]
+
+name=_("Tux")
+plural=_("?plural:Tux_users")
+class=_("Fictional")
+legend=_("Tux is a symbol who represent the users from linux around world.")
+leader= "linus torvalds","Kevin M"
+
+leader_sex= "Male","Male"
+	    
+flag="f.tux"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder= ""
+government= "Communism"
+
+
+cities =
+  "none"

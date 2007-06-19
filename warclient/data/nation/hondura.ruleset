@@ -1,0 +1,39 @@
+[nation_hondura]
+
+name=_("Honduran")
+plural=_("?plural:Hondurans")
+class=_("Historical")
+legend=_("Archaeologists have demonstrated that Honduras had a rich, multi-ethnic prehistory.An\ important part of that prehistory was the Mayan presence around the city of Copán in western\ Honduras, near the Guatemalan border. Here a major Mayan city flourished during the classic\
+period (150-900).")
+
+leader= "Manuel Zelaya"
+
+leader_sex= "Male"
+
+flag="f.hondura"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder=""
+government= "Democracy"
+civilwar_nations ="cuba"
+
+cities =
+  "Tegucigalpa",
+  "Atlántida",
+  "Choluteca",
+  "Colón",
+  "Comayagua",
+  "Copán",
+  "Cortés",
+  "El Paraíso",
+  "Francisco Morazán",
+  "Gracias a Dios",
+  "Intibucá",
+  "Islas de la Bahía",
+  "La Paz",
+  "Lempira"

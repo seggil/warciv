@@ -7,7 +7,7 @@ legend=_("Hong Kong was a dependent territory of the United Kingdom from 1842 un
 leader= "Donald Tsang"
 leader_sex= "Male"
 	  
-flag="f.Hong_Kong"
+flag="f.hong_kong"
 flag_alt = "-"
 city_style = "Asian"
 

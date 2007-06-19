@@ -1,0 +1,26 @@
+[nation_hradec_kralove]
+
+name=_("Hradec")
+plural=_("?plural:Hradecs")
+class=_("City")
+legend=_("The city is situated in the centre of a very fertile region called the Golden Road on\
+the confluence of Elbe and Orlice and contains many buildings of historical and architectural  \
+interest. The cathedral was founded in 1303 by Elizabeth, wife of Wenceslaus II, and the church \ St. John, built in 1710, stands on the ruins of the old castle. During 1920s and 1930s the city\ grew rapidly and due to many buildings of modern architecture Hradec Králové became known as the\ Salon of the Republic.")
+
+leader= "Otakar Divíšek"
+leader_sex= "Male"
+
+flag="f.hradeckralove"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder= ""
+government= "Democracy"
+civilwar_nations = ""
+
+cities =
+  "none"
