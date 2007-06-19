@@ -118,8 +118,12 @@ pkgdata_DATA =\
                 laos.png		\
                 marshallislands.png	\
 		slovakia.png		\
+                dead_wood.png		\
                 iglu.png		\
                 hezbollah.png		\
+                honduras.png		\
+                midwayislands.png	\
+                tux.png			\
        		                        \
 		afghanistan-shield.png	\
 		assyria-shield.png	\
