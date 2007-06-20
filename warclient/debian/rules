@@ -24,10 +24,10 @@ COMMON_CONFIG := --cache-file=$(CURDIR)/config.cache \
 		 --prefix=/usr --datadir=\$${prefix}/share/games \
 		 --bindir=\$${prefix}/games \
 		 --host $(DEB_BUILD_GNU_TYPE) --build $(DEB_HOST_GNU_TYPE) \
-		 --enable-debug=yes \
+		 --enable-debug=no \
 		 --enable-auth \
 
-#		 --enable-debug=no \
+#		 --enable-debug=yes \
 
 build: patch build-all-stamp
 

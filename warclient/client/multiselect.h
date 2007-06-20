@@ -251,6 +251,7 @@ void request_player_execute_delayed_goto(struct player *pplayer,int dg);
 void request_unit_execute_delayed_goto(int dg);
 void request_execute_delayed_goto(struct tile *ptile,int dg);
 void schedule_delayed_airlift(struct tile *ptile);
+void add_pause_delayed_goto(void);
 
 /* airlift queues with many selections */
 #define AIRLIFT_QUEUE_NUM 7

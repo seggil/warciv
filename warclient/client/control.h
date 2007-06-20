@@ -70,6 +70,7 @@ void key_select_rally_point(void);
 void key_clear_rally_point_for_selected_cities(void);
 void check_rally_points(struct city *pcity, struct unit *punit);
 void key_unit_delayed_airlift(void);
+void key_add_pause_delayed_goto(void);
 void enable_auto_mode(void);
 
 void do_move_unit(struct unit *punit, struct unit *target_unit);

@@ -36,7 +36,7 @@ chmod u+x $DIRCOMPILE/debian/rules
 #display what it must be done
 echo now run : 
 echo cd $DIRCOMPILE
-echo "./autogen.sh --enable-client=gtk2-0 (for example see ./configure --help)"
+echo "./autogen.sh --enable-client=gtk2 (for example see ./configure --help)"
 echo make
 echo make install
 

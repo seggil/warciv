@@ -926,7 +926,7 @@ void request_unit_execute_delayed_goto(int dg)
 		return;
 	delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist,dgd)
 	{
-		if(!dgd->ptile)
+		if( !dgd->ptile && dgd->type != 3 )
 		{
 			hover_state=HOVER_DELAYED_GOTO;
 			need_tile_for=dg;
@@ -945,6 +945,7 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 
 	char buf[256];
 	int counter=0;
+	int counter2;
 
 	if(dg)
 		my_snprintf(buf,sizeof(buf),_("Warclient: Executing delayed goto selection %d"),dg);
@@ -954,6 +955,13 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 	connection_do_buffer(&aconnection);
 	delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist,dgd)
 	{
+	  // pause in delayed goto type==3
+                if (dgd->type==3) 
+		{
+		  delayed_goto_data_list_unlink(&delayed_goto_list[dg].dglist,dgd);
+		  free(dgd);
+		  break;
+		}
 		if(!dgd->ptile)//no selected target
 		{
 			if(ptile)
@@ -961,6 +969,7 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 			else
 				continue;
 		}
+
 		if(unit_limit&&(++counter>unit_limit))
 			break;
 		if(dgd->type==2)
@@ -994,8 +1003,14 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 		free(dgd);
 	} delayed_goto_data_list_iterate_end;
 	connection_do_unbuffer(&aconnection);
-	if(!delayed_goto_data_list_size(&delayed_goto_list[dg].dglist))
-		delayed_goto_clear(dg);
+	counter2=delayed_goto_size(dg);
+	if(!counter2)
+	        delayed_goto_clear(dg);
+	else
+	{
+	        my_snprintf(buf,sizeof(buf),_("Warclient: %d delayed goto still remain into queue. Press Y to continue"),counter2);
+	        append_output_window(buf);
+	}
 	update_menus();
 }
 
@@ -1008,6 +1023,15 @@ void schedule_delayed_airlift(struct tile *ptile)
 	delayed_goto_add_unit(0,need_city_for,2,ptile);
 	update_menus();
 	need_city_for=-1;
+}
+
+void add_pause_delayed_goto(void)
+{
+	char buf[256];
+
+	append_output_window(_("Warclient: Adding Pause in delayed goto"));
+	delayed_goto_add_unit(0,0,3,NULL);
+	update_menus();
 }
 
 /* airlift queues */

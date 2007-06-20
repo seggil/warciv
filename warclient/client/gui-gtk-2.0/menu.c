@@ -171,6 +171,7 @@ enum MenuID {
   MENU_DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE,
   MENU_DELAYED_GOTO_DELAYED_AIRLIFT,
   MENU_DELAYED_GOTO_EXECUTE_DELAYED_GOTO,
+  MENU_DELAYED_GOTO_ADD_PAUSE,
   MENU_DELAYED_GOTO_CLEAR_DELAYED_ORDERS,
   MENU_DELAYED_GOTO_GOTO_SINGLE_UNIT,
   MENU_DELAYED_GOTO_GOTO_ON_TILE,
@@ -756,6 +757,9 @@ static void delayed_goto_menu_callback(gpointer callback_data,
     break;
    case MENU_DELAYED_GOTO_EXECUTE_DELAYED_GOTO:
 	key_unit_execute_delayed_goto();
+    break;
+   case MENU_DELAYED_GOTO_ADD_PAUSE:
+     key_add_pause_delayed_goto();
     break;
    case MENU_DELAYED_GOTO_CLEAR_DELAYED_ORDERS:
 	key_unit_clear_delayed_orders();
@@ -1999,6 +2003,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE	},
   { "/" N_("Delayed Goto") "/" N_("Delayed _airlift"),		"<ctrl>y",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_DELAYED_AIRLIFT		},
+  { "/" N_("Delayed Goto") "/" N_("_Add Pause"),		       	"<ctrl>b",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_ADD_PAUSE		},
   { "/" N_("Delayed Goto") "/" N_("_Execute delayed goto"),	"y",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_EXECUTE_DELAYED_GOTO		},
   { "/" N_("Delayed Goto") "/" N_("_Clear delayed orders"),	"u",
