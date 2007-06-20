@@ -1027,8 +1027,6 @@ void schedule_delayed_airlift(struct tile *ptile)
 
 void add_pause_delayed_goto(void)
 {
-	char buf[256];
-
 	append_output_window(_("Warclient: Adding Pause in delayed goto"));
 	delayed_goto_add_unit(0,0,3,NULL);
 	update_menus();
