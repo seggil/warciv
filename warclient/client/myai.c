@@ -695,6 +695,7 @@ void find_best_trade_combination(char *buf, size_t buf_len)
 	struct trade_route_list *ptrl;
 	struct trade_route_list btrl,ctrl;
 	struct trade_conf btc,ctc;
+        int move_cost;
 
         buf[0]='\0';
 	if(!city_list_size(&game.player_ptr->cities))
@@ -758,6 +759,10 @@ void find_best_trade_combination(char *buf, size_t buf_len)
 				pmacity->free_slots--;
 				ttc->free_slots--;
 				ctc.free_slots-=2;
+				caravan->tile=pmacity->pcity->tile;
+                                move_cost=calculate_move_cost(caravan,ttc->pcity->tile);
+				ctc.moves+=move_cost;
+                                ctc.turns+=(move_cost+1)/SINGLE_MOVE;
 				my_ai_trade_city_list_unlink(&ttc->trade_with,pmacity);
 			} my_ai_trade_city_list_iterate_end;
 			my_ai_trade_city_list_unlink_all(&pmacity->trade_with);
