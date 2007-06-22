@@ -506,6 +506,10 @@ void my_ai_trade_route_execute(struct unit *punit)
 			cunit.tile=ptr->pc1->tile;
 			cunit.homecity=ptr->pc1->id;
 		}
+                else if(my_ai_trade_level==LEVEL_BEST)
+                {
+                        request_new_unit_activity(punit, ACTIVITY_IDLE);
+                }
 	}
 	if(cunit.homecity==ptr->pc1->id)
 	{
@@ -516,6 +520,10 @@ void my_ai_trade_route_execute(struct unit *punit)
 			my_snprintf(buf,sizeof(buf),_("PepClient: %s establishing trade route between %s and %s"),unit_name(punit->type),ptr->pc1->name,ptr->pc2->name);
 			append_output_window(buf);
 		}
+                else if(my_ai_trade_level==LEVEL_BEST)
+                {
+                        request_new_unit_activity(punit, ACTIVITY_IDLE);
+                }
 	}
 }
 
