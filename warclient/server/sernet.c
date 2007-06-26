@@ -193,13 +193,6 @@ static void handle_readline_input_callback(char *line)
 *****************************************************************************/
 void close_connection(struct connection *pconn)
 {
-  /* prevent strange connections problems */
-  send_packet_thaw_hint(pconn);
-  if(pconn->server.currently_processed_request_id) {
-    finish_processing_request(pconn);
-  }
-  flush_connection_send_buffer_all(pconn);
-
   while (timer_list_size(pconn->server.ping_timers) > 0) {
     struct timer *timer = timer_list_get(pconn->server.ping_timers, 0);
 
@@ -273,6 +266,21 @@ static void close_socket_callback(struct connection *pc)
   close_connection(pc);
 }
 
+/*****************************************************************************
+  Break a client connection. Send the packet which will allow the client
+  to reconnect.
+*****************************************************************************/
+void server_break_connection(struct connection *pconn)
+{
+  send_packet_thaw_hint(pconn);
+  if(pconn->server.currently_processed_request_id) {
+    finish_processing_request(pconn);
+  }
+  flush_connection_send_buffer_all(pconn);
+
+  close_socket_callback(pconn);
+}
+
 /****************************************************************************
   Attempt to flush all information in the send buffers for upto 'netwait'
   seconds.
@@ -321,7 +329,7 @@ void flush_packets(void)
 	if (FD_ISSET(pconn->sock, &exceptfs)) {
 	  freelog(LOG_NORMAL, "cut connection %s due to exception data",
 		  conn_description(pconn));
-	  close_socket_callback(pconn);
+	  server_break_connection(pconn);
 	} else {
 	  if (pconn->send_buffer && pconn->send_buffer->ndata > 0) {
 	    if (FD_ISSET(pconn->sock, &writefs)) {
@@ -332,7 +340,7 @@ void flush_packets(void)
 		freelog(LOG_NORMAL,
 			"cut connection %s due to lagging player",
 			conn_description(pconn));
-		close_socket_callback(pconn);
+		server_break_connection(pconn);
 	      }
 	    }
 	  }
@@ -473,7 +481,7 @@ int sniff_packets(void)
 	  } else {
 	    freelog(LOG_NORMAL, "cut connection %s due to ping timeout",
 		    conn_description(pconn));
-	    close_socket_callback(pconn);
+	    server_break_connection(pconn);
 	  }
 	} else {
 	  ping_connection(pconn);
@@ -588,7 +596,7 @@ int sniff_packets(void)
       if (pconn->used && FD_ISSET(pconn->sock, &exceptfs)) {
 	freelog(LOG_ERROR, "cut connection %s due to exception data",
 		conn_description(pconn));
-	close_socket_callback(pconn);
+	server_break_connection(pconn);
       }
     }
 
@@ -738,7 +746,7 @@ int sniff_packets(void)
 		&& (time(NULL) > pconn->last_write + game.tcptimeout)) {
 	      freelog(LOG_NORMAL, "cut connection %s due to lagging player",
 		      conn_description(pconn));
-	      close_socket_callback(pconn);
+	      server_break_connection(pconn);
 	    }
 	  }
 	}
