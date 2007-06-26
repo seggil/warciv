@@ -268,9 +268,27 @@ gettext package. We recommend you versions >= 0.10.38. Or use
   fi
 fi
 
+dnl Autoconf >= 2.60 defines localedir. For older versions of autoconf, we
+dnl have to define it here, so that it can be used in po/Makefile.
+dnl You cannot use localedir above this line or it will fail for old ac's.
+if test -z "$localedir"; then
+  localedir="$datadir/locale"
+  AC_SUBST(localedir)
+fi
+
+dnl Windows-specific settings
+AC_DIAGNOSE([obsolete],[AC_MINGW32 is obsolete: use AC_CANONICAL_HOST and $host_os])
+case $host_os in
+  *mingw32* ) MINGW32=yes;;
+          * ) MINGW32=no;;
+esac
 
 dnl note this has to match the path installed by po/Makefile
-CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
+if test x"$MINGW32" != "xyes"; then
+  CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$localedir\\\"\""
+else
+  AC_DEFINE_UNQUOTED(LOCALEDIR, "./share/locale", [Locale directory (windows)])
+fi  
 
 EXTRA_GCC_DEBUG_CFLAGS=""
 
@@ -305,13 +323,6 @@ if test x`$UNAME -s` = xBeOS ; then
   # broke compilation on other systems.  Setting ARFLAGS shouldn't be
   # necessary with a working automake.
 fi
-
-dnl Windows-specific settings
-AC_DIAGNOSE([obsolete],[AC_MINGW32 is obsolete: use AC_CANONICAL_HOST and $host_os])
-case $host_os in
-  *mingw32* ) MINGW32=yes;;
-          * ) MINGW32=no;;
-esac
 
 if test x"$MINGW32" = "xyes"; then
   AC_DEFINE(SOCKET_ZERO_ISNT_STDIN, 1, [Mingw32-specific setting - stdin])

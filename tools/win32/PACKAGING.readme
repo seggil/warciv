@@ -24,10 +24,7 @@ export PKG_CONFIG_PATH="/c/devel/GTK/lib/pkgconfig:/c/devel/SDL/lib/pkgconfig:/m
 export PATH="/c/devel/GTK/bin:/c/devel/SDL/bin:/c/devel/SDL/lib:$PATH"
 
 
-./autogen.sh --prefix=c:/Progra~1//Pepclient-2.0.9+${VERSION}-sdl --with-included-gettext --with-sdl-prefix=/c/devel/SDL --enable-client=gtk2 --with-libiconv-prefix="/c/devel/GTK"
-
-
-
+./autogen.sh --with-included-gettext --with-sdl-prefix=/c/devel/SDL --enable-client=gtk2 --with-libiconv-prefix="/c/devel/GTK"
 
 make clean 
 make &&  make DESTDIR=$MYDEST/pepclient prefix= bindir=./ install
