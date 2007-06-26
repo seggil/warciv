@@ -1,12 +1,12 @@
 diff -urNad pepclient-2.0.9/configure.ac pepclient-2.0.9.debian/configure.ac
---- pepclient-2.0.9/configure.ac	2007-05-14 13:14:49.000000000 +0200
-+++ pepclient-2.0.9.debian/configure.ac	2007-05-14 13:16:28.000000000 +0200
-@@ -270,7 +270,7 @@
- 
- 
- dnl note this has to match the path installed by po/Makefile
--CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
-+CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$prefix/share/locale\\\"\""
- 
- EXTRA_GCC_DEBUG_CFLAGS=""
+--- pepclient-2.0.9/configure.ac	2007-06-26 12:59:23.000000000 +0200
++++ pepclient-2.0.9.debian/configure.ac	2007-06-26 13:00:34.000000000 +0200
+@@ -272,7 +272,7 @@
+ dnl have to define it here, so that it can be used in po/Makefile.
+ dnl You cannot use localedir above this line or it will fail for old ac's.
+ if test -z "$localedir"; then
+-  localedir="$datadir/locale"
++  localedir="$prefix/share/locale"
+   AC_SUBST(localedir)
+ fi
  
