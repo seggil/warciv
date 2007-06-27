@@ -1990,43 +1990,50 @@ static void select_random_race(void)
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(races_nation_list));
 
 //*pepeto*
-	int i;
-	const gchar *nn;
-	Nation_Type_id id;
-	
-	id=find_nation_by_name(default_user_nation);
-	if(id==NO_NATION_SELECTED)
-		id=find_nation_by_name_orig(default_user_nation);
-	if(id!=NO_NATION_SELECTED)
-		for(i=0;i<game.playable_nation_count;i++)
-		{
-			GtkTreePath *path;
-			GtkTreeIter it;
-			GValue val = { 0, };
+  int i, n;
+  const gchar *nn;
+  char *nations[4]; /* set a default limit of 4 */
+  Nation_Type_id id;
 
-			path = gtk_tree_path_new();
-			gtk_tree_path_append_index(path,i);
-			if(gtk_tree_model_get_iter(model,&it,path))
-			{
-				gtk_tree_model_get_value(model,&it,3,&val);
-				nn=g_value_get_string(&val);
-				if(find_nation_by_name(nn)==id)
-				{
-					gboolean chosen;
-	
-					g_value_unset(&val);
-					gtk_tree_model_get(model,&it,1,&chosen,-1);
-					if (!chosen)
-					{
-						gtk_tree_view_set_cursor(GTK_TREE_VIEW(races_nation_list),path,NULL,FALSE);
-						gtk_tree_path_free(path);
-						return;
-					}
-					g_value_unset(&val);
-				}
-				gtk_tree_path_free(path);
-			}
-		}
+  n = get_tokens(default_user_nation, nations, 4, " ,;");
+  for (i = 0, id = NO_NATION_SELECTED; i < n && id == NO_NATION_SELECTED; i++) {
+    if (id == NO_NATION_SELECTED) {
+      id = find_nation_by_name(nations[i]);
+    }
+    if (id == NO_NATION_SELECTED) {
+      id = find_nation_by_name_orig(nations[i]);
+    }
+    free(nations[i]);
+  }
+
+  if(id != NO_NATION_SELECTED) {
+    for(i = 0; i < game.playable_nation_count; i++) {
+      GtkTreePath *path;
+      GtkTreeIter it;
+      GValue val = { 0, };
+
+      path = gtk_tree_path_new();
+      gtk_tree_path_append_index(path, i);
+      if (gtk_tree_model_get_iter(model, &it, path)) {
+        gtk_tree_model_get_value(model, &it, 3, &val);
+        nn = g_value_get_string(&val);
+        if (find_nation_by_name(nn) == id) {
+          gboolean chosen;
+
+          g_value_unset(&val);
+          gtk_tree_model_get(model, &it, 1, &chosen, -1);
+          if (!chosen) {
+            gtk_tree_view_set_cursor(GTK_TREE_VIEW(races_nation_list),
+                                     path, NULL, FALSE);
+            gtk_tree_path_free(path);
+            return;
+          }
+          g_value_unset(&val);
+        }
+        gtk_tree_path_free(path);
+      }
+    }
+  }
 	
   /* This has a possibility of infinite loop in case
    * game.playable_nation_count < game.nplayers. */
