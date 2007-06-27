@@ -1996,7 +1996,7 @@ static void select_random_race(void)
   Nation_Type_id id;
 
   n = get_tokens(default_user_nation, nations, 4, " ,;");
-  for (i = 0, id = NO_NATION_SELECTED; i < n && id == NO_NATION_SELECTED; i++) {
+  for (i = 0, id = NO_NATION_SELECTED; i < n; i++) {
     if (id == NO_NATION_SELECTED) {
       id = find_nation_by_name(nations[i]);
     }
