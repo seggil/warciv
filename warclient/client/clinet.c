@@ -578,7 +578,7 @@ static struct server_list *parse_metaserver_data(fz_FILE * f)
   nservers = secfile_lookup_int_default(file, 0, "main.nservers");
 
   for (i = 0; i < nservers; i++) {
-    char *host, *port, *version, *state, *message, *nplayers;
+    char *host, *port, *version, *state, *message, *nplayers, *patches;
     int n;
     struct server *pserver =
 	(struct server *) fc_malloc(sizeof(struct server));
@@ -598,6 +598,9 @@ static struct server_list *parse_metaserver_data(fz_FILE * f)
     message = secfile_lookup_str_default(file, "", "server%d.message", i);
     pserver->message = mystrdup(message);
 
+    patches = secfile_lookup_str_default(file, "none", "server%d.patches", i);
+    pserver->patches = mystrdup(patches);
+
     nplayers = secfile_lookup_str_default(file, "0", "server%d.nplayers", i);
     pserver->nplayers = mystrdup(nplayers);
     n = atoi(nplayers);
@@ -609,11 +612,15 @@ static struct server_list *parse_metaserver_data(fz_FILE * f)
     }
 
     for (j = 0; j < n; j++) {
-      char *name, *nation, *type, *host;
+      char *name, *user, *nation, *type, *host;
 
       name = secfile_lookup_str_default(file, "",
 					"server%d.player%d.name", i, j);
       pserver->players[j].name = mystrdup(name);
+
+      user = secfile_lookup_str_default(file, "",
+					"server%d.player%d.user", i, j);
+      pserver->players[j].user = mystrdup(user);
 
       type = secfile_lookup_str_default(file, "",
 					"server%d.player%d.type", i, j);
@@ -1297,10 +1304,14 @@ void delete_server_list(struct server_list *server_list)
     free(ptmp->version);
     free(ptmp->state);
     free(ptmp->message);
+    if (ptmp->patches) {
+      free(ptmp->patches);
+    }
 
     if (ptmp->players) {
       for (i = 0; i < n; i++) {
 	free(ptmp->players[i].name);
+        free(ptmp->players[i].user);
 	free(ptmp->players[i].type);
 	free(ptmp->players[i].host);
 	free(ptmp->players[i].nation);
@@ -1502,6 +1513,7 @@ again:
     pserver->host = mystrdup(servername);
     pserver->port = mystrdup(port);
     pserver->version = mystrdup(version);
+    pserver->patches = NULL;
     pserver->state = mystrdup(status);
     pserver->nplayers = mystrdup(players);
     pserver->message = mystrdup(message);

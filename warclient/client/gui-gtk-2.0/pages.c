@@ -54,7 +54,8 @@ static GtkListStore *load_store, *scenario_store,
     *nation_store, *meta_store, *lan_store, *metaplayerlist_store;
 
 enum metaplayerlist_column_ids {
-  MPL_COL_USERNAME,
+  MPL_COL_NAME,
+  MPL_COL_USER,
   MPL_COL_HOST,
   MPL_COL_TYPE,
   MPL_COL_NATION,
@@ -281,20 +282,21 @@ static void update_server_list(GtkTreeSelection * selection,
 
   server_list_iterate(*list, pserver) {
     GtkTreeIter it;
-    gchar *row[6];
+    gchar *row[7];
 
     gtk_list_store_append(store, &it);
 
     row[0] = pserver->host;
     row[1] = pserver->port;
     row[2] = pserver->version;
-    row[3] = _(pserver->state);
-    row[4] = pserver->nplayers;
-    row[5] = pserver->message;
+    row[3] = pserver->patches;
+    row[4] = _(pserver->state);
+    row[5] = pserver->nplayers;
+    row[6] = pserver->message;
 
     gtk_list_store_set(store, &it,
-		       0, row[0], 1, row[1], 2, row[2],
-		       3, row[3], 4, row[4], 5, row[5], -1);
+		       0, row[0], 1, row[1], 2, row[2], 3, row[3],
+		       4, row[4], 5, row[5], 6, row[6], -1);
 
     if (strcmp(host, pserver->host) == 0 && strcmp(port, pserver->port) == 0) {
       gtk_tree_selection_select_iter(selection, &it);
@@ -749,7 +751,8 @@ static void update_metaplayerlist(GtkTreePath * path)
   for (i = 0; i < nplayers; i++) {
     gtk_list_store_append(metaplayerlist_store, &iter);
     gtk_list_store_set(metaplayerlist_store, &iter,
-		       MPL_COL_USERNAME, pserver->players[i].name,
+		       MPL_COL_NAME, pserver->players[i].name,
+		       MPL_COL_USER, pserver->players[i].user,
 		       MPL_COL_HOST, pserver->players[i].host,
 		       MPL_COL_TYPE, pserver->players[i].type,
 		       MPL_COL_NATION, pserver->players[i].nation, -1);
@@ -810,7 +813,9 @@ static GtkWidget *create_metaplayerlist_view()
   GtkCellRenderer *rend;
   GtkTreeSelection *selection;
 
-  metaplayerlist_store = gtk_list_store_new(MPL_NUM_COLUMNS, G_TYPE_STRING,	/* username */
+  metaplayerlist_store = gtk_list_store_new(MPL_NUM_COLUMNS,
+                                            G_TYPE_STRING,	/* name */
+					    G_TYPE_STRING,	/* user */
 					    G_TYPE_STRING,	/* host */
 					    G_TYPE_STRING,	/* type */
 					    G_TYPE_STRING);	/* nation */
@@ -825,7 +830,13 @@ static GtkWidget *create_metaplayerlist_view()
   rend = gtk_cell_renderer_text_new();
   gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
 					      _("Name"), rend,
-					      "text", MPL_COL_USERNAME,
+					      "text", MPL_COL_NAME,
+					      NULL);
+
+  rend = gtk_cell_renderer_text_new();
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
+					      _("User"), rend,
+					      "text", MPL_COL_USER,
 					      NULL);
 
   rend = gtk_cell_renderer_text_new();
@@ -871,6 +882,7 @@ GtkWidget *create_network_page(void)
     N_("Server Name"),
     N_("Port"),
     N_("Version"),
+    N_("Patches"),
     N_("Status"),
     N_("Players"),
     N_("Comment")
@@ -888,9 +900,10 @@ GtkWidget *create_network_page(void)
   gtk_box_pack_start(GTK_BOX(box), notebook, TRUE, TRUE, 8);
 
   /* LAN pane. */
-  lan_store = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_STRING);
+  lan_store = gtk_list_store_new(7, G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_STRING,
+                                 G_TYPE_STRING);
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(lan_store));
   g_object_unref(lan_store);
@@ -925,9 +938,10 @@ GtkWidget *create_network_page(void)
 
 
   /* Metaserver pane. */
-  meta_store = gtk_list_store_new(6, G_TYPE_STRING, G_TYPE_STRING,
+  meta_store = gtk_list_store_new(7, G_TYPE_STRING, G_TYPE_STRING,
 				  G_TYPE_STRING, G_TYPE_STRING,
-				  G_TYPE_STRING, G_TYPE_STRING);
+				  G_TYPE_STRING, G_TYPE_STRING,
+				  G_TYPE_STRING);
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(meta_store));
   g_object_unref(meta_store);
@@ -965,7 +979,7 @@ GtkWidget *create_network_page(void)
   gtk_box_pack_start(GTK_BOX(box), sbox, FALSE, FALSE, 8);
 
   hbox = gtk_hbox_new(FALSE, 16);
-  gtk_box_pack_start(GTK_BOX(sbox), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(sbox), hbox, FALSE, FALSE, 8);
 
   table = gtk_table_new(6, 2, FALSE);
   gtk_table_set_row_spacings(GTK_TABLE(table), 2);
@@ -1053,7 +1067,7 @@ GtkWidget *create_network_page(void)
 
 
   metaplayerlist = create_metaplayerlist_view();
-  gtk_box_pack_start(GTK_BOX(hbox), metaplayerlist, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(hbox), metaplayerlist, TRUE, TRUE, 16);
 
 
   bbox = gtk_hbutton_box_new();

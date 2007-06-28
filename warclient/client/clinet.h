@@ -55,6 +55,7 @@ struct server
   struct players
   {
     char *name;
+    char *user;
     char *type;
     char *host;
     char *nation;
