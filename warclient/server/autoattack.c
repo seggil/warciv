@@ -69,17 +69,17 @@ static struct unit *search_best_target(struct player *pplayer,
 
   range = unit_flag(punit, F_ONEATTACK) ?
       punit->moves_left :
-      punit->moves_left/2;
+      punit->moves_left / 2;
 
   /* attack the next to city */
-  range = range<4 ? 3 : range;
+  range = range < SINGLE_MOVE ? SINGLE_MOVE : range;
 
   freelog(LOG_VERBOSE, "doing autoattack for %s (%d/%d),"
 	  " range %d(%d)",
 	  unit_name(punit->type), punit->tile->x, punit->tile->y,
 	  range, punit->moves_left);
 
-  square_iterate(punit->tile, range, ptile) {
+  square_iterate(punit->tile, range / SINGLE_MOVE, ptile) {
     if (same_pos(punit->tile, ptile))
       continue;
 
