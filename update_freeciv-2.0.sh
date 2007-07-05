@@ -19,7 +19,6 @@ fi
 if [ -a $WORKDIR ]; then
     echo Directory $WORKDIR exist already
     echo "First delete it ( rm -fr $WORKDIR ) or run"
-    echo "./run <your_dir>"
     exit 1
 fi
 
