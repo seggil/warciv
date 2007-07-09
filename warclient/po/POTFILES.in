@@ -216,7 +216,6 @@ client/gui-win32/ratesdlg.c
 client/gui-win32/repodlgs.c
 client/gui-win32/spaceshipdlg.c
 client/gui-win32/wldlg.c
-client/gui-xaw/Freeciv.h
 client/gui-xaw/chatline.c
 client/gui-xaw/citydlg.c
 client/gui-xaw/cityrep.c
