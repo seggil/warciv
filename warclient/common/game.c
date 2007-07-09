@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ void game_remove_city(struct city *pcity)
 }
 
 /***************************************************************
-  ...
+...
 ***************************************************************/
 void game_init(bool clear_players)
 {
@@ -225,7 +225,7 @@ void game_init(bool clear_players)
   game.timeoutinc    = GAME_DEFAULT_TIMEOUTINC;
   game.timeoutincmult= GAME_DEFAULT_TIMEOUTINCMULT;
   game.timeoutcounter= 1;
-  game.timeoutaddenemymove = GAME_DEFAULT_TIMEOUTADDEMOVE;
+  game.timeoutaddenemymove = GAME_DEFAULT_TIMEOUTADDEMOVE; 
   game.tcptimeout    = GAME_DEFAULT_TCPTIMEOUT;
   game.netwait       = GAME_DEFAULT_NETWAIT;
   game.last_ping     = 0;
@@ -239,7 +239,7 @@ void game_init(bool clear_players)
   game.aifill      = GAME_DEFAULT_AIFILL;
 
   if (clear_players) {
-    game.nplayers = 0;
+  game.nplayers=0;
   }
 
   game.researchcost = GAME_DEFAULT_RESEARCHCOST;
@@ -302,7 +302,7 @@ void game_init(bool clear_players)
   game.num_unit_types = 0;
   game.num_impr_types = 0;
   game.num_tech_types = 0;
-
+ 
   game.nation_count = 0;
   game.government_count = 0;
   game.default_government = G_MAGIC;        /* flag */
@@ -322,14 +322,14 @@ void game_init(bool clear_players)
   game.save_options.save_starts = TRUE;
   game.save_options.save_private_map = TRUE;
 
-  init_our_capability();
+  init_our_capability();    
   map_init();
   idex_init();
   cm_init();
-
+  
   if (clear_players) {
-    for(i=0; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++)
-      player_init(&game.players[i]);
+  for(i=0; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++)
+    player_init(&game.players[i]);
   }
   for (i=0; i<A_LAST; i++)      /* game.num_tech_types = 0 here */
     game.global_advances[i]=0;
@@ -337,12 +337,11 @@ void game_init(bool clear_players)
     game.global_wonders[i]=0;
   game.player_idx=0;
   game.player_ptr=&game.players[0];
-
   terrain_control.river_help_text[0] = '\0';
 }
 
 /***************************************************************
-  Remove all initialized players. This is all player slots,
+  Remove all initialized players. This is all player slots, 
   since we initialize them all on game initialization.
 ***************************************************************/
 static void game_remove_all_players(void)
@@ -363,7 +362,7 @@ static void game_remove_all_players(void)
 void game_free(bool remove_players)
 {
   if (remove_players)
-    game_remove_all_players();
+  game_remove_all_players();
   map_free();
   idex_free();
   ruleset_data_free();
@@ -409,11 +408,11 @@ int game_next_year(int year)
   if (year == 1) /* hacked it to get rid of year 0 */
     year = 0;
 
-    /* !McFred:
+    /* !McFred: 
        - want year += 1 for spaceship.
     */
 
-  /* test game with 7 normal AI's, gen 4 map, foodbox 10, foodbase 0:
+  /* test game with 7 normal AI's, gen 4 map, foodbox 10, foodbase 0: 
    * Gunpowder about 0 AD
    * Railroad  about 500 AD
    * Electricity about 1000 AD
@@ -460,9 +459,9 @@ int game_next_year(int year)
   else if( year >= -1000 ) /* used this line for tuning (was -1250) */
     year += 25;
   else
-    year += 50;
+    year += 50; 
 
-  if (year == 0)
+  if (year == 0) 
     year = 1;
 
   return year;
@@ -487,14 +486,14 @@ void game_remove_player(struct player *pplayer)
   if (pplayer->attribute_block.data) {
     free(pplayer->attribute_block.data);
     pplayer->attribute_block.data = NULL;
-    pplayer->attribute_block.length = 0;
   }
+  pplayer->attribute_block.length = 0;
 
   if (pplayer->attribute_block_buffer.data) {
     free(pplayer->attribute_block_buffer.data);
     pplayer->attribute_block_buffer.data = NULL;
-    pplayer->attribute_block_buffer.length = 0;
   }
+  pplayer->attribute_block_buffer.length = 0;
 
   if (pplayer->island_improv) {
     free(pplayer->island_improv);
@@ -503,13 +502,13 @@ void game_remove_player(struct player *pplayer)
 
   conn_list_unlink_all(&pplayer->connections);
 
-  unit_list_iterate(pplayer->units, punit)
+  unit_list_iterate(pplayer->units, punit) 
     game_remove_unit(punit);
   unit_list_iterate_end;
   assert(unit_list_size(&pplayer->units) == 0);
   unit_list_unlink_all(&pplayer->units);
 
-  city_list_iterate(pplayer->cities, pcity)
+  city_list_iterate(pplayer->cities, pcity) 
     game_remove_city(pcity);
   city_list_iterate_end;
   assert(city_list_size(&pplayer->cities) == 0);
@@ -528,16 +527,16 @@ void game_renumber_players(int plrno)
   int i;
 
   for (i = plrno; i < game.nplayers - 1; i++) {
-    game.players[i] = game.players[i+1];
-    game.players[i].player_no = i;
+    game.players[i]=game.players[i+1];
+    game.players[i].player_no=i;
     conn_list_iterate(game.players[i].connections, pconn) {
       pconn->player = &game.players[i];
     } conn_list_iterate_end;
   }
 
-  if (game.player_idx > plrno) {
+  if(game.player_idx>plrno) {
     game.player_idx--;
-    game.player_ptr = &game.players[game.player_idx];
+    game.player_ptr=&game.players[game.player_idx];
   }
 
   if (game.nplayers > 0) {
@@ -555,7 +554,7 @@ get_player() - Return player struct pointer corresponding to player_id.
 struct player *get_player(int player_id)
 {
   assert(0 <= player_id && player_id < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS);
-  return &game.players[player_id];
+    return &game.players[player_id];
 }
 
 bool is_valid_player_id(int player_id)
@@ -650,3 +649,4 @@ const char *population_to_text(int thousand_citizen)
   assert(thousand_citizen >= 0);
   return big_int_to_text(thousand_citizen, 3);
 }
+

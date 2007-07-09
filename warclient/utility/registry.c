@@ -582,7 +582,7 @@ static bool section_file_read_dup(struct section_file *sf,
 ...
 **************************************************************************/
 bool section_file_load(struct section_file *my_section_file,
-                       const char *filename)
+		      const char *filename)
 {
   char real_filename[1024];
   struct inputfile *inf;
@@ -597,7 +597,7 @@ bool section_file_load(struct section_file *my_section_file,
   Load a section_file, but disallow (die on) duplicate entries.
 **************************************************************************/
 bool section_file_load_nodup(struct section_file *my_section_file,
-                             const char *filename)
+			    const char *filename)
 {
   char real_filename[1024];
   struct inputfile *inf;

@@ -60,7 +60,7 @@ static int ocean_sizes[MAP_NCONT];
   is useful for mapgen algorithms.
 **************************************************************************/
 void assign_continent_flood(struct tile *ptile, bool is_land,
-                            int nr, bool skip_unsafe)
+				   int nr, bool skip_unsafe)
 {
   if (map_get_continent(ptile) != 0) {
     return;

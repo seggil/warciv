@@ -267,7 +267,7 @@ void generator_init_topology(bool autosize)
     if(map.generator == 4 || map.generator == 5) {
       set_sizes(req_size, 2, 1);
     } else {
-      /* Set map.xsize and map.ysize based on map.size. */
+    /* Set map.xsize and map.ysize based on map.size. */
       set_sizes(req_size, default_ratios[id][0], default_ratios[id][1]);
     }
   }
@@ -285,7 +285,7 @@ void generator_init_topology(bool autosize)
     }
     freelog(LOG_VERBOSE, "landmass changed for %d", map.landpercent);
   }
-  
+
   /* initialize the ICE_BASE_LEVEL */
 
   /*

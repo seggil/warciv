@@ -593,12 +593,12 @@ void update_players_dialog(void)
 
     players_iterate(pplayer) {
 //      if (!is_barbarian(pplayer)) {
-		if (!exists[pplayer->player_no]) {
+	if (!exists[pplayer->player_no]) {
 		
-		gtk_list_store_append(store, &it);
+	  gtk_list_store_append(store, &it);
 
-		build_row(&it, pplayer->player_no);
-		}
+	  build_row(&it, pplayer->player_no);
+	}
 //      }
     } players_iterate_end;
 

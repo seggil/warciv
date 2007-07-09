@@ -316,7 +316,7 @@ warmer_wetter_result = "Jungle"
 warmer_drier_result  = "Desert"
 cooler_wetter_result = "no"
 cooler_drier_result  = "no"
-flags                = "Starter","CanHaveRiver"
+flags                = "Starter", "CanHaveRiver"
 helptext	     = _("\
 Forests are densely wooded, making agriculture somewhat\
  problematic.\

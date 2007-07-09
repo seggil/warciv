@@ -7120,7 +7120,7 @@ msgstr ""
 
 #: server/stdinhand.c:6011
 msgid ""
-"Welcome - this is the introductory help text for the Freecivserver.\n"
+"Welcome - this is the introductory help text for the Freeciv server.\n"
 "\n"
 "Two important server concepts are Commands and Options.\n"
 "Commands, such as 'help', are used to interact with the server.\n"
@@ -17012,22 +17012,22 @@ msgstr "לוח מידע"
 
 #: client/gui-sdl/citydlg.c:2214
 #, fuzzy, c-format
-msgid "Pollution : %d"
+msgid "Pollution: %d"
 msgstr "זיהום: %d"
 
 #: client/gui-sdl/citydlg.c:2242
 #, fuzzy
-msgid "Pollution : none"
+msgid "Pollution: none"
 msgstr "זיהום: אין"
 
 #: client/gui-sdl/citydlg.c:2255
 #, fuzzy
-msgid "Trade routes : "
+msgid "Trade routes: "
 msgstr "נתיבי־סחר"
 
 #: client/gui-sdl/citydlg.c:2304
 #, fuzzy, c-format
-msgid "Trade : +%d"
+msgid "Trade: +%d"
 msgstr "סחר: +%d"
 
 #: client/gui-sdl/citydlg.c:2348 client/gui-sdl/citydlg.c:3831
@@ -17040,32 +17040,32 @@ msgstr "אזרחים"
 
 #: client/gui-sdl/citydlg.c:2728
 #, fuzzy, c-format
-msgid "Food : %d per turn"
+msgid "Food: %d per turn"
 msgstr "מזון: %d לתור"
 
 #: client/gui-sdl/citydlg.c:2764
 #, fuzzy, c-format
-msgid "?food:Surplus : %d"
+msgid "?food:Surplus: %d"
 msgstr "?מזון:עודף: %d"
 
 #: client/gui-sdl/citydlg.c:2812
 #, fuzzy, c-format
-msgid "Production : %d (%d) per turn"
+msgid "Production: %d (%d) per turn"
 msgstr "ייצור: %d (לתור %d)"
 
 #: client/gui-sdl/citydlg.c:2858
 #, fuzzy, c-format
-msgid "?production:Support : %d"
+msgid "?production:Support: %d"
 msgstr "?ייצור:תמיכה: %d"
 
 #: client/gui-sdl/citydlg.c:2895
 #, fuzzy, c-format
-msgid "Trade : %d per turn"
+msgid "Trade: %d per turn"
 msgstr "זהב: %d לתור"
 
 #: client/gui-sdl/citydlg.c:2929
 #, fuzzy, c-format
-msgid "Corruption : %d"
+msgid "Corruption: %d"
 msgstr "שחיתות: %d"
 
 #: client/gui-sdl/citydlg.c:2967
@@ -17075,7 +17075,7 @@ msgstr "זהב: %d (לתור %d)"
 
 #: client/gui-sdl/citydlg.c:3014
 #, fuzzy, c-format
-msgid "Upkeep : %d"
+msgid "Upkeep: %d"
 msgstr "תחזוקה: %d"
 
 #: client/gui-sdl/citydlg.c:3053
@@ -17090,17 +17090,17 @@ msgstr "שפע: %d לתור"
 
 #: client/gui-sdl/citydlg.c:3131
 #, fuzzy
-msgid "City growth : blocked"
+msgid "City growth: blocked"
 msgstr "צמחית עיר: חסומה"
 
 #: client/gui-sdl/citydlg.c:3133
 #, fuzzy
-msgid "City growth : never"
+msgid "City growth: never"
 msgstr "צמיחת עיר: לעולם לא"
 
 #: client/gui-sdl/citydlg.c:3137
 #, fuzzy, c-format
-msgid "City shrinks : %d %s"
+msgid "City shrinks: %d %s"
 msgstr "צמצום עיר: %d %s"
 
 #: client/gui-sdl/citydlg.c:3138 client/gui-sdl/citydlg.c:3142
@@ -17123,7 +17123,7 @@ msgstr[1] "תורות"
 
 #: client/gui-sdl/citydlg.c:3141
 #, fuzzy, c-format
-msgid "City growth : %d %s"
+msgid "City growth: %d %s"
 msgstr "צמיחת עיר: %d %s"
 
 #: client/gui-sdl/citydlg.c:3185 data/default/buildings.ruleset:514

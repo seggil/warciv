@@ -56,7 +56,7 @@ char default_sound_plugin_name[512] = "\0";
 
 bool solid_color_behind_units = FALSE;
 bool sound_bell_at_new_turn = FALSE;
-int smooth_move_unit_msec = 30;
+int  smooth_move_unit_msec = 30;
 int smooth_center_slide_msec = 200;
 bool do_combat_animation = TRUE;
 bool ai_popup_windows = FALSE;
@@ -521,7 +521,7 @@ void load_general_options(void)
       load_cma_preset(&sf, i);
     }
   }
-
+ 
   secfile_load_chatline_colors (&sf);
  
   section_file_free(&sf);

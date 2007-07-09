@@ -415,19 +415,19 @@ static void try_summon_barbarians(void)
 
     if ( game.barbarianrate > 4 ) n_boats = game.barbarianrate - 3;
     for ( i_boat = 0; i_boat < n_boats; i_boat++ ) {
-      boat = find_a_unit_type(L_BARBARIAN_BOAT,-1);
-      ptrans = create_unit(barbarians, utile, boat, 0, 0, -1);
-      cap = get_transporter_capacity(unit_list_get(&utile->units, 0));
-      for (i = 0; i < cap-1; i++) {
-        unit = find_a_unit_type(L_BARBARIAN_SEA,L_BARBARIAN_SEA_TECH);
-        (void) create_unit_full(barbarians, utile, unit, 0, 0, -1, -1,
-	  		        ptrans);
-        freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
-        }
-      (void) create_unit_full(barbarians, utile,
-			      get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0,
-			      -1, -1, ptrans);
+    boat = find_a_unit_type(L_BARBARIAN_BOAT,-1);
+    ptrans = create_unit(barbarians, utile, boat, 0, 0, -1);
+    cap = get_transporter_capacity(unit_list_get(&utile->units, 0));
+    for (i = 0; i < cap-1; i++) {
+      unit = find_a_unit_type(L_BARBARIAN_SEA,L_BARBARIAN_SEA_TECH);
+      (void) create_unit_full(barbarians, utile, unit, 0, 0, -1, -1,
+			      ptrans);
+      freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
     }
+    (void) create_unit_full(barbarians, utile,
+			    get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0,
+			    -1, -1, ptrans);
+  }
   }
 
   /* Is this necessary?  create_unit_full already sends unit info. */

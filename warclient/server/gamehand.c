@@ -569,7 +569,7 @@ void init_new_game(void)
     if (pplayer->is_observer) {
       continue;
     }
-    
+
     assert(!is_ocean(map_get_terrain(p.tile)));
 
     for (i = 1; i < strlen(game.start_units); i++) {

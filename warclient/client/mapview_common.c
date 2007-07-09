@@ -819,7 +819,7 @@ static void put_path_length(void)
       if (!reported) {
 	freelog(LOG_ERROR,
 		_("Paths longer than 99 turns are not supported.\n"
-		  "Report this bug to bugs@freeciv.org."));
+		  "Report this bug at %s"), BUG_URL);
 	reported = TRUE;
       }
       tens = units = 9;
@@ -1892,7 +1892,7 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
   int counter = 0;
 
   set_units_in_combat(punit0, punit1);
-  
+
   /* Make sure we don't start out with fewer HP than we're supposed to
    * end up with (which would cause the following loop to break). */
   punit0->hp = MAX(punit0->hp, hp0);
@@ -1904,7 +1904,7 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
   deltahp0 = (unit0_hp - hp0) / steps;
   deltahp1 = (unit1_hp - hp1) / steps;
   
-  
+
   while (counter++ < steps) {
     anim_timer = renew_timer_start(anim_timer, TIMER_USER, TIMER_ACTIVE);
 
@@ -1914,8 +1914,8 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
     
     punit0->hp = (int)unit0_hp;
     punit1->hp = (int)unit1_hp;
-    refresh_tile_mapcanvas(punit0->tile, FALSE);
-    refresh_tile_mapcanvas(punit1->tile, FALSE);
+      refresh_tile_mapcanvas(punit0->tile, FALSE);
+      refresh_tile_mapcanvas(punit1->tile, FALSE);
 
     flush_dirty();
     redraw_selection_rectangle();
@@ -2377,29 +2377,29 @@ static void flush_dirty_overview(void)
 **************************************************************************/
 static void center_tile_overviewcanvas(struct tile *ptile)
 {
-   /* The overview coordinates are equivalent to (scaled) natural
-    * coordinates. */
-   do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
+  /* The overview coordinates are equivalent to (scaled) natural
+   * coordinates. */
+  do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
     if (do_not_recenter_overview) {
        overview.map_x0 = 0;
        overview.map_y0 = 0;
     } else {
-      /* NOTE: this embeds the map wrapping in the overview code.  This is
-       * basically necessary for the overview to be efficiently
-       * updated. */
-      if (topo_has_flag(TF_WRAPX)) {
-        overview.map_x0 = FC_WRAP(ntl_x - NATURAL_WIDTH / 2, NATURAL_WIDTH);
-      } else {
-        overview.map_x0 = 0;
-      }
-      if (topo_has_flag(TF_WRAPY)) {
-        overview.map_y0 = FC_WRAP(ntl_y - NATURAL_HEIGHT / 2, NATURAL_HEIGHT);
-      } else {
-        overview.map_y0 = 0;
-      }
+    /* NOTE: this embeds the map wrapping in the overview code.  This is
+     * basically necessary for the overview to be efficiently
+     * updated. */
+    if (topo_has_flag(TF_WRAPX)) {
+      overview.map_x0 = FC_WRAP(ntl_x - NATURAL_WIDTH / 2, NATURAL_WIDTH);
+    } else {
+      overview.map_x0 = 0;
+    }
+    if (topo_has_flag(TF_WRAPY)) {
+      overview.map_y0 = FC_WRAP(ntl_y - NATURAL_HEIGHT / 2, NATURAL_HEIGHT);
+    } else {
+      overview.map_y0 = 0;
+    }
     } 
-     redraw_overview();
-   } do_in_natural_pos_end;
+    redraw_overview();
+  } do_in_natural_pos_end;
 }
 
 /**************************************************************************

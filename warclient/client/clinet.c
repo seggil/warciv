@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -142,12 +142,12 @@ static void close_socket_nomessage(struct connection *pc)
 {
   connection_common_close(pc);
   remove_net_input();
-  popdown_races_dialog();
+  popdown_races_dialog(); 
   close_connection_dialog();
   set_client_page(PAGE_MAIN);
 
   reports_force_thaw();
-
+  
   set_client_state(CLIENT_PRE_GAME_STATE);
   agents_disconnect();
   update_menus();
@@ -213,8 +213,8 @@ int get_server_address(const char *hostname, int port, char *errbuf,
   Try to connect to a server (get_server_address() must be called first!):
    - try to create a TCP socket and connect it to `server_addr'
    - if successful:
-          - start monitoring the socket for packets from the server
-          - send a "login request" packet to the server
+	  - start monitoring the socket for packets from the server
+	  - send a "login request" packet to the server
       and - return 0
    - if unable to create the connection, close the socket, put an error
      message in ERRBUF and return the Unix error code (ie., errno, which
@@ -232,14 +232,14 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
     (void) mystrlcpy(errbuf, _("Connection in progress."), errbufsize);
     return -1;
   }
-
+  
   if ((aconnection.sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     (void) mystrlcpy(errbuf, mystrsocketerror(), errbufsize);
     return -1;
   }
 
   if (connect(aconnection.sock, &server_addr.sockaddr,
-	      sizeof(server_addr)) == -1) {
+      sizeof(server_addr)) == -1) {
     (void) mystrlcpy(errbuf, mystrsocketerror(), errbufsize);
     my_closesocket(aconnection.sock);
     aconnection.sock = -1;
@@ -268,7 +268,7 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
   sz_strlcpy(req.version_label, VERSION_LABEL);
   sz_strlcpy(req.capability, our_capability);
   sz_strlcpy(req.username, username);
-
+  
   send_packet_server_join_req(&aconnection, &req);
 
   return 0;
@@ -282,7 +282,7 @@ void disconnect_from_server(void)
   const bool force = !aconnection.used;
 
   attribute_flush();
-  /* If it's internal server - kill him
+  /* If it's internal server - kill him 
    * We assume that we are always connected to the internal server  */
   if (!force) {
     client_kill_server(FALSE);
@@ -292,7 +292,7 @@ void disconnect_from_server(void)
     client_kill_server(TRUE);
   }
   append_network_statusbar(_("Disconnected from server."));
-}
+}  
 
 /**************************************************************************
 A wrapper around read_socket_data() which also handles the case the
@@ -310,7 +310,7 @@ static int read_from_connection(struct connection *pc, bool block)
     fd_set readfs, writefs, exceptfs;
     int socket_fd = pc->sock;
     bool have_data_for_server = (pc->used && pc->send_buffer
-				 && pc->send_buffer->ndata > 0);
+				&& pc->send_buffer->ndata > 0);
     int n;
     struct timeval tv;
 
@@ -404,7 +404,7 @@ void input_from_server(int fd)
  the PACKET_PROCESSING_FINISHED packet for the given request is
  received.
 **************************************************************************/
-void input_from_server_till_request_got_processed(int fd,
+void input_from_server_till_request_got_processed(int fd, 
 						  int expected_request_id)
 {
   assert(expected_request_id);
@@ -514,41 +514,41 @@ static char *win_uname()
     break;
   }
 
-  GetSystemInfo(&sysinfo);
+  GetSystemInfo(&sysinfo); 
   switch (sysinfo.wProcessorArchitecture) {
-  case PROCESSOR_ARCHITECTURE_INTEL:
-    {
-      unsigned int ptype;
-      if (sysinfo.wProcessorLevel < 3)	/* Shouldn't happen. */
-	ptype = 3;
-      else if (sysinfo.wProcessorLevel > 9)	/* P4 */
-	ptype = 6;
-      else
-	ptype = sysinfo.wProcessorLevel;
+    case PROCESSOR_ARCHITECTURE_INTEL:
+      {
+	unsigned int ptype;
+	if (sysinfo.wProcessorLevel < 3) /* Shouldn't happen. */
+	  ptype = 3;
+	else if (sysinfo.wProcessorLevel > 9) /* P4 */
+	  ptype = 6;
+	else
+	  ptype = sysinfo.wProcessorLevel;
+	
+	my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
+      }
+      break;
 
-      my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
-    }
-    break;
+    case PROCESSOR_ARCHITECTURE_MIPS:
+      sz_strlcpy(cpuname, "mips");
+      break;
 
-  case PROCESSOR_ARCHITECTURE_MIPS:
-    sz_strlcpy(cpuname, "mips");
-    break;
+    case PROCESSOR_ARCHITECTURE_ALPHA:
+      sz_strlcpy(cpuname, "alpha");
+      break;
 
-  case PROCESSOR_ARCHITECTURE_ALPHA:
-    sz_strlcpy(cpuname, "alpha");
-    break;
-
-  case PROCESSOR_ARCHITECTURE_PPC:
-    sz_strlcpy(cpuname, "ppc");
-    break;
+    case PROCESSOR_ARCHITECTURE_PPC:
+      sz_strlcpy(cpuname, "ppc");
+      break;
 #if 0
-  case PROCESSOR_ARCHITECTURE_IA64:
-    sz_strlcpy(cpuname, "ia64");
-    break;
+    case PROCESSOR_ARCHITECTURE_IA64:
+      sz_strlcpy(cpuname, "ia64");
+      break;
 #endif
-  default:
-    sz_strlcpy(cpuname, "unknown");
-    break;
+    default:
+      sz_strlcpy(cpuname, "unknown");
+      break;
   }
   my_snprintf(uname_buf, sizeof(uname_buf),
 	      "%s %ld.%ld [%s]", osname, osvi.dwMajorVersion,
@@ -561,7 +561,7 @@ static char *win_uname()
  The server sends a stream in a registry 'ini' type format.
  Read it using secfile functions and fill the server_list structs.
 **************************************************************************/
-static struct server_list *parse_metaserver_data(fz_FILE * f)
+static struct server_list *parse_metaserver_data(fz_FILE *f)
 {
   struct server_list *server_list;
   struct section_file the_file, *file = &the_file;
@@ -610,12 +610,12 @@ static struct server_list *parse_metaserver_data(fz_FILE * f)
     } else {
       pserver->players = NULL;
     }
-
+      
     for (j = 0; j < n; j++) {
       char *name, *user, *nation, *type, *host;
 
-      name = secfile_lookup_str_default(file, "",
-					"server%d.player%d.name", i, j);
+      name = secfile_lookup_str_default(file, "", 
+                                        "server%d.player%d.name", i, j);
       pserver->players[j].name = mystrdup(name);
 
       user = secfile_lookup_str_default(file, "",
@@ -623,15 +623,15 @@ static struct server_list *parse_metaserver_data(fz_FILE * f)
       pserver->players[j].user = mystrdup(user);
 
       type = secfile_lookup_str_default(file, "",
-					"server%d.player%d.type", i, j);
+                                        "server%d.player%d.type", i, j);
       pserver->players[j].type = mystrdup(type);
 
-      host = secfile_lookup_str_default(file, "",
-					"server%d.player%d.host", i, j);
+      host = secfile_lookup_str_default(file, "", 
+                                        "server%d.player%d.host", i, j);
       pserver->players[j].host = mystrdup(host);
 
       nation = secfile_lookup_str_default(file, "",
-					  "server%d.player%d.nation", i, j);
+                                          "server%d.player%d.nation", i, j);
       pserver->players[j].nation = mystrdup(nation);
     }
 
@@ -656,22 +656,22 @@ static int generate_server_list_http_request(char *buf, int buflen,
   int len;
 #ifdef HAVE_UNAME
   struct utsname un;
-#endif
+#endif 
 
 #ifdef HAVE_UNAME
   uname(&un);
-  my_snprintf(machine_string, sizeof(machine_string),
+  my_snprintf(machine_string,sizeof(machine_string),
 	      "%s %s [%s]", un.sysname, un.release, un.machine);
-#else				/* ! HAVE_UNAME */
+#else /* ! HAVE_UNAME */
   /* Fill in here if you are making a binary without sys/utsname.h and know
      the OS name, release number, and machine architechture */
 #ifdef WIN32_NATIVE
-  sz_strlcpy(machine_string, win_uname());
+  sz_strlcpy(machine_string,win_uname());
 #else
-  my_snprintf(machine_string, sizeof(machine_string),
-	      "unknown unknown [unknown]");
+  my_snprintf(machine_string,sizeof(machine_string),
+              "unknown unknown [unknown]");
 #endif
-#endif				/* HAVE_UNAME */
+#endif /* HAVE_UNAME */
 
   capstr = my_url_encode(our_capability);
 
@@ -1310,11 +1310,11 @@ void delete_server_list(struct server_list *server_list)
 
     if (ptmp->players) {
       for (i = 0; i < n; i++) {
-	free(ptmp->players[i].name);
+        free(ptmp->players[i].name);
         free(ptmp->players[i].user);
-	free(ptmp->players[i].type);
-	free(ptmp->players[i].host);
-	free(ptmp->players[i].nation);
+        free(ptmp->players[i].type);
+        free(ptmp->players[i].host);
+        free(ptmp->players[i].nation);
       }
       free(ptmp->players);
     }
@@ -1328,7 +1328,7 @@ void delete_server_list(struct server_list *server_list)
 }
 
 /**************************************************************************
-  Broadcast an UDP package to all servers on LAN, requesting information
+  Broadcast an UDP package to all servers on LAN, requesting information 
   about the server. The packet is send to all Freeciv servers in the same
   multicast group as the client.
 **************************************************************************/
@@ -1350,7 +1350,7 @@ int begin_lanserver_scan(void)
   }
 
   if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-		 (char *) &opt, sizeof(opt)) == -1) {
+                 (char *)&opt, sizeof(opt)) == -1) {
     freelog(LOG_ERROR, "SO_REUSEADDR failed: %s", mystrsocketerror());
   }
 
@@ -1363,14 +1363,14 @@ int begin_lanserver_scan(void)
 
   /* Set the Time-to-Live field for the packet  */
   ttl = SERVER_LAN_TTL;
-  if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (const char *) &ttl,
-		 sizeof(ttl))) {
+  if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)&ttl, 
+                 sizeof(ttl))) {
     freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
     return 0;
   }
 
-  if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char *) &opt,
-		 sizeof(opt))) {
+  if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char*)&opt, 
+                 sizeof(opt))) {
     freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
     return 0;
   }
@@ -1378,7 +1378,7 @@ int begin_lanserver_scan(void)
   dio_output_init(&dout, buffer, sizeof(buffer));
   dio_put_uint8(&dout, SERVER_LAN_VERSION);
   size = dio_output_used(&dout);
-
+ 
 
   if (sendto(sock, buffer, size, 0, &addr.sockaddr, sizeof(addr)) < 0) {
     freelog(LOG_ERROR, "sendto failed: %s", mystrsocketerror());
@@ -1398,13 +1398,13 @@ int begin_lanserver_scan(void)
   my_nonblock(socklan);
 
   if (setsockopt(socklan, SOL_SOCKET, SO_REUSEADDR,
-		 (char *) &opt, sizeof(opt)) == -1) {
+                 (char *)&opt, sizeof(opt)) == -1) {
     freelog(LOG_ERROR, "SO_REUSEADDR failed: %s", mystrsocketerror());
   }
-
+                                                                               
   memset(&addr, 0, sizeof(addr));
   addr.sockaddr_in.sin_family = AF_INET;
-  addr.sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
+  addr.sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY); 
   addr.sockaddr_in.sin_port = htons(SERVER_LAN_PORT + 1);
 
   if (bind(socklan, &addr.sockaddr, sizeof(addr)) < 0) {
@@ -1414,8 +1414,8 @@ int begin_lanserver_scan(void)
 
   mreq.imr_multiaddr.s_addr = inet_addr(group);
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-  if (setsockopt(socklan, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-		 (const char *) &mreq, sizeof(mreq)) < 0) {
+  if (setsockopt(socklan, IPPROTO_IP, IP_ADD_MEMBERSHIP, 
+                 (const char*)&mreq, sizeof(mreq)) < 0) {
     freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
     return 0;
   }
@@ -1428,7 +1428,7 @@ int begin_lanserver_scan(void)
 
 /**************************************************************************
   Listens for UDP packets broadcasted from a server that responded
-  to the request-packet sent from the client.
+  to the request-packet sent from the client. 
 **************************************************************************/
 struct server_list *get_lan_server_list(void)
 {
@@ -1451,7 +1451,7 @@ struct server_list *get_lan_server_list(void)
   fd_set readfs, exceptfs;
   struct timeval tv;
 
-again:
+ again:
 
   FD_ZERO(&readfs);
   FD_ZERO(&exceptfs);
@@ -1476,9 +1476,9 @@ again:
   dio_input_init(&din, msgbuf, sizeof(msgbuf));
   fromlen = sizeof(fromend);
 
-  /* Try to receive a packet from a server. */
+  /* Try to receive a packet from a server. */ 
   if (0 < recvfrom(socklan, msgbuf, sizeof(msgbuf), 0,
-		   &fromend.sockaddr, &fromlen)) {
+                   &fromend.sockaddr, &fromlen)) {
     struct server *pserver;
 
     dio_get_uint8(&din, &type);
@@ -1500,16 +1500,16 @@ again:
 
     /* UDP can send duplicate or delayed packets. */
     server_list_iterate(*lan_servers, aserver) {
-      if (!mystrcasecmp(aserver->host, servername)
-	  && !mystrcasecmp(aserver->port, port)) {
+      if (!mystrcasecmp(aserver->host, servername) 
+          && !mystrcasecmp(aserver->port, port)) {
 	goto again;
-      }
+      } 
     } server_list_iterate_end;
 
     freelog(LOG_DEBUG,
-	    ("Received a valid announcement from a server on the LAN."));
-
-    pserver = (struct server *) fc_malloc(sizeof(struct server));
+            ("Received a valid announcement from a server on the LAN."));
+    
+    pserver =  (struct server*)fc_malloc(sizeof(struct server));
     pserver->host = mystrdup(servername);
     pserver->port = mystrdup(port);
     pserver->version = mystrdup(version);
@@ -1530,7 +1530,7 @@ again:
 /**************************************************************************
   Closes the socket listening on the lan and frees the list of LAN servers.
 **************************************************************************/
-void finish_lanserver_scan(void)
+void finish_lanserver_scan(void) 
 {
   my_closesocket(socklan);
   delete_server_list(lan_servers);

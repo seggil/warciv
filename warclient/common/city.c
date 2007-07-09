@@ -387,7 +387,7 @@ bool can_build_improvement(const struct city *pcity, Impr_Type_id id)
 {  
   if (!can_build_improvement_direct(pcity, id)) {
 //     freelog(LOG_VERBOSE,"can_build_improvement_direct failed for %i",id);
-     return FALSE;
+    return FALSE;
   }
   if (improvement_obsolete(city_owner(pcity), id)) {
 //     freelog(LOG_VERBOSE,"improvement_obsolete failed for %i",id);
@@ -988,18 +988,18 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
   int bonus = 0;
 // classic 2.0.8
   if(game.traderevenuestyle==0) {
-      if (pc1 && pc2) {
-        bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
+  if (pc1 && pc2) {
+    bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
 
-        /* Double if on different continents. */
-        if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
-          bonus *= 2;
-        }
-
-        if (pc1->owner == pc2->owner) {
-          bonus /= 2;
-        }
+    /* Double if on different continents. */
+    if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+      bonus *= 2;
     }
+
+    if (pc1->owner == pc2->owner) {
+      bonus /= 2;
+    }
+  }
   } // experimental revenue style
   else if(game.traderevenuestyle==1) {
       if (pc1 && pc2) {
@@ -1061,19 +1061,19 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
   double bonus = 0;
 //classic 2.0.8
   if(game.caravanbonusstyle==0) {
-      /* Should this be real_map_distance? */
+  /* Should this be real_map_distance? */
       tb = real_map_distance(pc1->tile, pc2->tile) + 10;
-      tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
+  tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
 
-      /*  fudge factor to more closely approximate Civ2 behavior (Civ2 is
-       * really very different -- this just fakes it a little better) */
-      tb *= 3;
+  /*  fudge factor to more closely approximate Civ2 behavior (Civ2 is
+   * really very different -- this just fakes it a little better) */
+  tb *= 3;
 
-      /* Check for technologies that reduce trade revenues. */
-      for (i = 0; i < num_known_tech_with_flag(city_owner(pc1),
+  /* Check for technologies that reduce trade revenues. */
+  for (i = 0; i < num_known_tech_with_flag(city_owner(pc1),
 					   TF_TRADE_REVENUE_REDUCE); i++) {
-        tb = (tb * 2) / 3;
-      }
+    tb = (tb * 2) / 3;
+  }
   }//experimental logarithmic bonus
   else if (game.caravanbonusstyle==1) {
         bonus = pow(log(real_map_distance(pc1->tile, pc2->tile) + 20 +

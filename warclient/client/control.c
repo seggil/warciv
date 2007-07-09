@@ -70,7 +70,7 @@ static struct unit *punit_focus = NULL;
 static int previous_focus_id = -1;
 
 /* These should be set via set_hover_state() */
-int hover_unit = 0;		/* id of unit hover_state applies to */
+int hover_unit = 0; /* id of unit hover_state applies to */
 enum cursor_hover_state hover_state = HOVER_NONE;
 enum unit_activity connect_activity;
 /* This may only be here until client goto is fully implemented.
@@ -88,10 +88,11 @@ static struct unit *punit_defending = NULL;
 bool non_ai_unit_focus;
 
 /*************************************************************************/
+
 static struct unit *find_best_focus_candidate(bool accept_current);
 static void store_focus(void);
 static struct unit *quickselect(struct tile *ptile,
-				enum quickselect_type qtype);
+                        enum quickselect_type qtype);
 static void do_mass_order(enum unit_activity activity);
 /**************************************************************************
 ...
@@ -199,7 +200,7 @@ void set_unit_focus(struct unit *punit)
     punit->focus_status=FOCUS_AVAIL;
     refresh_tile_mapcanvas(punit->tile, FALSE);
   }
-
+  
   /* avoid the old focus unit disappearing: */
   if (punit_old_focus
       && (!punit || !same_pos(punit_old_focus->tile, punit->tile))) {
@@ -254,7 +255,7 @@ void update_unit_focus(void)
 	  && !unit_has_orders(punit_focus)
 	  && punit_focus->activity != ACTIVITY_GOTO)
       || punit_focus->done_moving
-      || punit_focus->moves_left == 0
+      || punit_focus->moves_left == 0 
 	  || punit_focus->virtual_moves_left <= 0//*pepeto*
       || punit_focus->my_ai.control//*pepeto*
       || punit_focus->ai.control) {
@@ -331,7 +332,7 @@ void advance_unit_focus(void)
 		  focus_turn=FALSE;
 	  }
 	  if(auto_turn_done)
-		key_end_turn();
+    key_end_turn();
   }
 }
 
@@ -405,7 +406,7 @@ struct unit *find_visible_unit(struct tile *ptile)
       if(punit == punit_focus) return punit;
     unit_list_iterate_end;
   }
-  
+
   /* *pepeto*: If a unit is on the current multi-selection */
   if(punit_focus)
   {
@@ -462,15 +463,15 @@ void blink_active_unit(void)
   static bool is_shown;
 
   if (punit_focus) {
-	is_shown = !is_shown;
-	set_focus_unit_hidden_state(!is_shown);
+      is_shown = !is_shown;
+    set_focus_unit_hidden_state(!is_shown);
 	if(!multi_select_blink) {
 	  refresh_tile_mapcanvas(punit_focus->tile,TRUE);
 	} else {
     unit_list_iterate(*multi_select_get_units_focus(),punit)
     {
       if(multi_select_blink_all||punit==punit_focus||unit_satisfies_filter(punit,multi_select_inclusive_filter,multi_select_exclusive_filter))
-        refresh_tile_mapcanvas(punit->tile,TRUE);
+    refresh_tile_mapcanvas(punit->tile, TRUE);
     } unit_list_iterate_end;
 	}
   }
@@ -599,8 +600,8 @@ void process_caravan_arrival(struct unit *punit)
       struct city *pcity_dest = map_get_city(punit->tile);
       struct city *pcity_homecity = find_city_by_id(punit->homecity);
       if (!default_caravan_action && pcity_dest && pcity_homecity) {//if 0 popup dialog
-        	popup_caravan_dialog(punit, pcity_homecity, pcity_dest);
-        	return;
+	popup_caravan_dialog(punit, pcity_homecity, pcity_dest);
+	return;
       }else {
             switch(default_caravan_action) {
                 case 1:
@@ -611,7 +612,7 @@ void process_caravan_arrival(struct unit *punit)
                     break;
                 default://if 3 then do nothing
             ;}
-        }      
+      }
     }
   }
 }
@@ -668,14 +669,14 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       continue;
 
     dipl_unit_ok = punit != NULL
-        && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
-                                        punit->tile)
-        && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
+	&& is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
+					punit->tile)
+	&& diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
                                   punit->tile);
     dipl_city_ok = pcity != NULL
-        && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
-                                        pcity->tile)
-        && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
+	       && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
+					       pcity->tile)
+	       && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
                                   pcity->tile);
 
     if (dipl_unit_ok) {
@@ -699,7 +700,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       /* target is a city */
       switch (default_diplomat_action) {
       case 0:
-	popup_diplomat_dialog(pdiplomat, pcity->tile);
+      popup_diplomat_dialog(pdiplomat, pcity->tile);
 	break;
       case 3:			/* embassy */
 	request_diplomat_action(DIPLOMAT_EMBASSY, diplomat_id, victim_id, 0);
@@ -1042,12 +1043,12 @@ void request_diplomat_action(enum diplomat_actions action, int dipl_id,
 
 void wakeup_sentried_units(struct tile *ptile)
 {
-	unit_list_iterate(ptile->units, punit) {
-	if(punit->activity==ACTIVITY_SENTRY && game.player_idx==punit->owner) {
-		request_new_unit_activity(punit, ACTIVITY_IDLE);
-		}
-	}
-	unit_list_iterate_end;
+  unit_list_iterate(ptile->units, punit) {
+    if(punit->activity==ACTIVITY_SENTRY && game.player_idx==punit->owner) {
+      request_new_unit_activity(punit, ACTIVITY_IDLE);
+    }
+  }
+  unit_list_iterate_end;
 }
 
 /**************************************************************************
@@ -1107,6 +1108,7 @@ void request_new_unit_activity(struct unit *punit, enum unit_activity act)
   if (!can_client_issue_orders()) {
     return;
   }
+
   dsend_packet_unit_change_activity(&aconnection, punit->id, act,
 				    S_NO_SPECIAL);
 }
@@ -1189,6 +1191,7 @@ void request_unit_load(struct unit *pcargo, struct unit *ptrans)
 				      ACTIVITY_SENTRY, S_NO_SPECIAL);
   }
 }
+
 /****************************************************************************
   Send a request to the server that the cargo be unloaded from its current
   transporter.
@@ -1304,7 +1307,7 @@ void request_unit_sentry(struct unit *punit)
      can_unit_do_activity(punit, ACTIVITY_SENTRY)) {
     punit->is_new = FALSE;
     request_new_unit_activity(punit, ACTIVITY_SENTRY);
-   }
+}
 }
 
 /****************************************************************
@@ -1317,7 +1320,7 @@ void request_unit_fortify(struct unit *punit)
   if(can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
     punit->is_new = FALSE;
     request_new_unit_activity(punit, ACTIVITY_FORTIFYING);
-  }
+}
 }
 
 /****************************************************************
@@ -1346,15 +1349,15 @@ void request_unit_pillage(struct unit *punit)
 
   if ( punit->activity != ACTIVITY_PILLAGE &&
      can_unit_do_activity(punit, ACTIVITY_PILLAGE)) {
-    if ((game.rgame.pillage_select) &&
-	((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
+  if ((game.rgame.pillage_select) &&
+      ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
       punit->is_new = FALSE;
-      popup_pillage_dialog(punit, (pspresent & (~psworking)));
-    } else {
+    popup_pillage_dialog(punit, (pspresent & (~psworking)));
+  } else {
       punit->is_new = FALSE;
-      request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, what);
-    }
+    request_new_unit_activity_targeted(punit, ACTIVITY_PILLAGE, what);
   }
+}
 }
 
 /**************************************************************************
@@ -1884,14 +1887,14 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
         } multi_select_iterate_end;
       }
       else
-        do_unit_goto(ptile);
+      do_unit_goto(ptile);
       break;
     case HOVER_NUKE:
       if (SINGLE_MOVE * real_map_distance(punit->tile, ptile)
 	  > punit->moves_left) {
         append_output_window(_("Game: Too far for this unit."));
       } else {
-	send_goto_unit(punit,ptile);
+	send_goto_unit(punit, ptile);
 	/* note that this will be executed by the server after the goto */
 	if (!pcity)
 	  do_unit_nuke(punit);
@@ -1900,7 +1903,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     case HOVER_PARADROP:
 	  multi_select_iterate(FALSE,punit)
 	  {
-		  do_unit_paradrop_to(punit,ptile);
+      do_unit_paradrop_to(punit, ptile);
 	  } multi_select_iterate_end;
       break;
     case HOVER_CONNECT://*pepeto* fuck: lie to don't crash !!!
@@ -1913,7 +1916,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 			connect_activity=ca;
 			put_unit_focus(punit);
 			enter_goto_state(punit);
-			do_unit_connect(punit,ptile,connect_activity);
+      do_unit_connect(punit, ptile, connect_activity);
 		} multi_select_iterate_end;
 		put_last_unit_focus();
       break;
@@ -1926,15 +1929,16 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 			hover_unit=punit->id;
 			put_unit_focus(punit);
 			enter_goto_state(punit);
-			do_unit_patrol_to(punit, ptile);
+      do_unit_patrol_to(punit, ptile);
 		} multi_select_iterate_end;
 		put_last_unit_focus();
-      break;
+      break;	
     default: ;
     }
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
   }
+
   /* Bypass stack or city popup if quickselect is specified. */
   else if (qtype) {
     struct unit *qunit = quickselect(ptile, qtype);
@@ -2312,7 +2316,7 @@ void key_unit_build (void)
 			key_unit_build_city();
 		} else {
 			key_unit_build_wonder();
- 	   }
+  }
 }
 
 /**************************************************************************
@@ -2359,7 +2363,7 @@ void key_unit_diplomat_actions(void)
 	  if (punit
 		 && is_diplomat_unit(punit)
 		 && (pcity = map_get_city(punit->tile))
-		 && !diplomat_dialog_is_open()    /* confusing otherwise? */
+     && !diplomat_dialog_is_open()    /* confusing otherwise? */
 		 && diplomat_can_do_action(punit, DIPLOMAT_ANY_ACTION,
 					   punit->tile))
 		 process_diplomat_arrival(punit,pcity->id);
@@ -2427,7 +2431,7 @@ void key_unit_traderoute(void)
   {
 	  if (unit_flag(punit, F_TRADE_ROUTE)) {
    		 request_unit_caravan_action(punit, PACKET_UNIT_ESTABLISH_TRADE);
- 	 }
+  }
   } multi_select_iterate_end;
 }
 
@@ -2482,7 +2486,7 @@ void key_unit_delayed_goto(int flg)
    } else {
       delayed_para_or_nuke = flg;
 	   request_unit_delayed_goto();
-	}
+  }
 }
 
 /**************************************************************************
@@ -2500,7 +2504,7 @@ void key_unit_execute_delayed_goto(void)
 void key_unit_clear_delayed_orders(void)
 {
 	delayed_goto_clear(0);
-}
+  }
 
 /**************************************************************************
 ...
@@ -2527,7 +2531,7 @@ void key_unit_airbase(void)
 void key_unit_auto_attack(void)
 {
     enable_auto_mode();
-}
+  }
 
 void enable_auto_mode(void)
 {
@@ -2573,7 +2577,7 @@ void key_unit_disband(void)
 void key_unit_fallout(void)
 {
      do_mass_order(ACTIVITY_FALLOUT);
-}
+  }
 /**************************************************************************
 ...
 **************************************************************************/
@@ -2585,7 +2589,7 @@ static void do_mass_order(enum unit_activity activity)
     if(can_unit_do_activity(punit, activity)) {
 		punit->is_new = FALSE;
 		request_new_unit_activity(punit, activity);
-    }
+  }
   } multi_select_iterate_end;
 }
 
@@ -2599,7 +2603,7 @@ void key_unit_fortify(void)
   multi_select_iterate(TRUE,punit) {
     if(can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
       request_unit_fortify(punit);
-    }
+  }
   } multi_select_iterate_end;
 }
 
@@ -2611,7 +2615,7 @@ void key_unit_sleep(void)
   multi_select_iterate(TRUE,punit) {
     request_unit_sleep(punit);
   } multi_select_iterate_end;
-}
+  }
 
 /**************************************************************************
 ...
@@ -2649,7 +2653,7 @@ void key_unit_load(void)
   {
     request_unit_load(punit,NULL);
   } multi_select_iterate_end;
-}
+  }
 /**************************************************************************
 ...
 **************************************************************************/
@@ -2678,7 +2682,7 @@ void key_unit_pillage(void)
 void key_unit_pollution(void)
 {
      do_mass_order(ACTIVITY_POLLUTION);
-}
+  }
 
 /**************************************************************************
 ...
@@ -2706,7 +2710,7 @@ void key_unit_road(void)
 		  punit->is_new = FALSE;
 		  request_new_unit_activity(punit, ACTIVITY_RAILROAD);
 		}
-	  }
+  }
   } multi_select_iterate_end;
 }
 

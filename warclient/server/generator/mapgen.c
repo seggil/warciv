@@ -1065,7 +1065,7 @@ void map_fractal_generate(bool autosize)
     adjust_terrain_param();
     /* if one mapgenerator fails, it will choose another mapgenerator */
     /* with a lower number to try again */
-
+    
     if (map.generator == 5) {
       mapgenerator67(TRUE);
       if(map.generator != 5) {
@@ -1163,7 +1163,7 @@ void map_fractal_generate(bool autosize)
       break;
     }
     
-    for (;;) {
+    for(;;) {
       success = create_start_positions(mode);
       if (success) {
         break;

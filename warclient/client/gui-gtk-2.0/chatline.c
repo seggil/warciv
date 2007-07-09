@@ -198,7 +198,7 @@ void inputline_return(GtkEntry *w, gpointer data)
       my_snprintf(buf, sizeof(buf), ". %s", theinput);
       send_chat(buf);
     } else {
-      send_chat(theinput);
+    send_chat(theinput);
     }
 
     if (genlist_size(&history_list) >= MAX_CHATLINE_HISTORY) {
@@ -719,7 +719,7 @@ static void scroll_if_necessary(GtkTextView *w,
   Appends the string to the chat output window.  The string should be
   inserted on its own line, although it will have no newline.
 **************************************************************************/
-void real_append_output_window (const char *astring, int conn_id)
+void real_append_output_window(const char *astring, int conn_id)
 {
   bool previous_matched = FALSE, switch_next = FALSE, do_stop = FALSE;
   char *jump_target = "";
@@ -748,7 +748,7 @@ void real_append_output_window (const char *astring, int conn_id)
   }
 
   match_result_list_init (&matches);
-  
+
   gtk_text_buffer_get_iter_at_mark (buf, &start, text_start);
   gtk_text_buffer_get_end_iter (buf, &end);
   text_start_offset = gtk_text_iter_get_offset (&start);
@@ -763,8 +763,8 @@ void real_append_output_window (const char *astring, int conn_id)
         continue;
       }
       jump_target = "";
-    }
-    
+  }
+
     if (switch_next) {
       if (ptagpat->flags & TPF_INACTIVE) {
         ptagpat->flags &= ~TPF_INACTIVE;
@@ -775,7 +775,7 @@ void real_append_output_window (const char *astring, int conn_id)
     }
     if (do_stop)
       break;
-    
+
     if (ptagpat->flags & TPF_INACTIVE)
       continue;
 
@@ -785,10 +785,10 @@ void real_append_output_window (const char *astring, int conn_id)
     if (!match_tag_pattern (ptagpat, text, &matches)) {
       previous_matched = FALSE;
       continue;
-    }
-    
+  }
+
     previous_matched = TRUE;
-    
+
     if (ptagpat->flags & TPF_SWITCH_NEXT) {
       switch_next = TRUE;
     } else {

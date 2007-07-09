@@ -114,7 +114,7 @@ enum command_id {
   /* pseudo-commands: */
   CMD_NUM,		/* the number of commands - for iterations */
   CMD_UNRECOGNIZED,	/* used as a possible iteration result */
-  CMD_AMBIGUOUS 	/* used as a possible iteration result */
+  CMD_AMBIGUOUS		/* used as a possible iteration result */
 };
 
 extern const struct command commands[];

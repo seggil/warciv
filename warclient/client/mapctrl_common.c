@@ -760,3 +760,4 @@ void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list)
   /* Then sort it. */
   qsort(unit_list, i, sizeof(*unit_list), unit_list_compare);
 }
+

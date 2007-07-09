@@ -121,8 +121,8 @@ sprites =
 		"f.united_nations", "flags/united_nations"
 		"f.unknown", "flags/unknown"		; useful for alternates
 		"f.usa", "flags/usa"
- 		"f.vietnam", "flags/vietnam"
- 		"f.wales", "flags/wales"
+		"f.vietnam", "flags/vietnam"
+		"f.wales", "flags/wales"
                 "f.vietnamese", "flags/vietnamese"
                 "f.sudan", "flags/sudan"
                 "f.palestine", "flags/palestine"

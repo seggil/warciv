@@ -278,7 +278,7 @@ void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id,
   if (punit0 && punit1) {
     struct unit *pwinner = (defender_hp == 0 ? punit0 : punit1);
 
-  if (tile_visible_mapcanvas(punit0->tile) &&
+    if (tile_visible_mapcanvas(punit0->tile) &&
 	tile_visible_mapcanvas(punit1->tile)) {
       show_combat = TRUE;
     } else if (auto_center_on_combat) {
@@ -365,9 +365,8 @@ static void try_update_effects(bool need_update)
 **************************************************************************/
 void handle_game_state(int value)
 {
-
   bool changed = (get_client_state() != value);
-  
+
   if (get_client_state() == CLIENT_SELECT_RACE_STATE
       && value == CLIENT_GAME_RUNNING_STATE
       && game.player_ptr->nation == NO_NATION_SELECTED) {
@@ -733,7 +732,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     if (draw_city_names && name_changed) {
       update_descriptions = TRUE;
     }
-
+    
     if (name_changed) {
       city_autonaming_remove_used_name (pcity->name);
       city_autonaming_add_used_name (packet->name);
@@ -1118,7 +1117,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
         }
       }
       if(packet_unit->activity != ACTIVITY_SENTRY || punit->activity != ACTIVITY_FORTIFYING)
-        punit->activity = packet_unit->activity;
+      punit->activity = packet_unit->activity;
       punit->activity_target = packet_unit->activity_target;
 
       if (punit->occupy != packet_unit->occupy
@@ -1130,7 +1129,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       }
       punit->occupy = packet_unit->occupy;
       punit->transported_by = packet_unit->transported_by;
-      
+
       punit->has_orders = packet_unit->has_orders;
       punit->orders.length = packet_unit->orders.length;
       punit->orders.index = packet_unit->orders.index;
@@ -1388,7 +1387,7 @@ void handle_unit_short_info(struct packet_unit_short_info *packet)
 {
   struct city *pcity;
   struct unit *punit;
-  
+
   if (packet->goes_out_of_sight) {
     punit = find_unit_by_id(packet->id);
     if (punit) {
@@ -1513,7 +1512,7 @@ void handle_game_info(struct packet_game_info *pinfo)
   int i;
   bool boot_help, need_effect_update = FALSE;
   time_t estime;
-    
+
   estime = time (NULL);
   game.gold=pinfo->gold;
   game.tech=pinfo->tech;
@@ -1662,7 +1661,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   bool poptechup, new_tech = FALSE, update_overview = FALSE;//*pepeto*
   char msg[MAX_LEN_MSG];
   struct player *pplayer = &game.players[pinfo->playerno];
-	  
+
   sz_strlcpy(pplayer->name, pinfo->name);
 
   pplayer->nation=pinfo->nation;
@@ -1731,7 +1730,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   pplayer->ai.tech_goal=pinfo->tech_goal;
   
   if (can_client_change_view() && pplayer == game.player_ptr) {
-    science_dialog_update();
+      science_dialog_update();
     if (poptechup) {
       if (!game.player_ptr->ai.control || ai_popup_windows) {
 	popup_science_dialog(FALSE);
@@ -3106,3 +3105,4 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
+

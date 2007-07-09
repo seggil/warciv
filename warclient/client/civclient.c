@@ -698,10 +698,10 @@ void real_timer_callback(void)
 
   blink_active_unit();
   curtime = time (NULL);
-  
+
   seconds_to_turndone = game.timeout - (int) (curtime - gstime);
   if (seconds_to_turndone < 0)
-    seconds_to_turndone = 0;
+      seconds_to_turndone = 0;
   ap_timers_update();//*pepeto*
   update_timeout_label();
 }

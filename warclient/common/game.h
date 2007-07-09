@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@
 #define MAX_GRANARY_INIS 24
 #define MAX_LEN_STARTUNIT (20+1)
 
-enum server_states {
-  PRE_GAME_STATE,
-  SELECT_RACES_STATE,
+enum server_states { 
+  PRE_GAME_STATE, 
+  SELECT_RACES_STATE, 
   RUN_GAME_STATE,
   GAME_OVER_STATE
 };
 
-enum client_states {
+enum client_states { 
   CLIENT_BOOT_STATE,
   CLIENT_PRE_GAME_STATE,
   CLIENT_SELECT_RACE_STATE,
@@ -249,7 +249,7 @@ struct civ_game {
 
     bool killstack;
   } rgame;
-
+  
   struct {
     int improvement_factor;
     int unit_factor;
@@ -441,7 +441,7 @@ extern bool is_server;
 #define GAME_DEFAULT_RAPTUREDELAY    1
 #define GAME_MIN_RAPTUREDELAY        1
 #define GAME_MAX_RAPTUREDELAY        99 /* 99 practicaly disables rapturing */
-
+ 
 #define GAME_DEFAULT_SAVEPALACE      TRUE
 
 #define GAME_DEFAULT_NATURALCITYNAMES TRUE

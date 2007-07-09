@@ -66,3 +66,4 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src);
 GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite);
 
 #endif  /* FC__GRAPHICS_H */
+

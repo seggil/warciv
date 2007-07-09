@@ -78,28 +78,28 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
     break;
 
   case CMD_AIRLIFT:
-  {
+    {
       struct city *pdestcity = get_selected_city();
 
       if (pdestcity) {
 		  multi_select_iterate(TRUE,punit)
 		  {
-          	request_unit_airlift(punit, pdestcity);
+          request_unit_airlift(punit, pdestcity);
 		  } multi_select_iterate_end;
-      } 
+    }
     break;
   }
   case CMD_GOTO:
-  {
+    {
       struct city *pdestcity = get_selected_city();
 
       if (pdestcity) {
 		  multi_select_iterate(FALSE,punit)
 		  {
-          	send_goto_unit(punit, pdestcity->tile);
+          send_goto_unit(punit, pdestcity->tile);
 		  } multi_select_iterate_end;
-        }
-	}
+      }
+    }
     break;
 
   default:

@@ -72,14 +72,14 @@ void idex_init(void)
 void idex_free(void)
 {
   if (idex_city_hash) {
-    hash_free(idex_city_hash);
-    idex_city_hash = NULL;
+  hash_free(idex_city_hash);
+  idex_city_hash = NULL;
   }
 
   if (idex_unit_hash) {
-    hash_free(idex_unit_hash);
-    idex_unit_hash = NULL;
-  }
+  hash_free(idex_unit_hash);
+  idex_unit_hash = NULL;
+}
 
   if (idex_city_name_hash) {
     hash_iterate(idex_city_name_hash, void *, key, void *, val) {

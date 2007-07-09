@@ -412,7 +412,7 @@ void team_remove_player(struct player *pplayer)
   /* no other team members left? remove team! */
   if(teams[pplayer->team].member_count == 0) {
     teams[pplayer->team].id = TEAM_NONE;
-  }  
+  }
   pplayer->team = TEAM_NONE;
 }
 

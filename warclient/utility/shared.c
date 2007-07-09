@@ -1155,12 +1155,12 @@ struct datafile_list *datafilelist_infix(const char *subpath,
 	  datafile_list_append(res, file);
 	  num_matches++;
 	} else {
-          free(fullname);
+	free(fullname);
           free(filename);
-        }
-      } else {
-        free(filename);
       }
+      } else {
+      free(filename);
+    }
     }
 
     closedir(dir);

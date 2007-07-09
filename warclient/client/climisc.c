@@ -182,9 +182,9 @@ void client_remove_unit(struct unit *punit)
     multi_select_wipe_up_unit(punit);
     if(punit == get_unit_in_focus())
     {
-      set_unit_focus(NULL);
-      game_remove_unit(punit);
-      advance_unit_focus();
+    set_unit_focus(NULL);
+    game_remove_unit(punit);
+    advance_unit_focus();
     }
     else
       game_remove_unit(punit);
@@ -239,11 +239,11 @@ void client_remove_city(struct city *pcity)
 
   my_ai_city_free(pcity);//*pepeto*
 
-/* Explicitly remove all improvements, to properly remove any global effects
+  /* Explicitly remove all improvements, to properly remove any global effects
      and to handle the preservation of "destroyed" effects. */
   effect_update=FALSE;
 
- built_impr_iterate(pcity, i) {
+  built_impr_iterate(pcity, i) {
     effect_update = TRUE;
     city_remove_improvement(pcity, i);
   } built_impr_iterate_end;

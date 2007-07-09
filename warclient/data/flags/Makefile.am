@@ -3,7 +3,7 @@
 ## Override automake so that "make install" puts these in proper place:
 pkgdatadir = $(datadir)/@PACKAGE@/flags
 
-pkgdata_DATA =\
+pkgdata_DATA =				\
 		afghanistan.png		\
 		arab.png		\
 		argentina.png		\
@@ -124,7 +124,7 @@ pkgdata_DATA =\
                 hondura.png		\
                 midwayislands.png	\
                 tux.png			\
-       		                        \
+					\
 		afghanistan-shield.png	\
 		assyria-shield.png	\
 		bosnia-shield.png	\

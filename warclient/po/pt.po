@@ -7619,7 +7619,7 @@ msgstr "A terminar a ligação %s."
 #: server/stdinhand.c:6011
 #, fuzzy
 msgid ""
-"Welcome - this is the introductory help text for the Freecivserver.\n"
+"Welcome - this is the introductory help text for the Freeciv server.\n"
 "\n"
 "Two important server concepts are Commands and Options.\n"
 "Commands, such as 'help', are used to interact with the server.\n"
@@ -17967,7 +17967,7 @@ msgstr ""
 #: client/gui-sdl/dialogs.c:1615 client/gui-sdl/dialogs.c:1643
 #, fuzzy
 msgid "Veteran"
-msgstr "(veterana)"
+msgstr " (veterana)"
 
 #: client/gui-sdl/dialogs.c:679
 #, fuzzy, c-format

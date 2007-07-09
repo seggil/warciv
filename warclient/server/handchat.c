@@ -106,7 +106,7 @@ static void chat_msg_to_conn(struct connection *sender,
   char message[MAX_LEN_MSG];
   
   msg = skip_leading_spaces(msg);
-
+  
   form_chat_name(sender, sender_name, sizeof(sender_name));
   form_chat_name(dest, dest_name, sizeof(dest_name));
 
@@ -199,12 +199,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   /* this loop to prevent players from sending multiple lines
    * which can be abused */
   if(!srvarg.allow_multi_line_chat) {
-    for (cp = message; *cp != '\0'; cp++) {
-      if (*cp == '\n' || *cp == '\r') {
-        *cp='\0';
-        break;
-      }
+  for (cp = message; *cp != '\0'; cp++) {
+    if (*cp == '\n' || *cp == '\r') {
+      *cp='\0';
+      break;
     }
+  }
   }
 
   /* Server commands are prefixed with '/', which is an obvious
@@ -247,7 +247,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
         if (is_ignored(pconn, dest))
           continue;
         dsend_packet_chat_msg(dest, chat, -1, -1,
-                              E_NOEVENT, pconn->id);
+			     E_NOEVENT, pconn->id);
       } conn_list_iterate_end;
     } players_iterate_end;
     return;

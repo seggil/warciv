@@ -1429,7 +1429,7 @@ void contemplate_new_city(struct city *pcity)
   int player_cities = 0;
   struct player *pplayer = city_owner(pcity);
   struct unit *virtualunit;
-  Unit_Type_id unit_type = best_role_unit(pcity, F_CITIES);
+  Unit_Type_id unit_type = best_role_unit(pcity, F_CITIES); 
 
   if (unit_type == U_LAST) {
     freelog(LOG_DEBUG, "No F_CITIES role unit available");
@@ -1453,7 +1453,7 @@ void contemplate_new_city(struct city *pcity)
 	     TILE_XY(result.tile), 
 	     (result.virt_boat ? "build a boat" : 
 	      (result.overseas ? "use a boat" : "walk")));
-	
+
 	player_cities = city_list_size(&get_player(pcity->owner)->cities);
 	if(player_cities > MAX_AI_CITIES) {
 		FOUNDER_WANT_MULTIPLIER=MAX_AI_CITIES*(player_cities-MAX_AI_CITIES);

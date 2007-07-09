@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ const char blank_addr_str[] = "---.---.---.---";
 int delayed_disconnect = 0;
 
 struct connection *current_connection;
-
+  
 /* NB Must match enum conn_pattern_type
    in common/connection.h */
 char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
@@ -155,8 +155,6 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
   return TRUE;
 }
 
-
-
 /**************************************************************************
   Read data from socket, and check if a packet is ready.
   Returns:
@@ -250,23 +248,23 @@ static int write_socket_data(struct connection *pc,
     if (FD_ISSET(pc->sock, &writefs)) {
       nblock=MIN(buf->ndata-start, MAX_LEN_PACKET);
       freelog(LOG_DEBUG,"trying to write %d limit=%d",nblock,limit);
-      if((nput=my_writesocket(pc->sock,
+      if((nput=my_writesocket(pc->sock, 
 			      (const char *)buf->data+start, nblock)) == -1)
       {
 #ifdef NONBLOCKING_SOCKETS
         if (my_socket_would_block()) {
-          break;
-        }
+	  break;
+	}
 #endif
-      	if (delayed_disconnect > 0) {
-      	  pc->delayed_disconnect = TRUE;
-      	  return 0;
-      	} else {
-      	  if (close_callback) {
-      	    (*close_callback)(pc);
-    	    }
-    	    return -1;
-      	}
+	if (delayed_disconnect > 0) {
+	  pc->delayed_disconnect = TRUE;
+	  return 0;
+	} else {
+	  if (close_callback) {
+	    (*close_callback)(pc);
+	  }
+	  return -1;
+	}
       }
       start += nput;
     }
@@ -455,7 +453,7 @@ struct connection *find_conn_by_user_prefix(const char *user_name,
   *result = match_prefix(connection_accessor,
 			 conn_list_size(&game.all_connections),
 			 MAX_LEN_NAME-1, mystrncasecmp, user_name, &ind);
-
+  
   if (*result < M_PRE_AMBIGUOUS) {
     return conn_list_get(&game.all_connections, ind);
   } else {
@@ -524,9 +522,9 @@ const char *conn_description(const struct connection *pconn)
 
   if (*pconn->username != '\0') {
     if (!strcmp(pconn->addr, pconn->server.ipaddr)) {
-      my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
-                  pconn->username, pconn->addr);
-    } else {
+    my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
+		pconn->username, pconn->addr); 
+  } else {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s, ip %s"),
                   pconn->username, pconn->addr, pconn->server.ipaddr);
     }

@@ -190,7 +190,7 @@ const struct command commands[] = {
    N_("rulesetdir <directory>\n"
       "rulesetdir <ruleset_id>"),
    N_("Choose new ruleset directory or modpack."),
-   N_("Choose new ruleset directory or modpack. Calling this\n"
+   N_("Choose new ruleset directory or modpack. Calling this\n "
       "without any arguments will show you the currently selected\n"
       "ruleset. Use /list rulesets to get the complete list of\n"
       "available rulesets."),

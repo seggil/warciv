@@ -69,14 +69,14 @@ void popup_meswin_dialog(void)
   if (show_split_message_window) {
     update_meswin_dialog();
   } else {
-    if (!meswin_shell) {
-      create_meswin_dialog();
-    }
-
-    update_meswin_dialog();
-
-    gui_dialog_present(meswin_shell);
+  if (!meswin_shell) {
+    create_meswin_dialog();
   }
+
+  update_meswin_dialog();
+
+  gui_dialog_present(meswin_shell);
+}
 }
 
 /****************************************************************
@@ -85,9 +85,9 @@ void popup_meswin_dialog(void)
 void raise_meswin_dialog(void)
 {
   if (!show_split_message_window) {
-    popup_meswin_dialog();
-    gui_dialog_raise(meswin_shell);
-  }
+  popup_meswin_dialog();
+  gui_dialog_raise(meswin_shell);
+}
 }
 
 /**************************************************************************
@@ -154,7 +154,7 @@ static void meswin_cell_data_func(GtkTreeViewColumn *col,
 		 "weight", PANGO_WEIGHT_BOLD, NULL);
   }
 }
-
+					     
 /****************************************************************
 ...
 *****************************************************************/
@@ -252,12 +252,12 @@ void real_update_meswin_dialog(void)
   }
 
   if (!show_split_message_window) {
-    gui_dialog_set_response_sensitive(meswin_shell, CMD_GOTO, FALSE);
-    gui_dialog_set_response_sensitive(meswin_shell, CMD_POPCITY, FALSE);
+  gui_dialog_set_response_sensitive(meswin_shell, CMD_GOTO, FALSE);
+  gui_dialog_set_response_sensitive(meswin_shell, CMD_POPCITY, FALSE);
 
-    if (num_not_visited > 0) {
-      gui_dialog_alert(meswin_shell);
-    }
+  if (num_not_visited > 0) {
+    gui_dialog_alert(meswin_shell);
+  }
   } else {
     if (split_message_view && num > 0) {
       GtkTreePath *path = gtk_tree_path_new_from_indices(num - 1, -1);

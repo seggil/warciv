@@ -663,3 +663,4 @@ GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite)
   }
   return sprite->pixbuf;
 }
+

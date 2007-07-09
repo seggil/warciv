@@ -39,12 +39,12 @@
 #include "sernet.h"
 #include "srv_main.h"
 
-  /* where our mysql database is located and how to get to it */
+/* where our mysql database is located and how to get to it */
 char authdb_host[256] = "localhost";
 char authdb_user[256] = "freeciv";
 char authdb_password[256] = "password";
-  
-  /* the database where our table is located */
+
+/* the database where our table is located */
 char authdb_dbname[256] = "freeciv"; 
 
 /* the tables where we will do our lookups and inserts.

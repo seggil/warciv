@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 bool can_player_attack_tile(struct player *pplayer, const struct tile *ptile)
 {
   struct city *pcity = ptile->city;
-
+  
   /* 1. Is there anyone there at all? */
   if (!pcity && unit_list_size(&(ptile->units)) == 0) {
     return FALSE;
@@ -169,7 +169,7 @@ double win_chance(int as, int ahp, int afp, int ds, int dhp, int dfp)
   double def_P_lose1 = 1 - att_P_lose1;
 
   /*
-    This calculates
+    This calculates 
 
     binomial_coeff(def_N_lose-1 + lr, lr)
       * def_P_lose1^(def_N_lose-1)
@@ -248,14 +248,14 @@ void get_modified_firepower(struct unit *attacker, struct unit *defender,
     *att_fp *= 2;
   }
 
-  /* pearl harbour - defender's firepower is reduced to one,
+  /* pearl harbour - defender's firepower is reduced to one, 
    *                 attacker's is multiplied by two         */
   if (is_sailing_unit(defender) && map_get_city(defender->tile)) {
     *att_fp *= 2;
     *def_fp = 1;
   }
-
-  /*
+  
+  /* 
    * When attacked by fighters, helicopters have their firepower
    * reduced to 1.
    */
@@ -387,10 +387,10 @@ int get_defense_power(struct unit *punit)
   int db, power = base_get_defense_power(punit);
 
 	if(should_unit_type_get_terrain_bonus(punit->type)) {
-	  db = get_tile_type(punit->tile->terrain)->defense_bonus;
-  	  if (map_has_special(punit->tile, S_RIVER)) {
-	    db += (db * terrain_control.river_defense_bonus) / 100;
-	  }
+  db = get_tile_type(punit->tile->terrain)->defense_bonus;
+  if (map_has_special(punit->tile, S_RIVER)) {
+    db += (db * terrain_control.river_defense_bonus) / 100;
+  }
 	  power = (power * db)/ POWER_FACTOR;
 	}
   return power;
@@ -435,7 +435,7 @@ static int defense_multiplication(Unit_Type_id att_type,
 	(is_air_unittype(att_type) || is_heli_unittype(att_type))) {
       defensepower *= 2;
     }
-
+         
     if (is_air_unittype(att_type) && pcity) {
       if ((mod = get_city_bonus(pcity, EFT_AIR_DEFEND)) > 0) {
 	defensepower = defensepower * (100 + mod) / 100;
@@ -492,11 +492,11 @@ int get_virtual_defense_power(Unit_Type_id att_type, Unit_Type_id def_type,
   defensepower *= get_unit_type(def_type)->veteran[veteran].power_fact;
 
   if(should_unit_type_get_terrain_bonus(def_type)) {
-  	db = get_tile_type(t)->defense_bonus;
-  	if (map_has_special(ptile, S_RIVER)) {
-	    db += (db * terrain_control.river_defense_bonus) / 100;
-	  }
-	  defensepower *= db;
+  db = get_tile_type(t)->defense_bonus;
+  if (map_has_special(ptile, S_RIVER)) {
+    db += (db * terrain_control.river_defense_bonus) / 100;
+  }
+  defensepower *= db;
 	}
 
   return defense_multiplication(att_type, def_type, ptile, defensepower,
@@ -505,7 +505,7 @@ int get_virtual_defense_power(Unit_Type_id att_type, Unit_Type_id def_type,
 
 /***************************************************************************
  return the modified defense power of a unit.
- An veteran aegis cruiser in a mountain city with SAM and SDI defense
+ An veteran aegis cruiser in a mountain city with SAM and SDI defense 
  being attacked by a missile gets defense 288.
 ***************************************************************************/
 int get_total_defense_power(struct unit *attacker, struct unit *defender)
@@ -563,7 +563,7 @@ struct unit *get_defender(struct unit *attacker, const struct tile *ptile)
       int build_cost = unit_build_shield_cost(defender->type);
       int defense_rating = get_defense_rating(attacker, defender);
       /* This will make units roughly evenly good defenders look alike. */
-      int unit_def
+      int unit_def 
         = (int) (100000 * (1 - unit_win_chance(attacker, defender)));
 
       assert(unit_def >= 0);
@@ -574,7 +574,7 @@ struct unit *get_defender(struct unit *attacker, const struct tile *ptile)
 	if (build_cost < best_cost) {
 	  change = TRUE;
 	} else if (build_cost == best_cost) {
-	  if (rating_of_best < defense_rating) {
+	  if (rating_of_best < defense_rating) {	
 	    change = TRUE;
 	  }
 	}
@@ -595,7 +595,7 @@ struct unit *get_defender(struct unit *attacker, const struct tile *ptile)
     freelog(LOG_ERROR, "get_defender bug: %s's %s vs %s's %s (total %d"
             " units) on %s at (%d,%d). ", unit_owner(attacker)->name,
             unit_type(attacker)->name, unit_owner(punit)->name,
-            unit_type(punit)->name, unit_list_size(&ptile->units),
+            unit_type(punit)->name, unit_list_size(&ptile->units), 
             get_terrain_name(ptile->terrain), ptile->x, ptile->y);
   }
 

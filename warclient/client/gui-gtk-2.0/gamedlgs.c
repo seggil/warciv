@@ -455,7 +455,7 @@ static void create_option_dialog(void)
   hbox = gtk_hbox_new (TRUE, 8);
   gtk_box_pack_start (GTK_BOX (hbox), table, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), table2, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (option_dialog_shell)->vbox),
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(option_dialog_shell)->vbox),
                       hbox, FALSE, FALSE, 0);
 
   i = 0;

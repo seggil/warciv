@@ -593,8 +593,8 @@ Return whether the unit can be put in auto-mode.
 **************************************************************************/
 bool can_unit_do_auto(struct unit *punit) 
 {
-  return TRUE;
-}
+    return TRUE;
+  }
 
 /**************************************************************************
   Return the name of the activity in a static buffer.

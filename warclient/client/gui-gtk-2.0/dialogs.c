@@ -1412,7 +1412,7 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
 
           /* Activate this unit. */
 			request_active_unit(punit);
-	  	}
+        }
       } unit_list_iterate_end;
 
       if (pmyunit) {
@@ -1462,7 +1462,7 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
     break;
 	}
 
-	default:
+  default:
     break;
   }
   
@@ -2042,7 +2042,7 @@ static void select_random_race(void)
     GtkTreeIter it;
     int nation;
 
-   nation = myrand(game.playable_nation_count);
+    nation = myrand(game.playable_nation_count);
 
     path = gtk_tree_path_new();
     gtk_tree_path_append_index(path, nation);

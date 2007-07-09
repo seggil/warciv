@@ -597,16 +597,16 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     pango_layout_set_font_description(layout, main_font);
     
     /* Calculate the width of a space, for hack below. */
-    pango_layout_set_text(layout, "M", -1);
-    pango_layout_get_pixel_extents(layout, &rect, NULL);
-    extra_width = rect.width;
+      pango_layout_set_text(layout, "M", -1);
+      pango_layout_get_pixel_extents(layout, &rect, NULL);
+      extra_width = rect.width;
       
     pango_layout_set_text(layout, buffer, -1);
     pango_layout_get_pixel_extents(layout, &rect, NULL);
     
     /* HACK: put a character's worth of space between the two strings. */
     if (buffer2[0] != '\0') {
-      rect.width += extra_width;
+    rect.width += extra_width;
     }
 
     if (draw_city_growth && pcity->owner == game.player_idx) {
@@ -662,7 +662,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 			       + rect.height / 2 - rect2.height / 2,
 			       layout);
     }
-    
+
     if (draw_city_traderoutes && pcity->owner == game.player_idx) {
       pango_layout_set_font_description (layout, city_productions_font);
       pango_layout_set_text (layout, buffer3, -1);

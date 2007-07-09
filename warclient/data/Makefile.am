@@ -24,8 +24,8 @@ endif
 
 if SERVER
 SERVER_FILES = \
-	civ1.serv	\
-	civ2.serv	\
+	civ1.serv \
+	civ2.serv \
 	history.serv	\
 	warruleset-1.2.serv	\
 	warruleset-1.3.serv	\
@@ -45,7 +45,7 @@ EXTRA_DIST = \
 	freeciv.rc	\
 	freeciv.rc-2.0	\
 	isophex.tilespec	\
-	isotrident.tilespec	\
+	isotrident.tilespec \
 	trident.tilespec	\
 	trident_shields.tilespec	\
 	helpdata.txt	\

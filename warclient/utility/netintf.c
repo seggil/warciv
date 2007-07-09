@@ -574,7 +574,7 @@ int my_nonblock(int sockfd)
 #else
   /* It would be bad, if we got here. */
 #error NONBLOCKING_SOCKETS defined, but I do not know how to use them :(
-#endif 
+#endif
 
 #else /* i.e. ! NONBLOCKING_SOCKETS */
   freelog (LOG_ERROR, _("my_nonblock called but we don't have "
@@ -595,12 +595,12 @@ bool is_net_service_resolved (const char *name, int port,
   sock->sin_port = htons(port);
 
   if (!name) {
-    sock->sin_addr.s_addr = htonl (INADDR_ANY);
+    sock->sin_addr.s_addr = htonl(INADDR_ANY);
     return TRUE;
   }
 
 #ifdef HAVE_INET_ATON
-  if (inet_aton (name, &sock->sin_addr) != 0) {
+  if (inet_aton(name, &sock->sin_addr) != 0) {
     return TRUE;
   }
 #else
@@ -623,12 +623,12 @@ bool net_lookup_service (const char *name, int port, union my_sockaddr *addr)
   if (is_net_service_resolved (name, port, addr))
     return TRUE;
 
-  hp = gethostbyname (name);
+  hp = gethostbyname(name);
   if (!hp || hp->h_addrtype != AF_INET) {
     return FALSE;
   }
 
-  memcpy (&sock->sin_addr, hp->h_addr, hp->h_length);
+  memcpy(&sock->sin_addr, hp->h_addr, hp->h_length);
   return TRUE;
 }
 

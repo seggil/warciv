@@ -47,10 +47,11 @@ void genlist_init(struct genlist *pgenlist)
 {
   assert(pgenlist != NULL);
   pgenlist->init_magic = INIT_MAGIC;
-  pgenlist->nelements = 0;
+  pgenlist->nelements=0;
   pgenlist->head_link = NULL;
   pgenlist->tail_link = NULL;
 }
+
 
 /************************************************************************
   Returns the number of elements stored in the genlist.
@@ -59,6 +60,8 @@ int genlist_size(const struct genlist *pgenlist)
 {
   return pgenlist->nelements;
 }
+
+
 /************************************************************************
   Returns the user-data pointer stored in the genlist at the position
   given by 'idx'.  For idx out of range (including an empty list),

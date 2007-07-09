@@ -7716,7 +7716,7 @@ msgstr "%s‚Æ‚ÌÚ‘±‚ğØ‚è‚Ü‚µ‚½B"
 #: server/stdinhand.c:6011
 #, fuzzy
 msgid ""
-"Welcome - this is the introductory help text for the Freecivserver.\n"
+"Welcome - this is the introductory help text for the Freeciv server.\n"
 "\n"
 "Two important server concepts are Commands and Options.\n"
 "Commands, such as 'help', are used to interact with the server.\n"

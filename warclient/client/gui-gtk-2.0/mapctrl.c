@@ -263,13 +263,13 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     /* <CONTROL> + LMB : Quickselect a sea unit or *pepeto*: select an unit without activation. */
     else if (ev->state & GDK_CONTROL_MASK) {
 	  if(pcity)
-		  action_button_pressed(ev->x, ev->y, SELECT_SEA);
+      action_button_pressed(ev->x, ev->y, SELECT_SEA);
 	  else
 	  {
 		  struct unit *punit=find_visible_unit(ptile);
 		  if(punit&&punit->owner==game.player_idx)
 			 set_unit_focus(punit);
-	  }
+    }
     }
     /* <SHIFT> + LMB: *pepeto* select unit(s if double click). */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
@@ -303,8 +303,8 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     else if (tiles_hilited_cities && ptile
              && hover_state == HOVER_NONE)
     {
-      toggle_tile_hilite (ptile);
-    }
+        toggle_tile_hilite(ptile);
+      }
 	/* double LMB: *pepeto* select units of the same type. */
 	else if(ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS))
 	{
@@ -329,7 +329,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 			 set_unit_focus(nfu);
 	     update_unit_info_label(get_unit_in_focus());
 	     update_menus();
-		}
+    }
 	}
     /* Plain LMB click for city triple click for units (*pepeto*). */
     else
@@ -342,12 +342,13 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 		{
 			if(hover_state!=HOVER_NONE)
 				press_waited=2;
-      		action_button_pressed(ev->x, ev->y, SELECT_POPUP);
-		}
+      action_button_pressed(ev->x, ev->y, SELECT_POPUP);
+    }
     }
     break;
 
   case 2: /* MIDDLE mouse button */
+
     /* <CONTROL> + MMB: Wake up sentries. */
     if (ev->state & GDK_CONTROL_MASK) {
       wakeup_button_pressed(ev->x, ev->y);
@@ -383,13 +384,12 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
        *  release it on another widget, and return to canvas
        *  to find rectangle still active.
        */
-
       if (rectangle_active) {
         release_right_button(ev->x, ev->y);
         return TRUE;
       }
       if (hover_state != HOVER_RALLY_POINT)
-        cancel_tile_hiliting();
+      cancel_tile_hiliting();
       if (hover_state == HOVER_NONE) {
         anchor_selection_rectangle(ev->x, ev->y);
         rbutton_down = TRUE; /* causes rectangle updates */

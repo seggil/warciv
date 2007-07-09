@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ GtkWidget *map_horizontal_scrollbar;
 GtkWidget *map_vertical_scrollbar;
 
 GtkWidget *overview_canvas;             /* GtkDrawingArea */
-GdkPixmap *overview_canvas_store;       /* this pixmap acts as a backing store
+GdkPixmap *overview_canvas_store;       /* this pixmap acts as a backing store 
                                          * for the overview_canvas widget */
 int overview_canvas_store_width = 2 * 80;
 int overview_canvas_store_height = 2 * 50;
@@ -163,7 +163,7 @@ static GtkWidget *unit_below_pixmap[MAX_NUM_UNITS_BELOW];
 static GtkWidget *unit_below_pixmap_button[MAX_NUM_UNITS_BELOW];
 static GtkWidget *more_arrow_pixmap;
 
-static int unit_ids[MAX_NUM_UNITS_BELOW];  /* ids of the units icons in
+static int unit_ids[MAX_NUM_UNITS_BELOW];  /* ids of the units icons in 
                                             * information display: (or 0) */
 GtkTextView *main_message_area;
 GtkTextBuffer *message_buffer, *network_message_buffer;
@@ -190,7 +190,7 @@ static void tearoff_callback(GtkWidget *b, gpointer data);
 static GtkWidget *detached_widget_new(void);
 static GtkWidget *detached_widget_fill(GtkWidget *ahbox, gboolean propagate_keypress);
 
-static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev,
+static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev, 
 					    gpointer data);
 static gint timer_callback(gpointer data);
 gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data);
@@ -224,7 +224,7 @@ static void log_callback_utf8(int level, const char *message)
 
 /**************************************************************************
   Print extra usage information, including one line help on each option,
-  to stderr.
+  to stderr. 
 **************************************************************************/
 static void print_usage(const char *argv0)
 {
@@ -257,7 +257,7 @@ static gboolean toplevel_focus(GtkWidget *w, GtkDirectionType arg)
   switch (arg) {
     case GTK_DIR_TAB_FORWARD:
     case GTK_DIR_TAB_BACKWARD:
-
+      
       if (!GTK_WIDGET_CAN_FOCUS(w)) {
 	return FALSE;
       }
@@ -275,7 +275,7 @@ static gboolean toplevel_focus(GtkWidget *w, GtkDirectionType arg)
 }
 
 /**************************************************************************
-  ...
+...
 **************************************************************************/
 void chatline_entry_append_text (const char *text)
 {
@@ -467,7 +467,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 	case GDK_KP_Enter:
 	  key_end_turn();
 	  break;
-
+  
 	default:
 	  break;
       }
@@ -528,7 +528,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 				default: break;
 			}
 		}
-		switch (ev->keyval) {
+    switch (ev->keyval) {
 				CASE1(multi_select_copy(0,1))
 				CASE2(multi_select_copy(0,2))
 				CASE3(multi_select_copy(0,3))
@@ -606,7 +606,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
       case GDK_Escape:
         key_cancel_action();
         break;
-
+  
       case GDK_n: /* shared by MENU_VIEW_SHOW_CITY_NAMES */
         if (tiles_hilited_cities && (ev->state & GDK_CONTROL_MASK)) {
           normalize_names_in_selected_cities();
@@ -626,7 +626,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
           key handlers here be sure to check menu.c for conflicts otherwise
           you may get unexpected behavior. */
         if (!(ev->state & GDK_CONTROL_MASK) && !(ev->state & GDK_SHIFT_MASK))
-           key_city_workers(w, ev);
+        key_city_workers(w, ev);
         else
           return FALSE;
         break;
@@ -674,7 +674,7 @@ static void tearoff_destroy(GtkWidget *w, gpointer data)
 static gboolean tearoff_keypress_callback (GtkWidget *w,
                                            GdkEventKey *ev)
 {
-  gtk_widget_event (toplevel, (GdkEvent *) ev);
+  gtk_widget_event(toplevel, (GdkEvent *)ev);
   return FALSE;
 }
 
@@ -693,24 +693,24 @@ static void toggle_tearoff_window (GtkWidget *box,
   active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (toggle));
 
   if (active) {
-    w = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    setup_dialog (w, toplevel);
-    gtk_widget_set_name (w, "Freeciv");
-    gtk_window_set_title (GTK_WINDOW (w), _("Freeciv"));
-    gtk_window_set_position (GTK_WINDOW (w), GTK_WIN_POS_MOUSE);
-    g_signal_connect (w, "destroy", G_CALLBACK (tearoff_destroy), box);
+    w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    setup_dialog(w, toplevel);
+    gtk_widget_set_name(w, "Freeciv");
+    gtk_window_set_title(GTK_WINDOW(w), _("Freeciv"));
+    gtk_window_set_position(GTK_WINDOW(w), GTK_WIN_POS_MOUSE);
+    g_signal_connect(w, "destroy", G_CALLBACK(tearoff_destroy), box);
 
     if (propagate_keypress) {
       g_signal_connect (w, "key_press_event",
           G_CALLBACK (tearoff_keypress_callback), NULL);
     }
 
-    g_object_set_data (G_OBJECT (w), "parent", box->parent);
+    g_object_set_data(G_OBJECT(w), "parent", box->parent);
     g_object_set_data (G_OBJECT (w), "toggle", toggle);
-    gtk_widget_reparent (box, w);
-    gtk_widget_show (w);
+    gtk_widget_reparent(box, w);
+    gtk_widget_show(w);
   } else {
-    gtk_widget_destroy (box->parent);
+    gtk_widget_destroy(box->parent);
   }
 }
 
@@ -776,7 +776,7 @@ static void populate_unit_pixmap_table(void)
 {
   int i;
   GtkWidget *table = unit_pixmap_table;
-
+ 
   /* 135 below is rough value (could be more intelligent) --dwp */
   num_units_below = 135 / (int) NORMAL_TILE_WIDTH;
   num_units_below = CLIP(1, num_units_below, MAX_NUM_UNITS_BELOW);
@@ -793,7 +793,7 @@ static void populate_unit_pixmap_table(void)
   gtk_container_add(GTK_CONTAINER(unit_pixmap_button), unit_pixmap);
   gtk_table_attach_defaults(GTK_TABLE(table), unit_pixmap_button, 0, 1, 0, 1);
   g_signal_connect(unit_pixmap_button, "button_press_event",
-		   G_CALLBACK(select_unit_pixmap_callback),
+		   G_CALLBACK(select_unit_pixmap_callback), 
 		   GINT_TO_POINTER(-1));
 
   for (i = 0; i < num_units_below; i++) {
@@ -808,7 +808,7 @@ static void populate_unit_pixmap_table(void)
 		     "button_press_event",
 		     G_CALLBACK(select_unit_pixmap_callback),
 		     GINT_TO_POINTER(i));
-
+      
     gtk_table_attach_defaults(GTK_TABLE(table), unit_below_pixmap_button[i],
                               i, i + 1, 1, 2);
     gtk_widget_set_size_request(unit_below_pixmap[i],
@@ -902,7 +902,7 @@ static void setup_widgets(void)
 
   GtkWidget *notebook, *statusbar;
 
-  message_buffer = gtk_text_buffer_new (NULL);
+  message_buffer = gtk_text_buffer_new(NULL);
   refresh_message_buffer_tag_patterns (NULL);
   network_message_buffer = gtk_text_buffer_new (NULL);
 
@@ -936,7 +936,7 @@ static void setup_widgets(void)
 
   main_tips = gtk_tooltips_new();
 
-  /* the window is divided into two panes. "top" and "message window" */
+  /* the window is divided into two panes. "top" and "message window" */ 
   paned = gtk_vpaned_new();
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
       paned, NULL);
@@ -1009,7 +1009,7 @@ static void setup_widgets(void)
 
   /* make a box so the table will be centered */
   box = gtk_hbox_new(FALSE, 0);
-
+  
   gtk_box_pack_start(GTK_BOX(avbox), box, FALSE, FALSE, 0);
 
   table = gtk_table_new(3, 10, TRUE);
@@ -1021,12 +1021,12 @@ static void setup_widgets(void)
   ebox = gtk_event_box_new();
   gtk_table_attach_defaults(GTK_TABLE(table), ebox, 0, 10, 0, 1);
   econ_ebox = ebox;
-
+  
   table2 = gtk_table_new(1, 10, TRUE);
   gtk_table_set_row_spacing(GTK_TABLE(table2), 0, 0);
   gtk_table_set_col_spacing(GTK_TABLE(table2), 0, 0);
   gtk_container_add(GTK_CONTAINER(ebox), table2);
-
+  
   for (i = 0; i < 10; i++) {
     ebox = gtk_event_box_new();
     gtk_widget_add_events(ebox, GDK_BUTTON_PRESS_MASK);
@@ -1056,7 +1056,7 @@ static void setup_widgets(void)
 
   for (i = 0; i < 4; i++) {
     GtkWidget *w;
-
+    
     ebox = gtk_event_box_new();
 
     switch (i) {
@@ -1070,7 +1070,7 @@ static void setup_widgets(void)
       break;
     case 2:
       w = flake_label;
-      flake_ebox = ebox;
+      flake_ebox = ebox; 
       break;
     default:
     case 3:
@@ -1131,7 +1131,7 @@ static void setup_widgets(void)
   unit_pixmap_table = table;
   populate_unit_pixmap_table();
 
-  top_notebook = gtk_notebook_new();
+  top_notebook = gtk_notebook_new();  
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(top_notebook), GTK_POS_BOTTOM);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(top_notebook), TRUE);
   gtk_box_pack_start(GTK_BOX(hbox), top_notebook, TRUE, TRUE, 0);
@@ -1434,7 +1434,7 @@ void ui_main(int argc, char **argv)
 
   {
     GdkColor pixel;
-
+    
     mask_bitmap = gdk_pixmap_new(root_window, 1, 1, 1);
 
     mask_fg_gc = gdk_gc_new(mask_bitmap);
@@ -1477,7 +1477,7 @@ void update_conn_list_dialog(void)
 {
   char buf[256];
   GtkTreeIter it;
-
+  
   if (get_client_state() != CLIENT_GAME_RUNNING_STATE) {
     gtk_list_store_clear(conn_model);
     conn_list_iterate(game.est_connections, pconn) {
@@ -1569,7 +1569,7 @@ void sound_bell(void)
 void set_unit_icon(int idx, struct unit *punit)
 {
   GtkWidget *w;
-
+  
   assert(idx >= -1 && idx < num_units_below);
 
   if (idx == -1) {
@@ -1586,7 +1586,7 @@ void set_unit_icon(int idx, struct unit *punit)
   } else {
     gtk_pixcomm_clear(GTK_PIXCOMM(w));
   }
-
+  
   gtk_pixcomm_thaw(GTK_PIXCOMM(w));
 }
 
@@ -1613,8 +1613,8 @@ void set_unit_icons_more_arrow(bool onoff)
  callback for clicking a unit icon underneath unit info box.
  these are the units on the same tile as the focus unit.
 **************************************************************************/
-static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev,
-                                        gpointer data)
+static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev, 
+                                        gpointer data) 
 {
   int i = GPOINTER_TO_INT(data);
   struct unit *punit;
@@ -1641,7 +1641,7 @@ static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev,
 }
 
 /**************************************************************************
- this is called every TIMER_INTERVAL milliseconds whilst we are in
+ this is called every TIMER_INTERVAL milliseconds whilst we are in 
  gtk_main() (which is all of the time) TIMER_INTERVAL needs to be .5s
 **************************************************************************/
 static gint timer_callback(gpointer data)
@@ -1669,7 +1669,7 @@ static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
   if(ev->button == 1) {
     GtkWidget *p;
     char buf[512];
-
+    
     my_snprintf(buf, sizeof(buf),
 	    _("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
 	      "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
@@ -1686,7 +1686,7 @@ static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
 	    game.player_ptr->research.bulbs_researched,
 	    total_bulbs_required(game.player_ptr),
 	    get_government_name(game.player_ptr->government));
-
+    
     p = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_set_app_paintable(p, TRUE);
     gtk_container_set_border_width(GTK_CONTAINER(p), 4);
@@ -1740,7 +1740,7 @@ static void set_wait_for_writable_socket(struct connection *pc,
 
   freelog(LOG_DEBUG, "set_wait_for_writable_socket(%d)", socket_writable);
   gtk_input_remove(input_id);
-  input_id = gtk_input_add_full(aconnection.sock, GDK_INPUT_READ
+  input_id = gtk_input_add_full(aconnection.sock, GDK_INPUT_READ 
 				| (socket_writable ? GDK_INPUT_WRITE : 0)
 				| GDK_INPUT_EXCEPTION,
 				get_net_input, NULL, NULL, NULL);
@@ -1925,7 +1925,7 @@ void popup_quit_dialog(void)
 
     gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
-    g_signal_connect(dialog, "response",
+    g_signal_connect(dialog, "response", 
 	G_CALLBACK(quit_dialog_response), NULL);
     g_signal_connect(dialog, "destroy",
 	G_CALLBACK(gtk_widget_destroyed), &dialog);
@@ -1943,3 +1943,4 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
+

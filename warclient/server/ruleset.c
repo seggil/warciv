@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ static int lookup_city_cost(struct section_file *file, const char *prefix,
 			    const char *entry, const char *filename);
 static char *lookup_helptext(struct section_file *file, char *prefix);
 
-static Terrain_type_id lookup_terrain(char *name,
+static Terrain_type_id lookup_terrain(char *name, 
                                              Terrain_type_id tthis);
 
 static void load_tech_names(struct section_file *file);
@@ -173,7 +173,7 @@ static char *check_ruleset_capabilities(struct section_file *file,
 					const char *us_capstr, const char *filename)
 {
   char *datafile_options;
-
+  
   datafile_options = secfile_lookup_str(file, "datafile.options");
   if (!has_capabilities(us_capstr, datafile_options)) {
     freelog(LOG_FATAL, _("Ruleset datafile appears incompatible:"));
@@ -208,7 +208,7 @@ static int lookup_tech(struct section_file *file, const char *prefix,
 {
   char *sval;
   int i;
-
+  
   sval = secfile_lookup_str_default(file, NULL, "%s.%s", prefix, entry);
   if (!sval || (!required && strcmp(sval, "Never") == 0)) {
     i = A_LAST;
@@ -343,7 +343,7 @@ static int lookup_unit_type(struct section_file *file, const char *prefix,
 {
   char *sval;
   int i;
-
+  
   if (required) {
     sval = secfile_lookup_str(file, "%s.%s", prefix, entry);
   } else {
@@ -414,7 +414,7 @@ static int lookup_government(struct section_file *file, const char *entry,
 {
   char *sval;
   struct government *gov;
-
+  
   sval = secfile_lookup_str(file, "%s", entry);
   gov = find_government_by_name(sval);
   if (!gov) {
@@ -435,7 +435,7 @@ static int lookup_city_cost(struct section_file *file, const char *prefix,
 {
   char *sval;
   int ival = 0;
-
+  
   sval = secfile_lookup_str_int(file, &ival, "%s.%s", prefix, entry);
   if (sval) {
     if (mystrcasecmp(sval, "City_Size") == 0) {
@@ -456,7 +456,7 @@ static char *lookup_string(struct section_file *file, const char *prefix,
 			   const char *suffix)
 {
   char *sval;
-
+  
   sval = secfile_lookup_str_default(file, NULL, "%s.%s", prefix, suffix);
   if (sval) {
     sval = skip_leading_spaces(sval);
@@ -478,12 +478,12 @@ static char *lookup_helptext(struct section_file *file, char *prefix)
 /**************************************************************************
   Look up a terrain name in the tile_types array and return its index.
 **************************************************************************/
-static Terrain_type_id lookup_terrain(char *name,
+static Terrain_type_id lookup_terrain(char *name, 
                                              Terrain_type_id tthis)
 {
   Terrain_type_id i;
 
-  if (*name == '\0' || (0 == strcmp(name, "none"))
+  if (*name == '\0' || (0 == strcmp(name, "none")) 
       || (0 == strcmp(name, "no"))) {
     return T_NONE;
   } else if (0 == strcmp(name, "yes")) {
@@ -555,7 +555,7 @@ static void load_ruleset_techs(struct section_file *file)
   int num_techs; /* number of techs in the ruleset (means without A_NONE)*/
   int i;
   const char *filename = secfile_filename(file);
-
+  
   (void) check_ruleset_capabilities(file, "+1.9", filename);
   sec = secfile_get_secnames_prefix(file, "advance_", &num_techs);
 
@@ -566,7 +566,7 @@ static void load_ruleset_techs(struct section_file *file)
   advances[A_NONE].root_req = A_LAST;
 
   a = &advances[A_FIRST];
-
+  
   for( i=0; i<num_techs; i++ ) {
     char *sval, **slist;
     int j,ival,nval;
@@ -611,13 +611,13 @@ static void load_ruleset_techs(struct section_file *file)
     sz_strlcpy(a->graphic_alt,
 	       secfile_lookup_str_default(file, "-",
 					  "%s.graphic_alt", sec[i]));
-
-    a->helptext = lookup_helptext(file, sec[i]);
+    
+    a->helptext = lookup_helptext(file, sec[i]);    
     a->bonus_message = lookup_string(file, sec[i], "bonus_message");
     a->preset_cost =
 	secfile_lookup_int_default(file, -1, "%s.%s", sec[i], "cost");
     a->num_reqs = 0;
-
+    
     a++;
   }
 
@@ -649,7 +649,7 @@ restart:
 	/* HACK: If we just changed the root_tech of a lower-numbered
 	 * technology, we need to go back so that we can propagate the
 	 * root_tech up to that technology's parents... */
-	goto restart;
+	goto restart;   
       }
     }
   }
@@ -661,7 +661,7 @@ restart:
     }
   }
 
-  /* Some more consistency checking:
+  /* Some more consistency checking: 
      Non-removed techs depending on removed techs is too
      broken to fix by default, so die.
   */
@@ -674,7 +674,7 @@ restart:
 	freelog(LOG_FATAL, "tech \"%s\": req1 leads to removed tech \"%s\" (%s)",
 	     a->name, advances[a->req[0]].name, filename);
 	exit(EXIT_FAILURE);
-      }
+      } 
       if (!tech_exists(a->req[1])) {
 	freelog(LOG_FATAL, "tech \"%s\": req2 leads to removed tech \"%s\" (%s)",
 	     a->name, advances[a->req[1]].name, filename);
@@ -691,7 +691,7 @@ restart:
 }
 
 /**************************************************************************
-  ...
+  ...  
 **************************************************************************/
 static void load_unit_names(struct section_file *file)
 {
@@ -727,7 +727,7 @@ static void load_unit_names(struct section_file *file)
 }
 
 /**************************************************************************
-...
+...  
 **************************************************************************/
 static void load_ruleset_units(struct section_file *file)
 {
@@ -769,7 +769,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
       }
       free(vnlist);
     } else {
-      /* apply defaults */
+      /* apply defaults */  
       for (j = 0; j < vet_levels_default; j++) {
         sz_strlcpy(u->veteran[j].name, def_vnlist[j]);
       }
@@ -845,7 +845,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
   if (def_vblist) {
     free(def_vblist);
   }
-
+  
   /* move bonus */
   def_vblist = secfile_lookup_int_vec(file, &vet_levels_default,
                                       "veteran_system.veteran_move_bonus");
@@ -868,7 +868,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
   if (def_vblist) {
     free(def_vblist);
   }
-
+  
   /* Tech requirement is used to flag removed unit_types, which
      we might want to know for other fields.  After this we
      can use unit_type_exists()
@@ -878,7 +878,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
     u->tech_requirement = lookup_tech(file, sec[i], "tech_req",
 				      FALSE, filename, u->name);
   } unit_type_iterate_end;
-
+  
   unit_type_iterate(i) {
     u = &unit_types[i];
     if (unit_type_exists(i)) {
@@ -895,7 +895,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
     u = &unit_types[i];
 
     u->impr_requirement =
-      find_improvement_by_name(secfile_lookup_str_default(file, "None",
+      find_improvement_by_name(secfile_lookup_str_default(file, "None", 
 					"%s.impr_req", sec[i]));
 
     sval = secfile_lookup_str(file, "%s.move_type", sec[i]);
@@ -906,7 +906,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
       exit(EXIT_FAILURE);
     }
     u->move_type = ival;
-
+    
     sz_strlcpy(u->sound_move,
 	       secfile_lookup_str_default(file, "-", "%s.sound_move",
 					  sec[i]));
@@ -919,12 +919,12 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
     sz_strlcpy(u->sound_fight_alt,
 	       secfile_lookup_str_default(file, "-", "%s.sound_fight_alt",
 					  sec[i]));
-
+    
     sz_strlcpy(u->graphic_str,
 	       secfile_lookup_str(file,"%s.graphic", sec[i]));
     sz_strlcpy(u->graphic_alt,
 	       secfile_lookup_str_default(file, "-", "%s.graphic_alt", sec[i]));
-
+    
     u->build_cost =
       secfile_lookup_int(file,"%s.build_cost", sec[i]);
     u->pop_cost =
@@ -935,7 +935,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
       secfile_lookup_int(file,"%s.defense", sec[i]);
     u->move_rate =
       SINGLE_MOVE*secfile_lookup_int(file,"%s.move_rate", sec[i]);
-
+    
     u->vision_range =
       secfile_lookup_int(file,"%s.vision_range", sec[i]);
     u->transport_capacity =
@@ -967,7 +967,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
     u->bombard_rate = secfile_lookup_int_default(file,
 	0, "%s.bombard_rate", sec[i]);
   } unit_type_iterate_end;
-
+  
   /* flags */
   unit_type_iterate(i) {
     u = &unit_types[i];
@@ -990,12 +990,12 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
     }
     free(slist);
   } unit_type_iterate_end;
-
+    
   /* roles */
   unit_type_iterate(i) {
     u = &unit_types[i];
     BV_CLR_ALL(u->roles);
-
+    
     slist = secfile_lookup_str_vec(file, &nval, "%s.roles", sec[i] );
     for(j=0; j<nval; j++) {
       sval = slist[j];
@@ -1037,7 +1037,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
 
   /* Setup roles and flags pre-calcs: */
   role_unit_precalcs();
-
+     
   /* Check some required flags and roles etc: */
   if(num_role_units(F_CITIES)==0) {
     freelog(LOG_FATAL, "No flag=cities units? (%s)", filename);
@@ -1120,7 +1120,7 @@ if (vet_levels_default > MAX_VET_LEVELS || vet_levels > MAX_VET_LEVELS) { \
 }
 
 /**************************************************************************
-  ...
+  ...  
 **************************************************************************/
 static void load_building_names(struct section_file *file)
 {
@@ -1158,7 +1158,7 @@ static void load_building_names(struct section_file *file)
 }
 
 /**************************************************************************
-...
+...  
 **************************************************************************/
 static void load_ruleset_buildings(struct section_file *file)
 {
@@ -1305,7 +1305,7 @@ static void load_ruleset_buildings(struct section_file *file)
     b->obsolete_by = lookup_tech(file, sec[i], "obsolete_by",
 				 FALSE, filename, b->name);
     if (b->obsolete_by == A_NONE || !tech_exists(b->obsolete_by)) {
-      /*
+      /* 
        * The ruleset can specify "None" for a never-obsoleted
        * improvement.  Currently this means A_NONE, which is an
        * unnecessary special-case.  We use A_LAST to flag a
@@ -1499,7 +1499,7 @@ static void load_ruleset_buildings(struct section_file *file)
 }
 
 /**************************************************************************
-  ...
+  ...  
 **************************************************************************/
 static void load_terrain_names(struct section_file *file)
 {
@@ -1534,7 +1534,7 @@ static void load_terrain_names(struct section_file *file)
 }
 
 /**************************************************************************
-...
+...  
 **************************************************************************/
 static void load_ruleset_terrain(struct section_file *file)
 {
@@ -1685,15 +1685,15 @@ static void load_ruleset_terrain(struct section_file *file)
       t->transform_result =
 	lookup_terrain(secfile_lookup_str(file, "%s.transform_result", sec[i]), i);
       t->transform_time = secfile_lookup_int(file, "%s.transform_time", sec[i]);
-      t->rail_time =
+      t->rail_time = 
           secfile_lookup_int_default(file, 3, "%s.rail_time", sec[i]);
-      t->airbase_time =
+      t->airbase_time = 
           secfile_lookup_int_default(file, 3, "%s.airbase_time", sec[i]);
-      t->fortress_time =
+      t->fortress_time = 
           secfile_lookup_int_default(file, 3, "%s.fortress_time", sec[i]);
-      t->clean_pollution_time =
+      t->clean_pollution_time = 
          secfile_lookup_int_default(file, 3, "%s.clean_pollution_time", sec[i]);
-      t->clean_fallout_time =
+      t->clean_fallout_time = 
           secfile_lookup_int_default(file, 3, "%s.clean_fallout_time", sec[i]);
 
       t->warmer_wetter_result
@@ -1725,7 +1725,7 @@ static void load_ruleset_terrain(struct section_file *file)
 	}
       }
       free(slist);
-
+      
       t->helptext = lookup_helptext(file, sec[i]);
   } terrain_type_iterate_end;
 
@@ -1735,7 +1735,7 @@ static void load_ruleset_terrain(struct section_file *file)
 }
 
 /**************************************************************************
-  ...
+  ...  
 **************************************************************************/
 static void load_government_names(struct section_file *file)
 {
@@ -1771,7 +1771,7 @@ static void load_government_names(struct section_file *file)
 }
 
 /**************************************************************************
-...
+...  
 **************************************************************************/
 static void load_ruleset_governments(struct section_file *file)
 {
@@ -1786,17 +1786,17 @@ static void load_ruleset_governments(struct section_file *file)
 
   game.default_government
     = lookup_government(file, "governments.default", filename);
-
+  
   game.government_when_anarchy
     = lookup_government(file, "governments.when_anarchy", filename);
-
+  
   game.ai_goal_government
     = lookup_government(file, "governments.ai_goal", filename);
 
   freelog(LOG_DEBUG, "govs: def %d, anarchy %d, ai_goal %d",
 	  game.default_government, game.government_when_anarchy,
 	  game.ai_goal_government);
-
+  
   /* Because player_init is called before rulesets are loaded we set
    * all players governments here, if they have not been previously
    * set (eg by loading game).
@@ -1813,15 +1813,15 @@ static void load_ruleset_governments(struct section_file *file)
   /* easy ones: */
   government_iterate(g) {
     int i = g->index;
-
+    
     g->required_tech
       = lookup_tech(file, sec[i], "tech_req", FALSE, filename, g->name);
-
+    
     sz_strlcpy(g->graphic_str,
 	       secfile_lookup_str(file, "%s.graphic", sec[i]));
     sz_strlcpy(g->graphic_alt,
 	       secfile_lookup_str(file, "%s.graphic_alt", sec[i]));
-
+    
     g->martial_law_max = secfile_lookup_int(file, "%s.martial_law_max", sec[i]);
     g->martial_law_per = secfile_lookup_int(file, "%s.martial_law_per", sec[i]);
     g->max_rate = secfile_lookup_int(file, "%s.max_single_rate", sec[i]);
@@ -1830,7 +1830,7 @@ static void load_ruleset_governments(struct section_file *file)
     g->empire_size_inc =
       secfile_lookup_int_default(file, 0, "%s.empire_size_inc", sec[i]);
     g->rapture_size = secfile_lookup_int(file, "%s.rapture_size", sec[i]);
-
+    
     g->free_happy
       = lookup_city_cost(file, sec[i], "unit_free_unhappy", filename);
     g->free_shield
@@ -1858,8 +1858,8 @@ static void load_ruleset_governments(struct section_file *file)
     g->extra_corruption_distance
       = secfile_lookup_int(file, "%s.corruption_extra_distance", sec[i]);
     g->corruption_max_distance_cap
-      = secfile_lookup_int_default(file, 36,
-        "%s.corruption_max_distance_cap", sec[i]);
+      = secfile_lookup_int_default(file, 36, 
+        "%s.corruption_max_distance_cap", sec[i]); 
 
     g->waste_level
       = secfile_lookup_int(file, "%s.waste_level", sec[i]);
@@ -1870,7 +1870,7 @@ static void load_ruleset_governments(struct section_file *file)
     g->extra_waste_distance
       = secfile_lookup_int(file, "%s.waste_extra_distance", sec[i]);
     g->waste_max_distance_cap
-      = secfile_lookup_int_default(file, 36, "%s.waste_max_distance_cap", sec[i]);
+      = secfile_lookup_int_default(file, 36, "%s.waste_max_distance_cap", sec[i]); 
 
     g->trade_bonus
       = secfile_lookup_int(file, "%s.production_trade_bonus", sec[i]);
@@ -1899,11 +1899,11 @@ static void load_ruleset_governments(struct section_file *file)
       = secfile_lookup_int(file, "%s.production_shield_penalty,1", sec[i]);
     g->celeb_food_before_penalty
       = secfile_lookup_int(file, "%s.production_food_penalty,1", sec[i]);
-
+    
     g->helptext = lookup_helptext(file, sec[i]);
   } government_iterate_end;
 
-
+  
   /* flags: */
   government_iterate(g) {
     g->flags = 0;
@@ -2032,7 +2032,7 @@ static void send_ruleset_control(struct conn_list *dest)
 }
 
 /**************************************************************************
-This checks if nations[pos] leader names are not already defined in any
+This checks if nations[pos] leader names are not already defined in any 
 previous nation, or twice in its own leader name table.
 If not return NULL, if yes return pointer to name which is repeated.
 **************************************************************************/
@@ -2189,7 +2189,7 @@ static struct city_name* load_city_name_list(struct section_file *file,
 	    next[0] = '\0';
 	  }
 	  remove_leading_trailing_spaces(name);
-
+	
 	  /*
 	   * The ! is used to mark a negative, which is recorded
 	   * with a -1.  Otherwise we use a 1.
@@ -2200,14 +2200,14 @@ static struct city_name* load_city_name_list(struct section_file *file,
 	  } else {
 	    setting = 1;
 	  }
-
+	
 	  if (mystrcasecmp(name, "river") == 0) {
 	    city_names[j].river = setting;
 	  } else {
 	    /* "handled" tracks whether we find a match (for error handling) */
 	    bool handled = FALSE;
 	    Terrain_type_id type;
-
+	
 	    for (type = T_FIRST; type < T_COUNT && !handled; type++) {
               /*
                * Note that at this time (before a call to
@@ -2339,7 +2339,7 @@ static void load_ruleset_nations(struct section_file *file)
 					   sec[i], ++j))) {
       char *male_name;
       char *female_name;
-
+      
       male_name = secfile_lookup_str(file, "%s.ruler_titles%d.male_title",
 				     sec[i], j);
       female_name = secfile_lookup_str(file, "%s.ruler_titles%d.female_title",
@@ -2366,7 +2366,7 @@ static void load_ruleset_nations(struct section_file *file)
     pl->city_style = get_style_by_name(temp_name);
     if (pl->city_style == -1) {
       freelog(LOG_NORMAL,
-	      "Nation %s: city style %s is unknown, using default.",
+	      "Nation %s: city style %s is unknown, using default.", 
 	      pl->name_plural, temp_name);
       pl->city_style = 0;
     }
@@ -2585,17 +2585,17 @@ static void load_ruleset_cities(struct section_file *file)
       = secfile_lookup_int(file, "specialist.%s_min_size", name);
     game.rgame.specialists[i].bonus
       = secfile_lookup_int(file, "specialist.%s_base_bonus", name);
-
+    
   }
   free(specialist_names);
 
-  game.rgame.changable_tax =
+  game.rgame.changable_tax = 
     secfile_lookup_bool_default(file, TRUE, "specialist.changable_tax");
-  game.rgame.forced_science =
+  game.rgame.forced_science = 
     secfile_lookup_int_default(file, 0, "specialist.forced_science");
-  game.rgame.forced_luxury =
+  game.rgame.forced_luxury = 
     secfile_lookup_int_default(file, 100, "specialist.forced_luxury");
-  game.rgame.forced_gold =
+  game.rgame.forced_gold = 
     secfile_lookup_int_default(file, 0, "specialist.forced_gold");
   if (game.rgame.forced_science + game.rgame.forced_luxury
       + game.rgame.forced_gold != 100) {
@@ -2619,19 +2619,19 @@ static void load_ruleset_cities(struct section_file *file)
 
   /* Get rest: */
   for( i=0; i<game.styles_count; i++) {
-    sz_strlcpy(city_styles[i].graphic,
+    sz_strlcpy(city_styles[i].graphic, 
 	       secfile_lookup_str(file, "%s.graphic", styles[i]));
-    sz_strlcpy(city_styles[i].graphic_alt,
+    sz_strlcpy(city_styles[i].graphic_alt, 
 	       secfile_lookup_str(file, "%s.graphic_alt", styles[i]));
-    sz_strlcpy(city_styles[i].citizens_graphic,
-	       secfile_lookup_str_default(file, "-",
+    sz_strlcpy(city_styles[i].citizens_graphic, 
+	       secfile_lookup_str_default(file, "-", 
 	    		"%s.citizens_graphic", styles[i]));
-    sz_strlcpy(city_styles[i].citizens_graphic_alt,
-	       secfile_lookup_str_default(file, "generic",
+    sz_strlcpy(city_styles[i].citizens_graphic_alt, 
+	       secfile_lookup_str_default(file, "generic", 
 	    		"%s.citizens_graphic_alt", styles[i]));
     city_styles[i].techreq = lookup_tech(file, styles[i], "tech", TRUE,
                                          filename, city_styles[i].name);
-
+    
     replacement = secfile_lookup_str(file, "%s.replaced_by", styles[i]);
     if( strcmp(replacement, "-") == 0) {
       city_styles[i].replaced_by = -1;
@@ -2715,7 +2715,7 @@ static void load_ruleset_game()
     game.rgame.nuke_contamination = CONTAMINATION_POLLUTION;
   }
 
-  food_ini = secfile_lookup_int_vec(&file, &game.rgame.granary_num_inis,
+  food_ini = secfile_lookup_int_vec(&file, &game.rgame.granary_num_inis, 
 				    "civstyle.granary_food_ini");
   if (game.rgame.granary_num_inis > MAX_GRANARY_INIS) {
     freelog(LOG_FATAL,
@@ -2762,7 +2762,7 @@ static void load_ruleset_game()
 	    game.rgame.tech_cost_style);
     game.rgame.tech_cost_style = 0;
   }
-  game.rgame.tech_cost_double_year =
+  game.rgame.tech_cost_double_year = 
       secfile_lookup_int_default(&file, 1, "civstyle.tech_cost_double_year");
   tmp = secfile_lookup_int(&file, "civstyle.tech_leakage");
   if (!game.ignoreruleset) {//if ignoreruleset is 1, then we ignore ruleset
@@ -2781,13 +2781,13 @@ static void load_ruleset_game()
     freelog(LOG_ERROR, "Switching to tech_leakage 0.");
     game.rgame.tech_leakage = 0;
   }
-
+    
   /* City incite cost */
-  game.incite_cost.improvement_factor =
+  game.incite_cost.improvement_factor = 
     secfile_lookup_int_default(&file, 1, "incite_cost.improvement_factor");
-  game.incite_cost.unit_factor =
+  game.incite_cost.unit_factor = 
     secfile_lookup_int_default(&file, 1, "incite_cost.unit_factor");
-  game.incite_cost.total_factor =
+  game.incite_cost.total_factor = 
     secfile_lookup_int_default(&file, 100, "incite_cost.total_factor");
 
   /* Slow invasions */
@@ -2796,7 +2796,7 @@ static void load_ruleset_game()
   if (!game.ignoreruleset) {//if ignoreruleset is 1, then we ignore ruleset
         game.slow_invasions = tmp;
   }
-
+  
   /* Load global initial items. */
   lookup_tech_list(&file, "options", "global_init_techs",
 		   game.rgame.global_init_techs, filename);
@@ -2808,7 +2808,7 @@ static void load_ruleset_game()
   if (!game.ignoreruleset) {//if ignoreruleset is 1, then we ignore ruleset
         game.rgame.killstack = tmp;
   }
-
+	
   section_file_check_unused(&file, filename);
   section_file_free(&file);
 }
@@ -2886,7 +2886,7 @@ static void send_ruleset_techs(struct conn_list *dest)
     packet.id = tech_id;
     sz_strlcpy(packet.name, a->name_orig);
     sz_strlcpy(packet.graphic_str, a->graphic_str);
-    sz_strlcpy(packet.graphic_alt, a->graphic_alt);
+    sz_strlcpy(packet.graphic_alt, a->graphic_alt);	  
     packet.req[0] = a->req[0];
     packet.req[1] = a->req[1];
     packet.root_req = a->root_req;
@@ -3018,7 +3018,7 @@ static void send_ruleset_terrain(struct conn_list *dest)
       } else {
 	packet.helptext[0] = '\0';
       }
-
+      
       lsend_packet_ruleset_terrain(dest, &packet);
   } terrain_type_iterate_end;
 }
@@ -3046,12 +3046,12 @@ static void send_ruleset_governments(struct conn_list *dest)
     gov.empire_size_mod  = g->empire_size_mod;
     gov.empire_size_inc  = g->empire_size_inc;
     gov.rapture_size     = g->rapture_size;
-
+    
     gov.unit_happy_cost_factor  = g->unit_happy_cost_factor;
     gov.unit_shield_cost_factor = g->unit_shield_cost_factor;
     gov.unit_food_cost_factor   = g->unit_food_cost_factor;
     gov.unit_gold_cost_factor   = g->unit_gold_cost_factor;
-
+    
     gov.free_happy  = g->free_happy;
     gov.free_shield = g->free_shield;
     gov.free_food   = g->free_food;
@@ -3078,28 +3078,28 @@ static void send_ruleset_governments(struct conn_list *dest)
     gov.corruption_distance_factor = g->corruption_distance_factor;
     gov.extra_corruption_distance = g->extra_corruption_distance;
     gov.corruption_max_distance_cap = g->corruption_max_distance_cap;
-
+    
     gov.waste_level = g->waste_level;
     gov.fixed_waste_distance = g->fixed_waste_distance;
     gov.waste_distance_factor = g->waste_distance_factor;
     gov.extra_waste_distance = g->extra_waste_distance;
     gov.waste_max_distance_cap = g->waste_max_distance_cap;
-
+        
     gov.flags = g->flags;
     gov.num_ruler_titles = g->num_ruler_titles;
 
     sz_strlcpy(gov.name, g->name_orig);
     sz_strlcpy(gov.graphic_str, g->graphic_str);
     sz_strlcpy(gov.graphic_alt, g->graphic_alt);
-
+    
     if (g->helptext) {
       sz_strlcpy(gov.helptext, g->helptext);
     } else {
       gov.helptext[0] = '\0';
     }
-
+      
     lsend_packet_ruleset_government(dest, &gov);
-
+    
     /* send one packet_government_ruler_title per ruler title */
     for(j=0; j<g->num_ruler_titles; j++) {
       p_title = &g->ruler_titles[j];
@@ -3109,7 +3109,7 @@ static void send_ruleset_governments(struct conn_list *dest)
       title.nation = p_title->nation;
       sz_strlcpy(title.male_title, p_title->male_title);
       sz_strlcpy(title.female_title, p_title->female_title);
-
+    
       lsend_packet_ruleset_government_ruler_title(dest, &title);
     }
   } government_iterate_end;
@@ -3209,13 +3209,13 @@ static void send_ruleset_game(struct conn_list *dest)
   misc_p.tech_leakage = game.rgame.tech_leakage;
   misc_p.tech_cost_double_year = game.rgame.tech_cost_double_year;
 
-  memcpy(misc_p.trireme_loss_chance, game.trireme_loss_chance,
+  memcpy(misc_p.trireme_loss_chance, game.trireme_loss_chance, 
          sizeof(game.trireme_loss_chance));
-  memcpy(misc_p.work_veteran_chance, game.work_veteran_chance,
+  memcpy(misc_p.work_veteran_chance, game.work_veteran_chance, 
          sizeof(game.work_veteran_chance));
-  memcpy(misc_p.veteran_chance, game.veteran_chance,
+  memcpy(misc_p.veteran_chance, game.veteran_chance, 
          sizeof(game.veteran_chance));
-
+    
   assert(sizeof(misc_p.global_init_techs) ==
 	 sizeof(game.rgame.global_init_techs));
   assert(ARRAY_SIZE(misc_p.global_init_techs) ==
@@ -3228,7 +3228,7 @@ static void send_ruleset_game(struct conn_list *dest)
 }
 
 /**************************************************************************
-...
+...  
 **************************************************************************/
 void load_rulesets(void)
 {

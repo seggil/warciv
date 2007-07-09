@@ -84,11 +84,13 @@ done
 
 done
 
-echo "diff -urNad $DIRWAR_LIKE $DIRWAR > warclient_old.diff"  >>   output.sh
+echo "rm -fr */po/*.po"   >>   output.sh
+
+echo "diff -urNadEBbw $DIRWAR_LIKE $DIRWAR > warclient_old.diff"  >>   output.sh
 
 echo cd $DIRWAR_UPDATED  >>   output.sh
 
-echo "patch -p1 < ../warclient_old.diff"  >>   output.sh
+echo "patch -p1 -f < ../warclient_old.diff"  >>   output.sh
 
 echo "cd -"  >>   output.sh
 
@@ -96,12 +98,17 @@ echo "diff -urNad $DIRWAR $DIRWAR_UPDATED > warclient.diff"  >>   output.sh
 
 echo "echo verifie that patch warclient_old.diff is apply correctly"  >>   output.sh
 echo "echo if yes apply warclient.diff freeciv.diff " >>   output.sh
+echo "echo if not, patch anyway and fix all .rej failed patch"  >>   output.sh
 echo "echo cd $pwd/warclient" >>   output.sh
-echo "echo Warning your svn dir $pwd/warclient can contain somme .orig file"  >>   output.sh
-echo "echo \"You can delete them by: rm -ivr \\\` find . -wholename \\\"*orig\\\"\\\` \""  >>   output.sh
 echo "echo \"patch -p1 < ../$1/warclient.diff\"" >>   output.sh
 echo "echo cd $pwd/$DIR" >>   output.sh
 echo "echo \"patch -p1 < ../$1/freeciv.diff\"" >>   output.sh
+echo "echo cd .." >>   output.sh
+echo "echo \"#Warning your svn dir $pwd/warclient can contain somme .orig file\""  >>   output.sh
+echo "echo \"#You can delete them by: rm -ivr \\\` find . -wholename \\\"*orig\\\"\\\` \""  >>   output.sh
+echo "echo \"#Warning your svn dir $pwd/warclient can contain somme .rej file\""  >>   output.sh
+echo "echo \"#You can delete them by: rm -ivr \\\` find . -wholename \\\"*rej\\\"\\\` \""  >>   output.sh
+echo "echo \"#After you run for be sure that new files will be take in account\"" >>   output.sh
 
 chmod u+x output.sh
 

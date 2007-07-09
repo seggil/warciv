@@ -38,9 +38,9 @@ const char *sset_category_names[] = {N_("Geological"),
 /* Level names must match the values in enum sset_level. */
 const char *sset_level_names[SSET_NUM_LEVELS] = {
   N_("None"),
-  N_("All"),
-  N_("Vital"),
-  N_("Situational"),
+				  N_("All"),
+				  N_("Vital"),
+				  N_("Situational"),
   N_("Rare"),
   N_("Changed")
 };

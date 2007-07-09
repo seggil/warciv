@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ static bool send_to_metaserver(enum meta_flag flag)
     my_snprintf(s, rest, "version=%s&", my_url_encode(VERSION_STRING));
     s = end_of_strn(s, &rest);
 
-    my_snprintf(s, rest, "patches=%s&",
+    my_snprintf(s, rest, "patches=%s&", 
                 my_url_encode(get_meta_patches_string()));
     s = end_of_strn(s, &rest);
 
@@ -311,7 +311,7 @@ static bool send_to_metaserver(enum meta_flag flag)
         s = end_of_strn(s, &rest);
 
         my_snprintf(s, rest, "pln[]=%s&",
-                    my_url_encode(plr->nation != NO_NATION_SELECTED
+                    my_url_encode(plr->nation != NO_NATION_SELECTED 
                                   ? get_nation_name_plural(plr->nation)
                                   : "none"));
         s = end_of_strn(s, &rest);
@@ -321,7 +321,7 @@ static bool send_to_metaserver(enum meta_flag flag)
         s = end_of_strn(s, &rest);
 
         /* is this player available to take?
-         * TODO: there's some duplication here with
+         * TODO: there's some duplication here with 
          * stdinhand.c:is_allowed_to_take() */
         if (is_barbarian(plr) && !strchr(game.allow_take, 'b')) {
           is_player_available = FALSE;
@@ -410,7 +410,7 @@ static bool send_to_metaserver(enum meta_flag flag)
 }
 
 /*************************************************************************
-
+ 
 *************************************************************************/
 void server_close_meta(void)
 {
@@ -423,19 +423,19 @@ void server_close_meta(void)
 void server_open_meta(void)
 {
   const char *path;
-
+ 
   if (metaserver_path) {
     free(metaserver_path);
     metaserver_path = NULL;
   }
-
+  
   if (!(path = my_lookup_httpd(metaname, &metaport, srvarg.metaserver_addr))) {
     freelog(LOG_ERROR, _("Metaserver: bad http server url: %s."),
             srvarg.metaserver_addr);
     metaserver_failed();
     return;
   }
-
+  
   metaserver_path = mystrdup(path);
 
   if (!net_lookup_service(metaname, metaport, &meta_addr)) {
@@ -475,7 +475,7 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
   static bool want_update;
 
   /* if we're bidding farewell, ignore all timers */
-  if (flag == META_GOODBYE) {
+  if (flag == META_GOODBYE) { 
     if (last_send_timer) {
       free_timer(last_send_timer);
       last_send_timer = NULL;
@@ -492,9 +492,9 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
     return FALSE;
   }
 
-  /* if we're asking for a refresh, only do so if
+  /* if we're asking for a refresh, only do so if 
    * we've exceeded the refresh interval */
-  if ((flag == META_REFRESH) && !want_update && last_send_timer
+  if ((flag == META_REFRESH) && !want_update && last_send_timer 
       && (read_timer_seconds(last_send_timer) < METASERVER_REFRESH_INTERVAL)) {
     return FALSE;
   }

@@ -70,7 +70,7 @@ ai_tech_hints = { "tech", "turns_factor", "const_factor", "get_first", "done"
 
 ; corruption:
  
-; _level            = percentage factor applied to corruption multiplied 
+; _level            = percentage factor applied to corruption multiplied
 ;		      by 100; if 0, Courthouse effect changes
 ; _fixed_distance   = if non-zero, used instead of actual calculation of 
 ;		      distance from Palace; also used for distances in 
@@ -346,7 +346,7 @@ rapture_size     = 3
 unit_unhappy_factor = 0
 unit_shield_factor  = 1
 unit_food_factor    = 1
-unit_gold_factor    = 1 
+unit_gold_factor    = 1
 
 unit_free_unhappy = 0
 unit_free_shield  = 3
@@ -407,6 +407,7 @@ You impose limited but efficient martial law under Communism.  Each\
  military unit inside a city, up to a maximum of 3, will keep 2\
  unhappy citizens content.\
 ")
+
 ;------------------------------------------------------------------------
 [government_fundamentalism]
 
@@ -490,7 +491,7 @@ Cities under Fundamentalism suffer a small amount of corruption and\
 Improvement that normally convert unhappy citizens to content\
  citizens, produces `tithes' (gold) equivalent to the number\
  of people they would convert, and require no maintenance.\
-") 
+")
 
 ;------------------------------------------------------------------------
 [government_republic]
@@ -528,7 +529,7 @@ corruption_max_distance_cap = 36
 waste_level                = 0
 waste_fixed_distance       = 0
 waste_distance_factor      = 0 
-waste_extra_distance       = 0
+waste_extra_distance       = 0 
 waste_max_distance_cap     = 36
 
 production_trade_bonus    = 1, 1
@@ -613,7 +614,7 @@ corruption_max_distance_cap = 36
 waste_level                = 0
 waste_fixed_distance       = 0
 waste_distance_factor      = 0 
-waste_extra_distance       = 0
+waste_extra_distance       = 0 
 waste_max_distance_cap     = 36
 
 production_trade_bonus    = 1, 1

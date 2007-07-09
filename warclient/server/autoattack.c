@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
    - if have movement and enough hp remaining, should consider
      attacking multiple times if multiple targets (hard, because you
      have to calculate warmap for each choice -> lots of cpu !!!)
-
+     
    - create gui-client for diplomacy for players
      (in work by other persons)
 
@@ -52,6 +52,7 @@
 
 #include "autoattack.h"
 
+
 /**************************************************************************
 FIXME: Calculate the attractiveness of attacking.
 **************************************************************************/
@@ -69,16 +70,16 @@ static struct unit *search_best_target(struct player *pplayer,
 
   range = unit_flag(punit, F_ONEATTACK) ?
       punit->moves_left :
-      punit->moves_left / 2;
+      punit->moves_left/2;
 
-  /* attack the next to city */
+  /* attack the next to city */ 
   range = range < SINGLE_MOVE ? SINGLE_MOVE : range;
-
+  
   freelog(LOG_VERBOSE, "doing autoattack for %s (%d/%d),"
 	  " range %d(%d)",
 	  unit_name(punit->type), punit->tile->x, punit->tile->y,
 	  range, punit->moves_left);
-
+  
   square_iterate(punit->tile, range / SINGLE_MOVE, ptile) {
     if (same_pos(punit->tile, ptile))
       continue;
@@ -154,7 +155,7 @@ static struct unit *search_best_target(struct player *pplayer,
   if(!best_enemy) return NULL;
 
   enemy = best_enemy;
-
+  
   freelog(LOG_VERBOSE, "chosen target=%s (%d/%d)",
 	  get_unit_name(enemy->type), enemy->tile->x, enemy->tile->y);
 
@@ -184,43 +185,43 @@ bool auto_attack_with_unit(struct player *pplayer,
 //  do {
     enemy=search_best_target(pplayer,punit);
 
-      /* nothing found */
+  /* nothing found */
       if(!enemy) {
         freelog(LOG_VERBOSE, "no weak enemy found");
         if(!passnumber)return TRUE;//if its 1st pass we return
 //            else break;//if its 2nd pass we break out of loop to return unit back to original tile
       }
-
+  
       freelog(LOG_VERBOSE, "launching attack");
-
-      notify_player_ex(pplayer, enemy->tile, E_NOEVENT,
+  
+  notify_player_ex(pplayer, enemy->tile, E_NOEVENT,
     		   _("Game: Auto-Attack: %s attacking %s's %s"),
     		   unit_name(punit->type),
-    		   unit_owner(enemy)->name, unit_name(enemy->type));
-
-      set_unit_activity(punit, ACTIVITY_GOTO);
-      punit->goto_tile = enemy->tile;
-
-      send_unit_info(NULL, punit);
+		   unit_owner(enemy)->name, unit_name(enemy->type));
+  
+  set_unit_activity(punit, ACTIVITY_GOTO);
+  punit->goto_tile = enemy->tile;
+  
+  send_unit_info(NULL, punit);
       do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
-
+  
       punit = find_unit_by_id(id);//check if it survived
 //      passnumber++;
 //  }
 //  while(punit);//if survived we repeat
-
+  
   if (punit) {//it survived, send unit back
     set_unit_activity(punit, ACTIVITY_GOTO);
     punit->goto_tile = stile;
     send_unit_info(NULL, punit);
-
+    
     do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
     return TRUE;
-  }
+}
   else
-  {
+{
     return FALSE;			/* true if unit survived */
-  }
+    }
 }
 
 /**************************************************************************

@@ -866,7 +866,7 @@ static gint cityrep_sort_func(GtkTreeModel *model,
 static void create_city_report_dialog(bool make_modal)
 {
   static char *titles [NUM_CREPORT_COLS];
-  static char  buf    [NUM_CREPORT_COLS][64];
+  static char  buf    [NUM_CREPORT_COLS][128];
   struct city_report_spec *spec;
 
   GtkWidget *w, *sw, *menubar;
@@ -912,12 +912,11 @@ static void create_city_report_dialog(bool make_modal)
   city_buy_command = w;
 
   
-  gui_dialog_add_button (city_dialog_shell,
+  gui_dialog_add_button(city_dialog_shell,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
   gui_dialog_set_default_response(city_dialog_shell,
 				  GTK_RESPONSE_CLOSE);
-
 
   /* tree view */
   for (i=0; i<NUM_CREPORT_COLS; i++)
@@ -1755,7 +1754,7 @@ static void recreate_sell_menu(void)
   
   menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(city_sell_command));
   children = gtk_container_get_children(GTK_CONTAINER(menu));
-  
+
   n = g_list_length(children);
   gtk_widget_set_sensitive(city_sell_command, n > 0);
 }
