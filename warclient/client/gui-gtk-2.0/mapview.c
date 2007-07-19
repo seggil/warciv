@@ -1199,6 +1199,41 @@ void draw_selection_rectangle(int canvas_x, int canvas_y, int w, int h)
 }
 
 /**************************************************************************
+ Selection distance
+**************************************************************************/
+void draw_selection_distance(int canvas_x, int canvas_y, int w, int h)
+{
+  PangoContext *context;
+  PangoLayout *layout;
+  PangoRectangle rect;
+  gchar text[128];
+  struct tile *ptile1, *ptile2;
+
+  ptile1 = canvas_pos_to_tile(canvas_x, canvas_y);
+  ptile2 = canvas_pos_to_tile(canvas_x + w, canvas_y + h);
+
+  if (!ptile1 || !ptile2) {
+    return;
+  }
+
+  gdk_gc_set_foreground(civ_gc, colors_standard[COLOR_STD_YELLOW]);
+
+  gdk_draw_line(map_canvas->window, civ_gc, canvas_x, canvas_y,
+                canvas_x + w, canvas_y + h);
+  context = gdk_pango_context_get();
+  layout = pango_layout_new(context);
+  pango_layout_set_font_description(layout, main_font);
+
+  my_snprintf(text, sizeof(text), _("real distance: %d\ntrade distance: %d"),
+              real_map_distance(ptile1, ptile2), map_distance(ptile1, ptile2));
+  pango_layout_set_text(layout, text , -1);
+  pango_layout_get_pixel_extents(layout, &rect, NULL);
+
+  gdk_draw_layout(map_canvas->window, civ_gc, canvas_x, canvas_y, layout);
+  distance_active = TRUE;
+}
+
+/**************************************************************************
   This function is called when the tileset is changed.
 **************************************************************************/
 void tileset_changed(void)

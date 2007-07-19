@@ -51,6 +51,7 @@ static int rec_w, rec_h;                /* width, heigth in pixels */
 
 bool rbutton_down = FALSE;
 bool rectangle_active = FALSE;
+bool distance_active = FALSE;
 
 /* This changes the behaviour of left mouse
    button in Area Selection mode. */
@@ -83,6 +84,18 @@ static void define_tiles_within_rectangle(void);
  width, height. Also record the current mapview centering.
 **************************************************************************/
 void anchor_selection_rectangle(int canvas_x, int canvas_y)
+{
+  struct tile *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
+
+  tile_to_canvas_pos(&rec_anchor_x, &rec_anchor_y, ptile);
+  rec_anchor_x += NORMAL_TILE_WIDTH / 2;
+  rec_anchor_y += NORMAL_TILE_HEIGHT / 2;
+  /* FIXME: This may be off-by-one. */
+  rec_canvas_center_tile = get_center_tile_mapcanvas();
+  rec_w = rec_h = 0;
+}
+
+void anchor_selection_distance(int canvas_x, int canvas_y)
 {
   struct tile *ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
 
@@ -260,12 +273,91 @@ void update_selection_rectangle(int canvas_x, int canvas_y)
 }
 
 /**************************************************************************
+ Called when mouse pointer moves and rectangle is active.
+**************************************************************************/
+void update_selection_distance(int canvas_x, int canvas_y)
+{
+  const int W = NORMAL_TILE_WIDTH,    half_W = W / 2;
+  const int H = NORMAL_TILE_HEIGHT,   half_H = H / 2;
+  static struct tile *rec_tile = NULL;
+  int diff_x, diff_y;
+  struct tile *center_tile;
+  struct tile *ptile;
+
+  ptile = canvas_pos_to_nearest_tile(canvas_x, canvas_y);
+
+  /*  Did mouse pointer move beyond the current tile's
+   *  boundaries? Avoid macros; tile may be unreal!
+   */
+  if (ptile == rec_tile) {
+    return;
+  }
+  rec_tile = ptile;
+
+  /* Clear previous rectangle. */
+  dirty_all();
+  flush_dirty();
+
+  /*  Fix canvas coords to the center of the tile.
+   */
+  tile_to_canvas_pos(&canvas_x, &canvas_y, ptile);
+  canvas_x += half_W;
+  canvas_y += half_H;
+
+  rec_w = rec_anchor_x - canvas_x;  /* width */
+  rec_h = rec_anchor_y - canvas_y;  /* height */
+
+  /* FIXME: This may be off-by-one. */
+  center_tile = get_center_tile_mapcanvas();
+  map_distance_vector(&diff_x, &diff_y, center_tile, rec_canvas_center_tile);
+
+  /*  Adjust width, height if mapview has recentered.
+   */
+  if (diff_x != 0 || diff_y != 0) {
+
+    if (is_isometric) {
+      rec_w += (diff_x - diff_y) * half_W;
+      rec_h += (diff_x + diff_y) * half_H;
+
+      /* Iso wrapping */
+      if (abs(rec_w) > map.xsize * half_W / 2) {
+        int wx = map.xsize * half_W,  wy = map.xsize * half_H;
+        rec_w > 0 ? (rec_w -= wx, rec_h -= wy) : (rec_w += wx, rec_h += wy);
+      }
+
+    } else {
+      rec_w += diff_x * W;
+      rec_h += diff_y * H;
+
+      /* X wrapping */
+      if (abs(rec_w) > map.xsize * half_W) {
+        int wx = map.xsize * W;
+        rec_w > 0 ? (rec_w -= wx) : (rec_w += wx);
+      }
+    }
+  }
+
+  if (rec_w == 0 && rec_h == 0) {
+    distance_active = FALSE;
+    return;
+  }
+
+  /* It is currently drawn only to the screen, not backing store */
+  distance_active = TRUE;
+  draw_selection_distance(canvas_x, canvas_y, rec_w, rec_h);
+  rec_corner_x = canvas_x;
+  rec_corner_y = canvas_y;
+}
+
+/**************************************************************************
   Redraws the selection rectangle after a map flush.
 **************************************************************************/
 void redraw_selection_rectangle(void)
 {
   if (rectangle_active) {
     draw_selection_rectangle(rec_corner_x, rec_corner_y, rec_w, rec_h);
+  } else if (distance_active) {
+    draw_selection_distance(rec_corner_x, rec_corner_y, rec_w, rec_h);
   }
 }
 
@@ -303,10 +395,13 @@ void release_right_button(int canvas_x, int canvas_y)
   if (rectangle_active) {
     define_tiles_within_rectangle();
     update_map_canvas_visible();
+    rectangle_active = FALSE;
+  } else if (distance_active) {
+    update_map_canvas_visible();
+    distance_active = FALSE;
   } else {
     recenter_button_pressed(canvas_x, canvas_y);
   }
-  rectangle_active = FALSE;
   rbutton_down = FALSE;
 }
 

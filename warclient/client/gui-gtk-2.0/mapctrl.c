@@ -231,7 +231,7 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 **************************************************************************/
 gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
-  static int press_waited=0;//*pepeto*
+  static int press_waited=0;// *pepeto*
   struct city *pcity = NULL;
   struct tile *ptile = NULL;
 
@@ -262,14 +262,14 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
     /* <CONTROL> + LMB : Quickselect a sea unit or *pepeto*: select an unit without activation. */
     else if (ev->state & GDK_CONTROL_MASK) {
-	  if(pcity)
-      action_button_pressed(ev->x, ev->y, SELECT_SEA);
-	  else
-	  {
-		  struct unit *punit=find_visible_unit(ptile);
-		  if(punit&&punit->owner==game.player_idx)
-			 set_unit_focus(punit);
-    }
+      if(pcity) {
+        action_button_pressed(ev->x, ev->y, SELECT_SEA);
+      } else {
+	struct unit *punit = find_visible_unit(ptile);
+	if (punit && punit->owner == game.player_idx) {
+	  set_unit_focus(punit);
+        }
+      }
     }
     /* <SHIFT> + LMB: *pepeto* select unit(s if double click). */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
@@ -363,16 +363,34 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 
     /* <CONTROL> + <ALT> + RMB : insert chat link. */
     if (ptile && (ev->state & GDK_MOD1_MASK)
-             && (ev->state & GDK_CONTROL_MASK)) {
+        && (ev->state & GDK_CONTROL_MASK)) {
       insert_chat_link(ptile);
     }
     /* <SHIFT> <CONTROL> + RMB: Paste Production. */
-    else if ((ev->state & GDK_SHIFT_MASK) && (ev->state & GDK_CONTROL_MASK) && pcity) {
+    else if ((ev->state & GDK_SHIFT_MASK)
+             && (ev->state & GDK_CONTROL_MASK) && pcity)
+    {
       clipboard_paste_production(pcity);
       cancel_tile_hiliting();
     }    /* <CONTROL> + RMB : Quickselect a land unit. */
     else if (ev->state & GDK_CONTROL_MASK) {
       action_button_pressed(ev->x, ev->y, SELECT_LAND);
+    }
+    /* <ALT> + <ALT> + RMB : insert chat link. */
+    else if (ptile
+             && (ev->state & GDK_SHIFT_MASK)
+             && (ev->state & GDK_MOD1_MASK))
+    {
+      if (distance_active) {
+        release_right_button(ev->x, ev->y);
+        return TRUE;
+      }
+      if (hover_state != HOVER_RALLY_POINT)
+        cancel_tile_hiliting();
+      if (hover_state == HOVER_NONE) {
+        anchor_selection_distance(ev->x, ev->y);
+        rbutton_down = TRUE; /* causes rectangle updates */
+      }
     }
     /* <SHIFT> + RMB: Copy Production. */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
@@ -389,7 +407,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         return TRUE;
       }
       if (hover_state != HOVER_RALLY_POINT)
-      cancel_tile_hiliting();
+        cancel_tile_hiliting();
       if (hover_state == HOVER_NONE) {
         anchor_selection_rectangle(ev->x, ev->y);
         rbutton_down = TRUE; /* causes rectangle updates */
@@ -449,7 +467,16 @@ void update_rect_at_mouse_pos(void)
 gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
 {
   update_line(ev->x, ev->y);
-  update_rect_at_mouse_pos();
+  if (rbutton_down) {
+    if ((ev->state & GDK_SHIFT_MASK)
+        && (ev->state & GDK_MOD1_MASK)) {
+      int canvas_x, canvas_y;
+      gdk_window_get_pointer(map_canvas->window, &canvas_x, &canvas_y, NULL);
+      update_selection_distance(canvas_x, canvas_y);
+    } else {
+      update_rect_at_mouse_pos();
+    }
+  }
   if (keyboardless_goto_button_down && hover_state == HOVER_NONE) {
     maybe_activate_keyboardless_goto(ev->x, ev->y);
   }
