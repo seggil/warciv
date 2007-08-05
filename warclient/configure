@@ -9533,27 +9533,6 @@ fi
   fi
 fi
 
-if test -z "$localedir"; then
-  localedir="$datadir/locale"
-
-fi
-
-
-case $host_os in
-  *mingw32* ) MINGW32=yes;;
-          * ) MINGW32=no;;
-esac
-
-if test x"$MINGW32" != "xyes"; then
-  CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$localedir\\\"\""
-else
-
-cat >>confdefs.h <<_ACEOF
-#define LOCALEDIR "./share/locale"
-_ACEOF
-
-fi
-
 EXTRA_GCC_DEBUG_CFLAGS=""
 
 if test -n "$GCC"; then
@@ -9739,6 +9718,12 @@ _ACEOF
   # necessary with a working automake.
 fi
 
+
+case $host_os in
+  *mingw32* ) MINGW32=yes;;
+          * ) MINGW32=no;;
+esac
+
 if test x"$MINGW32" = "xyes"; then
 
 cat >>confdefs.h <<\_ACEOF
@@ -9766,6 +9751,16 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   LIBS="$LIBS -lwsock32"
+fi
+
+if test x"$MINGW32" != "xyes"; then
+  CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
+else
+
+cat >>confdefs.h <<_ACEOF
+#define LOCALEDIR "./share/locale"
+_ACEOF
+
 fi
 
 

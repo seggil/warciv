@@ -263,12 +263,12 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     /* <CONTROL> + LMB : Quickselect a sea unit or *pepeto*: select an unit without activation. */
     else if (ev->state & GDK_CONTROL_MASK) {
       if(pcity) {
-        action_button_pressed(ev->x, ev->y, SELECT_SEA);
+      action_button_pressed(ev->x, ev->y, SELECT_SEA);
       } else {
 	struct unit *punit = find_visible_unit(ptile);
 	if (punit && punit->owner == game.player_idx) {
 	  set_unit_focus(punit);
-        }
+    }
       }
     }
     /* <SHIFT> + LMB: *pepeto* select unit(s if double click). */
@@ -330,7 +330,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 	     update_unit_info_label(get_unit_in_focus());
 	     update_menus();
     }
-	}
+    }
     /* Plain LMB click for city triple click for units (*pepeto*). */
     else
 	{
@@ -407,7 +407,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         return TRUE;
       }
       if (hover_state != HOVER_RALLY_POINT)
-        cancel_tile_hiliting();
+      cancel_tile_hiliting();
       if (hover_state == HOVER_NONE) {
         anchor_selection_rectangle(ev->x, ev->y);
         rbutton_down = TRUE; /* causes rectangle updates */
@@ -474,7 +474,7 @@ gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
       gdk_window_get_pointer(map_canvas->window, &canvas_x, &canvas_y, NULL);
       update_selection_distance(canvas_x, canvas_y);
     } else {
-      update_rect_at_mouse_pos();
+  update_rect_at_mouse_pos();
     }
   }
   if (keyboardless_goto_button_down && hover_state == HOVER_NONE) {

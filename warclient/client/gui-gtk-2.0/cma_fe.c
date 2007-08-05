@@ -750,3 +750,4 @@ static void hscale_changed(GtkAdjustment *get, gpointer data)
     refresh_cma_dialog(pdialog->pcity, DONT_REFRESH_HSCALES);
   }
 }
+
