@@ -1623,7 +1623,8 @@ void add_link_mark(struct tile *ptile)
   hash_insert(mark_table, ptile, NULL);
   draw_link_mark(ptile);
 
-  if(get_client_state() == CLIENT_GAME_RUNNING_STATE) {
+  if(get_client_state() == CLIENT_GAME_RUNNING_STATE
+     || get_client_state() == CLIENT_GAME_OVER_STATE) {
     update_map_canvas_visible();
   }
 }
