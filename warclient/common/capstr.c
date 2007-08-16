@@ -100,8 +100,8 @@ const char * const our_capability = our_capability_internal;
  * "exttechleakage" was added to inform client of the news warserver settings,
  * and it send it the real science cost you need to get a technology.
  */
-#define CAPABILITY "+2.0 conn_ping_info username_info new_hack ReportFreezeFix "
-                   "extroutes extgameinfo exttechleakage"
+#define CAPABILITY "+2.0 conn_ping_info username_info new_hack " \
+                   "ReportFreezeFix extroutes extgameinfo exttechleakage"
 
 void init_our_capability(void)
 {
