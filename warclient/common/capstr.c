@@ -89,8 +89,19 @@ const char * const our_capability = our_capability_internal;
  *   - Avoid adding a new manditory capbility to the development branch for
  *     as long as possible.  We want to maintain network compatibility with
  *     the stable branch for as long as possible.
+ * 	 
+ * "extroutes" means the client or server supports configurable traderoute 	 
+ * parameters (e.g. trademindist, traderevenuestyle, etc.). This is 	 
+ * currently only supported by warserver 0.8.11a and above. 	 
+ * 	 
+ * "extgameinfo" was added to inform client of some warserver settings it 	 
+ * was unaware of before.
+ *
+ * "exttechleakage" was added to inform client of the news warserver settings,
+ * and it send it the real science cost you need to get a technology.
  */
-#define CAPABILITY "+2.0 conn_ping_info username_info new_hack ReportFreezeFix"
+#define CAPABILITY "+2.0 conn_ping_info username_info new_hack ReportFreezeFix "
+                   "extroutes extgameinfo exttechleakage"
 
 void init_our_capability(void)
 {
