@@ -1433,9 +1433,10 @@ static void load_player_units(struct player *plr, int plrno,
     nat_y = secfile_lookup_int(file, "player%d.u%d.y", plrno, i);
     punit->tile = native_pos_to_tile(nat_x, nat_y);
 
-    punit->foul
-      = secfile_lookup_bool_default(file, FALSE, "player%d.u%d.foul",
-				    plrno, i);
+    /* Avoid warning when loading pre-2.1 saves containing foul status */
+    secfile_lookup_bool_default(file, FALSE, "player%d.u%d.foul",
+                                plrno, i);
+
     punit->homecity = secfile_lookup_int(file, "player%d.u%d.homecity",
 					 plrno, i);
 
@@ -2630,8 +2631,6 @@ static void player_save(struct player *plr, int plrno,
     secfile_insert_int(file, punit->tile->nat_y, "player%d.u%d.y", plrno, i);
     secfile_insert_int(file, punit->veteran, "player%d.u%d.veteran", 
 				plrno, i);
-    secfile_insert_bool(file, punit->foul, "player%d.u%d.foul", 
-				plrno, i);
     secfile_insert_int(file, punit->hp, "player%d.u%d.hp", plrno, i);
     secfile_insert_int(file, punit->homecity, "player%d.u%d.homecity",
 				plrno, i);
@@ -3137,12 +3136,19 @@ void game_load(struct section_file *file)
     set_meta_patches_string(secfile_lookup_str_default(file, 
                                                 default_meta_patches_string(),
                                                 "game.metapatches"));
+    game.meta_info.user_message_set =
+      secfile_lookup_bool_default(file, FALSE, "game.user_metamessage");
+    if (game.meta_info.user_message_set) {
+      set_user_meta_message_string(secfile_lookup_str_default(file, 
+                                                default_meta_message_string(),
+                                                "game.metamessage"));
+    } else {
+      /* To avoid warnings when loading pre-2.0.10 savegames */
+      secfile_lookup_str_default(file, "", "game.metamessage");
+    }
     set_meta_topic_string(secfile_lookup_str_default(file, 
                                                 default_meta_topic_string(),
                                                 "game.metatopic"));
-    set_meta_message_string(secfile_lookup_str_default(file, 
-                                                default_meta_message_string(),
-                                                "game.metamessage"));
 
     sz_strlcpy(srvarg.metaserver_addr,
 	       secfile_lookup_str_default(file, DEFAULT_META_SERVER_ADDR,
@@ -3712,6 +3718,7 @@ void game_save(struct section_file *file)
   int version;
   char options[512];
   char temp[B_LAST+1];
+  const char *user_message;
 
   version = MAJOR_VERSION *10000 + MINOR_VERSION *100 + PATCH_VERSION; 
   secfile_insert_int(file, version, "game.version");
@@ -3725,7 +3732,12 @@ void game_save(struct section_file *file)
   
   secfile_insert_str(file, get_meta_patches_string(), "game.metapatches");
   secfile_insert_str(file, get_meta_topic_string(), "game.metatopic");
-  secfile_insert_str(file, get_meta_message_string(), "game.metamessage");
+  secfile_insert_bool(file, game.meta_info.user_message_set,
+                      "game.user_metamessage");
+  user_message = get_user_meta_message_string();
+  if (user_message != NULL) {
+    secfile_insert_str(file, user_message, "game.metamessage");
+  }
   secfile_insert_str(file, meta_addr_port(), "game.metaserver");
   
   sz_strlcpy(options, SAVEFILE_OPTIONS);

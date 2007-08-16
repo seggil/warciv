@@ -714,7 +714,6 @@ MAKE_DATA_TRUE
 MAKE_DATA_FALSE
 MAKE_CLIENT_INCLUDE_TRUE
 MAKE_CLIENT_INCLUDE_FALSE
-CVS_DEPS
 LN_S
 RANLIB
 AR
@@ -741,6 +740,7 @@ INSTOBJEXT
 GENCAT
 MKINSTALLDIRS
 INTL_LIBTOOL_SUFFIX_PREFIX
+AUTO_DEPS
 PKG_CONFIG
 GTK_CFLAGS
 GTK_LIBS
@@ -1411,7 +1411,7 @@ Optional Features:
                           (ok to disable unless you will 'make install')
   --enable-make-include   force make to recurse into include directory
                           (useful for 'make tags')
-  --disable-cvs-deps      remove cvs-source deps calcs, which require gmake,gcc
+  --disable-auto-deps     remove automatic deps calcs, which require gmake,gcc
   --disable-nls           do not use Native Language Support
   --enable-debug[=no/some/yes]  turn on debugging [default=some]
   --disable-gtktest       do not try to compile and run a test GTK+ program
@@ -4792,16 +4792,20 @@ else
 fi
 
 
-# Check whether --enable-cvs_deps was given.
-if test "${enable_cvs_deps+set}" = set; then
-  enableval=$enable_cvs_deps;
+# Check whether --enable-auto_deps was given.
+if test "${enable_auto_deps+set}" = set; then
+  enableval=$enable_auto_deps; case "${enableval}" in
+  yes) enable_auto_deps=true ;;
+  no)  enable_auto_deps=false;;
+  *)   { { echo "$as_me:$LINENO: error: bad value ${enableval} for --enable-auto-deps" >&5
+echo "$as_me: error: bad value ${enableval} for --enable-auto-deps" >&2;}
+   { (exit 1); exit 1; }; } ;;
+esac
 else
-  enable_cvs_deps="maybe"
-
+  enable_auto_deps="maybe"
 fi
 
-CVS_DEPS=$enable_cvs_deps
-
+AUTO_DEPS=$enable_auto_deps
 
 
 # Check whether --with-efence was given.
@@ -9693,13 +9697,14 @@ echo "$as_me: error: A compiler supporting C99 variable arrays is required" >&2;
   fi
 
 
-if test "$CVS_DEPS" = "maybe"; then
+if test "$AUTO_DEPS" = "maybe"; then
       if test -n "$GCC"; then
-      CVS_DEPS="yes"
+      AUTO_DEPS="yes"
    else
-      CVS_DEPS="no"
+      AUTO_DEPS="no"
    fi
 fi
+
 
 if test x`$UNAME -s` = xBeOS ; then
 
@@ -9754,7 +9759,7 @@ _ACEOF
 fi
 
 if test x"$MINGW32" != "xyes"; then
-  CPPFLAGS="$CFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
+  CPPFLAGS="$CPPFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
 else
 
 cat >>confdefs.h <<_ACEOF
@@ -22059,7 +22064,6 @@ MAKE_DATA_TRUE!$MAKE_DATA_TRUE$ac_delim
 MAKE_DATA_FALSE!$MAKE_DATA_FALSE$ac_delim
 MAKE_CLIENT_INCLUDE_TRUE!$MAKE_CLIENT_INCLUDE_TRUE$ac_delim
 MAKE_CLIENT_INCLUDE_FALSE!$MAKE_CLIENT_INCLUDE_FALSE$ac_delim
-CVS_DEPS!$CVS_DEPS$ac_delim
 LN_S!$LN_S$ac_delim
 RANLIB!$RANLIB$ac_delim
 AR!$AR$ac_delim
@@ -22086,6 +22090,7 @@ INSTOBJEXT!$INSTOBJEXT$ac_delim
 GENCAT!$GENCAT$ac_delim
 MKINSTALLDIRS!$MKINSTALLDIRS$ac_delim
 INTL_LIBTOOL_SUFFIX_PREFIX!$INTL_LIBTOOL_SUFFIX_PREFIX$ac_delim
+AUTO_DEPS!$AUTO_DEPS$ac_delim
 PKG_CONFIG!$PKG_CONFIG$ac_delim
 GTK_CFLAGS!$GTK_CFLAGS$ac_delim
 GTK_LIBS!$GTK_LIBS$ac_delim

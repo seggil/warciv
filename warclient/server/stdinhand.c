@@ -867,29 +867,6 @@ static bool metapatches_command(struct connection *caller,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool metatopic_command(struct connection *caller, char *arg,
-                              bool check)
-{
-    if (check)
-{
-    return TRUE;
-  }
-  set_meta_topic_string(arg);
-    if (is_metaserver_open())
-    {
-    send_server_info_to_metaserver(META_INFO);
-    notify_conn(NULL, _("Metaserver topic string set to '%s'."), arg);
-    }
-    else
-    {
-    notify_conn(NULL, _("Metaserver topic string set to '%s', "
-                          "not reporting to metaserver."), arg);
-  }
-    return TRUE;
-}
-/**************************************************************************
-...
-**************************************************************************/
 static bool welcome_message_command(struct connection *caller,
                                     char *arg, bool check)
 {
@@ -1114,49 +1091,79 @@ static bool welcome_file_command(struct connection *caller,
               arg, len);
     return TRUE;
 }
+
+/**************************************************************************
+...
+**************************************************************************/
+static bool metatopic_command(struct connection *caller, char *arg, bool check)
+{
+  if (check) {
+    return TRUE;
+  }
+
+  set_meta_topic_string(arg);
+  if (is_metaserver_open()) {
+    send_server_info_to_metaserver(META_INFO);
+    notify_conn(NULL, _("Metaserver topic string set to '%s'."), arg);
+  } else {
+    notify_conn(NULL, _("Metaserver topic string set to '%s', "
+                          "not reporting to metaserver."), arg);
+  }
+
+  return TRUE;
+}
+
 /**************************************************************************
 ...
 **************************************************************************/
 static bool metamessage_command(struct connection *caller, 
                                 char *arg, bool check)
 {
-    char buf[1024];
-    if (check)
-    {
+  char buf[1024];
+
+  if (check) {
     return TRUE;
   }
-    sz_strlcpy(buf, arg);
-    remove_leading_trailing_spaces(buf);
-    if (!buf || !buf[0])
+
+  sz_strlcpy(buf, arg);
+  remove_leading_trailing_spaces(buf);
+  if (!buf || !buf[0])
     {
-        cmd_reply(CMD_METAMESSAGE, caller, C_COMMENT,
-                  _("Metaserver message string is \"%s\"."),
-                  get_meta_message_string());
-        return TRUE;
+      cmd_reply(CMD_METAMESSAGE, caller, C_COMMENT,
+                   _("Metaserver message string is \"%s\"."),
+		get_meta_message_string());
+      return TRUE;
     }
-    set_meta_message_string(buf);
-    if (is_metaserver_open())
-    {
+  
+  set_user_meta_message_string(arg);
+  if (is_metaserver_open()) {
     send_server_info_to_metaserver(META_INFO);
+    notify_conn(NULL, _("Metaserver message string set to '%s'."), arg);
+  } else {
+    notify_conn(NULL, _("Metaserver message string set to '%s', "
+			"not reporting to metaserver."), arg);
   }
-    if (caller)
+
+  if (caller)
     {
-        cmd_reply(CMD_METAMESSAGE, caller, C_OK,
-                  _("%s sets the metaserver message string "
-                    "to '%s'%s."), caller->username, buf,
-                  is_metaserver_open()? ""
-                  : _(" (not reporting to metaserver)"));
+      cmd_reply(CMD_METAMESSAGE, caller, C_OK,
+		_("%s sets the metaserver message string "
+		  "to '%s'%s."), caller->username, buf,
+		is_metaserver_open()? ""
+		: _(" (not reporting to metaserver)"));
     }
-    else
+  else
     {
-        cmd_reply(CMD_METAMESSAGE, caller, C_OK,
-                  _("Metaserver message string set "
-                    "to '%s'%s."),
-                  buf, is_metaserver_open()? ""
-                  : _(" (not reporting to metaserver)"));
+      cmd_reply(CMD_METAMESSAGE, caller, C_OK,
+		_("Metaserver message string set "
+		  "to '%s'%s."),
+		buf, is_metaserver_open()? ""
+		: _(" (not reporting to metaserver)"));
     }
+  
   return TRUE;
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1313,24 +1320,25 @@ void toggle_ai_player_direct(struct connection *caller,
     cancel_all_meetings(pplayer);
     /* The following is sometimes necessary to avoid using
        uninitialized data... */
-    if (server_state == RUN_GAME_STATE)
+    if (server_state == RUN_GAME_STATE) {
       assess_danger_player(pplayer);
     }
-    else
-    {
+    /* In case this was last player who has not pressed turn done. */
+    check_for_full_turn_done();
+  } else {
     cmd_reply(CMD_AITOGGLE, caller, C_OK,
 	      _("%s is now under human control."), pplayer->name);
+
     /* because the hard AI `cheats' with government rates but humans shouldn't */
-        if (!game.is_new_game)
-        {
+    if (!game.is_new_game) {
       check_player_government_rates(pplayer);
     }
     /* Remove hidden dialogs from clients. This way the player can initiate
      * new meeting */
     cancel_all_meetings(pplayer);
   }
-    if (server_state == RUN_GAME_STATE)
-    {
+
+  if (server_state == RUN_GAME_STATE) {
     send_player_info(pplayer, NULL);
     gamelog(GAMELOG_PLAYER, pplayer);
   }

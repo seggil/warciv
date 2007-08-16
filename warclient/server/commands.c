@@ -199,7 +199,11 @@ const struct command commands[] = {
   {"metamessage", ALLOW_BASIC, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("metainfo <meta-line>"),
-   N_("Set metaserver info line."), NULL,
+   N_("Set metaserver info line."),
+   N_("Set user defined metaserver info line. If parameter is omitted,\n"
+      "previously set metamessage will be removed. For most of the time\n"
+      "user defined metamessage will be used instead of automatically\n"
+      "generated messages, if it is available."),
    ECHO_ADMINS
   },
   {"metatopic", ALLOW_BASIC, ALLOW_BASIC,
@@ -228,7 +232,7 @@ const struct command commands[] = {
    /* TRANS: translate text between <> only */
    N_("metaserver <address>"),
    N_("Set address (URL) for metaserver to report to."), NULL,
-   ECHO_ADMINS
+    ECHO_ADMINS
   },
   {"aitoggle",	ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
