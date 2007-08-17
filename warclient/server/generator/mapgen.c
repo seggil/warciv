@@ -3046,7 +3046,7 @@ struct gen8_map *create_fair_island(int size, bool startpos)
     tile = myrand(size);
     tx = x[tile];
     ty = y[tile];
-    if (temp->tiles[tx][ty].river
+    if (temp->tiles[tx][ty].river || temp->tiles[tx][ty].terrain == T_OCEAN
        || !(temp->tiles[tx-1][ty].terrain == T_OCEAN
             || temp->tiles[tx+1][ty].terrain == T_OCEAN
             || temp->tiles[tx][ty-1].terrain == T_OCEAN
@@ -3079,7 +3079,7 @@ struct gen8_map *create_fair_island(int size, bool startpos)
           ny--;
           break;
       }
-      if (temp->tiles[nx][ny].river
+      if (temp->tiles[nx][ny].river || temp->tiles[nx][ny].terrain == T_OCEAN
          || temp->tiles[nx-1][ny].terrain == T_OCEAN
          || temp->tiles[nx+1][ny].terrain == T_OCEAN
          || temp->tiles[nx][ny-1].terrain == T_OCEAN
