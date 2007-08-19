@@ -378,6 +378,13 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
     return FALSE;
   }
 
+  if (ev->keyval == GDK_Tab) {
+    if (!GTK_WIDGET_HAS_FOCUS(inputline)) {
+      gtk_widget_grab_focus(inputline);
+    }
+    return TRUE;
+  }
+
   if (ev->keyval == GDK_Page_Up) {
     g_signal_emit_by_name(main_message_area, "move_cursor",
 			  GTK_MOVEMENT_PAGES, -1, FALSE);
@@ -1947,4 +1954,3 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
-
