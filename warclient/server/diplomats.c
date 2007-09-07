@@ -421,7 +421,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
     notify_player_ex(pplayer, pdiplomat->tile,
 		     E_MY_DIPLOMAT_FAILED,
 		     _("Game: You don't have enough gold to"
-		       " bribe unit(s)."));
+		       " bribe unit(s). Cost is %d Gold"), total_cost);
     freelog (LOG_DEBUG, "bribe-unit: not enough gold");
     return;
   }
@@ -771,7 +771,8 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   if (pplayer->economic.gold < revolt_cost) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
 		     _("Game: You don't have enough gold to"
-		       " subvert %s."), pcity->name);
+		       " subvert %s. Cost is %d Gold"), pcity->name,
+		     revolt_cost);
     freelog(LOG_DEBUG, "incite: not enough gold");
     return;
   }
