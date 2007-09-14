@@ -751,9 +751,11 @@ static void aslcfree(void *data)
 	    ctx, ctx->req_id);
     hash_delete_entry(async_server_list_request_table,
 		      INT_TO_PTR(ctx->req_id));
+    ctx->req_id = -1;
   }
   freelog(LOG_DEBUG, "free async_server_list_context %p", ctx);
-  free(ctx);
+  /* is free(ctx); usefull here?
+   * Don't make it here to don't crash at the next net input callback */
 }
 
 /**************************************************************************
