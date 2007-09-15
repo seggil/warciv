@@ -4,6 +4,7 @@ Update to 13590 is done in way to have a client 2.0 compatible and not 2.0.10!
 see : 
 warclient/common/capstr.c: CAPABILITY
 warclient/common/packets.h: ATTRIBUTE_CHUNK_SIZE
+warclient/version.in:FREECIV_VERSION_INFO
 
 Previous revisions :
 13342
