@@ -4521,14 +4521,16 @@ bool load_command(struct connection *caller, char *filename, bool check)
   /* We make a local copy because the parameter might be a pointer to 
    * srvarg.load_filename, which we edit down below. */
   sz_strlcpy(arg, filename);
-    if (!arg || arg[0] == '\0')
-    {
+
+  if (!arg || arg[0] == '\0') 
+  {
     cmd_reply(CMD_LOAD, caller, C_FAIL, _("Usage: load <filename>"));
     send_load_game_info(FALSE);
     return FALSE;
   }
-    if (server_state != PRE_GAME_STATE)
-    {
+
+  if (server_state != PRE_GAME_STATE) 
+  {
     cmd_reply(CMD_LOAD, caller, C_FAIL, _("Can't load a game while another "
                                           "is running."));
     send_load_game_info(FALSE);

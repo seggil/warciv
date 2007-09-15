@@ -1666,6 +1666,7 @@ void srv_main(void)
     server_open_meta(); /* open socket for meta server */ 
   }
 
+  maybe_automatic_meta_message(default_meta_message_string());
   (void) send_server_info_to_metaserver(META_INFO);
 
   /* accept new players, wait for serverop to start..*/
@@ -1952,8 +1953,11 @@ main_start_players:
 /**************************************************************************
  ...
 **************************************************************************/
-void server_game_free()
+void server_game_free(void)
 {
+  /* Free all the treaties that were left open when game finished. */
+  free_treaties();
+
   players_iterate(pplayer) {
     player_map_free(pplayer);
   } players_iterate_end;

@@ -1954,3 +1954,4 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
+

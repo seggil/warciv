@@ -844,7 +844,9 @@ static void update_unit_activity(struct unit *punit)
     break; /* nothing */
 
   case OLC_LAND_TO_OCEAN:
-    unit_list_iterate(ptile->units, punit2) {
+    unit_list_iterate_safe(ptile->units, punit2) {
+      bool unit_alive = TRUE;
+
       if (is_ground_unit(punit2)) {
 	/* look for nearby land */
 	adjc_iterate(punit->tile, ptile2) {
@@ -860,19 +862,20 @@ static void update_unit_activity(struct unit *punit)
 			     punit2->tile, E_UNIT_RELOCATED,
 			     _("Game: Moved your %s due to changing"
 			       " land to sea."), unit_name(punit2->type));
-	    (void) move_unit(punit2, ptile2, 0);
-	    if (punit2->activity == ACTIVITY_SENTRY)
+	    unit_alive = move_unit(punit2, ptile2, 0);
+	    if (unit_alive && punit2->activity == ACTIVITY_SENTRY) {
 	      handle_unit_activity_request(punit2, ACTIVITY_IDLE);
+            }
 	    goto START;
 	  }
 	} adjc_iterate_end;
-	/* look for nearby transport */
-	adjc_iterate(punit->tile, ptile2) {
-	  if (is_ocean(ptile2->terrain)
-	      && ground_unit_transporter_capacity(ptile2,
-						  unit_owner(punit2)) > 0) {
-	    if (get_transporter_capacity(punit2) > 0)
-	      sentry_transported_idle_units(punit2);
+        /* look for nearby transport */
+        adjc_iterate(punit->tile, ptile2) {
+          if (is_ocean(ptile2->terrain)
+              && ground_unit_transporter_capacity(ptile2,
+                                                  unit_owner(punit2)) > 0) {
+            if (get_transporter_capacity(punit2) > 0)
+              sentry_transported_idle_units(punit2);
 	    freelog(LOG_VERBOSE,
 		    "Embarked %s's %s due to changing land to sea at (%d, %d).",
 		    unit_owner(punit2)->name, unit_name(punit2->type),
@@ -881,9 +884,10 @@ static void update_unit_activity(struct unit *punit)
 			     punit2->tile, E_UNIT_RELOCATED,
 			     _("Game: Embarked your %s due to changing"
 			       " land to sea."), unit_name(punit2->type));
-	    (void) move_unit(punit2, ptile2, 0);
-	    if (punit2->activity == ACTIVITY_SENTRY)
+	    unit_alive = move_unit(punit2, ptile2, 0);
+	    if (unit_alive && punit2->activity == ACTIVITY_SENTRY) {
 	      handle_unit_activity_request(punit2, ACTIVITY_IDLE);
+            }
 	    goto START;
 	  }
 	} adjc_iterate_end;
@@ -899,10 +903,12 @@ static void update_unit_activity(struct unit *punit)
 	wipe_unit_spec_safe(punit2, FALSE);
 	goto START;
       }
-    } unit_list_iterate_end;
+    } unit_list_iterate_safe_end;
     break;
   case OLC_OCEAN_TO_LAND:
-    unit_list_iterate(ptile->units, punit2) {
+    unit_list_iterate_safe(ptile->units, punit2) {
+      bool unit_alive = TRUE;
+
       if (is_sailing_unit(punit2)) {
 	/* look for nearby water */
 	adjc_iterate(punit->tile, ptile2) {
@@ -918,9 +924,10 @@ static void update_unit_activity(struct unit *punit)
 			     punit2->tile, E_UNIT_RELOCATED,
 			     _("Game: Moved your %s due to changing"
 			       " sea to land."), unit_name(punit2->type));
-	    (void) move_unit(punit2, ptile2, 0);
-	    if (punit2->activity == ACTIVITY_SENTRY)
+	    unit_alive = move_unit(punit2, ptile2, 0);
+	    if (unit_alive && punit2->activity == ACTIVITY_SENTRY) {
 	      handle_unit_activity_request(punit2, ACTIVITY_IDLE);
+            }
 	    goto START;
 	  }
 	} adjc_iterate_end;
@@ -938,9 +945,10 @@ static void update_unit_activity(struct unit *punit)
 			     punit2->tile, E_UNIT_RELOCATED,
 			     _("Game: Docked your %s due to changing"
 			       " sea to land."), unit_name(punit2->type));
-	    (void) move_unit(punit2, ptile2, 0);
-	    if (punit2->activity == ACTIVITY_SENTRY)
+	    unit_alive = move_unit(punit2, ptile2, 0);
+	    if (unit_alive && punit2->activity == ACTIVITY_SENTRY) {
 	      handle_unit_activity_request(punit2, ACTIVITY_IDLE);
+            }
 	    goto START;
 	  }
 	} adjc_iterate_end;
@@ -956,7 +964,7 @@ static void update_unit_activity(struct unit *punit)
 	wipe_unit_spec_safe(punit2, FALSE);
 	goto START;
       }
-    } unit_list_iterate_end;
+    } unit_list_iterate_safe_end;
     break;
   }
 }
@@ -2667,6 +2675,8 @@ static void check_unit_activity(struct unit *punit)
   the transported_by unit field correctly. take_from_land is only relevant 
   if you have set transport_units. Note that the src and dest need not be 
   adjacent.
+
+  Returns TRUE iff unit still alive.
 **************************************************************************/
 bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
 {

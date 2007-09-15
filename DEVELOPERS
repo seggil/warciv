@@ -1,6 +1,12 @@
-Freeciv 2.0 from svn revision 13342
+Freeciv 2.0 from svn revision 13590
+
+Update to 13590 is done in way to have a client 2.0 compatible and not 2.0.10!
+see : 
+warclient/common/capstr.c: CAPABILITY
+warclient/common/packets.h: ATTRIBUTE_CHUNK_SIZE
 
 Previous revisions :
+13342
 13137
 13086
 13054
