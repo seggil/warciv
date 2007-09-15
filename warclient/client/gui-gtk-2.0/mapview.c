@@ -1230,6 +1230,10 @@ void draw_selection_distance(int canvas_x, int canvas_y, int w, int h)
   pango_layout_get_pixel_extents(layout, &rect, NULL);
 
   gdk_draw_layout(map_canvas->window, civ_gc, canvas_x, canvas_y, layout);
+
+  g_object_unref(layout);
+  g_object_unref(context);
+
   distance_active = TRUE;
 }
 

@@ -677,7 +677,6 @@ void transfer_city_units(struct player *pplayer, struct player *pvictim,
          * after that. Not sure if it is correct to unlink at all in
          * some cases, depending which list 'units' points to. */
 	transfer_unit(vunit, pcity, verbose);
-        wipe_unit(vunit);
 	unit_list_unlink(units, vunit);
         wipe_unit(vunit);
       } else if (!pplayers_allied(pplayer, unit_owner(vunit))) {
