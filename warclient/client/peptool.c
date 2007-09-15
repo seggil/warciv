@@ -1228,7 +1228,7 @@ void save_all_settings(void)
 
 void autosave_settings(void)
 {
-	if(!save_turns||client_is_observer())
+	if(!save_turns||client_is_observer()||!game.player_ptr)
 		return;
 
 	turns++;

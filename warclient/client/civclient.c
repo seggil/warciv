@@ -576,7 +576,7 @@ void set_client_state(enum client_states newstate)
       set_client_page(PAGE_GAME);
 //*pepeto*
       init_all_settings();
-      if(!client_is_observer()) {
+      if(!client_is_observer() && game.player_ptr) {
         if(reload_pepsettings)
           load_all_settings();
         if(game.turn == 0)
