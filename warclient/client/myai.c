@@ -17,6 +17,7 @@
 #include "city.h"
 #include "combat.h"
 #include "fcintl.h"
+#include "genlist.h"
 #include "log.h"
 #include "map.h"
 #include "mem.h"
@@ -46,6 +47,14 @@ struct trade_conf
 	int free_slots;
 	int turns;
 	int moves;
+};
+
+struct toggle_worker
+{
+	struct city *pcity;
+	struct tile *ptile;
+        int x, y;
+        bool was_used;
 };
 
 static automatic_processus *my_ai_auto_execute;//main automatic processus id for my_ai
@@ -123,6 +132,11 @@ int calculate_best_move_trade_cost(struct trade_route *ptr);
 struct trade_route *can_establish_new_trade_route(struct unit *punit,struct city *pc1,struct city *pc2);
 struct trade_route *best_city_trade_route(struct unit *punit,struct city *pcity);
 struct trade_route *trade_route_list_find_cities(struct trade_route_list *ptrl,struct city *pc1,struct city *pc2);
+struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y);
+struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, int x, int y);
+void toggle_worker_free(struct toggle_worker *ptw);
+struct genlist *apply_trade(struct city *pcity, struct genlist *pother);
+void release_trade(struct genlist *ptcity);
 
 struct trade_route *trade_route_new(struct unit *punit,struct city *pc1,struct city *pc2,bool planned)
 {
@@ -401,6 +415,164 @@ struct trade_route *best_city_trade_route(struct unit *punit,struct city *pcity)
 	return btr;
 }
 
+struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y)
+{
+  struct city *pcity;
+
+  square_iterate(pcenter_tile, CITY_MAP_RADIUS + 1, ptile) {
+    if ((pcity = map_get_city(ptile))
+        && pcity->owner == game.player_idx
+        && map_to_city_map(x, y, pcity, pcenter_tile)
+        && pcity->city_map[*x][*y] == C_TILE_WORKER) {
+      return pcity;
+    }
+  } square_iterate_end;
+
+  return NULL;
+}
+
+struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, int x, int y)
+{
+  struct toggle_worker *ptw = fc_malloc(sizeof(struct toggle_worker));
+
+  ptw->pcity = pcity;
+  ptw->ptile = ptile;
+  ptw->x = x;
+  ptw->y = y;
+  ptw->was_used = pcity->city_map[x][y] == C_TILE_WORKER;
+
+  freelog(LOG_VERBOSE, "Apply: Toggling tile (%d, %d) to %s for %s",
+          TILE_XY(ptile), ptw->was_used ? "specialist" : "worker", pcity->name);
+
+  if (ptw->was_used) {
+    dsend_packet_city_make_specialist(&aconnection, pcity->id, x, y);
+  } else {
+    dsend_packet_city_make_worker(&aconnection, pcity->id, x, y);
+  }
+
+  return ptw;
+}
+
+void toggle_worker_free(struct toggle_worker *ptw)
+{
+  freelog(LOG_VERBOSE, "Release: Toggling tile (%d, %d) to %s for %s",
+          TILE_XY(ptw->ptile), ptw->was_used ? "worker" : "specialist", ptw->pcity->name);
+
+  if (ptw->was_used) {
+    dsend_packet_city_make_worker(&aconnection, ptw->pcity->id, ptw->x, ptw->y);
+  } else {
+    dsend_packet_city_make_specialist(&aconnection, ptw->pcity->id, ptw->x, ptw->y);
+  }
+
+  free(ptw);
+}
+
+/* Choose the best trade tiles for the city. */
+struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
+{
+  if (pcity->owner != game.player_idx) {
+    return NULL;
+  }
+
+  struct genlist *ptcity = fc_malloc(sizeof(struct genlist));
+  size_t size = 0, min = MIN(pcity->size, CITY_TILES);
+  struct tile *tiles[CITY_TILES];
+  int i, j, x[CITY_TILES], y[CITY_TILES], t[CITY_TILES], trade;
+
+  genlist_init(ptcity);
+  /* Check first the best tiles, ignoring the ones which are not available. */
+  city_map_checked_iterate(pcity->tile, cx, cy, ptile) {
+    if (ptile == pcity->tile) {
+      continue;
+    }
+
+    trade = get_tile_type(ptile->terrain)->trade;
+    for (i = 0; i < size; i++) {
+      if (trade > t[i]) {
+        break;
+      }
+    }
+    assert(i < CITY_TILES);
+    for (j = size; j > i; j--) {
+      tiles[j] = tiles[j - 1];
+      x[j] = x[j - 1];
+      y[j] = y[j - 1];
+      t[j] = t[j - 1];
+    }
+    tiles[i] = ptile;
+    x[i] = cx;
+    y[i] = cy;
+    t[i] = trade;
+    size++;
+    assert(size <= CITY_TILES);
+  } city_map_checked_iterate_end;
+
+  /* Remove of the list the tiles already used for an another city. */
+  if (pother) {
+    struct genlist_link *myiter = ptcity->head_link;
+    struct toggle_worker *potw;
+    for (; ITERATOR_PTR(myiter);) {
+      potw = (struct toggle_worker *)ITERATOR_PTR(myiter);
+      for (i = 0; i < size; i++) {
+        if (tiles[i] == potw->ptile) {
+          tiles[i] = NULL;
+        }
+      }
+    }
+  }
+
+  /* Try to steal tiles from neighbor cities. */
+  for (i = 0, j = 0; i < size && j < min; i++) {
+    if (!tiles[i]) {
+      continue;
+    }
+
+    if (pcity->city_map[x[i]][y[i]] == C_TILE_UNAVAILABLE) {
+      int cx, cy;
+      struct city *pother_city = get_city_user(tiles[i], &cx, &cy);
+
+      if (pother_city != NULL) {
+        genlist_insert(ptcity, (void *)toggle_worker_new(pother_city, tiles[i], cx, cy), 0);
+        j++;
+      } else {
+        tiles[i] = NULL;
+      }
+    } else {
+      j++;
+    }
+  }
+  /* Finish the iteration */
+  for (; i < size; i++) {
+    if (tiles[i] && pcity->city_map[x[i]][y[i]] == C_TILE_WORKER) {
+      genlist_insert(ptcity, (void *)toggle_worker_new(pcity, tiles[i], x[i], y[i]), 0);
+    }
+    tiles[i] = NULL;
+  }
+
+  /* Take the best tiles */
+  for (i = 0; i < size; i++) {
+    if (tiles[i] && pcity->city_map[x[i]][y[i]] != C_TILE_WORKER) {
+      genlist_insert(ptcity, (void *)toggle_worker_new(pcity, tiles[i], x[i], y[i]), 0);
+    }
+  }
+
+  return ptcity;
+}
+
+void release_trade(struct genlist *ptcity)
+{
+  if (!ptcity) {
+    return;
+  }
+
+  struct toggle_worker *ptw;
+  while ((ptw = (struct toggle_worker *)genlist_get(ptcity, 0))) {
+    genlist_unlink(ptcity, ptw);
+    toggle_worker_free(ptw);
+  }
+  free(ptcity);
+}
+
 void my_ai_trade_route_alloc(struct trade_route *ptr)
 {
         char buf[1024];
@@ -516,7 +688,15 @@ void my_ai_trade_route_execute(struct unit *punit)
 		goto_and_request((&cunit),ptr->pc2->tile)
 		{
 			char buf[256];
+                        struct genlist *city1, *city2;
+
+                        connection_do_buffer(&aconnection);
+                        city1 = apply_trade(ptr->pc1, NULL);
+                        city2 = apply_trade(ptr->pc2, city1);
 			dsend_packet_unit_establish_trade(&aconnection,punit->id);
+                        release_trade(city2);
+                        release_trade(city1);
+                        connection_do_unbuffer(&aconnection);
 			my_snprintf(buf,sizeof(buf),_("PepClient: %s establishing trade route between %s and %s"),unit_name(punit->type),ptr->pc1->name,ptr->pc2->name);
 			append_output_window(buf);
 		}
