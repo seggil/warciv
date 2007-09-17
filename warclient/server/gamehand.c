@@ -59,6 +59,7 @@ int repeat = 0;
 /****************************************************************************
   prototypes
 ****************************************************************************/
+int calculate_team_distance(struct tile *ptile1, struct tile *ptile2);
 int calculate_score(int *start_pos);
 void swap_int(int *a, int *b);
 void shuffle_start_positions_by_iter(int *start_pos);
@@ -69,7 +70,6 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos);
 void calculate_team_mapping(void);
 int get_team_mapping(Team_Type_id team);
 void shuffle_start_positions(int *start_pos);
-
 
 /****************************************************************************
   Initialize the game.id variable to a random string of characters.
@@ -170,34 +170,48 @@ static void place_starting_unit(struct tile *ptile, struct player *pplayer,
 }
 
 /****************************************************************************
+  Calculate the distance relative to the team placement type.
+****************************************************************************/
+int calculate_team_distance(struct tile *ptile1, struct tile *ptile2)
+{
+  int dx, dy;
+
+  map_distance_vector(&dx, &dy, ptile1, ptile2);
+  switch (game.teamplacementtype) {
+    case 1:
+      if (map_get_continent(ptile1) != map_get_continent(ptile2)) {
+        return NATIVE_WIDTH + NATIVE_HEIGHT
+               + map_vector_to_real_distance(dx, dy);
+      }
+      /* break not missing here */
+    case 0:
+      return map_vector_to_real_distance(dx, dy);
+    case 2:
+      return abs(dy);
+    case 3:
+      return abs(dx);
+    default:
+      break;
+  }
+
+  freelog(LOG_ERROR, "Unkown team placement type.");
+  abort();
+
+  return -1;
+}
+
+/****************************************************************************
    Calculate score for the best starting positions with regard to teams
 ****************************************************************************/
 int calculate_score(int *start_pos)//if nobody is on team, score is 0
 {
     int score = 0;
-    int x, y, dx, dy;
+    int x, y;
     for (x = 0; x < game.nplayers; x++ ) {
         for (y = x + 1; y < game.nplayers; y++ ) {
             if(start_pos[x] == start_pos[y]) {
-                map_distance_vector(&dx, &dy, map.start_positions[x].tile, map.start_positions[y].tile);
-                switch(game.teamplacementtype) {
-                  case 1:
-                    if(map_get_continent(map.start_positions[x].tile) != map_get_continent(map.start_positions[y].tile)) {
-                      score += NATIVE_WIDTH + NATIVE_HEIGHT;
-                    }
-                    //break is not missing here!
-                  case 0:
-                    score += real_map_distance(map.start_positions[x].tile,map.start_positions[y].tile);
-                    break;
-                  case 2:
-                    score += dy;
-                    break;
-                  case 3:
-                    score += dx;
-                    break;
-                  default:
-                    ;
-                }
+                score += calculate_team_distance(map.start_positions[x].tile,
+                                                 map.start_positions[y].tile);
             }
         }
     }
@@ -278,30 +292,13 @@ void shuffle_start_positions_by_iter(int *start_pos)
 ****************************************************************************/
 int calculate_delta_score(int *start_pos, int depth)//if nobody is in team, score is 0
 {
-    int score = 0, dx, dy;
+    int score = 0;
     static int x;
     assert(start_pos != NULL && depth >= 0 && depth < MAX_NUM_PLAYERS);
     for (x = 0; x < depth; x++) {
         if(start_pos[x] == start_pos[depth]) {//then they are on the same team
-                map_distance_vector(&dx, &dy, map.start_positions[x].tile, map.start_positions[depth].tile);
-                switch(game.teamplacementtype) {
-                  case 1:
-                    if(map_get_continent(map.start_positions[x].tile) != map_get_continent(map.start_positions[depth].tile)) {
-                      score += NATIVE_WIDTH + NATIVE_HEIGHT;
-                    }
-                    //break is not missing here!
-                  case 0:
-                    score += real_map_distance(map.start_positions[x].tile,map.start_positions[depth].tile);
-                    break;
-                  case 2:
-                    score += dy;
-                    break;
-                  case 3:
-                    score += dx;
-                    break;
-                  default:
-                    ;
-                }
+            score += calculate_team_distance(map.start_positions[x].tile,
+                                             map.start_positions[depth].tile);
         }
     }
     return score;
