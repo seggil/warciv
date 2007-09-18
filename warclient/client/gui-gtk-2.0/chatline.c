@@ -957,6 +957,11 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
   } while (0)
 
 
+  MK_TAG_PATTERN ("game start", "All players are ready",
+                  TPF_MATCH_AT_START, "", "#00FF00", "#115511");
+  MK_TAG_PATTERN ("", "Game: All players are ready",
+                  TPF_MATCH_AT_START, "", "#00FF00", "#115511");
+
   MK_TAG_PATTERN ("server prompt", "(server prompt):",
                   TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                   "", "#FF0000", "#BEBEBE");
@@ -969,6 +974,12 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
   MK_TAG_PATTERN ("option message", "Option:",
                   TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                   "", "#8B0000", "");
+  MK_TAG_PATTERN("Warclient message", "Warclient:",
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#0000FF", "");
+  MK_TAG_PATTERN("PepClient message", "PepClient:",
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#0000FF", "");
 
   MK_TAG_PATTERN ("commands", "/", TPF_MATCH_AT_START, "", "#006400", "");
   
@@ -979,7 +990,8 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
                   "", "#A020F0", "");
   MK_TAG_PATTERN ("private message sent", "->*", TPF_MATCH_AT_START,
                   "", "#A020F0", "");
-                
+  MK_TAG_PATTERN("private message sent 2", "->[", TPF_MATCH_AT_START,
+                 "", "#A020F0", "");
 
   MK_TAG_PATTERN ("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
                   | TPF_NEGATE, "", "", "");
@@ -1040,9 +1052,6 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
   MK_TAG_PATTERN ("vote failed", " failed ",
                   TPF_REQUIRE_PREVIOUS_MATCH | TPF_STOP_IF_MATCHED,
                   "", "#8B0000", "#FFAAAA");
-
-  MK_TAG_PATTERN ("game start", "All players are ready",
-                  TPF_MATCH_AT_START, "", "#00FF00", "#115511");
 
   MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY
                   | TPF_MATCH_AT_START, "", "", "");
