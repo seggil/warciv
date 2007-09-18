@@ -421,7 +421,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
     notify_player_ex(pplayer, pdiplomat->tile,
 		     E_MY_DIPLOMAT_FAILED,
 		     _("Game: You don't have enough gold to"
-		       " bribe unit(s). Cost is %d Gold"), total_cost);
+		       " bribe unit(s). Cost was %d gold."), total_cost);
     freelog (LOG_DEBUG, "bribe-unit: not enough gold");
     return;
   }
@@ -485,11 +485,12 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
   if (vet) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_BRIBE,
 		     _("Game: Your %s succeeded in bribing unit(s)"
-		        " and became more experienced."),
-		     unit_name(pdiplomat->type));
+		        " and became more experienced. Cost was %d gold."),
+		     unit_name(pdiplomat->type), total_cost);
   } else {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_BRIBE,
-		     _("Game: Your %s succeeded in bribing unit(s)."),unit_name(pdiplomat->type));
+		     _("Game: Your %s succeeded in bribing unit(s)."
+		       "Cost was %d gold." ), unit_name(pdiplomat->type), total_cost);
   }
 
   /* Now, try to move the briber onto the victim's square. */
@@ -771,7 +772,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   if (pplayer->economic.gold < revolt_cost) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
 		     _("Game: You don't have enough gold to"
-		       " subvert %s. Cost is %d Gold"), pcity->name,
+		       " subvert %s. Cost was %d gold."), pcity->name,
 		     revolt_cost);
     freelog(LOG_DEBUG, "incite: not enough gold");
     return;
@@ -821,8 +822,8 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   gamelog(GAMELOG_LOSECITY, cplayer, pplayer, pcity, "incited to revolt");
 
   notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_INCITE,
-		   _("Game: Revolt incited in %s, you now rule the city!"),
-		   pcity->name);
+		   _("Game: Revolt incited in %s, you now rule the city! "
+                   "Cost was %d gold."), pcity->name, revolt_cost);
   notify_player_ex(cplayer, pcity->tile, E_ENEMY_DIPLOMAT_INCITE,
 		   _("Game: %s has revolted, %s influence suspected."),
 		   pcity->name, get_nation_name(pplayer->nation));
