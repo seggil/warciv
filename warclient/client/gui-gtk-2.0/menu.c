@@ -1531,7 +1531,11 @@ static void multi_selection_menu_callback(gpointer callback_data,
       update_menus();
       break;
     case MENU_MULTI_SELECTION_MY_AI_SPREAD:
-      my_ai_spread_execute();
+      if (tiles_hilited_cities) {
+        key_select_rally_point();
+      } else {
+        my_ai_spread_execute();
+      }
       break;
     case MENU_MULTI_SELECTION_MY_AI_SPREAD_AIRPORT:
       if(spread_airport_cities^GTK_CHECK_MENU_ITEM(widget)->active)
@@ -1618,7 +1622,11 @@ static void miscellaneous_menu_callback(gpointer callback_data,
       key_toggle_moveandattack();
   	break;
    case MENU_MISCELLANEOUS_SET_RALLIES:
-        key_select_rally_point();
+        if (tiles_hilited_cities) {
+          key_select_rally_point();
+        } else {
+          my_ai_spread_execute();
+        }
         break;
    case MENU_MISCELLANEOUS_CLEAR_RALLIES:
         key_clear_rally_point_for_selected_cities();
