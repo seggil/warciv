@@ -76,6 +76,7 @@ struct pepsetting
 extern struct pepsetting *pepsettings;
 
 extern bool auto_load;
+extern bool save_pepsettings_on_exit;
 extern bool my_ai_enable;
 
 extern bool multi_select_count_all;
@@ -110,6 +111,8 @@ extern int my_ai_defend_city_power_req;
 #define DEFAULT_SAVE_TURNS 3
 #define MIN_SAVE_TURNS 0
 #define MAX_SAVE_TURNS 10
+
+#define DEFAULT_SAVE_ON_EXIT TRUE
 
 #define DEFAULT_ERRORS_MAX 20
 #define MIN_ERRORS_MAX 0

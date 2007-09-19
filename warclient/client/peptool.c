@@ -292,6 +292,7 @@ static int load_pepsettings_mode;
 static int save_turns;
 static int errors_max;
 
+bool save_pepsettings_on_exit;
 bool my_ai_enable;
 
 bool multi_select_count_all;
@@ -328,6 +329,7 @@ static struct pepsetting static_pepsettings[]=
 		"5: Dynamic and static settings \n6: Dynamic settings and automatic execution values\n7: All"),LOAD_PEPSETTINGS_MODE),
 	PSGEN_INT(PAGE_PMAIN,errors_max,N_("Maximum warning before aborting load"),N_("0: Unlimited"),ERRORS_MAX),
 	PSGEN_INT(PAGE_PMAIN,save_turns,N_("Save settings all the x turns"),N_("0: Disable"),SAVE_TURNS),
+	PSGEN_BOOL(PAGE_PMAIN,save_pepsettings_on_exit,N_("Save settings on server exit"),SAVE_ON_EXIT),
 	PSGEN_BOOL(PAGE_PMAIN,my_ai_enable,N_("Enable automatics orders"),MY_AI_ENABLE),
 	PSGEN_BOOL(PAGE_PMAIN,autowakeup_state,N_("Autowakeup sentried units"),AUTOWAKEUP),
 	PSGEN_BOOL(PAGE_PMAIN,moveandattack_state,N_("Move and attack mode"),MOVEATTACK),

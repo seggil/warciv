@@ -591,6 +591,10 @@ void set_client_state(enum client_states newstate)
       set_unit_focus(NULL);
       clear_notify_window();
       if (oldstate != CLIENT_BOOT_STATE) {
+        if (!client_is_observer() && game.player_ptr
+            && save_pepsettings_on_exit) {
+          save_all_settings();
+        }
 	client_game_free();
       }
       client_game_init();
