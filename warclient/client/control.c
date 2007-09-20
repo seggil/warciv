@@ -1685,8 +1685,6 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 			canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
 			width, height);
       overview_update_tile(ptile);
-    } else {
-      refresh_tile_mapcanvas(ptile, FALSE);
     }
 
     if (do_animation) {
@@ -1699,10 +1697,11 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
       move_unit_map_canvas(punit, ptile, dx, dy);
     }
   }
-    
+
   punit->tile = target_unit->tile;
 
   unit_list_insert(&punit->tile->units, punit);
+  refresh_tile_mapcanvas(ptile, FALSE);
 
   if (punit_focus == punit) update_menus();
 }

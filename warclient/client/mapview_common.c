@@ -1617,7 +1617,7 @@ void update_map_canvas(int canvas_x, int canvas_y, int width, int height)
   /* Draw trade route lines. */
   draw_traderoutes();
 
-  draw_link_marks();
+  draw_all_link_marks();
 
   /* Draw the goto lines on top of the whole thing. This is done last as
    * we want it completely on top.

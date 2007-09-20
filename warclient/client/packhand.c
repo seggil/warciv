@@ -888,8 +888,6 @@ void handle_new_year(int year, int turn)
   }
 
   agents_new_turn();
-
-  decrease_link_mark_ttl();
 }
 
 /**************************************************************************
@@ -910,6 +908,8 @@ void handle_before_new_year(void)
   agents_before_new_turn();
   autosave_settings();
   actived_unit_remove_all();
+
+  decrease_link_mark_turn_counters();
 }
 
 /**************************************************************************
@@ -3121,4 +3121,3 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
-

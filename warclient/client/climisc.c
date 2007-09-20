@@ -81,7 +81,21 @@ struct autoname_data {
   int continent_city_number;
 };
 
-static struct hash_table *mark_table = NULL;
+struct map_link {
+  enum tag_link_types type;
+  int id, turns;
+};
+
+#define SPECLIST_TAG map_link
+#define SPECLIST_TYPE struct map_link
+#include "speclist.h"
+#define map_link_list_iterate(pml) \
+  TYPED_LIST_ITERATE(struct map_link, link_marks, pml)
+#define map_link_list_iterate_end LIST_ITERATE_END
+
+static struct map_link_list link_marks;
+
+static void draw_link_mark(struct map_link *pml);
 
 struct tile *ltile = NULL;
 int ltilex, ltiley;
@@ -1567,151 +1581,200 @@ int buy_production_in_selected_cities (void)
   return 1;
 }
 
-/**************************************************************************
-...
-**************************************************************************/
-static void check_init_mark_table(void)
+/********************************************************************** 
+  Init.
+***********************************************************************/
+void link_marks_init(void)
 {
-  if (mark_table)
-    return;
-  mark_table = hash_new(hash_fval_keyval, hash_fcmp_keyval);
+  map_link_list_init(&link_marks);
 }
 
-/**************************************************************************
-...
-**************************************************************************/
-void clear_link_marks(void)
+/********************************************************************** 
+  Find a link mark in the list.
+***********************************************************************/
+static struct map_link *find_link_mark(enum tag_link_types type, int id)
 {
-  check_init_mark_table();
-  
-  hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
-    assert(ptile);
-    ptile->client.mark_ttl = 0;
-  } hash_iterate_end;
+  map_link_list_iterate(pml) {
+    if (pml->type == type && pml->id == id) {
+      return pml;
+    }
+  } map_link_list_iterate_end;
 
-  hash_delete_all_entries(mark_table);
+  return NULL;
+}
 
-  if(get_client_state() == CLIENT_GAME_RUNNING_STATE) {
-    update_map_canvas_visible();
+/********************************************************************** 
+  Create a new link mark.
+***********************************************************************/
+static struct map_link *map_link_new(enum tag_link_types type, int id)
+{
+  struct map_link *pml = fc_malloc(sizeof(struct map_link));
+
+  pml->type = type;
+  pml->id = id;
+  map_link_list_append(&link_marks, pml);
+
+  return pml;
+}
+
+/********************************************************************** 
+  Remove a link mark.
+***********************************************************************/
+static void map_link_remove(struct map_link *pml)
+{
+  map_link_list_unlink(&link_marks, pml);
+  free(pml);
+}
+
+/********************************************************************** 
+  Clear all visible links.
+***********************************************************************/
+void clear_all_link_marks(void)
+{
+  map_link_list_iterate(pml) {
+    map_link_remove(pml);
+  } map_link_list_iterate_end;
+
+  update_map_canvas_visible();
+}
+
+/********************************************************************** 
+  Decrease the link marks turn counter.
+***********************************************************************/
+void decrease_link_mark_turn_counters(void)
+{
+  map_link_list_iterate(pml) {
+    pml->turns--;
+    if (pml->turns <= 0) {
+      map_link_remove(pml);
+    }
+  } map_link_list_iterate_end;
+}
+
+/********************************************************************** 
+  Returns the location of the pointed mark.
+***********************************************************************/
+static struct tile *get_link_mark_tile(struct map_link *pml)
+{
+  switch (pml->type) {
+    case LINK_LOCATION:
+      return index_to_tile(pml->id);
+    case LINK_CITY:
+    case LINK_CITY_ID:
+    case LINK_CITY_ID_AND_NAME:
+    {
+      struct city *pcity = find_city_by_id(pml->id);
+      return pcity ? pcity->tile : NULL;
+    }
+    case LINK_UNIT:
+    {
+      struct unit *punit = find_unit_by_id(pml->id);
+      return punit ? punit->tile : NULL;
+    }
+  }
+  return NULL;
+}
+
+/********************************************************************** 
+  Returns the color of the pointed mark.
+***********************************************************************/
+static enum color_std get_link_mark_color(struct map_link *pml)
+{
+  switch (pml->type) {
+    case LINK_LOCATION:
+      return COLOR_STD_RED;
+    case LINK_CITY:
+    case LINK_CITY_ID:
+    case LINK_CITY_ID_AND_NAME:
+      return COLOR_STD_GREEN;
+    case LINK_UNIT:
+      return COLOR_STD_OCEAN;
+  }
+  return COLOR_STD_BLACK;
+}
+
+/********************************************************************** 
+  Add a visible link.
+***********************************************************************/
+void add_link_mark(enum tag_link_types type, int id)
+{
+  struct map_link *pml = find_link_mark(type, id);
+  struct tile *ptile;
+
+  if (!pml) {
+    pml = map_link_new(type, id);
+  }
+  pml->turns = 2;
+
+  ptile = get_link_mark_tile(pml);
+  if (ptile && tile_visible_mapcanvas(ptile)) {
+    refresh_tile_mapcanvas(ptile, FALSE);
   }
 }
 
-/**************************************************************************
-  ...
-**************************************************************************/
-void decrease_link_mark_ttl(void)
+/********************************************************************** 
+  Add a visible link for 1 turn.
+***********************************************************************/
+void restore_link_mark(enum tag_link_types type, int id)
 {
-  check_init_mark_table();
+  if (find_link_mark(type, id)) {
+    return;
+  }
 
-  hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
-    assert(ptile);
-    if (--ptile->client.mark_ttl <= 0)
-      hash_delete_entry(mark_table, ptile);
-  } hash_iterate_end;
-}
+  struct map_link *pml;
+  struct tile *ptile;
 
-/**************************************************************************
-  ...
-**************************************************************************/
-void add_link_mark(struct tile *ptile)
-{
-  check_init_mark_table();
+  pml = map_link_new(type, id);
+  pml->turns = 1;
 
-  assert(ptile != NULL);
-
-  ptile->client.mark_ttl = 2;
-  hash_insert(mark_table, ptile, NULL);
-  draw_link_mark(ptile);
-
-  if(get_client_state() == CLIENT_GAME_RUNNING_STATE
-     || get_client_state() == CLIENT_GAME_OVER_STATE) {
-    update_map_canvas_visible();
+  ptile = get_link_mark_tile(pml);
+  if (ptile && tile_visible_mapcanvas(ptile)) {
+    refresh_tile_mapcanvas(ptile, FALSE);
   }
 }
 
-/**************************************************************************
-  ...
-**************************************************************************/
-void draw_link_mark(struct tile *ptile)
+/********************************************************************** 
+  Print a link mark.
+***********************************************************************/
+static void draw_link_mark(struct map_link *pml)
 {
-  int canvas_x, canvas_y, xlen, ylen;
-  if (!tile_visible_mapcanvas(ptile))
+  int xd = NORMAL_TILE_WIDTH / 20, yd = NORMAL_TILE_HEIGHT / 20;
+  int xlen = NORMAL_TILE_WIDTH / 3, ylen = NORMAL_TILE_HEIGHT / 3;
+  int canvas_x, canvas_y, x0, x1, y0, y1;
+  struct tile *ptile = get_link_mark_tile(pml);
+  enum color_std color = get_link_mark_color(pml);
+
+  if (!ptile || !tile_visible_mapcanvas(ptile)) {
     return;
-    
+  }
   tile_to_canvas_pos(&canvas_x, &canvas_y, ptile);
 
-#if 0
-  canvas_put_sprite_full(mapview_canvas.store, canvas_x, canvas_y,
-                         sprites.user.attention);
+  x0 = canvas_x + xd;
+  x1 = canvas_x + NORMAL_TILE_WIDTH - xd;
+  y0 = canvas_y + yd;
+  y1 = canvas_y + NORMAL_TILE_HEIGHT - yd;
+
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y0, xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y0, 0, ylen);
   
-  canvas_x += NORMAL_TILE_WIDTH / 2;
-  canvas_y += NORMAL_TILE_HEIGHT / 2;
-  canvas_put_rectangle(mapview_canvas.store, COLOR_STD_YELLOW,
-                       canvas_x-2, canvas_y-2, 4, 4);
-#endif
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y0, -xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y0, 0, ylen);
   
-  xlen = NORMAL_TILE_WIDTH / 3;
-  ylen = NORMAL_TILE_HEIGHT / 3;
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y1, xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y1, 0, -ylen);
   
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x,
-                  canvas_y,
-                  xlen, 0);
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x,
-                  canvas_y,
-                  0, ylen);
-  
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x + NORMAL_TILE_WIDTH,
-                  canvas_y,
-                  -xlen, 0);
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x + NORMAL_TILE_WIDTH,
-                  canvas_y,
-                  0, ylen);
-  
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x,
-                  canvas_y + NORMAL_TILE_HEIGHT,
-                  xlen, 0);
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x,
-                  canvas_y + NORMAL_TILE_HEIGHT,
-                  0, -ylen);
-  
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x + NORMAL_TILE_WIDTH,
-                  canvas_y + NORMAL_TILE_HEIGHT,
-                  -xlen, 0);
-  canvas_put_line(mapview_canvas.store, COLOR_STD_RED,
-                  LINE_TILE_FRAME,
-                  canvas_x + NORMAL_TILE_WIDTH,
-                  canvas_y + NORMAL_TILE_HEIGHT,
-                  0, -ylen);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y1, -xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y1, 0, -ylen);
 }
 
-/**************************************************************************
-  ...
-**************************************************************************/
-void draw_link_marks(void)
+/********************************************************************** 
+  Draw all link marks.
+***********************************************************************/
+void draw_all_link_marks(void)
 {
-  check_init_mark_table();
-  hash_iterate(mark_table, struct tile *, ptile, void *, dummy) {
-    assert(ptile);
-    if (ptile->client.mark_ttl <= 0) {
-      hash_delete_entry(mark_table, ptile);
-      continue;
-    }
-    draw_link_mark(ptile);
-  } hash_iterate_end;
+  map_link_list_iterate(pml) {
+    draw_link_mark(pml);
+  } map_link_list_iterate_end;
 }
 
 /**************************************************************************

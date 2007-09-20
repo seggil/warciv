@@ -361,10 +361,11 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 
   case 3: /* RIGHT mouse button */
 
-    /* <CONTROL> + <ALT> + RMB : insert chat link. */
+    /* <CONTROL> + <ALT> + RMB : insert city or tile chat link. */
+    /* <CONTROL> + <ALT> + <SHIFT> + RMB : insert unit chat link. */
     if (ptile && (ev->state & GDK_MOD1_MASK)
         && (ev->state & GDK_CONTROL_MASK)) {
-      insert_chat_link(ptile);
+      insert_chat_link(ptile, (ev->state & GDK_SHIFT_MASK) != 0);
     }
     /* <SHIFT> <CONTROL> + RMB: Paste Production. */
     else if ((ev->state & GDK_SHIFT_MASK)

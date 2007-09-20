@@ -33,6 +33,7 @@
 #include "civclient.h"
 #include "climisc.h"
 #include "clinet.h"
+#include "control.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "options.h"
@@ -92,13 +93,6 @@ static void put_tag_pattern_into_store (GtkListStore *store,
                                         GtkTreeIter *iter,
                                         struct tag_pattern *ptagpat);
 
-enum tag_link_types {
-  LINK_LOCATION = 1,
-  LINK_CITY,
-  LINK_CITY_ID,
-  LINK_CITY_ID_AND_NAME,
-};
-
 static gboolean hovering_over_link = FALSE;
 static GdkCursor *hand_cursor = NULL;
 static GdkCursor *regular_cursor = NULL;
@@ -153,10 +147,29 @@ static int insert_location_link(char *buf, int buflen, struct tile *ptile)
 /**************************************************************************
   ...
 **************************************************************************/
-void insert_chat_link(struct tile *ptile)
+static int insert_unit_link(char *buf, int buflen, struct unit *punit)
+{
+  assert (punit != NULL);
+
+  return my_snprintf(buf, buflen, "@U%d\"%s\"",
+                     punit->id, unit_name_orig(punit->type));
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void insert_chat_link(struct tile *ptile, bool unit)
 {
   char buf[256];
-  if (ptile->city) {
+
+  if (unit) {
+    struct unit *punit = find_visible_unit(ptile);
+    if (!punit) {
+      append_output_window(_("Warclient: No visible unit on this tile."));
+      return;
+    }
+    insert_unit_link(buf, sizeof(buf), punit);
+  } else if (ptile->city) {
     insert_city_name_and_id_link(buf, sizeof(buf), ptile);
   } else {
     insert_location_link(buf, sizeof(buf), ptile);
@@ -234,9 +247,9 @@ follow_if_link (GtkWidget   *text_view,
   gint link_type;
   int x, y, id;
   char buf[128];
-  const char *city_name;
   struct city *pcity;
-  struct tile *ptile = NULL;
+  struct tile *ptile;
+  struct unit *punit;
 
   tags = gtk_text_iter_get_tags (iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
@@ -247,20 +260,11 @@ follow_if_link (GtkWidget   *text_view,
 
     link_type = GPOINTER_TO_INT (data);
 
+    id = -1;
+    ptile = NULL;
+
     switch (link_type) {
     case LINK_CITY:
-      data = g_object_get_data (G_OBJECT (tag), "city_name");
-      city_name = (const char *) data;
-      pcity = find_city_by_name_fast (city_name);
-      if (!pcity) {
-        my_snprintf (buf, sizeof (buf), _("Warclient: \"%s\" is not the name "
-            "of any city I know about :("), city_name);
-        append_output_window (buf);
-      } else {
-        ptile = pcity->tile;
-      }
-      break;
-
     case LINK_CITY_ID:
     case LINK_CITY_ID_AND_NAME:
       data = g_object_get_data (G_OBJECT (tag), "city_id");
@@ -270,9 +274,9 @@ follow_if_link (GtkWidget   *text_view,
         my_snprintf (buf, sizeof (buf), _("Warclient: %d is not the ID "
             "of any city I know about :("), id);
         append_output_window (buf);
-      } else {
-        ptile = pcity->tile;
+        continue;
       }
+      ptile = pcity->tile;
       break;
 
     case LINK_LOCATION: 
@@ -283,17 +287,33 @@ follow_if_link (GtkWidget   *text_view,
         my_snprintf (buf, sizeof (buf), _("Warclient: (%d, %d) is not a valid "
             "location on this map!"), x, y);
         append_output_window (buf);
+        continue;
       }
+      id = ptile->index;
+      break;
+
+    case LINK_UNIT:
+      data = g_object_get_data (G_OBJECT (tag), "unit_id");
+      id = GPOINTER_TO_INT (data);
+      punit = find_unit_by_id (id);
+      if (!punit) {
+        my_snprintf (buf, sizeof (buf), _("Warclient: %d is not the ID "
+            "of any unit I know about :("), id);
+        append_output_window (buf);
+        continue;
+      }
+      ptile = punit->tile;
       break;
 
     default:
       break;
     }
-    if (ptile) {
-      add_link_mark(ptile);
-      center_tile_mapcanvas (ptile);
-      gtk_widget_grab_focus (GTK_WIDGET (map_canvas));
-    }
+
+    assert(id >= 0 && ptile != NULL);
+
+    restore_link_mark(link_type, id);
+    center_tile_mapcanvas (ptile);
+    gtk_widget_grab_focus (GTK_WIDGET (map_canvas));
   }
 
   if (tags) 
@@ -456,7 +476,6 @@ static int parse_city_id_and_name_link (const char *str,
   char *q, idbuf[32];
   int id;
   struct city *pcity;
-  struct tile *ptile;
   
   if (*p != '@' || p[1] != 'F')
     return 0;
@@ -494,17 +513,15 @@ static int parse_city_id_and_name_link (const char *str,
     return 0;
   
   *tag = gtk_text_buffer_create_tag (buf, NULL,
-                                     "foreground", "blue",
+                                     "foreground", "green",
                                      "underline", PANGO_UNDERLINE_SINGLE,
                                      NULL);
   g_object_set_data (G_OBJECT (*tag), "link_type",
-                     GINT_TO_POINTER (LINK_CITY_ID));
+                     GINT_TO_POINTER (LINK_CITY));
   g_object_set_data (G_OBJECT (*tag), "city_id",
                      GINT_TO_POINTER (id)); 
 
-  if ((ptile = pcity->tile)) {
-    add_link_mark(ptile);
-  }
+  add_link_mark(LINK_CITY, id);
 
   my_snprintf (newtext, newtext_maxlen, "%s", pcity->name);
   
@@ -523,7 +540,6 @@ static int parse_city_id_link (const char *str,
   char *q, idbuf[32];
   int id;
   struct city *pcity;
-  struct tile *ptile;
   
   if (*p != '@' || p[1] != 'I')
     return 0;
@@ -545,17 +561,15 @@ static int parse_city_id_link (const char *str,
     return 0;
   
   *tag = gtk_text_buffer_create_tag (buf, NULL,
-                                     "foreground", "blue",
+                                     "foreground", "green",
                                      "underline", PANGO_UNDERLINE_SINGLE,
                                      NULL);
   g_object_set_data (G_OBJECT (*tag), "link_type",
-                     GINT_TO_POINTER (LINK_CITY_ID));
+                     GINT_TO_POINTER (LINK_CITY));
   g_object_set_data (G_OBJECT (*tag), "city_id",
                      GINT_TO_POINTER (id)); 
 
-  if ((ptile = pcity->tile)) {
-    add_link_mark(ptile);
-  }
+  add_link_mark(LINK_CITY, id);
 
   my_snprintf (newtext, newtext_maxlen, "%s", pcity->name);
   
@@ -573,7 +587,6 @@ static int parse_city_link (const char *str,
   const char *p = str;
   char city_name[MAX_LEN_NAME], *q;
   struct city *pcity;
-  struct tile *ptile;
   
   if (*p != '@' || p[1] != 'C' || p[2] != '"')
     return 0;
@@ -591,17 +604,15 @@ static int parse_city_link (const char *str,
     return 0;
   
   *tag = gtk_text_buffer_create_tag (buf, NULL,
-                                     "foreground", "blue",
+                                     "foreground", "green",
                                      "underline", PANGO_UNDERLINE_SINGLE,
                                      NULL);
   g_object_set_data (G_OBJECT (*tag), "link_type",
                      GINT_TO_POINTER (LINK_CITY));
-  g_object_set_data (G_OBJECT (*tag), "city_name",
-                     mystrdup (city_name)); 
-  
-  if ((ptile = pcity->tile)) {
-    add_link_mark(ptile);
-  }
+  g_object_set_data (G_OBJECT (*tag), "city_id",
+                     GINT_TO_POINTER (pcity->id)); 
+
+  add_link_mark(LINK_CITY, pcity->id);
 
   my_snprintf (newtext, newtext_maxlen, "%s", city_name);
   
@@ -618,7 +629,6 @@ static int parse_location_link (const char *str,
 {
   const char *p;
   int x, y;
-  struct tile *ptile;
   
   if (2 != sscanf (str, "@L%d,%d", &x, &y))
     return 0;
@@ -628,7 +638,7 @@ static int parse_location_link (const char *str,
     p++;
   
   *tag = gtk_text_buffer_create_tag (buf, NULL,
-                                     "foreground", "blue",
+                                     "foreground", "red",
                                      "underline", PANGO_UNDERLINE_SINGLE,
                                      NULL);
   g_object_set_data (G_OBJECT (*tag), "link_type",
@@ -637,10 +647,72 @@ static int parse_location_link (const char *str,
   g_object_set_data (G_OBJECT (*tag), "y", GINT_TO_POINTER (y));
 
   my_snprintf (newtext, newtext_maxlen, "(%d, %d)", x, y);
-  
-  if ((ptile = map_pos_to_tile(x, y))) {
-    add_link_mark(ptile);
+
+  add_link_mark(LINK_LOCATION, map_pos_to_index(x, y));
+
+  return (int) (p - str);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static int parse_unit_link (const char *str, 
+                            GtkTextBuffer *buf,
+                            GtkTextTag **tag,
+                            char *newtext,
+                            int newtext_maxlen)
+{
+  const char *p = str;
+  char *q, idbuf[32];
+  int id;
+  struct unit *punit;
+
+  if (*p != '@' || p[1] != 'U')
+    return 0;
+  p += 2;
+  q = idbuf;
+  while (*p && my_isdigit (*p)) {
+    if (q >= idbuf + sizeof (idbuf))
+      return 0;
+    *q++ = *p++;
   }
+  *q = 0;
+
+  if (*p != '"')
+    return 0;
+  while (*p) {
+    if (*p == '\\') {
+      p++;
+      if (!*p)
+        break;
+    }
+    p++;
+    if (*p == '"')
+      break;
+  }
+
+  if (*p++ != '"')
+    return 0;
+
+  id = atoi (idbuf);
+  if (id < 0)
+    return 0;
+
+  punit = find_unit_by_id (id);
+  if (!punit)
+    return 0;
+
+  *tag = gtk_text_buffer_create_tag (buf, NULL,
+                                     "foreground", "blue",
+                                     "underline", PANGO_UNDERLINE_SINGLE,
+                                     NULL);
+  g_object_set_data (G_OBJECT (*tag), "link_type",
+                     GINT_TO_POINTER (LINK_UNIT));
+  g_object_set_data (G_OBJECT (*tag), "unit_id",
+                     GINT_TO_POINTER (id)); 
+
+  add_link_mark(LINK_UNIT, id);
+
+  my_snprintf (newtext, newtext_maxlen, "%s", unit_name(punit->type));
   
   return (int) (p - str);
 }
@@ -672,6 +744,9 @@ static void append_text_with_links (GtkTextBuffer *buf,
       break;
     case 'F':
       n = parse_city_id_and_name_link (q, buf, &tag, newtext, sizeof (newtext));
+      break;
+    case 'U':
+      n = parse_unit_link (q, buf, &tag, newtext, sizeof (newtext));
       break;
     default:
       n = 0;

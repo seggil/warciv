@@ -23,6 +23,14 @@ struct Clause;
 typedef int cid;
 typedef int wid;
 
+enum tag_link_types {
+  LINK_LOCATION = 1,
+  LINK_CITY,
+  LINK_CITY_ID,
+  LINK_CITY_ID_AND_NAME,
+  LINK_UNIT
+};
+
 void client_remove_player(int plrno);
 void client_remove_city(struct city *pcity);
 void client_remove_unit(struct unit *punit);
@@ -132,11 +140,13 @@ void city_autonaming_add_used_name (const char *city_name);
 void city_autonaming_remove_used_name (const char *city_name);
 void normalize_names_in_selected_cities (void);
 
-void clear_link_marks(void);
-void decrease_link_mark_ttl(void);
-void add_link_mark(struct tile *ptile);
-void draw_link_marks(void);
-void draw_link_mark(struct tile *ptile);
+void link_marks_init(void);
+void link_marks_free(void);
+void clear_all_link_marks(void);
+void decrease_link_mark_turn_counters(void);
+void draw_all_link_marks(void);
+void add_link_mark(enum tag_link_types type, int id);
+void restore_link_mark(enum tag_link_types type, int id);
 
 void set_default_user_tech_goal(void);
 void force_tech_goal(Tech_Type_id goal);
