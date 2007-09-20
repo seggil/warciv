@@ -1741,7 +1741,8 @@ void check_rally_points(struct city *pcity, struct unit *punit)
   if (!pcity || !pcity->rally_point || !punit || !punit->is_new)
     return;
 
-   send_goto_unit(punit,pcity->rally_point);
+  send_goto_unit(punit,pcity->rally_point);
+  pcity->rally_point = NULL; /* Clear it */
 }
 /**************************************************************************
  *pepeto*
