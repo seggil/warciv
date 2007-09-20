@@ -869,7 +869,6 @@ void handle_new_year(int year, int turn)
   auto_center_on_focus_unit();
 
   update_unit_info_label(get_unit_in_focus());
-  pep_airlift_menu_set_sensitive();
   update_menus();
 
   seconds_to_turndone=game.timeout;
@@ -909,7 +908,6 @@ void handle_before_new_year(void)
   agents_before_new_turn();
   autosave_settings();
   actived_unit_remove_all();
-
   decrease_link_mark_turn_counters();
 }
 
@@ -927,6 +925,7 @@ void handle_start_turn(void)
   if(game.player_ptr->ai.control && !ai_manual_turn_done) {
     user_ended_turn();
   }
+  pep_airlift_menu_set_sensitive();
 }
 
 /**************************************************************************
