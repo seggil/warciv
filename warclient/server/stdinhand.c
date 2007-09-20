@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
@@ -2265,18 +2266,45 @@ static bool autoteam_command(struct connection *caller, char *str,
         player_ordered[pplayer->player_no] = TRUE;
         no++;
     }
-    players_iterate(pplayer1)
-    {
-        assert(0 <= pplayer1->player_no);
-        assert(pplayer1->player_no < MAX_NUM_PLAYERS);
-        if (player_ordered[pplayer1->player_no])
-            continue;
-        player_ordering[i++] = pplayer1;
-        no++;
-    }
-    players_iterate_end;
+    
     if (check)
         return TRUE;
+
+    /* check other players */
+    t = 0;
+    players_iterate(pplayer) {
+      assert(0 <= pplayer->player_no);
+      assert(pplayer->player_no < MAX_NUM_PLAYERS);
+  
+      if (!player_ordered[pplayer->player_no]) {
+        t++;
+      }
+    }  players_iterate_end;
+  
+    /* assign them in a random order */
+    if (!myrand_is_init()) {
+      mysrand(time(NULL));
+    }
+  
+    for (; t > 0; t--) {
+      i = myrand(t);
+      players_iterate(pplayer) {
+        if (player_ordered[pplayer->player_no]) {
+          continue;
+        }
+        
+        if (i == 0) {
+          player_ordering[no] = pplayer;
+          player_ordered[pplayer->player_no] = TRUE;
+          no++;
+          break;
+        } else {
+          i--;
+        }
+      } players_iterate_end;
+    }
+
+    /* make teams, using ABCCBAABC... order */
     if (n > 0)
     {
         notify_conn(&game.est_connections,
@@ -7227,4 +7255,3 @@ bool sset_is_changeable(int idx)
     return FALSE;
   }
 }
-
