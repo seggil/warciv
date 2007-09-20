@@ -3997,11 +3997,9 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     players_iterate_end;
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE; /* do this before attach! */
-    if (pconn->access_level < ALLOW_ADMIN)
-    {	/* Only connections below admin get demoted */
-        pconn->previous_access_level = pconn->access_level;
-        pconn->access_level = ALLOW_OBSERVER;
-    }
+  if (pconn->access_level == ALLOW_BASIC) {
+    pconn->access_level = ALLOW_OBSERVER;
+  }
   attach_connection_to_player(pconn, pplayer);
   send_conn_info(&pconn->self, &game.est_connections);
     if (server_state == RUN_GAME_STATE)
@@ -4121,10 +4119,9 @@ static bool take_command(struct connection *caller, char *str, bool check)
     {
     goto end;
   }
-    if (pconn->observer && pconn->access_level == ALLOW_OBSERVER)
-    {
-        pconn->access_level = pconn->previous_access_level;
-    }
+  if (pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
+    pconn->access_level = pconn->granted_access_level;
+  }
   /* if we want to switch players, reset the client if the game is running */
     if (pconn->player && server_state == RUN_GAME_STATE)
     {
@@ -4282,11 +4279,10 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     send_player_info_c(NULL, &pconn->self);
     send_conn_info(&game.est_connections, &pconn->self);
   }
-    /* Restore previous priviledges*/
-    if (pconn->observer && pconn->access_level == ALLOW_OBSERVER)
-    {
-        pconn->access_level = pconn->previous_access_level;
-    }
+  /* Restore previous priviledges*/
+  if (pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
+    pconn->access_level = pconn->granted_access_level;
+  }
   /* actually do the detaching */
   unattach_connection_from_player(pconn);
   send_conn_info(&pconn->self, &game.est_connections);

@@ -639,7 +639,7 @@ void connection_common_init(struct connection *pconn)
   pconn->buffer = new_socket_packet_buffer();
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
-  pconn->previous_access_level = ALLOW_NONE;
+  pconn->access_level = pconn->granted_access_level = ALLOW_NONE;
   if (is_server) {
     pconn->server.ignore_list = fc_malloc(sizeof(struct ignore_list));
     ignore_list_init(pconn->server.ignore_list);

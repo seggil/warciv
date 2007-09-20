@@ -158,29 +158,30 @@ void grant_access_level(struct connection *pconn)
   int action = find_action_for_connection(NULL, pconn, -1);
   switch (action) {
   case ACTION_GIVE_NONE:
-    pconn->access_level = ALLOW_NONE;
+    pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
     break;
   case ACTION_GIVE_OBSERVER:
-    pconn->access_level = ALLOW_OBSERVER;
+    pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
     break;
   case ACTION_GIVE_BASIC:
-    pconn->access_level = ALLOW_BASIC;
+    pconn->granted_access_level = pconn->access_level = ALLOW_BASIC;
     break;
   case ACTION_GIVE_CTRL:
-    pconn->access_level = ALLOW_CTRL;
+    pconn->granted_access_level = pconn->access_level = ALLOW_CTRL;
     break;
   case ACTION_GIVE_ADMIN:
-    pconn->access_level = ALLOW_ADMIN;
+    pconn->granted_access_level = pconn->access_level = ALLOW_ADMIN;
     break;
   case ACTION_GIVE_HACK:
-    pconn->access_level = ALLOW_HACK;
+    pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
     break;
   default:
+    pconn->granted_access_level = pconn->access_level; /* Use the default in sernet.c */
     break;
   }
 
   if(pconn->access_level > ALLOW_OBSERVER && !can_control_a_player(pconn, FALSE)) {
-    pconn->access_level = ALLOW_OBSERVER;
+    pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
   }
 }
 

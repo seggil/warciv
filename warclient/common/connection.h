@@ -172,7 +172,7 @@ struct connection {
    * corresponding to this connection.
    */
   enum cmdlevel_id access_level;
-  enum cmdlevel_id previous_access_level;/* access level before we started observing*/
+  enum cmdlevel_id granted_access_level; /* access level granted by the action list */
 
   /* 
    * Something has occurred that means the connection should be
