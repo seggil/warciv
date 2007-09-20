@@ -3675,7 +3675,7 @@ void update_menus(void)
     menus_set_sensitive("<main>/_View/City G_rowth", draw_city_names);
     menus_set_sensitive("<main>/_View/Coastline", !draw_terrain);
     menus_set_sensitive("<main>/_View/Focus Unit", !draw_units);
-    cond=(my_ai_trade_city_list_size(my_ai_get_trade_cities()));
+    cond=(city_list_size(my_ai_get_trade_cities()));
     menus_set_sensitive("<main>/Auto Caravan/Clear city list for trade plan", cond);
     menus_set_sensitive("<main>/Auto Caravan/Show cities in trade plan", cond);
     menus_set_sensitive("<main>/Auto Caravan/Show the trade route free slots", cond);

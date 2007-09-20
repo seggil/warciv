@@ -1131,15 +1131,15 @@ void save_all_settings(void)
 		secfile_insert_bool(&sf,ptr->planned,"dynamic.trade_route.unit%d.planned",i);
 		i++;
 	} unit_list_iterate_end;
-	struct my_ai_trade_city_list *ptcl=my_ai_get_trade_cities();
-	secfile_insert_int_comment(&sf,my_ai_trade_city_list_size(ptcl),_("don't modify this !"),"dynamic.trade_cities.city_num");
+	struct city_list *ptcl=my_ai_get_trade_cities();
+	secfile_insert_int_comment(&sf,city_list_size(ptcl),_("don't modify this !"),"dynamic.trade_cities.city_num");
 	i=0;
-	my_ai_trade_city_list_iterate(*ptcl,ptc)
+	city_list_iterate(*ptcl,pcity)
 	{
 		my_snprintf(buf,sizeof(buf),"dynamic.trade_cities.city%d",i);
-		save_city(&sf,buf,ptc->pcity);
+		save_city(&sf,buf,pcity);
 		i++;
-	} my_ai_trade_city_list_iterate_end;
+	} city_list_iterate_end;
 	struct trade_route_list *ptrl=my_ai_trade_plan_get();
 	secfile_insert_int_comment(&sf,trade_route_list_size(ptrl),_("don't modify this !"),"dynamic.trade_plan.tr_num");
 	i=0;

@@ -15,24 +15,6 @@
 
 #define MAX_ESTIMATED_TURNS	32
 
-struct my_ai_trade_city;
-
-#define SPECLIST_TAG my_ai_trade_city
-#define SPECLIST_TYPE struct my_ai_trade_city
-#define SPECLIST_NO_FREE
-#define SPECLIST_NO_COPY
-#include "speclist.h"
-#define my_ai_trade_city_list_iterate(alist,pitem)	\
-	TYPED_LIST_ITERATE(struct my_ai_trade_city,alist,pitem)
-#define my_ai_trade_city_list_iterate_end LIST_ITERATE_END
-
-struct my_ai_trade_city
-{
-	struct city *pcity;
-	int free_slots;
-	struct my_ai_trade_city_list trade_with;
-};
-
 /* main functions */
 int my_ai_count_activity(enum my_ai_activity activity);
 const char *my_ai_unit_activity(struct unit *punit);
@@ -67,7 +49,7 @@ int estimate_non_ai_trade_route_number(struct city *pcity);
 void non_ai_trade_change(struct unit *punit,int action);
 int count_trade_routes(struct city *pcity);
 struct trade_route_list *my_ai_trade_plan_get(void);
-struct my_ai_trade_city_list *my_ai_get_trade_cities(void);
+struct city_list *my_ai_get_trade_cities(void);
 
 void my_ai_add_trade_city(struct city *pcity,bool multi);
 void show_cities_in_trade_plan(void);

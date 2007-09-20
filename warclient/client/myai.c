@@ -42,11 +42,18 @@
 	send_goto_unit_and_calculate_moves_left(punit,ptile);	\
 	if(punit->virtual_moves_left>=0)
 
-struct trade_conf
+struct trade_city {
+  struct city *pcity;                /* The pointed city */
+  int free_slots;                    /* Number of free slots */
+  int trade_routes_num;              /* Number of city it can trade with */
+  struct trade_route **trade_routes; /* A list of possible trade routes */
+};
+
+struct trade_configuration
 {
-	int free_slots;
-	int turns;
-	int moves;
+  int free_slots; /* the total number of free slots */
+  int turns;      /* the total number of required turns for a caravan */
+  int moves;      /* the total number of required moves for a caravan */
 };
 
 struct toggle_worker
@@ -62,7 +69,7 @@ static automatic_processus *my_ai_trade_auto_execute;
 static automatic_processus *my_ai_wonder_auto_execute;
 static automatic_processus *my_ai_patrol_auto_execute;
 
-static struct my_ai_trade_city_list trade_cities;
+static struct city_list trade_cities;
 static struct trade_route_list trade_plan;
 static struct trade_route_list non_ai_trade;
 static struct unit_list noners;
@@ -70,7 +77,6 @@ static struct unit_list traders;
 static struct unit_list helpers;
 static struct unit_list patrolers;
 static struct unit_list temp;
-static struct unit *caravan=NULL;
 static bool my_ai_update=FALSE;
 
 static const char *my_ai_activities[]={"Automatic orders","Auto trade route","Auto help wonder","Patrolling"};
@@ -415,6 +421,16 @@ struct trade_route *best_city_trade_route(struct unit *punit,struct city *pcity)
 	return btr;
 }
 
+struct trade_route *trade_route_list_find_cities(struct trade_route_list *ptrl,struct city *pc1,struct city *pc2)
+{
+	trade_route_list_iterate(*ptrl,ptr)
+	{
+		if((ptr->pc1==pc1&&ptr->pc2==pc2)||(ptr->pc1==pc2&&ptr->pc2==pc1))
+			return ptr;
+	} trade_route_list_iterate_end;
+	return NULL;
+}
+
 struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y)
 {
   struct city *pcity;
@@ -748,276 +764,321 @@ void my_ai_trade_route_free(struct unit *punit)
 }
 
 /* trade planning */
-static int my_ai_trade_city_sort_id(const void *pc1,const void *pc2);
-struct my_ai_trade_city *my_ai_trade_city_list_find_city(struct my_ai_trade_city_list *ptcl,struct city *pcity);
-void my_ai_trade_city_list_free(struct my_ai_trade_city_list *ptcl);
-bool is_trade_route_planned(struct trade_route_list *ptrl,struct city *pc1,struct city *pc2);
-bool can_cities_enter_in_trade_plan(struct city *pc1,struct city *pc2);
-void find_best_trade_combination_iterate(time_t time_max,struct trade_route_list *ptrl,struct trade_conf *ptc,struct my_ai_trade_city *pcity,
-	int min_id,struct trade_route_list *btsl,struct trade_conf *btc);
-void find_best_trade_combination(char *buf, size_t buf_len);
+int get_real_trade_route_number(struct city *pcity);
+bool cities_will_have_trade(struct city *pcity1, struct city *pcity2);
+static struct trade_route *add_trade_route_in_planning
+        (struct trade_city *tcities, struct trade_route_list *ptrlist,
+         struct trade_configuration *pconf, int c1, int c2);
+void recursive_calculate_trade_planning(time_t max_time,
+                                        struct trade_city *tcities, int size,
+                                        int start_city, int start_trade,
+                                        struct trade_route_list *ctlist,
+                                        struct trade_configuration *ctconf,
+                                        struct trade_route_list *btlist,
+                                        struct trade_configuration *btconf);
+void calculate_trade_planning(char *buf, size_t buf_len);
 
-static int my_ai_trade_city_sort_id(const void *pc1,const void *pc2)
+/****************************************************************************
+  Count the trade routes, but ignore the planned ones.
+****************************************************************************/
+int get_real_trade_route_number(struct city *pcity)
 {
-	return ((*((struct my_ai_trade_city **)pc1))->pcity->id>(*((struct my_ai_trade_city **)pc2))->pcity->id);
+  return my_city_num_trade_routes(pcity, TRUE)
+         + estimate_non_ai_trade_route_number(pcity);
 }
 
-struct my_ai_trade_city *my_ai_trade_city_list_find_city(struct my_ai_trade_city_list *ptcl,struct city *pcity)
+/****************************************************************************
+  Have cities trade route, or will have soon.
+****************************************************************************/
+bool cities_will_have_trade(struct city *pcity1, struct city *pcity2)
 {
-	my_ai_trade_city_list_iterate(*ptcl,ptc)
-	{
-		if(ptc->pcity==pcity)
-			return ptc;
-	} my_ai_trade_city_list_iterate_end;
-	return NULL;
+  if (have_cities_trade_route(pcity1, pcity2)) {
+    return TRUE;
+  }
+
+  trade_route_list_iterate(pcity1->trade_routes, ptr) {
+    if (ptr->pc1 == pcity2 || ptr->pc2 == pcity2)
+      return TRUE;
+  } trade_route_list_iterate_end;
+
+  if (my_ai_trade_manual_trade_route_enable) {
+    trade_route_list_iterate(non_ai_trade,ptr)
+    {
+      if ((ptr->pc1 == pcity1 && ptr->pc2 == pcity2)
+          || (ptr->pc1 == pcity2 && ptr->pc2 == pcity1)) {
+        return TRUE;
+      }
+    } trade_route_list_iterate_end;
+  }
+
+  return FALSE;
 }
 
-struct trade_route *trade_route_list_find_cities(struct trade_route_list *ptrl,struct city *pc1,struct city *pc2)
+/****************************************************************************
+  Add a trade route in the trade planning.
+  Returns the added trade route.
+****************************************************************************/
+struct trade_route *add_trade_route_in_planning
+        (struct trade_city *tcities, struct trade_route_list *ptrlist,
+         struct trade_configuration *pconf, int c1, int c2)
 {
-	trade_route_list_iterate(*ptrl,ptr)
-	{
-		if((ptr->pc1==pc1&&ptr->pc2==pc2)||(ptr->pc1==pc2&&ptr->pc2==pc1))
-			return ptr;
-	} trade_route_list_iterate_end;
-	return NULL;
+  struct trade_route *ptr;
+
+  ptr = tcities[c1].trade_routes[c2];
+  if (!ptr || ptr != tcities[c2].trade_routes[c1]) {
+    freelog(LOG_ERROR,
+            "Trying to add a bad trade route in the trade planning (%s - %s)",
+            tcities[c1].pcity->name, tcities[c2].pcity->name);
+    return NULL;
+  }
+
+  /* Change cities datas */
+  tcities[c1].free_slots--;
+  tcities[c1].trade_routes[c2] = NULL;
+  tcities[c1].trade_routes_num--;
+  tcities[c2].free_slots--;
+  tcities[c2].trade_routes[c1] = NULL;
+  tcities[c2].trade_routes_num--;
+
+  /* Change configuration */
+  trade_route_list_append(ptrlist, ptr);
+  pconf->free_slots -= 2;
+  pconf->moves += ptr->moves_req;
+  pconf->turns += ptr->turns_req;
+
+  return ptr;
 }
 
-void my_ai_trade_city_list_free(struct my_ai_trade_city_list *ptcl)
+/****************************************************************************
+  Calculate the trade planning...
+
+  max_time:    maximum time in seconds since 1970.
+  tcities:     the list of the trade_city
+  size:        the size of this list
+  start_city:  begin the calculation by the city with this index.
+  start_trade: begin the calculation by this city.
+  ctlist:      current trade planning
+  ctconf:      current trade configuration
+  btlist:      best trade planning
+  btconf:      best trade configuration
+****************************************************************************/
+void recursive_calculate_trade_planning(time_t max_time,
+                                        struct trade_city *tcities, int size,
+                                        int start_city, int start_trade,
+                                        struct trade_route_list *ctlist,
+                                        struct trade_configuration *ctconf,
+                                        struct trade_route_list *btlist,
+                                        struct trade_configuration *btconf)
 {
-	assert(ptcl);
-	my_ai_trade_city_list_iterate(*ptcl,ptc)
-	{
-		my_ai_trade_city_list_unlink_all(&ptc->trade_with);
-		free(ptc);
-	} my_ai_trade_city_list_iterate_end;
-	my_ai_trade_city_list_unlink_all(ptcl);
+  int i, j;
+
+  for (i = start_city; i < size; i++) {
+    if (time(NULL) > max_time) {
+      break;
+    }
+    if (tcities[i].free_slots <= 0 || tcities[i].trade_routes_num <= 0) {
+      continue;
+    }
+
+    for (j = i == start_city ? start_trade : i + 1; j < size; j++) {
+      if (time(NULL) > max_time) {
+        break;
+      }
+      if (tcities[j].free_slots <= 0 || !tcities[i].trade_routes[j]) {
+        continue;
+      }
+
+      /* Plan this trade route */
+      struct trade_configuration conf;
+      struct trade_route *ptr;
+
+      conf = *ctconf;
+      ptr = add_trade_route_in_planning(tcities, ctlist, ctconf, i, j);
+
+      /* Do recursive calculation */
+      recursive_calculate_trade_planning(max_time, tcities, size, i, j + 1,
+                                         ctlist, ctconf, btlist, btconf);
+
+      /* Reverse */
+      trade_route_list_unlink(ctlist, ptr);
+      *ctconf = conf;
+      tcities[i].free_slots++;
+      tcities[i].trade_routes[j] = ptr;
+      tcities[i].trade_routes_num++;
+      tcities[j].free_slots++;
+      tcities[j].trade_routes[i] = ptr;
+      tcities[j].trade_routes_num++;
+    }
+  }
+
+  /* Is the best configuration? */
+  if (ctconf->free_slots < btconf->free_slots
+      || (ctconf->free_slots == btconf->free_slots
+          && (ctconf->turns < btconf->turns
+              || (ctconf->turns == btconf->turns
+                  && ctconf->moves < btconf->moves)))) {
+    trade_route_list_copy(btlist, ctlist);
+    *btconf = *ctconf;
+  }
 }
 
-bool is_trade_route_planned(struct trade_route_list *ptrl,struct city *pc1,struct city *pc2)
+/****************************************************************************
+  Calculate trade planning for the cities in the city list.
+  time_limit = 0 means there isn't time limit.
+****************************************************************************/
+void calculate_trade_planning(char *buf, size_t buf_len)
 {
-	trade_route_list_iterate(pc1->trade_routes,ptr)
-	{
-		if(ptr->pc1==pc2||ptr->pc2==pc2)
-			return TRUE;
-	} trade_route_list_iterate_end;
-	trade_route_list_iterate(*ptrl,ptr)
-	{
-		if((ptr->pc1==pc1&&ptr->pc2==pc2)||(ptr->pc1==pc2&&ptr->pc2==pc1))
-			return TRUE;
-	} trade_route_list_iterate_end;
-	return FALSE;
-}
+  int i, j, size = city_list_size(&trade_cities);
+  struct trade_route_list btrlist, ptrlist;
+  struct trade_city tcities[size];
+  struct trade_configuration bconf, cconf;
+  struct unit *caravan = NULL;
 
-bool can_cities_enter_in_trade_plan(struct city *pc1,struct city *pc2)
-{
-	if(!can_cities_trade(pc1,pc2)||have_cities_trade_route(pc1,pc2))
-		return FALSE;
-	trade_route_list_iterate(pc1->trade_routes,ptr)
-	{
-		if(ptr->pc1==pc2||ptr->pc2==pc2)
-			return FALSE;
-	} trade_route_list_iterate_end;
-	return TRUE;
-}
+  buf[0] = '\0';
+  if (size <= 0) {
+    return;
+  }
 
-void find_best_trade_combination_iterate(time_t time_max,struct trade_route_list *ptrl,struct trade_conf *ptc,struct my_ai_trade_city *pcity,
-	int min_id,struct trade_route_list *btrl,struct trade_conf *btc)
-{
-	bool next=FALSE;
+  unit_type_iterate(type) {
+    if (unit_type_flag(type, F_TRADE_ROUTE)) {
+      caravan = create_unit_virtual(game.player_ptr,
+                                    city_list_get(&game.player_ptr->cities, 0),
+                                    type, 0);
+      break;
+    }
+  } unit_type_iterate_end;
+  assert(caravan);
 
-	if(pcity->free_slots)
-	{
-		my_ai_trade_city_list_iterate(pcity->trade_with,tcity)
-		{
-			if(time(NULL)>=time_max)
-				break;
-			if(tcity->free_slots&&tcity->pcity->id>min_id)
-			{
-				struct trade_conf conf=*ptc;
-				struct trade_route *ptr=trade_route_new(NULL,pcity->pcity,tcity->pcity,TRUE);
-                                int move_cost;
+  /* Initialize */
+  i = 0;
+  trade_route_list_init(&btrlist);
+  trade_route_list_init(&ptrlist);
+  cconf.free_slots = 0;
+  cconf.turns = 0;
+  cconf.moves = 0;
+  city_list_iterate(trade_cities, pcity) {
+    tcities[i].pcity = pcity;
+    tcities[i].free_slots = NUM_TRADEROUTES
+                            - get_real_trade_route_number(pcity);
+    tcities[i].trade_routes_num = 0;
+    tcities[i].trade_routes = fc_malloc(size * sizeof(struct trade_route *));
 
-				trade_route_list_append(ptrl,ptr);
-				pcity->free_slots--;
-				tcity->free_slots--;
-				ptc->free_slots-=2;
-				caravan->tile=pcity->pcity->tile;
-                                move_cost=calculate_move_cost(caravan,tcity->pcity->tile);
-				ptc->moves+=move_cost;
-                                ptc->turns+=(move_cost+1)/SINGLE_MOVE;
+    /* Check if a trade route is possible with the lower index cities */
+    for (j = 0; j <= i; j++) {
+      if (tcities[i].free_slots > 0 && tcities[j].free_slots > 0
+          && can_cities_trade(tcities[i].pcity, tcities[j].pcity)
+          && !cities_will_have_trade(tcities[i].pcity, tcities[j].pcity)) {
+        struct trade_route *ptr = trade_route_new(caravan, tcities[i].pcity,
+                                                  tcities[j].pcity, TRUE);
+        ptr->punit = NULL;
+        tcities[i].trade_routes[j] = ptr;
+        tcities[j].trade_routes[i] = ptr;
+        tcities[i].trade_routes_num++;
+        tcities[j].trade_routes_num++;
+      } else {
+        tcities[i].trade_routes[j] = NULL;
+        tcities[j].trade_routes[i] = NULL;
+      }
+    }
 
-				find_best_trade_combination_iterate(time_max,ptrl,ptc,pcity,tcity->pcity->id,btrl,btc);
+    cconf.free_slots += tcities[i].free_slots;
+    i++;
+  } city_list_iterate_end;
 
-				*ptc=conf;
-				pcity->free_slots++;
-				tcity->free_slots++;
-				trade_route_list_unlink(ptrl,ptr);
-				free(ptr);
-				next=TRUE;
-			}
-		} my_ai_trade_city_list_iterate_end;
-	}
+  /* Improvation of the calculation: allocate first the harder cities */
+  do {
+    j = -1;
+    /* Find the hardest */
+    for (i = 0; i < size; i++) {
+      if (tcities[i].trade_routes_num > 0
+          && tcities[i].trade_routes_num <= tcities[i].free_slots) {
+        if (j < 0
+            || tcities[i].free_slots - tcities[i].trade_routes_num
+              > tcities[j].free_slots - tcities[j].trade_routes_num) {
+          j = i;
+        }
+      }
+    }
+    if (j >= 0) {
+      /* Give it all its trade routes */
+      for (i = 0; i < size; i++) {
+        if (tcities[j].trade_routes[i] && tcities[i].free_slots > 0) {
+          /* Add a trade route in the planning */
+          add_trade_route_in_planning(tcities, &ptrlist, &cconf, j, i);
 
-	if(!next)
-	{
-		my_ai_trade_city_list_iterate(trade_cities,tc)
-		{
-			if(tc->free_slots&&tc->pcity->id>pcity->pcity->id)
-			{
-				find_best_trade_combination_iterate(time_max,ptrl,ptc,tc,tc->pcity->id,btrl,btc);
-				return;
-			}
-		} my_ai_trade_city_list_iterate_end;
-	}
+          /*
+           * If the city doesn't have free slots anymore,
+           * clear its possible trade roures
+           */
+          if (tcities[i].free_slots == 0) {
+            struct trade_route *ptr;
+            int k;
 
-	if(ptc->free_slots<btc->free_slots||(ptc->free_slots==btc->free_slots
-           &&(ptc->turns<btc->turns||(ptc->turns==btc->turns&&ptc->moves<btc->moves))))
-	{
-		*btc=*ptc;
-		trade_route_list_copy(btrl,ptrl);
-	}
-}
+            for (k = 0; k < size; k++) {
+              if ((ptr = tcities[i].trade_routes[k])) {
+                tcities[i].trade_routes[k] = NULL;
+                tcities[i].trade_routes_num--;
+                tcities[k].trade_routes[i] = NULL;
+                tcities[k].trade_routes_num--;
+                free(ptr);
+              }
+            }
+            assert(tcities[i].trade_routes_num == 0);
+          }
+        }
+      }
+      assert(tcities[j].trade_routes_num == 0);
+    }
+  } while (j >= 0);
 
-void find_best_trade_combination(char *buf, size_t buf_len)
-{
-	struct trade_route_list *ptrl;
-	struct trade_route_list btrl,ctrl;
-	struct trade_conf btc,ctc;
-        int move_cost;
+  /* Set the current configuration as best configuration */
+  trade_route_list_copy(&btrlist, &ptrlist);
+  bconf = cconf;
 
-        buf[0]='\0';
-	if(!city_list_size(&game.player_ptr->cities))
-		return;
+  /* Do the recursive calculation */
+  if (bconf.free_slots > 0) {
+    recursive_calculate_trade_planning(time(NULL) + my_ai_trade_plan_time_max,
+                                       tcities, size, 0, 1,
+                                       &ptrlist, &cconf, &btrlist, &bconf);
+  }
 
-	/* initialize */
-	ptrl=estimate_non_ai_trade_route();
-	trade_route_list_init(&btrl);
-	trade_route_list_init(&ctrl);
-	ctc.free_slots=0;
-	my_ai_trade_city_list_sort(&trade_cities,my_ai_trade_city_sort_id);
-	my_ai_trade_city_list_iterate(trade_cities,ptc)
-	{
-		ptc->free_slots=NUM_TRADEROUTES-my_city_num_trade_routes(ptc->pcity,TRUE)-estimate_non_ai_trade_route_number(ptc->pcity);
-		ctc.free_slots+=ptc->free_slots;
-		if(ptc->free_slots<0)
-		{
-			ptc->free_slots=0;
-			continue;
-		}
-		my_ai_trade_city_list_iterate(trade_cities,ttc)
-		{
-			if(can_cities_enter_in_trade_plan(ptc->pcity,ttc->pcity)&&(!ptrl||!trade_route_list_find_cities(ptrl,ptc->pcity,ttc->pcity)))
-				my_ai_trade_city_list_append(&ptc->trade_with,ttc);
-		} my_ai_trade_city_list_iterate_end;
-	} my_ai_trade_city_list_iterate_end;
-	ctc.turns=0;
-	ctc.moves=0;
+  /* Free datas */
+  destroy_unit_virtual(caravan);
+  trade_route_list_free(&ptrlist);
+  for (i = 0; i < size; i++) {
+    for (j = i; j < size; j++) {
+      if (tcities[i].trade_routes[j]) {
+        free(tcities[i].trade_routes[j]);
+      }
+    }
+    free(tcities[i].trade_routes);
+  }
 
-	unit_type_iterate(type)
-	{
-		if(unit_type_flag(type,F_TRADE_ROUTE))
-		{
-			caravan=create_unit_virtual(game.player_ptr,city_list_get(&game.player_ptr->cities,0),type,0);
-			break;
-		}
-	} unit_type_iterate_end;
-	assert(caravan);
-
-	/* alloc the harder cities */
-	struct my_ai_trade_city *pmacity;
-	do
-	{
-		pmacity=NULL;
-		my_ai_trade_city_list_iterate(trade_cities,ptc)
-		{
-			int size=my_ai_trade_city_list_size(&ptc->trade_with);
-			if(size&&size<=ptc->free_slots)
-			{
-		 		if(!pmacity||ptc->free_slots-size>pmacity->free_slots-my_ai_trade_city_list_size(&pmacity->trade_with))
-		 		pmacity=ptc;
-			}
-		 } my_ai_trade_city_list_iterate_end;
-		 if(pmacity)
-		 {
-			my_ai_trade_city_list_iterate(pmacity->trade_with,ttc)
-			{
-				if(!ttc->free_slots)
-					continue;
-				trade_route_list_append(&ctrl,trade_route_new(NULL,pmacity->pcity,ttc->pcity,TRUE));
-				pmacity->free_slots--;
-				ttc->free_slots--;
-				ctc.free_slots-=2;
-				caravan->tile=pmacity->pcity->tile;
-                                move_cost=calculate_move_cost(caravan,ttc->pcity->tile);
-				ctc.moves+=move_cost;
-                                ctc.turns+=(move_cost+1)/SINGLE_MOVE;
-				my_ai_trade_city_list_unlink(&ttc->trade_with,pmacity);
-			} my_ai_trade_city_list_iterate_end;
-			my_ai_trade_city_list_unlink_all(&pmacity->trade_with);
-		}
-	} while(pmacity);
-	btc=ctc;
-	trade_route_list_copy(&btrl,&ctrl);
-	
-	/* optimize city lists */
-	my_ai_trade_city_list_sort(&trade_cities,my_ai_trade_city_sort_id);
-	my_ai_trade_city_list_iterate(trade_cities,ptc)
-	{
-		if(!ptc->free_slots)
-		{
-			my_ai_trade_city_list_iterate(ptc->trade_with,ttc)
-			{
-				my_ai_trade_city_list_unlink(&ttc->trade_with,ptc);
-			} my_ai_trade_city_list_iterate_end;
-			my_ai_trade_city_list_unlink_all(&ptc->trade_with);
-		}
-		my_ai_trade_city_list_iterate(ptc->trade_with,ttc)
-		{
-			if(ttc->pcity->id>ptc->pcity->id)
-				break;
-			my_ai_trade_city_list_unlink(&ptc->trade_with,ttc);
-		} my_ai_trade_city_list_iterate_end;
-	} my_ai_trade_city_list_iterate_end;
-
-	/* find the best combinaison */
-	if(btc.free_slots)
-	{
-		struct my_ai_trade_city *ptc=my_ai_trade_city_list_get(&trade_cities,0);
-		find_best_trade_combination_iterate(time(NULL)+my_ai_trade_plan_time_max,&ctrl,&ctc,ptc,ptc->pcity->id,&btrl,&btc);
-	}
-
-	/* apply and free datas */
-	if(trade_route_list_size(&btrl))
-	{
-		trade_route_list_copy(&trade_plan,&btrl);
-		trade_route_list_free(&btrl);
-                my_snprintf(buf, buf_len, _("%d new trade routes, with a total of %d moves"), trade_route_list_size(&trade_plan), btc.moves);
-	}
-        else
-        	my_snprintf(buf, buf_len, _("Didn't find any trade routes to establish"));
-	my_ai_trade_city_list_iterate(trade_cities,ptc)
-	{
-		my_ai_trade_city_list_unlink_all(&ptc->trade_with);
-	} my_ai_trade_city_list_iterate_end;
-	trade_route_list_free(&ctrl);
-	destroy_unit_virtual(caravan);
-	caravan=NULL;
+  /* Apply */
+  if (trade_route_list_size(&btrlist) > 0) {
+    trade_route_list_copy(&trade_plan, &btrlist);
+    trade_route_list_free(&btrlist);
+    my_snprintf(buf, buf_len, _("%d new trade routes, with a total of %d moves"),
+                trade_route_list_size(&trade_plan), bconf.moves);
+  } else {
+     my_snprintf(buf, buf_len, _("Didn't find any trade routes to establish"));
+  }
 }
 
 void show_cities_in_trade_plan(void)
 {
-	if(my_ai_trade_city_list_size(&trade_cities)<=0)
+	if(city_list_size(&trade_cities)<=0)
 		return;
 
 	char buf[1024];
 	bool first=TRUE;
 
 	strcpy(buf,_("PepClient: Cities in trade plan:"));
-	my_ai_trade_city_list_iterate(trade_cities,ptc)
+	city_list_iterate(trade_cities,pcity)
 	{
-		cat_snprintf(buf,sizeof(buf),"%s %s",first?"":",",ptc->pcity->name);
+		cat_snprintf(buf,sizeof(buf),"%s %s",first?"":",",pcity->name);
 		first=FALSE;
-	} my_ai_trade_city_list_iterate_end;
+	} city_list_iterate_end;
 	strcat(buf,".");
 	append_output_window(buf);
 }
@@ -1025,7 +1086,7 @@ void show_cities_in_trade_plan(void)
 void clear_my_ai_trade_cities(void)
 {
 	trade_route_list_free(&trade_plan);
-	my_ai_trade_city_list_free(&trade_cities);
+	city_list_unlink_all(&trade_cities);
 	if(draw_city_traderoutes)
 		update_map_canvas_visible();
 	append_output_window(_("PepClient: Trade city list cleared."));
@@ -1037,15 +1098,15 @@ void show_free_slots_in_trade_plan(void)
 	char buf[1024]="\0";
 	int count =0;
 
-	my_ai_trade_city_list_iterate(trade_cities,ptc)
+	city_list_iterate(trade_cities,pcity)
 	{
-		int num=count_trade_routes(ptc->pcity)+estimate_non_ai_trade_route_number(ptc->pcity);
+		int num=count_trade_routes(pcity)+estimate_non_ai_trade_route_number(pcity);
 		if(num<NUM_TRADEROUTES)
 		{
-			cat_snprintf(buf,sizeof(buf),"%s %s (%d)",!count?"":",",ptc->pcity->name,NUM_TRADEROUTES-num);
+			cat_snprintf(buf,sizeof(buf),"%s %s (%d)",!count?"":",",pcity->name,NUM_TRADEROUTES-num);
 			count+=NUM_TRADEROUTES-num;
 		}
-	} my_ai_trade_city_list_iterate_end;
+	} city_list_iterate_end;
 	if(!count)
 		append_output_window(_("PepClient: No trade route free slot."));
 	else
@@ -1061,7 +1122,7 @@ void recalculate_trade_plan(void)
 	char buf[1024], buf2[1024];
 
 	freelog(LOG_VERBOSE,"Calculating automatic trade routes.");
-	find_best_trade_combination(buf,sizeof(buf));
+	calculate_trade_planning(buf,sizeof(buf));
         my_snprintf(buf2,sizeof(buf2),_("PepClient: Trade route plan calculation done%s%s."),buf[0]=='\0'?"":": ",buf);
 	append_output_window(buf2);
 	show_free_slots_in_trade_plan();
@@ -1075,24 +1136,18 @@ void my_ai_add_trade_city(struct city *pcity,bool multi)
 		return;
 
 	char buf[256]="\0";
-	struct my_ai_trade_city *ptc;
 
-	if((ptc=my_ai_trade_city_list_find_city(&trade_cities,pcity)))
+	if((city_list_find(&trade_cities,pcity)))
 	{
 		if(!multi)
 		{
-			my_ai_trade_city_list_unlink(&trade_cities,ptc);
-			my_ai_trade_city_list_unlink_all(&ptc->trade_with);
-			free(ptc);
+			city_list_unlink(&trade_cities,pcity);
 			my_snprintf(buf,sizeof(buf),_("PepClient: Remove city %s to trade plan"),pcity->name);
 		}
 	}
 	else
 	{
-		ptc=fc_malloc(sizeof(struct my_ai_trade_city));
-		ptc->pcity=pcity;
-		my_ai_trade_city_list_init(&ptc->trade_with);
-		my_ai_trade_city_list_append(&trade_cities,ptc);
+                city_list_append(&trade_cities,pcity);
 		my_snprintf(buf,sizeof(buf),_("PepClient: Adding city %s to trade plan"),pcity->name);
 	}
 
@@ -1227,7 +1282,7 @@ struct trade_route_list *my_ai_trade_plan_get(void)
 }
 
 
-struct my_ai_trade_city_list *my_ai_get_trade_cities(void)
+struct city_list *my_ai_get_trade_cities(void)
 {
 	return &trade_cities;
 }
@@ -2212,7 +2267,7 @@ void my_ai_city_free(struct city *pcity)
 	} trade_route_list_iterate_end;
 	trade_route_list_unlink_all(&pcity->trade_routes);
 	my_ai_help_wonder_city_free(pcity);
-	if(my_ai_trade_city_list_find_city(&trade_cities,pcity))
+	if(city_list_find(&trade_cities,pcity))
 		my_ai_add_trade_city(pcity,FALSE);
 	trade_route_list_iterate(trade_plan,ptr)
 	{
@@ -2240,7 +2295,7 @@ void my_ai_init(void)
 	unit_list_init(&helpers);
 	unit_list_init(&patrolers);
 	unit_list_init(&temp);
-	my_ai_trade_city_list_init(&trade_cities);
+	city_list_init(&trade_cities);
 	trade_route_list_init(&trade_plan);
 	trade_route_list_init(&non_ai_trade);
 	my_ai_auto_execute=automatic_processus_new(PAGE_PMAIN,AV_TO_FV(AUTO_OFF),"","Automatic orders execution",0,AP_MAIN_CONNECT(my_ai_execute),
@@ -2264,7 +2319,7 @@ void my_ai_free(void)
 	unit_list_unlink_all(&helpers);
 	unit_list_unlink_all(&patrolers);
 	unit_list_unlink_all(&temp);
-	my_ai_trade_city_list_free(&trade_cities);
+	city_list_unlink_all(&trade_cities);
 	trade_route_list_free(&trade_plan);
 	trade_route_list_free(&non_ai_trade);
 	automatic_processus_remove(my_ai_auto_execute);
