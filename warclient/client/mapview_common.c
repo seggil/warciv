@@ -1687,7 +1687,7 @@ void update_map_canvas(int canvas_x, int canvas_y, int width, int height)
 /**************************************************************************
  Update (only) the visible part of the map
 **************************************************************************/
-void update_map_canvas_visible(void)
+void real_update_map_canvas_visible(void)
 {
   dirty_all();
   update_map_canvas(0, 0, mapview_canvas.store_width,

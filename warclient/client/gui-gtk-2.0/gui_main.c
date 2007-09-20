@@ -1954,3 +1954,26 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
+
+static guint last_id = 0;
+
+/****************************************************************
+  ...
+****************************************************************/
+static gboolean update_map_canvas_visible_callback(gpointer data)
+{
+  real_update_map_canvas_visible();
+  g_source_remove(last_id);
+  last_id = 0;
+  return TRUE;
+}
+
+/****************************************************************
+  ...
+****************************************************************/
+void update_map_canvas_visible(void)
+{
+  if (last_id == 0) {
+    last_id = g_idle_add(update_map_canvas_visible_callback, NULL);
+  }
+}
