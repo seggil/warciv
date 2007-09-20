@@ -46,6 +46,7 @@
 #include "helpdlg.h"
 #include "mapctrl.h"   /* center_on_unit */
 #include "mapview.h"
+#include "menu_g.h"
 #include "messagedlg.h"
 #include "messagewin.h"
 #include "multiselect.h"
@@ -69,7 +70,6 @@ void update_automatic_processus_filter_menu(automatic_processus *pap);
 
 static void get_accel_label(GtkWidget *widget,const char *uname);
 static bool can_player_unit_type(Unit_Type_id utype);
-static void pep_airlift_menu_set_sensitive(void);
 static void pep_airlift_menu_set_active(void);
 static void pep_airlift_menu_callback(GtkWidget *widget,gpointer data);
 static void create_pep_airlift_menu(int aq,GtkWidget *widget);
@@ -928,57 +928,57 @@ static void delayed_goto_menu_callback(gpointer callback_data,
       break;
    case MENU_DELAYED_GOTO_DG1_SELECT:
       delayed_goto_copy(0, 1);
-      update_menus();
+      update_delayed_goto_menu(1);
       break;
    case MENU_DELAYED_GOTO_DG1_ADD:
       delayed_goto_cat(0, 1);
-      update_menus();
+      update_delayed_goto_menu(1);
       break;
    case MENU_DELAYED_GOTO_DG1_RECORD:
       delayed_goto_move(1 ,0);
-      update_menus();
+      update_delayed_goto_menu(1);
       break;
    case MENU_DELAYED_GOTO_DG1_CLEAR:
       delayed_goto_clear(1);
-      update_menus();
+      update_delayed_goto_menu(1);
       break;
    case MENU_DELAYED_GOTO_DG1_EXECUTE:
       request_unit_execute_delayed_goto(1);
       break;
    case MENU_DELAYED_GOTO_DG2_SELECT:
       delayed_goto_copy(0, 2);
-      update_menus();
+      update_delayed_goto_menu(2);
       break;
    case MENU_DELAYED_GOTO_DG2_ADD:
       delayed_goto_cat(0, 2);
-      update_menus();
+      update_delayed_goto_menu(2);
       break;
    case MENU_DELAYED_GOTO_DG2_RECORD:
       delayed_goto_move(2 ,0);
-      update_menus();
+      update_delayed_goto_menu(2);
       break;
    case MENU_DELAYED_GOTO_DG2_CLEAR:
       delayed_goto_clear(2);
-      update_menus();
+      update_delayed_goto_menu(2);
       break;
    case MENU_DELAYED_GOTO_DG2_EXECUTE:
       request_unit_execute_delayed_goto(2);
       break;
    case MENU_DELAYED_GOTO_DG3_SELECT:
       delayed_goto_move(0, 3);
-      update_menus();
+      update_delayed_goto_menu(3);
       break;
    case MENU_DELAYED_GOTO_DG3_ADD:
       delayed_goto_cat(0, 3);
-      update_menus();
+      update_delayed_goto_menu(3);
       break;
    case MENU_DELAYED_GOTO_DG3_RECORD:
       delayed_goto_move(3 ,0);
-      update_menus();
+      update_delayed_goto_menu(3);
       break;
    case MENU_DELAYED_GOTO_DG3_CLEAR:
       delayed_goto_clear(3);
-      update_menus();
+      update_delayed_goto_menu(3);
       break;
    case MENU_DELAYED_GOTO_DG3_EXECUTE:
       request_unit_execute_delayed_goto(3);
@@ -1012,19 +1012,19 @@ static void airlift_menu_callback(gpointer callback_data,
         break;
    case MENU_AIRLIFT_AQ1_SELECT:
       airlift_queue_copy(0, 1);
-      update_menus();
+      update_airlift_menu(1);
       break;
    case MENU_AIRLIFT_AQ1_ADD:
       airlift_queue_cat(0, 1);
-      update_menus();
+      update_airlift_menu(1);
       break;
    case MENU_AIRLIFT_AQ1_RECORD:
       airlift_queue_move(1 ,0);
-      update_menus();
+      update_airlift_menu(1);
       break;
    case MENU_AIRLIFT_AQ1_CLEAR:
       airlift_queue_clear(1);
-      update_menus();
+      update_airlift_menu(1);
       break;
    case MENU_AIRLIFT_AQ1_EXECUTE:
       do_airlift_for(1,NULL);
@@ -1034,19 +1034,19 @@ static void airlift_menu_callback(gpointer callback_data,
       break;
    case MENU_AIRLIFT_AQ2_SELECT:
       airlift_queue_copy(0, 2);
-      update_menus();
+      update_airlift_menu(2);
       break;
    case MENU_AIRLIFT_AQ2_ADD:
       airlift_queue_cat(0, 2);
-      update_menus();
+      update_airlift_menu(2);
       break;
    case MENU_AIRLIFT_AQ2_RECORD:
       airlift_queue_move(2 ,0);
-      update_menus();
+      update_airlift_menu(2);
       break;
    case MENU_AIRLIFT_AQ2_CLEAR:
       airlift_queue_clear(2);
-      update_menus();
+      update_airlift_menu(2);
       break;
    case MENU_AIRLIFT_AQ2_EXECUTE:
       do_airlift_for(2,NULL);
@@ -1056,19 +1056,19 @@ static void airlift_menu_callback(gpointer callback_data,
       break;
   case MENU_AIRLIFT_AQ3_SELECT:
       airlift_queue_copy(0, 3);
-      update_menus();
+      update_airlift_menu(3);
       break;
    case MENU_AIRLIFT_AQ3_ADD:
       airlift_queue_cat(0, 3);
-      update_menus();
+      update_airlift_menu(3);
       break;
    case MENU_AIRLIFT_AQ3_RECORD:
       airlift_queue_move(3 ,0);
-      update_menus();
+      update_airlift_menu(3);
       break;
    case MENU_AIRLIFT_AQ3_CLEAR:
       airlift_queue_clear(3);
-      update_menus();
+      update_airlift_menu(3);
       break;
    case MENU_AIRLIFT_AQ3_EXECUTE:
       do_airlift_for(3,NULL);
@@ -1078,19 +1078,19 @@ static void airlift_menu_callback(gpointer callback_data,
       break;
    case MENU_AIRLIFT_AQ4_SELECT:
       airlift_queue_copy(0, 4);
-      update_menus();
+      update_airlift_menu(4);
       break;
    case MENU_AIRLIFT_AQ4_ADD:
       airlift_queue_cat(0, 4);
-      update_menus();
+      update_airlift_menu(4);
       break;
    case MENU_AIRLIFT_AQ4_RECORD:
       airlift_queue_move(4 ,0);
-      update_menus();
+      update_airlift_menu(4);
       break;
    case MENU_AIRLIFT_AQ4_CLEAR:
       airlift_queue_clear(4);
-      update_menus();
+      update_airlift_menu(4);
       break;
    case MENU_AIRLIFT_AQ4_EXECUTE:
       do_airlift_for(4,NULL);
@@ -1100,19 +1100,19 @@ static void airlift_menu_callback(gpointer callback_data,
       break;
    case MENU_AIRLIFT_AQ5_SELECT:
       airlift_queue_copy(0, 5);
-      update_menus();
+      update_airlift_menu(5);
       break;
    case MENU_AIRLIFT_AQ5_ADD:
       airlift_queue_cat(0, 5);
-      update_menus();
+      update_airlift_menu(5);
       break;
    case MENU_AIRLIFT_AQ5_RECORD:
       airlift_queue_move(5 ,0);
-      update_menus();
+      update_airlift_menu(5);
       break;
    case MENU_AIRLIFT_AQ5_CLEAR:
       airlift_queue_clear(5);
-      update_menus();
+      update_airlift_menu(5);
       break;
    case MENU_AIRLIFT_AQ5_EXECUTE:
       do_airlift_for(5,NULL);
@@ -1122,19 +1122,19 @@ static void airlift_menu_callback(gpointer callback_data,
       break;
    case MENU_AIRLIFT_AQ6_SELECT:
       airlift_queue_copy(0, 6);
-      update_menus();
+      update_airlift_menu(6);
       break;
    case MENU_AIRLIFT_AQ6_ADD:
       airlift_queue_cat(0, 6);
-      update_menus();
+      update_airlift_menu(6);
       break;
    case MENU_AIRLIFT_AQ6_RECORD:
       airlift_queue_move(6 ,0);
-      update_menus();
+      update_airlift_menu(6);
       break;
    case MENU_AIRLIFT_AQ6_CLEAR:
       airlift_queue_clear(6);
-      update_menus();
+      update_airlift_menu(6);
       break;
    case MENU_AIRLIFT_AQ6_EXECUTE:
       do_airlift_for(6,NULL);
@@ -1388,147 +1388,147 @@ static void multi_selection_menu_callback(gpointer callback_data,
       break;
     case MENU_MULTI_SELECTION_MS1_SELECT:
       multi_select_copy(0, 1);
-      update_menus();
+      update_multi_selection_menu(1);
       break;
     case MENU_MULTI_SELECTION_MS1_ADD:
       multi_select_cat(0, 1);
-      update_menus();
+      update_multi_selection_menu(1);
       break;
     case MENU_MULTI_SELECTION_MS1_RECORD:
       multi_select_copy(1, 0);
-      update_menus();
+      update_multi_selection_menu(1);
       break;
     case MENU_MULTI_SELECTION_MS1_CLEAR:
       multi_select_clear(1);
-      update_menus();
+      update_multi_selection_menu(1);
       break;
     case MENU_MULTI_SELECTION_MS2_SELECT:
       multi_select_copy(0, 2);
-      update_menus();
+      update_multi_selection_menu(2);
       break;
     case MENU_MULTI_SELECTION_MS2_ADD:
       multi_select_cat(0, 2);
-      update_menus();
+      update_multi_selection_menu(2);
       break;
     case MENU_MULTI_SELECTION_MS2_RECORD:
       multi_select_copy(2, 0);
-      update_menus();
+      update_multi_selection_menu(2);
       break;
     case MENU_MULTI_SELECTION_MS2_CLEAR:
       multi_select_clear(2);
-      update_menus();
+      update_multi_selection_menu(2);
       break;
     case MENU_MULTI_SELECTION_MS3_SELECT:
       multi_select_copy(0, 3);
-      update_menus();
+      update_multi_selection_menu(3);
       break;
     case MENU_MULTI_SELECTION_MS3_ADD:
       multi_select_cat(0, 3);
-      update_menus();
+      update_multi_selection_menu(3);
       break;
     case MENU_MULTI_SELECTION_MS3_RECORD:
       multi_select_copy(3, 0);
-      update_menus();
+      update_multi_selection_menu(3);
       break;
     case MENU_MULTI_SELECTION_MS3_CLEAR:
       multi_select_clear(3);
-      update_menus();
+      update_multi_selection_menu(3);
       break;
     case MENU_MULTI_SELECTION_MS4_SELECT:
       multi_select_copy(0, 4);
-      update_menus();
+      update_multi_selection_menu(4);
       break;
     case MENU_MULTI_SELECTION_MS4_ADD:
       multi_select_cat(0, 4);
-      update_menus();
+      update_multi_selection_menu(4);
       break;
     case MENU_MULTI_SELECTION_MS4_RECORD:
       multi_select_copy(4, 0);
-      update_menus();
+      update_multi_selection_menu(4);
       break;
     case MENU_MULTI_SELECTION_MS4_CLEAR:
       multi_select_clear(4);
-      update_menus();
+      update_multi_selection_menu(4);
       break;
     case MENU_MULTI_SELECTION_MS5_SELECT:
       multi_select_copy(0, 5);
-      update_menus();
+      update_multi_selection_menu(5);
       break;
     case MENU_MULTI_SELECTION_MS5_ADD:
       multi_select_cat(0, 5);
-      update_menus();
+      update_multi_selection_menu(5);
       break;
     case MENU_MULTI_SELECTION_MS5_RECORD:
       multi_select_copy(5, 0);
-      update_menus();
+      update_multi_selection_menu(5);
       break;
     case MENU_MULTI_SELECTION_MS5_CLEAR:
       multi_select_clear(5);
-      update_menus();
+      update_multi_selection_menu(5);
       break;
     case MENU_MULTI_SELECTION_MS6_SELECT:
       multi_select_copy(0, 6);
-      update_menus();
+      update_multi_selection_menu(6);
       break;
     case MENU_MULTI_SELECTION_MS6_ADD:
       multi_select_cat(0, 6);
-      update_menus();
+      update_multi_selection_menu(6);
       break;
     case MENU_MULTI_SELECTION_MS6_RECORD:
       multi_select_copy(6, 0);
-      update_menus();
+      update_multi_selection_menu(6);
       break;
     case MENU_MULTI_SELECTION_MS6_CLEAR:
       multi_select_clear(6);
-      update_menus();
+      update_multi_selection_menu(6);
       break;
     case MENU_MULTI_SELECTION_MS7_SELECT:
       multi_select_copy(0, 7);
-      update_menus();
+      update_multi_selection_menu(7);
       break;
     case MENU_MULTI_SELECTION_MS7_ADD:
       multi_select_cat(0, 7);
-      update_menus();
+      update_multi_selection_menu(7);
       break;
     case MENU_MULTI_SELECTION_MS7_RECORD:
       multi_select_copy(7, 0);
-      update_menus();
+      update_multi_selection_menu(7);
       break;
     case MENU_MULTI_SELECTION_MS7_CLEAR:
       multi_select_clear(7);
-      update_menus();
+      update_multi_selection_menu(7);
       break;
     case MENU_MULTI_SELECTION_MS8_SELECT:
       multi_select_copy(0, 8);
-      update_menus();
+      update_multi_selection_menu(8);
       break;
     case MENU_MULTI_SELECTION_MS8_ADD:
       multi_select_cat(0, 8);
-      update_menus();
+      update_multi_selection_menu(8);
       break;
     case MENU_MULTI_SELECTION_MS8_RECORD:
       multi_select_copy(8, 0);
-      update_menus();
+      update_multi_selection_menu(8);
       break;
     case MENU_MULTI_SELECTION_MS8_CLEAR:
       multi_select_clear(8);
-      update_menus();
+      update_multi_selection_menu(8);
       break;
     case MENU_MULTI_SELECTION_MS9_SELECT:
       multi_select_copy(0, 9);
-      update_menus();
+      update_multi_selection_menu(9);
       break;
     case MENU_MULTI_SELECTION_MS9_ADD:
       multi_select_cat(0, 9);
-      update_menus();
+      update_multi_selection_menu(9);
       break;
     case MENU_MULTI_SELECTION_MS9_RECORD:
       multi_select_copy(9, 0);
-      update_menus();
+      update_multi_selection_menu(9);
       break;
     case MENU_MULTI_SELECTION_MS9_CLEAR:
       multi_select_clear(9);
-      update_menus();
+      update_multi_selection_menu(9);
       break;
     case MENU_MULTI_SELECTION_MY_AI_SPREAD:
       if (tiles_hilited_cities) {
@@ -3120,7 +3120,7 @@ static bool can_player_unit_type(Unit_Type_id utype)
 /****************************************************************
  ...
  *****************************************************************/
-static void pep_airlift_menu_set_sensitive(void)
+void pep_airlift_menu_set_sensitive(void)
 {
   int i, j;
 
@@ -3485,6 +3485,200 @@ void update_automatic_processus_filter_menu(automatic_processus *pap)
 }
 
 /****************************************************************
+  Update the menus about the delayed goto queues.
+*****************************************************************/
+void update_delayed_goto_menu(int i)
+{
+  if (!can_client_issue_orders() || !main_menubar) {
+    return;
+  }
+
+  assert(i >= 0 && i < DELAYED_GOTO_NUM);
+
+  char buf[256], *m;
+  bool cond = delayed_goto_size(0) > 0;
+
+  if (i == 0) {
+    menus_set_sensitive("<main>/Delayed Goto/Execute delayed goto", cond);
+    menus_set_sensitive("<main>/Delayed Goto/Clear delayed orders", cond);
+    for (i = 1; i < DELAYED_GOTO_NUM; i++) {
+      update_delayed_goto_menu(i);
+    }
+    return;
+  } else {
+    m = buf + my_snprintf(buf, sizeof(buf),
+                          "<main>/Delayed Goto/Delayed goto selection %d", i);
+    if (delayed_goto_size(i) > 0) {
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Select");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Add to current selection");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Record");
+      menus_set_sensitive(buf, cond);
+      strcpy(m, "/Clear");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Execute");
+      menus_set_sensitive(buf, TRUE);
+    } else if (cond) {
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Select");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Add to current selection");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Record");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Clear");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Execute");
+      menus_set_sensitive(buf, FALSE);
+    } else {
+      menus_set_sensitive(buf, FALSE);
+    }
+  }
+}
+
+/****************************************************************
+  Update the menus about the airlift queue i.
+*****************************************************************/
+void update_airlift_menu(int i)
+{
+  if (!can_client_issue_orders() || !main_menubar) {
+    return;
+  }
+
+  assert(i >= 0 && i < AIRLIFT_QUEUE_NUM);
+
+  char buf[256], *m;
+  bool cond = airlift_queue_size(0) > 0;
+
+  if (i == 0) {
+    menus_set_sensitive("<main>/Airlift/Clear airlift queue", cond);
+    menus_set_sensitive("<main>/Airlift/Show cities in airlift queue", cond);
+    cond = cond && airlift_queue_get_unit_type(0) != U_LAST;
+    menus_set_sensitive("<main>/Airlift/Set airlift destination", cond);
+    menus_set_sensitive("<main>/Delayed Goto/Delayed airlift", cond);
+    for (i = 1; i < AIRLIFT_QUEUE_NUM; i++) {
+      update_airlift_menu(i);
+    }
+    return;
+  } else {
+    m = buf + my_snprintf(buf, sizeof(buf), "<main>/Airlift/Airlift queue %d",
+                          i + DELAYED_GOTO_NUM - 1);
+    if (airlift_queue_size(i) > 0) {
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Select");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Add to current selection");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Record");
+      menus_set_sensitive(buf, cond);
+      strcpy(m, "/Clear");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Execute");
+      menus_set_sensitive(buf, airlift_queue_get_unit_type(i) != U_LAST);
+      strcpy(m, "/Show");
+      menus_set_sensitive(buf, TRUE);
+    } else if (cond) {
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Select");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Add to current selection");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Record");
+      menus_set_sensitive(buf, TRUE);
+      strcpy(m, "/Clear");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Execute");
+      menus_set_sensitive(buf, FALSE);
+      strcpy(m, "/Show");
+      menus_set_sensitive(buf, FALSE);
+    } else {
+      menus_set_sensitive(buf, FALSE);
+    }
+  }
+}
+
+/****************************************************************
+  Update the menus about the trade planning.
+*****************************************************************/
+void update_auto_caravan_menu(void)
+{
+  if (!can_client_issue_orders() || !main_menubar) {
+    return;
+  }
+
+  bool cond = city_list_size(my_ai_get_trade_cities()) > 0;
+
+  menus_set_sensitive("<main>/Auto Caravan/Clear city list for trade plan", cond);
+  menus_set_sensitive("<main>/Auto Caravan/Show cities in trade plan", cond);
+  menus_set_sensitive("<main>/Auto Caravan/Show the trade route free slots", cond);
+  menus_set_sensitive("<main>/Auto Caravan/Show trade estimation", (my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0)
+                                                                    || (my_ai_trade_manual_trade_route_enable && trade_route_list_size(estimate_non_ai_trade_route())));
+  menus_set_sensitive("<main>/Auto Caravan/Recalculate trade plan", cond);
+  menus_set_sensitive("<main>/Auto Caravan/Execute all trade route orders", my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0);
+  menus_set_sensitive("<main>/Auto Caravan/Execute all help wonder orders", my_ai_wonder_level && my_ai_count_activity(MY_AI_HELP_WONDER) > 0);
+}
+
+/****************************************************************
+  Update the menus about the multi-selection i.
+*****************************************************************/
+void update_multi_selection_menu(int i)
+{
+  if (!can_client_issue_orders() || !main_menubar) {
+    return;
+  }
+
+  assert(i > 0 && i < MULTI_SELECT_NUM);
+
+  char buf[256], *m;
+  bool cond = multi_select_size(0) > 0;
+
+  m = buf + my_snprintf(buf, sizeof(buf),
+                        "<main>/Multi-Selection/Multi-selection %d", i);
+  if (multi_select_size(i) > 0) {
+    menus_set_sensitive(buf, TRUE);
+    strcpy(m, "/Select");
+    menus_set_sensitive(buf, TRUE);
+    strcpy(m, "/Add to current selection");
+    menus_set_sensitive(buf, TRUE);
+    strcpy(m, "/Record");
+    menus_set_sensitive(buf, cond);
+    strcpy(m, "/Clear");
+    menus_set_sensitive(buf, TRUE);
+  } else if (cond) {
+    menus_set_sensitive(buf, TRUE);
+    strcpy(m, "/Select");
+    menus_set_sensitive(buf, FALSE);
+    strcpy(m, "/Add to current selection");
+    menus_set_sensitive(buf, FALSE);
+    strcpy(m, "/Record");
+    menus_set_sensitive(buf, TRUE);
+    strcpy(m, "/Clear");
+    menus_set_sensitive(buf, FALSE);
+  } else {
+    menus_set_sensitive(buf, FALSE);
+  }
+}
+
+/****************************************************************
+  Update the menus about the hilited cities.
+*****************************************************************/
+void update_miscellaneous_menu(void)
+{
+  if (!can_client_issue_orders() || !main_menubar) {
+    return;
+  }
+
+  bool cond = (tiles_hilited_cities);
+
+  menus_set_sensitive("<main>/Miscellaneous/Set rallies for selected cities", cond);
+  menus_set_sensitive("<main>/Miscellaneous/Clear rallies in selected cities", cond);
+  menus_set_sensitive("<main>/Miscellaneous/Execute all automatic orders", my_ai_enable && my_ai_count_activity(MY_AI_LAST));
+  menus_set_sensitive("<main>/Miscellaneous/Execute all patrol orders", my_ai_enable && my_ai_count_activity(MY_AI_PATROL));
+}
+
+/****************************************************************
  ...
 *****************************************************************/
 void init_menus(void)
@@ -3492,6 +3686,7 @@ void init_menus(void)
   if(!main_menubar)
     return;
   bool cond;
+  int i;
 
   cond=(can_client_access_hack() && get_client_state() >= CLIENT_GAME_RUNNING_STATE);
   menus_set_sensitive("<main>/_Game/Save Game _As...", cond);
@@ -3549,9 +3744,7 @@ void init_menus(void)
   menus_set_active("<main>/_View/Focus Unit", draw_focus_unit);
   menus_set_active("<main>/_View/Fog of War", draw_fog_of_war);
 
-  menus_set_active("<main>/Miscellaneous/Autowakeup sentried units", autowakeup_state);
-  menus_set_active("<main>/Miscellaneous/Move and attack mode", moveandattack_state);
-
+  /* Delayed goto menu */
   switch(delayed_goto_place)
   {
     case PLACE_SINGLE_UNIT: menus_set_active("<main>/Delayed Goto/Delayed goto mode/Single unit", TRUE); break;
@@ -3567,6 +3760,44 @@ void init_menus(void)
     case UTYPE_ALL: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All unit types", TRUE); break;
     default: break;
   }
+  update_delayed_goto_inclusive_filter_menu();
+  update_delayed_goto_exclusive_filter_menu();
+  for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+    update_delayed_goto_menu(i);
+  }
+
+  /* Airlift menu */
+  for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+    update_airlift_menu(i);
+  }
+  pep_airlift_menu_set_active();
+  pep_airlift_menu_set_sensitive();
+
+  /* Auto Caravan menu */
+  update_auto_caravan_menu();
+
+  /* Multi-Selection menu */
+  switch(multi_select_place)
+  {
+    case PLACE_SINGLE_UNIT: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Single unit", TRUE); break;
+    case PLACE_ON_TILE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units on the tile", TRUE); break;
+    case PLACE_ON_CONTINENT: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units on the continent", TRUE); break;
+    case PLACE_EVERY_WHERE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units", TRUE); break;
+    default: break;
+  }
+  switch(multi_select_utype)
+  {
+    case UTYPE_SAME_TYPE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Only units with the same type", TRUE); break;
+    case UTYPE_SAME_MOVE_TYPE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Only units with the same move type", TRUE); break;
+    case UTYPE_ALL: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All unit types", TRUE); break;
+    default: break;
+  }
+  menus_set_active("<main>/Multi-Selection/Spread only in cities with airport", spread_airport_cities);
+  menus_set_active("<main>/Multi-Selection/Allow spreading into allied cities", spread_allied_cities);
+  update_multi_select_inclusive_filter_menu();
+  update_multi_select_exclusive_filter_menu();
+
+  /* Miscellaneous menu */
   switch(default_caravan_action)
   {
     case 0: menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/Popup dialog", TRUE); break;
@@ -3589,25 +3820,13 @@ void init_menus(void)
     case 9: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Keep going", TRUE); break;
     default: break;
   }
-  pep_airlift_menu_set_active();
+  menus_set_active("<main>/Miscellaneous/Autowakeup sentried units", autowakeup_state);
+  menus_set_active("<main>/Miscellaneous/Move and attack mode", moveandattack_state);
+  update_miscellaneous_menu();
 
-  switch(multi_select_place)
-  {
-    case PLACE_SINGLE_UNIT: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Single unit", TRUE); break;
-    case PLACE_ON_TILE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units on the tile", TRUE); break;
-    case PLACE_ON_CONTINENT: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units on the continent", TRUE); break;
-    case PLACE_EVERY_WHERE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units", TRUE); break;
-    default: break;
-  }
-  switch(multi_select_utype)
-  {
-    case UTYPE_SAME_TYPE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Only units with the same type", TRUE); break;
-    case UTYPE_SAME_MOVE_TYPE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Only units with the same move type", TRUE); break;
-    case UTYPE_ALL: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All unit types", TRUE); break;
-    default: break;
-  }
-   menus_set_active("<main>/Multi-Selection/Spread only in cities with airport", spread_airport_cities);
-   menus_set_active("<main>/Multi-Selection/Allow spreading into allied cities", spread_allied_cities);
+  automatic_processus_iterate(pap) {
+    update_automatic_processus_filter_menu(pap);
+  } automatic_processus_iterate_end;
 
   update_menus();
 }
@@ -3625,6 +3844,7 @@ void update_menus(void)
 
   if(can_client_change_view()) {
     bool cond;
+    int i;
     struct unit *punit;
     const char *path =
       menu_path_remove_uline("<main>/_Government/_Change Government");
@@ -3675,149 +3895,10 @@ void update_menus(void)
     menus_set_sensitive("<main>/_View/City G_rowth", draw_city_names);
     menus_set_sensitive("<main>/_View/Coastline", !draw_terrain);
     menus_set_sensitive("<main>/_View/Focus Unit", !draw_units);
-    cond=(city_list_size(my_ai_get_trade_cities()));
-    menus_set_sensitive("<main>/Auto Caravan/Clear city list for trade plan", cond);
-    menus_set_sensitive("<main>/Auto Caravan/Show cities in trade plan", cond);
-    menus_set_sensitive("<main>/Auto Caravan/Show the trade route free slots", cond);
-    menus_set_sensitive("<main>/Auto Caravan/Show trade estimation", (my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE))
-                                              || (my_ai_trade_manual_trade_route_enable && trade_route_list_size(estimate_non_ai_trade_route())));
-    menus_set_sensitive("<main>/Auto Caravan/Recalculate trade plan", cond);
-    menus_set_sensitive("<main>/Miscellaneous/Execute all automatic orders", my_ai_enable && my_ai_count_activity(MY_AI_LAST));
-    menus_set_sensitive("<main>/Auto Caravan/Execute all trade route orders", my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE));
-    menus_set_sensitive("<main>/Auto Caravan/Execute all help wonder orders", my_ai_wonder_level && my_ai_count_activity(MY_AI_HELP_WONDER));
-    menus_set_sensitive("<main>/Miscellaneous/Execute all patrol orders", my_ai_enable && my_ai_count_activity(MY_AI_PATROL));
-    update_delayed_goto_inclusive_filter_menu();
-    update_delayed_goto_exclusive_filter_menu();
-    update_multi_select_inclusive_filter_menu();
-    update_multi_select_exclusive_filter_menu();
-    {
-      char buf[256], *m;
-      int cs = multi_select_size(0), i;
-      /* update multi-selections */
-      for(i = 1; i < MULTI_SELECT_NUM; i++)
-      {
-        my_snprintf(buf, sizeof(buf), "<main>/Multi-Selection/Multi-selection %d", i);
-        m = buf + strlen(buf);
-        if(multi_select_size(i))
-        {
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Select");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Add to current selection");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Record");
-          menus_set_sensitive(buf, cs);
-          strcpy(m, "/Clear");
-          menus_set_sensitive(buf, TRUE);
-        }
-        else if(cs)
-        {
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Select");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Add to current selection");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Record");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Clear");
-          menus_set_sensitive(buf, FALSE);
-        }
-        else
-          menus_set_sensitive(buf, FALSE);
-     }
-     /* update delayed goto selections */
-     cs = delayed_goto_size(0);
-     for(i = 1; i < DELAYED_GOTO_NUM; i++)
-     {
-        my_snprintf(buf, sizeof(buf), "<main>/Delayed Goto/Delayed goto selection %d", i);
-        m = buf + strlen(buf);
-        if(delayed_goto_size(i))
-        {
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Select");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Add to current selection");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Record");
-          menus_set_sensitive(buf, cs);
-          strcpy(m, "/Clear");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Execute");
-          menus_set_sensitive(buf, TRUE);
-        }
-        else if(cs)
-        {
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Select");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Add to current selection");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Record");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Clear");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Execute");
-          menus_set_sensitive(buf, FALSE);
-        }
-        else
-          menus_set_sensitive(buf, FALSE);
-     }
-     /* update airlift queues */
-     cs = airlift_queue_size(0);
-     for(i = 1; i < AIRLIFT_QUEUE_NUM; i++)
-     {
-        my_snprintf(buf, sizeof(buf), "<main>/Airlift/Airlift queue %d", i + DELAYED_GOTO_NUM - 1);
-        m = buf + strlen(buf);
-        if(airlift_queue_size(i))
-        {
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Select");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Add to current selection");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Record");
-          menus_set_sensitive(buf, cs);
-          strcpy(m, "/Clear");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Execute");
-          menus_set_sensitive(buf, airlift_queue_get_unit_type(i) != U_LAST);
-          strcpy(m, "/Show");
-          menus_set_sensitive(buf, TRUE);
-        }
-        else if(cs)
-        {
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Select");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Add to current selection");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Record");
-          menus_set_sensitive(buf, TRUE);
-          strcpy(m, "/Clear");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Execute");
-          menus_set_sensitive(buf, FALSE);
-          strcpy(m, "/Show");
-          menus_set_sensitive(buf, FALSE);
-        }
-        else
-          menus_set_sensitive(buf, FALSE);
-      }
+    for (i = 1; i < MULTI_SELECT_NUM; i++) {
+      update_multi_selection_menu(i);
     }
-    pep_airlift_menu_set_sensitive();
-    automatic_processus_iterate(pap)
-    {
-      update_automatic_processus_filter_menu(pap);
-    } automatic_processus_iterate_end;
-    cond = (delayed_goto_size(0));
-    menus_set_sensitive("<main>/Delayed Goto/Execute delayed goto", cond);
-    menus_set_sensitive("<main>/Delayed Goto/Clear delayed orders", cond);
-    cond = (airlift_queue_size(0));
-    menus_set_sensitive("<main>/Airlift/Clear airlift queue", cond);
-    menus_set_sensitive("<main>/Airlift/Show cities in airlift queue", cond);
-    cond = (tiles_hilited_cities);
-    menus_set_sensitive("<main>/Miscellaneous/Set rallies for selected cities", cond);
-    menus_set_sensitive("<main>/Miscellaneous/Clear rallies in selected cities", cond);
+
 /*  This should be done in a future version for all warclient menu items
     menus_set_sensitive("<main>/Miscellaneous/Set rallies for selected cities", tiles_hilited_cities); */
     /* Remaining part of this function: Update Orders menu */
@@ -3974,35 +4055,35 @@ void update_menus(void)
 	menus_rename("<main>/_Orders/_Auto Settler", _("_Auto Settler"));
       }
 
-	menus_set_sensitive("<main>/Delayed Goto/Delayed goto", TRUE);
-	menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", TRUE);
-	menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", my_ai_enable && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
-	menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", my_ai_enable);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", TRUE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", TRUE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", TRUE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", TRUE);
-	cond=(my_ai_trade_level && unit_flag(punit,F_TRADE_ROUTE));
-	menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", my_ai_enable && cond);
-	menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", my_ai_enable && (cond || (my_ai_wonder_level
+      menus_set_sensitive("<main>/Delayed Goto/Delayed goto", TRUE);
+      menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", TRUE);
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", my_ai_enable && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", my_ai_enable);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", TRUE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", TRUE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", TRUE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", TRUE);
+      cond=(my_ai_trade_level && unit_flag(punit,F_TRADE_ROUTE));
+      menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", my_ai_enable && cond);
+      menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", my_ai_enable && (cond || (my_ai_wonder_level
 		&& unit_flag(punit,F_HELP_WONDER))));
-	menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", punit->my_ai.control);
-	menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders", my_ai_enable && punit->my_ai.control);
+      menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", punit->my_ai.control);
+      menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders", my_ai_enable && punit->my_ai.control);
 
       menus_set_sensitive("<main>/_Orders", TRUE);
     } else {
-	menus_set_sensitive("<main>/Delayed Goto/Delayed goto", FALSE);
-	menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", FALSE);
-	menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", FALSE);
-	menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", FALSE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", FALSE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", FALSE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", FALSE);
-	menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", FALSE);
- 	menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", FALSE);
-	menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", FALSE);
-	menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", FALSE);
-	menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders", FALSE);
+      menus_set_sensitive("<main>/Delayed Goto/Delayed goto", FALSE);
+      menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", FALSE);
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", FALSE);
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", FALSE);
+      menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", FALSE);
+      menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", FALSE);
+      menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", FALSE);
+      menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders", FALSE);
 
       menus_set_sensitive("<main>/_Orders", FALSE);
     }

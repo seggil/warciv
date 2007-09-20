@@ -176,6 +176,8 @@ static void define_tiles_within_rectangle(void)
 				  multi_select_add_unit(punit);
 		  }
 	  } unit_list_iterate_end;
+          update_menus();
+          update_unit_info_label(get_unit_in_focus());
 	}
 	  
       /*  Tile passed all tests; process it.
@@ -183,11 +185,10 @@ static void define_tiles_within_rectangle(void)
       if (ptile->city && ptile->city->owner == game.player_idx) {
         ptile->client.hilite = HILITE_CITY;
         tiles_hilited_cities = TRUE;
+        update_miscellaneous_menu();
       }
     }
   }
-  update_menus();
-  update_unit_info_label(get_unit_in_focus());
 
   /* Hilite in City List Window */
   if (tiles_hilited_cities) {
@@ -382,8 +383,8 @@ void cancel_tile_hiliting(void)
     } whole_map_iterate_end;
 
     update_map_canvas_visible();
+    update_miscellaneous_menu();
   }
-  update_menus();
 }
 
 /**************************************************************************
@@ -855,4 +856,3 @@ void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list)
   /* Then sort it. */
   qsort(unit_list, i, sizeof(*unit_list), unit_list_compare);
 }
-

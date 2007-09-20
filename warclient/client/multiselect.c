@@ -740,7 +740,7 @@ void delayed_goto_clear(int dg)
 	else
 		my_snprintf(buf,sizeof(buf),_("Warclient: Delayed orders queue cleared"));
 	append_output_window(buf);
-	update_menus();
+	update_delayed_goto_menu(dg);
 }
 
 void delayed_goto_clear_all(void)
@@ -772,7 +772,7 @@ void delayed_goto_copy(int dest,int src)
 		delayed_goto_add_unit(dest,dgd->id,dgd->type,dgd->ptile);
 	} delayed_goto_data_list_iterate_end;
 	delayed_goto_list[dest].pplayer=delayed_goto_list[src].pplayer;
-	update_menus();
+	update_delayed_goto_menu(dest);
 	if(dest)
 		my_snprintf(buf,sizeof(buf),_("Warclient: Delayed goto selection %d: %d delayed orders"),dest,delayed_goto_size(dest));
 	else
@@ -820,7 +820,6 @@ void delayed_goto_move(int dest,int src)
 	
 	delayed_goto_copy(dest,src);
 	delayed_goto_clear(src);
-	update_menus();
 }
 
 void delayed_goto_set(int dg,struct delayed_goto *pdg)
@@ -836,7 +835,7 @@ void delayed_goto_set(int dg,struct delayed_goto *pdg)
 		delayed_goto_add_unit(dg,dgd->id,dgd->type,dgd->ptile);
 	} delayed_goto_data_list_iterate_end;
 	delayed_goto_list[dg].pplayer=pdg->pplayer;
-	update_menus();
+	update_delayed_goto_menu(dg);
 }
 
 int delayed_goto_size(int dg)
@@ -908,7 +907,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 	char buf[256];
 	my_snprintf(buf,sizeof(buf),_("Warclient: Adding %d unit goto %s to queue."),count,get_tile_info(ptile));
 	append_output_window(buf);
-	update_menus();
+	update_delayed_goto_menu(0);
 }
 
 void request_player_execute_delayed_goto(struct player *pplayer,int dg)
@@ -916,7 +915,7 @@ void request_player_execute_delayed_goto(struct player *pplayer,int dg)
 	dgassert(dg);
 	if(delayed_goto_list[dg].pplayer==pplayer)
 		request_execute_delayed_goto(NULL,dg);
-	update_menus();
+	update_delayed_goto_menu(dg);
 }
 
 void request_unit_execute_delayed_goto(int dg)
@@ -1011,7 +1010,7 @@ void request_execute_delayed_goto(struct tile *ptile,int dg)
 	        my_snprintf(buf,sizeof(buf),_("Warclient: %d delayed goto still remain into queue. Press Y to continue"),counter2);
 	        append_output_window(buf);
 	}
-	update_menus();
+	update_delayed_goto_menu(dg);
 }
 
 void schedule_delayed_airlift(struct tile *ptile)
@@ -1021,7 +1020,7 @@ void schedule_delayed_airlift(struct tile *ptile)
 	my_snprintf(buf,sizeof(buf),_("Warclient: Scheduling delayed airlift for %s"),get_tile_info(ptile));
 	append_output_window(buf);
 	delayed_goto_add_unit(0,need_city_for,2,ptile);
-	update_menus();
+	update_delayed_goto_menu(0);
 	need_city_for=-1;
 }
 
@@ -1029,7 +1028,7 @@ void add_pause_delayed_goto(void)
 {
 	append_output_window(_("Warclient: Adding Pause in delayed goto"));
 	delayed_goto_add_unit(0,0,3,NULL);
-	update_menus();
+	update_delayed_goto_menu(0);
 }
 
 /* airlift queues */
@@ -1075,7 +1074,7 @@ void airlift_queue_clear(int aq)
 	else
 		my_snprintf(buf,sizeof(buf),_("Warclient: Airlift queue cleared"));
 	append_output_window(buf);
-	update_menus();
+	update_airlift_menu(aq);
 }
 
 void airlift_queue_clear_all(void)
@@ -1156,7 +1155,6 @@ void airlift_queue_move(int dest,int src)
 
 	airlift_queue_copy(dest,src);
 	airlift_queue_clear(src);
-	update_menus();
 }
 
 void airlift_queue_set(int aq,struct airlift_queue *paq)
@@ -1247,7 +1245,7 @@ void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi)
 	}
 	if(buf[0])
 		append_output_window(buf);
-	update_menus();
+	update_airlift_menu(0);
 }
 
 void request_auto_airlift_source_selection_with_airport(void)

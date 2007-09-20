@@ -636,6 +636,8 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
         {
         	append_output_window(buf);
         }
+        update_auto_caravan_menu();
+        update_miscellaneous_menu();
 	if(draw_city_traderoutes)
 		update_map_canvas_visible();
 }
@@ -1090,7 +1092,7 @@ void clear_my_ai_trade_cities(void)
 	if(draw_city_traderoutes)
 		update_map_canvas_visible();
 	append_output_window(_("PepClient: Trade city list cleared."));
-	update_menus();
+	update_auto_caravan_menu();
 }
 
 void show_free_slots_in_trade_plan(void)
@@ -1154,7 +1156,7 @@ void my_ai_add_trade_city(struct city *pcity,bool multi)
 	if(buf[0])
 	{
 		append_output_window(buf);
-		update_menus();
+		update_auto_caravan_menu();
 	}
 	if(my_ai_trade_plan_recalculate_auto&&!multi)
 		recalculate_trade_plan();
@@ -1261,7 +1263,7 @@ void non_ai_trade_change(struct unit *punit,int action)//0: none, 1: cancel, 2: 
 
 	if(draw_city_traderoutes&&my_ai_trade_manual_trade_route_enable)
 		update_map_canvas_visible();
-       update_menus();
+       update_auto_caravan_menu();
 }
 
 int count_trade_routes(struct city *pcity)
@@ -1545,6 +1547,8 @@ void my_ai_help_wonder_alloc(struct unit *punit,struct help_wonder *phw)
 		my_ai_orders_free(phw->punit0);
 		my_ai_caravan(phw->punit0);
 	}
+        update_auto_caravan_menu();
+        update_miscellaneous_menu();
 }
 
 void my_ai_help_wonder_execute(struct unit *punit)
@@ -1644,6 +1648,7 @@ void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile)
 	                    get_unit_type(punit->type)->name,punit->id,ptile->x,ptile->y);
         append_output_window(buf);
 	automatic_processus_event(AUTO_ORDERS,punit);
+        update_miscellaneous_menu();
 }
 
 void my_ai_patrol_execute(struct unit *punit)
@@ -2097,10 +2102,8 @@ goto_city:
 		punit->my_ai.control=TRUE;
 		punit->my_ai.activity=MY_AI_NONE;
 		unit_list_append(&noners,punit);
-		if(!map_get_city(punit->tile))
-			my_ai_goto_nearest_city(punit);
-		else
-			my_ai_goto_nearest_city(punit);
+        	my_ai_goto_nearest_city(punit);
+                update_miscellaneous_menu();
 	}
 }
 
@@ -2141,6 +2144,8 @@ void my_ai_orders_free(struct unit *punit)
 	punit->my_ai.control=FALSE;
 	punit->ai.control=FALSE;
 	request_new_unit_activity(punit,ACTIVITY_IDLE);
+        update_auto_caravan_menu();
+        update_miscellaneous_menu();
 	if(punit==get_unit_in_focus())
 		update_unit_info_label(punit);
 }
