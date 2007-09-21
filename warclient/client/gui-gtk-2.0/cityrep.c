@@ -1098,11 +1098,18 @@ static void autoarrange_workers_iterate (GtkTreeModel *model,
 {
   gpointer res;
   struct city *pcity;
+  struct cm_parameter parameter;
+
   gtk_tree_model_get (model, it, 0, &res, -1);
   pcity = res;
-  /* If server changes behaviour on this input, this will
-     no longer work... */
-  city_toggle_worker (pcity, CITY_MAP_RADIUS, CITY_MAP_RADIUS);
+
+  if (cma_is_city_under_agent(pcity, &parameter)) {
+    cma_put_city_under_agent(pcity, &parameter);
+  } else {
+    /* If server changes behaviour on this input, this will
+       no longer work... */
+    city_toggle_worker(pcity, CITY_MAP_RADIUS, CITY_MAP_RADIUS);
+  }
 }
 
 /****************************************************************
