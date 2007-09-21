@@ -581,10 +581,12 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
       }
     }
   } else {
+    connection_do_buffer(&aconnection);
     reports_freeze();
     gtk_tree_selection_selected_foreach(city_selection,
 					cma_iterate, GINT_TO_POINTER(idx));
     reports_thaw();
+    connection_do_unbuffer(&aconnection);
   }
 }
 
@@ -1377,19 +1379,27 @@ static void city_command_callback(struct gui_dialog *dlg, int response)
     gtk_tree_selection_selected_foreach(city_selection, popup_iterate, NULL);
     break;
   case CITY_BUY:
+    connection_do_buffer(&aconnection);
     gtk_tree_selection_selected_foreach(city_selection, buy_iterate, NULL);
+    connection_do_unbuffer(&aconnection);
     break;
   case CITY_CLEAR_WORKLIST:
+    connection_do_buffer(&aconnection);
     gtk_tree_selection_selected_foreach (city_selection,
         clear_worklist_iterate, NULL);
+    connection_do_unbuffer(&aconnection);
     break;
   case CITY_REMOVE_CUR_PROD:
+    connection_do_buffer(&aconnection);
     gtk_tree_selection_selected_foreach (city_selection,
        remove_cur_prod_iterate, NULL);
+    connection_do_unbuffer(&aconnection);
     break;//*pepeto*
   case CITY_AUTOARRANGE_WORKERS:
+    connection_do_buffer(&aconnection);
     gtk_tree_selection_selected_foreach (city_selection,
         autoarrange_workers_iterate, NULL);
+    connection_do_unbuffer(&aconnection);
     break;
   default:
     gui_dialog_destroy(dlg);
