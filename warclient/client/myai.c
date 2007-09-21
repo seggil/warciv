@@ -502,7 +502,7 @@ struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
       continue;
     }
 
-    trade = get_tile_type(ptile->terrain)->trade;
+    trade = city_get_trade_tile(cx, cy, pcity);
     for (i = 0; i < size; i++) {
       if (trade > t[i]) {
         break;
