@@ -1186,6 +1186,7 @@ void airlift_queue_set_unit_type(int aq,Unit_Type_id utype)
 	assert(utype>=0&&utype<=U_LAST);
 
 	airlift_queues[aq].utype=utype;
+        update_airlift_menu(aq);
 }
 
 void airlift_queue_show(int aq)
@@ -1245,7 +1246,8 @@ void add_city_to_auto_airlift_queue(struct tile *ptile,bool multi)
 	}
 	if(buf[0])
 		append_output_window(buf);
-	update_airlift_menu(0);
+        if(!multi)
+		update_airlift_menu(0);
 }
 
 void request_auto_airlift_source_selection_with_airport(void)
@@ -1257,6 +1259,7 @@ void request_auto_airlift_source_selection_with_airport(void)
 		if(city_got_building(pcity,airport))
 			add_city_to_auto_airlift_queue(pcity->tile,TRUE);
 	} city_list_iterate_end;
+        update_airlift_menu(0);
 }
 
 void do_airlift_for(int aq,struct city *pcity)

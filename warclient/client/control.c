@@ -811,6 +811,7 @@ void request_auto_airlift_source_selection(void)
         continue;
       add_city_to_auto_airlift_queue (pcity->tile,TRUE);
     } city_list_iterate_end;
+    update_airlift_menu(0);
   } else {
   hover_state = HOVER_AIRLIFT_SOURCE;
   update_hover_cursor();
@@ -1701,7 +1702,6 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
   punit->tile = target_unit->tile;
 
   unit_list_insert(&punit->tile->units, punit);
-  refresh_tile_mapcanvas(ptile, FALSE);
 
   if (punit_focus == punit) update_menus();
 }
