@@ -754,8 +754,7 @@ static void aslcfree(void *data)
     ctx->req_id = -1;
   }
   freelog(LOG_DEBUG, "free async_server_list_context %p", ctx);
-  /* is free(ctx); usefull here?
-   * Don't make it here to don't crash at the next net input callback */
+  free(ctx);
 }
 
 /**************************************************************************
@@ -823,12 +822,7 @@ process_metaserver_response(struct async_server_list_context *ctx)
   sl = parse_metaserver_http_data(f, errbuf, sizeof(errbuf));
   freelog(LOG_DEBUG, "calling %p userdata=%p", ctx->callback, ctx->userdata);
   (*ctx->callback) (sl, errbuf, ctx->userdata);
-  freelog(LOG_DEBUG, "deleting ctx=%p req_id=%d from aslr table",
-	  ctx, ctx->req_id);
-  hash_delete_entry(async_server_list_request_table,
-		    INT_TO_PTR(ctx->req_id));
-  freelog(LOG_DEBUG, "free asl ctx=%p", ctx);
-  free(ctx);
+  aslcfree(ctx);
 }
 
 /**************************************************************************
