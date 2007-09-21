@@ -1807,6 +1807,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 				else
 					append_output_window (_("PepClient: This unit is not able to trade"));  
 			} multi_select_iterate_end;
+                        update_unit_focus();
 	  }
 	  else
 		  append_output_window (_("PepClient: You must select a city to trade with"));  

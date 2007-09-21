@@ -675,7 +675,6 @@ void my_ai_trade_route_alloc_city(struct unit *punit,struct city *pcity)
 	}
 	if(buf[0])
 		append_output_window(buf);
-	update_unit_focus();
 }
 
 void my_ai_trade_route_execute(struct unit *punit)
