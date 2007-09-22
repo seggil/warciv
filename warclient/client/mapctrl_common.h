@@ -27,9 +27,14 @@ extern bool keyboardless_goto_button_down;
 extern bool keyboardless_goto_active;
 extern struct tile *keyboardless_goto_start_tile;
 
+extern struct tile *dist_first_tile, *dist_last_tile;
+
 void anchor_selection_rectangle(int canvas_x, int canvas_y);
 void update_selection_rectangle(int canvas_x, int canvas_y);
 void redraw_selection_rectangle(void);
+
+void update_distance_tool(int canvas_x, int canvas_y);
+void cancel_distance_tool(void);
 
 bool is_city_hilited(struct city *pcity);
 
@@ -64,9 +69,5 @@ bool get_chance_to_win(int *att_chance, int *def_chance,
 void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list);
 
 extern struct city *city_workers_display;
-
-void anchor_selection_distance(int canvas_x, int canvas_y);
-void update_selection_distance(int canvas_x, int canvas_y);
-bool distance_active;
 
 #endif /* FC__MAPCTRL_COMMON_H */

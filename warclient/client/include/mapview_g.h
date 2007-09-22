@@ -79,7 +79,7 @@ void put_city_worker(struct canvas *pcanvas,
 		     int canvas_x, int canvas_y);
 
 void draw_selection_rectangle(int canvas_x, int canvas_y, int w, int h);
-void draw_selection_distance(int canvas_x, int canvas_y, int w, int h);
+void redraw_distance_tool(void);
 void tileset_changed(void);
 
 #endif  /* FC__MAPVIEW_G_H */

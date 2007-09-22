@@ -221,6 +221,10 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
   if(ev->button == 3 && (rbutton_down || hover_state != HOVER_NONE))  {
     release_right_button(ev->x, ev->y);
   }
+  if (dist_first_tile) {
+    /* Distance tool */
+    cancel_distance_tool();
+  }
 
   return TRUE;
 }
@@ -367,6 +371,11 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         && (ev->state & GDK_CONTROL_MASK)) {
       insert_chat_link(ptile, (ev->state & GDK_SHIFT_MASK) != 0);
     }
+    /* <ALT> + <SHIFT> + RMB : Distance tool. */
+    else if ((ev->state & GDK_SHIFT_MASK)
+             && (ev->state & GDK_MOD1_MASK)) {
+      update_distance_tool(ev->x, ev->y);
+    }
     /* <SHIFT> <CONTROL> + RMB: Paste Production. */
     else if ((ev->state & GDK_SHIFT_MASK)
              && (ev->state & GDK_CONTROL_MASK) && pcity)
@@ -376,22 +385,6 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }    /* <CONTROL> + RMB : Quickselect a land unit. */
     else if (ev->state & GDK_CONTROL_MASK) {
       action_button_pressed(ev->x, ev->y, SELECT_LAND);
-    }
-    /* <ALT> + <ALT> + RMB : insert chat link. */
-    else if (ptile
-             && (ev->state & GDK_SHIFT_MASK)
-             && (ev->state & GDK_MOD1_MASK))
-    {
-      if (distance_active) {
-        release_right_button(ev->x, ev->y);
-        return TRUE;
-      }
-      if (hover_state != HOVER_RALLY_POINT)
-        cancel_tile_hiliting();
-      if (hover_state == HOVER_NONE) {
-        anchor_selection_distance(ev->x, ev->y);
-        rbutton_down = TRUE; /* causes rectangle updates */
-      }
     }
     /* <SHIFT> + RMB: Copy Production. */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
@@ -468,19 +461,20 @@ void update_rect_at_mouse_pos(void)
 gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
 {
   update_line(ev->x, ev->y);
+
   if (rbutton_down) {
-    if ((ev->state & GDK_SHIFT_MASK)
-        && (ev->state & GDK_MOD1_MASK)) {
-      int canvas_x, canvas_y;
-      gdk_window_get_pointer(map_canvas->window, &canvas_x, &canvas_y, NULL);
-      update_selection_distance(canvas_x, canvas_y);
-    } else {
-  update_rect_at_mouse_pos();
-    }
+    update_rect_at_mouse_pos();
   }
+
   if (keyboardless_goto_button_down && hover_state == HOVER_NONE) {
     maybe_activate_keyboardless_goto(ev->x, ev->y);
   }
+
+  if (dist_first_tile) {
+    /* Distance tool */
+    update_distance_tool(ev->x, ev->y);
+  }
+
   return TRUE;
 }
 

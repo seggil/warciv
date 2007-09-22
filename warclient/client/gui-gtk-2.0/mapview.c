@@ -1199,42 +1199,41 @@ void draw_selection_rectangle(int canvas_x, int canvas_y, int w, int h)
 }
 
 /**************************************************************************
- Selection distance
+  Distance tool.
 **************************************************************************/
-void draw_selection_distance(int canvas_x, int canvas_y, int w, int h)
+void redraw_distance_tool(void)
 {
-  PangoContext *context;
-  PangoLayout *layout;
-  PangoRectangle rect;
-  gchar text[128];
-  struct tile *ptile1, *ptile2;
-
-  ptile1 = canvas_pos_to_tile(canvas_x, canvas_y);
-  ptile2 = canvas_pos_to_tile(canvas_x + w, canvas_y + h);
-
-  if (!ptile1 || !ptile2) {
+  if (!dist_first_tile || !dist_last_tile) {
     return;
   }
 
+  PangoContext *context;
+  PangoLayout *layout;
+  gchar text[128];
+  int x0, x1, y0, y1;
+
+  tile_to_canvas_pos(&x0, &y0, dist_first_tile);
+  tile_to_canvas_pos(&x1, &y1, dist_last_tile);
+  x0 += NORMAL_TILE_WIDTH;
+  x1 += NORMAL_TILE_WIDTH;
+  y0 += NORMAL_TILE_HEIGHT;
+  y1 += NORMAL_TILE_HEIGHT;
+
   gdk_gc_set_foreground(civ_gc, colors_standard[COLOR_STD_YELLOW]);
 
-  gdk_draw_line(map_canvas->window, civ_gc, canvas_x, canvas_y,
-                canvas_x + w, canvas_y + h);
+  gdk_draw_line(map_canvas->window, civ_gc, x0, y0, x1, y1);
   context = gdk_pango_context_get();
   layout = pango_layout_new(context);
   pango_layout_set_font_description(layout, main_font);
 
   my_snprintf(text, sizeof(text), _("real distance: %d\ntrade distance: %d"),
-              real_map_distance(ptile1, ptile2), map_distance(ptile1, ptile2));
+              real_map_distance(dist_first_tile, dist_last_tile),
+              map_distance(dist_first_tile, dist_last_tile));
   pango_layout_set_text(layout, text , -1);
-  pango_layout_get_pixel_extents(layout, &rect, NULL);
 
-  gdk_draw_layout(map_canvas->window, civ_gc, canvas_x, canvas_y, layout);
-
+  gdk_draw_layout(map_canvas->window, civ_gc, x1, y1, layout);
   g_object_unref(layout);
   g_object_unref(context);
-
-  distance_active = TRUE;
 }
 
 /**************************************************************************
