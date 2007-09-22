@@ -1960,10 +1960,10 @@ static guint last_id = 0;
 /****************************************************************
   ...
 ****************************************************************/
-static gboolean update_map_canvas_visible_callback(gpointer data)
+static gboolean idle_callback(gpointer data)
 {
-  real_update_map_canvas_visible();
   g_source_remove(last_id);
+  unqueue_mapview_updates();
   last_id = 0;
   return TRUE;
 }
@@ -1971,9 +1971,9 @@ static gboolean update_map_canvas_visible_callback(gpointer data)
 /****************************************************************
   ...
 ****************************************************************/
-void update_map_canvas_visible(void)
+void add_idle_callback(void)
 {
   if (last_id == 0) {
-    last_id = g_idle_add(update_map_canvas_visible_callback, NULL);
+    last_id = g_idle_add(idle_callback, NULL);
   }
 }

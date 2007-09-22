@@ -880,7 +880,7 @@ void handle_new_year(int year, int turn)
   last_turn_gold_amount=game.player_ptr->economic.gold;
 #endif
 
-  queue_mapview_update(UPDATE_MAP_CANVAS_VISIBLE);
+  update_map_canvas_visible();
 
   if (sound_bell_at_new_turn &&
       (!game.player_ptr->ai.control || ai_manual_turn_done)) {
@@ -1221,6 +1221,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
 	  if (pcity->client.occupied != new_occupied) {
 	    pcity->client.occupied = new_occupied;
+            refresh_tile_mapcanvas(pcity->tile, FALSE);
 	  }
 	}
 
@@ -1229,7 +1230,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	else
 	  refresh_city_dialog(pcity);
       }
-      refresh_tile_mapcanvas(old_tile, FALSE);
 
       if((pcity=map_get_city(punit->tile)))  {
 	if (can_player_see_units_in_city(game.player_ptr, pcity)) {
@@ -2201,14 +2201,14 @@ void handle_tile_info(struct packet_tile_info *packet)
   if (can_client_change_view()) {
     /* the tile itself */
     if (tile_changed || old_known!=ptile->known)
-      refresh_tile_mapcanvas(ptile, FALSE);
+      refresh_tile_mapcanvas(ptile, TRUE);
 
     /* if the terrain or the specials of the tile
        have changed it affects the adjacent tiles */
     if (tile_changed) {
       adjc_iterate(ptile, tile1) {
 	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED)
-	  refresh_tile_mapcanvas(tile1, FALSE);
+	  refresh_tile_mapcanvas(tile1, TRUE);
       }
       adjc_iterate_end;
       return;

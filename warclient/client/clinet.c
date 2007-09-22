@@ -81,7 +81,6 @@
 #include "connectdlg_g.h"
 #include "dialogs_g.h"		/* popdown_races_dialog() */
 #include "gui_main_g.h"		/* add_net_input(), remove_net_input() */
-#include "mapview_common.h"	/* unqueue_mapview_update */
 #include "menu_g.h"
 #include "messagewin_g.h"
 #include "options.h"
@@ -394,8 +393,6 @@ void input_from_server(int fd)
   } else {
     close_socket_callback(&aconnection);
   }
-
-  unqueue_mapview_updates();
 }
 
 /**************************************************************************
@@ -438,7 +435,7 @@ void input_from_server_till_request_got_processed(int fd,
 	  if (aconnection.client.last_processed_request_id_seen >=
 	      expected_request_id) {
 	    freelog(LOG_DEBUG, "ifstrgp: got it; returning");
-	    goto out;
+	    return;
 	  }
 	}
       }
@@ -447,9 +444,6 @@ void input_from_server_till_request_got_processed(int fd,
       break;
     }
   }
-
-out:
-  unqueue_mapview_updates();
 }
 
 #ifdef WIN32_NATIVE

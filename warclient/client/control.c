@@ -1660,6 +1660,9 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
   }
 
   unit_list_unlink(&ptile->units, punit);
+  punit->tile = target_unit->tile; /* For unit chat link */
+  refresh_tile_mapcanvas(ptile, TRUE);
+  punit->tile = ptile;             /* Revert */
 
   if (game.player_idx == punit->owner
       && auto_center_on_unit
@@ -1693,8 +1696,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
       freelog(LOG_DEBUG,"animating unit movement");
       /* For the duration of the animation the unit exists at neither
        * tile. */
-      map_distance_vector(&dx, &dy, punit->tile,
-			  target_unit->tile);
+      map_distance_vector(&dx, &dy, ptile, target_unit->tile);
       move_unit_map_canvas(punit, ptile, dx, dy);
     }
   }

@@ -33,6 +33,7 @@
 #include "climisc.h"
 #include "control.h"
 #include "goto.h"
+#include "gui_main_g.h"
 #include "mapview_common.h"
 #include "myai.h"//*pepeto*
 #include "tilespec.h"
@@ -46,11 +47,20 @@ bool can_slide = TRUE;
 #define MAX_CITY_DESC_WIDTH 128
 #define MAX_CITY_DESC_HEIGHT 32
 
+enum update_type {
+  /* Masks */
+  UPDATE_NONE = 0,
+  UPDATE_CITY_DESCRIPTIONS = 1,
+  UPDATE_MAP_CANVAS_VISIBLE = 2
+};
+
 /*
  * Set to TRUE if the backing store is more recent than the version
  * drawn into overview.window.
  */
 static bool overview_dirty = FALSE;
+static bool real_update = FALSE;
+static struct tile_list updated_tiles;
 
 static void base_canvas_to_map_pos(int *map_x, int *map_y,
 				   int canvas_x, int canvas_y);
@@ -59,6 +69,8 @@ static void get_mapview_corners(int x[4], int y[4]);
 static void redraw_overview(void);
 static void dirty_overview(void);
 static void flush_dirty_overview(void);
+
+void queue_mapview_update(enum update_type update);
 
 static void draw_traderoutes_for_city (struct city *src_pcity);
 static void draw_trade_route_list(struct trade_route_list *ptrl,enum color_std color);
@@ -70,16 +82,21 @@ void refresh_tile_mapcanvas(struct tile *ptile, bool write_to_screen)
 {
   int canvas_x, canvas_y;
 
-  if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
-    canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
-    update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
-
-    if (write_to_screen) {
-      flush_dirty();
-      redraw_selection_rectangle();
+  if (real_update || write_to_screen) {
+    if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
+      canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
+      update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+  
+      if (write_to_screen) {
+        flush_dirty();
+        redraw_selection_rectangle();
+      }
     }
+    overview_update_tile(ptile);
+  } else if (!tile_list_find(&updated_tiles, ptile)) {
+    tile_list_append(&updated_tiles, ptile);
+    add_idle_callback();
   }
-  overview_update_tile(ptile);
 }
 
 /**************************************************************************
@@ -1687,11 +1704,9 @@ void update_map_canvas(int canvas_x, int canvas_y, int width, int height)
 /**************************************************************************
  Update (only) the visible part of the map
 **************************************************************************/
-void real_update_map_canvas_visible(void)
+void update_map_canvas_visible(void)
 {
-  dirty_all();
-  update_map_canvas(0, 0, mapview_canvas.store_width,
-		    mapview_canvas.store_height);
+  queue_mapview_update(UPDATE_MAP_CANVAS_VISIBLE);
 }
 
 /* The maximum city description width and height.  This gives the dimensions
@@ -2210,6 +2225,7 @@ static enum update_type needed_updates = UPDATE_NONE;
 void queue_mapview_update(enum update_type update)
 {
   needed_updates |= update;
+  add_idle_callback(); /* unqueue_mapview_updates() will be called later */
 }
 
 /**************************************************************************
@@ -2221,10 +2237,18 @@ void unqueue_mapview_updates(void)
 	  needed_updates);
 
   if (needed_updates & UPDATE_MAP_CANVAS_VISIBLE) {
-    update_map_canvas_visible();
+    dirty_all();
+    update_map_canvas(0, 0, mapview_canvas.store_width,
+                      mapview_canvas.store_height);
   } else if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
     update_city_descriptions();
   }
+  real_update = TRUE;
+  tile_list_iterate(updated_tiles, ptile) {
+    refresh_tile_mapcanvas(ptile, FALSE);
+  } tile_list_iterate_end;
+  real_update = FALSE;
+  tile_list_unlink_all(&updated_tiles);
   needed_updates = UPDATE_NONE;
 
   flush_dirty();
@@ -2750,6 +2774,7 @@ bool map_canvas_resized(int width, int height)
 **************************************************************************/
 void init_mapcanvas_and_overview(void)
 {
+  tile_list_init(&updated_tiles);
 }
 
 //*pepeto*
