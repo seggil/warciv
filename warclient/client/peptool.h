@@ -183,7 +183,7 @@ extern int my_ai_defend_city_power_req;
 #define DEFAULT_MY_AI_TRADE_EXTERNAL FALSE
 
 #define DEFAULT_MY_AI_TRADE_TIME 10
-#define MIN_MY_AI_TRADE_TIME 1
+#define MIN_MY_AI_TRADE_TIME 0
 #define MAX_MY_AI_TRADE_TIME 60
 
 #define DEFAULT_MY_AI_TRADE_PLAN_AUTO TRUE
