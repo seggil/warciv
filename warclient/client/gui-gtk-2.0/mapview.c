@@ -1214,10 +1214,10 @@ void redraw_distance_tool(void)
 
   tile_to_canvas_pos(&x0, &y0, dist_first_tile);
   tile_to_canvas_pos(&x1, &y1, dist_last_tile);
-  x0 += NORMAL_TILE_WIDTH;
-  x1 += NORMAL_TILE_WIDTH;
-  y0 += NORMAL_TILE_HEIGHT;
-  y1 += NORMAL_TILE_HEIGHT;
+  x0 += NORMAL_TILE_WIDTH / 2;
+  x1 += NORMAL_TILE_WIDTH / 2;
+  y0 += NORMAL_TILE_HEIGHT / 2;
+  y1 += NORMAL_TILE_HEIGHT / 2;
 
   gdk_gc_set_foreground(civ_gc, colors_standard[COLOR_STD_YELLOW]);
 
