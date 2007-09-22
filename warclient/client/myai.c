@@ -874,7 +874,7 @@ void recursive_calculate_trade_planning(time_t max_time,
   int i, j;
 
   for (i = start_city; i < size; i++) {
-    if (time(NULL) > max_time) {
+    if (max_time && time(NULL) > max_time) {
       break;
     }
     if (tcities[i].free_slots <= 0 || tcities[i].trade_routes_num <= 0) {
@@ -882,7 +882,7 @@ void recursive_calculate_trade_planning(time_t max_time,
     }
 
     for (j = i == start_city ? start_trade : i + 1; j < size; j++) {
-      if (time(NULL) > max_time) {
+      if (max_time && time(NULL) > max_time) {
         break;
       }
       if (tcities[j].free_slots <= 0 || !tcities[i].trade_routes[j]) {
@@ -1038,8 +1038,9 @@ void calculate_trade_planning(char *buf, size_t buf_len)
 
   /* Do the recursive calculation */
   if (bconf.free_slots > 0) {
-    recursive_calculate_trade_planning(time(NULL) + my_ai_trade_plan_time_max,
-                                       tcities, size, 0, 1,
+    recursive_calculate_trade_planning(my_ai_trade_plan_time_max
+                                       ? time(NULL) + my_ai_trade_plan_time_max
+                                       : 0, tcities, size, 0, 1,
                                        &ptrlist, &cconf, &btrlist, &bconf);
   }
 
