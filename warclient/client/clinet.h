@@ -73,7 +73,6 @@ struct server
 #define server_list_iterate_end  LIST_ITERATE_END
 
 struct server_list *create_server_list(char *errbuf, int n_errbuf);
-void delete_server_list(struct server_list *server_list);
 int begin_lanserver_scan(void);
 struct server_list *get_lan_server_list(void); 
 void finish_lanserver_scan(void);

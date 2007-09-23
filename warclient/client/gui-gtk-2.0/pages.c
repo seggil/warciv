@@ -316,8 +316,8 @@ static void server_list_created_callback(struct server_list *new_server_list,
   freelog(LOG_DEBUG,
 	  "server_list_created_callback new_server_list=%p"
 	  " error=\"%s\" data=%p", new_server_list, error, data);
-  if (internet_server_list)
-    delete_server_list(internet_server_list);
+  /*if (internet_server_list)
+    delete_server_list(internet_server_list);*/
 
   if (!new_server_list) {
     my_snprintf(msg, sizeof(msg), _("Could not get server list: %s"), error);
@@ -344,9 +344,9 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
   char buf[1024];
 
   if (!adns_is_available()) {
-    if (internet_server_list)
-      delete_server_list(internet_server_list);
-
+    /* if (internet_server_list)
+      delete_server_list(internet_server_list);*/
+    
     internet_server_list = create_server_list(errbuf, n_errbuf);
 
     update_server_list(meta_selection, meta_store, internet_server_list);
@@ -778,6 +778,7 @@ static void network_list_callback(GtkTreeSelection *select, gpointer data)
     update_metaplayerlist(gtk_tree_model_get_path(model, &it));
   } else {
     gtk_tree_selection_unselect_all(meta_selection);
+    update_metaplayerlist(NULL);
   }
 
   gtk_tree_model_get(model, &it, 0, &host, 1, &port, -1);

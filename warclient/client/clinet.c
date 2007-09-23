@@ -1283,7 +1283,7 @@ struct server_list *create_server_list(char *errbuf, int n_errbuf)
  the server list itself (so the server_list is no longer
  valid after calling this function)
 **************************************************************************/
-void delete_server_list(struct server_list *server_list)
+static void delete_server_list(struct server_list *server_list)
 {
   server_list_iterate(*server_list, ptmp) {
     int i;
