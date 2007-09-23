@@ -149,20 +149,32 @@ const struct command commands[] = {
       "entered."),
    ECHO_ADMINS
   },
-  {"vote",	ALLOW_BASIC, ALLOW_BASIC,
-   N_("vote yes|no [vote number]"),
+  {"vote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
+   /* TRANS: translate text between [] only */
+   N_("vote yes|no|neutral|cancel [vote number]"),
    N_("Cast a vote."),
       /* xgettext:no-c-format */
-   N_("A player with basic level access issuing a control level command "
+   N_("A player with info level access issuing a control level command "
       "starts a new vote for the command.  The /vote command followed by "
-      "\"yes\" or \"no\", and optionally a vote number, "
-      "gives your vote.  If you do not add a vote number, your vote applies "
-      "to the latest command.  You can only suggest one vote at a time.  "
-      "The vote will pass immediately if more than half of the players "
+      "\"yes\", \"no\", \"neutral\" or \"cancel\", and optionally a vote "
+      "number, gives your vote.  If you do not add a vote number, your vote "
+      "applies to the latest command.  You can only suggest one vote at a "
+      "time. The vote will pass immediately if more than half of the players "
       "vote for it, or fail immediately if at least half of the players "
       "vote against it.  If one full turn elapses the vote may pass in any "
-      "case if nobody votes against it."),
+      "case if nobody votes against it. Without argument, it lists you and "
+      "the running votes."),
    ECHO_NONE
+  },
+  {"removevote",	ALLOW_BASIC,	ALLOW_BASIC,
+   /* TRANS: translate text between <> only */
+   N_("removevote\n"
+      "removevote <vote number>\n"
+      "removevote all\n"),
+   N_("Cancel a running vote.\n"),
+   N_("With no arguments, this command remove your own vote. If you have "
+      "an hack access level, you can cancel any vote by vote number, or all "
+      "with the all argument.")
   },
   {"debug",	ALLOW_HACK, ALLOW_HACK,
    N_("debug [ player <player> | city <x> <y> | units <x> <y> | unit <id> ]"),

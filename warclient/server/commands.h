@@ -58,6 +58,7 @@ enum command_id {
   CMD_VOTE,
   
   /* mostly non-harmful: */
+  CMD_REMOVE_VOTE,
   CMD_DEBUG,
   CMD_SET,
   CMD_TEAM,

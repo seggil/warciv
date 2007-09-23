@@ -794,6 +794,8 @@ void start_game(void)
 
   con_puts(C_OK, _("Starting game."));
 
+  clear_all_votes(); /* prevent some problems about commands */
+
   server_state=SELECT_RACES_STATE; /* loaded ??? */
   force_end_of_sniff = TRUE;
 }
