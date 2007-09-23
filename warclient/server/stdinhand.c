@@ -543,16 +543,22 @@ static void check_vote(struct voting *pvote)
   } vote_cast_list_iterate_end;
 
   /* Check if we should resolve the vote */
-  if (num_voters > 0 && (pvote->full_turn == TRUE
-                         || pvote->yes > num_voters / 2
-                         || pvote->no >= num_voters / 2
-                         || pvote->no + num_voters - num_cast < pvote->yes
-                         || pvote->yes + num_voters - num_cast <= pvote->no)) {
+  if (num_voters > 0
+      && ((pvote->command_id != CMD_END_GAME
+           && (pvote->full_turn == TRUE
+               || pvote->yes > num_voters / 2
+               || pvote->no >= num_voters / 2
+               || pvote->no + num_voters - num_cast < pvote->yes
+               || pvote->yes + num_voters - num_cast <= pvote->no))
+          || (pvote->command_id == CMD_END_GAME
+              && (pvote->full_turn == TRUE
+                  || pvote->yes > num_voters / 2
+                  || pvote->no > 0)))) {
     /* Yep, resolve this one */
     struct connection *pconn;
     bool passed = ((pvote->yes > pvote->no && pvote->command_id != CMD_END_GAME)
                    || (pvote->command_id == CMD_END_GAME
-                       && pvote->yes > 0 && pvote->no == 0));
+                       && pvote->yes > num_voters / 2 && pvote->no == 0));
 
     if (passed) {
       /* Do it! */
