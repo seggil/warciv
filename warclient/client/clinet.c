@@ -724,11 +724,6 @@ static void aslcfree(void *data)
 
   if (!ctx)
     return;
-  if (ctx->sock != -1) {
-    freelog(LOG_DEBUG, "closing socket %d", ctx->sock);
-    my_closesocket(ctx->sock);
-    ctx->sock = -1;
-  }
   if (ctx->nlsa_id > 0) {
     freelog(LOG_DEBUG, "cancelling net_lookup id=%d", ctx->nlsa_id);
     cancel_net_lookup_service(ctx->nlsa_id);
@@ -739,7 +734,11 @@ static void aslcfree(void *data)
     remove_net_input_callback(ctx->input_id);
     ctx->input_id = -1;
   }
-
+  if (ctx->sock != -1) {
+    freelog(LOG_DEBUG, "closing socket %d", ctx->sock);
+    my_closesocket(ctx->sock);
+    ctx->sock = -1;
+  }
   if (ctx->req_id > 0) {
     freelog(LOG_DEBUG, "deleting ctx=%p req_id=%d from aslr table",
 	    ctx, ctx->req_id);
@@ -816,7 +815,6 @@ process_metaserver_response(struct async_server_list_context *ctx)
   sl = parse_metaserver_http_data(f, errbuf, sizeof(errbuf));
   freelog(LOG_DEBUG, "calling %p userdata=%p", ctx->callback, ctx->userdata);
   (*ctx->callback) (sl, errbuf, ctx->userdata);
-  aslcfree(ctx);
 }
 
 /**************************************************************************
@@ -890,10 +888,8 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
     freelog(LOG_DEBUG, "connection closed, we are done reading");
 FINISHED_READING_DATA:
     ctx->buf[ctx->buflen] = '\0';
-    my_closesocket(ctx->sock);
-    ctx->sock = -1;
-    ctx->input_id = -1;
     process_metaserver_response(ctx);
+    aslcfree(ctx);
     return FALSE;		/* we are done reading */
   }
 
