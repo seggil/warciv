@@ -522,9 +522,8 @@ static enum cmdlevel_id access_level(enum command_id cmd)
 **************************************************************************/
 static bool may_use(struct connection *caller, enum command_id cmd)
 {
-    if (!caller)
-    {
-    return TRUE;  /* on the console, everything is allowed */
+  if (!caller) {
+    return access_level(cmd) < ALLOW_NEVER;
   }
   return caller->access_level >= access_level(cmd);
 }
@@ -6242,29 +6241,41 @@ static void show_help_command_list(struct connection *caller,
 				  enum command_id help_cmd)
 {
   enum command_id i;
+  char buf[MAX_LEN_CONSOLE_LINE];
+  int j;
+
   cmd_reply(help_cmd, caller, C_COMMENT, horiz_line);
   cmd_reply(help_cmd, caller, C_COMMENT,
 	    _("The following server commands are available:"));
   cmd_reply(help_cmd, caller, C_COMMENT, horiz_line);
-    if (!caller && con_get_style())
-    {
-        for (i = 0; i < CMD_NUM; i++)
-        {
-      cmd_reply(help_cmd, caller, C_COMMENT, "%s", commands[i].name);
+
+  buf[0] = '\0';
+  for (i = 0, j = 0; i < CMD_NUM; i++) {
+    if (may_use(caller, i)) {
+      cat_snprintf(buf, sizeof(buf), "%-19s", commands[i].name);
+      if ((++j % 4) == 0) {
+        cmd_reply(help_cmd, caller, C_COMMENT, buf);
+        buf[0] = '\0';
+      }
     }
-    }
-    else
-    {
-    char buf[MAX_LEN_CONSOLE_LINE];
-    int j;
+  }
+  if (buf[0] != '\0')
+    cmd_reply(help_cmd, caller, C_COMMENT, buf);
+  if (caller && caller->access_level == ALLOW_BASIC) {
+    cmd_reply(help_cmd, caller, C_COMMENT, horiz_line);
+    cmd_reply(help_cmd, caller, C_COMMENT,
+              _("The following server commands require a vote:"));
+    cmd_reply(help_cmd, caller, C_COMMENT, horiz_line);
+
     buf[0] = '\0';
-        for (i = 0, j = 0; i < CMD_NUM; i++)
-        {
-            if (may_use(caller, i))
-            {
+    for (i = 0, j = 0; i < CMD_NUM; i++) {
+      enum cmdlevel_id level = (server_state == PRE_GAME_STATE
+                                ? commands[i].pregame_level
+                                : commands[i].game_level);
+
+      if (level == ALLOW_CTRL) {
 	cat_snprintf(buf, sizeof(buf), "%-19s", commands[i].name);
-                if ((++j % 4) == 0)
-                {
+	if((++j % 4) == 0) {
 	  cmd_reply(help_cmd, caller, C_COMMENT, buf);
 	  buf[0] = '\0';
 	}
@@ -7251,4 +7262,3 @@ bool sset_is_changeable(int idx)
     return FALSE;
   }
 }
-

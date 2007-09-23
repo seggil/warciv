@@ -19,6 +19,8 @@ enum echo_type {
   ECHO_ALL,
 };
 
+#define ALLOW_NEVER ALLOW_NUM
+
 /**************************************************************************
   Commands - can be recognised by unique prefix
 **************************************************************************/

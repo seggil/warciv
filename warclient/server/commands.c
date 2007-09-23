@@ -135,7 +135,7 @@ const struct command commands[] = {
       "options that have been changed from the default value."),
    ECHO_NONE
   },
-  {"score",	ALLOW_CTRL, ALLOW_CTRL,
+  {"score",	ALLOW_CTRL, ALLOW_NEVER,
    "score",
    N_("Show current scores."),
    N_("For each connected client, pops up a window showing the current "
@@ -176,7 +176,7 @@ const struct command commands[] = {
    N_("Set server option."), NULL,
    ECHO_PLAYERS
   },
-  {"team",	ALLOW_CTRL, ALLOW_BASIC,
+  {"team",	ALLOW_NEVER, ALLOW_BASIC,
    N_("team <player> [team]"),
    N_("Change, add or remove a player's team affiliation."),
    N_("Sets a player as member of a team. If no team specified, the "
@@ -186,7 +186,7 @@ const struct command commands[] = {
       "with averaged individual scores."),
    ECHO_PLAYERS
   },
-  {"rulesetdir", ALLOW_CTRL, ALLOW_BASIC,
+  {"rulesetdir", ALLOW_NEVER, ALLOW_BASIC,
    N_("rulesetdir <directory>\n"
       "rulesetdir <ruleset_id>"),
    N_("Choose new ruleset directory or modpack."),
@@ -234,7 +234,7 @@ const struct command commands[] = {
    N_("Set address (URL) for metaserver to report to."), NULL,
     ECHO_ADMINS
   },
-  {"aitoggle",	ALLOW_CTRL, ALLOW_BASIC,
+  {"aitoggle",	ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("aitoggle <player-name>"),
    N_("Toggle AI status of player."), NULL,
@@ -268,7 +268,7 @@ const struct command commands[] = {
       "other connections to detach from a player."),
    ECHO_ADMINS
   },
-  {"create",	ALLOW_CTRL, ALLOW_CTRL,
+  {"create",	ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("create <player-name>"),
    N_("Create an AI player with a given name."),
@@ -366,7 +366,7 @@ const struct command commands[] = {
       ),
    ECHO_ADMINS
   },
-  {"firstlevel", ALLOW_BASIC, ALLOW_BASIC,
+  {"firstlevel", ALLOW_NEVER, ALLOW_NEVER,
    "firstlevel",
    N_("Grab the 'first come' command access level."),
    N_("If 'cmdlevel first come' has been used to set a special 'first come'\n"
@@ -404,7 +404,7 @@ const struct command commands[] = {
       "the last valid ignore list index."),
    ECHO_NONE
   },
-  {"autoteam", ALLOW_HACK, ALLOW_CTRL, /* require vote in pregame */
+  {"autoteam", ALLOW_NEVER, ALLOW_CTRL, /* require vote in pregame */
    /* TRANS: translate text between <> only */
    N_("autoteam <number of teams> <best player; 2nd best; 3rd; etc.>"), 
    N_("Assign teams automatically."),
@@ -435,7 +435,7 @@ const struct command commands[] = {
    ECHO_NONE
   },
 #endif
-  {"endgame",	ALLOW_CTRL, ALLOW_CTRL,
+  {"endgame",	ALLOW_CTRL, ALLOW_NEVER,
    /* TRANS: translate text between <> only */
    N_("endgame <player1 player2 player3 ...>"),
    N_("End the game.  If players are listed, these win the game."),
@@ -451,7 +451,7 @@ const struct command commands[] = {
       "all cities and units etc. Works even in the middle of game. Use with care!"),
    ECHO_ALL
   },
-  {"save",	ALLOW_CTRL, ALLOW_CTRL,
+  {"save",	ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
    N_("save\n"
       "save <file-name>"),
@@ -464,7 +464,7 @@ const struct command commands[] = {
       "and use the 'start' command once players have reconnected."),
    ECHO_ALL
   },
-  {"load",      ALLOW_CTRL, ALLOW_CTRL,
+  {"load",      ALLOW_NEVER, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
    N_("load\n"
       "load <file-name>"),
@@ -473,7 +473,7 @@ const struct command commands[] = {
       "rulesets and server options are lost.\n"),
    ECHO_ALL
   },
-    {"loadmap",      ALLOW_CTRL, ALLOW_CTRL,
+    {"loadmap",      ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("loadmap\n"
       "loadmap <mapfile-name>"),
@@ -485,7 +485,7 @@ const struct command commands[] = {
       "list of maps."),
    ECHO_ALL
   },
-  {"unloadmap",      ALLOW_CTRL, ALLOW_CTRL,
+  {"unloadmap",      ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("unloadmap\n"
       "unloadmap"),
@@ -494,7 +494,7 @@ const struct command commands[] = {
       "Use it if you want to play without a map after you have loaded a mapfile.\n"),
    ECHO_ALL
   },
-    {"loadscenario",      ALLOW_CTRL, ALLOW_CTRL,
+    {"loadscenario",      ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("loadscenario\n"
       "loadscenario <scenariofile-name>"),
@@ -515,7 +515,7 @@ const struct command commands[] = {
    N_("Write current settings as server commands to file."), NULL,
    ECHO_ADMINS
   },
-  {"reset",	ALLOW_HACK, ALLOW_CTRL,
+  {"reset",	ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("reset"),
    N_("Reset all settings"), N_("Reset all settings and read the setup file, "
