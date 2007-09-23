@@ -463,7 +463,7 @@ gboolean move_mapcanvas(GtkWidget *w, GdkEventMotion *ev, gpointer data)
   update_line(ev->x, ev->y);
 
   if (rbutton_down) {
-    update_rect_at_mouse_pos();
+  update_rect_at_mouse_pos();
   }
 
   if (keyboardless_goto_button_down && hover_state == HOVER_NONE) {

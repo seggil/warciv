@@ -469,13 +469,13 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 
       /* This costs! */
       pplayer->economic.gold -= pvictim->bribe_cost;
-
-      notify_player_ex(uplayer, pvictim->tile, E_ENEMY_DIPLOMAT_BRIBE,
+  
+  notify_player_ex(uplayer, pvictim->tile, E_ENEMY_DIPLOMAT_BRIBE,
 		   _("Game: Your %s was bribed by %s."),
 		   unit_name(pvictim->type), pplayer->name);
 
-      /* Be sure to wipe the converted unit! */
-      wipe_unit(pvictim);
+  /* Be sure to wipe the converted unit! */
+  wipe_unit(pvictim);
   }unit_list_iterate_safe_end;
 
   /* Check if the unit gained veteran level */

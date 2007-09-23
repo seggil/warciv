@@ -83,16 +83,16 @@ void refresh_tile_mapcanvas(struct tile *ptile, bool write_to_screen)
   int canvas_x, canvas_y;
 
   if (real_update || write_to_screen) {
-    if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
-      canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
-      update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
-  
-      if (write_to_screen) {
-        flush_dirty();
-        redraw_selection_rectangle();
-      }
+  if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
+    canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
+    update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+
+    if (write_to_screen) {
+      flush_dirty();
+      redraw_selection_rectangle();
     }
-    overview_update_tile(ptile);
+  }
+  overview_update_tile(ptile);
   } else if (!tile_list_find(&updated_tiles, ptile)) {
     tile_list_append(&updated_tiles, ptile);
     add_idle_callback();
@@ -1915,7 +1915,7 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
 
   unit0_hp = punit0->hp;
   unit1_hp = punit1->hp;
-  
+
   deltahp0 = (unit0_hp - hp0) / steps;
   deltahp1 = (unit1_hp - hp1) / steps;
   
@@ -2242,8 +2242,8 @@ void unqueue_mapview_updates(void)
                       mapview_canvas.store_height);
   } else {
     if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
-      update_city_descriptions();
-    }
+    update_city_descriptions();
+  }
     real_update = TRUE;
     tile_list_iterate(updated_tiles, ptile) {
       refresh_tile_mapcanvas(ptile, FALSE);

@@ -7251,3 +7251,4 @@ bool sset_is_changeable(int idx)
     return FALSE;
   }
 }
+

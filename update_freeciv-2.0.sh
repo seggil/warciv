@@ -85,7 +85,7 @@ done
 done
 
 echo "rm -fr */po/*.po"   >>   output.sh
-
+echo "rm -fr */debian"  >>   output.sh
 echo "diff -urNadEBbw $DIRWAR_LIKE $DIRWAR > warclient_old.diff"  >>   output.sh
 
 echo cd $DIRWAR_UPDATED  >>   output.sh

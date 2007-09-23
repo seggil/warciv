@@ -1700,7 +1700,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
       move_unit_map_canvas(punit, ptile, dx, dy);
     }
   }
-
+    
   punit->tile = target_unit->tile;
 
   unit_list_insert(&punit->tile->units, punit);
@@ -2712,8 +2712,8 @@ void key_unit_road(void)
 		} else if(can_unit_do_activity(punit, ACTIVITY_RAILROAD)) {
 		  punit->is_new = FALSE;
 		  request_new_unit_activity(punit, ACTIVITY_RAILROAD);
-		}
   }
+}
   } multi_select_iterate_end;
 }
 

@@ -1221,7 +1221,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
 	  if (pcity->client.occupied != new_occupied) {
 	    pcity->client.occupied = new_occupied;
-            refresh_tile_mapcanvas(pcity->tile, FALSE);
+	    refresh_tile_mapcanvas(pcity->tile, FALSE);
 	  }
 	}
 
@@ -1230,7 +1230,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	else
 	  refresh_city_dialog(pcity);
       }
-
+      
       if((pcity=map_get_city(punit->tile)))  {
 	if (can_player_see_units_in_city(game.player_ptr, pcity)) {
 	  /* Unit moved into a city - obviously it's occupied. */
@@ -3121,3 +3121,4 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
+

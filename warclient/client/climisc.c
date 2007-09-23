@@ -195,9 +195,9 @@ void client_remove_unit(struct unit *punit)
   if (punit == ufocus) {
     multi_select_wipe_up_unit(punit);
     if(punit == get_unit_in_focus()) {
-      set_unit_focus(NULL);
-      game_remove_unit(punit);
-      advance_unit_focus();
+    set_unit_focus(NULL);
+    game_remove_unit(punit);
+    advance_unit_focus();
       if (!get_unit_in_focus()) {
         /* It was the last unit */
         automatic_processus_event(AUTO_NO_UNIT_SELECTED, NULL);
