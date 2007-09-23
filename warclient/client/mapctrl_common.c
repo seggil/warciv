@@ -346,8 +346,6 @@ void release_right_button(int canvas_x, int canvas_y)
     define_tiles_within_rectangle();
     update_map_canvas_visible();
     rectangle_active = FALSE;
-  } else if (dist_first_tile) {
-    cancel_distance_tool();
   } else {
     recenter_button_pressed(canvas_x, canvas_y);
   }
