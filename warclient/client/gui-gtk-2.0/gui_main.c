@@ -1240,7 +1240,6 @@ static void setup_widgets(void)
 
   gtk_widget_set_name(text, "chatline");
 
-  gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text), GTK_WRAP_WORD);
   gtk_widget_realize(text);
   gtk_text_view_set_left_margin(GTK_TEXT_VIEW(text), 5);
 
