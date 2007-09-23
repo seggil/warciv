@@ -5508,7 +5508,7 @@ static bool end_command(struct connection *caller, char *str, bool check)
         {
       free(arg[i]);
     }
-    return TRUE;
+    return result;
     }
     else
     {
