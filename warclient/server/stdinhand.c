@@ -1341,7 +1341,7 @@ static bool metamessage_command(struct connection *caller,
 
   sz_strlcpy(buf, arg);
   remove_leading_trailing_spaces(buf);
-  if (!buf || !buf[0])
+  if (!buf[0])
     {
       cmd_reply(CMD_METAMESSAGE, caller, C_COMMENT,
                    _("Metaserver message string is \"%s\"."),
@@ -4859,7 +4859,7 @@ bool load_command(struct connection *caller, char *filename, bool check)
    * srvarg.load_filename, which we edit down below. */
   sz_strlcpy(arg, filename);
 
-  if (!arg || arg[0] == '\0') 
+  if (arg[0] == '\0') 
   {
     cmd_reply(CMD_LOAD, caller, C_FAIL, _("Usage: load <filename>"));
     send_load_game_info(FALSE);
