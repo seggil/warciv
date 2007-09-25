@@ -470,7 +470,7 @@ static void cma_iterate(GtkTreeModel *model, GtkTreePath *path,
   gtk_tree_model_get(GTK_TREE_MODEL(city_model), it, 0, &res, -1);
   pcity = res;
 
-   if (idx == CMA_NONE) {
+   if (idx == cmafec_preset_num()) {
      cma_release_city(pcity);
    } else {
      cma_put_city_under_agent(pcity, cmafec_preset_get_parameter(idx));
@@ -548,8 +548,8 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
   gtk_menu_item_set_submenu(parent_item, menu);
 
   if (change_cma) {
-    for (i = -1; i < cmafec_preset_num(); i++) {
-      w = (i == -1 ? gtk_menu_item_new_with_label(_("none"))
+    for (i = 0; i <= cmafec_preset_num(); i++) {
+      w = (i == cmafec_preset_num() ? gtk_menu_item_new_with_label(_("none"))
 	   : gtk_menu_item_new_with_label(cmafec_preset_get_descr(i)));
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
       g_signal_connect(w, "activate", G_CALLBACK(select_cma_callback),
