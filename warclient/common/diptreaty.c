@@ -28,12 +28,10 @@
 **************************************************************************/
 bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
 {
-  if (pplayers_allied(pplayer, aplayer)) {
-    return TRUE;
-  }
-
-  if (game.maxallies && (player_allies_count(pplayer) >= game.maxallies
-                         || player_allies_count(aplayer) >= game.maxallies)) {
+  if (game.diplomacy == 4
+      || (game.maxallies
+          && (player_allies_count(pplayer) >= game.maxallies
+              || player_allies_count(aplayer) >= game.maxallies))) {
     return FALSE;
   }
 
