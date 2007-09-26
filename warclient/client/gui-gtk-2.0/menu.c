@@ -4057,8 +4057,9 @@ void update_menus(void)
 
       menus_set_sensitive("<main>/Delayed Goto/Delayed goto", TRUE);
       menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", TRUE);
-      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", my_ai_enable && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
-      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", my_ai_enable);
+      cond = (my_ai_enable && unit_type(punit)->fuel > 0);
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", cond && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", cond);
       menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", TRUE);
       menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", TRUE);
       menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", TRUE);

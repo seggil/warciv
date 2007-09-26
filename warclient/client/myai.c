@@ -1622,6 +1622,10 @@ bool must_return_into_city(struct unit *punit)
 
 void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile)
 {
+        if (!punit || unit_type(punit)->fuel == 0) {
+          return;
+        }
+
         char buf[1024];
         struct tile *old_tile=(punit->my_ai.control&&punit->my_ai.activity==MY_AI_PATROL?(struct tile *)punit->my_ai.data:NULL);
 
