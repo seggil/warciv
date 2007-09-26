@@ -1679,10 +1679,21 @@ static void apply_callback (GtkWidget *w,
 /**************************************************************************
 ...
 **************************************************************************/
-static void close_callback (GtkWidget *w,
+static void cancel_callback (GtkWidget *w,
                             gpointer user_data)
 {
   GtkWidget *dialog = (GtkWidget *) user_data;
+  gtk_widget_destroy (dialog);
+}
+/**************************************************************************
+...
+**************************************************************************/
+static void ok_callback (GtkWidget *w,
+                            gpointer user_data)
+{
+  GtkWidget *dialog = (GtkWidget *) user_data;
+
+  apply_callback(NULL, dialog);
   gtk_widget_destroy (dialog);
 }
 /**************************************************************************
@@ -2463,36 +2474,42 @@ static GtkWidget *create_chatline_config_shell (void)
   hbox = gtk_hbox_new (FALSE, 10);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   
-  button = gtk_button_new_with_mnemonic (_("_Close"));
+  button = gtk_stockbutton_new(GTK_STOCK_CANCEL, _("_Cancel"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
-      G_CALLBACK (close_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
+      G_CALLBACK (cancel_callback), dialog);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   
-  button = gtk_button_new_with_mnemonic (_("_Apply"));
+  button = gtk_stockbutton_new(GTK_STOCK_OK, _("_Ok"));
+  gtk_widget_set_size_request(button, 120, 30);
+  g_signal_connect (button, "clicked",
+      G_CALLBACK (ok_callback), dialog);
+  gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+  
+  button = gtk_stockbutton_new(GTK_STOCK_APPLY, _("_Apply"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (apply_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   
 
   /* save/reset/help buttons */
-  button = gtk_button_new_with_mnemonic (_("_Save"));
+  button = gtk_stockbutton_new(GTK_STOCK_SAVE, _("_Save"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (save_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_mnemonic (_("_Reset"));
+  button = gtk_button_new_with_mnemonic(_("_Reset"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (reset_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_mnemonic (_("_Help"));
+  button = gtk_stockbutton_new(GTK_STOCK_HELP, _("_Help"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (help_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
   
@@ -2555,42 +2572,42 @@ static GtkWidget *create_chatline_config_shell (void)
   hbox = gtk_hbox_new (FALSE, 10);
   gtk_box_pack_start (GTK_BOX (top_vbox), hbox, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_mnemonic (_("Clear"));
+  button = gtk_stockbutton_new(GTK_STOCK_CLEAR, _("Clear"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (clear_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   
-  button = gtk_button_new_with_mnemonic (_("D_elete"));
+  button = gtk_stockbutton_new(GTK_STOCK_DELETE, _("D_elete"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (delete_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   
-  button = gtk_button_new_with_mnemonic (_("A_dd"));
+  button = gtk_stockbutton_new(GTK_STOCK_ADD, _("A_dd"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (add_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   
-  button = gtk_button_new_with_mnemonic (_("Add Con_trol Pattern"));
+  button = gtk_stockbutton_new(GTK_STOCK_ADD, _("Add Con_trol Pattern"));
+  gtk_widget_set_size_request(button, -1, 30); /* Too long */
   g_signal_connect (button, "clicked",
       G_CALLBACK (add_control_callback), dialog);
-  gtk_widget_set_size_request (button, 110, 30);
   gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   
 
   /* up/down buttons */
-  button = gtk_button_new_with_mnemonic (_("Move _Up"));
+  button = gtk_stockbutton_new(GTK_STOCK_GO_UP, _("Move _Up"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (up_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
-  button = gtk_button_new_with_mnemonic (_("Move Do_wn"));
+  button = gtk_stockbutton_new(GTK_STOCK_GO_DOWN, _("Move Do_wn"));
+  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect (button, "clicked",
       G_CALLBACK (down_callback), dialog);
-  gtk_widget_set_size_request (button, 100, 30);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
   
