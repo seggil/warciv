@@ -289,7 +289,9 @@ void advance_unit_focus(void)
   struct unit *punit_old_focus = punit_focus;
   struct unit *candidate = find_best_focus_candidate(FALSE);
 
-  set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
+  if (punit_focus && punit_focus->id == hover_unit) {
+    set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
+  }
   if (!can_client_change_view()) {
     return;
   }
@@ -762,7 +764,7 @@ void request_unit_goto(void)
 void request_unit_delayed_goto(void)
 {
   if(!punit_focus)return;
-  set_hover_state(punit_focus,HOVER_DELAYED_GOTO,ACTIVITY_LAST);
+  set_hover_state(punit_focus, HOVER_DELAYED_GOTO, ACTIVITY_LAST);
   update_unit_info_label(punit_focus);
 }
 /**************************************************************************
@@ -786,8 +788,9 @@ void key_select_rally_point (void)
         n, PL_("city", "cities", n));
     append_output_window (buf);
 
-	hover_state = HOVER_RALLY_POINT;
-	update_hover_cursor();
+    hover_state = HOVER_RALLY_POINT;
+    hover_unit = 0;
+    update_hover_cursor();
   }
 }
 
@@ -797,6 +800,7 @@ void key_select_rally_point (void)
 void request_auto_airlift_destination_selection(void)
 {
   hover_state = HOVER_AIRLIFT_DEST;
+  hover_unit = 0;
   update_hover_cursor();
 }
 
@@ -813,8 +817,9 @@ void request_auto_airlift_source_selection(void)
     } city_list_iterate_end;
     update_airlift_menu(0);
   } else {
-  hover_state = HOVER_AIRLIFT_SOURCE;
-  update_hover_cursor();
+    hover_state = HOVER_AIRLIFT_SOURCE;
+    hover_unit = 0;
+    update_hover_cursor();
   }
 }
 
@@ -1814,7 +1819,8 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  else
 		  append_output_window (_("PepClient: You must select a city to trade with"));  
       hover_state = HOVER_NONE;
-	   update_hover_cursor();
+      hover_unit = 0;
+      update_hover_cursor();
       return;
   }
   else if(hover_state==HOVER_MY_AI_TRADE_CITY) {
@@ -1828,13 +1834,15 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  else
 		  append_output_window (_("PepClient: You need to select a city for trade"));	             
       hover_state = HOVER_NONE;
-	   update_hover_cursor();
+      hover_unit = 0;
+      update_hover_cursor();
       return;
   }
   else if(ptile && hover_state==HOVER_AIRLIFT_SOURCE) {
     add_city_to_auto_airlift_queue(ptile,FALSE);       
     hover_state = HOVER_NONE;
-      update_hover_cursor();
+    hover_unit = 0;
+    update_hover_cursor();
     return;
   }else if(ptile && hover_state==HOVER_AIRLIFT_DEST) {
     if(pcity) {
@@ -1845,6 +1853,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     }
     need_city_for = -1;
     hover_state = HOVER_NONE;
+    hover_unit = 0;
     update_hover_cursor();
     return;
   }else if(ptile && hover_state==HOVER_MYPATROL) {
@@ -1853,6 +1862,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       my_ai_patrol_alloc(punit,ptile);
     } multi_select_iterate_end;
     hover_state = HOVER_NONE;
+    hover_unit = 0;
     update_hover_cursor();
     return;
   }else if(ptile && hover_state==HOVER_DELAYED_GOTO) {
@@ -1862,19 +1872,22 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
        } else {
          add_unit_to_delayed_goto(ptile);
        }
-       hover_state = HOVER_NONE;
-	    update_hover_cursor();
+    hover_state = HOVER_NONE;
+    hover_unit = 0;
+    update_hover_cursor();
        return;
   } else if (ptile && hover_state == HOVER_RALLY_POINT) {
     set_rally_point_for_selected_cities (ptile);
     hover_state = HOVER_NONE;
-	update_hover_cursor();
+    hover_unit = 0;
+    update_hover_cursor();
     return;
   }else if(ptile && hover_state==HOVER_DELAYED_AIRLIFT) {
-       schedule_delayed_airlift(ptile);
-       hover_state = HOVER_NONE;
-	   update_hover_cursor();
-       return;
+    schedule_delayed_airlift(ptile);
+    hover_state = HOVER_NONE;
+    hover_unit = 0;
+    update_hover_cursor();
+    return;
   }
   if (punit && hover_state != HOVER_NONE) {
     switch (hover_state) {
@@ -2246,11 +2259,12 @@ void key_cancel_action(void)
       || hover_state == HOVER_MYPATROL
       || hover_state == HOVER_RALLY_POINT
       || hover_state == HOVER_DELAYED_AIRLIFT
-  	   || hover_state == HOVER_MY_AI_TRADE
-  	   || hover_state == HOVER_MY_AI_TRADE_CITY)
+      || hover_state == HOVER_MY_AI_TRADE
+      || hover_state == HOVER_MY_AI_TRADE_CITY)
   {
-      hover_state = HOVER_NONE;
-	   update_hover_cursor();
+    hover_state = HOVER_NONE;
+    hover_unit = 0;
+    update_hover_cursor();
   }
   need_tile_for = -1;
   need_city_for = -1;
@@ -2485,10 +2499,11 @@ void key_unit_delayed_goto(int flg)
       delayed_para_or_nuke |= flg;
       add_unit_to_delayed_goto(NULL);
       hover_state = HOVER_NONE;
+      hover_unit = 0;
       update_hover_cursor();
    } else {
       delayed_para_or_nuke = flg;
-	   request_unit_delayed_goto();
+      request_unit_delayed_goto();
   }
 }
 
@@ -2925,8 +2940,10 @@ void key_unit_delayed_airlift(void)
   if(hover_state == HOVER_DELAYED_AIRLIFT) {
     schedule_delayed_airlift(NULL);
     hover_state = HOVER_NONE;
+    hover_unit = 0;
   } else {
     hover_state = HOVER_DELAYED_AIRLIFT;
+    hover_unit = 0;
   }
   update_hover_cursor();
 }
@@ -2997,6 +3014,7 @@ void key_my_ai_trade_city(void)
     }
   } else {
   hover_state = HOVER_MY_AI_TRADE_CITY;
+  hover_unit = 0;
   update_hover_cursor();
   }
 }
