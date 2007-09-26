@@ -53,7 +53,7 @@
 #include "cityrep.h"
 
 #define NEG_VAL(x)  ((x)<0 ? (x) : (-x))
-#define CMA_NONE	(-1)
+#define CMA_NONE	(cmafec_preset_num())
 #define CMA_CUSTOM	(-2)
 
 enum city_operation_type {
@@ -528,7 +528,7 @@ static void cma_iterate(GtkTreeModel *model, GtkTreePath *path,
   gtk_tree_model_get(GTK_TREE_MODEL(city_model), it, 0, &res, -1);
   pcity = res;
 
-   if (idx == cmafec_preset_num()) {
+   if (idx == CMA_NONE) {
      cma_release_city(pcity);
    } else {
      cma_put_city_under_agent(pcity, cmafec_preset_get_parameter(idx));
@@ -609,12 +609,18 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
 
   if (change_cma) {
     for (i = 0; i <= cmafec_preset_num(); i++) {
-      w = (i == cmafec_preset_num() ? gtk_menu_item_new_with_label(_("none"))
-	   : gtk_menu_item_new_with_label(cmafec_preset_get_descr(i)));
-      gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
+      if ( i == CMA_NONE) {
+	w = gtk_menu_item_new_with_label(_("none"));
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), w);	
+      } else {
+	w = gtk_menu_item_new_with_label(cmafec_preset_get_descr(i));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
+      }
       g_signal_connect(w, "activate", G_CALLBACK(select_cma_callback),
 		       GINT_TO_POINTER(i));
+
     }
+    
   } else {
     /* search for a "none" */
     int found;
