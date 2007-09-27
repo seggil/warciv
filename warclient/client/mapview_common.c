@@ -1929,8 +1929,8 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
     
     punit0->hp = (int)unit0_hp;
     punit1->hp = (int)unit1_hp;
-      refresh_tile_mapcanvas(punit0->tile, FALSE);
-      refresh_tile_mapcanvas(punit1->tile, FALSE);
+    refresh_tile_mapcanvas(punit0->tile, TRUE);
+    refresh_tile_mapcanvas(punit1->tile, TRUE);
 
     flush_dirty();
     redraw_selection_rectangle();
