@@ -187,13 +187,14 @@ void handle_unit_bribe_inq(struct connection *pc, int unit_id)
 {
   struct player *pplayer = pc->player;
   struct unit *punit = find_unit_by_id(unit_id);
+  int bribe_cost = 0;
+
 //quite cumbersome, we have to get tile from unit coz old client needs to work with warserver
   if (pplayer && punit) {
-        punit->bribe_cost = 0;
         unit_list_iterate(punit->tile->units, pvictim) {
-            punit->bribe_cost += unit_bribe_cost(pvictim);
+            bribe_cost += unit_bribe_cost(pvictim);
         }unit_list_iterate_end;//fucking shit!! we have to lie here for compatibility
-    dsend_packet_unit_bribe_info(pc, unit_id, punit->bribe_cost);
+    dsend_packet_unit_bribe_info(pc, unit_id, bribe_cost);
   }
 }
 

@@ -6565,7 +6565,8 @@ static void show_help_command_list(struct connection *caller,
   }
   if (buf[0] != '\0')
     cmd_reply(help_cmd, caller, C_COMMENT, buf);
-  if (caller && caller->access_level == ALLOW_BASIC) {
+  if (caller && caller->player && !caller->observer
+      && caller->access_level == ALLOW_BASIC) {
     cmd_reply(help_cmd, caller, C_COMMENT, horiz_line);
     cmd_reply(help_cmd, caller, C_COMMENT,
               _("The following server commands require a vote:"));
