@@ -767,10 +767,10 @@ other player isn't getting a better deal than you expect.\
 [help_warclient]
 name = _("Warclient")
 text = _("\
-Autowakeup \
+Autowakeup and sleeping units \
 \n\n\
-Press 'v' key to disable the auto wake-up (default is \
-on). If disabled, client automatically sentries units \
+This feature is enabled by default (menu Miscellanous). \
+If disabled, client automatically sentries units \
 activated by enemy units without moving the view. \
 \n\n\
 This is useful during attack with lots of air units and \
@@ -780,45 +780,50 @@ or when one player is under attack by two players. The same \
 result can be achieved by disabling warclient->autowakeup \
 sentried units. \
 \n\n\
-Autodiplomats \
+You can also choose exactly what unit should wake up, what \
+unit shouldn't with sleeping units (key 'k'). \
 \n\n\
-Autodiplomat feature is disabled by default. To enable it, \
-go to warclient->diplomat action upon arrival and choose \
+Move and attack mode \
+\n\n\
+Disabled by default, this feature allow to auto attack units after \
+a unit move when enabled. \
+\n\n\
+Default diplomats and caravans actions \
+\n\n\
+This features are disabled by default. To enable it, \
+go to Miscellanous->diplomat action upon arrival for diplomats or \
+Miscellanous->caravan action upon arrival for caravans and choose \
 the desired action. Then when you send a diplomat to enemy \
 unit or a city, the diplomat will automatically carry \
 out the selected action without prompt. When autoattack \
 is enabled, diplomats having bribe as the default action \
-will bribe units automatically. \
-\n\n\
-Autocaravans \
-\n\n\
-Autocaravans are disabled by default. To enable them go \
-to warclient->caravan action upon arrival and choose the \
-desired action. From now on, caravans won't prompt for \
+will bribe units automatically. From now on, caravans won't prompt for \
 action when they arrive in a city but will carry out the \
 selected action automatically. \
 \n\n\
 Delayed goto \
 \n\n\
-Delayed goto operates in 4 modes: \
-1.) single unit - like classic goto \n\
+Delayed goto operates in many modes. You can choose it \
+in Delayed Goto->Delayed goto mode. The 4 main modes are: \n\
+1.) single unit - like classic goto (key 'F9') \n\
 2.) all units of the same type - giving order to one unit \
 gives the same order to all units of the same type on the \
-same tile. \n\
+same tile (key 'F10'). \n\
 3.) all units - giving order to one unit gives the same \
-order to all units on the same tile. \n\
+order to all units on the same tile (key 'F11'). \n\
 4.) all units of the same type on the same continent - \
 giving order to one unit gives the same order to all units \
-of the same type on current continent \n\
-\n\n\
-Choose the apropriate mode before pressing 'z' from \
-warclient->delayed goto mode. Change of mode affects only \
-future delayed goto orders. \
+of the same type on current continent  (key 'F12').\n\
+\n\
+Choose the apropriate mode before pressing 'z'. \
+Change of mode affects only future delayed goto orders. \
 \n\n\
 Select the desired filters. Filters are 'check items' so \
 multiple choices can be selected from a single menu. Client \
 first takes into account inclusive filters, and then \
-exclusive filters. \
+exclusive filters. A unit satisfy filters when:\n\
+* All inclusive filter conditions are satisfied. \n\
+* Nul exclusive filter condition is satisfied. \
 \n\n\
 For example if inclusive filter is set to all, and exlusive \
 to sentried, and delayed goto mode is all units of the \
@@ -828,8 +833,7 @@ all units of the same type on the same continent except \
 sentried units. \
 \n\n\
 Select a unit, press 'z' and click on a destination \
-tile. Note that mouse cursor won't change after you press \
-'z'. This goto order will be added to the delayed orders \
+tile. This goto order will be added to the delayed orders \
 queue and will remain there until all orders are executed \
 or cleared. It is possible to give multiple commands to the \
 same unit - this works properly only if all destinations \
@@ -840,15 +844,22 @@ massive assault and press 'y' even several turns later, \
 all units will remain in the queue until it is cleared or \
 order is executed. \
 \n\n\
+If you repress 'z' before you clicked on a destination tile, \
+then your units will be send on a tile that you will select \
+when pressing 'y'. \
+\n\n\
 If you do not want to execute all delayed orders at once \
-when you press y, you can limit the number of units that \
-will move in unit limit menu. You can select 2, 5, 10 and \
-unlimited number of units. Then press y repeatedly. \
+when you press 'y', you can limit the number of units that \
+will move in Game->PepClient Settings->Delayed goto->Unit limit. \
+If unit limit isn't 0 (unlimited), Then press 'y' repeatedly. \
 \n\n\
 If you press 'ctrl'+'z' instead of 'z' and selected unit \
 is a paratrooper, it will be paradropped, if it's a nuke \
 it will go to destination tile and detonate 'manually' - \
-killing any steath fighters. \
+killing any stealth fighters. \
+\n\n\
+You can also schedule a massive airlift units with 'ctrl'+'y' \
+or add a break ('ctrl'+'b') in the delayed goto queue. \
 \n\n\
 To clear the queue press 'u'. \
 \n\n\
@@ -856,55 +867,30 @@ Side effect of delayed goto is that if the path to \
 destination is blocked by invisible stealth unit, order \
 will be canceled by server and no units will move. \
 \n\n\
-Delayed airlift \
+You can register few delayed goto queues with 'ctrl'+'alt'+'1-3'. \
+Then you can schedule many attack. For example, you can plan \
+an attack at the end of the turn, and one at the beginning \
+of the next turn. \
 \n\n\
-First setup standard airlift - select source cities, \
-and unit type. Then go to warclient->delayed airlift \
-and click on a destination tile. When you press y, units \
-will airlift into destination city. This can be used in \
-combination with delayed goto for bombers, paratroopers, \
-with airlifted units reinforcing the captured city. \
-\n\n\
-Inclusive and exlusive filters \
-\n\n\
-Before a unit is added to delayed goto queue or carries out \
-a mass order, client checks whether it fulfills delayed \
-goto mode, inclusive and exlusive filters. Inclusive \
-filters specify which units should be selected. Exclusive \
-filters specify which units should not be selected. \
-\n\n\
-Filters are applied in the following order: \n\
-1. Delayed goto mode \n\
-2. Inclusive filters \n\
-3. Exclusive filters \n\
-\n\n\
-Following filters are available: \n\
-1. all units - selects all units \n\
-2. new units - selects units which have never moved in \
-the game \n\
-3. fortified units \n\
-4. sentried units \n\
-5. veteran units \n\
-6. idle units - units not carrying out an action (like \
-fortifying, sentried, mining, building roads etc) \n\
-7. units able to move - units which have more than 0 \
-movement points left \n\
+This orders can be executed automatically with selecting a value \
+at Delayed Goto->Delayed goto auto. \
 \n\n\
 Automated airlifting \
 \n\n\
-Automated airlifting works only on standard 2.0.7 server \
-or 0.8.xb warserver. It doesn't work on standard 2.0.8 \
+Automated airlifting works only on standard 2.0.7 server, \
+0.8.x or 0.9.x warserver. It doesn't work on standard 2.0.8 \
 server as you would expect since you can only airlift one \
 unit between 2 cities with an airport. \
 \n\n\
-First of all select unit type from warclient->airlift \
+First of all select unit type from Airlift->airlift \
 unit type. \
 \n\n\
 Then press 'shift'+'z' and click on a city on the map to \
-add it to airlift queue. Note that mouse cursor won't \
-change after you press 'shift'+'z'. Add any number of \
+add it to airlift queue. Add any number of \
 cities you want to airlift from to the airlift queue. You \
-need to do this only once. \
+need to do this only once. If you click a second time on a city, \
+The city is removed of the queue. Note that you can adding all \
+your cities with an airport pressing 'ctrl'+'shift'+'z'. \
 \n\n\
 Clear the queue using 'shift'+'u'. \
 \n\n\
@@ -914,12 +900,19 @@ now on, just keep pressing 'shift'+'y' and clicking on a \
 destination city and units will be airlifted. There is no \
 need to select source cities again! \
 \n\n\
-Patrol \
+You can manage many airlift source queues, with different \
+unit type. For it, register your current airlift city queue \
+with 'alt'+'ctrl'+'4-9'. You can airlift using only 1 queue \
+with using 'alt'+'ctrl'+'shift'+'4-9'. This feature can be \
+usefull when you already got many islands. \
 \n\n\
-Select an airplane and press 'ctrl'+'shift'+'z' and \
-click on a destination tile. Note that mouse cursor won't \
-change. That unit will go to that tile as soon as client \
-receives new turn packet (as soon as new turn begins). \
+Air Patrol \
+\n\n\
+Select an airplane and press 'ctrl'+'e' and \
+click on a destination tile, or 'e' if you want \
+to select the current tile. That unit will go to \
+that tile as soon as client receives new turn packet \
+(as soon as new turn begins). \
 \n\n\
 Air units return to cities to refuel automatically, so \
 there is no need to tell the unit where to return at the \
@@ -928,37 +921,162 @@ end of turn. \
 Air units will keep going to their destination tiles at \
 the beginning of each turn. \
 \n\n\
-Press 'ctrl'+'shift'+'u' to clear the patrol queue. \
+Press 'e' (if the unit is on the patrol tile), 'e'+'e' (else) \
+or 'shift'+'f' (both cases) to cancel the orders of a unit. \
 \n\n\
 Very useful for AWACS patrolling far away protected by \
 AEGIS or stealth fighters blocking every mountain and hill \
 during attack or defence. \
 \n\n\
-Mass orders \
+Auto-Caravans \
 \n\n\
-Select proper delayed goto mode from warclient->delayed \
-goto mode. Delayed goto mode affects the number of units \
-selected for a given mass order. \
+When all your cities are built, select the cities you want \
+to have traderoutes. Either right click, drag your mouse \
+over all your cities and then unselect inland cities with \
+left click and then press 'shift'+'a' or hold 'shift'+'a' + click \
+on each city you want traderoutes for individually. 2 click \
+on one city means remove the city of the list. \
 \n\n\
-Press 'q' or 'Q' followed by a key shortcut for one of \
-the following orders: \n\
-- build_airbase \n\
-- auto_explore \n\
-- clean_fallout \n\
-- fortify \n\
-- build_fortress \n\
-- irrigate \n\
-- build_mine \n\
-- pillage \n\
-- clean_pollution \n\
-- sentry \n\
-- terraform (transform) \n\
-- load unit on a ship \n\
-- help build wonder (caravan or freight) while in a city \n\
-- autoattack \n\
+Then press 'ctrl'+'t' to see your suggested traderoutes at map. \
 \n\n\
-Orders like build road or airlift are not supported. Do \
-a mass airlift using delayed goto. \
+When caravans are built, press 'ctrl'+'j' to auto-send them. \
+Or press 'j' to choose a city to trade with. When you are done \
+trading, you can press 'ctrl'+'t' again to hide the traderoutes. \
+\n\n\
+To execute only 1 caravan orders, select it and press 'ctrl'+'m'. \
+To cancel an automatic caravan, select it and press 'ctrl'+'f', \
+the informations about the trade route of this caravan \
+(at the left of the map) should be removed. \
+\n\n\
+You can see some informations about this trade planning at \
+Auto caravan->Show trade estimation (list of the running caravans) or \
+Auto caravan->Show trade route free slots (list of the cities \
+which won't have 4 trade routes). \
+\n\n\
+Multi-Selection \
+\n\n\
+The unit multi-selection tool allow to the user to select many units. \
+When the units are selected you can execute all commands \
+available on PepClient. It's the new code for mass orders. \
+\n\n\
+The unit selection is like delayed goto selection: there a \
+selection mode, an inclusive filter and an exclusive filter. \
+When you press shift + C, all units which enter in the mode \
+(place and unit type) are selected. When you execute a command \
+with this units, only the units which pass the 2 filters would \
+get the new order. \
+\n\n\
+The place mode can be: \n\
+1. One single unit (disable the tool) \n\
+2. A tile \n\
+3. A continent \n\
+4. Every where \n\
+The unit type mode can be: \n\
+1. One only type \n\
+2. All types with the same move type \
+(e.g. land units, sea units or air units) \n\
+3. All types \
+\n\n\
+A unit satisfy the filters if one of the inclusive filter \
+condition passes and if nul exclusive filter condition pass. \
+\n\n\
+The different command: \n\
+* 'shift'+'c': select all the units which enter \
+in the mode (place + unit type). \n\
+* 'shift'+'v': clear the current selection, return to the single unit mode. \n\
+* 'shift'+'b': active (free orders) all units which enter in the mode \
+(including the units which don't pass the filters selection). \n\
+* double+LMB on one unit: select all units of the same \
+type on the current map view. \n\
+* 'shift'+LMB on one unit: add or remove this unit of the current selection. \n\
+* 'shift'+double LMB on one unit: add all units of this tile. \n\
+* In city dialogs: when you click on one unit, you can click \
+on Add/Remove unit in focus to add or remove the unit \
+of the current selection. Short cuts: shift + LMB on \
+the unit or shift + MMB (+ close the city dialog). \n\
+* In tile dialog: you can select one or many units. \
+Select them or add them to the current selection. \n\
+* 'shift'+'s': spread all this units on the different cities \
+of the continent. If the Spread only in cities with airport \
+option is enabled, the units will be spread only in the cities \
+where there is an airport. If the Allow spreading into allied cities \
+is enabled, the units will be spread as well in your cities \
+than in the cities of your allies. \
+\n\n\
+The different options: (Game->PepClient settings->Multi-Selection) \n\
+* Count all units in the selection, including excluded units: \
+when many units are selected, a number on the unit info label says \
+to you how many units are selected. If this option is enabled, it will \
+count the units which don't satisfy the filters. \n\
+* Blink all units in the selection, including excluded units: \
+if enabled, it will blink all units, including the units which \
+don't satisfy the filters. \n\
+* Blink units in the selection: if disabled, only 1 unit will blink. \n\
+* Allow multi-selection at map: if enabled, you can select \
+the units with the yellow selection rectangle at the map. \
+\n\n\
+You can assign many units to a battle group, using ctrl + [1 - 9]. \
+To call back a battle group press [1 - 9], \
+or shift + [1 - 9] is you want to add it to the current selection. \
+With shift + ctrl + [1 - 9], you free a battle group. \
+\n\n\
+Rally points \
+\n\n\
+You can select a rally point for all your cities. \
+That's mean that all new unit will go to this tile \
+after being created. \
+\n\n\
+First, select cities with the yellow selection rectangle. \
+Second, press 'shift'+'s'. Third, select the rally point \
+for this selected cities. \
+\n\n\
+This rally point is deleted when it is used \
+(when the first unit is built on the city), or \
+when you press 'shift'+'r' after selecting cities. \
+\n\n\n\
+Inclusive and exlusive filters \
+\n\n\
+Filters are applied in the following order: \n\
+1. Mode (from Delayed goto or Multi-Selection) \n\
+2. Inclusive filters \n\
+3. Exclusive filters \
+\n\n\
+Following filters are available: \n\
+1. All units - selects all units \n\
+2. New units - selects units which have never moved in \
+the game \n\
+3. Fortified units \n\
+4. Sentried units \n\
+5. Veteran units \n\
+6. Auto units - Unit which have automatic orders \n\
+6. Idle units - units not carrying out an action (like \
+fortifying, sentried, mining, building roads etc) \n\
+7. Units able to move - units which have more than 0 \
+movement points left \n\
+8. Military units - units able to attack \n\
+9. Off - no unit! \
+\n\n\
+Automatic Executions \
+\n\n\
+Some features can be executed automatically. \
+It's the case of airplane patrol, delayed goto and auto-caravans. \
+You can choose a value or many for them in Game->PepClient settings. \
+There is also a general execution of all automatic orders checkbox. \
+\n\n\
+The different defined signals are: \n\
+1. New year (when the new turn begins) \n\
+2. Press turn done (when  your press this button) \n\
+3. No unit Selected (when there isn't any unit to select in focus) \n\
+4. 50% timeout \n\
+5. 80% timeout \n\
+6. 90% timeout \n\
+7. 95% timeout \n\
+8. 5 seconds before turn done \n\
+9. Unit recieves orders (when the unit receive this type of orders) \n\
+10. Player cancels diplomacy \
+(when the diplomtic state with this player change to war) \
+\n\n\
+Note that not all signals are available for all processus. \
 ")
 
 
