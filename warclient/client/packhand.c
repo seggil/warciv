@@ -1095,7 +1095,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
       /* Wakeup Focus */
       if(((!autowakeup_state && punit->activity == ACTIVITY_SENTRY) || punit->activity == ACTIVITY_FORTIFYING)
-        && packet_unit->activity == ACTIVITY_IDLE && !is_actived_unit(punit->id)) {
+        && packet_unit->activity == ACTIVITY_IDLE && !is_actived_unit(punit->id)
+        && (punit->hp == packet_unit->hp || packet_unit->hp < unit_type(packet_unit)->hp)) {
         resentry = punit->activity;
       } else if (autowakeup_state 
 		  && wakeup_focus 
@@ -3121,4 +3122,3 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
-
