@@ -2240,16 +2240,15 @@ void unqueue_mapview_updates(void)
     dirty_all();
     update_map_canvas(0, 0, mapview_canvas.store_width,
                       mapview_canvas.store_height);
-  } else {
-    if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
+  } else if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
     update_city_descriptions();
   }
-    real_update = TRUE;
-    tile_list_iterate(updated_tiles, ptile) {
-      refresh_tile_mapcanvas(ptile, FALSE);
-    } tile_list_iterate_end;
-    real_update = FALSE;
-  }
+
+  real_update = TRUE;
+  tile_list_iterate(updated_tiles, ptile) {
+    refresh_tile_mapcanvas(ptile, FALSE);
+  } tile_list_iterate_end;
+  real_update = FALSE;
   tile_list_unlink_all(&updated_tiles);
   needed_updates = UPDATE_NONE;
 
