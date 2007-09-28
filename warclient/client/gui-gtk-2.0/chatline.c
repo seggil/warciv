@@ -1110,12 +1110,6 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
                   "", "", "");
 
   
-  MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY 
-                  | TPF_MATCH_AT_START, "", "", "");
-  MK_TAG_PATTERN ("not ready", "not ready",
-                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
-                  "", "#FF0000", "");
-
   MK_TAG_PATTERN ("new vote", "New vote",
                   TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED, 
                   "", "#FFFFFF", "#AA0000");
@@ -1130,13 +1124,23 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
                   TPF_REQUIRE_PREVIOUS_MATCH | TPF_STOP_IF_MATCHED,
                   "", "#8B0000", "#FFAAAA");
 
+  MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY 
+                  | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN ("not ready", "not ready",
+                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
+                  "", "#FF0000", "");
+
   MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY
                   | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN ("no nation", ", Human)", TPF_REQUIRE_PREVIOUS_MATCH,
                   "", "#FF0000", "");
   MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY
                   | TPF_MATCH_AT_START, "", "", "");
-  MK_TAG_PATTERN ("no nation", ", Human, team ", TPF_REQUIRE_PREVIOUS_MATCH,
+  MK_TAG_PATTERN ("", ", Human, team ",
+                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_IS_CONTROL_ONLY,
+                  "", "", "");
+  MK_TAG_PATTERN ("no nation", " not ready)",
+                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
                   "", "#FF0000", "");
   
 
