@@ -1108,7 +1108,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
                  && (!get_unit_in_focus()
                         /* only 1 wakeup focus per tile is useful */
                      || !same_pos(packet_unit->tile, get_unit_in_focus()->tile))) {
-        set_unit_focus(punit);
+        set_unit_focus_and_active(punit);
         check_focus = FALSE; /* and keep it */
 
         /* Autocenter on Wakeup, regardless of the local option 
