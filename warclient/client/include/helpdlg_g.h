@@ -40,6 +40,6 @@ void popdown_help_dialog(void);
 #define HELP_SPACE_RACE_ITEM "Space Race"
 #define HELP_COPYING_ITEM "Copying"
 #define HELP_ABOUT_ITEM "About"
-#define HELP_WARCLIENT_ITEM "Warclient"
+#define HELP_WARCLIENT_ITEM "Warclient - PepClient"
 
 #endif  /* FC__HELPDLG_G_H */

@@ -1033,9 +1033,11 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
 
 
   MK_TAG_PATTERN ("game start", "All players are ready",
-                  TPF_MATCH_AT_START, "", "#00FF00", "#115511");
+                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                  "", "#00FF00", "#115511");
   MK_TAG_PATTERN ("", "Game: All players are ready",
-                  TPF_MATCH_AT_START, "", "#00FF00", "#115511");
+                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                  "", "#00FF00", "#115511");
 
   MK_TAG_PATTERN ("server prompt", "(server prompt):",
                   TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,

@@ -765,7 +765,7 @@ other player isn't getting a better deal than you expect.\
 ")
 
 [help_warclient]
-name = _("Warclient")
+name = _("Warclient - PepClient")
 text = _("\
 Autowakeup and sleeping units \
 \n\n\
