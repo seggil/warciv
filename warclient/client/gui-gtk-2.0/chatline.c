@@ -1132,6 +1132,10 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
                   | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN ("no nation", ", Human)", TPF_REQUIRE_PREVIOUS_MATCH,
                   "", "#FF0000", "");
+  MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY
+                  | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN ("no nation", ", Human, team ", TPF_REQUIRE_PREVIOUS_MATCH,
+                  "", "#FF0000", "");
   
 
   my_snprintf (buf, sizeof (buf), "<%s>", default_user_name);
