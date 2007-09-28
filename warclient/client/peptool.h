@@ -87,6 +87,7 @@ extern bool spread_airport_cities;
 extern bool spread_allied_cities;
 
 extern enum my_ai_level my_ai_trade_level;
+extern int my_ai_establish_trade_route_level;
 extern int my_ai_trade_mode;
 extern bool my_ai_trade_external;
 extern bool my_ai_trade_manual_trade_route_enable;
@@ -173,6 +174,10 @@ extern int my_ai_defend_city_power_req;
 #define DEFAULT_MY_AI_TRADE_LEVEL LEVEL_GOOD
 #define MIN_MY_AI_TRADE_LEVEL LEVEL_OFF
 #define MAX_MY_AI_TRADE_LEVEL LEVEL_BEST
+
+#define DEFAULT_MY_AI_ESTABLISH_LEVEL 1
+#define MIN_MY_AI_ESTABLISH_LEVEL 0
+#define MAX_MY_AI_ESTABLISH_LEVEL 99
 
 #define DEFAULT_MY_AI_TRADE_MODE 2
 #define MIN_MY_AI_TRADE_MODE 0

@@ -303,6 +303,7 @@ bool spread_airport_cities;
 bool spread_allied_cities;
 
 enum my_ai_level my_ai_trade_level;
+int my_ai_establish_trade_route_level;
 int my_ai_trade_mode;
 bool my_ai_trade_manual_trade_route_enable;
 bool my_ai_trade_external;
@@ -358,6 +359,7 @@ static struct pepsetting static_pepsettings[]=
 	PSGEN_FILTER(PAGE_DG,delayed_goto_inclusive_filter,N_("Delayed goto inclusive filter"),DG_INCLUSIVE),
 	PSGEN_FILTER(PAGE_DG,delayed_goto_exclusive_filter,N_("Delayed goto exclusive filter"),DG_EXCLUSIVE),
 	PSGEN_INT(PAGE_TRADE,my_ai_trade_level,N_("Automatic trade order level"),N_("0: Off\n1: On\n2: Good\n3:Best level"),MY_AI_TRADE_LEVEL),
+	PSGEN_INT(PAGE_TRADE,my_ai_establish_trade_route_level,N_("Improved trade route establishing level"),N_("0: Off"),MY_AI_ESTABLISH_LEVEL),
 	PSGEN_INT(PAGE_TRADE,my_ai_trade_mode,N_("Automatic trade mode"),N_("0: Off\n1: Best trade only\n2: Trade planning only\n"
 		"3: Trade planning or best trade"),MY_AI_TRADE_MODE),
 	PSGEN_BOOL(PAGE_TRADE,my_ai_trade_manual_trade_route_enable,N_("Allow manual trade orders"),MY_AI_TRADE_MANUAL),

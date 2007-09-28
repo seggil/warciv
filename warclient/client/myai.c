@@ -56,6 +56,13 @@ struct trade_configuration
   int moves;      /* the total number of required moves for a caravan */
 };
 
+struct toggle_city
+{
+	struct city *pcity;
+        int depth;
+        enum city_tile_type city_map[CITY_MAP_SIZE][CITY_MAP_SIZE];
+};
+
 struct toggle_worker
 {
 	struct city *pcity;
@@ -138,11 +145,6 @@ int calculate_best_move_trade_cost(struct trade_route *ptr);
 struct trade_route *can_establish_new_trade_route(struct unit *punit,struct city *pc1,struct city *pc2);
 struct trade_route *best_city_trade_route(struct unit *punit,struct city *pcity);
 struct trade_route *trade_route_list_find_cities(struct trade_route_list *ptrl,struct city *pc1,struct city *pc2);
-struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y);
-struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, int x, int y);
-void toggle_worker_free(struct toggle_worker *ptw);
-struct genlist *apply_trade(struct city *pcity, struct genlist *pother);
-void release_trade(struct genlist *ptcity);
 
 struct trade_route *trade_route_new(struct unit *punit,struct city *pc1,struct city *pc2,bool planned)
 {
@@ -431,15 +433,44 @@ struct trade_route *trade_route_list_find_cities(struct trade_route_list *ptrl,s
 	return NULL;
 }
 
-struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y)
+/* Toggle tiles to trade code */
+struct toggle_city *toggle_city_find(struct toggle_city *pcities, size_t size, struct city *pcity);
+struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y, int depth,
+                           struct toggle_city *pcities, size_t size);
+struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, int x, int y);
+void toggle_worker_free(struct toggle_worker *ptw);
+void recursive_add_cities(struct city *pcity, struct toggle_city *pcities, size_t size, int depth);
+void sort_cities(struct toggle_city *pcities, size_t size);
+void switch_tiles(struct city *pcity, struct genlist *ptcity, struct toggle_city *pcities, size_t size);
+struct genlist *apply_trade(struct city *pcity1, struct city *pcity2);
+void release_trade(struct genlist *ptcity);
+
+struct toggle_city *toggle_city_find(struct toggle_city *pcities, size_t size, struct city *pcity)
+{
+  int i;
+
+  for (i = 0; i < size; i++) {
+    if (pcities[i].pcity == pcity) {
+      return &pcities[i];
+    }
+  }
+
+  return NULL;
+}
+
+struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y, int depth,
+                           struct toggle_city *pcities, size_t size)
 {
   struct city *pcity;
+  struct toggle_city *ptcity;
 
   square_iterate(pcenter_tile, CITY_MAP_RADIUS + 1, ptile) {
     if ((pcity = map_get_city(ptile))
         && pcity->owner == game.player_idx
         && map_to_city_map(x, y, pcity, pcenter_tile)
-        && pcity->city_map[*x][*y] == C_TILE_WORKER) {
+        && pcity->city_map[*x][*y] == C_TILE_WORKER
+        && (ptcity = toggle_city_find(pcities, size, pcity))
+        && ptcity->depth > depth) {
       return pcity;
     }
   } square_iterate_end;
@@ -449,6 +480,8 @@ struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y)
 
 struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, int x, int y)
 {
+  assert(pcity->city_map[x][y] != C_TILE_UNAVAILABLE);
+
   struct toggle_worker *ptw = fc_malloc(sizeof(struct toggle_worker));
 
   ptw->pcity = pcity;
@@ -462,8 +495,28 @@ struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, 
 
   if (ptw->was_used) {
     dsend_packet_city_make_specialist(&aconnection, pcity->id, x, y);
+    pcity->city_map[x][y] = C_TILE_EMPTY;
+    map_city_radius_iterate(ptile, tile1) {
+      struct city *pcity2 = map_get_city(tile1);
+
+      if (pcity2 && pcity2 != pcity) {
+	int x2, y2;
+	assert(map_to_city_map(&x2, &y2, pcity2, ptile));
+	pcity2->city_map[x2][y2] = C_TILE_EMPTY;
+      }
+    } map_city_radius_iterate_end;
   } else {
     dsend_packet_city_make_worker(&aconnection, pcity->id, x, y);
+    pcity->city_map[x][y] = C_TILE_WORKER;
+    map_city_radius_iterate(ptile, tile1) {
+      struct city *pcity2 = map_get_city(tile1);
+
+      if (pcity2 && pcity2 != pcity) {
+	int x2, y2;
+	assert(map_to_city_map(&x2, &y2, pcity2, ptile));
+	pcity2->city_map[x2][y2] = C_TILE_UNAVAILABLE;
+      }
+    } map_city_radius_iterate_end;
   }
 
   return ptw;
@@ -483,19 +536,51 @@ void toggle_worker_free(struct toggle_worker *ptw)
   free(ptw);
 }
 
-/* Choose the best trade tiles for the city. */
-struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
+void recursive_add_cities(struct city *pcity, struct toggle_city *pcities, size_t size, int depth)
 {
-  if (pcity->owner != game.player_idx) {
-    return NULL;
+  if (!pcity || pcity->owner != game.player_idx) {
+    return;
   }
 
-  struct genlist *ptcity = fc_malloc(sizeof(struct genlist));
+  struct toggle_city *ptcity = toggle_city_find(pcities, size, pcity);
+  int i;
+
+  assert(ptcity != NULL);
+
+  if (ptcity->depth > depth) {
+    ptcity->depth = depth;
+    if (my_ai_establish_trade_route_level > depth) {
+      for (i = 0; i < NUM_TRADEROUTES; i++) {
+        recursive_add_cities(find_city_by_id(pcity->trade[i]), pcities, size, depth + 1);
+      }
+    }
+  }
+}
+
+void sort_cities(struct toggle_city *pcities, size_t size)
+{
+  int i, j;
+
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < i; j++) {
+      if (pcities[i].depth < pcities[j].depth) {
+        swap(pcities[i], pcities[j], struct toggle_city);
+      }
+    }
+  }
+}
+
+void switch_tiles(struct city *pcity, struct genlist *ptcity, struct toggle_city *pcities, size_t csize)
+{
+  assert(pcity->owner == game.player_idx);
+
   size_t size = 0, min = MIN(pcity->size, CITY_TILES);
   struct tile *tiles[CITY_TILES];
+  struct toggle_city *ttcity = toggle_city_find(pcities, csize, pcity);
   int i, j, x[CITY_TILES], y[CITY_TILES], t[CITY_TILES], trade;
 
-  genlist_init(ptcity);
+  assert(ttcity != NULL);
+
   /* Check first the best tiles, ignoring the ones which are not available. */
   city_map_checked_iterate(pcity->tile, cx, cy, ptile) {
     if (ptile == pcity->tile) {
@@ -504,10 +589,11 @@ struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
 
     trade = city_get_trade_tile(cx, cy, pcity);
     for (i = 0; i < size; i++) {
-      if (trade > t[i]) {
+      if (trade > t[i] || (trade == t[i] && pcity->city_map[cx][cy] != C_TILE_UNAVAILABLE)) {
         break;
       }
     }
+
     assert(i < CITY_TILES);
     for (j = size; j > i; j--) {
       tiles[j] = tiles[j - 1];
@@ -523,20 +609,6 @@ struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
     assert(size <= CITY_TILES);
   } city_map_checked_iterate_end;
 
-  /* Remove of the list the tiles already used for an another city. */
-  if (pother) {
-    struct genlist_link *myiter = ptcity->head_link;
-    struct toggle_worker *potw;
-    for (; ITERATOR_PTR(myiter);) {
-      potw = (struct toggle_worker *)ITERATOR_PTR(myiter);
-      for (i = 0; i < size; i++) {
-        if (tiles[i] == potw->ptile) {
-          tiles[i] = NULL;
-        }
-      }
-    }
-  }
-
   /* Try to steal tiles from neighbor cities. */
   for (i = 0, j = 0; i < size && j < min; i++) {
     if (!tiles[i]) {
@@ -545,7 +617,7 @@ struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
 
     if (pcity->city_map[x[i]][y[i]] == C_TILE_UNAVAILABLE) {
       int cx, cy;
-      struct city *pother_city = get_city_user(tiles[i], &cx, &cy);
+      struct city *pother_city = get_city_user(tiles[i], &cx, &cy, ttcity->depth, pcities, csize);
 
       if (pother_city != NULL) {
         genlist_insert(ptcity, (void *)toggle_worker_new(pother_city, tiles[i], cx, cy), 0);
@@ -557,6 +629,7 @@ struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
       j++;
     }
   }
+
   /* Finish the iteration */
   for (; i < size; i++) {
     if (tiles[i] && pcity->city_map[x[i]][y[i]] == C_TILE_WORKER) {
@@ -571,7 +644,39 @@ struct genlist *apply_trade(struct city *pcity, struct genlist *pother)
       genlist_insert(ptcity, (void *)toggle_worker_new(pcity, tiles[i], x[i], y[i]), 0);
     }
   }
+}
 
+/* Choose the best trade tiles for the cities. */
+struct genlist *apply_trade(struct city *pcity1, struct city *pcity2)
+{
+  size_t size = city_list_size(&game.player_ptr->cities);
+  struct toggle_city cities[size];
+  int i;
+  struct genlist *ptcity = fc_malloc(sizeof(struct genlist));
+  genlist_init(ptcity);
+
+  if (my_ai_establish_trade_route_level > 0) {
+    i = 0;
+    city_list_iterate(game.player_ptr->cities, pcity) {
+      cities[i].pcity = pcity;
+      cities[i].depth = size;
+      memcpy(cities[i].city_map, pcity->city_map, sizeof(pcity->city_map));
+      i++;
+    } city_list_iterate_end;
+
+    recursive_add_cities(pcity1, cities, size, 1);
+    recursive_add_cities(pcity2, cities, size, 1);
+    sort_cities(cities, size);
+  
+    for (i = 0; i < size; i++) {
+      if (cities[i].depth < size) {
+        switch_tiles(cities[i].pcity, ptcity, cities, size);
+      }
+    }
+    for (i = 0; i < size; i++) {
+      memcpy(cities[i].pcity->city_map, cities[i].city_map, sizeof(cities[i].city_map));
+    }
+  }
   return ptcity;
 }
 
@@ -705,14 +810,12 @@ void my_ai_trade_route_execute(struct unit *punit)
 		goto_and_request((&cunit),ptr->pc2->tile)
 		{
 			char buf[256];
-                        struct genlist *city1, *city2;
+                        struct genlist *trade;
 
                         connection_do_buffer(&aconnection);
-                        city1 = apply_trade(ptr->pc1, NULL);
-                        city2 = apply_trade(ptr->pc2, city1);
+                        trade = apply_trade(ptr->pc1, ptr->pc2);
 			dsend_packet_unit_establish_trade(&aconnection,punit->id);
-                        release_trade(city2);
-                        release_trade(city1);
+                        release_trade(trade);
                         connection_do_unbuffer(&aconnection);
 			my_snprintf(buf,sizeof(buf),_("PepClient: %s establishing trade route between %s and %s"),unit_name(punit->type),ptr->pc1->name,ptr->pc2->name);
 			append_output_window(buf);
