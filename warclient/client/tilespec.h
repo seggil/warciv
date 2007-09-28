@@ -211,6 +211,7 @@ struct named_sprites {
       *pollution,
       *road,
       *sentry,
+      *sleeping,
       *stack,
       *loaded,
       *trade,

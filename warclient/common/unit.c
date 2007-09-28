@@ -1768,6 +1768,8 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->occupy = 0;
   punit->client.colored = FALSE;
   punit->has_orders = FALSE;
+  punit->is_new = TRUE;
+  punit->is_sleeping = FALSE;
 
   return punit;
 }

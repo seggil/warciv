@@ -1386,6 +1386,7 @@ static void tilespec_lookup_sprite_tags(void)
   SET_SPRITE(unit.pollution,    "unit.pollution");
   SET_SPRITE(unit.road,	        "unit.road");
   SET_SPRITE(unit.sentry,	"unit.sentry");      
+  sprites.unit.sleeping = load_sprite("unit.sleeping");
   SET_SPRITE(unit.stack,	"unit.stack");
   sprites.unit.loaded = load_sprite("unit.loaded");
   sprites.unit.trade = load_sprite("unit.trade");
@@ -2021,6 +2022,8 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
       s = sprites.unit.auto_settler;
     }
     ADD_SPRITE_FULL(s);
+  } else if (punit->is_sleeping) {
+    ADD_SPRITE_FULL(sprites.unit.sleeping);
   } else if (punit->activity!=ACTIVITY_IDLE) {
     struct Sprite *s = NULL;
     switch(punit->activity) {

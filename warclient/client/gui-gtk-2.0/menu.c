@@ -1947,7 +1947,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Orders") "/" N_("_Sentry"),			"s",
 	orders_menu_callback,	MENU_ORDER_SENTRY					},
-  { "/" N_("Orders") "/" N_("S_leep"),				"k",
+  { "/" N_("Orders") "/" N_("Sleep"),				"k",
 	orders_menu_callback,		MENU_ORDER_SLEEP				},
   { "/" N_("Orders") "/" N_("Pi_llage"),				"<shift>p",
 	orders_menu_callback,	MENU_ORDER_PILLAGE					},
@@ -4037,10 +4037,14 @@ void update_menus(void)
       menus_rename("<main>/_Orders/Build _Mine", mintext);
       menus_rename("<main>/_Orders/Transf_orm Terrain", transtext);
 
-      if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
-	menus_rename("<main>/_Orders/Build _Fortress", _("Build _Fortress"));
-      } else {
+      if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
 	menus_rename("<main>/_Orders/Build _Fortress", _("_Fortify"));
+        menus_set_sensitive("<main>/_Orders/Sleep", FALSE);
+      } else {
+        menus_set_sensitive("<main>/_Orders/Sleep", TRUE);
+        if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
+	  menus_rename("<main>/_Orders/Build _Fortress", _("Build _Fortress"));
+        }
       }
 
       if (unit_flag(punit, F_PARATROOPERS)) {

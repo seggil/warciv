@@ -53,8 +53,6 @@ bool autowakeup_state;
 int default_caravan_action;
 int default_diplomat_action;
 
-//*pepeto*
-static int *actived_units = NULL, actived_units_num = 0;
 bool focus_turn=TRUE;
 static struct unit *plast=NULL;
 
@@ -103,7 +101,6 @@ void control_queues_free(void)
   delayed_goto_clear_all();
   airlift_queue_clear_all();
   my_ai_free();
-  actived_unit_remove_all();
 }
 
 /**************************************************************************
@@ -116,7 +113,6 @@ void control_queues_init(void)
   delayed_goto_init_all();
   airlift_queue_init_all();
   my_ai_init();
-  actived_unit_remove_all();
 }
 
 /**************************************************************************
@@ -889,38 +885,7 @@ bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
 }
 
 /**************************************************************************
- *pepeto*: utilities for active unit
-**************************************************************************/
-bool is_actived_unit(int unit_id)
-{
-  int i;
-
-  for(i = 0; i < actived_units_num; i++) {
-    if(actived_units[i] == unit_id) {
-      actived_units[i] = 0;
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
-
-void actived_unit_new(int unit_id)
-{
-  actived_units_num++;
-  actived_units = fc_realloc(actived_units, sizeof(int) * actived_units_num);
-  actived_units[actived_units_num-1] = unit_id;
-}
-
-void actived_unit_remove_all(void)
-{
-  actived_units_num = 0;
-  if(actived_units)
-    free(actived_units);
-  actived_units = NULL;
-}
-
-/**************************************************************************
- *pepeto*: active an unit
+  Active an unit
 **************************************************************************/
 void request_active_unit(struct unit *punit)
 {
@@ -932,7 +897,6 @@ void request_active_unit(struct unit *punit)
 		punit->ai.control=FALSE;
 	request_new_unit_activity(punit,ACTIVITY_IDLE);
 	punit->focus_status=FOCUS_AVAIL;
-	actived_unit_new(punit->id);
 }
 
 /**************************************************************************
@@ -1113,6 +1077,10 @@ void request_new_unit_activity(struct unit *punit, enum unit_activity act)
 {
   if (!can_client_issue_orders()) {
     return;
+  }
+
+  if (act == ACTIVITY_IDLE) {
+    punit->is_sleeping = FALSE;
   }
 
   dsend_packet_unit_change_activity(&aconnection, punit->id, act,
@@ -1334,9 +1302,11 @@ void request_unit_fortify(struct unit *punit)
 *****************************************************************/
 void request_unit_sleep(struct unit *punit)
 {
-  punit->is_new = FALSE;
-  request_new_unit_activity(punit, ACTIVITY_SENTRY);
-  punit->activity = ACTIVITY_FORTIFYING;
+  if (!can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+    punit->is_new = FALSE;
+    request_new_unit_activity(punit, ACTIVITY_SENTRY);
+    punit->is_sleeping = TRUE;
+  }
 }
 
 /**************************************************************************
@@ -2633,7 +2603,7 @@ void key_unit_sleep(void)
   multi_select_iterate(TRUE,punit) {
     request_unit_sleep(punit);
   } multi_select_iterate_end;
-  }
+}
 
 /**************************************************************************
 ...

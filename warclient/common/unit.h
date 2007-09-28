@@ -188,6 +188,7 @@ struct unit {
 
   bool has_orders;
   bool is_new;//it is new if it has never moved
+  bool is_sleeping;
   struct {
     int length, index;
     bool repeat;	/* The path is to be repeated on completion. */

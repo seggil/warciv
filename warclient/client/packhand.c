@@ -907,7 +907,6 @@ void handle_before_new_year(void)
   game.turn++;
   agents_before_new_turn();
   autosave_settings();
-  actived_unit_remove_all();
   decrease_link_mark_turn_counters();
 }
 
@@ -1037,7 +1036,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool check_focus = FALSE;     /* conservative focus change */
   bool moved = FALSE;
   bool ret = FALSE;
-  int resentry = 0;
   int trade_action=0;//*pepeto*
   struct unit *focus_unit = get_unit_in_focus();
   
@@ -1094,20 +1092,22 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       repaint_unit = TRUE;
 
       /* Wakeup Focus */
-      if(((!autowakeup_state && punit->activity == ACTIVITY_SENTRY) || punit->activity == ACTIVITY_FORTIFYING)
-        && packet_unit->activity == ACTIVITY_IDLE && !is_actived_unit(punit->id)
-        && (punit->hp == packet_unit->hp || packet_unit->hp < unit_type(packet_unit)->hp)) {
-        resentry = punit->activity;
-      } else if (autowakeup_state 
-		  && wakeup_focus 
-          && !game.player_ptr->ai.control
-          && punit->owner == game.player_idx
-          && punit->activity == ACTIVITY_SENTRY
+      if ((!autowakeup_state || punit->is_sleeping)
           && packet_unit->activity == ACTIVITY_IDLE
-          && (!get_unit_in_focus()
-              /* only 1 wakeup focus per tile is useful */
-              || !same_pos(packet_unit->tile, get_unit_in_focus()->tile))) {
-//	append_output_window("wakeup-if\n");
+          && (punit->hp == packet_unit->hp
+              || packet_unit->hp < unit_type(packet_unit)->hp)) {
+         /* Don't wake up sleeping units */
+         request_new_unit_activity(punit, ACTIVITY_SENTRY);
+         check_focus = FALSE;
+      } else if (autowakeup_state 
+		 && wakeup_focus 
+                 && !game.player_ptr->ai.control
+                 && punit->owner == game.player_idx
+                 && punit->activity == ACTIVITY_SENTRY
+                 && packet_unit->activity == ACTIVITY_IDLE
+                 && (!get_unit_in_focus()
+                        /* only 1 wakeup focus per tile is useful */
+                     || !same_pos(packet_unit->tile, get_unit_in_focus()->tile))) {
         set_unit_focus(punit);
         check_focus = FALSE; /* and keep it */
 
@@ -1117,7 +1117,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
           center_tile_mapcanvas(punit->tile);
         }
       }
-      if(packet_unit->activity != ACTIVITY_SENTRY || punit->activity != ACTIVITY_FORTIFYING)
       punit->activity = packet_unit->activity;
       punit->activity_target = packet_unit->activity_target;
 
@@ -1360,11 +1359,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     } else {
       refresh_tile_mapcanvas(punit->tile, FALSE);
     }
-  }
-  if(resentry) {
-	  request_unit_sentry(punit);
-	  if(resentry == ACTIVITY_FORTIFYING)
-	    punit->activity = ACTIVITY_FORTIFYING;
   }
 
   if ((check_focus || get_unit_in_focus() == NULL) &&
