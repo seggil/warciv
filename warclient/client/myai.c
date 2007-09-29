@@ -1052,6 +1052,7 @@ void calculate_trade_planning(char *buf, size_t buf_len)
     }
   } unit_type_iterate_end;
   assert(caravan);
+  caravan->moves_left = 0;
 
   /* Initialize */
   i = 0;
@@ -1072,8 +1073,13 @@ void calculate_trade_planning(char *buf, size_t buf_len)
       if (tcities[i].free_slots > 0 && tcities[j].free_slots > 0
           && can_cities_trade(tcities[i].pcity, tcities[j].pcity)
           && !cities_will_have_trade(tcities[i].pcity, tcities[j].pcity)) {
-        struct trade_route *ptr = trade_route_new(caravan, tcities[i].pcity,
+        struct trade_route *ptr = trade_route_new(NULL, tcities[i].pcity,
                                                   tcities[j].pcity, TRUE);
+
+        caravan->homecity = tcities[i].pcity->id;
+        caravan->tile = tcities[i].pcity->tile;
+        ptr->punit = caravan;
+        update_trade_route(ptr);
         ptr->punit = NULL;
         tcities[i].trade_routes[j] = ptr;
         tcities[j].trade_routes[i] = ptr;
