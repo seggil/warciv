@@ -103,7 +103,7 @@ killstack               = 1
 
 [description]
 description = _("\
-Standard ruleset for Warservers with all units are more expensive:\n\
+Standard ruleset for Warservers with all units more expensive:\n\
   * wonders costs: Lighthouse 200, Isaac Newton 400, SETI 1200\n\
   * + elephants + crusaders + fanatics\n\
-  * + funamentalism")
+  * + fundamentalism")
