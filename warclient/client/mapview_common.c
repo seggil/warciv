@@ -59,7 +59,7 @@ enum update_type {
  * drawn into overview.window.
  */
 static bool overview_dirty = FALSE;
-static bool real_update = FALSE;
+bool real_update = FALSE;
 static struct tile_list updated_tiles;
 
 static void base_canvas_to_map_pos(int *map_x, int *map_y,
@@ -2236,18 +2236,24 @@ void unqueue_mapview_updates(void)
   freelog(LOG_DEBUG, "unqueue_mapview_update: needed_updates=%d",
 	  needed_updates);
 
+  real_update = TRUE;
   if (needed_updates & UPDATE_MAP_CANVAS_VISIBLE) {
     dirty_all();
     update_map_canvas(0, 0, mapview_canvas.store_width,
                       mapview_canvas.store_height);
-  } else if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
-    update_city_descriptions();
+    tile_list_iterate(updated_tiles, ptile) {
+      if (!tile_visible_mapcanvas(ptile)) {
+        refresh_tile_mapcanvas(ptile, FALSE);
+      }
+    } tile_list_iterate_end;
+  } else {
+    if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
+      update_city_descriptions();
+    }
+    tile_list_iterate(updated_tiles, ptile) {
+      refresh_tile_mapcanvas(ptile, FALSE);
+    } tile_list_iterate_end;
   }
-
-  real_update = TRUE;
-  tile_list_iterate(updated_tiles, ptile) {
-    refresh_tile_mapcanvas(ptile, FALSE);
-  } tile_list_iterate_end;
   real_update = FALSE;
   tile_list_unlink_all(&updated_tiles);
   needed_updates = UPDATE_NONE;

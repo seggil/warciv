@@ -1955,15 +1955,35 @@ static gboolean quit_dialog_callback(void)
 }
 
 static guint last_id = 0;
+#ifdef DEBUG
+static guint update = 0, max_update = 0;
+static gdouble max_time = 0;
+#endif /* DEBUG */
 
 /****************************************************************
   ...
 ****************************************************************/
 static gboolean idle_callback(gpointer data)
 {
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "Update unqueue");
+
+  GTimer *timer = g_timer_new();
+  gdouble time;
+
+  g_timer_start(timer);
+#endif /* DEBUG */
   g_source_remove(last_id);
   unqueue_mapview_updates();
   last_id = 0;
+#ifdef DEBUG
+  update = 0;
+  g_timer_stop(timer);
+  time = g_timer_elapsed(timer, NULL);
+  freelog(LOG_NORMAL, "Total time %f (max was %f)", time, max_time);
+  max_time = MAX(time, max_time);
+  g_timer_destroy(timer);
+#endif /* DEBUG */
   return TRUE;
 }
 
@@ -1972,6 +1992,11 @@ static gboolean idle_callback(gpointer data)
 ****************************************************************/
 void add_idle_callback(void)
 {
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "Update queue #%d (max was %d)", ++update, max_update);
+  max_update = MAX(update, max_update);
+#endif /* DEBUG */
+
   if (last_id == 0) {
     last_id = g_idle_add(idle_callback, NULL);
   }

@@ -48,6 +48,7 @@ extern struct overview overview;
 /* HACK: Callers can set this to FALSE to disable sliding.  It should be
  * reenabled afterwards. */
 extern bool can_slide;
+extern bool real_update;
 
 #define BORDER_WIDTH 2
 #define GOTO_WIDTH 2

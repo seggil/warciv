@@ -498,7 +498,9 @@ void dirty_rect(int canvas_x, int canvas_y,
     dirty_rects[num_dirty_rects].width = pixel_width;
     dirty_rects[num_dirty_rects].height = pixel_height;
     num_dirty_rects++;
-    queue_flush();
+    if (!real_update) {
+      queue_flush();
+    }
   }
 }
 

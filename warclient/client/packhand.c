@@ -1098,6 +1098,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
               || packet_unit->hp < unit_type(packet_unit)->hp)) {
          /* Don't wake up sleeping units */
          request_new_unit_activity(punit, ACTIVITY_SENTRY);
+         packet_unit->activity = ACTIVITY_SENTRY; /* Cheat here */
          check_focus = FALSE;
       } else if (autowakeup_state 
 		 && wakeup_focus 
@@ -1108,7 +1109,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
                  && (!get_unit_in_focus()
                         /* only 1 wakeup focus per tile is useful */
                      || !same_pos(packet_unit->tile, get_unit_in_focus()->tile))) {
-        set_unit_focus_and_active(punit);
+        punit->is_sleeping = FALSE;
+        set_unit_focus(punit);
         check_focus = FALSE; /* and keep it */
 
         /* Autocenter on Wakeup, regardless of the local option 
@@ -1203,6 +1205,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
       old_tile = punit->tile;
       moved = TRUE;
+      punit->is_sleeping = FALSE;
 
       /* Show where the unit is going. */
       do_move_unit(punit, packet_unit);
