@@ -1277,11 +1277,24 @@ void request_unit_patrol(void)
 *****************************************************************/
 void request_unit_sentry(struct unit *punit)
 {
-  if(punit->activity!=ACTIVITY_SENTRY &&
+  if (punit->is_sleeping) {
+    struct city *pcity = find_city_by_id(punit->homecity);
+
+    punit->is_sleeping = FALSE;
+    refresh_tile_mapcanvas(punit->tile, FALSE);
+
+    if (pcity) {
+      refresh_city_dialog(pcity);
+    }
+    if (punit->tile->city && punit->tile->city != pcity) {
+      refresh_city_dialog(punit->tile->city);
+    }
+    update_unit_focus();
+  } else if (punit->activity!=ACTIVITY_SENTRY &&
      can_unit_do_activity(punit, ACTIVITY_SENTRY)) {
     punit->is_new = FALSE;
     request_new_unit_activity(punit, ACTIVITY_SENTRY);
-}
+  }
 }
 
 /****************************************************************
@@ -1294,7 +1307,7 @@ void request_unit_fortify(struct unit *punit)
   if(can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
     punit->is_new = FALSE;
     request_new_unit_activity(punit, ACTIVITY_FORTIFYING);
-}
+  }
 }
 
 /****************************************************************
@@ -1303,9 +1316,24 @@ void request_unit_fortify(struct unit *punit)
 void request_unit_sleep(struct unit *punit)
 {
   if (!can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
-    punit->is_new = FALSE;
-    request_new_unit_activity(punit, ACTIVITY_SENTRY);
     punit->is_sleeping = TRUE;
+
+    if (punit->activity == ACTIVITY_SENTRY) {
+      struct city *pcity = find_city_by_id(punit->homecity);
+
+      refresh_tile_mapcanvas(punit->tile, FALSE);
+
+      if (pcity) {
+        refresh_city_dialog(pcity);
+      }
+      if (punit->tile->city && punit->tile->city != pcity) {
+        refresh_city_dialog(punit->tile->city);
+      }
+      update_unit_focus();
+    } else {
+      punit->is_new = FALSE;
+      request_new_unit_activity(punit, ACTIVITY_SENTRY);
+    }
   }
 }
 
@@ -2707,7 +2735,9 @@ void key_unit_road(void)
 **************************************************************************/
 void key_unit_sentry(void)
 {
-     do_mass_order(ACTIVITY_SENTRY);
+  multi_select_iterate(TRUE, punit) {
+    request_unit_sentry(punit);
+  } multi_select_iterate_end;
 }
 
 /**************************************************************************
