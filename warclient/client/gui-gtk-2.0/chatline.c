@@ -1139,7 +1139,7 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
   MK_TAG_PATTERN ("", ", Human, team ",
                   TPF_REQUIRE_PREVIOUS_MATCH | TPF_IS_CONTROL_ONLY,
                   "", "", "");
-  MK_TAG_PATTERN ("no nation", " not ready)",
+  MK_TAG_PATTERN ("no nation", " ready)",
                   TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
                   "", "#FF0000", "");
   
