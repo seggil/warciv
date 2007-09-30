@@ -2948,6 +2948,10 @@ void handle_endgame_report(struct packet_endgame_report *packet)
 **************************************************************************/
 void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet)
 {
+  if (!game.player_ptr) {
+    return;
+  }
+
   generic_handle_player_attribute_chunk(game.player_ptr, packet);
 
   if (packet->offset + packet->chunk_length == packet->total_length) {
