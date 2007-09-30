@@ -35,7 +35,8 @@
 #include "goto.h"
 #include "gui_main_g.h"
 #include "mapview_common.h"
-#include "myai.h"//*pepeto*
+#include "myai.h"
+#include "pages_g.h"
 #include "tilespec.h"
 
 struct mapview_canvas mapview_canvas;
@@ -2253,6 +2254,10 @@ void queue_mapview_update(enum update_type update)
 **************************************************************************/
 void unqueue_mapview_updates(void)
 {
+  if (get_client_page() != PAGE_GAME) {
+    return;
+  }
+  
   freelog(LOG_DEBUG, "unqueue_mapview_update: needed_updates=%d",
 	  needed_updates);
 
