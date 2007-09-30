@@ -489,9 +489,21 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
     case CO_SELL: {
         struct sell_data sd = { 0, 0, cid };
         GtkWidget *w;
+        gint res;
         char buf[128];
         const char *imprname = get_improvement_name(cid);
         
+        /* Ask confirmation */
+        my_snprintf(buf, sizeof(buf),
+                    _("Are you sure to sell those %s?"), imprname);
+        w = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_YES_NO, buf);
+        res = gtk_dialog_run(GTK_DIALOG(w));
+        gtk_widget_destroy(w);
+        if (res == GTK_RESPONSE_NO) {
+          break;
+        }
+
         gtk_tree_selection_selected_foreach(city_selection,
                                             sell_impr_iterate,
                                             &sd);
