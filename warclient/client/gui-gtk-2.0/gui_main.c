@@ -1980,7 +1980,7 @@ static gboolean idle_callback(gpointer data)
   update = 0;
   g_timer_stop(timer);
   time = g_timer_elapsed(timer, NULL);
-  freelog(LOG_NORMAL, "Total time %f (max was %f)", time, max_time);
+  freelog(LOG_DEBUG, "Total time %f (max was %f)", time, max_time);
   max_time = MAX(time, max_time);
   g_timer_destroy(timer);
 #endif /* DEBUG */

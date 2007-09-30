@@ -510,7 +510,9 @@ void dirty_rect(int canvas_x, int canvas_y,
 void dirty_all(void)
 {
   num_dirty_rects = MAX_DIRTY_RECTS;
-  queue_flush();
+  if (!real_update) {
+    queue_flush();
+  }
 }
 
 /**************************************************************************

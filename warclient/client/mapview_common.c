@@ -85,11 +85,15 @@ void refresh_tile_mapcanvas(struct tile *ptile, bool write_to_screen)
   if (real_update || write_to_screen) {
   if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
     canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
-    update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
-
     if (write_to_screen) {
+      assert(real_update == FALSE);
+      real_update = TRUE;
+      update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
       flush_dirty();
       redraw_selection_rectangle();
+      real_update = FALSE;
+    } else {
+      update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
     }
   }
   overview_update_tile(ptile);
@@ -568,8 +572,11 @@ void set_mapview_origin(int gui_x0, int gui_y0)
     do {
       mytime = MIN(read_timer_seconds(anim_timer), timing_sec);
 
+      assert(real_update == FALSE);
+      real_update = TRUE;
       base_set_mapview_origin(start_x + diff_x * (mytime / timing_sec),
 			      start_y + diff_y * (mytime / timing_sec));
+      real_update = FALSE;
       flush_dirty();
       redraw_selection_rectangle();
       gui_flush();
@@ -1303,8 +1310,11 @@ void put_nuke_mushroom_pixmaps(struct tile *ptile)
   canvas_x += (NORMAL_TILE_WIDTH - width) / 2;
   canvas_y += (NORMAL_TILE_HEIGHT - height) / 2;
 
+  assert(real_update == FALSE);
+  real_update = TRUE;
   canvas_put_sprite_full(mapview_canvas.store, canvas_x, canvas_y, mysprite);
   dirty_rect(canvas_x, canvas_y, width, height);
+  real_update = FALSE;
 
   /* Make sure everything is flushed and synced before proceeding. */
   flush_dirty();
@@ -1929,8 +1939,12 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
     
     punit0->hp = (int)unit0_hp;
     punit1->hp = (int)unit1_hp;
-    refresh_tile_mapcanvas(punit0->tile, TRUE);
-    refresh_tile_mapcanvas(punit1->tile, TRUE);
+
+    assert(real_update == FALSE);
+    real_update = TRUE;
+    refresh_tile_mapcanvas(punit0->tile, FALSE);
+    refresh_tile_mapcanvas(punit1->tile, FALSE);
+    real_update = FALSE;
 
     flush_dirty();
     redraw_selection_rectangle();
@@ -1956,6 +1970,8 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
       /* We first draw the explosion onto the unit and draw draw the
        * complete thing onto the map canvas window. This avoids
        * flickering. */
+      assert(real_update == FALSE);
+      real_update = TRUE;
       canvas_copy(mapview_canvas.store, mapview_canvas.tmp_store,
 		  canvas_x, canvas_y, canvas_x, canvas_y,
 		  NORMAL_TILE_WIDTH, NORMAL_TILE_HEIGHT);
@@ -1964,6 +1980,7 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
 			     canvas_y + NORMAL_TILE_HEIGHT / 2 - h / 2,
 			     sprites.explode.unit[i]);
       dirty_rect(canvas_x, canvas_y, NORMAL_TILE_WIDTH, NORMAL_TILE_HEIGHT);
+      real_update = FALSE;
 
       flush_dirty();
       redraw_selection_rectangle();
@@ -2038,6 +2055,8 @@ void move_unit_map_canvas(struct unit *punit,
       new_y = start_y + canvas_dy * (mytime / timing_sec);
 
       /* Backup the canvas store to the temp store. */
+      assert(real_update == FALSE);
+      real_update = TRUE;
       canvas_copy(mapview_canvas.tmp_store, mapview_canvas.store,
 		  new_x, new_y, new_x, new_y,
 		  UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
@@ -2045,6 +2064,7 @@ void move_unit_map_canvas(struct unit *punit,
       /* Draw */
       put_unit(punit, mapview_canvas.store, new_x, new_y);
       dirty_rect(new_x, new_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+      real_update = FALSE;
 
       /* Flush. */
       flush_dirty();
@@ -2241,11 +2261,6 @@ void unqueue_mapview_updates(void)
     dirty_all();
     update_map_canvas(0, 0, mapview_canvas.store_width,
                       mapview_canvas.store_height);
-    tile_list_iterate(updated_tiles, ptile) {
-      if (!tile_visible_mapcanvas(ptile)) {
-        refresh_tile_mapcanvas(ptile, FALSE);
-      }
-    } tile_list_iterate_end;
   } else {
     if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
       update_city_descriptions();

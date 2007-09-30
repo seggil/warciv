@@ -1664,7 +1664,10 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 
   unit_list_unlink(&ptile->units, punit);
   punit->tile = target_unit->tile; /* For unit chat link */
-  refresh_tile_mapcanvas(ptile, TRUE);
+  assert(real_update == FALSE);
+  real_update = TRUE;
+  refresh_tile_mapcanvas(ptile, FALSE);
+  real_update = FALSE;
   punit->tile = ptile;             /* Revert */
 
   if (game.player_idx == punit->owner
