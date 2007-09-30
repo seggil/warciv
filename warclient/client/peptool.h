@@ -223,6 +223,8 @@ const char *get_page_name(enum peppage page);
 
 /* load/save settings */
 void init_all_settings(void);
+void load_static_settings(void);
+void load_dynamic_settings(void);
 void load_all_settings(void);
 void save_all_settings(void);
 void autosave_settings(void);

@@ -2476,7 +2476,7 @@ static void pepsetting_callback(GtkWidget *win,gint rid,GtkWidget *w)
 			update_pepsettind_dialog(w);
 			break;
 		case 2://load
-			load_all_settings();
+			load_static_settings();
 			init_menus();
 			update_pepsettind_dialog(w);
 			break;

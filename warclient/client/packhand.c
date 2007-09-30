@@ -190,10 +190,8 @@ void handle_server_join_reply(bool you_can_join, char *message,
 
     init_all_settings();
     if (reload_pepsettings) {
-      load_all_settings();
+      load_static_settings();
     }
-
-    game.player_ptr = NULL;
   } else {
     my_snprintf(msg, sizeof(msg),
 		_("You were rejected from the game: %s"), message);
@@ -2948,10 +2946,6 @@ void handle_endgame_report(struct packet_endgame_report *packet)
 **************************************************************************/
 void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet)
 {
-  if (!game.player_ptr) {
-    return;
-  }
-
   generic_handle_player_attribute_chunk(game.player_ptr, packet);
 
   if (packet->offset + packet->chunk_length == packet->total_length) {
