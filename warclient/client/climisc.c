@@ -1120,6 +1120,32 @@ enum known_type map_get_known(const struct tile *ptile,
   return tile_get_known(ptile);
 }
 
+/********************************************************************** 
+  Convert a integer in string. The string will be completed with spaces.
+***********************************************************************/
+static const char *int_to_string(int n, int min_size)
+{
+  static char buf[16];
+  int i, size;
+
+  /* Calcul the size we need */
+  for (size = 1; (double)n / pow(26, size) >= 1; size++);
+  assert(size < sizeof(buf));
+
+  for (i = 0; i < min_size - size; i++) {
+    /* Complete with spaces */
+    buf[i] = ' ';
+  }
+  while (size > 0 && n > 0) {
+    buf[i] = (n / pow(26, --size)) + 0x41;
+    n -= n / pow(26, size);
+    i++;
+  }
+  buf[i] = '\0';
+
+  return buf;
+}
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1127,7 +1153,7 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
                               struct autoname_data *ad)
 {
   const char *in = format;
-  char *out = buf, tmp[32];
+  char *out = buf;
   int rem = buflen, len, fw = 0;
   
   int *pcontinent_counter;
@@ -1169,23 +1195,32 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
       while (my_isdigit (*in)) {
         fw = (*in++ - '0') + 10 * fw;
       }
-      if (fw <= 0)
-        fw = 1;
-      my_snprintf (tmp, sizeof (tmp), "%%0%dd", fw);
-      
+
       switch (*in) {
       case 'c': /* continent id */
-        len = my_snprintf (out, rem, tmp, ad->continent_id);
+        len = my_snprintf(out, rem, "%0*d", fw, ad->continent_id);
         break;
         
+      case 'C':
+        len = my_snprintf(out, rem, "%s", int_to_string(ad->continent_id, fw));
+        break;
+
       case 'g': /* global city counter */
-        len = my_snprintf (out, rem, tmp, ad->global_city_number);
+        len = my_snprintf(out, rem, "%0*d", fw, ad->global_city_number);
         break;
         
+      case 'G':
+        len = my_snprintf(out, rem, "%s", int_to_string(ad->global_city_number, fw));
+        break;
+
       case 'n': /* per continent city counter */
-        len = my_snprintf (out, rem, tmp, ad->continent_city_number);
+        len = my_snprintf(out, rem, "%0*d", fw, ad->continent_city_number);
         break;
         
+      case 'N':
+        len = my_snprintf(out, rem, "%s", int_to_string(ad->continent_city_number, fw));
+        break;
+
       case '%': /* a single percent sign */
         *out = '%';
         len = 1;
