@@ -187,6 +187,13 @@ void handle_server_join_reply(bool you_can_join, char *message,
 
     /* we could always use hack, verify we're local */ 
     send_client_wants_hack(challenge_file);
+
+    init_all_settings();
+    if (reload_pepsettings) {
+      load_all_settings();
+    }
+
+    game.player_ptr = NULL;
   } else {
     my_snprintf(msg, sizeof(msg),
 		_("You were rejected from the game: %s"), message);

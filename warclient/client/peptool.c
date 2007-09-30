@@ -286,7 +286,13 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 /* settings */
 char *pepsettings_file_name(void);
 
-static const char *peppagenames[]={"Main","Multi-Selection","Delayed Goto","Trade","Wonder","Attack","Defend"};
+static const char *peppagenames[] = {
+  N_("Main"),
+  N_("Multi-Selection"),
+  N_("Delayed Goto"),
+  N_("Trade"),
+  N_("Wonder")
+};
 static int turns=0;
 static int load_pepsettings_mode;
 static int save_turns;
@@ -379,7 +385,7 @@ const char *get_page_name(enum peppage page)
 {
 	assert(page>=0&&page<PAGE_NUM);
 
-	return peppagenames[page];
+	return _(peppagenames[page]);
 }
 
 void init_all_settings(void)

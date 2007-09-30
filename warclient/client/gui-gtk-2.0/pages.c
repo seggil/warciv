@@ -37,6 +37,7 @@
 #include "clinet.h"
 #include "connectdlg.h"
 #include "connectdlg_common.h"
+#include "dialogs.h"
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
@@ -1230,21 +1231,25 @@ GtkWidget *create_start_page(void)
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 
   vbox2 = gtk_vbox_new(FALSE, 2);
-  button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES,
+  button = gtk_stockbutton_new(GTK_STOCK_PROPERTIES,
       _("More Game _Options..."));
   g_signal_connect(button, "clicked",
       G_CALLBACK(game_options_callback), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
+  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 4);
 
-  button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES,
+  button = gtk_stockbutton_new(GTK_STOCK_SELECT_COLOR,
 			       _("Co_nfigure Chat Colors"));
   g_signal_connect(button, "clicked",
 		   G_CALLBACK(configure_chatline_colors_callback), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
+  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
 
   button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES, _("_Local Options"));
   g_signal_connect(button, "clicked", G_CALLBACK(popup_option_dialog), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
+  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
+
+  button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES, _("_PepClient Options"));
+  g_signal_connect(button, "clicked", G_CALLBACK(create_pepsetting_dialog), NULL);
+  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
 
   align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
   gtk_container_add(GTK_CONTAINER(align), vbox2);
@@ -2116,4 +2121,3 @@ void popup_save_dialog(void)
  
   gtk_window_present(GTK_WINDOW(save_dialog_shell));
 }
-

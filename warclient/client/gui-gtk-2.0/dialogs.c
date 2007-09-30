@@ -2514,7 +2514,13 @@ void create_pepsetting_dialog(void)
 	int i;
 
 	tips=gtk_tooltips_new();
-	win=gtk_dialog_new_with_buttons(_("PepClient settings"),NULL,0,"Reset",1,"Load",2,GTK_STOCK_SAVE,3,GTK_STOCK_APPLY,GTK_RESPONSE_APPLY,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,GTK_STOCK_OK,GTK_RESPONSE_OK,NULL);
+	win=gtk_dialog_new_with_buttons(_("PepClient settings"), NULL, 0,
+                                        _("Reset"), 1,
+                                        _("Load"), 2,
+                                        GTK_STOCK_SAVE, 3,
+                                        GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
+                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_has_separator(GTK_DIALOG(win),FALSE);
 	setup_dialog(win,toplevel);
 
@@ -2525,7 +2531,7 @@ void create_pepsetting_dialog(void)
 	{
 		vbox[i]=gtk_vbox_new(FALSE,2);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox[i]),6);
-		label=gtk_label_new(_(get_page_name(i)));
+		label=gtk_label_new(get_page_name(i));
 		gtk_notebook_append_page(GTK_NOTEBOOK(book),vbox[i],label);
 		chbox[i]=NULL;
 	}

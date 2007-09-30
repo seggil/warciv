@@ -2428,10 +2428,12 @@ void my_ai_init(void)
 
 void my_ai_free(void)
 {
-	city_list_iterate(game.player_ptr->cities,pcity)
-	{
-		my_ai_city_free(pcity);
-	} city_list_iterate_end;
+        if (game.player_ptr != NULL) {
+          city_list_iterate(game.player_ptr->cities,pcity)
+          {
+                  my_ai_city_free(pcity);
+          } city_list_iterate_end;
+        }
 	unit_list_unlink_all(&noners);
 	unit_list_unlink_all(&traders);
 	unit_list_unlink_all(&helpers);
