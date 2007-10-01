@@ -1170,7 +1170,21 @@ static bool reset_command(struct connection *caller, bool free_map, bool check)
   return TRUE;
 }
 /**************************************************************************
-...
+  ...
+**************************************************************************/
+static void show_required_capabilities(struct connection *pconn)
+{
+  if (srvarg.required_cap[0] != '\0') {
+    cmd_reply(CMD_REQUIRE, pconn, C_COMMENT,
+              _("Current required capabilities are '%s'"),
+              srvarg.required_cap);
+  } else {
+    cmd_reply(CMD_REQUIRE, pconn, C_COMMENT,
+              _("There is no current required capabilities"));
+  }
+}
+/**************************************************************************
+  ...
 **************************************************************************/
 bool require_command(struct connection *caller, char *arg, bool check)
 {
@@ -1178,9 +1192,9 @@ bool require_command(struct connection *caller, char *arg, bool check)
   int ntokens = 0, i;
 
   if(caller && caller->access_level < ALLOW_ADMIN) {
-    cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Current required capabilities '%s'"), srvarg.required_cap);
-  return TRUE;
-}
+    show_required_capabilities(caller);
+    return TRUE;
+  }
 
   if(arg && strlen(arg) > 0) {
     sz_strlcpy(buf, arg);
@@ -1190,26 +1204,33 @@ bool require_command(struct connection *caller, char *arg, bool check)
   /* Ensure capability is supported exist */
   for(i = 0; i < ntokens; i++) {
     if(!mystrcasecmp(cap[i], "?")) {
-      cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Current required capabilities '%s'"), srvarg.required_cap);
+      show_required_capabilities(caller);
       return TRUE;
     }
     else if(!has_capability(cap[i], our_capability)) {
-      cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("You cannot require the '%s' capability, "
-      	"which is not supported by the server."), cap[i]);
+      cmd_reply(CMD_REQUIRE, caller, C_FAIL,
+                _("You cannot require the '%s' capability, "
+      	          "which is not supported by the server."), cap[i]);
       return FALSE;
     }
   }
 
   if(check) {
-  return TRUE;
-}
+    return TRUE;
+  }
 
   srvarg.required_cap[0] = '\0';
   for(i = 0; i < ntokens; i++) {
-    cat_snprintf(srvarg.required_cap, sizeof(srvarg.required_cap), "%s%s", i ? " " : "", cap[i]);
+    cat_snprintf(srvarg.required_cap, sizeof(srvarg.required_cap),
+                 "%s%s", i ? " " : "", cap[i]);
   }
-  
-  cmd_reply(CMD_REQUIRE, caller, C_FAIL, _("Required capabilities set to '%s'"), srvarg.required_cap);
+
+  if (srvarg.required_cap[0] != '\0') {
+    notify_conn(NULL, _("Server: Required capabilities set to '%s'"),
+                srvarg.required_cap);
+  } else {
+    notify_conn(NULL, _("Server: Required capabilities have been cleared"));
+  }
 
   /* detach all bad connections without this capability */
   conn_list_iterate(game.game_connections, pconn) {
