@@ -498,8 +498,16 @@ static void government_menu_callback(gpointer callback_data,
     popup_find_dialog();
     break;
   case MENU_GOVERNMENT_WORKLISTS:
-    popup_worklists_report();
+  {
+    struct unit *punit = get_unit_in_focus();
+
+    if (punit && unit_flag(punit, F_SETTLERS)) {
+      key_unit_connect(ACTIVITY_RAILROAD);
+    } else {
+      popup_worklists_report();
+    }
     break;
+  }
   case MENU_GOVERNMENT_CLEAR_SELECTED_WORKLISTS:
     clear_worklists_in_selected_cities();
     break;
@@ -682,12 +690,20 @@ static void orders_menu_callback(gpointer callback_data,
     key_unit_homecity();
     break;
    case MENU_ORDER_UNLOAD_TRANSPORTER:
-    key_unit_unload_all();
+   {
+    struct unit *punit = get_unit_in_focus();
+
+    if (punit && get_transporter_occupancy(punit) > 0) {
+      key_unit_unload_all();
+    } else {
+      airlift_queue_clear(0);
+    }
     break;
-  case MENU_ORDER_LOAD:
+   }
+   case MENU_ORDER_LOAD:
 	  key_unit_load();
     break;
-  case MENU_ORDER_UNLOAD:
+   case MENU_ORDER_UNLOAD:
 	  key_unit_unload();
     break;
    case MENU_ORDER_WAKEUP_OTHERS:
@@ -704,8 +720,16 @@ static void orders_menu_callback(gpointer callback_data,
     key_unit_connect(ACTIVITY_ROAD);
     break;
    case MENU_ORDER_CONNECT_RAIL:
-    key_unit_connect(ACTIVITY_RAILROAD);
+   {
+    struct unit *punit = get_unit_in_focus();
+
+    if (punit && unit_flag(punit, F_SETTLERS)) {
+      key_unit_connect(ACTIVITY_RAILROAD);
+    } else {
+      popup_worklists_report();
+    }
     break;
+   }
    case MENU_ORDER_CONNECT_IRRIGATE:
     key_unit_connect(ACTIVITY_IRRIGATE);
     break;
@@ -1005,8 +1029,16 @@ static void airlift_menu_callback(gpointer callback_data,
         request_auto_airlift_source_selection_with_airport();
         break;
    case MENU_AIRLIFT_CLEAR_AIRLIFT_QUEUE:
-        airlift_queue_clear(0);
+   {
+        struct unit *punit = get_unit_in_focus();
+
+        if (punit && get_transporter_occupancy(punit) > 0) {
+            key_unit_unload_all();
+        } else {
+            airlift_queue_clear(0);
+        }
         break;
+   }
    case MENU_AIRLIFT_SHOW_CITIES_IN_AIRLIFT_QUEUE:
         airlift_queue_show(0);
         break;
@@ -1869,7 +1901,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,			0,					"<Tearoff>"	},
   { "/" N_("View") "/" N_("Map _Grid"),			"<control>g",
 	view_menu_callback,	MENU_VIEW_SHOW_MAP_GRID,		"<CheckItem>"	},
-  { "/" N_("View") "/" N_("National _Borders"),		"<control>b",
+  { "/" N_("View") "/" N_("National _Borders"),		NULL,
 	view_menu_callback,	MENU_VIEW_SHOW_NATIONAL_BORDERS,	"<CheckItem>"	},
   { "/" N_("View") "/" N_("City _Names"),		"<control>n",
 	view_menu_callback,	MENU_VIEW_SHOW_CITY_NAMES,		"<CheckItem>"	},

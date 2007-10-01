@@ -450,8 +450,10 @@ Unit Orders:\n\
          j: choose caravan destination (caravan units)\n\
    <ctrl>j: auto-caravan (caravan units)\n\
          i: build (i)rrigation or convert terrain (settler/worker units)\n\
+   <ctrl>i: connect (i)rrigation (settler/worker units)\n\
          k: sleep unit\n\
          l: (l)oad unit on boat\n\
+   <ctrl>l: connect rai(l) (settler/worker units)\n\
   <shift>g: go/air(l)ift to city\n\
          m: build (m)ine or convert terrain (settler/worker units)\n\
    <ctrl>m: execute automatic orders (auto-trade, patrol, ...)\n\
@@ -465,6 +467,7 @@ Unit Orders:\n\
          q: add a patrol waypoint (when in patrol mode)\n\
          r: build (r)oad/railroad (settler/worker units)\n\
          r: establish trade (r)oute (caravan units)\n\
+   <ctrl>r: connect (r)oad (settler/worker units)\n\
          s: (s)entry unit\n\
          u: (u)nload unit\n\
   <shift>u: (U)nload all units from a boat\n\
@@ -520,11 +523,9 @@ Main Map (Keys):\n\
 ================\n\
     <shift>home: center on capital\n\
   <shift>arrows: scroll map\n\
-        <ctrl>b: show national borders on/off\n\
         <ctrl>g: show grid lines on/off\n\
         <ctrl>n: show city names on/off\n\
         <ctrl>p: show city production on/off\n\
-        <ctrl>r: show city growth on/off\n\
               t: show city workers (mouse over or near city/settler)\n\
         <ctrl>t: show traderoutes lines\n\
 "), _("\
