@@ -1695,6 +1695,11 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
     cmd_reply_no_such_player(CMD_REMOVE, caller, arg, match_result);
     return FALSE;
   }
+  if (server_state == GAME_OVER_STATE) {
+    cmd_reply(CMD_REMOVE, caller, C_FAIL,
+              _("You cannot remove player after the game ended."));
+    return FALSE;
+  }
     sz_strlcpy(name, pplayer->name);
   if (!(game.is_new_game && (server_state==PRE_GAME_STATE ||
                                server_state == SELECT_RACES_STATE)))

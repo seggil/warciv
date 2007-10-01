@@ -1775,6 +1775,7 @@ void server_remove_player(struct player *pplayer)
     if (!unattach_connection_from_player(pconn)) {
       die("player had a connection attached that didn't belong to it!");
     }
+    send_conn_info(&pconn->self, &game.est_connections);
   } conn_list_iterate_end;
 
   game_remove_player(pplayer);
