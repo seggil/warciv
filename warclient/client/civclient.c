@@ -574,7 +574,7 @@ void set_client_state(enum client_states newstate)
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
 //*pepeto*
-      if (!client_is_observer() && game.player_ptr) {
+      if (!client_is_observer() && aconnection.player) {
         if (reload_pepsettings) {
           init_all_settings();
           load_all_settings();

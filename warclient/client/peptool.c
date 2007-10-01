@@ -25,6 +25,7 @@
 
 #include "chatline_g.h"
 #include "civclient.h"
+#include "clinet.h"
 #include "cma_core.h"
 #include "control.h"
 #include "mapview_g.h"
@@ -1282,7 +1283,7 @@ void save_all_settings(void)
 
 void autosave_settings(void)
 {
-	if(!save_turns||client_is_observer()||!game.player_ptr)
+	if(!save_turns||client_is_observer()||!aconnection.player)
 		return;
 
 	turns++;
