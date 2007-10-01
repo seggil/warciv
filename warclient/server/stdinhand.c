@@ -4622,6 +4622,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
         }
         conn_list_iterate_end;
     /* actually do the removal */
+    team_remove_player(pplayer);
     game_remove_player(pplayer);
     game_renumber_players(pplayer->player_no);
   }
