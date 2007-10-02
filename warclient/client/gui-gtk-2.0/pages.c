@@ -2129,3 +2129,4 @@ void popup_save_dialog(void)
  
   gtk_window_present(GTK_WINDOW(save_dialog_shell));
 }
+

@@ -3540,7 +3540,6 @@ cleanup:
   for (i = 0; i < ntokens; i++) {
     free(arg[i]);
   }
-
   return res;
 }
 
@@ -7592,3 +7591,4 @@ bool sset_is_changeable(int idx)
     return FALSE;
   }
 }
+

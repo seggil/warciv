@@ -1124,6 +1124,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
           center_tile_mapcanvas(punit->tile);
         }
       }
+
       punit->activity = packet_unit->activity;
       punit->activity_target = packet_unit->activity_target;
 
@@ -3131,3 +3132,4 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
+
