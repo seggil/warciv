@@ -47,13 +47,14 @@ struct trade_city {
   int free_slots;                    /* Number of free slots */
   int trade_routes_num;              /* Number of city it can trade with */
   struct trade_route **trade_routes; /* A list of possible trade routes */
+  int *distance;                     /* A list of the distances */
 };
 
 struct trade_configuration
 {
-  int free_slots; /* the total number of free slots */
-  int turns;      /* the total number of required turns for a caravan */
-  int moves;      /* the total number of required moves for a caravan */
+  int free_slots;       /* the total number of free slots */
+  int turns;            /* the total number of required turns for a caravan */
+  int moves;            /* the total number of required moves for a caravan */
 };
 
 struct toggle_city
@@ -947,8 +948,13 @@ struct trade_route *add_trade_route_in_planning
   /* Change configuration */
   trade_route_list_append(ptrlist, ptr);
   pconf->free_slots -= 2;
-  pconf->moves += ptr->moves_req;
-  pconf->turns += ptr->turns_req;
+  if (ptr->moves_req < MAXCOST) {
+    pconf->moves += ptr->moves_req;
+    pconf->turns += ptr->turns_req;
+  } else {
+    pconf->turns += tcities[c1].distance[c2];
+    pconf->moves += tcities[c1].distance[c2] * SINGLE_MOVE;
+  }
 
   return ptr;
 }
@@ -1032,7 +1038,7 @@ void recursive_calculate_trade_planning(time_t max_time,
 ****************************************************************************/
 void calculate_trade_planning(char *buf, size_t buf_len)
 {
-  int i, j, size = city_list_size(&trade_cities);
+  int i, j, size = city_list_size(&trade_cities), dist;
   struct trade_route_list btrlist, ptrlist;
   struct trade_city tcities[size];
   struct trade_configuration bconf, cconf;
@@ -1067,6 +1073,7 @@ void calculate_trade_planning(char *buf, size_t buf_len)
                             - get_real_trade_route_number(pcity);
     tcities[i].trade_routes_num = 0;
     tcities[i].trade_routes = fc_malloc(size * sizeof(struct trade_route *));
+    tcities[i].distance = fc_malloc(size * sizeof(int));
 
     /* Check if a trade route is possible with the lower index cities */
     for (j = 0; j <= i; j++) {
@@ -1076,13 +1083,16 @@ void calculate_trade_planning(char *buf, size_t buf_len)
         struct trade_route *ptr = trade_route_new(NULL, tcities[i].pcity,
                                                   tcities[j].pcity, TRUE);
 
-        caravan->homecity = tcities[i].pcity->id;
-        caravan->tile = tcities[i].pcity->tile;
+        dist = real_map_distance(pcity->tile, tcities[j].pcity->tile);
+        caravan->homecity = pcity->id;
+        caravan->tile = pcity->tile;
         ptr->punit = caravan;
         update_trade_route(ptr);
         ptr->punit = NULL;
         tcities[i].trade_routes[j] = ptr;
         tcities[j].trade_routes[i] = ptr;
+        tcities[i].distance[j] = dist;
+        tcities[j].distance[i] = dist;
         tcities[i].trade_routes_num++;
         tcities[j].trade_routes_num++;
       } else {
@@ -1163,13 +1173,15 @@ void calculate_trade_planning(char *buf, size_t buf_len)
       }
     }
     free(tcities[i].trade_routes);
+    free(tcities[i].distance);
   }
 
   /* Apply */
   if (trade_route_list_size(&btrlist) > 0) {
     trade_route_list_copy(&trade_plan, &btrlist);
     trade_route_list_free(&btrlist);
-    my_snprintf(buf, buf_len, _("%d new trade routes, with a total of %d moves"),
+    my_snprintf(buf, buf_len,
+                _("%d new trade routes, with a total of %d moves"),
                 trade_route_list_size(&trade_plan), bconf.moves);
   } else {
      my_snprintf(buf, buf_len, _("Didn't find any trade routes to establish"));
