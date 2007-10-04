@@ -391,9 +391,6 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
       /* If this option is enabled, the keys GDK_1-GDK_9 are used 
        * for PepClient features instead of units moves. This is
        * useful for laptop users. */
-      /* If this option is enabled, the keys GDK_1-GDK_9 are used 
-       * for PepClient features instead of units moves. This is
-       * useful for laptop users. */
       guint keyval;
 
       /* Use shift mode to be compatible with all keyboads */

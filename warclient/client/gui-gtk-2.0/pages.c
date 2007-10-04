@@ -1235,7 +1235,7 @@ GtkWidget *create_start_page(void)
       _("More Game _Options..."));
   g_signal_connect(button, "clicked",
       G_CALLBACK(game_options_callback), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
 
   button = gtk_stockbutton_new(GTK_STOCK_SELECT_COLOR,
 			       _("Co_nfigure Chat Colors"));
@@ -2129,4 +2129,3 @@ void popup_save_dialog(void)
  
   gtk_window_present(GTK_WINDOW(save_dialog_shell));
 }
-
