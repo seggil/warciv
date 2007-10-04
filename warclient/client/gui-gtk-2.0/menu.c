@@ -3130,13 +3130,13 @@ void get_accel_label(GtkWidget *widget,const char *uname)
 		gtk_widget_add_accelerator(widget,"activate",toplevel_accel,'d',GDK_SHIFT_MASK|GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 	else if(!strcmp(uname,"Spy"))
 		gtk_widget_add_accelerator(widget,"activate",toplevel_accel,'s',GDK_SHIFT_MASK|GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
-	else if(!strcmp(uname,"Freight"))
+	else if(!strcmp(uname,"Fanatics"))
 		gtk_widget_add_accelerator(widget,"activate",toplevel_accel,'f',GDK_SHIFT_MASK|GDK_CONTROL_MASK,GTK_ACCEL_VISIBLE);
 }
 
 /****************************************************************
- ...
- *****************************************************************/
+  ...
+*****************************************************************/
 static bool can_player_unit_type(Unit_Type_id utype)
 {
   if(can_player_build_unit(game.player_ptr,utype))
@@ -3150,8 +3150,8 @@ static bool can_player_unit_type(Unit_Type_id utype)
 }
 
 /****************************************************************
- ...
- *****************************************************************/
+  ...
+*****************************************************************/
 void pep_airlift_menu_set_sensitive(void)
 {
   int i, j;
@@ -3166,8 +3166,8 @@ void pep_airlift_menu_set_sensitive(void)
 }
 
 /****************************************************************
- ...
- *****************************************************************/
+  ...
+*****************************************************************/
 static void pep_airlift_menu_set_active(void)
 {
   int i;
@@ -3180,42 +3180,92 @@ static void pep_airlift_menu_set_active(void)
 
 /****************************************************************
   ...
- *****************************************************************/
+*****************************************************************/
 static void pep_airlift_menu_callback(GtkWidget *widget,gpointer data)
 {
   int aq = GPOINTER_TO_INT(data) / (U_LAST + 1);
   Unit_Type_id utype = GPOINTER_TO_INT(data) % (U_LAST + 1);
-  
+
   airlift_queue_set_unit_type(aq, utype);
 }
 
 /****************************************************************
-  ...
- *****************************************************************/
-static void create_pep_airlift_menu(int aq,GtkWidget *widget)
+  Create the menu <main>/Airlift/Airlift unit type
+  Sort the unit type in 4 classes:
+  * civil units
+  * attack units
+  * defense units
+  * fast units
+*****************************************************************/
+#define CLASS_NUM 4
+static void create_pep_airlift_menu(int aq, GtkWidget *menu)
 {
   GSList **group = fc_malloc(sizeof(GList *));
   GtkWidget *item;
-  int i;
-  Tech_Type_id tid = find_tech_by_name_orig("Never");
+  Unit_Type_id classes[CLASS_NUM][U_LAST];
+  int index[CLASS_NUM] = {0, 0, 0, 0}, i, j, k = 0;
 
-  *group=NULL;
-  item = gtk_radio_menu_item_new_with_label(*group, _("None"));
-  g_signal_connect(item, "activate", G_CALLBACK(pep_airlift_menu_callback), GINT_TO_POINTER(aq * (U_LAST + 1) + U_LAST));
-  *group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-  gtk_menu_shell_append(GTK_MENU_SHELL(widget), item);
-  airlift_queue_set_menu_item(aq, U_LAST, item);
-  for(i = 0; i < game.num_unit_types; i++)
-  {
-    if(unit_types[i].move_type != LAND_MOVING || unit_types[i].tech_requirement == tid || unit_type_flag(i,F_NOBUILD))
+  unit_type_iterate(ut) {
+    struct unit_type *utype = get_unit_type(ut);
+
+    if (utype->move_type != LAND_MOVING || unit_type_flag(ut, F_NOBUILD)) {
+      /* Land unit and buildable units only */
       continue;
-    item = gtk_radio_menu_item_new_with_label(*group, unit_name(i));
-    g_signal_connect(item, "activate", G_CALLBACK(pep_airlift_menu_callback), GINT_TO_POINTER(aq * (U_LAST + 1) + i));
-    *group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
-    if(!aq)
-    	get_accel_label(item, unit_name_orig(i));
-    gtk_menu_shell_append(GTK_MENU_SHELL(widget), item);
-    airlift_queue_set_menu_item(aq, i, item);
+    }
+
+    if (utype->attack_strength == 0) {
+      i = 0;
+    } else if (unit_has_role(ut, L_DEFEND_GOOD)) {
+      i = 2;
+    } else if (unit_has_role(ut, L_ATTACK_FAST)) {
+      i = 3;
+    } else if (unit_has_role(ut, L_ATTACK_STRONG)) {
+      i = 1;
+    } else if (utype->attack_strength > utype->defense_strength) {
+      if (utype->move_rate > SINGLE_MOVE
+          && utype->attack_strength < 4 * utype->defense_strength) {
+        i = 3;
+      } else {
+        i = 1;
+      }
+    } else {
+      i = 2;
+    }
+
+    classes[i][index[i]++] = ut;
+    k++;
+  } unit_type_iterate_end;
+
+  /* None unit type */
+  *group = NULL;
+  item = gtk_radio_menu_item_new_with_label(*group, _("None"));
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(pep_airlift_menu_callback),
+                   GINT_TO_POINTER(aq * (U_LAST + 1) + U_LAST));
+  *group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  airlift_queue_set_menu_item(aq, U_LAST, item);
+
+  for (k = i = 0; i < CLASS_NUM; i++) {
+    if (index[i] == 0) {
+      continue; /* No unit type in this class */
+    }
+    item = gtk_separator_menu_item_new();
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+    for (j = 0; j < index[i]; j++, k++) {
+      item = gtk_radio_menu_item_new_with_label(*group,
+                                                unit_name(classes[i][j]));
+      g_signal_connect(item, "activate",
+                       G_CALLBACK(pep_airlift_menu_callback),
+                       GINT_TO_POINTER(aq * (U_LAST + 1) + classes[i][j]));
+      if (aq == 0) {
+        get_accel_label(item, unit_name_orig(classes[i][j]));
+      }
+      *group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(item));
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+      airlift_queue_set_menu_item(aq, classes[i][j], item);
+    }
   }
 }
 
@@ -3611,6 +3661,8 @@ void update_airlift_menu(int i)
       menus_set_sensitive(buf, airlift_queue_get_unit_type(i) != U_LAST);
       strcpy(m, "/Show");
       menus_set_sensitive(buf, TRUE);
+      menus_set_sensitive("<main>/Airlift/Set airlift destination", TRUE);
+      menus_set_sensitive("<main>/Delayed Goto/Delayed airlift", TRUE);
     } else if (cond) {
       menus_set_sensitive(buf, TRUE);
       strcpy(m, "/Select");
