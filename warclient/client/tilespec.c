@@ -2022,7 +2022,7 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
       s = sprites.unit.auto_settler;
     }
     ADD_SPRITE_FULL(s);
-  } else if (punit->is_sleeping) {
+  } else if (punit->is_sleeping && sprites.unit.sleeping) {
     ADD_SPRITE_FULL(sprites.unit.sleeping);
   } else if (punit->activity!=ACTIVITY_IDLE) {
     struct Sprite *s = NULL;
