@@ -148,6 +148,39 @@ static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
   return move_cost;
 }
 
+/************************************************************ 
+  LAND_MOVE cost function for a unit 
+************************************************************/
+static int diplomat_move_unit(const struct tile *ptile, enum direction8 dir,
+			      const struct tile *ptile1,
+			      struct pf_parameter *param)
+{
+  Terrain_type_id terrain1 = ptile1->terrain;
+  int move_cost;
+
+  if (is_ocean(terrain1)) {
+    if (ground_unit_transporter_capacity(ptile1, param->owner) > 0
+        || (is_non_allied_unit_tile(ptile1, param->owner)
+            && (unit_list_size(&ptile1->units) == 1
+                || game.stackbribing))) {
+      move_cost = SINGLE_MOVE;
+    } else {
+      move_cost = PF_IMPOSSIBLE_MC;
+    }
+  } else if (is_ocean(ptile->terrain)) {
+    if (is_non_allied_unit_tile(ptile1, param->owner)
+        || is_non_allied_city_tile(ptile1, param->owner)) {
+      move_cost = PF_IMPOSSIBLE_MC;
+    } else {
+      move_cost = get_tile_type(terrain1)->movement_cost * SINGLE_MOVE;
+    }
+  } else {
+    move_cost = ptile->move_cost[dir];
+  }
+
+  return move_cost;
+}
+
 /******************************************************************* 
   LAND_MOVE cost function for a unit, but taking into account
   possibilities of attacking.
@@ -447,6 +480,8 @@ void pft_fill_unit_parameter(struct pf_parameter *parameter,
   case LAND_MOVING:
     if (unit_flag(punit, F_IGTER)) {
       parameter->get_MC = igter_move_unit;
+    } else if (is_diplomat_unit(punit)) {
+      parameter->get_MC = diplomat_move_unit;
     } else {
       parameter->get_MC = normal_move_unit;
     }
