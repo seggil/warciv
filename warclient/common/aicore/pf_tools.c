@@ -160,7 +160,8 @@ static int diplomat_move_unit(const struct tile *ptile, enum direction8 dir,
 
   if (is_ocean(terrain1)) {
     if (ground_unit_transporter_capacity(ptile1, param->owner) > 0
-        || (is_non_allied_unit_tile(ptile1, param->owner)
+        || (!is_ocean(ptile->terrain)
+            && is_non_allied_unit_tile(ptile1, param->owner)
             && (unit_list_size(&ptile1->units) == 1
                 || game.stackbribing))) {
       move_cost = SINGLE_MOVE;
@@ -170,6 +171,7 @@ static int diplomat_move_unit(const struct tile *ptile, enum direction8 dir,
   } else if (is_ocean(ptile->terrain)) {
     if (is_non_allied_unit_tile(ptile1, param->owner)
         || is_non_allied_city_tile(ptile1, param->owner)) {
+      /* Diplomats must be on land to make actions */
       move_cost = PF_IMPOSSIBLE_MC;
     } else {
       move_cost = get_tile_type(terrain1)->movement_cost * SINGLE_MOVE;
