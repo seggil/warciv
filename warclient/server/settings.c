@@ -1054,201 +1054,223 @@ struct settings_s settings[] = {
 	  0, 40, 20)
 
   GEN_BOOL("techtrading", game.techtrading, SSET_RULES,
-	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Technology trading"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, trading technologies in diplomacy dialog\n"
-             "is not allowed."), NULL,
-          GAME_DEFAULT_TECHTRADING)
+	   SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Technology trading"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, trading technologies in diplomacy dialog\n"
+              "is not allowed."), NULL,
+           GAME_DEFAULT_TECHTRADING)
+
   GEN_BOOL("goldtrading", game.goldtrading, SSET_RULES,
-	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Gold trading"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, trading gold in diplomacy dialog\n"
-             "is not allowed."), NULL,
-          GAME_DEFAULT_GOLDTRADING)
+	   SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Gold trading"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, trading gold in diplomacy dialog\n"
+              "is not allowed."), NULL,
+           GAME_DEFAULT_GOLDTRADING)
+
   GEN_BOOL("citytrading", game.citytrading, SSET_RULES,
-	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-          N_("City trading"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, trading cities in diplomacy dialog\n"
-             "is not allowed."), NULL,
-          GAME_DEFAULT_CITYTRADING)
+	   SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
+           N_("City trading"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, trading cities in diplomacy dialog\n"
+              "is not allowed."), NULL,
+           GAME_DEFAULT_CITYTRADING)
+
   GEN_INT("airliftingstyle", game.airliftingstyle, 
-      SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
+          SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Airlifting style"),
-          N_("0 - standard 2.0.8, only 1 unit per turn to destination\n"
+          N_("0 - standard 2.0.9, only 1 unit per turn to destination\n"
              "1 - multiple units can be airlifted into destination\n"
              "2 - like 0 but airlifts into allied cities are possible\n"
              "3 - like 1 but airlifts into allied cities are possible"),
-          NULL,
-          0, 3, GAME_DEFAULT_AIRLIFTINGSTYLE)
+          NULL, GAME_MIN_AIRLIFTINGSTYLE,
+          GAME_MAX_AIRLIFTINGSTYLE, GAME_DEFAULT_AIRLIFTINGSTYLE)
+
   GEN_BOOL("teamplacement", game.teamplacement, SSET_RULES,
-	  SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Team placement"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, team players are placed randomly."), NULL,
-          GAME_DEFAULT_TEAMPLACEMENT)
+	   SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Team placement"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, team players are placed randomly."), NULL,
+           GAME_DEFAULT_TEAMPLACEMENT)
+
   GEN_INT("teamplacementtype", game.teamplacementtype,
 	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-    N_("Type of team placement"),
+          N_("Type of team placement"),
 	  N_("0 - team players are placed as close as possible\n"
 	     "    regardless of continents.\n"
-       "1 - team players are placed on the same continent.\n"
-       "2 - team players are placed horizontally. This is for\n"
-       "    generator 4/5.\n"
-       "3 - team players are placed vertically."),
-	  NULL,
-	  0, 3, GAME_DEFAULT_TEAMPLACEMENTTYPE)
+             "1 - team players are placed on the same continent.\n"
+             "2 - team players are placed horizontally. This is for\n"
+             "    generator 4/5.\n"
+            "3 - team players are placed vertically."), NULL,
+	  GAME_MIN_TEAMPLACEMENTTYPE, GAME_MAX_TEAMPLACEMENTTYPE,
+          GAME_DEFAULT_TEAMPLACEMENTTYPE)
+
   GEN_INT("bruteforcethreshold", game.bruteforcethreshold,
 	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-    N_("Brute force team placement algorithm threshold"),
+          N_("Brute force team placement algorithm threshold"),
 	  N_("Brute force team placement algorithm will be used\n"
-      "if the number of players is less or equal than this value.\n"
-      "This algorithm guarantees that team players will be placed\n"
-      "as close as possible. Default value is 11."),
-	  NULL,
-	  0, 32, GAME_DEFAULT_BRUTEFORCETHRESHOLD)
+             "if the number of players is less or equal than this value.\n"
+             "This algorithm guarantees that team players will be placed\n"
+             "as close as possible. Default value is 11."), NULL,
+	  GAME_MIN_BRUTEFORCETHRESHOLD, GAME_MAX_BRUTEFORCETHRESHOLD,
+          GAME_DEFAULT_BRUTEFORCETHRESHOLD)
+
   GEN_INT("iterplacementcoefficient", game.iterplacementcoefficient,
 	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
-    N_("Iterative team placement algorithm coefficient."),
+          N_("Iterative team placement algorithm coefficient."),
 	  N_("This value is the upper bound of the number of\n"
 	    "iterations the iterative tabu search performs.\n"
-      "Iterative alrogithm is much faster than brute force\n"
-      "and provies acceptable team placement. Allied players\n"
-      "will be placed very close, but a slighly better solution\n"
-      "might exist. Default value is 800."),
-	  NULL,
-	  100, 5000, GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT)
+            "Iterative alrogithm is much faster than brute force\n"
+            "and provies acceptable team placement. Allied players\n"
+            "will be placed very close, but a slighly better solution\n"
+            "might exist. Default value is 400."), NULL,
+	  GAME_MIN_ITERPLACEMENTCOEFFICIENT, GAME_MAX_ITERPLACEMENTCOEFFICIENT,
+          GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT)
+
   GEN_BOOL("globalwarming", game.globalwarmingon, SSET_RULES,
-	  SSET_ECOLOGY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Global warming"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, global warming will not occur\n"
-             "as a result of pollution. This settings does not\n"
-             "affect pollution."), NULL,
-          GAME_DEFAULT_GLOBALWARMINGON)
+	   SSET_ECOLOGY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Global warming"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, global warming will not occur\n"
+              "as a result of pollution. This settings does not\n"
+              "affect pollution."), NULL,
+           GAME_DEFAULT_GLOBALWARMINGON)
+
   GEN_BOOL("nuclearwinter", game.nuclearwinteron, SSET_RULES,
-	  SSET_ECOLOGY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Nuclear winter"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, nuclear winter will not occur\n"
-             "as a result of nuclear war."), NULL,
-          GAME_DEFAULT_NUCLEARWINTERON)
+           SSET_ECOLOGY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Nuclear winter"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, nuclear winter will not occur\n"
+              "as a result of nuclear war."), NULL,
+           GAME_DEFAULT_NUCLEARWINTERON)
+
   GEN_INT_EXT("traderevenuestyle", game.traderevenuestyle,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-          "extroutes", /* required capability for non-default */
-	  N_("Trade revenue style"),
-	  N_("0 - standard freeciv 2.0.8\n"
-      "1 - experimental\n"
-      "2 - civ2 trade routes\n"
-      "This setting affects how much trade cities"
-      "generate after trade routes are established."),
-	  NULL,
-	  0, 2, GAME_DEFAULT_TRADEREVENUESTYLE)
+	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+              "extroutes", /* required capability for non-default */
+	      N_("Trade revenue style"),
+	      N_("0 - standard freeciv 2.0.9\n"
+                 "1 - experimental\n"
+                 "2 - civ2 trade routes\n"
+                 "This setting affects how much trade cities"
+                 "generate after trade routes are established."), NULL,
+              GAME_MIN_TRADEREVENUESTYLE, GAME_MAX_TRADEREVENUESTYLE,
+              GAME_DEFAULT_TRADEREVENUESTYLE)
+
   GEN_INT_EXT("traderevenuepercentage", game.traderevenuepct,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-          "extroutes", /* required capability for non-default */
-	  N_("Trade revenue percentage"),
-	  N_("100 - default value"),
-	  NULL,
-	  1, 200, GAME_DEFAULT_TRADEREVENUEPCT)
+	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+              "extroutes", /* required capability for non-default */
+	      N_("Trade revenue percentage"),
+	      N_("100 - default value"), NULL,
+	      GAME_MIN_TRADEREVENUEPCT, GAME_MAX_TRADEREVENUEPCT,
+              GAME_DEFAULT_TRADEREVENUEPCT)
+
   GEN_INT_EXT("caravanbonusstyle", game.caravanbonusstyle,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-          "extroutes", /* required capability for non-default */
-	  N_("Caravan bonus style"),
-	  N_("0 - standard freeciv 2.0.8\n"
-      "1 - experimental\n"
-      "This setting affects how much gold and science"
-      "you get when a caravan arrives in a city."),
-	  NULL,
-	  0, 1, GAME_DEFAULT_CARAVANBONUSSTYLE)
+	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+              "extroutes", /* required capability for non-default */
+	      N_("Caravan bonus style"),
+	      N_("0 - standard freeciv 2.0.9\n"
+                 "1 - experimental\n"
+                 "This setting affects how much gold and science"
+                 "you get when a caravan arrives in a city."), NULL,
+	      GAME_MIN_CARAVANBONUSSTYLE, GAME_MAX_CARAVANBONUSSTYLE,
+              GAME_DEFAULT_CARAVANBONUSSTYLE)
+
   GEN_INT_EXT("trademindist", game.trademindist,
-	  SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-          "extroutes", /* required capability for non-default */
-	  N_("Minimum trade distance"),
-	  N_("Minimum distance to establish trade route.\n"
-             "9 is default"),
-	  NULL,
-	  1, 999, GAME_DEFAULT_TRADEMINDIST)
+	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+              "extroutes", /* required capability for non-default */
+	      N_("Minimum trade distance"),
+	      N_("Minimum distance to establish trade route.\n"
+                 "9 is default"), NULL,
+	      GAME_MIN_TRADEMINDIST, GAME_MAX_TRADEMINDIST,
+              GAME_DEFAULT_TRADEMINDIST)
+
   GEN_BOOL("futuretechsscore", game.futuretechsscore, SSET_RULES,
-	  SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
-          N_("Score for future techs"),
-          N_("0 - off\n"
-             "1 - on"), NULL,
-          GAME_DEFAULT_FUTURETECHSSCORE)
+	   SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
+           N_("Score for future techs"),
+           N_("0 - off\n"
+              "1 - on"), NULL,
+           GAME_DEFAULT_FUTURETECHSSCORE)
+
   GEN_BOOL("improvedautoattack", game.improvedautoattack, SSET_RULES,
-	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Improved autoattack"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, automatic units don't attack\n"
-             "in the middle of turn.\n"), NULL,
-          GAME_DEFAULT_IMPROVEDAUTOATTACK)
+	   SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Improved autoattack"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, automatic units don't attack\n"
+              "in the middle of turn.\n"), NULL,
+           GAME_DEFAULT_IMPROVEDAUTOATTACK)
+
   GEN_BOOL("stackbribing", game.stackbribing, SSET_RULES,
-	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Stack bribing"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned on, diplomats can bribe stacks\n"
-             "of units.\n"), NULL,
-          GAME_DEFAULT_STACKBRIBING)
+	   SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Stack bribing"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned on, diplomats can bribe stacks\n"
+              "of units.\n"), NULL,
+           GAME_DEFAULT_STACKBRIBING)
+
   GEN_BOOL("experimentalbribingcost", game.experimentalbribingcost, SSET_RULES,
-	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Experimental bribing cost"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned on, bribing cost doesn't depend on\n"
-             "government, distance, reserve gold, but depends on\n"
-						 "build cost, veterancy, terrain, fortification."), NULL,
-          GAME_DEFAULT_EXPERIMENTALBRIBINGCOST)
+	   SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Experimental bribing cost"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned on, bribing cost doesn't depend on\n"
+              "government, distance, reserve gold, but depends on\n"
+              "build cost, veterancy, terrain, fortification."), NULL,
+           GAME_DEFAULT_EXPERIMENTALBRIBINGCOST)
+
   GEN_BOOL("ignoreruleset", game.ignoreruleset, SSET_RULES,
-	  SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
-          N_("Ignore ruleset"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "Ignore ruleset if ruleset and pregame settings differs\n"
-             "Must be set to 1 if slow invasions are off or tech leakage is on\n"
-             "or kill stack is off."), NULL,
-          GAME_DEFAULT_IGNORERULESET)
+	   SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
+           N_("Ignore ruleset"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "Ignore ruleset if ruleset and pregame settings differs\n"
+              "Must be set to 1 if slow invasions are off or tech leakage is on\n"
+              "or kill stack is off."), NULL,
+           GAME_DEFAULT_IGNORERULESET)
+
   GEN_BOOL("slowinvasions", game.slow_invasions, SSET_RULES,
-	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Slow invasions"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If slow invasions are off, units with 2 movement points\n"
-             "can unload from ship and attack in the same turn. If you\n"
-             "change this setting, turn on 'ignoreruleset'."), NULL,
-          GAME_DEFAULT_SLOWINVASIONS)
+	   SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Slow invasions"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If slow invasions are off, units with 2 movement points\n"
+              "can unload from ship and attack in the same turn. If you\n"
+              "change this setting, turn on 'ignoreruleset'."), NULL,
+           GAME_DEFAULT_SLOWINVASIONS)
+
   GEN_BOOL("killstack", game.rgame.killstack, SSET_RULES,
-	  SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
-          N_("Kill stack"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned off, killing one unit in a stack doesn't\n"
-             "kill the whole stack but all units have to be killed\n"
-             "individually. If you change this setting, turn on\n"
-             "'ignoreruleset'."), NULL,
-          GAME_DEFAULT_KILLSTACK)
+           SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
+           N_("Kill stack"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned off, killing one unit in a stack doesn't\n"
+              "kill the whole stack but all units have to be killed\n"
+              "individually. If you change this setting, turn on\n"
+              "'ignoreruleset'."), NULL,
+           GAME_DEFAULT_KILLSTACK)
+
   GEN_INT("techleakage", game.rgame.tech_leakage,
 	  SSET_RULES, SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Technology leak from other civilizations"),
 	  N_("0 - No reduction of the technology cost\n"
-      "1 - Technology cost is reduced depending on the number of players\n"
-      "    which already know the tech and you have an embassy with.\n"
-      "2 - Technology cost is reduced depending on the number of all players\n"
-      "    (human, AI and barbarians) which already know the tech.\n"
-      "3 - Technology cost is reduced depending on the number of normal\n"
-      "    players (human and AI) which already know the tech.\n\n"
-      "If you change this setting, turn on 'ignoreruleset'.\n"),
+             "1 - Technology cost is reduced depending on the number of players\n"
+             "    which already know the tech and you have an embassy with.\n"
+             "2 - Technology cost is reduced depending on the number of all players\n"
+             "    (human, AI and barbarians) which already know the tech.\n"
+             "3 - Technology cost is reduced depending on the number of normal\n"
+             "    players (human and AI) which already know the tech.\n\n"
+             "If you change this setting, turn on 'ignoreruleset'.\n"),
 	  NULL,
-	  0, 3, GAME_DEFAULT_TECHLEAKAGE)
+	  GAME_MIN_TECHLEAKAGE, GAME_MAX_TECHLEAKAGE, GAME_DEFAULT_TECHLEAKAGE)
+
   GEN_INT("techleakagerate", game.techleakagerate,
 	  SSET_RULES, SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Technology leak rate from other civilizations (in percent)"),
@@ -1256,9 +1278,10 @@ struct settings_s settings[] = {
 	  "If this value is 100%, the last player to search a technology\n"
 	  "will have only (technologycost * 1 / playernumber).\n"
 	  "If this value is 0%, all players will have the same technology\n"
-	  "costs."),
-	  NULL,
-	  0, 100, GAME_DEFAULT_TECHLEAKAGERATE)
+	  "costs."), NULL,
+          GAME_MIN_TECHLEAKAGERATE, GAME_MAX_TECHLEAKAGERATE,
+          GAME_DEFAULT_TECHLEAKAGERATE)
+
   GEN_INT("techcoststyle", game.rgame.tech_cost_style,
 	  SSET_RULES, SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Technology cost style"),
@@ -1268,25 +1291,24 @@ struct settings_s settings[] = {
              "2 - Cost are read from tech.ruleset. Missing costs are\n"
              "    generated by style 1.\n\n"
              "If you change this setting, turn on 'ignoreruleset'.\n"),
-	  NULL,
-	  0, 2, GAME_DEFAULT_TECHCOSTSTYLE)
-
+	  NULL, GAME_MIN_TECHCOSTSTYLE,
+          GAME_MAX_TECHCOSTSTYLE, GAME_DEFAULT_TECHCOSTSTYLE)
 
   GEN_INT("maxconnections", game.maxconnections,
 	  SSET_RULES_FLEXIBLE, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Maximum number of connections to the server"),
 	  N_("New players will be rejected if the total number\n"
-      "of connections exceeds maxconnections.\n"
-			"0 means there is no limit."),
-	  NULL,
-	  0, 100, GAME_DEFAULT_MAXCONNECTIONS)
+             "of connections exceeds maxconnections.\n"
+             "0 means there is no limit."), NULL,
+	  GAME_MIN_MAXCONNECTIONS, GAME_MAX_MAXCONNECTIONS,
+          GAME_DEFAULT_MAXCONNECTIONS)
+
   GEN_BOOL("multilinechat", srvarg.allow_multi_line_chat, SSET_RULES_FLEXIBLE,
-	  SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
-          N_("Multi line chat"),
-          N_("0 - off\n"
-             "1 - on\n"
-             "If turned on, the user can send many chat lines."), NULL,
-          FALSE)
+	   SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
+           N_("Multi line chat"),
+           N_("0 - off\n"
+              "1 - on\n"
+              "If turned on, the user can send many chat lines."), NULL, FALSE)
 
   GEN_END
 };
