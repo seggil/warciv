@@ -371,9 +371,8 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
         && (ev->state & GDK_CONTROL_MASK)) {
       insert_chat_link(ptile, (ev->state & GDK_SHIFT_MASK) != 0);
     }
-    /* <ALT> + <SHIFT> + RMB : Distance tool. */
-    else if ((ev->state & GDK_SHIFT_MASK)
-             && (ev->state & GDK_MOD1_MASK)) {
+    /* <ALT GR> + RMB : Distance tool. */
+    else if ((ev->state & GDK_MOD5_MASK)) {
       update_distance_tool(ev->x, ev->y);
     }
     /* <SHIFT> <CONTROL> + RMB: Paste Production. */
