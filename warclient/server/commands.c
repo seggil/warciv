@@ -528,10 +528,10 @@ const struct command commands[] = {
    ECHO_ADMINS
   },
   {"reset",	ALLOW_NEVER, ALLOW_CTRL,
-   /* TRANS: translate text between <> only */
    N_("reset"),
-   N_("Reset all settings"), N_("Reset all settings and read the setup file, "
-   "if there is one (run the server with --read <setup-file>)."),
+   N_("Reset all settings"),
+   N_("Reset all settings and read the setup file, "
+      "if there is one (run the server with --read <setup-file>)."),
    ECHO_ALL
   },
   {"wmessage",	ALLOW_HACK, ALLOW_HACK,

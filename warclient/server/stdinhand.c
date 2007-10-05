@@ -6544,14 +6544,16 @@ static void show_help_command(struct connection *caller,
     my_snprintf(prefix, sizeof(prefix), "%*s", (int) synlen, " ");
     cmd_reply_prefix(help_cmd, caller, C_COMMENT, prefix,
 		     "%s%s", syn, _(cmd->synopsis));
-  }
-  cmd_reply(help_cmd, caller, C_COMMENT,
-	    _("Level: %s"), cmdlevel_name(cmd->game_level));
-    if (cmd->game_level != cmd->pregame_level)
-    {
-    cmd_reply(help_cmd, caller, C_COMMENT,
-	      _("Pregame level: %s"), cmdlevel_name(cmd->pregame_level));
-  }
+    }
+    if (cmd->game_level < ALLOW_NEVER) {
+      cmd_reply(help_cmd, caller, C_COMMENT,
+                _("Level: %s"), cmdlevel_name(cmd->game_level));
+    }
+    if (cmd->game_level != cmd->pregame_level
+        && cmd->pregame_level < ALLOW_NEVER) {
+      cmd_reply(help_cmd, caller, C_COMMENT,
+                _("Pregame level: %s"), cmdlevel_name(cmd->pregame_level));
+    }
     if (cmd->extra_help)
     {
     static struct astring abuf = ASTRING_INIT;
@@ -7591,4 +7593,3 @@ bool sset_is_changeable(int idx)
     return FALSE;
   }
 }
-
