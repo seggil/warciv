@@ -504,7 +504,7 @@ void release_goto_button(int canvas_x, int canvas_y)
 
   if (keyboardless_goto_active && hover_state == HOVER_GOTO && ptile) {
     if (multi_select_size(0) == 1) {
-      send_goto_route(get_unit_in_focus());
+      do_unit_goto(ptile);
     } else {
       multi_select_iterate(FALSE, punit) {
         send_goto_unit(punit, ptile);
