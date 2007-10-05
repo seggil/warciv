@@ -544,7 +544,8 @@ current view in the focus\n\
   LMB-and-drag on unit:     Goto command for unit\n\
   MMB:                      Show tile info\n\
   RMB:                      Center tile in view\n\
-  <alt gr>RMB-and-drag:     Show the distance between tiles\n\
+  <alt><shift>RMB-and-drag\n\
+  or <alt>RMB-and-drag:     Show the distance between tiles\n\
 \n\
   <shift>RMB:               Copy production (GTK)\n\
   <ctrl><shift>RMB on city: Paste production into city (GTK)\n\
