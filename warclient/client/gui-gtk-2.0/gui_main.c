@@ -393,10 +393,14 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
        * useful for laptop users. */
       guint keyval;
 
-      /* Use shift mode to be compatible with all keyboads */
-      gdk_keymap_translate_keyboard_state(NULL, ev->hardware_keycode,
-                                          GDK_SHIFT_MASK, ev->group,
-                                          &keyval, NULL, NULL, NULL);
+      if (ev->keyval < GDK_1 || ev->keyval > GDK_9) {
+        /* Try with the shift mode */
+        gdk_keymap_translate_keyboard_state(NULL, ev->hardware_keycode,
+                                            GDK_SHIFT_MASK, ev->group,
+                                            &keyval, NULL, NULL, NULL);
+      } else {
+        keyval = ev->keyval;
+      }
 
       if ((ev->state & GDK_SHIFT_MASK)) {
         if ((ev->state & GDK_CONTROL_MASK)) {
