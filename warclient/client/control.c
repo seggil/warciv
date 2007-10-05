@@ -2156,9 +2156,9 @@ void do_unit_goto(struct tile *ptile)
       if (ptile == dest_tile) {
 	send_goto_route(punit);
 	attack_after_move(punit);
-      } else if (is_diplomat_unit(punit) && 
-		 base_get_direction_for_step(punit->tile,ptile,&dir) &&
-		 unit_list_size(&ptile->units) > 0) {
+      } else if (is_diplomat_unit(punit)
+		 && base_get_direction_for_step(punit->tile, ptile, &dir)
+		 && unit_list_size(&ptile->units) > 0) {
 	key_unit_move(map_to_gui_dir(dir));
       } else {
 	append_output_window(_("Game: Didn't find a route to the "
