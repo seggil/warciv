@@ -503,10 +503,13 @@ void release_goto_button(int canvas_x, int canvas_y)
   struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
   if (keyboardless_goto_active && hover_state == HOVER_GOTO && ptile) {
-	  multi_select_iterate(FALSE,punit)//*pepeto*
-	  {
-		send_goto_unit(punit,ptile);
-	  } multi_select_iterate_end;
+    if (multi_select_size(0) == 1) {
+      send_goto_route(get_unit_in_focus());
+    } else {
+      multi_select_iterate(FALSE, punit) {
+        send_goto_unit(punit, ptile);
+      } multi_select_iterate_end;
+    }
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
     update_unit_info_label(get_unit_in_focus());
   }
@@ -802,4 +805,3 @@ void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list)
   /* Then sort it. */
   qsort(unit_list, i, sizeof(*unit_list), unit_list_compare);
 }
-
