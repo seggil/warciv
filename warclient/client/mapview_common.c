@@ -84,20 +84,20 @@ void refresh_tile_mapcanvas(struct tile *ptile, bool write_to_screen)
   int canvas_x, canvas_y;
 
   if (real_update || write_to_screen) {
-  if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
-    canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
-    if (write_to_screen) {
-      assert(real_update == FALSE);
-      real_update = TRUE;
-      update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
-      flush_dirty();
-      redraw_selection_rectangle();
-      real_update = FALSE;
-    } else {
-      update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+    if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
+      canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
+      if (write_to_screen) {
+        assert(real_update == FALSE);
+        real_update = TRUE;
+        update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+        flush_dirty();
+        redraw_selection_rectangle();
+        real_update = FALSE;
+      } else {
+        update_map_canvas(canvas_x, canvas_y, UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+      }
     }
-  }
-  overview_update_tile(ptile);
+    overview_update_tile(ptile);
   } else if (!tile_list_find(&updated_tiles, ptile)) {
     tile_list_append(&updated_tiles, ptile);
     add_idle_callback();
@@ -521,7 +521,8 @@ static void base_set_mapview_origin(int gui_x0, int gui_y0)
 			update_x1 - update_x0, common_y1 - common_y0);
     }
   } else {
-    update_map_canvas_visible();
+    update_map_canvas(0, 0, mapview_canvas.store_width,
+                      mapview_canvas.store_height);
   }
 
   map_center = get_center_tile_mapcanvas();
