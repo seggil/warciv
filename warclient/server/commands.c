@@ -174,7 +174,8 @@ const struct command commands[] = {
    N_("Cancel a running vote.\n"),
    N_("With no arguments, this command remove your own vote. If you have "
       "an hack access level, you can cancel any vote by vote number, or all "
-      "with the all argument.")
+      "with the all argument."),
+   ECHO_PLAYERS
   },
   {"debug",	ALLOW_HACK, ALLOW_HACK,
    N_("debug [ player <player> | city <x> <y> | units <x> <y> | unit <id> ]"),
