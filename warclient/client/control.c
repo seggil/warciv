@@ -2124,11 +2124,13 @@ static struct unit *quickselect(struct tile *ptile,
 **************************************************************************/
 void attack_after_move(struct unit *punit)
 {
-    if ((moveandattack_state == 1) && can_unit_do_auto(punit)) {
-       ignore_focus_change_for_unit = punit->id;
-       request_unit_auto(punit);
-       request_new_unit_activity(punit, ACTIVITY_IDLE);
-    }
+  if (moveandattack_state
+      && can_unit_do_auto(punit)
+      && is_military_unit(punit)) {
+    ignore_focus_change_for_unit = punit->id;
+    request_unit_auto(punit);
+    request_new_unit_activity(punit, ACTIVITY_IDLE);
+  }
 }
 
 /**************************************************************************
