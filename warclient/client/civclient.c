@@ -576,8 +576,7 @@ void set_client_state(enum client_states newstate)
 //*pepeto*
       if (!client_is_observer() && aconnection.player) {
         if (reload_pepsettings) {
-          init_all_settings();
-          load_all_settings();
+          load_dynamic_settings();
         }
         if (game.turn == 0) {
           set_default_user_tech_goal();

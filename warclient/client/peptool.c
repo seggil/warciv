@@ -388,6 +388,22 @@ static struct pepsetting static_pepsettings[] = {
                "7: Incite revolt\n"
                "8: Poison city (spy)\n"
                "9: Keep going"), DIPLOMAT_ACTION),
+  PSGEN_INT(PAGE_PMAIN, default_action_type,
+            N_("New unit default action"),
+            N_("The new created units will do this activity automaticely.\n\n"
+               "0: Idle\n"
+               "1: Sentry\n"
+               "2: Fortify\n"
+               "3: Sleep\n"
+               "4: Fortify or Sleep (depend of unit)\n"), UNIT_ACTION),
+  PSGEN_BOOL(PAGE_PMAIN, default_action_locked,
+             N_("Lock the new unit default action"),
+             N_("If this setting is disabled, the new unit default action "
+                "will be canceled every turn"), ACTION_LOCKED),
+  PSGEN_BOOL(PAGE_PMAIN, default_action_military_only,
+             N_("New unit default action for military units only"),
+             N_("If enabled, units not able to attack won't do the "
+                "default action."), ACTION_MILITARY),
 
   PSGEN_INT(PAGE_MS, multi_select_place,
             N_("Multi-selection place mode"),

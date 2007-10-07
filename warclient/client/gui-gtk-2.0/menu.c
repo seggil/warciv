@@ -358,6 +358,13 @@ enum MenuID {
   MENU_MISCELLANEOUS_DIPLOMAT_INCITE,
   MENU_MISCELLANEOUS_DIPLOMAT_POISON,
   MENU_MISCELLANEOUS_DIPLOMAT_NOTHING,
+  MENU_MISCELLANEOUS_UNIT_IDLE,
+  MENU_MISCELLANEOUS_UNIT_SENTRY,
+  MENU_MISCELLANEOUS_UNIT_FORTIFY,
+  MENU_MISCELLANEOUS_UNIT_SLEEP,
+  MENU_MISCELLANEOUS_UNIT_FORTIFY_OR_SLEEP,
+  MENU_MISCELLANEOUS_UNIT_MILITARY,
+  MENU_MISCELLANEOUS_UNIT_LOCK,
   MENU_MISCELLANEOUS_TOGGLE_WAKEUP,
   MENU_MISCELLANEOUS_TOGGLE_MOVEANDATTACK,
   MENU_MISCELLANEOUS_MY_AI_EXECUTE,
@@ -1645,6 +1652,27 @@ static void miscellaneous_menu_callback(gpointer callback_data,
    case MENU_MISCELLANEOUS_DIPLOMAT_NOTHING:
         default_diplomat_action = 9;
         break;
+   case MENU_MISCELLANEOUS_UNIT_IDLE:
+        default_action_type = ACTION_IDLE;
+        break;
+   case MENU_MISCELLANEOUS_UNIT_SENTRY:
+        default_action_type = ACTION_SENTRY;
+        break;
+   case MENU_MISCELLANEOUS_UNIT_FORTIFY:
+        default_action_type = ACTION_FORTIFY;
+        break;
+   case MENU_MISCELLANEOUS_UNIT_SLEEP:
+        default_action_type = ACTION_SLEEP;
+        break;
+   case MENU_MISCELLANEOUS_UNIT_FORTIFY_OR_SLEEP:
+        default_action_type = ACTION_FORTIFY_OR_SLEEP;
+        break;
+   case MENU_MISCELLANEOUS_UNIT_MILITARY:
+        default_action_military_only = GTK_CHECK_MENU_ITEM(widget)->active;
+        break;
+   case MENU_MISCELLANEOUS_UNIT_LOCK:
+        default_action_locked = GTK_CHECK_MENU_ITEM(widget)->active;
+        break;
    case MENU_MISCELLANEOUS_TOGGLE_WAKEUP:
     if (autowakeup_state ^ GTK_CHECK_MENU_ITEM(widget)->active)
 		key_toggle_autowakeup();
@@ -2894,13 +2922,46 @@ static GtkItemFactoryEntry menu_items[]	=
 
   { "/" N_("Miscellaneous") "/sep2",				NULL,
 	NULL,				0,				"<Separator>"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action"),	NULL,
+	NULL,				0,				"<Branch>"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action") "/tearoff1",
+								NULL,
+	NULL,				0,				"<Tearoff>"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action") "/" N_("Idle"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_IDLE,	"<RadioItem>"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action") "/" N_("Sentry"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_SENTRY,
+		"<main>/Miscellaneous/New unit default action/Idle"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action") "/" N_("Fortify"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_FORTIFY,
+		"<main>/Miscellaneous/New unit default action/Idle"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action") "/" N_("Sleep"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_SLEEP,
+		"<main>/Miscellaneous/New unit default action/Idle"	},
+  { "/" N_("Miscellaneous") "/" N_("New unit default action") "/" N_("Fortify or Sleep"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_FORTIFY_OR_SLEEP,
+		"<main>/Miscellaneous/New unit default action/Idle"	},
+  { "/" N_("Miscellaneous") "/" N_("Lock new unit default action"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_LOCK,	"<CheckItem>"	},
+  { "/" N_("Miscellaneous") "/" N_("Military units only"),
+								NULL,
+	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_UNIT_MILITARY,
+								"<CheckItem>"	},
+  { "/" N_("Miscellaneous") "/sep3",				NULL,
+	NULL,				0,				"<Separator>"	},
   { "/" N_("Miscellaneous") "/" N_("Autowakeup _sentried units"),NULL,
 	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_TOGGLE_WAKEUP,
 									"<CheckItem>"	},
   { "/" N_("Miscellaneous") "/" N_("Move and _attack mode"),	NULL,
 	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_TOGGLE_MOVEANDATTACK,
 									"<CheckItem>"	},
-  { "/" N_("Miscellaneous") "/sep3",				NULL,
+  { "/" N_("Miscellaneous") "/sep4",				NULL,
 	NULL,				0,				"<Separator>"	},
   { "/" N_("Miscellaneous") "/" N_("_Set rallies for selected cities"),
 								"<shift>s",
@@ -2908,7 +2969,7 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Miscellaneous") "/" N_("_Clear rallies in selected cities"),
 								"<shift>r",
 	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_CLEAR_RALLIES		},
-  { "/" N_("Miscellaneous") "/sep4",				NULL,
+  { "/" N_("Miscellaneous") "/sep5",				NULL,
 	NULL,				0,				"<Separator>"	},
   { "/" N_("Miscellaneous") "/" N_("E_xecute automatic orders"),	"<ctrl>m",
 	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_MY_AI_EXECUTE		},
@@ -3147,22 +3208,6 @@ static bool can_player_unit_type(Unit_Type_id utype)
       return TRUE;
   } unit_list_iterate_end;
   return FALSE;
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-void pep_airlift_menu_set_sensitive(void)
-{
-  int i, j;
-
-  for(i = 0; i < U_LAST; i++) {
-    if(!airlift_queue_get_menu_item(0, i))
-      continue;
-    bool sensitive = can_player_unit_type(i);
-    for(j = 0; j < AIRLIFT_QUEUE_NUM; j++)
-      gtk_widget_set_sensitive(airlift_queue_get_menu_item(j, i), sensitive);
-  }
 }
 
 /****************************************************************
@@ -3763,6 +3808,34 @@ void update_miscellaneous_menu(void)
 }
 
 /****************************************************************
+  ...
+*****************************************************************/
+void start_turn_menus_udpate(void)
+{
+  int i, j;
+
+  /* Airlift */
+  for(i = 0; i < U_LAST; i++) {
+    if(!airlift_queue_get_menu_item(0, i))
+      continue;
+    bool sensitive = can_player_unit_type(i);
+    for(j = 0; j < AIRLIFT_QUEUE_NUM; j++)
+      gtk_widget_set_sensitive(airlift_queue_get_menu_item(j, i), sensitive);
+  }
+
+  /* Miscellaneous */
+  switch(default_action_type)
+  {
+    case ACTION_IDLE: menus_set_active("<main>/Miscellaneous/New unit default action/Idle", TRUE); break;
+    case ACTION_SENTRY: menus_set_active("<main>/Miscellaneous/New unit default action/Sentry", TRUE); break;
+    case ACTION_FORTIFY: menus_set_active("<main>/Miscellaneous/New unit default action/Fortify", TRUE); break;
+    case ACTION_SLEEP: menus_set_active("<main>/Miscellaneous/New unit default action/Sleep", TRUE); break;
+    case ACTION_FORTIFY_OR_SLEEP: menus_set_active("<main>/Miscellaneous/New unit default action/Fortify or Sleep", TRUE); break;
+    default: break;
+  }
+}
+
+/****************************************************************
  ...
 *****************************************************************/
 void init_menus(void)
@@ -3855,7 +3928,6 @@ void init_menus(void)
     update_airlift_menu(i);
   }
   pep_airlift_menu_set_active();
-  pep_airlift_menu_set_sensitive();
 
   /* Auto Caravan menu */
   update_auto_caravan_menu();
@@ -3904,6 +3976,8 @@ void init_menus(void)
     case 9: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Keep going", TRUE); break;
     default: break;
   }
+  menus_set_active("<main>/Miscellaneous/Lock new unit default action", default_action_locked);
+  menus_set_active("<main>/Miscellaneous/Military units only", default_action_military_only);
   menus_set_active("<main>/Miscellaneous/Autowakeup sentried units", autowakeup_state);
   menus_set_active("<main>/Miscellaneous/Move and attack mode", moveandattack_state);
   update_miscellaneous_menu();
@@ -3912,6 +3986,7 @@ void init_menus(void)
     update_automatic_processus_filter_menu(pap);
   } automatic_processus_iterate_end;
 
+  start_turn_menus_udpate();
   update_menus();
 }
 

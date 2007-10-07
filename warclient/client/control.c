@@ -38,10 +38,10 @@
 #include "mapctrl_g.h"
 #include "mapview_g.h"
 #include "menu_g.h"
-#include "multiselect.h"//*pepeto*
-#include "myai.h"//*pepeto*
+#include "multiselect.h"
+#include "myai.h"
 #include "options.h"
-#include "peptool.h"//*pepeto*
+#include "peptool.h"
 #include "tilespec.h"
 #include "unit.h"
 #include "control.h"
@@ -52,6 +52,10 @@ int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
 int default_caravan_action;
 int default_diplomat_action;
+
+enum new_unit_action default_action_type;
+bool default_action_locked;
+bool default_action_military_only;
 
 bool focus_turn=TRUE;
 static struct unit *plast=NULL;
@@ -158,7 +162,7 @@ in a city, the refresh code draws the previous unit instead of the city).
 void set_unit_focus(struct unit *punit)
 {
   struct unit *punit_old_focus = punit_focus;
-  bool ms_clear=FALSE;//*pepeto*
+  bool ms_clear=FALSE;
 
   if (punit && punit->owner != game.player_idx) {
     freelog(LOG_ERROR, "Trying to focus on another player's unit!");
@@ -184,7 +188,7 @@ void set_unit_focus(struct unit *punit)
     assert(punit == NULL);
     return;
   }
-//*pepeto*
+
   if(ms_clear)
 	  multi_select_set_unit(0,punit);
   else
@@ -208,7 +212,7 @@ void set_unit_focus(struct unit *punit)
 }
 
 /**************************************************************************
- *pepeto*: with activation
+  with activation
 **************************************************************************/
 void set_unit_focus_and_active(struct unit *punit)
 {
@@ -252,8 +256,8 @@ void update_unit_focus(void)
 	  && punit_focus->activity != ACTIVITY_GOTO)
       || punit_focus->done_moving
       || punit_focus->moves_left == 0 
-	  || punit_focus->virtual_moves_left <= 0//*pepeto*
-      || punit_focus->my_ai.control//*pepeto*
+	  || punit_focus->virtual_moves_left <= 0
+      || punit_focus->my_ai.control
       || punit_focus->ai.control) {
      if(punit_focus && moveandattack_state == 1) {
          // ignore focus change for move and attack mode
@@ -324,7 +328,7 @@ void advance_unit_focus(void)
    * keypress.
    */
   if (punit_old_focus && !punit_focus && non_ai_unit_focus) {
-	  if(focus_turn)//*pepeto*
+	  if(focus_turn)
 	  {
 		  automatic_processus_event(AUTO_NO_UNIT_SELECTED,NULL);
 		  focus_turn=FALSE;
@@ -358,9 +362,9 @@ static struct unit *find_best_focus_candidate(bool accept_current)
       && punit->activity == ACTIVITY_IDLE
 	&& !unit_has_orders(punit)
       && punit->moves_left > 0
-      && punit->virtual_moves_left > 0//*pepeto*
+      && punit->virtual_moves_left > 0
       && !punit->done_moving
-      && !punit->my_ai.control//*pepeto*
+      && !punit->my_ai.control
       && !punit->ai.control) {
         int d = sq_map_distance(punit->tile, ptile);
         if (d < best_dist) {
@@ -405,7 +409,7 @@ struct unit *find_visible_unit(struct tile *ptile)
     unit_list_iterate_end;
   }
 
-  /* *pepeto*: If a unit is on the current multi-selection */
+  /* If a unit is on the current multi-selection */
   if(punit_focus)
   {
     unit_list_iterate(ptile->units, punit)
@@ -454,7 +458,7 @@ struct unit *find_visible_unit(struct tile *ptile)
 }
 
 /**************************************************************************
-... *pepeto*
+  ...
 **************************************************************************/
 void blink_active_unit(void)
 {
@@ -556,7 +560,7 @@ void set_units_in_combat(struct unit *pattacker, struct unit *pdefender)
 **************************************************************************/
 void process_caravan_arrival(struct unit *punit)
 {
-	if(punit&&punit->my_ai.control)//*pepeto*
+	if(punit&&punit->my_ai.control)
 		return;
 
   static struct genlist arrival_queue;
@@ -1713,6 +1717,38 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 
   if (punit_focus == punit) update_menus();
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void check_new_unit_action(struct unit *punit)
+{
+  if (!punit || (default_action_military_only && !is_military_unit(punit))) {
+    return;
+  }
+
+  switch (default_action_type) {
+    case ACTION_SENTRY:
+      request_unit_sentry(punit);
+      break;
+    case ACTION_FORTIFY:
+      request_unit_fortify(punit);
+      break;
+    case ACTION_SLEEP:
+      request_unit_sleep(punit);
+      break;
+    case ACTION_FORTIFY_OR_SLEEP:
+      if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+        request_unit_fortify(punit);
+      } else {
+        request_unit_sentry(punit);
+      }
+      break;
+    default:
+      break;
+  }
+}
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1741,6 +1777,7 @@ void key_clear_rally_point_for_selected_cities (void)
     append_output_window (buf);
   }
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1752,8 +1789,9 @@ void check_rally_points(struct city *pcity, struct unit *punit)
   send_goto_unit(punit,pcity->rally_point);
   pcity->rally_point = NULL; /* Clear it */
 }
+
 /**************************************************************************
- *pepeto*
+  ...
 **************************************************************************/
 void city_set_rally_point(struct city *pcity,struct tile *ptile)
 {
@@ -1765,6 +1803,7 @@ void city_set_rally_point(struct city *pcity,struct tile *ptile)
 	my_snprintf(buf,sizeof(buf),_("Warclient: Rallying from %s to (%d, %d)\n"),pcity->name,ptile->x,ptile->y);
 	append_output_window (buf);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1794,6 +1833,7 @@ static void set_rally_point_for_selected_cities (struct tile *ptile)
     append_output_window (buf);
   }
 }
+
 /**************************************************************************
  Handles everything when the user clicked a tile
 **************************************************************************/
@@ -1804,7 +1844,6 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   struct unit *punit = player_find_unit_by_id(game.player_ptr, hover_unit);
   bool maybe_goto = FALSE;
 
-//*pepeto*
    if(punit && hover_state==HOVER_MY_AI_TRADE) {
   	   if(pcity)
   	  {
@@ -1923,7 +1962,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       do_unit_paradrop_to(punit, ptile);
 	  } multi_select_iterate_end;
       break;
-    case HOVER_CONNECT://*pepeto* fuck: lie to don't crash !!!
+    case HOVER_CONNECT: /* lie to don't crash !!! */
 		exit_goto_state();
 		lie_unit_focus_init();
 		multi_select_iterate(TRUE,punit)
@@ -1937,7 +1976,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 		} multi_select_iterate_end;
 		put_last_unit_focus();
       break;
-    case HOVER_PATROL://*pepeto* fuck: lie to don't crash !!!
+    case HOVER_PATROL: /* lie to don't crash !!! */
 		exit_goto_state();
 		lie_unit_focus_init();
 		multi_select_iterate(TRUE,punit)
@@ -2464,7 +2503,7 @@ void key_unit_unload(void)
 }
 
 /**************************************************************************
-... *pepeto*: multi_select_iterate() deprecied here. Using a complete code...
+  ... multi_select_iterate() deprecied here. Using a complete code...
 **************************************************************************/
 void key_unit_unload_all(void)
 {
@@ -2938,7 +2977,7 @@ void key_toggle_autowakeup(void)
 }
 
 /**************************************************************************
-...
+  ...
 **************************************************************************/
 void key_unit_delayed_airlift(void)
 {
@@ -2954,7 +2993,7 @@ void key_unit_delayed_airlift(void)
 }
 
 /**************************************************************************
-...
+  ...
 **************************************************************************/
 void key_add_pause_delayed_goto(void)
 {
@@ -2962,7 +3001,7 @@ void key_add_pause_delayed_goto(void)
 }
 
 /**************************************************************************
-... *pepeto*
+  ...
 **************************************************************************/
 void key_unit_air_patrol(void)
 {
@@ -2972,7 +3011,7 @@ void key_unit_air_patrol(void)
 }
 
 /**************************************************************************
-... *pepeto*
+  ...
 **************************************************************************/
 void key_toggle_spread_airport(void)
 {
@@ -2980,7 +3019,7 @@ void key_toggle_spread_airport(void)
 }
 
 /**************************************************************************
-... *pepeto*
+  ...
 **************************************************************************/
 void key_toggle_spread_ally(void)
 {
@@ -2988,7 +3027,7 @@ void key_toggle_spread_ally(void)
 }
 
 /**************************************************************************
-... *pepeto* my_ai hover
+  ...
 **************************************************************************/
 void key_airplane_patrol(void)
 {
@@ -3025,7 +3064,7 @@ void key_my_ai_trade_city(void)
 }
 
 /**************************************************************************
-... *pepeto* for connect and patrol
+  For connect and patrol
 **************************************************************************/
 void put_unit_focus(struct unit *punit)
 {

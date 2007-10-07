@@ -28,7 +28,6 @@ enum cursor_hover_state {
   HOVER_AIRLIFT_SOURCE,
   HOVER_AIRLIFT_DEST,
   HOVER_RALLY_POINT,
-//*pepeto*
   HOVER_MY_AI_TRADE,
   HOVER_MY_AI_TRADE_CITY,
 };
@@ -36,6 +35,14 @@ enum cursor_hover_state {
 /* Selecting unit from a stack without popup. */
 enum quickselect_type {
   SELECT_POPUP = 0, SELECT_SEA, SELECT_LAND
+};
+
+enum new_unit_action {
+  ACTION_IDLE,
+  ACTION_SENTRY,
+  ACTION_FORTIFY,
+  ACTION_SLEEP,
+  ACTION_FORTIFY_OR_SLEEP
 };
 
 #define SPECLIST_TAG tile
@@ -57,18 +64,22 @@ extern int lastactivatedunit;
 extern int look_into_allied_city;
 extern int default_caravan_action;
 extern int default_diplomat_action;
-extern bool focus_turn;//*pepeto*
+extern bool focus_turn;
+extern enum new_unit_action default_action_type;
+extern bool default_action_locked;
+extern bool default_action_military_only;
 
 bool can_unit_do_connect(struct unit *punit, enum unit_activity activity);
 void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
 
 void key_airplane_patrol(void);
-void city_set_rally_point(struct city *pcity,struct tile *ptile);//*pepeto*
+void city_set_rally_point(struct city *pcity,struct tile *ptile);
 
 void key_select_rally_point(void);
 void key_clear_rally_point_for_selected_cities(void);
 void check_rally_points(struct city *pcity, struct unit *punit);
+void check_new_unit_action(struct unit *punit);
 void key_unit_delayed_airlift(void);
 void key_add_pause_delayed_goto(void);
 void enable_auto_mode(void);
@@ -146,7 +157,7 @@ void auto_center_on_focus_unit(void);
 void advance_unit_focus(void);
 struct unit *get_unit_in_focus(void);
 void set_unit_focus(struct unit *punit);
-void set_unit_focus_and_active(struct unit *punit);//*pepeto*
+void set_unit_focus_and_active(struct unit *punit);
 void set_unit_focus_and_select(struct unit *punit);
 void update_unit_focus(void);
 struct unit *find_visible_unit(struct tile *ptile);
@@ -221,14 +232,14 @@ void key_unit_execute_delayed_goto(void);
 void key_unit_clear_delayed_orders(void);
 void key_toggle_autowakeup(void);
 void key_toggle_moveandattack(void);
-//*pepeto*
+
 void key_unit_air_patrol(void);
 void key_toggle_spread_airport(void);
 void key_toggle_spread_ally(void);
 void key_my_ai_trade(void);
 void key_my_ai_trade_city(void);
 
-void update_hover_cursor(void);//*pepeto* /gtk-2.0/mapview.c
+void update_hover_cursor(void);
 
 /* don't change this unless you also put more entries in data/Freeciv */
 #define MAX_NUM_UNITS_BELOW 4
@@ -238,7 +249,6 @@ extern int num_units_below;
 void control_queues_init (void);
 void control_queues_free (void);
 
-//*pepeto*
 void put_unit_focus(struct unit *punit);
 void lie_unit_focus_init(void);
 void put_last_unit_focus(void);

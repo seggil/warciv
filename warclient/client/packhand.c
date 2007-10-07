@@ -59,8 +59,8 @@
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "messagewin_g.h"
-#include "myai.h"//*pepeto*
-#include "multiselect.h"//*pepeto* for automatic processus
+#include "myai.h"
+#include "multiselect.h"
 #include "options.h"
 #include "pages_g.h"
 #include "peptool.h"
@@ -94,7 +94,7 @@ static struct unit * unpackage_unit(struct packet_unit_info *packet)
   punit->id = packet->id;
   punit->tile = map_pos_to_tile(packet->x, packet->y);
   punit->homecity = packet->homecity;
-  punit->virtual_moves_left = punit->moves_left = packet->movesleft;//*pepeto*
+  punit->virtual_moves_left = punit->moves_left = packet->movesleft;
   punit->hp = packet->hp;
   punit->activity = packet->activity;
   punit->activity_count = packet->activity_count;
@@ -393,7 +393,7 @@ void handle_game_state(int value)
     
     free_intro_radar_sprites();
     agents_game_start();
-	ap_timers_init();//*pepeto*
+	ap_timers_init();
   }
 
   if (get_client_state() == CLIENT_GAME_OVER_STATE) {
@@ -418,7 +418,7 @@ void handle_city_info(struct packet_city_info *packet)
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool need_units_dialog_update = FALSE;
   struct city *pcity;
-  bool popup, update_descriptions = FALSE, name_changed = FALSE, change_wonder = FALSE;//*pepeto*
+  bool popup, update_descriptions = FALSE, name_changed = FALSE, change_wonder = FALSE;
   struct unit *pfocus_unit = get_unit_in_focus();
 
   pcity=find_city_by_id(packet->id);
@@ -514,7 +514,7 @@ void handle_city_info(struct packet_city_info *packet)
       || pcity->is_building_unit != packet->is_building_unit
       || pcity->currently_building != packet->currently_building) {
     need_units_dialog_update = TRUE;
-	if((!pcity->is_building_unit&&is_wonder(pcity->currently_building))||(!packet->is_building_unit&&is_wonder(packet->currently_building)))//*pepeto*
+	if((!pcity->is_building_unit&&is_wonder(pcity->currently_building))||(!packet->is_building_unit&&is_wonder(packet->currently_building)))
 	  change_wonder=TRUE;
   }
   pcity->is_building_unit=packet->is_building_unit;
@@ -526,7 +526,7 @@ void handle_city_info(struct packet_city_info *packet)
     improvement_status_init(pcity->improvements,
 			    ARRAY_SIZE(pcity->improvements));
   }
-  if(pcity->owner==game.player_idx&&!are_worklists_equal(&pcity->worklist, &packet->worklist))//*pepeto*
+  if(pcity->owner==game.player_idx&&!are_worklists_equal(&pcity->worklist, &packet->worklist))
 	  change_wonder=TRUE;
   copy_worklist(&pcity->worklist, &packet->worklist);
   if(change_wonder)
@@ -707,7 +707,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 {
   struct city *pcity;
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
-  bool update_descriptions = FALSE, name_changed = FALSE;//*pepeto*
+  bool update_descriptions = FALSE, name_changed = FALSE;
 
   pcity=find_city_by_id(packet->id);
 
@@ -724,7 +724,6 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     pcity->id=packet->id;
     idex_register_city(pcity);
     city_autonaming_add_used_name (packet->name);
-//*pepeto*
 	pcity->rally_point=NULL;
 	trade_route_list_init(&pcity->trade_routes);
 	help_wonder_list_init(&pcity->help_wonders);
@@ -877,7 +876,7 @@ void handle_new_year(int year, int turn)
   update_menus();
 
   seconds_to_turndone=game.timeout;
-  ap_timers_init();//*pepeto*
+  ap_timers_init();
 #if 0
   /* This information shouldn't be needed, but if it is this is the only
    * way we can get it. */
@@ -929,7 +928,11 @@ void handle_start_turn(void)
   if(game.player_ptr->ai.control && !ai_manual_turn_done) {
     user_ended_turn();
   }
-  pep_airlift_menu_set_sensitive();
+
+  if (!default_action_locked) {
+    default_action_type = ACTION_IDLE;
+  }
+  start_turn_menus_udpate();
 }
 
 /**************************************************************************
@@ -1041,7 +1044,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool check_focus = FALSE;     /* conservative focus change */
   bool moved = FALSE;
   bool ret = FALSE;
-  int trade_action=0;//*pepeto*
+  int trade_action=0;
   struct unit *focus_unit = get_unit_in_focus();
   
   punit = player_find_unit_by_id(get_player(packet_unit->owner),
@@ -1060,7 +1063,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       }
     }
 
-//*pepeto*
 		struct city *tcity,*hcity;
 		if(punit->owner==game.player_idx&&unit_flag(punit,F_TRADE_ROUTE)&&!punit->my_ai.control)
 		{
@@ -1334,10 +1336,10 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       pcity->client.occupied = TRUE;
     }
 
-    check_rally_points (pcity, punit);
+    check_rally_points(pcity, punit);
+    check_new_unit_action(punit);
 
-//*pepeto*
-    struct city *hcity,*tcity; 
+    struct city *hcity, *tcity; 
     if(punit->owner==game.player_idx&&unit_flag(punit,F_TRADE_ROUTE)&&packet_unit->activity==ACTIVITY_GOTO
       &&packet_unit->goto_tile&&(tcity=packet_unit->goto_tile->city)&&(hcity=player_find_city_by_id(game.player_ptr,packet_unit->homecity))
       &&can_cities_trade(hcity,tcity)&&!have_cities_trade_route(hcity,tcity))
@@ -1379,7 +1381,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     update_menus();
   }
 
-  non_ai_trade_change(punit,trade_action);//*pepeto*
+  non_ai_trade_change(punit,trade_action);
 
   return ret;
 }
@@ -1662,7 +1664,7 @@ void start_revolution(void)
 void handle_player_info(struct packet_player_info *pinfo)
 {
   int i;
-  bool poptechup, new_tech = FALSE, update_overview = FALSE;//*pepeto*
+  bool poptechup, new_tech = FALSE, update_overview = FALSE;
   char msg[MAX_LEN_MSG];
   struct player *pplayer = &game.players[pinfo->playerno];
 
@@ -1686,7 +1688,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   }
 
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-	if(pplayer->diplstates[i].type!=pinfo->diplstates[i].type)//*pepeto*
+	if(pplayer->diplstates[i].type!=pinfo->diplstates[i].type)
 	{
 		update_overview =TRUE;
 		if(pplayer->diplstates[i].type!=DS_WAR&&pinfo->diplstates[i].type==DS_WAR&&!(pplayer->diplstates[i].type==DS_NO_CONTACT&&game.diplomacy>=2))
@@ -1809,7 +1811,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   /* Just about any changes above require an update to the intelligence
    * dialog. */
   update_intel_dialog(pplayer);
-  if(update_overview&&!game.is_new_game)//*pepeto*
+  if(update_overview&&!game.is_new_game)
 	  refresh_overview_canvas();
 }
 
@@ -3132,4 +3134,3 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
-

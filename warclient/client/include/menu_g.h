@@ -21,6 +21,6 @@ void update_airlift_menu(int i);
 void update_auto_caravan_menu(void);
 void update_multi_selection_menu(int i);
 void update_miscellaneous_menu(void);
-void pep_airlift_menu_set_sensitive(void);
+void start_turn_menus_udpate(void);
 
 #endif  /* FC__MENU_G_H */

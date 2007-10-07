@@ -851,6 +851,28 @@ will bribe units automatically. From now on, caravans won't prompt for \
 action when they arrive in a city but will carry out the \
 selected action automatically.\
 "), _("\
+New unit default action\n\
+=======================\n\
+\n\
+This feature allow to give automatically some orders to the newly \
+created units. You can choose this follow default actions:\n\
+1: Idle (do nothing)\n\
+2: Sentry\n\
+3: Fortify\n\
+4: Sleep\n\
+5: Fortify or Sleep (the client choose in order to the unit)\n\
+\n\
+The default action is set for the next turn only by default. \
+However, you can lock it in the miscellanous menu, then it will be kept \
+as long you don't define a new action.\n\
+\n\
+By default, it affects only military units. A check-button in miscellanous \
+menu allow to affect all units.\n\
+\n\
+This feature give only a new activity to the unit. If you want to see it \
+moves, use rally points. You can also use both, then the action should be \
+effective after the units moved.\
+"), _("\
 Delayed goto\n\
 ============\n\
 \n\
