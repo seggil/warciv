@@ -1934,16 +1934,14 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     case HOVER_NONE:
       die("well; shouldn't get here :)");
     case HOVER_GOTO:
-      if(multi_select_size(0)>1||unit_flag(punit,F_TRADE_ROUTE))
-      {
-        multi_select_iterate(FALSE,punit)
-        {
-          send_goto_unit(punit,ptile);
+      if (multi_select_size(0) > 1) {
+        multi_select_iterate(FALSE, punit) {
+          send_goto_unit(punit, ptile);
           attack_after_move(punit);
         } multi_select_iterate_end;
+      } else {
+        do_unit_goto(ptile);
       }
-      else
-      do_unit_goto(ptile);
       break;
     case HOVER_NUKE:
       if (SINGLE_MOVE * real_map_distance(punit->tile, ptile)

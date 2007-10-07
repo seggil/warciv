@@ -1063,18 +1063,39 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       }
     }
 
-		struct city *tcity,*hcity;
-		if(punit->owner==game.player_idx&&unit_flag(punit,F_TRADE_ROUTE)&&!punit->my_ai.control)
-		{
-			if(punit->activity==ACTIVITY_GOTO&&punit->goto_tile&&(packet_unit->activity!=ACTIVITY_GOTO||punit->goto_tile!=packet_unit->goto_tile)
-				&&(tcity=punit->goto_tile->city)&&(hcity=player_find_city_by_id(game.player_ptr,punit->homecity))&&can_cities_trade(hcity,tcity)&&
-				!have_cities_trade_route(hcity,tcity))
-					trade_action+=1;
-			if(packet_unit->activity==ACTIVITY_GOTO&&packet_unit->goto_tile&&(punit->activity!=ACTIVITY_GOTO||punit->goto_tile!=packet_unit->goto_tile)
-				&&(tcity=packet_unit->goto_tile->city)&&(hcity=player_find_city_by_id(game.player_ptr,packet_unit->homecity))
-				&&can_cities_trade(hcity,tcity)&&!have_cities_trade_route(hcity,tcity))
-					trade_action+=2;
-		}
+    struct city *tcity,*hcity;
+
+    if (punit->owner == game.player_idx
+        && unit_flag(punit, F_TRADE_ROUTE)
+        && !punit->my_ai.control) {
+      if (((punit->activity == ACTIVITY_GOTO
+            && (packet_unit->activity != ACTIVITY_GOTO 
+                || punit->goto_tile != packet_unit->goto_tile))
+           || (unit_has_orders(punit)
+               && (!unit_has_orders(packet_unit)
+                   || punit->goto_tile != packet_unit->goto_tile)))
+          && punit->goto_tile
+	  && (tcity = punit->goto_tile->city)
+          && (hcity = player_find_city_by_id(game.player_ptr, punit->homecity))
+          && can_cities_trade(hcity,tcity)
+          && !have_cities_trade_route(hcity,tcity)) {
+	trade_action |= 1;
+      }
+      if (((packet_unit->activity == ACTIVITY_GOTO
+            && (punit->activity != ACTIVITY_GOTO
+                || punit->goto_tile != packet_unit->goto_tile))
+           || (unit_has_orders(packet_unit)
+               && (!unit_has_orders(punit)
+                   || punit->goto_tile != packet_unit->goto_tile)))
+          && packet_unit->goto_tile
+          && (tcity = packet_unit->goto_tile->city)
+          && (hcity = player_find_city_by_id(game.player_ptr,
+                                             packet_unit->homecity))
+          && can_cities_trade(hcity, tcity)
+          && !have_cities_trade_route(hcity, tcity)) {
+        trade_action |= 2;
+      }
+    }
 
     if (punit->activity != packet_unit->activity
 	|| punit->activity_target != packet_unit->activity_target
