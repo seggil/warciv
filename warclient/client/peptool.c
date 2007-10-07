@@ -330,54 +330,189 @@ int my_ai_attack_city_power_req;
 enum my_ai_level my_ai_defend_level;
 int my_ai_defend_city_power_req;
 
-static struct pepsetting static_pepsettings[]=
-{
-	PSGEN_INT(PAGE_PMAIN,load_pepsettings_mode,N_("PepClient setting load mode"),N_("0: Off\n1: Only static settings\n"
-		"2: Only automatic execution values\n3: Static settings and automatic execution values\n4: Only dynamic settings\n"
-		"5: Dynamic and static settings \n6: Dynamic settings and automatic execution values\n7: All"),LOAD_PEPSETTINGS_MODE),
-	PSGEN_INT(PAGE_PMAIN,errors_max,N_("Maximum warning before aborting load"),N_("0: Unlimited"),ERRORS_MAX),
-	PSGEN_INT(PAGE_PMAIN,save_turns,N_("Save settings all the x turns"),N_("0: Disable"),SAVE_TURNS),
-	PSGEN_BOOL(PAGE_PMAIN,save_pepsettings_on_exit,N_("Save settings on server exit"),SAVE_ON_EXIT),
-	PSGEN_BOOL(PAGE_PMAIN,my_ai_enable,N_("Enable automatics orders"),MY_AI_ENABLE),
-	PSGEN_BOOL(PAGE_PMAIN,autowakeup_state,N_("Autowakeup sentried units"),AUTOWAKEUP),
-	PSGEN_BOOL(PAGE_PMAIN,moveandattack_state,N_("Move and attack mode"),MOVEATTACK),
-	PSGEN_INT(PAGE_PMAIN,default_caravan_action,N_("Caravan action upon arrival"),N_("0: Popup dialog\n1: Establish trade route\n"
-		"2: Help building wonder\n3: Keep going"),CARAVAN_ACTION),
-	PSGEN_INT(PAGE_PMAIN,default_diplomat_action,N_("Diplomat action upon arrival"),N_("0: Popup dialog\n1: Bribe unit\n"
-		"2: Sabotage unit (spy)\n3: Establish embassy\n4: Investigate city\n5: Sabotage city\n6: Steal technology\n7: Incite revolt\n"
-		"8: Poison city (spy)\n9: Keep going"),DIPLOMAT_ACTION),
-	PSGEN_INT(PAGE_MS,multi_select_place,N_("Multi-selection place mode"),N_("0: Single unit\n1: All units on the tile\n"
-		"2: All units on the continent\n3: All units"),MS_PLACE),
-	PSGEN_INT(PAGE_MS,multi_select_utype,N_("Multi-selection unit type mode"),N_("0: Only units with the same type\n"
-		"1: Only units with the same move type\n2: All unit types"),MS_UTYPE),
-	PSGEN_BOOL(PAGE_MS,multi_select_count_all,N_("Count all units in the selection, included excluded units"),MS_COUNT_ALL),
-	PSGEN_BOOL(PAGE_MS,multi_select_blink_all,N_("Blink all units in the selection, included excluded units"),MS_BLINK_ALL),
-	PSGEN_BOOL(PAGE_MS,multi_select_blink,N_("Blink units in the selection"),MS_BLINK),
-	PSGEN_BOOL(PAGE_MS,multi_select_map_selection,N_("Allow multi-selection at map"),MS_MAP),
-	PSGEN_BOOL(PAGE_MS,spread_airport_cities,N_("Spread only in cities with airport"),SPREAD_AIRPORT),
-	PSGEN_BOOL(PAGE_MS,spread_allied_cities,N_("Allow spreading into allied cities"),SPREAD_ALLY),
-	PSGEN_FILTER(PAGE_MS,multi_select_inclusive_filter,N_("Multi-selection inclusive filter"),MS_INCLUSIVE),
-	PSGEN_FILTER(PAGE_MS,multi_select_exclusive_filter,N_("Multi-selection exclusive filter"),MS_EXCLUSIVE),
-	PSGEN_INT(PAGE_DG,unit_limit,N_("Delayed goto unit limit"),N_("0: Unlimited units"),DG_LIMIT),
-	PSGEN_INT(PAGE_DG,delayed_goto_place,N_("Delayed goto place mode"),N_("0: Single unit\n1: All units on the tile\n"
-		"2: All units on the continent\n3: All units"),DG_PLACE),
-	PSGEN_INT(PAGE_DG,delayed_goto_utype,N_("Delayed goto unit type mode"),N_("0: Only units with the same type\n"
-		"1: Only units with the same move type\n2: All unit types"),DG_UTYPE),
-	PSGEN_FILTER(PAGE_DG,delayed_goto_inclusive_filter,N_("Delayed goto inclusive filter"),DG_INCLUSIVE),
-	PSGEN_FILTER(PAGE_DG,delayed_goto_exclusive_filter,N_("Delayed goto exclusive filter"),DG_EXCLUSIVE),
-	PSGEN_INT(PAGE_TRADE,my_ai_trade_level,N_("Automatic trade order level"),N_("0: Off\n1: On\n2: Good\n3:Best level"),MY_AI_TRADE_LEVEL),
-	PSGEN_INT(PAGE_TRADE,my_ai_establish_trade_route_level,N_("Improved trade route establishing level"),N_("0: Off"),MY_AI_ESTABLISH_LEVEL),
-	PSGEN_INT(PAGE_TRADE,my_ai_trade_mode,N_("Automatic trade mode"),N_("0: Off\n1: Best trade only\n2: Trade planning only\n"
-		"3: Trade planning or best trade"),MY_AI_TRADE_MODE),
-	PSGEN_BOOL(PAGE_TRADE,my_ai_trade_manual_trade_route_enable,N_("Allow manual trade orders"),MY_AI_TRADE_MANUAL),
-	PSGEN_BOOL(PAGE_TRADE,my_ai_trade_external,N_("Allow external trade"),MY_AI_TRADE_EXTERNAL),
-	PSGEN_INT(PAGE_TRADE,my_ai_trade_plan_time_max,N_("Maximum time (in seconds) allowed to trade planning calcul"),N_("0: No limit"),
-		MY_AI_TRADE_TIME),
-	PSGEN_BOOL(PAGE_TRADE,my_ai_trade_plan_recalculate_auto,N_("Automatic trade planning calcul"),MY_AI_TRADE_PLAN_AUTO),
-	PSGEN_BOOL(PAGE_TRADE,my_ai_trade_plan_change_homecity,N_("Change homecity if a trade route is faster"),MY_AI_TRADE_PLAN_HOMECITY),
-	PSGEN_INT(PAGE_WONDER,my_ai_wonder_level,N_("Automatic help wonder order level"),N_("0: Off\n1: On\n2: Good\n3:Best level"),
-		MY_AI_WONDER_LEVEL),
-	PSGEN_END
+static struct pepsetting static_pepsettings[] = {
+  PSGEN_INT(PAGE_PMAIN, load_pepsettings_mode,
+            N_("PepClient setting load mode"),
+            N_("0: Off\n"
+               "1: Only static settings\n"
+               "2: Only automatic execution values\n"
+               "3: Static settings and automatic execution values\n"
+               "4: Only dynamic settings\n"
+               "5: Dynamic and static settings\n"
+               "6: Dynamic settings and automatic execution values\n"
+               "7: All"), LOAD_PEPSETTINGS_MODE),
+  PSGEN_INT(PAGE_PMAIN, errors_max,
+            N_("Maximum warning before aborting load"),
+            N_("When the dynamic settings are loaded, it will stop "
+               "to load them if more than this value errors are found.\n\n"
+               "0: Unlimited"), ERRORS_MAX),
+  PSGEN_INT(PAGE_PMAIN, save_turns,
+            N_("Save settings all the x turns"),
+            N_("0: Disable"), SAVE_TURNS),
+  PSGEN_BOOL(PAGE_PMAIN, save_pepsettings_on_exit,
+             N_("Save settings on server exit"),
+             N_("If this option is enabled, this settings will be saved "
+                "when you exit a server."), SAVE_ON_EXIT),
+  PSGEN_BOOL(PAGE_PMAIN, my_ai_enable,
+             N_("Enable automatics orders"),
+             N_("If this option is disabled, you won't be able to use "
+                "any automatic orders for manange units."), MY_AI_ENABLE),
+  PSGEN_BOOL(PAGE_PMAIN, autowakeup_state,
+             N_("Autowakeup sentried units"),
+             N_("If disable, sentried units cannot wake up. "
+                "All sentried units are considered as sleeping."), AUTOWAKEUP),
+  PSGEN_BOOL(PAGE_PMAIN, moveandattack_state,
+             N_("Move and attack mode"),
+             N_("When this option is enabled, the units will try to "
+                "autoattack after every move. Note that will cancel "
+                "the path for the next turn."), MOVEATTACK),
+  PSGEN_INT(PAGE_PMAIN, default_caravan_action,
+            N_("Caravan action upon arrival"),
+            N_("The caravans will execute this order when they "
+               "will arrive to a destination city.\n\n"
+               "0: Popup dialog\n"
+               "1: Establish trade route\n"
+               "2: Help building wonder\n"
+               "3: Keep going"), CARAVAN_ACTION),
+  PSGEN_INT(PAGE_PMAIN, default_diplomat_action,
+            N_("Diplomat action upon arrival"),
+            N_("The diplomats will execute this order when they "
+               "will arrive to a new destination.\n\n"
+               "0: Popup dialog\n"
+               "1: Bribe unit\n"
+               "2: Sabotage unit (spy)\n"
+               "3: Establish embassy\n"
+               "4: Investigate city\n"
+               "5: Sabotage city\n"
+               "6: Steal technology\n"
+               "7: Incite revolt\n"
+               "8: Poison city (spy)\n"
+               "9: Keep going"), DIPLOMAT_ACTION),
+
+  PSGEN_INT(PAGE_MS, multi_select_place,
+            N_("Multi-selection place mode"),
+            N_("This option affects where the units will be selected.\n\n"
+               "0: Single unit\n"
+               "1: All units on the tile\n"
+               "2: All units on the continent\n"
+               "3: All units"), MS_PLACE),
+  PSGEN_INT(PAGE_MS, multi_select_utype,
+            N_("Multi-selection unit type mode"),
+            N_("This option affects what kinds of units will be selected.\n\n"
+               "0: Only units with the same type\n"
+               "1: Only units with the same move type\n"
+               "2: All unit types"), MS_UTYPE),
+  PSGEN_BOOL(PAGE_MS, multi_select_count_all,
+             N_("Count all units in the selection"),
+             N_("If this option is enabled, the unit count (in the unit label) "
+                "will include excluded units (by filters)."),MS_COUNT_ALL),
+  PSGEN_BOOL(PAGE_MS, multi_select_blink_all,
+             N_("Blink all units in the selection"),
+             N_("If this option is enabled, all selected units will blink, "
+                "including excluded units (by filters)."), MS_BLINK_ALL),
+  PSGEN_BOOL(PAGE_MS, multi_select_blink,
+             N_("Blink units in the selection"),
+             N_("If this option is disabled, only the first unit wil blink."),
+             MS_BLINK),
+  PSGEN_BOOL(PAGE_MS, multi_select_map_selection,
+             N_("Allow multi-selection at map"),
+             N_("If this option is enabled, you will be able to select units "
+                "with the yellow rectangle (Dragging right click)."), MS_MAP),
+  PSGEN_BOOL(PAGE_MS, spread_airport_cities,
+             N_("Spread only in cities with airport"),
+             N_("If this option is enabled, spreading units command "
+                "will spread selected units only in the cities which "
+                "have an aitport."), SPREAD_AIRPORT),
+  PSGEN_BOOL(PAGE_MS, spread_allied_cities,
+             N_("Allow spreading into allied cities"),
+             N_("If this option is enabled, spreading units command "
+                "will spread selected units in allies cities or in "
+                "your own ciries indifferently"), SPREAD_ALLY),
+  PSGEN_FILTER(PAGE_MS, multi_select_inclusive_filter,
+               N_("Multi-selection inclusive filter"), MS_INCLUSIVE),
+  PSGEN_FILTER(PAGE_MS, multi_select_exclusive_filter,
+               N_("Multi-selection exclusive filter"), MS_EXCLUSIVE),
+
+  PSGEN_INT(PAGE_DG, unit_limit,
+            N_("Delayed goto unit limit"),
+            N_("0: Unlimited units"), DG_LIMIT),
+  PSGEN_INT(PAGE_DG, delayed_goto_place,
+            N_("Delayed goto place mode"),
+            N_("This option affects where the units will be selected.\n\n"
+               "0: Single unit\n"
+               "1: All units on the tile\n"
+               "2: All units on the continent\n"
+               "3: All units"), DG_PLACE),
+  PSGEN_INT(PAGE_DG, delayed_goto_utype,
+            N_("Delayed goto unit type mode"),
+            N_("This option affects what kinds of units will be selected.\n\n"
+               "0: Only units with the same type\n"
+               "1: Only units with the same move type\n"
+               "2: All unit types"), DG_UTYPE),
+  PSGEN_FILTER(PAGE_DG, delayed_goto_inclusive_filter,
+               N_("Delayed goto inclusive filter"), DG_INCLUSIVE),
+  PSGEN_FILTER(PAGE_DG, delayed_goto_exclusive_filter,
+               N_("Delayed goto exclusive filter"), DG_EXCLUSIVE),
+
+  PSGEN_INT(PAGE_TRADE, my_ai_trade_level,
+            N_("Automatic trade order level"),
+            N_("This option will determinate how the trade routes "
+               "will be chosen.\n\n"
+               "0: Off\n"
+               "1: Basic check\n"
+               "2: Good check, including freeing running caravans\n"
+               "3: Best check, can be slower, but should be faster in turns"),
+            MY_AI_TRADE_LEVEL),
+  PSGEN_INT(PAGE_TRADE, my_ai_establish_trade_route_level,
+            N_("Improved trade route establishing level"),
+            N_("This option affect how good the tiles will be switched "
+               "for cities before a trade route will be established.\n\n"
+               "0: Off\n"
+               "1: Only in the caravan homecity and the destination city"
+               "2 and more: also in cities this previous cities had trade "
+               "routes with\n\n"
+               "Note that more the value is huge, more it will be slow"),
+            MY_AI_ESTABLISH_LEVEL),
+  PSGEN_INT(PAGE_TRADE, my_ai_trade_mode,
+            N_("Automatic trade mode"),
+            N_("0: Off\n"
+               "1: Best trade only (go where the trade is the best, "
+               "depreciated)\n"
+               "2: Trade planning only\n"
+               "3: Trade planning or best trade (using best trade if there "
+               "is no more planned trade route)"), MY_AI_TRADE_MODE),
+  PSGEN_BOOL(PAGE_TRADE, my_ai_trade_manual_trade_route_enable,
+             N_("Allow manual trade orders"),
+             N_("If this option is enabled, the client will take care about "
+               "non-automatic caravans."), MY_AI_TRADE_MANUAL),
+  PSGEN_BOOL(PAGE_TRADE, my_ai_trade_external,
+             N_("Allow external trade"),
+             N_("If this option is enabled, the client will take care about "
+                "about non-owned cities to trade with."), MY_AI_TRADE_EXTERNAL),
+  PSGEN_INT(PAGE_TRADE, my_ai_trade_plan_time_max,
+            N_("Maximum time allowed to trade planning calculation"),
+            N_("This value is in seconds.\n\n"
+               "0: No limit"), MY_AI_TRADE_TIME),
+  PSGEN_BOOL(PAGE_TRADE, my_ai_trade_plan_recalculate_auto,
+             N_("Automatic trade planning calcul"),
+             N_("If this option is enabled, the trade planning will be "
+                "calculated every time a city is added or removed."),
+             MY_AI_TRADE_PLAN_AUTO),
+  PSGEN_BOOL(PAGE_TRADE, my_ai_trade_plan_change_homecity,
+             N_("Change homecity if a trade route is faster"),
+             N_("If this option is disabled, the caravan will check the "
+                "planned trade route for the caravan's homecity before "
+                "checking for other cities trade routes."),
+             MY_AI_TRADE_PLAN_HOMECITY),
+
+  PSGEN_INT(PAGE_WONDER, my_ai_wonder_level,
+            N_("Automatic help wonder order level"),
+            N_("0: Off\n"
+               "1: On\n"
+               "2: Good\n"
+               "3:Best level"),
+            MY_AI_WONDER_LEVEL),
+  PSGEN_END
 };
 
 struct pepsetting *pepsettings=static_pepsettings;

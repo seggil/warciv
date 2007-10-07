@@ -199,7 +199,7 @@ extern int my_ai_defend_city_power_req;
 #define MIN_MY_AI_WONDER_LEVEL LEVEL_OFF
 #define MAX_MY_AI_WONDER_LEVEL LEVEL_BEST
 
-#define PSGEN_BOOL(page,name,desc,value) {page,#name,desc,NULL,TYPE_BOOL,&name,DEFAULT_##value,0,1}
+#define PSGEN_BOOL(page,name,desc,help,value) {page,#name,desc,help,TYPE_BOOL,&name,DEFAULT_##value,0,1}
 #define PSGEN_INT(page,name,desc,help,value) {page,#name,desc,help,TYPE_INT,&name,DEFAULT_##value,MIN_##value,MAX_##value}
 #define PSGEN_FILTER(page,name,desc,value) {page,#name,desc,NULL,TYPE_FILTER,&name,DEFAULT_##value,FILTER_ALL,FILTER_OFF}
 #define PSGEN_END {PAGE_NUM,NULL,NULL,NULL,TYPE_END,NULL,0,0,0}
