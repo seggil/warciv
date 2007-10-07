@@ -703,7 +703,11 @@ void init_tech(struct player *plr)
   } tech_type_iterate_end;
   set_invention(plr, A_NONE, TECH_KNOWN);
 
+  plr->research.bulbs_last_turn = 0;
+  plr->research.bulbs_researched = 0;
   plr->research.techs_researched = 1;
+  plr->research.changed_from = A_NONE;
+  plr->research.bulbs_researched_before = 0;
 
   /* Mark the reachable techs */
   update_research(plr);
