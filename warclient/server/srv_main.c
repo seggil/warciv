@@ -1497,6 +1497,9 @@ static void freeze_clients(void)
   conn_list_iterate(game.game_connections, pconn) {
     if (has_capability("ReportFreezeFix", pconn->capability)) {
       send_packet_freeze_client(pconn);
+    } else {
+      /* For old client udpates */
+      send_packet_freeze_hint(pconn);
     }
   } conn_list_iterate_end;
 }
@@ -1509,6 +1512,9 @@ static void thaw_clients(void)
   conn_list_iterate(game.game_connections, pconn) {
     if (has_capability("ReportFreezeFix", pconn->capability)) {
       send_packet_thaw_client(pconn);
+    } else {
+      /* For old client udpates */
+      send_packet_thaw_hint(pconn);
     }
   } conn_list_iterate_end;
 }
