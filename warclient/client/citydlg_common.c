@@ -488,8 +488,6 @@ int city_set_worklist(struct city *pcity, struct worklist *pworklist)
 
   copy_worklist(&copy, pworklist);
 
-  my_ai_worklist_event(pcity);//*pepeto*
-
   /* Don't send the worklist name to the server. */
   copy.name[0] = '\0';
 

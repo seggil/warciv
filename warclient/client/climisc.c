@@ -157,13 +157,13 @@ void clear_worklists_in_selected_cities (void)
 /**************************************************************************
   Advance the worlist while the city can't build
 **************************************************************************/
-void city_worklist_check(struct city *pcity)
+void city_worklist_check(struct city *pcity, struct worklist *pwl)
 {
-  while (pcity->worklist.wlefs[0] != WEF_END
-         && (pcity->worklist.wlefs[0] == WEF_UNIT
-            ? !can_build_unit_direct(pcity, pcity->worklist.wlids[0])
-            : !can_build_improvement_direct(pcity, pcity->worklist.wlids[0]))) {
-    worklist_advance(&pcity->worklist);
+  while (pwl->wlefs[0] != WEF_END
+         && (pwl->wlefs[0] == WEF_UNIT
+             ? !can_build_unit_direct(pcity, pwl->wlids[0])
+             : !can_build_improvement_direct(pcity, pwl->wlids[0]))) {
+    worklist_advance(pwl);
   }
 }
 

@@ -1148,194 +1148,235 @@ static void clear_worklist_iterate (GtkTreeModel *model,
 }
 
 /****************************************************************
-... *pepeto*
+  ...
 *****************************************************************/
-static void remove_cur_prod_iterate (GtkTreeModel *model,
+static void remove_cur_prod_iterate(GtkTreeModel *model,
                                     GtkTreePath *path,
                                     GtkTreeIter *it,
                                     gpointer data)
 {
   gpointer res;
   struct city *pcity;
-  gtk_tree_model_get (model, it, 0, &res, -1);
-  pcity = res;
-  if(worklist_is_empty(&pcity->worklist))
-	  return;
-  city_change_production(pcity,pcity->worklist.wlefs[0]==WEF_UNIT,pcity->worklist.wlids[0]);
-  worklist_advance(&pcity->worklist);
-  city_set_worklist(pcity,&pcity->worklist);
-  city_report_dialog_update_city(pcity);
-}
-
-/****************************************************************
-   change production and add a worklist *pepeto*
-*****************************************************************/
-static void worklist_change_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
-			GtkTreeIter *it, gpointer data)
-{
-  int i=GPOINTER_TO_INT(data);
-  if( i < 0 || i >= MAX_NUM_WORKLISTS )
-	  return;
-  struct worklist *pwl=&game.player_ptr->worklists[i];
-  if(!pwl->is_valid)
-	  return;
-  
-  struct city *pcity;
-  gpointer res;
+  struct worklist wl;
 
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
-  copy_worklist(&pcity->worklist,pwl);
-  city_worklist_check(pcity);
-  if (!worklist_is_empty(&pcity->worklist)) {
-    city_change_production(pcity, pcity->worklist.wlefs[0] == WEF_UNIT,
-                           pcity->worklist.wlids[0]);
-    worklist_advance(&pcity->worklist);
+
+  if (worklist_is_empty(&pcity->worklist)) {
+    return;
   }
-  city_set_worklist(pcity, &pcity->worklist);
-  city_report_dialog_update_city(pcity);
+
+  copy_worklist(&wl, &pcity->worklist);
+  city_change_production(pcity, wl.wlefs[0] == WEF_UNIT, wl.wlids[0]);
+  worklist_advance(&wl);
+  city_set_worklist(pcity, &wl);
 }
 
+/****************************************************************
+  Change production and add a worklist
+*****************************************************************/
+static void worklist_change_worklist_iterate(GtkTreeModel *model,
+                                             GtkTreePath *path,
+			                     GtkTreeIter *it,
+                                             gpointer data)
+{
+  int i = GPOINTER_TO_INT(data);
+  struct worklist wl, *pwl;
+  struct city *pcity;
+  gpointer res;
+
+  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
+    return;
+  }
+
+  pwl = &game.player_ptr->worklists[i];
+  if (!pwl->is_valid) {
+    return;
+  }
+
+  gtk_tree_model_get(model, it, 0, &res, -1);
+  pcity = res;
+
+  copy_worklist(&wl, pwl);
+  city_worklist_check(pcity, &wl);
+  if (!worklist_is_empty(&wl)) {
+    city_change_production(pcity, wl.wlefs[0] == WEF_UNIT, wl.wlids[0]);
+    worklist_advance(&wl);
+  }
+  city_set_worklist(pcity, &wl);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
 static void select_change_worklist_callback(GtkWidget *w, gpointer data)
 {
-  reports_freeze();
   connection_do_buffer(&aconnection);
-  gtk_tree_selection_selected_foreach(city_selection, worklist_change_worklist_iterate, data);
+  gtk_tree_selection_selected_foreach(city_selection,
+                                      worklist_change_worklist_iterate, data);
   connection_do_unbuffer(&aconnection);
-  reports_thaw();
 }
 
 /**************************************************************************
-  Copy a worklist in an another at idx *pepeto*
+  Copy a worklist in an another at pos
 **************************************************************************/
-static bool worklist_insert_worklist(struct worklist *dwl,struct worklist *swl,int idx)
+static void worklist_insert_worklist(struct worklist *pwl,
+                                     struct worklist *dwl,
+                                     struct worklist *swl, int pos)
 {
-  int lend = worklist_length(dwl) + 1, lens = worklist_length(swl);
+  int i, d, s, dlen = worklist_length(dwl), slen = worklist_length(swl);
 
-  if (lend + lens > MAX_LEN_WORKLIST || idx >= lend)
-    return FALSE;
+  init_worklist(pwl);
+  if (pos >= MAX_LEN_WORKLIST || pos > dlen) {
+    return;
+  }
 
-  memmove(&dwl->wlefs[idx + lens], &dwl->wlefs[idx],
-	  sizeof(dwl->wlefs[0]) * (lend - idx));
-  memmove(&dwl->wlids[idx + lens], &dwl->wlids[idx],
-	  sizeof(dwl->wlids[0]) * (lend - idx));
+  if (pos < 0) {
+    pos = dlen;
+  }
 
-  memmove(&dwl->wlefs[idx], swl->wlefs,
-      sizeof(swl->wlefs[0]) * lens);
-  memmove(&dwl->wlids[idx], swl->wlids,
-      sizeof(swl->wlids[0]) * lens);
-  
-  return TRUE;
+  for (d = 0; d < pos && d < dlen; d++) {
+    worklist_append(pwl, dwl->wlids[d], dwl->wlefs[d] == WEF_UNIT);
+  }
+  for (i = d, s = 0; i < MAX_LEN_WORKLIST && s < slen; i++, s++) {
+    worklist_append(pwl, swl->wlids[s], swl->wlefs[s] == WEF_UNIT);
+  }
+  for (; i < MAX_LEN_WORKLIST && d < dlen; i++, d++) {
+    worklist_append(pwl, dwl->wlids[d], dwl->wlefs[d] == WEF_UNIT);
+  }
 }
 
 /****************************************************************
-   add a worklist after the current worklist *pepeto*
+  Add a worklist after the current worklist
 *****************************************************************/
 static void worklist_last_worklist_iterate(GtkTreeModel *model,
-                             GtkTreePath *path, GtkTreeIter *it, gpointer data)
+                                           GtkTreePath *path,
+                                           GtkTreeIter *it,
+                                           gpointer data)
 {
-  int i=GPOINTER_TO_INT(data);
-  if( i < 0 || i >= MAX_NUM_WORKLISTS )
-	  return;
-  struct worklist *pwl=&game.player_ptr->worklists[i];
-  if(!pwl->is_valid)
-	  return;
-  
+  int i = GPOINTER_TO_INT(data);
+  struct worklist *pwl, wl;
   struct city *pcity;
   gpointer res;
 
+  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
+    return;
+  }
+
+  pwl = &game.player_ptr->worklists[i];
+  if (!pwl->is_valid) {
+    return;
+  }
+
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
-  worklist_insert_worklist(&pcity->worklist,pwl,worklist_length(&pcity->worklist));
-  city_set_worklist(pcity, &pcity->worklist);
-  city_report_dialog_update_city(pcity);
-}
-
-static void select_last_worklist_callback(GtkWidget *w, gpointer data)
-{
-  reports_freeze();
-  connection_do_buffer(&aconnection);
-  gtk_tree_selection_selected_foreach(city_selection, worklist_last_worklist_iterate, data);
-  connection_do_unbuffer(&aconnection);
-  reports_thaw();
+  worklist_insert_worklist(&wl, &pcity->worklist, pwl, -1);
+  city_set_worklist(pcity, &wl);
 }
 
 /****************************************************************
-   add a worklist before the current worklist *pepeto*
+  ...
 *****************************************************************/
-static void worklist_first_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
-			GtkTreeIter *it, gpointer data)
+static void select_last_worklist_callback(GtkWidget *w, gpointer data)
 {
-  int i=GPOINTER_TO_INT(data);
-  if( i < 0 || i >= MAX_NUM_WORKLISTS )
-	  return;
-  struct worklist *pwl=&game.player_ptr->worklists[i];
-  if(!pwl->is_valid)
-	  return;
-  
+  connection_do_buffer(&aconnection);
+  gtk_tree_selection_selected_foreach(city_selection,
+                                      worklist_last_worklist_iterate, data);
+  connection_do_unbuffer(&aconnection);
+}
+
+/****************************************************************
+  Add a worklist before the current worklist
+*****************************************************************/
+static void worklist_first_worklist_iterate(GtkTreeModel *model,
+                                            GtkTreePath *path,
+			                    GtkTreeIter *it,
+                                            gpointer data)
+{
+  int i = GPOINTER_TO_INT(data);
+  struct worklist *pwl, wl, temp;
   struct city *pcity;
   gpointer res;
   int old_id;
   bool old_is_unit;
 
+  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
+    return;
+  }
+
+  pwl = &game.player_ptr->worklists[i];
+  if (!pwl->is_valid) {
+    return;
+  }
+
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
  
+  copy_worklist(&temp, &pcity->worklist);
   old_id = pcity->currently_building;
   old_is_unit = pcity->is_building_unit;
-  if (!worklist_insert(&pcity->worklist, old_id, old_is_unit, 0))
-      return;
+  worklist_insert(&temp, old_id, old_is_unit, 0);
 
-  worklist_insert_worklist(&pcity->worklist,pwl,0);
-  city_worklist_check(pcity);
-  if (!worklist_is_empty(&pcity->worklist)) {
-    city_change_production(pcity, pcity->worklist.wlefs[0] == WEF_UNIT,
-                           pcity->worklist.wlids[0]);
-    worklist_advance(&pcity->worklist);
+  worklist_insert_worklist(&wl, &temp, pwl, 0);
+  city_worklist_check(pcity, &wl);
+
+  if (!worklist_is_empty(&wl)) {
+    city_change_production(pcity, wl.wlefs[0] == WEF_UNIT, wl.wlids[0]);
+    worklist_advance(&wl);
   }
-  city_set_worklist(pcity, &pcity->worklist);
-  city_report_dialog_update_city(pcity);
-}
-
-static void select_first_worklist_callback(GtkWidget *w, gpointer data)
-{
-  reports_freeze();
-  connection_do_buffer(&aconnection);
-  gtk_tree_selection_selected_foreach(city_selection, worklist_first_worklist_iterate, data);
-  connection_do_unbuffer(&aconnection);
-  reports_thaw();
+  city_set_worklist(pcity, &wl);
 }
 
 /****************************************************************
-   add a worklist after the current production *pepeto*
+  ...
 *****************************************************************/
-static void worklist_next_worklist_iterate(GtkTreeModel *model, GtkTreePath *path,
-			GtkTreeIter *it, gpointer data)
+static void select_first_worklist_callback(GtkWidget *w, gpointer data)
 {
-  int i=GPOINTER_TO_INT(data);
-  if( i < 0 || i >= MAX_NUM_WORKLISTS )
-	  return;
-  struct worklist *pwl=&game.player_ptr->worklists[i];
-  if(!pwl->is_valid)
-	  return;
-  
+  connection_do_buffer(&aconnection);
+  gtk_tree_selection_selected_foreach(city_selection,
+                                      worklist_first_worklist_iterate, data);
+  connection_do_unbuffer(&aconnection);
+}
+
+/****************************************************************
+  Add a worklist after the current production
+*****************************************************************/
+static void worklist_next_worklist_iterate(GtkTreeModel *model,
+                                           GtkTreePath *path,
+			                   GtkTreeIter *it,
+                                           gpointer data)
+{
+  int i = GPOINTER_TO_INT(data);
+  struct worklist *pwl, wl;
   struct city *pcity;
   gpointer res;
 
+  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
+    return;
+  }
+
+  pwl = &game.player_ptr->worklists[i];
+  if (!pwl->is_valid) {
+    return;
+  }
+
+
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;
-  worklist_insert_worklist(&pcity->worklist,pwl,0);
-  city_set_worklist(pcity, &pcity->worklist);
-  city_report_dialog_update_city(pcity);
+
+  worklist_insert_worklist(&wl, &pcity->worklist, pwl, 0);
+  city_set_worklist(pcity, &wl);
 }
 
+/****************************************************************
+  Add a worklist after the current production
+*****************************************************************/
 static void select_next_worklist_callback(GtkWidget *w, gpointer data)
 {
-  reports_freeze();
   connection_do_buffer(&aconnection);
-  gtk_tree_selection_selected_foreach(city_selection, worklist_next_worklist_iterate, data);
+  gtk_tree_selection_selected_foreach(city_selection,
+                                      worklist_next_worklist_iterate, data);
   connection_do_unbuffer(&aconnection);
-  reports_thaw();
 }
 
 /****************************************************************
