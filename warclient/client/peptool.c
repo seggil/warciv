@@ -526,7 +526,7 @@ static struct pepsetting static_pepsettings[] = {
             N_("0: Off\n"
                "1: On\n"
                "2: Good\n"
-               "3:Best level"),
+               "3: Best level"),
             MY_AI_WONDER_LEVEL),
   PSGEN_END
 };

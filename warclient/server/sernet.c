@@ -317,7 +317,8 @@ void flush_packets(void)
 
     for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
       struct connection *pconn = &connections[i];
-      if(pconn->used && pconn->send_buffer->ndata > 0) {
+      if(pconn->used && !pconn->delayed_disconnect
+         && pconn->send_buffer->ndata > 0) {
 	FD_SET(pconn->sock, &writefs);
 	FD_SET(pconn->sock, &exceptfs);
 	max_desc=MAX(pconn->sock, max_desc);
@@ -334,7 +335,7 @@ void flush_packets(void)
 
     for(i=0; i<MAX_NUM_CONNECTIONS; i++) {   /* check for freaky players */
       struct connection *pconn = &connections[i];
-      if(pconn->used) {
+      if(pconn->used && !pconn->delayed_disconnect) {
         if(FD_ISSET(pconn->sock, &exceptfs)) {
 	  freelog(LOG_NORMAL, "cut connection %s due to exception data",
 		  conn_description(pconn));
@@ -500,11 +501,13 @@ int sniff_packets(void)
     }
 
     /* if we've waited long enough after a failure, respond to the client */
-    conn_list_iterate(game.all_connections, pconn) {
-      if (srvarg.auth_enabled && pconn->server.status != AS_ESTABLISHED) {
-        process_authentication_status(pconn);
-      }
-    } conn_list_iterate_end;
+    if (srvarg.auth_enabled) {
+      conn_list_iterate(game.all_connections, pconn) {
+        if (pconn->server.status != AS_ESTABLISHED) {
+          process_authentication_status(pconn);
+        }
+      } conn_list_iterate_end;
+    }
 
     /* Don't wait if timeout == -1 (i.e. on auto games) */
     if (server_state != PRE_GAME_STATE && game.timeout == -1) {
