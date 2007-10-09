@@ -185,15 +185,34 @@ void handle_unit_upgrade(struct player *pplayer, int unit_id)
 ***************************************************************/
 void handle_unit_bribe_inq(struct connection *pc, int unit_id)
 {
-  struct player *pplayer = pc->player;
+  struct player *pplayer = pc->observer ? NULL : pc->player;
   struct unit *punit = find_unit_by_id(unit_id);
   int bribe_cost = 0;
+  bool possible = FALSE;
 
-//quite cumbersome, we have to get tile from unit coz old client needs to work with warserver
+  /* Quite cumbersome, we have to get tile from unit coz
+   * old client needs to work with warserver. */
   if (pplayer && punit) {
-        unit_list_iterate(punit->tile->units, pvictim) {
-            bribe_cost += unit_bribe_cost(pvictim);
-        }unit_list_iterate_end;//fucking shit!! we have to lie here for compatibility
+    /* First check if the player has a diplomat near this tile */
+    adjc_iterate(punit->tile, ptile) {
+      unit_list_iterate(ptile->units, pdiplomat) {
+        if (pdiplomat->owner == pplayer->player_no
+            && is_diplomat_unit(pdiplomat)) {
+          possible = TRUE;
+          break;
+        }
+      } unit_list_iterate_end;
+    } adjc_iterate_end;
+
+    if (!possible) {
+      /* Don't allow client to cheat */
+      return;
+    }
+
+    unit_list_iterate(punit->tile->units, pvictim) {
+      /* We have to lie here for compatibility. */
+      bribe_cost += unit_bribe_cost(pvictim);
+    } unit_list_iterate_end;
     dsend_packet_unit_bribe_info(pc, unit_id, bribe_cost);
   }
 }
