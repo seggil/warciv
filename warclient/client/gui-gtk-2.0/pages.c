@@ -52,7 +52,8 @@ GtkListStore *conn_model;
 static GtkWidget *start_options_table;
 
 static GtkListStore *load_store, *scenario_store,
-    *nation_store, *meta_store, *lan_store, *metaplayerlist_store;
+  *nation_store, *meta_store, *lan_store,
+  *metaplayerlist_store, *variables_store;
 
 enum metaplayerlist_column_ids {
   MPL_COL_NAME,
@@ -62,6 +63,13 @@ enum metaplayerlist_column_ids {
   MPL_COL_NATION,
 
   MPL_NUM_COLUMNS,
+};
+
+enum metavariableslist_column_ids {
+  MVAR_COL_NAME,
+  MVAR_COL_VALUE,
+
+  MVAR_NUM_COLUMNS,
 };
 
 static GtkTreeSelection *load_selection, *scenario_selection,
@@ -761,6 +769,36 @@ static void update_metaplayerlist(GtkTreePath * path)
 }
 
 /**************************************************************************
+  update the variable list for the server given by path
+**************************************************************************/
+static void update_variableslist(GtkTreePath * path)
+{
+  int i;
+  struct server *pserver;
+  GtkTreeIter iter;
+
+  gtk_list_store_clear(variables_store);
+
+  if (!internet_server_list || !path) {
+    return;
+  }
+
+  i = gtk_tree_path_get_indices(path)[0];
+  pserver = server_list_get(internet_server_list, i);
+
+  if (!pserver) {
+    return;
+  }
+
+  for (i = 0; i < pserver->nvars; i++) {
+    gtk_list_store_append(variables_store, &iter);
+    gtk_list_store_set(variables_store, &iter,
+                       MVAR_COL_NAME, pserver->vars[i].name,
+                       MVAR_COL_VALUE, pserver->vars[i].value, -1);
+  }
+}
+
+/**************************************************************************
   sets the host, port of the selected server.
 **************************************************************************/
 static void network_list_callback(GtkTreeSelection *select, gpointer data)
@@ -777,9 +815,11 @@ static void network_list_callback(GtkTreeSelection *select, gpointer data)
   if (select == meta_selection) {
     gtk_tree_selection_unselect_all(lan_selection);
     update_metaplayerlist(gtk_tree_model_get_path(model, &it));
+    update_variableslist(gtk_tree_model_get_path(model, &it));
   } else {
     gtk_tree_selection_unselect_all(meta_selection);
     update_metaplayerlist(NULL);
+    update_variableslist(NULL);
   }
 
   gtk_tree_model_get(model, &it, 0, &host, 1, &port, -1);
@@ -868,13 +908,56 @@ static GtkWidget *create_metaplayerlist_view()
 }
 
 /**************************************************************************
+  create the variable list widget (scroll window, view and model)
+**************************************************************************/
+static GtkWidget *create_variables_view()
+{
+  GtkWidget *view, *sw;
+  GtkCellRenderer *rend;
+  GtkTreeSelection *selection;
+
+  variables_store = gtk_list_store_new(MVAR_NUM_COLUMNS,
+                                       G_TYPE_STRING,   /* setting */
+                                       G_TYPE_STRING);  /* value */
+
+  view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(variables_store));
+  g_object_unref(variables_store);
+  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+  gtk_tree_selection_set_mode(selection, GTK_SELECTION_NONE);
+
+  rend = gtk_cell_renderer_text_new();
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
+                                              _("Setting"), rend,
+                                              "text", MVAR_COL_NAME,
+                                              NULL);
+
+  rend = gtk_cell_renderer_text_new();
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1,
+                                              _("Value"), rend,
+                                              "text", MVAR_COL_VALUE,
+                                              NULL);
+
+  sw = gtk_scrolled_window_new(NULL, NULL);
+  gtk_container_set_border_width(GTK_CONTAINER(sw), 0);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+                                      GTK_SHADOW_ETCHED_IN);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+                                 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(sw), view);
+
+  return sw;
+}
+
+/**************************************************************************
   create the network page.
 **************************************************************************/
 GtkWidget *create_network_page(void)
 {
   GtkWidget *box, *sbox, *bbox, *notebook, *hbox;
 
-  GtkWidget *button, *label, *view, *sw, *metaplayerlist;
+  GtkWidget *button, *label, *view, *sw, *metaplayerlist, *variables;
   GtkCellRenderer *rend;
   GtkTreeSelection *selection;
 
@@ -977,10 +1060,10 @@ GtkWidget *create_network_page(void)
   gtk_notebook_prepend_page(GTK_NOTEBOOK(notebook), sw, label);
 
   /* Bottom part of the page, outside the inner notebook. */
-  sbox = gtk_vbox_new(FALSE, 8);
+  sbox = gtk_vbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(box), sbox, FALSE, FALSE, 8);
 
-  hbox = gtk_hbox_new(FALSE, 16);
+  hbox = gtk_hbox_new(FALSE, 2);
   gtk_box_pack_start(GTK_BOX(sbox), hbox, FALSE, FALSE, 8);
 
   table = gtk_table_new(6, 2, FALSE);
@@ -988,7 +1071,7 @@ GtkWidget *create_network_page(void)
   gtk_table_set_col_spacings(GTK_TABLE(table), 12);
   gtk_table_set_row_spacing(GTK_TABLE(table), 2, 12);
   gtk_widget_set_size_request(table, 300, -1);
-  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 16);
+  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
   network_host = gtk_entry_new();
   g_signal_connect(network_host, "activate",
@@ -1067,9 +1150,12 @@ GtkWidget *create_network_page(void)
   gtk_table_attach(GTK_TABLE(table), label, 0, 1, 5, 6,
 		   GTK_FILL, GTK_FILL, 0, 0);
 
+  variables = create_variables_view();
+  gtk_widget_set_size_request(variables, 200, -1);
+  gtk_box_pack_start(GTK_BOX(hbox), variables, FALSE, TRUE, 4);
 
   metaplayerlist = create_metaplayerlist_view();
-  gtk_box_pack_start(GTK_BOX(hbox), metaplayerlist, TRUE, TRUE, 16);
+  gtk_box_pack_start(GTK_BOX(hbox), metaplayerlist, TRUE, TRUE, 4);
 
 
   bbox = gtk_hbutton_box_new();

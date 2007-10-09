@@ -629,6 +629,24 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
       pserver->players[j].nation = mystrdup(nation);
     }
 
+    for (j = 0; section_file_lookup(file, "server%d.vars%d.name", i, j); j++);
+
+    pserver->nvars = j;
+    if (pserver->nvars > 0) {
+      pserver->vars = fc_calloc(pserver->nvars, sizeof(*pserver->vars));
+    } else {
+      pserver->vars = NULL;
+    }
+
+    for (j = 0; j < pserver->nvars; j++) {
+      char *vars;
+      vars = secfile_lookup_str_default(file, "",
+                                        "server%d.vars%d.name", i, j);
+      pserver->vars[j].name = mystrdup(vars);
+      vars = secfile_lookup_str_default(file, "",
+                                        "server%d.vars%d.value", i, j);
+      pserver->vars[j].value = mystrdup(vars);
+    }
     server_list_append(server_list, pserver);
   }
 
@@ -748,6 +766,9 @@ static void aslcfree(void *data)
   }
   freelog(LOG_DEBUG, "free async_server_list_context %p", ctx);
   free(ctx);
+
+  adns_check_expired();
+
 }
 
 /**************************************************************************
@@ -776,10 +797,8 @@ async_server_list_request_error(struct async_server_list_context *ctx,
     (*ctx->callback) (NULL, errbuf, ctx->userdata);
   }
 
-  if (ctx->req_id > 0) {
-    /* we were called indirectly, so need to free ctx */
-    aslcfree(ctx);
-  }
+  aslcfree(ctx);
+
 }
 
 /**************************************************************************
@@ -1290,9 +1309,7 @@ static void delete_server_list(struct server_list *server_list)
     free(ptmp->version);
     free(ptmp->state);
     free(ptmp->message);
-    if (ptmp->patches) {
-      free(ptmp->patches);
-    }
+    free(ptmp->patches);
 
     if (ptmp->players) {
       for (i = 0; i < n; i++) {
@@ -1305,6 +1322,14 @@ static void delete_server_list(struct server_list *server_list)
       free(ptmp->players);
     }
     free(ptmp->nplayers);
+
+    if (ptmp->vars) {
+      for (i = 0; i < ptmp->nvars; i++) {
+        free(ptmp->vars[i].name);
+        free(ptmp->vars[i].value);
+      }
+      free(ptmp->vars);
+    }
 
     free(ptmp);
   } server_list_iterate_end;
@@ -1499,7 +1524,7 @@ struct server_list *get_lan_server_list(void)
     pserver->host = mystrdup(servername);
     pserver->port = mystrdup(port);
     pserver->version = mystrdup(version);
-    pserver->patches = NULL;
+    pserver->patches = "Cannot be read";
     pserver->state = mystrdup(status);
     pserver->nplayers = mystrdup(players);
     pserver->message = mystrdup(message);

@@ -62,6 +62,13 @@ struct server
   } *players;
 
   char *nplayers;
+
+  int nvars;
+  struct vars
+  {
+    char *name;
+    char *value;
+  } *vars;
 };
 
 #define SPECLIST_TAG server

@@ -184,14 +184,14 @@ static void my_init_adns()
 {
   adns_init();
   if (adns_is_available()) {
-    add_net_input_callback (adns_get_socket_fd(),
-                            INPUT_READ,
-                            my_adns_input_ready_cb,
-                            NULL,
-                            NULL);
-    add_timer_callback (5000,
-                        my_adns_timer_cb,
-                        NULL);
+    add_net_input_callback(adns_get_socket_fd(),
+			   INPUT_READ,
+			   my_adns_input_ready_cb,
+			   NULL,
+			   NULL);
+    add_timer_callback(5000,
+		       my_adns_timer_cb,
+		       NULL);
   }
 }
 
