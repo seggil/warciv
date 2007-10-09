@@ -419,7 +419,9 @@ void handle_city_incite_inq(struct connection *pc, int city_id)
     adjc_iterate(pcity->tile, ptile) {
       unit_list_iterate(ptile->units, pdiplomat) {
         if (pdiplomat->owner == pplayer->player_no
-            && is_diplomat_unit(pdiplomat)) {
+            && is_diplomat_unit(pdiplomat)
+            && diplomat_can_do_action(pdiplomat,
+                                      DIPLOMAT_INCITE, pcity->tile)) {
           possible = TRUE;
           break;
         }

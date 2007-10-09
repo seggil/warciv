@@ -197,7 +197,9 @@ void handle_unit_bribe_inq(struct connection *pc, int unit_id)
     adjc_iterate(punit->tile, ptile) {
       unit_list_iterate(ptile->units, pdiplomat) {
         if (pdiplomat->owner == pplayer->player_no
-            && is_diplomat_unit(pdiplomat)) {
+            && is_diplomat_unit(pdiplomat)
+            && diplomat_can_do_action(pdiplomat,
+                                      DIPLOMAT_BRIBE, punit->tile)) {
           possible = TRUE;
           break;
         }
@@ -205,7 +207,7 @@ void handle_unit_bribe_inq(struct connection *pc, int unit_id)
     } adjc_iterate_end;
 
     if (!possible) {
-      /* Don't allow client to cheat */
+      /* Don't allow clients to cheat */
       return;
     }
 
