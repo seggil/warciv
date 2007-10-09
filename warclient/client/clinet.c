@@ -768,7 +768,7 @@ static void aslcfree(void *data)
   free(ctx);
 
   adns_check_expired();
-
+  
 }
 
 /**************************************************************************
@@ -1524,11 +1524,13 @@ struct server_list *get_lan_server_list(void)
     pserver->host = mystrdup(servername);
     pserver->port = mystrdup(port);
     pserver->version = mystrdup(version);
-    pserver->patches = "Cannot be read";
+    pserver->patches = mystrdup("Cannot be read");
     pserver->state = mystrdup(status);
     pserver->nplayers = mystrdup(players);
     pserver->message = mystrdup(message);
     pserver->players = NULL;
+    pserver->nvars = 0;
+    pserver->vars = NULL;
 
     server_list_insert(lan_servers, pserver);
 
