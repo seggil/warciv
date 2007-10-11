@@ -796,9 +796,6 @@ async_server_list_request_error(struct async_server_list_context *ctx,
 	    ctx->userdata);
     (*ctx->callback) (NULL, errbuf, ctx->userdata);
   }
-
-  aslcfree(ctx);
-
 }
 
 /**************************************************************************

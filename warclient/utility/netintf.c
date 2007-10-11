@@ -96,79 +96,81 @@ struct adns_ctx {
 /***************************************************************************
   ...
 ***************************************************************************/
-static void check_init_lookup_tables (void)
+static void check_init_lookup_tables(void)
 {
   if (!net_lookup_service_table) {
-    net_lookup_service_table = hash_new (hash_fval_int,
-                                         hash_fcmp_int);
+    net_lookup_service_table = hash_new(hash_fval_int,
+					hash_fcmp_int);
   }
   if (!adns_request_table) {
-    adns_request_table = hash_new (hash_fval_int,
-                                   hash_fcmp_int);
+    adns_request_table = hash_new(hash_fval_int,
+				  hash_fcmp_int);
   }
 }
 /***************************************************************************
   ...
 ***************************************************************************/
-int adns_get_socket_fd (void)
+int adns_get_socket_fd(void)
 {
-  return dns ? dns_get_fd (dns) : -1;
+  return dns ? dns_get_fd(dns) : -1;
 }
 /***************************************************************************
   ...
 ***************************************************************************/
-void adns_free (void)
+void adns_free(void)
 {
   if (dns) {
-    dns_fini (dns);
+    dns_fini(dns);
     dns = NULL;
   }
 }
 /***************************************************************************
   ...
 ***************************************************************************/
-bool adns_is_available (void)
+bool adns_is_available(void)
 {
   return dns != NULL;
 }
 /***************************************************************************
   ...
 ***************************************************************************/
-void adns_check_expired (void)
+void adns_check_expired(void)
 {
-  dns_check_expired (dns);
+  dns_check_expired(dns);
 }
 /***************************************************************************
   Initialize the asynchronous DNS subsystem. Be sure to add the fd from
   adns_get_socket_fd to some kind of select loop and call adns_input_ready
   when data arrives.
 ***************************************************************************/
-void adns_init (void)
+void adns_init(void)
 {
   dns = dns_init();
   if (dns == NULL) {
-    freelog (LOG_ERROR, _("Failed to initialize asynchronous DNS resolver."));
+    freelog(LOG_ERROR, 
+	    _("Failed to initialize asynchronous DNS resolver."));
   }
 }
 /***************************************************************************
   ...
 ***************************************************************************/
-static void dns_result_callback (void *data,
-                                 enum dns_query_type qtype,
-                                 const char *hostname,
-                                 const unsigned char *addr,
-                                 size_t addrlen)
+static void dns_result_callback(void *data,
+				enum dns_query_type qtype,
+				const char *hostname,
+				const unsigned char *addr,
+				size_t addrlen)
 {
   struct adns_ctx *ctx = data;
 
-  freelog (LOG_DEBUG, "drc dns_result_callback: data=%p qtype=%d" /*ASYNCDEBUG*/
-           " hostname=\"%s\" addrlen=%d", /*ASYNCDEBUG*/
-           data, qtype, hostname, addrlen); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "drc dns_result_callback: data=%p " /*ASYNCDEBUG*/
+	  " qtype=%d hostname=\"%s\" addrlen=%d", /*ASYNCDEBUG*/
+	  data, qtype, hostname, addrlen); /*ASYNCDEBUG*/
   
-  assert (ctx != NULL);
-  assert (ctx->callback != NULL);
+  assert(ctx != NULL);
+  assert(ctx->callback != NULL);
 
-  freelog (LOG_DEBUG, "drc   calling %p userdata=%p", ctx->callback, ctx->userdata); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "drc   calling %p userdata=%p",
+	  ctx->callback, ctx->userdata); /*ASYNCDEBUG*/
   if (addrlen <= 0) {
     (*ctx->callback) (NULL, 0, ctx->userdata);
   } else {
@@ -179,35 +181,36 @@ static void dns_result_callback (void *data,
     /* we were called directly by dns_queue, so don't free ctx! :) */
     ctx->req_id = 0;
   } else {
-    freelog (LOG_DEBUG, "drc   hash_delete_entry adsn id=%d", /*ASYNCDEBUG*/
-             ctx->req_id); /*ASYNCDEBUG*/
-    hash_delete_entry (adns_request_table, INT_TO_PTR (ctx->req_id));
-    freelog (LOG_DEBUG, "drc   free adns_ctx %p", ctx); /*ASYNCDEBUG*/
-    free (ctx);
+    freelog(LOG_DEBUG,
+	    "drc   hash_delete_entry adsn id=%d", /*ASYNCDEBUG*/
+	    ctx->req_id); /*ASYNCDEBUG*/
+    hash_delete_entry(adns_request_table, INT_TO_PTR(ctx->req_id));
+    freelog(LOG_DEBUG, "drc   free adns_ctx %p", ctx); /*ASYNCDEBUG*/
+    free(ctx);
   }
 }
 /***************************************************************************
   Should be called when there is data waiting to be read on the socket
   returned by adns_get_socket_fd.
 ***************************************************************************/
-void adns_poll (void)
+void adns_poll(void)
 {
   if (!adns_is_available())
     return;
-  freelog (LOG_DEBUG, "ap adns_poll"); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "ap adns_poll"); /*ASYNCDEBUG*/
 
-	dns_poll (dns); /* should result in a call to dns_result_callback */
+  dns_poll(dns); /* should result in a call to dns_result_callback */
 }
 /***************************************************************************
   Queues an asynchronous dns request for the A record for the given
   hostname. Behaves the same as adns_lookup_full.
 ***************************************************************************/
-int adns_lookup (const char *hostname,
-                 adns_result_callback_t cb,
-                 void *data,
-                 data_free_func_t datafree)
+int adns_lookup(const char *hostname,
+		adns_result_callback_t cb,
+		void *data,
+		data_free_func_t datafree)
 {
-  return adns_lookup_full (hostname, DNS_A_RECORD, cb, data, datafree);
+  return adns_lookup_full(hostname, DNS_A_RECORD, cb, data, datafree);
 }
 /***************************************************************************
   Queues an asynchronous dns lookup.
@@ -223,43 +226,45 @@ int adns_lookup (const char *hostname,
     >0 - the request is in progress, cb will be called in the future and
          the request may be cancelled with adns_cancel.
 ***************************************************************************/
-int adns_lookup_full (const char *query_data,
-                      enum dns_query_type query_type,
-                      adns_result_callback_t cb,
-                      void *data,
-                      data_free_func_t datafree)
+int adns_lookup_full(const char *query_data,
+		     enum dns_query_type query_type,
+		     adns_result_callback_t cb,
+		     void *data,
+		     data_free_func_t datafree)
 {
   struct adns_ctx *ctx;
   int ret = 0;
 
-  assert (query_type == DNS_A_RECORD || query_type == DNS_PTR_RECORD);
+  assert(query_type == DNS_A_RECORD || query_type == DNS_PTR_RECORD);
 
-  freelog (LOG_DEBUG, "alf adns_lookup_full: query_data=\"%s\"" /*ASYNCDEBUG*/
-           " query_type=%d cb=%p data=%p datafree=%p", /*ASYNCDEBUG*/
-           query_data, query_type, cb, data, datafree); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, 
+	  "alf adns_lookup_full: query_data=\"%s\"" /*ASYNCDEBUG*/
+	  " query_type=%d cb=%p data=%p datafree=%p", /*ASYNCDEBUG*/
+	  query_data, query_type, cb, data, datafree); /*ASYNCDEBUG*/
 
   check_init_lookup_tables();
-  assert (dns != NULL);
+  assert(dns != NULL);
 
-  ctx = fc_malloc (sizeof (struct adns_ctx));
-  freelog (LOG_DEBUG, "alf   new adns_ctx %p", ctx); /*ASYNCDEBUG*/
+  ctx = fc_malloc(sizeof(struct adns_ctx));
+  freelog(LOG_DEBUG, "alf   new adns_ctx %p", ctx); /*ASYNCDEBUG*/
   ctx->callback = cb;
   ctx->userdata = data;
   ctx->datafree = datafree;
   ctx->req_id = -1;
 
   /* NB this may call dns_result_callback directly */
-  dns_queue (dns, ctx, query_data, query_type, dns_result_callback);
+  dns_queue(dns, ctx, query_data, query_type, dns_result_callback);
 
   if (ctx->req_id == 0) {
     /* dns_queue called dns_result_callback directly */
-    freelog (LOG_DEBUG, "alf   free adns_ctx %p", ctx); /*ASYNCDEBUG*/
-    free (ctx);
+    freelog(LOG_DEBUG, "alf   free adns_ctx %p", ctx); /*ASYNCDEBUG*/
+    free(ctx);
     ret = 0;
   } else {
     ctx->req_id = ++adns_request_id;
-    freelog (LOG_DEBUG, "alf   hash_insert adns req ctx=%p id=%d", ctx, ctx->req_id); /*ASYNCDEBUG*/
-    hash_insert (adns_request_table, INT_TO_PTR (ctx->req_id), ctx);
+    freelog(LOG_DEBUG, "alf   hash_insert adns req ctx=%p id=%d", 
+	    ctx, ctx->req_id); /*ASYNCDEBUG*/
+    hash_insert(adns_request_table, INT_TO_PTR(ctx->req_id), ctx);
     ret = ctx->req_id;
   }
   return ret;
@@ -267,83 +272,85 @@ int adns_lookup_full (const char *query_data,
 /***************************************************************************
   Find the hostname for a given address, asynchronously.
 ***************************************************************************/
-int adns_reverse_lookup (union my_sockaddr *sa,
-                         adns_result_callback_t cb,
-                         void *data,
-                         data_free_func_t datafree)
+int adns_reverse_lookup(union my_sockaddr *sa,
+			adns_result_callback_t cb,
+			void *data,
+			data_free_func_t datafree)
 {
   const unsigned char *addr;
   char buf[64];
 
   addr = (const unsigned char *) &sa->sockaddr_in.sin_addr;
-  my_snprintf (buf, sizeof (buf), "%d.%d.%d.%d.in-addr.arpa",
-               addr[3], addr[2], addr[1], addr[0]);
-  return adns_lookup_full (buf, DNS_PTR_RECORD, cb, data, datafree);
+  my_snprintf(buf, sizeof(buf), "%d.%d.%d.%d.in-addr.arpa",
+	      addr[3], addr[2], addr[1], addr[0]);
+  return adns_lookup_full(buf, DNS_PTR_RECORD, cb, data, datafree);
 }
 /***************************************************************************
   Cancels the adns request with the given id. If datafree from adns_lookup
   is not NULL, it will be called on data, otherwise data will be returned
   from this function.
 ***************************************************************************/
-void *adns_cancel (int id)
+void *adns_cancel(int id)
 {
   void *ret = NULL;
   struct adns_ctx *ctx;
 
-  freelog (LOG_DEBUG, "ac adns_cancel: id=%d", id); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "ac adns_cancel: id=%d", id); /*ASYNCDEBUG*/
 
   check_init_lookup_tables();
 
-  freelog (LOG_DEBUG, "ac   hash_delete_entry adns id=%d", id); /*ASYNCDEBUG*/
-  ctx = hash_delete_entry (adns_request_table, INT_TO_PTR (id));
+  freelog(LOG_DEBUG, "ac   hash_delete_entry adns id=%d", id); /*ASYNCDEBUG*/
+  ctx = hash_delete_entry(adns_request_table, INT_TO_PTR(id));
   if (ctx) {
-    assert (ctx->req_id == id);
-    dns_cancel (dns, ctx);
+    assert(ctx->req_id == id);
+    dns_cancel(dns, ctx);
     if (ctx->datafree) {
-      freelog (LOG_DEBUG, "ac   calling datafree %p on %p", ctx->datafree, ctx->userdata); /*ASYNCDEBUG*/
+      freelog(LOG_DEBUG, "ac   calling datafree %p on %p", 
+	      ctx->datafree, ctx->userdata); /*ASYNCDEBUG*/
       (*ctx->datafree) (ctx->userdata);
     } else {
       ret = ctx->userdata;
     }
-    freelog (LOG_DEBUG, "ac   free adns_ctx %p", ctx); /*ASYNCDEBUG*/
-    free (ctx);
+    freelog(LOG_DEBUG, "ac   free adns_ctx %p", ctx); /*ASYNCDEBUG*/
+    free(ctx);
   }
   return ret;
 }
 /***************************************************************************
   ...
 ***************************************************************************/
-static void nlcfree (void *data)
+static void nlcfree(void *data)
 {
   struct net_lookup_ctx *ctx = data;
   
-  freelog (LOG_DEBUG, "nf nlcfree: data=%p", data); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "nf nlcfree: data=%p", data); /*ASYNCDEBUG*/
            
   if (!ctx)
     return;
   if (ctx->req_id > 0) {
-    freelog (LOG_DEBUG, "nf  hash_delete_entry nls id=%d", ctx->req_id); /*ASYNCDEBUG*/
-    hash_delete_entry (net_lookup_service_table, INT_TO_PTR (ctx->req_id));
+    freelog(LOG_DEBUG, "nf  hash_delete_entry nls id=%d", 
+	    ctx->req_id); /*ASYNCDEBUG*/
+    hash_delete_entry(net_lookup_service_table, INT_TO_PTR(ctx->req_id));
   }
   if (ctx->addr)
-    free (ctx->addr);
+    free(ctx->addr);
   if (ctx->adns_id > 0)
-    adns_cancel (ctx->adns_id);
-  freelog (LOG_DEBUG, "nf  free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
-  free (ctx);
+    adns_cancel(ctx->adns_id);
+  freelog(LOG_DEBUG, "nf  free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
+  free(ctx);
 }
 /***************************************************************************
   ...
 ***************************************************************************/
 static void adns_result_callback(const unsigned char *address,
-                                  int addrlen, void *data)
+				 int addrlen, void *data)
 {
   struct net_lookup_ctx *ctx = data;
   struct sockaddr_in *sock;
 
   assert(ctx != NULL);
 
-  freelog(LOG_DEBUG, "address=%p addrelen=%d data=%p",
+  freelog(LOG_ERROR, "address=%p addrelen=%d data=%p",
           address, addrlen, data);
 
   if (address && addrlen > 0) {
@@ -368,26 +375,28 @@ static void adns_result_callback(const unsigned char *address,
   Cancels an net_lookup_service request in progress. Behaves analogously
   to adns_cancel.
 ***************************************************************************/
-void *cancel_net_lookup_service (int id)
+void *cancel_net_lookup_service(int id)
 {
   struct net_lookup_ctx *ctx;
   void *ret = NULL;
 
-  freelog (LOG_DEBUG, "cnls cancel_net_lookup_service id=%d", id); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG,
+	  "cnls cancel_net_lookup_service id=%d", id); /*ASYNCDEBUG*/
   
   check_init_lookup_tables();
 
-  freelog (LOG_DEBUG, "cnls   hash_delete_entry nlc id=%d", id); /*ASYNCDEBUG*/
-  ctx = hash_delete_entry (net_lookup_service_table, INT_TO_PTR (id));
+  freelog(LOG_DEBUG, "cnls   hash_delete_entry nlc id=%d", id); /*ASYNCDEBUG*/
+  ctx = hash_delete_entry(net_lookup_service_table, INT_TO_PTR(id));
   if (ctx) {
-    assert (ctx->req_id == id);
+    assert(ctx->req_id == id);
     if (ctx->datafree) {
-      freelog (LOG_DEBUG, "cnls   calling datafree %p on %p", ctx->datafree, ctx->userdata); /*ASYNCDEBUG*/
+      freelog(LOG_DEBUG, "cnls   calling datafree %p on %p", 
+	      ctx->datafree, ctx->userdata); /*ASYNCDEBUG*/
       (*ctx->datafree) (ctx->userdata);
     } else {
       ret = ctx->userdata;
     }
-    nlcfree (ctx);
+    nlcfree(ctx);
   }
   return ret;
 }
@@ -395,57 +404,59 @@ void *cancel_net_lookup_service (int id)
   Just like net_lookup_service, but asynchronous. Behaves analogously to
   adns_lookup. NB cb may be called directly.
 ***************************************************************************/
-int net_lookup_service_async (const char *name, int port,
-                              net_lookup_result_callback_t cb,
-                              void *data, data_free_func_t datafree)
+int net_lookup_service_async(const char *name, int port,
+			     net_lookup_result_callback_t cb,
+			     void *data, data_free_func_t datafree)
 {
   struct net_lookup_ctx *ctx;
   int adns_id;
 
   check_init_lookup_tables();
 
-  freelog (LOG_DEBUG, "nlsa net_lookup_service_async: name=\"%s\" port=%d " /*ASYNCDEBUG*/
-           "cb=%p data=%p datafree=%p", name, port, cb, data, datafree); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, 
+	  "nlsa net_lookup_service_async: name=\"%s\" port=%d " /*ASYNCDEBUG*/
+	  "cb=%p data=%p datafree=%p", name, port, cb, data, datafree); /*ASYNCDEBUG*/
 
-  ctx = fc_malloc (sizeof (struct net_lookup_ctx));
-  freelog (LOG_DEBUG, "nlsa   new net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
+  ctx = fc_malloc(sizeof(struct net_lookup_ctx));
+  freelog(LOG_DEBUG, "nlsa   new net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
   ctx->callback = cb;
   ctx->userdata = data;
   ctx->datafree = datafree;
-  ctx->addr = fc_malloc (sizeof (union my_sockaddr));
+  ctx->addr = fc_malloc(sizeof(union my_sockaddr));
   ctx->req_id = 0;
   ctx->adns_id = -1;
   
   if (is_net_service_resolved (name, port, ctx->addr)) {
-    freelog (LOG_DEBUG, "nlsa   is_net_service_resolved return TRUE"); /*ASYNCDEBUG*/
+    freelog(LOG_DEBUG, 
+	    "nlsa   is_net_service_resolved return TRUE"); /*ASYNCDEBUG*/
     (*ctx->callback) (ctx->addr, ctx->userdata);
-    free (ctx->addr);
-    freelog (LOG_DEBUG, "nlsa   free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
-    free (ctx);
+    free(ctx->addr);
+    freelog(LOG_DEBUG, "nlsa   free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
+    free(ctx);
     return 0;
   }
   
   /* this may call adns_result_callback directly */
-  adns_id = adns_lookup (name, adns_result_callback,
-                         ctx, NULL);
-  freelog (LOG_DEBUG, "nlsa   got adns_id=%d", adns_id); /*ASYNCDEBUG*/
+  adns_id = adns_lookup(name, adns_result_callback,
+			ctx, NULL);
+  freelog(LOG_DEBUG, "nlsa   got adns_id=%d", adns_id); /*ASYNCDEBUG*/
   
   if (adns_id == 0) {
     /* adns_result_callback called already, no lookup required */
-    freelog (LOG_DEBUG, "nlsa   free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
-    free (ctx->addr);
-    free (ctx);
+    freelog(LOG_DEBUG, "nlsa   free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
+    free(ctx->addr);
+    free(ctx);
     return 0;
   }
 
   ctx->adns_id = ctx->adns_id;
   ctx->req_id = ++net_lookup_service_id;
-  freelog (LOG_DEBUG, "nlsa   nls req_id = %d", ctx->req_id); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "nlsa   nls req_id = %d", ctx->req_id); /*ASYNCDEBUG*/
 
-  freelog (LOG_DEBUG, "nlsa   hash_insert nls req ctx=%p id=%d", /*ASYNCDEBUG*/
-           ctx, ctx->req_id); /*ASYNCDEBUG*/
-  hash_insert (net_lookup_service_table,
-               INT_TO_PTR (ctx->req_id), ctx);
+  freelog(LOG_DEBUG, "nlsa   hash_insert nls req ctx=%p id=%d", /*ASYNCDEBUG*/
+	  ctx, ctx->req_id); /*ASYNCDEBUG*/
+  hash_insert(net_lookup_service_table,
+	      INT_TO_PTR(ctx->req_id), ctx);
   
   return ctx->req_id;
 }
@@ -518,7 +529,7 @@ void my_shutdown_network(void)
   Returns true if errno indicates that the previous socket
   operation would block.
 ***************************************************************/
-bool my_socket_would_block (void)
+bool my_socket_would_block(void)
 {
 #ifdef HAVE_WINSOCK
   return WSAGetLastError() == WSAEWOULDBLOCK;
@@ -530,7 +541,7 @@ bool my_socket_would_block (void)
   Returns true if errno indicates that the previous socket
   is in progress.
 ***************************************************************/
-bool my_socket_operation_in_progess (void)
+bool my_socket_operation_in_progess(void)
 {
 #ifdef HAVE_WINSOCK
   return WSAGetLastError() == WSAEINPROGRESS;
@@ -567,8 +578,8 @@ int my_nonblock(int sockfd)
   }
 #elif defined (HAVE_WINSOCK)
   long one=1;
-  if (SOCKET_ERROR == ioctlsocket (sockfd, FIONBIO, &one)) {
-    freelog (LOG_ERROR, _("ioctlsocket failed: %s"), mystrsocketerror());
+  if (SOCKET_ERROR == ioctlsocket(sockfd, FIONBIO, &one)) {
+    freelog(LOG_ERROR, _("ioctlsocket failed: %s"), mystrsocketerror());
     return -1;
   }
 #else
@@ -577,17 +588,18 @@ int my_nonblock(int sockfd)
 #endif
 
 #else /* i.e. ! NONBLOCKING_SOCKETS */
-  freelog (LOG_ERROR, _("my_nonblock called but we don't have "
-                        "non blocking sockets on this platform!"));
+  freelog(LOG_ERROR, _("my_nonblock called but we don't have "
+		       "non blocking sockets on this platform!"));
 #endif /* NONBLOCKING_SOCKETS */
   return 0;
 }
+  
 /***************************************************************************
   Returns true if the name is already resolved. Also fills in sockaddr_in
   parts of addr that do no require name resolution.
 ***************************************************************************/
-bool is_net_service_resolved (const char *name, int port,
-                              union my_sockaddr *addr)
+bool is_net_service_resolved(const char *name, int port,
+			     union my_sockaddr *addr)
 {
   struct sockaddr_in *sock = &addr->sockaddr_in;
 
@@ -598,7 +610,7 @@ bool is_net_service_resolved (const char *name, int port,
     sock->sin_addr.s_addr = htonl(INADDR_ANY);
     return TRUE;
   }
-
+  
 #ifdef HAVE_INET_ATON
   if (inet_aton(name, &sock->sin_addr) != 0) {
     return TRUE;
@@ -611,27 +623,27 @@ bool is_net_service_resolved (const char *name, int port,
   
   return FALSE;
 }
-
+ 
 /***************************************************************************
   Look up the service at hostname:port and fill in *sa.
 ***************************************************************************/
-bool net_lookup_service (const char *name, int port, union my_sockaddr *addr)
+bool net_lookup_service(const char *name, int port, union my_sockaddr *addr)
 {
   struct hostent *hp;
   struct sockaddr_in *sock = &addr->sockaddr_in;
-
-  if (is_net_service_resolved (name, port, addr))
+  
+  if (is_net_service_resolved(name, port, addr))
     return TRUE;
-
+  
   hp = gethostbyname(name);
   if (!hp || hp->h_addrtype != AF_INET) {
     return FALSE;
   }
-
+  
   memcpy(&sock->sin_addr, hp->h_addr, hp->h_length);
   return TRUE;
 }
-
+ 
 /*************************************************************************
   Writes buf to socket and returns the response in an fz_FILE.
   Use only on blocking sockets.
@@ -639,27 +651,27 @@ bool net_lookup_service (const char *name, int port, union my_sockaddr *addr)
 fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 {
   FILE *fp;
-
+  
 #ifdef HAVE_FDOPEN
   fp = fdopen(sock, "r+b");
   if (fwrite(buf, 1, size, fp) != size) {
     die("socket %d: write error", sock);
   }
   fflush(fp);
-
+  
   /* we don't use my_closesocket on sock here since when fp is closed
    * sock will also be closed. fdopen doesn't dup the socket descriptor. */
 #else
   {
     char tmp[4096];
     int n;
-
+    
     fp = my_tmpfile();
-
+    
     if (fp == NULL) {
       return NULL;
     }
-
+    
     my_writesocket(sock, buf, size);
 
     while ((n = my_readsocket(sock, tmp, sizeof(tmp))) > 0) {
@@ -668,16 +680,16 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
       }
     }
     fflush(fp);
-
+    
     my_closesocket(sock);
-
+    
     rewind(fp);
   }
 #endif
-
+  
   return fz_from_stream(fp);
 }
-
+ 
 /*************************************************************************
   Returns a valid httpd server and port, plus the path to the resource
   at the url location.
@@ -685,7 +697,7 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 const char *my_lookup_httpd(char *server, int *port, const char *url)
 {
   const char *purl, *str, *ppath, *pport;
-
+  
   if ((purl = getenv("http_proxy"))) {
     if (strncmp(purl, "http://", strlen("http://")) != 0) {
       return NULL;
@@ -697,12 +709,12 @@ const char *my_lookup_httpd(char *server, int *port, const char *url)
     }
     str = url;
   }
-
+  
   str += strlen("http://");
   
   pport = strchr(str, ':');
   ppath = strchr(str, '/');
-
+  
   /* snarf server. */
   server[0] = '\0';
 
@@ -805,7 +817,7 @@ int find_next_free_port(int starting_port)
 /************************************************************************** 
   For debugging mostly...
 **************************************************************************/ 
-int my_errno (void)
+int my_errno(void)
 {
 #ifdef HAVE_WINSOCK
   return WSAGetLastError();
