@@ -1070,7 +1070,7 @@ GtkWidget *create_network_page(void)
   gtk_table_set_row_spacings(GTK_TABLE(table), 2);
   gtk_table_set_col_spacings(GTK_TABLE(table), 12);
   gtk_table_set_row_spacing(GTK_TABLE(table), 2, 12);
-  gtk_widget_set_size_request(table, 300, -1);
+  gtk_widget_set_size_request(table, 340, -1);
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
   network_host = gtk_entry_new();
