@@ -350,7 +350,7 @@ static void adns_result_callback(const unsigned char *address,
 
   assert(ctx != NULL);
 
-  freelog(LOG_ERROR, "address=%p addrelen=%d data=%p",
+  freelog(LOG_DEBUG, "address=%p addrelen=%d data=%p",
           address, addrlen, data);
 
   if (address && addrlen > 0) {
