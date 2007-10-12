@@ -276,9 +276,9 @@ void establish_new_connection(struct connection *pconn)
        * See the comment in lost_connection_to_client(). */
       send_packet_freeze_hint(pconn);
       send_rulesets(dest);
+      send_player_info(NULL, NULL);
       send_all_info(dest);
       send_game_state(dest, CLIENT_GAME_RUNNING_STATE);
-      send_player_info(NULL,NULL);
       send_diplomatic_meetings(pconn);
       send_packet_thaw_hint(pconn);
       send_packet_start_turn(pconn);

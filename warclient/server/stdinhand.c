@@ -4341,9 +4341,9 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     {
     send_packet_freeze_hint(pconn);
     send_rulesets(&pconn->self);
+    send_player_info(NULL, NULL);
     send_all_info(&pconn->self);
     send_game_state(&pconn->self, CLIENT_GAME_RUNNING_STATE);
-    send_player_info(NULL, NULL);
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
     send_packet_start_turn(pconn);
@@ -7593,4 +7593,3 @@ bool sset_is_changeable(int idx)
     return FALSE;
   }
 }
-
