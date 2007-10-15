@@ -3077,6 +3077,9 @@ void set_reports_thaw_request(int request_id)
 void handle_freeze_hint(void)
 {
   freelog(LOG_DEBUG, "handle_freeze_hint");
+
+  reports_freeze();
+  agents_freeze_hint();
 }
 
 /**************************************************************************
@@ -3086,10 +3089,8 @@ void handle_freeze_client(void)
 {
   freelog(LOG_DEBUG, "handle_freeze_client");
 
-  /*
   reports_freeze();
   agents_freeze_hint();
-  */
 }
 
 /**************************************************************************
@@ -3098,6 +3099,11 @@ void handle_freeze_client(void)
 void handle_thaw_hint(void)
 {
   freelog(LOG_DEBUG, "handle_thaw_hint");
+
+  reports_thaw();
+  agents_thaw_hint();
+
+  update_turn_done_button_state();
 }
 
 /**************************************************************************
@@ -3107,10 +3113,8 @@ void handle_thaw_client(void)
 {
   freelog(LOG_DEBUG, "handle_thaw_client");
 
-  /*
   reports_thaw();
   agents_thaw_hint();
-  */
 
   update_turn_done_button_state();
 }
@@ -3156,4 +3160,3 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
-

@@ -1130,6 +1130,7 @@ static void autoarrange_workers_iterate (GtkTreeModel *model,
        no longer work... */
     city_toggle_worker(pcity, CITY_MAP_RADIUS, CITY_MAP_RADIUS);
   }
+  refresh_city_dialog(pcity);
 }
 
 /****************************************************************
@@ -1453,12 +1454,14 @@ static void city_command_callback(struct gui_dialog *dlg, int response)
     gtk_tree_selection_selected_foreach (city_selection,
        remove_cur_prod_iterate, NULL);
     connection_do_unbuffer(&aconnection);
-    break;//*pepeto*
+    break;
   case CITY_AUTOARRANGE_WORKERS:
+    reports_freeze();
     connection_do_buffer(&aconnection);
     gtk_tree_selection_selected_foreach (city_selection,
         autoarrange_workers_iterate, NULL);
     connection_do_unbuffer(&aconnection);
+    reports_thaw();
     break;
   default:
     gui_dialog_destroy(dlg);
