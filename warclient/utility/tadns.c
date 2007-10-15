@@ -334,6 +334,7 @@ static void call_user(struct dns *dns, struct query *query)
   freelog(LOG_DEBUG, "cu   returned from callback"); /*ASYNCDEBUG*/
   query->callback = NULL;
   query->ctx = NULL;
+  query->expire = 0;
 }
 
 /**************************************************************************
@@ -455,7 +456,7 @@ static void parse_udp(struct dns *dns)
     if (p + dlen <= e) {
       /* Add to the cache */
       memcpy(&ttl, p - 6, sizeof(ttl));
-      q->expire = time(NULL) + (time_t) ntohl(ttl);
+      q->expire = (time_t) ntohl(ttl);
       freelog(LOG_DEBUG, "pu   got expire=%ld ttl=%ld", 
 	      q->expire, ntohl(ttl)); /*ASYNCDEBUG*/
       
@@ -536,6 +537,7 @@ void dns_poll(struct dns *dns)
   }
 
   dns->buflen = 0;
+  
 }
 
 /**************************************************************************
@@ -689,13 +691,13 @@ void dns_check_expired(struct dns *dns)
   freelog(LOG_DEBUG, "dce dns_check_expired dns=%p", dns); /*ASYNCDEBUG*/
   
   now = time(NULL);
-
+  
   /* Cleanup expired active queries */
   hash_iterate(dns->active, void *, key, struct query *, query) {
-    if (query->expire < now) {
-      freelog(LOG_ERROR, "dce   active query expired tid=%d", 
+    if (query->expire < now && query->expire != 0) {
+      freelog(LOG_DEBUG, "dce   active query expired tid=%d", 
 	      query->tid); /*ASYNCDEBUG*/
-      freelog(LOG_ERROR, "dcz   now=%ld expire=%ld", 
+      freelog(LOG_DEBUG, "dcz   now=%ld expire=%ld", 
 	      now, query->expire); /*ASYNCDEBUG*/
       query->addrlen = 0;
       if (query->callback) {
@@ -704,11 +706,11 @@ void dns_check_expired(struct dns *dns)
       destroy_query(query);
     }
   } hash_iterate_end;
-
+  
   /* Cleanup cached queries */
   hash_iterate(dns->cache, char *, name, struct query *, query) {
-    if (query->expire < now) {
-      freelog(LOG_ERROR, "dce   query expired in cache tid=%d", query->tid); /*ASYNCDEBUG*/
+    if (query->expire < now && query->expire != 0) {
+      freelog(LOG_DEBUG, "dce   query expired in cache tid=%d", query->tid); /*ASYNCDEBUG*/
       destroy_query(query);
     }
   } hash_iterate_end;
