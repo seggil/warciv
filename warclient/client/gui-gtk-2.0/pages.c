@@ -281,7 +281,7 @@ static void update_server_list(GtkTreeSelection *selection,
   const gchar *host, *port;
 
   if (get_client_page() != PAGE_NETWORK){
-    //   return;
+    return;
   }
 
   host = gtk_entry_get_text(GTK_ENTRY(network_host));
