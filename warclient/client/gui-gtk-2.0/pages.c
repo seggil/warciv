@@ -131,11 +131,11 @@ static void load_saved_game_callback(GtkWidget *w, gpointer data)
 **************************************************************************/
 static void main_callback(GtkWidget *w, gpointer data)
 {
-    if (server_list_request_id > 0) {
-      cancel_async_server_list_request(server_list_request_id);
+  if (server_list_request_id > 0) {
+    cancel_async_server_list_request(server_list_request_id);
     append_network_statusbar(_("Server list request cancelled."));
-      server_list_request_id = -1;
-    }
+    server_list_request_id = -1;
+  }
   if (aconnection.used) {
     disconnect_from_server();
   } else {
@@ -165,9 +165,9 @@ static gboolean intro_expose(GtkWidget *w, GdkEventExpose *ev)
   }
  
   gtk_draw_shadowed_string(w->window,
-      w->style->black_gc,
-      w->style->white_gc,
-      w->allocation.x + w->allocation.width - width - 4,
+			   w->style->black_gc,
+			   w->style->white_gc,
+			   w->allocation.x + w->allocation.width - width - 4,
 			   w->allocation.y + w->allocation.height - height -
 			   4, layout);
   return TRUE;
@@ -215,7 +215,7 @@ GtkWidget *create_main_page(void)
   gtk_container_add(GTK_CONTAINER(bbox), button);
   g_signal_connect(button, "clicked",
       G_CALLBACK(start_new_game_callback), NULL);
-
+  
   button = gtk_button_new_with_mnemonic(_("Start _Scenario Game"));
   gtk_size_group_add_widget(size, button);
   gtk_container_add(GTK_CONTAINER(bbox), button);
@@ -279,6 +279,10 @@ static void update_server_list(GtkTreeSelection *selection,
 			       struct server_list *list)
 {
   const gchar *host, *port;
+
+  if (get_client_page() != PAGE_NETWORK){
+    //   return;
+  }
 
   host = gtk_entry_get_text(GTK_ENTRY(network_host));
   port = gtk_entry_get_text(GTK_ENTRY(network_port));
@@ -495,7 +499,7 @@ void append_network_statusbar(const char *text)
 **************************************************************************/
 static GtkWidget *create_network_message_dialog(void)
 {
-  GtkWidget *dialog, *vbox, *hbox, *sw, *button, *text;
+  GtkWidget *dialog, *vbox, *hbox, *sw, *button, *text, *clearbutton;
 
   dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(dialog), _("Network Messages"));
@@ -529,14 +533,20 @@ static GtkWidget *create_network_message_dialog(void)
 			   G_CALLBACK(gtk_widget_hide), dialog);
   gtk_widget_set_size_request(button, 100, 30);
 
+  clearbutton = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+  g_signal_connect_swapped(clearbutton, "clicked",
+			   G_CALLBACK(clear_network_statusbar), NULL);
+  gtk_widget_set_size_request(clearbutton, 100, 30);
+
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-  gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+  gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 4);
+  gtk_box_pack_end(GTK_BOX(hbox), clearbutton, FALSE, FALSE, 0);
 
   gtk_widget_show_all(dialog);
 
   return dialog;
-    }
+}
 
 /**************************************************************************
   ...
@@ -1945,7 +1955,6 @@ void set_client_page(enum client_pages page)
 
   /* hide/show statusbar. */
   if (new_page == PAGE_START || new_page == PAGE_GAME) {
-    clear_network_statusbar();
     gtk_widget_hide(statusbar_frame);
   } else {
     gtk_widget_show(statusbar_frame);
