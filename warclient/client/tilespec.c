@@ -3000,45 +3000,53 @@ enum color_std overview_tile_color(struct tile *ptile)
 {
   struct unit *punit;
   struct city *pcity;
+  struct player *pplayer;
 
-  if (tile_get_known(ptile) == TILE_UNKNOWN)
+  if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {
     return COLOR_STD_BLACK;
-  if((pcity=map_get_city(ptile))) {
-    if(pcity->owner==game.player_idx)
+  }
+  if ((pcity = map_get_city(ptile))) {
+    pplayer = city_owner(pcity);
+    if (!pplayer || pplayer == game.player_ptr) {
       return COLOR_STD_WHITE;
-    else switch(pplayer_get_diplstate(city_owner(pcity),game.player_ptr)->type)
-	{
-		case DS_NO_CONTACT:
-			if(game.diplomacy>=2)
-				 return COLOR_STD_FORANGE;
-		case DS_NEUTRAL:
-		case DS_PEACE:
-		case DS_CEASEFIRE:
-			return COLOR_STD_CYAN;
-		case DS_ALLIANCE:
-		case DS_TEAM:
-			return COLOR_STD_FGREEN;
-		default://DS_WAR
-		return COLOR_STD_FORANGE;
-	}
+    } else {
+      switch (pplayer_get_diplstate(pplayer, game.player_ptr)->type) {
+	case DS_NO_CONTACT:
+	  if (game.diplomacy >= 2) {
+            return COLOR_STD_FORANGE;
+          }
+	case DS_NEUTRAL:
+	case DS_PEACE:
+	case DS_CEASEFIRE:
+	  return COLOR_STD_CYAN;
+	case DS_ALLIANCE:
+	case DS_TEAM:
+	  return COLOR_STD_FGREEN;
+	default: /* DS_WAR */
+	  return COLOR_STD_FORANGE;
+      }
+    }
   } else if ((punit=find_visible_unit(ptile))) {
-    if(punit->owner==game.player_idx)
+    pplayer = unit_owner(punit);
+    if(!pplayer || pplayer == game.player_ptr) {
       return COLOR_STD_YELLOW;
-    else switch(pplayer_get_diplstate(unit_owner(punit),game.player_ptr)->type)
-	{
-		case DS_NO_CONTACT:
-			if(game.diplomacy>=2)
-				 return COLOR_STD_RED;
-		case DS_NEUTRAL:
-		case DS_PEACE:
-		case DS_CEASEFIRE:
-			return COLOR_STD_ORANGE;
-		case DS_ALLIANCE:
-		case DS_TEAM:
-			return COLOR_STD_GREEN;
-		default://DS_WAR
-		return COLOR_STD_RED;
-	}
+    } else {
+      switch(pplayer_get_diplstate(pplayer, game.player_ptr)->type) {
+        case DS_NO_CONTACT:
+	  if (game.diplomacy >= 2) {
+	    return COLOR_STD_RED;
+          }
+	case DS_NEUTRAL:
+	case DS_PEACE:
+	case DS_CEASEFIRE:
+	  return COLOR_STD_ORANGE;
+	case DS_ALLIANCE:
+	case DS_TEAM:
+	  return COLOR_STD_GREEN;
+	default: /* DS_WAR */
+	  return COLOR_STD_RED;
+      }
+    }
   } else if (is_ocean(ptile->terrain)) {
     if (tile_get_known(ptile) == TILE_KNOWN_FOGGED && draw_fog_of_war) {
       return COLOR_STD_RACE4;
