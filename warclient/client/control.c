@@ -1708,6 +1708,8 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
        * tile. */
       map_distance_vector(&dx, &dy, ptile, target_unit->tile);
       move_unit_map_canvas(punit, ptile, dx, dy);
+    } else {
+      refresh_tile_mapcanvas(ptile, FALSE);
     }
   }
     
