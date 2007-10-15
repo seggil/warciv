@@ -463,6 +463,7 @@ static void clear_network_statusbar(void)
   gtk_text_buffer_delete(network_message_buffer, &start, &end);
 
   gtk_label_set_text(GTK_LABEL(statusbar), "");
+  append_network_statusbar(_("Network messages has been cleared."));
 }
 
 /**************************************************************************
