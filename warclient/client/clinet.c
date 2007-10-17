@@ -808,6 +808,8 @@ process_metaserver_response(struct async_server_list_context *ctx)
   struct server_list *sl;
   fz_FILE *f;
   char errbuf[256];
+  char newbuf[24576];
+  int i, j, count=0;
 
   freelog(LOG_DEBUG, "process_metaserver_response: ctx=%p", ctx);
 
@@ -817,7 +819,17 @@ process_metaserver_response(struct async_server_list_context *ctx)
     return;
   }
 
-  if (fwrite(ctx->buf, 1, ctx->buflen, fp) != ctx->buflen) {
+  /* Prevent \" sequences in files which would produce problem for secfile_lookup 
+     Insert space character between \ and " */
+  for (i = 0, j = 0; i < sizeof(ctx->buf); i++, j++){
+    if (ctx->buf[i-1] == '\\' && ctx->buf[i] == '"' ){
+      newbuf[j++]= ' ';
+      count++;
+    }
+    newbuf[j]=ctx->buf[i];
+  }
+
+  if (fwrite(newbuf, 1, (ctx->buflen + count), fp) != (ctx->buflen + count)) {
     async_server_list_request_error(ctx,
         _("Error writing to temporary file: %s"), mystrerror());
     fclose(fp);
