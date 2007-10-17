@@ -334,7 +334,6 @@ static void call_user(struct dns *dns, struct query *query)
   freelog(LOG_DEBUG, "cu   returned from callback"); /*ASYNCDEBUG*/
   query->callback = NULL;
   query->ctx = NULL;
-  query->expire = 0;
 }
 
 /**************************************************************************
@@ -456,7 +455,7 @@ static void parse_udp(struct dns *dns)
     if (p + dlen <= e) {
       /* Add to the cache */
       memcpy(&ttl, p - 6, sizeof(ttl));
-      q->expire = (time_t) ntohl(ttl);
+      q->expire = time(NULL) + (time_t) ntohl(ttl);
       freelog(LOG_DEBUG, "pu   got expire=%ld ttl=%ld", 
 	      q->expire, ntohl(ttl)); /*ASYNCDEBUG*/
       
@@ -694,7 +693,7 @@ void dns_check_expired(struct dns *dns)
   
   /* Cleanup expired active queries */
   hash_iterate(dns->active, void *, key, struct query *, query) {
-    if (query->expire < now && query->expire != 0) {
+    if (query->expire < now) {
       freelog(LOG_DEBUG, "dce   active query expired tid=%d", 
 	      query->tid); /*ASYNCDEBUG*/
       freelog(LOG_DEBUG, "dcz   now=%ld expire=%ld", 
@@ -709,7 +708,7 @@ void dns_check_expired(struct dns *dns)
   
   /* Cleanup cached queries */
   hash_iterate(dns->cache, char *, name, struct query *, query) {
-    if (query->expire < now && query->expire != 0) {
+    if (query->expire < now) {
       freelog(LOG_DEBUG, "dce   query expired in cache tid=%d", query->tid); /*ASYNCDEBUG*/
       destroy_query(query);
     }
