@@ -3495,20 +3495,26 @@ static const char *get_tile_change_menu_text(struct tile *ptile,
   /* Change the terrain manually to avoid any side effects. */
   switch (activity) {
   case ACTIVITY_IRRIGATE:
-    assert(ptype->irrigation_result != ptile->terrain
-	   && ptype->irrigation_result != T_NONE);
+    if (ptype->irrigation_result == ptile->terrain
+	|| ptype->irrigation_result == T_NONE) {
+      assert(0);
+    }
     map_irrigate_tile(ptile);
     break;
 
   case ACTIVITY_MINE:
-    assert(ptype->mining_result != ptile->terrain
-	   && ptype->mining_result != T_NONE);
+    if (ptype->mining_result == ptile->terrain
+	|| ptype->mining_result == T_NONE) {
+      assert(0);
+    }
     map_mine_tile(ptile);
     break;
-
+    
   case ACTIVITY_TRANSFORM:
-    assert(ptype->transform_result != ptile->terrain
-	   && ptype->transform_result != T_NONE);
+    if (ptype->transform_result == ptile->terrain
+	|| ptype->transform_result == T_NONE) {
+      assert(0);
+    }
     map_transform_tile(ptile);
     break;
 

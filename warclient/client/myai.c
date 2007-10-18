@@ -502,7 +502,9 @@ struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, 
 
       if (pcity2 && pcity2 != pcity) {
 	int x2, y2;
-	assert(map_to_city_map(&x2, &y2, pcity2, ptile));
+	if (!map_to_city_map(&x2, &y2, pcity2, ptile)) {
+	  assert(0);
+	}
 	pcity2->city_map[x2][y2] = C_TILE_EMPTY;
       }
     } map_city_radius_iterate_end;
@@ -514,7 +516,9 @@ struct toggle_worker *toggle_worker_new(struct city *pcity, struct tile *ptile, 
 
       if (pcity2 && pcity2 != pcity) {
 	int x2, y2;
-	assert(map_to_city_map(&x2, &y2, pcity2, ptile));
+	if (!map_to_city_map(&x2, &y2, pcity2, ptile)) {
+	  assert(0);
+	}
 	pcity2->city_map[x2][y2] = C_TILE_UNAVAILABLE;
       }
     } map_city_radius_iterate_end;

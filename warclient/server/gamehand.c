@@ -420,10 +420,14 @@ int get_team_mapping(Team_Type_id team)
 {
     int i;
     for (i = 0; i < mappings; i++) {
-        if(mapping[i].team_id == team)return i;
+      if(mapping[i].team_id == team) {
+	return i;
+      }
     }
     assert(false);
+    return 0;
 }
+
 /****************************************************************************
     Shuffle start positions so team players are close
 ****************************************************************************/
