@@ -1852,32 +1852,20 @@ main_start_players:
     
     players_iterate(pplayer) {
       int i;
-      bool free_techs_already_given = FALSE;
 
       give_initial_techs(pplayer);
-    
-      players_iterate(eplayer) {
-        if (players_on_same_team(eplayer, pplayer) &&
-            eplayer->player_no < pplayer->player_no) {
-	  free_techs_already_given = TRUE;
-	  break;
-        }
-      } players_iterate_end;
-      
-      if (free_techs_already_given) {
-        break;
-      }
-      for (i = 0; i < game.tech; i++) {
+
+      /* Note that the real number of researched techs is (tech_researched - 1)
+       * because there A_NONE is always marked as researched */
+      for (i = pplayer->research.techs_researched - 1; i < game.tech; i++) {
         give_random_initial_tech(pplayer);
       }
     } players_iterate_end;
     
-    if(game.is_new_game) {
-      /* If we're starting a new game, reset the max_players to be the
-       * number of players currently in the game.  But when loading a game
-       * we don't want to change it. */
-      game.max_players = game.nplayers;
-    }
+    /* If we're starting a new game, reset the max_players to be the
+     * number of players currently in the game.  But when loading a game
+     * we don't want to change it. */
+    game.max_players = game.nplayers;
   }
 
   /* Set up alliances based on team selections */
