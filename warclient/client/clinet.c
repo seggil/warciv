@@ -995,7 +995,6 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
 **************************************************************************/
 static int check_really_connected(int sock)
 {
-  int counter = 0;
   int ret = 0;
   fd_set fdsw;
 

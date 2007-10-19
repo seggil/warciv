@@ -30,6 +30,7 @@
 
 #ifdef HAVE_LIBCHARSET
 #include <libcharset.h>
+extern const char *my_locale_charset (void);
 #endif
 
 #include "fciconv.h"

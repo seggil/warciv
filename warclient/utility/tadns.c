@@ -53,10 +53,6 @@
 
 
 #ifdef WIN32_NATIVE
-#if 0
-#pragma comment(lib,"ws2_32")
-#pragma comment(lib,"advapi32")
-#endif
 typedef int socklen_t;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
@@ -157,7 +153,7 @@ static int getdnsip(struct dns *dns)
   int i;
   LONG err;
   HKEY hKey, hSub;
-  char subkey[512], dhcpns[512], ns[512], value[128], *key =
+  char subkey[512], value[128], *key =
     "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
 
   if ((err = RegOpenKey(HKEY_LOCAL_MACHINE, key, &hKey)) != ERROR_SUCCESS) {
@@ -237,7 +233,7 @@ struct dns *dns_init(void)
 
   /* Increase the receive buffer */
   if (-1 == setsockopt(dns->sock, SOL_SOCKET, SO_RCVBUF,
-		       &rcvbufsiz, sizeof(rcvbufsiz)))
+		       (char *) &rcvbufsiz, sizeof(rcvbufsiz)))
     {
       freelog (LOG_ERROR, _("Failed to set UDP socket receive buffer size:"
 			    " setsockopt: %s"), mystrsocketerror());

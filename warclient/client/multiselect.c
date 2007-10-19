@@ -609,7 +609,7 @@ int multi_select_size(int multi)
 
 void multi_select_wipe_up_unit(struct unit *punit)
 {
-	bool need_update_menus;
+	bool need_update_menus = FALSE;
 	int i;
 	
 	multi_select_remove_unit(punit);
