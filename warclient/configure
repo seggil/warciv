@@ -21058,7 +21058,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-ac_config_files="$ac_config_files Makefile data/Makefile data/flags/Makefile data/misc/Makefile data/trident/Makefile data/isophex/Makefile data/isotrident/Makefile data/default/Makefile data/civ1/Makefile data/civ2/Makefile data/warruleset-1.2/Makefile data/warruleset-1.3/Makefile data/nowonder+1.2/Makefile data/tournament/Makefile data/duel/Makefile data/experimental/Makefile data/maps/Makefile data/stdsounds/Makefile data/scenario/Makefile data/nation/Makefile data/history/Makefile utility/Makefile utility/ftwl/Makefile common/Makefile common/aicore/Makefile ai/Makefile tests/Makefile win32/Makefile client/Makefile client/agents/Makefile client/include/Makefile client/gui-sdl/Makefile client/gui-gtk/Makefile client/gui-gtk-2.0/Makefile client/gui-xaw/Makefile client/gui-win32/Makefile client/gui-ftwl/Makefile client/gui-stub/Makefile server/Makefile server/generator/Makefile manual/Makefile intl/Makefile po/Makefile.in doc/Makefile doc/man/Makefile doc/de/Makefile doc/fr/Makefile doc/it/Makefile doc/ja/Makefile doc/nl/Makefile doc/sv/Makefile freeciv.spec:bootstrap/freeciv.spec.in bootstrap/undep.sh data/Freeciv client/freeciv.desktop:bootstrap/freeciv.desktop.in"
+ac_config_files="$ac_config_files Makefile data/Makefile data/flags/Makefile data/misc/Makefile data/trident/Makefile data/isophex/Makefile data/isotrident/Makefile data/default/Makefile data/civ1/Makefile data/civ2/Makefile data/warruleset-1.2/Makefile data/warruleset-1.3/Makefile data/nowonder+1.2/Makefile data/tournament/Makefile data/duel/Makefile data/experimental/Makefile data/1.14style/Makefile data/maps/Makefile data/stdsounds/Makefile data/scenario/Makefile data/nation/Makefile data/history/Makefile utility/Makefile utility/ftwl/Makefile common/Makefile common/aicore/Makefile ai/Makefile tests/Makefile win32/Makefile client/Makefile client/agents/Makefile client/include/Makefile client/gui-sdl/Makefile client/gui-gtk/Makefile client/gui-gtk-2.0/Makefile client/gui-xaw/Makefile client/gui-win32/Makefile client/gui-ftwl/Makefile client/gui-stub/Makefile server/Makefile server/generator/Makefile manual/Makefile intl/Makefile po/Makefile.in doc/Makefile doc/man/Makefile doc/de/Makefile doc/fr/Makefile doc/it/Makefile doc/ja/Makefile doc/nl/Makefile doc/sv/Makefile freeciv.spec:bootstrap/freeciv.spec.in bootstrap/undep.sh data/Freeciv client/freeciv.desktop:bootstrap/freeciv.desktop.in"
 
 ac_config_files="$ac_config_files civ:bootstrap/civ.in"
 
@@ -21832,6 +21832,7 @@ do
     "data/tournament/Makefile") CONFIG_FILES="$CONFIG_FILES data/tournament/Makefile" ;;
     "data/duel/Makefile") CONFIG_FILES="$CONFIG_FILES data/duel/Makefile" ;;
     "data/experimental/Makefile") CONFIG_FILES="$CONFIG_FILES data/experimental/Makefile" ;;
+    "data/1.14style/Makefile") CONFIG_FILES="$CONFIG_FILES data/1.14style/Makefile" ;;
     "data/maps/Makefile") CONFIG_FILES="$CONFIG_FILES data/maps/Makefile" ;;
     "data/stdsounds/Makefile") CONFIG_FILES="$CONFIG_FILES data/stdsounds/Makefile" ;;
     "data/scenario/Makefile") CONFIG_FILES="$CONFIG_FILES data/scenario/Makefile" ;;

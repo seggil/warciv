@@ -671,6 +671,7 @@ AC_CONFIG_FILES([Makefile
 	  data/tournament/Makefile
 	  data/duel/Makefile
 	  data/experimental/Makefile
+	  data/1.14style/Makefile
 	  data/maps/Makefile
 	  data/stdsounds/Makefile
 	  data/scenario/Makefile
