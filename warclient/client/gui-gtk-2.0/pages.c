@@ -324,7 +324,6 @@ static void server_list_created_callback(struct server_list *new_server_list,
 					 const char *error, void *data)
 {
   char msg[256];
-  server_list_request_id = -1;
 
   freelog(LOG_DEBUG,
 	  "server_list_created_callback new_server_list=%p"
@@ -333,7 +332,14 @@ static void server_list_created_callback(struct server_list *new_server_list,
     delete_server_list(internet_server_list);*/
 
   if (!new_server_list) {
-    my_snprintf(msg, sizeof(msg), _("Could not get server list: %s"), error);
+    if (server_list_request_id > 0) {
+      cancel_async_server_list_request(server_list_request_id);
+      my_snprintf(msg, sizeof(msg), 
+		  _("Could not get server list: %s"), error);
+      append_network_statusbar(msg);
+      server_list_request_id = -1;
+     return;
+    }
   } else {
     my_snprintf(msg, sizeof(msg),
 		_("Received %d server(s) from the meta server."),
@@ -341,6 +347,8 @@ static void server_list_created_callback(struct server_list *new_server_list,
     freelog(LOG_DEBUG, "slcc   list size %d",
 	    server_list_size(new_server_list));
   }
+
+  server_list_request_id = -1;
   append_network_statusbar(msg);
 
   internet_server_list = new_server_list;

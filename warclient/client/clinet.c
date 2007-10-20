@@ -767,8 +767,6 @@ static void aslcfree(void *data)
   freelog(LOG_DEBUG, "free async_server_list_context %p", ctx);
   free(ctx);
 
-  adns_check_expired();
-  
 }
 
 /**************************************************************************

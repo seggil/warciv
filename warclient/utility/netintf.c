@@ -339,6 +339,7 @@ static void nlcfree(void *data)
   freelog(LOG_DEBUG, "nf  free net_lookup_ctx %p", ctx); /*ASYNCDEBUG*/
   free(ctx);
 }
+
 /***************************************************************************
   ...
 ***************************************************************************/
@@ -365,7 +366,7 @@ static void adns_result_callback(const unsigned char *address,
     (*ctx->callback) (NULL, ctx->userdata);
   }
 
-  if (ctx->req_id > 0) {
+  if (ctx->req_id > 0) { 
     /* we were called indirectly, so it's ok to free ctx */
     nlcfree(ctx);
   }
@@ -426,7 +427,7 @@ int net_lookup_service_async(const char *name, int port,
   ctx->req_id = 0;
   ctx->adns_id = -1;
   
-  if (is_net_service_resolved (name, port, ctx->addr)) {
+  if (is_net_service_resolved(name, port, ctx->addr)) {
     freelog(LOG_DEBUG, 
 	    "nlsa   is_net_service_resolved return TRUE"); /*ASYNCDEBUG*/
     (*ctx->callback) (ctx->addr, ctx->userdata);
