@@ -18,4 +18,4 @@ Icon=warclient.png
 StartupNotify=true
 Terminal=false
 Type=Application
-Categories=Application;Game;StrategyGame;
+Categories=Game;GNOME;StrategyGame;

@@ -3090,6 +3090,7 @@ void handle_freeze_client(void)
   freelog(LOG_DEBUG, "handle_freeze_client");
 
   reports_freeze();
+
   agents_freeze_hint();
 }
 
@@ -3114,8 +3115,8 @@ void handle_thaw_client(void)
   freelog(LOG_DEBUG, "handle_thaw_client");
 
   reports_thaw();
-  agents_thaw_hint();
 
+  agents_thaw_hint();
   update_turn_done_button_state();
 }
 
@@ -3160,3 +3161,4 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->survives, packet->eff_value,
 		    packet->req_type, packet->req_value, packet->group_id);
 }
+

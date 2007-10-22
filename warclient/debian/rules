@@ -27,8 +27,6 @@ COMMON_CONFIG := --cache-file=$(CURDIR)/config.cache \
 		 --enable-debug=no \
 		 --enable-auth \
 
-#		 --enable-debug=yes \
-
 build: patch build-all-stamp
 
 build-all-stamp:
@@ -70,7 +68,6 @@ install-stamp:  build-all-stamp
 		localedir=$(DESTDIR)/usr/share/locale install)
 
 	mv debian/tmp/usr/games/civclient debian/tmp/usr/games/warclient-gtk
-#	ln -s debian/tmp/usr/share/man/man6/civclient.6.gz debian/tmp/usr/share/man/man6/civclient-gtk.6.gz
 
 	install -d -m 755 $(CURDIR)/debian/tmp/usr/share/applications
 	cp debian/warclient.desktop debian/tmp/usr/share/applications
@@ -81,9 +78,9 @@ install-stamp:  build-all-stamp
 	cp debian/warclient-server.png debian/tmp/usr/share/pixmaps
 	cp debian/warclient-server.xpm debian/tmp/usr/share/pixmaps
 
-	install -d -m 755 $(CURDIR)/debian/tmp/usr/share/man/man6
-	cp debian/civclient.6 debian/tmp/usr/share/man/man6
-	cp debian/civserver.6 debian/tmp/usr/share/man/man6
+#	install -d -m 755 $(CURDIR)/debian/tmp/usr/share/man/man6
+#	cp debian/civclient.6 debian/tmp/usr/share/man/man6
+#	cp debian/civserver.6 debian/tmp/usr/share/man/man6
 
 	dh_install
 
@@ -95,7 +92,6 @@ binary-indep: build install
 	dh_installdocs -i
 	dh_installchangelogs -i
 	dh_installmenu -i
-	dh_installman -i
 	dh_compress -i
 	-gzip -9 debian/warclient-data/usr/share/games/freeciv/scenario/*.sav
 	dh_fixperms -i
@@ -117,6 +113,7 @@ binary-arch: build install
 	done
 	dh_link -a
 	dh_installmenu -a
+	dh_installman -a
 	dh_strip -a
 	dh_compress -a
 	dh_fixperms -a

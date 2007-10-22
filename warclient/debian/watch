@@ -1,5 +1,5 @@
 # Example watch control file for uscan
 version=2
 
-http://woodswolf.homelinux.net/debian/dists/sid/pool/warclient/warclient(.*)\.tar\.gz \
+http://dl.gna.org/freeciv-warclient/sources/warclient(.*)\.tar\.gz \
 	debian uupdate
