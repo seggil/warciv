@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+update-alternatives --remove civ /usr/games/warclient-gtk
+update-alternatives --remove civclient /usr/games/warclient-gtk
+
+#DEBHELPER#
