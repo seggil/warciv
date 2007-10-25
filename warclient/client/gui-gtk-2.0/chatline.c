@@ -185,13 +185,16 @@ static bool is_public_message(const char *s)
 {
   const char *p;
   
-  if (s[0] == '/' || s[0] == '.')
+  if (s[0] == '/' || s[0] == '.') {
     return FALSE;
-  for (p = s; *p; p++) {
-    if (my_isspace(*p))
+  }
+  for (p = s[0] == '\'' || s[0] == '"' ? strchr(s + 1, s[0]) : s;
+       p && *p != '\0'; p++) {
+    if (my_isspace(*p)) {
       return TRUE;
-    if (*p == ':')
+    } else if (*p == ':') {
       return FALSE;
+    }
   }
   return TRUE;
 }

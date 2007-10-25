@@ -199,12 +199,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   /* this loop to prevent players from sending multiple lines
    * which can be abused */
   if(!srvarg.allow_multi_line_chat) {
-  for (cp = message; *cp != '\0'; cp++) {
-    if (*cp == '\n' || *cp == '\r') {
-      *cp='\0';
-      break;
+    for (cp = message; *cp != '\0'; cp++) {
+      if (*cp == '\n' || *cp == '\r') {
+	*cp='\0';
+	break;
+      }
     }
-  }
   }
 
   /* Server commands are prefixed with '/', which is an obvious
@@ -283,10 +283,23 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     struct player *pdest = NULL;
     struct connection *conn_dest = NULL;
     char name[MAX_LEN_NAME];
-    char *cpblank;
+    char *cpblank, *quotes = NULL;
 
-    (void) mystrlcpy(name, message,
-		     MIN(sizeof(name), cp - message + 1));
+    if ((message[0] == '\'' || message[0] == '"')
+	&& ((quotes = strchr(message + 1, message[0])))) {
+      if (*(quotes + 1) != ':') {
+	quotes = NULL;
+        (void) mystrlcpy(name, message,
+		         MIN(sizeof(name), cp - message + 1));
+      } else {
+	cp = quotes + 1;
+        (void) mystrlcpy(name, message + 1,
+		         MIN(sizeof(name), quotes - message));
+      }
+    } else {
+      (void) mystrlcpy(name, message,
+		       MIN(sizeof(name), cp - message + 1));
+    }
 
     double_colon = (*(cp+1) == ':');
     if (double_colon) {
@@ -341,7 +354,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     /* Didn't match; check heuristics to see if this is likely
      * to be a global message
      */
-    cpblank=strchr(message, ' ');
+    cpblank=strchr(quotes ? quotes : message, ' ');
     if (!cpblank || (cp < cpblank)) {
       if (double_colon) {
 	my_snprintf(chat, sizeof(chat),

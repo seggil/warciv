@@ -1557,7 +1557,7 @@ void finish_lanserver_scan(void)
 }
 
 /**************************************************************************
-  Return TRUE if the client is connected to a warserver > 0.8.9a
+  Returns TRUE if the client is connected to a warserver >= 0.8.9a.
 **************************************************************************/
 bool is_warserver(void)
 {
