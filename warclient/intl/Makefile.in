@@ -50,7 +50,7 @@ RANLIB = @RANLIB@
 YACC = @INTLBISON@ -y -d
 YFLAGS = --name-prefix=__gettext
 
-DEFS = -DLOCALE_ALIAS_PATH=\"$(aliaspath)\" \
+DEFS = -DLOCALEDIR=\"$(localedir)\" -DLOCALE_ALIAS_PATH=\"$(aliaspath)\" \
 -DLIBDIR=\"$(libdir)\" @DEFS@
 CPPFLAGS = @CPPFLAGS@
 CFLAGS = @CFLAGS@

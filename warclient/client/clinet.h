@@ -93,4 +93,6 @@ int create_server_list_async (char *errbuf,
                               data_free_func_t datafree);
 void *cancel_async_server_list_request (int id);
 
+bool is_warserver(void);
+
 #endif  /* FC__CLINET_H */

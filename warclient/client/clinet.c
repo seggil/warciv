@@ -59,6 +59,7 @@
 #include <winsock2.h>
 #endif
 
+#include "capability.h"
 #include "capstr.h"
 #include "dataio.h"
 #include "fcintl.h"
@@ -1553,4 +1554,13 @@ void finish_lanserver_scan(void)
 {
   my_closesocket(socklan);
   delete_server_list(lan_servers);
+}
+
+/**************************************************************************
+  Return TRUE if the client is connected to a warserver > 0.8.9a
+**************************************************************************/
+bool is_warserver(void)
+{
+  return (aconnection.established
+	  && has_capability("extroutes", aconnection.capability));
 }

@@ -38,6 +38,8 @@
 #include "support.h"
 #include "unit.h"
 
+#include "clinet.h"
+
 #include "helpdata.h"
 
 static const char * const help_type_names[] = {
@@ -696,9 +698,9 @@ void helptext_unit(char *buf, int i, const char *user_text)
     /* TRANS: "Manhattan" distance is the distance along gridlines, with
      * no diagonals allowed. */
     sprintf(buf + strlen(buf), _("* Can establish trade routes (must travel "
-				 "to target city and must be at least 9 "
+				 "to target city and must be at least %d "
 				 "tiles [in Manhattan distance] from this "
-				 "unit's home city).\n"));
+				 "unit's home city).\n"), game.trademindist);
   }
   if (unit_type_flag(i, F_HELP_WONDER)) {
     sprintf(buf + strlen(buf),
@@ -847,8 +849,14 @@ void helptext_unit(char *buf, int i, const char *user_text)
 	      "the attacker.\n"), utype->bombard_rate);
   }
   if (unit_type_flag(i, F_AEGIS)) {
-    sprintf(buf + strlen(buf),
-	    _("* Gets quintuple defence against missiles and aircraft.\n"));
+    if (is_warserver()) {
+      /* Common rule for warservers */
+      sprintf(buf + strlen(buf),
+              _("* Gets double defence against missiles and aircraft.\n"));
+    } else {
+      sprintf(buf + strlen(buf),
+              _("* Gets quintuple defence against missiles and aircraft.\n"));
+    }
   }
   if (unit_type_flag(i, F_IGTER)) {
     sprintf(buf + strlen(buf),
