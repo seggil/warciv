@@ -2267,6 +2267,9 @@ void unqueue_mapview_updates(void)
     dirty_all();
     update_map_canvas(0, 0, mapview_canvas.store_width,
                       mapview_canvas.store_height);
+    tile_list_iterate(updated_tiles, ptile) {
+      overview_update_tile(ptile);
+    } tile_list_iterate_end;
   } else {
     if (needed_updates & UPDATE_CITY_DESCRIPTIONS) {
       update_city_descriptions();
