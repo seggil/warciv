@@ -708,15 +708,16 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 	request_diplomat_action(DIPLOMAT_EMBASSY, diplomat_id, victim_id, 0);
 	break;
       case 4:			/* investigate */
-	request_diplomat_action(DIPLOMAT_INVESTIGATE, diplomat_id, victim_id,
-				0);
+	request_diplomat_action(DIPLOMAT_INVESTIGATE, diplomat_id,
+				victim_id, 0);
 	break;
       case 5:			/* sabotage city */
-	request_diplomat_action(DIPLOMAT_SABOTAGE, diplomat_id, victim_id,
-				0);
+	request_diplomat_action(DIPLOMAT_SABOTAGE, diplomat_id,
+				victim_id, B_LAST);
 	break;
       case 6:			/* steal tech */
-	request_diplomat_action(DIPLOMAT_STEAL, diplomat_id, victim_id, 0);
+	request_diplomat_action(DIPLOMAT_STEAL, diplomat_id,
+				victim_id, game.num_tech_types);
 	break;
       case 7:			/* incite revolt */
 	request_diplomat_action(DIPLOMAT_INCITE, diplomat_id, victim_id, 0);

@@ -543,8 +543,11 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   freelog (LOG_DEBUG, "steal-tech: unit: %d", pdiplomat->id);
 
   /* If not a Spy, do something random. */
-  if (!unit_flag (pdiplomat, F_SPY))
+  if (!unit_flag(pdiplomat, F_SPY)
+      || get_invention(pplayer, technology) == TECH_KNOWN
+      || get_invention (cplayer, technology) != TECH_KNOWN) {
     technology = game.num_tech_types;
+  }
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
   if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat, 
@@ -624,15 +627,19 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   } else if (technology >= game.num_tech_types) {
     /* Pick first available tech to steal. */
     target = -1;
-//    which = myrand (count);
     tech_type_iterate(index) {
       if (get_invention(pplayer, index) != TECH_KNOWN
 	  && get_invention(cplayer, index) == TECH_KNOWN
 	  && tech_is_available(pplayer, index)) {
 	  target = index;
 	  break;
-	}
+      }
     } tech_type_iterate_end;
+    /* This player cannot steal a tech that the target player doesn't own */
+    if (target == -1 && cplayer->future_tech <= pplayer->future_tech) {
+      freelog(LOG_DEBUG, "steal-tech: random: couldn't find any tech to steal");
+      return;
+    }
     freelog(LOG_DEBUG, "steal-tech: random: targeted technology: %d (%s)",
 	    target, get_tech_name(pplayer, target));
   } else {
