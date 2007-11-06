@@ -313,6 +313,9 @@ struct city {
     /* If set, workers need to be arranged when the city is unfrozen.  Only
      * set inside auto_arrange_workers. */
     bool needs_arrange;
+
+    /* Used to build unit or city at the end of the turn. */
+    bool delayed_build;
   } server;
 
   int turn_founded;		/* In which turn was the city founded? */
