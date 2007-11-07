@@ -545,7 +545,8 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   /* If not a Spy, do something random. */
   if (!unit_flag(pdiplomat, F_SPY)
       || get_invention(pplayer, technology) == TECH_KNOWN
-      || get_invention (cplayer, technology) != TECH_KNOWN) {
+      || get_invention (cplayer, technology) != TECH_KNOWN
+      || !tech_is_available(pplayer, technology)) {
     technology = game.num_tech_types;
   }
 
@@ -649,9 +650,9 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
      */
     if ((get_invention (pplayer, technology) != TECH_KNOWN) &&
 	(get_invention (cplayer, technology) == TECH_KNOWN)) {
-	target = technology;
-	freelog(LOG_DEBUG, "steal-tech: specified target technology: %d (%s)",
-		target, get_tech_name(pplayer, target));
+      target = technology;
+      freelog(LOG_DEBUG, "steal-tech: specified target technology: %d (%s)",
+	      target, get_tech_name(pplayer, target));
     } else {
       notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
 		       _("Game: Your %s could not find the %s technology"
