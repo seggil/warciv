@@ -505,27 +505,28 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
               return TRUE;
 
             case GDK_4:
-              delayed_goto_cat(0, 4);
+              airlift_queue_cat(0, 1);
               return TRUE;
 
             case GDK_5:
+              airlift_queue_cat(0, 2);
               return TRUE;
 
               break;
             case GDK_6:
-              delayed_goto_cat(0, 6);
+              airlift_queue_cat(0, 3);
               return TRUE;
 
             case GDK_7:
-              delayed_goto_cat(0, 7);
+              airlift_queue_cat(0, 4);
               return TRUE;
 
             case GDK_8:
-              delayed_goto_cat(0, 8);
+              airlift_queue_cat(0, 5);
               return TRUE;
 
             case GDK_9:
-              delayed_goto_cat(0, 9);
+              airlift_queue_cat(0, 6);
               return TRUE;
 
             default:
@@ -591,27 +592,27 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
               return TRUE;
 
             case GDK_4:
-              delayed_goto_move(4, 0);
+              airlift_queue_move(1, 0);
               return TRUE;
 
             case GDK_5:
-              delayed_goto_move(5, 0);
+              airlift_queue_move(2, 0);
               return TRUE;
 
             case GDK_6:
-              delayed_goto_move(6, 0);
+              airlift_queue_move(3, 0);
               return TRUE;
 
             case GDK_7:
-              delayed_goto_move(7, 0);
+              airlift_queue_move(4, 0);
               return TRUE;
 
             case GDK_8:
-              delayed_goto_move(8, 0);
+              airlift_queue_move(5, 0);
               return TRUE;
 
             case GDK_9:
-              delayed_goto_move(9, 0);
+              airlift_queue_move(6, 0);
               return TRUE;
 
             default:
@@ -676,27 +677,27 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
             return TRUE;
 
           case GDK_4:
-            delayed_goto_copy(0, 4);
+            airlift_queue_copy(0, 1);
             return TRUE;
 
           case GDK_5:
-            delayed_goto_copy(0, 5);
+            airlift_queue_copy(0, 2);
             return TRUE;
 
           case GDK_6:
-            delayed_goto_copy(0, 6);
+            airlift_queue_copy(0, 3);
             return TRUE;
 
           case GDK_7:
-            delayed_goto_copy(0, 7);
+            airlift_queue_copy(0, 4);
             return TRUE;
 
           case GDK_8:
-            delayed_goto_copy(0, 8);
+            airlift_queue_copy(0, 5);
             return TRUE;
 
           case GDK_9:
-            delayed_goto_copy(0, 9);
+            airlift_queue_copy(0, 6);
             return TRUE;
 
           default:
