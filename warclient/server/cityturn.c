@@ -71,7 +71,9 @@ static Impr_Type_id building_upgrades_to(struct city *pcity, Impr_Type_id b);
 static bool upgrade_building_prod(struct city *pcity);
 static Unit_Type_id unit_upgrades_to(struct city *pcity, Unit_Type_id id);
 static bool upgrade_unit_prod(struct city *pcity);
-static void pay_for_buildings(struct player *pplayer, struct city *pcity);
+
+static bool sell_random_improvement(struct player *pplayer);
+static bool drop_random_unit(struct player *pplayer);
 
 static bool disband_city(struct city *pcity);
 
@@ -377,18 +379,93 @@ void send_city_turn_notifications(struct conn_list *dest, struct city *pcity)
 }
 
 /**************************************************************************
+  Choose a radom improvement and sell it.
+  Returns TRUE if a imoprvement has been sold.
+**************************************************************************/
+static bool sell_random_improvement(struct player *pplayer)
+{
+  struct city *ccity = NULL;
+  Impr_Type_id cimpr = B_LAST;
+  int r = 0;
+
+  city_list_iterate(pplayer->cities, pcity) {
+    built_impr_iterate(pcity, i) {
+      if (!is_wonder(i)
+	  && (!ccity || improvement_upkeep(pcity, i) > 0)
+	  && pplayer->government != game.government_when_anarchy
+	  && myrand(++r) == 0) {
+	ccity = pcity;
+	cimpr = i;
+	if (improvement_upkeep(pcity, i) <= 0) {
+	  r--;
+	}
+      }
+    } built_impr_iterate_end;
+  } city_list_iterate_end;
+
+  if (ccity) {
+    assert(cimpr != B_LAST);
+    notify_player_ex(pplayer, ccity->tile, E_IMP_AUCTIONED,
+		     _("Game: Can't afford to maintain %s in %s, "
+		       "building sold!"),
+		     improvement_types[cimpr].name, ccity->name);
+    /* Restore the upkeep cost */
+    pplayer->economic.gold += improvement_upkeep(ccity, cimpr);
+    do_sell_building(pplayer, ccity, cimpr);
+    /* Partial update: don't set it in revolt! */
+    city_refresh(ccity);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**************************************************************************
+  Choose a radom unit and disband it.
+  Returns TRUE if a unit has been wiped up.
+**************************************************************************/
+static bool drop_random_unit(struct player *pplayer)
+{
+  struct unit *cunit = NULL;
+  int r = 0;
+
+  /* Don't iterate the units, maybe some doesn't have homecity */
+  city_list_iterate(pplayer->cities, pcity) {
+    unit_list_iterate_safe(pcity->units_supported, punit) {
+      if (punit->upkeep_gold > 0 && myrand(++r) == 0) {
+	cunit = punit;
+      }
+    } unit_list_iterate_safe_end;
+  } city_list_iterate_end;
+
+  if (cunit) {
+    notify_player_ex(pplayer, cunit->tile, E_UNIT_LOST,
+	             _("Not enough gold. %s disbanded"),
+		     unit_type(cunit)->name);
+    /* Restore the upkeep cost */
+    pplayer->economic.gold += cunit->upkeep_gold;
+    wipe_unit(cunit);
+    city_refresh(player_find_city_by_id(pplayer, cunit->homecity));
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**************************************************************************
 ...
 **************************************************************************/
 void update_city_activities(struct player *pplayer)
 {
   int gold;
-  gold=pplayer->economic.gold;
+
+  gold = pplayer->economic.gold;
   pplayer->got_tech = FALSE;
   pplayer->research.bulbs_last_turn = 0;
   city_list_iterate(pplayer->cities, pcity) {
     assert(pcity->server.delayed_build == FALSE);
     update_city_activity(pplayer, pcity);
   } city_list_iterate_end;
+
+  /* Maybe build some unit/buildings */
   city_list_iterate(pplayer->cities, pcity) {
     if (pcity->server.delayed_build) {
       if (pcity->is_building_unit) {
@@ -399,6 +476,11 @@ void update_city_activities(struct player *pplayer)
       pcity->server.delayed_build = FALSE;
     }
   } city_list_iterate_end;
+
+  while (pplayer->economic.gold < 0 && sell_random_improvement(pplayer));
+  while (pplayer->economic.gold < 0 && drop_random_unit(pplayer));
+  assert(pplayer->economic.gold >= 0);
+
   pplayer->ai.prev_gold = gold;
   /* This test include the cost of the units because pay_for_units is called
    * in update_city_activity */
@@ -1063,8 +1145,13 @@ static bool city_build_building(struct player *pplayer, struct city *pcity)
     } else {
       city_refresh(pcity);
     }
-  }
 
+    if (pcity->server.delayed_build && !is_wonder(pcity->currently_building)) {
+      /* Pay for this building */
+      pplayer->economic.gold -= improvement_upkeep(pcity,
+						   pcity->currently_building);
+    }
+  }
   /* If there's something in the worklist, change the build target.
    * Else if just built a spaceship part, keep building the same
    * part.  (Fixme? - doesn't check whether spaceship part is still
@@ -1076,7 +1163,6 @@ static bool city_build_building(struct player *pplayer, struct city *pcity)
     advisor_choose_build(pplayer, pcity);
     freelog(LOG_DEBUG, "Advisor_choose_build didn't kill us.");
   }
-
   return TRUE;
 }
 
@@ -1085,6 +1171,8 @@ static bool city_build_building(struct player *pplayer, struct city *pcity)
 **************************************************************************/
 static bool city_build_unit(struct player *pplayer, struct city *pcity)
 {
+  struct unit *punit = NULL;
+
   if (!upgrade_unit_prod(pcity)) {
     /* Delay this */
     return TRUE;
@@ -1124,9 +1212,9 @@ static bool city_build_unit(struct player *pplayer, struct city *pcity)
     /* don't update turn_last_built if we returned above */
     pcity->turn_last_built = game.turn;
 
-    (void) create_unit(pplayer, pcity->tile, pcity->currently_building,
-		       do_make_unit_veteran(pcity, pcity->currently_building),
-		       pcity->id, -1);
+    punit = create_unit(pplayer, pcity->tile, pcity->currently_building,
+		        do_make_unit_veteran(pcity, pcity->currently_building),
+		        pcity->id, -1);
 
     /* After we created the unit remove the citizen. This will also
        rearrange the worker to take into account the extra resources
@@ -1158,6 +1246,10 @@ static bool city_build_unit(struct player *pplayer, struct city *pcity)
       advisor_choose_build(pplayer, pcity);
     }
   }
+  if (pcity->server.delayed_build && punit) {
+    /* Pay for this unit */
+    pplayer->economic.gold -= punit->upkeep_gold;
+  }
   return TRUE;
 }
 
@@ -1179,27 +1271,6 @@ static bool city_build_stuff(struct player *pplayer, struct city *pcity)
   } else {
     return city_build_unit(pplayer, pcity);
   }
-}
-
-/**************************************************************************
-...
-**************************************************************************/
-static void pay_for_buildings(struct player *pplayer, struct city *pcity)
-{
-  built_impr_iterate(pcity, i) {
-    if (!is_wonder(i)
-	&& pplayer->government != game.government_when_anarchy) {
-      if (pplayer->economic.gold - improvement_upkeep(pcity, i) < 0) {
-	notify_player_ex(pplayer, pcity->tile, E_IMP_AUCTIONED,
-			 _("Game: Can't afford to maintain %s in %s, "
-			   "building sold!"),
-			 improvement_types[i].name, pcity->name);
-	do_sell_building(pplayer, pcity, i);
-	city_refresh(pcity);
-      } else
-	pplayer->economic.gold -= improvement_upkeep(pcity, i);
-    }
-  } built_impr_iterate_end;
 }
 
 /**************************************************************************
@@ -1410,8 +1481,17 @@ static void update_city_activity(struct player *pplayer, struct city *pcity)
     pcity->airlift = (get_city_bonus(pcity, EFT_AIRLIFT) > 0);
     update_tech(pplayer, pcity->science_total);
     pplayer->economic.gold+=pcity->tax_total;
-    pay_for_units(pplayer, pcity);
-    pay_for_buildings(pplayer, pcity);
+    /* Pay for units */
+    unit_list_iterate_safe(pcity->units_supported, punit) {
+      pplayer->economic.gold -= punit->upkeep_gold;
+    } unit_list_iterate_safe_end;
+    /* Pay for buildings */
+    built_impr_iterate(pcity, i) {
+      if (!is_wonder(i)
+	  && pplayer->government != game.government_when_anarchy) {
+	pplayer->economic.gold -= improvement_upkeep(pcity, i);
+      }
+    } built_impr_iterate_end;
 
     if(city_unhappy(pcity)) { 
       pcity->anarchy++;

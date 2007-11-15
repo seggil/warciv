@@ -248,37 +248,6 @@ static void do_upgrade_effects(struct player *pplayer)
 }
 
 /***************************************************************************
-  Pay the cost of supported units of one city
-***************************************************************************/
-void pay_for_units(struct player *pplayer, struct city *pcity)
-{
-  int potential_gold = 0;
-
-  built_impr_iterate(pcity, pimpr) {
-    potential_gold += impr_sell_gold(pimpr);
-  } built_impr_iterate_end;
-
-  unit_list_iterate_safe(pcity->units_supported, punit) {
-
-    if (pplayer->economic.gold + potential_gold < punit->upkeep_gold) {
-      /* We cannot upkeep this unit any longer and selling off city
-       * improvements will not help so we will have to disband */
-      assert(pplayer->economic.gold + potential_gold >= 0);
-      
-      notify_player_ex(pplayer, NULL, E_UNIT_LOST,
-		       _("Not enough gold. %s disbanded"),
-		       unit_type(punit)->name);
-      wipe_unit(punit);
-    } else {
-      /* Gold can get negative here as city improvements will be sold
-       * afterwards to balance our budget. FIXME: Should units with gold 
-       * upkeep give gold when they are disbanded? */
-      pplayer->economic.gold -= punit->upkeep_gold;
-    }
-  } unit_list_iterate_safe_end;
-}
-
-/***************************************************************************
   1. Do Leonardo's Workshop upgrade if applicable.
 
   2. Restore/decrease unit hitpoints.
