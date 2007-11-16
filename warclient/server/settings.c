@@ -756,7 +756,9 @@ struct settings_s settings[] = {
 	     "1 = barbarians only in huts \n"
 	     "2 = normal rate of barbarian appearance \n"
 	     "3 = frequent barbarian uprising \n"
-	     "4 = raging hordes, lots of barbarians"), NULL, 
+	     "4 = raging hordes, lots of barbarians\n"
+	     "5 = super-barbarians\n"
+	     "6 = very numerous and powerful barbarians"), NULL, 
 	  GAME_MIN_BARBARIANRATE, GAME_MAX_BARBARIANRATE, 
 	  GAME_DEFAULT_BARBARIANRATE)
 
