@@ -1043,7 +1043,7 @@ static bool city_build_building(struct player *pplayer, struct city *pcity)
     pplayer->economic.gold += pcity->before_change_shields;
     pcity->before_change_shields = 0;
     pcity->shield_stock = 0;
-    advance_worklist = TRUE;
+    advance_worklist = !worklist_is_empty(&pcity->worklist);
   }
   if (!upgrade_building_prod(pcity)) {
     /* Delay this */
