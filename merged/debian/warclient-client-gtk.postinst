@@ -1,7 +1,0 @@
-#!/bin/sh
-set -e
-update-alternatives --install /usr/games/civ civ /usr/games/warclient-gtk 50 \
-  --slave /usr/share/man/man6/civ.6.gz civ.6.gz /usr/share/man/man6/warclient-gtk.6.gz
-update-alternatives --install /usr/games/civclient civclient /usr/games/warclient-gtk 50
-
-#DEBHELPER#

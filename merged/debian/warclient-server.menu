@@ -1,1 +1,0 @@
-?package(warclient-server):needs="text" section="Games/Strategy" title="Warclient server" command="/usr/games/civserver" icon="warclient-server.xpm"
