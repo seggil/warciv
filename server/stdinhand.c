@@ -6765,8 +6765,9 @@ static void show_teams(struct connection *caller, bool send_to_all)
                 count++;
                 listed[i] = TRUE;
                 tc++;
-                cat_snprintf(buf2, sizeof(buf2), "%s ", pplayer->is_connected ?
-                             pplayer->username : pplayer->name);
+                cat_snprintf(buf2, sizeof(buf2), "<%s> ",
+			     pplayer->is_connected ? pplayer->username
+			                           : pplayer->name);
             }
         }
         if (teamid != -1)
