@@ -1,0 +1,12 @@
+diff -urNad warclient/configure.ac warclient.debian/configure.ac
+--- warclient/configure.ac	2007-08-05 11:59:41.000000000 +0200
++++ warclient.debian/configure.ac	2007-08-05 12:30:12.000000000 +0200
+@@ -320,7 +320,7 @@
+ 
+ dnl note this has to match the path installed by po/Makefile
+ if test x"$MINGW32" != "xyes"; then
+-  CPPFLAGS="$CPPFLAGS -DLOCALEDIR=\"\\\"$datadir/locale\\\"\""
++  CPPFLAGS="$CPPFLAGS -DLOCALEDIR=\"\\\"$prefix/share/locale\\\"\""
+ else
+   AC_DEFINE_UNQUOTED(LOCALEDIR, "./share/locale", [Locale directory (windows)])
+ fi

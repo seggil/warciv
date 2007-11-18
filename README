@@ -1,13 +1,1 @@
-Since revision 378 and for better maintenance of code 
-and usage of sources, you just need to get this directory.
-Originals Freeciv sources are given separatelly from 
-warclient hacking.
-
-To cleany merge freeciv-2.0 and warclient, just run :
-
-chmod u+x ./run.sh
-./run.sh <your_merged_dir>
-
-Warning : if <your_merged_dir> is empty, default is set as "./merged/"
-
-Follow instructions given in the output of ./run.sh
+Please see the doc/ directory for a complete list of documentation files.

@@ -1,0 +1,26 @@
+[nation_belgian]
+
+name=_("Belgian")
+plural=_("?plural:Belgians")
+class=_("Modern")
+legend = _("Belgium gained independance from the Dutch Kingdom in 1830. \
+Belgium is mainly characterized by its movement from a unified state \
+to a federal one. This is the result of the Flemish and the \
+Walloon's nationalist (almost) peaceful fights.")
+leader="Leopold", "Albert", "Boudewijn", "Baudouin"
+leader_sex="Male", "Male", "Male", "Male"
+flag="f.belgium"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "Warrior Code", "Monarchy", "Democracy", "Gunpowder",
+             "Guerilla Warfare"
+wonder= "Cure for Cancer"
+government = "Monarchy"
+
+cities =
+  "Brussel", "Antwerpen", "Gent", "Charleroi", "Liège", "Brugge", "Namur",
+  "Mons", "Leuven", "Aalst", "Kortrijk", "Mechelen", "Oostende", "Eupen",
+  "Tournai", "Hasselt", "St. Niklaas", "Dendermonde", "Dinant", "Lokeren"

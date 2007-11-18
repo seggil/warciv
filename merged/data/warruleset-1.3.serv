@@ -1,0 +1,44 @@
+# Server commands to make rules similar to Warruleset.
+#
+# Use this as, eg, "./ser -r data/warruleset-1.3.serv" 
+#
+# Warruleset start:
+
+rulesetdir warruleset-1.3
+
+/set startpos 4
+/set autosize 108
+/set gen 6
+/set alltemperate 1
+/set spec 350
+/set startunits cccwwwxxxx
+/set huts 0
+/set barb 0
+/set minpl 1
+/set aifill 0
+/set saveturns 1
+/set tinyisles 1
+/set landmass 20
+/set size 4
+/set top 3
+/set gamelog 30
+/set revolen 2
+/set traderevenuestyle 1
+/set caravanbonusstyle 1
+/set techt 0
+/set cityt 0
+/set goldt 0
+/set alliedair 1
+/set dispersion 0
+/set global 0
+/set nuclearwinter 0
+/hard
+
+#/loadac actions.txt
+
+#/wf data/welcome.txt
+
+# Change <your name> to the name people know you by, so
+# that they can contact you if they have problems. 
+#/metam Warserver + Pepserver <version> hosted by <your name>
+#/metat Warserver + Pepserver <version> hosted by <your name>

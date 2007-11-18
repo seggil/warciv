@@ -1,0 +1,23 @@
+[nation_hongkong]
+
+name=_("HongKong") ;need check this correct 
+plural=_("?plural:Kongs");need check this correct
+class=_("Historical")
+legend=_("Hong Kong was a dependent territory of the United Kingdom from 1842 until the transfer of sovereignty to the\ People's Republic of China in 1997.")
+leader= "Donald Tsang"
+leader_sex= "Male"
+	  
+flag="f.hong_kong"
+flag_alt = "-"
+city_style = "Asian"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder= "Magellan's Expedition"
+government= "Communism"
+civilwar_nations = "usa","vietnam"
+
+cities =
+ "none"

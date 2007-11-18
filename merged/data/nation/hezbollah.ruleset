@@ -1,0 +1,27 @@
+[nation_hezbollah]
+
+name=_("Terrorist")
+plural=_("?plural:Terrorists")
+class=_("Fictional")
+legend=_("A radical political and military organization that arose after the Israeli\
+invasion of Lebanon often accused of terrorism.")
+
+leader= "Sheikh Hassan"
+leader_sex= "Male"
+	    
+flag="f.hezbollah"
+flag_alt = "-"
+city_style = "Asian"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+
+wonder= ""
+government= "Fundamentalism"
+
+civilwar_nations = "usa","israeli"
+
+cities =
+  "none"

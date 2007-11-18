@@ -1,0 +1,32 @@
+[nation_nato]
+
+name=_("Otanese")
+plural=_("?plural:Otaneses")
+class=_("Fictional")
+legend=_("The North Atlantic Treaty Organisation NATO.")
+leader= "Paul-Henri Spaak",
+     "Dirk Stikker",
+      "Manlio Brosio",
+      "Joseph Luns",
+      "Lord Carrington",
+      "Manfred Wörner", 
+      "Sergio Balanzino",
+      "Willy Claes",
+      "Javier Solana"
+leader_sex= "Male","Male","Male","Male","Male","Male","Male","Male","Male"
+
+flag="f.nato"
+flag_alt = "-"
+city_style = "European"
+
+init_techs=""
+init_buildings=""
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
+wonder= ""
+government= "Democracy"
+civilwar_nations = "soviet","azerbaijan"
+
+cities =
+  "kill soviets",
+  "Washinton"
