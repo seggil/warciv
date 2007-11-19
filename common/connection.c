@@ -811,13 +811,23 @@ int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen)
 bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn,
                         char *username)
 {
-  if (cp->type == CPT_ADDRESS) {
-    return wildcardfit (cp->pattern, pconn->server.ipaddr);
-  } else if (cp->type == CPT_HOSTNAME) {
-    return wildcardfit (cp->pattern, pconn->addr);
-  } else if (cp->type == CPT_USERNAME) {
-    return wildcardfit (cp->pattern, username ? username
-                        : pconn->username);
+  bool ret = FALSE;
+
+  switch (cp->type) {
+  case CPT_HOSTNAME:
+    ret =  wildcardfit(cp->pattern, pconn->addr);
+    break;
+  case CPT_USERNAME:
+    ret = wildcardfit(cp->pattern, username ? username
+		       : pconn->username);
+    break;
+  case CPT_ADDRESS:
+    ret = wildcardfit(cp->pattern, pconn->server.ipaddr);
+    break;
+  default:
+    break;
   }
-  return FALSE;
+
+  return ret;
+
 }

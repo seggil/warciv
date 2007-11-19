@@ -594,18 +594,18 @@ int sniff_packets(void)
       game.turn_start = time(NULL);
     }
 
-    if(FD_ISSET(sock, &exceptfs)) {	     /* handle Ctrl-Z suspend/resume */
+    if (FD_ISSET(sock, &exceptfs)) {	     /* handle Ctrl-Z suspend/resume */
       continue;
     }
-    if(FD_ISSET(sock, &readfs)) {	     /* new players connects */
+    if (FD_ISSET(sock, &readfs)) {	     /* new players connects */
       freelog(LOG_VERBOSE, "got new connection");
-      if(server_accept_connection(sock)==-1) {
+      if (server_accept_connection(sock) == -1) {
 	freelog(LOG_ERROR, "failed accepting connection");
       }
     }
-    for(i=0; i<MAX_NUM_CONNECTIONS; i++) {   /* check for freaky players */
+    for (i=0; i<MAX_NUM_CONNECTIONS; i++) {   /* check for freaky players */
       struct connection *pconn = &connections[i];
-      if(pconn->used && FD_ISSET(pconn->sock, &exceptfs)) {
+      if (pconn->used && FD_ISSET(pconn->sock, &exceptfs)) {
  	freelog(LOG_ERROR, "cut connection %s due to exception data",
 		conn_description(pconn));
 	server_break_connection(pconn);
@@ -614,8 +614,9 @@ int sniff_packets(void)
     
     /* Check for adns responses */
     if (adns_is_available()) {
-      if (FD_ISSET(adns_get_socket_fd(), &readfs))
+      if (FD_ISSET(adns_get_socket_fd(), &readfs)) {
 	adns_poll();
+      }
       adns_check_expired();
     }
 #ifdef SOCKET_ZERO_ISNT_STDIN
@@ -627,7 +628,7 @@ int sniff_packets(void)
       free(bufptr_internal);
     }
 #else  /* !SOCKET_ZERO_ISNT_STDIN */
-    if(!no_input && FD_ISSET(0, &readfs)) {    /* input from server operator */
+    if (!no_input && FD_ISSET(0, &readfs)) {    /* input from server operator */
 #ifdef HAVE_LIBREADLINE
       rl_callback_read_char();
       if (readline_handled_input) {
@@ -657,117 +658,117 @@ int sniff_packets(void)
      
 #define MAX_PACKETS_WITHOUT_DELAY 2
 #define DELAY_COUNTER 1000
-    {                             /* input from a player */
-      for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
-  	struct connection *pconn = &connections[i];
-	if(pconn->used && FD_ISSET(pconn->sock, &readfs)) {
-	  //ballancing code start
-/*    if(!my_peeksocket(pconn->sock)) {//no data ready
-      pconn->server.packets_received = 0;//zero freeciv packets received
-      continue;
-    } else {//data ready, perhaps wait?
-      if(pconn->server.packets_received > MAX_PACKETS_WITHOUT_DELAY) {
-        if(pconn->server.delay_counter==0) {
-           freelog(LOG_NORMAL,  "BALLANCER: Setting counter to 0"); 
-           pconn->server.delay_counter = DELAY_COUNTER;
-          continue;//skip this packet
-        } else {//pconn->server.delay_counter is set, decrease it until zero
-          pconn->server.delay_counter--;
-          freelog(LOG_NORMAL,  "BALLANCER: Decreasing counter %i",pconn->server.delay_counter); 
-          if(pconn->server.delay_counter!=0) continue;//process packet only if pconn->server.delay_counter is zero
-          freelog(LOG_NORMAL,  "BALLANCER: Processing packet"); 
-        }
-      }
-    }*/
-	  //ballancing code end
-	  if (read_socket_data(pconn->sock, pconn->buffer) >= 0) {	//read single real packet
-	    void *packet;
-	    enum packet_type type;
-	    bool result;
-
-	    while (TRUE) {	//decode "freeciv packets" from real packet
-	      packet = get_packet_from_connection(pconn, &type, &result);
-	      if (result) {
-		pconn->server.packets_received++;
-		bool command_ok;
-
-		pconn->server.last_request_id_seen =
+      {                             /* input from a player */
+	for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
+	  struct connection *pconn = &connections[i];
+	  if(pconn->used && FD_ISSET(pconn->sock, &readfs)) {
+	    //ballancing code start
+	    /*    if(!my_peeksocket(pconn->sock)) {//no data ready
+		  pconn->server.packets_received = 0;//zero freeciv packets received
+		  continue;
+		  } else {//data ready, perhaps wait?
+		  if(pconn->server.packets_received > MAX_PACKETS_WITHOUT_DELAY) {
+		  if(pconn->server.delay_counter==0) {
+		  freelog(LOG_NORMAL,  "BALLANCER: Setting counter to 0"); 
+		  pconn->server.delay_counter = DELAY_COUNTER;
+		  continue;//skip this packet
+		  } else {//pconn->server.delay_counter is set, decrease it until zero
+		  pconn->server.delay_counter--;
+		  freelog(LOG_NORMAL,  "BALLANCER: Decreasing counter %i",pconn->server.delay_counter); 
+		  if(pconn->server.delay_counter!=0) continue;//process packet only if pconn->server.delay_counter is zero
+		  freelog(LOG_NORMAL,  "BALLANCER: Processing packet"); 
+		  }
+		  }
+		  }*/
+	    //ballancing code end
+	    if (read_socket_data(pconn->sock, pconn->buffer) >= 0) {	//read single real packet
+	      void *packet;
+	      enum packet_type type;
+	      bool result;
+	      
+	      while (TRUE) {	//decode "freeciv packets" from real packet
+		packet = get_packet_from_connection(pconn, &type, &result);
+		if (result) {
+		  pconn->server.packets_received++;
+		  bool command_ok;
+		  
+		  pconn->server.last_request_id_seen =
 		    get_next_request_id(pconn->server.last_request_id_seen);
 #if PROCESSING_TIME_STATISTICS
-		{
-		  int err;
-		  struct timeval start, end;
-		  struct timezone tz;
-		  long us;
-
-		  err = gettimeofday(&start, &tz);
-		  assert(!err);
+		  {
+		    int err;
+		    struct timeval start, end;
+		    struct timezone tz;
+		    long us;
+		    
+		    err = gettimeofday(&start, &tz);
+		    assert(!err);
 #endif
-		connection_do_buffer(pconn);
-		start_processing_request(pconn,
-					 pconn->server.
-					 last_request_id_seen);
-		command_ok = handle_packet_input(pconn, packet, type);
-		if (packet) {
-		  free(packet);
-		  packet = NULL;
-		}
-
-                  /* Maybe changed */
-		  if(!pconn->used) {
-                    break;
-                  }
-
-		finish_processing_request(pconn);
-		connection_do_unbuffer(pconn);
-		if (!command_ok) {
-		  close_connection(pconn);
-		}
+		    connection_do_buffer(pconn);
+		    start_processing_request(pconn,
+					     pconn->server.
+					     last_request_id_seen);
+		    command_ok = handle_packet_input(pconn, packet, type);
+		    if (packet) {
+		      free(packet);
+		      packet = NULL;
+		    }
+		    
+		    /* Maybe changed */
+		    if (!pconn->used) {
+		      break;
+		    }
+		    
+		    finish_processing_request(pconn);
+		    connection_do_unbuffer(pconn);
+		    if (!command_ok) {
+		      close_connection(pconn);
+		    }
 #if PROCESSING_TIME_STATISTICS
-		  err = gettimeofday(&end, &tz);
-		  assert(!err);
-
-		  us = (end.tv_sec - start.tv_sec) * 1000000 +
+		    err = gettimeofday(&end, &tz);
+		    assert(!err);
+		    
+		    us = (end.tv_sec - start.tv_sec) * 1000000 +
 		      end.tv_usec - start.tv_usec;
-
-		  freelog(LOG_NORMAL,
-			  "processed request %d in %ld.%03ldms",
-			  pconn->server.last_request_id_seen, us / 1000,
-			  us % 1000);
-                }
+		    
+		    freelog(LOG_NORMAL,
+			    "processed request %d in %ld.%03ldms",
+			    pconn->server.last_request_id_seen, us / 1000,
+			    us % 1000);
+		  }
 #endif
-	      } else {		//end of if (result)
-		break;
-	      }
-	    }			//end of while
-	    //find connection with minimum packets sent
-	  } else {
-	    close_socket_callback(pconn);
+		} else {		//end of if (result)
+		  break;
+		}
+	      }			//end of while
+	      //find connection with minimum packets sent
+	    } else {
+	      close_socket_callback(pconn);
+	    }
 	  }
 	}
-      }
-
-      for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
-        struct connection *pconn = &connections[i];
-	if (pconn->used && pconn->send_buffer
-	    && pconn->send_buffer->ndata > 0) {
-	  if(FD_ISSET(pconn->sock, &writefs)) {
-	    flush_connection_send_buffer_all(pconn);
-	  } else {
-	    if(game.tcptimeout != 0 && pconn->last_write != 0
-	       && (time(NULL)>pconn->last_write + game.tcptimeout)) {
+	
+	for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
+	  struct connection *pconn = &connections[i];
+	  if (pconn->used && pconn->send_buffer
+	      && pconn->send_buffer->ndata > 0) {
+	    if(FD_ISSET(pconn->sock, &writefs)) {
+	      flush_connection_send_buffer_all(pconn);
+	    } else {
+	      if(game.tcptimeout != 0 && pconn->last_write != 0
+		 && (time(NULL)>pconn->last_write + game.tcptimeout)) {
 	      freelog(LOG_NORMAL, "cut connection %s due to lagging player",
 		      conn_description(pconn));
 	      server_break_connection(pconn);
+	      }
 	    }
 	  }
-        }
+	}
       }
-    }
     break;
   }
   con_prompt_off();
-
+  
   if (game.timeout != 0 && (time(NULL) > game.turn_start + game.timeout)) {
     return 0;
   }
@@ -809,15 +810,17 @@ static void reverse_lookup_cb(const unsigned char *addr,
 {
   struct connection *pconn = data;
   const char *hostname = (const char *) addr;
-
+  
   assert(pconn != NULL);
 
   freelog(LOG_DEBUG, "rlc reverse_lookup_cb addr=%p addrlen=%d data=%p",
-	  /*ASYNCDEBUG*/ addr, addrlen, data);
-  /*ASYNCDEBUG*/ if (!pconn->used) {
+	  addr, addrlen, data);
+  /*ASYNCDEBUG*/ 
+  if (!pconn->used) {
     freelog(LOG_DEBUG, "rlc   callback for non-existant pconn!");
-    /*ASYNCDEBUG*/ return;
+    return;
   }
+  /*ASYNCDEBUG*/ 
 
   pconn->adns_id = -1;
 
@@ -830,6 +833,7 @@ static void reverse_lookup_cb(const unsigned char *addr,
     freelog(LOG_VERBOSE, "ADNS could not find hostname for "
 	    "connection %s (%s)", pconn->server.ipaddr, pconn->username);
   }
+  grant_access_level(pconn);
 }
 
 /********************************************************************
@@ -878,57 +882,62 @@ static int server_accept_connection(int sockfd)
     return -1;
   }
 
-      connection_common_init(pconn);
-      pconn->sock = new_sock;
-      pconn->observer = FALSE;
-      pconn->player = NULL;
-      pconn->capability[0] = '\0';
-      pconn->access_level = access_level_for_next_connection();
-      pconn->delayed_disconnect = FALSE;
-      pconn->notify_of_writable_data = NULL;
-      pconn->server.currently_processed_request_id = 0;
-      pconn->server.last_request_id_seen = 0;
-      pconn->server.auth_tries = 0;
-      pconn->server.auth_settime = 0;
+  connection_common_init(pconn);
+  pconn->sock = new_sock;
+  pconn->observer = FALSE;
+  pconn->player = NULL;
+  pconn->capability[0] = '\0';
+  pconn->access_level = ALLOW_NONE;
+  pconn->delayed_disconnect = FALSE;
+  pconn->notify_of_writable_data = NULL;
+  pconn->server.currently_processed_request_id = 0;
+  pconn->server.last_request_id_seen = 0;
+  pconn->server.auth_tries = 0;
+  pconn->server.auth_settime = 0;
   pconn->server.delay_counter = 0;
   pconn->server.packets_received = 0;
-      pconn->server.status = AS_NOT_ESTABLISHED;
+  pconn->server.status = AS_NOT_ESTABLISHED;
   pconn->server.ping_timers = fc_malloc(sizeof(*pconn->server.ping_timers));
-      timer_list_init(pconn->server.ping_timers);
-      pconn->ping_time = -1.0;
-      pconn->incoming_packet_notify = NULL;
-      pconn->outgoing_packet_notify = NULL;
-      sz_strlcpy(pconn->username, makeup_connection_name(&pconn->id));
+  timer_list_init(pconn->server.ping_timers);
+  pconn->ping_time = -1.0;
+  pconn->incoming_packet_notify = NULL;
+  pconn->outgoing_packet_notify = NULL;
+  sz_strlcpy(pconn->username, makeup_connection_name(&pconn->id));
   sz_strlcpy(pconn->server.ipaddr, inet_ntoa(fromend.sockaddr_in.sin_addr));
   sz_strlcpy(pconn->addr, inet_ntoa(fromend.sockaddr_in.sin_addr));
   pconn->adns_id = -1;
-
+  
   if (!srvarg.no_dns_lookup) {
     if (adns_is_available()) {
       freelog(LOG_DEBUG, "sac   making adns request");
       /*ASYNCDEBUG*/
-	  pconn->adns_id = adns_reverse_lookup(&fromend,
-					       reverse_lookup_cb, pconn,
-					       NULL);
+      pconn->adns_id = adns_reverse_lookup(&fromend,
+					   reverse_lookup_cb, pconn,
+					   NULL);
       freelog(LOG_DEBUG, "sac   got adns_id=%d", pconn->adns_id);
-      /*ASYNCDEBUG*/ if (pconn->adns_id == 0) {	/* reverse_lookup_cb called already */
+      /*ASYNCDEBUG*/ 
+      if ( pconn->adns_id == 0) {	/* reverse_lookup_cb called already */
 	pconn->adns_id = -1;
       }
     } else {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
 			   sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
-      if (from)
+      if (from) {
 	sz_strlcpy(pconn->addr, from->h_name);
+      }
+      grant_access_level(pconn);
     }
+  } else {
+    grant_access_level(pconn);
   }
   
-      freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
+  freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
 	  pconn->username, pconn->addr, !from && pconn->adns_id > 0
 	  ? "hostname lookup in progress" : pconn->server.ipaddr);
-
+  
   conn_list_append(&game.all_connections, pconn);
-      ping_connection(pconn);
-
+  ping_connection(pconn);
+  
   return 0;
 }
 

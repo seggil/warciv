@@ -75,13 +75,12 @@ static enum cmdlevel_id default_access_level = ALLOW_BASIC;
 static enum cmdlevel_id first_access_level = ALLOW_BASIC;
 static bool cut_client_connection(struct connection *caller, char *name,
                                   bool check);
-static bool show_help(struct connection *caller, char *arg);
 static bool show_list(struct connection *caller, char *arg);
-static void show_connections(struct connection *caller);
 static void show_actionlist(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
 static void show_rulesets(struct connection *caller);
 static bool show_scenarios(struct connection *caller);
+static bool show_help(struct connection *caller, char *arg);
 static bool set_ai_level(struct connection *caller, char *name, int level, 
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
@@ -7042,7 +7041,7 @@ void show_players(struct connection *caller)
 /**************************************************************************
   List connections; initially mainly for debugging
 **************************************************************************/
-static void show_connections(struct connection *caller)
+void show_connections(struct connection *caller)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
     int n;

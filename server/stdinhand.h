@@ -33,6 +33,7 @@ void report_settable_server_options(struct connection *dest, int which);
 void set_ai_level_direct(struct player *pplayer, int level);
 void set_ai_level_directer(struct player *pplayer, int level);
 bool read_init_script(struct connection *caller, char *script_filename);
+void show_connections(struct connection *caller);
 void show_players(struct connection *caller);
 void clearallactions(void);
 

@@ -370,25 +370,25 @@ static void parse_udp(struct dns *dns)
   if (rcode == 1) {
     freelog(LOG_ERROR,
 	    _("DNS query failed: format error (%d)."), rcode);
-    return;
+    header->nanswers = 0;
   }
 
   if (rcode == 2) {
     freelog(LOG_VERBOSE,
 	    _("DNS query failed: server failure (%d)."), rcode);
-    return;
+    header->nanswers = 0;
   }
 
   if (rcode == 3) {
     freelog(LOG_VERBOSE,
 	    _("DNS query failed: name error - no such domain (%d)."),
 	    rcode);
-    return;
+    header->nanswers = 0;
   }
 
   if (rcode != 0) {
     freelog(LOG_VERBOSE, _("Unknown DNS query failure (%d)."), rcode);
-    return;
+    header->nanswers = 0;
   }
 
   /* Received 0 answers */
