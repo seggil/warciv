@@ -120,7 +120,7 @@ find_action_for_connection(char *username,
 
   user_action_list_iterate(on_connect_user_actions, pua) {
     user_action_as_str(pua, buf, sizeof(buf));
-    freelog(LOG_VERBOSE, "testing action %s against %s "
+    freelog(LOG_DEBUG, "testing action %s against %s "
 	    " (username=\"%s\", pref=%d)", buf,
 	    conn_description(pconn), username, pref);
 
@@ -130,7 +130,7 @@ find_action_for_connection(char *username,
     match = conn_pattern_match(pua->conpat, pconn, username);
 
     if (match) {
-      freelog(LOG_VERBOSE, "  matched! returning action %d", pua->action);
+      freelog(LOG_DEBUG, "  matched! returning action %d", pua->action);
       return pua->action;
     }
   } user_action_list_iterate_end;
