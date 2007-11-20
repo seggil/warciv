@@ -60,6 +60,7 @@ char *user_action_type_strs[NUM_ACTION_TYPES] = {
   "hack"
 };
 
+static void grant_access_level(struct connection *pconn);
 static int generate_welcome_message(char *buf, int buf_len,
 				    char *welcome_msg);
 
@@ -118,6 +119,7 @@ find_action_for_connection(char *username,
   bool match = FALSE;
   char buf[128];
 
+
   user_action_list_iterate(on_connect_user_actions, pua) {
     user_action_as_str(pua, buf, sizeof(buf));
     freelog(LOG_DEBUG, "testing action %s against %s "
@@ -141,10 +143,9 @@ find_action_for_connection(char *username,
 /**************************************************************************
   ...
 **************************************************************************/
-bool is_banned(char *username, struct connection *pconn)
+bool is_banned(char *username, struct connection * pconn)
 {
   int action;
-
   action = find_action_for_connection(username, pconn, ACTION_BAN);
   return action == ACTION_BAN;
 }
@@ -154,11 +155,8 @@ bool is_banned(char *username, struct connection *pconn)
 **************************************************************************/
 void grant_access_level(struct connection *pconn)
 {
-  switch (find_action_for_connection(NULL, pconn, -1)) {
-  case ACTION_BAN:
-    notify_conn(&pconn->self, _("You are banned from this server."));
-    server_break_connection(pconn);
-    return;
+  int action = find_action_for_connection(NULL, pconn, -1);
+  switch (action) {
   case ACTION_GIVE_NONE:
     pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
     break;
@@ -178,14 +176,11 @@ void grant_access_level(struct connection *pconn)
     pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
     break;
   default:
-    /* Use the default access level from sernet.c */
-    pconn->granted_access_level = pconn->access_level;
+    pconn->granted_access_level = pconn->access_level; /* Use the default in sernet.c */
     break;
   }
 
-  /* Maybe this connection doesn't have the required capabilities */
-  if(pconn->access_level > ALLOW_OBSERVER
-     && !can_control_a_player(pconn, FALSE)) {
+  if(pconn->access_level > ALLOW_OBSERVER && !can_control_a_player(pconn, FALSE)) {
     pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
   }
 }
@@ -206,7 +201,7 @@ void establish_new_connection(struct connection *pconn)
 
   /* zero out the password */
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
-
+  grant_access_level(pconn);
   /* send off login_replay packet */
   packet.you_can_join = TRUE;
   sz_strlcpy(packet.capability, our_capability);
@@ -331,15 +326,13 @@ void establish_new_connection(struct connection *pconn)
     } players_iterate_end;
   }
 
-  send_conn_info(dest, &game.est_connections);
-  conn_list_append(&game.est_connections, pconn);
-
+  /* if the game is running, players can just view the Players menu? --dwp */
   if (server_state != RUN_GAME_STATE) {
-    show_connections(pconn);
-  } else {
     show_players(pconn);
   }
 
+  send_conn_info(dest, &game.est_connections);
+  conn_list_append(&game.est_connections, pconn);
   if (conn_list_size(&game.est_connections) == 1) {
     /* First connection
      * Replace "restarting in x seconds" meta message */
@@ -458,11 +451,6 @@ bool handle_login_request(struct connection *pconn,
     }
   } conn_list_iterate_end;
 
-  grant_access_level(pconn);
-  if (pconn->used) {
-    return FALSE;
-  }
-
   if (srvarg.auth_enabled) {
     return authenticate_user(pconn, req->username);
   } else {
@@ -574,6 +562,7 @@ void lost_connection_to_client(struct connection *pconn)
      * to display player information.  See establish_new_connection(). */
     send_player_info(pplayer, NULL);
   }
+  notify_if_first_access_level_is_available();
 
   /* Cancel diplomacy meetings */
   if (!pplayer->is_connected) { /* may be still true if multiple connections */

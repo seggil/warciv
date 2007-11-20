@@ -811,16 +811,13 @@ int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen)
 bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn,
                         char *username)
 {
-  switch (cp->type) {
-  case CPT_HOSTNAME:
-    return wildcardfit(cp->pattern, pconn->addr);
-  case CPT_USERNAME:
-    return wildcardfit(cp->pattern, username ? username : pconn->username);
-  case CPT_ADDRESS:
-    return wildcardfit(cp->pattern, pconn->server.ipaddr);
-  default:
-    freelog(LOG_ERROR, "Unknown connection pattern type (%d), cp->type");
+  if (cp->type == CPT_ADDRESS) {
+    return wildcardfit (cp->pattern, pconn->server.ipaddr);
+  } else if (cp->type == CPT_HOSTNAME) {
+    return wildcardfit (cp->pattern, pconn->addr);
+  } else if (cp->type == CPT_USERNAME) {
+    return wildcardfit (cp->pattern, username ? username
+                        : pconn->username);
   }
-
   return FALSE;
 }

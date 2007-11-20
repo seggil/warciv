@@ -85,5 +85,4 @@ void server_assign_nation(struct player *pplayer,
                           int city_style);
 bool server_assign_random_nation(struct player *pplayer);
 
-void grant_access_level(struct connection *pconn);
 #endif /* FC__CONNECTHAND_H */

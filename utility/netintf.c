@@ -269,7 +269,6 @@ int adns_lookup_full(const char *query_data,
   }
   return ret;
 }
-
 /***************************************************************************
   Find the hostname for a given address, asynchronously.
 ***************************************************************************/
