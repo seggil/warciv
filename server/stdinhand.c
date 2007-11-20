@@ -1925,6 +1925,7 @@ static bool cmdlevel_command(struct connection *caller, char *str,
       cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, "cmdlevel %s %s",
 		cmdlevel_name(pconn->access_level), pconn->username);
     } conn_list_iterate_end;
+    cmd_reply(CMD_CMDLEVEL, caller, C_COMMENT, horiz_line);
     return TRUE;
   }
 

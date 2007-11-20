@@ -206,6 +206,7 @@ void establish_new_connection(struct connection *pconn)
 
   /* zero out the password */
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
+
   /* send off login_replay packet */
   packet.you_can_join = TRUE;
   sz_strlcpy(packet.capability, our_capability);
@@ -456,6 +457,11 @@ bool handle_login_request(struct connection *pconn,
       return FALSE;
     }
   } conn_list_iterate_end;
+
+  grant_access_level(pconn);
+  if (pconn->used) {
+    return FALSE;
+  }
 
   if (srvarg.auth_enabled) {
     return authenticate_user(pconn, req->username);

@@ -927,10 +927,13 @@ static int server_accept_connection(int sockfd)
       }
       grant_access_level(pconn);
     }
-  } else {
-    grant_access_level(pconn);
   }
-  
+
+  if (!pconn->used) {
+    /* Was certainly banned */
+    return -1;
+  }
+
   freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
 	  pconn->username, pconn->addr, !from && pconn->adns_id > 0
 	  ? "hostname lookup in progress" : pconn->server.ipaddr);
