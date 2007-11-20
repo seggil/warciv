@@ -154,13 +154,11 @@ bool is_banned(char *username, struct connection *pconn)
 **************************************************************************/
 void grant_access_level(struct connection *pconn)
 {
-  int action = find_action_for_connection(NULL, pconn, -1);
-  switch (action) {
+  switch (find_action_for_connection(NULL, pconn, -1)) {
   case ACTION_BAN:
     notify_conn(&pconn->self, _("You are banned from this server."));
-    close_connection(pconn);
+    server_break_connection(pconn);
     return;
-    break;
   case ACTION_GIVE_NONE:
     pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
     break;
@@ -180,18 +178,14 @@ void grant_access_level(struct connection *pconn)
     pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
     break;
   default:
-    pconn->granted_access_level = pconn->access_level = 
-      access_level_for_next_connection();
+    /* Use the default access level from sernet.c */
+    pconn->granted_access_level = pconn->access_level;
     break;
   }
 
-  if (server_state != RUN_GAME_STATE) {
-    show_connections(pconn);
-  } else {
-    show_players(pconn);
-  }
-
-  if(pconn->access_level > ALLOW_OBSERVER && !can_control_a_player(pconn, FALSE)) {
+  /* Maybe this connection doesn't have the required capabilities */
+  if(pconn->access_level > ALLOW_OBSERVER
+     && !can_control_a_player(pconn, FALSE)) {
     pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
   }
 }
@@ -338,6 +332,13 @@ void establish_new_connection(struct connection *pconn)
 
   send_conn_info(dest, &game.est_connections);
   conn_list_append(&game.est_connections, pconn);
+
+  if (server_state != RUN_GAME_STATE) {
+    show_connections(pconn);
+  } else {
+    show_players(pconn);
+  }
+
   if (conn_list_size(&game.est_connections) == 1) {
     /* First connection
      * Replace "restarting in x seconds" meta message */
@@ -567,7 +568,6 @@ void lost_connection_to_client(struct connection *pconn)
      * to display player information.  See establish_new_connection(). */
     send_player_info(pplayer, NULL);
   }
-  notify_if_first_access_level_is_available();
 
   /* Cancel diplomacy meetings */
   if (!pplayer->is_connected) { /* may be still true if multiple connections */
