@@ -2288,6 +2288,16 @@ void unqueue_mapview_updates(void)
 }
 
 /**************************************************************************
+  Free the mapview update datas.
+**************************************************************************/
+void free_mapview_updates(void)
+{
+  tile_list_unlink_all(&updated_tiles);
+  needed_updates = UPDATE_NONE;
+  remove_idle_callback();
+}
+
+/**************************************************************************
   Fill the two buffers which information about the city which is shown
   below it. It takes draw_city_names and draw_city_growth into account.
 **************************************************************************/

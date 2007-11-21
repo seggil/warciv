@@ -101,6 +101,9 @@ static void do_mass_order(enum unit_activity activity);
 **************************************************************************/
 void control_queues_free(void)
 {
+  exit_goto_state();
+  hover_state = HOVER_NONE;
+  hover_unit = 0;
   multi_select_clear_all();
   delayed_goto_clear_all();
   airlift_queue_clear_all();

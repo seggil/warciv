@@ -205,6 +205,7 @@ void get_city_mapview_traderoutes(struct city *pcity,
 				      size_t traderoutes_len,
 				      enum color_std *traderoutes_color);
 
+void free_mapview_updates(void);
 void unqueue_mapview_updates(void);
 
 void map_to_overview_pos(int *overview_x, int *overview_y,

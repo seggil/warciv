@@ -511,6 +511,7 @@ void client_game_init()
 **************************************************************************/
 void client_game_free()
 {
+  free_mapview_updates();
   city_autonaming_free();
   control_queues_free();
   clear_all_link_marks();

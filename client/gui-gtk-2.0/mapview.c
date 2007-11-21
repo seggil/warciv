@@ -522,6 +522,9 @@ void dirty_all(void)
 **************************************************************************/
 void flush_dirty(void)
 {
+  if (!gdk_window_is_visible(map_canvas->window)) {
+    return;
+  }
   if (num_dirty_rects == MAX_DIRTY_RECTS) {
     flush_mapcanvas(0, 0, map_canvas->allocation.width,
 		    map_canvas->allocation.height);
