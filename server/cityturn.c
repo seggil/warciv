@@ -481,6 +481,10 @@ void update_city_activities(struct player *pplayer)
   while (pplayer->economic.gold < 0 && drop_random_unit(pplayer));
   assert(pplayer->economic.gold >= 0);
 
+  city_list_iterate(pplayer->cities, pcity) {
+    send_city_info(NULL, pcity);
+  } city_list_iterate_end;
+
   pplayer->ai.prev_gold = gold;
   /* This test include the cost of the units because pay_for_units is called
    * in update_city_activity */
@@ -1511,7 +1515,6 @@ static void update_city_activity(struct player *pplayer, struct city *pcity)
     }
     check_pollution(pcity);
 
-    send_city_info(NULL, pcity);
     if (pcity->anarchy>2 && government_has_flag(g, G_REVOLUTION_WHEN_UNHAPPY)) {
       notify_player_ex(pplayer, pcity->tile, E_ANARCHY,
 		       _("Game: The people have overthrown your %s, "
