@@ -1153,6 +1153,9 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
   my_snprintf (buf, sizeof (buf), "<(%s)>", default_user_name);
   MK_TAG_PATTERN ("", buf, TPF_IS_CONTROL_ONLY 
                   | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+  my_snprintf (buf, sizeof (buf), "<[%s]>", default_user_name);
+  MK_TAG_PATTERN ("", buf, TPF_IS_CONTROL_ONLY 
+                  | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
   my_snprintf (buf, sizeof (buf), "%s to allies:", default_user_name);
   MK_TAG_PATTERN ("", buf, TPF_IS_CONTROL_ONLY 
                   | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
