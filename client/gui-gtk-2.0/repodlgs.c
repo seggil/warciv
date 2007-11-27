@@ -57,8 +57,8 @@ static void science_help_callback(GtkTreeView *view,
       				  GtkTreePath *arg1,
 				  GtkTreeViewColumn *arg2,
 				  gpointer data);
-static void science_change_callback(GtkWidget * widget, gpointer data);
-static void science_goal_callback(GtkWidget * widget, gpointer data);
+static void science_change_callback(GtkComboBox *combo, gpointer data);
+static void science_goal_callback(GtkComboBox *combo, gpointer data);
 static void science_change_from_goal_callback(GtkWidget * widget, gpointer data);
 
 /******************************************************************/
@@ -67,9 +67,9 @@ static GtkWidget *science_label;
 static GtkWidget *science_current_label, *science_goal_label;
 static GtkWidget *science_change_menu_button, *science_goal_menu_button, *science_change_from_goal_button;
 static GtkWidget *science_help_toggle;
-static GtkListStore *science_model[3];
+static GtkListStore *science_model[3], *reachable_techs, *reachable_goals;
 static int science_dialog_shell_is_modal;
-static GtkWidget *popupmenu, *goalmenu;
+static bool no_science_callback = FALSE;
 
 /******************************************************************/
 enum {
@@ -178,6 +178,7 @@ void popdown_science_dialog(void)
 void create_science_dialog(bool make_modal)
 {
   GtkWidget *frame, *hbox;
+  GtkCellRenderer *renderer;
   int i;
 
   gui_dialog_new(&science_dialog_shell, GTK_NOTEBOOK(top_notebook));
@@ -200,12 +201,20 @@ void create_science_dialog(bool make_modal)
   hbox = gtk_hbox_new(TRUE, 4);
   gtk_container_add(GTK_CONTAINER(frame), hbox);
 
-  science_change_menu_button = gtk_option_menu_new();
+  /* (name and Tech_Type_id) */
+  reachable_techs = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+  science_change_menu_button =
+    gtk_combo_box_new_with_model(GTK_TREE_MODEL(reachable_techs));
+  g_object_unref(reachable_techs);
+  renderer = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(science_change_menu_button),
+			     renderer, FALSE);
+  gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(science_change_menu_button),
+				 renderer, "text", 0, NULL);
+  g_signal_connect(science_change_menu_button, "changed",
+		   G_CALLBACK(science_change_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), science_change_menu_button,
       TRUE, TRUE, 0);
-
-  popupmenu = gtk_menu_new();
-  gtk_widget_show_all(popupmenu);
 
   science_current_label=gtk_progress_bar_new();
   gtk_box_pack_start(GTK_BOX(hbox), science_current_label, TRUE, TRUE, 0);
@@ -221,20 +230,37 @@ void create_science_dialog(bool make_modal)
   hbox = gtk_hbox_new(TRUE, 4);
   gtk_container_add(GTK_CONTAINER(frame),hbox);
 
-  science_goal_menu_button = gtk_option_menu_new();
+  /* (name, steps and Tech_Type_id) */
+  reachable_goals =
+    gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT);
+  science_goal_menu_button =
+    gtk_combo_box_new_with_model(GTK_TREE_MODEL(reachable_goals));
+  g_object_unref(reachable_goals);
+  renderer = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(science_goal_menu_button),
+			     renderer, TRUE);
+  gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(science_goal_menu_button),
+				 renderer, "text", 0, NULL);
+  renderer = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_end(GTK_CELL_LAYOUT(science_goal_menu_button),
+			   renderer, FALSE);
+  gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(science_goal_menu_button),
+				 renderer, "text", 1, NULL);
+  g_signal_connect(science_goal_menu_button, "changed",
+		   G_CALLBACK(science_goal_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), science_goal_menu_button,
       TRUE, TRUE, 0);
-
-  goalmenu = gtk_menu_new();
-  gtk_widget_show_all(goalmenu);
 
   science_goal_label = gtk_label_new("");
   gtk_box_pack_start(GTK_BOX(hbox), science_goal_label, TRUE, TRUE, 0);
   gtk_widget_set_size_request(science_goal_label, -1, 25);
 
-  science_change_from_goal_button = gtk_button_new_with_label(_("Change current technology"));
-  gtk_box_pack_start(GTK_BOX(hbox), science_change_from_goal_button, TRUE, FALSE, 0);
-  g_signal_connect(science_change_from_goal_button, "clicked", G_CALLBACK(science_change_from_goal_callback), NULL);
+  science_change_from_goal_button =
+    gtk_button_new_with_label(_("Change current technology"));
+  gtk_box_pack_start(GTK_BOX(hbox), science_change_from_goal_button,
+		     TRUE, FALSE, 0);
+  g_signal_connect(science_change_from_goal_button, "clicked",
+		   G_CALLBACK(science_change_from_goal_callback), NULL);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
@@ -248,7 +274,6 @@ void create_science_dialog(bool make_modal)
   for (i=0; i<ARRAY_SIZE(science_model); i++) {
     GtkWidget *view;
     GtkTreeSelection *selection;
-    GtkCellRenderer *renderer;
     GtkTreeViewColumn *column;
 
     science_model[i] = gtk_list_store_new(1, G_TYPE_STRING);
@@ -276,61 +301,46 @@ void create_science_dialog(bool make_modal)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
-void science_change_callback(GtkWidget *widget, gpointer data)
+void science_change_callback(GtkComboBox *combo, gpointer data)
 {
-  char text[512];
-  size_t to = (size_t) data;
+  GtkTreeIter iter;
+  gchar *tech_name;
+  gint tech;
+
+  if (no_science_callback || !gtk_combo_box_get_active_iter(combo, &iter)) {
+    return;
+  }
+  gtk_tree_model_get(gtk_combo_box_get_model(combo), &iter, 0, &tech_name,
+		                                            1, &tech, -1);
 
   if (GTK_TOGGLE_BUTTON(science_help_toggle)->active) {
-    popup_help_dialog_typed(get_tech_name(game.player_ptr, to), HELP_TECH);
-    /* Following is to make the menu go back to the current research;
-     * there may be a better way to do this?  --dwp */
-    science_dialog_update();
+    popup_help_dialog_typed(tech_name, HELP_TECH);
   } else {
-    gdouble pct;
-
-    gtk_widget_set_sensitive(science_change_menu_button,
-			     can_client_issue_orders());
-    my_snprintf(text, sizeof(text), "%d/%d",
-		game.player_ptr->research.bulbs_researched,
-		total_bulbs_required(game.player_ptr));
-    pct=CLAMP((gdouble) game.player_ptr->research.bulbs_researched /
-		total_bulbs_required(game.player_ptr), 0.0, 1.0);
-
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(science_current_label), text);
-    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(science_current_label),
-	pct);
-    
-    /* work around GTK+ refresh bug. */
-    gtk_widget_queue_resize(science_current_label);
-
-    dsend_packet_player_research(&aconnection, to);
+    dsend_packet_player_research(&aconnection, tech);
   }
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
-void science_goal_callback(GtkWidget *widget, gpointer data)
+void science_goal_callback(GtkComboBox *combo, gpointer data)
 {
-  char text[512];
-  size_t to = (size_t) data;
+  GtkTreeIter iter;
+  gchar *tech_name;
+  gint tech;
+
+  if (no_science_callback || !gtk_combo_box_get_active_iter(combo, &iter)) {
+    return;
+  }
+  gtk_tree_model_get(gtk_combo_box_get_model(combo), &iter, 0, &tech_name,
+		                                            2, &tech, -1);
 
   if (GTK_TOGGLE_BUTTON(science_help_toggle)->active) {
-    popup_help_dialog_typed(get_tech_name(game.player_ptr, to), HELP_TECH);
-    /* Following is to make the menu go back to the current goal;
-     * there may be a better way to do this?  --dwp */
-    science_dialog_update();
-  }
-  else {  
-    int steps = num_unknown_techs_for_goal(game.player_ptr, to);
-    my_snprintf(text, sizeof(text),
-		PL_("(%d step)", "(%d steps)", steps), steps);
-    gtk_label_set_text(GTK_LABEL(science_goal_label), text);
-
-    dsend_packet_player_tech_goal(&aconnection, to);
+    popup_help_dialog_typed(tech_name, HELP_TECH);
+  } else {  
+    dsend_packet_player_tech_goal(&aconnection, tech);
   }
 }
 
@@ -401,19 +411,23 @@ static gint cmp_func(gconstpointer a_p, gconstpointer b_p)
 *****************************************************************/
 void science_dialog_update(void)
 {
-  if(science_dialog_shell) {
-  int i, j, hist;
+  if (!science_dialog_shell) {
+    return;
+  }
+
+  int i, j;
   char text[512];
-  GtkWidget *item;
   GList *sorting_list = NULL, *it;
   gdouble pct;
   int steps;
   GtkSizeGroup *group1, *group2;
+  GtkTreeIter iter;
 
   if (is_report_dialogs_frozen()) {
     return;
   }
 
+  no_science_callback = TRUE;
   gtk_label_set_text(GTK_LABEL(science_label), science_dialog_text());
 
   for (i=0; i<ARRAY_SIZE(science_model); i++) {
@@ -445,10 +459,7 @@ void science_dialog_update(void)
   g_list_free(sorting_list);
   sorting_list = NULL;
 
-  gtk_widget_destroy(popupmenu);
-  popupmenu = gtk_menu_new();
-  gtk_option_menu_set_menu(GTK_OPTION_MENU(science_change_menu_button),
-	popupmenu);
+  gtk_list_store_clear(reachable_techs);
   gtk_widget_set_sensitive(science_change_menu_button,
 			   can_client_issue_orders());
 
@@ -466,23 +477,23 @@ void science_dialog_update(void)
   gtk_widget_queue_resize(science_current_label);
  
   if (game.player_ptr->research.researching == A_UNSET) {
-    item = gtk_menu_item_new_with_label(get_tech_name(game.player_ptr,
-						      A_NONE));
-    gtk_menu_shell_append(GTK_MENU_SHELL(popupmenu), item);
+    gtk_list_store_append(reachable_techs, &iter);
+    gtk_list_store_set(reachable_techs, &iter,
+		       0, get_tech_name(game.player_ptr, A_UNSET),
+		       1, A_UNSET,
+		       -1);
+    gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_change_menu_button),
+				  &iter);
   }
 
   /* collect all techs which are reachable in the next step
    * hist will hold afterwards the techid of the current choice
    */
-  hist=0;
   if (!is_future_tech(game.player_ptr->research.researching)) {
-    for(i=A_FIRST; i<game.num_tech_types; i++) {
-      if(get_invention(game.player_ptr, i)!=TECH_REACHABLE)
-	continue;
-
-      if (i==game.player_ptr->research.researching)
-	hist=i;
-      sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
+    for (i = A_FIRST; i < game.num_tech_types; i++) {
+      if (get_invention(game.player_ptr, i) == TECH_REACHABLE) {
+        sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
+      }
     }
   } else {
     sorting_list = g_list_append(sorting_list,
@@ -494,37 +505,32 @@ void science_dialog_update(void)
   /* sort the list and build from it the menu */
   sorting_list = g_list_sort(sorting_list, cmp_func);
   for (i = 0; i < g_list_length(sorting_list); i++) {
+    gint tech = GPOINTER_TO_INT(g_list_nth_data(sorting_list, i));
     const gchar *data;
 
-    if (GPOINTER_TO_INT(g_list_nth_data(sorting_list, i)) <
-	game.num_tech_types) {
-      data = get_tech_name(game.player_ptr,
-			GPOINTER_TO_INT(g_list_nth_data(sorting_list, i)));
+    if (tech < game.num_tech_types) {
+      data = get_tech_name(game.player_ptr, tech);
     } else {
-      my_snprintf(text, sizeof(text), _("Future Tech. %d"),
-		  GPOINTER_TO_INT(g_list_nth_data(sorting_list, i))
+      my_snprintf(text, sizeof(text), _("Future Tech. %d"), tech
 		  - game.num_tech_types);
-      data=text;
+      data = text;
     }
 
-    item = gtk_menu_item_new_with_label(data);
-    gtk_menu_shell_append(GTK_MENU_SHELL(popupmenu), item);
-    if (strlen(data) > 0)
-      g_signal_connect(item, "activate",
-		       G_CALLBACK(science_change_callback),
-		       g_list_nth_data(sorting_list, i));
+    gtk_list_store_append(reachable_techs, &iter);
+    gtk_list_store_set(reachable_techs, &iter,
+		       0, data,
+		       1, GPOINTER_TO_INT(g_list_nth_data(sorting_list, i)),
+		       -1);
+    if (tech == game.player_ptr->research.researching) {
+      gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_change_menu_button),
+				    &iter);
+    }
   }
 
-  gtk_widget_show_all(popupmenu);
-  gtk_option_menu_set_history(GTK_OPTION_MENU(science_change_menu_button),
-	g_list_index(sorting_list, GINT_TO_POINTER(hist)));
   g_list_free(sorting_list);
   sorting_list = NULL;
 
-  gtk_widget_destroy(goalmenu);
-  goalmenu = gtk_menu_new();
-  gtk_option_menu_set_menu(GTK_OPTION_MENU(science_goal_menu_button),
-	goalmenu);
+  gtk_list_store_clear(reachable_goals);
   gtk_widget_set_sensitive(science_goal_menu_button,
 			   can_client_issue_orders());
   
@@ -537,23 +543,24 @@ void science_dialog_update(void)
   gtk_widget_set_sensitive(science_change_from_goal_button, can_client_issue_orders());
 
   if (game.player_ptr->ai.tech_goal == A_UNSET) {
-    item = gtk_menu_item_new_with_label(get_tech_name(game.player_ptr,
-						      A_NONE));
-    gtk_menu_shell_append(GTK_MENU_SHELL(goalmenu), item);
+    gtk_list_store_append(reachable_goals, &iter);
+    gtk_list_store_set(reachable_goals, &iter,
+		       0, get_tech_name(game.player_ptr, A_NONE),
+                       2, A_NONE,
+		       -1);
+    gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_goal_menu_button),
+				  &iter);
   }
 
   /* collect all techs which are reachable in under 11 steps
    * hist will hold afterwards the techid of the current choice
    */
-  hist=0;
-  for(i=A_FIRST; i<game.num_tech_types; i++) {
+  for (i = A_FIRST; i < game.num_tech_types; i++) {
     if (tech_is_available(game.player_ptr, i)
         && get_invention(game.player_ptr, i) != TECH_KNOWN
         && advances[i].req[0] != A_LAST && advances[i].req[1] != A_LAST
         && (num_unknown_techs_for_goal(game.player_ptr, i) < 11
 	    || i == game.player_ptr->ai.tech_goal)) {
-      if (i==game.player_ptr->ai.tech_goal)
-	hist=i;
       sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
     }
   }
@@ -564,39 +571,23 @@ void science_dialog_update(void)
   /* sort the list and build from it the menu */
   sorting_list = g_list_sort(sorting_list, cmp_func);
   for (it = g_list_first(sorting_list); it; it = g_list_next(it)) {
-    GtkWidget *hbox, *label;
-    char text[512];
     gint tech = GPOINTER_TO_INT(g_list_nth_data(it, 0));
 
-    item = gtk_menu_item_new();
-    hbox = gtk_hbox_new(FALSE, 18);
-    gtk_container_add(GTK_CONTAINER(item), hbox);
-
-    label = gtk_label_new(get_tech_name(game.player_ptr, tech));
-    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-    gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-    gtk_size_group_add_widget(group1, label);
-
-    my_snprintf(text, sizeof(text), "%d",
-	num_unknown_techs_for_goal(game.player_ptr, tech));
-
-    label = gtk_label_new(text);
-    gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-    gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-    gtk_size_group_add_widget(group2, label);
-
-    gtk_menu_shell_append(GTK_MENU_SHELL(goalmenu), item);
-    g_signal_connect(item, "activate",
-		     G_CALLBACK(science_goal_callback),
-		     GINT_TO_POINTER(tech));
+    gtk_list_store_append(reachable_goals, &iter);
+    gtk_list_store_set(reachable_goals, &iter,
+		       0, get_tech_name(game.player_ptr, tech),
+		       1, num_unknown_techs_for_goal(game.player_ptr, tech),
+                       2, tech,
+		       -1);
+    if (tech == game.player_ptr->ai.tech_goal) {
+      gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_goal_menu_button),
+				    &iter);
+    }
   }
 
-  gtk_widget_show_all(goalmenu);
-  gtk_option_menu_set_history(GTK_OPTION_MENU(science_goal_menu_button),
-	g_list_index(sorting_list, GINT_TO_POINTER(hist)));
   g_list_free(sorting_list);
   sorting_list = NULL;
-  }
+  no_science_callback = FALSE;
 }
 
 
