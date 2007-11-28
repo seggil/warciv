@@ -14,7 +14,7 @@ Summary:	Turn-based strategy game, inspired by the commercial Civilization serie
 Name:		%{name}
 Version:	@VERSION_WITHOUT_LABEL@
 Release:	1
-Copyright:	GPL
+License:	GPL
 Group:		Games/Strategy
 Url:		http://www.freeciv.org
 Source:		%{name}-%{version_full}.tar.gz
@@ -23,9 +23,7 @@ Requires: %name-client = %version-%release
 Requires: %name-server = %version-%release
 
 %def_with gtk2
-%def_with gtk
-%def_with xaw
-%define clients_list %{?_with_gtk2:gtk2} %{?_with_gtk:gtk} %{?_with_xaw:xaw}
+%define clients_list %{?_with_gtk2:gtk2}
 
 BuildRoot:	%{_tmppath}/%{name}-%{version_full}-buildroot
 Packager:	Freeciv Team <rt@freeciv.org>
@@ -50,18 +48,6 @@ Group: Games/Strategy
 Provides: %name-client-gui = %version-%release
 Requires: %name-common = %version-%release
 
-%package client-gtk
-Summary: Turn-based strategy game, inspired by the commercial Civilization series - GTK client
-Group: Games/Strategy
-Provides: %name-client-gui = %version-%release
-Requires: %name-common = %version-%release
-
-%package client-xaw
-Summary: Turn-based strategy game, inspired by the commercial Civilization series - Xaw client
-Group: Games/Strategy
-Provides: %name-client-gui = %version-%release
-Requires: %name-common = %version-%release
-
 %description
 Freeciv is a free turn-based multiplayer strategy game, in which each 
 player becomes the leader of a civilization, fighting to obtain the 
@@ -71,6 +57,10 @@ one aim of Freeciv is to have compatible rules.
 Freeciv is maintained by an international team of coders and 
 enthusiasts, and is easily one of the most fun and addictive network 
 games out there! 
+Warclient is modpack Freeciv that enhances the client''s control
+of units and cities.  This makes control faster, which is good for
+multiplayer war games. Pepclient feature are added and enhances that.
+See http://freeciv.freeforums.org/.
 
 %description common
 Freeciv is a free turn-based multiplayer strategy game, in which each 
@@ -81,6 +71,10 @@ one aim of Freeciv is to have compatible rules.
 Freeciv is maintained by an international team of coders and 
 enthusiasts, and is easily one of the most fun and addictive network 
 games out there! 
+Warclient is modpack Freeciv that enhances the client''s control
+of units and cities.  This makes control faster, which is good for
+multiplayer war games. Pepclient feature are added and enhances that.
+See http://freeciv.freeforums.org/.
 
 This package contains files common for client ans server.
 
@@ -93,6 +87,10 @@ one aim of Freeciv is to have compatible rules.
 Freeciv is maintained by an international team of coders and 
 enthusiasts, and is easily one of the most fun and addictive network 
 games out there! 
+Warclient is modpack Freeciv that enhances the client''s control
+of units and cities.  This makes control faster, which is good for
+multiplayer war games. Pepclient feature are added and enhances that.
+See http://freeciv.freeforums.org/.
 
 This package contains Freeciv server.
 
@@ -105,6 +103,10 @@ one aim of Freeciv is to have compatible rules.
 Freeciv is maintained by an international team of coders and 
 enthusiasts, and is easily one of the most fun and addictive network 
 games out there! 
+Warclient is modpack Freeciv that enhances the client''s control
+of units and cities.  This makes control faster, which is good for
+multiplayer war games. Pepclient feature are added and enhances that.
+See http://freeciv.freeforums.org/.
 
 This package contains Freeciv client common files.
 
@@ -117,33 +119,13 @@ one aim of Freeciv is to have compatible rules.
 Freeciv is maintained by an international team of coders and 
 enthusiasts, and is easily one of the most fun and addictive network 
 games out there! 
+Warclient is modpack Freeciv that enhances the client''s control
+of units and cities.  This makes control faster, which is good for
+multiplayer war games. Pepclient feature are added and enhances that.
+See http://freeciv.freeforums.org/.
 
 This package contains Freeciv client with Gtk2 interface (default
 Freeciv GUI).
-
-%description client-gtk
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
-ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
-one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
-
-This package contains Freeciv client with Gtk+ interface.
-
-%description client-xaw
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
-ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
-one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
-
-This package contains Freeciv client with Xaw interface.
 
 %prep
 %setup -q -n %{name}-%{version_full}
@@ -223,31 +205,6 @@ rm -fr %buildroot
 				%name-client \
 				%{_gamesbindir}/civclient-gtk2
 
-%post client-gtk
-/usr/sbin/update-alternatives --install \
-				%{_gamesbindir}/civclient \
-				%name-client \
-				%{_gamesbindir}/civclient-gtk 20
-
-%preun client-gtk
-[ $1 = 0 ] || exit 0
-/usr/sbin/update-alternatives --remove \
-				%name-client \
-				%{_gamesbindir}/civclient-gtk
-
-%post client-xaw
-/usr/sbin/update-alternatives --install \
-				%{_gamesbindir}/civclient \
-				%name-client \
-				%{_gamesbindir}/civclient-xaw 10
-
-%preun client-xaw
-[ $1 = 0 ] || exit 0
-/usr/sbin/update-alternatives --remove \
-				%name-client \
-				%{_gamesbindir}/civclient-xaw
-
-
 %files common -f %name.lang
 %defattr(644, root, root, 0755)
 %doc COPYING NEWS doc/BUGS doc/HOWTOPLAY doc/PEOPLE doc/README
@@ -259,24 +216,46 @@ rm -fr %buildroot
 %doc COPYING NEWS
 %doc doc/BUGS doc/HACKING doc/PEOPLE doc/README
 %doc doc/README.AI doc/README.agents doc/README.attributes doc/README.cma
-%doc doc/README.delta doc/README.effects doc/README.ftwl
+%doc doc/README.delta doc/README.effects
 #README.graphics and README.sound are included in client package
 %doc doc/README.scorelog doc/TODO
-%{_gamesdatadir}/%{name}/civ1
-%{_gamesdatadir}/%{name}/civ2	
-%{_gamesdatadir}/%{name}/default
-%{_gamesdatadir}/%{name}/history
-%{_gamesdatadir}/%{name}/nation
-%{_gamesdatadir}/%{name}/scenario
-%{_gamesdatadir}/%{name}/civ1.serv
-%{_gamesdatadir}/%{name}/civ2.serv
-%{_gamesdatadir}/%{name}/history.serv
+%{_gamesdatadir}/%{name}/1.14style		  
+%{_gamesdatadir}/%{name}/civ1			  
+%{_gamesdatadir}/%{name}/civ1.serv		  
+%{_gamesdatadir}/%{name}/civ2			  
+%{_gamesdatadir}/%{name}/civ2.serv		  
+%{_gamesdatadir}/%{name}/default			  
+%{_gamesdatadir}/%{name}/duel			  
+%{_gamesdatadir}/%{name}/exemple-actions.txt	  
+%{_gamesdatadir}/%{name}/exemple-welcome.txt	  
+%{_gamesdatadir}/%{name}/experimental		  
+%{_gamesdatadir}/%{name}/Freeciv.in		  
+%{_gamesdatadir}/%{name}/freeciv.rc		  
+%{_gamesdatadir}/%{name}/freeciv.rc-2.0		  
+%{_gamesdatadir}/%{name}/graphics			  
+%{_gamesdatadir}/%{name}/history			  
+%{_gamesdatadir}/%{name}/history.serv		  
+%{_gamesdatadir}/%{name}/maps			  
+%{_gamesdatadir}/%{name}/nation			  
+%{_gamesdatadir}/%{name}/nowonder+1.2		  
+%{_gamesdatadir}/%{name}/nowonder+1.2.serv	  
+%{_gamesdatadir}/%{name}/scenario			  
+%{_gamesdatadir}/%{name}/stdsounds		  
+%{_gamesdatadir}/%{name}/stdsounds.soundspec	  
+%{_gamesdatadir}/%{name}/tournament		  
+%{_gamesdatadir}/%{name}/tournament.serv		  
+%{_gamesdatadir}/%{name}/warruleset-1.2		  
+%{_gamesdatadir}/%{name}/warruleset-1.2.serv	  
+%{_gamesdatadir}/%{name}/warruleset-1.3		  
+%{_gamesdatadir}/%{name}/warruleset-1.3.serv	  
+%{_gamesdatadir}/%{name}/warserver.serv             
 %{_mandir}/man6/civserver.6
 
 %files client
 %defattr(644,root,root,0755)
 %doc COPYING NEWS
 %doc doc/README.graphics doc/README.sound doc/HOWTOPLAY
+%{_gamesdatadir}/%{name}/fonts			  
 %{_gamesdatadir}/%{name}/flags
 %{_gamesdatadir}/%{name}/isotrident
 %{_gamesdatadir}/%{name}/misc
@@ -293,15 +272,3 @@ rm -fr %buildroot
 %{_gamesdatadir}/%{name}/freeciv.rc-2.0
 %{_gamesbindir}/civclient-gtk2
 %endif #gtk2
-
-%if_with gtk
-%files client-gtk
-%{_gamesdatadir}/%{name}/freeciv.rc
-%{_gamesbindir}/civclient-gtk
-%endif #gtk
-
-%if_with xaw
-%files client-xaw
-%{_gamesdatadir}/%{name}/Freeciv
-%{_gamesbindir}/civclient-xaw
-%endif #xaw
