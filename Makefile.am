@@ -37,21 +37,6 @@ EXTRA_DIST=	acconfig.old			\
 		configure.ac			\
 		configure.in			\
 		diff_ignore			\
-		amiga/Freeciv.start		\
-		amiga/amigaclient.c		\
-		amiga/amigaserver.c		\
-		amiga/config.h			\
-		amiga/declgate.h		\
-		amiga/gettext.c			\
-		amiga/libintl.h			\
-		amiga/myregargs.h		\
-		amiga/ReadMe			\
-		amiga/ReadMe.2Amigas		\
-		amiga/ReadMe.developer		\
-		amiga/SDI_compiler.h		\
-		amiga/smakefile			\
-		amiga/vmakefile			\
-		amiga/vsnprintf.c		\
 		bootstrap/civ.in		\
 		bootstrap/ser.in		\
 		bootstrap/freeciv.desktop.in	\
@@ -71,8 +56,6 @@ EXTRA_DIST=	acconfig.old			\
 		m4/glib.m4			\
 		m4/glibc21.m4			\
 		m4/gtk-2.0.m4			\
-		m4/gtk.m4			\
-		m4/gtk-client.m4		\
 		m4/gtk2-client.m4		\
 		m4/iconv.m4			\
 		m4/imlib.m4			\
@@ -83,15 +66,12 @@ EXTRA_DIST=	acconfig.old			\
 		m4/no-client.m4			\
 		m4/progtest.m4			\
 		m4/readline.m4			\
-		m4/sdl-client.m4		\
 		m4/sdl.m4			\
 		m4/sound.m4			\
 		m4/version.m4			\
 		m4/vsnprintf.m4			\
-		m4/win32-client.m4		\
 		m4/x.213			\
 		m4/x.252			\
-		m4/xaw-client.m4		\
 		vms/config.h_vms		\
 		vms/freeciv_h.vms		\
 		vms/imlib_config.h_vms		\

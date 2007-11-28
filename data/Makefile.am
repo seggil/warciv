@@ -8,12 +8,6 @@ COMMON_CLIENT_FILES =			\
 	trident_shields.tilespec	\
 	helpdata.txt			\
 	stdsounds.soundspec
-if CLIENT_GUI_XAW
-CLIENT_EXTRA_FILES = Freeciv
-endif
-if CLIENT_GUI_GTK
-CLIENT_EXTRA_FILES = freeciv.rc
-endif
 if CLIENT_GUI_GTK_2_0
 CLIENT_EXTRA_FILES = freeciv.rc-2.0
 endif

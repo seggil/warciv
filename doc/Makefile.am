@@ -14,10 +14,8 @@ EXTRA_DIST =			\
 	README.cma		\
 	README.delta		\
 	README.effects		\
-	README.ftwl		\
 	README.graphics		\
 	README.rulesets		\
 	README.scorelog		\
-	README.SDLClient	\
 	README.sound		\
 	TODO
