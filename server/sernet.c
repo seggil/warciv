@@ -281,7 +281,6 @@ static void close_socket_callback(struct connection *pc)
 *****************************************************************************/
 void server_break_connection(struct connection *pconn)
 {
-  send_packet_thaw_hint(pconn);
   if(pconn->server.currently_processed_request_id) {
     finish_processing_request(pconn);
   }

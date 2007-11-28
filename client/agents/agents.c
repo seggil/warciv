@@ -406,6 +406,7 @@ void register_agent(const struct agent *agent)
 void agents_disconnect(void)
 {
   freelog(META_CALLBACKS_LOGLEVEL, "agents_disconnect()");
+  frozen_level = 0;
   initialized = FALSE;
 }
 
