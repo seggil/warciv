@@ -26,9 +26,6 @@ utility/shared.h
 utility/speclist.h
 utility/specvec.h
 utility/support.c
-utility/ftwl/be_common_24_sprite.c
-utility/ftwl/be_sdl.c
-utility/ftwl/theme_engine.c
 utility/tadns.c
 ai/advdiplomacy.c
 ai/aicity.c
