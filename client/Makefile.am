@@ -106,7 +106,6 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
 fc_civclient_libs =	../utility/libcivutility.a	\
-			$(LIBFTWL)			\
 			../common/libcivcommon.a	\
 			../common/aicore/libaicore.a	\
 			agents/libagents.a		\
