@@ -317,6 +317,9 @@ void science_change_callback(GtkComboBox *combo, gpointer data)
 
   if (GTK_TOGGLE_BUTTON(science_help_toggle)->active) {
     popup_help_dialog_typed(tech_name, HELP_TECH);
+    /* Following is to make the menu go back to the current research; 	 
+     * there may be a better way to do this?  --dwp */ 	 
+    science_dialog_update();
   } else {
     dsend_packet_player_research(&aconnection, tech);
   }
@@ -339,6 +342,9 @@ void science_goal_callback(GtkComboBox *combo, gpointer data)
 
   if (GTK_TOGGLE_BUTTON(science_help_toggle)->active) {
     popup_help_dialog_typed(tech_name, HELP_TECH);
+    /* Following is to make the menu go back to the current research; 	 
+     * there may be a better way to do this?  --dwp */ 	 
+    science_dialog_update();
   } else {  
     dsend_packet_player_tech_goal(&aconnection, tech);
   }
