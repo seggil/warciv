@@ -30,6 +30,8 @@ for NAME in $@ ; do
   fi
 done
 
+FC_NEWARGLINE="$FC_NEWARGLINE $NAME"
+
 debug ()
 # print out a debug message if DEBUG is a defined variable
 {
