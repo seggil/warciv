@@ -16,8 +16,9 @@
 #include "game.h"		/* enum client_states */
 #include "packets.h"		/* enum report_type */
 #include "shared.h"		/* MAX_LEN_NAME */
+#include "version.h"
 
-#define PEPCLIENT_VERSION "Warclient - PepClient 0.9.5 devel"
+#define PEPCLIENT_VERSION "Warclient - PepClient " WARCLIENT_VERSION
 
 /*
  * Every TIMER_INTERVAL milliseconds real_timer_callback is

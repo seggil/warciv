@@ -58,6 +58,8 @@
                        VER_STRINGIFY(PATCH_VERSION) VERSION_LABEL
 #endif
 
+#define WARCLIENT_VERSION "0.9.6"
+
 /* version informational strings */
 const char *freeciv_name_version(void);
 const char *word_version(void);
