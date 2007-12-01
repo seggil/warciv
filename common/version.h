@@ -50,15 +50,16 @@
 #define NEXT_RELEASE_MONTH	(month[7])
 #endif
 
-#ifndef VERSION_STRING
 #define VER_STRINGIFY1(x) #x
 #define VER_STRINGIFY(x) VER_STRINGIFY1(x)
+#ifndef VERSION_STRING
 #define VERSION_STRING VER_STRINGIFY(MAJOR_VERSION) "." \
                        VER_STRINGIFY(MINOR_VERSION) "." \
                        VER_STRINGIFY(PATCH_VERSION) VERSION_LABEL
 #endif
 
-#define WARCLIENT_VERSION "0.9.6"
+#define WARCLIENT_VERSION VER_STRINGIFY(MINOR_VERSION) "." \
+                          VER_STRINGIFY(PATCH_VERSION) ".7 devel"
 
 /* version informational strings */
 const char *freeciv_name_version(void);
