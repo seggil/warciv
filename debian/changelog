@@ -1,6 +1,12 @@
-warclient (2.0.9+0.9.5+rev780-1) experimental; urgency=high
+warclient (2.0.9+0.9.6-1) testing; urgency=high
 
   *  New upstream release.
+
+ -- Carl Castanier <woodswolf@gmail.com>  Sat, 01 Dec 2007 11:40:47 +0000
+
+warclient (2.0.9+0.9.5-1) experimental; urgency=high
+
+  *  Developpement version.
 
  -- Carl Castanier <woodswolf@gmail.com>  Sat, 15 Sep 2007 12:45:00 +0000
 
