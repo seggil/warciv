@@ -28,9 +28,8 @@ for NAME in $@ ; do
     echo "! nls checks disabled"
     FC_USE_NLS=no
   fi
+  FC_NEWARGLINE="$FC_NEWARGLINE $NAME"
 done
-
-FC_NEWARGLINE="$FC_NEWARGLINE $NAME"
 
 debug ()
 # print out a debug message if DEBUG is a defined variable
