@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freeciv 2.0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 12:21+0100\n"
+"POT-Creation-Date: 2007-12-01 10:58+0100\n"
 "PO-Revision-Date: 2005-09-03 19:25+0100\n"
 "Last-Translator: Dusan Hokuv <dusan@mirc.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -296,8 +296,8 @@ msgstr "(Neznámý)"
 msgid "None"
 msgstr "Žádné"
 
-#: common/tech.c:623 client/gui-gtk-2.0/repodlgs.c:393
-#: client/gui-gtk-2.0/repodlgs.c:401 client/gui-gtk-2.0/repodlgs.c:514
+#: common/tech.c:623 client/gui-gtk-2.0/repodlgs.c:198
+#: client/gui-gtk-2.0/repodlgs.c:473 client/gui-gtk-2.0/repodlgs.c:481
 #, c-format
 msgid "Future Tech. %d"
 msgstr "Tech. budoucnosti %d"
@@ -468,11 +468,11 @@ msgid "'Cause civilization should be free!"
 msgstr "Aby civilizace byla svobodná!"
 
 #: common/aicore/cm.c:1856 client/cityrepdata.c:471
-#: client/gui-gtk-2.0/repodlgs.c:943
+#: client/gui-gtk-2.0/repodlgs.c:1005
 msgid "Food"
 msgstr "Jídlo"
 
-#: common/aicore/cm.c:1858 client/gui-gtk-2.0/repodlgs.c:942
+#: common/aicore/cm.c:1858 client/gui-gtk-2.0/repodlgs.c:1004
 msgid "Shield"
 msgstr "Štít"
 
@@ -485,7 +485,7 @@ msgstr "Štít"
 msgid "Trade"
 msgstr "Obchod"
 
-#: common/aicore/cm.c:1862 client/gui-gtk-2.0/repodlgs.c:944
+#: common/aicore/cm.c:1862 client/gui-gtk-2.0/repodlgs.c:1006
 #: data/default/terrain.ruleset:475 data/civ1/terrain.ruleset:427
 #: data/civ2/terrain.ruleset:475 data/history/terrain.ruleset:467
 #: data/nowonder+1.2/terrain.ruleset:475 data/duel/terrain.ruleset:475
@@ -500,7 +500,7 @@ msgid "Luxury"
 msgstr "Luxus"
 
 #: common/aicore/cm.c:1866 server/plrhand.c:855
-#: client/gui-gtk-2.0/gamedlgs.c:283 client/gui-gtk-2.0/repodlgs.c:185
+#: client/gui-gtk-2.0/gamedlgs.c:283 client/gui-gtk-2.0/repodlgs.c:221
 #: data/Freeciv.in:1393
 msgid "Science"
 msgstr "Věda, výzkum"
@@ -8804,7 +8804,7 @@ msgstr "Nejlepší obranné jednotky"
 #: client/cityrepdata.c:445 client/cityrepdata.c:447
 #: client/gui-gtk-2.0/cityrep.c:1622 client/gui-gtk-2.0/cityrep.c:1654
 #: client/gui-gtk-2.0/cityrep.c:1675 client/gui-gtk-2.0/cityrep.c:1696
-#: client/gui-gtk-2.0/repodlgs.c:965 data/Freeciv.in:1922
+#: client/gui-gtk-2.0/repodlgs.c:1027 data/Freeciv.in:1922
 #: data/helpdata.txt:1253
 msgid "Units"
 msgstr "Jednotky"
@@ -8861,7 +8861,7 @@ msgstr "?Trade surplus:O+"
 msgid "Surplus: Trade"
 msgstr "Přebytek: Obchod"
 
-#: client/cityrepdata.c:459 client/gui-gtk-2.0/repodlgs.c:660
+#: client/cityrepdata.c:459 client/gui-gtk-2.0/repodlgs.c:722
 #: data/Freeciv.in:1846
 msgid "Economy"
 msgstr "Ekonomika"
@@ -11698,7 +11698,7 @@ msgstr "Vyle_pšit jednotku"
 msgid "Upgrade Unit!"
 msgstr "Vylepšit jednotku!"
 
-#: client/gui-gtk-2.0/citydlg.c:2310 client/gui-gtk-2.0/repodlgs.c:1165
+#: client/gui-gtk-2.0/citydlg.c:2310 client/gui-gtk-2.0/repodlgs.c:1227
 #: data/Freeciv.in:2500
 msgid "Upgrade Obsolete Units"
 msgstr "Vylepšit zastaralé jednotky"
@@ -12849,7 +12849,7 @@ msgstr "_Technologie"
 msgid "Foreign Intelligence: %s Empire"
 msgstr "Zahraniční přehled: %s Impérium"
 
-#: client/gui-gtk-2.0/inteldlg.c:382 client/gui-gtk-2.0/repodlgs.c:539
+#: client/gui-gtk-2.0/inteldlg.c:382 client/gui-gtk-2.0/repodlgs.c:609
 #, c-format
 msgid "(%d step)"
 msgid_plural "(%d steps)"
@@ -13243,7 +13243,6 @@ msgstr "_Připojit"
 
 #: client/gui-gtk-2.0/menu.c:2034 client/gui-gtk-2.0/menu.c:2036
 #: client/gui-gtk-2.0/menu.c:2038 data/Freeciv.in:104 data/Freeciv.in:2537
-#: data/themes/morgan/640x480/connect.screen:137
 msgid "Connect"
 msgstr "Připojit"
 
@@ -14138,7 +14137,7 @@ msgstr "_Vesmírná loď"
 #: client/gui-gtk-2.0/menu.c:3045 client/gui-gtk-2.0/menu.c:3047
 #: client/gui-gtk-2.0/menu.c:3049 client/gui-gtk-2.0/menu.c:3051
 #: client/gui-gtk-2.0/menu.c:3053 client/gui-gtk-2.0/menu.c:3055
-#: client/gui-gtk-2.0/menu.c:3057 client/gui-gtk-2.0/repodlgs.c:223
+#: client/gui-gtk-2.0/menu.c:3057 client/gui-gtk-2.0/repodlgs.c:258
 #: data/Freeciv.in:1493 data/Freeciv.in:2058 data/Freeciv.in:2128
 #: data/Freeciv.in:2215 data/Freeciv.in:2221
 msgid "Help"
@@ -14396,7 +14395,6 @@ msgid "Server Name"
 msgstr "Jméno serveru"
 
 #: client/gui-gtk-2.0/pages.c:987 data/Freeciv.in:96
-#: data/themes/morgan/640x480/connect.screen:59
 msgid "Port"
 msgstr "Port"
 
@@ -14557,89 +14555,97 @@ msgstr "_Počítač"
 msgid "_Toggle AI Mode"
 msgstr "_Přepnout na PO mód"
 
-#: client/gui-gtk-2.0/repodlgs.c:197
+#: client/gui-gtk-2.0/repodlgs.c:233
 msgid "Researching"
 msgstr "Zkoumá se"
 
-#: client/gui-gtk-2.0/repodlgs.c:226 data/Freeciv.in:1456
+#: client/gui-gtk-2.0/repodlgs.c:263 data/Freeciv.in:1456
 msgid "Goal"
 msgstr "Cíl"
 
-#: client/gui-gtk-2.0/repodlgs.c:259
+#: client/gui-gtk-2.0/repodlgs.c:294
 msgid "Change current technology"
 msgstr ""
 
-#: client/gui-gtk-2.0/repodlgs.c:641
+#: client/gui-gtk-2.0/repodlgs.c:610
+#, c-format
+msgid "(%d bulb)"
+msgid_plural "(%d bulbs)"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: client/gui-gtk-2.0/repodlgs.c:703
 msgid "Building Name"
 msgstr "Název stavby"
 
-#: client/gui-gtk-2.0/repodlgs.c:642
+#: client/gui-gtk-2.0/repodlgs.c:704
 msgid "Count"
 msgstr "Počet"
 
-#: client/gui-gtk-2.0/repodlgs.c:643 client/gui-gtk-2.0/wldlg.c:1017
+#: client/gui-gtk-2.0/repodlgs.c:705 client/gui-gtk-2.0/wldlg.c:1017
 msgid "Cost"
 msgstr "Stojí"
 
-#: client/gui-gtk-2.0/repodlgs.c:644
+#: client/gui-gtk-2.0/repodlgs.c:706
 msgid "U Total"
 msgstr "Celkem"
 
-#: client/gui-gtk-2.0/repodlgs.c:707
+#: client/gui-gtk-2.0/repodlgs.c:769
 msgid "Total Cost:"
 msgstr "Celkem stojí:"
 
-#: client/gui-gtk-2.0/repodlgs.c:713
+#: client/gui-gtk-2.0/repodlgs.c:775
 msgid "Sell _Obsolete"
 msgstr "Prodat Z_astaralé"
 
-#: client/gui-gtk-2.0/repodlgs.c:718
+#: client/gui-gtk-2.0/repodlgs.c:780
 msgid "Sell _All"
 msgstr "Prodat _Vše"
 
-#: client/gui-gtk-2.0/repodlgs.c:795
+#: client/gui-gtk-2.0/repodlgs.c:857
 #, c-format
 msgid "Do you really wish to sell your %s?\n"
 msgstr "Opravdu chcete prodat váš %s?\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:798
+#: client/gui-gtk-2.0/repodlgs.c:860
 msgid "Sell Improvements"
 msgstr "Prodej Vylepšení"
 
-#: client/gui-gtk-2.0/repodlgs.c:824
+#: client/gui-gtk-2.0/repodlgs.c:886
 msgid "Sell-Off: Results"
 msgstr "Odprodej: Výsledky"
 
-#: client/gui-gtk-2.0/repodlgs.c:883
+#: client/gui-gtk-2.0/repodlgs.c:945
 #, c-format
 msgid "Income: %d    Total Costs: %d"
 msgstr "Příjmy: %d    Celkem Výdaje: %d"
 
-#: client/gui-gtk-2.0/repodlgs.c:938
+#: client/gui-gtk-2.0/repodlgs.c:1000
 msgid "Unit Type"
 msgstr "Typ jednotky"
 
-#: client/gui-gtk-2.0/repodlgs.c:939
+#: client/gui-gtk-2.0/repodlgs.c:1001
 msgid "U"
 msgstr "V"
 
-#: client/gui-gtk-2.0/repodlgs.c:940
+#: client/gui-gtk-2.0/repodlgs.c:1002
 msgid "In-Prog"
 msgstr "Probíhá"
 
-#: client/gui-gtk-2.0/repodlgs.c:941
+#: client/gui-gtk-2.0/repodlgs.c:1003
 msgid "Active"
 msgstr "Aktivní"
 
-#: client/gui-gtk-2.0/repodlgs.c:1014
+#: client/gui-gtk-2.0/repodlgs.c:1076
 msgid "Find _Nearest"
 msgstr "Najít _Nejbližší"
 
-#: client/gui-gtk-2.0/repodlgs.c:1019
+#: client/gui-gtk-2.0/repodlgs.c:1081
 msgid "_Upgrade"
 msgstr "_Vylepšit"
 
-#: client/gui-gtk-2.0/repodlgs.c:1158
+#: client/gui-gtk-2.0/repodlgs.c:1220
 #, c-format
 msgid ""
 "Upgrade as many %s to %s as possible for %d gold each?\n"
@@ -14648,23 +14654,23 @@ msgstr ""
 "Vylepšit co nejvíce %s na %s jak je možné za %d zlatých za každou jednotku?\n"
 "Pokladna obsahuje %d zlatých."
 
-#: client/gui-gtk-2.0/repodlgs.c:1259
+#: client/gui-gtk-2.0/repodlgs.c:1321
 msgid "Totals:"
 msgstr "Celkem:"
 
-#: client/gui-gtk-2.0/repodlgs.c:1282
+#: client/gui-gtk-2.0/repodlgs.c:1344
 msgid "Player\n"
 msgstr "Hráč\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1283
+#: client/gui-gtk-2.0/repodlgs.c:1345
 msgid "Score\n"
 msgstr "Skóre\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1284
+#: client/gui-gtk-2.0/repodlgs.c:1346
 msgid "Population\n"
 msgstr "Populace\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1285
+#: client/gui-gtk-2.0/repodlgs.c:1347
 msgid ""
 "Trade\n"
 "(M goods)"
@@ -14672,7 +14678,7 @@ msgstr ""
 "Obchod\n"
 "(M zboží)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1286
+#: client/gui-gtk-2.0/repodlgs.c:1348
 msgid ""
 "Production\n"
 "(M tons)"
@@ -14680,15 +14686,15 @@ msgstr ""
 "Produkce\n"
 "(M tun)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1287
+#: client/gui-gtk-2.0/repodlgs.c:1349
 msgid "Cities\n"
 msgstr "Města\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1288
+#: client/gui-gtk-2.0/repodlgs.c:1350
 msgid "Technologies\n"
 msgstr "Technologie\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1289
+#: client/gui-gtk-2.0/repodlgs.c:1351
 msgid ""
 "Military Service\n"
 "(months)"
@@ -14696,11 +14702,11 @@ msgstr ""
 "Vojenská služba\n"
 "(měsíců)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1290
+#: client/gui-gtk-2.0/repodlgs.c:1352
 msgid "Wonders\n"
 msgstr "Divy světa\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1291
+#: client/gui-gtk-2.0/repodlgs.c:1353
 msgid ""
 "Research Speed\n"
 "(%)"
@@ -14708,7 +14714,7 @@ msgstr ""
 "Rychlost výzkumu\n"
 "(%)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1292
+#: client/gui-gtk-2.0/repodlgs.c:1354
 msgid ""
 "Land Area\n"
 "(sq. mi.)"
@@ -14716,7 +14722,7 @@ msgstr ""
 "Území\n"
 "(čtv. km)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1293
+#: client/gui-gtk-2.0/repodlgs.c:1355
 msgid ""
 "Settled Area\n"
 "(sq. mi.)"
@@ -14724,7 +14730,7 @@ msgstr ""
 "Obydlená plocha\n"
 "(čtv. km)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1294
+#: client/gui-gtk-2.0/repodlgs.c:1356
 msgid ""
 "Literacy\n"
 "(%)"
@@ -14732,15 +14738,15 @@ msgstr ""
 "Gramotnost\n"
 "(%)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1295
+#: client/gui-gtk-2.0/repodlgs.c:1357
 msgid "Spaceship\n"
 msgstr "Kosmická loď\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1318
+#: client/gui-gtk-2.0/repodlgs.c:1380
 msgid "Score"
 msgstr "Skóre"
 
-#: client/gui-gtk-2.0/repodlgs.c:1452
+#: client/gui-gtk-2.0/repodlgs.c:1514
 msgid "Game Options"
 msgstr "Možnosti hry"
 
@@ -25548,82 +25554,6 @@ msgstr ""
 "výbušniny dřív než bude dílna zastaralá. Touto cestou povýšíte osadníky "
 "zdarma."
 
-#: data/themes/morgan/640x480/mapview.screen:41
-msgid ""
-"TESTING\n"
-"1234"
-msgstr ""
-
-#: data/themes/morgan/640x480/mapview.screen:84
-#, fuzzy
-msgid "Wealth:"
-msgstr "Stealth"
-
-#: data/themes/morgan/640x480/mapview.screen:113
-#, fuzzy
-msgid "Population:"
-msgstr "Populace"
-
-#: data/themes/morgan/640x480/mapview.screen:156
-#, fuzzy
-msgid "Map"
-msgstr "_Mapa"
-
-#: data/themes/morgan/640x480/mapview.screen:187
-msgid "1234567890 Vera"
-msgstr ""
-
-#: data/themes/morgan/640x480/mapview.screen:202
-msgid "1234567890 vera"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:12
-#, fuzzy
-msgid "User Name"
-msgstr "Uživatelské jméno"
-
-#: data/themes/morgan/640x480/connect.screen:28
-#, fuzzy
-msgid "Password"
-msgstr "Heslo:"
-
-#: data/themes/morgan/640x480/connect.screen:44
-#, fuzzy
-msgid "Server"
-msgstr "Server id: %s"
-
-#: data/themes/morgan/640x480/connect.screen:145
-msgid "A tooltip"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:164
-msgid "clearly halo 0"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:181
-msgid "clearly halo 1"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:198
-msgid "clearly halo 2"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:215
-msgid "clearly halo 3"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:232
-msgid "clearly halo 4"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:249
-msgid "clearly halo 5"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:266
-msgid "clearly halo 6"
-msgstr ""
-
 #: data/nowonder+1.2/game.ruleset:105
 msgid ""
 "Same as warruleset1.2 with 2 wonders: Manhattan and Apollo\n"
@@ -25928,6 +25858,30 @@ msgid ""
 msgstr ""
 "<h1>Freeciv %s nápověda k divům světa</h1>\n"
 "\n"
+
+#, fuzzy
+#~ msgid "Wealth:"
+#~ msgstr "Stealth"
+
+#, fuzzy
+#~ msgid "Population:"
+#~ msgstr "Populace"
+
+#, fuzzy
+#~ msgid "Map"
+#~ msgstr "_Mapa"
+
+#, fuzzy
+#~ msgid "User Name"
+#~ msgstr "Uživatelské jméno"
+
+#, fuzzy
+#~ msgid "Password"
+#~ msgstr "Heslo:"
+
+#, fuzzy
+#~ msgid "Server"
+#~ msgstr "Server id: %s"
 
 #~ msgid "Failed reading PNG file: %s"
 #~ msgstr "Selhalo čtení PNG souboru: %s"

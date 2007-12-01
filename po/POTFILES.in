@@ -243,9 +243,6 @@ data/history/techs.ruleset
 data/history/terrain.ruleset
 data/history/units.ruleset
 data/history/cities.ruleset
-data/themes/morgan/640x480/mapview.screen
-data/themes/morgan/640x480/connect.screen
-data/themes/morgan/640x480/mapview.prop
 data/nowonder+1.2/buildings.ruleset
 data/nowonder+1.2/cities.ruleset
 data/nowonder+1.2/units.ruleset

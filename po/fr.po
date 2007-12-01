@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Freeciv 1.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 12:21+0100\n"
+"POT-Creation-Date: 2007-12-01 10:58+0100\n"
 "PO-Revision-Date: 1999-09-13 10:22+0200\n"
 "Last-Translator: Genevieve Gracian <ggracian@free.fr>\n"
 "Language-Team: <freeciv-l10n-fr@yahoogroupes.fr>\n"
@@ -301,8 +301,8 @@ msgstr "(Inconnu)"
 msgid "None"
 msgstr "Aucun"
 
-#: common/tech.c:623 client/gui-gtk-2.0/repodlgs.c:393
-#: client/gui-gtk-2.0/repodlgs.c:401 client/gui-gtk-2.0/repodlgs.c:514
+#: common/tech.c:623 client/gui-gtk-2.0/repodlgs.c:198
+#: client/gui-gtk-2.0/repodlgs.c:473 client/gui-gtk-2.0/repodlgs.c:481
 #, c-format
 msgid "Future Tech. %d"
 msgstr "Techno. Future %d"
@@ -473,11 +473,11 @@ msgid "'Cause civilization should be free!"
 msgstr "Car la civilisation devrait être libre !"
 
 #: common/aicore/cm.c:1856 client/cityrepdata.c:471
-#: client/gui-gtk-2.0/repodlgs.c:943
+#: client/gui-gtk-2.0/repodlgs.c:1005
 msgid "Food"
 msgstr "Nourriture"
 
-#: common/aicore/cm.c:1858 client/gui-gtk-2.0/repodlgs.c:942
+#: common/aicore/cm.c:1858 client/gui-gtk-2.0/repodlgs.c:1004
 msgid "Shield"
 msgstr "Production"
 
@@ -490,7 +490,7 @@ msgstr "Production"
 msgid "Trade"
 msgstr "Commerce"
 
-#: common/aicore/cm.c:1862 client/gui-gtk-2.0/repodlgs.c:944
+#: common/aicore/cm.c:1862 client/gui-gtk-2.0/repodlgs.c:1006
 #: data/default/terrain.ruleset:475 data/civ1/terrain.ruleset:427
 #: data/civ2/terrain.ruleset:475 data/history/terrain.ruleset:467
 #: data/nowonder+1.2/terrain.ruleset:475 data/duel/terrain.ruleset:475
@@ -505,7 +505,7 @@ msgid "Luxury"
 msgstr "Biens de luxe"
 
 #: common/aicore/cm.c:1866 server/plrhand.c:855
-#: client/gui-gtk-2.0/gamedlgs.c:283 client/gui-gtk-2.0/repodlgs.c:185
+#: client/gui-gtk-2.0/gamedlgs.c:283 client/gui-gtk-2.0/repodlgs.c:221
 #: data/Freeciv.in:1393
 msgid "Science"
 msgstr "Recherche"
@@ -9017,7 +9017,7 @@ msgstr "Meilleures unités défensives"
 #: client/cityrepdata.c:445 client/cityrepdata.c:447
 #: client/gui-gtk-2.0/cityrep.c:1622 client/gui-gtk-2.0/cityrep.c:1654
 #: client/gui-gtk-2.0/cityrep.c:1675 client/gui-gtk-2.0/cityrep.c:1696
-#: client/gui-gtk-2.0/repodlgs.c:965 data/Freeciv.in:1922
+#: client/gui-gtk-2.0/repodlgs.c:1027 data/Freeciv.in:1922
 #: data/helpdata.txt:1253
 msgid "Units"
 msgstr "Unités"
@@ -9074,7 +9074,7 @@ msgstr "?Surplus de Commerce:C+"
 msgid "Surplus: Trade"
 msgstr "Surplus : Commerce"
 
-#: client/cityrepdata.c:459 client/gui-gtk-2.0/repodlgs.c:660
+#: client/cityrepdata.c:459 client/gui-gtk-2.0/repodlgs.c:722
 #: data/Freeciv.in:1846
 msgid "Economy"
 msgstr "Économie"
@@ -11942,7 +11942,7 @@ msgstr "Mettre à jour l'unité (_p)"
 msgid "Upgrade Unit!"
 msgstr "Mettre à jour l'unité !"
 
-#: client/gui-gtk-2.0/citydlg.c:2310 client/gui-gtk-2.0/repodlgs.c:1165
+#: client/gui-gtk-2.0/citydlg.c:2310 client/gui-gtk-2.0/repodlgs.c:1227
 #: data/Freeciv.in:2500
 msgid "Upgrade Obsolete Units"
 msgstr "Mettre à jour les unités obsolètes"
@@ -13096,7 +13096,7 @@ msgstr "_Techs"
 msgid "Foreign Intelligence: %s Empire"
 msgstr "Rapport sur l'Étranger : empire %s"
 
-#: client/gui-gtk-2.0/inteldlg.c:382 client/gui-gtk-2.0/repodlgs.c:539
+#: client/gui-gtk-2.0/inteldlg.c:382 client/gui-gtk-2.0/repodlgs.c:609
 #, c-format
 msgid "(%d step)"
 msgid_plural "(%d steps)"
@@ -13492,7 +13492,6 @@ msgstr "Se _connecter"
 
 #: client/gui-gtk-2.0/menu.c:2034 client/gui-gtk-2.0/menu.c:2036
 #: client/gui-gtk-2.0/menu.c:2038 data/Freeciv.in:104 data/Freeciv.in:2537
-#: data/themes/morgan/640x480/connect.screen:137
 msgid "Connect"
 msgstr "Se connecter"
 
@@ -14387,7 +14386,7 @@ msgstr "Vaisseau s_patial"
 #: client/gui-gtk-2.0/menu.c:3045 client/gui-gtk-2.0/menu.c:3047
 #: client/gui-gtk-2.0/menu.c:3049 client/gui-gtk-2.0/menu.c:3051
 #: client/gui-gtk-2.0/menu.c:3053 client/gui-gtk-2.0/menu.c:3055
-#: client/gui-gtk-2.0/menu.c:3057 client/gui-gtk-2.0/repodlgs.c:223
+#: client/gui-gtk-2.0/menu.c:3057 client/gui-gtk-2.0/repodlgs.c:258
 #: data/Freeciv.in:1493 data/Freeciv.in:2058 data/Freeciv.in:2128
 #: data/Freeciv.in:2215 data/Freeciv.in:2221
 msgid "Help"
@@ -14646,7 +14645,6 @@ msgid "Server Name"
 msgstr "Nom du serveur"
 
 #: client/gui-gtk-2.0/pages.c:987 data/Freeciv.in:96
-#: data/themes/morgan/640x480/connect.screen:59
 msgid "Port"
 msgstr "Port"
 
@@ -14807,89 +14805,96 @@ msgstr "_IA"
 msgid "_Toggle AI Mode"
 msgstr "Basculer en mode IA"
 
-#: client/gui-gtk-2.0/repodlgs.c:197
+#: client/gui-gtk-2.0/repodlgs.c:233
 msgid "Researching"
 msgstr "Recherche"
 
-#: client/gui-gtk-2.0/repodlgs.c:226 data/Freeciv.in:1456
+#: client/gui-gtk-2.0/repodlgs.c:263 data/Freeciv.in:1456
 msgid "Goal"
 msgstr "But"
 
-#: client/gui-gtk-2.0/repodlgs.c:259
+#: client/gui-gtk-2.0/repodlgs.c:294
 msgid "Change current technology"
 msgstr ""
 
-#: client/gui-gtk-2.0/repodlgs.c:641
+#: client/gui-gtk-2.0/repodlgs.c:610
+#, c-format
+msgid "(%d bulb)"
+msgid_plural "(%d bulbs)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: client/gui-gtk-2.0/repodlgs.c:703
 msgid "Building Name"
 msgstr "Nom du bâtiment"
 
-#: client/gui-gtk-2.0/repodlgs.c:642
+#: client/gui-gtk-2.0/repodlgs.c:704
 msgid "Count"
 msgstr "Nombre"
 
-#: client/gui-gtk-2.0/repodlgs.c:643 client/gui-gtk-2.0/wldlg.c:1017
+#: client/gui-gtk-2.0/repodlgs.c:705 client/gui-gtk-2.0/wldlg.c:1017
 msgid "Cost"
 msgstr "Coût"
 
-#: client/gui-gtk-2.0/repodlgs.c:644
+#: client/gui-gtk-2.0/repodlgs.c:706
 msgid "U Total"
 msgstr "Total"
 
-#: client/gui-gtk-2.0/repodlgs.c:707
+#: client/gui-gtk-2.0/repodlgs.c:769
 msgid "Total Cost:"
 msgstr "Coût total:"
 
-#: client/gui-gtk-2.0/repodlgs.c:713
+#: client/gui-gtk-2.0/repodlgs.c:775
 msgid "Sell _Obsolete"
 msgstr "Vendre _obsolète"
 
-#: client/gui-gtk-2.0/repodlgs.c:718
+#: client/gui-gtk-2.0/repodlgs.c:780
 msgid "Sell _All"
 msgstr "To_ut vendre"
 
-#: client/gui-gtk-2.0/repodlgs.c:795
+#: client/gui-gtk-2.0/repodlgs.c:857
 #, c-format
 msgid "Do you really wish to sell your %s?\n"
 msgstr "Voulez-vous réellement vendre %s ?\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:798
+#: client/gui-gtk-2.0/repodlgs.c:860
 msgid "Sell Improvements"
 msgstr "Vendre des bâtiments"
 
-#: client/gui-gtk-2.0/repodlgs.c:824
+#: client/gui-gtk-2.0/repodlgs.c:886
 msgid "Sell-Off: Results"
 msgstr "Ventes : Résultats"
 
-#: client/gui-gtk-2.0/repodlgs.c:883
+#: client/gui-gtk-2.0/repodlgs.c:945
 #, c-format
 msgid "Income: %d    Total Costs: %d"
 msgstr "Revenu: %d    Coûts Totaux: %d"
 
-#: client/gui-gtk-2.0/repodlgs.c:938
+#: client/gui-gtk-2.0/repodlgs.c:1000
 msgid "Unit Type"
 msgstr "Type d'unité"
 
-#: client/gui-gtk-2.0/repodlgs.c:939
+#: client/gui-gtk-2.0/repodlgs.c:1001
 msgid "U"
 msgstr "U"
 
-#: client/gui-gtk-2.0/repodlgs.c:940
+#: client/gui-gtk-2.0/repodlgs.c:1002
 msgid "In-Prog"
 msgstr "En Projet"
 
-#: client/gui-gtk-2.0/repodlgs.c:941
+#: client/gui-gtk-2.0/repodlgs.c:1003
 msgid "Active"
 msgstr "Actif"
 
-#: client/gui-gtk-2.0/repodlgs.c:1014
+#: client/gui-gtk-2.0/repodlgs.c:1076
 msgid "Find _Nearest"
 msgstr "_Trouver au plus proche"
 
-#: client/gui-gtk-2.0/repodlgs.c:1019
+#: client/gui-gtk-2.0/repodlgs.c:1081
 msgid "_Upgrade"
 msgstr "Mettre à _niveau"
 
-#: client/gui-gtk-2.0/repodlgs.c:1158
+#: client/gui-gtk-2.0/repodlgs.c:1220
 #, c-format
 msgid ""
 "Upgrade as many %s to %s as possible for %d gold each?\n"
@@ -14898,23 +14903,23 @@ msgstr ""
 "Améliorer autant de %s en %s que possible pour %d lingots chacun ?\n"
 "Vous avez %d Or."
 
-#: client/gui-gtk-2.0/repodlgs.c:1259
+#: client/gui-gtk-2.0/repodlgs.c:1321
 msgid "Totals:"
 msgstr "Totaux : "
 
-#: client/gui-gtk-2.0/repodlgs.c:1282
+#: client/gui-gtk-2.0/repodlgs.c:1344
 msgid "Player\n"
 msgstr "Joueur\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1283
+#: client/gui-gtk-2.0/repodlgs.c:1345
 msgid "Score\n"
 msgstr "Score\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1284
+#: client/gui-gtk-2.0/repodlgs.c:1346
 msgid "Population\n"
 msgstr "Population\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1285
+#: client/gui-gtk-2.0/repodlgs.c:1347
 msgid ""
 "Trade\n"
 "(M goods)"
@@ -14922,7 +14927,7 @@ msgstr ""
 "Commerce\n"
 "(M d'unités)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1286
+#: client/gui-gtk-2.0/repodlgs.c:1348
 msgid ""
 "Production\n"
 "(M tons)"
@@ -14930,15 +14935,15 @@ msgstr ""
 "Production\n"
 "(M tonnes)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1287
+#: client/gui-gtk-2.0/repodlgs.c:1349
 msgid "Cities\n"
 msgstr "Villes\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1288
+#: client/gui-gtk-2.0/repodlgs.c:1350
 msgid "Technologies\n"
 msgstr "Technologies\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1289
+#: client/gui-gtk-2.0/repodlgs.c:1351
 msgid ""
 "Military Service\n"
 "(months)"
@@ -14946,11 +14951,11 @@ msgstr ""
 "Service Militaire\n"
 "(mois)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1290
+#: client/gui-gtk-2.0/repodlgs.c:1352
 msgid "Wonders\n"
 msgstr "Merveilles\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1291
+#: client/gui-gtk-2.0/repodlgs.c:1353
 msgid ""
 "Research Speed\n"
 "(%)"
@@ -14958,7 +14963,7 @@ msgstr ""
 "Rapidité des recherches\n"
 "(%)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1292
+#: client/gui-gtk-2.0/repodlgs.c:1354
 msgid ""
 "Land Area\n"
 "(sq. mi.)"
@@ -14966,7 +14971,7 @@ msgstr ""
 "Terrain\n"
 "(km²)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1293
+#: client/gui-gtk-2.0/repodlgs.c:1355
 msgid ""
 "Settled Area\n"
 "(sq. mi.)"
@@ -14974,7 +14979,7 @@ msgstr ""
 "Terrain aménagé\n"
 "(km²)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1294
+#: client/gui-gtk-2.0/repodlgs.c:1356
 msgid ""
 "Literacy\n"
 "(%)"
@@ -14982,15 +14987,15 @@ msgstr ""
 "Littérature\n"
 "(%)"
 
-#: client/gui-gtk-2.0/repodlgs.c:1295
+#: client/gui-gtk-2.0/repodlgs.c:1357
 msgid "Spaceship\n"
 msgstr "Vaisseau spatial\n"
 
-#: client/gui-gtk-2.0/repodlgs.c:1318
+#: client/gui-gtk-2.0/repodlgs.c:1380
 msgid "Score"
 msgstr "Score"
 
-#: client/gui-gtk-2.0/repodlgs.c:1452
+#: client/gui-gtk-2.0/repodlgs.c:1514
 msgid "Game Options"
 msgstr "Options de la partie"
 
@@ -26156,82 +26161,6 @@ msgstr ""
 "les Explosifs avant que ce dernier ne soit obsolète. Ainsi, vos colons se "
 "transformeront gratuitement en ingénieurs."
 
-#: data/themes/morgan/640x480/mapview.screen:41
-msgid ""
-"TESTING\n"
-"1234"
-msgstr ""
-
-#: data/themes/morgan/640x480/mapview.screen:84
-#, fuzzy
-msgid "Wealth:"
-msgstr "Furtivité"
-
-#: data/themes/morgan/640x480/mapview.screen:113
-#, fuzzy
-msgid "Population:"
-msgstr "Population"
-
-#: data/themes/morgan/640x480/mapview.screen:156
-#, fuzzy
-msgid "Map"
-msgstr "Car_te"
-
-#: data/themes/morgan/640x480/mapview.screen:187
-msgid "1234567890 Vera"
-msgstr ""
-
-#: data/themes/morgan/640x480/mapview.screen:202
-msgid "1234567890 vera"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:12
-#, fuzzy
-msgid "User Name"
-msgstr "Nom d'utilisateur"
-
-#: data/themes/morgan/640x480/connect.screen:28
-#, fuzzy
-msgid "Password"
-msgstr "Mot de passe:"
-
-#: data/themes/morgan/640x480/connect.screen:44
-#, fuzzy
-msgid "Server"
-msgstr "Identifiant du serveur: %s"
-
-#: data/themes/morgan/640x480/connect.screen:145
-msgid "A tooltip"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:164
-msgid "clearly halo 0"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:181
-msgid "clearly halo 1"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:198
-msgid "clearly halo 2"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:215
-msgid "clearly halo 3"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:232
-msgid "clearly halo 4"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:249
-msgid "clearly halo 5"
-msgstr ""
-
-#: data/themes/morgan/640x480/connect.screen:266
-msgid "clearly halo 6"
-msgstr ""
-
 #: data/nowonder+1.2/game.ruleset:105
 msgid ""
 "Same as warruleset1.2 with 2 wonders: Manhattan and Apollo\n"
@@ -26536,6 +26465,30 @@ msgid ""
 msgstr ""
 "<h1>Freeciv %s : aide des merveilles</h1>\n"
 "\n"
+
+#, fuzzy
+#~ msgid "Wealth:"
+#~ msgstr "Furtivité"
+
+#, fuzzy
+#~ msgid "Population:"
+#~ msgstr "Population"
+
+#, fuzzy
+#~ msgid "Map"
+#~ msgstr "Car_te"
+
+#, fuzzy
+#~ msgid "User Name"
+#~ msgstr "Nom d'utilisateur"
+
+#, fuzzy
+#~ msgid "Password"
+#~ msgstr "Mot de passe:"
+
+#, fuzzy
+#~ msgid "Server"
+#~ msgstr "Identifiant du serveur: %s"
 
 #~ msgid "Failed reading PNG file: %s"
 #~ msgstr "Lecture du fichier PNG %s impossible"
