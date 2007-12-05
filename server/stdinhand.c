@@ -3582,7 +3582,7 @@ static bool remove_vote_command(struct connection *caller, char *arg,
     /* This should never happen anyway, since /removevote
      * is set to ALLOW_BASIC in both pregame and while the
      * game is running. */
-    return TRUE;
+    return FALSE;
   }
 
   remove_leading_trailing_spaces(arg);
