@@ -151,19 +151,21 @@ const struct command commands[] = {
   },
   {"vote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
    /* TRANS: translate text between [] only */
-   N_("vote yes|no|neutral|cancel [vote number]"),
+   N_("vote\n"
+      "vote yes|no|abstain|cancel [vote number]"),
    N_("Cast a vote."),
       /* xgettext:no-c-format */
-   N_("A player with info level access issuing a control level command "
+   N_("A player with basic level access issuing a control level command "
       "starts a new vote for the command.  The /vote command followed by "
-      "\"yes\", \"no\", \"neutral\" or \"cancel\", and optionally a vote "
-      "number, gives your vote.  If you do not add a vote number, your vote "
-      "applies to the latest command.  You can only suggest one vote at a "
-      "time. The vote will pass immediately if more than half of the players "
-      "vote for it, or fail immediately if at least half of the players "
-      "vote against it.  If one full turn elapses the vote may pass in any "
-      "case if nobody votes against it. Without argument, it lists you and "
-      "the running votes."),
+      "\"yes\", \"no\" or \"abstain\", and optionally a vote number, "
+      "gives your vote. The special argument \"cancel\" will cancel "
+      "a vote if it belongs to you. If you do not add a vote number, your "
+      "vote applies to the last vote made. You can only suggest one vote "
+      "at a time. The vote will pass immediately if more than half of the "
+      "players vote for it, or fail immediately if at least half of the "
+      "players vote against it. If one full turn elapses the vote fails "
+      "if not enough votes were cast one way or the other. Without "
+      "arguments, it lists the status of currently running votes."),
    ECHO_NONE
   },
   {"removevote",	ALLOW_BASIC,	ALLOW_BASIC,
@@ -172,9 +174,9 @@ const struct command commands[] = {
       "removevote <vote number>\n"
       "removevote all\n"),
    N_("Cancel a running vote.\n"),
-   N_("With no arguments, this command remove your own vote. If you have "
-      "an hack access level, you can cancel any vote by vote number, or all "
-      "with the all argument."),
+   N_("With no arguments this command removes your own vote. If you have "
+      "hack access level, you can cancel any vote by vote number, or all "
+      "votes with the \'all\' argument."),
    ECHO_PLAYERS
   },
   {"debug",	ALLOW_HACK, ALLOW_HACK,
