@@ -65,11 +65,12 @@ const struct command commands[] = {
    "list ignore\n"
    "list maps\n"
    "list scenario\n"
-   "list rulesets",
+   "list rulesets\n"
+   "list mutes",
    N_("Show a list of various things."),
    N_("Show a list of players, list of connections to the server, the "
       "action list, the teams and the players in them, your ignore "
-      "list, all maps, scenarios or rulesets on the server. "
+      "list, all maps, scenarios, rulesets or muted users on the server. "
       "The argument may be abbreviated, and defaults to 'players' if absent."),
    ECHO_NONE
   },
@@ -429,6 +430,27 @@ const struct command commands[] = {
       "Names may be abbreviated so long as they are not ambiguous."),
    ECHO_ALL
   },
+  {"mute", ALLOW_CTRL, ALLOW_CTRL,
+   /* TRANS: translate text between <> and [] only */
+   N_("mute <username> [# of turns = 3]"),
+   N_("Prevent a user from making votes or chat messages."),
+   N_("The user whose name matches the argument will not be allowed "
+      "to make public, private or ally message, nor start votes. The "
+      "optional '# of turns' argument specifies how long this should "
+      "go on for; zero implies forever. The default value, if left "
+      "unspecified, is 3."),
+   ECHO_ADMINS
+  },
+  {"unmute", ALLOW_CTRL, ALLOW_CTRL,
+   /* TRANS: translate text between <> only */
+   N_("unmute <username>"),
+   N_("Allow a user to speak and make votes again."),
+   N_("This command undoes what the /mute command did. The given "
+      "user is again allowed to make public, private and ally "
+      "messages and can create votes."),
+   ECHO_ADMINS
+  },
+
 #ifdef HAVE_AUTH
   {"authdb",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */

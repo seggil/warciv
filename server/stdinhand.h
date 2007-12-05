@@ -27,6 +27,8 @@ void stdinhand_free(void);
 void clear_all_votes(void);
 void cancel_connection_votes(struct connection *pconn);
 
+bool conn_is_muted(struct connection *pconn);
+
 bool handle_stdin_input(struct connection *caller, char *str, bool check);
 void report_server_options(struct conn_list *dest, int which);
 void report_settable_server_options(struct connection *dest, int which);

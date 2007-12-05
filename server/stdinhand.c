@@ -36,6 +36,7 @@
 #include "events.h"
 #include "fcintl.h"
 #include "game.h"
+#include "hash.h"
 #include "log.h"
 #include "map.h"
 #include "mem.h"
@@ -82,6 +83,7 @@ static void show_actionlist(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
 static void show_rulesets(struct connection *caller);
 static bool show_scenarios(struct connection *caller);
+static bool show_mutes(struct connection *caller);
 static bool set_ai_level(struct connection *caller, char *name, int level, 
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
@@ -308,6 +310,15 @@ static struct vote_list vote_list;
 static bool votes_are_initialized = FALSE;
 static int vote_number_sequence;
 
+
+struct muteinfo {
+  int conn_id;
+  int turns_left;
+  char *addr;
+};
+
+static struct hash_table *mute_table = NULL;
+
 static const char horiz_line[] =
 "------------------------------------------------------------------------------";
 
@@ -418,6 +429,8 @@ void stdinhand_init(void)
   vote_list_init(&vote_list);
   votes_are_initialized = TRUE;
   vote_number_sequence = 0;
+
+  mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
 }
 
 /**************************************************************************
@@ -425,18 +438,22 @@ void stdinhand_init(void)
 **************************************************************************/
 static bool connection_is_player(struct connection *pconn)
 {
-  return (pconn && pconn->player
-          && !pconn->observer && pconn->player->is_alive);
+  return pconn && pconn->player && !pconn->observer
+    && pconn->player->is_alive;
 }
 
 /**************************************************************************
   Cannot vote if:
+    * is muted
     * is not connected
     * access level < basic
     * isn't a player
 **************************************************************************/
 static bool connection_can_vote(struct connection *pconn)
 {
+  if (conn_is_muted(pconn)) {
+    return FALSE;
+  }
   if (connection_is_player(pconn) && pconn->access_level >= ALLOW_BASIC) {
     return TRUE;
   }
@@ -725,6 +742,24 @@ void cancel_connection_votes(struct connection *pconn)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void unmute_conn_by_mi(struct muteinfo *mi)
+{
+  struct connection *pconn;
+
+  pconn = find_conn_by_id(mi->conn_id);
+
+  hash_delete_entry(mute_table, mi->addr);
+  free(mi->addr);
+  free(mi);
+
+  if (!pconn) {
+    return;
+  }
+  notify_conn(&pconn->self, _("Server: You have been unmuted."));
+}
+/**************************************************************************
   Update stuff every turn that is related to this code module. Run this
   on turn end.
 **************************************************************************/
@@ -734,6 +769,15 @@ void stdinhand_turn(void)
     pvote->turn_count++;
     check_vote(pvote);
   } vote_list_iterate_end;
+
+  hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+    if (mi->turns_left > 0) {
+      mi->turns_left--;
+      if (mi->turns_left == 0) {
+        unmute_conn_by_mi(mi);
+      }
+    }
+  } hash_iterate_end;
 }
 
 /**************************************************************************
@@ -742,6 +786,16 @@ void stdinhand_turn(void)
 void stdinhand_free(void)
 {
   clear_all_votes();
+  
+  if (mute_table) {
+    hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+      free(mi->addr);
+      free(mi);
+    } hash_iterate_end;
+    hash_delete_all_entries(mute_table);
+    hash_free(mute_table);
+    mute_table = NULL;
+  }
 }
 
 /**************************************************************************
@@ -2599,6 +2653,152 @@ static bool autoteam_command(struct connection *caller, char *str,
                     _("Server: Teams cleared."));
     }
     return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+bool conn_is_muted(struct connection *pconn)
+{
+  if (!pconn) {
+    return FALSE;
+  }
+  return hash_key_exists(mute_table, pconn->server.ipaddr);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool unmute_command(struct connection *caller,
+                           char *str,
+                           bool check)
+{
+  enum m_pre_result res;
+  struct muteinfo *mi;
+  struct connection *pconn;
+
+  pconn = find_conn_by_user_prefix(str, &res);
+  if (!pconn) {
+    cmd_reply(CMD_UNMUTE, caller, C_FAIL,
+      _("The string \"%s\" does not match any user name."), str);
+    return FALSE;
+  }
+
+  if (!conn_is_muted(pconn)) {
+    cmd_reply(CMD_UNMUTE, caller, C_FAIL, _("User %s is not muted."),
+              pconn->username);
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  mi = hash_lookup_data(mute_table, pconn->server.ipaddr);
+  unmute_conn_by_mi(mi);
+
+  cmd_reply(CMD_UNMUTE, caller, C_OK, _("User %s has been unmuted."),
+            pconn->username);
+
+  return TRUE;
+}
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool mute_command(struct connection *caller, char *str, bool check)
+{
+  char buf[MAX_LEN_CONSOLE_LINE];
+  char *arg[2], *p;
+  int ntokens = 0, nturns = 3;
+  struct connection *pconn = NULL;
+  enum m_pre_result res;
+  struct muteinfo *mi;
+
+  sz_strlcpy(buf, str);
+  ntokens = get_tokens(buf, arg, 2, TOKEN_DELIMITERS);
+
+  if (ntokens < 1 || ntokens > 2) {
+    cmd_reply(CMD_MUTE, caller, C_SYNTAX, _("Missing username argument."));
+    return FALSE;
+  }
+
+  pconn = find_conn_by_user_prefix(arg[0], &res);
+  if (!pconn) {
+    cmd_reply(CMD_MUTE, caller, C_FAIL,
+      _("The string \"%s\" does not match any user name."), arg[0]);
+    return FALSE;
+  }
+
+  if (ntokens == 2) {
+    for (p = arg[1]; *p != '\0'; p++) {
+      if (!isdigit(*p)) {
+        cmd_reply(CMD_MUTE, caller, C_SYNTAX,
+          _("Last argument must be an integer."));
+        return FALSE;
+      }
+    }
+    nturns = atoi(arg[1]);
+    if (nturns < 0) {
+      cmd_reply(CMD_MUTE, caller, C_SYNTAX,
+        _("Last argument must be a positive integer."));
+      return FALSE;
+    }
+  }
+
+  if (conn_is_muted(pconn)) {
+    cmd_reply(CMD_MUTE, caller, C_FAIL,
+      _("User %s is already muted."), pconn->username);
+    return FALSE;
+  }
+
+  if (pconn->access_level >= ALLOW_ADMIN) {
+    cmd_reply(CMD_MUTE, caller, C_FAIL,
+      _("User %s cannot be muted."), pconn->username);
+    return FALSE;
+  }
+  
+  if (check) {
+    return TRUE;
+  }
+
+  mi = fc_malloc(sizeof(struct muteinfo));
+  mi->turns_left = nturns;
+  mi->conn_id = pconn->id;
+  mi->addr = mystrdup(pconn->server.ipaddr);
+  
+  hash_insert(mute_table, mi->addr, mi);
+
+  conn_list_iterate(game.est_connections, pc) {
+    if (pc == pconn) {
+      if (nturns == 0) {
+        notify_conn(&pc->self, _("Server: You have been muted."));
+      } else {
+        notify_conn(&pc->self,
+          _("Server: You have been muted for the next %d turns."),
+          nturns);
+      }
+    } else if (pc == caller) {
+      if (nturns == 0) {
+        cmd_reply(CMD_MUTE, caller, C_OK, _("User %s has been muted."),
+                  pconn->username);
+      } else {
+        cmd_reply(CMD_MUTE, caller, C_OK,
+          _("User %s has been muted for the next %d turns."),
+          pconn->username, nturns);
+      }
+    } else {
+      if (nturns == 0) {
+        notify_conn(&pc->self, 
+          _("Server: User %s has been muted."), pconn->username);
+      } else {
+        notify_conn(&pc->self, 
+          _("Server: User %s has been muted for the next %d turns."),
+          pconn->username, nturns);
+      }
+    }
+  } conn_list_iterate_end;
+  
+  return TRUE;
 }
 /**************************************************************************
   Set timeout options.
@@ -5537,10 +5737,10 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
    * other non-alphanumeric characters.
    */
   for (cptr_d = command; *cptr_s != '\0' && my_isalnum(*cptr_s) &&
-       cptr_d < command+sizeof(command)-1; cptr_s++, cptr_d++) {
-    *cptr_d=*cptr_s;
+       cptr_d < command + sizeof(command) - 1; cptr_s++, cptr_d++) {
+    *cptr_d = *cptr_s;
   }
-  *cptr_d='\0';
+  *cptr_d = '\0';
 
   cmd = command_named(command, FALSE);
   if (cmd == CMD_AMBIGUOUS) {
@@ -5548,19 +5748,17 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     cmd_reply(cmd, caller, C_SYNTAX,
               _("Warning: '%s' interpreted as '%s', but it is ambiguous."
                 "  Try '%shelp'."),
-              command, commands[cmd].name, caller?"/":"");
+              command, commands[cmd].name, caller ? "/" : "");
   } else if (cmd == CMD_UNRECOGNIZED) {
     cmd_reply(cmd, caller, C_SYNTAX,
-              _("Unknown command.  Try '%shelp'."), caller?"/":"");
+              _("Unknown command.  Try '%shelp'."), caller ? "/" : "");
     return FALSE;
   }
 
   enum cmdlevel_id level = access_level(cmd);
 
   if (connection_can_vote(caller)
-      && !check
-      && caller->access_level == ALLOW_BASIC
-      && level == ALLOW_CTRL) {
+      && !check && caller->access_level == ALLOW_BASIC && level == ALLOW_CTRL) {
     /* If we already have a vote going, cancel it in favour of the new
      * vote command. You can only have one vote at a time. */
     if (get_vote_by_caller(caller->id)) {
@@ -5587,11 +5785,11 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     }
   }
   if (caller
-      && !(check && caller->access_level >= ALLOW_BASIC 
+      && !(check && caller->access_level >= ALLOW_BASIC
            && level == ALLOW_CTRL)
       && caller->access_level < level) {
     cmd_reply(cmd, caller, C_FAIL,
-	      _("You are not allowed to use this command."));
+              _("You are not allowed to use this command."));
     return FALSE;
   }
 
@@ -5604,71 +5802,64 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
   sz_strlcpy(allargs, cptr_s);
   cut_comment(allargs);
 
-  i=strlen(arg)-1;
-  while(i>0 && my_isspace(arg[i]))
-    arg[i--]='\0';
-    if (!check)
-    {
-        struct conn_list echolist;
-        conn_list_init(&echolist);
-        switch (commands[cmd].echo_mode)
-        {
-        case ECHO_NONE:
-            break;
-        case ECHO_USER:
-            if (caller)
-                conn_list_insert(&echolist, caller);
-            break;
-        case ECHO_PLAYERS:
-            conn_list_iterate(game.est_connections, pconn)
-            {
-                if (pconn->access_level < ALLOW_BASIC)
-                    continue;
-                conn_list_insert(&echolist, pconn);
-  }
-            conn_list_iterate_end;
-            break;
-        case ECHO_ADMINS:
-            conn_list_iterate(game.est_connections, pconn)
-            {
-                if (pconn->access_level < ALLOW_ADMIN)
-                    continue;
-                conn_list_insert(&echolist, pconn);
-            }
-            conn_list_iterate_end;
-            break;
-        case ECHO_ALL:
-            conn_list_iterate(game.est_connections, pconn)
-            {
-                conn_list_insert(&echolist, pconn);
-            }
-            conn_list_iterate_end;
-            break;
-        default:
-            assert(0 /* should not happend */);
-            break;
-        }
-        if (conn_list_size(&echolist) > 0)
-        {
-            notify_conn(&echolist, "%s: '%s %s'", caller ? caller->username
-                        : _("(server prompt)"), command, arg);
-        }
-        conn_list_unlink_all(&echolist);
+  i = strlen(arg) - 1;
+  while (i > 0 && my_isspace(arg[i]))
+    arg[i--] = '\0';
+  if (!check) {
+    struct conn_list echolist;
+    conn_list_init(&echolist);
+    switch (commands[cmd].echo_mode) {
+    case ECHO_NONE:
+      break;
+    case ECHO_USER:
+      if (caller)
+        conn_list_insert(&echolist, caller);
+      break;
+    case ECHO_PLAYERS:
+      conn_list_iterate(game.est_connections, pconn) {
+        if (pconn->access_level < ALLOW_BASIC)
+          continue;
+        conn_list_insert(&echolist, pconn);
+      }
+      conn_list_iterate_end;
+      break;
+    case ECHO_ADMINS:
+      conn_list_iterate(game.est_connections, pconn) {
+        if (pconn->access_level < ALLOW_ADMIN)
+          continue;
+        conn_list_insert(&echolist, pconn);
+      }
+      conn_list_iterate_end;
+      break;
+    case ECHO_ALL:
+      conn_list_iterate(game.est_connections, pconn) {
+        conn_list_insert(&echolist, pconn);
+      }
+      conn_list_iterate_end;
+      break;
+    default:
+      assert(0 /* should not happend */ );
+      break;
     }
-    switch (cmd)
-    {
+    if (conn_list_size(&echolist) > 0) {
+      notify_conn(&echolist, "%s: '%s %s'", caller ? caller->username
+                  : _("(server prompt)"), command, arg);
+    }
+    conn_list_unlink_all(&echolist);
+  }
+  switch (cmd) {
   case CMD_REMOVE:
     return remove_player(caller, arg, check);
   case CMD_SAVE:
-    return save_command(caller,arg, check);
+    return save_command(caller, arg, check);
   case CMD_LOAD:
     return load_command(caller, arg, check);
-    case CMD_LOADMAP:
-        return loadmap_command(caller, arg, check);
-    case CMD_UNLOADMAP:
-        return unloadmap_command(caller, check);
-    case CMD_LOADSCERARIO:
-        return loadscenario_command(caller, arg, check);
+  case CMD_LOADMAP:
+    return loadmap_command(caller, arg, check);
+  case CMD_UNLOADMAP:
+    return unloadmap_command(caller, check);
+  case CMD_LOADSCERARIO:
+    return loadscenario_command(caller, arg, check);
   case CMD_METAPATCHES:
     return metapatches_command(caller, arg, check);
   case CMD_METATOPIC:
@@ -5711,20 +5902,20 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return quit_game(caller, check);
   case CMD_CUT:
     return cut_client_connection(caller, arg, check);
-    case CMD_BAN:
-        return ban_command(caller, arg, check);
-    case CMD_UNBAN:
-        return unban_command(caller, arg, check);
-    case CMD_ADDACTION:
-        return addaction_command(caller, arg, check);
-    case CMD_DELACTION:
-        return delaction_command(caller, arg, check);
-    case CMD_LOADACTIONLIST:
-        return loadactionlist_command(caller, arg, check);
-    case CMD_SAVEACTIONLIST:
-        return saveactionlist_command(caller, arg, check);
-    case CMD_CLEARACTIONLIST:
-        return clearactionlist_command(caller, arg, check);
+  case CMD_BAN:
+    return ban_command(caller, arg, check);
+  case CMD_UNBAN:
+    return unban_command(caller, arg, check);
+  case CMD_ADDACTION:
+    return addaction_command(caller, arg, check);
+  case CMD_DELACTION:
+    return delaction_command(caller, arg, check);
+  case CMD_LOADACTIONLIST:
+    return loadactionlist_command(caller, arg, check);
+  case CMD_SAVEACTIONLIST:
+    return saveactionlist_command(caller, arg, check);
+  case CMD_CLEARACTIONLIST:
+    return clearactionlist_command(caller, arg, check);
   case CMD_SHOW:
     return show_command(caller, arg, check);
   case CMD_EXPLAIN:
@@ -5738,18 +5929,14 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
   case CMD_RULESETDIR:
     return set_rulesetdir(caller, arg, check);
   case CMD_SCORE:
-        if (server_state == RUN_GAME_STATE || server_state == GAME_OVER_STATE)
-        {
-            if (!check)
-            {
+    if (server_state == RUN_GAME_STATE || server_state == GAME_OVER_STATE) {
+      if (!check) {
         report_progress_scores();
       }
       return TRUE;
-        }
-        else
-        {
+    } else {
       cmd_reply(cmd, caller, C_SYNTAX,
-		_("The game must be running before you can see the score."));
+                _("The game must be running before you can see the score."));
       return FALSE;
     }
   case CMD_WALL:
@@ -5762,19 +5949,18 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return read_command(caller, arg, check);
   case CMD_WRITE_SCRIPT:
     return write_command(caller, arg, check);
-    case CMD_RESET:
-        return reset_command(caller, FALSE, check);
-    case CMD_WELCOME_MESSAGE:
-        return welcome_message_command(caller, arg, check);
-    case CMD_WELCOME_FILE:
-        return welcome_file_command(caller, arg, check);
-    case CMD_DNS_LOOKUP:
-        return dnslookup_command(caller, arg, check);
-    case CMD_REQUIRE:
-        return require_command(caller, arg, check);
-  case CMD_RFCSTYLE:	/* see console.h for an explanation */
-        if (!check)
-        {
+  case CMD_RESET:
+    return reset_command(caller, FALSE, check);
+  case CMD_WELCOME_MESSAGE:
+    return welcome_message_command(caller, arg, check);
+  case CMD_WELCOME_FILE:
+    return welcome_file_command(caller, arg, check);
+  case CMD_DNS_LOOKUP:
+    return dnslookup_command(caller, arg, check);
+  case CMD_REQUIRE:
+    return require_command(caller, arg, check);
+  case CMD_RFCSTYLE:           /* see console.h for an explanation */
+    if (!check) {
       con_set_style(!con_get_style());
     }
     return TRUE;
@@ -5784,29 +5970,34 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return firstlevel_command(caller, check);
   case CMD_TIMEOUT:
     return timeout_command(caller, allargs, check);
-    case CMD_IGNORE:
-        return ignore_command(caller, allargs, check);
-    case CMD_UNIGNORE:
-        return unignore_command(caller, allargs, check);
-    case CMD_AUTOTEAM:
-        return autoteam_command(caller, allargs, check);
+  case CMD_IGNORE:
+    return ignore_command(caller, allargs, check);
+  case CMD_UNIGNORE:
+    return unignore_command(caller, allargs, check);
+  case CMD_AUTOTEAM:
+    return autoteam_command(caller, allargs, check);
+  case CMD_MUTE:
+    return mute_command(caller, allargs, check);
+  case CMD_UNMUTE:
+    return unmute_command(caller, allargs, check);
   case CMD_START_GAME:
     return start_command(caller, arg, check);
   case CMD_END_GAME:
     return end_command(caller, arg, check);
 #ifdef HAVE_AUTH
-    case CMD_AUTHDB:
-        return authdb_command(caller, arg, check);
+  case CMD_AUTHDB:
+    return authdb_command(caller, arg, check);
 #endif
   case CMD_NUM:
   case CMD_UNRECOGNIZED:
   case CMD_AMBIGUOUS:
   default:
-        freelog(LOG_FATAL,
-                "bug in civserver: impossible command recognized; bye!");
+    freelog(LOG_FATAL, "bug in civserver: impossible command recognized; bye!");
     assert(0);
   }
-  return FALSE; /* should NEVER happen but we need to satisfy some compilers */
+
+  /* should NEVER happen but we need to satisfy some compilers */
+  return FALSE;
 }
 
 /**************************************************************************
@@ -6893,17 +7084,45 @@ static bool show_scenarios(struct connection *caller)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static bool show_mutes(struct connection *caller)
+{
+  struct connection *pconn;
+  if (hash_num_entries(mute_table) < 1) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, _("There are no muted users."));
+    return TRUE;
+  }
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_LIST, caller, C_COMMENT, "%-32s %s",
+            _("Username / Address"), _("Turns left"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+    pconn = find_conn_by_id(mi->conn_id);
+    if (mi->turns_left > 0) {
+      cmd_reply(CMD_LIST, caller, C_COMMENT, _("%-32s %d"),
+                pconn ? pconn->username : mi->addr, mi->turns_left);
+    } else {
+      cmd_reply(CMD_LIST, caller, C_COMMENT, _("%-32s forever"),
+                pconn ? pconn->username : mi->addr);
+    }
+  } hash_iterate_end;
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  return TRUE;
+}
+/**************************************************************************
   'list' arguments
 **************************************************************************/
-enum LIST_ARGS { LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-                 LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_SCENARIOS,
-                 LIST_RULESETS, LIST_ARG_NUM /* Must be last */
+enum LIST_ARGS {
+  LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
+  LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_SCENARIOS,
+  LIST_RULESETS, LIST_MUTES, LIST_ARG_NUM /* Must be last */
 };
-static const char *const list_args[] =
-    {
-        "players", "connections", "actionlist", "teams", "ignore",
-        "maps", "scenarios", "rulesets", NULL
-    };
+static const char *const list_args[] = {
+  "players", "connections", "actionlist", "teams", "ignore",
+  "maps", "scenarios", "rulesets", "mutes", NULL
+};
 static const char *listarg_accessor(int i)
 {
   return list_args[i];
@@ -6916,46 +7135,46 @@ static bool show_list(struct connection *caller, char *arg)
   enum m_pre_result match_result;
   int ind;
   remove_leading_trailing_spaces(arg);
-    match_result = match_prefix(listarg_accessor,
-                                LIST_ARG_NUM, 0, mystrncasecmp, arg, &ind);
-    if (match_result > M_PRE_EMPTY)
-    {
+  match_result = match_prefix(listarg_accessor,
+                              LIST_ARG_NUM, 0, mystrncasecmp, arg, &ind);
+  if (match_result > M_PRE_EMPTY) {
     cmd_reply(CMD_LIST, caller, C_SYNTAX,
-	      _("Bad list argument: '%s'.  Try '%shelp list'."),
-	      arg, (caller?"/":""));
+              _("Bad list argument: '%s'.  Try '%shelp list'."),
+              arg, (caller ? "/" : ""));
     return FALSE;
   }
-    if (match_result == M_PRE_EMPTY)
-    {
+  if (match_result == M_PRE_EMPTY) {
     ind = LIST_PLAYERS;
   }
-    switch (ind)
-    {
+  switch (ind) {
   case LIST_PLAYERS:
     show_players(caller);
     return TRUE;
   case LIST_CONNECTIONS:
     show_connections(caller);
     return TRUE;
-    case LIST_ACTIONLIST:
-        show_actionlist(caller);
-        return TRUE;
-    case LIST_TEAMS:
-        show_teams(caller, FALSE);
-        return TRUE;
-    case LIST_IGNORE:
-        show_ignore(caller);
-        return TRUE;
-    case LIST_MAPS:
-        return showmaplist_command(caller);
-    case LIST_SCENARIOS:
-        return show_scenarios(caller);
-    case LIST_RULESETS:
-        show_rulesets(caller);
-        return TRUE;
+  case LIST_ACTIONLIST:
+    show_actionlist(caller);
+    return TRUE;
+  case LIST_TEAMS:
+    show_teams(caller, FALSE);
+    return TRUE;
+  case LIST_IGNORE:
+    show_ignore(caller);
+    return TRUE;
+  case LIST_MAPS:
+    return showmaplist_command(caller);
+  case LIST_SCENARIOS:
+    return show_scenarios(caller);
+  case LIST_RULESETS:
+    show_rulesets(caller);
+    return TRUE;
+  case LIST_MUTES:
+    show_mutes(caller);
+    return TRUE;
   default:
     cmd_reply(CMD_LIST, caller, C_FAIL,
-	      "Internal error: ind %d in show_list", ind);
+              "Internal error: ind %d in show_list", ind);
     freelog(LOG_ERROR, "Internal error: ind %d in show_list", ind);
     return FALSE;
   }

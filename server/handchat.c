@@ -222,6 +222,13 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     return;
   }
 
+  if (conn_is_muted(pconn)) {
+    my_snprintf(chat, sizeof(chat),
+      _("Server: You cannot send any messages because you are muted."));
+    dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
+    return;
+  }
+
   /* Send to allies command */
   if (message[0] == ALLIESCHAT_COMMAND_PREFIX) {
     char sender_name[MAX_LEN_CHAT_NAME];
