@@ -403,6 +403,8 @@ static void remove_vote(struct voting *pvote)
     return;
   }
 
+  assert(votes_are_initialized);
+
   vote_list_unlink(&vote_list, pvote);
   vote_cast_list_iterate(pvote->votes_cast, pvc) {
     free(pvc);
@@ -422,16 +424,6 @@ void clear_all_votes(void)
 }
 
 /**************************************************************************
-  ...
-**************************************************************************/
-static void check_init_mute_table(void)
-{
-  if (!mute_table) {
-    mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
-  }
-}
-
-/**************************************************************************
   Initialize stuff related to this code module.
 **************************************************************************/
 void stdinhand_init(void)
@@ -442,7 +434,9 @@ void stdinhand_init(void)
   }
   vote_number_sequence = 0;
 
-  check_init_mute_table();
+  if (!mute_table) {
+    mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  }
 }
 
 /**************************************************************************
@@ -477,6 +471,8 @@ static bool connection_can_vote(struct connection *pconn)
 **************************************************************************/
 static struct voting *get_vote_by_no(int vote_no)
 {
+  assert(votes_are_initialized);
+
   vote_list_iterate(pvote) {
     if (pvote->vote_no == vote_no) {
       return pvote;
@@ -491,6 +487,8 @@ static struct voting *get_vote_by_no(int vote_no)
 **************************************************************************/
 static struct voting *get_vote_by_caller(int caller_id)
 {
+  assert(votes_are_initialized);
+
   vote_list_iterate(pvote) {
     if (pvote->caller_id == caller_id) {
       return pvote;
@@ -506,6 +504,8 @@ static struct voting *get_vote_by_caller(int caller_id)
 static struct voting *vote_new(struct connection *caller, const char *command,
                                enum command_id command_id)
 {
+  assert(votes_are_initialized);
+
   struct voting *pvote;
 
   if (!connection_can_vote(caller)) {
@@ -542,6 +542,8 @@ static struct voting *vote_new(struct connection *caller, const char *command,
 **************************************************************************/
 static void check_vote(struct voting *pvote)
 {
+  assert(votes_are_initialized);
+
   int num_cast = 0, num_voters = 0;
   bool resolve = FALSE, passed = FALSE;
   struct connection *pconn = NULL;
@@ -674,6 +676,8 @@ static void check_vote(struct voting *pvote)
 **************************************************************************/
 static struct vote_cast *find_vote_cast(struct voting *pvote, int conn_id)
 {
+  assert(votes_are_initialized);
+
   vote_cast_list_iterate(pvote->votes_cast, pvc) {
     if (pvc->conn_id == conn_id) {
       return pvc;
@@ -688,6 +692,8 @@ static struct vote_cast *find_vote_cast(struct voting *pvote, int conn_id)
 **************************************************************************/
 static struct vote_cast *vote_cast_new(struct voting *pvote)
 {
+  assert(votes_are_initialized);
+
   struct vote_cast *pvc = fc_malloc(sizeof(struct vote_cast));
 
   pvc->conn_id = -1;
@@ -703,6 +709,8 @@ static struct vote_cast *vote_cast_new(struct voting *pvote)
 **************************************************************************/
 static void remove_vote_cast(struct voting *pvote, struct vote_cast *pvc)
 {
+  assert(votes_are_initialized);
+
   if (!pvc) {
     return;
   }
@@ -718,6 +726,8 @@ static void remove_vote_cast(struct voting *pvote, struct vote_cast *pvc)
 static void connection_vote(struct connection *pconn, struct voting *pvote,
                             enum vote_type type)
 {
+  assert(votes_are_initialized);
+
   struct vote_cast *pvc;
 
   if (!connection_can_vote(pconn)) {
@@ -775,6 +785,7 @@ static void unmute_conn_by_mi(struct muteinfo *mi)
   }
   notify_conn(&pconn->self, _("Server: You have been unmuted."));
 }
+
 /**************************************************************************
   Update stuff every turn that is related to this code module. Run this
   on turn end.
@@ -802,7 +813,8 @@ void stdinhand_turn(void)
 void stdinhand_free(void)
 {
   clear_all_votes();
-  
+  votes_are_initialized = FALSE;
+
   if (mute_table) {
     hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
       free(mi->addr);
@@ -2676,8 +2688,6 @@ static bool autoteam_command(struct connection *caller, char *str,
 **************************************************************************/
 bool conn_is_muted(struct connection *pconn)
 {
-  check_init_mute_table();
-
   if (!pconn) {
     return FALSE;
   }
@@ -2694,8 +2704,6 @@ static bool unmute_command(struct connection *caller,
   enum m_pre_result res;
   struct muteinfo *mi;
   struct connection *pconn;
-
-  check_init_mute_table();
 
   pconn = find_conn_by_user_prefix(str, &res);
   if (!pconn) {
@@ -2735,8 +2743,6 @@ static bool mute_command(struct connection *caller, char *str, bool check)
   struct connection *pconn = NULL;
   enum m_pre_result res;
   struct muteinfo *mi;
-
-  check_init_mute_table();
 
   sz_strlcpy(buf, str);
   ntokens = get_tokens(buf, arg, 2, TOKEN_DELIMITERS);

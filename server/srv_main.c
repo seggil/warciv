@@ -1933,24 +1933,27 @@ main_start_players:
 }
 
 /**************************************************************************
- ...
+  If full_free is FALSE, we don't all datas.
 **************************************************************************/
-void server_game_free(bool remove_players)
+void server_game_free(bool full_free)
 {
-  /* Free all the treaties that were left open when game finished. */
-  free_treaties();
+  if (full_free) {
+    /* Free all the treaties that were left open when game finished. */
+    free_treaties();
 
-  players_iterate(pplayer) {
-    player_map_free(pplayer);
-  } players_iterate_end;
-  diplhand_free();
-  game_free(remove_players);
-  stdinhand_free();
-  BV_CLR_ALL(srvarg.draw);
-  if (game.ruleset_loaded)
-    {
-      ruleset_cache_free();
-    }
+    players_iterate(pplayer) {
+      player_map_free(pplayer);
+    } players_iterate_end;
+    diplhand_free();
+  }
+  game_free(full_free);
+  if (full_free) {
+    stdinhand_free();
+    BV_CLR_ALL(srvarg.draw);
+  }
+  if (game.ruleset_loaded) {
+    ruleset_cache_free();
+  }
 }
 
 /**************************************************************************
