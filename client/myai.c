@@ -1882,7 +1882,6 @@ void my_ai_spread_execute(void)
 	struct scity_list sclist;
 	struct scity *pscity=NULL;
 	Continent_id cid=get_unit_in_focus()->tile->continent;
-	Impr_Type_id airport=find_improvement_by_name_orig("Airport");
 
 	/* get datas */
 	scity_list_init(&sclist);
@@ -1895,7 +1894,7 @@ void my_ai_spread_execute(void)
 			continue;
 		city_list_iterate(pplayer->cities,pcity)
 		{
-			if(pcity->tile->continent!=cid||(spread_airport_cities&&!city_got_building(pcity,airport)))
+			if(pcity->tile->continent!=cid||(spread_airport_cities&&get_city_bonus(pcity,EFT_AIRLIFT)==0))
 				continue;
 			pscity=fc_malloc(sizeof(struct scity));
 			pscity->tdv=pscity->rdv=pscity->tav=pscity->rav=0;
