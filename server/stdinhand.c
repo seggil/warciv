@@ -422,15 +422,27 @@ void clear_all_votes(void)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void check_init_mute_table(void)
+{
+  if (!mute_table) {
+    mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  }
+}
+
+/**************************************************************************
   Initialize stuff related to this code module.
 **************************************************************************/
 void stdinhand_init(void)
 {
-  vote_list_init(&vote_list);
-  votes_are_initialized = TRUE;
+  if (!votes_are_initialized) {
+    vote_list_init(&vote_list);
+    votes_are_initialized = TRUE;
+  }
   vote_number_sequence = 0;
 
-  mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  check_init_mute_table();
 }
 
 /**************************************************************************
@@ -747,6 +759,10 @@ void cancel_connection_votes(struct connection *pconn)
 static void unmute_conn_by_mi(struct muteinfo *mi)
 {
   struct connection *pconn;
+
+  if (mi == NULL) {
+    return;
+  }
 
   pconn = find_conn_by_id(mi->conn_id);
 
@@ -2660,6 +2676,8 @@ static bool autoteam_command(struct connection *caller, char *str,
 **************************************************************************/
 bool conn_is_muted(struct connection *pconn)
 {
+  check_init_mute_table();
+
   if (!pconn) {
     return FALSE;
   }
@@ -2676,6 +2694,8 @@ static bool unmute_command(struct connection *caller,
   enum m_pre_result res;
   struct muteinfo *mi;
   struct connection *pconn;
+
+  check_init_mute_table();
 
   pconn = find_conn_by_user_prefix(str, &res);
   if (!pconn) {
@@ -2694,7 +2714,9 @@ static bool unmute_command(struct connection *caller,
     return TRUE;
   }
 
+  /* Cannot fail, since conn_is_muted returned true. */
   mi = hash_lookup_data(mute_table, pconn->server.ipaddr);
+  assert(mi != NULL);
   unmute_conn_by_mi(mi);
 
   cmd_reply(CMD_UNMUTE, caller, C_OK, _("User %s has been unmuted."),
@@ -2713,6 +2735,8 @@ static bool mute_command(struct connection *caller, char *str, bool check)
   struct connection *pconn = NULL;
   enum m_pre_result res;
   struct muteinfo *mi;
+
+  check_init_mute_table();
 
   sz_strlcpy(buf, str);
   ntokens = get_tokens(buf, arg, 2, TOKEN_DELIMITERS);
