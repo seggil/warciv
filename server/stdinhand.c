@@ -2731,7 +2731,7 @@ static bool mute_command(struct connection *caller, char *str, bool check)
 
   if (ntokens == 2) {
     for (p = arg[1]; *p != '\0'; p++) {
-      if (!isdigit(*p)) {
+      if (!my_isdigit(*p)) {
         cmd_reply(CMD_MUTE, caller, C_SYNTAX,
           _("Last argument must be an integer."));
         return FALSE;
