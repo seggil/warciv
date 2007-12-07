@@ -42,5 +42,6 @@ void send_connect_route(struct unit *punit, enum unit_activity activity);
 struct pf_path *path_to_nearest_allied_city(struct unit *punit);
 
 int calculate_move_cost(struct unit *punit, struct tile *dest_tile);
+struct tile *find_nearest_city(struct unit *punit, bool allies);
 
 #endif /* FC__GOTO_H */

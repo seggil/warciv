@@ -157,7 +157,8 @@ static inline void SPECLIST_FOO(_list_free) (SPECLIST_LIST *tthis)
 #ifdef SPECLIST_NO_COPY
 #undef SPECLIST_NO_COPY
 #else
-static inline void SPECLIST_FOO(_list_copy) (SPECLIST_LIST *dest, SPECLIST_LIST *src)
+static inline void SPECLIST_FOO(_list_copy) (SPECLIST_LIST *dest,
+					     const SPECLIST_LIST *src)
 {
   assert(src);
   assert(dest);
@@ -175,14 +176,16 @@ static inline void SPECLIST_FOO(_list_copy) (SPECLIST_LIST *dest, SPECLIST_LIST 
 #ifdef SPECLIST_NO_FIND
 #undef SPECLIST_NO_FIND
 #else
-static inline SPECLIST_TYPE *SPECLIST_FOO(_list_find) (SPECLIST_LIST *tthis, SPECLIST_TYPE *data)
+static inline SPECLIST_TYPE *SPECLIST_FOO(_list_find) (const SPECLIST_LIST *tthis,
+						       const SPECLIST_TYPE *data)
 {
   assert(tthis);
 
   TYPED_LIST_ITERATE(SPECLIST_TYPE, *tthis, pitem)
   {
-    if(pitem==data)
+    if (pitem == data) {
       return pitem;
+    }
   } LIST_ITERATE_END;
   return NULL;
 }

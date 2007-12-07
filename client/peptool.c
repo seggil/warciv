@@ -846,7 +846,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
     city_list_iterate(ttradecities, pcity) {
       my_ai_add_trade_city(pcity,TRUE);
     } city_list_iterate_end;
-    trade_route_list_copy(my_ai_trade_plan_get(), &ttradeplan);
+    set_trade_planning(&ttradeplan);
     trade_route_list_iterate(ttraders, ptr) {
       my_ai_orders_free(ptr->punit);
       my_ai_trade_route_alloc(ptr);
@@ -862,9 +862,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
     } unit_list_iterate_end;
     unit_list_iterate(tnoners, punit) {
       if (!punit->my_ai.control) {
-	unit_list_append(my_ai_get_units(MY_AI_NONE), punit);
-	punit->my_ai.control = TRUE;
-	punit->my_ai.activity = MY_AI_NONE;
+	my_ai_none(punit);
       }
     } unit_list_iterate_end;
     update_unit_info_label(get_unit_in_focus());

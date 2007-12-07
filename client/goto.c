@@ -1162,3 +1162,40 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 
   return move_cost;
 }
+
+/**************************************************************************
+  Return the nearest tile with a city.
+***************************************************************************/
+struct tile *find_nearest_city(struct unit *punit, bool allies)
+{
+  struct city *pcity = map_get_city(punit->tile);
+  struct pf_parameter parameter;
+  struct pf_map *map;
+
+  if (pcity
+      && (city_owner(pcity) == game.player_ptr
+	  || (allies && pplayers_allied(game.player_ptr,
+					city_owner(pcity))))) {
+    return pcity->tile;
+  }
+
+  fill_client_goto_parameter(punit, &parameter);
+  map = pf_create_map(&parameter);
+
+  while (pf_next(map)) {
+    struct pf_position pos;
+
+    pf_next_get_position(map, &pos);
+
+    if ((pcity = map_get_city(pos.tile))
+	&& (city_owner(pcity) == game.player_ptr
+	    || (allies
+		&& pplayers_allied(game.player_ptr, city_owner(pcity))))) {
+      break;
+    }
+  }
+
+  pf_destroy_map(map);
+
+  return pcity ? pcity->tile : NULL;
+}

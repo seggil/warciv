@@ -1,11 +1,17 @@
-/**********************************************************************
- This file was edited by *pepeto*.
- - auto-caravans
- - spread
- - patrol
+/********************************************************************** 
+ Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 ***********************************************************************/
-#ifndef _MYAI_H
-#define _MYAI_H
+#ifndef FC__MYAI_H
+#define FC__MYAI_H
 
 #include "city.h"
 #include "unit.h"
@@ -13,13 +19,13 @@
 
 #include "multiselect.h"
 
-#define MAX_ESTIMATED_TURNS	32
-
-/* main functions */
+/********************************************************************** 
+  Main and common functions.
+***********************************************************************/
 int my_ai_count_activity(enum my_ai_activity activity);
 const char *my_ai_unit_activity(struct unit *punit);
-char *my_ai_unit_orders(struct unit *punit);
-struct unit_list *my_ai_get_units(enum my_ai_activity activity);
+const char *my_ai_unit_orders(struct unit *punit);
+const struct unit_list *my_ai_get_units(enum my_ai_activity activity);
 
 void my_ai_goto_nearest_city(struct unit *punit);
 void my_ai_caravan(struct unit *punit);
@@ -36,22 +42,28 @@ void my_ai_help_wonder_city_free(struct city *pcity);
 void my_ai_init(void);
 void my_ai_free(void);
 
-/* trade functions */
+/********************************************************************** 
+  Trade functions.
+***********************************************************************/
+#define MAX_ESTIMATED_TURNS 32
+
 void my_ai_trade_route_alloc(struct trade_route *ptr);
-void my_ai_trade_route_alloc_city(struct unit *punit,struct city *pcity);
+void my_ai_trade_route_alloc_city(struct unit *punit, struct city *pcity);
 void my_ai_trade_route_free(struct unit *punit);
 void my_ai_trade_route_execute(struct unit *punit);
 void my_ai_trade_route_execute_all(void);
 
-struct trade_route *trade_route_new(struct unit *punit,struct city *pc1,struct city *pc2,bool planned);
-struct trade_route_list *estimate_non_ai_trade_route(void);
+struct trade_route *trade_route_new(struct unit *punit, struct city *pc1,
+				    struct city *pc2, bool planned);
+const struct trade_route_list *estimate_non_ai_trade_route(void);
 int estimate_non_ai_trade_route_number(struct city *pcity);
 void non_ai_trade_change(struct unit *punit,int action);
 int count_trade_routes(struct city *pcity);
-struct trade_route_list *my_ai_trade_plan_get(void);
-struct city_list *my_ai_get_trade_cities(void);
+void set_trade_planning(const struct trade_route_list *ptrl);
+const struct trade_route_list *my_ai_trade_plan_get(void);
+const struct city_list *my_ai_get_trade_cities(void);
 
-void my_ai_add_trade_city(struct city *pcity,bool multi);
+void my_ai_add_trade_city(struct city *pcity, bool multi);
 void show_cities_in_trade_plan(void);
 void recalculate_trade_plan(void);
 void clear_my_ai_trade_cities(void);
@@ -59,19 +71,25 @@ void show_free_slots_in_trade_plan(void);
 void recalculate_trade_plan(void);
 void calculate_trade_estimation(void);
 
-/* help wonder functions */
-void my_ai_help_wonder_alloc(struct unit *punit,struct help_wonder *phw);
+/********************************************************************** 
+  Help Wonder functions.
+***********************************************************************/
+void my_ai_help_wonder_alloc(struct unit *punit, struct help_wonder *phw);
 void my_ai_help_wonder_execute(struct unit *punit);
 void my_ai_help_wonder_execute_all(void);
 void my_ai_help_wonder_free(struct unit *punit);
 
-/* patrol functions */
-void my_ai_patrol_alloc(struct unit *punit,struct tile *ptile);
+/********************************************************************** 
+  Patrol functions.
+***********************************************************************/
+void my_ai_patrol_alloc(struct unit *punit, struct tile *ptile);
 void my_ai_patrol_execute(struct unit *punit);
 void my_ai_patrol_execute_all(void);
 void my_ai_patrol_free(struct unit *punit);
 
-/* spread function */
+/********************************************************************** 
+  Spread units.
+***********************************************************************/
 void my_ai_spread_execute(void);
 
-#endif /* _MYAI_H */
+#endif /* FC__MYAI_H */
