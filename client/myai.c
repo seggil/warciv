@@ -30,6 +30,7 @@
 #include "civclient.h"
 #include "clinet.h"
 #include "control.h"
+#include "goto.h"
 #include "mapview_common.h"
 #include "mapview_g.h"
 #include "menu_g.h"
@@ -96,7 +97,7 @@ struct tile *find_nearest_city(struct unit *punit,bool allies)
 	if(map_get_city(punit->tile))
 		return punit->tile;
 	Continent_id cid=punit->tile->continent;
-	int bmr=MAXCOST,mr,dist=MAXCOST,d;
+	int bmr=FC_INFINITY,mr,dist=FC_INFINITY,d;
 	struct tile *btile=NULL;
 	bool cond=is_ground_unit(punit);
 
@@ -204,20 +205,20 @@ int trade_route_value(struct city *pc1,struct city *pc2)//pc1 is an own city
 	for(i=0;i<NUM_TRADEROUTES;i++)
 		if(pc1->trade[i]==pc2->id)
 			return pc1->trade_value[i];
-	return MAXCOST;
+	return FC_INFINITY;
 }
 
 int city_min_trade_route(struct city *pcity,struct trade_route **pptr)
 {
 	if(!pcity)
-		return MAXCOST;
+		return FC_INFINITY;
 	int min;
 
 	if(pcity->owner==game.player_idx)
 		min=get_city_min_trade_route(pcity,NULL);
 	else
 	{
-		min=MAXCOST;
+		min=FC_INFINITY;
 		city_list_iterate(game.player_ptr->cities,ocity)
 		{
 			int value=trade_route_value(ocity,pcity);
@@ -254,7 +255,7 @@ int calculate_move_trade_cost(struct unit *punit,struct city *pc1,struct city *p
 	if(punit->homecity==pc1->id)
 		return calculate_move_cost(punit,pc2->tile);
 	if(punit->owner!=pc1->owner)
-		return MAXCOST;
+		return FC_INFINITY;
 
 	struct unit cunit=*punit;
 	
@@ -952,7 +953,7 @@ struct trade_route *add_trade_route_in_planning
   /* Change configuration */
   trade_route_list_append(ptrlist, ptr);
   pconf->free_slots -= 2;
-  if (ptr->moves_req < MAXCOST) {
+  if (ptr->moves_req < FC_INFINITY) {
     pconf->moves += ptr->moves_req;
     pconf->turns += ptr->turns_req;
   } else {
@@ -1554,7 +1555,7 @@ struct help_wonder *best_wonder(struct unit *punit)
 struct unit *find_first_helper(struct city *pcity,struct help_wonder_list *phwlist)
 {
 	struct unit *bunit=NULL;
-	int best=MAXCOST,cost;
+	int best=FC_INFINITY,cost;
 	help_wonder_list_iterate(*phwlist,phw)
 	{
 		hw_unit_list_iterate(phw->units,phw_unit)

@@ -1132,3 +1132,33 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 
   return path;
 }
+
+/**************************************************************************
+  Calculate the move cost for the unit to reach the destination tile.
+***************************************************************************/
+int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
+{
+  if (!punit) {
+    return FC_INFINITY;
+  }
+
+  if (is_air_unit(punit) || is_heli_unit(punit)) {
+    return SINGLE_MOVE * real_map_distance(punit->tile, dest_tile);
+  }
+
+  struct pf_parameter parameter;
+  struct pf_map *map;
+  struct pf_position pos;
+  int move_cost = FC_INFINITY;
+
+  fill_client_goto_parameter(punit, &parameter);
+  map = pf_create_map(&parameter);
+
+  if (pf_get_position(map, dest_tile, &pos)) {
+    move_cost = pos.total_MC;
+  }
+
+  pf_destroy_map(map);
+
+  return move_cost;
+}

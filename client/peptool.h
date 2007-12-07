@@ -1,76 +1,58 @@
-/**********************************************************************
- This file was edited by *pepeto*.
- - warmap
- - pepsettings
-*********************************************************************/
-#ifndef _PEPTOOL_H
-#define _PEPTOOL_H
+/********************************************************************** 
+ Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+***********************************************************************/
+#ifndef FC__PEPTOOL_H
+#define FC__PEPTOOL_H
 
 #include "city.h"
 #include "map.h"
 #include "unit.h"
 
-void generate_warmap(struct unit *punit, enum unit_move_type move_type);
-int calculate_move_cost(struct unit *punit, struct tile *dst_tile);
-
-#define THRESHOLD 12
-#define MAXCOST 255
-
-struct move_cost_map {
-  unsigned char *cost;
-  unsigned char *seacost;
-  unsigned char *vector;
-  int size;
-
-  struct city *warcity; /* so we know what we're dealing with here */
-  struct unit *warunit; /* so we know what we're dealing with here */
-  struct tile *orig_tile;
-};
-
-extern struct move_cost_map warmap;
-
-#define WARMAP_COST(ptile) (warmap.cost[(ptile)->index])
-#define WARMAP_SEACOST(ptile) (warmap.seacost[(ptile)->index])
-#define WARMAP_VECTOR(ptile) (warmap.vector[(ptile)->index])
-
-/* settings */
+/********************************************************************** 
+  PepClient settings...
+***********************************************************************/
 #define PEPSETTINGS_FILE_NAME ".pepsettings"
 
-enum my_ai_level
-{
-	LEVEL_OFF=0,
-	LEVEL_ON,
-	LEVEL_GOOD,
-	LEVEL_BEST//may be slower
+enum my_ai_level {
+  LEVEL_OFF = 0,
+  LEVEL_ON,
+  LEVEL_GOOD,
+  LEVEL_BEST /* may be slower */
 };
 
-enum peppage
-{
-	PAGE_PMAIN=0,
-	PAGE_MS,
-	PAGE_DG,
-	PAGE_TRADE,
-	PAGE_WONDER,
-	PAGE_NUM
+enum peppage {
+  PAGE_PMAIN = 0,
+  PAGE_MS,
+  PAGE_DG,
+  PAGE_TRADE,
+  PAGE_WONDER,
+  PAGE_NUM
 };
 
-enum peptype
-{
-	TYPE_BOOL,
-	TYPE_INT,
-	TYPE_FILTER,
-	TYPE_END
+enum peptype {
+  TYPE_BOOL,
+  TYPE_INT,
+  TYPE_FILTER,
+  TYPE_END
 };
 
-struct pepsetting
-{
-	enum peppage page;
-	const char *name;
-	const char *description;
-	const char *help_text;
-	enum peptype type;
-	void *data;
-	long def,min,max;
+struct pepsetting {
+  enum peppage page;
+  const char *name;
+  const char *description;
+  const char *help_text;
+  enum peptype type;
+  void *data;
+  long def,min,max;
 };
 
 extern struct pepsetting *pepsettings;
@@ -207,26 +189,29 @@ extern int my_ai_defend_city_power_req;
 #define MIN_MY_AI_WONDER_LEVEL LEVEL_OFF
 #define MAX_MY_AI_WONDER_LEVEL LEVEL_BEST
 
-#define PSGEN_BOOL(page,name,desc,help,value) {page,#name,desc,help,TYPE_BOOL,&name,DEFAULT_##value,0,1}
-#define PSGEN_INT(page,name,desc,help,value) {page,#name,desc,help,TYPE_INT,&name,DEFAULT_##value,MIN_##value,MAX_##value}
-#define PSGEN_FILTER(page,name,desc,value) {page,#name,desc,NULL,TYPE_FILTER,&name,DEFAULT_##value,FILTER_ALL,FILTER_OFF}
-#define PSGEN_END {PAGE_NUM,NULL,NULL,NULL,TYPE_END,NULL,0,0,0}
+#define PSGEN_BOOL(page, name, desc, help, value) \
+  {page, #name, desc, help, TYPE_BOOL, &name, DEFAULT_##value, FALSE, TRUE}
+#define PSGEN_INT(page, name, desc, help, value)  \
+  {page, #name, desc, help, TYPE_INT, &name,      \
+   DEFAULT_##value, MIN_##value, MAX_##value}
+#define PSGEN_FILTER(page, name, desc, value)     \
+  {page, #name, desc, NULL, TYPE_FILTER, &name,   \
+   DEFAULT_##value, FILTER_ALL, FILTER_OFF}
+#define PSGEN_END {PAGE_NUM, NULL, NULL, NULL, TYPE_END, NULL, 0, 0, 0}
 
 const char *get_page_name(enum peppage page);
 
-#define pepsettings_iterate(pset)	\
-{	\
-	int _i=0;	\
-	struct pepsetting *pset;	\
-	while(TRUE)	\
-	{	\
-		pset=&pepsettings[_i];	\
-		if(pset->type==TYPE_END)	\
-			break;
-
-#define pepsettings_iterate_end	\
-		_i++;	\
-	}	\
+#define pepsettings_iterate(pset) { \
+  int _i = 0;                       \
+  struct pepsetting *pset;          \
+  while (TRUE) {                    \
+    pset = &pepsettings[_i];        \
+    if (pset->type == TYPE_END) {   \
+      break;                        \
+    }
+#define pepsettings_iterate_end	    \
+    _i++;                           \
+  }	                            \
 }
 
 /* load/save settings */
@@ -237,4 +222,4 @@ void load_all_settings(void);
 void save_all_settings(void);
 void autosave_settings(void);
 
-#endif /* _PEPTOOL_H */
+#endif /* FC__PEPTOOL_H */

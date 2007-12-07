@@ -1,8 +1,15 @@
-/**********************************************************************
- This file was edited by *pepeto*.
- - warmap
- - pepsettings
-*********************************************************************/
+/********************************************************************** 
+ Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -33,259 +40,10 @@
 #include "myai.h"
 #include "peptool.h"
 
-/* warmap */
-struct move_cost_map warmap;
-
-#define AIR_ASSUMES_UNKNOWN_SAFE        TRUE
-#define AIR_ASSUMES_FOGGED_SAFE         TRUE
-
-#define MAXARRAYS 10000
-#define ARRAYLENGTH 10
-
-struct mappos_array {
-  int first_pos;
-  int last_pos;
-  struct tile *tile[ARRAYLENGTH];
-  struct mappos_array *next_array;
-};
-
-struct array_pointer {
-  struct mappos_array *first_array;
-  struct mappos_array *last_array;
-};
-
-static struct mappos_array *mappos_arrays[MAXARRAYS];
-static struct array_pointer cost_lookup[MAXCOST];
-static int array_count;
-static int lowest_cost;
-static int highest_cost;
-
-bool can_move_here(struct tile *ptile);
-
-/**************************************************************************
-...
-**************************************************************************/
-static void init_queue(void)
-{
-  int i;
-  static bool is_initialized = FALSE;
-
-  if (!is_initialized) {
-    for (i = 0; i < MAXARRAYS; i++) {
-      mappos_arrays[i] = NULL;
-    }
-    is_initialized = TRUE;
-  }
-
-  for (i = 0; i < MAXCOST; i++) {
-    cost_lookup[i].first_array = NULL;
-    cost_lookup[i].last_array = NULL;
-  }
-  array_count = 0;
-  lowest_cost = 0;
-  highest_cost = 0;
-}
-
-/**************************************************************************
-...
-**************************************************************************/
-static struct mappos_array *get_empty_array(void)
-{
-  struct mappos_array *parray;
-  if (!mappos_arrays[array_count])
-    mappos_arrays[array_count] = fc_malloc(sizeof(struct mappos_array));
-  parray = mappos_arrays[array_count++];
-  parray->first_pos = 0;
-  parray->last_pos = -1;
-  parray->next_array = NULL;
-  return parray;
-}
-
-/**************************************************************************
-...
-**************************************************************************/
-static void add_to_mapqueue(int cost, struct tile *ptile)
-{
-  struct mappos_array *our_array;
-
-  assert(cost < MAXCOST && cost >= 0);
-
-  our_array = cost_lookup[cost].last_array;
-  if (!our_array) {
-    our_array = get_empty_array();
-    cost_lookup[cost].first_array = our_array;
-    cost_lookup[cost].last_array = our_array;
-  } else if (our_array->last_pos == ARRAYLENGTH-1) {
-    our_array->next_array = get_empty_array();
-    our_array = our_array->next_array;
-    cost_lookup[cost].last_array = our_array;
-  }
-
-  our_array->tile[++(our_array->last_pos)] = ptile;
-  if (cost > highest_cost)
-    highest_cost = cost;
-  freelog(LOG_DEBUG, "adding cost:%i at %i,%i", cost, ptile->x, ptile->y);
-}
-
-/**************************************************************************
-...
-**************************************************************************/
-static struct tile *get_from_mapqueue(void)
-{
-  struct mappos_array *our_array;
-  struct tile *ptile;
-
-  freelog(LOG_DEBUG, "trying get");
-  while (lowest_cost < MAXCOST) {
-    if (lowest_cost > highest_cost)
-      return FALSE;
-    our_array = cost_lookup[lowest_cost].first_array;
-    if (!our_array) {
-      lowest_cost++;
-      continue;
-    }
-    if (our_array->last_pos < our_array->first_pos) {
-      if (our_array->next_array) {
-	cost_lookup[lowest_cost].first_array = our_array->next_array;
-	continue;
-      } else {
-	cost_lookup[lowest_cost].first_array = NULL;
-	lowest_cost++;
-	continue;
-      }
-    }
-    ptile = our_array->tile[our_array->first_pos];
-    our_array->first_pos++;
-    return ptile;
-  }
-  return NULL;
-}
-
-static void init_warmap(struct tile *orig_tile, enum unit_move_type move_type)
-{
-  if (warmap.size != MAX_MAP_INDEX) {
-    warmap.cost = fc_realloc(warmap.cost,
-			     MAX_MAP_INDEX * sizeof(*warmap.cost));
-    warmap.seacost = fc_realloc(warmap.seacost,
-				MAX_MAP_INDEX * sizeof(*warmap.seacost));
-    warmap.vector = fc_realloc(warmap.vector,
-			       MAX_MAP_INDEX * sizeof(*warmap.vector));
-    warmap.size = MAX_MAP_INDEX;
-  }
-
-  init_queue();
-
-  switch (move_type) {
-  case SEA_MOVING:
-    assert(sizeof(*warmap.seacost) == sizeof(char));
-    memset(warmap.seacost, MAXCOST, map.xsize * map.ysize);
-    WARMAP_SEACOST(orig_tile) = 0;
-    break;
-  default:
-    assert(sizeof(*warmap.cost) == sizeof(char));
-    memset(warmap.cost, MAXCOST, map.xsize * map.ysize);
-    WARMAP_COST(orig_tile) = 0;
-    break;
-  }
-}  
-
-bool can_move_here(struct tile *ptile)
-{
-	unit_list_iterate(ptile->units,punit)
-	{
-		if(!pplayers_allied(game.player_ptr,unit_owner(punit)))
-			return FALSE;
-	} unit_list_iterate_end;
-	return TRUE;
-}
-
-void generate_warmap(struct unit *punit, enum unit_move_type move_type)
-{
-  int move_cost;
-  bool igter=unit_flag(punit, F_IGTER);
-  int maxcost = THRESHOLD * 6 + 2;
-  struct tile *ptile;
-  unsigned char cost;
-
-  init_warmap(punit->tile, move_type);
-  add_to_mapqueue(0, punit->tile);
-
-  if (unit_flag(punit, F_SETTLERS)
-      && unit_move_rate(punit)==3)
-    maxcost /= 2;
-
-  if(move_type == SEA_MOVING)
-	  while ((ptile = get_from_mapqueue())) {
-		cost = WARMAP_SEACOST(ptile);
-		adjc_dir_iterate(ptile, tile1, dir) {
-			if(!is_ocean(tile1->terrain))
-				continue;
-			move_cost = SINGLE_MOVE;
-			move_cost += cost;
-			if(can_move_here(tile1) && WARMAP_SEACOST(tile1) > move_cost && move_cost < maxcost) {
-			  WARMAP_SEACOST(tile1) = move_cost;
-		  if (ptile->move_cost[dir] == MOVE_COST_FOR_VALID_SEA_STEP) {
-			add_to_mapqueue(move_cost, tile1);
-		  }
-		}
-	  } adjc_dir_iterate_end;
-	}
-  else
-	  while ((ptile = get_from_mapqueue())) {
-		cost = WARMAP_COST(ptile);
-	
-		adjc_dir_iterate(ptile, tile1, dir) {
-		if (WARMAP_COST(tile1) <= cost || !can_move_here(tile1))
-		  continue;
-	
-			if (is_ocean(map_get_terrain(tile1))) {
-			  if (ground_unit_transporter_capacity(tile1, game.player_ptr) > 0)
-			move_cost = SINGLE_MOVE;
-			  else
-			continue;
-		} else if (is_ocean(ptile->terrain)) {
-		  int base_cost = get_tile_type(map_get_terrain(tile1))->movement_cost * SINGLE_MOVE;
-		  move_cost = igter ? MOVE_COST_ROAD : MIN(base_cost, unit_move_rate(punit));
-			} else if (igter)
-		  move_cost = (ptile->move_cost[dir] != 0 ? SINGLE_MOVE : 0);
-			else
-		  move_cost = MIN(ptile->move_cost[dir], unit_move_rate(punit));
-	
-			move_cost += cost;
-			if (WARMAP_COST(tile1) > move_cost && move_cost < maxcost) {
-			  WARMAP_COST(tile1) = move_cost;
-			  add_to_mapqueue(move_cost, tile1);
-			}
-		} adjc_dir_iterate_end;
-	  }
-}
-
-#define DANGER_MOVE (2 * SINGLE_MOVE + 1)
-
-int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
-{
-  if(!punit)
-    return MAXCOST;
-  if (is_air_unit(punit) || is_heli_unit(punit)) {
-    return SINGLE_MOVE * real_map_distance(punit->tile, dest_tile);
-  }
-
-  warmap.warunit = punit;
-  warmap.orig_tile = punit->tile;
-
-    if (is_sailing_unit(punit))
-      generate_warmap(punit, SEA_MOVING);
-   else
-      generate_warmap(punit, LAND_MOVING);
-
-  if (is_sailing_unit(punit))
-    return WARMAP_SEACOST(dest_tile);
-  else /* ground unit */
-    return WARMAP_COST(dest_tile);
-}
-
-/* settings */
-char *pepsettings_file_name(void);
+/********************************************************************** 
+  PepClient settings...
+***********************************************************************/
+const char *pepsettings_file_name(void);
 
 static const char *peppagenames[] = {
   N_("Main"),
@@ -294,7 +52,8 @@ static const char *peppagenames[] = {
   N_("Trade"),
   N_("Wonder")
 };
-static int turns=0;
+
+static int turns = 0;
 static int load_pepsettings_mode;
 static int save_turns;
 static int errors_max;
@@ -330,6 +89,9 @@ int my_ai_attack_city_power_req;
 enum my_ai_level my_ai_defend_level;
 int my_ai_defend_city_power_req;
 
+/********************************************************************** 
+  Settings definitions.
+***********************************************************************/
 static struct pepsetting static_pepsettings[] = {
   PSGEN_INT(PAGE_PMAIN, load_pepsettings_mode,
             N_("PepClient setting load mode"),
@@ -531,568 +293,613 @@ static struct pepsetting static_pepsettings[] = {
   PSGEN_END
 };
 
-struct pepsetting *pepsettings=static_pepsettings;
+struct pepsetting *pepsettings = static_pepsettings;
 
+/********************************************************************** 
+  Accessor and translator function.
+***********************************************************************/
 const char *get_page_name(enum peppage page)
 {
-	assert(page>=0&&page<PAGE_NUM);
+  assert(page >= 0 && page < PAGE_NUM);
 
-	return _(peppagenames[page]);
+  return _(peppagenames[page]);
 }
 
+/********************************************************************** 
+  Init all settings, set them to default.
+***********************************************************************/
 void init_all_settings(void)
 {
-	pepsettings_iterate(pset)
-	{
-		switch(pset->type)
-		{
-			case TYPE_BOOL:
-				*((bool *)pset->data)=pset->def;
-				break;
-			case TYPE_INT:
-				*((int *)pset->data)=pset->def;
-				break;
-			case TYPE_FILTER:
-				*((filter *)pset->data)=pset->def;
-				break;
-			default:
-				break;
-		}
-	} pepsettings_iterate_end;
-	
-	automatic_processus_iterate(pap)
-	{
-		pap->auto_filter=pap->default_auto_filter;
-	} automatic_processus_iterate_end;
+  pepsettings_iterate(pset) {
+    switch (pset->type) {
+      case TYPE_BOOL:
+	*((bool *)pset->data) = pset->def;
+	break;
+      case TYPE_INT:
+	*((int *)pset->data) = pset->def;
+	break;
+      case TYPE_FILTER:
+	*((filter *)pset->data) = pset->def;
+	break;
+      default:
+	break;
+    }
+  } pepsettings_iterate_end;
+
+  automatic_processus_iterate(pap) {
+    pap->auto_filter = pap->default_auto_filter;
+  } automatic_processus_iterate_end;
 }
 
-char *pepsettings_file_name(void)
+/********************************************************************** 
+  Build the file name.
+***********************************************************************/
+const char *pepsettings_file_name(void)
 {
-	static char buf[256];
-	char *name;
+  static char buf[256];
+  char *name;
 
-	name=user_home_dir();
-	my_snprintf(buf,sizeof(buf),"%s%s%s",name?name:"",name?"/":"",PEPSETTINGS_FILE_NAME);
-	return buf;
+  name = user_home_dir();
+  if (name) {
+    my_snprintf(buf, sizeof(buf), "%s/%s", name, PEPSETTINGS_FILE_NAME);
+  } else {
+    sz_strlcpy(buf, PEPSETTINGS_FILE_NAME);
+  }
+  return buf;
 }
 
-/* load settings */
-//this functions return TRUE when a fatal error is found
-bool load_city(struct section_file *psf,const char *way,struct city **pcity);
-bool load_player(struct section_file *psf,const char *way,struct player **pplayer);
-bool load_tile(struct section_file *psf,const char *way,struct tile **ptile);
-bool load_unit(struct section_file *psf,const char *way,struct unit **punit);
+/********************************************************************** 
+  Load settings system.
 
-bool load_city(struct section_file *psf,const char *way,struct city **pcity)
+  Note: the following return TRUE when a fatal error is detected.
+***********************************************************************/
+bool load_city(struct section_file *psf, struct city **ppcity,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+bool load_player(struct section_file *psf, struct player **ppplayer,
+		 const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+bool load_tile(struct section_file *psf, struct tile **pptile,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+bool load_unit(struct section_file *psf, struct unit **ppunit,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+
+/********************************************************************** 
+  Load a city from the file.
+***********************************************************************/
+bool load_city(struct section_file *psf, struct city **ppcity,
+	       const char *format, ...)
 {
-	char buf[256];
-	int id,x,y;
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  int id, x, y;
+  va_list args;
 
-	id=secfile_lookup_int_default(psf,-1,buf,"id");
-	x=secfile_lookup_int_default(psf,-1,buf,"x");
-	y=secfile_lookup_int_default(psf,-1,buf,"y");
-	*pcity=find_city_by_id(id);
-	if(*pcity&&((*pcity)->tile->x!=x||(*pcity)->tile->y!=y))
-		return TRUE;
-	return FALSE;
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  id = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "id");
+  x = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "x");
+  y = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "y");
+
+  *ppcity = find_city_by_id(id);
+  if (*ppcity && ((*ppcity)->tile->x != x || (*ppcity)->tile->y != y)) {
+    /* The city is not at the right place */
+    return TRUE;
+  }
+  return FALSE;
 }
 
-bool load_player(struct section_file *psf,const char *way,struct player **pplayer)
+/********************************************************************** 
+  Load a player from the file.
+***********************************************************************/
+bool load_player(struct section_file *psf, struct player **ppplayer,
+		 const char *format, ...)
 {
-	char buf[256],name[256];
-	int id;
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256], name[MAX_LEN_NAME];
+  int id;
+  va_list args;
 
-	id=secfile_lookup_int_default(psf,-1,buf,"id");
-	strcpy(name,secfile_lookup_str_default(psf,"\0",buf,"name"));
-	if(id<0&&!strcmp(name,"NULL"))
-	{
-		*pplayer=NULL;
-		return FALSE;
-	}
-	*pplayer=get_player(id);
-	if(!(*pplayer)||strcmp((*pplayer)->name,name))
-		return TRUE;
-	return FALSE;
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  id = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "id");
+  sz_strlcpy(name,
+	     secfile_lookup_str_default(psf, "\0" , "%s.%s", buf , "name"));
+
+  if (id < 0 && strcmp(name, "NULL") == 0) {
+    /* This is the NULL player */
+    *ppplayer = NULL;
+    return FALSE;
+  }
+
+  *ppplayer = get_player(id);
+  if ((*ppplayer) == NULL || strcmp((*ppplayer)->name, name) != 0) {
+    /* There is no player or it's not the right name */
+    return TRUE;
+  }
+  return FALSE;
 }
 
-bool load_tile(struct section_file *psf,const char *way,struct tile **ptile)
+/********************************************************************** 
+  Load a tile from the file.
+***********************************************************************/
+bool load_tile(struct section_file *psf, struct tile **pptile,
+	       const char *format, ...)
 {
-	char buf[256];
-	int x,y;
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  int x, y;
+  va_list args;
 
-	x=secfile_lookup_int_default(psf,-1,buf,"x");
-	y=secfile_lookup_int_default(psf,-1,buf,"y");
-	*ptile=map_pos_to_tile(x,y);
-	if(!(*ptile))
-		return TRUE;
-	return FALSE;
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  x = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "x");
+  y = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "y");
+
+  if (!is_normal_map_pos(x, y)) {
+    /* Not a right tile in this game */
+    return TRUE;
+  }
+
+  *pptile = map_pos_to_tile(x, y);
+  if ((*pptile) == NULL) {
+    /* Shouldn't occur here */
+    return TRUE;
+  }
+  return FALSE;
 }
 
-bool load_unit(struct section_file *psf,const char *way,struct unit **punit)
+/********************************************************************** 
+  Load an unit from the file.
+***********************************************************************/
+bool load_unit(struct section_file *psf, struct unit **ppunit,
+	       const char *format, ...)
 {
-	char buf[256];
-	int id,type;
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  int id, type;
+  va_list args;
 
-	id=secfile_lookup_int_default(psf,-1,buf,"id");
-	type=secfile_lookup_int_default(psf,-1,buf,"type");
-	*punit=find_unit_by_id(id);
-	if(*punit&&(*punit)->type!=type)
-		return TRUE;
-	return FALSE;
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  id = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "id");
+  type = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "type");
+
+  *ppunit = find_unit_by_id(id);
+  if (*ppunit && (*ppunit)->type != type) {
+    /* Not the right type */
+    return TRUE;
+  }
+  return FALSE;
 }
 
-#define load(type,way,data)	\
-	freelog(LOG_DEBUG,"Loading " #type " '%s' at %s: line %d",way,__FILE__,__LINE__);	\
-	if(load_##type(psf,way,&data))	\
-	{	\
-		freelog(LOG_NORMAL,_("Cannot load dynamics settings (%s: line %d, bad " #type " '%s'), aborting..."),__FILE__,__LINE__,way);	\
-		goto free_datas;	\
-	}	\
-	if(!(data))	\
-	{	\
-		freelog(LOG_VERBOSE,"Cannot load '%s' (%s: line %d, " #type " not found)",way,__FILE__,__LINE__);	\
-		error_count++;	\
-		if(errors_max&&error_count>=errors_max)	\
-		{	\
-			freelog(LOG_NORMAL,_("Cannot load dynamics settings, too much warning (%d/%d), aborting..."),error_count,errors_max);	\
-			goto free_datas;	\
-		}	\
-	}	\
-	else
- 
-#define load_owner(type,way,data)	\
-	load(type,way,data) if(data->owner!=game.player_idx)	\
-	{	\
-		freelog(LOG_VERBOSE,"Cannot load '%s' (%s: line %d, " #type " has a bad owner)",way,__FILE__,__LINE__);	\
-		data=NULL;	\
-	}	\
-	else
-
+/********************************************************************** 
+  Load the client options for PepClient.
+***********************************************************************/
 static void base_load_static_settings(struct section_file *psf)
 {
-	char buf[256];
-        int i, num;
+  char buf[256];
+  int i, num;
 
-	/* static settings */
-	if(load_pepsettings_mode&1)
-	{
-		freelog(LOG_DEBUG,"Loading static settings");
-		pepsettings_iterate(pset)
-		{
-			switch(pset->type)
-			{
-				case TYPE_BOOL:
-					*((bool *)pset->data)=secfile_lookup_bool_default(psf,*((bool *)pset->data),"static.%s",pset->name);
-					break;
-				case TYPE_INT:
-					*((int *)pset->data)=secfile_lookup_int_default(psf,*((int *)pset->data),"static.%s",pset->name);
-					break;
-				case TYPE_FILTER:
-					*((filter *)pset->data)=secfile_lookup_int_default(psf,*((filter *)pset->data),"static.%s",pset->name);
-					break;
-				default:
-					break;
-			}
-			if(!(load_pepsettings_mode&1))
-				break;
-		} pepsettings_iterate_end;
-	}
+  /* Static settings */
+  if (load_pepsettings_mode & 1) {
+    freelog(LOG_DEBUG, "Loading static settings");
 
-	/* automatic processus */
-	if(load_pepsettings_mode&2)
-	{
-		freelog(LOG_DEBUG,"Loading automatic processus");
-		automatic_processus *pap;
-		num=secfile_lookup_int_default(psf,-1,"automatic_processus.num");
-		for(i=0;i<num;i++)
-		{
-			strcpy(buf,secfile_lookup_str_default(psf,"\0","automatic_processus.ap%d.name",i));
-			if((pap=find_automatic_processus_by_name(buf)))
-			{
-				pap->auto_filter=secfile_lookup_int_default(psf,pap->auto_filter,"automatic_processus.ap%d.filter",i);
-				auto_filter_normalize(pap);
-			}
-			else
-				freelog(LOG_ERROR,"No automatic_processus named '%s'",buf);
-		}
-	}
+    pepsettings_iterate(pset) {
+      switch (pset->type) {
+	case TYPE_BOOL:
+	  *((bool *)pset->data) =
+	    secfile_lookup_bool_default(psf, *((bool *)pset->data),
+					"static.%s", pset->name);
+	  break;
+	case TYPE_INT:
+	  *((int *)pset->data) =
+	    secfile_lookup_int_default(psf, *((int *)pset->data),
+				       "static.%s", pset->name);
+	  break;
+	case TYPE_FILTER:
+	  *((filter *)pset->data) =
+	    secfile_lookup_int_default(psf, *((filter *)pset->data),
+				       "static.%s", pset->name);
+	  break;
+	default:
+	  break;
+      }
+      if (!(load_pepsettings_mode & 1)) {
+	/* Maybe we shouldn't loaf this! */
+        break;
+      }
+    } pepsettings_iterate_end;
+  }
+
+  /* Automatic processus (see multiselect.h) */
+  if (load_pepsettings_mode & 2) {
+    freelog(LOG_DEBUG, "Loading automatic processus");
+    automatic_processus *pap;
+    num = secfile_lookup_int_default(psf, -1, "automatic_processus.num");
+    for (i = 0; i < num; i++) {
+      sz_strlcpy(buf, secfile_lookup_str_default(psf, "\0",
+			"automatic_processus.ap%d.name", i));
+      if ((pap = find_automatic_processus_by_name(buf))) {
+	pap->auto_filter =
+	  secfile_lookup_int_default(psf, pap->auto_filter,
+				     "automatic_processus.ap%d.filter", i);
+	auto_filter_normalize(pap);
+      } else {
+	freelog(LOG_ERROR, "No automatic_processus named '%s'", buf);
+      }
+    }
+  }
 }
 
+/********************************************************************** 
+  Accessor macros.
+***********************************************************************/
+#define load(type, data, ...)						       \
+  freelog(LOG_DEBUG, "Loading one %s at %s, line %d",			       \
+          #type, __FILE__, __LINE__);					       \
+  struct type *data;							       \
+  if (load_##type(psf, &data, __VA_ARGS__)) {				       \
+    freelog(LOG_NORMAL, _("Cannot load dynamics settings "		       \
+			  "(%s: line %d, wrong %s), aborting..."),	       \
+	    __FILE__, __LINE__, #type);					       \
+    goto free_datas;							       \
+  }									       \
+  if (!(data)) {							       \
+    freelog(LOG_VERBOSE, "Cannot load the %s at %s, line %d",		       \
+            #type, __FILE__, __LINE__);					       \
+    if (errors_max > 0 && ++error_count >= errors_max) {		       \
+      freelog(LOG_NORMAL, _("Cannot load dynamics settings, too much warning " \
+			    "(%d/%d), aborting..."), error_count, errors_max); \
+      goto free_datas;							       \
+    }									       \
+  } else
+
+#define load_owner(type, data, ...)					    \
+  load(type, data, __VA_ARGS__) if (data->owner!=game.player_idx) {	    \
+    freelog(LOG_VERBOSE, "Cannot load the %s at %s, line %d (wrong owner)", \
+            #type, __FILE__,__LINE__);					    \
+    data = NULL;							    \
+  }	  								    \
+  else
+
+/********************************************************************** 
+  Load the game queues for PepClient.
+***********************************************************************/
 static void base_load_dynamic_settings(struct section_file *psf)
 {
-	char buf[256];
-	int i, num, error_count = 0;
+  int i, j, num, error_count = 0;
 
-	turns = 0;
+  turns = 0;
 
-	/* dynamic settings */
-	if(load_pepsettings_mode&4)
-	{
-		//compatibity test
-		bool compatible=TRUE;
-		i=secfile_lookup_int_default(psf,-1,"game_info.xsize");
-		if(i!=-1&&i!=map.xsize)
-			compatible=FALSE;
-		i=secfile_lookup_int_default(psf,-1,"game_info.ysize");
-		if(i!=-1&&i!=map.ysize)
-			compatible=FALSE;
-		i=secfile_lookup_int_default(psf,-1,"game_info.topology_id");
-		if(i!=-1&&i!=map.topology_id)
-			compatible=FALSE;
-		num=secfile_lookup_int_default(psf,-1,"game_info.nplayers");
-		if(num!=-1&&num!=game.nplayers)
-			compatible=FALSE;
-		else
-		{
-			for(i=0;i<num;i++)
-			{
-				struct player *pplayer;
-				my_snprintf(buf,sizeof(buf),"game_info.player%d",i);
-				if(load_player(psf,buf,&pplayer))
-				{
-					compatible=FALSE;
-					break;
-				}
-			}
-		}
+  /* Dynamic settings */
+  if (load_pepsettings_mode & 4) {
+    /* First, let's so a compatibity test between
+     * the current game and the saved game. */
+    bool compatible = TRUE;
 
-		if(!compatible)
-		{
-			freelog(LOG_NORMAL, 
-                                _("Dynamic settings were saved for an other "
-                                  "game, they cannot be loaded"));
-			goto end;
-		}
+    i = secfile_lookup_int_default(psf, -1, "game_info.xsize");
+    if (i != -1 && i != map.xsize) {
+      compatible = FALSE;
+    }
+    i = secfile_lookup_int_default(psf, -1, "game_info.ysize");
+    if (i != -1 && i != map.ysize) {
+      compatible = FALSE;
+    }
+    i = secfile_lookup_int_default(psf, -1, "game_info.topology_id");
+    if (i != -1 && i != map.topology_id) {
+      compatible = FALSE;
+    }
+    num = secfile_lookup_int_default(psf, -1, "game_info.nplayers");
+    if (num != -1 && num != game.nplayers) {
+      compatible = FALSE;
+    } else {
+      for (i = 0; i < num; i++) {
+	struct player *pplayer;
 
-		freelog(LOG_DEBUG,"Loading dynamic settings");
-		//initialize
-		struct multi_select tmultiselect[MULTI_SELECT_NUM];
-		struct delayed_goto tdelayedgoto[DELAYED_GOTO_NUM];
-		struct airlift_queue tairliftqueue[AIRLIFT_QUEUE_NUM];
-		struct trade_route_list ttraders,ttradeplan;
-		struct city_list trallypoint,ttradecities;
-		struct hw_unit_list thelpers;
-		struct unit_list tpatrolers,tnoners;
+	if (load_player(psf, &pplayer, "game_info.player%d", i)) {
+	  compatible = FALSE;
+	  break;
+	}
+      }
+    }
 
-		city_list_init(&trallypoint);
-		for(i=0;i<MULTI_SELECT_NUM;i++)
-		{
-			unit_list_init(&tmultiselect[i].ulist);
-			tmultiselect[i].punit_focus=NULL;
-		}
-		for(i=0;i<DELAYED_GOTO_NUM;i++)
-		{
-			delayed_goto_data_list_init(&tdelayedgoto[i].dglist);
-			tdelayedgoto[i].pplayer=NULL;
-		}
-		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
-		{
-			tile_list_init(&tairliftqueue[i].tlist);
-			tairliftqueue[i].utype=U_LAST;
-		}
-		trade_route_list_init(&ttraders);
-		trade_route_list_init(&ttradeplan);
-		city_list_init(&ttradecities);
-		hw_unit_list_init(&thelpers);
-		unit_list_init(&tpatrolers);
-		unit_list_init(&tnoners);
+    if (!compatible) {
+      freelog(LOG_NORMAL, 
+	      _("Dynamic settings were saved for an other "
+		"game, they cannot be loaded"));
+      goto end;
+    }
 
-		//rally point
-		num=secfile_lookup_int_default(psf,-1,"dynamic.rally.city_num");
-		for(i=0;i<num;i++)
-		{
-			struct city *pcity;
-			struct tile *ptile;
-			my_snprintf(buf,sizeof(buf),"dynamic.rally.city%d",i);
-			load_owner(city,buf,pcity)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.rally.city%d.tile",i);
-				load(tile,buf,ptile)
-				{
-					struct city *ccity=fc_malloc(sizeof(struct city));
-					*ccity=*pcity;
-					ccity->rally_point=ptile;
-					city_list_append(&trallypoint,ccity);
-				}
-			}
-		}
-		//multi-select
-		for(i=0;i<MULTI_SELECT_NUM;i++)
-		{
-			my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit_num",i);
-			num=secfile_lookup_int_default(psf,0,buf);
-			int j;
-			for(j=0;j<num;j++)
-			{
-				struct unit *punit;
-				my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit%d",i,j);
-				load_owner(unit,buf,punit)
-				{
-					unit_list_append(&tmultiselect[i].ulist,punit);
-				}
-			}
-			if(num)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit_focus",i);
-				load_owner(unit,buf,tmultiselect[i].punit_focus);
-			}
-		}
-		//delayed goto
-		for(i=0;i<DELAYED_GOTO_NUM;i++)
-		{
-			my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data_num",i);
-			num=secfile_lookup_int_default(psf,0,buf);
-			int j;
-			for(j=0;j<num;j++)
-			{
-				struct delayed_goto_data *pdgd=fc_malloc(sizeof(struct delayed_goto_data));
-				my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data%d.%%s",i,j);
-				pdgd->id=secfile_lookup_int_default(psf,0,buf,"id");
-				pdgd->type=secfile_lookup_int_default(psf,0,buf,"type");
-				my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data%d.tile",i,j);
-				load_tile(psf,buf,&pdgd->ptile);//ignore the NULL tile
-				delayed_goto_data_list_append(&tdelayedgoto[i].dglist,pdgd);
-			}
-			if(num)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.player",i);
-				load(player,buf,tdelayedgoto[i].pplayer);
-			}
-		}
-		//airlift
-		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
-		{
-			my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile_num",i);
-			num=secfile_lookup_int_default(psf,0,buf);
-			int j;
-			for(j=0;j<num;j++)
-			{
-				struct tile *ptile;
-				my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile%d",i,j);
-				load(tile,buf,ptile)
-				{
-					tile_list_append(&tairliftqueue[i].tlist,ptile);
-				}
-			}
-			my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.unit_type",i);
-			tairliftqueue[i].utype=secfile_lookup_int_default(psf,U_LAST,buf);
-		}
-		//my_ai_trade
-		num=secfile_lookup_int_default(psf,-1,"dynamic.trade_route.unit_num");
-		for(i=0;i<num;i++)
-		{
-			struct unit *punit;
-			struct city *pc1,*pc2;
-			my_snprintf(buf,sizeof(buf),"dynamic.trade_route.unit%d",i);
-			load_owner(unit,buf,punit)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.trade_route.unit%d.city1",i);
-				load_owner(city,buf,pc1)
-				{
-					my_snprintf(buf,sizeof(buf),"dynamic.trade_route.unit%d.city2",i);
-					load(city,buf,pc2)
-					{
-						trade_route_list_append(&ttraders,trade_route_new(punit,pc1,pc2,secfile_lookup_bool_default
-							(psf,FALSE,"dynamic.trade_route.unit%d.planned",i)));
-					}
-				}
-			}
-		}
-		num=secfile_lookup_int_default(psf,-1,"dynamic.trade_cities.city_num");
-		for(i=0;i<num;i++)
-		{
-			struct city *pcity;
-			my_snprintf(buf,sizeof(buf),"dynamic.trade_cities.city%d",i);
-			load_owner(city,buf,pcity)
-			{
-				city_list_append(&ttradecities,pcity);
-			}
-		}
-		num=secfile_lookup_int_default(psf,-1,"dynamic.trade_plan.tr_num");
-		for(i=0;i<num;i++)
-		{
-			struct city *pc1,*pc2;
-			my_snprintf(buf,sizeof(buf),"dynamic.trade_plan.tr%d.city1",i);
-			load_owner(city,buf,pc1)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.trade_plan.tr%d.city2",i);
-				load(city,buf,pc2)
-				{
-					trade_route_list_append(&ttradeplan,trade_route_new(NULL,pc1,pc2,TRUE));
-				}
-			}
-		}
-		//my_ai_wonder
-		num=secfile_lookup_int_default(psf,-1,"dynamic.help_wonder.unit_num");
-		for(i=0;i<num;i++)
-		{
-			struct unit *punit;
-			struct city *pcity;
-			struct help_wonder *thw=NULL,*bhw=NULL,*fhw=NULL;
-			int id,level;
-			my_snprintf(buf,sizeof(buf),"dynamic.help_wonder.unit%d",i);
-			load_owner(unit,buf,punit)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.help_wonder.unit%d.city",i);
-				load_owner(city,buf,pcity)
-				{
-					my_snprintf(buf,sizeof(buf),"dynamic.help_wonder.unit%d.%%s",i);
-					id=secfile_lookup_int_default(psf,-1,buf,"wid");
-					level=secfile_lookup_int_default(psf,-1,buf,"level");
-					help_wonder_list_iterate(pcity->help_wonders,phw)
-					{
-						if(phw->id==id)
-						{
-							if(phw->level==level)
-							{
-								thw=phw;
-								break;
-							}
-							else
-								bhw=phw;
-						}
-						else
-							fhw=phw;
-					} help_wonder_list_iterate_end;
-					bhw=(thw?thw:(bhw?bhw:fhw));
-					if(bhw)
-					{
-						struct hw_unit *phwu=fc_malloc(sizeof(struct hw_unit));
-						phwu->punit=punit;
-						phwu->phw=bhw;
-						hw_unit_list_append(&thelpers,phwu);
-					}
-					else
-						unit_list_append(&tnoners,punit);
-				}
-			}
-		}
-		//my_ai_patrol
-		num=secfile_lookup_int_default(psf,-1,"dynamic.patrol.unit_num");
-		for(i=0;i<num;i++)
-		{
-			struct unit *punit;
-			struct tile *ptile;
-			my_snprintf(buf,sizeof(buf),"dynamic.patrol.unit%d",i);
-			load_owner(unit,buf,punit)
-			{
-				my_snprintf(buf,sizeof(buf),"dynamic.patrol.unit%d.tile",i);
-				load(tile,buf,ptile)
-				{
-					struct unit *cunit=fc_malloc(sizeof(struct unit));
-					*cunit=*punit;
-					cunit->my_ai.data=(void *)ptile;
-					unit_list_append(&tpatrolers,cunit);
-				}
-			}
-		}
-		//my_ai_none
-		num=secfile_lookup_int_default(psf,-1,"dynamic.none.unit_num");
-		for(i=0;i<num;i++)
-		{
-			struct unit *punit;
-			my_snprintf(buf,sizeof(buf),"dynamic.none.unit%d",i);
-			load_owner(unit,buf,punit)
-			{
-				unit_list_append(&tnoners,punit);
-			}
-		}
-		//CMA
-		num=secfile_lookup_int_default(psf,-1,"dynamic.cma.city_num");
-		for(i=0;i<num;i++)
-		{
-			struct city *pcity;
-			my_snprintf(buf,sizeof(buf),"dynamic.cma.city%d",i);
-			load_owner(city,buf,pcity)
-			{
-				struct cm_parameter parameter;
-				int j;
-				
-				for(j=0;j<NUM_STATS;j++)
-				{
-					parameter.minimal_surplus[j]=secfile_lookup_int_default(psf,0,"dynamic.cma.city%d.minimal_surplus%d",i,j);
-					parameter.factor[j]=secfile_lookup_int_default(psf,1,"dynamic.cma.city%d.factor%d",i,j);
-				}
-				parameter.require_happy=secfile_lookup_bool_default(psf,FALSE,"dynamic.cma.city%d.require_happy",i);
-				parameter.allow_disorder=secfile_lookup_bool_default(psf,FALSE,"dynamic.cma.city%d.allow_disorder",i);
-				parameter.allow_specialists=secfile_lookup_bool_default(psf,TRUE,"dynamic.cma.city%d.allow_specialists",i);
-				parameter.happy_factor=secfile_lookup_int_default(psf,1,"dynamic.cma.city%d.happy_factor",i);
-				cma_put_city_under_agent(pcity, &parameter);
-			}
-		}
-		
-		//apply
-		freelog(LOG_DEBUG,"Apply dynamic settings");
-		city_list_iterate(trallypoint,ccity)
-		{
-			city_set_rally_point(player_find_city_by_id(game.player_ptr,ccity->id),ccity->rally_point);
-		} city_list_iterate_end;
-		for(i=0;i<MULTI_SELECT_NUM;i++)
-			multi_select_set(i,&tmultiselect[i]);
-		for(i=0;i<DELAYED_GOTO_NUM;i++)
-			delayed_goto_set(i,&tdelayedgoto[i]);
-		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
-			airlift_queue_set(i,&tairliftqueue[i]);
-		city_list_iterate(ttradecities,pcity)
-		{
-			my_ai_add_trade_city(pcity,TRUE);
-		} city_list_iterate_end;
-		trade_route_list_copy(my_ai_trade_plan_get(),&ttradeplan);
-		trade_route_list_iterate(ttraders,ptr)
-		{
-			my_ai_orders_free(ptr->punit);
-			my_ai_trade_route_alloc(ptr);
-		} trade_route_list_iterate_end;
-		hw_unit_list_iterate(thelpers,phwu)
-		{
-			my_ai_orders_free(phwu->punit);
-			my_ai_help_wonder_alloc(phwu->punit,phwu->phw);
-		} hw_unit_list_iterate_end;
-		unit_list_iterate(tpatrolers,cunit)
-		{
-			struct unit *punit=player_find_unit_by_id(game.player_ptr,cunit->id);
-			my_ai_orders_free(punit);
-			my_ai_patrol_alloc(punit,(struct tile *)cunit->my_ai.data);
-		} unit_list_iterate_end;
-		unit_list_iterate(tnoners,punit)
-		{
-			if(!punit->my_ai.control)
-			{
-				unit_list_append(my_ai_get_units(MY_AI_NONE),punit);
-				punit->my_ai.control=TRUE;
-				punit->my_ai.activity=MY_AI_NONE;
-			}
-		} unit_list_iterate_end;
-		update_unit_info_label(get_unit_in_focus());
+    /* It seems this game look like the saved one */
+    freelog(LOG_DEBUG, "Loading dynamic settings");
+
+    /* Initialize */
+    struct multi_select tmultiselect[MULTI_SELECT_NUM];
+    struct delayed_goto tdelayedgoto[DELAYED_GOTO_NUM];
+    struct airlift_queue tairliftqueue[AIRLIFT_QUEUE_NUM];
+    struct trade_route_list ttraders, ttradeplan;
+    struct city_list trallypoint, ttradecities;
+    struct hw_unit_list thelpers;
+    struct unit_list tpatrolers, tnoners;
+
+    city_list_init(&trallypoint);
+    for (i = 0; i < MULTI_SELECT_NUM; i++) {
+      unit_list_init(&tmultiselect[i].ulist);
+      tmultiselect[i].punit_focus = NULL;
+    }
+    for (i = 0; i <DELAYED_GOTO_NUM; i++) {
+      delayed_goto_data_list_init(&tdelayedgoto[i].dglist);
+      tdelayedgoto[i].pplayer = NULL;
+    }
+    for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+      tile_list_init(&tairliftqueue[i].tlist);
+      tairliftqueue[i].utype = U_LAST;
+    }
+    trade_route_list_init(&ttraders);
+    trade_route_list_init(&ttradeplan);
+    city_list_init(&ttradecities);
+    hw_unit_list_init(&thelpers);
+    unit_list_init(&tpatrolers);
+    unit_list_init(&tnoners);
+
+    /* Load the rally points */
+    num = secfile_lookup_int_default(psf, -1, "dynamic.rally.city_num");
+    for (i = 0; i < num; i++) {
+      load_owner(city, pcity, "dynamic.rally.city%d", i) {
+	load(tile, ptile, "dynamic.rally.city%d.tile", i) {
+	  struct city *ccity = fc_malloc(sizeof(struct city));
+	  *ccity = *pcity;
+	  ccity->rally_point = ptile;
+	  city_list_append(&trallypoint, ccity);
+	}
+      }
+    }
+
+    /* Load the unit selections */
+    for (i = 0; i < MULTI_SELECT_NUM; i++) {
+      num = secfile_lookup_int_default(psf, 0,
+				       "dynamic.multiselect%ds.unit_num", i);
+      for (j = 0; j < num; j++) {
+	load_owner(unit, punit, "dynamic.multiselect%ds.unit%d", i, j) {
+	  unit_list_append(&tmultiselect[i].ulist, punit);
+	}
+      }
+      if (num > 0) {
+	load_owner(unit, punit, "dynamic.multiselect%ds.unit_focus", i);
+	tmultiselect[i].punit_focus = punit;
+      }
+    }
+
+    /* Load the delayed goto queues */
+    for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+      num = secfile_lookup_int_default(psf, 0,
+				       "dynamic.delayedgoto%ds.data_num", i);
+      for (j = 0; j < num; j++) {
+	struct delayed_goto_data *pdgd =
+	  fc_malloc(sizeof(struct delayed_goto_data));
+	pdgd->id = secfile_lookup_int_default(psf, 0,
+		     "dynamic.delayedgoto%ds.data%d.id", i, j);
+	pdgd->type = secfile_lookup_int_default(psf, 0,
+		       "dynamic.delayedgoto%ds.data%d.type", i, j);
+	/* Here, we ignore the NULL tile */
+	load_tile(psf, &pdgd->ptile,
+		  "dynamic.delayedgoto%ds.data%d.tile", i, j);
+	delayed_goto_data_list_append(&tdelayedgoto[i].dglist, pdgd);
+      }
+      if (num > 0) {
+	load(player, pplayer, "dynamic.delayedgoto%ds.player", i);
+	tdelayedgoto[i].pplayer = pplayer;
+      }
+    }
+
+    /* Load the airlift queues */
+    for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+      num = secfile_lookup_int_default(psf, 0,
+				       "dynamic.airliftqueue%ds.tile_num", i);
+      for (j = 0; j < num; j++) {
+	load(tile, ptile, "dynamic.airliftqueue%ds.tile%d", i, j) {
+	  tile_list_append(&tairliftqueue[i].tlist, ptile);
+	}
+      }
+      tairliftqueue[i].utype = secfile_lookup_int_default(psf, U_LAST,
+				 "dynamic.airliftqueue%ds.unit_type", i);
+    }
+
+    /* Load the trade planning */
+    num = secfile_lookup_int_default(psf, -1, "dynamic.trade_route.unit_num");
+    for (i = 0; i < num; i++) {
+      load_owner(unit, punit, "dynamic.trade_route.unit%d", i) {
+	load_owner(city, pc1, "dynamic.trade_route.unit%d.city1", i) {
+	  load(city, pc2, "dynamic.trade_route.unit%d.city2", i) {
+	    /* Doesn't need to be owned... */
+	    trade_route_list_append(&ttraders,
+	                            trade_route_new(punit, pc1, pc2,
+	                            secfile_lookup_bool_default(psf, FALSE,
+	                            "dynamic.trade_route.unit%d.planned", i)));
+	  }
+	}
+      }
+    }
+    num = secfile_lookup_int_default(psf, -1, "dynamic.trade_cities.city_num");
+    for (i = 0; i < num; i++) {
+      load_owner(city, pcity, "dynamic.trade_cities.city%d", i)  {
+	city_list_append(&ttradecities, pcity);
+      }
+    }
+    num = secfile_lookup_int_default(psf, -1, "dynamic.trade_plan.tr_num");
+    for (i = 0; i < num; i++) {
+      load_owner(city, pc1, "dynamic.trade_plan.tr%d.city1", i) {
+	load_owner(city, pc2, "dynamic.trade_plan.tr%d.city2", i) {
+	  trade_route_list_append(&ttradeplan, trade_route_new(NULL, pc1,
+							       pc2, TRUE));
+	}
+      }
+    }
+
+    /* Auto help-wonder */
+    num = secfile_lookup_int_default(psf, -1, "dynamic.help_wonder.unit_num");
+    for (i = 0; i < num; i++) {
+      struct help_wonder *thw = NULL, *bhw = NULL, *fhw = NULL;
+      int id, level;
+
+      load_owner(unit, punit, "dynamic.help_wonder.unit%d", i) {
+	load_owner(city, pcity, "dynamic.help_wonder.unit%d.city", i) {
+	  id = secfile_lookup_int_default(psf, -1,
+					  "dynamic.help_wonder.unit%d.wid", i);
+	  level = secfile_lookup_int_default(psf, -1,
+					 "dynamic.help_wonder.unit%d.level", i);
+	  help_wonder_list_iterate(pcity->help_wonders, phw) {
+	    if (phw->id == id) {
+	      if (phw->level == level) {
+		thw = phw;
+		break;
+	      } else {
+		bhw = phw;
+	      }
+	    } else {
+	      fhw = phw;
+	    }
+	  } help_wonder_list_iterate_end;
+	  bhw = thw ? thw : (bhw ? bhw : fhw);
+	  if (bhw) {
+	    struct hw_unit *phwu = fc_malloc(sizeof(struct hw_unit));
+	    phwu->punit = punit;
+	    phwu->phw = bhw;
+	    hw_unit_list_append(&thelpers, phwu);
+	  } else {
+	    unit_list_append(&tnoners, punit);
+	  }
+	}
+      }
+    }
+
+    /* Load patrolling units */
+    num = secfile_lookup_int_default(psf, -1, "dynamic.patrol.unit_num");
+    for (i = 0; i < num; i++) {
+      load_owner(unit, punit, "dynamic.patrol.unit%d", i) {
+	load(tile, ptile, "dynamic.patrol.unit%d.tile", i) {
+	  struct unit *cunit = fc_malloc(sizeof(struct unit));
+	  *cunit = *punit;
+	  cunit->my_ai.data = (void *)ptile;
+	  unit_list_append(&tpatrolers, cunit);
+	}
+      }
+    }
+
+    /* Load unused units */
+    num = secfile_lookup_int_default(psf, -1, "dynamic.none.unit_num");
+    for (i = 0; i < num; i++) {
+      load_owner(unit, punit, "dynamic.none.unit%d", i) {
+	unit_list_append(&tnoners, punit);
+      }
+    }
+
+    /* Load CMA and apply it... */
+    num = secfile_lookup_int_default(psf, -1, "dynamic.cma.city_num");
+    for (i = 0; i < num; i++) {
+      load_owner(city, pcity, "dynamic.cma.city%d", i) {
+        struct cm_parameter parameter;
+
+        for (j = 0; j < NUM_STATS; j++) {
+	  parameter.minimal_surplus[j] =
+	    secfile_lookup_int_default(psf, 0,
+				       "dynamic.cma.city%d.minimal_surplus%d",
+				       i, j);
+	  parameter.factor[j] =
+	    secfile_lookup_int_default(psf, 1, "dynamic.cma.city%d.factor%d",
+				       i, j);
+        }
+	parameter.require_happy = secfile_lookup_bool_default(psf, FALSE,
+				    "dynamic.cma.city%d.require_happy", i);
+	parameter.allow_disorder = secfile_lookup_bool_default(psf, FALSE,
+				     "dynamic.cma.city%d.allow_disorder", i);
+	parameter.allow_specialists = secfile_lookup_bool_default(psf, TRUE,
+				     "dynamic.cma.city%d.allow_specialists", i);
+	parameter.happy_factor = secfile_lookup_int_default(psf, 1,
+				   "dynamic.cma.city%d.happy_factor", i);
+	cma_put_city_under_agent(pcity, &parameter);
+      }
+    }
+
+    /* Ok, all looks fine, ready to apply... */
+    freelog(LOG_DEBUG, "Apply dynamic settings");
+    city_list_iterate(trallypoint, ccity) {
+      city_set_rally_point(player_find_city_by_id(game.player_ptr,ccity->id),
+			   ccity->rally_point);
+    } city_list_iterate_end;
+    for (i = 0; i < MULTI_SELECT_NUM; i++) {
+      multi_select_set(i, &tmultiselect[i]);
+    }
+    for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+      delayed_goto_set(i,&tdelayedgoto[i]);
+    }
+    for (i = 0; i <AIRLIFT_QUEUE_NUM; i++) {
+      airlift_queue_set(i,&tairliftqueue[i]);
+    }
+    city_list_iterate(ttradecities, pcity) {
+      my_ai_add_trade_city(pcity,TRUE);
+    } city_list_iterate_end;
+    trade_route_list_copy(my_ai_trade_plan_get(), &ttradeplan);
+    trade_route_list_iterate(ttraders, ptr) {
+      my_ai_orders_free(ptr->punit);
+      my_ai_trade_route_alloc(ptr);
+    } trade_route_list_iterate_end;
+    hw_unit_list_iterate(thelpers, phwu) {
+      my_ai_orders_free(phwu->punit);
+      my_ai_help_wonder_alloc(phwu->punit, phwu->phw);
+    } hw_unit_list_iterate_end;
+    unit_list_iterate(tpatrolers, cunit) {
+      struct unit *punit = player_find_unit_by_id(game.player_ptr, cunit->id);
+      my_ai_orders_free(punit);
+      my_ai_patrol_alloc(punit, (struct tile *)cunit->my_ai.data);
+    } unit_list_iterate_end;
+    unit_list_iterate(tnoners, punit) {
+      if (!punit->my_ai.control) {
+	unit_list_append(my_ai_get_units(MY_AI_NONE), punit);
+	punit->my_ai.control = TRUE;
+	punit->my_ai.activity = MY_AI_NONE;
+      }
+    } unit_list_iterate_end;
+    update_unit_info_label(get_unit_in_focus());
 
 free_datas:
-		//free datas
-		city_list_free(&trallypoint);
-		for(i=0;i<MULTI_SELECT_NUM;i++)
-			unit_list_unlink_all(&tmultiselect[i].ulist);
-		for(i=0;i<DELAYED_GOTO_NUM;i++)
-			delayed_goto_data_list_free(&tdelayedgoto[i].dglist);
-		for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
-			tile_list_unlink_all(&tairliftqueue[i].tlist);
-		trade_route_list_unlink_all(&ttraders);
-		trade_route_list_free(&ttradeplan);
-		city_list_unlink_all(&ttradecities);
-		hw_unit_list_free(&thelpers);
-		unit_list_free(&tpatrolers);
-		unit_list_unlink_all(&tnoners);
-	}
+    /* Free datas */
+    city_list_free(&trallypoint);
+    for (i = 0; i < MULTI_SELECT_NUM; i++) {
+      unit_list_unlink_all(&tmultiselect[i].ulist);
+    }
+    for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+      delayed_goto_data_list_free(&tdelayedgoto[i].dglist);
+    }
+    for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+      tile_list_unlink_all(&tairliftqueue[i].tlist);
+    }
+    trade_route_list_unlink_all(&ttraders);
+    trade_route_list_free(&ttradeplan);
+    city_list_unlink_all(&ttradecities);
+    hw_unit_list_free(&thelpers);
+    unit_list_free(&tpatrolers);
+    unit_list_unlink_all(&tnoners);
+  }
 
 end:
-	append_output_window(_("PepClient: Settings loaded"));
+  append_output_window(_("PepClient: Settings loaded"));
 }
 
+/********************************************************************** 
+  Open the file
+***********************************************************************/
 static struct section_file *open_pepsettings_file(void)
 {
-  char *name = pepsettings_file_name(), buf[256];
+  const char *name = pepsettings_file_name();
+  char buf[256];
   static struct section_file sf;
 
   if (!section_file_load(&sf, name)) {
@@ -1105,6 +912,9 @@ static struct section_file *open_pepsettings_file(void)
   return &sf;
 }
 
+/********************************************************************** 
+  ...
+***********************************************************************/
 void load_static_settings(void)
 {
   struct section_file *psf = open_pepsettings_file();
@@ -1115,6 +925,9 @@ void load_static_settings(void)
   }
 }
 
+/********************************************************************** 
+  ...
+***********************************************************************/
 void load_dynamic_settings(void)
 {
   struct section_file *psf = open_pepsettings_file();
@@ -1125,6 +938,9 @@ void load_dynamic_settings(void)
   }
 }
 
+/********************************************************************** 
+  ...
+***********************************************************************/
 void load_all_settings(void)
 {
   struct section_file *psf = open_pepsettings_file();
@@ -1136,311 +952,340 @@ void load_all_settings(void)
   }
 }
 
-/* save settings */
-void save_city(struct section_file *psf,const char *way,struct city *pcity);
-void save_player(struct section_file *psf,const char *way,struct player *pplayer);
-void save_tile(struct section_file *psf,const char *way,struct tile *ptile);
-void save_unit(struct section_file *psf,const char *way,struct unit *punit);
+/********************************************************************** 
+  Save settings system.
+***********************************************************************/
+void save_city(struct section_file *psf, struct city *pcity,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+void save_player(struct section_file *psf, struct player *pplayer,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+void save_tile(struct section_file *psf, struct tile *ptile,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
+void save_unit(struct section_file *psf, struct unit *punit,
+	       const char *format, ...)
+               fc__attribute((__format__ (__printf__, 3, 4)));
 
-void save_city(struct section_file *psf,const char *way,struct city *pcity)
+/********************************************************************** 
+  Save a city.
+***********************************************************************/
+void save_city(struct section_file *psf, struct city *pcity,
+	       const char *format, ...)
 {
-	char buf[256];
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  va_list args;
 
-	secfile_insert_int(psf,(pcity?pcity->id:-1),buf,"id");
-	secfile_insert_int(psf,(pcity?pcity->tile->x:-1),buf,"x");
-	secfile_insert_int(psf,(pcity?pcity->tile->y:-1),buf,"y");
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  secfile_insert_int(psf, pcity ? pcity->id : -1, "%s.%s", buf, "id");
+  secfile_insert_int(psf, pcity ? pcity->tile->x : -1, "%s.%s", buf, "x");
+  secfile_insert_int(psf, pcity ? pcity->tile->y : -1, "%s.%s", buf, "y");
 }
 
-void save_player(struct section_file *psf,const char *way,struct player *pplayer)
+/********************************************************************** 
+  Save a player.
+***********************************************************************/
+void save_player(struct section_file *psf, struct player *pplayer,
+	       const char *format, ...)
 {
-	char buf[256];
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  va_list args;
 
-	secfile_insert_int(psf,(pplayer?pplayer->player_no:-1),buf,"id");
-	secfile_insert_str(psf,(pplayer?pplayer->name:"NULL"),buf,"name");
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  secfile_insert_int(psf, pplayer ? pplayer->player_no : -1,
+		     "%s.%s", buf, "id");
+  secfile_insert_str(psf, pplayer ? pplayer->name : "NULL",
+		     "%s.%s" , buf, "name");
 }
 
-void save_tile(struct section_file *psf,const char *way,struct tile *ptile)
+/********************************************************************** 
+  Save a tile.
+***********************************************************************/
+void save_tile(struct section_file *psf, struct tile *ptile,
+	       const char *format, ...)
 {
-	char buf[256];
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  va_list args;
 
-	secfile_insert_int(psf,(ptile?ptile->x:-1),buf,"x");
-	secfile_insert_int(psf,(ptile?ptile->y:-1),buf,"y");
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  secfile_insert_int(psf, ptile ? ptile->x : -1, "%s.%s", buf, "x");
+  secfile_insert_int(psf, ptile ? ptile->y : -1, "%s.%s", buf, "y");
 }
 
-void save_unit(struct section_file *psf,const char *way,struct unit *punit)
+/********************************************************************** 
+  Save an unit.
+***********************************************************************/
+void save_unit(struct section_file *psf, struct unit *punit,
+	       const char *format, ...)
 {
-	char buf[256];
-	my_snprintf(buf,sizeof(buf),"%s.%%s",way);
+  char buf[256];
+  va_list args;
 
-	secfile_insert_int(psf,(punit?punit->id:-1),buf,"id");
-	secfile_insert_int(psf,(punit?punit->type:-1),buf,"type");
+  va_start(args, format);
+  my_vsnprintf(buf, sizeof(buf), format, args);
+  va_end(args);
+
+  secfile_insert_int(psf, punit ? punit->id : -1, "%s.%s", buf, "id");
+  secfile_insert_int(psf, punit ? punit->type : -1, "%s.%s", buf, "type");
 }
 
+/********************************************************************** 
+  ...
+***********************************************************************/
 void save_all_settings(void)
 {
-	struct section_file sf;
-	char *name=pepsettings_file_name();
-	char buf[256];
-	int i;
+  struct section_file sf;
+  char buf[256];
+  const char *name = pepsettings_file_name();
+  int i, j;
 
-	section_file_init(&sf);
+  section_file_init(&sf);
 	
-	/* static settings */
-	pepsettings_iterate(pset)
-	{
-		switch(pset->type)
-		{
-			case TYPE_BOOL:
-				secfile_insert_bool(&sf,*((bool*)pset->data),"static.%s",pset->name);
-				break;
-			case TYPE_INT:
-				secfile_insert_int(&sf,*((int*)pset->data),"static.%s",pset->name);
-				break;
-			case TYPE_FILTER:
-				secfile_insert_int(&sf,(int)*((filter*)pset->data),"static.%s",pset->name);
-				break;
-			default:
-				break;
-		}
-	} pepsettings_iterate_end;
+  /* Static settings */
+  pepsettings_iterate(pset) {
+    switch (pset->type) {
+      case TYPE_BOOL:
+	secfile_insert_bool(&sf, *((bool*)pset->data), "static.%s", pset->name);
+	break;
+      case TYPE_INT:
+	secfile_insert_int(&sf, *((int*)pset->data), "static.%s", pset->name);
+	break;
+      case TYPE_FILTER:
+	secfile_insert_int(&sf, (int)*((filter*)pset->data),
+			   "static.%s", pset->name);
+	break;
+      default:
+	break;
+    }
+  } pepsettings_iterate_end;
 
-	/* automatic processus */
-	i=0;
-	automatic_processus_iterate(pap)
-	{
-		if(pap->menu[0]||pap->description[0])
-			i++;
-	} automatic_processus_iterate_end;
-	secfile_insert_int_comment(&sf,i,_("don't modify this !"),"automatic_processus.num");
-	i=0;
-	automatic_processus_iterate(pap)
-	{
-		char *name=(pap->menu[0]?pap->menu:pap->description);
-		if(!name[0])
-			continue;
-		my_snprintf(buf,sizeof(buf),"automatic_processus.ap%d.%%s",i);
-		secfile_insert_str(&sf,name,buf,"name");
-		secfile_insert_int(&sf,pap->auto_filter,buf,"filter");
-		i++;
-	} automatic_processus_iterate_end;
+  /* Automatic processus */
+  i = 0;
+  automatic_processus_iterate(pap) {
+    const char *name = pap->description;
 
-	/* dynamic settings */
-        //some game infos, to test the compatibility
-        secfile_insert_int(&sf,map.xsize,"game_info.xsize");
-        secfile_insert_int(&sf,map.ysize,"game_info.ysize");
-        secfile_insert_int(&sf,map.topology_id,"game_info.topology_id");
-        secfile_insert_int(&sf,game.nplayers,"game_info.nplayers");
-        i=0;
-        players_iterate(pplayer)
-        {
-                my_snprintf(buf,sizeof(buf),"game_info.player%d",i);
-                save_player(&sf,buf,pplayer);
-                i++;
-        } players_iterate_end;
+    if (name[0] == '\0' ) {
+      continue;
+    }
 
-        //rally point
-        i=0;
-        city_list_iterate(game.player_ptr->cities,pcity)
-        {
-                if(pcity->rally_point)
-                        i++;
-        } city_list_iterate_end;
-        secfile_insert_int_comment(&sf,i,_("don't modify this !"),"dynamic.rally.city_num");
-        i=0;
-        city_list_iterate(game.player_ptr->cities,pcity)
-        {
-                if(!pcity->rally_point)
-                        continue;
-                my_snprintf(buf,sizeof(buf),"dynamic.rally.city%d",i);
-                save_city(&sf,buf,pcity);
-                my_snprintf(buf,sizeof(buf),"dynamic.rally.city%d.tile",i);
-                save_tile(&sf,buf,pcity->rally_point);
-                i++;
-        } city_list_iterate_end;
-        //multi-select
-        struct multi_select *pms;
-        for(i=0;i<MULTI_SELECT_NUM;i++)
-        {
-                pms=multi_select_get(i);
-                my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit_num",i);
-                secfile_insert_int_comment(&sf,unit_list_size(&pms->ulist),_("don't modify this !"),buf);
-                int j=0;
-                unit_list_iterate(pms->ulist,punit)
-                {
-                        my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit%d",i,j);
-                        save_unit(&sf,buf,punit);
-                        j++;
-                } unit_list_iterate_end;
-                if(j)
-                {
-                        my_snprintf(buf,sizeof(buf),"dynamic.multiselect%ds.unit_focus",i);
-                        save_unit(&sf,buf,pms->punit_focus);
-                }
-        }
-        //delayed goto
-        struct delayed_goto *pdg;
-        for(i=0;i<DELAYED_GOTO_NUM;i++)
-        {
-                pdg=delayed_goto_get(i);
-                my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data_num",i);
-                secfile_insert_int_comment(&sf,delayed_goto_data_list_size(&pdg->dglist),_("don't modify this !"),buf);
-                int j=0;
-                delayed_goto_data_list_iterate(pdg->dglist,pdgd)
-                {
-                        my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data%d.%%s",i,j);
-                        secfile_insert_int(&sf,pdgd->id,buf,"id");
-                        secfile_insert_int(&sf,pdgd->type,buf,"type");
-                        my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.data%d.tile",i,j);
-                        save_tile(&sf,buf,pdgd->ptile);
-                        j++;
-                } delayed_goto_data_list_iterate_end;
-                if(j)
-                {
-                        my_snprintf(buf,sizeof(buf),"dynamic.delayedgoto%ds.player",i);
-                        save_player(&sf,buf,pdg->pplayer);
-                }
-        }
-        //airlift
-        struct airlift_queue *paq;
-        for(i=0;i<AIRLIFT_QUEUE_NUM;i++)
-        {
-                paq=airlift_queue_get(i);
-                my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile_num",i);
-                secfile_insert_int_comment(&sf,tile_list_size(&paq->tlist),_("don't modify this !"),buf);
-                int j=0;
-                tile_list_iterate(paq->tlist,ptile)
-                {
-                        my_snprintf(buf,sizeof(buf),"dynamic.airliftqueue%ds.tile%d",i,j);
-                        save_tile(&sf,buf,ptile);
-                        j++;
-                } tile_list_iterate_end;
-                secfile_insert_int(&sf,airlift_queue_get_unit_type(i),"dynamic.airliftqueue%ds.unit_type",i);
-        }
-        //my_ai_trade
-        struct unit_list *pul=my_ai_get_units(MY_AI_TRADE_ROUTE);
-        secfile_insert_int_comment(&sf,unit_list_size(pul),_("don't modify this !"),"dynamic.trade_route.unit_num");
-        i=0;
-        unit_list_iterate(*pul,punit)
-        {
-                struct trade_route *ptr=(struct trade_route *)punit->my_ai.data;
-                my_snprintf(buf,sizeof(buf),"dynamic.trade_route.unit%d",i);
-                save_unit(&sf,buf,punit);
-                my_snprintf(buf,sizeof(buf),"dynamic.trade_route.unit%d.city1",i);
-                save_city(&sf,buf,ptr->pc1);
-                my_snprintf(buf,sizeof(buf),"dynamic.trade_route.unit%d.city2",i);
-                save_city(&sf,buf,ptr->pc2);
-                secfile_insert_bool(&sf,ptr->planned,"dynamic.trade_route.unit%d.planned",i);
-                i++;
-        } unit_list_iterate_end;
-        struct city_list *ptcl=my_ai_get_trade_cities();
-        secfile_insert_int_comment(&sf,city_list_size(ptcl),_("don't modify this !"),"dynamic.trade_cities.city_num");
-        i=0;
-        city_list_iterate(*ptcl,pcity)
-        {
-                my_snprintf(buf,sizeof(buf),"dynamic.trade_cities.city%d",i);
-                save_city(&sf,buf,pcity);
-                i++;
-        } city_list_iterate_end;
-        struct trade_route_list *ptrl=my_ai_trade_plan_get();
-        secfile_insert_int_comment(&sf,trade_route_list_size(ptrl),_("don't modify this !"),"dynamic.trade_plan.tr_num");
-        i=0;
-        trade_route_list_iterate(*ptrl,ptr)
-        {
-                my_snprintf(buf,sizeof(buf),"dynamic.trade_plan.tr%d.city1",i);
-                save_city(&sf,buf,ptr->pc1);
-                my_snprintf(buf,sizeof(buf),"dynamic.trade_plan.tr%d.city2",i);
-                save_city(&sf,buf,ptr->pc2);
-                i++;
-        } trade_route_list_iterate_end;
-        //my_ai_wonder
-        pul=my_ai_get_units(MY_AI_HELP_WONDER);
-        secfile_insert_int_comment(&sf,unit_list_size(pul),_("don't modify this !"),"dynamic.help_wonder.unit_num");
-        i=0;
-        unit_list_iterate(*pul,punit)
-        {
-                struct help_wonder *phw=(struct help_wonder *)punit->my_ai.data;
-                my_snprintf(buf,sizeof(buf),"dynamic.help_wonder.unit%d",i);
-                save_unit(&sf,buf,punit);
-                my_snprintf(buf,sizeof(buf),"dynamic.help_wonder.unit%d.city",i);
-                save_city(&sf,buf,phw->pcity);
-                my_snprintf(buf,sizeof(buf),"dynamic.help_wonder.unit%d.%%s",i);
-                secfile_insert_int(&sf,phw->id,buf,"wid");
-                secfile_insert_int(&sf,phw->level,buf,"level");
-                i++;
-        } unit_list_iterate_end;
-        //my_ai_patrol
-        pul=my_ai_get_units(MY_AI_PATROL);
-        secfile_insert_int_comment(&sf,unit_list_size(pul),_("don't modify this !"),"dynamic.patrol.unit_num");
-        i=0;
-        unit_list_iterate(*pul,punit)
-        {
-                my_snprintf(buf,sizeof(buf),"dynamic.patrol.unit%d",i);
-                save_unit(&sf,buf,punit);
-                my_snprintf(buf,sizeof(buf),"dynamic.patrol.unit%d.tile",i);
-                save_tile(&sf,buf,(struct tile *)punit->my_ai.data);
-                i++;
-        } unit_list_iterate_end;
-        //my_ai_none
-        pul=my_ai_get_units(MY_AI_NONE);
-        secfile_insert_int_comment(&sf,unit_list_size(pul),_("don't modify this !"),"dynamic.none.unit_num");
-        i=0;
-        unit_list_iterate(*pul,punit)
-        {
-                my_snprintf(buf,sizeof(buf),"dynamic.none.unit%d",i);
-                save_unit(&sf,buf,punit);
-                i++;
-        } unit_list_iterate_end;
-        //CMA
-        struct cm_parameter parameter;
-        i=0;
-        city_list_iterate(game.player_ptr->cities,pcity)
-        {
-          if(cma_is_city_under_agent(pcity,&parameter))
-            i++;
-        } city_list_iterate_end;
-        secfile_insert_int_comment(&sf,i,_("don't modify this !"),"dynamic.cma.city_num");
-        i=0;
-        city_list_iterate(game.player_ptr->cities,pcity)
-        {
-                if(!cma_is_city_under_agent(pcity,&parameter))
-                        continue;
-                my_snprintf(buf,sizeof(buf),"dynamic.cma.city%d",i);
-                save_city(&sf,buf,pcity);
-                int j;
-                for(j=0;j<NUM_STATS;j++)
-                {
-                        secfile_insert_int(&sf,parameter.minimal_surplus[j],"dynamic.cma.city%d.minimal_surplus%d",i,j);
-                        secfile_insert_int(&sf,parameter.factor[j],"dynamic.cma.city%d.factor%d",i,j);
-                }
-                secfile_insert_bool(&sf,parameter.require_happy,"dynamic.cma.city%d.require_happy",i);
-                secfile_insert_bool(&sf,parameter.allow_disorder,"dynamic.cma.city%d.allow_disorder",i);
-                secfile_insert_bool(&sf,parameter.allow_specialists,"dynamic.cma.city%d.allow_specialists",i);
-                secfile_insert_int(&sf,parameter.happy_factor,"dynamic.cma.city%d.happy_factor",i);
-                i++;
-        } city_list_iterate_end;
+    secfile_insert_str(&sf, name, "automatic_processus.ap%d.name", i);
+    secfile_insert_int(&sf, pap->auto_filter,
+		       "automatic_processus.ap%d.filter", i);
+    i++;
+  } automatic_processus_iterate_end;
+  secfile_insert_int_comment(&sf, i, _("don't modify this!"),
+			     "automatic_processus.num");
 
-	/* save to disk */
-	if(!section_file_save(&sf,name,0))
-		my_snprintf(buf,sizeof(buf),_("PepClient: Save failed, cannot write to file %s"),name);
-	else
-		my_snprintf(buf,sizeof(buf),_("PepClient: Saved settings to file %s"),name);
+  /* Dynamic settings */
+  /* Some game infos for the main compatibity test */
+  secfile_insert_int(&sf, map.xsize, "game_info.xsize");
+  secfile_insert_int(&sf, map.ysize, "game_info.ysize");
+  secfile_insert_int(&sf, map.topology_id, "game_info.topology_id");
+  secfile_insert_int(&sf, game.nplayers, "game_info.nplayers");
+  i = 0;
+  players_iterate(pplayer) {
+    save_player(&sf, pplayer, "game_info.player%d", i);
+    i++;
+  } players_iterate_end;
 
-	append_output_window(buf);
-	section_file_free(&sf);
+  /* Rally points */
+  i = 0;
+  city_list_iterate(game.player_ptr->cities, pcity) {
+    if (!pcity->rally_point) {
+      continue;
+    }
+    save_city(&sf, pcity, "dynamic.rally.city%d", i);
+    save_tile(&sf, pcity->rally_point, "dynamic.rally.city%d.tile", i);
+    i++;
+  } city_list_iterate_end;
+  secfile_insert_int_comment(&sf, i, _("don't modify this!"),
+			     "dynamic.rally.city_num");
+
+  /* Units selections */
+  struct multi_select *pms;
+  for (i = 0; i < MULTI_SELECT_NUM; i++) {
+    pms = multi_select_get(i);
+    secfile_insert_int_comment(&sf, unit_list_size(&pms->ulist),
+			       _("don't modify this!"),
+			       "dynamic.multiselect%ds.unit_num", i);
+    j = 0;
+    unit_list_iterate(pms->ulist, punit) {
+      save_unit(&sf, punit, "dynamic.multiselect%ds.unit%d", i, j);
+      j++;
+    } unit_list_iterate_end;
+    if (j > 0) {
+      save_unit(&sf, pms->punit_focus, "dynamic.multiselect%ds.unit_focus", i);
+    }
+  }
+
+  /* Delayed goto queues */
+  struct delayed_goto *pdg;
+  for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+    pdg = delayed_goto_get(i);
+    secfile_insert_int_comment(&sf, delayed_goto_data_list_size(&pdg->dglist),
+			       _("don't modify this!"),
+			       "dynamic.delayedgoto%ds.data_num", i);
+    j = 0;
+    delayed_goto_data_list_iterate(pdg->dglist, pdgd) {
+      secfile_insert_int(&sf, pdgd->id,
+			 "dynamic.delayedgoto%ds.data%d.id", i, j);
+      secfile_insert_int(&sf, pdgd->type,
+			 "tdynamic.delayedgoto%ds.data%d.ype", i, j);
+      save_tile(&sf, pdgd->ptile, "dynamic.delayedgoto%ds.data%d.tile", i, j);
+      j++;
+    } delayed_goto_data_list_iterate_end;
+    if (j > 0) {
+      save_player(&sf, pdg->pplayer, "dynamic.delayedgoto%ds.player", i);
+    }
+  }
+
+  /* Airlift queues */
+  struct airlift_queue *paq;
+  for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+    paq = airlift_queue_get(i);
+    secfile_insert_int_comment(&sf, tile_list_size(&paq->tlist),
+			       _("don't modify this!"),
+			       "dynamic.airliftqueue%ds.tile_num", i);
+    j = 0;
+    tile_list_iterate(paq->tlist, ptile) {
+      save_tile(&sf, ptile, "dynamic.airliftqueue%ds.tile%d", i, j);
+      j++;
+    } tile_list_iterate_end;
+    secfile_insert_int(&sf, airlift_queue_get_unit_type(i),
+		       "dynamic.airliftqueue%ds.unit_type", i);
+  }
+
+  /* Trade planning */
+  struct unit_list *pul = my_ai_get_units(MY_AI_TRADE_ROUTE);
+  secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
+			     "dynamic.trade_route.unit_num");
+  i = 0;
+  unit_list_iterate(*pul, punit) {
+    struct trade_route *ptr = (struct trade_route *)punit->my_ai.data;
+    save_unit(&sf, punit, "dynamic.trade_route.unit%d", i);
+    save_city(&sf, ptr->pc1, "dynamic.trade_route.unit%d.city1", i);
+    save_city(&sf, ptr->pc2, "dynamic.trade_route.unit%d.city2", i);
+    secfile_insert_bool(&sf, ptr->planned,
+			"dynamic.trade_route.unit%d.planned", i);
+    i++;
+  } unit_list_iterate_end;
+  struct city_list *ptcl = my_ai_get_trade_cities();
+  secfile_insert_int_comment(&sf, city_list_size(ptcl), _("don't modify this!"),
+			     "dynamic.trade_cities.city_num");
+  i = 0;
+  city_list_iterate(*ptcl, pcity) {
+    save_city(&sf, pcity, "dynamic.trade_cities.city%d", i);
+    i++;
+  } city_list_iterate_end;
+  struct trade_route_list *ptrl = my_ai_trade_plan_get();
+  secfile_insert_int_comment(&sf, trade_route_list_size(ptrl),
+			     _("don't modify this!"),
+			     "dynamic.trade_plan.tr_num");
+  i = 0;
+  trade_route_list_iterate(*ptrl, ptr) {
+    save_city(&sf, ptr->pc1, "dynamic.trade_plan.tr%d.city1", i);
+    save_city(&sf, ptr->pc2, "dynamic.trade_plan.tr%d.city2", i);
+    i++;
+  } trade_route_list_iterate_end;
+
+  /* Help wonders */
+  pul = my_ai_get_units(MY_AI_HELP_WONDER);
+  secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
+			     "dynamic.help_wonder.unit_num");
+  i = 0;
+  unit_list_iterate(*pul, punit) {
+    struct help_wonder *phw = (struct help_wonder *)punit->my_ai.data;
+    save_unit(&sf, punit, "dynamic.help_wonder.unit%d", i);
+    save_city(&sf, phw->pcity, "dynamic.help_wonder.unit%d.city", i);
+    secfile_insert_int(&sf, phw->id, "dynamic.help_wonder.unit%d.wid", i);
+    secfile_insert_int(&sf, phw->level, "dynamic.help_wonder.unit%d.level", i);
+    i++;
+  } unit_list_iterate_end;
+
+  /* Patrolling units */
+  pul = my_ai_get_units(MY_AI_PATROL);
+  secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
+			     "dynamic.patrol.unit_num");
+  i = 0;
+  unit_list_iterate(*pul, punit) {
+    save_unit(&sf, punit, "dynamic.patrol.unit%d", i);
+    save_tile(&sf, (struct tile *)punit->my_ai.data,
+	      "dynamic.patrol.unit%d.tile", i);
+    i++;
+  } unit_list_iterate_end;
+
+  /* Unused units */
+  pul = my_ai_get_units(MY_AI_NONE);
+  secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
+			     "dynamic.none.unit_num");
+  i = 0;
+  unit_list_iterate(*pul, punit) {
+    save_unit(&sf, punit, "dynamic.none.unit%d", i);
+    i++;
+  } unit_list_iterate_end;
+
+  /* CMA */
+  struct cm_parameter parameter;
+
+  i = 0;
+  city_list_iterate(game.player_ptr->cities, pcity) {
+    if (!cma_is_city_under_agent(pcity,&parameter)) {
+      continue;
+    }
+    save_city(&sf, pcity, "dynamic.cma.city%d", i);
+    for (j = 0; j < NUM_STATS; j++) {
+      secfile_insert_int(&sf, parameter.minimal_surplus[j],
+			 "dynamic.cma.city%d.minimal_surplus%d", i, j);
+      secfile_insert_int(&sf, parameter.factor[j],
+			 "dynamic.cma.city%d.factor%d", i, j);
+    }
+    secfile_insert_bool(&sf, parameter.require_happy,
+			"dynamic.cma.city%d.require_happy", i);
+    secfile_insert_bool(&sf, parameter.allow_disorder,
+			"dynamic.cma.city%d.allow_disorder", i);
+    secfile_insert_bool(&sf, parameter.allow_specialists,
+			"dynamic.cma.city%d.allow_specialists", i);
+    secfile_insert_int(&sf, parameter.happy_factor,
+		       "dynamic.cma.city%d.happy_factor", i);
+    i++;
+  } city_list_iterate_end;
+  secfile_insert_int_comment(&sf, i, _("don't modify this!"),
+			     "dynamic.cma.city_num");
+
+  /* Save to disk */
+  if (!section_file_save(&sf, name, 0)) {
+    my_snprintf(buf, sizeof(buf),
+		_("PepClient: Save failed, cannot write to file %s"), name);
+  } else {
+    my_snprintf(buf, sizeof(buf),
+		_("PepClient: Saved settings to file %s") ,name);
+  }
+
+  append_output_window(buf);
+  section_file_free(&sf);
 }
 
+/********************************************************************** 
+  ... Called every turn.
+***********************************************************************/
 void autosave_settings(void)
 {
-	if(!save_turns||client_is_observer()||!aconnection.player)
-		return;
+  if (save_turns == 0 || client_is_observer() || !aconnection.player) {
+    return;
+  }
 
-	turns++;
-	if(turns<save_turns)
-		return;
-	turns=0;
-
-	save_all_settings();
+  if (++turns >= save_turns) {
+    turns = 0;
+    save_all_settings();
+  }
 }
