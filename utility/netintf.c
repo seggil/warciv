@@ -163,7 +163,7 @@ static void dns_result_callback(void *data,
   struct adns_ctx *ctx = data;
 
   freelog(LOG_DEBUG, "drc dns_result_callback: data=%p " /*ASYNCDEBUG*/
-	  " qtype=%d hostname=\"%s\" addrlen=%d", /*ASYNCDEBUG*/
+	  " qtype=%d hostname=\"%s\" addrlen=%lu", /*ASYNCDEBUG*/
 	  data, qtype, hostname, addrlen); /*ASYNCDEBUG*/
   
   assert(ctx != NULL);

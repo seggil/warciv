@@ -91,7 +91,7 @@ struct dns {
   struct hash_table *cache;
 
   char buf[4096];
-  int buflen;
+  size_t buflen;
 };
 
 /* DNS network packet */
@@ -452,7 +452,7 @@ static void parse_udp(struct dns *dns)
       /* Add to the cache */
       memcpy(&ttl, p - 6, sizeof(ttl));
       q->expire = time(NULL) + (time_t) ntohl(ttl);
-      freelog(LOG_DEBUG, "pu   got expire=%ld ttl=%ld", 
+      freelog(LOG_DEBUG, "pu   got expire=%ld ttl=%u", 
 	      q->expire, ntohl(ttl)); /*ASYNCDEBUG*/
       
       /* Call user */
@@ -525,8 +525,9 @@ void dns_poll(struct dns *dns)
     if (dns->buflen > sizeof(struct header)) {
       parse_udp(dns);
     } else {
-      freelog(LOG_VERBOSE, _("Ignoring UDP packet since it is smaller "
-			     "than the size of a DNS packet header (%d < %d)."),
+      freelog(LOG_VERBOSE,
+	      _("Ignoring UDP packet since it is smaller "
+		"than the size of a DNS packet header (%lu < %lu)."),
 	      dns->buflen, sizeof(struct header));
     }
   }

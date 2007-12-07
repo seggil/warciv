@@ -6608,7 +6608,7 @@ static int load_action_list_v1(const char *filename)
         {
             freelog(LOG_ERROR, _("Syntax error on line %d of "
                                  "action list file %s: %s."),
-                    err, lc, filename, p);
+                    lc, filename, p);
             continue;
         }
 
