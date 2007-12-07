@@ -608,7 +608,7 @@ void multi_select_copy(int dest, int src)
 /********************************************************************** 
   ...
 ***********************************************************************/
-struct multi_select *multi_select_get(int multi)
+const struct multi_select *multi_select_get(int multi)
 {
   msassert(multi);
 
@@ -618,7 +618,7 @@ struct multi_select *multi_select_get(int multi)
 /********************************************************************** 
   ...
 ***********************************************************************/
-struct unit_list *multi_select_get_units_focus(void)
+const struct unit_list *multi_select_get_units_focus(void)
 {
   return &multi_selection[0].ulist;
 }
@@ -696,7 +696,7 @@ Unit_Type_id multi_select_unit_type(int multi)
 /********************************************************************** 
   ...
 ***********************************************************************/
-void multi_select_set(int multi, struct multi_select *pms)
+void multi_select_set(int multi, const struct multi_select *pms)
 {
   assert(pms != NULL);
   msassert(multi);
@@ -1008,7 +1008,7 @@ void delayed_goto_copy(int dest, int src)
 /********************************************************************** 
   Accessor function.
 ***********************************************************************/
-struct delayed_goto *delayed_goto_get(int dg)
+const struct delayed_goto *delayed_goto_get(int dg)
 {
   dgassert(dg);
 
@@ -1069,7 +1069,7 @@ void delayed_goto_move(int dest, int src)
 /********************************************************************** 
   ...
 ***********************************************************************/
-void delayed_goto_set(int dg, struct delayed_goto *pdg)
+void delayed_goto_set(int dg, const struct delayed_goto *pdg)
 {
   dgassert(dg);
   assert(pdg);
@@ -1446,7 +1446,7 @@ void airlift_queue_copy(int dest, int src)
 /********************************************************************** 
   ...
 ***********************************************************************/
-struct airlift_queue *airlift_queue_get(int aq)
+const struct airlift_queue *airlift_queue_get(int aq)
 {
   aqassert(aq);
 
@@ -1506,7 +1506,7 @@ void airlift_queue_move(int dest, int src)
 /********************************************************************** 
   ...
 ***********************************************************************/
-void airlift_queue_set(int aq, struct airlift_queue *paq)
+void airlift_queue_set(int aq, const struct airlift_queue *paq)
 {
   aqassert(aq);
 

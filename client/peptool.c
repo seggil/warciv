@@ -1112,7 +1112,7 @@ void save_all_settings(void)
 			     "dynamic.rally.city_num");
 
   /* Units selections */
-  struct multi_select *pms;
+  const struct multi_select *pms;
   for (i = 0; i < MULTI_SELECT_NUM; i++) {
     pms = multi_select_get(i);
     secfile_insert_int_comment(&sf, unit_list_size(&pms->ulist),
@@ -1129,7 +1129,7 @@ void save_all_settings(void)
   }
 
   /* Delayed goto queues */
-  struct delayed_goto *pdg;
+  const struct delayed_goto *pdg;
   for (i = 0; i < DELAYED_GOTO_NUM; i++) {
     pdg = delayed_goto_get(i);
     secfile_insert_int_comment(&sf, delayed_goto_data_list_size(&pdg->dglist),
@@ -1150,7 +1150,7 @@ void save_all_settings(void)
   }
 
   /* Airlift queues */
-  struct airlift_queue *paq;
+  const struct airlift_queue *paq;
   for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
     paq = airlift_queue_get(i);
     secfile_insert_int_comment(&sf, tile_list_size(&paq->tlist),
@@ -1166,7 +1166,7 @@ void save_all_settings(void)
   }
 
   /* Trade planning */
-  struct unit_list *pul = my_ai_get_units(MY_AI_TRADE_ROUTE);
+  const struct unit_list *pul = my_ai_get_units(MY_AI_TRADE_ROUTE);
   secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
 			     "dynamic.trade_route.unit_num");
   i = 0;
@@ -1179,7 +1179,7 @@ void save_all_settings(void)
 			"dynamic.trade_route.unit%d.planned", i);
     i++;
   } unit_list_iterate_end;
-  struct city_list *ptcl = my_ai_get_trade_cities();
+  const struct city_list *ptcl = my_ai_get_trade_cities();
   secfile_insert_int_comment(&sf, city_list_size(ptcl), _("don't modify this!"),
 			     "dynamic.trade_cities.city_num");
   i = 0;
@@ -1187,7 +1187,7 @@ void save_all_settings(void)
     save_city(&sf, pcity, "dynamic.trade_cities.city%d", i);
     i++;
   } city_list_iterate_end;
-  struct trade_route_list *ptrl = my_ai_trade_plan_get();
+  const struct trade_route_list *ptrl = my_ai_trade_plan_get();
   secfile_insert_int_comment(&sf, trade_route_list_size(ptrl),
 			     _("don't modify this!"),
 			     "dynamic.trade_plan.tr_num");
