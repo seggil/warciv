@@ -246,8 +246,8 @@ void update_hover_cursor(void);
 
 extern int num_units_below;
 
-void control_queues_init (void);
-void control_queues_free (void);
+void control_queues_init(void);
+void control_queues_free(void);
 
 void put_unit_focus(struct unit *punit);
 void lie_unit_focus_init(void);
