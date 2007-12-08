@@ -62,6 +62,7 @@
 #include "spaceshipdlg.h"
 #include "wldlg.h"
 #include "unittype.h"
+#include "style.h"
 
 #include "menu.h"
 
@@ -99,6 +100,7 @@ enum MenuID {
   MENU_GAME_PEPSETTINGS,
   MENU_GAME_PEPSETTINGS_LOAD,
   MENU_GAME_PEPSETTINGS_SAVE,
+  MENU_GAME_STYLE,
   MENU_GAME_SERVER_OPTIONS1,
   MENU_GAME_SERVER_OPTIONS2,
   MENU_GAME_SAVE_GAME,
@@ -449,6 +451,9 @@ static void game_menu_callback(gpointer callback_data,
     break;
   case MENU_GAME_PEPSETTINGS_SAVE:
     save_all_settings();
+    break;
+  case MENU_GAME_STYLE:
+    popup_style_config_dialog();
     break;
   case MENU_GAME_SERVER_OPTIONS1:
     send_report_request(REPORT_SERVER_OPTIONS1);
@@ -1869,6 +1874,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	game_menu_callback,		MENU_GAME_PEPSETTINGS_LOAD			},
   { "/" N_("Game") "/" N_("Sa_ve PepClient Settings"),		NULL,
 	game_menu_callback,		MENU_GAME_PEPSETTINGS_SAVE			},
+  { "/" N_("Game") "/" N_("_Font Size"),		NULL,
+        game_menu_callback,		MENU_GAME_STYLE			},
   { "/" N_("Game") "/sep3",					NULL,
 	NULL,				0,				"<Separator>"	},
   { "/" N_("Game") "/" N_("_Initial Server Options"),NULL,
