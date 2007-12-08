@@ -205,7 +205,7 @@ static void dns_result_callback(const unsigned char *addr,
   struct adns_ctx *ctx = data;
 
   freelog(LOG_DEBUG, "drc dns_result_callback data=%p "
-          " qtype=%d hostname=\"%s\" addrlen=%d",
+          " qtype=%d hostname=\"%s\" addrlen=%lu",
           data, qtype, hostname, addrlen);
   
   assert(ctx != NULL);
