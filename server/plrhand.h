@@ -29,8 +29,6 @@ struct conn_list;
 
 enum plr_info_level { INFO_MINIMUM, INFO_MEETING, INFO_EMBASSY, INFO_FULL };
 
-extern bool mute;
-
 void server_player_init(struct player *pplayer, bool initmap);
 void server_remove_player(struct player *pplayer);
 void kill_player(struct player *pplayer);
@@ -61,6 +59,7 @@ void notify_player(const struct player *pplayer, const char *format, ...)
 void notify_embassies(struct player *pplayer, struct player *exclude,
 		      const char *format, ...)
 		      fc__attribute((__format__ (__printf__, 3, 4)));
+void notify_enabled(bool yes);
 
 struct conn_list *player_reply_dest(struct player *pplayer);
 

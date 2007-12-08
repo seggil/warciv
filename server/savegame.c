@@ -671,7 +671,6 @@ static void map_load(struct section_file *file)
     }
   }
 
-
   map.have_specials = TRUE;
 }
 
@@ -2729,8 +2728,7 @@ static void player_save(struct player *plr, int plrno,
       secfile_insert_str(file, "-",
 			 "player%d.u%d.activity_list", plrno, i);
     }
-  }
-  unit_list_iterate_end;
+  } unit_list_iterate_end;
 
   i = -1;
   city_list_iterate(plr->cities, pcity) {
@@ -2858,8 +2856,7 @@ static void player_save(struct player *plr, int plrno,
     /* FIXME: remove this when the urgency is properly recalculated. */
     secfile_insert_int(file, pcity->ai.urgency,
 		       "player%d.c%d.ai.urgency", plrno, i);
-  }
-  city_list_iterate_end;
+  } city_list_iterate_end;
 
   /********** Put the players private map **********/
  /* Otherwise the player can see all, and there's no reason to save the private map. */
@@ -3041,8 +3038,7 @@ static void apply_unit_ordering(void)
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
       unit_list_sort_ord_city(&pcity->units_supported);
-    }
-    city_list_iterate_end;
+    } city_list_iterate_end;
   } players_iterate_end;
 
   whole_map_iterate(ptile) {
@@ -3102,18 +3098,18 @@ void game_load(struct section_file *file)
   enum server_states tmp_server_state;
   char *savefile_options;
   const char *string;
-  char** improvement_order = NULL;
+  char **improvement_order = NULL;
   int improvement_order_size = 0;
-  char** technology_order = NULL;
+  char **technology_order = NULL;
   int technology_order_size = 0;
-  const char* name;
+  const char *name;
 
   map.generator = 0;
   map.is_fixed = TRUE;
 
   game.version = secfile_lookup_int_default(file, 0, "game.version");
   tmp_server_state = (enum server_states)
-    secfile_lookup_int_default(file, RUN_GAME_STATE, "game.server_state");
+      secfile_lookup_int_default(file, RUN_GAME_STATE, "game.server_state");
 
   savefile_options = secfile_lookup_str(file, "savefile.options");
   if (has_capability("improvement_order", savefile_options)) {
@@ -3127,388 +3123,363 @@ void game_load(struct section_file *file)
 
   /* we require at least version 1.9.0 */
   if (REQUIERED_GAME_VERSION > game.version) {
-    freelog(LOG_FATAL,
-	    _("Savegame too old, at least version 1.9.0 required."));
-    exit(EXIT_FAILURE);
+    freelog(LOG_FATAL, _("Savegame too old, at least version 1.9.0 required."));
+    exit(EXIT_FAILURE);         /* WTF exit?! XXX */
   }
 
-  {
-    set_meta_patches_string(secfile_lookup_str_default(file, 
-                                                default_meta_patches_string(),
-                                                "game.metapatches"));
-    game.meta_info.user_message_set =
+  set_meta_patches_string(secfile_lookup_str_default(file,
+      default_meta_patches_string(), "game.metapatches"));
+
+  game.meta_info.user_message_set =
       secfile_lookup_bool_default(file, FALSE, "game.user_metamessage");
-    if (game.meta_info.user_message_set) {
-      set_user_meta_message_string(secfile_lookup_str_default(file, 
-                                                default_meta_message_string(),
-                                                "game.metamessage"));
-    } else {
-      /* To avoid warnings when loading pre-2.0.10 savegames */
-      secfile_lookup_str_default(file, "", "game.metamessage");
-    }
-    set_meta_topic_string(secfile_lookup_str_default(file, 
-                                                default_meta_topic_string(),
-                                                "game.metatopic"));
+  if (game.meta_info.user_message_set) {
+    set_user_meta_message_string(secfile_lookup_str_default(file,
+        default_meta_message_string(), "game.metamessage"));
+  } else {
+    /* To avoid warnings when loading pre-2.0.10 savegames */
+    secfile_lookup_str_default(file, "", "game.metamessage");
+  }
+  set_meta_topic_string(secfile_lookup_str_default(file,
+      default_meta_topic_string(), "game.metatopic"));
 
-    sz_strlcpy(srvarg.metaserver_addr,
-	       secfile_lookup_str_default(file, DEFAULT_META_SERVER_ADDR,
-					  "game.metaserver"));
+  sz_strlcpy(srvarg.metaserver_addr,
+             secfile_lookup_str_default(file, DEFAULT_META_SERVER_ADDR,
+                                        "game.metaserver"));
 
-    game.gold          = secfile_lookup_int(file, "game.gold");
-    game.tech          = secfile_lookup_int(file, "game.tech");
-    game.skill_level   = secfile_lookup_int(file, "game.skill_level");
-    if (game.skill_level==0)
-      game.skill_level = GAME_OLD_DEFAULT_SKILL_LEVEL;
+  game.gold = secfile_lookup_int(file, "game.gold");
+  game.tech = secfile_lookup_int(file, "game.tech");
+  game.skill_level = secfile_lookup_int(file, "game.skill_level");
+  if (game.skill_level == 0) {
+    game.skill_level = GAME_OLD_DEFAULT_SKILL_LEVEL;
+  }
 
-    game.timeout       = secfile_lookup_int(file, "game.timeout");
-    game.timeoutint = secfile_lookup_int_default(file,
-						 GAME_DEFAULT_TIMEOUTINT,
-						 "game.timeoutint");
-    game.timeoutintinc =
-	secfile_lookup_int_default(file, GAME_DEFAULT_TIMEOUTINTINC,
-				   "game.timeoutintinc");
-    game.timeoutinc =
-	secfile_lookup_int_default(file, GAME_DEFAULT_TIMEOUTINC,
-				   "game.timeoutinc");
-    game.timeoutincmult =
-	secfile_lookup_int_default(file, GAME_DEFAULT_TIMEOUTINCMULT,
-				   "game.timeoutincmult");
-    game.timeoutcounter =
-	secfile_lookup_int_default(file, 1, "game.timeoutcounter");
+  game.timeout = secfile_lookup_int(file, "game.timeout");
+  game.timeoutint = secfile_lookup_int_default(file,
+      GAME_DEFAULT_TIMEOUTINT, "game.timeoutint");
+  game.timeoutintinc = secfile_lookup_int_default(file,
+      GAME_DEFAULT_TIMEOUTINTINC, "game.timeoutintinc");
+  game.timeoutinc = secfile_lookup_int_default(file,
+      GAME_DEFAULT_TIMEOUTINC, "game.timeoutinc");
+  game.timeoutincmult = secfile_lookup_int_default(file,
+      GAME_DEFAULT_TIMEOUTINCMULT, "game.timeoutincmult");
+  game.timeoutcounter =
+      secfile_lookup_int_default(file, 1, "game.timeoutcounter");
 
-    game.timeoutaddenemymove =
-        secfile_lookup_int_default(file, game.timeoutaddenemymove, 
-			           "game.timeoutaddenemymove");
-    
-    game.end_year      = secfile_lookup_int(file, "game.end_year");
-    game.researchcost  = secfile_lookup_int_default(file, 0, "game.researchcost");
-    if (game.researchcost == 0)
-      game.researchcost = secfile_lookup_int(file, "game.techlevel");
+  game.timeoutaddenemymove = secfile_lookup_int_default(file,
+      game.timeoutaddenemymove, "game.timeoutaddenemymove");
 
-    game.year          = secfile_lookup_int(file, "game.year");
+  game.end_year = secfile_lookup_int(file, "game.end_year");
+  game.researchcost = secfile_lookup_int_default(file, 0, "game.researchcost");
+  if (game.researchcost == 0) {
+    game.researchcost = secfile_lookup_int(file, "game.techlevel");
+  }
 
-    if (has_capability("turn", savefile_options)) {
-      game.turn = secfile_lookup_int(file, "game.turn");
-    } else {
-      game.turn = -2;
-    }
+  game.year = secfile_lookup_int(file, "game.year");
 
-    game.min_players   = secfile_lookup_int(file, "game.min_players");
-    game.max_players   = secfile_lookup_int(file, "game.max_players");
-    game.nplayers      = secfile_lookup_int(file, "game.nplayers");
-    game.globalwarming = secfile_lookup_int(file, "game.globalwarming");
-    game.warminglevel  = secfile_lookup_int(file, "game.warminglevel");
-    game.nuclearwinter = secfile_lookup_int_default(file, 0, "game.nuclearwinter");
-    game.coolinglevel  = secfile_lookup_int_default(file, 8, "game.coolinglevel");
-    game.notradesize   = secfile_lookup_int_default(file, 0, "game.notradesize");
-    game.fulltradesize = secfile_lookup_int_default(file, 1, "game.fulltradesize");
-    game.unhappysize   = secfile_lookup_int(file, "game.unhappysize");
-    game.angrycitizen  = secfile_lookup_bool_default(file, FALSE, "game.angrycitizen");
+  if (has_capability("turn", savefile_options)) {
+    game.turn = secfile_lookup_int(file, "game.turn");
+  } else {
+    game.turn = -2;
+  }
 
-    if (game.version >= 10100) {
-      game.cityfactor  = secfile_lookup_int(file, "game.cityfactor");
-      game.diplcost    = secfile_lookup_int(file, "game.diplcost");
-      game.freecost    = secfile_lookup_int(file, "game.freecost");
-      game.conquercost = secfile_lookup_int(file, "game.conquercost");
-      game.foodbox     = secfile_lookup_int(file, "game.foodbox");
-      game.techpenalty = secfile_lookup_int(file, "game.techpenalty");
-      game.razechance  = secfile_lookup_int(file, "game.razechance");
+  game.min_players = secfile_lookup_int(file, "game.min_players");
+  game.max_players = secfile_lookup_int(file, "game.max_players");
+  game.nplayers = secfile_lookup_int(file, "game.nplayers");
+  game.globalwarming = secfile_lookup_int(file, "game.globalwarming");
+  game.warminglevel = secfile_lookup_int(file, "game.warminglevel");
+  game.nuclearwinter =
+      secfile_lookup_int_default(file, 0, "game.nuclearwinter");
+  game.coolinglevel = secfile_lookup_int_default(file, 8, "game.coolinglevel");
+  game.notradesize = secfile_lookup_int_default(file, 0, "game.notradesize");
+  game.fulltradesize =
+      secfile_lookup_int_default(file, 1, "game.fulltradesize");
+  game.unhappysize = secfile_lookup_int(file, "game.unhappysize");
+  game.angrycitizen =
+      secfile_lookup_bool_default(file, FALSE, "game.angrycitizen");
 
-      /* suppress warnings about unused entries in old savegames: */
-      (void) section_file_lookup(file, "game.rail_food");
-      (void) section_file_lookup(file, "game.rail_prod");
-      (void) section_file_lookup(file, "game.rail_trade");
-      (void) section_file_lookup(file, "game.farmfood");
-    }
-    if (game.version >= 10300) {
-      game.civstyle = secfile_lookup_int_default(file, 0, "game.civstyle");
-      game.save_nturns = secfile_lookup_int(file, "game.save_nturns");
-    }
+  if (game.version >= 10100) {
+    game.cityfactor = secfile_lookup_int(file, "game.cityfactor");
+    game.diplcost = secfile_lookup_int(file, "game.diplcost");
+    game.freecost = secfile_lookup_int(file, "game.freecost");
+    game.conquercost = secfile_lookup_int(file, "game.conquercost");
+    game.foodbox = secfile_lookup_int(file, "game.foodbox");
+    game.techpenalty = secfile_lookup_int(file, "game.techpenalty");
+    game.razechance = secfile_lookup_int(file, "game.razechance");
 
-    game.citymindist  = secfile_lookup_int_default(file,
+    /* suppress warnings about unused entries in old savegames: */
+    (void) section_file_lookup(file, "game.rail_food");
+    (void) section_file_lookup(file, "game.rail_prod");
+    (void) section_file_lookup(file, "game.rail_trade");
+    (void) section_file_lookup(file, "game.farmfood");
+  }
+  if (game.version >= 10300) {
+    game.civstyle = secfile_lookup_int_default(file, 0, "game.civstyle");
+    game.save_nturns = secfile_lookup_int(file, "game.save_nturns");
+  }
+
+  game.citymindist = secfile_lookup_int_default(file,
       GAME_DEFAULT_CITYMINDIST, "game.citymindist");
 
-    game.rapturedelay  = secfile_lookup_int_default(file,
+  game.rapturedelay = secfile_lookup_int_default(file,
       GAME_DEFAULT_RAPTUREDELAY, "game.rapturedelay");
 
-    /* National borders setting. */
-    game.borders = secfile_lookup_int_default(file, 0, "game.borders");
-    game.happyborders = secfile_lookup_bool_default(file, FALSE, 
-						    "game.happyborders");
+  /* National borders setting. */
+  game.borders = secfile_lookup_int_default(file, 0, "game.borders");
+  game.happyborders = secfile_lookup_bool_default(file, FALSE,
+      "game.happyborders");
 
-    /* Diplomacy. */
-    game.diplomacy = secfile_lookup_int_default(file, GAME_DEFAULT_DIPLOMACY, 
-                                                "game.diplomacy");
-    game.maxallies = secfile_lookup_int_default(file, GAME_DEFAULT_MAXALLIES,
-                                                "game.maxallies");
+  /* Diplomacy. */
+  game.diplomacy = secfile_lookup_int_default(file,
+      GAME_DEFAULT_DIPLOMACY, "game.diplomacy");
+  game.maxallies = secfile_lookup_int_default(file,
+      GAME_DEFAULT_MAXALLIES, "game.maxallies");
 
-    if (has_capability("watchtower", savefile_options)) {
-      game.watchtower_extra_vision =
-	  secfile_lookup_int_default(file, 0, "game.watchtower_extra_vision");
-      game.watchtower_vision =
-	  secfile_lookup_int_default(file, 1, "game.watchtower_vision");
+  if (has_capability("watchtower", savefile_options)) {
+    game.watchtower_extra_vision =
+        secfile_lookup_int_default(file, 0, "game.watchtower_extra_vision");
+    game.watchtower_vision =
+        secfile_lookup_int_default(file, 1, "game.watchtower_vision");
+  } else {
+    game.watchtower_extra_vision = 0;
+    game.watchtower_vision = 1;
+  }
+
+  sz_strlcpy(game.save_name, secfile_lookup_str_default(file,
+      GAME_DEFAULT_SAVE_NAME, "game.save_name"));
+
+  game.aifill = secfile_lookup_int_default(file, 0, "game.aifill");
+
+  game.scorelog = secfile_lookup_bool_default(file, FALSE, "game.scorelog");
+  sz_strlcpy(game.id, secfile_lookup_str_default(file, "", "game.id"));
+
+  game.fogofwar = secfile_lookup_bool_default(file, FALSE, "game.fogofwar");
+  game.fogofwar_old = game.fogofwar;
+
+  game.civilwarsize = secfile_lookup_int_default(file,
+      GAME_DEFAULT_CIVILWARSIZE, "game.civilwarsize");
+  game.contactturns = secfile_lookup_int_default(file,
+      GAME_DEFAULT_CONTACTTURNS, "game.contactturns");
+
+  if (has_capability("diplchance_percent", savefile_options)) {
+    game.diplchance = secfile_lookup_int_default(file, game.diplchance,
+                                                 "game.diplchance");
+  } else {
+    game.diplchance = secfile_lookup_int_default(file, 3, /* old default */
+                                                 "game.diplchance");
+    if (game.diplchance < 2) {
+      game.diplchance = GAME_MAX_DIPLCHANCE;
+    } else if (game.diplchance > 10) {
+      game.diplchance = GAME_MIN_DIPLCHANCE;
     } else {
-      game.watchtower_extra_vision = 0;
-      game.watchtower_vision = 1;
+      game.diplchance = 100 - (10 * (game.diplchance - 1));
     }
+  }
+  game.aqueductloss = secfile_lookup_int_default(file, game.aqueductloss,
+                                                 "game.aqueductloss");
+  game.killcitizen = secfile_lookup_int_default(file, game.killcitizen,
+                                                "game.killcitizen");
+  game.savepalace = secfile_lookup_bool_default(file, game.savepalace,
+                                                "game.savepalace");
+  game.turnblock = secfile_lookup_bool_default(file, game.turnblock,
+                                               "game.turnblock");
+  game.fixedlength = secfile_lookup_bool_default(file, game.fixedlength,
+                                                 "game.fixedlength");
+  game.barbarianrate = secfile_lookup_int_default(file, game.barbarianrate,
+                                                  "game.barbarians");
+  game.onsetbarbarian = secfile_lookup_int_default(file, game.onsetbarbarian,
+                                                   "game.onsetbarbs");
+  game.revolution_length = secfile_lookup_int_default(file,
+      game.revolution_length, "game.revolen");
 
-    sz_strlcpy(game.save_name,
-	       secfile_lookup_str_default(file, GAME_DEFAULT_SAVE_NAME,
-					  "game.save_name"));
+  /* counted in player_load for compatibility with 1.10.0 */
+  game.nbarbarians = 0;
 
-    game.aifill = secfile_lookup_int_default(file, 0, "game.aifill");
+  game.occupychance = secfile_lookup_int_default(file, game.occupychance,
+                                                 "game.occupychance");
+  game.seed = secfile_lookup_int_default(file, game.seed, "game.randseed");
+  game.allowed_city_names = secfile_lookup_int_default(file,
+      game.allowed_city_names, "game.allowed_city_names");
 
-    game.scorelog = secfile_lookup_bool_default(file, FALSE, "game.scorelog");
-    sz_strlcpy(game.id, secfile_lookup_str_default(file, "", "game.id"));
+  if (game.civstyle == 1) {
+    string = "civ1";
+  } else {
+    string = "default";
+    game.civstyle = GAME_DEFAULT_CIVSTYLE;
+  }
 
-    game.fogofwar = secfile_lookup_bool_default(file, FALSE, "game.fogofwar");
-    game.fogofwar_old = game.fogofwar;
-  
-    game.civilwarsize =
-      secfile_lookup_int_default(file, GAME_DEFAULT_CIVILWARSIZE,
-				 "game.civilwarsize");
-    game.contactturns =
-      secfile_lookup_int_default(file, GAME_DEFAULT_CONTACTTURNS,
-				 "game.contactturns");
-  
-    if(has_capability("diplchance_percent", savefile_options)) {
-      game.diplchance = secfile_lookup_int_default(file, game.diplchance,
-						   "game.diplchance");
-    } else {
-      game.diplchance = secfile_lookup_int_default(file, 3, /* old default */
-						   "game.diplchance");
-      if (game.diplchance < 2) {
-	game.diplchance = GAME_MAX_DIPLCHANCE;
-      } else if (game.diplchance > 10) {
-	game.diplchance = GAME_MIN_DIPLCHANCE;
-      } else {
-	game.diplchance = 100 - (10 * (game.diplchance - 1));
-      }
+  if (!has_capability("rulesetdir", savefile_options)) {
+    char *str2, *str;
+    
+    str = secfile_lookup_str_default(file, "default", "game.ruleset.techs");
+
+    if (strcmp("classic",
+               secfile_lookup_str_default(file, "default",
+                                          "game.ruleset.terrain")) == 0) {
+      freelog(LOG_FATAL, _("The savegame uses the classic terrain "
+                           "ruleset which is no longer supported."));
+      exit(EXIT_FAILURE); /* WTF again exit? XXX */
     }
-    game.aqueductloss = secfile_lookup_int_default(file, game.aqueductloss,
-						   "game.aqueductloss");
-    game.killcitizen = secfile_lookup_int_default(file, game.killcitizen,
-						  "game.killcitizen");
-    game.savepalace = secfile_lookup_bool_default(file,game.savepalace,
-						"game.savepalace");
-    game.turnblock = secfile_lookup_bool_default(file,game.turnblock,
-						"game.turnblock");
-    game.fixedlength = secfile_lookup_bool_default(file,game.fixedlength,
-						  "game.fixedlength");
-    game.barbarianrate = secfile_lookup_int_default(file, game.barbarianrate,
-						    "game.barbarians");
-    game.onsetbarbarian = secfile_lookup_int_default(file, game.onsetbarbarian,
-						     "game.onsetbarbs");
-    game.revolution_length
-      = secfile_lookup_int_default(file, game.revolution_length,
-				   "game.revolen");
-    game.nbarbarians = 0; /* counted in player_load for compatibility with 
-			     1.10.0 */
-    game.occupychance = secfile_lookup_int_default(file, game.occupychance,
-						   "game.occupychance");
-    game.seed = secfile_lookup_int_default(file, game.seed,
-					   "game.randseed");
-    game.allowed_city_names =
-	secfile_lookup_int_default(file, game.allowed_city_names,
-				   "game.allowed_city_names"); 
-
-    if(game.civstyle == 1) {
-      string = "civ1";
-    } else {
-      string = "default";
-      game.civstyle = GAME_DEFAULT_CIVSTYLE;
-    }
-
-    if (!has_capability("rulesetdir", savefile_options)) {
-      char *str2, *str =
-	  secfile_lookup_str_default(file, "default", "game.ruleset.techs");
-
-      if (strcmp("classic",
-		 secfile_lookup_str_default(file, "default",
-					    "game.ruleset.terrain")) == 0) {
-	freelog(LOG_FATAL, _("The savegame uses the classic terrain "
-			     "ruleset which is no longer supported."));
-	exit(EXIT_FAILURE);
-      }
-
-
 #define T(x) \
       str2 = secfile_lookup_str_default(file, "default", x); \
       if (strcmp(str, str2) != 0) { \
-	freelog(LOG_NORMAL, _("Warning: Different rulesetdirs " \
+        freelog(LOG_NORMAL, _("Warning: Different rulesetdirs " \
 			      "('%s' and '%s') are no longer supported. " \
 			      "Using '%s'."), \
 			      str, str2, str); \
       }
 
-      T("game.ruleset.units");
-      T("game.ruleset.buildings");
-      T("game.ruleset.terrain");
-      T("game.ruleset.governments");
-      T("game.ruleset.nations");
-      T("game.ruleset.cities");
-      T("game.ruleset.game");
+    T("game.ruleset.units");
+    T("game.ruleset.buildings");
+    T("game.ruleset.terrain");
+    T("game.ruleset.governments");
+    T("game.ruleset.nations");
+    T("game.ruleset.cities");
+    T("game.ruleset.game");
 #undef T
 
-      sz_strlcpy(game.rulesetdir, str);
-    } else {
-      sz_strlcpy(game.rulesetdir, 
-	       secfile_lookup_str_default(file, string,
-					  "game.rulesetdir"));
-    }
+    sz_strlcpy(game.rulesetdir, str);
+  } else {
+    sz_strlcpy(game.rulesetdir,
+               secfile_lookup_str_default(file, string, "game.rulesetdir"));
+  }
 
-    sz_strlcpy(game.demography,
-	       secfile_lookup_str_default(file, GAME_DEFAULT_DEMOGRAPHY,
-					  "game.demography"));
-    sz_strlcpy(game.allow_take,
-	       secfile_lookup_str_default(file, GAME_DEFAULT_ALLOW_TAKE,
-					  "game.allow_take"));
+  sz_strlcpy(game.demography, secfile_lookup_str_default(file,
+      GAME_DEFAULT_DEMOGRAPHY, "game.demography"));
+  sz_strlcpy(game.allow_take, secfile_lookup_str_default(file,
+      GAME_DEFAULT_ALLOW_TAKE, "game.allow_take"));
 
-    game.spacerace = secfile_lookup_bool_default(file, game.spacerace,
-						"game.spacerace");
+  game.spacerace = secfile_lookup_bool_default(file, game.spacerace,
+                                               "game.spacerace");
 
-    game.auto_ai_toggle = secfile_lookup_bool_default(file, game.auto_ai_toggle,
-						     "game.auto_ai_toggle");
+  game.auto_ai_toggle = secfile_lookup_bool_default(file, game.auto_ai_toggle,
+                                                    "game.auto_ai_toggle");
 
-    game.heating=0;
-    game.cooling=0;
+  game.heating = 0;
+  game.cooling = 0;
 
-    if (!game.ruleset_loaded)
-    {
+  if (!game.ruleset_loaded) {
     load_rulesets();
   }
-  }
 
-  {
-    if (game.version >= 10300) {
-      {
-	if (!has_capability("startunits", savefile_options)) {
-	  int settlers = secfile_lookup_int(file, "game.settlers");
-	  int explorer = secfile_lookup_int(file, "game.explorer");
-	  int i;
-	  for (i = 0; settlers > 0 && i < (MAX_LEN_STARTUNIT - 1) ; i++, settlers--) {
-	    game.start_units[i] = 'c';
-	  }
-	  for (; explorer > 0 && i < (MAX_LEN_STARTUNIT - 1) ; i++, explorer--) {
-	    game.start_units[i] = 'x';
-	  }
-	  game.start_units[i] = '\0';
-	} else {
-	  sz_strlcpy(game.start_units,
-		     secfile_lookup_str_default(file,
-						GAME_DEFAULT_START_UNITS,
-						"game.start_units"));
-	}
-	game.dispersion =
-	  secfile_lookup_int_default(file, GAME_DEFAULT_DISPERSION,
-				     "game.dispersion");
+  if (game.version >= 10300) {
+    if (!has_capability("startunits", savefile_options)) {
+      int settlers = secfile_lookup_int(file, "game.settlers");
+      int explorer = secfile_lookup_int(file, "game.explorer");
+      int i;
+      for (i = 0; settlers > 0 && i < (MAX_LEN_STARTUNIT - 1);
+           i++, settlers--) {
+        game.start_units[i] = 'c';
       }
+      for (; explorer > 0 && i < (MAX_LEN_STARTUNIT - 1); i++, explorer--) {
+        game.start_units[i] = 'x';
+      }
+      game.start_units[i] = '\0';
+    } else {
+      sz_strlcpy(game.start_units, secfile_lookup_str_default(file,
+          GAME_DEFAULT_START_UNITS, "game.start_units"));
+    }
+    game.dispersion = secfile_lookup_int_default(file,
+        GAME_DEFAULT_DISPERSION, "game.dispersion");
 
     if (has_capability("warserver_08_13", savefile_options)) {
-        game.trademindist = secfile_lookup_int_default(file,
-                GAME_DEFAULT_TRADEMINDIST, "game.trademindist");
-        game.traderevenuepct = secfile_lookup_int_default(file,
-                GAME_DEFAULT_TRADEREVENUEPCT, "game.traderevenuepct");
-        game.traderevenuestyle = secfile_lookup_int_default(file,
-                GAME_DEFAULT_TRADEREVENUESTYLE, "game.traderevenuestyle");
-        game.caravanbonusstyle = secfile_lookup_int_default(file,
-                GAME_DEFAULT_CARAVANBONUSSTYLE, "game.caravanbonusstyle");
-        game.futuretechsscore = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_FUTURETECHSSCORE, "game.futuretechsscore");
-        game.improvedautoattack = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_IMPROVEDAUTOATTACK, "game.improvedautoattack");
-        game.stackbribing = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_STACKBRIBING, "game.stackbribing");
-        game.experimentalbribingcost = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_EXPERIMENTALBRIBINGCOST, "game.experimentalbribingcost");
-        game.techtrading = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_TECHTRADING, "game.techtrading");
-        game.ignoreruleset = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_IGNORERULESET, "game.ignoreruleset");
-        game.goldtrading = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_GOLDTRADING, "game.goldtrading");
-        game.citytrading = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_CITYTRADING, "game.citytrading");
-        game.airliftingstyle = secfile_lookup_int_default(file,
-                GAME_DEFAULT_AIRLIFTINGSTYLE, "game.airliftingstyle");
-        game.teamplacement = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_TEAMPLACEMENT, "game.teamplacement");
-        game.globalwarmingon = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_GLOBALWARMINGON, "game.globalwarmingon");
-        game.nuclearwinteron = secfile_lookup_bool_default(file,
-                GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
-        game.maxconnections = secfile_lookup_int_default(file,
-                GAME_DEFAULT_MAXCONNECTIONS, "game.maxconnections");
-        game.bruteforcethreshold = secfile_lookup_int_default(file,
-                GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
-        game.iterplacementcoefficient = secfile_lookup_int_default(file,
-                GAME_DEFAULT_TRADEMINDIST, "game.iterplacementcoefficient");
-        game.teamplacementtype = secfile_lookup_int_default(file,
-                GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
-        game.techleakagerate = secfile_lookup_int_default(file,
-                GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
-	}
-
-      map.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
-					           "map.topology_id");
-      map.size = secfile_lookup_int_default(file, MAP_DEFAULT_SIZE,
-                                            "map.size");
-      map.riches = secfile_lookup_int(file, "map.riches");
-      map.huts = secfile_lookup_int(file, "map.huts");
-      map.generator = secfile_lookup_int(file, "map.generator");
-      map.seed = secfile_lookup_int(file, "map.seed");
-      map.landpercent = secfile_lookup_int(file, "map.landpercent");
-      map.wetness = secfile_lookup_int_default(file, MAP_DEFAULT_WETNESS,
-					       "map.wetness");
-      map.steepness = secfile_lookup_int_default(file, MAP_DEFAULT_STEEPNESS, 
-						 "map.steepness");
-      map.have_huts = secfile_lookup_bool_default(file, TRUE,
-						  "map.have_huts");
-      map.temperature =
-	secfile_lookup_int_default(file,
-				   MAP_DEFAULT_TEMPERATURE, "map.temperature");
-      map.alltemperate
-	= secfile_lookup_bool_default(file, MAP_DEFAULT_ALLTEMPERATE,
-				      "map.alltemperate");
-      map.tinyisles
-	= secfile_lookup_bool_default(file, MAP_DEFAULT_TINYISLES,
-				      "map.tinyisles");
-      map.separatepoles
-	= secfile_lookup_bool_default(file, MAP_DEFAULT_SEPARATE_POLES,
-				      "map.separatepoles");
-      map.startpos
-        = secfile_lookup_int_default(file,4,"map.startpos");
-
-      if (has_capability("startoptions", savefile_options)) {
-	map.xsize = secfile_lookup_int(file, "map.width");
-	map.ysize = secfile_lookup_int(file, "map.height");
-      } else {
-	/* old versions saved with these names in PRE_GAME_STATE: */
-	map.xsize = secfile_lookup_int(file, "map.xsize");
-	map.ysize = secfile_lookup_int(file, "map.ysize");
-      }
-
-      if (tmp_server_state==PRE_GAME_STATE && map.generator == 0) {
-	/* generator 0 = map done with map editor */
-	/* aka a "scenario" */
-        if (has_capability("specials",savefile_options)) {
-          map_load(file);
-          return;
-        }
-        map_tiles_load(file);
-        if (has_capability("riversoverlay",savefile_options)) {
-	  map_rivers_overlay_load(file);
-	}
-        if (has_capability("startpos",savefile_options)) {
-          map_startpos_load(file);
-          return;
-        }
-	return;
-      }
+      game.trademindist = secfile_lookup_int_default(file,
+          GAME_DEFAULT_TRADEMINDIST, "game.trademindist");
+      game.traderevenuepct = secfile_lookup_int_default(file,
+          GAME_DEFAULT_TRADEREVENUEPCT, "game.traderevenuepct");
+      game.traderevenuestyle = secfile_lookup_int_default(file,
+          GAME_DEFAULT_TRADEREVENUESTYLE, "game.traderevenuestyle");
+      game.caravanbonusstyle = secfile_lookup_int_default(file,
+          GAME_DEFAULT_CARAVANBONUSSTYLE, "game.caravanbonusstyle");
+      game.futuretechsscore = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_FUTURETECHSSCORE, "game.futuretechsscore");
+      game.improvedautoattack = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_IMPROVEDAUTOATTACK, "game.improvedautoattack");
+      game.stackbribing = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_STACKBRIBING, "game.stackbribing");
+      game.experimentalbribingcost = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_EXPERIMENTALBRIBINGCOST,
+          "game.experimentalbribingcost");
+      game.techtrading = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_TECHTRADING, "game.techtrading");
+      game.ignoreruleset = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_IGNORERULESET, "game.ignoreruleset");
+      game.goldtrading = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_GOLDTRADING, "game.goldtrading");
+      game.citytrading = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_CITYTRADING, "game.citytrading");
+      game.airliftingstyle = secfile_lookup_int_default(file,
+          GAME_DEFAULT_AIRLIFTINGSTYLE, "game.airliftingstyle");
+      game.teamplacement = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_TEAMPLACEMENT, "game.teamplacement");
+      game.globalwarmingon = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_GLOBALWARMINGON, "game.globalwarmingon");
+      game.nuclearwinteron = secfile_lookup_bool_default(file,
+          GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
+      game.maxconnections = secfile_lookup_int_default(file,
+          GAME_DEFAULT_MAXCONNECTIONS, "game.maxconnections");
+      game.bruteforcethreshold = secfile_lookup_int_default(file,
+          GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
+      game.iterplacementcoefficient = secfile_lookup_int_default(file,
+          GAME_DEFAULT_TRADEMINDIST, "game.iterplacementcoefficient");
+      game.teamplacementtype = secfile_lookup_int_default(file,
+          GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
+      game.techleakagerate = secfile_lookup_int_default(file,
+          GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
     }
-    if(tmp_server_state==PRE_GAME_STATE) {
+
+    map.topology_id = secfile_lookup_int_default(file,
+        MAP_ORIGINAL_TOPO, "map.topology_id");
+    map.size = secfile_lookup_int_default(file,
+        MAP_DEFAULT_SIZE, "map.size");
+    map.riches = secfile_lookup_int(file, "map.riches");
+    map.huts = secfile_lookup_int(file, "map.huts");
+    map.generator = secfile_lookup_int(file, "map.generator");
+    map.seed = secfile_lookup_int(file, "map.seed");
+    map.landpercent = secfile_lookup_int(file, "map.landpercent");
+    map.wetness = secfile_lookup_int_default(file,
+        MAP_DEFAULT_WETNESS, "map.wetness");
+    map.steepness = secfile_lookup_int_default(file,
+        MAP_DEFAULT_STEEPNESS, "map.steepness");
+    map.have_huts = secfile_lookup_bool_default(file,
+        TRUE, "map.have_huts");
+    map.temperature = secfile_lookup_int_default(file,
+        MAP_DEFAULT_TEMPERATURE, "map.temperature");
+    map.alltemperate = secfile_lookup_bool_default(file,
+        MAP_DEFAULT_ALLTEMPERATE, "map.alltemperate");
+    map.tinyisles = secfile_lookup_bool_default(file,
+        MAP_DEFAULT_TINYISLES, "map.tinyisles");
+    map.separatepoles = secfile_lookup_bool_default(file,
+        MAP_DEFAULT_SEPARATE_POLES, "map.separatepoles");
+    map.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
+
+    if (has_capability("startoptions", savefile_options)) {
+      map.xsize = secfile_lookup_int(file, "map.width");
+      map.ysize = secfile_lookup_int(file, "map.height");
+    } else {
+      /* old versions saved with these names in PRE_GAME_STATE: */
+      map.xsize = secfile_lookup_int(file, "map.xsize");
+      map.ysize = secfile_lookup_int(file, "map.ysize");
+    }
+
+    if (tmp_server_state == PRE_GAME_STATE && map.generator == 0) {
+      /* generator 0 = map done with map editor */
+      /* aka a "scenario" */
+      if (has_capability("specials", savefile_options)) {
+        map_load(file);
+        return;
+      }
+      map_tiles_load(file);
+      if (has_capability("riversoverlay", savefile_options)) {
+        map_rivers_overlay_load(file);
+      }
+      if (has_capability("startpos", savefile_options)) {
+        map_startpos_load(file);
+      }
       return;
     }
+  }
+  if (tmp_server_state == PRE_GAME_STATE) {
+    return;
   }
 
   /* We check
@@ -3517,16 +3488,16 @@ void game_load(struct section_file *file)
   if (section_file_lookup(file, "random.index_J")
       && secfile_lookup_bool_default(file, TRUE, "game.save_random")) {
     RANDOM_STATE rstate;
-    rstate.j = secfile_lookup_int(file,"random.index_J");
-    rstate.k = secfile_lookup_int(file,"random.index_K");
-    rstate.x = secfile_lookup_int(file,"random.index_X");
-    for(i=0;i<8;i++) {
+    rstate.j = secfile_lookup_int(file, "random.index_J");
+    rstate.k = secfile_lookup_int(file, "random.index_K");
+    rstate.x = secfile_lookup_int(file, "random.index_X");
+    for (i = 0; i < 8; i++) {
       char name[20];
-      my_snprintf(name, sizeof(name), "random.table%d",i);
-      string=secfile_lookup_str(file,name);
-      sscanf(string,"%8x %8x %8x %8x %8x %8x %8x", &rstate.v[7*i],
-	     &rstate.v[7*i+1], &rstate.v[7*i+2], &rstate.v[7*i+3],
-	     &rstate.v[7*i+4], &rstate.v[7*i+5], &rstate.v[7*i+6]);
+      my_snprintf(name, sizeof(name), "random.table%d", i);
+      string = secfile_lookup_str(file, name);
+      sscanf(string, "%8x %8x %8x %8x %8x %8x %8x", &rstate.v[7 * i],
+             &rstate.v[7 * i + 1], &rstate.v[7 * i + 2], &rstate.v[7 * i + 3],
+             &rstate.v[7 * i + 4], &rstate.v[7 * i + 5], &rstate.v[7 * i + 6]);
     }
     rstate.is_init = TRUE;
     set_myrand_state(rstate);
@@ -3543,42 +3514,40 @@ void game_load(struct section_file *file)
   }
 
 
-  game.is_new_game = !secfile_lookup_bool_default(file, TRUE,
-						  "game.save_players");
+  game.is_new_game = !secfile_lookup_bool_default(file,
+      TRUE, "game.save_players");
 
-  if (!game.is_new_game) { /* If new game, this is done in srv_main.c */
+  if (!game.is_new_game) {      /* If new game, this is done in srv_main.c */
     /* Initialise lists of improvements with World and Island equiv_ranges */
-    improvement_status_init(game.improvements,
-			    ARRAY_SIZE(game.improvements));
+    improvement_status_init(game.improvements, ARRAY_SIZE(game.improvements));
   }
 
   map_load(file);
 
   if (!game.is_new_game) {
     /* destroyed wonders: */
-    string = secfile_lookup_str_default(file, NULL,
-                                        "game.destroyed_wonders_new");
+    string = secfile_lookup_str_default(file,
+        NULL, "game.destroyed_wonders_new");
     if (!string) {
       /* old savegames */
-      string = secfile_lookup_str_default(file, "",
-                                          "game.destroyed_wonders");
+      string = secfile_lookup_str_default(file, "", "game.destroyed_wonders");
       for (k = 0; string[k]; k++) {
         if (string[k] == '1') {
-	  name = old_impr_type_name(k);
-	  id = find_improvement_by_name_orig(name);
-	  if (id != -1) {
-	    game.global_wonders[id] = -1;
-	  }
-	}
+          name = old_impr_type_name(k);
+          id = find_improvement_by_name_orig(name);
+          if (id != -1) {
+            game.global_wonders[id] = -1;
+          }
+        }
       }
     } else {
       for (k = 0; k < improvement_order_size && string[k]; k++) {
         if (string[k] == '1') {
-	  id = find_improvement_by_name_orig(improvement_order[k]);
-	  if (id != -1) {
+          id = find_improvement_by_name_orig(improvement_order[k]);
+          if (id != -1) {
             game.global_wonders[id] = -1;
-	  }
-	}
+          }
+        }
       }
     }
 
@@ -3588,8 +3557,8 @@ void game_load(struct section_file *file)
 
     for (i = 0; i < game.nplayers; i++) {
       player_load(&game.players[i], i, file, improvement_order,
-		  improvement_order_size, technology_order,
-		  technology_order_size); 
+                  improvement_order_size, technology_order,
+                  technology_order_size);
     }
 
     /* Update all city information.  This must come after all cities are
@@ -3606,8 +3575,8 @@ void game_load(struct section_file *file)
 
     /* Since the cities must be placed on the map to put them on the
        player map we do this afterwards */
-    for(i=0; i<game.nplayers; i++) {
-      player_map_load(&game.players[i], i, file); 
+    for (i = 0; i < game.nplayers; i++) {
+      player_map_load(&game.players[i], i, file);
     }
 
     /* We do this here since if the did it in player_load, player 1
@@ -3621,15 +3590,14 @@ void game_load(struct section_file *file)
       char *vision;
       int plrno = pplayer->player_no;
 
-      vision = secfile_lookup_str_default(file, NULL,
-					  "player%d.gives_shared_vision",
-					  plrno);
+      vision = secfile_lookup_str_default(file,
+          NULL, "player%d.gives_shared_vision", plrno);
       if (vision) {
-	players_iterate(pplayer2) {
-	  if (vision[pplayer2->player_no] == '1') {
-	    give_shared_vision(pplayer, pplayer2);
-	  }
-	} players_iterate_end;
+        players_iterate(pplayer2) {
+          if (vision[pplayer2->player_no] == '1') {
+            give_shared_vision(pplayer, pplayer2);
+          }
+        } players_iterate_end;
       }
     } players_iterate_end;
 
@@ -3642,27 +3610,26 @@ void game_load(struct section_file *file)
     /* Make sure everything is consistent. */
     players_iterate(pplayer) {
       unit_list_iterate(pplayer->units, punit) {
-	if (!can_unit_continue_current_activity(punit)) {
-	  freelog(LOG_ERROR, "ERROR: Unit doing illegal activity in savegame!");
-	  punit->activity = ACTIVITY_IDLE;
-	}
+        if (!can_unit_continue_current_activity(punit)) {
+          freelog(LOG_ERROR, "ERROR: Unit doing illegal activity in savegame!");
+          punit->activity = ACTIVITY_IDLE;
+        }
       } unit_list_iterate_end;
 
       city_list_iterate(pplayer->cities, pcity) {
-	check_city(pcity);
+        check_city(pcity);
       } city_list_iterate_end;
     } players_iterate_end;
   } else {
     game.nplayers = 0;
   }
 
-  if (secfile_lookup_int_default(file, -1,
-				 "game.shuffled_player_%d", 0) >= 0) {
+  if (secfile_lookup_int_default(file, -1, "game.shuffled_player_%d", 0) >= 0) {
     int shuffled_players[game.nplayers];
 
     for (i = 0; i < game.nplayers; i++) {
       shuffled_players[i]
-	= secfile_lookup_int(file, "game.shuffled_player_%d", i);
+          = secfile_lookup_int(file, "game.shuffled_player_%d", i);
     }
     set_shuffled_players(shuffled_players);
   } else {
@@ -3676,8 +3643,8 @@ void game_load(struct section_file *file)
     improvements_update_obsolete();
   }
 
-  game.player_idx=0;
-  game.player_ptr=&game.players[0];  
+  game.player_idx = 0;
+  game.player_ptr = &game.players[0];
 
   /* Fix ferrying sanity */
   players_iterate(pplayer) {
@@ -3990,66 +3957,70 @@ void game_save(struct section_file *file)
 /***************************************************************
 ...
 ***************************************************************/
-void game_loadmap(struct section_file *file)
+bool game_loadmap(struct section_file *file)
 {
   int mapversion;
 
-  freelog(LOG_DEBUG, _("Starting Mapload"));
+  freelog(LOG_DEBUG, "Starting Mapload");
   mapversion = secfile_lookup_int_default(file, 0, "game.mapversion");
-  freelog(LOG_DEBUG, _("mapversion %d"), mapversion);
-  if (mapversion >= 1) {
-    map_init();
-    map.generator = 0;
-    map.is_fixed = TRUE;
+  freelog(LOG_DEBUG, "mapversion %d", mapversion);
 
-    set_meta_topic_string(secfile_lookup_str_default(file,
-        default_meta_topic_string(), "game.metatopic"));
-    set_meta_message_string(secfile_lookup_str_default(file,
-        default_meta_message_string(), "game.metamessage"));
-
-    sz_strlcpy(game.start_units,secfile_lookup_str_default(file,
-        "wwwxxxccc", "game.start_units"));
-    game.dispersion = secfile_lookup_int_default(file, 0, "game.dispersion");
-    game.max_players = secfile_lookup_int(file, "game.max_players");
-
-    map.topology_id = secfile_lookup_int_default(file,
-        MAP_ORIGINAL_TOPO, "map.topology_id");
-    /* map.seed = secfile_lookup_int_default(file, "map.seed"); */
-
-    map.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
-
-    map.xsize = secfile_lookup_int(file, "map.width");
-    map.ysize = secfile_lookup_int(file, "map.height");
-
-    if (!game.ruleset_loaded) {
-        freelog(LOG_DEBUG, _("Starting loading rulesets"));
-        load_rulesets();
-    }
-    freelog(LOG_DEBUG, _("Starting loading maptiles"));
-    map.have_specials = TRUE;
-    map_tiles_load(file);
-    freelog(LOG_DEBUG, _("Starting loading startpositions"));
-    if (map.startpos == 5) {
-      map_startpos_load(file);
-      freelog(LOG_DEBUG, _("Starting loading startpositions"));
-    }
-
-    freelog(LOG_DEBUG, _("Starting loading specials"));
-    /* get 4-bit segments of 16-bit "special" field. */
-    LOAD_MAP_DATA(ch, nat_y, ptile,
-		secfile_lookup_str(file, "map.l%03d", nat_y),
-		ptile->special = ascii_hex2bin(ch, 0));
-    LOAD_MAP_DATA(ch, nat_y, ptile,
-		secfile_lookup_str(file, "map.u%03d", nat_y),
-		ptile->special |= ascii_hex2bin(ch, 1));
-    LOAD_MAP_DATA(ch, nat_y, ptile,
-		secfile_lookup_str_default(file, NULL, "map.n%03d", nat_y),
-		ptile->special |= ascii_hex2bin(ch, 2));
-    LOAD_MAP_DATA(ch, nat_y, ptile,
-		secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
-		ptile->special |= ascii_hex2bin(ch, 3));
-  } else {
+  if (mapversion < 1) {
     freelog(LOG_ERROR, _("Not a mapfile! Loaded nothing."));
+    return FALSE;
   }
-  return;
+
+  map.generator = 0;
+  map.is_fixed = TRUE;
+
+  set_meta_topic_string(secfile_lookup_str_default(file,
+      default_meta_topic_string(), "game.metatopic"));
+  set_meta_message_string(secfile_lookup_str_default(file,
+      default_meta_message_string(), "game.metamessage"));
+
+  sz_strlcpy(game.start_units,secfile_lookup_str_default(file,
+      "wwwxxxccc", "game.start_units"));
+  game.dispersion = secfile_lookup_int_default(file, 0, "game.dispersion");
+  game.max_players = secfile_lookup_int(file, "game.max_players");
+
+  map.topology_id = secfile_lookup_int_default(file,
+      MAP_ORIGINAL_TOPO, "map.topology_id");
+  /* map.seed = secfile_lookup_int_default(file, "map.seed"); */
+
+  map.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
+
+  map.xsize = secfile_lookup_int(file, "map.width");
+  map.ysize = secfile_lookup_int(file, "map.height");
+
+  if (!game.ruleset_loaded) {
+    freelog(LOG_DEBUG, "Starting loading rulesets");
+    load_rulesets();
+  }
+  freelog(LOG_DEBUG, "Starting loading maptiles");
+  map.have_specials = TRUE;
+  map_tiles_load(file);
+
+  freelog(LOG_DEBUG, "Starting loading startpositions");
+  if (map.startpos == 5) {
+    map_startpos_load(file);
+    freelog(LOG_DEBUG, "Finished loading startpositions");
+  }
+
+  freelog(LOG_DEBUG, "Starting loading specials");
+
+  /* get 4-bit segments of 16-bit "special" field. */
+  LOAD_MAP_DATA(ch, nat_y, ptile,
+                secfile_lookup_str(file, "map.l%03d", nat_y),
+                ptile->special = ascii_hex2bin(ch, 0));
+  LOAD_MAP_DATA(ch, nat_y, ptile,
+                secfile_lookup_str(file, "map.u%03d", nat_y),
+                ptile->special |= ascii_hex2bin(ch, 1));
+  LOAD_MAP_DATA(ch, nat_y, ptile,
+                secfile_lookup_str_default(file, NULL, "map.n%03d", nat_y),
+                ptile->special |= ascii_hex2bin(ch, 2));
+  LOAD_MAP_DATA(ch, nat_y, ptile,
+                secfile_lookup_str_default(file, NULL, "map.f%03d", nat_y),
+                ptile->special |= ascii_hex2bin(ch, 3));
+
+  return TRUE;
 }

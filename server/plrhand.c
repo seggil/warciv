@@ -67,8 +67,15 @@ static Tech_Type_id pick_random_tech(struct player *plr);
 static enum plr_info_level player_info_level(struct player *plr,
 					     struct player *receiver);
 
-bool mute = FALSE;
+static bool allow_notify = TRUE;
 
+/**************************************************************************
+ XXX Stupid kludge to prevent handle_stdin_input from spewing excess info
+ to clients when the reset command is used.
+**************************************************************************/
+void notify_enabled(bool yes) {
+  allow_notify = yes;
+}
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1371,7 +1378,8 @@ void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
 		     enum event_type event, const char *format,
 		     va_list vargs)
 {
-  if (mute) {
+  /* XXX Find a better way to do this. */
+  if (!allow_notify) {
     return;
   }
 
@@ -1750,7 +1758,6 @@ void server_player_init(struct player *pplayer, bool initmap)
     player_map_allocate(pplayer);
   }
   pplayer->player_no = pplayer-game.players;
-  pplayer->team = TEAM_NONE;
   ai_data_init(pplayer);
 }
 

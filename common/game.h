@@ -290,8 +290,18 @@ enum sset_type {
   SSET_BOOL, SSET_INT, SSET_STRING
 };
 
-void game_init(bool clear_players);
-void game_free(bool map_unloading);
+void game_init(void);
+void game_free(void);
+
+void game_init_settings(void);
+void game_init_players(void);
+void game_init_map(void);
+void game_init_misc(void);
+void game_free_settings(void);
+void game_free_players(void);
+void game_free_map(void);
+void game_free_misc(void);
+
 void ruleset_data_free(void);
 
 int game_next_year(int);

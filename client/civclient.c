@@ -498,7 +498,7 @@ void send_report_request(enum report_type type)
 **************************************************************************/
 void client_game_init()
 {
-  game_init(TRUE);
+  game_init();
   attribute_init();
   agents_init();
   city_autonaming_init();
@@ -519,7 +519,7 @@ void client_game_free()
   free_help_texts();
   attribute_free();
   agents_free();
-  game_free(FALSE);
+  game_free();
 }
 
 /**************************************************************************

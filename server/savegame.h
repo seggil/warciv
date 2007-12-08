@@ -18,7 +18,7 @@
 #define REQUIERED_GAME_VERSION 10900
 
 void game_load(struct section_file *file);
-void game_loadmap(struct section_file *file);
+bool game_loadmap(struct section_file *file);
 void game_save(struct section_file *file);
 
 #endif /* FC__SAVEGAME_H */

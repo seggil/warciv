@@ -36,9 +36,6 @@ struct civ_map map;
 /* these are initialized from the terrain ruleset */
 struct terrain_misc terrain_control;
 
-/* used by the server for reset settings */
-bool map_can_be_free = TRUE;
-
 /* used to compute neighboring tiles.
  *
  * using
@@ -166,13 +163,19 @@ bool map_is_empty(void)
 }
 
 /***************************************************************
+  Return true if the current map was loaded from a map, savegame
+  or scenario file.
+***************************************************************/
+bool map_is_loaded(void)
+{
+  return map.is_fixed == TRUE;
+}
+
+/***************************************************************
  put some sensible values into the map structure
 ***************************************************************/
 void map_init(void)
 {
-  if(!map_can_be_free)
-    return;
-
   map.topology_id = MAP_DEFAULT_TOPO;
   map.size = MAP_DEFAULT_SIZE;
   map.autosize = MAP_DEFAULT_AUTOSIZE;
@@ -523,9 +526,6 @@ void map_allocate(void)
 ***************************************************************/
 void map_free(void)
 {
-  if(!map_can_be_free)
-    return;
-
   if (map.tiles) {
     /* it is possible that map_init was called but not map_allocate */
 

@@ -215,6 +215,7 @@ enum topo_flag {
 #define topo_has_flag(flag) ((CURRENT_TOPOLOGY & (flag)) != 0)
 
 bool map_is_empty(void);
+bool map_is_loaded(void);
 void map_init(void);
 void map_init_topology(bool set_sizes);
 void map_allocate(void);
@@ -439,8 +440,6 @@ bool can_reclaim_ocean(const struct tile *ptile);
 extern struct civ_map map;
 
 extern struct terrain_misc terrain_control;
-
-extern bool map_can_be_free;
 
 /* This iterates outwards from the starting point. Every tile within max_dist
  * will show up exactly once, in an outward (based on real map distance)

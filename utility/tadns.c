@@ -527,7 +527,7 @@ void dns_poll(struct dns *dns)
     } else {
       freelog(LOG_VERBOSE,
 	      _("Ignoring UDP packet since it is smaller "
-		"than the size of a DNS packet header (%lu < %lu)."),
+		"than the size of a DNS packet header (%d < %d)."),
 	      dns->buflen, sizeof(struct header));
     }
   }

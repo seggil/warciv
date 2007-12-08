@@ -131,6 +131,7 @@ void team_add_player(struct player *pplayer, const char *team_name);
 void team_remove_player(struct player *pplayer);
 int team_count_members_alive(Team_Type_id id);
 int team_count_members(Team_Type_id id);
+void team_clear_teams(void);
 
 #define team_iterate(PI_team)                                                 \
 {                                                                             \

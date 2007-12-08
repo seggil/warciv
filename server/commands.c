@@ -554,9 +554,10 @@ const struct command commands[] = {
   },
   {"reset",	ALLOW_NEVER, ALLOW_CTRL,
    N_("reset"),
-   N_("Reset all settings"),
-   N_("Reset all settings and read the setup file, "
-      "if there is one (run the server with --read <setup-file>)."),
+   N_("Reset all teams and settings, and unload map."),
+   N_("Reset all settings and re-read the server start script, "
+      "if there was one given with the --read server argument. "
+      "Also clear teams and unload the map/scenario if applicable."),
    ECHO_ALL
   },
   {"wmessage",	ALLOW_HACK, ALLOW_HACK,

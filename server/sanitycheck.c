@@ -64,11 +64,19 @@ static void check_fow(void)
 {
   whole_map_iterate(ptile) {
     players_iterate(pplayer) {
-      struct player_tile *plr_tile = map_get_player_tile(ptile, pplayer);
+      struct player_tile *plr_tile;
+
+      /* We can't check fog-of-war if the server-side
+       * player maps are not yet allocated. */
+      if (pplayer->private_map == NULL) {
+        break;
+      }
+
+      plr_tile = map_get_player_tile(ptile, pplayer);
 
       assert(plr_tile->own_seen <= plr_tile->seen);
       if (map_is_known(ptile, pplayer)) {
-	assert(plr_tile->pending_seen == 0);
+        assert(plr_tile->pending_seen == 0);
       }
     } players_iterate_end;
   } whole_map_iterate_end;

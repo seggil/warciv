@@ -206,9 +206,6 @@ void srv_init(void)
   srvarg.required_cap[0] = '\0';
   srvarg.allow_multi_line_chat = FALSE;
 
-  /* initialize teams */
-  team_init();
-
   srvarg.save_ppm = FALSE;
 
   /* mark as initialized */
@@ -319,8 +316,7 @@ void send_all_info(struct conn_list *dest)
 {
   conn_list_iterate(*dest, pconn) {
       send_attribute_block(pconn->player,pconn);
-  }
-  conn_list_iterate_end;
+  } conn_list_iterate_end;
 
   send_game_info(dest);
   send_map_info(dest);
@@ -805,7 +801,7 @@ void start_game(void)
 **************************************************************************/
 void server_quit(void)
 {
-  server_game_free(TRUE);
+  server_game_free();
   server_free_final();
   close_connections_and_socket();
   exit(EXIT_SUCCESS);
@@ -1625,51 +1621,49 @@ void srv_main(void)
   gamelog_init(srvarg.gamelog_filename);
   gamelog_set_level(GAMELOG_FULL);
   gamelog(GAMELOG_BEGIN);
-  
+
 #if IS_BETA_VERSION
   con_puts(C_COMMENT, "");
   con_puts(C_COMMENT, beta_message());
   con_puts(C_COMMENT, "");
 #endif
-  
+
   con_flush();
 
-  game_init(TRUE);
-  stdinhand_init();
-  diplhand_init();
+  server_game_init();
 
-  /* init network */  
-  init_connections(); 
+  init_connections();
   adns_init();
+
   server_open_socket();
-  if(!require_command(NULL, srvarg.required_cap, FALSE)) {
+
+  if (!require_command(NULL, srvarg.required_cap, FALSE)) {
     exit(EXIT_FAILURE);
   }
 
   /* load a saved game */
   if (srvarg.load_filename[0] != '\0') {
     (void) load_command(NULL, srvarg.load_filename, FALSE);
-  } 
+  }
 
-  if(!(srvarg.metaserver_no_send)) {
-    freelog(LOG_NORMAL, _("Sending info to metaserver [%s]"),
-	    meta_addr_port());
-    server_open_meta(); /* open socket for meta server */ 
+  if (!(srvarg.metaserver_no_send)) {
+    freelog(LOG_NORMAL, _("Sending info to metaserver [%s]"), meta_addr_port());
+    server_open_meta();         /* open socket for meta server */
   }
 
   maybe_automatic_meta_message(default_meta_message_string());
   (void) send_server_info_to_metaserver(META_INFO);
 
-  /* accept new players, wait for serverop to start..*/
+  /* accept new players, wait for serverop to start.. */
   server_state = PRE_GAME_STATE;
 
   /* Run server loop */
   while (TRUE) {
-  /* load a script file */
-  if (srvarg.script_filename
-      && !read_init_script(NULL, srvarg.script_filename)) {
-    exit(EXIT_FAILURE);
-  }
+    /* load a script file */
+    if (srvarg.script_filename
+        && !read_init_script(NULL, srvarg.script_filename)) {
+      exit(EXIT_FAILURE);
+    }
 
     srv_loop();
 
@@ -1695,9 +1689,9 @@ void srv_main(void)
     }
 
     /* Reset server */
-    server_game_free(TRUE);
-    game_init(TRUE);
-    game.is_new_game = TRUE;
+    server_game_free();
+    server_game_init();
+    assert(game.is_new_game == TRUE);
     server_state = PRE_GAME_STATE;
   }
 
@@ -1713,8 +1707,8 @@ static void srv_loop(void)
   bool start_nations;
 
   freelog(LOG_NORMAL, _("Now accepting new client connections."));
-  while(server_state == PRE_GAME_STATE) {
-    sniff_packets(); /* Accepting commands. */
+  while (server_state == PRE_GAME_STATE) {
+    sniff_packets();            /* Accepting commands. */
   }
 
   (void) send_server_info_to_metaserver(META_INFO);
@@ -1727,11 +1721,11 @@ static void srv_loop(void)
     load_rulesets();
   }
 
-  nations_available
-    = fc_realloc(nations_available,
-		 game.nation_count * sizeof(*nations_available));
+  nations_available = fc_realloc(nations_available,
+                                 game.nation_count *
+                                 sizeof(*nations_available));
 
-main_start_players:
+MAIN_START_PLAYERS:
 
   send_rulesets(&game.est_connections);
 
@@ -1740,8 +1734,8 @@ main_start_players:
 
     for (i = 0; i < map.num_start_positions; i++) {
       if (map.start_positions[i].nation == NO_NATION_SELECTED) {
-	start_nations = FALSE;
-	break;
+        start_nations = FALSE;
+        break;
       }
     }
   } else {
@@ -1755,7 +1749,7 @@ main_start_players:
     for (i = 0; i < map.num_start_positions; i++) {
       nations_available[map.start_positions[i].nation] = TRUE;
     }
-    
+
   } else {
     for (i = 0; i < game.nation_count; i++) {
       nations_available[i] = TRUE;
@@ -1765,7 +1759,7 @@ main_start_players:
   if (game.auto_ai_toggle) {
     players_iterate(pplayer) {
       if (!pplayer->is_connected && !pplayer->ai.control) {
-	toggle_ai_player_direct(NULL, pplayer);
+        toggle_ai_player_direct(NULL, pplayer);
       }
     } players_iterate_end;
   }
@@ -1785,36 +1779,37 @@ main_start_players:
     }
   } players_iterate_end;
 
-  while(server_state == SELECT_RACES_STATE) {
+  while (server_state == SELECT_RACES_STATE) {
     bool flag = FALSE;
 
     sniff_packets();
 
     players_iterate(pplayer) {
-      if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control && pplayer->is_connected) {
-	flag = TRUE;
-	break;
+      if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control
+          && pplayer->is_connected) {
+        flag = TRUE;
+        break;
       }
     } players_iterate_end;
 
     if (!flag) {
       if (game.nplayers > 0) {
-	server_state = RUN_GAME_STATE;
+        server_state = RUN_GAME_STATE;
       } else {
-	con_write(C_COMMENT,
-		  _("Last player has disconnected: will need to restart."));
-	server_state = PRE_GAME_STATE;
-	while(server_state == PRE_GAME_STATE) {
-	  sniff_packets();
-	}
-	goto main_start_players;
+        con_write(C_COMMENT,
+                  _("Last player has disconnected: will need to restart."));
+        server_state = PRE_GAME_STATE;
+        while (server_state == PRE_GAME_STATE) {
+          sniff_packets();
+        }
+        goto MAIN_START_PLAYERS;
       }
     }
   }
 
   init_game_seed();
 
-#ifdef TEST_RANDOM /* not defined anywhere, set it if you want it */
+#ifdef TEST_RANDOM              /* not defined anywhere, set it if you want it */
   test_random1(200);
   test_random1(2000);
   test_random1(20000);
@@ -1824,7 +1819,7 @@ main_start_players:
   if (game.is_new_game) {
     generate_ai_players();
   }
-   
+
   /* If we have a tile map, and map.generator==0, call map_fractal_generate
    * anyway to make the specials, huts and continent numbers. */
   if (map_is_empty() || (map.generator == 0 && game.is_new_game)) {
@@ -1837,19 +1832,20 @@ main_start_players:
   server_state = RUN_GAME_STATE;
   (void) send_server_info_to_metaserver(META_INFO);
 
-  if(game.is_new_game) {
+  if (game.is_new_game) {
     /* Before the player map is allocated (and initiailized)! */
     game.fogofwar_old = game.fogofwar;
 
     allot_island_improvs();
 
+    server_init_player_maps();
+
     players_iterate(pplayer) {
-      player_map_allocate(pplayer);
       init_tech(pplayer);
       player_limit_to_government_rates(pplayer);
       pplayer->economic.gold = game.gold;
     } players_iterate_end;
-    
+
     players_iterate(pplayer) {
       int i;
 
@@ -1861,7 +1857,7 @@ main_start_players:
         give_random_initial_tech(pplayer);
       }
     } players_iterate_end;
-    
+
     /* If we're starting a new game, reset the max_players to be the
      * number of players currently in the game.  But when loading a game
      * we don't want to change it. */
@@ -1870,16 +1866,16 @@ main_start_players:
 
   /* Set up alliances based on team selections */
   if (game.is_new_game) {
-   players_iterate(pplayer) {
-     players_iterate(pdest) {
-      if (players_on_same_team(pplayer, pdest)
-          && pplayer->player_no != pdest->player_no) {
-        pplayer->diplstates[pdest->player_no].type = DS_TEAM;
-        give_shared_vision(pplayer, pdest);
-        pplayer->embassy |= (1 << pdest->player_no);
-      }
+    players_iterate(pplayer) {
+      players_iterate(pdest) {
+        if (players_on_same_team(pplayer, pdest)
+            && pplayer->player_no != pdest->player_no) {
+          pplayer->diplstates[pdest->player_no].type = DS_TEAM;
+          give_shared_vision(pplayer, pdest);
+          pplayer->embassy |= (1 << pdest->player_no);
+        }
+      } players_iterate_end;
     } players_iterate_end;
-   } players_iterate_end;
   }
 
   /* tell the gamelog about the players */
@@ -1892,21 +1888,21 @@ main_start_players:
     gamelog(GAMELOG_TEAM, pteam);
   } team_iterate_end;
 
-  initialize_move_costs(); /* this may be the wrong place to do this */
-  init_settlers(); /* create minimap and other settlers.c data */
+  initialize_move_costs();      /* this may be the wrong place to do this */
+  init_settlers();              /* create minimap and other settlers.c data */
 
   if (!game.is_new_game) {
     players_iterate(pplayer) {
       if (pplayer->ai.control) {
-	set_ai_level_direct(pplayer, pplayer->ai.skill_level);
+        set_ai_level_direct(pplayer, pplayer->ai.skill_level);
       }
     } players_iterate_end;
   } else {
     players_iterate(pplayer) {
-      ai_data_init(pplayer); /* Initialize this at last moment */
+      ai_data_init(pplayer);    /* Initialize this at last moment */
     } players_iterate_end;
   }
-  
+
   /* We want to reset the timer as late as possible but before the info is
    * sent to the clients */
   game.turn_start = time(NULL);
@@ -1914,8 +1910,8 @@ main_start_players:
   lsend_packet_freeze_hint(&game.game_connections);
   send_all_info(&game.game_connections);
   lsend_packet_thaw_hint(&game.game_connections);
-  
-  if(game.is_new_game) {
+
+  if (game.is_new_game) {
     init_new_game();
 
     /* give global observers the entire map */
@@ -1933,27 +1929,58 @@ main_start_players:
 }
 
 /**************************************************************************
-  If full_free is FALSE, we don't all datas.
+  ...
 **************************************************************************/
-void server_game_free(bool full_free)
+void server_init_player_maps(void)
 {
-  if (full_free) {
-    /* Free all the treaties that were left open when game finished. */
-    free_treaties();
+  players_iterate(pplayer) {
+    player_map_allocate(pplayer);
+  } players_iterate_end;
+}
+/**************************************************************************
+  Free server-side player map data streuctures.
+**************************************************************************/
+void server_free_player_maps(void)
+{
+  players_iterate(pplayer) {
+    player_map_free(pplayer);
+  } players_iterate_end;
+}
 
-    players_iterate(pplayer) {
-      player_map_free(pplayer);
-    } players_iterate_end;
-    diplhand_free();
+/**************************************************************************
+  ...
+**************************************************************************/
+void server_game_init(void)
+{
+  int i;
+
+  game_init();
+
+  for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
+    server_player_init(&game.players[i], FALSE);
   }
-  game_free(full_free);
-  if (full_free) {
-    stdinhand_free();
-    BV_CLR_ALL(srvarg.draw);
-  }
+
+  diplhand_init();
+  stdinhand_init();
+}
+
+/**************************************************************************
+ Frees all server game related data, and then common game data.
+**************************************************************************/
+void server_game_free(void)
+{
+  diplhand_free();
+  stdinhand_free();
+
+  server_free_player_maps();
+
+  BV_CLR_ALL(srvarg.draw);
   if (game.ruleset_loaded) {
     ruleset_cache_free();
   }
+
+  /* Free stuff from common. */
+  game_free();
 }
 
 /**************************************************************************

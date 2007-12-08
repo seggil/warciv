@@ -50,13 +50,18 @@
 #define treaty_list_iterate_end  LIST_ITERATE_END
 
 static struct treaty_list treaties;
+static bool treaties_initialized = FALSE;
 
 /**************************************************************************
 ...
 **************************************************************************/
 void diplhand_init(void)
 {
+  if (treaties_initialized) {
+    diplhand_free();
+  }
   treaty_list_init(&treaties);
+  treaties_initialized = TRUE;
 }
 
 /**************************************************************************
@@ -72,6 +77,10 @@ void diplhand_free(void)
 **************************************************************************/
 void free_treaties(void)
 {
+  if (!treaties_initialized) {
+    return;
+  }
+
   /* Free memory allocated for treaties */
   treaty_list_iterate(treaties, pt) {
     clear_treaty(pt);
@@ -79,6 +88,8 @@ void free_treaties(void)
   } treaty_list_iterate_end;
 
   treaty_list_unlink_all(&treaties);
+
+  treaties_initialized = FALSE;
 }
 
 /**************************************************************************

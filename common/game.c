@@ -179,9 +179,9 @@ void game_remove_city(struct city *pcity)
 /***************************************************************
 ...
 ***************************************************************/
-void game_init(bool clear_players)
+void game_init_settings(void)
 {
-  int i;
+
   game.is_new_game   = TRUE;
   game.globalwarming = 0;
   game.warminglevel  = 8;
@@ -235,14 +235,10 @@ void game_init(bool clear_players)
   game.year          = GAME_START_YEAR;
   game.turn          = 0;
   game.min_players   = GAME_DEFAULT_MIN_PLAYERS;
-  game.max_players  = GAME_DEFAULT_MAX_PLAYERS;
-  game.aifill      = GAME_DEFAULT_AIFILL;
+  game.max_players   = GAME_DEFAULT_MAX_PLAYERS;
+  game.aifill        = GAME_DEFAULT_AIFILL;
 
-  if (clear_players) {
-  game.nplayers=0;
-  }
-
-  game.researchcost = GAME_DEFAULT_RESEARCHCOST;
+  game.researchcost= GAME_DEFAULT_RESEARCHCOST;
   game.diplcost    = GAME_DEFAULT_DIPLCOST;
   game.diplchance  = GAME_DEFAULT_DIPLCHANCE;
   game.diplomacy   = GAME_DEFAULT_DIPLOMACY;
@@ -271,7 +267,7 @@ void game_init(bool clear_players)
   game.fogofwar    = GAME_DEFAULT_FOGOFWAR;
   game.fogofwar_old= game.fogofwar;
   game.borders     = GAME_DEFAULT_BORDERS;
-  game.happyborders = GAME_DEFAULT_HAPPYBORDERS;
+  game.happyborders= GAME_DEFAULT_HAPPYBORDERS;
   game.diplomacy   = GAME_DEFAULT_DIPLOMACY;
   game.maxallies   = GAME_DEFAULT_MAXALLIES;
   /* game.slow_invasions = GAME_DEFAULT_SLOW_INVASIONS; */
@@ -322,24 +318,71 @@ void game_init(bool clear_players)
   game.save_options.save_known = TRUE;
   game.save_options.save_starts = TRUE;
   game.save_options.save_private_map = TRUE;
+}
 
-  init_our_capability();    
+/***************************************************************
+...
+***************************************************************/
+void game_init(void)
+{
+  game_init_settings();
+  game_init_misc();
+  game_init_players();
+  game_init_map();
+}
+
+/***************************************************************
+...
+***************************************************************/
+void game_init_map(void)
+{
   map_init();
-  idex_init();
-  cm_init();
-  
-  if (clear_players) {
-  for(i=0; i<MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS; i++)
+}
+
+/***************************************************************
+...
+***************************************************************/
+void game_init_players(void)
+{
+  int i;
+
+  for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
     player_init(&game.players[i]);
   }
-  for (i=0; i<A_LAST; i++)      /* game.num_tech_types = 0 here */
+
+  game.nplayers = 0;
+}
+
+/***************************************************************
+...
+***************************************************************/
+void game_init_misc(void)
+{
+  int i;
+
+  init_our_capability();
+
+  idex_init();
+  cm_init();
+  team_init();
+  
+  for (i=0; i<A_LAST; i++) {
+    /* game.num_tech_types = 0 here */
     game.global_advances[i]=0;
-  for (i=0; i<B_LAST; i++)      /* game.num_impr_types = 0 here */
+  }
+  for (i=0; i<B_LAST; i++) {
+    /* game.num_impr_types = 0 here */
     game.global_wonders[i]=0;
+  }
+
+  /* These next two fields are only used in the client. */
   game.player_idx=0;
   game.player_ptr=&game.players[0];
+
+  /* XXX Why is this here? */
   terrain_control.river_help_text[0] = '\0';
 
+  /* Seems to be server only. */
   game.meta_info.user_message_set = FALSE;
   game.meta_info.user_message[0] = '\0';
 }
@@ -361,16 +404,47 @@ static void game_remove_all_players(void)
 }
 
 /***************************************************************
+  ...
+***************************************************************/
+void game_free_settings(void)
+{
+  /* Nothing to do, yet. */
+}
+/***************************************************************
+  ...
+***************************************************************/
+void game_free_players(void)
+{
+  game_remove_all_players();
+}
+/***************************************************************
+  ...
+***************************************************************/
+void game_free_map(void)
+{
+  map_free();
+}
+/***************************************************************
+  ...
+***************************************************************/
+void game_free_misc(void)
+{
+  idex_free();
+  cm_free();
+  /* There is no team_free. */
+
+  /* XXX Where is this init'd ? */
+  ruleset_data_free();
+}
+/***************************************************************
   Frees all memory of the game.
 ***************************************************************/
-void game_free(bool remove_players)
+void game_free(void)
 {
-  if (remove_players)
-  game_remove_all_players();
-  map_free();
-  idex_free();
-  ruleset_data_free();
-  cm_free();
+  game_free_settings();
+  game_free_players();
+  game_free_map();
+  game_free_misc();
 }
 
 /***************************************************************
@@ -395,8 +469,9 @@ void initialize_globals(void)
   players_iterate(plr) {
     city_list_iterate(plr->cities, pcity) {
       built_impr_iterate(pcity, i) {
-	if (is_wonder(i))
-	  game.global_wonders[i] = pcity->id;
+        if (is_wonder(i)) {
+          game.global_wonders[i] = pcity->id;
+        }
       } built_impr_iterate_end;
     } city_list_iterate_end;
   } players_iterate_end;
@@ -518,7 +593,9 @@ void game_remove_player(struct player *pplayer)
   assert(city_list_size(&pplayer->cities) == 0);
   city_list_unlink_all(&pplayer->cities);
 
-  if (is_barbarian(pplayer)) game.nbarbarians--;
+  if (is_barbarian(pplayer)) {
+    game.nbarbarians--;
+  }
 
   player_init(pplayer);
 }
@@ -544,7 +621,7 @@ void game_renumber_players(int plrno)
   }
 
   if (game.nplayers > 0) {
-  game.nplayers--;
+    game.nplayers--;
 
     /* reinit former last player*/
     player_init(&game.players[game.nplayers]);
@@ -561,6 +638,9 @@ struct player *get_player(int player_id)
     return &game.players[player_id];
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
 bool is_valid_player_id(int player_id)
 {
   /* NB game.nplayers is 0 in the client until the game starts. */

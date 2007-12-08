@@ -418,14 +418,14 @@ void calculate_team_mapping(void)
 ****************************************************************************/
 int get_team_mapping(Team_Type_id team)
 {
-    int i;
-    for (i = 0; i < mappings; i++) {
-      if(mapping[i].team_id == team) {
-	return i;
-      }
+  int i;
+  for (i = 0; i < mappings; i++) {
+    if (mapping[i].team_id == team) {
+      return i;
     }
-    assert(false);
-    return 0;
+  }
+  assert(FALSE);
+  return 0;
 }
 
 /****************************************************************************
@@ -433,45 +433,48 @@ int get_team_mapping(Team_Type_id team)
 ****************************************************************************/
 void shuffle_start_positions(int *start_pos)
 {
-    int i;
-    struct player *pplayer;
-    assert(start_pos != NULL);
+  int i;
+  struct player *pplayer;
+  assert(start_pos != NULL);
 
-    calculate_team_mapping();
-    for (i = 0; i < game.nplayers; i++ ) {
-        pplayer = get_player(i);
-        assert(pplayer != NULL);
-        pplayer->team_placement_flag = FALSE;
+  calculate_team_mapping();
+  for (i = 0; i < game.nplayers; i++) {
+    pplayer = get_player(i);
+    assert(pplayer != NULL);
+    pplayer->team_placement_flag = FALSE;
 
-        best_start_pos[i] = -1;
-        team_pos[i] = best_team_pos[i] = get_team_mapping(pplayer->team);
-        freelog(LOG_VERBOSE, "Setting team pos %i = %i",i,team_pos[i]);
-    }
-    best_score = calculate_score(best_team_pos);        
-    freelog(LOG_VERBOSE, "Current best score is %i",best_score);
-    
-    if(game.nplayers<=game.bruteforcethreshold) {//brute force for small number of players
-      notify_conn(NULL, _("Using brute force team placement algorithm"));
-      freelog(LOG_VERBOSE, "Using brute force algorithm");
-      clean_start_pos(team_pos);
-      for (i = 0; i < mappings; i++ ) {
-        if(mapping[i].member_count > 0) {
-            find_pos_by_brute_force(team_pos,i);
-        }
-	notify_conn(NULL, _("Brute force team placement in progress, %i%% complete"), (i+1)*100/mappings);
+    best_start_pos[i] = -1;
+    team_pos[i] = best_team_pos[i] = get_team_mapping(pplayer->team);
+    freelog(LOG_VERBOSE, "Setting team pos %i = %i", i, team_pos[i]);
+  }
+  best_score = calculate_score(best_team_pos);
+  freelog(LOG_VERBOSE, "Current best score is %i", best_score);
+
+  if (game.nplayers <= game.bruteforcethreshold) {  //brute force for small number of players
+    notify_conn(NULL, _("Using brute force team placement algorithm"));
+    freelog(LOG_VERBOSE, "Using brute force algorithm");
+    clean_start_pos(team_pos);
+    for (i = 0; i < mappings; i++) {
+      if (mapping[i].member_count > 0) {
+        find_pos_by_brute_force(team_pos, i);
       }
-    } else {
-        freelog(LOG_VERBOSE, "Using iterative team placement algorithm");
-        notify_conn(NULL, _("Using iterative team placement algorithm"));
-        shuffle_start_positions_by_iter(team_pos);    
+      notify_conn(NULL,
+                  _("Brute force team placement in progress, %i%% complete"),
+                  (i + 1) * 100 / mappings);
     }
-    assign_players_to_positions(best_team_pos, best_start_pos);
+  } else {
+    freelog(LOG_VERBOSE, "Using iterative team placement algorithm");
+    notify_conn(NULL, _("Using iterative team placement algorithm"));
+    shuffle_start_positions_by_iter(team_pos);
+  }
+  assign_players_to_positions(best_team_pos, best_start_pos);
 
-    freelog(LOG_VERBOSE, "Iterations: %i",repeat);
-    freelog(LOG_VERBOSE, "Final score checked: %i",calculate_score(best_team_pos));      
-    for (i = 0; i < game.nplayers; i++ ) {//restore best solution
-        start_pos[i] = best_start_pos[i];
-    }        
+  freelog(LOG_VERBOSE, "Iterations: %i", repeat);
+  freelog(LOG_VERBOSE, "Final score checked: %i",
+          calculate_score(best_team_pos));
+  for (i = 0; i < game.nplayers; i++) { //restore best solution
+    start_pos[i] = best_start_pos[i];
+  }
 }
 /****************************************************************************
   Initialize a new game: place the players' units onto the map, etc.
@@ -542,8 +545,9 @@ void init_new_game(void)
     assert(start_pos[pplayer->player_no] != NO_START_POS);
   } players_iterate_end;
 
-  if(game.teamplacement && map.generator != 7)
+  if (game.teamplacement && map.generator != 7) {
     shuffle_start_positions(start_pos);
+  }
 
   /* Loop over all players, creating their initial units... */
   players_iterate(pplayer) {

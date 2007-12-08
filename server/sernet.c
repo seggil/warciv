@@ -165,9 +165,7 @@ static bool readline_handled_input = FALSE;
 
 static bool readline_initialized = FALSE;
 
-/***********************************************indent: Standard input:286: Warning:old style assignment ambiguity in "=-".  Assuming "= -"
-
-******************************
+/*****************************************************************************
 ...
 *****************************************************************************/
 static void handle_readline_input_callback(char *line)

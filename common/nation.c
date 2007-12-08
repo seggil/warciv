@@ -432,3 +432,15 @@ void team_init()
     teams[i].member_count = 0;
   }
 }
+
+/***************************************************************
+  ...
+***************************************************************/
+void team_clear_teams(void)
+{
+  players_iterate(pplayer) {
+    team_remove_player(pplayer);
+  } players_iterate_end;
+
+  team_init();
+}
