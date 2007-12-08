@@ -96,11 +96,11 @@ enum MenuID {
   MENU_GAME_OPTIONS,
   MENU_GAME_MSG_OPTIONS,
   MENU_GAME_CHATLINE_COLORS,
+  MENU_GAME_STYLE,
   MENU_GAME_SAVE_SETTINGS,
   MENU_GAME_PEPSETTINGS,
   MENU_GAME_PEPSETTINGS_LOAD,
   MENU_GAME_PEPSETTINGS_SAVE,
-  MENU_GAME_STYLE,
   MENU_GAME_SERVER_OPTIONS1,
   MENU_GAME_SERVER_OPTIONS2,
   MENU_GAME_SAVE_GAME,
@@ -439,6 +439,9 @@ static void game_menu_callback(gpointer callback_data,
   case MENU_GAME_CHATLINE_COLORS:
     popup_chatline_config_dialog();
     break;
+  case MENU_GAME_STYLE:
+    popup_style_config_dialog();
+    break;
   case MENU_GAME_SAVE_SETTINGS:
     save_options();
     break;
@@ -451,9 +454,6 @@ static void game_menu_callback(gpointer callback_data,
     break;
   case MENU_GAME_PEPSETTINGS_SAVE:
     save_all_settings();
-    break;
-  case MENU_GAME_STYLE:
-    popup_style_config_dialog();
     break;
   case MENU_GAME_SERVER_OPTIONS1:
     send_report_request(REPORT_SERVER_OPTIONS1);
@@ -1864,6 +1864,8 @@ static GtkItemFactoryEntry menu_items[]	=
 	game_menu_callback,	MENU_GAME_MSG_OPTIONS					},
   { "/" N_("Game") "/" N_("_Chat Colors"),			NULL,
 	game_menu_callback,		MENU_GAME_CHATLINE_COLORS			},
+  { "/" N_("Game") "/" N_("_Font Size"),		NULL,
+        game_menu_callback,		MENU_GAME_STYLE			},
   { "/" N_("Game") "/" N_("Sa_ve Settings"),		NULL,
 	game_menu_callback,	MENU_GAME_SAVE_SETTINGS					},
   { "/" N_("Game") "/sep2",				NULL,
@@ -1874,8 +1876,6 @@ static GtkItemFactoryEntry menu_items[]	=
 	game_menu_callback,		MENU_GAME_PEPSETTINGS_LOAD			},
   { "/" N_("Game") "/" N_("Sa_ve PepClient Settings"),		NULL,
 	game_menu_callback,		MENU_GAME_PEPSETTINGS_SAVE			},
-  { "/" N_("Game") "/" N_("_Font Size"),		NULL,
-        game_menu_callback,		MENU_GAME_STYLE			},
   { "/" N_("Game") "/sep3",					NULL,
 	NULL,				0,				"<Separator>"	},
   { "/" N_("Game") "/" N_("_Initial Server Options"),NULL,
