@@ -388,6 +388,8 @@ tiles = { "row", "column", "tag"
  18, 16, "unit.lowfuel"
  18, 16, "unit.tired"
  18, 17, "unit.loaded"
+ 18, 18, "unit.sleeping"
+ 18, 19, "unit.trade"
 
 ; Unit hit-point bars: approx percent of hp remaining
 
