@@ -28,19 +28,26 @@ enum dns_query_type {
  * User defined function that will be called when DNS reply arrives for
  * requested hostname. The addrlen == 0 indicates lookup failure or timeout.
  */
-typedef void (*dns_callback_t)(void *context, enum dns_query_type qtype,
-		const char *name, const unsigned char *addr, size_t addrlen);
+typedef void (*dns_callback_t)(const unsigned char *addr,
+                               size_t addrlen,
+                               const char *name,
+                               enum dns_query_type qtype,
+                               void *userdata);
 
-#define	DNS_QUERY_TIMEOUT	30	/* Query timeout, seconds */
+#define	DNS_QUERY_TIMEOUT	15	/* Query timeout, seconds */
 
 struct dns;
-extern struct dns *dns_init(void);
-extern void	dns_fini(struct dns *);
-extern int	dns_get_fd(struct dns *);
-extern void	dns_queue(struct dns *, void *context, const char *hostname,
-			enum dns_query_type type, dns_callback_t callback);
-extern void	dns_cancel(struct dns *, const void *context);
-extern void	dns_poll(struct dns *);
-extern void     dns_check_expired (struct dns *);
+
+struct dns *dns_new(void);
+void dns_destroy(struct dns *dns);
+int dns_get_fd(struct dns *dns);
+void dns_queue(struct dns *dns,
+               const char *hostname,
+               enum dns_query_type type,
+               dns_callback_t callback,
+               void *userdata);
+void dns_cancel(struct dns *dns, const void *userdata);
+void dns_poll(struct dns *dns);
+void dns_check_expired(struct dns *dns);
 
 #endif /* DNS_HEADER_INCLUDED */

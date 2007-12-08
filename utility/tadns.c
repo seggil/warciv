@@ -60,25 +60,27 @@ typedef unsigned int uint32_t;
 #endif /* WIN32_NATIVE */
 
 
-#define  DNS_MAX      1025      /* Maximum host name */
-#define  DNS_PACKET_LEN    2048 /* Buffer size for DNS packet */
-#define  MAX_CACHE_ENTRIES  10000 /* Dont cache more than that */
+#define DNS_MAX           1025      /* Maximum host name */
+#define DNS_PACKET_LEN    2048 /* Buffer size for DNS packet */
 
 struct dns;
-/*
- * User query. Holds mapping from application-level ID to DNS transaction id,
+
+#define QUERY_MEMORY_GUARD 0xbedabb1e
+
+/* User query. Holds mapping from application-level ID to DNS transaction id,
  * and user defined callback function.
  */
 struct query {
+  int guard;
+  int refcount;
   time_t expire;                /* Time when this query expire */
   uint16_t tid;                 /* UDP DNS transaction ID, big endian */
   uint16_t qtype;               /* Query type */
   char name[DNS_MAX];           /* Host name */
-  void *ctx;                    /* Application context */
   dns_callback_t callback;      /* User callback routine */
+  void *userdata;               /* Application context */
   unsigned char addr[DNS_MAX];  /* Host address */
   size_t addrlen;               /* Address length */
-  struct dns *dns;
 };
 
 /* Resolver descriptor. */
@@ -110,14 +112,17 @@ struct header {
 **************************************************************************/
 int dns_get_fd(struct dns *dns)
 {
-  return (dns->sock);
+  return dns->sock;
 }
 
 /**************************************************************************
   Fetch name from DNS packet
 **************************************************************************/
-static void fetch(const uint8_t * pkt, int pktsiz, const uint8_t * s,
-		  char *dst, int dstlen)
+static void fetch(const uint8_t *pkt,
+                  int pktsiz,
+                  const uint8_t *s,
+                  char *dst,
+                  int dstlen)
 {
   const uint8_t *e = pkt + pktsiz;
   int j, i = 0, n = 0;
@@ -147,7 +152,7 @@ static void fetch(const uint8_t * pkt, int pktsiz, const uint8_t * s,
 **************************************************************************/
 static int getdnsip(struct dns *dns)
 {
-  int ret = 0;
+  int ret = -1;
 
 #ifdef WIN32_NATIVE
   int i;
@@ -158,18 +163,17 @@ static int getdnsip(struct dns *dns)
 
   if ((err = RegOpenKey(HKEY_LOCAL_MACHINE, key, &hKey)) != ERROR_SUCCESS) {
     freelog(LOG_ERROR, "Cannot open registry key %s: %d", key, err);
-    ret--;
   } else {
-    for (ret--, i = 0; RegEnumKey(hKey, i, subkey,
-				  sizeof(subkey)) == ERROR_SUCCESS; i++) {
+    for (i = 0; RegEnumKey(hKey, i, subkey, sizeof(subkey)) == ERROR_SUCCESS; i++) {
       DWORD type, len = sizeof(value);
-      if (RegOpenKey(hKey, subkey, &hSub) == ERROR_SUCCESS &&
-          (RegQueryValueEx(hSub, "DhcpNameServer", 0,
-			   &type, value, &len) == ERROR_SUCCESS ||
-           RegQueryValueEx(hSub, "DhcpNameServer", 0,
-			   &type, value, &len) == ERROR_SUCCESS)) {
+      if (RegOpenKey(hKey, subkey, &hSub) == ERROR_SUCCESS
+          && (RegQueryValueEx(hSub, "DhcpNameServer", 0,
+                              &type, value, &len) == ERROR_SUCCESS
+              || RegQueryValueEx(hSub, "DhcpNameServer", 0,
+                                 &type, value, &len) == ERROR_SUCCESS))
+      {
         dns->sa.sin_addr.s_addr = inet_addr(value);
-        ret++;
+        ret = 0;
         RegCloseKey(hSub);
         break;
       }
@@ -185,10 +189,10 @@ static int getdnsip(struct dns *dns)
     ret = -1;
   } else {
     /* Try to figure out what DNS server to use */
-    for (ret--; fgets(line, sizeof(line), fp) != NULL;) {
+    while (fgets(line, sizeof(line), fp) != NULL) {
       if (sscanf(line, "nameserver %d.%d.%d.%d", &a, &b, &c, &d) == 4) {
         dns->sa.sin_addr.s_addr = htonl(a << 24 | b << 16 | c << 8 | d);
-        ret++;
+        ret = 0;
         break;
       }
     }
@@ -196,20 +200,19 @@ static int getdnsip(struct dns *dns)
   }
 #endif /* WIN32_NATIVE */
 
-  return (ret);
+  return ret;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-struct dns *dns_init(void)
+struct dns *dns_new(void)
 {
   struct dns *dns;
   int rcvbufsiz = 64 * 1024;
   uint32_t seed;
 
-  dns = fc_malloc(sizeof(struct dns));
-  memset(dns, 0, sizeof(struct dns));
+  dns = fc_calloc(1, sizeof(struct dns));
   dns->sock = -1;
   
   if ((dns->sock = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -233,43 +236,68 @@ struct dns *dns_init(void)
 
   /* Increase the receive buffer */
   if (-1 == setsockopt(dns->sock, SOL_SOCKET, SO_RCVBUF,
-		       (char *) &rcvbufsiz, sizeof(rcvbufsiz)))
-    {
-      freelog (LOG_ERROR, _("Failed to set UDP socket receive buffer size:"
-			    " setsockopt: %s"), mystrsocketerror());
-      goto FAILED;
-    }
+                       (char *) &rcvbufsiz, sizeof(rcvbufsiz)))
+  {
+    freelog (LOG_ERROR, _("Failed to set UDP socket receive buffer size:"
+                          " setsockopt: %s"), mystrsocketerror());
+    goto FAILED;
+  }
   
   dns->active = hash_new(hash_fval_uint16_t, hash_fcmp_uint16_t);
   dns->cache = hash_new(hash_fval_string, hash_fcmp_string_ci);
 
-  /* Not exactly cryptographically kosher,
-     but good enough I guess :) */
+  /* Not cryptographically strong, but good enough here for now. */
   seed = (uint32_t) time(NULL);
   dns->tid = hash_fval_uint32_t(UINT32_T_TO_PTR(seed), 0xffffffff);
   
   return dns;
   
- FAILED:
-  dns_fini(dns);  
+FAILED:
+  dns_destroy(dns);  
   return NULL;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static void destroy_query(struct query *query)
+static void destroy_query(struct dns *dns, struct query *query)
 {
-  struct dns *dns;
-  freelog(LOG_DEBUG, "deq destroy_query query=%p", query); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "dq destroy_query query=%p", query);
 
-  assert(query != NULL);
-  assert(query->dns != NULL);
-  dns = query->dns;
-  freelog(LOG_DEBUG, "deq   removing tid=%d from active table", query->tid); /*ASYNCDEBUG*/
-  hash_delete_entry(dns->active, UINT16_T_TO_PTR(query->tid));
-  freelog(LOG_DEBUG, "deq   removing name=\"%s\" from cache", query->name); /*ASYNCDEBUG*/
-  hash_delete_entry(dns->cache, query->name);
+  if (!query) {
+    return;
+  }
+  if (query->guard != QUERY_MEMORY_GUARD) {
+    freelog(LOG_DEBUG, "dq called on %p more than once", query);
+    return;
+  }
+
+  if (query->tid > 0) {
+    freelog(LOG_DEBUG, "dq removing tid=%x from active table", query->tid);
+    hash_delete_entry(dns->active, UINT16_T_TO_PTR(query->tid));
+    query->tid = 0;
+  }
+
+  if (query->refcount > 0) {
+    freelog(LOG_DEBUG, "dq not destroying query %p yet, refcount=%d",
+            query, query->refcount);
+    query->refcount--;
+    return;
+  }
+
+  if (query->name[0] != '\0') {
+    void *key;
+    freelog(LOG_DEBUG, "dq removing name=\"%s\" from cache", query->name);
+    hash_delete_entry_full(dns->cache, query->name, &key);
+    if (key) {
+      free(key);
+    }
+    query->name[0] = '\0';
+  }
+
+  freelog(LOG_DEBUG, "dq freeing query %p", query);
+
+  memset(query, 0, sizeof(struct query));
   free(query);
 }
 
@@ -277,22 +305,25 @@ static void destroy_query(struct query *query)
   Find host in host cache.
 **************************************************************************/
 static struct query *find_cached_query(struct dns *dns,
-				       enum dns_query_type qtype,
-				       const char *name)
+                                       enum dns_query_type qtype,
+                                       const char *name)
 {
   struct query *q;
-  freelog(LOG_DEBUG, "fcq find_cached_query \"%s\"", name); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "fcq find_cached_query \"%s\"", name);
 
-  freelog(LOG_DEBUG, "fcq   cache contains:"); /*ASYNCDEBUG*/
-  freelog(LOG_DEBUG, "fcq     entries=%d", hash_num_entries(dns->cache)); /*ASYNCDEBUG*/
-  freelog(LOG_DEBUG, "fcq     buckets=%d", hash_num_buckets(dns->cache)); /*ASYNCDEBUG*/
-  freelog(LOG_DEBUG, "fcq     deleted=%d", hash_num_deleted(dns->cache)); /*ASYNCDEBUG*/
-  hash_iterate(dns->cache, char *, name, struct query *, pq) { /*ASYNCDEBUG*/
-    freelog(LOG_DEBUG, "fcq   \"%s\" --> query %p", name, pq); /*ASYNCDEBUG*/
-  } hash_iterate_end; /*ASYNCDEBUG*/
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "fcq cache contains:");
+  freelog(LOG_DEBUG, "fcq entries=%d", hash_num_entries(dns->cache));
+  freelog(LOG_DEBUG, "fcq buckets=%d", hash_num_buckets(dns->cache));
+  freelog(LOG_DEBUG, "fcq deleted=%d", hash_num_deleted(dns->cache));
+
+  hash_iterate(dns->cache, char *, name, struct query *, pq) {
+    freelog(LOG_DEBUG, "fcq \"%s\" --> query %p", name, pq);
+  } hash_iterate_end;
+#endif
   
   q = hash_lookup_data(dns->cache, name);
-  freelog(LOG_DEBUG, "fcq   %sfound", q ? "" : "NOT "); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "fcq %sfound query=%p", q ? "" : "NOT ", q);
   return q;
 }
 
@@ -307,12 +338,14 @@ static struct query *find_active_query(struct dns *dns, uint16_t tid)
 /**************************************************************************
   User wants to cancel query
 **************************************************************************/
-void dns_cancel(struct dns *dns, const void *context)
+void dns_cancel(struct dns *dns, const void *userdata)
 {
-  freelog(LOG_DEBUG, "dns_cancel dns=%p context=%p", dns, context); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "dns_cancel dns=%p userdata=%p", dns, userdata);
+
   hash_iterate(dns->active, void *, key, struct query *, query) {
-    if (query->ctx == context) {
-      destroy_query(query);
+    if (query->userdata == userdata) {
+      destroy_query(dns, query);
+      break;
     }
   } hash_iterate_end;
 }
@@ -322,14 +355,15 @@ void dns_cancel(struct dns *dns, const void *context)
 **************************************************************************/
 static void call_user(struct dns *dns, struct query *query)
 {
-  freelog(LOG_DEBUG, "cu call_user query tid=%d name=%s", /*ASYNCDEBUG*/
-	  query->tid, query->name); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "cu call_user query %p tid=%x name=\"%s\"",
+          query, query->tid, query->name);
+
   assert(query->callback != NULL);
-  query->callback(query->ctx,(enum dns_query_type) query->qtype,
-		  query->name, query->addr, query->addrlen);
-  freelog(LOG_DEBUG, "cu   returned from callback"); /*ASYNCDEBUG*/
-  query->callback = NULL;
-  query->ctx = NULL;
+
+  (*query->callback) (query->addr, query->addrlen,
+                      query->name, query->qtype, query->userdata);
+
+  freelog(LOG_DEBUG, "cu returned from callback");
 }
 
 /**************************************************************************
@@ -344,146 +378,159 @@ static void parse_udp(struct dns *dns)
   uint16_t type, qtype, flags;
   char name[1025];
   int dlen, nlen, rcode;
-  bool found = FALSE, stop = FALSE;
+  bool found = FALSE;
 
-  freelog(LOG_DEBUG, "pu parse_udp"); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "pu parse_udp");
   
-  /* We sent 1 query. We want to see more that 1 answer. */
+  /* We sent 1 query. The response must also have a query count of 1. */
   header = (struct header *) dns->buf;
   if (ntohs(header->nqueries) != 1) {
-    freelog(LOG_DEBUG, "pu   nqueries is not 1 (%d) :(", header->nqueries); /*ASYNCDEBUG*/
+    freelog(LOG_DEBUG, "pu ignoring packet, nqueries is not 1 (it is %d)",
+            header->nqueries);
     return;
   }
 
   /* Return if we did not send that query */
   if ((q = find_active_query(dns, header->tid)) == NULL) {
-    freelog(LOG_DEBUG, "pu   unknown tid=%d :(", header->tid); /*ASYNCDEBUG*/
+    freelog(LOG_DEBUG, "pu ignoring packet, unknown tid=%x", header->tid);
     return;
   }
 
   /* Check respone code */
   flags = ntohs(header->flags);
-  freelog(LOG_DEBUG, "pu   header->flags=0x%04x flags=0x%04x", header->flags, flags); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "pu header->flags=0x%04x flags=0x%04x",
+          header->flags, flags);
   rcode = flags & 0x000f;
-  freelog(LOG_DEBUG, "pu   rcode=%d", rcode); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "pu rcode=%d", rcode);
   
   if (rcode == 1) {
-    freelog(LOG_ERROR,
-	    _("DNS query failed: format error (%d)."), rcode);
-    return;
+    freelog(LOG_ERROR, _("DNS query failed: query format error."));
+    goto QUERY_FAILED;
   }
 
   if (rcode == 2) {
-    freelog(LOG_VERBOSE,
-	    _("DNS query failed: server failure (%d)."), rcode);
-    return;
+    freelog(LOG_ERROR, _("DNS query failed: server failure "
+                         "(error code %d)."), rcode);
+    goto QUERY_FAILED;
   }
 
   if (rcode == 3) {
-    freelog(LOG_VERBOSE,
-	    _("DNS query failed: name error - no such domain (%d)."),
-	    rcode);
-    return;
+    freelog(LOG_ERROR, _("DNS query failed: name error, no such domain."));
+    goto QUERY_FAILED;
   }
 
   if (rcode != 0) {
-    freelog(LOG_VERBOSE, _("Unknown DNS query failure (%d)."), rcode);
-    return;
+    freelog(LOG_ERROR, _("Unknown DNS query failure (error code %d)."),
+            rcode);
+    goto QUERY_FAILED;
   }
 
   /* Received 0 answers */
   if (header->nanswers == 0) {
-    freelog(LOG_DEBUG, "pu   got 0 answers :("); /*ASYNCDEBUG*/
-    q->addrlen = 0;
-    call_user(dns, q);
-    return;
+    freelog(LOG_DEBUG, "pu got 0 answers");
+    goto QUERY_FAILED;
   }
 
   /* Skip host name */
   e = (const unsigned char *)(dns->buf + dns->buflen);
-  p = &header->data[0];
-  for (nlen = 0; p < e && *p != '\0'; p++)
+  p = header->data;
+  for (nlen = 0; p < e && *p != '\0'; p++) {
     nlen++;
+  }
 
   qtype = ntohs(*(uint16_t *) (p + 1));
 
   /* We sent query class 1, query type 1 */
   if (p + 5 > e || qtype != q->qtype) {
-    freelog(LOG_DEBUG, "pu   returning on class/query mismatch: " /*ASYNCDEBUG*/
-	    "p+5=%p e=%p qtype=%d q->qtype=%d", /*ASYNCDEBUG*/
-	    p+5, e, qtype, q->qtype); /*ASYNCDEBUG*/
-    return;
+    freelog(LOG_DEBUG, "pu returning on class/query mismatch: "
+            "p+5=%p e=%p qtype=%d q->qtype=%d",
+            p+5, e, qtype, q->qtype);
+    goto QUERY_FAILED;
   }
 
   /* Go to the first answer section */
   p += 5;
 
   /* Loop through the answers, we want A type answer */
-  for (found = stop = 0; !stop && p + 12 < e;) {
+  found = FALSE;
+  while (p + 12 < e) {
 
     /* Skip possible name in CNAME answer */
     if (*p != 0xc0) {
-      while (*p && p + 12 < e)
+      while (*p && p + 12 < e) {
         p++;
+      }
       p--;
     }
 
-    /* XXX check: is this supposed to be ntohs, or htons?
-       (was htons in original tadns sources (similarly below) */
     type = ntohs(((uint16_t *) p)[1]);
 
-    freelog(LOG_DEBUG, "pu   got answer type=%d", type); /*ASYNCDEBUG*/
+    freelog(LOG_DEBUG, "pu got answer type=%d", type);
     if (type == 5) {
       /* CNAME answer. shift to the next section */
       dlen = ntohs(((uint16_t *) p)[5]);
       p += 12 + dlen;
     } else if (type == q->qtype) {
-      found = stop = 1;
+      found = TRUE;
+      break;
     } else {
-      stop = 1;
+      break;
     }
   }
 
   if (found && p + 12 < e) {
-    dlen = htons(((uint16_t *) p)[5]); /* XXX ntohs? */
+    dlen = ntohs(((uint16_t *) p)[5]);
     p += 12;
 
-    if (p + dlen <= e) {
-      /* Add to the cache */
-      memcpy(&ttl, p - 6, sizeof(ttl));
-      q->expire = time(NULL) + (time_t) ntohl(ttl);
-      freelog(LOG_DEBUG, "pu   got expire=%ld ttl=%u", 
-	      q->expire, ntohl(ttl)); /*ASYNCDEBUG*/
-      
-      /* Call user */
-      if (q->qtype == DNS_MX_RECORD) {
-        /* Skip 2 byte preference field */
-        fetch((const unsigned char *) (dns->buf), 
-	      dns->buflen, p + 2, name, sizeof(name));
-        p = (const unsigned char *) name;
-        dlen = strlen(name) + 1;
-      } else if (q->qtype == DNS_PTR_RECORD) {
-        freelog(LOG_DEBUG, "pu   extracting DNS_PTR_RECORD"); /*ASYNCDEBUG*/
-        fetch((const unsigned char *) (dns->buf),
-	      dns->buflen, p, name, sizeof(name));
-        p = (const unsigned char *) name;
-        dlen = strlen(name) + 1;
-        freelog(LOG_DEBUG, "pu   p=\"%s\" dlen=\"%d\"", p, dlen); /*ASYNCDEBUG*/
-      }
-
-      q->addrlen = dlen;
-      if (q->addrlen > sizeof(q->addr))
-        q->addrlen = sizeof(q->addr);
-      memcpy(q->addr, p, q->addrlen);
-      call_user(dns, q);
-
-      /* Move query to cache */
-      freelog(LOG_DEBUG, "pu   caching \"%s\" with query=%p", q->name, q); /*ASYNCDEBUG*/
-      if (!hash_insert(dns->cache, q->name, q)) {
-        freelog(LOG_DEBUG, _("Failed to insert DNS result into cache!")); /*ASYNCDEBUG*/
-      }
+    if (p + dlen > e) {
+      return;
     }
+    
+    ttl = ntohl(*((uint32_t *) (p - 6)));
+    q->expire = time(NULL) + (time_t) ttl;
+    if (q->expire < 0) {
+      q->expire = (time_t) INT_MAX;
+    }
+    freelog(LOG_DEBUG, "pu got ttl=%u, set expire=%ld", 
+            ttl, q->expire);
+    
+    if (q->qtype == DNS_MX_RECORD) {
+      /* Skip 2 byte preference field */
+      fetch((const unsigned char *) (dns->buf),
+            dns->buflen, p + 2, name, sizeof(name));
+      p = (const unsigned char *) name;
+      dlen = strlen(name) + 1;
+    } else if (q->qtype == DNS_PTR_RECORD) {
+      freelog(LOG_DEBUG, "pu extracting DNS_PTR_RECORD");
+      fetch((const unsigned char *) (dns->buf),
+            dns->buflen, p, name, sizeof(name));
+      p = (const unsigned char *) name;
+      dlen = strlen(name) + 1;
+      freelog(LOG_DEBUG, "pu p=\"%s\" dlen=\"%d\"", p, dlen);
+    }
+
+    q->addrlen = dlen;
+    if (q->addrlen > sizeof(q->addr)) {
+      q->addrlen = sizeof(q->addr);
+    }
+    memcpy(q->addr, p, q->addrlen);
+
+    /* Move query to cache */
+    if (q->name[0] != '\0') {
+      freelog(LOG_DEBUG, "pu caching \"%s\" with query=%p", q->name, q);
+      hash_insert(dns->cache, mystrdup(q->name), q);
+      q->refcount++;
+    }
+
+    call_user(dns, q);
   }
+  return;
+
+QUERY_FAILED:
+  assert(q != NULL);
+  q->addrlen = 0;
+  call_user(dns, q);
+  destroy_query(dns, q);
 }
 
 /**************************************************************************
@@ -495,28 +542,28 @@ void dns_poll(struct dns *dns)
   socklen_t len = sizeof(sa);
   int nb;
 
-  freelog(LOG_DEBUG, "dp dns_poll"); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "dp dns_poll");
 
   /* Check our socket for new stuff */
   nb = recvfrom(dns->sock, dns->buf + dns->buflen,
-		sizeof(dns->buf) - dns->buflen, 0,
+                sizeof(dns->buf) - dns->buflen, 0,
                 (struct sockaddr *) &sa, &len);
-  freelog(LOG_DEBUG, "dp   recvfrom got nb=%d, from %s", /*ASYNCDEBUG*/
-	  nb, inet_ntoa(sa.sin_addr)); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "dp recvfrom got nb=%d, from %s",
+          nb, inet_ntoa(sa.sin_addr));
 
   if (memcmp(&sa.sin_addr, &dns->sa.sin_addr, sizeof(sa.sin_addr))) {
-    freelog(LOG_VERBOSE,
-	    _("Ignoring UDP packet from %s (not from DNS resolver %s)."),
-	    inet_ntoa(sa.sin_addr), inet_ntoa(dns->sa.sin_addr));
+    freelog(LOG_VERBOSE, _("Ignoring UDP packet from %s (not from DNS "
+                           "resolver %s)."),
+            inet_ntoa(sa.sin_addr), inet_ntoa(dns->sa.sin_addr));
     return;
   }
   
   if (nb < 0) {
     if (my_socket_would_block() || my_socket_operation_in_progess()) {
-      freelog(LOG_DEBUG, "dp   recvfrom would block"); /*ASYNCDEBUG*/
+      freelog(LOG_DEBUG, "dp recvfrom would block");
     } else {
       freelog(LOG_ERROR, _("Failed reading DNS response: recvfrom: %s"),
-	      mystrsocketerror());
+              mystrsocketerror());
     }
   }
   
@@ -525,10 +572,9 @@ void dns_poll(struct dns *dns)
     if (dns->buflen > sizeof(struct header)) {
       parse_udp(dns);
     } else {
-      freelog(LOG_VERBOSE,
-	      _("Ignoring UDP packet since it is smaller "
-		"than the size of a DNS packet header (%d < %d)."),
-	      dns->buflen, sizeof(struct header));
+      freelog(LOG_VERBOSE, _("Ignoring UDP packet since it is smaller "
+          "than the size of a DNS packet header (%d < %d)."),
+          dns->buflen, sizeof(struct header));
     }
   }
 
@@ -539,23 +585,39 @@ void dns_poll(struct dns *dns)
 /**************************************************************************
   Cleanup
 **************************************************************************/
-void dns_fini(struct dns *dns)
+void dns_destroy(struct dns *dns)
 {
-  if (dns->sock != -1)
-    (void) my_closesocket(dns->sock);
+  const void *q;
+  void *key;
+
+  if (!dns) {
+    return;
+  }
+
+  if (dns->sock != -1) {
+    my_closesocket(dns->sock);
+    dns->sock = -1;
+  }
 
   if (dns->active) {
-    hash_iterate(dns->active, void *, key, struct query *, query) {
-      destroy_query(query);
-    } hash_iterate_end;
+    while ((q = hash_key_by_number(dns->active, 1))) {
+      hash_delete_entry(dns->active, q);
+      destroy_query(dns, (struct query *) q);
+    }
     hash_free(dns->active);
+    dns->active = NULL;
   }
 
   if (dns->cache) {
-    hash_iterate(dns->cache, char *, name, struct query *, query) {
-      destroy_query(query);
-    } hash_iterate_end;
+    while ((q = hash_key_by_number(dns->cache, 1))) {
+      hash_delete_entry_full(dns->cache, q, &key);
+      if (key) {
+        free(key);
+      }
+      destroy_query(dns, (struct query *) q);
+    }
     hash_free(dns->cache);
+    dns->cache = NULL;
   }
 
   free(dns);
@@ -564,9 +626,11 @@ void dns_fini(struct dns *dns)
 /**************************************************************************
   Queue the resolution
 **************************************************************************/
-void
-dns_queue(struct dns *dns, void *ctx, const char *name,
-	  enum dns_query_type qtype, dns_callback_t callback)
+void dns_queue(struct dns *dns,
+               const char *name,
+               enum dns_query_type qtype,
+               dns_callback_t callback,
+               void *userdata)
 {
   struct query *query;
   struct header *header;
@@ -576,40 +640,45 @@ dns_queue(struct dns *dns, void *ctx, const char *name,
   time_t now = time(NULL);
   unsigned int hv;
 
-  freelog(LOG_DEBUG, "dq dns_queue dns=%p ctx=%p name=\"%s\"" /*ASYNCDEBUG*/
-	  " qtype=%d callback=%p", dns, ctx, name, qtype, callback); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "dq dns_queue dns=%p userdata=%p name=\"%s\""
+          " qtype=%d callback=%p", dns, userdata, name, qtype,
+          callback);
   
   /* Search the cache first */
   if ((query = find_cached_query(dns, qtype, name)) != NULL) {
-    freelog(LOG_DEBUG, "dq   found cached query for \"%s\": query %p", name, query); /*ASYNCDEBUG*/
+    freelog(LOG_DEBUG, "dq found cached query for \"%s\": query %p",
+            name, query);
     query->callback = callback;
-    query->ctx = ctx;
+    query->userdata = userdata;
     call_user(dns, query);
     if (query->expire < now) {
-      destroy_query(query);
+      destroy_query(dns, query);
     }
     return;
   }
 
   /* Allocate new query */
-  query = fc_malloc(sizeof(struct query));
+  query = fc_calloc(1, sizeof(struct query));
 
-  /* Init query structure */
-  query->ctx = ctx;
+  freelog(LOG_DEBUG, "dq new query %p", query);
+
+  query->guard = QUERY_MEMORY_GUARD;
+  query->callback = callback;
+  query->userdata = userdata;
   query->qtype = (uint16_t) qtype;
-  hv = hash_fval_uint16_t(UINT16_T_TO_PTR (dns->tid), 0xffff);
+  hv = hash_fval_uint16_t(UINT16_T_TO_PTR(dns->tid), 0xffff);
   query->tid = (uint16_t) hv;
   dns->tid = query->tid;
-  query->callback = callback;
   query->expire = now + DNS_QUERY_TIMEOUT;
-  query->dns = dns;
 
   /* copy over name, converted to lower case */
-  for (p = query->name; *name &&
-	 p < query->name + sizeof(query->name) - 1; name++, p++)
-    *p = tolower(*name);
+  for (p = query->name, i = 0;
+       name[i] != '\0' && p < query->name + sizeof(query->name) - 1;
+       i++, p++)
+  {
+    *p = tolower(name[i]);
+  }
   *p = '\0';
-  name = query->name;
 
   /* Prepare DNS packet header */
   header = (struct header *) pkt;
@@ -625,16 +694,19 @@ dns_queue(struct dns *dns, void *ctx, const char *name,
   p = (char *) &header->data;   /* For encoding host name into packet */
 
   do {
-    if ((s = strchr(name, '.')) == NULL)
+    if ((s = strchr(name, '.')) == NULL) {
       s = name + name_len;
+    }
 
     n = s - name;               /* Chunk length */
     *p++ = n;                   /* Copy length */
-    for (i = 0; i < n; i++)     /* Copy chunk */
+    for (i = 0; i < n; i++) {   /* Copy chunk */
       *p++ = name[i];
+    }
 
-    if (*s == '.')
+    if (*s == '.') {
       n++;
+    }
 
     name += n;
     name_len -= n;
@@ -653,29 +725,27 @@ dns_queue(struct dns *dns, void *ctx, const char *name,
 
   {
     char *resolver = inet_ntoa(dns->sa.sin_addr);
-    freelog(LOG_DEBUG, "dq   sending dns packet n=%d to resolver=%s", n, /*ASYNCDEBUG*/
-            resolver); /*ASYNCDEBUG*/
+    freelog(LOG_DEBUG, "dq sending dns packet n=%d to resolver=%s", n,
+            resolver);
   }
   
-  nb = sendto(dns->sock, pkt, n, 0,
-              (struct sockaddr *) &dns->sa,
-	      sizeof(dns->sa));
+  nb = sendto(dns->sock, pkt, n, 0, (struct sockaddr *) &dns->sa,
+              sizeof(dns->sa));
 
   if (nb != n) {
     if (nb == -1) {
       freelog(LOG_ERROR, _("Failed to send DNS query: sendto: %s."),
-	      mystrsocketerror());
+              mystrsocketerror());
     } else {
       freelog(LOG_ERROR, _("Function sendto failed to send entire DNS query."));
     }
-    callback(ctx, qtype, name, NULL, 0);
-    destroy_query(query);
+    call_user(dns, query);
+    destroy_query(dns, query);
     return;
   }
 
-  if (!hash_insert(dns->active, UINT16_T_TO_PTR(query->tid), query)) {
-    freelog(LOG_ERROR, _("Failed to insert into DNS active query table!"));
-  }
+  hash_insert(dns->active, UINT16_T_TO_PTR(query->tid), query);
+  query->refcount++;
 }
 /**************************************************************************
   ...
@@ -684,30 +754,26 @@ void dns_check_expired(struct dns *dns)
 {
   time_t now;
 
-  freelog(LOG_DEBUG, "dce dns_check_expired dns=%p", dns); /*ASYNCDEBUG*/
-  
   now = time(NULL);
+  freelog(LOG_DEBUG, "dce dns_check_expired dns=%p now=%lu", dns, now);
   
   /* Cleanup expired active queries */
   hash_iterate(dns->active, void *, key, struct query *, query) {
     if (query->expire < now) {
-      freelog(LOG_DEBUG, "dce   active query expired tid=%d", 
-	      query->tid); /*ASYNCDEBUG*/
-      freelog(LOG_DEBUG, "dcz   now=%ld expire=%ld", 
-	      now, query->expire); /*ASYNCDEBUG*/
+      freelog(LOG_DEBUG, "dce active query timeout tid=%x expire=%lu",
+              query->tid, query->expire);
       query->addrlen = 0;
-      if (query->callback) {
-        call_user(dns, query);
-      }
-      destroy_query(query);
+      call_user(dns, query);
+      destroy_query(dns, query);
     }
   } hash_iterate_end;
   
   /* Cleanup cached queries */
   hash_iterate(dns->cache, char *, name, struct query *, query) {
     if (query->expire < now) {
-      freelog(LOG_DEBUG, "dce   query expired in cache tid=%d", query->tid); /*ASYNCDEBUG*/
-      destroy_query(query);
+      freelog(LOG_DEBUG, "dce query expired in cache tid=%x expire=%lu "
+              "(name \"%s\")", query->tid, query->expire, name);
+      destroy_query(dns, query);
     }
   } hash_iterate_end;
 }

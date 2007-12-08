@@ -196,8 +196,11 @@ static gint timer_callback(gpointer data);
 gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data);
 static gboolean quit_dialog_callback(void);
 
+#define NET_INPUT_CTX_MEMORY_GUARD 0xfece5ace
+
 /* used by add_net_input_callback and related functions */
-struct net_input_context {
+struct net_input_ctx {
+  int guard;
   input_ready_callback_t callback;
   int sock;
   void *userdata;
@@ -2007,7 +2010,7 @@ static void get_net_input(gpointer data, gint fid, GdkInputCondition condition)
 ...
 **************************************************************************/
 static void set_wait_for_writable_socket(struct connection *pc,
-					 bool socket_writable)
+                                         bool socket_writable)
 {
   static bool previous_state = FALSE;
 
@@ -2028,21 +2031,19 @@ static void set_wait_for_writable_socket(struct connection *pc,
 /**************************************************************************
   ...
 **************************************************************************/
-void remove_timer_callback (int id)
+void remove_timer_callback(int id)
 {
-  g_source_remove (id);
+  g_source_remove(id);
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-int add_timer_callback (int millisecond_interval,
-                        timer_callback_t cb,
-                        void *data)
+int add_timer_callback(int millisecond_interval,
+                       timer_callback_t cb,
+                       void *data)
 {
-  return g_timeout_add (millisecond_interval,
-                        (GSourceFunc) cb,
-                        data);
+  return g_timeout_add(millisecond_interval, (GSourceFunc) cb, data);
 }
 
 /**************************************************************************
@@ -2060,33 +2061,35 @@ void add_net_input(int sock)
   ...
 **************************************************************************/
 static gboolean gioc_input_ready(GIOChannel *source,
-				 GIOCondition cond,
-				 gpointer data)
+                                 GIOCondition cond,
+                                 gpointer data)
 {
-  struct net_input_context *ctx;
+  struct net_input_ctx *ctx = data;
   int flags = 0;
   gboolean keep;
 
-  ctx = data;
+  freelog(LOG_DEBUG, "gir gioc_input_ready source=%p cond=%d ctx=%p, "
+          "sock=%d", source, cond, ctx, ctx->sock);
+
   assert(ctx != NULL);
-  freelog(LOG_DEBUG, "gir gioc_input_ready source=%p cond=%d data=%p, sock=%i", /*ASYNCDEBUG*/
-           source, cond, data,ctx->sock); /*ASYNCDEBUG*/
 
-  if (cond & G_IO_IN)
+  if (cond & G_IO_IN) {
     flags |= INPUT_READ;
-  if (cond & G_IO_OUT)
+  }
+  if (cond & G_IO_OUT) {
     flags |= INPUT_WRITE;
-  if (cond & G_IO_ERR)
+  }
+  if (cond & G_IO_ERR) {
     flags |= INPUT_ERROR;
-  if (cond & G_IO_HUP)
+  }
+  if (cond & G_IO_HUP) {
     flags |= INPUT_CLOSED;
+  }
 
-
-  freelog(LOG_DEBUG, "gir   calling cb=%p with flags=%d", /*ASYNCDEBUG*/
-	  ctx->callback, flags); /*ASYNCDEBUG*/
-  keep = (*ctx->callback) (ctx->sock, flags,
-                           ctx->userdata);
-  freelog(LOG_DEBUG, "gir   callback returned %d", keep); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "gir calling cb=%p userdata=%p with flags=%d",
+          ctx->callback, ctx->userdata, flags);
+  keep = (*ctx->callback) (ctx->sock, flags, ctx->userdata);
+  freelog(LOG_DEBUG, "gir callback returned keep=%d", keep);
 
   return keep;
 }
@@ -2094,48 +2097,68 @@ static gboolean gioc_input_ready(GIOChannel *source,
 /**************************************************************************
   ...
 **************************************************************************/
-static void nicfree(gpointer data)
+static void destroy_net_input_ctx(gpointer data)
 {
-  struct net_input_context *ctx = data;
+  struct net_input_ctx *ctx = data;
 
-  freelog(LOG_DEBUG, "nicfree: data=%p, socket=%i", data,ctx->sock); /*ASYNCDEBUG*/
-  if (!ctx)
+  freelog(LOG_DEBUG, "dnic destroy_net_input_ctx %p (socket=%d)",
+          data, ctx->sock);
+  if (!ctx) {
     return;
-  if (ctx->datafree) {
-    (*ctx->datafree) (ctx->userdata);
   }
+
+  if (ctx->guard != NET_INPUT_CTX_MEMORY_GUARD) {
+    freelog(LOG_DEBUG, "dnic called more than once on %p", ctx);
+    return;
+  }
+  ctx->guard = 0;
+
+  if (ctx->datafree) {
+    freelog(LOG_DEBUG, "dnic calling datafree func %p", ctx->datafree);
+    (*ctx->datafree) (ctx->userdata);
+    ctx->datafree = NULL;
+  }
+
+  freelog(LOG_DEBUG, "dnic freeing %p", ctx);
   free(ctx);
-  freelog(LOG_DEBUG, "nicfree: data=%p, socket=%i freed", data,ctx->sock); /*ASYNCDEBUG*/
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
 int add_net_input_callback(int sock,
-			   int flags,
-			   input_ready_callback_t cb,
-			   void *data,
-			   data_free_func_t datafree)
+                           int flags,
+                           input_ready_callback_t cb,
+                           void *data,
+                           data_free_func_t datafree)
 {
   int id;
   GIOCondition cond = 0;
-  struct net_input_context *ctx;
+  struct net_input_ctx *ctx;
   GIOChannel *gioc;
 
-  freelog(LOG_DEBUG, "anic add_net_input_callback sock=%d flags=%d cb=%p" /*ASYNCDEBUG*/
-	  " data=%p datafree=%p", sock, flags, cb, data, datafree); /*ASYNCDEBUG*/
+  freelog(LOG_DEBUG, "anic add_net_input_callback sock=%d flags=%d cb=%p"
+          " data=%p datafree=%p", sock, flags, cb, data, datafree);
 
-  if (flags & INPUT_READ)
+  if (flags & INPUT_READ) {
     cond |= G_IO_IN;
-  if (flags & INPUT_WRITE)
+  }
+  if (flags & INPUT_WRITE) {
     cond |= G_IO_OUT;
+  }
 
-  if (flags & INPUT_ERROR)
+  if (flags & INPUT_ERROR) {
     cond |= G_IO_ERR;
-  if (flags & INPUT_CLOSED)
+  }
+  if (flags & INPUT_CLOSED) {
     cond |= G_IO_HUP;
+  }
 
-  ctx = fc_malloc(sizeof (struct net_input_context));
+  ctx = fc_calloc(1, sizeof (struct net_input_ctx));
+  ctx->guard = NET_INPUT_CTX_MEMORY_GUARD;
+
+  freelog(LOG_DEBUG, "anic new net_input_ctx %p", ctx);
+
   ctx->sock = sock;
   ctx->callback = cb;
   ctx->userdata = data;
@@ -2147,10 +2170,10 @@ int add_net_input_callback(int sock,
   gioc = g_io_channel_unix_new(sock);
 #endif
 
-  freelog(LOG_DEBUG, "anic   gioc=%p", gioc);
+  freelog(LOG_DEBUG, "anic gioc=%p", gioc);
   id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
-                            gioc_input_ready, ctx, nicfree);
-  freelog(LOG_DEBUG, "anic   g_io_add_watch_full id=%d", id); /*ASYNCDEBUG*/
+                           gioc_input_ready, ctx, destroy_net_input_ctx);
+  freelog(LOG_DEBUG, "anic g_io_add_watch_full returns id=%d", id);
 
   return id;
 }
@@ -2160,8 +2183,9 @@ int add_net_input_callback(int sock,
 **************************************************************************/
 void remove_net_input_callback(int input_id)
 {
-  freelog(LOG_DEBUG, "remove_net_input_callback input_id=%d", input_id); /*ASYNCDEBUG*/
-  g_source_remove(input_id); /* calls nicfree on ctx */
+  freelog(LOG_DEBUG, "rnic remove_net_input_callback input_id=%d",
+          input_id);
+  g_source_remove(input_id); /* calls destroy_net_input_ctx on ctx */
 }
 
 /**************************************************************************

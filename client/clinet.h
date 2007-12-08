@@ -80,18 +80,20 @@ struct server
 #define server_list_iterate_end  LIST_ITERATE_END
 
 struct server_list *create_server_list(char *errbuf, int n_errbuf);
+void delete_server_list(struct server_list *server_list);
 int begin_lanserver_scan(void);
 struct server_list *get_lan_server_list(void); 
 void finish_lanserver_scan(void);
 
-typedef void (*server_list_created_callback_t) (struct server_list *new_server_list,
-                                                const char *errbuf, void *data);
-int create_server_list_async (char *errbuf,
-                              int n_errbuf,
-                              server_list_created_callback_t cb,
-                              void *data,
-                              data_free_func_t datafree);
-void *cancel_async_server_list_request (int id);
+typedef void (*server_list_created_callback_t)(struct server_list *new_server_list,
+                                               const char *errbuf,
+                                               void *data);
+int create_server_list_async(char *errbuf,
+                             int n_errbuf,
+                             server_list_created_callback_t cb,
+                             void *data,
+                             data_free_func_t datafree);
+void *cancel_async_server_list_request(int id);
 
 bool is_warserver(void);
 

@@ -802,7 +802,7 @@ static const char *makeup_connection_name(int *id)
   ...
 ********************************************************************/
 static void reverse_lookup_cb(const unsigned char *addr,
-			      int addrlen, void *data)
+                              int addrlen, void *data)
 {
   struct connection *pconn = data;
   const char *hostname = (const char *) addr;
@@ -810,22 +810,24 @@ static void reverse_lookup_cb(const unsigned char *addr,
   assert(pconn != NULL);
 
   freelog(LOG_DEBUG, "rlc reverse_lookup_cb addr=%p addrlen=%d data=%p",
-	  /*ASYNCDEBUG*/ addr, addrlen, data);
-  /*ASYNCDEBUG*/ if (!pconn->used) {
-    freelog(LOG_DEBUG, "rlc   callback for non-existant pconn!");
-    /*ASYNCDEBUG*/ return;
+          addr, addrlen, data);
+
+  if (!pconn->used) {
+    freelog(LOG_DEBUG, "rlc callback for non-existant pconn!");
+    return;
   }
 
   pconn->adns_id = -1;
 
   if (addrlen > 0) {
     freelog(LOG_VERBOSE, "ADNS found hostname \"%s\" for "
-	    "connection (%s) from %s", hostname, pconn->username,
-	    pconn->server.ipaddr);
+            "connection (%s) from %s", hostname, pconn->username,
+            pconn->server.ipaddr);
     sz_strlcpy(pconn->addr, hostname);
   } else {
     freelog(LOG_VERBOSE, "ADNS could not find hostname for "
-	    "connection %s (%s)", pconn->server.ipaddr, pconn->username);
+            "connection %s (%s)", pconn->server.ipaddr,
+            pconn->username);
   }
 }
 
@@ -852,7 +854,7 @@ static int server_accept_connection(int sockfd)
   struct connection *pconn = NULL;
 
   freelog(LOG_DEBUG, "sac server_accept_connection sockfd=%d", sockfd);
-  /*ASYNCDEBUG*/ fromlen = sizeof(fromend);
+  fromlen = sizeof(fromend);
 
   if ((new_sock = accept(sockfd, &fromend.sockaddr, &fromlen)) == -1) {
     freelog(LOG_ERROR, "accept failed: %s", mystrsocketerror());
@@ -875,56 +877,56 @@ static int server_accept_connection(int sockfd)
     return -1;
   }
 
-      connection_common_init(pconn);
-      pconn->sock = new_sock;
-      pconn->observer = FALSE;
-      pconn->player = NULL;
-      pconn->capability[0] = '\0';
-      pconn->access_level = access_level_for_next_connection();
-      pconn->delayed_disconnect = FALSE;
-      pconn->notify_of_writable_data = NULL;
-      pconn->server.currently_processed_request_id = 0;
-      pconn->server.last_request_id_seen = 0;
-      pconn->server.auth_tries = 0;
-      pconn->server.auth_settime = 0;
+  connection_common_init(pconn);
+  pconn->sock = new_sock;
+  pconn->observer = FALSE;
+  pconn->player = NULL;
+  pconn->capability[0] = '\0';
+  pconn->access_level = access_level_for_next_connection();
+  pconn->delayed_disconnect = FALSE;
+  pconn->notify_of_writable_data = NULL;
+  pconn->server.currently_processed_request_id = 0;
+  pconn->server.last_request_id_seen = 0;
+  pconn->server.auth_tries = 0;
+  pconn->server.auth_settime = 0;
   pconn->server.delay_counter = 0;
   pconn->server.packets_received = 0;
-      pconn->server.status = AS_NOT_ESTABLISHED;
+  pconn->server.status = AS_NOT_ESTABLISHED;
   pconn->server.ping_timers = fc_malloc(sizeof(*pconn->server.ping_timers));
-      timer_list_init(pconn->server.ping_timers);
-      pconn->ping_time = -1.0;
-      pconn->incoming_packet_notify = NULL;
-      pconn->outgoing_packet_notify = NULL;
-      sz_strlcpy(pconn->username, makeup_connection_name(&pconn->id));
+  timer_list_init(pconn->server.ping_timers);
+  pconn->ping_time = -1.0;
+  pconn->incoming_packet_notify = NULL;
+  pconn->outgoing_packet_notify = NULL;
+  sz_strlcpy(pconn->username, makeup_connection_name(&pconn->id));
   sz_strlcpy(pconn->server.ipaddr, inet_ntoa(fromend.sockaddr_in.sin_addr));
   sz_strlcpy(pconn->addr, inet_ntoa(fromend.sockaddr_in.sin_addr));
   pconn->adns_id = -1;
 
   if (!srvarg.no_dns_lookup) {
     if (adns_is_available()) {
-      freelog(LOG_DEBUG, "sac   making adns request");
-      /*ASYNCDEBUG*/
-	  pconn->adns_id = adns_reverse_lookup(&fromend,
-					       reverse_lookup_cb, pconn,
-					       NULL);
-      freelog(LOG_DEBUG, "sac   got adns_id=%d", pconn->adns_id);
-      /*ASYNCDEBUG*/ if (pconn->adns_id == 0) {	/* reverse_lookup_cb called already */
-	pconn->adns_id = -1;
+      freelog(LOG_DEBUG, "sac making adns request");
+      pconn->adns_id = adns_reverse_lookup(&fromend, reverse_lookup_cb,
+                                           pconn, NULL);
+      freelog(LOG_DEBUG, "sac got adns_id=%d", pconn->adns_id);
+      if (pconn->adns_id == 0) {
+        /* reverse_lookup_cb called already */
+        pconn->adns_id = -1;
       }
     } else {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
-			   sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
-      if (from)
-	sz_strlcpy(pconn->addr, from->h_name);
+                           sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
+      if (from) {
+        sz_strlcpy(pconn->addr, from->h_name);
+      }
     }
   }
   
-      freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
-	  pconn->username, pconn->addr, !from && pconn->adns_id > 0
-	  ? "hostname lookup in progress" : pconn->server.ipaddr);
+  freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
+          pconn->username, pconn->addr, !from && pconn->adns_id > 0
+          ? "hostname lookup in progress" : pconn->server.ipaddr);
 
   conn_list_append(&game.all_connections, pconn);
-      ping_connection(pconn);
+  ping_connection(pconn);
 
   return 0;
 }

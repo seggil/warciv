@@ -321,36 +321,37 @@ static void update_server_list(GtkTreeSelection *selection,
   new_server_list must be freed when no longer needed.
 **************************************************************************/
 static void server_list_created_callback(struct server_list *new_server_list,
-					 const char *error, void *data)
+                                         const char *error, void *data)
 {
   char msg[256];
 
-  freelog(LOG_DEBUG,
-	  "server_list_created_callback new_server_list=%p"
-	  " error=\"%s\" data=%p", new_server_list, error, data);
-  /*if (internet_server_list)
-    delete_server_list(internet_server_list);*/
+  freelog(LOG_DEBUG, "slcc server_list_created_callback "
+          "new_server_list=%p error=\"%s\" data=%p",
+          new_server_list, error, data);
 
   if (!new_server_list) {
     if (server_list_request_id > 0) {
       cancel_async_server_list_request(server_list_request_id);
-      my_snprintf(msg, sizeof(msg), 
-		  _("Could not get server list: %s"), error);
+      my_snprintf(msg, sizeof(msg), _("Could not get server list: %s"),
+                  error);
       append_network_statusbar(msg);
       server_list_request_id = -1;
-     return;
+      return;
     }
   } else {
-    my_snprintf(msg, sizeof(msg),
-		_("Received %d server(s) from the meta server."),
-		server_list_size(new_server_list));
-    freelog(LOG_DEBUG, "slcc   list size %d",
-	    server_list_size(new_server_list));
+    my_snprintf(msg, sizeof(msg), _("Received %d server(s) from the "
+                                    "meta server."),
+                server_list_size(new_server_list));
+    freelog(LOG_DEBUG, "slcc list size %d",
+            server_list_size(new_server_list));
   }
 
   server_list_request_id = -1;
   append_network_statusbar(msg);
 
+  if (internet_server_list) {
+    delete_server_list(internet_server_list);
+  }
   internet_server_list = new_server_list;
   
   update_server_list(meta_selection, meta_store, internet_server_list);
@@ -365,28 +366,27 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
   char buf[1024];
 
   if (!adns_is_available()) {
-    /* if (internet_server_list)
-      delete_server_list(internet_server_list);*/
-    
+    if (internet_server_list) {
+      delete_server_list(internet_server_list);
+    }
     internet_server_list = create_server_list(errbuf, n_errbuf);
-
     update_server_list(meta_selection, meta_store, internet_server_list);
 
     return internet_server_list != NULL;
   }
 
   freelog(LOG_DEBUG, "gml get_meta_list server_list_request_id=%d",
-	  server_list_request_id);
+          server_list_request_id);
   if (server_list_request_id != -1) {
-    freelog(LOG_DEBUG, "gml   request in progress...");
+    freelog(LOG_DEBUG, "gml can't make new request, one is in progress");
 
     my_snprintf(errbuf, n_errbuf, _("Server list request in progress..."));
     return FALSE;
   }
 
   id = create_server_list_async(errbuf, n_errbuf,
-				server_list_created_callback, NULL, NULL);
-  freelog(LOG_DEBUG, "gml   got server_list_request_id=%d", id);
+      server_list_created_callback, NULL, NULL);
+  freelog(LOG_DEBUG, "gml got server_list_request_id=%d", id);
   if (id == -1) {
     return FALSE;		/* we got an error :( */
   }
@@ -396,8 +396,8 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
 
   /* request in progress! */
   server_list_request_id = id;
-  my_snprintf(buf, sizeof(buf),
-	      _("Requesting server list from %s..."), metaserver);
+  my_snprintf(buf, sizeof(buf), _("Requesting server list from %s..."),
+              metaserver);
   append_network_statusbar(buf);
   return TRUE;
 }
