@@ -1063,6 +1063,7 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
 
   MK_TAG_PATTERN ("commands", "/", TPF_MATCH_AT_START, "", "#006400", "");
   
+
   MK_TAG_PATTERN ("chat message", "<", TPF_MATCH_AT_START, "", "#00008B", "");
   MK_TAG_PATTERN ("private message", "*", TPF_MATCH_AT_START,
                   "", "#A020F0", "");
@@ -1079,6 +1080,7 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
                   TPF_REQUIRE_PREVIOUS_MATCH,
                   "", "#551166", "");
   
+
   MK_TAG_PATTERN ("", "/show: ", TPF_IS_CONTROL_ONLY
                   | TPF_MATCH_AT_START | TPF_NEGATE,
                   "end of show stuff", "", "");
@@ -1112,20 +1114,25 @@ static void create_default_tag_patterns (struct tag_pattern_list *tpl)
   MK_TAG_PATTERN ("end of show stuff", "", TPF_IS_CONTROL_ONLY,
                   "", "", "");
 
-  
+
   MK_TAG_PATTERN ("new vote", "New vote",
                   TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED, 
                   "", "#FFFFFF", "#AA0000");
-  MK_TAG_PATTERN ("", "Vote ", TPF_IS_CONTROL_ONLY 
-                  | TPF_MATCH_AT_START, "", "", "");
-  MK_TAG_PATTERN ("vote passed", " is passed ",
-                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_STOP_IF_MATCHED,
+
+  MK_TAG_PATTERN ("", "Vote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
+                  | TPF_MATCH_AT_START, "vote stuff end", "", "");
+  MK_TAG_PATTERN ("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
                   "", "#006400", "#AAFFAA");
-  MK_TAG_PATTERN ("", "Vote ", TPF_IS_CONTROL_ONLY
-                  | TPF_MATCH_AT_START, "", "", "");
-  MK_TAG_PATTERN ("vote failed", " failed ",
-                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_STOP_IF_MATCHED,
+  MK_TAG_PATTERN ("vote failed", " failed ", TPF_STOP_IF_MATCHED,
                   "", "#8B0000", "#FFAAAA");
+  MK_TAG_PATTERN ("voted yes", "voted yes", TPF_STOP_IF_MATCHED,
+                  "", "#000000", "#C8FFD5");
+  MK_TAG_PATTERN ("voted no", "voted no", TPF_STOP_IF_MATCHED,
+                  "", "#000000", "#FFD2D2");
+  MK_TAG_PATTERN ("abstained", "chose to abstain", TPF_STOP_IF_MATCHED,
+                  "", "#000000", "#E8E8E8");
+  MK_TAG_PATTERN ("vote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
+
 
   MK_TAG_PATTERN ("", "/list:", TPF_IS_CONTROL_ONLY 
                   | TPF_MATCH_AT_START, "", "", "");
