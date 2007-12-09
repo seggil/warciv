@@ -5392,12 +5392,7 @@ static bool reset_command(struct connection *caller, bool check)
     return TRUE;
   }
 
-  team_clear_teams();
-  if (map_is_loaded()) {
-    unloadmap_command(caller, FALSE);
-  } else {
-    reload_settings();
-  }
+  reload_settings();
 
   notify_conn(NULL, _("Server: Settings re-initialized."));
   return TRUE;
