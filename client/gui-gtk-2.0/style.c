@@ -153,54 +153,61 @@ static void read_style_from_rc(void)
 }
 
 /**************************************************************************
+  Unlike the real gdk_color_to_string (only in gdk >= 2.12), this returns
+  a pointer to a static buffer. So do not call this twice in the same
+  expression (e.g. as arguments to a function)!
+**************************************************************************/
+static gchar *colorstr(const GdkColor *color)
+{
+  static char buf[32];
+  my_snprintf(buf, sizeof(buf), "#%04x%04x%04x",
+              color->red, color->green, color->blue);
+  return buf;
+}
+
+/**************************************************************************
 ...
 **************************************************************************/
-static const char *create_style_str(void)
+static void create_style_str(char *buf, int buflen)
 {
-  char buf[32000]="\0";
-  char *pbuf;
+  char *p = buf, *tmp;
   
+#define SSCAT(fmt, arg) do {\
+    p += my_snprintf(p, buflen - (unsigned) (p - buf), (fmt), (arg));\
+} while(0)
+
   style_iterate(sset){
-    cat_snprintf(buf, sizeof(buf),"style \"%s\"\n"
-		 "{\n"
-		 "font_name = \"%s\"\n"
-		 "base[NORMAL] = \"%s\"\nbase[ACTIVE] = \"%s\"\n"
-		 "base[PRELIGHT] = \"%s\"\nbase[SELECTED] = \"%s\"\n"
-		 "base[INSENSITIVE] = \"%s\"\n"
-		 "text[NORMAL] = \"%s\"\ntext[ACTIVE] = \"%s\"\n"
-		 "text[PRELIGHT] = \"%s\"\ntext[SELECTED] = \"%s\"\n"
-		 "text[INSENSITIVE] = \"%s\"\n"
-		 "bg[NORMAL] = \"%s\"\nbg[ACTIVE] = \"%s\"\n"
-		 "bg[PRELIGHT] = \"%s\"\nbg[SELECTED] = \"%s\"\n"
-		 "bg[INSENSITIVE] = \"%s\"\n"
-		 "}\n\n",
-		 sset->stylename,
-		 pango_font_description_to_string(sset->style->font_desc),
-		 gdk_color_to_string(&sset->style->base[0]),
-		 gdk_color_to_string(&sset->style->base[1]),
-		 gdk_color_to_string(&sset->style->base[2]),
-		 gdk_color_to_string(&sset->style->base[3]),
-		 gdk_color_to_string(&sset->style->base[4]),
-		 gdk_color_to_string(&sset->style->text[0]),
-		 gdk_color_to_string(&sset->style->text[1]),
-		 gdk_color_to_string(&sset->style->text[2]),
-		 gdk_color_to_string(&sset->style->text[3]),
-		 gdk_color_to_string(&sset->style->text[4]),
-		 gdk_color_to_string(&sset->style->bg[0]),
-		 gdk_color_to_string(&sset->style->bg[1]),
-		 gdk_color_to_string(&sset->style->bg[2]),
-		 gdk_color_to_string(&sset->style->bg[3]),
-		 gdk_color_to_string(&sset->style->bg[4]));
+    SSCAT("style \"%s\"\n{\n", sset->stylename);
+
+    tmp = pango_font_description_to_string(sset->style->font_desc);
+		SSCAT("font_name = \"%s\"\n", tmp);
+    g_free(tmp);
+
+    SSCAT("base[NORMAL] = \"%s\"\n", colorstr(&sset->style->base[0]));
+    SSCAT("base[ACTIVE] = \"%s\"\n", colorstr(&sset->style->base[1]));
+    SSCAT("base[PRELIGHT] = \"%s\"\n", colorstr(&sset->style->base[2]));
+    SSCAT("base[SELECTED] = \"%s\"\n", colorstr(&sset->style->base[3]));
+    SSCAT("base[INSENSITIVE] = \"%s\"\n", colorstr(&sset->style->base[4]));
+    SSCAT("text[NORMAL] = \"%s\"\n", colorstr(&sset->style->text[0]));
+    SSCAT("text[ACTIVE] = \"%s\"\n", colorstr(&sset->style->text[1]));
+    SSCAT("text[PRELIGHT] = \"%s\"\n", colorstr(&sset->style->text[2]));
+    SSCAT("text[SELECTED] = \"%s\"\n", colorstr(&sset->style->text[3]));
+    SSCAT("text[INSENSITIVE] = \"%s\"\n", colorstr(&sset->style->text[4]));
+    SSCAT("bg[NORMAL] = \"%s\"\n", colorstr(&sset->style->bg[0]));
+    SSCAT("bg[ACTIVE] = \"%s\"\n", colorstr(&sset->style->bg[1]));
+    SSCAT("bg[PRELIGHT] = \"%s\"\n", colorstr(&sset->style->bg[2]));
+    SSCAT("bg[SELECTED] = \"%s\"\n", colorstr(&sset->style->bg[3]));
+    SSCAT("bg[INSENSITIVE] = \"%s\"\n", colorstr(&sset->style->bg[4]));
+
+    p += my_snprintf(p, buflen - (unsigned) (p - buf), "}\n\n");
   } style_iterate_end;
+
   style_iterate(sset){
-    cat_snprintf(buf, sizeof(buf),
-		 "widget \"%s\" style \"%s\"\n",
-		 sset->stylewidget, sset->stylename);
+    SSCAT("widget \"%s\" ", sset->stylewidget);
+    SSCAT("style \"%s\"\n", sset->stylename);
   } style_iterate_end;
-/*   printf("%s",buf); */
     
-  pbuf = buf;
-  return pbuf;
+#undef SSCAT
 }
 
 /**************************************************************************
@@ -251,7 +258,9 @@ static void save_callback(GtkWidget *w,
   GtkWidget *dialog = (GtkWidget *) user_data;
   const gchar *home;
   FILE *fp;
-  char buf[255];
+  char buf[255], stylebuf[16384];
+
+  create_style_str(stylebuf, sizeof(stylebuf));
 
   home = g_get_home_dir();
   if (home) {
@@ -259,7 +268,7 @@ static void save_callback(GtkWidget *w,
 
     str = g_build_filename(home, ".freeciv.rc-2.0", NULL);
     fp = fopen(str, "wr");
-    fprintf(fp, "%s", create_style_str());
+    fputs(stylebuf, fp);
     fclose(fp);
     my_snprintf(buf, sizeof(buf), _("Styles are saved in %s"), str);
     append_output_window(buf);
@@ -268,7 +277,7 @@ static void save_callback(GtkWidget *w,
   } else {
     append_output_window(_("Save failed, cannot find home dir."));
   }
-  gtk_rc_parse_string(create_style_str());
+  gtk_rc_parse_string(stylebuf);
   
   gtksettings = gtk_settings_get_default();
   gtk_rc_reset_styles(gtksettings);
@@ -284,9 +293,11 @@ static void apply_callback(GtkWidget *w,
   GtkSettings *gtksettings;
   GtkWidget *dialog = (GtkWidget *) user_data;
   GtkStyle *style;
+  char stylebuf[16384];
 
   gtksettings = gtk_settings_get_default();
-  gtk_rc_parse_string(create_style_str());
+  create_style_str(stylebuf, sizeof(stylebuf));
+  gtk_rc_parse_string(stylebuf);
   gtk_rc_reset_styles(gtksettings);
 
     /* font names shouldn't be in spec files! */
