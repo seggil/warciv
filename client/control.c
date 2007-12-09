@@ -131,7 +131,7 @@ void set_hover_state(struct unit *punit, enum cursor_hover_state state,
   assert(punit != NULL || state == HOVER_NONE);
   assert(state == HOVER_CONNECT || activity == ACTIVITY_LAST);
   draw_goto_line = TRUE;
-  hover_unit = punit ? punit->id : hover_unit;
+  hover_unit = punit ? punit->id : 0;
   hover_state = state;
   connect_activity = activity;
   exit_goto_state();

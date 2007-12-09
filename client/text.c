@@ -30,9 +30,9 @@
 
 #include "control.h"
 #include "goto.h"
-#include "multiselect.h"//*pepeto*
-#include "myai.h"//*pepeto*
-#include "peptool.h"//*pepeto*
+#include "multiselect.h"
+#include "myai.h"
+#include "peptool.h"
 #include "text.h"
 
 /*
@@ -583,11 +583,16 @@ const char *get_unit_info_label_text2(struct unit *punit)
     if (hover_unit == punit->id) {
       add_line(_("Turns to target: %d"), get_goto_turns());
     } else {
-      add_line("%s", unit_activity_text(punit));
+      add_line(" ");
     }
 
-	add_line("%s",(punit->my_ai.control?my_ai_unit_activity(punit):""));//*pepeto*
-	add_line("%s",(punit->my_ai.control?my_ai_unit_orders(punit):""));//*pepeto*
+    if (punit->my_ai.control) {
+      add_line(my_ai_unit_activity(punit));
+      add_line(my_ai_unit_orders(punit));
+    } else {
+      add_line(unit_activity_text(punit));
+      add_line(" ");
+    }
 
     add_line("%s", map_get_tile_info_text(punit->tile));
     if (infrastructure) {
