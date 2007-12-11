@@ -272,7 +272,7 @@ static char *four_team_suggestions[][4] =
     };
 
 enum vote_type {
-  VOTE_NONE, VOTE_YES, VOTE_NO, VOTE_ABSTAIN, VOTE_NUM
+  VOTE_YES, VOTE_NO, VOTE_ABSTAIN, VOTE_NUM
 };
 
 struct vote_cast {
@@ -711,7 +711,7 @@ static struct vote_cast *vote_cast_new(struct voting *pvote)
   struct vote_cast *pvc = fc_malloc(sizeof(struct vote_cast));
 
   pvc->conn_id = -1;
-  pvc->vote_cast = VOTE_NONE;
+  pvc->vote_cast = VOTE_ABSTAIN;
 
   vote_cast_list_append(&pvote->votes_cast, pvc);
 
@@ -3679,7 +3679,6 @@ CLEANUP:
   ...
 ******************************************************************/
 static const char *const vote_args[] = {
-  "cancel",
   "yes",
   "no",
   "abstain",
@@ -3700,9 +3699,8 @@ static bool vote_command(struct connection *caller, char *str,
   int ntokens = 0, i = 0, which = -1;
   enum m_pre_result match_result;
   struct voting *pvote = NULL;
-
-  const char *usage = _("Invalid arguments. Usage: vote yes|no"
-                        "|abstain|cancel [vote number].");
+  const char *usage = _("Invalid arguments. Usage: vote "
+                        "yes|no|abstain [vote number].");
   bool res = FALSE;
 
   if (check) {
@@ -3767,19 +3765,7 @@ static bool vote_command(struct connection *caller, char *str,
     goto CLEANUP;
   }
 
-  if (i == VOTE_NONE) {
-    /* Cancel */
-    struct vote_cast *pvc = find_vote_cast(pvote, caller->id);
-
-    if (pvc) {
-      cmd_reply(CMD_VOTE, caller, C_COMMENT,
-                _("You canceled your vote for \"%s\"."), pvote->command);
-      remove_vote_cast(pvote, pvc);
-    } else {
-      cmd_reply(CMD_VOTE, caller, C_FAIL,
-                _("You didn't vote yet for \"%s\"."), pvote->command);
-    }
-  } else if (i == VOTE_YES) {
+  if (i == VOTE_YES) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT, _("You voted for \"%s\""),
               pvote->command);
     connection_vote(caller, pvote, VOTE_YES);
@@ -3788,8 +3774,8 @@ static bool vote_command(struct connection *caller, char *str,
               pvote->command);
     connection_vote(caller, pvote, VOTE_NO);
   } else if (i == VOTE_ABSTAIN) {
-    cmd_reply(CMD_VOTE, caller, C_COMMENT, _("You abstained from voting on \"%s\""),
-              pvote->command);
+    cmd_reply(CMD_VOTE, caller, C_COMMENT,
+	      _("You abstained from voting on \"%s\""), pvote->command);
     connection_vote(caller, pvote, VOTE_ABSTAIN);
   } else {
     assert(0); /* Must never happen */
@@ -3805,16 +3791,16 @@ CLEANUP:
 }
 
 /**************************************************************************
-  Cancel a vote... /removevote <vote number>|all.
+  Cancel a vote... /cancelvote <vote number>|all.
 **************************************************************************/
-static bool remove_vote_command(struct connection *caller, char *arg,
+static bool cancel_vote_command(struct connection *caller, char *arg,
                                 bool check)
 {
   struct voting *pvote = NULL;
   int vote_no;
 
   if (check) {
-    /* This should never happen anyway, since /removevote
+    /* This should never happen anyway, since /cancelvote
      * is set to ALLOW_BASIC in both pregame and while the
      * game is running. */
     return FALSE;
@@ -3825,18 +3811,18 @@ static bool remove_vote_command(struct connection *caller, char *arg,
   if (arg[0] == '\0') {
     if (!caller) {
       /* Server prompt */
-      cmd_reply(CMD_REMOVE_VOTE, NULL, C_SYNTAX,
+      cmd_reply(CMD_CANCEL_VOTE, NULL, C_SYNTAX,
                 _("Missing argument <vote number>|all"));
       return FALSE;
     }
     if (!(pvote = get_vote_by_caller(caller->id))) {
-      cmd_reply(CMD_REMOVE_VOTE, caller, C_FAIL,
+      cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You don't have any vote going on."));
       return FALSE;
     }
   } else if (mystrcasecmp(arg, "all") == 0) {
     if (vote_list_size(&vote_list) == 0) {
-      cmd_reply(CMD_REMOVE_VOTE, caller, C_FAIL,
+      cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("There isn't any vote going on."));
       return FALSE;
     } else if (!caller || caller->access_level == ALLOW_HACK) {
@@ -3844,24 +3830,24 @@ static bool remove_vote_command(struct connection *caller, char *arg,
       notify_conn(NULL, _("Server: All votes have been removed."));
       return TRUE;
     } else {
-      cmd_reply(CMD_REMOVE_VOTE, caller, C_FAIL,
+      cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You are not allowed to use this command."));
       return FALSE;
     }
   } else if (sscanf(arg, "%d", &vote_no) == 1) {
     if (!(pvote = get_vote_by_no(vote_no))) {
-      cmd_reply(CMD_REMOVE_VOTE, caller, C_FAIL,
+      cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("No such vote (%d)."), vote_no);
       return FALSE;
     } else if (caller && caller->access_level < ALLOW_HACK
                && caller->id != pvote->caller_id) {
-      cmd_reply(CMD_REMOVE_VOTE, caller, C_FAIL,
+      cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You are not allowed to cancel this vote (%d)."), vote_no);
       return FALSE;
     }
   } else {
-    cmd_reply(CMD_REMOVE_VOTE, caller, C_SYNTAX,
-              _("Usage: /removevote [<vote number>|all]"));
+    cmd_reply(CMD_CANCEL_VOTE, caller, C_SYNTAX,
+              _("Usage: /cancelvote [<vote number>|all]"));
     return FALSE;
   }
 
@@ -3869,16 +3855,16 @@ static bool remove_vote_command(struct connection *caller, char *arg,
 
   if (caller) {
     if (caller->id == pvote->caller_id) {
-      notify_conn(NULL, _("Server: %s removed his vote \"%s\" (number %d)."),
+      notify_conn(NULL, _("Server: %s cancelled his vote \"%s\" (number %d)."),
                   caller->username, pvote->command, pvote->vote_no);
     } else {
-      notify_conn(NULL, _("Server: %s removed the vote \"%s\" (number %d)."),
+      notify_conn(NULL, _("Server: %s cancelled the vote \"%s\" (number %d)."),
                   caller->username, pvote->command, pvote->vote_no);
     }
   } else {
     /* Server prompt */
     notify_conn(NULL,
-                _("Server: The vote \"%s\" (number %d) has been removed."),
+                _("Server: The vote \"%s\" (number %d) has been cancelled."),
                 pvote->command, pvote->vote_no);
   }
   /* Make it after, prevent crashs about a free pointer (pvote). */
@@ -6018,8 +6004,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return wall(arg, check);
   case CMD_VOTE:
     return vote_command(caller, arg, check);
-  case CMD_REMOVE_VOTE:
-    return remove_vote_command(caller, arg, check);
+  case CMD_CANCEL_VOTE:
+    return cancel_vote_command(caller, arg, check);
   case CMD_READ_SCRIPT:
     return read_command(caller, arg, check);
   case CMD_WRITE_SCRIPT:

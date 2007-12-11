@@ -153,14 +153,13 @@ const struct command commands[] = {
   {"vote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
    /* TRANS: translate text between [] only */
    N_("vote\n"
-      "vote yes|no|abstain|cancel [vote number]"),
+      "vote yes|no|abstain [vote number]"),
    N_("Cast a vote."),
       /* xgettext:no-c-format */
    N_("A player with basic level access issuing a control level command "
       "starts a new vote for the command.  The /vote command followed by "
       "\"yes\", \"no\" or \"abstain\", and optionally a vote number, "
-      "gives your vote. The special argument \"cancel\" will cancel "
-      "a vote if it belongs to you. If you do not add a vote number, your "
+      "gives your vote. If you do not add a vote number, your "
       "vote applies to the last vote made. You can only suggest one vote "
       "at a time. The vote will pass immediately if more than half of the "
       "players vote for it, or fail immediately if at least half of the "
@@ -169,11 +168,11 @@ const struct command commands[] = {
       "arguments, it lists the status of currently running votes."),
    ECHO_NONE
   },
-  {"removevote",	ALLOW_BASIC,	ALLOW_BASIC,
+  {"cancelvote",	ALLOW_BASIC,	ALLOW_BASIC,
    /* TRANS: translate text between <> only */
-   N_("removevote\n"
-      "removevote <vote number>\n"
-      "removevote all\n"),
+   N_("cancelvote\n"
+      "cancelvote <vote number>\n"
+      "cancelvote all\n"),
    N_("Cancel a running vote.\n"),
    N_("With no arguments this command removes your own vote. If you have "
       "hack access level, you can cancel any vote by vote number, or all "
