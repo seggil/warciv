@@ -562,7 +562,6 @@ void lost_connection_to_client(struct connection *pconn)
      * to display player information.  See establish_new_connection(). */
     send_player_info(pplayer, NULL);
   }
-  notify_if_first_access_level_is_available();
 
   /* Cancel diplomacy meetings */
   if (!pplayer->is_connected) { /* may be still true if multiple connections */

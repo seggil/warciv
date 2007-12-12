@@ -47,11 +47,6 @@ void toggle_ai_player_direct(struct connection *caller,
 
 const char *name_of_skill_level(int level);
 
-/* for sernet.c in initing a new connection */
-enum cmdlevel_id access_level_for_next_connection(void);
-
-void notify_if_first_access_level_is_available(void);
-
 #ifdef HAVE_LIBREADLINE
 #ifdef HAVE_NEWLIBREADLINE
 char **freeciv_completion(const char *text, int start, int end);

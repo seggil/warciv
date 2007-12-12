@@ -354,8 +354,6 @@ const struct command commands[] = {
    /* TRANS: translate text between <> only */
    N_("cmdlevel\n"
       "cmdlevel <level>\n"
-      "cmdlevel <level> new\n"
-      "cmdlevel <level> first\n"
       "cmdlevel <level> <connection-name>"),
    N_("Query or set command access level access."),
    N_("The command access level controls which server commands are available\n"
@@ -367,25 +365,13 @@ const struct command commands[] = {
       "    admin -  includes banning, unbanning and removing players\n"
       "    hack  -  *all* commands - dangerous!\n"
       "With no arguments, the current command access levels are reported.\n"
-      "With a single argument, the level is set for all existing "
-      "connections,\nand the default is set for future connections.\n"
-      "If 'new' is specified, the level is set for newly connecting clients.\n"
-      "If 'first come' is specified, the 'first come' level is set; it will be\n"
-      "granted to the first client to connect, or if there are connections\n"
-      "already, the first client to issue the 'firstlevel' command.\n"
+      "With a single argument, the level is set for all existing connections.\n"
       "If a connection name is specified, the level is set for that "
       "connection only.\n"
       "Command access levels do not persist if a client disconnects, "
       "because some untrusted person could reconnect with the same name.  "
       "Note that this command now takes connection names, not player names."
       ),
-   ECHO_ADMINS
-  },
-  {"firstlevel", ALLOW_NEVER, ALLOW_NEVER,
-   "firstlevel",
-   N_("Grab the 'first come' command access level."),
-   N_("If 'cmdlevel first come' has been used to set a special 'first come'\n"
-      "command access level, this is the command to grab it with."),
    ECHO_ADMINS
   },
   {"timeoutincrease", ALLOW_CTRL, ALLOW_BASIC,

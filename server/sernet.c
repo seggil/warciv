@@ -882,7 +882,6 @@ static int server_accept_connection(int sockfd)
   pconn->observer = FALSE;
   pconn->player = NULL;
   pconn->capability[0] = '\0';
-  pconn->access_level = access_level_for_next_connection();
   pconn->delayed_disconnect = FALSE;
   pconn->notify_of_writable_data = NULL;
   pconn->server.currently_processed_request_id = 0;
