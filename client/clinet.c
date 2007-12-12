@@ -902,9 +902,18 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
     rem -= nb;
     buf += nb;
     count += nb;
-    if (nb < READSZ) {
+#ifndef WIN32_NATIVE
+/*  g-io-channel-win32-new-socket said */
+/*  Polling a GSource created to watch a channel for a socket puts the socket  */
+/*  in non-blocking mode.  */
+/*  This is a side-effect of the implementation and unavoidable. */
+/*  It appears that we must keep reading sockets until  */
+/*  error occurs or finish reading (nb == 0) otherwise G_IO_HUP GCond */
+/*  nearly never occurs */
+   if (nb < READSZ) {
       break;
     }
+#endif
   }
   ctx->buflen += count;
   freelog(LOG_DEBUG, "mrc count=%d (buflen=%d)", count, ctx->buflen);
