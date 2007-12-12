@@ -3121,7 +3121,7 @@ void key_my_ai_trade_city(void)
     hover_state = HOVER_MY_AI_TRADE_CITY;
     hover_unit = 0;
     update_hover_cursor();
-    }
+  }
 }
 
 /**************************************************************************

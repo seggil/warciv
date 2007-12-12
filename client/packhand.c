@@ -526,11 +526,7 @@ void handle_city_info(struct packet_city_info *packet)
     improvement_status_init(pcity->improvements,
 			    ARRAY_SIZE(pcity->improvements));
   }
-  if(pcity->owner==game.player_idx&&!are_worklists_equal(&pcity->worklist, &packet->worklist))
-	  change_wonder=TRUE;
   copy_worklist(&pcity->worklist, &packet->worklist);
-  if(change_wonder)
-	  my_ai_worklist_event(pcity);
   pcity->did_buy=packet->did_buy;
   pcity->did_sell=packet->did_sell;
   pcity->was_happy=packet->was_happy;
@@ -724,9 +720,8 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     pcity->id=packet->id;
     idex_register_city(pcity);
     city_autonaming_add_used_name (packet->name);
-	pcity->rally_point=NULL;
-	trade_route_list_init(&pcity->trade_routes);
-	help_wonder_list_init(&pcity->help_wonders);
+    pcity->rally_point = NULL;
+    trade_route_list_init(&pcity->trade_routes);
   }
   else {
     city_is_new = FALSE;

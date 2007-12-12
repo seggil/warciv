@@ -1395,7 +1395,6 @@ static void tilespec_lookup_sprite_tags(void)
   SET_SPRITE(unit.patrol,       "unit.patrol");
   SET_SPRITE(unit.lowfuel, "unit.lowfuel");
   SET_SPRITE(unit.tired, "unit.tired");
-  sprites.unit.wonder = load_sprite("unit.wonder");
 
   for(i=0; i<NUM_TILES_HP_BAR; i++) {
     my_snprintf(buffer, sizeof(buffer), "unit.hp_%d", i*10);
@@ -2008,9 +2007,6 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
     switch(punit->my_ai.activity) {
       case MY_AI_TRADE_ROUTE:
         s = sprites.unit.trade;
-        break;
-      case MY_AI_HELP_WONDER:
-        s = sprites.unit.wonder;
         break;
       case MY_AI_PATROL:
         s = sprites.unit.patrol;

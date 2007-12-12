@@ -34,7 +34,6 @@ enum peppage {
   PAGE_MS,
   PAGE_DG,
   PAGE_TRADE,
-  PAGE_WONDER,
   PAGE_NUM
 };
 
@@ -70,22 +69,11 @@ extern bool spread_allied_cities;
 
 extern enum my_ai_level my_ai_trade_level;
 extern int my_ai_establish_trade_route_level;
-extern int my_ai_trade_mode;
 extern bool my_ai_trade_external;
 extern bool my_ai_trade_manual_trade_route_enable;
 extern int my_ai_trade_plan_time_max;
 extern bool my_ai_trade_plan_recalculate_auto;
 extern bool my_ai_trade_plan_change_homecity;
-
-extern enum my_ai_level my_ai_wonder_level;
-
-extern enum my_ai_level my_ai_attack_level;
-extern int my_ai_attack_min;
-extern int my_ai_delayed_attack_delay;
-extern int my_ai_attack_city_power_req;
-
-extern enum my_ai_level my_ai_defend_level;
-extern int my_ai_defend_city_power_req;
 
 #define DEFAULT_LOAD_PEPSETTINGS_MODE 7
 #define MIN_LOAD_PEPSETTINGS_MODE 0
@@ -143,8 +131,8 @@ extern int my_ai_defend_city_power_req;
 
 #define DEFAULT_SPREAD_ALLY FALSE
 
-#define DEFAULT_MS_INCLUSIVE FILTER_ABLE_TO_MOVE|FILTER_IDLE
-#define DEFAULT_MS_EXCLUSIVE FILTER_FORTIFIED|FILTER_SENTRIED|FILTER_AUTO
+#define DEFAULT_MS_INCLUSIVE FILTER_ABLE_TO_MOVE | FILTER_IDLE
+#define DEFAULT_MS_EXCLUSIVE FILTER_FORTIFIED | FILTER_SENTRIED | FILTER_AUTO
 
 #define DEFAULT_DG_LIMIT 0
 #define MIN_DG_LIMIT 0
@@ -184,10 +172,6 @@ extern int my_ai_defend_city_power_req;
 #define DEFAULT_MY_AI_TRADE_PLAN_AUTO TRUE
 
 #define DEFAULT_MY_AI_TRADE_PLAN_HOMECITY FALSE
-
-#define DEFAULT_MY_AI_WONDER_LEVEL LEVEL_GOOD
-#define MIN_MY_AI_WONDER_LEVEL LEVEL_OFF
-#define MAX_MY_AI_WONDER_LEVEL LEVEL_BEST
 
 #define PSGEN_BOOL(page, name, desc, help, value) \
   {page, #name, desc, help, TYPE_BOOL, &name, DEFAULT_##value, FALSE, TRUE}

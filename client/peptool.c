@@ -45,12 +45,11 @@
 ***********************************************************************/
 const char *pepsettings_file_name(void);
 
-static const char *peppagenames[] = {
+static const char *peppagenames[PAGE_NUM] = {
   N_("Main"),
   N_("Multi-Selection"),
   N_("Delayed Goto"),
   N_("Trade"),
-  N_("Wonder")
 };
 
 static int turns = 0;
@@ -70,7 +69,6 @@ bool spread_allied_cities;
 
 enum my_ai_level my_ai_trade_level;
 int my_ai_establish_trade_route_level;
-int my_ai_trade_mode;
 bool my_ai_trade_manual_trade_route_enable;
 bool my_ai_trade_external;
 int my_ai_trade_plan_level;
@@ -78,16 +76,6 @@ int my_ai_trade_plan_time_max;
 bool my_ai_trade_plan_enable_free_slots;
 bool my_ai_trade_plan_recalculate_auto;
 bool my_ai_trade_plan_change_homecity;
-
-enum my_ai_level my_ai_wonder_level;
-
-enum my_ai_level my_ai_attack_level;
-int my_ai_attack_min;
-int my_ai_delayed_attack_delay;
-int my_ai_attack_city_power_req;
-
-enum my_ai_level my_ai_defend_level;
-int my_ai_defend_city_power_req;
 
 /********************************************************************** 
   Settings definitions.
@@ -251,14 +239,6 @@ static struct pepsetting static_pepsettings[] = {
                "routes with\n\n"
                "Note that more the value is huge, more it will be slow"),
             MY_AI_ESTABLISH_LEVEL),
-  PSGEN_INT(PAGE_TRADE, my_ai_trade_mode,
-            N_("Automatic trade mode"),
-            N_("0: Off\n"
-               "1: Best trade only (go where the trade is the best, "
-               "depreciated)\n"
-               "2: Trade planning only\n"
-               "3: Trade planning or best trade (using best trade if there "
-               "is no more planned trade route)"), MY_AI_TRADE_MODE),
   PSGEN_BOOL(PAGE_TRADE, my_ai_trade_manual_trade_route_enable,
              N_("Allow manual trade orders"),
              N_("If this option is enabled, the client will take care about "
@@ -283,13 +263,6 @@ static struct pepsetting static_pepsettings[] = {
                 "checking for other cities trade routes."),
              MY_AI_TRADE_PLAN_HOMECITY),
 
-  PSGEN_INT(PAGE_WONDER, my_ai_wonder_level,
-            N_("Automatic help wonder order level"),
-            N_("0: Off\n"
-               "1: On\n"
-               "2: Good\n"
-               "3: Best level"),
-            MY_AI_WONDER_LEVEL),
   PSGEN_END
 };
 
@@ -626,8 +599,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
     struct airlift_queue tairliftqueue[AIRLIFT_QUEUE_NUM];
     struct trade_route_list ttraders, ttradeplan;
     struct city_list trallypoint, ttradecities;
-    struct hw_unit_list thelpers;
-    struct unit_list tpatrolers, tnoners;
+    struct unit_list tpatrolers;
 
     city_list_init(&trallypoint);
     for (i = 0; i < MULTI_SELECT_NUM; i++) {
@@ -645,9 +617,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
     trade_route_list_init(&ttraders);
     trade_route_list_init(&ttradeplan);
     city_list_init(&ttradecities);
-    hw_unit_list_init(&thelpers);
     unit_list_init(&tpatrolers);
-    unit_list_init(&tnoners);
 
     /* Load the rally points */
     num = secfile_lookup_int_default(psf, -1, "dynamic.rally.city_num");
@@ -743,43 +713,6 @@ static void base_load_dynamic_settings(struct section_file *psf)
       }
     }
 
-    /* Auto help-wonder */
-    num = secfile_lookup_int_default(psf, -1, "dynamic.help_wonder.unit_num");
-    for (i = 0; i < num; i++) {
-      struct help_wonder *thw = NULL, *bhw = NULL, *fhw = NULL;
-      int id, level;
-
-      load_owner(unit, punit, "dynamic.help_wonder.unit%d", i) {
-	load_owner(city, pcity, "dynamic.help_wonder.unit%d.city", i) {
-	  id = secfile_lookup_int_default(psf, -1,
-					  "dynamic.help_wonder.unit%d.wid", i);
-	  level = secfile_lookup_int_default(psf, -1,
-					 "dynamic.help_wonder.unit%d.level", i);
-	  help_wonder_list_iterate(pcity->help_wonders, phw) {
-	    if (phw->id == id) {
-	      if (phw->level == level) {
-		thw = phw;
-		break;
-	      } else {
-		bhw = phw;
-	      }
-	    } else {
-	      fhw = phw;
-	    }
-	  } help_wonder_list_iterate_end;
-	  bhw = thw ? thw : (bhw ? bhw : fhw);
-	  if (bhw) {
-	    struct hw_unit *phwu = fc_malloc(sizeof(struct hw_unit));
-	    phwu->punit = punit;
-	    phwu->phw = bhw;
-	    hw_unit_list_append(&thelpers, phwu);
-	  } else {
-	    unit_list_append(&tnoners, punit);
-	  }
-	}
-      }
-    }
-
     /* Load patrolling units */
     num = secfile_lookup_int_default(psf, -1, "dynamic.patrol.unit_num");
     for (i = 0; i < num; i++) {
@@ -790,14 +723,6 @@ static void base_load_dynamic_settings(struct section_file *psf)
 	  cunit->my_ai.data = (void *)ptile;
 	  unit_list_append(&tpatrolers, cunit);
 	}
-      }
-    }
-
-    /* Load unused units */
-    num = secfile_lookup_int_default(psf, -1, "dynamic.none.unit_num");
-    for (i = 0; i < num; i++) {
-      load_owner(unit, punit, "dynamic.none.unit%d", i) {
-	unit_list_append(&tnoners, punit);
       }
     }
 
@@ -851,19 +776,10 @@ static void base_load_dynamic_settings(struct section_file *psf)
       my_ai_orders_free(ptr->punit);
       my_ai_trade_route_alloc(ptr);
     } trade_route_list_iterate_end;
-    hw_unit_list_iterate(thelpers, phwu) {
-      my_ai_orders_free(phwu->punit);
-      my_ai_help_wonder_alloc(phwu->punit, phwu->phw);
-    } hw_unit_list_iterate_end;
     unit_list_iterate(tpatrolers, cunit) {
       struct unit *punit = player_find_unit_by_id(game.player_ptr, cunit->id);
       my_ai_orders_free(punit);
       my_ai_patrol_alloc(punit, (struct tile *)cunit->my_ai.data);
-    } unit_list_iterate_end;
-    unit_list_iterate(tnoners, punit) {
-      if (!punit->my_ai.control) {
-	my_ai_none(punit);
-      }
     } unit_list_iterate_end;
     update_unit_info_label(get_unit_in_focus());
 
@@ -882,9 +798,7 @@ free_datas:
     trade_route_list_unlink_all(&ttraders);
     trade_route_list_free(&ttradeplan);
     city_list_unlink_all(&ttradecities);
-    hw_unit_list_free(&thelpers);
     unit_list_free(&tpatrolers);
-    unit_list_unlink_all(&tnoners);
   }
 
 end:
@@ -1196,20 +1110,6 @@ void save_all_settings(void)
     i++;
   } trade_route_list_iterate_end;
 
-  /* Help wonders */
-  pul = my_ai_get_units(MY_AI_HELP_WONDER);
-  secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
-			     "dynamic.help_wonder.unit_num");
-  i = 0;
-  unit_list_iterate(*pul, punit) {
-    struct help_wonder *phw = (struct help_wonder *)punit->my_ai.data;
-    save_unit(&sf, punit, "dynamic.help_wonder.unit%d", i);
-    save_city(&sf, phw->pcity, "dynamic.help_wonder.unit%d.city", i);
-    secfile_insert_int(&sf, phw->id, "dynamic.help_wonder.unit%d.wid", i);
-    secfile_insert_int(&sf, phw->level, "dynamic.help_wonder.unit%d.level", i);
-    i++;
-  } unit_list_iterate_end;
-
   /* Patrolling units */
   pul = my_ai_get_units(MY_AI_PATROL);
   secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
@@ -1219,16 +1119,6 @@ void save_all_settings(void)
     save_unit(&sf, punit, "dynamic.patrol.unit%d", i);
     save_tile(&sf, (struct tile *)punit->my_ai.data,
 	      "dynamic.patrol.unit%d.tile", i);
-    i++;
-  } unit_list_iterate_end;
-
-  /* Unused units */
-  pul = my_ai_get_units(MY_AI_NONE);
-  secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
-			     "dynamic.none.unit_num");
-  i = 0;
-  unit_list_iterate(*pul, punit) {
-    save_unit(&sf, punit, "dynamic.none.unit%d", i);
     i++;
   } unit_list_iterate_end;
 

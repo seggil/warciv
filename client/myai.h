@@ -27,17 +27,13 @@ const char *my_ai_unit_activity(struct unit *punit);
 const char *my_ai_unit_orders(struct unit *punit);
 const struct unit_list *my_ai_get_units(enum my_ai_activity activity);
 
-void my_ai_goto_nearest_city(struct unit *punit);
 void my_ai_caravan(struct unit *punit);
-void my_ai_none(struct unit *punit);
 
 void my_ai_orders_free(struct unit *punit);
 void my_ai_unit_execute(struct unit *punit);
 void my_ai_execute(void);
 
-void my_ai_worklist_event(struct city *pcity);
 void my_ai_city_free(struct city *pcity);
-void my_ai_help_wonder_city_free(struct city *pcity);
 
 void my_ai_init(void);
 void my_ai_free(void);
@@ -70,14 +66,6 @@ void clear_my_ai_trade_cities(void);
 void show_free_slots_in_trade_plan(void);
 void recalculate_trade_plan(void);
 void calculate_trade_estimation(void);
-
-/********************************************************************** 
-  Help Wonder functions.
-***********************************************************************/
-void my_ai_help_wonder_alloc(struct unit *punit, struct help_wonder *phw);
-void my_ai_help_wonder_execute(struct unit *punit);
-void my_ai_help_wonder_execute_all(void);
-void my_ai_help_wonder_free(struct unit *punit);
 
 /********************************************************************** 
   Patrol functions.

@@ -269,7 +269,6 @@ enum MenuID {
   MENU_AUTO_CARAVAN_MY_AI_TRADE_WITH,
   MENU_AUTO_CARAVAN_MY_AI_CARAVAN,
   MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE,
-  MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE,
 
   MENU_MULTI_SELECTION_MS_SELECT,
   MENU_MULTI_SELECTION_MS_ACTIVE_ALL,
@@ -1226,9 +1225,6 @@ static void auto_caravan_menu_callback(gpointer callback_data,
       break;
     case MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE:
       my_ai_trade_route_execute_all();
-      break;
-    case MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE:
-      my_ai_help_wonder_execute_all();
       break;
   }
 }
@@ -2518,8 +2514,6 @@ static GtkItemFactoryEntry menu_items[]	=
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_CARAVAN	},
   { "/" N_("Auto Caravan") "/" N_("_Execute all trade route orders"), "<shift>j",
 	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_TRADE_EXECUTE	},
-  { "/" N_("Auto Caravan") "/" N_("Execute all help _wonder orders"), "<shift>i",
-	auto_caravan_menu_callback,	MENU_AUTO_CARAVAN_MY_AI_WONDER_EXECUTE	},
 
  /* Multi-Selection menu ...*/
   { "/" N_("_Multi-Selection"),					NULL,
@@ -3752,14 +3746,21 @@ void update_auto_caravan_menu(void)
 
   bool cond = city_list_size(my_ai_get_trade_cities()) > 0;
 
-  menus_set_sensitive("<main>/Auto Caravan/Clear city list for trade plan", cond);
+  menus_set_sensitive("<main>/Auto Caravan/Clear city list for trade plan",
+		      cond);
   menus_set_sensitive("<main>/Auto Caravan/Show cities in trade plan", cond);
-  menus_set_sensitive("<main>/Auto Caravan/Show the trade route free slots", cond);
-  menus_set_sensitive("<main>/Auto Caravan/Show trade estimation", (my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0)
-                                                                    || (my_ai_trade_manual_trade_route_enable && trade_route_list_size(estimate_non_ai_trade_route())));
+  menus_set_sensitive("<main>/Auto Caravan/Show the trade route free slots",
+		      cond);
+  menus_set_sensitive("<main>/Auto Caravan/Show trade estimation",
+		      (my_ai_trade_level
+		       && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0)
+		      || (my_ai_trade_manual_trade_route_enable
+			  && trade_route_list_size(
+			         estimate_non_ai_trade_route()) > 0));
   menus_set_sensitive("<main>/Auto Caravan/Recalculate trade plan", cond);
-  menus_set_sensitive("<main>/Auto Caravan/Execute all trade route orders", my_ai_trade_level && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0);
-  menus_set_sensitive("<main>/Auto Caravan/Execute all help wonder orders", my_ai_wonder_level && my_ai_count_activity(MY_AI_HELP_WONDER) > 0);
+  menus_set_sensitive("<main>/Auto Caravan/Execute all trade route orders",
+		      my_ai_trade_level
+		      && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0);
 }
 
 /****************************************************************
@@ -4234,33 +4235,51 @@ void update_menus(void)
       menus_set_sensitive("<main>/Delayed Goto/Delayed goto", TRUE);
       menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", TRUE);
       cond = (my_ai_enable && unit_type(punit)->fuel > 0);
-      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", cond && !can_unit_do_activity(punit,ACTIVITY_AIRBASE));
-      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", cond);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", TRUE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", TRUE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", TRUE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", TRUE);
-      cond=(my_ai_trade_level && unit_flag(punit,F_TRADE_ROUTE));
-      menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", my_ai_enable && cond);
-      menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", my_ai_enable && (cond || (my_ai_wonder_level
-		&& unit_flag(punit,F_HELP_WONDER))));
-      menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", punit->my_ai.control);
-      menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders", my_ai_enable && punit->my_ai.control);
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol",
+			  cond
+			  && !can_unit_do_activity(punit, ACTIVITY_AIRBASE));
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination",
+			  cond);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection select",
+			  TRUE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection "
+			  "active all units", TRUE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear",
+			  TRUE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread",
+			  TRUE);
+      cond = (my_ai_trade_level && unit_flag(punit, F_TRADE_ROUTE));
+      menus_set_sensitive("<main>/Auto Caravan/Set caravan destination",
+			  my_ai_enable && cond);
+      menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders",
+			  my_ai_enable && cond);
+      menus_set_sensitive("<main>/Miscellaneous/Free automatic orders",
+			  punit->my_ai.control);
+      menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders",
+			  my_ai_enable && punit->my_ai.control);
 
       menus_set_sensitive("<main>/_Orders", TRUE);
     } else {
       menus_set_sensitive("<main>/Delayed Goto/Delayed goto", FALSE);
-      menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke", FALSE);
+      menus_set_sensitive("<main>/Delayed Goto/Delayed paradrop or nuke",
+			  FALSE);
       menus_set_sensitive("<main>/Miscellaneous/Airplane patrol", FALSE);
-      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination", FALSE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection select", FALSE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection active all units", FALSE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear", FALSE);
-      menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread", FALSE);
-      menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders", FALSE);
+      menus_set_sensitive("<main>/Miscellaneous/Airplane patrol destination",
+			  FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection select",
+			  FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection "
+			  "active all units", FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection clear",
+			  FALSE);
+      menus_set_sensitive("<main>/Multi-Selection/Multi-selection spread",
+			  FALSE);
+      menus_set_sensitive("<main>/Auto Caravan/Automatic caravan orders",
+			  FALSE);
       menus_set_sensitive("<main>/Auto Caravan/Set caravan destination", FALSE);
       menus_set_sensitive("<main>/Miscellaneous/Free automatic orders", FALSE);
-      menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders", FALSE);
+      menus_set_sensitive("<main>/Miscellaneous/Execute automatic orders",
+			  FALSE);
 
       menus_set_sensitive("<main>/_Orders", FALSE);
     }

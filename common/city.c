@@ -2546,11 +2546,9 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   unit_list_init(&pcity->units_supported);
   pcity->debug = FALSE;
 
-//*pepeto*
-  pcity->rally_point=NULL;
+  pcity->rally_point = NULL;
 
   trade_route_list_init(&pcity->trade_routes);
-  help_wonder_list_init(&pcity->help_wonders);
 
   return pcity;
 }

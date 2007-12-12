@@ -86,23 +86,17 @@ struct toggle_worker
 
 static automatic_processus *my_ai_auto_execute; /* Include all others */
 static automatic_processus *my_ai_trade_auto_execute;
-static automatic_processus *my_ai_wonder_auto_execute;
 static automatic_processus *my_ai_patrol_auto_execute;
 
 static struct city_list trade_cities;        /* Cities for trade planning */
 static struct trade_route_list trade_plan;   /* Trade planning */
 static struct trade_route_list non_ai_trade; /* Manual trade */
-static struct unit_list noners;              /* Unused units */
 static struct unit_list traders;             /* Caravans doing trade */
-static struct unit_list helpers;             /* Caravans helping for wonders */
 static struct unit_list patrolers;           /* Air patrol units */
-static struct unit_list temp;
-static bool my_ai_update = FALSE;
 
-static const char *my_ai_activities[] = {
+static const char *my_ai_activities[MY_AI_LAST] = {
   N_("Automatic orders"),
   N_("Auto trade route"),
-  N_("Auto help wonder"),
   N_("Patrolling")
 };
 
@@ -110,18 +104,11 @@ static const char *my_ai_activities[] = {
   Unit auto-trade 
 **************************************************************************/
 void update_trade_route(struct trade_route *ptr);
-int my_city_num_trade_routes(struct city *pcity, bool all);
-int trade_route_value(struct city *pc1, struct city *pc2);
-int city_min_trade_route(struct city *pcity, struct trade_route **pptr);
+int my_city_num_trade_routes(struct city *pcity);
 struct trade_route *find_same_trade_route(struct trade_route *ptr);
 int calculate_move_trade_cost(struct unit *punit,
 			      struct city *pc1, struct city *pc2);
 int calculate_best_move_trade_cost(struct trade_route *ptr);
-struct trade_route *can_establish_new_trade_route(struct unit *punit,
-						  struct city *pc1,
-						  struct city *pc2);
-struct trade_route *best_city_trade_route(struct unit *punit,
-					  struct city *pcity);
 struct trade_route *trade_route_list_find_cities(struct trade_route_list *ptrl,
 						 struct city *pc1,
 						 struct city *pc2);
@@ -142,15 +129,13 @@ struct trade_route *trade_route_new(struct unit *punit, struct city *pc1,
   ptr->punit = punit;
   ptr->pc1 = pc1;
   ptr->pc2 = pc2;
-  ptr->ptr0 = ptr->ptr1 = ptr->ptr2 = NULL;
+  ptr->ptr = NULL;
   ptr->planned = planned;
   if (punit) {
-    ptr->tr_type = TR_NONE;
     /* For moves_req, turns_req and trade values */
     update_trade_route(ptr);
   } else {
     /* Case trade planning */
-    ptr->tr_type = TR_NEW;
     ptr->trade = trade_between_cities(pc1, pc2);
   }
 
@@ -172,9 +157,9 @@ void update_trade_route(struct trade_route *ptr)
 /**************************************************************************
   Estime the number of trade routes (established + planned + in route).
 **************************************************************************/
-int my_city_num_trade_routes(struct city *pcity, bool all)
+int my_city_num_trade_routes(struct city *pcity)
 {
-  int num = all ? trade_route_list_size(&pcity->trade_routes) : 0;
+  int num = trade_route_list_size(&pcity->trade_routes);
 
   if (pcity->owner == game.player_idx) {
     return num + city_num_trade_routes(pcity);
@@ -187,57 +172,6 @@ int my_city_num_trade_routes(struct city *pcity, bool all)
   } city_list_iterate_end;
 
   return num;
-}
-
-/**************************************************************************
-  Returns the current value of a trade route.
-**************************************************************************/
-int trade_route_value(struct city *pc1, struct city *pc2)
-{
-  int i;
-  
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    if (pc1->trade[i] == pc2->id) {
-      return pc1->trade_value[i];
-    }
-  }
-  return FC_INFINITY;
-}
-
-/**************************************************************************
-  Returns the current value of a trade route.
-**************************************************************************/
-int city_min_trade_route(struct city *pcity, struct trade_route **pptr)
-{
-  if (!pcity) {
-    return FC_INFINITY;
-  }
-
-  int min;
-
-  if (pcity->owner == game.player_idx) {
-    min = get_city_min_trade_route(pcity, NULL);
-  } else {
-    min = FC_INFINITY;
-    city_list_iterate(game.player_ptr->cities, ocity) {
-      int value = trade_route_value(ocity, pcity);
-
-      if (value < min) {
-        min = value;
-      }
-    } city_list_iterate_end;
-  }
-
-  *pptr = NULL;
-  trade_route_list_iterate(pcity->trade_routes, ptr) {
-    update_trade_route(ptr);
-    if (ptr->trade <= min) {
-      min = ptr->trade;
-      *pptr = ptr;
-    }
-  } trade_route_list_iterate_end;
-
-  return min;
 }
 
 /**************************************************************************
@@ -258,7 +192,8 @@ struct trade_route *find_same_trade_route(struct trade_route *ptr)
   Returns the move cost a unit need to go to pc1
   (if it's not the home city) and pc2.
 **************************************************************************/
-int calculate_move_trade_cost(struct unit *punit,struct city *pc1,struct city *pc2)
+int calculate_move_trade_cost(struct unit *punit,
+			      struct city *pc1, struct city *pc2)
 {
   if (punit->homecity == pc1->id) {
     return calculate_move_cost(punit, pc2->tile);
@@ -286,7 +221,7 @@ int calculate_best_move_trade_cost(struct trade_route *ptr)
   }
 
   int mtc1 = calculate_move_trade_cost(ptr->punit, ptr->pc1, ptr->pc2);
-  int mtc2 = calculate_move_trade_cost(ptr->punit,ptr->pc2,ptr->pc1);
+  int mtc2 = calculate_move_trade_cost(ptr->punit, ptr->pc2, ptr->pc1);
 
   if (mtc2 >= mtc1) {
     return mtc1;
@@ -294,149 +229,6 @@ int calculate_best_move_trade_cost(struct trade_route *ptr)
   swap(struct city *, ptr->pc1, ptr->pc2);
 
   return mtc2;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-struct trade_route *can_establish_new_trade_route(struct unit *punit,
-						  struct city *pc1,
-						  struct city *pc2)
-{
-  if (!can_cities_trade(pc1, pc2) || pc1==pc2
-      || have_cities_trade_route(pc1, pc2)) {
-    return NULL;
-  }
-
-  struct trade_route *ptr = trade_route_new(punit, pc1, pc2, FALSE);
-  if (!ptr) {
-    return NULL;
-  }
-
-  ptr->tr_type = TR_NEW;
-  if (my_ai_trade_level == LEVEL_ON) {
-    if (my_city_num_trade_routes(ptr->pc1, FALSE) == NUM_TRADEROUTES) {
-      ptr->tr_type = TR_REMP;
-      if (get_city_min_trade_route(pc1 ,NULL) >= ptr->trade) {
-        free(ptr);
-        return NULL;
-      }
-    }
-    if (my_city_num_trade_routes(ptr->pc2, FALSE) == NUM_TRADEROUTES) {
-      ptr->tr_type = TR_REMP;
-      if (get_city_min_trade_route(ptr->pc2, NULL) >= ptr->trade) {
-        free(ptr);
-        return NULL;
-      }
-    }
-    return ptr;
-  }
-  ptr->ptr0 = find_same_trade_route(ptr);
-  if (ptr->ptr0) {
-    update_trade_route(ptr->ptr0);
-    if (ptr->turns_req < ptr->ptr0->turns_req
-	|| (ptr->turns_req == ptr->ptr0->turns_req
-	    && ptr->moves_req > ptr->ptr0->moves_req)) {
-       ptr->tr_type = ptr->ptr0->tr_type;
-       ptr->planned = ptr->ptr0->planned;
-       return ptr;
-    }
-    free(ptr);
-    return NULL;
-  }
-  if (my_city_num_trade_routes(ptr->pc1, TRUE) >= NUM_TRADEROUTES) {
-    if (city_min_trade_route(ptr->pc1, &ptr->ptr1) < ptr->trade) {
-      ptr->tr_type = TR_REMP;
-    } else {
-      free(ptr);
-      return NULL;
-    }
-  }
-  if (my_city_num_trade_routes(ptr->pc2, TRUE) >= NUM_TRADEROUTES) {
-    if (city_min_trade_route(ptr->pc2, &ptr->ptr2) < ptr->trade) {
-      ptr->tr_type = TR_REMP;
-    } else {
-      free(ptr);
-      return NULL;
-    }
-  }
-  return ptr;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-struct trade_route *best_city_trade_route(struct unit *punit,
-					  struct city *pcity)
-{
-  if (!pcity) {
-    return NULL;
-  }
-
-  struct trade_route *btr = NULL, *ptr;
-  Continent_id continent = punit->tile->continent;
-
-  if (my_ai_trade_external) {
-    cities_iterate(pc) {
-      if (pc->tile->continent != continent) {
-        continue;
-      }
-
-      if (btr) {
-        ptr = can_establish_new_trade_route(punit, pcity, pc);
-        if (ptr) {
-          if (ptr->tr_type == btr->tr_type) {
-            if (ptr->trade == btr->trade) {
-              if (ptr->turns_req < btr->turns_req) {
-                if (ptr->moves_req > btr->moves_req) {
-                  swap(struct trade_route *, btr, ptr);
-		}
-              } else if (ptr->turns_req < btr->turns_req) {
-                swap(struct trade_route *, btr, ptr);
-	      }
-            } else if (ptr->trade>btr->trade) {
-              swap(struct trade_route *, btr, ptr);
-	    }
-          } else if (ptr->tr_type>btr->tr_type) {
-	    swap(struct trade_route *, btr, ptr);
-	  }
-          free(ptr);
-        }
-      } else {
-        btr = can_establish_new_trade_route(punit, pcity, pc);
-      }
-    } cities_iterate_end;
-  } else {
-    city_list_iterate(game.player_ptr->cities, pc) {
-      if (pc->tile->continent != continent) {
-        continue;
-      }
-      if (btr) {
-        ptr = can_establish_new_trade_route(punit, pcity, pc);
-        if (ptr) {
-          if (ptr->tr_type == btr->tr_type) {
-            if (ptr->trade == btr->trade) {
-              if (ptr->turns_req < btr->turns_req) {
-                if (ptr->moves_req > btr->moves_req) {
-                  swap(struct trade_route *, btr, ptr);
-		}
-              } else if (ptr->turns_req < btr->turns_req) {
-                swap(struct trade_route *, btr, ptr);
-	      }
-            } else if (ptr->trade>btr->trade) {
-              swap(struct trade_route *, btr, ptr);
-	    }
-          } else if (ptr->tr_type>btr->tr_type) {
-	    swap(struct trade_route *, btr, ptr);
-	  }
-          free(ptr);
-        }
-      } else {
-        btr = can_establish_new_trade_route(punit, pcity, pc);
-      }
-    } city_list_iterate_end;
-  }
-  return btr;
 }
 
 /**************************************************************************
@@ -772,11 +564,9 @@ void release_trade(struct genlist *ptcity)
 void my_ai_trade_route_alloc(struct trade_route *ptr)
 {
   char buf[1024];
-  struct trade_route *ptr0 = ptr->ptr0, *ptr1 = ptr->ptr1, *ptr2 = ptr->ptr2;
+  struct trade_route *ptr0 = ptr->ptr;
   struct unit *punit = ptr->punit;
   struct unit *punit0 = ptr0 ? ptr0->punit : NULL;
-  struct unit *punit1 = ptr1 ? ptr1->punit : NULL;
-  struct unit *punit2 = ptr2 ? ptr2->punit : NULL;
 
   freelog(LOG_VERBOSE, "alloc auto-trade orders for %s (%d, %d)",
 	  unit_name(punit->type), TILE_XY(punit->tile));
@@ -788,9 +578,7 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
   trade_route_list_unlink(&trade_plan, ptr);
   trade_route_list_append(&ptr->pc1->trade_routes, ptr);
   trade_route_list_append(&ptr->pc2->trade_routes, ptr);
-  ptr->ptr0 = NULL;
-  ptr->ptr1 = NULL;
-  ptr->ptr2 = NULL;
+  ptr->ptr = NULL;
   update_trade_route(ptr);
   my_snprintf(buf, sizeof(buf),
 	      _("PepClient: Sending %s %d to establish trade route "
@@ -802,16 +590,6 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
     if (ptr0 && punit0 && punit0->my_ai.data == ptr0) {
       my_ai_trade_route_free(punit0);
       my_ai_caravan(punit0);
-    }
-    if (my_ai_trade_level == LEVEL_BEST) {
-      if (ptr1 && punit1 && punit1->my_ai.data == ptr1) {
-        my_ai_trade_route_free(punit1);
-        my_ai_caravan(punit1);
-      }
-      if (ptr2 && punit2 && punit2->my_ai.data == ptr2) {
-        my_ai_trade_route_free(punit2);
-        my_ai_caravan(punit2);
-      }
     }
   }
   /* Maybe the route was free */
@@ -997,7 +775,7 @@ void calculate_trade_planning(char *buf, size_t buf_len);
 ****************************************************************************/
 int get_real_trade_route_number(struct city *pcity)
 {
-  return my_city_num_trade_routes(pcity, TRUE)
+  return my_city_num_trade_routes(pcity)
          + estimate_non_ai_trade_route_number(pcity);
 }
 
@@ -1560,7 +1338,7 @@ void non_ai_trade_change(struct unit *punit, int action)
 **************************************************************************/
 int count_trade_routes(struct city *pcity)
 {
-  int count = my_city_num_trade_routes(pcity, TRUE);
+  int count = my_city_num_trade_routes(pcity);
 
   trade_route_list_iterate(trade_plan, ptr) {
     if (ptr->pc1 == pcity || ptr->pc2 == pcity) {
@@ -1593,395 +1371,6 @@ const struct city_list *my_ai_get_trade_cities(void)
 void set_trade_planning(const struct trade_route_list *ptrl)
 {
   trade_route_list_copy(&trade_plan, ptrl);
-}
-
-/**************************************************************************
-  my_ai_help_wonder
-**************************************************************************/
-struct help_wonder *help_wonder_new(struct city *pcity, int level, int id);
-void help_wonder_destroy(struct help_wonder *phw);
-int calculate_shield_cost(struct help_wonder *phw);
-void update_help_wonders(struct help_wonder *phw);
-struct help_wonder *find_first_wonder(struct unit *punit, struct city *pcity,
-				      struct help_wonder_list *pwhlist);
-struct help_wonder *best_wonder(struct unit *punit);
-struct unit *find_first_helper(struct city *pcity,
-			       struct help_wonder_list *phwlist);
-bool realloc_help_wonder(struct city *pcity, struct help_wonder_list *dest,
-			 struct help_wonder_list *src);
-int are_wonders_list_equal(struct help_wonder_list *old,
-			   struct help_wonder_list *new);
-
-/**************************************************************************
-  ...
-**************************************************************************/
-struct help_wonder *help_wonder_new(struct city *pcity, int level, int id)
-{
-  struct help_wonder *phw = fc_malloc(sizeof(struct help_wonder));
-
-  hw_unit_list_init(&phw->units);
-  phw->pcity = pcity;
-  phw->level = level;
-  phw->id = id;
-  return phw;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void help_wonder_destroy(struct help_wonder *phw)
-{
-  hw_unit_list_iterate(phw->units,phw_unit)
-  {
-    unit_list_append(&noners, phw_unit->punit);
-    unit_list_append(&temp, phw_unit->punit);
-    my_ai_help_wonder_free(phw_unit->punit);
-  } hw_unit_list_iterate_end;
-  hw_unit_list_unlink_all(&phw->units);
-  free(phw);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-int calculate_shield_cost(struct help_wonder *phw)
-{
-  int cost = impr_build_shield_cost(phw->id);
-
-  hw_unit_list_iterate(phw->units, phw_unit) {
-    cost -= unit_build_shield_cost(phw_unit->punit->type);
-  } hw_unit_list_iterate_end;
-  return cost;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void update_help_wonders(struct help_wonder *phw)
-{
-  phw->punit0 = NULL;
-  if (phw->level == -1) {
-    phw->wonder_cost = calculate_shield_cost(phw) - phw->pcity->shield_stock;
-    phw->turns = 0;
-  } else {
-    phw->wonder_cost = calculate_shield_cost(phw);
-    struct worklist *pwl = &phw->pcity->worklist;
-    int i;
-
-    phw->turns = city_turns_to_build(phw->pcity,
-				     phw->pcity->currently_building,
-				     phw->pcity->is_building_unit,
-				     TRUE);
-    for (i = 0; i < phw->level; i++) {
-      phw->turns += city_turns_to_build(phw->pcity, pwl->wlids[i],
-					pwl->wlefs[i] == WEF_UNIT,FALSE);
-    }
-  }
-  hw_unit_list_iterate(phw->units, phw_unit) {
-    struct unit *punit = phw_unit->punit;
-    phw_unit->move_req =
-      ((calculate_move_cost(punit, phw->pcity->tile)
-	- punit->virtual_moves_left) * SINGLE_MOVE) / unit_move_rate(punit);
-  } hw_unit_list_iterate_end;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-struct help_wonder *find_first_wonder(struct unit *punit, struct city *pcity,
-				      struct help_wonder_list *pwhlist)
-{
-  if (!pwhlist) {
-    pwhlist = &pcity->help_wonders;
-  }
-  if (my_ai_wonder_level == LEVEL_ON) {
-    struct help_wonder *phw = help_wonder_list_get(pwhlist, 0);
-    if (phw->level != -1) {
-      return NULL;
-    }
-    update_help_wonders(phw);
-    return phw;
-  }
-
-  int min = 0, move_req;
-  move_req = ((calculate_move_cost(punit,pcity->tile)
-	        -punit->virtual_moves_left) * SINGLE_MOVE)
-              / unit_move_rate(punit);
-
-  help_wonder_list_iterate(*pwhlist, phw) {
-    if (my_ai_wonder_level == LEVEL_BEST) {
-      if (phw->level == -1) {
-        min = move_req * pcity->shield_surplus;
-      } else {
-        min = 0;
-      }
-    }
-    update_help_wonders(phw);
-    if (phw->wonder_cost > min) {
-      return phw;
-    } else {
-      hw_unit_list_iterate(phw->units, phw_unit) {
-        if (phw_unit->move_req > move_req) {
-          phw->punit0 = phw_unit->punit;
-          return phw;
-        }
-      } hw_unit_list_iterate_end;
-    }
-  } help_wonder_list_iterate_end;
-  return NULL;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-struct help_wonder *best_wonder(struct unit *punit)
-{
-  Continent_id cid = punit->tile->continent;
-  struct help_wonder *bhw = NULL, *phw = NULL;
-
-  city_list_iterate(game.player_ptr->cities, pcity) {
-    if (pcity->tile->continent != cid
-	|| !help_wonder_list_size(&pcity->help_wonders)) {
-      continue;
-    }
-    if (bhw) {
-      phw = find_first_wonder(punit, pcity, NULL);
-      if (phw && phw->turns < bhw->turns) {
-        bhw = phw;
-      }
-    } else {
-      bhw = find_first_wonder(punit, pcity, NULL);
-    }
-  } city_list_iterate_end;
-  
-  return bhw;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-struct unit *find_first_helper(struct city *pcity,
-			       struct help_wonder_list *phwlist)
-{
-  struct unit *bunit = NULL;
-  int best = FC_INFINITY, cost;
-
-  help_wonder_list_iterate(*phwlist, phw) {
-    hw_unit_list_iterate(phw->units, phw_unit) {
-      cost = calculate_move_cost(phw_unit->punit, pcity->tile);
-      if (!cost) {
-        return phw_unit->punit;
-      }
-      if (cost < best) {
-        bunit = phw_unit->punit;
-      }
-    } hw_unit_list_iterate_end;
-  } help_wonder_list_iterate_end;
-  return bunit;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-bool realloc_help_wonder(struct city *pcity, struct help_wonder_list *dest,
-			 struct help_wonder_list *src)
-{
-  struct unit *punit = find_first_helper(pcity, src);
-
-  if (!punit) {
-    return FALSE;
-  }
-
-  struct help_wonder *phw = find_first_wonder(punit, pcity, dest);
-
-  if (!phw) {
-    return FALSE;
-  }
-
-  my_ai_help_wonder_free(punit);
-  my_ai_help_wonder_alloc(punit, phw);
-  automatic_processus_event(AUTO_ORDERS, punit);
-  return TRUE;
-}
-
-/**************************************************************************
-  Returns:
-  0: yes
-  1: advance
-  2: add
-  3: remove last
-  4: change
-**************************************************************************/
-int are_wonders_list_equal(struct help_wonder_list *old,
-			   struct help_wonder_list *new)
-{
-  int size1 = help_wonder_list_size(old), size2 = help_wonder_list_size(new), i;
-  struct help_wonder *phw1, *phw2;
-
-  /* Are equal ? */
-  if (size1 == size2) {
-    for (i = 0; i < size1; i++) {
-      phw1 = help_wonder_list_get(old, i);
-      phw2 = help_wonder_list_get(new, i);
-      if (phw1->level != phw2->level || phw1->id != phw2->id) {
-        break;
-      }
-    }
-    if (i == size1)
-      return 0;
-  }
-
-  /* Advance ? */
-  bool cond = (size1 && size1 == size2 + 1
-	       && help_wonder_list_get(old, 0)->level == -1);
-  if (size1 == size2 || cond) {
-    for (i = 0; i < size2; i++) {
-      phw1 = help_wonder_list_get(old, i + cond);
-      phw2 = help_wonder_list_get(new, i);
-      if (phw1->level != phw2->level + 1
-	  || phw1->id != phw2->id) {
-        break;
-      }
-    }
-    if (i == size2) {
-      return 1;
-    }
-  }
-
-  /* Add ? */
-  if (size1 < size2) {
-    for (i = 0; i < size1; i++) {
-      phw1 = help_wonder_list_get(old, i);
-      phw2 = help_wonder_list_get(new, i);
-      if (phw1->level != phw2->level
-	  || phw1->id != phw2->id) {
-        break;
-      }
-    }
-    if (i == size1) {
-      return 2;
-    }
-  }
-
-  /* Remove ? */
-  if (size1 > size2) {
-    for (i = 0; i < size2; i++) {
-      phw1 = help_wonder_list_get(old, i);
-      phw2 = help_wonder_list_get(new, i);
-      if (phw1->level != phw2->level
-	  || phw1->id != phw2->id) {
-        break;
-      }
-    }
-    if (i == size2) {
-      return 3;
-    }
-  }
-
-  return 4;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void my_ai_help_wonder_alloc(struct unit *punit, struct help_wonder *phw)
-{
-  struct hw_unit *phw_unit = fc_malloc(sizeof(struct hw_unit));
-
-  freelog(LOG_VERBOSE, "alloc auto-wonders orders for %s (%d, %d)",
-	  unit_name(punit->type), TILE_XY(punit->tile));
-
-  phw_unit->punit = punit;
-  phw_unit->phw = phw;
-  hw_unit_list_append(&phw->units, phw_unit);
-  punit->my_ai.control = TRUE;
-  punit->my_ai.activity = MY_AI_HELP_WONDER;
-  punit->my_ai.data = (void *)phw;
-  unit_list_append(&helpers, punit);
-  if (my_ai_wonder_level == LEVEL_ON) {
-    return;
-  }
-  if (phw->punit0) {
-    my_ai_orders_free(phw->punit0);
-    my_ai_caravan(phw->punit0);
-  }
-  update_auto_caravan_menu();
-  update_miscellaneous_menu();
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void my_ai_help_wonder_execute(struct unit *punit)
-{
-  if (!my_ai_wonder_level) {
-    return;
-  }
-  if (!punit) {
-    freelog(LOG_ERROR, "auto_wonders_orders called with a bad unit");
-    return;
-  }
-  if (!punit->my_ai.control
-      || punit->my_ai.activity != MY_AI_HELP_WONDER) {
-    return;
-  }
-
-  struct help_wonder *phw = (struct help_wonder *)punit->my_ai.data;
-
-  goto_and_request(punit, phw->pcity->tile) {
-    if (phw->level == -1) {
-      char buf[256];
-      dsend_packet_unit_help_build_wonder(&aconnection, punit->id);
-      my_snprintf(buf, sizeof(buf),
-		  _("PepClient: %s helping to %s in %s"),
-		  unit_name(punit->type), get_improvement_name(phw->id),
-		  phw->pcity->name);
-      append_output_window(buf);
-    }
-  }
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void my_ai_help_wonder_execute_all(void)
-{
-  if (!my_ai_enable
-      || my_ai_wonder_level == LEVEL_OFF
-      || unit_list_size(&helpers) == 0) {
-    return;
-  }
-
-  append_output_window(
-    _("PepClient: Executing all automatic help wonder orders..."));
-
-  connection_do_buffer(&aconnection);
-  unit_list_iterate(helpers, punit) {
-    my_ai_help_wonder_execute(punit);
-  } unit_list_iterate_end;
-  connection_do_unbuffer(&aconnection);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void my_ai_help_wonder_free(struct unit *punit)
-{
-  struct help_wonder *phw = (struct help_wonder *)punit->my_ai.data;
-
-  freelog(LOG_VERBOSE, "free auto-wonders orders for %s (%d, %d)",
-	  unit_name(punit->type), TILE_XY(punit->tile));
-
-  hw_unit_list_iterate(phw->units, phw_unit) {
-    if (phw_unit->punit == punit) {
-      hw_unit_list_unlink(&phw->units, phw_unit);
-      free(phw_unit);
-      break;
-    }
-  } hw_unit_list_iterate_end;
-  unit_list_unlink(&helpers, punit);
-  punit->my_ai.activity = MY_AI_NONE;
-  punit->my_ai.data = NULL;
 }
 
 /**************************************************************************
@@ -2253,15 +1642,11 @@ free:
 const struct unit_list *my_ai_get_units(enum my_ai_activity activity)
 {
   switch (activity) {
-    case MY_AI_NONE:
-      return &noners;
     case MY_AI_TRADE_ROUTE:
       return &traders;
-    case MY_AI_HELP_WONDER:
-      return &helpers;
     case MY_AI_PATROL:
       return &patrolers;
-    case MY_AI_LAST:
+    default:
       return NULL;
   }
   return NULL;
@@ -2274,9 +1659,7 @@ const struct unit_list *my_ai_get_units(enum my_ai_activity activity)
 int my_ai_count_activity(enum my_ai_activity activity)
 {
   if (activity == MY_AI_LAST) {
-    return unit_list_size(&noners)
-           + unit_list_size(&traders)
-           + unit_list_size(&helpers)
+    return unit_list_size(&traders)
            + unit_list_size(&patrolers);
   }
   return unit_list_size(my_ai_get_units(activity));
@@ -2317,13 +1700,6 @@ const char *my_ai_unit_orders(struct unit *punit)
 		  ptr->turns_req, PL_("turn", "turns", ptr->turns_req));
       break;
     }
-    case MY_AI_HELP_WONDER:
-    {
-      struct help_wonder *phw = (struct help_wonder *)punit->my_ai.data;
-      my_snprintf(buf, sizeof(buf), _("%s in %s"),
-		  get_improvement_name(phw->id), phw->pcity->name);
-      break;
-    }
     case MY_AI_PATROL:
     {
       struct tile *ptile = (struct tile *)punit->my_ai.data;
@@ -2342,249 +1718,117 @@ const char *my_ai_unit_orders(struct unit *punit)
 }
 
 /**************************************************************************
-  Get a short description of what is doing the unit.
-**************************************************************************/
-void my_ai_goto_nearest_city(struct unit *punit)
-{
-  struct tile *ptile;
-
-  if ((ptile = find_nearest_city(punit, FALSE))) {
-    goto_and_request(punit, ptile) {
-      request_unit_move_done(punit);
-    }
-  }
-}
-
-/**************************************************************************
   Give an auto-order for a caravan.
 **************************************************************************/
 void my_ai_caravan(struct unit *punit)
 {
   if (my_ai_trade_level == LEVEL_OFF || !unit_flag(punit, F_TRADE_ROUTE)) {
-    goto wonders;
+    return;
   }
 
   if (punit->my_ai.control && punit->my_ai.activity == MY_AI_TRADE_ROUTE) {
     my_ai_trade_route_free(punit);
   }
 
-  if (!(my_ai_trade_mode & 2) || trade_route_list_size(&trade_plan) == 0) {
-    goto other_trade;
+  struct trade_route *btr = NULL, *htr = NULL, **pptr;
+
+  trade_route_list_iterate(trade_plan, ptr) {
+    pptr = (!my_ai_trade_plan_change_homecity
+	    && (ptr->pc1->id==punit->homecity
+		|| ptr->pc2->id == punit->homecity) ? &htr : &btr);
+    ptr->punit = punit;
+    update_trade_route(ptr);
+    if (*pptr) {
+      if (ptr->turns_req < (*pptr)->turns_req
+	  || (ptr->turns_req == (*pptr)->turns_req
+	      && (ptr->moves_req>(*pptr)->moves_req
+		  || (ptr->moves_req == (*pptr)->moves_req
+		      && ptr->trade>(*pptr)->trade)))) {
+	*pptr = ptr;
+      }
+    } else {
+      *pptr = ptr;
+    }
+  } trade_route_list_iterate_end;
+  if (htr) {
+    btr = htr;
   }
+  if (my_ai_trade_level == LEVEL_GOOD) {
+    htr = NULL;
+    trade_route_list_iterate(
+      player_find_city_by_id(game.player_ptr, punit->homecity)->trade_routes,
+			     ctr) {
+      if (!ctr->planned) {
+	continue;
+      }
 
-  {
-    /* Trade planning */
-    struct trade_route *btr = NULL, *htr = NULL, **pptr;
+      struct trade_route *ptr = trade_route_new(punit, ctr->pc1,
+						ctr->pc2, TRUE);
 
-    trade_route_list_iterate(trade_plan, ptr) {
-      pptr = (!my_ai_trade_plan_change_homecity
-	      && (ptr->pc1->id==punit->homecity
-		  || ptr->pc2->id == punit->homecity) ? &htr : &btr);
-      ptr->punit = punit;
-      update_trade_route(ptr);
-      if (*pptr) {
-        if (ptr->turns_req < (*pptr)->turns_req
-	    || (ptr->turns_req == (*pptr)->turns_req
-                && (ptr->moves_req>(*pptr)->moves_req
-		    || (ptr->moves_req == (*pptr)->moves_req
-			&& ptr->trade>(*pptr)->trade)))) {
-          *pptr = ptr;
-        }
+      if ((ptr->turns_req < ctr->turns_req
+	   || (ptr->turns_req == ctr->turns_req
+	       && ptr->moves_req > ctr->moves_req))
+	   && (!btr
+	       || (ptr->turns_req < btr->turns_req
+		   || (ptr->turns_req == btr->turns_req
+		       && ptr->moves_req > btr->moves_req)))) {
+	if (htr) {
+	  if (ptr->turns_req < htr->turns_req
+	      || (ptr->turns_req == htr->turns_req
+		  && ptr->moves_req > htr->moves_req)) {
+	    free(htr);
+	  } else {
+	    free(ptr);
+	    continue;
+	  }
+	}
+	ptr->ptr = ctr;
+	htr = ptr;
       } else {
-        *pptr = ptr;
+	free(ptr);
       }
     } trade_route_list_iterate_end;
     if (htr) {
+      htr->ptr->planned = FALSE;
       btr = htr;
     }
-    if (my_ai_trade_level == LEVEL_GOOD) {
-      htr = NULL;
-      trade_route_list_iterate(
-        player_find_city_by_id(game.player_ptr, punit->homecity)->trade_routes,
-			       ctr) {
-        if (!ctr->planned) {
-          continue;
-	}
-
-        struct trade_route *ptr = trade_route_new(punit, ctr->pc1,
-						  ctr->pc2, TRUE);
-
-        if ((ptr->turns_req < ctr->turns_req
-	     || (ptr->turns_req == ctr->turns_req
-		 && ptr->moves_req > ctr->moves_req))
-	     && (!btr
-		 || (ptr->turns_req < btr->turns_req
-		     || (ptr->turns_req == btr->turns_req
-			 && ptr->moves_req > btr->moves_req)))) {
-          if (htr) {
-            if (ptr->turns_req < htr->turns_req
-		|| (ptr->turns_req == htr->turns_req
-		    && ptr->moves_req > htr->moves_req)) {
-              free(htr);
-	    } else {
-              free(ptr);
-              continue;
-            }
-          }
-          ptr->ptr0 = ctr;
-          htr = ptr;
-        } else {
-          free(ptr);
-	}
-      } trade_route_list_iterate_end;
-      if (htr) {
-        htr->ptr0->planned = FALSE;
-        btr = htr;
+  } else if (my_ai_trade_level == LEVEL_BEST) {
+    htr = NULL;
+    unit_list_iterate(traders, tunit) {
+      struct trade_route *utr = (struct trade_route *)punit->my_ai.data;
+      if (!utr || !utr->planned) {
+	continue;
       }
-    } else if (my_ai_trade_level == LEVEL_BEST) {
-      htr = NULL;
-      unit_list_iterate(traders, tunit) {
-        struct trade_route *utr = (struct trade_route *)punit->my_ai.data;
-        if (!utr || !utr->planned) {
-          continue;
+
+      update_trade_route(utr);
+      struct trade_route *ptr = trade_route_new(punit, utr->pc1,
+						utr->pc2, TRUE);
+
+      if ((ptr->turns_req < utr->turns_req
+	   || (ptr->turns_req == utr->turns_req
+	       && ptr->moves_req > utr->moves_req))
+	  && (!btr
+	      || (ptr->turns_req < btr->turns_req
+		  || (ptr->turns_req == btr->turns_req
+		      && ptr->moves_req > btr->moves_req)))) {
+	if (htr) {
+	  free(htr);
 	}
-
-	update_trade_route(utr);
-        struct trade_route *ptr = trade_route_new(punit, utr->pc1,
-						  utr->pc2, TRUE);
-
-        if ((ptr->turns_req < utr->turns_req
-	     || (ptr->turns_req == utr->turns_req
-		 && ptr->moves_req > utr->moves_req))
-	    && (!btr
-		|| (ptr->turns_req < btr->turns_req
-		    || (ptr->turns_req == btr->turns_req
-			&& ptr->moves_req > btr->moves_req)))) {
-          if (htr) {
-            free(htr);
-	  }
-          ptr->ptr0 = utr;
-          htr = ptr;
-        }
-      } unit_list_iterate_end;
-      if (htr) {
-        htr->ptr0->planned = FALSE; /* to don't recalculate trade planning */
-        btr = htr;
+	ptr->ptr = utr;
+	htr = ptr;
       }
+    } unit_list_iterate_end;
+    if (htr) {
+      htr->ptr->planned = FALSE; /* to don't recalculate trade planning */
+      btr = htr;
     }
-    if (!btr) {
-      goto other_trade;
-    }
+  }
+
+  if (btr) {
+    /* Found a trade route to establish */
     my_ai_orders_free(punit);
     my_ai_trade_route_alloc(btr);
-    if (!my_ai_update) {
-      automatic_processus_event(AUTO_ORDERS, punit);
-    }
-    return;
-  }
-
-other_trade:
-  {
-    /* Check the best destination to establish a trade route. */
-    if (!(my_ai_trade_mode & 1)) {
-      goto wonders;
-    }
-
-    struct trade_route *btr =
-      best_city_trade_route(punit, player_find_city_by_id(game.player_ptr,
-							  punit->homecity));
-
-    if (!btr || (btr && btr->tr_type < TR_NEW)) {
-      struct trade_route *ptr = NULL;
-      Continent_id cid = punit->tile->continent;
-
-      city_list_iterate(game.player_ptr->cities, pcity) {
-        if (pcity->tile->continent != cid) {
-          continue;
-	}
-        if (btr) {
-          ptr = best_city_trade_route(punit, pcity);
-          if (ptr) {
-            if (ptr->tr_type == btr->tr_type) {
-              if (ptr->trade == btr->trade) {
-                if (ptr->turns_req==btr->turns_req) {
-                  if (ptr->moves_req>btr->moves_req) {
-                    swap(struct trade_route *, btr, ptr);
-                  }
-		} else if (ptr->turns_req < btr->turns_req) {
-                  swap(struct trade_route *, btr, ptr);
-		}
-              } else if (ptr->trade > btr->trade) {
-                swap(struct trade_route *, btr, ptr);
-	      }
-            } else if (ptr->tr_type>btr->tr_type) {
-              swap(struct trade_route *, btr, ptr);
-	    }
-            free(ptr);
-          }
-        } else {
-          btr = best_city_trade_route(punit, pcity);
-	}
-      } city_list_iterate_end;
-    }
-    if (!btr) {
-      goto wonders;
-    }
-    my_ai_orders_free(punit);
-    my_ai_trade_route_alloc(btr);
-    if (!my_ai_update) {
-      automatic_processus_event(AUTO_ORDERS, punit);
-    }
-    return;
-  }
-
-wonders:
-  if (my_ai_wonder_level == LEVEL_OFF || !unit_flag(punit, F_HELP_WONDER)) {
-    goto goto_city;
-  }
-
-  if (punit->my_ai.control && punit->my_ai.activity == MY_AI_HELP_WONDER) {
-    my_ai_help_wonder_free(punit);
-  }
-
-  {
-    /* Check if we can add to a wonder */
-    struct help_wonder *phw;
-
-    phw = best_wonder(punit);
-    if (!phw) {
-      goto goto_city;
-    }
-    my_ai_orders_free(punit);
-    my_ai_help_wonder_alloc(punit, phw);
-    if (!my_ai_update) {
-      automatic_processus_event(AUTO_ORDERS, punit);
-    }
-    return;
-  }
-
-goto_city:
-  {
-    /* Bah! :( Nothing to do, moving to a city and waiting for more tasks */
-    my_ai_orders_free(punit);
-    punit->my_ai.control = TRUE;
-    punit->my_ai.activity = MY_AI_NONE;
-    unit_list_append(&noners, punit);
-    my_ai_goto_nearest_city(punit);
-    update_miscellaneous_menu();
-  }
-}
-
-/**************************************************************************
-  What to do when there is nothing to do?
-**************************************************************************/
-void my_ai_none(struct unit *punit)
-{
-  if (unit_flag(punit, F_TRADE_ROUTE)
-      || unit_flag(punit, F_HELP_WONDER)) {
-    my_ai_caravan(punit);
-  }
-  if (punit->my_ai.activity == MY_AI_NONE) {
-    if (!punit->my_ai.control) {
-      unit_list_append(&noners, punit);
-      punit->my_ai.control = TRUE;
-    }
-    my_ai_goto_nearest_city(punit);
+    automatic_processus_event(AUTO_ORDERS, punit);
   }
 }
 
@@ -2601,14 +1845,8 @@ void my_ai_orders_free(struct unit *punit)
   }
 
   switch (punit->my_ai.activity) {
-    case MY_AI_NONE:
-      unit_list_unlink(&noners,punit);
-      break;
     case MY_AI_TRADE_ROUTE:
       my_ai_trade_route_free(punit);
-      break;
-    case MY_AI_HELP_WONDER:
-      my_ai_help_wonder_free(punit);
       break;
     case MY_AI_PATROL:
       my_ai_patrol_free(punit);
@@ -2639,14 +1877,8 @@ void my_ai_unit_execute(struct unit *punit)
   }
 
   switch (punit->my_ai.activity) {
-    case MY_AI_NONE:
-      my_ai_none(punit);
-      break;
     case MY_AI_TRADE_ROUTE:
       my_ai_trade_route_execute(punit);
-      break;
-    case MY_AI_HELP_WONDER:
-      my_ai_help_wonder_execute(punit);
       break;
     case MY_AI_PATROL:
       my_ai_patrol_execute(punit);
@@ -2668,96 +1900,8 @@ void my_ai_execute(void)
   }
 
   append_output_window(_("PepClient: Executing all automatic orders..."));
-  my_ai_update = TRUE;
-  unit_list_iterate(noners, punit) {
-    /* Try to do something with this fucking units */
-    my_ai_none(punit);
-  } unit_list_iterate_end;
-  my_ai_update = FALSE;
   my_ai_trade_route_execute_all();
-  my_ai_help_wonder_execute_all();
   my_ai_patrol_execute_all();
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void my_ai_worklist_event(struct city *pcity)
-{
-  int i;
-  bool destroy = TRUE;
-  struct help_wonder_list hwlist;
-  help_wonder_list_init(&hwlist);
-
-  if (!pcity->is_building_unit && is_wonder(pcity->currently_building)) {
-    help_wonder_list_append(&hwlist,
-			    help_wonder_new(pcity, -1,
-					    pcity->currently_building));
-  }
-
-  for (i = 0; pcity->worklist.wlefs[i] != WEF_END; i++) {
-    if (pcity->worklist.wlefs[i] == WEF_IMPR
-	&& is_wonder(pcity->worklist.wlids[i])) {
-      help_wonder_list_append(&hwlist,
-			      help_wonder_new(pcity, i,
-					      pcity->worklist.wlids[i]));
-    }
-  }
-
-  unit_list_unlink_all(&temp);
-  switch (are_wonders_list_equal(&pcity->help_wonders, &hwlist)) {
-    case 1: /* Advance */
-      help_wonder_list_iterate(pcity->help_wonders, phw) {
-        if (phw->level == -1) {
-          help_wonder_list_unlink(&pcity->help_wonders, phw);
-          help_wonder_destroy(phw);
-        } else {
-          phw->level--;
-	}
-      } help_wonder_list_iterate_end;
-      break;
-    case 2: /* Add */
-      for (i = help_wonder_list_size(&pcity->help_wonders);
-	   i < help_wonder_list_size(&hwlist); i++) {
-        struct help_wonder *phw = help_wonder_list_get(&hwlist, i);
-        help_wonder_list_append(&pcity->help_wonders,
-				help_wonder_new(pcity, phw->level, phw->id));
-      }
-      break;
-    case 3: /* Remove */
-      for (i = help_wonder_list_size(&hwlist);
-	   i < help_wonder_list_size(&pcity->help_wonders); i++) {
-        struct help_wonder *phw = help_wonder_list_get(&pcity->help_wonders, i);
-        help_wonder_list_unlink(&pcity->help_wonders, phw);
-        help_wonder_destroy(phw);
-      }
-      break;
-    case 4: /* Change */
-      if (my_ai_wonder_level == LEVEL_GOOD) {
-        while (realloc_help_wonder(pcity, &hwlist, &pcity->help_wonders));
-      }
-      my_ai_help_wonder_city_free(pcity);
-      help_wonder_list_iterate(hwlist, phw) {
-        help_wonder_list_append(&pcity->help_wonders, phw);
-      } help_wonder_list_iterate_end;
-      destroy = FALSE;
-      break;
-    default: /* Yes */
-      break;
-  }
-
-  if (destroy) {
-    help_wonder_list_iterate(hwlist, phw) {
-      help_wonder_destroy(phw);
-    } help_wonder_list_iterate_end;
-  }
-  help_wonder_list_unlink_all(&hwlist);
-
-  /* Maybe some units lost their orders */
-  unit_list_iterate(temp, punit) {
-    my_ai_caravan(punit);
-  } unit_list_iterate_end;
-  unit_list_unlink_all(&temp);
 }
 
 /**************************************************************************
@@ -2769,10 +1913,6 @@ void my_ai_city_free(struct city *pcity)
     my_ai_trade_route_free(ptr->punit);
   } trade_route_list_iterate_end;
   trade_route_list_unlink_all(&pcity->trade_routes);
-  my_ai_help_wonder_city_free(pcity);
-  if (city_list_find(&trade_cities, pcity)) {
-    my_ai_add_trade_city(pcity, FALSE);
-  }
   trade_route_list_iterate(trade_plan, ptr) {
     if (ptr->pc1 == pcity
 	||ptr->pc2 == pcity) {
@@ -2780,17 +1920,9 @@ void my_ai_city_free(struct city *pcity)
       free(ptr);
     }
   } trade_route_list_iterate_end;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void my_ai_help_wonder_city_free(struct city *pcity)
-{
-  help_wonder_list_iterate(pcity->help_wonders, phw) {
-    help_wonder_destroy(phw);
-  } help_wonder_list_iterate_end;
-  help_wonder_list_unlink_all(&pcity->help_wonders);
+  if (city_list_find(&trade_cities, pcity)) {
+    my_ai_add_trade_city(pcity, FALSE);
+  }
 }
 
 /**************************************************************************
@@ -2798,11 +1930,8 @@ void my_ai_help_wonder_city_free(struct city *pcity)
 **************************************************************************/
 void my_ai_init(void)
 {
-  unit_list_init(&noners);
   unit_list_init(&traders);
-  unit_list_init(&helpers);
   unit_list_init(&patrolers);
-  unit_list_init(&temp);
   city_list_init(&trade_cities);
   trade_route_list_init(&trade_plan);
   trade_route_list_init(&non_ai_trade);
@@ -2817,12 +1946,6 @@ void my_ai_init(void)
 			    "", _("Automatic trade route orders execution"), 0,
 			    AP_MAIN_CONNECT(my_ai_trade_route_execute_all),
 			    AP_CONNECT(AUTO_ORDERS, my_ai_trade_route_execute),
-			    -1);
-  my_ai_wonder_auto_execute =
-    automatic_processus_new(PAGE_WONDER, AV_TO_FV(AUTO_ORDERS), "",
-			    _("Automatic help wonder orders execution"), 0,
-                            AP_MAIN_CONNECT(my_ai_help_wonder_execute_all),
-			    AP_CONNECT(AUTO_ORDERS, my_ai_help_wonder_execute),
 			    -1);
   my_ai_patrol_auto_execute =
     automatic_processus_new(PAGE_PMAIN, AV_TO_FV(AUTO_NEW_YEAR), "",
@@ -2839,16 +1962,12 @@ void my_ai_free(void)
   city_list_iterate(game.player_ptr->cities, pcity) {
     my_ai_city_free(pcity);
   } city_list_iterate_end;
-  unit_list_unlink_all(&noners);
   unit_list_unlink_all(&traders);
-  unit_list_unlink_all(&helpers);
   unit_list_unlink_all(&patrolers);
-  unit_list_unlink_all(&temp);
   city_list_unlink_all(&trade_cities);
   trade_route_list_free(&trade_plan);
   trade_route_list_free(&non_ai_trade);
   automatic_processus_remove(my_ai_auto_execute);
   automatic_processus_remove(my_ai_trade_auto_execute);
-  automatic_processus_remove(my_ai_wonder_auto_execute);
   automatic_processus_remove(my_ai_patrol_auto_execute);
 }

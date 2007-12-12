@@ -219,8 +219,7 @@ struct named_sprites {
       *connect,
       *patrol,
       *lowfuel,
-      *tired,
-      *wonder;
+      *tired;
   } unit;
   struct {
     struct Sprite
