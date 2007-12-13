@@ -59,6 +59,8 @@ struct server_arguments {
 
   char required_cap[MAX_LEN_CAPSTR];
   bool allow_multi_line_chat;
+
+  bool hack_request_disabled;
 };
 
 void init_game_seed(void);

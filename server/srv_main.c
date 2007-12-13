@@ -205,6 +205,7 @@ void srv_init(void)
 
   srvarg.required_cap[0] = '\0';
   srvarg.allow_multi_line_chat = FALSE;
+  srvarg.hack_request_disabled = FALSE;
 
   srvarg.save_ppm = FALSE;
 

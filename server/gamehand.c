@@ -834,7 +834,8 @@ static const char *get_challenge_fullname(struct connection *pc)
 **************************************************************************/
 const char *new_challenge_filename(struct connection *pc)
 {
-  if (!has_capability("new_hack", pc->capability)) {
+  if (!has_capability("new_hack", pc->capability)
+      || srvarg.hack_request_disabled) {
     return "";
   }
 
