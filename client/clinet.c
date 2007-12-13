@@ -1126,7 +1126,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   }
   ctx->sock = sock;
 
-#ifdef WIN32_NATIVE
+#ifndef WIN32_NATIVE
 /*   if we have winsock, we must let's glib to make this  */
 /*   socket in  non-blocking mode to prevent busy wait socket*/
   if (-1 == my_nonblock(sock)) {
