@@ -866,6 +866,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   int nb = 0, count = 0, rem = 0;
   static const int READSZ = 4096;
   struct async_slist_ctx *ctx = data;
+  bool socket_would_block = FALSE;
 
   assert(data != NULL);
   assert(ctx->sock == sock);
@@ -895,6 +896,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
 
   while (rem > 0) {
     nb = my_readsocket(ctx->sock, buf, rem > READSZ ? READSZ : rem);
+    socket_would_block = my_socket_would_block();
     freelog(LOG_DEBUG, "mrc my_readsocket nb=%d", nb);
     if (nb <= 0) {
       break;
@@ -919,7 +921,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   freelog(LOG_DEBUG, "mrc count=%d (buflen=%d)", count, ctx->buflen);
 
   if (nb == -1) {		/* read error */
-    if (my_socket_would_block()) {
+    if (socket_would_block) {
       freelog(LOG_DEBUG, "mrc socket read would block");
       return TRUE;
     }

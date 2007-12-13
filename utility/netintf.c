@@ -618,14 +618,7 @@ void my_shutdown_network(void)
 bool my_socket_would_block(void)
 {
 #ifdef HAVE_WINSOCK
-/* WSAGetLastError() == 183 is not refenced ; errors on socket */
-/* are above of 10000 (hell of windows) */
-/* Error message is 'Cannot create a file when that file already exists.' */
-/* there are nothing to do with sockets and append often if  */
-/* many prints in file occurs like start with civclient.exe -d 4 -l file.txt */
-/* I assume it's minor error and must be discarded */
-  return WSAGetLastError() == WSAEWOULDBLOCK ||
-    WSAGetLastError() == 183;
+  return WSAGetLastError() == WSAEWOULDBLOCK;
 #else
   return errno == EAGAIN || errno == EWOULDBLOCK;
 #endif
