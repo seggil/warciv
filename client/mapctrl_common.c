@@ -308,7 +308,7 @@ void cancel_distance_tool(void)
   dist_first_tile = NULL;
   dist_last_tile = NULL;
 
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -331,7 +331,7 @@ void cancel_tile_hiliting(void)
       ptile->client.hilite = HILITE_NONE;
     } whole_map_iterate_end;
 
-    update_map_canvas_visible();
+    update_map_canvas_visible(MUT_NORMAL);
     update_miscellaneous_menu();
   }
 }
@@ -344,7 +344,7 @@ void release_right_button(int canvas_x, int canvas_y)
 {
   if (rectangle_active) {
     define_tiles_within_rectangle();
-    update_map_canvas_visible();
+    update_map_canvas_visible(MUT_NORMAL);
     rectangle_active = FALSE;
   } else {
     recenter_button_pressed(canvas_x, canvas_y);
@@ -374,7 +374,7 @@ void toggle_tile_hilite(struct tile *ptile)
     return;
   }
 
-  refresh_tile_mapcanvas(ptile, TRUE);
+  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
 }
 
 /**************************************************************************

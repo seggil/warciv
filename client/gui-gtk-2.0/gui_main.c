@@ -2249,36 +2249,3 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
-
-static guint last_id = 0;
-
-/****************************************************************
-  ...
-****************************************************************/
-static gboolean idle_callback(gpointer data)
-{
-  remove_idle_callback();
-  unqueue_mapview_updates();
-  return TRUE;
-}
-
-/****************************************************************
-  ...
-****************************************************************/
-void add_idle_callback(void)
-{
-  if (last_id == 0) {
-    last_id = g_idle_add(idle_callback, NULL);
-  }
-}
-
-/****************************************************************
-  ...
-****************************************************************/
-void remove_idle_callback(void)
-{
-  if (last_id != 0) {
-    g_source_remove(last_id);
-    last_id = 0;
-  }
-}

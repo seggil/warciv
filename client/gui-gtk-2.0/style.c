@@ -277,7 +277,7 @@ static void reset_style(const char * stylebuf)
 /*   g_object_ref(style); */
   city_productions_font = style->font_desc;
 
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************

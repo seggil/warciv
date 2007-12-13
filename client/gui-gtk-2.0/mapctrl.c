@@ -168,7 +168,7 @@ void popupinfo_popdown_callback(GtkWidget *w, gpointer data)
   bool full = GPOINTER_TO_INT(data);
 
   if (full) {
-    update_map_canvas_visible();
+    update_map_canvas_visible(MUT_NORMAL);
   } else {
     dirty_all();
   }

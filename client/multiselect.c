@@ -453,7 +453,7 @@ void multi_select_add_unit(struct unit *punit)
     }
   }
   /* Blink */
-  refresh_tile_mapcanvas(punit->tile, FALSE);
+  refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
 }
 
 /********************************************************************** 
@@ -485,7 +485,7 @@ void multi_select_blink_update(void)
 {
   unit_list_iterate(multi_selection[0].ulist, punit) {
     if (punit->focus_status != FOCUS_DONE) {
-      refresh_tile_mapcanvas(punit->tile, FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     }
   } unit_list_iterate_end;
 }
@@ -530,7 +530,7 @@ void multi_select_clear(int multi)
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
       unit_list_unlink(&multi_selection[multi].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
   unit_list_unlink_all(&multi_selection[multi].ulist); /* to be sure about it */
@@ -575,7 +575,7 @@ void multi_select_copy(int dest, int src)
   if (dest == 0) {
     unit_list_iterate(multi_selection[dest].ulist, punit) {
       unit_list_unlink(&multi_selection[dest].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
 
@@ -642,7 +642,7 @@ void multi_select_init_all(void)
 void multi_select_remove_unit(struct unit *punit)
 {
   unit_list_unlink(&multi_selection[0].ulist, punit);
-  refresh_tile_mapcanvas(punit->tile,FALSE);
+  refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
   if (punit == get_unit_in_focus()) {
     struct unit *pnuf = NULL;
 
@@ -708,7 +708,7 @@ void multi_select_set(int multi, const struct multi_select *pms)
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
       unit_list_unlink(&multi_selection[multi].ulist,punit);
-      refresh_tile_mapcanvas(punit->tile,FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
 
@@ -737,7 +737,7 @@ void multi_select_set_unit(int multi,struct unit *punit)
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
       unit_list_unlink(&multi_selection[multi].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
 

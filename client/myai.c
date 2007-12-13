@@ -599,7 +599,7 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
   update_auto_caravan_menu();
   update_miscellaneous_menu();
   if (draw_city_traderoutes) {
-    update_map_canvas_visible();
+    update_trade_route_line(ptr->pc1, ptr->pc2);
   }
 }
 
@@ -724,6 +724,7 @@ void my_ai_trade_route_free(struct unit *punit)
 {
   char buf[1024];
   struct trade_route *ptr = (struct trade_route *)punit->my_ai.data;
+  struct city *pcity1 = ptr->pc1, *pcity2 = ptr->pc2;
 
   freelog(LOG_VERBOSE, "free auto-trade orders for %s (%d, %d)",
 	  unit_name(punit->type), TILE_XY(punit->tile));
@@ -749,7 +750,7 @@ void my_ai_trade_route_free(struct unit *punit)
     free(ptr);
   }
   if (draw_city_traderoutes) {
-    update_map_canvas_visible();
+    update_trade_route_line(pcity1, pcity2);
   }
 }
 
@@ -1104,7 +1105,7 @@ void clear_my_ai_trade_cities(void)
   trade_route_list_free(&trade_plan);
   city_list_unlink_all(&trade_cities);
   if (draw_city_traderoutes) {
-    update_map_canvas_visible();
+    update_map_canvas_visible(MUT_NORMAL);
   }
   append_output_window(_("PepClient: Trade city list cleared."));
   update_auto_caravan_menu();
@@ -1154,7 +1155,7 @@ void recalculate_trade_plan(void)
   append_output_window(buf2);
   show_free_slots_in_trade_plan();
   if (draw_city_traderoutes) {
-    update_map_canvas_visible();
+    update_map_canvas_visible(MUT_NORMAL);
   }
 }
 
@@ -1306,6 +1307,7 @@ void non_ai_trade_change(struct unit *punit, int action)
   }
 
   struct trade_route *ptr = NULL;
+  struct city *pc1 = NULL, *pc2 = NULL, *pc3 = NULL, *pc4 = NULL;
 
   trade_route_list_iterate(non_ai_trade, itr) {
     if (itr->punit == punit) {
@@ -1315,20 +1317,26 @@ void non_ai_trade_change(struct unit *punit, int action)
   } trade_route_list_iterate_end;
 
   if (ptr && action & 1) {
+    pc1 = ptr->pc1;
+    pc2 = ptr->pc2;
     trade_route_list_unlink(&non_ai_trade, ptr);
     free(ptr);
   }
   
   if (action & 2 && punit->goto_tile && punit->goto_tile->city) {
+    pc3 = player_find_city_by_id(game.player_ptr, punit->homecity);
+    pc4 = punit->goto_tile->city;
     trade_route_list_append(&non_ai_trade,
-			    trade_route_new(punit,
-			      player_find_city_by_id(game.player_ptr,
-						     punit->homecity),
-			     punit->goto_tile->city, FALSE));
+			    trade_route_new(punit, pc3, pc4, FALSE));
   }
 
   if (draw_city_traderoutes && my_ai_trade_manual_trade_route_enable) {
-    update_map_canvas_visible();
+    if (pc1 && pc2) {
+      update_trade_route_line(pc1, pc2);
+    }
+    if (pc3 && pc4) {
+      update_trade_route_line(pc3, pc4);
+    }
   }
   update_auto_caravan_menu();
 }

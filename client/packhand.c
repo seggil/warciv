@@ -303,12 +303,10 @@ void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id,
 		       unit_type(punit1)->sound_fight_alt);
 
       if (do_combat_animation) {
-	flush_dirty();
-	redraw_selection_rectangle();
 	decrease_unit_hp_smooth(punit0, hp0, punit1, hp1);
 	if (make_winner_veteran) {
 	  pwinner->veteran++;
-	  refresh_tile_mapcanvas(pwinner->tile, FALSE);
+	  refresh_tile_mapcanvas(pwinner->tile, MUT_NORMAL);
 	}
       } else {
 	punit0->hp = hp0;
@@ -318,13 +316,13 @@ void handle_unit_combat_info(int attacker_unit_id, int defender_unit_id,
 	if (make_winner_veteran) {
 	  pwinner->veteran++;
 	}
-	refresh_tile_mapcanvas(punit0->tile, FALSE);
-	refresh_tile_mapcanvas(punit1->tile, FALSE);
+	refresh_tile_mapcanvas(punit0->tile, MUT_NORMAL);
+	refresh_tile_mapcanvas(punit1->tile, MUT_NORMAL);
       }
     } else {
       if (make_winner_veteran) {
 	pwinner->veteran++;
-	refresh_tile_mapcanvas(pwinner->tile, FALSE);
+	refresh_tile_mapcanvas(pwinner->tile, MUT_NORMAL);
       }
     }
   }
@@ -405,7 +403,7 @@ void handle_game_state(int value)
   }
 
   if (changed && can_client_change_view()) {
-    update_map_canvas_visible();
+    update_map_canvas_visible(MUT_NORMAL);
   }
 }
 
@@ -655,10 +653,10 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
 
     update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
 		      canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
-		      width, height);
+		      width, height, MUT_NORMAL);
     overview_update_tile(pcity->tile);
   } else {
-    refresh_tile_mapcanvas(pcity->tile, FALSE);
+    refresh_tile_mapcanvas(pcity->tile, MUT_NORMAL);
   }
 
   if (city_workers_display==pcity)  {
@@ -879,7 +877,7 @@ void handle_new_year(int year, int turn)
   last_turn_gold_amount=game.player_ptr->economic.gold;
 #endif
 
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 
   if (sound_bell_at_new_turn &&
       (!game.player_ptr->ai.control || ai_manual_turn_done)) {
@@ -1248,7 +1246,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
 	  if (pcity->client.occupied != new_occupied) {
 	    pcity->client.occupied = new_occupied;
-	    refresh_tile_mapcanvas(pcity->tile, FALSE);
+	    refresh_tile_mapcanvas(pcity->tile, MUT_NORMAL);
 	  }
 	}
 
@@ -1263,7 +1261,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	  /* Unit moved into a city - obviously it's occupied. */
 	  if (!pcity->client.occupied) {
 	    pcity->client.occupied = TRUE;
-	    refresh_tile_mapcanvas(pcity->tile, FALSE);
+	    refresh_tile_mapcanvas(pcity->tile, MUT_NORMAL);
 	  }
 	}
 
@@ -1383,9 +1381,9 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       tile_to_canvas_pos(&canvas_x, &canvas_y, punit->tile);
       update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
 			canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
-			width, height);
+			width, height, MUT_NORMAL);
     } else {
-      refresh_tile_mapcanvas(punit->tile, FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     }
   }
 
@@ -2222,12 +2220,9 @@ void handle_tile_info(struct packet_tile_info *packet)
 
   /* refresh tiles */
   if (can_client_change_view()) {
-    assert(real_update == FALSE);
-    real_update = TRUE;
-
     /* the tile itself */
     if (tile_changed || old_known!=ptile->known) {
-      refresh_tile_mapcanvas(ptile, FALSE);
+      refresh_tile_mapcanvas(ptile, MUT_DRAW);
     }
 
     /* if the terrain or the specials of the tile
@@ -2235,10 +2230,9 @@ void handle_tile_info(struct packet_tile_info *packet)
     if (tile_changed) {
       adjc_iterate(ptile, tile1) {
 	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED)
-	  refresh_tile_mapcanvas(tile1, FALSE);
+	  refresh_tile_mapcanvas(tile1, MUT_NORMAL);
       }
       adjc_iterate_end;
-      real_update = FALSE;
       return;
     }
 
@@ -2247,11 +2241,9 @@ void handle_tile_info(struct packet_tile_info *packet)
     if (old_known == TILE_UNKNOWN && packet->known >= TILE_KNOWN_FOGGED) {     
       cardinal_adjc_iterate(ptile, tile1) {
 	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED)
-	  refresh_tile_mapcanvas(tile1, FALSE);
+	  refresh_tile_mapcanvas(tile1, MUT_NORMAL);
       } cardinal_adjc_iterate_end;
     }
-
-    real_update = FALSE;
   }
 
   /* update menus if the focus unit is on the tile. */

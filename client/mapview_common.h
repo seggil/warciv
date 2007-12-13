@@ -23,6 +23,17 @@
 
 #include "tilespec.h"
 
+enum map_update_type {
+  MUT_NORMAL, /* Mark the zone to be re-drawn and copied to screen later */
+  MUT_DRAW,   /* Redraw the zone and will be copied to screen later */
+  MUT_WRITE   /* Redraw and copy to screen */
+};
+
+enum draw_elements {
+  DRAW_SPRITES    = 1 << 0, /* Draw the tiles + cities + units */
+  DRAW_DECORATION = 1 << 1  /* Draw goto path, chat links, etc... */
+};
+
 struct canvas_store;		/* opaque type, real type is gui-dep */
 
 struct mapview_canvas {
@@ -48,7 +59,6 @@ extern struct overview overview;
 /* HACK: Callers can set this to FALSE to disable sliding.  It should be
  * reenabled afterwards. */
 extern bool can_slide;
-extern bool real_update;
 
 #define BORDER_WIDTH 2
 #define GOTO_WIDTH 2
@@ -123,7 +133,6 @@ extern bool real_update;
   }									    \
 }
 
-void refresh_tile_mapcanvas(struct tile *ptile, bool write_to_screen);
 enum color_std get_grid_color(struct tile *ptile, enum direction8 dir);
 
 void map_to_gui_vector(int *gui_dx, int *gui_dy, int map_dx, int map_dy);
@@ -172,9 +181,15 @@ void put_one_tile_iso(struct canvas *pcanvas, struct tile *ptile,
 void tile_draw_grid(struct canvas *pcanvas, struct tile *ptile,
 		    int canvas_x, int canvas_y, bool citymode);
 
-void update_map_canvas(int canvas_x, int canvas_y, int width, int height);
-void update_map_canvas_visible(void);
+void draw_map_canvas(int canvas_x, int canvas_y,
+		     int width, int height, enum draw_elements elements);
+void update_map_canvas(int canvas_x, int canvas_y,
+		       int width, int height, enum map_update_type type);
+void update_map_canvas_visible(enum map_update_type type);
+void refresh_tile_mapcanvas(struct tile *ptile, enum map_update_type type);
 void update_city_description(struct city *pcity);
+
+void flush_dirty_overview(void);
 
 void show_city_descriptions(int canvas_x, int canvas_y,
 			    int width, int height);
@@ -205,9 +220,6 @@ void get_city_mapview_traderoutes(struct city *pcity,
 				      size_t traderoutes_len,
 				      enum color_std *traderoutes_color);
 
-void free_mapview_updates(void);
-void unqueue_mapview_updates(void);
-
 void map_to_overview_pos(int *overview_x, int *overview_y,
 			 int map_x, int map_y);
 void overview_to_map_pos(int *map_x, int *map_y,
@@ -221,5 +233,6 @@ bool map_canvas_resized(int width, int height);
 void init_mapcanvas_and_overview(void);
 
 void draw_traderoutes(void);
+void update_trade_route_line(struct city *pcity1, struct city *pcity2);
 
 #endif /* FC__MAPVIEW_COMMON_H */

@@ -240,7 +240,7 @@ void client_remove_unit(struct unit *punit)
 	    TILE_XY(pcity->tile));
   }
 
-  refresh_tile_mapcanvas(ptile, FALSE);
+  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -272,7 +272,7 @@ void client_remove_city(struct city *pcity)
   popdown_city_dialog(pcity);
   game_remove_city(pcity);
   city_report_dialog_update();
-  refresh_tile_mapcanvas(ptile, FALSE);
+  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1673,7 +1673,7 @@ void clear_all_link_marks(void)
     map_link_remove(pml);
   } map_link_list_iterate_end;
 
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /********************************************************************** 
@@ -1746,7 +1746,7 @@ void add_link_mark(enum tag_link_types type, int id)
 
   ptile = get_link_mark_tile(pml);
   if (ptile && tile_visible_mapcanvas(ptile)) {
-    refresh_tile_mapcanvas(ptile, FALSE);
+    refresh_tile_mapcanvas(ptile, MUT_NORMAL);
   }
 }
 
@@ -1767,7 +1767,7 @@ void restore_link_mark(enum tag_link_types type, int id)
 
   ptile = get_link_mark_tile(pml);
   if (ptile && tile_visible_mapcanvas(ptile)) {
-    refresh_tile_mapcanvas(ptile, FALSE);
+    refresh_tile_mapcanvas(ptile, MUT_NORMAL);
   }
 }
 
@@ -1776,8 +1776,8 @@ void restore_link_mark(enum tag_link_types type, int id)
 ***********************************************************************/
 static void draw_link_mark(struct map_link *pml)
 {
-  int xd = NORMAL_TILE_WIDTH / 20, yd = NORMAL_TILE_HEIGHT / 20;
-  int xlen = NORMAL_TILE_WIDTH / 3, ylen = NORMAL_TILE_HEIGHT / 3;
+  int xd = UNIT_TILE_WIDTH / 20, yd = UNIT_TILE_HEIGHT / 20;
+  int xlen = UNIT_TILE_WIDTH / 3, ylen = UNIT_TILE_HEIGHT / 3;
   int canvas_x, canvas_y, x0, x1, y0, y1;
   struct tile *ptile = get_link_mark_tile(pml);
   enum color_std color = get_link_mark_color(pml);
@@ -1792,17 +1792,25 @@ static void draw_link_mark(struct map_link *pml)
   y0 = canvas_y + yd;
   y1 = canvas_y + NORMAL_TILE_HEIGHT - yd;
 
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y0, xlen, 0);
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y0, 0, ylen);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x0, y0, xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x0, y0, 0, ylen);
   
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y0, -xlen, 0);
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y0, 0, ylen);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x1, y0, -xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x1, y0, 0, ylen);
   
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y1, xlen, 0);
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x0, y1, 0, -ylen);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x0, y1, xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x0, y1, 0, -ylen);
   
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y1, -xlen, 0);
-  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME, x1, y1, 0, -ylen);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x1, y1, -xlen, 0);
+  canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
+		  x1, y1, 0, -ylen);
 }
 
 /********************************************************************** 

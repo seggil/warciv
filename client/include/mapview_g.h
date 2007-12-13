@@ -35,7 +35,6 @@ struct canvas *get_overview_window(void);
 
 void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 		    struct city *pcity, int *width, int *height);
-void prepare_show_city_descriptions(void);
 
 void canvas_put_sprite(struct canvas *pcanvas,
 		       int canvas_x, int canvas_y, struct Sprite *sprite,
@@ -62,13 +61,20 @@ void canvas_copy(struct canvas *dest, struct canvas *src,
 		 int src_x, int src_y, int dest_x, int dest_y,
 		 int width, int height);
 
-void flush_mapcanvas(int canvas_x, int canvas_y,
+void flush_rectangle(int canvas_x, int canvas_y,
 		     int pixel_width, int pixel_height);
 void dirty_rect(int canvas_x, int canvas_y,
 		int pixel_width, int pixel_height);
 void dirty_all(void);
 void flush_dirty(void);
 void gui_flush(void);
+
+void update_queue_add_tile(struct tile *ptile);
+void update_queue_remove_tile(struct tile *ptile);
+void update_queue_add_rectangle(int x, int y, int w, int h);
+void move_update_queue(int vector_x, int vector_y);
+
+void free_mapview_updates(void);
 
 void update_map_canvas_scrollbars(void);
 void update_map_canvas_scrollbars_size(void);

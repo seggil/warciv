@@ -245,7 +245,7 @@ static void unit_upgrade_callback(GtkWidget * w, gpointer data);
 static gboolean citizens_callback(GtkWidget * w, GdkEventButton * ev,
 			      gpointer data);
 static gboolean button_down_citymap(GtkWidget * w, GdkEventButton * ev);
-static void draw_map_canvas(struct city_dialog *pdialog);
+static void draw_city_map_canvas(struct city_dialog *pdialog);
 
 static void buy_callback(GtkWidget * w, gpointer data);
 
@@ -1397,7 +1397,7 @@ static void city_dialog_update_map(struct city_dialog *pdialog)
   city_dialog_redraw_map(pdialog->pcity, &store);
 
   /* draw to real window */
-  draw_map_canvas(pdialog);
+  draw_city_map_canvas(pdialog);
 
   if(cma_is_city_under_agent(pdialog->pcity, NULL)) {
     gtk_widget_set_sensitive(pdialog->overview.map_canvas, FALSE);
@@ -2390,7 +2390,7 @@ static gboolean button_down_citymap(GtkWidget * w, GdkEventButton * ev)
 /****************************************************************
 ...
 *****************************************************************/
-static void draw_map_canvas(struct city_dialog *pdialog)
+static void draw_city_map_canvas(struct city_dialog *pdialog)
 {
   gtk_widget_queue_draw(pdialog->overview.map_canvas_pixmap);
   if (pdialog->happiness.map_canvas_pixmap) {	/* in case of spy */

@@ -55,6 +55,7 @@
 #include "mapview.h"
 
 #define map_canvas_store (mapview_canvas.store->v.pixmap)
+#define LOG_UPDATE_QUEUE LOG_DEBUG
 
 static void pixmap_put_overlay_tile(GdkDrawable *pixmap,
 				    int canvas_x, int canvas_y,
@@ -70,7 +71,6 @@ static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
 static SPRITE *scaled_intro_sprite = NULL;
 
 static GtkObject *map_hadj, *map_vadj;
-
 
 /**************************************************************************
   If do_restore is FALSE it will invert the turn done button style. If
@@ -169,7 +169,7 @@ void update_info_label( void )
 }
 
 /**************************************************************************
- ... *pepeto*
+ ...
 **************************************************************************/
 void update_hover_cursor(void)
 {
@@ -314,6 +314,7 @@ struct canvas *canvas_create(int width, int height)
 
   result->type = CANVAS_PIXMAP;
   result->v.pixmap = gdk_pixmap_new(root_window, width, height, -1);
+
   return result;
 }
 
@@ -325,6 +326,7 @@ void canvas_free(struct canvas *store)
   if (store->type == CANVAS_PIXMAP) {
     g_object_unref(store->v.pixmap);
   }
+
   free(store);
 }
 
@@ -362,9 +364,17 @@ gboolean overview_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
 /**************************************************************************
 ...
 **************************************************************************/
+static struct tile_list *tiles_to_update = NULL;
+static GdkRegion *region_to_update = NULL;
+static GdkRegion *region_to_flush = NULL;
+static bool update_full = FALSE;
+static bool is_flush_queued = FALSE;
 static bool map_center = TRUE;
 static bool map_configure = FALSE;
 
+/**************************************************************************
+...
+**************************************************************************/
 gboolean map_canvas_configure(GtkWidget * w, GdkEventConfigure * ev,
 			      gpointer data)
 {
@@ -412,9 +422,7 @@ gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
       }
     }
     map_center = TRUE;
-  }
-  else
-  {
+  } else {
     if (scaled_intro_sprite) {
       free_sprite(scaled_intro_sprite);
       scaled_intro_sprite = NULL;
@@ -447,29 +455,91 @@ gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
   Flush the given part of the canvas buffer (if there is one) to the
   screen.
 **************************************************************************/
-void flush_mapcanvas(int canvas_x, int canvas_y,
-		     int pixel_width, int pixel_height)
+static void base_flush_rectangle(int canvas_x, int canvas_y,
+		          int pixel_width, int pixel_height)
 {
   gdk_draw_drawable(map_canvas->window, civ_gc, map_canvas_store,
 		    canvas_x, canvas_y, canvas_x, canvas_y,
 		    pixel_width, pixel_height);
 }
 
-#define MAX_DIRTY_RECTS 20
-static int num_dirty_rects = 0;
-static GdkRectangle dirty_rects[MAX_DIRTY_RECTS];
-static bool is_flush_queued = FALSE;
-
 /**************************************************************************
-  A callback invoked as a result of gtk_idle_add, this function simply
-  flushes the mapview canvas.
+  A callback invoked as a result of g_idle_add, this function
+  redraw all what is needed and flush the rest.
 **************************************************************************/
-static gint unqueue_flush(gpointer data)
+static gboolean unqueue_flush(gpointer data)
 {
+  freelog(LOG_UPDATE_QUEUE, "unqueue_flush");
+
+  if (tiles_to_update) {
+    tile_list_iterate(*tiles_to_update, ptile) {
+      int canvas_x, canvas_y;
+
+      freelog(LOG_UPDATE_QUEUE, "unqueue_flush update tile (%d, %d)",
+	      TILE_XY(ptile));
+      overview_update_tile(ptile);
+
+      if (update_full) {
+	continue;
+      }
+
+      /* Add the tiles on the region to update */
+      if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
+        canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
+        update_queue_add_rectangle(canvas_x, canvas_y,
+				   UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+      }
+    } tile_list_iterate_end;
+    tile_list_unlink_all(tiles_to_update);
+    free(tiles_to_update);
+    tiles_to_update = NULL;
+  }
+
+  if (region_to_update) {
+    GdkRectangle *rectangles, rectangle;
+    gint i, num;
+
+    /* Get the rectangles to update */
+    gdk_region_get_rectangles(region_to_update, &rectangles, &num);
+    gdk_region_get_clipbox(region_to_update, &rectangle);
+
+    /* Put sprites */
+    for (i = 0; i < num; i++) {
+      freelog(LOG_UPDATE_QUEUE, "put sprites in rectangle (%d, %d)-(%d, %d)",
+	      rectangles[i].x, rectangles[i].y,
+	      rectangles[i].width, rectangles[i].height);
+      draw_map_canvas(rectangles[i].x, rectangles[i].y,
+	              rectangles[i].width, rectangles[i].height, DRAW_SPRITES);
+    }
+    if (rectangles) {
+      g_free(rectangles);
+    }
+
+    /* Put map decoration */
+    freelog(LOG_UPDATE_QUEUE, "put map deco in rectangle (%d, %d)-(%d, %d)",
+	    rectangle.x, rectangle.y, rectangle.width, rectangle.y);
+    draw_map_canvas(rectangle.x, rectangle.y,
+		    rectangle.width, rectangle.height, DRAW_DECORATION);
+
+    if (region_to_flush) {
+      gdk_region_union(region_to_flush, region_to_update);
+      gdk_region_destroy(region_to_update);
+    } else {
+      region_to_flush = region_to_update;
+    }
+    region_to_update = NULL;
+  }
+
+  /* Flush what we need to redraw */
   flush_dirty();
   redraw_selection_rectangle();
+  flush_dirty_overview();
+  gdk_flush();
+
+  update_full = FALSE;
   is_flush_queued = FALSE;
-  return 0;
+
+  return FALSE; /* Remove the source */
 }
 
 /**************************************************************************
@@ -480,7 +550,8 @@ static gint unqueue_flush(gpointer data)
 static void queue_flush(void)
 {
   if (!is_flush_queued) {
-    gtk_idle_add(unqueue_flush, NULL);
+    freelog(LOG_UPDATE_QUEUE, "queue_flush");
+    g_idle_add(unqueue_flush, NULL);
     is_flush_queued = TRUE;
   }
 }
@@ -492,16 +563,19 @@ static void queue_flush(void)
 void dirty_rect(int canvas_x, int canvas_y,
 		int pixel_width, int pixel_height)
 {
-  if (num_dirty_rects < MAX_DIRTY_RECTS) {
-    dirty_rects[num_dirty_rects].x = canvas_x;
-    dirty_rects[num_dirty_rects].y = canvas_y;
-    dirty_rects[num_dirty_rects].width = pixel_width;
-    dirty_rects[num_dirty_rects].height = pixel_height;
-    num_dirty_rects++;
-    if (!real_update) {
-      queue_flush();
-    }
+  GdkRectangle rect = {.x = canvas_x, .y = canvas_y,
+                       .width = pixel_width, .height = pixel_height};
+  GdkRegion *region = gdk_region_rectangle(&rect);
+
+  freelog(LOG_UPDATE_QUEUE, "dirty_rect (%d, %d)-(%d, %d)",
+	  canvas_x, canvas_y, pixel_width, pixel_height);
+  if (region_to_flush) {
+    gdk_region_union(region_to_flush, region);
+    gdk_region_destroy(region);
+  } else {
+    region_to_flush = region;
   }
+  queue_flush();
 }
 
 /**************************************************************************
@@ -509,9 +583,28 @@ void dirty_rect(int canvas_x, int canvas_y,
 **************************************************************************/
 void dirty_all(void)
 {
-  num_dirty_rects = MAX_DIRTY_RECTS;
-  if (!real_update) {
-    queue_flush();
+  dirty_rect(0, 0, mapview_canvas.store_width, mapview_canvas.store_height);
+}
+
+/**************************************************************************
+  Flush the given part of the canvas buffer (if there is one) to the
+  screen.
+**************************************************************************/
+void flush_rectangle(int canvas_x, int canvas_y,
+		     int pixel_width, int pixel_height)
+{
+  freelog(LOG_UPDATE_QUEUE, "flush_rectangle (%d, %d)-(%d, %d)",
+	  canvas_x, canvas_y, pixel_width, pixel_height);
+  base_flush_rectangle(canvas_x, canvas_y, pixel_width, pixel_height);
+
+  if (region_to_flush) {
+    /* Set this rectangle as flushed, no need to do it anymore */
+    GdkRectangle rect = {.x = canvas_x, .y = canvas_y,
+                         .width = pixel_width, .height = pixel_height};
+    GdkRegion *region = gdk_region_rectangle(&rect);
+
+    gdk_region_subtract(region_to_flush, region);
+    gdk_region_destroy(region);
   }
 }
 
@@ -522,21 +615,28 @@ void dirty_all(void)
 **************************************************************************/
 void flush_dirty(void)
 {
-  if (!gdk_window_is_visible(map_canvas->window)) {
+  if (!gdk_window_is_visible(map_canvas->window) || !region_to_flush) {
     return;
   }
-  if (num_dirty_rects == MAX_DIRTY_RECTS) {
-    flush_mapcanvas(0, 0, map_canvas->allocation.width,
-		    map_canvas->allocation.height);
-  } else {
-    int i;
 
-    for (i = 0; i < num_dirty_rects; i++) {
-      flush_mapcanvas(dirty_rects[i].x, dirty_rects[i].y,
-		      dirty_rects[i].width, dirty_rects[i].height);
-    }
+  GdkRectangle *rectangles;
+  gint i, num;
+
+  gdk_region_get_rectangles(region_to_flush, &rectangles, &num);
+  freelog(LOG_UPDATE_QUEUE, "flush_dirty (%d rectangles)", num);
+  for (i = 0; i < num; i++) {
+    freelog(LOG_UPDATE_QUEUE, "flush_dirty rectangle (%d, %d)-(%d, %d)",
+	    rectangles[i].x, rectangles[i].y,
+	    rectangles[i].width, rectangles[i].height);
+    base_flush_rectangle(rectangles[i].x, rectangles[i].y,
+		         rectangles[i].width, rectangles[i].height);
   }
-  num_dirty_rects = 0;
+
+  if (rectangles) {
+    g_free(rectangles);
+  }
+  gdk_region_destroy(region_to_flush);
+  region_to_flush = NULL;
 }
 
 /****************************************************************************
@@ -549,20 +649,126 @@ void gui_flush(void)
   gdk_flush();
 }
 
-/**************************************************************************
- Update display of descriptions associated with cities on the main map.
-**************************************************************************/
-void update_city_descriptions(void)
+/****************************************************************************
+  Add a tile which need to be updated.
+****************************************************************************/
+void update_queue_add_tile(struct tile *ptile)
 {
-  update_map_canvas_visible();
+  freelog(LOG_UPDATE_QUEUE, "update_queue_add_tile (%d, %d)",
+	  TILE_XY(ptile));
+
+  if (!tiles_to_update) {
+    tiles_to_update = fc_malloc(sizeof(struct tile_list));
+    tile_list_init(tiles_to_update);
+  } else if (tile_list_find(tiles_to_update, ptile)) {
+    return;
+  }
+
+  tile_list_append(tiles_to_update, ptile);
+  queue_flush();
 }
 
-/**************************************************************************
-  If necessary, clear the city descriptions out of the buffer.
-**************************************************************************/
-void prepare_show_city_descriptions(void)
+/****************************************************************************
+  Remove a tile which has just been udpated.
+****************************************************************************/
+void update_queue_remove_tile(struct tile *ptile)
 {
-  /* Nothing to do */
+  freelog(LOG_UPDATE_QUEUE, "update_queue_remove_tile (%d, %d)",
+	  TILE_XY(ptile));
+
+  if (tiles_to_update) {
+    tile_list_unlink(tiles_to_update, ptile);
+  }
+}
+
+/****************************************************************************
+  Add a rectangle which need to be updated.
+****************************************************************************/
+void update_queue_add_rectangle(int x, int y, int w, int h)
+{
+  if (update_full) {
+    return;
+  }
+
+  GdkRectangle rect;
+  GdkRegion *region;
+
+  freelog(LOG_UPDATE_QUEUE, "update_queue_add_rectangle (%d, %d)-(%d, %d)",
+	  x, y, w, h);
+
+  rect.x = MAX(x, 0);
+  rect.y = MAX(y, 0);
+  rect.width = MIN(w, mapview_canvas.store_width - rect.x);
+  rect.height = MIN(h, mapview_canvas.store_height - rect.y);
+  if (rect.width <= 0 || rect.height <= 0) {
+    return;
+  }
+
+  region = gdk_region_rectangle(&rect);
+
+  if (region_to_update) {
+    gdk_region_union(region_to_update, region);
+    gdk_region_destroy(region);
+  } else {
+    region_to_update = region;
+  }
+  queue_flush();
+
+  if (!update_full
+      && rect.x == 0
+      && rect.y == 0
+      && rect.width == mapview_canvas.store_width
+      && rect.height == mapview_canvas.store_height) {
+    update_full = TRUE;
+  }
+}
+
+/****************************************************************************
+  Move the area which need to be updated.
+****************************************************************************/
+void move_update_queue(int vector_x, int vector_y)
+{
+  if (!region_to_update) {
+    return;
+  }
+
+  GdkRectangle rectangle;
+
+  freelog(LOG_UPDATE_QUEUE, "move_update_queue (%d, %d)", vector_x, vector_y);
+
+  gdk_region_get_clipbox(region_to_update, &rectangle);
+  rectangle.x = MAX(rectangle.x + vector_x, 0);
+  rectangle.y = MAX(rectangle.y + vector_y, 0);
+  rectangle.width = MIN(rectangle.width,
+			mapview_canvas.store_width - rectangle.x);
+  rectangle.height = MIN(rectangle.height,
+			 mapview_canvas.store_height - rectangle.y);
+  gdk_region_destroy(region_to_update);
+  if (rectangle.width > 0 && rectangle.height > 0) {
+    region_to_update = gdk_region_rectangle(&rectangle);
+  } else {
+    region_to_update = NULL;
+  }
+}
+
+/****************************************************************************
+  Free the update queue.
+****************************************************************************/
+void free_mapview_updates(void)
+{
+  if (tiles_to_update) {
+    tile_list_unlink_all(tiles_to_update);
+    free(tiles_to_update);
+    tiles_to_update = NULL;
+  }
+  if (region_to_update) {
+    gdk_region_destroy(region_to_update);
+    region_to_update = NULL;
+  }
+  if (region_to_flush) {
+    gdk_region_destroy(region_to_flush);
+    region_to_flush = NULL;
+  }
 }
 
 /****************************************************************************
@@ -964,7 +1170,7 @@ void canvas_put_line(struct canvas *pcanvas, enum color_std color,
 }
 
 /**************************************************************************
-...
+  ...
 **************************************************************************/
 void canvas_copy(struct canvas *dest, struct canvas *src,
 		 int src_x, int src_y, int dest_x, int dest_y,

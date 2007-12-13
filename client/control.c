@@ -196,17 +196,17 @@ void set_unit_focus(struct unit *punit)
     multi_select_set_unit_focus(0, punit);
   }
 
-  if(punit) {
+  if (punit) {
     auto_center_on_focus_unit();
 
     punit->focus_status = FOCUS_AVAIL;
-    refresh_tile_mapcanvas(punit->tile, FALSE);
+    refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
   }
   
   /* avoid the old focus unit disappearing: */
   if (punit_old_focus
       && (!punit || !same_pos(punit_old_focus->tile, punit->tile))) {
-    refresh_tile_mapcanvas(punit_old_focus->tile, FALSE);
+    refresh_tile_mapcanvas(punit_old_focus->tile, MUT_NORMAL);
   }
 
   update_unit_info_label(punit);
@@ -478,15 +478,15 @@ void blink_active_unit(void)
   if (punit_focus) {
     is_shown = !is_shown;
     set_focus_unit_hidden_state(!is_shown);
-    if(!multi_select_blink) {
-      refresh_tile_mapcanvas(punit_focus->tile, TRUE);
+    if (!multi_select_blink) {
+      refresh_tile_mapcanvas(punit_focus->tile, MUT_NORMAL);
     } else {
       unit_list_iterate(*multi_select_get_units_focus(), punit) {
 	if (multi_select_blink_all
 	    || punit == punit_focus
 	    || unit_satisfies_filter(punit, multi_select_inclusive_filter,
 					    multi_select_exclusive_filter)) {
-	  refresh_tile_mapcanvas(punit->tile, TRUE);
+	  refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
 	}
       } unit_list_iterate_end;
     }
@@ -1319,7 +1319,7 @@ void request_unit_sentry(struct unit *punit)
     struct city *pcity = find_city_by_id(punit->homecity);
 
     punit->is_sleeping = FALSE;
-    refresh_tile_mapcanvas(punit->tile, FALSE);
+    refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
 
     if (pcity) {
       refresh_city_dialog(pcity);
@@ -1360,7 +1360,7 @@ void request_unit_sleep(struct unit *punit)
     if (punit->activity == ACTIVITY_SENTRY) {
       struct city *pcity = find_city_by_id(punit->homecity);
 
-      refresh_tile_mapcanvas(punit->tile, FALSE);
+      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
 
       if (pcity) {
         refresh_city_dialog(pcity);
@@ -1413,7 +1413,7 @@ void request_toggle_map_grid(void)
   }
 
   draw_map_grid ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1426,7 +1426,7 @@ void request_toggle_map_borders(void)
   }
 
   draw_borders ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1439,7 +1439,7 @@ void request_toggle_city_names(void)
   }
 
   draw_city_names ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
  
 /**************************************************************************
@@ -1452,7 +1452,7 @@ void request_toggle_city_growth(void)
   }
 
   draw_city_growth ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1465,7 +1465,7 @@ void request_toggle_city_productions(void)
   }
 
   draw_city_productions ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1478,7 +1478,7 @@ void request_toggle_city_production_buy_cost(void)
   }
 
   draw_city_production_buy_cost ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1491,7 +1491,7 @@ void request_toggle_city_traderoutes(void)
   }
 
   draw_city_traderoutes ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1504,7 +1504,7 @@ void request_toggle_terrain(void)
   }
 
   draw_terrain ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1517,7 +1517,7 @@ void request_toggle_coastline(void)
   }
 
   draw_coastline ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1530,7 +1530,7 @@ void request_toggle_roads_rails(void)
   }
 
   draw_roads_rails ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1543,7 +1543,7 @@ void request_toggle_irrigation(void)
   }
 
   draw_irrigation ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1556,7 +1556,7 @@ void request_toggle_mines(void)
   }
 
   draw_mines ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1569,7 +1569,7 @@ void request_toggle_fortress_airbase(void)
   }
 
   draw_fortress_airbase ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1582,7 +1582,7 @@ void request_toggle_specials(void)
   }
 
   draw_specials ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1595,7 +1595,7 @@ void request_toggle_pollution(void)
   }
 
   draw_pollution ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1608,7 +1608,7 @@ void request_toggle_cities(void)
   }
 
   draw_cities ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1621,7 +1621,7 @@ void request_toggle_units(void)
   }
 
   draw_units ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1634,7 +1634,7 @@ void request_toggle_focus_unit(void)
   }
 
   draw_focus_unit ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
 }
 
 /**************************************************************************
@@ -1647,7 +1647,7 @@ void request_toggle_fog_of_war(void)
   }
 
   draw_fog_of_war ^= 1;
-  update_map_canvas_visible();
+  update_map_canvas_visible(MUT_NORMAL);
   refresh_overview_canvas();
 }
 
@@ -1704,12 +1704,6 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
   }
 
   unit_list_unlink(&ptile->units, punit);
-  punit->tile = target_unit->tile; /* For unit chat link */
-  assert(real_update == FALSE);
-  real_update = TRUE;
-  refresh_tile_mapcanvas(ptile, FALSE);
-  real_update = FALSE;
-  punit->tile = ptile;             /* Revert */
 
   if (game.player_idx == punit->owner
       && auto_center_on_unit
@@ -1734,7 +1728,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
       tile_to_canvas_pos(&canvas_x, &canvas_y, ptile);
       update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
 			canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
-			width, height);
+			width, height, MUT_NORMAL);
       overview_update_tile(ptile);
     }
 
@@ -1745,11 +1739,10 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
        * tile. */
       map_distance_vector(&dx, &dy, ptile, target_unit->tile);
       move_unit_map_canvas(punit, ptile, dx, dy);
-    } else {
-      refresh_tile_mapcanvas(ptile, FALSE);
     }
   }
-    
+
+  refresh_tile_mapcanvas(ptile, MUT_NORMAL);
   punit->tile = target_unit->tile;
 
   unit_list_insert(&punit->tile->units, punit);
