@@ -26,8 +26,8 @@ SERVER_FILES = \
 	nowonder+1.2.serv	\
 	tournament.serv	\
 	warserver.serv	\
-	exemple-actions.txt	\
-	exemple-welcome.txt
+	example-actions.txt	\
+	example-welcome.txt
 else
 SERVER_FILES =
 endif
@@ -50,8 +50,8 @@ EXTRA_DIST = \
 	warruleset-1.3.serv	\
 	tournament.serv	\
 	warserver.serv	\
-	exemple-actions.txt	\
-	exemple-welcome.txt
+	example-actions.txt	\
+	example-welcome.txt
 
 if CLIENT
 CLIENTDATADIRS = misc flags isotrident trident isophex stdsounds
