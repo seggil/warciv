@@ -62,29 +62,39 @@ char *user_action_type_strs[NUM_ACTION_TYPES] = {
 
 static void grant_access_level(struct connection *pconn);
 static int generate_welcome_message(char *buf, int buf_len,
-				    char *welcome_msg);
+                                    char *welcome_msg);
+static bool is_banned(struct connection *pconn, enum conn_pattern_type type);
+static bool conn_can_be_established(struct connection *pconn);
+static void check_connection(struct connection *pconn);
 
-
+/**************************************************************************
+  ...
+**************************************************************************/
 bool can_control_a_player(struct connection *pconn, bool message)
 {
   char *cap[256];
   int ntokens = 0, i;
+  bool ret = TRUE;
 
-  if(!strlen(srvarg.required_cap))
+  if (!strlen(srvarg.required_cap)) {
     return TRUE;
+  }
  
   ntokens = get_tokens(srvarg.required_cap, cap, 256, TOKEN_DELIMITERS);
 
-  for(i = 0; i < ntokens; i++) {
-    if(!has_capability(cap[i], pconn->capability)) {
-      if(message)
-        notify_conn(&pconn->self, _("Server: Sorry, you haven't got the '%s' capability, "
-        	"which is required to play on this server."), cap[i]);
-      return FALSE;
+  for (i = 0; i < ntokens; i++) {
+    if (ret && !has_capability(cap[i], pconn->capability)) {
+      if (message) {
+        notify_conn(&pconn->self,
+            _("Server: Sorry, you haven't got the '%s' capability, "
+              "which is required to play on this server."), cap[i]);
+      }
+      ret = FALSE;
     }
+    free(cap[i]);
   }
-
-  return TRUE;
+  
+  return ret;
 }
 
 /**************************************************************************
@@ -104,6 +114,7 @@ void clear_all_on_connect_user_actions(void)
 int user_action_as_str(struct user_action *pua, char *buf, int buflen)
 {
   char buf2[128];
+
   conn_pattern_as_str(pua->conpat, buf2, sizeof(buf2));
   return my_snprintf(buf, buflen, "<%s %s>",
 		     user_action_type_strs[pua->action], buf2);
@@ -112,26 +123,17 @@ int user_action_as_str(struct user_action *pua, char *buf, int buflen)
 /**************************************************************************
   ...
 **************************************************************************/
-static enum action_type
-find_action_for_connection(char *username,
-			   struct connection *pconn, int pref)
+static enum action_type find_action_for_connection(struct connection *pconn)
 {
-  bool match = FALSE;
-  char buf[128];
-
-
   user_action_list_iterate(on_connect_user_actions, pua) {
+#ifdef DEBUG
+    char buf[128];
     user_action_as_str(pua, buf, sizeof(buf));
-    freelog(LOG_DEBUG, "testing action %s against %s "
-	    " (username=\"%s\", pref=%d)", buf,
-	    conn_description(pconn), username, pref);
+    freelog(LOG_DEBUG, "testing action %s against %s",
+	    buf, conn_description(pconn));
+#endif /* DEBUG */
 
-    if (0 <= pref && pref < NUM_ACTION_TYPES && pua->action != pref)
-      continue;
-
-    match = conn_pattern_match(pua->conpat, pconn, username);
-
-    if (match) {
+    if (conn_pattern_match(pua->conpat, pconn)) {
       freelog(LOG_DEBUG, "  matched! returning action %d", pua->action);
       return pua->action;
     }
@@ -143,46 +145,155 @@ find_action_for_connection(char *username,
 /**************************************************************************
   ...
 **************************************************************************/
-bool is_banned(char *username, struct connection * pconn)
+static void grant_access_level(struct connection *pconn)
 {
-  int action;
-  action = find_action_for_connection(username, pconn, ACTION_BAN);
-  return action == ACTION_BAN;
+  switch (find_action_for_connection(pconn)) {
+    case ACTION_BAN:
+      /* This should never happen as bans should have already been
+       * handled. */
+      die("Tried to grant access level for a banned connection %d "
+          "(%s from %s)!", pconn->id, pconn->username, pconn->addr);
+      break;
+    case ACTION_GIVE_NONE:
+      pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
+      break;
+    case ACTION_GIVE_OBSERVER:
+      pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
+      break;
+    case ACTION_GIVE_BASIC:
+      pconn->granted_access_level = pconn->access_level = ALLOW_BASIC;
+      break;
+    case ACTION_GIVE_CTRL:
+      pconn->granted_access_level = pconn->access_level = ALLOW_CTRL;
+      break;
+    case ACTION_GIVE_ADMIN:
+      pconn->granted_access_level = pconn->access_level = ALLOW_ADMIN;
+      break;
+    case ACTION_GIVE_HACK:
+      pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
+      break;
+    default:
+      if (user_action_list_size(&on_connect_user_actions) > 0) {
+        freelog(LOG_NORMAL,
+		_("Warning: There was no match in the "
+                  "action list for connection %d (%s from %s). It will "
+                  "have access level 'none'."),
+                pconn->id, pconn->username, pconn->server.ipaddr);
+      }
+      pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
+      return;
+  }
+
+  if (pconn->access_level > ALLOW_OBSERVER 
+      && !can_control_a_player(pconn, FALSE)) {
+    pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
+  }
+
+  freelog(LOG_VERBOSE, "Giving access '%s' to connection %d (%s from %s).",
+	  cmdlevel_name(pconn->granted_access_level),
+	  pconn->id, pconn->username, pconn->addr);
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void grant_access_level(struct connection *pconn)
+static bool is_banned(struct connection *pconn, enum conn_pattern_type type)
 {
-  int action = find_action_for_connection(NULL, pconn, -1);
-  switch (action) {
-  case ACTION_GIVE_NONE:
-    pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
-    break;
-  case ACTION_GIVE_OBSERVER:
-    pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
-    break;
-  case ACTION_GIVE_BASIC:
-    pconn->granted_access_level = pconn->access_level = ALLOW_BASIC;
-    break;
-  case ACTION_GIVE_CTRL:
-    pconn->granted_access_level = pconn->access_level = ALLOW_CTRL;
-    break;
-  case ACTION_GIVE_ADMIN:
-    pconn->granted_access_level = pconn->access_level = ALLOW_ADMIN;
-    break;
-  case ACTION_GIVE_HACK:
-    pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
-    break;
-  default:
-    pconn->granted_access_level = pconn->access_level; /* Use the default in sernet.c */
-    break;
+  user_action_list_iterate(on_connect_user_actions, pua) {
+    if (pua->action == ACTION_BAN && pua->conpat->type == type
+        && conn_pattern_match(pua->conpat, pconn)) {
+      return TRUE;
+    }
+  } user_action_list_iterate_end;
+
+  return FALSE;
+}
+
+/**************************************************************************
+  Returns FALSE if some clues are missing for the action list.
+**************************************************************************/
+static bool conn_can_be_established(struct connection *pconn)
+{
+  return pconn != NULL
+	 && pconn->server.ipaddr != '\0'
+	 && pconn->addr != '\0'
+	 && pconn->server.adns_id == -1
+	 && pconn->server.received_username;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void check_connection(struct connection *pconn)
+{
+  if (user_action_list_size(&on_connect_user_actions) > 0
+      && conn_can_be_established(pconn)) {
+    grant_access_level(pconn);
+    if (pconn->server.delay_establish) {
+      pconn->server.delay_establish = FALSE;
+      establish_new_connection(pconn);
+    }
+  }
+}
+
+/**************************************************************************
+  Returns FALSE if the connection must be/has been closed.
+**************************************************************************/
+bool receive_ip(struct connection *pconn, const char *ipaddr)
+{
+  assert(ipaddr != NULL);
+
+  sz_strlcpy(pconn->server.ipaddr, ipaddr);
+  sz_strlcpy(pconn->addr, ipaddr);
+
+  if (is_banned(pconn, CPT_ADDRESS)) {
+    freelog(LOG_NORMAL, _("The address %s is banned from this server"), ipaddr);
+    server_break_connection(pconn);
+    return FALSE;
   }
 
-  if(pconn->access_level > ALLOW_OBSERVER && !can_control_a_player(pconn, FALSE)) {
-    pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
+  check_connection(pconn);
+  return TRUE;
+}
+
+/**************************************************************************
+  Returns FALSE if the connection must be/has been closed.
+**************************************************************************/
+bool receive_hostname(struct connection *pconn, const char *addr)
+{
+  if (addr) {
+    sz_strlcpy(pconn->addr, addr);
   }
+
+  if (is_banned(pconn, CPT_HOSTNAME)) {
+    freelog(LOG_NORMAL,
+	    _("The hostname %s is banned from this server"), pconn->addr);
+    server_break_connection(pconn);
+    return FALSE;
+  }
+
+  check_connection(pconn);
+  return TRUE;
+}
+
+/**************************************************************************
+  Returns FALSE if the connection must be/has been closed.
+**************************************************************************/
+bool receive_username(struct connection *pconn, const char *username)
+{
+  assert(username != NULL);
+
+  sz_strlcpy(pconn->username, username);
+
+  if (is_banned(pconn, CPT_USERNAME)) {
+    /* Do not close this connection here, it will be 
+     * closed by sniff_packets (command_ok = FALSE). */
+    return FALSE;
+  }
+
+  pconn->server.received_username = TRUE;
+  check_connection(pconn);
+  return TRUE;
 }
 
 /**************************************************************************
@@ -194,14 +305,31 @@ void grant_access_level(struct connection *pconn)
 **************************************************************************/
 void establish_new_connection(struct connection *pconn)
 {
-  struct conn_list *dest = &pconn->self;
+  struct conn_list *dest = pconn ? &pconn->self : NULL;
   struct player *pplayer;
   struct packet_server_join_reply packet;
   char hostname[512];
 
+  if (user_action_list_size(&on_connect_user_actions) > 0
+      && !conn_can_be_established(pconn)) {
+    freelog(LOG_VERBOSE, _("Cannot establish connection %d (%s) now, "
+                           "delay it"), pconn->id, pconn->username);
+    pconn->server.delay_establish = TRUE;
+    return;
+  }
+
+  /* Give a warning if we give access NONE when the hack
+   * challenge is disabled and there is no action list. */
+  if (user_action_list_size(&on_connect_user_actions) == 0
+      && pconn->access_level == ALLOW_NONE
+      && srvarg.hack_request_disabled) {
+    freelog(LOG_NORMAL, _("Warning: Without an action list, connection %d "
+                          "(%s) has been set to access level NONE."),
+            pconn->id, pconn->username);
+  }
+
   /* zero out the password */
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
-  grant_access_level(pconn);
   /* send off login_replay packet */
   packet.you_can_join = TRUE;
   sz_strlcpy(packet.capability, our_capability);
@@ -218,13 +346,13 @@ void establish_new_connection(struct connection *pconn)
   /* introduce the server to the connection */
   if (!welcome_message) {
     /* The default. */
-  if (my_gethostname(hostname, sizeof(hostname)) == 0) {
-    notify_conn(dest, _("Welcome to the %s Server running at %s port %d."),
-                freeciv_name_version(), hostname, srvarg.port);
-  } else {
-    notify_conn(dest, _("Welcome to the %s Server at port %d."),
-                freeciv_name_version(), srvarg.port);
-  }
+    if (my_gethostname(hostname, sizeof(hostname)) == 0) {
+      notify_conn(dest, _("Welcome to the %s Server running at %s port %d."),
+		  freeciv_name_version(), hostname, srvarg.port);
+    } else {
+      notify_conn(dest, _("Welcome to the %s Server at port %d."),
+		  freeciv_name_version(), srvarg.port);
+    }
   } else {
     /* Though it is possible that maxlen will not be enough
        space for all the expansions, at worst it will result
@@ -318,7 +446,9 @@ void establish_new_connection(struct connection *pconn)
   /* if need be, tell who we're waiting on to end the game turn */
   if (server_state == RUN_GAME_STATE && game.turnblock) {
     players_iterate(cplayer) {
-      if (cplayer->is_alive && !cplayer->ai.control && !cplayer->turn_done && cplayer != pconn->player) {	/* skip current player */
+      if (cplayer->is_alive && !cplayer->ai.control
+	  && !cplayer->turn_done && cplayer != pconn->player) {
+	/* Skip current player */
 	notify_conn(dest, _("Game: Turn-blocking game play: "
                             "waiting on %s to finish turn..."),
                     cplayer->name);
@@ -374,22 +504,22 @@ bool handle_login_request(struct connection *pconn,
   char msg[MAX_LEN_MSG];
   
   freelog(LOG_NORMAL, _("Connection request from %s from %s%s"),
-	  req->username, pconn->addr, pconn->adns_id > 0 ?
+	  req->username, pconn->addr, pconn->server.adns_id > 0 ?
 	  _(" (hostname lookup in progress)") : "");
 
   if ((game.maxconnections != 0)
       && (conn_list_size(&game.all_connections) > game.maxconnections)) {
-    reject_new_connection(_
-			  ("Maximum number of connections for this server exceeded."),
-			  pconn);
+    reject_new_connection(_("Maximum number of connections "
+			    "for this server exceeded."), pconn);
     return FALSE;
   }
 
-  if (is_banned(req->username, pconn)) {
+  remove_leading_trailing_spaces(req->username);
+  if (!receive_username(pconn, req->username)) {
     reject_new_connection(_("You are banned from this server."), pconn);
     return FALSE;
   }
-  
+
   /* print server and client capabilities to console */
   freelog(LOG_NORMAL, _("%s has client version %d.%d.%d%s"),
           pconn->username, req->major_version, req->minor_version,
@@ -428,8 +558,6 @@ bool handle_login_request(struct connection *pconn,
     return FALSE;
   }
 
-  remove_leading_trailing_spaces(req->username);
-
   /* Name-sanity check: could add more checks? */
   if (!is_valid_username(req->username)) {
     my_snprintf(msg, sizeof(msg), _("Invalid username '%s'"), req->username);
@@ -441,6 +569,9 @@ bool handle_login_request(struct connection *pconn,
 
   /* don't allow duplicate logins */
   conn_list_iterate(game.all_connections, aconn) {
+    if (aconn == pconn) {
+      continue;
+    }
     if (mystrcasecmp(req->username, aconn->username) == 0) { 
       my_snprintf(msg, sizeof(msg), _("'%s' already connected."), 
                   req->username);

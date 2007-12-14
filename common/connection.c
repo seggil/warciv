@@ -663,9 +663,9 @@ void connection_common_close(struct connection *pconn)
     freelog(LOG_ERROR, "WARNING: Trying to close already closed connection");
   } else {
     my_closesocket(pconn->sock);
-    if (pconn->adns_id > 0) {
-      adns_cancel (pconn->adns_id);
-      pconn->adns_id = -1;
+    if (is_server && pconn->server.adns_id > 0) {
+      adns_cancel(pconn->server.adns_id);
+      pconn->server.adns_id = -1;
     }
     pconn->used = FALSE;
     pconn->established = FALSE;
@@ -808,16 +808,18 @@ int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen)
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn,
-                        char *username)
+bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 {
-  if (cp->type == CPT_ADDRESS) {
-    return wildcardfit (cp->pattern, pconn->server.ipaddr);
-  } else if (cp->type == CPT_HOSTNAME) {
-    return wildcardfit (cp->pattern, pconn->addr);
-  } else if (cp->type == CPT_USERNAME) {
-    return wildcardfit (cp->pattern, username ? username
-                        : pconn->username);
+  switch (cp->type) {
+    case CPT_ADDRESS:
+      return wildcardfit(cp->pattern, pconn->server.ipaddr);
+    case CPT_HOSTNAME:
+      return wildcardfit(cp->pattern, pconn->addr);
+    case CPT_USERNAME:
+      return wildcardfit(cp->pattern, pconn->username);
+    default:
+      break;
   }
+
   return FALSE;
 }

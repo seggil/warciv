@@ -279,7 +279,7 @@ static void close_socket_callback(struct connection *pc)
 *****************************************************************************/
 void server_break_connection(struct connection *pconn)
 {
-  if(pconn->server.currently_processed_request_id) {
+  if (pconn->server.currently_processed_request_id) {
     finish_processing_request(pconn);
   }
   flush_connection_send_buffer_all(pconn);
@@ -685,8 +685,8 @@ int sniff_packets(void)
 	    while (TRUE) {	//decode "freeciv packets" from real packet
 	      packet = get_packet_from_connection(pconn, &type, &result);
 	      if (result) {
-		pconn->server.packets_received++;
 		bool command_ok;
+		pconn->server.packets_received++;
 
 		pconn->server.last_request_id_seen =
 		    get_next_request_id(pconn->server.last_request_id_seen);
@@ -817,17 +817,18 @@ static void reverse_lookup_cb(const unsigned char *addr,
     return;
   }
 
-  pconn->adns_id = -1;
+  pconn->server.adns_id = -1;
 
   if (addrlen > 0) {
     freelog(LOG_VERBOSE, "ADNS found hostname \"%s\" for "
             "connection (%s) from %s", hostname, pconn->username,
             pconn->server.ipaddr);
-    sz_strlcpy(pconn->addr, hostname);
+    receive_hostname(pconn, hostname);
   } else {
     freelog(LOG_VERBOSE, "ADNS could not find hostname for "
             "connection %s (%s)", pconn->server.ipaddr,
             pconn->username);
+    receive_hostname(pconn, NULL);
   }
 }
 
@@ -891,37 +892,53 @@ static int server_accept_connection(int sockfd)
   pconn->server.delay_counter = 0;
   pconn->server.packets_received = 0;
   pconn->server.status = AS_NOT_ESTABLISHED;
-  pconn->server.ping_timers = fc_malloc(sizeof(*pconn->server.ping_timers));
+
+  /* We don't want to leak this memory every time
+   * server_accept_connection is called... */
+  if (pconn->server.ping_timers == NULL) {
+    pconn->server.ping_timers
+        = fc_malloc(sizeof(*pconn->server.ping_timers));
+  }
+
   timer_list_init(pconn->server.ping_timers);
   pconn->ping_time = -1.0;
   pconn->incoming_packet_notify = NULL;
   pconn->outgoing_packet_notify = NULL;
   sz_strlcpy(pconn->username, makeup_connection_name(&pconn->id));
-  sz_strlcpy(pconn->server.ipaddr, inet_ntoa(fromend.sockaddr_in.sin_addr));
-  sz_strlcpy(pconn->addr, inet_ntoa(fromend.sockaddr_in.sin_addr));
-  pconn->adns_id = -1;
+  pconn->server.ipaddr[0] = '\0';
+  pconn->addr[0] = '\0';
+  pconn->server.adns_id = -1;
+  pconn->server.received_username = FALSE;
+  pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
+  pconn->server.delay_establish = FALSE;
+
+  if (!receive_ip(pconn, inet_ntoa(fromend.sockaddr_in.sin_addr))) {
+    /* Banned, but not an error. */
+    return 0;
+  }
 
   if (!srvarg.no_dns_lookup) {
     if (adns_is_available()) {
       freelog(LOG_DEBUG, "sac making adns request");
-      pconn->adns_id = adns_reverse_lookup(&fromend, reverse_lookup_cb,
-                                           pconn, NULL);
-      freelog(LOG_DEBUG, "sac got adns_id=%d", pconn->adns_id);
-      if (pconn->adns_id == 0) {
+      pconn->server.adns_id = adns_reverse_lookup(&fromend,
+          reverse_lookup_cb, pconn, NULL);
+      freelog(LOG_DEBUG, "sac got adns_id=%d", pconn->server.adns_id);
+      if (pconn->server.adns_id == 0) {
         /* reverse_lookup_cb called already */
-        pconn->adns_id = -1;
+        pconn->server.adns_id = -1;
       }
     } else {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
                            sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
-      if (from) {
-        sz_strlcpy(pconn->addr, from->h_name);
+      if (!receive_hostname(pconn, from ? from->h_name : NULL)) {
+        /* Banned, but not an error. */
+        return 0;
       }
     }
   }
   
   freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
-          pconn->username, pconn->addr, !from && pconn->adns_id > 0
+          pconn->username, pconn->addr, !from && pconn->server.adns_id > 0
           ? "hostname lookup in progress" : pconn->server.ipaddr);
 
   conn_list_append(&game.all_connections, pconn);
@@ -1007,7 +1024,7 @@ int server_open_socket(void)
 
 
 /********************************************************************
-...
+  Called once and only once when the server starts.
 ********************************************************************/
 void init_connections(void)
 {
