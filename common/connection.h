@@ -125,8 +125,7 @@ struct conn_pattern *conn_pattern_new(const char *pattern,
                                       int type);
 void conn_pattern_free(struct conn_pattern *cp);
 int conn_pattern_as_str(struct conn_pattern *cp, char *buf, int buflen);
-bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn,
-                        char *username);
+bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn);
 
 #define SPECLIST_TAG ignore
 #define SPECLIST_TYPE struct conn_pattern
@@ -238,6 +237,15 @@ struct connection {
     unsigned int delay_counter;
 
     struct ignore_list *ignore_list;
+ 
+    bool received_username;
+
+    /* Request id of asynchronous dns query, if applicable. */
+    int adns_id;
+
+    /* Is TRUE when we need are waiting for the hostname before
+     * complishing authentification and action list look up. */
+    bool delay_establish;
   } server;
 
   /*
@@ -272,9 +280,6 @@ struct connection {
   struct {
     int bytes_send;
   } statistics;
-
-  /* Request id of asynchronous dns query, if applicable. */
-  int adns_id;
 };
 
 

@@ -93,8 +93,9 @@ static bool is_ignored(struct connection *pconn, struct connection *dest)
     return FALSE;
 
   ignore_list_iterate(*dest->server.ignore_list, cp) {
-    if (conn_pattern_match(cp, pconn, NULL))
+    if (conn_pattern_match(cp, pconn)) {
       return TRUE;
+    }
   } ignore_list_iterate_end;
   return FALSE;
 }

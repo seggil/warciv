@@ -61,6 +61,10 @@ struct packet_server_join_req;
 
 bool can_control_a_player(struct connection *pconn, bool message);
 
+bool receive_ip(struct connection *pconn, const char *ipaddr);
+bool receive_hostname(struct connection *pcon, const char *addr);
+bool receive_username(struct connection *pconn, const char *username);
+
 void establish_new_connection(struct connection *pconn);
 void reject_new_connection(const char *msg, struct connection *pconn);
 
@@ -75,8 +79,7 @@ void send_conn_info_remove(struct conn_list *src, struct conn_list *dest);
 bool attach_connection_to_player(struct connection *pconn, 
                                  struct player *pplayer);
 bool unattach_connection_from_player(struct connection *pconn);
-bool is_banned (char *username, struct connection *pconn);
-void clear_all_on_connect_user_actions (void);
+void clear_all_on_connect_user_actions(void);
 
 void server_assign_nation(struct player *pplayer,
                           Nation_Type_id nation_no,
