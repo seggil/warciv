@@ -1017,34 +1017,6 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
   return FALSE;
 }
 
-#ifdef HAVE_WINSOCK
-/**************************************************************************
-  ...
-**************************************************************************/
-static int check_really_connected(int sock)
-{
-  int ret = 0;
-  fd_set fdsw;
-
-  struct timeval ywait;
-  ywait.tv_sec = 0;
-  ywait.tv_usec = 0;		/* Do not block, just check */
-
-  FD_ZERO(&fdsw);
-  FD_SET(sock, &fdsw);
-  ret = select(sock + 1, NULL, &fdsw, NULL, &ywait);
-
-  freelog(LOG_DEBUG, "sock=%d ret=%d", sock, ret);
-  if (ret == SOCKET_ERROR) {
-    int error = WSAGetLastError();
-    freelog(LOG_ERROR, _("Winsock error during select: %d"), error);
-    return -1;
-  }
-
-  return ret;
-}
-#endif
-
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1069,13 +1041,6 @@ static bool metaserver_connected_cb(int sock, int flags, void *data)
                              "before it was even established!"));
     return FALSE;
   }
-#ifdef WIN32_NATIVE
-  if (check_really_connected(sock) <= 0) {
-    freelog(LOG_DEBUG, "mcc got connection callback, but not really connected!"
-	    " Waiting some more...");
-    return TRUE;
-  }
-#endif
 
   freelog(LOG_DEBUG, "mcc connection to metaserver succeeded");
 
