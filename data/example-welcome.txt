@@ -1,0 +1,21 @@
+#
+# Example Welcome Message File
+#
+# 
+# The welcome message is the string the server displays to all
+# newly connected players.
+# 
+# The following escape sequences are understood:
+#   %v - Freeciv version running on the server
+#   %p - Port the server is running on
+#   %h - Hostname of the server (blank if it does not exist)
+#   %d - Current date
+#   %t - Current time
+#   %% - A single '%'
+#
+# Lines beginning with '#' are ignored. To have the server
+# use a welcome message file, use the command /wmessage <file>.
+#
+
+# Equivalent to the default welcome message.
+Welcome to the %v server running at %h port %p.
