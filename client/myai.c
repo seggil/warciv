@@ -729,6 +729,7 @@ void my_ai_trade_route_free(struct unit *punit)
   freelog(LOG_VERBOSE, "free auto-trade orders for %s (%d, %d)",
 	  unit_name(punit->type), TILE_XY(punit->tile));
 
+  punit->my_ai.control = FALSE;
   punit->my_ai.activity = MY_AI_NONE;
   punit->my_ai.data = NULL;
   unit_list_unlink(&traders, punit);
@@ -1477,6 +1478,7 @@ void my_ai_patrol_execute_all(void)
 void my_ai_patrol_free(struct unit *punit)
 {
   unit_list_unlink(&patrolers, punit);
+  punit->my_ai.control = FALSE;
   punit->my_ai.data = NULL;
   punit->my_ai.activity = MY_AI_NONE;
 }
