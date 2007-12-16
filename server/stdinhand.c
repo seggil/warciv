@@ -3956,7 +3956,7 @@ static bool set_command(struct connection *caller, char *str, bool check)
     *cptr_d=*cptr_s;
   *cptr_d='\0';
   cmd = lookup_option(command);
-    if (cmd == -1)
+    if (cmd == -1 || cmd == -3)
     {
     cmd_reply(CMD_SET, caller, C_SYNTAX,
 	      _("Undefined argument.  Usage: set <option> <value>."));
