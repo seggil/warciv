@@ -595,12 +595,12 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
   /* Maybe the route was free */
   if (punit->my_ai.data == ptr) {
     append_output_window(buf);
+    if (draw_city_traderoutes) {
+      update_trade_route_line(ptr->pc1, ptr->pc2);
+    }
   }
   update_auto_caravan_menu();
   update_miscellaneous_menu();
-  if (draw_city_traderoutes) {
-    update_trade_route_line(ptr->pc1, ptr->pc2);
-  }
 }
 
 /**************************************************************************
