@@ -32,6 +32,8 @@ struct command {
   const char *short_help; /* one line (about 70 chars) description */
   const char *extra_help; /* extra help information; will be line-wrapped */
   int echo_mode; /* who to tell when used (enum echo_type) */
+  int vote_flags; /* how to handle votes */
+  int vote_percent; /* parameter for voting, meaning depends on flags */
 };
 
 /* Order here is important: for ambiguous abbreviations the first

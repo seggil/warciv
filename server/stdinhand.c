@@ -296,6 +296,8 @@ struct voting {
   int yes;
   int no;
   int abstain;
+  int flags;
+  double need_pc;
 };
 
 #define SPECLIST_TAG vote
@@ -378,17 +380,12 @@ static enum command_id command_named(const char *token,
   enum m_pre_result result;
   int ind;
   result = match_prefix(cmdname_accessor, CMD_NUM, 0,
-			mystrncasecmp, token, &ind);
-    if (result < M_PRE_AMBIGUOUS)
-    {
+                        mystrncasecmp, token, &ind);
+  if (result < M_PRE_AMBIGUOUS) {
     return ind;
-    }
-    else if (result == M_PRE_AMBIGUOUS)
-    {
+  } else if (result == M_PRE_AMBIGUOUS) {
     return accept_ambiguity ? ind : CMD_AMBIGUOUS;
-    }
-    else
-    {
+  } else {
     return CMD_UNRECOGNIZED;
   }
 }
@@ -514,12 +511,14 @@ static struct voting *get_vote_by_caller(int caller_id)
 /**************************************************************************
   ...
 **************************************************************************/
-static struct voting *vote_new(struct connection *caller, const char *command,
-                               enum command_id command_id)
+static struct voting *vote_new(struct connection *caller,
+                               const char *command,
+                               enum command_id command_id,
+                               struct setting_value *sv)
 {
-  assert(votes_are_initialized);
-
   struct voting *pvote;
+
+  assert(votes_are_initialized);
 
   if (!connection_can_vote(caller)) {
     return NULL;
@@ -537,6 +536,33 @@ static struct voting *vote_new(struct connection *caller, const char *command,
   vote_cast_list_init(&pvote->votes_cast);
   pvote->vote_no = ++vote_number_sequence;
 
+  pvote->flags = commands[command_id].vote_flags;
+  pvote->need_pc = (double) commands[command_id].vote_percent / 100.0;
+
+  if (pvote->command_id == CMD_SET) {
+    struct settings_s *op = NULL;
+
+    assert(sv != NULL);
+    assert(sv->setting_idx >= 0);
+
+    op = &settings[sv->setting_idx];
+    if (op->vote_flags > VCF_NONE) {
+      pvote->flags = op->vote_flags;
+    }
+    if (op->vote_percent > 0) {
+      pvote->need_pc = (double) op->vote_percent / 100.0;
+    }
+
+    /* Extra special kludge for the timeout setting.
+     * NB If this is changed, do not forget to update
+     * help texts. */
+    if (0 == strcmp(op->name, "timeout")
+        && sv->int_value > *op->int_value) {
+      pvote->flags |= VCF_FASTPASS;
+      pvote->need_pc = 0.25;
+    }
+  }
+
   vote_list_append(&vote_list, pvote);
 
   return pvote;
@@ -546,21 +572,17 @@ static struct voting *vote_new(struct connection *caller, const char *command,
   Check if we satisfy the criteria for resolving a vote, and resolve it
   if these critera are indeed met. Updates yes and no variables in voting 
   struct as well.
-
-  Criteria:
-    Accepted immediately if: > 50% of votes for
-    Rejected immediately if: >= 50% of votes against
-    Accepted on conclusion iff: More than half eligible voters voted for,
-                                or none against.
 **************************************************************************/
 static void check_vote(struct voting *pvote)
 {
-  assert(votes_are_initialized);
-
   int num_cast = 0, num_voters = 0;
   bool resolve = FALSE, passed = FALSE;
   struct connection *pconn = NULL;
   double yes_pc = 0.0, no_pc = 0.0, rem_pc = 0.0, base = 0.0;
+  int flags;
+  double need_pc;
+
+  assert(votes_are_initialized);
 
   pvote->yes = 0;
   pvote->no = 0;
@@ -595,24 +617,51 @@ static void check_vote(struct voting *pvote)
     }
   } vote_cast_list_iterate_end;
 
+  flags = pvote->flags;
+  need_pc = pvote->need_pc;
 
   /* Check if we should resolve the vote. */
   if (num_voters > 0) {
+
+    /* Players that abstain essentially remove themselves from
+     * the voting pool. */
     base = num_voters - pvote->abstain;
+
     if (base > 0.0) {
       yes_pc = (double) pvote->yes / base;
       no_pc = (double) pvote->no / base;
+
+      /* The fraction of people who have not voted at all. */
       rem_pc = (double) (num_voters - num_cast) / base;
     }
 
-    if (pvote->command_id == CMD_END_GAME) {
-      resolve = yes_pc > 0.5 || no_pc > 0.0;
-    } else {
-      resolve = yes_pc > 0.5 || no_pc >= 0.5
-                || no_pc + rem_pc < 0.5
-                || yes_pc + rem_pc <= 0.5;
+    if (flags & VCF_NO_DISSENT && no_pc > 0.0) {
+      resolve = TRUE;
+    }
+    if (flags & VCF_UNANIMOUS && yes_pc < 1.0) {
+      resolve = TRUE;
     }
 
+    if (!resolve) {
+      if (flags & VCF_FASTPASS) {
+        /* We have enough votes and yes is in majority. */
+        resolve = (yes_pc > no_pc && 1.0 - rem_pc > need_pc)
+          /* Can't get enough yes votes from the remainder. */
+            || yes_pc + rem_pc <= no_pc
+          /* Everyone voted. */
+            || rem_pc == 0.0;
+      } else {
+        /* We have enough yes votes. */
+        resolve = yes_pc > need_pc
+          /* We have too many no votes. */
+            || no_pc >= 1.0 - need_pc
+          /* We can't get enough no votes. */
+            || no_pc + rem_pc < 1.0 - need_pc
+          /* We can't get enough yes votes. */
+            || yes_pc + rem_pc <= need_pc;
+      }
+    }
+      
     /* Resolve this vote if it has been around long enough. */
     if (!resolve && pvote->turn_count > 1) {
       resolve = TRUE;
@@ -624,18 +673,25 @@ static void check_vote(struct voting *pvote)
     }
   }
 
+  freelog(LOG_DEBUG, "check_vote flags=%d need_pc=%0.2f yes_pc=%0.2f "
+          "no_pc=%0.2f rem_pc=%0.2f base=%0.2f resolve=%d",
+          flags, need_pc, yes_pc, no_pc, rem_pc, base, resolve);
 
   if (!resolve) {
     return;
   }
 
-  if (pvote->command_id == CMD_END_GAME) {
-    passed = yes_pc > 0.5 && no_pc == 0.0;
+  if (flags & VCF_FASTPASS) {
+    passed = yes_pc > no_pc && 1.0 - rem_pc > need_pc;
   } else {
-    passed = yes_pc > 0.5;
+    passed = yes_pc > need_pc;
+  }
 
-    /* The old behaviour was: */
-    /* passed = yes_pc > no_pc; */
+  if (passed && flags & VCF_UNANIMOUS) {
+    passed = yes_pc == 1.0;
+  }
+  if (passed && flags & VCF_NO_DISSENT) {
+    passed = no_pc == 0.0;
   }
 
   if (passed) {
@@ -2720,10 +2776,9 @@ Find option level number by name.
 static enum sset_level lookup_option_level(const char *name)
 {
   enum sset_level i;
-    for (i = SSET_ALL; i < SSET_NUM_LEVELS; i++)
-    {
-        if (0 == mystrcasecmp(name, sset_level_names[i]))
-        {
+  
+  for (i = SSET_ALL; i < SSET_NUM_LEVELS; i++) {
+    if (0 == mystrcasecmp(name, sset_level_names[i])){
       return i;
     }
   }
@@ -2740,14 +2795,13 @@ static int lookup_option(const char *name)
   enum m_pre_result result;
   int ind;
   /* Check for option levels, first off */
-    if (lookup_option_level(name) != SSET_NONE)
-    {
+  if (lookup_option_level(name) != SSET_NONE) {
     return -3;
   }
   result = match_prefix(optname_accessor, SETTINGS_NUM, 0, mystrncasecmp,
-			name, &ind);
+                        name, &ind);
   return ((result < M_PRE_AMBIGUOUS) ? ind :
-	  (result == M_PRE_AMBIGUOUS) ? -2 : -1);
+          (result == M_PRE_AMBIGUOUS) ? -2 : -1);
 }
 
 /**************************************************************************
@@ -3548,9 +3602,15 @@ static bool vote_command(struct connection *caller, char *str,
     vote_list_iterate(vote_list, pvote) {
       i++;
       cmd_reply(CMD_VOTE, caller, C_COMMENT,
-                _("Vote %d \"%s\": %d for, %d against, %d abstained."),
+                _("Vote %d \"%s\" (needs %0.0f%%%s%s%s): %d for, "
+                  "%d against, and %d abstained out of %d players."),
                 pvote->vote_no, pvote->command,
-                pvote->yes, pvote->no, pvote->abstain);
+                pvote->need_pc * 100 + 1,
+                pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
+                pvote->flags & VCF_NO_DISSENT ? _(" no dissent") : "",
+                pvote->flags & VCF_FASTPASS ? _(" participation") : "",
+                pvote->yes, pvote->no, pvote->abstain,
+                game.nplayers);
     } vote_list_iterate_end;
 
     if (i == 0) {
@@ -3928,180 +3988,196 @@ static void check_option_capability(struct connection *caller,
 /******************************************************************
   ...
 ******************************************************************/
-static bool set_command(struct connection *caller, char *str, bool check)
+static bool parse_set_arguments(const char *str,
+                                struct setting_value *sv)
 {
-    char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE], *cptr_s,
-    *cptr_d;
+  const char *cptr_s;
+  char *cptr_d;
+  char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE];
+  int val;
+  struct settings_s *op;
+
+  memset(sv, 0, sizeof(struct setting_value));
+
+  cptr_s = str;
+  while (*cptr_s != '\0' && !is_ok_opt_name_char(*cptr_s)) {
+    cptr_s++;
+  }
+
+  cptr_d = command;
+  while (*cptr_s != '\0' && is_ok_opt_name_char(*cptr_s)) {
+    *cptr_d++ = *cptr_s++;
+  }
+  *cptr_d = '\0';
+
+  while (*cptr_s != '\0' && is_ok_opt_name_value_sep_char(*cptr_s)) {
+    cptr_s++;
+  }
+
+  cptr_d = arg;
+  while (*cptr_s != '\0' && is_ok_opt_value_char(*cptr_s)) {
+    *cptr_d++ = *cptr_s++;
+  }
+  *cptr_d = '\0';
+
+  sv->setting_idx = lookup_option(command);
+
+  if (sv->setting_idx < 0) {
+    return FALSE;
+  }
+  op = &settings[sv->setting_idx];
+
+  sz_strlcpy(sv->string_value, arg);
+  if (sscanf(arg, "%d", &val) == 1) {
+    sv->bool_value = val;
+    sv->int_value = val;
+  }
+
+  return TRUE;
+}
+
+/******************************************************************
+  ...
+******************************************************************/
+static bool set_command(struct connection *caller,
+                        struct setting_value *sv,
+                        bool check)
+{
   int val, cmd;
   struct settings_s *op;
   bool do_update;
   char buffer[500];
-  for (cptr_s = str; *cptr_s != '\0' && !is_ok_opt_name_char(*cptr_s);
-            cptr_s++)
-    {
-    /* nothing */
-  }
-  for(cptr_d=command;
-            *cptr_s != '\0' && is_ok_opt_name_char(*cptr_s); cptr_s++, cptr_d++)
-    {
-    *cptr_d=*cptr_s;
-  }
-  *cptr_d='\0';
-    for (; *cptr_s != '\0' && is_ok_opt_name_value_sep_char(*cptr_s); cptr_s++)
-    {
-    /* nothing */
-  }
-    for (cptr_d = arg; *cptr_s != '\0' && is_ok_opt_value_char(*cptr_s);
-            cptr_s++, cptr_d++)
-    *cptr_d=*cptr_s;
-  *cptr_d='\0';
-  cmd = lookup_option(command);
-    if (cmd == -1 || cmd == -3)
-    {
+
+
+  cmd = sv->setting_idx;
+
+  if (cmd == -1 || cmd <= -3) {
     cmd_reply(CMD_SET, caller, C_SYNTAX,
-	      _("Undefined argument.  Usage: set <option> <value>."));
+              _("Undefined argument.  Usage: set <option> <value>."));
+    return FALSE;
+  } else if (cmd == -2) {
+    cmd_reply(CMD_SET, caller, C_SYNTAX, _("Ambiguous option name."));
     return FALSE;
   }
-    else if (cmd == -2)
-    {
-        cmd_reply(CMD_SET, caller, C_SYNTAX, _("Ambiguous option name."));
+
+  if (!may_set_option(caller, cmd) && !check) {
+    cmd_reply(CMD_SET, caller, C_FAIL,
+              _("You are not allowed to set this option."));
     return FALSE;
   }
-    if (!may_set_option(caller, cmd) && !check)
-    {
-     cmd_reply(CMD_SET, caller, C_FAIL,
-	       _("You are not allowed to set this option."));
+
+  if (!sset_is_changeable(cmd)) {
+    cmd_reply(CMD_SET, caller, C_BOUNCE, _("This setting can't be "
+              "modified after the game has started."));
     return FALSE;
   }
-    if (!sset_is_changeable(cmd))
-    {
-    cmd_reply(CMD_SET, caller, C_BOUNCE,
-	      _("This setting can't be modified after the game has started."));
-    return FALSE;
-  }
+
   op = &settings[cmd];
   do_update = FALSE;
   buffer[0] = '\0';
-    if (map_is_loaded() && op->category == SSET_GEOLOGY)
-    {
-        cmd_reply(CMD_SET, caller, C_BOUNCE,
-                  _("A fixed Map is loaded, geological settings can't be modified.\n"
-                    "Type /unloadmap in order to unfix mapsettings"));
-    }
-    else
-    {
-        switch (op->type)
-        {
-  case SSET_BOOL:
-            if (sscanf(arg, "%d", &val) != 1)
-            {
-      cmd_reply(CMD_SET, caller, C_SYNTAX, _("Value must be an integer."));
-      return FALSE;
-            }
-            else if (val != 0 && val != 1)
-            {
-      cmd_reply(CMD_SET, caller, C_SYNTAX,
-		_("Value out of range (minimum: 0, maximum: 1)."));
-      return FALSE;
-            }
-            else
-            {
-      const char *reject_message = NULL;
-      bool b_val = (val != 0);
-      if (settings[cmd].bool_validate
-                        && !settings[cmd].bool_validate(b_val, &reject_message))
-                {
-	cmd_reply(CMD_SET, caller, C_SYNTAX, reject_message);
+
+  if (map_is_loaded() && op->category == SSET_GEOLOGY) {
+    cmd_reply(CMD_SET, caller, C_BOUNCE, _("A fixed Map is loaded, "
+              "geological settings can't be modified.\n"
+              "Type /unloadmap in order to unfix mapsettings"));
+  } else {
+    assert(sv->string_value != NULL);
+
+    switch (op->type) {
+
+    case SSET_BOOL:
+      if (sscanf(sv->string_value, "%d", &val) != 1) {
+        cmd_reply(CMD_SET, caller, C_SYNTAX,
+                  _("Value must be an integer."));
         return FALSE;
-                }
-                else if (!check)
-                {
-	*(op->bool_value) = b_val;
-	my_snprintf(buffer, sizeof(buffer),
-		    _("Option: %s has been set to %d."), op->name,
-		    *(op->bool_value) ? 1 : 0);
-	do_update = TRUE;
-      }
-    }
-    break;
-  case SSET_INT:
-            if (sscanf(arg, "%d", &val) != 1)
-            {
-      cmd_reply(CMD_SET, caller, C_SYNTAX, _("Value must be an integer."));
-      return FALSE;
-            }
-            else if (val < op->int_min_value || val > op->int_max_value)
-            {
-      cmd_reply(CMD_SET, caller, C_SYNTAX,
-		_("Value out of range (minimum: %d, maximum: %d)."),
-		op->int_min_value, op->int_max_value);
-      return FALSE;
-            }
-            else
-            {
-      const char *reject_message = NULL;
-      if (settings[cmd].int_validate
-                        && !settings[cmd].int_validate(val, &reject_message))
-                {
-	cmd_reply(CMD_SET, caller, C_SYNTAX, reject_message);
+      } else if (val != 0 && val != 1) {
+        cmd_reply(CMD_SET, caller, C_SYNTAX,
+                  _("Value out of range (minimum: 0, maximum: 1)."));
         return FALSE;
-                }
-                else if (!check)
-                {
-	*(op->int_value) = val;
-	my_snprintf(buffer, sizeof(buffer),
-		    _("Option: %s has been set to %d."), op->name,
-		    *(op->int_value));
-                    check_option_capability(caller, op);
-	do_update = TRUE;
+      } else {
+        const char *reject_message = NULL;
+        bool b_val = (val != 0);
+        if (settings[cmd].bool_validate
+            && !settings[cmd].bool_validate(b_val, &reject_message)) {
+          cmd_reply(CMD_SET, caller, C_SYNTAX, reject_message);
+          return FALSE;
+        } else if (!check) {
+          *(op->bool_value) = b_val;
+          my_snprintf(buffer, sizeof(buffer),
+                      _("Option: %s has been set to %d."), op->name,
+                      *(op->bool_value) ? 1 : 0);
+          do_update = TRUE;
+        }
       }
-    }
-    break;
-  case SSET_STRING:
-            if (strlen(arg) >= op->string_value_size)
-            {
-      cmd_reply(CMD_SET, caller, C_SYNTAX,
-		_("String value too long.  Usage: set <option> <value>."));
-      return FALSE;
-            }
-            else
-            {
-      const char *reject_message = NULL;
-      if (settings[cmd].string_validate
-                        && !settings[cmd].string_validate(arg, &reject_message))
-                {
-	cmd_reply(CMD_SET, caller, C_SYNTAX, reject_message);
+      break;
+
+    case SSET_INT:
+      if (sscanf(sv->string_value, "%d", &val) != 1) {
+        cmd_reply(CMD_SET, caller, C_SYNTAX,
+                  _("Value must be an integer."));
         return FALSE;
-                }
-                else if (!check)
-                {
-	strcpy(op->string_value, arg);
-	my_snprintf(buffer, sizeof(buffer),
-		    _("Option: %s has been set to \"%s\"."), op->name,
-		    op->string_value);
-	do_update = TRUE;
+      } else if (val < op->int_min_value || val > op->int_max_value) {
+        cmd_reply(CMD_SET, caller, C_SYNTAX,
+                  _("Value out of range (minimum: %d, maximum: %d)."),
+                  op->int_min_value, op->int_max_value);
+        return FALSE;
+      } else {
+        const char *reject_message = NULL;
+        if (settings[cmd].int_validate
+            && !settings[cmd].int_validate(val, &reject_message)) {
+          cmd_reply(CMD_SET, caller, C_SYNTAX, reject_message);
+          return FALSE;
+        } else if (!check) {
+          *(op->int_value) = val;
+          my_snprintf(buffer, sizeof(buffer),
+                      _("Option: %s has been set to %d."), op->name,
+                      *(op->int_value));
+          check_option_capability(caller, op);
+          do_update = TRUE;
+        }
       }
+      break;
+
+    case SSET_STRING:
+      if (strlen(sv->string_value) >= op->string_value_size) {
+        cmd_reply(CMD_SET, caller, C_SYNTAX, _("String value too "
+                  "long.  Usage: set <option> <value>."));
+        return FALSE;
+      } else {
+        const char *reject_message = NULL;
+        if (settings[cmd].string_validate
+            && !settings[cmd].string_validate(sv->string_value,
+                                              &reject_message)) {
+          cmd_reply(CMD_SET, caller, C_SYNTAX, reject_message);
+          return FALSE;
+        } else if (!check) {
+          strcpy(op->string_value, sv->string_value);
+          my_snprintf(buffer, sizeof(buffer),
+                      _("Option: %s has been set to \"%s\"."),
+                      op->name, op->string_value);
+          do_update = TRUE;
+        }
+      }
+      break;
     }
-    break;
   }
-    }
-    if (!check && strlen(buffer) > 0 && sset_is_to_client(cmd))
-    {
+
+  if (!check && strlen(buffer) > 0 && sset_is_to_client(cmd)) {
     notify_conn(NULL, "%s", buffer);
   }
-    if (!check && do_update)
-    {
+
+  if (!check && do_update) {
     send_server_info_to_metaserver(META_INFO);
-    /* 
-     * send any modified game parameters to the clients -- if sent
+
+    /* send any modified game parameters to the clients -- if sent
      * before RUN_GAME_STATE, triggers a popdown_races_dialog() call
-     * in client/packhand.c#handle_game_info() 
-     */
-        if (server_state == RUN_GAME_STATE)
-        {
+     * in client/packhand.c#handle_game_info() */
+
+    if (server_state == RUN_GAME_STATE) {
       send_game_info(NULL);
     }
   }
+  
   return TRUE;
 }
 
@@ -5587,6 +5663,10 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
       *cptr_s, *cptr_d;
   int i;
   enum command_id cmd;
+  enum cmdlevel_id level;
+  struct setting_value sv;
+
+
   /* notify to the server console */
   if (!check && caller) {
     con_write(C_COMMENT, "%s: '%s'", caller->username, str);
@@ -5641,10 +5721,32 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  enum cmdlevel_id level = access_level(cmd);
+  level = access_level(cmd);
+
+  cptr_s = skip_leading_spaces(cptr_s);
+  sz_strlcpy(arg, cptr_s);
+
+ 
+  cut_comment(arg);
+
+  /* keep this before we cut everything after a space */
+  sz_strlcpy(allargs, cptr_s);
+  cut_comment(allargs);
+
+  i = strlen(arg) - 1;
+  while (i > 0 && my_isspace(arg[i])) {
+    arg[i--] = '\0';
+  }
+
+
+  if (cmd == CMD_SET) {
+    parse_set_arguments(arg, &sv);
+  }
 
   if (connection_can_vote(caller)
       && !check && caller->access_level == ALLOW_BASIC && level == ALLOW_CTRL) {
+    struct voting *vote;
+
     /* If we already have a vote going, cancel it in favour of the new
      * vote command. You can only have one vote at a time. */
     if (get_vote_by_caller(caller->id)) {
@@ -5652,12 +5754,19 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
                 _("Your new vote cancelled your previous vote."));
     }
 
-    struct voting *vote;
     /* Check if the vote command would succeed. */
     if (handle_stdin_input(caller, full_command, TRUE)
-        && (vote = vote_new(caller, full_command, cmd))) {
-      notify_conn(NULL, _("New vote (number %d) by %s: %s."),
-                  vote->vote_no, caller->username, full_command);
+        && (vote = vote_new(caller, full_command, cmd, &sv))) {
+
+      notify_conn(NULL, _("New vote (number %d) by %s: %s%s%s "
+                          "(needs %0.0f%%%s%s%s)."),
+                  vote->vote_no, caller->username,
+                  commands[cmd].name,
+                  allargs[0] != '\0' ? " " : "", allargs,
+                  vote->need_pc * 100.0 + 1,
+                  vote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
+                  vote->flags & VCF_NO_DISSENT ? _(" no dissent") : "",
+                  vote->flags & VCF_FASTPASS ? _(" participation") : "");
 
       /* Vote on your own suggestion. */
       connection_vote(caller, vote, VOTE_YES);
@@ -5670,6 +5779,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
       return FALSE;
     }
   }
+
   if (caller
       && !(check && caller->access_level >= ALLOW_BASIC
            && level == ALLOW_CTRL)
@@ -5679,19 +5789,6 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  cptr_s = skip_leading_spaces(cptr_s);
-  sz_strlcpy(arg, cptr_s);
-
-  cut_comment(arg);
-
-  /* keep this before we cut everything after a space */
-  sz_strlcpy(allargs, cptr_s);
-  cut_comment(allargs);
-
-  i = strlen(arg) - 1;
-  while (i > 0 && my_isspace(arg[i])) {
-    arg[i--] = '\0';
-  }
 
   if (!check) {
     struct conn_list echolist;
@@ -5816,7 +5913,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
   case CMD_DEBUG:
     return debug_command(caller, arg, check);
   case CMD_SET:
-    return set_command(caller, arg, check);
+    return set_command(caller, &sv, check);
   case CMD_TEAM:
     return team_command(caller, arg, check);
   case CMD_RULESETDIR:
@@ -6612,21 +6709,20 @@ static void show_help_intro(struct connection *caller,
  help_cmd is the command the player used.
 **************************************************************************/
 static void show_help_command(struct connection *caller,
-                              enum command_id help_cmd, enum command_id id)
+                              enum command_id help_cmd,
+                              enum command_id id)
 {
   const struct command *cmd = &commands[id];
-    if (cmd->short_help)
-    {
-    cmd_reply(help_cmd, caller, C_COMMENT,
-	      "%s %s  -  %s", _("Command:"), cmd->name, _(cmd->short_help));
-    }
-    else
-    {
-    cmd_reply(help_cmd, caller, C_COMMENT,
-	      "%s %s", _("Command:"), cmd->name);
+
+  if (cmd->short_help) {
+    cmd_reply(help_cmd, caller, C_COMMENT, "%s %s  -  %s",
+              _("Command:"), cmd->name, _(cmd->short_help));
+  } else {
+    cmd_reply(help_cmd, caller, C_COMMENT, "%s %s",
+              _("Command:"), cmd->name);
   }
-    if (cmd->synopsis)
-    {
+
+  if (cmd->synopsis) {
     /* line up the synopsis lines: */
     const char *syn = _("Synopsis: ");
     size_t synlen = strlen(syn);
@@ -6634,26 +6730,58 @@ static void show_help_command(struct connection *caller,
 
     my_snprintf(prefix, sizeof(prefix), "%*s", (int) synlen, " ");
     cmd_reply_prefix(help_cmd, caller, C_COMMENT, prefix,
-		     "%s%s", syn, _(cmd->synopsis));
+                     "%s%s", syn, _(cmd->synopsis));
+  }
+
+  if (cmd->game_level < ALLOW_NEVER) {
+    cmd_reply(help_cmd, caller, C_COMMENT,
+              _("Level: %s"), cmdlevel_name(cmd->game_level));
+  }
+
+  if (cmd->game_level != cmd->pregame_level
+      && cmd->pregame_level < ALLOW_NEVER) {
+    cmd_reply(help_cmd, caller, C_COMMENT, _("Pregame level: %s"),
+              cmdlevel_name(cmd->pregame_level));
+  }
+
+  if ((cmd->game_level == ALLOW_CTRL
+       || cmd->pregame_level == ALLOW_CTRL)
+      && (cmd->vote_flags > VCF_NONE
+          || cmd->vote_percent > 0)) {
+    if (cmd->vote_flags & VCF_NO_DISSENT) {
+      cmd_reply(help_cmd, caller, C_COMMENT, "  %s",
+                _("May only pass if there are no dissenting votes."));
     }
-    if (cmd->game_level < ALLOW_NEVER) {
-      cmd_reply(help_cmd, caller, C_COMMENT,
-                _("Level: %s"), cmdlevel_name(cmd->game_level));
+    if (cmd->vote_flags & VCF_UNANIMOUS) {
+      cmd_reply(help_cmd, caller, C_COMMENT, "  %s",
+                _("May only pass by unanimous vote."));
     }
-    if (cmd->game_level != cmd->pregame_level
-        && cmd->pregame_level < ALLOW_NEVER) {
-      cmd_reply(help_cmd, caller, C_COMMENT,
-                _("Pregame level: %s"), cmdlevel_name(cmd->pregame_level));
+    if (cmd->vote_flags & VCF_FASTPASS) {
+      if (cmd->vote_percent > 0) {
+        cmd_reply(help_cmd, caller, C_COMMENT, _("  Passes by majority "
+                  "once more than %d%% of players have voted."),
+                  cmd->vote_percent);
+      } else {
+        cmd_reply(help_cmd, caller, C_COMMENT, "  %s",
+                _("Passes by majority vote."));
+      }
+    } else {
+      if (cmd->vote_percent > 0) {
+        cmd_reply(help_cmd, caller, C_COMMENT,
+                _("  Requires more than %d%% in favor to pass."),
+                cmd->vote_percent);
+      }
     }
-    if (cmd->extra_help)
-    {
+  }
+
+  if (cmd->extra_help) {
     static struct astring abuf = ASTRING_INIT;
     const char *help = _(cmd->extra_help);
-    astr_minsize(&abuf, strlen(help)+1);
+    astr_minsize(&abuf, strlen(help) + 1);
     strcpy(abuf.str, help);
     wordwrap_string(abuf.str, 76);
     cmd_reply(help_cmd, caller, C_COMMENT, _("Description:"));
-        cmd_reply_prefix(help_cmd, caller, C_COMMENT, "  ", "  %s", abuf.str);
+    cmd_reply_prefix(help_cmd, caller, C_COMMENT, "  ", "  %s", abuf.str);
   }
 }
 /**************************************************************************

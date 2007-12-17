@@ -124,7 +124,19 @@ struct settings_s {
   const char *string_default_value;
   bool (*string_validate)(const char * value, const char **reject_message);
   size_t string_value_size;	/* max size we can write into string_value */
+
+  /* Just like commands, settings have vote parameters. */
+  int vote_flags;
+  int vote_percent;
 };
 
 extern struct settings_s settings[];
 extern const int SETTINGS_NUM;
+
+struct setting_value {
+  int setting_idx;
+  enum sset_type type;
+  bool bool_value;
+  int int_value;
+  char string_value[512]; /* MAX_LEN_CONSOLE_LINE */
+};

@@ -1372,11 +1372,11 @@ const char *m_pre_description(enum m_pre_result result)
   If max_len_name==0, treat as no maximum.
 ***************************************************************************/
 enum m_pre_result match_prefix(m_pre_accessor_fn_t accessor_fn,
-			       size_t n_names,
-			       size_t max_len_name,
-			       m_pre_strncmp_fn_t cmp_fn,
-			       const char *prefix,
-			       int *ind_result)
+                               size_t n_names,
+                               size_t max_len_name,
+                               m_pre_strncmp_fn_t cmp_fn,
+                               const char *prefix,
+                               int *ind_result)
 {
   int i, len, nmatches;
 
@@ -1393,11 +1393,11 @@ enum m_pre_result match_prefix(m_pre_accessor_fn_t accessor_fn,
     const char *name = accessor_fn(i);
     if (cmp_fn(name, prefix, len)==0) {
       if (strlen(name) == len) {
-	*ind_result = i;
-	return M_PRE_EXACT;
+        *ind_result = i;
+        return M_PRE_EXACT;
       }
       if (nmatches==0) {
-	*ind_result = i;	/* first match */
+        *ind_result = i;	/* first match */
       }
       nmatches++;
     }

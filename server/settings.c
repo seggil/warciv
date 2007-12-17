@@ -166,7 +166,7 @@ static bool maxplayers_callback(int value, const char **error_string)
   {name, sclass, to_client, short_help, extra_help, SSET_BOOL,		\
       scateg, slevel, "", &value, default, func,			\
       NULL, 0, NULL, 0, 0,						\
-      NULL, NULL, NULL, 0},
+      NULL, NULL, NULL, 0, VCF_NONE, 0},
 
 #define GEN_INT(name, value, sclass, scateg, slevel, to_client,		\
 		short_help, extra_help, func, min, max, default)	\
@@ -174,7 +174,7 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, "",						\
       NULL, FALSE, NULL,						\
       &value, default, func, min, max,					\
-      NULL, NULL, NULL, 0},
+      NULL, NULL, NULL, 0, VCF_NONE, 0},
 
 #define GEN_STRING(name, value, sclass, scateg, slevel, to_client,	\
 		   short_help, extra_help, func, default)		\
@@ -182,14 +182,14 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, "",						\
       NULL, FALSE, NULL,						\
       NULL, 0, NULL, 0, 0,						\
-      value, default, func, sizeof(value)},
+      value, default, func, sizeof(value), VCF_NONE, 0},
 
 #define GEN_END							\
   {NULL, SSET_LAST, SSET_SERVER_ONLY, NULL, NULL, SSET_INT,	\
       SSET_NUM_CATEGORIES, SSET_NONE, "",			\
       NULL, FALSE, NULL,					\
       NULL, 0, NULL, 0, 0,					\
-      NULL, NULL, NULL},
+      NULL, NULL, NULL, VCF_NONE, 0},
 
 #define GEN_INT_EXT(name, value, sclass, scateg, slevel, to_client, \
                     reqcap,short_help, extra_help, func, min,       \
@@ -198,7 +198,7 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, reqcap,					    \
       NULL, FALSE, NULL,					    \
       &value, default, func, min, max,				    \
-      NULL, NULL, NULL, 0},
+      NULL, NULL, NULL, VCF_NONE, 0},
       
 struct settings_s settings[] = {
 
@@ -911,7 +911,10 @@ struct settings_s settings[] = {
 	  N_("If all players have not hit \"Turn Done\" before this "
 	     "time is up, then the turn ends automatically. Zero "
 	     "means there is no timeout.  Use this with the command "
-	     "\"timeoutincrease\" to have a dynamic timer."), NULL, 
+	     "\"timeoutincrease\" to have a dynamic timer. Note that "
+       "as a special case, voting to increase the timeout requires "
+       "only that 25% of the players have voted and that there are "
+       "more in favor than against."), NULL, 
 	   GAME_MIN_TIMEOUT, GAME_MAX_TIMEOUT, GAME_DEFAULT_TIMEOUT)
 
   GEN_INT("timeaddenemymove", game.timeoutaddenemymove,
