@@ -2034,7 +2034,7 @@ static void set_wait_for_writable_socket(struct connection *pc,
   gioc = g_io_channel_unix_new(aconnection.sock);
 #endif
 
-  cond = G_IO_IN | (socket_writable ? (G_IO_OUT | G_IO_PRI) : 0) | G_IO_ERR |
+  cond = G_IO_IN | G_IO_PRI | (socket_writable ? G_IO_OUT : 0) | G_IO_ERR |
     G_IO_HUP | G_IO_NVAL;
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
 				 get_net_input, &aconnection.sock, 
@@ -2074,7 +2074,7 @@ void add_net_input(int sock)
 #else
   gioc = g_io_channel_unix_new(sock);
 #endif
-  cond = G_IO_IN |  G_IO_ERR | G_IO_HUP | G_IO_NVAL;
+  cond = G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP | G_IO_NVAL;
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
 				 get_net_input, (int *) sock, NULL);
   aconnection.notify_of_writable_data = set_wait_for_writable_socket;
