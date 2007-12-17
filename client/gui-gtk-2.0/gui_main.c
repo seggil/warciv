@@ -178,7 +178,7 @@ static gboolean show_info_button_release(GtkWidget *w, GdkEventButton *ev, gpoin
 static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data);
 
 static void end_turn_callback(GtkWidget *w, gpointer data);
-static void get_net_input(gpointer data, gint fid, GdkInputCondition condition);
+static gboolean get_net_input(GIOChannel *source, GIOCondition cond, gpointer data);
 static void set_wait_for_writable_socket(struct connection *pc,
                                          bool socket_writable);
 
@@ -2001,9 +2001,13 @@ static void end_turn_callback(GtkWidget *w, gpointer data)
 /**************************************************************************
 ...
 **************************************************************************/
-static void get_net_input(gpointer data, gint fid, GdkInputCondition condition)
+static gboolean get_net_input(GIOChannel *source,
+                                 GIOCondition cond,
+                                 gpointer data)
 {
+  int fid = (int) data;
   input_from_server(fid);
+  return TRUE;
 }
 
 /**************************************************************************
@@ -2013,6 +2017,8 @@ static void set_wait_for_writable_socket(struct connection *pc,
                                          bool socket_writable)
 {
   static bool previous_state = FALSE;
+  GIOChannel *gioc;
+  GIOCondition cond = 0;
 
   assert(pc == &aconnection);
 
@@ -2020,11 +2026,19 @@ static void set_wait_for_writable_socket(struct connection *pc,
     return;
 
   freelog(LOG_DEBUG, "set_wait_for_writable_socket(%d)", socket_writable);
-  gtk_input_remove(input_id);
-  input_id = gtk_input_add_full(aconnection.sock, GDK_INPUT_READ 
-				| (socket_writable ? GDK_INPUT_WRITE : 0)
-				| GDK_INPUT_EXCEPTION,
-				get_net_input, NULL, NULL, NULL);
+  g_source_remove(input_id);
+
+#ifdef WIN32_NATIVE
+  gioc = g_io_channel_win32_new_socket(aconnection.sock);
+#else
+  gioc = g_io_channel_unix_new(aconnection.sock);
+#endif
+
+  cond = G_IO_IN | (socket_writable ? (G_IO_OUT | G_IO_PRI) : 0) | G_IO_ERR |
+    G_IO_HUP | G_IO_NVAL;
+  input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
+				 get_net_input, &aconnection.sock, 
+				 NULL);
   previous_state = socket_writable;
 }
 
@@ -2052,8 +2066,17 @@ int add_timer_callback(int millisecond_interval,
 **************************************************************************/
 void add_net_input(int sock)
 {
-  input_id = gtk_input_add_full(sock, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
-				get_net_input, NULL, NULL, NULL);
+  GIOChannel *gioc;
+  GIOCondition cond = 0;
+
+#ifdef WIN32_NATIVE
+  gioc = g_io_channel_win32_new_socket(sock);
+#else
+  gioc = g_io_channel_unix_new(sock);
+#endif
+  cond = G_IO_IN |  G_IO_ERR | G_IO_HUP | G_IO_NVAL;
+  input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
+				 get_net_input, (int *) sock, NULL);
   aconnection.notify_of_writable_data = set_wait_for_writable_socket;
 }
 
@@ -2192,9 +2215,9 @@ void remove_net_input_callback(int input_id)
  This function is called if the client disconnects
  from the server
 **************************************************************************/
-void remove_net_input(void)
+void remove_net_input()
 {
-  gtk_input_remove(input_id);
+  g_source_remove(input_id);
   gdk_window_set_cursor(root_window, NULL);
 }
 
