@@ -1,3 +1,9 @@
+warclient (2.0.9+0.9.7+rev882-1) unstable; urgency=high
+
+  *  New upstream release.
+
+ -- Carl Castanier <woodswolf@gmail.com>  Mon, 10 Dec 2007 14:18:55 +0000
+
 warclient (2.0.9+0.9.6-1) testing; urgency=high
 
   *  New upstream release.

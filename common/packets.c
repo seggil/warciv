@@ -30,8 +30,8 @@
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
+#ifdef WIN32_NATIVE
+#include <winsock2.h>
 #endif
 
 #include "capability.h"

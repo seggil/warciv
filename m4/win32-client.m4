@@ -17,7 +17,7 @@ AC_DEFUN([FC_WIN32_CLIENT],
                     [
                       found_client=yes
                       client=win32
-                      CLIENT_LIBS="-lwsock32 -lcomctl32  -lpng -lz -mwindows"
+                      CLIENT_LIBS="-lws2_32 -lcomctl32  -lpng -lz -mwindows"
                     ],
                     [
                       FC_NO_CLIENT([win32], [libpng-dev is needed])

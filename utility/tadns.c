@@ -33,8 +33,11 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
+#ifdef WIN32_NATIVE
+#include <winsock2.h>
+#include <limits.h>
+#include <stdint.h>
+#include <ws2tcpip.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -50,16 +53,6 @@
 #include "support.h"
 
 #include "tadns.h"
-
-
-#ifdef WIN32_NATIVE
-typedef int socklen_t;
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-#include <limits.h>
-#endif /* WIN32_NATIVE */
-
 
 #define DNS_MAX           1025      /* Maximum host name */
 #define DNS_PACKET_LEN    2048 /* Buffer size for DNS packet */
@@ -156,18 +149,22 @@ static int getdnsip(struct dns *dns)
   int ret = -1;
 
 #ifdef WIN32_NATIVE
-  int i;
-  LONG err;
+  int i, err;
+  DWORD tlen;
   HKEY hKey, hSub;
   char subkey[512], value[128], *key =
     "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
 
-  if ((err = RegOpenKey(HKEY_LOCAL_MACHINE, key, &hKey)) != ERROR_SUCCESS) {
+  if ((err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey)) != 
+	ERROR_SUCCESS) {
     freelog(LOG_ERROR, "Cannot open registry key %s: %d", key, err);
   } else {
-    for (i = 0; RegEnumKey(hKey, i, subkey, sizeof(subkey)) == ERROR_SUCCESS; i++) {
+    for (i = 0, tlen =  sizeof(subkey);
+         RegEnumKeyEx(hKey, i, subkey, &tlen, NULL, NULL, NULL, NULL) == 
+	 ERROR_SUCCESS;
+         i++, tlen =  sizeof(subkey)) {
       DWORD type, len = sizeof(value);
-      if (RegOpenKey(hKey, subkey, &hSub) == ERROR_SUCCESS
+      if (RegOpenKeyEx(hKey, subkey, 0, KEY_ALL_ACCESS, &hSub) == ERROR_SUCCESS
           && (RegQueryValueEx(hSub, "DhcpNameServer", 0,
                               &type, value, &len) == ERROR_SUCCESS
               || RegQueryValueEx(hSub, "DhcpNameServer", 0,
@@ -226,7 +223,7 @@ struct dns *dns_new(void)
 	    mystrsocketerror());
     goto FAILED;
   }
-  
+ 
   if (getdnsip(dns) == -1) {
     freelog(LOG_ERROR, _("Could not find address of DNS resolver host."));
     goto FAILED;

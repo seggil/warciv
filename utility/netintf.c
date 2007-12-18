@@ -44,10 +44,8 @@
 #ifdef HAVE_SYS_SIGNAL_H
 #include <sys/signal.h>
 #endif
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
-#endif
 #ifdef WIN32_NATIVE
+#include <winsock2.h>
 #include <windows.h>	/* GetTempPath */
 #endif
 
@@ -551,7 +549,7 @@ int net_lookup_service_async(const char *name, int port,
 ***************************************************************/
 int my_readsocket(int sock, void *buf, size_t size)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   return recv(sock, buf, size, 0);
 #else
   return read(sock, buf, size);
@@ -563,7 +561,7 @@ int my_readsocket(int sock, void *buf, size_t size)
 ***************************************************************/
 int my_writesocket(int sock, const void *buf, size_t size)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   return send(sock, buf, size, 0);
 #else
   return write(sock, buf, size);
@@ -575,7 +573,7 @@ int my_writesocket(int sock, const void *buf, size_t size)
 ***************************************************************/
 void my_closesocket(int sock)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   closesocket(sock);
 #else
   close(sock);
@@ -587,10 +585,25 @@ void my_closesocket(int sock)
 ***************************************************************/
 void my_init_network(void)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   WSADATA wsa;
 
-  if (WSAStartup(MAKEWORD(1, 1), &wsa) != 0) {
+  if (WSAStartup(MAKEWORD(2, 2), &wsa) == NO_ERROR) {
+    freelog(LOG_VERBOSE, "Using WINSOCK.DLL 2.2");
+  }
+  else if (WSAStartup(MAKEWORD(2, 1), &wsa) == NO_ERROR) {
+    freelog(LOG_VERBOSE, "Using WINSOCK.DLL 2.1");
+  }
+  else if (WSAStartup(MAKEWORD(2, 0), &wsa) == NO_ERROR) {
+    freelog(LOG_VERBOSE, "Using WINSOCK.DLL 2.0");
+  }
+  else if (WSAStartup(MAKEWORD(1, 1), &wsa) == NO_ERROR) {
+    freelog(LOG_VERBOSE, "Using WINSOCK.DLL 1.1");
+  }
+  else if (WSAStartup(MAKEWORD(1, 0), &wsa) == NO_ERROR) {
+    freelog(LOG_VERBOSE, "Using WINSOCK.DLL 1.0");
+  }
+  else {
     freelog(LOG_ERROR, "no usable WINSOCK.DLL: %s", mystrsocketerror());
   }
 #endif
@@ -606,7 +619,7 @@ void my_init_network(void)
 ***************************************************************/
 void my_shutdown_network(void)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   WSACleanup();
 #endif
 }
@@ -617,7 +630,7 @@ void my_shutdown_network(void)
 ***************************************************************/
 bool my_socket_would_block(void)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   return WSAGetLastError() == WSAEWOULDBLOCK;
 #else
   return errno == EAGAIN || errno == EWOULDBLOCK;
@@ -629,7 +642,7 @@ bool my_socket_would_block(void)
 ***************************************************************/
 bool my_socket_operation_in_progess(void)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   return WSAGetLastError() == WSAEINPROGRESS;
 #else
   return errno == EINPROGRESS;
@@ -662,7 +675,7 @@ int my_nonblock(int sockfd)
     freelog(LOG_ERROR, _("ioctl failed: %s"), mystrsocketerror());
     return -1;
   }
-#elif defined (HAVE_WINSOCK)
+#elif defined (WIN32_NATIVE)
   long one=1;
   if (SOCKET_ERROR == ioctlsocket(sockfd, FIONBIO, &one)) {
     freelog(LOG_ERROR, _("ioctlsocket failed: %s"), mystrsocketerror());
@@ -905,7 +918,7 @@ int find_next_free_port(int starting_port)
 **************************************************************************/ 
 int my_errno(void)
 {
-#ifdef HAVE_WINSOCK
+#ifdef WIN32_NATIVE
   return WSAGetLastError();
 #else
   return errno;

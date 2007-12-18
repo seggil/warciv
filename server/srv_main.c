@@ -40,8 +40,8 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
+#ifdef WIN32_NATIVE
+#include <winsock2.h>
 #endif
 
 #include "capability.h"

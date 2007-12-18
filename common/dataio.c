@@ -39,8 +39,8 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
+#ifdef WIN32_NATIVE
+#include <winsock2.h>
 #endif
 
 #include "capability.h"

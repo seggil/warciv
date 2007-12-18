@@ -73,10 +73,8 @@
 #endif
 #ifdef WIN32_NATIVE
 #include <process.h>
+#include <winsock2.h>
 #include <windows.h>
-#endif
-#ifdef HAVE_WINSOCK
-#include <winsock.h>
 #endif
 
 #include "fcintl.h"

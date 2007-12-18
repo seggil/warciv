@@ -28,6 +28,7 @@
 #endif
 
 #ifdef WIN32_NATIVE
+#include <winsock2.h>
 #include <windows.h>
 #endif
 
