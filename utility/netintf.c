@@ -669,14 +669,14 @@ int my_nonblock(int sockfd)
     return -1;
   }
 #elif defined (HAVE_IOCTL)
-  long value=1;
+  long value = 1;
 
   if (ioctl(sockfd, FIONBIO, (char*)&value) == -1) {
     freelog(LOG_ERROR, _("ioctl failed: %s"), mystrsocketerror());
     return -1;
   }
 #elif defined (WIN32_NATIVE)
-  long one=1;
+  long one = 1;
   if (SOCKET_ERROR == ioctlsocket(sockfd, FIONBIO, &one)) {
     freelog(LOG_ERROR, _("ioctlsocket failed: %s"), mystrsocketerror());
     return -1;

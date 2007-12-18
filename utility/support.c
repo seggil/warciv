@@ -622,9 +622,9 @@ FILE *my_tmpfile (void)
   {
     char filename[MAX_PATH];
 
-    GetTempPath (sizeof (filename), filename);
-    sz_strlcat (filename, "fctmp");
-    fp = fopen (filename, "w+b");
+    GetTempPath(sizeof (filename), filename);
+    sz_strlcat(filename, "fctmp");
+    fp = fopen(filename, "w+b");
   }
 #else
   fp = tmpfile();

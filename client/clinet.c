@@ -246,11 +246,7 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
     (void) mystrlcpy(errbuf, mystrsocketerror(), errbufsize);
     my_closesocket(aconnection.sock);
     aconnection.sock = -1;
-#ifdef WIN32_NATIVE
-    return -1;
-#else
-    return errno;
-#endif
+    return my_errno();
   }
 
   connection_common_init(&aconnection);
@@ -501,6 +497,19 @@ static char *win_uname()
       case 1:
 	osname = "WinXP";
 	break;
+      case 2:
+	osname = "WinServer2003";
+	break;
+      default:
+	break;
+      }
+    }
+
+    if (osvi.dwMajorVersion == 6) {
+      switch (osvi.dwMinorVersion) {
+      case 0:
+	osname = "WinVista";
+	break;
       default:
 	break;
       }
@@ -539,11 +548,15 @@ static char *win_uname()
     case PROCESSOR_ARCHITECTURE_PPC:
       sz_strlcpy(cpuname, "ppc");
       break;
-#if 0
+
+    case PROCESSOR_ARCHITECTURE_AMD64:
+      sz_strlcpy(cpuname, "amd64");
+      break;
     case PROCESSOR_ARCHITECTURE_IA64:
       sz_strlcpy(cpuname, "ia64");
       break;
-#endif
+
+    case PROCESSOR_ARCHITECTURE_UNKNOWN:
     default:
       sz_strlcpy(cpuname, "unknown");
       break;

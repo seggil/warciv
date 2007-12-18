@@ -231,9 +231,9 @@ int main(int argc, char *argv[])
   dont_run_as_root(argv[0], "freeciv_server");
 
 #ifndef WIN32_NATIVE
-  if (signal (SIGQUIT, signal_handler) == SIG_ERR) {
-    fc_fprintf (stderr, _("Failed to install SIGQUIT handler: %s\n"), mystrerror());
-    exit (EXIT_FAILURE);
+  if (signal(SIGQUIT, signal_handler) == SIG_ERR) {
+    fc_fprintf(stderr, _("Failed to install SIGQUIT handler: %s\n"), mystrerror());
+    exit(EXIT_FAILURE);
   }
 #endif
 

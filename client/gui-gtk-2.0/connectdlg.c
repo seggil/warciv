@@ -126,9 +126,7 @@ static int try_to_autoconnect(gpointer data)
 {
   char errbuf[512];
   static int count = 0;
-#ifndef WIN32_NATIVE
   static int warning_shown = 0;
-#endif
 
   count++;
 
@@ -144,9 +142,11 @@ static int try_to_autoconnect(gpointer data)
   case 0:			/* Success! */
     return FALSE;		/*  Tells GTK not to call this
 				   function again */
-#ifndef WIN32_NATIVE
-  /* See PR#4042 for more info on issues with try_to_connect() and errno. */
+#ifdef WIN32_NATIVE
+  case WSAECONNREFUSED:		/* Server not available (yet) */
+#else
   case ECONNREFUSED:		/* Server not available (yet) */
+#endif
     if (!warning_shown) {
       freelog(LOG_NORMAL, _("Connection to server refused. "
 			    "Please start the server."));
@@ -155,7 +155,6 @@ static int try_to_autoconnect(gpointer data)
       warning_shown = 1;
     }
     return TRUE;		/*  Tells GTK to keep calling this function */
-#endif
   default:			/* All other errors are fatal */
     freelog(LOG_FATAL,
 	    _("Error contacting server \"%s\" at port %d "

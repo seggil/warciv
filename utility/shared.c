@@ -699,10 +699,10 @@ char *user_home_dir(void)
       freelog(LOG_VERBOSE, "HOME is %s", home_dir);
     } else {
 #ifdef WIN32_NATIVE
-      home_dir=fc_malloc(PATH_MAX);
-      if (!getcwd(home_dir,PATH_MAX)) {
+      home_dir = fc_malloc(PATH_MAX);
+      if (!getcwd(home_dir, PATH_MAX)) {
 	free(home_dir);
-	home_dir=NULL;
+	home_dir = NULL;
 	freelog(LOG_ERROR, "Could not find home directory (HOME is not set)");
       }
 #else

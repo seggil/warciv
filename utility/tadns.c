@@ -149,32 +149,34 @@ static int getdnsip(struct dns *dns)
   int ret = -1;
 
 #ifdef WIN32_NATIVE
-  int i, err;
+  int i;
+  long int err;
   DWORD tlen;
   HKEY hKey, hSub;
   char subkey[512], value[128], *key =
     "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
 
-  if ((err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey)) != 
-	ERROR_SUCCESS) {
+  if ((err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey)) 
+      != ERROR_SUCCESS) {
     freelog(LOG_ERROR, "Cannot open registry key %s: %d", key, err);
   } else {
     for (i = 0, tlen =  sizeof(subkey);
          RegEnumKeyEx(hKey, i, subkey, &tlen, NULL, NULL, NULL, NULL) == 
-	 ERROR_SUCCESS;
+	   ERROR_SUCCESS;
          i++, tlen =  sizeof(subkey)) {
       DWORD type, len = sizeof(value);
-      if (RegOpenKeyEx(hKey, subkey, 0, KEY_ALL_ACCESS, &hSub) == ERROR_SUCCESS
+      if (RegOpenKeyEx(hKey, subkey, 0, KEY_ALL_ACCESS, &hSub) 
+	  == ERROR_SUCCESS
           && (RegQueryValueEx(hSub, "DhcpNameServer", 0,
                               &type, value, &len) == ERROR_SUCCESS
               || RegQueryValueEx(hSub, "DhcpNameServer", 0,
                                  &type, value, &len) == ERROR_SUCCESS))
-      {
-        dns->sa.sin_addr.s_addr = inet_addr(value);
-        ret = 0;
-        RegCloseKey(hSub);
-        break;
-      }
+	{
+	  dns->sa.sin_addr.s_addr = inet_addr(value);
+	  ret = 0;
+	  RegCloseKey(hSub);
+	  break;
+	}
     }
     RegCloseKey(hKey);
   }
