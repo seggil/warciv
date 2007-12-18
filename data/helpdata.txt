@@ -496,7 +496,6 @@ Unit Mass orders:\n\
    <ctrl>b: add a (b)reak in the the delayed goto queue\n\
   <shift>c: select many units\n\
   <shift>e: execute all airplane patrol orders\n\
-  <shift>i: execute all auto-help wonder orders\n\
   <shift>j: execute all auto-traderoute orders\n\
   <shift>m: execute all automatic orders\n\
   <shift>s: spread the selected units in the city of the continent\n\
