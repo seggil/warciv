@@ -2005,8 +2005,7 @@ static gboolean get_net_input(GIOChannel *source,
                                  GIOCondition cond,
                                  gpointer data)
 {
-  int fid = (int) data;
-  input_from_server(fid);
+  input_from_server(GPOINTER_TO_INT(data));
   return TRUE;
 }
 
@@ -2076,7 +2075,7 @@ void add_net_input(int sock)
 #endif
   cond = G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP | G_IO_NVAL;
   input_id = g_io_add_watch_full(gioc, G_PRIORITY_DEFAULT, cond,
-				 get_net_input, (int *) sock, NULL);
+				 get_net_input, GINT_TO_POINTER(sock), NULL);
   aconnection.notify_of_writable_data = set_wait_for_writable_socket;
 }
 
