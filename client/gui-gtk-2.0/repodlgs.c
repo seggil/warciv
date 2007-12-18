@@ -332,7 +332,6 @@ void create_science_dialog(bool make_modal)
   gui_dialog_show_all(science_dialog_shell);
 
   science_dialog_update();
-  gtk_widget_grab_focus(science_change_combo);
 }
 
 /****************************************************************
