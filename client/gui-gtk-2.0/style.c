@@ -41,20 +41,20 @@ struct styleconf{
   GtkStyle *style;
 };
 
-#define style_iterate(sset)\
-{\
-        int _i=0;\
-        struct styleconf *sset;\
-        while(TRUE)\
-        {\
-                sset=&styleconf[_i];\
-                if(sset->stylewidget==NULL)\
-                        break;
+#define style_iterate(sset)			\
+  {						\
+    int _i=0;					\
+    struct styleconf *sset;			\
+    while(TRUE)					\
+      {						\
+	sset=&styleconf[_i];			\
+	if(sset->stylewidget==NULL)		\
+	  break;
 
-#define style_iterate_end\
-                _i++;\
-        }\
-}
+#define style_iterate_end			\
+  _i++;						\
+  }						\
+    }
 
 static struct styleconf styleconf[] = {
   {
@@ -120,9 +120,9 @@ static struct styleconf styleconf[] = {
 **************************************************************************/
 static void change_style(GtkFontButton *widget, gpointer data)
 {
-  GtkStyle *style = data;
+  struct styleconf *tstyleconf = data;
 
-  style->font_desc = 
+  tstyleconf->style->font_desc = 
     pango_font_description_from_string(gtk_font_button_get_font_name(widget));
 }
 					 
@@ -141,17 +141,16 @@ static void destroy_callback(GtkWidget *w,
 static void read_style_from_rc(void)
 {
   GtkSettings *gtksettings;
-  GtkStyle *tmpstyle;
 
+  gtksettings = gtk_settings_get_default();
   style_iterate(sset){
-    gtksettings = gtk_settings_get_default();
-    tmpstyle = gtk_rc_get_style_by_paths(gtksettings,
-					 sset->stylewidget,
-					 NULL, G_TYPE_NONE);
-    if (!tmpstyle) {
-      tmpstyle = gtk_style_new();
+    sset->style = 
+      gtk_style_copy(gtk_rc_get_style_by_paths(gtksettings,
+					       sset->stylewidget,
+					       NULL, G_TYPE_NONE));
+    if (!sset->style) {
+      sset->style = gtk_style_new();
     }
-    sset->style = gtk_style_copy(tmpstyle);
   } style_iterate_end;
 
 }
@@ -176,9 +175,9 @@ static void create_style_str(char *buf, int buflen)
 {
   char *p = buf, *tmp;
   
-#define SSCAT(fmt, arg) do {\
-    p += my_snprintf(p, buflen - (unsigned) (p - buf), (fmt), (arg));\
-} while(0)
+#define SSCAT(fmt, arg) do {						\
+    p += my_snprintf(p, buflen - (unsigned) (p - buf), (fmt), (arg));	\
+  } while(0)
 
   style_iterate(sset){
     SSCAT("style \"%s\"\n{\n", sset->stylename);
@@ -228,12 +227,12 @@ static void cancel_callback(GtkWidget *w,
   ...
 **************************************************************************/
 static void undo_callback(GtkWidget *w,
-                            gpointer user_data)
+			  gpointer user_data)
 {
   char *tmp;
   GtkWidget *sel, *hbox;
   GtkWidget *dialog = (GtkWidget *) user_data;
-  
+ 
   read_style_from_rc();
 
   style_iterate(sset)
@@ -258,15 +257,14 @@ static void reset_style(const char * stylebuf)
   gtksettings = gtk_settings_get_default();
   gtk_rc_reset_styles(gtksettings);
   
-    /* font names shouldn't be in spec files! */
+  /* font names shouldn't be in spec files! */
   style = gtk_rc_get_style_by_paths(gtksettings,
 				    "Freeciv*.city names",
 				    NULL, G_TYPE_NONE);
   if (!style) {
     style = gtk_style_new();
   }
-  /* useless already done at init */
-  /*   g_object_ref(style); */
+  g_object_ref(style);
   main_font = style->font_desc;
   
   style = gtk_rc_get_style_by_paths(gtksettings,
@@ -275,8 +273,7 @@ static void reset_style(const char * stylebuf)
   if (!style) {
     style = gtk_style_new();
   }
-  /* useless already done at init */
-/*   g_object_ref(style); */
+  g_object_ref(style);
   city_productions_font = style->font_desc;
 
   update_map_canvas_visible(MUT_NORMAL);
@@ -286,7 +283,7 @@ static void reset_style(const char * stylebuf)
   ...
 **************************************************************************/
 static void save_callback(GtkWidget *w,
-                            gpointer user_data)
+			  gpointer user_data)
 {
   const gchar *home;
   FILE *fp;
@@ -316,7 +313,7 @@ static void save_callback(GtkWidget *w,
   ...
 **************************************************************************/
 static void apply_callback(GtkWidget *w,
-                            gpointer user_data)
+			   gpointer user_data)
 {
   char stylebuf[16384];
 
@@ -328,14 +325,11 @@ static void apply_callback(GtkWidget *w,
   ...
 **************************************************************************/
 static void reset_callback(GtkWidget *w,
-                            gpointer user_data)
+			   gpointer user_data)
 {
-  GtkSettings *gtksettings;
   GtkWidget *dialog = (GtkWidget *) user_data;
 
-  gtk_rc_parse_string(fallback_resources);
-  gtksettings = gtk_settings_get_default();
-  gtk_rc_reset_styles(gtksettings);
+  reset_style(fallback_resources);
   undo_callback(NULL, dialog);
 }
 
@@ -422,7 +416,7 @@ static GtkWidget *create_style_config_shell(void)
     gtk_font_button_set_show_style(GTK_FONT_BUTTON(sel), TRUE);
     gtk_font_button_set_use_font(GTK_FONT_BUTTON(sel), TRUE);
     gtk_font_button_set_title(GTK_FONT_BUTTON(sel), sset->styletitle);
-    g_signal_connect(sel, "font-set" , G_CALLBACK(change_style), sset->style);
+    g_signal_connect(sel, "font-set" , G_CALLBACK(change_style), sset);
     g_object_set_data (G_OBJECT(hbox), "fontname", sel);
     
     gtk_box_pack_start(GTK_BOX(hbox), sel , TRUE, TRUE, 0);
@@ -468,20 +462,20 @@ static GtkWidget *create_style_config_shell(void)
   button = gtk_stockbutton_new(GTK_STOCK_UNDO, _("_Undo"));
   gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
-      G_CALLBACK(undo_callback), dialog);
+		   G_CALLBACK(undo_callback), dialog);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   button = gtk_stockbutton_new(GTK_STOCK_CLEAR, _("_Reset"));
   gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
-      G_CALLBACK(reset_callback), dialog);
+		   G_CALLBACK(reset_callback), dialog);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-/*   button = gtk_stockbutton_new(GTK_STOCK_HELP, _("_Help")); */
-/*   gtk_widget_set_size_request(button, 120, 30); */
-/*   g_signal_connect(button, "clicked", */
-/* 		    G_CALLBACK(help_callback), dialog); */
-/*   gtk_box_pack_start(GTK_BOX (hbox), button, FALSE, FALSE, 0); */
+  /*   button = gtk_stockbutton_new(GTK_STOCK_HELP, _("_Help")); */
+  /*   gtk_widget_set_size_request(button, 120, 30); */
+  /*   g_signal_connect(button, "clicked", */
+  /* 		    G_CALLBACK(help_callback), dialog); */
+  /*   gtk_box_pack_start(GTK_BOX (hbox), button, FALSE, FALSE, 0); */
 
   gtk_widget_show_all (dialog);
 

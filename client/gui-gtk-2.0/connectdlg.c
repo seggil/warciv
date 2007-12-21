@@ -15,6 +15,10 @@
 #include <config.h>
 #endif
 
+#ifdef WIN32_NATIVE
+#include <winsock2.h>
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
