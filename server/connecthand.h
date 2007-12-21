@@ -50,7 +50,7 @@ int user_action_as_str(struct user_action *pua,
     TYPED_LIST_ITERATE (struct user_action, alist, pitem)
 #define user_action_list_iterate_end LIST_ITERATE_END
 
-extern struct user_action_list on_connect_user_actions;
+extern struct user_action_list *on_connect_user_actions;
 extern char *user_action_type_strs[NUM_ACTION_TYPES];
 
 struct connection;

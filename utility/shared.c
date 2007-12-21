@@ -1049,22 +1049,18 @@ char *datafilename(const char *filename)
 /**************************************************************************
   Compare modification times.
 **************************************************************************/
-static int compare_file_mtime_ptrs(const void *a, const void *b)
+static int compare_file_mtime_ptrs(const struct datafile * const *ppa,
+				   const struct datafile * const *ppb)
 {
-  struct datafile * const *ppa = a;
-  struct datafile * const *ppb = b;
-
   return ((*ppa)->mtime < (*ppb)->mtime);
 }
 
 /**************************************************************************
   Compare names.
 **************************************************************************/
-static int compare_file_name_ptrs(const void *a, const void *b)
+static int compare_file_name_ptrs(const struct datafile * const *ppa,
+				  const struct datafile * const *ppb)
 {
-  struct datafile * const *ppa = a;
-  struct datafile * const *ppb = b;
-
   return compare_strings((*ppa)->name, (*ppb)->name);
 }
 
@@ -1074,20 +1070,22 @@ static int compare_file_name_ptrs(const void *a, const void *b)
 **************************************************************************/
 void free_datafile_list(struct datafile_list *pdl)
 {
-  if (!pdl)
+  if (!pdl) {
     return;
+  }
   
-  datafile_list_iterate(*pdl, pfile) {
+  datafile_list_iterate(pdl, pfile) {
     if (pfile) {
-      if (pfile->name)
+      if (pfile->name) {
         free(pfile->name);
-      if (pfile->fullname)
+      }
+      if (pfile->fullname) {
         free(pfile->fullname);
+      }
       free(pfile);
     }
   } datafile_list_iterate_end;
-  datafile_list_unlink_all(pdl);
-  free(pdl);
+  datafile_list_free(pdl);
 }
 
 /**************************************************************************
@@ -1099,15 +1097,14 @@ void free_datafile_list(struct datafile_list *pdl)
   substring. The returned list must be freed.
 **************************************************************************/
 struct datafile_list *datafilelist_infix(const char *subpath,
-    const char *infix, bool nodups)
+				         const char *infix, bool nodups)
 {
   const char **dirs = get_data_dirs(NULL);
   int num_matches = 0;
   int dir_num;
   struct datafile_list *res;
 
-  res = fc_malloc(sizeof(struct datafile_list));
-  datafile_list_init(res);
+  res = datafile_list_new();
 
   /* First assemble a full list of names. */
   for (dir_num = 0; dirs[dir_num]; dir_num++) {
@@ -1173,7 +1170,7 @@ struct datafile_list *datafilelist_infix(const char *subpath,
   if (nodups) {
     char *name = "";
 
-    datafile_list_iterate(*res, pfile) {
+    datafile_list_iterate(res, pfile) {
       if (compare_strings(name, pfile->name) != 0) {
 	name = pfile->name;
       } else {

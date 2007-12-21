@@ -93,7 +93,7 @@ struct map_link {
   TYPED_LIST_ITERATE(struct map_link, link_marks, pml)
 #define map_link_list_iterate_end LIST_ITERATE_END
 
-static struct map_link_list link_marks;
+static struct map_link_list *link_marks = NULL;
 
 static void draw_link_mark(struct map_link *pml);
 
@@ -223,7 +223,7 @@ void client_remove_unit(struct unit *punit)
   if (pcity) {
     if (can_player_see_units_in_city(game.player_ptr, pcity)) {
       pcity->client.occupied =
-	(unit_list_size(&pcity->tile->units) > 0);
+	(unit_list_size(pcity->tile->units) > 0);
     }
 
     refresh_city_dialog(pcity);
@@ -486,14 +486,14 @@ void center_on_something(void)
   } else if ((pcity = find_palace(game.player_ptr))) {
     /* Else focus on the capital. */
     center_tile_mapcanvas(pcity->tile);
-  } else if (city_list_size(&game.player_ptr->cities) > 0) {
+  } else if (city_list_size(game.player_ptr->cities) > 0) {
     /* Just focus on any city. */
-    pcity = city_list_get(&game.player_ptr->cities, 0);
+    pcity = city_list_get(game.player_ptr->cities, 0);
     assert(pcity != NULL);
     center_tile_mapcanvas(pcity->tile);
-  } else if (unit_list_size(&game.player_ptr->units) > 0) {
+  } else if (unit_list_size(game.player_ptr->units) > 0) {
     /* Just focus on any unit. */
-    punit = unit_list_get(&game.player_ptr->units, 0);
+    punit = unit_list_get(game.player_ptr->units, 0);
     assert(punit != NULL);
     center_tile_mapcanvas(punit->tile);
   } else {
@@ -962,9 +962,9 @@ int num_supported_units_in_city(struct city *pcity)
   struct unit_list *plist;
 
   if (pcity->owner != game.player_idx) {
-    plist = &pcity->info_units_supported;
+    plist = pcity->info_units_supported;
   } else {
-    plist = &pcity->units_supported;
+    plist = pcity->units_supported;
   }
 
   return unit_list_size(plist);
@@ -978,9 +978,9 @@ int num_present_units_in_city(struct city *pcity)
   struct unit_list *plist;
 
   if (pcity->owner != game.player_idx) {
-    plist = &pcity->info_units_present;
+    plist = pcity->info_units_present;
   } else {
-    plist = &pcity->tile->units;
+    plist = pcity->tile->units;
   }
 
   return unit_list_size(plist);
@@ -1348,7 +1348,7 @@ static int an_generate_city_name (char *buf, int buflen,
 /**************************************************************************
   ...
 **************************************************************************/
-static void an_parse_city_name_formats (void)
+static void an_parse_city_name_formats(void)
 {
   char *p, *q, buf[1024];
   
@@ -1356,34 +1356,35 @@ static void an_parse_city_name_formats (void)
 
   assert (an_city_name_formats != NULL);
   
-  city_name_list_iterate (*an_city_name_formats, fmt) {
-    free (fmt);
+  city_name_list_iterate(an_city_name_formats, fmt) {
+    free(fmt);
   } city_name_list_iterate_end;
-  city_name_list_unlink_all (an_city_name_formats);
+  city_name_list_unlink_all(an_city_name_formats);
   
-  sz_strlcpy (buf, city_name_formats);
+  sz_strlcpy(buf, city_name_formats);
 
-  freelog (LOG_DEBUG, "apcnf   adding special first format");
-  city_name_list_append (an_city_name_formats, mystrdup (""));
+  freelog(LOG_DEBUG, "apcnf   adding special first format");
+  city_name_list_append(an_city_name_formats, mystrdup (""));
 
-  freelog (LOG_DEBUG, "apcnf   parsing \"%s\"", city_name_formats);
+  freelog(LOG_DEBUG, "apcnf   parsing \"%s\"", city_name_formats);
   
   for (p = buf; p && *p; p = q) {
     if ((q = strchr (p, ';'))) {
       *q++ = 0;
     }
-    remove_leading_trailing_spaces (p);
+    remove_leading_trailing_spaces(p);
     if (!*p && !q) {
       break;
     }
     if (*p) {
-      freelog (LOG_DEBUG, "apcnf   adding format to list \"%s\"", p);
-      city_name_list_append (an_city_name_formats, mystrdup (p));
+      freelog(LOG_DEBUG, "apcnf   adding format to list \"%s\"", p);
+      city_name_list_append(an_city_name_formats, mystrdup(p));
     }
   }
 
-  freelog (LOG_DEBUG, "apcnf   parsed %d formats", city_name_list_size (an_city_name_formats));
+  freelog(LOG_DEBUG, "apcnf   parsed %d formats", city_name_list_size (an_city_name_formats));
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1398,8 +1399,7 @@ void city_autonaming_init (void)
     an_city_autoname_data_table = hash_new (hash_fval_int, hash_fcmp_int);
   
   if (!an_city_name_formats) {
-    an_city_name_formats = fc_malloc (sizeof (struct city_name_list));
-    city_name_list_init (an_city_name_formats);    
+    an_city_name_formats = city_name_list_new();
     an_global_city_number_counter = 0;
   }
 }
@@ -1446,11 +1446,10 @@ void city_autonaming_free (void)
 
   an_global_city_number_counter = 0;
 
-  city_name_list_iterate (*an_city_name_formats, fmt) {
+  city_name_list_iterate(an_city_name_formats, fmt) {
     free (fmt);
   } city_list_iterate_end;
-  city_name_list_unlink_all (an_city_name_formats);
-  free (an_city_name_formats);
+  city_name_list_free(an_city_name_formats);
   an_city_name_formats = NULL;
 }
         
@@ -1624,7 +1623,9 @@ int buy_production_in_selected_cities (void)
 ***********************************************************************/
 void link_marks_init(void)
 {
-  map_link_list_init(&link_marks);
+  if (!link_marks) {
+    link_marks = map_link_list_new();
+  }
 }
 
 /********************************************************************** 
@@ -1650,7 +1651,7 @@ static struct map_link *map_link_new(enum tag_link_types type, int id)
 
   pml->type = type;
   pml->id = id;
-  map_link_list_append(&link_marks, pml);
+  map_link_list_append(link_marks, pml);
 
   return pml;
 }
@@ -1660,7 +1661,7 @@ static struct map_link *map_link_new(enum tag_link_types type, int id)
 ***********************************************************************/
 static void map_link_remove(struct map_link *pml)
 {
-  map_link_list_unlink(&link_marks, pml);
+  map_link_list_unlink(link_marks, pml);
   free(pml);
 }
 

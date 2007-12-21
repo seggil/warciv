@@ -214,8 +214,8 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       pcmap->player_landarea[owner]++;
       pcmap->player_owndarea[owner]++;
       pclaim->know = ptile->known;
-    } else if (unit_list_size(&ptile->units) > 0) {
-      owner = (unit_list_get(&ptile->units, 0))->owner;
+    } else if (unit_list_size(ptile->units) > 0) {
+      owner = (unit_list_get(ptile->units, 0))->owner;
       pclaim->when = turn + 1;
       pclaim->whom = owner;
       *nextedge = ptile;
@@ -569,8 +569,8 @@ void save_ppm(void)
        /* color for cities first, then units, then land */
        if (ptile->city) {
          color = col[city_owner(ptile->city)->player_no];
-       } else if (unit_list_size(&ptile->units) > 0) {
-         color = col[unit_owner(unit_list_get(&ptile->units, 0))->player_no];
+       } else if (unit_list_size(ptile->units) > 0) {
+         color = col[unit_owner(unit_list_get(ptile->units, 0))->player_no];
        } else if (is_ocean(ptile->terrain)) {
          color = watercol;
        } else {

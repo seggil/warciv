@@ -1191,7 +1191,7 @@ bool city_rapture_grow(const struct city *pcity)
 struct city *city_list_find_id(struct city_list *This, int id)
 {
   if (id != 0) {
-    city_list_iterate(*This, pcity) {
+    city_list_iterate(This, pcity) {
       if (pcity->id == id) {
 	return pcity;
       }
@@ -1206,7 +1206,7 @@ struct city *city_list_find_id(struct city_list *This, int id)
 **************************************************************************/
 struct city *city_list_find_name(struct city_list *This, const char *name)
 {
-  city_list_iterate(*This, pcity) {
+  city_list_iterate(This, pcity) {
     if (mystrcasecmp(name, pcity->name) == 0) {
       return pcity;
     }
@@ -1604,7 +1604,7 @@ int city_granary_size(int city_size)
 **************************************************************************/
 static int content_citizens(struct player *pplayer)
 {
-  int cities = city_list_size(&pplayer->cities);
+  int cities = city_list_size(pplayer->cities);
   int content = game.unhappysize;
   int basis = game.cityfactor + get_gov_pplayer(pplayer)->empire_size_mod;
   int step = get_gov_pplayer(pplayer)->empire_size_inc;
@@ -2543,12 +2543,15 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->client.happy = pcity->client.unhappy = FALSE;
   pcity->client.colored = FALSE;
 
-  unit_list_init(&pcity->units_supported);
+  pcity->units_supported = unit_list_new();
   pcity->debug = FALSE;
 
   pcity->rally_point = NULL;
 
-  trade_route_list_init(&pcity->trade_routes);
+  pcity->trade_routes = is_server ? NULL : trade_route_list_new();
+
+  pcity->info_units_supported = NULL;
+  pcity->info_units_present = NULL;
 
   return pcity;
 }
@@ -2559,6 +2562,15 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
 **************************************************************************/
 void remove_city_virtual(struct city *pcity)
 {
-  unit_list_unlink_all(&pcity->units_supported);
+  unit_list_free(pcity->units_supported);
+  if (pcity->trade_routes) {
+    trade_route_list_free(pcity->trade_routes);
+  }
+  if (pcity->info_units_supported) {
+    unit_list_free(pcity->info_units_supported);
+  }
+  if (pcity->info_units_present) {
+    unit_list_free(pcity->info_units_present);
+  }
   free(pcity);
 }

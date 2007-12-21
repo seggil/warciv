@@ -30,17 +30,18 @@
    including this file would provide a struct definition for:
       struct foo_list;
    and prototypes for the following functions:
-      void foo_list_init(struct foo_list *This);
-      bool foo_list_is_initiazlized(struct foo_list *This);
+      struct foo_list *foo_list_new(void);
+      struct foo_list *foo_list_free(void);
       int  foo_list_size(struct foo_list *This);
       foo_t *foo_list_get(struct foo_list *This, int index);
-      void foo_list_insert(struct foo_list *This, foo_t *pfoo);
+      void foo_list_prepend(struct foo_list *This, foo_t *pfoo);
       void foo_list_append(struct foo_list *This, foo_t *pfoo);
-      void foo_list_insert_at(struct foo_list *This, foo_t *pfoo, int index);
+      void foo_list_insert(struct foo_list *This, foo_t *pfoo, int index);
       void foo_list_unlink(struct foo_list *This, foo_t *pfoo);
       void foo_list_unlink_all(struct foo_list *This);
       void foo_list_sort(struct foo_list *This, 
          int (*compar)(const void *, const void *));
+      bool foo_list_search(struct foo_list *This, foo_t *pfoo);
 
    You should also define yourself:  (this file cannot do this for you)
    
@@ -59,6 +60,7 @@
 */
 
 #include "genlist.h"
+#include "mem.h"
 
 #include <assert.h>
 
@@ -76,125 +78,72 @@
 #define SPECLIST_LIST struct SPECLIST_PASTE(SPECLIST_TAG, _list)
 #define SPECLIST_FOO(suffix) SPECLIST_PASTE(SPECLIST_TAG, suffix)
 
-#ifdef SPECLIST_NO_DEFINE
-#undef SPECLIST_NO_DEFINE
-#else
-SPECLIST_LIST {
-  struct genlist list;
-};
-#endif
+/* Dump opaque type, the real type is genlist */
+SPECLIST_LIST;
 
-static inline void SPECLIST_FOO(_list_init) (SPECLIST_LIST *tthis)
+static inline SPECLIST_LIST *SPECLIST_FOO(_list_new)(void)
+{
+  return (SPECLIST_LIST *)genlist_new();
+}
+
+static inline void SPECLIST_FOO(_list_free)(SPECLIST_LIST *tthis)
 {
   assert(tthis != NULL);
-  genlist_init(&tthis->list);
+  genlist_free((genlist *)tthis);
 }
 
-static inline void SPECLIST_FOO(_list_insert) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+static inline void SPECLIST_FOO(_list_prepend)(SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+{
+  assert(tthis != NULL && pfoo != NULL);
+  genlist_insert((genlist *)tthis, pfoo, 0);
+}
+
+static inline void SPECLIST_FOO(_list_unlink)(SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+{
+  assert(tthis != NULL && pfoo != NULL);
+  genlist_unlink((genlist *)tthis, pfoo);
+}
+
+static inline int SPECLIST_FOO(_list_size)(const SPECLIST_LIST *tthis)
 {
   assert(tthis != NULL);
-  genlist_insert(&tthis->list, pfoo, 0);
+  return genlist_size((const genlist *)tthis);
 }
 
-static inline void SPECLIST_FOO(_list_unlink) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+static inline SPECLIST_TYPE *SPECLIST_FOO(_list_get)(const SPECLIST_LIST *tthis, int index)
 {
   assert(tthis != NULL);
-  genlist_unlink(&tthis->list, pfoo);
+  return genlist_get((const genlist *)tthis, index);
 }
 
-static inline int SPECLIST_FOO(_list_size) (const SPECLIST_LIST *tthis)
+static inline void SPECLIST_FOO(_list_append)(SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+{
+  assert(tthis != NULL && pfoo != NULL);
+  genlist_insert((genlist *)tthis, pfoo, -1);
+}
+
+static inline void SPECLIST_FOO(_list_insert)(SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo, int index)
+{
+  assert(tthis != NULL && pfoo != NULL);
+  genlist_insert((genlist *)tthis, pfoo, index);
+}
+
+static inline void SPECLIST_FOO(_list_unlink_all)(SPECLIST_LIST *tthis)
 {
   assert(tthis != NULL);
-  return genlist_size(&tthis->list);
+  genlist_unlink_all((genlist *)tthis);
 }
 
-static inline SPECLIST_TYPE *SPECLIST_FOO(_list_get) (const SPECLIST_LIST *tthis, int index)
+static inline void SPECLIST_FOO(_list_sort)(SPECLIST_LIST *tthis, int (*compar)(const SPECLIST_TYPE * const *, const SPECLIST_TYPE * const *))
 {
   assert(tthis != NULL);
-  return genlist_get(&tthis->list, index);
+  genlist_sort((genlist *)tthis, (int(*)(const void *, const void *))compar);
 }
 
-static inline void SPECLIST_FOO(_list_append) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo)
+static inline bool SPECLIST_FOO(_list_search)(const SPECLIST_LIST *tthis, const SPECLIST_TYPE *pfoo)
 {
-  assert(tthis != NULL);
-  genlist_insert(&tthis->list, pfoo, -1);
-}
-
-static inline void SPECLIST_FOO(_list_insert_at) (SPECLIST_LIST *tthis, SPECLIST_TYPE *pfoo, int index)
-{
-  assert(tthis != NULL);
-  genlist_insert(&tthis->list, pfoo, index);
-}
-
-static inline void SPECLIST_FOO(_list_unlink_all) (SPECLIST_LIST *tthis)
-{
-  assert(tthis != NULL);
-  genlist_unlink_all(&tthis->list);
-}
-
-static inline void SPECLIST_FOO(_list_sort) (SPECLIST_LIST * tthis, int (*compar) (const void *, const void *))
-{
-  assert(tthis != NULL);
-  genlist_sort(&tthis->list, compar);
-}
-
-//*pepeto*
-#ifdef SPECLIST_NO_FREE
-#undef SPECLIST_NO_FREE
-#else
-static inline void SPECLIST_FOO(_list_free) (SPECLIST_LIST *tthis)
-{
-  assert(tthis);
-
-  TYPED_LIST_ITERATE(SPECLIST_TYPE, *tthis, pitem)
-  {
-    free(pitem);
-  } LIST_ITERATE_END;
-  SPECLIST_FOO(_list_unlink_all(tthis));
-}
-#endif
-
-#ifdef SPECLIST_NO_COPY
-#undef SPECLIST_NO_COPY
-#else
-static inline void SPECLIST_FOO(_list_copy) (SPECLIST_LIST *dest,
-					     const SPECLIST_LIST *src)
-{
-  assert(src);
-  assert(dest);
-
-  SPECLIST_FOO(_list_free(dest));
-  TYPED_LIST_ITERATE(SPECLIST_TYPE, *src, pitem)
-  {
-    SPECLIST_TYPE *nitem = malloc(sizeof(SPECLIST_TYPE));
-    *nitem = *pitem;
-    SPECLIST_FOO(_list_append(dest, nitem));
-  } LIST_ITERATE_END;
-}
-#endif
-
-#ifdef SPECLIST_NO_FIND
-#undef SPECLIST_NO_FIND
-#else
-static inline SPECLIST_TYPE *SPECLIST_FOO(_list_find) (const SPECLIST_LIST *tthis,
-						       const SPECLIST_TYPE *data)
-{
-  assert(tthis);
-
-  TYPED_LIST_ITERATE(SPECLIST_TYPE, *tthis, pitem)
-  {
-    if (pitem == data) {
-      return pitem;
-    }
-  } LIST_ITERATE_END;
-  return NULL;
-}
-#endif
-
-static inline bool SPECLIST_FOO(_list_is_initialized) (SPECLIST_LIST * tthis)
-{
-  assert(tthis != NULL);
-  return genlist_is_initialized(&tthis->list);
+  assert(tthis != NULL && pfoo != NULL);
+  return genlist_search((const genlist *)tthis, pfoo);
 }
 
 #undef SPECLIST_TAG

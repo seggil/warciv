@@ -48,7 +48,7 @@ struct tile {
   Terrain_type_id terrain;
   enum tile_special_type special;
   struct city *city;
-  struct unit_list units;
+  struct unit_list *units;
   unsigned int known;   /* A bitvector on the server side, an
 			   enum known_type on the client side.
 			   Player_no is index */

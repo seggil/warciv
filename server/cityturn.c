@@ -99,12 +99,12 @@ called on government change or wonder completion or stuff like that -- Syela
 **************************************************************************/
 void global_city_refresh(struct player *pplayer)
 {
-  conn_list_do_buffer(&pplayer->connections);
-  city_list_iterate(pplayer->cities, pcity)
+  conn_list_do_buffer(pplayer->connections);
+  city_list_iterate(pplayer->cities, pcity) {
     city_refresh(pcity);
     send_city_info(pplayer, pcity);
-  city_list_iterate_end;
-  conn_list_do_unbuffer(&pplayer->connections);
+  } city_list_iterate_end;
+  conn_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -307,8 +307,9 @@ Notices about cities that should be sent to all players.
 **************************************************************************/
 void send_global_city_turn_notifications(struct conn_list *dest)
 {
-  if (!dest)
-    dest = &game.all_connections;
+  if (!dest) {
+    dest = game.all_connections;
+  }
 
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
@@ -1354,7 +1355,7 @@ int city_incite_cost(struct player *pplayer, struct city *pcity)
   }
 
   /* City is empty */
-  if (unit_list_size(&pcity->tile->units) == 0) {
+  if (unit_list_size(pcity->tile->units) == 0) {
     cost /= 2;
   }
 
@@ -1555,7 +1556,8 @@ static bool disband_city(struct city *pcity)
    * to rcity.  transfer_city_units does not make sure no units are
    * left floating without a transport, but since all units are
    * transferred this is not a problem. */
-  transfer_city_units(pplayer, pplayer, &pcity->units_supported, rcity, pcity, -1, TRUE);
+  transfer_city_units(pplayer, pplayer, pcity->units_supported,
+		      rcity, pcity, -1, TRUE);
 
   notify_player_ex(pplayer, ptile, E_UNIT_BUILT,
 		   /* TRANS: Settler production leads to disbanded city. */

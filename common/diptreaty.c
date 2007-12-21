@@ -80,25 +80,29 @@ bool could_intel_with_player(struct player *pplayer, struct player *aplayer)
 /****************************************************************
 ...
 *****************************************************************/
-void init_treaty(struct Treaty *ptreaty, 
-		 struct player *plr0, struct player *plr1)
+struct Treaty *treaty_new(struct player *plr0, struct player *plr1)
 {
-  ptreaty->plr0=plr0;
-  ptreaty->plr1=plr1;
+  struct Treaty *ptreaty = fc_malloc(sizeof(struct Treaty));
+
+  ptreaty->plr0 = plr0;
+  ptreaty->plr1 = plr1;
   ptreaty->accept0 = FALSE;
   ptreaty->accept1 = FALSE;
-  clause_list_init(&ptreaty->clauses);
+  ptreaty->clauses = clause_list_new();
+
+  return ptreaty;
 }
 
 /****************************************************************
-  Free the clauses of a treaty.
+  ...
 *****************************************************************/
-void clear_treaty(struct Treaty *ptreaty)
+void treaty_free(struct Treaty *ptreaty)
 {
   clause_list_iterate(ptreaty->clauses, pclause) {
     free(pclause);
   } clause_list_iterate_end;
-  clause_list_unlink_all(&ptreaty->clauses);
+  clause_list_free(ptreaty->clauses);
+  free(ptreaty);
 }
 
 /****************************************************************
@@ -108,9 +112,9 @@ bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
 		  enum clause_type type, int val)
 {
   clause_list_iterate(ptreaty->clauses, pclause) {
-    if(pclause->type==type && pclause->from==pfrom &&
-       pclause->value==val) {
-      clause_list_unlink(&ptreaty->clauses, pclause);
+    if (pclause->type == type && pclause->from == pfrom
+	&& pclause->value == val) {
+      clause_list_unlink(ptreaty->clauses, pclause);
       free(pclause);
 
       ptreaty->accept0 = FALSE;
@@ -144,16 +148,16 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
     return FALSE;
   }
   
-  if (!game.goldtrading && type==CLAUSE_GOLD) {
-        return FALSE;
+  if (!game.goldtrading && type == CLAUSE_GOLD) {
+    return FALSE;
   } 
-  if (!game.techtrading && type==CLAUSE_ADVANCE) {
-        return FALSE;
+  if (!game.techtrading && type == CLAUSE_ADVANCE) {
+    return FALSE;
   } 
-  if (!game.citytrading && type==CLAUSE_CITY) {
-        return FALSE;
+  if (!game.citytrading && type == CLAUSE_CITY) {
+    return FALSE;
   } 
-  
+
   if (is_pact_clause(type)
       && ((ds == DS_PEACE && type == CLAUSE_PEACE)
           || (ds == DS_ALLIANCE && type == CLAUSE_ALLIANCE)
@@ -166,9 +170,9 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
   }
 
   clause_list_iterate(ptreaty->clauses, pclause) {
-    if(pclause->type==type
-       && pclause->from==pfrom
-       && pclause->value==val) {
+    if (pclause->type == type
+       && pclause->from == pfrom
+       && pclause->value == val) {
       /* same clause already there */
       return FALSE;
     }
@@ -181,7 +185,7 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
       return TRUE;
     }
     if (type == CLAUSE_GOLD && pclause->type==CLAUSE_GOLD &&
-        pclause->from==pfrom) {
+        pclause->from == pfrom) {
       /* gold clause there, different value */
       ptreaty->accept0 = FALSE;
       ptreaty->accept1 = FALSE;
@@ -190,13 +194,13 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
     }
   } clause_list_iterate_end;
    
-  pclause=(struct Clause *)fc_malloc(sizeof(struct Clause));
+  pclause = (struct Clause *)fc_malloc(sizeof(struct Clause));
 
-  pclause->type=type;
-  pclause->from=pfrom;
-  pclause->value=val;
+  pclause->type = type;
+  pclause->from = pfrom;
+  pclause->value = val;
   
-  clause_list_append(&ptreaty->clauses, pclause);
+  clause_list_append(ptreaty->clauses, pclause);
 
   ptreaty->accept0 = FALSE;
   ptreaty->accept1 = FALSE;

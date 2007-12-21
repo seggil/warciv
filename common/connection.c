@@ -409,15 +409,15 @@ void connection_do_unbuffer(struct connection *pc)
 **************************************************************************/
 void conn_list_do_buffer(struct conn_list *dest)
 {
-  conn_list_iterate(*dest, pconn)
+  conn_list_iterate(dest, pconn) {
     connection_do_buffer(pconn);
-  conn_list_iterate_end;
+  } conn_list_iterate_end;
 }
 void conn_list_do_unbuffer(struct conn_list *dest)
 {
-  conn_list_iterate(*dest, pconn)
+  conn_list_iterate(dest, pconn) {
     connection_do_unbuffer(pconn);
-  conn_list_iterate_end;
+  } conn_list_iterate_end;
 }
 
 /***************************************************************
@@ -442,7 +442,7 @@ struct connection *find_conn_by_user(const char *user_name)
   match/non-match (see shared.[ch])
 ***************************************************************/
 static const char *connection_accessor(int i) {
-  return conn_list_get(&game.all_connections, i)->username;
+  return conn_list_get(game.all_connections, i)->username;
 }
 
 struct connection *find_conn_by_user_prefix(const char *user_name,
@@ -451,11 +451,11 @@ struct connection *find_conn_by_user_prefix(const char *user_name,
   int ind;
 
   *result = match_prefix(connection_accessor,
-			 conn_list_size(&game.all_connections),
+			 conn_list_size(game.all_connections),
 			 MAX_LEN_NAME-1, mystrncasecmp, user_name, &ind);
   
   if (*result < M_PRE_AMBIGUOUS) {
-    return conn_list_get(&game.all_connections, ind);
+    return conn_list_get(game.all_connections, ind);
   } else {
     return NULL;
   }
@@ -641,8 +641,7 @@ void connection_common_init(struct connection *pconn)
   pconn->statistics.bytes_send = 0;
   pconn->access_level = pconn->granted_access_level = ALLOW_NONE;
   if (is_server) {
-    pconn->server.ignore_list = fc_malloc(sizeof(struct ignore_list));
-    ignore_list_init(pconn->server.ignore_list);
+    pconn->server.ignore_list = ignore_list_new();
   } else {
     pconn->server.ignore_list = NULL;
   }
@@ -680,11 +679,10 @@ void connection_common_close(struct connection *pconn)
     free_packet_hashes(pconn);
 
     if (pconn->server.ignore_list) {
-      ignore_list_iterate(*pconn->server.ignore_list, cp) {
+      ignore_list_iterate(pconn->server.ignore_list, cp) {
         conn_pattern_free(cp);
       } ignore_list_iterate_end;
-      ignore_list_unlink_all(pconn->server.ignore_list);
-      free(pconn->server.ignore_list);
+      ignore_list_free(pconn->server.ignore_list);
       pconn->server.ignore_list = NULL;
     }
   }

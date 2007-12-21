@@ -597,27 +597,27 @@ static void base_load_dynamic_settings(struct section_file *psf)
     struct multi_select tmultiselect[MULTI_SELECT_NUM];
     struct delayed_goto tdelayedgoto[DELAYED_GOTO_NUM];
     struct airlift_queue tairliftqueue[AIRLIFT_QUEUE_NUM];
-    struct trade_route_list ttraders, ttradeplan;
-    struct city_list trallypoint, ttradecities;
-    struct unit_list tpatrolers;
+    struct trade_route_list *ttraders, *ttradeplan;
+    struct city_list *trallypoint, *ttradecities;
+    struct unit_list *tpatrolers;
 
-    city_list_init(&trallypoint);
+    trallypoint = city_list_new();
     for (i = 0; i < MULTI_SELECT_NUM; i++) {
-      unit_list_init(&tmultiselect[i].ulist);
+      tmultiselect[i].ulist = unit_list_new();
       tmultiselect[i].punit_focus = NULL;
     }
     for (i = 0; i <DELAYED_GOTO_NUM; i++) {
-      delayed_goto_data_list_init(&tdelayedgoto[i].dglist);
+      tdelayedgoto[i].dglist = delayed_goto_data_list_new();
       tdelayedgoto[i].pplayer = NULL;
     }
     for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
-      tile_list_init(&tairliftqueue[i].tlist);
+      tairliftqueue[i].tlist = tile_list_new();
       tairliftqueue[i].utype = U_LAST;
     }
-    trade_route_list_init(&ttraders);
-    trade_route_list_init(&ttradeplan);
-    city_list_init(&ttradecities);
-    unit_list_init(&tpatrolers);
+    ttraders = trade_route_list_new();
+    ttradeplan = trade_route_list_new();
+    ttradecities = city_list_new();
+    tpatrolers = unit_list_new();
 
     /* Load the rally points */
     num = secfile_lookup_int_default(psf, -1, "dynamic.rally.city_num");
@@ -627,7 +627,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
 	  struct city *ccity = fc_malloc(sizeof(struct city));
 	  *ccity = *pcity;
 	  ccity->rally_point = ptile;
-	  city_list_append(&trallypoint, ccity);
+	  city_list_append(trallypoint, ccity);
 	}
       }
     }
@@ -638,7 +638,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
 				       "dynamic.multiselect%ds.unit_num", i);
       for (j = 0; j < num; j++) {
 	load_owner(unit, punit, "dynamic.multiselect%ds.unit%d", i, j) {
-	  unit_list_append(&tmultiselect[i].ulist, punit);
+	  unit_list_append(tmultiselect[i].ulist, punit);
 	}
       }
       if (num > 0) {
@@ -661,7 +661,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
 	/* Here, we ignore the NULL tile */
 	load_tile(psf, &pdgd->ptile,
 		  "dynamic.delayedgoto%ds.data%d.tile", i, j);
-	delayed_goto_data_list_append(&tdelayedgoto[i].dglist, pdgd);
+	delayed_goto_data_list_append(tdelayedgoto[i].dglist, pdgd);
       }
       if (num > 0) {
 	load(player, pplayer, "dynamic.delayedgoto%ds.player", i);
@@ -675,7 +675,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
 				       "dynamic.airliftqueue%ds.tile_num", i);
       for (j = 0; j < num; j++) {
 	load(tile, ptile, "dynamic.airliftqueue%ds.tile%d", i, j) {
-	  tile_list_append(&tairliftqueue[i].tlist, ptile);
+	  tile_list_append(tairliftqueue[i].tlist, ptile);
 	}
       }
       tairliftqueue[i].utype = secfile_lookup_int_default(psf, U_LAST,
@@ -689,7 +689,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
 	load_owner(city, pc1, "dynamic.trade_route.unit%d.city1", i) {
 	  load(city, pc2, "dynamic.trade_route.unit%d.city2", i) {
 	    /* Doesn't need to be owned... */
-	    trade_route_list_append(&ttraders,
+	    trade_route_list_append(ttraders,
 	                            trade_route_new(punit, pc1, pc2,
 	                            secfile_lookup_bool_default(psf, FALSE,
 	                            "dynamic.trade_route.unit%d.planned", i)));
@@ -700,14 +700,14 @@ static void base_load_dynamic_settings(struct section_file *psf)
     num = secfile_lookup_int_default(psf, -1, "dynamic.trade_cities.city_num");
     for (i = 0; i < num; i++) {
       load_owner(city, pcity, "dynamic.trade_cities.city%d", i)  {
-	city_list_append(&ttradecities, pcity);
+	city_list_append(ttradecities, pcity);
       }
     }
     num = secfile_lookup_int_default(psf, -1, "dynamic.trade_plan.tr_num");
     for (i = 0; i < num; i++) {
       load_owner(city, pc1, "dynamic.trade_plan.tr%d.city1", i) {
 	load_owner(city, pc2, "dynamic.trade_plan.tr%d.city2", i) {
-	  trade_route_list_append(&ttradeplan, trade_route_new(NULL, pc1,
+	  trade_route_list_append(ttradeplan, trade_route_new(NULL, pc1,
 							       pc2, TRUE));
 	}
       }
@@ -721,7 +721,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
 	  struct unit *cunit = fc_malloc(sizeof(struct unit));
 	  *cunit = *punit;
 	  cunit->my_ai.data = (void *)ptile;
-	  unit_list_append(&tpatrolers, cunit);
+	  unit_list_append(tpatrolers, cunit);
 	}
       }
     }
@@ -763,15 +763,15 @@ static void base_load_dynamic_settings(struct section_file *psf)
       multi_select_set(i, &tmultiselect[i]);
     }
     for (i = 0; i < DELAYED_GOTO_NUM; i++) {
-      delayed_goto_set(i,&tdelayedgoto[i]);
+      delayed_goto_set(i, &tdelayedgoto[i]);
     }
     for (i = 0; i <AIRLIFT_QUEUE_NUM; i++) {
-      airlift_queue_set(i,&tairliftqueue[i]);
+      airlift_queue_set(i, &tairliftqueue[i]);
     }
     city_list_iterate(ttradecities, pcity) {
-      my_ai_add_trade_city(pcity,TRUE);
+      my_ai_add_trade_city(pcity, TRUE);
     } city_list_iterate_end;
-    set_trade_planning(&ttradeplan);
+    set_trade_planning(ttradeplan);
     trade_route_list_iterate(ttraders, ptr) {
       my_ai_orders_free(ptr->punit);
       my_ai_trade_route_alloc(ptr);
@@ -785,20 +785,31 @@ static void base_load_dynamic_settings(struct section_file *psf)
 
 free_datas:
     /* Free datas */
-    city_list_free(&trallypoint);
+    city_list_iterate(trallypoint, pcity) {
+      free(pcity);
+    } city_list_iterate_end;
+    city_list_free(trallypoint);
     for (i = 0; i < MULTI_SELECT_NUM; i++) {
-      unit_list_unlink_all(&tmultiselect[i].ulist);
+      unit_list_free(tmultiselect[i].ulist);
     }
     for (i = 0; i < DELAYED_GOTO_NUM; i++) {
-      delayed_goto_data_list_free(&tdelayedgoto[i].dglist);
+      delayed_goto_data_list_iterate(tdelayedgoto[i].dglist, pdg) {
+	free(pdg);
+      } delayed_goto_data_list_iterate_end;
+      delayed_goto_data_list_free(tdelayedgoto[i].dglist);
     }
     for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
-      tile_list_unlink_all(&tairliftqueue[i].tlist);
+      tile_list_free(tairliftqueue[i].tlist);
     }
-    trade_route_list_unlink_all(&ttraders);
-    trade_route_list_free(&ttradeplan);
-    city_list_unlink_all(&ttradecities);
-    unit_list_free(&tpatrolers);
+    trade_route_list_iterate(ttraders, ptr) {
+      free(ptr);
+    } trade_route_list_iterate_end;
+    trade_route_list_free(ttraders);
+    city_list_free(ttradecities);
+    unit_list_iterate(tpatrolers, punit) {
+      free(punit);
+    } unit_list_iterate_end;
+    unit_list_free(tpatrolers);
   }
 
 end:
@@ -1027,7 +1038,7 @@ void save_all_settings(void)
   const struct multi_select *pms;
   for (i = 0; i < MULTI_SELECT_NUM; i++) {
     pms = multi_select_get(i);
-    secfile_insert_int_comment(&sf, unit_list_size(&pms->ulist),
+    secfile_insert_int_comment(&sf, unit_list_size(pms->ulist),
 			       _("don't modify this!"),
 			       "dynamic.multiselect%ds.unit_num", i);
     j = 0;
@@ -1044,7 +1055,7 @@ void save_all_settings(void)
   const struct delayed_goto *pdg;
   for (i = 0; i < DELAYED_GOTO_NUM; i++) {
     pdg = delayed_goto_get(i);
-    secfile_insert_int_comment(&sf, delayed_goto_data_list_size(&pdg->dglist),
+    secfile_insert_int_comment(&sf, delayed_goto_data_list_size(pdg->dglist),
 			       _("don't modify this!"),
 			       "dynamic.delayedgoto%ds.data_num", i);
     j = 0;
@@ -1065,7 +1076,7 @@ void save_all_settings(void)
   const struct airlift_queue *paq;
   for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
     paq = airlift_queue_get(i);
-    secfile_insert_int_comment(&sf, tile_list_size(&paq->tlist),
+    secfile_insert_int_comment(&sf, tile_list_size(paq->tlist),
 			       _("don't modify this!"),
 			       "dynamic.airliftqueue%ds.tile_num", i);
     j = 0;
@@ -1082,7 +1093,7 @@ void save_all_settings(void)
   secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
 			     "dynamic.trade_route.unit_num");
   i = 0;
-  unit_list_iterate(*pul, punit) {
+  unit_list_iterate(pul, punit) {
     struct trade_route *ptr = (struct trade_route *)punit->my_ai.data;
     save_unit(&sf, punit, "dynamic.trade_route.unit%d", i);
     save_city(&sf, ptr->pc1, "dynamic.trade_route.unit%d.city1", i);
@@ -1095,7 +1106,7 @@ void save_all_settings(void)
   secfile_insert_int_comment(&sf, city_list_size(ptcl), _("don't modify this!"),
 			     "dynamic.trade_cities.city_num");
   i = 0;
-  city_list_iterate(*ptcl, pcity) {
+  city_list_iterate(ptcl, pcity) {
     save_city(&sf, pcity, "dynamic.trade_cities.city%d", i);
     i++;
   } city_list_iterate_end;
@@ -1104,7 +1115,7 @@ void save_all_settings(void)
 			     _("don't modify this!"),
 			     "dynamic.trade_plan.tr_num");
   i = 0;
-  trade_route_list_iterate(*ptrl, ptr) {
+  trade_route_list_iterate(ptrl, ptr) {
     save_city(&sf, ptr->pc1, "dynamic.trade_plan.tr%d.city1", i);
     save_city(&sf, ptr->pc2, "dynamic.trade_plan.tr%d.city2", i);
     i++;
@@ -1115,7 +1126,7 @@ void save_all_settings(void)
   secfile_insert_int_comment(&sf, unit_list_size(pul), _("don't modify this!"),
 			     "dynamic.patrol.unit_num");
   i = 0;
-  unit_list_iterate(*pul, punit) {
+  unit_list_iterate(pul, punit) {
     save_unit(&sf, punit, "dynamic.patrol.unit%d", i);
     save_tile(&sf, (struct tile *)punit->my_ai.data,
 	      "dynamic.patrol.unit%d.tile", i);

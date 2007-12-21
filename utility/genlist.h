@@ -49,40 +49,30 @@
   See also the speclist module.
 ***********************************************************************/
 
-/* A single element of a genlist, storing the pointer to user
-   data, and pointers to the next and previous elements:
-*/
-struct genlist_link {
-  struct genlist_link *next, *prev; 
-  void *dataptr;
-};
+/* Opaque types to avoid a non-pointer declarations */
+typedef struct _genlist genlist;
+typedef struct _genlist_link genlist_link;
 
+genlist *genlist_new(void);
+void genlist_free(genlist *pgenlist);
 
-/* A genlist, storing the number of elements (for quick retrieval and
-   testing for empty lists), and pointers to the first and last elements
-   of the list.
-*/
-struct genlist {
-  int init_magic; /* initialization check */
-  int nelements;
-  struct genlist_link *head_link;
-  struct genlist_link *tail_link;
-};
+int genlist_size(const genlist *pgenlist);
+void *genlist_get(const genlist *pgenlist, int idx);
+const genlist_link *genlist_get_head(const genlist *pgenlist);
+const genlist_link *genlist_get_tail(const genlist *pgenlist);
+void genlist_insert(genlist *pgenlist, void *data, int pos);
+void genlist_unlink(genlist *pgenlist, void *punlink);
+void genlist_unlink_all(genlist *pgenlist);
+void genlist_sort(genlist *pgenlist, int (*compar)(const void *, const void *));
+bool genlist_search(const genlist *pgenlist, const void *data);
 
-int genlist_size(const struct genlist *pgenlist);
-void *genlist_get(const struct genlist *pgenlist, int idx);
-void genlist_init(struct genlist *pgenlist);
-bool genlist_is_initialized(struct genlist *pgenlist);
-void genlist_unlink_all(struct genlist *pgenlist);
-void genlist_insert(struct genlist *pgenlist, void *data, int pos);
-void genlist_unlink(struct genlist *pgenlist, void *punlink);
+void *genlist_link_get_data(const genlist_link *plink);
+const genlist_link *genlist_link_get_prev(const genlist_link *plink);
+const genlist_link *genlist_link_get_next(const genlist_link *plink);
 
-void genlist_sort(struct genlist *pgenlist,
-		  int (*compar)(const void *, const void *));
-
-#define ITERATOR_PTR(iter) ((iter) ? ((iter)->dataptr) : NULL)
-#define ITERATOR_NEXT(iter) (iter = (iter)->next)
-#define ITERATOR_PREV(iter) (iter = (iter)->prev)
+#define ITERATOR_PTR(iter) (genlist_link_get_data(iter))
+#define ITERATOR_NEXT(iter) (iter = genlist_link_get_next(iter))
+#define ITERATOR_PREV(iter) (iter = genlist_link_get_prev(iter))
 
 
 /* This is to iterate for a type defined like:
@@ -91,9 +81,9 @@ void genlist_sort(struct genlist *pgenlist,
    Eg, see speclist.h, which is what this is really for.
 */
 #define TYPED_LIST_ITERATE(atype, typed_list, var) {       \
-  struct genlist_link *myiter;                             \
+  const genlist_link *myiter;                              \
   atype *var;                                              \
-  myiter = (typed_list).list.head_link;                    \
+  myiter = genlist_get_head((const genlist *)typed_list);  \
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
     ITERATOR_NEXT(myiter);
@@ -104,9 +94,9 @@ void genlist_sort(struct genlist *pgenlist,
 
 /* Same, but iterate backwards: */
 #define TYPED_LIST_ITERATE_REV(atype, typed_list, var) {   \
-  struct genlist_link *myiter;                             \
+  const genlist_link *myiter;                              \
   atype *var;                                              \
-  myiter = (typed_list).list.tail_link;                    \
+  myiter = genlist_get_tail((const genlist *)typed_list);  \
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
     ITERATOR_PREV(myiter);

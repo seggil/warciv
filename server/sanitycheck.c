@@ -414,8 +414,8 @@ static void check_players(void)
 
     if (!pplayer->is_alive) {
       /* Dead players' units and cities are disbanded in kill_player(). */
-      assert(unit_list_size(&pplayer->units) == 0);
-      assert(city_list_size(&pplayer->cities) == 0);
+      assert(unit_list_size(pplayer->units) == 0);
+      assert(city_list_size(pplayer->cities) == 0);
     }
 
     /* Dying players shouldn't be left around.  But they are. */

@@ -345,9 +345,9 @@ int main(int argc, char *argv[])
 
   /* initialization */
 
-  conn_list_init(&game.all_connections);
-  conn_list_init(&game.est_connections);
-  conn_list_init(&game.game_connections);
+  game.all_connections = conn_list_new();
+  game.est_connections = conn_list_new();
+  game.game_connections = conn_list_new();
 
   ui_init();
   charsets_init();
@@ -574,7 +574,6 @@ void set_client_state(enum client_states newstate)
       update_unit_focus();
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
-//*pepeto*
       if (!client_is_observer() && aconnection.player) {
         if (reload_pepsettings) {
           load_dynamic_settings();
@@ -638,11 +637,11 @@ enum client_states get_client_state(void)
 void client_remove_cli_conn(struct connection *pconn)
 {
   if (pconn->player) {
-    conn_list_unlink(&pconn->player->connections, pconn);
+    conn_list_unlink(pconn->player->connections, pconn);
   }
-  conn_list_unlink(&game.all_connections, pconn);
-  conn_list_unlink(&game.est_connections, pconn);
-  conn_list_unlink(&game.game_connections, pconn);
+  conn_list_unlink(game.all_connections, pconn);
+  conn_list_unlink(game.est_connections, pconn);
+  conn_list_unlink(game.game_connections, pconn);
   assert(pconn != &aconnection);
   free(pconn);
 }
@@ -653,8 +652,8 @@ void client_remove_cli_conn(struct connection *pconn)
 **************************************************************************/
 void client_remove_all_cli_conn(void)
 {
-  while (conn_list_size(&game.all_connections) > 0) {
-    struct connection *pconn = conn_list_get(&game.all_connections, 0);
+  while (conn_list_size(game.all_connections) > 0) {
+    struct connection *pconn = conn_list_get(game.all_connections, 0);
     client_remove_cli_conn(pconn);
   }
 }

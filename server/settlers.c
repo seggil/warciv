@@ -1454,7 +1454,7 @@ void contemplate_new_city(struct city *pcity)
 	     (result.virt_boat ? "build a boat" : 
 	      (result.overseas ? "use a boat" : "walk")));
 
-	player_cities = city_list_size(&get_player(pcity->owner)->cities);
+	player_cities = city_list_size(get_player(pcity->owner)->cities);
 	if(player_cities > MAX_AI_CITIES) {
 		FOUNDER_WANT_MULTIPLIER=MAX_AI_CITIES*(player_cities-MAX_AI_CITIES);
 	}

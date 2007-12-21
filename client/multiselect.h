@@ -34,7 +34,7 @@
   struct unit *_punit, *_punit_next_focus = NULL;                         \
   bool _cond = (multi_select_size(0) > 1);                                \
   connection_do_buffer(&aconnection);                                     \
-  unit_list_iterate(*multi_select_get_units_focus(), punit) {             \
+  unit_list_iterate(multi_select_get_units_focus(), punit) {              \
     _punit = punit;                                                       \
     if ((_cond                                                            \
          && !unit_satisfies_filter(punit, multi_select_inclusive_filter,  \
@@ -170,7 +170,7 @@ typedef struct {
 #define SPECLIST_TYPE automatic_processus
 #include "speclist.h"
 #define automatic_processus_iterate(pitem) \
-  TYPED_LIST_ITERATE(automatic_processus,*get_automatic_processus(), pitem)
+  TYPED_LIST_ITERATE(automatic_processus, get_automatic_processus(), pitem)
 #define automatic_processus_iterate_end  LIST_ITERATE_END
 
 /* For timeout events */
@@ -193,7 +193,7 @@ void automatic_processus_init(void);
   real_automatic_processus_new(__FILE__, __LINE__, page, default_auto_filter, \
                                menu, description, data, __VA_ARGS__);
 void automatic_processus_remove(automatic_processus *pap);
-struct automatic_processus_list *get_automatic_processus(void);
+const struct automatic_processus_list *get_automatic_processus(void);
 automatic_processus *find_automatic_processus_by_name(const char *path);
 automatic_processus *
   real_automatic_processus_new(const char *file, const int line,
@@ -207,7 +207,7 @@ automatic_processus *
 #define MULTI_SELECT_NUM 10
 
 struct multi_select {
-  struct unit_list ulist;   /* The list of units */
+  struct unit_list *ulist;  /* The list of units */
   struct unit *punit_focus; /* The units which is/was in focus */
 };
 
@@ -259,9 +259,9 @@ struct delayed_goto_data {
 #define delayed_goto_data_list_iterate_end LIST_ITERATE_END
 
 struct delayed_goto {
-  struct delayed_goto_data_list dglist; /* The datas of the delayed orders */
-  automatic_processus *pap;             /* The automatic way */
-  struct player *pplayer;               /* The supposed target player */
+  struct delayed_goto_data_list *dglist; /* The datas of the delayed orders */
+  automatic_processus *pap;              /* The automatic way */
+  struct player *pplayer;                /* The supposed target player */
 };
 
 extern filter delayed_goto_inclusive_filter;
@@ -298,9 +298,9 @@ void add_pause_delayed_goto(void);
 #define AIRLIFT_QUEUE_NUM 7
 
 struct airlift_queue {
-  struct tile_list tlist;  /* The airlift sources */
-  void *widgets[U_LAST+1]; /* GtkWidget, for unit type menus */
-  Unit_Type_id utype;      /* The selected unit type */
+  struct tile_list *tlist;  /* The airlift sources */
+  void *widgets[U_LAST+1];  /* GtkWidget, for unit type menus */
+  Unit_Type_id utype;       /* The selected unit type */
 };
 
 extern int need_city_for;

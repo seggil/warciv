@@ -291,7 +291,7 @@ struct voting {
   enum command_id command_id;
   char command[MAX_LEN_CONSOLE_LINE]; /* [0] == \0 if none in action */
   int turn_count;                     /* Number of turns active. */
-  struct vote_cast_list votes_cast;
+  struct vote_cast_list *votes_cast;
   int vote_no;                        /* place in the queue */
   int yes;
   int no;
@@ -307,8 +307,7 @@ struct voting {
     TYPED_LIST_ITERATE(struct voting, alist, pvote)
 #define vote_list_iterate_end  LIST_ITERATE_END
 
-static struct vote_list vote_list;
-static bool votes_are_initialized = FALSE;
+static struct vote_list *vote_list = NULL;
 static int vote_number_sequence;
 
 
@@ -399,12 +398,12 @@ static void free_vote(struct voting *pvote)
     return;
   }
 
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   vote_cast_list_iterate(pvote->votes_cast, pvc) {
     free(pvc);
   } vote_cast_list_iterate_end;
-  vote_cast_list_unlink_all(&pvote->votes_cast);
+  vote_cast_list_free(pvote->votes_cast);
   free(pvote);
 }
 
@@ -413,10 +412,12 @@ static void free_vote(struct voting *pvote)
 **************************************************************************/
 static void remove_vote(struct voting *pvote)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
-  vote_list_unlink(&vote_list, pvote);
-  free_vote(pvote);
+  if (pvote != NULL) {
+    vote_list_unlink(vote_list, pvote);
+    free_vote(pvote);
+  }
 }
 
 /**************************************************************************
@@ -424,13 +425,14 @@ static void remove_vote(struct voting *pvote)
 **************************************************************************/
 void clear_all_votes(void)
 {
-  if (!votes_are_initialized) {
+  if (!vote_list) {
     return;
   }
+
   vote_list_iterate(vote_list, pvote) {
     free_vote(pvote);
   } vote_list_iterate_end;
-  vote_list_unlink_all(&vote_list);
+  vote_list_unlink_all(vote_list);
 }
 
 /**************************************************************************
@@ -438,10 +440,9 @@ void clear_all_votes(void)
 **************************************************************************/
 void stdinhand_init(void)
 {
-  if (!votes_are_initialized) {
-    vote_list_init(&vote_list);
+  if (!vote_list) {
+    vote_list = vote_list_new();
     vote_number_sequence = 0;
-    votes_are_initialized = TRUE;
   }
 
   if (!mute_table) {
@@ -454,8 +455,7 @@ void stdinhand_init(void)
 **************************************************************************/
 static bool connection_is_player(struct connection *pconn)
 {
-  return pconn && pconn->player && !pconn->observer
-    && pconn->player->is_alive;
+  return pconn && pconn->player && !pconn->observer && pconn->player->is_alive;
 }
 
 /**************************************************************************
@@ -481,7 +481,7 @@ static bool connection_can_vote(struct connection *pconn)
 **************************************************************************/
 static struct voting *get_vote_by_no(int vote_no)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   vote_list_iterate(vote_list, pvote) {
     if (pvote->vote_no == vote_no) {
@@ -497,7 +497,7 @@ static struct voting *get_vote_by_no(int vote_no)
 **************************************************************************/
 static struct voting *get_vote_by_caller(int caller_id)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   vote_list_iterate(vote_list, pvote) {
     if (pvote->caller_id == caller_id) {
@@ -518,7 +518,7 @@ static struct voting *vote_new(struct connection *caller,
 {
   struct voting *pvote;
 
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   if (!connection_can_vote(caller)) {
     return NULL;
@@ -533,8 +533,10 @@ static struct voting *vote_new(struct connection *caller,
   sz_strlcpy(pvote->command, command);
   pvote->command_id = command_id;
   pvote->turn_count = 0;
-  vote_cast_list_init(&pvote->votes_cast);
+  pvote->votes_cast = vote_cast_list_new();
   pvote->vote_no = ++vote_number_sequence;
+
+  vote_list_append(vote_list, pvote);
 
   pvote->flags = commands[command_id].vote_flags;
   pvote->need_pc = (double) commands[command_id].vote_percent / 100.0;
@@ -563,8 +565,6 @@ static struct voting *vote_new(struct connection *caller,
     }
   }
 
-  vote_list_append(&vote_list, pvote);
-
   return pvote;
 }
 
@@ -582,7 +582,7 @@ static void check_vote(struct voting *pvote)
   int flags;
   double need_pc;
 
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   pvote->yes = 0;
   pvote->no = 0;
@@ -745,7 +745,7 @@ static void check_vote(struct voting *pvote)
 **************************************************************************/
 static struct vote_cast *find_vote_cast(struct voting *pvote, int conn_id)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   vote_cast_list_iterate(pvote->votes_cast, pvc) {
     if (pvc->conn_id == conn_id) {
@@ -761,14 +761,14 @@ static struct vote_cast *find_vote_cast(struct voting *pvote, int conn_id)
 **************************************************************************/
 static struct vote_cast *vote_cast_new(struct voting *pvote)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   struct vote_cast *pvc = fc_malloc(sizeof(struct vote_cast));
 
   pvc->conn_id = -1;
   pvc->vote_cast = VOTE_ABSTAIN;
 
-  vote_cast_list_append(&pvote->votes_cast, pvc);
+  vote_cast_list_append(pvote->votes_cast, pvc);
 
   return pvc;
 }
@@ -778,13 +778,13 @@ static struct vote_cast *vote_cast_new(struct voting *pvote)
 **************************************************************************/
 static void remove_vote_cast(struct voting *pvote, struct vote_cast *pvc)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   if (!pvc) {
     return;
   }
 
-  vote_cast_list_unlink(&pvote->votes_cast, pvc);
+  vote_cast_list_unlink(pvote->votes_cast, pvc);
   free(pvc);
   check_vote(pvote); /* Maybe can pass */
 }
@@ -795,7 +795,7 @@ static void remove_vote_cast(struct voting *pvote, struct vote_cast *pvc)
 static void connection_vote(struct connection *pconn, struct voting *pvote,
                             enum vote_type type)
 {
-  assert(votes_are_initialized);
+  assert(vote_list != NULL);
 
   struct vote_cast *pvc;
 
@@ -821,7 +821,7 @@ static void connection_vote(struct connection *pconn, struct voting *pvote,
 **************************************************************************/
 void cancel_connection_votes(struct connection *pconn)
 {
-  if (!pconn || !votes_are_initialized) {
+  if (!pconn || !vote_list) {
     return;
   }
 
@@ -852,7 +852,7 @@ static void unmute_conn_by_mi(struct muteinfo *mi)
   if (!pconn) {
     return;
   }
-  notify_conn(&pconn->self, _("Server: You have been unmuted."));
+  notify_conn(pconn->self, _("Server: You have been unmuted."));
 }
 
 /**************************************************************************
@@ -882,7 +882,8 @@ void stdinhand_turn(void)
 void stdinhand_free(void)
 {
   clear_all_votes();
-  votes_are_initialized = FALSE;
+  vote_list_free(vote_list);
+  vote_list = NULL;
 
   if (mute_table) {
     hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
@@ -1006,7 +1007,7 @@ static void cmd_reply_line(enum command_id cmd,
         : "(?!?)";  /* this case is a bug! */
 
   if (caller) {
-    notify_conn(&caller->self, "/%s: %s%s", cmdname, prefix, line);
+    notify_conn(caller->self, "/%s: %s%s", cmdname, prefix, line);
     /* cc: to the console - testing has proved it's too verbose - rp
        con_write(rfc_status, "%s/%s: %s%s", caller->name, cmdname, prefix, line);
      */
@@ -1017,7 +1018,7 @@ static void cmd_reply_line(enum command_id cmd,
     conn_list_iterate(game.est_connections, pconn) {
       /* Do not tell caller, since he was told above! */
       if (pconn != caller) {
-        notify_conn(&pconn->self, _("Server: %s"), line);
+        notify_conn(pconn->self, _("Server: %s"), line);
       }
     } conn_list_iterate_end;
   }
@@ -2297,73 +2298,68 @@ static bool parse_range(const char *s, int *first, int *last, char *err,
     }
     return TRUE;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
 static bool unignore_command(struct connection *caller,
-                             char *str,
-                             bool check)
+                             char *str, bool check)
 {
-    char arg[128], err[64];
-    int first, last, n;
-    struct ignore_list *saved;
-    if (!caller)
-    {
-        cmd_reply(CMD_IGNORE, caller, C_FAIL,
-                  _("That would be rather silly, since you are not a player."));
-        return FALSE;
-    }
-    sz_strlcpy(arg, str);
-    remove_leading_trailing_spaces(arg);
-    n = ignore_list_size(caller->server.ignore_list);
-    if (n == 0)
-    {
-        cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
-                  _("Your ignore list is empty."));
-        return FALSE;
-    }
-    first = 1;
-    last = n;
-    if (!parse_range(arg, &first, &last, err, sizeof(err)))
-    {
-        cmd_reply(CMD_UNIGNORE, caller, C_SYNTAX,
-                  _("Range syntax error: %s."), err);
-        return FALSE;
-    }
-    if (!(1 <= first && first <= last && last <= n))
-    {
-        cmd_reply(CMD_UNIGNORE, caller, C_FAIL,
-                  _("Invalid range: %d to %d."), first, last);
-        return FALSE;
-    }
-    if (check)
-        return TRUE;
-    saved = fc_malloc(sizeof(struct ignore_list));
-    ignore_list_init(saved);
-    n = 1;
-    ignore_list_iterate(*caller->server.ignore_list, ap)
-    {
-        if (!(first <= n && n <= last))
-        {
-            ignore_list_append(saved, ap);
-        }
-        else
-        {
-            char buf[128];
-            conn_pattern_as_str(ap, buf, sizeof(buf));
-            cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
-                      _("Removed pattern %d (%s) from your ignore list."),
-                      n, buf);
-            conn_pattern_free(ap);
-        }
-        n++;
-    } ignore_list_iterate_end;
+  char arg[128], err[64];
+  int first, last, n;
 
-    ignore_list_unlink_all(caller->server.ignore_list);
-    free(caller->server.ignore_list);
-    caller->server.ignore_list = saved;
-    return TRUE;
+  if (!caller) {
+    cmd_reply(CMD_IGNORE, caller, C_FAIL,
+	      _("That would be rather silly, since you are not a player."));
+    return FALSE;
+  }
+
+  sz_strlcpy(arg, str);
+  remove_leading_trailing_spaces(arg);
+  n = ignore_list_size(caller->server.ignore_list);
+
+  if (n == 0) {
+    cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
+	      _("Your ignore list is empty."));
+    return FALSE;
+  }
+
+  first = 1;
+  last = n;
+  if (!parse_range(arg, &first, &last, err, sizeof(err))) {
+    cmd_reply(CMD_UNIGNORE, caller, C_SYNTAX,
+	      _("Range syntax error: %s."), err);
+    return FALSE;
+  }
+
+  if (!(1 <= first && first <= last && last <= n)) {
+    cmd_reply(CMD_UNIGNORE, caller, C_FAIL,
+	      _("Invalid range: %d to %d."), first, last);
+    return FALSE;
+  }
+
+  if (check) {
+      return TRUE;
+  }
+
+  n = 1;
+  ignore_list_iterate(caller->server.ignore_list, ap) {
+    if (first <= n && n <= last) {
+      char buf[128];
+      conn_pattern_as_str(ap, buf, sizeof(buf));
+      cmd_reply(CMD_UNIGNORE, caller, C_COMMENT,
+		_("Removed pattern %d (%s) from your ignore list."),
+		n, buf);
+      ignore_list_unlink(caller->server.ignore_list, ap);
+      conn_pattern_free(ap);
+      break;
+    }
+    n++;
+  } ignore_list_iterate_end;
+
+  return TRUE;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -2551,7 +2547,7 @@ static bool autoteam_command(struct connection *caller, char *str,
     /* make teams, using ABCCBAABC... order */
     if (n > 0)
     {
-        notify_conn(&game.est_connections,
+        notify_conn(game.est_connections,
                     _("Server: Assigning all players to %d teams."), n);
         team_names = create_team_names(n);
     }
@@ -2571,7 +2567,7 @@ static bool autoteam_command(struct connection *caller, char *str,
     }
     else
     {
-        notify_conn(&game.est_connections,
+        notify_conn(game.est_connections,
                     _("Server: Teams cleared."));
     }
     return TRUE;
@@ -2695,9 +2691,9 @@ static bool mute_command(struct connection *caller, char *str, bool check)
   conn_list_iterate(game.est_connections, pc) {
     if (pc == pconn) {
       if (nturns == 0) {
-        notify_conn(&pc->self, _("Server: You have been muted."));
+        notify_conn(pc->self, _("Server: You have been muted."));
       } else {
-        notify_conn(&pc->self,
+        notify_conn(pc->self,
           _("Server: You have been muted for the next %d turns."),
           nturns);
       }
@@ -2712,10 +2708,10 @@ static bool mute_command(struct connection *caller, char *str, bool check)
       }
     } else {
       if (nturns == 0) {
-        notify_conn(&pc->self, 
+        notify_conn(pc->self, 
           _("Server: User %s has been muted."), pconn->username);
       } else {
-        notify_conn(&pc->self, 
+        notify_conn(pc->self, 
           _("Server: User %s has been muted for the next %d turns."),
           pconn->username, nturns);
       }
@@ -2954,13 +2950,13 @@ static bool explain_option(struct connection *caller, char *str, bool check)
 ******************************************************************/
 static bool wall(char *str, bool check)
 {
-    if (!check)
-    {
-    notify_conn_ex(&game.game_connections, NULL, E_MESSAGE_WALL,
+  if (!check) {
+    notify_conn_ex(game.game_connections, NULL, E_MESSAGE_WALL,
  		   _("Server Operator: %s"), str);
   }
   return TRUE;
 }
+
 /******************************************************************
 Send a report with server options to specified connections.
 "which" should be one of:
@@ -3044,7 +3040,7 @@ void report_settable_server_options(struct connection *dest, int which)
   if (dest->access_level == ALLOW_NONE
             || (which == 1 && server_state > PRE_GAME_STATE))
     {
-    report_server_options(&dest->self, which);
+    report_server_options(dest->self, which);
     return;
   }
   memset(&control, 0, sizeof(struct packet_options_settable_control));
@@ -3232,18 +3228,18 @@ static bool set_away(struct connection *caller, char *name, bool check)
     }
     else if (name && strlen(name) > 0)
     {
-    notify_conn(&caller->self, _("Usage: away"));
+    notify_conn(caller->self, _("Usage: away"));
     return FALSE;
     }
     else if (!caller->player || caller->observer)
     {
     /* This happens for detached or observer connections. */
-    notify_conn(&caller->self, _("Only players may use the away command."));
+    notify_conn(caller->self, _("Only players may use the away command."));
     return FALSE;
     }
     else if (!caller->player->ai.control && !check)
     {
-    notify_conn(&game.est_connections, _("%s set to away mode."), 
+    notify_conn(game.est_connections, _("%s set to away mode."), 
                 caller->player->name);
     set_ai_level_directer(caller->player, 1);
     caller->player->ai.control = TRUE;
@@ -3251,7 +3247,7 @@ static bool set_away(struct connection *caller, char *name, bool check)
     }
     else if (!check)
     {
-    notify_conn(&game.est_connections, _("%s returned to game."), 
+    notify_conn(game.est_connections, _("%s returned to game."), 
                 caller->player->name);
     caller->player->ai.control = FALSE;
     /* We have to do it, because the client doesn't display 
@@ -3713,7 +3709,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
       return FALSE;
     }
   } else if (mystrcasecmp(arg, "all") == 0) {
-    if (vote_list_size(&vote_list) == 0) {
+    if (vote_list_size(vote_list) == 0) {
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("There isn't any vote going on."));
       return FALSE;
@@ -3982,7 +3978,7 @@ static void check_option_capability(struct connection *caller,
     } players_iterate_end;
     if (n > 0)
     {
-        notify_conn(&game.est_connections, "%s.", buf);
+        notify_conn(game.est_connections, "%s.", buf);
     }
 }
 /******************************************************************
@@ -4462,8 +4458,8 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   /* if we want to switch players, reset the client */
     if (pconn->player && server_state == RUN_GAME_STATE)
     {
-    send_game_state(&pconn->self, CLIENT_PRE_GAME_STATE);
-    send_conn_info(&game.est_connections,  &pconn->self);
+    send_game_state(pconn->self, CLIENT_PRE_GAME_STATE);
+    send_conn_info(game.est_connections, pconn->self);
   }
   /* if the connection is already attached to a player,
    * unattach and cleanup old player (rename, remove, etc) */
@@ -4490,22 +4486,21 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     pconn->access_level = ALLOW_OBSERVER;
   }
   attach_connection_to_player(pconn, pplayer);
-  send_conn_info(&pconn->self, &game.est_connections);
-    if (server_state == RUN_GAME_STATE)
-    {
+  send_conn_info(pconn->self, game.est_connections);
+  if (server_state == RUN_GAME_STATE) {
     send_packet_freeze_hint(pconn);
-    send_rulesets(&pconn->self);
+    send_rulesets(pconn->self);
     send_player_info(NULL, NULL);
-    send_all_info(&pconn->self);
-    send_game_state(&pconn->self, CLIENT_GAME_RUNNING_STATE);
+    send_all_info(pconn->self);
+    send_game_state(pconn->self, CLIENT_GAME_RUNNING_STATE);
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
     send_packet_start_turn(pconn);
-    } else if (server_state == SELECT_RACES_STATE) {
-        send_packet_freeze_hint(pconn);
-        send_rulesets(&pconn->self);
-        send_player_info(NULL, NULL);
-        send_packet_thaw_hint(pconn);
+  } else if (server_state == SELECT_RACES_STATE) {
+    send_packet_freeze_hint(pconn);
+    send_rulesets(pconn->self);
+    send_player_info(NULL, NULL);
+    send_packet_thaw_hint(pconn);
   }
   cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s"),
             pconn->username, pplayer->name);
@@ -4614,9 +4609,9 @@ static bool take_command(struct connection *caller, char *str, bool check)
   /* if we want to switch players, reset the client if the game is running */
     if (pconn->player && server_state == RUN_GAME_STATE)
     {
-    send_game_state(&pconn->self, CLIENT_PRE_GAME_STATE);
-    send_player_info_c(NULL, &pconn->self);
-    send_conn_info(&game.est_connections,  &pconn->self);
+    send_game_state(pconn->self, CLIENT_PRE_GAME_STATE);
+    send_player_info_c(NULL, pconn->self);
+    send_conn_info(game.est_connections,  pconn->self);
   }
   /* if we're taking another player with a user attached, 
    * forcibly detach the user from the player. */
@@ -4626,11 +4621,11 @@ static bool take_command(struct connection *caller, char *str, bool check)
         {
             if (server_state == RUN_GAME_STATE)
             {
-        send_game_state(&aconn->self, CLIENT_PRE_GAME_STATE);
+        send_game_state(aconn->self, CLIENT_PRE_GAME_STATE);
       }
-      notify_conn(&aconn->self, _("being detached from %s."), pplayer->name);
+      notify_conn(aconn->self, _("being detached from %s."), pplayer->name);
       unattach_connection_from_player(aconn);
-      send_conn_info(&aconn->self, &game.est_connections);
+      send_conn_info(aconn->self, game.est_connections);
     }
     } conn_list_iterate_end;
   /* if the connection is already attached to a player,
@@ -4654,7 +4649,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
     } players_iterate_end;
   /* now attach to new player */
   attach_connection_to_player(pconn, pplayer);
-  send_conn_info(&pconn->self, &game.est_connections);
+  send_conn_info(pconn->self, game.est_connections);
   /* if pplayer wasn't /created, and we're still in pregame, change its name */
     if (!pplayer->was_created && is_newgame)
     {
@@ -4663,9 +4658,9 @@ static bool take_command(struct connection *caller, char *str, bool check)
     if (server_state == RUN_GAME_STATE)
     {
     send_packet_freeze_hint(pconn);
-    send_rulesets(&pconn->self);
-    send_all_info(&pconn->self);
-    send_game_state(&pconn->self, CLIENT_GAME_RUNNING_STATE);
+    send_rulesets(pconn->self);
+    send_all_info(pconn->self);
+    send_game_state(pconn->self, CLIENT_GAME_RUNNING_STATE);
     send_player_info(NULL, NULL);
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
@@ -4749,7 +4744,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   }
   /* a special case for global observers: we don't want to remove the
    * observer player in pregame if someone else is also observing it */
-    if (pplayer->is_observer && conn_list_size(&pplayer->connections) > 1)
+    if (pplayer->is_observer && conn_list_size(pplayer->connections) > 1)
     {
     one_obs_among_many = TRUE;
   }
@@ -4761,10 +4756,10 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   /* if we want to detach while the game is running, reset the client */
     if (server_state == RUN_GAME_STATE)
     {
-    send_game_state(&pconn->self, CLIENT_PRE_GAME_STATE);
-    send_game_info(&pconn->self);
-    send_player_info_c(NULL, &pconn->self);
-    send_conn_info(&game.est_connections, &pconn->self);
+    send_game_state(pconn->self, CLIENT_PRE_GAME_STATE);
+    send_game_info(pconn->self);
+    send_player_info_c(NULL, pconn->self);
+    send_conn_info(game.est_connections, pconn->self);
   }
   /* Restore previous priviledges*/
   if (pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
@@ -4772,26 +4767,23 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   }
   /* actually do the detaching */
   unattach_connection_from_player(pconn);
-  send_conn_info(&pconn->self, &game.est_connections);
+  send_conn_info(pconn->self, game.est_connections);
   cmd_reply(CMD_DETACH, caller, C_COMMENT,
             _("%s detaching from %s"), pconn->username, pplayer->name);
 
   /* only remove the player if the game is new and in pregame, 
    * the player wasn't /created, and no one is controlling it 
    * and we were observing but no one else was... */
-  if (!pplayer->is_connected && !pplayer->was_created && is_newgame
-            && !one_obs_among_many)
-    {
+  if (!pplayer->is_connected && !pplayer->was_created
+      && is_newgame && !one_obs_among_many) {
     /* detach any observers */
-        conn_list_iterate(pplayer->connections, aconn)
-        {
-            if (aconn->observer)
-            {
+    conn_list_iterate(pplayer->connections, aconn) {
+      if (aconn->observer) {
         unattach_connection_from_player(aconn);
-        send_conn_info(&aconn->self, &game.est_connections);
-        notify_conn(&aconn->self, _("detaching from %s."), pplayer->name);
+        send_conn_info(aconn->self, game.est_connections);
+        notify_conn(aconn->self, _("detaching from %s."), pplayer->name);
       }
-        } conn_list_iterate_end;
+    } conn_list_iterate_end;
     /* actually do the removal */
     team_remove_player(pplayer);
     game_remove_player(pplayer);
@@ -4800,28 +4792,24 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 
   cancel_connection_votes(pconn);
 
-    if (!pplayer->is_connected)
-    {
+  if (!pplayer->is_connected) {
     /* aitoggle the player if no longer connected. */
-        if (game.auto_ai_toggle && !pplayer->ai.control)
-        {
+    if (game.auto_ai_toggle && !pplayer->ai.control) {
       toggle_ai_player_direct(NULL, pplayer);
     }
     /* reset username if in pregame. */
-        if (is_newgame)
-        {
+    if (is_newgame) {
       sz_strlcpy(pplayer->username, ANON_USER_NAME);
     }
   }
-    if (server_state == RUN_GAME_STATE)
-    {
+
+  if (server_state == RUN_GAME_STATE) {
     gamelog(GAMELOG_PLAYER, pplayer);
   }
+
 end:
-    ;
   /* free our args */
-    for (i = 0; i < ntokens; i++)
-    {
+  for (i = 0; i < ntokens; i++) {
     free(arg[i]);
   }
   return res;
@@ -4871,7 +4859,7 @@ static void send_load_game_info(bool load_successful)
     {
     packet.nplayers = 0;
   }
-  lsend_packet_game_load(&game.est_connections, &packet);
+  lsend_packet_game_load(game.est_connections, &packet);
 }
 #ifdef HAVE_AUTH
 /**************************************************************************
@@ -5143,7 +5131,7 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
     sscanf(buf, "%d", &mapnum);
     files = datafilelist_infix("maps", ".map", TRUE);
 
-    datafile_list_iterate(*files, pfile) {
+    datafile_list_iterate(files, pfile) {
       counter++;
       if (counter == mapnum) {
         sz_strlcpy(buf, pfile->fullname);
@@ -5319,7 +5307,7 @@ static bool showmaplist_command(struct connection *caller)
               _("/loadmap <mapnumber> or /loadmap <mapfile-name>:"));
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
     i = 0;
-    datafile_list_iterate(*files, pfile)
+    datafile_list_iterate(files, pfile)
     {
         i++;
         if (!section_file_load_nodup(&mapfile, pfile->fullname))
@@ -5374,7 +5362,7 @@ static struct datafile_list *get_scenario_list(void)
   struct datafile_list *files = datafilelist_infix("scenario", ".sav", TRUE);
   struct section_file file;
 
-  datafile_list_iterate(*files, pfile) {
+  datafile_list_iterate(files, pfile) {
     if (section_file_load_nodup(&file, pfile->fullname)) {
       if (!is_scenario(&file, NULL, 0)) {
         datafile_list_unlink(files, pfile);
@@ -5436,7 +5424,7 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
 
     sscanf(buf, "%d", &mapnum);
     files = get_scenario_list();
-    datafile_list_iterate(*files, pfile) {
+    datafile_list_iterate(files, pfile) {
       counter++;
       if (counter == mapnum) {
         sz_strlcpy(buf, pfile->fullname);
@@ -5791,8 +5779,8 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
 
 
   if (!check) {
-    struct conn_list echolist;
-    conn_list_init(&echolist);
+    struct conn_list *echolist = conn_list_new();
+
     switch (commands[cmd].echo_mode) {
 
     case ECHO_NONE:
@@ -5800,28 +5788,28 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
 
     case ECHO_USER:
       if (caller)
-        conn_list_insert(&echolist, caller);
+        conn_list_append(echolist, caller);
       break;
 
     case ECHO_PLAYERS:
       conn_list_iterate(game.est_connections, pconn) {
-        if (pconn->access_level < ALLOW_BASIC)
-          continue;
-        conn_list_insert(&echolist, pconn);
+        if (pconn->player && !pconn->observer) {
+          conn_list_append(echolist, pconn);
+	}
       } conn_list_iterate_end;
       break;
 
     case ECHO_ADMINS:
       conn_list_iterate(game.est_connections, pconn) {
-        if (pconn->access_level < ALLOW_ADMIN)
-          continue;
-        conn_list_insert(&echolist, pconn);
+        if (pconn->access_level >= ALLOW_ADMIN) {
+          conn_list_append(echolist, pconn);
+	}
       } conn_list_iterate_end;
       break;
 
     case ECHO_ALL:
       conn_list_iterate(game.est_connections, pconn) {
-        conn_list_insert(&echolist, pconn);
+        conn_list_append(echolist, pconn);
       } conn_list_iterate_end;
       break;
 
@@ -5830,11 +5818,11 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
       break;
     }
 
-    if (conn_list_size(&echolist) > 0) {
-      notify_conn(&echolist, "%s: '%s %s'", caller ? caller->username
+    if (conn_list_size(echolist) > 0) {
+      notify_conn(echolist, "%s: '%s %s'", caller ? caller->username
                   : _("(server prompt)"), command, arg);
     }
-    conn_list_unlink_all(&echolist);
+    conn_list_free(echolist);
   }
 
   switch (cmd) {
@@ -6226,7 +6214,7 @@ static bool addaction_command(struct connection *caller,
     if (check)
         return TRUE;
     pua = user_action_new(buf, type, action);
-    user_action_list_insert(&on_connect_user_actions, pua);
+    user_action_list_append(on_connect_user_actions, pua);
     user_action_as_str(pua, buf, sizeof(buf));
     cmd_reply(CMD_ADDACTION, caller, C_COMMENT,
               _("Added %s to the action list."), buf);
@@ -6253,7 +6241,7 @@ static bool delaction_command(struct connection *caller,
     char buf[1024];
     struct user_action *pua;
     int len, n;
-    len = user_action_list_size(&on_connect_user_actions);
+    len = user_action_list_size(on_connect_user_actions);
     if (!len)
     {
         cmd_reply(CMD_DELACTION, caller, C_FAIL, _("The action list is emtpy."));
@@ -6271,15 +6259,16 @@ static bool delaction_command(struct connection *caller,
     }
     if (check)
         return TRUE;
-    pua = user_action_list_get(&on_connect_user_actions, n - 1);
+    pua = user_action_list_get(on_connect_user_actions, n - 1);
     user_action_as_str(pua, buf, sizeof(buf));
-    user_action_list_unlink(&on_connect_user_actions, pua);
+    user_action_list_unlink(on_connect_user_actions, pua);
     user_action_free(pua);
 
     cmd_reply(CMD_UNBAN, caller, C_COMMENT,
               _("Entry %d removed from the action list %s."), n, buf);
     return TRUE;
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -6309,11 +6298,12 @@ static bool ban_command(struct connection *caller, char *pattern, bool check)
     if (check)
         return TRUE;
     pua = user_action_new(buf, type, ACTION_BAN);
-    user_action_list_insert(&on_connect_user_actions, pua);
+    user_action_list_prepend(on_connect_user_actions, pua);
     conn_pattern_as_str(pua->conpat, buf, sizeof(buf));
     cmd_reply(CMD_BAN, caller, C_COMMENT, _("%s has been banned."), buf);
     return TRUE;
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -6323,7 +6313,7 @@ static bool unban_command(struct connection *caller,
     char buf[1024], err[256];
     bool found = FALSE;
     int len, type;
-    len = user_action_list_size(&on_connect_user_actions);
+    len = user_action_list_size(on_connect_user_actions);
     if (!len)
     {
         cmd_reply(CMD_UNBAN, caller, C_FAIL, _("The action list is emtpy."));
@@ -6345,7 +6335,7 @@ static bool unban_command(struct connection *caller,
                 && 0 == mystrcasecmp(buf, pua->conpat->pattern))
         {
             found = TRUE;
-            user_action_list_unlink(&on_connect_user_actions, pua);
+            user_action_list_unlink(on_connect_user_actions, pua);
             user_action_free(pua);
             break;
         }
@@ -6484,7 +6474,7 @@ static int load_action_list_v0(const char *filename)
 
             pua = user_action_new(!strcmp(addr, "ALL") ? "*" : addr,
                                   CPT_HOSTNAME, actionid);
-            user_action_list_append(&on_connect_user_actions, pua);
+            user_action_list_append(on_connect_user_actions, pua);
         }
         else
             continue;
@@ -6574,7 +6564,7 @@ static int load_action_list_v1(const char *filename)
             continue;
         }
         pua = user_action_new(pat, type, action);
-        user_action_list_append(&on_connect_user_actions, pua);
+        user_action_list_append(on_connect_user_actions, pua);
         count++;
     }
     fclose(file);
@@ -6924,28 +6914,28 @@ static bool show_help(struct connection *caller, char *arg)
   freelog(LOG_ERROR, "Bug in show_help!");
   return FALSE;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
 static void show_ignore(struct connection *caller)
 {
-    int n = 1;
-    char buf[128];
-    if (ignore_list_size(caller->server.ignore_list) <= 0)
-    {
-        cmd_reply(CMD_LIST, caller, C_COMMENT,
-                  _("Your ignore list is empty."));
-        return;
-    }
-    cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list:"));
-    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
-    ignore_list_iterate(*caller->server.ignore_list, cp)
-    {
-        conn_pattern_as_str(cp, buf, sizeof(buf));
-        cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", n++, buf);
-    } ignore_list_iterate_end;
-    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  int n = 1;
+  char buf[128];
+  if (ignore_list_size(caller->server.ignore_list) <= 0)  {
+    cmd_reply(CMD_LIST, caller, C_COMMENT,
+	      _("Your ignore list is empty."));
+    return;
+  }
+  cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  ignore_list_iterate(caller->server.ignore_list, cp) {
+    conn_pattern_as_str(cp, buf, sizeof(buf));
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", n++, buf);
+  } ignore_list_iterate_end;
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -6958,7 +6948,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
     memset(listed, 0, sizeof(bool) * (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS));
     if (send_to_all)
     {
-        notify_conn(&game.est_connections, _("Server: List of teams:"));
+        notify_conn(game.est_connections, _("Server: List of teams:"));
     }
     else
     {
@@ -6995,7 +6985,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
             my_snprintf(buf, sizeof(buf), "%s (%d): %s", teamname, tc, buf2);
             if (send_to_all)
             {
-                notify_conn(&game.est_connections, "  %s", buf);
+                notify_conn(game.est_connections, "  %s", buf);
             }
             else
             {
@@ -7068,11 +7058,9 @@ static bool show_scenarios(struct connection *caller)
                                       "or /loadscenario <scernariofile-name>"));
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
     i = 0;
-    datafile_list_iterate(*files, pfile)
-    {
-        i++;
-
-        cmd_reply(CMD_LIST, caller, C_COMMENT, _("%d: %s"), i, pfile->name);
+    datafile_list_iterate(files, pfile) {
+      i++;
+      cmd_reply(CMD_LIST, caller, C_COMMENT, _("%d: %s"), i, pfile->name);
     } datafile_list_iterate_end;
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
     free_datafile_list(files);
@@ -7252,7 +7240,7 @@ void show_players(struct connection *caller)
 	}
       }
       my_snprintf(buf, sizeof(buf), "%s (%s)", pplayer->name, buf2);
-      n = conn_list_size(&pplayer->connections);
+      n = conn_list_size(pplayer->connections);
             if (n > 0)
             {
         cat_snprintf(buf, sizeof(buf), 
@@ -7290,7 +7278,7 @@ static void show_connections(struct connection *caller)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
     int n;
-    n = conn_list_size(&game.all_connections);
+    n = conn_list_size(game.all_connections);
     cmd_reply(CMD_LIST, caller, C_COMMENT,
               _("List of connections to server (%d):"), n);
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
@@ -7332,7 +7320,7 @@ static void show_actionlist(struct connection *caller)
         return;
     }
 
-    n = user_action_list_size(&on_connect_user_actions);
+    n = user_action_list_size(on_connect_user_actions);
     if (n == 0)
     {
         cmd_reply(CMD_LIST, caller, C_COMMENT, _("The action list is empty."));
@@ -7442,12 +7430,12 @@ The connection user names, from game.all_connections.
 **************************************************************************/
 static const char *connection_name_accessor(int idx)
 {
-  return conn_list_get(&game.all_connections, idx)->username;
+  return conn_list_get(game.all_connections, idx)->username;
 }
 static char *connection_generator(const char *text, int state)
 {
     return generic_generator(text, state,
-                             conn_list_size(&game.all_connections),
+                             conn_list_size(game.all_connections),
 			   connection_name_accessor);
 }
 /**************************************************************************
@@ -7475,7 +7463,7 @@ static const char *cmdlevel_arg2_accessor(int idx)
 static char *cmdlevel_arg2_generator(const char *text, int state)
 {
   return generic_generator(text, state,
-			   2 + conn_list_size(&game.all_connections),
+			   2 + conn_list_size(game.all_connections),
 			   cmdlevel_arg2_accessor);
 }
 

@@ -81,16 +81,23 @@ static struct unit *search_best_target(struct player *pplayer,
 	  range, punit->moves_left);
   
   square_iterate(punit->tile, range / SINGLE_MOVE, ptile) {
-    if (same_pos(punit->tile, ptile))
+    if (same_pos(punit->tile, ptile)) {
       continue;
+    }
 
-    if (map_get_city(ptile)) continue;
-    /* don't attack enemy cities (or our own ;-) --dwp */
-
-    targets = &(ptile->units);
-    if (unit_list_size(targets) == 0) continue;
-    if (!is_enemy_unit_tile(ptile, pplayer))
+    if (map_get_city(ptile)) {
+      /* don't attack enemy cities (or our own ;-) --dwp */
       continue;
+    }
+
+    targets = ptile->units;
+    if (unit_list_size(targets) == 0) {
+      continue;
+    }
+
+    if (!is_enemy_unit_tile(ptile, pplayer)) {
+      continue;
+    }
 
     freelog(LOG_VERBOSE,  "found enemy unit/stack at %d,%d",
 	    ptile->x, ptile->y);

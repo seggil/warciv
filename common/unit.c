@@ -163,17 +163,17 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
     struct unit *punit;
 
     if ((action == SPY_SABOTAGE_UNIT || action == DIPLOMAT_ANY_ACTION) 
-        && unit_list_size(&ptile->units) == 1
+        && unit_list_size(ptile->units) == 1
         && unit_flag(pdiplomat, F_SPY)) {
-      punit = unit_list_get(&ptile->units, 0);
+      punit = unit_list_get(ptile->units, 0);
       if (pplayers_at_war(unit_owner(pdiplomat), unit_owner(punit))) {
         return TRUE;
       }
     }
 
     if ((action == DIPLOMAT_BRIBE || action == DIPLOMAT_ANY_ACTION)
-        && (unit_list_size(&ptile->units) == 1 || (game.stackbribing && unit_list_size(&ptile->units) > 0))) {
-      punit = unit_list_get(&ptile->units, 0);
+        && (unit_list_size(ptile->units) == 1 || (game.stackbribing && unit_list_size(ptile->units) > 0))) {
+      punit = unit_list_get(ptile->units, 0);
       if (!pplayers_allied(unit_owner(punit), unit_owner(pdiplomat))) {
         return TRUE;
       }
@@ -1148,7 +1148,7 @@ const char *unit_activity_text(struct unit *punit)
 **************************************************************************/
 struct unit *unit_list_find(struct unit_list *This, int id)
 {
-  unit_list_iterate(*This, punit) {
+  unit_list_iterate(This, punit) {
     if (punit->id == id) {
       return punit;
     }
@@ -1165,23 +1165,19 @@ struct unit *unit_list_find(struct unit_list *This, int id)
    2. dereference to get the "void*"
    3. cast that "void*" to a "struct unit*"
 **************************************************************************/
-static int compar_unit_ord_map(const void *a, const void *b)
+static int compar_unit_ord_map(const struct unit * const *ppa, 
+			       const struct unit * const *ppb)
 {
-  const struct unit *ua, *ub;
-  ua = (const struct unit*) *(const void**)a;
-  ub = (const struct unit*) *(const void**)b;
-  return ua->ord_map - ub->ord_map;
+  return (*ppa)->ord_map - (*ppb)->ord_map;
 }
 
 /**************************************************************************
  Comparison function for genlist_sort, sorting by ord_city: see above.
 **************************************************************************/
-static int compar_unit_ord_city(const void *a, const void *b)
+static int compar_unit_ord_city(const struct unit * const *ppa, 
+			        const struct unit * const *ppb)
 {
-  const struct unit *ua, *ub;
-  ua = (const struct unit*) *(const void**)a;
-  ub = (const struct unit*) *(const void**)b;
-  return ua->ord_city - ub->ord_city;
+  return (*ppa)->ord_city - (*ppb)->ord_city;
 }
 
 /**************************************************************************
@@ -1190,7 +1186,7 @@ static int compar_unit_ord_city(const void *a, const void *b)
 void unit_list_sort_ord_map(struct unit_list *This)
 {
   if (unit_list_size(This) > 1) {
-    genlist_sort(&This->list, compar_unit_ord_map);
+    unit_list_sort(This, compar_unit_ord_map);
   }
 }
 
@@ -1200,7 +1196,7 @@ void unit_list_sort_ord_map(struct unit_list *This)
 void unit_list_sort_ord_city(struct unit_list *This)
 {
   if (unit_list_size(This) > 1) {
-    genlist_sort(&This->list, compar_unit_ord_city);
+    unit_list_sort(This, compar_unit_ord_city);
   }
 }
 

@@ -71,7 +71,7 @@ void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
 
   cat_snprintf(buffer, sizeof(buffer), buffer2);
   if (pplayer->debug) {
-    notify_conn(&game.est_connections, buffer);
+    notify_conn(game.est_connections, buffer);
   }
   freelog(minlevel, buffer);
 }
@@ -105,7 +105,7 @@ void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
 
   cat_snprintf(buffer, sizeof(buffer), buffer2);
   if (pcity->debug) {
-    notify_conn(&game.est_connections, buffer);
+    notify_conn(game.est_connections, buffer);
   }
   freelog(minlevel, buffer);
 }
@@ -161,7 +161,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
 
   cat_snprintf(buffer, sizeof(buffer), buffer2);
   if (punit->debug || messwin) {
-    notify_conn(&game.est_connections, buffer);
+    notify_conn(game.est_connections, buffer);
   }
   freelog(minlevel, buffer);
 }
@@ -205,7 +205,7 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
 	      s, id, ptile->x, ptile->y);
   cat_snprintf(buffer, sizeof(buffer), msg);
   if (punit->debug) {
-    notify_conn(&game.est_connections, buffer);
+    notify_conn(game.est_connections, buffer);
   }
   freelog(minlevel, buffer);
 }

@@ -294,7 +294,7 @@ static void update_server_list(GtkTreeSelection *selection,
     return;
   }
 
-  server_list_iterate(*list, pserver) {
+  server_list_iterate(list, pserver) {
     GtkTreeIter it;
     gchar *row[7];
 
@@ -1496,7 +1496,7 @@ static void update_saves_store(GtkListStore *store)
 
   /* search for user saved games. */
   files = datafilelist_infix("saves", ".sav", FALSE);
-  datafile_list_iterate(*files, pfile) {
+  datafile_list_iterate(files, pfile) {
     GtkTreeIter it;
     gtk_list_store_append(store, &it);
     gtk_list_store_set(store, &it, 0, pfile->name, 1, pfile->fullname, -1);
@@ -1504,7 +1504,7 @@ static void update_saves_store(GtkListStore *store)
   free_datafile_list(files);
 
   files = datafilelist_infix(NULL, ".sav", FALSE);
-  datafile_list_iterate(*files, pfile) {
+  datafile_list_iterate(files, pfile) {
     GtkTreeIter it;
     gtk_list_store_append(store, &it);
     gtk_list_store_set(store, &it, 0, pfile->name, 1, pfile->fullname, -1);
@@ -1635,7 +1635,7 @@ static void update_scenario_page(void)
 
   /* search for scenario files. */
   files = datafilelist_infix("scenario", ".sav", TRUE);
-  datafile_list_iterate(*files, pfile) {
+  datafile_list_iterate(files, pfile) {
     GtkTreeIter it;
 
     gtk_list_store_append(scenario_store, &it);

@@ -294,7 +294,7 @@ void upgrade_city_rails(struct player *pplayer, bool discovery)
     return;
   }
 
-  conn_list_do_buffer(&pplayer->connections);
+  conn_list_do_buffer(pplayer->connections);
 
   if (discovery) {
     notify_player(pplayer,
@@ -316,7 +316,7 @@ void upgrade_city_rails(struct player *pplayer, bool discovery)
   }
   city_list_iterate_end;
 
-  conn_list_do_unbuffer(&pplayer->connections);
+  conn_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -334,9 +334,9 @@ static void buffer_shared_vision(struct player *pplayer)
 {
   players_iterate(pplayer2) {
     if (really_gives_vision(pplayer, pplayer2))
-      conn_list_do_buffer(&pplayer2->connections);
+      conn_list_do_buffer(pplayer2->connections);
   } players_iterate_end;
-  conn_list_do_buffer(&pplayer->connections);
+  conn_list_do_buffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -346,9 +346,9 @@ static void unbuffer_shared_vision(struct player *pplayer)
 {
   players_iterate(pplayer2) {
     if (really_gives_vision(pplayer, pplayer2))
-      conn_list_do_unbuffer(&pplayer2->connections);
+      conn_list_do_unbuffer(pplayer2->connections);
   } players_iterate_end;
-  conn_list_do_unbuffer(&pplayer->connections);
+  conn_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************
@@ -403,7 +403,9 @@ void send_all_known_tiles(struct conn_list *dest)
 {
   int tiles_sent;
 
-  if (!dest) dest = &game.game_connections;
+  if (!dest) {
+    dest = game.game_connections;
+  }
 
   /* send whole map piece by piece to each player to balance the load
      of the send buffers better */
@@ -418,7 +420,7 @@ void send_all_known_tiles(struct conn_list *dest)
       conn_list_do_buffer(dest);
     }
 
-    conn_list_iterate(*dest, pconn) {
+    conn_list_iterate(dest, pconn) {
       struct player *pplayer = pconn->player;
 
       if (!pplayer && !pconn->observer) {	/* no map needed */
@@ -426,7 +428,7 @@ void send_all_known_tiles(struct conn_list *dest)
       }
 
       if (!pplayer || map_is_known(ptile, pplayer)) {
-	send_tile_info_always(pplayer, &pconn->self, ptile);
+	send_tile_info_always(pplayer, pconn->self, ptile);
       }
     } conn_list_iterate_end;
   } whole_map_iterate_end;
@@ -447,7 +449,9 @@ void send_tile_info(struct conn_list *dest, struct tile *ptile)
 {
   struct packet_tile_info info;
 
-  if (!dest) dest = &game.game_connections;
+  if (!dest) {
+    dest = game.game_connections;
+  }
 
   info.x = ptile->x;
   info.y = ptile->y;
@@ -458,7 +462,7 @@ void send_tile_info(struct conn_list *dest, struct tile *ptile)
     info.spec_sprite[0] = '\0';
   }
 
-  conn_list_iterate(*dest, pconn) {
+  conn_list_iterate(dest, pconn) {
     struct player *pplayer = pconn->player;
     if (!pplayer && !pconn->observer) {
       continue;
@@ -642,17 +646,18 @@ static void really_unfog_area(struct player *pplayer, struct tile *ptile)
    * continent number before it can handle following packets
    */
   update_player_tile_knowledge(pplayer, ptile);
-  send_tile_info_always(pplayer, &pplayer->connections, ptile);
+  send_tile_info_always(pplayer, pplayer->connections, ptile);
 
   /* discover units */
-  unit_list_iterate(ptile->units, punit)
+  unit_list_iterate(ptile->units, punit) {
     send_unit_info(pplayer, punit);
-  unit_list_iterate_end;
+  } unit_list_iterate_end;
 
   /* discover cities */ 
   reality_check_city(pplayer, ptile);
-  if ((pcity=map_get_city(ptile)))
+  if ((pcity = map_get_city(ptile))) {
     send_city_info(pplayer, pcity);
+  }
 
   /* If the tile was not known before we need to refresh the cities that
      can use the tile. */
@@ -718,7 +723,7 @@ static void really_fog_area(struct player *pplayer, struct tile *ptile)
   unit_list_iterate_end;  
 
   update_player_tile_last_seen(pplayer, ptile);
-  send_tile_info_always(pplayer, &pplayer->connections, ptile);
+  send_tile_info_always(pplayer, pplayer->connections, ptile);
 }
 
 /**************************************************************************
@@ -878,7 +883,7 @@ static void really_show_area(struct player *pplayer, struct tile *ptile)
     update_player_tile_knowledge(pplayer, ptile);
     update_player_tile_last_seen(pplayer, ptile);
 
-    send_tile_info_always(pplayer, &pplayer->connections, ptile);
+    send_tile_info_always(pplayer, pplayer->connections, ptile);
 
     /* remove old cities that exist no more */
     reality_check_city(pplayer, ptile);
@@ -1138,7 +1143,7 @@ void update_tile_knowledge(struct tile *ptile)
   players_iterate(pplayer) {
     if (map_is_known_and_seen(ptile, pplayer)) {
       if (update_player_tile_knowledge(pplayer, ptile)) {
-        send_tile_info(&pplayer->connections, ptile);
+        send_tile_info(pplayer->connections, ptile);
       }
     }
   } players_iterate_end;
@@ -1147,7 +1152,7 @@ void update_tile_knowledge(struct tile *ptile)
   conn_list_iterate(game.game_connections, pconn) {
     struct player *pplayer = pconn->player;
     if (!pplayer && pconn->observer) {
-      send_tile_info(&pconn->self, ptile);
+      send_tile_info(pconn->self, ptile);
     }
   } conn_list_iterate_end;
 }
@@ -1188,7 +1193,7 @@ static void really_give_tile_info_from_player_to_player(struct player *pfrom,
       dest_tile->terrain = from_tile->terrain;
       dest_tile->special = from_tile->special;
       dest_tile->last_updated = from_tile->last_updated;
-      send_tile_info_always(pdest, &pdest->connections, ptile);
+      send_tile_info_always(pdest, pdest->connections, ptile);
 	
       /* update and send city knowledge */
       /* remove outdated cities */
@@ -1209,7 +1214,7 @@ static void really_give_tile_info_from_player_to_player(struct player *pfrom,
 	  dest_tile->city = fc_malloc(sizeof(struct dumb_city));
 	}
 	*dest_tile->city = *from_tile->city;
-	send_city_info_at_tile(pdest, &pdest->connections, NULL, ptile);
+	send_city_info_at_tile(pdest, pdest->connections, NULL, ptile);
       }
 
       reveal_pending_seen(pdest, ptile, 0);
@@ -1639,11 +1644,7 @@ static void tile_update_owner(struct tile *ptile)
 *************************************************************************/
 static void map_update_borders_recalculate_position(struct tile *ptile)
 {
-  struct city_list cities_to_refresh;
-  
-  if (game.happyborders > 0) {
-    city_list_init(&cities_to_refresh);
-  }
+  struct city_list *cities_to_refresh = city_list_new();
   
   if (game.borders > 0) {
     iterate_outward(ptile, game.borders, tile1) {
@@ -1660,7 +1661,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
 	/* Update happiness */
 	if (game.happyborders > 0) {
 	  unit_list_iterate(tile1->units, unit) {
-	    struct city* homecity = find_city_by_id(unit->homecity);
+	    struct city *homecity = find_city_by_id(unit->homecity);
 	    bool already_listed = FALSE;
 	    
 	    if (!homecity) {
@@ -1675,7 +1676,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
 	    } city_list_iterate_end;
 	    
 	    if (!already_listed) {
-	      city_list_insert(&cities_to_refresh, homecity);
+	      city_list_prepend(cities_to_refresh, homecity);
 	    }
 
 	  } unit_list_iterate_end;
@@ -1690,9 +1691,9 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
       city_refresh(to_refresh);
       send_city_info(city_owner(to_refresh), to_refresh);
     } city_list_iterate_end;
-    
-    city_list_unlink_all(&cities_to_refresh);
   }
+
+  city_list_free(cities_to_refresh);
 }
 
 /*************************************************************************

@@ -2283,7 +2283,7 @@ void get_city_mapview_traderoutes(struct city *pcity,
   num_traderoutes = city_num_trade_routes(pcity);
   my_snprintf(traderoutes_buffer, traderoutes_buffer_len,
 	      "[%d(+%d)/%d/%d]", num_traderoutes,
-              trade_route_list_size(&pcity->trade_routes)
+              trade_route_list_size(pcity->trade_routes)
 	      + estimate_non_ai_trade_route_number(pcity),
 	      count_trade_routes(pcity), NUM_TRADEROUTES);
 
@@ -2845,7 +2845,7 @@ static void draw_trade_route_list(const struct trade_route_list *ptrl,
   struct tile *pt1, *pt2;
   int canvas_x, canvas_y, canvas_x2, canvas_y2;
 
-  trade_route_list_iterate(*ptrl, ptr) {
+  trade_route_list_iterate(ptrl, ptr) {
     if (tile_visible_mapcanvas(ptr->pc1->tile)
 	|| tile_visible_mapcanvas(ptr->pc2->tile)) {
       if (ptr->pc1->id > ptr->pc2->id) {

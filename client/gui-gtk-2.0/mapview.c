@@ -472,7 +472,7 @@ static gboolean unqueue_flush(gpointer data)
   freelog(LOG_UPDATE_QUEUE, "unqueue_flush");
 
   if (tiles_to_update) {
-    tile_list_iterate(*tiles_to_update, ptile) {
+    tile_list_iterate(tiles_to_update, ptile) {
       int canvas_x, canvas_y;
 
       freelog(LOG_UPDATE_QUEUE, "unqueue_flush update tile (%d, %d)",
@@ -490,8 +490,7 @@ static gboolean unqueue_flush(gpointer data)
 				   UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
       }
     } tile_list_iterate_end;
-    tile_list_unlink_all(tiles_to_update);
-    free(tiles_to_update);
+    tile_list_free(tiles_to_update);
     tiles_to_update = NULL;
   }
 
@@ -658,9 +657,8 @@ void update_queue_add_tile(struct tile *ptile)
 	  TILE_XY(ptile));
 
   if (!tiles_to_update) {
-    tiles_to_update = fc_malloc(sizeof(struct tile_list));
-    tile_list_init(tiles_to_update);
-  } else if (tile_list_find(tiles_to_update, ptile)) {
+    tiles_to_update = tile_list_new();
+  } else if (tile_list_search(tiles_to_update, ptile)) {
     return;
   }
 
@@ -757,8 +755,7 @@ void move_update_queue(int vector_x, int vector_y)
 void free_mapview_updates(void)
 {
   if (tiles_to_update) {
-    tile_list_unlink_all(tiles_to_update);
-    free(tiles_to_update);
+    tile_list_free(tiles_to_update);
     tiles_to_update = NULL;
   }
   if (region_to_update) {

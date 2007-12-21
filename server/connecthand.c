@@ -47,7 +47,7 @@
 
 #include "connecthand.h"
 
-struct user_action_list on_connect_user_actions;
+struct user_action_list *on_connect_user_actions = NULL;
 
 /* NB Must match enum action_type in connecthand.h */
 char *user_action_type_strs[NUM_ACTION_TYPES] = {
@@ -85,9 +85,9 @@ bool can_control_a_player(struct connection *pconn, bool message)
   for (i = 0; i < ntokens; i++) {
     if (ret && !has_capability(cap[i], pconn->capability)) {
       if (message) {
-        notify_conn(&pconn->self,
-            _("Server: Sorry, you haven't got the '%s' capability, "
-              "which is required to play on this server."), cap[i]);
+        notify_conn(pconn->self,
+                    _("Server: Sorry, you haven't got the '%s' capability, "
+                      "which is required to play on this server."), cap[i]);
       }
       ret = FALSE;
     }
@@ -105,7 +105,7 @@ void clear_all_on_connect_user_actions(void)
   user_action_list_iterate(on_connect_user_actions, pua) {
     user_action_free(pua);
   } user_action_list_iterate_end;
-  user_action_list_unlink_all(&on_connect_user_actions);
+  user_action_list_unlink_all(on_connect_user_actions);
 }
 
 /**************************************************************************
@@ -173,7 +173,7 @@ static void grant_access_level(struct connection *pconn)
       pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
       break;
     default:
-      if (user_action_list_size(&on_connect_user_actions) > 0) {
+      if (user_action_list_size(on_connect_user_actions) > 0) {
         freelog(LOG_NORMAL,
 		_("Warning: There was no match in the "
                   "action list for connection %d (%s from %s). It will "
@@ -226,7 +226,7 @@ static bool conn_can_be_established(struct connection *pconn)
 **************************************************************************/
 static void check_connection(struct connection *pconn)
 {
-  if (user_action_list_size(&on_connect_user_actions) > 0
+  if (user_action_list_size(on_connect_user_actions) > 0
       && conn_can_be_established(pconn)) {
     grant_access_level(pconn);
     if (pconn->server.delay_establish) {
@@ -305,12 +305,12 @@ bool receive_username(struct connection *pconn, const char *username)
 **************************************************************************/
 void establish_new_connection(struct connection *pconn)
 {
-  struct conn_list *dest = pconn ? &pconn->self : NULL;
+  struct conn_list *dest = pconn ? pconn->self : NULL;
   struct player *pplayer;
   struct packet_server_join_reply packet;
   char hostname[512];
 
-  if (user_action_list_size(&on_connect_user_actions) > 0
+  if (user_action_list_size(on_connect_user_actions) > 0
       && !conn_can_be_established(pconn)) {
     freelog(LOG_VERBOSE, _("Cannot establish connection %d (%s) now, "
                            "delay it"), pconn->id, pconn->username);
@@ -320,7 +320,7 @@ void establish_new_connection(struct connection *pconn)
 
   /* Give a warning if we give access NONE when the hack
    * challenge is disabled and there is no action list. */
-  if (user_action_list_size(&on_connect_user_actions) == 0
+  if (user_action_list_size(on_connect_user_actions) == 0
       && pconn->access_level == ALLOW_NONE
       && srvarg.hack_request_disabled) {
     freelog(LOG_NORMAL, _("Warning: Without an action list, connection %d "
@@ -382,7 +382,7 @@ void establish_new_connection(struct connection *pconn)
           pconn->username, pconn->addr);
   conn_list_iterate(game.est_connections, aconn) {
     if (aconn != pconn) {
-      notify_conn(&aconn->self, _("Server: %s has connected from %s."),
+      notify_conn(aconn->self, _("Server: %s has connected from %s."),
                   pconn->username, pconn->addr);
     }
   } conn_list_iterate_end;
@@ -461,15 +461,15 @@ void establish_new_connection(struct connection *pconn)
     show_players(pconn);
   }
 
-  send_conn_info(dest, &game.est_connections);
-  conn_list_append(&game.est_connections, pconn);
-  if (conn_list_size(&game.est_connections) == 1) {
+  send_conn_info(dest, game.est_connections);
+  conn_list_append(game.est_connections, pconn);
+  if (conn_list_size(game.est_connections) == 1) {
     /* First connection
      * Replace "restarting in x seconds" meta message */
      maybe_automatic_meta_message(default_meta_message_string());
      (void) send_server_info_to_metaserver(META_INFO);
   }
-  send_conn_info(&game.est_connections, dest);
+  send_conn_info(game.est_connections, dest);
   (void) send_server_info_to_metaserver(META_INFO);
 }
 
@@ -508,7 +508,7 @@ bool handle_login_request(struct connection *pconn,
 	  _(" (hostname lookup in progress)") : "");
 
   if ((game.maxconnections != 0)
-      && (conn_list_size(&game.all_connections) > game.maxconnections)) {
+      && (conn_list_size(game.all_connections) > game.maxconnections)) {
     reject_new_connection(_("Maximum number of connections "
 			    "for this server exceeded."), pconn);
     return FALSE;
@@ -673,10 +673,10 @@ void lost_connection_to_client(struct connection *pconn)
    * really lost (as opposed to server shutting it down) which would
    * trigger an error on send and recurse back to here.
    * Safe to unlink even if not in list: */
-  conn_list_unlink(&game.est_connections, pconn);
+  conn_list_unlink(game.est_connections, pconn);
   delayed_disconnect++;
   pconn->delayed_disconnect = TRUE;
-  notify_conn(&game.est_connections, _("Game: Lost connection: %s."), desc);
+  notify_conn(game.est_connections, _("Game: Lost connection: %s."), desc);
 
   if (!pplayer) {
     delayed_disconnect--;
@@ -685,7 +685,7 @@ void lost_connection_to_client(struct connection *pconn)
 
   unattach_connection_from_player(pconn);
 
-  send_conn_info_remove(&pconn->self, &game.est_connections);
+  send_conn_info_remove(pconn->self, game.est_connections);
   if (server_state == RUN_GAME_STATE) {
     /* Player info is only updated when the game is running; this must be
      * done consistently or the client will end up with inconsistent errors.
@@ -753,7 +753,7 @@ static void send_conn_info_arg(struct conn_list *src,
 {
   struct packet_conn_info packet;
   
-  conn_list_iterate(*src, psrc) {
+  conn_list_iterate(src, psrc) {
     package_conn_info(psrc, &packet);
     if (remove) {
       packet.used = FALSE;
@@ -810,8 +810,8 @@ bool attach_connection_to_player(struct connection *pconn,
   }
 
   pconn->player = pplayer;
-  conn_list_append(&pplayer->connections, pconn);
-  conn_list_append(&game.game_connections, pconn);
+  conn_list_append(pplayer->connections, pconn);
+  conn_list_append(game.game_connections, pconn);
 
   return TRUE;
 }
@@ -828,8 +828,8 @@ bool unattach_connection_from_player(struct connection *pconn)
     return FALSE; /* no player is attached to this conn */
   }
 
-  conn_list_unlink(&pconn->player->connections, pconn);
-  conn_list_unlink(&game.game_connections, pconn);
+  conn_list_unlink(pconn->player->connections, pconn);
+  conn_list_unlink(game.game_connections, pconn);
 
   pconn->player->is_connected = FALSE;
   pconn->observer = FALSE;

@@ -98,9 +98,9 @@ void player_init(struct player *plr)
   plr->is_started = FALSE;
   plr->revolution_finishes = -1;
   plr->capital = FALSE;
-  unit_list_init(&plr->units);
-  city_list_init(&plr->cities);
-  conn_list_init(&plr->connections);
+  plr->units = unit_list_new();
+  plr->cities = city_list_new();
+  plr->connections = conn_list_new();
   plr->current_conn = NULL;
   plr->is_connected = FALSE;
   plr->is_observer = FALSE;

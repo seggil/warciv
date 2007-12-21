@@ -42,19 +42,18 @@ struct Clause {
 struct Treaty {
   struct player *plr0, *plr1;
   bool accept0, accept1;
-  struct clause_list clauses;
+  struct clause_list *clauses;
 };
 
 bool diplomacy_possible(struct player *pplayer, struct player *aplayer);
 bool could_meet_with_player(struct player *pplayer, struct player *aplayer);
 bool could_intel_with_player(struct player *pplayer, struct player *aplayer);
 
-void init_treaty(struct Treaty *ptreaty, 
-		 struct player *plr0, struct player *plr1);
+struct Treaty *treaty_new(struct player *plr0, struct player *plr1);
 bool add_clause(struct Treaty *ptreaty, struct player *pfrom, 
-	       enum clause_type type, int val);
+	        enum clause_type type, int val);
 bool remove_clause(struct Treaty *ptreaty, struct player *pfrom, 
-		  enum clause_type type, int val);
-void clear_treaty(struct Treaty *ptreaty);
+		   enum clause_type type, int val);
+void treaty_free(struct Treaty *ptreaty);
 
 #endif /* FC__DIPTREATY_H */

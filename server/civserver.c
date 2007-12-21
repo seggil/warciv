@@ -153,8 +153,6 @@ int main(int argc, char *argv[])
       srvarg.saves_pathname = option;
     } else if ((option = get_option("--Require", argv, &inx, argc))) {
       sz_strlcpy(srvarg.required_cap, option);
-    } else if (is_option("--Hack-disabled", argv[inx])) {
-      srvarg.hack_request_disabled = TRUE;
     } else if (is_option("--version", argv[inx]))
       showvers = TRUE;
     else {
@@ -196,9 +194,6 @@ int main(int argc, char *argv[])
 	       _("  -g, --gamelog FILE\tUse FILE as game logfile\n"));
     fc_fprintf(stderr,
 	       _("  -h, --help\t\tPrint a summary of the options\n"));
-    fc_fprintf(stderr,
-         _("  -H, --Hack-disabled\tDo not allow granting hack access\n"
-           "                     \tvia a client challenge\n"));
     fc_fprintf(stderr, _("  -l, --log FILE\tUse FILE as logfile\n"));
     fc_fprintf(stderr, _("  -m, --meta\t\tNotify metaserver and "
 			 "send server's info\n"));

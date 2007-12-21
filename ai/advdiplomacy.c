@@ -87,7 +87,7 @@ static void notify(struct player *pplayer, const char *text, ...)
 {
   if (diplomacy_verbose) {
     va_list ap;
-    struct conn_list *dest = (struct conn_list*)&pplayer->connections;
+    struct conn_list *dest = pplayer->connections;
 
     va_start(ap, text);
     vnotify_conn_ex(dest, NULL, E_DIPLOMACY, text, ap);
@@ -371,7 +371,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
       /* Very silly algorithm 1: Sea map more worth if enemy has more
          cities. Reasoning is he has more use of seamap for settling
          new areas the more cities he has already. */
-      worth -= 15 * city_list_size(&aplayer->cities);
+      worth -= 15 * city_list_size(aplayer->cities);
 
       /* Make maps from novice player cheap */
       if (ai_handicap(pplayer, H_DIPLOMACY)) {
@@ -387,7 +387,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
     } else {
       /* Very silly algorithm 2: Land map more worth the more cities
          we have, since we expose all of these to the enemy. */
-      worth -= 50 * MAX(city_list_size(&pplayer->cities), 3);
+      worth -= 50 * MAX(city_list_size(pplayer->cities), 3);
       /* Inflate numbers if not peace */
       if (!pplayers_in_peace(pplayer, aplayer)) {
         worth *= 4;
@@ -400,7 +400,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
     break;
 
   case CLAUSE_CITY: {
-    struct city *offer = city_list_find_id(&(pclause->from)->cities, 
+    struct city *offer = city_list_find_id(pclause->from->cities, 
                                            pclause->value);
 
     if (!offer || offer->owner != giver) {
@@ -511,7 +511,7 @@ void ai_treaty_evaluate(struct player *pplayer, struct player *aplayer,
 
   if (given_cities > 0) {
     /* alway keep at least two cities */
-    if (city_list_size(&pplayer->cities) - given_cities <= 2) {
+    if (city_list_size(pplayer->cities) - given_cities <= 2) {
       return;
     }
   }
@@ -585,7 +585,7 @@ void ai_treaty_accepted(struct player *pplayer, struct player *aplayer,
    * he or she offers us gifts. It is only a gift if _all_ the clauses
    * are beneficial to us. */
   if (total_balance > 0 && gift) {
-    int i = total_balance / ((city_list_size(&pplayer->cities) * 50) + 1);
+    int i = total_balance / ((city_list_size(pplayer->cities) * 50) + 1);
 
     i = MIN(i, ai->diplomacy.love_incr * 150) * 10;
     pplayer->ai.love[aplayer->player_no] += i;
@@ -605,7 +605,7 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
   struct ai_dip_intel *adip = &ai->diplomacy.player_intel[aplayer->player_no];
 
   /* Number of cities is a player's base potential. */
-  kill_desire = city_list_size(&aplayer->cities);
+  kill_desire = city_list_size(aplayer->cities);
 
   /* Count settlers in production for us, indicating our expansionism,
    * while counting all enemy settlers as (worst case) indicators of
@@ -634,7 +634,7 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
   /* Spacerace loss we will not allow! */
   if (ship->state >= SSHIP_STARTED) {
     /* add potential */
-    kill_desire += city_list_size(&aplayer->cities);
+    kill_desire += city_list_size(aplayer->cities);
   }
   if (ai->diplomacy.spacerace_leader == aplayer) {
     ai->diplomacy.strategy = WIN_CAPITAL;

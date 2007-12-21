@@ -198,7 +198,6 @@ struct unit {
 /* get 'struct unit_list' and related functions: */
 #define SPECLIST_TAG unit
 #define SPECLIST_TYPE struct unit
-#define SPECLIST_NO_FIND
 #include "speclist.h"
 
 #define unit_list_iterate(unitlist, punit) \
@@ -212,7 +211,7 @@ struct unit {
 
 #define unit_list_iterate_safe(unitlist, punit) \
 { \
-  int _size = unit_list_size(&unitlist); \
+  int _size = unit_list_size(unitlist); \
   if (_size > 0) { \
     int _ids[_size]; \
     int _i = 0; \

@@ -116,7 +116,6 @@ static int socklan;
 
 #define SPECLIST_TAG timer
 #define SPECLIST_TYPE struct timer
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define PROCESSING_TIME_STATISTICS 0
@@ -207,18 +206,18 @@ void close_connection(struct connection *pconn)
     free_timer(timer);
   }
   assert(timer_list_size(pconn->server.ping_timers) == 0);
-  timer_list_unlink_all(pconn->server.ping_timers);
+  timer_list_free(pconn->server.ping_timers);
 
   /* safe to do these even if not in lists: */
-  conn_list_unlink(&game.all_connections, pconn);
-  conn_list_unlink(&game.est_connections, pconn);
-  conn_list_unlink(&game.game_connections, pconn);
+  conn_list_unlink(game.all_connections, pconn);
+  conn_list_unlink(game.est_connections, pconn);
+  conn_list_unlink(game.game_connections, pconn);
 
   pconn->player = NULL;
   pconn->access_level = ALLOW_NONE;
   connection_common_close(pconn);
 
-  send_conn_info(&pconn->self, &game.est_connections);
+  send_conn_info(pconn->self, game.est_connections);
 }
 
 /*****************************************************************************
@@ -227,24 +226,24 @@ void close_connection(struct connection *pconn)
 void close_connections_and_socket(void)
 {
   int i;
-  lsend_packet_server_shutdown(&game.all_connections);
+  lsend_packet_server_shutdown(game.all_connections);
 
   clear_all_on_connect_user_actions();
 
-  for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
-    if(connections[i].used) {
+  for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
+    if (connections[i].used) {
       close_connection(&connections[i]);
     }
-    conn_list_unlink_all(&connections[i].self);
+    conn_list_free(connections[i].self);
   }
 
   /* Remove the game connection lists and make sure they are empty. */
-  assert(conn_list_size(&game.all_connections) == 0);
-  conn_list_unlink_all(&game.all_connections);
-  assert(conn_list_size(&game.est_connections) == 0);
-  conn_list_unlink_all(&game.est_connections);
-  assert(conn_list_size(&game.game_connections) == 0);
-  conn_list_unlink_all(&game.game_connections);
+  assert(conn_list_size(game.all_connections) == 0);
+  conn_list_free(game.all_connections);
+  assert(conn_list_size(game.est_connections) == 0);
+  conn_list_free(game.est_connections);
+  assert(conn_list_size(game.game_connections) == 0);
+  conn_list_free(game.game_connections);
 
   my_closesocket(sock);
   my_closesocket(socklan);
@@ -433,7 +432,7 @@ int sniff_packets(void)
     /* end server if no players for 'srvarg.quitidle' seconds */
     if (srvarg.quitidle != 0 && server_state != PRE_GAME_STATE) {
       static time_t last_noplayers;
-      if(conn_list_size(&game.est_connections) == 0) {
+      if(conn_list_size(game.est_connections) == 0) {
 	if (last_noplayers != 0) {
 	  if (time(NULL)>last_noplayers + srvarg.quitidle) {
 	    if (srvarg.exit_on_end) {
@@ -893,15 +892,7 @@ static int server_accept_connection(int sockfd)
   pconn->server.delay_counter = 0;
   pconn->server.packets_received = 0;
   pconn->server.status = AS_NOT_ESTABLISHED;
-
-  /* We don't want to leak this memory every time
-   * server_accept_connection is called... */
-  if (pconn->server.ping_timers == NULL) {
-    pconn->server.ping_timers
-        = fc_malloc(sizeof(*pconn->server.ping_timers));
-  }
-
-  timer_list_init(pconn->server.ping_timers);
+  pconn->server.ping_timers = timer_list_new();
   pconn->ping_time = -1.0;
   pconn->incoming_packet_notify = NULL;
   pconn->outgoing_packet_notify = NULL;
@@ -942,7 +933,7 @@ static int server_accept_connection(int sockfd)
           pconn->username, pconn->addr, !from && pconn->server.adns_id > 0
           ? "hostname lookup in progress" : pconn->server.ipaddr);
 
-  conn_list_append(&game.all_connections, pconn);
+  conn_list_append(game.all_connections, pconn);
   ping_connection(pconn);
 
   return 0;
@@ -1031,16 +1022,16 @@ void init_connections(void)
 {
   int i;
 
-  conn_list_init(&game.all_connections);
-  conn_list_init(&game.est_connections);
-  conn_list_init(&game.game_connections);
-  user_action_list_init(&on_connect_user_actions);
+  game.all_connections = conn_list_new();
+  game.est_connections = conn_list_new();
+  game.game_connections = conn_list_new();
+  on_connect_user_actions = user_action_list_new();
 
-  for(i=0; i<MAX_NUM_CONNECTIONS; i++) { 
+  for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
     struct connection *pconn = &connections[i];
     pconn->used = FALSE;
-    conn_list_init(&pconn->self);
-    conn_list_insert(&pconn->self, pconn);
+    pconn->self = conn_list_new();
+    conn_list_append(pconn->self, pconn);
   }
 #if defined(__VMS)
   {
@@ -1146,7 +1137,7 @@ static void send_ping_times_to_all(void)
     }
     i++;
   } conn_list_iterate_end;
-  lsend_packet_conn_ping_info(&game.est_connections, &packet);
+  lsend_packet_conn_ping_info(game.est_connections, &packet);
 }
 
 /********************************************************************

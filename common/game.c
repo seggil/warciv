@@ -84,7 +84,7 @@ int civ_population(struct player *pplayer)
 struct city *game_find_city_by_name(const char *name)
 {
   players_iterate(pplayer) {
-    struct city *pcity = city_list_find_name(&pplayer->cities, name);
+    struct city *pcity = city_list_find_name(pplayer->cities, name);
 
     if (pcity) {
       return pcity;
@@ -137,7 +137,7 @@ void game_remove_unit(struct unit *punit)
 
   pcity = player_find_city_by_id(unit_owner(punit), punit->homecity);
   if (pcity) {
-    unit_list_unlink(&pcity->units_supported, punit);
+    unit_list_unlink(pcity->units_supported, punit);
   }
 
   if (pcity) {
@@ -146,8 +146,8 @@ void game_remove_unit(struct unit *punit)
 	    pcity->tile->y);
   }
 
-  unit_list_unlink(&punit->tile->units, punit);
-  unit_list_unlink(&unit_owner(punit)->units, punit);
+  unit_list_unlink(punit->tile->units, punit);
+  unit_list_unlink(unit_owner(punit)->units, punit);
 
   idex_unregister_unit(punit);
 
@@ -170,7 +170,7 @@ void game_remove_city(struct city *pcity)
   city_map_checked_iterate(pcity->tile, x, y, map_tile) {
     set_worker_city(pcity, x, y, C_TILE_EMPTY);
   } city_map_checked_iterate_end;
-  city_list_unlink(&city_owner(pcity)->cities, pcity);
+  city_list_unlink(city_owner(pcity)->cities, pcity);
   map_set_city(pcity->tile, NULL);
   idex_unregister_city(pcity);
   remove_city_virtual(pcity);
@@ -459,6 +459,7 @@ void ruleset_data_free()
   improvements_free();
   city_styles_free();
   tile_types_free();
+  ruleset_cache_free();
 }
 
 /***************************************************************
@@ -579,19 +580,22 @@ void game_remove_player(struct player *pplayer)
     pplayer->island_improv = NULL;
   }
 
-  conn_list_unlink_all(&pplayer->connections);
+  conn_list_free(pplayer->connections);
+  pplayer->connections = NULL;
 
-  unit_list_iterate(pplayer->units, punit) 
+  unit_list_iterate(pplayer->units, punit) {
     game_remove_unit(punit);
-  unit_list_iterate_end;
-  assert(unit_list_size(&pplayer->units) == 0);
-  unit_list_unlink_all(&pplayer->units);
+  } unit_list_iterate_end;
+  assert(unit_list_size(pplayer->units) == 0);
+  unit_list_free(pplayer->units);
+  pplayer->units = NULL;
 
   city_list_iterate(pplayer->cities, pcity) 
     game_remove_city(pcity);
   city_list_iterate_end;
-  assert(city_list_size(&pplayer->cities) == 0);
-  city_list_unlink_all(&pplayer->cities);
+  assert(city_list_size(pplayer->cities) == 0);
+  city_list_free(pplayer->cities);
+  pplayer->cities = NULL;
 
   if (is_barbarian(pplayer)) {
     game.nbarbarians--;

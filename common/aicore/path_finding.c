@@ -210,8 +210,7 @@ static void init_node(struct pf_map *pf_map, struct pf_node * node,
 		   || params->get_zoc(params->owner, ptile));
     /* ZoC rules cannot prevent us from moving into/attacking an occupied 
      * tile.  Other rules can, but we don't care about them here. */ 
-    bool occupied = (unit_list_size(&ptile->units) > 0
-                     || ptile->city);
+    bool occupied = (unit_list_size(ptile->units) > 0 || ptile->city);
 
     /* 2 means can move unrestricted from/into it, 
      * 1 means can move unrestricted into it, but not necessarily from it */

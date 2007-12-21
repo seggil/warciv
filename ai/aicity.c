@@ -221,7 +221,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
   }
 
   /* Find number of cities per range.  */
-  cities[EFR_PLAYER] = city_list_size(&pplayer->cities);
+  cities[EFR_PLAYER] = city_list_size(pplayer->cities);
   cities[EFR_WORLD] = cities[EFR_PLAYER]; /* kludge. */
 
   cities[EFR_CONTINENT] = ai->stats.cities[ptile->continent];
@@ -231,7 +231,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 
   /* Calculate desire value. */
   effect_type_vector_iterate(get_building_effect_types(id), ptype) {
-    effect_list_iterate(*get_building_effects(id, *ptype), peff) {
+    effect_list_iterate(get_building_effects(id, *ptype), peff) {
       if (is_effect_useful(TARGET_BUILDING, pplayer, pcity, id,
 			   NULL, id, peff)) {
 	int amount = peff->value, c = cities[peff->range];
@@ -297,7 +297,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	  case EFT_MAKE_CONTENT_MIL:
 	    if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
 	      v += pcity->ppl_unhappy[4] * amount
-		* MAX(unit_list_size(&pcity->units_supported)
+		* MAX(unit_list_size(pcity->units_supported)
 		    - gov->free_happy, 0) * 2;
 	      v += c * MAX(amount + 2 - gov->free_happy, 1);
 	    }
@@ -348,7 +348,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    break;
 	  case EFT_NUKE_PROOF:
 	    if (ai->threats.nuclear) {
-	      v += pcity->size * unit_list_size(&ptile->units) * (capital + 1);
+	      v += pcity->size * unit_list_size(ptile->units) * (capital + 1);
 	    }
 	    break;
 	  case EFT_REVEAL_MAP:
@@ -386,7 +386,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    v += ai->stats.units.sea * 8 * amount;
 	    break;
 	  case EFT_UNIT_NO_LOSE_POP:
-	    v += unit_list_size(&(ptile->units)) * 2;
+	    v += unit_list_size(ptile->units) * 2;
 	    break;
 	  case EFT_LAND_REGEN:
 	    v += 15 * c + ai->stats.units.land * 3;
@@ -882,7 +882,7 @@ static void ai_spend_gold(struct player *pplayer)
              > pcity->food_stock + pcity->food_surplus) {
         /* Don't buy settlers in size 1 cities unless we grow next turn */
         continue;
-      } else if (city_list_size(&pplayer->cities) > 6) {
+      } else if (city_list_size(pplayer->cities) > 6) {
           /* Don't waste precious money buying settlers late game
            * since this raises taxes, and we want science. Adjust this
            * again when our tax algorithm is smarter. */
@@ -1048,7 +1048,7 @@ static void ai_sell_obsolete_buildings(struct city *pcity)
 static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
 #define LOG_EMERGENCY LOG_DEBUG
 {
-  struct city_list minilist;
+  struct city_list *minilist = city_list_new();
 
   freelog(LOG_EMERGENCY,
           "Emergency in %s (%s, angry%d, unhap%d food%d, prod%d)",
@@ -1056,7 +1056,6 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
           pcity->ppl_angry[4], pcity->ppl_unhappy[4],
           pcity->food_surplus, pcity->shield_surplus);
 
-  city_list_init(&minilist);
   map_city_radius_iterate(pcity->tile, ptile) {
     struct city *acity = ptile->worked;
     int city_map_x, city_map_y;
@@ -1073,8 +1072,8 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
       assert(is_valid);
       server_remove_worker_city(acity, city_map_x, city_map_y);
       acity->specialists[SP_ELVIS]++;
-      if (!city_list_find_id(&minilist, acity->id)) {
-	city_list_insert(&minilist, acity);
+      if (!city_list_find_id(minilist, acity->id)) {
+	city_list_prepend(minilist, acity);
       }
     }
   } map_city_radius_iterate_end;
@@ -1110,7 +1109,7 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
     auto_arrange_workers(pcity);
   } city_list_iterate_end;
 
-  city_list_unlink_all(&minilist);
+  city_list_free(minilist);
 
   sync_cities();
 }

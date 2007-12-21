@@ -19,7 +19,7 @@
 
 #define	MAX_CHATLINE_HISTORY 20
 
-extern struct genlist history_list;
+extern genlist *history_list;
 extern int history_pos;
 
 void inputline_return(GtkEntry *w, gpointer data);
@@ -59,33 +59,31 @@ struct tag_pattern {
 
 #define SPECLIST_TAG tag_pattern
 #define SPECLIST_TYPE struct tag_pattern
-#define SPECLIST_NO_FREE
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 #define tag_pattern_list_iterate(alist, pitem)\
   TYPED_LIST_ITERATE(struct tag_pattern, alist, pitem)
 #define tag_pattern_list_iterate_end  LIST_ITERATE_END
 
-struct tag_pattern_list *tag_pattern_list_clone (struct tag_pattern_list *old);
-void tag_pattern_list_free (struct tag_pattern_list *tpl);
-void tag_pattern_list_free_data (struct tag_pattern_list *tpl);
-struct tag_pattern *tag_pattern_clone (struct tag_pattern *old);
+struct tag_pattern_list *tag_pattern_list_clone(struct tag_pattern_list *old);
+void tag_pattern_list_free_all(struct tag_pattern_list *tpl);
+void tag_pattern_list_free_data(struct tag_pattern_list *tpl);
+struct tag_pattern *tag_pattern_clone(struct tag_pattern *old);
 
 
-void init_message_buffer_tag_patterns (void);
-void free_message_buffer_tag_patterns (void);
-void refresh_message_buffer_tag_patterns (GHashTable *tags_to_delete);
-struct tag_pattern *tag_pattern_new (const char *name, const char *pattern,
-                                     int flags, const char *jump_target,
-                                     const char *fgcolor, const char *bgcolor);
-void tag_pattern_free (struct tag_pattern *ptagpat);
+void init_message_buffer_tag_patterns(void);
+void free_message_buffer_tag_patterns(void);
+void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete);
+struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
+                                    int flags, const char *jump_target,
+                                    const char *fgcolor, const char *bgcolor);
+void tag_pattern_free(struct tag_pattern *ptagpat);
 
-void secfile_save_message_buffer_tag_patterns (struct section_file *file);
-void secfile_load_message_buffer_tag_patterns (struct section_file *file);
+void secfile_save_message_buffer_tag_patterns(struct section_file *file);
+void secfile_load_message_buffer_tag_patterns(struct section_file *file);
 
-void popup_chatline_config_dialog (void);
+void popup_chatline_config_dialog(void);
 
-void set_message_buffer_view_link_handlers (GtkTextView *view);
+void set_message_buffer_view_link_handlers(GtkTextView *view);
 void insert_chat_link(struct tile *ptile, bool unit);
 
 #endif  /* FC__CHATLINE_H */

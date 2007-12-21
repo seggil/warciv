@@ -277,27 +277,24 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
     /* <SHIFT> + LMB: *pepeto* select unit(s if double click). */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
-	  if (ev->type == GDK_2BUTTON_PRESS)
-		  multi_select_add_units(&ptile->units);
-	  else
-	  {
-		struct unit *punit = find_visible_unit(ptile);
-		if(punit&&punit->owner==game.player_idx)
-			multi_select_add_or_remove_unit(punit);
-		else
-		{
-			unit_list_iterate(ptile->units,punit)
-			{
-				if(punit->owner==game.player_idx)
-				{
-				      multi_select_add_or_remove_unit(punit);
-					  break;
-				 }
-			 } unit_list_iterate_end;
-		 }
-	  }
-	  update_unit_info_label(get_unit_in_focus());
-	  update_menus();
+      if (ev->type == GDK_2BUTTON_PRESS) {
+	multi_select_add_units(ptile->units);
+      } else {
+	struct unit *punit = find_visible_unit(ptile);
+
+	if (punit && punit->owner == game.player_idx) {
+	  multi_select_add_or_remove_unit(punit);
+	} else {
+	  unit_list_iterate(ptile->units, punit) {
+	    if (punit->owner == game.player_idx) {
+	      multi_select_add_or_remove_unit(punit);
+	      break;
+	    }
+	  } unit_list_iterate_end;
+	}
+      }
+      update_unit_info_label(get_unit_in_focus());
+      update_menus();
     }
     /* <ALT> + LMB: popit (same as middle-click) */
     else if (ptile && (ev->state & GDK_MOD1_MASK)) {
@@ -305,49 +302,59 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
     /* LMB in Area Selection mode. */
     else if (tiles_hilited_cities && ptile
-             && hover_state == HOVER_NONE)
-    {
-        toggle_tile_hilite(ptile);
+             && hover_state == HOVER_NONE) {
+      toggle_tile_hilite(ptile);
+    }
+    /* double LMB: *pepeto* select units of the same type. */
+    else if(ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS)) {
+      struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
+      if (punit && punit->owner == game.player_idx) {
+	multi_select_clear(0);
+	set_unit_focus(punit);
+	gui_rect_iterate(mapview_canvas.gui_x0, mapview_canvas.gui_y0,
+			 mapview_canvas.store_width,
+			 mapview_canvas.store_height, ptile) {
+	  unit_list_iterate(ptile->units, tunit) {
+	    if (tunit->owner == game.player_idx && tunit->type == punit->type) {
+	      multi_select_add_unit(tunit);
+	    }
+	    if (unit_satisfies_filter(tunit, multi_select_inclusive_filter, 
+				      multi_select_exclusive_filter))
+	    nfu = tunit;
+	  } unit_list_iterate_end;
+	} gui_rect_iterate_end;
+	if (!multi_select_satisfies_filter(0)) {
+	  multi_select_clear(0);
+	} else if (multi_select_size(0) > 1
+		   && !unit_satisfies_filter(punit,
+					     multi_select_inclusive_filter,
+					     multi_select_exclusive_filter)) {
+	  set_unit_focus(nfu);
+	}
+	update_unit_info_label(get_unit_in_focus());
+	update_menus();
       }
-	/* double LMB: *pepeto* select units of the same type. */
-	else if(ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS))
-	{
-		struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
-		if(punit&&punit->owner==game.player_idx)
-		{
-			multi_select_clear(0);
-			set_unit_focus(punit);
-			gui_rect_iterate(mapview_canvas.gui_x0,mapview_canvas.gui_y0,mapview_canvas.store_width,mapview_canvas.store_height,ptile)
-			{
-			   unit_list_iterate(ptile->units,tunit)
-			   {
-				  if(tunit->owner==game.player_idx&&tunit->type==punit->type)
-					  multi_select_add_unit(tunit);
-				  if(unit_satisfies_filter(tunit,multi_select_inclusive_filter,multi_select_exclusive_filter))
-					  nfu=tunit;
-			   } unit_list_iterate_end;
-			} gui_rect_iterate_end;
-		 if(!multi_select_satisfies_filter(0))
-			 multi_select_clear(0);
-		 else if(multi_select_size(0)>1&&!unit_satisfies_filter(punit,multi_select_inclusive_filter,multi_select_exclusive_filter))
-			 set_unit_focus(nfu);
-	     update_unit_info_label(get_unit_in_focus());
-	     update_menus();
     }
-    }
-    /* Plain LMB click for city triple click for units (*pepeto*). */
-    else
-	{
-		struct unit *punit;
-		if(hover_state==HOVER_NONE&&ptile&&!pcity&&unit_list_size(&ptile->units)>1&&(punit=find_visible_unit(ptile))
-			&&is_unit_in_multi_select(0,punit)&&punit!=get_unit_in_focus()&&punit->owner==game.player_idx&&(ev->type == GDK_BUTTON_PRESS))
-			set_unit_focus(punit);
-		else
-		{
-			if(hover_state!=HOVER_NONE)
-				press_waited=2;
-      action_button_pressed(ev->x, ev->y, SELECT_POPUP);
-    }
+    /* Plain LMB click for city triple click for units. */
+    else {
+      struct unit *punit;
+
+      if (hover_state == HOVER_NONE
+	  && ptile
+	  && !pcity
+	  && unit_list_size(ptile->units) > 1
+	  && (punit = find_visible_unit(ptile))
+	  && is_unit_in_multi_select(0, punit)
+	  && punit != get_unit_in_focus()
+	  && punit->owner == game.player_idx
+	  && (ev->type == GDK_BUTTON_PRESS)) {
+        set_unit_focus(punit);
+      } else {
+        if (hover_state != HOVER_NONE) {
+          press_waited = 2;
+	}
+        action_button_pressed(ev->x, ev->y, SELECT_POPUP);
+      }
     }
     break;
 

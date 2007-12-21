@@ -126,7 +126,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
 ***********************************************************************/
 #define ap_timers_num 5
 
-static struct automatic_processus_list automatic_processus_list;
+static struct automatic_processus_list *automatic_processus_list;
 static const int ap_timer_values[ap_timers_num] = {50, 80, 90, 95, -5};
 static const enum automatic_value ap_timer_event[ap_timers_num] = {
   AUTO_50_TIMEOUT, AUTO_80_TIMEOUT, AUTO_90_TIMEOUT,
@@ -284,7 +284,7 @@ void automatic_processus_event(enum automatic_value event, void *data)
 ***********************************************************************/
 void automatic_processus_init(void)
 {
-  automatic_processus_list_init(&automatic_processus_list);
+  automatic_processus_list = automatic_processus_list_new();
 }
 
 /**************************************************************************
@@ -345,7 +345,7 @@ real_automatic_processus_new(const char *file, const int line,
   }
 
   /* append on the list */
-  automatic_processus_list_append(&automatic_processus_list, pap);
+  automatic_processus_list_append(automatic_processus_list, pap);
   return pap;
 }
 
@@ -354,16 +354,16 @@ real_automatic_processus_new(const char *file, const int line,
 ***********************************************************************/
 void automatic_processus_remove(automatic_processus *pap)
 {
-  automatic_processus_list_unlink(&automatic_processus_list, pap);
+  automatic_processus_list_unlink(automatic_processus_list, pap);
   free(pap);
 }
 
 /********************************************************************** 
   ...
 ***********************************************************************/
-struct automatic_processus_list *get_automatic_processus(void)
+const struct automatic_processus_list *get_automatic_processus(void)
 {
-  return &automatic_processus_list;
+  return automatic_processus_list;
 }
 
 /********************************************************************** 
@@ -442,7 +442,7 @@ void multi_select_add_unit(struct unit *punit)
   if (!multi_select_size(0)) {
     set_unit_focus(punit);
   } else {
-    unit_list_append(&multi_selection[0].ulist, punit);
+    unit_list_append(multi_selection[0].ulist, punit);
     /* Maybe replace the current unit in focus. */
     if (!unit_satisfies_filter(get_unit_in_focus(),
 			       multi_select_inclusive_filter,
@@ -473,7 +473,7 @@ void multi_select_add_or_remove_unit(struct unit *punit)
 ***********************************************************************/
 void multi_select_add_units(struct unit_list *ulist)
 {
-  unit_list_iterate(*ulist,punit) {
+  unit_list_iterate(ulist ,punit) {
     multi_select_add_unit(punit);
   } unit_list_iterate_end;
 }
@@ -508,7 +508,7 @@ void multi_select_cat(int dest, int src)
 
   unit_list_iterate(multi_selection[src].ulist, punit) {
     if (!is_unit_in_multi_select(dest, punit)) {
-      unit_list_append(&multi_selection[dest].ulist, punit);
+      unit_list_append(multi_selection[dest].ulist, punit);
     }
   } unit_list_iterate_end;
   update_unit_info_label(get_unit_in_focus());
@@ -529,11 +529,11 @@ void multi_select_clear(int multi)
 
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
-      unit_list_unlink(&multi_selection[multi].ulist, punit);
+      unit_list_unlink(multi_selection[multi].ulist, punit);
       refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
-  unit_list_unlink_all(&multi_selection[multi].ulist); /* to be sure about it */
+  unit_list_unlink_all(multi_selection[multi].ulist); /* to be sure about it */
   multi_selection[multi].punit_focus = NULL;
   if(multi == 0) {
     advance_unit_focus();
@@ -553,7 +553,7 @@ void multi_select_clear_all(void)
   int i;
 
   for (i = 0; i < MULTI_SELECT_NUM; i++) {
-    unit_list_unlink_all(&multi_selection[i].ulist);
+    unit_list_free(multi_selection[i].ulist);
     multi_selection[i].punit_focus = NULL;
   }
   multi_select_is_initialized = FALSE;
@@ -574,16 +574,16 @@ void multi_select_copy(int dest, int src)
 
   if (dest == 0) {
     unit_list_iterate(multi_selection[dest].ulist, punit) {
-      unit_list_unlink(&multi_selection[dest].ulist, punit);
+      unit_list_unlink(multi_selection[dest].ulist, punit);
       refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
 
-  unit_list_unlink_all(&multi_selection[dest].ulist);
+  unit_list_unlink_all(multi_selection[dest].ulist);
   unit_list_iterate(multi_selection[src].ulist, punit) {
     if (!dest || unit_satisfies_filter(punit, multi_select_inclusive_filter,
 					      multi_select_exclusive_filter)) {
-      unit_list_append(&multi_selection[dest].ulist, punit);
+      unit_list_append(multi_selection[dest].ulist, punit);
     }
   } unit_list_iterate_end;
   multi_selection[dest].punit_focus = multi_selection[src].punit_focus;
@@ -620,7 +620,7 @@ const struct multi_select *multi_select_get(int multi)
 ***********************************************************************/
 const struct unit_list *multi_select_get_units_focus(void)
 {
-  return &multi_selection[0].ulist;
+  return multi_selection[0].ulist;
 }
 
 /********************************************************************** 
@@ -630,7 +630,7 @@ void multi_select_init_all(void)
 {
   int i;
   for(i = 0; i < MULTI_SELECT_NUM; i++) {
-    unit_list_init(&multi_selection[i].ulist);
+    multi_selection[i].ulist = unit_list_new();
     multi_selection[i].punit_focus = NULL;
   }
   multi_select_is_initialized = TRUE;
@@ -641,7 +641,7 @@ void multi_select_init_all(void)
 ***********************************************************************/
 void multi_select_remove_unit(struct unit *punit)
 {
-  unit_list_unlink(&multi_selection[0].ulist, punit);
+  unit_list_unlink(multi_selection[0].ulist, punit);
   refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
   if (punit == get_unit_in_focus()) {
     struct unit *pnuf = NULL;
@@ -701,20 +701,20 @@ void multi_select_set(int multi, const struct multi_select *pms)
   assert(pms != NULL);
   msassert(multi);
 
-  if (unit_list_size(&pms->ulist) == 0) {
+  if (unit_list_size(pms->ulist) == 0) {
     return;
   }
 
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
-      unit_list_unlink(&multi_selection[multi].ulist,punit);
+      unit_list_unlink(multi_selection[multi].ulist,punit);
       refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
 
-  unit_list_unlink_all(&multi_selection[multi].ulist);
+  unit_list_unlink_all(multi_selection[multi].ulist);
   unit_list_iterate(pms->ulist, punit) {
-    unit_list_append(&multi_selection[multi].ulist, punit);
+    unit_list_append(multi_selection[multi].ulist, punit);
   } unit_list_iterate_end;
   multi_selection[multi].punit_focus = pms->punit_focus;
 
@@ -736,16 +736,16 @@ void multi_select_set_unit(int multi,struct unit *punit)
 
   if (multi == 0) {
     unit_list_iterate(multi_selection[multi].ulist, punit) {
-      unit_list_unlink(&multi_selection[multi].ulist, punit);
+      unit_list_unlink(multi_selection[multi].ulist, punit);
       refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
     } unit_list_iterate_end;
   }
 
-  unit_list_unlink_all(&multi_selection[multi].ulist);
+  unit_list_unlink_all(multi_selection[multi].ulist);
   multi_selection[multi].punit_focus = punit;
 
   if (punit) {
-    unit_list_append(&multi_selection[multi].ulist, punit);
+    unit_list_append(multi_selection[multi].ulist, punit);
   }
 }
 
@@ -768,7 +768,7 @@ int multi_select_size(int multi)
 {
   msassert(multi);
 
-  return unit_list_size(&multi_selection[multi].ulist);
+  return unit_list_size(multi_selection[multi].ulist);
 }
 
 /********************************************************************** 
@@ -781,13 +781,13 @@ void multi_select_wipe_up_unit(struct unit *punit)
 
   multi_select_remove_unit(punit);
   for (i = 1; i <= 9; i++) {
-    unit_list_unlink(&multi_selection[i].ulist, punit);
-    if (!unit_list_size(&multi_selection[i].ulist)) {
+    unit_list_unlink(multi_selection[i].ulist, punit);
+    if (!unit_list_size(multi_selection[i].ulist)) {
       multi_select_clear(i);
       need_update_menus = TRUE;
     } else if (multi_selection[i].punit_focus == punit) {
       multi_selection[i].punit_focus =
-	unit_list_get(&multi_selection[i].ulist, 0);
+	unit_list_get(multi_selection[i].ulist, 0);
     }
   }
 
@@ -815,14 +815,14 @@ void multi_select_select(void)
     return;
   }
   if (multi_select_place == PLACE_ON_TILE) {
-    ulist = &punit_focus->tile->units;
+    ulist = punit_focus->tile->units;
   } else {
-    ulist = &game.player_ptr->units;
+    ulist = game.player_ptr->units;
   }
 
-  unit_list_iterate(*ulist, punit) {
+  unit_list_iterate(ulist, punit) {
     if ((multi_select_place == PLACE_ON_CONTINENT
-	 &&punit->tile->continent != punit_focus->tile->continent)
+	 && punit->tile->continent != punit_focus->tile->continent)
 	|| (multi_select_utype == UTYPE_SAME_MOVE_TYPE
 	    && unit_type(punit)->move_type != unit_type(punit_focus)->move_type)
 	|| (multi_select_utype == UTYPE_SAME_TYPE
@@ -895,7 +895,7 @@ void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
   dgd->id = id;
   dgd->type = type;
   dgd->ptile = ptile;
-  delayed_goto_data_list_append(&delayed_goto_list[dg].dglist, dgd);
+  delayed_goto_data_list_append(delayed_goto_list[dg].dglist, dgd);
   delayed_goto_list[dg].pplayer = get_tile_player(ptile);
 }
 
@@ -944,7 +944,7 @@ void delayed_goto_clear(int dg)
   delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist, dgd) {
     free(dgd);
   } delayed_goto_data_list_iterate_end;
-  delayed_goto_data_list_unlink_all(&delayed_goto_list[dg].dglist);
+  delayed_goto_data_list_unlink_all(delayed_goto_list[dg].dglist);
   delayed_goto_list[dg].pplayer = NULL;
   if (dg != 0) {
     my_snprintf(buf, sizeof(buf),
@@ -968,7 +968,7 @@ void delayed_goto_clear_all(void)
     delayed_goto_data_list_iterate(delayed_goto_list[i].dglist, dgd) {
       free(dgd);
     } delayed_goto_data_list_iterate_end;
-    delayed_goto_data_list_unlink_all(&delayed_goto_list[i].dglist);
+    delayed_goto_data_list_free(delayed_goto_list[i].dglist);
     delayed_goto_list[i].pplayer = NULL;
     automatic_processus_remove(delayed_goto_list[i].pap);
   }
@@ -1023,7 +1023,7 @@ void delayed_goto_init_all(void)
   int i;
 
   for (i = 0; i < DELAYED_GOTO_NUM; i++) {
-    delayed_goto_data_list_init(&delayed_goto_list[i].dglist);
+    delayed_goto_list[i].dglist = delayed_goto_data_list_new();
     delayed_goto_list[i].pplayer = NULL;
     if (i != 0) {
       char buf[256], buf2[256];
@@ -1074,7 +1074,7 @@ void delayed_goto_set(int dg, const struct delayed_goto *pdg)
   dgassert(dg);
   assert(pdg);
 
-  if (delayed_goto_data_list_size(&pdg->dglist) == 0) {
+  if (delayed_goto_data_list_size(pdg->dglist) == 0) {
     return;
   }
   delayed_goto_clear(dg);
@@ -1092,7 +1092,7 @@ int delayed_goto_size(int dg)
 {
   dgassert(dg);
 
-  return delayed_goto_data_list_size(&delayed_goto_list[dg].dglist);
+  return delayed_goto_data_list_size(delayed_goto_list[dg].dglist);
 }
 
 /********************************************************************** 
@@ -1149,12 +1149,12 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     } multi_select_iterate_end;
   } else {
     if (delayed_goto_place == PLACE_ON_TILE) {
-      ulist = &punit_focus->tile->units;
+      ulist = punit_focus->tile->units;
     } else {
-      ulist = &game.player_ptr->units;
+      ulist = game.player_ptr->units;
     }
 
-    unit_list_iterate(*ulist, punit) {
+    unit_list_iterate(ulist, punit) {
       if (punit->owner != game.player_idx
 	  || (delayed_goto_place == PLACE_ON_CONTINENT
 	      && punit->tile->continent != punit_focus->tile->continent)
@@ -1241,7 +1241,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
   delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist, dgd) {
     if (dgd->type == 3) {
       /* Pause */
-      delayed_goto_data_list_unlink(&delayed_goto_list[dg].dglist, dgd);
+      delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);
       free(dgd);
       break;
     }
@@ -1269,7 +1269,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
 
       if (!punit) {
 	/* Unfortunately, it seems we already lost this unit :( */
-        delayed_goto_data_list_unlink(&delayed_goto_list[dg].dglist, dgd);
+        delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);
         free(dgd);
         continue;
       }
@@ -1288,7 +1288,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
         do_unit_nuke(punit);
       }
     }
-    delayed_goto_data_list_unlink(&delayed_goto_list[dg].dglist,dgd);
+    delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist,dgd);
     free(dgd);
   } delayed_goto_data_list_iterate_end;
   connection_do_unbuffer(&aconnection);
@@ -1363,8 +1363,8 @@ void airlift_queue_cat(int dest, int src)
   }
 
   tile_list_iterate(airlift_queues[src].tlist, ptile) {
-    if (!tile_list_find(&airlift_queues[dest].tlist, ptile)) {
-      tile_list_append(&airlift_queues[dest].tlist, ptile);
+    if (!tile_list_search(airlift_queues[dest].tlist, ptile)) {
+      tile_list_append(airlift_queues[dest].tlist, ptile);
     }
   } tile_list_iterate_end;
 
@@ -1388,7 +1388,7 @@ void airlift_queue_clear(int aq)
   if (airlift_queue_size(aq) == 0) {
     return;
   }
-  tile_list_unlink_all(&airlift_queues[aq].tlist);
+  tile_list_unlink_all(airlift_queues[aq].tlist);
   if (aq != 0) {
     my_snprintf(buf, sizeof(buf), _("Warclient: Airlift queue %d cleared"),
 		airlift_queue_size(aq));
@@ -1407,7 +1407,7 @@ void airlift_queue_clear_all(void)
   int i;
 
   for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
-    tile_list_unlink_all(&airlift_queues[i].tlist);
+    tile_list_free(airlift_queues[i].tlist);
   }
   airlift_is_initialized = FALSE;
 }
@@ -1426,7 +1426,7 @@ void airlift_queue_copy(int dest, int src)
   }
   airlift_queue_clear(dest);
   tile_list_iterate(airlift_queues[src].tlist, ptile) {
-    tile_list_append(&airlift_queues[dest].tlist, ptile);
+    tile_list_append(airlift_queues[dest].tlist, ptile);
   } tile_list_iterate_end;
   airlift_queues[dest].utype = airlift_queues[src].utype;
   init_menus();
@@ -1482,7 +1482,7 @@ void airlift_queue_init_all(void)
   int i, j;
 
   for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
-    tile_list_init(&airlift_queues[i].tlist);
+    airlift_queues[i].tlist = tile_list_new();
     airlift_queues[i].utype = U_LAST;
     for (j = 0; j <= U_LAST; j++) {
       airlift_queues[i].widgets[j] = NULL;
@@ -1510,10 +1510,10 @@ void airlift_queue_set(int aq, const struct airlift_queue *paq)
 {
   aqassert(aq);
 
-  if (tile_list_size(&paq->tlist) > 0) {
-    tile_list_unlink_all(&airlift_queues[aq].tlist);
+  if (tile_list_size(paq->tlist) > 0) {
+    tile_list_unlink_all(airlift_queues[aq].tlist);
     tile_list_iterate(paq->tlist, ptile) {
-      tile_list_append(&airlift_queues[aq].tlist, ptile);
+      tile_list_append(airlift_queues[aq].tlist, ptile);
     } tile_list_iterate_end;
   }
   airlift_queues[aq].utype = paq->utype;
@@ -1580,7 +1580,7 @@ int airlift_queue_size(int aq)
 {
   aqassert(aq);
 
-  return tile_list_size(&airlift_queues[aq].tlist);
+  return tile_list_size(airlift_queues[aq].tlist);
 }
 
 /********************************************************************** 
@@ -1600,15 +1600,15 @@ void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
     return;
   }
 
-  if (tile_list_find(&airlift_queues[0].tlist, ptile)) {
+  if (tile_list_search(airlift_queues[0].tlist, ptile)) {
     if (!multi) {
-      tile_list_unlink(&airlift_queues[0].tlist, ptile);
+      tile_list_unlink(airlift_queues[0].tlist, ptile);
       my_snprintf(buf, sizeof(buf),
 		  _("Warclient: Remove city %s to autolift queue"),
 		  ptile->city->name);
     }
   } else {
-    tile_list_insert(&airlift_queues[0].tlist, ptile);
+    tile_list_prepend(airlift_queues[0].tlist, ptile);
     my_snprintf(buf, sizeof(buf),
 		_("Warclient: Adding city %s to autolift queue"),
 		ptile->city->name);
@@ -1657,7 +1657,7 @@ void do_airlift_for(int aq,struct city *pcity)
   tile_list_iterate(airlift_queues[aq].tlist, ptile) {
     if (!ptile->city
 	|| ptile->city->owner != game.player_idx
-	|| unit_list_size(&ptile->units) == 0) {
+	|| unit_list_size(ptile->units) == 0) {
       continue;
     }
     unit_list_iterate(ptile->units, punit) {

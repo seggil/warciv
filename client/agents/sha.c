@@ -32,7 +32,7 @@ allready got the new ones.
 **************************************************************************/
 
 static struct tile *previous_tiles = NULL;
-static struct unit_list previous_units;
+static struct unit_list *previous_units = NULL;
 
 /**************************************************************************
 ...
@@ -53,7 +53,7 @@ static void sha_tile_update(struct tile *ptile)
 static void sha_unit_change(int id)
 {
   struct unit *punit = find_unit_by_id(id);
-  struct unit *pold_unit = unit_list_find(&previous_units, id);
+  struct unit *pold_unit = unit_list_find(previous_units, id);
 
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
@@ -73,7 +73,7 @@ static void sha_unit_new(int id)
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
   *pold_unit = *punit;
-  unit_list_insert(&previous_units, pold_unit);
+  unit_list_prepend(previous_units, pold_unit);
 }
 
 /**************************************************************************
@@ -81,12 +81,12 @@ static void sha_unit_new(int id)
 **************************************************************************/
 static void sha_unit_remove(int id)
 {
-  struct unit *pold_unit = unit_list_find(&previous_units, id);;
+  struct unit *pold_unit = unit_list_find(previous_units, id);;
 
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
   assert(pold_unit);
-  unit_list_unlink(&previous_units, pold_unit);
+  unit_list_unlink(previous_units, pold_unit);
 }
 
 /**************************************************************************
@@ -99,7 +99,7 @@ void simple_historian_init(void)
   previous_tiles = fc_malloc(MAX_MAP_INDEX * sizeof(*previous_tiles));
   memset(previous_tiles, 0, MAX_MAP_INDEX * sizeof(*previous_tiles));
 
-  unit_list_init(&previous_units);
+  previous_units = unit_list_new();
 
   memset(&self, 0, sizeof(self));
   sz_strlcpy(self.name, "Simple Historian");
@@ -132,5 +132,5 @@ struct tile *sha_tile_recall(struct tile *ptile)
 **************************************************************************/
 struct unit *sha_unit_recall(int id)
 {
-  return unit_list_find(&previous_units, id);
+  return unit_list_find(previous_units, id);
 }

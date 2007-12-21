@@ -1699,8 +1699,7 @@ static void miscellaneous_menu_callback(gpointer callback_data,
       } multi_select_iterate_end;
       break;
     case MENU_MISCELLANEOUS_MY_AI_FREE:
-      unit_list_iterate(*multi_select_get_units_focus(),punit)
-      {
+      unit_list_iterate(multi_select_get_units_focus(), punit) {
         my_ai_orders_free(punit);
       } unit_list_iterate_end;
       break;

@@ -116,7 +116,7 @@ static void ai_select_tech(struct player *pplayer,
 			   struct ai_tech_choice *goal)
 {
   Tech_Type_id newtech, newgoal;
-  int num_cities_nonzero = MAX(1, city_list_size(&pplayer->cities));
+  int num_cities_nonzero = MAX(1, city_list_size(pplayer->cities));
   int values[A_LAST];
   int goal_values[A_LAST];
 
@@ -245,8 +245,7 @@ static void ai_use_gov_tech_hint(struct player *pplayer)
     if (get_invention(pplayer, hint->tech) != TECH_KNOWN) {
       int steps = num_unknown_techs_for_goal(pplayer, hint->tech);
 
-      pplayer->ai.tech_want[hint->tech] += 
-	city_list_size(&pplayer->cities)
+      pplayer->ai.tech_want[hint->tech] += city_list_size(pplayer->cities)
 	* (hint->turns_factor * steps + hint->const_factor);
       if (hint->get_first) {
 	break;

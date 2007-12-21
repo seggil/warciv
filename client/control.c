@@ -387,7 +387,7 @@ struct unit *find_visible_unit(struct tile *ptile)
   struct unit *panyowned = NULL, *panyother = NULL, *ptptother = NULL;
 
   /* If no units here, return nothing. */
-  if (unit_list_size(&ptile->units) == 0) {
+  if (unit_list_size(ptile->units) == 0) {
     return NULL;
   }
 
@@ -481,7 +481,7 @@ void blink_active_unit(void)
     if (!multi_select_blink) {
       refresh_tile_mapcanvas(punit_focus->tile, MUT_NORMAL);
     } else {
-      unit_list_iterate(*multi_select_get_units_focus(), punit) {
+      unit_list_iterate(multi_select_get_units_focus(), punit) {
 	if (multi_select_blink_all
 	    || punit == punit_focus
 	    || unit_satisfies_filter(punit, multi_select_inclusive_filter,
@@ -577,22 +577,20 @@ void process_caravan_arrival(struct unit *punit)
     return;
   }
 
-  static struct genlist arrival_queue;
-  static bool is_init_arrival_queue = FALSE;
+  static genlist *arrival_queue = NULL;
   int *p_id;
 
   /* arrival_queue is a list of individually malloc-ed ints with
      punit.id values, for units which have arrived. */
 
-  if (!is_init_arrival_queue) {
-    genlist_init(&arrival_queue);
-    is_init_arrival_queue = TRUE;
+  if (!arrival_queue) {
+    arrival_queue = genlist_new();
   }
 
   if (punit) {
     p_id = fc_malloc(sizeof(int));
     *p_id = punit->id;
-    genlist_insert(&arrival_queue, p_id, -1);
+    genlist_insert(arrival_queue, p_id, -1);
   }
 
   /* There can only be one dialog at a time: */
@@ -600,11 +598,11 @@ void process_caravan_arrival(struct unit *punit)
     return;
   }
   
-  while (genlist_size(&arrival_queue) > 0) {
+  while (genlist_size(arrival_queue) > 0) {
     int id;
     
-    p_id = genlist_get(&arrival_queue, 0);
-    genlist_unlink(&arrival_queue, p_id);
+    p_id = genlist_get(arrival_queue, 0);
+    genlist_unlink(arrival_queue, p_id);
     id = *p_id;
     free(p_id);
     p_id = NULL;
@@ -644,23 +642,21 @@ void process_caravan_arrival(struct unit *punit)
 **************************************************************************/
 void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 {
-  static struct genlist arrival_queue;
-  static bool is_init_arrival_queue = FALSE;
+  static genlist *arrival_queue = NULL;
   int *p_ids;
 
   /* arrival_queue is a list of individually malloc-ed int[2]s with
      punit.id and pcity.id values, for units which have arrived. */
 
-  if (!is_init_arrival_queue) {
-    genlist_init(&arrival_queue);
-    is_init_arrival_queue = TRUE;
+  if (!arrival_queue) {
+    arrival_queue = genlist_new();
   }
 
   if (pdiplomat && victim_id != 0) {
     p_ids = fc_malloc(2 * sizeof(int));
     p_ids[0] = pdiplomat->id;
     p_ids[1] = victim_id;
-    genlist_insert(&arrival_queue, p_ids, -1);
+    genlist_insert(arrival_queue, p_ids, -1);
   }
 
   /* There can only be one dialog at a time: */
@@ -668,14 +664,14 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
     return;
   }
 
-  while (genlist_size(&arrival_queue) > 0) {
+  while (genlist_size(arrival_queue) > 0) {
     int diplomat_id, victim_id;
     struct city *pcity;
     struct unit *punit;
     bool dipl_unit_ok, dipl_city_ok;
 
-    p_ids = genlist_get(&arrival_queue, 0);
-    genlist_unlink(&arrival_queue, p_ids);
+    p_ids = genlist_get(arrival_queue, 0);
+    genlist_unlink(arrival_queue, p_ids);
     diplomat_id = p_ids[0];
     victim_id = p_ids[1];
     free(p_ids);
@@ -1703,7 +1699,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 		     unit_type(punit)->sound_move_alt);
   }
 
-  unit_list_unlink(&ptile->units, punit);
+  unit_list_unlink(ptile->units, punit);
 
   if (game.player_idx == punit->owner
       && auto_center_on_unit
@@ -1745,7 +1741,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
   refresh_tile_mapcanvas(ptile, MUT_NORMAL);
   punit->tile = target_unit->tile;
 
-  unit_list_insert(&punit->tile->units, punit);
+  unit_list_prepend(punit->tile->units, punit);
 
   if (punit_focus == punit) {
     update_menus();
@@ -2039,13 +2035,13 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   else if (pcity && can_player_see_city_internals(game.player_ptr, pcity)) {
     popup_city_dialog(pcity, FALSE);
   }
-  else if (unit_list_size(&ptile->units) == 0 && !pcity
+  else if (unit_list_size(ptile->units) == 0 && !pcity
            && punit_focus) {
     maybe_goto = keyboardless_goto;
   }
-  else if (unit_list_size(&ptile->units) == 1
-      && !unit_list_get(&ptile->units, 0)->occupy) {
-    struct unit *punit = unit_list_get(&ptile->units, 0);
+  else if (unit_list_size(ptile->units) == 1
+      && !unit_list_get(ptile->units, 0)->occupy) {
+    struct unit *punit = unit_list_get(ptile->units, 0);
     if (game.player_idx == punit->owner) {
       if(can_unit_do_activity(punit, ACTIVITY_IDLE)) {
         maybe_goto = keyboardless_goto;
@@ -2056,7 +2052,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       popup_unit_select_dialog(ptile);
     }
   }
-  else if (unit_list_size(&ptile->units) > 0) {
+  else if (unit_list_size(ptile->units) > 0) {
     /* The stack list is always popped up, even if it includes enemy units.
      * If the server doesn't want the player to know about them it shouldn't
      * tell him!  The previous behavior would only pop up the stack if you
@@ -2080,7 +2076,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 static struct unit *quickselect(struct tile *ptile,
                           enum quickselect_type qtype)
 {
-  int listsize = unit_list_size(&ptile->units);
+  int listsize = unit_list_size(ptile->units);
   struct unit *panytransporter = NULL,
               *panymovesea  = NULL, *panysea  = NULL,
               *panymoveland = NULL, *panyland = NULL,
@@ -2091,7 +2087,7 @@ static struct unit *quickselect(struct tile *ptile,
   if (listsize == 0) {
     return NULL;
   } else if (listsize == 1) {
-    struct unit *punit = unit_list_get(&ptile->units, 0);
+    struct unit *punit = unit_list_get(ptile->units, 0);
     return (game.player_idx == punit->owner) ? punit : NULL;
   }
 
@@ -2542,7 +2538,7 @@ void key_unit_unload_all(void)
   bool cond = multi_select_size(0) > 1;
 
   plast = NULL;
-  unit_list_iterate(*multi_select_get_units_focus(), punit) {
+  unit_list_iterate(multi_select_get_units_focus(), punit) {
     if ((cond && !unit_satisfies_filter(punit,
 					multi_select_inclusive_filter,
 					multi_select_exclusive_filter))

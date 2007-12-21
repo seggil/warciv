@@ -81,7 +81,6 @@ enum auth_status {
 struct connection;
 #define SPECLIST_TAG conn
 #define SPECLIST_TYPE struct connection
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define conn_list_iterate(connlist, pconn) \
@@ -156,7 +155,7 @@ struct connection {
 
   double ping_time;
   
-  struct conn_list self;     /* list with this connection as single element */
+  struct conn_list *self;     /* list with this connection as single element */
   char username[MAX_LEN_NAME];
   char addr[MAX_LEN_ADDR];
 
@@ -179,7 +178,7 @@ struct connection {
    */
   bool delayed_disconnect;
 
-  void (*notify_of_writable_data) (struct connection * pc,
+  void (*notify_of_writable_data) (struct connection *pc,
 				   bool data_available_and_socket_full);
 
   struct {

@@ -49,19 +49,17 @@
     TYPED_LIST_ITERATE(struct Treaty, list, p)
 #define treaty_list_iterate_end  LIST_ITERATE_END
 
-static struct treaty_list treaties;
-static bool treaties_initialized = FALSE;
+static struct treaty_list *treaties = NULL;
 
 /**************************************************************************
 ...
 **************************************************************************/
 void diplhand_init(void)
 {
-  if (treaties_initialized) {
+  if (treaties != NULL) {
     diplhand_free();
   }
-  treaty_list_init(&treaties);
-  treaties_initialized = TRUE;
+  treaties = treaty_list_new();
 }
 
 /**************************************************************************
@@ -69,7 +67,6 @@ void diplhand_init(void)
 **************************************************************************/
 void diplhand_free(void)
 {
-  free_treaties();
 }
 
 /**************************************************************************
@@ -77,19 +74,17 @@ void diplhand_free(void)
 **************************************************************************/
 void free_treaties(void)
 {
-  if (!treaties_initialized) {
+  if (!treaties) {
     return;
   }
 
   /* Free memory allocated for treaties */
   treaty_list_iterate(treaties, pt) {
-    clear_treaty(pt);
-    free(pt);
+    treaty_free(pt);
   } treaty_list_iterate_end;
 
-  treaty_list_unlink_all(&treaties);
-
-  treaties_initialized = FALSE;
+  treaty_list_free(treaties);
+  treaties = NULL;
 }
 
 /**************************************************************************
@@ -246,20 +241,20 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 
   *player_accept = ! *player_accept;
 
-  dlsend_packet_diplomacy_accept_treaty(&pplayer->connections,
+  dlsend_packet_diplomacy_accept_treaty(pplayer->connections,
 					pother->player_no, *player_accept,
 					*other_accept);
-  dlsend_packet_diplomacy_accept_treaty(&pother->connections,
+  dlsend_packet_diplomacy_accept_treaty(pother->connections,
 					pplayer->player_no, *other_accept,
 					*player_accept);
 
   if (ptreaty->accept0 && ptreaty->accept1) {
-    int nclauses = clause_list_size(&ptreaty->clauses);
+    int nclauses = clause_list_size(ptreaty->clauses);
 
-    dlsend_packet_diplomacy_cancel_meeting(&pplayer->connections,
+    dlsend_packet_diplomacy_cancel_meeting(pplayer->connections,
 					   pother->player_no,
 					   pplayer->player_no);
-    dlsend_packet_diplomacy_cancel_meeting(&pother->connections,
+    dlsend_packet_diplomacy_cancel_meeting(pother->connections,
 					   pplayer->player_no,
  					   pplayer->player_no);
 
@@ -529,9 +524,8 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 
     } clause_list_iterate_end;
   cleanup:
-    treaty_list_unlink(&treaties, ptreaty);
-    clear_treaty(ptreaty);
-    free(ptreaty);
+    treaty_list_unlink(treaties, ptreaty);
+    treaty_free(ptreaty);
     send_player_info(pplayer, NULL);
     send_player_info(pother, NULL);
   }
@@ -574,10 +568,10 @@ void handle_diplomacy_remove_clause_req(struct player *pplayer,
   ptreaty = find_treaty(pplayer, pother);
 
   if (ptreaty && remove_clause(ptreaty, pgiver, type, value)) {
-    dlsend_packet_diplomacy_remove_clause(&pplayer->connections,
+    dlsend_packet_diplomacy_remove_clause(pplayer->connections,
 					  pother->player_no, giver, type,
 					  value);
-    dlsend_packet_diplomacy_remove_clause(&pother->connections,
+    dlsend_packet_diplomacy_remove_clause(pother->connections,
 					  pplayer->player_no, giver, type,
 					  value);
     if (pplayer->ai.control) {
@@ -629,10 +623,10 @@ void handle_diplomacy_create_clause_req(struct player *pplayer,
 	give_citymap_from_player_to_player(pcity, pplayer, pother);
     }
 
-    dlsend_packet_diplomacy_create_clause(&pplayer->connections,
+    dlsend_packet_diplomacy_create_clause(pplayer->connections,
 					  pother->player_no, giver, type,
 					  value);
-    dlsend_packet_diplomacy_create_clause(&pother->connections,
+    dlsend_packet_diplomacy_create_clause(pother->connections,
 					  pplayer->player_no, giver, type,
 					  value);
     if (pplayer->ai.control) {
@@ -653,20 +647,19 @@ static void really_diplomacy_cancel_meeting(struct player *pplayer,
   struct Treaty *ptreaty = find_treaty(pplayer, pother);
 
   if (ptreaty) {
-    dlsend_packet_diplomacy_cancel_meeting(&pother->connections,
+    dlsend_packet_diplomacy_cancel_meeting(pother->connections,
 					   pplayer->player_no,
 					   pplayer->player_no);
     notify_player(pother, _("Game: %s canceled the meeting!"), 
 		  pplayer->name);
     /* Need to send to pplayer too, for multi-connects: */
-    dlsend_packet_diplomacy_cancel_meeting(&pplayer->connections,
+    dlsend_packet_diplomacy_cancel_meeting(pplayer->connections,
 					   pother->player_no,
 					   pplayer->player_no);
     notify_player(pplayer, _("Game: Meeting with %s canceled."), 
 		  pother->name);
-    treaty_list_unlink(&treaties, ptreaty);
-    clear_treaty(ptreaty);
-    free(ptreaty);
+    treaty_list_unlink(treaties, ptreaty);
+    treaty_free(ptreaty);
   }
 }
 
@@ -707,16 +700,14 @@ void handle_diplomacy_init_meeting_req(struct player *pplayer,
   }
 
   if (could_meet_with_player(pplayer, pother)) {
-    struct Treaty *ptreaty;
+    struct Treaty *ptreaty = treaty_new(pplayer, pother);
 
-    ptreaty = fc_malloc(sizeof(struct Treaty));
-    init_treaty(ptreaty, pplayer, pother);
-    treaty_list_insert(&treaties, ptreaty);
+    treaty_list_prepend(treaties, ptreaty);
 
-    dlsend_packet_diplomacy_init_meeting(&pplayer->connections,
+    dlsend_packet_diplomacy_init_meeting(pplayer->connections,
 					 pother->player_no,
 					 pplayer->player_no);
-    dlsend_packet_diplomacy_init_meeting(&pother->connections,
+    dlsend_packet_diplomacy_init_meeting(pother->connections,
 					 pplayer->player_no,
 					 pplayer->player_no);
   }
@@ -766,29 +757,38 @@ void cancel_all_meetings(struct player *pplayer)
 **************************************************************************/
 void cancel_diplomacy(struct player *pplayer)
 {
-  notify_player(pplayer, _("Game: You have got %d/%d alliances. Cancelling all other diplomacy..."),
-  	player_allies_count(pplayer), game.maxallies);
+  notify_player(pplayer, _("Game: You have got %d/%d alliances. "
+			   "Cancelling all other diplomacy..."),
+  	        player_allies_count(pplayer), game.maxallies);
+
   players_iterate(pplayer2) {
-    if(pplayers_allied(pplayer, pplayer2))
+    if (pplayers_allied(pplayer, pplayer2)) {
       continue;
-    if(find_treaty(pplayer, pplayer2))
+    }
+
+    if (find_treaty(pplayer, pplayer2)) {
       really_diplomacy_cancel_meeting(pplayer, pplayer2);
+    }
+
     bool message = FALSE;
-    if(gives_shared_vision(pplayer, pplayer2)) {
+
+    if (gives_shared_vision(pplayer, pplayer2)) {
       remove_shared_vision(pplayer, pplayer2);
       message = TRUE;
     }
-    if(gives_shared_vision(pplayer2, pplayer)) {
+    if (gives_shared_vision(pplayer2, pplayer)) {
       remove_shared_vision(pplayer2, pplayer);
       message = TRUE;
     }
-    if(pplayer_get_diplstate(pplayer, pplayer2)->type != DS_NO_CONTACT && pplayer_get_diplstate(pplayer, pplayer2)->type != DS_WAR) {
+    if (pplayer_get_diplstate(pplayer, pplayer2)->type != DS_NO_CONTACT
+        && pplayer_get_diplstate(pplayer, pplayer2)->type != DS_WAR) {
       pplayer->diplstates[pplayer2->player_no].type = DS_WAR;
       pplayer2->diplstates[pplayer->player_no].type = DS_WAR;
       message = TRUE;
     }
-    if(message) {
-      notify_player(pplayer2, _("Game: %s has got %d/%d alliances. All diplomacy canceled."),
+    if (message) {
+      notify_player(pplayer2, _("Game: %s has got %d/%d alliances. "
+				"All diplomacy cancelled."),
       	pplayer->name, player_allies_count(pplayer), game.maxallies);
       send_player_info(pplayer2, NULL);
     }

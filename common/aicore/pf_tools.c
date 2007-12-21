@@ -162,7 +162,7 @@ static int diplomat_move_unit(const struct tile *ptile, enum direction8 dir,
     if (ground_unit_transporter_capacity(ptile1, param->owner) > 0
         || (!is_ocean(ptile->terrain)
             && is_non_allied_unit_tile(ptile1, param->owner)
-            && (unit_list_size(&ptile1->units) == 1
+            && (unit_list_size(ptile1->units) == 1
                 || game.stackbribing))) {
       move_cost = SINGLE_MOVE;
     } else {

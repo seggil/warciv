@@ -162,7 +162,7 @@ enum choice_type { CT_NONE = 0, CT_BUILDING = 0, CT_NONMIL, CT_ATTACKER,
         assert(type >= 0 && type < CT_LAST /* && type != CT_NONE */ );
 
 #include "genlist.h"
-struct trade_route_list {struct genlist list;};
+struct trade_route_list;
 
 struct ai_choice {
   int choice;            /* what the advisor wants */
@@ -236,7 +236,7 @@ struct city {
 
   /* trade routes */
   int trade[NUM_TRADEROUTES], trade_value[NUM_TRADEROUTES];
-  struct trade_route_list trade_routes;
+  struct trade_route_list *trade_routes;
 
   /* the productions */
   int food_prod, food_surplus;
@@ -266,7 +266,7 @@ struct city {
 
   enum city_tile_type city_map[CITY_MAP_SIZE][CITY_MAP_SIZE];
 
-  struct unit_list units_supported;
+  struct unit_list *units_supported;
 
   struct {
     /* Only used at the client (the serer is omniscient). */
@@ -319,8 +319,8 @@ struct city {
   struct tile *rally_point;
 
   /* info for dipl/spy investigation -- used only in client */
-  struct unit_list info_units_supported;
-  struct unit_list info_units_present;
+  struct unit_list *info_units_supported;
+  struct unit_list *info_units_present;
 
   struct ai_city ai;
   bool debug;
@@ -336,7 +336,6 @@ struct trade_route {
 
 #define SPECLIST_TAG trade_route
 #define SPECLIST_TYPE struct trade_route
-#define SPECLIST_NO_DEFINE
 #include "speclist.h"
 #define trade_route_list_iterate(alist,pitem) \
     TYPED_LIST_ITERATE(struct trade_route,alist,pitem)

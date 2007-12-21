@@ -92,7 +92,7 @@ static bool is_ignored(struct connection *pconn, struct connection *dest)
   if (pconn == dest || pconn == NULL || dest == NULL)
     return FALSE;
 
-  ignore_list_iterate(*dest->server.ignore_list, cp) {
+  ignore_list_iterate(dest->server.ignore_list, cp) {
     if (conn_pattern_match(cp, pconn)) {
       return TRUE;
     }
@@ -335,9 +335,9 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
         return;
       }
       if (pdest && match_result_player < M_PRE_AMBIGUOUS) {
-	int nconn = conn_list_size(&pdest->connections);
+	int nconn = conn_list_size(pdest->connections);
 	if (nconn==1) {
-	  chat_msg_to_conn(pconn, conn_list_get(&pdest->connections, 0), cp+1);
+	  chat_msg_to_conn(pconn, conn_list_get(pdest->connections, 0), cp+1);
 	  return;
 	} else if (nconn>1) {
 	  chat_msg_to_player_multi(pconn, pdest, cp+1);

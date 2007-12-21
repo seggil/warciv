@@ -125,7 +125,6 @@ struct specfile;
 
 #define SPECLIST_TAG specfile
 #define SPECLIST_TYPE struct specfile
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define specfile_list_iterate(list, pitem) \
@@ -135,15 +134,14 @@ struct specfile;
 struct small_sprite;
 #define SPECLIST_TAG small_sprite
 #define SPECLIST_TYPE struct small_sprite
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 
 #define small_sprite_list_iterate(list, pitem) \
     TYPED_LIST_ITERATE(struct small_sprite, list, pitem)
 #define small_sprite_list_iterate_end  LIST_ITERATE_END
 
-static struct specfile_list specfiles;
-static struct small_sprite_list small_sprites;
+static struct specfile_list *specfiles;
+static struct small_sprite_list *small_sprites;
 
 struct specfile {
   struct Sprite *big_sprite;
@@ -658,7 +656,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
       ss->sf = sf;
       ss->sprite = NULL;
 
-      small_sprite_list_insert(&small_sprites, ss);
+      small_sprite_list_prepend(small_sprites, ss);
 
       if (!duplicates_ok) {
         for (k = 0; k < num_tags; k++) {
@@ -696,7 +694,7 @@ static void scan_specfile(struct specfile *sf, bool duplicates_ok)
     ss->sf = NULL;
     ss->sprite = NULL;
 
-    small_sprite_list_insert(&small_sprites, ss);
+    small_sprite_list_prepend(small_sprites, ss);
 
     if (!duplicates_ok) {
       for (k = 0; k < num_tags; k++) {
@@ -1048,8 +1046,8 @@ bool tilespec_read_toplevel(const char *tileset_name)
   }
 
   sprite_hash = hash_new(hash_fval_string, hash_fcmp_string);
-  specfile_list_init(&specfiles);
-  small_sprite_list_init(&small_sprites);
+  specfiles = specfile_list_new();
+  small_sprites = small_sprite_list_new();
   for (i = 0; i < num_spec_files; i++) {
     struct specfile *sf = fc_malloc(sizeof(*sf));
 
@@ -1059,7 +1057,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
     sf->file_name = mystrdup(datafilename_required(spec_filenames[i]));
     scan_specfile(sf, duplicates_ok);
 
-    specfile_list_insert(&specfiles, sf);
+    specfile_list_prepend(specfiles, sf);
   }
   free(spec_filenames);
 
@@ -2820,7 +2818,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
   }
 
   if (do_draw_unit) {
-    bool stacked = ptile && (unit_list_size(&ptile->units) > 1);
+    bool stacked = ptile && (unit_list_size(ptile->units) > 1);
     bool backdrop = !pcity;
 
     sprs += fill_unit_sprite_array(sprs, punit, stacked, backdrop);
@@ -3126,16 +3124,15 @@ void tilespec_free_tiles(void)
   sprite_hash = NULL;
 
   small_sprite_list_iterate(small_sprites, ss) {
-    small_sprite_list_unlink(&small_sprites, ss);
     if (ss->file) {
       free(ss->file);
     }
     assert(ss->sprite == NULL);
     free(ss);
   } small_sprite_list_iterate_end;
+  small_sprite_list_free(small_sprites);
 
   specfile_list_iterate(specfiles, sf) {
-    specfile_list_unlink(&specfiles, sf);
     free(sf->file_name);
     if (sf->big_sprite) {
       free_sprite(sf->big_sprite);
@@ -3143,6 +3140,7 @@ void tilespec_free_tiles(void)
     }
     free(sf);
   } specfile_list_iterate_end;
+  specfile_list_free(specfiles);
 
   if (num_tiles_explode_unit > 0) {
     free(sprites.explode.unit);

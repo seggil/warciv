@@ -72,7 +72,7 @@ static struct {
       int wait_at_network, wait_at_network_requests;
     } stats;
   } entries[MAX_AGENTS];
-  struct call_list calls;
+  struct call_list *calls;
 } agents;
 
 static bool initialized = FALSE;
@@ -152,7 +152,7 @@ static void enqueue_call(struct my_agent *agent,
     }
   } call_list_iterate_end;
 
-  call_list_insert(&agents.calls, pcall2);
+  call_list_prepend(agents.calls, pcall2);
 
   if (DEBUG_TODO_LISTS) {
     freelog(LOG_NORMAL, "A: adding call");
@@ -164,12 +164,10 @@ static void enqueue_call(struct my_agent *agent,
 /***********************************************************************
  Helper.
 ***********************************************************************/
-static int my_call_sort(const void *a, const void *b)
+static int my_call_sort(const struct call * const *ppa,
+			const struct call * const *ppb)
 {
-  const struct call *c1 = (const struct call *) *(const void **) a;
-  const struct call *c2 = (const struct call *) *(const void **) b;
-
-  return c1->agent->agent.level - c2->agent->agent.level;
+  return (*ppa)->agent->agent.level - (*ppb)->agent->agent.level;
 }
 
 /***********************************************************************
@@ -180,15 +178,15 @@ static struct call *remove_and_return_a_call(void)
 {
   struct call *result;
 
-  if (call_list_size(&agents.calls) == 0) {
+  if (call_list_size(agents.calls) == 0) {
     return NULL;
   }
 
   /* get calls to agents with low levels first */
-  call_list_sort(&agents.calls, my_call_sort);
+  call_list_sort(agents.calls, my_call_sort);
 
-  result = call_list_get(&agents.calls, 0);
-  call_list_unlink(&agents.calls, result);
+  result = call_list_get(agents.calls, 0);
+  call_list_unlink(agents.calls, result);
 
   if (DEBUG_TODO_LISTS) {
     freelog(LOG_NORMAL, "A: removed call");
@@ -341,7 +339,7 @@ static void print_stats(struct my_agent *agent)
 void agents_init(void)
 {
   agents.entries_used = 0;
-  call_list_init(&agents.calls);
+  agents.calls = call_list_new();
 
   /* Add init calls of agents here */
   cma_init();
@@ -810,7 +808,7 @@ bool agents_busy(void)
 {
   int i;
 
-  if (!initialized || call_list_size(&agents.calls) > 0 || frozen_level > 0
+  if (!initialized || call_list_size(agents.calls) > 0 || frozen_level > 0
       || currently_running) {
     return TRUE;
   }

@@ -47,7 +47,6 @@ enum new_unit_action {
 
 #define SPECLIST_TAG tile
 #define SPECLIST_TYPE struct tile
-#define SPECLIST_NO_COPY
 #include "speclist.h"
 #define tile_list_iterate(alist, pitem) \
   TYPED_LIST_ITERATE(struct tile, alist, pitem)
