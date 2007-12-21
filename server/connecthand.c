@@ -391,7 +391,7 @@ void establish_new_connection(struct connection *pconn)
   if ((pplayer = find_player_by_user(pconn->username))) {
     attach_connection_to_player(pconn, pplayer);
 
-    if(server_state == SELECT_RACES_STATE) {
+    if (server_state == SELECT_RACES_STATE) {
       send_packet_freeze_hint(pconn);
       send_rulesets(dest);		
       send_player_info(NULL, NULL);
@@ -399,7 +399,7 @@ void establish_new_connection(struct connection *pconn)
       if(pplayer->nation == NO_NATION_SELECTED) {
         send_select_nation(pplayer);
       }
-    } else if (server_state == RUN_GAME_STATE) {
+    } else if (server_state >= RUN_GAME_STATE) {
       /* Player and other info is only updated when the game is running.
        * See the comment in lost_connection_to_client(). */
       send_packet_freeze_hint(pconn);
@@ -457,7 +457,7 @@ void establish_new_connection(struct connection *pconn)
   }
 
   /* if the game is running, players can just view the Players menu? --dwp */
-  if (server_state != RUN_GAME_STATE) {
+  if (server_state <= RUN_GAME_STATE || !pconn->player) {
     show_players(pconn);
   }
 
