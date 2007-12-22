@@ -1740,9 +1740,9 @@ void refresh_tile_mapcanvas(struct tile *ptile, enum map_update_type type)
       canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
       update_map_canvas(canvas_x, canvas_y,
 			UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT, type);
-      overview_update_tile(ptile);
       update_queue_remove_tile(ptile);
     }
+    overview_update_tile(ptile);
   }
 }
 
@@ -2347,6 +2347,7 @@ static void redraw_overview(void)
 static void dirty_overview(void)
 {
   overview_dirty = TRUE;
+  queue_flush();
 }
 
 /****************************************************************************

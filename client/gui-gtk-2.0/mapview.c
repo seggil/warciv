@@ -546,7 +546,7 @@ static gboolean unqueue_flush(gpointer data)
   to be handled later by GTK.  The flush may end up being done
   by freeciv before then, in which case it will be a wasted call.
 **************************************************************************/
-static void queue_flush(void)
+void queue_flush(void)
 {
   if (!is_flush_queued) {
     freelog(LOG_UPDATE_QUEUE, "queue_flush");

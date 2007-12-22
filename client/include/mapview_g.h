@@ -68,6 +68,7 @@ void dirty_rect(int canvas_x, int canvas_y,
 void dirty_all(void);
 void flush_dirty(void);
 void gui_flush(void);
+void queue_flush(void);
 
 void update_queue_add_tile(struct tile *ptile);
 void update_queue_remove_tile(struct tile *ptile);
