@@ -14,9 +14,13 @@
 #include <config.h>
 #endif
 
-#include "game.h"
+#include "fcintl.h"
 #include "log.h"
+
+#include "game.h"
 #include "map.h"
+
+#include "plrhand.h"
 
 #include "mapgen_topology.h"
 
@@ -258,13 +262,13 @@ void generator_init_topology(bool autosize)
 
     assert(TF_WRAPX == 0x1 && TF_WRAPY == 0x2);
 
-    if(map.autosize) {
+    if (map.autosize) {
       req_size = (double)(game.nplayers * map.autosize) / (10 * map.landpercent);
       if(req_size < 0.6)
         req_size = 0.6;
       map.size = req_size;
     }
-    if(map.generator == 4 || map.generator == 5) {
+    if (map.generator == 4 || map.generator == 5) {
       set_sizes(req_size, 2, 1);
     } else {
     /* Set map.xsize and map.ysize based on map.size. */
@@ -273,17 +277,27 @@ void generator_init_topology(bool autosize)
   }
 
   /* adjust landmass? */
-  if(map.autosize) {
+  if (map.autosize) {
+    int old_landmass = map.landpercent;
+
     req_size = (double)(map.xsize * map.ysize) / (100 * game.nplayers);
-    while(map.landpercent > MAP_MIN_LANDMASS && abs(map.autosize - req_size * map.landpercent)
-    	> abs(map.autosize - (double)req_size * (map.landpercent - 1))) {
+    while (map.landpercent > MAP_MIN_LANDMASS
+	   && abs(map.autosize - req_size * map.landpercent)
+    	      > abs(map.autosize - (double)req_size * (map.landpercent - 1))) {
     	map.landpercent--;
     } 
-    while(map.landpercent < MAP_MAX_LANDMASS && abs(map.autosize - req_size * map.landpercent)
-    	> abs(map.autosize - (double)req_size * (map.landpercent + 1))) {
+    while(map.landpercent < MAP_MAX_LANDMASS
+	  && abs(map.autosize - req_size * map.landpercent)
+    	     > abs(map.autosize - (double)req_size * (map.landpercent + 1))) {
     	map.landpercent++;
     }
-    freelog(LOG_VERBOSE, "landmass changed for %d", map.landpercent);
+    if (map.landpercent != old_landmass) {
+      freelog(LOG_VERBOSE, "landmass ajdusted from %d to %d",
+	      old_landmass, map.landpercent);
+      /* TRANS: don't translate "landmass" */
+      notify_conn(NULL, _("landmass has been adjusted from %d to %d"),
+		  old_landmass, map.landpercent);
+    }
   }
 
   /* initialize the ICE_BASE_LEVEL */
