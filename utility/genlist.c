@@ -269,15 +269,13 @@ void genlist_sort(genlist *pgenlist, int (*compar)(const void *, const void *))
     return;
   }
 
-  myiter = find_genlist_position(pgenlist, 0);  
-  for (i = 0; i < n; i++, genlist_link_get_next(myiter)) {
+  for (i = 0, myiter = pgenlist->head_link; i < n; i++, myiter = myiter->next) {
     sortbuf[i] = genlist_link_get_data(myiter);
   }
   
   qsort(sortbuf, n, sizeof(*sortbuf), compar);
   
-  myiter = find_genlist_position(pgenlist, 0);  
-  for(i = 0; i < n; i++, genlist_link_get_next(myiter)) {
+  for (i = 0, myiter = pgenlist->head_link; i < n; i++, myiter = myiter->next) {
     myiter->dataptr = sortbuf[i];
   }
 }
