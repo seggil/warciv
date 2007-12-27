@@ -104,7 +104,8 @@ static bool is_ignored(struct connection *pconn, struct connection *dest)
   Send private message to single connection.
 **************************************************************************/
 static void chat_msg_to_conn(struct connection *sender,
-			     struct connection *dest, char *msg)
+			     struct connection *dest,
+                             const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], dest_name[MAX_LEN_CHAT_NAME];
   char message[MAX_LEN_MSG];
@@ -136,7 +137,8 @@ static void chat_msg_to_conn(struct connection *sender,
   Send private message to multi-connected player.
 **************************************************************************/
 static void chat_msg_to_player_multi(struct connection *sender,
-				     struct player *pdest, char *msg)
+				     struct player *pdest,
+                                     const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], message[MAX_LEN_MSG];
   struct connection *dest;

@@ -455,7 +455,7 @@ static int lookup_city_cost(struct section_file *file, const char *prefix,
 static char *lookup_string(struct section_file *file, const char *prefix,
 			   const char *suffix)
 {
-  char *sval;
+  const char *sval;
   
   sval = secfile_lookup_str_default(file, NULL, "%s.%s", prefix, suffix);
   if (sval) {

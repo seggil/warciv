@@ -289,7 +289,7 @@ struct vote_cast {
 struct voting {
   int caller_id;                      /* caller connection id */
   enum command_id command_id;
-  char command[MAX_LEN_CONSOLE_LINE]; /* [0] == \0 if none in action */
+  char cmdline[MAX_LEN_CONSOLE_LINE];
   int turn_count;                     /* Number of turns active. */
   struct vote_cast_list *votes_cast;
   int vote_no;                        /* place in the queue */
@@ -512,7 +512,7 @@ static struct voting *get_vote_by_caller(int caller_id)
   ...
 **************************************************************************/
 static struct voting *vote_new(struct connection *caller,
-                               const char *command,
+                               const char *allargs,
                                enum command_id command_id,
                                struct setting_value *sv)
 {
@@ -530,8 +530,11 @@ static struct voting *vote_new(struct connection *caller,
  /* Make a new vote */
   pvote = fc_malloc(sizeof(struct voting));
   pvote->caller_id = caller->id;
-  sz_strlcpy(pvote->command, command);
   pvote->command_id = command_id;
+  my_snprintf(pvote->cmdline, sizeof(pvote->cmdline), "%s%s%s",
+              commands[command_id].name,
+              allargs[0] == '\0' ? "" : " ",
+              allargs);
   pvote->turn_count = 0;
   pvote->votes_cast = vote_cast_list_new();
   pvote->vote_no = ++vote_number_sequence;
@@ -558,7 +561,7 @@ static struct voting *vote_new(struct connection *caller,
     /* Extra special kludge for the timeout setting.
      * NB If this is changed, do not forget to update
      * help texts. */
-    if (0 == strcmp(op->name, "timeout")
+    if (op->int_value == &game.timeout 
         && sv->int_value > *op->int_value) {
       pvote->flags |= VCF_FASTPASS;
       pvote->need_pc = 0.25;
@@ -697,12 +700,14 @@ static void check_vote(struct voting *pvote)
   if (passed) {
     notify_conn(NULL, _("Vote %d \"%s\" is passed %d to %d with "
                         "%d abstentions and %d who did not vote."),
-                pvote->vote_no, pvote->command, pvote->yes, pvote->no,
+                pvote->vote_no, pvote->cmdline,
+                pvote->yes, pvote->no,
                 pvote->abstain, num_voters - num_cast);
   } else {
     notify_conn(NULL, _("Vote %d \"%s\" failed with %d against, %d for, "
                         "%d abstentions and %d who did not vote."),
-                pvote->vote_no, pvote->command, pvote->no, pvote->yes,
+                pvote->vote_no, pvote->cmdline,
+                pvote->no, pvote->yes,
                 pvote->abstain, num_voters - num_cast);
   }
 
@@ -734,7 +739,7 @@ static void check_vote(struct voting *pvote)
   } vote_cast_list_iterate_end;
 
   if (passed) {
-    handle_stdin_input(NULL, pvote->command, FALSE);
+    handle_stdin_input(NULL, pvote->cmdline, FALSE);
   }
 
   remove_vote(pvote);
@@ -3600,7 +3605,7 @@ static bool vote_command(struct connection *caller, char *str,
       cmd_reply(CMD_VOTE, caller, C_COMMENT,
                 _("Vote %d \"%s\" (needs %0.0f%%%s%s%s): %d for, "
                   "%d against, and %d abstained out of %d players."),
-                pvote->vote_no, pvote->command,
+                pvote->vote_no, pvote->cmdline,
                 pvote->need_pc * 100 + 1,
                 pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
                 pvote->flags & VCF_NO_DISSENT ? _(" no dissent") : "",
@@ -3655,15 +3660,15 @@ static bool vote_command(struct connection *caller, char *str,
 
   if (i == VOTE_YES) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT, _("You voted for \"%s\""),
-              pvote->command);
+              pvote->cmdline);
     connection_vote(caller, pvote, VOTE_YES);
   } else if (strcmp(arg[0], "no") == 0) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT, _("You voted against \"%s\""),
-              pvote->command);
+              pvote->cmdline);
     connection_vote(caller, pvote, VOTE_NO);
   } else if (i == VOTE_ABSTAIN) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT,
-	      _("You abstained from voting on \"%s\""), pvote->command);
+	      _("You abstained from voting on \"%s\""), pvote->cmdline);
     connection_vote(caller, pvote, VOTE_ABSTAIN);
   } else {
     assert(0); /* Must never happen */
@@ -3744,16 +3749,16 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
   if (caller) {
     if (caller->id == pvote->caller_id) {
       notify_conn(NULL, _("Server: %s cancelled his vote \"%s\" (number %d)."),
-                  caller->username, pvote->command, pvote->vote_no);
+                  caller->username, pvote->cmdline, pvote->vote_no);
     } else {
       notify_conn(NULL, _("Server: %s cancelled the vote \"%s\" (number %d)."),
-                  caller->username, pvote->command, pvote->vote_no);
+                  caller->username, pvote->cmdline, pvote->vote_no);
     }
   } else {
     /* Server prompt */
     notify_conn(NULL,
                 _("Server: The vote \"%s\" (number %d) has been cancelled."),
-                pvote->command, pvote->vote_no);
+                pvote->cmdline, pvote->vote_no);
   }
   /* Make it after, prevent crashs about a free pointer (pvote). */
   remove_vote(pvote);
@@ -5632,11 +5637,14 @@ static bool quit_game(struct connection *caller, bool check)
 
   If check is TRUE, then do nothing, just check syntax.
 **************************************************************************/
-bool handle_stdin_input(struct connection *caller, char *str, bool check)
+bool handle_stdin_input(struct connection *caller,
+                        const char *str,
+                        bool check)
 {
-  char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE],
-      allargs[MAX_LEN_CONSOLE_LINE], full_command[MAX_LEN_CONSOLE_LINE],
-      *cptr_s, *cptr_d;
+  char command[MAX_LEN_CONSOLE_LINE], arg[MAX_LEN_CONSOLE_LINE];
+  char allargs[MAX_LEN_CONSOLE_LINE], full_command[MAX_LEN_CONSOLE_LINE];
+  const char *cptr_s;
+  char *cptr_d;
   int i;
   enum command_id cmd;
   enum cmdlevel_id level;
@@ -5732,7 +5740,7 @@ bool handle_stdin_input(struct connection *caller, char *str, bool check)
 
     /* Check if the vote command would succeed. */
     if (handle_stdin_input(caller, full_command, TRUE)
-        && (vote = vote_new(caller, full_command, cmd, &sv))) {
+        && (vote = vote_new(caller, allargs, cmd, &sv))) {
 
       notify_conn(NULL, _("New vote (number %d) by %s: %s%s%s "
                           "(needs %0.0f%%%s%s%s)."),

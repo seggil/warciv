@@ -457,7 +457,7 @@ int compare_strings_ptrs(const void *first, const void *second)
 /***************************************************************************
   Returns 's' incremented to first non-space character.
 ***************************************************************************/
-char *skip_leading_spaces(char *s)
+const char *skip_leading_spaces(const char *s)
 {
   assert(s!=NULL);
   while(*s != '\0' && my_isspace(*s)) {
@@ -472,7 +472,7 @@ char *skip_leading_spaces(char *s)
 ***************************************************************************/
 static void remove_leading_spaces(char *s)
 {
-  char *t;
+  const char *t;
   
   assert(s!=NULL);
   t = skip_leading_spaces(s);
@@ -838,7 +838,7 @@ static const char **get_data_dirs(int *num_dirs)
   do {
     int i;			/* strlen(tok), or -1 as flag */
 
-    tok = skip_leading_spaces(tok);
+    tok = (char *) skip_leading_spaces(tok);
     remove_trailing_spaces(tok);
     if (strcmp(tok, "/") != 0) {
       remove_trailing_char(tok, '/');

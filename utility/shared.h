@@ -202,7 +202,7 @@ const char *textyear(int year);
 int compare_strings(const void *first, const void *second);
 int compare_strings_ptrs(const void *first, const void *second);
 
-char *skip_leading_spaces(char *s);
+const char *skip_leading_spaces(const char *s);
 void remove_leading_trailing_spaces(char *s);
 void remove_trailing_spaces(char *s);
 int wordwrap_string(char *s, int len);
