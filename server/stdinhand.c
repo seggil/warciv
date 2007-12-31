@@ -5193,6 +5193,10 @@ static bool loadmap_command(struct connection *caller, char *str, bool check)
 
   reload_settings();
 
+  /* XXX Yet another hack... we need to restore game.ruleset_loaded
+   * since it was set to FALSE by game_init_settings(). */
+  game.ruleset_loaded = TRUE;
+
   sanity_check();
 
   notify_conn(NULL, _("Server: Map %s loaded: %s."),
@@ -5265,6 +5269,12 @@ static bool reset_command(struct connection *caller, bool check)
 
   if (check) {
     return TRUE;
+  }
+
+  if (!map_is_loaded()) {
+    /* Reset map related settings if we do not have a map loaded. */
+    game_free_map();
+    game_init_map();
   }
 
   reload_settings();
@@ -5515,6 +5525,10 @@ static bool loadscenario_command(struct connection *caller, char *str, bool chec
           read_timer_seconds_free(uloadtimer));
 
   reload_settings();
+
+  /* XXX Yet another hack... we need to restore game.ruleset_loaded
+   * since it was set to FALSE by game_init_settings(). */
+  game.ruleset_loaded = TRUE;
 
   sanity_check();
 

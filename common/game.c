@@ -215,7 +215,10 @@ void game_init_settings(void)
   game.teamplacementtype = GAME_DEFAULT_TEAMPLACEMENTTYPE;
   game.techleakagerate = GAME_DEFAULT_TECHLEAKAGERATE;
 
-  game.ruleset_loaded= FALSE;
+  /* XXX This is not a setting, but a flag used by ruleset
+   * loading/freeing code. :( */
+  game.ruleset_loaded = FALSE;
+
   game.gold          = GAME_DEFAULT_GOLD;
   game.tech          = GAME_DEFAULT_TECHLEVEL;
   game.skill_level   = GAME_DEFAULT_SKILL_LEVEL;

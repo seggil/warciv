@@ -1152,8 +1152,6 @@ static void load_building_names(struct section_file *file)
     improvement_types[i].name = improvement_types[i].name_orig;
   } impr_type_iterate_end;
 
-  ruleset_cache_init();
-
   free(sec);
 }
 
@@ -3234,6 +3232,9 @@ void load_rulesets(void)
 {
   struct section_file techfile, unitfile, buildfile, govfile, terrfile;
   struct section_file cityfile, nationfile;
+
+  ruleset_cache_free();
+  ruleset_cache_init();
 
   freelog(LOG_NORMAL, _("Loading rulesets"));
 
