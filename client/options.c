@@ -43,6 +43,7 @@
 /** Defaults for options normally on command line **/
 
 char default_user_name[512] = "\0";
+char default_password[512] = "\0";
 char default_user_nation[512] = "\0";
 char default_user_tech_goal[512] = "\0";
 char default_server_host[512] = "localhost";
@@ -89,6 +90,8 @@ bool update_city_text_in_refresh_tile = TRUE;
 static client_option common_options[] = {
   GEN_STR_OPTION(default_user_name,        N_("Default player's login name"),
 		 NULL, NULL), 
+  GEN_STR_OPTION(default_password, N_("Default password"),
+                 NULL, NULL),
   GEN_STR_OPTION(default_user_nation,        N_("Default player's nation"),
 		 NULL, NULL), 
   GEN_STR_OPTION(default_user_tech_goal,        N_("Default player's technology goal"),
@@ -465,10 +468,6 @@ void load_general_options(void)
     create_default_cma_presets();
     return;  
   }
-
-  /* a "secret" option for the lazy. TODO: make this saveable */
-  sz_strlcpy(password, 
-             secfile_lookup_str_default(&sf, "", "%s.password", prefix));
 
   for (i = 0; i < num_options; i++) {
     client_option *o = options + i;

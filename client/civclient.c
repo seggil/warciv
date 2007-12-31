@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
   int i, loglevel;
   int ui_options = 0;
   bool ui_separator = FALSE;
-  char *option=NULL;
+  char *option = NULL;
 
   /* Load win32 post-crash debugger */
 #ifdef WIN32_NATIVE
@@ -229,95 +229,106 @@ int main(int argc, char *argv[])
   audio_init();
 
   /* default argument values are set in options.c */
-  loglevel=LOG_NORMAL;
+  loglevel = LOG_NORMAL;
 
   i = 1;
 
   while (i < argc) {
-   if (ui_separator) {
-     argv[1 + ui_options] = argv[i];
-     ui_options++;
-   } else if (is_option("--help", argv[i])) {
-    fc_fprintf(stderr, _("Usage: %s [option ...]\n"
-		      "Valid options are:\n"), argv[0]);
-    fc_fprintf(stderr, _("  -a, --autoconnect\tSkip connect dialog\n"));
+    if (ui_separator) {
+      argv[1 + ui_options] = argv[i];
+      ui_options++;
+    } else if (is_option("--help", argv[i])) {
+      fc_fprintf(stderr, _("Usage: %s [option ...]\n"
+                           "Valid options are:\n"), argv[0]);
+      fc_fprintf(stderr, _("  -a, --autoconnect\tSkip connect dialog\n"));
 #ifdef DEBUG
-    fc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
-                                  " or 4:file1,min,max:...)\n"));
+      fc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
+                           " or 4:file1,min,max:...)\n"));
 #else
-    fc_fprintf(stderr,
-	       _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
+      fc_fprintf(stderr,
+                 _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
 #endif
-    fc_fprintf(stderr,
-	       _("  -h, --help\t\tPrint a summary of the options\n"));
-    fc_fprintf(stderr, _("  -l, --log FILE\tUse FILE as logfile "
-                      "(spawned server also uses this)\n"));
-    fc_fprintf(stderr, _("  -m, --meta HOST\t"
-		      "Connect to the metaserver at HOST\n"));
-    fc_fprintf(stderr, _("  -n, --name NAME\tUse NAME as name\n"));
-    fc_fprintf(stderr,
-	       _("  -p, --port PORT\tConnect to server port PORT\n"));
-    fc_fprintf(stderr,
-	       _("  -P, --Plugin PLUGIN\tUse PLUGIN for sound output %s\n"),
-	    audio_get_all_plugin_names());
-    fc_fprintf(stderr, _("  -r, --read FILE\tRead startup script FILE "
-                      "(for spawned server only)\n"));
-    fc_fprintf(stderr,
-	       _("  -s, --server HOST\tConnect to the server at HOST\n"));
-    fc_fprintf(stderr, _("  -S, --Sound FILE\tRead sound tags from FILE\n"));
-    fc_fprintf(stderr, _("  -t, --tiles FILE\t"
-		      "Use data file FILE.tilespec for tiles\n"));
-    fc_fprintf(stderr, _("  -v, --version\t\tPrint the version number\n"));
-    fc_fprintf(stderr, _("      --\t\t"
-		      "Pass any following options to the UI.\n"
-		      "\t\t\tTry \"%s -- --help\" for more.\n"), argv[0]);
-    exit(EXIT_SUCCESS);
-   } else if (is_option("--version",argv[i])) {
-    fc_fprintf(stderr, "%s %s "PEPCLIENT_VERSION"\n", freeciv_name_version(), client_string);
-    exit(EXIT_SUCCESS);
-   } else if ((option = get_option("--log",argv,&i,argc))) {
+      fc_fprintf(stderr,
+                 _("  -h, --help\t\tPrint a summary of the options\n"));
+      fc_fprintf(stderr,
+                 _("  -l, --log FILE\tUse FILE as logfile "
+                   "(spawned server also uses this)\n"));
+      fc_fprintf(stderr,
+                 _("  -m, --meta HOST\t"
+                   "Connect to the metaserver at HOST\n"));
+      fc_fprintf(stderr, _("  -n, --name NAME\tUse NAME as name\n"));
+      fc_fprintf(stderr,
+                 _("  -p, --port PORT\tConnect to server port PORT\n"));
+      fc_fprintf(stderr, _("  -P, --Plugin PLUGIN\tUse PLUGIN for sound "
+                           "output %s\n"),
+                 audio_get_all_plugin_names());
+      fc_fprintf(stderr,
+                 _("  -r, --read FILE\tRead startup script FILE "
+                   "(for spawned server only)\n"));
+      fc_fprintf(stderr,
+                 _("  -s, --server HOST\tConnect to the server at HOST\n"));
+      fc_fprintf(stderr,
+                 _("  -S, --Sound FILE\tRead sound tags from FILE\n"));
+      fc_fprintf(stderr,
+                 _("  -t, --tiles FILE\t"
+                   "Use data file FILE.tilespec for tiles\n"));
+      fc_fprintf(stderr,
+                 _("  -v, --version\t\tPrint the version number\n"));
+      fc_fprintf(stderr,
+                 _("  -w, --word PASS\tUse PASS as "
+                   "password\n"));
+      fc_fprintf(stderr,
+                 _("      --\t\t" "Pass any following options to the UI.\n"
+                   "\t\t\tTry \"%s -- --help\" for more.\n"), argv[0]);
+      exit(EXIT_SUCCESS);
+    } else if (is_option("--version", argv[i])) {
+      fc_fprintf(stderr, "%s %s " PEPCLIENT_VERSION "\n",
+                 freeciv_name_version(), client_string);
+      exit(EXIT_SUCCESS);
+    } else if ((option = get_option("--log", argv, &i, argc))) {
       logfile = mystrdup(option); /* never free()d */
-   } else  if ((option = get_option("--read", argv, &i, argc)))
-      scriptfile = mystrdup(option); /* never free()d */
-   else if ((option = get_option("--name",argv,&i,argc)))
+    } else if ((option = get_option("--read", argv, &i, argc))) {
+      scriptfile = mystrdup(option);  /* never free()d */
+    } else if ((option = get_option("--name", argv, &i, argc))) {
       sz_strlcpy(user_name, option);
-   else if ((option = get_option("--meta",argv,&i,argc)))
+    } else if ((option = get_option("--meta", argv, &i, argc))) {
       sz_strlcpy(metaserver, option);
-   else if ((option = get_option("--Sound", argv, &i, argc)))
+    } else if ((option = get_option("--Sound", argv, &i, argc))) {
       sz_strlcpy(sound_set_name, option);
-   else if ((option = get_option("--Plugin", argv, &i, argc)))
+    } else if ((option = get_option("--Plugin", argv, &i, argc))) {
       sz_strlcpy(sound_plugin_name, option);
-   else if ((option = get_option("--port",argv,&i,argc))) {
-     if(sscanf(option, "%d", &server_port) != 1) {
-       fc_fprintf(stderr,
-		  _("Invalid port \"%s\" specified with --port option.\n"),
-		  option);
-       fc_fprintf(stderr, _("Try using --help.\n"));
-        exit(EXIT_FAILURE);
-     }
-   } else if ((option = get_option("--server",argv,&i,argc)))
-      sz_strlcpy(server_host, option);
-   else if (is_option("--autoconnect",argv[i]))
-      auto_connect = TRUE;
-   else if ((option = get_option("--debug",argv,&i,argc))) {
-      loglevel=log_parse_level_str(option);
-      if (loglevel==-1) {
-	fc_fprintf(stderr,
-		   _("Invalid debug level \"%s\" specified with --debug "
-		     "option.\n"), option);
-	fc_fprintf(stderr, _("Try using --help.\n"));
+    } else if ((option = get_option("--port", argv, &i, argc))) {
+      if (sscanf(option, "%d", &server_port) != 1) {
+        fc_fprintf(stderr, _("Invalid port \"%s\" specified with "
+                             "--port option.\n"), option);
+        fc_fprintf(stderr, _("Try using --help.\n"));
         exit(EXIT_FAILURE);
       }
-   } else if ((option = get_option("--tiles", argv, &i, argc)))
+    } else if ((option = get_option("--server", argv, &i, argc))) {
+      sz_strlcpy(server_host, option);
+    } else if (is_option("--autoconnect", argv[i])) {
+      auto_connect = TRUE;
+    } else if ((option = get_option("--debug", argv, &i, argc))) {
+      loglevel = log_parse_level_str(option);
+      if (loglevel == -1) {
+        fc_fprintf(stderr,
+                   _("Invalid debug level \"%s\" specified with --debug "
+                     "option.\n"), option);
+        fc_fprintf(stderr, _("Try using --help.\n"));
+        exit(EXIT_FAILURE);
+      }
+    } else if ((option = get_option("--tiles", argv, &i, argc))) {
       sz_strlcpy(tileset_name, option);
-   else if (is_option("--", argv[i])) {
-     ui_separator = TRUE;
-   } else { 
+    } else if ((option = get_option("--word", argv, &i, argc))) {
+      sz_strlcpy(password, option);
+    } else if (is_option("--", argv[i])) {
+      ui_separator = TRUE;
+    } else {
       fc_fprintf(stderr, _("Unrecognized option: \"%s\"\n"), argv[i]);
       exit(EXIT_FAILURE);
-   }
-   i++;
-  } /* of while */
+    }
+    i++;
+  }                             /* of while */
 
   /* Remove all options except those intended for the UI. */
   argv[1 + ui_options] = NULL;
@@ -339,7 +350,7 @@ int main(int argc, char *argv[])
       sz_strlcpy(default_user_name, buf);
     } else {
       my_snprintf(default_user_name, sizeof(default_user_name),
-		  "player%d", myrand(10000));
+                  "player%d", myrand(10000));
     }
   }
 
@@ -354,7 +365,7 @@ int main(int argc, char *argv[])
   my_init_network();
   my_init_adns();
 
-  /* register exit handler */ 
+  /* register exit handler */
   atexit(at_exit);
 
   chatline_common_init();
@@ -368,17 +379,27 @@ int main(int argc, char *argv[])
   if (tileset_name[0] == '\0') {
     sz_strlcpy(tileset_name, default_tileset_name);
   }
-  if (sound_set_name[0] == '\0') 
-    sz_strlcpy(sound_set_name, default_sound_set_name); 
-  if (sound_plugin_name[0] == '\0')
-    sz_strlcpy(sound_plugin_name, default_sound_plugin_name); 
-  if (server_host[0] == '\0')
-    sz_strlcpy(server_host, default_server_host); 
-  if (user_name[0] == '\0')
-    sz_strlcpy(user_name, default_user_name); 
-  if (metaserver[0] == '\0')
-    sz_strlcpy(metaserver, default_metaserver); 
-  if (server_port == -1) server_port = default_server_port;
+  if (sound_set_name[0] == '\0') {
+    sz_strlcpy(sound_set_name, default_sound_set_name);
+  }
+  if (sound_plugin_name[0] == '\0') {
+    sz_strlcpy(sound_plugin_name, default_sound_plugin_name);
+  }
+  if (server_host[0] == '\0') {
+    sz_strlcpy(server_host, default_server_host);
+  }
+  if (user_name[0] == '\0') {
+    sz_strlcpy(user_name, default_user_name);
+  }
+  if (password[0] == '\0') {
+    sz_strlcpy(password, default_password);
+  }
+  if (metaserver[0] == '\0') {
+    sz_strlcpy(metaserver, default_metaserver);
+  }
+  if (server_port == -1) {
+    server_port = default_server_port;
+  }
 
 
   /* This seed is not saved anywhere; randoms in the client should
@@ -399,11 +420,10 @@ int main(int argc, char *argv[])
 
   /* termination */
   ui_exit();
-  
+
   /* not reached */
   return EXIT_SUCCESS;
 }
-
 /**************************************************************************
 ...
 **************************************************************************/

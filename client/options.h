@@ -17,6 +17,7 @@
 #include "shared.h"		/* bool type */
 
 extern char default_user_name[512];
+extern char default_password[512];
 extern char default_user_nation[512];
 extern char default_user_tech_goal[512];
 extern char default_server_host[512];
