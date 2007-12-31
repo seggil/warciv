@@ -1997,6 +1997,7 @@ void set_client_page(enum client_pages page)
   case PAGE_START:
     if (start_page_entry)
       gtk_widget_grab_focus(start_page_entry);
+    chatline_scroll_to_bottom();
     allied_chat_only = FALSE;
     break;
   case PAGE_NATION:
@@ -2010,6 +2011,7 @@ void set_client_page(enum client_pages page)
 			(scenario_selection));
     break;
   case PAGE_GAME:
+    chatline_scroll_to_bottom();
     clear_allied_chat_only();
     break;
   case PAGE_NETWORK:

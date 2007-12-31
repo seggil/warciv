@@ -85,5 +85,6 @@ void popup_chatline_config_dialog(void);
 
 void set_message_buffer_view_link_handlers(GtkTextView *view);
 void insert_chat_link(struct tile *ptile, bool unit);
+void chatline_scroll_to_bottom(void);
 
 #endif  /* FC__CHATLINE_H */

@@ -2670,3 +2670,24 @@ void popup_chatline_config_dialog(void)
   
   gtk_window_present(GTK_WINDOW(chatline_config_shell));
 }
+/**************************************************************************
+  ...
+**************************************************************************/
+void chatline_scroll_to_bottom(void)
+{
+  GtkTextIter end;
+
+  if (!message_buffer) {
+    return;
+  }
+  gtk_text_buffer_get_end_iter(message_buffer, &end);
+
+  if (main_message_area) {
+    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(main_message_area),
+                                 &end, 0.0, TRUE, 1.0, 0.0);
+  }
+  if (start_message_area) {
+    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(start_message_area),
+                                 &end, 0.0, TRUE, 1.0, 0.0);
+  }
+}
