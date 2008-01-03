@@ -40,8 +40,8 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 
 AM_MAINTAINER_MODE
 
-dnl checks for mysql, sets AUTH_LIBS, AUTH_CFLAGS
-FC_CHECK_AUTH
+dnl checks for mysql, sets MYSQL_LIBS, MYSQL_CFLAGS
+FC_CHECK_MYSQL
 
 dnl  no=do not compile server,  yes=compile server,  *=error
 AC_ARG_ENABLE(server,

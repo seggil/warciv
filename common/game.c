@@ -41,6 +41,27 @@
 void dealloc_id(int id);
 struct civ_game game;
 
+/* Must match enum game_outcomes in game.h */
+const char *game_outcome_strings[GOC_NUM_OUTCOMES] = {
+  "none",
+  "drawn by endyear",
+  "drawn by mutual destruction",
+  "ended by lone survival",
+  "ended by spaceship arrival",
+  "ended by vote",
+  "ended by team victory",
+  "ended by allied victory"
+};
+
+/* Must match enum game_types in game.h. */
+static const char *game_type_strings[GT_NUM_TYPES] = {
+  "ffa",
+  "team",
+  "duel",
+  "solo",
+  "mixed"
+};
+
 /*
 struct player_score {
   int happy;
@@ -214,6 +235,7 @@ void game_init_settings(void)
   game.trademindist = GAME_DEFAULT_TRADEMINDIST;
   game.teamplacementtype = GAME_DEFAULT_TEAMPLACEMENTTYPE;
   game.techleakagerate = GAME_DEFAULT_TECHLEAKAGERATE;
+  game.rated = GAME_DEFAULT_RATED;
 
   /* XXX This is not a setting, but a flag used by ruleset
    * loading/freeing code. :( */
@@ -388,6 +410,11 @@ void game_init_misc(void)
   /* Seems to be server only. */
   game.meta_info.user_message_set = FALSE;
   game.meta_info.user_message[0] = '\0';
+
+  game.fcdb.id = 0;
+  game.fcdb.outcome = GOC_NONE;
+  game.fcdb.type = GT_FFA;
+  game.fcdb.termap = NULL;
 }
 
 /***************************************************************
@@ -438,6 +465,11 @@ void game_free_misc(void)
 
   /* XXX Where is this init'd ? */
   ruleset_data_free();
+
+  if (game.fcdb.termap) {
+    free(game.fcdb.termap);
+    game.fcdb.termap = NULL;
+  }
 }
 /***************************************************************
   Frees all memory of the game.
@@ -741,3 +773,74 @@ const char *population_to_text(int thousand_citizen)
   return big_int_to_text(thousand_citizen, 3);
 }
 
+/****************************************************************************
+  ...
+****************************************************************************/
+int game_set_type(void)
+{
+  int ais = 0, players = 0;
+
+  players_iterate(pplayer) {
+    if (is_barbarian(pplayer) || pplayer->is_observer) {
+      continue;
+    }
+    if (!pplayer->is_connected
+        && pplayer->ai.control
+        && pplayer->was_created) {
+      ais++;
+    } else {
+      players++;
+    }
+  } players_iterate_end;
+
+  if (players == 1 && ais == 0) {
+    game.fcdb.type = GT_SOLO;
+
+  } else if (players == 2
+             && ais == 0
+             && (team_count() == 0
+                 || team_count() == 2)) {
+    game.fcdb.type = GT_DUEL;
+
+  } else if (players > 1
+             && team_count() > 1
+             && players > team_count()) {
+    game.fcdb.type = GT_TEAM;
+
+  } else if ((team_count() == 0
+              || team_count() == players)
+             && players > 1) {
+    game.fcdb.type = GT_FFA;
+
+  } else {
+    game.fcdb.type = GT_MIXED;
+  }
+
+  return game.fcdb.type;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+int game_get_type_from_string(const char *s)
+{
+  int i;
+
+  for (i = 0; i < GT_NUM_TYPES; i++) {
+    if (0 == mystrcasecmp(s, game_type_strings[i])) {
+      return i;
+    }
+  }
+  return GT_NUM_TYPES;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+const char *game_type_as_string(int type)
+{
+  if (!(0 <= type && type < GT_NUM_TYPES)) {
+    return NULL;
+  }
+  return game_type_strings[type];
+}

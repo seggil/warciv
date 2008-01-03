@@ -169,6 +169,7 @@ struct civ_game {
   int iterplacementcoefficient;
   int teamplacementtype;
   int techleakagerate;
+  bool rated;
   /*=========== WARSERVER settings END ================*/
   /* used in server only */
   bool ruleset_loaded;
@@ -278,7 +279,52 @@ struct civ_game {
     char user_message[256];
   } meta_info;
  
+  struct {
+    /* Used to avoid duplicating game end condition checks.
+       Takes values from GOC_* enum. */
+    int outcome;
+
+    int type;
+    int id;
+
+    char *termap;
+  } fcdb;
 };
+
+/* Different ways the game can end. */
+enum game_outcomes {
+  GOC_NONE = 0,
+  GOC_DRAWN_BY_ENDYEAR,
+  GOC_DRAWN_BY_MUTUAL_DESTRUCTION,
+  GOC_ENDED_BY_LONE_SURVIVAL,
+  GOC_ENDED_BY_SPACESHIP,
+  GOC_ENDED_BY_VOTE,
+  GOC_ENDED_BY_TEAM_VICTORY,
+  GOC_ENDED_BY_ALLIED_VICTORY,
+
+  GOC_NUM_OUTCOMES
+};
+
+extern const char *game_outcome_strings[GOC_NUM_OUTCOMES];
+
+/* Sets and returns the type of game (team, freeforall, duel, etc.)
+ * based on the current teams/players/ais. The game type can then
+ * also be read from the field 'game.fcdb.type'. */
+int game_set_type(void);
+
+enum game_types {
+  GT_FFA, /* i.e. free for all */
+  GT_TEAM,
+  GT_DUEL,
+  GT_SOLO,
+
+  GT_MIXED, /* everything else */
+
+  GT_NUM_TYPES
+};
+
+const char *game_type_as_string(int type);
+int game_get_type_from_string(const char *s);
 
 /* Unused? */
 struct lvldat {
@@ -332,6 +378,11 @@ const char *population_to_text(int thousand_citizen);
 extern struct civ_game game;
 extern bool is_server;
 
+/* NB: When changing defaults marked with "COMPAT", beware
+ * unintended side-effects due to compatibilty with
+ * non-warclients/servers. In most cases they should not
+ * be changed or strange things might happen. */
+
 #define GAME_DEFAULT_BRUTEFORCETHRESHOLD 20
 #define GAME_MIN_BRUTEFORCETHRESHOLD     0
 #define GAME_MAX_BRUTEFORCETHRESHOLD     MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
@@ -340,15 +391,15 @@ extern bool is_server;
 #define GAME_MIN_ITERPLACEMENTCOEFFICIENT     100
 #define GAME_MAX_ITERPLACEMENTCOEFFICIENT     5000
 
-#define GAME_DEFAULT_TRADEMINDIST 9
+#define GAME_DEFAULT_TRADEMINDIST 9 /* COMPAT */
 #define GAME_MIN_TRADEMINDIST     1
 #define GAME_MAX_TRADEMINDIST     999
 
-#define GAME_DEFAULT_CARAVANBONUSSTYLE 0
+#define GAME_DEFAULT_CARAVANBONUSSTYLE 0 /* COMPAT */
 #define GAME_MIN_CARAVANBONUSSTYLE     0
 #define GAME_MAX_CARAVANBONUSSTYLE     1
 
-#define GAME_DEFAULT_TRADEREVENUESTYLE 0
+#define GAME_DEFAULT_TRADEREVENUESTYLE 0 /* COMPAT */
 #define GAME_MIN_TRADEREVENUESTYLE     0
 #define GAME_MAX_TRADEREVENUESTYLE     2
 
@@ -356,7 +407,7 @@ extern bool is_server;
 #define GAME_MIN_TRADEREVENUEPCT     0
 #define GAME_MAX_TRADEREVENUEPCT     200
 
-#define GAME_DEFAULT_AIRLIFTINGSTYLE 0
+#define GAME_DEFAULT_AIRLIFTINGSTYLE 0 /* COMPAT */
 #define GAME_MIN_AIRLIFTINGSTYLE     0
 #define GAME_MAX_AIRLIFTINGSTYLE     3
 
@@ -380,19 +431,21 @@ extern bool is_server;
 #define GAME_MIN_TECHLEAKAGERATE     0
 #define GAME_MAX_TECHLEAKAGERATE     100
 
-#define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE
+#define GAME_DEFAULT_RATED TRUE
+
+#define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE
 #define GAME_DEFAULT_IMPROVEDAUTOATTACK FALSE
-#define GAME_DEFAULT_STACKBRIBING FALSE
-#define GAME_DEFAULT_GOLDTRADING TRUE
-#define GAME_DEFAULT_TECHTRADING TRUE
-#define GAME_DEFAULT_CITYTRADING TRUE
+#define GAME_DEFAULT_STACKBRIBING FALSE /* COMPAT */
+#define GAME_DEFAULT_GOLDTRADING TRUE /* COMPAT */
+#define GAME_DEFAULT_TECHTRADING TRUE /* COMPAT */
+#define GAME_DEFAULT_CITYTRADING TRUE /* COMPAT */
 #define GAME_DEFAULT_SLOWINVASIONS TRUE
 #define GAME_DEFAULT_TEAMPLACEMENT TRUE
-#define GAME_DEFAULT_GLOBALWARMINGON TRUE
-#define GAME_DEFAULT_NUCLEARWINTERON TRUE
+#define GAME_DEFAULT_GLOBALWARMINGON TRUE /* COMPAT */
+#define GAME_DEFAULT_NUCLEARWINTERON TRUE /* COMPAT */
 #define GAME_DEFAULT_KILLSTACK TRUE
-#define GAME_DEFAULT_FUTURETECHSSCORE TRUE
+#define GAME_DEFAULT_FUTURETECHSSCORE FALSE
 
 #define GAME_DEFAULT_SEED        0
 #define GAME_MIN_SEED            0
@@ -458,7 +511,7 @@ extern bool is_server;
 #define GAME_MIN_DIPLOMACY           0
 #define GAME_MAX_DIPLOMACY           4
 
-#define GAME_DEFAULT_MAXALLIES       0 // must be 0, for client compatibilty
+#define GAME_DEFAULT_MAXALLIES       0 /* COMPAT */
 #define GAME_MIN_MAXALLIES           0
 #define GAME_MAX_MAXALLIES           (MAX_NUM_PLAYERS - 1)
 
@@ -589,7 +642,7 @@ extern bool is_server;
 #define GAME_OLD_DEFAULT_SKILL_LEVEL 5  /* normal; for old save games */
 
 #define GAME_DEFAULT_DEMOGRAPHY      "NASRLPEMOqrb"
-#define GAME_DEFAULT_ALLOW_TAKE      "H1A1h1a1d3O3o3"
+#define GAME_DEFAULT_ALLOW_TAKE      "H1A1h1a1d3O3o3" /* COMPAT */
 
 #define GAME_DEFAULT_COMPRESS_LEVEL 6    /* if we have compression */
 #define GAME_MIN_COMPRESS_LEVEL     0

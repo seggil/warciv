@@ -48,11 +48,12 @@
 #include "support.h"
 #include "timing.h"
 #include "version.h"
-#include "auth.h"
+
 #include "citytools.h"
 #include "commands.h"
 #include "connecthand.h"
 #include "console.h"
+#include "database.h"
 #include "diplhand.h"
 #include "gamehand.h"
 #include "gamelog.h"
@@ -64,11 +65,14 @@
 #include "ruleset.h"
 #include "sanitycheck.h"
 #include "savegame.h"
+#include "score.h"
 #include "sernet.h"
 #include "settings.h"
 #include "srv_main.h"
+
 #include "advmilitary.h"	/* assess_danger_player() */
 #include "ailog.h"
+
 #include "stdinhand.h"
 /* Import */
 #include "stdinhand_info.h"
@@ -135,7 +139,7 @@ static char *two_team_suggestions[][2] =
         { "LILLIPUT", "BLEFUSCU" },
         { "HALF_FULL", "HALF_EMPTY" },
         { "SHEEP", "WOLVES" },
-        { "BIG_ENDIAN", "LITLE_ENDIAN" },
+        { "BIG_ENDIAN", "LITTLE_ENDIAN" },
         { "FANATICS", "HERETICS" },
         { "TITANS", "OLYMPIANS" },
         { "BOURGEOISIE", "PROLETARIAT" },
@@ -1608,20 +1612,6 @@ static bool show_serverid(struct connection *caller, char *arg)
               srvarg.serverid);
   return TRUE;
 }
-/***************************************************************
- This could be in common/player if the client ever gets
- told the ai player skill levels.
-***************************************************************/
-const char *name_of_skill_level(int level)
-{
-    const char *nm[11] =
-        { "UNUSED", "away", "novice", "easy",
-			 "UNKNOWN", "normal", "UNKNOWN", "hard",
-          "UNKNOWN", "UNKNOWN", "experimental"
-        };
-  assert(level>0 && level<=10);
-  return nm[level];
-}
 
 /***************************************************************
 ...
@@ -2419,167 +2409,245 @@ static char **create_team_names(int n)
     }
     return p;
 }
+
+#ifdef HAVE_MYSQL
+/**************************************************************************
+  ...
+**************************************************************************/
+static int autoteam_rated_player_cmp(const void *va, const void *vb)
+{
+  const struct player *a, *b;
+  a = *(const struct player **) va;
+  b = *(const struct player **) vb;
+
+  return b->fcdb.rating - a->fcdb.rating;
+}
+#endif
+
 /**************************************************************************
   ...
 **************************************************************************/
 static bool autoteam_command(struct connection *caller, char *str,
                              bool check)
 {
-    char *p, *q, buf[1024], **team_names = NULL;
-    int n, i, no, t;
-    enum m_pre_result result;
-    struct player *pplayer;
-    struct player *player_ordering[MAX_NUM_PLAYERS];
-    bool player_ordered[MAX_NUM_PLAYERS];
-    if (server_state != PRE_GAME_STATE || !game.is_new_game)
-    {
-        cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-                  _("Cannot change teams once game has begun."));
-        return FALSE;
+  char *p, *q, buf[1024], **team_names = NULL;
+  int n, i, num, t, step;
+  struct player *player_ordering[MAX_NUM_PLAYERS];
+  bool player_ordered[MAX_NUM_PLAYERS];
+  enum m_pre_result result;
+  int ntokens;
+  char *args[3];
+
+  if (server_state != PRE_GAME_STATE || !game.is_new_game) {
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+              _("Cannot change teams once game has begun."));
+    return FALSE;
+  }
+
+  ntokens = get_tokens_full(str, args, 3, TOKEN_DELIMITERS, TRUE);
+
+  if (ntokens < 1) {
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+              _("Missing number argument. See /help autoteam."));
+    free_tokens(args, ntokens);
+    return FALSE;
+  }
+
+  for (p = args[0]; *p; p++) {
+    if (!my_isdigit(*p)) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+                _("The first argument must be an non-negative "
+                  "integer."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+  }
+
+  n = atoi(args[0]);
+  if (n < 0 || n > game.nplayers) {
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+              _("Invalid number argument. See /help autoteam."));
+    free_tokens(args, ntokens);
+    return FALSE;
+  }
+
+  if (n == 0) {
+    if (!check) {
+      team_clear_teams();
+      notify_conn(NULL, _("Server: Teams cleared."));
+    }
+    free_tokens(args, ntokens);
+    return TRUE;
+  }
+
+  memset(player_ordered, 0, sizeof(player_ordered));
+  num = 0;
+
+  if (ntokens == 1 || (ntokens == 2 && 0 == strcmp(args[1], "rating"))) {
+#ifdef HAVE_MYSQL
+    if (!srvarg.fcdb.enabled) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
+                _("Database support is not enabled."));
+      free_tokens(args, ntokens);
+      return FALSE;
     }
 
-    p = str;
-    while (*p && my_isspace(*p))
-        p++;
-    for (q = buf; *p; )
-    {
-        if (my_isspace(*p))
-        {
-            break;
-        }
-        if (!my_isdigit(*p))
-        {
-            cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-                      _("The first argument must be an integer."));
-            return FALSE;
-        }
-        *q++ = *p++;
+    if (check) {
+      free_tokens(args, ntokens);
+      return TRUE;
     }
-    *q++ = 0;
 
-    if (!*p && !*buf)
-    {
-        cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-                  _("Missing number argument. See /help autoteam."));
-        return FALSE;
+    if (!fcdb_load_player_ratings(GT_TEAM)) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
+          _("There was an error loading ratings from the database."));
+      free_tokens(args, ntokens);
+      return FALSE;
     }
-    n = atoi(buf);
-    if (n < 0 || n > game.nplayers)
-    {
-        cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-                  _("Invalid number argument. See /help autoteam."));
-        return FALSE;
-    }
-    memset(player_ordered, 0, sizeof(player_ordered));
-    for (i = 0, no = 0; n > 0 && *p && i < MAX_NUM_PLAYERS; i++)
-    {
-        while (*p && my_isspace(*p))
-            p++;
-        for (q = buf; *p && *p != ';';)
-            *q++ = *p++;
-        if (*p == ';')
-            p++;
-        *q++ = 0;
-        if (!*buf)
-            break;
-        pplayer = find_player_by_name_prefix(buf, &result);
-        if (!pplayer)
-        {
-            cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
-                      _("There is no player corresponding to \"%s\"."),
-                      buf);
-            return FALSE;
-        }
-        assert(0 <= pplayer->player_no);
-        assert(pplayer->player_no < MAX_NUM_PLAYERS);
-        if (player_ordered[pplayer->player_no])
-        {
-            cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
-                      _("%s is in the list more than once!"),
-                      pplayer->username);
-            return FALSE;
-        }
-        if (pplayer->is_observer)
-        {
-            cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
-                      _("You may not assign observers to a team (%s)."),
-                      pplayer->username);
-            return FALSE;
-        }
 
-        player_ordering[i] = pplayer;
-        player_ordered[pplayer->player_no] = TRUE;
-        no++;
-    }
-    
-    if (check)
-        return TRUE;
-
-    /* check other players */
-    t = 0;
     players_iterate(pplayer) {
+      if (pplayer->fcdb.rating <= 0.0) {
+        continue;
+      }
+      player_ordering[num++] = pplayer;
+      player_ordered[pplayer->player_no] = TRUE;
+    } players_iterate_end;
+
+    qsort(player_ordering, num, sizeof(struct player *),
+          autoteam_rated_player_cmp);
+
+#ifdef DEBUG
+    freelog(LOG_DEBUG, "autoteam by rating, ordering after sort:");
+    for (i = 0; i < num; i++) {
+      freelog(LOG_DEBUG, "  %d: %p %s %f", i, player_ordering[i],
+              player_ordering[i]->name, player_ordering[i]->fcdb.rating);
+    }
+#endif
+    
+#else
+    cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
+              _("Database support is not enabled."));
+    free_tokens(args, ntokens);
+    return FALSE;
+
+#endif /* HAVE_MYSQL */
+
+  } else if (ntokens >= 2 && 0 == strcmp(args[1], "list")) {
+
+    if (ntokens <= 2) {
+      cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+                _("Missing the ordered list of players."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+
+    p = args[2];
+    num = 0;
+    for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+      struct player *pplayer;
+
+      while (*p && my_isspace(*p)) {
+        p++;
+      }
+      for (q = buf; *p && *p != ';';) {
+        *q++ = *p++;
+      }
+      if (*p == ';') {
+        p++;
+      }
+      *q++ = 0;
+      if (!*buf) {
+        break;
+      }
+
+      pplayer = find_player_by_name_prefix(buf, &result);
+      if (!pplayer) {
+        cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
+                  _("There is no player corresponding to \"%s\"."), buf);
+        free_tokens(args, ntokens);
+        return FALSE;
+      }
+
       assert(0 <= pplayer->player_no);
       assert(pplayer->player_no < MAX_NUM_PLAYERS);
-  
-      if (!player_ordered[pplayer->player_no]) {
-        t++;
+
+      if (player_ordered[pplayer->player_no]) {
+        cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
+                  _("%s is in the list more than once!"), pplayer->username);
+        free_tokens(args, ntokens);
+        return FALSE;
       }
-    }  players_iterate_end;
-  
-    /* assign them in a random order */
-    if (!myrand_is_init()) {
-      mysrand(time(NULL));
-    }
-  
-    for (; t > 0; t--) {
-      i = myrand(t);
-      players_iterate(pplayer) {
-        if (player_ordered[pplayer->player_no]) {
-          continue;
-        }
-        
-        if (i == 0) {
-          player_ordering[no] = pplayer;
-          player_ordered[pplayer->player_no] = TRUE;
-          no++;
-          break;
-        } else {
-          i--;
-        }
-      } players_iterate_end;
+      if (pplayer->is_observer) {
+        cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
+                  _("You may not assign observers to a team (%s)."),
+                  pplayer->username);
+        free_tokens(args, ntokens);
+        return FALSE;
+      }
+
+      player_ordering[i] = pplayer;
+      player_ordered[pplayer->player_no] = TRUE;
+      num++;
     }
 
-    /* make teams, using ABCCBAABC... order */
-    if (n > 0)
-    {
-        notify_conn(game.est_connections,
-                    _("Server: Assigning all players to %d teams."), n);
-        team_names = create_team_names(n);
+    if (check) {
+      free_tokens(args, ntokens);
+      return TRUE;
     }
-    for (i = 0, t = 0; i < no; i++)
-    {
-        team_remove_player(player_ordering[i]);
-        if (n > 0)
-        {
-            team_add_player(player_ordering[i], team_names[t]);
-            t = (t + 1) % n;
-        }
+  }
+
+  free_tokens(args, ntokens);
+
+  /* Assign the remaining unordered players to the ordering,
+   * essentially randomly (since they will have connected in
+   * a random order already). */
+  players_iterate(pplayer) {
+    if (pplayer->is_observer
+        || is_barbarian(pplayer)
+        || player_ordered[pplayer->player_no]) {
+      continue;
     }
-    if (n > 0)
-    {
-        free_team_names(team_names, n);
-        show_teams(caller, TRUE);
+    player_ordering[num++] = pplayer;
+    player_ordered[pplayer->player_no] = TRUE;
+  } players_iterate_end;
+
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "autoteam player ordering:");
+  for (i = 0; i < num; i++) {
+    freelog(LOG_DEBUG, "  %d: %p %s", i, player_ordering[i],
+            player_ordering[i]->name);
+  }
+#endif
+
+  notify_conn(NULL, _("Server: Assigning all players to %d teams."), n);
+  team_names = create_team_names(n);
+
+  for (i = 0, t = 0, step = 1; i < num; i++) {
+    team_remove_player(player_ordering[i]);
+    team_add_player(player_ordering[i], team_names[t]);
+
+    /* Do the "ABBAABB...", "ABCCBAABCCBA...", etc. assignment. */
+    t = t + step;
+    if (step == 1) {
+      if (t == n) {
+        step = -1;
+        t = n - 1;
+      }
+    } else { /* step == -1 */
+      if (t < 0) {
+        step = 1;
+        t = 0;
+      }
     }
-    else
-    {
-        notify_conn(game.est_connections,
-                    _("Server: Teams cleared."));
-    }
-    return TRUE;
+  }
+
+  free_team_names(team_names, n);
+  show_teams(caller, TRUE);
+
+  return TRUE;
 }
 
 /**************************************************************************
-  ...
+ ...
 **************************************************************************/
 bool conn_is_muted(struct connection *pconn)
 {
@@ -2724,6 +2792,122 @@ static bool mute_command(struct connection *caller, char *str, bool check)
   } conn_list_iterate_end;
   
   return TRUE;
+}
+
+/* To allow compililation without mysql and debugging enabled. */
+#ifdef HAVE_MYSQL
+/**************************************************************************
+  ...
+**************************************************************************/
+static void mkstatdate(time_t t, char *buf, int len)
+{
+  struct tm tm;
+  localtime_r(&t, &tm);
+  strftime(buf, len, "%F %T", &tm);
+}
+#endif /* HAVE_MYSQL */
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool stats_command(struct connection *caller,
+                          char *allargs,           
+                          bool check)
+{
+#ifdef HAVE_MYSQL
+  char username[MAX_LEN_NAME + 64], buf[256];
+  struct fcdb_user_stats *fus;
+  struct game_type_stats *gts;
+  int i, recent[5], num_recent = ARRAY_SIZE(recent);
+
+  if (!srvarg.fcdb.enabled) {
+    cmd_reply(CMD_STATS, caller, C_FAIL,
+              _("Database communication has been disabled."));
+    return FALSE;
+  }
+
+  sz_strlcpy(username, allargs);
+  remove_leading_trailing_spaces(username);
+
+  if (username[0] == '\0') {
+    if (caller == NULL) {
+      /* Server operator is not a user. */
+      cmd_reply(CMD_STATS, caller, C_FAIL,
+                _("You are not a user, you are the server operator!"));
+      return FALSE;
+    }
+    sz_strlcpy(username, caller->username);
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (!(fus = fcdb_user_stats_new(username))
+      || !fcdb_get_recent_games(username, recent, &num_recent)) {
+    cmd_reply(CMD_STATS, caller, C_FAIL,
+              _("There was an error communicating with the database."));
+    return FALSE;
+  }
+
+  if (fus->id <= 0) {
+    cmd_reply(CMD_STATS, caller, C_FAIL,
+              _("No user named '%s' in the database."), username);
+    fcdb_user_stats_free(fus);
+    return FALSE;
+  }
+
+  cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_STATS, caller, C_COMMENT, _("Statistics for %s"),
+            fus->username);
+  cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
+  if (fus->email[0] != '\0') {
+    cmd_reply(CMD_STATS, caller, C_COMMENT, _("  Email: %s"),
+              fus->email);
+  }
+  
+  cmd_reply(CMD_STATS, caller, C_COMMENT,
+            _("  User Id: %-24d Login Count: %d"),
+            fus->id, fus->logincount);
+  mkstatdate(fus->createtime, buf, sizeof(buf));
+  cmd_reply(CMD_STATS, caller, C_COMMENT, _("  Created: %-24s From: %s"),
+            buf, fus->createaddress);
+  mkstatdate(fus->accesstime, buf, sizeof(buf));
+  cmd_reply(CMD_STATS, caller, C_COMMENT, _("  Last Login: %-21s From: %s"),
+            buf, fus->address);
+  cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
+
+  if (fus->num_game_types > 0) {
+    cmd_reply(CMD_STATS, caller, C_COMMENT,
+              "%-10s %5s %6s %6s %13s %10s %8s",
+              _("Game Type"), _("Wins"), _("Loses"), _("Draws"),
+              _("Total Played"), _("Rating"), _("RD"));
+    for (i = 0; i < fus->num_game_types; i++) {
+      gts = &fus->gt_stats[i];
+      cmd_reply(CMD_STATS, caller, C_COMMENT,
+                "%-10s %5d %6d %6d %13d %10.2f %8.2f",
+                gts->type, gts->wins, gts->loses, gts->draws,
+                gts->count, gts->rating, gts->rating_deviation);
+    }
+    cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
+  }
+  fcdb_user_stats_free(fus);
+
+  if (num_recent > 0) {
+    my_snprintf(buf, sizeof(buf), _("Recent rated games:"));
+    for (i = 0; i < num_recent; i++) {
+      cat_snprintf(buf, sizeof(buf), "  %d", recent[i]);
+    }
+    cmd_reply(CMD_STATS, caller, C_COMMENT, "%s", buf);
+  }
+
+  return TRUE;
+
+#else
+  cmd_reply(CMD_STATS, caller, C_GENFAIL,
+            _("Database support not enabled for this server."));
+  return FALSE;
+#endif /* HAVE_MYSQL */
 }
 /**************************************************************************
   Set timeout options.
@@ -4077,6 +4261,20 @@ static bool set_command(struct connection *caller,
   do_update = FALSE;
   buffer[0] = '\0';
 
+  /* Prevent shenanigans with the 'rated'
+   * setting in running SOLO games. */
+  if (server_state == RUN_GAME_STATE
+      && op->bool_value == &game.rated
+      && game.fcdb.type == GT_SOLO
+      && (game.turn >= srvarg.fcdb.min_rated_turns
+          || (game.rated == FALSE
+              && sv->bool_value == TRUE))) {
+    cmd_reply(CMD_SET, caller, C_REJECTED,
+              _("Because this is a SOLO game, this setting may "
+                "no longer be changed."));
+    return FALSE;
+  }
+
   if (map_is_loaded() && op->category == SSET_GEOLOGY) {
     cmd_reply(CMD_SET, caller, C_BOUNCE, _("A fixed Map is loaded, "
               "geological settings can't be modified.\n"
@@ -4854,11 +5052,625 @@ static void send_load_game_info(bool load_successful)
   }
   lsend_packet_game_load(game.est_connections, &packet);
 }
-#ifdef HAVE_AUTH
+
+#ifdef HAVE_MYSQL /* See note for mkstatdate. */
+/**************************************************************************
+  ...
+**************************************************************************/
+static int parse_game_type(int cmd_id,
+                           struct connection *caller,
+                           const char *arg)
+{
+  char buf[128];
+  int type = GT_NUM_TYPES;
+
+  sz_strlcpy(buf, arg);
+  remove_leading_trailing_spaces(buf);
+  if (buf[0] != '\0') {
+    type = game_get_type_from_string(buf);
+    if (type == GT_NUM_TYPES) {
+      cmd_reply(cmd_id, caller, C_SYNTAX,
+                _("Unrecognized game type."));
+      buf[0] = '\0';
+      for (type = 0; type < GT_NUM_TYPES; type++) {
+        cat_snprintf(buf, sizeof(buf), " %s", game_type_as_string(type));
+      }
+      cmd_reply(cmd_id, caller, C_COMMENT,
+                _("The valid game types are:%s"), buf);
+      return -1;
+    }
+  }
+  return type;
+}
+#endif /* HAVE_MYSQL */
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool ratings_command(struct connection *caller,
+                            char *arg,
+                            bool check)
+{
+#ifdef HAVE_MYSQL
+  char buf[128];
+  int i, type = GT_NUM_TYPES;
+  double rating, rd;
+
+  if (!srvarg.fcdb.enabled) {
+    cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
+        _("This server does not have database support enabled."));
+    return FALSE;
+  }
+
+  if (game.nplayers <= 0) {
+    cmd_reply(CMD_RATINGS, caller, C_FAIL,
+        _("There are no players in the game."));
+    return FALSE;
+  }
+
+  if ((type = parse_game_type(CMD_RATINGS, caller, arg)) == -1) {
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (type == GT_NUM_TYPES) {
+    if (server_state == PRE_GAME_STATE) {
+      /* Refresh the game type since teams/players/ais may have changed. */
+      game_set_type();
+    }
+    type = game.fcdb.type;
+  }
+
+  sz_strlcpy(buf, game_type_as_string(type));
+  for (i = 0; buf[i] != '\0'; i++) {
+    buf[i] = my_toupper(buf[i]);
+  }
+
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, _("%s Ratings"), buf);
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, "%-20s %-20s %10s %10s",
+            _("Player"), _("Username"), _("Rating"), _("RD"));
+
+  players_iterate(pplayer) {
+    if (pplayer->is_observer || is_barbarian(pplayer)) {
+      continue;
+    }
+    rating = rd = 0.0;
+    if (pplayer->fcdb.rated_user_name[0] != '\0') {
+      if (!fcdb_get_user_rating(pplayer->fcdb.rated_user_name,
+                                type, &rating, &rd)) {
+        cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
+            _("An error occurred while reading from the database."));
+        return FALSE;
+      }
+    } else if (pplayer->username[0] != '\0'
+               && 0 != strcmp(pplayer->username, ANON_USER_NAME)) {
+      if (!fcdb_get_user_rating(pplayer->username, type,
+                                &rating, &rd)) {
+        cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
+            _("An error occurred while reading from the database."));
+        return FALSE;
+      }
+    } else {
+      /* Assume it is an AI... */
+      score_get_ai_rating(pplayer->ai.skill_level, type,
+                          &rating, &rd);
+    }
+
+    player_get_rated_username(pplayer, buf, sizeof(buf));
+
+    if (rating > 0.0) {
+      cmd_reply(CMD_RATINGS, caller, C_COMMENT,
+                "%-20s %-20s %10.2f %10.2f",
+                pplayer->name, buf, rating, rd);
+    } else {
+      cmd_reply(CMD_RATINGS, caller, C_COMMENT,
+                "%-20s %-20s %10s %10s",
+                pplayer->name, buf, _("<unrated>"), _("<unrated>"));
+    }
+  } players_iterate_end;
+
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
+
+  return TRUE;
+
+#endif
+  cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
+            _("This server does not have database support enabled."));
+  return FALSE;
+}
+
+/* To allow compililation without mysql and debugging enabled. */
+#ifdef HAVE_MYSQL
+/**************************************************************************
+  ...
+**************************************************************************/
+static void format_time_duration(time_t t, char *buf, int maxlen)
+{
+  int seconds, minutes, hours, days;
+  bool space = FALSE;
+
+  seconds = t % 60;
+  minutes = (t / 60) % 60;
+  hours = (t / (60 * 60)) % 24;
+  days = t / (60 * 60 * 24);
+
+  if (maxlen <= 0) {
+    return;
+  }
+
+  buf[0] = '\0';
+
+  if (days > 0) {
+    cat_snprintf(buf, maxlen, "%d %s",
+                 days, PL_("day", "days", days));
+    space = TRUE;
+  }
+  if (hours > 0) {
+    cat_snprintf(buf, maxlen, "%s%d %s",
+                 space ? " " : "",
+                 hours, PL_("hour", "hours", hours));
+    space = TRUE;
+  }
+  if (minutes > 0) {
+    cat_snprintf(buf, maxlen, "%s%d %s",
+                 space ? " " : "",
+                 minutes, PL_("minute", "minutes", minutes));
+    space = TRUE;
+  }
+  if (seconds > 0) {
+    cat_snprintf(buf, maxlen, "%s%d %s",
+                 space ? " " : "",
+                 seconds, PL_("second", "seconds", seconds));
+  }
+}
+#endif /* HAVE_MYSQL */
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool examine_command(struct connection *caller,
+                            char *arg,
+                            bool check)
+{
+#ifdef HAVE_MYSQL
+  int id, i;
+  char buf[256];
+  struct fcdb_game_info *fgi;
+  struct fcdb_player_in_game_info *fpi;
+  struct fcdb_team_in_game_info *fti;
+
+  if (!srvarg.fcdb.enabled) {
+    cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
+        _("This server does not have database support enabled."));
+    return FALSE;
+  }
+
+  sz_strlcpy(buf, arg);
+  remove_leading_trailing_spaces(buf);
+  id = atoi(buf);
+
+  if (id <= 0) {
+    cmd_reply(CMD_EXAMINE, caller, C_SYNTAX,
+              _("The game number must be a positive integer."));
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (!(fgi = fcdb_game_info_new(id))) {
+    cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
+        _("There was an error reading from the database."));
+    return FALSE;
+  }
+
+  if (fgi->id <= 0) {
+    cmd_reply(CMD_EXAMINE, caller, C_FAIL,
+              _("No such game: %d."), id);
+    fcdb_game_info_free(fgi);
+    return FALSE;
+  }
+
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+            _("Information For Game #%d"), fgi->id);
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+            _("  Host: %-16s Port: %d"),
+            fgi->host, fgi->port);
+
+  mkstatdate(fgi->created, buf, sizeof(buf));
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+            _("  Created: %s"), buf);
+
+  format_time_duration(fgi->duration, buf, sizeof(buf));
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+            _("  Duration: %s"), buf);
+
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+            _("  Type: %-8s Turns: %-8d Outcome: %s"),
+            fgi->type, fgi->num_turns, fgi->outcome);
+
+  if (fgi->num_teams > 0) {
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+              _("  Teams (%d):"), fgi->num_teams);
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+              "    %-16s %7s %s",
+              _("Name"), _("Rank"), _("Result"));
+    for (i = 0; i < fgi->num_teams; i++) {
+      fti = &fgi->teams[i];
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+                "    %-16s %7.1f %s",
+                fti->name, fti->rank + 1.0, fti->result);
+    }
+  }
+
+  if (fgi->num_players > 0) {
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+              _("  Players (%d):"), fgi->num_players);
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+              "    %-14s %-14s %-14s %-14s %7s %s",
+              _("Name"), _("User"), _("Nation"), _("Team"),
+              _("Rank"), _("Result"));
+    for (i = 0; i < fgi->num_players; i++) {
+      fpi = &fgi->players[i];
+      if (fpi->team_name == NULL
+          || fpi->team_name[0] == '\0') {
+        my_snprintf(buf, sizeof(buf), "<none>");
+      } else {
+        sz_strlcpy(buf, fpi->team_name);
+      }
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+                "    %-14s %-14s %-14s %-14s %7.1f %6s",
+                fpi->name, fpi->user, fpi->nation, buf,
+                fpi->rank + 1.0, fpi->result);
+    }
+  }
+
+
+  fcdb_game_info_free(fgi);
+  return TRUE;
+
+#endif
+  cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
+            _("This server does not have database support enabled."));
+  return FALSE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool topten_command(struct connection *caller,
+                           char *arg,
+                           bool check)
+{
+#ifdef HAVE_MYSQL
+  int type = GT_NUM_TYPES;
+  struct fcdb_topten_info *ftti = NULL;
+  struct fcdb_topten_info_entry *tte = NULL;
+  char buf[64];
+  int i;
+
+  if (!srvarg.fcdb.enabled) {
+    cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
+        _("This server does not have database support enabled."));
+    return FALSE;
+  }
+
+  if ((type = parse_game_type(CMD_TOPTEN, caller, arg)) == -1) {
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (type == GT_NUM_TYPES) {
+    if (server_state == PRE_GAME_STATE) {
+      /* Refresh the game type since teams/players/ais may have changed. */
+      game_set_type();
+    }
+    type = game.fcdb.type;
+  }
+
+  if (!(ftti = fcdb_topten_info_new(type))) {
+    cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
+        _("There was an error reading from the database."));
+    return FALSE;
+  }
+
+  sz_strlcpy(buf, game_type_as_string(type));
+  for (i = 0; buf[i] != '\0'; i++) {
+    buf[i] = my_toupper(buf[i]);
+  }
+
+  if (ftti->count <= 0) {
+    cmd_reply(CMD_TOPTEN, caller, C_FAIL,
+              _("There are no rated players for the %s game type."),
+              buf);
+    fcdb_topten_info_free(ftti);
+    return TRUE;
+  }
+
+  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, _("Top %s Players"), buf);
+  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, "%4s %-16s %10s %8s   %s",
+            _("Rank"), _("User"), _("Rating"), _("RD"),
+            _("Wins/Loses/Draws"));
+  for (i = 0; i < ftti->count; i++) {
+    tte = &ftti->entries[i];
+    my_snprintf(buf, sizeof(buf), "%d/%d/%d",
+                tte->wins, tte->loses, tte->draws);
+    cmd_reply(CMD_TOPTEN, caller, C_COMMENT, "%-4d %-16s %10.2f %8.2f   %s",
+              i+1, tte->user, tte->rating, tte->rd, buf);
+  }
+  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
+
+  fcdb_topten_info_free(ftti);
+
+  return TRUE;
+#endif
+  cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
+            _("This server does not have database support enabled."));
+  return FALSE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool gamelist_command(struct connection *caller,
+                             char *arg,
+                             bool check)
+{
+#ifdef HAVE_MYSQL
+  struct fcdb_gamelist *fgl = NULL;
+  struct fcdb_gamelist_entry *fgle = NULL;
+  char buf[128];
+  char user[MAX_LEN_NAME] = "";
+  int type = GT_NUM_TYPES, i;
+  int ntokens;
+  char *args[2];
+
+  if (!srvarg.fcdb.enabled) {
+    cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
+        _("This server does not have database support enabled."));
+    return FALSE;
+  }
+
+  ntokens = get_tokens(arg, args, 2, " =\n\t");
+
+  if (ntokens == 2) {
+    if (0 == strcmp(args[0], "user")) {
+      sz_strlcpy(user, args[1]);
+    } else if (0 == strcmp(args[0], "type")) {
+      if (-1 == (type = parse_game_type(CMD_GAMELIST, caller, args[1]))) {
+        free_tokens(args, ntokens);
+        return FALSE;
+      }
+    }
+  } else if (ntokens == 1) {
+    if (-1 == (type = parse_game_type(CMD_GAMELIST, caller, args[0]))) {
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+  }
+
+  free_tokens(args, ntokens);
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (!(fgl = fcdb_gamelist_new(type, user))) {
+    cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
+        _("There was an error reading from the database."));
+    return FALSE;
+  }
+
+  if (user[0] != '\0' && fgl->id <= 0) {
+    cmd_reply(CMD_GAMELIST, caller, C_FAIL,
+              _("No such user \"%s\"."), user);
+    fcdb_gamelist_free(fgl);
+    return FALSE;
+  }
+
+  if (fgl->count <= 0) {
+    cmd_reply(CMD_GAMELIST, caller, C_FAIL,
+              _("No matching games to list."));
+    fcdb_gamelist_free(fgl);
+    return FALSE;
+  }
+
+  cmd_reply(CMD_GAMELIST, caller, C_COMMENT, "%7s %10s %8s %24s  %s",
+            _("Game #"), _("Type"), _("Players"), _("Date"),
+            _("Outcome"));
+  for (i = 0; i < fgl->count; i++) {
+    fgle = &fgl->entries[i];
+    mkstatdate(fgle->created, buf, sizeof(buf));
+    cmd_reply(CMD_GAMELIST, caller, C_COMMENT, "%7d %10s %8d %24s  %s",
+              fgle->id, fgle->type, fgle->players, buf, fgle->outcome);
+  }
+
+  fcdb_gamelist_free(fgl);
+
+  return TRUE;
+#endif
+  cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
+            _("This server does not have database support enabled."));
+  return FALSE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool aka_command(struct connection *caller,
+                        const char *arg,
+                        bool check)
+{
+#ifdef HAVE_MYSQL
+  struct fcdb_aliaslist *fal = NULL;
+  struct fcdb_aliaslist_entry *fale = NULL;
+  char buf[512];
+  char user[MAX_LEN_NAME] = "";
+  int i;
+
+  if (!srvarg.fcdb.enabled) {
+    cmd_reply(CMD_AKA, caller, C_GENFAIL,
+        _("This server does not have database support enabled."));
+    return FALSE;
+  }
+
+  sz_strlcpy(buf, arg);
+  remove_leading_trailing_spaces(buf);
+  sz_strlcpy(user, buf);
+
+  if (user[0] == '\0') {
+    cmd_reply(CMD_AKA, caller, C_SYNTAX,
+              _("Missing user name argument."));
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (!(fal = fcdb_aliaslist_new(user))) {
+    cmd_reply(CMD_AKA, caller, C_GENFAIL,
+        _("There was an error reading from the database."));
+    return FALSE;
+  }
+
+  if (fal->id <= 0) {
+    cmd_reply(CMD_AKA, caller, C_FAIL,
+              _("No such user \"%s\" in the database."), user);
+    fcdb_aliaslist_free(fal);
+    return FALSE;
+  }
+
+  if (fal->count < 1) {
+    cmd_reply(CMD_AKA, caller, C_COMMENT,
+              _("User %s has no aliases."), user);
+    fcdb_aliaslist_free(fal);
+    return TRUE;
+  }
+
+  my_snprintf(buf, sizeof(buf), _("Aliases for user %s:"), user);
+  for (i = 0; i < fal->count; i++) {
+    fale = &fal->entries[i];
+    if (fale->name[0] == '\0') {
+      cat_snprintf(buf, sizeof(buf), " user#%d", fale->id);
+    } else {
+      cat_snprintf(buf, sizeof(buf), " <%s>", fale->name);
+    }
+  }
+  cmd_reply(CMD_AKA, caller, C_COMMENT, "%s", buf);
+
+  fcdb_aliaslist_free(fal);
+
+  return TRUE;
+
+#endif
+  cmd_reply(CMD_AKA, caller, C_GENFAIL,
+            _("This server does not have database support enabled."));
+  return FALSE;
+}
+
+#ifdef HAVE_MYSQL
+/**************************************************************************
+  Helpers for fcdb_command.
+**************************************************************************/
+enum fcdb_args {
+  FCDB_ON, FCDB_OFF, FCDB_MIN_RATED_TURNS, FCDB_NUM_ARGS
+};
+static const char *const fcdb_args[] = {
+  "on", "off", "min_rated_turns", NULL
+};
+static const char *fcdbarg_accessor(int i)
+{ 
+  return fcdb_args[i];
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool fcdb_command(struct connection *caller, char *arg, bool check)
+{
+  int ind, n, ntokens;
+  enum m_pre_result match_result;
+  char *args[2];
+
+  /* Only server operator can use this anyway. */
+  if (check) {
+    return TRUE;
+  }
+
+  ntokens = get_tokens(arg, args, 2, TOKEN_DELIMITERS);
+
+  if (ntokens <= 0) {
+    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              _("FCDB access is %s."),
+              srvarg.fcdb.enabled ? _("enabled") : _("disabled"));
+    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              _("Minimum turns for rated game: %d."),
+              srvarg.fcdb.min_rated_turns);
+    free_tokens(args, ntokens);
+    return TRUE;
+  }
+
+  match_result = match_prefix(fcdbarg_accessor, FCDB_NUM_ARGS, 0,
+                              mystrncasecmp, args[0], &ind);
+
+  if (match_result > M_PRE_EMPTY) {
+    cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+              _("Unrecognized argument: \"%s\"."), args[0]);
+    free_tokens(args, ntokens);
+    return FALSE;
+  }
+
+  if (ind == FCDB_ON) {
+    srvarg.fcdb.enabled = TRUE;
+    cmd_reply(CMD_FCDB, caller, C_OK,
+              _("FCDB access enabled."));
+
+  } else if (ind == FCDB_OFF) {
+    srvarg.fcdb.enabled = FALSE;
+    cmd_reply(CMD_FCDB, caller, C_OK,
+              _("FCDB access disabled."));
+
+  } else if (ind == FCDB_MIN_RATED_TURNS) {
+    if (ntokens < 2) {
+      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+                _("Number argument missing."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+
+    n = atoi(args[1]);
+    if (n < 0 || (n == 0 && !(args[1][0] == '0'
+                              && args[1][1] == '\0'))) {
+      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+                _("The number argument must be a non-negative integer."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+
+    srvarg.fcdb.min_rated_turns = n;
+    cmd_reply(CMD_FCDB, caller, C_OK,
+              _("The minimum number of turns for a rated game has "
+                "been set to %d."), n);
+  }
+  
+  free_tokens(args, ntokens);
+  return TRUE;
+}
 /**************************************************************************
   'authdb' arguments
 **************************************************************************/
-enum AUTDB_ARGS
+enum AUTHDB_ARGS
 {
     AUTHDB_ARG_HOST,
     AUTHDB_ARG_USER,
@@ -4908,27 +5720,27 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
     {
         cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                   _("Authorization Database Parameters (%s):"),
-                  srvarg.auth_enabled ? _("enabled") : _("disabled"));
+                  srvarg.auth.enabled ? _("enabled") : _("disabled"));
         cmd_reply(CMD_AUTHDB, caller, C_COMMENT, horiz_line);
         cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                   _("Host: \"%s\"\nUser: \"%s\"\nPassword: \"%s\"\n"
                     "Database: \"%s\"\nGuests: %s\nNew users: %s"),
-                  authdb_host, authdb_user, authdb_password,
-                  authdb_dbname,
-                  srvarg.auth_allow_guests ? "allowed" : "not allowed",
-                  srvarg.auth_allow_newusers ? "allowed" : "not allowed");
+                  fcdb.host, fcdb.user, fcdb.password,
+                  fcdb.dbname,
+                  srvarg.auth.allow_guests ? "allowed" : "not allowed",
+                  srvarg.auth.allow_newusers ? "allowed" : "not allowed");
         cmd_reply(CMD_AUTHDB, caller, C_COMMENT, horiz_line);
         return TRUE;
     }
     if (ind == AUTHDB_ARG_ON)
     {
-        srvarg.auth_enabled = TRUE;
+        srvarg.auth.enabled = TRUE;
         cmd_reply(CMD_AUTHDB, caller, C_COMMENT, "Authorization enabled.");
         return TRUE;
     }
     else if (ind == AUTHDB_ARG_OFF)
     {
-        srvarg.auth_enabled = FALSE;
+        srvarg.auth.enabled = FALSE;
         cmd_reply(CMD_AUTHDB, caller, C_COMMENT, "Authorization disabled.");
         return TRUE;
     }
@@ -4941,27 +5753,27 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
     switch (ind)
     {
     case AUTHDB_ARG_HOST:
-        sz_strlcpy(authdb_host, lastarg);
+        sz_strlcpy(fcdb.host, lastarg);
         break;
     case AUTHDB_ARG_PASSWORD:
-        sz_strlcpy(authdb_password, lastarg);
+        sz_strlcpy(fcdb.password, lastarg);
         break;
     case AUTHDB_ARG_DATABASE:
-        sz_strlcpy(authdb_dbname, lastarg);
+        sz_strlcpy(fcdb.dbname, lastarg);
         break;
     case AUTHDB_ARG_USER:
-        sz_strlcpy(authdb_user, lastarg);
+        sz_strlcpy(fcdb.user, lastarg);
         break;
     case AUTHDB_ARG_GUESTS:
         if (!strcmp(lastarg, "yes"))
         {
-            srvarg.auth_allow_guests = TRUE;
+            srvarg.auth.allow_guests = TRUE;
             cmd_reply(CMD_AUTHDB, caller, C_COMMENT, _("Guests are now allowed."));
             return TRUE;
         }
         else if (!strcmp(lastarg, "no"))
         {
-            srvarg.auth_allow_guests = FALSE;
+            srvarg.auth.allow_guests = FALSE;
             cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                       _("Guests are now not allowed."));
             return TRUE;
@@ -4976,14 +5788,14 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
     case AUTHDB_ARG_NEWUSERS:
         if (!strcmp(lastarg, "yes"))
         {
-            srvarg.auth_allow_newusers = TRUE;
+            srvarg.auth.allow_newusers = TRUE;
             cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                       _("New users are now allowed."));
             return TRUE;
         }
         else if (!strcmp(lastarg, "no"))
         {
-            srvarg.auth_allow_newusers = FALSE;
+            srvarg.auth.allow_newusers = FALSE;
             cmd_reply(CMD_AUTHDB, caller, C_COMMENT,
                       _("New users are now not allowed."));
             return TRUE;
@@ -5002,7 +5814,7 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
               _("AUTH %s set to \"%s\"."), authdb_args[ind], lastarg);
     return TRUE;
 }
-#endif				/* HAVE_AUTH */
+#endif				/* HAVE_MYSQL */
 /**************************************************************************
   ...
 **************************************************************************/
@@ -5966,13 +6778,27 @@ bool handle_stdin_input(struct connection *caller,
     return mute_command(caller, allargs, check);
   case CMD_UNMUTE:
     return unmute_command(caller, allargs, check);
+  case CMD_STATS:
+    return stats_command(caller, allargs, check);
+  case CMD_RATINGS:
+    return ratings_command(caller, arg, check);
+  case CMD_EXAMINE:
+    return examine_command(caller, arg, check);
+  case CMD_TOPTEN:
+    return topten_command(caller, arg, check);
+  case CMD_GAMELIST:
+    return gamelist_command(caller, arg, check);
+  case CMD_AKA:
+    return aka_command(caller, arg, check);
   case CMD_START_GAME:
     return start_command(caller, arg, check);
   case CMD_END_GAME:
     return end_command(caller, arg, check);
-#ifdef HAVE_AUTH
+#ifdef HAVE_MYSQL
   case CMD_AUTHDB:
     return authdb_command(caller, arg, check);
+  case CMD_FCDB:
+    return fcdb_command(caller, allargs, check);
 #endif
   case CMD_NUM:
   case CMD_UNRECOGNIZED:
@@ -5991,76 +6817,281 @@ bool handle_stdin_input(struct connection *caller,
 **************************************************************************/
 static bool end_command(struct connection *caller, char *str, bool check)
 {
-    if (server_state == RUN_GAME_STATE)
-    {
-    char *arg[MAX_NUM_PLAYERS];
-    int ntokens = 0, i;
-    enum m_pre_result plr_result;
-    bool result = TRUE;
-    char buf[MAX_LEN_CONSOLE_LINE];
-        if (str != NULL || strlen(str) > 0)
-        {
-      sz_strlcpy(buf, str);
-      ntokens = get_tokens(buf, arg, MAX_NUM_PLAYERS, TOKEN_DELIMITERS);
-    }
-    /* Ensure players exist */
-        for (i = 0; i < ntokens; i++)
-        {
-            struct player *pplayer =
-                            find_player_by_name_prefix(arg[i], &plr_result);
-            if (!pplayer)
-    {
-        cmd_reply_no_such_player(CMD_TEAM, caller, arg[i], plr_result);
-        result = FALSE;
-        goto cleanup;
-            }
-            else if (pplayer->is_alive == FALSE)
-            {
-        cmd_reply(CMD_END_GAME, caller, C_FAIL, _("But %s is dead!"),
-                  pplayer->name);
-        result = FALSE;
-        goto cleanup;
-      }
-    }
-        if (check)
-        {
-      goto cleanup;
-    }
-        if (ntokens > 0)
-        {
-      /* Mark players for victory. */
-            for (i = 0; i < ntokens; i++)
-            {
-        BV_SET(srvarg.draw, 
-               find_player_by_name_prefix(arg[i], &plr_result)->player_no);
-      }
-    }
-    server_state = GAME_OVER_STATE;
-    force_end_of_sniff = TRUE;
-    cmd_reply(CMD_END_GAME, caller, C_OK,
-              _("Ending the game. The server will restart once all clients "
-              "have disconnected."));
-    cleanup:
-        for (i = 0; i < ntokens; i++)
-        {
-      free(arg[i]);
-    }
-    return result;
-    }
-    else
-    {
-    cmd_reply(CMD_END_GAME, caller, C_FAIL, 
+  char *arg[MAX_NUM_PLAYERS];
+  int ntokens = 0, i;
+  enum m_pre_result plr_result;
+  bool result = TRUE, declared_winner = FALSE;
+  char buf[MAX_LEN_CONSOLE_LINE];
+
+  if (server_state != RUN_GAME_STATE) {
+    cmd_reply(CMD_END_GAME, caller, C_FAIL,
               _("Cannot end the game: no game running."));
     return FALSE;
   }
+
+  if (str != NULL || strlen(str) > 0) {
+    sz_strlcpy(buf, str);
+    ntokens = get_tokens(buf, arg, MAX_NUM_PLAYERS, TOKEN_DELIMITERS);
+  }
+
+  if (game.fcdb.type == GT_SOLO && ntokens > 0) {
+    cmd_reply(CMD_END_GAME, caller, C_REJECTED,
+              _("You can only win a solo game by building a spaceship!"));
+    return FALSE;
+  }
+
+  /* Ensure players exist */
+  for (i = 0; i < ntokens; i++) {
+    struct player *pplayer = find_player_by_name_prefix(arg[i], &plr_result);
+    if (!pplayer) {
+      cmd_reply_no_such_player(CMD_TEAM, caller, arg[i], plr_result);
+      result = FALSE;
+      goto cleanup;
+    } else if (pplayer->is_alive == FALSE) {
+      cmd_reply(CMD_END_GAME, caller, C_FAIL, _("But %s is dead!"),
+                pplayer->name);
+      result = FALSE;
+      goto cleanup;
+    }
+  }
+  if (check) {
+    goto cleanup;
+  }
+  if (ntokens > 0) {
+    /* Mark players for victory. */
+    for (i = 0; i < ntokens; i++) {
+      BV_SET(srvarg.draw,
+             find_player_by_name_prefix(arg[i], &plr_result)->player_no);
+      declared_winner = TRUE;
+    }
+  }
+
+  game.fcdb.outcome = GOC_ENDED_BY_VOTE;
+  if (declared_winner) {
+    players_iterate(pplayer) {
+      if (BV_ISSET(srvarg.draw, pplayer->player_no)) {
+        pplayer->result = PR_WIN;
+        if (pplayer->team != TEAM_NONE) {
+          players_iterate(pplayer_other) {
+            if (pplayer->team == pplayer_other->team)
+              pplayer_other->result = PR_WIN;
+          }
+          players_iterate_end;
+        }
+      } else if (pplayer->result == PR_NONE) {
+        pplayer->result = PR_LOSE;
+      }
+    } players_iterate_end;
+  }
+
+  server_state = GAME_OVER_STATE;
+  force_end_of_sniff = TRUE;
+  cmd_reply(CMD_END_GAME, caller, C_OK,
+            _("Ending the game. The server will restart once all clients "
+              "have disconnected."));
+cleanup:
+  for (i = 0; i < ntokens; i++) {
+    free(arg[i]);
+  }
+  return result;
+}
+
+/**************************************************************************
+  Returns TRUE if the settings are suitable for a rated game or if the
+  game is not rated (i.e. game.rated == FALSE). Default (i.e. standard)
+  settings are only enforced for rated 'solo' games, since otherwise it
+  is fine if players agree to play a rated game with non-standard
+  settings. Of course server only settings and some others are exempt,
+  e.g. 'timeout'.
+**************************************************************************/
+static bool check_settings_for_rated_game(void)
+{
+  /* Non-default settings that should be enforced
+   * for SOLO games. */
+  struct standard_int_setting {
+    int *psetting;
+    int standard_value;
+  } sis[] = {
+    { &map.autosize, 108 },
+    { &map.landpercent, 17 }, /* landmass */
+    { &game.airliftingstyle, 1 },
+    { &game.traderevenuestyle, 1 },
+    { &game.caravanbonusstyle, 1 },
+    { &game.trademindist, 8 }
+  };
+
+  struct standard_bool_setting {
+    bool *psetting;
+    bool standard_value;
+  } sbs[] = {
+    { &map.tinyisles, TRUE },
+    { &map.alltemperate, TRUE },
+    { &game.techtrading, FALSE },
+    { &game.goldtrading, FALSE },
+    { &game.citytrading, FALSE },
+    { &game.globalwarmingon, FALSE },
+    { &game.nuclearwinteron, FALSE },
+    { &game.stackbribing, TRUE },
+    { &game.experimentalbribingcost, TRUE }
+  };
+
+  struct standard_string_setting {
+    const char *psetting;
+    const char *standard_value;
+  } sss[] = {
+    { game.allow_take, "H4h1a1" }
+  };
+
+  struct settings_s *op;
+  bool ok = TRUE, checked = FALSE;
+  int i;
+
+  if (!game.rated || game.fcdb.type == GT_MIXED) {
+    /* For unrated games or 'mixed' type games, any settings are ok. */
+    return TRUE;
+  }
+
+  if (server_state == PRE_GAME_STATE) {
+    /* We might get called in pregame, so refresh the game type. */
+    game_set_type();
+  }
+
+  for (op = settings; op->name; op++) {
+    if (op->to_client == SSET_SERVER_ONLY) {
+      continue;
+    }
+
+    /* Use pointer comparison to check which setting we are
+     * testing. Much faster than name comparison and requires
+     * the same amount of maintenance if a setting definition
+     * is changed. */
+
+    /* Always allow these settings to be changed. */
+    if (op->int_value == &game.timeout
+        || op->int_value == &game.min_players
+        || op->int_value == &game.max_players) {
+      continue;
+    }
+
+    if (game.fcdb.type == GT_TEAM
+        && op->int_value == &game.diplomacy
+        && *op->int_value != 4) {
+      notify_conn(NULL, _("Game: Warning: Diplomacy is not disabled "
+                          "for this team game."));
+      continue;
+    }
+
+    if (game.fcdb.type == GT_FFA
+        && op->int_value == &game.maxallies
+        && *op->int_value > 1) {
+      notify_conn(NULL, _("Game: Warning: The setting 'maxallies' "
+                          "is greater than one, this may result in "
+                          "an unfair free-for-all game."));
+      continue;
+    }
+
+    if (game.fcdb.type != GT_SOLO) {
+      /* Non-default settings can only prevent a solo game from
+       * being rated. */
+      continue;
+    }
+
+
+    /* NB: What follows are the setting checks for SOLO games only. */
+
+    if (op->int_value == &game.diplomacy
+        || op->int_value == &game.maxallies) {
+      /* We don't care about these settings for solo games. */
+      continue;
+    }
+
+    checked = FALSE;
+
+    switch (op->type) {
+    case SSET_BOOL:
+      for (i = 0; i < ARRAY_SIZE(sbs); i++) {
+        if (sbs[i].psetting == op->bool_value) {
+          if (sbs[i].standard_value != *op->bool_value) {
+            notify_conn(NULL, _("Game: The setting '%s' is not "
+                                "at the standard value of %d."),
+                    op->name, sbs[i].standard_value);
+            ok = FALSE;
+          }
+          checked = TRUE;
+          break;
+        }
+      }
+      if (!checked && *op->bool_value != op->bool_default_value) {
+        notify_conn(NULL, _("Game: The setting '%s' is not "
+                            "at the default value of %d."),
+                    op->name, op->bool_default_value);
+        ok = FALSE;
+      }
+      break;
+
+    case SSET_INT:
+      for (i = 0; i < ARRAY_SIZE(sis); i++) {
+        if (sis[i].psetting == op->int_value) {
+          if (sis[i].standard_value != *op->int_value) {
+            notify_conn(NULL, _("Game: The setting '%s' is not "
+                                "at the standard value of %d."),
+                    op->name, sis[i].standard_value);
+            ok = FALSE;
+          }
+          checked = TRUE;
+          break;
+        }
+      }
+      if (!checked && *op->int_value != op->int_default_value)  {
+        notify_conn(NULL, _("Game: The setting '%s' is not "
+                            "at the default value of %d."),
+                    op->name, op->int_default_value);
+        ok = FALSE;
+      }
+      break;
+
+    case SSET_STRING:
+      for (i = 0; i < ARRAY_SIZE(sss); i++) {
+        if (sss[i].psetting == op->string_value) {
+          if (0 != strcmp(sss[i].standard_value, op->string_value)) {
+            notify_conn(NULL, _("Game: The setting '%s' is not "
+                                "at the standard value of \"%s\"."),
+                    op->name, sss[i].standard_value);
+            ok = FALSE;
+          }
+          checked = TRUE;
+          break;
+        }
+      }
+      if (!checked
+          && 0 != strcmp(op->string_value, op->string_default_value)) {
+        notify_conn(NULL, _("Game: The setting '%s' is not "
+                            "at the default value of \"%s\"."),
+                    op->name, op->string_default_value);
+        ok = FALSE;
+      }
+      break;
+
+    default:
+      assert(0);
+      break;
+    }
+  }
+
+  return ok;
 }
 
 /**************************************************************************
 ...
 **************************************************************************/
-static bool start_command(struct connection *caller, char *name, bool check)
+static bool start_command(struct connection *caller,
+                          char *name,
+                          bool check)
 {
+  int started = 0, notstarted = 0;
+
   switch (server_state) {
+
   case PRE_GAME_STATE:
     /* Sanity check scenario */
     if (game.is_new_game && !check) {
@@ -6070,8 +7101,8 @@ static bool start_command(struct connection *caller, char *name, bool check)
          * to increase the number of players beyond the number supported by
          * the scenario.  The solution is a hack: cut the extra players
          * when the game starts. */
-        freelog(LOG_VERBOSE, "Reduced maxplayers from %i to %i to fit "
-                "to the number of start positions.",
+        freelog(LOG_VERBOSE, _("Reduced maxplayers from %i to %i to fit "
+                "to the number of start positions."),
                 game.max_players, map.num_start_positions);
         game.max_players = map.num_start_positions;
       }
@@ -6085,10 +7116,10 @@ static bool start_command(struct connection *caller, char *name, bool check)
         }
 
         freelog(LOG_VERBOSE,
-                "Had to cut down the number of players to the "
-                "number of map start positions, there must be "
-                "something wrong with the savegame or you "
-                "adjusted the maxplayers value.");
+                _("Had to cut down the number of players to the "
+                  "number of map start positions, there must be "
+                  "something wrong with the savegame or you "
+                  "adjusted the maxplayers value."));
       }
     }
     /* check min_players */
@@ -6096,73 +7127,120 @@ static bool start_command(struct connection *caller, char *name, bool check)
       cmd_reply(CMD_START_GAME, caller, C_FAIL,
                 _("Not enough players, game will not start."));
       return FALSE;
-    } else if (check) {
-      return TRUE;
-    } else if (!caller) {
+    }
+    
+    if (!caller) {
+      /* Forced start by server operator. */
       start_game();
       return TRUE;
-    } else if (!caller->player || !caller->player->is_connected) {
+    }
+    
+    if (!caller->player || !caller->player->is_connected) {
       /* A detached or observer player can't do /start. */
       cmd_reply(CMD_START_GAME, caller, C_REJECTED,
                 _("You are not a player in the game!"));
       return FALSE;
-    } else {
-      int started = 0, notstarted = 0;
-      players_iterate(pplayer) {
-        if (pplayer->is_connected) {
-          if (pplayer->is_started) {
-            started++;
-          } else {
-            notstarted++;
-          }
+    }
+    
+    players_iterate(pplayer) {
+      if (pplayer->is_connected) {
+        if (pplayer->is_started) {
+          started++;
+        } else {
+          notstarted++;
         }
-      } players_iterate_end;
-      /* Note this is called even if the player has pressed /start once
-       * before.  This is a good thing given that no other code supports
-       * is_started yet.  For instance if a player leaves everyone left
-       * might have pressed /start already but the start won't happen
-       * until someone presses it again.  Also you can press start more
-       * than once to remind other people to start (which is a good thing
-       * until somebody does it too much and it gets labeled as spam). */
-      /* Spam is bad. Use chat to remind others to start. */
-      if (caller->player->is_started && started < started + notstarted) {
-        cmd_reply(CMD_START_GAME, caller, C_COMMENT,
-                  _("You have already notified others that you are ready"
-                    " to start."));
-        return TRUE;
       }
-      if (!caller->player->is_started) {
-        caller->player->is_started = TRUE;
-        started++;
-        notstarted--;
-      }
+    } players_iterate_end;
 
-      if (started < started + notstarted) {
-        notify_conn(NULL, _("Game: %s is ready. %d out of %d players are "
-                            "ready to start."),
-                    caller->username, started, started + notstarted);
-        return TRUE;
-      }
-      notify_conn(NULL, _("Game: All players are ready; starting game."));
-      start_game();
+    /* Note this is called even if the player has pressed /start once
+     * before.  This is a good thing given that no other code supports
+     * is_started yet.  For instance if a player leaves everyone left
+     * might have pressed /start already but the start won't happen
+     * until someone presses it again.  Also you can press start more
+     * than once to remind other people to start (which is a good thing
+     * until somebody does it too much and it gets labeled as spam). */
+
+    /* Spam is bad. Use chat to remind others to start. */
+    if (caller->player->is_started && started < started + notstarted) {
+      cmd_reply(CMD_START_GAME, caller, C_COMMENT,
+                _("You have already notified others that you are ready"
+                  " to start."));
       return TRUE;
     }
+
+    if (check) {
+      return TRUE;
+    } 
+    
+    /* If we are getting close to starting, check that settings
+     * are ok for this type of rated game. */
+    if (notstarted < 3 && !check_settings_for_rated_game()) {
+      static int failed_rated_start = 0;
+      failed_rated_start++;
+      if (failed_rated_start < 3) {
+        notify_conn(NULL, _("Game: The game will not start unless "
+                            "settings are fixed or the 'rated' setting "
+                            "is set to 0."));
+      } else {
+        notify_conn(NULL, _("Game: This game will not be rated because "
+                            "settings are not suitable."));
+        game.rated = FALSE;
+        failed_rated_start = 0;
+      }
+      return TRUE;
+    }
+
+    if (!caller->player->is_started) {
+      caller->player->is_started = TRUE;
+      started++;
+      notstarted--;
+    }
+
+    /* Refresh game type. */
+    game_set_type();
+
+    if (notstarted > 0) {
+      notify_conn(NULL, _("Game: %s is ready. %d out of %d players are "
+                          "ready to start a %s%s game."),
+                  caller->username, started, started + notstarted,
+                  game.rated ? _("RATED ") : "",
+                  game_type_as_string(game.fcdb.type));
+      return TRUE;
+    }
+
+    if (game.rated) {
+      notify_conn(NULL, _("Game: All players are ready; "
+                          "starting a RATED %s game."),
+                  game_type_as_string(game.fcdb.type));
+    } else {
+      notify_conn(NULL, _("Game: All players are ready; "
+                          "starting a %s game."),
+                  game_type_as_string(game.fcdb.type));
+    }
+    start_game();
+    return TRUE;
+
   case GAME_OVER_STATE:
     /* TRANS: given when /start is invoked during gameover. */
     cmd_reply(CMD_START_GAME, caller, C_FAIL,
               _("Cannot start the game: the game is waiting for all clients "
                 "to disconnect."));
     return FALSE;
+
   case SELECT_RACES_STATE:
     /* TRANS: given when /start is invoked during nation selection. */
     cmd_reply(CMD_START_GAME, caller, C_FAIL,
               _("Cannot start the game: it has already been started."));
     return FALSE;
+
   case RUN_GAME_STATE:
     /* TRANS: given when /start is invoked while the game is running. */
     cmd_reply(CMD_START_GAME, caller, C_FAIL,
               _("Cannot start the game: it is already running."));
     return FALSE;
+
+  default:
+    break;
   }
   assert(FALSE);
   return FALSE;
@@ -7105,17 +8183,20 @@ static bool show_mutes(struct connection *caller)
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   return TRUE;
 }
+
 /**************************************************************************
   'list' arguments
 **************************************************************************/
 enum LIST_ARGS {
   LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
   LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_SCENARIOS,
-  LIST_RULESETS, LIST_MUTES, LIST_ARG_NUM /* Must be last */
+  LIST_RULESETS, LIST_MUTES,
+  LIST_ARG_NUM /* Must be last */
 };
 static const char *const list_args[] = {
   "players", "connections", "actionlist", "teams", "ignore",
-  "maps", "scenarios", "rulesets", "mutes", NULL
+  "maps", "scenarios", "rulesets", "mutes",
+  NULL
 };
 static const char *listarg_accessor(int i)
 {
@@ -7752,49 +8833,29 @@ char **freeciv_completion(const char *text, int start, int end)
 char **freeciv_completion(char *text, int start, int end)
 #endif
 {
-  char **matches = (char **)NULL;
-    if (is_help(start))
-    {
+  char **matches = (char **) NULL;
+  if (is_help(start)) {
     matches = completion_matches(text, help_generator);
-    }
-    else if (is_command(start))
-    {
+  } else if (is_command(start)) {
     matches = completion_matches(text, command_generator);
-    }
-    else if (is_list(start))
-    {
+  } else if (is_list(start)) {
     matches = completion_matches(text, list_generator);
-    }
-    else if (is_cmdlevel_arg2(start))
-    {
+  } else if (is_cmdlevel_arg2(start)) {
     matches = completion_matches(text, cmdlevel_arg2_generator);
-    }
-    else if (is_cmdlevel_arg1(start))
-    {
+  } else if (is_cmdlevel_arg1(start)) {
     matches = completion_matches(text, cmdlevel_arg1_generator);
-    }
-    else if (is_connection(start))
-    {
+  } else if (is_connection(start)) {
     matches = completion_matches(text, connection_generator);
-    }
-    else if (is_player(start))
-    {
+  } else if (is_player(start)) {
     matches = completion_matches(text, player_generator);
-    }
-    else if (is_server_option(start))
-    {
+  } else if (is_server_option(start)) {
     matches = completion_matches(text, option_generator);
-    }
-    else if (is_option_level(start))
-    {
+  } else if (is_option_level(start)) {
     matches = completion_matches(text, olevel_generator);
-    }
-    else if (is_filename(start))
-    {
+  } else if (is_filename(start)) {
     /* This function we get from readline */
     matches = completion_matches(text, filename_completion_function);
-    }
-    else			/* We have no idea what to do */
+  } else                        /* We have no idea what to do */
     matches = NULL;
   /* Don't automatically try to complete with filenames */
   rl_attempted_completion_over = 1;

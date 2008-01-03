@@ -54,8 +54,6 @@ bool require_command(struct connection *caller, char *arg, bool check);
 void toggle_ai_player_direct(struct connection *caller,
 			     struct player *pplayer);
 
-const char *name_of_skill_level(int level);
-
 #ifdef HAVE_LIBREADLINE
 #ifdef HAVE_NEWLIBREADLINE
 char **freeciv_completion(const char *text, int start, int end);

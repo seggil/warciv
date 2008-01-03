@@ -50,10 +50,13 @@ struct server_arguments {
   bool exit_on_end;
   /* what kind of end game we should use */
   bv_draw draw;
+
   /* authentication options */
-  bool auth_enabled;            /* defaults to FALSE */
-  bool auth_allow_guests;       /* defaults to TRUE */
-  bool auth_allow_newusers;     /* defaults to TRUE */
+  struct {
+    bool enabled;            /* defaults to FALSE */
+    bool allow_guests;       /* defaults to TRUE */
+    bool allow_newusers;     /* defaults to TRUE */
+  } auth;
 
   bool no_dns_lookup; /* defaults to FALSE */
 
@@ -61,6 +64,11 @@ struct server_arguments {
   bool allow_multi_line_chat;
 
   bool hack_request_disabled;
+
+  struct {
+    bool enabled;           /* Defaults to FALSE. */
+    int min_rated_turns;    /* Defaults to 30. */
+  } fcdb;
 };
 
 void init_game_seed(void);

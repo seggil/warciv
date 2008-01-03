@@ -34,6 +34,7 @@
 
 static struct nation_type *nations = NULL;
 static struct team teams[MAX_NUM_TEAMS];
+static int num_teams = 0;
 
 /***************************************************************
   Returns 1 if nid is a valid nation id, else 0.
@@ -41,7 +42,7 @@ static struct team teams[MAX_NUM_TEAMS];
   quoting given func name, explaining problem.
 ***************************************************************/
 static bool bounds_check_nation_id(Nation_Type_id nid, int loglevel,
-				  const char *func_name)
+                                   const char *func_name)
 {
   if (game.nation_count==0) {
     freelog(loglevel, "%s before nations setup", func_name);
@@ -308,9 +309,9 @@ Team_Type_id team_find_by_name(const char *team_name)
   assert(team_name != NULL);
 
   team_iterate(pteam) {
-     if(mystrcasecmp(team_name, pteam->name) == 0) {
-	return pteam->id;
-     }
+    if (mystrcasecmp(team_name, pteam->name) == 0) {
+      return pteam->id;
+    }
   } team_iterate_end;
 
   return TEAM_NONE;
@@ -355,13 +356,18 @@ int team_count_members_alive(Team_Type_id id)
 ***************************************************************/
 int team_count_members(Team_Type_id id)
 {
-    int count = 0;
-    players_iterate(pplayer)
-        if (pplayer->team == id) {
-        count++;    
-        }
-    players_iterate_end
-    return count;
+  int count = 0;
+
+  if (0 <= id && id < MAX_NUM_TEAMS) {
+    return teams[id].member_count;
+  }
+
+  players_iterate(pplayer) {
+    if (pplayer->team == id) {
+      count++;    
+    }
+  } players_iterate_end
+  return count;
 }
 
 /***************************************************************
@@ -381,6 +387,7 @@ void team_add_player(struct player *pplayer, const char *team_name)
     for (i = 0; i < MAX_NUM_TEAMS; i++) {
       if (teams[i].id == TEAM_NONE) {
         team_id = i;
+        num_teams++;
         break;
       }
     }
@@ -391,6 +398,7 @@ void team_add_player(struct player *pplayer, const char *team_name)
     /* add another team */
     teams[team_id].id = team_id;
     sz_strlcpy(teams[team_id].name, team_name);
+    teams[i].member_count = 0;
   }
   pplayer->team = team_id;
   teams[team_id].member_count++;
@@ -412,6 +420,7 @@ void team_remove_player(struct player *pplayer)
   /* no other team members left? remove team! */
   if(teams[pplayer->team].member_count == 0) {
     teams[pplayer->team].id = TEAM_NONE;
+    num_teams--;
   }
   pplayer->team = TEAM_NONE;
 }
@@ -431,6 +440,16 @@ void team_init()
     teams[i].name[0] = '\0';
     teams[i].member_count = 0;
   }
+
+  num_teams = 0;
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+int team_count(void)
+{
+  return num_teams;
 }
 
 /***************************************************************

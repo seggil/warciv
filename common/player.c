@@ -33,6 +33,14 @@
 
 #include "player.h"
 
+/* Must match enum player_results in player.h */
+static const char *player_result_strings[PR_NUM_PLAYER_RESULTS] = {
+  "none",
+  "win",
+  "lose",
+  "draw",
+};
+
 /***************************************************************
   Returns true iff p1 can ally p2. There is only one condition:
   We are not at war with any of p2's allies. Note that for an
@@ -154,6 +162,18 @@ void player_init(struct player *plr)
   plr->attribute_block_buffer.length = 0;
 
   plr->debug = FALSE;
+
+  plr->result = PR_NONE;
+  plr->rank = RANK_NONE;
+
+  plr->fcdb.player_id = 0;
+  plr->fcdb.rated_user_id = 0;
+  plr->fcdb.rated_user_name[0] = '\0';
+  plr->fcdb.rating = 0;
+  plr->fcdb.rating_deviation = 0;
+  plr->fcdb.last_rating_timestamp = 0;
+  plr->fcdb.new_rating = 0;
+  plr->fcdb.new_rating_deviation = 0;
 }
 
 /***************************************************************
@@ -696,11 +716,31 @@ bool players_on_same_team(const struct player *pplayer1,
   return (pplayer1->team == pplayer2->team);
 }
 
+/**************************************************************************
+ ...
+**************************************************************************/
 bool is_barbarian(const struct player *pplayer)
 {
   return pplayer->ai.barbarian_type != NOT_A_BARBARIAN;
 }
 
+/**************************************************************************
+ ...
+**************************************************************************/
+bool players_on_different_teams(const struct player *p1,
+                                const struct player *p2)
+{
+  return p1->team != TEAM_NONE &&
+         p2->team != TEAM_NONE &&
+         p1->team != p2->team;
+}
+/**************************************************************************
+ ...
+**************************************************************************/
+bool player_is_on_team(const struct player *pplayer)
+{
+  return pplayer->team != TEAM_NONE;
+}
 /**************************************************************************
  ...
 **************************************************************************/
@@ -778,4 +818,52 @@ bool is_valid_username(const char *name)
 	  && !my_isdigit(name[0])
 	  && is_ascii_name(name)
 	  && mystrcasecmp(name, ANON_USER_NAME) != 0);
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+const char *result_as_string(enum player_results res)
+{
+  if (res < 0 || res >= PR_NUM_PLAYER_RESULTS) {
+    return NULL;
+  }
+  return player_result_strings[res];
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+const char *name_of_skill_level(int level)
+{
+  static const char *nm[] = {
+    "UNUSED", "away", "novice", "easy",
+    "UNKNOWN", "normal", "UNKNOWN", "hard",
+    "UNKNOWN", "UNKNOWN", "experimental"
+  };
+  assert(level > 0 && level <= 10);
+  return nm[level];
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+int player_get_username(const struct player *pplayer,
+                        char *outbuf, int maxlen)
+{
+  int len = 0;
+
+  if (0 == strcmp(pplayer->username, ANON_USER_NAME)
+      || pplayer->username[0] == '\0') {
+    if (pplayer->ai.control) {
+      len = my_snprintf(outbuf, maxlen, "AI (%s)",
+                        name_of_skill_level(pplayer->ai.skill_level));
+    } else {
+      outbuf[0] = '\0';
+    }
+  } else {
+    len = mystrlcpy(outbuf, pplayer->username, maxlen);
+  }
+
+  return len;
 }

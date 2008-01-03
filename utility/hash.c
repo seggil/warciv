@@ -478,24 +478,26 @@ void hash_free(struct hash_table *h)
 /**************************************************************************
   ...
 **************************************************************************/
-static void hash_dump (struct hash_table *h)
+static void hash_dump(struct hash_table *h)
 {
-  fc_fprintf (stderr, "dump of hash_table %p:\n", h);
-  fc_fprintf (stderr, "  buckets=%p:\n", h->buckets);
-  fc_fprintf (stderr, "  fval=%p:\n", h->fval);
-  fc_fprintf (stderr, "  fcmp=%p:\n", h->fcmp);
-  fc_fprintf (stderr, "  num_buckets=%d:\n", h->num_buckets);
-  fc_fprintf (stderr, "  num_entries=%d:\n", h->num_entries);
-  fc_fprintf (stderr, "  num_deleted=%d:\n", h->num_deleted);
-  fc_fprintf (stderr, "  frozen=%d:\n", h->frozen);
   unsigned i;
+
+  freelog(LOG_DEBUG, "dump of hash_table %p:\n", h);
+  freelog(LOG_DEBUG, "  buckets=%p:\n", h->buckets);
+  freelog(LOG_DEBUG, "  fval=%p:\n", h->fval);
+  freelog(LOG_DEBUG, "  fcmp=%p:\n", h->fcmp);
+  freelog(LOG_DEBUG, "  num_buckets=%d:\n", h->num_buckets);
+  freelog(LOG_DEBUG, "  num_entries=%d:\n", h->num_entries);
+  freelog(LOG_DEBUG, "  num_deleted=%d:\n", h->num_deleted);
+  freelog(LOG_DEBUG, "  frozen=%d:\n", h->frozen);
+
   for (i = 0; i < h->num_buckets; i++) {
     struct hash_bucket *bucket = h->buckets + i;
-    fc_fprintf (stderr, "    bucket[%d] (%p):\n", i, bucket);
-    fc_fprintf (stderr, "      used=%d\n", bucket->used); 
-    fc_fprintf (stderr, "      key=%p (\"%s\")\n", bucket->key, KEY_AS_STR (h, bucket->key));
-    fc_fprintf (stderr, "      data=%p\n", bucket->data); 
-    fc_fprintf (stderr, "      hash_val=%u\n", bucket->hash_val); 
+    freelog(LOG_DEBUG, "    bucket[%d] (%p):\n", i, bucket);
+    freelog(LOG_DEBUG, "      used=%d\n", bucket->used); 
+    freelog(LOG_DEBUG, "      key=%p (\"%s\")\n", bucket->key, KEY_AS_STR (h, bucket->key));
+    freelog(LOG_DEBUG, "      data=%p\n", bucket->data); 
+    freelog(LOG_DEBUG, "      hash_val=%u\n", bucket->hash_val); 
   }
 }
 
@@ -513,10 +515,12 @@ static void hash_resize_table(struct hash_table *h, unsigned int new_nbuckets)
   h_new = hash_new_nbuckets(h->fval, h->fcmp, new_nbuckets);
   h_new->frozen = TRUE;
   
-  freelog (LOG_DEBUG, "hash_resize_table h=%p new_nbuckets=%d (from %d)",
+  freelog(LOG_DEBUG, "hash_resize_table h=%p new_nbuckets=%d (from %d)",
           h, new_nbuckets, h->num_buckets);
-  if (fc_log_level >= LOG_DEBUG)
-    hash_dump (h);
+
+#ifdef DEBUG
+    hash_dump(h);
+#endif
   
   for(i=0; i<h->num_buckets; i++) {
     struct hash_bucket *bucket = h->buckets + i;

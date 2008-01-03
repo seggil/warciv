@@ -233,7 +233,43 @@ struct player {
   struct attribute_block_s attribute_block_buffer;
   bool team_placement_flag;
   bool debug;
+
+  /* Game result for this player (to avoid duplicating winner/loser
+     evaluation). Uses PR_* enum. */
+  int result;
+  float rank; /* May be fractional. */
+
+  struct {
+    /* ID of this player in the game database, for the current game. */
+    int player_id;
+    
+    /* These fields are filled in by fcdb_load_player_ratings. */
+    int rated_user_id;
+    char rated_user_name[MAX_LEN_NAME]; /* Convenience. */
+    double rating;
+    double rating_deviation;
+    time_t last_rating_timestamp;
+
+    /* Set by evaluate_players. */
+    double new_rating;
+    double new_rating_deviation;
+  } fcdb;
 };
+
+enum player_results {
+  PR_NONE = 0,
+  PR_WIN,
+  PR_LOSE,
+  PR_DRAW,
+
+  PR_NUM_PLAYER_RESULTS
+};
+
+const char *result_as_string(enum player_results res);
+
+/* Though ranks can never go above MAX_NUM_PLAYERS, avoid
+   hardcoding a set value. */
+#define RANK_NONE 255
 
 void player_init(struct player *plr);
 struct player *find_player_by_name(const char *name);
@@ -295,6 +331,9 @@ bool pplayers_non_attack(const struct player *pplayer,
 			const struct player *pplayer2);
 bool players_on_same_team(const struct player *pplayer1,
                           const struct player *pplayer2);
+bool players_on_different_teams(const struct player *pplayer1,
+                                const struct player *pplayer2);
+bool player_is_on_team(const struct player *pplayer);
 int player_allies_count(const struct player *pplayer);
 int player_in_territory(struct player *pplayer, struct player *pplayer2);
 
@@ -319,6 +358,9 @@ bool gives_shared_vision(struct player *me, struct player *them);
 
 /* User functions. */
 bool is_valid_username(const char *name);
+int player_get_username(const struct player *pplayer,
+                        char *outbuf, int maxlen);
 
+const char *name_of_skill_level(int level);
 
 #endif  /* FC__PLAYER_H */

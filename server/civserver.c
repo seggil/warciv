@@ -137,13 +137,13 @@ int main(int argc, char *argv[])
 	showhelp = TRUE;
 	break;
       }
-#ifdef HAVE_AUTH
+#ifdef HAVE_MYSQL
     } else if (is_option("--auth", argv[inx])) {
-      srvarg.auth_enabled = TRUE;
+      srvarg.auth.enabled = TRUE;
     } else if (is_option("--Guests", argv[inx])) {
-      srvarg.auth_allow_guests = TRUE;
+      srvarg.auth.allow_guests = TRUE;
     } else if (is_option("--Newusers", argv[inx])) {
-      srvarg.auth_allow_newusers = TRUE;
+      srvarg.auth.allow_newusers = TRUE;
 #endif
     } else if (is_option("--Ppm", argv[inx])) {
       srvarg.save_ppm = TRUE;
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
   if (showhelp) {
     fc_fprintf(stderr,
 	       _("Usage: %s [option ...]\nValid options are:\n"), argv[0]);
-#ifdef HAVE_AUTH
+#ifdef HAVE_MYSQL
     fc_fprintf(stderr, _("  -a  --auth\t\tEnable server authentication.\n"));
     fc_fprintf(stderr, _("  -G  --Guests\t\tAllow guests to "
 			 "login if auth is enabled.\n"));

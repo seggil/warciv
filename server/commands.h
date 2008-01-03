@@ -88,10 +88,17 @@ enum command_id {
   CMD_AUTOTEAM,
   CMD_MUTE,
   CMD_UNMUTE,
+  CMD_STATS,
+  CMD_RATINGS,
+  CMD_EXAMINE,
+  CMD_TOPTEN,
+  CMD_GAMELIST,
+  CMD_AKA,
 
   /* potentially harmful: */
-#ifdef HAVE_AUTH
+#ifdef HAVE_MYSQL
   CMD_AUTHDB,
+  CMD_FCDB,
 #endif
   CMD_END_GAME,
   CMD_REMOVE,

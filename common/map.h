@@ -65,6 +65,16 @@ struct tile {
   char *spec_sprite;
 };
 
+/****************************************************************
+  Speclist for struct tile.
+*****************************************************************/
+#define SPECLIST_TAG tile
+#define SPECLIST_TYPE struct tile
+#define SPECLIST_NO_COPY
+#include "speclist.h"
+#define tile_list_iterate(alist, pitem) \
+  TYPED_LIST_ITERATE(struct tile, alist, pitem)
+#define tile_list_iterate_end  LIST_ITERATE_END
 
 /****************************************************************
 miscellaneous terrain information
@@ -620,7 +630,7 @@ extern const int DIR_DY[8];
 #define MAP_MIN_SIZE             1
 #define MAP_MAX_SIZE             29
 
-#define MAP_DEFAULT_AUTOSIZE         0
+#define MAP_DEFAULT_AUTOSIZE         108
 #define MAP_MIN_AUTOSIZE             0
 #define MAP_MAX_AUTOSIZE             1000
 
@@ -641,7 +651,7 @@ extern const int DIR_DY[8];
 #define MAP_MIN_SEED             0
 #define MAP_MAX_SEED             (MAX_UINT32 >> 1)
 
-#define MAP_DEFAULT_LANDMASS     20
+#define MAP_DEFAULT_LANDMASS     17
 #define MAP_MIN_LANDMASS         5
 #define MAP_MAX_LANDMASS         90
 
@@ -665,7 +675,7 @@ extern const int DIR_DY[8];
 #define MAP_MIN_STARTPOS         0
 #define MAP_MAX_STARTPOS         4
 
-#define MAP_DEFAULT_TINYISLES    FALSE
+#define MAP_DEFAULT_TINYISLES    TRUE
 #define MAP_MIN_TINYISLES        FALSE
 #define MAP_MAX_TINYISLES        TRUE
 
@@ -673,7 +683,7 @@ extern const int DIR_DY[8];
 #define MAP_MIN_SEPARATE_POLES       FALSE
 #define MAP_MAX_SEPARATE_POLES       TRUE
 
-#define MAP_DEFAULT_ALLTEMPERATE   FALSE
+#define MAP_DEFAULT_ALLTEMPERATE   TRUE
 #define MAP_MIN_ALLTEMPERATE       FALSE
 #define MAP_MAX_ALLTEMPERATE       TRUE
 

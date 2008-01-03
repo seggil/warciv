@@ -168,6 +168,14 @@ static bool maxplayers_callback(int value, const char **error_string)
       NULL, 0, NULL, 0, 0,						\
       NULL, NULL, NULL, 0, VCF_NONE, 0},
 
+#define GEN_BOOL_FULL(name, value, sclass, scateg, slevel, to_client,	\
+                      short_help, extra_help, func, default,            \
+                      vote_flags, vote_percent)	                        \
+  {name, sclass, to_client, short_help, extra_help, SSET_BOOL,		\
+      scateg, slevel, "", &value, default, func,			\
+      NULL, 0, NULL, 0, 0,						\
+      NULL, NULL, NULL, 0, vote_flags, vote_percent},
+
 #define GEN_INT(name, value, sclass, scateg, slevel, to_client,		\
 		short_help, extra_help, func, min, max, default)	\
   {name, sclass, to_client, short_help, extra_help, SSET_INT,		\
@@ -1116,7 +1124,7 @@ struct settings_s settings[] = {
           GAME_DEFAULT_TEAMPLACEMENTTYPE)
 
   GEN_INT("bruteforcethreshold", game.bruteforcethreshold,
-	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_RULES, SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
           N_("Brute force team placement algorithm threshold"),
 	  N_("Brute force team placement algorithm will be used\n"
              "if the number of players is less or equal than this value.\n"
@@ -1126,7 +1134,7 @@ struct settings_s settings[] = {
           GAME_DEFAULT_BRUTEFORCETHRESHOLD)
 
   GEN_INT("iterplacementcoefficient", game.iterplacementcoefficient,
-	  SSET_RULES, SSET_SOCIOLOGY, SSET_RARE, SSET_TO_CLIENT,
+	  SSET_RULES, SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,
           N_("Iterative team placement algorithm coefficient."),
 	  N_("This value is the upper bound of the number of\n"
 	    "iterations the iterative tabu search performs.\n"
@@ -1315,8 +1323,16 @@ struct settings_s settings[] = {
               "1 - on\n"
               "If turned on, the user can send many chat lines."), NULL, FALSE)
 
+  GEN_BOOL_FULL("rated", game.rated, SSET_RULES_FLEXIBLE, SSET_INTERNAL,
+           SSET_VITAL, SSET_TO_CLIENT,
+           N_("Update user ratings"),
+           N_("0 - User ratings will not be affected by this game.\n"
+              "1 - New ratings will be calculated based on the outcome "
+              "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 75)
+
   GEN_END
 };
 
 /* The number of settings, not including the END. */
 const int SETTINGS_NUM = ARRAY_SIZE(settings) - 1;
+

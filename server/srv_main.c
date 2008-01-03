@@ -68,7 +68,6 @@
 #include "timing.h"
 #include "version.h"
 
-#include "auth.h"
 #include "autoattack.h"
 #include "barbarian.h"
 #include "cityhand.h"
@@ -76,6 +75,7 @@
 #include "cityturn.h"
 #include "connecthand.h"
 #include "console.h"
+#include "database.h"
 #include "diplhand.h"
 #include "gamehand.h"
 #include "gamelog.h"
@@ -197,9 +197,12 @@ void srv_init(void)
   srvarg.quitidle = 60;
   BV_CLR_ALL(srvarg.draw);
 
-  srvarg.auth_enabled = FALSE;
-  srvarg.auth_allow_guests = FALSE;
-  srvarg.auth_allow_newusers = FALSE;
+  srvarg.auth.enabled = FALSE;
+  srvarg.auth.allow_guests = FALSE;
+  srvarg.auth.allow_newusers = FALSE;
+
+  srvarg.fcdb.enabled = FALSE;
+  srvarg.fcdb.min_rated_turns = 30;
 
   srvarg.no_dns_lookup = FALSE;
 
@@ -233,6 +236,12 @@ static bool is_game_over(void)
 		   _("Game ended in a draw as end year exceeded"));
     gamelog(GAMELOG_JUDGE, GL_DRAW, 
             "Game ended in a draw as end year exceeded");
+
+    game.fcdb.outcome = GOC_DRAWN_BY_ENDYEAR;
+    players_iterate(pplayer) {
+      pplayer->result = PR_DRAW;
+    } players_iterate_end;
+
     return TRUE;
   }
 
@@ -265,6 +274,15 @@ static bool is_game_over(void)
       notify_conn_ex(game.est_connections, NULL, E_GAME_END,
 		     _("Team victory to %s"), pteam->name);
       gamelog(GAMELOG_JUDGE, GL_TEAMWIN, pteam);
+
+      game.fcdb.outcome = GOC_ENDED_BY_TEAM_VICTORY;
+      players_iterate(pplayer) {
+        if (pplayer->team == pteam->id)
+          pplayer->result = PR_WIN;
+        else
+          pplayer->result = PR_LOSE;
+      } players_iterate_end;
+
       return TRUE;
     }
   } team_iterate_end;
@@ -274,11 +292,26 @@ static bool is_game_over(void)
     notify_conn_ex(game.est_connections, NULL, E_GAME_END,
 		   _("Game ended in victory for %s"), victor->name);
     gamelog(GAMELOG_JUDGE, GL_LONEWIN, victor);
+
+    game.fcdb.outcome = GOC_ENDED_BY_LONE_SURVIVAL;
+    players_iterate(pplayer) {
+      if (pplayer == victor)
+        pplayer->result = PR_WIN;
+      else
+        pplayer->result = PR_LOSE;
+    } players_iterate_end;
+
     return TRUE;
   } else if (alive == 0) {
     notify_conn_ex(game.est_connections, NULL, E_GAME_END, 
 		   _("Game ended in a draw"));
     gamelog(GAMELOG_JUDGE, GL_DRAW);
+
+    game.fcdb.outcome = GOC_DRAWN_BY_MUTUAL_DESTRUCTION;
+    players_iterate(pplayer) {
+      pplayer->result = PR_DRAW;
+    } players_iterate_end;
+
     return TRUE;
   }
 
@@ -302,6 +335,15 @@ static bool is_game_over(void)
     notify_conn_ex(game.est_connections, NULL, E_GAME_END, 
 		   _("Game ended in allied victory"));
     gamelog(GAMELOG_JUDGE, GL_ALLIEDWIN);
+
+    game.fcdb.outcome = GOC_ENDED_BY_ALLIED_VICTORY;
+    players_iterate(pplayer) {
+      if (pplayer->is_alive)
+        pplayer->result = PR_WIN;
+      else
+        pplayer->result = PR_LOSE;
+    } players_iterate_end;
+
     return TRUE;
   }
 
@@ -640,6 +682,9 @@ static void end_turn(void)
   players_iterate(pplayer) {
     calc_civ_score(pplayer);
   } players_iterate_end;
+
+  score_calculate_team_scores();
+  fcdb_end_of_turn_update();
 
   freelog(LOG_DEBUG, "Season of native unrests");
   summon_barbarians(); /* wild guess really, no idea where to put it, but
@@ -1603,7 +1648,6 @@ static void main_loop(void)
 
   free_timer(eot_timer);
 }
-
 /**************************************************************************
   Server initialization.
 **************************************************************************/
@@ -1668,10 +1712,16 @@ void srv_main(void)
     srv_loop();
 
     send_game_state(game.game_connections, CLIENT_GAME_OVER_STATE);
-    report_final_scores();
-    show_map_to_all();
     notify_conn(NULL, _("Game: The game is over..."));
     gamelog(GAMELOG_JUDGE, GL_NONE);
+
+    score_evaluate_players();
+    fcdb_record_game_end();
+    report_final_scores();
+    report_game_rankings();
+
+    show_map_to_all();
+
     send_server_info_to_metaserver(META_INFO);
     if (game.save_nturns > 0) {
       save_game_auto();
@@ -1921,6 +1971,12 @@ MAIN_START_PLAYERS:
       }
     } players_iterate_end;
   }
+
+  /* This should be the last time it is set for this game. */
+  game_set_type();
+
+  fcdb_load_player_ratings(game.fcdb.type);
+  fcdb_record_game_start();
 
   send_game_state(game.game_connections, CLIENT_GAME_RUNNING_STATE);
 

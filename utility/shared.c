@@ -233,10 +233,22 @@ static size_t my_strcspn(const char *s, const char *reject)
  num_tokens are extracted.
 
  The user has the responsiblity to free the memory allocated by
- **tokens.
+ **tokens, e.g. with the free_tokens functions.
 ***************************************************************/
-int get_tokens(const char *str, char **tokens, size_t num_tokens,
-	       const char *delimiterset)
+int get_tokens(const char *str, char **tokens,
+               size_t num_tokens, const char *delimiterset)
+{
+  return get_tokens_full(str, tokens, num_tokens,
+                         delimiterset, FALSE);
+}
+/***************************************************************
+  ...
+***************************************************************/
+int get_tokens_full(const char *str,
+                    char **tokens,
+                    size_t num_tokens,
+                    const char *delimiterset,
+                    bool fill_last)
 {
   int token = 0;
 
@@ -252,19 +264,23 @@ int get_tokens(const char *str, char **tokens, size_t num_tokens,
       break;
     }
 
-    len = my_strcspn(str, delimiterset);
-
     if (token >= num_tokens) {
       break;
+    }
+
+    if (fill_last && token == num_tokens - 1) {
+      len = strlen(str);
+    } else {
+      len = my_strcspn(str, delimiterset);
     }
 
     /* strip start/end quotes if they exist */
     if (len >= 2) {
       if ((str[0] == '"' && str[len - 1] == '"')
-	  || (str[0] == '\'' && str[len - 1] == '\'')) {
-	len -= 2;
-	padlength = 1;		/* to set the string past the end quote */
-	str++;
+          || (str[0] == '\'' && str[len - 1] == '\'')) {
+        len -= 2;
+        padlength = 1;		/* to set the string past the end quote */
+        str++;
       }
     }
   
@@ -277,6 +293,19 @@ int get_tokens(const char *str, char **tokens, size_t num_tokens,
   }
 
   return token;
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+void free_tokens(char **tokens, size_t ntokens)
+{
+  size_t i;
+  for (i = 0; i < ntokens; i++) {
+    if (tokens[i]) {
+      free(tokens[i]);
+    }
+  }
 }
 
 /***************************************************************

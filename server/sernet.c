@@ -76,9 +76,9 @@
 #include "support.h"
 #include "timing.h"
 
-#include "auth.h"
 #include "connecthand.h"
 #include "console.h"
+#include "database.h"
 #include "meta.h"
 #include "plrhand.h"
 #include "srv_main.h"
@@ -498,7 +498,7 @@ int sniff_packets(void)
     }
 
     /* if we've waited long enough after a failure, respond to the client */
-    if (srvarg.auth_enabled) {
+    if (srvarg.auth.enabled) {
       conn_list_iterate(game.all_connections, pconn) {
         if (pconn->server.status != AS_ESTABLISHED) {
           process_authentication_status(pconn);

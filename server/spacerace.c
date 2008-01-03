@@ -356,19 +356,32 @@ void check_spaceship_arrivals(void)
     if (ship->state == SSHIP_LAUNCHED) {
       arrival = ship->launch_year + ship->travel_time;
       if (game.year >= (int)arrival
-	  && (!best_pplayer || arrival < best_arrival)) {
-	best_arrival = arrival;
-	best_pplayer = pplayer;
+          && (!best_pplayer || arrival < best_arrival)) {
+        best_arrival = arrival;
+        best_pplayer = pplayer;
       }
     }
   } shuffled_players_iterate_end;
-  if (best_pplayer) {
-    best_pplayer->spaceship.state = SSHIP_ARRIVED;
-    server_state = GAME_OVER_STATE;
-    notify_player_ex(NULL, NULL, E_SPACESHIP,
-		     _("Game: The %s spaceship has arrived "
-		       "at Alpha Centauri."),
-		     get_nation_name(best_pplayer->nation));
-    gamelog(GAMELOG_JUDGE, GL_LONEWIN, best_pplayer);
+
+  if (!best_pplayer) {
+    return;
   }
+
+  best_pplayer->spaceship.state = SSHIP_ARRIVED;
+  server_state = GAME_OVER_STATE;
+  notify_player_ex(NULL, NULL, E_SPACESHIP,
+       _("Game: The %s spaceship has arrived "
+         "at Alpha Centauri."),
+       get_nation_name(best_pplayer->nation));
+  gamelog(GAMELOG_JUDGE, GL_LONEWIN, best_pplayer);
+
+  game.fcdb.outcome = GOC_ENDED_BY_SPACESHIP;
+  players_iterate (pplayer) {
+    if (pplayer == best_pplayer
+        || players_on_same_team(pplayer, best_pplayer)) {
+      pplayer->result = PR_WIN;
+    } else {
+      pplayer->result = PR_LOSE;
+    }
+  } players_iterate_end;
 }

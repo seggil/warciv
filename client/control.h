@@ -45,13 +45,6 @@ enum new_unit_action {
   ACTION_FORTIFY_OR_SLEEP
 };
 
-#define SPECLIST_TAG tile
-#define SPECLIST_TYPE struct tile
-#include "speclist.h"
-#define tile_list_iterate(alist, pitem) \
-  TYPED_LIST_ITERATE(struct tile, alist, pitem)
-#define tile_list_iterate_end  LIST_ITERATE_END
-
 extern int hover_unit; /* unit hover_state applies to */
 extern enum cursor_hover_state hover_state;
 extern enum unit_activity connect_activity;

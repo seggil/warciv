@@ -106,6 +106,14 @@ struct team {
   char name[MAX_LEN_NAME];
   int member_count;
   Team_Type_id id; /* equal to array index if active, else TEAM_NONE */
+
+  float score;
+  float rank;
+  int result;
+  struct {
+    double rating, rating_deviation;
+    double new_rating, new_rating_deviation;
+  } fcdb;
 };
 
 Nation_Type_id find_nation_by_name(const char *name);
@@ -132,6 +140,7 @@ void team_remove_player(struct player *pplayer);
 int team_count_members_alive(Team_Type_id id);
 int team_count_members(Team_Type_id id);
 void team_clear_teams(void);
+int team_count(void);
 
 #define team_iterate(PI_team)                                                 \
 {                                                                             \

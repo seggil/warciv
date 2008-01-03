@@ -32,7 +32,7 @@
 #include "version.h"
 #include "wildcards.h"
 
-#include "auth.h"
+#include "database.h"
 #include "diplhand.h"
 #include "gamehand.h"
 #include "gamelog.h"
@@ -582,7 +582,7 @@ bool handle_login_request(struct connection *pconn,
     }
   } conn_list_iterate_end;
 
-  if (srvarg.auth_enabled) {
+  if (srvarg.auth.enabled) {
     return authenticate_user(pconn, req->username);
   } else {
     sz_strlcpy(pconn->username, req->username);

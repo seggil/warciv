@@ -23,4 +23,4 @@ civmanual_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../utility/libcivutility.a \
       ../common/aicore/libaicore.a \
       ../server/generator/libgenerator.a \
-      $(SERVER_LIBS) $(AUTH_LIBS)
+      $(SERVER_LIBS) $(MYSQL_LIBS)

@@ -71,7 +71,7 @@ const struct command commands[] = {
    N_("Show a list of various things."),
    N_("Show a list of players, list of connections to the server, the "
       "action list, the teams and the players in them, your ignore "
-      "list, all maps, scenarios, rulesets or muted users on the server. "
+      "list, all maps, scenarios, rulesets, or muted users on the server. "
       "The argument may be abbreviated, and defaults to 'players' if absent."),
    ECHO_NONE, VCF_NONE, 0
   },
@@ -411,12 +411,16 @@ const struct command commands[] = {
   },
   {"autoteam", ALLOW_NEVER, ALLOW_CTRL, /* require vote in pregame */
    /* TRANS: translate text between <> only */
-   N_("autoteam <number of teams> <best player; 2nd best; 3rd; etc.>"), 
+   N_("autoteam <# of teams>\n"
+      "autoteam <# of teams> rating\n"
+      "autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"), 
    N_("Assign teams automatically."),
    N_("Generate the given number of teams assuming that players' "
-      "relative strength is as ordered in the supplied list. Players "
-      "not listed will be assumed to have an equal, lowest skill level. "
-      "Names may be abbreviated so long as they are not ambiguous."),
+      "relative strength is given by their rating (if the rating "
+      "database is enabled), or as ordered in the supplied list. "
+      "Players not listed will be assumed to have an equal, lowest"
+      "skill level. Names may be abbreviated so long as they are "
+      "not ambiguous."),
    ECHO_ALL, VCF_FASTPASS, 50
   },
   {"mute", ALLOW_CTRL, ALLOW_CTRL,
@@ -439,8 +443,64 @@ const struct command commands[] = {
       "messages and can create votes."),
    ECHO_ADMINS, VCF_FASTPASS, 50
   },
+  {"stats", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("stats\n"
+      "stats <username>"),
+   N_("Show statitics about a user."),
+   N_("If the server can access the game database, print some "
+      "statistics about yourself or the given user."),
+   ECHO_ADMINS
+  },
+  {"ratings", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("ratings\n"
+      "ratings <game type>"),
+   N_("List player ratings."),
+   N_("If the server can access the ratings database, list the "
+      "ratings for all connected players for the current game "
+      "type, or for the given game type."),
+   ECHO_ADMINS
+  },
+  {"examine", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("examine <game number>"),
+   N_("Examine a game in the database."),
+   N_("If the server can access the games database, request "
+      "information about the game with the given number id."),
+   ECHO_ADMINS
+  },
+  {"topten", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("topten\n"
+      "topten <game type>"),
+   N_("List the top rated players."),
+   N_("If the server can access the ratings database, request "
+      "the list of the top ten players for the given game type "
+      "or the current game type if ommitted."),
+   ECHO_ADMINS
+  },
+  {"gamelist", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("gamelist\n"
+      "gamelist <game type>\n"
+      "gamelist type=<game type>\n"
+      "gamelist user=<user name>"),
+   N_("List games in the database."),
+   N_("If the server can access the games database, request "
+      "a list of games matching the given criteria."),
+   ECHO_ADMINS
+  },
+  {"aka", ALLOW_OBSERVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("aka <user name>"),
+   N_("List user aliases."),
+   N_("If the server can access the games database, request "
+      "a list of aliases for the given user."),
+   ECHO_ADMINS
+  },
 
-#ifdef HAVE_AUTH
+#ifdef HAVE_MYSQL
   {"authdb",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("authdb\n"
@@ -459,6 +519,20 @@ const struct command commands[] = {
       "\"guests\" and \"newusers\" control whether guests are allow or "
       "new users are allowed when authentication is enabled."),
    ECHO_NONE, VCF_NONE, 0
+  },
+  {"fcdb", ALLOW_HACK, ALLOW_HACK,
+    /* TRANS: translate text between <> only */
+    N_("fcdb\n"
+       "fcdb on\n"
+       "fcdb off\n"
+       "fcdb min_rated_turns <number>"),
+    N_("Game and rating database control.\n"),
+    N_("If no arguments are given, show some information about the "
+       "game database. Arguments 'on' and 'off' enable and "
+       "disable database access respectively. The 'min_rated_turns' "
+       "option controls the number of turns before a rated game "
+       "should be considered for updating user ratings."),
+    ECHO_NONE
   },
 #endif
   {"endgame",	ALLOW_CTRL, ALLOW_NEVER,

@@ -33,6 +33,7 @@
 #include "version.h"
 
 #include "citytools.h"
+#include "plrhand.h"
 #include "report.h"
 #include "score.h"
 
@@ -1109,6 +1110,16 @@ void report_progress_scores(void)
   page_conn(game.game_connections,
 	    _("Progress Scores:"),
 	    _("The Greatest Civilizations in the world."), buffer);
+
+  if (team_count() > 0) {
+    /* Refresh the scores. */
+    score_calculate_team_scores();
+
+    notify_conn(NULL, _("Score: Team Scores:"));
+    team_iterate(pteam) {
+      notify_conn(NULL, _("Score: %-16s %.1f"), pteam->name, pteam->score);
+    } team_iterate_end;
+  }
 }
 
 /**************************************************************************
@@ -1150,6 +1161,118 @@ void report_final_scores(void)
 
   lsend_packet_endgame_report(game.game_connections, &packet);
 }	
+
+/**************************************************************************
+  Assumes groupings have been assigned, filled and results propagated.
+  If game.rated is TRUE, reports rating changes as well.
+**************************************************************************/
+void report_game_rankings(void)
+{
+  const struct grouping *groupings = NULL;
+  int num_groupings = 0, i, j;
+  struct team *pteam;
+  struct player *pplayer;
+  char buf[128];
+
+  groupings = score_get_groupings(&num_groupings);
+
+  if (num_groupings <= 0 || groupings == NULL) {
+    return;
+  }
+
+  if (game.fcdb.type == GT_SOLO) {
+    double r, rd;
+
+    r = score_calculate_solo_opponent_rating(&groupings[0]);
+    rd = score_get_solo_opponent_rating_deviation();
+
+    if (game.rated) {
+      if (game.fcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
+        notify_conn(NULL, _("Game: You have won this solo game at "
+                            "turn %d and with score %.0f. It will "
+                            "count as a win against an 'opponent' "
+                            "with rating %.2f and rating deviation "
+                            "%.2f."),
+                    game.turn, groupings[0].score, r, rd);
+      } else {
+        notify_conn(NULL, _("Game: You have lost this solo game. "
+                            "It will count as a loss against an "
+                            "'opponent' with rating %.2f and rating "
+                            "deviation %.2f."), r, rd);
+      }
+    }
+  } else if (team_count() > 0) {
+    notify_conn(NULL,
+        "------------------------ %s ------------------------",
+        _("Team Standings"));
+    notify_conn(NULL, "%-16s %10s %10s %10s",
+        _("Name"), _("Rank"), _("Score"), _("Result"));
+    for (i = 0; i < num_groupings; i++) {
+      pteam = team_get_by_id(groupings[i].players[0]->team);
+      notify_conn(NULL, "%-16s %10.1f %10.0f %10s",
+                  pteam ? pteam->name : groupings[i].players[0]->name,
+                  groupings[i].rank + 1.0, groupings[i].score,
+                  result_as_string(groupings[i].result));
+    }
+  }
+
+  if (game.fcdb.type != GT_SOLO) {
+    notify_conn(NULL,
+        "------------------------ %s ------------------------",
+        _("Player Standings"));
+    notify_conn(NULL, "%-16s %-16s %10s %10s %10s",
+        _("Name"), _("User"), _("Rank"), _("Score"),  _("Result"));
+
+    for (i = 0; i < num_groupings; i++) {
+      for (j = 0; j < groupings[i].num_players; j++) {
+        pplayer = groupings[i].players[j];
+        player_get_rated_username(pplayer, buf, sizeof(buf));
+        notify_conn(NULL, "%-16s %-16s %10.1f %10d %10s",
+                    pplayer->name, buf, pplayer->rank + 1.0,
+                    get_civ_score(pplayer),
+                    result_as_string(pplayer->result));
+      }
+    }
+  }
+
+
+  if (game.rated) {
+    if (team_count() > 0) {
+      notify_conn(NULL,
+          "---------------------- %s ----------------------",
+          _("Team Ratings"));
+      notify_conn(NULL, "%-16s %10s %10s %12s %10s",
+          _("Name"), _("Rating"), _("RD"), _("New Rating"), _("New RD"));
+      for (i = 0; i < num_groupings; i++) {
+        pteam = team_get_by_id(groupings[i].players[0]->team);
+        if (pteam == NULL) {
+          continue;
+        }
+        notify_conn(NULL, "%-16s %10.2f %10.2f %12.2f %10.2f",
+                    pteam->name, groupings[i].rating,
+                    groupings[i].rating_deviation,
+                    groupings[i].new_rating,
+                    groupings[i].new_rating_deviation);
+      }
+    }
+    notify_conn(NULL,
+        "------------------------ %s ------------------------",
+        _("Player Ratings"));
+    notify_conn(NULL, "%-16s %10s %10s %12s %10s",
+        _("Name"), _("Rating"), _("RD"), _("New Rating"), _("New RD"));
+    for (i = 0; i < num_groupings; i++) {
+      for (j = 0; j < groupings[i].num_players; j++) {
+        pplayer = groupings[i].players[j];
+        player_get_rated_username(pplayer, buf, sizeof(buf));
+        notify_conn(NULL, "%-16s %10.2f %10.2f %12.2f %10.2f",
+                    buf, pplayer->fcdb.rating,
+                    pplayer->fcdb.rating_deviation,
+                    pplayer->fcdb.new_rating,
+                    pplayer->fcdb.new_rating_deviation);
+      }
+    }
+  }
+}
 
 /**************************************************************************
 This function pops up a non-modal message dialog on the player's desktop

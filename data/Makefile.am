@@ -27,7 +27,9 @@ SERVER_FILES = \
 	tournament.serv	\
 	warserver.serv	\
 	example-actions.txt	\
-	example-welcome.txt
+	example-welcome.txt	\
+	auth.sql	\
+	fcdb.sql
 else
 SERVER_FILES =
 endif
@@ -51,7 +53,9 @@ EXTRA_DIST = \
 	tournament.serv	\
 	warserver.serv	\
 	example-actions.txt	\
-	example-welcome.txt
+	example-welcome.txt	\
+	auth.sql	\
+	fcdb.sql
 
 if CLIENT
 CLIENTDATADIRS = misc flags isotrident trident isophex stdsounds

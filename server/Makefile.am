@@ -4,7 +4,7 @@ SUBDIRS=	generator
 
 bin_PROGRAMS = civserver
 noinst_LIBRARIES = libcivserver.a
-AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/../common -I$(srcdir)/../ai -I../intl -I$(top_srcdir)/common/aicore -I$(srcdir)/generator @AUTH_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/../common -I$(srcdir)/../ai -I../intl -I$(top_srcdir)/common/aicore -I$(srcdir)/generator @MYSQL_CFLAGS@
 
 
 ## Above, note -I../intl instead of -I$(top_srdir/intl) is deliberate.
@@ -20,8 +20,6 @@ civserver_SOURCES = \
 libcivserver_a_SOURCES = \
 		airgoto.c	\
 		airgoto.h	\
-		auth.c		\
-		auth.h		\
 		autoattack.c	\
 		autoattack.h	\
 		barbarian.c	\
@@ -38,6 +36,8 @@ libcivserver_a_SOURCES = \
 		connecthand.h	\
 		console.c	\
 		console.h	\
+		database.c      \
+		database.h      \
 		diplhand.c	\
 		diplhand.h	\
 		diplomats.c	\
@@ -95,5 +95,5 @@ civserver_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../utility/libcivutility.a ../common/libcivcommon.a ../ai/libcivai.a \
       ../utility/libcivutility.a ./libcivserver.a ../utility/libcivutility.a \
       ../common/aicore/libaicore.a ./generator/libgenerator.a \
-      $(AUTH_LIBS) $(SERVER_LIBS) $(SERVERICON)
+      $(MYSQL_LIBS) $(SERVER_LIBS) $(SERVERICON)
 
