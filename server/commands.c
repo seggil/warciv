@@ -410,9 +410,8 @@ const struct command commands[] = {
    ECHO_NONE, VCF_NONE, 0
   },
   {"autoteam", ALLOW_NEVER, ALLOW_CTRL, /* require vote in pregame */
-   /* TRANS: translate text between <> only */
-   N_("autoteam <# of teams>\n"
-      "autoteam <# of teams> rating\n"
+   /* TRANS: translate text between <> only (NOT in []) */
+   N_("autoteam <# of teams> [rating|ranking|rated|rank]\n"
       "autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"), 
    N_("Assign teams automatically."),
    N_("Generate the given number of teams assuming that players' "

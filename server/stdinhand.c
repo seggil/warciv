@@ -2483,7 +2483,11 @@ static bool autoteam_command(struct connection *caller, char *str,
   memset(player_ordered, 0, sizeof(player_ordered));
   num = 0;
 
-  if (ntokens == 1 || (ntokens == 2 && 0 == strcmp(args[1], "rating"))) {
+  if (ntokens == 1 || (ntokens == 2
+                       && (0 == strcmp(args[1], "rating")
+                           || 0 == strcmp(args[1], "ranking")
+                           || 0 == strcmp(args[1], "rated")
+                           || 0 == strcmp(args[1], "rank")))) {
 #ifdef HAVE_MYSQL
     if (!srvarg.fcdb.enabled) {
       cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
@@ -2523,6 +2527,9 @@ static bool autoteam_command(struct connection *caller, char *str,
     }
 #endif
     
+    notify_conn(NULL, _("Server: Ordering players by "
+                        "their TEAM rating."));
+
 #else
     cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
               _("Database support is not enabled."));
@@ -2533,16 +2540,9 @@ static bool autoteam_command(struct connection *caller, char *str,
 
   } else if (ntokens >= 2 && 0 == strcmp(args[1], "list")) {
 
-    if (ntokens <= 2) {
-      cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-                _("Missing the ordered list of players."));
-      free_tokens(args, ntokens);
-      return FALSE;
-    }
-
-    p = args[2];
+    p = ntokens > 2 ? args[2] : NULL;
     num = 0;
-    for (i = 0; i < MAX_NUM_PLAYERS; i++) {
+    for (i = 0; p != NULL && i < MAX_NUM_PLAYERS; i++) {
       struct player *pplayer;
 
       while (*p && my_isspace(*p)) {
@@ -2593,6 +2593,20 @@ static bool autoteam_command(struct connection *caller, char *str,
       free_tokens(args, ntokens);
       return TRUE;
     }
+
+    if (num > 0) {
+      notify_conn(NULL, _("Server: Ordering players using the provided "
+                          "list of %d %s."),
+                  num, PL_("player", "players", num));
+    } else {
+      notify_conn(NULL, _("Server: Ordering players arbitrarily."));
+    }
+  } else {
+    /* TRANS: do not translate "/help autoteam". */
+    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
+              _("Invalid syntax. Please read /help autoteam."));
+    free_tokens(args, ntokens);
+    return FALSE;
   }
 
   free_tokens(args, ntokens);
