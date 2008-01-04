@@ -5312,12 +5312,12 @@ static bool examine_command(struct connection *caller,
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
               _("  Teams (%d):"), fgi->num_teams);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-              "    %-16s %7s %s",
+              "    %-14s %7s %s",
               _("Name"), _("Rank"), _("Result"));
     for (i = 0; i < fgi->num_teams; i++) {
       fti = &fgi->teams[i];
       cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-16s %7.1f %s",
+                "    %-14s %7.1f %s",
                 fti->name, fti->rank + 1.0, fti->result);
     }
   }
@@ -5326,7 +5326,7 @@ static bool examine_command(struct connection *caller,
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
               _("  Players (%d):"), fgi->num_players);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-              "    %-14s %-14s %-14s %-14s %7s %s",
+              "    %-22s %-22s %-22s %-14s %7s %s",
               _("Name"), _("User"), _("Nation"), _("Team"),
               _("Rank"), _("Result"));
     for (i = 0; i < fgi->num_players; i++) {
@@ -5338,7 +5338,7 @@ static bool examine_command(struct connection *caller,
         sz_strlcpy(buf, fpi->team_name);
       }
       cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-14s %-14s %-14s %-14s %7.1f %6s",
+                "    %-22s %-22s %-22s %-14s %7.1f %6s",
                 fpi->name, fpi->user, fpi->nation, buf,
                 fpi->rank + 1.0, fpi->result);
     }
@@ -5528,7 +5528,7 @@ static bool aka_command(struct connection *caller,
 #ifdef HAVE_MYSQL
   struct fcdb_aliaslist *fal = NULL;
   struct fcdb_aliaslist_entry *fale = NULL;
-  char buf[512];
+  char buf[4096];
   char user[MAX_LEN_NAME] = "";
   int i;
 
