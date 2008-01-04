@@ -6960,6 +6960,20 @@ static bool check_settings_for_rated_game(void)
   bool ok = TRUE, checked = FALSE;
   int i;
 
+  if (!srvarg.fcdb.enabled || !srvarg.auth.enabled) {
+    /* No sense in enforcing settings if we cannot update the
+     * database or determine who logged in. */
+
+    if (game.rated) {
+      notify_conn(NULL, _("Server: This game cannot be rated because"
+                          " database communication is disabled (option"
+                          " 'rated' has been set to 0)."));
+      game.rated = FALSE;
+    }
+
+    return TRUE;
+  }
+
   if (!game.rated || game.fcdb.type == GT_MIXED) {
     /* For unrated games or 'mixed' type games, any settings are ok. */
     return TRUE;
@@ -7103,6 +7117,8 @@ static bool start_command(struct connection *caller,
                           bool check)
 {
   int started = 0, notstarted = 0;
+  static int failed_rated_start = 0;
+  const int MAX_FAILED_RATED_STARTS = 3;
 
   switch (server_state) {
 
@@ -7185,19 +7201,34 @@ static bool start_command(struct connection *caller,
     if (check) {
       return TRUE;
     } 
+
+    if (notstarted >= MAX_FAILED_RATED_STARTS) {
+      failed_rated_start = 0;
+    }
     
     /* If we are getting close to starting, check that settings
      * are ok for this type of rated game. */
     if (notstarted < 3 && !check_settings_for_rated_game()) {
-      static int failed_rated_start = 0;
       failed_rated_start++;
-      if (failed_rated_start < 3) {
+      if (failed_rated_start < MAX_FAILED_RATED_STARTS - 1) {
+        notify_conn(NULL, _("Game: The game will not start unless "
+                            "settings are fixed or the 'rated' setting "
+                            "is set to 0 (this warning will repeat %d "
+                            "more %s)."),
+                    MAX_FAILED_RATED_STARTS - failed_rated_start - 1,
+                    PL_("time", "times", MAX_FAILED_RATED_STARTS
+                        - failed_rated_start - 1));
+      } else if (failed_rated_start == MAX_FAILED_RATED_STARTS - 1) {
         notify_conn(NULL, _("Game: The game will not start unless "
                             "settings are fixed or the 'rated' setting "
                             "is set to 0."));
+        notify_conn(NULL, _("Game: WARNING: Attempting to start again "
+                            "without fixing settings will set the "
+                            "'rated' option to 0)."));
       } else {
         notify_conn(NULL, _("Game: This game will not be rated because "
-                            "settings are not suitable."));
+                            "settings are not suitable (option 'rated' "
+                            "has been set to 0)."));
         game.rated = FALSE;
         failed_rated_start = 0;
       }
