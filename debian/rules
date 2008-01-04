@@ -26,6 +26,7 @@ COMMON_CONFIG := --cache-file=$(CURDIR)/config.cache \
 		 --host $(DEB_BUILD_GNU_TYPE) --build $(DEB_HOST_GNU_TYPE) \
 		 --enable-debug=no \
 		 --enable-auth \
+		 --enable-mysql
 
 build: patch build-all-stamp
 
