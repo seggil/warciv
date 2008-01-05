@@ -475,6 +475,8 @@ void hash_free(struct hash_table *h)
   hash_free_contents(h);
   free(h);
 }
+
+#ifdef DEBUG
 /**************************************************************************
   ...
 **************************************************************************/
@@ -500,6 +502,7 @@ static void hash_dump(struct hash_table *h)
     freelog(LOG_DEBUG, "      hash_val=%u\n", bucket->hash_val); 
   }
 }
+#endif /* DEBUG */
 
 /**************************************************************************
   Resize the hash table: create a new table, insert, then remove

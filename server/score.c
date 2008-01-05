@@ -632,6 +632,7 @@ void save_ppm(void)
   fclose(fp);
 }
 
+#ifdef DEBUG
 /**************************************************************************
   ...
 **************************************************************************/
@@ -678,11 +679,12 @@ static void dump_groupings(void)
   }
   freelog(LOG_DEBUG, "END GROUPING DUMP");
 }
+#endif /* DEBUG */
 
 /**************************************************************************
   ...
 **************************************************************************/
-#if 0
+#if 0   /* FOR DEBUGGING ONLY */
 static int real_grouping_compare(const void *va, const void *vb);
 static int grouping_compare(const void *va, const void *vb)
 {
