@@ -774,12 +774,21 @@ const char *format_duration(int duration)
 ****************************************************************************/
 const char *get_ping_time_text(struct player *pplayer)
 {
+  struct connection *pconn = NULL;
+  double ping_time_in_ms;
   INIT;
 
-  if (conn_list_size(pplayer->connections) > 0
-      && conn_list_get(pplayer->connections, 0)->ping_time != -1.0) {
-    double ping_time_in_ms =
-	1000 * conn_list_get(pplayer->connections, 0)->ping_time;
+  conn_list_iterate(game.est_connections, oconn) {
+    if (oconn->player == pplayer
+	&& !oconn->observer
+	/* Certainly not needed, but safer */
+	&& 0 == strcmp(oconn->username, pplayer->username)) {
+      pconn = oconn;
+    }
+  } conn_list_iterate_end;
+
+  if (pconn && pconn->ping_time != -1) {
+    ping_time_in_ms = 1000 * pconn->ping_time;
 
     add(_("%6d.%02d ms"), (int) ping_time_in_ms,
 	((int) (ping_time_in_ms * 100.0)) % 100);
