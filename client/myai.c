@@ -957,12 +957,15 @@ void calculate_trade_planning(char *buf, size_t buf_len)
   struct trade_city tcities[size];
   struct trade_configuration bconf, cconf;
   struct unit *caravan = NULL;
+  time_t max_time;
 
   buf[0] = '\0';
   if (size <= 0) {
     return;
   }
 
+  max_time = my_ai_trade_plan_time_max > 0
+             ? time(NULL) + my_ai_trade_plan_time_max : 0;
   unit_type_iterate(type) {
     if (unit_type_flag(type, F_TRADE_ROUTE)) {
       caravan = create_unit_virtual(game.player_ptr,
@@ -1071,9 +1074,7 @@ void calculate_trade_planning(char *buf, size_t buf_len)
 
   /* Do the recursive calculation */
   if (bconf.free_slots > 0) {
-    recursive_calculate_trade_planning(my_ai_trade_plan_time_max
-                                       ? time(NULL) + my_ai_trade_plan_time_max
-                                       : 0, tcities, size, 0, 1,
+    recursive_calculate_trade_planning(max_time, tcities, size, 0, 1,
                                        ptrlist, &cconf, btrlist, &bconf);
   }
 
