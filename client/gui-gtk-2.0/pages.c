@@ -2012,7 +2012,7 @@ void set_client_page(enum client_pages page)
     break;
   case PAGE_GAME:
     chatline_scroll_to_bottom();
-    clear_allied_chat_only();
+    init_chat_buttons();
     break;
   case PAGE_NETWORK:
     update_network_lists();

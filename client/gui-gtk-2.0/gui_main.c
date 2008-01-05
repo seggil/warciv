@@ -162,6 +162,8 @@ static GtkWidget *unit_pixmap_button;
 static GtkWidget *unit_below_pixmap[MAX_NUM_UNITS_BELOW];
 static GtkWidget *unit_below_pixmap_button[MAX_NUM_UNITS_BELOW];
 static GtkWidget *more_arrow_pixmap;
+static GtkWidget *more_time_button;
+static GtkWidget *pause_button;
 
 static int unit_ids[MAX_NUM_UNITS_BELOW];  /* ids of the units icons in 
                                             * information display: (or 0) */
@@ -210,11 +212,18 @@ struct net_input_ctx {
 /**************************************************************************
 ...
 **************************************************************************/
-void clear_allied_chat_only(void)
+void init_chat_buttons(void)
 {
   allied_chat_only = TRUE;
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(allied_chat_toggle_button),
                                TRUE);
+  if (can_client_issue_orders()) {
+    gtk_widget_set_sensitive(more_time_button, TRUE);
+    gtk_widget_set_sensitive(pause_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive(more_time_button, FALSE);
+    gtk_widget_set_sensitive(pause_button, FALSE);
+  }
 }
 
 /**************************************************************************
@@ -1568,11 +1577,13 @@ static void setup_widgets(void)
   g_signal_connect(button, "clicked",
                    G_CALLBACK(request_more_time_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+  more_time_button = button;
 
   button = gtk_button_new_with_label(_("Request Pause"));
   g_signal_connect(button, "clicked",
                    G_CALLBACK(request_pause_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+  pause_button = button;
 
   /* Other things to take care of */
 
