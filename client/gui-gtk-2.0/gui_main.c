@@ -1167,6 +1167,26 @@ static void allied_chat_button_toggled(GtkToggleButton *button,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void request_more_time_callback(void)
+{
+  int new_timeout = game.timeout + 30;
+  char buf[256];
+  my_snprintf(buf, sizeof(buf), "/set timeout %d --- I need more time!",
+              new_timeout);
+  send_chat(buf);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void request_pause_callback(void)
+{
+  send_chat("/set timeout 600 --- I need a pause!");
+}
+
+/**************************************************************************
  do the heavy lifting for the widget setup.
 **************************************************************************/
 static void setup_widgets(void)
@@ -1542,6 +1562,16 @@ static void setup_widgets(void)
 
   button = gtk_button_new_with_label(_("Clear links"));
   g_signal_connect(button, "clicked", G_CALLBACK(clear_all_link_marks), NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+  button = gtk_button_new_with_label(_("More Time!"));
+  g_signal_connect(button, "clicked",
+                   G_CALLBACK(request_more_time_callback), NULL);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+  button = gtk_button_new_with_label(_("Request Pause"));
+  g_signal_connect(button, "clicked",
+                   G_CALLBACK(request_pause_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   /* Other things to take care of */
