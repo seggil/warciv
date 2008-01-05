@@ -218,11 +218,11 @@ void init_chat_buttons(void)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(allied_chat_toggle_button),
                                TRUE);
   if (can_client_issue_orders()) {
-    gtk_widget_set_sensitive(more_time_button, TRUE);
-    gtk_widget_set_sensitive(pause_button, TRUE);
+    gtk_widget_show(more_time_button);
+    gtk_widget_show(pause_button);
   } else {
-    gtk_widget_set_sensitive(more_time_button, FALSE);
-    gtk_widget_set_sensitive(pause_button, FALSE);
+    gtk_widget_hide(more_time_button);
+    gtk_widget_hide(pause_button);
   }
 }
 
