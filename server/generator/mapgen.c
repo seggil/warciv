@@ -2673,12 +2673,12 @@ enum gen8_tile_type {
   TYPE_UNASSIGNED,
   TYPE_UNASSIGNED_SEA,
   TYPE_ASSIGNED_SEA,
-  TYPE_LAND,
-  TYPE_STARTPOS
+  TYPE_LAND
 };
 
 struct gen8_tile {
   enum gen8_tile_type type;
+  int start_pos;
   int terrain;
   int spec;
   bool river;
@@ -2711,6 +2711,7 @@ void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src,
               struct player **pplayers, size_t num);
 
 int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y);
+bool is_correct_start_pos(struct gen8_map *pmap, int x, int y, int land_tiles);
 struct gen8_map *create_fair_island(int size, int startpos);
 
 void do_rotation(struct gen8_map *island);
@@ -2784,6 +2785,7 @@ void startpos_init(void)
 *************************************************************************/
 void startpos_new(int x, int y, Nation_Type_id nation)
 {
+  assert(map.num_start_positions < game.nplayers);
   map.start_positions[map.num_start_positions].tile = native_pos_to_tile(x, y);
   map.start_positions[map.num_start_positions].nation = nation;
   map.num_start_positions++;
@@ -2843,6 +2845,7 @@ struct gen8_tile **create_tiles_buffer(int xsize, int ysize)
     buffer[x] = fc_malloc(sizeof(struct gen8_tile) * ysize);
     for (y = 0; y < ysize; y++) {
       buffer[x][y].type = TYPE_UNASSIGNED;
+      buffer[x][y].start_pos = 0;
       buffer[x][y].terrain = T_OCEAN;
       buffer[x][y].spec = 0;
       buffer[x][y].river = FALSE;
@@ -2895,7 +2898,7 @@ void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src,
               int xmin, int xmax, int ymin, int ymax, bool new_startpos,
               struct player **pplayers, size_t num)
 {
-  int xc, yc, xsize = xmax - xmin, ysize = ymax - ymin, idx = 0;
+  int i, xc, yc, xsize = xmax - xmin, ysize = ymax - ymin, idx = 0;
 
   for (xc = 0; xc < xsize; xc++) {
     for (yc = 0; yc < ysize; yc++) {
@@ -2909,12 +2912,15 @@ void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src,
       } else if (src->tiles[sx][sy].spec) {
         dest->tiles[dx][dy].spec = src->tiles[sx][sy].spec;
       }
-      if (src->tiles[sx][sy].type == TYPE_STARTPOS && new_startpos) {
-	if (pplayers) {
-          assert(idx < num);
-          startpos_new(dx, dy, pplayers[idx++]->nation);
-	} else {
-          startpos_new(dx, dy, NO_NATION_SELECTED);
+      if (new_startpos) {
+freelog(LOG_ERROR, "%d", src->tiles[sx][sy].start_pos);
+	for (i = 0; i < src->tiles[sx][sy].start_pos; i++) {
+	  if (pplayers) {
+	    assert(idx < num);
+	    startpos_new(dx, dy, pplayers[idx++]->nation);
+	  } else {
+	    startpos_new(dx, dy, NO_NATION_SELECTED);
+	  }
 	}
       }
     }
@@ -2949,6 +2955,25 @@ int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y)
     }
   } adjacent_tiles_pos_iterate_end;
   return tile_num;
+}
+
+/*************************************************************************
+  Determine if the tile (x, y) is ok to become a start pos. It needed
+  land_tiles land tiles arround to be considered as start pos.
+*************************************************************************/
+bool is_correct_start_pos(struct gen8_map *pmap, int x, int y, int land_tiles)
+{
+  int tx, ty, count = 0;
+
+  for (tx = MAX(x - 2, 0); tx < MIN(x + 2, pmap->xsize); tx++) {
+    for (ty = MAX(y - 2, 0); ty < MIN(y + 2, pmap->ysize); ty++) {
+      if (pmap->tiles[tx][ty].type == TYPE_LAND) {
+	count++;
+      }
+    }
+  }
+
+  return count >= land_tiles;
 }
 
 /*************************************************************************
@@ -2988,7 +3013,7 @@ struct gen8_map *create_fair_island(int size, int startpos)
     tx = x[tile];
     ty = y[tile];
 
-    switch(myrand(4)) {
+    switch (myrand(4)) {
       case 0:
         tx++;
         break;
@@ -3025,12 +3050,22 @@ struct gen8_map *create_fair_island(int size, int startpos)
   size = i;
 
   /* Add start positions */
-  for (i = 0; i < startpos;) {
-    int tile = myrand(size);
+  for (i = 0; i < startpos; i++) {
+    bool found = FALSE;
+    int j, tile;
 
-    if (temp->tiles[x[tile]][y[tile]].type == TYPE_LAND) {
-      temp->tiles[x[tile]][y[tile]].type = TYPE_STARTPOS;
-      i++;
+    for (j = 100; j > 0; j--) {
+      tile = myrand(size);
+      if (is_correct_start_pos(temp, x[tile], y[tile], j / 5)) {
+	temp->tiles[x[tile]][y[tile]].start_pos++;
+	found = TRUE;
+	break;
+      }
+    }
+    if (!found) {
+      /* Make a totally random start position */
+      tile = myrand(size);
+      temp->tiles[x[tile]][y[tile]].start_pos++;
     }
   }
 
