@@ -77,7 +77,7 @@ enum auth_status {
 
 /* Determines why the connection is closed */
 enum exit_state {
-  STATE_NORMAL,
+  STATE_NORMAL = 0,
   STATE_STREAM_ERROR,
   STATE_PING_TIMEOUT,
   STATE_EXCEPTION_DATA,

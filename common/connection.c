@@ -515,13 +515,13 @@ static void free_socket_packet_buffer(struct socket_packet_buffer *buf)
 **************************************************************************/
 const char *conn_description(const struct connection *pconn)
 {
-  static char buffer[MAX_LEN_NAME*2 + MAX_LEN_ADDR + 128];
+  static char buffer[MAX_LEN_NAME * 2 + MAX_LEN_ADDR + 128];
   static const char *exit_state_name[] = {
     NULL,
     N_("stream error"),
     N_("ping timeout"),
     N_("exception data"),
-    N_("huge buffer sent")
+    N_("huge buffer sent"),
     N_("lagging connection"),
     N_("banned"),
     N_("auth failed"),
@@ -542,8 +542,8 @@ const char *conn_description(const struct connection *pconn)
     sz_strlcpy(buffer, "server");
   }
   if (exit_state_name[pconn->exit_state]) {
-    cat_snprintf(buffer, sizeof(buffer), buffer,
-		 _(" (%s)"), _(exit_state_name[pconn->exit_state]));
+    cat_snprintf(buffer, sizeof(buffer),
+		 " (%s)", _(exit_state_name[pconn->exit_state]));
   } else if (!pconn->established) {
     sz_strlcat(buffer, _(" (connection incomplete)"));
     return buffer;
