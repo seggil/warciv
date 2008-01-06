@@ -842,7 +842,8 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
 
   len_comp = len_comp_max; /* Satisfy zlib. */
 
-  switch (compress(tmap_comp, &len_comp, tmap, len)) {
+  switch (compress((unsigned char *)tmap_comp, &len_comp,
+                   (unsigned char *)tmap, len)) {
   case Z_OK:
     break;
   case Z_MEM_ERROR:
@@ -965,7 +966,8 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
 
   len_comp = len_comp_max; /* Satisfy zlib. */
 
-  switch (compress(tmap_comp, &len_comp, tmap, len)) {
+  switch (compress((unsigned char *)tmap_comp, &len_comp,
+                   (unsigned char *)tmap, len)) {
   case Z_OK:
     break;
   case Z_MEM_ERROR:
