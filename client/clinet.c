@@ -124,9 +124,6 @@ struct async_slist_ctx {
 static struct hash_table *async_slist_req_table = NULL;
 static int async_slist_req_id = 0;
 
-/* FIXME: This prototype should be moved to a *_common.h file */
-void append_network_statusbar(const char *text);
-
 /**************************************************************************
   ...
 **************************************************************************/

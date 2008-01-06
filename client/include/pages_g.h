@@ -32,4 +32,6 @@ enum client_pages {
 void set_client_page(enum client_pages page);
 enum client_pages get_client_page(void);
 
+void append_network_statusbar(const char *text);
+
 #endif  /* FC__PAGES_G_H */

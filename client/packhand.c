@@ -195,7 +195,7 @@ void handle_server_join_reply(bool you_can_join, char *message,
   } else {
     my_snprintf(msg, sizeof(msg),
 		_("You were rejected from the game: %s"), message);
-    append_output_window(msg);
+    append_network_statusbar(msg);
     aconnection.id = 0;
     if (auto_connect) {
       freelog(LOG_NORMAL, "%s", msg);
