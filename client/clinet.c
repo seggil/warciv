@@ -114,7 +114,7 @@ struct async_slist_ctx {
   int req_id;
   int nlsa_id;
   int buflen;			/* amount of data in buf */
-  char buf[16384];		/* metaserver response buffer */
+  char buf[65536];		/* metaserver response buffer */
   char urlpath[MAX_LEN_ADDR];
   char metaname[MAX_LEN_ADDR];
   int metaport;
@@ -830,8 +830,8 @@ static void process_metaserver_response(struct async_slist_ctx *ctx)
   struct server_list *sl;
   fz_FILE *f;
   char errbuf[256];
-  char newbuf[24576];
-  int i, j, count=0;
+  char *newbuf;
+  int i, j, newsize = 0;
 
   freelog(LOG_DEBUG, "pmr process_metaserver_response ctx=%p", ctx);
 
@@ -841,22 +841,27 @@ static void process_metaserver_response(struct async_slist_ctx *ctx)
     return;
   }
 
+  newbuf = fc_malloc(sizeof(ctx->buf));
+  newsize = ctx->buflen;
+
   /* Prevent \" sequences in files which would produce problem for secfile_lookup 
      Insert space character between \ and " */
-  for (i = 0, j = 0; i < sizeof(ctx->buf); i++, j++){
-    if (ctx->buf[i-1] == '\\' && ctx->buf[i] == '"' ){
+  for (i = 0, j = 0; i < ctx->buflen; i++, j++) {
+    if (i > 0 && ctx->buf[i-1] == '\\' && ctx->buf[i] == '"' ) {
       newbuf[j++]= ' ';
-      count++;
+      newsize++;
     }
-    newbuf[j]=ctx->buf[i];
+    newbuf[j] = ctx->buf[i];
   }
 
-  if (fwrite(newbuf, 1, (ctx->buflen + count), fp) != (ctx->buflen + count)) {
+  if (newsize != fwrite(newbuf, 1, newsize, fp)) {
     async_slist_error(ctx, _("Error writing to temporary file: %s"),
                       mystrerror());
     fclose(fp);
+    free(newbuf);
     return;
   }
+  free(newbuf);
   fflush(fp);
   rewind(fp);
 
