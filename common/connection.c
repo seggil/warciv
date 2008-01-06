@@ -118,7 +118,7 @@ enum cmdlevel_id cmdlevel_named(const char *token)
   appropriate (different) actions: server lost a client, client lost
   connection to server.
 **************************************************************************/
-static CLOSE_FUN close_callback;
+static CLOSE_FUN close_callback = NULL;
 
 /**************************************************************************
   Register the close_callback:
@@ -129,11 +129,15 @@ void close_socket_set_callback(CLOSE_FUN fun)
 }
 
 /**************************************************************************
-  Return the the close_callback.
+  Call the callback to close the socket.
 **************************************************************************/
-CLOSE_FUN close_socket_get_callback(void)
+void close_socket(struct connection *pc, enum exit_state state)
 {
-  return close_callback;
+  assert(pc != NULL);
+  assert(close_callback != NULL);
+
+  pc->exit_state = state;
+  (*close_callback)(pc);
 }
 
 /**************************************************************************
@@ -251,11 +255,6 @@ static int write_socket_data(struct connection *pc,
       if((nput=my_writesocket(pc->sock, 
 			      (const char *)buf->data+start, nblock)) == -1)
       {
-#ifdef NONBLOCKING_SOCKETS
-        if (my_socket_would_block()) {
-	  break;
-	}
-#endif
 	if (delayed_disconnect > 0) {
 	  pc->delayed_disconnect = TRUE;
 	  return 0;
@@ -332,6 +331,7 @@ static bool add_connection_data(struct connection *pc,
     freelog(LOG_DEBUG, "add %d bytes to %d (space=%d)", len, buf->ndata,
 	    buf->nsize);
     if (!buffer_ensure_free_extra_space(buf, len)) {
+      pc->exit_state = STATE_HUGE_BUFFER;
       if (delayed_disconnect > 0) {
 	pc->delayed_disconnect = TRUE;
 	return TRUE;
@@ -364,8 +364,7 @@ void send_connection_data(struct connection *pc, const unsigned char *data,
 		conn_description(pc));
       }
       flush_connection_send_buffer_packets(pc);
-    }
-    else {
+    } else {
       flush_connection_send_buffer_all(pc);
       if (!add_connection_data(pc, data, len)) {
 	freelog(LOG_ERROR, "cut connection %s due to huge send buffer (2)",
@@ -517,6 +516,17 @@ static void free_socket_packet_buffer(struct socket_packet_buffer *buf)
 const char *conn_description(const struct connection *pconn)
 {
   static char buffer[MAX_LEN_NAME*2 + MAX_LEN_ADDR + 128];
+  static const char *exit_state_name[] = {
+    NULL,
+    N_("stream error"),
+    N_("ping timeout"),
+    N_("exception data"),
+    N_("huge buffer sent")
+    N_("lagging connection"),
+    N_("banned"),
+    N_("auth failed"),
+    N_("cut connection"),
+  };
 
   buffer[0] = '\0';
 
@@ -531,7 +541,10 @@ const char *conn_description(const struct connection *pconn)
   } else {
     sz_strlcpy(buffer, "server");
   }
-  if (!pconn->established) {
+  if (exit_state_name[pconn->exit_state]) {
+    cat_snprintf(buffer, sizeof(buffer), buffer,
+		 _(" (%s)"), _(exit_state_name[pconn->exit_state]));
+  } else if (!pconn->established) {
     sz_strlcat(buffer, _(" (connection incomplete)"));
     return buffer;
   }
@@ -640,6 +653,7 @@ void connection_common_init(struct connection *pconn)
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
   pconn->access_level = pconn->granted_access_level = ALLOW_NONE;
+  pconn->exit_state = STATE_NORMAL;
   if (is_server) {
     pconn->server.ignore_list = ignore_list_new();
   } else {

@@ -324,7 +324,7 @@ void process_authentication_status(struct connection *pconn)
         freelog(LOG_NORMAL,
                 _("%s was rejected: Too many wrong password tries."),
                 pconn->username);
-        close_connection(pconn);
+        server_break_connection(pconn, STATE_AUTH_FAILED);
       } else {
         struct packet_authentication_req request;
 
@@ -348,7 +348,7 @@ void process_authentication_status(struct connection *pconn)
           _("%s was rejected: Connection timeout waiting for password."),
           pconn->username);
 
-      close_connection(pconn);
+      server_break_connection(pconn, STATE_AUTH_FAILED);
     }
     break;
   case AS_ESTABLISHED:

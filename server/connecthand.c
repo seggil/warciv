@@ -248,7 +248,7 @@ bool receive_ip(struct connection *pconn, const char *ipaddr)
 
   if (is_banned(pconn, CPT_ADDRESS)) {
     freelog(LOG_NORMAL, _("The address %s is banned from this server"), ipaddr);
-    server_break_connection(pconn);
+    server_break_connection(pconn, STATE_BANNED);
     return FALSE;
   }
 
@@ -268,7 +268,7 @@ bool receive_hostname(struct connection *pconn, const char *addr)
   if (is_banned(pconn, CPT_HOSTNAME)) {
     freelog(LOG_NORMAL,
 	    _("The hostname %s is banned from this server"), pconn->addr);
-    server_break_connection(pconn);
+    server_break_connection(pconn, STATE_BANNED);
     return FALSE;
   }
 

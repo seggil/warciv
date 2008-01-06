@@ -389,12 +389,9 @@ void *get_packet_from_connection(struct connection *pc,
 		   ADD_TO_POINTER(buffer->data, header_size), 
 		   compressed_size);
     if (error != Z_OK) {
-      CLOSE_FUN close_callback = close_socket_get_callback();
-
       freelog(LOG_ERROR, "Uncompressing of the packet stream failed. "
 	      "The connection will be closed now.");
-      assert(close_callback);
-      (*close_callback) (pc);
+    close_socket(pc, STATE_STREAM_ERROR);
 
       return NULL;
     }
@@ -438,12 +435,9 @@ void *get_packet_from_connection(struct connection *pc,
    * to have to be at least 3 bytes in size.
    */
   if (whole_packet_len < 3) {
-    CLOSE_FUN close_callback = close_socket_get_callback();
-
     freelog(LOG_ERROR, "The packet stream is corrupt. The connection "
 	    "will be closed now.");
-    assert(close_callback);
-    (*close_callback) (pc);
+    close_socket(pc, STATE_STREAM_ERROR);
 
     return NULL;
   }

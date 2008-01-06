@@ -75,6 +75,19 @@ enum auth_status {
   AS_ESTABLISHED
 };
 
+/* Determines why the connection is closed */
+enum exit_state {
+  STATE_NORMAL,
+  STATE_STREAM_ERROR,
+  STATE_PING_TIMEOUT,
+  STATE_EXCEPTION_DATA,
+  STATE_HUGE_BUFFER,
+  STATE_LAGGING_CONN,
+  STATE_BANNED,
+  STATE_AUTH_FAILED,
+  STATE_CUT_COMMAND
+};
+
 /* get 'struct conn_list' and related functions: */
 /* do this with forward definition of struct connection, so that
  * connection struct can contain a struct conn_list */
@@ -177,6 +190,9 @@ struct connection {
    * closed, but the closing has been postponed. 
    */
   bool delayed_disconnect;
+
+  /* Used to determine how the connection is broken */
+  enum exit_state exit_state;
 
   void (*notify_of_writable_data) (struct connection *pc,
 				   bool data_available_and_socket_full);
@@ -288,7 +304,7 @@ enum cmdlevel_id cmdlevel_named(const char *token);
 
 typedef void (*CLOSE_FUN) (struct connection *pc);
 void close_socket_set_callback(CLOSE_FUN fun);
-CLOSE_FUN close_socket_get_callback(void);
+void close_socket(struct connection *pc, enum exit_state state);
 
 int read_socket_data(int sock, struct socket_packet_buffer *buffer);
 void flush_connection_send_buffer_all(struct connection *pc);

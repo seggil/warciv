@@ -2913,7 +2913,6 @@ void copy_map(struct gen8_map *dest, int x, int y, struct gen8_map *src,
         dest->tiles[dx][dy].spec = src->tiles[sx][sy].spec;
       }
       if (new_startpos) {
-freelog(LOG_ERROR, "%d", src->tiles[sx][sy].start_pos);
 	for (i = 0; i < src->tiles[sx][sy].start_pos; i++) {
 	  if (pplayers) {
 	    assert(idx < num);
@@ -2960,6 +2959,7 @@ int fill_land(struct gen8_map *pmap, int tx, int ty, int *x, int *y)
 /*************************************************************************
   Determine if the tile (x, y) is ok to become a start pos. It needed
   land_tiles land tiles arround to be considered as start pos.
+  Note that ee don't want that there is already a start position arround.
 *************************************************************************/
 bool is_correct_start_pos(struct gen8_map *pmap, int x, int y, int land_tiles)
 {
@@ -2967,12 +2967,14 @@ bool is_correct_start_pos(struct gen8_map *pmap, int x, int y, int land_tiles)
 
   for (tx = MAX(x - 2, 0); tx < MIN(x + 2, pmap->xsize); tx++) {
     for (ty = MAX(y - 2, 0); ty < MIN(y + 2, pmap->ysize); ty++) {
+      if (pmap->tiles[tx][ty].start_pos > 0) {
+	return FALSE;
+      }
       if (pmap->tiles[tx][ty].type == TYPE_LAND) {
 	count++;
       }
     }
   }
-
   return count >= land_tiles;
 }
 

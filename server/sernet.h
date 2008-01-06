@@ -13,7 +13,7 @@
 #ifndef FC__SERNET_H
 #define FC__SERNET_H
 
-struct connection;
+#include "connection.h"
 
 #define DEFAULT_SOCK_PORT 5555
 #define BUF_SIZE 512
@@ -26,9 +26,8 @@ int server_open_socket(void);
 void flush_packets(void);
 int sniff_packets(void);
 void close_connections_and_socket(void);
-void server_break_connection(struct connection *pconn);
+void server_break_connection(struct connection *pconn, enum exit_state state);
 void init_connections(void);
-void close_connection(struct connection *pconn);
 void handle_conn_pong(struct connection *pconn);
 
 #endif  /* FC__SERNET_H */

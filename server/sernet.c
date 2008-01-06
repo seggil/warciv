@@ -195,7 +195,7 @@ static void handle_readline_input_callback(char *line)
 /*****************************************************************************
 ...
 *****************************************************************************/
-void close_connection(struct connection *pconn)
+static void close_connection(struct connection *pconn)
 {
   cancel_connection_votes(pconn);
 
@@ -277,8 +277,10 @@ static void close_socket_callback(struct connection *pc)
   Break a client connection. Send the packet which will allow the client
   to reconnect.
 *****************************************************************************/
-void server_break_connection(struct connection *pconn)
+void server_break_connection(struct connection *pconn, enum exit_state state)
 {
+  pconn->exit_state = state;
+
   if (pconn->server.currently_processed_request_id) {
     finish_processing_request(pconn);
   }
@@ -336,7 +338,7 @@ void flush_packets(void)
         if(FD_ISSET(pconn->sock, &exceptfs)) {
 	  freelog(LOG_NORMAL, "cut connection %s due to exception data",
 		  conn_description(pconn));
-	  server_break_connection(pconn);
+	  server_break_connection(pconn, STATE_EXCEPTION_DATA);
         } else {
 	  if(pconn->send_buffer && pconn->send_buffer->ndata > 0) {
 	    if(FD_ISSET(pconn->sock, &writefs)) {
@@ -347,7 +349,7 @@ void flush_packets(void)
 		freelog(LOG_NORMAL,
 			"cut connection %s due to lagging player",
 			conn_description(pconn));
-		server_break_connection(pconn);
+		server_break_connection(pconn, STATE_LAGGING_CONN);
 	      }
 	    }
 	  }
@@ -432,7 +434,7 @@ int sniff_packets(void)
     /* end server if no players for 'srvarg.quitidle' seconds */
     if (srvarg.quitidle != 0 && server_state != PRE_GAME_STATE) {
       static time_t last_noplayers;
-      if(conn_list_size(game.est_connections) == 0) {
+      if (conn_list_size(game.est_connections) == 0) {
 	if (last_noplayers != 0) {
 	  if (time(NULL)>last_noplayers + srvarg.quitidle) {
 	    if (srvarg.exit_on_end) {
@@ -444,10 +446,6 @@ int sniff_packets(void)
 
             server_state = GAME_OVER_STATE;
             force_end_of_sniff = TRUE;
-            conn_list_iterate(game.est_connections, pconn) {
-              lost_connection_to_client(pconn);
-              close_connection(pconn);
-            } conn_list_iterate_end;
 
 	    if (srvarg.exit_on_end) {
 	      /* No need for anything more; just quit. */
@@ -488,7 +486,7 @@ int sniff_packets(void)
 	  } else {
 	    freelog(LOG_NORMAL, "cut connection %s due to ping timeout",
 		    conn_description(pconn));
-	    server_break_connection(pconn);
+	    server_break_connection(pconn, STATE_PING_TIMEOUT);
 	  }
 	} else {
 	  ping_connection(pconn);
@@ -605,7 +603,7 @@ int sniff_packets(void)
       if(pconn->used && FD_ISSET(pconn->sock, &exceptfs)) {
  	freelog(LOG_ERROR, "cut connection %s due to exception data",
 		conn_description(pconn));
-	server_break_connection(pconn);
+	server_break_connection(pconn, STATE_EXCEPTION_DATA);
       }
     }
     
@@ -711,14 +709,14 @@ int sniff_packets(void)
 		}
 
                   /* Maybe changed */
-		  if(!pconn->used) {
+		  if (!pconn->used) {
                     break;
                   }
 
 		finish_processing_request(pconn);
 		connection_do_unbuffer(pconn);
 		if (!command_ok) {
-		  close_connection(pconn);
+		  close_socket_callback(pconn);
 		}
 #if PROCESSING_TIME_STATISTICS
 		  err = gettimeofday(&end, &tz);
@@ -755,7 +753,7 @@ int sniff_packets(void)
 	       && (time(NULL)>pconn->last_write + game.tcptimeout)) {
 	      freelog(LOG_NORMAL, "cut connection %s due to lagging player",
 		      conn_description(pconn));
-	      server_break_connection(pconn);
+	      server_break_connection(pconn, STATE_LAGGING_CONN);
 	    }
 	  }
         }
