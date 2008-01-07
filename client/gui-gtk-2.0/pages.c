@@ -1447,10 +1447,12 @@ GtkWidget *create_start_page(void)
 **************************************************************************/
 void handle_game_load(struct packet_game_load *packet)
 {
-  if (!packet->load_successful) {
-  } else {
+  /* NB Only put up the nation page for local game/scenario loads.
+   * This is to avoid the terrible confusion this page causes for
+   * reloaded network games. */
+  if (can_client_access_hack() && packet->load_successful) {
     update_nation_page(packet);
-
+      
     set_client_page(PAGE_NATION);
   }
 }
