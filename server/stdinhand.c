@@ -746,7 +746,11 @@ static void check_vote(struct voting *pvote)
     handle_stdin_input(NULL, pvote->cmdline, FALSE);
   }
 
-  remove_vote(pvote);
+  if (pvote == get_vote_by_no(vote_no)) {
+    /* Check if the vote still exists. e.g. if the command was /cut and the
+     * caller was the target, the vote would be already removed. */
+    remove_vote(pvote);
+  }
 }
 
 /**************************************************************************
