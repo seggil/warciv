@@ -207,6 +207,7 @@ static void close_connection(struct connection *pconn)
   }
   assert(timer_list_size(pconn->server.ping_timers) == 0);
   timer_list_free(pconn->server.ping_timers);
+  pconn->server.ping_timers = NULL;
 
   /* safe to do these even if not in lists: */
   conn_list_unlink(game.all_connections, pconn);
@@ -411,7 +412,7 @@ int sniff_packets(void)
   }
 #endif /* HAVE_LIBREADLINE */
 
-  if(year!=game.year) {
+  if (year!=game.year) {
     if (server_state == RUN_GAME_STATE)
       year = game.year;
   }
@@ -420,10 +421,10 @@ int sniff_packets(void)
     game.turn_start = time(NULL);
   }
   
-  while(TRUE) {
+  while (TRUE) {
     con_prompt_on();		/* accepting new input */
     
-    if(force_end_of_sniff) {
+    if (force_end_of_sniff) {
       force_end_of_sniff = FALSE;
       con_prompt_off();
       return 2;
@@ -436,7 +437,7 @@ int sniff_packets(void)
       static time_t last_noplayers;
       if (conn_list_size(game.est_connections) == 0) {
 	if (last_noplayers != 0) {
-	  if (time(NULL)>last_noplayers + srvarg.quitidle) {
+	  if (time(NULL) > last_noplayers + srvarg.quitidle) {
 	    if (srvarg.exit_on_end) {
 	      save_game_auto();
 	    }
@@ -455,7 +456,7 @@ int sniff_packets(void)
 	} else {
           char buf[256];
 	  last_noplayers = time(NULL);
-	  
+
 	  my_snprintf(buf, sizeof(buf),
 		      "restarting in %d seconds for lack of players",
 		      srvarg.quitidle);
@@ -475,9 +476,9 @@ int sniff_packets(void)
 
       conn_list_iterate(game.all_connections, pconn) {
 	if ((timer_list_size(pconn->server.ping_timers) > 0
-	     &&
-	     read_timer_seconds(timer_list_get(pconn->server.ping_timers, 0))
-	     > game.pingtimeout) || pconn->ping_time > game.pingtimeout) {
+	     && read_timer_seconds(timer_list_get(pconn->server.ping_timers, 0))
+	        > game.pingtimeout)
+	    || pconn->ping_time > game.pingtimeout) {
 	  /* cut mute players, except for hack-level ones */
 	  if (pconn->access_level == ALLOW_HACK) {
 	    freelog(LOG_NORMAL,
@@ -510,8 +511,8 @@ int sniff_packets(void)
       return 0;
     }
 
-    tv.tv_sec=1;
-    tv.tv_usec=0;
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
 
     MY_FD_ZERO(&readfs);
     MY_FD_ZERO(&writefs);
@@ -916,6 +917,10 @@ static int server_accept_connection(int sockfd)
       if (pconn->server.adns_id == 0) {
         /* reverse_lookup_cb called already */
         pconn->server.adns_id = -1;
+      }
+      if (!pconn->used) {
+	/* Have been banned (not an error) */
+	return 0;
       }
     } else {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
