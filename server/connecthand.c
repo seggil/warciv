@@ -668,7 +668,11 @@ void lost_connection_to_client(struct connection *pconn)
   const char *desc = conn_description(pconn);
 
   freelog(LOG_NORMAL, _("Lost connection: %s."), desc);
-  
+
+  if (!pconn->established) {
+    return;
+  }
+
   /* _Must_ avoid sending to pconn, in case pconn connection is
    * really lost (as opposed to server shutting it down) which would
    * trigger an error on send and recurse back to here.
