@@ -3,9 +3,13 @@
 name=_("Islandian")
 plural=_("?plural:Islandians")
 class=_("Fictional")
-legend=_("The atoll was discovered July 5, 1859 by Captain N.C. Middlebrooks, though he was most\ commonly known as Captain Brooks, of the seal hunting ship Gambia.The islands were named the\    Middlebrook Islands or the Brook Islands .Brooks claimed Midway for the United States under\ 
-the Guano Islands Act of 1856, which authorized Americans to temporarily occupy uninhabited\ 
-islands to obtain guano.")
+legend=_("The atoll was discovered July 5, 1859 by Captain N.C.\
+ Middlebrooks, though he was most commonly known as Captain\
+ Brooks, of the seal hunting ship Gambia.The islands were named\
+ the Middlebrook Islands or the Brook Islands. Brooks claimed \
+ Midway for the United States under the Guano Islands Act of\
+ 1856,which authorized Americans to temporarily occupy\
+ uninhabited islands to obtain guano.")
 leader= "none"
 leader_sex= "Male"
 	    

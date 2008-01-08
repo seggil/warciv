@@ -3,10 +3,11 @@
 name=_("Deadwood")
 plural=_("?plural:Deadwoods")
 class=_("Fictional")
-legend=_("The city of Deadwood, seat of Lawrence County, in the Black Hills of Western South\ 
-Dakota was incorporated 1876. The city was named for the dead trees that were found in the\ 
-narrow canyon (Deadwood Gulch) where you'll find the historic Main and Sherman streets,\
-with many streets built up its steep sides.")
+legend=_("The city of Deadwood, seat of Lawrence County, in the\
+ Black Hills of Western South Dakota was incorporated 1876. The\
+ city was named for the dead trees that were found in the narrow\
+ canyon (Deadwood Gulch) where you'll find the historic Main and\
+ Sherman streets, with many streets built up its steep sides.")
 
 leader= "Hickok","Calamity Jane","Wyatt Earp"
 	
