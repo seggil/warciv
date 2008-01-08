@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freeciv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 2003-06-08 18:30+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: \n"
@@ -1197,8 +1197,9 @@ msgid "Starting server..."
 msgstr "A iniciar o jogo."
 
 #: client/connectdlg_common.c:328
+#, fuzzy
 msgid "Couldn't start the server."
-msgstr ""
+msgstr "Jogo: Não pode atacar aqui."
 
 #: client/connectdlg_common.c:329 client/connectdlg_common.c:362
 msgid "You'll have to start one manually. Sorry..."
@@ -5061,8 +5062,9 @@ msgid "Beta"
 msgstr "Melhor"
 
 #: client/gui-gtk-2.0/style.c:93
+#, fuzzy
 msgid "Small Font"
-msgstr ""
+msgstr "Maravilhas Disponíveis"
 
 #: client/gui-gtk-2.0/style.c:101
 #, fuzzy
@@ -17368,8 +17370,9 @@ msgid "Buruzagi"
 msgstr ""
 
 #: data/nation/basque.ruleset:33
+#, fuzzy
 msgid "?female:Buruzagi"
-msgstr ""
+msgstr "Camarada"
 
 #. TRANS: Apaiz nagusi = Pope, Lord Protector
 #: data/nation/basque.ruleset:35
@@ -17398,8 +17401,9 @@ msgid "Lehendakari"
 msgstr ""
 
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
+#, fuzzy
 msgid "?female:Lehendakari"
-msgstr ""
+msgstr "Presidente"
 
 #: data/nation/bavarian.ruleset:3
 msgid "Bavarian"
@@ -17476,8 +17480,9 @@ msgid "Nabob"
 msgstr ""
 
 #: data/nation/bengali.ruleset:25
+#, fuzzy
 msgid "?female:Nabob"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/bengali.ruleset:26
 #, fuzzy
@@ -17485,8 +17490,9 @@ msgid "Major"
 msgstr "Maçonaria"
 
 #: data/nation/bengali.ruleset:26
+#, fuzzy
 msgid "?female:Major"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/boer.ruleset:3
 msgid "Boer"
@@ -17755,8 +17761,9 @@ msgid "Bohmugyi"
 msgstr ""
 
 #: data/nation/burmese.ruleset:21
+#, fuzzy
 msgid "?female:Bohmugyi"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/burmese.ruleset:22
 #, fuzzy
@@ -17829,8 +17836,9 @@ msgid "Basileus"
 msgstr "Oásis"
 
 #: data/nation/byzantium.ruleset:28
+#, fuzzy
 msgid "?female:Basileus"
-msgstr ""
+msgstr "Oásis"
 
 #: data/nation/cambodian.ruleset:3
 #, fuzzy
@@ -17996,8 +18004,9 @@ msgstr "Chefe"
 #: data/nation/malian.ruleset:26 data/nation/maori.ruleset:24
 #: data/nation/sioux.ruleset:28 data/nation/southafrican.ruleset:25
 #: data/nation/swazi.ruleset:22 data/nation/zulu.ruleset:38
+#, fuzzy
 msgid "?female:Chief"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/muskogee.ruleset:32 data/nation/sioux.ruleset:29
@@ -18029,8 +18038,9 @@ msgid "Principal Chief"
 msgstr "Grande Chefe"
 
 #: data/nation/cherokee.ruleset:25
+#, fuzzy
 msgid "?female:Principal Chief"
-msgstr ""
+msgstr "Presidente"
 
 #: data/nation/chilean.ruleset:3
 msgid "Chilean"
@@ -18715,8 +18725,9 @@ msgid "Druid"
 msgstr "Fruta"
 
 #: data/nation/gallic.ruleset:30
+#, fuzzy
 msgid "?female:Druid"
-msgstr ""
+msgstr "Presidente"
 
 #: data/nation/georgian.ruleset:3
 #, fuzzy
@@ -18790,8 +18801,9 @@ msgid "Despot"
 msgstr "Despotismo"
 
 #: data/nation/greek.ruleset:19
+#, fuzzy
 msgid "?female:Despot"
-msgstr ""
+msgstr "Presidente"
 
 #: data/nation/greenland.ruleset:3
 #, fuzzy
@@ -18854,8 +18866,9 @@ msgid "?title:Hacker"
 msgstr ""
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?female:Hacker"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/hawaiian.ruleset:3
 #, fuzzy
@@ -18907,8 +18920,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/himyarite.ruleset:3
+#, fuzzy
 msgid "Himyarite"
-msgstr ""
+msgstr "Activar"
 
 #: data/nation/himyarite.ruleset:4
 #, fuzzy
@@ -19089,12 +19103,14 @@ msgid "Inka"
 msgstr "Inca"
 
 #: data/nation/inca.ruleset:36
+#, fuzzy
 msgid "Sapa Inka"
-msgstr ""
+msgstr "Inca"
 
 #: data/nation/inca.ruleset:37
+#, fuzzy
 msgid "Willaq Umu"
-msgstr ""
+msgstr "Pilhar"
 
 #: data/nation/indian.ruleset:3
 msgid "Indian"
@@ -19116,8 +19132,9 @@ msgid "Raja"
 msgstr "Rainha"
 
 #: data/nation/indian.ruleset:19
+#, fuzzy
 msgid "?female:Raja"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/indian.ruleset:20
 msgid "Maharaja"
@@ -19134,8 +19151,9 @@ msgid "Mahatma"
 msgstr "Marajá"
 
 #: data/nation/indian.ruleset:21
+#, fuzzy
 msgid "?female:Mahatma"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/indonesian.ruleset:3
 #, fuzzy
@@ -19178,8 +19196,9 @@ msgid "Shaman"
 msgstr "Conselheiro"
 
 #: data/nation/inuit.ruleset:20
+#, fuzzy
 msgid "?female:Shaman"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/inuit.ruleset:21
 #, fuzzy
@@ -19276,8 +19295,9 @@ msgid "Taoiseach"
 msgstr ""
 
 #: data/nation/irish.ruleset:48
+#, fuzzy
 msgid "?female:Taoiseach"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/iroquois.ruleset:3
 #, fuzzy
@@ -19581,8 +19601,9 @@ msgid "Supreme Commander"
 msgstr "Director Supremo"
 
 #: data/nation/lankese.ruleset:22
+#, fuzzy
 msgid "?female:Supreme Commander"
-msgstr ""
+msgstr "Director Supremo"
 
 #: data/nation/laotian.ruleset:3
 #, fuzzy
@@ -19753,8 +19774,9 @@ msgid "High Commissioner"
 msgstr ""
 
 #: data/nation/malagasy.ruleset:22
+#, fuzzy
 msgid "?female:High Commissioner"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/malaysian.ruleset:3
 #, fuzzy
@@ -19867,8 +19889,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/mapuche.ruleset:19
+#, fuzzy
 msgid "Toqui"
-msgstr ""
+msgstr "Irlandês"
 
 #: data/nation/mapuche.ruleset:20
 #, fuzzy
@@ -19926,8 +19949,9 @@ msgid "Ajaw"
 msgstr ""
 
 #: data/nation/mayan.ruleset:20
+#, fuzzy
 msgid "?female:Ajaw"
-msgstr ""
+msgstr "Camarada"
 
 #. TRANS: Ah kin = Priest
 #: data/nation/mayan.ruleset:22
@@ -19935,8 +19959,9 @@ msgid "Ah kin"
 msgstr ""
 
 #: data/nation/mayan.ruleset:22
+#, fuzzy
 msgid "?female:Ah kin"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/mexican.ruleset:3
 #, fuzzy
@@ -20039,12 +20064,14 @@ msgstr ""
 "guerra."
 
 #: data/nation/mongol.ruleset:29 data/nation/uyghur.ruleset:29
+#, fuzzy
 msgid "?female:Khan"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/mongol.ruleset:31 data/nation/uyghur.ruleset:30
+#, fuzzy
 msgid "?female:Khagan"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/mordor.ruleset:3
 msgid "Mordor"
@@ -20159,8 +20186,9 @@ msgid "Jarl"
 msgstr "Patrulha"
 
 #: data/nation/norman.ruleset:22
+#, fuzzy
 msgid "?female:Jarl"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/northkorean.ruleset:3
 #, fuzzy
@@ -20784,12 +20812,14 @@ msgstr ""
 
 #. TRANS: Noaydde = Shaman
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "Noaydde"
-msgstr ""
+msgstr "Não"
 
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "?female:Noaydde"
-msgstr ""
+msgstr "Camarada"
 
 #: data/nation/samogitian.ruleset:3
 #, fuzzy
@@ -20892,8 +20922,9 @@ msgid "Encik"
 msgstr "Encique"
 
 #: data/nation/singaporean.ruleset:34
+#, fuzzy
 msgid "?female:Encik"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/sioux.ruleset:3
 msgid "Sioux"
@@ -20940,8 +20971,9 @@ msgid "Priestess"
 msgstr "Suma Sacerdotiza"
 
 #: data/nation/slovakian.ruleset:30 data/nation/soviet.ruleset:27
+#, fuzzy
 msgid "?female:General Secretary"
-msgstr ""
+msgstr "Primeiro Secretário"
 
 #: data/nation/slovenian.ruleset:3
 msgid "Slovenian"
@@ -20959,8 +20991,9 @@ msgstr ""
 "A Eslovénia é a república mais a oeste e norte da antiga Federação Jugoslava."
 
 #: data/nation/southafrican.ruleset:3
+#, fuzzy
 msgid "South African"
-msgstr ""
+msgstr "Americano"
 
 #: data/nation/southafrican.ruleset:4
 #, fuzzy
@@ -21028,8 +21061,9 @@ msgid "Great Leader"
 msgstr "Grande Biblioteca"
 
 #: data/nation/soviet.ruleset:28
+#, fuzzy
 msgid "?female:Great Leader"
-msgstr ""
+msgstr "Maravilha"
 
 #: data/nation/spanish.ruleset:3
 msgid "Spanish"
@@ -21200,8 +21234,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/swiss.ruleset:19
+#, fuzzy
 msgid "?female:General"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/swiss.ruleset:20
 #, fuzzy
@@ -21209,8 +21244,9 @@ msgid "Bailiff"
 msgstr "Brasileiro"
 
 #: data/nation/swiss.ruleset:20
+#, fuzzy
 msgid "?female:Bailiff"
-msgstr ""
+msgstr "Brasileiro"
 
 #: data/nation/swiss.ruleset:21 data/nation/swiss.ruleset:22
 msgid "President of the Confederation"
@@ -21222,8 +21258,9 @@ msgid "Federal Chancellor"
 msgstr "Chanceler"
 
 #: data/nation/swiss.ruleset:23
+#, fuzzy
 msgid "?female:Federal Chancellor"
-msgstr ""
+msgstr "Chanceler"
 
 #: data/nation/syrian.ruleset:3
 #, fuzzy
@@ -21442,8 +21479,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/tibetan.ruleset:27
+#, fuzzy
 msgid "Lama"
-msgstr ""
+msgstr "Baixo"
 
 #: data/nation/tibetan.ruleset:28
 #, fuzzy
@@ -21642,20 +21680,23 @@ msgid "?female:Chairperson"
 msgstr "Conselheira"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "Secretary-General"
-msgstr ""
+msgstr "Governo"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "?female:Secretary-General"
-msgstr ""
+msgstr "Cônsul"
 
 #: data/nation/un.ruleset:25
 msgid "Representative"
 msgstr ""
 
 #: data/nation/un.ruleset:25
+#, fuzzy
 msgid "?female:Representative"
-msgstr ""
+msgstr "Presidente"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
@@ -21710,8 +21751,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/venezuelan.ruleset:3
+#, fuzzy
 msgid "Venezuelan"
-msgstr ""
+msgstr "?plural:Quenianos"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -24186,8 +24228,9 @@ msgid "Your password is incorrect. Try again."
 msgstr ""
 
 #: server/database.c:345
+#, fuzzy
 msgid "Sorry, your connection timed out..."
-msgstr ""
+msgstr "Jogo: Desculpe, patrula aérea ainda não implementada."
 
 #: server/database.c:348
 #, fuzzy, c-format
@@ -27565,9 +27608,9 @@ msgid "Game: request for unknown report (type %d)"
 msgstr "Jogo: pedido de relatório desconhecido (tipo %d)"
 
 #: server/srv_main.c:949
-#, c-format
+#, fuzzy, c-format
 msgid "Warning: rejecting old client %s"
-msgstr ""
+msgstr "Jogo: Aviso: Receia-se fome em %s."
 
 #: server/srv_main.c:958
 msgid ""
@@ -28677,14 +28720,14 @@ msgid "No city at this coordinate."
 msgstr ""
 
 #: server/stdinhand.c:4091 server/stdinhand.c:4125
-#, c-format
+#, fuzzy, c-format
 msgid "%s's %s no longer debugged."
-msgstr ""
+msgstr "Jogo: %s, unidade %s, sofreu um ataque nuclear."
 
 #: server/stdinhand.c:4097 server/stdinhand.c:4131
-#, c-format
+#, fuzzy, c-format
 msgid "%s's %s debugged."
-msgstr ""
+msgstr "Jogo: %s, unidade %s, sofreu um ataque nuclear."
 
 #: server/stdinhand.c:4113
 #, fuzzy
@@ -28896,9 +28939,9 @@ msgid "You can not detach other users."
 msgstr "Jogo: Não pode atacar aqui."
 
 #: server/stdinhand.c:4945
-#, c-format
+#, fuzzy, c-format
 msgid "%s is not attached to any player."
-msgstr ""
+msgstr "Jogo: %s não é um nome válido."
 
 #: server/stdinhand.c:4977
 #, fuzzy, c-format

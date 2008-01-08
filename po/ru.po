@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Freeciv-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 2006-03-10 21:31+0300\n"
 "Last-Translator: Egor Vyscrebentsov <evyscr@murom.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -5033,8 +5033,9 @@ msgid "Beta"
 msgstr "Лучшая"
 
 #: client/gui-gtk-2.0/style.c:93
+#, fuzzy
 msgid "Small Font"
-msgstr ""
+msgstr "Небольшое чудо"
 
 #: client/gui-gtk-2.0/style.c:101
 #, fuzzy
@@ -16710,7 +16711,7 @@ msgstr ""
 #: data/nation/afghani.ruleset:24 data/nation/emirati.ruleset:25
 #: data/nation/kurd.ruleset:25 data/nation/uzbek.ruleset:28
 msgid "Emir"
-msgstr ""
+msgstr "Эмир"
 
 #: data/nation/afghani.ruleset:25 data/nation/slovakian.ruleset:30
 #: data/nation/soviet.ruleset:27
@@ -16720,7 +16721,7 @@ msgstr "Первый Секретарь"
 
 #: data/nation/afghani.ruleset:26
 msgid "Mullah"
-msgstr ""
+msgstr "Мулла"
 
 #: data/nation/afghani.ruleset:27 data/nation/australian.ruleset:28
 #: data/nation/british.ruleset:22 data/nation/burmese.ruleset:23
@@ -16827,6 +16828,8 @@ msgid ""
 "Algeria is an Arabic nation in North Africa. It is historically inhabited by "
 "the Berber people."
 msgstr ""
+"Алжир - это арабское государство в Северной Африке. Исторически, оно "
+"заселено берберами."
 
 #: data/nation/american.ruleset:3 data/nation/muskogee.ruleset:5
 msgid "American"
@@ -16958,6 +16961,8 @@ msgstr "?plural:Ассирийцы"
 msgid ""
 "Assyria was an empire in northern Mesopotamia, named after its capital Ashur."
 msgstr ""
+"Ассирия была империей в северной Месопотамии; названа в честь своей столицы "
+"- Ашшура."
 
 #: data/nation/assyrian.ruleset:21
 msgid "Malka"
@@ -17188,8 +17193,9 @@ msgid "Buruzagi"
 msgstr ""
 
 #: data/nation/basque.ruleset:33
+#, fuzzy
 msgid "?female:Buruzagi"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #. TRANS: Apaiz nagusi = Pope, Lord Protector
 #: data/nation/basque.ruleset:35
@@ -17218,8 +17224,9 @@ msgid "Lehendakari"
 msgstr ""
 
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
+#, fuzzy
 msgid "?female:Lehendakari"
-msgstr ""
+msgstr "?женск:Президент"
 
 #: data/nation/bavarian.ruleset:3
 msgid "Bavarian"
@@ -17297,8 +17304,9 @@ msgid "Nabob"
 msgstr ""
 
 #: data/nation/bengali.ruleset:25
+#, fuzzy
 msgid "?female:Nabob"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/bengali.ruleset:26
 #, fuzzy
@@ -17306,8 +17314,9 @@ msgid "Major"
 msgstr "Строительство"
 
 #: data/nation/bengali.ruleset:26
+#, fuzzy
 msgid "?female:Major"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/boer.ruleset:3
 msgid "Boer"
@@ -17437,8 +17446,9 @@ msgid "Dug"
 msgstr ""
 
 #: data/nation/breton.ruleset:35
+#, fuzzy
 msgid "Dugez"
-msgstr ""
+msgstr "Князь"
 
 #: data/nation/breton.ruleset:36
 #, fuzzy
@@ -17501,7 +17511,7 @@ msgstr "Венгры"
 
 #: data/nation/bulgarian.ruleset:33
 msgid "Drugarkata"
-msgstr ""
+msgstr "Товарищ"
 
 #: data/nation/bulgarian.ruleset:34 data/nation/byzantium.ruleset:26
 #: data/nation/russian.ruleset:49
@@ -17510,7 +17520,7 @@ msgstr "Патриарх"
 
 #: data/nation/bulgarian.ruleset:34
 msgid "Sveta Maika"
-msgstr ""
+msgstr "Святая мать"
 
 #: data/nation/burgundian.ruleset:3
 #, fuzzy
@@ -17545,7 +17555,7 @@ msgstr "Морская пехота"
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
 #: data/nation/samogitian.ruleset:20 data/nation/serbian.ruleset:36
 msgid "Duke"
-msgstr ""
+msgstr "Князь"
 
 #: data/nation/burgundian.ruleset:32 data/nation/norman.ruleset:23
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
@@ -17575,8 +17585,9 @@ msgid "Bohmugyi"
 msgstr ""
 
 #: data/nation/burmese.ruleset:21
+#, fuzzy
 msgid "?female:Bohmugyi"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/burmese.ruleset:22
 #, fuzzy
@@ -17629,6 +17640,7 @@ msgid "?plural:Byzantines"
 msgstr "Аргентинцы"
 
 #: data/nation/byzantium.ruleset:6
+#, fuzzy
 msgid ""
 "At the time of the decline of the old Roman empire, the Emperor Constantine "
 "moved the empire's capital to Byzantium and formed a new empire mostly known "
@@ -17637,6 +17649,12 @@ msgid ""
 "I, the Byzantines controlled nearly all of the Middle East, northern Africa, "
 "Italy, and parts of Spain."
 msgstr ""
+"Во время упадка старой Римской Империи, император Константин перенес столицу "
+"империи в Бизантиум (Константинополь) и основал новую империю, известную под "
+"именем Византия или Восточная Римская Империя. Империя просуществовала до "
+"1453 г., когда ее столица пала под ударами османов. Во время правления "
+"Юстиниана, византийцы контролировали почти весь Ближний Восток, северную "
+"Африку, Италию и часть Испании."
 
 #: data/nation/byzantium.ruleset:26 data/nation/russian.ruleset:49
 msgid "Matriarch"
@@ -17649,8 +17667,9 @@ msgid "Basileus"
 msgstr "Оазис"
 
 #: data/nation/byzantium.ruleset:28
+#, fuzzy
 msgid "?female:Basileus"
-msgstr ""
+msgstr "Базилевс"
 
 #: data/nation/cambodian.ruleset:3
 #, fuzzy
@@ -17813,8 +17832,9 @@ msgstr "Вождь"
 #: data/nation/malian.ruleset:26 data/nation/maori.ruleset:24
 #: data/nation/sioux.ruleset:28 data/nation/southafrican.ruleset:25
 #: data/nation/swazi.ruleset:22 data/nation/zulu.ruleset:38
+#, fuzzy
 msgid "?female:Chief"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/muskogee.ruleset:32 data/nation/sioux.ruleset:29
@@ -17846,8 +17866,9 @@ msgid "Principal Chief"
 msgstr "Великий Вождь"
 
 #: data/nation/cherokee.ruleset:25
+#, fuzzy
 msgid "?female:Principal Chief"
-msgstr ""
+msgstr "?женск:Президент"
 
 #: data/nation/chilean.ruleset:3
 msgid "Chilean"
@@ -18256,8 +18277,9 @@ msgid "Queen of Doriath"
 msgstr "Королева Дориата"
 
 #: data/nation/emirati.ruleset:3
+#, fuzzy
 msgid "Emirati"
-msgstr ""
+msgstr "Эмир"
 
 #: data/nation/emirati.ruleset:4
 #, fuzzy
@@ -18524,8 +18546,9 @@ msgid "Druid"
 msgstr "Фрукты"
 
 #: data/nation/gallic.ruleset:30
+#, fuzzy
 msgid "?female:Druid"
-msgstr ""
+msgstr "?женск:Президент"
 
 #: data/nation/georgian.ruleset:3
 #, fuzzy
@@ -18599,8 +18622,9 @@ msgid "Despot"
 msgstr "Деспотизм"
 
 #: data/nation/greek.ruleset:19
+#, fuzzy
 msgid "?female:Despot"
-msgstr ""
+msgstr "?женск:Президент"
 
 #: data/nation/greenland.ruleset:3
 #, fuzzy
@@ -18659,12 +18683,14 @@ msgid "h4xx0r r0xx0rz!"
 msgstr ""
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?title:Hacker"
-msgstr ""
+msgstr "?attitude:Геноцид"
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?female:Hacker"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/hawaiian.ruleset:3
 #, fuzzy
@@ -18716,8 +18742,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/himyarite.ruleset:3
+#, fuzzy
 msgid "Himyarite"
-msgstr ""
+msgstr "Отношения"
 
 #: data/nation/himyarite.ruleset:4
 #, fuzzy
@@ -18895,12 +18922,14 @@ msgid "Inka"
 msgstr "Инки"
 
 #: data/nation/inca.ruleset:36
+#, fuzzy
 msgid "Sapa Inka"
-msgstr ""
+msgstr "Инки"
 
 #: data/nation/inca.ruleset:37
+#, fuzzy
 msgid "Willaq Umu"
-msgstr ""
+msgstr "Разрушать"
 
 #: data/nation/indian.ruleset:3
 msgid "Indian"
@@ -18922,8 +18951,9 @@ msgid "Raja"
 msgstr "Королева"
 
 #: data/nation/indian.ruleset:19
+#, fuzzy
 msgid "?female:Raja"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/indian.ruleset:20
 msgid "Maharaja"
@@ -18940,8 +18970,9 @@ msgid "Mahatma"
 msgstr "Магараджа"
 
 #: data/nation/indian.ruleset:21
+#, fuzzy
 msgid "?female:Mahatma"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/indonesian.ruleset:3
 msgid "Indonesian"
@@ -18982,8 +19013,9 @@ msgid "Shaman"
 msgstr "Председатель"
 
 #: data/nation/inuit.ruleset:20
+#, fuzzy
 msgid "?female:Shaman"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/inuit.ruleset:21
 #, fuzzy
@@ -19019,7 +19051,7 @@ msgstr ""
 
 #: data/nation/iranian.ruleset:46 data/nation/persian.ruleset:22
 msgid "Ayatollah"
-msgstr ""
+msgstr "Аятолла"
 
 #: data/nation/iraqi.ruleset:3
 #, fuzzy
@@ -19210,7 +19242,7 @@ msgstr "Кенийцы"
 
 #: data/nation/kenyan.ruleset:6
 msgid "Kenya gained independence from Britain in December 1963."
-msgstr ""
+msgstr "Кения добилась независимости от Великобритании в декабре 1963."
 
 #: data/nation/kenyan.ruleset:18
 #, fuzzy
@@ -19388,8 +19420,9 @@ msgid "Supreme Commander"
 msgstr "Высший Директор"
 
 #: data/nation/lankese.ruleset:22
+#, fuzzy
 msgid "?female:Supreme Commander"
-msgstr ""
+msgstr "Высший Директор"
 
 #: data/nation/laotian.ruleset:3
 #, fuzzy
@@ -19560,8 +19593,9 @@ msgid "High Commissioner"
 msgstr ""
 
 #: data/nation/malagasy.ruleset:22
+#, fuzzy
 msgid "?female:High Commissioner"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/malaysian.ruleset:3
 msgid "Malaysian"
@@ -19672,8 +19706,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/mapuche.ruleset:19
+#, fuzzy
 msgid "Toqui"
-msgstr ""
+msgstr "Ирокезы"
 
 #: data/nation/mapuche.ruleset:20
 #, fuzzy
@@ -19729,8 +19764,9 @@ msgid "Ajaw"
 msgstr ""
 
 #: data/nation/mayan.ruleset:20
+#, fuzzy
 msgid "?female:Ajaw"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #. TRANS: Ah kin = Priest
 #: data/nation/mayan.ruleset:22
@@ -19738,8 +19774,9 @@ msgid "Ah kin"
 msgstr ""
 
 #: data/nation/mayan.ruleset:22
+#, fuzzy
 msgid "?female:Ah kin"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/mexican.ruleset:3
 msgid "Mexican"
@@ -19794,7 +19831,7 @@ msgstr ""
 #. TRANS: Voievod/Doamna = Prince/Lady
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 msgid "Voievod"
-msgstr ""
+msgstr "Воевода"
 
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 #, fuzzy
@@ -19817,7 +19854,7 @@ msgstr "Итого"
 
 #: data/nation/moldovan.ruleset:26 data/nation/romanian.ruleset:38
 msgid "Tovarasa"
-msgstr ""
+msgstr "Товарищ"
 
 #: data/nation/mongol.ruleset:3
 msgid "Mongol"
@@ -19839,12 +19876,14 @@ msgstr ""
 "Они также известны своей жестокостью в войне."
 
 #: data/nation/mongol.ruleset:29 data/nation/uyghur.ruleset:29
+#, fuzzy
 msgid "?female:Khan"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/mongol.ruleset:31 data/nation/uyghur.ruleset:30
+#, fuzzy
 msgid "?female:Khagan"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/mordor.ruleset:3
 msgid "Mordor"
@@ -19904,7 +19943,7 @@ msgstr ""
 
 #: data/nation/newzealand.ruleset:3
 msgid "New Zealand"
-msgstr ""
+msgstr "Новая Зеландия"
 
 #: data/nation/newzealand.ruleset:4
 #, fuzzy
@@ -19955,8 +19994,9 @@ msgid "Jarl"
 msgstr "Патрулировать"
 
 #: data/nation/norman.ruleset:22
+#, fuzzy
 msgid "?female:Jarl"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/northkorean.ruleset:3
 #, fuzzy
@@ -20511,7 +20551,7 @@ msgstr ""
 
 #: data/nation/russian.ruleset:48
 msgid "Tsar"
-msgstr ""
+msgstr "Царь"
 
 #: data/nation/russian.ruleset:48
 #, fuzzy
@@ -20576,12 +20616,14 @@ msgstr ""
 
 #. TRANS: Noaydde = Shaman
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "Noaydde"
-msgstr ""
+msgstr "Нет"
 
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "?female:Noaydde"
-msgstr ""
+msgstr "?женск:Товарищ"
 
 #: data/nation/samogitian.ruleset:3
 #, fuzzy
@@ -20682,8 +20724,9 @@ msgid "Encik"
 msgstr "Энцик"
 
 #: data/nation/singaporean.ruleset:34
+#, fuzzy
 msgid "?female:Encik"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/sioux.ruleset:3
 msgid "Sioux"
@@ -20730,8 +20773,9 @@ msgid "Priestess"
 msgstr "Пepвocвящeнницa"
 
 #: data/nation/slovakian.ruleset:30 data/nation/soviet.ruleset:27
+#, fuzzy
 msgid "?female:General Secretary"
-msgstr ""
+msgstr "Генеральный Секретарь"
 
 #: data/nation/slovenian.ruleset:3
 msgid "Slovenian"
@@ -20749,7 +20793,7 @@ msgstr "Словения была самой северной и западной республикой Югославии."
 
 #: data/nation/southafrican.ruleset:3
 msgid "South African"
-msgstr ""
+msgstr "Южноафриканцы"
 
 #: data/nation/southafrican.ruleset:4
 #, fuzzy
@@ -20817,8 +20861,9 @@ msgid "Great Leader"
 msgstr "Beликaя библиoтeкa"
 
 #: data/nation/soviet.ruleset:28
+#, fuzzy
 msgid "?female:Great Leader"
-msgstr ""
+msgstr "Великое чудо"
 
 #: data/nation/spanish.ruleset:3
 msgid "Spanish"
@@ -20985,8 +21030,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/swiss.ruleset:19
+#, fuzzy
 msgid "?female:General"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/swiss.ruleset:20
 #, fuzzy
@@ -20994,8 +21040,9 @@ msgid "Bailiff"
 msgstr "Бразильцы"
 
 #: data/nation/swiss.ruleset:20
+#, fuzzy
 msgid "?female:Bailiff"
-msgstr ""
+msgstr "Бразильцы"
 
 #: data/nation/swiss.ruleset:21 data/nation/swiss.ruleset:22
 msgid "President of the Confederation"
@@ -21007,8 +21054,9 @@ msgid "Federal Chancellor"
 msgstr "Канцлер"
 
 #: data/nation/swiss.ruleset:23
+#, fuzzy
 msgid "?female:Federal Chancellor"
-msgstr ""
+msgstr "Канцлер"
 
 #: data/nation/syrian.ruleset:3
 #, fuzzy
@@ -21226,8 +21274,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/tibetan.ruleset:27
+#, fuzzy
 msgid "Lama"
-msgstr ""
+msgstr "Королева"
 
 #: data/nation/tibetan.ruleset:28
 #, fuzzy
@@ -21425,20 +21474,23 @@ msgid "?female:Chairperson"
 msgstr "Председатель"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "Secretary-General"
-msgstr ""
+msgstr "Губернаторша"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "?female:Secretary-General"
-msgstr ""
+msgstr "?женск:Консул"
 
 #: data/nation/un.ruleset:25
 msgid "Representative"
 msgstr ""
 
 #: data/nation/un.ruleset:25
+#, fuzzy
 msgid "?female:Representative"
-msgstr ""
+msgstr "?женск:Президент"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
@@ -21458,7 +21510,7 @@ msgstr ""
 
 #: data/nation/uyghur.ruleset:3
 msgid "Uyghur"
-msgstr ""
+msgstr "Уйгуры"
 
 #: data/nation/uyghur.ruleset:4
 #, fuzzy
@@ -21493,8 +21545,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/venezuelan.ruleset:3
+#, fuzzy
 msgid "Venezuelan"
-msgstr ""
+msgstr "Венесуэльцы"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -24014,8 +24067,9 @@ msgid "Your password is incorrect. Try again."
 msgstr "Ваш пароль неверен. Попробуйте ещё раз."
 
 #: server/database.c:345
+#, fuzzy
 msgid "Sorry, your connection timed out..."
-msgstr ""
+msgstr "Извините, соединение воздушных соединений ещё не работает."
 
 #: server/database.c:348
 #, c-format

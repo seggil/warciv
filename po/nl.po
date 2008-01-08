@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Freeciv 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 2007-02-22 21:39+0100\n"
 "Last-Translator: Jelle Pelfrene <jelle.pelfrene@student.kuleuven.ac.be>\n"
 "Language-Team: Nederlands <nl@li.org>\n"
@@ -5011,7 +5011,7 @@ msgstr "Beste"
 
 #: client/gui-gtk-2.0/style.c:93
 msgid "Small Font"
-msgstr ""
+msgstr "Klein Lettertype"
 
 #: client/gui-gtk-2.0/style.c:101
 #, fuzzy
@@ -16795,6 +16795,10 @@ msgid ""
 "to themselves with different names, including Koori, Yamaji, Nunga, and "
 "Murri."
 msgstr ""
+"Australische Aboriginals is een term voor alle oorspronkelijke bewoners van "
+"het Australische continent. Aboriginals van verschillende delen van "
+"Australië benoemen zichzelf met verschillende namen, waaronder Koori, "
+"Yamaji, Nunga en Murri."
 
 #: data/nation/afghani.ruleset:3
 msgid "Afghani"
@@ -16812,11 +16816,16 @@ msgid ""
 "The Afghanistan nation-state as it is known today came into existence in "
 "1746 when Ahmad Shah founded the Durrani Empire."
 msgstr ""
+"Afghanistan, vaak het kruispunt van Centraal Azië genoemd, heeft een heel "
+"turbulente geschiedenis. Doorheen de eeuwen is het land door velen veroverd "
+"waaronder het Perzische rijk, Genghis Khan en Alexander de Grote. Het land "
+"zoals het nu bestaat ontstond in 1746 toen Ahmad Shah het Durrani Rijk "
+"stichtte."
 
 #: data/nation/afghani.ruleset:24 data/nation/emirati.ruleset:25
 #: data/nation/kurd.ruleset:25 data/nation/uzbek.ruleset:28
 msgid "Emir"
-msgstr ""
+msgstr "Emir"
 
 #: data/nation/afghani.ruleset:25 data/nation/slovakian.ruleset:30
 #: data/nation/soviet.ruleset:27
@@ -16826,7 +16835,7 @@ msgstr "Eerste Secretaricretaris"
 
 #: data/nation/afghani.ruleset:26
 msgid "Mullah"
-msgstr ""
+msgstr "Mullah"
 
 #: data/nation/afghani.ruleset:27 data/nation/australian.ruleset:28
 #: data/nation/british.ruleset:22 data/nation/burmese.ruleset:23
@@ -16933,6 +16942,8 @@ msgid ""
 "Algeria is an Arabic nation in North Africa. It is historically inhabited by "
 "the Berber people."
 msgstr ""
+"Algerije is een Arabisch land in Noord-Afrika. Historisch wordt het bewoond "
+"door Berbers."
 
 #: data/nation/american.ruleset:3 data/nation/muskogee.ruleset:5
 msgid "American"
@@ -16980,7 +16991,7 @@ msgstr "?plural:Marsmannetjes"
 
 #: data/nation/antarctican.ruleset:6
 msgid "Independent South Pole, land of penguins."
-msgstr ""
+msgstr "Onafhankelijke Zuidpool, land van pinguins."
 
 #: data/nation/arab.ruleset:3
 msgid "Arab"
@@ -17014,6 +17025,8 @@ msgid ""
 "According to legend, the Aramean people are the descendants of Aram, the "
 "grandson of Noah."
 msgstr ""
+"Volgens de legende bestaat het Arameense volk uit de nazaten van Aram, de "
+"kleinzoon van Noah."
 
 #: data/nation/argentine.ruleset:3
 msgid "Argentine"
@@ -17034,6 +17047,11 @@ msgid ""
 "politics was dominated by Juan Peron and his charismatic wife Eva \"Evita\" "
 "Peron."
 msgstr ""
+"Argentinië ligt aan de zuidoostelijke kust van Zuid-Amerika. Sinds de "
+"onafhankelijkheid van Spanje in 1816 is het geplaagd geweest door "
+"verschillende interne en externe conflicten. In de decennia na WW2 werd de "
+"politiek in het land gedomineerd door Juan Perón en zijn charismatische "
+"vrouw Eva \"Evita\" Perón."
 
 #: data/nation/armenian.ruleset:3
 #, fuzzy
@@ -17051,6 +17069,9 @@ msgid ""
 "great-great-grandson of Noah. The modern Republic of Armenia gained "
 "independence from Soviet in 1991 AD"
 msgstr ""
+"Volgens de legende zijn de Armeniërs de afstammelingen van Haik, de achter-"
+"achter-kleinzoon van Noah. De moderne republiek werd onafhankelijk van de "
+"Soviet Unie in 1991 AD"
 
 #: data/nation/assyrian.ruleset:3
 msgid "Assyrian"
@@ -17064,6 +17085,8 @@ msgstr "?plural:Assyriërs"
 msgid ""
 "Assyria was an empire in northern Mesopotamia, named after its capital Ashur."
 msgstr ""
+"Assyrië was een rijk in noordelijk Mesopatamië, genaamd naar de hoofdstad "
+"Ashur"
 
 #: data/nation/assyrian.ruleset:21
 msgid "Malka"
@@ -17082,12 +17105,18 @@ msgid "?plural:Australians"
 msgstr "?plural:Australiërs"
 
 #: data/nation/australian.ruleset:6
+#, fuzzy
 msgid ""
 "Australia was founded as a British penal colony in 1788AD. Originally "
 "comprising of several colonies (New South Wales, Victoria, Queensland, South "
 "Australia, Western Australia and Tasmania) it became a single country in "
 "1902. It is the only country on earth to occupy an entire continent."
 msgstr ""
+"Australië werd gesticht als een Britse strafkolonie in 1788AD. "
+"Oorspronkelijk was het samengesteld uit verschillende kolonies "
+"(New·South·Wales,·Victora,·Queensland,·South·Australia,·Western·Australia·en "
+"Tasmania), maar het werd een verenigd land in 1902. Het is het enige land "
+"ter wereld dat het geheel continent omvat."
 
 #: data/nation/austrian.ruleset:3
 msgid "Austrian"
@@ -17102,6 +17131,8 @@ msgid ""
 "Austria means Eastern Realm, given its position as the far east territory of "
 "the medieval Holy Roman Empire."
 msgstr ""
+"Oostenrijk kreeg zijn naam wegens zijn uiterst oostelijke ligging in het "
+"middeleeuwse Heilige Romeinse Rijke"
 
 #: data/nation/aymara.ruleset:3
 #, fuzzy
@@ -17119,6 +17150,9 @@ msgid ""
 "reorganized into a set of culturally close Aymara kingdoms that thrived "
 "around the Titicaca lake until they were conquered by the Incas."
 msgstr ""
+"Na de ineenstorting van de Tiwanaku beschaving in de Andes, reorganiseerden "
+"hun erfgenamen in een groep gesloten Aymara koninkrijken die bloeiden rond "
+"het Titicaca meer tot ze veroverd werden door de Incas."
 
 #: data/nation/aymara.ruleset:30
 #, fuzzy
@@ -17225,12 +17259,13 @@ msgstr ""
 #. TRANS: Tlatoani = Speaker
 #: data/nation/aztec.ruleset:22
 msgid "Tlatoani"
-msgstr ""
+msgstr "Tlatoani"
 
 #. TRANS: Huey Tlatoani = Great Speaker
 #: data/nation/aztec.ruleset:24
+#, fuzzy
 msgid "Huey Tlatoani"
-msgstr ""
+msgstr "Huey·Tlatoani"
 
 #: data/nation/babylonian.ruleset:3
 msgid "Babylonian"
@@ -17269,10 +17304,12 @@ msgid ""
 "Since the dawn of civilization, barbarians have been a threat to cultured "
 "peoples everywhere."
 msgstr ""
+"Sinds het begin van de beschaving zijn barbaren overal een bedreiging "
+"geweest voor volkeren met meer cultuur."
 
 #: data/nation/basque.ruleset:3
 msgid "Basque"
-msgstr ""
+msgstr "Baskisch"
 
 #: data/nation/basque.ruleset:4
 #, fuzzy
@@ -17291,20 +17328,21 @@ msgstr ""
 #. TRANS: Buruzagi = Leader, head (like spanish Caudillo)
 #: data/nation/basque.ruleset:33
 msgid "Buruzagi"
-msgstr ""
+msgstr "Buruzagi"
 
 #: data/nation/basque.ruleset:33
+#, fuzzy
 msgid "?female:Buruzagi"
-msgstr ""
+msgstr "?female:Druide"
 
 #. TRANS: Apaiz nagusi = Pope, Lord Protector
 #: data/nation/basque.ruleset:35
 msgid "Apaiz nagusi"
-msgstr ""
+msgstr "Apaiz·nagusi"
 
 #: data/nation/basque.ruleset:35
 msgid "Emakume Apaiz nagusi"
-msgstr ""
+msgstr "Emakume·Apaiz·nagusi"
 
 #. TRANS: Errege and Erregina = King and Queen
 #: data/nation/basque.ruleset:37
@@ -17321,11 +17359,12 @@ msgstr "Reina"
 #. ; /* TRANS: (but is quite inexact for Basques to call him/her "president")
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
 msgid "Lehendakari"
-msgstr ""
+msgstr "Lehendakari"
 
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
+#, fuzzy
 msgid "?female:Lehendakari"
-msgstr ""
+msgstr "Lehendakari"
 
 #: data/nation/bavarian.ruleset:3
 msgid "Bavarian"
@@ -17383,7 +17422,7 @@ msgstr ""
 
 #: data/nation/bengali.ruleset:3
 msgid "Bengali"
-msgstr ""
+msgstr "Bengali"
 
 #: data/nation/bengali.ruleset:4
 #, fuzzy
@@ -17398,14 +17437,18 @@ msgid ""
 "eastern part of the region, while the western part is the Indian state of "
 "West Bengal."
 msgstr ""
+"Bengal is een regio aan de oostgrens van het Indische subcontinient. De "
+"eerste overgeleverde onafhankelijke koning van de Bengalen is Shashanka die "
+"regeerde rond 606 AD. Vandaag is het oostelijk deel de Volksrepubliek van "
+"Bangladesh, en het westelijk deel is de staat West Bengal in Indië."
 
 #: data/nation/bengali.ruleset:25
 msgid "Nabob"
-msgstr ""
+msgstr "Nabob"
 
 #: data/nation/bengali.ruleset:25
 msgid "?female:Nabob"
-msgstr ""
+msgstr "?female:Nabob"
 
 #: data/nation/bengali.ruleset:26
 #, fuzzy
@@ -17414,7 +17457,7 @@ msgstr "Bouwkunde"
 
 #: data/nation/bengali.ruleset:26
 msgid "?female:Major"
-msgstr ""
+msgstr "?female:Majoor"
 
 #: data/nation/boer.ruleset:3
 msgid "Boer"
@@ -17448,6 +17491,8 @@ msgid ""
 "Bosnia and Herzegovina is a country in south-east Europe, and the home of "
 "three constituent peoples: Bosniaks, Serbs, and Croats."
 msgstr ""
+"Bosnië en Herzegovina is een land in zuidoost Europa, en de thuis van drie "
+"verschillende volkeren: Bosniërs, Serven en Kroaten."
 
 #. TRANS: Ban = Duke
 #: data/nation/bosnia.ruleset:27
@@ -17544,8 +17589,9 @@ msgid "Dug"
 msgstr ""
 
 #: data/nation/breton.ruleset:35
+#, fuzzy
 msgid "Dugez"
-msgstr ""
+msgstr "Hertog"
 
 #: data/nation/breton.ruleset:36
 #, fuzzy
@@ -17574,6 +17620,10 @@ msgid ""
 "Great Britain - became the leading industrial and maritime power in the 19th "
 "century."
 msgstr ""
+"Het Verenigd Koninkrijk onstond in 1707 uit een onderhandelde overeenkomst "
+"tussen het koninkrijk Engelend en het koninkrijk Schotland. Het land, ook "
+"bekend als Groot-Brittanië, werd de leidende industriële en maritieme macht "
+"in de 19de eeuw."
 
 #: data/nation/bulgarian.ruleset:3
 #, fuzzy
@@ -17590,6 +17640,9 @@ msgid ""
 "Bulgar leader Khan Asparukh led his people into the northern Balkans, and "
 "founded Bulgaria in 681. This was the first Slavic nation-state in history."
 msgstr ""
+"Khan Asparukh, de leider van de Bulgaren, nam zijn volk naar de noordelijke "
+"Balkan en stichtte Bulgarije in 681. Het was de eerste Slavische natiestaat "
+"in de geschiedenis."
 
 #: data/nation/bulgarian.ruleset:31
 #, fuzzy
@@ -17608,7 +17661,7 @@ msgstr "Hongaarse"
 
 #: data/nation/bulgarian.ruleset:33
 msgid "Drugarkata"
-msgstr ""
+msgstr "Drugarkata"
 
 #: data/nation/bulgarian.ruleset:34 data/nation/byzantium.ruleset:26
 #: data/nation/russian.ruleset:49
@@ -17616,8 +17669,9 @@ msgid "Patriarch"
 msgstr "Patriarch"
 
 #: data/nation/bulgarian.ruleset:34
+#, fuzzy
 msgid "Sveta Maika"
-msgstr ""
+msgstr "Sveta·Maika"
 
 #: data/nation/burgundian.ruleset:3
 #, fuzzy
@@ -17652,7 +17706,7 @@ msgstr "Mariniers"
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
 #: data/nation/samogitian.ruleset:20 data/nation/serbian.ruleset:36
 msgid "Duke"
-msgstr ""
+msgstr "Hertog"
 
 #: data/nation/burgundian.ruleset:32 data/nation/norman.ruleset:23
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
@@ -17676,14 +17730,16 @@ msgid ""
 "The Union of Burma (officially \"Myanmar\") is the largest country in "
 "mainland Southeast Asia."
 msgstr ""
+"De Unie van Birma (officieel Myanmar) is het grootste land van continentaal "
+"zuidoost Azië."
 
 #: data/nation/burmese.ruleset:21
 msgid "Bohmugyi"
-msgstr ""
+msgstr "Bohmugyi"
 
 #: data/nation/burmese.ruleset:21
 msgid "?female:Bohmugyi"
-msgstr ""
+msgstr "?female:Bohmugyi"
 
 #: data/nation/burmese.ruleset:22
 #, fuzzy
@@ -17696,8 +17752,9 @@ msgid "Sayama"
 msgstr "Zeekaart"
 
 #: data/nation/burundi.ruleset:3
+#, fuzzy
 msgid "Burundi"
-msgstr ""
+msgstr "Buruzagi"
 
 #: data/nation/burundi.ruleset:4
 #, fuzzy
@@ -17736,6 +17793,7 @@ msgid "?plural:Byzantines"
 msgstr "?plural:Argentijnen"
 
 #: data/nation/byzantium.ruleset:6
+#, fuzzy
 msgid ""
 "At the time of the decline of the old Roman empire, the Emperor Constantine "
 "moved the empire's capital to Byzantium and formed a new empire mostly known "
@@ -17744,6 +17802,12 @@ msgid ""
 "I, the Byzantines controlled nearly all of the Middle East, northern Africa, "
 "Italy, and parts of Spain."
 msgstr ""
+"Ten tijde van de achteruitgang van het oude Romeinse Rijk, verplaatste "
+"keizer Constantijn de hoofdstad naar Byzantium en vormde hij een nieuw rijk: "
+"het Oost-Romeinse of Byzantijnse Rijk. Dit overleefde tot 1453 wanneer de "
+"hoofdstad onder de Ottomanen viel. Tijdens de heerschappij van Justinianus I "
+"beheerste het rijk bijna heel het Midden-Oosten, Noord-Afrika, Italië en "
+"delen van Spanje."
 
 #: data/nation/byzantium.ruleset:26 data/nation/russian.ruleset:49
 msgid "Matriarch"
@@ -17757,7 +17821,7 @@ msgstr "Oase"
 
 #: data/nation/byzantium.ruleset:28
 msgid "?female:Basileus"
-msgstr ""
+msgstr "?female:Basileus"
 
 #: data/nation/cambodian.ruleset:3
 #, fuzzy
@@ -17770,11 +17834,15 @@ msgid "?plural:Cambodians"
 msgstr "?plural:Canadezen"
 
 #: data/nation/cambodian.ruleset:6
+#, fuzzy
 msgid ""
 "Kampuchea (known in English as Cambodia) is the modern successor state of "
 "the mighty Khmer Empire, which ruled most of the Indochinese Peninsula "
 "between the 11th and 14th centuries."
 msgstr ""
+"Kompuchea is de moderne opvolger van wat het rijk van de Khmer was, die over "
+"het grootste deel van het Indochinese schiereiland heersten tussen de 11de "
+"en de 14de eeuw."
 
 #: data/nation/cambodian.ruleset:21 data/nation/manchu.ruleset:20
 msgid "Warlord"
@@ -17801,6 +17869,8 @@ msgid ""
 "Canada is the geographically northernmost country in world: The Magnetic "
 "North Pole currently lies on Canadian territory."
 msgstr ""
+"Canada is het meest geographisch noordelijke land ter wereld. De magnetische "
+"noordpool ligt momenteel in Canadees territorium."
 
 #: data/nation/carthaginian.ruleset:3
 msgid "Carthaginian"
@@ -17894,7 +17964,7 @@ msgstr ""
 
 #: data/nation/cherokee.ruleset:3
 msgid "Cherokee"
-msgstr ""
+msgstr "Cherokee"
 
 #: data/nation/cherokee.ruleset:4
 #, fuzzy
@@ -17906,6 +17976,8 @@ msgid ""
 "The Cherokee nation is the largest Native American nation in North America "
 "today."
 msgstr ""
+"De·Cherokee·is de grootste natie van oorspronkelijke bewoners die nu in "
+"Noord-Amerika bestaat."
 
 #: data/nation/cherokee.ruleset:22 data/nation/iroquois.ruleset:26
 #: data/nation/kanem-bornu.ruleset:22 data/nation/kongo.ruleset:27
@@ -17920,8 +17992,9 @@ msgstr "Opperhoofd"
 #: data/nation/malian.ruleset:26 data/nation/maori.ruleset:24
 #: data/nation/sioux.ruleset:28 data/nation/southafrican.ruleset:25
 #: data/nation/swazi.ruleset:22 data/nation/zulu.ruleset:38
+#, fuzzy
 msgid "?female:Chief"
-msgstr ""
+msgstr "?female: Kameraad"
 
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/muskogee.ruleset:32 data/nation/sioux.ruleset:29
@@ -17945,7 +18018,7 @@ msgstr "Singaporese"
 #: data/nation/muskogee.ruleset:33 data/nation/sami.ruleset:23
 #: data/nation/sioux.ruleset:30 data/nation/zulu.ruleset:39
 msgid "Spokeswoman"
-msgstr ""
+msgstr "Woordvoerdster"
 
 #: data/nation/cherokee.ruleset:25
 #, fuzzy
@@ -17954,7 +18027,7 @@ msgstr "Groot Opperhoofd"
 
 #: data/nation/cherokee.ruleset:25
 msgid "?female:Principal Chief"
-msgstr ""
+msgstr "?female:Opperhoofd"
 
 #: data/nation/chilean.ruleset:3
 msgid "Chilean"
@@ -18043,12 +18116,17 @@ msgid "?plural:Colombians"
 msgstr "?plural:Columbianen"
 
 #: data/nation/colombian.ruleset:6
+#, fuzzy
 msgid ""
 "Colombia is a country in northern South America. The region was an "
 "Amerindian cultural center in pre-European time. The Spanish began settling "
 "Colombia's north coast around 1500. In 1819 the Republic of Colombia gained "
 "independence."
 msgstr ""
+"Colombia is een land in noordelijk Zuid-Amerika. De regia was een "
+"Amerindisch cultuurcentrum in de pre-Europese tijd. De Spanjaarde begonnen "
+"isch op de noordelijke kust te vestigen rond 1500. In 1819 werd de Republiek "
+"van Colombia onafhankelijk."
 
 #: data/nation/colombian.ruleset:21 data/nation/swiss.ruleset:19
 #, fuzzy
@@ -18082,6 +18160,10 @@ msgid ""
 "but had to abandon their claims of independence a few years later after "
 "several military defeats by United States troops."
 msgstr ""
+"De Confederale Staten van Amerika was een afscheiding van de Verenigde "
+"Staten tijdens de Amerikaanse Burgeroorlog. Het werd in 1861 gevormd door 6 "
+"zuidelijke staten maar een paar jaar later na verscheidene militaire "
+"nederlagen moesten ze hun onafhankelijkheidseis laten varen."
 
 #: data/nation/cornish.ruleset:3
 msgid "Cornish"
@@ -18187,6 +18269,9 @@ msgid ""
 "centuries, the island became one of the leading producers of tobacco, sugar "
 "and coffee in the world. Cuba was granted nominal independence in 1902."
 msgstr ""
+"Cuba kwam onder Spaanse controle in de 16de eeuw. In de volgende eeuwen werd "
+"het eiland een van de grootste producenten van tabak, suiker en koffie in de "
+"wereld. Cuba werd onafhankelijkheid gegeven in 1902."
 
 #: data/nation/czech.ruleset:3
 msgid "Czech"
@@ -18310,6 +18395,10 @@ msgid ""
 "forming the Union of Utrecht in 1579. The Netherlands grew to be a dominant "
 "maritime and economic power in the 17th century."
 msgstr ""
+"Toen de Heilig Romeinse Keizer de gehele bevolking ter door veroordeelde "
+"kwamen de Nederlanden in opstand en riepen zichzelf onafhankelijk uit tot de "
+"Unie van Utrecht in 1579. De Nederlanden werden een dominante maritieme en "
+"economische macht in de 17de eeuw."
 
 #: data/nation/egyptian.ruleset:3
 msgid "Egyptian"
@@ -18365,8 +18454,9 @@ msgid "Queen of Doriath"
 msgstr "Koningin van Doriath"
 
 #: data/nation/emirati.ruleset:3
+#, fuzzy
 msgid "Emirati"
-msgstr ""
+msgstr "Emir"
 
 #: data/nation/emirati.ruleset:4
 #, fuzzy
@@ -18460,6 +18550,8 @@ msgid ""
 "Ethiopia is the oldest nation in Africa and the only one to remain "
 "independent during European colonialism."
 msgstr ""
+"Ethiopië is de oudste natie in Afrika en ook de enige die de hele periode "
+"van de kolonisatie door Europa er in geslaagd is onafhankelijk te blijven."
 
 #: data/nation/european.ruleset:4
 #, fuzzy
@@ -18473,6 +18565,10 @@ msgid ""
 "fledgeling super state. But the question remains: Does such a thing as a "
 "common European identity and nation actually exist?"
 msgstr ""
+"De grondslagen voor de Europese Unie werden gelegd in 1957 met het verdrag "
+"van Rome. Het EU project is sindsdien verder ontwikkeld en begint te lijken "
+"op een jonge superstaat. Maar deze vraag blijft: Bestaat er zoiets als een "
+"gemeenschappelijke Europese identiteit?"
 
 #: data/nation/european.ruleset:22 data/nation/slovakian.ruleset:29
 #, fuzzy
@@ -18486,7 +18582,7 @@ msgstr "Profetes"
 
 #: data/nation/european.ruleset:23 data/nation/european.ruleset:24
 msgid "President of the Commission"
-msgstr ""
+msgstr "Commissievoorzitter"
 
 #: data/nation/filipino.ruleset:3
 msgid "Filipino"
@@ -18530,11 +18626,15 @@ msgid "?plural:French"
 msgstr "?plural:Fransen"
 
 #: data/nation/french.ruleset:6
+#, fuzzy
 msgid ""
 "France has long been a major power in Europe. French conquerors like Emperor "
 "Napoleon and King Charlemagne united large parts of Europe under the French "
 "flag."
 msgstr ""
+"Frankrijk is lang een grootmacht in Europa geweest. Franse veroveraars zoals "
+"Napoleon en Karel de Grote verzamelden elk grote delen van Europa onder de "
+"Franse/Frankische vlag."
 
 #: data/nation/french.ruleset:27
 msgid "Premier"
@@ -18561,6 +18661,7 @@ msgstr "?plural:Galiciërs"
 #: data/nation/galician.ruleset:6
 msgid "Galicia is a region in the northwest of Spain, just above Portugal."
 msgstr ""
+"Galicië is een streek in het noordwesten van Spanje, juist boven Portugal."
 
 #: data/nation/galician.ruleset:22
 msgid "Primeiro Ministro"
@@ -18634,7 +18735,7 @@ msgstr "Fruit"
 
 #: data/nation/gallic.ruleset:30
 msgid "?female:Druid"
-msgstr ""
+msgstr "?female:Druide"
 
 #: data/nation/georgian.ruleset:3
 #, fuzzy
@@ -18651,6 +18752,8 @@ msgid ""
 "The Georgians were one of the first peoples in history to adopt "
 "Christianity, in the 300s AD."
 msgstr ""
+"De Georgiërs waren 1 van de eerste volkeren in de geschiedenis die het "
+"christendom aannamen, in de jaren 300."
 
 #: data/nation/german.ruleset:3
 msgid "German"
@@ -18710,7 +18813,7 @@ msgstr "Dictatuur"
 
 #: data/nation/greek.ruleset:19
 msgid "?female:Despot"
-msgstr ""
+msgstr "?female:Despot"
 
 #: data/nation/greenland.ruleset:3
 #, fuzzy
@@ -18766,15 +18869,17 @@ msgstr "?plural:Boeren"
 
 #: data/nation/hacker.ruleset:6
 msgid "h4xx0r r0xx0rz!"
-msgstr ""
+msgstr "h4xx0r·r0xx0rz!"
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?title:Hacker"
-msgstr ""
+msgstr "?attitude:Inca"
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?female:Hacker"
-msgstr ""
+msgstr "?female:Spreker"
 
 #: data/nation/hawaiian.ruleset:3
 #, fuzzy
@@ -18808,6 +18913,8 @@ msgid ""
 "The Hellenic Republic - also known as Greece - was created when the Hellenic "
 "people gained independence from the Ottoman Empire in 1832."
 msgstr ""
+"De Helleense Republiek, ook gekend als Griekenland, ontstond toen de "
+"Hellenen in 1830 onafhankelijk werden van de Ottomanen"
 
 #: data/nation/hezbollah.ruleset:3
 #, fuzzy
@@ -18826,8 +18933,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/himyarite.ruleset:3
+#, fuzzy
 msgid "Himyarite"
-msgstr ""
+msgstr "Hittiet"
 
 #: data/nation/himyarite.ruleset:4
 #, fuzzy
@@ -18867,6 +18975,10 @@ msgid ""
 "controlled central Anatolia, north-western Syria and Mesopotamia down to "
 "Babylon."
 msgstr ""
+"Het koninkrijk van de Hittieten duurde van ongeveer 1680 BC tot 1180 BC. Het "
+"was de eerste beschaving die ijzer leerde bewerken. Op hun hoogtepunt "
+"beheerste ze centraal Anatolië, noordwest Syrië en Mesopotamië tot aan "
+"Babylon."
 
 #: data/nation/hobbits.ruleset:3
 msgid "Hobbit"
@@ -18927,7 +19039,7 @@ msgstr "?plural:Hongaren"
 
 #: data/nation/hungarian.ruleset:6
 msgid "Legend says that Hungary was founded by Arpad in the 9th century."
-msgstr ""
+msgstr "Volgens de legende werd Hongarije in de 9de eeuw gesticht door Arpad."
 
 #: data/nation/icelandic.ruleset:3
 msgid "Icelandic"
@@ -18944,6 +19056,10 @@ msgid ""
 "kept initially under the Norwegian and later the Danish crown until "
 "independence from Denmark in 1944."
 msgstr ""
+"Ijsland was lang een van de grootste onbewoonde eilanden in de wereld, tot "
+"het werd bevolkt door Noorse Vikingen in de late 9de eeuw. Het eiland was "
+"eerst onder de Noorse en dan de Deense kroon tot het in 1944 van Denemarken "
+"onafhankelijk werd."
 
 #: data/nation/iglu.ruleset:3
 msgid "Iglu"
@@ -18973,6 +19089,12 @@ msgid ""
 "Adriatic Sea.  Illyrian kingdoms were independent for centuries,  until "
 "conquered by the Roman Republic."
 msgstr ""
+"De Illyriërs waren Indo-Europese stammen. Ze doken op in het westelijk "
+"gedeelte van de Balkan voor 1000BC. Ze omvatten de Dalmatiërs in het "
+"noorden, het prehistorische Epirus met Corcyra en Ambracia ten zuiden, "
+"mengden zich met de Thraciërs in Dardania ten oosten, en vestigden zich ook "
+"in Messapia aan de overkant van de Adriatische Zee. Hun koninkrijken waren "
+"eeuwen onafhankelijk tot ze veroverd werden door de Romeinse Republiek."
 
 #: data/nation/inca.ruleset:3
 msgid "Inca"
@@ -19005,12 +19127,14 @@ msgid "Inka"
 msgstr "Inca"
 
 #: data/nation/inca.ruleset:36
+#, fuzzy
 msgid "Sapa Inka"
-msgstr ""
+msgstr "Sapa Inca"
 
 #: data/nation/inca.ruleset:37
+#, fuzzy
 msgid "Willaq Umu"
-msgstr ""
+msgstr "Willka"
 
 #: data/nation/indian.ruleset:3
 msgid "Indian"
@@ -19025,6 +19149,8 @@ msgid ""
 "The cradle of Ancient Indian civilization lay in the Indus river valley in "
 "modern-day Pakistan."
 msgstr ""
+"De bakermat van de oude Indische beschaving ligt in de vallei van de Indus "
+"in hedendaags Pakistan."
 
 #: data/nation/indian.ruleset:19 data/nation/majapahit.ruleset:26
 #, fuzzy
@@ -19033,7 +19159,7 @@ msgstr "Reina"
 
 #: data/nation/indian.ruleset:19
 msgid "?female:Raja"
-msgstr ""
+msgstr "?female:Raja"
 
 #: data/nation/indian.ruleset:20
 msgid "Maharaja"
@@ -19051,7 +19177,7 @@ msgstr "Maharadja"
 
 #: data/nation/indian.ruleset:21
 msgid "?female:Mahatma"
-msgstr ""
+msgstr "?female:Mahatma"
 
 #: data/nation/indonesian.ruleset:3
 msgid "Indonesian"
@@ -19067,6 +19193,9 @@ msgid ""
 "government on the island of Java. The country has a Muslim majority and is "
 "one of the most populous in the world."
 msgstr ""
+"Indonesië is een groot land op de Maleisische eilandengroep met de centrale "
+"regering op het eiland Java. Het land heeft een moslimmeerderheid en is een "
+"van de meest bevolkte landen ter wereld."
 
 #: data/nation/inuit.ruleset:3
 #, fuzzy
@@ -19079,12 +19208,17 @@ msgid "?plural:Inuits"
 msgstr "?plural:Indiërs"
 
 #: data/nation/inuit.ruleset:6
+#, fuzzy
 msgid ""
 "The Inuit people inhabit northern Canada and Greenland. Legend says that the "
 "Great Shaman Qitdlarssuaq lead his people to Thule (Qaanaaq) on the west "
 "coast of Greenland in the 10th century. All Inuit of today are descendents "
 "of the Thule culture."
 msgstr ""
+"De Inuit of Eskimo's bewonen noordelijk Canada en Groenland. In de legende "
+"leidde de Grote Shaman Qitdlarssuaq zijn volk naar Thule (:Qaanaaq) en de "
+"westkust van Groendland in de 10de eeuw. Alle Inuit vandaag zijn "
+"afstammelingen van die Thule cultuur."
 
 #: data/nation/inuit.ruleset:20
 #, fuzzy
@@ -19093,7 +19227,7 @@ msgstr "Voorzitter"
 
 #: data/nation/inuit.ruleset:20
 msgid "?female:Shaman"
-msgstr ""
+msgstr "?female:Shaman"
 
 #: data/nation/inuit.ruleset:21
 #, fuzzy
@@ -19129,7 +19263,7 @@ msgstr ""
 
 #: data/nation/iranian.ruleset:46 data/nation/persian.ruleset:22
 msgid "Ayatollah"
-msgstr ""
+msgstr "Ayatollah"
 
 #: data/nation/iraqi.ruleset:3
 #, fuzzy
@@ -19147,6 +19281,8 @@ msgid ""
 "the ancient region of Mesopotamia at the confluence of the Tigris and "
 "Euphrates rivers."
 msgstr ""
+"Irak werd gesticht na de val van het Ottomaanse rijk. Het omvat de oude "
+"regio Mesopotamië aan de samenvloeing van de Tigris en de Eufraat."
 
 #: data/nation/iraqi.ruleset:21
 #, fuzzy
@@ -19216,6 +19352,12 @@ msgid ""
 "written constitution and a currency system making them the most advanced "
 "state in North America upon the arrival of the Europeans."
 msgstr ""
+"De Iroquois Confederatie, in hun eigen taal Haudenosaunee, was een Noord-"
+"Amerikaanse groep naties met gemeenschappelijke taal en cultuur. Hun gronden "
+"lagen in noordelijk New York en waren oorspronkelijk Seneca, Cayuga, "
+"Onondaga, Oneida en Mohawk. De confederatie had een neergeschreven grondwet "
+"en een muntsysteem en was daardoor de meest geavanceerde staat in Noord-"
+"Amerika voor de tijd van de Europeanen."
 
 #: data/nation/israeli.ruleset:3
 msgid "Israeli"
@@ -19268,6 +19410,8 @@ msgid ""
 "According to traditional Japanese mythology, Japan was founded in the 7th "
 "century BC by the ancestral Emperor Jimmu."
 msgstr ""
+"Volgends de traditionele Japanse mythologie werd Japan in de 7de eeuw BC "
+"gesticht door Keizer Jimmu."
 
 #: data/nation/japanese.ruleset:21
 msgid "Shogun"
@@ -19320,7 +19464,7 @@ msgstr "?plural:Kenianen"
 
 #: data/nation/kenyan.ruleset:6
 msgid "Kenya gained independence from Britain in December 1963."
-msgstr ""
+msgstr "Kenya werd onafhankelijk van Brittanië in december 1963."
 
 #: data/nation/kenyan.ruleset:18
 #, fuzzy
@@ -19470,6 +19614,9 @@ msgid ""
 "the 6th century BC and founded the Sinhalese kingdom there. During British "
 "colonialism the country was known as Ceylon."
 msgstr ""
+"Prins Vijaya kwan vanuit Orissa naar Sri Lanka in de 6de eeuw BC en stichte "
+"het Sinhalese koninkrijk daar. Onder Britste heerschappij was het land "
+"bekend als Ceylon."
 
 #: data/nation/lankese.ruleset:20 data/nation/silesian.ruleset:21
 #: data/nation/welsh.ruleset:26
@@ -19499,7 +19646,7 @@ msgstr "Hoofdbestuurder"
 
 #: data/nation/lankese.ruleset:22
 msgid "?female:Supreme Commander"
-msgstr ""
+msgstr "?female: Opperbevelhebster"
 
 #: data/nation/laotian.ruleset:3
 #, fuzzy
@@ -19535,6 +19682,9 @@ msgid ""
 "1940, Latvia was forcibly occupied by the Soviet Union. After the collapse "
 "of Soviet Union in 1991 Latvia restored its independence."
 msgstr ""
+"In de nadagen van WWi riep Letland haar onafhankelijkheid van Rusland uit. "
+"In 1940 werd het bezet en ingelijfd door de Soviet Unie. Na diens "
+"uiteenvallen in 1991 werd Letland opnieuw onafhankelijk."
 
 #: data/nation/libyan.ruleset:3
 #, fuzzy
@@ -19553,10 +19703,14 @@ msgid ""
 "of Italy and after the Second World War Libya was granted independence as a "
 "condition of the Allied peace treaty with Italy."
 msgstr ""
+"Het gebied dat nu Libië is was een Romeinse kolonie tot het in de 7de eeuw "
+"door de Arabische beschaving veroverd werd. In 1912 kwam het onder Italië en "
+"na de tweede wereldoorlog kreeg Libië de onafhankelijkheid als een van de "
+"stipulaties van het vredesverdrag tussen de Geallieerden en Italië."
 
 #: data/nation/libyan.ruleset:23
 msgid "Dey"
-msgstr ""
+msgstr "Dey"
 
 #: data/nation/libyan.ruleset:24
 #, fuzzy
@@ -19664,14 +19818,16 @@ msgid ""
 "The Malagasy are the people of Madagascar. For centuries, tribes from "
 "Indonesia, East Africa and the Arab world have gathered on the island."
 msgstr ""
+"Eeuwenlang zijn stammen uit Indonesië, Oostelijk Afrika en de Arabische "
+"wereld samengekomen op het eiland Madagascar"
 
 #: data/nation/malagasy.ruleset:22
 msgid "High Commissioner"
-msgstr ""
+msgstr "Hoge Commissaris"
 
 #: data/nation/malagasy.ruleset:22
 msgid "?female:High Commissioner"
-msgstr ""
+msgstr "?female:Hoge Commissaris"
 
 #: data/nation/malaysian.ruleset:3
 msgid "Malaysian"
@@ -19686,6 +19842,8 @@ msgid ""
 "Malaysia was started with the founding of Malacca (Melaka) by Parameswara in "
 "the early 14th century."
 msgstr ""
+"Maleisië begon met het stichten van Malacca (Melaka) door Porameswara in de "
+"vroege 14de eeuw"
 
 #: data/nation/malaysian.ruleset:22 data/nation/singaporean.ruleset:32
 #: data/nation/turk.ruleset:23
@@ -19714,6 +19872,7 @@ msgid "?plural:Malians"
 msgstr "?plural:Maleisiërs"
 
 #: data/nation/malian.ruleset:6
+#, fuzzy
 msgid ""
 "Sub-Saharan Africa has been a cultural and ethnical melting pot for "
 "millennia. In medieval times, the region was home to a succession of empires "
@@ -19722,6 +19881,12 @@ msgid ""
 "14th to the 17th century and was famed for its wealth and benevolent kings. "
 "The modern Republic of Mali derives its name from this empire."
 msgstr ""
+"Sub-Sahara Afrika is al millenia lang een culturele en etnische smeltpot. In "
+"de middeleeuwen was er een opeenvolging van rijken bekend als de "
+"koninkrijken van de Sahel. Van deze was het Islamitische Mali rijk met de "
+"hoofdstad in Timbuktu het meest invloedrijk. Deze macht heerste van de 14de "
+"tot de 17de eeuw en was beroemd voor haar rijkdom en welwillende koningen. "
+"De moderne republiek Mali heeft haar naar hieraan ontleed."
 
 #. TRANS: Mansa = King of kings
 #: data/nation/malian.ruleset:28
@@ -19745,6 +19910,9 @@ msgid ""
 "Manchuria in Northeast Asia. In the 17th century they conquered and ruled "
 "China as the Manchu Empire until 1911."
 msgstr ""
+"De Manchus waren een semi-nomadisch volk komende uit de regio Manchurië in "
+"noordoost Azië. In de 17de eeuw veroverden en regeerden ze China als het "
+"Manchu rijk tot 1911"
 
 #: data/nation/maori.ruleset:3
 #, fuzzy
@@ -19762,6 +19930,9 @@ msgid ""
 "group that is now New Zealand. According to archeological evidence, the "
 "migration commenced in the 900s and continued until the 1400s."
 msgstr ""
+"De Maori zijn een Polynesisch volk dat migreerde naar de eilandgroep die nu "
+"Nieuw-Zeeland heet en zich daar permanent vestigde. Volgens archeologisch "
+"bewijs begon de migratie in de jaren 900 en duurde ze tot de jaren 1400."
 
 #: data/nation/mapuche.ruleset:3
 #, fuzzy
@@ -19782,8 +19953,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/mapuche.ruleset:19
+#, fuzzy
 msgid "Toqui"
-msgstr ""
+msgstr "Iroquois"
 
 #: data/nation/mapuche.ruleset:20
 #, fuzzy
@@ -19815,7 +19987,7 @@ msgstr "?plural:Marsmannetjes"
 
 #: data/nation/martian.ruleset:6
 msgid "Marsmen landed on Earth in 4000 BC!"
-msgstr ""
+msgstr "Marsmannetjes landen op de aarde in 4000 BC!"
 
 #: data/nation/mayan.ruleset:3
 #, fuzzy
@@ -19832,15 +20004,17 @@ msgid ""
 "The Mayans were a Mesoamerican civilization. Famous for building great "
 "pyramids and palaces in the jungle."
 msgstr ""
+"De Mayas waren een mesoamerikaanse bovelking, beroemd voor het bouwen van "
+"grootse piramiden en paleizen in de jungle."
 
 #. TRANS: Ajaw = Lord
 #: data/nation/mayan.ruleset:20
 msgid "Ajaw"
-msgstr ""
+msgstr "Ajaw"
 
 #: data/nation/mayan.ruleset:20
 msgid "?female:Ajaw"
-msgstr ""
+msgstr "?female:Ajaw"
 
 #. TRANS: Ah kin = Priest
 #: data/nation/mayan.ruleset:22
@@ -19848,8 +20022,9 @@ msgid "Ah kin"
 msgstr ""
 
 #: data/nation/mayan.ruleset:22
+#, fuzzy
 msgid "?female:Ah kin"
-msgstr ""
+msgstr "?female:Ah"
 
 #: data/nation/mexican.ruleset:3
 msgid "Mexican"
@@ -19863,6 +20038,8 @@ msgstr "?plural:Mexicanen"
 msgid ""
 "Mexico borrows its name from the Mexica people, another name for the Aztecs."
 msgstr ""
+"Mexica ontleende zijn naam aan het Mexica volk, een andre naam voor de "
+"Azteken"
 
 #: data/nation/midway_islands.ruleset:3
 #, fuzzy
@@ -19904,7 +20081,7 @@ msgstr ""
 #. TRANS: Voievod/Doamna = Prince/Lady
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 msgid "Voievod"
-msgstr ""
+msgstr "Voievod"
 
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 #, fuzzy
@@ -19927,7 +20104,7 @@ msgstr "Totalen"
 
 #: data/nation/moldovan.ruleset:26 data/nation/romanian.ruleset:38
 msgid "Tovarasa"
-msgstr ""
+msgstr "Tovarasa"
 
 #: data/nation/mongol.ruleset:3
 msgid "Mongol"
@@ -19951,11 +20128,11 @@ msgstr ""
 
 #: data/nation/mongol.ruleset:29 data/nation/uyghur.ruleset:29
 msgid "?female:Khan"
-msgstr ""
+msgstr "?female:Khan"
 
 #: data/nation/mongol.ruleset:31 data/nation/uyghur.ruleset:30
 msgid "?female:Khagan"
-msgstr ""
+msgstr "?female:Khagan"
 
 #: data/nation/mordor.ruleset:3
 msgid "Mordor"
@@ -20016,7 +20193,7 @@ msgstr ""
 
 #: data/nation/newzealand.ruleset:3
 msgid "New Zealand"
-msgstr ""
+msgstr "Nieuw-Zeeland"
 
 #: data/nation/newzealand.ruleset:4
 #, fuzzy
@@ -20029,6 +20206,9 @@ msgid ""
 "royal proclamation in 1907, the country became an independent dominion "
 "within the Commonwealth of Nations."
 msgstr ""
+"De eilandgroep Nieuw-Zeeland werd door Brittanië geanexeerd in 1840. Na een "
+"koninklijke bepaling in 1907 werd het land onafhankelijk en binnen het "
+"Gemenebest."
 
 #: data/nation/nigerian.ruleset:3
 msgid "Nigerian"
@@ -20040,7 +20220,7 @@ msgstr "?plural:Nigerianen"
 
 #: data/nation/nigerian.ruleset:6
 msgid "Nigeria won full independence from British rule in 1960."
-msgstr ""
+msgstr "Nigerie werd volledig onafhankelijk van de Britten in 1960."
 
 #: data/nation/norman.ruleset:3
 #, fuzzy
@@ -20067,8 +20247,9 @@ msgid "Jarl"
 msgstr "Patrouilleer"
 
 #: data/nation/norman.ruleset:22
+#, fuzzy
 msgid "?female:Jarl"
-msgstr ""
+msgstr "?female: Oorlogsleider"
 
 #: data/nation/northkorean.ruleset:3
 #, fuzzy
@@ -20108,6 +20289,8 @@ msgid ""
 "in Eidsvoll, 1814AD. Finally, in 1905AD the Norwegians got their "
 "independence after a union with Sweden."
 msgstr ""
+"Na eeuwen onder Denemarken vestigden de Noren hun eigen grondwet in Eidsvoll "
+"in 1814. De onafhankelijkheid kwam pas in 1905, na een unie met Zweden."
 
 #: data/nation/nubian.ruleset:3
 #, fuzzy
@@ -20293,7 +20476,7 @@ msgstr "?plural:Japanners"
 
 #: data/nation/papuan.ruleset:6
 msgid "The Papuans are a Melanesian people on the island of New Guinea."
-msgstr ""
+msgstr "De Papua zijn een melanees volk op het eiland Nieuw-Guinea"
 
 #: data/nation/papuan.ruleset:16
 #, fuzzy
@@ -20401,6 +20584,8 @@ msgid ""
 "The Polish state was formed about a millennium ago, and reached its Golden "
 "Age near the end of the 16th century."
 msgstr ""
+"De Poolse staat werd ongeveer 1000 jaar geleden gevormd en bereikte een "
+"gouden eeuw op het einde van de 16de eeuw."
 
 #. TRANS: Dyktator/Dyktatorka = Dictator
 #: data/nation/polish.ruleset:27
@@ -20542,6 +20727,8 @@ msgid ""
 "Quebec is the largest province of Canada, housing the majority of the "
 "Francophone population of America."
 msgstr ""
+"Quebec is de grootste province van Canande en heeft de meerderheid van de "
+"francofone bewoners van Amerika."
 
 #: data/nation/revolution.ruleset:3
 #, fuzzy
@@ -20564,6 +20751,7 @@ msgid "?plural:Romanians"
 msgstr "?plural:Romeinen"
 
 #: data/nation/romanian.ruleset:6
+#, fuzzy
 msgid ""
 "Romania as a nation was formed at the beginning of the 20th century, when "
 "the states of Transylvania, Wallachia, and Moldavia merged. It is a country "
@@ -20571,6 +20759,12 @@ msgid ""
 "Rome. Its history is convoluted as it was always at the borders of great "
 "empires: Roman, Ottoman, Austro-Hungarian, and Russian."
 msgstr ""
+"Roemenië werd als een natie gevormd in het begin van de 20ste eeuw toen "
+"Transylvanië, Wallachië en Moldavië samensmolten. Het is een land met "
+"bewoners die een taal spreken die doet denken aan de tijd van het oude Rome. "
+"De geschiedenis is ingewikkeld omdat het altijd aan de grenzen van grote "
+"imperia lag: het Romeinse, het Ottomaanse, het Oostenrijk-Hongaarse, en het "
+"Russische."
 
 #. TRANS: Rege/Regina = King/Queen
 #: data/nation/romanian.ruleset:36
@@ -20621,10 +20815,20 @@ msgid ""
 "dissolution in 1991 Russia appeared on world map again, now as a federative "
 "republic."
 msgstr ""
+"Volgens de legende nodigden in 862 de Slavische en Finse stammen van "
+"Novgorod de viking koning Rurik uit om orde te brengen in hun land. Rurik "
+"vestigde de Kievan Rus in dit gebied, de eerste Russische staat. Tegen de "
+"11de eeuw was Kievan Rus terug uiteengevallen in kleinere prinsdommen, die "
+"opnieuw verenigd werden tot 1 staat door Ivan III in de 15de eeuw. Na een "
+"beslissende overwinning op Zweden en grote winst in territorium verklaarde "
+"Peter I het Russisch Rijk in 1721. Het Russisch Rijk duurte tot in 1917 een "
+"socialistische revolutie de laatste keizer ontroonde. Na de ontbinding van "
+"de USSR in 1991 verscheen Rusland terug op de wereldkaart, nu een "
+"federatieve republiek."
 
 #: data/nation/russian.ruleset:48
 msgid "Tsar"
-msgstr ""
+msgstr "Tsaar"
 
 #: data/nation/russian.ruleset:48
 #, fuzzy
@@ -20649,7 +20853,7 @@ msgstr ""
 
 #: data/nation/ryukyuan.ruleset:3
 msgid "Ryukyuan"
-msgstr ""
+msgstr "Ryukyuan"
 
 #: data/nation/ryukyuan.ruleset:4
 #, fuzzy
@@ -20661,15 +20865,17 @@ msgid ""
 "The Ryukyu Kingdom (1372-1879) was the Land of Propriety, a peaceful "
 "maritime trading nation eventually invaded, occupied, and annexed by Japan."
 msgstr ""
+"Het Ryukyu Koningrijk (1372-1879) was een vredevolle zeevaart handelsnatie "
+"die uiteindelijk binnengevallen en geannexeerd werd door Japan."
 
 #. TRANS: Koku-o/Jo-o = King/Queen
 #: data/nation/ryukyuan.ruleset:22
 msgid "Koku-o"
-msgstr ""
+msgstr "Koku-o"
 
 #: data/nation/ryukyuan.ruleset:22
 msgid "Jo-o"
-msgstr ""
+msgstr "Jo-o"
 
 #: data/nation/sami.ruleset:3
 #, fuzzy
@@ -20682,19 +20888,23 @@ msgid "?plural:Sami"
 msgstr "?plural:Thai"
 
 #: data/nation/sami.ruleset:6
+#, fuzzy
 msgid ""
 "The Sami are a people of northern Scandinavia. Their nation spans over the "
 "northernmost regions of the Scandinavian countries and northwestern Russia."
 msgstr ""
+"De Sami of Lappen zijn een volk uit noordelijk Scandinavië. Hun natie "
+"beslaat de meest noordelijke gebieden: Finnmark in Noorwegen , en Lapland in "
+"Zweden en Finland."
 
 #. TRANS: Noaydde = Shaman
 #: data/nation/sami.ruleset:22
 msgid "Noaydde"
-msgstr ""
+msgstr "Noaydde"
 
 #: data/nation/sami.ruleset:22
 msgid "?female:Noaydde"
-msgstr ""
+msgstr "?female:Noaydde"
 
 #: data/nation/samogitian.ruleset:3
 #, fuzzy
@@ -20711,6 +20921,9 @@ msgid ""
 "Samogitia - historical country near the Baltic Sea - home to the last pagans "
 "in Europe (official until 1413). Today, Samogitia is a region of Lithuania"
 msgstr ""
+"Samogitia - historisch land bij de Baltische Zee - thuis van de laatste niet "
+"gekerstenden in Europa (officieel tot 1413). Vandaag is Samogitia een regio "
+"in Litouwen."
 
 #: data/nation/scottish.ruleset:3
 msgid "Scottish"
@@ -20799,7 +21012,7 @@ msgstr "Encik"
 
 #: data/nation/singaporean.ruleset:34
 msgid "?female:Encik"
-msgstr ""
+msgstr "?female:Encik"
 
 #: data/nation/sioux.ruleset:3
 msgid "Sioux"
@@ -20815,6 +21028,9 @@ msgid ""
 "against the United States. It consisted of three distinct groups of tribes: "
 "the Lakota, the Dakota and the Nakota."
 msgstr ""
+"De Sioux was een Noord-Amerikaanse natie die verschillende beslissende "
+"veldslagen tegen de Verenigde Staten vochten. Het bestand uit die groepen "
+"stammen: de Lakota, de Dakota en de Nakota."
 
 #: data/nation/slovakian.ruleset:3
 #, fuzzy
@@ -20847,7 +21063,7 @@ msgstr "Hogepriesteres"
 
 #: data/nation/slovakian.ruleset:30 data/nation/soviet.ruleset:27
 msgid "?female:General Secretary"
-msgstr ""
+msgstr "?female:Algemeen Secretaris"
 
 #: data/nation/slovenian.ruleset:3
 msgid "Slovenian"
@@ -20867,7 +21083,7 @@ msgstr ""
 
 #: data/nation/southafrican.ruleset:3
 msgid "South African"
-msgstr ""
+msgstr "Zuid-Afrikaan"
 
 #: data/nation/southafrican.ruleset:4
 #, fuzzy
@@ -20885,6 +21101,14 @@ msgid ""
 "prisoner Nelson Mandela was elected the first truly democratically elected "
 "president of South Africa."
 msgstr ""
+"Nederlandse kolonisten begonnen zich in zuidelijk Afrika te vestigen in de "
+"17de eeuw. Na vele oorlogen tussen voornamelijk Boers(afstammelingen van de "
+"Nederlandse trekkers), Britste troepen en Zulu's werd in 1910 de Unie van "
+"Zuid-Afrika gevormd in het Gemenebest. De Zuid-Afrikaanse overheid werd "
+"berucht voor de 'apartheid' politiek van wettelijke ongelijkheid gebaseerd "
+"op huidskleur. Na het aannemen van de eerste democratische grondwet in 1994 "
+"werd politiek gevangene Nelson Mandela de eerste echt democratisch verkozen "
+"presiden van Zuid-Afrika"
 
 #: data/nation/southkorean.ruleset:3
 #, fuzzy
@@ -20923,6 +21147,11 @@ msgid ""
 "powerful states in the 20th century. But by the end of 1991 due to many "
 "social shocks it disintegrated into fifteen independent countries"
 msgstr ""
+"De geschiedenis van de Soviet Unie bogin in november 1917 toen onder Lenin "
+"een Bolsjevistische revolutie ontketend werd. Op 31 december 1922 vormden "
+"vier Soviet republieken een land. De Soviet Unie werd een van de machtichste "
+"staten in de 20ste eeuw. Maar tegen het einde van 1991 viel het uiteen in 15 "
+"onafhankelijke landen door grote socio-politieke schokken."
 
 #: data/nation/soviet.ruleset:26
 #, fuzzy
@@ -20936,7 +21165,7 @@ msgstr "De Grote Bibliotheek"
 
 #: data/nation/soviet.ruleset:28
 msgid "?female:Great Leader"
-msgstr ""
+msgstr "?female:Grote Leider"
 
 #: data/nation/spanish.ruleset:3
 msgid "Spanish"
@@ -21013,6 +21242,8 @@ msgid ""
 "In 1820 Sudan came under Egyptian rule and later British rule. Sudan became "
 "independent in 1956."
 msgstr ""
+"In 1820 kwam Sudan onder Egyptische heerschappij en later de Britste. Sudan "
+"werd onafhankelijk in 1956"
 
 #: data/nation/sumerian.ruleset:3
 msgid "Sumerian"
@@ -21028,6 +21259,9 @@ msgid ""
 "of Sumerian writing some 5500 years old have been found, pre-dating every "
 "other writing in history."
 msgstr ""
+"Sumerië beheerste zuidelijk Mesopotamië tot de opkomst van Babylonië. "
+"Tabletten met Sumerisch schrift van zo'n 5500 jaar oud zijn teruggevonden, "
+"en zijn daarmee het eerste geschrift en het begin van de geschiedenis."
 
 #: data/nation/sumerian.ruleset:27
 #, fuzzy
@@ -21059,15 +21293,18 @@ msgid ""
 "Mswati II (1820 - 1868), the Swazis expanded their territory and stabilized "
 "the southern frontier with the Zulus."
 msgstr ""
+"De Swazis zijn een Bantoe volk uit zuidelijk Afrika. Onder de leiding van "
+"Mswati II (1820-1868} breidden de Swazis hun gebied uit en kregen een "
+"stabiele zuidgrens met de Zulus"
 
 #. TRANS: Ngwenyama/Indovuzaki = Lion/Elephant cow
 #: data/nation/swazi.ruleset:24
 msgid "Ngwenyama"
-msgstr ""
+msgstr "Ngwenyama"
 
 #: data/nation/swazi.ruleset:24
 msgid "Indovuzaki"
-msgstr ""
+msgstr "Indovuzaki"
 
 #: data/nation/swedish.ruleset:3
 msgid "Swedish"
@@ -21087,6 +21324,13 @@ msgid ""
 "its gained territory. The country has not been involved in an armed conflict "
 "since 1814."
 msgstr ""
+"Het Koninkrijk van Zweden was gekerstened en geconsolideerd als een "
+"politieke eenheid tegen de 12de eeuw AD. Het land werd belangrijk als een "
+"van de grootmachten in het Europa van de 17de eeuw na aanzienlijke "
+"veroveringen door de zogenoemde Strijder Koningen. Maar door een "
+"verslechterende economie en enkele nederlagen tegen Rusland, verloor Zweden "
+"het meeste gewonnen territorium terug. Het land is niet in oorlog geweest "
+"sinds 1814."
 
 #: data/nation/swiss.ruleset:3
 msgid "Swiss"
@@ -21101,10 +21345,12 @@ msgid ""
 "Switzerland is a federation of cantons, some of which have more than 700 "
 "years of history as a confederacy."
 msgstr ""
+"Zwitserland is een federatie van kantons, waarvan sommige meer dan 700 jaar "
+"confederale geschiedenis hebben."
 
 #: data/nation/swiss.ruleset:19
 msgid "?female:General"
-msgstr ""
+msgstr "?female:Generaal"
 
 #: data/nation/swiss.ruleset:20
 #, fuzzy
@@ -21113,11 +21359,11 @@ msgstr "Braziliaanse"
 
 #: data/nation/swiss.ruleset:20
 msgid "?female:Bailiff"
-msgstr ""
+msgstr "?female:Bailiff"
 
 #: data/nation/swiss.ruleset:21 data/nation/swiss.ruleset:22
 msgid "President of the Confederation"
-msgstr ""
+msgstr "President van de Confederatie"
 
 #: data/nation/swiss.ruleset:23
 #, fuzzy
@@ -21126,7 +21372,7 @@ msgstr "Kanselier"
 
 #: data/nation/swiss.ruleset:23
 msgid "?female:Federal Chancellor"
-msgstr ""
+msgstr "?female:Federaal Kanselier"
 
 #: data/nation/syrian.ruleset:3
 #, fuzzy
@@ -21227,6 +21473,9 @@ msgid ""
 "communists, the nationalist government evacuated to the island of Taiwan "
 "where they formed the Republic of China."
 msgstr ""
+"Toen de Chinese nationalisten het gewapend conflict tegen de communisten "
+"verloren, evacueerde de regering naar het eiland Taiwan waar ze de Republiek "
+"Chine vormde."
 
 #: data/nation/tajik.ruleset:3
 #, fuzzy
@@ -21280,10 +21529,13 @@ msgid "?plural:Texans"
 msgstr "?plural:Mexicanen"
 
 #: data/nation/texan.ruleset:6
+#, fuzzy
 msgid ""
 "Texas is second largest and second most populous state of the USA, famous "
 "for its \"larger than life\" cowboy mentality."
 msgstr ""
+"Texas is de tweede grootste en tweede meest bevolkte staat in de USA, en "
+"beroemd voor de 'larger than life' cowboy mentaliteit."
 
 #: data/nation/thai.ruleset:3
 msgid "Thai"
@@ -21342,10 +21594,18 @@ msgid ""
 "established a buddhist religious state under the control of the Gelugpa "
 "school of Tibetan Buddhism."
 msgstr ""
+"Het Tibetaanse thuisland wordt soms ook het 'dak van de wereld' genoemd, het "
+"hoogste gebied op aarde. In de 7de eeuw werd Tibet een imperium onder het "
+"leiderschap van koning Songtsen Gompo, die erkend werd door zowel China als "
+"Indië. De dynastie bleef duren tot de 11de eeuw, toen Tibet overrompeld werd "
+"door Mongolen. Eeuwen later, toen de Mongoolse heerschappij verzwakt was, "
+"stichtte Lozang Gyatso, geboren in 1617 en de 5de Dalai Lama, een "
+"boeddhistische religieuze staat onder de controle van de Gelugpa school van "
+"Tibetaans Boeddhisme."
 
 #: data/nation/tibetan.ruleset:27
 msgid "Lama"
-msgstr ""
+msgstr "Lama"
 
 #: data/nation/tibetan.ruleset:28
 #, fuzzy
@@ -21353,8 +21613,9 @@ msgid "Dharma King"
 msgstr "Voorzitter"
 
 #: data/nation/tibetan.ruleset:29
+#, fuzzy
 msgid "Dalai Lama"
-msgstr ""
+msgstr "Dalai·Lama"
 
 #: data/nation/tocharian.ruleset:3
 #, fuzzy
@@ -21420,6 +21681,14 @@ msgid ""
 "1861. But in 1881 Tunisia was invaded by the French and was made a French "
 "protectorate. The country became independent in 1956."
 msgstr ""
+"De Phoeniciërs hebben Carthago gesticht waar nu Tunesië is. Carthago werd "
+"later een grote macht in het Middellandse Zeegebied tot het in 146 BC door "
+"de Romeinen werd verslaan. Later kwam er door de veroveringen van Arabische "
+"moslim een migratie op gang vanaf de Arabische en Ottomaanse landen. Maar "
+"ook veel joden en Spaanse moren gingen er wonen op het einde van de 16de "
+"eeuw. Tunesië werd grotendeels onafhankelijk van het Ottomaanse rijk in "
+"1861. Maar in 1881 werd het binnengevallen door de Fransen en tot een Frans "
+"protectoriaat gemaakt. Het land werd in 1956 onafhankelijk."
 
 #: data/nation/tupi.ruleset:3
 msgid "Tupi"
@@ -21543,24 +21812,27 @@ msgid "?female:Chairperson"
 msgstr "Vice Voorzitter"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "Secretary-General"
-msgstr ""
+msgstr "Goeverneur-Generaal"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "?female:Secretary-General"
-msgstr ""
+msgstr "?female:Goeverneur-Generaal"
 
 #: data/nation/un.ruleset:25
 msgid "Representative"
 msgstr ""
 
 #: data/nation/un.ruleset:25
+#, fuzzy
 msgid "?female:Representative"
-msgstr ""
+msgstr "?female:Presedinte"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
-msgstr ""
+msgstr "Uruguayaans"
 
 #: data/nation/uruguayan.ruleset:4
 #, fuzzy
@@ -21573,10 +21845,12 @@ msgid ""
 "\"Switzerland of the Americas\" due to its once higly developed social "
 "welfare system."
 msgstr ""
+"Uruguay is een klein Zuid-Amerikaans land soms het \"Zwitserland van Amerika"
+"\" genoemd wegens het ooit hoog ontwikkeld sociaal systeem."
 
 #: data/nation/uyghur.ruleset:3
 msgid "Uyghur"
-msgstr ""
+msgstr "Uyghur"
 
 #: data/nation/uyghur.ruleset:4
 #, fuzzy
@@ -21592,6 +21866,12 @@ msgid ""
 "Asian states of Uzbekistan, Kazakhstan and Kyrgyzstan. They are also the "
 "main minority of the Xinjiang province of China."
 msgstr ""
+"Uyghur was een oost Turks rijk en beschaving. Op het hoogtepunt in 820 AD "
+"beheerste het het grootste deel van Centraal- en Noord-Azië. Na eeuwenlange "
+"stribbelingen met de Chinezen, werden ze door de Qing dynastie overwonnen in "
+"de jaren 1700. Vandaag vormen de afstammelingen van de Uyghur de bevolking "
+"van Uzbekistan, Kazachstan en Kyrgizië in Centraal Azië. Ze zijn ook de "
+"grootste minderheid in de XIinjiang provincie van China."
 
 #: data/nation/uzbek.ruleset:3
 msgid "Uzbek"
@@ -21612,7 +21892,7 @@ msgstr ""
 
 #: data/nation/venezuelan.ruleset:3
 msgid "Venezuelan"
-msgstr ""
+msgstr "Venezuelaans"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -21629,6 +21909,9 @@ msgid ""
 "July 5th 1811 under the leadership of El Libertador Simon Bolivar - The "
 "Liberator."
 msgstr ""
+"Venezuela is het noordelijkste land in Zuid-Amerika. Een Spaanse kolonie "
+"sinds de 16de eeuw tot op 5 july 1811 het land onafhankelijk werd onder het "
+"leiderschap van El Libertador Simón Bolivar."
 
 #. TRANS: Terrateniente = Junker
 #: data/nation/venezuelan.ruleset:29
@@ -21703,11 +21986,15 @@ msgid "?plural:Westphalians"
 msgstr "?plural:Italianen"
 
 #: data/nation/westphalian.ruleset:6
+#, fuzzy
 msgid ""
 "Westphalia, before becoming a Prussian province, was the western region of "
 "the Duchy of Saxony. Today it makes up the northern part of the largest "
 "German federal state, North Rhine-Westphalia."
 msgstr ""
+"Westphalen, was het westelijk deel van Saksen voor het een provincie van "
+"Pruisen werd. Nu is het het noordelijk deel van de grootste staat in het "
+"federale Duitsland, Nordrhein Westphalen"
 
 #: data/nation/zulu.ruleset:3
 msgid "Zulu"
@@ -24045,6 +24332,7 @@ msgstr "Voor een introductie, type 'help'."
 #, c-format
 msgid "Warning: the guest name '%s' has been taken, renaming to user '%s'."
 msgstr ""
+"Waarchuwing: de gastnaam '%s' is al in gebruik, hernoem tot gebruiker '%s'."
 
 #: server/database.c:179
 #, fuzzy
@@ -24062,30 +24350,34 @@ msgid ""
 "There was an error reading the user database, logging in as guest connection "
 "'%s'."
 msgstr ""
+"Er trad een fout op bij het lezen van de gebruikersdatabase, log in als gast-"
+"verbinding '%s'."
 
 #: server/database.c:205
 msgid ""
 "There was an error reading the user database and guest logins are not "
 "allowed. Sorry"
 msgstr ""
+"Er trad een fout op bij het lezen van de gebruikersdatabase en gast-logins "
+"zijn niet toegestaan. Sorry"
 
 #: server/database.c:209
 #, c-format
 msgid "%s was rejected: Database error and guests not allowed."
-msgstr ""
+msgstr "%s afgewezen: Database fout en gasten niet toegelaten."
 
 #: server/database.c:217
 #, c-format
 msgid "Enter password for %s:"
-msgstr ""
+msgstr "Geef wachtwoord voor %s:"
 
 #: server/database.c:228
 msgid "Enter a new password (and remember it)."
-msgstr ""
+msgstr "Geef een nieuw wachtwoord (en onthoud het)."
 
 #: server/database.c:234
 msgid "This server allows only preregistered users. Sorry."
-msgstr ""
+msgstr "Deze server staat alleen vooraf geregistreerde gebruikers toe. Sorry."
 
 #: server/database.c:237
 #, fuzzy, c-format
@@ -24094,18 +24386,20 @@ msgstr "%s is geweigerd: Al gebruikte login naam [%s]."
 
 #: server/database.c:265 server/database.c:323
 msgid "Sorry, too many wrong tries..."
-msgstr ""
+msgstr "Sorry, teveel mislukte pogingen..."
 
 #: server/database.c:266
 #, c-format
 msgid "%s was rejected: Too many wrong password verifies for new user."
-msgstr ""
+msgstr "%s afgewezen: Te veel verkeerde paswoorden voor nieuwe gebruiker."
 
 #: server/database.c:281
 msgid ""
 "Warning: There was an error in saving to the database. Continuing, but your "
 "stats will not be saved."
 msgstr ""
+"Waarschuwing: Er trad een fout op bij het opslaan in de database. Ik ga "
+"door, maar uw statistieken zullen niet bewaard worden."
 
 #: server/database.c:325
 #, fuzzy, c-format
@@ -24114,21 +24408,21 @@ msgstr "%s is geweigerd: Afwijkende mogelijkheden."
 
 #: server/database.c:334
 msgid "Your password is incorrect. Try again."
-msgstr ""
+msgstr "Uw wachtwoord is onjuist. Probeer opnieuw."
 
 #: server/database.c:345
 msgid "Sorry, your connection timed out..."
-msgstr ""
+msgstr "Sorry, timeout voor uw verbinding..."
 
 #: server/database.c:348
 #, c-format
 msgid "%s was rejected: Connection timeout waiting for password."
-msgstr ""
+msgstr "%s afgewezen: Verbinding timeout bij wachten op wachtwoord."
 
 #: server/database.c:412
 #, c-format
 msgid "Your password is too short, the minimum length is %d. Try again."
-msgstr ""
+msgstr "Uw wachtwoord is te kort, de minimum lengte is %d. Probeer opnieuw."
 
 #: server/database.c:417
 #, c-format
@@ -24136,6 +24430,8 @@ msgid ""
 "The password must have at least %d capital letters, %d numbers, and be at "
 "minimum %d [printable] characters long. Try again."
 msgstr ""
+"Het wachtwoord moet tenminste %d hoofdletters en %d cijfers bevatten en "
+"dient tenminste %d [afdrukbare] tekens lang te zijn. Probeer opnieuw"
 
 #: server/database.c:1178
 #, c-format

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freeciv 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 2003-06-16 19:18+0200\n"
 "Last-Translator: Roman Festchook <roma@polesye.net>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -68,12 +68,12 @@ msgstr ""
 #: ai/advdiplomacy.c:433
 #, c-format
 msgid "*%s (AI)* Sorry, sharing vision with you is not safe."
-msgstr ""
+msgstr "*%s (Ш╤)* Вибачте, но мати сп╕льний з╕р з Вами небезпечно."
 
 #: ai/advdiplomacy.c:539
 #, c-format
 msgid "*%s (AI)* Welcome into our alliance %s!"
-msgstr ""
+msgstr "*%s (Ш╤)* Ласкаво просимо до нашого альянсу, %s!"
 
 #: ai/advdiplomacy.c:542
 #, c-format
@@ -83,7 +83,7 @@ msgstr ""
 #: ai/advdiplomacy.c:547
 #, c-format
 msgid "*%s (AI)* Yes, peace in our time!"
-msgstr ""
+msgstr "*%s (Ш╤)* Так, ми за мир!"
 
 #: ai/advdiplomacy.c:551
 #, c-format
@@ -101,6 +101,8 @@ msgid ""
 "*%s (AI)* Your attempt to conquer space for yourself alone betray your true "
 "intentions, and I will have no more of our alliance!"
 msgstr ""
+"*%s (Ш╤)* Твоя спроба захопити космос лише для себе самого зрадила наш╕ "
+"в╕дверт╕ нам╕ри, та ми залиша╓мо альянс!"
 
 #: ai/advdiplomacy.c:1010
 #, c-format
@@ -108,6 +110,8 @@ msgid ""
 "*%s (AI)* Your attempt to unilaterally dominate outer space is highly "
 "offensive."
 msgstr ""
+"*%s (Ш╤)* Ваша спроба одноб╕чно дом╕нувати у косм╕чному простор╕ дуже "
+"образлива."
 
 #: ai/advdiplomacy.c:1012
 #, c-format
@@ -115,6 +119,8 @@ msgid ""
 "*%s (AI)* If you do not stop constructing your spaceship, I may be forced to "
 "take action!"
 msgstr ""
+"*%s (Ш╤)* Якщо Ви не зипините буд╕вн╕цтво Вашого косм╕чного кораблю, це може "
+"змусити мене до в╕дпов╕дних д╕й!"
 
 #: ai/advdiplomacy.c:1037
 #, c-format
@@ -127,6 +133,8 @@ msgid ""
 "*%s (AI)* Finally I get around to you! Did you really think you could get "
 "away with your crimes?"
 msgstr ""
+"*%s (Ш╤)* Нарешт╕ я д╕стався тебе! Ти насправд╕ думав, що зможешь позбутися "
+"покарання за сво╖ злочини?"
 
 #: ai/advdiplomacy.c:1046
 #, c-format
@@ -141,7 +149,7 @@ msgstr ""
 #: ai/advdiplomacy.c:1085
 #, c-format
 msgid "*%s (AI)* Sorry, sharing vision with you is no longer safe."
-msgstr ""
+msgstr "*%s (Ш╤)* Вибачте, мати сп╕льне бачення з Вами б╕льш не ╓ безпечним."
 
 #: ai/advdiplomacy.c:1153
 #, c-format
@@ -156,6 +164,8 @@ msgid ""
 "*%s (AI)* Greetings ally, I see you have not yet made war with our enemy, %"
 "s. Why do I need to remind you of your promises?"
 msgstr ""
+"*%s (Ш╤)* Мо╖ в╕тання, союзнику, я бачу ти все ще не проголосив в╕йну нашому "
+"ворогов╕, %s. Чому ми ма╓мо нагадувати тоб╕ власн╕ об╕цянки?"
 
 #: ai/advdiplomacy.c:1163
 #, c-format
@@ -277,11 +287,11 @@ msgstr ""
 
 #: client/agents/cma_fec.c:420
 msgid "?cma:Very happy"
-msgstr ""
+msgstr "?cma:Дуже щасливо"
 
 #: client/agents/cma_fec.c:421
 msgid "?cma:Max food"
-msgstr ""
+msgstr "?cma:Макс. ╖жа"
 
 #: client/agents/cma_fec.c:422
 #, fuzzy
@@ -290,7 +300,7 @@ msgstr "Сер╕йне виробництво"
 
 #: client/agents/cma_fec.c:423
 msgid "?cma:Max gold"
-msgstr ""
+msgstr "?cma:Макс. грош╕"
 
 #: client/agents/cma_fec.c:424
 #, fuzzy
@@ -303,7 +313,7 @@ msgstr ""
 
 #: client/attribute.c:367
 msgid "Old attributes detected and removed."
-msgstr ""
+msgstr "Знайден╕ та видален╕ застар╕л╕ атрибути."
 
 #: client/audio.c:131
 #, c-format
@@ -892,16 +902,16 @@ msgstr ""
 #: client/civclient.c:302
 #, c-format
 msgid "Invalid port \"%s\" specified with --port option.\n"
-msgstr ""
+msgstr "Нев╕рний порт \"%s\" вказано ╕з опц╕╓ю --port.\n"
 
 #: client/civclient.c:304 client/civclient.c:317
 msgid "Try using --help.\n"
-msgstr ""
+msgstr "Спробуйте використати --help.\n"
 
 #: client/civclient.c:315
 #, c-format
 msgid "Invalid debug level \"%s\" specified with --debug option.\n"
-msgstr ""
+msgstr "Нев╕рний р╕вень в╕дладки \"%s\" вказаний ╕з опц╕╓ю --debug.\n"
 
 #: client/civclient.c:327
 #, c-format
@@ -1193,12 +1203,13 @@ msgid "Starting server..."
 msgstr "Стартую гру."
 
 #: client/connectdlg_common.c:328
+#, fuzzy
 msgid "Couldn't start the server."
-msgstr ""
+msgstr "Гра: Ви не можете атакувати тут."
 
 #: client/connectdlg_common.c:329 client/connectdlg_common.c:362
 msgid "You'll have to start one manually. Sorry..."
-msgstr ""
+msgstr "Вам доведеться запустити це вручну. Вибачте..."
 
 #: client/connectdlg_common.c:360
 #, fuzzy
@@ -1207,7 +1218,7 @@ msgstr "Роз╕рвати з'╓днання кл╕╓нта до сервера."
 
 #: client/connectdlg_common.c:361
 msgid "We probably couldn't start it from here."
-msgstr ""
+msgstr "В╕рог╕дно ми не можемо розпочати це зв╕дси."
 
 #: client/connectdlg_common.c:482
 #, fuzzy
@@ -1216,7 +1227,7 @@ msgstr "Виводить або встановлю╓ р╕вень доступу до команд."
 
 #: client/connectdlg_common.c:487
 msgid "We can't take control of server, attempting to kill it."
-msgstr ""
+msgstr "Ми не можемо отримати контроль над сервером, спробую зупинити його."
 
 #: client/control.c:806
 #, c-format
@@ -2563,7 +2574,7 @@ msgstr "Грош╕:"
 
 #: client/gui-gtk-2.0/diplodlg.c:555 client/gui-gtk-2.0/diplodlg.c:611
 msgid "_Add Clause..."
-msgstr ""
+msgstr "Додати Пункт..."
 
 #: client/gui-gtk-2.0/diplodlg.c:867
 msgid "Game: Invalid amount of gold specified."
@@ -2638,7 +2649,7 @@ msgstr "Показувати прокрутку мапи (т╕льк╕ GTK+)"
 
 #: client/gui-gtk-2.0/gui_main.c:146
 msgid "Keyboardless goto"
-msgstr ""
+msgstr "Рухатись без допомоги клав╕атури"
 
 #: client/gui-gtk-2.0/gui_main.c:147
 #, fuzzy
@@ -2647,15 +2658,15 @@ msgstr "Завжди поверх (лише GTK+ 2.0)"
 
 #: client/gui-gtk-2.0/gui_main.c:148
 msgid "Show worklist task icons"
-msgstr ""
+msgstr "Показувати ╕конки завданнь у план╕ буд╕вництва"
 
 #: client/gui-gtk-2.0/gui_main.c:149
 msgid "Fullscreen Mode"
-msgstr ""
+msgstr "Повноекранний режим"
 
 #: client/gui-gtk-2.0/gui_main.c:150
 msgid "Enable status report tabs"
-msgstr ""
+msgstr "Дозволити вкладки зв╕т╕в статуса"
 
 #: client/gui-gtk-2.0/gui_main.c:152
 #, fuzzy
@@ -2664,7 +2675,7 @@ msgstr "Заповнення фону з'╓днання"
 
 #: client/gui-gtk-2.0/gui_main.c:154
 msgid "Better fog-of-war drawing"
-msgstr ""
+msgstr "Краще в╕дображення туману в╕йни"
 
 #: client/gui-gtk-2.0/gui_main.c:244 server/civserver.c:221
 #, c-format
@@ -2682,7 +2693,7 @@ msgstr "Завершено х╕д"
 
 #: client/gui-gtk-2.0/gui_main.c:1418
 msgid "Shift+Return"
-msgstr ""
+msgstr "Shift+Return"
 
 #: client/gui-gtk-2.0/gui_main.c:1450
 #, fuzzy
@@ -2756,7 +2767,7 @@ msgstr ""
 
 #: client/gui-gtk-2.0/gui_main.c:2292
 msgid "Are you sure you want to quit?"
-msgstr ""
+msgstr "Ви впевнен╕, що хочете вийти?"
 
 #: client/gui-gtk-2.0/gui_stuff.c:438
 #, c-format
@@ -2764,10 +2775,12 @@ msgid ""
 "Close Tab:\n"
 "%s"
 msgstr ""
+"Закрити Вкладку:\n"
+"%s"
 
 #: client/gui-gtk-2.0/gui_stuff.c:438
 msgid "Ctrl+W"
-msgstr ""
+msgstr "Ctrl+W"
 
 #: client/gui-gtk-2.0/happiness.c:111 data/helpdata.txt:1743
 msgid "Happiness"
@@ -3056,7 +3069,7 @@ msgstr ""
 
 #: client/gui-gtk-2.0/mapview.c:1234
 msgid "Better fog will only work in truecolor.  Disabling it"
-msgstr ""
+msgstr "Кращий туман буде працювати лише в режим╕ truecolor.  В╕дключаю це"
 
 #: client/gui-gtk-2.0/mapview.c:1439
 #, c-format
@@ -3067,7 +3080,7 @@ msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:481
 msgid "Leaving a local game will end it!"
-msgstr ""
+msgstr "Якщо вийти ╕з локально╖ гри, вона завершиться!"
 
 #: client/gui-gtk-2.0/menu.c:1852
 msgid "_Game"
@@ -3238,7 +3251,7 @@ msgstr "С╕тка"
 
 #: client/gui-gtk-2.0/menu.c:1934
 msgid "National _Borders"
-msgstr ""
+msgstr "Нац╕ональн╕_Кордони"
 
 #: client/gui-gtk-2.0/menu.c:1936
 msgid "City _Names"
@@ -4434,7 +4447,7 @@ msgstr "Про програму"
 #: client/gui-gtk-2.0/menu.c:4042
 #, c-format
 msgid "%s..."
-msgstr ""
+msgstr "%s..."
 
 #: client/gui-gtk-2.0/menu.c:4083
 #, c-format
@@ -4545,7 +4558,7 @@ msgstr "Завантажити гру"
 
 #: client/gui-gtk-2.0/pages.c:235
 msgid "C_onnect to Network Game"
-msgstr ""
+msgstr "При╓днатися до Мережево╖ Гри"
 
 #: client/gui-gtk-2.0/pages.c:339
 #, fuzzy, c-format
@@ -4578,7 +4591,7 @@ msgstr "Пов╕домлення"
 
 #: client/gui-gtk-2.0/pages.c:728
 msgid "Passwords don't match, enter password."
-msgstr ""
+msgstr "Пароль не сп╕впада╓, введ╕ть пароль."
 
 #: client/gui-gtk-2.0/pages.c:900 server/report.c:1224 server/stdinhand.c:5330
 #: server/stdinhand.c:5416
@@ -4637,7 +4650,7 @@ msgstr "Коментар╕"
 
 #: client/gui-gtk-2.0/pages.c:1033
 msgid "Local _Area Network"
-msgstr ""
+msgstr "Локальна Мережа"
 
 #: client/gui-gtk-2.0/pages.c:1071
 #, fuzzy
@@ -4659,11 +4672,11 @@ msgstr "Лег╕он"
 
 #: client/gui-gtk-2.0/pages.c:1151
 msgid "Pass_word:"
-msgstr ""
+msgstr "_Пароль"
 
 #: client/gui-gtk-2.0/pages.c:1167
 msgid "Conf_irm Password:"
-msgstr ""
+msgstr "П╕дтверд╕ть Пароль:"
 
 #: client/gui-gtk-2.0/pages.c:1322
 #, fuzzy
@@ -4672,7 +4685,7 @@ msgstr "К╕льк╕сть комп'ютерних гравц╕в."
 
 #: client/gui-gtk-2.0/pages.c:1343
 msgid "_AI Skill Level:"
-msgstr ""
+msgstr "Р╕вень Ш╤:"
 
 #: client/gui-gtk-2.0/pages.c:1349
 #, fuzzy
@@ -4705,16 +4718,16 @@ msgstr "Стан"
 
 #: client/gui-gtk-2.0/pages.c:1487
 msgid "Choose Saved Game to Load"
-msgstr ""
+msgstr "Обер╕ть Збережену Гру для Завантаження"
 
 #: client/gui-gtk-2.0/pages.c:1563
 msgid "Choose Saved Game to _Load:"
-msgstr ""
+msgstr "Обер╕ть Збережену Гру для Завантаження:"
 
 #: client/gui-gtk-2.0/pages.c:1581 client/gui-gtk-2.0/pages.c:1707
 #: client/gui-gtk-2.0/pages.c:2162
 msgid "_Browse..."
-msgstr ""
+msgstr "Переглядати..."
 
 #: client/gui-gtk-2.0/pages.c:1626
 #, fuzzy
@@ -4807,7 +4820,7 @@ msgstr "Комп'ютер"
 
 #: client/gui-gtk-2.0/plrdlg.c:405
 msgid "_Toggle AI Mode"
-msgstr ""
+msgstr "Переключити Режим Ш╤"
 
 #: client/gui-gtk-2.0/repodlgs.c:198 client/gui-gtk-2.0/repodlgs.c:472
 #: client/gui-gtk-2.0/repodlgs.c:480 common/tech.c:623
@@ -4866,7 +4879,7 @@ msgstr "Продати все"
 #: client/gui-gtk-2.0/repodlgs.c:856
 #, c-format
 msgid "Do you really wish to sell your %s?\n"
-msgstr ""
+msgstr "Чи насправд╕ Ви хочете продати Ваш %s\n"
 
 #: client/gui-gtk-2.0/repodlgs.c:859
 #, fuzzy
@@ -4914,7 +4927,7 @@ msgstr "Грош╕"
 
 #: client/gui-gtk-2.0/repodlgs.c:1075
 msgid "Find _Nearest"
-msgstr ""
+msgstr "Знайти Найближчого"
 
 #: client/gui-gtk-2.0/repodlgs.c:1080
 msgid "_Upgrade"
@@ -5062,7 +5075,7 @@ msgstr "Найкращий"
 
 #: client/gui-gtk-2.0/style.c:93
 msgid "Small Font"
-msgstr ""
+msgstr "Маленький Шрифт"
 
 #: client/gui-gtk-2.0/style.c:101
 #, fuzzy
@@ -5215,22 +5228,22 @@ msgstr "* Можуть засновувати м╕ста.\n"
 #: client/helpdata.c:661
 #, c-format
 msgid "* Never has a home city.\n"
-msgstr ""
+msgstr "* Н╕коли не ма╓ р╕дного м╕ста.\n"
 
 #: client/helpdata.c:665
 #, c-format
 msgid "* Losing this unit will lose you the game!\n"
-msgstr ""
+msgstr "* Втрата цього п╕дрозд╕ла спричинить програш ус╕╓╖ гри.\n"
 
 #: client/helpdata.c:669
 #, c-format
 msgid "* Each player may only have one of this type of unit.\n"
-msgstr ""
+msgstr "* Кожний гравець може мати лише один п╕дрозд╕л цього типу.\n"
 
 #: client/helpdata.c:672
 #, c-format
 msgid "* Requires %d population to build.\n"
-msgstr ""
+msgstr "* Вимага╓ населення %d, щоб бути збудованим.\n"
 
 #: client/helpdata.c:678
 #, c-format
@@ -5273,12 +5286,13 @@ msgstr "* Допомогають будувати дива.\n"
 #: client/helpdata.c:707
 #, c-format
 msgid "* May not be disbanded.\n"
-msgstr ""
+msgstr "* Не може бути разпущеним.\n"
 
 #: client/helpdata.c:709
 #, c-format
 msgid "* May be disbanded in a city to recover 50%% of the production cost.\n"
 msgstr ""
+"* Може бути розпущеним у м╕ст╕ та повернути 50%% вартост╕ його виробництва.\n"
 
 #: client/helpdata.c:713
 #, c-format
@@ -5288,7 +5302,7 @@ msgstr "* Можуть засновувати м╕ста.\n"
 #: client/helpdata.c:716
 #, c-format
 msgid "* Can add on %d population to cities of no more than size %d.\n"
-msgstr ""
+msgstr "* Може додати %d населення до м╕ст не б╕льших за розм╕р %d.\n"
 
 #: client/helpdata.c:724
 #, fuzzy, c-format
@@ -5318,7 +5332,7 @@ msgstr "* Можуть засновувати м╕ста.\n"
 #: client/helpdata.c:739
 #, c-format
 msgid "* Can build farmland (if any of the following are known: %s).\n"
-msgstr ""
+msgstr "* Може будувати ферми (якщо будь що ╕з наступного в╕домо: %s).\n"
 
 #: client/helpdata.c:747
 #, fuzzy, c-format
@@ -5338,7 +5352,7 @@ msgstr ""
 #: client/helpdata.c:761
 #, c-format
 msgid "* Can clean pollution from tiles.\n"
-msgstr ""
+msgstr "* Може очищати м╕сцев╕сть в╕д забруднення.\n"
 
 #: client/helpdata.c:763
 #, fuzzy, c-format
@@ -5358,12 +5372,12 @@ msgstr "* Можуть засновувати м╕ста.\n"
 #: client/helpdata.c:773
 #, c-format
 msgid "* May fortify, granting a 50%% defensive bonus.\n"
-msgstr ""
+msgstr "* Може укр╕плятися, отримуючи 50%% п╕дв╕щення захисту.\n"
 
 #: client/helpdata.c:777
 #, c-format
 msgid "* May pillage to destroy infrastructure from tiles.\n"
-msgstr ""
+msgstr "* Може руйнувати ╕нфраструктуру у м╕сцевост╕.\n"
 
 #: client/helpdata.c:781
 #, c-format
@@ -5380,12 +5394,12 @@ msgstr "* Можуть виконувати д╕пломатичн╕ д╕╖.\n"
 #: client/helpdata.c:788
 #, c-format
 msgid "* Will never lose a diplomat-versus-diplomat fight.\n"
-msgstr ""
+msgstr "* Н╕коли не програ╓ б╕й дипломат проти дипломата.\n"
 
 #: client/helpdata.c:792
 #, c-format
 msgid "* May not be bribed.\n"
-msgstr ""
+msgstr "* Не може бути п╕дкуплений.\n"
 
 #: client/helpdata.c:795
 #, c-format
@@ -5445,7 +5459,7 @@ msgstr "* Атака цим п╕дрозд╕лом спричиня╓ рад╕ац╕йне забруднення!\n"
 #: client/helpdata.c:836
 #, c-format
 msgid "* Gets double firepower when attacking cities.\n"
-msgstr ""
+msgstr "* Отриму╓ подв╕йну вогньову силу, коли атаку╓ м╕ста.\n"
 
 #: client/helpdata.c:839
 #, c-format
@@ -5458,6 +5472,8 @@ msgid ""
 "* Does bombard attacks (%d per turn).  These attacks will only damage (never "
 "kill) the defender but has no risk to the attacker.\n"
 msgstr ""
+"* Викону╓ бомбардувальн╕ напади (%d за х╕д).  Ц╕ напади т╕льки спричинять "
+"шкоду захисников╕ (не знищать), проте не становлять ризику для нападника.\n"
 
 #: client/helpdata.c:851
 #, fuzzy, c-format
@@ -5498,12 +5514,12 @@ msgstr "* Польовий п╕дрозд╕л: один нещасний нав╕ть якщо й неагресивний.\n"
 #: client/helpdata.c:879
 #, c-format
 msgid "* Will never achieve veteran status.\n"
-msgstr ""
+msgstr "* Н╕коли не отрима╓ статуса ветерана.\n"
 
 #: client/helpdata.c:882
 #, c-format
 msgid "* May become veteran through training or combat.\n"
-msgstr ""
+msgstr "* Може стати ветераном через тренування або б╕й.\n"
 
 #: client/helpdata.c:888
 #, fuzzy, c-format
@@ -5557,7 +5573,7 @@ msgstr ""
 #: client/helpdata.c:999
 #, c-format
 msgid "You cannot research this technology."
-msgstr ""
+msgstr "Ви не можете винайти цю технолог╕ю."
 
 #: client/helpdata.c:1003
 #, c-format
@@ -5642,7 +5658,7 @@ msgstr "Дозволя╓ %s перетворювати зрошення на ферми.\n"
 #: client/helpdata.c:1101
 #, c-format
 msgid "* Pollution cannot be generated on this terrain."
-msgstr ""
+msgstr "* Цю м╕сцев╕сть не можна забруднити."
 
 #: client/helpdata.c:1106
 #, fuzzy, c-format
@@ -5652,7 +5668,7 @@ msgstr "* Можуть засновувати м╕ста.\n"
 #: client/helpdata.c:1112
 #, c-format
 msgid "* The coastline of this terrain is unsafe."
-msgstr ""
+msgstr "* Берегова л╕н╕я ц╕╓╖ м╕сцевост╕ ╓ небезпечною."
 
 #: client/helpdata.c:1117
 #, c-format
@@ -5662,7 +5678,7 @@ msgstr ""
 #: client/helpdata.c:1122
 #, c-format
 msgid "* Land units cannot travel on oceanic terrains."
-msgstr ""
+msgstr "* Наземн╕ п╕дрозд╕ли не можуть мандрувати океаном."
 
 #: client/helpdata.c:1168
 #, c-format
@@ -5705,6 +5721,8 @@ msgid ""
 "Paths longer than 99 turns are not supported.\n"
 "Report this bug at %s"
 msgstr ""
+"Шляхи довш╕ н╕ж 99 ход╕в не п╕дтримуються.\n"
+"Пов╕домьте про цю помилку до %s"
 
 #: client/messagewin_common.c:113
 #, fuzzy
@@ -6147,11 +6165,11 @@ msgstr "Звук на початку ходу"
 
 #: client/options.c:114
 msgid "Unit movement animation time (milliseconds)"
-msgstr ""
+msgstr "Час ан╕мац╕╖ ходу (у м╕лл╕секундах)"
 
 #: client/options.c:116
 msgid "Mapview recentering time (milliseconds)"
-msgstr ""
+msgstr "Час перем╕щення центру мапи (у м╕л╕секундах)"
 
 #: client/options.c:117
 msgid "Show combat animation"
@@ -6179,7 +6197,7 @@ msgstr "Фокусувати на активованих п╕дрозд╕лах"
 
 #: client/options.c:123
 msgid "Allow goto into the unknown"
-msgstr ""
+msgstr "Дозволити рух у нев╕дому м╕сцев╕сть"
 
 #: client/options.c:124
 msgid "Center map when Popup city"
@@ -7127,7 +7145,7 @@ msgstr "Гравц╕в"
 
 #: client/plrdlg_common.c:236
 msgid "?Player_dlg:Idle"
-msgstr ""
+msgstr "?Player_dlg:Оч╕кування"
 
 #: client/plrdlg_common.c:237
 msgid "Ping"
@@ -7166,23 +7184,23 @@ msgstr "?тривал╕сть:н╕коли"
 
 #: client/text.c:201
 msgid "?nation:Hostile"
-msgstr ""
+msgstr "?nation:Ворож╕"
 
 #: client/text.c:203
 msgid "?nation:Peaceful"
-msgstr ""
+msgstr "?nation:Мирн╕"
 
 #: client/text.c:203
 msgid "?nation:Friendly"
-msgstr ""
+msgstr "?nation:Дружн╕"
 
 #: client/text.c:204
 msgid "?nation:Mysterious"
-msgstr ""
+msgstr "?nation:Загадков╕"
 
 #: client/text.c:204
 msgid "?nation:Friendly(team)"
-msgstr ""
+msgstr "?nation:Дружн╕(команда)"
 
 #: client/text.c:207
 #, fuzzy
@@ -7201,15 +7219,15 @@ msgstr "?стан_м╕ста:Спок╕й"
 
 #: client/text.c:209
 msgid "?city:Friendly"
-msgstr ""
+msgstr "?city:Дружн╓"
 
 #: client/text.c:209
 msgid "?city:Mysterious"
-msgstr ""
+msgstr "?м╕сто:Загадкове"
 
 #: client/text.c:210
 msgid "?city:Friendly(team)"
-msgstr ""
+msgstr "?м╕сто:Дружне(команда)"
 
 #: client/text.c:214
 #, c-format
@@ -7237,7 +7255,7 @@ msgstr "Хут╕р маленького роду"
 
 #: client/text.c:228
 msgid "Our Territory"
-msgstr ""
+msgstr "Наша Територ╕я"
 
 #. TRANS: "Territory of Username (Polish) (5 turn ceasefire)"
 #: client/text.c:234
@@ -7257,7 +7275,7 @@ msgstr "%s з %s"
 
 #: client/text.c:250
 msgid "Unclaimed territory"
-msgstr ""
+msgstr "Незаймана територ╕я"
 
 #. TRANS: "City: Warsaw (Polish)"
 #: client/text.c:261
@@ -7404,7 +7422,7 @@ msgstr "Податки:%d Розк╕ш:%d Наука:%d"
 #: client/text.c:585 client/text.c:594
 #, c-format
 msgid "Turns to target: %d"
-msgstr ""
+msgstr "Ход╕в до ц╕л╕: %d"
 
 #: client/text.c:626
 #, c-format
@@ -7452,7 +7470,7 @@ msgstr "Населення: %s"
 #: client/text.c:692
 #, c-format
 msgid "Support:         %5d %%"
-msgstr ""
+msgstr "П╕дтримка:       %5d %%"
 
 #. TRANS: spaceship text; should have constant width.
 #: client/text.c:696
@@ -7484,13 +7502,13 @@ msgstr "Час перельоту:     нев╕домий"
 #: client/text.c:712
 #, c-format
 msgid "Success prob.:   %5d %%"
-msgstr ""
+msgstr "В╕рог╕д. вдач╕:   %5d %%"
 
 #. TRANS: spaceship text; should have constant width.
 #: client/text.c:716
 #, c-format
 msgid "Year of arrival: %8s"
-msgstr ""
+msgstr "Р╕к прибуття: %8s"
 
 #: client/text.c:734
 msgid "?timeout:off"
@@ -7565,6 +7583,10 @@ msgid ""
 "file options: %s\n"
 "supported options: %s"
 msgstr ""
+"%s файл зда╓ться несум╕стний:\n"
+"файл: \"%s\"\n"
+"опц╕╖ файла: %s\n"
+"в╕дом╕ опц╕╖: %s"
 
 #: client/tilespec.c:348
 #, fuzzy, c-format
@@ -7604,7 +7626,7 @@ msgstr "Кл╕╓нт не п╕дтриму╓ гор╕шн╕ фони. Використовую фони по замовчуванню."
 
 #: client/tilespec.c:862
 msgid "Invalid darkness style set in tileset."
-msgstr ""
+msgstr "Встановлено нев╕рний стиль темряви у тем╕."
 
 #: client/tilespec.c:1009
 #, c-format
@@ -7612,21 +7634,23 @@ msgid ""
 "Error in %s layer %d: you cannot have tall terrain or\n"
 "a sprite offset with a cell-based drawing method."
 msgstr ""
+"Помилку у %s шар╕ %d: Ви не можете мати високу м╕сцев╕сть або\n"
+"сдвиг спрайту ╕з методом в╕дображення, заснованом на кл╕тинах."
 
 #: client/tilespec.c:1190
 #, c-format
 msgid "No graphics for specialist %s."
-msgstr ""
+msgstr "Нема╓ граф╕к╕ для спец╕ал╕ста %s."
 
 #: client/tilespec.c:1222
 #, c-format
 msgid "No graphics for citizen %s."
-msgstr ""
+msgstr "Нема╓ граф╕к╕ для громадянина %s."
 
 #: client/tilespec.c:1560
 #, c-format
 msgid "Don't have graphics tags %s or %s for %s %s"
-msgstr ""
+msgstr "Не ма╓ граф╕чних тег╕в %s або %s для %s %s"
 
 #. TRANS: obscure tileset error.
 #: client/tilespec.c:1658
@@ -7823,23 +7847,23 @@ msgstr "Рад╕ац╕я"
 
 #: common/player.c:560
 msgid "?attitude:Genocidal"
-msgstr ""
+msgstr "?ставлення:Геноцид"
 
 #: common/player.c:562
 msgid "?attitude:Belligerent"
-msgstr ""
+msgstr "?ставлення:У стан╕ в╕йни"
 
 #: common/player.c:564
 msgid "?attitude:Hostile"
-msgstr ""
+msgstr "?ставлення:Ворожий"
 
 #: common/player.c:566
 msgid "?attitude:Uncooperative"
-msgstr ""
+msgstr "?ставлення:Не схильний до сп╕вроб╕тництва"
 
 #: common/player.c:568
 msgid "?attitude:Uneasy"
-msgstr ""
+msgstr "?ставлення:Складне"
 
 #: common/player.c:570
 #, fuzzy
@@ -7848,23 +7872,23 @@ msgstr "?д╕пломатичний_стан:Нейтральний"
 
 #: common/player.c:572
 msgid "?attitude:Respectful"
-msgstr ""
+msgstr "?ставлення:Поважний"
 
 #: common/player.c:574
 msgid "?attitude:Helpful"
-msgstr ""
+msgstr "?ставлення:Схильний до допомоги"
 
 #: common/player.c:576
 msgid "?attitude:Enthusiastic"
-msgstr ""
+msgstr "?ставлення:Ентуз╕астичний"
 
 #: common/player.c:578
 msgid "?attitude:Admiring"
-msgstr ""
+msgstr "?ставлення:Захоплення"
 
 #: common/player.c:581
 msgid "?attitude:Worshipful"
-msgstr ""
+msgstr "?ставлення:Пошана"
 
 #: common/player.c:593
 msgid "Spotless"
@@ -7919,7 +7943,7 @@ msgstr "?д╕пломатичний_стан:Мир"
 #: common/tech.c:114
 #, c-format
 msgid "tech \"%s\": requires itself"
-msgstr ""
+msgstr "технолог╕я \"%s\": вимага╓ себе саму"
 
 #: common/unit.c:619
 msgid "Fortifying"
@@ -7980,7 +8004,7 @@ msgstr "Гра: Лише парашут╕сти можуть робити це."
 #: common/unit.c:1918
 #, c-format
 msgid "Upgrading this %s would strand units it transports."
-msgstr ""
+msgstr "Модерн╕зац╕я %s вивантаже на берег транспорту╓м╕ п╕дрозд╕ли."
 
 #: common/unittype.c:319
 msgid " and "
@@ -9254,6 +9278,8 @@ msgid ""
 "possess this wonder.  Reputation is recovered twice as fast as it would "
 "otherwise."
 msgstr ""
+"Ваша репутац╕я та престиж серед ╕нших нац╕й зр╕с коли Ви отримали нове "
+"диво.  Репутац╕я зроста╓ удв╕ч╕ швидше н╕ж зростала би без дива."
 
 #: data/1.14style/buildings.ruleset:1558 data/civ1/buildings.ruleset:1128
 #: data/default/buildings.ruleset:1558 data/history/buildings.ruleset:1500
@@ -13148,6 +13174,8 @@ msgstr "Голова"
 #: data/warruleset-1.3/units.ruleset:1916
 msgid "This is you. If you lose this unit, you lose the game. So don't."
 msgstr ""
+"Це Ви. Якщо Ви втратите цей п╕дрозд╕л, Ви програ╓те гру. Отож не роб╕ть "
+"цього."
 
 #: data/duel/game.ruleset:126
 msgid ""
@@ -13175,7 +13203,7 @@ msgstr "Метасервери"
 
 #: data/Freeciv.in:111
 msgid "LAN Servers"
-msgstr ""
+msgstr "Локальн╕ Сервери"
 
 #: data/Freeciv.in:115 data/Freeciv.in:3187
 msgid "Quit"
@@ -14207,6 +14235,8 @@ msgstr ""
 #: data/helpdata.txt:602
 msgid "  - Messages starting with '.' will be sent only to all your allies."
 msgstr ""
+"  - Пов╕домлення, як╕ починаються ╕з '.' будуть над╕слану т╕льки вашим "
+"союзникам."
 
 #: data/helpdata.txt:607
 msgid "Worklist Editor"
@@ -15266,6 +15296,8 @@ msgid ""
 "Default Combat Rules\n"
 "---------------------"
 msgstr ""
+"Правила Бою за Замоченням\n"
+"---------------------"
 
 #: data/helpdata.txt:1331
 msgid ""
@@ -15457,25 +15489,31 @@ msgstr ""
 
 #: data/helpdata.txt:1427
 msgid " Modifying Combat Rules"
-msgstr ""
+msgstr "Модиф╕кац╕я Правил Бою"
 
 #: data/helpdata.txt:1428
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
 msgstr ""
+"Модиф╕кац╕я Правил Бою\n"
+"----------------------"
 
 #: data/helpdata.txt:1429
 msgid ""
 "The combat rules described before can be modified by changing the following "
 "modifiers in game.ruleset, section combat_rules: "
 msgstr ""
+"Правила бою викладен╕ ран╕ше можуть бути зм╕нен╕ за допомогою модиф╕катор╕в "
+"у game.ruleset, розд╕л╕ combat_rules:"
 
 #: data/helpdata.txt:1432
 msgid ""
 " - killstack. (default: 1) If set to 0, units in the same tile of a lost "
 "defender are not destroyed. "
 msgstr ""
+" - групова загибель. (по замовчуванню: 1) Якщо 0, п╕дрозд╕ли на тий сам╕й "
+"кл╕тинц╕, що й загиблий захисник не знищуються. "
 
 #: data/helpdata.txt:1438
 msgid " Combat example 1"
@@ -16687,10 +16725,13 @@ msgid ""
 "to themselves with different names, including Koori, Yamaji, Nunga, and "
 "Murri."
 msgstr ""
+"Австрал╕йськи абор╕гени це збиральний терм╕н для м╕сцевих жител╕в "
+"австрал╕йського континенту. Абор╕гени ╕з р╕зних частин Австрал╕╖ називають "
+"себе по р╕зному, включно, Коор╕, Ямадж╕, Нунг та Мурр╕."
 
 #: data/nation/afghani.ruleset:3
 msgid "Afghani"
-msgstr ""
+msgstr "Афганц╕"
 
 #: data/nation/afghani.ruleset:4
 #, fuzzy
@@ -16705,11 +16746,16 @@ msgid ""
 "The Afghanistan nation-state as it is known today came into existence in "
 "1746 when Ahmad Shah founded the Durrani Empire."
 msgstr ""
+"Афган╕стан, який часто називають перехрестям Центрально╖ Аз╕╖, мав дуже "
+"бурхливу ╕стор╕ю. Напротяз╕ стор╕ччь кра╖на була окупована багато раз╕в, "
+"включно Перською ╕мпер╕╓ю, Чинг╕зханом та Александром Македонським. "
+"Афган╕стан як нац╕ональна держава в╕дома сьогодн╕ з'явився у 1746 роц╕, коли "
+"Ахмад Шах заснував ╤мпер╕ю Дурран╕."
 
 #: data/nation/afghani.ruleset:24 data/nation/emirati.ruleset:25
 #: data/nation/kurd.ruleset:25 data/nation/uzbek.ruleset:28
 msgid "Emir"
-msgstr ""
+msgstr "Ем╕р"
 
 #: data/nation/afghani.ruleset:25 data/nation/slovakian.ruleset:30
 #: data/nation/soviet.ruleset:27
@@ -16719,7 +16765,7 @@ msgstr "Перший Секретар"
 
 #: data/nation/afghani.ruleset:26
 msgid "Mullah"
-msgstr ""
+msgstr "Мула"
 
 #: data/nation/afghani.ruleset:27 data/nation/australian.ruleset:28
 #: data/nation/british.ruleset:22 data/nation/burmese.ruleset:23
@@ -16771,20 +16817,22 @@ msgid ""
 "The Ainu are the indigenous people of northern Japan, the Kuril islands, "
 "Sakhalin, and the southern part of the Kamchatka peninsula."
 msgstr ""
+"А╕ну це м╕сцевий народ п╕вн╕чно╖ Япон╕╖, Курильских остров╕в, Сахалину та "
+"п╕вденно╖ частини п╕вострова Камчатка."
 
 #. TRANS: Nipa = Chief
 #: data/nation/ainu.ruleset:20
 msgid "Nipa"
-msgstr ""
+msgstr "Вождь"
 
 #. TRANS: Nipsa = Master
 #: data/nation/ainu.ruleset:22
 msgid "Nipsa"
-msgstr ""
+msgstr "Маг╕стр"
 
 #: data/nation/akwe.ruleset:3
 msgid "Akwe"
-msgstr ""
+msgstr "Акве"
 
 #: data/nation/akwe.ruleset:4
 #, fuzzy
@@ -16809,7 +16857,7 @@ msgstr "Гетьман"
 
 #: data/nation/akwe.ruleset:24 data/nation/srivijaya.ruleset:22
 msgid "Senapati"
-msgstr ""
+msgstr "Сенапат╕"
 
 #: data/nation/algerian.ruleset:3
 #, fuzzy
@@ -16826,6 +16874,8 @@ msgid ""
 "Algeria is an Arabic nation in North Africa. It is historically inhabited by "
 "the Berber people."
 msgstr ""
+"Алжир - арабська нац╕я у п╕вн╕чн╕й Африц╕. ╤сторично населена народом "
+"бербер╕в."
 
 #: data/nation/american.ruleset:3 data/nation/muskogee.ruleset:5
 msgid "American"
@@ -16873,7 +16923,7 @@ msgstr "Латиш╕"
 
 #: data/nation/antarctican.ruleset:6
 msgid "Independent South Pole, land of penguins."
-msgstr ""
+msgstr "Незалежна держава П╕вденний Полюс, земля п╕нгв╕н╕в."
 
 #: data/nation/arab.ruleset:3
 msgid "Arab"
@@ -16906,7 +16956,7 @@ msgstr "Американц╕"
 msgid ""
 "According to legend, the Aramean people are the descendants of Aram, the "
 "grandson of Noah."
-msgstr ""
+msgstr "Зг╕дно з легендою, народ арамейц╕в ╓ нащадками Авраама, онука Ноя."
 
 #: data/nation/argentine.ruleset:3
 msgid "Argentine"
@@ -16944,6 +16994,9 @@ msgid ""
 "great-great-grandson of Noah. The modern Republic of Armenia gained "
 "independence from Soviet in 1991 AD"
 msgstr ""
+"Зг╕дно ╕з легендою армянський народ ╓ нащадками Ха╕ка - прапраонука Ноя. "
+"Сучасна Республ╕ка Армен╕я отримала незалежн╕сть в╕д Радяньского Союзу у "
+"1991."
 
 #: data/nation/assyrian.ruleset:3
 #, fuzzy
@@ -16959,6 +17012,7 @@ msgstr "Москал╕"
 msgid ""
 "Assyria was an empire in northern Mesopotamia, named after its capital Ashur."
 msgstr ""
+"Асир╕я була ╕мпер╕╓ю у п╕вн╕чн╕й Месопотам╕╖, названой за ╕╖ столицею Ашур."
 
 #: data/nation/assyrian.ruleset:21
 #, fuzzy
@@ -17001,6 +17055,8 @@ msgid ""
 "Austria means Eastern Realm, given its position as the far east territory of "
 "the medieval Holy Roman Empire."
 msgstr ""
+"Австр╕я переклада╓ться як Сх╕дне Корол╕вство, названа так через розташування "
+"на сход╕ середньов╕чно╖ Священно╖ Римсько╖ ╤мпер╕╖."
 
 #: data/nation/aymara.ruleset:3
 #, fuzzy
@@ -17074,6 +17130,11 @@ msgid ""
 "Islamic republic in history. Then Azerbaijan became part of the Soviet Union "
 "until its dissolution in 1991."
 msgstr ""
+"Азербайджанц╕ ╓ народом Азербайджану. Територ╕я сучасного Азербайджану була "
+"сценою розкв╕ту та занепаду багатьох древн╕х цив╕л╕зац╕й кавказського "
+"рег╕ону. У 1813 Азербайджан став частиною Рос╕йсько╖ ╕мпер╕╖, пот╕м був "
+"короткий пер╕од незалежност╕ у 1918-1920 як першо╖ ╕сламсько╖ республ╕ки у "
+"╕стор╕╖. Пот╕м Азербайджан став частиною СРСР та незалежним у 1991 роц╕."
 
 #: data/nation/azeri.ruleset:40 data/nation/kazakh.ruleset:26
 #: data/nation/kyrgyz.ruleset:25 data/nation/mongol.ruleset:29
@@ -17124,12 +17185,12 @@ msgstr ""
 #. TRANS: Tlatoani = Speaker
 #: data/nation/aztec.ruleset:22
 msgid "Tlatoani"
-msgstr ""
+msgstr "Тлатоан╕"
 
 #. TRANS: Huey Tlatoani = Great Speaker
 #: data/nation/aztec.ruleset:24
 msgid "Huey Tlatoani"
-msgstr ""
+msgstr "Хуей Тлатоан╕"
 
 #: data/nation/babylonian.ruleset:3
 msgid "Babylonian"
@@ -17151,7 +17212,7 @@ msgstr ""
 #. TRANS: Lugal = Great Man
 #: data/nation/babylonian.ruleset:23 data/nation/sumerian.ruleset:28
 msgid "Lugal"
-msgstr ""
+msgstr "Лугал"
 
 #: data/nation/barbarian.ruleset:3 server/stdinhand.c:4886
 #: server/stdinhand.c:8346
@@ -17167,10 +17228,11 @@ msgid ""
 "Since the dawn of civilization, barbarians have been a threat to cultured "
 "peoples everywhere."
 msgstr ""
+"Через занепад цив╕л╕зац╕╖, дикуни скр╕зь загрожують культурним народам."
 
 #: data/nation/basque.ruleset:3
 msgid "Basque"
-msgstr ""
+msgstr "Баски"
 
 #: data/nation/basque.ruleset:4
 #, fuzzy
@@ -17189,20 +17251,20 @@ msgstr ""
 #. TRANS: Buruzagi = Leader, head (like spanish Caudillo)
 #: data/nation/basque.ruleset:33
 msgid "Buruzagi"
-msgstr ""
+msgstr "Барузаг╕"
 
 #: data/nation/basque.ruleset:33
 msgid "?female:Buruzagi"
-msgstr ""
+msgstr "?female:Барузаг╕"
 
 #. TRANS: Apaiz nagusi = Pope, Lord Protector
 #: data/nation/basque.ruleset:35
 msgid "Apaiz nagusi"
-msgstr ""
+msgstr "Апа╕з нагус╕"
 
 #: data/nation/basque.ruleset:35
 msgid "Emakume Apaiz nagusi"
-msgstr ""
+msgstr "Емакуме Апа╕з нагус╕"
 
 #. TRANS: Errege and Erregina = King and Queen
 #: data/nation/basque.ruleset:37
@@ -17219,11 +17281,11 @@ msgstr "Королева"
 #. ; /* TRANS: (but is quite inexact for Basques to call him/her "president")
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
 msgid "Lehendakari"
-msgstr ""
+msgstr "Лехендакар╕"
 
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
 msgid "?female:Lehendakari"
-msgstr ""
+msgstr "Лехендакар╕"
 
 #: data/nation/bavarian.ruleset:3
 msgid "Bavarian"
@@ -17258,6 +17320,9 @@ msgid ""
 "Union. Belarus became independent in 1991 with the dissolution of the Soviet "
 "Union."
 msgstr ""
+"Беларусь була частиною древньо╖ славяньско╖ держави Ки╖вська Русь, пот╕м "
+"Л╕тви, Реч╕ Поспол╕то╖, Рос╕йсько╖ ╤мпер╕╖ та Радяньского Союзу. Беларусь "
+"стала незалежною п╕сля розпаду Радяньского Союзу у 1991."
 
 #: data/nation/belgian.ruleset:3
 #, fuzzy
@@ -17276,10 +17341,13 @@ msgid ""
 "This is the result of the Flemish and the Walloon's nationalist (almost) "
 "peaceful fights."
 msgstr ""
+"Бельг╕я отримала незалежн╕сть в╕д Голандського Корол╕вства у 1830. Для "
+"Бельг╕╖ характерний рух в╕д ун╕тарно╖ держави до федерац╕╖. Це ╓ результатом "
+"(майже) мирно╖ боротьби м╕ж фламандськими та валонськими нац╕онал╕стами."
 
 #: data/nation/bengali.ruleset:3
 msgid "Bengali"
-msgstr ""
+msgstr "Бенгальц╕"
 
 #: data/nation/bengali.ruleset:4
 #, fuzzy
@@ -17294,14 +17362,18 @@ msgid ""
 "eastern part of the region, while the western part is the Indian state of "
 "West Bengal."
 msgstr ""
+"Бенгал╕я - найсх╕дн╕ший рег╕он ╕нд╕йському субконтинент╕. Перший в╕домий "
+"незалежний король бенгальц╕в Шашанка отримав владу приблизно у 606 роц╕ н.е. "
+"Зараз Народна Республ╕ка Бангладеш займа╓ сх╕дну частину рег╕она, у той час "
+"як зах╕дну частину займа╓ ╕нд╕йський штат Зах╕дний Бенгал."
 
 #: data/nation/bengali.ruleset:25
 msgid "Nabob"
-msgstr ""
+msgstr "Набоб"
 
 #: data/nation/bengali.ruleset:25
 msgid "?female:Nabob"
-msgstr ""
+msgstr "Набоб"
 
 #: data/nation/bengali.ruleset:26
 #, fuzzy
@@ -17310,7 +17382,7 @@ msgstr "Буд╕вництво"
 
 #: data/nation/bengali.ruleset:26
 msgid "?female:Major"
-msgstr ""
+msgstr "Майор"
 
 #: data/nation/boer.ruleset:3
 msgid "Boer"
@@ -17332,7 +17404,7 @@ msgstr ""
 
 #: data/nation/bosnia.ruleset:3
 msgid "Bosnian-Herzegovinian"
-msgstr ""
+msgstr "Босн╕йц╕"
 
 #: data/nation/bosnia.ruleset:4
 #, fuzzy
@@ -17344,6 +17416,8 @@ msgid ""
 "Bosnia and Herzegovina is a country in south-east Europe, and the home of "
 "three constituent peoples: Bosniaks, Serbs, and Croats."
 msgstr ""
+"Босн╕я та Герцеговина - це кра╖на на п╕вн╕чному сход╕ ╢вропи, та дом╕вка "
+"трьох народ╕в: босн╕йц╕в, серб╕в та хорват╕в."
 
 #. TRANS: Ban = Duke
 #: data/nation/bosnia.ruleset:27
@@ -17440,8 +17514,9 @@ msgid "Dug"
 msgstr ""
 
 #: data/nation/breton.ruleset:35
+#, fuzzy
 msgid "Dugez"
-msgstr ""
+msgstr "Великий князь"
 
 #: data/nation/breton.ruleset:36
 #, fuzzy
@@ -17470,6 +17545,9 @@ msgid ""
 "Great Britain - became the leading industrial and maritime power in the 19th "
 "century."
 msgstr ""
+"Об'╓днане Корол╕вство було створено у 1707 за угодою м╕ж корол╕вствами "
+"Англ╕╖ та Шотланд╕╖. Держава, також в╕дома як Велика Британ╕я,  стала "
+"пров╕дною силою на мор╕ та у виробництв╕ у 19-му строр╕чч╕."
 
 #: data/nation/bulgarian.ruleset:3
 #, fuzzy
@@ -17486,6 +17564,8 @@ msgid ""
 "Bulgar leader Khan Asparukh led his people into the northern Balkans, and "
 "founded Bulgaria in 681. This was the first Slavic nation-state in history."
 msgstr ""
+"Булгарський л╕дер хан Аспарух прив╕в св╕й народ до п╕вн╕чних Балкан, та "
+"заснував Болгра╕ю у 681 роц╕. Це було перше славянська держава у ╕строр╕╖."
 
 #: data/nation/bulgarian.ruleset:31
 #, fuzzy
@@ -17504,7 +17584,7 @@ msgstr "Угорц╕"
 
 #: data/nation/bulgarian.ruleset:33
 msgid "Drugarkata"
-msgstr ""
+msgstr "Другарката"
 
 #: data/nation/bulgarian.ruleset:34 data/nation/byzantium.ruleset:26
 #: data/nation/russian.ruleset:49
@@ -17513,7 +17593,7 @@ msgstr "Патр╕арх"
 
 #: data/nation/bulgarian.ruleset:34
 msgid "Sveta Maika"
-msgstr ""
+msgstr "Света Майка"
 
 #: data/nation/burgundian.ruleset:3
 #, fuzzy
@@ -17548,7 +17628,7 @@ msgstr "Морськ╕й десант"
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
 #: data/nation/samogitian.ruleset:20 data/nation/serbian.ruleset:36
 msgid "Duke"
-msgstr ""
+msgstr "Великий князь"
 
 #: data/nation/burgundian.ruleset:32 data/nation/norman.ruleset:23
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
@@ -17572,14 +17652,16 @@ msgid ""
 "The Union of Burma (officially \"Myanmar\") is the largest country in "
 "mainland Southeast Asia."
 msgstr ""
+"Союз Б╕рми (оф╕ц╕йно \"Мьянми\") ╓ найб╕льшою континентальною кра╖ною у "
+"п╕вденн╕й Аз╕╖."
 
 #: data/nation/burmese.ruleset:21
 msgid "Bohmugyi"
-msgstr ""
+msgstr "Бохмугий"
 
 #: data/nation/burmese.ruleset:21
 msgid "?female:Bohmugyi"
-msgstr ""
+msgstr "?female:Бохмугий"
 
 #: data/nation/burmese.ruleset:22
 #, fuzzy
@@ -17593,7 +17675,7 @@ msgstr "Мапу океану"
 
 #: data/nation/burundi.ruleset:3
 msgid "Burundi"
-msgstr ""
+msgstr "Бурунд╕"
 
 #: data/nation/burundi.ruleset:4
 #, fuzzy
@@ -17653,7 +17735,7 @@ msgstr "Оаз╕с"
 
 #: data/nation/byzantium.ruleset:28
 msgid "?female:Basileus"
-msgstr ""
+msgstr "Баз╕леус"
 
 #: data/nation/cambodian.ruleset:3
 #, fuzzy
@@ -17671,6 +17753,9 @@ msgid ""
 "the mighty Khmer Empire, which ruled most of the Indochinese Peninsula "
 "between the 11th and 14th centuries."
 msgstr ""
+"Кампуч╕я (також в╕дома як Камбоджа) ╓ сучасним нащадком кра╖ни могутньо╖ "
+"╕мпер╕╖ Кхмер╕в, яка панувала на п╕востров╕ ╤ндокитай м╕ж 11-м та 14-м "
+"стор╕ччами."
 
 #: data/nation/cambodian.ruleset:21 data/nation/manchu.ruleset:20
 msgid "Warlord"
@@ -17699,6 +17784,8 @@ msgid ""
 "Canada is the geographically northernmost country in world: The Magnetic "
 "North Pole currently lies on Canadian territory."
 msgstr ""
+"Канада географ╕чно ╓ самою п╕вн╕чною кра╖ною у св╕т╕: магн╕тний п╕вн╕чний "
+"полюс зараз знаходиться на територ╕╖ Канади."
 
 #: data/nation/carthaginian.ruleset:3
 msgid "Carthaginian"
@@ -17793,7 +17880,7 @@ msgstr ""
 
 #: data/nation/cherokee.ruleset:3
 msgid "Cherokee"
-msgstr ""
+msgstr "Ч╕рок╕"
 
 #: data/nation/cherokee.ruleset:4
 #, fuzzy
@@ -17805,6 +17892,8 @@ msgid ""
 "The Cherokee nation is the largest Native American nation in North America "
 "today."
 msgstr ""
+"Нац╕я ч╕рок╕ ╓ найб╕льшою нац╕╓ю американських ╕нд╕анц╕в у П╕вн╕чн╕й Америц╕ "
+"на сьогодняшний день."
 
 #: data/nation/cherokee.ruleset:22 data/nation/iroquois.ruleset:26
 #: data/nation/kanem-bornu.ruleset:22 data/nation/kongo.ruleset:27
@@ -17819,8 +17908,9 @@ msgstr "Вождь"
 #: data/nation/malian.ruleset:26 data/nation/maori.ruleset:24
 #: data/nation/sioux.ruleset:28 data/nation/southafrican.ruleset:25
 #: data/nation/swazi.ruleset:22 data/nation/zulu.ruleset:38
+#, fuzzy
 msgid "?female:Chief"
-msgstr ""
+msgstr "Товариш"
 
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/muskogee.ruleset:32 data/nation/sioux.ruleset:29
@@ -17844,7 +17934,7 @@ msgstr "С╕нгапурц╕"
 #: data/nation/muskogee.ruleset:33 data/nation/sami.ruleset:23
 #: data/nation/sioux.ruleset:30 data/nation/zulu.ruleset:39
 msgid "Spokeswoman"
-msgstr ""
+msgstr "Сп╕кер"
 
 #: data/nation/cherokee.ruleset:25
 #, fuzzy
@@ -17853,7 +17943,7 @@ msgstr "Велик╕й вождь"
 
 #: data/nation/cherokee.ruleset:25
 msgid "?female:Principal Chief"
-msgstr ""
+msgstr "Верховний Вождь"
 
 #: data/nation/chilean.ruleset:3
 msgid "Chilean"
@@ -17974,6 +18064,11 @@ msgid ""
 "but had to abandon their claims of independence a few years later after "
 "several military defeats by United States troops."
 msgstr ""
+"Конфедерац╕я Штат╕в Америки в╕докремулась в╕д Сполучених Штат╕в Америки п╕д "
+"час американьско╖ громадянсько╖ в╕йни. Вона була сформована у 1861 ╕з шести "
+"п╕вденних штат╕в, проте вона мала в╕дкинути проголошену незалежн╕сть "
+"дек╕лька рок╕в потому п╕сля дек╕лькох в╕йськових поразок в╕д в╕йськ "
+"Сполучених Штат╕в."
 
 #: data/nation/cornish.ruleset:3
 msgid "Cornish"
@@ -18027,21 +18122,21 @@ msgstr ""
 #. TRANS: Uchimaahkaaniskweu = Chief's wife
 #: data/nation/cree.ruleset:21
 msgid "Uchimaahkaan"
-msgstr ""
+msgstr "Уч╕маахкаан"
 
 #: data/nation/cree.ruleset:21
 msgid "Uchimaahkaaniskweu"
-msgstr ""
+msgstr "Уч╕маахкаан╕скью"
 
 #. TRANS: Chihchiuchimaau = King
 #. TRANS: Chihchiuchimaaskweu = Queen
 #: data/nation/cree.ruleset:24
 msgid "Chihchiuchimaau"
-msgstr ""
+msgstr "Ч╕хч╕уч╕маау"
 
 #: data/nation/cree.ruleset:24
 msgid "Chihchiuchimaaskweu"
-msgstr ""
+msgstr "Ч╕хч╕уч╕мааскью"
 
 #: data/nation/croatian.ruleset:3
 msgid "Croatian"
@@ -18257,7 +18352,7 @@ msgstr ""
 
 #: data/nation/emirati.ruleset:3
 msgid "Emirati"
-msgstr ""
+msgstr "Ем╕ратц╕"
 
 #: data/nation/emirati.ruleset:4
 #, fuzzy
@@ -18321,6 +18416,7 @@ msgstr "Корейц╕"
 #: data/nation/esperant.ruleset:6
 msgid "The Esperants are a world community united by the Esperanto language."
 msgstr ""
+"Есперантисти - це св╕това сп╕льнота, об'╓днана ╕нтересом до язика есперанто."
 
 #: data/nation/estonian.ruleset:3
 msgid "Estonian"
@@ -18354,6 +18450,8 @@ msgid ""
 "Ethiopia is the oldest nation in Africa and the only one to remain "
 "independent during European colonialism."
 msgstr ""
+"Еф╕оп╕я ╓ найстар╕шою нац╕╓ю у Африц╕ та ╓диною, що залишилася незалежною "
+"п╕д час ╢вропейського колон╕ал╕зму."
 
 #: data/nation/european.ruleset:4
 #, fuzzy
@@ -18367,6 +18465,10 @@ msgid ""
 "fledgeling super state. But the question remains: Does such a thing as a "
 "common European identity and nation actually exist?"
 msgstr ""
+"Заснування ╢вропейского Союзу було розпочато у 1957 роц╕ ╕з Римсько╖ угоди. "
+"З тих час╕в проект ╢С розвивався та почина╓ ставати молодою супердержавою. "
+"Проте залиша╓ться в╕дкритим питання: Чи ╕сну╓ ╓дина ╓вропейска нац╕я та "
+"╕дентичн╕сть насправд╕?"
 
 #: data/nation/european.ruleset:22 data/nation/slovakian.ruleset:29
 #, fuzzy
@@ -18380,7 +18482,7 @@ msgstr "Пророчиця"
 
 #: data/nation/european.ruleset:23 data/nation/european.ruleset:24
 msgid "President of the Commission"
-msgstr ""
+msgstr "Президент Ком╕с╕╖"
 
 #: data/nation/filipino.ruleset:3
 msgid "Filipino"
@@ -18431,6 +18533,9 @@ msgid ""
 "Napoleon and King Charlemagne united large parts of Europe under the French "
 "flag."
 msgstr ""
+"Франц╕я довго була найб╕льшою силою у ╢вроп╕. Французьски завойовники, так╕ "
+"як Наполеон та Карл Великий об'╓днали велик╕ частини ╢вропи п╕д французським "
+"флагом."
 
 #: data/nation/french.ruleset:27
 msgid "Premier"
@@ -18459,6 +18564,8 @@ msgstr "╤тал╕йц╕"
 #: data/nation/galician.ruleset:6
 msgid "Galicia is a region in the northwest of Spain, just above Portugal."
 msgstr ""
+"Галиц╕я ╓ п╕вн╕чнозах╕дним рег╕оном ╤спан╕╖, розташованим поруч ╕з "
+"Португал╕╓ю."
 
 #: data/nation/galician.ruleset:22
 #, fuzzy
@@ -18539,7 +18646,7 @@ msgstr "Фрукти"
 
 #: data/nation/gallic.ruleset:30
 msgid "?female:Druid"
-msgstr ""
+msgstr "Дру╕д"
 
 #: data/nation/georgian.ruleset:3
 #, fuzzy
@@ -18556,6 +18663,8 @@ msgid ""
 "The Georgians were one of the first peoples in history to adopt "
 "Christianity, in the 300s AD."
 msgstr ""
+"Грузини були одн╕╓ю ╕з перших нац╕й, що сприйняла християнство у 300 роц╕ н."
+"е."
 
 #: data/nation/german.ruleset:3
 msgid "German"
@@ -18614,7 +18723,7 @@ msgstr "Деспот╕зм"
 
 #: data/nation/greek.ruleset:19
 msgid "?female:Despot"
-msgstr ""
+msgstr "Деспот"
 
 #: data/nation/greenland.ruleset:3
 #, fuzzy
@@ -18639,7 +18748,7 @@ msgstr ""
 
 #: data/nation/gupta.ruleset:3
 msgid "Gupta"
-msgstr ""
+msgstr "Гупта"
 
 #: data/nation/gupta.ruleset:4
 #, fuzzy
@@ -18651,6 +18760,8 @@ msgid ""
 "The Gupta Empire was one of the great classical empires. It ruled northern "
 "India from around 240 to 550 CE."
 msgstr ""
+"╤мпер╕я Гупта була одн╕╓ю ╕з найб╕льших класичних ╕мпер╕й. Вона займала "
+"територ╕ю п╕вн╕чно╖ ╤нд╕╖ приблизно в╕д 240 до 550 н.е."
 
 #. TRANS: Maharajadhiraja = Great King of Kings
 #: data/nation/gupta.ruleset:21
@@ -18670,15 +18781,15 @@ msgstr "Боер"
 
 #: data/nation/hacker.ruleset:6
 msgid "h4xx0r r0xx0rz!"
-msgstr ""
+msgstr "h4xx0r r0xx0rz!"
 
 #: data/nation/hacker.ruleset:39
 msgid "?title:Hacker"
-msgstr ""
+msgstr "Хакер"
 
 #: data/nation/hacker.ruleset:39
 msgid "?female:Hacker"
-msgstr ""
+msgstr "Хакер"
 
 #: data/nation/hawaiian.ruleset:3
 #, fuzzy
@@ -18712,6 +18823,8 @@ msgid ""
 "The Hellenic Republic - also known as Greece - was created when the Hellenic "
 "people gained independence from the Ottoman Empire in 1832."
 msgstr ""
+"Грецька Республ╕ка - також в╕дома як Грец╕я - була створена, коли грецький "
+"народ отримав незалежн╕сть в╕д Отоманьско╖ ╤мпер╕╖ у 1832 роц╕."
 
 #: data/nation/hezbollah.ruleset:3
 #, fuzzy
@@ -18731,7 +18844,7 @@ msgstr ""
 
 #: data/nation/himyarite.ruleset:3
 msgid "Himyarite"
-msgstr ""
+msgstr "Х╕м'ярц╕"
 
 #: data/nation/himyarite.ruleset:4
 #, fuzzy
@@ -18817,6 +18930,8 @@ msgid ""
 "Hisatsinom. The Hopi live today on the Hopi Reservation in northeastern "
 "Arizona."
 msgstr ""
+"Матриархальна культура у П╕вн╕чн╕й Америц╕, яка вважа╓ться нащадками "
+"Х╕сатс╕ном. Хоп╕ зараз живуть у резервац╕╖ Хоп╕ у п╕вн╕чносх╕дн╕й Аризон╕."
 
 #: data/nation/hopi.ruleset:28
 #, fuzzy
@@ -18833,11 +18948,11 @@ msgstr "Угорц╕"
 
 #: data/nation/hungarian.ruleset:6
 msgid "Legend says that Hungary was founded by Arpad in the 9th century."
-msgstr ""
+msgstr "Зг╕дно з легендою Угорщину било засновано Арпадом у 9-му стор╕чч╕."
 
 #: data/nation/icelandic.ruleset:3
 msgid "Icelandic"
-msgstr ""
+msgstr "╤сландц╕"
 
 #: data/nation/icelandic.ruleset:4
 #, fuzzy
@@ -18851,6 +18966,10 @@ msgid ""
 "kept initially under the Norwegian and later the Danish crown until "
 "independence from Denmark in 1944."
 msgstr ""
+"╤сланд╕я довго була одним ╕з найб╕льших ненаселенних остров╕в у св╕т╕, доки "
+"не була заселена норвежськими в╕к╕нгами наприк╕нц╕ 9-го стор╕чча. Спочатку "
+"ост╕в був п╕д владою норвежсько╖, а пот╕м датсько╖ корони, доки не отримав "
+"незалежност╕ у 1944 роц╕."
 
 #: data/nation/iglu.ruleset:3
 msgid "Iglu"
@@ -18913,11 +19032,11 @@ msgstr "╤нки"
 
 #: data/nation/inca.ruleset:36
 msgid "Sapa Inka"
-msgstr ""
+msgstr "Великий ╤нка"
 
 #: data/nation/inca.ruleset:37
 msgid "Willaq Umu"
-msgstr ""
+msgstr "У╕ллак Уму"
 
 #: data/nation/indian.ruleset:3
 msgid "Indian"
@@ -18932,6 +19051,8 @@ msgid ""
 "The cradle of Ancient Indian civilization lay in the Indus river valley in "
 "modern-day Pakistan."
 msgstr ""
+"Колиска древно╖ ╕нд╕йсько╖ цив╕л╕зац╕╖ лежить у долин╕ р╕ки ╤нд, зараз у "
+"Пак╕стан╕."
 
 #: data/nation/indian.ruleset:19 data/nation/majapahit.ruleset:26
 #, fuzzy
@@ -18940,7 +19061,7 @@ msgstr "Королева"
 
 #: data/nation/indian.ruleset:19
 msgid "?female:Raja"
-msgstr ""
+msgstr "Раджа"
 
 #: data/nation/indian.ruleset:20
 msgid "Maharaja"
@@ -18958,7 +19079,7 @@ msgstr "Ма╜араджа"
 
 #: data/nation/indian.ruleset:21
 msgid "?female:Mahatma"
-msgstr ""
+msgstr "Махатма"
 
 #: data/nation/indonesian.ruleset:3
 #, fuzzy
@@ -19002,7 +19123,7 @@ msgstr "Голова"
 
 #: data/nation/inuit.ruleset:20
 msgid "?female:Shaman"
-msgstr ""
+msgstr "Шаман"
 
 #: data/nation/inuit.ruleset:21
 #, fuzzy
@@ -19034,11 +19155,11 @@ msgstr ""
 #. TRANS: Raiis Jomhoor = President
 #: data/nation/iranian.ruleset:45
 msgid "Raiis Jomhoor"
-msgstr ""
+msgstr "Ра╕╕с Джомхоор"
 
 #: data/nation/iranian.ruleset:46 data/nation/persian.ruleset:22
 msgid "Ayatollah"
-msgstr ""
+msgstr "Аятола"
 
 #: data/nation/iraqi.ruleset:3
 #, fuzzy
@@ -19078,6 +19199,11 @@ msgid ""
 "North of Ireland was settled in the 17th century by Scottish and English "
 "planters and is now part of the United Kingdom."
 msgstr ""
+"╤рланд╕я оборонилася в╕д римлян та в╕к╕нг╕в, проте була захоплена норманами "
+"у 1171. Була п╕в владою Англ╕╖ до 1922, коли б╕льша частина кра╖ни отримала "
+"обмежену автоном╕ю, та стала республ╕кою у 1949. П╕вн╕ч ╤рланд╕╖ задселений "
+"╕з 17-го стор╕чча шотландськими та англ╕йськими фермерами та ╓ зараз "
+"частиною Сполученого Корол╕вства."
 
 #: data/nation/irish.ruleset:45
 #, fuzzy
@@ -19091,16 +19217,16 @@ msgstr "Королева"
 
 #: data/nation/irish.ruleset:46
 msgid "Mother Superior"
-msgstr ""
+msgstr "Верховна Мати"
 
 #. TRANS: Taoiseach = Prime Minister
 #: data/nation/irish.ruleset:48
 msgid "Taoiseach"
-msgstr ""
+msgstr "Тао╕с╕ч"
 
 #: data/nation/irish.ruleset:48
 msgid "?female:Taoiseach"
-msgstr ""
+msgstr "Тао╕с╕ч"
 
 #: data/nation/iroquois.ruleset:3
 #, fuzzy
@@ -19173,6 +19299,8 @@ msgid ""
 "According to traditional Japanese mythology, Japan was founded in the 7th "
 "century BC by the ancestral Emperor Jimmu."
 msgstr ""
+"Зг╕дно ╕з традиц╕йною японською м╕фолог╕╓ю, Япон╕ю було засновано у 7-му "
+"стор╕чч╕ до н.е. древн╕м ╕мператором Дж╕мму."
 
 #: data/nation/japanese.ruleset:21
 msgid "Shogun"
@@ -19180,7 +19308,7 @@ msgstr "Сьогун"
 
 #: data/nation/kanem-bornu.ruleset:3
 msgid "Kanem-Bornu"
-msgstr ""
+msgstr "Канем-Борну"
 
 #: data/nation/kanem-bornu.ruleset:4
 #, fuzzy
@@ -19192,6 +19320,9 @@ msgid ""
 "This empire lasted in some form from the 9th-century until 1893 in modern "
 "Chad and Nigeria and controlled much of the trans-Saharan trade."
 msgstr ""
+"Ця ╕мпер╕я ╕снувала у р╕зних видах в╕д 9-го стор╕ччя до 1893 року на "
+"територ╕╖ сучасних Чаду та Нигер╕╖ та контролювала б╕льшу частину торг╕вл╕ у "
+"район╕ Сахари."
 
 #: data/nation/kanem-bornu.ruleset:23
 #, fuzzy
@@ -19200,7 +19331,7 @@ msgstr "Шахта"
 
 #: data/nation/kazakh.ruleset:3
 msgid "Kazakh"
-msgstr ""
+msgstr "Казахи"
 
 #: data/nation/kazakh.ruleset:4
 #, fuzzy
@@ -19214,6 +19345,9 @@ msgid ""
 "dissolution of the Soviet Union. It is one of ten largest states in the "
 "world by area."
 msgstr ""
+"Казахи нащадки тюркських та монгольских кочовик╕в, Захоплений Росс╕╓ю у 18-"
+"му строр╕чч╕, Казахстан став незалежним ╕з розпадом Радянського Союзу у 1991 "
+"роц╕. Казахстан ╓ одн╕╓ю ╕з десяти найб╕льших за розмром кра╖н."
 
 #: data/nation/kenyan.ruleset:3
 msgid "Kenyan"
@@ -19225,7 +19359,7 @@ msgstr "Кен╕йц╕"
 
 #: data/nation/kenyan.ruleset:6
 msgid "Kenya gained independence from Britain in December 1963."
-msgstr ""
+msgstr "Кен╕я отримала незалеждн╕сть в╕д Британ╕ю у грудн╕ 1963."
 
 #: data/nation/kenyan.ruleset:18
 #, fuzzy
@@ -19256,7 +19390,7 @@ msgstr ""
 
 #: data/nation/khwarezmian.ruleset:26
 msgid "Khorezmshah"
-msgstr ""
+msgstr "Хорезмшах"
 
 #: data/nation/kongo.ruleset:3
 #, fuzzy
@@ -19339,7 +19473,7 @@ msgstr ""
 
 #: data/nation/kyrgyz.ruleset:3
 msgid "Kyrgyz"
-msgstr ""
+msgstr "Киргизи"
 
 #: data/nation/kyrgyz.ruleset:4
 #, fuzzy
@@ -19351,6 +19485,8 @@ msgid ""
 "Nation in Central Asia. Conquered by the Russian Empire in 19th century, "
 "Kyrgyzstan got independence from the Soviet Union in 1991."
 msgstr ""
+"Нац╕я у Центральн╕й Аз╕╖. Захоплена Рос╕йскою ╤мепр╕╓ю у 19-му стор╕чч╕, "
+"Киргизстан отримав незалежн╕сть в╕д Радяньского Союзу у 1991."
 
 #. TRANS: Khagan = Great Khan
 #: data/nation/kyrgyz.ruleset:26 data/nation/mongol.ruleset:31
@@ -19405,7 +19541,7 @@ msgstr "Верховний Директор"
 
 #: data/nation/lankese.ruleset:22
 msgid "?female:Supreme Commander"
-msgstr ""
+msgstr "Верховний Командуючий"
 
 #: data/nation/laotian.ruleset:3
 #, fuzzy
@@ -19426,6 +19562,13 @@ msgid ""
 "1975 the communist Pathet Lao established strict solicalist regime. However, "
 "in 1986 the liberalization and a gradual return to private enterpise started."
 msgstr ""
+"╤стор╕я Лаосу почина╓ться ╕з створення корол╕вства Лан Ксанг, заснованого у "
+"14-му стор╕чч╕ та про╕снувавшему до к╕нця 18-го, коли С╕ам (Та╕ланд) вторгся "
+"до нього. На прик╕нц╕ 19-го стор╕чча Лаос став частиною Французського "
+"╤ндокитаю. Влада Франц╕╖ ск╕нчилась ╕з набуттям незалежност╕ у 1946, п╕сля "
+"чього розпочалася 30-р╕чна громадянська в╕йна. У 1975 комун╕стичний рух "
+"Патхет Лао встановив жорсткий соц╕ал╕стичний режим. Проте в 1986 розпочалася "
+"л╕берал╕зац╕я та пов╕льне повернення до приватно╖ властност╕."
 
 #: data/nation/latvian.ruleset:3
 msgid "Latvian"
@@ -19441,6 +19584,9 @@ msgid ""
 "1940, Latvia was forcibly occupied by the Soviet Union. After the collapse "
 "of Soviet Union in 1991 Latvia restored its independence."
 msgstr ""
+"П╕сля Першо╖ св╕тово╖ в╕йни Латв╕я проголосила незалежн╕сть в╕д Рос╕╖. У "
+"1940 роц╕ Латв╕ю окупував Радяньский Союз. П╕сля розпаду Радяньского Союзу у "
+"1991 Латв╕я в╕дновила свою незалежн╕сть."
 
 #: data/nation/libyan.ruleset:3
 #, fuzzy
@@ -19459,10 +19605,14 @@ msgid ""
 "of Italy and after the Second World War Libya was granted independence as a "
 "condition of the Allied peace treaty with Italy."
 msgstr ""
+"Рег╕он, який зарав в╕домий як Л╕в╕я, ран╕ше був римською колон╕╓ю, доку ╕╖ "
+"не захопили арабськ╕ цив╕л╕зац╕╖ у 7-му стор╕чч╕. У 1912 вона п╕дпала п╕д "
+"контроль ╤тал╕╖, та п╕сля Друго╖ св╕тово╖ в╕йни Л╕в╕я отримала незалежн╕сть "
+"як частина угоди м╕ж ╤тал╕╓ю та союзниками."
 
 #: data/nation/libyan.ruleset:23
 msgid "Dey"
-msgstr ""
+msgstr "Деж"
 
 #: data/nation/libyan.ruleset:24
 #, fuzzy
@@ -19512,6 +19662,10 @@ msgid ""
 "unambiguous (\"Time flies like an arrow. Fruit flies like a banana.\"), "
 "culturally neutral and simple to learn."
 msgstr ""
+"Ложбан╕стан це вигадане м╕сце, де люд╕ розмовляють ложбаньскою. Ложбаньска "
+"це сонструйована мова спец╕ально для людьского сп╕лкування. Ложбаньска "
+"синтаксично однозначна (\"Time flies like an arrow. Fruit flies like a "
+"banana.\"), культурно нейтральна та легка у вивченн╕."
 
 #: data/nation/macedonia.ruleset:3
 #, fuzzy
@@ -19531,7 +19685,7 @@ msgstr ""
 
 #: data/nation/majapahit.ruleset:3
 msgid "Majapahit"
-msgstr ""
+msgstr "Маджапах╕т"
 
 #: data/nation/majapahit.ruleset:4
 #, fuzzy
@@ -19570,14 +19724,16 @@ msgid ""
 "The Malagasy are the people of Madagascar. For centuries, tribes from "
 "Indonesia, East Africa and the Arab world have gathered on the island."
 msgstr ""
+"Малагасц╕ - народ Мадагаскару. Продовж стол╕ть племена з ╤ндонез╕╖, Сх╕дно╖ "
+"Африки там арабського св╕ту збиралися на остров╕."
 
 #: data/nation/malagasy.ruleset:22
 msgid "High Commissioner"
-msgstr ""
+msgstr "Верховний Спецуповноважений"
 
 #: data/nation/malagasy.ruleset:22
 msgid "?female:High Commissioner"
-msgstr ""
+msgstr "?female:Верховна Спецуповноважена"
 
 #: data/nation/malaysian.ruleset:3
 #, fuzzy
@@ -19594,6 +19750,8 @@ msgid ""
 "Malaysia was started with the founding of Malacca (Melaka) by Parameswara in "
 "the early 14th century."
 msgstr ""
+"Малайз╕я почалася ╕з заснування Малакк╕ (Мелак╕) Парамесварою на початку 14-"
+"го стор╕ччя."
 
 #: data/nation/malaysian.ruleset:22 data/nation/singaporean.ruleset:32
 #: data/nation/turk.ruleset:23
@@ -19691,7 +19849,7 @@ msgstr ""
 
 #: data/nation/mapuche.ruleset:19
 msgid "Toqui"
-msgstr ""
+msgstr "Ток'╕"
 
 #: data/nation/mapuche.ruleset:20
 #, fuzzy
@@ -19725,7 +19883,7 @@ msgstr "Латиш╕"
 
 #: data/nation/martian.ruleset:6
 msgid "Marsmen landed on Earth in 4000 BC!"
-msgstr ""
+msgstr "Марс╕ане висадились на Земл╕ у 4000 до н.е.!"
 
 #: data/nation/mayan.ruleset:3
 #, fuzzy
@@ -19742,24 +19900,26 @@ msgid ""
 "The Mayans were a Mesoamerican civilization. Famous for building great "
 "pyramids and palaces in the jungle."
 msgstr ""
+"Майа ╓ месоамериканською цивил╕зац╕╓ю. Вони в╕дом╕ сво╖ми видатними "
+"п╕рамидами та палацами у джунглях."
 
 #. TRANS: Ajaw = Lord
 #: data/nation/mayan.ruleset:20
 msgid "Ajaw"
-msgstr ""
+msgstr "Аджау"
 
 #: data/nation/mayan.ruleset:20
 msgid "?female:Ajaw"
-msgstr ""
+msgstr "Аджау"
 
 #. TRANS: Ah kin = Priest
 #: data/nation/mayan.ruleset:22
 msgid "Ah kin"
-msgstr ""
+msgstr "Ах к╕н"
 
 #: data/nation/mayan.ruleset:22
 msgid "?female:Ah kin"
-msgstr ""
+msgstr "Ах к╕н"
 
 #: data/nation/mexican.ruleset:3
 #, fuzzy
@@ -19774,7 +19934,7 @@ msgstr "Американц╕"
 #: data/nation/mexican.ruleset:6
 msgid ""
 "Mexico borrows its name from the Mexica people, another name for the Aztecs."
-msgstr ""
+msgstr "Мексика отримала сво╓ ╕м'я в╕д народу Мексика, ╕нше ╕м'я якого Ацтеки."
 
 #: data/nation/midway_islands.ruleset:3
 #, fuzzy
@@ -19798,7 +19958,7 @@ msgstr ""
 
 #: data/nation/moldovan.ruleset:3
 msgid "Moldovan"
-msgstr ""
+msgstr "Молдовани"
 
 #: data/nation/moldovan.ruleset:4
 #, fuzzy
@@ -19812,11 +19972,15 @@ msgid ""
 "Romania until inclusion  in the Soviet Union in 1940. The modern Republic of "
 "Moldova  gained independence from the Soviet Union in 1991."
 msgstr ""
+"Молдова була захоплена Оттоманцям╕ у 16-му строр╕чч╕. Пот╕м у 1812 Молдова "
+"стала частиною Рос╕йсько╖ ╤мпер╕╖. З 1918 Молдова була частиною Румун╕╖ доки "
+"не була включена до Радянського Союзу у 1940. Сучасна Республ╕ка Молдова "
+"отримала незалежн╕сть п╕сля розпаду Радянського Союзу у 1991."
 
 #. TRANS: Voievod/Doamna = Prince/Lady
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 msgid "Voievod"
-msgstr ""
+msgstr "Войовода"
 
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 #, fuzzy
@@ -19825,11 +19989,11 @@ msgstr "Нижче"
 
 #: data/nation/moldovan.ruleset:24
 msgid "Gospodar"
-msgstr ""
+msgstr "Господар"
 
 #: data/nation/moldovan.ruleset:24
 msgid "Gospodarynya"
-msgstr ""
+msgstr "Господариня"
 
 #. TRANS: Tovaras/Tovarasa = Comrade
 #: data/nation/moldovan.ruleset:26 data/nation/romanian.ruleset:38
@@ -19839,7 +20003,7 @@ msgstr "Загалом"
 
 #: data/nation/moldovan.ruleset:26 data/nation/romanian.ruleset:38
 msgid "Tovarasa"
-msgstr ""
+msgstr "Товариш"
 
 #: data/nation/mongol.ruleset:3
 msgid "Mongol"
@@ -19862,11 +20026,11 @@ msgstr ""
 
 #: data/nation/mongol.ruleset:29 data/nation/uyghur.ruleset:29
 msgid "?female:Khan"
-msgstr ""
+msgstr "Хан"
 
 #: data/nation/mongol.ruleset:31 data/nation/uyghur.ruleset:30
 msgid "?female:Khagan"
-msgstr ""
+msgstr "Ханша"
 
 #: data/nation/mordor.ruleset:3
 msgid "Mordor"
@@ -19952,7 +20116,7 @@ msgstr "Перси"
 
 #: data/nation/nigerian.ruleset:6
 msgid "Nigeria won full independence from British rule in 1960."
-msgstr ""
+msgstr "Н╕гер╕я здобула незалежн╕сть в╕д Британ╕╖ у 1960."
 
 #: data/nation/norman.ruleset:3
 #, fuzzy
@@ -19979,8 +20143,9 @@ msgid "Jarl"
 msgstr "Патрулювати"
 
 #: data/nation/norman.ruleset:22
+#, fuzzy
 msgid "?female:Jarl"
-msgstr ""
+msgstr "Майор"
 
 #: data/nation/northkorean.ruleset:3
 #, fuzzy
@@ -19998,11 +20163,15 @@ msgid ""
 "states along 38th parallel forming North Korea and South Korea. Even 60 "
 "years since then, North Korea remains a communist state of Stalinist type."
 msgstr ""
+"У 1945 Корея була под╕лена Радянським Союзом та Сполученими Штатами на дв╕ "
+"кра╖ни упродовж 38-╖ паралел╕. Цими кра╖нами стали П╕вн╕чна та П╕вденна "
+"Коре╖. Нав╕ть 60 рок╕в потому П╕вн╕чна Корея продовжу╓ залишатися "
+"комун╕стичною кра╖ною стал╕н╕стького типу."
 
 #. TRANS: translates as the Great leader
 #: data/nation/northkorean.ruleset:22
 msgid "Widaehan suryong"
-msgstr ""
+msgstr "Великий Вождь"
 
 #: data/nation/norwegian.ruleset:3
 #, fuzzy
@@ -20073,7 +20242,7 @@ msgstr ""
 
 #: data/nation/nuu-chah-nulth.ruleset:3
 msgid "Nuu-chah-nulth"
-msgstr ""
+msgstr "Нуу-чах-нулт"
 
 #: data/nation/nuu-chah-nulth.ruleset:4
 #, fuzzy
@@ -20098,7 +20267,7 @@ msgstr "Колесн╕ця"
 #. TRANS: Ha'wiih = Hereditary Chief
 #: data/nation/nuu-chah-nulth.ruleset:27
 msgid "Ha'wiih"
-msgstr ""
+msgstr "Хав'╕╕х"
 
 #: data/nation/observer.ruleset:3
 #, fuzzy
@@ -20166,6 +20335,8 @@ msgid ""
 "The Federation of Pakistan was formed from the predominantly Muslim regions "
 "of British India in 1947."
 msgstr ""
+"Федерац╕я Пак╕стану била сформована на основ╕ переважно мусульманських "
+"рег╕он╕в Британсько╖ ╤нд╕╖ у 1947."
 
 #: data/nation/palestine.ruleset:3
 #, fuzzy
@@ -20207,7 +20378,7 @@ msgstr "Японц╕"
 
 #: data/nation/papuan.ruleset:6
 msgid "The Papuans are a Melanesian people on the island of New Guinea."
-msgstr ""
+msgstr "Папуаси це меланез╕йский народ з остров╕в Ново╖ Гв╕не╖."
 
 #: data/nation/papuan.ruleset:16
 #, fuzzy
@@ -20246,6 +20417,8 @@ msgid ""
 "Peru was the cradle of the Inca Empire and civilization. It is still today a "
 "major center of indigenous South American culture."
 msgstr ""
+"Перу було колискою ╕мпер╕╖ ╕нк╕в та ╖х цив╕л╕зац╕╖. ╤ зараз воно видатний "
+"центр м╕сцево╖ п╕вденно-американсько╖ культури."
 
 #: data/nation/peruvian.ruleset:25
 #, fuzzy
@@ -20286,7 +20459,7 @@ msgstr "Ополчення"
 
 #: data/nation/phoenician.ruleset:29
 msgid "Suffet"
-msgstr ""
+msgstr "Суффет"
 
 #: data/nation/pirate.ruleset:3
 #, fuzzy
@@ -20303,6 +20476,8 @@ msgid ""
 "As long as honest men have sailed the seas, pirates have been a scourge of "
 "them and of all coastal dwelling peoples."
 msgstr ""
+"В╕дколи перш╕ см╕л╕вц╕ почали плавати морями, п╕рати стали ╖х бичом, так "
+"само як ╕ ус╕х прибрежних жител╕в."
 
 #: data/nation/polish.ruleset:3
 msgid "Polish"
@@ -20318,6 +20493,8 @@ msgid ""
 "The Polish state was formed about a millennium ago, and reached its Golden "
 "Age near the end of the 16th century."
 msgstr ""
+"Польська держава була заснована близько тисяч╕ рок╕в тому, та досягла "
+"Золотого В╕ку близько к╕нця 16 стор╕ччя."
 
 #. TRANS: Dyktator/Dyktatorka = Dictator
 #: data/nation/polish.ruleset:27
@@ -20363,6 +20540,8 @@ msgid ""
 "Polynesian culture stretches from Hawaii to New Zealand to Easter Island and "
 "covers all the islands in between."
 msgstr ""
+"Пол╕нез╕йська культура простяга╓ться в╕д Гава╖в до Ново╖ Зеланд╕╖, до "
+"острова Пасхи та остров╕в м╕ж ними."
 
 #: data/nation/portuguese.ruleset:3
 msgid "Portuguese"
@@ -20416,7 +20595,7 @@ msgstr "Електрика"
 
 #: data/nation/purhepecha.ruleset:3
 msgid "P'urhepecha"
-msgstr ""
+msgstr "П'юрхепеча"
 
 #: data/nation/purhepecha.ruleset:4
 #, fuzzy
@@ -20447,7 +20626,7 @@ msgstr "Пушка"
 
 #: data/nation/quebecois.ruleset:3
 msgid "Quebecois"
-msgstr ""
+msgstr "Квебекц╕"
 
 #: data/nation/quebecois.ruleset:4
 #, fuzzy
@@ -20459,6 +20638,8 @@ msgid ""
 "Quebec is the largest province of Canada, housing the majority of the "
 "Francophone population of America."
 msgstr ""
+"Квебек ╓ найб╕льшою пров╕нц╕╓ю Канади, надаючи дом╕вку б╕льшост╕ "
+"франкомовного населення Америки."
 
 #: data/nation/revolution.ruleset:3
 #, fuzzy
@@ -20513,6 +20694,9 @@ msgid ""
 "Rome was, in legend, founded by Romulus in 753 BC.  At its height, Rome "
 "controlled nearly all of Europe, northern Africa and Mesopotamia."
 msgstr ""
+"Рим був, зг╕дно ╕з легендою, заснований у 753 до н.е. Ромулом. На вершин╕ "
+"могутност╕ Рим контролював приблизно усю ╢вропу, п╕вн╕чну Африку та "
+"Месопотам╕ю."
 
 #: data/nation/russian.ruleset:3
 msgid "Russian"
@@ -20538,7 +20722,7 @@ msgstr ""
 
 #: data/nation/russian.ruleset:48
 msgid "Tsar"
-msgstr ""
+msgstr "Цар"
 
 #: data/nation/russian.ruleset:48
 #, fuzzy
@@ -20560,10 +20744,12 @@ msgid ""
 "Rwanda is a hilly and very fertile country in the Great Lakes region of "
 "eastern Africa. It supports the densest population of the continent."
 msgstr ""
+"Руанда ╓ холмистою та дуже родючою кра╖ною у район╕ Великих Озер сх╕дно╖ "
+"Африки. Це найб╕льш густозаселена кра╖на континенту."
 
 #: data/nation/ryukyuan.ruleset:3
 msgid "Ryukyuan"
-msgstr ""
+msgstr "Рюкюанц╕"
 
 #: data/nation/ryukyuan.ruleset:4
 #, fuzzy
@@ -20579,11 +20765,11 @@ msgstr ""
 #. TRANS: Koku-o/Jo-o = King/Queen
 #: data/nation/ryukyuan.ruleset:22
 msgid "Koku-o"
-msgstr ""
+msgstr "Коку-о"
 
 #: data/nation/ryukyuan.ruleset:22
 msgid "Jo-o"
-msgstr ""
+msgstr "Йо-о"
 
 #: data/nation/sami.ruleset:3
 #, fuzzy
@@ -20600,15 +20786,18 @@ msgid ""
 "The Sami are a people of northern Scandinavia. Their nation spans over the "
 "northernmost regions of the Scandinavian countries and northwestern Russia."
 msgstr ""
+"Саами - народ п╕вн╕чно╖ Скандинав╕╖. ╤х нац╕я под╕лена м╕ж п╕вн╕чними "
+"рег╕онами скандинавських стран та п╕н╕чно-зах╕дною Росс╕╓ю."
 
 #. TRANS: Noaydde = Shaman
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "Noaydde"
-msgstr ""
+msgstr "Н╕"
 
 #: data/nation/sami.ruleset:22
 msgid "?female:Noaydde"
-msgstr ""
+msgstr "Ноайдде"
 
 #: data/nation/samogitian.ruleset:3
 #, fuzzy
@@ -20711,7 +20900,7 @@ msgstr "Енц╕к"
 
 #: data/nation/singaporean.ruleset:34
 msgid "?female:Encik"
-msgstr ""
+msgstr "Енц╕к"
 
 #: data/nation/sioux.ruleset:3
 msgid "Sioux"
@@ -20759,7 +20948,7 @@ msgstr "Духовний л╕дер"
 
 #: data/nation/slovakian.ruleset:30 data/nation/soviet.ruleset:27
 msgid "?female:General Secretary"
-msgstr ""
+msgstr "Генеральний Секретар"
 
 #: data/nation/slovenian.ruleset:3
 msgid "Slovenian"
@@ -20778,8 +20967,9 @@ msgstr ""
 "Федерац╕╖."
 
 #: data/nation/southafrican.ruleset:3
+#, fuzzy
 msgid "South African"
-msgstr ""
+msgstr "Американц╕"
 
 #: data/nation/southafrican.ruleset:4
 #, fuzzy
@@ -20816,6 +21006,11 @@ msgid ""
 "formed from the nationalist and anti-communist \"Provisional Government of "
 "the Republic of Korea\" in 1948."
 msgstr ""
+"Колись ╓дина кра╖на, зараз Корейський п╕востр╕в розд╕лений м╕ж двома "
+"державами - П╕вн╕чною та П╕вденною Кореями - як результат патово╖ ситуац╕╖, "
+"що склалася наприк╕нц╕ Корейсько╖ в╕йни 1953-го року. П╕вденно-корейский "
+"уряд було сформовано ╕з нац╕онал╕стичного та ант╕комун╕стичного "
+"\"Тимчасового уряду Республ╕ки Корея\" у 1948."
 
 #: data/nation/soviet.ruleset:3
 #, fuzzy
@@ -20835,6 +21030,12 @@ msgid ""
 "powerful states in the 20th century. But by the end of 1991 due to many "
 "social shocks it disintegrated into fifteen independent countries"
 msgstr ""
+"╤стор╕я Радянського Союзу розпочалася у Листопад╕ 1917 року, коли п╕д "
+"кер╕вництвом Лен╕на в╕дбулася третя рос╕йська революц╕я (друга за той р╕к). "
+"31 грудня 1922 року чотири радянськ╕ республ╕ки об'╓дналися у ╓дину кра╖ну. "
+"Радянський Союз став одною ╕з найб╕льш могутн╕х держав 20-го стор╕чча. Проте "
+"у к╕нц╕ 1991 року п╕сля багатьох соц╕альних негаразд╕в в╕н розпався на "
+"пятнадцять незалежних кра╖н."
 
 #: data/nation/soviet.ruleset:26
 #, fuzzy
@@ -20848,7 +21049,7 @@ msgstr "Велика Б╕бл╕отека"
 
 #: data/nation/soviet.ruleset:28
 msgid "?female:Great Leader"
-msgstr ""
+msgstr "Велика Вождь"
 
 #: data/nation/spanish.ruleset:3
 msgid "Spanish"
@@ -20888,7 +21089,7 @@ msgstr "Кард╕нал"
 
 #: data/nation/srivijaya.ruleset:3
 msgid "Sri Vijaya"
-msgstr ""
+msgstr "Ср╕ В╕джая"
 
 #: data/nation/srivijaya.ruleset:4
 #, fuzzy
@@ -20924,6 +21125,8 @@ msgid ""
 "In 1820 Sudan came under Egyptian rule and later British rule. Sudan became "
 "independent in 1956."
 msgstr ""
+"У 1820 Судан п╕дпав п╕д египетську, та пот╕м п╕д британьску владу. Судан "
+"став незалежним у 1956."
 
 #: data/nation/sumerian.ruleset:3
 #, fuzzy
@@ -20977,11 +21180,11 @@ msgstr ""
 #. TRANS: Ngwenyama/Indovuzaki = Lion/Elephant cow
 #: data/nation/swazi.ruleset:24
 msgid "Ngwenyama"
-msgstr ""
+msgstr "Нгвенйама"
 
 #: data/nation/swazi.ruleset:24
 msgid "Indovuzaki"
-msgstr ""
+msgstr "╤ндовузак╕"
 
 #: data/nation/swedish.ruleset:3
 msgid "Swedish"
@@ -21001,6 +21204,13 @@ msgid ""
 "its gained territory. The country has not been involved in an armed conflict "
 "since 1814."
 msgstr ""
+"Корол╕вство Швец╕╖ було христиан╕зовано та об'╓днано як пол╕тична одиниця к "
+"12-му стор╕ччу. Кра╖на набула могутност╕ як одна ╕з найб╕льших сил у ╢вроп╕ "
+"у 17-му стор╕чч╕, як результат пост╕йний в╕йскових захопленнь так званими "
+"королями-во╖нами. Проте, через пог╕ршення економ╕чного становища та "
+"дек╕лькох катастроф╕чних поразок в╕д Рос╕╖, Швец╕я швидко втратила б╕кьш╕сть "
+"╕з захоплених територ╕й. Кра╖на не приймала участ╕ у в╕йскових д╕ях ╕з 1814 "
+"року."
 
 #: data/nation/swiss.ruleset:3
 #, fuzzy
@@ -21017,10 +21227,12 @@ msgid ""
 "Switzerland is a federation of cantons, some of which have more than 700 "
 "years of history as a confederacy."
 msgstr ""
+"Швейцар╕я ╓ федерац╕╓ю кантон╕в, деяк╕ з котрих мають б╕льш н╕ж 700-р╕чну "
+"╕стор╕ю як конфедерац╕я."
 
 #: data/nation/swiss.ruleset:19
 msgid "?female:General"
-msgstr ""
+msgstr "Генерал"
 
 #: data/nation/swiss.ruleset:20
 #, fuzzy
@@ -21029,11 +21241,11 @@ msgstr "Бразильц╕"
 
 #: data/nation/swiss.ruleset:20
 msgid "?female:Bailiff"
-msgstr ""
+msgstr "Байл╕фф"
 
 #: data/nation/swiss.ruleset:21 data/nation/swiss.ruleset:22
 msgid "President of the Confederation"
-msgstr ""
+msgstr "Президент Конфедерац╕╖"
 
 #: data/nation/swiss.ruleset:23
 #, fuzzy
@@ -21042,7 +21254,7 @@ msgstr "Канцлер"
 
 #: data/nation/swiss.ruleset:23
 msgid "?female:Federal Chancellor"
-msgstr ""
+msgstr "Федеральний Канцлер"
 
 #: data/nation/syrian.ruleset:3
 #, fuzzy
@@ -21059,6 +21271,8 @@ msgid ""
 "The modern Syrian Arab Republic was formed from a French mandate and "
 "gradually gained independence during the 1940s."
 msgstr ""
+"Сучасна Сир╕йська Арабська Республ╕ка була сформована ╕з французсько╖ "
+"мандата та поступово отримала незалежн╕сть на протяз╕ 1940-х рок╕в."
 
 #: data/nation/taino.ruleset:3
 #, fuzzy
@@ -21127,7 +21341,7 @@ msgstr "Банк"
 #. TRANS: Guacanaoma = Paramount Chief
 #: data/nation/tairona.ruleset:28
 msgid "Guacanaoma"
-msgstr ""
+msgstr "Гуаканаома"
 
 #: data/nation/taiwanese.ruleset:3
 #, fuzzy
@@ -21145,6 +21359,9 @@ msgid ""
 "communists, the nationalist government evacuated to the island of Taiwan "
 "where they formed the Republic of China."
 msgstr ""
+"Коли китайск╕ нац╕онал╕сти програли озрбо╓ну боротьбу проти китайских "
+"комун╕ст╕в, нац╕онал╕стичний уряд евакуювався до острову Тайвань, де в╕н "
+"створив Республ╕ку К╕тай."
 
 #: data/nation/tajik.ruleset:3
 #, fuzzy
@@ -21161,6 +21378,8 @@ msgid ""
 "Nation in Central Asia. Conquered by the Russian Empire in 19th century, "
 "Tajikistan got independence from the Soviet Union in 1991."
 msgstr ""
+"Нац╕я у Центральн╕й Аз╕╖. Захоплена Рос╕йською ╤мпер╕╓ю у 19-му строр╕чч╕, "
+"Таджик╕стан отримав незалежн╕сть в╕д Радянського Союзу у 1991."
 
 #: data/nation/templar.ruleset:3
 #, fuzzy
@@ -21202,6 +21421,8 @@ msgid ""
 "Texas is second largest and second most populous state of the USA, famous "
 "for its \"larger than life\" cowboy mentality."
 msgstr ""
+"Техас ╓ другим за населенням та розм╕ром штатом США, в╕домий сво╓ю \"б╕льшою "
+"за життя\" ковбойською ментальн╕стю."
 
 #: data/nation/thai.ruleset:3
 msgid "Thai"
@@ -21231,7 +21452,7 @@ msgstr "Та╕ландц╕"
 
 #: data/nation/thracian.ruleset:7
 msgid "The second most numerous people in the ancient western world."
-msgstr ""
+msgstr "Друга за чисельн╕стю нац╕я у древньому зах╕дному св╕т╕."
 
 #: data/nation/thracian.ruleset:19
 #, fuzzy
@@ -21261,8 +21482,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/tibetan.ruleset:27
+#, fuzzy
 msgid "Lama"
-msgstr ""
+msgstr "Нижче"
 
 #: data/nation/tibetan.ruleset:28
 #, fuzzy
@@ -21271,7 +21493,7 @@ msgstr "Голова"
 
 #: data/nation/tibetan.ruleset:29
 msgid "Dalai Lama"
-msgstr ""
+msgstr "Далай Лама"
 
 #: data/nation/tocharian.ruleset:3
 #, fuzzy
@@ -21303,7 +21525,7 @@ msgstr ""
 
 #: data/nation/tocharian.ruleset:33
 msgid "Kakmartik"
-msgstr ""
+msgstr "Какмарт╕к"
 
 #. TRANS: Lant/Lantsa = King/Queen
 #: data/nation/tocharian.ruleset:35
@@ -21340,7 +21562,7 @@ msgstr ""
 
 #: data/nation/tupi.ruleset:3
 msgid "Tupi"
-msgstr ""
+msgstr "Туп╕"
 
 #: data/nation/tupi.ruleset:4
 #, fuzzy
@@ -21356,11 +21578,17 @@ msgid ""
 "disease. The Tupi intermarried with African slaves and Europeans alike and a "
 "great many Brazilian place names are derived from Tupi words. "
 msgstr ""
+"Туп╕ ╓ м╕сцевим народом Бразил╕╖ пов'язан╕ ╕з Гуаран╕, як╕ населяли сучасн╕ "
+"бразильськ╕ штати Пара╕ба, Пернамбуко, Цера, Р╕о Гранде до Норте, Алагоас, "
+"Серг╕пе та деяк╕ ╕нш╕. Осередки ╖х культури були знищен╕ п╕д час рейд╕в "
+"португальц╕в за рабами, заснування м╕с╕онерських сел та хвороби. Туп╕ "
+"зм╕шалися ╕з африканськими рабами та ╓вропейцями та багато бразильських назв "
+"походять в╕д сл╕в на мов╕ Туп╕."
 
 #. TRANS: Morubixaba = Chief
 #: data/nation/tupi.ruleset:24
 msgid "Morubixaba"
-msgstr ""
+msgstr "Моруб╕ксаба"
 
 #. TRANS: Paje = Shaman
 #: data/nation/tupi.ruleset:26
@@ -21383,6 +21611,8 @@ msgid ""
 "Nation in Central Asia. Conquered by the Russian Empire in 19th century, "
 "Turkmenistan got independence from the Soviet Union in 1991."
 msgstr ""
+"Нац╕я у Центральн╕й Аз╕╖. Захоплена Рос╕йскькою ╤мпер╕╓ю у 19-му строр╕чч╕, "
+"Туркмен╕стан отримав незалежн╕сть в╕д Радянського Союзу у 1991."
 
 #: data/nation/turk.ruleset:3
 #, fuzzy
@@ -21451,7 +21681,7 @@ msgstr "Турки"
 #: data/nation/un.ruleset:6
 msgid ""
 "The United Nations believe in human rights and the protection of the weak."
-msgstr ""
+msgstr "Об'╓днан╕ Нац╕╖ в╕рять у права людини та захист слабого."
 
 #: data/nation/un.ruleset:23
 #, fuzzy
@@ -21460,23 +21690,23 @@ msgstr "Голова"
 
 #: data/nation/un.ruleset:24
 msgid "Secretary-General"
-msgstr ""
+msgstr "Генеральний секретар"
 
 #: data/nation/un.ruleset:24
 msgid "?female:Secretary-General"
-msgstr ""
+msgstr "Генеральний секретар"
 
 #: data/nation/un.ruleset:25
 msgid "Representative"
-msgstr ""
+msgstr "Представник"
 
 #: data/nation/un.ruleset:25
 msgid "?female:Representative"
-msgstr ""
+msgstr "Представниця"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
-msgstr ""
+msgstr "Уругвайц╕"
 
 #: data/nation/uruguayan.ruleset:4
 #, fuzzy
@@ -21489,10 +21719,13 @@ msgid ""
 "\"Switzerland of the Americas\" due to its once higly developed social "
 "welfare system."
 msgstr ""
+"Уругвай, маленька держава у п╕вденн╕й Америц╕, ╕нод╕ назива╓ться "
+"\"Швейцар╕╓ю Америк\" через свою високо розвинену систему соц╕ально╖ "
+"п╕дтримки."
 
 #: data/nation/uyghur.ruleset:3
 msgid "Uyghur"
-msgstr ""
+msgstr "Уйгури"
 
 #: data/nation/uyghur.ruleset:4
 #, fuzzy
@@ -21508,10 +21741,17 @@ msgid ""
 "Asian states of Uzbekistan, Kazakhstan and Kyrgyzstan. They are also the "
 "main minority of the Xinjiang province of China."
 msgstr ""
+"Уйгури були сх╕дною тюркьскою ╕мпер╕╓ю та цив╕л╕зац╕╓ю. У пер╕од свого "
+"розкв╕ту у 820 роц╕ н.е. вона контролювала б╕льш╕сть центрально╖ та "
+"п╕вн╕чно╖ Аз╕╖. П╕сля сутичок ╕з китайцями на протяз╕ дек╕лькох стор╕чь, "
+"уйгури були зрештою п╕дкорен╕ д╕наст╕╓ю К╕нг у 1700-х роках. Зараз нащадки "
+"уйгуров становлять населення кра╖н у центральн╕й Аз╕╖, таких як Узбек╕стан, "
+"Казахстан та Киргизстан. Також вони головна меньшина у китайськ╕й пров╕нц╕╖ "
+"Кс╕нж╕анг."
 
 #: data/nation/uzbek.ruleset:3
 msgid "Uzbek"
-msgstr ""
+msgstr "Узбеки"
 
 #: data/nation/uzbek.ruleset:4
 #, fuzzy
@@ -21525,10 +21765,14 @@ msgid ""
 "Russian Empire in 19th century, Uzbekistan got independence from the Soviet "
 "Union in 1991."
 msgstr ""
+"Нац╕я у Центральн╕й Аз╕╖. Узбек╕стан був центром древн╕х держав, таких як "
+"Хорезм, Бухарський ханат, Кокандський ханат та ╕нших. Захоплений Рос╕йською "
+"╕мпер╕╓ю у 19-му стор╕чч╕, Узбек╕стан набув незалежност╕ в╕д Радяньского "
+"Союзу у 1991."
 
 #: data/nation/venezuelan.ruleset:3
 msgid "Venezuelan"
-msgstr ""
+msgstr "Венесуельц╕"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -21545,6 +21789,9 @@ msgid ""
 "July 5th 1811 under the leadership of El Libertador Simon Bolivar - The "
 "Liberator."
 msgstr ""
+"Венесуела ╓ самою п╕вн╕чною кра╖ною п╕вденно╖ Америки. Вона була ╕спанською "
+"колон╕╓ю с 16-го стор╕чча, кра╖на набула незалежност╕ 5 липня 1811 року п╕д "
+"кер╕вництвом Ель Л╕бертадор С╕мона Бол╕вара - Визволителя."
 
 #. TRANS: Terrateniente = Junker
 #: data/nation/venezuelan.ruleset:29
@@ -21619,11 +21866,15 @@ msgid "?plural:Westphalians"
 msgstr "╤тал╕йц╕"
 
 #: data/nation/westphalian.ruleset:6
+#, fuzzy
 msgid ""
 "Westphalia, before becoming a Prussian province, was the western region of "
 "the Duchy of Saxony. Today it makes up the northern part of the largest "
 "German federal state, North Rhine-Westphalia."
 msgstr ""
+"Вестфал╕я, перед тим, як стати пров╕нц╕╓ю Прус╕╕, била зах╕дним рег╕оном "
+"графства Саксон╕╕. За наших час╕в вона склада╓ться з П╕вн╕чно╖ частини "
+"найб╕льш велико╖ н╕мецько╖ федерально╖ земл╕, П╕вн╕чно╖ Рейн-Вестфал╕╖."
 
 #: data/nation/zulu.ruleset:3
 msgid "Zulu"
@@ -21696,12 +21947,12 @@ msgstr "Р╕вень: %s"
 #: manual/civmanual.c:156
 #, c-format
 msgid "Category: %s.<br>"
-msgstr ""
+msgstr "Категор╕я: %s.<br>"
 
 #: manual/civmanual.c:159
 #, c-format
 msgid "Can only be used in server console. "
-msgstr ""
+msgstr "Може бути використано лише у серверн╕й консол╕."
 
 #: manual/civmanual.c:162
 #, fuzzy, c-format
@@ -21711,7 +21962,7 @@ msgstr "Робить опц╕╖ сервера зм╕нними на протяз╕ гри."
 #: manual/civmanual.c:164
 #, c-format
 msgid "Can <b>not</b> be changed during a game. "
-msgstr ""
+msgstr "<b>Не може</b> бути зм╕нено п╕д час гри. "
 
 #: manual/civmanual.c:169
 #, fuzzy, c-format
@@ -21726,6 +21977,8 @@ msgid ""
 "<p class=\"changed\">Value set to %d</p>\n"
 "\n"
 msgstr ""
+"<p class=\"changed\">Значення встановлено до %d</p>\n"
+"\n"
 
 #: manual/civmanual.c:178
 #, fuzzy, c-format
@@ -21740,6 +21993,8 @@ msgid ""
 "<p class=\"bounds\">Default: \"%s\"</p>\n"
 "\n"
 msgstr ""
+"<p class=\"bounds\">По замовчуванню: \"%s\"</p>\n"
+"\n"
 
 #: manual/civmanual.c:191
 #, c-format
@@ -21747,6 +22002,8 @@ msgid ""
 "<p class=\"changed\">Value set to %s</p>\n"
 "\n"
 msgstr ""
+"<p class=\"changed\">Значення встановлено до %s</p>\n"
+"\n"
 
 #: manual/civmanual.c:200
 #, c-format
@@ -21754,6 +22011,8 @@ msgid ""
 "<h1>Freeciv %s server commands</h1>\n"
 "\n"
 msgstr ""
+"<h1>Freeciv %s команди серверу</h1>\n"
+"\n"
 
 #: manual/civmanual.c:206
 #, fuzzy, c-format
@@ -21770,6 +22029,10 @@ msgid ""
 "<td valign=\"top\"><pre>Synopsis:</pre></td>\n"
 "<td>"
 msgstr ""
+"<table>\n"
+"<tr>\n"
+"<td valign=\"top\"><pre>Короткий огляд:</pre></td>\n"
+"<td>"
 
 #: manual/civmanual.c:213
 #, c-format
@@ -21777,6 +22040,8 @@ msgid ""
 "<p class=\"level\">Level: %s</p>\n"
 "\n"
 msgstr ""
+"<p class=\"level\">Р╕вень: %s</p>\n"
+"\n"
 
 #: manual/civmanual.c:216
 #, c-format
@@ -21798,6 +22063,8 @@ msgid ""
 "<h1>Freeciv %s terrain help</h1>\n"
 "\n"
 msgstr ""
+"<h1>Freeciv %s допомога до м╕сцевостей</h1>\n"
+"\n"
 
 #: manual/civmanual.c:235
 #, c-format
@@ -21880,6 +22147,8 @@ msgid ""
 "<h1>Freeciv %s buildings help</h1>\n"
 "\n"
 msgstr ""
+"<h1>Freeciv %s допомога до буд╕вель</h1>\n"
+"\n"
 
 #: manual/civmanual.c:325 manual/civmanual.c:354
 #, c-format
@@ -21907,6 +22176,8 @@ msgid ""
 "<h1>Freeciv %s wonders help</h1>\n"
 "\n"
 msgstr ""
+"<h1>Freeciv %s допомога до див</h1>\n"
+"\n"
 
 #: server/autoattack.c:172
 #, fuzzy, c-format
@@ -22005,6 +22276,8 @@ msgstr ""
 msgid ""
 "%s is not a valid name. Only ASCII or ruleset names are allowed for cities."
 msgstr ""
+"%s не придатна назва . Т╕льки назви в ASCII або з файл╕в нац╕й можуть бути "
+"використан╕ для м╕ст."
 
 #: server/citytools.c:471
 #, c-format
@@ -22164,7 +22437,7 @@ msgstr "Гра: Неможливо утримувати %s у %s, буд╕влю продано!"
 #: server/cityturn.c:443
 #, c-format
 msgid "Not enough gold. %s disbanded"
-msgstr ""
+msgstr "Недостатньо грошей. %s розпущено."
 
 #: server/cityturn.c:494
 msgid "Game: WARNING, we're LOW on FUNDS sire."
@@ -22372,10 +22645,14 @@ msgstr ""
 #: server/civserver.c:179
 msgid "  -G  --Guests\t\tAllow guests to login if auth is enabled.\n"
 msgstr ""
+"  -G  --Guests\t\tДозволити г╕стям п╕дключатися, якщо аутентиф╕кац╕ю "
+"включено.\n"
 
 #: server/civserver.c:181
 msgid "  -N  --Newusers\tAllow new users to login if auth is enabled.\n"
 msgstr ""
+"  -N  --Newusers\tДозволя╓ новим користувачам п╕дключатися, якщо ув╕мкнено "
+"аутентиф╕кац╕ю.\n"
 
 #: server/civserver.c:184
 #, fuzzy
@@ -22418,10 +22695,11 @@ msgstr "  -q, --quitidle ЧАС\tЗак╕нчити якщо не буде гравц╕в за ЧАС секунд\n"
 #: server/civserver.c:209
 msgid "  -e, --exit-on-end\tWhen a game ends, exit instead of restarting\n"
 msgstr ""
+"  -e, --exit-on-end\tКоли гра зак╕нчу╓ться, виходити зам╕сть перезапуску\n"
 
 #: server/civserver.c:212
 msgid "  -s, --saves DIR\tSave games to directory DIR\n"
-msgstr ""
+msgstr "  -s, --saves ТЕКА\tЗбер╕га╓ гру у теку ТЕКА\n"
 
 #: server/civserver.c:214
 #, fuzzy
@@ -22430,7 +22708,7 @@ msgstr "  -s, --server АДРЕСА\tПри╓днатися до сервера на АДРЕСА\n"
 
 #: server/civserver.c:216
 msgid "  -P, --Ppm\t\tSave ppms of the map when saving the game.\n"
-msgstr ""
+msgstr "  -P, --Ppm\t\tЗбер╕гати ppms мапи, п╕д час збереження гри.\n"
 
 #: server/civserver.c:217
 msgid "  -r, --read FILE\tRead startup script FILE\n"
@@ -22708,13 +22986,15 @@ msgstr ""
 
 #: server/commands.c:185
 msgid "Turn on or off AI debugging of given entity."
-msgstr ""
+msgstr "В╕мкн╕ть або вимкн╕ть в╕дладку Ш╤ для цього запису."
 
 #: server/commands.c:186
 msgid ""
 "Print AI debug information about given entity and turn continous debugging "
 "output for this entity on or off."
 msgstr ""
+"Вивести в╕дладочну ╕нформац╕ю для Ш╤ про заданий запис та включити чи "
+"виключити безперервний в╕дладочний вив╕д для цього запису."
 
 #: server/commands.c:191
 msgid "set <option-name> <value>"
@@ -22891,7 +23171,7 @@ msgstr "cut <╕м'я-з'╓днання>"
 
 #: server/commands.c:285
 msgid "detach from a player."
-msgstr ""
+msgstr "в╕д'╓днатися в╕д гравця."
 
 #: server/commands.c:286
 #, fuzzy
@@ -23713,7 +23993,7 @@ msgstr "Перемика╓ вив╕д сервера м╕ж 'RFC-стилем' та нормальним стилем."
 
 #: server/commands.c:724
 msgid "Simply returns the id of the server."
-msgstr ""
+msgstr "Поверта╓ ╤Д сервера."
 
 #: server/connecthand.c:89
 #, c-format
@@ -23915,7 +24195,7 @@ msgstr "Для початково╖ допомоги введ╕ть 'help'."
 #: server/database.c:173
 #, c-format
 msgid "Warning: the guest name '%s' has been taken, renaming to user '%s'."
-msgstr ""
+msgstr "Застереження: ╕м'я гостя '%s' вже обрано, зм╕нюю ╕м'я на '%s'."
 
 #: server/database.c:179
 #, fuzzy
@@ -23933,30 +24213,34 @@ msgid ""
 "There was an error reading the user database, logging in as guest connection "
 "'%s'."
 msgstr ""
+"Сталася помилка доступу до бази даних користувач╕в, встановлено г╕стьове "
+"з'╓днання '%s'."
 
 #: server/database.c:205
 msgid ""
 "There was an error reading the user database and guest logins are not "
 "allowed. Sorry"
 msgstr ""
+"Сталася помилка доступу до бази даних користувач╕в та г╕стьовий доступ "
+"заборонено. Вибачте."
 
 #: server/database.c:209
 #, c-format
 msgid "%s was rejected: Database error and guests not allowed."
-msgstr ""
+msgstr " %s в╕дкинуто.  Помилка бази даних та гост╕ не дозволяються."
 
 #: server/database.c:217
 #, c-format
 msgid "Enter password for %s:"
-msgstr ""
+msgstr "Введ╕ть пароль для %s:"
 
 #: server/database.c:228
 msgid "Enter a new password (and remember it)."
-msgstr ""
+msgstr "Введ╕ть новий пароль (та запам'ятайте його)"
 
 #: server/database.c:234
 msgid "This server allows only preregistered users. Sorry."
-msgstr ""
+msgstr "Цей сервер т╕льки для заре╓строваних користувач╕в. Вибачте."
 
 #: server/database.c:237
 #, fuzzy, c-format
@@ -23965,18 +24249,22 @@ msgstr "В╕дкинуто %s: несп╕впадають можливост╕."
 
 #: server/database.c:265 server/database.c:323
 msgid "Sorry, too many wrong tries..."
-msgstr ""
+msgstr "Вибачте, забагато помилкових спроб..."
 
 #: server/database.c:266
 #, c-format
 msgid "%s was rejected: Too many wrong password verifies for new user."
 msgstr ""
+" %s в╕дкинуто. Забагато нев╕рних намаганнь ввести пароль для нового "
+"користувача."
 
 #: server/database.c:281
 msgid ""
 "Warning: There was an error in saving to the database. Continuing, but your "
 "stats will not be saved."
 msgstr ""
+"Застереження: виникла помилка п╕д час запису до бази даних. Продовжую, проте "
+"ваша статистика не буде збер╕гатися."
 
 #: server/database.c:325
 #, fuzzy, c-format
@@ -23985,21 +24273,22 @@ msgstr "В╕дкинуто %s: несп╕впадають можливост╕."
 
 #: server/database.c:334
 msgid "Your password is incorrect. Try again."
-msgstr ""
+msgstr "Ваш пароль нев╕рний. Спробуйте ще раз."
 
 #: server/database.c:345
+#, fuzzy
 msgid "Sorry, your connection timed out..."
-msgstr ""
+msgstr "Гра: Вибачте, патрулування пов╕тряними п╕дрозд╕лами ще не реал╕зоване."
 
 #: server/database.c:348
 #, c-format
 msgid "%s was rejected: Connection timeout waiting for password."
-msgstr ""
+msgstr "%s в╕дкинуто: П╕дключення перевищило л╕м╕т часу, оч╕куючи пароль."
 
 #: server/database.c:412
 #, c-format
 msgid "Your password is too short, the minimum length is %d. Try again."
-msgstr ""
+msgstr "Ваш пароль занадто короткий, м╕н╕мальна длина %d. спрообуйте ще раз."
 
 #: server/database.c:417
 #, c-format
@@ -24007,6 +24296,8 @@ msgid ""
 "The password must have at least %d capital letters, %d numbers, and be at "
 "minimum %d [printable] characters long. Try again."
 msgstr ""
+"Пароль ма╓ м╕стити найменьше %d прописних л╕тер, %d цифр та бути не коротше "
+"за %d [печатних] символ╕в. Спробуйте ще раз."
 
 #: server/database.c:1178
 #, c-format
@@ -24214,7 +24505,7 @@ msgstr "Гра: Зустр╕ч з %s завершено."
 
 #: server/diplhand.c:698
 msgid "Your diplomatic envoy was decapitated!"
-msgstr ""
+msgstr "Вашого дипломатичного посланника було обезголовлено!"
 
 #: server/diplhand.c:760
 #, c-format
@@ -24558,12 +24849,13 @@ msgstr "Гра: %s призв╕в до ╕нциденту при влаштуванн╕ заколоту у %s."
 #: server/gamehand.c:161
 #, c-format
 msgid "Sea moving start units are not yet supported, %s not created."
-msgstr ""
+msgstr "Морськи п╕дрозд╕ли на початку гри ще не п╕дтримуються, %s не создано."
 
 #: server/gamehand.c:163
 #, c-format
 msgid "Sea moving start units are not yet supported. Nobody gets %s."
 msgstr ""
+"Морськи п╕дрозд╕ли на початку гри ще не п╕дтримуються. Н╕хто не отриму╓ %s."
 
 #: server/gamehand.c:247
 #, c-format
@@ -24888,7 +25180,7 @@ msgstr "Гра: %s влаштували революц╕ю!"
 
 #: server/plrhand.c:1101
 msgid "You should choose a new government from the government menu."
-msgstr ""
+msgstr "Ви ма╓те обрати новий уряд ╕з меню уряда."
 
 #: server/plrhand.c:1128
 #, c-format
@@ -24980,7 +25272,7 @@ msgstr "Гра: Ви зустр╕лися з нац╕╓ю %s якою керу╓ %s."
 #: server/plrhand.c:2219
 #, c-format
 msgid "Could not throw %s into civil war - too many players"
-msgstr ""
+msgstr "Не можу спричинити громадянськи в╕йну для %s - забагато гравц╕в"
 
 #: server/plrhand.c:2241
 #, c-format
@@ -25357,7 +25649,7 @@ msgstr "Файл правил потребу╓ опц╕╖ як╕ ми не п╕дтриму╓мо:"
 #: server/ruleset.c:500
 #, c-format
 msgid "Unknown terrain %s in entry %s."
-msgstr ""
+msgstr "Нев╕дома територ╕я %s у запису %s."
 
 #. TRANS: Obscure ruleset error
 #: server/ruleset.c:1193
@@ -25422,25 +25714,27 @@ msgstr ""
 #: server/ruleset.c:1515
 #, c-format
 msgid "Ruleset doesn't have any terrains (%s)"
-msgstr ""
+msgstr "Зб╕р правил не м╕стить н╕яких м╕сцевостей (%s)"
 
 #. TRANS: message for an obscure ruleset error.
 #: server/ruleset.c:1620
 #, c-format
 msgid "Terrains %s and %s have the same identifier."
-msgstr ""
+msgstr "М╕сцевост╕ %s та %s мають однаковий ╕дентиф╕катор."
 
 #. TRANS: message for an obscure ruleset error.
 #: server/ruleset.c:1627
 #, c-format
 msgid "'%c' cannot be used as a terrain identifier; it is reserved."
 msgstr ""
+"'%c' не може використовуватись як ╕дентиф╕катор м╕сцевост╕; його "
+"зарезервовано."
 
 #. TRANS: message for an obscure ruleset error.
 #: server/ruleset.c:1718
 #, c-format
 msgid "Terrain %s has unknown flag %s"
-msgstr ""
+msgstr "М╕сцев╕сть %s ма╓ нев╕домий флаг %s"
 
 #: server/ruleset.c:3239
 msgid "Loading rulesets"
@@ -25486,12 +25780,12 @@ msgstr ""
 #: server/savegame.c:243
 #, c-format
 msgid "Unknown terrain identifier '%c' in savegame."
-msgstr ""
+msgstr "Нев╕рний ╕дентиф╕катор м╕сцевост╕ '%c' у записан╕й гр╕."
 
 #: server/savegame.c:518
 #, c-format
 msgid "Warning: Unknown nation %s for starting position no %d"
-msgstr ""
+msgstr "Попередження: Нев╕дома нац╕я %s на стартов╕й позиц╕╖ не ма╓ %d"
 
 #: server/savegame.c:546
 #, c-format
@@ -25503,17 +25797,17 @@ msgstr ""
 #: server/savegame.c:938 server/savegame.c:944 server/savegame.c:950
 #, c-format
 msgid "Wrong unit type id value (%d)"
-msgstr ""
+msgstr "Нев╕рне значення типу ╕дентиф╕катора п╕дрозд╕ла (%d)"
 
 #: server/savegame.c:985
 #, c-format
 msgid "Wrong improvement type id value (%d)"
-msgstr ""
+msgstr "Нев╕рне значення типу ╕дентиф╕катора буд╕вл╕ (%d)"
 
 #: server/savegame.c:1084
 #, c-format
 msgid "Wrong tech type id value (%d)"
-msgstr ""
+msgstr "Нев╕рне значення типу ╕дентиф╕катора технолог╕╖ (%d)"
 
 #: server/savegame.c:1166
 #, fuzzy, c-format
@@ -25523,7 +25817,7 @@ msgstr "Нема╓ технолог╕╖"
 #: server/savegame.c:1242 server/savegame.c:1248 server/savegame.c:1254
 #, c-format
 msgid "Wrong government type id value (%d)"
-msgstr ""
+msgstr "Нев╕рне значення типу ╕дентиф╕катора уряду (%d)"
 
 #: server/savegame.c:1306
 #, c-format
@@ -25538,16 +25832,16 @@ msgstr ""
 #: server/savegame.c:1409
 #, c-format
 msgid "Wrong player%d.u%d.type value (%d)"
-msgstr ""
+msgstr "Нев╕рне player%d.u%d.type значення (%d)"
 
 #: server/savegame.c:1419
 #, c-format
 msgid "Unknown unit type '%s' in player%d section"
-msgstr ""
+msgstr "Нев╕домий тип п╕дрозд╕л╕в '%s' у розд╕л╕ player%d"
 
 #: server/savegame.c:1542
 msgid "Savegame error: invalid unit orders."
-msgstr ""
+msgstr "Помилка запису гри: нев╕рн╕ накази п╕дрозд╕лу."
 
 #: server/savegame.c:1662
 #, c-format
@@ -25563,6 +25857,8 @@ msgstr "п╕дтримуван╕ опц╕╖: %s"
 #, c-format
 msgid "Unsupported city style found in player%d section. Changed to %s"
 msgstr ""
+"Стиль м╕ст, який не п╕дтриму╓ться, було знайдено у розд╕л╕ player%d. Зм╕нено "
+"до %s"
 
 #: server/savegame.c:1906
 #, c-format
@@ -25570,6 +25866,8 @@ msgid ""
 "Illegal alliance structure detected: %s's alliance to %s reduced to peace "
 "treaty."
 msgstr ""
+"Знайдено заборонену структуру альянсу: альянс %s ╕з %s спрощено до мирно╖ "
+"угоди."
 
 #: server/savegame.c:3122
 msgid "Savegame too old, at least version 1.9.0 required."
@@ -25625,7 +25923,7 @@ msgstr "Метасервер: погана адреса: [%s:%d]."
 
 #: server/settings.c:29
 msgid "Geological"
-msgstr ""
+msgstr "Геолог╕чн╕"
 
 #: server/settings.c:30
 #, fuzzy
@@ -25634,7 +25932,7 @@ msgstr "Економ╕ка"
 
 #: server/settings.c:31
 msgid "Sociological"
-msgstr ""
+msgstr "Соц╕олог╕чн╕"
 
 #: server/settings.c:32
 #, fuzzy
@@ -25658,7 +25956,7 @@ msgstr "╤ндустр╕альн╕"
 
 #: server/settings.c:36
 msgid "Networking"
-msgstr ""
+msgstr "Мережев╕"
 
 #: server/settings.c:42
 #, fuzzy
@@ -25704,6 +26002,9 @@ msgid ""
 "at least one city founder.  Try \n"
 "\"help startunits\"."
 msgstr ""
+"Строка початкових п╕дрозд╕л╕в не м╕стить\n"
+"жодного засновника м╕ст.  Спробуйте \n"
+"\"help startunits\"."
 
 #: server/settings.c:155
 #, fuzzy
@@ -25714,7 +26015,7 @@ msgstr ""
 
 #: server/settings.c:218
 msgid "Map size (in thousands of tiles)"
-msgstr ""
+msgstr "Розм╕р карти (у тисячах кл╕ток)"
 
 #: server/settings.c:219
 msgid ""
@@ -25722,6 +26023,9 @@ msgid ""
 "  size = 4 is a normal map of 4,000 tiles (default)\n"
 "  size = 20 is a huge map of 20,000 tiles"
 msgstr ""
+"Це значення використову╓ться для того, щоб визначити розм╕ри карти.\n"
+"  size = 4 це нормальна карта з 4,000 кл╕тин (значення за замовчуванням)\n"
+"  size = 20 це величезна карта з 20,000 кл╕тин"
 
 #: server/settings.c:225
 #, fuzzy
@@ -25739,7 +26043,7 @@ msgstr ""
 
 #: server/settings.c:234
 msgid "Map topology index"
-msgstr ""
+msgstr "╤ндекс тополог╕╖ карти"
 
 #. TRANS: do not edit the ugly ASCII art
 #: server/settings.c:236
@@ -25840,15 +26144,15 @@ msgstr "0 = континенти можуть бути з'╓днан╕ з полюсом; 1 = полюса окремо"
 
 #: server/settings.c:327
 msgid "All the map is temperate"
-msgstr ""
+msgstr "Ус╕ мапи ╓ пом╕рними"
 
 #: server/settings.c:328
 msgid "0 = normal Earth-like planet; 1 = all-temperate planet "
-msgstr ""
+msgstr "0 = нормальна под╕бна до Земл╕ планета; 1 = все-пом╕рна планета "
 
 #: server/settings.c:333
 msgid "Average temperature of the planet"
-msgstr ""
+msgstr "Середня температура планети"
 
 #: server/settings.c:334
 msgid ""
@@ -25870,13 +26174,13 @@ msgstr ""
 
 #: server/settings.c:351
 msgid "Percentage of the map that is land"
-msgstr ""
+msgstr "Процент карти, що буде землею"
 
 #: server/settings.c:352
 msgid ""
 "This setting gives the approximate percentage of the map that will be made "
 "into land."
-msgstr ""
+msgstr "Ця установка вказу╓ приблизний процент карти, що буде землею."
 
 #: server/settings.c:358
 msgid "Amount of hills/mountains"
@@ -25901,6 +26205,8 @@ msgid ""
 "Small values mean lots of dry, desert-like land; higher values give a wetter "
 "map with more swamps, jungles, and rivers."
 msgstr ""
+"Маленьк╕ значення призведуть до сухо╖, пустельно╖ земл╕; велик╕ значення "
+"дадуть вологу карту ╕з болотами, джунглями та р╕чками."
 
 #: server/settings.c:373
 msgid "Map generation random seed"
@@ -25950,6 +26256,9 @@ msgid ""
 "This setting gives the exact number of huts that will be placed on the "
 "entire map. Huts are small tribal villages that may be investiged by units."
 msgstr ""
+"Ця установка вказу╓ точне число хутор╕в, як╕ будуть розм╕щен╕ на ус╕й мап╕. "
+"Хутора ╓ маленькими племенними селами, як╕ можуть бути досл╕джен╕ "
+"п╕дрозд╕лами."
 
 #: server/settings.c:417
 msgid "Minimum number of players"
@@ -26029,7 +26338,7 @@ msgstr "Початкова к╕льк╕сть гривень на гравця"
 
 #: server/settings.c:472
 msgid "At the beginning of the game, each player is given this much gold."
-msgstr ""
+msgstr "На початку гри кажний гравець отриму╓ таку к╕льк╕сть грошей."
 
 #: server/settings.c:478
 #, fuzzy
@@ -26125,6 +26434,9 @@ msgid ""
 "multiplied by another factor that comes from the ruleset and is dependent on "
 "the size of the city."
 msgstr ""
+"Це базова к╕льк╕сть ╖ж╕, що потр╕бна для зростання м╕ста. Це число "
+"помножу╓ться на ╕нший фактор, який береться ╕з зб╕ра правил та залежить в╕д "
+"розм╕ра м╕ста."
 
 #: server/settings.c:545
 msgid "Percentage food lost when need aqueduct"
@@ -26350,7 +26662,7 @@ msgstr ""
 
 #: server/settings.c:696
 msgid "National borders radius"
-msgstr ""
+msgstr "Рад╕ус нац╕ональних кордон╕в"
 
 #: server/settings.c:697
 msgid ""
@@ -26369,10 +26681,12 @@ msgid ""
 "If this is set, units will not cause unhappiness when inside your own "
 "borders."
 msgstr ""
+"Якщо це встановлено, п╕дрозд╕ли не будуть викликати нещастя, якщо "
+"знаходяться у межах сво╖х кордон╕в."
 
 #: server/settings.c:714
 msgid "Ability to do diplomacy with other players"
-msgstr ""
+msgstr "Можлив╕сть проводити дипломатичн╕ зустр╕ч╕ ╕з ╕ншими гравцями"
 
 #: server/settings.c:715
 msgid ""
@@ -26457,13 +26771,15 @@ msgstr "Дикуни не будуть з'являтися перед цим роком."
 
 #: server/settings.c:782
 msgid "Length in turns of revolution"
-msgstr ""
+msgstr "Тривал╕сть революц╕╖ у ходах"
 
 #: server/settings.c:783
 msgid ""
 "When changing governments, a period of anarchy lasting this many turns will "
 "occur. Setting this value to 0 will give a random length of 1-6 turns."
 msgstr ""
+"П╕д час зм╕ни уряду, пер╕од анарх╕╖ буде тривати вказане число ход╕в. Якщо "
+"встановлено у 0, то тривал╕сть буде випадкова у межах 1-6 ход╕в."
 
 #: server/settings.c:792
 msgid "Whether to enable fog of war"
@@ -26529,7 +26845,7 @@ msgstr ""
 
 #: server/settings.c:833
 msgid "Turns until player contact is lost"
-msgstr ""
+msgstr "Ходи до контакту гравця втрачен╕"
 
 #: server/settings.c:834
 #, fuzzy
@@ -26571,7 +26887,7 @@ msgstr ""
 
 #: server/settings.c:869
 msgid "Players that users are allowed to take"
-msgstr ""
+msgstr "Гравц╕, в╕льн╕ для вибору користувачами"
 
 #: server/settings.c:870
 #, fuzzy
@@ -26647,7 +26963,7 @@ msgstr "Р╕к к╕нця гри"
 
 #: server/settings.c:913
 msgid "The game will end at the end of the given year."
-msgstr ""
+msgstr "Гра зак╕нчиться у к╕нц╕ вказаного року."
 
 #: server/settings.c:918
 msgid "Maximum seconds per turn"
@@ -26668,13 +26984,15 @@ msgstr ""
 
 #: server/settings.c:930
 msgid "Timeout at least n seconds when enemy moved"
-msgstr ""
+msgstr "Затримка що найменьш n секунд, коли супротивник зак╕нчив х╕д"
 
 #: server/settings.c:931
 msgid ""
 "Any time a unit moves when in sight of an enemy player, the remaining "
 "timeout is set to this value if it was lower."
 msgstr ""
+"Кожного разу як п╕дрозд╕л руха╓ться у пол╕ зору ворожого гравця, залишок "
+"часу встановлю╓ться до цього значення, якщо в╕н був меньший за нього."
 
 #: server/settings.c:937
 #, fuzzy
@@ -27354,9 +27672,9 @@ msgid "Game: request for unknown report (type %d)"
 msgstr "Гра: запит на нев╕домий зв╕т (тип %d)"
 
 #: server/srv_main.c:949
-#, c-format
+#, fuzzy, c-format
 msgid "Warning: rejecting old client %s"
-msgstr ""
+msgstr "Гра: Увага: У %s очикують голодомор."
 
 #: server/srv_main.c:958
 msgid ""
@@ -27581,6 +27899,7 @@ msgstr "╤нформац╕йну строку метасервера встановлено у '%s'."
 #, c-format
 msgid "Metaserver patches string set to '%s', not reporting to metaserver."
 msgstr ""
+"Строку патчей метасерверу встановлено до '%s', не зв╕ту╓мо метасерверу."
 
 #: server/stdinhand.c:1289
 msgid "Welcome message set to the default."
@@ -28225,7 +28544,7 @@ msgstr "Використання: away"
 
 #: server/stdinhand.c:3440
 msgid "Only players may use the away command."
-msgstr ""
+msgstr "Т╕льки гравц╕ можуть використовувати команду away."
 
 #: server/stdinhand.c:3445
 #, c-format
@@ -28264,7 +28583,7 @@ msgstr "Встановити локальн╕ опц╕╖"
 
 #: server/stdinhand.c:3561
 msgid "Rarely used options"
-msgstr ""
+msgstr "Р╕дко потр╕бн╕ опц╕╖"
 
 #: server/stdinhand.c:3564
 #, fuzzy
@@ -28346,7 +28665,7 @@ msgstr ""
 
 #: server/stdinhand.c:3816
 msgid "There are no votes going on."
-msgstr ""
+msgstr "Нема╓ активних голосуваннь."
 
 #: server/stdinhand.c:3822 server/stdinhand.c:3925 server/stdinhand.c:5991
 #: server/stdinhand.c:6296 server/stdinhand.c:6392 server/stdinhand.c:6621
@@ -28361,7 +28680,7 @@ msgstr "Аргумент допомоги '%s' двозначний."
 
 #: server/stdinhand.c:3844
 msgid "No legal last vote."
-msgstr ""
+msgstr "Нема╓ останнього легального голосу."
 
 #: server/stdinhand.c:3849 server/stdinhand.c:4304 server/stdinhand.c:4330
 msgid "Value must be an integer."
@@ -28370,7 +28689,7 @@ msgstr "Значення повино бути ц╕лим."
 #: server/stdinhand.c:3855 server/stdinhand.c:3931
 #, c-format
 msgid "No such vote (%d)."
-msgstr ""
+msgstr "Нема╓ такого голосування (%d)."
 
 #: server/stdinhand.c:3860
 #, fuzzy, c-format
@@ -28380,7 +28699,7 @@ msgstr "Не можу в╕дкрити \"%s\"."
 #: server/stdinhand.c:3864
 #, c-format
 msgid "You voted against \"%s\""
-msgstr ""
+msgstr "Ви проголосували проти \"%s\""
 
 #: server/stdinhand.c:3869
 #, fuzzy, c-format
@@ -28445,7 +28764,7 @@ msgstr "Не можна зм╕нити команду п╕сля старту гри."
 #: server/stdinhand.c:4015 server/stdinhand.c:4056
 #, c-format
 msgid "%s no longer debugged"
-msgstr ""
+msgstr "%s б╕льше не у стан╕ в╕дладки"
 
 #: server/stdinhand.c:4021
 #, c-format
@@ -28459,21 +28778,21 @@ msgstr "Значення повино бути ц╕лим."
 
 #: server/stdinhand.c:4043 server/stdinhand.c:4083
 msgid "Bad map coordinates."
-msgstr ""
+msgstr "Нев╕рн╕ координати на мап╕."
 
 #: server/stdinhand.c:4050
 msgid "No city at this coordinate."
-msgstr ""
+msgstr "За такими координатами нема╓ м╕ста."
 
 #: server/stdinhand.c:4091 server/stdinhand.c:4125
-#, c-format
+#, fuzzy, c-format
 msgid "%s's %s no longer debugged."
-msgstr ""
+msgstr "Гра: %s %s атаковано атомною бомбою."
 
 #: server/stdinhand.c:4097 server/stdinhand.c:4131
-#, c-format
+#, fuzzy, c-format
 msgid "%s's %s debugged."
-msgstr ""
+msgstr "Гра: %s %s атаковано атомною бомбою."
 
 #: server/stdinhand.c:4113
 #, fuzzy
@@ -28483,7 +28802,7 @@ msgstr "Значення повино бути ц╕лим."
 #: server/stdinhand.c:4118
 #, c-format
 msgid "Unit %d does not exist."
-msgstr ""
+msgstr "П╕дрозд╕ла %d не ╕сну╓."
 
 #: server/stdinhand.c:4162
 #, c-format
@@ -28540,19 +28859,21 @@ msgstr "Опц╕я: %s встановлена у \"%s\"."
 
 #: server/stdinhand.c:4410 server/stdinhand.c:4580 server/stdinhand.c:4587
 msgid "Sorry, one can't observe globally in this game."
-msgstr ""
+msgstr "Вибачте, н╕хто не може спостер╕гати глобально у ц╕й гр╕."
 
 #: server/stdinhand.c:4415
 msgid "Sorry, you can't take a global observer. Observe it instead."
 msgstr ""
+"Вибачте, Ви не можете отримати керування глобальним спостер╕гачем. "
+"Спостер╕гайте."
 
 #: server/stdinhand.c:4428
 msgid "Sorry, one can't observe barbarians in this game."
-msgstr ""
+msgstr "Вибачте, н╕хто не може спостер╕гати за дикунами у ц╕й гр╕."
 
 #: server/stdinhand.c:4433
 msgid "Sorry, one can't take barbarians in this game."
-msgstr ""
+msgstr "Вибачте, н╕хто не може отримати керування дикунами у ц╕й гр╕."
 
 #: server/stdinhand.c:4446
 #, fuzzy
@@ -28566,7 +28887,7 @@ msgstr "Не зв╕ту╓мо метасерверу у ц╕й гр╕."
 
 #: server/stdinhand.c:4464
 msgid "Sorry, one can't observe AI players in this game."
-msgstr ""
+msgstr "Вибачте, н╕хто не може спостер╕гати за Ш╤-гравцями у ц╕й гр╕."
 
 #: server/stdinhand.c:4469
 #, fuzzy
@@ -28575,11 +28896,11 @@ msgstr "Створити комп'ютерного гравця з таким ╕м'ям"
 
 #: server/stdinhand.c:4482
 msgid "Sorry, one can't observe human players in this game."
-msgstr ""
+msgstr "Вибачте, н╕хто не може спостер╕гати за гравцями-людинами у ц╕й гр╕."
 
 #: server/stdinhand.c:4488
 msgid "Sorry, one can't take human players in this game."
-msgstr ""
+msgstr "Вибачте, н╕хто не може отримати керування гравцями-людинами у ц╕й гр╕."
 
 #: server/stdinhand.c:4497
 #, fuzzy
@@ -28660,7 +28981,7 @@ msgstr "%s вже контролю╓ або нагляда╓ над %s"
 #: server/stdinhand.c:4830
 #, c-format
 msgid "being detached from %s."
-msgstr ""
+msgstr "в╕дключаюся в╕д %s."
 
 #: server/stdinhand.c:4884
 #, fuzzy, c-format
@@ -28678,9 +28999,9 @@ msgid "You can not detach other users."
 msgstr "Гра: Ви не можете атакувати тут."
 
 #: server/stdinhand.c:4945
-#, c-format
+#, fuzzy, c-format
 msgid "%s is not attached to any player."
-msgstr ""
+msgstr "Гра: %s невдала назва."
 
 #: server/stdinhand.c:4977
 #, fuzzy, c-format
@@ -29196,7 +29517,7 @@ msgstr ""
 #: server/stdinhand.c:6913
 msgid ""
 "Ending the game. The server will restart once all clients have disconnected."
-msgstr ""
+msgstr "Зак╕нчую гру. Сервер буде перезапущено коли ус╕ кл╕╓нти в╕д'╓днаються."
 
 #: server/stdinhand.c:6977
 msgid ""
@@ -29662,7 +29983,7 @@ msgstr ", Помер"
 
 #: server/stdinhand.c:8384
 msgid ", not ready"
-msgstr ""
+msgstr ", не готове"
 
 #: server/stdinhand.c:8392
 #, c-format
@@ -30031,12 +30352,12 @@ msgstr "Гра: Розпущено Ваш %s у (%d, %d)."
 #: server/unittools.c:1533
 #, c-format
 msgid "Unable to defend %s, %s has lost the game."
-msgstr ""
+msgstr "Не можу захистити %s, %s програв гру."
 
 #: server/unittools.c:1535
 #, c-format
 msgid "Losing %s meant losing the game! Be more careful next time!"
-msgstr ""
+msgstr "Втрата %s означа╓ програш гри! Будьте б╕льш пильним ╕ншого разу!"
 
 #: server/unittools.c:1639
 #, fuzzy, c-format
@@ -30397,7 +30718,7 @@ msgstr "не сп╕впада╓"
 #: utility/support.c:144 utility/support.c:173
 #, c-format
 msgid "error %ld (failed FormatMessage)"
-msgstr ""
+msgstr "помилка %ld (невдале FormatMessage)"
 
 #: utility/support.c:154 utility/support.c:183
 #, c-format

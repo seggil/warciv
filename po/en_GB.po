@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freeciv 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 1999-10-21 20:02+0100\n"
 "Last-Translator: Robert Brady <rwb197@ecs.soton.ac.uk>\n"
 "Language-Team: \n"
@@ -2915,7 +2915,7 @@ msgstr ""
 
 #: client/gui-gtk-2.0/mapview.c:1234
 msgid "Better fog will only work in truecolor.  Disabling it"
-msgstr ""
+msgstr "Better fog will only work in truecoulor.  Disabling it"
 
 #: client/gui-gtk-2.0/mapview.c:1439
 #, c-format
@@ -4864,7 +4864,7 @@ msgstr ""
 
 #: client/helpdata.c:132
 msgid "(Railroads and fortresses require 3 turns, regardless of terrain.)"
-msgstr ""
+msgstr "(Railways and fortresses require 3 turns, regardless of terrain.)"
 
 #. TRANS: preserve single space at beginning
 #: client/helpdata.c:280
@@ -5803,7 +5803,7 @@ msgstr ""
 
 #: client/options.c:116
 msgid "Mapview recentering time (milliseconds)"
-msgstr ""
+msgstr "Mapview recentring time (milliseconds)"
 
 #: client/options.c:117
 msgid "Show combat animation"
@@ -9116,8 +9116,9 @@ msgstr ""
 #: data/history/cities.ruleset:79 data/nation/kurd.ruleset:5
 #: data/nowonder+1.2/cities.ruleset:79 data/tournament/cities.ruleset:79
 #: data/warruleset-1.2/cities.ruleset:79 data/warruleset-1.3/cities.ruleset:79
+#, fuzzy
 msgid "Asian"
-msgstr ""
+msgstr "Railway"
 
 #: data/1.14style/cities.ruleset:88 data/civ1/cities.ruleset:88
 #: data/civ2/cities.ruleset:88 data/default/cities.ruleset:88
@@ -14331,6 +14332,12 @@ msgid ""
 "center may have a ruleset-dependent minimum for food, shield, and trade "
 "output."
 msgstr ""
+"City centres (the tile a city is on) are special.  A city centre is worked "
+"for free in the default rules. When a city is built a road is automatically "
+"put on the city, and a railway will also be placed there whenever possible.  "
+"City centres are auto-irrigated: they get the benefits of irrigation, "
+"although they are not actually irrigated. Finally the city centre may have a "
+"ruleset-dependent minimum for food, shield, and trade output."
 
 #: data/helpdata.txt:1646
 msgid "  Pillaging"
@@ -15105,8 +15112,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/armenian.ruleset:3
+#, fuzzy
 msgid "Armenian"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/armenian.ruleset:4
 #, fuzzy
@@ -15211,8 +15219,9 @@ msgstr ""
 
 #. TRANS: Mama = Priest
 #: data/nation/aymara.ruleset:34 data/nation/tairona.ruleset:30
+#, fuzzy
 msgid "Mama"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/aymara.ruleset:35
 msgid "Markachiri"
@@ -15363,8 +15372,9 @@ msgid "Errege"
 msgstr ""
 
 #: data/nation/basque.ruleset:37
+#, fuzzy
 msgid "Erregina"
-msgstr ""
+msgstr "Railway"
 
 #. TRANS: Lehendakari = similar to President
 #. ; /* TRANS: (but is quite inexact for Basques to call him/her "president")
@@ -15456,8 +15466,9 @@ msgid "Major"
 msgstr ""
 
 #: data/nation/bengali.ruleset:26
+#, fuzzy
 msgid "?female:Major"
-msgstr ""
+msgstr "Dúnedan"
 
 #: data/nation/boer.ruleset:3
 msgid "Boer"
@@ -15746,8 +15757,9 @@ msgid "Mwami"
 msgstr "Railway"
 
 #: data/nation/burundi.ruleset:28
+#, fuzzy
 msgid "Mwamikazi"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/byzantium.ruleset:3
 msgid "Byzantine"
@@ -16249,8 +16261,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/dominican.ruleset:3
+#, fuzzy
 msgid "Dominican"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/dominican.ruleset:4
 #, fuzzy
@@ -16659,12 +16672,14 @@ msgid "The ancient Greeks, between Mycenae and the Roman conquest."
 msgstr ""
 
 #: data/nation/greek.ruleset:19
+#, fuzzy
 msgid "Despot"
-msgstr ""
+msgstr "Traveller's Report:"
 
 #: data/nation/greek.ruleset:19
+#, fuzzy
 msgid "?female:Despot"
-msgstr ""
+msgstr "Traveller's Report:"
 
 #: data/nation/greenland.ruleset:3
 msgid "Eskimo"
@@ -17046,8 +17061,9 @@ msgid "?female:Great Shaman"
 msgstr ""
 
 #: data/nation/iranian.ruleset:3
+#, fuzzy
 msgid "Iranian"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/iranian.ruleset:4
 #, fuzzy
@@ -17415,8 +17431,9 @@ msgid "?female:Supreme Commander"
 msgstr ""
 
 #: data/nation/laotian.ruleset:3
+#, fuzzy
 msgid "Laotian"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/laotian.ruleset:4
 #, fuzzy
@@ -17497,8 +17514,9 @@ msgid "Great Duchess"
 msgstr ""
 
 #: data/nation/lojbanistani.ruleset:3
+#, fuzzy
 msgid "Lojbanistani"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/lojbanistani.ruleset:4
 #, fuzzy
@@ -17748,8 +17766,9 @@ msgid "Ah kin"
 msgstr ""
 
 #: data/nation/mayan.ruleset:22
+#, fuzzy
 msgid "?female:Ah kin"
-msgstr ""
+msgstr "Traveller's Report:"
 
 #: data/nation/mexican.ruleset:3
 msgid "Mexican"
@@ -17958,8 +17977,9 @@ msgid "Jarl"
 msgstr ""
 
 #: data/nation/norman.ruleset:22
+#, fuzzy
 msgid "?female:Jarl"
-msgstr ""
+msgstr "Dúnedan"
 
 #: data/nation/northkorean.ruleset:3
 msgid "North Korean"
@@ -18119,8 +18139,9 @@ msgid "Imparator"
 msgstr ""
 
 #: data/nation/pakistani.ruleset:3
+#, fuzzy
 msgid "Pakistani"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/pakistani.ruleset:4
 #, fuzzy
@@ -18173,8 +18194,9 @@ msgid "The Papuans are a Melanesian people on the island of New Guinea."
 msgstr ""
 
 #: data/nation/papuan.ruleset:16
+#, fuzzy
 msgid "Governor-General"
-msgstr ""
+msgstr "Honourable"
 
 #: data/nation/persian.ruleset:3
 msgid "Persian"
@@ -18356,8 +18378,9 @@ msgid "Grand Master"
 msgstr ""
 
 #: data/nation/prussian.ruleset:27
+#, fuzzy
 msgid "Elector"
-msgstr ""
+msgstr "Traveller's Report:"
 
 #: data/nation/purhepecha.ruleset:3
 msgid "P'urhepecha"
@@ -18716,6 +18739,14 @@ msgid ""
 "prisoner Nelson Mandela was elected the first truly democratically elected "
 "president of South Africa."
 msgstr ""
+"Dutch settlers began colonizing southern Africa in the 17th century. After "
+"many wars between primarily Boers (descendants of Dutch settlers), British "
+"forces and Zulus, the Union of South Africa was created in 1910. The South "
+"African government became notorious for its \"apartheid\" policy of legal "
+"inequality based on the colour of a citizen's skin. Following the adoption "
+"of the country's first non-racial constitution in 1994, long-time political "
+"prisoner Nelson Mandela was elected the first truly democratically elected "
+"president of South Africa."
 
 #: data/nation/southkorean.ruleset:3
 msgid "South Korean"
@@ -18851,8 +18882,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/sumerian.ruleset:27
+#, fuzzy
 msgid "Nin"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/sumerian.ruleset:29
 msgid "Ensi"
@@ -18922,8 +18954,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/swiss.ruleset:19
+#, fuzzy
 msgid "?female:General"
-msgstr ""
+msgstr "Honourable"
 
 #: data/nation/swiss.ruleset:20
 msgid "Bailiff"
@@ -18946,8 +18979,9 @@ msgid "?female:Federal Chancellor"
 msgstr ""
 
 #: data/nation/syrian.ruleset:3
+#, fuzzy
 msgid "Syrian"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/syrian.ruleset:4
 #, fuzzy
@@ -19110,8 +19144,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/thracian.ruleset:3
+#, fuzzy
 msgid "Thracian"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/thracian.ruleset:4
 #, fuzzy
@@ -19192,12 +19227,14 @@ msgstr ""
 
 #. TRANS: Lant/Lantsa = King/Queen
 #: data/nation/tocharian.ruleset:35
+#, fuzzy
 msgid "Lant"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/tocharian.ruleset:35
+#, fuzzy
 msgid "Lantsa"
-msgstr ""
+msgstr "Railway"
 
 #: data/nation/tunisian.ruleset:3
 msgid "Tunisian"
@@ -19326,24 +19363,28 @@ msgid ""
 msgstr ""
 
 #: data/nation/un.ruleset:23
+#, fuzzy
 msgid "?female:Chairperson"
-msgstr ""
+msgstr "Traveller's Report:"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "Secretary-General"
-msgstr ""
+msgstr "Honourable"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "?female:Secretary-General"
-msgstr ""
+msgstr "Honourable"
 
 #: data/nation/un.ruleset:25
 msgid "Representative"
 msgstr ""
 
 #: data/nation/un.ruleset:25
+#, fuzzy
 msgid "?female:Representative"
-msgstr ""
+msgstr "Traveller's Report:"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
@@ -19398,8 +19439,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/venezuelan.ruleset:3
+#, fuzzy
 msgid "Venezuelan"
-msgstr ""
+msgstr "Dúnedan"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -26405,7 +26447,7 @@ msgstr ""
 
 #: server/stdinhand.c:6587
 msgid "Your new vote cancelled your previous vote."
-msgstr ""
+msgstr "Your new vote cancelled your previous vote."
 
 #: server/stdinhand.c:6594
 #, c-format

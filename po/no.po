@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 2005-01-28 11:42+0100\n"
 "Last-Translator: Per I. Mathisen <per@freeciv.org>\n"
 "Language-Team: Norwegian <andrearo@stud.ntnu.no>\n"
@@ -5025,8 +5025,9 @@ msgid "Beta"
 msgstr "Best"
 
 #: client/gui-gtk-2.0/style.c:93
+#, fuzzy
 msgid "Small Font"
-msgstr ""
+msgstr "Tilgjengelige underverker"
 
 #: client/gui-gtk-2.0/style.c:101
 #, fuzzy
@@ -17124,8 +17125,9 @@ msgid "Buruzagi"
 msgstr ""
 
 #: data/nation/basque.ruleset:33
+#, fuzzy
 msgid "?female:Buruzagi"
-msgstr ""
+msgstr "Kamerat"
 
 #. TRANS: Apaiz nagusi = Pope, Lord Protector
 #: data/nation/basque.ruleset:35
@@ -17154,8 +17156,9 @@ msgid "Lehendakari"
 msgstr ""
 
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
+#, fuzzy
 msgid "?female:Lehendakari"
-msgstr ""
+msgstr "President"
 
 #: data/nation/bavarian.ruleset:3
 msgid "Bavarian"
@@ -17233,8 +17236,9 @@ msgid "Nabob"
 msgstr ""
 
 #: data/nation/bengali.ruleset:25
+#, fuzzy
 msgid "?female:Nabob"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/bengali.ruleset:26
 #, fuzzy
@@ -17242,8 +17246,9 @@ msgid "Major"
 msgstr "Murkunst"
 
 #: data/nation/bengali.ruleset:26
+#, fuzzy
 msgid "?female:Major"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/boer.ruleset:3
 msgid "Boer"
@@ -17511,8 +17516,9 @@ msgid "Bohmugyi"
 msgstr ""
 
 #: data/nation/burmese.ruleset:21
+#, fuzzy
 msgid "?female:Bohmugyi"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/burmese.ruleset:22
 #, fuzzy
@@ -17585,8 +17591,9 @@ msgid "Basileus"
 msgstr "Oase"
 
 #: data/nation/byzantium.ruleset:28
+#, fuzzy
 msgid "?female:Basileus"
-msgstr ""
+msgstr "Oase"
 
 #: data/nation/cambodian.ruleset:3
 #, fuzzy
@@ -17749,8 +17756,9 @@ msgstr "Høvding"
 #: data/nation/malian.ruleset:26 data/nation/maori.ruleset:24
 #: data/nation/sioux.ruleset:28 data/nation/southafrican.ruleset:25
 #: data/nation/swazi.ruleset:22 data/nation/zulu.ruleset:38
+#, fuzzy
 msgid "?female:Chief"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/muskogee.ruleset:32 data/nation/sioux.ruleset:29
@@ -17782,8 +17790,9 @@ msgid "Principal Chief"
 msgstr "Store Høvding"
 
 #: data/nation/cherokee.ruleset:25
+#, fuzzy
 msgid "?female:Principal Chief"
-msgstr ""
+msgstr "President"
 
 #: data/nation/chilean.ruleset:3
 msgid "Chilean"
@@ -18457,8 +18466,9 @@ msgid "Druid"
 msgstr "Frukt"
 
 #: data/nation/gallic.ruleset:30
+#, fuzzy
 msgid "?female:Druid"
-msgstr ""
+msgstr "President"
 
 #: data/nation/georgian.ruleset:3
 #, fuzzy
@@ -18532,8 +18542,9 @@ msgid "Despot"
 msgstr "Despotisme"
 
 #: data/nation/greek.ruleset:19
+#, fuzzy
 msgid "?female:Despot"
-msgstr ""
+msgstr "President"
 
 #: data/nation/greenland.ruleset:3
 #, fuzzy
@@ -18592,12 +18603,14 @@ msgid "h4xx0r r0xx0rz!"
 msgstr ""
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?title:Hacker"
-msgstr ""
+msgstr "Folkemorder"
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?female:Hacker"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/hawaiian.ruleset:3
 #, fuzzy
@@ -18650,8 +18663,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/himyarite.ruleset:3
+#, fuzzy
 msgid "Himyarite"
-msgstr ""
+msgstr "Stilling"
 
 #: data/nation/himyarite.ruleset:4
 #, fuzzy
@@ -18829,12 +18843,14 @@ msgid "Inka"
 msgstr "inka"
 
 #: data/nation/inca.ruleset:36
+#, fuzzy
 msgid "Sapa Inka"
-msgstr ""
+msgstr "inka"
 
 #: data/nation/inca.ruleset:37
+#, fuzzy
 msgid "Willaq Umu"
-msgstr ""
+msgstr "Plyndre"
 
 #: data/nation/indian.ruleset:3
 msgid "Indian"
@@ -18856,8 +18872,9 @@ msgid "Raja"
 msgstr "Raina"
 
 #: data/nation/indian.ruleset:19
+#, fuzzy
 msgid "?female:Raja"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/indian.ruleset:20
 msgid "Maharaja"
@@ -18874,8 +18891,9 @@ msgid "Mahatma"
 msgstr "Maharaja"
 
 #: data/nation/indian.ruleset:21
+#, fuzzy
 msgid "?female:Mahatma"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/indonesian.ruleset:3
 msgid "Indonesian"
@@ -18916,8 +18934,9 @@ msgid "Shaman"
 msgstr "Formann"
 
 #: data/nation/inuit.ruleset:20
+#, fuzzy
 msgid "?female:Shaman"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/inuit.ruleset:21
 #, fuzzy
@@ -19321,8 +19340,9 @@ msgid "Supreme Commander"
 msgstr "Overdiktator"
 
 #: data/nation/lankese.ruleset:22
+#, fuzzy
 msgid "?female:Supreme Commander"
-msgstr ""
+msgstr "Overdiktator"
 
 #: data/nation/laotian.ruleset:3
 #, fuzzy
@@ -19492,8 +19512,9 @@ msgid "High Commissioner"
 msgstr ""
 
 #: data/nation/malagasy.ruleset:22
+#, fuzzy
 msgid "?female:High Commissioner"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/malaysian.ruleset:3
 msgid "Malaysian"
@@ -19604,8 +19625,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/mapuche.ruleset:19
+#, fuzzy
 msgid "Toqui"
-msgstr ""
+msgstr "irsk"
 
 #: data/nation/mapuche.ruleset:20
 #, fuzzy
@@ -19661,8 +19683,9 @@ msgid "Ajaw"
 msgstr ""
 
 #: data/nation/mayan.ruleset:20
+#, fuzzy
 msgid "?female:Ajaw"
-msgstr ""
+msgstr "Kamerat"
 
 #. TRANS: Ah kin = Priest
 #: data/nation/mayan.ruleset:22
@@ -19670,8 +19693,9 @@ msgid "Ah kin"
 msgstr ""
 
 #: data/nation/mayan.ruleset:22
+#, fuzzy
 msgid "?female:Ah kin"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/mexican.ruleset:3
 msgid "Mexican"
@@ -19771,12 +19795,14 @@ msgstr ""
 "ble beryktet for sin fryktløse krigføring."
 
 #: data/nation/mongol.ruleset:29 data/nation/uyghur.ruleset:29
+#, fuzzy
 msgid "?female:Khan"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/mongol.ruleset:31 data/nation/uyghur.ruleset:30
+#, fuzzy
 msgid "?female:Khagan"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/mordor.ruleset:3
 msgid "Mordor"
@@ -19887,8 +19913,9 @@ msgid "Jarl"
 msgstr "Patruljer"
 
 #: data/nation/norman.ruleset:22
+#, fuzzy
 msgid "?female:Jarl"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/northkorean.ruleset:3
 #, fuzzy
@@ -20508,12 +20535,14 @@ msgstr ""
 
 #. TRANS: Noaydde = Shaman
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "Noaydde"
-msgstr ""
+msgstr "Nei"
 
 #: data/nation/sami.ruleset:22
+#, fuzzy
 msgid "?female:Noaydde"
-msgstr ""
+msgstr "Kamerat"
 
 #: data/nation/samogitian.ruleset:3
 #, fuzzy
@@ -20613,8 +20642,9 @@ msgid "Encik"
 msgstr "Encik"
 
 #: data/nation/singaporean.ruleset:34
+#, fuzzy
 msgid "?female:Encik"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/sioux.ruleset:3
 msgid "Sioux"
@@ -20661,8 +20691,9 @@ msgid "Priestess"
 msgstr "Høyeste prestinne"
 
 #: data/nation/slovakian.ruleset:30 data/nation/soviet.ruleset:27
+#, fuzzy
 msgid "?female:General Secretary"
-msgstr ""
+msgstr "Generalsekretær"
 
 #: data/nation/slovenian.ruleset:3
 msgid "Slovenian"
@@ -20681,8 +20712,9 @@ msgstr ""
 "føderasjonen."
 
 #: data/nation/southafrican.ruleset:3
+#, fuzzy
 msgid "South African"
-msgstr ""
+msgstr "amerikansk"
 
 #: data/nation/southafrican.ruleset:4
 #, fuzzy
@@ -20750,8 +20782,9 @@ msgid "Great Leader"
 msgstr "Verdensbiblioteket"
 
 #: data/nation/soviet.ruleset:28
+#, fuzzy
 msgid "?female:Great Leader"
-msgstr ""
+msgstr "Underverk"
 
 #: data/nation/spanish.ruleset:3
 msgid "Spanish"
@@ -20917,8 +20950,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/swiss.ruleset:19
+#, fuzzy
 msgid "?female:General"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/swiss.ruleset:20
 #, fuzzy
@@ -20926,8 +20960,9 @@ msgid "Bailiff"
 msgstr "brasiliansk"
 
 #: data/nation/swiss.ruleset:20
+#, fuzzy
 msgid "?female:Bailiff"
-msgstr ""
+msgstr "brasiliansk"
 
 #: data/nation/swiss.ruleset:21 data/nation/swiss.ruleset:22
 msgid "President of the Confederation"
@@ -20939,8 +20974,9 @@ msgid "Federal Chancellor"
 msgstr "Kansler"
 
 #: data/nation/swiss.ruleset:23
+#, fuzzy
 msgid "?female:Federal Chancellor"
-msgstr ""
+msgstr "Kansler"
 
 #: data/nation/syrian.ruleset:3
 #, fuzzy
@@ -21157,8 +21193,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/tibetan.ruleset:27
+#, fuzzy
 msgid "Lama"
-msgstr ""
+msgstr "Ned"
 
 #: data/nation/tibetan.ruleset:28
 #, fuzzy
@@ -21356,20 +21393,23 @@ msgid "?female:Chairperson"
 msgstr "Forkvinne"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "Secretary-General"
-msgstr ""
+msgstr "Sysselmann"
 
 #: data/nation/un.ruleset:24
+#, fuzzy
 msgid "?female:Secretary-General"
-msgstr ""
+msgstr "Konsul"
 
 #: data/nation/un.ruleset:25
 msgid "Representative"
 msgstr ""
 
 #: data/nation/un.ruleset:25
+#, fuzzy
 msgid "?female:Representative"
-msgstr ""
+msgstr "President"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
@@ -21424,8 +21464,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/venezuelan.ruleset:3
+#, fuzzy
 msgid "Venezuelan"
-msgstr ""
+msgstr "?plural:kenyanere"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -23939,8 +23980,9 @@ msgid "Your password is incorrect. Try again."
 msgstr "Passordet er feil. Prøv igjen."
 
 #: server/database.c:345
+#, fuzzy
 msgid "Sorry, your connection timed out..."
-msgstr ""
+msgstr "Beklager, luftpatruljering er ikke implementert."
 
 #: server/database.c:348
 #, c-format

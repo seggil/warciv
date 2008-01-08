@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 14:10+0100\n"
+"POT-Creation-Date: 2008-01-08 16:28+0100\n"
 "PO-Revision-Date: 2006-07-12 16:59-0330\n"
 "Last-Translator: Arman Ordookhani <arman_o71@Yahoo.com>\n"
 "Language-Team: Farsi\n"
@@ -507,8 +507,9 @@ msgid "State"
 msgstr "وضعیت"
 
 #: client/cityrepdata.c:415
+#, fuzzy
 msgid "Rapture/Peace/Disorder"
-msgstr ""
+msgstr "././مختل شده"
 
 #: client/cityrepdata.c:417
 msgid "Concise *=Rapture, X=Disorder"
@@ -1893,7 +1894,7 @@ msgstr "شگفتی‌ها"
 #: client/gui-gtk-2.0/cityrep.c:1628 client/gui-gtk-2.0/cityrep.c:1660
 #: client/gui-gtk-2.0/cityrep.c:1681 client/gui-gtk-2.0/cityrep.c:1702
 msgid "Worklist"
-msgstr ""
+msgstr "لیست کار"
 
 #: client/gui-gtk-2.0/cityrep.c:1852 data/Freeciv.in:1170
 msgid "All Cities"
@@ -2454,7 +2455,7 @@ msgstr "نقشه‌ها"
 
 #: client/gui-gtk-2.0/diplodlg.c:256 server/settings.c:41
 msgid "All"
-msgstr ""
+msgstr "همه"
 
 #: client/gui-gtk-2.0/diplodlg.c:260
 msgid "_Advances"
@@ -2826,19 +2827,19 @@ msgstr ""
 
 #: client/gui-gtk-2.0/helpdlg.c:106
 msgid "Road Rslt/Time:"
-msgstr ""
+msgstr "جاده نتیجه/زمان:"
 
 #: client/gui-gtk-2.0/helpdlg.c:106
 msgid "Irrig. Rslt/Time:"
-msgstr ""
+msgstr "آبیاری نتیجه/زمان:"
 
 #: client/gui-gtk-2.0/helpdlg.c:107
 msgid "Mine Rslt/Time:"
-msgstr ""
+msgstr "معدن نتیجه/زمان:"
 
 #: client/gui-gtk-2.0/helpdlg.c:107
 msgid "Trans. Rslt/Time:"
-msgstr ""
+msgstr "تبدیل نتیجه/زمان:"
 
 #: client/gui-gtk-2.0/helpdlg.c:129 data/helpdata.txt:37
 msgid "About"
@@ -2890,7 +2891,7 @@ msgstr "را با"
 
 #: client/gui-gtk-2.0/helpdlg.c:955 client/gui-gtk-2.0/helpdlg.c:972
 msgid "?techhelp:"
-msgstr ""
+msgstr "?techhelp:"
 
 #: client/gui-gtk-2.0/helpdlg.c:1006 client/gui-gtk-2.0/helpdlg.c:1020
 #, c-format
@@ -2924,7 +2925,7 @@ msgstr "+%d منبع / %d"
 
 #: client/gui-gtk-2.0/inteldlg.c:41
 msgid "Ruler:"
-msgstr ""
+msgstr "حاکم:"
 
 #: client/gui-gtk-2.0/inteldlg.c:42
 msgid "Government:"
@@ -2974,7 +2975,7 @@ msgstr "ساختن شهر جدید"
 
 #: client/gui-gtk-2.0/mapctrl.c:196
 msgid "What should we call our new city?"
-msgstr ""
+msgstr "شهر جدیدمان را چه باید بنامیم؟"
 
 #: client/gui-gtk-2.0/mapview.c:159
 msgid "Shows your current luxury/science/tax rates;click to toggle them."
@@ -3301,7 +3302,7 @@ msgstr "ساخت دژ"
 
 #: client/gui-gtk-2.0/menu.c:2002
 msgid "Build Airbas_e"
-msgstr ""
+msgstr "ساخت پایگاه هوایی"
 
 #: client/gui-gtk-2.0/menu.c:2004 client/gui-gtk-2.0/menu.c:4225
 msgid "Clean _Pollution"
@@ -3309,7 +3310,7 @@ msgstr "پاک کردن آلودگی"
 
 #: client/gui-gtk-2.0/menu.c:2006
 msgid "Clean _Nuclear Fallout"
-msgstr ""
+msgstr "پاک کردن غبار اتمی"
 
 #: client/gui-gtk-2.0/menu.c:2010
 msgid "_Sentry"
@@ -4287,11 +4288,11 @@ msgstr "خط گفتگو"
 
 #: client/gui-gtk-2.0/menu.c:3023
 msgid "_Worklist Editor"
-msgstr ""
+msgstr "ویرایش‌گر لیست کار"
 
 #: client/gui-gtk-2.0/menu.c:3025
 msgid "Citizen _Management"
-msgstr ""
+msgstr "مدریت شهروندان"
 
 #: client/gui-gtk-2.0/menu.c:3027
 msgid "_Playing"
@@ -4312,7 +4313,7 @@ msgstr "جنگ"
 
 #: client/gui-gtk-2.0/menu.c:3039
 msgid "_ZOC"
-msgstr ""
+msgstr "محدوده کنترل"
 
 #: client/gui-gtk-2.0/menu.c:3041
 msgid "Techno_logy"
@@ -4376,7 +4377,7 @@ msgstr "اضافه کردن به شهر (_B)"
 
 #: client/gui-gtk-2.0/menu.c:4169
 msgid "Make Trade _Route"
-msgstr ""
+msgstr "ساخت راه تجاری"
 
 #: client/gui-gtk-2.0/menu.c:4172
 msgid "Build _Railroad"
@@ -4421,7 +4422,7 @@ msgstr "بیرون"
 
 #: client/gui-gtk-2.0/messagedlg.c:131
 msgid "Mes"
-msgstr ""
+msgstr "پبام"
 
 #: client/gui-gtk-2.0/messagedlg.c:138
 msgid "Pop"
@@ -4609,11 +4610,11 @@ msgstr "شروع"
 
 #: client/gui-gtk-2.0/pages.c:1487
 msgid "Choose Saved Game to Load"
-msgstr ""
+msgstr "بازی ذخیره شده را برای بارگذاری انتخاب کنید"
 
 #: client/gui-gtk-2.0/pages.c:1563
 msgid "Choose Saved Game to _Load:"
-msgstr ""
+msgstr "بازی ذخیره شده را برای بارگذاری انتخاب کنید"
 
 #: client/gui-gtk-2.0/pages.c:1581 client/gui-gtk-2.0/pages.c:1707
 #: client/gui-gtk-2.0/pages.c:2162
@@ -4640,7 +4641,7 @@ msgstr "مرده"
 #: client/gui-gtk-2.0/pages.c:1805 client/plrdlg_common.c:228
 #: server/stdinhand.c:4887 server/stdinhand.c:8350
 msgid "AI"
-msgstr ""
+msgstr "ه‌م"
 
 #: client/gui-gtk-2.0/pages.c:1805 client/gui-gtk-2.0/pages.c:1830
 #: server/stdinhand.c:4887 server/stdinhand.c:8354
@@ -4760,7 +4761,7 @@ msgstr "فروختن همه"
 #: client/gui-gtk-2.0/repodlgs.c:856
 #, c-format
 msgid "Do you really wish to sell your %s?\n"
-msgstr ""
+msgstr "آیا واقعاً می‌خواهید %s خود را بفروشید؟\n"
 
 #: client/gui-gtk-2.0/repodlgs.c:859
 msgid "Sell Improvements"
@@ -4773,7 +4774,7 @@ msgstr ""
 #: client/gui-gtk-2.0/repodlgs.c:944
 #, c-format
 msgid "Income: %d    Total Costs: %d"
-msgstr ""
+msgstr "درآمد: %d    قیمت کل: %d"
 
 #: client/gui-gtk-2.0/repodlgs.c:999
 msgid "Unit Type"
@@ -4781,11 +4782,11 @@ msgstr "نوع مهره"
 
 #: client/gui-gtk-2.0/repodlgs.c:1000
 msgid "U"
-msgstr ""
+msgstr "ت"
 
 #: client/gui-gtk-2.0/repodlgs.c:1001
 msgid "In-Prog"
-msgstr ""
+msgstr "در-برنامه"
 
 #: client/gui-gtk-2.0/repodlgs.c:1002
 msgid "Active"
@@ -4819,6 +4820,8 @@ msgid ""
 "Upgrade as many %s to %s as possible for %d gold each?\n"
 "Treasury contains %d gold."
 msgstr ""
+"ترفیع تمام %sها به %s با %d طلا برای هرکدام؟\n"
+"خزانه %d طلا دارد."
 
 #: client/gui-gtk-2.0/repodlgs.c:1320
 msgid "Totals:"
@@ -4865,6 +4868,8 @@ msgid ""
 "Military Service\n"
 "(months)"
 msgstr ""
+"خدمت نظامی\n"
+"(ماه)"
 
 #: client/gui-gtk-2.0/repodlgs.c:1351
 msgid "Wonders\n"
@@ -5216,7 +5221,7 @@ msgstr "* می‌تواند آلودگی را از زمین پاک کند.\n"
 #: client/helpdata.c:763
 #, c-format
 msgid "* Can clean nuclear fallout from tiles.\n"
-msgstr ""
+msgstr "* می‌تواند غبار اتمی را از زمین پاک کند\n"
 
 #: client/helpdata.c:766
 #, c-format
@@ -5991,7 +5996,7 @@ msgstr ""
 
 #: client/options.c:108
 msgid "Tileset"
-msgstr ""
+msgstr "مجموعه خانه"
 
 #: client/options.c:111
 msgid "Solid unit background color"
@@ -6084,19 +6089,19 @@ msgstr ""
 
 #: client/options.c:213
 msgid "City: Building Unavailable Item"
-msgstr ""
+msgstr "شهر: ساخت عنصری که در دسترس نیست"
 
 #: client/options.c:214
 msgid "City: Captured/Destroyed"
-msgstr ""
+msgstr "شهر: گرفته شد/خراب شد"
 
 #: client/options.c:215
 msgid "City: Celebrating"
-msgstr ""
+msgstr "شهر: جشن گرفته‌اند"
 
 #: client/options.c:216
 msgid "City: Civil Disorder"
-msgstr ""
+msgstr "شهر: مختل شده"
 
 #: client/options.c:217
 msgid "City: Famine"
@@ -6104,7 +6109,7 @@ msgstr "شهر: قحطی"
 
 #: client/options.c:218
 msgid "City: Famine Feared"
-msgstr ""
+msgstr "شهر: احتمال قحطی"
 
 #: client/options.c:219
 msgid "City: Growth"
@@ -6112,15 +6117,15 @@ msgstr "شهر: در حال رشد"
 
 #: client/options.c:220
 msgid "City: May Soon Grow"
-msgstr ""
+msgstr "شهر: بزودی رشد می‌کند"
 
 #: client/options.c:221
 msgid "City: Needs Aqueduct"
-msgstr ""
+msgstr "شهر: نیاز به آبراه دارد"
 
 #: client/options.c:222
 msgid "City: Needs Aqueduct Being Built"
-msgstr ""
+msgstr "شهر: نیاز به آبراه دارد (در حال ساخت)"
 
 #: client/options.c:223
 msgid "City: Normal"
@@ -6128,7 +6133,7 @@ msgstr "شهر: معمولی"
 
 #: client/options.c:224
 msgid "City: Nuked"
-msgstr ""
+msgstr "شهر: بمباران اتمی شده"
 
 #: client/options.c:225
 msgid "City: Released from CMA"
@@ -6140,39 +6145,39 @@ msgstr ""
 
 #: client/options.c:227
 msgid "City: Transfer"
-msgstr ""
+msgstr "شهر: جابجایی"
 
 #: client/options.c:228
 msgid "City: Was Built"
-msgstr ""
+msgstr "شهر: ساخته شده"
 
 #: client/options.c:229
 msgid "City: Worklist Events"
-msgstr ""
+msgstr "شهر: رویدادهای لیست کار"
 
 #: client/options.c:230
 msgid "Civ: Barbarian Uprising"
-msgstr ""
+msgstr "شهر: بیگانگان قیام کردند"
 
 #: client/options.c:231
 msgid "Civ: Civil War"
-msgstr ""
+msgstr "تمدن: جنگ تمدن"
 
 #: client/options.c:232
 msgid "Civ: Collapse to Anarchy"
-msgstr ""
+msgstr "تمدن: حکومت به هرج‌و‌مرج تبدیل شد"
 
 #: client/options.c:233
 msgid "Civ: First Contact"
-msgstr ""
+msgstr "تمدن: اولین ارتباط"
 
 #: client/options.c:234
 msgid "Civ: Learned New Government"
-msgstr ""
+msgstr "تمدن: حکومت جدید فراگرفته شد"
 
 #: client/options.c:235
 msgid "Civ: Low Funds"
-msgstr ""
+msgstr "تمدن: سرمایه کم"
 
 #: client/options.c:236
 msgid "Civ: Pollution"
@@ -6180,79 +6185,79 @@ msgstr "تمدن: آلودگی"
 
 #: client/options.c:237
 msgid "Civ: Revolt Ended"
-msgstr ""
+msgstr "تمدن: انقلاب پایان یافت"
 
 #: client/options.c:238
 msgid "Civ: Revolt Started"
-msgstr ""
+msgstr "تمدن: انقلااب شروع شد"
 
 #: client/options.c:239
 msgid "Civ: Spaceship Events"
-msgstr ""
+msgstr "تمدن: رویدادهای سفینه فضایی"
 
 #: client/options.c:240
 msgid "Diplomat Action: Bribe"
-msgstr ""
+msgstr "فعالیت دیپلمات: تطمیع"
 
 #: client/options.c:241
 msgid "Diplomat Action: Caused Incident"
-msgstr ""
+msgstr "فعالیت دیپلمات: باعث انقلاب شدن"
 
 #: client/options.c:242
 msgid "Diplomat Action: Escape"
-msgstr ""
+msgstr "فعالیت دیپلمات: فرار"
 
 #: client/options.c:243
 msgid "Diplomat Action: Embassy"
-msgstr ""
+msgstr "فعالیت دیپلمات: سفارت"
 
 #: client/options.c:244
 msgid "Diplomat Action: Failed"
-msgstr ""
+msgstr "فعالیت دیپلمات: ناموفق"
 
 #: client/options.c:245
 msgid "Diplomat Action: Incite"
-msgstr ""
+msgstr "فعالیت دیپلمات: انقلاب کردن"
 
 #: client/options.c:246
 msgid "Diplomat Action: Poison"
-msgstr ""
+msgstr "فعالیت دیپلمات: سمی کردن"
 
 #: client/options.c:247
 msgid "Diplomat Action: Sabotage"
-msgstr ""
+msgstr "فعالیت دیپلمات: خراب کاری"
 
 #: client/options.c:248
 msgid "Diplomat Action: Theft"
-msgstr ""
+msgstr "فعالیت دیپلمات: دزدی"
 
 #: client/options.c:249
 msgid "Enemy Diplomat: Bribe"
-msgstr ""
+msgstr "دیپلمات حریف: تطمیع"
 
 #: client/options.c:250
 msgid "Enemy Diplomat: Embassy"
-msgstr ""
+msgstr "دیپلمات حریف: سفارت"
 
 #: client/options.c:251
 msgid "Enemy Diplomat: Failed"
-msgstr ""
+msgstr "دیپلمات حریف: ناموفق"
 
 #: client/options.c:252
 msgid "Enemy Diplomat: Incite"
-msgstr ""
+msgstr "دیپلمات حریف: انقلاب کردن"
 
 #: client/options.c:253
 msgid "Enemy Diplomat: Poison"
-msgstr ""
+msgstr "دیپلمات حریف: سمی کردن"
 
 #: client/options.c:254
 msgid "Enemy Diplomat: Sabotage"
-msgstr ""
+msgstr "دیپلمات حریف: خراب کاری"
 
 #: client/options.c:255
 msgid "Enemy Diplomat: Theft"
-msgstr ""
+msgstr "دیپلمات حریف: دزدی"
 
 #: client/options.c:256
 #, fuzzy
@@ -6306,31 +6311,31 @@ msgstr ""
 
 #: client/options.c:267
 msgid "Hut: Barbarians in a Hut Roused"
-msgstr ""
+msgstr "کلبه: بیگانگان در کلبه بیدار شدند"
 
 #: client/options.c:268
 msgid "Hut: City Founded from Hut"
-msgstr ""
+msgstr "کلبه: در کلبه شهر پیدا شد"
 
 #: client/options.c:269
 msgid "Hut: Gold Found in Hut"
-msgstr ""
+msgstr "کلبه: در کلبه طلا پیدا شد"
 
 #: client/options.c:270
 msgid "Hut: Killed by Barbarians in a Hut"
-msgstr ""
+msgstr "کلبه: نوسط بیگانگان در کلبه کشته شدند"
 
 #: client/options.c:271
 msgid "Hut: Mercenaries Found in Hut"
-msgstr ""
+msgstr "کلبه: در کلبه سرباز بی طرف پیدا شد"
 
 #: client/options.c:272
 msgid "Hut: Settler Found in Hut"
-msgstr ""
+msgstr "کلبه: در کلبه سازنده پیدا شد"
 
 #: client/options.c:273
 msgid "Hut: Tech Found in Hut"
-msgstr ""
+msgstr "کلبه: در کلبه تکنولوژی پیدا شد"
 
 #: client/options.c:274
 msgid "Hut: Unit Spared by Barbarians"
@@ -6338,39 +6343,39 @@ msgstr ""
 
 #: client/options.c:275
 msgid "Improvement: Bought"
-msgstr ""
+msgstr "اصلاحیه: خریده شد"
 
 #: client/options.c:276
 msgid "Improvement: Built"
-msgstr ""
+msgstr "اصلاحیه: ساخته شد"
 
 #: client/options.c:277
 msgid "Improvement: Forced to Sell"
-msgstr ""
+msgstr "اصلاحیه: مجبور به فروختن شد"
 
 #: client/options.c:278
 msgid "Improvement: New Improvement Selected"
-msgstr ""
+msgstr "اصلاحیه: اصلاحیه جدید انتخاب شد"
 
 #: client/options.c:279
 msgid "Improvement: Sold"
-msgstr ""
+msgstr "اصلاحیه: فروخته شد"
 
 #: client/options.c:280
 msgid "Tech: Learned From Great Library"
-msgstr ""
+msgstr "تکنولوژی: از کتابخانه بزرگ یاد گرفته شد"
 
 #: client/options.c:281
 msgid "Tech: Learned New Tech"
-msgstr ""
+msgstr "تکنولوژی: تکنولوژی جدید یاد گرفته شد"
 
 #: client/options.c:282
 msgid "Treaty: Alliance"
-msgstr ""
+msgstr "قرارداد: اتحاد"
 
 #: client/options.c:283
 msgid "Treaty: Broken"
-msgstr ""
+msgstr "قرارداد: شکسته شد"
 
 #: client/options.c:284
 msgid "Treaty: Ceasefire"
@@ -6378,83 +6383,83 @@ msgstr ""
 
 #: client/options.c:285
 msgid "Treaty: Peace"
-msgstr ""
+msgstr "قرارداد: صلح"
 
 #: client/options.c:286
 msgid "Treaty: Shared Vision"
-msgstr ""
+msgstr "قرارداد: دید مشترک"
 
 #: client/options.c:287
 msgid "Unit: Attack Failed"
-msgstr ""
+msgstr "مهره: حمله موفق نشد"
 
 #: client/options.c:288
 msgid "Unit: Attack Succeeded"
-msgstr ""
+msgstr "مهره: حمله موفق شد"
 
 #: client/options.c:289
 msgid "Unit: Bought"
-msgstr ""
+msgstr "مهره: خریده شد"
 
 #: client/options.c:290
 msgid "Unit: Built"
-msgstr ""
+msgstr "مهره: ساخته شد"
 
 #: client/options.c:291
 msgid "Unit: Defender Destroyed"
-msgstr ""
+msgstr "مهره: مدافع از بین رفت"
 
 #: client/options.c:292
 msgid "Unit: Defender Survived"
-msgstr ""
+msgstr "مهره: مدافع زنده ماند"
 
 #: client/options.c:293
 msgid "Unit: Became More Veteran"
-msgstr ""
+msgstr "مهره: کارآزموده‌تر شد"
 
 #: client/options.c:294
 msgid "Unit: Production Upgraded"
-msgstr ""
+msgstr "مهره: محصول ترفیع شد"
 
 #: client/options.c:295
 msgid "Unit: Relocated"
-msgstr ""
+msgstr "مهره: بازگیری شد"
 
 #: client/options.c:296
 msgid "Unit: Orders / goto events"
-msgstr ""
+msgstr "مهره: رویداد‌های دستور / برو به"
 
 #: client/options.c:297
 msgid "Wonder: Finished"
-msgstr ""
+msgstr "شگفتی: تمام شد"
 
 #: client/options.c:298
 msgid "Wonder: Made Obsolete"
-msgstr ""
+msgstr "شگفتی: منسوخ شد"
 
 #: client/options.c:299
 msgid "Wonder: Started"
-msgstr ""
+msgstr "شگفتی: شروع شد"
 
 #: client/options.c:300
 msgid "Wonder: Stopped"
-msgstr ""
+msgstr "شگفتی: متوقف شد"
 
 #: client/options.c:301
 msgid "Wonder: Will Finish Next Turn"
-msgstr ""
+msgstr "شگفتی: نوبت بعد تمام می‌شود"
 
 #: client/options.c:302
 msgid "Diplomatic Message"
-msgstr ""
+msgstr "پیام دیپلماتیک"
 
 #: client/options.c:303
 msgid "City: Production changed"
-msgstr ""
+msgstr "شهر: محصول تغییر کرد"
 
 #: client/options.c:304
 msgid "Treaty: Embassy"
-msgstr ""
+msgstr "قرارداد: سفارت"
 
 #: client/options.c:430
 msgid "Cannot find your home directory"
@@ -6496,7 +6501,7 @@ msgstr ""
 #: client/packhand.c:885
 #, c-format
 msgid "Start of turn %d"
-msgstr ""
+msgstr "شروع نوبت %d"
 
 #: client/packhand.c:1345 server/stdinhand.c:1015
 msgid "(unknown)"
@@ -6509,11 +6514,11 @@ msgstr ""
 
 #: client/packhand.c:1788
 msgid "ON"
-msgstr ""
+msgstr "روشن"
 
 #: client/packhand.c:1788
 msgid "OFF"
-msgstr ""
+msgstr "خاموش"
 
 #: client/packhand.c:2784
 #, fuzzy
@@ -6935,7 +6940,7 @@ msgstr "متحرک"
 
 #: client/plrdlg_common.c:189
 msgid "R.I.P"
-msgstr ""
+msgstr "مرده"
 
 #: client/plrdlg_common.c:222
 msgid "?Player:Name"
@@ -6947,7 +6952,7 @@ msgstr "نام کاربری"
 
 #: client/plrdlg_common.c:226
 msgid "Border"
-msgstr ""
+msgstr "محدوده"
 
 #: client/plrdlg_common.c:227 server/stdinhand.c:5330
 msgid "Team"
@@ -7102,7 +7107,7 @@ msgstr "خانه‌ی %s %s"
 
 #: client/text.c:250
 msgid "Unclaimed territory"
-msgstr ""
+msgstr "خانه بی مالک"
 
 #. TRANS: "City: Warsaw (Polish)"
 #: client/text.c:261
@@ -7557,7 +7562,7 @@ msgstr "%s از %s"
 
 #: common/connection.c:548
 msgid " (connection incomplete)"
-msgstr ""
+msgstr " (ارتباط کامل نیست)"
 
 #: common/connection.c:552
 #, c-format
@@ -7653,7 +7658,7 @@ msgstr "پایگاه هوایی"
 
 #: common/map.c:74 common/unit.c:639
 msgid "Fallout"
-msgstr ""
+msgstr "غبار اتمی"
 
 #: common/player.c:560
 msgid "?attitude:Genocidal"
@@ -7755,7 +7760,7 @@ msgstr "تیم"
 #: common/tech.c:114
 #, c-format
 msgid "tech \"%s\": requires itself"
-msgstr ""
+msgstr "تکنولوژی \"%s\": به خودش نیاز دارد"
 
 #: common/unit.c:619
 msgid "Fortifying"
@@ -12390,7 +12395,7 @@ msgstr "خروج"
 
 #: data/Freeciv.in:129
 msgid "Freeciv Server List"
-msgstr ""
+msgstr "لیست سرور Freeciv"
 
 #: data/Freeciv.in:132
 msgid ""
@@ -12418,7 +12423,7 @@ msgstr ""
 
 #: data/Freeciv.in:215
 msgid "Diplomacy"
-msgstr ""
+msgstr "دیپلماسی"
 
 #: data/Freeciv.in:310
 msgid "The following clauses have been agreed upon:"
@@ -12438,7 +12443,7 @@ msgstr ""
 
 #: data/Freeciv.in:474 data/Freeciv.in:483
 msgid "Shared vision"
-msgstr ""
+msgstr "دید مشترک"
 
 #: data/Freeciv.in:492
 msgid "Pacts"
@@ -12458,7 +12463,7 @@ msgstr ""
 
 #: data/Freeciv.in:558
 msgid "Select Unit(s)"
-msgstr ""
+msgstr "انتخاب مهره(ها)"
 
 #: data/Freeciv.in:561
 msgid "Ready all"
@@ -12474,23 +12479,23 @@ msgstr "قدرت‌آتش:"
 
 #: data/Freeciv.in:932
 msgid "Movement/Defense:"
-msgstr ""
+msgstr "حرکت/دفاع:"
 
 #: data/Freeciv.in:951
 msgid "Food/Resources/Trade:"
-msgstr ""
+msgstr "غذا/منبع/تجارت:"
 
 #: data/Freeciv.in:1012
 msgid "Road Result/Time:"
-msgstr ""
+msgstr "جاده نتیجه/زمان:"
 
 #: data/Freeciv.in:1032
 msgid "Irrig. Result/Time:"
-msgstr ""
+msgstr "آبیاری نتیجه/زمان:"
 
 #: data/Freeciv.in:1053
 msgid "Mine Result/Time:"
-msgstr ""
+msgstr "معدن نتیجه/زمان:"
 
 #: data/Freeciv.in:1073
 msgid "Trans. Result/Time:"
@@ -12515,7 +12520,7 @@ msgstr "لغو"
 
 #: data/Freeciv.in:1137
 msgid "Select destination:"
-msgstr ""
+msgstr "انتخاب مقصد:"
 
 #: data/Freeciv.in:1192 data/Freeciv.in:1228
 msgid "Unit Commands"
@@ -12547,7 +12552,7 @@ msgstr ""
 
 #: data/Freeciv.in:1218
 msgid "Upgrade unit"
-msgstr ""
+msgstr "ترفیع مهره"
 
 #: data/Freeciv.in:1249
 msgid "Options"
@@ -12803,7 +12808,7 @@ msgstr ""
 
 #: data/Freeciv.in:2258
 msgid "Trade Routes"
-msgstr ""
+msgstr "راه‌های تجاری"
 
 #: data/Freeciv.in:2279 data/Freeciv.in:2483 data/Freeciv.in:2513
 msgid "Darn"
@@ -14385,7 +14390,7 @@ msgstr ""
 
 #: data/helpdata.txt:1520
 msgid "Zones of Control"
-msgstr ""
+msgstr "محدوده‌ی کنترل"
 
 #: data/helpdata.txt:1521
 msgid ""
@@ -14558,7 +14563,7 @@ msgstr ""
 
 #: data/helpdata.txt:1646
 msgid "  Pillaging"
-msgstr ""
+msgstr "  غارت کردن"
 
 #: data/helpdata.txt:1647
 msgid ""
@@ -15097,7 +15102,7 @@ msgstr ""
 #: data/nation/afghani.ruleset:24 data/nation/emirati.ruleset:25
 #: data/nation/kurd.ruleset:25 data/nation/uzbek.ruleset:28
 msgid "Emir"
-msgstr ""
+msgstr "امیر"
 
 #: data/nation/afghani.ruleset:25 data/nation/slovakian.ruleset:30
 #: data/nation/soviet.ruleset:27
@@ -15106,7 +15111,7 @@ msgstr ""
 
 #: data/nation/afghani.ruleset:26
 msgid "Mullah"
-msgstr ""
+msgstr "ملا"
 
 #: data/nation/afghani.ruleset:27 data/nation/australian.ruleset:28
 #: data/nation/british.ruleset:22 data/nation/burmese.ruleset:23
@@ -15123,7 +15128,7 @@ msgstr ""
 #: data/nation/swedish.ruleset:32 data/nation/tibetan.ruleset:30
 #: data/nation/welsh.ruleset:27
 msgid "Prime Minister"
-msgstr ""
+msgstr "پرایم مینیستر"
 
 #: data/nation/afghani.ruleset:27 data/nation/australian.ruleset:28
 #: data/nation/british.ruleset:22 data/nation/burmese.ruleset:23
@@ -15189,8 +15194,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/akwe.ruleset:23
+#, fuzzy
 msgid "He'a"
-msgstr ""
+msgstr "هتمن"
 
 #: data/nation/akwe.ruleset:24 data/nation/srivijaya.ruleset:22
 msgid "Senapati"
@@ -15228,7 +15234,7 @@ msgstr ""
 
 #: data/nation/american.ruleset:51 data/nation/scottish.ruleset:25
 msgid "Speaker"
-msgstr ""
+msgstr "اسپیکر"
 
 #: data/nation/american.ruleset:51 data/nation/scottish.ruleset:25
 #, fuzzy
@@ -15237,7 +15243,7 @@ msgstr "لیدر"
 
 #: data/nation/american.ruleset:52 data/nation/texan.ruleset:20
 msgid "Reverend"
-msgstr ""
+msgstr "ریورند"
 
 #: data/nation/american.ruleset:52 data/nation/texan.ruleset:20
 #, fuzzy
@@ -15273,7 +15279,7 @@ msgstr ""
 #: data/nation/arab.ruleset:20 data/nation/emirati.ruleset:24
 #: data/nation/palestine.ruleset:21
 msgid "Caliph"
-msgstr ""
+msgstr "کالیف"
 
 #: data/nation/aramean.ruleset:3
 #, fuzzy
@@ -15343,11 +15349,11 @@ msgstr ""
 
 #: data/nation/assyrian.ruleset:21
 msgid "Malka"
-msgstr ""
+msgstr "مالکا"
 
 #: data/nation/assyrian.ruleset:21
 msgid "Malikta"
-msgstr ""
+msgstr "مالیکتا"
 
 #: data/nation/australian.ruleset:3
 msgid "Australian"
@@ -15495,12 +15501,12 @@ msgstr ""
 #. TRANS: Tlatoani = Speaker
 #: data/nation/aztec.ruleset:22
 msgid "Tlatoani"
-msgstr ""
+msgstr "تلاتوآنی"
 
 #. TRANS: Huey Tlatoani = Great Speaker
 #: data/nation/aztec.ruleset:24
 msgid "Huey Tlatoani"
-msgstr ""
+msgstr "هوی تلاتوآنی"
 
 #: data/nation/babylonian.ruleset:3
 msgid "Babylonian"
@@ -15520,7 +15526,7 @@ msgstr ""
 #. TRANS: Lugal = Great Man
 #: data/nation/babylonian.ruleset:23 data/nation/sumerian.ruleset:28
 msgid "Lugal"
-msgstr ""
+msgstr "لوگال"
 
 #: data/nation/barbarian.ruleset:3 server/stdinhand.c:4886
 #: server/stdinhand.c:8346
@@ -15539,7 +15545,7 @@ msgstr ""
 
 #: data/nation/basque.ruleset:3
 msgid "Basque"
-msgstr ""
+msgstr "باسکوعه"
 
 #: data/nation/basque.ruleset:4
 #, fuzzy
@@ -15558,7 +15564,7 @@ msgstr ""
 #. TRANS: Buruzagi = Leader, head (like spanish Caudillo)
 #: data/nation/basque.ruleset:33
 msgid "Buruzagi"
-msgstr ""
+msgstr "برازاگی"
 
 #: data/nation/basque.ruleset:33
 #, fuzzy
@@ -15568,11 +15574,11 @@ msgstr "اینکا"
 #. TRANS: Apaiz nagusi = Pope, Lord Protector
 #: data/nation/basque.ruleset:35
 msgid "Apaiz nagusi"
-msgstr ""
+msgstr "آپایز ناگاسی"
 
 #: data/nation/basque.ruleset:35
 msgid "Emakume Apaiz nagusi"
-msgstr ""
+msgstr "اماکوم آپایز ناگاسی"
 
 #. TRANS: Errege and Erregina = King and Queen
 #: data/nation/basque.ruleset:37
@@ -15589,7 +15595,7 @@ msgstr "رینا"
 #. ; /* TRANS: (but is quite inexact for Basques to call him/her "president")
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
 msgid "Lehendakari"
-msgstr ""
+msgstr "لهنداکاری"
 
 #: data/nation/basque.ruleset:40 data/nation/basque.ruleset:41
 #, fuzzy
@@ -15646,7 +15652,7 @@ msgstr ""
 
 #: data/nation/bengali.ruleset:3
 msgid "Bengali"
-msgstr ""
+msgstr "بنگلادش"
 
 #: data/nation/bengali.ruleset:4
 #, fuzzy
@@ -15664,7 +15670,7 @@ msgstr ""
 
 #: data/nation/bengali.ruleset:25
 msgid "Nabob"
-msgstr ""
+msgstr "نابب"
 
 #: data/nation/bengali.ruleset:25
 #, fuzzy
@@ -15805,8 +15811,9 @@ msgid "Dug"
 msgstr ""
 
 #: data/nation/breton.ruleset:35
+#, fuzzy
 msgid "Dugez"
-msgstr ""
+msgstr "دوک"
 
 #: data/nation/breton.ruleset:36
 #, fuzzy
@@ -15868,16 +15875,16 @@ msgstr "هانگار"
 
 #: data/nation/bulgarian.ruleset:33
 msgid "Drugarkata"
-msgstr ""
+msgstr "دراگارکاتا"
 
 #: data/nation/bulgarian.ruleset:34 data/nation/byzantium.ruleset:26
 #: data/nation/russian.ruleset:49
 msgid "Patriarch"
-msgstr ""
+msgstr "پاتریارچ"
 
 #: data/nation/bulgarian.ruleset:34
 msgid "Sveta Maika"
-msgstr ""
+msgstr "سوتا مایکا"
 
 #: data/nation/burgundian.ruleset:3
 #, fuzzy
@@ -15913,7 +15920,7 @@ msgstr "سرباز دریایی"
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
 #: data/nation/samogitian.ruleset:20 data/nation/serbian.ruleset:36
 msgid "Duke"
-msgstr ""
+msgstr "دوک"
 
 #: data/nation/burgundian.ruleset:32 data/nation/norman.ruleset:23
 #: data/nation/prussian.ruleset:26 data/nation/russian.ruleset:47
@@ -15939,7 +15946,7 @@ msgstr ""
 
 #: data/nation/burmese.ruleset:21
 msgid "Bohmugyi"
-msgstr ""
+msgstr "بهمگی"
 
 #: data/nation/burmese.ruleset:21
 #, fuzzy
@@ -15957,8 +15964,9 @@ msgid "Sayama"
 msgstr "نقشه دریا"
 
 #: data/nation/burundi.ruleset:3
+#, fuzzy
 msgid "Burundi"
-msgstr ""
+msgstr "برازاگی"
 
 #: data/nation/burundi.ruleset:4
 #, fuzzy
@@ -15982,8 +15990,9 @@ msgid "Mwami"
 msgstr "معدن"
 
 #: data/nation/burundi.ruleset:28
+#, fuzzy
 msgid "Mwamikazi"
-msgstr ""
+msgstr "مالیکتا"
 
 #: data/nation/byzantium.ruleset:3
 #, fuzzy
@@ -16007,12 +16016,12 @@ msgstr ""
 
 #: data/nation/byzantium.ruleset:26 data/nation/russian.ruleset:49
 msgid "Matriarch"
-msgstr ""
+msgstr "ماتریاچ"
 
 #. TRANS: Basileus = Monarch
 #: data/nation/byzantium.ruleset:28
 msgid "Basileus"
-msgstr ""
+msgstr "باسیلیوس"
 
 #: data/nation/byzantium.ruleset:28
 #, fuzzy
@@ -16038,7 +16047,7 @@ msgstr ""
 
 #: data/nation/cambodian.ruleset:21 data/nation/manchu.ruleset:20
 msgid "Warlord"
-msgstr ""
+msgstr "وارلرد"
 
 #: data/nation/cambodian.ruleset:22
 msgid "Brother"
@@ -16151,7 +16160,7 @@ msgstr ""
 
 #: data/nation/cherokee.ruleset:3
 msgid "Cherokee"
-msgstr ""
+msgstr "چروکی"
 
 #: data/nation/cherokee.ruleset:4
 #, fuzzy
@@ -16171,7 +16180,7 @@ msgstr ""
 #: data/nation/sioux.ruleset:28 data/nation/southafrican.ruleset:25
 #: data/nation/swazi.ruleset:22 data/nation/zulu.ruleset:38
 msgid "Chief"
-msgstr ""
+msgstr "چیف"
 
 #: data/nation/cherokee.ruleset:22 data/nation/iroquois.ruleset:26
 #: data/nation/malian.ruleset:26 data/nation/maori.ruleset:24
@@ -16184,7 +16193,7 @@ msgstr "کاردینال"
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/muskogee.ruleset:32 data/nation/sioux.ruleset:29
 msgid "Great Chief"
-msgstr ""
+msgstr "گریت چیف"
 
 #: data/nation/cherokee.ruleset:23 data/nation/iroquois.ruleset:27
 #: data/nation/sioux.ruleset:29
@@ -16203,11 +16212,11 @@ msgstr "سنگاپور"
 #: data/nation/muskogee.ruleset:33 data/nation/sami.ruleset:23
 #: data/nation/sioux.ruleset:30 data/nation/zulu.ruleset:39
 msgid "Spokeswoman"
-msgstr ""
+msgstr "اسپکسومن"
 
 #: data/nation/cherokee.ruleset:25
 msgid "Principal Chief"
-msgstr ""
+msgstr "پرینسیپال چیف"
 
 #: data/nation/cherokee.ruleset:25
 #, fuzzy
@@ -16233,11 +16242,11 @@ msgstr "کاپیتان ژنرال"
 #: data/nation/chilean.ruleset:25 data/nation/french.ruleset:28
 #: data/nation/german.ruleset:35 data/nation/irish.ruleset:46
 msgid "Archbishop"
-msgstr ""
+msgstr "آرچبیشاپ"
 
 #: data/nation/chilean.ruleset:26
 msgid "Supreme Director"
-msgstr ""
+msgstr "سوپرم دایرکتور"
 
 #: data/nation/chinese.ruleset:3
 msgid "Chinese"
@@ -16260,7 +16269,7 @@ msgstr ""
 
 #: data/nation/chinese.ruleset:31
 msgid "Dowager"
-msgstr ""
+msgstr "داگر"
 
 #: data/nation/chola.ruleset:3
 #, fuzzy
@@ -16350,7 +16359,7 @@ msgstr ""
 #: data/nation/gallic.ruleset:29 data/nation/irish.ruleset:44
 #: data/nation/scottish.ruleset:24 data/nation/welsh.ruleset:25
 msgid "Chieftain"
-msgstr ""
+msgstr "چیفتین"
 
 #: data/nation/cornish.ruleset:20 data/nation/french.ruleset:26
 #: data/nation/gallic.ruleset:29 data/nation/irish.ruleset:44
@@ -16446,11 +16455,11 @@ msgstr ""
 
 #: data/nation/czech.ruleset:36
 msgid "Thane"
-msgstr ""
+msgstr "تان"
 
 #: data/nation/czech.ruleset:36
 msgid "Prophetess"
-msgstr ""
+msgstr "پروفتس"
 
 #: data/nation/danish.ruleset:3
 msgid "Danish"
@@ -16566,7 +16575,7 @@ msgstr ""
 
 #: data/nation/egyptian.ruleset:26 data/nation/nubian.ruleset:33
 msgid "Pharaoh"
-msgstr ""
+msgstr "فاراه"
 
 #: data/nation/egyptian.ruleset:26 data/nation/nubian.ruleset:33
 #, fuzzy
@@ -16575,7 +16584,7 @@ msgstr "امپراطور"
 
 #: data/nation/egyptian.ruleset:27 data/nation/nubian.ruleset:34
 msgid "Great Pharaoh"
-msgstr ""
+msgstr "گریت فاراه"
 
 #: data/nation/egyptian.ruleset:27 data/nation/nubian.ruleset:34
 #, fuzzy
@@ -16601,8 +16610,9 @@ msgid "Queen of Doriath"
 msgstr ""
 
 #: data/nation/emirati.ruleset:3
+#, fuzzy
 msgid "Emirati"
-msgstr ""
+msgstr "امیر"
 
 #: data/nation/emirati.ruleset:4
 #, fuzzy
@@ -16644,11 +16654,11 @@ msgstr ""
 
 #: data/nation/english.ruleset:26
 msgid "Lord Protector"
-msgstr ""
+msgstr "لرد پروتکتور"
 
 #: data/nation/english.ruleset:26
 msgid "Lady Protector"
-msgstr ""
+msgstr "لیدی پروتکتور"
 
 #: data/nation/esperant.ruleset:3
 #, fuzzy
@@ -16764,7 +16774,7 @@ msgstr ""
 
 #: data/nation/french.ruleset:27
 msgid "Premier"
-msgstr ""
+msgstr "پرایمر"
 
 #: data/nation/french.ruleset:27
 #, fuzzy
@@ -16790,11 +16800,11 @@ msgstr ""
 
 #: data/nation/galician.ruleset:22
 msgid "Primeiro Ministro"
-msgstr ""
+msgstr "پرایمر مینیسترو"
 
 #: data/nation/galician.ruleset:22
 msgid "Primeira Ministra"
-msgstr ""
+msgstr "پرایمر مینیسترا"
 
 #. TRANS: The third letter in "Dona" should be U+00F1 LATIN SMALL LETTER
 #. TRANS: N WITH TILDE
@@ -16810,7 +16820,7 @@ msgstr "پایین"
 
 #: data/nation/galician.ruleset:26
 msgid "Raina"
-msgstr ""
+msgstr "راینا"
 
 #: data/nation/galician.ruleset:27 data/nation/moldovan.ruleset:25
 #: data/nation/venezuelan.ruleset:31 data/nation/venezuelan.ruleset:32
@@ -16825,11 +16835,11 @@ msgstr "پرزیدنتا"
 
 #: data/nation/galician.ruleset:28
 msgid "Gran Bardo"
-msgstr ""
+msgstr "گران باردو"
 
 #: data/nation/galician.ruleset:28
 msgid "Grande Bardesa"
-msgstr ""
+msgstr "گراند باردسا"
 
 #: data/nation/gallic.ruleset:3
 msgid "Gallic"
@@ -16896,7 +16906,7 @@ msgstr ""
 
 #: data/nation/german.ruleset:34
 msgid "Chancellor"
-msgstr ""
+msgstr "چانسلر"
 
 #: data/nation/german.ruleset:34
 #, fuzzy
@@ -16905,7 +16915,7 @@ msgstr "کاردینال"
 
 #: data/nation/german.ruleset:36
 msgid "First Secretary"
-msgstr ""
+msgstr "فرست سکرتری"
 
 #: data/nation/german.ruleset:36
 #, fuzzy
@@ -16972,8 +16982,9 @@ msgstr ""
 
 #. TRANS: Maharajadhiraja = Great King of Kings
 #: data/nation/gupta.ruleset:21
+#, fuzzy
 msgid "Maharajadhiraja"
-msgstr ""
+msgstr "ماهاراجا"
 
 #: data/nation/hacker.ruleset:3
 #, fuzzy
@@ -16987,11 +16998,12 @@ msgstr "بُعِری‌ها"
 
 #: data/nation/hacker.ruleset:6
 msgid "h4xx0r r0xx0rz!"
-msgstr ""
+msgstr "h4xx0r r0xx0rz!"
 
 #: data/nation/hacker.ruleset:39
+#, fuzzy
 msgid "?title:Hacker"
-msgstr ""
+msgstr "اینکا"
 
 #: data/nation/hacker.ruleset:39
 #, fuzzy
@@ -17017,7 +17029,7 @@ msgstr ""
 
 #: data/nation/hellenic.ruleset:3
 msgid "Hellenic"
-msgstr ""
+msgstr "هلنی"
 
 #: data/nation/hellenic.ruleset:4
 #, fuzzy
@@ -17047,8 +17059,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/himyarite.ruleset:3
+#, fuzzy
 msgid "Himyarite"
-msgstr ""
+msgstr "هیتی"
 
 #: data/nation/himyarite.ruleset:4
 #, fuzzy
@@ -17231,8 +17244,9 @@ msgid "Sapa Inka"
 msgstr "ساپااینکا"
 
 #: data/nation/inca.ruleset:37
+#, fuzzy
 msgid "Willaq Umu"
-msgstr ""
+msgstr "ویلکا"
 
 #: data/nation/indian.ruleset:3
 msgid "Indian"
@@ -17250,7 +17264,7 @@ msgstr ""
 
 #: data/nation/indian.ruleset:19 data/nation/majapahit.ruleset:26
 msgid "Raja"
-msgstr ""
+msgstr "راجا"
 
 #: data/nation/indian.ruleset:19
 #, fuzzy
@@ -17259,7 +17273,7 @@ msgstr "اینکا"
 
 #: data/nation/indian.ruleset:20
 msgid "Maharaja"
-msgstr ""
+msgstr "ماهاراجا"
 
 #: data/nation/indian.ruleset:20
 #, fuzzy
@@ -17268,7 +17282,7 @@ msgstr "کاردینال"
 
 #: data/nation/indian.ruleset:21
 msgid "Mahatma"
-msgstr ""
+msgstr "مهاتما"
 
 #: data/nation/indian.ruleset:21
 #, fuzzy
@@ -17352,7 +17366,7 @@ msgstr ""
 
 #: data/nation/iranian.ruleset:46 data/nation/persian.ruleset:22
 msgid "Ayatollah"
-msgstr ""
+msgstr "آیت الله"
 
 #: data/nation/iraqi.ruleset:3
 msgid "Iraqi"
@@ -17400,12 +17414,12 @@ msgstr "ملکه بزرگ"
 
 #: data/nation/irish.ruleset:46
 msgid "Mother Superior"
-msgstr ""
+msgstr "مادر سوپریور"
 
 #. TRANS: Taoiseach = Prime Minister
 #: data/nation/irish.ruleset:48
 msgid "Taoiseach"
-msgstr ""
+msgstr "تائویسیچ"
 
 #: data/nation/irish.ruleset:48
 #, fuzzy
@@ -17479,7 +17493,7 @@ msgstr ""
 
 #: data/nation/japanese.ruleset:21
 msgid "Shogun"
-msgstr ""
+msgstr "شوگان"
 
 #: data/nation/kanem-bornu.ruleset:3
 msgid "Kanem-Bornu"
@@ -17692,7 +17706,7 @@ msgstr "پرنسس"
 #: data/nation/lankese.ruleset:21 data/nation/quebecois.ruleset:20
 #: data/nation/texan.ruleset:19
 msgid "Governor"
-msgstr ""
+msgstr "حاکم"
 
 #: data/nation/lankese.ruleset:21 data/nation/quebecois.ruleset:20
 #: data/nation/texan.ruleset:19
@@ -17702,7 +17716,7 @@ msgstr "کنسول"
 
 #: data/nation/lankese.ruleset:22
 msgid "Supreme Commander"
-msgstr ""
+msgstr "سوپرم کاماندر"
 
 #: data/nation/lankese.ruleset:22
 #, fuzzy
@@ -17764,7 +17778,7 @@ msgstr ""
 
 #: data/nation/libyan.ruleset:23
 msgid "Dey"
-msgstr ""
+msgstr "دی"
 
 #: data/nation/libyan.ruleset:24
 #, fuzzy
@@ -17857,7 +17871,7 @@ msgstr "ریاضیات"
 
 #: data/nation/malagasy.ruleset:3
 msgid "Malagasy"
-msgstr ""
+msgstr "مالاگاس"
 
 #: data/nation/malagasy.ruleset:4
 #, fuzzy
@@ -17872,11 +17886,11 @@ msgstr ""
 
 #: data/nation/malagasy.ruleset:22
 msgid "High Commissioner"
-msgstr ""
+msgstr "های کمیسینر"
 
 #: data/nation/malagasy.ruleset:22
 msgid "?female:High Commissioner"
-msgstr ""
+msgstr "های کمیسینر"
 
 #: data/nation/malaysian.ruleset:3
 msgid "Malaysian"
@@ -17986,8 +18000,9 @@ msgid ""
 msgstr ""
 
 #: data/nation/mapuche.ruleset:19
+#, fuzzy
 msgid "Toqui"
-msgstr ""
+msgstr "ایروکویس"
 
 #: data/nation/mapuche.ruleset:20
 #, fuzzy
@@ -18040,7 +18055,7 @@ msgstr ""
 #. TRANS: Ajaw = Lord
 #: data/nation/mayan.ruleset:20
 msgid "Ajaw"
-msgstr ""
+msgstr "آجا"
 
 #: data/nation/mayan.ruleset:20
 #, fuzzy
@@ -18110,7 +18125,7 @@ msgstr ""
 #. TRANS: Voievod/Doamna = Prince/Lady
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 msgid "Voievod"
-msgstr ""
+msgstr "ویود"
 
 #: data/nation/moldovan.ruleset:23 data/nation/romanian.ruleset:34
 #, fuzzy
@@ -18128,11 +18143,11 @@ msgstr ""
 #. TRANS: Tovaras/Tovarasa = Comrade
 #: data/nation/moldovan.ruleset:26 data/nation/romanian.ruleset:38
 msgid "Tovaras"
-msgstr ""
+msgstr "تواراس"
 
 #: data/nation/moldovan.ruleset:26 data/nation/romanian.ruleset:38
 msgid "Tovarasa"
-msgstr ""
+msgstr "تواراسا"
 
 #: data/nation/mongol.ruleset:3
 msgid "Mongol"
@@ -18219,7 +18234,7 @@ msgstr ""
 
 #: data/nation/newzealand.ruleset:3
 msgid "New Zealand"
-msgstr ""
+msgstr "زلاندنو"
 
 #: data/nation/newzealand.ruleset:4
 #, fuzzy
@@ -18421,7 +18436,7 @@ msgstr ""
 
 #: data/nation/ottoman.ruleset:27 data/nation/tunisian.ruleset:28
 msgid "Bey"
-msgstr ""
+msgstr "بی"
 
 #: data/nation/ottoman.ruleset:28
 #, fuzzy
@@ -18819,7 +18834,7 @@ msgstr ""
 
 #: data/nation/russian.ruleset:48
 msgid "Tsar"
-msgstr ""
+msgstr "تزار"
 
 #: data/nation/russian.ruleset:48
 #, fuzzy
@@ -18844,7 +18859,7 @@ msgstr ""
 
 #: data/nation/ryukyuan.ruleset:3
 msgid "Ryukyuan"
-msgstr ""
+msgstr "ریوکیان"
 
 #: data/nation/ryukyuan.ruleset:4
 #, fuzzy
@@ -18860,11 +18875,11 @@ msgstr ""
 #. TRANS: Koku-o/Jo-o = King/Queen
 #: data/nation/ryukyuan.ruleset:22
 msgid "Koku-o"
-msgstr ""
+msgstr "کوکو و"
 
 #: data/nation/ryukyuan.ruleset:22
 msgid "Jo-o"
-msgstr ""
+msgstr "جو و"
 
 #: data/nation/sami.ruleset:3
 #, fuzzy
@@ -18885,7 +18900,7 @@ msgstr ""
 #. TRANS: Noaydde = Shaman
 #: data/nation/sami.ruleset:22
 msgid "Noaydde"
-msgstr ""
+msgstr "نوایده"
 
 #: data/nation/sami.ruleset:22
 #, fuzzy
@@ -18925,7 +18940,7 @@ msgstr ""
 
 #: data/nation/scottish.ruleset:26
 msgid "First Minister"
-msgstr ""
+msgstr "فرست مینیستر"
 
 #: data/nation/scottish.ruleset:26
 #, fuzzy
@@ -18978,7 +18993,7 @@ msgstr ""
 #. TRANS: Encik = Sir
 #: data/nation/singaporean.ruleset:34
 msgid "Encik"
-msgstr ""
+msgstr "انکیک"
 
 #: data/nation/singaporean.ruleset:34
 #, fuzzy
@@ -19137,11 +19152,11 @@ msgstr ""
 
 #: data/nation/spanish.ruleset:28
 msgid "Caudillo"
-msgstr ""
+msgstr "کادیلو"
 
 #: data/nation/spanish.ruleset:28
 msgid "Caudilla"
-msgstr ""
+msgstr "کادیلا"
 
 #: data/nation/spanish.ruleset:29
 msgid "Cardinal"
@@ -19212,7 +19227,7 @@ msgstr "ملت"
 
 #: data/nation/sumerian.ruleset:29
 msgid "Ensi"
-msgstr ""
+msgstr "انسی"
 
 #: data/nation/sumerian.ruleset:30
 #, fuzzy
@@ -19239,11 +19254,11 @@ msgstr ""
 #. TRANS: Ngwenyama/Indovuzaki = Lion/Elephant cow
 #: data/nation/swazi.ruleset:24
 msgid "Ngwenyama"
-msgstr ""
+msgstr "نگونیاما"
 
 #: data/nation/swazi.ruleset:24
 msgid "Indovuzaki"
-msgstr ""
+msgstr "اندوزاکی"
 
 #: data/nation/swedish.ruleset:3
 msgid "Swedish"
@@ -19299,7 +19314,7 @@ msgstr ""
 
 #: data/nation/swiss.ruleset:23
 msgid "Federal Chancellor"
-msgstr ""
+msgstr "فدرال چنسلر"
 
 #: data/nation/swiss.ruleset:23
 #, fuzzy
@@ -19498,7 +19513,7 @@ msgstr "منبع"
 
 #: data/nation/tibetan.ruleset:3
 msgid "Tibetan"
-msgstr ""
+msgstr "تبت"
 
 #: data/nation/tibetan.ruleset:4
 #, fuzzy
@@ -19529,7 +19544,7 @@ msgstr "چیرمن"
 
 #: data/nation/tibetan.ruleset:29
 msgid "Dalai Lama"
-msgstr ""
+msgstr "دالای لاما"
 
 #: data/nation/tocharian.ruleset:3
 #, fuzzy
@@ -19689,11 +19704,12 @@ msgstr ""
 
 #: data/nation/ukrainian.ruleset:18
 msgid "Hetman"
-msgstr ""
+msgstr "هتمن"
 
 #: data/nation/un.ruleset:3
+#, fuzzy
 msgid "UN"
-msgstr ""
+msgstr "ت"
 
 #: data/nation/un.ruleset:4
 #, fuzzy
@@ -19730,7 +19746,7 @@ msgstr "رئیس جمهور"
 
 #: data/nation/uruguayan.ruleset:3
 msgid "Uruguayan"
-msgstr ""
+msgstr "اروگوئه"
 
 #: data/nation/uruguayan.ruleset:4
 #, fuzzy
@@ -19746,7 +19762,7 @@ msgstr ""
 
 #: data/nation/uyghur.ruleset:3
 msgid "Uyghur"
-msgstr ""
+msgstr "آیگار"
 
 #: data/nation/uyghur.ruleset:4
 #, fuzzy
@@ -19782,7 +19798,7 @@ msgstr ""
 
 #: data/nation/venezuelan.ruleset:3
 msgid "Venezuelan"
-msgstr ""
+msgstr "ونزوئلا"
 
 #: data/nation/venezuelan.ruleset:4
 #, fuzzy
@@ -23651,19 +23667,19 @@ msgstr ""
 
 #: server/settings.c:33
 msgid "Military"
-msgstr ""
+msgstr "نظامی"
 
 #: server/settings.c:34
 msgid "Scientific"
-msgstr ""
+msgstr "علمی"
 
 #: server/settings.c:35
 msgid "Internal"
-msgstr ""
+msgstr "داخلی"
 
 #: server/settings.c:36
 msgid "Networking"
-msgstr ""
+msgstr "شبکه‌ای"
 
 #: server/settings.c:42
 msgid "Vital"
@@ -26382,7 +26398,7 @@ msgstr ""
 #: server/stdinhand.c:4884
 #, c-format
 msgid "%s now controls %s (%s, %s)"
-msgstr ""
+msgstr "%s اکنون %s را کنترل می‌کند(%s, %s)"
 
 #: server/stdinhand.c:4918
 msgid "Usage: detach <connection-name>"
@@ -28039,7 +28055,7 @@ msgstr ""
 
 #: utility/shared.c:1385
 msgid "empty"
-msgstr ""
+msgstr "خالی"
 
 #: utility/shared.c:1386
 msgid "too long"
