@@ -582,7 +582,7 @@ static struct voting *vote_new(struct connection *caller,
 **************************************************************************/
 static void check_vote(struct voting *pvote)
 {
-  int num_cast = 0, num_voters = 0;
+  int num_cast = 0, num_voters = 0, vote_no;
   bool resolve = FALSE, passed = FALSE;
   struct connection *pconn = NULL;
   double yes_pc = 0.0, no_pc = 0.0, rem_pc = 0.0, base = 0.0;
@@ -591,6 +591,7 @@ static void check_vote(struct voting *pvote)
 
   assert(vote_list != NULL);
 
+  vote_no = pvote->vote_no;
   pvote->yes = 0;
   pvote->no = 0;
   pvote->abstain = 0;
