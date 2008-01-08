@@ -234,7 +234,7 @@ bool authenticate_user(struct connection *pconn, char *username)
         reject_new_connection(_("This server allows only preregistered "
                                 "users. Sorry."), pconn);
         freelog(LOG_NORMAL,
-                _("%s was rejected: Only preregister users allowed."),
+                _("%s was rejected: Only preregistered users allowed."),
                 pconn->username);
 
         return FALSE;
@@ -286,7 +286,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
 
     establish_new_connection(pconn);
   } else if (pconn->server.status == AS_REQUESTING_OLD_PASS) { 
-    if (check_password(pconn, password, strlen(password)) == 1) {
+    if (check_password(pconn, password, strlen(password))) {
       establish_new_connection(pconn);
     } else {
       pconn->server.status = AS_FAILED;
@@ -454,46 +454,62 @@ static bool check_password(struct connection *pconn,
                            const char *password, int len)
 {
 #ifdef HAVE_MYSQL
-  bool ok = FALSE;
+  bool password_ok = FALSE;
   char buffer[512] = "";
   char checksum[DIGEST_HEX_BYTES];
   MYSQL *sock, mysql;
+  char escaped_name[MAX_LEN_NAME * 2 + 1];
 
   /* do the password checking right here */
   create_md5sum(password, len, checksum);
-  ok = (strncmp(checksum, pconn->server.password, DIGEST_HEX_BYTES) == 0)
-                                                              ? TRUE : FALSE;
+  password_ok = 0 == strncmp(checksum, pconn->server.password,
+                             DIGEST_HEX_BYTES);
 
   /* we don't really need the stuff below here to 
    * verify password, this is just logging */
   mysql_init(&mysql);
 
   /* attempt to connect to the server */
-  if ((sock = mysql_real_connect(&mysql, fcdb.host, fcdb.user,
-                                 fcdb.password, fcdb.dbname, 0, NULL, 0)))
-  {
-    char escaped_name[MAX_LEN_NAME * 2 + 1];
-    mysql_real_escape_string(sock, escaped_name, pconn->username,
-                             strlen(pconn->username));
-
-    /* insert an entry into our log */
-    my_snprintf(buffer, sizeof(buffer),
-                "insert into %s (name, logintime, address, succeed) "
-                "values ('%s',unix_timestamp(),'%s','%s')",
-                LOGIN_TABLE, escaped_name, pconn->server.ipaddr,
-                ok ? "S" : "F");
-
-    if (mysql_query(sock, buffer)) {
-      freelog(LOG_ERROR, "check_pass insert loginlog failed for "
-              "user: %s (%s)", pconn->username, mysql_error(sock));
-    }
-    mysql_close(sock);
-  } else {
+  if (!(sock = mysql_real_connect(&mysql, fcdb.host, fcdb.user,
+                                  fcdb.password, fcdb.dbname, 0,
+                                  NULL, 0))) {
     freelog(LOG_ERROR, "Can't connect to server! (%s)",
             mysql_error(&mysql));
+    return password_ok;
   }
 
-  return ok;
+  mysql_real_escape_string(sock, escaped_name, pconn->username,
+                           strlen(pconn->username));
+
+  /* insert an entry into our log */
+  my_snprintf(buffer, sizeof(buffer),
+      "insert into %s (name, logintime, address, succeed) "
+      "values ('%s',unix_timestamp(),'%s','%s')",
+      LOGIN_TABLE, escaped_name, pconn->server.ipaddr,
+      password_ok ? "S" : "F");
+  if (mysql_query(sock, buffer)) {
+    freelog(LOG_ERROR, "check_password insert loginlog failed for "
+            "user: %s (%s)", pconn->username, mysql_error(sock));
+    mysql_close(sock);
+    return password_ok;
+  }
+
+  if (password_ok) {
+    my_snprintf(buffer, sizeof(buffer),
+        "update %s set accesstime=unix_timestamp(), address='%s', "
+        "logincount=logincount+1 where name = '%s'",
+        AUTH_TABLE, pconn->server.ipaddr, escaped_name);
+    if (mysql_query(sock, buffer)) {
+      freelog(LOG_ERROR, "check_password auth update failed for "
+              "user: %s (%s)", pconn->username, mysql_error(sock));
+      mysql_close(sock);
+      return password_ok;
+    }
+  }
+
+
+  mysql_close(sock);
+  return password_ok;
 #else
   return TRUE;
 #endif /* HAVE_MYSQL */
@@ -560,13 +576,6 @@ static enum authdb_status load_user(struct connection *pconn)
   mystrlcpy(pconn->server.password, row[0],
             sizeof(pconn->server.password));
   mysql_free_result(res);
-
-  /* update the access time for this user */
-  memset(buffer, 0, sizeof(buffer));
-  my_snprintf(buffer, sizeof(buffer),
-              "update %s set accesstime=unix_timestamp(), address='%s', "
-              "logincount=logincount+1 where strcmp(name, '%s') = 0",
-              AUTH_TABLE, pconn->server.ipaddr, escaped_name);
 
   if (mysql_query(sock, buffer)) {
     freelog(LOG_ERROR, "db_load update accesstime failed for "
@@ -1317,7 +1326,7 @@ static bool get_user_id(MYSQL *sock, const char *user_name, int *id)
   *id = 0;
 
   my_snprintf(buf, sizeof(buf),
-      "SELECT id FROM auth WHERE STRCMP(name, '%s') = 0",
+      "SELECT id FROM auth WHERE name = '%s'",
       fcdb_escape(sock, user_name));
   fcdb_reset_escape_buffer();
   fcdb_execute_or_return(sock, buf, FALSE);
@@ -1737,7 +1746,7 @@ bool fcdb_load_player_ratings(int game_type)
           "  FROM turns AS t INNER JOIN player_status AS ps"
           "      ON t.id = ps.turn_id"
           "    INNER JOIN auth AS a"
-          "      ON 0 = STRCMP(ps.user_name, a.name)"
+          "      ON ps.user_name = a.name"
           "  WHERE t.game_id = %d AND ps.user_name IS NOT NULL"
           "    AND ps.player_id = %d"
           "  GROUP BY a.id"
@@ -1948,7 +1957,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username)
       "SELECT p.result, COUNT(p.result) "
       "  FROM ratings AS r INNER JOIN players AS p"
       "  ON r.player_id = p.id"
-      "  WHERE r.user_id = %d AND STRCMP(r.game_type, '%s') = 0"
+      "  WHERE r.user_id = %d AND r.game_type = '%s'"
       "  GROUP BY p.result",
       fus->id, fus->gt_stats[i].type);
 
@@ -2588,7 +2597,7 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
 
   my_snprintf(buf, sizeof(buf),
     "SELECT id, address, createaddress FROM auth "
-    "  WHERE STRCMP(name, '%s') = 0",
+    "  WHERE name = '%s'",
     user);
   fcdb_execute_or_return(sock, buf, NULL);
 

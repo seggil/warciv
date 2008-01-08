@@ -5528,9 +5528,10 @@ static bool aka_command(struct connection *caller,
 #ifdef HAVE_MYSQL
   struct fcdb_aliaslist *fal = NULL;
   struct fcdb_aliaslist_entry *fale = NULL;
-  char buf[4096];
-  char user[MAX_LEN_NAME] = "";
-  int i;
+  char buf[MAX_LEN_MSG];
+  char namebuf[MAX_LEN_NAME];
+  char user[MAX_LEN_NAME];
+  int i, nb, len;
 
   if (!srvarg.fcdb.enabled) {
     cmd_reply(CMD_AKA, caller, C_GENFAIL,
@@ -5572,14 +5573,22 @@ static bool aka_command(struct connection *caller,
     return TRUE;
   }
 
-  my_snprintf(buf, sizeof(buf), _("Aliases for user %s:"), user);
+  nb = my_snprintf(buf, sizeof(buf), _("Aliases for user %s:"), user);
   for (i = 0; i < fal->count; i++) {
     fale = &fal->entries[i];
     if (fale->name[0] == '\0') {
-      cat_snprintf(buf, sizeof(buf), " user#%d", fale->id);
+      len = my_snprintf(namebuf, sizeof(namebuf),
+                        " user#%d", fale->id);
     } else {
-      cat_snprintf(buf, sizeof(buf), " <%s>", fale->name);
+      len = my_snprintf(namebuf, sizeof(namebuf),
+                        " <%s>", fale->name);
     }
+    if (len + nb >= MAX_LEN_MSG - 1) {
+      cmd_reply(CMD_AKA, caller, C_COMMENT, "%s", buf);
+      nb = my_snprintf(buf, sizeof(buf),
+                       _("More aliases for user %s:"), user);
+    }
+    nb = cat_snprintf(buf, sizeof(buf), "%s", namebuf);
   }
   cmd_reply(CMD_AKA, caller, C_COMMENT, "%s", buf);
 
