@@ -14,30 +14,33 @@
 
 name=_("Singaporean")
 plural=_("?plural:Singaporeans")
-class=_("Modern")
-legend=_("Singapore is a mercantile city-state located at the southernmost \
-tip of the Malaysian Peninsula")
-leader="Tengku Long", "Stamford Raffles", "W.A. Pickering", "Ong Teng Cheong",
-  "S.R. Nathan", "Lee Kuan Yew", "Yusof bin Ishak"
-leader_sex="Male", "Male", "Male", "Male",
-  "Male", "Male", "Male"
+groups="Modern", "Asian"
+legend=_("Singapore is a mercantile city-state located at the southernmost\
+ tip of the Malaysian Peninsula.")
+leader=
+ "Stamford Raffles",
+ "W.A. Pickering",
+ "Ong Teng Cheong",
+ "Lee Kuan Yew",
+ "Yusof bin Ishak"
+leader_sex="Male", "Male", "Male", "Male", "Male"
 flag="f.singapore"
 flag_alt = "-"
 city_style = "Asian"
 
 ruler_titles = { "government",	"male_title",		"female_title"
-		 "Monarchy",	_("Sultan"),		_("Sultan")
-		 "Communism",	_("Encik"),		_("Encik")
-		 "Republic",	_("President"),		_("President")
-		 "Democracy",	_("Prime Minister"),	_("Prime Minister")
+		 "Monarchy",	_("Sultan"),		_("Sultana")
+		 ; /* TRANS: Encik = Sir */
+		 "Communism",	_("Encik"),		_("?female:Encik")
+		 "Republic",	_("President"),	       _("?female:President")
+		 "Democracy",_("Prime Minister"), _("?female:Prime Minister")
 }
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "Iron Working", "Trade", "Monotheism", "Navigation",
-  "Railroad", "Steel", "Industrialization"
-wonder="J.S. Bach's Cathedral"
-government="Republic"
+init_government="Despotism"
+init_units=""
+civilwar_nations="malaysian"
 
 cities =
   "Singapore", "Esplanade", "Tumasik", "Raffles Place", "Keppel", "Chinatown",

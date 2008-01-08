@@ -2,23 +2,35 @@
 
 name=_("Canadian")
 plural=_("?plural:Canadians")
-class=_("Modern")
-leader="Pierre Trudeau", "John A. MacDonald", "John Diefenbaker", "Mackenzie King"
-leader_sex="Male", "Male", "Male", "Male"
+groups="Modern", "American"
+conflicts_with="quebecois", "inuit"
+legend=_("Canada is the geographically northernmost country in world: The\
+ Magnetic North Pole currently lies on Canadian territory.")
+leader=
+ "Pierre Trudeau",
+ "John A. MacDonald",
+ "John Diefenbaker",
+ "Mackenzie King",
+ "Wilfrid Laurier",
+ "Robert Borden"
+leader_sex="Male", "Male", "Male", "Male", "Male", "Male"
 flag="f.canada"
-flag_alt = "f.united_kingdom"
-city_style = "European"
+flag_alt = "united_kingdom"
+city_style = "Celtic"
+
 ruler_titles = { "government",      "male_title",         "female_title"
-                 "Democracy",       _("Prime Minister"),  _("Prime Minister")
+                "Democracy", _("Prime Minister"), _("?female:Prime Minister")
                }
 
 init_techs=""
 init_buildings=""
-tech_goals = "The Republic", "Trade", "Engineering", "Democracy",
-             "Railroad", "Explosives", "Automobile"
-wonder="Cure For Cancer"
-government="Democracy"
-civilwar_nations = "american"
+init_government="Despotism"
+init_units=""
+civilwar_nations=
+; Sub-national nations
+ "quebecois",
+; First Nations
+ "inuit", "iroquois"
 
 ; Capitals of provinces and territories are listed first in this list
 cities =

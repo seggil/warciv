@@ -2,19 +2,23 @@
 
 name=_("Taiwanese")
 plural=_("?plural:Taiwanese")
-class=_("Modern")
-leader="Sun Yat Sen", "Chiang Kai Shek", "Lee Teng Hui", "Kung Fu Tse"
-leader_sex="Male", "Male", "Male", "Male"
+groups="Modern", "Asian"
+legend=_("When the Chinese nationalists lost the armed struggle against the\
+ Chinese communists, the nationalist government evacuated to the island of\
+ Taiwan where they formed the Republic of China.")
+leader=
+ "Sun Yat Sen",
+ "Chiang Kai Shek"
+leader_sex="Male", "Male"
 flag="f.taiwan"
 flag_alt = "-"
-city_style = "Classical"
+city_style = "Asian"
 
 init_techs=""
 init_buildings=""
-tech_goals = "Feudalism", "The Republic", "Democracy", "Explosives",
-             "Guerilla Warfare"
-wonder= "Marco Polo's Embassy"
-government = "Democracy"
+init_government="Despotism"
+init_units=""
+civilwar_nations="chinese"
 
 ; These names used to be spelled differently (Taipeh instead of Taipei).
 ; The new names are better but may not be canonical.

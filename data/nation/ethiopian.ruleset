@@ -2,24 +2,33 @@
 
 name=_("Ethiopian")
 plural=_("?plural:Ethiopians")
-class=_("Modern")
-leader="Zara Yakob", "Menelik II", "Haile Selassies", "Zoskales", "Gedara",
-   "Lalibela", "Yekuno Amlak", "Tewodros II"
+groups="Modern", "Ancient", "African"
+legend=_("Ethiopia is the oldest nation in Africa and the only one to\
+ remain independent during European colonialism.")
+leader=
+ "Zara Yakob",
+ "Menelik II",
+ "Haile Selassies",
+ "Zoskales",
+ "Gedara",
+ "Lalibela",
+ "Yekuno Amlak",
+ "Tewodros II"
 leader_sex="Male", "Male", "Male", "Male", "Male",
   "Male", "Male", "Male"
 flag="f.ethiopia"
-flag_alt = "f.italy"
-city_style = "Classical"
+flag_alt = "italy"
+city_style = "Babylonian"
+
 ruler_titles = { "government",      "male_title",       "female_title"
-                 "Monarchy",       _("Emporer"),    _("Emporer")
+                 "Monarchy",       _("Emperor"),        _("Empress")
                }
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "Pottery", "Ceremonial Burial", "Mysticism",
-             "Trade"
-wonder="Hanging Gardens"
-government="Monarchy"
+init_government="Despotism"
+init_units=""
+civilwar_nations="sudanese", "kenyan"
 
 cities =
   "Addis Abeba", "Dire Dawa", "Gonder", "Nazret", "Harer", "Mek'ele",

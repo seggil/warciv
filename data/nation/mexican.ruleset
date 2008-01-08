@@ -2,19 +2,24 @@
 
 name=_("Mexican")
 plural=_("?plural:Mexicans")
-class=_("Modern")
-leader="B. Juárez", "Cárdenas"
-leader_sex="Male", "Male"
+groups="Modern", "American"
+legend=_("Mexico borrows its name from the Mexica people, another name for\
+ the Aztecs.")
+leader=
+ "Benito Juárez",
+ "L. Cárdenas del Río",
+ "A. López de Santa Anna",
+ "Guadalupe Victoria"
+leader_sex="Male", "Male", "Male", "Male"
 flag="f.mexico"
 flag_alt = "-"
-city_style = "European"
+city_style = "Babylonian"
 
 init_techs=""
 init_buildings=""
-tech_goals = "Warrior Code", "The Republic", "Gunpowder", "Explosives",
-             "Guerilla Warfare"
-wonder= "Statue of Liberty"
-government = "The Republic"
+init_government="Despotism"
+init_units=""
+civilwar_nations="aztec", "texan"
 
 cities =
   "Ciudad de México", "Guadalajara", "Monterrey",

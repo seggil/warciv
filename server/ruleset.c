@@ -2455,7 +2455,7 @@ static void load_ruleset_nations(struct section_file *file)
 
     /* AI wonder & government */
 
-    sz_strlcpy(temp_name, secfile_lookup_str(file, "%s.wonder", sec[i]));
+    sz_strlcpy(temp_name, secfile_lookup_str_default(file, "Great Wall", "%s.wonder", sec[i]));
     val = find_improvement_by_name(temp_name);
     /* Below LOG_VERBOSE rather than LOG_ERROR so that can use single
        nation ruleset file with variety of building ruleset files: */
@@ -2472,7 +2472,7 @@ static void load_ruleset_nations(struct section_file *file)
     pl->goals.wonder = val;
     freelog(LOG_DEBUG, "%s wonder goal %d %s", pl->name, val, temp_name);
 
-    sz_strlcpy(temp_name, secfile_lookup_str(file, "%s.government", sec[i]));
+    sz_strlcpy(temp_name, secfile_lookup_str(file, "%s.init_government", sec[i]));
     gov = find_government_by_name(temp_name);
     if(!gov) {
       /* LOG_VERBOSE rather than LOG_ERROR so that can use single nation

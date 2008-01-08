@@ -2,30 +2,30 @@
 
 name=_("Pakistani")
 plural=_("?plural:Pakistanis")
-class=_("Modern")
-legend=_("he Federation of Pakistan was formed from the\
+groups="Modern", "Asian"
+legend=_("The Federation of Pakistan was formed from the\
  predominantly Muslim regions of British India in 1947.")
 
-leader= "Zulfikar Ali Bhutto",
+leader=
+ "Zulfikar Ali Bhutto",
  "Muhammad Zia-ul-Haq",
  "Benazir Bhutto",
  "Muhammad Ali Jinnah",
  "Khawaja Nazimuddin"
+leader_sex="Male", "Male", "Female", "Male", "Male"
 
-leader_sex= "Male", "Male", "Male",
-	    "Male","Male"
 flag="f.pakistan"
-flag_alt = "-"
+flag_alt="-"
 city_style = "Asian"
 
 init_techs=""
 init_buildings=""
-tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
-	     "Railroad", "Explosives"
-wonder= ""
-government= "Fundamentalism"
-civilwar_nations = "indian", "afghani","chinese"
+init_government="Despotism"
+init_units=""
 
+civilwar_nations="indian", "afghani", "iranian"
+
+; http://de.wikipedia.org/wiki/Liste_der_Städte_in_Pakistan
 cities =
  "Karachi",
  "Lahore",

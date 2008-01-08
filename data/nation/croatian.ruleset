@@ -2,16 +2,27 @@
 
 name=_("Croatian")
 plural=_("?plural:Croatians")
-class=_("Modern")
-legend=_("Croatia is the region of the Southern Slavs that was held by the \
-Austro-Hungarian Empire, rather than coming under Ottoman rule after the \
-collapse of Byzantium. During most of the 20th century it was part of the \
-Yugoslav Federation.")
-leader="Ljudevit Posavski", "Borna", "Trpimir", "Domagoj", "Branimir",
-       "Tomislav", "Stjepan Drzislav", "Petar Kresimir IV", "Zvonimir",
-       "Nikola Subic Zrinski", "Matija Gubec", "Petar Zrinski",
-       "Franjo Frankopan", "Franjo Tudjman",
-       "Josip Ban Jelacic"
+groups="Modern", "European"
+legend=_("Croatia is the region of the Southern Slavs that was held by the\
+ Austro-Hungarian Empire, rather than coming under Ottoman rule after the\
+ collapse of Byzantium. During most of the 20th century it was part of the\
+ Yugoslav Federation.")
+leader=
+ "Ljudevit Posavski",
+ "Borna",
+ "Trpimir",
+ "Domagoj",
+ "Branimir",
+ "Tomislav",
+ "Stjepan Držislav",
+ "Petar Krešimir IV",
+ "Dmitar Zvonimir",
+ "Nikola Šubić Zrinski",
+ "Matija Gubec",
+ "Petar Zrinski",
+ "Franjo Frankopan",
+ "Franjo Tuđman",
+ "Josip Jelačić"
 leader_sex="Male", "Male", "Male", "Male", "Male", "Male", "Male",
            "Male", "Male", "Male", "Male", "Male", "Male", "Male",
            "Male"
@@ -20,18 +31,14 @@ flag_alt = "-"
 city_style = "European"
 
 ruler_titles = { "government",      "male_title",      "female_title"
-                 "Monarchy",	    _("King"),         _("Queen")
-		 "Republic",	    _("President"),    _("President")
-	         "Democracy",       _("President"),    _("President")
+		 "Republic",	    _("President"),    _("?female:President")
                }
 
 init_techs=""
 init_buildings=""
 
-tech_goals="The Republic", "Trade", "Engineering", "Democracy",
-           "Railroad", "Explosives", "Automobile"
-wonder="Hoover Dam"
-government="Republic"
+init_government="Despotism"
+init_units=""
 civilwar_nations = "slovenian"
 
 cities =

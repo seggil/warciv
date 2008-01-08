@@ -2,32 +2,73 @@
 
 name=_("Swiss")
 plural=_("?plural:Swiss")
-class=_("Modern")
-leader=	"Wilhelm Tell", "Arnold von Winkelried", "Gessler", "General Guisan",
-	"Adolf Ogi", "Ruth Dreifuss", "Moritz Leuenberger",
-	"Christoph Blocher"
-leader_sex="Male", "Male", "Male", "Male", "Male",
-  "Female", "Male", "Male"
+groups="Modern", "Medieval", "European"
+legend=_("Switzerland is a federation of cantons, some of which have more\
+ than 700 years of history as a confederacy.")
+leader=
+ "Wilhelm Tell",
+ "Arnold von Winkelried",
+ "Hermann Gessler",
+ "Henri Guisan"
+leader_sex="Male", "Male", "Male", "Male"
 flag="f.switzerland"
 flag_alt = "-"
 city_style = "European"
 
+ruler_titles = { "government",	"male_title",	"female_title"
+		 "Anarchy",     _("General"),   _("?female:General")
+		 "Despotism",   _("Bailiff"),   _("?female:Bailiff")
+		 "Republic",    _("President of the Confederation"),
+				_("President of the Confederation")
+	"Democracy", _("Federal Chancellor"), _("?female:Federal Chancellor")
+	       }
+
 init_techs=""
 init_buildings=""
-
-tech_goals = "Democracy", "Iron Working", "Trade", "Engineering",
-             "Railroad", "Bridge Building", "Banking"
-wonder="United Nations"
-government="Democracy"
+init_government="Despotism"
+init_units=""
+civilwar_nations="austrian", "french", "italian"
 
 cities =
-  "Bern (river)", "Zürich", "Basel (river)", "Genève", "Lausanne",
-  "Winterthur", "St. Gallen", "Luzern", "Biel / Bienne", "Thun (river)",
-  "Köniz", "La Chaux-de-Fonds", "Fribourg (river)", "Schaffhausen (river)",
-  "Neuchatel", "Chur", "Vernier GE", "Emmen LU", "Sion (river)", "Lugano",
-  "Uster ZH", "Kriens LU", "Lancy GE", "Montreux VD",
-  "Yverdon-les-bains VD (river)",
-  "Zug", "Dietikon ZH", "Dübendorf ZH", "Frauenfeld TG", "Riehen BS",
-  "Aarau (river)", "Herisau", "Appenzell", "Liestal", "Glarus",
-  "Delemont", "Stans", "Sarnen", "Schwyz",
-  "Solothurn (river)", "Bellinzona", "Altdorf"
+ "Bern (river)",
+ "Zürich",
+ "Basel (river)",
+ "Genève",
+ "Lausanne",
+ "Winterthur",
+ "St. Gallen",
+ "Luzern",
+ "Biel / Bienne",
+ "Thun (river)",
+ "Köniz",
+ "La Chaux-de-Fonds",
+ "Fribourg (river)",
+ "Schaffhausen (river)",
+ "Neuchatel",
+ "Chur",
+ "Vernier",
+ "Emmen",
+ "Sion (river)",
+ "Lugano",
+ "Uster",
+ "Kriens",
+ "Lancy",
+ "Montreux",
+ "Yverdon-les-bains (river)",
+ "Zug",
+ "Dietikon",
+ "Dübendorf",
+ "Frauenfeld",
+ "Riehen",
+ "Aarau (river)",
+ "Herisau",
+ "Appenzell",
+ "Liestal",
+ "Glarus",
+ "Delemont",
+ "Stans",
+ "Sarnen",
+ "Schwyz",
+ "Solothurn (river)",
+ "Bellinzona",
+ "Altdorf"

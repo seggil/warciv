@@ -2,7 +2,15 @@
 
 name=_("Barbarian")
 plural=_("?plural:Barbarians")
-leader="Genseric", "Alaric", "Theodoric", "Stilicho", "Attila", "Boadicea"
+legend=_("Since the dawn of civilization, barbarians have been a threat to\
+ cultured peoples everywhere.")
+leader=
+ "Genseric",
+ "Alaric",
+ "Theodoric",
+ "Stilicho",
+ "Attila",
+ "Boadicea"
 leader_sex="Male", "Male", "Male", "Male", "Male", "Female"
 flag="f.barbarian"
 flag_alt = "-"
@@ -10,11 +18,13 @@ city_style = "European"
 
 init_techs=""
 init_buildings=""
+init_government="Despotism"
+init_units=""
 
-tech_goals = "Warrior Code"
-wonder = "Apollo Program"
-government = "Despotism"
+cities = "Barbaricum"
 
-cities = "Nowhere"
+is_playable = 0
+is_observer = 0
+barbarian_type = "Land"
 
 ; nothing more needed for barbarians

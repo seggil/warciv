@@ -2,34 +2,43 @@
 
 name=_("Soviet")
 plural=_("?plural:Soviets")
-class=_("Historical")
+groups="European", "Asian"
 legend=_("Soviet Union's history starts in November 1917,\
-when under Lenin's leadership a Bolshevik revolution occurred.\
-On December 31 1922, four Soviet republics integrated into one\
-country. Soviet Union became one of most powerful states in\
-the 20th century. But by the end of 1991 due to many social\
-shocks it disintegrated into fifteen independent countries.")
-leader= "Vladimir Lenin",
+ when under Lenin's leadership a Bolshevik revolution occurred.\
+ On December 31 1922, four Soviet republics integrated into one\
+ country. Soviet Union became one of most powerful states in\
+ the 20th century. But by the end of 1991 due to many social\
+ shocks it disintegrated into fifteen independent countries")
+leader=
+ "Vladimir Lenin",
  "Iosif Stalin",
  "Nikita Khruschov",
  "Leonid Brezhnev",
  "Yuriy Andropov",
  "Nadezhda Krupskaya",
  "Alexandra Kollontai"
-leader_sex= "Male", "Male", "Male",
-	    "Male", "Male", "Male","Male"
+leader_sex="Male", "Male", "Male", "Male", "Male", "Female", "Female"
 flag="f.soviet"
 flag_alt = "-"
 city_style = "European"
 
+ruler_titles = { "government",    "male_title",       "female_title",
+                 "Republic",      _("Comrade"),       _("?female:Comrade")
+          "Communism", _("General Secretary"), _("?female:General Secretary")
+		 "Monarchy",      _("Great Leader"),_("?female:Great Leader")
+               }
+
 init_techs=""
 init_buildings=""
-tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
-	     "Railroad", "Explosives"
-wonder= "Magellan's Expedition"
-government= "Communism"
+init_government="Despotism"
+init_units=""
+
+conflicts_with = "russian", "ukrainian", "belarusian",
+ "Lithuanian", "latvian", "estonian",
+ "moldovan", "georgian", "armenian", "azeri",
+ "kazakh", "kyrgyz", "tajik", "turkmen", "uzbek"
 civilwar_nations = "russian", "ukrainian", "belarusian",
- "lithuaninan", "latvian", "estonian",
+ "Lithuanian", "latvian", "estonian",
  "moldovan", "georgian", "armenian", "azeri",
  "kazakh", "kyrgyz", "tajik", "turkmen", "uzbek"
 

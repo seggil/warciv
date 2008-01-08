@@ -2,21 +2,28 @@
 
 name = _("Cornish")
 plural = _("?plural:Cornish")
-class=_("Historical")
-legend=_("Cornwall is a region in the extreme southwest of England, \
-traditionally the home of the legendary King Arthur.")
-leader = "Arthur", "Jonathen Trelawny", "Thomas Flamank", "Michael Joseph",
-	"William Bligh"
+groups= "Medieval", "European"
+legend=_("Cornwall is a region in the extreme southwest of England,\
+ traditionally the home of the legendary King Arthur.")
+leader =
+ "Arthur",
+ "Jonathen Trelawny",
+ "Thomas Flamank",
+ "Michael Joseph",
+ "William Bligh"
 leader_sex = "Male", "Male", "Male", "Male", "Male"
-flag = "f.cornwall"
-flag_alt = "f.england"
-city_style = "European"
+flag="f.cornwall"
+flag_alt = "england"
+city_style = "Celtic"
+
+ruler_titles = { "government",      "male_title",      "female_title"
+                 "Despotism",       _("Chieftain"),    _("?female:Chieftain")
+               }
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "Iron Working", "Feudalism", "Invention"
-wonder = "King Richard's Crusade"
-government = "Republic"
+init_government="Despotism"
+init_units=""
 civilwar_nations = "english", "irish"
 
 cities =

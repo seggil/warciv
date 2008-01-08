@@ -2,17 +2,27 @@
 
 name   = _("German")
 plural = _("?plural:Germans")
-class  = _("Modern")
+groups  = "Modern", "Medieval", "European"
 
 legend = _("Germany was united in 1871 by the Prussian military \
 force.  After World War I it became a republic, but fell into \
 Nazism 1933 and started World War II.  After the war it was split \
 into two states, which reunited in 1990 at the end of the Cold War.")
 
-leader = "Arminius", "Alarich", "Karl der Große", "Otto I.", 
-         "Friedrich I. Barbarossa", "Friedrich II.", "Wilhelm I.",
-         "Otto von Bismarck", "Friedrich Ebert", "Adolf Hitler", 
-         "Konrad Adenauer", "Willy Brandt", "Erich Honecker"
+leader =
+ "Arminius",
+ "Alarich",
+ "Karl der Große",
+ "Otto I", 
+ "Friedrich I Barbarossa",
+ "Friedrich II",
+ "Wilhelm I",
+ "Otto von Bismarck",
+ "Friedrich Ebert",
+ "Adolf Hitler", 
+ "Konrad Adenauer",
+ "Willy Brandt",
+ "Erich Honecker"
 leader_sex = "Male", "Male", "Male", "Male", "Male", "Male", "Male", 
              "Male", "Male", "Male", "Male", "Male", "Male"
 
@@ -20,24 +30,23 @@ flag         = "f.germany"
 flag_alt     = "-"
 city_style   = "European"
 ruler_titles = { "government",      "male_title",       "female_title"
-                 "Republic",       _("President"),       _("President") 
-                 "Democracy",      _("Chancellor"),      _("Chancellor")
-                 "Fundamentalism", _("Archbishop"),      _("Archbishop")
-                 "Communism",      _("First Secretary"), _("First Secretary")
+                 "Republic",       _("President"),     _("?female:President") 
+                 "Democracy",      _("Chancellor"),   _("?female:Chancellor")
+                 "Fundamentalism", _("Archbishop"),   _("?female:Archbishop")
+                "Communism",_("First Secretary"),_("?female:First Secretary")
                }
 
 init_techs = ""
 init_buildings=""
+init_government="Despotism"
+init_units=""
 
-tech_goals = "The Republic", "Iron Working", "Gunpowder", "Explosives",
-             "Flight"
-wonder     = "J.S. Bach's Cathedral"
-government = "Republic"
-civilwar_nations = "french", "italian"
+conflicts_with="bavarian", "westphalian", "prussian"
+civilwar_nations="bavarian", "westphalian", "prussian"
 
 cities =
   "Berlin (grassland, !mountains)", 
-  "Hamburg(grassland, swamp, ocean, river, !mountains)",
+  "Hamburg (grassland, swamp, ocean, river, !mountains)",
   "München (hills, mountains, !ocean)", 
   "Köln (plains, hills, river)", 
   "Frankfurt am Main (grassland, hills, river, !ocean)",

@@ -2,9 +2,9 @@
 
 name=_("Silesian")
 plural=_("?plural:Silesians")
-class=_("Historical")
-legend=_("Silesia is a region of southern Poland that was at one time an \
-independent kingdom.")
+groups="Medieval", "European"
+legend=_("Silesia is a region of southern Poland that was at one time an\
+ independent kingdom.")
 leader = "Władysław Wygnaniec",
          "Henryk Brodaty",
          "Henryk Pobożny",
@@ -17,16 +17,15 @@ flag="f.silesia"
 flag_alt = "-"
 city_style = "European"
 
-ruler_titles = { "government",      "male_title",      "female_title",
+ruler_titles = { "government",      "male_title",      "female_title"
                  "Monarchy",        _("Prince"),         _("Princess")
-                 "Democracy",       _("Prime Minister"), _("Prime Minister")
+                 "Democracy",_("Prime Minister"), _("?female:Prime Minister")
                }
 init_techs=""
 init_buildings=""
 
-tech_goals="The Republic", "Trade", "Feudalism", "Railroad", "Steel"
-wonder="Great Wall" ; Yes, we had own great wall ("Wały Śląskie") 
-government="Democracy"
+init_government="Despotism"
+init_units=""
 civilwar_nations = "polish"
 
 ; if you want your favourite city to be in more prominent place, go ahead

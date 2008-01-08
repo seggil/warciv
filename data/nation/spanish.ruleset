@@ -2,32 +2,47 @@
 
 name=_("Spanish")
 plural=_("?plural:Spanish")
-class=_("Modern")
-legend=_("The modern Spanish nation was formed when the rulers of the \
-kingdoms of Castille and Aragon led the recapture of the Iberian peninsula \
-from the Moslems.  The Reconquista was completed in 1492AD, the same year \
-Columbus sailed.")
-leader="Viriato", "Recaredo I", "Alfonso X", "Fernando V", "Isabel I",
-       "Carlos I", "Felipe II", "Carlos III", "Franco", "Mortadelo"
+groups="Medieval","Modern","European"
+legend=_("The modern Spanish nation was formed when the rulers of the\
+ kingdoms of Castille and Aragon led the recapture of the Iberian peninsula\
+ from the Moslems.  The Reconquista was completed in 1492AD, the same year\
+ Columbus sailed.")
+leader=
+ "Viriato",
+ "Recaredo I",
+ "Alfonso X",
+ "Fernando V",
+ "Isabel I",
+ "Carlos I",
+ "Felipe II",
+ "Carlos III",
+ "Manuel Azaña",
+ "Francisco Franco"
 leader_sex="Male", "Male", "Male", "Male", "Female",
            "Male", "Male", "Male", "Male", "Male"
 flag="f.spain"
 flag_alt = "-"
-city_style = "European"
+city_style = "Classical"
+
 ruler_titles = { "government",     "male_title",        "female_title"
                  "Despotism",      _("Caudillo"),       _("Caudilla")
-                 "Fundamentalism", _("Cardinal"),       _("Cardinal")
+                 "Fundamentalism", _("Cardinal"),       _("?female:Cardinal")
                  "Monarchy",       _("King"),           _("Queen")
-                 "Democracy",      _("Prime Minister"), _("Prime Minister")
+                 "Democracy",_("Prime Minister"), _("?female:Prime Minister")
                }
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "Philosophy", "Navigation", "Iron Working",
-             "Railroad"
-wonder="Magellan's Expedition"
-government="Democracy"
-civilwar_nations = "chilean", "argentine"
+init_government="Despotism"
+init_units=""
+
+conflicts_with="catalan", "galician"
+
+civilwar_nations=
+; Sub-national nations
+ "catalan", "galician",
+; Spanish speaking ex-colonies
+ "argentine", "chilean", "colombian", "cuban", "filipino", "venezuelan"
 
 cities =
   "Madrid", "Barcelona", "Bilbao", "Valencia", "Sevilla", "Zaragoza",

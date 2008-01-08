@@ -2,12 +2,17 @@
 
 name=_("Thai")
 plural=_("?plural:Thai")
-class=_("Modern")
-legend=_("The Thai kingdom was the only country in Southeast Asia to \
-preserve its independence throught the colonial era of the 18th and \
-19th centuries AD.")
-leader = "Rama Thibodi", "Chao Phya Chakri", "Maha Mongkut", "Chulalongkorn",
-         "Pibul Songgram", "Seni Pramoya"
+groups="Modern", "Medieval", "Asian"
+legend=_("The Thai kingdom was the only country in Southeast Asia to\
+ preserve its independence throught the colonial era of the 18th and\
+ 19th centuries AD.")
+leader =
+ "Rama Thibodi",
+ "Chao Phya Chakri",
+ "Maha Mongkut",
+ "Chulalongkorn",
+ "Pibul Songgram",
+ "Seni Pramoya"
 leader_sex = "Male", "Male", "Male", "Male",
              "Male", "Male"
 flag="f.thailand"
@@ -16,11 +21,9 @@ city_style = "Asian"
 
 init_techs=""
 init_buildings=""
-tech_goals = "The Republic", "Engineering", "Invention", "Railroad",
-             "Explosives"
-wonder= "Marco Polo's Embassy"
-government = "Democracy"
-civilwar_nations = "vietnamese"
+init_government="Despotism"
+init_units=""
+civilwar_nations="vietnamese", "cambodian", "laotian"
 
 cities =
   "Bangkok", "Thon Buri", "Nakhon Rachasima", "Chiang Mai", "Khon Kaen",

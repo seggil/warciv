@@ -2,10 +2,19 @@
 
 name=_("Hungarian")
 plural=_("?plural:Hungarians")
-class=_("Modern")
-leader="Árpád", "Szent István", "Károly Róbert",
-       "Hunyadi Mátyás", "Mária Terézia", "Batthyány"
-leader_sex="Male", "Male", "Male", "Male", "Female", "Male"
+groups="Medieval", "Modern", "European"
+legend=_("Legend says that Hungary was founded by Arpad in the 9th\
+ century.")
+conflicts_with="indian"	; Similar flags
+leader=
+ "Árpád",
+ "Szent István",
+ "Károly Róbert",
+ "Hunyadi Mátyás",
+ "Mária Terézia",
+ "Batthyány",
+ "Béla IV"
+leader_sex="Male", "Male", "Male", "Male", "Female", "Male", "Male"
 flag="f.hungary"
 flag_alt = "-"
 city_style = "European"
@@ -13,10 +22,8 @@ city_style = "European"
 init_techs=""
 init_buildings=""
 
-tech_goals = "The Republic", "Iron Working", "Chivalry", "Theology",
-             "Gunpowder", "Railroad", "Industrialization"
-wonder="J.S. Bach's Cathedral"
-government="Republic"
+init_government="Despotism"
+init_units=""
 civilwar_nations = "lithuanian", "croatian", "slovenian"
 
 cities =

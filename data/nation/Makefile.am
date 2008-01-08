@@ -5,42 +5,66 @@
 pkgdatadir = $(datadir)/@PACKAGE@/nation
 
 pkgdata_DATA = \
+		aborigines.ruleset \
 		afghani.ruleset \
+		ainu.ruleset \
+		akwe.ruleset \
+		algerian.ruleset \
 		american.ruleset \
+		antarctican.ruleset \
 		arab.ruleset \
+		aramean.ruleset \
 		argentine.ruleset \
 		armenian.ruleset \
 		assyrian.ruleset \
 		australian.ruleset \
 		austrian.ruleset \
-		azerbaijan.ruleset \
+		aymara.ruleset \
+		azeri.ruleset \
 		aztec.ruleset \
 		babylonian.ruleset \
 		barbarian.ruleset \
+		basque.ruleset \
 		bavarian.ruleset \
+		belarusian.ruleset \
 		belgian.ruleset \
+		bengali.ruleset \
 		boer.ruleset \
 		bosnia.ruleset \
 		brazilian.ruleset \
-		bulgaria.ruleset \
+		breton.ruleset \
+		british.ruleset \
+		bulgarian.ruleset \
+		burgundian.ruleset \
+		burmese.ruleset \
+		burundi.ruleset \
+		byzantium.ruleset \
+		cambodian.ruleset \
 		canadian.ruleset \
 		carthaginian.ruleset \
 		catalan.ruleset \
 		chechenia.ruleset \
+		cherokee.ruleset \
 		chilean.ruleset \
 		chinese.ruleset \
-		columbian.ruleset \
+		chola.ruleset \
+		colombian.ruleset \
+		confederate.ruleset \
 		cornish.ruleset \
+		cree.ruleset \
 		croatian.ruleset \
-		cuba.ruleset \
+		cuban.ruleset \
 		czech.ruleset \
 		danish.ruleset \
 		deadwood.ruleset \
+		dominican.ruleset \
 		dunedain.ruleset \
 		dutch.ruleset \
 		egyptian.ruleset \
 		elvish.ruleset \
+		emirati.ruleset \
 		english.ruleset \
+		esperant.ruleset \
 		estonian.ruleset \
 		ethiopian.ruleset \
 		european.ruleset \
@@ -48,79 +72,145 @@ pkgdata_DATA = \
 		finnish.ruleset \
 		french.ruleset \
 		galician.ruleset \
+		gallic.ruleset \
+		georgian.ruleset \
 		german.ruleset \
 		greek.ruleset \
 		greenland.ruleset \
+		gupta.ruleset \
+		hacker.ruleset \
+		hawaiian.ruleset \
+		hellenic.ruleset \
 		hezbollah.ruleset \
+		himyarite.ruleset \
+		hittite.ruleset \
 		hobbits.ruleset \
 		hondura.ruleset \
 		hongkong.ruleset \
+		hopi.ruleset \
 		hradeckralove.ruleset \
 		hungarian.ruleset \
 		icelandic.ruleset \
 		iglu.ruleset \
+		illyrian.ruleset \
 		inca.ruleset \
 		indian.ruleset \
 		indonesian.ruleset \
-		iraq.ruleset \
+		inuit.ruleset \
+		iranian.ruleset \
+		iraqi.ruleset \
 		irish.ruleset \
+		iroquois.ruleset \
 		israeli.ruleset \
 		italian.ruleset \
 		japanese.ruleset \
-		kampuchean.ruleset \
+		kanem-bornu.ruleset \
+		kazakh.ruleset \
 		kenyan.ruleset \
+		khwarezmian.ruleset \
+		kongo.ruleset \
 		korean.ruleset \
 		krev.ruleset \
+		kurd.ruleset \
+		kyrgyz.ruleset \
+		lankese.ruleset \
+		laotian.ruleset \
 		latvian.ruleset \
+		libyan.ruleset \
 		lithuanian.ruleset \
-		loatian.ruleset \
+		lojbanistani.ruleset \
 		macedonia.ruleset \
+		majapahit.ruleset \
+		malagasy.ruleset \
 		malaysian.ruleset \
+		malian.ruleset \
+		manchu.ruleset \
+		maori.ruleset \
+		mapuche.ruleset \
 		marshall_islands.ruleset \
 		martian.ruleset \
+		mayan.ruleset \
 		mexican.ruleset \
 		midway_islands.ruleset \
+		moldovan.ruleset \
 		mongol.ruleset \
 		mordor.ruleset \
+		muskogee.ruleset \
 		nato.ruleset \
+		newzealand.ruleset \
 		nigerian.ruleset \
+		norman.ruleset \
+		northkorean.ruleset \
+		norwegian.ruleset \
+		nubian.ruleset \
+		numidian.ruleset \
+		nuu-chah-nulth.ruleset \
 		observer.ruleset \
+		ottoman.ruleset \
 		pakistani.ruleset \
 		palestine.ruleset \
+		papuan.ruleset \
 		persian.ruleset \
+		peruvian.ruleset \
 		phoenician.ruleset \
+		pirate.ruleset \
 		polish.ruleset \
+		polynesian.ruleset \
 		portuguese.ruleset \
+		prussian.ruleset \
+		purhepecha.ruleset \
 		quebecois.ruleset \
 		revolution.ruleset \
+		romanian.ruleset \
 		roman.ruleset \
 		russian.ruleset \
 		rwandan.ruleset \
+		ryukyuan.ruleset \
+		sami.ruleset \
+		samogitian.ruleset \
 		scottish.ruleset \
 		serbian.ruleset \
 		silesian.ruleset \
 		singaporean.ruleset \
 		sioux.ruleset \
-		slovakia.ruleset \
+		slovakian.ruleset \
 		slovenian.ruleset \
+		southafrican.ruleset \
+		southkorean.ruleset \
 		soviet.ruleset \
 		spanish.ruleset \
+		srivijaya.ruleset \
 		sudanese.ruleset \
 		sumerian.ruleset \
+		swazi.ruleset \
 		swedish.ruleset \
 		swiss.ruleset \
-		syria.ruleset \
+		syrian.ruleset \
+		taino.ruleset \
+		tairona.ruleset \
 		taiwanese.ruleset \
+		tajik.ruleset \
+		templar.ruleset \
+		texan.ruleset \
 		thai.ruleset \
+		thracian.ruleset \
+		tibetan.ruleset \
+		tocharian.ruleset \
+		tunisian.ruleset \
+		tupi.ruleset \
+		turkmen.ruleset \
 		turk.ruleset \
 		tux.ruleset \
 		ukrainian.ruleset \
-		united_kingdom.ruleset \
-		united_nations.ruleset \
-		vietcongs.ruleset \
+		un.ruleset \
+		uruguayan.ruleset \
+		uyghur.ruleset \
+		uzbek.ruleset \
+		venezuelan.ruleset \
 		vietnamese.ruleset \
 		viking.ruleset \
 		welsh.ruleset \
+		westphalian.ruleset \
 		zulu.ruleset 
 
 EXTRA_DIST = $(pkgdata_DATA) Makefile.am.sh

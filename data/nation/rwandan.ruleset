@@ -2,29 +2,35 @@
 
 name=_("Rwandan")
 plural=_("?plural:Rwandans")
-class=_("Modern")
+groups="Modern", "African"
 legend=_("Rwanda is a hilly and very fertile country in the Great Lakes\
-region of eastern Africa. It supports the densest population of\
-the continent.")
-
-
-leader="Juvénal Habyarimana","Grégoire Kayibanda","Kigeli V","Mutara III","Yuhi IV"
-
-leader_sex="Male","Male","Male","Male","Male"
-           
+ region of eastern Africa. It supports the densest population of\
+ the continent.")
+leader=
+ "Juvénal Habyarimana",
+ "Grégoire Kayibanda",
+ "Kigeli V",
+ "Mutara III",
+ "Yuhi IV"
+leader_sex="Male", "Male", "Male", "Male", "Male"
 flag="f.rwanda"
-flag_alt = "-" 
+flag_alt = "-"
 city_style = "Tropical"
+
+ruler_titles = { "government",      "male_title",      "female_title"
+                 "Despotism",       _("Chief"),        _("Chief")
+; /* TRANS: Mwami = King */
+                 "Monarchy",        _("Mwami"),        _("Mwami")
+               }
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "Philosophy", "Chivalry", "Trade","Bridge Building",
-             "Railroad", "Communism"
-wonder=""
-government="Republic"
-civilwar_nations= "kenyan"
+init_government="Despotism"
+init_units=""
 
+civilwar_nations = "swazi", "kenyan"
 
+; http://de.wikipedia.org/wiki/Liste_der_Städte_in_Ruanda
 cities =
  "Kigali",
  "Butare",

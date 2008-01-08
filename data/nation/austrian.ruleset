@@ -2,8 +2,13 @@
 
 name=_("Austrian")
 plural=_("?plural:Austrians")
-class=_("Modern")
-leader="Maria Theresia", "Franz Joseph", "Luitpold" 
+groups="Modern", "European"
+legend=_("Austria means Eastern Realm, given its position as the far east\
+ territory of the medieval Holy Roman Empire.")
+leader=
+ "Maria Theresia",
+ "Franz Joseph",
+ "Luitpold" 
 leader_sex="Female", "Male", "Male"
 flag="f.austria"
 flag_alt = "-"
@@ -11,10 +16,9 @@ city_style = "European"
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "The Republic", "Gunpowder", "Metallurgy",
-             "Plastics"
-wonder= "J.S. Bach's Cathedral"
-government = "Monarchy"
+init_government="Despotism"
+init_units=""
+civilwar_nations="swiss", "hungarian"
 
 cities =
   "Wien", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt",

@@ -12,7 +12,7 @@ leader="Elros", "Tar-Ancalimë", "Míriel", "Elendil", "Isildur", "Aragorn",
 	"Tarannon Falastur", "Thorongil", "Ar-Pharazon", "Beruthiel"
 leader_sex="Male", "Female", "Female", "Male", "Male", "Male",
 	"Male", "Male", "Male", "Female"
-flag = "f.dunedain"
+flag="f.dunedain"
 flag_alt = "-"
 city_style = "Classical"
 
@@ -22,9 +22,9 @@ ruler_titles = { "government",      "male_title",      "female_title"
 
 init_techs=""
 init_buildings=""
+init_government="Despotism"
 tech_goals = "Monarchy", "Iron Working", "Feudalism", "Construction"
 wonder="Magellan's Expedition"
-government="Monarchy"
 civilwar_nations = "mordor"
 
 cities =

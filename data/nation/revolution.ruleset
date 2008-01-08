@@ -4,7 +4,7 @@ name=_("Revolutionary")
 plural=_("?plural:Revolutionaries")
 class=_("Fictional")
 
-leader= "-----"
+leader= "Che Guevara"
 
 leader_sex= "Male"
 
@@ -14,11 +14,9 @@ city_style ="European"
 
 init_techs=""
 init_buildings=""
+init_government="Despotism"
 tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
 	     "Railroad", "Explosives"
-wonder="" 
-government= "Comunism"
-
 
 cities =
   "none"

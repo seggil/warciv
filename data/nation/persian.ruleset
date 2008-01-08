@@ -2,34 +2,73 @@
 
 name=_("Persian")
 plural=_("?plural:Persians")
-class=_("Historical")
-legend=_("The first Persian (Achaemenid) Empire lasted from 550BC to 330BC; \
-the second (Sassanid) from 226AD to 642AD.")
-leader="Cyrus", "Darius", "Xerxes", "Ardashir"
-leader_sex="Male", "Male", "Male", "Male"
-flag="f.iran"
-flag_alt = "-"
+groups="Ancient","Asian"
+legend=_("The first Persian (Achaemenid) Empire lasted from 550BC to 330BC;\
+ the second (Sassanid) from 226AD to 642AD.")
+leader=
+ "Cyrus II",	; A native rendering of his name is "Kurush"
+ "Darius I",	;		-""-		    "Darayavaush"
+ "Xerxes I",	;		-""-		    "Khshayarsha"
+ "Ardashir I",
+ "Khosrau I",
+ "Shapur I"
+leader_sex="Male", "Male", "Male", "Male", "Male", "Male"
+flag="f.iran_ancient"
+flag_alt = "iran"
 city_style = "Classical"
 
 ruler_titles = { "government",      "male_title",      "female_title"
-                 "Monarchy",        _("Shah"),         _("Shah")
+                 "Monarchy",        _("Shah"),         _("Shahbanu")
+                 "Fundamentalism",  _("Ayatollah"),    _("Ayatollah")
                }
 
 init_techs=""
 init_buildings=""
-tech_goals = "Polytheism", "Philosophy", "Trade", "Engineering",
-             "Iron Working", "Railroad"
-wonder="Hanging Gardens"
-government="Monarchy"
-civilwar_nations = "babylonian", "arab"
+init_government="Despotism"
+init_units=""
+civilwar_nations = "khwarezmian", "arab"
 
-;first are ancient cities in latin version
-
+; Sources:
+; http://www.livius.org/persia.html
+; http://www.iranian.com/GuiveMirfendereski/2005/May/Saka/
 cities =
-  "Persepolis", "Susa", "Ekbatana", "Pasargadae",
-  "Rhagae", "Margiane", "Baktra", "Taxila", "Gabae",
-  "Zadrakarta", "Herat", "Drapsaka", "Karmana", "Pura", ;modern cities
-  "Teheran", "Isfahan", "Tabriz", "Hamadan", "Rasht",
-  "Ahraz", "Shiraz", "Kerman", "Yazd", "Mashhad", "Zahedan",
-  "Bushehr", "Qazrin", "Lhasa", "Bulgar", "Hormuz",
-  "Esfahan", "Mosul"
+; Ancient cities first; Latin rendering in comment
+ "Parsa",	; Persepolis
+ "Susa",
+ "Hagmatana",	; Ecbatana
+ "Pathragada",	; Pasaradae
+ "Raga",	; Rhagae
+ "Margush",	; Margiane
+ "Baktra",
+ "Takshasila",	; Taxila
+ "Gaba",	; Gabae
+ "Sakarta",	; Zadrakarta
+ "Herat",
+ "Drapsaka",
+ "Karmana",
+ "Pura",
+ "Bishapur",
+ "Ardashir Khureh",
+ "Tikni",
+ "Istakhr",
+ "Shurkutir",
+ "Susia",
+
+ ; Modern cities of the region
+ "Teheran",
+ "Isfahan",
+ "Tabriz",
+ "Hamadan",
+ "Rasht",
+ "Ahraz",
+ "Shiraz",
+ "Kerman",
+ "Yazd",
+ "Mashhad",
+ "Zahedan",
+ "Bushehr",
+ "Qazrin",
+ "Lhasa",
+ "Bulgar",
+ "Hormuz",
+ "Mosul"

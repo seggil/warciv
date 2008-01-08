@@ -2,47 +2,121 @@
 
 name=_("Serbian")
 plural=_("?plural:Serbians")
-class=_("Modern")
-legend=_("Serbia is part of the region of the Southern Slavs that was \
-conquered by the Ottomans after the collapse of the Byzantine Empire.  \
-During most of the 20th century it was part of the Yugoslav Federation.")
-leader="Vlastimir", "Caslav", "Vojislav", "Mihailo", "Bodin", "Nemanja",
-       "Stefan Prvovjencani", "Stefan Uros", "Milutin", "Dusan",
-       "Karadorde Petrovic", "Milos Obrenovic", "Aleksandar Petrovic",
-       "Stefan Supljikac", "Milan II Obrenovic", "Petar Karadordevic"
+groups="Modern", "Medieval", "European"
+legend=_("Serbia is part of the region of the Southern Slavs that was\
+ conquered by the Ottomans after the collapse of the Byzantine Empire. \
+ During most of the 20th century it was part of the Yugoslav Federation.")
+leader=
+ "Vlastimir",
+ "Časlav Klonimirović",
+ "Stephanus Vojislav",
+ "Mihailo Obrenović",
+ "Konstantin Bodin",
+ "Stefan Nemanja",
+ "Stefan Prvovenčani",
+ "Stefan Uroš",
+ "Stefan Milutin",
+ "Stefan Dušan",
+ "Karađorđe Petrović",
+ "Miloš Obrenović",
+ "Aleksandar Karađorđević",
+ "Stevan Šupljikac",
+ "Milan II Obrenović",
+ "Petar Karađorđević",
+ "Slobodan Milošević",
+ "Zoran Đinđić"
 leader_sex="Male", "Male", "Male", "Male", "Male", "Male", "Male", "Male",
-           "Male", "Male", "Male", "Male", "Male", "Male", "Male", "Male"
+           "Male", "Male", "Male", "Male", "Male", "Male", "Male", "Male",
+           "Male", "Male"
 flag="f.serbia"
 flag_alt = "-"
 city_style = "European"
 
 ruler_titles = { "government",      "male_title",      "female_title"
-        	 "Monarchy",        _("King"),         _("Queen")
-                 "Republic",        _("President"),    _("President")
-                 "Democracy",       _("President"),    _("President")
+                 "Despotism",       _("Duke"),         _("Duchess")
+                 "Republic",        _("President"),    _("?female:President")
                }
 
 init_techs=""
 init_buildings=""
+init_government="Despotism"
+init_units=""
 
-tech_goals="The Republic", "The Wheel", "Iron Working", "Construction",
-           "Railroad", "Automobile"
-wonder="Sun Tzu's War Academy"
-government="Monarchy"
-civilwar_nations = "slovenian"
+civilwar_nations = "slovenian", "croatian", "bosnia"
 
 cities =
-  "Beograd", "Novi Sad", "Nis", "Subotica", "Zrenjanin", "Pancevo",
-  "Zemun", "Kragujevac", "Pristina", "Sombor", "Senta", "Kikinda",
-  "Becej", "Vrsac", "Sremska Mitrovica", "Sabac", "Smederevo",
-  "Pozarevac", "Bor", "Cacak", "Svetozarevo", "Zajecar", "Vidin",
-  "Krusevac", "Kraljevo", "Novi Pazar", "Leskovac", "Pirot", "Pec",
-  "Kosovska Mitrovica", "Vranje", "Dakovica", "Prizren", "Orahovac",
-  "Urosevac", "Gnjilane", "Prokuplje", "Knjazevac", "Aleksinac",
-  "Priboj", "Paracin", "Titovo Uzice", "Cuprija", "Negotin", "Sid",
-  "Vel. Plaha", "Arandelovac", "Valjevo", "Loznica", "Mladenovac",
-  "Smederevska Palanka", "Obrenovac", "Zeleznik", "Kovin", "Ruma",
-  "Batajnica", "Bela Crkva", "Stara Pazova", "Indija", "Nova Pazova",
-  "Backa Palanka", "Futog", "Petrovaradin", "Muzlja", "Srbobran",
-  "Novi Becej", "Backo Petrovo Selo", "Kula", "Apatin", "Sivac",
-  "Crvenka", "Ada", "Backa Topola", "Bajmok", "Kanjiza"
+ "Beograd",
+ "Novi Sad",
+ "Niš",
+ "Subotica",
+ "Zrenjanin",
+ "Pančevo",
+ "Zemun",
+ "Kragujevac",
+ "Priština",
+ "Sombor",
+ "Senta",
+ "Kikinda",
+ "Bečej",
+ "Vršac",
+ "Sremska Mitrovica",
+ "Šabac",
+ "Smederevo",
+ "Požarevac",
+ "Bor",
+ "Čačak",
+ "Svetozarevo",
+ "Zaječar",
+ "Vidin",
+ "Kruševac",
+ "Kraljevo",
+ "Novi Pazar",
+ "Leskovac",
+ "Pirot",
+ "Peć",
+ "Kosovska Mitrovica",
+ "Vranje",
+ "Đakovica",
+ "Prizren",
+ "Orahovac",
+ "Uroševac",
+ "Gnjilane",
+ "Prokuplje",
+ "Knjaževac",
+ "Aleksinac",
+ "Priboj",
+ "Paraćin",
+ "Titovo Užice",
+ "Ćuprija",
+ "Negotin",
+ "Šid",
+ "Vel. Plaha",
+ "Arandelovac",
+ "Valjevo",
+ "Loznica",
+ "Mladenovac",
+ "Smederevska Palanka",
+ "Obrenovac",
+ "Železnik",
+ "Kovin",
+ "Ruma",
+ "Batajnica",
+ "Bela Crkva",
+ "Stara Pazova",
+ "Indija",
+ "Nova Pazova",
+ "Bačka Palanka",
+ "Futog",
+ "Petrovaradin",
+ "Mužlja",
+ "Srbobran",
+ "Novi Bečej",
+ "Bačko Petrovo Selo",
+ "Kula",
+ "Apatin",
+ "Sivac",
+ "Crvenka",
+ "Ada",
+ "Bačka Topola",
+ "Bajmok",
+ "Kanjiža"

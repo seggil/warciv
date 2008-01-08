@@ -10,10 +10,9 @@ city_style = "Classical"
 
 init_techs=""
 init_buildings=""
-
-tech_goals = ""
-wonder = ""
-government = "Anarchy"
+init_government="Despotism"
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
 
 cities = "Nowhere"
 

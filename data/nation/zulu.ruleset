@@ -2,39 +2,82 @@
 
 name=_("Zulu")
 plural=_("?plural:Zulus")
-class=_("Historical")
-; /*
-; According to <http://www.anglo.50megs.com/zulu_kings.htm>, this is the
-; complete Zulu king list.  It's in regnal order, except that Utshaka
-; (Westernized "Shaka" or "Chaka"), the best known of the kings, has 
-; been moved from between Usenzangakona  and Udingana to the front.
-; */
-leader="Utshaka", "Umdhlani", "Umalandela", "Untombela", "Uzulu", 
-       "Unkosinkulu", "Umageba",  "Upunga", "Undaba", "Ujama", 
-       "Usenzangakona", "Udingana", "Umpande", "Ucetywayo", "Udinuzulu", 
-       "Usolomona"
-legend=_("The Zulus are a warlike Bantu people who migrated from \
-west-central Africa into southern Africa beginning in the early 1700s, \
-conquering the native Khoisan peoples and clashing with European settlers.")
+groups="African"
+legend=_("The Zulus are a warlike Bantu people who migrated from\
+ west-central Africa into southern Africa beginning in the early 1700s,\
+ conquering the native Khoisan peoples and clashing with European settlers.")
+leader=
+ "Mnguni",		; Legendary first king of the Zulu and related tribes
+ "Nkosinkulu",
+ "Mdlani",
+ "Malandela kaLuzumana",
+ "Ntombhela kaMalandela",
+ "Zulu kaNtombela",	; Founder of the Zulu clan
+ "Gumede kaZulu",
+ "Phunga kaGumede",
+ "Mageba kaPhunga",
+ "Ndaba kaMageba",
+ "Jama kaNdaba",
+ "Senzangakhona kaJama",
+ "Shaka kaSenzangakhona",	; Shaka Zulu
+ "Dingane kaSenzangakhona",	; Half-brother of Shaka
+ "Mpande kaSenzangakhona",	; Half-brother of Shaka
+ "Cetshwayo kaMpande",
+ "Dinizulu kaCetshwayo",
+ "Solomon kaDinizulu",
+ "Cyprian Bhekuzulu kaSolomon"
 leader_sex="Male", "Male", "Male", "Male", "Male", 
            "Male", "Male", "Male", "Male", "Male", 
            "Male", "Male", "Male", "Male", "Male", 
-           "Male"
-flag="f.south_africa"
-flag_alt = "f.rwanda"  ; used previously
+           "Male", "Male", "Male", "Male"
+flag="f.zulu"
+flag_alt = "rwanda"  ; used previously
 city_style = "Tropical"
+
+ruler_titles = { "government",      "male_title",      "female_title"
+                 "Despotism",       _("Chief"),        _("?female:Chief")
+		 "Republic", 	    _("Spokesman"),    _("Spokeswoman")
+               }
 
 init_techs=""
 init_buildings=""
-
-tech_goals = "Monarchy", "Philosophy", "Chivalry", "Trade", "Bridge Building",
-             "Railroad", "Communism"
-wonder="Apollo Program"
-government="Communism"
+init_government="Despotism"
+init_units=""
+civilwar_nations="south african", "swazi"
 
 cities =
- "Zimbabwe", "Ulundi", "Bapedi", "Hlobane", "Isandhlwana",
- "Intombe", "Mpondo", "Ngome", "Swazi", "Tugela", "Umtata",
- "Umfolozi", "Ibabanago", "Isipezi", "Amatikulu", "Zunguin",
- "Nongoma", "Ixopo", "Isipingo", "Amanzimtoti", "Mtubatuba",
- "Ubombo", "Ngobeni", "Ngutu", "Nkande", "Empangeni"
+ "Zimbabwe",
+ "Ulundi",
+ "Ethekwini",	; Boer name: Durban
+ "Tshwane",	; Boer name: Pretoria
+ "Harare",
+ "Maputo",
+ "Bulaweyo",
+ "Mzizima",
+ "Luanda",
+ "Umgungundlovu", ; Boer name: Pietermaitzburg
+ "Matola",
+ "Benoni",
+ "Gabarone",
+ "Beira",
+ "Tembisa",
+ "Nampula",
+ "Chitungwiza",
+ "Mbabane",
+ "Arusha",
+ "Mbeya",
+ "Huambo",
+ "Molepolole",
+ "Epumalanga",
+ "Ladysmtih",
+ "KwaDukuza",
+ "Eshowe",
+ "Hlobane",
+ "Esikhawini",
+ "Empangeni",
+ "Nongoma",
+ "Magudu",
+ "Mondlo",
+ "Endumeni",
+ "Mtunzini",
+ "Tongati"

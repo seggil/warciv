@@ -2,26 +2,29 @@
 
 name=_("Icelandic")
 plural=_("?plural:Icelanders")
-class=_("Modern")
-leader= "Jón Sigurdsson",
-   "Ingólfur Arnarson",
-   "Davíð Oddsson",
-   "Ólafur Ragnar Grímsson"
+groups="Modern", "European"
+legend=_("Iceland was long one of the largest uninhabited islands in the\
+ world, until it was settled by Norwegian Vikings in the\
+ late 9th century. The island was kept initially under the Norwegian and\
+ later the Danish crown until independence from Denmark in 1944.")
+leader=
+ "Jón Sigurdsson",
+ "Ingólfur Arnarson",
+ "Sveinn Björnsson",
+ "Ásgeir Ásgeirsson",
+ "Kristján Eldjárn",
+ "Vigdís Finnbogadóttir"
 
-leader_sex="Male", "Male", "Male", "Male"
+leader_sex="Male", "Male", "Male", "Male", "Male", "Female"
 
 flag="f.iceland"
-flag_alt = "f.norway"
-city_style = "Classical"
-ruler_titles = { "government",      "male_title",       "female_title"
-       "Democracy",   _("President"),      _("President")
-               }
+flag_alt = "norway"
+city_style = "European"
 
 init_techs=""
 init_buildings=""
-tech_goals = "The Republic", "Navigation", "Trade"
-wonder="Magellan's Expedition"
-government="Republic"
+init_government="Despotism"
+init_units=""
 civilwar_nations = "danish", "english", "canadian"
 
 cities =

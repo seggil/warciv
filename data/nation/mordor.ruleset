@@ -7,7 +7,7 @@ legend=_("The armies of the Dark Lord Sauron, from J.R.R. Tolkien's \
 Middle Earth fantasies.")
 leader="Sauron", "Angmar", "Gorthaur", "Melkor"
 leader_sex="Male", "Male", "Male", "Male"
-flag = "f.mordor"
+flag="f.mordor"
 flag_alt = "-"
 city_style = "Tropical"
 
@@ -18,9 +18,9 @@ ruler_titles = { "government",      "male_title",      "female_title"
 
 init_techs=""
 init_buildings=""
+init_government="Despotism"
 tech_goals = "Monarchy", "Bronze Working", "Iron Working", "Construction"
 wonder="Sun Tzu's War Academy"
-government="Monarchy"
 civilwar_nations = "dunedain"
 
 cities =

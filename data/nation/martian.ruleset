@@ -2,19 +2,23 @@
 
 name=_("Martian")
 plural=_("?plural:Martians")
-class=_("Fictional")
-leader="Ray Bradbury", "Wernher von Braun", "Arthur C. Clarke",
-   "Isaac Asimov", "Gene Roddenberry"
+groups="Fictional"
+legend=_("Marsmen landed on Earth in 4000 BC!")
+leader=
+ "Ray Bradbury",
+ "Wernher von Braun",
+ "Arthur C. Clarke",
+ "Isaac Asimov",
+ "Gene Roddenberry"
 leader_sex="Male", "Male", "Male", "Male", "Male"
 flag="f.mars"
 flag_alt = "-"
-city_style = "European"
+city_style = "Babylonian"
 
 init_techs=""
 init_buildings=""
-tech_goals = "The Republic", "RailRoad", "Space Travel"
-wonder="Apollo Program"
-government="Communism"
+init_government="Despotism"
+init_units=""
 
 cities =
 	"Olympus Mons", "Utopia Planitia", "Hellas Planitia",

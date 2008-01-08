@@ -2,18 +2,26 @@
 
 name=_("Indonesian")
 plural=_("?plural:Indonesians")
-class=_("Modern")
-leader="Sukarno", "Suharto", "Habibie", "Wahid"
-leader_sex="Male", "Male", "Male", "Male"
+groups="Modern", "Asian"
+legend=_("Indonesia is a large country on the Malay Archipelago with central\
+ government on the island of Java. The country has a Muslim majority and is\
+ one of the most populous in the world.")
+leader=
+ "Sukarno",
+ "Suharto"
+leader_sex="Male", "Male"
 flag="f.indonesia"
 flag_alt = "-"
-city_style = "Classical"
+city_style = "Tropical"
 
 init_techs=""
 init_buildings=""
-tech_goals = "Monarchy", "Feudalism", "Navigation", "Flight", "Rocketry"
-wonder= "Magellan's Expedition"
-government = "Despotism"
+init_government="Despotism"
+init_units=""
+
+; Similar flags
+conflicts_with="singaporean"
+civilwar_nations="malaysian", "malagasy"
 
 cities =
   "Jakarta", "Surabaya", "Bandung", "Medan", "Semarang", "Palembang",

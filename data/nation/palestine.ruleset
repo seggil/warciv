@@ -12,7 +12,7 @@ used in the past three millennia.")
 leader = "Yasir Arafat" , "Rauhi Fattouh", "Mahmoud Abbas",
          "Ahmad Qurei", "Nabil Shaath"
 leader_sex = "Male", "Male", "Male", "Male", "Male"
-flag = "f.palestine"
+flag="f.palestine"
 flag_alt = "-"
 city_style = "Historical"
 
@@ -24,10 +24,9 @@ ruler_titles = {
 
 init_techs = ""
 init_buildings = ""
+init_government="Despotism"
 tech_goals = "Monarchy", "Philosophy", "Chivalry", "Trade",
              "Bridge Building", "Railroad"
-wonder = ""
-government = "Monarchy"
 civilwar_nations = "Arab", "Syrian", "turk"
 
 cities =

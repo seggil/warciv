@@ -23,11 +23,12 @@ ruler_titles = { "government",      "male_title",      "female_title"
 
 init_techs=""
 init_buildings=""
-tech_goals = ""
+init_government="Despotism"
+tech_goals = "The Republic", "Trade", "Engineering", "Gunpowder",
+	     "Railroad", "Explosives"
 
 ; Think of the Girdle of Melian, the Encircling Mountains around Rivendell, the rivers (Silverlode and Anduin) around Lothlorien, etc.
 wonder="Great Wall"
-government="Monarchy"
 
 ; /* <-- avoid gettext warnings
 ; Cities in order of seeing them on the map :-)

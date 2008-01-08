@@ -1,31 +1,36 @@
 [nation_scottish]
+
 name=_("Scottish")
 plural=_("?plural:Scots")
-class=_("Modern")
-legend=_("Scotland, originally settled in late Roman times by Irish \
-raiders who displaced the native Picts, was an independent kingdom from \
-around 1034AD to the Union of Crowns with England in 1701.")
-leader="Henry McLeish", "Donald Dewar", "Charles", "James",
-       "Robert the Bruce", "William Wallace", "Mary Stuart"
+groups="Medieval", "European"
+legend=_("Scotland, originally settled in late Roman times by Irish\
+ raiders who displaced the native Picts, was an independent kingdom from\
+ around 1034AD to the Union of Crowns with England in 1701.")
+leader=
+ "Henry McLeish",
+ "Donald Dewar",
+ "Charles II",
+ "James IV",
+ "Robert the Bruce",
+ "William Wallace",
+ "Mary Stuart"
 leader_sex="Male", "Male", "Male", "Male",
            "Male", "Male", "Female"
 flag="f.scotland"
-flag_alt = "f.united_kingdom"
-city_style = "European"
+flag_alt = "united_kingdom"
+city_style = "Celtic"
 
 ruler_titles = { "government",  "male_title",         "female_title"
-                 "Republic",    _("Speaker"),         _("Speaker")
-                 "Democracy",   _("First Minister"),  _("First Minister")
+                 "Despotism",   _("Chieftain"),       _("?female:Chieftain")
+                 "Republic",    _("Speaker"),         _("?female:Speaker")
+                 "Democracy",_("First Minister"), _("?female:First Minister")
                }
 
 init_techs=""
 init_buildings=""
-
-tech_goals="Monarchy","Iron Working","Trade","Navigation","Railroad","Steel",
-           "Industrialization"
-wonder="Hoover Dam"
-government="Democracy"
-civilwar_nations = "welsh"
+init_government="Despotism"
+init_units=""
+civilwar_nations = "welsh", "irish", "american"
 
 cities =
 "Edinburgh", "Glasgow (river)", "Aberdeen (ocean, river)", 

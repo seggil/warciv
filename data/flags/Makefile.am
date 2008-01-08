@@ -80,7 +80,7 @@ flag_files =			\
 	hittite.png		\
 	hobbits.png		\
 	hondura.png		\
-	hong_kong.png		\
+	hongkong.png		\
 	hopi.png		\
 	hradeckralove.png	\
 	hungary.png		\
