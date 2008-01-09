@@ -1717,8 +1717,8 @@ void srv_main(void)
 
     score_evaluate_players();
     fcdb_record_game_end();
-    report_final_scores();
-    report_game_rankings();
+    report_final_scores(NULL);
+    report_game_rankings(NULL);
 
     show_map_to_all();
 

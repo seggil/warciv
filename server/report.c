@@ -139,12 +139,21 @@ static struct dem_col
 };
 
 /**************************************************************************
-...
+  ...
 **************************************************************************/
 static int secompare(const void *a, const void *b)
 {
   return (((const struct player_score_entry *)b)->value -
 	  ((const struct player_score_entry *)a)->value);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int team_score_compare(const void *a, const void *b)
+{
+  return (*((const struct team **)b))->score
+         - (*((const struct team **)a))->score;
 }
 
 static const char *greatness[MAX_NUM_PLAYERS] = {
@@ -1112,24 +1121,42 @@ void report_progress_scores(void)
 	    _("The Greatest Civilizations in the world."), buffer);
 
   if (team_count() > 0) {
+    size_t team_num = team_count();
+    struct team *sorted_teams[team_num];
+
+    i = 0;
+    team_iterate(pteam) {
+      sorted_teams[i++] = pteam;
+    } team_iterate_end;
+
     /* Refresh the scores. */
     score_calculate_team_scores();
+    qsort(sorted_teams, team_num, sizeof(struct team *), team_score_compare);
 
-    notify_conn(NULL, _("Score: Team Scores:"));
-    team_iterate(pteam) {
-      notify_conn(NULL, _("Score: %-16s %.1f"), pteam->name, pteam->score);
-    } team_iterate_end;
+    buffer[0] = '\0';
+    for (i = 0; i < team_num; i++) {
+      cat_snprintf(buffer, sizeof(buffer), _("%2d: %-16s %.1f\n"),
+		   i + 1, sorted_teams[i]->name, sorted_teams[i]->score);
+    }
+
+    page_conn(game.game_connections,
+	      _("Progress Team Scores:"),
+	      _("The Greatest Teams in the world."), buffer);
   }
 }
 
 /**************************************************************************
   Inform clients about player scores and statistics when the game ends.
 **************************************************************************/
-void report_final_scores(void)
+void report_final_scores(struct conn_list *dest)
 {
   int i, j = 0;
   struct player_score_entry size[game.nplayers];
   struct packet_endgame_report packet;
+
+  if (!dest) {
+    dest = game.game_connections;
+  }
 
   players_iterate(pplayer) {
     if (!is_barbarian(pplayer)) {
@@ -1159,25 +1186,29 @@ void report_final_scores(void)
     packet.spaceship[i] = get_spaceship(size[i].player); 
   }  
 
-  lsend_packet_endgame_report(game.game_connections, &packet);
+  lsend_packet_endgame_report(dest, &packet);
 }	
 
 /**************************************************************************
   Assumes groupings have been assigned, filled and results propagated.
   If game.rated is TRUE, reports rating changes as well.
 **************************************************************************/
-void report_game_rankings(void)
+void report_game_rankings(struct conn_list *dest)
 {
   const struct grouping *groupings = NULL;
   int num_groupings = 0, i, j;
   struct team *pteam;
   struct player *pplayer;
-  char buf[128];
+  char buffer[4096], head_line[256], username[256];
 
   groupings = score_get_groupings(&num_groupings);
 
   if (num_groupings <= 0 || groupings == NULL) {
     return;
+  }
+
+  if (!dest) {
+    dest = game.game_connections;
   }
 
   if (game.fcdb.type == GT_SOLO) {
@@ -1188,89 +1219,87 @@ void report_game_rankings(void)
 
     if (game.rated) {
       if (game.fcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
-        notify_conn(NULL, _("Game: You have won this solo game at "
+        notify_conn(dest, _("Game: You have won this solo game at "
                             "turn %d and with score %.0f. It will "
                             "count as a win against an 'opponent' "
                             "with rating %.2f and rating deviation "
                             "%.2f."),
                     game.turn, groupings[0].score, r, rd);
       } else {
-        notify_conn(NULL, _("Game: You have lost this solo game. "
+        notify_conn(dest, _("Game: You have lost this solo game. "
                             "It will count as a loss against an "
                             "'opponent' with rating %.2f and rating "
                             "deviation %.2f."), r, rd);
       }
     }
   } else if (team_count() > 0) {
-    notify_conn(NULL,
-        "------------------------ %s ------------------------",
-        _("Team Standings"));
-    notify_conn(NULL, "%-16s %10s %10s %10s",
-        _("Name"), _("Rank"), _("Score"), _("Result"));
+    my_snprintf(head_line, sizeof(head_line), "%-16s %10s %10s %10s",
+		_("Name"), _("Rank"), _("Score"), _("Result"));
+    buffer[0] = '\0';
     for (i = 0; i < num_groupings; i++) {
       pteam = team_get_by_id(groupings[i].players[0]->team);
-      notify_conn(NULL, "%-16s %10.1f %10.0f %10s",
-                  pteam ? pteam->name : groupings[i].players[0]->name,
-                  groupings[i].rank + 1.0, groupings[i].score,
-                  result_as_string(groupings[i].result));
+      cat_snprintf(buffer, sizeof(buffer), "%-16s %10.1f %10.0f %10s\n",
+                   pteam ? pteam->name : groupings[i].players[0]->name,
+                   groupings[i].rank + 1.0, groupings[i].score,
+                   result_as_string(groupings[i].result));
     }
+    page_conn(dest, _("Team Standings:"), head_line, buffer);
   }
 
   if (game.fcdb.type != GT_SOLO) {
-    notify_conn(NULL,
-        "------------------------ %s ------------------------",
-        _("Player Standings"));
-    notify_conn(NULL, "%-16s %-16s %10s %10s %10s",
-        _("Name"), _("User"), _("Rank"), _("Score"),  _("Result"));
-
+    my_snprintf(head_line, sizeof(head_line), "%-16s %-16s %10s %10s %10s",
+		_("Name"), _("User"), _("Rank"), _("Score"),  _("Result"));
+    buffer[0] = '\0';
     for (i = 0; i < num_groupings; i++) {
       for (j = 0; j < groupings[i].num_players; j++) {
         pplayer = groupings[i].players[j];
-        player_get_rated_username(pplayer, buf, sizeof(buf));
-        notify_conn(NULL, "%-16s %-16s %10.1f %10d %10s",
-                    pplayer->name, buf, pplayer->rank + 1.0,
-                    get_civ_score(pplayer),
-                    result_as_string(pplayer->result));
+        player_get_rated_username(pplayer, username, sizeof(username));
+        cat_snprintf(buffer, sizeof(buffer), "%-16s %-16s %10.1f %10d %10s\n",
+                     pplayer->name, username, pplayer->rank + 1.0,
+                     get_civ_score(pplayer),
+                     result_as_string(pplayer->result));
       }
     }
+    page_conn(dest, _("Player Standings:"), head_line, buffer);
   }
 
 
   if (game.rated) {
     if (team_count() > 0) {
-      notify_conn(NULL,
-          "---------------------- %s ----------------------",
-          _("Team Ratings"));
-      notify_conn(NULL, "%-16s %10s %10s %12s %10s",
-          _("Name"), _("Rating"), _("RD"), _("New Rating"), _("New RD"));
+      my_snprintf(head_line, sizeof(head_line),
+		  "%-16s %10s %10s %12s %10s", _("Name"), _("Rating"),
+		  _("RD"), _("New Rating"), _("New RD"));
+      buffer[0] = '\0';
       for (i = 0; i < num_groupings; i++) {
         pteam = team_get_by_id(groupings[i].players[0]->team);
         if (pteam == NULL) {
           continue;
         }
-        notify_conn(NULL, "%-16s %10.2f %10.2f %12.2f %10.2f",
-                    pteam->name, groupings[i].rating,
-                    groupings[i].rating_deviation,
-                    groupings[i].new_rating,
-                    groupings[i].new_rating_deviation);
+        cat_snprintf(buffer, sizeof(buffer),
+		     "%-16s %10.2f %10.2f %12.2f %10.2f\n",
+                     pteam->name, groupings[i].rating,
+                     groupings[i].rating_deviation,
+                     groupings[i].new_rating,
+                     groupings[i].new_rating_deviation);
       }
+      page_conn(dest, _("Team Ratings:"), head_line, buffer);
     }
-    notify_conn(NULL,
-        "------------------------ %s ------------------------",
-        _("Player Ratings"));
-    notify_conn(NULL, "%-16s %10s %10s %12s %10s",
-        _("Name"), _("Rating"), _("RD"), _("New Rating"), _("New RD"));
+    my_snprintf(head_line, sizeof(head_line), "%-16s %10s %10s %12s %10s",
+		_("Name"), _("Rating"), _("RD"), _("New Rating"), _("New RD"));
+    buffer[0] = '\0';
     for (i = 0; i < num_groupings; i++) {
       for (j = 0; j < groupings[i].num_players; j++) {
         pplayer = groupings[i].players[j];
-        player_get_rated_username(pplayer, buf, sizeof(buf));
-        notify_conn(NULL, "%-16s %10.2f %10.2f %12.2f %10.2f",
-                    buf, pplayer->fcdb.rating,
-                    pplayer->fcdb.rating_deviation,
-                    pplayer->fcdb.new_rating,
-                    pplayer->fcdb.new_rating_deviation);
+        player_get_rated_username(pplayer, username, sizeof(username));
+        cat_snprintf(buffer, sizeof(buffer),
+		     "%-16s %10.2f %10.2f %12.2f %10.2f\n",
+                     username, pplayer->fcdb.rating,
+                     pplayer->fcdb.rating_deviation,
+                     pplayer->fcdb.new_rating,
+                     pplayer->fcdb.new_rating_deviation);
       }
     }
+    page_conn(dest, _("Player Ratings:"), head_line, buffer);
   }
 }
 
@@ -1278,7 +1307,8 @@ void report_game_rankings(void)
 This function pops up a non-modal message dialog on the player's desktop
 **************************************************************************/
 void page_conn(struct conn_list *dest, const char *caption, 
-	       const char *headline, const char *lines) {
+	       const char *headline, const char *lines)
+{
   page_conn_etype(dest, caption, headline, lines, E_REPORT);
 }
 

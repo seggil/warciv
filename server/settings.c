@@ -1323,12 +1323,14 @@ struct settings_s settings[] = {
               "1 - on\n"
               "If turned on, the user can send many chat lines."), NULL, FALSE)
 
+#ifdef HAVE_MYSQL
   GEN_BOOL_FULL("rated", game.rated, SSET_RULES_FLEXIBLE, SSET_INTERNAL,
            SSET_VITAL, SSET_TO_CLIENT,
            N_("Update user ratings"),
            N_("0 - User ratings will not be affected by this game.\n"
               "1 - New ratings will be calculated based on the outcome "
               "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 75)
+#endif
 
   GEN_END
 };

@@ -39,6 +39,7 @@
 #include "maphand.h"
 #include "meta.h"
 #include "plrhand.h"
+#include "report.h"
 #include "ruleset.h"
 #include "sernet.h"
 #include "srv_main.h"
@@ -410,6 +411,10 @@ void establish_new_connection(struct connection *pconn)
       send_diplomatic_meetings(pconn);
       send_packet_thaw_hint(pconn);
       send_packet_start_turn(pconn);
+      if (server_state == GAME_OVER_STATE) {
+	report_final_scores(pconn->self);
+	report_game_rankings(pconn->self);
+      }
     }
 
     /* This must be done after the above info is sent, because it will

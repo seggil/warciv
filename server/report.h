@@ -27,8 +27,8 @@ void report_top_five_cities(struct conn_list *dest);
 bool is_valid_demography(const char *demography, const char **error_message);
 void report_demographics(struct connection *pconn);
 void report_progress_scores(void);
-void report_final_scores(void);
-void report_game_rankings(void);
+void report_final_scores(struct conn_list *dest);
+void report_game_rankings(struct conn_list *dest);
 
 /* See also report_server_options() in stdinhand.h */
 

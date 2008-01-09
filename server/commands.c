@@ -411,8 +411,9 @@ const struct command commands[] = {
   },
   {"autoteam", ALLOW_NEVER, ALLOW_CTRL, /* require vote in pregame */
    /* TRANS: translate text between <> only (NOT in []) */
+#ifdef HAVE_MYSQL
    N_("autoteam <# of teams> [rating|ranking|rated|rank]\n"
-      "autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"), 
+      "autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"),
    N_("Assign teams automatically."),
    N_("Generate the given number of teams assuming that players' "
       "relative strength is given by their rating (if the rating "
@@ -420,6 +421,14 @@ const struct command commands[] = {
       "Players not listed will be assumed to have an equal, lowest"
       "skill level. Names may be abbreviated so long as they are "
       "not ambiguous."),
+#else
+   N_("autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"),
+   N_("Assign teams automatically."),
+   N_("Generate the given number of teams assuming that players' "
+      "relative strength is as ordered in the supplied list. Players "
+      "not listed will be assumed to have an equal, lowest skill level. "
+      "Names may be abbreviated so long as they are not ambiguous."),
+#endif /* HAVE_MYSQL */
    ECHO_ALL, VCF_FASTPASS, 50
   },
   {"mute", ALLOW_CTRL, ALLOW_CTRL,
@@ -442,6 +451,7 @@ const struct command commands[] = {
       "messages and can create votes."),
    ECHO_ADMINS, VCF_FASTPASS, 50
   },
+#ifdef HAVE_MYSQL
   {"stats", ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("stats\n"
@@ -499,7 +509,6 @@ const struct command commands[] = {
    ECHO_ADMINS
   },
 
-#ifdef HAVE_MYSQL
   {"authdb",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("authdb\n"
@@ -533,7 +542,7 @@ const struct command commands[] = {
        "should be considered for updating user ratings."),
     ECHO_NONE
   },
-#endif
+#endif /* HAVE_MYSQL */
   {"endgame",	ALLOW_CTRL, ALLOW_NEVER,
    /* TRANS: translate text between <> only */
    N_("endgame <player1 player2 player3 ...>"),

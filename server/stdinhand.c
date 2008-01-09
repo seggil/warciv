@@ -2824,7 +2824,6 @@ static void mkstatdate(time_t t, char *buf, int len)
   localtime_r(&t, &tm);
   strftime(buf, len, "%F %T", &tm);
 }
-#endif /* HAVE_MYSQL */
 
 /**************************************************************************
   ...
@@ -2833,7 +2832,6 @@ static bool stats_command(struct connection *caller,
                           char *allargs,           
                           bool check)
 {
-#ifdef HAVE_MYSQL
   char username[MAX_LEN_NAME + 64], buf[256];
   struct fcdb_user_stats *fus;
   struct game_type_stats *gts;
@@ -2921,13 +2919,9 @@ static bool stats_command(struct connection *caller,
   }
 
   return TRUE;
-
-#else
-  cmd_reply(CMD_STATS, caller, C_GENFAIL,
-            _("Database support not enabled for this server."));
-  return FALSE;
-#endif /* HAVE_MYSQL */
 }
+#endif /* HAVE_MYSQL */
+
 /**************************************************************************
   Set timeout options.
 **************************************************************************/
@@ -4707,6 +4701,10 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
     send_packet_start_turn(pconn);
+    if (server_state == GAME_OVER_STATE) {
+      report_final_scores(pconn->self);
+      report_game_rankings(pconn->self);
+    }
   } else if (server_state == SELECT_RACES_STATE) {
     send_packet_freeze_hint(pconn);
     send_rulesets(pconn->self);
@@ -4875,6 +4873,10 @@ static bool take_command(struct connection *caller, char *str, bool check)
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
     send_packet_start_turn(pconn);
+    if (server_state == GAME_OVER_STATE) {
+      report_final_scores(pconn->self);
+      report_game_rankings(pconn->self);
+    }
   }
 
   /* aitoggle the player back to human if necessary. */
@@ -5101,19 +5103,37 @@ static int parse_game_type(int cmd_id,
   }
   return type;
 }
-#endif /* HAVE_MYSQL */
+
+struct rated_player {
+  const char *player_name;
+  char username[256];
+  double rating, rd;
+};
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int rate_compare(const void *a, const void *b)
+{
+  double rating1, rating2, rd1, rd2;
+
+  rating1 = ((const struct rated_player *)a)->rating;
+  rating2 = ((const struct rated_player *)b)->rating;
+  rd1 = ((const struct rated_player *)a)->rd;
+  rd2 = ((const struct rated_player *)b)->rd;
+
+  return rating1 < rating2 || (rating1 == rating2 && rd1 > rd2);
+}
 
 /**************************************************************************
   ...
 **************************************************************************/
 static bool ratings_command(struct connection *caller,
-                            char *arg,
-                            bool check)
+                            char *arg, bool check)
 {
-#ifdef HAVE_MYSQL
   char buf[128];
   int i, type = GT_NUM_TYPES;
-  double rating, rd;
+  struct rated_player list[game.nplayers];
 
   if (!srvarg.fcdb.enabled) {
     cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
@@ -5148,19 +5168,19 @@ static bool ratings_command(struct connection *caller,
     buf[i] = my_toupper(buf[i]);
   }
 
-  cmd_reply(CMD_RATINGS, caller, C_COMMENT, _("%s Ratings"), buf);
-  cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
-  cmd_reply(CMD_RATINGS, caller, C_COMMENT, "%-20s %-20s %10s %10s",
-            _("Player"), _("Username"), _("Rating"), _("RD"));
-
+  i = 0;
   players_iterate(pplayer) {
     if (pplayer->is_observer || is_barbarian(pplayer)) {
       continue;
     }
-    rating = rd = 0.0;
+
+    list[i].player_name = pplayer->name;
+    list[i].rating = 0;
+    list[i].rd = 0;
+
     if (pplayer->fcdb.rated_user_name[0] != '\0') {
       if (!fcdb_get_user_rating(pplayer->fcdb.rated_user_name,
-                                type, &rating, &rd)) {
+                                type, &list[i].rating, &list[i].rd)) {
         cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
             _("An error occurred while reading from the database."));
         return FALSE;
@@ -5168,7 +5188,7 @@ static bool ratings_command(struct connection *caller,
     } else if (pplayer->username[0] != '\0'
                && 0 != strcmp(pplayer->username, ANON_USER_NAME)) {
       if (!fcdb_get_user_rating(pplayer->username, type,
-                                &rating, &rd)) {
+                                &list[i].rating, &list[i].rd)) {
         cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
             _("An error occurred while reading from the database."));
         return FALSE;
@@ -5176,34 +5196,38 @@ static bool ratings_command(struct connection *caller,
     } else {
       /* Assume it is an AI... */
       score_get_ai_rating(pplayer->ai.skill_level, type,
-                          &rating, &rd);
+                          &list[i].rating, &list[i].rd);
     }
 
-    player_get_rated_username(pplayer, buf, sizeof(buf));
+    player_get_rated_username(pplayer, list[i].username,
+			      sizeof(list[i].username));
+    i++;
+  } players_iterate_end;
 
-    if (rating > 0.0) {
+  qsort(list, game.nplayers, sizeof(struct rated_player), rate_compare);
+
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, _("%s Ratings"), buf);
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, "%-20s %-20s %10s %10s",
+            _("Player"), _("Username"), _("Rating"), _("RD"));
+  for (i = 0; i < game.nplayers; i++) {
+    if (list[i].rating > 0.0) {
       cmd_reply(CMD_RATINGS, caller, C_COMMENT,
                 "%-20s %-20s %10.2f %10.2f",
-                pplayer->name, buf, rating, rd);
+                list[i].player_name, list[i].username,
+		list[i].rating, list[i].rd);
     } else {
       cmd_reply(CMD_RATINGS, caller, C_COMMENT,
                 "%-20s %-20s %10s %10s",
-                pplayer->name, buf, _("<unrated>"), _("<unrated>"));
+                list[i].player_name, list[i].username,
+		_("<unrated>"), _("<unrated>"));
     }
-  } players_iterate_end;
-
+  }
   cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
 
   return TRUE;
-
-#endif
-  cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
-            _("This server does not have database support enabled."));
-  return FALSE;
 }
 
-/* To allow compililation without mysql and debugging enabled. */
-#ifdef HAVE_MYSQL
 /**************************************************************************
   ...
 **************************************************************************/
@@ -5246,7 +5270,6 @@ static void format_time_duration(time_t t, char *buf, int maxlen)
                  seconds, PL_("second", "seconds", seconds));
   }
 }
-#endif /* HAVE_MYSQL */
 
 /**************************************************************************
   ...
@@ -5255,7 +5278,6 @@ static bool examine_command(struct connection *caller,
                             char *arg,
                             bool check)
 {
-#ifdef HAVE_MYSQL
   int id, i;
   char buf[256];
   struct fcdb_game_info *fgi;
@@ -5352,11 +5374,6 @@ static bool examine_command(struct connection *caller,
 
   fcdb_game_info_free(fgi);
   return TRUE;
-
-#endif
-  cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
-            _("This server does not have database support enabled."));
-  return FALSE;
 }
 
 /**************************************************************************
@@ -5366,7 +5383,6 @@ static bool topten_command(struct connection *caller,
                            char *arg,
                            bool check)
 {
-#ifdef HAVE_MYSQL
   int type = GT_NUM_TYPES;
   struct fcdb_topten_info *ftti = NULL;
   struct fcdb_topten_info_entry *tte = NULL;
@@ -5432,10 +5448,6 @@ static bool topten_command(struct connection *caller,
   fcdb_topten_info_free(ftti);
 
   return TRUE;
-#endif
-  cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
-            _("This server does not have database support enabled."));
-  return FALSE;
 }
 
 /**************************************************************************
@@ -5445,7 +5457,6 @@ static bool gamelist_command(struct connection *caller,
                              char *arg,
                              bool check)
 {
-#ifdef HAVE_MYSQL
   struct fcdb_gamelist *fgl = NULL;
   struct fcdb_gamelist_entry *fgle = NULL;
   char buf[128];
@@ -5517,10 +5528,6 @@ static bool gamelist_command(struct connection *caller,
   fcdb_gamelist_free(fgl);
 
   return TRUE;
-#endif
-  cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
-            _("This server does not have database support enabled."));
-  return FALSE;
 }
 
 /**************************************************************************
@@ -5530,7 +5537,6 @@ static bool aka_command(struct connection *caller,
                         const char *arg,
                         bool check)
 {
-#ifdef HAVE_MYSQL
   struct fcdb_aliaslist *fal = NULL;
   struct fcdb_aliaslist_entry *fale = NULL;
   char buf[MAX_LEN_MSG];
@@ -5600,14 +5606,8 @@ static bool aka_command(struct connection *caller,
   fcdb_aliaslist_free(fal);
 
   return TRUE;
-
-#endif
-  cmd_reply(CMD_AKA, caller, C_GENFAIL,
-            _("This server does not have database support enabled."));
-  return FALSE;
 }
 
-#ifdef HAVE_MYSQL
 /**************************************************************************
   Helpers for fcdb_command.
 **************************************************************************/
@@ -5695,6 +5695,7 @@ static bool fcdb_command(struct connection *caller, char *arg, bool check)
   free_tokens(args, ntokens);
   return TRUE;
 }
+
 /**************************************************************************
   'authdb' arguments
 **************************************************************************/
@@ -5710,15 +5711,15 @@ enum AUTHDB_ARGS
     AUTHDB_ARG_NEWUSERS,
     AUTHDB_NUM_ARGS,
 };
-static const char *const authdb_args[] =
-    {
-        "host", "user", "password", "database", "on", "off", "guests",
-        "newusers", NULL
-    };
+static const char *const authdb_args[] = {
+  "host", "user", "password", "database", "on", "off", "guests",
+  "newusers", NULL
+};
 static const char *authdbarg_accessor(int i)
 {
     return authdb_args[i];
 }
+
 /**************************************************************************
   Control password database parameters.
 **************************************************************************/
@@ -5842,7 +5843,7 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
               _("AUTH %s set to \"%s\"."), authdb_args[ind], lastarg);
     return TRUE;
 }
-#endif				/* HAVE_MYSQL */
+#endif /* HAVE_MYSQL */
 /**************************************************************************
   ...
 **************************************************************************/
@@ -6806,6 +6807,7 @@ bool handle_stdin_input(struct connection *caller,
     return mute_command(caller, allargs, check);
   case CMD_UNMUTE:
     return unmute_command(caller, allargs, check);
+#ifdef HAVE_MYSQL
   case CMD_STATS:
     return stats_command(caller, allargs, check);
   case CMD_RATINGS:
@@ -6818,16 +6820,15 @@ bool handle_stdin_input(struct connection *caller,
     return gamelist_command(caller, arg, check);
   case CMD_AKA:
     return aka_command(caller, arg, check);
-  case CMD_START_GAME:
-    return start_command(caller, arg, check);
-  case CMD_END_GAME:
-    return end_command(caller, arg, check);
-#ifdef HAVE_MYSQL
   case CMD_AUTHDB:
     return authdb_command(caller, arg, check);
   case CMD_FCDB:
     return fcdb_command(caller, allargs, check);
-#endif
+#endif /* HAVE_MYSQL */
+  case CMD_START_GAME:
+    return start_command(caller, arg, check);
+  case CMD_END_GAME:
+    return end_command(caller, arg, check);
   case CMD_NUM:
   case CMD_UNRECOGNIZED:
   case CMD_AMBIGUOUS:

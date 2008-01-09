@@ -88,6 +88,7 @@ enum command_id {
   CMD_AUTOTEAM,
   CMD_MUTE,
   CMD_UNMUTE,
+#ifdef HAVE_MYSQL
   CMD_STATS,
   CMD_RATINGS,
   CMD_EXAMINE,
@@ -96,7 +97,6 @@ enum command_id {
   CMD_AKA,
 
   /* potentially harmful: */
-#ifdef HAVE_MYSQL
   CMD_AUTHDB,
   CMD_FCDB,
 #endif
