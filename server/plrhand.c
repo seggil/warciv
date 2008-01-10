@@ -689,6 +689,9 @@ void choose_tech(struct player *plr, int tech)
   }
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
 void choose_tech_goal(struct player *plr, int tech)
 {
   if (plr->ai.tech_goal != tech) {
@@ -708,6 +711,7 @@ void init_tech(struct player *plr)
   } tech_type_iterate_end;
   set_invention(plr, A_NONE, TECH_KNOWN);
 
+  plr->research.researching = A_UNSET;
   plr->research.bulbs_last_turn = 0;
   plr->research.bulbs_researched = 0;
   plr->research.techs_researched = 1;

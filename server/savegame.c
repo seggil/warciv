@@ -44,6 +44,7 @@
 
 #include "citytools.h"
 #include "cityturn.h"
+#include "connecthand.h" /* server_assign_random_nation */
 #include "diplhand.h"
 #include "mapgen.h"
 #include "maphand.h"
@@ -1627,46 +1628,49 @@ static void player_load(struct player *plr, int plrno,
   sz_strlcpy(plr->username,
 	     secfile_lookup_str_default(file, "", "player%d.username", plrno));
 
-  /* 1.15 and later versions store nations by name.  Try that first. */
-  p = secfile_lookup_str_default(file, NULL, "player%d.nation", plrno);
-  if (!p) {
-    /*
-     * Otherwise read as a pre-1.15 savefile with numeric nation indexes.
-     * This random-looking order is from the old nations/ruleset file.
-     * Use it to convert old-style nation indices to name strings.
-     * The idea is not to be dependent on the order in which nations 
-     * get read into the registry.
-     */
-    const char *name_order[] = {
-      "roman", "babylonian", "german", "egyptian", "american", "greek",
-      "indian", "russian", "zulu", "french", "aztec", "chinese", "english",
-      "mongol", "turk", "spanish", "persian", "arab", "carthaginian", "inca",
-      "viking", "polish", "hungarian", "danish", "dutch", "swedish",
-      "japanese", "portuguese", "finnish", "sioux", "czech", "australian",
-      "welsh", "korean", "scottish", "israeli", "argentine", "canadian",
-      "ukrainian", "lithuanian", "kenyan", "dunedain", "vietnamese", "thai",
-      "mordor", "bavarian", "brazilian", "irish", "cornish", "italian",
-      "filipino", "estonian", "latvian", "boer", "silesian", "singaporean",
-      "chilean", "catalan", "croatian", "slovenian", "serbian", "barbarian",
-    };
-    int index = secfile_lookup_int(file, "player%d.race", plrno);
+  if (is_barbarian(plr)) {
+    plr->nation = game.nation_count - 1;
+  } else {
+    /* 1.15 and later versions store nations by name.  Try that first. */
+    p = secfile_lookup_str_default(file, NULL, "player%d.nation", plrno);
+    if (!p) {
+      /*
+       * Otherwise read as a pre-1.15 savefile with numeric nation indexes.
+       * This random-looking order is from the old nations/ruleset file.
+       * Use it to convert old-style nation indices to name strings.
+       * The idea is not to be dependent on the order in which nations 
+       * get read into the registry.
+       */
+      const char *name_order[] = {
+	"roman", "babylonian", "german", "egyptian", "american", "greek",
+	"indian", "russian", "zulu", "french", "aztec", "chinese", "english",
+	"mongol", "turk", "spanish", "persian", "arab", "carthaginian", "inca",
+	"viking", "polish", "hungarian", "danish", "dutch", "swedish",
+	"japanese", "portuguese", "finnish", "sioux", "czech", "australian",
+	"welsh", "korean", "scottish", "israeli", "argentine", "canadian",
+	"ukrainian", "lithuanian", "kenyan", "dunedain", "vietnamese", "thai",
+	"mordor", "bavarian", "brazilian", "irish", "cornish", "italian",
+	"filipino", "estonian", "latvian", "boer", "silesian", "singaporean",
+	"chilean", "catalan", "croatian", "slovenian", "serbian", "barbarian",
+      };
+      int index = secfile_lookup_int(file, "player%d.race", plrno);
 
-    if (index >= 0 && index < ARRAY_SIZE(name_order)) {
-      p = name_order[index];
+      if (index >= 0 && index < ARRAY_SIZE(name_order)) {
+	p = name_order[index];
+      } else {
+	p = "";
+      }
+    }
+    plr->nation = find_nation_by_name_orig(p);
+    if (plr->nation == NO_NATION_SELECTED) {
+      freelog(LOG_VERBOSE, "Nation %s (used by %s) isn't available.",
+	      p, plr->name);
     } else {
-      p = "";
+      /* Add techs from game and nation, but ignore game.tech. */
+      init_tech(plr);
+      give_initial_techs(plr);
     }
   }
-  plr->nation = find_nation_by_name_orig(p);
-  if (plr->nation == NO_NATION_SELECTED) {
-    freelog(LOG_FATAL, _("Nation %s (used by %s) isn't available."),
-	    p, plr->name);
-    exit(EXIT_FAILURE);
-  }
-
-  /* Add techs from game and nation, but ignore game.tech. */
-  init_tech(plr);
-  give_initial_techs(plr);
 
   /* not all players have teams */
   if (section_file_lookup(file, "player%d.team", plrno)) {
@@ -1677,9 +1681,6 @@ static void player_load(struct player *plr, int plrno,
     plr->team = team_find_by_name(tmp);
   } else {
     plr->team = TEAM_NONE;
-  }
-  if (is_barbarian(plr)) {
-    plr->nation=game.nation_count-1;
   }
 
   /* government */
@@ -3088,6 +3089,41 @@ static void check_city(struct city *pcity)
 /***************************************************************
 ...
 ***************************************************************/
+static void savegame_assign_random_nation(struct player *pplayer)
+{
+  Nation_Type_id i, nation = NO_NATION_SELECTED;
+  int n = 0;
+  bool used;
+
+  for (i = 0; i < game.nation_count; i++) {
+    used = FALSE;
+    players_iterate(pplayer) {
+      if (pplayer->nation == i) {
+	used = TRUE;
+	break;
+      }
+    } players_iterate_end;
+    if (!used) {
+      if (myrand(++n) == 0) {
+      nation = i;
+      }
+    }
+  }
+
+  if (nation == NO_NATION_SELECTED) {
+    die("Cannot attribute any nation for player %s", pplayer->name);
+  } else {
+    freelog(LOG_VERBOSE, "Player %s's nation changed to %s",
+	    pplayer->name, get_nation_name_orig(nation));
+    pplayer->nation = nation;
+    init_tech(pplayer);
+    give_initial_techs(pplayer);
+  }
+}
+
+/***************************************************************
+...
+***************************************************************/
 void game_load(struct section_file *file)
 {
   int i, k, id;
@@ -3556,6 +3592,13 @@ void game_load(struct section_file *file)
                   improvement_order_size, technology_order,
                   technology_order_size);
     }
+
+    /* Attribute nations to player which their nation wasn't loaded correctly */
+    players_iterate(pplayer) {
+      if (pplayer->nation == NO_NATION_SELECTED) {
+	savegame_assign_random_nation(pplayer);
+      }
+    } players_iterate_end;
 
     /* Update all city information.  This must come after all cities are
      * loaded (in player_load) but before player (dumb) cities are loaded
