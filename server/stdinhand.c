@@ -5122,7 +5122,20 @@ static int rate_compare(const void *a, const void *b)
   rd1 = ((const struct rated_player *)a)->rd;
   rd2 = ((const struct rated_player *)b)->rd;
 
-  return rating1 < rating2 || (rating1 == rating2 && rd1 > rd2);
+  /* To avoid any complications due to double-to-int
+   * implicit conversion, compare the double values
+   * directly. */
+  if (rating1 > rating2) {
+    return -1;
+  } else if (rating1 < rating2) {
+    return 1;
+  } else if (rd1 > rd2) {
+    return 1;
+  } else if (rd1 < rd2) {
+    return -1;
+  }
+
+  return 0;
 }
 
 /**************************************************************************
