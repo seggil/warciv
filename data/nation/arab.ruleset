@@ -5,13 +5,12 @@ plural=_("?plural:Arabs")
 groups="Medieval", "Asian", "African"
 legend=_("The Arab/Islamic civilization of 622AD-1495AD.")
 leader=
- "Mohammad",
- "Umar",
  "Harun al-Rashid",
  "Saladin", 
+ "Al-Musta'sim",
  "Al-Mansur",
  "Al-Hakim"
-leader_sex="Male", "Male", "Male", "Male", "Male", "Male"
+leader_sex="Male", "Male", "Male", "Male", "Male"
 flag="f.arab"
 flag_alt = "-"
 city_style = "Classical"
@@ -35,11 +34,10 @@ civilwar_nations="iraqi", "libyan", "sudanese"
 ; thus, Dimashq = Damascus, Al Qahira = Cairo, etc.
 
 cities =
-
-  "Makkah", "Al-Madinah", "Al-Rijadh", "Al-Qahira", "Baghdad",
-  "Timbuktu", "Sijilmasa", "Jidda", "Al-Hufuf", "Buraydah", "At Taif", 
-  "Sana'a", "Al-Hudaydah", "Al'Adan",
-  "Al-Mukalla", "Taizz", "Masquat", "Abu Zaby", "Dubayy",
-  "Ad-Dawhah", "Al-Manamah", "Ad-Damman", "Al-Kuwayt", "Al-Jahrah",
-  "Al-Amman", "Dimashq", "Bayrut", "Hamah", "Aleppo", "Hums",
-  "Al-Ayn", "Al-Basrah", "Khorramshar"
+ "Baghdad", "Al-Qahira", "Al-Rijadh", "Tabouk", 
+ "Sijilmasa", "Jidda", "Al-Hufuf", "Buraydah", "At Taif", 
+ "Sana'a", "Al-Hudaydah", "Al'Adan", "Al-Mukalla", 
+ "Taizz", "Masquat", "Abu Zaby", "Dubayy", 
+ "Ad-Dawhah", "Al-Manamah", "Ad-Damman", "Al-Kuwayt", "Al-Jahrah", 
+ "Amman", "Dimashq", "Bayrut", "Hamah", "Aleppo", "Hums", 
+ "Al-Ayn", "Al-Basrah", "Khorramshar"
