@@ -3859,7 +3859,7 @@ static bool vote_command(struct connection *caller, char *str,
     cmd_reply(CMD_VOTE, caller, C_COMMENT, _("You voted for \"%s\""),
               pvote->cmdline);
     connection_vote(caller, pvote, VOTE_YES);
-  } else if (strcmp(arg[0], "no") == 0) {
+  } else if (i == VOTE_NO) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT, _("You voted against \"%s\""),
               pvote->cmdline);
     connection_vote(caller, pvote, VOTE_NO);
