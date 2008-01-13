@@ -373,6 +373,40 @@ static gboolean toplevel_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 /**************************************************************************
 ...
 **************************************************************************/
+static guint chatline_scroll_callback_id = 0;
+static gboolean chatline_scroll_callback(gpointer data)
+{
+  /* Why do we do it in such a convuluted fasion rather than calling
+   * chatline_scroll_to_bottom directly from toplevel_configure?
+   * Because the widget is not at its final size yet when the configure
+   * event occurs. */
+  chatline_scroll_to_bottom();
+  chatline_scroll_callback_id = 0;
+  return FALSE; /* Remove this idle function. */
+}
+
+/**************************************************************************
+  Called whenever the toplevel window is resized or moved (we primarily
+  care about the resize only).
+**************************************************************************/
+static gboolean toplevel_configure(GtkWidget *w,
+                                   GdkEventConfigure *event,
+                                   gpointer user_data)
+{
+  /* Often it happens that by resizing the window the scrollbar for the
+   * chat window gets pushed up, causing the chatline to not scroll
+   * automatically to the bottom when new messages arrives.
+   * This rectifies that situation. */
+  if (chatline_scroll_callback_id == 0) {
+    chatline_scroll_callback_id = g_idle_add(chatline_scroll_callback,
+                                             NULL);
+  }
+  return FALSE; /* Continue propagating. */
+}
+
+/**************************************************************************
+...
+**************************************************************************/
 static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
 {
   /* inputline history code */
@@ -1668,6 +1702,9 @@ void ui_main(int argc, char **argv)
   toplevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   g_signal_connect(toplevel, "key_press_event",
                    G_CALLBACK(toplevel_handler), NULL);
+
+  g_signal_connect(toplevel, "configure_event",
+                   G_CALLBACK(toplevel_configure), NULL);
 
   gtk_window_set_role(GTK_WINDOW(toplevel), "toplevel");
   gtk_widget_realize(toplevel);
