@@ -826,7 +826,7 @@ static inline double glicko_E_function(double r, double rj, double gRDj)
 **************************************************************************/
 void score_calculate_grouping_ratings(void)
 {
-  double K, A, B, min_r, RD, maxRD, sum, r;
+  double K, A, B, min_r, RD, avgRD, sum, r;
   int i, j;
 
   K = RATING_CONSTANT_EXTRA_TEAMMATE_INFLUENCE;
@@ -837,17 +837,18 @@ void score_calculate_grouping_ratings(void)
   for (i = 0; i < num_groupings; i++) {
 
     /* A grouping's base rating is the average of
-     * its members' ratings. It's RD is the maximum
+     * its members' ratings. Its RD is the average
      * of its members' RDs. */
     sum = 0.0;
-    maxRD = 0.0;
+    avgRD = 0.0;
     for (j = 0; j < groupings[i].num_players; j++) {
       sum += groupings[i].players[j]->fcdb.rating;
       RD = groupings[i].players[j]->fcdb.rating_deviation;
-      maxRD = MAX(RD, maxRD);
+      avgRD += RD;
       min_r = MIN(min_r, groupings[i].players[j]->fcdb.rating);
     }
     sum /= (double) groupings[i].num_players;
+    avgRD /= (double) groupings[i].num_players;
 
     /* If there is more than 1 player in the grouping,
      * add to the base rating the approximate effect
@@ -874,7 +875,7 @@ void score_calculate_grouping_ratings(void)
     }
 
     groupings[i].rating = sum;
-    groupings[i].rating_deviation = maxRD;
+    groupings[i].rating_deviation = avgRD;
 
     if (player_is_on_team(groupings[i].players[0])) {
       /* Set corresponding fcdb fields in team structures. */
@@ -909,7 +910,6 @@ void score_propagate_grouping_ratings(void)
 
       if (groupings[i].num_players == 1) {
         new_r += rating_change;
-        new_RD += rd_change;
       } else {
         /* The "pie/blame" allotment scheme:
          * If the change is positive, 'better' members get a bigger
@@ -929,11 +929,13 @@ void score_propagate_grouping_ratings(void)
         } else {
           new_r += rating_change * weight;
         }
-
-        /* The uncertainty changes, but not so much if you
-         * are in a big team. */
-        new_RD += rd_change / groupings[i].num_players;
       }
+
+      /* Whether alone or in a group, you get the
+       * full RD change. This was added since it was
+       * observed that RDs decreased too slowly for 
+       * team games. */
+      new_RD += rd_change;
 
       /* As per Glicko's suggestion. */
       if (new_RD < RATING_CONSTANT_MINIMUM_RD) {
