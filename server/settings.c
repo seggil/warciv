@@ -1332,6 +1332,13 @@ struct settings_s settings[] = {
               "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 75)
 #endif
 
+  GEN_BOOL("nopubliclinks", game.no_public_links, SSET_RULES_FLEXIBLE,
+           SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
+           N_("Disallow public chat links"),
+           N_("0 - Public chat links are allowed.\n"
+              "1 - Public chat messages with links are rejected."),
+           NULL, GAME_DEFAULT_NO_PUBLIC_LINKS)
+
   GEN_END
 };
 

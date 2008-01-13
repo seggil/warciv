@@ -381,6 +381,28 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
       return;
     }
   }
+
+  /* Skip leading ':' if it exists. */
+  if (message[0] == ':') {
+    message++;
+  }
+
+  if (game.no_public_links) {
+    const char *p = strchr(message, '@');
+
+    /* Very simple chat link detection.
+     * NB this follows the format used in client/gui-gtk-2.0/chatline.c.
+     * If that changes, then this will break! */
+    if (p && (p[1] == 'F' || p[1] == 'L' || p[1] == 'U')
+        && p[1] != '\0' && my_isdigit(p[2])) {
+      my_snprintf(chat, sizeof(chat),
+          _("Server: Public messages containing chat links are "
+            "not allowed."));
+      dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
+      return;
+    }
+  }
+
   /* global message: */
   form_chat_name(pconn, sender_name, sizeof(sender_name));
   my_snprintf(chat, sizeof(chat),

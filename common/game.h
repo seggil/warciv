@@ -170,6 +170,7 @@ struct civ_game {
   int teamplacementtype;
   int techleakagerate;
   bool rated;
+  bool no_public_links;
   /*=========== WARSERVER settings END ================*/
   /* used in server only */
   bool ruleset_loaded;
@@ -432,6 +433,8 @@ extern bool is_server;
 #define GAME_MAX_TECHLEAKAGERATE     100
 
 #define GAME_DEFAULT_RATED TRUE
+
+#define GAME_DEFAULT_NO_PUBLIC_LINKS FALSE
 
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE

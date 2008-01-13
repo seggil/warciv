@@ -236,6 +236,7 @@ void game_init_settings(void)
   game.teamplacementtype = GAME_DEFAULT_TEAMPLACEMENTTYPE;
   game.techleakagerate = GAME_DEFAULT_TECHLEAKAGERATE;
   game.rated = GAME_DEFAULT_RATED;
+  game.no_public_links = GAME_DEFAULT_NO_PUBLIC_LINKS;
 
   /* XXX This is not a setting, but a flag used by ruleset
    * loading/freeing code. :( */
