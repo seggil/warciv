@@ -723,7 +723,8 @@ static int parse_unit_link(const char *str,
 }
 
 /**************************************************************************
-  ...
+  NB If you change any of the chat link formats, be sure to change
+  the detection code in server/handchat.c as well!
 **************************************************************************/
 static void append_text_with_links(GtkTextBuffer *buf,
                                     const char *astring)
