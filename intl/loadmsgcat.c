@@ -72,7 +72,6 @@ char *alloca ();
 
 #include "gettext.h"
 #include "gettextP.h"
-#include "netintf.h"
 
 #ifdef _LIBC
 # include "../locale/localeinfo.h"
@@ -419,14 +418,10 @@ _nl_load_domain (domain_file, domainbinding)
 	  long int nb = (long int) read (fd, read_ptr, to_read);
 	  if (nb <= 0)
 	    {
-#ifdef WIN32_NATIVE
-	      if (nb == -1 && my_errno() == WSAEINTR)
-#else
-	      if (nb == -1 && my_errno() == EINTR)
-#endif
-		{
+#ifdef EINTR
+	      if (nb == -1 && errno == EINTR)
 		continue;
-		}
+#endif
 	      close (fd);
 	      return;
 	    }
