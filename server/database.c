@@ -597,6 +597,7 @@ static bool save_user(struct connection *pconn)
   char buffer[1024] = "";
   MYSQL *sock, mysql;
   char escaped_name[MAX_LEN_NAME * 2 + 1];
+  char escaped_password[MAX_LEN_PASSWORD * 2 + 1];
 
   mysql_init(&mysql);
 
@@ -611,6 +612,9 @@ static bool save_user(struct connection *pconn)
 
   mysql_real_escape_string(sock, escaped_name, pconn->username,
                            strlen(pconn->username));
+  mysql_real_escape_string(sock, escaped_password,
+                           pconn->server.password,
+                           strlen(pconn->server.password));
 
   /* insert new user into table. we insert the following things: name
    * md5sum of the password, the creation time in seconds, the accesstime
@@ -619,7 +623,7 @@ static bool save_user(struct connection *pconn)
   my_snprintf(buffer, sizeof(buffer), "insert into %s values "
           "(NULL, '%s', md5('%s'), NULL, unix_timestamp(), "
           "unix_timestamp(), '%s', '%s', 0)",
-          AUTH_TABLE, escaped_name, pconn->server.password,
+          AUTH_TABLE, escaped_name, escaped_password,
           pconn->server.ipaddr, pconn->server.ipaddr);
 
   if (mysql_query(sock, buffer)) {
