@@ -228,7 +228,11 @@ static int write_socket_data(struct connection *pc,
     tv.tv_sec = 0; tv.tv_usec = 0;
 
     if (select(pc->sock+1, NULL, &writefs, &exceptfs, &tv) <= 0) {
-      if (errno != EINTR) {
+#ifdef WIN32_NATIVE
+      if (my_errno() != WSAEINTR) {
+#else
+      if (my_errno() != EINTR) {
+#endif
 	break;
       } else {
 	/* EINTR can happen sometimes, especially when compiling with -pg.
@@ -248,27 +252,33 @@ static int write_socket_data(struct connection *pc,
 	return -1;
       }
     }
-
+    
     if (FD_ISSET(pc->sock, &writefs)) {
-      nblock=MIN(buf->ndata-start, MAX_LEN_PACKET);
-      freelog(LOG_DEBUG,"trying to write %d limit=%d",nblock,limit);
-      if((nput=my_writesocket(pc->sock, 
-			      (const char *)buf->data+start, nblock)) == -1)
-      {
-	if (delayed_disconnect > 0) {
-	  pc->delayed_disconnect = TRUE;
-	  return 0;
-	} else {
-	  if (close_callback) {
-	    (*close_callback)(pc);
+      nblock = MIN(buf->ndata-start, MAX_LEN_PACKET);
+      freelog(LOG_DEBUG, "trying to write %d limit=%d", nblock, limit);
+      if((nput = my_writesocket(pc->sock, 
+				(const char *)buf->data+start, nblock)) == -1)
+	{
+	  
+#ifdef NONBLOCKING_SOCKETS 	 
+	  if (my_socket_would_block()) { 	 
+	    break; 	 
+	  } 	 
+#endif 	 
+	  if (delayed_disconnect > 0) {
+	    pc->delayed_disconnect = TRUE;
+	    return 0;
+	  } else {
+	    if (close_callback) {
+	      (*close_callback)(pc);
+	    }
+	    return -1;
 	  }
-	  return -1;
 	}
-      }
       start += nput;
     }
   }
-
+    
   if (start > 0) {
     buf->ndata -= start;
     memmove(buf->data, buf->data+start, buf->ndata);

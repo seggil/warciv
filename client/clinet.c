@@ -336,7 +336,11 @@ static int read_from_connection(struct connection *pc, bool block)
     }
 
     if (n == -1) {
-      if (errno == EINTR) {
+#ifdef WIN32_NATIVE
+      if (my_errno() == WSAEINTR) {
+#else
+      if (my_errno() == EINTR) {
+#endif
 	/* EINTR can happen sometimes, especially when compiling with -pg.
 	 * Generally we just want to run select again. */
 	freelog(LOG_DEBUG, "select() returned EINTR");
@@ -1500,7 +1504,11 @@ struct server_list *get_lan_server_list(void)
   tv.tv_usec = 0;
 
   while (select(socklan + 1, &readfs, NULL, &exceptfs, &tv) == -1) {
-    if (errno != EINTR) {
+#ifdef WIN32_NATIVE
+      if (my_errno() != WSAEINTR) {
+#else
+      if (my_errno() != EINTR) {
+#endif
       freelog(LOG_ERROR, "select failed: %s", mystrsocketerror());
       return lan_servers;
     }

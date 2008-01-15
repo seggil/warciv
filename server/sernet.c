@@ -1164,7 +1164,11 @@ static void get_lanserver_announcement(void)
   tv.tv_usec = 0;
 
   while (select(socklan + 1, &readfs, NULL, &exceptfs, &tv) == -1) {
-    if (errno != EINTR) {
+#ifdef WIN32_NATIVE
+      if (my_errno() != WSAEINTR) {
+#else
+      if (my_errno() != EINTR) {
+#endif
       freelog(LOG_ERROR, "select failed: %s", mystrsocketerror());
       return;
     }
