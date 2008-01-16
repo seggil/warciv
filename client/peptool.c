@@ -138,6 +138,12 @@ static struct pepsetting static_pepsettings[] = {
                "7: Incite revolt\n"
                "8: Poison city (spy)\n"
                "9: Keep going"), DIPLOMAT_ACTION),
+  PSGEN_BOOL(PAGE_PMAIN, default_diplomat_ignore_allies,
+             N_("Diplomat ignores allies"),
+             N_("If this option is set, diplomats and spies "
+                "will ignore all allied units and cities, i.e. "
+                "they will pass over them instead of performing "
+                "an action."), DIPLOMAT_IGNORE_ALLIES),
   PSGEN_INT(PAGE_PMAIN, default_action_type,
             N_("New unit default action"),
             N_("The new created units will do this activity automaticely.\n\n"

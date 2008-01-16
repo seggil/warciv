@@ -56,6 +56,7 @@ extern int lastactivatedunit;
 extern int look_into_allied_city;
 extern int default_caravan_action;
 extern int default_diplomat_action;
+extern bool default_diplomat_ignore_allies;
 extern bool focus_turn;
 extern enum new_unit_action default_action_type;
 extern bool default_action_locked;

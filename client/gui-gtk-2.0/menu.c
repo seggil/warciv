@@ -359,6 +359,7 @@ enum MenuID {
   MENU_MISCELLANEOUS_DIPLOMAT_INCITE,
   MENU_MISCELLANEOUS_DIPLOMAT_POISON,
   MENU_MISCELLANEOUS_DIPLOMAT_NOTHING,
+  MENU_MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES,
   MENU_MISCELLANEOUS_UNIT_IDLE,
   MENU_MISCELLANEOUS_UNIT_SENTRY,
   MENU_MISCELLANEOUS_UNIT_FORTIFY,
@@ -1653,6 +1654,9 @@ static void miscellaneous_menu_callback(gpointer callback_data,
    case MENU_MISCELLANEOUS_DIPLOMAT_NOTHING:
         default_diplomat_action = 9;
         break;
+   case MENU_MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES:
+        default_diplomat_ignore_allies = GTK_CHECK_MENU_ITEM(widget)->active;
+        break;
    case MENU_MISCELLANEOUS_UNIT_IDLE:
         default_action_type = ACTION_IDLE;
         break;
@@ -2919,6 +2923,12 @@ static GtkItemFactoryEntry menu_items[]	=
   { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/" N_("_Keep going"),NULL,
 	miscellaneous_menu_callback,	MENU_MISCELLANEOUS_DIPLOMAT_NOTHING,
 		"<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/sep",				NULL,
+	NULL,				0,				"<Separator>"	},
+  { "/" N_("Miscellaneous") "/" N_("Diplomat action upon arrival") "/"
+        N_("Ignore allies"), NULL, miscellaneous_menu_callback,
+        MENU_MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES,
+        "<CheckItem>" },
 
   { "/" N_("Miscellaneous") "/sep2",				NULL,
 	NULL,				0,				"<Separator>"	},
@@ -3989,6 +3999,8 @@ void init_menus(void)
     case 9: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Keep going", TRUE); break;
     default: break;
   }
+  menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival"
+                   "/Ignore allies", default_diplomat_ignore_allies);
   menus_set_active("<main>/Miscellaneous/Lock new unit default action", default_action_locked);
   menus_set_active("<main>/Miscellaneous/Military units only", default_action_military_only);
   menus_set_active("<main>/Miscellaneous/Autowakeup sentried units", autowakeup_state);

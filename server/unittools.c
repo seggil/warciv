@@ -3028,8 +3028,8 @@ bool execute_orders(struct unit *punit)
 	return TRUE;
       }
 
-      freelog(LOG_DEBUG, "  moving to %d,%d",
-	      dst_tile->x, dst_tile->y);
+      freelog(LOG_DEBUG, "  moving to %d,%d last_order=%d",
+	      dst_tile->x, dst_tile->y, last_order);
       res = handle_unit_move_request(punit, dst_tile, FALSE, !last_order);
       if (!player_find_unit_by_id(pplayer, unitid)) {
 	freelog(LOG_DEBUG, "  unit died while moving.");

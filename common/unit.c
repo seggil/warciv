@@ -172,7 +172,8 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
     }
 
     if ((action == DIPLOMAT_BRIBE || action == DIPLOMAT_ANY_ACTION)
-        && (unit_list_size(ptile->units) == 1 || (game.stackbribing && unit_list_size(ptile->units) > 0))) {
+        && (unit_list_size(ptile->units) == 1
+            || (game.stackbribing && unit_list_size(ptile->units) > 0))) {
       punit = unit_list_get(ptile->units, 0);
       if (!pplayers_allied(unit_owner(punit), unit_owner(pdiplomat))) {
         return TRUE;

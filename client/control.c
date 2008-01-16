@@ -52,6 +52,7 @@ int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
 int default_caravan_action;
 int default_diplomat_action;
+bool default_diplomat_ignore_allies;
 
 enum new_unit_action default_action_type;
 bool default_action_locked;
@@ -645,6 +646,9 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
   static genlist *arrival_queue = NULL;
   int *p_ids;
 
+  freelog(LOG_DEBUG, "process_diplomat_arrival pdiplomat=%p victim_id=%d",
+          pdiplomat, victim_id);
+
   /* arrival_queue is a list of individually malloc-ed int[2]s with
      punit.id and pcity.id values, for units which have arrived. */
 
@@ -696,6 +700,14 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 
     if (dipl_unit_ok) {
       /* Target is a unit */
+
+      freelog(LOG_DEBUG, "dipl_unit_ok");
+
+      if (default_diplomat_ignore_allies
+          && pplayers_allied(unit_owner(punit), unit_owner(pdiplomat))) {
+        return;
+      }
+
       switch (default_diplomat_action) {
 	case 0: /* Popup */
 	  popup_diplomat_dialog(pdiplomat, punit->tile);
@@ -712,6 +724,15 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       return;
     } else if (dipl_city_ok) {
       /* Target is a city */
+
+      freelog(LOG_DEBUG, "dipl_city_ok");
+
+      if (default_diplomat_ignore_allies
+          && pplayers_allied(city_owner(pcity), unit_owner(pdiplomat))) {
+        request_diplomat_action(DIPLOMAT_MOVE, diplomat_id, victim_id, 0);
+        return;
+      }
+
       switch (default_diplomat_action) {
 	case 0: /* Popup */
 	  popup_diplomat_dialog(pdiplomat, pcity->tile);
@@ -738,6 +759,9 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 	  request_diplomat_action(SPY_POISON, diplomat_id, victim_id, 0);
 	  break;
 	default:
+          /* For anything else, assume we want to
+           * just move into the city. */
+          request_diplomat_action(DIPLOMAT_MOVE, diplomat_id, victim_id, 0);
 	  break;
       }
       return;
