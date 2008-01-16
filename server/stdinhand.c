@@ -2437,11 +2437,13 @@ static bool autoteam_command(struct connection *caller, char *str,
 {
   char *p, *q, buf[1024], **team_names = NULL;
   int n, i, num, t, step;
+  int num_unordered = 0;
   struct player *player_ordering[MAX_NUM_PLAYERS];
   bool player_ordered[MAX_NUM_PLAYERS];
   enum m_pre_result result;
   int ntokens;
   char *args[3];
+  bool default_by_rating = FALSE;
 
   if (server_state != PRE_GAME_STATE || !game.is_new_game) {
     cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
@@ -2488,15 +2490,24 @@ static bool autoteam_command(struct connection *caller, char *str,
   memset(player_ordered, 0, sizeof(player_ordered));
   num = 0;
 
-  if (ntokens == 1 || (ntokens == 2
-                       && (0 == strcmp(args[1], "rating")
-                           || 0 == strcmp(args[1], "ranking")
-                           || 0 == strcmp(args[1], "rated")
-                           || 0 == strcmp(args[1], "rank")))) {
 #ifdef HAVE_MYSQL
+  default_by_rating = TRUE;
+#endif
+
+  if ((ntokens == 1 && default_by_rating)
+      || (ntokens == 2
+          && (0 == strcmp(args[1], "rating")
+              || 0 == strcmp(args[1], "ranking")
+              || 0 == strcmp(args[1], "rated")
+              || 0 == strcmp(args[1], "rank")))) {
+
+#ifdef HAVE_MYSQL
+    int num_unreliable = 0;
+
     if (!srvarg.fcdb.enabled) {
       cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
-                _("Database support is not enabled."));
+                _("Cannot use ratings to assign teams because "
+                  "database support is not enabled."));
       free_tokens(args, ntokens);
       return FALSE;
     }
@@ -2517,33 +2528,54 @@ static bool autoteam_command(struct connection *caller, char *str,
       if (pplayer->fcdb.rating <= 0.0) {
         continue;
       }
+
+      if (pplayer->fcdb.rating_deviation > RATING_CONSTANT_RELIABLE_RD) {
+        /* If the player's RD is too high (i.e. they haven't played
+         * enough recent games for their real rating to be reliably
+         * determined), then don't use their rating for the ordering. */
+        num_unreliable++;
+        continue;
+      }
+
       player_ordering[num++] = pplayer;
       player_ordered[pplayer->player_no] = TRUE;
     } players_iterate_end;
 
-    qsort(player_ordering, num, sizeof(struct player *),
-          autoteam_rated_player_cmp);
+    if (num > 1) {
+      qsort(player_ordering, num, sizeof(struct player *),
+            autoteam_rated_player_cmp);
+    }
 
 #ifdef DEBUG
     freelog(LOG_DEBUG, "autoteam by rating, ordering after sort:");
     for (i = 0; i < num; i++) {
-      freelog(LOG_DEBUG, "  %d: %p %s %f", i, player_ordering[i],
-              player_ordering[i]->name, player_ordering[i]->fcdb.rating);
+      freelog(LOG_DEBUG, "  %d: %p %s %f RD=%f", i, player_ordering[i],
+              player_ordering[i]->name, player_ordering[i]->fcdb.rating,
+              player_ordering[i]->fcdb.rating_deviation);
     }
 #endif
     
     notify_conn(NULL, _("Server: Ordering players by "
                         "their TEAM rating."));
+    if (num_unreliable > 0) {
+      notify_conn(NULL, _("Server: %d %s not used for ordering "
+                          "because of unreliability (RD > %.0f)."),
+                  num_unreliable,
+                  PL_("rating", "ratings", num_unreliable),
+                  RATING_CONSTANT_RELIABLE_RD);
+    }
 
 #else
     cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
-              _("Database support is not enabled."));
+              _("Cannot use ratings to assign teams because "
+                "database support is not enabled."));
     free_tokens(args, ntokens);
     return FALSE;
 
 #endif /* HAVE_MYSQL */
 
-  } else if (ntokens >= 2 && 0 == strcmp(args[1], "list")) {
+  } else if ((ntokens == 1 && !default_by_rating)
+             || (ntokens >= 2 && 0 == strcmp(args[1], "list"))) {
 
     p = ntokens > 2 ? args[2] : NULL;
     num = 0;
@@ -2616,9 +2648,7 @@ static bool autoteam_command(struct connection *caller, char *str,
 
   free_tokens(args, ntokens);
 
-  /* Assign the remaining unordered players to the ordering,
-   * essentially randomly (since they will have connected in
-   * a random order already). */
+  /* Assign the remaining unordered players. */
   players_iterate(pplayer) {
     if (pplayer->is_observer
         || is_barbarian(pplayer)
@@ -2627,9 +2657,25 @@ static bool autoteam_command(struct connection *caller, char *str,
     }
     player_ordering[num++] = pplayer;
     player_ordered[pplayer->player_no] = TRUE;
+    num_unordered++;
   } players_iterate_end;
 
+  /* Shuffle the unordered players so that consecutive
+   * calls to autoteam will generate different teams. */
+  for (i = 0; i < num_unordered; i++) {
+    int pos, cur;
+    struct player *tmp;
+
+    cur = num - num_unordered + i;
+    pos = cur + myrand(num_unordered - i);
+    tmp = player_ordering[cur];
+    player_ordering[cur] = player_ordering[pos];
+    player_ordering[pos] = tmp;
+  }
+
 #ifdef DEBUG
+  freelog(LOG_DEBUG, "autoteam num=%d num_unordered=%d",
+          num, num_unordered);
   freelog(LOG_DEBUG, "autoteam player ordering:");
   for (i = 0; i < num; i++) {
     freelog(LOG_DEBUG, "  %d: %p %s", i, player_ordering[i],
