@@ -280,6 +280,8 @@ static void close_socket_callback(struct connection *pc)
 *****************************************************************************/
 void server_break_connection(struct connection *pconn, enum exit_state state)
 {
+  cancel_connection_votes(pconn);
+
   pconn->exit_state = state;
 
   if (pconn->server.currently_processed_request_id) {

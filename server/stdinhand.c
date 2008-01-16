@@ -7845,27 +7845,28 @@ static bool cut_client_connection(struct connection *caller, char *name,
   enum m_pre_result match_result;
   struct connection *ptarget;
   struct player *pplayer;
-    bool was_connected;
+  bool was_connected;
+
   ptarget = find_conn_by_user_prefix(name, &match_result);
-    if (!ptarget)
+  if (!ptarget)
     {
-    cmd_reply_no_such_conn(CMD_CUT, caller, name, match_result);
-    return FALSE;
+      cmd_reply_no_such_conn(CMD_CUT, caller, name, match_result);
+      return FALSE;
     }
-    else if (check)
+  else if (check)
     {
-    return TRUE;
-  }
+      return TRUE;
+    }
   pplayer = ptarget->player;
-    was_connected = pplayer ? pplayer->is_connected : FALSE;
+  was_connected = pplayer ? pplayer->is_connected : FALSE;
   cmd_reply(CMD_CUT, caller, C_DISCONNECTED,
 	    _("Cutting connection %s."), ptarget->username);
-    server_break_connection(ptarget, STATE_CUT_COMMAND);
+  server_break_connection(ptarget, STATE_CUT_COMMAND);
   /* if we cut the connection, unassign the login name */
-    if (pplayer && was_connected && !pplayer->is_connected)
+  if (pplayer && was_connected && !pplayer->is_connected)
     {
-    sz_strlcpy(pplayer->username, ANON_USER_NAME);
-  }
+      sz_strlcpy(pplayer->username, ANON_USER_NAME);
+    }
   return TRUE;
 }
 
