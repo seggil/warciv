@@ -582,7 +582,7 @@ static struct voting *vote_new(struct connection *caller,
 **************************************************************************/
 static void check_vote(struct voting *pvote)
 {
-  int num_cast = 0, num_voters = 0, vote_no;
+  int num_cast = 0, num_voters = 0;
   bool resolve = FALSE, passed = FALSE;
   struct connection *pconn = NULL;
   double yes_pc = 0.0, no_pc = 0.0, rem_pc = 0.0, base = 0.0;
@@ -591,7 +591,6 @@ static void check_vote(struct voting *pvote)
 
   assert(vote_list != NULL);
 
-  vote_no = pvote->vote_no;
   pvote->yes = 0;
   pvote->no = 0;
   pvote->abstain = 0;
@@ -689,6 +688,12 @@ static void check_vote(struct voting *pvote)
     return;
   }
 
+  /* Remove the reference to this pointer from vote_list because it's cause
+   * many crashes due to the /cut command:
+   *   - If the caller is the target.
+   *   - If the target is the last to vote to this. */
+  vote_list_unlink(vote_list, pvote);
+
   if (flags & VCF_FASTPASS) {
     passed = yes_pc > no_pc && 1.0 - rem_pc > need_pc;
   } else {
@@ -747,11 +752,7 @@ static void check_vote(struct voting *pvote)
     handle_stdin_input(NULL, pvote->cmdline, FALSE);
   }
 
-  if (pvote == get_vote_by_no(vote_no)) {
-    /* Check if the vote still exists. e.g. if the command was /cut and the
-     * caller was the target, the vote would be already removed. */
-    remove_vote(pvote);
-  }
+  remove_vote(pvote);
 }
 
 /**************************************************************************
