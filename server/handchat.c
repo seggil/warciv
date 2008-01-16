@@ -382,10 +382,25 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     }
   }
 
-  /* Skip leading ':' if it exists. */
-  if (message[0] == ':') {
+  /* From the canonical smiley list, every possible eye-following
+   * character known to mankind.
+   *
+   * $ wget http://www.astro.umd.edu/~marshall/smileys.html
+   * $ grep ^: smileys.html |cut -b 2|sort|uniq|perl -pe 's/\n//'
+   *
+   */
+#define EMOTICON_BELOW_EYES_CHARACTERS \
+  "^~=| _-,:?/'()[]{}@$*&#%+03689bBcCdDEgGInoOpPqQsTuUvVxX"
+
+  /* Skip leading ':' if it exists, the game is not in pregame
+   * and it does not start an emoticon. :P */
+  if (server_state != PRE_GAME_STATE && message[0] == ':'
+      && message[1] != '\0'
+      && NULL == strchr(EMOTICON_BELOW_EYES_CHARACTERS, message[1])) {
     message++;
   }
+
+#undef EMOTICON_BELOW_EYES_CHARACTERS
 
   if (game.no_public_links) {
     const char *p = strchr(message, '@');
