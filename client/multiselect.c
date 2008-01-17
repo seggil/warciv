@@ -815,15 +815,19 @@ void multi_select_select(void)
   if (multi_select_place == PLACE_SINGLE_UNIT) {
     return;
   }
-  if (multi_select_place == PLACE_ON_TILE) {
+  if (multi_select_place == PLACE_IN_TRANSPORTER
+      || multi_select_place == PLACE_ON_TILE) {
     ulist = punit_focus->tile->units;
   } else {
     ulist = get_player_ptr()->units;
   }
 
   unit_list_iterate(ulist, punit) {
-    if ((multi_select_place == PLACE_ON_CONTINENT
-	 && punit->tile->continent != punit_focus->tile->continent)
+    if (punit->owner != get_player_idx()
+	|| (multi_select_place == PLACE_IN_TRANSPORTER
+	    && punit->transported_by != punit_focus->transported_by)
+	|| (multi_select_place == PLACE_ON_CONTINENT
+	    && punit->tile->continent != punit_focus->tile->continent)
 	|| (multi_select_utype == UTYPE_SAME_MOVE_TYPE
 	    && unit_type(punit)->move_type != unit_type(punit_focus)->move_type)
 	|| (multi_select_utype == UTYPE_SAME_TYPE
@@ -1149,7 +1153,8 @@ void add_unit_to_delayed_goto(struct tile *ptile)
       count++;
     } multi_select_iterate_end;
   } else {
-    if (delayed_goto_place == PLACE_ON_TILE) {
+    if (delayed_goto_place == PLACE_IN_TRANSPORTER
+	|| delayed_goto_place == PLACE_ON_TILE) {
       ulist = punit_focus->tile->units;
     } else {
       ulist = get_player_ptr()->units;
@@ -1157,10 +1162,13 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 
     unit_list_iterate(ulist, punit) {
       if (punit->owner != get_player_idx()
+	  || (delayed_goto_place == PLACE_IN_TRANSPORTER
+	      && punit->transported_by != punit_focus->transported_by)
 	  || (delayed_goto_place == PLACE_ON_CONTINENT
 	      && punit->tile->continent != punit_focus->tile->continent)
 	  || (delayed_goto_utype == UTYPE_SAME_MOVE_TYPE
-	      && unit_type(punit)->move_type != unit_type(punit_focus)->move_type)
+	      && unit_type(punit)->move_type !=
+	             unit_type(punit_focus)->move_type)
 	  || (delayed_goto_utype == UTYPE_SAME_TYPE
 	      && punit->type != punit_focus->type)) {
 	continue;

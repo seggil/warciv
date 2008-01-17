@@ -96,6 +96,7 @@ enum filter_value {
 /* selections mode */
 enum place_value {
   PLACE_SINGLE_UNIT,
+  PLACE_IN_TRANSPORTER,
   PLACE_ON_TILE,
   PLACE_ON_CONTINENT,
   PLACE_EVERY_WHERE

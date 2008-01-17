@@ -857,26 +857,6 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
     }
 
     switch (ev->keyval) {
-      /* for compatibility with old Warclient */
-      case GDK_F9:
-        set_delayed_goto_mode("Single unit");
-        return TRUE;
-  
-      case GDK_F10:
-        set_delayed_goto_mode("All units on the tile");
-        set_delayed_goto_mode("Only units with the same type");
-        return TRUE;
-  
-      case GDK_F11:
-        set_delayed_goto_mode("All units on the tile");
-        set_delayed_goto_mode("All unit types");
-        return TRUE;
-  
-      case GDK_F12:
-        set_delayed_goto_mode("All units on the continent");
-        set_delayed_goto_mode("Only units with the same type");
-        return TRUE;
-
       case GDK_KP_Up:
       case GDK_KP_8:
       case GDK_8:

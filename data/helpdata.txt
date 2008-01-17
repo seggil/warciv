@@ -1044,9 +1044,11 @@ get the new order.\
 \n\n\
 The place mode can be:\n\
 1. One single unit (disable the tool)\n\
-2. A tile\n\
-3. A continent\n\
-4. Every where\n\
+2. A transporter (unit without tranporters are considered \
+to be in the same transporter)\n\
+3. A tile\n\
+4. A continent\n\
+5. Every where\n\
 The unit type mode can be:\n\
 1. One only type\n\
 2. All types with the same move type \

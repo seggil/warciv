@@ -86,6 +86,7 @@ static void update_multi_select_inclusive_filter_menu(void);
 static void update_multi_select_exclusive_filter_menu(void);
 
 static void menus_rename(const char *path, const char *s);
+static void menus_set_active(const char *path, int active);
 
 /****************************************************************
 ...
@@ -176,12 +177,17 @@ enum MenuID {
   MENU_DELAYED_GOTO_ADD_PAUSE,
   MENU_DELAYED_GOTO_CLEAR_DELAYED_ORDERS,
   MENU_DELAYED_GOTO_GOTO_SINGLE_UNIT,
+  MENU_DELAYED_GOTO_GOTO_IN_TRANSPORTER,
   MENU_DELAYED_GOTO_GOTO_ON_TILE,
   MENU_DELAYED_GOTO_GOTO_ON_CONTINENT,
   MENU_DELAYED_GOTO_GOTO_EVERY_WHERE,
   MENU_DELAYED_GOTO_GOTO_SAME_TYPE,
   MENU_DELAYED_GOTO_GOTO_SAME_MOVE_TYPE,
   MENU_DELAYED_GOTO_GOTO_ALL,
+  MENU_DELAYED_GOTO_OLD_SINGLE,
+  MENU_DELAYED_GOTO_OLD_TILE,
+  MENU_DELAYED_GOTO_OLD_CONTINENT,
+  MENU_DELAYED_GOTO_OLD_TILE_ALL_TYPES,
   MENU_DELAYED_GOTO_DG1_SELECT,
   MENU_DELAYED_GOTO_DG1_ADD,
   MENU_DELAYED_GOTO_DG1_RECORD,
@@ -294,6 +300,7 @@ enum MenuID {
   MENU_MULTI_SELECTION_EXCLUSIVE_MILITARY,
   MENU_MULTI_SELECTION_EXCLUSIVE_OFF,
   MENU_MULTI_SELECTION_MODE_SINGLE_UNIT,
+  MENU_MULTI_SELECTION_MODE_IN_TRANSPORTER,
   MENU_MULTI_SELECTION_MODE_ON_TILE,
   MENU_MULTI_SELECTION_MODE_ON_CONTINENT,
   MENU_MULTI_SELECTION_MODE_EVERY_WHERE,
@@ -804,6 +811,9 @@ static void delayed_goto_menu_callback(gpointer callback_data,
    case MENU_DELAYED_GOTO_GOTO_SINGLE_UNIT:
         delayed_goto_place = PLACE_SINGLE_UNIT;
         break;
+   case MENU_DELAYED_GOTO_GOTO_IN_TRANSPORTER:
+        delayed_goto_place = PLACE_IN_TRANSPORTER;
+        break;
    case MENU_DELAYED_GOTO_GOTO_ON_TILE:
         delayed_goto_place = PLACE_ON_TILE;
         break;
@@ -821,6 +831,28 @@ static void delayed_goto_menu_callback(gpointer callback_data,
         break;
    case MENU_DELAYED_GOTO_GOTO_ALL:
         delayed_goto_utype = UTYPE_ALL;
+        break;
+   case MENU_DELAYED_GOTO_OLD_SINGLE:
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/Single unit",
+			 TRUE);
+        break;
+   case MENU_DELAYED_GOTO_OLD_TILE:
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+			 "All units on the tile", TRUE);
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+			 "Only units with the same type", TRUE);
+        break;
+   case MENU_DELAYED_GOTO_OLD_CONTINENT:
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+			 "All units on the continent", TRUE);
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+			 "Only units with the same type", TRUE);
+        break;
+   case MENU_DELAYED_GOTO_OLD_TILE_ALL_TYPES:
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+			 "All units on the tile", TRUE);
+        menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+			 "All unit types", TRUE);
         break;
    case MENU_DELAYED_GOTO_INCLUSIVE_ALL:
       if(!!(delayed_goto_inclusive_filter & FILTER_ALL) ^ GTK_CHECK_MENU_ITEM(widget)->active)
@@ -1248,6 +1280,9 @@ static void multi_selection_menu_callback(gpointer callback_data,
       break;
     case MENU_MULTI_SELECTION_MODE_SINGLE_UNIT:
       multi_select_place = PLACE_SINGLE_UNIT;
+      break;
+    case MENU_MULTI_SELECTION_MODE_IN_TRANSPORTER:
+      multi_select_place = PLACE_IN_TRANSPORTER;
       break;
     case MENU_MULTI_SELECTION_MODE_ON_TILE:
       multi_select_place = PLACE_ON_TILE;
@@ -2094,33 +2129,51 @@ static GtkItemFactoryEntry menu_items[]	=
 								"<alt><shift>F1",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_SINGLE_UNIT,
 									"<RadioItem>"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the _tile"),
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All _units in the same transporter"),
 								"<alt><shift>F2",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_IN_TRANSPORTER,
+				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the _tile"),
+								"<alt><shift>F3",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_ON_TILE,
 				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
   { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the _continent"),
-								"<alt><shift>F3",
+								"<alt><shift>F4",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_ON_CONTINENT,
 				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
   { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("_All units"),
-								"<alt><shift>F4",
+								"<alt><shift>F5",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_EVERY_WHERE,
 				"<main>/Delayed Goto/Delayed goto mode/Single unit"	},
   { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/sep1",	NULL,
 	NULL,			0,					"<Separator>"	},
   { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Only units with the _same type"),
-								"<alt><shift>F5",
+								"<alt><shift>F6",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_SAME_TYPE,
 									"<RadioItem>"	},
   { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Only units with the same _move type"),
-								"<alt><shift>F6",
+								"<alt><shift>F7",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_SAME_MOVE_TYPE,
 		"<main>/Delayed Goto/Delayed goto mode/Only units with the same type"	},
   { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("_All unit types"),
-								"<alt><shift>F7",
+								"<alt><shift>F8",
 	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_GOTO_ALL,
 		"<main>/Delayed Goto/Delayed goto mode/Only units with the same type"	},
-  { "/" N_("Delayed Goto") "/" N_("Delayed goto _auto"),		NULL,
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/sep2",	NULL,
+	NULL,			0,					"<Separator>"	},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("Single unit (old)"),
+								"F9",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_OLD_SINGLE			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units of the same type on the tile (old)"),
+								"F10",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_OLD_TILE			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units on the tile (old)"),
+								"F11",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_OLD_TILE_ALL_TYPES		},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto mode") "/" N_("All units of the same type on the continent (old)"),
+								"F12",
+	delayed_goto_menu_callback,	MENU_DELAYED_GOTO_OLD_CONTINENT			},
+  { "/" N_("Delayed Goto") "/" N_("Delayed goto _auto"),	NULL,
 	NULL,				0,				"<Branch>"      },
   { "/" N_("Delayed Goto") "/" N_("Delayed goto auto") "/tearoff1",
 								NULL,
@@ -2541,31 +2594,35 @@ static GtkItemFactoryEntry menu_items[]	=
 								"<shift>F1",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_SINGLE_UNIT,
 									"<RadioItem>"	},
-  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the _tile"),
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All _units in the same transporter"),
 								"<shift>F2",
+	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_IN_TRANSPORTER,
+			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
+  { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the _tile"),
+								"<shift>F3",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_ON_TILE,
 			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
   { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("All units on the _continent"),
-								"<shift>F3",
+								"<shift>F4",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_ON_CONTINENT,
 			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
   { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("_All units"),
-								"<shift>F4",
+								"<shift>F5",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_EVERY_WHERE,
 			"<main>/Multi-Selection/Multi-selection mode/Single unit"	},
   { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/sep1",
 								NULL,
 	NULL,				0,				"<Separator>"	},
   { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Only units with the same _type"),
-								"<shift>F5",
+								"<shift>F6",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_SAME_TYPE,
 									"<RadioItem>"	},
   { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("Only units with the same _move type"),
-								"<shift>F6",
+								"<shift>F7",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_SAME_MOVE_TYPE,
 	"<main>/Multi-Selection/Multi-selection mode/Only units with the same type"	},
   { "/" N_("Multi-Selection") "/" N_("Multi-selection mode") "/" N_("_All unit types"),
-								"<shift>F7",
+								"<shift>F8",
 	multi_selection_menu_callback,	MENU_MULTI_SELECTION_MODE_ALL,
 	"<main>/Multi-Selection/Multi-selection mode/Only units with the same type"	},
 
@@ -3544,87 +3601,130 @@ static const char *get_tile_change_menu_text(struct tile *ptile,
 }
 
 /****************************************************************
- ... for compatibility with Warclient for F9-F12
+  ...
 *****************************************************************/
-void set_delayed_goto_mode(const char *path)
-{
-    if(!main_menubar)
-    return;
-	char buf[256]="<main>/Delayed Goto/Delayed goto mode/",*b;
-
-	b=buf+strlen(buf);
-	strcpy(b,path);
-	menus_set_active(buf,TRUE);
-  }
-
 static void update_delayed_goto_inclusive_filter_menu(void)
 {
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/All units", delayed_goto_inclusive_filter & FILTER_ALL);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/New units", delayed_goto_inclusive_filter & FILTER_NEW);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Fortified units", delayed_goto_inclusive_filter & FILTER_FORTIFIED);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Sentried units", delayed_goto_inclusive_filter & FILTER_SENTRIED);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Veteran units", delayed_goto_inclusive_filter & FILTER_VETERAN);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Auto units", delayed_goto_inclusive_filter & FILTER_AUTO);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Idle units", delayed_goto_inclusive_filter & FILTER_IDLE);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Units able to move", delayed_goto_inclusive_filter & FILTER_ABLE_TO_MOVE);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Military units", delayed_goto_inclusive_filter & FILTER_MILITARY);
-  menus_set_active("<main>/Delayed Goto/Inclusive filter/Off", delayed_goto_inclusive_filter & FILTER_OFF);
-}
-
-static void update_delayed_goto_exclusive_filter_menu(void)
-{
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/All units", delayed_goto_exclusive_filter & FILTER_ALL);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/New units", delayed_goto_exclusive_filter & FILTER_NEW);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Fortified units", delayed_goto_exclusive_filter & FILTER_FORTIFIED);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Sentried units", delayed_goto_exclusive_filter & FILTER_SENTRIED);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Veteran units", delayed_goto_exclusive_filter & FILTER_VETERAN);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Auto units", delayed_goto_exclusive_filter & FILTER_AUTO);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Idle units", delayed_goto_exclusive_filter & FILTER_IDLE);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Units able to move", delayed_goto_exclusive_filter & FILTER_ABLE_TO_MOVE);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Military units", delayed_goto_exclusive_filter & FILTER_MILITARY);
-  menus_set_active("<main>/Delayed Goto/Exclusive filter/Off", delayed_goto_exclusive_filter & FILTER_OFF);
-}
-
-static void update_multi_select_inclusive_filter_menu(void)
-{
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/All units", multi_select_inclusive_filter & FILTER_ALL);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/New units", multi_select_inclusive_filter & FILTER_NEW);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Fortified units", multi_select_inclusive_filter & FILTER_FORTIFIED);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Sentried units", multi_select_inclusive_filter & FILTER_SENTRIED);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Veteran units", multi_select_inclusive_filter & FILTER_VETERAN);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Auto units", multi_select_inclusive_filter & FILTER_AUTO);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Idle units", multi_select_inclusive_filter & FILTER_IDLE);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Units able to move", multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Military units", multi_select_inclusive_filter & FILTER_MILITARY);
-  menus_set_active("<main>/Multi-Selection/Inclusive filter/Off", multi_select_inclusive_filter & FILTER_OFF);
-}
-
-static void update_multi_select_exclusive_filter_menu(void)
-{
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/All units", multi_select_exclusive_filter & FILTER_ALL);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/New units", multi_select_exclusive_filter & FILTER_NEW);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Fortified units", multi_select_exclusive_filter & FILTER_FORTIFIED);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Sentried units", multi_select_exclusive_filter & FILTER_SENTRIED);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Veteran units", multi_select_exclusive_filter & FILTER_VETERAN);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Auto units", multi_select_exclusive_filter & FILTER_AUTO);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Idle units", multi_select_exclusive_filter & FILTER_IDLE);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Units able to move", multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Military units", multi_select_exclusive_filter & FILTER_MILITARY);
-  menus_set_active("<main>/Multi-Selection/Exclusive filter/Off", multi_select_exclusive_filter & FILTER_OFF);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/All units",
+		   delayed_goto_inclusive_filter & FILTER_ALL);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/New units",
+		   delayed_goto_inclusive_filter & FILTER_NEW);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Fortified units",
+		   delayed_goto_inclusive_filter & FILTER_FORTIFIED);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Sentried units",
+		   delayed_goto_inclusive_filter & FILTER_SENTRIED);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Veteran units",
+		   delayed_goto_inclusive_filter & FILTER_VETERAN);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Auto units",
+		   delayed_goto_inclusive_filter & FILTER_AUTO);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Idle units",
+		   delayed_goto_inclusive_filter & FILTER_IDLE);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Units able to move",
+		   delayed_goto_inclusive_filter & FILTER_ABLE_TO_MOVE);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Military units",
+		   delayed_goto_inclusive_filter & FILTER_MILITARY);
+  menus_set_active("<main>/Delayed Goto/Inclusive filter/Off",
+		   delayed_goto_inclusive_filter & FILTER_OFF);
 }
 
 /****************************************************************
- ... for automatic processus
+  ...
+*****************************************************************/
+static void update_delayed_goto_exclusive_filter_menu(void)
+{
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/All units",
+		   delayed_goto_exclusive_filter & FILTER_ALL);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/New units",
+		   delayed_goto_exclusive_filter & FILTER_NEW);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Fortified units",
+		   delayed_goto_exclusive_filter & FILTER_FORTIFIED);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Sentried units",
+		   delayed_goto_exclusive_filter & FILTER_SENTRIED);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Veteran units",
+		   delayed_goto_exclusive_filter & FILTER_VETERAN);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Auto units",
+		   delayed_goto_exclusive_filter & FILTER_AUTO);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Idle units",
+		   delayed_goto_exclusive_filter & FILTER_IDLE);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Units able to move",
+		   delayed_goto_exclusive_filter & FILTER_ABLE_TO_MOVE);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Military units",
+		   delayed_goto_exclusive_filter & FILTER_MILITARY);
+  menus_set_active("<main>/Delayed Goto/Exclusive filter/Off",
+		   delayed_goto_exclusive_filter & FILTER_OFF);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void update_multi_select_inclusive_filter_menu(void)
+{
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/All units",
+		   multi_select_inclusive_filter & FILTER_ALL);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/New units",
+		   multi_select_inclusive_filter & FILTER_NEW);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Fortified units",
+		   multi_select_inclusive_filter & FILTER_FORTIFIED);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Sentried units",
+		   multi_select_inclusive_filter & FILTER_SENTRIED);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Veteran units",
+		   multi_select_inclusive_filter & FILTER_VETERAN);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Auto units",
+		   multi_select_inclusive_filter & FILTER_AUTO);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Idle units",
+		   multi_select_inclusive_filter & FILTER_IDLE);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Units able to move",
+		   multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Military units",
+		   multi_select_inclusive_filter & FILTER_MILITARY);
+  menus_set_active("<main>/Multi-Selection/Inclusive filter/Off",
+		   multi_select_inclusive_filter & FILTER_OFF);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void update_multi_select_exclusive_filter_menu(void)
+{
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/All units",
+		   multi_select_exclusive_filter & FILTER_ALL);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/New units",
+		   multi_select_exclusive_filter & FILTER_NEW);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Fortified units",
+		   multi_select_exclusive_filter & FILTER_FORTIFIED);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Sentried units",
+		   multi_select_exclusive_filter & FILTER_SENTRIED);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Veteran units",
+		   multi_select_exclusive_filter & FILTER_VETERAN);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Auto units",
+		   multi_select_exclusive_filter & FILTER_AUTO);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Idle units",
+		   multi_select_exclusive_filter & FILTER_IDLE);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Units able to move",
+		   multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Military units",
+		   multi_select_exclusive_filter & FILTER_MILITARY);
+  menus_set_active("<main>/Multi-Selection/Exclusive filter/Off",
+		   multi_select_exclusive_filter & FILTER_OFF);
+}
+
+/****************************************************************
+  ... for automatic processus
 *****************************************************************/
 void update_automatic_processus_filter_menu(automatic_processus *pap)
 {
-	if(!pap||pap->menu[0]=='\0')
-		return;
-	int i;
+  int i;
 
-	for(i=0;i<AUTO_VALUES_NUM;i++)
-		if(is_auto_value_allowed(pap,i))
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(pap->widget[i]),pap->auto_filter&AV_TO_FV(i));
+  if (!pap || pap->menu[0] == '\0') {
+    return;
+  }
+
+  for (i = 0; i < AUTO_VALUES_NUM; i++) {
+    if (is_auto_value_allowed(pap, i)) {
+      gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(pap->widget[i]),
+				     pap->auto_filter & AV_TO_FV(i));
+    }
+  }
 }
 
 /****************************************************************
@@ -3925,20 +4025,44 @@ void init_menus(void)
   menus_set_active("<main>/_View/Fog of War", draw_fog_of_war);
 
   /* Delayed goto menu */
-  switch(delayed_goto_place)
-  {
-    case PLACE_SINGLE_UNIT: menus_set_active("<main>/Delayed Goto/Delayed goto mode/Single unit", TRUE); break;
-    case PLACE_ON_TILE: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units on the tile", TRUE); break;
-    case PLACE_ON_CONTINENT: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units on the continent", TRUE); break;
-    case PLACE_EVERY_WHERE: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units", TRUE); break;
-    default: break;
+  switch (delayed_goto_place) {
+    case PLACE_SINGLE_UNIT:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/Single unit",
+		       TRUE);
+      break;
+    case PLACE_IN_TRANSPORTER:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+		       "All units in the same transporter", TRUE);
+      break;
+    case PLACE_ON_TILE:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+		       "All units on the tile", TRUE);
+      break;
+    case PLACE_ON_CONTINENT:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+		       "All units on the continent", TRUE);
+      break;
+    case PLACE_EVERY_WHERE:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/All units", TRUE);
+      break;
+    default:
+      break;
   }
-  switch(delayed_goto_utype)
-  {
-    case UTYPE_SAME_TYPE: menus_set_active("<main>/Delayed Goto/Delayed goto mode/Only units with the same type", TRUE); break;
-    case UTYPE_SAME_MOVE_TYPE: menus_set_active("<main>/Delayed Goto/Delayed goto mode/Only units with the same move type", TRUE); break;
-    case UTYPE_ALL: menus_set_active("<main>/Delayed Goto/Delayed goto mode/All unit types", TRUE); break;
-    default: break;
+  switch (delayed_goto_utype) {
+    case UTYPE_SAME_TYPE:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+		       "Only units with the same type", TRUE);
+      break;
+    case UTYPE_SAME_MOVE_TYPE:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/"
+		       "Only units with the same move type", TRUE);
+      break;
+    case UTYPE_ALL:
+      menus_set_active("<main>/Delayed Goto/Delayed goto mode/All unit types",
+		       TRUE);
+      break;
+    default:
+      break;
   }
   update_delayed_goto_inclusive_filter_menu();
   update_delayed_goto_exclusive_filter_menu();
@@ -3956,55 +4080,128 @@ void init_menus(void)
   update_auto_caravan_menu();
 
   /* Multi-Selection menu */
-  switch(multi_select_place)
-  {
-    case PLACE_SINGLE_UNIT: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Single unit", TRUE); break;
-    case PLACE_ON_TILE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units on the tile", TRUE); break;
-    case PLACE_ON_CONTINENT: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units on the continent", TRUE); break;
-    case PLACE_EVERY_WHERE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All units", TRUE); break;
-    default: break;
+  switch (multi_select_place) {
+    case PLACE_SINGLE_UNIT:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "Single unit", TRUE);
+      break;
+    case PLACE_IN_TRANSPORTER:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "All units in the same transporter", TRUE);
+      break;
+    case PLACE_ON_TILE:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "All units on the tile", TRUE);
+      break;
+    case PLACE_ON_CONTINENT:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "All units on the continent", TRUE);
+      break;
+    case PLACE_EVERY_WHERE:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "All units", TRUE);
+      break;
+    default:
+      break;
   }
-  switch(multi_select_utype)
-  {
-    case UTYPE_SAME_TYPE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Only units with the same type", TRUE); break;
-    case UTYPE_SAME_MOVE_TYPE: menus_set_active("<main>/Multi-Selection/Multi-selection mode/Only units with the same move type", TRUE); break;
-    case UTYPE_ALL: menus_set_active("<main>/Multi-Selection/Multi-selection mode/All unit types", TRUE); break;
-    default: break;
+  switch (multi_select_utype) {
+    case UTYPE_SAME_TYPE:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "Only units with the same type", TRUE);
+      break;
+    case UTYPE_SAME_MOVE_TYPE:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "Only units with the same move type", TRUE);
+      break;
+    case UTYPE_ALL:
+      menus_set_active("<main>/Multi-Selection/Multi-selection mode/"
+		       "All unit types", TRUE);
+      break;
+    default:
+      break;
   }
-  menus_set_active("<main>/Multi-Selection/Spread only in cities with airport", spread_airport_cities);
-  menus_set_active("<main>/Multi-Selection/Allow spreading into allied cities", spread_allied_cities);
+  menus_set_active("<main>/Multi-Selection/Spread only in cities with airport",
+		   spread_airport_cities);
+  menus_set_active("<main>/Multi-Selection/Allow spreading into allied cities",
+		   spread_allied_cities);
   update_multi_select_inclusive_filter_menu();
   update_multi_select_exclusive_filter_menu();
 
   /* Miscellaneous menu */
-  switch(default_caravan_action)
-  {
-    case 0: menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/Popup dialog", TRUE); break;
-    case 1: menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/Establish trade route", TRUE); break;
-    case 2: menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/Help building wonder", TRUE); break;
-    case 3: menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/Keep going", TRUE); break;
-    default: break;
+  switch (default_caravan_action) {
+    case 0:
+      menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/"
+		       "Popup dialog", TRUE);
+      break;
+    case 1:
+      menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/"
+		       "Establish trade route", TRUE);
+      break;
+    case 2:
+      menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/"
+		       "Help building wonder", TRUE);
+      break;
+    case 3:
+      menus_set_active("<main>/Miscellaneous/Caravan action upon arrival/"
+		       "Keep going", TRUE);
+      break;
+    default:
+      break;
   }
-  switch(default_diplomat_action)
-  {
-    case 0: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Popup dialog", TRUE); break;
-    case 1: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Bribe unit", TRUE); break;
-    case 2: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Sabotage unit (spy)", TRUE); break;
-    case 3: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Establish embassy", TRUE); break;
-    case 4: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Investigate city", TRUE); break;
-    case 5: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Sabotage city", TRUE); break;
-    case 6: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Steal technology", TRUE); break;
-    case 7: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Incite revolt", TRUE); break;
-    case 8: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Poison city (spy)", TRUE); break;
-    case 9: menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/Keep going", TRUE); break;
-    default: break;
+  switch (default_diplomat_action) {
+    case 0:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Popup dialog", TRUE);
+      break;
+    case 1:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Bribe unit", TRUE);
+      break;
+    case 2:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Sabotage unit (spy)", TRUE);
+     break;
+    case 3:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Establish embassy", TRUE);
+      break;
+    case 4:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Investigate city", TRUE);
+      break;
+    case 5:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Sabotage city", TRUE);
+      break;
+    case 6:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Steal technology", TRUE);
+      break;
+    case 7:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Incite revolt", TRUE);
+      break;
+    case 8:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Poison city (spy)", TRUE);
+      break;
+    case 9:
+      menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival/"
+		       "Keep going", TRUE);
+      break;
+    default:
+      break;
   }
   menus_set_active("<main>/Miscellaneous/Diplomat action upon arrival"
                    "/Ignore allies", default_diplomat_ignore_allies);
-  menus_set_active("<main>/Miscellaneous/Lock new unit default action", default_action_locked);
-  menus_set_active("<main>/Miscellaneous/Military units only", default_action_military_only);
-  menus_set_active("<main>/Miscellaneous/Autowakeup sentried units", autowakeup_state);
-  menus_set_active("<main>/Miscellaneous/Move and attack mode", moveandattack_state);
+  menus_set_active("<main>/Miscellaneous/Lock new unit default action",
+		   default_action_locked);
+  menus_set_active("<main>/Miscellaneous/Military units only",
+		   default_action_military_only);
+  menus_set_active("<main>/Miscellaneous/Autowakeup sentried units",
+		   autowakeup_state);
+  menus_set_active("<main>/Miscellaneous/Move and attack mode",
+		   moveandattack_state);
   update_miscellaneous_menu();
 
   automatic_processus_iterate(pap) {
