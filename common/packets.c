@@ -577,10 +577,20 @@ void generic_handle_player_attribute_chunk(struct player *pplayer,
 					   packet_player_attribute_chunk
 					   *chunk)
 {
-  freelog(BASIC_PACKET_LOG_LEVEL, "received attribute chunk %u/%u %u",
-	  (unsigned int) chunk->offset,
-	  (unsigned int) chunk->total_length,
-	  (unsigned int) chunk->chunk_length);
+  assert(chunk != NULL);
+
+  freelog(BASIC_PACKET_LOG_LEVEL, "received attribute chunk %u/%u %u "
+          "pplayer=%p",
+          (unsigned int) chunk->offset,
+          (unsigned int) chunk->total_length,
+          (unsigned int) chunk->chunk_length,
+          pplayer);
+
+  /* Even though we are discarding the chunk, we can't
+   * do anything without a valid player pointer. */
+  if (pplayer == NULL) {
+    return;
+  }
 
   if (chunk->total_length < 0
       || chunk->chunk_length < 0
