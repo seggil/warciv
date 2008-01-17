@@ -523,6 +523,7 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
 {
   static struct timer *last_send_timer = NULL;
   static bool want_update;
+  double last_send_time = 0.0;
 
   /* if we're bidding farewell, ignore all timers */
   if (flag == META_GOODBYE) { 
@@ -533,9 +534,13 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
     return send_to_metaserver(flag);
   }
 
+  if (last_send_timer) {
+    last_send_time = read_timer_seconds(last_send_timer);
+  }
+
   /* don't allow the user to spam the metaserver with updates */
-  if (last_send_timer && (read_timer_seconds(last_send_timer)
-                                          < METASERVER_MIN_UPDATE_INTERVAL)) {
+  if (last_send_time != 0.0
+      && last_send_time < METASERVER_MIN_UPDATE_INTERVAL) {
     if (flag == META_INFO) {
       want_update = TRUE; /* we couldn't update now, but update a.s.a.p. */
     }
@@ -544,8 +549,8 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
 
   /* if we're asking for a refresh, only do so if 
    * we've exceeded the refresh interval */
-  if ((flag == META_REFRESH) && !want_update && last_send_timer 
-      && (read_timer_seconds(last_send_timer) < METASERVER_REFRESH_INTERVAL)) {
+  if (flag == META_REFRESH && !want_update && last_send_time != 0.0
+      && last_send_time < METASERVER_REFRESH_INTERVAL) {
     return FALSE;
   }
 

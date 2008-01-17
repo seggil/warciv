@@ -317,7 +317,8 @@ instead of just testing if the returning package is NULL as we sometimes
 return a NULL packet even if everything is OK (receive_packet_goto_route).
 **************************************************************************/
 void *get_packet_from_connection(struct connection *pc,
-				 enum packet_type *ptype, bool * presult)
+                                 enum packet_type *ptype,
+                                 bool *presult)
 {
   int len_read;
   int whole_packet_len;
@@ -484,8 +485,9 @@ void *get_packet_from_connection(struct connection *pc,
 
       freelog(LOG_NORMAL, "Received packets:");
       for (i = 0; i < PACKET_LAST; i++) {
-	if (packets_stats[i].counter == 0)
+	if (packets_stats[i].counter == 0) {
 	  continue;
+        }
 	sum += packets_stats[i].size;
 	freelog(LOG_NORMAL,
 		"  [%-25.25s %3d]: %6d packets; %8d bytes total; "
@@ -500,7 +502,8 @@ void *get_packet_from_connection(struct connection *pc,
 	      sum, packet_counter, sum / packet_counter);
     }
   }
-#endif
+#endif /* PACKET_SIZE_STATISTICS */
+
   return get_packet_from_connection_helper(pc, utype.type);
 }
 

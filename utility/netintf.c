@@ -573,6 +573,9 @@ int my_writesocket(int sock, const void *buf, size_t size)
 ***************************************************************/
 void my_closesocket(int sock)
 {
+  if (sock < 0) {
+    return;
+  }
 #ifdef WIN32_NATIVE
   closesocket(sock);
 #else

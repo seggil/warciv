@@ -754,13 +754,17 @@ static void package_conn_info(struct connection *pconn,
 
 /**************************************************************************
   Handle both send_conn_info() and send_conn_info_removed(), depending
-  on 'remove' arg.  Sends conn_info packets for 'src' to 'dest', turning
-  off 'used' if 'remove' is specified.
+  on 'remove' arg.  Sends conn_info packets for 'src' to 'dest', setting
+  FALSE 'packet.used' if 'remove' is specified.
 **************************************************************************/
 static void send_conn_info_arg(struct conn_list *src,
                                struct conn_list *dest, bool remove)
 {
   struct packet_conn_info packet;
+
+  if (!src || !dest) {
+    return;
+  }
   
   conn_list_iterate(src, psrc) {
     package_conn_info(psrc, &packet);

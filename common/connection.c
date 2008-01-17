@@ -57,8 +57,6 @@ const char blank_addr_str[] = "---.---.---.---";
    a connection list might corrupt the list. */
 int delayed_disconnect = 0;
 
-struct connection *current_connection;
-  
 /* NB Must match enum conn_pattern_type
    in common/connection.h */
 char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
@@ -198,25 +196,35 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static int connection_maybe_delay_disconnect(struct connection *pc)
+{
+  if (delayed_disconnect > 0) {
+    pc->delayed_disconnect = TRUE;
+    return 0;
+  }
+
+  if (close_callback) {
+    (*close_callback)(pc);
+  }
+  return -1;
+}
+
+/**************************************************************************
   write wrapper function -vasc
 **************************************************************************/
 static int write_socket_data(struct connection *pc,
-			     struct socket_packet_buffer *buf, int limit)
+                             struct socket_packet_buffer *buf,
+                             int limit)
 {
   int start, nput, nblock;
 
   if (pc->delayed_disconnect) {
-    if (delayed_disconnect > 0) {
-      return 0;
-    } else {
-      if (close_callback) {
-	(*close_callback)(pc);
-      }
-      return -1;
-    }
+    return connection_maybe_delay_disconnect(pc);
   }
 
-  for (start=0; buf->ndata-start>limit;) {
+  for (start = 0; buf->ndata - start > limit; ) {
     fd_set writefs, exceptfs;
     struct timeval tv;
 
@@ -225,65 +233,64 @@ static int write_socket_data(struct connection *pc,
     FD_SET(pc->sock, &writefs);
     FD_SET(pc->sock, &exceptfs);
 
-    tv.tv_sec = 0; tv.tv_usec = 0;
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
 
-    if (select(pc->sock+1, NULL, &writefs, &exceptfs, &tv) <= 0) {
+    if (select(pc->sock + 1, NULL, &writefs, &exceptfs, &tv) <= 0) {
+
+      /* EINTR can happen sometimes, especially when compiling with -pg.
+       * Generally we just want to run select again. */
 #ifdef WIN32_NATIVE
-      if (my_errno() != WSAEINTR) {
-#else
-      if (my_errno() != EINTR) {
-#endif
-	break;
-      } else {
-	/* EINTR can happen sometimes, especially when compiling with -pg.
-	 * Generally we just want to run select again. */
-	continue;
+      if (my_errno() == WSAEINTR) {
+        continue;
       }
+#else
+      if (my_errno() == EINTR) {
+        continue;
+      }
+#endif
+
+      /* Select failed with some other error. */
+      freelog(LOG_ERROR, "select on write for %s failed: %s",
+              conn_description(pc), mystrerror());
+      break;
     }
 
     if (FD_ISSET(pc->sock, &exceptfs)) {
-      if (delayed_disconnect > 0) {
-	pc->delayed_disconnect = TRUE;
-	return 0;
-      } else {
-	if (close_callback) {
-	  (*close_callback)(pc);
-	}
-	return -1;
+      freelog(LOG_ERROR, "network exception during write for %s",
+              conn_description(pc));
+      return connection_maybe_delay_disconnect(pc);
+    }
+
+    if (!FD_ISSET(pc->sock, &writefs)) {
+      continue;
+    }
+
+    nblock = MIN(buf->ndata - start, MAX_LEN_PACKET);
+
+    freelog(LOG_DEBUG, "trying to write %d limit=%d", nblock, limit);
+
+    nput = my_writesocket(pc->sock, buf->data + start, nblock);
+    if (nput == -1) {
+
+#ifdef NONBLOCKING_SOCKETS
+      if (my_socket_would_block()) {
+        break;
       }
+#endif
+      freelog(LOG_ERROR, "write of %d bytes failed for %s: %s",
+              nblock, conn_description(pc), mystrerror());
+      return connection_maybe_delay_disconnect(pc);
     }
-    
-    if (FD_ISSET(pc->sock, &writefs)) {
-      nblock = MIN(buf->ndata-start, MAX_LEN_PACKET);
-      freelog(LOG_DEBUG, "trying to write %d limit=%d", nblock, limit);
-      if((nput = my_writesocket(pc->sock, 
-				(const char *)buf->data+start, nblock)) == -1)
-	{
-	  
-#ifdef NONBLOCKING_SOCKETS 	 
-	  if (my_socket_would_block()) { 	 
-	    break; 	 
-	  } 	 
-#endif 	 
-	  if (delayed_disconnect > 0) {
-	    pc->delayed_disconnect = TRUE;
-	    return 0;
-	  } else {
-	    if (close_callback) {
-	      (*close_callback)(pc);
-	    }
-	    return -1;
-	  }
-	}
-      start += nput;
-    }
+    start += nput;
   }
-    
+
   if (start > 0) {
     buf->ndata -= start;
-    memmove(buf->data, buf->data+start, buf->ndata);
-    (void) time(&pc->last_write);
+    memmove(buf->data, buf->data + start, buf->ndata);
+    time(&pc->last_write);
   }
+
   return 0;
 }
 
@@ -293,11 +300,11 @@ static int write_socket_data(struct connection *pc,
 **************************************************************************/
 void flush_connection_send_buffer_all(struct connection *pc)
 {
-  if(pc && pc->used && pc->send_buffer->ndata > 0) {
+  if (pc && pc->used && pc->send_buffer->ndata > 0) {
     write_socket_data(pc, pc->send_buffer, 0);
     if (pc->notify_of_writable_data) {
       pc->notify_of_writable_data(pc, pc->send_buffer
-				  && pc->send_buffer->ndata > 0);
+                                  && pc->send_buffer->ndata > 0);
     }
   }
 }
@@ -307,7 +314,7 @@ void flush_connection_send_buffer_all(struct connection *pc)
 **************************************************************************/
 static void flush_connection_send_buffer_packets(struct connection *pc)
 {
-  if(pc && pc->used && pc->send_buffer->ndata >= MAX_LEN_PACKET) {
+  if (pc && pc->used && pc->send_buffer->ndata >= MAX_LEN_PACKET) {
     write_socket_data(pc, pc->send_buffer, MAX_LEN_PACKET-1);
     if (pc->notify_of_writable_data) {
       pc->notify_of_writable_data(pc, pc->send_buffer
@@ -684,31 +691,39 @@ void connection_common_close(struct connection *pconn)
 {
   if (!pconn->used) {
     freelog(LOG_ERROR, "WARNING: Trying to close already closed connection");
-  } else {
-    my_closesocket(pconn->sock);
-    if (is_server && pconn->server.adns_id > 0) {
-      adns_cancel(pconn->server.adns_id);
-      pconn->server.adns_id = -1;
-    }
-    pconn->used = FALSE;
-    pconn->established = FALSE;
+    return;
+  }
 
+  if (pconn->sock >= 0) {
+    my_closesocket(pconn->sock);
+    pconn->sock = -1;
+  }
+  if (is_server && pconn->server.adns_id > 0) {
+    adns_cancel(pconn->server.adns_id);
+    pconn->server.adns_id = -1;
+  }
+  pconn->used = FALSE;
+  pconn->established = FALSE;
+
+  if (pconn->buffer) {
     free_socket_packet_buffer(pconn->buffer);
     pconn->buffer = NULL;
+  }
 
+  if (pconn->send_buffer) {
     free_socket_packet_buffer(pconn->send_buffer);
     pconn->send_buffer = NULL;
+  }
 
-    free_compression_queue(pconn);
-    free_packet_hashes(pconn);
+  free_compression_queue(pconn);
+  free_packet_hashes(pconn);
 
-    if (pconn->server.ignore_list) {
-      ignore_list_iterate(pconn->server.ignore_list, cp) {
-        conn_pattern_free(cp);
-      } ignore_list_iterate_end;
-      ignore_list_free(pconn->server.ignore_list);
-      pconn->server.ignore_list = NULL;
-    }
+  if (pconn->server.ignore_list) {
+    ignore_list_iterate(pconn->server.ignore_list, cp) {
+      conn_pattern_free(cp);
+    } ignore_list_iterate_end;
+    ignore_list_free(pconn->server.ignore_list);
+    pconn->server.ignore_list = NULL;
   }
 }
 

@@ -523,7 +523,7 @@ char *my_read_console(void)
 #endif
 }
 
-#endif
+#endif /* SOCKET_ZERO_ISNT_STDIN */
 
 /**********************************************************************
   Returns TRUE iff the file is a regular file or a link to a regular
