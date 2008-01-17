@@ -124,10 +124,10 @@ Arguably this should be called improvement_type_exists, but that's too long.
 **************************************************************************/
 bool improvement_exists(Impr_Type_id id)
 {
-  if (id<0 || id>=B_LAST || id>=game.num_impr_types)
+  if (id<0 || id>=B_LAST || id>=game.ruleset_control.num_impr_types)
     return FALSE;
 
-  if (!game.spacerace
+  if (!game.info.spacerace
       && (building_has_effect(id, EFT_SS_STRUCTURAL)
 	  || building_has_effect(id, EFT_SS_COMPONENT)
 	  || building_has_effect(id, EFT_SS_MODULE))) {
@@ -254,7 +254,7 @@ bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
   if (improvement_types[id].is_wonder) {
     /* a wonder is obsolete, as soon as *any* player researched the
        obsolete tech */
-   return game.global_advances[improvement_types[id].obsolete_by] != 0;
+   return game.info.global_advances[improvement_types[id].obsolete_by] != 0;
   }
 
   return (get_invention(pplayer, improvement_types[id].obsolete_by)
@@ -287,7 +287,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
 
     if (cont > 0 && pplayer->island_improv) {
       equiv_list[IR_ISLAND] =
-                          &pplayer->island_improv[cont * game.num_impr_types];
+                          &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
     }
   }
 
@@ -349,7 +349,7 @@ bool wonder_obsolete(Impr_Type_id id)
 void improvement_status_init(Impr_Status * improvements, size_t elements)
 {
   /* 
-   * Since this function is called with elements!=game.num_impr_types
+   * Since this function is called with elements!=game.ruleset_control.num_impr_types
    * impr_type_iterate can't used here.
    */
   Impr_Type_id i;
@@ -407,7 +407,7 @@ bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id)
 
   if (is_wonder(id)) {
     /* Can't build wonder if already built */
-    if (game.global_wonders[id] != 0) return FALSE;
+    if (game.info.global_wonders[id] != 0) return FALSE;
   }
 
   return TRUE;
@@ -477,20 +477,20 @@ void allot_island_improvs(void)
   players_iterate(pplayer) {
     pplayer->island_improv = fc_realloc(pplayer->island_improv,
                                         (map.num_continents + 1)
-                                        * game.num_impr_types
+                                        * game.ruleset_control.num_impr_types
                                         * sizeof(Impr_Status));
   
     /* We index into this array with the continent number, so don't use zero */
     for (i = 1; i <= map.num_continents; i++) {
-      improvement_status_init(&pplayer->island_improv[i * game.num_impr_types],
-                              game.num_impr_types);
+      improvement_status_init(&pplayer->island_improv[i * game.ruleset_control.num_impr_types],
+                              game.ruleset_control.num_impr_types);
     } 
 
     /* Fill the lists with existent improvements with Island equiv_range */
     city_list_iterate(pplayer->cities, pcity) {
       Continent_id cont = map_get_continent(pcity->tile);
       Impr_Status *improvs = 
-                           &pplayer->island_improv[cont * game.num_impr_types];
+                           &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
 
       built_impr_iterate(pcity, id) {
         if (improvement_types[id].equiv_range != IR_ISLAND) {

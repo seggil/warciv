@@ -55,8 +55,7 @@ extern int  server_port;
 extern bool auto_connect;
 extern bool waiting_for_end_turn;
 extern bool turn_done_sent;
-
-extern int seconds_to_turndone;
+extern time_t end_of_turn;
 
 void wait_till_request_got_processed(int request_id);
 bool client_is_observer(void);
@@ -69,5 +68,8 @@ bool can_intel_with_player(struct player *pplayer);
 void client_game_init(void);
 void client_game_free(void);
 void ui_exit(void);
+
+struct player *get_player_ptr(void);
+int get_player_idx(void);
 
 #endif  /* FC__CIVCLIENT_H */

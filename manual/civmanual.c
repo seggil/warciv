@@ -89,14 +89,7 @@ enum manuals {
 #endif
 
 bool is_warserver(void);
-
-/**************************************************************************
-  ...
-**************************************************************************/
-bool is_warserver(void)
-{
-  return TRUE;
-}
+struct player *get_player_ptr(void);
 
 /**************************************************************************
   Useless stubs for compiling client code.
@@ -105,10 +98,17 @@ void popup_help_dialog_string(const char *item)
 {
   /* Empty stub. */
 }
-
 void popdown_help_dialog(void)
 {
   /* Empty stub. */
+}
+bool is_warserver(void)
+{
+  return TRUE;
+}
+struct player *get_player_ptr(void)
+{
+  return NULL;
 }
 
 /**************************************************************************

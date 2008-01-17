@@ -176,7 +176,7 @@ static bool check_city(int city_id, struct cm_parameter *parameter)
     return FALSE;
   }
 
-  if (city_owner(pcity) != game.player_ptr) {
+  if (city_owner(pcity) != get_player_ptr()) {
     cma_release_city(pcity);
     create_event(pcity->tile, E_CITY_CMA_RELEASE,
 		 _("CMA: You lost control of %s. Detaching from city."),
@@ -519,7 +519,7 @@ void cma_put_city_under_agent(struct city *pcity,
   freelog(LOG_DEBUG, "cma_put_city_under_agent(city='%s'(%d))",
 	  pcity->name, pcity->id);
 
-  assert(city_owner(pcity) == game.player_ptr);
+  assert(city_owner(pcity) == get_player_ptr());
 
   cma_set_parameter(ATTR_CITY_CMA_PARAMETER, pcity->id, parameter);
 

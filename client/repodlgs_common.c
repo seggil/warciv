@@ -26,6 +26,7 @@
 #include "repodlgs_g.h"
 
 #include "civclient.h"		/* can_client_issue_orders */
+#include "clinet.h"
 #include "control.h"
 #include "repodlgs_common.h"
 #include "packhand_gen.h"
@@ -50,7 +51,7 @@ void get_economy_report_data(struct improvement_entry *entries,
   impr_type_iterate(impr_id) {
     if (!is_wonder(impr_id)) {
       int count = 0, cost = 0;
-      city_list_iterate(game.player_ptr->cities, pcity) {
+      city_list_iterate(get_player_ptr()->cities, pcity) {
 	if (city_got_building(pcity, impr_id)) {
 	  count++;
 	  cost += improvement_upkeep(pcity, impr_id);
@@ -71,7 +72,7 @@ void get_economy_report_data(struct improvement_entry *entries,
       /* Currently there is no building expense under anarchy.  It's
        * not a good idea to hard-code this in the client, but what
        * else can we do? */
-      if (game.player_ptr->government != game.government_when_anarchy) {
+      if (get_player_ptr()->government != game.ruleset_control.government_when_anarchy) {
         *total_cost += cost;
       }
     }
@@ -79,7 +80,7 @@ void get_economy_report_data(struct improvement_entry *entries,
 
   *total_income = 0;
 
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     *total_income += pcity->tax_total;
     if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
       *total_income += MAX(0, pcity->shield_surplus);
@@ -99,7 +100,7 @@ void get_economy_report_units_data(struct unit_entry *entries,
 
   unit_type_iterate(utype) {
     unittype = get_unit_type(utype);
-    cost = utype_gold_cost(unittype, get_gov_pplayer(game.player_ptr));
+    cost = utype_gold_cost(unittype, get_gov_pplayer(get_player_ptr()));
 
     if (cost == 0) {
       continue;
@@ -108,7 +109,7 @@ void get_economy_report_units_data(struct unit_entry *entries,
     count = 0;
     partial_cost = 0;
 
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       unit_list_iterate(pcity->units_supported, punit) {
 
 	if (punit->type == utype) {
@@ -317,10 +318,10 @@ void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
     return;
   }
 
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!pcity->did_sell && city_got_building(pcity, impr)
 	&& (!obsolete_only
-	    || improvement_obsolete(game.player_ptr, impr)
+	    || improvement_obsolete(get_player_ptr(), impr)
 	    || is_building_replaced(pcity, impr))) {
       count++;
       gold += impr_sell_gold(impr);
@@ -361,7 +362,7 @@ void disband_all_units(Unit_Type_id type, bool in_cities_only,
     return;
   }
 
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     /* Only supported units are disbanded.  Units with no homecity have no
      * cost and are not disbanded. */
     unit_list_iterate(pcity->units_supported, punit) {
@@ -369,7 +370,7 @@ void disband_all_units(Unit_Type_id type, bool in_cities_only,
 
       if (punit->type == type
 	  && (!in_cities_only
-	      || (incity && city_owner(incity) == game.player_ptr))) {
+	      || (incity && city_owner(incity) == get_player_ptr()))) {
 	count++;
 	request_unit_disband(punit);
       }

@@ -36,6 +36,8 @@
 #include "version.h"
 
 #include "climisc.h"
+#include "clinet.h"
+#include "civclient.h"
 #include "colors.h"
 #include "graphics.h"
 #include "gui_main.h"
@@ -205,13 +207,13 @@ static void create_tech_tree(int tech, int levels, GtkTreeIter *parent)
     return;
   }
 
-  switch (get_invention(game.player_ptr, tech)) {
+  switch (get_invention(get_player_ptr(), tech)) {
   case TECH_UNKNOWN:	      bg = COLOR_STD_RED;	      break;
   case TECH_KNOWN:	      bg = COLOR_STD_GROUND;	      break;
   case TECH_REACHABLE:        bg = COLOR_STD_YELLOW;	      break;
   default:		      bg = COLOR_STD_WHITE;	      break;
   }
-  turns_to_tech = num_unknown_techs_for_goal(game.player_ptr, tech);
+  turns_to_tech = num_unknown_techs_for_goal(get_player_ptr(), tech);
 
   /* l is the original in the tree. */
   original = !help_advances[tech];
@@ -220,7 +222,7 @@ static void create_tech_tree(int tech, int levels, GtkTreeIter *parent)
   help_advances[tech] = TRUE;
 
   g_value_init(&value, G_TYPE_STRING);
-  g_value_set_static_string(&value, get_tech_name(game.player_ptr, tech));
+  g_value_set_static_string(&value, get_tech_name(get_player_ptr(), tech));
   gtk_tree_store_set_value(tstore, &l, 0, &value);
   g_value_unset(&value);
 
@@ -256,7 +258,7 @@ static void help_tech_tree_activated_callback(GtkTreeView *view,
 
   gtk_tree_model_get_iter(GTK_TREE_MODEL(tstore), &it, path);
   gtk_tree_model_get(GTK_TREE_MODEL(tstore), &it, 2, &tech, -1);
-  select_help_item_string(get_tech_name(game.player_ptr, tech), HELP_TECH);
+  select_help_item_string(get_tech_name(get_player_ptr(), tech), HELP_TECH);
 }
 
 /**************************************************************************
@@ -683,7 +685,7 @@ static void help_update_improvement(const struct help_item *pitem,
   
   create_help_page(HELP_IMPROVEMENT);
   
-  if (which<game.num_impr_types) {
+  if (which<game.ruleset_control.num_impr_types) {
     struct impr_type *imp = &improvement_types[which];
     sprintf(buf, "%d", impr_build_shield_cost(which));
     gtk_label_set_text(GTK_LABEL(help_ilabel[1]), buf);
@@ -693,7 +695,7 @@ static void help_update_improvement(const struct help_item *pitem,
       gtk_label_set_text(GTK_LABEL(help_ilabel[5]), _("(Never)"));
     } else {
       gtk_label_set_text(GTK_LABEL(help_ilabel[5]),
-			 get_tech_name(game.player_ptr, imp->tech_req));
+			 get_tech_name(get_player_ptr(), imp->tech_req));
     }
 /*    create_tech_tree(help_improvement_tree, 0, imp->tech_req, 3);*/
   }
@@ -701,7 +703,7 @@ static void help_update_improvement(const struct help_item *pitem,
     gtk_label_set_text(GTK_LABEL(help_ilabel[1]), "0");
     gtk_label_set_text(GTK_LABEL(help_ilabel[3]), "0");
     gtk_label_set_text(GTK_LABEL(help_ilabel[5]), _("(Never)"));
-/*    create_tech_tree(help_improvement_tree, 0, game.num_tech_types, 3);*/
+/*    create_tech_tree(help_improvement_tree, 0, game.ruleset_control.num_tech_types, 3);*/
   }
   gtk_widget_show(help_itable);
 
@@ -720,7 +722,7 @@ static void help_update_wonder(const struct help_item *pitem,
 
   create_help_page(HELP_WONDER);
 
-  if (which<game.num_impr_types) {
+  if (which<game.ruleset_control.num_impr_types) {
     struct impr_type *imp = &improvement_types[which];
     sprintf(buf, "%d", impr_build_shield_cost(which));
     gtk_label_set_text(GTK_LABEL(help_wlabel[1]), buf);
@@ -728,11 +730,11 @@ static void help_update_wonder(const struct help_item *pitem,
       gtk_label_set_text(GTK_LABEL(help_wlabel[3]), _("(Never)"));
     } else {
       gtk_label_set_text(GTK_LABEL(help_wlabel[3]),
-			 get_tech_name(game.player_ptr, imp->tech_req));
+			 get_tech_name(get_player_ptr(), imp->tech_req));
     }
     if (tech_exists(imp->obsolete_by)) {
       gtk_label_set_text(GTK_LABEL(help_wlabel[5]),
-			 get_tech_name(game.player_ptr, imp->obsolete_by));
+			 get_tech_name(get_player_ptr(), imp->obsolete_by));
     } else {
       gtk_label_set_text(GTK_LABEL(help_wlabel[5]), _("(Never)"));
     }
@@ -743,7 +745,7 @@ static void help_update_wonder(const struct help_item *pitem,
     gtk_label_set_text(GTK_LABEL(help_wlabel[1]), "0");
     gtk_label_set_text(GTK_LABEL(help_wlabel[3]), _("(Never)"));
     gtk_label_set_text(GTK_LABEL(help_wlabel[5]), _("None"));
-/*    create_tech_tree(help_improvement_tree, 0, game.num_tech_types, 3); */
+/*    create_tech_tree(help_improvement_tree, 0, game.ruleset_control.num_tech_types, 3); */
   }
   gtk_widget_show(help_wtable);
 
@@ -762,7 +764,7 @@ static void help_update_unit_type(const struct help_item *pitem,
 
   create_help_page(HELP_UNIT);
 
-  if (i<game.num_unit_types) {
+  if (i<game.ruleset_control.num_unit_types) {
     struct unit_type *utype = get_unit_type(i);
     sprintf(buf, "%d", unit_build_shield_cost(i));
     gtk_label_set_text(GTK_LABEL(help_ulabel[0][1]), buf);
@@ -783,7 +785,7 @@ static void help_update_unit_type(const struct help_item *pitem,
       gtk_label_set_text(GTK_LABEL(help_ulabel[4][1]), _("(Never)"));
     } else {
       gtk_label_set_text(GTK_LABEL(help_ulabel[4][1]),
-			 get_tech_name(game.player_ptr,
+			 get_tech_name(get_player_ptr(),
 				       utype->tech_requirement));
     }
 /*    create_tech_tree(help_improvement_tree, 0, utype->tech_requirement, 3);*/
@@ -929,14 +931,14 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
       gtk_widget_show_all(hbox);
     } unit_type_iterate_end;
 
-    for (j = 0; j < game.num_tech_types; j++) {
+    for (j = 0; j < game.ruleset_control.num_tech_types; j++) {
       if(i==advances[j].req[0]) {
 	if(advances[j].req[1]==A_NONE) {
           hbox = gtk_hbox_new(FALSE, 0);
           gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
           w = gtk_label_new(_("Allows"));
           gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-          w = help_slink_new(get_tech_name(game.player_ptr, j), HELP_TECH);
+          w = help_slink_new(get_tech_name(get_player_ptr(), j), HELP_TECH);
           gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
           gtk_widget_show_all(hbox);
 	}
@@ -945,11 +947,11 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
           gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
           w = gtk_label_new(_("Allows"));
           gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-          w = help_slink_new(get_tech_name(game.player_ptr, j), HELP_TECH);
+          w = help_slink_new(get_tech_name(get_player_ptr(), j), HELP_TECH);
           gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
           w = gtk_label_new(_("with"));
           gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-          w = help_slink_new(get_tech_name(game.player_ptr,
+          w = help_slink_new(get_tech_name(get_player_ptr(),
 					   advances[j].req[1]), HELP_TECH);
           gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
           w = gtk_label_new(Q_("?techhelp:"));
@@ -962,11 +964,11 @@ static void help_update_tech(const struct help_item *pitem, char *title, int i)
         gtk_container_add(GTK_CONTAINER(help_vbox), hbox);
         w = gtk_label_new(_("Allows"));
         gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-        w = help_slink_new(get_tech_name(game.player_ptr, j), HELP_TECH);
+        w = help_slink_new(get_tech_name(get_player_ptr(), j), HELP_TECH);
         gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
         w = gtk_label_new(_("with"));
         gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
-        w = help_slink_new(get_tech_name(game.player_ptr,
+        w = help_slink_new(get_tech_name(get_player_ptr(),
 					 advances[j].req[0]), HELP_TECH);
         gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
         w = gtk_label_new(Q_("?techhelp:"));

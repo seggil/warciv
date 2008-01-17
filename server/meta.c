@@ -131,8 +131,8 @@ const char *get_meta_message_string(void)
 *************************************************************************/
 const char *get_user_meta_message_string(void)
 {
-  if (game.meta_info.user_message_set) {
-    return game.meta_info.user_message;
+  if (game.server.meta_info.user_message_set) {
+    return game.server.meta_info.user_message;
   }
 
   return NULL;
@@ -191,13 +191,13 @@ void set_meta_message_string(const char *string)
 void set_user_meta_message_string(const char *string)
 {
   if (string != NULL && string[0] != '\0') {
-    sz_strlcpy(game.meta_info.user_message, string);
-    game.meta_info.user_message_set = TRUE;
+    sz_strlcpy(game.server.meta_info.user_message, string);
+    game.server.meta_info.user_message_set = TRUE;
     set_meta_message_string(string);
   } else {
     /* Remove user meta message. We will use automatic messages instead */
-    game.meta_info.user_message[0] = '\0';
-    game.meta_info.user_message_set = FALSE;
+    game.server.meta_info.user_message[0] = '\0';
+    game.server.meta_info.user_message_set = FALSE;
     set_meta_message_string(default_meta_message_string());    
   }
 }
@@ -373,15 +373,15 @@ static bool send_to_metaserver(enum meta_flag flag)
         /* is this player available to take?
          * TODO: there's some duplication here with 
          * stdinhand.c:is_allowed_to_take() */
-        if (is_barbarian(plr) && !strchr(game.allow_take, 'b')) {
+        if (is_barbarian(plr) && !strchr(game.server.allow_take, 'b')) {
           is_player_available = FALSE;
-        } else if (!plr->is_alive && !strchr(game.allow_take, 'd')) {
+        } else if (!plr->is_alive && !strchr(game.server.allow_take, 'd')) {
           is_player_available = FALSE;
         } else if (plr->ai.control
-            && !strchr(game.allow_take, (game.is_new_game ? 'A' : 'a'))) {
+            && !strchr(game.server.allow_take, (game.server.is_new_game ? 'A' : 'a'))) {
           is_player_available = FALSE;
         } else if (!plr->ai.control
-            && !strchr(game.allow_take, (game.is_new_game ? 'H' : 'h'))) {
+            && !strchr(game.server.allow_take, (game.server.is_new_game ? 'H' : 'h'))) {
           is_player_available = FALSE;
         }
 
@@ -402,31 +402,31 @@ static bool send_to_metaserver(enum meta_flag flag)
     /* send some variables: should be listed in inverted order
      * FIXME: these should be input from the settings array */
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("timeout"), game.timeout);
+                my_url_encode("timeout"), game.info.timeout);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("year"), game.year);
+                my_url_encode("year"), game.info.year);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("turn"), game.turn);
+                my_url_encode("turn"), game.info.turn);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("endyear"), game.end_year);
+                my_url_encode("endyear"), game.info.end_year);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("minplayers"), game.min_players);
+                my_url_encode("minplayers"), game.info.min_players);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("maxplayers"), game.max_players);
+                my_url_encode("maxplayers"), game.info.max_players);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%s&",
-                my_url_encode("allowtake"), game.allow_take);
+                my_url_encode("allowtake"), game.server.allow_take);
     s = end_of_strn(s, &rest);
 
     my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",

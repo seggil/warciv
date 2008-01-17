@@ -68,7 +68,7 @@
 **************************************************************************/
 static void ai_manage_spaceship(struct player *pplayer)
 {
-  if (game.spacerace) {
+  if (game.info.spacerace) {
     if (pplayer->spaceship.state == SSHIP_STARTED) {
       ai_spaceship_autoplace(pplayer, &pplayer->spaceship);
       /* if we have built the best possible spaceship  -- AJS 19990610 */
@@ -262,7 +262,7 @@ void ai_best_government(struct player *pplayer)
       int val = 0;
       int dist;
 
-      if (gov->index == game.government_when_anarchy) {
+      if (gov->index == game.ruleset_control.government_when_anarchy) {
         continue; /* pointless */
       }
       pplayer->government = gov->index;

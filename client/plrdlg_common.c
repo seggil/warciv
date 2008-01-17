@@ -22,6 +22,7 @@
 #include "game.h"
 #include "support.h"
 
+#include "civclient.h"
 #include "climisc.h"
 #include "text.h"
 
@@ -98,7 +99,7 @@ static const char *col_nation(struct player *player)
 static const char *col_team(struct player *player)
 {
   if (player->team != TEAM_NONE) {
-    return team_get_by_id(player->team)->name;
+    return get_team_name(player->team);
   } else {
     return "";
   }
@@ -117,7 +118,7 @@ static bool col_ai(struct player *plr)
 *******************************************************************/
 static const char *col_embassy(struct player *player)
 {
-  return get_embassy_status(game.player_ptr, player);
+  return get_embassy_status(get_player_ptr(), player);
 }
 
 /******************************************************************
@@ -128,10 +129,10 @@ static const char *col_diplstate(struct player *player)
   static char buf[100];
   const struct player_diplstate *pds;
 
-  if (player == game.player_ptr) {
+  if (player == get_player_ptr()) {
     return "-";
   } else {
-    pds = pplayer_get_diplstate(game.player_ptr, player);
+    pds = pplayer_get_diplstate(get_player_ptr(), player);
     if (pds->type == DS_CEASEFIRE) {
       my_snprintf(buf, sizeof(buf), "%s (%d)",
 		  diplstate_text(pds->type), pds->turns_left);
@@ -147,10 +148,10 @@ static const char *col_diplstate(struct player *player)
 *******************************************************************/
 static const char *col_love(struct player *player)
 {
-  if (player == game.player_ptr || !player->ai.control) {
+  if (player == get_player_ptr() || !player->ai.control) {
     return "-";
   } else {
-    return love_text(player->ai.love[game.player_ptr->player_no]);
+    return love_text(player->ai.love[get_player_idx()]);
   }
 }
 
@@ -159,7 +160,7 @@ static const char *col_love(struct player *player)
 *******************************************************************/
 static const char *col_vision(struct player *player)
 {
-  return get_vision_status(game.player_ptr, player);
+  return get_vision_status(get_player_ptr(), player);
 }
 
 /******************************************************************

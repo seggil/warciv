@@ -28,22 +28,22 @@
 **************************************************************************/
 bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
 {
-  if (game.diplomacy == 4
-      || (game.maxallies
+  if (game.info.diplomacy == 4
+      || (game.ext_info.maxallies
 	  && !pplayers_allied(pplayer, aplayer)
-          && (player_allies_count(pplayer) >= game.maxallies
-              || player_allies_count(aplayer) >= game.maxallies))) {
+          && (player_allies_count(pplayer) >= game.ext_info.maxallies
+              || player_allies_count(aplayer) >= game.ext_info.maxallies))) {
     return FALSE;
   }
 
-  return  (game.diplomacy == 0      /* Unlimited diplomacy */
-	   || (game.diplomacy == 1  /* Human diplomacy only */
+  return  (game.info.diplomacy == 0      /* Unlimited diplomacy */
+	   || (game.info.diplomacy == 1  /* Human diplomacy only */
 	       && !pplayer->ai.control 
 	       && !aplayer->ai.control)
-	   || (game.diplomacy == 2  /* AI diplomacy only */
+	   || (game.info.diplomacy == 2  /* AI diplomacy only */
 	       && pplayer->ai.control
 	       && aplayer->ai.control)
-	   || (game.diplomacy == 3  /* Team diplomacy only */
+	   || (game.info.diplomacy == 3  /* Team diplomacy only */
 	       && players_on_same_team(pplayer, aplayer)));
 }
 
@@ -148,13 +148,13 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
     return FALSE;
   }
   
-  if (!game.goldtrading && type == CLAUSE_GOLD) {
+  if (!game.ext_info.goldtrading && type == CLAUSE_GOLD) {
     return FALSE;
   } 
-  if (!game.techtrading && type == CLAUSE_ADVANCE) {
+  if (!game.ext_info.techtrading && type == CLAUSE_ADVANCE) {
     return FALSE;
   } 
-  if (!game.citytrading && type == CLAUSE_CITY) {
+  if (!game.ext_info.citytrading && type == CLAUSE_CITY) {
     return FALSE;
   } 
 

@@ -1106,7 +1106,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
   struct pf_map *map;
   struct pf_path *path = NULL;
 
-  if ((pcity = is_allied_city_tile(punit->tile, game.player_ptr))) {
+  if ((pcity = is_allied_city_tile(punit->tile, get_player_ptr()))) {
     /* We're already on a city - don't go anywhere. */
     return NULL;
   }
@@ -1119,7 +1119,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 
     pf_next_get_position(map, &pos);
 
-    if ((pcity = is_allied_city_tile(pos.tile, game.player_ptr))) {
+    if ((pcity = is_allied_city_tile(pos.tile, get_player_ptr()))) {
       break;
     }
   }
@@ -1173,8 +1173,8 @@ struct tile *find_nearest_city(struct unit *punit, bool allies)
   struct pf_map *map;
 
   if (pcity
-      && (city_owner(pcity) == game.player_ptr
-	  || (allies && pplayers_allied(game.player_ptr,
+      && (city_owner(pcity) == get_player_ptr()
+	  || (allies && pplayers_allied(get_player_ptr(),
 					city_owner(pcity))))) {
     return pcity->tile;
   }
@@ -1188,9 +1188,9 @@ struct tile *find_nearest_city(struct unit *punit, bool allies)
     pf_next_get_position(map, &pos);
 
     if ((pcity = map_get_city(pos.tile))
-	&& (city_owner(pcity) == game.player_ptr
+	&& (city_owner(pcity) == get_player_ptr()
 	    || (allies
-		&& pplayers_allied(game.player_ptr, city_owner(pcity))))) {
+		&& pplayers_allied(get_player_ptr(), city_owner(pcity))))) {
       break;
     }
   }

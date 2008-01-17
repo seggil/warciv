@@ -44,13 +44,13 @@ static int num_teams = 0;
 static bool bounds_check_nation_id(Nation_Type_id nid, int loglevel,
                                    const char *func_name)
 {
-  if (game.nation_count==0) {
+  if (game.ruleset_control.nation_count==0) {
     freelog(loglevel, "%s before nations setup", func_name);
     return FALSE;
   }
-  if (nid < 0 || nid >= game.nation_count) {
+  if (nid < 0 || nid >= game.ruleset_control.nation_count) {
     freelog(loglevel, "Bad nation id %d (count %d) in %s",
-	    nid, game.nation_count, func_name);
+	    nid, game.ruleset_control.nation_count, func_name);
     return FALSE;
   }
   return TRUE;
@@ -63,7 +63,7 @@ Nation_Type_id find_nation_by_name(const char *name)
 {
   int i;
 
-  for(i=0; i<game.nation_count; i++)
+  for(i=0; i<game.ruleset_control.nation_count; i++)
      if(mystrcasecmp(name, get_nation_name (i)) == 0)
 	return i;
 
@@ -77,7 +77,7 @@ Nation_Type_id find_nation_by_name_orig(const char *name)
 {
   int i;
 
-  for(i=0; i<game.nation_count; i++)
+  for(i=0; i<game.ruleset_control.nation_count; i++)
      if(mystrcasecmp(name, get_nation_name_orig (i)) == 0)
 	return i;
 
@@ -205,7 +205,7 @@ struct nation_type *get_nation_by_idx(Nation_Type_id nation)
 void nations_alloc(int num)
 {
   nations = (struct nation_type *)fc_calloc(num, sizeof(struct nation_type));
-  game.nation_count = num;
+  game.ruleset_control.nation_count = num;
 }
 
 /***************************************************************
@@ -259,13 +259,13 @@ void nations_free()
     return;
   }
 
-  for (nation = 0; nation < game.nation_count; nation++) {
+  for (nation = 0; nation < game.ruleset_control.nation_count; nation++) {
     nation_free(nation);
   }
 
   free(nations);
   nations = NULL;
-  game.nation_count = 0;
+  game.ruleset_control.nation_count = 0;
 }
 
 /***************************************************************
@@ -309,7 +309,8 @@ Team_Type_id team_find_by_name(const char *team_name)
   assert(team_name != NULL);
 
   team_iterate(pteam) {
-    if (mystrcasecmp(team_name, pteam->name) == 0) {
+    if (mystrcasecmp(team_name,
+		     game.ruleset_control.team_name[pteam->id]) == 0) {
       return pteam->id;
     }
   } team_iterate_end;
@@ -327,6 +328,30 @@ struct team *team_get_by_id(Team_Type_id id)
     return NULL;
   }
   return &teams[id];
+}
+
+/***************************************************************
+  Accessor function for getting the team names.
+  N.B.: The names are not a part of the struct team, then we
+  always need to use this function to get it.
+***************************************************************/
+const char *get_team_name(Team_Type_id id)
+{
+  if (id == TEAM_NONE) {
+    return NULL;
+  } else {
+    assert(id < MAX_NUM_TEAMS && id >= 0);
+    return game.ruleset_control.team_name[id];
+  }
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+static void set_team_name(Team_Type_id id, const char *name)
+{
+  assert(id < MAX_NUM_TEAMS && id >= 0);
+  sz_strlcpy(game.ruleset_control.team_name[id], name);
 }
 
 /***************************************************************
@@ -397,8 +422,8 @@ void team_add_player(struct player *pplayer, const char *team_name)
     }
     /* add another team */
     teams[team_id].id = team_id;
-    sz_strlcpy(teams[team_id].name, team_name);
-    teams[i].member_count = 0;
+    set_team_name(team_id, team_name);
+    teams[team_id].member_count = 0;
   }
   pplayer->team = team_id;
   teams[team_id].member_count++;
@@ -437,7 +462,7 @@ void team_init()
   for (i = 0; i < MAX_NUM_TEAMS; i++) {
     /* mark as unused */
     teams[i].id = TEAM_NONE;
-    teams[i].name[0] = '\0';
+    set_team_name(i, "");
     teams[i].member_count = 0;
   }
 

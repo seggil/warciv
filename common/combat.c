@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <math.h>
 
+#include "game.h"
 #include "log.h"
 #include "map.h"
 #include "packets.h"
@@ -639,5 +640,5 @@ bool is_stack_vulnerable(const struct tile *ptile)
   return !(ptile->city != NULL
            || map_has_special(ptile, S_FORTRESS)
            || map_has_special(ptile, S_AIRBASE)
-           || !game.rgame.killstack);
+           || !game.ruleset_game.killstack);
 }

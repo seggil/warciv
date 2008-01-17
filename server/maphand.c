@@ -204,7 +204,7 @@ void global_warming(int effect)
 {
   int k;
 
-  freelog(LOG_VERBOSE, "Global warming: %d", game.heating);
+  freelog(LOG_VERBOSE, "Global warming: %d", game.info.heating);
 
   k = map_num_tiles();
   while(effect > 0 && (k--) > 0) {
@@ -246,7 +246,7 @@ void nuclear_winter(int effect)
 {
   int k;
 
-  freelog(LOG_VERBOSE, "Nuclear winter: %d", game.cooling);
+  freelog(LOG_VERBOSE, "Nuclear winter: %d", game.info.cooling);
 
   k = map_num_tiles();
   while(effect > 0 && (k--) > 0) {
@@ -1088,7 +1088,7 @@ static void player_tile_init(struct tile *ptile, struct player *pplayer)
 
   plrtile->seen = 0;
   plrtile->pending_seen = 0;
-  if (!game.fogofwar_old) {
+  if (!game.server.fogofwar_old) {
     if (map_is_known(ptile, pplayer)) {
       plrtile->seen = 1;
     } else {
@@ -1162,7 +1162,7 @@ void update_tile_knowledge(struct tile *ptile)
 ***************************************************************/
 void update_player_tile_last_seen(struct player *pplayer, struct tile *ptile)
 {
-  map_get_player_tile(ptile, pplayer)->last_updated = game.year;
+  map_get_player_tile(ptile, pplayer)->last_updated = game.info.year;
 }
 
 /***************************************************************
@@ -1589,7 +1589,7 @@ static bool is_claimed_ocean(struct tile *ptile, Continent_id *contp)
   works for water bases in SMAC mode, and allows coastal cities
   to claim one square of ocean. Inland lakes and long inlets act in
   the same way as the surrounding continent's land tiles. If no cities
-  are within game.borders distance, returns NULL.
+  are within game.ruleset_control.borders distance, returns NULL.
 
   NOTE: The behaviour of this function will eventually depend
   upon some planned ruleset options.
@@ -1602,7 +1602,7 @@ static struct city *map_get_closest_city(struct tile *ptile)
   if (!closest) {
     int distsq;		/* Squared distance to city */
     /* integer arithmetic equivalent of (borders+0.5)**2 */
-    int cldistsq = game.borders * (game.borders + 1);
+    int cldistsq = game.ruleset_control.borders * (game.ruleset_control.borders + 1);
     Continent_id cont = map_get_continent(ptile);
 
     if (!is_ocean(map_get_terrain(ptile)) || is_claimed_ocean(ptile, &cont)) {
@@ -1646,8 +1646,8 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
 {
   struct city_list *cities_to_refresh = city_list_new();
   
-  if (game.borders > 0) {
-    iterate_outward(ptile, game.borders, tile1) {
+  if (game.ruleset_control.borders > 0) {
+    iterate_outward(ptile, game.ruleset_control.borders, tile1) {
       struct city *pccity = map_get_closest_city(tile1);
       struct player *new_owner = pccity ? get_player(pccity->owner) : NULL;
 
@@ -1659,7 +1659,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
 	send_tile_info(NULL, tile1);
 	tile_update_owner(tile1);
 	/* Update happiness */
-	if (game.happyborders > 0) {
+	if (game.ruleset_control.happyborders > 0) {
 	  unit_list_iterate(tile1->units, unit) {
 	    struct city *homecity = find_city_by_id(unit->homecity);
 	    bool already_listed = FALSE;
@@ -1686,7 +1686,7 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
   }
  
   /* Update happiness in all homecities we have collected */ 
-  if (game.happyborders > 0) {
+  if (game.ruleset_control.happyborders > 0) {
     city_list_iterate(cities_to_refresh, to_refresh) {
       city_refresh(to_refresh);
       send_city_info(city_owner(to_refresh), to_refresh);
@@ -1743,11 +1743,11 @@ static void map_calculate_territory(void)
   /* Clear any old territorial claims. */
   map_clear_borders();
 
-  if (game.borders > 0) {
+  if (game.ruleset_control.borders > 0) {
     /* Loop over all cities and claim territory. */
     cities_iterate(pcity) {
       /* Loop over all map tiles within this city's sphere of influence. */
-      iterate_outward(pcity->tile, game.borders, ptile) {
+      iterate_outward(pcity->tile, game.ruleset_control.borders, ptile) {
 	struct city *pccity = map_get_closest_city(ptile);
 
 	if (pccity) {
@@ -1766,7 +1766,7 @@ static void map_calculate_territory(void)
 *************************************************************************/
 void map_calculate_borders(void)
 {
-  if (game.borders > 0) {
+  if (game.ruleset_control.borders > 0) {
     map_calculate_territory();
 
     /* Fix tile worker states. */

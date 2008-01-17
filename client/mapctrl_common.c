@@ -152,7 +152,7 @@ static void define_tiles_within_rectangle(void)
 	{
 	  unit_list_iterate(ptile->units,punit)
 	  {
-		  if(punit->owner==game.player_idx)
+		  if(punit->owner==get_player_idx())
 		  {
 			  if(first)
 			  {
@@ -170,7 +170,7 @@ static void define_tiles_within_rectangle(void)
 	  
       /*  Tile passed all tests; process it.
        */
-      if (ptile->city && ptile->city->owner == game.player_idx) {
+      if (ptile->city && ptile->city->owner == get_player_idx()) {
         ptile->client.hilite = HILITE_CITY;
         tiles_hilited_cities = TRUE;
         update_miscellaneous_menu();
@@ -365,7 +365,7 @@ void toggle_tile_hilite(struct tile *ptile)
       toggle_city_hilite(pcity, FALSE); /* cityrep.c */
     }
   }
-  else if (pcity && pcity->owner == game.player_idx) {
+  else if (pcity && pcity->owner == get_player_idx()) {
     ptile->client.hilite = HILITE_CITY;
     tiles_hilited_cities = TRUE;
     toggle_city_hilite(pcity, TRUE);
@@ -406,7 +406,7 @@ void clipboard_copy_production(struct tile *ptile)
   struct city *pcity = ptile->city;
 
   if (pcity) {
-    if (pcity->owner != game.player_idx)  {
+    if (pcity->owner != get_player_idx())  {
       return;
     }
     clipboard = pcity->currently_building;
@@ -416,7 +416,7 @@ void clipboard_copy_production(struct tile *ptile)
     if (!punit) {
       return;
     }
-    if (!can_player_build_unit_direct(game.player_ptr, punit->type))  {
+    if (!can_player_build_unit_direct(get_player_ptr(), punit->type))  {
       my_snprintf(msg, sizeof(msg),
       _("Game: You don't know how to build %s!"),
         unit_types[punit->type].name);
@@ -449,14 +449,14 @@ void clipboard_paste_production(struct city *pcity)
     return;
   }
   if (!tiles_hilited_cities) {
-    if (pcity && pcity->owner == game.player_idx) {
+    if (pcity && pcity->owner == get_player_idx()) {
       clipboard_send_production_packet(pcity);
     }
     return;
   }
   else {
     connection_do_buffer(&aconnection);
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       if (is_city_hilited(pcity)) {
         clipboard_send_production_packet(pcity);
       }
@@ -488,7 +488,7 @@ static void clipboard_send_production_packet(struct city *pcity)
 void upgrade_canvas_clipboard(void)
 {
   if (clipboard_is_unit)  {
-    int u = can_upgrade_unittype(game.player_ptr, clipboard);
+    int u = can_upgrade_unittype(get_player_ptr(), clipboard);
     if (u != -1)  {
       clipboard = u;
     }
@@ -661,7 +661,7 @@ void update_turn_done_button_state()
   }
 
   new_state = (can_client_issue_orders()
-	       && !game.player_ptr->turn_done && !agents_busy()
+	       && !get_player_ptr()->turn_done && !agents_busy()
 	       && !turn_done_sent);
   if (new_state == turn_done_state) {
     return;
@@ -675,7 +675,7 @@ void update_turn_done_button_state()
 
   if (turn_done_state) {
     if (waiting_for_end_turn
-	|| (game.player_ptr->ai.control && !ai_manual_turn_done)) {
+	|| (get_player_ptr()->ai.control && !ai_manual_turn_done)) {
       send_turn_done();
     } else {
       update_turn_done_button(TRUE);

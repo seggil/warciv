@@ -31,6 +31,7 @@
 #include "support.h"
 
 #include "chatline.h"
+#include "civclient.h"
 #include "climisc.h"
 #include "clinet.h"
 #include "diptreaty.h"
@@ -166,13 +167,13 @@ static void popup_diplomacy_dialog(int other_player_id)
 {
   struct Diplomacy_dialog *pdialog = find_diplomacy_dialog(other_player_id);
 
-  if (game.player_ptr->ai.control) {
+  if (get_player_ptr()->ai.control) {
     return;			/* Don't show if we are AI controlled. */
   }
 
   if (!pdialog) {
     pdialog =
-	create_diplomacy_dialog(game.player_ptr,
+	create_diplomacy_dialog(get_player_ptr(),
 				get_player(other_player_id));
   }
 
@@ -235,13 +236,13 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
 
     menu = gtk_menu_new();
 
-    for (i = 1, flag = FALSE; i < game.num_tech_types; i++) {
+    for (i = 1, flag = FALSE; i < game.ruleset_control.num_tech_types; i++) {
       if (get_invention(plr0, i) == TECH_KNOWN
 	  && (get_invention(plr1, i) == TECH_UNKNOWN
 	      || get_invention(plr1, i) == TECH_REACHABLE)
           && tech_is_available(plr1, i)) {
 	item
-	  = gtk_menu_item_new_with_label(get_tech_name(game.player_ptr, i));
+	  = gtk_menu_item_new_with_label(get_tech_name(get_player_ptr(), i));
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	g_signal_connect(item, "activate",
@@ -663,7 +664,7 @@ static void diplomacy_dialog_tech_callback(GtkWidget *w, gpointer data)
   int giver = (choice >> 24) & 0xff, dest = (choice >> 16) & 0xff, other;
   int tech = choice & 0xffff;
 
-  if (giver == game.player_idx) {
+  if (giver == get_player_idx()) {
     other = dest;
   } else {
     other = giver;
@@ -681,13 +682,13 @@ static void diplomacy_dialog_all_tech_callback(GtkWidget *w, gpointer data)
   size_t choice = GPOINTER_TO_UINT(data);
   int giver = (choice >> 8) & 0xff, dest = choice & 0xff, other, i;
 
-  if (giver == game.player_idx) {
+  if (giver == get_player_idx()) {
     other = dest;
   } else {
     other = giver;
   }
 
-    for (i = 1; i < game.num_tech_types; i++) {
+    for (i = 1; i < game.ruleset_control.num_tech_types; i++) {
       if (get_invention(get_player(giver), i) == TECH_KNOWN
 	  && (get_invention(get_player(dest), i) == TECH_UNKNOWN
 	      || get_invention(get_player(dest), i) == TECH_REACHABLE)
@@ -708,7 +709,7 @@ static void diplomacy_dialog_city_callback(GtkWidget * w, gpointer data)
   int giver = (choice >> 24) & 0xff, dest = (choice >> 16) & 0xff, other;
   int city = choice & 0xffff;
 
-  if (giver == game.player_idx) {
+  if (giver == get_player_idx()) {
     other = dest;
   } else {
     other = giver;
@@ -831,7 +832,7 @@ void close_diplomacy_dialog(struct Diplomacy_dialog *pdialog)
 *****************************************************************/
 static struct Diplomacy_dialog *find_diplomacy_dialog(int other_player_id)
 {
-  struct player *plr0 = game.player_ptr, *plr1 = get_player(other_player_id);
+  struct player *plr0 = get_player_ptr(), *plr1 = get_player(other_player_id);
 
   if (!dialog_list) {
     dialog_list = dialog_list_new();

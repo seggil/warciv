@@ -72,7 +72,7 @@ int get_team_mapping(Team_Type_id team);
 void shuffle_start_positions(int *start_pos);
 
 /****************************************************************************
-  Initialize the game.id variable to a random string of characters.
+  Initialize the game.server.id variable to a random string of characters.
 ****************************************************************************/
 static void init_game_id(void)
 {
@@ -80,10 +80,10 @@ static void init_game_id(void)
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   int i;
 
-  for (i = 0; i < sizeof(game.id) - 1; i++) {
-    game.id[i] = chars[myrand(sizeof(chars) - 1)];
+  for (i = 0; i < sizeof(game.server.id) - 1; i++) {
+    game.server.id[i] = chars[myrand(sizeof(chars) - 1)];
   }
-  game.id[i] = '\0';
+  game.server.id[i] = '\0';
 }
 
 /****************************************************************************
@@ -109,7 +109,7 @@ static void place_starting_unit(struct tile *ptile, struct player *pplayer,
   }
 
   /* Expose visible area. */
-  circle_iterate(ptile, game.rgame.init_vis_radius_sq, ctile) {
+  circle_iterate(ptile, game.ruleset_game.init_vis_radius_sq, ctile) {
     show_area(pplayer, ctile, 0);
   } circle_iterate_end;
 
@@ -177,7 +177,7 @@ int calculate_team_distance(struct tile *ptile1, struct tile *ptile2)
   int dx, dy;
 
   map_distance_vector(&dx, &dy, ptile1, ptile2);
-  switch (game.teamplacementtype) {
+  switch (game.server.teamplacementtype) {
     case 1:
       if (map_get_continent(ptile1) != map_get_continent(ptile2)) {
         return NATIVE_WIDTH + NATIVE_HEIGHT
@@ -207,8 +207,8 @@ int calculate_score(int *start_pos)//if nobody is on team, score is 0
 {
     int score = 0;
     int x, y;
-    for (x = 0; x < game.nplayers; x++ ) {
-        for (y = x + 1; y < game.nplayers; y++ ) {
+    for (x = 0; x < game.info.nplayers; x++ ) {
+        for (y = x + 1; y < game.info.nplayers; y++ ) {
             if(start_pos[x] == start_pos[y]) {
                 score += calculate_team_distance(map.start_positions[x].tile,
                                                  map.start_positions[y].tile);
@@ -236,20 +236,20 @@ void swap_int(int *a, int *b)
 ****************************************************************************/
 void shuffle_start_positions_by_iter(int *start_pos)
 {
-    int tabtabu[game.nplayers][game.nplayers];
+    int tabtabu[game.info.nplayers][game.info.nplayers];
     int i,x,y, found = 1;
     int tmp;
     int score, best_local_score = 0, best_local_x = 0, best_local_y = 0;
 
-    while(found && (repeat < game.nplayers*game.iterplacementcoefficient)) {//limit # of iterations
+    while(found && (repeat < game.info.nplayers*game.server.iterplacementcoefficient)) {//limit # of iterations
         repeat++;
-        if(repeat % (game.nplayers*game.iterplacementcoefficient/8)==0) {
-    	   notify_conn(NULL, _("Iterative team placement in progress, %i%% complete"), repeat*100/(game.nplayers*game.iterplacementcoefficient));
+        if(repeat % (game.info.nplayers*game.server.iterplacementcoefficient/8)==0) {
+    	   notify_conn(NULL, _("Iterative team placement in progress, %i%% complete"), repeat*100/(game.info.nplayers*game.server.iterplacementcoefficient));
         }
         found = 0;
         best_local_score = 99999999;
-        for (x = 0; x < game.nplayers; x++ ) {
-            for (y = x + 1; y < game.nplayers; y++ ) {
+        for (x = 0; x < game.info.nplayers; x++ ) {
+            for (y = x + 1; y < game.info.nplayers; y++ ) {
                 if(start_pos[x] == start_pos[y])continue;//same teams, no reason to swap
                 if(tabtabu[x][y]>0)tabtabu[x][y]--;
                 swap_int(&start_pos[x], &start_pos[y]);
@@ -269,8 +269,8 @@ void shuffle_start_positions_by_iter(int *start_pos)
             start_pos[best_local_y] = tmp;
             best_score = best_local_score;
             freelog(LOG_VERBOSE, "Exchanging (%i,%i) with score %i",best_local_x,best_local_y,best_score);
-            tabtabu[best_local_x][best_local_y] += game.nplayers;
-            for (i = 0; i < game.nplayers; i++ ) {//remember new best solution
+            tabtabu[best_local_x][best_local_y] += game.info.nplayers;
+            for (i = 0; i < game.info.nplayers; i++ ) {//remember new best solution
                 best_team_pos[i] = start_pos[i];
             }
         } else if(found){//other solution found which is worse than the best one
@@ -279,7 +279,7 @@ void shuffle_start_positions_by_iter(int *start_pos)
             start_pos[best_local_y] = tmp;
             //but we do not rewrite the best solution found
             //we remember that we did this exchange
-            tabtabu[best_local_x][best_local_y] += game.nplayers;            
+            tabtabu[best_local_x][best_local_y] += game.info.nplayers;            
         }
     }    
 }
@@ -322,10 +322,10 @@ void find_pos_by_brute_force(int *positions, int a)
     tmpscore = calculate_delta_score(positions, depth);
     score+= tmpscore;
     
-    if(depth == (game.nplayers - 1)) {//enough players
+    if(depth == (game.info.nplayers - 1)) {//enough players
         repeat++;    
         if (score < best_score) {
-            for (p = 0; p < game.nplayers; p++ ) {
+            for (p = 0; p < game.info.nplayers; p++ ) {
                 best_team_pos[p] = positions[p];
             }
             best_score = score;
@@ -357,7 +357,7 @@ void find_pos_by_brute_force(int *positions, int a)
 void clean_start_pos(int *positions)
 {
     assert(positions != NULL);
-    memset(positions, -1, sizeof(int) * game.nplayers);
+    memset(positions, -1, sizeof(int) * game.info.nplayers);
 }
 
 /****************************************************************************
@@ -372,7 +372,7 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
     freelog(LOG_VERBOSE, "entry");
     /*starting positions were assigned to team indexes
       in team mapping*/
-    for (i = 0; i < game.nplayers; i++ ) {
+    for (i = 0; i < game.info.nplayers; i++ ) {
         assert(best_team_pos[i] >= 0 && best_team_pos[i] < MAX_NUM_TEAMS+1);
         team_id = mapping[best_team_pos[i]].team_id;
         freelog(LOG_VERBOSE, "Assigning position %i to team index %i, team_id %i",i,best_team_pos[i],mapping[best_team_pos[i]].team_id);
@@ -438,7 +438,7 @@ void shuffle_start_positions(int *start_pos)
   assert(start_pos != NULL);
 
   calculate_team_mapping();
-  for (i = 0; i < game.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     pplayer = get_player(i);
     assert(pplayer != NULL);
     pplayer->team_placement_flag = FALSE;
@@ -450,7 +450,7 @@ void shuffle_start_positions(int *start_pos)
   best_score = calculate_score(best_team_pos);
   freelog(LOG_VERBOSE, "Current best score is %i", best_score);
 
-  if (game.nplayers <= game.bruteforcethreshold) {  //brute force for small number of players
+  if (game.info.nplayers <= game.server.bruteforcethreshold) {  //brute force for small number of players
     notify_conn(NULL, _("Using brute force team placement algorithm"));
     freelog(LOG_VERBOSE, "Using brute force algorithm");
     clean_start_pos(team_pos);
@@ -472,7 +472,7 @@ void shuffle_start_positions(int *start_pos)
   freelog(LOG_VERBOSE, "Iterations: %i", repeat);
   freelog(LOG_VERBOSE, "Final score checked: %i",
           calculate_score(best_team_pos));
-  for (i = 0; i < game.nplayers; i++) { //restore best solution
+  for (i = 0; i < game.info.nplayers; i++) { //restore best solution
     start_pos[i] = best_start_pos[i];
   }
 }
@@ -482,7 +482,7 @@ void shuffle_start_positions(int *start_pos)
 void init_new_game(void)
 {
   const int NO_START_POS = -1;
-  int start_pos[game.nplayers];
+  int start_pos[game.info.nplayers];
   bool pos_used[map.num_start_positions];
   int i, num_used = 0;
 
@@ -545,7 +545,7 @@ void init_new_game(void)
     assert(start_pos[pplayer->player_no] != NO_START_POS);
   } players_iterate_end;
 
-  if (game.teamplacement && map.generator != 7) {
+  if (game.ext_info.teamplacement && map.generator != 7) {
     shuffle_start_positions(start_pos);
   }
 
@@ -560,7 +560,7 @@ void init_new_game(void)
     }
 
     /* Place the first unit. */
-    place_starting_unit(pos.tile, pplayer, game.start_units[0]);
+    place_starting_unit(pos.tile, pplayer, game.server.start_units[0]);
   } players_iterate_end;
 
   /* Place all other units. */
@@ -577,10 +577,10 @@ void init_new_game(void)
 
     assert(!is_ocean(map_get_terrain(p.tile)));
 
-    for (i = 1; i < strlen(game.start_units); i++) {
+    for (i = 1; i < strlen(game.server.start_units); i++) {
       do {
-	x = p.tile->x + myrand(2 * game.dispersion + 1) - game.dispersion;
-	y = p.tile->y + myrand(2 * game.dispersion + 1) - game.dispersion;
+	x = p.tile->x + myrand(2 * game.server.dispersion + 1) - game.server.dispersion;
+	y = p.tile->y + myrand(2 * game.server.dispersion + 1) - game.server.dispersion;
       } while (!((ptile = map_pos_to_tile(x, y))
 		 && map_get_continent(p.tile) == map_get_continent(ptile)
 		 && !is_ocean(map_get_terrain(ptile))
@@ -588,7 +588,7 @@ void init_new_game(void)
 
 
       /* Create the unit of an appropriate type. */
-      place_starting_unit(ptile, pplayer, game.start_units[i]);
+      place_starting_unit(ptile, pplayer, game.server.start_units[i]);
     }
   } players_iterate_end;
 
@@ -613,14 +613,14 @@ void send_year_to_clients(int year)
   struct packet_new_year apacket;
   int i;
   
-  for(i=0; i<game.nplayers; i++) {
+  for(i=0; i<game.info.nplayers; i++) {
     struct player *pplayer = &game.players[i];
     pplayer->turn_done = FALSE;
     pplayer->nturns_idle++;
   }
 
   apacket.year = year;
-  apacket.turn = game.turn;
+  apacket.turn = game.info.turn;
   lsend_packet_new_year(game.game_connections, &apacket);
 
   /* Hmm, clients could add this themselves based on above packet? */
@@ -645,154 +645,96 @@ void send_game_state(struct conn_list *dest, int state)
 **************************************************************************/
 void send_game_info(struct conn_list *dest)
 {
-  struct packet_game_info ginfo;
-  struct packet_traderoute_info tinfo;
-  struct packet_extgame_info extgameinfo;
-  int i;
-
   if (!dest) {
     dest = game.game_connections;
   }
 
-  ginfo.gold = game.gold;
-  ginfo.tech = game.tech;
-  ginfo.researchcost = game.researchcost;
-  ginfo.skill_level = game.skill_level;
-  ginfo.timeout = game.timeout;
-  ginfo.end_year = game.end_year;
-  ginfo.year = game.year;
-  ginfo.turn = game.turn;
-  ginfo.min_players = game.min_players;
-  ginfo.max_players = game.max_players;
-  ginfo.nplayers = game.nplayers;
-  ginfo.globalwarming = game.globalwarming;
-  ginfo.heating = game.heating;
-  ginfo.nuclearwinter = game.nuclearwinter;
-  ginfo.cooling = game.cooling;
-  ginfo.diplomacy = game.diplomacy;
-  ginfo.techpenalty = game.techpenalty;
-  ginfo.foodbox = game.foodbox;
-  ginfo.civstyle = game.civstyle;
-  ginfo.spacerace = game.spacerace;
-  ginfo.unhappysize = game.unhappysize;
-  ginfo.angrycitizen = game.angrycitizen;
-  ginfo.diplcost = game.diplcost;
-  ginfo.freecost = game.freecost;
-  ginfo.conquercost = game.conquercost;
-  ginfo.cityfactor = game.cityfactor;
-  for (i = 0; i < A_LAST /*game.num_tech_types */ ; i++) {
-    ginfo.global_advances[i] = game.global_advances[i];
-  }
-  for (i = 0; i < B_LAST /*game.num_impr_types */ ; i++) {
-    ginfo.global_wonders[i] = game.global_wonders[i];
-  }
   /* the following values are computed every
      time a packet_game_info packet is created */
-  if (game.timeout != 0) {
-    ginfo.seconds_to_turndone =
-	game.turn_start + game.timeout - time(NULL);
+  if (game.info.timeout != 0) {
+    game.info.seconds_to_turndone =
+      game.server.turn_start + game.info.timeout - time(NULL);
   } else {
     /* unused but at least initialized */
-    ginfo.seconds_to_turndone = -1;
+    game.info.seconds_to_turndone = -1;
   }
 
-  tinfo.trademindist = game.trademindist;
-  tinfo.traderevenuepct = game.traderevenuepct;
-  tinfo.traderevenuestyle = game.traderevenuestyle;
-  tinfo.caravanbonusstyle = game.caravanbonusstyle;
-/* send extra game info */
-  extgameinfo.futuretechsscore = game.futuretechsscore;
-  extgameinfo.improvedautoattack = game.improvedautoattack;
-  extgameinfo.stackbribing = game.stackbribing;
-  extgameinfo.experimentalbribingcost = game.experimentalbribingcost;
-  extgameinfo.techtrading = game.techtrading;
-  extgameinfo.ignoreruleset = game.ignoreruleset;
-  extgameinfo.goldtrading = game.goldtrading;
-  extgameinfo.citytrading = game.citytrading;
-  extgameinfo.airliftingstyle = game.airliftingstyle;
-  extgameinfo.teamplacement = game.teamplacement;
-  extgameinfo.globalwarmingon = game.globalwarmingon;
-  extgameinfo.nuclearwinteron = game.nuclearwinteron;
-  extgameinfo.maxallies = game.maxallies;
-  extgameinfo.techleakagerate = game.techleakagerate;
-
   conn_list_iterate(dest, pconn) {
-    /* ? fixme: check for non-players: */
-    ginfo.player_idx = (pconn->player ? pconn->player->player_no : -1);
-    send_packet_game_info(pconn, &ginfo);
+    game.info.player_idx = (pconn->player ? pconn->player->player_no : -1);
+    send_packet_game_info(pconn, &game.info);
     if (has_capability("extroutes", pconn->capability)) {
-      send_packet_traderoute_info(pconn, &tinfo);
+      send_packet_traderoute_info(pconn, &game.traderoute_info);
     }
     if (has_capability("extgameinfo", pconn->capability)) {
-      send_packet_extgame_info(pconn, &extgameinfo);
+      send_packet_extgame_info(pconn, &game.ext_info);
     }
   } conn_list_iterate_end;
 }
 
 /**************************************************************************
-  adjusts game.timeout based on various server options
+  adjusts game.info.timeout based on various server options
 
-  timeoutint: adjust game.timeout every timeoutint turns
-  timeoutinc: adjust game.timeout by adding timeoutinc to it.
-  timeoutintinc: every time we adjust game.timeout, we add timeoutintinc
+  timeoutint: adjust game.info.timeout every timeoutint turns
+  timeoutinc: adjust game.info.timeout by adding timeoutinc to it.
+  timeoutintinc: every time we adjust game.info.timeout, we add timeoutintinc
                  to timeoutint.
-  timeoutincmult: every time we adjust game.timeout, we multiply timeoutinc
+  timeoutincmult: every time we adjust game.info.timeout, we multiply timeoutinc
                   by timeoutincmult
 **************************************************************************/
 int update_timeout(void)
 {
   /* if there's no timer or we're doing autogame, do nothing */
-  if (game.timeout < 1 || game.timeoutint == 0) {
-    return game.timeout;
+  if (game.info.timeout < 1 || game.server.timeoutint == 0) {
+    return game.info.timeout;
   }
 
-  if (game.timeoutcounter >= game.timeoutint) {
-    game.timeout += game.timeoutinc;
-    game.timeoutinc *= game.timeoutincmult;
+  if (game.server.timeoutcounter >= game.server.timeoutint) {
+    game.info.timeout += game.server.timeoutinc;
+    game.server.timeoutinc *= game.server.timeoutincmult;
 
-    game.timeoutcounter = 1;
-    game.timeoutint += game.timeoutintinc;
+    game.server.timeoutcounter = 1;
+    game.server.timeoutint += game.server.timeoutintinc;
 
-    if (game.timeout > GAME_MAX_TIMEOUT) {
+    if (game.info.timeout > GAME_MAX_TIMEOUT) {
       notify_conn_ex(game.game_connections, NULL, E_NOEVENT,
 		     _("The turn timeout has exceeded its maximum value, "
 		       "fixing at its maximum"));
-      freelog(LOG_DEBUG, "game.timeout exceeded maximum value");
-      game.timeout = GAME_MAX_TIMEOUT;
-      game.timeoutint = 0;
-      game.timeoutinc = 0;
-    } else if (game.timeout < 0) {
+      freelog(LOG_DEBUG, "game.info.timeout exceeded maximum value");
+      game.info.timeout = GAME_MAX_TIMEOUT;
+      game.server.timeoutint = 0;
+      game.server.timeoutinc = 0;
+    } else if (game.info.timeout < 0) {
       notify_conn_ex(game.game_connections, NULL, E_NOEVENT,
 		     _("The turn timeout is smaller than zero, "
 		       "fixing at zero."));
-      freelog(LOG_DEBUG, "game.timeout less than zero");
-      game.timeout = 0;
+      freelog(LOG_DEBUG, "game.info.timeout less than zero");
+      game.info.timeout = 0;
     }
   } else {
-    game.timeoutcounter++;
+    game.server.timeoutcounter++;
   }
 
   freelog(LOG_DEBUG, "timeout=%d, inc=%d incmult=%d\n   "
 	  "int=%d, intinc=%d, turns till next=%d",
-	  game.timeout, game.timeoutinc, game.timeoutincmult,
-	  game.timeoutint, game.timeoutintinc,
-	  game.timeoutint - game.timeoutcounter);
+	  game.info.timeout, game.server.timeoutinc, game.server.timeoutincmult,
+	  game.server.timeoutint, game.server.timeoutintinc,
+	  game.server.timeoutint - game.server.timeoutcounter);
 
-  return game.timeout;
+  return game.info.timeout;
 }
 
 /**************************************************************************
-  adjusts game.turn_start when enemy moves an unit, we see it and the 
+  adjusts game.server.turn_start when enemy moves an unit, we see it and the 
   remaining timeout is smaller than the option
   It's possible to use a simular function to do that per player.
 **************************************************************************/
 void increase_timeout_because_unit_moved(void)
 {
-  if (game.timeout != 0){
-    int seconds_to_turndone = game.turn_start + game.timeout - time(NULL);
+  if (game.info.timeout != 0){
+    int seconds_to_turndone = game.server.turn_start + game.info.timeout - time(NULL);
 
-    if (seconds_to_turndone < game.timeoutaddenemymove){
-      game.turn_start = time(NULL) - game.timeout + game.timeoutaddenemymove;
+    if (seconds_to_turndone < game.server.timeoutaddenemymove){
+      game.server.turn_start = time(NULL) - game.info.timeout + game.server.timeoutaddenemymove;
       send_game_info(NULL);
     }	
   }

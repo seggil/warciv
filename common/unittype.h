@@ -280,7 +280,7 @@ void unit_types_free(void);
 #define unit_type_iterate(m_i)                                                \
 {                                                                             \
   Unit_Type_id m_i;                                                           \
-  for (m_i = 0; m_i < game.num_unit_types; m_i++) {
+  for (m_i = 0; m_i < game.ruleset_control.num_unit_types; m_i++) {
 
 #define unit_type_iterate_end                                                 \
   }                                                                           \

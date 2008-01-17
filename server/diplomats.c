@@ -17,12 +17,14 @@
 
 #include <stdio.h>
 
-#include "events.h"
 #include "fcintl.h"
-#include "government.h"
 #include "log.h"
-#include "player.h"
 #include "rand.h"
+
+#include "events.h"
+#include "game.h"
+#include "government.h"
+#include "player.h"
 
 #include "citytools.h"
 #include "cityturn.h"
@@ -427,7 +429,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
   }
 
   /* Check if the Diplomat/Spy succeeds with his/her task. */
-  if (myrand (100) >= game.diplchance) {
+  if (myrand (100) >= game.server.diplchance) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_FAILED,
 		     _("Game: Your %s was caught in the attempt"
 		       " of bribing enemy unit(s) along with %d gold!"),
@@ -508,7 +510,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 
 /****************************************************************************
   Try to steal a technology from an enemy city.
-  If "technology" is game.num_tech_types, steal a random technology.
+  If "technology" is game.ruleset_control.num_tech_types, steal a random technology.
   Otherwise, steal the technology whose ID is "technology".
   (Note: Only Spies can select what to steal.)
 
@@ -547,7 +549,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
       || get_invention(pplayer, technology) == TECH_KNOWN
       || get_invention (cplayer, technology) != TECH_KNOWN
       || !tech_is_available(pplayer, technology)) {
-    technology = game.num_tech_types;
+    technology = game.ruleset_control.num_tech_types;
   }
 
   /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
@@ -568,12 +570,12 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   } else {
     /* Determine difficulty. */
     count = 1;
-    if (technology < game.num_tech_types) count++;
+    if (technology < game.ruleset_control.num_tech_types) count++;
     count += pcity->steal;
     freelog (LOG_DEBUG, "steal-tech: difficulty: %d", count);
     /* Determine success or failure. */
     while (count > 0) {
-      if (myrand (100) >= game.diplchance) {
+      if (myrand (100) >= game.server.diplchance) {
 	break;
       }
       count--;
@@ -625,7 +627,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
       freelog (LOG_DEBUG, "steal-tech: nothing to steal");
       return;
     }
-  } else if (technology >= game.num_tech_types) {
+  } else if (technology >= game.ruleset_control.num_tech_types) {
     /* Pick first available tech to steal. */
     target = -1;
     tech_type_iterate(index) {
@@ -795,7 +797,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   freelog (LOG_DEBUG, "incite: infiltrated");
 
   /* Check if the Diplomat/Spy succeeds with his/her task. */
-  if (myrand (100) >= game.diplchance) {
+  if (myrand (100) >= game.server.diplchance) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
 		     _("Game: Your %s was caught in the attempt"
 		       " of inciting a revolt along with %d gold!"),
@@ -886,8 +888,8 @@ void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
   int count, which, target;
   const char *prod;
   /* Twice as difficult if target is specified. */
-  int success_prob = (improvement >= B_LAST ? game.diplchance 
-                      : game.diplchance / 2); 
+  int success_prob = (improvement >= B_LAST ? game.server.diplchance 
+                      : game.server.diplchance / 2); 
 
   /* Fetch target city's player.  Sanity checks. */
   if (!pcity)
@@ -1110,7 +1112,7 @@ static void diplomat_charge_movement (struct unit *pdiplomat, struct tile *ptile
   who is also a diplomat or spy.
   (Note: This is weird in order to try to conform to Civ2 rules.)
 
-  - Depends entirely upon game.diplchance and the defender:
+  - Depends entirely upon game.server.diplchance and the defender:
     - Spies are much better.
     - Veterans are somewhat better.
 
@@ -1119,8 +1121,8 @@ static void diplomat_charge_movement (struct unit *pdiplomat, struct tile *ptile
 static bool diplomat_success_vs_defender (struct unit *pattacker, 
 	struct unit *pdefender, struct tile *pdefender_tile)
 {
-  int att = game.diplchance;
-  int def = 100 - game.diplchance;
+  int att = game.server.diplchance;
+  int def = 100 - game.server.diplchance;
 
   if (unit_flag(pdefender, F_SUPERSPY)) {
     return TRUE;
@@ -1244,7 +1246,7 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
   This determines if a diplomat/spy survives and escapes.
   If "pcity" is NULL, assume action was in the field.
 
-  Spies have a game.diplchance specified chance of survival (better 
+  Spies have a game.server.diplchance specified chance of survival (better 
   if veteran):
     - Diplomats always die.
     - Escapes to home city.
@@ -1258,7 +1260,7 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
   bool vet;
   struct city *spyhome;
 
-  escapechance = game.diplchance + pdiplomat->veteran * 5;
+  escapechance = game.server.diplchance + pdiplomat->veteran * 5;
   
   if (pcity) {
     ptile = pcity->tile;
@@ -1430,7 +1432,7 @@ int unit_bribe_cost(struct unit *punit)
   int default_hp = unit_type(punit)->hp;
   int shield_cost = unit_build_shield_cost(punit->type);
 
-  if(game.experimentalbribingcost) {//experimental cost
+  if(game.ext_info.experimentalbribingcost) {//experimental cost
 		struct city *pcity = map_get_city(punit->tile);
   	cost = 2 * shield_cost + (shield_cost * shield_cost) / 20;//basic cost
 		cost = (int)(cost * (1 + (float)punit->veteran/2));//multiply by veterancy, veteran unit = *1.5 cost

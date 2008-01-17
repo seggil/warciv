@@ -1747,7 +1747,7 @@ static void reports_menu_callback(gpointer callback_data,
     send_report_request(REPORT_DEMOGRAPHIC);
     break;
    case MENU_REPORT_SPACESHIP:
-    popup_spaceship_dialog(game.player_ptr);
+    popup_spaceship_dialog(get_player_ptr());
     break;
   }
 }
@@ -3210,10 +3210,10 @@ void get_accel_label(GtkWidget *widget,const char *uname)
 *****************************************************************/
 static bool can_player_unit_type(Unit_Type_id utype)
 {
-  if(can_player_build_unit(game.player_ptr,utype))
+  if(can_player_build_unit(get_player_ptr(),utype))
     return TRUE;
 
-  unit_list_iterate(game.player_ptr->units,punit) {
+  unit_list_iterate(get_player_ptr()->units,punit) {
     if(punit->type==utype)
       return TRUE;
   } unit_list_iterate_end;
@@ -3900,12 +3900,12 @@ void init_menus(void)
   menus_set_sensitive("<main>/Auto Caravan", cond );
   menus_set_sensitive("<main>/Miscellaneous", cond );
 
-  menus_set_sensitive("<main>/_Government/_Tax Rates", game.rgame.changable_tax && cond);
+  menus_set_sensitive("<main>/_Government/_Tax Rates", game.ruleset_game.changable_tax && cond);
   menus_set_sensitive("<main>/_Government/_Worklists", cond);
   menus_set_sensitive("<main>/_Government/_Change Government", cond);
 
   menus_set_active("<main>/_View/Map _Grid", draw_map_grid);
-  menus_set_sensitive("<main>/_View/National _Borders", game.borders > 0);
+  menus_set_sensitive("<main>/_View/National _Borders", game.ruleset_control.borders > 0);
   menus_set_active("<main>/_View/National _Borders", draw_borders);
   menus_set_active("<main>/_View/City _Names", draw_city_names);
   menus_set_active("<main>/_View/City G_rowth", draw_city_growth);
@@ -4046,7 +4046,7 @@ void update_menus(void)
 
       /* add new government entries. */
       government_iterate(g) {
-        if (g->index != game.government_when_anarchy) {
+        if (g->index != game.ruleset_control.government_when_anarchy) {
           GtkWidget *item, *image;
           struct Sprite *gsprite;
 	  char buf[256];
@@ -4063,7 +4063,7 @@ void update_menus(void)
           g_signal_connect(item, "activate",
             G_CALLBACK(government_callback), GINT_TO_POINTER(g->index));
 
-          if (!can_change_to_government(game.player_ptr, g->index)) {
+          if (!can_change_to_government(get_player_ptr(), g->index)) {
             gtk_widget_set_sensitive(item, FALSE);
 	  }
 
@@ -4074,7 +4074,7 @@ void update_menus(void)
     }
 
     menus_set_sensitive("<main>/_Reports/S_paceship",
-			(game.player_ptr->spaceship.state!=SSHIP_NONE));
+			(get_player_ptr()->spaceship.state!=SSHIP_NONE));
 
     menus_set_sensitive("<main>/_View/City G_rowth", draw_city_names);
     menus_set_sensitive("<main>/_View/Coastline", !draw_terrain);
@@ -4201,7 +4201,7 @@ void update_menus(void)
 		    get_tile_change_menu_text(punit->tile,
 					      ACTIVITY_IRRIGATE));
       } else if (map_has_special(punit->tile, S_IRRIGATION)
-		 && player_knows_techs_with_flag(game.player_ptr,
+		 && player_knows_techs_with_flag(get_player_ptr(),
 						 TF_FARMLAND)) {
 	sz_strlcpy(irrtext, _("Bu_ild Farmland"));
       }

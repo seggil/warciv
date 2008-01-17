@@ -114,7 +114,7 @@ Returns the priority of the city name at the given position,
 using its own internal algorithm.  Lower priority values are
 more desired, and all priorities are non-negative.
 
-This function takes into account game.natural_city_names, and
+This function takes into account game.server.natural_city_names, and
 should be able to deal with any future options we want to add.
 *****************************************************************/
 static int evaluate_city_name_priority(struct tile *ptile,
@@ -139,7 +139,7 @@ static int evaluate_city_name_priority(struct tile *ptile,
    * it elewhere because this localizes everything to this
    * function, even though it's a bit inefficient.
    */
-    if (!game.natural_city_names)
+    if (!game.server.natural_city_names)
     {
     return default_priority;
   }
@@ -284,7 +284,7 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
         return FALSE;
     }
   /* Mode 1: A city name has to be unique for each player. */
-  if (game.allowed_city_names == 1
+  if (game.server.allowed_city_names == 1
       && city_list_find_name(pplayer->cities, city_name)) {
     if (error_buf) {
       my_snprintf(error_buf, bufsz, _("You already have a city called %s."),
@@ -293,7 +293,7 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
     return FALSE;
   }
   /* Modes 2,3: A city name has to be globally unique. */
-  if ((game.allowed_city_names == 2 || game.allowed_city_names == 3)
+  if ((game.server.allowed_city_names == 2 || game.server.allowed_city_names == 3)
             && game_find_city_by_name(city_name))
     {
         if (error_buf)
@@ -313,7 +313,7 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
    * player's default city names.  Note the name will already have been
    * allowed if it is in this player's default city names list.
    */
-    if (game.allowed_city_names == 3)
+    if (game.server.allowed_city_names == 3)
     {
     struct player *pother = NULL;
         players_iterate(player2)
@@ -373,8 +373,8 @@ by caller.
 char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
 {
   int i = 0, j;
-  bool nations_selected[game.nation_count];
-  Nation_Type_id nation_list[game.nation_count], n;
+  bool nations_selected[game.ruleset_control.nation_count];
+  Nation_Type_id nation_list[game.ruleset_control.nation_count], n;
   int queue_size;
 
   static const int num_tiles = MAP_MAX_WIDTH * MAP_MAX_HEIGHT; 
@@ -408,7 +408,7 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
   queue_size = 1;
   nation_list[0] = pplayer->nation;
   nations_selected[pplayer->nation] = TRUE;
-    while (i < game.nation_count)
+    while (i < game.ruleset_control.nation_count)
     {
         for (; i < queue_size; i++)
         {
@@ -455,7 +455,7 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
       }
     }
     /* Append all remaining nations. */
-        for (n = 0; n < game.nation_count; n++)
+        for (n = 0; n < game.ruleset_control.nation_count; n++)
         {
             if (!nations_selected[n])
             {
@@ -490,11 +490,24 @@ bool can_sell_building(struct city *pcity, Impr_Type_id id)
 }
 
 /**************************************************************************
+.rapture is checked instead of city_celebrating() because this function is
+called after .was_happy was updated.
+**************************************************************************/
+bool city_rapture_grow(const struct city *pcity)
+{
+  struct government *g = get_gov_pcity(pcity);
+
+  return (pcity->rapture > 0 && pcity->food_surplus > 0
+	  && (pcity->rapture % game.server.rapturedelay) == 0
+	  && government_has_flag(g, G_RAPTURE_CITY_GROWTH));
+}
+
+/**************************************************************************
 ...
 **************************************************************************/
 struct city *find_city_wonder(Impr_Type_id id)
 {
-  return (find_city_by_id(game.global_wonders[id]));
+  return (find_city_by_id(game.info.global_wonders[id]));
 }
 
 /**************************************************************************
@@ -749,12 +762,12 @@ struct city *find_closest_owned_city(struct player *pplayer, struct tile *ptile,
 
 /**************************************************************************
   called when a player conquers a city, remove buildings (not wonders and 
-  always palace) with game.razechance% chance, barbarians destroy more
+  always palace) with game.server.razechance% chance, barbarians destroy more
   set the city's shield stock to 0
 **************************************************************************/
 static void raze_city(struct city *pcity)
 {
-  int razechance = game.razechance;
+  int razechance = game.server.razechance;
 
   /* We don't use city_remove_improvement here as the global effects
      stuff has already been handled by transfer_city */
@@ -874,7 +887,7 @@ void transfer_city(struct player *ptaker, struct city *pcity,
   give_citymap_from_player_to_player(pcity, pgiver, ptaker);
   map_unfog_pseudo_city_area(ptaker, pcity->tile);
   sz_strlcpy(old_city_name, pcity->name);
-  if (game.allowed_city_names == 1
+  if (game.server.allowed_city_names == 1
       && city_list_find_name(ptaker->cities, pcity->name)) {
     sz_strlcpy(pcity->name,
 	       city_name_suggestion(ptaker, pcity->tile));
@@ -973,7 +986,7 @@ void transfer_city(struct player *ptaker, struct city *pcity,
   map_fog_pseudo_city_area(pgiver, pcity->tile);
   /* Build a new palace for free if the player lost her capital and
      savepalace is on. */
-  if (had_palace && game.savepalace) {
+  if (had_palace && game.server.savepalace) {
     build_free_palace(pgiver, pcity->name);
   }
   sanity_check_city(pcity);
@@ -989,12 +1002,12 @@ void create_city(struct player *pplayer, struct tile *ptile,
   struct city *pcity;
   int x_itr, y_itr;
   struct nation_type *nation = get_nation_by_plr(pplayer);
+
   freelog(LOG_DEBUG, "Creating city %s", name);
-    if (terrain_control.may_road)
-    {
+  if (terrain_control.may_road) {
     map_set_special(ptile, S_ROAD);
-        if (player_knows_techs_with_flag(pplayer, TF_RAILROAD))
-        {
+
+    if (player_knows_techs_with_flag(pplayer, TF_RAILROAD)) {
       map_set_special(ptile, S_RAILROAD);
       update_tile_knowledge(ptile);
     }
@@ -1010,42 +1023,40 @@ void create_city(struct player *pplayer, struct tile *ptile,
   pcity->ai.trade_want = TRADE_WEIGHTING;
   pcity->id = get_next_id_number();
   idex_register_city(pcity);
-    if (!pplayer->capital)
-    {
+
+  if (!pplayer->capital) {
     int i;
+
     pplayer->capital = TRUE;
-        for (i = 0; i < MAX_NUM_BUILDING_LIST; i++)
-        {
-            if (game.rgame.global_init_buildings[i] == B_LAST)
-            {
+    for (i = 0; i < MAX_NUM_BUILDING_LIST; i++) {
+      if (game.server.global_init_buildings[i] == B_LAST) {
 	break;
       }
-      city_add_improvement(pcity, game.rgame.global_init_buildings[i]);
+      city_add_improvement(pcity, game.server.global_init_buildings[i]);
     }
-        for (i = 0; i < MAX_NUM_BUILDING_LIST; i++)
-        {
-            if (nation->init_buildings[i] == B_LAST)
-            {
+    for (i = 0; i < MAX_NUM_BUILDING_LIST; i++) {
+      if (nation->init_buildings[i] == B_LAST) {
 	break;
       }
       city_add_improvement(pcity, nation->init_buildings[i]);
     }
   }
+
   /* Before arranging workers to show unknown land */
   map_unfog_pseudo_city_area(pplayer, ptile);
   map_set_city(ptile, pcity);
   city_list_prepend(pplayer->cities, pcity);
+
   /* it is possible to build a city on a tile that is already worked
    * this will displace the worker on the newly-built city's tile -- Syela */
-    for (y_itr = 0; y_itr < CITY_MAP_SIZE; y_itr++)
-    {
-        for (x_itr = 0; x_itr < CITY_MAP_SIZE; x_itr++)
-        {
+  for (y_itr = 0; y_itr < CITY_MAP_SIZE; y_itr++) {
+    for (x_itr = 0; x_itr < CITY_MAP_SIZE; x_itr++) {
       if (is_valid_city_coords(x_itr, y_itr)
-	  && city_can_work_tile(pcity, x_itr, y_itr))
+	  && city_can_work_tile(pcity, x_itr, y_itr)) {
 	pcity->city_map[x_itr][y_itr] = C_TILE_EMPTY;
-      else
+      } else {
 	pcity->city_map[x_itr][y_itr] = C_TILE_UNAVAILABLE;
+      }
     }
   }
 
@@ -1055,6 +1066,7 @@ void create_city(struct player *pplayer, struct tile *ptile,
   server_set_tile_city(pcity, CITY_MAP_SIZE/2, CITY_MAP_SIZE/2, C_TILE_WORKER);
   auto_arrange_workers(pcity);
   city_refresh(pcity);
+
   /* Put vision back to normal, if fortress acted as a watchtower */
   if (map_has_special(ptile, S_FORTRESS)) {
     unit_list_iterate((ptile)->units, punit) {
@@ -1214,7 +1226,7 @@ void remove_city(struct city *pcity)
 
   /* Build a new palace for free if the player lost her capital and
    * savepalace is on. */
-  if (had_palace && game.savepalace) {
+  if (had_palace && game.server.savepalace) {
     build_free_palace(pplayer, city_name);
   }
   free(city_name);
@@ -1252,9 +1264,9 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
   }
   
   if (is_capital(pcity)
-      && city_list_size(cplayer->cities) >= game.civilwarsize
-      && game.nplayers < game.playable_nation_count
-      && game.civilwarsize < GAME_MAX_CIVILWARSIZE
+      && city_list_size(cplayer->cities) >= game.server.civilwarsize
+      && game.info.nplayers < game.ruleset_control.playable_nation_count
+      && game.server.civilwarsize < GAME_MAX_CIVILWARSIZE
       && get_num_human_and_ai_players() < MAX_NUM_PLAYERS
             && civil_war_triggered(cplayer))
     {
@@ -2141,38 +2153,35 @@ void check_city_workers(struct player *pplayer)
 **************************************************************************/
 void city_landlocked_sell_coastal_improvements(struct tile *ptile)
 {
-    adjc_iterate(ptile, tile1)
-    {
+  adjc_iterate(ptile, tile1) {
     struct city *pcity = map_get_city(tile1);
-        if (pcity && !is_ocean_near_tile(tile1))
-        {
+
+    if (pcity && !is_ocean_near_tile(tile1)) {
       struct player *pplayer = city_owner(pcity);
+
       /* Sell all buildings (but not Wonders) that must be next to the ocean */
-            built_impr_iterate(pcity, impr)
-            {
-        int i = 0;
-                if (is_wonder(impr))
-                {
-          continue;
-        }
-        while (!is_ocean(improvement_types[impr].terr_gate[i])
-                        && improvement_types[impr].terr_gate[i] != T_NONE)
-                {
-          i++;
-        }
-        if (is_ocean(improvement_types[impr].terr_gate[i])
-                        && !city_has_terr_spec_gate(pcity, impr))
-                {
-          do_sell_building(pplayer, pcity, impr);
-          notify_player_ex(pplayer, tile1, E_IMP_SOLD,
-                           _("Game: You sell %s in %s (now landlocked)"
-                             " for %d gold."),
-                           get_improvement_name(impr), pcity->name,
-                           impr_sell_gold(impr)); 
-        }
+      built_impr_iterate(pcity, impr) {
+	int i = 0;
+
+	if (is_wonder(impr)) {
+	  continue;
+	}
+
+	while (!is_ocean(improvement_types[impr].terr_gate[i])
+	       && improvement_types[impr].terr_gate[i] != T_NONE) {
+	  i++;
+	}
+
+	if (is_ocean(improvement_types[impr].terr_gate[i])
+	    && !city_has_terr_spec_gate(pcity, impr)) {
+	  do_sell_building(pplayer, pcity, impr);
+	  notify_player_ex(pplayer, tile1, E_IMP_SOLD,
+			   _("Game: You sell %s in %s (now landlocked)"
+			     " for %d gold."),
+			   get_improvement_name(impr), pcity->name,
+			   impr_sell_gold(impr)); 
+	}
+      } built_impr_iterate_end;
     }
-            built_impr_iterate_end;
-        }
-    }
-    adjc_iterate_end;
+  } adjc_iterate_end;
 }

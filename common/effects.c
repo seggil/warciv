@@ -494,7 +494,9 @@ void ruleset_cache_free(void)
   effect_group_list_free(groups);
   groups = NULL;
 
-  game.ruleset_loaded = FALSE;
+  if (is_server) {
+    game.server.ruleset_loaded = FALSE;
+  }
 }
 
 /**************************************************************************
@@ -797,7 +799,7 @@ bool building_has_effect(Impr_Type_id id, enum effect_type effect)
 static int num_world_buildings_total(Impr_Type_id building)
 {
   if (is_wonder(building)) {
-    return (game.global_wonders[building] != 0) ? 1 : 0;
+    return (game.info.global_wonders[building] != 0) ? 1 : 0;
   } else {
     freelog(LOG_ERROR,
 	    /* TRANS: Obscure ruleset error. */
@@ -812,7 +814,7 @@ static int num_world_buildings_total(Impr_Type_id building)
 static int num_world_buildings(Impr_Type_id id)
 {
   if (is_wonder(id)) {
-    return find_city_by_id(game.global_wonders[id]) ? 1 : 0;
+    return find_city_by_id(game.info.global_wonders[id]) ? 1 : 0;
   } else {
     freelog(LOG_ERROR,
 	    /* TRANS: Obscure ruleset error. */
@@ -828,7 +830,7 @@ static int num_player_buildings(const struct player *pplayer,
 				Impr_Type_id building)
 {
   if (is_wonder(building)) {
-    if (player_find_city_by_id(pplayer, game.global_wonders[building])) {
+    if (player_find_city_by_id(pplayer, game.info.global_wonders[building])) {
       return 1;
     } else {
       return 0;
@@ -850,7 +852,7 @@ static int num_continent_buildings(const struct player *pplayer,
   if (is_wonder(building)) {
     const struct city *pcity;
 
-    pcity = player_find_city_by_id(pplayer, game.global_wonders[building]);
+    pcity = player_find_city_by_id(pplayer, game.info.global_wonders[building]);
     if (pcity && map_get_continent(pcity->tile) == continent) {
       return 1;
     }

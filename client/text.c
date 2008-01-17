@@ -29,6 +29,7 @@
 #include "civclient.h"
 
 #include "control.h"
+#include "clinet.h"
 #include "goto.h"
 #include "multiselect.h"
 #include "myai.h"
@@ -155,7 +156,7 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   char trade[16];
   int x, before_penalty;
   
-  struct government *gov = get_gov_pplayer(game.player_ptr);
+  struct government *gov = get_gov_pplayer(get_player_ptr());
   
   x = get_food_tile(ptile);
   before_penalty = gov->food_before_penalty;
@@ -220,11 +221,11 @@ const char *popup_info_text(struct tile *ptile)
   if (tile_has_special(ptile, S_HUT)) {
     add_line(_("Minor Tribe Village"));
   }
-  if (game.borders > 0 && !pcity) {
+  if (game.ruleset_control.borders > 0 && !pcity) {
     struct player *owner = map_get_owner(ptile);
-    struct player_diplstate *ds = game.player_ptr->diplstates;
+    struct player_diplstate *ds = get_player_ptr()->diplstates;
 
-    if (owner == game.player_ptr){
+    if (owner == get_player_ptr()){
       add_line(_("Our Territory"));
     } else if (owner) {
       if (ds[owner->player_no].type == DS_CEASEFIRE) {
@@ -254,9 +255,9 @@ const char *popup_info_text(struct tile *ptile)
     /* Look at city owner, not tile owner (the two should be the same, if
      * borders are in use). */
     struct player *owner = city_owner(pcity);
-    struct player_diplstate *ds = game.player_ptr->diplstates;
+    struct player_diplstate *ds = get_player_ptr()->diplstates;
 
-    if (owner == game.player_ptr){
+    if (owner == get_player_ptr()){
       /* TRANS: "City: Warsaw (Polish)" */
       add_line(_("City: %s (%s)"), pcity->name,
 	       get_nation_name(owner->nation));
@@ -308,15 +309,15 @@ const char *popup_info_text(struct tile *ptile)
   }
   if (punit && !pcity) {
     struct player *owner = unit_owner(punit);
-    struct player_diplstate *ds = game.player_ptr->diplstates;
+    struct player_diplstate *ds = get_player_ptr()->diplstates;
     struct unit_type *ptype = unit_type(punit);
     char vet[1024] = "";
 
-    if (owner == game.player_ptr){
+    if (owner == get_player_ptr()){
       struct city *pcity;
       char tmp[64] = {0};
 
-      pcity = player_find_city_by_id(game.player_ptr, punit->homecity);
+      pcity = player_find_city_by_id(get_player_ptr(), punit->homecity);
       if (pcity) {
 	my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
       }
@@ -377,7 +378,7 @@ const char *popup_info_text(struct tile *ptile)
 	     ptype->attack_strength, 
 	     ptype->defense_strength, ptype->firepower, punit->hp, 
 	     ptype->hp, vet);
-    if (owner == game.player_ptr && unit_list_size(ptile->units) >= 2) {
+    if (owner == get_player_ptr() && unit_list_size(ptile->units) >= 2) {
       /* TRANS: "5 more" units on this tile */
       add(_("  (%d more)"), unit_list_size(ptile->units) - 1);
     }
@@ -457,7 +458,7 @@ const char *unit_description(struct unit *punit)
 {
   int pcity_near_dist;
   struct city *pcity =
-      player_find_city_by_id(game.player_ptr, punit->homecity);
+      player_find_city_by_id(get_player_ptr(), punit->homecity);
   struct city *pcity_near = get_nearest_city(punit, &pcity_near_dist);
   struct unit_type *ptype = unit_type(punit);
   INIT;
@@ -488,7 +489,7 @@ const char *unit_description(struct unit *punit)
 const char *science_dialog_text(void)
 {
   int turns_to_advance;
-  struct player *plr = game.player_ptr;
+  struct player *plr = get_player_ptr();
   int ours = 0, theirs = -1;
   INIT;
 
@@ -534,12 +535,12 @@ const char *get_info_label_text(void)
   INIT;
 
   add_line(_("Population: %s"),
-	     population_to_text(civ_population(game.player_ptr)));
-  add_line(_("Year: %s - T%d"), textyear(game.year), game.turn);
-  add_line(_("Gold: %d"), game.player_ptr->economic.gold);
-  add_line(_("Tax: %d Lux: %d Sci: %d"), game.player_ptr->economic.tax,
-	   game.player_ptr->economic.luxury,
-	   game.player_ptr->economic.science);
+	     population_to_text(civ_population(get_player_ptr())));
+  add_line(_("Year: %s - T%d"), textyear(game.info.year), game.info.turn);
+  add_line(_("Gold: %d"), get_player_ptr()->economic.gold);
+  add_line(_("Tax: %d Lux: %d Sci: %d"), get_player_ptr()->economic.tax,
+	   get_player_ptr()->economic.luxury,
+	   get_player_ptr()->economic.science);
   RETURN;
 }
 
@@ -577,7 +578,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
    * GUI widgets may be confused and try to resize themselves. */
   if (punit) {
     struct city *pcity =
-	player_find_city_by_id(game.player_ptr, punit->homecity);
+	player_find_city_by_id(get_player_ptr(), punit->homecity);
     int infrastructure = get_tile_infrastructure_set(punit->tile);
 
     if (punit->my_ai.control) {
@@ -625,10 +626,10 @@ const char *get_bulb_tooltip(void)
 
   add(_("Shows your progress in researching "
 	"the current technology.\n%s: %d/%d."),
-      get_tech_name(game.player_ptr,
-		    game.player_ptr->research.researching),
-      game.player_ptr->research.bulbs_researched,
-      total_bulbs_required(game.player_ptr));
+      get_tech_name(get_player_ptr(),
+		    get_player_ptr()->research.researching),
+      get_player_ptr()->research.bulbs_researched,
+      total_bulbs_required(get_player_ptr()));
   RETURN;
 }
 
@@ -667,7 +668,7 @@ const char *get_government_tooltip(void)
   INIT;
 
   add(_("Shows your current government:\n%s."),
-      get_government_name(game.player_ptr->government));
+      get_government_name(get_player_ptr()->government));
   RETURN;
 }
 
@@ -730,10 +731,10 @@ const char *get_timeout_label_text(void)
 {
   INIT;
 
-  if (game.timeout <= 0) {
+  if (game.info.timeout <= 0) {
     add("%s", Q_("?timeout:off"));
   } else {
-    add("%s", format_duration(seconds_to_turndone));
+    add("%s", format_duration(game.info.seconds_to_turndone));
   }
 
   RETURN;
@@ -810,14 +811,14 @@ const char *get_report_title(const char *report_name)
 
   /* TRANS: "Republic of the Polish" */
   add_line(_("%s of the %s"),
-	   get_government_name(game.player_ptr->government),
-	   get_nation_name_plural(game.player_ptr->nation));
+	   get_government_name(get_player_ptr()->government),
+	   get_nation_name_plural(get_player_ptr()->nation));
 
   add_line("%s %s: %s",
-	   get_ruler_title(game.player_ptr->government,
-			   game.player_ptr->is_male,
-			   game.player_ptr->nation), game.player_ptr->name,
-	   textyear(game.year));
+	   get_ruler_title(get_player_ptr()->government,
+			   get_player_ptr()->is_male,
+			   get_player_ptr()->nation), get_player_ptr()->name,
+	   textyear(game.info.year));
   RETURN;
 }
 

@@ -33,8 +33,9 @@
 
 #include "chatline.h"
 #include "cityrep.h"
-#include "dialogs.h"
+#include "civclient.h"
 #include "clinet.h"
+#include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "messagewin.h"
@@ -74,7 +75,7 @@ static void rates_set_values(int tax, int no_tax_scroll,
   lux_lock	= GTK_TOGGLE_BUTTON(rates_lux_toggle)->active;
   sci_lock	= GTK_TOGGLE_BUTTON(rates_sci_toggle)->active;
 
-  maxrate=get_government_max_rate(game.player_ptr->government);
+  maxrate=get_government_max_rate(get_player_ptr()->government);
   /* This's quite a simple-minded "double check".. */
   tax=MIN(tax, maxrate);
   lux=MIN(lux, maxrate);
@@ -325,9 +326,9 @@ static GtkWidget *create_rates_dialog(void)
     g_signal_connect_after(rates_sci_adj, "value_changed",
 			   G_CALLBACK(rates_changed_callback), NULL);
 
-  rates_set_values( game.player_ptr->economic.tax, 0,
-        	    game.player_ptr->economic.luxury, 0,
-        	    game.player_ptr->economic.science, 0 );
+  rates_set_values( get_player_ptr()->economic.tax, 0,
+        	    get_player_ptr()->economic.luxury, 0,
+        	    get_player_ptr()->economic.science, 0 );
   return shell;
 }
 
@@ -345,8 +346,8 @@ void popup_rates_dialog(void)
     rates_dialog_shell = create_rates_dialog();
 
   my_snprintf(buf, sizeof(buf), _("%s max rate: %d%%"),
-      get_government_name(game.player_ptr->government),
-      get_government_max_rate(game.player_ptr->government));
+      get_government_name(get_player_ptr()->government),
+      get_government_max_rate(get_player_ptr()->government));
   gtk_label_set_text(GTK_LABEL(rates_gov_label), buf);
   
   gtk_window_present(GTK_WINDOW(rates_dialog_shell));

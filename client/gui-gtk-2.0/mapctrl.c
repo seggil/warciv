@@ -270,7 +270,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       action_button_pressed(ev->x, ev->y, SELECT_SEA);
       } else {
 	struct unit *punit = find_visible_unit(ptile);
-	if (punit && punit->owner == game.player_idx) {
+	if (punit && punit->owner == get_player_idx()) {
 	  set_unit_focus(punit);
     }
       }
@@ -282,11 +282,11 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       } else {
 	struct unit *punit = find_visible_unit(ptile);
 
-	if (punit && punit->owner == game.player_idx) {
+	if (punit && punit->owner == get_player_idx()) {
 	  multi_select_add_or_remove_unit(punit);
 	} else {
 	  unit_list_iterate(ptile->units, punit) {
-	    if (punit->owner == game.player_idx) {
+	    if (punit->owner == get_player_idx()) {
 	      multi_select_add_or_remove_unit(punit);
 	      break;
 	    }
@@ -308,14 +308,14 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     /* double LMB: *pepeto* select units of the same type. */
     else if(ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS)) {
       struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
-      if (punit && punit->owner == game.player_idx) {
+      if (punit && punit->owner == get_player_idx()) {
 	multi_select_clear(0);
 	set_unit_focus(punit);
 	gui_rect_iterate(mapview_canvas.gui_x0, mapview_canvas.gui_y0,
 			 mapview_canvas.store_width,
 			 mapview_canvas.store_height, ptile) {
 	  unit_list_iterate(ptile->units, tunit) {
-	    if (tunit->owner == game.player_idx && tunit->type == punit->type) {
+	    if (tunit->owner == get_player_idx() && tunit->type == punit->type) {
 	      multi_select_add_unit(tunit);
 	    }
 	    if (unit_satisfies_filter(tunit, multi_select_inclusive_filter, 
@@ -346,7 +346,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 	  && (punit = find_visible_unit(ptile))
 	  && is_unit_in_multi_select(0, punit)
 	  && punit != get_unit_in_focus()
-	  && punit->owner == game.player_idx
+	  && punit->owner == get_player_idx()
 	  && (ev->type == GDK_BUTTON_PRESS)) {
         set_unit_focus(punit);
       } else {

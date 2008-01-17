@@ -39,6 +39,7 @@
 #include "civclient.h"
 #include "climap.h"
 #include "climisc.h"
+#include "clinet.h"
 #include "colors.h"
 #include "control.h" /* get_unit_in_focus() */
 #include "graphics.h"
@@ -118,7 +119,7 @@ void update_info_label( void )
 
   label = gtk_frame_get_label_widget(GTK_FRAME(main_frame_civ_name));
   gtk_label_set_text(GTK_LABEL(label),
-		     get_nation_name(game.player_ptr->nation));
+		     get_nation_name(get_player_ptr()->nation));
 
   gtk_label_set_text(GTK_LABEL(main_label_info), get_info_label_text());
 
@@ -127,18 +128,18 @@ void update_info_label( void )
   set_indicator_icons(client_research_sprite(),
 		      sol,
 		      flake,
-		      game.player_ptr->government);
+		      get_player_ptr()->government);
 
   d=0;
-  for (; d < game.player_ptr->economic.luxury /10; d++) {
+  for (; d < get_player_ptr()->economic.luxury /10; d++) {
     struct Sprite *sprite = sprites.tax_luxury;
 
     gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
 			      sprite->pixmap, sprite->mask);
   }
  
-  for (; d < (game.player_ptr->economic.science
-	     + game.player_ptr->economic.luxury) / 10; d++) {
+  for (; d < (get_player_ptr()->economic.science
+	     + get_player_ptr()->economic.luxury) / 10; d++) {
     struct Sprite *sprite = sprites.tax_science;
 
     gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
@@ -282,7 +283,7 @@ void set_indicator_icons(int bulb, int sol, int flake, int gov)
   gtk_image_set_from_pixmap(GTK_IMAGE(flake_label),
 			    sprites.cooling[flake]->pixmap, NULL);
 
-  if (game.government_count==0) {
+  if (game.ruleset_control.government_count==0) {
     /* HACK: the UNHAPPY citizen is used for the government
      * when we don't know any better. */
     struct citizen_type c = {.type = CITIZEN_UNHAPPY};
@@ -819,7 +820,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     rect.width += extra_width;
     }
 
-    if (draw_city_growth && pcity->owner == game.player_idx) {
+    if (draw_city_growth && pcity->owner == get_player_idx()) {
       /* We need to know the size of the growth text before
 	 drawing anything. */
       pango_layout_set_font_description(layout, city_productions_font);
@@ -832,7 +833,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     } else {
       rect2.width = 0;
     }
-    if (draw_city_traderoutes && pcity->owner == game.player_idx) {
+    if (draw_city_traderoutes && pcity->owner == get_player_idx()) {
       /* We need to know the size of the trade routes text before
 	 drawing anything. */
       pango_layout_set_font_description (layout, city_productions_font);
@@ -859,7 +860,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 			     canvas_x - (rect.width + rect2.width + rect3.width) / 2,
 			     canvas_y + PANGO_ASCENT(rect), layout);
 
-    if (draw_city_growth && pcity->owner == game.player_idx) {
+    if (draw_city_growth && pcity->owner == get_player_idx()) {
       pango_layout_set_font_description(layout, city_productions_font);
       pango_layout_set_text(layout, buffer2, -1);
       gdk_gc_set_foreground(civ_gc, colors_standard[color]);
@@ -873,7 +874,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
 			       layout);
     }
 
-    if (draw_city_traderoutes && pcity->owner == game.player_idx) {
+    if (draw_city_traderoutes && pcity->owner == get_player_idx()) {
       pango_layout_set_font_description (layout, city_productions_font);
       pango_layout_set_text (layout, buffer3, -1);
       gdk_gc_set_foreground (civ_gc, colors_standard[color2]);
@@ -893,7 +894,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     *height += rect.height + 3;
   }
 
-  if (draw_city_productions && (pcity->owner==game.player_idx)) {
+  if (draw_city_productions && (pcity->owner==get_player_idx())) {
     get_city_mapview_production(pcity, buffer, sizeof(buffer));
 
     pango_layout_set_font_description(layout, city_productions_font);

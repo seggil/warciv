@@ -23,7 +23,7 @@
 /* Changing this value will break network compatibility. */
 #define NO_NATION_SELECTED (Nation_Type_id)(-1)
 
-#define OBSERVER_NATION (game.nation_count - 2)
+#define OBSERVER_NATION (game.ruleset_control.nation_count - 2)
 
 /* 
  * Purpose of this constant is to catch invalid ruleset and network
@@ -103,7 +103,6 @@ struct nation_type {
 };
 
 struct team {
-  char name[MAX_LEN_NAME];
   int member_count;
   Team_Type_id id; /* equal to array index if active, else TEAM_NONE */
 
@@ -135,6 +134,7 @@ int get_nation_city_style(Nation_Type_id nation);
 void team_init(void);
 Team_Type_id team_find_by_name(const char *team_name);
 struct team *team_get_by_id(Team_Type_id id);
+const char *get_team_name(Team_Type_id id);
 void team_add_player(struct player *pplayer, const char *team_name);
 void team_remove_player(struct player *pplayer);
 int team_count_members_alive(Team_Type_id id);

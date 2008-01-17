@@ -192,11 +192,11 @@ void science_list_add(GtkListStore *list, GtkTreeIter *iter, Tech_Type_id tech)
   char buf[256];
   const gchar *tech_name;
 
-  if (tech < game.num_tech_types || tech == A_UNSET) {
-    tech_name = get_tech_name(game.player_ptr, tech);
+  if (tech < game.ruleset_control.num_tech_types || tech == A_UNSET) {
+    tech_name = get_tech_name(get_player_ptr(), tech);
   } else {
     my_snprintf(buf, sizeof(buf), _("Future Tech. %d"),
-		tech - game.num_tech_types);
+		tech - game.ruleset_control.num_tech_types);
     tech_name = buf;
   }
 
@@ -204,7 +204,7 @@ void science_list_add(GtkListStore *list, GtkTreeIter *iter, Tech_Type_id tech)
   gtk_list_store_set(list, iter,
 		     TECH_ID, tech,
 		     TECH_NAME, tech_name,
-		     TECH_STEPS, num_unknown_techs_for_goal(game.player_ptr,
+		     TECH_STEPS, num_unknown_techs_for_goal(get_player_ptr(),
 							    tech), -1);
 }
 
@@ -452,7 +452,7 @@ static void science_help_callback(GtkTreeView *view,
 *****************************************************************/
 static void science_change_from_goal_callback(GtkWidget * widget, gpointer data)
 {
-  force_tech_goal(game.player_ptr->ai.tech_goal);
+  force_tech_goal(get_player_ptr()->ai.tech_goal);
 }
 
 /****************************************************************
@@ -467,18 +467,18 @@ static gint cmp_func(gconstpointer a_p, gconstpointer b_p)
   /* FIXME: future techs aren't counted this way but are handled by
    * get_tech_name() when given a player parameter. */
   if (!is_future_tech(a)) {
-    a_str = get_tech_name(game.player_ptr, a);
+    a_str = get_tech_name(get_player_ptr(), a);
   } else {
     my_snprintf(text_a,sizeof(text_a), _("Future Tech. %d"),
-		a - game.num_tech_types);
+		a - game.ruleset_control.num_tech_types);
     a_str=text_a;
   }
 
   if(!is_future_tech(b)) {
-    b_str = get_tech_name(game.player_ptr, b);
+    b_str = get_tech_name(get_player_ptr(), b);
   } else {
     my_snprintf(text_b,sizeof(text_b), _("Future Tech. %d"),
-		b - game.num_tech_types);
+		b - game.ruleset_control.num_tech_types);
     b_str=text_b;
   }
 
@@ -516,8 +516,8 @@ void science_dialog_update(void)
   }
 
   /* collect all researched techs in sorting_list */
-  for(i=A_FIRST; i<game.num_tech_types; i++) {
-    if ((get_invention(game.player_ptr, i)==TECH_KNOWN)) {
+  for(i=A_FIRST; i<game.ruleset_control.num_tech_types; i++) {
+    if ((get_invention(get_player_ptr(), i)==TECH_KNOWN)) {
       sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
     }
   }
@@ -532,7 +532,7 @@ void science_dialog_update(void)
     gtk_list_store_append(science_model[i%ARRAY_SIZE(science_model)], &it);
 
     g_value_init(&value, G_TYPE_STRING);
-    g_value_set_static_string(&value, get_tech_name(game.player_ptr, j));
+    g_value_set_static_string(&value, get_tech_name(get_player_ptr(), j));
     gtk_list_store_set_value(science_model[i%ARRAY_SIZE(science_model)], &it,
 	0, &value);
     g_value_unset(&value);
@@ -545,11 +545,11 @@ void science_dialog_update(void)
 			   can_client_issue_orders());
 
   my_snprintf(text, sizeof(text), "%d/%d",
-	      game.player_ptr->research.bulbs_researched,
-	      game.player_ptr->research.researching_cost);
+	      get_player_ptr()->research.bulbs_researched,
+	      get_player_ptr()->research.researching_cost);
 
-  pct=CLAMP((gdouble) game.player_ptr->research.bulbs_researched /
-	    game.player_ptr->research.researching_cost, 0.0, 1.0);
+  pct=CLAMP((gdouble) get_player_ptr()->research.bulbs_researched /
+	    get_player_ptr()->research.researching_cost, 0.0, 1.0);
 
   gtk_progress_bar_set_text(GTK_PROGRESS_BAR(science_current_label), text);
   gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(science_current_label), pct);
@@ -557,7 +557,7 @@ void science_dialog_update(void)
   /* work around GTK+ refresh bug. */
   gtk_widget_queue_resize(science_current_label);
  
-  if (game.player_ptr->research.researching == A_UNSET) {
+  if (get_player_ptr()->research.researching == A_UNSET) {
     science_list_add(reachable_techs, &iter, A_UNSET);
     gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_change_combo),
 				  &iter);
@@ -566,16 +566,16 @@ void science_dialog_update(void)
   /* collect all techs which are reachable in the next step
    * hist will hold afterwards the techid of the current choice
    */
-  if (!is_future_tech(game.player_ptr->research.researching)) {
-    for (i = A_FIRST; i < game.num_tech_types; i++) {
-      if (get_invention(game.player_ptr, i) == TECH_REACHABLE) {
+  if (!is_future_tech(get_player_ptr()->research.researching)) {
+    for (i = A_FIRST; i < game.ruleset_control.num_tech_types; i++) {
+      if (get_invention(get_player_ptr(), i) == TECH_REACHABLE) {
         sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
       }
     }
   } else {
     sorting_list = g_list_append(sorting_list,
-				 GINT_TO_POINTER(game.num_tech_types + 1 +
-						 game.player_ptr->
+				 GINT_TO_POINTER(game.ruleset_control.num_tech_types + 1 +
+						 get_player_ptr()->
 						 future_tech));
   }
 
@@ -585,9 +585,9 @@ void science_dialog_update(void)
     gint tech = GPOINTER_TO_INT(g_list_nth_data(sorting_list, i));
 
     science_list_add(reachable_techs, &iter, tech);
-    if (tech == game.player_ptr->research.researching
-	|| (is_future_tech(game.player_ptr->research.researching)
-	    && tech > game.num_tech_types)) {
+    if (tech == get_player_ptr()->research.researching
+	|| (is_future_tech(get_player_ptr()->research.researching)
+	    && tech > game.ruleset_control.num_tech_types)) {
       gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_change_combo),
 				    &iter);
     }
@@ -600,10 +600,10 @@ void science_dialog_update(void)
   gtk_widget_set_sensitive(science_goal_combo,
 			   can_client_issue_orders());
 
-  steps = num_unknown_techs_for_goal(game.player_ptr,
-				     game.player_ptr->ai.tech_goal);
-  bulbs = total_bulbs_required_for_goal(game.player_ptr,
-					game.player_ptr->ai.tech_goal);
+  steps = num_unknown_techs_for_goal(get_player_ptr(),
+				     get_player_ptr()->ai.tech_goal);
+  bulbs = total_bulbs_required_for_goal(get_player_ptr(),
+					get_player_ptr()->ai.tech_goal);
   my_snprintf(format, sizeof(format), "%s -- %s",
 	      PL_("(%d step)", "(%d steps)", steps),
 	      PL_("(%d bulb)", "(%d bulbs)", bulbs));
@@ -612,7 +612,7 @@ void science_dialog_update(void)
 
   gtk_widget_set_sensitive(science_change_from_goal_button, can_client_issue_orders());
 
-  if (game.player_ptr->ai.tech_goal == A_UNSET) {
+  if (get_player_ptr()->ai.tech_goal == A_UNSET) {
     science_list_add(reachable_goals, &iter, A_UNSET);
     gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_goal_combo),
 				  &iter);
@@ -621,12 +621,12 @@ void science_dialog_update(void)
   /* collect all techs which are reachable in under 11 steps
    * hist will hold afterwards the techid of the current choice
    */
-  for (i = A_FIRST; i < game.num_tech_types; i++) {
-    if (tech_is_available(game.player_ptr, i)
-        && get_invention(game.player_ptr, i) != TECH_KNOWN
+  for (i = A_FIRST; i < game.ruleset_control.num_tech_types; i++) {
+    if (tech_is_available(get_player_ptr(), i)
+        && get_invention(get_player_ptr(), i) != TECH_KNOWN
         && advances[i].req[0] != A_LAST && advances[i].req[1] != A_LAST
-        && (num_unknown_techs_for_goal(game.player_ptr, i) < 11
-	    || i == game.player_ptr->ai.tech_goal)) {
+        && (num_unknown_techs_for_goal(get_player_ptr(), i) < 11
+	    || i == get_player_ptr()->ai.tech_goal)) {
       sorting_list = g_list_append(sorting_list, GINT_TO_POINTER(i));
     }
   }
@@ -640,7 +640,7 @@ void science_dialog_update(void)
     gint tech = GPOINTER_TO_INT(g_list_nth_data(it, 0));
 
     science_list_add(reachable_goals, &iter, tech);
-    if (tech == game.player_ptr->ai.tech_goal) {
+    if (tech == get_player_ptr()->ai.tech_goal) {
       gtk_combo_box_set_active_iter(GTK_COMBO_BOX(science_goal_combo),
 				    &iter);
     }
@@ -809,11 +809,11 @@ static void economy_selection_callback(GtkTreeSelection *selection,
   if (row >= 0) {
     if (economy_row_type[row].is_impr == TRUE) {
       /* The user has selected an improvement type. */
-      bool is_sellable = (i >= 0 && i < game.num_impr_types && !is_wonder(i));
+      bool is_sellable = (i >= 0 && i < game.ruleset_control.num_impr_types && !is_wonder(i));
 
       gtk_widget_set_sensitive(sellobsolete_command, is_sellable
 			       && can_client_issue_orders()
-			       && improvement_obsolete(game.player_ptr, i));
+			       && improvement_obsolete(get_player_ptr(), i));
       gtk_widget_set_sensitive(sellall_command, is_sellable
 			       && can_client_issue_orders());
     } else {
@@ -1125,7 +1125,7 @@ static void activeunits_selection_callback(GtkTreeSelection *selection,
 				      ACTIVEUNITS_NEAREST,
 				      can_client_issue_orders());	
     
-    if (can_upgrade_unittype(game.player_ptr, ut) != -1) {
+    if (can_upgrade_unittype(get_player_ptr(), ut) != -1) {
       gui_dialog_set_response_sensitive(activeunits_dialog_shell,
 					ACTIVEUNITS_UPGRADE,
 					can_client_issue_orders());	
@@ -1145,7 +1145,7 @@ static struct unit *find_nearest_unit(Unit_Type_id type, struct tile *ptile)
   int best_dist = 99999;
 
   best_candidate = NULL;
-  unit_list_iterate(game.player_ptr->units, punit) {
+  unit_list_iterate(get_player_ptr()->units, punit) {
     if (punit->type == type) {
       if (punit->focus_status==FOCUS_AVAIL
 	  && punit->moves_left > 0
@@ -1210,7 +1210,7 @@ static void activeunits_command_callback(struct gui_dialog *dlg, int response)
   } else {
     GtkWidget *shell;
 
-    ut2 = can_upgrade_unittype(game.player_ptr, ut1);
+    ut2 = can_upgrade_unittype(get_player_ptr(), ut1);
 
     shell = gtk_message_dialog_new(
 	  NULL,
@@ -1219,8 +1219,8 @@ static void activeunits_command_callback(struct gui_dialog *dlg, int response)
 	  _("Upgrade as many %s to %s as possible for %d gold each?\n"
 	    "Treasury contains %d gold."),
 	  unit_types[ut1].name, unit_types[ut2].name,
-	  unit_upgrade_price(game.player_ptr, ut1, ut2),
-	  game.player_ptr->economic.gold);
+	  unit_upgrade_price(get_player_ptr(), ut1, ut2),
+	  get_player_ptr()->economic.gold);
     setup_dialog(shell, gui_dialog_get_toplevel(dlg));
 
     gtk_window_set_title(GTK_WINDOW(shell), _("Upgrade Obsolete Units"));
@@ -1259,7 +1259,7 @@ void activeunits_report_dialog_update(void)
     gtk_list_store_clear(activeunits_store);
 
     memset(unitarray, '\0', sizeof(unitarray));
-    unit_list_iterate(game.player_ptr->units, punit) {
+    unit_list_iterate(get_player_ptr()->units, punit) {
       (unitarray[punit->type].active_count)++;
       if (punit->homecity) {
 	unitarray[punit->type].upkeep_shield += punit->upkeep;
@@ -1268,7 +1268,7 @@ void activeunits_report_dialog_update(void)
       }
     }
     unit_list_iterate_end;
-    city_list_iterate(game.player_ptr->cities,pcity) {
+    city_list_iterate(get_player_ptr()->cities,pcity) {
       if (pcity->is_building_unit &&
 	  (unit_type_exists (pcity->currently_building)))
 	(unitarray[pcity->currently_building].building_count)++;
@@ -1280,7 +1280,7 @@ void activeunits_report_dialog_update(void)
     unit_type_iterate(i) {
     
       if ((unitarray[i].active_count > 0) || (unitarray[i].building_count > 0)) {
-	can = (can_upgrade_unittype(game.player_ptr, i) != -1);
+	can = (can_upgrade_unittype(get_player_ptr(), i) != -1);
 	
         gtk_list_store_append(activeunits_store, &it);
 	gtk_list_store_set(activeunits_store, &it,

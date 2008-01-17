@@ -541,7 +541,7 @@ static void base_load_static_settings(struct section_file *psf)
   } else
 
 #define load_owner(type, data, ...)					    \
-  load(type, data, __VA_ARGS__) if (data->owner!=game.player_idx) {	    \
+  load(type, data, __VA_ARGS__) if (data->owner!=get_player_idx()) {	    \
     freelog(LOG_VERBOSE, "Cannot load the %s at %s, line %d (wrong owner)", \
             #type, __FILE__,__LINE__);					    \
     data = NULL;							    \
@@ -576,7 +576,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
       compatible = FALSE;
     }
     num = secfile_lookup_int_default(psf, -1, "game_info.nplayers");
-    if (num != -1 && num != game.nplayers) {
+    if (num != -1 && num != game.info.nplayers) {
       compatible = FALSE;
     } else {
       for (i = 0; i < num; i++) {
@@ -762,7 +762,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
     /* Ok, all looks fine, ready to apply... */
     freelog(LOG_DEBUG, "Apply dynamic settings");
     city_list_iterate(trallypoint, ccity) {
-      city_set_rally_point(player_find_city_by_id(game.player_ptr,ccity->id),
+      city_set_rally_point(player_find_city_by_id(get_player_ptr(),ccity->id),
 			   ccity->rally_point);
     } city_list_iterate_end;
     for (i = 0; i < MULTI_SELECT_NUM; i++) {
@@ -783,7 +783,7 @@ static void base_load_dynamic_settings(struct section_file *psf)
       my_ai_trade_route_alloc(ptr);
     } trade_route_list_iterate_end;
     unit_list_iterate(tpatrolers, cunit) {
-      struct unit *punit = player_find_unit_by_id(game.player_ptr, cunit->id);
+      struct unit *punit = player_find_unit_by_id(get_player_ptr(), cunit->id);
       my_ai_orders_free(punit);
       my_ai_patrol_alloc(punit, (struct tile *)cunit->my_ai.data);
     } unit_list_iterate_end;
@@ -1020,7 +1020,7 @@ void save_all_settings(void)
   secfile_insert_int(&sf, map.xsize, "game_info.xsize");
   secfile_insert_int(&sf, map.ysize, "game_info.ysize");
   secfile_insert_int(&sf, map.topology_id, "game_info.topology_id");
-  secfile_insert_int(&sf, game.nplayers, "game_info.nplayers");
+  secfile_insert_int(&sf, game.info.nplayers, "game_info.nplayers");
   i = 0;
   players_iterate(pplayer) {
     save_player(&sf, pplayer, "game_info.player%d", i);
@@ -1029,7 +1029,7 @@ void save_all_settings(void)
 
   /* Rally points */
   i = 0;
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!pcity->rally_point) {
       continue;
     }
@@ -1143,7 +1143,7 @@ void save_all_settings(void)
   struct cm_parameter parameter;
 
   i = 0;
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!cma_is_city_under_agent(pcity,&parameter)) {
       continue;
     }
@@ -1185,7 +1185,7 @@ void save_all_settings(void)
 ***********************************************************************/
 void autosave_settings(void)
 {
-  if (save_turns == 0 || client_is_observer() || !aconnection.player) {
+  if (save_turns == 0 || client_is_observer() || !get_player_ptr()) {
     return;
   }
 

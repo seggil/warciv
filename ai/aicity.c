@@ -113,11 +113,11 @@ static inline int city_want(struct player *pplayer, struct city *acity,
   shields -= city_waste(acity, shields);
   get_tax_income(pplayer, trade, &sci, &lux, &tax);
   sci += (acity->specialists[SP_SCIENTIST]
-	  * game.rgame.specialists[SP_SCIENTIST].bonus);
+	  * game.ruleset_game.specialist_bonus[SP_SCIENTIST]);
   lux += (acity->specialists[SP_ELVIS]
-	  * game.rgame.specialists[SP_ELVIS].bonus);
+	  * game.ruleset_game.specialist_bonus[SP_ELVIS]);
   tax += (acity->specialists[SP_TAXMAN]
-	  * game.rgame.specialists[SP_TAXMAN].bonus);
+	  * game.ruleset_game.specialist_bonus[SP_TAXMAN]);
 
   built_impr_iterate(acity, i) {
     tax -= improvement_upkeep(acity, i);
@@ -163,7 +163,7 @@ static int base_want(struct player *pplayer, struct city *pcity,
   /* Add the improvement */
   city_add_improvement(pcity, id);
   if (is_wonder(id)) {
-    game.global_wonders[id] = pcity->id;
+    game.info.global_wonders[id] = pcity->id;
   }
 
   /* Stir, then compare notes */
@@ -174,7 +174,7 @@ static int base_want(struct player *pplayer, struct city *pcity,
   /* Restore */
   city_remove_improvement(pcity, id);
   if (is_wonder(id)) {
-    game.global_wonders[id] = 0;
+    game.info.global_wonders[id] = 0;
   }
 
   /* Ensure that we didn't inadvertantly move our palace */
@@ -205,8 +205,8 @@ static void adjust_building_want_by_effects(struct city *pcity,
   struct impr_type *pimpr = get_improvement_type(id);
   int v = 0;
   int cities[EFR_LAST];
-  int nplayers = game.nplayers
-                 - game.nbarbarians
+  int nplayers = game.info.nplayers
+                 - game.server.nbarbarians
                  - team_count_members_alive(pplayer->team);
   struct ai_data *ai = ai_data_get(pplayer);
   struct tile *ptile = pcity->tile;
@@ -303,7 +303,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    }
 	    break;
 	  case EFT_TECH_PARASITE:
-	    v += (total_bulbs_required(pplayer) * (100 - game.freecost)
+	    v += (total_bulbs_required(pplayer) * (100 - game.info.freecost)
 		* (nplayers - amount)) / (nplayers * amount * 100);
 	    break;
 	  case EFT_GROWTH_FOOD:
@@ -325,7 +325,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    v += 20 + ai->stats.units.missiles * 5;
 	    break;
 	  case EFT_ENABLE_SPACE:
-	    if (game.spacerace) {
+	    if (game.info.spacerace) {
 	      v += 5;
 	      if (ai->diplomacy.production_leader == pplayer) {
 		v += 100;
@@ -334,7 +334,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    break;
 	  case EFT_GIVE_IMM_TECH:
 	    if (!ai_wants_no_science(pplayer)) {
-	      v += amount * (game.researchcost + 1);
+	      v += amount * (game.info.researchcost + 1);
 	    }
 	    break;
 	  case EFT_HAVE_EMBASSIES:
@@ -362,16 +362,16 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	  case EFT_SIZE_ADJ: 
             if (!city_can_grow_to(pcity, pcity->size + 1)) {
 	      v += pcity->food_surplus * ai->food_priority * amount;
-              if (pcity->size == game.aqueduct_size) {
+              if (pcity->size == game.ruleset_control.aqueduct_size) {
                 v += 30 * pcity->food_surplus;
               }
 	    }
-	    v += c * amount * 4 / game.aqueduct_size;
+	    v += c * amount * 4 / game.ruleset_control.aqueduct_size;
 	    break;
 	  case EFT_SS_STRUCTURAL:
 	  case EFT_SS_COMPONENT:
 	  case EFT_SS_MODULE:
-	    if (game.spacerace
+	    if (game.info.spacerace
 	        /* If someone has started building spaceship already or
 		 * we have chance to win a spacerace */
 	        && (ai->diplomacy.spacerace_leader
@@ -468,9 +468,10 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    break;
 	  case EFT_NO_INCITE:
 	    if (!government_has_flag(gov, G_UNBRIBABLE)) {
-	      v += MAX((game.diplchance * 2 - game.incite_cost.total_factor) / 2
-		  - game.incite_cost.improvement_factor * 5
-		  - game.incite_cost.unit_factor * 5, 0);
+	      v += MAX((game.server.diplchance * 2
+			- game.server.incite_cost.total_factor) / 2
+		  - game.server.incite_cost.improvement_factor * 5
+		  - game.server.incite_cost.unit_factor * 5, 0);
 	    }
 	    break;
           case EFT_REGEN_REPUTATION:
@@ -529,7 +530,7 @@ void ai_manage_buildings(struct player *pplayer)
       continue;
     }
     city_list_iterate(pplayer->cities, pcity) {
-      if (pplayer->ai.control && pcity->ai.next_recalc > game.turn) {
+      if (pplayer->ai.control && pcity->ai.next_recalc > game.info.turn) {
         continue; /* do not recalc yet */
       } else {
         pcity->ai.building_want[id] = 0; /* do recalc */
@@ -548,10 +549,11 @@ void ai_manage_buildings(struct player *pplayer)
 
   /* Reset recalc counter */
   city_list_iterate(pplayer->cities, pcity) {
-    if (pcity->ai.next_recalc <= game.turn) {
+    if (pcity->ai.next_recalc <= game.info.turn) {
       /* This will spread recalcs out so that no one turn end is 
        * much longer than others */
-      pcity->ai.next_recalc = game.turn + myrand(RECALC_SPEED) + RECALC_SPEED;
+      pcity->ai.next_recalc = game.info.turn + myrand(RECALC_SPEED)
+	                      + RECALC_SPEED;
     }
   } city_list_iterate_end;
 }
@@ -625,7 +627,7 @@ static void ai_barbarian_choose_build(struct player *pplayer,
   for(i = 0; i < num_role_units(L_BARBARIAN_BUILD_TECH); i++) {
     Unit_Type_id iunit = get_role_unit(L_BARBARIAN_BUILD_TECH, i);
 
-    if (game.global_advances[get_unit_type(iunit)->tech_requirement] != 0
+    if (game.info.global_advances[get_unit_type(iunit)->tech_requirement] != 0
 	&& get_unit_type(iunit)->attack_strength > bestattack) {
       bestunit = iunit;
       bestattack = get_unit_type(iunit)->attack_strength;
@@ -683,8 +685,9 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
     if (best_role_unit(pcity, F_TRADE_ROUTE) != U_LAST) {
       pcity->ai.choice.choice = best_role_unit(pcity, F_TRADE_ROUTE);
       pcity->ai.choice.type = CT_NONMIL;
-    } else if (can_build_improvement(pcity, game.default_building)) {
-      pcity->ai.choice.choice = game.default_building;
+    } else if (can_build_improvement(pcity,
+				     game.ruleset_control.default_building)) {
+      pcity->ai.choice.choice = game.ruleset_control.default_building;
       pcity->ai.choice.type = CT_BUILDING;
     } else if (best_role_unit(pcity, F_SETTLERS) != U_LAST) {
       pcity->ai.choice.choice = best_role_unit(pcity, F_SETTLERS);
@@ -979,11 +982,12 @@ void ai_manage_cities(struct player *pplayer)
     /* Will record its findings in pcity->settler_want */ 
     contemplate_terrain_improvements(pcity);
 
-    if (pcity->ai.next_founder_want_recalc <= game.turn) {
+    if (pcity->ai.next_founder_want_recalc <= game.info.turn) {
       /* Will record its findings in pcity->founder_want */ 
       contemplate_new_city(pcity);
       /* Avoid recalculating all the time.. */
-      pcity->ai.next_founder_want_recalc = game.turn + myrand(RECALC_SPEED) + RECALC_SPEED;
+      pcity->ai.next_founder_want_recalc = game.info.turn + myrand(RECALC_SPEED)
+	                                   + RECALC_SPEED;
     } 
   } city_list_iterate_end;
 

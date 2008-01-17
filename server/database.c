@@ -797,7 +797,7 @@ static bool fcdb_insert_player(MYSQL *sock, struct player *pplayer)
 
   my_snprintf(buf, sizeof(buf), "INSERT INTO players"
       "(game_id, name, nation) VALUES (%d, '%s', '%s')",
-      game.fcdb.id, fcdb_escape(sock, pplayer->name),
+      game.server.fcdb.id, fcdb_escape(sock, pplayer->name),
       fcdb_escape(sock, get_nation_name(pplayer->nation)));
 
   fcdb_execute_or_return(sock, buf, FALSE);
@@ -819,8 +819,8 @@ static bool fcdb_insert_player(MYSQL *sock, struct player *pplayer)
         "  SELECT id FROM teams "
         "    WHERE teams.game_id = %d AND teams.name = '%s'"
         ") WHERE id = %d",
-        game.fcdb.id,
-        fcdb_escape(sock, team_get_by_id(pplayer->team)->name),
+        game.server.fcdb.id,
+        fcdb_escape(sock, get_team_name(pplayer->team)),
         pplayer->fcdb.player_id);
     fcdb_execute_or_return(sock, buf, FALSE);
   }
@@ -893,7 +893,7 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   memset(bind, 0, sizeof(bind));
 
   bind[0].buffer_type = MYSQL_TYPE_LONG;
-  bind[0].buffer = (char *) &game.fcdb.id;
+  bind[0].buffer = (char *) &game.server.fcdb.id;
   bind[0].is_null = 0;
   bind[0].length = 0;
 
@@ -918,10 +918,10 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   mysql_stmt_close(stmt);
   free(tmap_comp);
 
-  if (game.fcdb.termap) {
-    free(game.fcdb.termap);
+  if (game.server.fcdb.termap) {
+    free(game.server.fcdb.termap);
   }
-  game.fcdb.termap = tmap;
+  game.server.fcdb.termap = tmap;
 
   return TRUE;
 
@@ -967,7 +967,7 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
     = "INSERT INTO turn_maps (turn_id, map) VALUES (?, ?)";
 
   changed_list = tile_list_new();
-  tmap = etm_encode_turn_map(game.fcdb.termap, changed_list);
+  tmap = etm_encode_turn_map(game.server.fcdb.termap, changed_list);
   if (!tmap) {
     fcdb_error("Failed to encode turn map.");
     goto ERROR;
@@ -1046,7 +1046,7 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
   /* Now deal with any terrain that has changed from
    * the original map. */
 
-  rdict = get_termap_rdict(game.fcdb.termap);
+  rdict = get_termap_rdict(game.server.fcdb.termap);
 
   tile_list_iterate(changed_list, ptile) {
     index = get_tile_termap_index(ptile);
@@ -1178,10 +1178,10 @@ static char *etm_encode_terrain_map(void)
   const char *rdict;
   struct tile *ptile;
 
-  if (game.terrain_count > FCDB_ETM_DICT_LEN) {
+  if (game.ruleset_control.terrain_count > FCDB_ETM_DICT_LEN) {
     freelog(LOG_ERROR, _("Cannot encode more than %d terrain types! "
                          "Ruleset has %d."),
-            FCDB_ETM_DICT_LEN, game.terrain_count);
+            FCDB_ETM_DICT_LEN, game.ruleset_control.terrain_count);
     return NULL;
   }
   if (map.xsize > 255 || map.ysize > 255) {
@@ -1292,8 +1292,7 @@ static bool load_old_rating(MYSQL *sock,
       "  WHERE id = ("
       "    SELECT MAX(id) FROM ratings"
       "      WHERE user_id = %d AND game_type = '%s')",
-      user_id,
-      game_type_as_string(game_type));
+      user_id, game_type_name_orig(game_type));
   fcdb_execute_or_return(sock, buf, FALSE);
 
   res = mysql_store_result(sock);
@@ -1381,11 +1380,11 @@ bool fcdb_record_game_start(void)
       host, srvarg.port, fcdb_escape(sock, VERSION_STRING),
       fcdb_escape(sock, get_meta_patches_string()),
       fcdb_escape(sock, our_capability),
-      fcdb_escape(sock, game.rulesetdir),
-      game_type_as_string(game.fcdb.type));
+      fcdb_escape(sock, game.server.rulesetdir),
+      game_type_name_orig(game.server.fcdb.type));
   fcdb_reset_escape_buffer();
   fcdb_execute_or_return(sock, buf, FALSE);
-  game.fcdb.id = mysql_insert_id(sock);
+  game.server.fcdb.id = mysql_insert_id(sock);
 
   /* Record the terrain map. */
   if (!fcdb_insert_terrain_map(sock)) {
@@ -1409,17 +1408,17 @@ bool fcdb_record_game_start(void)
     case SSET_BOOL:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%s')",
-          game.fcdb.id, op->name, *op->bool_value ? "true" : "false");
+          game.server.fcdb.id, op->name, *op->bool_value ? "true" : "false");
       break;
     case SSET_INT:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%d')",
-          game.fcdb.id, op->name, *op->int_value);
+          game.server.fcdb.id, op->name, *op->int_value);
       break;
     case SSET_STRING:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%s')",
-          game.fcdb.id, op->name, fcdb_escape(sock, op->string_value));
+          game.server.fcdb.id, op->name, fcdb_escape(sock, op->string_value));
       fcdb_reset_escape_buffer(); 
       break;
     default:
@@ -1433,8 +1432,8 @@ bool fcdb_record_game_start(void)
   team_iterate(pteam) {
     my_snprintf(buf, sizeof(buf), "INSERT INTO teams "
         "(game_id, name, num_players) VALUES (%d, '%s', %d)",
-        game.fcdb.id,
-        fcdb_escape(sock, pteam->name),
+        game.server.fcdb.id,
+        fcdb_escape(sock, get_team_name(pteam->id)),
         pteam->member_count);
     fcdb_reset_escape_buffer();
     fcdb_execute_or_return(sock, buf, FALSE);
@@ -1474,8 +1473,8 @@ bool fcdb_end_of_turn_update(void)
 
   freelog(LOG_VERBOSE, _("FCDB: Recording turn data into database."));
 
-  if (game.fcdb.id <= 0) {
-    fcdb_error("Current game id is invalid.");
+  if (game.server.fcdb.id <= 0) {
+    fcdb_error("Current game_id is invalid.");
     return FALSE;
   }
 
@@ -1486,7 +1485,7 @@ bool fcdb_end_of_turn_update(void)
   /* Make a record for this turn. */
   my_snprintf(buf, sizeof(buf), "INSERT INTO turns"
       "(game_id, turn_no, year) VALUES (%d, %d, %d)",
-      game.fcdb.id, game.turn, game.year);
+      game.server.fcdb.id, game.info.turn, game.info.year);
   fcdb_execute_or_return(sock, buf, FALSE);
 
   turn_id = mysql_insert_id(sock);
@@ -1498,7 +1497,7 @@ bool fcdb_end_of_turn_update(void)
   /* Update the game record with that last turn we know about. */
   my_snprintf(buf, sizeof(buf), "UPDATE games "
       "SET last_turn_id = %d, last_update = NOW() WHERE id = %d",
-      turn_id, game.fcdb.id);
+      turn_id, game.server.fcdb.id);
   fcdb_execute_or_return(sock, buf, FALSE);
 
   /* Check to see if any new players have magically appeared. */
@@ -1637,8 +1636,8 @@ bool fcdb_record_game_end(void)
 
   freelog(LOG_VERBOSE, _("FCDB: Recording game end into database."));
 
-  if (game.fcdb.id <= 0) {
-    fcdb_error("Current game id is invalid.");
+  if (game.server.fcdb.id <= 0) {
+    fcdb_error("Current game_id is invalid.");
     return FALSE;
   }
 
@@ -1654,7 +1653,7 @@ bool fcdb_record_game_end(void)
     }
     my_snprintf(buf, sizeof(buf), "UPDATE players "
         "SET result = '%s', rank = %f WHERE id = %d",
-        result_as_string(pplayer->result),
+        result_name_orig(pplayer->result),
         pplayer->rank,
         pplayer->fcdb.player_id);
     fcdb_execute_or_return(sock, buf, FALSE);
@@ -1665,8 +1664,9 @@ bool fcdb_record_game_end(void)
     my_snprintf(buf, sizeof(buf), "UPDATE teams "
         "SET score = %f, rank = %f, result = '%s'"
         "WHERE game_id = %d AND STRCMP(name, '%s') = 0",
-        pteam->score, pteam->rank, result_as_string(pteam->result),
-        game.fcdb.id, fcdb_escape(sock, pteam->name));
+        pteam->score, pteam->rank, result_name_orig(pteam->result),
+        game.server.fcdb.id,
+        fcdb_escape(sock, get_team_name(pteam->id)));
     fcdb_reset_escape_buffer();
     fcdb_execute_or_return(sock, buf, FALSE);
   } team_iterate_end;
@@ -1674,10 +1674,10 @@ bool fcdb_record_game_end(void)
   /* Record game outcome. */
   my_snprintf(buf, sizeof(buf), "UPDATE games "
       "SET outcome = '%s' WHERE id = %d",
-      game_outcome_strings[game.fcdb.outcome], game.fcdb.id);
+      game_outcome_name_orig(game.server.fcdb.outcome), game.server.fcdb.id);
   fcdb_execute_or_return(sock, buf, FALSE);
 
-  if (game.rated) {
+  if (game.server.rated) {
     players_iterate(pplayer) {
       if (pplayer->fcdb.player_id <= 0
           || pplayer->fcdb.rated_user_id <= 0
@@ -1691,13 +1691,13 @@ bool fcdb_record_game_end(void)
           " rating, rating_deviation, game_type) "
           "VALUES (%d, %d, %d, %f, %f, %f, %f, '%s')",
           pplayer->fcdb.rated_user_id,
-          game.fcdb.id,
+          game.server.fcdb.id,
           pplayer->fcdb.player_id,
           pplayer->fcdb.rating,
           pplayer->fcdb.rating_deviation,
           pplayer->fcdb.new_rating,
           pplayer->fcdb.new_rating_deviation,
-          game_type_as_string(game.fcdb.type));
+          game_type_name_orig(game.server.fcdb.type));
       fcdb_execute_or_return(sock, buf, FALSE);
     } players_iterate_end;
   }
@@ -1742,7 +1742,7 @@ bool fcdb_load_player_ratings(int game_type)
      * this player. */
     user_id_for_old_rating = 0;
 
-    if (pplayer->fcdb.player_id > 0 && game.fcdb.id > 0) {
+    if (pplayer->fcdb.player_id > 0 && game.server.fcdb.id > 0) {
       /* Find all users that have been connected to this player
          and how many turns each of them were connected. */
       my_snprintf(buf, sizeof(buf),
@@ -1755,7 +1755,7 @@ bool fcdb_load_player_ratings(int game_type)
           "    AND ps.player_id = %d"
           "  GROUP BY a.id"
           "  ORDER BY turn_count DESC",
-          game.fcdb.id, pplayer->fcdb.player_id);
+          game.server.fcdb.id, pplayer->fcdb.player_id);
 
       if (!fcdb_execute(sock, buf)) {
         goto FAILED;
@@ -1973,11 +1973,11 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username)
     num_rows = mysql_num_rows(res);
     for (j = 0; j < num_rows; j++) {
       row = mysql_fetch_row(res);
-      if (0 == strcmp(row[0], result_as_string(PR_WIN))) {
+      if (0 == strcmp(row[0], result_name_orig(PR_WIN))) {
         fus->gt_stats[i].wins = atoi(row[1]);
-      } else if (0 == strcmp(row[0], result_as_string(PR_LOSE))) {
+      } else if (0 == strcmp(row[0], result_name_orig(PR_LOSE))) {
         fus->gt_stats[i].loses = atoi(row[1]);
-      } else if (0 == strcmp(row[0], result_as_string(PR_DRAW))) {
+      } else if (0 == strcmp(row[0], result_name_orig(PR_DRAW))) {
         fus->gt_stats[i].draws = atoi(row[1]);
       }
     }
@@ -2089,8 +2089,8 @@ bool fcdb_get_user_rating(const char *username,
     return TRUE;
   }
 
-  if (game_type_as_string(game_type) == NULL) {
-    game_type = game.fcdb.type;
+  if (game_type_name_orig(game_type) == NULL) {
+    game_type = game.server.fcdb.type;
   }
 
   my_snprintf(buf, sizeof(buf),
@@ -2098,7 +2098,7 @@ bool fcdb_get_user_rating(const char *username,
       "  WHERE id = ("
       "    SELECT MAX(id) FROM ratings"
       "      WHERE user_id = %d AND game_type = '%s')",
-      id, game_type_as_string(game_type));
+      id, game_type_name_orig(game_type));
   fcdb_execute_or_return(sock, buf, FALSE);
 
   res = mysql_store_result(sock);
@@ -2171,7 +2171,7 @@ bool fcdb_get_recent_games(const char *username,
 }
 
 /**************************************************************************
-  The 'id' parameter is the game id (a.k.a. game #) in the database.
+  The 'id' parameter is the gam_id (a.k.a. game #) in the database.
 **************************************************************************/
 struct fcdb_game_info *fcdb_game_info_new(int id)
 {
@@ -2379,7 +2379,7 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
       "    ON r.id = rm.last_id AND a.id = r.user_id"
       "  ORDER BY r.rating DESC"
       "  LIMIT 10",
-      game_type_as_string(type));
+      game_type_name_orig(type));
   fcdb_execute_or_return(sock, buf, NULL);
 
   res = mysql_store_result(sock);
@@ -2416,7 +2416,7 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
       "  GROUP BY p.result"
       "  ORDER BY FIELD(p.result, 'win', 'lose', 'draw')"
       "  LIMIT 3",
-      tte->id, game_type_as_string(type));
+      tte->id, game_type_name_orig(type));
     if (!fcdb_execute(sock, buf)) {
       goto ERROR;
     }
@@ -2516,7 +2516,7 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user)
         "  GROUP BY g.id"
         "  ORDER BY g.id DESC"
         "  LIMIT 50",
-        game_type_as_string(type));
+        game_type_name_orig(type));
     if (!fcdb_execute(sock, buf)) {
       goto ERROR;
     }

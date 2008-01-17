@@ -140,3 +140,9 @@ struct setting_value {
   int int_value;
   char string_value[512]; /* MAX_LEN_CONSOLE_LINE */
 };
+
+bool sset_is_changeable(int idx);
+bool sset_is_to_client(int idx);
+
+void settings_init(void);
+void settings_reset(void);

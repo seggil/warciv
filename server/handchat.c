@@ -402,7 +402,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 
 #undef EMOTICON_BELOW_EYES_CHARACTERS
 
-  if (game.no_public_links) {
+  if (game.server.no_public_links) {
     const char *p = strchr(message, '@');
 
     /* Very simple chat link detection.

@@ -85,7 +85,7 @@ int find_a_unit_type(int role, int role_tech)
   if (role_tech != -1) {
     for(i=0; i<num_role_units(role_tech); i++) {
       int iunit = get_role_unit(role_tech, i);
-      if (game.global_advances[get_unit_type(iunit)->tech_requirement] >= 2) {
+      if (game.info.global_advances[get_unit_type(iunit)->tech_requirement] >= 2) {
 	which[num++] = iunit;
       }
     }
@@ -131,7 +131,7 @@ bool maybe_make_veteran(struct unit *punit)
     /* The modification is tacked on as a multiplier to the base chance.
      * For example with a base chance of 50% for green units and a modifier
      * of +50% the end chance is 75%. */
-    if (myrand(100) < game.veteran_chance[punit->veteran] * mod / 100) {
+    if (myrand(100) < game.ruleset_game.veteran_chance[punit->veteran] * mod / 100) {
       punit->veteran++;
       return TRUE;
     }
@@ -513,7 +513,7 @@ static bool maybe_settler_become_veteran(struct unit *punit)
     return FALSE;
   }
   if (unit_flag(punit, F_SETTLERS)
-      && myrand(100) < game.work_veteran_chance[punit->veteran]) {
+      && myrand(100) < game.ruleset_game.work_veteran_chance[punit->veteran]) {
     punit->veteran++;
     return TRUE;
   }
@@ -1094,8 +1094,8 @@ void make_partisans(struct city *pcity)
 
   if (num_role_units(L_PARTISAN)==0)
     return;
-  if (!tech_exists(game.rtech.u_partisan)
-      || game.global_advances[game.rtech.u_partisan] == 0
+  if (!tech_exists(game.server.u_partisan)
+      || game.info.global_advances[game.server.u_partisan] == 0
       || pcity->original != pcity->owner)
     return;
 
@@ -1104,7 +1104,7 @@ void make_partisans(struct city *pcity)
   
   pplayer = city_owner(pcity);
   for(i=0; i<MAX_NUM_TECH_LIST; i++) {
-    int tech = game.rtech.partisan_req[i];
+    int tech = game.ruleset_control.rtech_partisan_req[i];
     if (tech == A_LAST) break;
     if (get_invention(pplayer, tech) != TECH_KNOWN) return;
     /* Was A_COMMUNISM and A_GUNPOWDER */
@@ -1968,7 +1968,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
     }
   } conn_list_iterate_end;
   
-  if (game.timeout != 0 && new_information_for_enemy){
+  if (game.info.timeout != 0 && new_information_for_enemy){
     increase_timeout_because_unit_moved();
   }
 
@@ -1999,7 +1999,7 @@ void send_all_known_units(struct conn_list *dest)
     if (!pconn->player && !pconn->observer) {
       continue;
     }
-    for(p=0; p<game.nplayers; p++) { /* send the players units */
+    for(p=0; p<game.info.nplayers; p++) { /* send the players units */
       struct player *unitowner = &game.players[p];
       unit_list_iterate(unitowner->units, punit) {
 	if (!pplayer
@@ -2079,7 +2079,7 @@ static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
   }
 
   if (!is_ocean(map_get_terrain(ptile)) && myrand(2) == 1) {
-    if (game.rgame.nuke_contamination == CONTAMINATION_POLLUTION) {
+    if (game.ruleset_game.nuke_contamination == CONTAMINATION_POLLUTION) {
       if (!map_has_special(ptile, S_POLLUTION)) {
 	map_set_special(ptile, S_POLLUTION);
 	update_tile_knowledge(ptile);
@@ -2371,14 +2371,14 @@ static bool unit_enter_hut(struct unit *punit)
   bool ok = TRUE;
   int hut_chance = myrand(12);
   
-  if (game.rgame.hut_overflight==OVERFLIGHT_NOTHING && is_air_unit(punit)) {
+  if (game.ruleset_game.hut_overflight==OVERFLIGHT_NOTHING && is_air_unit(punit)) {
     return ok;
   }
 
   map_clear_special(punit->tile, S_HUT);
   update_tile_knowledge(punit->tile);
 
-  if (game.rgame.hut_overflight==OVERFLIGHT_FRIGHTEN && is_air_unit(punit)) {
+  if (game.ruleset_game.hut_overflight==OVERFLIGHT_FRIGHTEN && is_air_unit(punit)) {
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
 		     _("Game: Your overflight frightens the tribe;"
 		       " they scatter in terror."));
@@ -2492,7 +2492,7 @@ static bool wakeup_neighbor_sentries(struct unit *punit)
 	set_unit_activity(penemy, ACTIVITY_IDLE);
 	send_unit_info(NULL, penemy);
       }
-            if(game.improvedautoattack && penemy->ai.control && pplayers_at_war(unit_owner(penemy),unit_owner(punit))) {
+            if(game.ext_info.improvedautoattack && penemy->ai.control && pplayers_at_war(unit_owner(penemy),unit_owner(punit))) {
                    auto_attack_with_unit(get_player(penemy->owner),penemy);
                    cunit = find_unit_by_id(id);
                    if(!cunit)return FALSE;//our unit got killed
@@ -2579,7 +2579,7 @@ static void handle_unit_move_consequences(struct unit *punit,
 
     /* entering/leaving a fortress or friendly territory */
     if (homecity) {
-      if ((game.happyborders > 0 && src_tile->owner != dst_tile->owner)
+      if ((game.ruleset_control.happyborders > 0 && src_tile->owner != dst_tile->owner)
           ||
 	  (map_has_special(dst_tile, S_FORTRESS)
 	   && is_friendly_city_near(unit_owner(punit), dst_tile))
@@ -2631,6 +2631,15 @@ static void check_unit_activity(struct unit *punit)
       && punit->activity != ACTIVITY_GOTO) {
     set_unit_activity(punit, ACTIVITY_IDLE);
   }
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+bool kills_citizen_after_attack(struct unit *punit)
+{
+  return TEST_BIT(game.server.killcitizen,
+		  (int) (unit_type(punit)->move_type) - 1);
 }
 
 /**************************************************************************
@@ -3109,12 +3118,12 @@ int get_watchtower_vision(struct unit *punit)
   int base_vision = unit_type(punit)->vision_range;
 
   assert(base_vision > 0);
-  assert(game.watchtower_vision > 0);
-  assert(game.watchtower_extra_vision >= 0);
+  assert(game.server.watchtower_vision > 0);
+  assert(game.server.watchtower_extra_vision >= 0);
 
   return MAX(base_vision,
-	     MAX(game.watchtower_vision,
-		 base_vision + game.watchtower_extra_vision));
+	     MAX(game.server.watchtower_vision,
+		 base_vision + game.server.watchtower_extra_vision));
 }
 
 /**************************************************************************

@@ -91,7 +91,7 @@ struct player *shuffled_player(int i);
 {                                                                           \
   struct player *pplayer;                                                   \
   int i;                                                                    \
-  for (i = 0; i < game.nplayers; i++) {                                     \
+  for (i = 0; i < game.info.nplayers; i++) {                                     \
     pplayer = shuffled_player(i);                                           \
     {
 

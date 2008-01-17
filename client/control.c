@@ -165,7 +165,7 @@ void set_unit_focus(struct unit *punit)
   struct unit *punit_old_focus = punit_focus;
   bool ms_clear = FALSE;
 
-  if (punit && punit->owner != game.player_idx) {
+  if (punit && punit->owner != get_player_idx()) {
     freelog(LOG_ERROR, "Trying to focus on another player's unit!");
     return;
   }
@@ -302,7 +302,7 @@ void advance_unit_focus(void)
 
   if (!candidate) {
     /* First try for "waiting" units. */
-    unit_list_iterate(game.player_ptr->units, punit) {
+    unit_list_iterate(get_player_ptr()->units, punit) {
       if(punit->focus_status == FOCUS_WAIT) {
         punit->focus_status = FOCUS_AVAIL;
       }
@@ -360,7 +360,7 @@ static struct unit *find_best_focus_candidate(bool accept_current)
   }
 
   best_candidate = NULL;
-  unit_list_iterate(game.player_ptr->units, punit) {
+  unit_list_iterate(get_player_ptr()->units, punit) {
     if ((punit != punit_focus || accept_current)
       && punit->focus_status == FOCUS_AVAIL
       && punit->activity == ACTIVITY_IDLE
@@ -449,7 +449,7 @@ struct unit *find_visible_unit(struct tile *ptile)
        4: any unit
      (always return first in stack). */
   unit_list_iterate(ptile->units, punit) {
-    if (unit_owner(punit) == game.player_ptr) {
+    if (unit_owner(punit) == get_player_ptr()) {
       if (punit->transported_by == -1) {
         if (get_transporter_capacity(punit) > 0) {
 	  return punit;
@@ -607,11 +607,11 @@ void process_caravan_arrival(struct unit *punit)
     id = *p_id;
     free(p_id);
     p_id = NULL;
-    punit = player_find_unit_by_id(game.player_ptr, id);
+    punit = player_find_unit_by_id(get_player_ptr(), id);
 
     if (punit && (unit_can_help_build_wonder_here(punit)
 		  || unit_can_est_traderoute_here(punit))
-	&& (!game.player_ptr->ai.control || ai_popup_windows)) {
+	&& (!get_player_ptr()->ai.control || ai_popup_windows)) {
       struct city *pcity_dest = map_get_city(punit->tile);
       struct city *pcity_homecity = find_city_by_id(punit->homecity);
 
@@ -680,7 +680,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
     victim_id = p_ids[1];
     free(p_ids);
     p_ids = NULL;
-    pdiplomat = player_find_unit_by_id(game.player_ptr, diplomat_id);
+    pdiplomat = player_find_unit_by_id(get_player_ptr(), diplomat_id);
     pcity = find_city_by_id(victim_id);
     punit = find_unit_by_id(victim_id);
 
@@ -750,7 +750,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 	  break;
 	case 6: /* Steal tech */
 	  request_diplomat_action(DIPLOMAT_STEAL, diplomat_id,
-				  victim_id, game.num_tech_types);
+				  victim_id, game.ruleset_control.num_tech_types);
 	  break;
 	case 7: /* Incite revolt */
 	  request_diplomat_action(DIPLOMAT_INCITE, diplomat_id, victim_id, 0);
@@ -818,7 +818,7 @@ void key_select_rally_point (void)
     return;
   }
   
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (is_city_hilited(pcity)) {
       n++;
     }
@@ -853,7 +853,7 @@ void request_auto_airlift_destination_selection(void)
 void request_auto_airlift_source_selection(void)
 {
   if (tiles_hilited_cities) {
-    city_list_iterate (game.player_ptr->cities, pcity) {
+    city_list_iterate (get_player_ptr()->cities, pcity) {
       if (!is_city_hilited (pcity)) {
         continue;
       }
@@ -996,7 +996,7 @@ void request_unit_unload_all(struct unit *punit)
 	request_new_unit_activity(pcargo, ACTIVITY_IDLE);
       }
 
-      if (pcargo->owner == game.player_idx
+      if (pcargo->owner == get_player_idx()
 	  && (!plast || !unit_flag(plast,F_MARINES))) {
 	plast = pcargo;
       }
@@ -1031,7 +1031,7 @@ void request_unit_return(struct unit *punit)
     enum unit_activity activity = ACTIVITY_LAST;
     int turns = pf_last_position(path)->turn;
 
-    if (punit->hp + turns * get_player_bonus(game.player_ptr,
+    if (punit->hp + turns * get_player_bonus(get_player_ptr(),
 					     EFT_UNIT_RECOVER)
 	< unit_type(punit)->hp) {
       activity = ACTIVITY_SENTRY;
@@ -1070,7 +1070,7 @@ void request_diplomat_action(enum diplomat_actions action, int dipl_id,
 void wakeup_sentried_units(struct tile *ptile)
 {
   unit_list_iterate(ptile->units, punit) {
-    if(punit->activity == ACTIVITY_SENTRY && game.player_idx == punit->owner) {
+    if(punit->activity == ACTIVITY_SENTRY && get_player_idx() == punit->owner) {
       request_new_unit_activity(punit, ACTIVITY_IDLE);
     }
   }
@@ -1412,7 +1412,7 @@ void request_unit_pillage(struct unit *punit)
 
   if (punit->activity != ACTIVITY_PILLAGE &&
       can_unit_do_activity(punit, ACTIVITY_PILLAGE)) {
-    if ((game.rgame.pillage_select)
+    if ((game.ruleset_game.pillage_select)
 	&& ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
       punit->is_new = FALSE;
       popup_pillage_dialog(punit, (pspresent & (~psworking)));
@@ -1725,7 +1725,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 
   unit_list_unlink(ptile->units, punit);
 
-  if (game.player_idx == punit->owner
+  if (get_player_idx() == punit->owner
       && auto_center_on_unit
       && !unit_has_orders(punit)
       && punit->activity != ACTIVITY_GOTO
@@ -1816,7 +1816,7 @@ void key_clear_rally_point_for_selected_cities (void)
   
   my_snprintf (buf, sizeof (buf), _("Warclient: Removed rally points: "));
 
-  city_list_iterate (game.player_ptr->cities, pcity) {
+  city_list_iterate (get_player_ptr()->cities, pcity) {
     if (!is_city_hilited(pcity) || !pcity->rally_point) {
       continue;
     }
@@ -1877,7 +1877,7 @@ static void set_rally_point_for_selected_cities(struct tile *ptile)
   my_snprintf(buf, sizeof(buf),
 	      _("Warclient: Rallying to (%d, %d) from: "), TILE_XY(ptile));
 
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!is_city_hilited (pcity)) {
       continue;
     }
@@ -1901,7 +1901,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 {
   enum unit_activity ca=connect_activity;
   struct city *pcity = map_get_city(ptile);
-  struct unit *punit = player_find_unit_by_id(game.player_ptr, hover_unit);
+  struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
   bool maybe_goto = FALSE;
 
   if (punit && hover_state == HOVER_MY_AI_TRADE) {
@@ -1925,7 +1925,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     return;
   } else if (hover_state == HOVER_MY_AI_TRADE_CITY) {
     if (pcity) {
-      if (pcity->owner == game.player_idx) {
+      if (pcity->owner == get_player_idx()) {
 	my_ai_add_trade_city(pcity, FALSE);
       } else {
 	append_output_window(
@@ -2056,7 +2056,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     }
   }
   /* Otherwise use popups. */
-  else if (pcity && can_player_see_city_internals(game.player_ptr, pcity)) {
+  else if (pcity && can_player_see_city_internals(get_player_ptr(), pcity)) {
     popup_city_dialog(pcity, FALSE);
   }
   else if (unit_list_size(ptile->units) == 0 && !pcity
@@ -2066,7 +2066,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   else if (unit_list_size(ptile->units) == 1
       && !unit_list_get(ptile->units, 0)->occupy) {
     struct unit *punit = unit_list_get(ptile->units, 0);
-    if (game.player_idx == punit->owner) {
+    if (get_player_idx() == punit->owner) {
       if(can_unit_do_activity(punit, ACTIVITY_IDLE)) {
         maybe_goto = keyboardless_goto;
 	set_unit_focus_and_select(punit);
@@ -2112,7 +2112,7 @@ static struct unit *quickselect(struct tile *ptile,
     return NULL;
   } else if (listsize == 1) {
     struct unit *punit = unit_list_get(ptile->units, 0);
-    return (game.player_idx == punit->owner) ? punit : NULL;
+    return (get_player_idx() == punit->owner) ? punit : NULL;
   }
 
   /*  Quickselect priorities. Units with moves left
@@ -2129,7 +2129,7 @@ static struct unit *quickselect(struct tile *ptile,
    */
 
   unit_list_iterate(ptile->units, punit)  {
-    if(game.player_idx != punit->owner || punit == punit_focus) {
+    if(get_player_idx() != punit->owner || punit == punit_focus) {
       continue;
     }
     if (qtype == SELECT_SEA) {
@@ -2229,7 +2229,7 @@ void attack_after_move(struct unit *punit)
 **************************************************************************/
 void do_unit_goto(struct tile *ptile)
 {
-  struct unit *punit = player_find_unit_by_id(game.player_ptr, hover_unit);
+  struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
 
   if (hover_unit == 0 || (hover_state != HOVER_GOTO)) {
     return;
@@ -2338,7 +2338,7 @@ void key_cancel_action(void)
       popped = goto_pop_waypoint();
 
   if (hover_state != HOVER_NONE && !popped) {
-    struct unit *punit = player_find_unit_by_id(game.player_ptr, hover_unit);
+    struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
 
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
@@ -2369,7 +2369,7 @@ void key_cancel_action(void)
 **************************************************************************/
 void key_center_capital(void)
 {
-  struct city *capital = find_palace(game.player_ptr);
+  struct city *capital = find_palace(get_player_ptr());
 
   if (capital)  {
     /* Center on the tile, and pop up the crosshair overlay. */
@@ -2393,7 +2393,7 @@ void key_end_turn(void)
 **************************************************************************/
 void key_recall_previous_focus_unit(void)
 {
-  struct unit *punit = player_find_unit_by_id(game.player_ptr,
+  struct unit *punit = player_find_unit_by_id(get_player_ptr(),
                                               previous_focus_id);
   if (punit) {
     set_unit_focus_and_select(punit);
@@ -3121,7 +3121,7 @@ void key_my_ai_trade(void)
 void key_my_ai_trade_city(void)
 {
   if (tiles_hilited_cities) {
-    city_list_iterate (game.player_ptr->cities, pcity) {
+    city_list_iterate (get_player_ptr()->cities, pcity) {
       if (!is_city_hilited(pcity)) {
         continue;
       }

@@ -549,14 +549,14 @@ void load_ruleset_specific_options(void)
 
   /* load global worklists */
   for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-    game.player_ptr->worklists[i].is_valid =
+    get_player_ptr()->worklists[i].is_valid =
 	secfile_lookup_bool_default(&sf, FALSE,
 				    "worklists.worklist%d.is_valid", i);
-    strcpy(game.player_ptr->worklists[i].name,
+    strcpy(get_player_ptr()->worklists[i].name,
            secfile_lookup_str_default(&sf, "",
                                       "worklists.worklist%d.name", i));
     load_global_worklist(&sf, "worklists.worklist%d", i, 
-                         &(game.player_ptr->worklists[i]));
+                         &(get_player_ptr()->worklists[i]));
   }
 
   section_file_free(&sf);
@@ -621,13 +621,13 @@ void save_options(void)
 
   /* insert global worklists */
   for(i = 0; i < MAX_NUM_WORKLISTS; i++){
-    if (game.player_ptr->worklists[i].is_valid) {
-      secfile_insert_bool(&sf, game.player_ptr->worklists[i].is_valid,
+    if (get_player_ptr()->worklists[i].is_valid) {
+      secfile_insert_bool(&sf, get_player_ptr()->worklists[i].is_valid,
 			  "worklists.worklist%d.is_valid", i);
-      secfile_insert_str(&sf, game.player_ptr->worklists[i].name,
+      secfile_insert_str(&sf, get_player_ptr()->worklists[i].name,
                          "worklists.worklist%d.name", i);
       save_global_worklist(&sf, "worklists.worklist%d", i, 
-                           &(game.player_ptr->worklists[i]));
+                           &(get_player_ptr()->worklists[i]));
     }
   }
 

@@ -127,7 +127,7 @@ void improvements_update_redundant(struct player *pplayer, struct city *pcity,
 #define impr_type_iterate(m_i)                                                \
 {                                                                             \
   Impr_Type_id m_i;                                                           \
-  for (m_i = 0; m_i < game.num_impr_types; m_i++) {
+  for (m_i = 0; m_i < game.ruleset_control.num_impr_types; m_i++) {
 
 #define impr_type_iterate_end                                                 \
   }                                                                           \

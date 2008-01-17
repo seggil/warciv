@@ -24,273 +24,14 @@
 #include "connection.h"		/* struct conn_list */
 #include "fc_types.h"
 #include "improvement.h"	/* Impr_Status */
+#include "packets.h"
 #include "player.h"
-
-/* Changing these will probably break network compatability. */
-#define MAX_LEN_DEMOGRAPHY 16
-#define MAX_LEN_ALLOW_TAKE 16
-#define MAX_ID_LEN 33
-#define MAX_GRANARY_INIS 24
-#define MAX_LEN_STARTUNIT (20+1)
-
-enum server_states { 
-  PRE_GAME_STATE, 
-  SELECT_RACES_STATE, 
-  RUN_GAME_STATE,
-  GAME_OVER_STATE
-};
-
-enum client_states { 
-  CLIENT_BOOT_STATE,
-  CLIENT_PRE_GAME_STATE,
-  CLIENT_SELECT_RACE_STATE,
-  CLIENT_WAITING_FOR_GAME_START_STATE,
-  CLIENT_GAME_RUNNING_STATE,
-  CLIENT_GAME_OVER_STATE
-};
 
 #define OVERFLIGHT_NOTHING  1
 #define OVERFLIGHT_FRIGHTEN 2
 
 #define CONTAMINATION_POLLUTION 1
 #define CONTAMINATION_FALLOUT   2
-
-struct civ_game {
-  bool is_new_game;		/* 1 for games never started */
-  int version;
-  char id[MAX_ID_LEN];		/* server only */
-  int civstyle;
-  int gold;
-  char start_units[MAX_LEN_STARTUNIT];
-  int dispersion;
-  int tech;
-  int skill_level;
-  int timeout;
-  int timeoutint;     /* increase timeout every N turns... */
-  int timeoutinc;     /* ... by this amount ... */
-  int timeoutincmult; /* ... and multiply timeoutinc by this amount ... */
-  int timeoutintinc;  /* ... and increase timeoutint by this amount */
-  int timeoutcounter; /* timeoutcounter - timeoutint = turns to next inc. */
-  int timeoutaddenemymove; /* increase to, when enemy move seen */
-  int tcptimeout;
-  int netwait;
-  time_t last_ping;
-  int pingtimeout;
-  int pingtime;
-  time_t turn_start;
-  int end_year;
-  int year;
-  int turn;
-  int researchcost; /* Multiplier on cost of new research */
-  int diplcost, freecost, conquercost;
-  int diplchance;
-  int cityfactor;
-  int citymindist;
-  int civilwarsize;
-  int contactturns;
-  int rapturedelay;
-  int min_players, max_players, nplayers;
-  int aifill;
-  int notradesize, fulltradesize;
-  int barbarianrate;
-  int onsetbarbarian;
-  int nbarbarians;
-  int occupychance;
-  int unhappysize;
-  bool angrycitizen;
-  char *startmessage;
-  int player_idx;
-  struct player *player_ptr;
-  struct player players[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
-  struct conn_list *all_connections;        /* including not yet established */
-  struct conn_list *est_connections;        /* all established client conns */
-  struct conn_list *game_connections;       /* involved in game; send map etc */
-  int global_advances[A_LAST];             /* a counter */
-  int global_wonders[B_LAST];              /* contains city id's */
-         /* global_wonders[] may also be (-1), or the id of a city
-	    which no longer exists, if the wonder has been destroyed */
-  Impr_Status improvements[B_LAST];        /* impr. with equiv_range==World */
-
-  int heating; /* Number of polluted squares. */
-  int globalwarming; /* Total damage done. (counts towards a warming event.) */
-  int warminglevel; /* If globalwarming is higher than this number there is
-		       a chance of a warming event. */
-
-  int cooling; /* Number of irradiated squares. */
-  int nuclearwinter; /* Total damage done. (counts towards a cooling event.) */
-  int coolinglevel; /* If nuclearwinter is higher than this number there is
-		       a chance of a cooling event. */
-
-  char save_name[MAX_LEN_NAME];
-  int save_nturns;
-  int save_compress_level;
-  int foodbox;
-  int aqueductloss;
-  int killcitizen;
-  int techpenalty;
-  int razechance;
-  bool scorelog;
-  int seed;
-  int aqueduct_size;
-  int add_to_size_limit;
-  bool savepalace;
-  bool natural_city_names;
-  bool spacerace;
-  bool turnblock;
-  bool fixedlength;
-  bool auto_ai_toggle;
-  bool fogofwar;
-  bool fogofwar_old;	/* as the fog_of_war bit get changed by setting
-			   the server we need to remember the old setting */
-
-  int num_unit_types;
-  int num_impr_types;
-  int num_tech_types;  /* including A_NONE */
-
-  /*=========== WARSERVER settings ================*/
-  int trademindist;
-  int traderevenuepct;
-  int traderevenuestyle;
-  int caravanbonusstyle;
-  bool futuretechsscore;
-  bool improvedautoattack;
-  bool stackbribing;
-  bool experimentalbribingcost;
-  bool techtrading;
-  bool ignoreruleset;
-  bool goldtrading;
-  bool citytrading;
-  int airliftingstyle;
-  bool teamplacement;
-  bool globalwarmingon;
-  bool nuclearwinteron;
-  int maxconnections;
-  int bruteforcethreshold;
-  int iterplacementcoefficient;
-  int teamplacementtype;
-  int techleakagerate;
-  bool rated;
-  bool no_public_links;
-  /*=========== WARSERVER settings END ================*/
-  /* used in server only */
-  bool ruleset_loaded;
-
-  int government_count;
-  int default_government;
-  int government_when_anarchy;
-  int ai_goal_government;	/* kludge */
-
-  int nation_count;
-  int playable_nation_count;
-  int styles_count;
-
-  int terrain_count;
-
-  int watchtower_extra_vision;
-  int watchtower_vision;
-  int allowed_city_names;
-
-  int borders;		/* distance of border from city; 0=disabled. */
-  bool happyborders;
-  int diplomacy;        /* who can do it */
-  int maxallies;
-  bool slow_invasions;  /* land units lose all movement landing on shores */
-
-  char rulesetdir[MAX_LEN_NAME];
-  int firepower_factor;		/* See README.rulesets */
-
-  Impr_Type_id default_building;
-  Impr_Type_id palace_building;
-  Impr_Type_id land_defend_building;
-
-  struct {
-    int cathedral_plus;		/* eg Theology */
-    int cathedral_minus;	/* eg Communism */
-    int colosseum_plus;		/* eg Electricity */
-    int temple_plus;		/* eg Mysticism */
-    int nav;			/* AI convenience: tech_req for first
-				   non-trireme ferryboat */
-    int u_partisan;		/* convenience: tech_req for first
-				   Partisan unit */
-    /* Following tech list is A_LAST terminated if shorter than
-       max len, and the techs listed are guaranteed to exist;
-       this could be better implemented as a new field in the
-       units.ruleset
-    */
-    int partisan_req[MAX_NUM_TECH_LIST];       /* all required for uprisings */
-  } rtech;
-
-  /* values from game.ruleset */
-  struct {
-    struct {
-      char name[MAX_LEN_NAME];
-      int min_size, bonus;
-    } specialists[SP_COUNT];
-    bool changable_tax;
-    int forced_science; /* only relevant if !changable_tax */
-    int forced_luxury;
-    int forced_gold;
-    int min_city_center_food;
-    int min_city_center_shield;
-    int min_city_center_trade;
-    int min_dist_bw_cities;
-    int init_vis_radius_sq;
-    int hut_overflight;
-    bool pillage_select;
-    int nuke_contamination;
-    int granary_food_ini[MAX_GRANARY_INIS];
-    int granary_num_inis;
-    int granary_food_inc;
-    int tech_cost_style;
-    int tech_leakage;
-    int tech_cost_double_year;
-
-    /* Items given to all players at game start.  Server only. */
-    int global_init_techs[MAX_NUM_TECH_LIST];
-    int global_init_buildings[MAX_NUM_BUILDING_LIST];
-
-    bool killstack;
-  } rgame;
-  
-  struct {
-    int improvement_factor;
-    int unit_factor;
-    int total_factor;
-  } incite_cost;
-
-  char demography[MAX_LEN_DEMOGRAPHY];
-  char allow_take[MAX_LEN_ALLOW_TAKE];
-
-  /* used by the map editor to control game_save; could be used by the server too */
-  struct {
-    bool save_random;
-    bool save_players;
-    bool save_known; /* loading will just reveal the squares around cities and units */
-    bool save_starts; /* start positions will be auto generated */
-    bool save_private_map; /* FoW map; will be created if not saved */
-  } save_options;
-
-  int trireme_loss_chance[MAX_VET_LEVELS];
-  int work_veteran_chance[MAX_VET_LEVELS];
-  int veteran_chance[MAX_VET_LEVELS];
-  int revolution_length; /* 0=> random length, else the fixated length */
-
-  struct {
-    bool user_message_set;
-    char user_message[256];
-  } meta_info;
- 
-  struct {
-    /* Used to avoid duplicating game end condition checks.
-       Takes values from GOC_* enum. */
-    int outcome;
-
-    int type;
-    int id;
-
-    char *termap;
-  } fcdb;
-};
 
 /* Different ways the game can end. */
 enum game_outcomes {
@@ -306,13 +47,6 @@ enum game_outcomes {
   GOC_NUM_OUTCOMES
 };
 
-extern const char *game_outcome_strings[GOC_NUM_OUTCOMES];
-
-/* Sets and returns the type of game (team, freeforall, duel, etc.)
- * based on the current teams/players/ais. The game type can then
- * also be read from the field 'game.fcdb.type'. */
-int game_set_type(void);
-
 enum game_types {
   GT_FFA, /* i.e. free for all */
   GT_TEAM,
@@ -324,30 +58,160 @@ enum game_types {
   GT_NUM_TYPES
 };
 
-const char *game_type_as_string(int type);
-int game_get_type_from_string(const char *s);
+struct civ_game {
+  /* Main game packets */
+  struct packet_game_info info; /* Use send_game_info() */
+  struct packet_extgame_info ext_info;
+  struct packet_traderoute_info traderoute_info;
+  struct packet_ruleset_control ruleset_control;
+  struct packet_ruleset_game ruleset_game;
+
+  /* Common part */
+  struct player players[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
+  struct conn_list *all_connections;  /* including not yet established */
+  struct conn_list *est_connections;  /* all established client conns */
+  struct conn_list *game_connections; /* involved in game; send map etc */
+
+  /* global_wonders[] may also be (-1), or the id of a city
+   * which no longer exists, if the wonder has been destroyed */
+  Impr_Status improvements[B_LAST];   /* impr. with equiv_range==World */
+  Impr_Type_id palace_building;
+  Impr_Type_id land_defend_building;
+
+  /* Server side only */
+  struct {
+    bool is_new_game;    /* TRUE for games never started */
+    int version;         /* Savegame version */
+    char id[MAX_ID_LEN]; /* server only */
+    char start_units[MAX_LEN_STARTUNIT];
+    int dispersion;
+
+    int timeoutint;          /* increase timeout every N turns... */
+    int timeoutinc;          /* by this amount ... */
+    int timeoutincmult;      /* and multiply timeoutinc by this amount ... */
+    int timeoutintinc;       /* and increase timeoutint by this amount */
+    int timeoutcounter;      /* timeoutcounter-timeoutint= urns to next inc. */
+    int timeoutaddenemymove; /* increase to, when enemy move seen */
+    int tcptimeout;
+    int netwait;
+    time_t last_ping;
+    int pingtimeout;
+    int pingtime;
+    time_t turn_start;
+
+    int diplchance;
+    int citymindist;
+    int civilwarsize;
+    int contactturns;
+    int rapturedelay;
+    int aifill;
+    int barbarianrate;
+    int onsetbarbarian;
+    int nbarbarians;
+    int occupychance;
+    char *startmessage;
+
+    int warminglevel; /* If globalwarming is higher than this number there is
+		       * a chance of a warming event. */
+
+    int coolinglevel; /* If nuclearwinter is higher than this number there is
+		       * a chance of a cooling event. */
+
+    char save_name[MAX_LEN_NAME];
+    int save_nturns;
+    int save_compress_level;
+    int aqueductloss;
+    int killcitizen;
+    int razechance;
+    bool scorelog;
+    int seed;
+    bool savepalace;
+    bool natural_city_names;
+    bool turnblock;
+    bool fixedlength;
+    bool auto_ai_toggle;
+    bool fogofwar;
+    bool fogofwar_old;	/* As the fog_of_war bit get changed by setting
+			 * the server we need to remember the old setting */
+
+    bool ruleset_loaded;
+    int nav; /* AI convenience: tech_req for first non-trireme ferryboat */
+    int u_partisan; /* Convenience: tech_req for first Partisan unit */
+    char rulesetdir[MAX_LEN_NAME];
+    int firepower_factor; /* See README.rulesets */
+    int global_init_buildings[MAX_NUM_BUILDING_LIST];
+
+    int ai_goal_government; /* kludge */
+
+    int watchtower_extra_vision;
+    int watchtower_vision;
+    int allowed_city_names;
+
+    struct {
+      int improvement_factor;
+      int unit_factor;
+      int total_factor;
+    } incite_cost;
+
+    char demography[MAX_LEN_DEMOGRAPHY];
+    char allow_take[MAX_LEN_ALLOW_TAKE];
+
+    /* Used by the map editor to control game_save;
+     * could be used by the server too */
+    struct {
+      bool save_random;
+      bool save_players;
+      bool save_known;       /* Moading will just reveal the squares around
+                              * cities and units */
+      bool save_starts;      /* Start positions will be auto generated */
+      bool save_private_map; /* FoW map; will be created if not saved */
+    } save_options;
+
+    int revolution_length; /* 0=> random length, else the fixated length */
+
+    struct {
+      bool user_message_set;
+      char user_message[256];
+    } meta_info;
+
+    struct {
+      /* Used to avoid duplicating game end condition checks. */
+      enum game_outcomes outcome;
+
+      enum game_types type;
+      int id;
+
+      char *termap;
+    } fcdb;
+
+    int maxconnections;
+    int bruteforcethreshold;
+    int iterplacementcoefficient;
+    int teamplacementtype;
+    bool rated;
+    bool no_public_links;
+  } server;
+};
+
+/* Sets and returns the type of game (team, freeforall, duel, etc.)
+ * based on the current teams/players/ais. The game type can then
+ * also be read from the field 'game.server.fcdb.type'. */
+enum game_types game_set_type(void);
+
+const char *game_type_name(enum game_types type);
+const char *game_type_name_orig(enum game_types type);
+enum game_types game_get_type_from_string(const char *s);
+
+const char *game_outcome_name(enum game_outcomes outcome);
+const char *game_outcome_name_orig(enum game_outcomes outcome);
 
 /* Unused? */
 struct lvldat {
   int advspeed;
 };
 
-/* Server setting types.  Changing these will break network compatability. */
-enum sset_type {
-  SSET_BOOL, SSET_INT, SSET_STRING
-};
-
 void game_init(void);
 void game_free(void);
-
-void game_init_settings(void);
-void game_init_players(void);
-void game_init_map(void);
-void game_init_misc(void);
-void game_free_settings(void);
-void game_free_players(void);
-void game_free_map(void);
-void game_free_misc(void);
 
 void ruleset_data_free(void);
 
@@ -404,7 +268,7 @@ extern bool is_server;
 #define GAME_MIN_TRADEREVENUESTYLE     0
 #define GAME_MAX_TRADEREVENUESTYLE     2
 
-#define GAME_DEFAULT_TRADEREVENUEPCT 100
+#define GAME_DEFAULT_TRADEREVENUEPCT 100 /* COMPAT */
 #define GAME_MIN_TRADEREVENUEPCT     0
 #define GAME_MAX_TRADEREVENUEPCT     200
 
@@ -428,11 +292,15 @@ extern bool is_server;
 #define GAME_MIN_TEAMPLACEMENTTYPE     0
 #define GAME_MAX_TEAMPLACEMENTTYPE     3
 
-#define GAME_DEFAULT_TECHLEAKAGERATE 100
+#define GAME_DEFAULT_TECHLEAKAGERATE 100 /* COMPAT */
 #define GAME_MIN_TECHLEAKAGERATE     0
 #define GAME_MAX_TECHLEAKAGERATE     100
 
+#ifdef HAVE_MYSQL
 #define GAME_DEFAULT_RATED TRUE
+#else
+#define GAME_DEFAULT_RATED FALSE
+#endif /* HAVE_MYSQL */
 
 #define GAME_DEFAULT_NO_PUBLIC_LINKS FALSE
 

@@ -24,6 +24,7 @@ int find_a_unit_type(int role, int role_tech);
 bool maybe_make_veteran(struct unit *punit);
 void unit_versus_unit(struct unit *attacker, struct unit *defender,
 		      bool bombard);
+bool kills_citizen_after_attack(struct unit *punit);
 
 /* move check related */
 bool is_airunit_refuel_point(struct tile *ptile, struct player *pplayer,

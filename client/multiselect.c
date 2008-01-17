@@ -155,9 +155,9 @@ void ap_timers_init(void)
   int i;
 
   for (i = 0; i < ap_timers_num; i++) {
-    if (game.timeout > 0) {
+    if (game.info.timeout > 0) {
       if (ap_timer_values[i] >= 0) {
-	ap_timers[i].seconds = (game.timeout
+	ap_timers[i].seconds = (game.info.timeout
 				* (100 - ap_timer_values[i])) / 100;
       } else /* if (ap_timer_values[i] < 0) */ {
         ap_timers[i].seconds =- ap_timer_values[i];
@@ -177,7 +177,8 @@ void ap_timers_update(void)
   int i;
 	
   for (i = 0; i < ap_timers_num; i++) {
-    if (ap_timers[i].npassed && seconds_to_turndone <= ap_timers[i].seconds) {
+    if (ap_timers[i].npassed
+	&& game.info.seconds_to_turndone <= ap_timers[i].seconds) {
       automatic_processus_event(ap_timer_event[i], NULL);
       ap_timers[i].npassed = FALSE;
     }
@@ -434,7 +435,7 @@ void multi_select_active_all(int multi)
 ***********************************************************************/
 void multi_select_add_unit(struct unit *punit)
 {
-  if(punit->owner != game.player_idx
+  if(punit->owner != get_player_idx()
      || is_unit_in_multi_select(0, punit)) {
     /* No foreigner units, no units duplications! */
     return;
@@ -817,7 +818,7 @@ void multi_select_select(void)
   if (multi_select_place == PLACE_ON_TILE) {
     ulist = punit_focus->tile->units;
   } else {
-    ulist = game.player_ptr->units;
+    ulist = get_player_ptr()->units;
   }
 
   unit_list_iterate(ulist, punit) {
@@ -1106,11 +1107,11 @@ struct player *get_tile_player(struct tile *ptile)
   if (ptile->city) {
     return city_owner(ptile->city);
   }
-  int count[game.nplayers], best = -1;
+  int count[game.info.nplayers], best = -1;
 
   memset(count, 0, sizeof(count));
   unit_list_iterate(ptile->units, punit) {
-    switch (pplayer_get_diplstate(game.player_ptr, unit_owner(punit))->type) {
+    switch (pplayer_get_diplstate(get_player_ptr(), unit_owner(punit))->type) {
       case DS_NEUTRAL:
       case DS_WAR:
       case DS_CEASEFIRE:
@@ -1151,11 +1152,11 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     if (delayed_goto_place == PLACE_ON_TILE) {
       ulist = punit_focus->tile->units;
     } else {
-      ulist = game.player_ptr->units;
+      ulist = get_player_ptr()->units;
     }
 
     unit_list_iterate(ulist, punit) {
-      if (punit->owner != game.player_idx
+      if (punit->owner != get_player_idx()
 	  || (delayed_goto_place == PLACE_ON_CONTINENT
 	      && punit->tile->continent != punit_focus->tile->continent)
 	  || (delayed_goto_utype == UTYPE_SAME_MOVE_TYPE
@@ -1265,7 +1266,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
       need_city_for = dgd->id;
       do_airlift(dgd->ptile);
     } else {
-      struct unit *punit = player_find_unit_by_id(game.player_ptr, dgd->id);
+      struct unit *punit = player_find_unit_by_id(get_player_ptr(), dgd->id);
 
       if (!punit) {
 	/* Unfortunately, it seems we already lost this unit :( */
@@ -1627,7 +1628,7 @@ void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
 ***********************************************************************/
 void request_auto_airlift_source_selection_with_airport(void)
 {
-  city_list_iterate(game.player_ptr->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (get_city_bonus(pcity, EFT_AIRLIFT) > 0) {
       add_city_to_auto_airlift_queue(pcity->tile, TRUE);
     }
@@ -1656,7 +1657,7 @@ void do_airlift_for(int aq,struct city *pcity)
 
   tile_list_iterate(airlift_queues[aq].tlist, ptile) {
     if (!ptile->city
-	|| ptile->city->owner != game.player_idx
+	|| ptile->city->owner != get_player_idx()
 	|| unit_list_size(ptile->units) == 0) {
       continue;
     }

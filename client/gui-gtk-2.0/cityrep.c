@@ -638,7 +638,7 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
     int found;
 
     found = 0;
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       if (!cma_is_city_under_agent(pcity, NULL)) {
 	found = 1;
 	break;
@@ -657,7 +657,7 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
      * take a lonnggg time.
      */
     found = 0;
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       if (cma_is_city_under_agent(pcity, &parameter) &&
 	  cmafec_preset_get_index_of_parameter(&parameter) == -1) {
 	found = 1;
@@ -677,7 +677,7 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
     /* only fill in presets that are being used. */
     for (i = 0; i < cmafec_preset_num(); i++) {
       found = 0;
-      city_list_iterate(game.player_ptr->cities, pcity) {
+      city_list_iterate(get_player_ptr()->cities, pcity) {
 	if (cma_is_city_under_agent(pcity, &parameter) &&
 	    cm_are_parameter_equal(&parameter,
 				   cmafec_preset_get_parameter(i))) {
@@ -703,7 +703,7 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
 static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
 					     GCallback callback)//*pepeto*
 {
-  struct player *plr = game.player_ptr;
+  struct player *plr = get_player_ptr();
   GtkWidget *menu, *item;
   int i;
   bool sensitive=FALSE;
@@ -1190,7 +1190,7 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model,
     return;
   }
 
-  pwl = &game.player_ptr->worklists[i];
+  pwl = &get_player_ptr()->worklists[i];
   if (!pwl->is_valid) {
     return;
   }
@@ -1264,7 +1264,7 @@ static void worklist_last_worklist_iterate(GtkTreeModel *model,
     return;
   }
 
-  pwl = &game.player_ptr->worklists[i];
+  pwl = &get_player_ptr()->worklists[i];
   if (!pwl->is_valid) {
     return;
   }
@@ -1305,7 +1305,7 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model,
     return;
   }
 
-  pwl = &game.player_ptr->worklists[i];
+  pwl = &get_player_ptr()->worklists[i];
   if (!pwl->is_valid) {
     return;
   }
@@ -1356,7 +1356,7 @@ static void worklist_next_worklist_iterate(GtkTreeModel *model,
     return;
   }
 
-  pwl = &game.player_ptr->worklists[i];
+  pwl = &get_player_ptr()->worklists[i];
   if (!pwl->is_valid) {
     return;
   }
@@ -1519,7 +1519,7 @@ static void city_model_init(void)
 {
   if (city_dialog_shell && !is_report_dialogs_frozen()) {
 
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       GtkTreeIter it;
 
       gtk_list_store_append(city_model, &it);
@@ -1556,7 +1556,7 @@ void city_report_dialog_update(void)
     /* update. */
     gtk_list_store_clear(city_model);
 
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       gtk_list_store_append(city_model, &it);
       update_row(&it, pcity);
 

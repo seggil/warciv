@@ -892,7 +892,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
    * multiple defenders and unstacked combat). Note that this could mean 
    * capturing (or destroying) a city. */
 
-  if (pwinner == punit && myrand(100) < game.occupychance &&
+  if (pwinner == punit && myrand(100) < game.server.occupychance &&
       !is_non_allied_unit_tile(def_tile,
 			       unit_owner(punit))) {
 

@@ -124,7 +124,7 @@ static void update_players_menu(void)
       gtk_widget_set_sensitive(players_sship_command, FALSE);
     }
 
-    switch (pplayer_get_diplstate(game.player_ptr, get_player(plrno))->type) {
+    switch (pplayer_get_diplstate(get_player_ptr(), get_player(plrno))->type) {
     case DS_WAR:
     case DS_NO_CONTACT:
       gtk_widget_set_sensitive(players_war_command, FALSE);
@@ -132,12 +132,12 @@ static void update_players_menu(void)
     default:
       gtk_widget_set_sensitive(players_war_command,
 			       can_client_issue_orders()
-			       && game.player_idx != plrno);
+			       && get_player_idx() != plrno);
     }
 
     gtk_widget_set_sensitive(players_vision_command,
 			     can_client_issue_orders()
-			     && gives_shared_vision(game.player_ptr, plr));
+			     && gives_shared_vision(get_player_ptr(), plr));
 
     gtk_widget_set_sensitive(players_meet_command, can_meet_with_player(plr));
     gtk_widget_set_sensitive(players_int_command, can_intel_with_player(plr));
@@ -530,7 +530,7 @@ static void build_row(GtkTreeIter *it, int i)
     -1);
 
    /* now add some eye candy ... */
-   switch (pplayer_get_diplstate(game.player_ptr, plr)->type) {
+   switch (pplayer_get_diplstate(get_player_ptr(), plr)->type) {
    case DS_WAR:
      weight = PANGO_WEIGHT_NORMAL;
      style = PANGO_STYLE_ITALIC;
@@ -558,11 +558,11 @@ static void build_row(GtkTreeIter *it, int i)
 void update_players_dialog(void)
 {
   if (players_dialog_shell && !is_plrdlg_frozen()) {
-    gboolean exists[game.nplayers];
+    gboolean exists[game.info.nplayers];
     gint i;
     GtkTreeIter it, it_next;
 
-    for (i = 0; i < game.nplayers; i++) {
+    for (i = 0; i < game.info.nplayers; i++) {
       exists[i] = FALSE;
     }
 

@@ -38,6 +38,7 @@
 #include "dataio.h"
 #include "events.h"
 #include "fcintl.h"
+#include "game.h"
 #include "hash.h"
 #include "log.h"
 #include "map.h"
@@ -253,9 +254,9 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
 
     packet_counter++;
     if (packet_type == PACKET_START_TURN
-	&& last_start_turn_seen != game.turn) {
+	&& last_start_turn_seen != game.info.turn) {
 	start_turn_seen=TRUE;
-      last_start_turn_seen = game.turn;
+      last_start_turn_seen = game.info.turn;
     }
 
     if ((packet_type ==
@@ -289,9 +290,9 @@ int send_packet_data(struct connection *pc, unsigned char *data, int len)
       }
       freelog(LOG_NORMAL,
 	      "turn=%d; transmitted %d bytes in %d packets;average size "
-	      "per packet %d bytes", game.turn, sum, packet_counter,
+	      "per packet %d bytes", game.info.turn, sum, packet_counter,
 	      sum / packet_counter);
-      freelog(LOG_NORMAL, "turn=%d; transmitted %d bytes", game.turn,
+      freelog(LOG_NORMAL, "turn=%d; transmitted %d bytes", game.info.turn,
 	      pc->statistics.bytes_send);
     }    
     if (clear) {

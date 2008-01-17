@@ -16,6 +16,8 @@
 #endif
 
 #include "log.h"
+
+#include "game.h"
 #include "unit.h"
 
 #include "path_finding.h"
@@ -202,7 +204,7 @@ static int aiferry_avail_boats(struct player *pplayer)
 
   if (boats != ai->stats.available_boats) {
     freelog(LOG_ERROR, "Player[%d] in turn %d: boats miscounted.",
-	    pplayer->player_no, game.turn);
+	    pplayer->player_no, game.info.turn);
     aiferry_print_stats(pplayer);
   }
 #endif /* DEBUG_FERRY_STATS */

@@ -244,7 +244,7 @@ void popup_notify_goto_dialog(const char *headline, const char *lines,
 
     pcity = map_get_city(ptile);
     gtk_widget_set_sensitive(popcity_command,
-      (pcity && city_owner(pcity) == game.player_ptr));
+      (pcity && city_owner(pcity) == get_player_ptr()));
   }
 
   g_object_set_data(G_OBJECT(shell), "tile", ptile);
@@ -290,11 +290,11 @@ void popup_bribe_dialog(struct unit *punit)
                                  GTK_STOCK_OK, NULL, NULL, NULL);
     gtk_window_present(GTK_WINDOW(shell));
     return;
-  } else if (game.player_ptr->economic.gold >= punit->bribe_cost) {
+  } else if (get_player_ptr()->economic.gold >= punit->bribe_cost) {
     shell = gtk_message_dialog_new(NULL, 0,
       GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
       _("Bribe unit for %d gold?\nTreasury contains %d gold."),
-      punit->bribe_cost, game.player_ptr->economic.gold);
+      punit->bribe_cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Bribe Enemy Unit"));
     setup_dialog(shell, toplevel);
   } else {
@@ -302,7 +302,7 @@ void popup_bribe_dialog(struct unit *punit)
       0,
       GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
       _("Bribing the unit costs %d gold.\nTreasury contains %d gold."),
-      punit->bribe_cost, game.player_ptr->economic.gold);
+      punit->bribe_cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Traitors Demand Too Much!"));
     setup_dialog(shell, toplevel);
   }
@@ -490,7 +490,7 @@ static void create_advances_list(struct player *pplayer,
     GtkTreeIter it;
     GValue value = { 0, };
 
-    for(i=A_FIRST; i<game.num_tech_types; i++) {
+    for(i=A_FIRST; i<game.ruleset_control.num_tech_types; i++) {
       if(get_invention(pvictim, i)==TECH_KNOWN && 
 	 (get_invention(pplayer, i)==TECH_UNKNOWN || 
 	  get_invention(pplayer, i)==TECH_REACHABLE)) {
@@ -498,7 +498,7 @@ static void create_advances_list(struct player *pplayer,
 
 	g_value_init(&value, G_TYPE_STRING);
 	g_value_set_static_string(&value,
-				  get_tech_name(game.player_ptr, i));
+				  get_tech_name(get_player_ptr(), i));
 	gtk_list_store_set_value(store, &it, 0, &value);
 	g_value_unset(&value);
 	gtk_list_store_set(store, &it, 1, i, -1);
@@ -511,7 +511,7 @@ static void create_advances_list(struct player *pplayer,
     g_value_set_static_string(&value, _("At Spy's Discretion"));
     gtk_list_store_set_value(store, &it, 0, &value);
     g_value_unset(&value);
-    gtk_list_store_set(store, &it, 1, game.num_tech_types, -1);
+    gtk_list_store_set(store, &it, 1, game.ruleset_control.num_tech_types, -1);
   }
 
   gtk_dialog_set_response_sensitive(GTK_DIALOG(spy_tech_shell),
@@ -674,7 +674,7 @@ has happened to the city during latency.  Therefore we must initialize
 pvictim to NULL and account for !pvictim in create_advances_list. -- Syela */
   
   if(!spy_tech_shell){
-    create_advances_list(game.player_ptr, pvictim);
+    create_advances_list(get_player_ptr(), pvictim);
     gtk_window_present(GTK_WINDOW(spy_tech_shell));
   }
   gtk_widget_destroy(diplomat_dialog);
@@ -701,7 +701,7 @@ static void spy_request_sabotage_list(GtkWidget *w, gpointer data)
 void popup_sabotage_dialog(struct city *pcity)
 {
   if(!spy_sabotage_shell){
-    create_improvements_list(game.player_ptr, pcity);
+    create_improvements_list(get_player_ptr(), pcity);
     gtk_window_present(GTK_WINDOW(spy_sabotage_shell));
   }
 }
@@ -744,12 +744,12 @@ void popup_incite_dialog(struct city *pcity)
       pcity->name);
     gtk_window_set_title(GTK_WINDOW(shell), _("City can't be incited!"));
   setup_dialog(shell, toplevel);
-  } else if (game.player_ptr->economic.gold >= pcity->incite_revolt_cost) {
+  } else if (get_player_ptr()->economic.gold >= pcity->incite_revolt_cost) {
     shell = gtk_message_dialog_new(NULL,
       0,
       GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
       _("Incite a revolt for %d gold?\nTreasury contains %d gold."),
-      pcity->incite_revolt_cost, game.player_ptr->economic.gold);
+      pcity->incite_revolt_cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Incite a Revolt!"));
     setup_dialog(shell, toplevel);
   } else {
@@ -757,7 +757,7 @@ void popup_incite_dialog(struct city *pcity)
       0,
       GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
       _("Inciting a revolt costs %d gold.\nTreasury contains %d gold."),
-      pcity->incite_revolt_cost, game.player_ptr->economic.gold);
+      pcity->incite_revolt_cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Traitors Demand Too Much!"));
     setup_dialog(shell, toplevel);
   }
@@ -1029,7 +1029,7 @@ void popup_revolution_dialog(int government)
 {
   static GtkWidget *shell = NULL;
 
-  if (game.player_ptr->revolution_finishes == -1) {
+  if (get_player_ptr()->revolution_finishes == -1) {
     if (!shell) {
       shell = gtk_message_dialog_new(NULL,
 	  0,
@@ -1269,7 +1269,7 @@ static void unit_select_row_activated(GtkTreeView *view, GtkTreePath *path)
   gtk_tree_model_get_iter(GTK_TREE_MODEL(unit_select_store), &it, path);
   gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store), &it, 0, &id, -1);
  
-  if ((punit = player_find_unit_by_id(game.player_ptr, id))) {
+  if ((punit = player_find_unit_by_id(get_player_ptr(), id))) {
     set_unit_focus_and_active(punit);
   }
 
@@ -1282,7 +1282,7 @@ static void unit_select_row_activated(GtkTreeView *view, GtkTreePath *path)
 static int unit_list_tile_sort(const struct unit * const *ppa, 
 			       const struct unit * const *ppb)
 {
-  return (*ppa)->owner != game.player_idx && (*ppb)->owner == game.player_idx;
+  return (*ppa)->owner != get_player_idx() && (*ppb)->owner == get_player_idx();
 }
 
 /**************************************************************************
@@ -1293,7 +1293,7 @@ static void unit_select_append(struct unit *punit, GtkTreeIter *it,
 {
   GdkPixbuf *pix;
   struct unit_type *ptype = unit_type(punit);
-  struct city *pcity = player_find_city_by_id(game.player_ptr, punit->homecity);
+  struct city *pcity = player_find_city_by_id(get_player_ptr(), punit->homecity);
 
   pix = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
       UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
@@ -1382,7 +1382,7 @@ static void add_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
   bool *focus_change=(bool *)data;
 
   gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store),it,0,&id,-1);
-  if(!(punit=player_find_unit_by_id(game.player_ptr,id)))
+  if(!(punit=player_find_unit_by_id(get_player_ptr(),id)))
     return;
   if(*focus_change)
   {
@@ -1406,7 +1406,7 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
       struct unit *pmyunit = NULL;
 
       unit_list_iterate(ptile->units, punit) {
-        if (game.player_idx == punit->owner) {
+        if (get_player_idx() == punit->owner) {
           pmyunit = punit;
 
           /* Activate this unit. */
@@ -1424,7 +1424,7 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
   case SELECT_UNIT_SENTRY:
     {
       unit_list_iterate(ptile->units, punit) {
-        if (game.player_idx == punit->owner) {
+        if (get_player_idx() == punit->owner) {
           if ((punit->activity == ACTIVITY_IDLE) &&
               !punit->ai.control &&
               can_unit_do_activity(punit, ACTIVITY_SENTRY)) {
@@ -1710,7 +1710,7 @@ static void create_races_dialog(void)
   gtk_tree_view_append_column(GTK_TREE_VIEW(list), column);
 
   /* Populate nation list store. */
-  for (i = 0; i < game.nation_count; i++) {
+  for (i = 0; i < game.ruleset_control.nation_count; i++) {
     struct nation_type *nation;
     SPRITE *s;
     GdkPixbuf *img;
@@ -1822,7 +1822,7 @@ static void create_races_dialog(void)
   gtk_table_set_row_spacing(GTK_TABLE(table), 1, 12);
 
   /* Populate city style store. */
-  for (i = 0; i < game.styles_count; i++) {
+  for (i = 0; i < game.ruleset_control.style_count; i++) {
     GdkPixbuf *img;
     SPRITE *s;
     int last;
@@ -2006,7 +2006,7 @@ static void select_random_race(void)
   }
 
   if(id != NO_NATION_SELECTED) {
-    for(i = 0; i < game.playable_nation_count; i++) {
+    for(i = 0; i < game.ruleset_control.playable_nation_count; i++) {
       GtkTreePath *path;
       GtkTreeIter it;
       GValue val = { 0, };
@@ -2035,13 +2035,13 @@ static void select_random_race(void)
   }
 	
   /* This has a possibility of infinite loop in case
-   * game.playable_nation_count < game.nplayers. */
+   * game.ruleset_control.playable_nation_count < game.info.nplayers. */
   while (TRUE) {
     GtkTreePath *path;
     GtkTreeIter it;
     int nation;
 
-    nation = myrand(game.playable_nation_count);
+    nation = myrand(game.ruleset_control.playable_nation_count);
 
     path = gtk_tree_path_new();
     gtk_tree_path_append_index(path, nation);
@@ -2129,7 +2129,7 @@ static void races_nation_callback(GtkTreeSelection *select, gpointer data)
       
       /* Select city style for chosen nation. */
       cs = get_nation_city_style(selected_nation);
-      for (i = 0, j = 0; i < game.styles_count; i++) {
+      for (i = 0, j = 0; i < game.ruleset_control.style_count; i++) {
         if (city_styles[i].techreq != A_NONE) {
 	  continue;
 	}

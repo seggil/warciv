@@ -952,7 +952,7 @@ static void init_specialist_lattice_nodes(struct tile_type_vector *lattice,
     if (city_can_use_specialist(pcity, pairs[i].spec)) {
       type.spec = pairs[i].spec;
       type.production[pairs[i].stat]
-        = game.rgame.specialists[pairs[i].spec].bonus;
+        = game.ruleset_game.specialist_bonus[pairs[i].spec];
 
       tile_type_lattice_add(lattice, &type, 0, 0);
 

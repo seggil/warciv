@@ -270,7 +270,7 @@ const char *get_impr_name_ex(const struct city *pcity, Impr_Type_id id)
     default:						break;
     }
   } else if (is_wonder(id)) {
-    if (game.global_wonders[id] != 0) {
+    if (game.info.global_wonders[id] != 0) {
       state = Q_("?built:B");
     } else {
       state = Q_("?wonder:w");
@@ -484,7 +484,7 @@ bool can_eventually_build_unit(const struct city *pcity, Unit_Type_id id)
 bool city_can_use_specialist(const struct city *pcity,
 			     Specialist_type_id type)
 {
-  return pcity->size >= game.rgame.specialists[type].min_size;
+  return pcity->size >= game.ruleset_game.specialist_min_size[type];
 }
 
 /****************************************************************************
@@ -593,7 +593,7 @@ static int base_get_shields_tile(const struct tile *ptile,
   }
 
   if (pcity && is_city_center(city_x, city_y)) {
-    s = MAX(s, game.rgame.min_city_center_shield);
+    s = MAX(s, game.ruleset_game.min_city_center_shield);
   }
 
   return s;
@@ -704,7 +704,7 @@ static int base_get_trade_tile(const struct tile *ptile,
   }
 
   if (pcity && is_city_center(city_x, city_y)) {
-    t = MAX(t, game.rgame.min_city_center_trade);
+    t = MAX(t, game.ruleset_game.min_city_center_trade);
   }
 
   return t;
@@ -823,7 +823,7 @@ static int base_get_food_tile(const struct tile *ptile,
   }
 
   if (pcity && is_city_center(city_x, city_y)) {
-    f = MAX(f, game.rgame.min_city_center_food);
+    f = MAX(f, game.ruleset_game.min_city_center_food);
   }
 
   return f;
@@ -891,8 +891,8 @@ bool city_can_be_built_here(const struct tile *ptile, struct unit *punit)
     }
   }
 
-  /* game.rgame.min_dist_bw_cities minimum is 1, meaning adjacent is okay */
-  square_iterate(ptile, game.rgame.min_dist_bw_cities - 1, ptile1) {
+  /* game.ruleset_game.min_dist_bw_cities minimum is 1, meaning adjacent is okay */
+  square_iterate(ptile, game.ruleset_game.min_dist_bw_cities - 1, ptile1) {
     if (ptile1->city) {
       return FALSE;
     }
@@ -913,7 +913,8 @@ bool can_cities_trade(const struct city *pc1, const struct city *pc2)
    * helptext_unit(). */
   return (pc1 && pc2 && pc1 != pc2
           && (pc1->owner != pc2->owner
-	      || map_distance(pc1->tile, pc2->tile) >= game.trademindist));
+	      || map_distance(pc1->tile, pc2->tile)
+	         >= game.traderoute_info.trademindist));
 }
 
 /**************************************************************************
@@ -986,51 +987,55 @@ bool can_establish_trade_route(const struct city *pc1, const struct city *pc2)
 int trade_between_cities(const struct city *pc1, const struct city *pc2)
 {
   int bonus = 0;
-// classic 2.0.9
-  if(game.traderevenuestyle==0) {
-  if (pc1 && pc2) {
-    bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
 
-    /* Double if on different continents. */
-    if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
-      bonus *= 2;
-    }
+  if (game.traderoute_info.traderevenuestyle == 0) {
+    /* Classic 2.0.9 */
+    if (pc1 && pc2) {
+      bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
 
-    if (pc1->owner == pc2->owner) {
-      bonus /= 2;
-    }
-  }
-  } // experimental revenue style
-  else if(game.traderevenuestyle==1) {
-      if (pc1 && pc2) {
-        bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 4;
+      /* Double if on different continents. */
+      if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+	bonus *= 2;
       }
-  }//civ2 trade routes according to http://www.civfanatics.com/civ2/strategy/scrolls/#Trade
-  else if(game.traderevenuestyle == 2) {
-      if (pc1 && pc2) {
-        bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
-        
-        if(pc1->owner == pc2->owner) {
-          bonus = bonus / 1.5;
-        }
-        
-        if(map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
-          bonus *= 2;
-        }
-        if(city_got_building(pc1,find_improvement_by_name_orig(_("Airport"))) &&
-          city_got_building(pc2,find_improvement_by_name_orig(_("Airport")))) {
-            bonus *= 1.5;
-        }
-        
-        if(city_got_building(pc1,find_improvement_by_name_orig(_("Super Highways")))) {
-            bonus *= 1.5;
-        }
-//  cities will always be connected by roads
-        bonus *= 1.5;
+
+      if (pc1->owner == pc2->owner) {
+	bonus /= 2;
+      }
+    }
+  }  else if (game.traderoute_info.traderevenuestyle == 1) {
+    /* Experimental revenue style */
+    if (pc1 && pc2) {
+      bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 4;
+    }
+  } else if (game.traderoute_info.traderevenuestyle == 2) {
+    /* civ2 trade routes according to
+     * http://www.civfanatics.com/civ2/strategy/scrolls/#Trade */
+    if (pc1 && pc2) {
+      bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
+      
+      if(pc1->owner == pc2->owner) {
+	bonus = bonus / 1.5;
+      }
+      
+      if(map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+	bonus *= 2;
+      }
+      if(city_got_building(pc1, find_improvement_by_name_orig(_("Airport")))
+	 && city_got_building(pc2,
+			      find_improvement_by_name_orig(_("Airport")))) {
+	  bonus *= 1.5;
+      }
+      
+      if(city_got_building(pc1,
+			   find_improvement_by_name_orig(_("Super Highways")))) {
+	  bonus *= 1.5;
+      }
+      /* cities will always be connected by roads */
+      bonus *= 1.5;
     }
   }
 
-  return ((bonus*game.traderevenuepct)/100);
+  return ((bonus * game.traderoute_info.traderevenuepct) / 100);
 }
 
 /**************************************************************************
@@ -1041,7 +1046,9 @@ int city_num_trade_routes(const struct city *pcity)
   int i, n = 0;
 
   for (i = 0; i < NUM_TRADEROUTES; i++)
-    if(pcity->trade[i] != 0) n++;
+    if (pcity->trade[i] != 0) {
+      n++;
+    }
   
   return n;
 }
@@ -1059,27 +1066,29 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
 {
   int i, tb = 0;
   double bonus = 0;
-//classic 2.0.9
-  if(game.caravanbonusstyle==0) {
-  /* Should this be real_map_distance? */
-      tb = real_map_distance(pc1->tile, pc2->tile) + 10;
-  tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
 
-  /*  fudge factor to more closely approximate Civ2 behavior (Civ2 is
-   * really very different -- this just fakes it a little better) */
-  tb *= 3;
+  if (game.traderoute_info.caravanbonusstyle == 0) {
+    /* Classic 2.0.9 */
+    /* Should this be real_map_distance? */
+    tb = real_map_distance(pc1->tile, pc2->tile) + 10;
+    tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
+
+    /*  fudge factor to more closely approximate Civ2 behavior (Civ2 is
+     * really very different -- this just fakes it a little better) */
+    tb *= 3;
+  } else if (game.traderoute_info.caravanbonusstyle == 1) {
+    /* Experimental logarithmic bonus */
+    bonus = pow(log(real_map_distance(pc1->tile, pc2->tile) + 20
+		    + pc1->trade_prod + pc2->trade_prod) * 2, 2);
+    tb = (int)bonus;
+  }
 
   /* Check for technologies that reduce trade revenues. */
   for (i = 0; i < num_known_tech_with_flag(city_owner(pc1),
 					   TF_TRADE_REVENUE_REDUCE); i++) {
     tb = (tb * 2) / 3;
   }
-  }//experimental logarithmic bonus
-  else if (game.caravanbonusstyle==1) {
-        bonus = pow(log(real_map_distance(pc1->tile, pc2->tile) + 20 +
-         pc1->trade_prod + pc2->trade_prod)*2,2);
-        tb = (int)bonus;
-  }
+
   return tb;
 }
 
@@ -1170,19 +1179,6 @@ cities celebrate only after consecutive happy turns
 bool city_celebrating(const struct city *pcity)
 {
   return base_city_celebrating(pcity) && city_happy(pcity);
-}
-
-/**************************************************************************
-.rapture is checked instead of city_celebrating() because this function is
-called after .was_happy was updated.
-**************************************************************************/
-bool city_rapture_grow(const struct city *pcity)
-{
-  struct government *g = get_gov_pcity(pcity);
-
-  return (pcity->rapture > 0 && pcity->food_surplus > 0
-	  && (pcity->rapture % game.rapturedelay) == 0
-	  && government_has_flag(g, G_RAPTURE_CITY_GROWTH));
 }
 
 /**************************************************************************
@@ -1309,16 +1305,12 @@ int get_style_by_name(const char *style_name)
 {
   int i;
 
-  for (i = 0; i < game.styles_count; i++) {
+  for (i = 0; i < game.ruleset_control.style_count; i++) {
     if (strcmp(style_name, city_styles[i].name) == 0) {
-      break;
+      return i;
     }
   }
-  if (i < game.styles_count) {
-    return i;
-  } else {
-    return -1;
-  }
+  return -1;
 }
 
 /**************************************************************************
@@ -1328,16 +1320,12 @@ int get_style_by_name_orig(const char *style_name)
 {
   int i;
 
-  for (i = 0; i < game.styles_count; i++) {
+  for (i = 0; i < game.ruleset_control.style_count; i++) {
     if (strcmp(style_name, city_styles[i].name_orig) == 0) {
-      break;
+      return i;
     }
   }
-  if (i < game.styles_count) {
-    return i;
-  } else {
-    return -1;
-  }
+  return -1;
 }
 
 /**************************************************************************
@@ -1478,7 +1466,8 @@ bool city_can_grow_to(const struct city *pcity, int pop_size)
   } else {
     int max_size;
                                                                                
-    max_size = game.aqueduct_size + get_city_bonus(pcity, EFT_SIZE_ADJ);
+    max_size = game.ruleset_control.aqueduct_size
+               + get_city_bonus(pcity, EFT_SIZE_ADJ);
     return (pop_size <= max_size);
   }
 }
@@ -1586,16 +1575,18 @@ bool city_exists_within_city_radius(const struct tile *ptile,
 ****************************************************************************/
 int city_granary_size(int city_size)
 {
-  int food_inis = game.rgame.granary_num_inis;
-  int food_inc = game.rgame.granary_food_inc;
+  int food_inis = game.ruleset_game.granary_num_inis;
+  int food_inc = game.ruleset_game.granary_food_inc;
 
   /* Granary sizes for the first food_inis citizens are given directly.
    * After that we increase the granary size by food_inc per citizen. */
   if (city_size > food_inis) {
-    return (game.rgame.granary_food_ini[food_inis - 1] * game.foodbox +
-	    food_inc * (city_size - food_inis) * game.foodbox / 100) ;
+    return (game.ruleset_game.granary_food_ini[food_inis - 1]
+	    * game.info.foodbox + food_inc * (city_size - food_inis)
+	                           * game.info.foodbox / 100) ;
   } else {
-    return game.rgame.granary_food_ini[city_size - 1] * game.foodbox;
+    return game.ruleset_game.granary_food_ini[city_size - 1]
+           * game.info.foodbox;
   }
 }
 
@@ -1605,8 +1596,8 @@ int city_granary_size(int city_size)
 static int content_citizens(struct player *pplayer)
 {
   int cities = city_list_size(pplayer->cities);
-  int content = game.unhappysize;
-  int basis = game.cityfactor + get_gov_pplayer(pplayer)->empire_size_mod;
+  int content = game.info.unhappysize;
+  int basis = game.info.cityfactor + get_gov_pplayer(pplayer)->empire_size_mod;
   int step = get_gov_pplayer(pplayer)->empire_size_inc;
 
   if (cities > basis) {
@@ -1695,18 +1686,19 @@ void get_tax_income(struct player *pplayer, int trade, int *sci,
   const int SCIENCE = 0, TAX = 1, LUXURY = 2;
   int rates[3], result[3];
 
-  if (game.rgame.changable_tax) {
+  if (game.ruleset_game.changable_tax) {
     rates[SCIENCE] = pplayer->economic.science;
     rates[LUXURY] = pplayer->economic.luxury;
     rates[TAX] = 100 - rates[SCIENCE] - rates[LUXURY];
   } else {
-    rates[SCIENCE] = game.rgame.forced_science;
-    rates[LUXURY] = game.rgame.forced_luxury;
-    rates[TAX] = game.rgame.forced_gold;
+    rates[SCIENCE] = game.ruleset_game.forced_science;
+    rates[LUXURY] = game.ruleset_game.forced_luxury;
+    rates[TAX] = game.ruleset_game.forced_gold;
   }
   
   /* ANARCHY */
-  if (get_gov_pplayer(pplayer)->index == game.government_when_anarchy) {
+  if (get_gov_pplayer(pplayer)->index
+      == game.ruleset_control.government_when_anarchy) {
     rates[SCIENCE] = 0;
     rates[LUXURY] = 100;
     rates[TAX] = 0;
@@ -1727,7 +1719,7 @@ void get_tax_income(struct player *pplayer, int trade, int *sci,
 **************************************************************************/
 bool city_built_last_turn(const struct city *pcity)
 {
-  return pcity->turn_last_built + 1 >= game.turn;
+  return pcity->turn_last_built + 1 >= game.info.turn;
 }
 
 /**************************************************************************
@@ -1739,11 +1731,11 @@ static inline void set_tax_income(struct city *pcity)
                  &pcity->luxury_total, &pcity->tax_total);
 
   pcity->luxury_total += (pcity->specialists[SP_ELVIS]
-			  * game.rgame.specialists[SP_ELVIS].bonus);
+			  * game.ruleset_game.specialist_bonus[SP_ELVIS]);
   pcity->science_total += (pcity->specialists[SP_SCIENTIST]
-			   * game.rgame.specialists[SP_SCIENTIST].bonus);
+			   * game.ruleset_game.specialist_bonus[SP_SCIENTIST]);
   pcity->tax_total += (pcity->specialists[SP_TAXMAN]
-			* game.rgame.specialists[SP_TAXMAN].bonus);
+			* game.ruleset_game.specialist_bonus[SP_TAXMAN]);
   pcity->tax_total += get_city_tithes_bonus(pcity);
 }
 
@@ -1796,7 +1788,7 @@ static void citizen_happy_size(struct city *pcity)
 
   /* Create angry citizens only if we have a negative number of possible
    * content citizens. This happens when empires grow really big. */
-  if (game.angrycitizen == FALSE) {
+  if (game.info.angrycitizen == FALSE) {
     pcity->ppl_angry[0] = 0;
   } else {
     pcity->ppl_angry[0] = MIN(MAX(0, -content), pcity->size - specialists);
@@ -2247,8 +2239,10 @@ int city_corruption(const struct city *pcity, int trade)
   int dist;
   unsigned int val;
   int trade_penalty;
-  int notradesize = MIN(game.notradesize, game.fulltradesize);
-  int fulltradesize = MAX(game.notradesize, game.fulltradesize);
+  int notradesize = MIN(game.ruleset_control.notradesize,
+			game.ruleset_control.fulltradesize);
+  int fulltradesize = MAX(game.ruleset_control.notradesize,
+			  game.ruleset_control.fulltradesize);
 
   if (pcity->size <= notradesize) {
     trade_penalty = trade;
@@ -2431,7 +2425,7 @@ bool is_city_option_set(const struct city *pcity, enum city_options option)
 void city_styles_alloc(int num)
 {
   city_styles = fc_calloc(num, sizeof(struct citystyle));
-  game.styles_count = num;
+  game.ruleset_control.style_count = num;
 }
 
 /**************************************************************************
@@ -2441,7 +2435,7 @@ void city_styles_free(void)
 {
   free(city_styles);
   city_styles = NULL;
-  game.styles_count = 0;
+  game.ruleset_control.style_count = 0;
 }
 
 /**************************************************************************
@@ -2495,15 +2489,15 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
       pcity->currently_building = u;
     } else {
       pcity->is_building_unit = FALSE;
-      pcity->currently_building = game.default_building;
+      pcity->currently_building = game.ruleset_control.default_building;
     }
   }
-  pcity->turn_founded = game.turn;
+  pcity->turn_founded = game.info.turn;
   pcity->did_buy = TRUE;
   pcity->did_sell = FALSE;
   pcity->airlift = FALSE;
 
-  pcity->turn_last_built = game.turn;
+  pcity->turn_last_built = game.info.turn;
   pcity->changed_from_id = pcity->currently_building;
   pcity->changed_from_is_unit = pcity->is_building_unit;
   pcity->before_change_shields = 0;

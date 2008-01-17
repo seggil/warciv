@@ -1250,10 +1250,10 @@ void auto_settlers_player(struct player *pplayer)
   /* Initialize the infrastructure cache, which is used shortly. */
   initialize_infrastructure_cache(pplayer);
 
-  pplayer->ai.warmth = WARMING_FACTOR * (game.heating > game.warminglevel ? 2 : 1);
+  pplayer->ai.warmth = WARMING_FACTOR * (game.info.heating > game.server.warminglevel ? 2 : 1);
 
-  freelog(LOG_DEBUG, "Warmth = %d, game.globalwarming=%d",
-	  pplayer->ai.warmth, game.globalwarming);
+  freelog(LOG_DEBUG, "Warmth = %d, game.info.globalwarming=%d",
+	  pplayer->ai.warmth, game.info.globalwarming);
 
   /* Auto-settle with a settler unit if it's under AI control (e.g. human
    * player auto-settler mode) or if the player is an AI.  But don't

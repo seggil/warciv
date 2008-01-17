@@ -173,7 +173,8 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
 
     if ((action == DIPLOMAT_BRIBE || action == DIPLOMAT_ANY_ACTION)
         && (unit_list_size(ptile->units) == 1
-            || (game.stackbribing && unit_list_size(ptile->units) > 0))) {
+	    || (game.ext_info.stackbribing
+		&& unit_list_size(ptile->units) > 0))) {
       punit = unit_list_get(ptile->units, 0);
       if (!pplayers_allied(unit_owner(punit), unit_owner(pdiplomat))) {
         return TRUE;
@@ -197,9 +198,14 @@ bool unit_can_airlift_to(struct unit *punit, struct city *pcity)
     return FALSE;
   }
   if (punit->tile->city->owner != pcity->owner) {
-    if(!(game.airliftingstyle & 2) || !pplayers_allied(get_player(punit->owner),get_player(pcity->owner))) return FALSE;
+    if (!(game.ext_info.airliftingstyle & 2)
+       || !pplayers_allied(get_player(punit->owner),
+			   get_player(pcity->owner))) {
+      return FALSE;
+    }
   }
-  if (!punit->tile->city->airlift || (!pcity->airlift && (!(game.airliftingstyle & 1)))) {
+  if (!punit->tile->city->airlift
+      || (!pcity->airlift && (!(game.ext_info.airliftingstyle & 1)))) {
     return FALSE;
   }
   if (!is_ground_unit(punit))
@@ -430,14 +436,6 @@ bool is_hiding_unit(struct unit *punit)
 /**************************************************************************
 ...
 **************************************************************************/
-bool kills_citizen_after_attack(struct unit *punit)
-{
-  return TEST_BIT(game.killcitizen, (int) (unit_type(punit)->move_type) - 1);
-}
-
-/**************************************************************************
-...
-**************************************************************************/
 bool can_unit_add_to_city(struct unit *punit)
 {
   return (test_unit_add_or_build_city(punit) == AB_ADD_OK);
@@ -492,7 +490,7 @@ enum add_build_city_result test_unit_add_or_build_city(struct unit *punit)
   assert(unit_pop_value(punit->type) > 0);
   new_pop = pcity->size + unit_pop_value(punit->type);
 
-  if (new_pop > game.add_to_size_limit)
+  if (new_pop > game.ruleset_control.add_to_size_limit)
     return AB_TOO_BIG;
   if (pcity->owner != punit->owner)
     return AB_NOT_OWNER;
@@ -975,7 +973,7 @@ bool can_unit_do_activity_targeted_at(struct unit *punit,
 	  } else {
 	    return ((pspresent & (~psworking)) != S_NO_SPECIAL);
 	  }
-	} else if (!game.rgame.pillage_select
+	} else if (!game.ruleset_game.pillage_select
 		   && target != get_preferred_pillage(pspresent)) {
 	  return FALSE;
 	} else {
@@ -1643,11 +1641,11 @@ int base_trireme_loss_pct(struct player *pplayer, struct unit *punit)
   if (get_player_bonus(pplayer, EFT_NO_SINK_DEEP) > 0) {
     return 0;
   } else if (player_knows_techs_with_flag(pplayer, TF_REDUCE_TRIREME_LOSS2)) {
-    return game.trireme_loss_chance[punit->veteran] / 4;
+    return game.ruleset_game.trireme_loss_chance[punit->veteran] / 4;
   } else if (player_knows_techs_with_flag(pplayer, TF_REDUCE_TRIREME_LOSS1)) {
-    return game.trireme_loss_chance[punit->veteran] / 2;
+    return game.ruleset_game.trireme_loss_chance[punit->veteran] / 2;
   } else {
-    return game.trireme_loss_chance[punit->veteran];
+    return game.ruleset_game.trireme_loss_chance[punit->veteran];
   }
 }
 
@@ -1673,8 +1671,8 @@ bool unit_being_aggressive(struct unit *punit)
     return FALSE;
   if (map_get_city(punit->tile))
     return FALSE;
-  if (game.borders > 0
-      && game.happyborders
+  if (game.ruleset_control.borders > 0
+      && game.ruleset_control.happyborders
       && map_get_owner(punit->tile) == unit_owner(punit)) {
     return FALSE;
   }

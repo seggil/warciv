@@ -17,8 +17,10 @@
 
 #include <assert.h>
 
-#include "combat.h"
 #include "log.h"
+
+#include "game.h"
+#include "combat.h"
 #include "map.h"
 #include "player.h"
 #include "unit.h"

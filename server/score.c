@@ -125,7 +125,7 @@ static void print_landarea_map(struct claim_map *pcmap, int turn)
   if (turn == 0) {
     printf("Player Info...\n");
 
-    for (p = 0; p < game.nplayers; p++) {
+    for (p = 0; p < game.info.nplayers; p++) {
       printf(".know (%d)\n  ", p);
       WRITE_MAP_DATA("%c",
 		     TEST_BIT(pcmap->claims[map_pos_to_index(x, y)].know,
@@ -165,11 +165,11 @@ static void build_landarea_map_new(struct claim_map *pcmap)
   pcmap->claims = fc_malloc(nbytes);
   memset(pcmap->claims, 0, nbytes);
 
-  nbytes = game.nplayers * sizeof(int);
+  nbytes = game.info.nplayers * sizeof(int);
   pcmap->player_landarea = fc_malloc(nbytes);
   memset(pcmap->player_landarea, 0, nbytes);
 
-  nbytes = game.nplayers * sizeof(int);
+  nbytes = game.info.nplayers * sizeof(int);
   pcmap->player_owndarea = fc_malloc(nbytes);
   memset(pcmap->player_owndarea, 0, nbytes);
 
@@ -409,7 +409,7 @@ void calc_civ_score(struct player *pplayer)
   pplayer->score.spaceship = 0;
 
   if (is_barbarian(pplayer)) {
-    if (pplayer->player_no == game.nplayers - 1) {
+    if (pplayer->player_no == game.info.nplayers - 1) {
       free_landarea_map(&cmap);
     }
     return;
@@ -443,7 +443,7 @@ void calc_civ_score(struct player *pplayer)
   get_player_landarea(&cmap, pplayer, &landarea, &settledarea);
   pplayer->score.landarea = landarea;
   pplayer->score.settledarea = settledarea;
-  if (pplayer->player_no == game.nplayers - 1) {
+  if (pplayer->player_no == game.info.nplayers - 1) {
     free_landarea_map(&cmap);
   }
 
@@ -453,7 +453,7 @@ void calc_civ_score(struct player *pplayer)
     }
   } tech_type_iterate_end;
   
-  if(game.futuretechsscore)pplayer->score.techs += pplayer->future_tech * 5 / 2;
+  if(game.ext_info.futuretechsscore)pplayer->score.techs += pplayer->future_tech * 5 / 2;
   
   unit_list_iterate(pplayer->units, punit) {
     if (is_military_unit(punit)) {
@@ -463,7 +463,7 @@ void calc_civ_score(struct player *pplayer)
 
   impr_type_iterate(i) {
     if (is_wonder(i)
-	&& (pcity = find_city_by_id(game.global_wonders[i]))
+	&& (pcity = find_city_by_id(game.info.global_wonders[i]))
 	&& player_owns_city(pplayer, pcity)) {
       pplayer->score.wonders++;
     }
@@ -538,7 +538,7 @@ void save_ppm(void)
 
   /* put this file in the same place we put savegames */
   my_snprintf(filename, sizeof(filename),
-              "%s%+05d.int.ppm", game.save_name, game.year);
+              "%s%+05d.int.ppm", game.server.save_name, game.info.year);
 
   /* Ensure the saves directory exists. */
   make_dir(srvarg.saves_pathname);
@@ -557,12 +557,12 @@ void save_ppm(void)
     return;
   }
 
-  fprintf(fp, "P3\n# version:2\n# gameid: %s\n", game.id);
+  fprintf(fp, "P3\n# version:2\n# gameid: %s\n", game.server.id);
   fprintf(fp, "# An intermediate map from saved Freeciv game %s%+05d\n",
-          game.save_name, game.year);
+          game.server.save_name, game.info.year);
 
 
-  for (i = 0; i < game.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     struct player *pplayer = get_player(i);
     fprintf(fp, "# playerno:%d:color:#%02x%02x%02x:name:\"%s\"\n", 
             pplayer->player_no, col[i][0], col[i][1], col[i][2],
@@ -745,17 +745,17 @@ static bool game_can_be_rated(void)
     }
   } players_iterate_end;
 
-  freelog(LOG_DEBUG, "game_can_be_rated num_rated_users=%d game.turn=%d",
-          num_rated_users, game.turn);
+  freelog(LOG_DEBUG, "game_can_be_rated num_rated_users=%d game.info.turn=%d",
+          num_rated_users, game.info.turn);
   
-  if ((game.fcdb.type == GT_SOLO && num_rated_users < 1)
-      || (game.fcdb.type != GT_SOLO && num_rated_users < 2)) {
+  if ((game.server.fcdb.type == GT_SOLO && num_rated_users < 1)
+      || (game.server.fcdb.type != GT_SOLO && num_rated_users < 2)) {
     notify_conn(NULL, _("Game: The game cannot be rated because there "
                         "are not enough rated users in the game."));
     return FALSE;
   }
 
-  if (srvarg.fcdb.min_rated_turns > game.turn) {
+  if (srvarg.fcdb.min_rated_turns > game.info.turn) {
     notify_conn(NULL, _("Game: The game cannot be rated because not "
                         "enough turns (%d) have been played."),
                 srvarg.fcdb.min_rated_turns);
@@ -922,7 +922,7 @@ static void update_ratings(void)
   double RD, c, t, r, q, q2, RD2, sum, inv_d2;
   double rj, sj, E, new_r, new_RD, gRD[MAX_NUM_PLAYERS];
 
-  if (game.fcdb.type == GT_SOLO) {
+  if (game.server.fcdb.type == GT_SOLO) {
     assert(num_groupings == 1);
     assert(groupings[0].num_players == 1);
   }
@@ -952,7 +952,7 @@ static void update_ratings(void)
   /* Update ratings. (Glicko Step 2) */
 
   /* Fill gRD[j] table to avoid recalculation. */
-  if (game.fcdb.type == GT_SOLO) {
+  if (game.server.fcdb.type == GT_SOLO) {
     gRD[0] = glicko_g_function(score_get_solo_opponent_rating_deviation());
   } else {
     for (i = 0; i < num_groupings; i++) {
@@ -971,11 +971,11 @@ static void update_ratings(void)
     inv_d2 = 0.0;
     for (j = 0; j < num_groupings; j++) {
 
-      if (game.fcdb.type == GT_SOLO) {
+      if (game.server.fcdb.type == GT_SOLO) {
         rj = score_calculate_solo_opponent_rating(&groupings[0]);
 
         /* You only 'win' if you get to Alpha Centauri. */
-        sj = game.fcdb.outcome == GOC_ENDED_BY_SPACESHIP ? 1.0 : 0.0;
+        sj = game.server.fcdb.outcome == GOC_ENDED_BY_SPACESHIP ? 1.0 : 0.0;
 
       } else {
         if (i == j) {
@@ -1172,8 +1172,8 @@ void score_update_grouping_results(void)
         groupings[i-1].result = PR_DRAW;
       } while (i < num_groupings && 0 == next_cmp);
     } else {
-      if (game.fcdb.type == GT_SOLO
-          && game.fcdb.outcome != GOC_ENDED_BY_SPACESHIP) {
+      if (game.server.fcdb.type == GT_SOLO
+          && game.server.fcdb.outcome != GOC_ENDED_BY_SPACESHIP) {
         groupings[0].result = PR_LOSE;
       } else {
         groupings[0].result = PR_WIN;
@@ -1275,21 +1275,21 @@ void score_evaluate_players(void)
   dump_groupings();
 #endif
   
-  if (!game.rated || !srvarg.fcdb.enabled || !srvarg.auth.enabled) {
+  if (!game.server.rated || !srvarg.fcdb.enabled || !srvarg.auth.enabled) {
     return;
   }
 
   /* Get the old ratings. */
-  if (!fcdb_load_player_ratings(game.fcdb.type)) {
+  if (!fcdb_load_player_ratings(game.server.fcdb.type)) {
     notify_conn(NULL, _("Game: Though the server option 'rated' was set, "
         "player ratings cannot be updated because there was an error "
         "communicating with the database."));
-    game.rated = FALSE;
+    game.server.rated = FALSE;
     return;
   }
 
   if (!game_can_be_rated()) {
-    game.rated = FALSE;
+    game.server.rated = FALSE;
     return;
   }
 
@@ -1373,7 +1373,7 @@ double score_calculate_solo_opponent_rating(const struct grouping *g)
 
   K = RATING_CONSTANT_SOLO_RATING_COEFFICIENT;
   S = g->score;
-  T = game.turn;
+  T = game.info.turn;
 
   rating = K * S / (1.0 + T);
 

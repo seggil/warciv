@@ -161,11 +161,11 @@ int my_city_num_trade_routes(struct city *pcity)
 {
   int num = trade_route_list_size(pcity->trade_routes);
 
-  if (pcity->owner == game.player_idx) {
+  if (pcity->owner == get_player_idx()) {
     return num + city_num_trade_routes(pcity);
   }
 
-  city_list_iterate(game.player_ptr->cities, ocity) {
+  city_list_iterate(get_player_ptr()->cities, ocity) {
     if (have_cities_trade_route(pcity, ocity)) {
       num++;
     }
@@ -216,7 +216,7 @@ int calculate_move_trade_cost(struct unit *punit,
 **************************************************************************/
 int calculate_best_move_trade_cost(struct trade_route *ptr)
 {
-  if (ptr->pc2->owner != game.player_idx) {
+  if (ptr->pc2->owner != get_player_idx()) {
     return calculate_move_trade_cost(ptr->punit, ptr->pc1, ptr->pc2);
   }
 
@@ -322,7 +322,7 @@ struct city *get_city_user(struct tile *pcenter_tile, int *x, int *y, int depth,
 
   square_iterate(pcenter_tile, CITY_MAP_RADIUS + 1, ptile) {
     if ((pcity = map_get_city(ptile))
-        && pcity->owner == game.player_idx
+        && pcity->owner == get_player_idx()
         && map_to_city_map(x, y, pcity, pcenter_tile)
         && pcity->city_map[*x][*y] == C_TILE_WORKER
         && (ptcity = toggle_city_find(pcities, size, pcity))
@@ -411,7 +411,7 @@ void toggle_worker_free(struct toggle_worker *ptw)
 void recursive_add_cities(struct city *pcity, struct toggle_city *pcities,
 			  size_t size, int depth)
 {
-  if (!pcity || pcity->owner != game.player_idx) {
+  if (!pcity || pcity->owner != get_player_idx()) {
     return;
   }
 
@@ -453,7 +453,7 @@ void sort_cities(struct toggle_city *pcities, size_t size)
 void switch_tiles(struct city *pcity, genlist *ptcity,
 		  struct toggle_city *pcities, size_t csize)
 {
-  assert(pcity->owner == game.player_idx);
+  assert(pcity->owner == get_player_idx());
 
   size_t size = 0, min = MIN(pcity->size, CITY_TILES);
   struct tile *tiles[CITY_TILES];
@@ -537,14 +537,14 @@ void switch_tiles(struct city *pcity, genlist *ptcity,
 **************************************************************************/
 genlist *apply_trade(struct city *pcity1, struct city *pcity2)
 {
-  size_t size = city_list_size(game.player_ptr->cities);
+  size_t size = city_list_size(get_player_ptr()->cities);
   struct toggle_city cities[size];
   int i;
   genlist *ptcity = genlist_new();
 
   if (my_ai_establish_trade_route_level > 0) {
     i = 0;
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       cities[i].pcity = pcity;
       cities[i].depth = size;
       memcpy(cities[i].city_map, pcity->city_map, sizeof(pcity->city_map));
@@ -638,7 +638,7 @@ void my_ai_trade_route_alloc_city(struct unit *punit, struct city *pcity)
   }
 
   char buf[256] = "\0";
-  struct city *hcity = player_find_city_by_id(game.player_ptr, punit->homecity);
+  struct city *hcity = player_find_city_by_id(get_player_ptr(), punit->homecity);
   struct trade_route *ptr;
 
   if (!can_cities_trade(hcity, pcity)) {
@@ -968,8 +968,8 @@ void calculate_trade_planning(char *buf, size_t buf_len)
              ? time(NULL) + my_ai_trade_plan_time_max : 0;
   unit_type_iterate(type) {
     if (unit_type_flag(type, F_TRADE_ROUTE)) {
-      caravan = create_unit_virtual(game.player_ptr,
-                                    city_list_get(game.player_ptr->cities, 0),
+      caravan = create_unit_virtual(get_player_ptr(),
+                                    city_list_get(get_player_ptr()->cities, 0),
                                     type, 0);
       break;
     }
@@ -1353,7 +1353,7 @@ void non_ai_trade_change(struct unit *punit, int action)
   }
   
   if (action & 2 && punit->goto_tile && punit->goto_tile->city) {
-    pc3 = player_find_city_by_id(game.player_ptr, punit->homecity);
+    pc3 = player_find_city_by_id(get_player_ptr(), punit->homecity);
     pc4 = punit->goto_tile->city;
     trade_route_list_append(non_ai_trade,
 			    trade_route_new(punit, pc3, pc4, FALSE));
@@ -1592,8 +1592,8 @@ void my_ai_spread_execute(void)
   /* get datas */
   sclist = scity_list_new();
   players_iterate(pplayer) {
-    if ((!spread_allied_cities && pplayer != game.player_ptr)
-	|| !pplayers_allied(game.player_ptr, pplayer)) {
+    if ((!spread_allied_cities && pplayer != get_player_ptr())
+	|| !pplayers_allied(get_player_ptr(), pplayer)) {
       continue;
     }
 
@@ -1794,7 +1794,7 @@ void my_ai_caravan(struct unit *punit)
   if (my_ai_trade_level == LEVEL_GOOD) {
     htr = NULL;
     trade_route_list_iterate(
-      player_find_city_by_id(game.player_ptr, punit->homecity)->trade_routes,
+      player_find_city_by_id(get_player_ptr(), punit->homecity)->trade_routes,
 			     ctr) {
       if (!ctr->planned) {
 	continue;
@@ -1997,9 +1997,11 @@ void my_ai_init(void)
 **************************************************************************/
 void my_ai_free(void)
 {
-  city_list_iterate(game.player_ptr->cities, pcity) {
-    my_ai_city_free(pcity);
-  } city_list_iterate_end;
+  if (get_player_ptr()) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
+      my_ai_city_free(pcity);
+    } city_list_iterate_end;
+  }
   unit_list_free(traders);
   unit_list_free(patrolers);
   city_list_free(trade_cities);

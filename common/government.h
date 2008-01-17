@@ -86,12 +86,12 @@ struct government
 				   enforce martial law */
   int   martial_law_per;        /* number of unhappy citizens made
 				   content by each enforcer unit */
-  int   empire_size_mod;	/* (signed) offset to game.cityfactor to
+  int   empire_size_mod;	/* (signed) offset to game.info.cityfactor to
 				   give city count when number of naturally
 				   content citizens is decreased */
   int   empire_size_inc;	/* if non-zero, reduce one content citizen for
 				   every empire_size_inc cities once #cities
-				   exceeds game.cityfactor + empire_size_mod */
+				   exceeds game.info.cityfactor + empire_size_mod */
   int   rapture_size;		/* minimum city size for rapture; if 255,
 				   rapture is (practically) impossible */
 
@@ -165,7 +165,7 @@ struct ai_gov_tech_hint {
 extern struct government *governments;
 
 extern struct ai_gov_tech_hint ai_gov_tech_hints[MAX_NUM_TECH_LIST];
-/* like game.rtech lists, A_LAST terminated (for .tech)
+/* like game.ruleset_control.rtech_lists, A_LAST terminated (for .tech)
    and techs before that are guaranteed to exist */
 
 struct government *get_government(int gov);
@@ -195,7 +195,8 @@ void governments_free(void);
 {                                                                           \
   int GI_index;                                                             \
                                                                             \
-  for (GI_index = 0; GI_index < game.government_count; GI_index++) {        \
+  for (GI_index = 0; GI_index < game.ruleset_control.government_count;      \
+       GI_index++) {							    \
     struct government *gov = get_government(GI_index);                      \
     {
 

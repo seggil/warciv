@@ -123,7 +123,7 @@ static int ai_goldequiv_tech(struct player *pplayer, Tech_Type_id tech)
     return 0;
   }
   worth = total_bulbs_required_for_goal(pplayer, tech) * 3;
-  worth += MAX(pplayer->ai.tech_want[tech], 0) / MAX(game.turn, 1);
+  worth += MAX(pplayer->ai.tech_want[tech], 0) / MAX(game.info.turn, 1);
   if (get_invention(pplayer, tech) == TECH_REACHABLE) {
     worth /= 2;
   }
@@ -896,7 +896,8 @@ static void ai_share(struct player *pplayer, struct player *aplayer)
 
   /* Only share techs with team mates */
   if (players_on_same_team(pplayer, aplayer)) {
-    for (index = A_FIRST; index < game.num_tech_types; index++) {
+    for (index = A_FIRST;
+	 index < game.ruleset_control.num_tech_types; index++) {
       if ((get_invention(pplayer, index) != TECH_KNOWN)
           && (get_invention(aplayer, index) == TECH_KNOWN)) {
        ai_diplomacy_suggest(aplayer, pplayer, CLAUSE_ADVANCE, index);

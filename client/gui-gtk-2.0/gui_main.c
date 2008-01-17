@@ -1214,7 +1214,7 @@ static void allied_chat_button_toggled(GtkToggleButton *button,
 **************************************************************************/
 static void request_more_time_callback(void)
 {
-  int new_timeout = game.timeout + 30;
+  int new_timeout = game.info.timeout + 30;
   char buf[256];
   my_snprintf(buf, sizeof(buf), "/set timeout %d --- I need more time!",
               new_timeout);
@@ -1991,7 +1991,7 @@ static gboolean select_unit_pixmap_callback(GtkWidget *w, GdkEvent *ev,
 
   punit = find_unit_by_id(unit_ids[i]);
   if(punit) { /* should always be true at this point */
-    if (punit->owner == game.player_idx) {  /* may be non-true if alliance */
+    if (punit->owner == get_player_idx()) {  /* may be non-true if alliance */
       set_unit_focus_and_active(punit);
     }
   }
@@ -2032,19 +2032,19 @@ static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
     my_snprintf(buf, sizeof(buf),
 	    _("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
 	      "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
-	    population_to_text(civ_population(game.player_ptr)),
-	    textyear(game.year), game.turn,
-	    game.player_ptr->economic.gold,
-	    player_get_expected_income(game.player_ptr),
-	    game.player_ptr->economic.tax,
-	    game.player_ptr->economic.luxury,
-	    game.player_ptr->economic.science,
+	    population_to_text(civ_population(get_player_ptr())),
+	    textyear(game.info.year), game.info.turn,
+	    get_player_ptr()->economic.gold,
+	    player_get_expected_income(get_player_ptr()),
+	    get_player_ptr()->economic.tax,
+	    get_player_ptr()->economic.luxury,
+	    get_player_ptr()->economic.science,
 
-	    get_tech_name(game.player_ptr,
-			  game.player_ptr->research.researching),
-	    game.player_ptr->research.bulbs_researched,
-	    total_bulbs_required(game.player_ptr),
-	    get_government_name(game.player_ptr->government));
+	    get_tech_name(get_player_ptr(),
+			  get_player_ptr()->research.researching),
+	    get_player_ptr()->research.bulbs_researched,
+	    total_bulbs_required(get_player_ptr()),
+	    get_government_name(get_player_ptr()->government));
     
     p = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_set_app_paintable(p, TRUE);

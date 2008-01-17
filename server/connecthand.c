@@ -397,7 +397,7 @@ void establish_new_connection(struct connection *pconn)
       send_rulesets(dest);		
       send_player_info(NULL, NULL);
       send_packet_thaw_hint(pconn);
-      if(pplayer->nation == NO_NATION_SELECTED) {
+      if (pplayer->nation == NO_NATION_SELECTED) {
         send_select_nation(pplayer);
       }
     } else if (server_state >= RUN_GAME_STATE) {
@@ -405,9 +405,9 @@ void establish_new_connection(struct connection *pconn)
        * See the comment in lost_connection_to_client(). */
       send_packet_freeze_hint(pconn);
       send_rulesets(dest);
-      send_player_info(NULL, NULL);
       send_all_info(dest);
       send_game_state(dest, CLIENT_GAME_RUNNING_STATE);
+      send_player_info(NULL, NULL);
       send_diplomatic_meetings(pconn);
       send_packet_thaw_hint(pconn);
       send_packet_start_turn(pconn);
@@ -420,13 +420,13 @@ void establish_new_connection(struct connection *pconn)
     /* This must be done after the above info is sent, because it will
      * generate a player-packet which can't be sent until (at least)
      * rulesets are sent. */
-    if (game.auto_ai_toggle && pplayer->ai.control) {
+    if (game.server.auto_ai_toggle && pplayer->ai.control) {
       toggle_ai_player_direct(NULL, pplayer);
     }
 
     gamelog(GAMELOG_PLAYER, pplayer);
 
-  } else if (server_state == PRE_GAME_STATE && game.is_new_game) {
+  } else if (server_state == PRE_GAME_STATE && game.server.is_new_game) {
     if (!attach_connection_to_player(pconn, NULL)) {
       notify_conn(dest, _("Server: Couldn't attach your connection to new player."));
       freelog(LOG_VERBOSE, "%s is not attached to a player",
@@ -448,8 +448,8 @@ void establish_new_connection(struct connection *pconn)
                 pconn->username, pconn->player->name);
   }
 
-  /* if need be, tell who we're waiting on to end the game turn */
-  if (server_state == RUN_GAME_STATE && game.turnblock) {
+  /* if need be, tell who we're waiting on to end the game.info.turn */
+  if (server_state == RUN_GAME_STATE && game.server.turnblock) {
     players_iterate(cplayer) {
       if (cplayer->is_alive && !cplayer->ai.control
 	  && !cplayer->turn_done && cplayer != pconn->player) {
@@ -512,8 +512,8 @@ bool handle_login_request(struct connection *pconn,
 	  req->username, pconn->addr, pconn->server.adns_id > 0 ?
 	  _(" (hostname lookup in progress)") : "");
 
-  if ((game.maxconnections != 0)
-      && (conn_list_size(game.all_connections) > game.maxconnections)) {
+  if ((game.server.maxconnections != 0)
+      && (conn_list_size(game.all_connections) > game.server.maxconnections)) {
     reject_new_connection(_("Maximum number of connections "
 			    "for this server exceeded."), pconn);
     return FALSE;
@@ -646,7 +646,7 @@ void server_assign_nation(struct player *pplayer,
   } players_iterate_end;
 
   /* if there's no nation left, reject remaining players, sorry */
-  if (nation_used_count == game.playable_nation_count) {   /* barb */
+  if (nation_used_count == game.ruleset_control.playable_nation_count) {   /* barb */
     players_iterate(other_player) {
       if (other_player->nation == NO_NATION_SELECTED) {
 	freelog(LOG_NORMAL, _("No nations left: Removing player %s."),
@@ -713,14 +713,14 @@ void lost_connection_to_client(struct connection *pconn)
     } players_iterate_end;
   }
 
-  if (game.is_new_game && !pplayer->is_connected	/* eg multiple controllers */
+  if (game.server.is_new_game && !pplayer->is_connected	/* eg multiple controllers */
       && !pplayer->ai.control    /* eg created AI player */
       && (server_state == PRE_GAME_STATE 
 	  || (server_state == SELECT_RACES_STATE
               && select_random_nation(NULL) == NO_NATION_SELECTED))) {
     server_remove_player(pplayer);
   } else {
-    if (game.auto_ai_toggle
+    if (game.server.auto_ai_toggle
         && !pplayer->ai.control
         && !pplayer->is_connected /* eg multiple controllers */) {
       toggle_ai_player_direct(NULL, pplayer);
@@ -807,13 +807,13 @@ bool attach_connection_to_player(struct connection *pconn,
 {
   /* if pplayer is NULL, attach to first non-connected player slot */
   if (!pplayer) {
-    if (game.nplayers >= game.max_players 
- 	|| game.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
+    if (game.info.nplayers >= game.info.max_players 
+ 	|| game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
  	|| !can_control_a_player(pconn, TRUE) ) {
       return FALSE; 
     } else {
-      pplayer = &game.players[game.nplayers];
-      game.nplayers++;
+      pplayer = &game.players[game.info.nplayers];
+      game.info.nplayers++;
     }
   }
 

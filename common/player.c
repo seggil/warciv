@@ -35,10 +35,10 @@
 
 /* Must match enum player_results in player.h */
 static const char *player_result_strings[PR_NUM_PLAYER_RESULTS] = {
-  "none",
-  "win",
-  "lose",
-  "draw",
+  N_("none"),
+  N_("win"),
+  N_("lose"),
+  N_("draw")
 };
 
 /***************************************************************
@@ -99,8 +99,8 @@ void player_init(struct player *plr)
   sz_strlcpy(plr->name, ANON_PLAYER_NAME);
   sz_strlcpy(plr->username, ANON_USER_NAME);
   plr->is_male = TRUE;
-  plr->government=game.default_government;
-  plr->target_government = game.default_government;
+  plr->government = game.ruleset_control.default_government;
+  plr->target_government = game.ruleset_control.default_government;
   plr->nation = NO_NATION_SELECTED;
   plr->team = TEAM_NONE;
   plr->is_started = FALSE;
@@ -147,12 +147,13 @@ void player_init(struct player *plr)
   /* Initialise list of improvements with Island-wide equiv_range */
   plr->island_improv = NULL;
 
-  if (map.num_continents > 0 && game.num_impr_types > 0) {
+  if (map.num_continents > 0 && game.ruleset_control.num_impr_types > 0) {
     plr->island_improv = fc_malloc((map.num_continents + 1)
-        * game.num_impr_types * sizeof(Impr_Status));
+        * game.ruleset_control.num_impr_types * sizeof(Impr_Status));
     for (i = 1; i <= map.num_continents; i++) {
-      improvement_status_init(&plr->island_improv[i * game.num_impr_types],
-                              game.num_impr_types);
+      improvement_status_init(&plr->island_improv[i
+				  * game.ruleset_control.num_impr_types],
+                              game.ruleset_control.num_impr_types);
     }
   }
 
@@ -182,7 +183,7 @@ void player_init(struct player *plr)
 void player_set_unit_focus_status(struct player *pplayer)
 {
   unit_list_iterate(pplayer->units, punit) 
-    punit->focus_status=FOCUS_AVAIL;
+    punit->focus_status = FOCUS_AVAIL;
   unit_list_iterate_end;
 }
 
@@ -218,7 +219,7 @@ struct player *find_player_by_name_prefix(const char *name,
 {
   int ind;
 
-  *result = match_prefix(pname_accessor, game.nplayers, MAX_LEN_NAME-1,
+  *result = match_prefix(pname_accessor, game.info.nplayers, MAX_LEN_NAME - 1,
 			 mystrncasecmp, name, &ind);
 
   if (*result < M_PRE_AMBIGUOUS) {
@@ -823,12 +824,19 @@ bool is_valid_username(const char *name)
 /****************************************************************************
   ...
 ****************************************************************************/
-const char *result_as_string(enum player_results res)
+const char *result_name_orig(enum player_results res)
 {
-  if (res < 0 || res >= PR_NUM_PLAYER_RESULTS) {
-    return NULL;
-  }
+  assert(0 <= res && res < PR_NUM_PLAYER_RESULTS);
   return player_result_strings[res];
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+const char *result_name(enum player_results res)
+{
+  assert(0 <= res && res < PR_NUM_PLAYER_RESULTS);
+  return _(player_result_strings[res]);
 }
 
 /***************************************************************

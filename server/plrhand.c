@@ -82,7 +82,7 @@ void notify_enabled(bool yes) {
 void do_dipl_cost(struct player *pplayer, Tech_Type_id new_tech)
 {
   pplayer->research.bulbs_researched -=
-      (base_total_bulbs_required(pplayer,new_tech) * game.diplcost) / 100;
+      (base_total_bulbs_required(pplayer,new_tech) * game.info.diplcost) / 100;
   pplayer->research.changed_from = -1;
 }
 
@@ -92,7 +92,7 @@ void do_dipl_cost(struct player *pplayer, Tech_Type_id new_tech)
 void do_free_cost(struct player *pplayer)
 {
   pplayer->research.bulbs_researched -=
-      (total_bulbs_required(pplayer) * game.freecost) / 100;
+      (total_bulbs_required(pplayer) * game.info.freecost) / 100;
   pplayer->research.changed_from = -1;
 }
 
@@ -102,7 +102,7 @@ void do_free_cost(struct player *pplayer)
 void do_conquer_cost(struct player *pplayer)
 {
   pplayer->research.bulbs_researched -=
-      (total_bulbs_required(pplayer) * game.conquercost) / 100;
+      (total_bulbs_required(pplayer) * game.info.conquercost) / 100;
   pplayer->research.changed_from = -1;
 }
 
@@ -159,7 +159,7 @@ void do_tech_parasite_effect(struct player *pplayer)
     tech_type_iterate(i) {
       if (get_invention(pplayer, i) != TECH_KNOWN
 	  && tech_is_available(pplayer, i)
-	  && game.global_advances[i] >= mod) {
+	  && game.info.global_advances[i] >= mod) {
 	notify_player_ex(pplayer, NULL, E_TECH_GAIN,
 			 _("Game: %s acquired from %s!"),
 			 get_tech_name(pplayer, i), buf);
@@ -235,8 +235,8 @@ void kill_player(struct player *pplayer) {
 
   /* Transfer back all cities not originally owned by player to their
      rightful owners, if they are still around */
-  palace = game.savepalace;
-  game.savepalace = FALSE; /* moving it around is dumb */
+  palace = game.server.savepalace;
+  game.server.savepalace = FALSE; /* moving it around is dumb */
   city_list_iterate(pplayer->cities, pcity) {
     if ((pcity->original != pplayer->player_no)
         && (get_player(pcity->original)->is_alive)) {
@@ -256,7 +256,7 @@ void kill_player(struct player *pplayer) {
   city_list_iterate(pplayer->cities, pcity) {
     remove_city(pcity);
   } city_list_iterate_end;
-  game.savepalace = palace;
+  game.server.savepalace = palace;
 
   /* Ensure this dead player doesn't win with a spaceship.
    * Now that would be truly unbelievably dumb - Per */
@@ -322,16 +322,16 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
 
   plr->research.changed_from = -1;
   plr->research.techs_researched++;
-  was_first = (game.global_advances[tech_found] == 0);
+  was_first = (game.info.global_advances[tech_found] == 0);
 
   if (was_first) {
     /* We used to have a gamelog() for first-researched, but not anymore. */
 
     /* Alert the owners of any wonders that have been made obsolete */
     impr_type_iterate(id) {
-      if (game.global_wonders[id] != 0 && is_wonder(id) &&
+      if (game.info.global_wonders[id] != 0 && is_wonder(id) &&
 	  improvement_types[id].obsolete_by == tech_found &&
-	  (pcity = find_city_by_id(game.global_wonders[id]))) {
+	  (pcity = find_city_by_id(game.info.global_wonders[id]))) {
 	notify_player_ex(city_owner(pcity), NULL, E_WONDER_OBSOLETE,
 	                 _("Game: Discovery of %s OBSOLETES %s in %s!"), 
 	                 get_tech_name(city_owner(pcity), tech_found),
@@ -462,10 +462,10 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
   /*
    * Update all cities if the new tech affects happiness.
    */
-  if (tech_found == game.rtech.cathedral_plus
-      || tech_found == game.rtech.cathedral_minus
-      || tech_found == game.rtech.colosseum_plus
-      || tech_found == game.rtech.temple_plus) {
+  if (tech_found == game.ruleset_control.rtech_cathedral_plus
+      || tech_found == game.ruleset_control.rtech_cathedral_minus
+      || tech_found == game.ruleset_control.rtech_colosseum_plus
+      || tech_found == game.ruleset_control.rtech_temple_plus) {
     city_list_iterate(plr->cities, pcity) {
       city_refresh(pcity);
       send_city_info(plr, pcity);
@@ -534,7 +534,7 @@ static void tech_researched(struct player* plr)
   found_new_tech(plr, tech, TRUE, TRUE, A_NONE);
   
   /* update resarch for all players */
-  if(!is_future_tech(tech) && game.rgame.tech_leakage) {
+  if(!is_future_tech(tech) && game.ruleset_game.tech_leakage) {
     shuffled_players_iterate(pplayer) {
       if(pplayer->research.researching == tech) {
         update_tech(pplayer, 0);
@@ -676,7 +676,7 @@ void choose_tech(struct player *plr, int tech)
     /* subtract a penalty because we changed subject */
     if (plr->research.bulbs_researched > 0) {
       plr->research.bulbs_researched -=
-	  ((plr->research.bulbs_researched * game.techpenalty) / 100);
+	  ((plr->research.bulbs_researched * game.info.techpenalty) / 100);
       assert(plr->research.bulbs_researched >= 0);
     }
   } else if (tech == plr->research.changed_from) {
@@ -736,10 +736,10 @@ void give_initial_techs(struct player* plr)
    * Give game wide initial techs
    */
   for (i = 0; i < MAX_NUM_TECH_LIST; i++) {
-    if (game.rgame.global_init_techs[i] == A_LAST) {
+    if (game.ruleset_game.global_init_techs[i] == A_LAST) {
       break;
     }
-    found_new_tech(plr, game.rgame.global_init_techs[i], FALSE, TRUE, A_NONE);
+    found_new_tech(plr, game.ruleset_game.global_init_techs[i], FALSE, TRUE, A_NONE);
   }
 
   /*
@@ -933,11 +933,11 @@ static void finish_revolution(struct player *pplayer)
 {
   int government = pplayer->target_government;
 
-  if (pplayer->target_government == game.government_when_anarchy) {
+  if (pplayer->target_government == game.ruleset_control.government_when_anarchy) {
     assert(0);
     return;
   }
-  if (pplayer->revolution_finishes > game.turn) {
+  if (pplayer->revolution_finishes > game.info.turn) {
     assert(0);
     return;
   }
@@ -948,7 +948,7 @@ static void finish_revolution(struct player *pplayer)
   freelog(LOG_DEBUG,
 	  "Revolution finished for %s.  Government is %s.  Revofin %d (%d).",
 	  pplayer->name, get_government_name(government),
-	  pplayer->revolution_finishes, game.turn);
+	  pplayer->revolution_finishes, game.info.turn);
   notify_player_ex(pplayer, NULL, E_REVOLT_DONE,
 		   _("Game: %s now governs the %s as a %s."), 
 		   pplayer->name, 
@@ -980,7 +980,7 @@ static void finish_revolution(struct player *pplayer)
 **************************************************************************/
 static void start_revolution(struct player *pplayer)
 {
-  pplayer->government = game.government_when_anarchy;
+  pplayer->government = game.ruleset_control.government_when_anarchy;
 
   /* Set revolution_finishes value. */
   if (pplayer->revolution_finishes > 0) {
@@ -988,26 +988,26 @@ static void start_revolution(struct player *pplayer)
   } else if ((pplayer->ai.control && !ai_handicap(pplayer, H_REVOLUTION))
 	     || get_player_bonus(pplayer, EFT_NO_ANARCHY)) {
     /* AI players without the H_REVOLUTION handicap can skip anarchy */
-    pplayer->revolution_finishes = game.turn;
-  } else if (game.revolution_length == 0) {
-    pplayer->revolution_finishes = game.turn + myrand(5) + 1;
+    pplayer->revolution_finishes = game.info.turn;
+  } else if (game.server.revolution_length == 0) {
+    pplayer->revolution_finishes = game.info.turn + myrand(5) + 1;
   } else {
-    pplayer->revolution_finishes = game.turn + game.revolution_length;
+    pplayer->revolution_finishes = game.info.turn + game.server.revolution_length;
   }
 
   freelog(LOG_DEBUG,
 	  "Revolution started for %s.  Target government is %s.  "
 	  "Revofin %d (%d).",
 	  pplayer->name, get_government_name(pplayer->target_government),
-	  pplayer->revolution_finishes, game.turn);
+	  pplayer->revolution_finishes, game.info.turn);
   notify_player_ex(pplayer, NULL, E_REVOLT_START,
 		   _("Game: The %s have incited a revolt!"),
 		   get_nation_name_plural(pplayer->nation));
   gamelog(GAMELOG_REVOLT, pplayer);
 
   /* Now see if the revolution is instantaneous. */
-  if (pplayer->revolution_finishes <= game.turn
-      && pplayer->target_government != game.government_when_anarchy) {
+  if (pplayer->revolution_finishes <= game.info.turn
+      && pplayer->target_government != game.ruleset_control.government_when_anarchy) {
     finish_revolution(pplayer);
     return;
   }
@@ -1022,7 +1022,7 @@ static void start_revolution(struct player *pplayer)
 **************************************************************************/
 void handle_player_change_government(struct player *pplayer, int government)
 {
-  if (government < 0 || government >= game.government_count
+  if (government < 0 || government >= game.ruleset_control.government_count
       || !can_change_to_government(pplayer, government)) {
     return;
   }
@@ -1035,13 +1035,13 @@ void handle_player_change_government(struct player *pplayer, int government)
 	  pplayer->name,
 	  get_government_name(pplayer->target_government),
 	  get_government_name(pplayer->government),
-	  pplayer->revolution_finishes, game.turn);
+	  pplayer->revolution_finishes, game.info.turn);
 
-  if (pplayer->government == game.government_when_anarchy) {
+  if (pplayer->government == game.ruleset_control.government_when_anarchy) {
     /* Already having a revolution. */
     assert(pplayer->revolution_finishes >= 0);
-    if (pplayer->revolution_finishes <= game.turn
-	&& government != game.government_when_anarchy) {
+    if (pplayer->revolution_finishes <= game.info.turn
+	&& government != game.ruleset_control.government_when_anarchy) {
       /* The revolution was already over.  Now we should enter the new
        * government immediately. */
       finish_revolution(pplayer);
@@ -1057,7 +1057,7 @@ void handle_player_change_government(struct player *pplayer, int government)
 	  pplayer->name,
 	  get_government_name(pplayer->target_government),
 	  get_government_name(pplayer->government),
-	  game.turn, pplayer->revolution_finishes);
+	  game.info.turn, pplayer->revolution_finishes);
 }
 
 /**************************************************************************
@@ -1089,10 +1089,10 @@ void update_revolution(struct player *pplayer)
 	  "target %s, revofin %d, turn %d.",
 	  pplayer->name, get_government_name(pplayer->government),
 	  get_government_name(pplayer->target_government),
-	  pplayer->revolution_finishes, game.turn);
-  if (pplayer->government == game.government_when_anarchy
-      && pplayer->revolution_finishes <= game.turn) {
-    if (pplayer->target_government != game.government_when_anarchy) {
+	  pplayer->revolution_finishes, game.info.turn);
+  if (pplayer->government == game.ruleset_control.government_when_anarchy
+      && pplayer->revolution_finishes <= game.info.turn) {
+    if (pplayer->target_government != game.ruleset_control.government_when_anarchy) {
       /* If the revolution is over and a target government is set, go into
        * the new government. */
       freelog(LOG_DEBUG, "Update: finishing revolution for %s.",
@@ -1105,8 +1105,8 @@ void update_revolution(struct player *pplayer)
 		       _("You should choose a new government from the "
 			 "government menu."));
     }
-  } else if (pplayer->government != game.government_when_anarchy
-	     && pplayer->revolution_finishes < game.turn) {
+  } else if (pplayer->government != game.ruleset_control.government_when_anarchy
+	     && pplayer->revolution_finishes < game.info.turn) {
     /* Reset the revolution counter.  If the player has another revolution
      * they'll have to re-enter anarchy. */
     freelog(LOG_DEBUG, "Update: resetting revofin for %s.",
@@ -1667,7 +1667,7 @@ static void package_player_info(struct player *plr,
   /* Send most civ info about the player only to players who have an
    * embassy. */
   if (info_level >= INFO_EMBASSY) {
-    for (i = A_FIRST; i < game.num_tech_types; i++) {
+    for (i = A_FIRST; i < game.ruleset_control.num_tech_types; i++) {
       packet->inventions[i] = plr->research.inventions[i].state + '0';
     }
     packet->inventions[i]   = '\0';
@@ -1680,7 +1680,7 @@ static void package_player_info(struct player *plr,
     packet->future_tech     = plr->future_tech;
     packet->revolution_finishes = plr->revolution_finishes;
   } else {
-    for (i = A_FIRST; i < game.num_tech_types; i++) {
+    for (i = A_FIRST; i < game.ruleset_control.num_tech_types; i++) {
       packet->inventions[i] = '0';
     }
     packet->inventions[i]   = '\0';
@@ -1770,7 +1770,7 @@ void server_player_init(struct player *pplayer, bool initmap)
 void server_remove_player(struct player *pplayer)
 {
   /* Not allowed after a game has started */
-  if (!(game.is_new_game && (server_state==PRE_GAME_STATE ||
+  if (!(game.server.is_new_game && (server_state==PRE_GAME_STATE ||
 			     server_state==SELECT_RACES_STATE))) {
     die("You can't remove players after the game has started!");
   }
@@ -1809,11 +1809,11 @@ void make_contact(struct player *pplayer1, struct player *pplayer2,
     return;
   }
 
-  pplayer1->diplstates[player2].contact_turns_left = game.contactturns;
-  pplayer2->diplstates[player1].contact_turns_left = game.contactturns;
+  pplayer1->diplstates[player2].contact_turns_left = game.server.contactturns;
+  pplayer2->diplstates[player1].contact_turns_left = game.server.contactturns;
 
   if (pplayer_get_diplstate(pplayer1, pplayer2)->type == DS_NO_CONTACT) {
-    /* Set default new diplomatic state depending on game.diplomacy
+    /* Set default new diplomatic state depending on game.info.diplomacy
      * server setting. Default is zero, which gives DS_NEUTRAL. */
     enum diplstate_type dipstate = diplomacy_possible(pplayer1,pplayer2)
                                     ? DS_NEUTRAL : DS_WAR;
@@ -1878,31 +1878,31 @@ void shuffle_players(void)
   int i, pos;
   struct player *tmp_plr;
 
-  freelog(LOG_DEBUG, "shuffling %d players", game.nplayers);
+  freelog(LOG_DEBUG, "shuffling %d players", game.info.nplayers);
 
   /* Initialize array in unshuffled order: */
-  for(i=0; i<game.nplayers; i++) {
+  for(i=0; i<game.info.nplayers; i++) {
     shuffled_plr[i] = &game.players[i];
   }
 
   /* Now shuffle them: */
-  for(i=0; i<game.nplayers-1; i++) {
+  for(i=0; i<game.info.nplayers-1; i++) {
     /* for each run: shuffled[ <i ] is already shuffled [Kero+dwp] */
-    pos = i + myrand(game.nplayers-i);
+    pos = i + myrand(game.info.nplayers-i);
     tmp_plr = shuffled_plr[i]; 
     shuffled_plr[i] = shuffled_plr[pos];
     shuffled_plr[pos] = tmp_plr;
   }
 
 #ifdef DEBUG
-  for (i = 0; i < game.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     freelog(LOG_DEBUG, "Shuffling player %d as %d.",
 	    i, shuffled_plr[i]->player_no);
   }
 #endif
 
   /* Record how many players there were when shuffled: */
-  shuffled_nplayers = game.nplayers;
+  shuffled_nplayers = game.info.nplayers;
 }
 
 /**************************************************************************
@@ -1912,14 +1912,14 @@ void set_shuffled_players(int *shuffled_players)
 {
   int i;
 
-  for (i = 0; i < game.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     shuffled_plr[i] = get_player(shuffled_players[i]);
 
     freelog(LOG_DEBUG, "Set shuffled player %d as %d.",
 	    i, shuffled_plr[i]->player_no);
   }
 
-  shuffled_nplayers = game.nplayers;
+  shuffled_nplayers = game.info.nplayers;
 }
 
 /**************************************************************************
@@ -1929,16 +1929,16 @@ void set_shuffled_players(int *shuffled_players)
 **************************************************************************/
 struct player *shuffled_player(int i)
 {
-  assert(i>=0 && i<game.nplayers);
+  assert(i>=0 && i<game.info.nplayers);
   
   if (shuffled_nplayers == 0) {
     freelog(LOG_ERROR, "shuffled_player() called before shuffled");
     return &game.players[i];
   }
   /* This shouldn't happen: */
-  if (game.nplayers < shuffled_nplayers) {
+  if (game.info.nplayers < shuffled_nplayers) {
     freelog(LOG_ERROR, "number of players shrunk between shuffles (%d < %d)",
-	    game.nplayers, shuffled_nplayers);
+	    game.info.nplayers, shuffled_nplayers);
     return &game.players[i];	/* ?? */
   }
   if (i < shuffled_nplayers) {
@@ -1955,16 +1955,16 @@ struct player *shuffled_player(int i)
 ****************************************************************************/
 static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
 {
-  int *nations_used, i, num_nations_avail = game.playable_nation_count, pick;
+  int *nations_used, i, num_nations_avail = game.ruleset_control.playable_nation_count, pick;
   int looking_for, pref_nations_avail = 0; 
 
   /* Values of nations_used: 
    * 0: not available
    * 1: available
    * 2: preferred choice */
-  nations_used = fc_calloc(game.playable_nation_count, sizeof(int));
+  nations_used = fc_calloc(game.ruleset_control.playable_nation_count, sizeof(int));
 
-  for (i = 0; i < game.playable_nation_count; i++) {
+  for (i = 0; i < game.ruleset_control.playable_nation_count; i++) {
     nations_used[i] = 1; /* Available (for now) */
   }
 
@@ -1974,7 +1974,7 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
   }
 
   players_iterate(other_player) {
-    if (other_player->nation < game.playable_nation_count) {
+    if (other_player->nation < game.ruleset_control.playable_nation_count) {
       if (nations_used[other_player->nation] == 2) {
 	pref_nations_avail--;
       } 
@@ -1994,7 +1994,7 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
     looking_for = 2; /* Use a preferred nation only. */
   }
 
-  for (i = 0; i < game.playable_nation_count; i++){ 
+  for (i = 0; i < game.ruleset_control.playable_nation_count; i++){ 
     if (nations_used[i] == looking_for) {
       pick--;
       
@@ -2016,7 +2016,7 @@ split between both players.
 ***********************************************************************/
 static struct player *split_player(struct player *pplayer)
 {
-  int newplayer = game.nplayers;
+  int newplayer = game.info.nplayers;
   struct player *cplayer = &game.players[newplayer];
   Nation_Type_id *civilwar_nations = get_nation_civilwar(pplayer->nation);
 
@@ -2030,13 +2030,13 @@ static struct player *split_player(struct player *pplayer)
 
   sz_strlcpy(cplayer->username, ANON_USER_NAME);
   cplayer->is_connected = FALSE;
-  cplayer->government = game.default_government;
-  cplayer->target_government = game.default_government;
+  cplayer->government = game.ruleset_control.default_government;
+  cplayer->target_government = game.ruleset_control.default_government;
   assert(cplayer->revolution_finishes < 0);
   cplayer->capital = TRUE;
 
   /* cplayer is not yet part of players_iterate which goes only
-     to game.nplayers. */
+     to game.info.nplayers. */
   players_iterate(other_player) {
     /* Barbarians are at war with everybody */
     if (is_barbarian(other_player)) {
@@ -2063,8 +2063,8 @@ static struct player *split_player(struct player *pplayer)
   }
   players_iterate_end;
 
-  game.nplayers++;
-  game.max_players = game.nplayers;
+  game.info.nplayers++;
+  game.info.max_players = game.info.nplayers;
 
   /* Split the resources */
   
@@ -2092,16 +2092,16 @@ static struct player *split_player(struct player *pplayer)
   cplayer->ai.maxbuycost = pplayer->ai.maxbuycost;
   cplayer->ai.handicap = pplayer->ai.handicap;
   cplayer->ai.warmth = pplayer->ai.warmth;
-  set_ai_level_direct(cplayer, game.skill_level);
+  set_ai_level_direct(cplayer, game.info.skill_level);
 
   tech_type_iterate(i) {
     cplayer->ai.tech_want[i] = pplayer->ai.tech_want[i];
   } tech_type_iterate_end;
   
   /* change the original player */
-  if (pplayer->government != game.government_when_anarchy) {
-    pplayer->government = game.government_when_anarchy;
-    pplayer->revolution_finishes = game.turn + 1;
+  if (pplayer->government != game.ruleset_control.government_when_anarchy) {
+    pplayer->government = game.ruleset_control.government_when_anarchy;
+    pplayer->revolution_finishes = game.info.turn + 1;
   }
   pplayer->research.bulbs_researched = 0;
   pplayer->embassy = 0; /* all embassies destroyed */
@@ -2218,7 +2218,7 @@ void civil_war(struct player *pplayer)
   int i, j;
   struct player *cplayer;
 
-  if (game.nplayers >= MAX_NUM_PLAYERS) {
+  if (game.info.nplayers >= MAX_NUM_PLAYERS) {
     /* No space to make additional player */
     freelog(LOG_NORMAL, _("Could not throw %s into civil war - too many "
             "players"), pplayer->name);
@@ -2227,7 +2227,7 @@ void civil_war(struct player *pplayer)
 
   cplayer = split_player(pplayer);
 
-  /* So that clients get the correct game.nplayers: */
+  /* So that clients get the correct game.info.nplayers: */
   send_game_info(NULL);
   
   /* Before units, cities, so clients know name of new nation

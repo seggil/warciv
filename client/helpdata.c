@@ -25,19 +25,21 @@
 #include <string.h>
 
 #include "astring.h"
-#include "city.h"
 #include "fcintl.h"
-#include "game.h"
 #include "genlist.h"
-#include "government.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
-#include "packets.h"
 #include "registry.h"
 #include "support.h"
+
+#include "city.h"
+#include "game.h"
+#include "government.h"
+#include "map.h"
+#include "packets.h"
 #include "unit.h"
 
+#include "civclient.h"
 #include "clinet.h"
 
 #include "helpdata.h"
@@ -254,7 +256,7 @@ void boot_help_texts(void)
 	    if (i != A_NONE && tech_exists(i)) {
 	      pitem = new_help_item(current_type);
 	      my_snprintf(name, sizeof(name), " %s",
-			  get_tech_name(game.player_ptr, i));
+			  get_tech_name(get_player_ptr(), i));
 	      pitem->topic = mystrdup(name);
 	      pitem->text = mystrdup("");
 	      help_list_append(category_nodes, pitem);
@@ -520,7 +522,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
   if (tech_exists(improvement_types[which].obsolete_by)) {
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
 		_("* The discovery of %s will make %s obsolete.\n"),
-		get_tech_name(game.player_ptr,
+		get_tech_name(get_player_ptr(),
 			improvement_types[which].obsolete_by),
 		improvement_types[which].name);
   }
@@ -531,14 +533,14 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
     Tech_Type_id t;
 
     u = get_role_unit(F_NUCLEAR, 0);
-    assert(u < game.num_unit_types);
+    assert(u < game.ruleset_control.num_unit_types);
     t = get_unit_type(u)->tech_requirement;
-    assert(t < game.num_tech_types);
+    assert(t < game.ruleset_control.num_tech_types);
 
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
 		_("* Allows all players with knowledge of %s "
 		  "to build %s units.\n"),
-		get_tech_name(game.player_ptr, t), get_unit_type(u)->name);
+		get_tech_name(get_player_ptr(), t), get_unit_type(u)->name);
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf), "  ");
   }
 
@@ -557,7 +559,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
        : sz_strlcpy(req_buf, (s)))
 
       if (b->tech_req != A_NONE) {
-	req_append(get_tech_name(game.player_ptr, b->tech_req));
+	req_append(get_tech_name(get_player_ptr(), b->tech_req));
       }
 
       for (i = 0; b->terr_gate[i] != T_NONE; i++) {
@@ -585,7 +587,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
       if (u->tech_requirement != A_LAST) {
 	my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
 		    _("* Allows %s (with %s).\n"), u->name,
-		    get_tech_name(game.player_ptr, u->tech_requirement));
+		    get_tech_name(get_player_ptr(), u->tech_requirement));
       } else {
 	my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
 		    _("* Allows %s.\n"), u->name);
@@ -624,7 +626,7 @@ static int techs_with_flag_string(enum tech_flag_id flag,
   assert(bufsz > 0);
   buf[0] = '\0';
   techs_with_flag_iterate(flag, tech_id) {
-    const char *name = get_tech_name(game.player_ptr, tech_id);
+    const char *name = get_tech_name(get_player_ptr(), tech_id);
     
     if (buf[0] == '\0') {
       my_snprintf(buf, bufsz, "%s", name);
@@ -696,7 +698,7 @@ void helptext_unit(char *buf, int i, const char *user_text)
     sprintf(buf + strlen(buf), _("* Can establish trade routes (must travel "
 				 "to target city and must be at least %d "
 				 "tiles [in Manhattan distance] from this "
-				 "unit's home city).\n"), game.trademindist);
+				 "unit's home city).\n"), game.traderoute_info.trademindist);
   }
   if (unit_type_flag(i, F_HELP_WONDER)) {
     sprintf(buf + strlen(buf),
@@ -715,7 +717,7 @@ void helptext_unit(char *buf, int i, const char *user_text)
   if (unit_type_flag(i, F_ADD_TO_CITY)) {
     sprintf(buf + strlen(buf), _("* Can add on %d population to "
 				 "cities of no more than size %d.\n"),
-	    unit_pop_value(i), game.add_to_size_limit - unit_pop_value(i));
+	    unit_pop_value(i), game.ruleset_control.add_to_size_limit - unit_pop_value(i));
   }
   if (unit_type_flag(i, F_SETTLERS)) {
     char buf2[1024];
@@ -890,12 +892,12 @@ void helptext_unit(char *buf, int i, const char *user_text)
     if (tech1 != A_LAST) {
       sprintf(buf + strlen(buf),
 	      _("* The discovery of %s reduces the risk to 25%%.\n"),
-	      get_tech_name(game.player_ptr, tech1));
+	      get_tech_name(get_player_ptr(), tech1));
     }
     if (tech2 != A_LAST) {
       sprintf(buf + strlen(buf),
 	      _("* %s reduces the risk to 12%%.\n"),
-	      get_tech_name(game.player_ptr, tech2));
+	      get_tech_name(get_player_ptr(), tech2));
     }
   }
   if (utype->fuel > 0) {
@@ -980,25 +982,25 @@ void helptext_tech(char *buf, int i, const char *user_text)
   assert(buf&&user_text);
   strcpy(buf, user_text);
 
-  if (get_invention(game.player_ptr, i) != TECH_KNOWN) {
-    if (get_invention(game.player_ptr, i) == TECH_REACHABLE) {
+  if (get_invention(get_player_ptr(), i) != TECH_KNOWN) {
+    if (get_invention(get_player_ptr(), i) == TECH_REACHABLE) {
       sprintf(buf + strlen(buf),
 	      _("If we would now start with %s we would need %d bulbs."),
-	      get_tech_name(game.player_ptr, i),
-	      base_total_bulbs_required(game.player_ptr, i));
-    } else if (tech_is_available(game.player_ptr, i)) {
+	      get_tech_name(get_player_ptr(), i),
+	      base_total_bulbs_required(get_player_ptr(), i));
+    } else if (tech_is_available(get_player_ptr(), i)) {
       sprintf(buf + strlen(buf),
 	      _("To reach %s we need to obtain %d other "
 		"technologies first. The whole project "
 		"will require %d bulbs to complete."),
-	      get_tech_name(game.player_ptr, i),
-	      num_unknown_techs_for_goal(game.player_ptr, i) - 1,
-	      total_bulbs_required_for_goal(game.player_ptr, i));
+	      get_tech_name(get_player_ptr(), i),
+	      num_unknown_techs_for_goal(get_player_ptr(), i) - 1,
+	      total_bulbs_required_for_goal(get_player_ptr(), i));
     } else {
       sprintf(buf + strlen(buf),
 	      _("You cannot research this technology."));
     }
-    if (!techs_have_fixed_costs() && tech_is_available(game.player_ptr, i)) {
+    if (!techs_have_fixed_costs() && tech_is_available(get_player_ptr(), i)) {
       sprintf(buf + strlen(buf),
 	      _(" This number may vary depending on what "
 		"other players will research.\n"));
@@ -1016,7 +1018,7 @@ void helptext_tech(char *buf, int i, const char *user_text)
   if (tech_flag(i, TF_BONUS_TECH)) {
     sprintf(buf + strlen(buf), _("* The first player to research %s gets "
 				 "an immediate advance.\n"),
-	    get_tech_name(game.player_ptr, i));
+	    get_tech_name(get_player_ptr(), i));
   }
   if (tech_flag(i, TF_BOAT_FAST))
     sprintf(buf + strlen(buf), _("* Gives sea units one extra move.\n"));
@@ -1029,13 +1031,13 @@ void helptext_tech(char *buf, int i, const char *user_text)
   if (tech_flag(i, TF_POPULATION_POLLUTION_INC))
     sprintf(buf + strlen(buf), _("* Increases the pollution generated by "
 				 "the population.\n"));
-  if (game.rtech.cathedral_plus == i)
+  if (game.ruleset_control.rtech_cathedral_plus == i)
     sprintf(buf + strlen(buf), _("* Improves the effect of Cathedrals.\n"));
-  if (game.rtech.cathedral_minus == i)
+  if (game.ruleset_control.rtech_cathedral_minus == i)
     sprintf(buf + strlen(buf), _("* Reduces the effect of Cathedrals.\n"));
-  if (game.rtech.colosseum_plus == i)
+  if (game.ruleset_control.rtech_colosseum_plus == i)
     sprintf(buf + strlen(buf), _("* Improves the effect of Colosseums.\n"));
-  if (game.rtech.temple_plus == i)
+  if (game.ruleset_control.rtech_temple_plus == i)
     sprintf(buf + strlen(buf), _("* Improves the effect of Temples.\n"));
 
   if (tech_flag(i, TF_BRIDGE)) {

@@ -84,7 +84,7 @@ static bool is_sea_barbarian(struct player *pplayer)
 **************************************************************************/
 static struct player *create_barbarian_player(bool land)
 {
-  int newplayer = game.nplayers;
+  int newplayer = game.info.nplayers;
   struct player *barbarians;
 
   players_iterate(barbarians) {
@@ -94,7 +94,7 @@ static struct player *create_barbarian_player(bool land)
         barbarians->economic.gold = 0;
         barbarians->is_alive = TRUE;
         barbarians->is_dying = FALSE;
-        pick_ai_player_name(game.nation_count - 1, barbarians->name);
+        pick_ai_player_name(game.ruleset_control.nation_count - 1, barbarians->name);
 	sz_strlcpy(barbarians->username, ANON_USER_NAME);
         /* I need to make them to forget the map, I think */
 	whole_map_iterate(ptile) {
@@ -116,17 +116,17 @@ static struct player *create_barbarian_player(bool land)
 
   server_player_init(barbarians, TRUE);
 
-  barbarians->nation = game.nation_count - 1;
-  pick_ai_player_name(game.nation_count - 1, barbarians->name);
+  barbarians->nation = game.ruleset_control.nation_count - 1;
+  pick_ai_player_name(game.ruleset_control.nation_count - 1, barbarians->name);
 
-  game.nplayers++;
-  game.nbarbarians++;
-  game.max_players = game.nplayers;
+  game.info.nplayers++;
+  game.server.nbarbarians++;
+  game.info.max_players = game.info.nplayers;
 
   sz_strlcpy(barbarians->username, ANON_USER_NAME);
   barbarians->is_connected = FALSE;
-  barbarians->government = game.default_government;
-  barbarians->target_government = game.default_government;
+  barbarians->government = game.ruleset_control.default_government;
+  barbarians->target_government = game.ruleset_control.default_government;
   assert(barbarians->revolution_finishes < 0);
   barbarians->capital = FALSE;
   barbarians->economic.gold = 100;
@@ -140,7 +140,7 @@ static struct player *create_barbarian_player(bool land)
   } else {
     barbarians->ai.barbarian_type = SEA_BARBARIAN;
   }
-  set_ai_level_directer(barbarians, game.skill_level);
+  set_ai_level_directer(barbarians, game.info.skill_level);
   init_tech(barbarians);
   give_initial_techs(barbarians);
 
@@ -202,7 +202,7 @@ bool unleash_barbarians(struct tile *ptile)
   struct tile *utile = NULL;
   bool alive = TRUE;     /* explorer survived */
 
-  if (game.barbarianrate == 0 || (game.year < game.onsetbarbarian)) {
+  if (game.server.barbarianrate == 0 || (game.info.year < game.server.onsetbarbarian)) {
     unit_list_iterate_safe((ptile)->units, punit) {
       wipe_unit(punit);
     } unit_list_iterate_safe_end;
@@ -210,7 +210,7 @@ bool unleash_barbarians(struct tile *ptile)
   }
 
   unit_cnt = 3 + myrand(4);
-  if ( game.barbarianrate > 4 ) unit_cnt += 2 + myrand(game.barbarianrate); 
+  if ( game.server.barbarianrate > 4 ) unit_cnt += 2 + myrand(game.server.barbarianrate); 
 
   barbarians = create_barbarian_player(TRUE);
   me = barbarians->player_no;
@@ -360,7 +360,7 @@ static void try_summon_barbarians(void)
   }
 
   victim = city_owner(pc);
-  if ( game.barbarianrate > 4 ) superbarb = 3;
+  if ( game.server.barbarianrate > 4 ) superbarb = 3;
 
   dist = real_map_distance(ptile, pc->tile);
   freelog(LOG_DEBUG,"Closest city to %d %d is %s at %d %d which is %d far", 
@@ -380,7 +380,7 @@ static void try_summon_barbarians(void)
   /* do not harass small civs - in practice: do not uprise at the beginning */
   if ((int)myrand(UPRISE_CIV_MORE) >
            (int)city_list_size(victim->cities) -
-                UPRISE_CIV_SIZE/(game.barbarianrate-1)
+                UPRISE_CIV_SIZE/(game.server.barbarianrate-1)
       || myrand(100) > get_gov_pcity(pc)->civil_war) {
     return;
   }
@@ -398,7 +398,7 @@ static void try_summon_barbarians(void)
     if (city_list_size(victim->cities) > UPRISE_CIV_MOST) {
       uprise = 3;
     }
-    for (i = 0; i < myrand(3) + superbarb + uprise * game.barbarianrate; i++) {
+    for (i = 0; i < myrand(3) + superbarb + uprise * game.server.barbarianrate; i++) {
       unit = find_a_unit_type(L_BARBARIAN, L_BARBARIAN_TECH);
       (void) create_unit(barbarians, utile, unit, 0, 0, -1);
       freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
@@ -413,7 +413,7 @@ static void try_summon_barbarians(void)
 
     barbarians = create_barbarian_player(FALSE);
 
-    if ( game.barbarianrate > 4 ) n_boats = game.barbarianrate - 3;
+    if ( game.server.barbarianrate > 4 ) n_boats = game.server.barbarianrate - 3;
     for ( i_boat = 0; i_boat < n_boats; i_boat++ ) {
     boat = find_a_unit_type(L_BARBARIAN_BOAT,-1);
     ptrans = create_unit(barbarians, utile, boat, 0, 0, -1);
@@ -458,11 +458,11 @@ void summon_barbarians(void)
 {
   int i, n;
 
-  if (game.barbarianrate == 0) {
+  if (game.server.barbarianrate == 0) {
     return;
   }
 
-  if (game.year < game.onsetbarbarian) {
+  if (game.info.year < game.server.onsetbarbarian) {
     return;
   }
 
@@ -472,7 +472,7 @@ void summon_barbarians(void)
     n = 1;
   }
 
-  for (i = 0; i < n * (game.barbarianrate - 1); i++) {
+  for (i = 0; i < n * (game.server.barbarianrate - 1); i++) {
     try_summon_barbarians();
   }
 }

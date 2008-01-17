@@ -31,6 +31,7 @@
 #include "civclient.h"
 #include "climap.h"
 #include "climisc.h"
+#include "clinet.h"
 #include "control.h"
 #include "goto.h"
 #include "gui_main_g.h"
@@ -81,8 +82,8 @@ enum color_std get_grid_color(struct tile *tile1, enum direction8 dir)
     return COLOR_STD_BLACK;
   }
 
-  pos1_is_in_city_radius = player_in_city_radius(game.player_ptr, tile1);
-  pos2_is_in_city_radius = player_in_city_radius(game.player_ptr, tile2);
+  pos1_is_in_city_radius = player_in_city_radius(get_player_ptr(), tile1);
+  pos2_is_in_city_radius = player_in_city_radius(get_player_ptr(), tile2);
 
   if (!pos1_is_in_city_radius && !pos2_is_in_city_radius) {
     return COLOR_STD_BLACK;
@@ -1307,7 +1308,7 @@ static void tile_draw_borders(struct canvas *pcanvas,
   struct player *this_owner = map_get_owner(ptile), *adjc_owner;
   int start_x, start_y, end_x, end_y;
 
-  if (!draw_borders || game.borders == 0) {
+  if (!draw_borders || game.ruleset_control.borders == 0) {
     return;
   }
 
@@ -2096,7 +2097,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
   }
 
   if (pcity) {
-    if (pcity->owner == game.player_idx) {
+    if (pcity->owner == get_player_idx()) {
       /* rule a */
       return pcity;
     } else {
@@ -2110,7 +2111,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
 
   city_map_checked_iterate(ptile, city_x, city_y, tile1) {
     pcity = map_get_city(tile1);
-    if (pcity && pcity->owner == game.player_idx
+    if (pcity && pcity->owner == get_player_idx()
 	&& get_worker_city(pcity, CITY_MAP_SIZE - 1 - city_x,
 			   CITY_MAP_SIZE - 1 - city_y) == C_TILE_EMPTY) {
       /*
@@ -2140,7 +2141,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
 
     if (tile1) {
       unit_list_iterate(tile1->units, psettler) {
-	if (psettler->owner == game.player_idx
+	if (psettler->owner == get_player_idx()
 	    && unit_flag(psettler, F_CITIES)
 	    && city_can_be_built_here(psettler->tile, psettler)) {
 	  if (!closest_settler) {
@@ -2236,7 +2237,7 @@ void get_city_mapview_name_and_growth(struct city *pcity,
 
   my_snprintf(name_buffer, name_buffer_len, pcity->name);
 
-  if (draw_city_growth && pcity->owner == game.player_idx) {
+  if (draw_city_growth && pcity->owner == get_player_idx()) {
     int turns = city_turns_to_grow(pcity);
 
     if (turns == 0) {
@@ -2804,7 +2805,7 @@ static void draw_traderoutes_for_city(struct city *src_pcity)
                       canvas_x, canvas_y, canvas_x2-canvas_x, canvas_y2-canvas_y);
     }
     
-    if (dest_pcity->owner == game.player_idx) {
+    if (dest_pcity->owner == get_player_idx()) {
       int j;
       for (j = 0; j < NUM_TRADEROUTES; j++) {
         if (dest_pcity->trade[j] == src_pcity->id) {
@@ -2880,7 +2881,7 @@ void draw_traderoutes(void)
     return;
   }
 
-  city_list_iterate (game.player_ptr->cities, pcity) {
+  city_list_iterate (get_player_ptr()->cities, pcity) {
     draw_traderoutes_for_city (pcity);
   } city_list_iterate_end;
 

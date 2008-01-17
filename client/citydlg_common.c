@@ -347,7 +347,7 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
 
 	if (is_wonder(id)) {
 	  state = _("Wonder");
-	  if (game.global_wonders[id] != 0) {
+	  if (game.info.global_wonders[id] != 0) {
 	    state = _("Built");
 	  }
 	  if (wonder_obsolete(id)) {
@@ -456,7 +456,7 @@ void activate_all_units(struct tile *ptile)
   struct unit *pmyunit = NULL;
 
   unit_list_iterate(punit_list, punit) {
-    if (game.player_idx == punit->owner) {
+    if (get_player_idx() == punit->owner) {
       /* Activate this unit. */
       pmyunit = punit;
       request_active_unit(punit);

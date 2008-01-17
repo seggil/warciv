@@ -96,7 +96,6 @@ struct connection aconnection;
 static int socklan;
 static struct server_list *lan_servers;
 static union my_sockaddr server_addr;
-extern int tflag;		//from packhand.c
 
 #define ASYNC_SLIST_CTX_MEMORY_GUARD 0xadebac1e
 
@@ -147,11 +146,12 @@ static void close_socket_nomessage(struct connection *pc)
   set_client_page(PAGE_MAIN);
 
   reports_force_thaw();
-  
+
   set_client_state(CLIENT_PRE_GAME_STATE);
   agents_disconnect();
   update_menus();
   client_remove_all_cli_conn();
+  aconnection.player = NULL;
 }
 
 /**************************************************************************
@@ -224,7 +224,6 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
 {
   struct packet_server_join_req req;
 
-  tflag = 0;
   close_socket_set_callback(close_socket_callback);
 
   /* connection in progress? wait. */

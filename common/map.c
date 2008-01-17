@@ -21,6 +21,7 @@
 #include "city.h"
 #include "fcintl.h"
 #include "log.h"
+#include "game.h"
 #include "mem.h"
 #include "packets.h"
 #include "rand.h"
@@ -1116,7 +1117,7 @@ static int tile_move_cost_ptrs(struct unit *punit,
 {
   bool cardinal_move;
 
-  if (game.slow_invasions
+  if (game.ruleset_control.slow_invasions
       && punit 
       && is_ground_unit(punit) 
       && is_ocean(t1->terrain)

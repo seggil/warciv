@@ -130,8 +130,8 @@ struct government *find_government_by_name_orig(const char *name)
 ****************************************************************************/
 struct government *get_government(int gov)
 {
-  assert(game.government_count > 0 && gov >= 0
-	 && gov < game.government_count);
+  assert(game.ruleset_control.government_count > 0 && gov >= 0
+	 && gov < game.ruleset_control.government_count);
   assert(governments[gov].index == gov);
   return &governments[gov];
 }
@@ -191,7 +191,7 @@ int get_government_max_rate(int type)
 {
   if(type == G_MAGIC)
     return 100;
-  if (governments && type >= 0 && type < game.government_count)
+  if (governments && type >= 0 && type < game.ruleset_control.government_count)
     return governments[type].max_rate;
   return 50;
 }
@@ -201,7 +201,7 @@ Added for civil war probability computation - Kris Bubendorfer
 ***************************************************************/
 int get_government_civil_war_prob(int type)
 {
-  if(type >= 0 && type < game.government_count)
+  if(type >= 0 && type < game.ruleset_control.government_count)
     return governments[type].civil_war;
   return 0;
 }
@@ -211,7 +211,7 @@ int get_government_civil_war_prob(int type)
 ***************************************************************/
 const char *get_government_name(int type)
 {
-  if(type >= 0 && type < game.government_count)
+  if(type >= 0 && type < game.ruleset_control.government_count)
     return governments[type].name;
   return "";
 }
@@ -226,8 +226,8 @@ bool can_change_to_government(struct player *pplayer, int government)
 {
   int req;
 
-  assert(game.government_count > 0 &&
-	 government >= 0 && government < game.government_count);
+  assert(game.ruleset_control.government_count > 0 &&
+	 government >= 0 && government < game.ruleset_control.government_count);
 
   req = governments[government].required_tech;
   if (!tech_is_available(pplayer, req)) {
@@ -272,7 +272,7 @@ void governments_alloc(int num)
   int index;
 
   governments = fc_calloc(num, sizeof(struct government));
-  game.government_count = num;
+  game.ruleset_control.government_count = num;
 
   for (index = 0; index < num; index++) {
     governments[index].index = index;
@@ -301,5 +301,5 @@ void governments_free(void)
   } government_iterate_end;
   free(governments);
   governments = NULL;
-  game.government_count = 0;
+  game.ruleset_control.government_count = 0;
 }

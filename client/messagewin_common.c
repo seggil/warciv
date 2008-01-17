@@ -23,6 +23,8 @@
 #include "mem.h"
 
 #include "citydlg_g.h"
+#include "civclient.h"
+#include "clinet.h"
 #include "mapview_g.h"
 #include "messagewin_g.h"
 #include "options.h"
@@ -74,7 +76,7 @@ void update_meswin_dialog(void)
   }
 
   if (!is_meswin_open() && messages_total > 0 &&
-      (!game.player_ptr->ai.control || ai_popup_windows)) {
+      (!get_player_ptr()->ai.control || ai_popup_windows)) {
     popup_meswin_dialog();
     change = FALSE;
     return;
@@ -151,7 +153,7 @@ void add_notify_window(char *message, struct tile *ptile,
     if (messages[i].location_ok) {
       struct city *pcity = map_get_city(messages[i].tile);
 
-      messages[i].city_ok = (pcity && city_owner(pcity) == game.player_ptr);
+      messages[i].city_ok = (pcity && city_owner(pcity) == get_player_ptr());
     } else {
       messages[i].city_ok = FALSE;
     }
@@ -200,7 +202,7 @@ void meswin_popup_city(int message_index)
       center_tile_mapcanvas(ptile);
     }
 
-    if (pcity && city_owner(pcity) == game.player_ptr) {
+    if (pcity && city_owner(pcity) == get_player_ptr()) {
       /* If the event was the city being destroyed, pcity will be NULL
        * and we'd better not try to pop it up.  It's also possible that
        * events will happen on enemy cities; we generally don't want to pop

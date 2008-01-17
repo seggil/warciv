@@ -97,7 +97,7 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
   char buf2[5000];
 
   my_snprintf(buf2, sizeof(buf2), "<%s y=\"%d\" t=\"%d\">%s</%s>", element,
-              game.year, game.turn, buf, element);
+              game.info.year, game.info.turn, buf, element);
   
   mystrlcpy(buf, buf2, len);
 }
@@ -497,7 +497,7 @@ void gamelog(int level, ...)
     pteam = va_arg(args, struct team *);
 
     my_snprintf(buf, sizeof(buf), "<id>%d</id><name>%s</name>",
-                                  pteam->id, pteam->name);
+                pteam->id, get_team_name(pteam->id));
     players_iterate(aplayer) {
       if (aplayer->team == pteam->id) {
         cat_snprintf(buf, sizeof(buf), "<n>%d</n>", aplayer->player_no);
@@ -550,7 +550,8 @@ void gamelog(int level, ...)
           cat_snprintf(buf, sizeof(buf), "<n>%d</n>", aplayer->player_no);
         }
       } players_iterate_end;
-      my_snprintf(msg, sizeof(msg), "Team victory to %s", pteam->name);
+      my_snprintf(msg, sizeof(msg),
+		  "Team victory to %s", get_team_name(pteam->id));
       break;
     default:
       break;
@@ -616,7 +617,7 @@ static void gamelog_status(char *buffer, int len) {
 
   int i, count = 0, highest = -1;
   struct player *highest_plr = NULL;
-  struct player_score_entry size[game.nplayers], rank[game.nplayers];
+  struct player_score_entry size[game.info.nplayers], rank[game.info.nplayers];
 
   players_iterate(pplayer) {
     if (!is_barbarian(pplayer)) {

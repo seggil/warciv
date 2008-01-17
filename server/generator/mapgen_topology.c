@@ -263,7 +263,7 @@ void generator_init_topology(bool autosize)
     assert(TF_WRAPX == 0x1 && TF_WRAPY == 0x2);
 
     if (map.autosize) {
-      req_size = (double)(game.nplayers * map.autosize) / (10 * map.landpercent);
+      req_size = (double)(game.info.nplayers * map.autosize) / (10 * map.landpercent);
       if(req_size < 0.6)
         req_size = 0.6;
       map.size = req_size;
@@ -280,7 +280,7 @@ void generator_init_topology(bool autosize)
   if (map.autosize) {
     int old_landmass = map.landpercent;
 
-    req_size = (double)(map.xsize * map.ysize) / (100 * game.nplayers);
+    req_size = (double)(map.xsize * map.ysize) / (100 * game.info.nplayers);
     while (map.landpercent > MAP_MIN_LANDMASS
 	   && abs(map.autosize - req_size * map.landpercent)
     	      > abs(map.autosize - (double)req_size * (map.landpercent - 1))) {

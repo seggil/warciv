@@ -173,7 +173,7 @@ static void historian_generic(enum historian_type which_news)
   int i, j = 0, rank = 0;
   char buffer[4096];
   char title[1024];
-  struct player_score_entry size[game.nplayers];
+  struct player_score_entry size[game.info.nplayers];
 
   players_iterate(pplayer) {
     if (pplayer->is_alive && !is_barbarian(pplayer)) {
@@ -310,7 +310,7 @@ void report_wonders_of_the_world(struct conn_list *dest)
 	cat_snprintf(buffer, sizeof(buffer), _("%s in %s (%s)\n"),
 		     get_impr_name_ex(pcity, i), pcity->name,
 		     get_nation_name(city_owner(pcity)->nation));
-      } else if(game.global_wonders[i] != 0) {
+      } else if(game.info.global_wonders[i] != 0) {
 	cat_snprintf(buffer, sizeof(buffer), _("%s has been DESTROYED\n"),
 		     get_improvement_type(i)->name);
       }
@@ -663,7 +663,7 @@ static void dem_line_item(char *outptr, size_t out_size,
 
 /*************************************************************************
   Verify that a given demography string is valid.  See
-  game.demography.
+  game.server.demography.
 
   Other settings callback functions are in settings.c, but this one uses
   static values from this file so it's done separately.
@@ -726,14 +726,14 @@ void report_demographics(struct connection *pconn)
 
   selcols = 0;
   for (i = 0; i < ARRAY_SIZE(coltable); i++) {
-    if (strchr(game.demography, coltable[i].key)) {
+    if (strchr(game.server.demography, coltable[i].key)) {
       selcols |= (1u << coltable[i].flag);
     }
   }
 
   anyrows = FALSE;
   for (i = 0; i < ARRAY_SIZE(rowtable); i++) {
-    if (strchr(game.demography, rowtable[i].key)) {
+    if (strchr(game.server.demography, rowtable[i].key)) {
       anyrows = TRUE;
       break;
     }
@@ -751,7 +751,7 @@ void report_demographics(struct connection *pconn)
 
   buffer[0] = '\0';
   for (i = 0; i < ARRAY_SIZE(rowtable); i++) {
-    if (strchr(game.demography, rowtable[i].key)) {
+    if (strchr(game.server.demography, rowtable[i].key)) {
       const char *name = _(rowtable[i].name);
 
       cat_snprintf(buffer, sizeof(buffer), "%s", name);
@@ -811,9 +811,9 @@ static bool scan_score_log(FILE * fp, int *last_turn, char *id,
 	return FALSE;
       }
       mystrlcpy(id, line + strlen("id "), MAX_ID_LEN);
-      if (strcmp(id, game.id) != 0) {
+      if (strcmp(id, game.server.id) != 0) {
 	freelog(LOG_ERROR, "IDs don't match! game='%s' scorelog='%s'",
-		game.id, id);
+		game.server.id, id);
 	return FALSE;
       }
     }
@@ -866,7 +866,7 @@ static bool scan_score_log(FILE * fp, int *last_turn, char *id,
     return FALSE;
   }
 
-  if (*last_turn + 1 != game.turn) {
+  if (*last_turn + 1 != game.info.turn) {
     freelog(LOG_ERROR, "Scorelog doesn't match savegame!");
     return FALSE;
   }
@@ -944,7 +944,7 @@ static void log_civ_score(void)
   }
 
   if (!fp) {
-    if (game.year == GAME_START_YEAR) {
+    if (game.info.year == GAME_START_YEAR) {
       oper = SL_CREATE;
     } else {
       fp = fopen(logname, "r");
@@ -975,7 +975,7 @@ static void log_civ_score(void)
 	      "# <http://www.freeciv.org/lxr/source/doc/README.scorelog?v=cvs>.\n"
 	      "\n");
 
-      fprintf(fp, "id %s\n", game.id);
+      fprintf(fp, "id %s\n", game.server.id);
       for (i = 0; i<ARRAY_SIZE(score_tags); i++) {
 	fprintf(fp, "tag %d %s\n", i, score_tags[i].name);
       }
@@ -995,14 +995,14 @@ static void log_civ_score(void)
 
 #define GOOD_PLAYER(p) ((p)->is_alive)
 
-  if (game.turn > last_turn) {
-    fprintf(fp, "turn %d %d %s\n", game.turn, game.year, textyear(game.year));
-    last_turn = game.turn;
+  if (game.info.turn > last_turn) {
+    fprintf(fp, "turn %d %d %s\n", game.info.turn, game.info.year, textyear(game.info.year));
+    last_turn = game.info.turn;
   }
 
   for (i = 0; i < ARRAY_SIZE(player_names); i++) {
     if (strlen(player_names[i]) > 0 && !GOOD_PLAYER(get_player(i))) {
-      fprintf(fp, "delplayer %d %d\n", game.turn - 1, i);
+      fprintf(fp, "delplayer %d %d\n", game.info.turn - 1, i);
       player_names[i][0] = '\0';
     }
   }
@@ -1010,7 +1010,7 @@ static void log_civ_score(void)
   players_iterate(pplayer) {
     if (GOOD_PLAYER(pplayer)
 	&& strlen(player_names[pplayer->player_no]) == 0) {
-      fprintf(fp, "addplayer %d %d %s\n", game.turn, pplayer->player_no,
+      fprintf(fp, "addplayer %d %d %s\n", game.info.turn, pplayer->player_no,
 	      pplayer->name);
       mystrlcpy(player_name_ptrs[pplayer->player_no], pplayer->name,
 		MAX_LEN_NAME);
@@ -1020,8 +1020,8 @@ static void log_civ_score(void)
   players_iterate(pplayer) {
     if (GOOD_PLAYER(pplayer)
 	&& strcmp(player_names[pplayer->player_no], pplayer->name) != 0) {
-      fprintf(fp, "delplayer %d %d\n", game.turn - 1, pplayer->player_no);
-      fprintf(fp, "addplayer %d %d %s\n", game.turn, pplayer->player_no,
+      fprintf(fp, "delplayer %d %d\n", game.info.turn - 1, pplayer->player_no);
+      fprintf(fp, "addplayer %d %d %s\n", game.info.turn, pplayer->player_no,
 	      pplayer->name);
       mystrlcpy(player_names[pplayer->player_no], pplayer->name,
 		MAX_LEN_NAME);
@@ -1034,7 +1034,7 @@ static void log_civ_score(void)
 	continue;
       }
 
-      fprintf(fp, "data %d %d %d %d\n", game.turn, i, pplayer->player_no,
+      fprintf(fp, "data %d %d %d %d\n", game.info.turn, i, pplayer->player_no,
 	      score_tags[i].get_value(pplayer));
     } players_iterate_end;
   }
@@ -1063,11 +1063,11 @@ void make_history_report(void)
   static enum historian_type report = HISTORIAN_FIRST;
   static int time_to_report=20;
 
-  if (game.scorelog) {
+  if (game.server.scorelog) {
     log_civ_score();
   }
 
-  if (game.nplayers == 1) {
+  if (game.info.nplayers == 1) {
     return;
   }
 
@@ -1094,7 +1094,7 @@ void report_progress_scores(void)
 {
   int i, j = 0;
   char buffer[4096];
-  struct player_score_entry size[game.nplayers];
+  struct player_score_entry size[game.info.nplayers];
 
   players_iterate(pplayer) {
     if (!is_barbarian(pplayer)) {
@@ -1136,7 +1136,8 @@ void report_progress_scores(void)
     buffer[0] = '\0';
     for (i = 0; i < team_num; i++) {
       cat_snprintf(buffer, sizeof(buffer), _("%2d: %-16s %.1f\n"),
-		   i + 1, sorted_teams[i]->name, sorted_teams[i]->score);
+		   i + 1, get_team_name(sorted_teams[i]->id),
+		   sorted_teams[i]->score);
     }
 
     page_conn(game.game_connections,
@@ -1151,7 +1152,7 @@ void report_progress_scores(void)
 void report_final_scores(struct conn_list *dest)
 {
   int i, j = 0;
-  struct player_score_entry size[game.nplayers];
+  struct player_score_entry size[game.info.nplayers];
   struct packet_endgame_report packet;
 
   if (!dest) {
@@ -1191,7 +1192,7 @@ void report_final_scores(struct conn_list *dest)
 
 /**************************************************************************
   Assumes groupings have been assigned, filled and results propagated.
-  If game.rated is TRUE, reports rating changes as well.
+  If game.server.rated is TRUE, reports rating changes as well.
 **************************************************************************/
 void report_game_rankings(struct conn_list *dest)
 {
@@ -1211,20 +1212,20 @@ void report_game_rankings(struct conn_list *dest)
     dest = game.game_connections;
   }
 
-  if (game.fcdb.type == GT_SOLO) {
+  if (game.server.fcdb.type == GT_SOLO) {
     double r, rd;
 
     r = score_calculate_solo_opponent_rating(&groupings[0]);
     rd = score_get_solo_opponent_rating_deviation();
 
-    if (game.rated) {
-      if (game.fcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
+    if (game.server.rated) {
+      if (game.server.fcdb.outcome == GOC_ENDED_BY_SPACESHIP) {
         notify_conn(dest, _("Game: You have won this solo game at "
                             "turn %d and with score %.0f. It will "
                             "count as a win against an 'opponent' "
                             "with rating %.2f and rating deviation "
                             "%.2f."),
-                    game.turn, groupings[0].score, r, rd);
+                    game.info.turn, groupings[0].score, r, rd);
       } else {
         notify_conn(dest, _("Game: You have lost this solo game. "
                             "It will count as a loss against an "
@@ -1239,14 +1240,15 @@ void report_game_rankings(struct conn_list *dest)
     for (i = 0; i < num_groupings; i++) {
       pteam = team_get_by_id(groupings[i].players[0]->team);
       cat_snprintf(buffer, sizeof(buffer), "%-16s %10.1f %10.0f %10s\n",
-                   pteam ? pteam->name : groupings[i].players[0]->name,
+                   pteam ? get_team_name(pteam->id)
+		         : groupings[i].players[0]->name,
                    groupings[i].rank + 1.0, groupings[i].score,
-                   result_as_string(groupings[i].result));
+                   result_name(groupings[i].result));
     }
     page_conn(dest, _("Team Standings:"), head_line, buffer);
   }
 
-  if (game.fcdb.type != GT_SOLO) {
+  if (game.server.fcdb.type != GT_SOLO) {
     my_snprintf(head_line, sizeof(head_line), "%-16s %-16s %10s %10s %10s",
 		_("Name"), _("User"), _("Rank"), _("Score"),  _("Result"));
     buffer[0] = '\0';
@@ -1257,14 +1259,14 @@ void report_game_rankings(struct conn_list *dest)
         cat_snprintf(buffer, sizeof(buffer), "%-16s %-16s %10.1f %10d %10s\n",
                      pplayer->name, username, pplayer->rank + 1.0,
                      get_civ_score(pplayer),
-                     result_as_string(pplayer->result));
+                     result_name(pplayer->result));
       }
     }
     page_conn(dest, _("Player Standings:"), head_line, buffer);
   }
 
 
-  if (game.rated) {
+  if (game.server.rated) {
     if (team_count() > 0) {
       my_snprintf(head_line, sizeof(head_line),
 		  "%-16s %10s %10s %12s %10s", _("Name"), _("Rating"),
@@ -1277,7 +1279,7 @@ void report_game_rankings(struct conn_list *dest)
         }
         cat_snprintf(buffer, sizeof(buffer),
 		     "%-16s %10.2f %10.2f %12.2f %10.2f\n",
-                     pteam->name, groupings[i].rating,
+                     get_team_name(pteam->id), groupings[i].rating,
                      groupings[i].rating_deviation,
                      groupings[i].new_rating,
                      groupings[i].new_rating_deviation);

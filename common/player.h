@@ -227,7 +227,7 @@ struct player {
   unsigned int really_gives_vision; /* takes into account that p3 may see what p1 has via p2 */
   Impr_Status improvements[B_LAST]; /* improvements with equiv_range==Player */
   Impr_Status *island_improv; /* improvements with equiv_range==Island, dimensioned to
-			 	 [map.num_continents][game.num_impr_types] */
+			 	 [map.num_continents][game.ruleset_control.num_impr_types] */
 
   struct attribute_block_s attribute_block;
   struct attribute_block_s attribute_block_buffer;
@@ -265,7 +265,8 @@ enum player_results {
   PR_NUM_PLAYER_RESULTS
 };
 
-const char *result_as_string(enum player_results res);
+const char *result_name(enum player_results res);
+const char *result_name_orig(enum player_results res);
 
 /* Though ranks can never go above MAX_NUM_PLAYERS, avoid
    hardcoding a set value. */
@@ -345,7 +346,7 @@ bool gives_shared_vision(struct player *me, struct player *them);
 {                                                                             \
   struct player *PI_player;                                                   \
   int PI_p_itr;                                                               \
-  for (PI_p_itr = 0; PI_p_itr < game.nplayers; PI_p_itr++) {                  \
+  for (PI_p_itr = 0; PI_p_itr < game.info.nplayers; PI_p_itr++) {             \
     PI_player = get_player(PI_p_itr);
 
 #define players_iterate_end                                                   \

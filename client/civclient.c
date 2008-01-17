@@ -79,7 +79,7 @@
 /* this is used in strange places, and is 'extern'd where
    needed (hence, it is not 'extern'd in civclient.h) */
 bool is_server = FALSE;
-time_t gstime;
+time_t end_of_turn;
 
 char *logfile = NULL;
 char *scriptfile = NULL;
@@ -94,8 +94,6 @@ int  server_port = -1;
 bool auto_connect = FALSE; /* TRUE = skip "Connect to Freeciv Server" dialog */
 
 static enum client_states client_state = CLIENT_BOOT_STATE;
-
-int seconds_to_turndone;
 
 /* TRUE if an end turn request is blocked by busy agents */
 bool waiting_for_end_turn = FALSE;
@@ -365,6 +363,10 @@ int main(int argc, char *argv[])
   my_init_network();
   my_init_adns();
 
+  aconnection.used = FALSE;
+  aconnection.established = FALSE;
+  aconnection.player = NULL;
+
   /* register exit handler */
   atexit(at_exit);
 
@@ -555,7 +557,7 @@ void set_client_state(enum client_states newstate)
     /*
      * Extra kludge for end-game handling of the CMA.
      */
-    city_list_iterate(game.player_ptr->cities, pcity) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
       if (cma_is_city_under_agent(pcity, NULL)) {
         cma_release_city(pcity);
       }
@@ -586,7 +588,7 @@ void set_client_state(enum client_states newstate)
       load_ruleset_specific_options();
       create_event(NULL, E_GAME_START, _("Game started."));
       precalc_tech_data();
-      update_research(game.player_ptr);
+      update_research(get_player_ptr());
       role_unit_precalcs();
       clear_notify_window();
       boot_help_texts();	/* reboot */
@@ -594,11 +596,11 @@ void set_client_state(enum client_states newstate)
       update_unit_focus();
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
-      if (!client_is_observer() && aconnection.player) {
+      if (!client_is_observer() && get_player_ptr()) {
         if (reload_pepsettings) {
           load_dynamic_settings();
         }
-        if (game.turn == 0) {
+        if (game.info.turn == 0) {
           set_default_user_tech_goal();
         }
       }
@@ -611,7 +613,7 @@ void set_client_state(enum client_states newstate)
       set_unit_focus(NULL);
       clear_notify_window();
       if (oldstate != CLIENT_BOOT_STATE) {
-        if (!client_is_observer() && game.player_ptr
+        if (!client_is_observer() && get_player_ptr()
             && save_pepsettings_on_exit) {
           save_all_settings();
         }
@@ -718,8 +720,8 @@ void real_timer_callback(void)
     return;
   }
 
-  if (game.player_ptr->is_connected && game.player_ptr->is_alive &&
-      !game.player_ptr->turn_done) {
+  if (get_player_ptr()->is_connected && get_player_ptr()->is_alive &&
+      !get_player_ptr()->turn_done) {
     int is_waiting = 0, is_moving = 0;
 
     players_iterate(pplayer) {
@@ -738,12 +740,12 @@ void real_timer_callback(void)
   }
 
   blink_active_unit();
-  curtime = time (NULL);
 
-  seconds_to_turndone = game.timeout - (int) (curtime - gstime);
-  if (seconds_to_turndone < 0)
-      seconds_to_turndone = 0;
-  ap_timers_update();//*pepeto*
+  if (game.info.timeout > 0) {
+    curtime = time(NULL);
+    game.info.seconds_to_turndone = MAX(end_of_turn - curtime, 0);
+  }
+  ap_timers_update();
   update_timeout_label();
 }
 
@@ -764,7 +766,7 @@ bool can_client_issue_orders(void)
 **************************************************************************/
 bool can_meet_with_player(struct player *pplayer)
 {
-  return (could_meet_with_player(game.player_ptr, pplayer)
+  return (could_meet_with_player(get_player_ptr(), pplayer)
           && can_client_issue_orders());
 }
 
@@ -774,7 +776,7 @@ bool can_meet_with_player(struct player *pplayer)
 **************************************************************************/
 bool can_intel_with_player(struct player *pplayer)
 {
-  return could_intel_with_player(game.player_ptr, pplayer);
+  return could_intel_with_player(get_player_ptr(), pplayer);
 }
 
 /**************************************************************************
@@ -786,4 +788,20 @@ bool can_client_change_view(void)
 {
   return (get_client_state() == CLIENT_GAME_RUNNING_STATE
 	  || get_client_state() == CLIENT_GAME_OVER_STATE);
+}
+
+/**************************************************************************
+  Return the player that the client is controlling or observing.
+**************************************************************************/
+struct player *get_player_ptr(void)
+{
+  return aconnection.player;
+}
+
+/**************************************************************************
+  Return the id of the player that the client is controlling or observing.
+**************************************************************************/
+int get_player_idx(void)
+{
+  return aconnection.player ? aconnection.player->player_no : -1;
 }

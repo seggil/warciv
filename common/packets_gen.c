@@ -15,13 +15,15 @@
 #include <string.h>
 
 #include "capability.h"
-#include "capstr.h"
-#include "connection.h"
-#include "dataio.h"
 #include "hash.h"
 #include "log.h"
 #include "mem.h"
 #include "support.h"
+
+#include "capstr.h"
+#include "connection.h"
+#include "dataio.h"
+#include "game.h"
 
 #include "packets.h"
 

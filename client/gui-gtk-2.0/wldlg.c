@@ -111,7 +111,7 @@ void update_worklist_report_dialog(void)
     return;
   }
 
-  plr = game.player_ptr;
+  plr = get_player_ptr();
 
   gtk_list_store_clear(worklists_store);
   
@@ -138,7 +138,7 @@ static void worklists_response(GtkWidget *w, gint response)
   GtkTreeModel *model;
   GtkTreeIter it;
 
-  plr = game.player_ptr;
+  plr = get_player_ptr();
 
   for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
     if (!plr->worklists[i].is_valid) {
@@ -212,7 +212,7 @@ static void cell_edited(GtkCellRendererText *cell,
   gtk_tree_model_get_iter(GTK_TREE_MODEL(worklists_store), &it, path);
   
   gtk_tree_model_get(GTK_TREE_MODEL(worklists_store), &it, 1, &pos, -1);
-  plr = game.player_ptr;
+  plr = get_player_ptr();
 
   sz_strlcpy(plr->worklists[pos].name, text);
   gtk_list_store_set(worklists_store, &it, 0, text, -1);
@@ -470,7 +470,7 @@ static void menu_item_callback(GtkMenuItem *item, struct worklist_data *ptr)
   gint pos;
   struct worklist *pwl;
 
-  plr = game.player_ptr;
+  plr = get_player_ptr();
   pos = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "pos"));
 
   pwl = &plr->worklists[pos];
@@ -507,7 +507,7 @@ static void popup_add_menu(GtkMenuShell *menu, gpointer data)
 
   gtk_container_foreach(GTK_CONTAINER(menu),
 			(GtkCallback) gtk_widget_destroy, NULL);
-  plr = game.player_ptr;
+  plr = get_player_ptr();
 
   for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
     if (plr->worklists[i].is_valid) {
@@ -895,7 +895,7 @@ static void src_selection_callback(GtkTreeSelection *selection, gpointer data)
   /* update widget sensitivity. */
   if (gtk_tree_selection_get_selected(selection, NULL, NULL)) {
     if (can_client_issue_orders()
-	&& ptr->pcity && city_owner(ptr->pcity) == game.player_ptr) {
+	&& ptr->pcity && city_owner(ptr->pcity) == get_player_ptr()) {
       gtk_widget_set_sensitive(ptr->change_cmd, TRUE);
       gtk_widget_set_sensitive(ptr->prepend_cmd, TRUE);
       gtk_widget_set_sensitive(ptr->append_cmd, TRUE);
@@ -1428,7 +1428,7 @@ void refresh_worklist(GtkWidget *editor)
 
   /* update widget sensitivity. */
   sens = !ptr->pcity || (can_client_issue_orders() &&
-                         city_owner(ptr->pcity) == game.player_ptr);
+                         city_owner(ptr->pcity) == get_player_ptr());
   gtk_widget_set_sensitive (ptr->add_cmd, sens);
   gtk_widget_set_sensitive (ptr->clear_cmd, sens);
   gtk_widget_set_sensitive (ptr->dst_view, sens);

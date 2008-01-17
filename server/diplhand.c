@@ -197,15 +197,15 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 	  }
 	  break;
 	case CLAUSE_ALLIANCE:
-	  if(game.maxallies) {
-	    if(player_allies_count(pplayer) >= game.maxallies) {
+	  if(game.ext_info.maxallies) {
+	    if(player_allies_count(pplayer) >= game.ext_info.maxallies) {
 	      notify_player(pplayer, _("Game: You have already %d/%d alliances."),
-		player_allies_count(pplayer), game.maxallies);
+		player_allies_count(pplayer), game.ext_info.maxallies);
 	      return;
             }
-	    if(player_allies_count(pother) >= game.maxallies) {
+	    if(player_allies_count(pother) >= game.ext_info.maxallies) {
 	      notify_player(pplayer, _("Game: %s has already %d/%d alliances."),
-		pother->name, player_allies_count(pother), game.maxallies);
+		pother->name, player_allies_count(pother), game.ext_info.maxallies);
 	      return;
             }
 	  } 
@@ -313,11 +313,11 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 	case CLAUSE_ALLIANCE:
           /* We need to recheck this way since things might have
            * changed. */
-	  if(game.maxallies && player_allies_count(pother) >= game.maxallies) {
+	  if(game.ext_info.maxallies && player_allies_count(pother) >= game.ext_info.maxallies) {
 	    notify_player(pother, _("Game: You have already %d/%d alliances."),
-	      player_allies_count(pother), game.maxallies);
+	      player_allies_count(pother), game.ext_info.maxallies);
 	    notify_player(pplayer, _("Game: %s has already %d/%d alliances."),
-	      pother->name, player_allies_count(pother), game.maxallies);
+	      pother->name, player_allies_count(pother), game.ext_info.maxallies);
 	    goto cleanup;
 	  } 
           if (!pplayer_can_ally(pother, pplayer)) {
@@ -497,9 +497,9 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
         gamelog(GAMELOG_TREATY, GL_ALLIANCE, pgiver, pdest);
 	check_city_workers(pplayer);
 	check_city_workers(pother);
-	if(game.maxallies && player_allies_count(pgiver) >= game.maxallies)
+	if(game.ext_info.maxallies && player_allies_count(pgiver) >= game.ext_info.maxallies)
 	  cancel_diplomacy(pgiver);
-	if(game.maxallies && player_allies_count(pdest) >= game.maxallies)
+	if(game.ext_info.maxallies && player_allies_count(pdest) >= game.ext_info.maxallies)
 	  cancel_diplomacy(pdest);
 	break;
       case CLAUSE_VISION:
@@ -759,7 +759,7 @@ void cancel_diplomacy(struct player *pplayer)
 {
   notify_player(pplayer, _("Game: You have got %d/%d alliances. "
 			   "Cancelling all other diplomacy..."),
-  	        player_allies_count(pplayer), game.maxallies);
+  	        player_allies_count(pplayer), game.ext_info.maxallies);
 
   players_iterate(pplayer2) {
     if (pplayers_allied(pplayer, pplayer2)) {
@@ -789,7 +789,7 @@ void cancel_diplomacy(struct player *pplayer)
     if (message) {
       notify_player(pplayer2, _("Game: %s has got %d/%d alliances. "
 				"All diplomacy cancelled."),
-      	pplayer->name, player_allies_count(pplayer), game.maxallies);
+      	pplayer->name, player_allies_count(pplayer), game.ext_info.maxallies);
       send_player_info(pplayer2, NULL);
     }
   } players_iterate_end;

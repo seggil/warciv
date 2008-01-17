@@ -145,7 +145,8 @@ extern struct advance advances[];
 #define tech_type_iterate(tech_id)                                          \
 {                                                                           \
   Tech_Type_id tech_id;                                                     \
-  for (tech_id = A_NONE; tech_id < game.num_tech_types; tech_id++) {
+  for (tech_id = A_NONE; tech_id < game.ruleset_control.num_tech_types;     \
+       tech_id++) {
 
 #define tech_type_iterate_end                                               \
   }                                                                         \

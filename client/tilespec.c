@@ -48,10 +48,11 @@
 
 #include "civclient.h"		/* for get_client_state() */
 #include "climap.h"		/* for tile_get_known() */
+#include "clinet.h"
 #include "control.h"		/* for fill_xxx */
-#include "multiselect.h"//*pepeto*
-#include "peptool.h"//*pepeto*
+#include "multiselect.h"
 #include "options.h"		/* for fill_xxx */
+#include "peptool.h"
 
 #include "tilespec.h"
 
@@ -425,7 +426,7 @@ void tilespec_reread(const char *tileset_name)
    * We free all old data in preparation for re-reading it.
    */
   tilespec_free_tiles();
-  tilespec_free_city_tiles(game.styles_count);
+  tilespec_free_city_tiles(game.ruleset_control.style_count);
   tilespec_free_toplevel();
 
   /* Step 2:  Read.
@@ -467,7 +468,7 @@ void tilespec_reread(const char *tileset_name)
   government_iterate(gov) {
     tilespec_setup_government(gov->index);
   } government_iterate_end;
-  for (id = 0; id < game.nation_count; id++) {
+  for (id = 0; id < game.ruleset_control.nation_count; id++) {
     tilespec_setup_nation_flag(id);
   }
   impr_type_iterate(imp_id) {
@@ -482,8 +483,8 @@ void tilespec_reread(const char *tileset_name)
 
   /* tilespec_load_tiles reverts the city tile pointers to 0.  This
      is a workaround. */
-  tilespec_alloc_city_tiles(game.styles_count);
-  for (id = 0; id < game.styles_count; id++) {
+  tilespec_alloc_city_tiles(game.ruleset_control.style_count);
+  for (id = 0; id < game.ruleset_control.style_count; id++) {
     tilespec_setup_city_tiles(id);
   }
 
@@ -1081,7 +1082,7 @@ static const char *get_citizen_name(struct citizen_type citizen)
    * translate. */
   switch (citizen.type) {
   case CITIZEN_SPECIALIST:
-    return game.rgame.specialists[citizen.spec_type].name;
+    return game.ruleset_game.specialist_name[citizen.spec_type];
   case CITIZEN_HAPPY:
     return "happy";
   case CITIZEN_CONTENT:
@@ -1606,7 +1607,7 @@ void tilespec_setup_tech_type(int id)
     = lookup_sprite_tag_alt(advances[id].graphic_str,
 			    advances[id].graphic_alt,
 			    FALSE, "tech_type",
-			    get_tech_name(game.player_ptr, id));
+			    get_tech_name(get_player_ptr(), id));
 
   /* should maybe do something if NULL, eg generic default? */
 }
@@ -3001,12 +3002,12 @@ enum color_std overview_tile_color(struct tile *ptile)
   }
   if ((pcity = map_get_city(ptile))) {
     pplayer = city_owner(pcity);
-    if (!pplayer || pplayer == game.player_ptr) {
+    if (!pplayer || pplayer == get_player_ptr()) {
       return COLOR_STD_WHITE;
     } else {
-      switch (pplayer_get_diplstate(pplayer, game.player_ptr)->type) {
+      switch (pplayer_get_diplstate(pplayer, get_player_ptr())->type) {
 	case DS_NO_CONTACT:
-	  if (game.diplomacy >= 2) {
+	  if (game.info.diplomacy >= 2) {
             return COLOR_STD_FORANGE;
           }
 	case DS_NEUTRAL:
@@ -3022,12 +3023,12 @@ enum color_std overview_tile_color(struct tile *ptile)
     }
   } else if ((punit=find_visible_unit(ptile))) {
     pplayer = unit_owner(punit);
-    if(!pplayer || pplayer == game.player_ptr) {
+    if(!pplayer || pplayer == get_player_ptr()) {
       return COLOR_STD_YELLOW;
     } else {
-      switch(pplayer_get_diplstate(pplayer, game.player_ptr)->type) {
+      switch(pplayer_get_diplstate(pplayer, get_player_ptr())->type) {
         case DS_NO_CONTACT:
-	  if (game.diplomacy >= 2) {
+	  if (game.info.diplomacy >= 2) {
 	    return COLOR_STD_RED;
           }
 	case DS_NEUTRAL:
@@ -3076,7 +3077,7 @@ struct unit *get_drawable_unit(struct tile *ptile, bool citymode)
   if (!punit)
     return NULL;
 
-  if (citymode && punit->owner == game.player_idx)
+  if (citymode && punit->owner == get_player_idx())
     return NULL;
 
   if (!is_unit_in_multi_select(0,punit)//*pepeto* 

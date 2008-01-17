@@ -17,10 +17,12 @@
 
 #include <stdarg.h>
 
-#include "city.h"
 #include "log.h"
 #include "shared.h"
 #include "support.h"
+
+#include "city.h"
+#include "game.h"
 #include "unit.h"
 
 #include "gotohand.h"

@@ -307,7 +307,7 @@ void flush_packets(void)
   (void) time(&start);
 
   for(;;) {
-    tv.tv_sec=(game.netwait - (time(NULL) - start));
+    tv.tv_sec=(game.server.netwait - (time(NULL) - start));
     tv.tv_usec=0;
 
     if (tv.tv_sec < 0)
@@ -347,8 +347,8 @@ void flush_packets(void)
 	    if(FD_ISSET(pconn->sock, &writefs)) {
 	      flush_connection_send_buffer_all(pconn);
 	    } else {
-	      if(game.tcptimeout != 0 && pconn->last_write != 0
-		 && (time(NULL)>pconn->last_write + game.tcptimeout)) {
+	      if(game.server.tcptimeout != 0 && pconn->last_write != 0
+		 && (time(NULL)>pconn->last_write + game.server.tcptimeout)) {
 		freelog(LOG_NORMAL,
 			"cut connection %s due to lagging player",
 			conn_description(pconn));
@@ -413,13 +413,13 @@ int sniff_packets(void)
 #endif /* HAVE_LIBREADLINE */
 
 
-  if (year != game.year && server_state == RUN_GAME_STATE) {
-    year = game.year;
+  if (year != game.info.year && server_state == RUN_GAME_STATE) {
+    year = game.info.year;
   }
 
-  if (game.timeout == 0) {
+  if (game.info.timeout == 0) {
     /* Just in case someone sets timeout we keep game.turn_start updated */
-    game.turn_start = time(NULL);
+    game.server.turn_start = time(NULL);
   }
 
 
@@ -482,7 +482,7 @@ int sniff_packets(void)
 
 
     /* Report ping times and ping all connections. */
-    if (time(NULL) > (game.last_ping + game.pingtime)) {
+    if (time(NULL) > (game.server.last_ping + game.server.pingtime)) {
       struct timer *ping_timer;
 
       /* Send data about the previous pings. */
@@ -502,8 +502,8 @@ int sniff_packets(void)
         }
 
         if ((ping_timer != NULL
-             && read_timer_seconds(ping_timer) > game.pingtimeout)
-            || pconn->ping_time > game.pingtimeout) {
+             && read_timer_seconds(ping_timer) > game.server.pingtimeout)
+            || pconn->ping_time > game.server.pingtimeout) {
 
           /* Disconnect timed-out users, except for hack-level ones. */
           if (pconn->access_level == ALLOW_HACK) {
@@ -520,7 +520,7 @@ int sniff_packets(void)
           ping_connection(pconn);
         }
       }
-      game.last_ping = time(NULL);
+      game.server.last_ping = time(NULL);
     }
 
 
@@ -535,7 +535,7 @@ int sniff_packets(void)
 
 
     /* Don't wait if timeout == -1 (i.e. on auto games) */
-    if (server_state != PRE_GAME_STATE && game.timeout == -1) {
+    if (server_state != PRE_GAME_STATE && game.info.timeout == -1) {
       send_server_info_to_metaserver(META_REFRESH);
       return 0;
     }
@@ -586,7 +586,8 @@ int sniff_packets(void)
 
       send_server_info_to_metaserver(META_REFRESH);
 
-      if (game.timeout != 0 && time(NULL) > game.turn_start + game.timeout
+      if (game.info.timeout != 0
+	  && time(NULL) > game.server.turn_start + game.info.timeout
           && server_state == RUN_GAME_STATE) {
         con_prompt_off();
         return 0;
@@ -621,9 +622,9 @@ int sniff_packets(void)
 
     } /* select */
 
-    if (game.timeout == 0) {
+    if (game.info.timeout == 0) {
       /* Just in case someone sets timeout we keep game.turn_start updated. */
-      game.turn_start = time(NULL);
+      game.server.turn_start = time(NULL);
     }
 
     if (FD_ISSET(sock, &exceptfs)) {
@@ -805,8 +806,8 @@ int sniff_packets(void)
           continue;
         }
 
-        if (game.tcptimeout != 0 && pconn->last_write != 0
-            && (time(NULL) > pconn->last_write + game.tcptimeout)) {
+        if (game.server.tcptimeout != 0 && pconn->last_write != 0
+            && (time(NULL) > pconn->last_write + game.server.tcptimeout)) {
           freelog(LOG_ERROR, "Disconnecting %s due to timeout waiting "
                   "for write readiness.",
                   conn_description(pconn));
@@ -821,8 +822,8 @@ int sniff_packets(void)
 
   con_prompt_off();
 
-  if (game.timeout != 0
-      && (time(NULL) > game.turn_start + game.timeout)) {
+  if (game.info.timeout != 0
+      && (time(NULL) > game.server.turn_start + game.info.timeout)) {
     /* Went past end of turn timeout. */
     return 0;
   }

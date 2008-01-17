@@ -1120,12 +1120,12 @@ void map_fractal_generate(bool autosize)
     if (map.generator == 2) {
       make_pseudofractal1_hmap(1 + ((map.startpos == 0
 				     || map.startpos == 3)
-				    ? 0 : game.nplayers));
+				    ? 0 : game.info.nplayers));
     }
 
     if (map.generator == 1) {
       make_random_hmap(MAX(1, 1 + SQSIZE 
-			   - (map.startpos ? game.nplayers / 4 : 0)));
+			   - (map.startpos ? game.info.nplayers / 4 : 0)));
     }
 
     /* if hmap only generator make anything else */
@@ -1819,7 +1819,7 @@ static void mapgenerator2(void)
 
   pstate->totalmass = ((map.ysize - 6 - spares) * map.landpercent 
                        * (map.xsize - spares)) / 100;
-  totalweight = 100 * game.nplayers;
+  totalweight = 100 * game.info.nplayers;
 
   assert(!placed_map_is_initialized());
 
@@ -1834,7 +1834,7 @@ static void mapgenerator2(void)
     initworld(pstate);
     
     /* Create one big island for each player. */
-    for (i = game.nplayers; i > 0; i--) {
+    for (i = game.info.nplayers; i > 0; i--) {
       if (!make_island(bigfrac * pstate->totalmass / totalweight,
                       1, pstate, 95)) {
 	/* we couldn't make an island at least 95% as big as we wanted,
@@ -1872,10 +1872,10 @@ static void mapgenerator2(void)
 
   /* Now place smaller islands, but don't worry if they're small,
    * or even non-existent. One medium and one small per player. */
-  for (i = game.nplayers; i > 0; i--) {
+  for (i = game.info.nplayers; i > 0; i--) {
     make_island(midfrac * pstate->totalmass / totalweight, 0, pstate, DMSIS);
   }
-  for (i = game.nplayers; i > 0; i--) {
+  for (i = game.info.nplayers; i > 0; i--) {
     make_island(smallfrac * pstate->totalmass / totalweight, 0, pstate, DMSIS);
   }
 
@@ -1914,11 +1914,11 @@ static void mapgenerator3(void)
       ((map.ysize - 6 - spares) * map.landpercent * (map.xsize - spares)) /
       100;
 
-  bigislands= game.nplayers;
+  bigislands= game.info.nplayers;
 
   landmass = (map.xsize * (map.ysize - 6) * map.landpercent)/100;
   /* subtracting the arctics */
-  if (landmass > 3 * map.ysize + game.nplayers * 3){
+  if (landmass > 3 * map.ysize + game.info.nplayers * 3){
     landmass -= 3 * map.ysize;
   }
 
@@ -1927,7 +1927,7 @@ static void mapgenerator3(void)
   if (islandmass < 4 * maxmassdiv6) {
     islandmass = (landmass)/(2 * bigislands);
   }
-  if (islandmass < 3 * maxmassdiv6 && game.nplayers * 2 < landmass) {
+  if (islandmass < 3 * maxmassdiv6 && game.info.nplayers * 2 < landmass) {
     islandmass= (landmass)/(bigislands);
   }
 
@@ -1972,7 +1972,7 @@ static void mapgenerator3(void)
         size=2;
       }
 
-      make_island(size, (pstate->isleindex - 2 <= game.nplayers) ? 1 : 0,
+      make_island(size, (pstate->isleindex - 2 <= game.info.nplayers) ? 1 : 0,
 		  pstate, DMSIS);
   }
 
@@ -2003,7 +2003,7 @@ static void mapgenerator4(void)
 
   /* no islands with mass >> sqr(min(xsize,ysize)) */
 
-  if (game.nplayers < 2 || map.landpercent > 80) {
+  if (game.info.nplayers < 2 || map.landpercent > 80) {
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
 		map.generator);
     map.startpos = 1;
@@ -2025,12 +2025,12 @@ static void mapgenerator4(void)
       100;
 
   /*!PS: The weights NEED to sum up to totalweight (dammit) */
-  totalweight = (30 + bigweight) * game.nplayers;
+  totalweight = (30 + bigweight) * game.info.nplayers;
 
   initworld(pstate);
 
-  i = game.nplayers / 2;
-  if ((game.nplayers % 2) == 1) {
+  i = game.info.nplayers / 2;
+  if ((game.info.nplayers % 2) == 1) {
     make_island(bigweight * 3 * pstate->totalmass / totalweight, 3, 
 		pstate, DMSIS);
   } else {
@@ -2040,10 +2040,10 @@ static void mapgenerator4(void)
     make_island(bigweight * 2 * pstate->totalmass / totalweight, 2,
 		pstate, DMSIS);
   }
-  for (i = game.nplayers; i > 0; i--) {
+  for (i = game.info.nplayers; i > 0; i--) {
     make_island(20 * pstate->totalmass / totalweight, 0, pstate, DMSIS);
   }
-  for (i = game.nplayers; i > 0; i--) {
+  for (i = game.info.nplayers; i > 0; i--) {
     make_island(10 * pstate->totalmass / totalweight, 0, pstate, DMSIS);
   }
   make_plains();  
@@ -2419,7 +2419,7 @@ static bool create_peninsula(int x, int y, int player_number,
 *************************************************************************/
 static bool mapgenerator67(bool make_roads)
 {
-  int peninsulas = game.nplayers;
+  int peninsulas = game.info.nplayers;
   int peninsulas_on_one_side = (peninsulas + 1) / 2;
   int isthmus_width = 10;
   int neck_height = (map.ysize / 8) | 1; 
@@ -2487,9 +2487,9 @@ static bool mapgenerator67(bool make_roads)
 
   map.num_continents = 1;
   map.start_positions = fc_realloc(map.start_positions,
-				   game.nplayers
+				   game.info.nplayers
 				   * sizeof(*map.start_positions));
-  map.num_start_positions = game.nplayers;
+  map.num_start_positions = game.info.nplayers;
 
   freelog(LOG_VERBOSE, "Creating isthmus");
   /* create isthmus central strip */
@@ -2501,7 +2501,7 @@ static bool mapgenerator67(bool make_roads)
 
   freelog(LOG_VERBOSE, "Creating peninsulas");
   /* setup peninsulas */
-  for (i = 0; i < game.nplayers; i++) {
+  for (i = 0; i < game.info.nplayers; i++) {
     /* direction is the direction to increment from the y location  - up or down*/
     int direction = (i < peninsulas_on_one_side) ? -1 : 1;
     int index = (direction == -1) ? i : i - peninsulas_on_one_side;
@@ -2515,7 +2515,7 @@ static bool mapgenerator67(bool make_roads)
     int x_offset = myrand(max_peninsula_width - width + 1);
     if (index == 0) {
       x = peninsula_separation + isthmus_width;
-      if(direction == 1 && game.nplayers & 1) {
+      if(direction == 1 && game.info.nplayers & 1) {
 	/* center the thing */
 	x = x + max_peninsula_width / 2;
       } 
@@ -2777,7 +2777,7 @@ void startpos_init(void)
   map.num_start_positions = 0;
   map.start_positions =
       fc_realloc(map.start_positions,
-                 game.nplayers * sizeof(*map.start_positions));
+                 game.info.nplayers * sizeof(*map.start_positions));
 }
 
 /*************************************************************************
@@ -2785,7 +2785,7 @@ void startpos_init(void)
 *************************************************************************/
 void startpos_new(int x, int y, Nation_Type_id nation)
 {
-  assert(map.num_start_positions < game.nplayers);
+  assert(map.num_start_positions < game.info.nplayers);
   map.start_positions[map.num_start_positions].tile = native_pos_to_tile(x, y);
   map.start_positions[map.num_start_positions].nation = nation;
   map.num_start_positions++;
@@ -3379,7 +3379,7 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
     rsy = sy + dy;
   } while (rsx < 0 || rsx >= xmax || rsy < 0 || rsy >= ymax);
 
-  /* game.teamplacementtype:
+  /* game.server.teamplacementtype:
    * 0 - team players are placed as close as possible regardless of continents.
    * 1 - team players are placed on the same continent. (ignored here)
    * 2 - team players are placed horizontally.
@@ -3405,7 +3405,7 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
   rx = rsx + x;	      \
   can_copy;
 
-  switch(game.teamplacementtype) {
+  switch(game.server.teamplacementtype) {
     case 2:
       for (y = 0; y < pmap->ysize; y++) {
         for (x = 0; x < pmap->xsize; x++) {
@@ -3516,7 +3516,7 @@ static bool mapgenerator89(bool team_placement)
   switch (map.startpos) {
     case 2:
       players_per_island = 2;
-      if (game.nplayers & 1) {
+      if (game.info.nplayers & 1) {
 	/* Cannot do it, must be a odd number of players */
 	map.startpos = 0;
 	players_per_island = 1;
@@ -3547,7 +3547,7 @@ static bool mapgenerator89(bool team_placement)
       }
       break;
     case 3:
-      if (team_placement && game.teamplacementtype == 1) {
+      if (team_placement && game.server.teamplacementtype == 1) {
 	int ref = players_without_team;
 
 	team_iterate(pteam) {
@@ -3622,7 +3622,7 @@ static bool mapgenerator89(bool team_placement)
       }
     }
   
-    playermass = i / game.nplayers;
+    playermass = i / game.info.nplayers;
     islandmass1 = (players_per_island * playermass * 7 * (100 - iter)) / 1000;
     if (islandmass1 < min_island_size) {
       islandmass1 = min_island_size;
@@ -3645,7 +3645,7 @@ static bool mapgenerator89(bool team_placement)
     island3 = create_fair_island(islandmass3, 0);
 
     freelog(LOG_VERBOSE, "Placing islands on the map");
-    if (team_placement && game.teamplacement) {
+    if (team_placement && game.ext_info.teamplacement) {
       freelog(LOG_VERBOSE, "Team placement required");
 
       int teams = 0, px[MAX_NUM_TEAMS], py[MAX_NUM_TEAMS], dx = 0, dy = 0;
@@ -3751,9 +3751,9 @@ static bool mapgenerator89(bool team_placement)
         } players_iterate_end;
       }
 
-    } else /* if (!team_placement || !game.teamplacement) */ {
+    } else /* if (!team_placement || !game.ext_info.teamplacement) */ {
       freelog(LOG_VERBOSE, "Team placement not requiered");
-      for (i = 0; i < game.nplayers; i += players_per_island) {
+      for (i = 0; i < game.info.nplayers; i += players_per_island) {
         if (!place_island_on_map(pmap, island1)) {
           freelog(LOG_VERBOSE, "Cannot place island1 for player %d", i);
           done = FALSE;
@@ -3762,7 +3762,7 @@ static bool mapgenerator89(bool team_placement)
       }
     }
     if (done) {
-      for (i = 0; i < game.nplayers; i++) {
+      for (i = 0; i < game.info.nplayers; i++) {
         if (!place_island_on_map(pmap, island2)) {
           freelog(LOG_VERBOSE, "Cannot place island2 for player %d", i);
           done = FALSE;
@@ -3771,7 +3771,7 @@ static bool mapgenerator89(bool team_placement)
       }
     }
     if (done) {
-      for (i = 0; i < game.nplayers; i++) {
+      for (i = 0; i < game.info.nplayers; i++) {
         if (!place_island_on_map(pmap, island3)) {
           freelog(LOG_VERBOSE, "Cannot place island3 for player %d", i);
           done = FALSE;

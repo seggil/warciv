@@ -197,7 +197,7 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
     loss = unit_build_shield_cost(u) * SHIELD_WEIGHTING;
 
     /* Probability to succeed, assuming no defending diplomat */
-    p_success = game.diplchance;
+    p_success = game.server.diplchance;
     /* Probability to lose our unit */
     p_failure = (unit_type_flag(u, F_SPY) ? 100 - p_success : 100);
 
@@ -529,7 +529,7 @@ static bool ai_diplomat_bribe_nearby(struct player *pplayer,
 
 /**************************************************************************
   If we are the only diplomat in a threatened city, defend against enemy 
-  actions. The passive defense is set by game.diplchance.  The active 
+  actions. The passive defense is set by game.server.diplchance.  The active 
   defense is to bribe units which end their move nearby. Our next trick is 
   to look for enemy cities on our continent and do our diplomat things.
 
