@@ -71,6 +71,7 @@ void message_dialog_set_hide(GtkWidget *dshell, gboolean setting);
 static GtkWidget  *races_shell;
 static GtkWidget  *races_nation_list;
 static GtkWidget  *races_leader;
+static int        num_races_leader = -1;
 static GtkWidget  *races_sex[2];
 static GtkWidget  *races_city_style_list;
 static GtkTextBuffer *races_text;
@@ -1758,6 +1759,7 @@ static void create_races_dialog(void)
 
   /* Leader. */ 
   races_leader = gtk_combo_box_entry_new_text();
+
   label = g_object_new(GTK_TYPE_LABEL,
       "use-underline", TRUE,
       "mnemonic-widget", races_leader,
@@ -1921,19 +1923,26 @@ static void races_destroy_callback(GtkWidget *w, gpointer data)
 static void select_random_leader(void)
 {
   struct leader *leaders;
-  int i, nleaders;
+  int i;
+
+  for (i = 0 ; i < num_races_leader + 1  ; i++) {
+    gtk_combo_box_remove_text(GTK_COMBO_BOX(races_leader), 0);
+  }
 
   gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), user_name);
-  leaders = get_nation_leaders(selected_nation, &nleaders);
-  for (i = 0; i < nleaders; i++) {
+  leaders = get_nation_leaders(selected_nation, &num_races_leader);
+  for (i = 0 ; i < num_races_leader ; i++) {
     gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), leaders[i].name);
   }
+
+  /* Select random leader or username */
   if (random_leader){
     gtk_combo_box_set_active(GTK_COMBO_BOX(races_leader), 
-			     (int) myrand(nleaders+1));
+			     (int) myrand(num_races_leader)+1);
   } else {
     gtk_combo_box_set_active(GTK_COMBO_BOX(races_leader), 0);
   }
+
 }
 
 /****************************************************************
