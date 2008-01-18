@@ -120,7 +120,11 @@ struct trade_route *trade_route_new(struct unit *punit, struct city *pc1,
 				    struct city *pc2, bool planned)
 {
   if (!pc1 || !pc2 || (!planned && !punit)) {
-    /* Shouldn't occur! */
+    freelog(LOG_ERROR,
+	    "Failed to create a new trade route between %s and %s, unit %s%s.",
+	    pc1 ? pc1->name : "(NULL)", pc2 ? pc2->name : "(NULL)",
+	    punit ? unit_name(punit->type) : "(NULL)",
+	    planned ? ", planned" : "");
     return NULL;
   }
 
@@ -1770,6 +1774,7 @@ void my_ai_caravan(struct unit *punit)
 
   struct trade_route *btr = NULL, *htr = NULL, **pptr;
 
+  /* Check all trade routes of the trade planning to find the best. */
   trade_route_list_iterate(trade_plan, ptr) {
     pptr = (!my_ai_trade_plan_change_homecity
 	    && (ptr->pc1->id==punit->homecity
@@ -1789,13 +1794,16 @@ void my_ai_caravan(struct unit *punit)
     }
   } trade_route_list_iterate_end;
   if (htr) {
+    /* Means that my_ai_trade_plan_change_homecity is FALSE and we found
+     * a trade route to establish from the caravan's homecity. */
     btr = htr;
   }
   if (my_ai_trade_level == LEVEL_GOOD) {
+    /* Check all other trade routes going to be established for the homecity, 
+     * and calcul if the new unit can arrive before the old ones. */
     htr = NULL;
-    trade_route_list_iterate(
-      player_find_city_by_id(get_player_ptr(), punit->homecity)->trade_routes,
-			     ctr) {
+    trade_route_list_iterate(player_find_city_by_id(get_player_ptr(),
+				 punit->homecity)->trade_routes, ctr) {
       if (!ctr->planned) {
 	continue;
       }
@@ -1827,10 +1835,13 @@ void my_ai_caravan(struct unit *punit)
       }
     } trade_route_list_iterate_end;
     if (htr) {
+      /* We copied it, we don't need to recalculate the trade planning! */
       htr->ptr->planned = FALSE;
       btr = htr;
     }
   } else if (my_ai_trade_level == LEVEL_BEST) {
+    /* Check all other trade routes going to be established for all cities, 
+     * and calcul if the new unit can arrive before the old ones. */
     htr = NULL;
     unit_list_iterate(traders, tunit) {
       struct trade_route *utr = (struct trade_route *)punit->my_ai.data;
@@ -1850,14 +1861,22 @@ void my_ai_caravan(struct unit *punit)
 		  || (ptr->turns_req == btr->turns_req
 		      && ptr->moves_req > btr->moves_req)))) {
 	if (htr) {
-	  free(htr);
+	  if (ptr->turns_req < htr->turns_req
+	      || (ptr->turns_req == htr->turns_req
+		  && ptr->moves_req > htr->moves_req)) {
+	    free(htr);
+	  } else {
+	    free(ptr);
+	    continue;
+	  }
 	}
 	ptr->ptr = utr;
 	htr = ptr;
       }
     } unit_list_iterate_end;
     if (htr) {
-      htr->ptr->planned = FALSE; /* to don't recalculate trade planning */
+      /* We copied it, we don't need to recalculate the trade planning! */
+      htr->ptr->planned = FALSE;
       btr = htr;
     }
   }
