@@ -101,11 +101,11 @@ static void my_wait(void)
 ***********************************************************************/
 static int set_hw_params(void)
 {
-  snd_pcm_hw_params_t *hwparams;
+  snd_pcm_hw_params_t *hwparams, **phwp = &hwparams;
   unsigned rrate;
   unsigned period_time = 100000;
 
-  snd_pcm_hw_params_alloca(&hwparams);
+  snd_pcm_hw_params_alloca(phwp);
 
   if (snd_pcm_hw_params_any(sound_handle, hwparams) < 0) {
     return -1;
