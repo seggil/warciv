@@ -2,9 +2,12 @@
 
 name=_("Honduran")
 plural=_("?plural:Hondurans")
-class=_("Historical")
-legend=_("Archaeologists have demonstrated that Honduras had a rich, multi-ethnic prehistory.An\ important part of that prehistory was the Mayan presence around the city of Copán in western\ Honduras, near the Guatemalan border. Here a major Mayan city flourished during the classic\
-period (150-900).")
+class=_("American")
+legend=_("Archaeologists have demonstrated that Honduras had a rich,\
+ multi-ethnic prehistory.An important part of that prehistory was the\
+ Mayan presence around the city of Copán in western Honduras, near\
+ the Guatemalan border. Here a major Mayan city flourished during the\
+ classic period (150-900).")
 
 leader= "Manuel Zelaya"
 

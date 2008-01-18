@@ -3,6 +3,7 @@
 name=_("South Korean")
 plural=_("?plural:South Koreans")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("Formerly the site of a unified Korean state, the Korean\
  peninsula is today divided into two states - North and South Korea -\
  as a result of the stalemate after the Korean War in 1953. The South\

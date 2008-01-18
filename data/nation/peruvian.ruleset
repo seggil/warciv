@@ -3,6 +3,7 @@
 name=_("Peruvian")
 plural=_("?plural:Peruvians")
 groups="Modern", "American"
+class = _("American")
 legend=_("Peru was the cradle of the Inca Empire and civilization. It is\
  still today a major center of indigenous South American culture.")
 leader=

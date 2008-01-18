@@ -3,6 +3,7 @@
 name   = _("German")
 plural = _("?plural:Germans")
 groups  = "Modern", "Medieval", "European"
+class = _("European")
 
 legend = _("Germany was united in 1871 by the Prussian military \
 force.  After World War I it became a republic, but fell into \

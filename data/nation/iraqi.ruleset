@@ -3,6 +3,7 @@
 name=_("Iraqi")
 plural=_("?plural:Iraqis")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("Iraq was founded after the fall of the Ottoman\
  empire. It is encompassing the ancient region of Mesopotamia at the\
  confluence of the Tigris and Euphrates rivers.")

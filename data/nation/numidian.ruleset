@@ -3,6 +3,7 @@
 name=_("Numidian")
 plural=_("?plural:Numidians")
 groups="Ancient", "African"
+class = _("African")
 
 legend=_("The Numidians were an ancient Berber people renowned for their\
  horsemanship who were composed of two main tribes in modern Algeria and\

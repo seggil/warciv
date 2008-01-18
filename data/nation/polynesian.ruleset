@@ -3,6 +3,7 @@
 name=_("Polynesian")
 plural=_("?plural:Polynesian")
 groups= "Oceanian"
+class = _("Oceanian")
 legend=_("Polynesian culture stretches from Hawaii to New Zealand to\
  Easter Island and covers all the islands in between.")
 leader=

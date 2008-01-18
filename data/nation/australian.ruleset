@@ -3,6 +3,7 @@
 name=_("Australian")
 plural=_("?plural:Australians")
 groups="Modern", "Oceanian"
+class = _("Oceanian")
 legend=_("Australia was founded as a British penal colony in 1788AD.\
  Originally comprising of several colonies (New South Wales, Victoria,\
  Queensland, South Australia, Western Australia and Tasmania) it\

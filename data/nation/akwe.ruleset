@@ -3,6 +3,7 @@
 name=_("Akwe")
 plural=_("?plural:Akwe")
 groups="American"
+class = _("American")
 
 legend=_("The Akwe are also known by three different tribal names in\
  Portuguese, Xavante, Xakriaba and Xerente. They have a patrilineal clan\

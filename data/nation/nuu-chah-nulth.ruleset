@@ -3,6 +3,7 @@
 name=_("Nuu-chah-nulth")
 plural=_("?plural:Nuu-chah-nulth")
 groups="American"
+class = _("American")
 
 legend=_("The Nuu-chah-nulth are a Pacific Northwest people, one of the few\
  Native American peoples to travel in the open ocean and hunt whales. They\

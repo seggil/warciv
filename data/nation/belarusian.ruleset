@@ -3,6 +3,7 @@
 name=_("Belarusian")
 plural=_("?plural:Belarusians")
 groups="Modern", "European"
+class = _("European")
 legend=_("Belarus was part of the ancient Slavic state of Kievan Rus', then\
  subsequently Lithuania, Rzeczpospolita, the Russian Empire and the Soviet\
  Union. Belarus became independent in 1991 with the dissolution of the\

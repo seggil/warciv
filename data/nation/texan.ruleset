@@ -3,6 +3,7 @@
 name=_("Texan")
 plural=_("?plural:Texans")
 groups="American"
+class = _("American")
 legend=_("Texas is second largest and second most populous state of the\
  USA, famous for its \"larger than life\" cowboy mentality.")
 leader=

@@ -3,6 +3,7 @@
 name=_("Indian")
 plural=_("?plural:Indians")
 groups="Ancient", "Medieval", "Modern", "Asian"
+class = _("Asian")
 legend=_("The cradle of Ancient Indian civilization lay in the Indus river\
  valley in modern-day Pakistan.")
 leader=

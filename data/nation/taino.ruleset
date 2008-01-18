@@ -3,6 +3,7 @@
 name=_("Taino")
 plural=_("?plural:Taino")
 groups="American"
+class = _("American")
 
 legend=_("Native inhabitants of the Bahamas, Cuba, Hispaniola, Puerto Rico,\
  Jamaica, and other Caribbean islands who gave us the root words for\

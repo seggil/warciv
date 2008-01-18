@@ -3,6 +3,7 @@
 name=_("North Korean")
 plural=_("?plural:North Koreans")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("In 1945 Korea was split by the Soviet Union and\
  the United States into two states along 38th parallel\
  forming North Korea and South Korea. Even 60 years since\

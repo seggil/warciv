@@ -3,6 +3,7 @@
 name=_("Quebecois")
 plural=_("?plural:Quebecois")
 groups= "American"
+class = _("American")
 legend=_("Quebec is the largest province of Canada, housing the majority of\
  the Francophone population of America.")
 leader=

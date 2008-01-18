@@ -3,6 +3,7 @@
 name=_("Mexican")
 plural=_("?plural:Mexicans")
 groups="Modern", "American"
+class = _("American")
 legend=_("Mexico borrows its name from the Mexica people, another name for\
  the Aztecs.")
 leader=

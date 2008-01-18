@@ -3,6 +3,7 @@
 name=_("Prussian")
 plural=_("?plural:Prussians")
 groups="Medieval", "European"
+class = _("European")
 
 legend=_("Prussia was originally the name of a pagan Baltic people, who in\
  the 13th century were conquered by the German Teutonic Knight order. The\

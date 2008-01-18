@@ -3,6 +3,7 @@
 name=_("Malagasy")
 plural=_("?plural:Malagasies")
 groups="Medieval", "Modern", "African"
+class = _("African")
 legend=_("The Malagasy are the people of Madagascar. For centuries, tribes\
  from Indonesia, East Africa and the Arab world have gathered on the\
  island.")

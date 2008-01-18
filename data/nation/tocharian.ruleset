@@ -3,6 +3,7 @@
 name=_("Tocharian")
 plural=_("?plural:Tocharians")
 groups="Asian"
+class = _("Asian")
 
 legend=_("The Tocharians were an Indo-European people living what is now\
  Xinjiang in western China. Because of their unique geopolitical position,\

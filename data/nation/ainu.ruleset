@@ -3,6 +3,7 @@
 name=_("Ainu")
 plural=_("?plural:Ainu")
 groups="Asian"
+class = _("Asian")
 
 legend=_("The Ainu are the indigenous people of northern Japan, the\
  Kuril islands, Sakhalin, and the southern part of the Kamchatka peninsula.")

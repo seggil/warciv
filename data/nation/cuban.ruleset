@@ -3,6 +3,7 @@
 name=_("Cuban")
 plural=_("?plural:Cubans")
 groups="Modern", "American"
+class = _("American")
 legend=_("Cuba came under Spanish control in the 16th century. In the\
  following centuries, the island became one of the leading producers of\
  tobacco, sugar and coffee in the world. Cuba was granted nominal\

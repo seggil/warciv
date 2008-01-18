@@ -2,7 +2,7 @@
 
 name=_("Macedonian")
 plural=_("?plural:Macedonians")
-class=_("Historical")
+class=_("European")
 legend=_("The Republic of Macedonia landlocked country on the Balkan peninsula in southeastern Europe.")
 leader= "Branko Crvenkovski"
 leader_sex= "Male"

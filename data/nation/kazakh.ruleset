@@ -3,6 +3,7 @@
 name=_("Kazakh")
 plural=_("?plural:Kazakhs")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("Kazakhs are descendants of Turkic and Mongolian nomadic tribes.\
  Conquered by Russia in the 18th century, Kazahstan became independent in\
  1991 with the dissolution of the Soviet Union. It is one of ten largest\

@@ -3,6 +3,7 @@
 name=_("Romanian")
 plural=_("?plural:Romanians")
 groups="Modern", "Medieval", "European"
+class = _("European")
 legend=_("Romania as a nation was formed at the beginning of the 20th\
  century, when the states of Transylvania, Wallachia, and Moldavia merged.\
  It is a country inhabited by people speaking a language reminiscent from\

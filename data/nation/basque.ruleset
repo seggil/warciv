@@ -3,6 +3,7 @@
 name=_("Basque")
 plural=_("?plural:Basques")
 groups="Medieval", "European"
+class = _("European")
 legend=_("The Basques have lived since times immemorial by the western\
  foothills of the Pyrenees.\
  By maintaining their age-old cultural traditions, and keeping their\

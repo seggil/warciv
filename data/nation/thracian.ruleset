@@ -3,6 +3,7 @@
 name=_("Thracian")
 plural=_("?plural:Thracians")
 groups="Ancient", "European"
+class = _("European")
 
 legend=_("The second most numerous people in the ancient western world.")
 

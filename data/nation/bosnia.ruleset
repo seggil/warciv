@@ -3,6 +3,7 @@
 name=_("Bosnian-Herzegovinian")
 plural=_("?plural:Bosnians")
 groups="Modern", "European"
+class = _("European")
 legend=_("Bosnia and Herzegovina is a country in south-east Europe, and the\
  home of three constituent peoples: Bosniaks, Serbs, and Croats.")
 leader=

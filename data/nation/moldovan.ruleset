@@ -3,6 +3,7 @@
 name=_("Moldovan")
 plural=_("?plural:Moldovans")
 groups="Modern", "European"
+class = _("European")
 legend=_("Moldova was conquered by the Ottomans in the 16th century.\
  Then in 1812 Moldova became part of the Russian Empire.\
  From 1918 Moldova was part of Romania until inclusion \

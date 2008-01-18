@@ -3,6 +3,7 @@
 name=_("Himyarite")
 plural=_("?plural:Himyar")
 groups="Ancient", "Asian"
+class = _("Asian")
 
 legend=_("The Himyar were originally a mountain tribe in what is now Yemen\
  that conquered the other South Arabian kingdoms, including Sabaea in\

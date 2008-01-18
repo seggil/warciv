@@ -3,6 +3,7 @@
 name=_("Majapahit")
 plural=_("?plural:Majapahit")
 groups="Asian", "Medieval"
+class = _("Asian")
 
 legend=_("This empire began in 1293 CE when a local prince used invading\
  Yuan dynasty troops to his own advantage by having them defeat his enemies\

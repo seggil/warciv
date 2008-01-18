@@ -3,6 +3,7 @@
 name=_("P'urhepecha")
 plural=_("?plural:P'urhepecha")
 groups="Medieval", "American"
+class = _("American")
 
 legend=_("The P'urhepecha are a people native to the modern Mexican state of\
  Michoacan, the heart of a former empire known to them as Irechecua\

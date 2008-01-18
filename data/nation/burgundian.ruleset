@@ -3,6 +3,7 @@
 name=_("Burgundian")
 plural=_("?plural:Burgundians")
 groups="Medieval", "European"
+class = _("European")
 legend=_("After the fall of the Western Roman Empire, a Germanic people\
  known as the Burgundians settled in the Rhine Valley, lending their name\
  to the region. Centuries later, the Duchy of Burgundy was a prosperous\

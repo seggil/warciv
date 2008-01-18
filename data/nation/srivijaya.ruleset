@@ -3,6 +3,7 @@
 name=_("Sri Vijaya")
 plural=_("?plural:Sri Vijaya")
 groups="Asian", "Medieval"
+class = _("Asian")
 
 legend=_("Sri Vijaya was an empire centered on Palembang in eastern Sumatra\
  and extended its control through much of the coastal regions of Sumatra,\

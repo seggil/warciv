@@ -3,6 +3,7 @@
 name=_("Emirati")
 plural=_("?plural:Emiratis")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("The history of the United Arab Emirates goes back to the 7th\
  century. In the 19th century the Emirates became a\
  dependency of the United Kingdom. In 1971 six\

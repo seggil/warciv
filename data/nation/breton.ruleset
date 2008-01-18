@@ -3,6 +3,7 @@
 name=_("Breton")
 plural=_("?plural:Bretons")
 groups="Medieval", "European"
+class = _("European")
 legend=_("Known to the Romans as Amorica, Brittany has been Celtic speaking\
  for many centuries before Britons arrive in the peninsula a mercenaries,\
  colonists and refugees in response to the chaos in Gaul and the invasion\

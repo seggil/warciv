@@ -3,6 +3,7 @@
 name=_("UN")
 plural=_("?plural:UN")
 groups="Fictional"
+class = _("Fictional")
 legend=_("The United Nations believe in human rights and the protection of\
  the weak.")
 leader=

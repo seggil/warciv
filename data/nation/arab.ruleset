@@ -3,6 +3,7 @@
 name=_("Arab")
 plural=_("?plural:Arabs")
 groups="Medieval", "Asian", "African"
+class = _("African/Asian")
 legend=_("The Arab/Islamic civilization of 622AD-1495AD.")
 leader=
  "Harun al-Rashid",

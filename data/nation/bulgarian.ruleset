@@ -3,6 +3,7 @@
 name=_("Bulgarian")
 plural=_("?plural:Bulgarians")
 groups="Modern", "Medieval", "European"
+class = _("European")
 legend=_("Bulgar leader Khan Asparukh led his people into the northern\
  Balkans, and founded Bulgaria in 681. This was the first Slavic\
  nation-state in history.")

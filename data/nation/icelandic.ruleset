@@ -3,6 +3,7 @@
 name=_("Icelandic")
 plural=_("?plural:Icelanders")
 groups="Modern", "European"
+class = _("European")
 legend=_("Iceland was long one of the largest uninhabited islands in the\
  world, until it was settled by Norwegian Vikings in the\
  late 9th century. The island was kept initially under the Norwegian and\

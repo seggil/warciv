@@ -3,6 +3,7 @@
 name=_("Hopi")
 plural=_("?plural:Hopis")
 groups="American"
+class = _("American")
 
 legend=_("A matrilineal culture in North America, who claim descent from the\
  Hisatsinom. The Hopi live today on the Hopi Reservation in northeastern\

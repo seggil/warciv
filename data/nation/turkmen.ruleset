@@ -3,6 +3,7 @@
 name=_("Turkmen")
 plural=_("?plural:Turkmens")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("Nation in Central Asia. Conquered by the Russian Empire\
  in 19th century, Turkmenistan got independence\
  from the Soviet Union in 1991.")

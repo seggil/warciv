@@ -3,6 +3,7 @@
 name=_("Tairona")
 plural=_("?plural:Tairona")
 groups="American"
+class = _("American")
 
 legend=_("A Chibchan-speaking people related to the Kuna of Panama and the\
  Muisca of central Colombia, the Tairona inhabit the modern Magdalena and La\

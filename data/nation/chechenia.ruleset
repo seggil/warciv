@@ -2,7 +2,7 @@
 
 name=_("Chechnyan")
 plural=_("?plural:Chechnyans")
-class=_("Modern")
+class=_("European")
 legend=_("During the collapse of the Soviet Union in 1991, the Chechen-Ingush ASSR was split into the Republic of Ingushetia\ which wanted to remain part of Russia and the Chechen Republic of Ichkeria which sought independence.")
 leader= "Ramzan Kadyrov","Akhmad Kadyrov"," Dzhabrailov Umar"," Maskhadov Aslan","Doku Umarov"
 	

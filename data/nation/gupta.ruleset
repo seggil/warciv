@@ -3,6 +3,7 @@
 name=_("Gupta")
 plural=_("?plural:Gupta")
 groups="Asian", "Ancient"
+class = _("Asian")
 
 legend=_("The Gupta Empire was one of the great classical empires. It ruled\
  northern India from around 240 to 550 CE.")

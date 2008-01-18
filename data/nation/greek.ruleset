@@ -3,6 +3,7 @@
 name=_("Greek")
 plural=_("?plural:Greeks")
 groups="Ancient", "European"
+class = _("European")
 legend=_("The ancient Greeks, between Mycenae and the Roman conquest.")
 leader=
  "Alexandros Molossus",

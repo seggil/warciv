@@ -1718,7 +1718,7 @@ void ui_main(int argc, char **argv)
 
   gtksettings = gtk_settings_get_default();
   /* kill gtk's default F10 handler */
-  g_object_set (G_OBJECT (gtksettings), "gtk-menu-bar-accel", NULL, NULL);
+  g_object_set(G_OBJECT(gtksettings), "gtk-menu-bar-accel", NULL, NULL);
 
   /* font names shouldn't be in spec files! */
   style = gtk_rc_get_style_by_paths(gtksettings,

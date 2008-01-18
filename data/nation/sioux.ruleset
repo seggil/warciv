@@ -3,6 +3,7 @@
 name=_("Sioux")
 plural=_("?plural:Sioux")
 groups="Medieval", "American"
+class = _("American")
 legend=_("The Sioux was a North American nation that fought several\
  decisive battles against the United States. It consisted of three distinct\
  groups of tribes: the Lakota, the Dakota and the Nakota.")

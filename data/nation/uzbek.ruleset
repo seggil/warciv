@@ -3,6 +3,7 @@
 name=_("Uzbek")
 plural=_("?plural:Uzbeks")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("Nation in Central Asia. Uzbekistan was the center of\
  ancient states such as Khoresm, Khanate of Bukhara, Khanate of\
  Kokand and others. Conquered by the Russian Empire in 19th century,\

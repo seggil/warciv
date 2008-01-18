@@ -3,6 +3,7 @@
 name=_("Papuan")
 plural=_("?plural:Papuans")
 groups="Modern", "Oceanian"
+class = _("Oceanian")
 legend=_("The Papuans are a Melanesian people on the island of New Guinea.")
 leader=
  "Michael Somare",

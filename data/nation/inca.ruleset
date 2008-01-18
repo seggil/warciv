@@ -3,6 +3,7 @@
 name=_("Inca")
 plural=_("?plural:Incas")
 groups="Medieval", "American"
+class = _("American")
 
 legend=_("The Inca were an Amerind people of the Northern Andes who\
  conquered an empire stretching along the west coast of South America\

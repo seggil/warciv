@@ -2,7 +2,7 @@
 
 name = _("Palestinian")
 plural = _("?plural:Palestinian")
-class = _("Modern")
+class = _("Asian")
 legend = _("Palestine (from Latin: Palaestina named after the Philistines; \
 Palestina; Arabic: Filasti, Falasti) is one of several names for the \
 geographic region between the Mediterranean Sea and the Jordan River with \

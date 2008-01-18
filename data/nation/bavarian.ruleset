@@ -3,6 +3,7 @@
 name=_("Bavarian")
 plural=_("?plural:Bavarians")
 groups="Medieval", "European"
+class = _("European")
 legend=_("Bavaria, before national unification in 1870AD, was one of the\
  largest of the German kingdoms.") 
 leader =

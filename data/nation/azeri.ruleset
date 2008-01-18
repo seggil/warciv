@@ -3,6 +3,7 @@
 name=_("Azeri")
 plural=_("?plural:Azeris")
 groups="Modern", "Asian"
+class = _("Asian")
 legend=_("The Azeris are the people of Azerbaijan. The territory\
  of modern Azerbaijan was the scene of rises and falls of different\
  ancient states of the Caucasus region. In 1813 Azerbaijan became\

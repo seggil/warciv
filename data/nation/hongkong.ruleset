@@ -2,8 +2,10 @@
 
 name=_("HongKong") ;need check this correct 
 plural=_("?plural:Kongs");need check this correct
-class=_("Historical")
-legend=_("Hong Kong was a dependent territory of the United Kingdom from 1842 until the transfer of sovereignty to the\ People's Republic of China in 1997.")
+class=_("Asian")
+legend=_("Hong Kong was a dependent territory of the United Kingdom from\
+ 1842 until the transfer of sovereignty to the People's Republic of China\
+ in 1997.")
 leader= "Donald Tsang"
 leader_sex= "Male"
 	  
