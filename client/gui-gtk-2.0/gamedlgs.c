@@ -387,8 +387,8 @@ static void option_ok_command_callback(GtkWidget *widget, gpointer data)
       break;
     case COT_STR:
       if (o->p_string_vals) {
-	const char* new_value = gtk_entry_get_text(GTK_ENTRY
-					(GTK_COMBO(o->p_gui_data)->entry));
+	const char* new_value = 
+	  gtk_entry_get_text(GTK_ENTRY(GTK_BIN(o->p_gui_data)->child));
 	if (strcmp(o->p_string_value, new_value)) {
 	  mystrlcpy(o->p_string_value, new_value, o->string_length);
 	  if (o->change_callback) {
@@ -493,7 +493,7 @@ static void create_option_dialog(void)
 		       GTK_FILL, GTK_FILL | GTK_EXPAND,
 		       0, 0);
       if (o->p_string_vals) {
-        o->p_gui_data = gtk_combo_new();
+        o->p_gui_data = gtk_combo_box_entry_new_text();
       } else {
         o->p_gui_data = gtk_entry_new();
       }
@@ -535,17 +535,14 @@ void popup_option_dialog(void)
     case COT_STR:
       if (o->p_string_vals) {
 	int i;
-	GList *items = NULL;
 	const char **vals = (*o->p_string_vals) ();
 
 	for (i = 0; vals[i]; i++) {
+	  gtk_combo_box_append_text(GTK_COMBO_BOX(o->p_gui_data), vals[i]);
 	  if (strcmp(vals[i], o->p_string_value) == 0) {
-	    continue;
+	    gtk_combo_box_set_active(GTK_COMBO_BOX(o->p_gui_data), i);
 	  }
-	  items = g_list_append(items, (gpointer) vals[i]);
-	}
-	items = g_list_prepend(items, (gpointer) o->p_string_value);
-	gtk_combo_set_popdown_strings(GTK_COMBO(o->p_gui_data), items);
+ 	}
       } else {
 	gtk_entry_set_text(GTK_ENTRY(o->p_gui_data), o->p_string_value);
       }
