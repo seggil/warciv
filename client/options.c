@@ -54,7 +54,7 @@ char default_sound_set_name[512] = "stdsounds";
 char default_sound_plugin_name[512] = "\0";
 
 /** Local Options: **/
-
+bool random_leader = FALSE;
 bool solid_color_behind_units = FALSE;
 bool sound_bell_at_new_turn = FALSE;
 int  smooth_move_unit_msec = 30;
@@ -108,6 +108,7 @@ static client_option common_options[] = {
   GEN_STR_OPTION(default_tileset_name,     N_("Tileset"),
 		 get_tileset_list, tilespec_reread_callback),
 
+  GEN_BOOL_OPTION(random_leader, N_("Select random leader name")),
   GEN_BOOL_OPTION(solid_color_behind_units, N_("Solid unit background color")),
   GEN_BOOL_OPTION(sound_bell_at_new_turn,   N_("Sound bell at new turn")),
   GEN_INT_OPTION(smooth_move_unit_msec,

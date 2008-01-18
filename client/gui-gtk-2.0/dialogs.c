@@ -71,7 +71,6 @@ void message_dialog_set_hide(GtkWidget *dshell, gboolean setting);
 static GtkWidget  *races_shell;
 static GtkWidget  *races_nation_list;
 static GtkWidget  *races_leader;
-static GList      *races_leader_list;
 static GtkWidget  *races_sex[2];
 static GtkWidget  *races_city_style_list;
 static GtkTextBuffer *races_text;
@@ -1620,7 +1619,7 @@ static void create_races_dialog(void)
   GtkWidget *shell;
   GtkWidget *cmd;
   GtkWidget *vbox, *hbox, *table;
-  GtkWidget *frame, *label, *combo;
+  GtkWidget *frame, *label;
   GtkWidget *notebook, *text;
   
   GtkWidget *list, *sw;
@@ -1758,27 +1757,24 @@ static void create_races_dialog(void)
   gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
   /* Leader. */ 
-  combo = gtk_combo_new();
-  races_leader = combo;
-  gtk_combo_disable_activate(GTK_COMBO(combo));
-  gtk_combo_set_value_in_list(GTK_COMBO(combo), FALSE, FALSE);
+  races_leader = gtk_combo_box_entry_new_text();
   label = g_object_new(GTK_TYPE_LABEL,
       "use-underline", TRUE,
-      "mnemonic-widget", GTK_COMBO(combo)->entry,
+      "mnemonic-widget", races_leader,
       "label", _("_Leader:"),
       "xalign", 0.0,
       "yalign", 0.5,
       NULL);
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 2);
-  gtk_table_attach_defaults(GTK_TABLE(table), combo, 1, 3, 0, 1);
+  gtk_table_attach_defaults(GTK_TABLE(table), races_leader, 1, 3, 0, 1);
 
-  cmd = gtk_radio_button_new_with_mnemonic(NULL, _("_Female"));
-  races_sex[0] = cmd;
+  cmd = gtk_radio_button_new_with_mnemonic(NULL, _("_Male"));
+  races_sex[1] = cmd;
   gtk_table_attach_defaults(GTK_TABLE(table), cmd, 1, 2, 1, 2);
 
   cmd = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(cmd),
-      _("_Male"));
-  races_sex[1] = cmd;
+      _("_Female"));
+  races_sex[0] = cmd;
   gtk_table_attach_defaults(GTK_TABLE(table), cmd, 2, 3, 1, 2);
 
   /* City style. */
@@ -1867,7 +1863,7 @@ static void create_races_dialog(void)
   g_signal_connect(shell, "response",
       G_CALLBACK(races_response), NULL);
 
-  g_signal_connect(GTK_COMBO(races_leader)->list, "select_child",
+  g_signal_connect(races_leader, "changed",
       G_CALLBACK(races_leader_callback), NULL);
 
   g_signal_connect(races_sex[0], "toggled",
@@ -1915,18 +1911,7 @@ void popdown_races_dialog(void)
  *****************************************************************/
 static void races_destroy_callback(GtkWidget *w, gpointer data)
 {
-  g_list_free(races_leader_list);
-  races_leader_list = NULL;
-
   races_shell = NULL;
-}
-
-/****************************************************************
-  ...
- *****************************************************************/
-static gint cmp_func(gconstpointer ap, gconstpointer bp)
-{
-  return strcmp((const char *)ap, (const char *)bp);
 }
 
 /****************************************************************
@@ -1937,45 +1922,18 @@ static void select_random_leader(void)
 {
   struct leader *leaders;
   int i, nleaders;
-  GList *items = NULL;
-  GtkWidget *text, *list;
-  gchar *name;
-  bool unique;
 
-  text = GTK_COMBO(races_leader)->entry;
-  list = GTK_COMBO(races_leader)->list;
-  name = gtk_editable_get_chars(GTK_EDITABLE(text), 0, -1);
-
-  if (name[0] == '\0'
-      || g_list_find_custom(races_leader_list, name, cmp_func)) {
-    unique = FALSE;
-  } else {
-    unique = TRUE;
-  }
-
-  items = g_list_append(items, user_name);
+  gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), user_name);
   leaders = get_nation_leaders(selected_nation, &nleaders);
   for (i = 0; i < nleaders; i++) {
-    items = g_list_append(items, leaders[i].name);
+    gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), leaders[i].name);
   }
-
-  /* Populate combo box with minimum signal noise. */
-  g_signal_handlers_block_by_func(list, races_leader_callback, NULL);
-  gtk_combo_set_popdown_strings(GTK_COMBO(races_leader), items);
-  gtk_entry_set_text(GTK_ENTRY(text), "");
-  g_signal_handlers_unblock_by_func(list, races_leader_callback, NULL);
-
-  g_list_free(races_leader_list);
-  races_leader_list = items;
-
-  if (unique) {
-    gtk_entry_set_text(GTK_ENTRY(text), name);
+  if (random_leader){
+    gtk_combo_box_set_active(GTK_COMBO_BOX(races_leader), 
+			     (int) myrand(nleaders+1));
   } else {
-    /*i = myrand(nleaders); */
-    gtk_entry_set_text(GTK_ENTRY(text), g_list_nth_data(items, 0));
+    gtk_combo_box_set_active(GTK_COMBO_BOX(races_leader), 0);
   }
-
-  g_free(name);
 }
 
 /****************************************************************
@@ -2163,7 +2121,7 @@ static void races_leader_callback(void)
 {
   const gchar *name;
 
-  name = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(races_leader)->entry));
+  name = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(races_leader)->child));
 
   if (check_nation_leader_name(selected_nation, name)) {
     selected_sex = get_nation_leader_sex(selected_nation, name);
@@ -2233,7 +2191,7 @@ static void races_response(GtkWidget *w, gint response, gpointer data)
       return;
     }
 
-    s = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(races_leader)->entry));
+    s = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(races_leader)->child));
 
     /* Perform a minimum of sanity test on the name. */
     /* This could call is_allowed_player_name if it were available. */
