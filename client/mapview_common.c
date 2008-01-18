@@ -2877,14 +2877,14 @@ static void draw_trade_route_list(const struct trade_route_list *ptrl,
 **************************************************************************/
 void draw_traderoutes(void)
 {
-  if (!draw_city_traderoutes) {
+  if (!draw_city_traderoutes || !get_player_ptr()) {
     return;
   }
 
-  city_list_iterate (get_player_ptr()->cities, pcity) {
-    draw_traderoutes_for_city (pcity);
+  city_list_iterate(get_player_ptr()->cities, pcity) {
+    draw_traderoutes_for_city(pcity);
   } city_list_iterate_end;
-
+  
   draw_trade_route_list(my_ai_trade_plan_get(), COLOR_STD_RED);
   if (my_ai_trade_manual_trade_route_enable) {
     draw_trade_route_list(estimate_non_ai_trade_route(), COLOR_STD_ORANGE);
