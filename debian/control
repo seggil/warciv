@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Non Official Debian Warclient Maintainers <woodswolf@gmail.com>
 Uploaders: Carl Castanier <woodswolf@gmail.com>
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 Build-Depends: quilt (>= 0.46), debhelper (>= 5.0.0), gettext, sharutils, libx11-dev, libxext-dev, libxmu-dev, libxt-dev, x11proto-core-dev, libgtk2.0-dev (>= 2.10.12-1), libpng12-dev, libreadline5-dev, libesd0-dev, libsdl-mixer1.2-dev, zlib1g-dev, autotools-dev, libmysqlclient-dev
 
 Package: warclient-server
