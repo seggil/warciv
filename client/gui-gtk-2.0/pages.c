@@ -493,14 +493,15 @@ void append_network_statusbar(const char *text)
   now = time(NULL);
   nowtm = localtime(&now);
   strftime(buf, sizeof(buf), "[%H:%M:%S] ", nowtm);
-
   gtk_text_buffer_get_end_iter(network_message_buffer, &iter);
   gtk_text_buffer_insert(network_message_buffer, &iter, buf, -1);
-  gtk_text_buffer_insert(network_message_buffer, &iter, text, -1);
+  gtk_text_buffer_insert(network_message_buffer, &iter, 
+			 g_locale_to_utf8(text, -1, NULL, NULL, NULL), -1);
   gtk_text_buffer_insert(network_message_buffer, &iter, "\n", -1);
 
   if (GTK_WIDGET_VISIBLE(statusbar_frame)) {
-    gtk_label_set_text(GTK_LABEL(statusbar), text);
+    gtk_label_set_text(GTK_LABEL(statusbar),
+		       g_locale_to_utf8(text, -1, NULL, NULL, NULL));
   }
 }
 
