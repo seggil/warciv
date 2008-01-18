@@ -481,7 +481,7 @@ static void clear_network_statusbar(void)
 void append_network_statusbar(const char *text)
 {
   GtkTextIter iter;
-  char buf[64];
+  char buf[255];
   struct tm *nowtm;
   time_t now;
 
@@ -495,13 +495,12 @@ void append_network_statusbar(const char *text)
   strftime(buf, sizeof(buf), "[%H:%M:%S] ", nowtm);
   gtk_text_buffer_get_end_iter(network_message_buffer, &iter);
   gtk_text_buffer_insert(network_message_buffer, &iter, buf, -1);
-  gtk_text_buffer_insert(network_message_buffer, &iter, 
-			 g_locale_to_utf8(text, -1, NULL, NULL, NULL), -1);
+  my_snprintf(buf, sizeof(buf), "%s", _(text));
+  gtk_text_buffer_insert(network_message_buffer, &iter, buf, -1);
   gtk_text_buffer_insert(network_message_buffer, &iter, "\n", -1);
 
   if (GTK_WIDGET_VISIBLE(statusbar_frame)) {
-    gtk_label_set_text(GTK_LABEL(statusbar),
-		       g_locale_to_utf8(text, -1, NULL, NULL, NULL));
+    gtk_label_set_text(GTK_LABEL(statusbar), buf);
   }
 }
 
