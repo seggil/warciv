@@ -7023,12 +7023,12 @@ static bool addaction_command(struct connection *caller,
   remove_leading_trailing_spaces(buf);
   if (!buf[0]) {
     cmd_reply(CMD_ADDACTION, caller, C_SYNTAX,
-              _("Incorrect syntax. Try /help action."));
+              _("Incorrect syntax. Try /help addaction."));
     return FALSE;
   }
   if (!(p = strchr(buf, ' '))) {
     cmd_reply(CMD_ADDACTION, caller, C_SYNTAX,
-              _("Incorrect syntax. Try /help action."));
+              _("Incorrect syntax. Try /help addaction."));
     return FALSE;
   }
   *p++ = 0;                     /* Mark end of <action> string */
@@ -7041,13 +7041,13 @@ static bool addaction_command(struct connection *caller,
   }
   if (action == NUM_ACTION_TYPES) {
     cmd_reply(CMD_ADDACTION, caller, C_SYNTAX,
-              _("Invalid action. Try /help action."));
+              _("Invalid action. Try /help addaction."));
     return FALSE;
   }
   type = CPT_HOSTNAME;
   if (!parse_conn_pattern(p, buf, sizeof(buf), &type, err, sizeof(err))) {
     cmd_reply(CMD_ADDACTION, caller, C_SYNTAX,
-              _("Incorrect syntax: %s. Try /help action."), err);
+              _("Incorrect syntax: %s. Try /help addaction."), err);
     return FALSE;
   }
   remove_leading_trailing_spaces(buf);
