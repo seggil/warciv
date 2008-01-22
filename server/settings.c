@@ -428,7 +428,7 @@ struct settings_s settings[] = {
           N_("The maximal number of human and AI players who can be in "
              "the game. When this number of players are connected in "
              "the pregame state, any new players who try to connect "
-             "will be rejected."), maxplayers_callback,
+             "will become detached."), maxplayers_callback,
 	  GAME_MIN_MAX_PLAYERS, GAME_MAX_MAX_PLAYERS, GAME_DEFAULT_MAX_PLAYERS)
 
   GEN_INT("aifill", game.server.aifill,

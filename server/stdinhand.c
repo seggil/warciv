@@ -4284,35 +4284,35 @@ static bool observe_command(struct connection *caller, char *str,
   if (!caller && ntokens < 1) {
     cmd_reply(CMD_OBSERVE, caller, C_SYNTAX,
               _("Usage: observe [connection-name [player-name]]"));
-    goto end;
+    goto CLEANUP;
   }
 
   if (ntokens == 2 && (caller && caller->access_level != ALLOW_HACK)) {
     cmd_reply(CMD_OBSERVE, caller, C_SYNTAX,
               _("Usage: observe [player-name]"));
-    goto end;
+    goto CLEANUP;
   }
   /* match connection if we're console, match a player if we're not */
   if (ntokens == 1) {
     if (!caller && !(pconn = find_conn_by_user_prefix(arg[0], &result))) {
       cmd_reply_no_such_conn(CMD_OBSERVE, caller, arg[0], result);
-      goto end;
+      goto CLEANUP;
     } else if (caller
                && !(pplayer =
                     find_player_by_name_prefix(arg[0], &result))) {
       cmd_reply_no_such_player(CMD_OBSERVE, caller, arg[0], result);
-      goto end;
+      goto CLEANUP;
     }
   }
   /* get connection name then player name */
   if (ntokens == 2) {
     if (!(pconn = find_conn_by_user_prefix(arg[0], &result))) {
       cmd_reply_no_such_conn(CMD_OBSERVE, caller, arg[0], result);
-      goto end;
+      goto CLEANUP;
     }
     if (!(pplayer = find_player_by_name_prefix(arg[1], &result))) {
       cmd_reply_no_such_player(CMD_OBSERVE, caller, arg[1], result);
-      goto end;
+      goto CLEANUP;
     }
   }
   /* if we can't force other connections to observe, assign us to be pconn. */
@@ -4330,14 +4330,14 @@ static bool observe_command(struct connection *caller, char *str,
                 (game.server.is_new_game ? 'O' : 'o')))) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
                 _("Sorry, one can't observe globally in this game."));
-      goto end;
+      goto CLEANUP;
     }
     allow++;
 
     if (*allow == '2' || *allow == '3') {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
                 _("Sorry, one can't observe globally in this game."));
-      goto end;
+      goto CLEANUP;
     }
 
     /* check if a global  observer has already been created */
@@ -4354,7 +4354,7 @@ static bool observe_command(struct connection *caller, char *str,
         notify_conn(NULL,
                     _("Game: A global observer cannot be created: too "
                       "many regular players."));
-        goto end;
+        goto CLEANUP;
       }
       pplayer = &game.players[game.info.nplayers];
       server_player_init(pplayer, (server_state == RUN_GAME_STATE)
@@ -4389,7 +4389,7 @@ static bool observe_command(struct connection *caller, char *str,
   /* check allowtake for permission */
   if (!is_allowed_to_take(pplayer, TRUE, msg)) {
     cmd_reply(CMD_OBSERVE, caller, C_FAIL, msg);
-    goto end;
+    goto CLEANUP;
   }
 
   /* observing your own player (during pregame) makes no sense. */
@@ -4398,19 +4398,19 @@ static bool observe_command(struct connection *caller, char *str,
     cmd_reply(CMD_OBSERVE, caller, C_FAIL,
               _("%s already controls %s. Using 'observe' would remove %s"),
               pconn->username, pplayer->name, pplayer->name);
-    goto end;
+    goto CLEANUP;
   }
   /* attempting to observe a player you're already observing should fail. */
   if (pconn->player == pplayer && pconn->observer) {
     cmd_reply(CMD_OBSERVE, caller, C_FAIL,
               _("%s is already observing %s."),
               pconn->username, pplayer->name);
-    goto end;
+    goto CLEANUP;
   }
 
   res = TRUE;                   /* all tests passed */
   if (check) {
-    goto end;
+    goto CLEANUP;
   }
 
   /* if we want to switch players, reset the client */
@@ -4438,9 +4438,7 @@ static bool observe_command(struct connection *caller, char *str,
 
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE;       /* do this before attach! */
-  if (pconn->access_level == ALLOW_BASIC) {
-    pconn->access_level = ALLOW_OBSERVER;
-  }
+  restore_observer_access_level(pconn);
 
   attach_connection_to_player(pconn, pplayer);
   send_conn_info(pconn->self, game.est_connections);
@@ -4466,8 +4464,8 @@ static bool observe_command(struct connection *caller, char *str,
   }
   cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s"),
             pconn->username, pplayer->name);
-end:
-  ;
+CLEANUP:
+
   /* free our args */
   for (i = 0; i < ntokens; i++) {
     free(arg[i]);
@@ -4727,17 +4725,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     send_conn_info(game.est_connections, pconn->self);
   }
 
-  /* Restore previous priviledges */
-  if (pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
-    pconn->access_level = pconn->granted_access_level;
-  }
-
-  /* Detached connections must have at most the same priviledges as
-   * observers, unless the action list gave them something higher
-   * than ALLOW_BASIC in the first place. */
-  if (pconn->access_level == ALLOW_BASIC) {
-    pconn->access_level = ALLOW_OBSERVER;
-  }
+  restore_observer_access_level(pconn);
 
   /* actually do the detaching */
   unattach_connection_from_player(pconn);

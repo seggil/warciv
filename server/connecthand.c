@@ -431,6 +431,7 @@ void establish_new_connection(struct connection *pconn)
       notify_conn(dest, _("Server: Couldn't attach your connection to new player."));
       freelog(LOG_VERBOSE, "%s is not attached to a player",
 	      pconn->username);
+      restore_observer_access_level(pconn);
     } else {
       sz_strlcpy(pconn->player->name, pconn->username);
     }
@@ -944,3 +945,21 @@ struct user_action *user_action_new(const char *pattern, int type,
   
   return pua;
 }
+
+/**************************************************************************
+  To be called on connections (i.e. users) that become observers
+  or detached.
+**************************************************************************/
+void restore_observer_access_level(struct connection *pconn)
+{
+  /* Restore previous priviledges */
+  pconn->access_level = pconn->granted_access_level;
+
+  /* Detached connections must have at most the same priviledges as
+   * observers, unless the action list gave them something higher
+   * than ALLOW_BASIC in the first place. */
+  if (pconn->access_level == ALLOW_BASIC) {
+    pconn->access_level = ALLOW_OBSERVER;
+  }
+}
+
