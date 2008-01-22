@@ -952,10 +952,10 @@ struct user_action *user_action_new(const char *pattern, int type,
 **************************************************************************/
 void restore_observer_access_level(struct connection *pconn)
 {
-  /* Restore previous priviledges */
+  /* Restore previous privileges. */
   pconn->access_level = pconn->granted_access_level;
 
-  /* Detached connections must have at most the same priviledges as
+  /* Detached connections must have at most the same privileges as
    * observers, unless the action list gave them something higher
    * than ALLOW_BASIC in the first place. */
   if (pconn->access_level == ALLOW_BASIC) {
