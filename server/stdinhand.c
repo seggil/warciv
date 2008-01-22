@@ -1241,31 +1241,6 @@ static bool metaconnection_command(struct connection *caller, char *arg,
 /**************************************************************************
 ...
 **************************************************************************/
-static bool metapatches_command(struct connection *caller, 
-                                char *arg, bool check)
-{
-    if (check)
-    {
-    return TRUE;
-  }
-  set_meta_patches_string(arg);
-    if (is_metaserver_open())
-    {
-    send_server_info_to_metaserver(META_INFO);
-    notify_conn(NULL, _("Metaserver patches string set to '%s'."), arg);
-    }
-    else
-    {
-    notify_conn(NULL, _("Metaserver patches string set to '%s', "
-                          "not reporting to metaserver."), arg);
-  }
-
-  return TRUE;
-}
-
-/**************************************************************************
-...
-**************************************************************************/
 static bool welcome_message_command(struct connection *caller,
                                     char *arg, bool check)
 {
@@ -1509,33 +1484,16 @@ static bool welcome_file_command(struct connection *caller,
 }
 
 /**************************************************************************
-...
+  Common code for meta* related commands to reduce code duplication.
+  Argument cmd_id gives the command we are running as.
 **************************************************************************/
-static bool metatopic_command(struct connection *caller, char *arg, bool check)
-{
-  if (check) {
-    return TRUE;
-  }
-
-  set_meta_topic_string(arg);
-  if (is_metaserver_open()) {
-    send_server_info_to_metaserver(META_INFO);
-    notify_conn(NULL, _("Metaserver topic string set to '%s'."), arg);
-  } else {
-    notify_conn(NULL, _("Metaserver topic string set to '%s', "
-                          "not reporting to metaserver."), arg);
-  }
-
-  return TRUE;
-}
-
-/**************************************************************************
-...
-**************************************************************************/
-static bool metamessage_command(struct connection *caller, 
-                                char *arg, bool check)
+static bool do_meta_set_command(struct connection *caller,
+                                const char *arg,
+                                bool check,
+                                int cmd_id)
 {
   char buf[1024];
+  bool meta_open = FALSE;
 
   if (check) {
     return TRUE;
@@ -1543,40 +1501,70 @@ static bool metamessage_command(struct connection *caller,
 
   sz_strlcpy(buf, arg);
   remove_leading_trailing_spaces(buf);
-  if (!buf[0])
-    {
-      cmd_reply(CMD_METAMESSAGE, caller, C_COMMENT,
-                   _("Metaserver message string is \"%s\"."),
-		get_meta_message_string());
-      return TRUE;
+
+  if (buf[0] == '\0') {
+    if (cmd_id == CMD_METAMESSAGE) {
+      cmd_reply(cmd_id, caller, C_COMMENT,
+                _("Metamessage is \"%s\"."),
+                get_meta_message_string());
+    } else if (cmd_id == CMD_METATOPIC) {
+      cmd_reply(cmd_id, caller, C_COMMENT,
+                _("Metatopic is \"%s\"."),
+                get_meta_topic_string());
+    } else if (cmd_id == CMD_METAPATCHES) {
+      cmd_reply(cmd_id, caller, C_COMMENT,
+                _("Metaserver patches string is \"%s\"."),
+                get_meta_patches_string());
     }
-  
-  set_user_meta_message_string(arg);
-  if (is_metaserver_open()) {
-    send_server_info_to_metaserver(META_INFO);
-    notify_conn(NULL, _("Metaserver message string set to '%s'."), arg);
-  } else {
-    notify_conn(NULL, _("Metaserver message string set to '%s', "
-			"not reporting to metaserver."), arg);
+    return TRUE;
   }
 
-  if (caller)
-    {
-      cmd_reply(CMD_METAMESSAGE, caller, C_OK,
-		_("%s sets the metaserver message string "
-		  "to '%s'%s."), caller->username, buf,
-		is_metaserver_open()? ""
-		: _(" (not reporting to metaserver)"));
+  if (cmd_id == CMD_METAMESSAGE) {
+    set_user_meta_message_string(buf);
+  } else if (cmd_id == CMD_METATOPIC) {
+    set_meta_topic_string(buf);
+  } else if (cmd_id == CMD_METAPATCHES) {
+    set_meta_patches_string(buf);
+  }
+
+  meta_open = is_metaserver_open();
+
+  if (meta_open) {
+    send_server_info_to_metaserver(META_INFO);
+  }
+
+  /* In order to avoid untranslatable sentence fragments in
+   * the following code, we avoid using a %s format for the 
+   * meta* thing that is being modified. */
+
+  if (cmd_id == CMD_METAMESSAGE) {
+    if (caller) {
+      /* TRANS: Printed when a user sets the metamessage. */
+      notify_conn(NULL, _("Server: %s sets the metamessage to '%s'."),
+                  caller->username, buf);
+    } else {
+      notify_conn(NULL, _("Server: Metamessage set to '%s'."), buf);
     }
-  else
-    {
-      cmd_reply(CMD_METAMESSAGE, caller, C_OK,
-		_("Metaserver message string set "
-		  "to '%s'%s."),
-		buf, is_metaserver_open()? ""
-		: _(" (not reporting to metaserver)"));
+  } else if (cmd_id == CMD_METATOPIC) {
+    if (caller) {
+      /* TRANS: Printed when a user sets the metatopic. */
+      notify_conn(NULL, _("Server: %s sets the metatopic to '%s'."),
+                  caller->username, buf);
+    } else {
+      notify_conn(NULL, _("Server: Metatopic set to '%s'."), buf);
     }
-  
+  } else if (cmd_id == CMD_METAPATCHES) {
+    cmd_reply(cmd_id, caller, C_OK,
+              _("Metaserver patches string set to '%s'."),
+              buf);
+  }
+
+  if (!meta_open && cmd_id != CMD_METAPATCHES) {
+    /* TRANS: Don't translate "/metac up". */
+    notify_conn(NULL, _("Server: Not reporting to metaserver "
+                        "(maybe you need to do /metac up)."));
+  }
+
   return TRUE;
 }
 
@@ -6707,11 +6695,9 @@ bool handle_stdin_input(struct connection *caller,
   case CMD_LOADSCERARIO:
     return loadscenario_command(caller, arg, check);
   case CMD_METAPATCHES:
-    return metapatches_command(caller, arg, check);
   case CMD_METATOPIC:
-    return metatopic_command(caller, arg, check);
   case CMD_METAMESSAGE:
-    return metamessage_command(caller, arg, check);
+    return do_meta_set_command(caller, arg, check, cmd);
   case CMD_METACONN:
     return metaconnection_command(caller, arg, check);
   case CMD_METASERVER:
