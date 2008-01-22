@@ -4678,13 +4678,13 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   if (!caller && ntokens == 0) {
     cmd_reply(CMD_DETACH, caller, C_SYNTAX,
               _("Usage: detach <connection-name>"));
-    goto end;
+    goto CLEANUP;
   }
   /* match the connection if the argument was given */
   if (ntokens == 1
       && !(pconn = find_conn_by_user_prefix(arg[0], &match_result))) {
     cmd_reply_no_such_conn(CMD_DETACH, caller, arg[0], match_result);
-    goto end;
+    goto CLEANUP;
   }
 
   /* if no argument is given, the caller wants to detach himself */
@@ -4697,7 +4697,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   if (pconn != caller && caller && caller->access_level != ALLOW_HACK) {
     cmd_reply(CMD_DETACH, caller, C_FAIL,
               _("You can not detach other users."));
-    goto end;
+    goto CLEANUP;
   }
 
   pplayer = pconn->player;
@@ -4705,7 +4705,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   if (!pplayer) {
     cmd_reply(CMD_DETACH, caller, C_FAIL,
               _("%s is not attached to any player."), pconn->username);
-    goto end;
+    goto CLEANUP;
   }
 
   /* a special case for global observers: we don't want to remove the
@@ -4716,7 +4716,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 
   res = TRUE;
   if (check) {
-    goto end;
+    goto CLEANUP;
   }
 
   /* if we want to detach while the game is running, reset the client */
@@ -4730,6 +4730,13 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   /* Restore previous priviledges */
   if (pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
     pconn->access_level = pconn->granted_access_level;
+  }
+
+  /* Detached connections must have at most the same priviledges as
+   * observers, unless the action list gave them something higher
+   * than ALLOW_BASIC in the first place. */
+  if (pconn->access_level == ALLOW_BASIC) {
+    pconn->access_level = ALLOW_OBSERVER;
   }
 
   /* actually do the detaching */
@@ -4774,7 +4781,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     gamelog(GAMELOG_PLAYER, pplayer);
   }
 
-end:
+CLEANUP:
   /* free our args */
   for (i = 0; i < ntokens; i++) {
     free(arg[i]);
