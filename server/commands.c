@@ -440,7 +440,7 @@ const struct command commands[] = {
       "optional '# of turns' argument specifies how long this should "
       "go on for; zero implies forever. The default value, if left "
       "unspecified, is 3."),
-   ECHO_ADMINS, VCF_NONE, 33
+   ECHO_ADMINS, VCF_NONE, 50
   },
   {"unmute", ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
@@ -449,7 +449,7 @@ const struct command commands[] = {
    N_("This command undoes what the /mute command did. The given "
       "user is again allowed to make public, private and ally "
       "messages and can create votes."),
-   ECHO_ADMINS, VCF_NONE, 33
+   ECHO_ADMINS, VCF_NONE, 50
   },
 #ifdef HAVE_MYSQL
   {"stats", ALLOW_OBSERVER, ALLOW_OBSERVER,
