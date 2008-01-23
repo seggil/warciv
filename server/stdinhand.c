@@ -3496,7 +3496,7 @@ static bool team_command(struct connection *caller, char *str, bool check)
   enum m_pre_result match_result;
   char buf[MAX_LEN_CONSOLE_LINE];
   char *arg[2];
-  int ntokens = 0, i;
+  int ntokens = 0;
   bool res = FALSE;
 
   if (server_state != PRE_GAME_STATE || !game.server.is_new_game) {
@@ -3560,10 +3560,9 @@ static bool team_command(struct connection *caller, char *str, bool check)
               pplayer->name, get_team_name(pplayer->team));
   }
   res = TRUE;
+
 CLEANUP:
-  for (i = 0; i < ntokens; i++) {
-    free(arg[i]);
-  }
+  free_tokens(arg, ntokens);
   return res;
 }
 
@@ -3682,9 +3681,7 @@ static bool vote_command(struct connection *caller, char *str, bool check)
   res = TRUE;
 
 CLEANUP:
-  for (i = 0; i < ntokens; i++) {
-    free(arg[i]);
-  }
+  free_tokens(arg, ntokens);
   return res;
 }
 
@@ -4267,7 +4264,7 @@ static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
 static bool observe_command(struct connection *caller, char *str,
                             bool check)
 {
-  int i = 0, ntokens = 0;
+  int ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[2], msg[MAX_LEN_MSG];
   bool is_newgame = (server_state == PRE_GAME_STATE ||
                      server_state == SELECT_RACES_STATE)
@@ -4324,10 +4321,8 @@ static bool observe_command(struct connection *caller, char *str,
   if (!pplayer) {
     const char *allow;
 
-    if (!
-        (allow =
-         strchr(game.server.allow_take,
-                (game.server.is_new_game ? 'O' : 'o')))) {
+    if (!(allow = strchr(game.server.allow_take,
+                         (game.server.is_new_game ? 'O' : 'o')))) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
                 _("Sorry, one can't observe globally in this game."));
       goto CLEANUP;
@@ -4340,7 +4335,7 @@ static bool observe_command(struct connection *caller, char *str,
       goto CLEANUP;
     }
 
-    /* check if a global  observer has already been created */
+    /* check if a global observer has already been created */
     players_iterate(aplayer) {
       if (aplayer->is_observer) {
         pplayer = aplayer;
@@ -4438,9 +4433,9 @@ static bool observe_command(struct connection *caller, char *str,
 
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE;       /* do this before attach! */
-  restore_observer_access_level(pconn);
 
   attach_connection_to_player(pconn, pplayer);
+
   send_conn_info(pconn->self, game.est_connections);
 
   if (server_state >= RUN_GAME_STATE) {
@@ -4464,12 +4459,9 @@ static bool observe_command(struct connection *caller, char *str,
   }
   cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s"),
             pconn->username, pplayer->name);
-CLEANUP:
 
-  /* free our args */
-  for (i = 0; i < ntokens; i++) {
-    free(arg[i]);
-  }
+CLEANUP:
+  free_tokens(arg, ntokens);
   return res;
 }
 
@@ -4507,27 +4499,27 @@ static bool take_command(struct connection *caller, char *str, bool check)
   if (!caller && ntokens != 2) {
     cmd_reply(CMD_TAKE, caller, C_SYNTAX,
               _("Usage: take <connection-name> <player-name>"));
-    goto end;
+    goto CLEANUP;
   }
   if (caller && caller->access_level != ALLOW_HACK && ntokens != 1) {
     cmd_reply(CMD_TAKE, caller, C_SYNTAX, _("Usage: take <player-name>"));
-    goto end;
+    goto CLEANUP;
   }
   if (ntokens == 0) {
     cmd_reply(CMD_TAKE, caller, C_SYNTAX,
               _("Usage: take [connection-name] <player-name>"));
-    goto end;
+    goto CLEANUP;
   }
   if (ntokens == 2) {
     if (!(pconn = find_conn_by_user_prefix(arg[i], &match_result))) {
       cmd_reply_no_such_conn(CMD_TAKE, caller, arg[i], match_result);
-      goto end;
+      goto CLEANUP;
     }
     i++;                        /* found a conn, now reference the second argument */
   }
   if (!(pplayer = find_player_by_name_prefix(arg[i], &match_result))) {
     cmd_reply_no_such_player(CMD_TAKE, caller, arg[i], match_result);
-    goto end;
+    goto CLEANUP;
   }
 
   /* if we don't assign other connections to players, assign us to be pconn. */
@@ -4537,36 +4529,32 @@ static bool take_command(struct connection *caller, char *str, bool check)
 
   /******** PART II: do the attaching ********/
   if (!can_control_a_player(pconn, TRUE)) {
-    goto end;
+    goto CLEANUP;
   }
 
   /* check allowtake for permission */
   if (!is_allowed_to_take(pplayer, FALSE, msg)) {
     cmd_reply(CMD_TAKE, caller, C_FAIL, msg);
-    goto end;
+    goto CLEANUP;
   }
 
   /* you may not take over a global observer */
   if (pplayer->is_observer) {
     cmd_reply(CMD_TAKE, caller, C_FAIL, _("%s cannot be taken."),
               pplayer->name);
-    goto end;
+    goto CLEANUP;
   }
 
   /* taking your own player makes no sense. */
   if (pconn->player == pplayer && !pconn->observer) {
     cmd_reply(CMD_TAKE, caller, C_FAIL, _("%s already controls %s"),
               pconn->username, pplayer->name);
-    goto end;
+    goto CLEANUP;
   }
 
   res = TRUE;
   if (check) {
-    goto end;
-  }
-
-  if (pconn->observer && pconn->access_level == ALLOW_OBSERVER) {
-    pconn->access_level = pconn->granted_access_level;
+    goto CLEANUP;
   }
 
   /* if we want to switch players, reset the client if the game is running */
@@ -4645,12 +4633,9 @@ static bool take_command(struct connection *caller, char *str, bool check)
             is_barbarian(pplayer) ? _("Barbarian") : pplayer->ai.control ?
             _("AI") : _("Human"),
             pplayer->is_alive ? _("Alive") : _("Dead"));
-end:
-  ;
-  /* free our args */
-  for (i = 0; i < ntokens; i++) {
-    free(arg[i]);
-  }
+
+CLEANUP:
+  free_tokens(arg, ntokens);
   return res;
 }
 
@@ -4660,7 +4645,7 @@ end:
 **************************************************************************/
 static bool detach_command(struct connection *caller, char *str, bool check)
 {
-  int i = 0, ntokens = 0;
+  int ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[1];
 
   enum m_pre_result match_result;
@@ -4725,8 +4710,6 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     send_conn_info(game.est_connections, pconn->self);
   }
 
-  restore_observer_access_level(pconn);
-
   /* actually do the detaching */
   unattach_connection_from_player(pconn);
   send_conn_info(pconn->self, game.est_connections);
@@ -4770,10 +4753,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   }
 
 CLEANUP:
-  /* free our args */
-  for (i = 0; i < ntokens; i++) {
-    free(arg[i]);
-  }
+  free_tokens(arg, ntokens);
   return res;
 }
 

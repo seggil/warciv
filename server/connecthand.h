@@ -80,7 +80,7 @@ bool attach_connection_to_player(struct connection *pconn,
                                  struct player *pplayer);
 bool unattach_connection_from_player(struct connection *pconn);
 void clear_all_on_connect_user_actions(void);
-void restore_observer_access_level(struct connection *pconn);
+void restore_access_level(struct connection *pconn);
 
 void server_assign_nation(struct player *pplayer,
                           Nation_Type_id nation_no,

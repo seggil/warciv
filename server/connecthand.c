@@ -431,7 +431,7 @@ void establish_new_connection(struct connection *pconn)
       notify_conn(dest, _("Server: Couldn't attach your connection to new player."));
       freelog(LOG_VERBOSE, "%s is not attached to a player",
 	      pconn->username);
-      restore_observer_access_level(pconn);
+      restore_access_level(pconn);
     } else {
       sz_strlcpy(pconn->player->name, pconn->username);
     }
@@ -827,6 +827,8 @@ bool attach_connection_to_player(struct connection *pconn,
   conn_list_append(pplayer->connections, pconn);
   conn_list_append(game.game_connections, pconn);
 
+  restore_access_level(pconn);
+
   return TRUE;
 }
   
@@ -860,6 +862,8 @@ bool unattach_connection_from_player(struct connection *pconn)
      the player data structure during pre-game */
 
   pconn->player = NULL;
+
+  restore_access_level(pconn);
 
   return TRUE;
 }
@@ -947,10 +951,10 @@ struct user_action *user_action_new(const char *pattern, int type,
 }
 
 /**************************************************************************
-  To be called on connections (i.e. users) that become observers
-  or detached.
+  Restore access level for the given connection (user). Used when taking
+  a player, observing, or detaching.
 **************************************************************************/
-void restore_observer_access_level(struct connection *pconn)
+void restore_access_level(struct connection *pconn)
 {
   /* Restore previous privileges. */
   pconn->access_level = pconn->granted_access_level;
@@ -958,7 +962,8 @@ void restore_observer_access_level(struct connection *pconn)
   /* Detached connections must have at most the same privileges as
    * observers, unless the action list gave them something higher
    * than ALLOW_BASIC in the first place. */
-  if (pconn->access_level == ALLOW_BASIC) {
+  if ((pconn->observer || !pconn->player)
+      && pconn->access_level == ALLOW_BASIC) {
     pconn->access_level = ALLOW_OBSERVER;
   }
 }
