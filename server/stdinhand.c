@@ -1955,7 +1955,7 @@ static bool set_cmdlevel(struct connection *caller,
               cmdlevel_name(caller->access_level));
     return FALSE;
   } else {
-    ptarget->access_level = level;
+    ptarget->granted_access_level = ptarget->access_level = level;
     return TRUE;
   }
 }
