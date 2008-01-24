@@ -3357,12 +3357,6 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
 {
   int dx, dy, rsx, rsy, xmax = pmap->xsize, ymax = pmap->ysize;
 
-  if (!topo_has_flag(TF_WRAPX)) {
-    xmax -= island->xsize;
-  }
-  if (!topo_has_flag(TF_WRAPY)) {
-    ymax -= island->ysize;
-  }
   if (myrand(100) < 50) {
     do_rotation(island);
   }
@@ -3371,6 +3365,12 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
   }
   if (myrand(100) < 50) {
     do_vsym(island);
+  }
+  if (!topo_has_flag(TF_WRAPX)) {
+    xmax -= island->xsize;
+  }
+  if (!topo_has_flag(TF_WRAPY)) {
+    ymax -= island->ysize;
   }
   do {
     dx = myrand(pmap->xsize / 10) - pmap->xsize / 20;
@@ -3439,12 +3439,6 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
 {
   int rx, ry, x, y, xmax = pmap->xsize, ymax = pmap->ysize, i;
 
-  if (!topo_has_flag(TF_WRAPX)) {
-    xmax -= island->xsize;
-  }
-  if (!topo_has_flag(TF_WRAPY)) {
-    ymax -= island->ysize;
-  }
   if (myrand(100) < 50) {
     do_rotation(island);
   }
@@ -3453,6 +3447,12 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
   }
   if (myrand(100) < 50) {
     do_vsym(island);
+  }
+  if (!topo_has_flag(TF_WRAPX)) {
+    xmax -= island->xsize;
+  }
+  if (!topo_has_flag(TF_WRAPY)) {
+    ymax -= island->ysize;
   }
   for (i = 0; i < 10; i++) {
     rx = myrand(xmax);
