@@ -169,6 +169,14 @@ const struct command commands[] = {
       "arguments, it lists the status of currently running votes."),
    ECHO_NONE, VCF_NONE, 0
   },
+  {"poll",	ALLOW_CTRL,	ALLOW_CTRL,
+   /* TRANS: translate text between <> only */
+   N_("poll <your yes/no poll question>\n"),
+   N_("Start a poll.\n"),
+   N_("If no other votes are running, a poll is started regarding the "
+      "question you type in after the command."),
+   ECHO_ADMINS, VCF_WAITFORALL | VCF_ALWAYSVOTE, 50
+  },
   {"cancelvote",	ALLOW_BASIC,	ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("cancelvote\n"

@@ -484,12 +484,16 @@ static struct voting *get_vote_by_no(int vote_no)
 /**************************************************************************
   ...
 **************************************************************************/
-static struct voting *get_vote_by_caller(int caller_id)
+static struct voting *get_vote_by_caller(const struct connection *caller)
 {
   assert(vote_list != NULL);
 
+  if (caller == NULL) {
+    return NULL;
+  }
+
   vote_list_iterate(vote_list, pvote) {
-    if (pvote->caller_id == caller_id) {
+    if (pvote->caller_id == caller->id) {
       return pvote;
     }
   } vote_list_iterate_end;
@@ -514,7 +518,7 @@ static struct voting *vote_new(struct connection *caller,
   }
 
   /* Cancel previous vote */
-  remove_vote(get_vote_by_caller(caller->id));
+  remove_vote(get_vote_by_caller(caller));
 
   /* Make a new vote */
   pvote = fc_malloc(sizeof(struct voting));
@@ -634,7 +638,7 @@ static void check_vote(struct voting *pvote)
       resolve = TRUE;
     }
 
-    if (!resolve) {
+    if (!resolve && !(flags & VCF_WAITFORALL)) {
       if (flags & VCF_FASTPASS) {
         /* We have enough votes and yes is in majority. */
         resolve = (yes_pc > no_pc && 1.0 - rem_pc > need_pc)
@@ -652,6 +656,11 @@ static void check_vote(struct voting *pvote)
             /* We can't get enough yes votes. */
             || yes_pc + rem_pc <= need_pc;
       }
+    }
+
+    /* Resolve if everyone voted already. */
+    if (!resolve && rem_pc == 0.0) {
+      resolve = TRUE;
     }
 
     /* Resolve this vote if it has been around long enough. */
@@ -824,7 +833,7 @@ void cancel_connection_votes(struct connection *pconn)
     return;
   }
 
-  remove_vote(get_vote_by_caller(pconn->id));
+  remove_vote(get_vote_by_caller(pconn));
 
   vote_list_iterate(vote_list, pvote) {
     remove_vote_cast(pvote, find_vote_cast(pvote, pconn->id));
@@ -3584,7 +3593,9 @@ static const char *vote_arg_accessor(int i)
 /******************************************************************
   Make or participate in a vote.
 ******************************************************************/
-static bool vote_command(struct connection *caller, char *str, bool check)
+static bool vote_command(struct connection *caller,
+                         char *str,
+                         bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
   char *arg[2];
@@ -3694,6 +3705,46 @@ CLEANUP:
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static bool poll_command(struct connection *caller,
+                         const char *str,
+                         bool check)
+{
+  char buf[MAX_LEN_CONSOLE_LINE];
+
+  sz_strlcpy(buf, str);
+  remove_leading_trailing_spaces(buf);
+
+  if (!caller) {
+    cmd_reply(CMD_POLL, caller, C_FAIL,
+              _("Only players in the game can make polls."));
+    return FALSE;
+  }
+
+  if (buf[0] == '\0') {
+    cmd_reply(CMD_POLL, caller, C_SYNTAX,
+              _("You need to supply a question for the poll!"));
+    return FALSE;
+  }
+  
+  if (vote_list_size(vote_list) > 0) {
+    cmd_reply(CMD_POLL, caller, C_FAIL,
+              _("You may not start a poll while other votes are running."));
+    return FALSE;
+  }
+
+  if (check) {
+    notify_conn(NULL, "/poll: %s", _("A new poll is started..."));
+  }
+
+  /* Do nothing more, the vote system will display the message
+   * and show who made the poll. */
+
+  return TRUE;
+}
+
+/**************************************************************************
   Cancel a vote... /cancelvote <vote number>|all.
 **************************************************************************/
 static bool cancel_vote_command(struct connection *caller, char *arg,
@@ -3718,7 +3769,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
                 _("Missing argument <vote number>|all"));
       return FALSE;
     }
-    if (!(pvote = get_vote_by_caller(caller->id))) {
+    if (!(pvote = get_vote_by_caller(caller))) {
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You don't have any vote going on."));
       return FALSE;
@@ -6257,13 +6308,14 @@ bool handle_stdin_input(struct connection * caller,
   }
 
   if (connection_can_vote(caller)
-      && !check && caller->access_level == ALLOW_BASIC
+      && !check && (caller->access_level == ALLOW_BASIC
+                    || (commands[cmd].vote_flags & VCF_ALWAYSVOTE))
       && level == ALLOW_CTRL) {
     struct voting *vote;
 
     /* If we already have a vote going, cancel it in favour of the new
      * vote command. You can only have one vote at a time. */
-    if (get_vote_by_caller(caller->id)) {
+    if (get_vote_by_caller(caller)) {
       cmd_reply(CMD_VOTE, caller, C_COMMENT,
                 _("Your new vote cancelled your previous vote."));
     }
@@ -6294,9 +6346,8 @@ bool handle_stdin_input(struct connection * caller,
     }
   }
 
-  if (caller
-      && !(check && caller->access_level >= ALLOW_BASIC
-           && level == ALLOW_CTRL)
+  if (caller && !(check && caller->access_level >= ALLOW_BASIC
+                  && level == ALLOW_CTRL)
       && caller->access_level < level) {
     cmd_reply(cmd, caller, C_FAIL,
               _("You are not allowed to use this command."));
@@ -6446,6 +6497,8 @@ bool handle_stdin_input(struct connection * caller,
     return wall(arg, check);
   case CMD_VOTE:
     return vote_command(caller, arg, check);
+  case CMD_POLL:
+    return poll_command(caller, arg, check);
   case CMD_CANCEL_VOTE:
     return cancel_vote_command(caller, arg, check);
   case CMD_READ_SCRIPT:
@@ -7551,6 +7604,17 @@ static void show_help_command(struct connection *caller,
                   _("  Requires more than %d%% in favor to pass."),
                   cmd->vote_percent);
       }
+    }
+
+    if (cmd->vote_flags & VCF_WAITFORALL) {
+      cmd_reply(help_cmd, caller, C_COMMENT,
+                _("  The vote remains until all have voted or the voting "
+                  "period elapses."));
+    }
+    if (cmd->vote_flags & VCF_ALWAYSVOTE) {
+      cmd_reply(help_cmd, caller, C_COMMENT,
+                _("  A vote will be started even if the user has "
+                  "an access level greater than 'basic'."));
     }
   }
 

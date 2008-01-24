@@ -58,6 +58,7 @@ enum command_id {
   CMD_SCORE,
   CMD_WALL,
   CMD_VOTE,
+  CMD_POLL,
   
   /* mostly non-harmful: */
   CMD_CANCEL_VOTE,
