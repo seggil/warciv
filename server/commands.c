@@ -378,10 +378,10 @@ const struct command commands[] = {
       ),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"timeoutincrease", ALLOW_CTRL, ALLOW_BASIC,
+  {"incrementaltimeout", ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
-   N_("timeoutincrease <turn> <turninc> <value> <valuemult>"), 
-   N_("See \"help timeoutincrease\"."),
+   N_("incrementaltimeout <turn> <turninc> <value> <valuemult>"), 
+   N_("See \"help incrementaltimeout\"."),
    N_("Every <turn> turns, add <value> to timeout timer, then add <turninc> "
       "to <turn> and multiply <value> by <valuemult>.  Use this command in "
       "concert with the option \"timeout\". Defaults are 0 0 0 1"),

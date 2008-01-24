@@ -2818,8 +2818,9 @@ static bool stats_command(struct connection *caller,
 /**************************************************************************
   Set timeout options.
 **************************************************************************/
-static bool timeout_command(struct connection *caller, char *str,
-                            bool check)
+static bool incremental_timeout_command(struct connection *caller,
+                                        char *str,
+                                        bool check)
 {
   char buf[MAX_LEN_CONSOLE_LINE];
   char *arg[4];
@@ -2834,21 +2835,21 @@ static bool timeout_command(struct connection *caller, char *str,
   ntokens = get_tokens(buf, arg, 4, TOKEN_DELIMITERS);
   for (i = 0; i < ntokens; i++) {
     if (sscanf(arg[i], "%d", timeouts[i]) != 1) {
-      cmd_reply(CMD_TIMEOUT, caller, C_FAIL, _("Invalid argument %d."),
-                i + 1);
+      cmd_reply(CMD_INCREMENTALTIMEOUT, caller, C_FAIL,
+                _("Invalid argument %d."), i + 1);
     }
     free(arg[i]);
   }
   if (ntokens == 0) {
-    cmd_reply(CMD_TIMEOUT, caller, C_SYNTAX, _("Usage: timeoutincrease "
-                                               "<turn> <turnadd> "
-                                               "<value> <valuemult>."));
+    cmd_reply(CMD_INCREMENTALTIMEOUT, caller, C_SYNTAX,
+              _("Usage: incrementaltimeout <turn> <turnadd> "
+                "<value> <valuemult>."));
     return FALSE;
   } else if (check) {
     return TRUE;
   }
-  cmd_reply(CMD_TIMEOUT, caller, C_OK, _("Dynamic timeout set to "
-                                         "%d %d %d %d"),
+  cmd_reply(CMD_INCREMENTALTIMEOUT, caller, C_OK,
+            _("Dynamic timeout set to %d %d %d %d"),
             game.server.timeoutint, game.server.timeoutintinc,
             game.server.timeoutinc, game.server.timeoutincmult);
 
@@ -6468,8 +6469,8 @@ bool handle_stdin_input(struct connection * caller,
     return TRUE;
   case CMD_CMDLEVEL:
     return cmdlevel_command(caller, arg, check);
-  case CMD_TIMEOUT:
-    return timeout_command(caller, allargs, check);
+  case CMD_INCREMENTALTIMEOUT:
+    return incremental_timeout_command(caller, allargs, check);
   case CMD_IGNORE:
     return ignore_command(caller, allargs, check);
   case CMD_UNIGNORE:
