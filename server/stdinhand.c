@@ -3647,7 +3647,14 @@ static bool vote_command(struct connection *caller, char *str, bool check)
     if (vote_number_sequence > 0 && get_vote_by_no(vote_number_sequence)) {
       which = vote_number_sequence;
     } else {
-      cmd_reply(CMD_VOTE, caller, C_FAIL, _("No legal last vote."));
+      int num_votes = vote_list_size(vote_list);
+      if (num_votes == 0) {
+        cmd_reply(CMD_VOTE, caller, C_FAIL, _("There are no votes running."));
+      } else {
+        cmd_reply(CMD_VOTE, caller, C_FAIL, _("No legal last vote (%d %s)."),
+                  num_votes, PL_("other vote running", "other votes running",
+                                 num_votes));
+      }
       goto CLEANUP;
     }
   } else {
