@@ -1344,6 +1344,80 @@ static bool get_user_id(MYSQL *sock, const char *user_name, int *id)
   return TRUE;
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool reload_termap()
+{
+  MYSQL mysql, *sock = &mysql;
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+  char buf[1024];
+  unsigned long *lengths, len;
+
+  if (game.server.fcdb.termap != NULL) {
+    return TRUE;
+  }
+
+  if (!fcdb_connect(sock)) {
+    return FALSE;
+  }
+
+  my_snprintf(buf, sizeof(buf), "SELECT map FROM terrain_maps "
+              "WHERE game_id = %d", game.server.fcdb.id);
+  fcdb_execute_or_return(sock, buf, FALSE);
+  
+  res = mysql_store_result(sock);
+  if (mysql_num_rows(res) == 1) {
+    bool succeeded = FALSE;
+
+    row = mysql_fetch_row(res);
+    lengths = mysql_fetch_lengths(res);
+    len = get_termap_len();
+    game.server.fcdb.termap = fc_malloc(len);
+
+    switch (uncompress(game.server.fcdb.termap, &len,
+                       row[0], lengths[0])) {
+    case Z_MEM_ERROR:
+      freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
+              "terrain map: out of memory.");
+      break;
+    case Z_BUF_ERROR:
+      freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
+              "terrain map: destination buffer too small!.");
+      break;
+    case Z_DATA_ERROR:
+      freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
+              "terrain map: compressed data is corrupted.");
+      break;
+    case Z_OK:
+      succeeded = TRUE;
+      break;
+
+    default:
+      /* Must not happen. */
+      assert(FALSE);
+      break;
+    }
+
+    if (!succeeded) {
+      free(game.server.fcdb.termap);
+      game.server.fcdb.termap = NULL;
+    }
+  }
+  mysql_free_result(res);
+
+  if (game.server.fcdb.termap == NULL) {
+    /* We might as well insert a new one then... */
+    if (!fcdb_insert_terrain_map(sock)) {
+      return FALSE;
+    }
+  }
+
+  fcdb_close(sock);
+
+  return TRUE;
+}
 #endif /* HAVE_MYSQL */
 
 /**************************************************************************
@@ -1360,6 +1434,15 @@ bool fcdb_record_game_start(void)
 
   if (!srvarg.fcdb.enabled) {
     return TRUE;
+  }
+
+  /* Check if this is a reloaded game. If so, we don't
+   * want to overwrite the existing start data. */
+  if (game.server.fcdb.id > 0) {
+    freelog(LOG_VERBOSE, _("FCDB: Game %d resumed."), game.server.fcdb.id);
+
+    /* We might have to recreate the termap... */
+    return reload_termap();
   }
 
   freelog(LOG_VERBOSE, _("FCDB: Recording game start into database."));

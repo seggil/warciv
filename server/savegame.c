@@ -182,7 +182,7 @@
 " diplchance_percent worklists2 map_editor known32fix turn " \
 "attributes watchtower rulesetdir client_worklists orders " \
 "startunits turn_last_built improvement_order technology_order " \
-"warserver_08_13"
+"warserver_08_13 fcdb_save"
 
 static const char hex_chars[] = "0123456789abcdef";
 
@@ -2256,6 +2256,11 @@ static void player_load(struct player *plr, int plrno,
     assert(actual_length == plr->attribute_block.length);
     free(quoted);
   }
+
+  if (has_capability("fcdb_save", savefile_options)) {
+    plr->fcdb.player_id = secfile_lookup_int_default(file, 0, 
+        "player%d.fcdb_player_id", plrno);
+  }
 }
 
 /********************************************************************** 
@@ -2994,6 +2999,9 @@ static void player_save(struct player *plr, int plrno,
     free(quoted);
   }
 #undef PART_SIZE
+
+  secfile_insert_int(file, plr->fcdb.player_id,
+                     "player%d.fcdb_player_id", plrno);
 }
 
 
@@ -3459,6 +3467,13 @@ void game_load(struct section_file *file)
           GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
     }
 
+    if (has_capability("fcdb_save", savefile_options)) {
+      game.server.fcdb.id = secfile_lookup_int_default(file,
+          0, "game.server_fcdb_id");
+      game.server.fcdb.type = secfile_lookup_int_default(file,
+          0, "game.server_fcdb_type");
+    }
+
     map.topology_id = secfile_lookup_int_default(file,
         MAP_ORIGINAL_TOPO, "map.topology_id");
     map.size = secfile_lookup_int_default(file,
@@ -3874,6 +3889,10 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.server.iterplacementcoefficient, "game.iterplacementcoefficient");
   secfile_insert_int(file, game.server.teamplacementtype, "game.teamplacementtype");
   secfile_insert_int(file, game.ext_info.techleakagerate, "game.techleakagerate");
+
+  /* FCDB related data that should be restored when the game is loaded. */
+  secfile_insert_int(file, game.server.fcdb.id, "game.server_fcdb_id");
+  secfile_insert_int(file, game.server.fcdb.type, "game.server_fcdb_type");
 
   /* old (1.14.1) servers need to have these server variables.  The values
    * don't matter, though. */

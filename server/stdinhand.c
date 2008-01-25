@@ -6665,45 +6665,38 @@ static bool check_settings_for_rated_game(void)
 {
   /* Non-default settings that should be enforced
    * for SOLO games. */
-  struct standard_int_setting
-  {
+  struct standard_int_setting {
     int *psetting;
     int standard_value;
   } sis[] = {
-    {
-    &map.autosize, 108}, {
-    &map.landpercent, 17},      /* landmass */
-    {
-    &game.ext_info.airliftingstyle, 1}, {
-    &game.traderoute_info.traderevenuestyle, 1}, {
-    &game.traderoute_info.caravanbonusstyle, 1}, {
-    &game.traderoute_info.trademindist, 8}
+    { &map.autosize, 108},
+    { &map.landpercent, 17},      /* landmass */
+    { &game.ext_info.airliftingstyle, 1},
+    { &game.traderoute_info.traderevenuestyle, 1},
+    { &game.traderoute_info.caravanbonusstyle, 1},
+    { &game.traderoute_info.trademindist, 8}
   };
 
-  struct standard_bool_setting
-  {
+  struct standard_bool_setting {
     bool *psetting;
     bool standard_value;
   } sbs[] = {
-    {
-    &map.tinyisles, TRUE}, {
-    &map.alltemperate, TRUE}, {
-    &game.ext_info.techtrading, FALSE}, {
-    &game.ext_info.goldtrading, FALSE}, {
-    &game.ext_info.citytrading, FALSE}, {
-    &game.ext_info.globalwarmingon, FALSE}, {
-    &game.ext_info.nuclearwinteron, FALSE}, {
-    &game.ext_info.stackbribing, TRUE}, {
-    &game.ext_info.experimentalbribingcost, TRUE}
+    { &map.tinyisles, TRUE},
+    { &map.alltemperate, TRUE},
+    { &game.ext_info.techtrading, FALSE},
+    { &game.ext_info.goldtrading, FALSE},
+    { &game.ext_info.citytrading, FALSE},
+    { &game.ext_info.globalwarmingon, FALSE},
+    { &game.ext_info.nuclearwinteron, FALSE},
+    { &game.ext_info.stackbribing, TRUE},
+    { &game.ext_info.experimentalbribingcost, TRUE}
   };
 
-  struct standard_string_setting
-  {
+  struct standard_string_setting {
     const char *psetting;
     const char *standard_value;
   } sss[] = {
-    {
-    game.server.allow_take, "H4h1a1"}
+    { game.server.allow_take, "H4h1a1" }
   };
 
   struct settings_s *op;
@@ -6773,6 +6766,13 @@ static bool check_settings_for_rated_game(void)
       continue;
     }
 
+    if (map_is_loaded()
+        && (op->int_value == &map.size
+            || op->int_value == &map.landpercent)) {
+      /* When a game is reloaded, ignore map setting changes
+       * due to autosize. */
+      continue;
+    }
 
     /* NB: What follows are the setting checks for SOLO games only. */
 
