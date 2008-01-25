@@ -450,6 +450,9 @@ void create_overlay_unit(struct canvas *pcanvas, int i)
   int width, height;
   struct unit_type *type = get_unit_type(i);
 
+  freelog(LOG_DEBUG, "create_overlay_unit pcanvas=%p id=%d --> type=%p",
+          pcanvas, i, type);
+
   sprite_get_bounding_box(type->sprite, &x1, &y1, &x2, &y2);
   if (pcanvas->type == CANVAS_PIXBUF) {
     width = gdk_pixbuf_get_width(pcanvas->v.pixbuf);

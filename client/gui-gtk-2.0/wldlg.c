@@ -30,6 +30,7 @@
 #include "gui_stuff.h"
 #include "helpdlg.h"
 #include "inputdlg.h"
+#include "log.h"
 #include "mem.h"
 #include "packets.h"
 #include "worklist.h"
@@ -66,6 +67,8 @@ static void popdown_worklist(struct worklist *pwl);
 *****************************************************************/
 void blank_max_unit_size(void)
 {
+  freelog(LOG_DEBUG, "blank_max_unit_size");
+
   max_unit_height = -1;
   max_unit_width = -1;
 }
@@ -75,6 +78,8 @@ void blank_max_unit_size(void)
 *****************************************************************/
 static void update_max_unit_size(void)
 {
+  freelog(LOG_DEBUG, "update_max_unit_size");
+
   max_unit_height = 0;
   max_unit_width = 0;
 
@@ -950,34 +955,48 @@ static void cell_render_func(GtkTreeViewColumn *col, GtkCellRenderer *rend,
 			     gpointer data)
 {
   gint cid, id;
-  bool is_unit;
+  bool is_unit, on_icon_column;
 
   gtk_tree_model_get(model, it, 0, &cid, -1);
   is_unit = cid_is_unit(cid);
   id = cid_id(cid);
+  on_icon_column = GTK_IS_CELL_RENDERER_PIXBUF(rend);
 
-  if (GTK_IS_CELL_RENDERER_PIXBUF(rend)) {
+  if (on_icon_column && show_task_icons) {
     GdkPixbuf *pix;
 
     if (is_unit) {
       struct canvas store;
 
+      if (max_unit_width == -1 || max_unit_height == -1) {
+        update_max_unit_size();
+      }
+
+      freelog(LOG_DEBUG, "cell_render_func creating pixbuf w=%d h=%d",
+              max_unit_width, max_unit_height);
+
       pix = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
-	  max_unit_width, max_unit_height);
+                           max_unit_width, max_unit_height);
 
-      store.type = CANVAS_PIXBUF;
-      store.v.pixbuf = pix;
-      create_overlay_unit(&store, id);
+      freelog(LOG_DEBUG, "cell_render_func created pix=%p unit id=%d", pix, id);
 
-      g_object_set(rend, "pixbuf", pix, NULL);
-      g_object_unref(pix);
+      if (pix) {
+        store.type = CANVAS_PIXBUF;
+        store.v.pixbuf = pix;
+        create_overlay_unit(&store, id);
+
+        g_object_set(rend, "pixbuf", pix, NULL);
+        g_object_unref(pix);
+      }
     } else {
       struct impr_type *impr = get_improvement_type(id);
 
       pix = sprite_get_pixbuf(impr->sprite);
       g_object_set(rend, "pixbuf", pix, NULL);
     }
-  } else {
+  }
+
+  if (!on_icon_column) {
     struct city **pcity;
     struct player *plr;
     gint column;
@@ -1053,7 +1072,7 @@ static void populate_view(GtkTreeView *view, struct city **ppcity,
     g_object_set_data(G_OBJECT(rend), "column", GINT_TO_POINTER(pos));
 
     gtk_tree_view_insert_column_with_data_func(view,
-	i, titles[i], rend, cell_render_func, ppcity, NULL); 
+        i, titles[i], rend, cell_render_func, ppcity, NULL); 
     col = gtk_tree_view_get_column(view, i);
 
     if (pos >= 2) {
