@@ -338,7 +338,7 @@ void load_cursors(void)
 SPRITE *ctor_sprite_mask( GdkPixmap *mypixmap, GdkPixmap *mask, 
 			  int width, int height )
 {
-    SPRITE *mysprite = fc_malloc(sizeof(SPRITE));
+    SPRITE *mysprite = fc_calloc(1, sizeof(SPRITE));
 
     mysprite->pixmap	= mypixmap;
     mysprite->fogged = NULL;
@@ -371,8 +371,7 @@ void dtor_sprite( SPRITE *mysprite )
 ***************************************************************************/
 const char **gfx_fileextensions(void)
 {
-  static const char *ext[] =
-  {
+  static const char *ext[] = {
     "png",
     "xpm",
     NULL
@@ -389,7 +388,9 @@ struct Sprite *load_gfxfile(const char *filename)
   GdkPixbuf *im;
   SPRITE    *mysprite;
   int	     w, h;
-  GError *pixbuf_error=NULL;
+  GError *pixbuf_error = NULL;
+
+  freelog(LOG_DEBUG, "load_gfxfile filename=\"%s\"", filename);
 
   if (!(im = gdk_pixbuf_new_from_file(filename,&pixbuf_error))) {
     freelog(LOG_FATAL, "Failed reading graphics file: %s \n" 
@@ -397,9 +398,10 @@ struct Sprite *load_gfxfile(const char *filename)
     exit(EXIT_FAILURE);
   }
 
-  mysprite=fc_malloc(sizeof(struct Sprite));
+  mysprite = fc_calloc(1, sizeof(struct Sprite));
 
-  w = gdk_pixbuf_get_width(im); h = gdk_pixbuf_get_height(im);
+  w = gdk_pixbuf_get_width(im);
+  h = gdk_pixbuf_get_height(im);
   gdk_pixbuf_render_pixmap_and_mask(im, &mysprite->pixmap, &mysprite->mask, 1);
 
   mysprite->has_mask  = (mysprite->mask != NULL);
@@ -417,8 +419,10 @@ struct Sprite *load_gfxfile(const char *filename)
 /***************************************************************************
    Deletes a sprite.  These things can use a lot of memory.
 ***************************************************************************/
-void free_sprite(SPRITE * s)
+void free_sprite(SPRITE *s)
 {
+  freelog(LOG_DEBUG, "free_sprite s=%p", s);
+
   if (s->pixmap) {
     g_object_unref(s->pixmap);
     s->pixmap = NULL;
@@ -613,6 +617,8 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src)
   GdkPixbuf *dst;
   int w, h;
 
+  freelog(LOG_DEBUG, "gdk_pixbuf_new_from_sprite SPRITE src=%p", src);
+
   w = src->width;
   h = src->height;
   
@@ -654,6 +660,8 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src)
  ********************************************************************/
 GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite)
 {
+  freelog(LOG_DEBUG, "sprite_get_pixbuf sprite=%p", sprite);
+
   if (!sprite) {
     return NULL;
   }

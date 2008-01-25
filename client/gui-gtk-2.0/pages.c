@@ -1739,46 +1739,28 @@ static void nation_start_callback(void)
   send_start_saved_game();
 }
 
-#define MIN_DIMENSION 5
 /**************************************************************************
- FIXME: this is somewhat duplicated in plrdlg.c, 
-        should be somewhere else and non-static
+ ....
 **************************************************************************/
 static GdkPixbuf *get_flag(char *flag_str)
 {
-  int x0, y0, x1, y1, w, h;
-  GdkPixbuf *im;
-  SPRITE *flag;
+  GdkPixbuf *img;
+  SPRITE *cs, *s;
 
-  flag = load_sprite(flag_str);
+  s = load_sprite(flag_str);
 
-  if (!flag) {
+  if (!s) {
     return NULL;
   }
 
-  /* calculate the bounding box ... */
-  sprite_get_bounding_box(flag, &x0, &y0, &x1, &y1);
+  cs = crop_blankspace(s);
+  img = gdk_pixbuf_new_from_sprite(cs);
+  free_sprite(cs);
 
-  assert(x0 != -1);
-  assert(y0 != -1);
-  assert(x1 != -1);
-  assert(y1 != -1);
-
-  w = (x1 - x0) + 1;
-  h = (y1 - y0) + 1;
-
-  /* if the flag is smaller then 5 x 5, something is wrong */
-  assert(w >= MIN_DIMENSION && h >= MIN_DIMENSION);
-
-  /* get the pixbuf and crop*/
-  im = gdk_pixbuf_get_from_drawable(NULL, flag->pixmap,
-                                    gdk_colormap_get_system(),
-                                    x0, y0, 0, 0, w, h);
-
+  /* Will call free_sprite(s) if needed. */
   unload_sprite(flag_str);
 
-  /* and finaly store the scaled flag pixbuf in the static flags array */
-  return im;
+  return img;
 }
 
 /**************************************************************************
@@ -1806,8 +1788,10 @@ static void update_nation_page(struct packet_game_load *packet)
     /* set flag if we've got one to set. */
     if (strcmp(packet->nation_flag[i], "") != 0) {
       flag = get_flag(packet->nation_flag[i]);
-      gtk_list_store_set(nation_store, &iter, 1, flag, -1);
-      g_object_unref(flag);
+      if (flag) {
+        gtk_list_store_set(nation_store, &iter, 1, flag, -1);
+        g_object_unref(flag);
+      }
     }
   }
 

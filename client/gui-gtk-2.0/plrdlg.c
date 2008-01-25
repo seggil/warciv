@@ -26,6 +26,7 @@
 #include "diptreaty.h"
 #include "fcintl.h"
 #include "game.h"
+#include "log.h"
 #include "packets.h"
 #include "nation.h"
 #include "player.h"
@@ -308,7 +309,7 @@ void create_players_dialog(void)
       break;
     case COL_COLOR:
       renderer = my_cell_renderer_color_new();
-      g_object_set (G_OBJECT (renderer), "xsize", 14, "ysize", 14, NULL);
+      g_object_set(G_OBJECT(renderer), "xsize", 14, "ysize", 14, NULL);
 
       col = gtk_tree_view_column_new_with_attributes(pcol->title, renderer,
              "color", i, NULL);
@@ -446,47 +447,23 @@ void create_players_dialog(void)
   gtk_tree_view_focus(GTK_TREE_VIEW(players_list));
 }
 
-
 /**************************************************************************
-...
-**************************************************************************/
-#define MIN_DIMENSION 5
-
-/**************************************************************************
- Builds the flag pixmap.
+ Builds the flag pixmap. Be sure to call g_object_unref on the return
+ value when you no longer need it (or after placing (i.e. copying) it
+ into a gtkcellrendererpixbuf).
 **************************************************************************/
 static GdkPixbuf *get_flag(struct nation_type *nation)
 {
-  int x0, y0, x1, y1, w, h;
-  GdkPixbuf *im;
-  SPRITE *flag;
+  GdkPixbuf *img;
+  SPRITE *s;
 
-  flag = nation->flag_sprite;
+  /* We have to crop the image because some flags
+   * contain extra "whitespace". :( */
+  s = crop_blankspace(nation->flag_sprite);
+  img = gdk_pixbuf_new_from_sprite(s);
+  free_sprite(s);
 
-  /* calculate the bounding box ... */
-  sprite_get_bounding_box(flag, &x0, &y0, &x1, &y1);
-
-  assert(x0 != -1);
-  assert(y0 != -1);
-  assert(x1 != -1);
-  assert(y1 != -1);
-
-  w = (x1 - x0) + 1;
-  h = (y1 - y0) + 1;
-
-  /* if the flag is smaller then 5 x 5, something is wrong */
-  assert(w >= MIN_DIMENSION && h >= MIN_DIMENSION);
-
-  /* croping */
-  im = gdk_pixbuf_get_from_drawable(NULL,
-				    flag->pixmap,
-				    gdk_colormap_get_system(),
-				    x0, y0,
-				    0, 0,
-				    w, h);
-
-  /* and finaly store the scaled flag pixbuf in the static flags array */
-  return im;
+  return img;
 }
 
 
@@ -512,6 +489,7 @@ static void build_row(GtkTreeIter *it, int i)
 	break;
       case COL_FLAG:
         pixbuf = get_flag(get_nation_by_plr(plr));
+        /* The cell renderer makes a deep copy of the pixbuf. */
         gtk_list_store_set(store, it, k, pixbuf, -1);
         g_object_unref(pixbuf);
 	break;
@@ -592,14 +570,12 @@ void update_players_dialog(void)
     }
 
     players_iterate(pplayer) {
-//      if (!is_barbarian(pplayer)) {
 	if (!exists[pplayer->player_no]) {
 		
 	  gtk_list_store_append(store, &it);
 
 	  build_row(&it, pplayer->player_no);
 	}
-//      }
     } players_iterate_end;
 
     update_players_menu();
