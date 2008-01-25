@@ -1376,8 +1376,8 @@ static bool reload_termap()
     len = get_termap_len();
     game.server.fcdb.termap = fc_malloc(len);
 
-    switch (uncompress(game.server.fcdb.termap, &len,
-                       row[0], lengths[0])) {
+    switch (uncompress((unsigned char *)game.server.fcdb.termap, &len,
+                       (unsigned char *)row[0], lengths[0])) {
     case Z_MEM_ERROR:
       freelog(LOG_ERROR, "FCDB: Failed to uncompress reloaded "
               "terrain map: out of memory.");
