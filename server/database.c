@@ -1547,8 +1547,9 @@ bool fcdb_end_of_turn_update(void)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
+  MYSQL_RES *res;
   char buf[4096];
-  int turn_id, lux_income;
+  int turn_id, lux_income, num;
 
   if (!srvarg.fcdb.enabled) {
     return TRUE;
@@ -1562,6 +1563,25 @@ bool fcdb_end_of_turn_update(void)
   }
 
   if (!fcdb_connect(sock)) {
+    return FALSE;
+  }
+
+  /* Check that there isn't already a record for this turn
+   * (e.g. if this is a replayed loaded game). */
+  my_snprintf(buf, sizeof(buf), "SELECT id FROM turns "
+      "WHERE game_id = %d AND turn_no = %d",
+      game.server.fcdb.id, game.info.turn);
+  fcdb_execute_or_return(sock, buf, FALSE);
+  res = mysql_store_result(sock);
+  num = mysql_num_rows(res);
+  mysql_free_result(res);
+  if (num > 0) {
+    fcdb_error("Turn %d for game %d already in database!",
+               game.info.turn, game.server.fcdb.id);
+    notify_conn(NULL, _("Server: Database updating disabled "
+                "because this game is being replayed from "
+                "a previously recorded point."));
+    fcdb_close(sock);
     return FALSE;
   }
 
