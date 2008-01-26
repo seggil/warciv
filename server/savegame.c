@@ -3457,6 +3457,8 @@ void game_load(struct section_file *file)
           GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
       game.server.maxconnections = secfile_lookup_int_default(file,
           GAME_DEFAULT_MAXCONNECTIONS, "game.maxconnections");
+      game.server.maxconnectionsperhost = secfile_lookup_int_default(file,
+          GAME_DEFAULT_MAXCONNECTIONSPERHOST, "game.maxconnectionsperhost");
       game.server.bruteforcethreshold = secfile_lookup_int_default(file,
           GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
       game.server.iterplacementcoefficient = secfile_lookup_int_default(file,
@@ -3868,27 +3870,50 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.server.allowed_city_names, "game.allowed_city_names");
 
   /* warserver settings (capability warserver_08_13) */
-  secfile_insert_int(file, game.traderoute_info.trademindist, "game.trademindist");
-  secfile_insert_int(file, game.traderoute_info.traderevenuepct, "game.traderevenuepct");
-  secfile_insert_int(file, game.traderoute_info.traderevenuestyle, "game.traderevenuestyle");
-  secfile_insert_int(file, game.traderoute_info.caravanbonusstyle, "game.caravanbonusstyle");
-  secfile_insert_bool(file, game.ext_info.futuretechsscore, "game.futuretechsscore");
-  secfile_insert_bool(file, game.ext_info.improvedautoattack, "game.improvedautoattack");
-  secfile_insert_bool(file, game.ext_info.stackbribing, "game.stackbribing");
-  secfile_insert_bool(file, game.ext_info.experimentalbribingcost, "game.experimentalbribingcost");
-  secfile_insert_bool(file, game.ext_info.techtrading, "game.techtrading");
-  secfile_insert_bool(file, game.ext_info.ignoreruleset, "game.ignoreruleset");
-  secfile_insert_bool(file, game.ext_info.goldtrading, "game.goldtrading");
-  secfile_insert_bool(file, game.ext_info.citytrading, "game.citytrading");
-  secfile_insert_int(file, game.ext_info.airliftingstyle, "game.airliftingstyle");
-  secfile_insert_bool(file, game.ext_info.teamplacement, "game.teamplacement");
-  secfile_insert_bool(file, game.ext_info.globalwarmingon, "game.globalwarmingon");
-  secfile_insert_bool(file, game.ext_info.nuclearwinteron, "game.nuclearwinteron");
-  secfile_insert_int(file, game.server.maxconnections, "game.maxconnections");
-  secfile_insert_int(file, game.server.bruteforcethreshold, "game.bruteforcethreshold");
-  secfile_insert_int(file, game.server.iterplacementcoefficient, "game.iterplacementcoefficient");
-  secfile_insert_int(file, game.server.teamplacementtype, "game.teamplacementtype");
-  secfile_insert_int(file, game.ext_info.techleakagerate, "game.techleakagerate");
+  secfile_insert_int(file, game.traderoute_info.trademindist,
+		     "game.trademindist");
+  secfile_insert_int(file, game.traderoute_info.traderevenuepct,
+		     "game.traderevenuepct");
+  secfile_insert_int(file, game.traderoute_info.traderevenuestyle,
+		     "game.traderevenuestyle");
+  secfile_insert_int(file, game.traderoute_info.caravanbonusstyle,
+		     "game.caravanbonusstyle");
+  secfile_insert_bool(file, game.ext_info.futuretechsscore,
+		      "game.futuretechsscore");
+  secfile_insert_bool(file, game.ext_info.improvedautoattack,
+		      "game.improvedautoattack");
+  secfile_insert_bool(file, game.ext_info.stackbribing,
+		      "game.stackbribing");
+  secfile_insert_bool(file, game.ext_info.experimentalbribingcost,
+		      "game.experimentalbribingcost");
+  secfile_insert_bool(file, game.ext_info.techtrading,
+		      "game.techtrading");
+  secfile_insert_bool(file, game.ext_info.ignoreruleset,
+		      "game.ignoreruleset");
+  secfile_insert_bool(file, game.ext_info.goldtrading,
+		      "game.goldtrading");
+  secfile_insert_bool(file, game.ext_info.citytrading,
+		      "game.citytrading");
+  secfile_insert_int(file, game.ext_info.airliftingstyle,
+		     "game.airliftingstyle");
+  secfile_insert_bool(file, game.ext_info.teamplacement,
+		      "game.teamplacement");
+  secfile_insert_bool(file, game.ext_info.globalwarmingon,
+		      "game.globalwarmingon");
+  secfile_insert_bool(file, game.ext_info.nuclearwinteron,
+		      "game.nuclearwinteron");
+  secfile_insert_int(file, game.server.maxconnections,
+		     "game.maxconnections");
+  secfile_insert_int(file, game.server.maxconnectionsperhost,
+		     "game.maxconnectionsperhost");
+  secfile_insert_int(file, game.server.bruteforcethreshold,
+		     "game.bruteforcethreshold");
+  secfile_insert_int(file, game.server.iterplacementcoefficient,
+		     "game.iterplacementcoefficient");
+  secfile_insert_int(file, game.server.teamplacementtype,
+		     "game.teamplacementtype");
+  secfile_insert_int(file, game.ext_info.techleakagerate,
+		     "game.techleakagerate");
 
   /* FCDB related data that should be restored when the game is loaded. */
   secfile_insert_int(file, game.server.fcdb.id, "game.server_fcdb_id");
