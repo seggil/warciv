@@ -2132,40 +2132,50 @@ static bool parse_range(const char *s, int *first, int *last, char *err,
   assert(s != NULL);
 
   for (p = buf; *s && *s != '-'; *p++ = *s++) {
-    if (my_isspace(*s))
+    if (my_isspace(*s)) {
       continue;
+    }
     if (!my_isdigit(*s)) {
-      my_snprintf(err, errlen, "not a number '%c'", *s);
+      my_snprintf(err, errlen, _("'%c' is not a number"), *s);
       return FALSE;
     }
   }
   *p++ = 0;
+
   if (my_isdigit(buf[0])) {
     a = atoi(buf);
-    if (first)
+    if (first) {
       *first = a;
+    }
   }
+
   if (!*s) {
-    if (my_isdigit(buf[0]) && last)
+    if (my_isdigit(buf[0]) && last) {
       *last = a;
+    }
     return TRUE;
   }
+
   numstr = ++s;
-  while (*numstr && my_isspace(*numstr))
+  while (*numstr && my_isspace(*numstr)) {
     numstr++;
+  }
+
   for (s = numstr; *s; s++) {
     if (my_isspace(*s)) {
       continue;
     }
     if (!my_isdigit(*s)) {
-      my_snprintf(err, errlen, "not a number '%c'", *s);
+      my_snprintf(err, errlen, _("'%c' is not a number"), *s);
       return FALSE;
     }
   }
+
   if (my_isdigit(*numstr)) {
     b = atoi(numstr);
-    if (last)
+    if (last) {
       *last = b;
+    }
   }
   return TRUE;
 }
@@ -5250,6 +5260,7 @@ static bool gamelist_command(struct connection *caller,
   char user[MAX_LEN_NAME] = "";
   int type = GT_NUM_TYPES, i;
   int ntokens;
+  int first = 0, last = 0;
   char *args[2];
 
   if (!srvarg.fcdb.enabled) {
@@ -5270,7 +5281,16 @@ static bool gamelist_command(struct connection *caller,
       }
     }
   } else if (ntokens == 1) {
-    if (-1 == (type = parse_game_type(CMD_GAMELIST, caller, args[0]))) {
+    char err[256];
+    bool ok;
+
+    ok = parse_range(args[0], &first, &last, err, sizeof(err));
+
+    freelog(LOG_DEBUG, "gamelist parsed range %d %d", first, last);
+
+    if (!ok) {
+      cmd_reply(CMD_GAMELIST, caller, C_SYNTAX,
+                _("Invalid range: %s."), err);
       free_tokens(args, ntokens);
       return FALSE;
     }
@@ -5282,7 +5302,7 @@ static bool gamelist_command(struct connection *caller,
     return TRUE;
   }
 
-  if (!(fgl = fcdb_gamelist_new(type, user))) {
+  if (!(fgl = fcdb_gamelist_new(type, user, first, last))) {
     cmd_reply(CMD_GAMELIST, caller, C_GENFAIL,
               _("There was an error reading from the database."));
     return FALSE;

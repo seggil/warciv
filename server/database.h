@@ -141,7 +141,8 @@ struct fcdb_game_info *fcdb_game_info_new(int id);
 void fcdb_game_info_free(struct fcdb_game_info *fgi);
 struct fcdb_topten_info *fcdb_topten_info_new(int type);
 void fcdb_topten_info_free(struct fcdb_topten_info *ftti);
-struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user);
+struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
+                                        int first, int last);
 void fcdb_gamelist_free(struct fcdb_gamelist *fgl);
 struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user);
 void fcdb_aliaslist_free(struct fcdb_aliaslist *fal);

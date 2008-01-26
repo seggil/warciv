@@ -2574,20 +2574,39 @@ void fcdb_topten_info_free(struct fcdb_topten_info *ftti)
 /**************************************************************************
   ...
 **************************************************************************/
-struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user)
+struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user,
+                                        int first, int last)
 {
 #ifdef HAVE_MYSQL
   struct fcdb_gamelist *fgl = NULL;
   struct fcdb_gamelist_entry *fgle = NULL;
   MYSQL mysql, *sock = &mysql;
-  char buf[1024];
+  char buf[1024], range_clause[128];
   MYSQL_RES *res = NULL;
   MYSQL_ROW row;
   int i;
+  const int MAX_GAMELIST_RESULTS = 50;
 
   fcdb_connect_or_return(sock, NULL);
 
   fgl = fc_calloc(1, sizeof(struct fcdb_gamelist));
+
+  if (first > 0 || last > 0) {
+    if (first < 1) {
+      first = MAX(1, last - MAX_GAMELIST_RESULTS + 1);
+    }
+    if (last < first) {
+      last = first + MAX_GAMELIST_RESULTS - 1;
+    }
+  }
+
+  if (first > 0 && last > 0 && first <= last) {
+    my_snprintf(range_clause, sizeof(range_clause),
+                "AND g.id BETWEEN %d AND %d",
+                first, last);
+  } else {
+    range_clause[0] = '\0';
+  }
 
   if (user[0] != '\0') {
     if (!get_user_id(sock, user, &fgl->id)) {
@@ -2601,11 +2620,13 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user)
         "    g.outcome"
         "  FROM games AS g INNER JOIN ratings AS r ON g.id = r.game_id"
         "    INNER JOIN players AS p ON g.id = p.game_id"
-        "  WHERE r.user_id = %d"
+        "  WHERE r.user_id = %d %s"
         "  GROUP BY g.id"
         "  ORDER BY g.id DESC"
-        "  LIMIT 50",
-        fgl->id);
+        "  LIMIT %d",
+        fgl->id,
+        range_clause,
+        MAX_GAMELIST_RESULTS);
     if (!fcdb_execute(sock, buf)) {
       goto ERROR;
     }
@@ -2615,11 +2636,13 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user)
         "    g.outcome"
         "  FROM games AS g INNER JOIN players AS p"
         "    ON g.id = p.game_id"
-        "  WHERE g.type = '%s'"
+        "  WHERE g.type = '%s' %s"
         "  GROUP BY g.id"
         "  ORDER BY g.id DESC"
-        "  LIMIT 50",
-        game_type_name_orig(type));
+        "  LIMIT %d",
+        game_type_name_orig(type),
+        range_clause,
+        MAX_GAMELIST_RESULTS);
     if (!fcdb_execute(sock, buf)) {
       goto ERROR;
     }
@@ -2629,9 +2652,12 @@ struct fcdb_gamelist *fcdb_gamelist_new(int type, const char *user)
         "    g.outcome"
         "  FROM games AS g INNER JOIN players AS p"
         "    ON g.id = p.game_id"
+        "  WHERE TRUE %s"
         "  GROUP BY g.id"
         "  ORDER BY g.id DESC"
-        "  LIMIT 50");
+        "  LIMIT %d",
+        range_clause,
+        MAX_GAMELIST_RESULTS);
     if (!fcdb_execute(sock, buf)) {
       goto ERROR;
     }

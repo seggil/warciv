@@ -500,12 +500,14 @@ const struct command commands[] = {
   {"gamelist", ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("gamelist\n"
-      "gamelist <game type>\n"
+      "gamelist <range>\n"
       "gamelist type=<game type>\n"
       "gamelist user=<user name>"),
    N_("List games in the database."),
    N_("If the server can access the games database, request "
-      "a list of games matching the given criteria."),
+      "a list of games matching the given criteria. The range "
+      "argument is a numeric interval of game numbers (e.g. "
+      "20-34)."),
    ECHO_ADMINS
   },
   {"aka", ALLOW_OBSERVER, ALLOW_OBSERVER,
