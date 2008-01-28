@@ -77,6 +77,7 @@
 #include <windows.h>
 #endif
 
+#include "fciconv.h"
 #include "fcintl.h"
 #include "mem.h"
 #include "netintf.h"
@@ -129,63 +130,63 @@ int mystrncasecmp(const char *str0, const char *str1, size_t n)
 }
 
 /***************************************************************
-  Return a string which describes a given socket error (errno-style.)
+  Return a string which describes a given (socket) error
+  (errno-style).
+
+  The string is converted as necessary from the local_encoding
+  to internal_encoding, for inclusion in internal translations
+  that are subsequently converted to local_encoding for display.
+
+  NB!!! This function returns a pointer to static data, hence
+  it is not thread-safe, not safe to call more than once in
+  the same expression, and it is certainly not safe to store
+  the returned pointer for later use.
 ***************************************************************/
-const char *mystrsocketerror(void)
+static const char *get_errno_string(bool socket_error)
 {
-#ifdef WIN32_NATIVE
   static char buf[256];
+#ifdef WIN32_NATIVE
   long int error;
+  static char msgbuf[256];
 
   error = WSAGetLastError();
-  if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		     NULL, error, 0, buf, sizeof(buf), NULL)) {
+  if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
+                     | FORMAT_MESSAGE_IGNORE_INSERTS,
+                     NULL, error, 0, msgbuf, sizeof(msgbuf), NULL)) {
     my_snprintf(buf, sizeof(buf),
-		_("error %ld (failed FormatMessage)"), error);
+                /* TRANS: An error number was supposed to be
+                 * converted to a string but the attempt failed. */
+                _("error %ld (FormatMessage failed)"), error);
   }
-  return buf;
-#else
+  return local_to_internal_string_buffer(msgbuf, buf,
+                                         sizeof(buf));
+#else /* ! WIN32_NATIVE */
 #ifdef HAVE_STRERROR
-  return strerror(errno);
+  return local_to_internal_string_buffer(strerror(errno),
+                                         buf, sizeof(buf));
 #else
-  static char buf[64];
-
   my_snprintf(buf, sizeof(buf),
-	      _("error %d (compiled without strerror)"), errno);
+              _("error %d (compiled without strerror)"), errno);
   return buf;
-#endif
-#endif
+#endif /* HAVE_STRERROR */
+#endif /* ! WIN32_NATIVE */
 }
 
 /***************************************************************
-  Return a string which describes a given error (errno-style.)
+  NB caveats for get_error_string.
+***************************************************************/
+const char *mystrsocketerror(void)
+{
+  return get_errno_string(TRUE);
+}
+
+/***************************************************************
+  NB caveats for get_error_string.
 ***************************************************************/
 const char *mystrerror(void)
 {
-#ifdef WIN32_NATIVE
-  static char buf[256];
-  long int error;
-
-  error = GetLastError();
-  if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		     NULL, error, 0, buf, sizeof(buf), NULL)) {
-    my_snprintf(buf, sizeof(buf),
-		_("error %ld (failed FormatMessage)"), error);
-  }
-  return buf;
-#else
-#ifdef HAVE_STRERROR
-  return strerror(errno);
-#else
-  static char buf[64];
-
-  my_snprintf(buf, sizeof(buf),
-	      _("error %d (compiled without strerror)"), errno);
-  return buf;
-#endif
-#endif
+  return get_errno_string(FALSE);
 }
-
 
 /***************************************************************
   Suspend execution for the specified number of microseconds.
