@@ -149,7 +149,11 @@ static const char *get_errno_string(bool socket_error)
   long int error;
   static char msgbuf[256];
 
-  error = WSAGetLastError();
+  if (socket_error) {
+    error = WSAGetLastError();
+  } else {
+    error = GetLastError();
+  }
   if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
                      | FORMAT_MESSAGE_IGNORE_INSERTS,
                      NULL, error, 0, msgbuf, sizeof(msgbuf), NULL)) {
