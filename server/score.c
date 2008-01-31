@@ -921,6 +921,7 @@ static void update_ratings(void)
   int i, j;
   double RD, c, t, r, q, q2, RD2, sum, inv_d2;
   double rj, sj, E, new_r, new_RD, gRD[MAX_NUM_PLAYERS];
+  time_t now_time;
 
   if (game.server.fcdb.type == GT_SOLO) {
     assert(num_groupings == 1);
@@ -931,14 +932,15 @@ static void update_ratings(void)
    * of time. (Glicko Step 1) */
 
   c = RATING_CONSTANT_C;
+  now_time = time(NULL);
   players_iterate(pplayer) {
     if (pplayer->fcdb.last_rating_timestamp <= 0) {
       continue;
     }
 
     RD = pplayer->fcdb.rating_deviation;
-    t = floor((double) (time(NULL) - pplayer->fcdb.last_rating_timestamp)
-        / RATING_CONSTANT_SECONDS_PER_RATING_PERIOD);
+    t = (double) (now_time - pplayer->fcdb.last_rating_timestamp)
+        / RATING_CONSTANT_SECONDS_PER_RATING_PERIOD;
 
     pplayer->fcdb.rating_deviation
       = MIN(sqrt(RD*RD + c*c*t), RATING_CONSTANT_MAXIMUM_RD);

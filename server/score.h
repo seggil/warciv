@@ -16,13 +16,15 @@
 #include "fc_types.h"
 
 
-/* Calibrated so that if a player with RD 50 does
- * not play for 3 years, his RD will become 350.
- * A 'rating period' is assumed to be a typical
- * game length, i.e. 3 hours. */
-#define RATING_CONSTANT_SECONDS_PER_RATING_PERIOD 10800
-#define RATING_CONSTANT_C 3.69993869
-#define RATING_CONSTANT_Q 0.00575646273 /* ln(10)/400 */
+/* In the terminology of the Glicko rating system,
+ * we set a rating period to be 1 day and calibrate
+ * the constant 'c' so that a player's rating becomes
+ * unreliable if that player does not play for 2 months. */
+#define RATING_CONSTANT_SECONDS_PER_RATING_PERIOD 86400
+#define RATING_CONSTANT_C 44.7213595
+
+/* ln(10)/400 */
+#define RATING_CONSTANT_Q 0.00575646273
 
 /* The RD given to new players. */
 #define RATING_CONSTANT_MAXIMUM_RD 350
