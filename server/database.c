@@ -1873,15 +1873,16 @@ bool fcdb_load_player_ratings(int game_type)
 
       if (num_users > 0) {
         MYSQL_ROW row1; /* id, name, turn_count. */
+        int tc1;
 
         row1 = mysql_fetch_row(res);
+        tc1 = atoi(row1[2]);
 
         if (num_users > 1) {
           MYSQL_ROW row2;
-          int tc1, tc2;
+          int tc2;
 
           row2 = mysql_fetch_row(res);
-          tc1 = atoi(row1[2]);
           tc2 = atoi(row2[2]);
 
           if (abs(tc1 - tc2) < 5) {
@@ -1896,6 +1897,15 @@ bool fcdb_load_player_ratings(int game_type)
                 tc2, row1[1]);
             rate_user = FALSE;
           }
+        }
+
+        if (rate_user
+            && tc1 < RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT) {
+          notify_conn(NULL, _("Server: User %s will not receive an "
+              "updated rating because not enough turns were played "
+              "(only played %d, which is less than the minimum of %d)."),
+              row1[1], tc1, RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT);
+          rate_user = FALSE;
         }
         user_id_for_old_rating = atoi(row1[0]);
       } else {
