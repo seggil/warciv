@@ -868,6 +868,7 @@ void handle_new_year(int year, int turn)
   if (game.info.timeout > 0) {
     game.info.seconds_to_turndone = game.info.timeout;
     end_of_turn = time(NULL) + game.info.timeout;
+    ap_timers_init();
   }
 #if 0
   /* This information shouldn't be needed, but if it is this is the only
