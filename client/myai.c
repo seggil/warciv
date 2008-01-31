@@ -20,17 +20,18 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "city.h"
-#include "combat.h"
 #include "fcintl.h"
-#include "genlist.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
-#include "player.h"
-#include "unit.h"
 #include "shared.h"
 #include "support.h"
+
+#include "city.h"
+#include "combat.h"
+#include "map.h"
+#include "player.h"
+#include "pf_tools.h"
+#include "unit.h"
 
 #include "chatline_g.h"
 #include "civclient.h"
@@ -62,6 +63,7 @@ struct trade_city {
 };
 
 struct trade_configuration {
+  int trade_routes_num; /* The total number of trade routes found */
   int free_slots;       /* The total number of free slots */
   int turns;            /* The total number of required turns for a caravan */
   int moves;            /* The total number of required moves for a caravan */
@@ -790,14 +792,14 @@ void my_ai_trade_route_free(struct unit *punit)
 int get_real_trade_route_number(struct city *pcity);
 bool cities_will_have_trade(struct city *pcity1, struct city *pcity2);
 static struct trade_route *add_trade_route_in_planning
-        (struct trade_city *tcities, struct trade_route_list *ptrlist,
+        (struct trade_city *tcities, struct trade_route **ptrlist,
          struct trade_configuration *pconf, int c1, int c2);
 void recursive_calculate_trade_planning(time_t max_time,
                                         struct trade_city *tcities, int size,
                                         int start_city, int start_trade,
-                                        struct trade_route_list *ctlist,
+                                        struct trade_route **ctlist,
                                         struct trade_configuration *ctconf,
-                                        struct trade_route_list *btlist,
+                                        struct trade_route **btlist,
                                         struct trade_configuration *btconf);
 void calculate_trade_planning(char *buf, size_t buf_len);
 
@@ -842,7 +844,7 @@ bool cities_will_have_trade(struct city *pcity1, struct city *pcity2)
   Returns the added trade route.
 ****************************************************************************/
 struct trade_route *add_trade_route_in_planning
-        (struct trade_city *tcities, struct trade_route_list *ptrlist,
+        (struct trade_city *tcities, struct trade_route **ptrlist,
          struct trade_configuration *pconf, int c1, int c2)
 {
   struct trade_route *ptr;
@@ -850,7 +852,7 @@ struct trade_route *add_trade_route_in_planning
   ptr = tcities[c1].trade_routes[c2];
   if (!ptr || ptr != tcities[c2].trade_routes[c1]) {
     freelog(LOG_ERROR,
-            "Trying to add a bad trade route in the trade planning (%s - %s)",
+            "Trying to add a wrong trade route in the trade planning (%s - %s)",
             tcities[c1].pcity->name, tcities[c2].pcity->name);
     return NULL;
   }
@@ -864,7 +866,7 @@ struct trade_route *add_trade_route_in_planning
   tcities[c2].trade_routes_num--;
 
   /* Change configuration */
-  trade_route_list_append(ptrlist, ptr);
+  ptrlist[pconf->trade_routes_num++] = ptr;
   pconf->free_slots -= 2;
   if (ptr->moves_req < FC_INFINITY) {
     pconf->moves += ptr->moves_req;
@@ -893,9 +895,9 @@ struct trade_route *add_trade_route_in_planning
 void recursive_calculate_trade_planning(time_t max_time,
                                         struct trade_city *tcities, int size,
                                         int start_city, int start_trade,
-                                        struct trade_route_list *ctlist,
+                                        struct trade_route **ctlist,
                                         struct trade_configuration *ctconf,
-                                        struct trade_route_list *btlist,
+                                        struct trade_route **btlist,
                                         struct trade_configuration *btconf)
 {
   int i, j;
@@ -928,7 +930,6 @@ void recursive_calculate_trade_planning(time_t max_time,
                                          ctlist, ctconf, btlist, btconf);
 
       /* Reverse */
-      trade_route_list_unlink(ctlist, ptr);
       *ctconf = conf;
       tcities[i].free_slots++;
       tcities[i].trade_routes[j] = ptr;
@@ -945,7 +946,8 @@ void recursive_calculate_trade_planning(time_t max_time,
           && (ctconf->turns < btconf->turns
               || (ctconf->turns == btconf->turns
                   && ctconf->moves < btconf->moves)))) {
-    trade_route_list_copy(btlist, ctlist);
+    memcpy(btlist, ctlist,
+	   ctconf->trade_routes_num * sizeof(struct trade_route *));
     *btconf = *ctconf;
   }
 }
@@ -957,10 +959,14 @@ void recursive_calculate_trade_planning(time_t max_time,
 void calculate_trade_planning(char *buf, size_t buf_len)
 {
   int i, j, size = city_list_size(trade_cities), dist;
-  struct trade_route_list *btrlist, *ptrlist;
+  struct trade_route *btrlist[size * NUM_TRADEROUTES / 2];
+  struct trade_route *ptrlist[size * NUM_TRADEROUTES / 2];
   struct trade_city tcities[size];
   struct trade_configuration bconf, cconf;
   struct unit *caravan = NULL;
+  struct pf_parameter parameter;
+  struct pf_map *map;
+  struct pf_position pos;
   time_t max_time;
 
   buf[0] = '\0';
@@ -968,8 +974,10 @@ void calculate_trade_planning(char *buf, size_t buf_len)
     return;
   }
 
+  /* Initialize */
   max_time = my_ai_trade_plan_time_max > 0
              ? time(NULL) + my_ai_trade_plan_time_max : 0;
+  /* Create a virtual caravan to calculate moves */
   unit_type_iterate(type) {
     if (unit_type_flag(type, F_TRADE_ROUTE)) {
       caravan = create_unit_virtual(get_player_ptr(),
@@ -980,11 +988,11 @@ void calculate_trade_planning(char *buf, size_t buf_len)
   } unit_type_iterate_end;
   assert(caravan);
   caravan->moves_left = 0;
+  pft_fill_unit_parameter(&parameter, caravan);
+  destroy_unit_virtual(caravan);
 
-  /* Initialize */
   i = 0;
-  btrlist = trade_route_list_new();
-  ptrlist = trade_route_list_new();
+  cconf.trade_routes_num = 0;
   cconf.free_slots = 0;
   cconf.turns = 0;
   cconf.moves = 0;
@@ -996,6 +1004,7 @@ void calculate_trade_planning(char *buf, size_t buf_len)
     tcities[i].trade_routes = fc_malloc(size * sizeof(struct trade_route *));
     tcities[i].distance = fc_malloc(size * sizeof(int));
 
+    map = NULL;
     /* Check if a trade route is possible with the lower index cities */
     for (j = 0; j <= i; j++) {
       if (tcities[i].free_slots > 0 && tcities[j].free_slots > 0
@@ -1004,12 +1013,18 @@ void calculate_trade_planning(char *buf, size_t buf_len)
         struct trade_route *ptr = trade_route_new(NULL, tcities[i].pcity,
                                                   tcities[j].pcity, TRUE);
 
+	if (!map) {
+	  parameter.start_tile = pcity->tile;
+	  map = pf_create_map(&parameter);
+	}
         dist = real_map_distance(pcity->tile, tcities[j].pcity->tile);
-        caravan->homecity = pcity->id;
-        caravan->tile = pcity->tile;
-        ptr->punit = caravan;
-        update_trade_route(ptr);
-        ptr->punit = NULL;
+	if (pf_get_position(map, tcities[j].pcity->tile, &pos)) {
+	  ptr->moves_req = pos.total_MC;
+	  ptr->turns_req = (2 + ptr->moves_req) / SINGLE_MOVE;
+	} else {
+	  ptr->moves_req = FC_INFINITY;
+	  ptr->turns_req = FC_INFINITY;
+	}
         tcities[i].trade_routes[j] = ptr;
         tcities[j].trade_routes[i] = ptr;
         tcities[i].distance[j] = dist;
@@ -1023,6 +1038,9 @@ void calculate_trade_planning(char *buf, size_t buf_len)
     }
 
     cconf.free_slots += tcities[i].free_slots;
+    if (map) {
+      pf_destroy_map(map);
+    }
     i++;
   } city_list_iterate_end;
 
@@ -1073,7 +1091,10 @@ void calculate_trade_planning(char *buf, size_t buf_len)
   } while (j >= 0);
 
   /* Set the current configuration as best configuration */
-  trade_route_list_copy(btrlist, ptrlist);
+  if (cconf.trade_routes_num > 0) {
+    memcpy(&btrlist, &ptrlist,
+	   cconf.trade_routes_num * sizeof(struct trade_route *));
+  }
   bconf = cconf;
 
   /* Do the recursive calculation */
@@ -1082,10 +1103,28 @@ void calculate_trade_planning(char *buf, size_t buf_len)
                                        ptrlist, &cconf, btrlist, &bconf);
   }
 
-  /* Free datas */
-  destroy_unit_virtual(caravan);
-  trade_route_list_free_all(ptrlist);
-  trade_route_list_free(ptrlist);
+  /* Apply */
+  if (bconf.trade_routes_num > 0) {
+    trade_route_list_free_all(trade_plan);
+    for (i = 0; i < bconf.trade_routes_num; i++) {
+      struct trade_route *ptr = fc_malloc(sizeof(struct trade_route));
+
+      *ptr = *btrlist[i];
+      trade_route_list_append(trade_plan, ptr);
+    }
+    my_snprintf(buf, buf_len,
+                _("%d new trade routes, with a total of %d moves"),
+                bconf.trade_routes_num, bconf.moves);
+  } else {
+     my_snprintf(buf, buf_len, _("Didn't find any trade routes to establish"));
+  }
+
+  /* Free datas
+   * N.B.: btrlist doesn't need to be free, because all trade routes
+   *       it could contain are already listed in tcities or ptrlist */
+  for (i = 0; i < cconf.trade_routes_num; i++) {
+    free(ptrlist[i]);
+  }
   for (i = 0; i < size; i++) {
     for (j = i; j < size; j++) {
       if (tcities[i].trade_routes[j]) {
@@ -1095,18 +1134,6 @@ void calculate_trade_planning(char *buf, size_t buf_len)
     free(tcities[i].trade_routes);
     free(tcities[i].distance);
   }
-
-  /* Apply */
-  if (trade_route_list_size(btrlist) > 0) {
-    trade_route_list_copy(trade_plan, btrlist);
-    trade_route_list_free_all(btrlist);
-    my_snprintf(buf, buf_len,
-                _("%d new trade routes, with a total of %d moves"),
-                trade_route_list_size(trade_plan), bconf.moves);
-  } else {
-     my_snprintf(buf, buf_len, _("Didn't find any trade routes to establish"));
-  }
-  trade_route_list_free(btrlist);
 }
 
 /**************************************************************************
