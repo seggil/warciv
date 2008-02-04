@@ -170,6 +170,7 @@ sprites =
 		"f.south_africa", "flags/south_africa-shield"
 		"f.southern_cross", "flags/southern_cross-shield"
 		"f.soviet", "flags/soviet-shield"
+		"f.soviet_ukrainian", "flags/soviet_ukrainian-shield"
 		"f.spain", "flags/spain-shield"
 		"f.srilanka", "flags/srilanka-shield"
 		"f.srivijaya", "flags/srivijaya-shield"

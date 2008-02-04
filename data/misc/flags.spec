@@ -387,6 +387,7 @@ sprites =
 		"f.south_africa", "flags/south_africa"
 		"f.southern_cross", "flags/southern_cross" ; confederate battle flag
 		"f.soviet", "flags/soviet"
+		"f.soviet_ukrainian", "flags/soviet_ukrainian"
 		"f.spain", "flags/spain"
 		"f.srilanka", "flags/srilanka"
 		"f.srivijaya", "flags/srivijaya"

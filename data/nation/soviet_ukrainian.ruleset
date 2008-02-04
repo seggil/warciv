@@ -1,0 +1,40 @@
+[nation_soviet_ukrainian]
+
+name=_("Soviet Ukrainian")
+plural=_("?plural:Soviet Ukrainians")
+groups="European"
+class=_("European")
+legend=_("The Ukrainian Soviet Socialist Republic a.k.a. Uk(r)SSR was a \
+socialist state in Ukraine which became one of the fifteen constituent \
+republics of the Soviet Union.")
+leader = "Lazar Kaganovich", "Nikita Khrushchev", "Petro Shelest"
+leader_sex = "Male", "Male", "Male"
+flag="f.soviet_ukrainian"
+flag_alt = "-"
+city_style = "European"
+ruler_titles = { "government",      "male_title",         "female_title"
+                 "Despotism",     _("Hetman"),          _("Hetman")
+               }
+
+init_techs=""
+init_buildings=""
+init_government="Despotism"
+init_units=""
+
+conflicts_with = "russian", "ukrainian", "belarusian",
+ "polish", "hungarian", "romanian"
+civilwar_nations = "russian", "ukrainian", "belarusian",
+ "polish", "hungarian", "romanian"
+
+tech_goals = "Chivalry","The Republic","Gunpowder","Leadership","Explosives"
+wonder="Sun Tzu's War Academy"
+government="Communism"
+
+cities =
+  "Kyiv", "Lviv", "Zhytomyr", "Lutsk", "Pereyeslav", "Zaporizhzhia",
+  "Chernihiv", "Braclav", "Kherson", "Kharkiv", "Sumy",
+  "Odesa", "Cherkasy", "Donetsk", "Dnipropetrovsk",
+  "Poltava", "Rivne", "Chernobyl", "Sevastopol", "Yalta",
+  "Kamieniec", "White Church", "Chernivtsi", "Khmelnistkyi",
+  "Ternopil", "Ivano-frankivsk", "Uzhhorod", "Kirovohrad",
+  "Luhansk", "Mykolaiv", "Vinnytsya"

@@ -179,6 +179,7 @@ flag_files =			\
 	south_africa.png	\
 	southern_cross.png	\
 	soviet.png		\
+	soviet_ukrainian.png	\
 	spain.png		\
 	srilanka.png		\
 	srivijaya.png		\
@@ -381,6 +382,7 @@ shield_files =				\
 	south_africa-shield.png		\
 	southern_cross-shield.png	\
 	soviet-shield.png		\
+	soviet_ukrainian-shield.png	\
 	spain-shield.png		\
 	srilanka-shield.png		\
 	srivijaya-shield.png		\
