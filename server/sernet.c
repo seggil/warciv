@@ -637,7 +637,7 @@ int sniff_packets(void)
 
       freelog(LOG_VERBOSE, "got new connection");
       if (server_accept_connection(sock) == -1) {
-        freelog(LOG_ERROR, "failed accepting connection");
+        freelog(LOG_NORMAL, _("Failed accepting connection"));
       }
     }
 
@@ -913,11 +913,12 @@ static int server_accept_connection(int sockfd)
   struct hostent *from = NULL;
   int i;
   struct connection *pconn = NULL;
+  char ipaddr[MAX_LEN_ADDR];
 
   freelog(LOG_DEBUG, "sac server_accept_connection sockfd=%d", sockfd);
   fromlen = sizeof(fromend);
 
-  if ((game.server.maxconnections != 0)
+  if ((game.server.maxconnections > 0)
       && (conn_list_size(game.all_connections) > game.server.maxconnections)) {
     freelog(LOG_NORMAL, _("Maximum number of connections "
 			  "for this server exceeded."));
@@ -929,7 +930,24 @@ static int server_accept_connection(int sockfd)
     return -1;
   }
 
+  sz_strlcpy(ipaddr, inet_ntoa(fromend.sockaddr_in.sin_addr));
+  if (game.server.maxconnectionsperhost > 0) {
+    int count = 0;
+
+    conn_list_iterate(game.all_connections, pconn) {
+      if (strcmp(ipaddr, pconn->server.ipaddr) == 0) {
+	if (++count >= game.server.maxconnectionsperhost) {
+	  freelog(LOG_NORMAL, _("Maximum number of connections "
+			        "for this host exceeded."));
+	  my_closesocket(new_sock);
+	  return -1;
+	}
+      }
+    } conn_list_iterate_end;
+  }
+
   if (-1 == my_nonblock(new_sock)) {
+    my_closesocket(new_sock);
     return -1;
   }
 
@@ -942,6 +960,7 @@ static int server_accept_connection(int sockfd)
 
   if (!pconn) {
     freelog(LOG_ERROR, "maximum number of connections reached");
+    my_closesocket(new_sock);
     return -1;
   }
 
@@ -971,7 +990,7 @@ static int server_accept_connection(int sockfd)
   pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
   pconn->server.delay_establish = FALSE;
 
-  if (!receive_ip(pconn, inet_ntoa(fromend.sockaddr_in.sin_addr))) {
+  if (!receive_ip(pconn, ipaddr)) {
     /* Banned, but not an error. */
     return 0;
   }

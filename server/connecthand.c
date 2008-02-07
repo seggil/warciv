@@ -247,22 +247,6 @@ bool receive_ip(struct connection *pconn, const char *ipaddr)
   sz_strlcpy(pconn->server.ipaddr, ipaddr);
   sz_strlcpy(pconn->addr, ipaddr);
 
- if (game.server.maxconnectionsperhost != 0) {
-    /* Note that this connection shouldn't be listed there for the moment */
-    int count = 0;
-
-    conn_list_iterate(game.all_connections, oconn) {
-      if (strcmp(pconn->server.ipaddr, oconn->server.ipaddr) == 0) {
-	if (++count >= game.server.maxconnectionsperhost) {
-	  freelog(LOG_NORMAL, _("Maximum number of connections "
-			        "for this host exceeded."));
-	  server_break_connection(pconn, STATE_MAX_CONNECTIONS);
-	  return FALSE;
-	}
-      }
-    } conn_list_iterate_end;
-  }
-
   if (is_banned(pconn, CPT_ADDRESS)) {
     freelog(LOG_NORMAL, _("The address %s is banned from this server"), ipaddr);
     server_break_connection(pconn, STATE_BANNED);

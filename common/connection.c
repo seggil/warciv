@@ -543,7 +543,6 @@ const char *conn_description(const struct connection *pconn)
     N_("banned"),
     N_("auth failed"),
     N_("cut connection"),
-    N_("max connections"),
   };
 
   buffer[0] = '\0';

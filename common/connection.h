@@ -85,8 +85,7 @@ enum exit_state {
   STATE_LAGGING_CONN,
   STATE_BANNED,
   STATE_AUTH_FAILED,
-  STATE_CUT_COMMAND,
-  STATE_MAX_CONNECTIONS
+  STATE_CUT_COMMAND
 };
 
 /* get 'struct conn_list' and related functions: */
