@@ -3399,10 +3399,7 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
   ry = rsy + y;	      \
   can_copy;	      \
   rx = rsx - x;	      \
-  can_copy;	      \
   ry = rsy - y;	      \
-  can_copy;	      \
-  rx = rsx + x;	      \
   can_copy;
 
   switch(game.server.teamplacementtype) {
