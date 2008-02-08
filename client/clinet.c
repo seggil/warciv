@@ -143,6 +143,12 @@ static void close_socket_nomessage(struct connection *pc)
   remove_net_input();
   popdown_races_dialog(); 
   close_connection_dialog();
+
+  /* We need to clear the voteinfo when a client disconnects.
+   * Unfortunately doing it only in client_game_free is not
+   * sufficient. */
+  voteinfo_queue_init();
+
   set_client_page(PAGE_MAIN);
 
   reports_force_thaw();

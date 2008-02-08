@@ -171,6 +171,9 @@ GtkTextView *main_message_area;
 GtkTextBuffer *message_buffer, *network_message_buffer;
 GtkWidget *inputline;
 
+struct voteinfo_bar *pregame_votebar = NULL;
+struct voteinfo_bar *ingame_votebar = NULL;
+
 static enum Display_color_type display_color_type;  /* practically unused */
 static gint timer_id;                               /*       ditto        */
 static guint input_id;
@@ -386,6 +389,17 @@ static gboolean chatline_scroll_callback(gpointer data)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+void queue_chatline_scroll_to_bottom(void)
+{
+  if (chatline_scroll_callback_id == 0) {
+    chatline_scroll_callback_id = g_idle_add(chatline_scroll_callback,
+                                             NULL);
+  }
+}
+
+/**************************************************************************
   Called whenever the toplevel window is resized or moved (we primarily
   care about the resize only).
 **************************************************************************/
@@ -397,10 +411,7 @@ static gboolean toplevel_configure(GtkWidget *w,
    * chat window gets pushed up, causing the chatline to not scroll
    * automatically to the bottom when new messages arrives.
    * This rectifies that situation. */
-  if (chatline_scroll_callback_id == 0) {
-    chatline_scroll_callback_id = g_idle_add(chatline_scroll_callback,
-                                             NULL);
-  }
+  queue_chatline_scroll_to_bottom();
   return FALSE; /* Continue propagating. */
 }
 
@@ -1520,8 +1531,16 @@ static void setup_widgets(void)
   gtk_paned_pack2(GTK_PANED(paned), sbox, TRUE, TRUE);
   avbox = detached_widget_fill(sbox, FALSE);
 
+  vbox = gtk_vbox_new(FALSE, 0);
+  if (ingame_votebar == NULL) {
+    ingame_votebar = create_voteinfo_bar();
+  }
+  gtk_box_pack_start(GTK_BOX(vbox), ingame_votebar->box,
+                     FALSE, FALSE, 2);
+  gtk_box_pack_start(GTK_BOX(avbox), vbox, TRUE, TRUE, 0);
+
   paned = gtk_hpaned_new();
-  gtk_box_pack_start(GTK_BOX(avbox), paned, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), paned, TRUE, TRUE, 4);
 
   /* split message window */
   splitmsgs = get_split_message_window();
@@ -2329,3 +2348,139 @@ static gboolean quit_dialog_callback(void)
   /* Stop emission of event. */
   return TRUE;
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void voteinfo_bar_do_vote_callback(GtkWidget *w, gpointer userdata)
+{
+  enum client_vote_type vote;
+  struct voteinfo *vi;
+  
+  vote = GPOINTER_TO_INT(userdata);
+  vi = voteinfo_queue_get_current(NULL);
+
+  if (vi == NULL) {
+    return;
+  }
+
+  voteinfo_do_vote(vi->vote_no, vote);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void voteinfo_bar_next_callback(GtkWidget *w, gpointer userdata)
+{
+  voteinfo_queue_next();
+  voteinfo_gui_update();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct voteinfo_bar *create_voteinfo_bar(void)
+{
+  GtkWidget *label, *button, *hbox, *evbox, *spacer, *arrow;
+  struct voteinfo_bar *vib;
+  const int BUTTON_HEIGHT = 12;
+
+  vib = fc_calloc(1, sizeof(struct voteinfo_bar));
+
+  hbox = gtk_hbox_new(FALSE, 4);
+  vib->box = hbox;
+
+  label = gtk_label_new("");
+  gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+  gtk_misc_set_padding(GTK_MISC(label), 8, 4);
+  gtk_label_set_max_width_chars(GTK_LABEL(label), 80);
+  evbox = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(evbox), label);
+  gtk_box_pack_start(GTK_BOX(hbox), evbox, TRUE, TRUE, 0);
+  gtk_widget_set_name(evbox, "vote label");
+  vib->label = label;
+
+  arrow = gtk_image_new_from_stock(GTK_STOCK_MEDIA_REWIND,
+                                   GTK_ICON_SIZE_SMALL_TOOLBAR);
+  gtk_misc_set_alignment(GTK_MISC(arrow), 0.5, 0.25);
+
+  button = gtk_button_new();
+  g_signal_connect(button, "clicked",
+                   G_CALLBACK(voteinfo_bar_next_callback), NULL);
+  gtk_button_set_image(GTK_BUTTON(button), arrow);
+  gtk_widget_set_size_request(button, -1, BUTTON_HEIGHT);
+  gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+  vib->next_button = button;
+
+  spacer = gtk_alignment_new(0, 0, 0, 0);
+  gtk_widget_set_size_request(spacer, 16, -1);
+  gtk_box_pack_start(GTK_BOX(hbox), spacer, FALSE, FALSE, 0);
+
+  button = gtk_button_new_with_mnemonic(_("_YES"));
+  g_signal_connect(button, "clicked",
+                   G_CALLBACK(voteinfo_bar_do_vote_callback),
+                   GINT_TO_POINTER(CVT_YES));
+  gtk_widget_set_size_request(button, 70, BUTTON_HEIGHT);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+  evbox = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(evbox), button);
+  gtk_box_pack_start(GTK_BOX(hbox), evbox, FALSE, FALSE, 0);
+  gtk_widget_set_name(button, "vote yes button");
+  gtk_widget_set_name(evbox, "vote yes button");
+  gtk_widget_set_name(gtk_bin_get_child(GTK_BIN(button)),
+                      "vote yes button");
+  vib->yes_button = button;
+
+  label = gtk_label_new("0");
+  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+  gtk_widget_set_size_request(label, 24, -1);
+  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  vib->yes_count_label = label;
+
+  button = gtk_button_new_with_mnemonic(_("_NO"));
+  g_signal_connect(button, "clicked",
+                   G_CALLBACK(voteinfo_bar_do_vote_callback),
+                   GINT_TO_POINTER(CVT_NO));
+  gtk_widget_set_size_request(button, 70, BUTTON_HEIGHT);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+  evbox = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(evbox), button);
+  gtk_box_pack_start(GTK_BOX(hbox), evbox, FALSE, FALSE, 0);
+  gtk_widget_set_name(button, "vote no button");
+  gtk_widget_set_name(evbox, "vote no button");
+  gtk_widget_set_name(gtk_bin_get_child(GTK_BIN(button)),
+                      "vote no button");
+  vib->no_button = button;
+
+  label = gtk_label_new("0");
+  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+  gtk_widget_set_size_request(label, 24, -1);
+  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  vib->no_count_label = label;
+
+  button = gtk_button_new_with_mnemonic(_("_ABSTAIN"));
+  g_signal_connect(button, "clicked",
+                   G_CALLBACK(voteinfo_bar_do_vote_callback),
+                   GINT_TO_POINTER(CVT_ABSTAIN));
+  gtk_widget_set_size_request(button, 70, BUTTON_HEIGHT);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+  evbox = gtk_event_box_new();
+  gtk_container_add(GTK_CONTAINER(evbox), button);
+  gtk_box_pack_start(GTK_BOX(hbox), evbox, FALSE, FALSE, 0);
+  gtk_widget_set_name(button, "vote abstain button");
+  gtk_widget_set_name(evbox, "vote abstain button");
+  gtk_widget_set_name(gtk_bin_get_child(GTK_BIN(button)),
+                      "vote abstain button");
+  vib->abstain_button = button;
+
+  label = gtk_label_new("0");
+  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+  gtk_widget_set_size_request(label, 24, -1);
+  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  vib->abstain_count_label = label;
+
+  return vib;
+}
+

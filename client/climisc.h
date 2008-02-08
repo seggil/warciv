@@ -128,17 +128,17 @@ struct city *get_nearest_city(struct unit *punit, int *sq_dist);
 void cityrep_buy(struct city *pcity);
 void common_taxrates_callback(int i);
 
-int buy_production_in_selected_cities (void);
+int buy_production_in_selected_cities(void);
 
-void city_clear_worklist (struct city *pcity);
-void clear_worklists_in_selected_cities (void);
+void city_clear_worklist(struct city *pcity);
+void clear_worklists_in_selected_cities(void);
 void city_worklist_check(struct city *pcity, struct worklist *pwl);
   
-void city_autonaming_init (void);
-void city_autonaming_free (void);
-void city_autonaming_add_used_name (const char *city_name);
-void city_autonaming_remove_used_name (const char *city_name);
-void normalize_names_in_selected_cities (void);
+void city_autonaming_init(void);
+void city_autonaming_free(void);
+void city_autonaming_add_used_name(const char *city_name);
+void city_autonaming_remove_used_name(const char *city_name);
+void normalize_names_in_selected_cities(void);
 
 void link_marks_init(void);
 void link_marks_free(void);
@@ -151,4 +151,57 @@ void restore_link_mark(enum tag_link_types type, int id);
 void set_default_user_tech_goal(void);
 void force_tech_goal(Tech_Type_id goal);
 
-#endif  /* FC__CLIMISC_H */
+enum client_vote_type {
+  CVT_NONE = 0,
+  CVT_YES,
+  CVT_NO,
+  CVT_ABSTAIN
+};
+
+struct voteinfo {
+  /* Set by the server via packets. */
+  int vote_no;
+  char user[MAX_LEN_NAME];
+  char desc[512];
+  int percent_required;
+  int flags;
+  bool is_poll;
+  int yes;
+  int no;
+  int abstain;
+  int num_voters;
+  bool resolved;
+  bool passed;
+
+  /* Set/used by the client. */
+  enum client_vote_type client_vote;
+  time_t remove_time;
+};
+
+void voteinfo_queue_init(void);
+void voteinfo_queue_free(void);
+void voteinfo_queue_remove(int vote_no);
+void voteinfo_queue_delayed_remove(int vote_no);
+void voteinfo_queue_check_removed(void);
+void voteinfo_queue_add(int vote_no,
+                        const char *user,
+                        const char *desc,
+                        int percent_required,
+                        int flags,
+                        bool is_poll);
+struct voteinfo *voteinfo_queue_find(int vote_no);
+void voteinfo_do_vote(int vote_no, enum client_vote_type vote);
+struct voteinfo *voteinfo_queue_get_current(int *pindex);
+void voteinfo_queue_next(void);
+
+/* Define struct voteinfo_list type. */
+#define SPECLIST_TAG voteinfo
+#define SPECLIST_TYPE struct voteinfo
+#include "speclist.h"
+#define voteinfo_list_iterate(alist, pitem)\
+  TYPED_LIST_ITERATE(struct voteinfo, alist, pitem)
+#define voteinfo_list_iterate_end  LIST_ITERATE_END
+
+extern struct voteinfo_list *voteinfo_queue;
+
+#endif /* FC__CLIMISC_H */

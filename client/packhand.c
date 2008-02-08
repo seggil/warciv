@@ -3030,3 +3030,74 @@ void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 		    packet->req_type, packet->req_value, packet->group_id);
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_vote_remove(int vote_no)
+{
+  voteinfo_queue_delayed_remove(vote_no);
+  voteinfo_gui_update();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_vote_update(int vote_no, int yes, int no, int abstain,
+                        int num_voters)
+{
+  struct voteinfo *vi;
+
+  vi = voteinfo_queue_find(vote_no);
+  if (vi == NULL) {
+    freelog(LOG_ERROR, "Got packet_vote_update for non-existant vote %d!",
+            vote_no);
+    return;
+  }
+
+  vi->yes = yes;
+  vi->no = no;
+  vi->abstain = abstain;
+  vi->num_voters = num_voters;
+
+  voteinfo_gui_update();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_vote_new(struct packet_vote_new *packet)
+{
+  if (voteinfo_queue_find(packet->vote_no)) {
+    freelog(LOG_ERROR, "Got a packet_vote_new for already existing "
+            "vote %d!", packet->vote_no);
+    return;
+  }
+
+  voteinfo_queue_add(packet->vote_no,
+                     packet->user,
+                     packet->desc,
+                     packet->percent_required,
+                     packet->flags,
+                     packet->is_poll);
+  voteinfo_gui_update();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_vote_resolve(int vote_no, bool passed)
+{
+  struct voteinfo *vi;
+
+  vi = voteinfo_queue_find(vote_no);
+  if (vi == NULL) {
+    freelog(LOG_ERROR, "Got packet_vote_resolve for non-existant "
+            "vote %d!", vote_no);
+    return;
+  }
+
+  vi->resolved = TRUE;
+  vi->passed = passed;
+
+  voteinfo_gui_update();
+}

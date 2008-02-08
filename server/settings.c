@@ -26,6 +26,7 @@
 #include "settings.h"
 #include "srv_main.h"
 #include "stdinhand.h"
+#include "vote.h"
 
 /* Category names must match the values in enum sset_category. */
 const char *sset_category_names[] = {N_("Geological"),

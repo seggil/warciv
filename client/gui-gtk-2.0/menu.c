@@ -1939,7 +1939,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	GTK_STOCK_QUIT		
 							},
   /* Government menu ... */
-  { "/" N_("Gover_nment"),					NULL,
+  { "/" N_("Gov_ernment"),					NULL,
 	NULL,			0,					"<Branch>"	},
   { "/" N_("Government") "/tearoff1",			NULL,
 	NULL,			0,					"<Tearoff>"	},
@@ -2354,7 +2354,7 @@ static GtkItemFactoryEntry menu_items[]	=
 	NULL,				0,				"<Tearoff>"	},
 
  /* Airlift menu ...*/
-  { "/" N_("_Airlift"),						NULL,
+  { "/" N_("A_irlift"),						NULL,
 	NULL,				0,				"<Branch>"	},
   { "/" N_("Airlift") "/tearoff1",				NULL,
 	NULL,				0,				"<Tearoff>"	},

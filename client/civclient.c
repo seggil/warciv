@@ -520,12 +520,15 @@ void send_report_request(enum report_type type)
 **************************************************************************/
 void client_game_init()
 {
+  freelog(LOG_DEBUG, "client_game_init");
+
   game_init();
   attribute_init();
   agents_init();
   city_autonaming_init();
   control_queues_init();
   link_marks_init();
+  voteinfo_queue_init();
 }
 
 /**************************************************************************
@@ -534,6 +537,7 @@ void client_game_init()
 void client_game_free()
 {
   free_mapview_updates();
+  voteinfo_queue_free();
   city_autonaming_free();
   control_queues_free();
   clear_all_link_marks();
@@ -552,6 +556,8 @@ void set_client_state(enum client_states newstate)
   bool connect_error = (client_state == CLIENT_PRE_GAME_STATE)
       && (newstate == CLIENT_PRE_GAME_STATE);
   enum client_states oldstate = client_state;
+
+  freelog(LOG_DEBUG, "set_client_state %d", newstate);
 
   if (newstate == CLIENT_GAME_OVER_STATE) {
     /*
@@ -605,8 +611,8 @@ void set_client_state(enum client_states newstate)
         }
       }
       init_menus();
-    }
-    else if (client_state == CLIENT_PRE_GAME_STATE) {
+
+    } else if (client_state == CLIENT_PRE_GAME_STATE) {
       popdown_all_city_dialogs();
       popdown_all_game_dialogs();
       close_all_diplomacy_dialogs();
@@ -627,6 +633,7 @@ void set_client_state(enum client_states newstate)
       }
     }
   }
+
   if (!aconnection.established && client_state == CLIENT_PRE_GAME_STATE) {
     gui_server_connect();
     if (auto_connect) {
@@ -640,6 +647,7 @@ void set_client_state(enum client_states newstate)
       }
     } 
   }
+
   update_turn_done_button_state();
   update_conn_list_dialog();
 }
@@ -715,6 +723,8 @@ bool client_is_observer(void)
 void real_timer_callback(void)
 {
   time_t curtime;
+
+  voteinfo_queue_check_removed();
 
   if (get_client_state() != CLIENT_GAME_RUNNING_STATE) {
     return;

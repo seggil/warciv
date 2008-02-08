@@ -95,6 +95,7 @@
 #include "stdinhand.h"
 #include "unithand.h"
 #include "unittools.h"
+#include "vote.h"
 
 #include "advdiplomacy.h"
 #include "advmilitary.h"
@@ -700,6 +701,7 @@ static void end_turn(void)
   update_diplomatics();
   make_history_report();
   stdinhand_turn();
+  voting_turn();
   send_player_turn_notifications(NULL);
 
   freelog(LOG_DEBUG, "Turn ended.");
@@ -1024,7 +1026,8 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
   if (server_state != RUN_GAME_STATE
       && type != PACKET_NATION_SELECT_REQ
       && type != PACKET_CONN_PONG
-      && type != PACKET_REPORT_REQ) {
+      && type != PACKET_REPORT_REQ
+      && type != PACKET_VOTE_SUBMIT) {
     if (server_state == GAME_OVER_STATE) {
       /* This can happen by accident, so we don't want to print
 	 out lots of error messages. Ie, we use LOG_DEBUG. */
@@ -2021,6 +2024,7 @@ void server_game_init(void)
 
   diplhand_init();
   stdinhand_init();
+  voting_init();
 }
 
 /**************************************************************************
@@ -2030,6 +2034,7 @@ void server_game_free(void)
 {
   diplhand_free();
   stdinhand_free();
+  voting_free();
 
   server_free_player_maps();
 

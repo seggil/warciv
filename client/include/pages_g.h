@@ -18,7 +18,7 @@
 **************************************************************************/
 enum client_pages {
   PAGE_MAIN,		/* Main menu, aka intro page.  */
-  PAGE_START,		/* Start new game page.  */
+  PAGE_START,		/* Start new game page (i.e. pregame). */
   PAGE_SCENARIO,	/* Start new scenario page. */
   PAGE_LOAD,		/* Load saved game page. */
   PAGE_NETWORK,		/* Connect to network page.  */
@@ -33,5 +33,7 @@ void set_client_page(enum client_pages page);
 enum client_pages get_client_page(void);
 
 void append_network_statusbar(const char *text);
+
+void voteinfo_gui_update(void);
 
 #endif  /* FC__PAGES_G_H */

@@ -39,6 +39,7 @@
 #include "options.h"
 
 #include "chatline.h"
+#include "colors.h"
 #include "my_cell_renderer_color.h"
 #include "pages.h"
 
@@ -949,24 +950,6 @@ void clear_output_window(void)
 void set_output_window_text(const char *text)
 {
   gtk_text_buffer_set_text(message_buffer, text, -1);
-}
-/**************************************************************************
-  Result must be freed.
-**************************************************************************/
-static GdkColor *color_from_str(const char *str)
-{
-  GdkColor color;
-  
-  if (!str || !str[0])
-    return NULL;
-  
-  if (!gdk_color_parse(str, &color)) {
-    freelog(LOG_ERROR, _("Could not parse color from \"%s\""),
-             str);
-    return NULL;
-  }
-  
-  return gdk_color_copy(&color);
 }
 /**************************************************************************
   ...

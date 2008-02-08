@@ -18,5 +18,6 @@
 #include "colors_g.h"
 
 extern GdkColor *colors_standard[COLOR_STD_LAST];
+GdkColor *color_from_str(const char *str);
 
 #endif  /* FC__COLORS_H */

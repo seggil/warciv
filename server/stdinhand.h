@@ -20,21 +20,9 @@
   /* the character to mark chatlines as server commands */
 #define DEFAULT_ACTION_LIST_FILE "action.list"
 
-enum vote_condition_flags {
-  VCF_NONE       = 0,
-  VCF_NO_DISSENT = (1 << 0), /* No 'no' votes.' */
-  VCF_UNANIMOUS  = (1 << 1), /* All must be 'yes' or 'abstain'. */
-  VCF_FASTPASS   = (1 << 2), /* Pass if 'yes' > 'no'. */
-  VCF_WAITFORALL = (1 << 3), /* Resolve only after timeout or all voted. */
-  VCF_ALWAYSVOTE = (1 << 4), /* Make a vote no matter what the cmdlev. */
-};
-
 void stdinhand_init(void);
 void stdinhand_turn(void);
 void stdinhand_free(void);
-
-void clear_all_votes(void);
-void cancel_connection_votes(struct connection *pconn);
 
 bool conn_is_muted(struct connection *pconn);
 

@@ -34,7 +34,9 @@
 
 #include "chatline.h"
 #include "civclient.h"
+#include "climisc.h"
 #include "clinet.h"
+#include "colors.h"
 #include "connectdlg.h"
 #include "connectdlg_common.h"
 #include "dialogs.h"
@@ -76,7 +78,7 @@ enum metavariableslist_column_ids {
 static GtkTreeSelection *load_selection, *scenario_selection,
   *nation_selection, *meta_selection, *lan_selection;
 
-static enum client_pages old_page;
+static enum client_pages current_page;
 
 static void set_page_callback(GtkWidget *w, gpointer data);
 static void update_nation_page(struct packet_game_load *packet);
@@ -1286,7 +1288,7 @@ GtkWidget *create_start_page(void)
 
   int i;
 
-  box = gtk_vbox_new(FALSE, 8);
+  box = gtk_vbox_new(FALSE, 0);
   gtk_container_set_border_width(GTK_CONTAINER(box), 4);
 
   sbox = gtk_hbox_new(FALSE, 12);
@@ -1318,7 +1320,7 @@ GtkWidget *create_start_page(void)
   label = g_object_new(GTK_TYPE_LABEL,
 		       "use-underline", TRUE,
 		       "mnemonic-widget", spin,
-                       "label", _("_Number of Players (including AI):"),
+                       "label", _("Number of Players (including AI):"),
 		       "xalign", 0.0, "yalign", 0.5, NULL);
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
@@ -1339,7 +1341,7 @@ GtkWidget *create_start_page(void)
   label = g_object_new(GTK_TYPE_LABEL,
 		       "use-underline", TRUE,
 		       "mnemonic-widget", option,
-                       "label", _("_AI Skill Level:"),
+                       "label", _("AI Skill Level:"),
 		       "xalign", 0.0, "yalign", 0.5, NULL);
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 
@@ -1351,7 +1353,7 @@ GtkWidget *create_start_page(void)
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
 
   button = gtk_stockbutton_new(GTK_STOCK_SELECT_COLOR,
-			       _("Co_nfigure Chat Colors"));
+			       _("Configure C_hat Colors"));
   g_signal_connect(button, "clicked",
 		   G_CALLBACK(configure_chatline_colors_callback), NULL);
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
@@ -1398,12 +1400,17 @@ GtkWidget *create_start_page(void)
   gtk_box_pack_start(GTK_BOX(sbox), sw, TRUE, TRUE, 0);
 
 
+  /* Lower area (chatline, entry, buttons) */
+
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(box), vbox, TRUE, TRUE, 4);
+
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 				      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				 GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-  gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
   text = gtk_text_view_new_with_buffer(message_buffer);
   start_message_area = text;
@@ -1413,6 +1420,17 @@ GtkWidget *create_start_page(void)
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
   gtk_container_add(GTK_CONTAINER(sw), text);
 
+
+  /* Vote widgets. */
+
+  if (pregame_votebar == NULL) {
+    pregame_votebar = create_voteinfo_bar();
+  }
+  gtk_box_pack_start(GTK_BOX(vbox), pregame_votebar->box,
+                     FALSE, FALSE, 0);
+  
+
+  /* Chat entry and buttons. */
 
   sbox = gtk_hbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(box), sbox, FALSE, FALSE, 0);
@@ -1904,11 +1922,11 @@ GtkWidget *create_nation_page(void)
   changes the current page.
   this is basically a state machine. jumps actions are hardcoded.
 **************************************************************************/
-void set_client_page(enum client_pages page)
+void set_client_page(enum client_pages new_page)
 {
-  enum client_pages new_page;
+  enum client_pages old_page;
 
-  new_page = page;
+  old_page = current_page;
 
   /* If the page remains the same, don't do anything. */
   if (old_page == new_page) {
@@ -1935,6 +1953,8 @@ void set_client_page(enum client_pages page)
     break;
   }
 
+  /* GUI changes to be done before the new page's
+   * widgets are shown. */
   switch (new_page) {
   case PAGE_MAIN:
     break;
@@ -1969,19 +1989,28 @@ void set_client_page(enum client_pages page)
     gtk_widget_show(statusbar_frame);
   }
 
+  /* Now we actually switch the page. */
   gtk_notebook_set_current_page(GTK_NOTEBOOK(toplevel_tabs), new_page);
+  current_page = new_page;
+
+  /* We have to do this here since gtk_notebook_set_current_page
+   * seems to do a show-all. */
+  voteinfo_gui_update();
 
   /* Update the GUI. */
   while (gtk_events_pending()) {
     gtk_main_iteration();
   }
 
+  /* GUI changes that are to be done after the
+   * widgets for the new page have been shown. */
   switch (new_page) {
   case PAGE_MAIN:
     break;
   case PAGE_START:
-    if (start_page_entry)
+    if (start_page_entry) {
       gtk_widget_grab_focus(start_page_entry);
+    }
     chatline_scroll_to_bottom();
     allied_chat_only = FALSE;
     break;
@@ -2005,8 +2034,6 @@ void set_client_page(enum client_pages page)
     gtk_editable_set_position(GTK_EDITABLE(network_login), 0);
     break;
   }
-
-  old_page = page;
 }
 
 /**************************************************************************
@@ -2014,7 +2041,7 @@ void set_client_page(enum client_pages page)
 **************************************************************************/
 enum client_pages get_client_page(void)
 {
-  return old_page;
+  return current_page;
 }
 
 
@@ -2236,3 +2263,105 @@ void popup_save_dialog(void)
   gtk_window_present(GTK_WINDOW(save_dialog_shell));
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_gui_update(void)
+{
+  int vote_count, index;
+  struct voteinfo_bar *vib = NULL;
+  struct voteinfo *vi = NULL;
+  char buf[512], status[128], ordstr[128], color[32];
+  bool running;
+  gchar *escaped_desc, *escaped_user;
+
+  if (get_client_page() == PAGE_START) {
+    vib = pregame_votebar;
+  } else if (get_client_page() == PAGE_GAME) {
+    vib = ingame_votebar;
+  }
+
+  if (vib == NULL) {
+    return;
+  }
+
+  if (voteinfo_queue == NULL) {
+    return;
+  }
+
+  vote_count = voteinfo_list_size(voteinfo_queue);
+  vi = voteinfo_queue_get_current(&index);
+
+  if (vote_count <= 0 || vi == NULL) {
+    gtk_widget_hide_all(vib->box);
+    return;
+  }
+
+  if (vi->resolved && vi->passed) {
+    /* TRANS: Describing a vote that passed. */
+    my_snprintf(status, sizeof(status), _("[passed]"));
+    sz_strlcpy(color, "green");
+  } else if (vi->resolved && !vi->passed) {
+    /* TRANS: Describing a vote that failed. */
+    my_snprintf(status, sizeof(status), _("[failed]"));
+    sz_strlcpy(color, "red");
+  } else if (vi->remove_time > 0) {
+    /* TRANS: Describing a vote that was removed. */
+    my_snprintf(status, sizeof(status), _("[removed]"));
+    sz_strlcpy(color, "grey");
+  } else {
+    status[0] = '\0';
+  }
+
+  if (vote_count > 1) {
+    my_snprintf(ordstr, sizeof(ordstr),
+                "<span weight=\"bold\">(%d/%d)</span> ",
+                index + 1, vote_count);
+  } else {
+    ordstr[0] = '\0';
+  }
+
+  if (status[0] != '\0') {
+    my_snprintf(buf, sizeof(buf),
+        "<span weight=\"bold\" background=\"%s\">%s</span> ",
+        color, status);
+    sz_strlcpy(status, buf);
+  }
+
+  escaped_desc = g_markup_escape_text(vi->desc, -1);
+  escaped_user = g_markup_escape_text(vi->user, -1);
+  if (vi->is_poll) {
+    my_snprintf(buf, sizeof(buf), _("%sPoll by %s: %s%s"),
+                ordstr, escaped_user, status, escaped_desc);
+  } else {
+    my_snprintf(buf, sizeof(buf), _("%sVote %d by %s: %s%s"),
+                ordstr, vi->vote_no, escaped_user, status,
+                escaped_desc);
+  }
+  g_free(escaped_desc);
+  g_free(escaped_user);
+  gtk_label_set_markup(GTK_LABEL(vib->label), buf);
+
+  my_snprintf(buf, sizeof(buf), "%d", vi->yes);
+  gtk_label_set_text(GTK_LABEL(vib->yes_count_label), buf);
+  my_snprintf(buf, sizeof(buf), "%d", vi->no);
+  gtk_label_set_text(GTK_LABEL(vib->no_count_label), buf);
+  my_snprintf(buf, sizeof(buf), "%d", vi->abstain);
+  gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), buf);
+
+  running = !vi->resolved && vi->remove_time == 0;
+
+  gtk_widget_set_sensitive(vib->yes_button, running);
+  gtk_widget_set_sensitive(vib->no_button, running);
+  gtk_widget_set_sensitive(vib->abstain_button, running);
+
+  gtk_widget_show_all(vib->box);
+
+  if (vote_count == 1) {
+    gtk_widget_hide(vib->next_button);
+  }
+
+  /* Showing the votebar when it was hidden
+   * previously makes the chatline scroll up. */
+  queue_chatline_scroll_to_bottom();
+}

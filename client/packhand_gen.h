@@ -111,5 +111,10 @@ struct packet_traderoute_info;
 void handle_traderoute_info(struct packet_traderoute_info *packet);
 struct packet_extgame_info;
 void handle_extgame_info(struct packet_extgame_info *packet);
+struct packet_vote_new;
+void handle_vote_new(struct packet_vote_new *packet);
+void handle_vote_update(int vote_no, int yes, int no, int abstain, int num_voters);
+void handle_vote_remove(int vote_no);
+void handle_vote_resolve(int vote_no, bool passed);
 
 #endif /* FC__PACKHAND_GEN_H */

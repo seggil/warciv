@@ -83,6 +83,36 @@ style "tooltips"
   font_name = "Monospace 8"
 }
 
+style "vote label"
+{
+  bg[NORMAL] = "#fffa70"
+}
+
+style "vote yes button"
+{
+  font_name = "Sans Bold 9"
+  bg[NORMAL] = "#4d4"
+  bg[ACTIVE] = "#4d4"
+  bg[PRELIGHT] = "#7f7"
+}
+
+style "vote no button"
+{
+  font_name = "Sans Bold 9"
+  bg[NORMAL] = "#d44"
+  bg[ACTIVE] = "#d44"
+  bg[PRELIGHT] = "#f77"
+}
+
+style "vote abstain button"
+{
+  font_name = "Sans Bold 9"
+  bg[NORMAL] = "#bbb"
+  bg[ACTIVE] = "#bbb"
+  bg[PRELIGHT] = "#ddd"
+}
+
+
 widget	"Freeciv*.city label"		style	"city_label"
 widget	"Freeciv*.notify label"		style	"notify_label"
 widget	"Freeciv*.spaceship label"	style	"spaceship_label"
@@ -96,3 +126,8 @@ widget	"Freeciv*.comment label"	style	"comment_label"
 widget	"Freeciv*.city names"		style	"city_names_font"
 widget	"Freeciv*.city productions"	style	"city_productions_font"
 widget	"gtk-tooltips*.*"		style	"tooltips"
+
+widget "Freeciv*.vote label" style "vote label"
+widget "Freeciv*.vote yes button" style "vote yes button"
+widget "Freeciv*.vote no button" style "vote no button"
+widget "Freeciv*.vote abstain button" style "vote abstain button"

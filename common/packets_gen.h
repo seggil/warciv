@@ -1072,6 +1072,37 @@ struct packet_extgame_info {
   int techleakagerate;
 };
 
+struct packet_vote_new {
+  int vote_no;
+  char user[MAX_LEN_NAME];
+  char desc[512];
+  int percent_required;
+  int flags;
+  bool is_poll;
+};
+
+struct packet_vote_update {
+  int vote_no;
+  int yes;
+  int no;
+  int abstain;
+  int num_voters;
+};
+
+struct packet_vote_remove {
+  int vote_no;
+};
+
+struct packet_vote_resolve {
+  int vote_no;
+  bool passed;
+};
+
+struct packet_vote_submit {
+  int vote_no;
+  int value;
+};
+
 enum packet_type {
   PACKET_PROCESSING_STARTED,             /* 0 */
   PACKET_PROCESSING_FINISHED,
@@ -1189,6 +1220,11 @@ enum packet_type {
   PACKET_RULESET_CACHE_EFFECT,
   PACKET_TRADEROUTE_INFO,
   PACKET_EXTGAME_INFO,
+  PACKET_VOTE_NEW,
+  PACKET_VOTE_UPDATE,
+  PACKET_VOTE_REMOVE,
+  PACKET_VOTE_RESOLVE,
+  PACKET_VOTE_SUBMIT,
   PACKET_FREEZE_CLIENT = 135,
   PACKET_THAW_CLIENT,
 
@@ -1674,6 +1710,21 @@ int send_packet_traderoute_info(struct connection *pc, const struct packet_trade
 
 struct packet_extgame_info *receive_packet_extgame_info(struct connection *pc, enum packet_type type);
 int send_packet_extgame_info(struct connection *pc, const struct packet_extgame_info *packet);
+
+struct packet_vote_new *receive_packet_vote_new(struct connection *pc, enum packet_type type);
+int send_packet_vote_new(struct connection *pc, const struct packet_vote_new *packet);
+
+struct packet_vote_update *receive_packet_vote_update(struct connection *pc, enum packet_type type);
+int send_packet_vote_update(struct connection *pc, const struct packet_vote_update *packet);
+
+struct packet_vote_remove *receive_packet_vote_remove(struct connection *pc, enum packet_type type);
+int send_packet_vote_remove(struct connection *pc, const struct packet_vote_remove *packet);
+
+struct packet_vote_resolve *receive_packet_vote_resolve(struct connection *pc, enum packet_type type);
+int send_packet_vote_resolve(struct connection *pc, const struct packet_vote_resolve *packet);
+
+struct packet_vote_submit *receive_packet_vote_submit(struct connection *pc, enum packet_type type);
+int send_packet_vote_submit(struct connection *pc, const struct packet_vote_submit *packet);
 
 
 void delta_stats_report(void);

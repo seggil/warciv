@@ -19,6 +19,7 @@
 
 #include <gtk/gtk.h>
 
+#include "fcintl.h"
 #include "log.h"
 #include "mem.h"
 
@@ -125,4 +126,22 @@ void free_color_system(void)
   for (i = 0; i < COLOR_STD_LAST; i++) {
     free(colors_standard[i]);
   }
+}
+
+/**************************************************************************
+  Result must be freed using gdk_color_free.
+**************************************************************************/
+GdkColor *color_from_str(const char *str)
+{
+  GdkColor color;
+  
+  if (!str || !str[0])
+    return NULL;
+  
+  if (!gdk_color_parse(str, &color)) {
+    freelog(LOG_ERROR, _("Could not parse color from \"%s\""), str);
+    return NULL;
+  }
+  
+  return gdk_color_copy(&color);
 }

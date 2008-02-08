@@ -84,7 +84,9 @@ libcivserver_a_SOURCES = \
 		unithand.c	\
 		unithand.h	\
 		unittools.c	\
-		unittools.h
+		unittools.h	\
+		vote.c		\
+		vote.h
 
 civserver_DEPENDENCIES = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ./libcivserver.a \

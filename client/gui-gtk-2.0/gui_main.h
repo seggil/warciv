@@ -35,6 +35,23 @@ struct canvas
   } v;
 };
 
+struct voteinfo_bar {
+  GtkWidget *box;
+  GtkWidget *next_button;
+  GtkWidget *label;
+  GtkWidget *yes_button;
+  GtkWidget *no_button;
+  GtkWidget *abstain_button;
+  GtkWidget *yes_count_label;
+  GtkWidget *no_count_label;
+  GtkWidget *abstain_count_label;
+};
+
+extern struct voteinfo_bar *ingame_votebar;
+extern struct voteinfo_bar *pregame_votebar;
+
+struct voteinfo_bar *create_voteinfo_bar(void);
+
 /* network string charset conversion */
 gchar *ntoh_str(const gchar *netstr);
 
@@ -104,6 +121,7 @@ gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data);
 void reset_unit_table(void);
 void popup_quit_dialog(void);
 
-void chatline_entry_append_text (const char *text);
+void chatline_entry_append_text(const char *text);
+void queue_chatline_scroll_to_bottom(void);
 
 #endif  /* FC__GUI_MAIN_H */

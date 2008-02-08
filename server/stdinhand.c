@@ -69,6 +69,7 @@
 #include "sernet.h"
 #include "settings.h"
 #include "srv_main.h"
+#include "vote.h"
 
 #include "advmilitary.h" /* assess_danger_player() */
 #include "ailog.h"
@@ -272,47 +273,6 @@ static char *four_team_suggestions[][4] = {
   {"VINYL", "8TRACK", "CASSETTE", "CD"},
 };
 
-enum vote_type {
-  VOTE_YES, VOTE_NO, VOTE_ABSTAIN, VOTE_NUM
-};
-
-struct vote_cast {
-  enum vote_type vote_cast;     /* see enum above */
-  int conn_id;                  /* user id */
-};
-
-#define SPECLIST_TAG vote_cast
-#define SPECLIST_TYPE struct vote_cast
-#include "speclist.h"
-#define vote_cast_list_iterate(alist, pvc) \
-    TYPED_LIST_ITERATE(struct vote_cast, alist, pvc)
-#define vote_cast_list_iterate_end  LIST_ITERATE_END
-
-struct voting {
-  int caller_id;                /* caller connection id */
-  enum command_id command_id;
-  char cmdline[MAX_LEN_CONSOLE_LINE];
-  int turn_count;               /* Number of turns active. */
-  struct vote_cast_list *votes_cast;
-  int vote_no;                  /* place in the queue */
-  int yes;
-  int no;
-  int abstain;
-  int flags;
-  double need_pc;
-};
-
-#define SPECLIST_TAG vote
-#define SPECLIST_TYPE struct voting
-#include "speclist.h"
-#define vote_list_iterate(alist, pvote) \
-    TYPED_LIST_ITERATE(struct voting, alist, pvote)
-#define vote_list_iterate_end  LIST_ITERATE_END
-
-static struct vote_list *vote_list = NULL;
-static int vote_number_sequence;
-
-
 struct muteinfo {
   int conn_id;
   int turns_left;
@@ -378,466 +338,13 @@ static enum command_id command_named(const char *token,
 }
 
 /**************************************************************************
-  Remove a vote of the vote list.
-**************************************************************************/
-static void free_vote(struct voting *pvote)
-{
-  if (!pvote) {
-    return;
-  }
-
-  assert(vote_list != NULL);
-
-  vote_cast_list_iterate(pvote->votes_cast, pvc) {
-    free(pvc);
-  } vote_cast_list_iterate_end;
-  vote_cast_list_free(pvote->votes_cast);
-  free(pvote);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static void remove_vote(struct voting *pvote)
-{
-  assert(vote_list != NULL);
-
-  if (pvote != NULL) {
-    vote_list_unlink(vote_list, pvote);
-    free_vote(pvote);
-  }
-}
-
-/**************************************************************************
-  Remove all votes.
-**************************************************************************/
-void clear_all_votes(void)
-{
-  if (!vote_list) {
-    return;
-  }
-
-  vote_list_iterate(vote_list, pvote) {
-    free_vote(pvote);
-  } vote_list_iterate_end;
-  vote_list_unlink_all(vote_list);
-}
-
-/**************************************************************************
   Initialize stuff related to this code module.
 **************************************************************************/
 void stdinhand_init(void)
 {
-  if (!vote_list) {
-    vote_list = vote_list_new();
-    vote_number_sequence = 0;
-  }
-
   if (!mute_table) {
     mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
   }
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static bool connection_is_player(struct connection *pconn)
-{
-  return pconn && pconn->player && !pconn->observer
-      && pconn->player->is_alive;
-}
-
-/**************************************************************************
-  Cannot vote if:
-    * is muted
-    * is not connected
-    * access level < basic
-    * isn't a player
-**************************************************************************/
-static bool connection_can_vote(struct connection *pconn)
-{
-  if (conn_is_muted(pconn)) {
-    return FALSE;
-  }
-  if (connection_is_player(pconn) && pconn->access_level >= ALLOW_BASIC) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static struct voting *get_vote_by_no(int vote_no)
-{
-  assert(vote_list != NULL);
-
-  vote_list_iterate(vote_list, pvote) {
-    if (pvote->vote_no == vote_no) {
-      return pvote;
-    }
-  } vote_list_iterate_end;
-
-  return NULL;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static struct voting *get_vote_by_caller(const struct connection *caller)
-{
-  assert(vote_list != NULL);
-
-  if (caller == NULL) {
-    return NULL;
-  }
-
-  vote_list_iterate(vote_list, pvote) {
-    if (pvote->caller_id == caller->id) {
-      return pvote;
-    }
-  } vote_list_iterate_end;
-
-  return NULL;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static struct voting *vote_new(struct connection *caller,
-                               const char *allargs,
-                               enum command_id command_id,
-                               struct setting_value *sv)
-{
-  struct voting *pvote;
-
-  assert(vote_list != NULL);
-
-  if (!connection_can_vote(caller)) {
-    return NULL;
-  }
-
-  /* Cancel previous vote */
-  remove_vote(get_vote_by_caller(caller));
-
-  /* Make a new vote */
-  pvote = fc_malloc(sizeof(struct voting));
-  pvote->caller_id = caller->id;
-  pvote->command_id = command_id;
-  my_snprintf(pvote->cmdline, sizeof(pvote->cmdline), "%s%s%s",
-              commands[command_id].name,
-              allargs[0] == '\0' ? "" : " ", allargs);
-  pvote->turn_count = 0;
-  pvote->votes_cast = vote_cast_list_new();
-  pvote->vote_no = ++vote_number_sequence;
-
-  vote_list_append(vote_list, pvote);
-
-  pvote->flags = commands[command_id].vote_flags;
-  pvote->need_pc = (double) commands[command_id].vote_percent / 100.0;
-
-  if (pvote->command_id == CMD_SET) {
-    struct settings_s *op = NULL;
-
-    assert(sv != NULL);
-    assert(sv->setting_idx >= 0);
-
-    op = &settings[sv->setting_idx];
-    if (op->vote_flags > VCF_NONE) {
-      pvote->flags = op->vote_flags;
-    }
-    if (op->vote_percent > 0) {
-      pvote->need_pc = (double) op->vote_percent / 100.0;
-    }
-
-    /* Extra special kludge for the timeout setting.
-     * NB If this is changed, do not forget to update
-     * help texts. */
-    if (op->int_value == &game.info.timeout
-        && sv->int_value > *op->int_value) {
-      pvote->flags |= VCF_FASTPASS;
-      pvote->need_pc = 0.25;
-    }
-  }
-
-  return pvote;
-}
-
-/**************************************************************************
-  Check if we satisfy the criteria for resolving a vote, and resolve it
-  if these critera are indeed met. Updates yes and no variables in voting 
-  struct as well.
-**************************************************************************/
-static void check_vote(struct voting *pvote)
-{
-  int num_cast = 0, num_voters = 0;
-  bool resolve = FALSE, passed = FALSE;
-  struct connection *pconn = NULL;
-  double yes_pc = 0.0, no_pc = 0.0, rem_pc = 0.0, base = 0.0;
-  int flags;
-  double need_pc;
-  char cmdline[MAX_LEN_CONSOLE_LINE];
-
-  assert(vote_list != NULL);
-
-  pvote->yes = 0;
-  pvote->no = 0;
-  pvote->abstain = 0;
-
-  conn_list_iterate(game.est_connections, pconn) {
-    if (connection_can_vote(pconn)) {
-      num_voters++;
-    }
-  } conn_list_iterate_end;
-
-  vote_cast_list_iterate(pvote->votes_cast, pvc) {
-    if (!(pconn = find_conn_by_id(pvc->conn_id))
-        || !connection_can_vote(pconn)) {
-      continue;
-    }
-    num_cast++;
-
-    switch (pvc->vote_cast) {
-    case VOTE_YES:
-      pvote->yes++;
-      break;
-    case VOTE_NO:
-      pvote->no++;
-      break;
-    case VOTE_ABSTAIN:
-      pvote->abstain++;
-      break;
-    default:
-      assert(0);
-      break;
-    }
-  } vote_cast_list_iterate_end;
-
-  flags = pvote->flags;
-  need_pc = pvote->need_pc;
-
-  /* Check if we should resolve the vote. */
-  if (num_voters > 0) {
-
-    /* Players that abstain essentially remove themselves from
-     * the voting pool. */
-    base = num_voters - pvote->abstain;
-
-    if (base > 0.0) {
-      yes_pc = (double) pvote->yes / base;
-      no_pc = (double) pvote->no / base;
-
-      /* The fraction of people who have not voted at all. */
-      rem_pc = (double) (num_voters - num_cast) / base;
-    }
-
-    if (flags & VCF_NO_DISSENT && no_pc > 0.0) {
-      resolve = TRUE;
-    }
-    if (flags & VCF_UNANIMOUS && yes_pc < 1.0) {
-      resolve = TRUE;
-    }
-
-    if (!resolve && !(flags & VCF_WAITFORALL)) {
-      if (flags & VCF_FASTPASS) {
-        /* We have enough votes and yes is in majority. */
-        resolve = (yes_pc > no_pc && 1.0 - rem_pc > need_pc)
-            /* Can't get enough yes votes from the remainder. */
-            || yes_pc + rem_pc <= no_pc
-            /* Everyone voted. */
-            || rem_pc == 0.0;
-      } else {
-        /* We have enough yes votes. */
-        resolve = yes_pc > need_pc
-            /* We have too many no votes. */
-            || no_pc >= 1.0 - need_pc
-            /* We can't get enough no votes. */
-            || no_pc + rem_pc < 1.0 - need_pc
-            /* We can't get enough yes votes. */
-            || yes_pc + rem_pc <= need_pc;
-      }
-    }
-
-    /* Resolve if everyone voted already. */
-    if (!resolve && rem_pc == 0.0) {
-      resolve = TRUE;
-    }
-
-    /* Resolve this vote if it has been around long enough. */
-    if (!resolve && pvote->turn_count > 1) {
-      resolve = TRUE;
-    }
-
-    /* Resolve this vote if everyone tries to abstain. */
-    if (!resolve && base == 0.0) {
-      resolve = TRUE;
-    }
-  }
-
-  freelog(LOG_DEBUG, "check_vote flags=%d need_pc=%0.2f yes_pc=%0.2f "
-          "no_pc=%0.2f rem_pc=%0.2f base=%0.2f resolve=%d",
-          flags, need_pc, yes_pc, no_pc, rem_pc, base, resolve);
-
-  if (!resolve) {
-    return;
-  }
-
-  if (flags & VCF_FASTPASS) {
-    passed = yes_pc > no_pc && 1.0 - rem_pc > need_pc;
-  } else {
-    passed = yes_pc > need_pc;
-  }
-
-  if (passed && flags & VCF_UNANIMOUS) {
-    passed = yes_pc == 1.0;
-  }
-  if (passed && flags & VCF_NO_DISSENT) {
-    passed = no_pc == 0.0;
-  }
-
-  if (passed) {
-    notify_conn(NULL, _("Vote %d \"%s\" is passed %d to %d with "
-                        "%d abstentions and %d who did not vote."),
-                pvote->vote_no, pvote->cmdline,
-                pvote->yes, pvote->no,
-                pvote->abstain, num_voters - num_cast);
-  } else {
-    notify_conn(NULL, _("Vote %d \"%s\" failed with %d against, %d for, "
-                        "%d abstentions and %d who did not vote."),
-                pvote->vote_no, pvote->cmdline,
-                pvote->no, pvote->yes,
-                pvote->abstain, num_voters - num_cast);
-  }
-
-  vote_cast_list_iterate(pvote->votes_cast, pvc) {
-    if (!(pconn = find_conn_by_id(pvc->conn_id))) {
-      freelog(LOG_ERROR, "Got a vote from a lost connection");
-      continue;
-    } else if (!connection_can_vote(pconn)) {
-      freelog(LOG_ERROR, "Got a vote from a non-voting connection");
-      continue;
-    }
-
-    switch (pvc->vote_cast) {
-    case VOTE_YES:
-      notify_conn(NULL, _("Vote %d: %s voted yes."),
-                  pvote->vote_no, pconn->username);
-      break;
-    case VOTE_NO:
-      notify_conn(NULL, _("Vote %d: %s voted no."),
-                  pvote->vote_no, pconn->username);
-      break;
-    case VOTE_ABSTAIN:
-      notify_conn(NULL, _("Vote %d: %s chose to abstain."),
-                  pvote->vote_no, pconn->username);
-      break;
-    default:
-      break;
-    }
-  } vote_cast_list_iterate_end;
-
-  /* Remove the vote before to exexute the command because it's the
-   * cause of many crashes due to the /cut command:
-   *   - If the caller is the target.
-   *   - If the target is voted to this vote. */
-  sz_strlcpy(cmdline, pvote->cmdline);
-  remove_vote(pvote);
-
-  if (passed) {
-    handle_stdin_input(NULL, cmdline, FALSE);
-  }
-}
-
-/**************************************************************************
-  Find the vote cast for the user id conn_id in a vote.
-**************************************************************************/
-static struct vote_cast *find_vote_cast(struct voting *pvote, int conn_id)
-{
-  assert(vote_list != NULL);
-
-  vote_cast_list_iterate(pvote->votes_cast, pvc) {
-    if (pvc->conn_id == conn_id) {
-      return pvc;
-    }
-  } vote_cast_list_iterate_end;
-
-  return NULL;
-}
-
-/**************************************************************************
-  Return a new vote cast.
-**************************************************************************/
-static struct vote_cast *vote_cast_new(struct voting *pvote)
-{
-  assert(vote_list != NULL);
-
-  struct vote_cast *pvc = fc_malloc(sizeof(struct vote_cast));
-
-  pvc->conn_id = -1;
-  pvc->vote_cast = VOTE_ABSTAIN;
-
-  vote_cast_list_append(pvote->votes_cast, pvc);
-
-  return pvc;
-}
-
-/**************************************************************************
-  Remove a vote cast.
-**************************************************************************/
-static void remove_vote_cast(struct voting *pvote, struct vote_cast *pvc)
-{
-  assert(vote_list != NULL);
-
-  if (!pvc) {
-    return;
-  }
-
-  vote_cast_list_unlink(pvote->votes_cast, pvc);
-  free(pvc);
-  check_vote(pvote);            /* Maybe can pass */
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static void connection_vote(struct connection *pconn, struct voting *pvote,
-                            enum vote_type type)
-{
-  assert(vote_list != NULL);
-
-  struct vote_cast *pvc;
-
-  if (!connection_can_vote(pconn)) {
-    return;
-  }
-
-  /* Try to find a previous vote */
-  if ((pvc = find_vote_cast(pvote, pconn->id))) {
-    pvc->vote_cast = type;
-  } else if ((pvc = vote_cast_new(pvote))) {
-    pvc->vote_cast = type;
-    pvc->conn_id = pconn->id;
-  } else {
-    /* Must never happen */
-    assert(0);
-  }
-  check_vote(pvote);
-}
-
-/**************************************************************************
-  Cancel the votes of a lost or a detached connection...
-**************************************************************************/
-void cancel_connection_votes(struct connection *pconn)
-{
-  if (!pconn || !vote_list) {
-    return;
-  }
-
-  remove_vote(get_vote_by_caller(pconn));
-
-  vote_list_iterate(vote_list, pvote) {
-    remove_vote_cast(pvote, find_vote_cast(pvote, pconn->id));
-  } vote_list_iterate_end;
 }
 
 /**************************************************************************
@@ -869,11 +376,6 @@ static void unmute_conn_by_mi(struct muteinfo *mi)
 **************************************************************************/
 void stdinhand_turn(void)
 {
-  vote_list_iterate(vote_list, pvote) {
-    pvote->turn_count++;
-    check_vote(pvote);
-  } vote_list_iterate_end;
-
   hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
     if (mi->turns_left > 0) {
       mi->turns_left--;
@@ -889,10 +391,6 @@ void stdinhand_turn(void)
 **************************************************************************/
 void stdinhand_free(void)
 {
-  clear_all_votes();
-  vote_list_free(vote_list);
-  vote_list = NULL;
-
   if (mute_table) {
     hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
       free(mi->addr);
@@ -3611,7 +3109,7 @@ static bool vote_command(struct connection *caller,
   char *arg[2];
   int ntokens = 0, i = 0, which = -1;
   enum m_pre_result match_result;
-  struct voting *pvote = NULL;
+  struct vote *pvote = NULL;
   const char *usage = _("Invalid arguments. Usage: vote "
                         "yes|no|abstain [vote number].");
   bool res = FALSE;
@@ -3760,7 +3258,7 @@ static bool poll_command(struct connection *caller,
 static bool cancel_vote_command(struct connection *caller, char *arg,
                                 bool check)
 {
-  struct voting *pvote = NULL;
+  struct vote *pvote = NULL;
   int vote_no;
 
   if (check) {
@@ -6331,7 +5829,7 @@ bool handle_stdin_input(struct connection * caller,
       && !check && (caller->access_level == ALLOW_BASIC
                     || (commands[cmd].vote_flags & VCF_ALWAYSVOTE))
       && level == ALLOW_CTRL) {
-    struct voting *vote;
+    struct vote *vote;
 
     /* If we already have a vote going, cancel it in favour of the new
      * vote command. You can only have one vote at a time. */
@@ -6343,16 +5841,13 @@ bool handle_stdin_input(struct connection * caller,
     /* Check if the vote command would succeed. */
     if (handle_stdin_input(caller, full_command, TRUE)
         && (vote = vote_new(caller, allargs, cmd, &sv))) {
+      char votedesc[MAX_LEN_CONSOLE_LINE];
 
-      notify_conn(NULL, _("New vote (number %d) by %s: %s%s%s "
-                          "(needs %0.0f%%%s%s%s)."),
+      describe_vote(vote, votedesc, sizeof(votedesc));
+
+      notify_conn(NULL, _("New vote (number %d) by %s: %s"),
                   vote->vote_no, caller->username,
-                  commands[cmd].name,
-                  allargs[0] != '\0' ? " " : "", allargs,
-                  vote->need_pc * 100.0 + 1,
-                  vote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
-                  vote->flags & VCF_NO_DISSENT ? _(" no dissent") : "",
-                  vote->flags & VCF_FASTPASS ? _(" participation") : "");
+                  votedesc);
 
       /* Vote on your own suggestion. */
       connection_vote(caller, vote, VOTE_YES);

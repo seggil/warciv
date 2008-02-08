@@ -19,6 +19,7 @@
 
 #include "connection.h"
 #include "stdinhand.h"
+#include "vote.h"
 
 #include "commands.h"
 

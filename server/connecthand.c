@@ -45,6 +45,7 @@
 #include "srv_main.h"
 #include "stdinhand.h"
 #include "stdinhand_info.h"
+#include "vote.h"
 
 #include "connecthand.h"
 
@@ -821,6 +822,8 @@ bool attach_connection_to_player(struct connection *pconn,
   conn_list_append(game.game_connections, pconn);
 
   restore_access_level(pconn);
+
+  send_running_votes(pconn);
 
   return TRUE;
 }

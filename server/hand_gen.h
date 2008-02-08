@@ -72,5 +72,6 @@ void handle_report_req(struct connection *pc, enum report_type type);
 void handle_conn_pong(struct connection *pc);
 void handle_spaceship_launch(struct player *pplayer);
 void handle_spaceship_place(struct player *pplayer, enum spaceship_place_type type, int num);
+void handle_vote_submit(struct connection *pc, int vote_no, int value);
 
 #endif /* FC__HAND_GEN_H */

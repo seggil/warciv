@@ -52,6 +52,7 @@ used throughout the client.
 #include "messagewin_common.h"
 #include "myai.h"//*pepeto*
 #include "packhand.h"
+#include "pages_g.h"
 #include "plrdlg_common.h"
 #include "repodlgs_common.h"
 #include "tilespec.h"
@@ -99,6 +100,9 @@ static void draw_link_mark(struct map_link *pml);
 
 struct tile *ltile = NULL;
 int ltilex, ltiley;
+
+struct voteinfo_list *voteinfo_queue = NULL;
+static int voteinfo_queue_current_index = 0;
 
 /**************************************************************************
   ...
@@ -1853,4 +1857,246 @@ void force_tech_goal(Tech_Type_id goal)
   if(get_player_ptr()->ai.tech_goal != goal)
     dsend_packet_player_tech_goal(&aconnection, goal);
   dsend_packet_player_research(&aconnection, next);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_queue_delayed_remove(int vote_no)
+{
+  struct voteinfo *vi;
+
+  if (voteinfo_queue == NULL) {
+    freelog(LOG_ERROR, "voteinfo_queue_delayed_remove called before "
+            "votinfo_queue_init!");
+    return;
+  }
+
+  vi = voteinfo_queue_find(vote_no);
+  if (vi == NULL) {
+    return;
+  }
+  vi->remove_time = time(NULL);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_queue_check_removed(void)
+{
+  time_t now;
+  struct voteinfo_list *removed;
+
+  if (voteinfo_queue == NULL) {
+    return;
+  }
+
+  now = time(NULL);
+  removed = voteinfo_list_new();
+  voteinfo_list_iterate(voteinfo_queue, vi) {
+    if (vi != NULL && vi->remove_time > 0
+        && now - vi->remove_time > 2) {
+      voteinfo_list_append(removed, vi);
+    }
+  } voteinfo_list_iterate_end;
+
+  voteinfo_list_iterate(removed, vi) {
+    voteinfo_queue_remove(vi->vote_no);
+  } voteinfo_list_iterate_end;
+
+  if (voteinfo_list_size(removed) > 0) {
+    voteinfo_gui_update();
+  }
+
+  voteinfo_list_free(removed);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_queue_remove(int vote_no)
+{
+  struct voteinfo *vi;
+
+  if (voteinfo_queue == NULL) {
+    freelog(LOG_ERROR, "voteinfo_queue_prepare_remove called before "
+            "votinfo_queue_init!");
+    return;
+  }
+
+  vi = voteinfo_queue_find(vote_no);
+  if (vi == NULL) {
+    return;
+  }
+
+  voteinfo_list_unlink(voteinfo_queue, vi);
+  free(vi);
+}
+
+/**************************************************************************
+  Why not just pass the packet_vote_new all the way here? Modularity and
+  dependency redution.
+**************************************************************************/
+void voteinfo_queue_add(int vote_no,
+                        const char *user,
+                        const char *desc,
+                        int percent_required,
+                        int flags,
+                        bool is_poll)
+{
+  struct voteinfo *vi;
+
+  if (voteinfo_queue == NULL) {
+    freelog(LOG_ERROR, "voteinfo_queue_add called before "
+            "votinfo_queue_init!");
+    return;
+  }
+
+  vi = fc_calloc(1, sizeof(struct voteinfo));
+  vi->vote_no = vote_no;
+  sz_strlcpy(vi->user, user);
+  sz_strlcpy(vi->desc, desc);
+  vi->percent_required = percent_required;
+  vi->flags = flags;
+  vi->is_poll = is_poll;
+
+  voteinfo_list_append(voteinfo_queue, vi);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct voteinfo *voteinfo_queue_find(int vote_no)
+{
+  if (voteinfo_queue == NULL) {
+    freelog(LOG_ERROR, "voteinfo_queue_find called before "
+            "votinfo_queue_init!");
+    return NULL;
+  }
+
+  voteinfo_list_iterate(voteinfo_queue, vi) {
+    if (vi->vote_no == vote_no) {
+      return vi;
+    }
+  } voteinfo_list_iterate_end;
+  return NULL;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_queue_init(void)
+{
+  if (voteinfo_queue != NULL) {
+    voteinfo_queue_free();
+  }
+  voteinfo_queue = voteinfo_list_new();
+  voteinfo_queue_current_index = 0;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_queue_free(void)
+{
+  if (voteinfo_queue == NULL) {
+    return;
+  }
+
+  voteinfo_list_iterate(voteinfo_queue, vi) {
+    if (vi != NULL) {
+      free(vi);
+    }
+  } voteinfo_list_iterate_end;
+
+  voteinfo_list_unlink_all(voteinfo_queue);
+  voteinfo_list_free(voteinfo_queue);
+  voteinfo_queue = NULL;
+  voteinfo_queue_current_index = 0;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct voteinfo *voteinfo_queue_get_current(int *pindex)
+{
+  struct voteinfo *vi;
+  int size;
+
+  if (voteinfo_queue == NULL) {
+    return NULL;
+  }
+  
+  size = voteinfo_list_size(voteinfo_queue);
+
+  if (size <= 0) {
+    return NULL;
+  }
+
+  if (!(0 <= voteinfo_queue_current_index
+        && voteinfo_queue_current_index < size)) {
+    voteinfo_queue_next();
+  }
+
+  vi = voteinfo_list_get(voteinfo_queue, voteinfo_queue_current_index);
+
+  if (vi != NULL && pindex != NULL) {
+    *pindex = voteinfo_queue_current_index;
+  }
+
+  return vi;
+}
+
+/**************************************************************************
+  Obviously only to be used if the server has the voteinfo capability,
+  which is the case when this function is called via the voteinfo gui.
+**************************************************************************/
+void voteinfo_do_vote(int vote_no, enum client_vote_type vote)
+{
+  struct voteinfo *vi;
+  struct packet_vote_submit packet;
+
+  vi = voteinfo_queue_find(vote_no);
+  if (vi == NULL) {
+    return;
+  }
+
+  packet.vote_no = vi->vote_no;
+
+  switch (vote) {
+  case CVT_YES:
+    packet.value = 1;
+    break;
+  case CVT_NO:
+    packet.value = -1;
+    break;
+  case CVT_ABSTAIN:
+    packet.value = 0;
+    break;
+  default:
+    return;
+    break;
+  }
+
+  send_packet_vote_submit(&aconnection, &packet);
+  vi->client_vote = vote;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void voteinfo_queue_next(void)
+{
+  int size;
+
+  if (voteinfo_queue == NULL) {
+    return;
+  }
+
+  size = voteinfo_list_size(voteinfo_queue);
+
+  voteinfo_queue_current_index++;
+  if (voteinfo_queue_current_index >= size) {
+    voteinfo_queue_current_index = 0;
+  }
 }
