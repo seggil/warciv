@@ -55,8 +55,11 @@
 
 /* Players with RDs higher than this are said to have
  * a "provisional" rating, i.e. their rating should not
- * taken as an accurate estimate of their real skill. */
-#define RATING_CONSTANT_RELIABLE_RD 100.0
+ * be taken as an "accurate" estimate of their real
+ * skill. This is currently only used by the /autoteam
+ * command to determine whether to use individual player
+ * ratings for ordering. */
+#define RATING_CONSTANT_RELIABLE_RD 200.0
 
 /* A user must play for at least this many turns before
  * being eligible for a rating update. */
