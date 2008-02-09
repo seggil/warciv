@@ -1228,11 +1228,12 @@ static void setup_widgets(void)
   GtkWidget *box, *ebox, *hbox, *sbox, *align, *label, *button;
   GtkWidget *frame, *table, *table2, *paned, *sw, *text, *splitmsgs;
   GtkStyle *style;
+  GList *focus_chain = NULL;
   int i;
   char buf[256];
   struct Sprite *sprite;
 
-  GtkWidget *notebook, *statusbar;
+  GtkWidget *notebook, *statusbar, *toplevel_vpaned;
 
   message_buffer = gtk_text_buffer_new(NULL);
   refresh_message_buffer_tag_patterns (NULL);
@@ -1270,6 +1271,7 @@ static void setup_widgets(void)
 
   /* the window is divided into two panes. "top" and "message window" */ 
   paned = gtk_vpaned_new();
+  toplevel_vpaned = paned;
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
       paned, NULL);
 
@@ -1427,6 +1429,8 @@ static void setup_widgets(void)
 
   /* turn done */
   turn_done_button = gtk_button_new_with_label(_("Turn Done"));
+  gtk_button_set_focus_on_click(GTK_BUTTON(turn_done_button),
+                                FALSE);
 
   /* the turn done button must have its own style. otherwise when we flash
      the turn done button other widgets may flash too. */
@@ -1595,6 +1599,7 @@ static void setup_widgets(void)
   gtk_box_pack_start(GTK_BOX(hbox), inputline, TRUE, TRUE, 0);
 
   button = gtk_toggle_button_new_with_label(_("Allies Only"));
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   allied_chat_toggle_button = button;
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
                                allied_chat_only);
@@ -1603,20 +1608,29 @@ static void setup_widgets(void)
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   button = gtk_button_new_with_label(_("More Time!"));
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   g_signal_connect(button, "clicked",
                    G_CALLBACK(request_more_time_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   more_time_button = button;
 
   button = gtk_button_new_with_label(_("Request Pause"));
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   g_signal_connect(button, "clicked",
                    G_CALLBACK(request_pause_callback), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   pause_button = button;
 
   button = gtk_button_new_with_label(_("Clear links"));
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   g_signal_connect(button, "clicked", G_CALLBACK(clear_all_link_marks), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+  /* Only allow tab-focusing to the chat entry, and
+   * nowhere else from there.*/
+  focus_chain = g_list_append(NULL, inputline);
+  gtk_container_set_focus_chain(GTK_CONTAINER(toplevel_vpaned),
+                                focus_chain);
 
   /* Other things to take care of */
 
