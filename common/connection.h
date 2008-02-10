@@ -339,6 +339,4 @@ int get_next_request_id(int old_request_id);
 
 extern const char blank_addr_str[];
 
-extern int delayed_disconnect;
-
 #endif  /* FC__CONNECTION_H */

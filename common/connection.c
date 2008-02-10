@@ -51,12 +51,6 @@
  */
 const char blank_addr_str[] = "---.---.---.---";
 
-/* This is only used by the server.
-   If it is set the disconnection of conns is posponed. This is sometimes
-   neccesary as removing a random connection while we are iterating through
-   a connection list might corrupt the list. */
-int delayed_disconnect = 0;
-
 /* NB Must match enum conn_pattern_type
    in common/connection.h */
 char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
