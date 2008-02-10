@@ -1073,6 +1073,9 @@ static void create_default_tag_patterns(struct tag_pattern_list *tpl)
   MK_TAG_PATTERN("ally message", "to allies: ",
                   TPF_REQUIRE_PREVIOUS_MATCH,
                   "", "#551166", "");
+
+  MK_TAG_PATTERN("player emote", "^ ", TPF_MATCH_AT_START, "", "#006D6E", "");
+  MK_TAG_PATTERN("server emote", "+ ", TPF_MATCH_AT_START, "", "#8C0015", "");
   
 
   MK_TAG_PATTERN("", "/show: ", TPF_IS_CONTROL_ONLY
