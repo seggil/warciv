@@ -271,7 +271,7 @@ void close_connections_and_socket(void)
   error.  Closes the connection cleanly, calling lost_connection_to_client()
   to clean up server variables, notify other clients, etc.
 *****************************************************************************/
-static void close_socket_callback(struct connection *pc)
+static void server_close_socket_callback(struct connection *pc)
 {
   lost_connection_to_client(pc);
   close_connection(pc);
@@ -290,7 +290,7 @@ void server_break_connection(struct connection *pconn, enum exit_state state)
   }
   flush_connection_send_buffer_all(pconn);
 
-  close_socket_callback(pconn);
+  server_close_socket_callback(pconn);
 }
 
 /****************************************************************************
@@ -731,11 +731,10 @@ int sniff_packets(void)
           continue;
         }
 
-        /* read single real packet */
         nb = read_socket_data(pconn->sock, pconn->buffer);
 	if (nb < 0) {
-          /* read error */
-	  close_socket_callback(pconn);
+          /* Read error or connection closed. */
+	  server_close_socket_callback(pconn);
 	}
           
 
@@ -774,7 +773,7 @@ int sniff_packets(void)
           finish_processing_request(pconn);
           connection_do_unbuffer(pconn);
           if (!command_ok) {
-            close_socket_callback(pconn);
+            server_close_socket_callback(pconn);
           }
 
 #if PROCESSING_TIME_STATISTICS
@@ -1101,7 +1100,6 @@ int server_open_socket(void)
     freelog(LOG_ERROR, "setsockopt failed: %s", mystrsocketerror());
   }
 
-  close_socket_set_callback(close_socket_callback);
   return 0;
 }
 
@@ -1134,6 +1132,8 @@ void init_connections(void)
       lib$stop(status);
   }
 #endif
+
+  close_socket_set_callback(server_close_socket_callback);
 }
 
 /**************************************************************************

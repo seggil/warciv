@@ -161,35 +161,37 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
 /**************************************************************************
   Read data from socket, and check if a packet is ready.
   Returns:
-    -1  :  an error occurred - you should close the socket
+    -1  :  an error occurred OR the connection was closed
     >0  :  number of bytes read
     =0  :  non-blocking sockets only; no data read, would block
 **************************************************************************/
 int read_socket_data(int sock, struct socket_packet_buffer *buffer)
 {
-  int didget;
+  int nb;
 
   if (!buffer_ensure_free_extra_space(buffer, MAX_LEN_PACKET)) {
-    freelog(LOG_ERROR, "can't grow buffer");
+    freelog(LOG_ERROR, "Failed to increase size of packet read buffer.");
     return -1;
   }
 
-  freelog(LOG_DEBUG, "try reading %d bytes", buffer->nsize - buffer->ndata);
-  didget = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
-			 buffer->nsize - buffer->ndata);
+  freelog(LOG_DEBUG, "read_socket_data: trying to read %d bytes",
+          buffer->nsize - buffer->ndata);
+  nb = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
+                     buffer->nsize - buffer->ndata);
+  freelog(LOG_DEBUG, "my_readsocket returns nb=%d (%s)",
+          nb, mystrerror());
 
-  if (didget > 0) {
-    buffer->ndata+=didget;
-    freelog(LOG_DEBUG, "didget:%d", didget);
-    return didget;
+  if (nb > 0) {
+    buffer->ndata += nb;
+    return nb;
   }
-  if (didget == 0) {
-    freelog(LOG_DEBUG, "EOF on socket read");
+
+  if (nb == 0) {
     return -1;
   }
+
 #ifdef NONBLOCKING_SOCKETS
   if (my_socket_would_block()) {
-    freelog (LOG_DEBUG, "socket read would block");
     return 0;
   }
 #endif
