@@ -429,9 +429,9 @@ static void unit_restore_movepoints(struct player *pplayer, struct unit *punit)
 **************************************************************************/
 void update_unit_activities(struct player *pplayer)
 {
-  unit_list_iterate_safe(pplayer->units, punit)
+  unit_list_iterate_safe(pplayer->units, punit) {
     update_unit_activity(punit);
-  unit_list_iterate_safe_end;
+  } unit_list_iterate_safe_end;
 }
 
 /**************************************************************************
@@ -2011,6 +2011,7 @@ void send_all_known_units(struct conn_list *dest)
     }
   } conn_list_iterate_end;
   conn_list_do_unbuffer(dest);
+  force_flush_packets();
 }
 
 

@@ -1481,9 +1481,9 @@ void send_all_known_cities(struct conn_list *dest)
 	send_city_info_at_tile(pplayer, pconn->self, NULL, ptile);
       }
     } whole_map_iterate_end;
-  }
-  conn_list_iterate_end;
+  } conn_list_iterate_end;
   conn_list_do_unbuffer(dest);
+  force_flush_packets();
 }
 
 /**************************************************************************

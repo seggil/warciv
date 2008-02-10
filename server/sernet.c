@@ -295,9 +295,9 @@ void server_break_connection(struct connection *pconn, enum exit_state state)
 
 /****************************************************************************
   Attempt to flush all information in the send buffers for upto 'netwait'
-  seconds.
+  seconds (default netwait is 4 seconds).
 *****************************************************************************/
-void flush_packets(void)
+void force_flush_packets(void)
 {
   int i;
   int max_desc;
@@ -326,16 +326,14 @@ void flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
       pconn = &connections[i];
-      if (!pconn->used || pconn->delayed_disconnect) {
+      if (!pconn->used || pconn->delayed_disconnect
+          || pconn->send_buffer == NULL
+          || pconn->send_buffer->ndata <= 0) {
         continue;
       }
-      if (pconn->send_buffer != NULL
-          && pconn->send_buffer->ndata > 0) {
-        freelog(LOG_DEBUG, "pconn %s added to write set", conn_description(pconn));
-        FD_SET(pconn->sock, &writefs);
-      }
+      freelog(LOG_DEBUG, "pconn %s added to write set", conn_description(pconn));
+      FD_SET(pconn->sock, &writefs);
       FD_SET(pconn->sock, &exceptfs);
-      freelog(LOG_DEBUG, "pconn %s added to except set", conn_description(pconn));
       max_desc = MAX(pconn->sock, max_desc);
     }
 
@@ -350,7 +348,9 @@ void flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
       pconn = &connections[i];
-      if (!pconn->used || pconn->delayed_disconnect) {
+      if (!pconn->used || pconn->delayed_disconnect
+          || pconn->send_buffer == NULL
+          || pconn->send_buffer->ndata <= 0) {
         continue;
       }
 
@@ -359,10 +359,6 @@ void flush_packets(void)
                               "network exception."),
                 conn_description(pconn));
         server_break_connection(pconn, ES_NETWORK_EXCEPTION);
-        continue;
-      }
-
-      if (pconn->send_buffer == NULL || pconn->send_buffer->ndata <= 0) {
         continue;
       }
 

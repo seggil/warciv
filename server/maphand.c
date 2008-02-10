@@ -415,7 +415,8 @@ void send_all_known_tiles(struct conn_list *dest)
   whole_map_iterate(ptile) {
     tiles_sent++;
     if ((tiles_sent % map.xsize) == 0) {
-      conn_list_do_unbuffer(dest); /* Flushes buffers. */
+      conn_list_do_unbuffer(dest);
+      force_flush_packets();
       conn_list_do_buffer(dest);
     }
 
@@ -433,6 +434,7 @@ void send_all_known_tiles(struct conn_list *dest)
   } whole_map_iterate_end;
 
   conn_list_do_unbuffer(dest);
+  force_flush_packets();
 }
 
 /**************************************************************************

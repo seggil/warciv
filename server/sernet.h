@@ -23,7 +23,7 @@
 #define SERVER_LAN_VERSION 1
 
 int server_open_socket(void);
-void flush_packets(void);
+void force_flush_packets(void);
 int sniff_packets(void);
 void close_connections_and_socket(void);
 void server_break_connection(struct connection *pconn, enum exit_state state);
