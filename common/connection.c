@@ -264,7 +264,7 @@ static int write_socket_data(struct connection *pc,
 
   if (ret == -1) {
     /* I guess we have to close it here. */
-    call_close_socket_callback(pc, STATE_STREAM_ERROR);
+    call_close_socket_callback(pc, ES_WRITE_ERROR);
   }
 
   return ret;
@@ -311,7 +311,7 @@ static bool add_connection_data(struct connection *pc,
   buf = pc->send_buffer;
 
   if (!buffer_ensure_free_extra_space(buf, len)) {
-    call_close_socket_callback(pc, STATE_HUGE_BUFFER);
+    call_close_socket_callback(pc, ES_BUFFER_OVERFLOW);
     return FALSE;
   }
 
@@ -518,14 +518,16 @@ const char *conn_description(const struct connection *pconn)
   static char buffer[MAX_LEN_NAME * 2 + MAX_LEN_ADDR + 128];
   static const char *exit_state_name[] = {
     NULL,
-    N_("stream error"),
+    N_("unknown"),
+    N_("deconding error"),
     N_("ping timeout"),
-    N_("exception data"),
-    N_("huge buffer sent"),
+    N_("network exception"),
+    N_("buffer overflow"),
     N_("lagging connection"),
     N_("banned"),
     N_("auth failed"),
     N_("cut connection"),
+    N_("write error")
   };
 
   if (pconn == NULL) {
@@ -657,7 +659,7 @@ void connection_common_init(struct connection *pconn)
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
   pconn->access_level = pconn->granted_access_level = ALLOW_NONE;
-  pconn->exit_state = STATE_NORMAL;
+  pconn->exit_state = ES_NONE;
   if (is_server) {
     pconn->server.ignore_list = ignore_list_new();
   } else {

@@ -75,17 +75,21 @@ enum auth_status {
   AS_ESTABLISHED
 };
 
-/* Determines why the connection is closed */
+/* Describes how a connection was closed. */
+/* NB: If you change these values, be sure to
+ * update exit_state_name in conn_description. */
 enum exit_state {
-  STATE_NORMAL = 0,
-  STATE_STREAM_ERROR,
-  STATE_PING_TIMEOUT,
-  STATE_EXCEPTION_DATA,
-  STATE_HUGE_BUFFER,
-  STATE_LAGGING_CONN,
-  STATE_BANNED,
-  STATE_AUTH_FAILED,
-  STATE_CUT_COMMAND
+  ES_NONE = 0,
+  ES_UNKNOWN,
+  ES_DECODING_ERROR,
+  ES_PING_TIMEOUT,
+  ES_NETWORK_EXCEPTION,
+  ES_BUFFER_OVERFLOW,
+  ES_LAGGING_CONN,
+  ES_BANNED,
+  ES_AUTH_FAILED,
+  ES_CUT_COMMAND,
+  ES_WRITE_ERROR,
 };
 
 /* get 'struct conn_list' and related functions: */

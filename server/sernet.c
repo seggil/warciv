@@ -304,60 +304,71 @@ void flush_packets(void)
   fd_set writefs, exceptfs;
   struct timeval tv;
   time_t start;
+  struct connection *pconn;
 
-  (void) time(&start);
+  start = time(NULL);
 
-  for(;;) {
-    tv.tv_sec=(game.server.netwait - (time(NULL) - start));
-    tv.tv_usec=0;
+  for (;;) {
+    tv.tv_sec = (game.server.netwait - (time(NULL) - start));
+    tv.tv_usec = 0;
 
-    if (tv.tv_sec < 0)
+    if (tv.tv_sec < 0) {
       return;
+    }
 
     MY_FD_ZERO(&writefs);
     MY_FD_ZERO(&exceptfs);
-    max_desc=-1;
+    max_desc = -1;
 
-    for(i=0; i<MAX_NUM_CONNECTIONS; i++) {
-      struct connection *pconn = &connections[i];
-      if(pconn->used && !pconn->delayed_disconnect
-         && pconn->send_buffer->ndata > 0) {
-	FD_SET(pconn->sock, &writefs);
-	FD_SET(pconn->sock, &exceptfs);
-	max_desc=MAX(pconn->sock, max_desc);
+    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
+      pconn = &connections[i];
+      if (!pconn->used || pconn->delayed_disconnect) {
+        continue;
       }
+      if (pconn->send_buffer != NULL
+          && pconn->send_buffer->ndata > 0) {
+        FD_SET(pconn->sock, &writefs);
+      }
+      FD_SET(pconn->sock, &exceptfs);
+      max_desc = MAX(pconn->sock, max_desc);
     }
 
     if (max_desc == -1) {
       return;
     }
 
-    if(select(max_desc+1, NULL, &writefs, &exceptfs, &tv)<=0) {
+    if (select(max_desc + 1, NULL, &writefs, &exceptfs, &tv) <= 0) {
       return;
     }
 
-    for(i=0; i<MAX_NUM_CONNECTIONS; i++) {   /* check for freaky players */
-      struct connection *pconn = &connections[i];
-      if(pconn->used && !pconn->delayed_disconnect) {
-        if(FD_ISSET(pconn->sock, &exceptfs)) {
-	  freelog(LOG_NORMAL, "cut connection %s due to exception data",
-		  conn_description(pconn));
-	  server_break_connection(pconn, STATE_EXCEPTION_DATA);
-        } else {
-	  if(pconn->send_buffer && pconn->send_buffer->ndata > 0) {
-	    if(FD_ISSET(pconn->sock, &writefs)) {
-	      flush_connection_send_buffer_all(pconn);
-	    } else {
-	      if(game.server.tcptimeout != 0 && pconn->last_write != 0
-		 && (time(NULL)>pconn->last_write + game.server.tcptimeout)) {
-		freelog(LOG_NORMAL,
-			"cut connection %s due to lagging player",
-			conn_description(pconn));
-		server_break_connection(pconn, STATE_LAGGING_CONN);
-	      }
-	    }
-	  }
-        }
+    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
+      pconn = &connections[i];
+      if (!pconn->used || pconn->delayed_disconnect) {
+        continue;
+      }
+
+      if (FD_ISSET(pconn->sock, &exceptfs)) {
+        freelog(LOG_NORMAL, _("Cutting connection %s due to "
+                              "network exception."),
+                conn_description(pconn));
+        server_break_connection(pconn, ES_NETWORK_EXCEPTION);
+        continue;
+      }
+
+      if (pconn->send_buffer == NULL || pconn->send_buffer->ndata <= 0) {
+        continue;
+      }
+
+      if (FD_ISSET(pconn->sock, &writefs)) {
+        flush_connection_send_buffer_all(pconn);
+      }
+
+      if (game.server.tcptimeout != 0 && pconn->last_write != 0
+          && (time(NULL) > pconn->last_write + game.server.tcptimeout)) {
+        freelog(LOG_NORMAL, _("Cutting connection %s due to write lag "
+                              "(waited too long for write)."),
+                conn_description(pconn));
+        server_break_connection(pconn, ES_LAGGING_CONN);
       }
     }
   }
@@ -515,7 +526,7 @@ int sniff_packets(void)
             freelog(LOG_NORMAL, "Disconnecting %s due to ping timeout.",
                     conn_description(pconn));
 
-            server_break_connection(pconn, STATE_PING_TIMEOUT);
+            server_break_connection(pconn, ES_PING_TIMEOUT);
           }
         } else {
           ping_connection(pconn);
@@ -655,7 +666,7 @@ int sniff_packets(void)
       freelog(LOG_ERROR, "Disconnecting %s due to network "
               "data exception.",
               conn_description(pconn));
-      server_break_connection(pconn, STATE_EXCEPTION_DATA);
+      server_break_connection(pconn, ES_NETWORK_EXCEPTION);
     }
 
     /* Check for adns responses */
@@ -811,7 +822,7 @@ int sniff_packets(void)
           freelog(LOG_ERROR, "Disconnecting %s due to timeout waiting "
                   "for write readiness.",
                   conn_description(pconn));
-          server_break_connection(pconn, STATE_LAGGING_CONN);
+          server_break_connection(pconn, ES_LAGGING_CONN);
         }
       }
     }

@@ -7015,7 +7015,7 @@ static bool cut_client_connection(struct connection *caller, char *name,
   was_connected = pplayer ? pplayer->is_connected : FALSE;
   cmd_reply(CMD_CUT, caller, C_DISCONNECTED,
             _("Cutting connection %s."), ptarget->username);
-  server_break_connection(ptarget, STATE_CUT_COMMAND);
+  server_break_connection(ptarget, ES_CUT_COMMAND);
   /* if we cut the connection, unassign the login name */
   if (pplayer && was_connected && !pplayer->is_connected) {
     sz_strlcpy(pplayer->username, ANON_USER_NAME);
