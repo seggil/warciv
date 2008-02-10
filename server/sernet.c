@@ -270,6 +270,9 @@ void close_connections_and_socket(void)
   passed to packet routines as callback for when packet sending has a write
   error.  Closes the connection cleanly, calling lost_connection_to_client()
   to clean up server variables, notify other clients, etc.
+
+  NB!! You should almost always use server_break_connection instead of this
+  function.
 *****************************************************************************/
 static void server_close_socket_callback(struct connection *pc)
 {
@@ -279,7 +282,8 @@ static void server_close_socket_callback(struct connection *pc)
 
 /*****************************************************************************
   Break a client connection. Send the packet which will allow the client
-  to reconnect.
+  to reconnect. You should almost always use this function instead of
+  calling server_close_socket_callback directly.
 *****************************************************************************/
 void server_break_connection(struct connection *pconn, enum exit_state state)
 {
@@ -730,7 +734,7 @@ int sniff_packets(void)
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         void *packet;
         enum packet_type type;
-        bool result, command_ok;
+        bool result, accepted;
 
 #if PROCESSING_TIME_STATISTICS
         int err;
@@ -748,9 +752,10 @@ int sniff_packets(void)
         nb = read_socket_data(pconn->sock, pconn->buffer);
 	if (nb < 0) {
           /* Read error or connection closed. */
-	  server_close_socket_callback(pconn);
+          /* FIXME It should distinguish between read errors
+           * and simple peer disconnects. */
+          server_break_connection(pconn, ES_REMOTE_CLOSE);
 	}
-          
 
         while (TRUE) {
           /* decode "freeciv packets" from real packet */
@@ -773,7 +778,7 @@ int sniff_packets(void)
           start_processing_request(pconn,
                                    pconn->server.
                                    last_request_id_seen);
-          command_ok = handle_packet_input(pconn, packet, type);
+          accepted = handle_packet_input(pconn, packet, type);
           if (packet) {
             free(packet);
             packet = NULL;
@@ -786,8 +791,8 @@ int sniff_packets(void)
 
           finish_processing_request(pconn);
           connection_do_unbuffer(pconn);
-          if (!command_ok) {
-            server_close_socket_callback(pconn);
+          if (!accepted) {
+            server_break_connection(pconn, ES_REJECTED);
           }
 
 #if PROCESSING_TIME_STATISTICS

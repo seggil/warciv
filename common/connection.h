@@ -80,16 +80,18 @@ enum auth_status {
  * update exit_state_name in conn_description. */
 enum exit_state {
   ES_NONE = 0,
-  ES_UNKNOWN,
-  ES_DECODING_ERROR,
+  ES_UNKNOWN,        /* Should not be used, unless unavoidable. */
+  ES_DECODING_ERROR, /* Failed decompressing or parsing packets. */
   ES_PING_TIMEOUT,
   ES_NETWORK_EXCEPTION,
   ES_BUFFER_OVERFLOW,
-  ES_LAGGING_CONN,
+  ES_LAGGING_CONN,   /* Waited too long to write. */
   ES_BANNED,
   ES_AUTH_FAILED,
   ES_CUT_COMMAND,
   ES_WRITE_ERROR,
+  ES_REMOTE_CLOSE,  /* FIXME Also used for read errors. */
+  ES_REJECTED       /* handle_packet_input returned FALSE. */
 };
 
 /* get 'struct conn_list' and related functions: */

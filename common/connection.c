@@ -521,7 +521,9 @@ const char *conn_description(const struct connection *pconn)
     N_("banned"),
     N_("auth failed"),
     N_("cut connection"),
-    N_("write error")
+    N_("write error"),
+    N_("peer disconnected"),
+    N_("rejected")
   };
 
   if (pconn == NULL) {
