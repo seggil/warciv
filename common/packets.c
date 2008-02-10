@@ -393,7 +393,7 @@ void *get_packet_from_connection(struct connection *pc,
     if (error != Z_OK) {
       freelog(LOG_ERROR, "Uncompressing of the packet stream failed. "
 	      "The connection will be closed now.");
-    close_socket(pc, STATE_STREAM_ERROR);
+      call_close_socket_callback(pc, STATE_STREAM_ERROR);
 
       return NULL;
     }
@@ -439,7 +439,7 @@ void *get_packet_from_connection(struct connection *pc,
   if (whole_packet_len < 3) {
     freelog(LOG_ERROR, "The packet stream is corrupt. The connection "
 	    "will be closed now.");
-    close_socket(pc, STATE_STREAM_ERROR);
+    call_close_socket_callback(pc, STATE_STREAM_ERROR);
 
     return NULL;
   }

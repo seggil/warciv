@@ -129,7 +129,8 @@ void close_socket_set_callback(CLOSE_FUN fun)
 /**************************************************************************
   Call the callback to close the socket.
 **************************************************************************/
-void close_socket(struct connection *pc, enum exit_state state)
+void call_close_socket_callback(struct connection *pc,
+                                enum exit_state state)
 {
   assert(pc != NULL);
   assert(close_callback != NULL);
