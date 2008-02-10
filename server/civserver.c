@@ -20,6 +20,7 @@
 #include <string.h>
 #ifndef WIN32_NATIVE
 #include <signal.h>
+#include <unistd.h>
 #endif
 
 #ifdef GENERATING_MAC  /* mac header(s) */
@@ -51,14 +52,20 @@ static void Mac_options(int argc);  /* don't need argv */
 #endif
 
 /**************************************************************************
-  Exit cleanly on SIGQUIT.
+  ...
 **************************************************************************/
 #ifndef WIN32_NATIVE
-static void signal_handler (int sig)
+static void signal_handler(int sig)
 {
+  /* Exit on SIGQUIT. */
   if (sig == SIGQUIT) {
-    fc_fprintf (stderr, _("\nServer quitting on SIGQUIT\n"));
-    server_quit();
+    fc_fprintf(stderr, _("\nServer quitting on SIGQUIT\n"));
+
+    /* Because the signal may have interrupted arbitrary code,
+     * we use _exit here instead of exit so that we don't
+     * accidentally call any "unsafe" functions here (see the
+     * manual page for the signal function). */
+    _exit(EXIT_SUCCESS);
   }
 }
 #endif
@@ -228,6 +235,13 @@ int main(int argc, char *argv[])
 #ifndef WIN32_NATIVE
   if (signal(SIGQUIT, signal_handler) == SIG_ERR) {
     fc_fprintf(stderr, _("Failed to install SIGQUIT handler: %s\n"), mystrerror());
+    exit(EXIT_FAILURE);
+  }
+
+  /* Ignore SIGPIPE, the error is handled by the return value
+   * of the write call. */
+  if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+    fc_fprintf(stderr, _("Failed to ignore SIGPIPE: %s\n"), mystrerror());
     exit(EXIT_FAILURE);
   }
 #endif
