@@ -1478,6 +1478,7 @@ static void setup_widgets(void)
 
   label = gtk_label_new_with_mnemonic(_("_Map"));
   gtk_notebook_append_page(GTK_NOTEBOOK(top_notebook), table, label);
+  focus_chain = g_list_append(focus_chain, top_notebook);
 
   frame = gtk_frame_new(NULL);
   gtk_table_attach(GTK_TABLE(table), frame, 0, 1, 0, 1,
@@ -1592,6 +1593,7 @@ static void setup_widgets(void)
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 3);
 
   inputline = gtk_entry_new();
+  focus_chain = g_list_append(focus_chain, inputline);
   g_signal_connect(inputline, "activate",
 		   G_CALLBACK(inputline_return), NULL);
   g_signal_connect(inputline, "key_press_event",
@@ -1626,11 +1628,11 @@ static void setup_widgets(void)
   g_signal_connect(button, "clicked", G_CALLBACK(clear_all_link_marks), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-  /* Only allow tab-focusing to the chat entry, and
-   * nowhere else from there.*/
-  focus_chain = g_list_append(NULL, inputline);
+  /* Only allow tab-focusing between the chat entry and
+   * the main notebook. */
   gtk_container_set_focus_chain(GTK_CONTAINER(toplevel_vpaned),
                                 focus_chain);
+  g_list_free(focus_chain);
 
   /* Other things to take care of */
 
