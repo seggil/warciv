@@ -145,16 +145,24 @@ void call_close_socket_callback(struct connection *pc,
 static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
 					   int extra_space)
 {
-  /* room for more? */
-  if (buf->nsize - buf->ndata < extra_space) {
-    buf->nsize = buf->ndata + extra_space;
-
-    /* added this check so we don't gobble up too much mem */
-    if (buf->nsize > MAX_LEN_PACKET_BUFFER) {
-      return FALSE;
-    }
-    buf->data = (unsigned char *) fc_realloc(buf->data, buf->nsize);
+  if (buf->nsize - buf->ndata >= extra_space) {
+    /* There is enough free space already. */
+    return TRUE;
   }
+
+  /* Double the capacity each time we need more space to
+   * avoid calling realloc too much. */
+  while (buf->nsize < buf->ndata + extra_space) {
+    buf->nsize *= 2;
+  }
+
+  /* Abort if we are taking up too much memory (probably due
+   * to a bug somewhere). */
+  if (buf->nsize > MAX_LEN_PACKET_BUFFER) {
+    return FALSE;
+  }
+
+  buf->data = (unsigned char *) fc_realloc(buf->data, buf->nsize);
   return TRUE;
 }
 
@@ -178,8 +186,8 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
           buffer->nsize - buffer->ndata);
   nb = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
                      buffer->nsize - buffer->ndata);
-  freelog(LOG_DEBUG, "my_readsocket returns nb=%d (%s)",
-          nb, mystrerror());
+  freelog(LOG_DEBUG, "my_readsocket nb=%d: %s",
+          nb, mystrsocketerror());
 
   if (nb > 0) {
     buffer->ndata += nb;
@@ -187,6 +195,7 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
   }
 
   if (nb == 0) {
+    freelog(LOG_DEBUG, "read_socket_data: peer disconnected");
     return -1;
   }
 
@@ -195,106 +204,69 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
     return 0;
   }
 #endif
+
   return -1;
 }
 
 /**************************************************************************
-  ...
+  Returns -1 on error and >= 0 otherwise.
 **************************************************************************/
-static int connection_maybe_delay_disconnect(struct connection *pc)
+static int write_socket_data(struct connection *pc,
+                             struct socket_packet_buffer *buf)
 {
-  if (delayed_disconnect > 0) {
-    pc->delayed_disconnect = TRUE;
+  int count = 0, nput = 0, nblock = 0, ret = 0;
+
+  if (pc == NULL || buf == NULL || buf->ndata <= 0
+      || !pc->used || pc->delayed_disconnect) {
     return 0;
   }
 
-  if (close_callback) {
-    (*close_callback)(pc);
-  }
-  return -1;
-}
+  while (buf->ndata - count > 0) {
+    nblock = MIN(buf->ndata - count, MAX_LEN_PACKET);
 
-/**************************************************************************
-  write wrapper function -vasc
-**************************************************************************/
-static int write_socket_data(struct connection *pc,
-                             struct socket_packet_buffer *buf,
-                             int limit)
-{
-  int start, nput, nblock;
+    freelog(LOG_DEBUG, "trying to write %d bytes to %s",
+            nblock, conn_description(pc));
+    nput = my_writesocket(pc->sock, buf->data + count, nblock);
+    freelog(LOG_DEBUG, "write returns nput=%d: %s",
+            nput, mystrsocketerror());
 
-  if (pc->delayed_disconnect) {
-    return connection_maybe_delay_disconnect(pc);
-  }
 
-  for (start = 0; buf->ndata - start > limit; ) {
-    fd_set writefs, exceptfs;
-    struct timeval tv;
-
-    MY_FD_ZERO(&writefs);
-    MY_FD_ZERO(&exceptfs);
-    FD_SET(pc->sock, &writefs);
-    FD_SET(pc->sock, &exceptfs);
-
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-
-    if (select(pc->sock + 1, NULL, &writefs, &exceptfs, &tv) <= 0) {
-
-      /* EINTR can happen sometimes, especially when compiling with -pg.
-       * Generally we just want to run select again. */
-#ifdef WIN32_NATIVE
-      if (my_errno() == WSAEINTR) {
-        continue;
-      }
-#else
-      if (my_errno() == EINTR) {
-        continue;
-      }
-#endif
-
-      /* Select failed with some other error. */
-      freelog(LOG_ERROR, "select on write for %s failed: %s",
-              conn_description(pc), mystrerror());
-      break;
-    }
-
-    if (FD_ISSET(pc->sock, &exceptfs)) {
-      freelog(LOG_ERROR, "network exception during write for %s",
-              conn_description(pc));
-      return connection_maybe_delay_disconnect(pc);
-    }
-
-    if (!FD_ISSET(pc->sock, &writefs)) {
-      continue;
-    }
-
-    nblock = MIN(buf->ndata - start, MAX_LEN_PACKET);
-
-    freelog(LOG_DEBUG, "trying to write %d limit=%d", nblock, limit);
-
-    nput = my_writesocket(pc->sock, buf->data + start, nblock);
     if (nput == -1) {
-
 #ifdef NONBLOCKING_SOCKETS
       if (my_socket_would_block()) {
+        freelog(LOG_DEBUG, "write would block");
         break;
       }
 #endif
-      freelog(LOG_ERROR, "write of %d bytes failed for %s: %s",
-              nblock, conn_description(pc), mystrerror());
-      return connection_maybe_delay_disconnect(pc);
+      ret = -1;
+      break;
     }
-    start += nput;
+
+    if (nput == 0) {
+      freelog(LOG_DEBUG, "wrote nothing... trying later");
+      /* Try again later. */
+      break;
+    }
+
+    count += nput;
   }
 
-  if (start > 0) {
-    buf->ndata -= start;
-    memmove(buf->data, buf->data + start, buf->ndata);
-    time(&pc->last_write);
+  if (count > 0) {
+    buf->ndata -= count;
+    memmove(buf->data, buf->data + count, buf->ndata);
+    pc->last_write = time(NULL);
+    if (ret != -1) {
+      ret = count;
+    }
+    pc->statistics.bytes_send += count;
   }
 
-  return 0;
+  if (ret == -1) {
+    /* I guess we have to close it here. */
+    call_close_socket_callback(pc, STATE_STREAM_ERROR);
+  }
+
+  return ret;
 }
 
 
@@ -303,35 +275,32 @@ static int write_socket_data(struct connection *pc,
 **************************************************************************/
 void flush_connection_send_buffer_all(struct connection *pc)
 {
-  if (pc && pc->used && pc->send_buffer->ndata > 0) {
-    write_socket_data(pc, pc->send_buffer, 0);
-    if (pc->notify_of_writable_data) {
-      pc->notify_of_writable_data(pc, pc->send_buffer
-                                  && pc->send_buffer->ndata > 0);
-    }
+  if (pc == NULL || !pc->used || pc->send_buffer == NULL
+      || pc->send_buffer->ndata <= 0) {
+    return;
+  }
+
+  write_socket_data(pc, pc->send_buffer);
+
+  if (pc->notify_of_writable_data) {
+    pc->notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
   }
 }
 
 /**************************************************************************
-  flush'em
-**************************************************************************/
-static void flush_connection_send_buffer_packets(struct connection *pc)
-{
-  if (pc && pc->used && pc->send_buffer->ndata >= MAX_LEN_PACKET) {
-    write_socket_data(pc, pc->send_buffer, MAX_LEN_PACKET-1);
-    if (pc->notify_of_writable_data) {
-      pc->notify_of_writable_data(pc, pc->send_buffer
-				  && pc->send_buffer->ndata > 0);
-    }
-  }
-}
-
-/**************************************************************************
-...
+  NB: May call call_close_socket_callback if buffer space allocation
+  fails. In that case FALSE will be returned.
 **************************************************************************/
 static bool add_connection_data(struct connection *pc,
 				const unsigned char *data, int len)
 {
+  struct socket_packet_buffer *buf;
+
+  if (pc == NULL || !pc->used || pc->send_buffer == NULL) {
+    return TRUE;
+  }
+
+#if 0
   if (pc && pc->delayed_disconnect) {
     if (delayed_disconnect > 0) {
       return TRUE;
@@ -342,30 +311,17 @@ static bool add_connection_data(struct connection *pc,
       return FALSE;
     }
   }
+#endif
 
-  if (pc && pc->used) {
-    struct socket_packet_buffer *buf;
+  buf = pc->send_buffer;
 
-    buf = pc->send_buffer;
-
-    freelog(LOG_DEBUG, "add %d bytes to %d (space=%d)", len, buf->ndata,
-	    buf->nsize);
-    if (!buffer_ensure_free_extra_space(buf, len)) {
-      pc->exit_state = STATE_HUGE_BUFFER;
-      if (delayed_disconnect > 0) {
-	pc->delayed_disconnect = TRUE;
-	return TRUE;
-      } else {
-	if (close_callback) {
-	  (*close_callback) (pc);
-	}
-	return FALSE;
-      }
-    }
-    memcpy(buf->data + buf->ndata, data, len);
-    buf->ndata += len;
-    return TRUE;
+  if (!buffer_ensure_free_extra_space(buf, len)) {
+    call_close_socket_callback(pc, STATE_HUGE_BUFFER);
+    return FALSE;
   }
+
+  memcpy(buf->data + buf->ndata, data, len);
+  buf->ndata += len;
   return TRUE;
 }
 
@@ -375,24 +331,21 @@ static bool add_connection_data(struct connection *pc,
 void send_connection_data(struct connection *pc, const unsigned char *data,
 			  int len)
 {
-  if (pc && pc->used) {
-    pc->statistics.bytes_send += len;
-    if(pc->send_buffer->do_buffer_sends > 0) {
-      flush_connection_send_buffer_packets(pc);
-      if (!add_connection_data(pc, data, len)) {
-	freelog(LOG_ERROR, "cut connection %s due to huge send buffer (1)",
-		conn_description(pc));
-      }
-      flush_connection_send_buffer_packets(pc);
-    } else {
-      flush_connection_send_buffer_all(pc);
-      if (!add_connection_data(pc, data, len)) {
-	freelog(LOG_ERROR, "cut connection %s due to huge send buffer (2)",
-		conn_description(pc));
-      }
-      flush_connection_send_buffer_all(pc);
-    }
+  if (pc == NULL || !pc->used) {
+    return;
   }
+
+  if (!add_connection_data(pc, data, len)) {
+    return;
+  }
+
+  if (pc->send_buffer->do_buffer_sends > 0) {
+    /* Data will be sent on the last call to
+     * connection_do_unbuffer. */
+    return;
+  }
+
+  flush_connection_send_buffer_all(pc);
 }
 
 /**************************************************************************
@@ -400,9 +353,11 @@ void send_connection_data(struct connection *pc, const unsigned char *data,
 **************************************************************************/
 void connection_do_buffer(struct connection *pc)
 {
-  if (pc && pc->used) {
-    pc->send_buffer->do_buffer_sends++;
+  if (pc == NULL || !pc->used || pc->send_buffer == NULL) {
+    return;
   }
+
+  pc->send_buffer->do_buffer_sends++;
 }
 
 /**************************************************************************
@@ -412,14 +367,19 @@ void connection_do_buffer(struct connection *pc)
 **************************************************************************/
 void connection_do_unbuffer(struct connection *pc)
 {
-  if (pc && pc->used) {
-    pc->send_buffer->do_buffer_sends--;
-    if (pc->send_buffer->do_buffer_sends < 0) {
-      freelog(LOG_ERROR, "Too many calls to unbuffer %s!", pc->username);
-      pc->send_buffer->do_buffer_sends = 0;
-    }
-    if(pc->send_buffer->do_buffer_sends == 0)
-      flush_connection_send_buffer_all(pc);
+  if (pc == NULL || !pc->used || pc->send_buffer == NULL) {
+    return;
+  }
+
+  pc->send_buffer->do_buffer_sends--;
+  if (pc->send_buffer->do_buffer_sends < 0) {
+    freelog(LOG_ERROR, "connection_do_unbuffer called too many "
+            "times on %s!", conn_description(pc));
+    pc->send_buffer->do_buffer_sends = 0;
+  }
+
+  if (pc->send_buffer->do_buffer_sends == 0) {
+    flush_connection_send_buffer_all(pc);
   }
 }
 
@@ -428,12 +388,24 @@ void connection_do_unbuffer(struct connection *pc)
 **************************************************************************/
 void conn_list_do_buffer(struct conn_list *dest)
 {
+  if (dest == NULL) {
+    return;
+  }
+
   conn_list_iterate(dest, pconn) {
     connection_do_buffer(pconn);
   } conn_list_iterate_end;
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
 void conn_list_do_unbuffer(struct conn_list *dest)
 {
+  if (dest == NULL) {
+    return;
+  }
+
   conn_list_iterate(dest, pconn) {
     connection_do_unbuffer(pconn);
   } conn_list_iterate_end;

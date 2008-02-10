@@ -163,7 +163,7 @@ static void close_socket_nomessage(struct connection *pc)
 /**************************************************************************
 ...
 **************************************************************************/
-static void close_socket_callback(struct connection *pc)
+static void client_close_socket_callback(struct connection *pc)
 {
   close_socket_nomessage(pc);
   /* If we lost connection to the internal server - kill him */
@@ -230,7 +230,7 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
 {
   struct packet_server_join_req req;
 
-  close_socket_set_callback(close_socket_callback);
+  close_socket_set_callback(client_close_socket_callback);
 
   /* connection in progress? wait. */
   if (aconnection.used) {
@@ -307,6 +307,8 @@ Returns:
 **************************************************************************/
 static int read_from_connection(struct connection *pc, bool block)
 {
+  freelog(LOG_DEBUG, "client read_from_connection");
+
   for (;;) {
     fd_set readfs, writefs, exceptfs;
     int socket_fd = pc->sock;
@@ -379,6 +381,8 @@ void input_from_server(int fd)
 {
   assert(fd == aconnection.sock);
 
+  freelog(LOG_DEBUG, "input_from_server");
+
   if (read_from_connection(&aconnection, FALSE) >= 0) {
     enum packet_type type;
 
@@ -397,7 +401,7 @@ void input_from_server(int fd)
       }
     }
   } else {
-    close_socket_callback(&aconnection);
+    client_close_socket_callback(&aconnection);
   }
 }
 
@@ -446,7 +450,7 @@ void input_from_server_till_request_got_processed(int fd,
 	}
       }
     } else {
-      close_socket_callback(&aconnection);
+      client_close_socket_callback(&aconnection);
       break;
     }
   }
