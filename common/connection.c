@@ -210,6 +210,7 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
 
 /**************************************************************************
   Returns -1 on error and >= 0 otherwise.
+  NB: May call call_close_socket_callback on write error.
 **************************************************************************/
 static int write_socket_data(struct connection *pc,
                              struct socket_packet_buffer *buf)
@@ -271,20 +272,27 @@ static int write_socket_data(struct connection *pc,
 
 
 /**************************************************************************
-  flush'em
+  NB: May call call_close_socket_callback if write fails.
+  Returns -1 on error, or the number of bytes flushed.
 **************************************************************************/
-void flush_connection_send_buffer_all(struct connection *pc)
+int flush_connection_send_buffer_all(struct connection *pc)
 {
+  int ret = 0;
+
   if (pc == NULL || !pc->used || pc->send_buffer == NULL
       || pc->send_buffer->ndata <= 0) {
-    return;
+    return 0;
   }
 
-  write_socket_data(pc, pc->send_buffer);
+  freelog(LOG_DEBUG, "flushing data for %s", conn_description(pc));
+
+  ret = write_socket_data(pc, pc->send_buffer);
 
   if (pc->notify_of_writable_data) {
     pc->notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
   }
+
+  return ret;
 }
 
 /**************************************************************************
@@ -300,19 +308,6 @@ static bool add_connection_data(struct connection *pc,
     return TRUE;
   }
 
-#if 0
-  if (pc && pc->delayed_disconnect) {
-    if (delayed_disconnect > 0) {
-      return TRUE;
-    } else {
-      if (close_callback) {
-	(*close_callback)(pc);
-      }
-      return FALSE;
-    }
-  }
-#endif
-
   buf = pc->send_buffer;
 
   if (!buffer_ensure_free_extra_space(buf, len)) {
@@ -322,30 +317,36 @@ static bool add_connection_data(struct connection *pc,
 
   memcpy(buf->data + buf->ndata, data, len);
   buf->ndata += len;
+
+  freelog(LOG_DEBUG, "added %d bytes to buffer for %s",
+          len, conn_description(pc));
+
   return TRUE;
 }
 
 /**************************************************************************
-  write data to socket
+  NB: May call call_close_socket_callback if an error occurs.
 **************************************************************************/
-void send_connection_data(struct connection *pc, const unsigned char *data,
+int send_connection_data(struct connection *pc, const unsigned char *data,
 			  int len)
 {
-  if (pc == NULL || !pc->used) {
-    return;
+  if (pc == NULL || !pc->used || pc->delayed_disconnect
+      || pc->send_buffer == NULL || data == NULL || len <= 0) {
+    return 0;
   }
 
   if (!add_connection_data(pc, data, len)) {
-    return;
+    return -1;
   }
 
   if (pc->send_buffer->do_buffer_sends > 0) {
     /* Data will be sent on the last call to
      * connection_do_unbuffer. */
-    return;
+    freelog(LOG_DEBUG, "send_connection_data waiting for unbuffer");
+    return 0;
   }
 
-  flush_connection_send_buffer_all(pc);
+  return flush_connection_send_buffer_all(pc);
 }
 
 /**************************************************************************
@@ -358,6 +359,9 @@ void connection_do_buffer(struct connection *pc)
   }
 
   pc->send_buffer->do_buffer_sends++;
+
+  freelog(LOG_DEBUG, "connection_do_buffer @ %d",
+          pc->send_buffer->do_buffer_sends);
 }
 
 /**************************************************************************
@@ -372,6 +376,10 @@ void connection_do_unbuffer(struct connection *pc)
   }
 
   pc->send_buffer->do_buffer_sends--;
+
+  freelog(LOG_DEBUG, "connection_do_unbuffer @ %d",
+          pc->send_buffer->do_buffer_sends);
+
   if (pc->send_buffer->do_buffer_sends < 0) {
     freelog(LOG_ERROR, "connection_do_unbuffer called too many "
             "times on %s!", conn_description(pc));
@@ -520,13 +528,17 @@ const char *conn_description(const struct connection *pconn)
     N_("cut connection"),
   };
 
+  if (pconn == NULL) {
+    return "(NULL)";
+  }
+
   buffer[0] = '\0';
 
-  if (*pconn->username != '\0') {
+  if (pconn->username[0] != '\0') {
     if (!strcmp(pconn->addr, pconn->server.ipaddr)) {
-    my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
-		pconn->username, pconn->addr); 
-  } else {
+      my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
+                  pconn->username, pconn->addr); 
+    } else {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s, ip %s"),
                   pconn->username, pconn->addr, pconn->server.ipaddr);
     }

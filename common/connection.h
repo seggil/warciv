@@ -308,9 +308,9 @@ void call_close_socket_callback(struct connection *pc,
                                 enum exit_state state);
 
 int read_socket_data(int sock, struct socket_packet_buffer *buffer);
-void flush_connection_send_buffer_all(struct connection *pc);
-void send_connection_data(struct connection *pc, const unsigned char *data,
-			  int len);
+int flush_connection_send_buffer_all(struct connection *pc);
+int send_connection_data(struct connection *pc, const unsigned char *data,
+                         int len);
 
 void connection_do_buffer(struct connection *pc);
 void connection_do_unbuffer(struct connection *pc);
