@@ -150,7 +150,7 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
     buf->nsize = buf->ndata + extra_space;
 
     /* added this check so we don't gobble up too much mem */
-    if (buf->nsize > MAX_LEN_BUFFER) {
+    if (buf->nsize > MAX_LEN_PACKET_BUFFER) {
       return FALSE;
     }
     buf->data = (unsigned char *) fc_realloc(buf->data, buf->nsize);
