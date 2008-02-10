@@ -3253,6 +3253,52 @@ static bool poll_command(struct connection *caller,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static bool emote_command(struct connection *caller,
+                          const char *str,
+                          bool check)
+{
+  char buf[MAX_LEN_CONSOLE_LINE], name[MAX_LEN_NAME];
+
+  sz_strlcpy(buf, str);
+  remove_leading_trailing_spaces(buf);
+
+  if (buf[0] == '\0') {
+    cmd_reply(CMD_EMOTE, caller, C_SYNTAX,
+              _("Missing argument."));
+    return FALSE;
+  }
+
+  if (caller != NULL
+      && (caller->player == NULL || caller->observer)) {
+    cmd_reply(CMD_EMOTE, caller, C_REJECTED,
+              _("You can't emote if you have no body!"));
+    return FALSE;
+  }
+
+  if (conn_is_muted(caller)) {
+    cmd_reply(CMD_EMOTE, caller, C_REJECTED,
+              _("You are not allowed to emote, you are muted!"));
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  if (caller) {
+    sz_strlcpy(name, caller->username);
+  } else {
+    sz_strlcpy(name, "Server console");
+  }
+
+  notify_conn(NULL, "%c %s %s", caller ? '^' : '+', name, buf);
+
+  return TRUE;
+}
+
+/**************************************************************************
   Cancel a vote... /cancelvote <vote number>|all.
 **************************************************************************/
 static bool cancel_vote_command(struct connection *caller, char *arg,
@@ -3271,10 +3317,11 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
   remove_leading_trailing_spaces(arg);
 
   if (arg[0] == '\0') {
-    if (!caller) {
+    if (caller == NULL) {
       /* Server prompt */
-      cmd_reply(CMD_CANCEL_VOTE, NULL, C_SYNTAX,
-                _("Missing argument <vote number>|all"));
+      cmd_reply(CMD_CANCEL_VOTE, caller, C_SYNTAX,
+                _("Missing argument <vote number> or "
+                  "the string \"all\"."));
       return FALSE;
     }
     if (!(pvote = get_vote_by_caller(caller))) {
@@ -6014,6 +6061,8 @@ bool handle_stdin_input(struct connection * caller,
     return vote_command(caller, arg, check);
   case CMD_POLL:
     return poll_command(caller, arg, check);
+  case CMD_EMOTE:
+    return emote_command(caller, arg, check);
   case CMD_CANCEL_VOTE:
     return cancel_vote_command(caller, arg, check);
   case CMD_READ_SCRIPT:

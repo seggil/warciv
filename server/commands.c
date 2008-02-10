@@ -178,6 +178,15 @@ const struct command commands[] = {
       "question you type in after the command."),
    ECHO_ADMINS, VCF_WAITFORALL | VCF_ALWAYSVOTE, 50
   },
+  {"emote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
+   /* TRANS: translate text between <> only */
+   N_("emote <an action>\n"),
+   N_("Display a message describing your action.\n"),
+   N_("This completely gratuitous command prints a message "
+      "with your name followed by the string you type after "
+      "the command name."),
+   ECHO_NONE, VCF_NONE, 0
+  },
   {"cancelvote",	ALLOW_BASIC,	ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("cancelvote\n"
