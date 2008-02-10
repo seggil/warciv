@@ -2007,13 +2007,10 @@ void send_all_known_units(struct conn_list *dest)
 	  send_unit_info_to_onlookers(pconn->self, punit,
 				      punit->tile, FALSE);
 	}
-      }
-      unit_list_iterate_end;
+      } unit_list_iterate_end;
     }
-  }
-  conn_list_iterate_end;
+  } conn_list_iterate_end;
   conn_list_do_unbuffer(dest);
-  flush_packets();
 }
 
 

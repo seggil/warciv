@@ -415,8 +415,7 @@ void send_all_known_tiles(struct conn_list *dest)
   whole_map_iterate(ptile) {
     tiles_sent++;
     if ((tiles_sent % map.xsize) == 0) {
-      conn_list_do_unbuffer(dest);
-      flush_packets();
+      conn_list_do_unbuffer(dest); /* Flushes buffers. */
       conn_list_do_buffer(dest);
     }
 
@@ -434,7 +433,6 @@ void send_all_known_tiles(struct conn_list *dest)
   } whole_map_iterate_end;
 
   conn_list_do_unbuffer(dest);
-  flush_packets();
 }
 
 /**************************************************************************
@@ -483,8 +481,7 @@ void send_tile_info(struct conn_list *dest, struct tile *ptile)
       info.continent = ptile->continent;
       send_packet_tile_info(pconn, &info);
     }
-  }
-  conn_list_iterate_end;
+  } conn_list_iterate_end;
 }
 
 /**************************************************************************

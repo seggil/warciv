@@ -308,6 +308,8 @@ void flush_packets(void)
 
   start = time(NULL);
 
+  freelog(LOG_DEBUG, "flush_packets");
+
   for (;;) {
     tv.tv_sec = (game.server.netwait - (time(NULL) - start));
     tv.tv_usec = 0;
@@ -315,6 +317,8 @@ void flush_packets(void)
     if (tv.tv_sec < 0) {
       return;
     }
+
+    freelog(LOG_DEBUG, "tv.tv_sec = %lu", tv.tv_sec);
 
     MY_FD_ZERO(&writefs);
     MY_FD_ZERO(&exceptfs);
@@ -327,9 +331,11 @@ void flush_packets(void)
       }
       if (pconn->send_buffer != NULL
           && pconn->send_buffer->ndata > 0) {
+        freelog(LOG_DEBUG, "pconn %s added to write set", conn_description(pconn));
         FD_SET(pconn->sock, &writefs);
       }
       FD_SET(pconn->sock, &exceptfs);
+      freelog(LOG_DEBUG, "pconn %s added to except set", conn_description(pconn));
       max_desc = MAX(pconn->sock, max_desc);
     }
 
@@ -338,6 +344,7 @@ void flush_packets(void)
     }
 
     if (select(max_desc + 1, NULL, &writefs, &exceptfs, &tv) <= 0) {
+      freelog(LOG_DEBUG, "flush_packets select returned <= 0");
       return;
     }
 

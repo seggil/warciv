@@ -359,7 +359,7 @@ static bool is_game_over(void)
 void send_all_info(struct conn_list *dest)
 {
   conn_list_iterate(dest, pconn) {
-      send_attribute_block(pconn->player,pconn);
+    send_attribute_block(pconn->player,pconn);
   } conn_list_iterate_end;
 
   send_game_info(dest);
@@ -511,8 +511,9 @@ static void ai_start_turn(void)
 {
   shuffled_players_iterate(pplayer) {
     if (pplayer->ai.control) {
+      conn_list_do_buffer(pplayer->connections);
       ai_do_first_activities(pplayer);
-      flush_packets();			/* AIs can be such spammers... */
+      conn_list_do_unbuffer(pplayer->connections);
     }
   } shuffled_players_iterate_end;
   kill_dying_players();
@@ -576,7 +577,6 @@ static void begin_phase(bool is_new_phase)
     send_player_cities(pplayer);
   } players_iterate_end;
 
-  flush_packets();  /* to curb major city spam */
   conn_list_do_unbuffer(game.game_connections);
 
   shuffled_players_iterate(pplayer) {
@@ -616,20 +616,24 @@ static void end_phase(void)
    */
   before_end_year();
   players_iterate(pplayer) {
+    conn_list_do_buffer(pplayer->connections);
     if (pplayer->research.researching == A_UNSET) {
       if (choose_goal_tech(pplayer) == A_UNSET) {
         choose_random_tech(pplayer);
       }
       update_tech(pplayer, 0);
     }
+    conn_list_do_unbuffer(pplayer->connections);
   } players_iterate_end;
 
   /* Freeze sending of cities. */
+  /* XXX WTF is this hack?!? */
   nocity_send = TRUE;
 
   /* AI end of turn activities */
   auto_settlers_init();
   players_iterate(pplayer) {
+    conn_list_do_buffer(pplayer->connections);
     if (pplayer->ai.control) {
       ai_settler_init(pplayer);
     }
@@ -637,15 +641,17 @@ static void end_phase(void)
     if (pplayer->ai.control) {
       ai_do_last_activities(pplayer);
     }
+    conn_list_do_unbuffer(pplayer->connections);
   } players_iterate_end;
 
   /* Refresh cities */
   shuffled_players_iterate(pplayer) {
+    conn_list_do_buffer(pplayer->connections);
     do_tech_parasite_effect(pplayer);
     player_restore_units(pplayer);
     update_city_activities(pplayer);
     pplayer->research.changed_from=-1;
-    flush_packets();
+    conn_list_do_unbuffer(pplayer->connections);
   } shuffled_players_iterate_end;
 
   kill_dying_players();
@@ -653,10 +659,11 @@ static void end_phase(void)
   /* Unfreeze sending of cities. */
   nocity_send = FALSE;
   players_iterate(pplayer) {
+    conn_list_do_buffer(pplayer->connections);
     send_player_cities(pplayer);
     ai_data_turn_done(pplayer);
+    conn_list_do_unbuffer(pplayer->connections);
   } players_iterate_end;
-  flush_packets();  /* to curb major city spam */
 
   do_reveal_effects();
   do_have_embassies_effect();
@@ -733,8 +740,9 @@ static void after_game_advance_year(void)
 {
   /* Unit end of turn activities */
   shuffled_players_iterate(pplayer) {
+    conn_list_do_buffer(pplayer->connections);
     update_unit_activities(pplayer); /* major network traffic */
-    flush_packets();
+    conn_list_do_unbuffer(pplayer->connections);
     pplayer->turn_done = FALSE;
   } shuffled_players_iterate_end;
 }
@@ -1836,19 +1844,19 @@ MAIN_START_PLAYERS:
   } players_iterate_end;
 
   while (server_state == SELECT_RACES_STATE) {
-    bool flag = FALSE;
+    bool waiting = FALSE;
 
     sniff_packets();
 
     players_iterate(pplayer) {
       if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control
           && pplayer->is_connected) {
-        flag = TRUE;
+        waiting = TRUE;
         break;
       }
     } players_iterate_end;
 
-    if (!flag) {
+    if (!waiting) {
       if (game.info.nplayers > 0) {
         server_state = RUN_GAME_STATE;
       } else {
