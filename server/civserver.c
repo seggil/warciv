@@ -234,14 +234,16 @@ int main(int argc, char *argv[])
 
 #ifndef WIN32_NATIVE
   if (signal(SIGQUIT, signal_handler) == SIG_ERR) {
-    fc_fprintf(stderr, _("Failed to install SIGQUIT handler: %s\n"), mystrerror());
+    fc_fprintf(stderr, _("Failed to install SIGQUIT handler: %s\n"),
+               mystrerror(myerrno()));
     exit(EXIT_FAILURE);
   }
 
   /* Ignore SIGPIPE, the error is handled by the return value
    * of the write call. */
   if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-    fc_fprintf(stderr, _("Failed to ignore SIGPIPE: %s\n"), mystrerror());
+    fc_fprintf(stderr, _("Failed to ignore SIGPIPE: %s\n"),
+               mystrerror(myerrno()));
     exit(EXIT_FAILURE);
   }
 #endif

@@ -216,13 +216,14 @@ struct dns *dns_new(void)
   dns->sock = -1;
   
   if ((dns->sock = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
-    freelog(LOG_ERROR, _("Failed to create UDP socket: %s"), mystrsocketerror());
+    freelog(LOG_ERROR, _("Failed to create UDP socket: %s"),
+            mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
   
   if (my_nonblock(dns->sock) == -1) {
     freelog(LOG_ERROR, _("Failed to set non-blocking mode on UDP socket: %s"),
-	    mystrsocketerror());
+	    mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
  
@@ -239,7 +240,8 @@ struct dns *dns_new(void)
                        (char *) &rcvbufsiz, sizeof(rcvbufsiz)))
   {
     freelog (LOG_ERROR, _("Failed to set UDP socket receive buffer size:"
-                          " setsockopt: %s"), mystrsocketerror());
+                          " setsockopt: %s"),
+             mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
   
@@ -563,7 +565,7 @@ void dns_poll(struct dns *dns)
       freelog(LOG_DEBUG, "dp recvfrom would block");
     } else {
       freelog(LOG_ERROR, _("Failed reading DNS response: recvfrom: %s"),
-              mystrsocketerror());
+              mystrsocketerror(mysocketerrno()));
     }
   }
   
@@ -737,7 +739,7 @@ void dns_queue(struct dns *dns,
   if (nb != n) {
     if (nb == -1) {
       freelog(LOG_ERROR, _("Failed to send DNS query: sendto: %s."),
-              mystrsocketerror());
+              mystrsocketerror(mysocketerrno()));
     } else {
       freelog(LOG_ERROR, _("Function sendto failed to send entire DNS query."));
     }

@@ -181,7 +181,7 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
   nb = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
                      buffer->nsize - buffer->ndata);
   freelog(LOG_DEBUG, "my_readsocket nb=%d: %s",
-          nb, mystrsocketerror());
+          nb, mystrsocketerror(mysocketerrno()));
 
   if (nb > 0) {
     buffer->ndata += nb;
@@ -223,7 +223,7 @@ static int write_socket_data(struct connection *pc,
             nblock, conn_description(pc));
     nput = my_writesocket(pc->sock, buf->data + count, nblock);
     freelog(LOG_DEBUG, "write returns nput=%d: %s",
-            nput, mystrsocketerror());
+            nput, mystrsocketerror(mysocketerrno()));
 
 
     if (nput == -1) {

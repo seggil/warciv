@@ -607,7 +607,8 @@ void my_init_network(void)
     freelog(LOG_VERBOSE, "Using WINSOCK.DLL 1.0");
   }
   else {
-    freelog(LOG_ERROR, "no usable WINSOCK.DLL: %s", mystrsocketerror());
+    freelog(LOG_ERROR, "no usable WINSOCK.DLL: %s",
+            mystrsocketerror(mysocketerrno()));
   }
 #endif
 
@@ -661,27 +662,31 @@ int my_nonblock(int sockfd)
   int f_set;
 
   if ((f_set=fcntl(sockfd, F_GETFL)) == -1) {
-    freelog(LOG_ERROR, _("fcntl F_GETFL failed: %s"), mystrsocketerror());
+    freelog(LOG_ERROR, _("fcntl F_GETFL failed: %s"),
+            mystrsocketerror(mysocketerrno()));
     return -1;
   }
 
   f_set |= O_NONBLOCK;
 
   if (fcntl(sockfd, F_SETFL, f_set) == -1) {
-    freelog(LOG_ERROR, _("fcntl F_SETFL failed: %s"), mystrsocketerror());
+    freelog(LOG_ERROR, _("fcntl F_SETFL failed: %s"),
+            mystrsocketerror(mysocketerrno()));
     return -1;
   }
 #elif defined (HAVE_IOCTL)
   long value = 1;
 
   if (ioctl(sockfd, FIONBIO, (char*)&value) == -1) {
-    freelog(LOG_ERROR, _("ioctl failed: %s"), mystrsocketerror());
+    freelog(LOG_ERROR, _("ioctl failed: %s"),
+            mystrsocketerror(mysocketerrno()));
     return -1;
   }
 #elif defined (WIN32_NATIVE)
   long one = 1;
   if (SOCKET_ERROR == ioctlsocket(sockfd, FIONBIO, &one)) {
-    freelog(LOG_ERROR, _("ioctlsocket failed: %s"), mystrsocketerror());
+    freelog(LOG_ERROR, _("ioctlsocket failed: %s"),
+            mystrsocketerror(mysocketerrno()));
     return -1;
   }
 #else
@@ -914,16 +919,4 @@ int find_next_free_port(int starting_port)
   my_closesocket(s);
   
   return port;
-}
-
-/************************************************************************** 
-  For debugging mostly...
-**************************************************************************/ 
-int my_errno(void)
-{
-#ifdef WIN32_NATIVE
-  return WSAGetLastError();
-#else
-  return errno;
-#endif
 }

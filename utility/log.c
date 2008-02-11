@@ -339,6 +339,10 @@ void vreal_freelog(int level, const char *message, va_list ap)
     }
   }
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
 void real_freelog(int level, const char *file, int line, const char *fncname, const char *message, ...)
 {
   l_file = file;

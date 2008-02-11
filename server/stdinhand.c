@@ -878,14 +878,14 @@ static bool welcome_file_command(struct connection *caller,
   if (!(f = fopen(arg, "r"))) {
     cmd_reply(CMD_WELCOME_FILE, caller, C_GENFAIL,
               _("Could not open welcome file \"%s\" for reading: %s."),
-              arg, mystrerror());
+              arg, mystrerror(myerrno()));
     return FALSE;
   }
   len = get_file_size(arg);
   if (len == -1) {
     cmd_reply(CMD_WELCOME_FILE, caller, C_GENFAIL,
               _("Could not get size of file \"%s\": %s."),
-              arg, mystrerror());
+              arg, mystrerror(myerrno()));
     fclose(f);
     return FALSE;
   }
@@ -899,7 +899,7 @@ static bool welcome_file_command(struct connection *caller,
     if (ferror(f) || nb != len) {
       cmd_reply(CMD_WELCOME_FILE, caller, C_GENFAIL,
                 _("Error while reading from \"%s\": %s."),
-                arg, mystrerror());
+                arg, mystrerror(myerrno()));
       free(buf);
       fclose(f);
       return FALSE;
@@ -6874,7 +6874,7 @@ static int load_action_list_v0(const char *filename)
   int len, count;
   if (!(file = fopen(filename, "r"))) {
     freelog(LOG_ERROR, "Could not open action list file %s: %s",
-            filename, mystrerror());
+            filename, mystrerror(myerrno()));
     return -1;
   }
   count = 0;
@@ -6926,7 +6926,7 @@ static int load_action_list_v1(const char *filename)
   int ver;
   if (!(file = fopen(filename, "r"))) {
     freelog(LOG_ERROR, _("Could not open action list file %s: %s."),
-            filename, mystrerror());
+            filename, mystrerror(myerrno()));
     return -1;
   }
   /* Version line */
@@ -6999,7 +6999,7 @@ static int load_action_list(const char *filename)
   int version;
   if (!(file = fopen(filename, "r"))) {
     freelog(LOG_ERROR, _("Could not open action list file %s: %s"),
-            filename, mystrerror());
+            filename, mystrerror(myerrno()));
     return -1;
   }
   fgets(line, sizeof(line), file);
@@ -7025,7 +7025,7 @@ static int save_action_list(const char *filename)
 
   if (!(file = fopen(filename, "w"))) {
     freelog(LOG_ERROR, "Could not save action list to %s because open"
-            " failed: %s", filename, mystrerror());
+            " failed: %s", filename, mystrerror(myerrno()));
     return -1;
   }
   fprintf(file, "version=%d\n", ACTION_LIST_FILE_VERSION);

@@ -63,7 +63,6 @@ void my_shutdown_network(void);
 bool my_socket_would_block(void);
 bool my_socket_operation_in_progess(void);
 int my_nonblock(int sockfd);
-int my_errno(void);
 
 bool is_net_service_resolved(const char *name, int port,
                              union my_sockaddr *addr);

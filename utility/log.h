@@ -82,6 +82,9 @@ static inline int logdebug_check(const char *file, int line)
 }
 #endif
 
+/* NB!! The freelog macro should never make any system calls before
+ * evaluating its arguments, as this would potentially break code
+ * that passes for example myerrno() as a parameter. */
 #ifdef DEBUG
 #  define freelog(level, ...)                                             \
   do {                                                                      \

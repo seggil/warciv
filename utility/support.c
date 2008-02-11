@@ -142,54 +142,76 @@ int mystrncasecmp(const char *str0, const char *str1, size_t n)
   the same expression, and it is certainly not safe to store
   the returned pointer for later use.
 ***************************************************************/
-static const char *get_errno_string(bool socket_error)
+static const char *get_errno_string(long error_no,
+                                    bool socket_error)
 {
   static char buf[256];
 #ifdef WIN32_NATIVE
-  long int error;
   static char msgbuf[256];
 
-  if (socket_error) {
-    error = WSAGetLastError();
-  } else {
-    error = GetLastError();
-  }
   if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM
                      | FORMAT_MESSAGE_IGNORE_INSERTS,
-                     NULL, error, 0, msgbuf, sizeof(msgbuf), NULL)) {
+                     NULL, error_no, 0, msgbuf, sizeof(msgbuf), NULL)) {
     my_snprintf(buf, sizeof(buf),
                 /* TRANS: An error number was supposed to be
                  * converted to a string but the attempt failed. */
-                _("error %ld (FormatMessage failed)"), error);
+                _("error %ld (FormatMessage failed)"), error_no);
   }
   return local_to_internal_string_buffer(msgbuf, buf,
                                          sizeof(buf));
 #else /* ! WIN32_NATIVE */
 #ifdef HAVE_STRERROR
-  return local_to_internal_string_buffer(strerror(errno),
+  return local_to_internal_string_buffer(strerror(error_no),
                                          buf, sizeof(buf));
-#else
+#else /* ! HAVE_STRERROR */
   my_snprintf(buf, sizeof(buf),
-              _("error %d (compiled without strerror)"), errno);
+              _("error %d (compiled without strerror)"),
+              error_no);
   return buf;
-#endif /* HAVE_STRERROR */
+#endif /* ! HAVE_STRERROR */
 #endif /* ! WIN32_NATIVE */
 }
 
 /***************************************************************
-  NB caveats for get_error_string.
+  NB caveats for get_errno_string.
 ***************************************************************/
-const char *mystrsocketerror(void)
+const char *mystrsocketerror(long err_no)
 {
-  return get_errno_string(TRUE);
+  return get_errno_string(err_no, TRUE);
 }
 
 /***************************************************************
-  NB caveats for get_error_string.
+  NB caveats for get_errno_string.
 ***************************************************************/
-const char *mystrerror(void)
+const char *mystrerror(long err_no)
 {
-  return get_errno_string(FALSE);
+  return get_errno_string(err_no, FALSE);
+}
+
+/***************************************************************
+  Returns the "errno" of the last system call. When handling
+  errors due to socket operations, you should use mysocketerrno
+  instead.
+***************************************************************/
+long myerrno(void)
+{
+#ifdef WIN32_NATIVE
+  return GetLastError();
+#else
+  return errno;
+#endif
+}
+
+/***************************************************************
+  Returns the error number of the last socket operation.
+***************************************************************/
+long mysocketerrno(void)
+{
+#ifdef WIN32_NATIVE
+  return WSAGetLastError();
+#else
+  return errno;
+#endif
 }
 
 /***************************************************************
@@ -541,7 +563,7 @@ bool is_reg_file_for_access(const char *name, bool write_access)
   if (stat(name, &tmp) == 0) {
     return S_ISREG(tmp.st_mode);
   } else {
-    return write_access && errno == ENOENT;
+    return write_access && myerrno() == ENOENT;
   }
 }
 
