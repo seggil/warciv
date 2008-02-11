@@ -1899,12 +1899,16 @@ bool fcdb_load_player_ratings(int game_type)
           }
         }
 
-        if (rate_user
-            && tc1 < RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT) {
+        /* The following check is only performed if enough turns
+         * have been played in the game for the game to be rated
+         * at all (if not, the function game_can_be_rated in
+         * score.c will handle the check). */
+        if (rate_user && game.info.turn >= srvarg.fcdb.min_rated_turns
+            && tc1 < srvarg.fcdb.min_rated_turns) {
           notify_conn(NULL, _("Server: User %s will not receive an "
               "updated rating because not enough turns were played "
               "(only played %d, which is less than the minimum of %d)."),
-              row1[1], tc1, RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT);
+              row1[1], tc1, srvarg.fcdb.min_rated_turns);
           rate_user = FALSE;
         }
         user_id_for_old_rating = atoi(row1[0]);

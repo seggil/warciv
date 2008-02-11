@@ -204,7 +204,7 @@ void srv_init(void)
   srvarg.auth.allow_newusers = FALSE;
 
   srvarg.fcdb.enabled = FALSE;
-  srvarg.fcdb.min_rated_turns = 30;
+  srvarg.fcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
 
   srvarg.no_dns_lookup = FALSE;
 
