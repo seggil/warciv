@@ -2000,8 +2000,8 @@ MAIN_START_PLAYERS:
     } players_iterate_end;
   }
 
-  /* This should be the last time it is set for this game. */
-  game_set_type();
+  /* NB: This is the one and only place this should be set. */
+  game.server.fcdb.type = game_determine_type();
 
   fcdb_load_player_ratings(game.server.fcdb.type);
   fcdb_record_game_start();

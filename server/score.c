@@ -786,6 +786,8 @@ static inline double glicko_E_function(double r, double rj, double gRDj)
   individual players' ratings and RDs. As this is not
   part of the Glicko rating system, just something I made
   up, it might be complete bullshit.
+
+  NB: Also sets rating and RD fields in team structs.
 **************************************************************************/
 void score_calculate_grouping_ratings(void)
 {

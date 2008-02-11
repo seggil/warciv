@@ -701,13 +701,18 @@ const char *population_to_text(int thousand_citizen)
 }
 
 /****************************************************************************
-  Server only function.
+  Determines and returns the type of game (team, freeforall, duel, etc.)
+  based on the current teams/players/ais.
+
+  NB: Because an AI player might be added during the game (e.g. from a
+  civil war split), calling the function after the game has started may
+  not give the expected result.
 ****************************************************************************/
-enum game_types game_set_type(void)
+enum game_types game_determine_type(void)
 {
   int ais = 0, players = 0;
-
-  assert(is_server);
+  int num_teams = team_count();
+  int max_team_size = 0;
 
   players_iterate(pplayer) {
     if (is_barbarian(pplayer) || pplayer->is_observer) {
@@ -722,30 +727,35 @@ enum game_types game_set_type(void)
     }
   } players_iterate_end;
 
+  team_iterate(pteam) {
+    int size = team_count_members(pteam->id);
+    if (size > max_team_size) {
+      max_team_size = size;
+    }
+  } team_iterate_end;
+
   if (players == 1 && ais == 0) {
-    game.server.fcdb.type = GT_SOLO;
+    return GT_SOLO;
 
   } else if (players == 2
              && ais == 0
-             && (team_count() == 0
-                 || team_count() == 2)) {
-    game.server.fcdb.type = GT_DUEL;
+             && max_team_size < 2) {
+    return GT_DUEL;
 
-  } else if (players > 1
-             && team_count() > 1
-             && players > team_count()) {
-    game.server.fcdb.type = GT_TEAM;
+  } else if (players > 2
+             && num_teams > 0
+             && max_team_size > 1) {
+    return GT_TEAM;
 
-  } else if ((team_count() == 0
-              || team_count() == players)
-             && players > 1) {
-    game.server.fcdb.type = GT_FFA;
+  } else if (max_team_size < 2
+             && players > 2) {
+    return GT_FFA;
 
   } else {
-    game.server.fcdb.type = GT_MIXED;
+    return GT_MIXED;
   }
 
-  return game.server.fcdb.type;
+  return GT_NUM_TYPES;
 }
 
 /****************************************************************************

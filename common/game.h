@@ -194,10 +194,7 @@ struct civ_game {
   } server;
 };
 
-/* Sets and returns the type of game (team, freeforall, duel, etc.)
- * based on the current teams/players/ais. The game type can then
- * also be read from the field 'game.server.fcdb.type'. */
-enum game_types game_set_type(void);
+enum game_types game_determine_type(void);
 
 const char *game_type_name(enum game_types type);
 const char *game_type_name_orig(enum game_types type);

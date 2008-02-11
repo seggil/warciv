@@ -4510,11 +4510,7 @@ static bool ratings_command(struct connection *caller,
   }
 
   if (type == GT_NUM_TYPES) {
-    if (server_state == PRE_GAME_STATE) {
-      /* Refresh the game type since teams/players/ais may have changed. */
-      game_set_type();
-    }
-    type = game.server.fcdb.type;
+    type = game_determine_type();
   }
 
   sz_strlcpy(buf, game_type_name(type));
@@ -4748,11 +4744,7 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
   }
 
   if (type == GT_NUM_TYPES) {
-    if (server_state == PRE_GAME_STATE) {
-      /* Refresh the game type since teams/players/ais may have changed. */
-      game_set_type();
-    }
-    type = game.server.fcdb.type;
+    type = game_determine_type();
   }
 
   if (!(ftti = fcdb_topten_info_new(type))) {
@@ -6266,6 +6258,7 @@ static bool check_settings_for_rated_game(void)
   struct settings_s *op;
   bool ok = TRUE, checked = FALSE;
   int i;
+  enum game_types type = game_determine_type();
 
   if (!srvarg.fcdb.enabled || !srvarg.auth.enabled) {
     /* No sense in enforcing settings if we cannot update the
@@ -6281,14 +6274,9 @@ static bool check_settings_for_rated_game(void)
     return TRUE;
   }
 
-  if (!game.server.rated || game.server.fcdb.type == GT_MIXED) {
+  if (!game.server.rated || type == GT_MIXED) {
     /* For unrated games or 'mixed' type games, any settings are ok. */
     return TRUE;
-  }
-
-  if (server_state == PRE_GAME_STATE) {
-    /* We might get called in pregame, so refresh the game type. */
-    game_set_type();
   }
 
   for (op = settings; op->name; op++) {
@@ -6308,15 +6296,14 @@ static bool check_settings_for_rated_game(void)
       continue;
     }
 
-    if (game.server.fcdb.type == GT_TEAM
-        && op->int_value == &game.info.diplomacy && *op->int_value != 4) {
+    if (type == GT_TEAM && op->int_value == &game.info.diplomacy
+        && *op->int_value != 4) {
       notify_conn(NULL, _("Game: Warning: Diplomacy is not disabled "
                           "for this team game."));
       continue;
     }
 
-    if (game.server.fcdb.type == GT_FFA
-        && op->int_value == &game.ext_info.maxallies
+    if (type == GT_FFA && op->int_value == &game.ext_info.maxallies
         && *op->int_value > 1) {
       notify_conn(NULL, _("Game: Warning: The setting 'maxallies' "
                           "is greater than one, this may result in "
@@ -6324,7 +6311,7 @@ static bool check_settings_for_rated_game(void)
       continue;
     }
 
-    if (game.server.fcdb.type != GT_SOLO) {
+    if (type != GT_SOLO) {
       /* Non-default settings can only prevent a solo game from
        * being rated. */
       continue;
@@ -6430,6 +6417,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
   int started = 0, notstarted = 0;
   static int failed_rated_start = 0;
   const int MAX_FAILED_RATED_STARTS = 3;
+  enum game_types type = GT_NUM_TYPES;
 
   switch (server_state) {
 
@@ -6552,26 +6540,25 @@ static bool start_command(struct connection *caller, char *name, bool check)
       notstarted--;
     }
 
-    /* Refresh game type. */
-    game_set_type();
+    type = game_determine_type();
 
     if (notstarted > 0) {
       notify_conn(NULL, _("Game: %s is ready. %d out of %d players are "
                           "ready to start a %s%s game."),
                   caller->username, started, started + notstarted,
                   game.server.rated ? _("RATED ") : "",
-                  game_type_name(game.server.fcdb.type));
+                  game_type_name(type));
       return TRUE;
     }
 
     if (game.server.rated) {
       notify_conn(NULL, _("Game: All players are ready; "
                           "starting a RATED %s game."),
-                  game_type_name(game.server.fcdb.type));
+                  game_type_name(type));
     } else {
       notify_conn(NULL, _("Game: All players are ready; "
                           "starting a %s game."),
-                  game_type_name(game.server.fcdb.type));
+                  game_type_name(type));
     }
     start_game();
     return TRUE;
@@ -7352,6 +7339,55 @@ static void show_ignore(struct connection *caller)
 /**************************************************************************
   ...
 **************************************************************************/
+static void show_team_ratings(struct connection *caller, bool send_to_all)
+{
+  enum game_types type = GT_NUM_TYPES;
+#ifdef HAVE_MYSQL
+  if (team_count() <= 0) {
+    return;
+  }
+
+  type = game_determine_type();
+
+  if (type == GT_NUM_TYPES
+      || !fcdb_load_player_ratings(type)) {
+    /* Simply don't print anything more. */
+    return;
+  }
+
+  score_assign_groupings();
+  score_calculate_grouping_ratings();
+
+  if (send_to_all) {
+    notify_conn(NULL, "Server: %-14s %-8s %-8s",
+                _("Team Name"), _("Rating"), _("RD"));
+  } else {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%-14s %-8s %-8s",
+              _("Team Name"), _("Rating"), _("RD"));
+  }
+
+  team_iterate(pteam) {
+    if (send_to_all) {
+      notify_conn(NULL, "Server: %-14s %-8.2f %-8.2f",
+                  get_team_name(pteam->id), pteam->fcdb.rating,
+                  pteam->fcdb.rating_deviation);
+    } else {
+      cmd_reply(CMD_LIST, caller, C_COMMENT, "%-14s %-8.2f %-8.2f",
+                get_team_name(pteam->id), pteam->fcdb.rating,
+                pteam->fcdb.rating_deviation);
+    }
+  } team_iterate_end;
+
+  if (!send_to_all) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  }
+    
+#endif /* HAVE_MYSQL */
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 static void show_teams(struct connection *caller, bool send_to_all)
 {
   bool listed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
@@ -7361,7 +7397,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
   memset(listed, 0, sizeof(bool) * (MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS));
 
   if (send_to_all) {
-    notify_conn(game.est_connections, _("Server: List of teams:"));
+    notify_conn(NULL, _("Server: List of teams:"));
   } else {
     cmd_reply(CMD_LIST, caller, C_COMMENT, _("List of teams:"));
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
@@ -7391,7 +7427,7 @@ static void show_teams(struct connection *caller, bool send_to_all)
           ? _("Unassigned") : get_team_name(teamid);
       my_snprintf(buf, sizeof(buf), "%s (%d): %s", teamname, tc, buf2);
       if (send_to_all) {
-        notify_conn(game.est_connections, "  %s", buf);
+        notify_conn(NULL, "Server:   %s", buf);
       } else {
         cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
       }
@@ -7401,6 +7437,8 @@ static void show_teams(struct connection *caller, bool send_to_all)
   if (!send_to_all) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   }
+
+  show_team_ratings(caller, send_to_all);
 }
 
 /**************************************************************************
