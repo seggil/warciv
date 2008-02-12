@@ -37,6 +37,7 @@ const char *mystrerror(long err_no);
 const char *mystrsocketerror(long err_no);
 long myerrno(void);
 long mysocketerrno(void);
+bool is_interrupted_errno(long err_no);
 void myusleep(unsigned long usec);
 
 size_t mystrlcpy(char *dest, const char *src, size_t n);

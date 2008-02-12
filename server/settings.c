@@ -935,15 +935,18 @@ struct settings_s settings[] = {
 	     "the remaining timeout is set to this value if it was lower."),
 	  NULL, 0, GAME_MAX_TIMEOUT, GAME_DEFAULT_TIMEOUTADDEMOVE)
   
-  GEN_INT("nettimeout", game.server.tcptimeout,
+  GEN_INT("tcpwritetimeout", game.server.tcpwritetimeout,
 	  SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
-	  N_("Seconds to let a client's network connection block"),
-	  N_("If a network connection is blocking for a time greater than "
-	     "this value, then the connection is closed. Zero "
-	     "means there is no timeout (although connections will be "
-	     "automatically disconnected eventually)."),
-	  NULL,
-	  GAME_MIN_TCPTIMEOUT, GAME_MAX_TCPTIMEOUT, GAME_DEFAULT_TCPTIMEOUT)
+	  N_("Maximum seconds to wait to write network data"),
+	  N_("If the server ever has to wait more than the "
+             "given number of seconds for a client's network "
+             "connection to become able to receive data, then "
+             "that connection is closed so that it no longer "
+             "lags the server. Zero means there is no timeout "
+             "(although connections will be automatically "
+             "disconnected eventually)."),
+	  NULL, GAME_MIN_TCPWRITETIMEOUT, GAME_MAX_TCPWRITETIMEOUT,
+          GAME_DEFAULT_TCPWRITETIMEOUT)
 
   GEN_INT("netwait", game.server.netwait,
 	  SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,

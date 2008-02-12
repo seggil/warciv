@@ -170,7 +170,14 @@ struct connection {
   bool observer;
   struct socket_packet_buffer *buffer;
   struct socket_packet_buffer *send_buffer;
-  time_t last_write;
+
+  /* Cumulative fractional seconds that we have unsuccesfully
+   * waited for this connection to become write ready. Reset
+   * to zero whenever bytes are successfully written (and of
+   * course on initialization). If this ever exceeds the value
+   * of game.server.tcptimeout, then the connection is closed
+   * (this is relevant only for the server). */
+  double write_wait_time;
 
   double ping_time;
   

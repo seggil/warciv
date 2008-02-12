@@ -658,3 +658,15 @@ FILE *my_tmpfile (void)
 #endif
   return fp;
 }
+
+/**********************************************************************
+  ...
+***********************************************************************/
+bool is_interrupted_errno(long err_no)
+{
+#ifdef WIN32_NATIVE
+  return err_no == WSAEINTR;
+#else
+  return err_no == EINTR;
+#endif
+}

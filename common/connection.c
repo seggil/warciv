@@ -249,11 +249,13 @@ static int write_socket_data(struct connection *pc,
   if (count > 0) {
     buf->ndata -= count;
     memmove(buf->data, buf->data + count, buf->ndata);
-    pc->last_write = time(NULL);
+
+    pc->write_wait_time = 0.0;
+    pc->statistics.bytes_send += count;
+
     if (ret != -1) {
       ret = count;
     }
-    pc->statistics.bytes_send += count;
   }
 
   if (ret == -1) {
@@ -650,7 +652,7 @@ void connection_common_init(struct connection *pconn)
 {
   pconn->established = FALSE;
   pconn->used = TRUE;
-  pconn->last_write = 0;
+  pconn->write_wait_time = 0.0;
   pconn->buffer = new_socket_packet_buffer();
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;

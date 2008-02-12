@@ -301,7 +301,7 @@ void game_init(void)
     game.server.timeoutincmult = GAME_DEFAULT_TIMEOUTINCMULT;
     game.server.timeoutcounter = 1;
     game.server.timeoutaddenemymove = GAME_DEFAULT_TIMEOUTADDEMOVE; 
-    game.server.tcptimeout = GAME_DEFAULT_TCPTIMEOUT;
+    game.server.tcpwritetimeout = GAME_DEFAULT_TCPWRITETIMEOUT;
     game.server.netwait = GAME_DEFAULT_NETWAIT;
     game.server.last_ping = 0;
     game.server.pingtimeout = GAME_DEFAULT_PINGTIMEOUT;

@@ -92,7 +92,7 @@ struct civ_game {
     int timeoutintinc;       /* and increase timeoutint by this amount */
     int timeoutcounter;      /* timeoutcounter-timeoutint= urns to next inc. */
     int timeoutaddenemymove; /* increase to, when enemy move seen */
-    int tcptimeout;
+    int tcpwritetimeout;
     int netwait;
     time_t last_ping;
     int pingtimeout;
@@ -470,9 +470,9 @@ extern bool is_server;
 #endif
 #define GAME_MAX_TIMEOUT             8639999
 
-#define GAME_DEFAULT_TCPTIMEOUT      10
-#define GAME_MIN_TCPTIMEOUT          0
-#define GAME_MAX_TCPTIMEOUT          120
+#define GAME_DEFAULT_TCPWRITETIMEOUT 30
+#define GAME_MIN_TCPWRITETIMEOUT     0
+#define GAME_MAX_TCPWRITETIMEOUT     120
 
 #define GAME_DEFAULT_NETWAIT         4
 #define GAME_MIN_NETWAIT             0

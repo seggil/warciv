@@ -299,30 +299,28 @@ void server_break_connection(struct connection *pconn, enum exit_state state)
 
 /****************************************************************************
   Attempt to flush all information in the send buffers for upto 'netwait'
-  seconds (default netwait is 4 seconds).
+  seconds (default netwait is 4 seconds: GAME_DEFAULT_NETWAIT).
+  FIXME Code duplicated in sniff_packets.
 *****************************************************************************/
 void force_flush_packets(void)
 {
-  int i;
-  int max_desc;
+  int i, max_desc, rv;
   fd_set writefs, exceptfs;
   struct timeval tv;
-  time_t start;
   struct connection *pconn;
-
-  start = time(NULL);
+  struct timer *select_timer;
+  double secs_left, secs_waited;
+  long error_no;
 
   freelog(LOG_DEBUG, "flush_packets");
 
-  for (;;) {
-    tv.tv_sec = (game.server.netwait - (time(NULL) - start));
-    tv.tv_usec = 0;
+  secs_left = (double) game.server.netwait;
 
-    if (tv.tv_sec < 0) {
-      return;
-    }
+  while (secs_left >= 0) {
+    tv.tv_sec = floor(secs_left);
+    tv.tv_usec = (secs_left - floor(secs_left)) * 1000000.0;
 
-    freelog(LOG_DEBUG, "tv.tv_sec = %lu", tv.tv_sec);
+    freelog(LOG_DEBUG, "tv_sec=%lu tv_usec=%lu", tv.tv_sec, tv.tv_usec);
 
     MY_FD_ZERO(&writefs);
     MY_FD_ZERO(&exceptfs);
@@ -345,8 +343,22 @@ void force_flush_packets(void)
       return;
     }
 
-    if (select(max_desc + 1, NULL, &writefs, &exceptfs, &tv) <= 0) {
-      freelog(LOG_DEBUG, "flush_packets select returned <= 0");
+    select_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
+    do {
+      rv = select(max_desc + 1, NULL, &writefs, &exceptfs, &tv);
+      error_no = mysocketerrno();
+    } while (rv == -1 && is_interrupted_errno(error_no));
+    secs_waited = read_timer_seconds_free(select_timer);
+    secs_left -= secs_waited;
+
+    if (rv < 0) {
+      freelog(LOG_DEBUG, "select error: %s",
+              mystrsocketerror(error_no));
+      return;
+    }
+
+    if (rv == 0) {
+      freelog(LOG_DEBUG, "select: no sockets ready");
       return;
     }
 
@@ -368,10 +380,13 @@ void force_flush_packets(void)
 
       if (FD_ISSET(pconn->sock, &writefs)) {
         flush_connection_send_buffer_all(pconn);
+        continue;
       }
 
-      if (game.server.tcptimeout != 0 && pconn->last_write != 0
-          && (time(NULL) > pconn->last_write + game.server.tcptimeout)) {
+      pconn->write_wait_time += secs_waited;
+      
+      if (game.server.tcpwritetimeout > 0
+          && pconn->write_wait_time >= game.server.tcpwritetimeout) {
         freelog(LOG_NORMAL, _("Cutting connection %s due to write lag "
                               "(waited too long for write)."),
                 conn_description(pconn));
@@ -395,7 +410,7 @@ functions.  That is, other functions should not need to do so.  --dwp
 *****************************************************************************/
 int sniff_packets(void)
 {
-  int i, nb;
+  int i, nb, rv;
   int max_desc;
   fd_set readfs, writefs, exceptfs;
   struct timeval tv;
@@ -404,6 +419,9 @@ int sniff_packets(void)
   char *bufptr;
 #endif
   struct connection *pconn = NULL;
+  struct timer *select_timer;
+  double secs_waited;
+  long error_no;
 
   con_prompt_init();
 
@@ -600,7 +618,23 @@ int sniff_packets(void)
     /* For any messages occuring after this, don't generate a new prompt. */
     con_prompt_off();
 
-    if (select(max_desc + 1, &readfs, &writefs, &exceptfs, &tv) == 0) {
+
+    select_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
+    do {
+      rv = select(max_desc + 1, &readfs, &writefs, &exceptfs, &tv);
+      error_no = mysocketerrno();
+    } while (rv == -1 && is_interrupted_errno(error_no));
+    secs_waited = read_timer_seconds_free(select_timer);
+
+    if (rv < 0) {
+      freelog(LOG_ERROR, "Select error while waiting for input: %s",
+              mystrsocketerror(error_no));
+
+      /* Just try again. */
+      continue;
+    }
+
+    if (rv == 0) {
       /* The select statement timed-out. */
 
       send_server_info_to_metaserver(META_REFRESH);
@@ -639,7 +673,7 @@ int sniff_packets(void)
 #endif /* !__VMS */
       }
 
-    } /* select */
+    } /* select timeout */
 
     if (game.info.timeout == 0) {
       /* Just in case someone sets timeout we keep game.turn_start updated. */
@@ -811,11 +845,14 @@ int sniff_packets(void)
 	} /* decode packet loop */
       } /* connection iterate */
 
+      
       /* Handle user connection write readiness. */
+      /* FIXME Code duplicated in force_flush_packets. */
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
 
-        if (!pconn->used || !pconn->send_buffer
+        if (!pconn->used || pconn->delayed_disconnect
+            || pconn->send_buffer == NULL
             || pconn->send_buffer->ndata <= 0) {
           continue;
         }
@@ -824,11 +861,13 @@ int sniff_packets(void)
           flush_connection_send_buffer_all(pconn);
           continue;
         }
+        
+        pconn->write_wait_time += secs_waited;
 
-        if (game.server.tcptimeout != 0 && pconn->last_write != 0
-            && (time(NULL) > pconn->last_write + game.server.tcptimeout)) {
-          freelog(LOG_ERROR, "Disconnecting %s due to timeout waiting "
-                  "for write readiness.",
+        if (game.server.tcpwritetimeout > 0
+            && pconn->write_wait_time >= game.server.tcpwritetimeout) {
+          freelog(LOG_NORMAL, _("Cutting connection %s due to write lag "
+                                "(waited too long for write)."),
                   conn_description(pconn));
           server_break_connection(pconn, ES_LAGGING_CONN);
         }
@@ -1281,17 +1320,17 @@ static void get_lanserver_announcement(void)
   tv.tv_usec = 0;
 
   while (select(socklan + 1, &readfs, NULL, &exceptfs, &tv) == -1) {
-#ifdef WIN32_NATIVE
-      if (myerrno() != WSAEINTR) {
-#else
-      if (myerrno() != EINTR) {
-#endif
-      freelog(LOG_ERROR, "select failed: %s",
-              mystrsocketerror(mysocketerrno()));
-      return;
+    long err_no = mysocketerrno();
+
+    if (is_interrupted_errno(err_no)) {
+      /* EINTR can happen sometimes, especially when compiling with -pg.
+       * Generally we just want to run select again. */
+      continue;
     }
-    /* EINTR can happen sometimes, especially when compiling with -pg.
-     * Generally we just want to run select again. */
+    
+    freelog(LOG_ERROR, "select failed: %s",
+            mystrsocketerror(err_no));
+    return;
   }
 
   if (FD_ISSET(socklan, &readfs)) {

@@ -344,19 +344,17 @@ static int read_from_connection(struct connection *pc, bool block)
     }
 
     if (n == -1) {
-#ifdef WIN32_NATIVE
-      if (myerrno() == WSAEINTR) {
-#else
-      if (myerrno() == EINTR) {
-#endif
+      long err_no = mysocketerrno();
+
+      if (is_interrupted_errno(err_no)) {
 	/* EINTR can happen sometimes, especially when compiling with -pg.
 	 * Generally we just want to run select again. */
 	freelog(LOG_DEBUG, "select() returned EINTR");
 	continue;
       }
 
-      freelog(LOG_NORMAL, "error in select() return=%d errno=%d (%s)",
-	      n, errno, mystrsocketerror(mysocketerrno()));
+      freelog(LOG_NORMAL, "error in select() return=%d errno=%lu (%s)",
+	      n, err_no, mystrsocketerror(err_no));
       return -1;
     }
 
@@ -1528,17 +1526,16 @@ struct server_list *get_lan_server_list(void)
   tv.tv_usec = 0;
 
   while (select(socklan + 1, &readfs, NULL, &exceptfs, &tv) == -1) {
-#ifdef WIN32_NATIVE
-      if (myerrno() != WSAEINTR) {
-#else
-      if (myerrno() != EINTR) {
-#endif
-      freelog(LOG_ERROR, "select failed: %s",
-              mystrsocketerror(mysocketerrno()));
-      return lan_servers;
+    long err_no = mysocketerrno();
+
+    if (is_interrupted_errno(err_no)) {
+      /* EINTR can happen sometimes, especially when compiling with -pg.
+       * Generally we just want to run select again. */
+      continue;
     }
-    /* EINTR can happen sometimes, especially when compiling with -pg.
-     * Generally we just want to run select again. */
+    freelog(LOG_ERROR, "select failed: %s",
+            mystrsocketerror(err_no));
+    return lan_servers;
   }
 
   if (!FD_ISSET(socklan, &readfs)) {
