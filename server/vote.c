@@ -294,14 +294,9 @@ struct vote *vote_new(struct connection *caller,
   pvote->caller_id = caller->id;
   pvote->command_id = command_id;
 
-  if (command_id == CMD_POLL) {
-    /* Don't display the "/poll" part. */
-    my_snprintf(pvote->cmdline, sizeof(pvote->cmdline), "%s", allargs);
-  } else {
-    my_snprintf(pvote->cmdline, sizeof(pvote->cmdline), "%s%s%s",
-                commands[command_id].name,
-                allargs[0] == '\0' ? "" : " ", allargs);
-  }
+  my_snprintf(pvote->cmdline, sizeof(pvote->cmdline), "%s%s%s",
+              commands[command_id].name,
+              allargs[0] == '\0' ? "" : " ", allargs);
 
   pvote->turn_count = 0;
   pvote->votes_cast = vote_cast_list_new();
@@ -658,9 +653,16 @@ int describe_vote(struct vote *pvote, char *buf, int buflen)
 {
   int ret = 0;
 
-  /* Special case for the /poll command. */
   if (pvote->command_id == CMD_POLL) {
-    return my_snprintf(buf, buflen, "%s", pvote->cmdline);
+    /* Special case for the /poll command. */
+    ret = my_snprintf(buf, buflen, "%s", pvote->cmdline);
+
+    /* FIXME hackish... */
+    if (0 == mystrncasecmp("poll ", buf, 5)) {
+      memmove(buf, buf + 5, ret - 5 + 1);
+      ret -= 5;
+    }
+    return ret;
   }
 
   /* NB We don't handle votes with multiple

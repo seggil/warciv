@@ -3242,10 +3242,6 @@ static bool poll_command(struct connection *caller,
     return FALSE;
   }
 
-  if (check) {
-    notify_conn(NULL, "/poll: %s", _("A new poll is started..."));
-  }
-
   /* Do nothing more, the vote system will display the message
    * and show who made the poll. */
 
@@ -5884,9 +5880,15 @@ bool handle_stdin_input(struct connection * caller,
 
       describe_vote(vote, votedesc, sizeof(votedesc));
 
-      notify_conn(NULL, _("New vote (number %d) by %s: %s"),
-                  vote->vote_no, caller->username,
-                  votedesc);
+      if (cmd == CMD_POLL) {
+        notify_conn(NULL, _("New poll (vote %d) by %s: %s"),
+                    vote->vote_no, caller->username,
+                    votedesc);
+      } else {
+        notify_conn(NULL, _("New vote (number %d) by %s: %s"),
+                    vote->vote_no, caller->username,
+                    votedesc);
+      }
 
       /* Vote on your own suggestion. */
       connection_vote(caller, vote, VOTE_YES);
