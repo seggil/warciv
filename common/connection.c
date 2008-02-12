@@ -212,7 +212,7 @@ static int write_socket_data(struct connection *pc,
   int count = 0, nput = 0, nblock = 0, ret = 0;
 
   if (pc == NULL || buf == NULL || buf->ndata <= 0
-      || !pc->used || pc->delayed_disconnect) {
+      || !pc->used || pc->is_closing) {
     return 0;
   }
 
@@ -275,8 +275,8 @@ int flush_connection_send_buffer_all(struct connection *pc)
 {
   int ret = 0;
 
-  if (pc == NULL || !pc->used || pc->send_buffer == NULL
-      || pc->send_buffer->ndata <= 0) {
+  if (pc == NULL || !pc->used || pc->is_closing
+      || pc->send_buffer == NULL || pc->send_buffer->ndata <= 0) {
     return 0;
   }
 
@@ -300,7 +300,8 @@ static bool add_connection_data(struct connection *pc,
 {
   struct socket_packet_buffer *buf;
 
-  if (pc == NULL || !pc->used || pc->send_buffer == NULL) {
+  if (pc == NULL || !pc->used || pc->is_closing
+      || pc->send_buffer == NULL || data == NULL || len <= 0) {
     return TRUE;
   }
 
@@ -324,9 +325,9 @@ static bool add_connection_data(struct connection *pc,
   NB: May call call_close_socket_callback if an error occurs.
 **************************************************************************/
 int send_connection_data(struct connection *pc, const unsigned char *data,
-			  int len)
+                         int len)
 {
-  if (pc == NULL || !pc->used || pc->delayed_disconnect
+  if (pc == NULL || !pc->used || pc->is_closing
       || pc->send_buffer == NULL || data == NULL || len <= 0) {
     return 0;
   }
@@ -350,7 +351,8 @@ int send_connection_data(struct connection *pc, const unsigned char *data,
 **************************************************************************/
 void connection_do_buffer(struct connection *pc)
 {
-  if (pc == NULL || !pc->used || pc->send_buffer == NULL) {
+  if (pc == NULL || !pc->used || pc->is_closing
+      || pc->send_buffer == NULL) {
     return;
   }
 
@@ -367,7 +369,8 @@ void connection_do_buffer(struct connection *pc)
 **************************************************************************/
 void connection_do_unbuffer(struct connection *pc)
 {
-  if (pc == NULL || !pc->used || pc->send_buffer == NULL) {
+  if (pc == NULL || !pc->used || pc->is_closing
+      || pc->send_buffer == NULL) {
     return;
   }
 

@@ -328,7 +328,7 @@ void force_flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
       pconn = &connections[i];
-      if (!pconn->used || pconn->delayed_disconnect
+      if (!pconn->used || pconn->is_closing
           || pconn->send_buffer == NULL
           || pconn->send_buffer->ndata <= 0) {
         continue;
@@ -364,7 +364,7 @@ void force_flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
       pconn = &connections[i];
-      if (!pconn->used || pconn->delayed_disconnect
+      if (!pconn->used || pconn->is_closing
           || pconn->send_buffer == NULL
           || pconn->send_buffer->ndata <= 0) {
         continue;
@@ -527,7 +527,8 @@ int sniff_packets(void)
 
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
-        if (!pconn->used || !pconn->established
+        if (!pconn->used || pconn->is_closing
+            || !pconn->established
             || !pconn->server.ping_timers) {
           continue;
         }
@@ -851,7 +852,7 @@ int sniff_packets(void)
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
 
-        if (!pconn->used || pconn->delayed_disconnect
+        if (!pconn->used || pconn->is_closing
             || pconn->send_buffer == NULL
             || pconn->send_buffer->ndata <= 0) {
           continue;
@@ -1029,7 +1030,7 @@ static int server_accept_connection(int sockfd)
   pconn->observer = FALSE;
   pconn->player = NULL;
   pconn->capability[0] = '\0';
-  pconn->delayed_disconnect = FALSE;
+  pconn->is_closing = FALSE;
   pconn->notify_of_writable_data = NULL;
   pconn->server.currently_processed_request_id = 0;
   pconn->server.last_request_id_seen = 0;

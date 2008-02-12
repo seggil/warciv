@@ -678,7 +678,7 @@ void lost_connection_to_client(struct connection *pconn)
    * trigger an error on send and recurse back to here.
    * Safe to unlink even if not in list: */
   conn_list_unlink(game.est_connections, pconn);
-  pconn->delayed_disconnect = TRUE;
+  pconn->is_closing = TRUE;
   notify_conn(game.est_connections, _("Game: Lost connection: %s."), desc);
 
   if (!pplayer) {

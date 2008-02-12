@@ -198,11 +198,11 @@ struct connection {
   enum cmdlevel_id access_level;
   enum cmdlevel_id granted_access_level; /* access level granted by the action list */
 
-  /* 
-   * Something has occurred that means the connection should be
-   * closed, but the closing has been postponed. 
-   */
-  bool delayed_disconnect;
+  /* Something has occurred that should have closed the
+   * connection, but the closing has been postponed. If
+   * this field is TRUE, under no circumstances should
+   * writing be done to the connection. */
+  bool is_closing;
 
   /* Used to determine how the connection is broken */
   enum exit_state exit_state;
