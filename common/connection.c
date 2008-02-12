@@ -170,6 +170,7 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
 int read_socket_data(int sock, struct socket_packet_buffer *buffer)
 {
   int nb;
+  long err_no;
 
   if (!buffer_ensure_free_extra_space(buffer, MAX_LEN_PACKET)) {
     freelog(LOG_ERROR, "Failed to increase size of packet read buffer.");
@@ -180,8 +181,9 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
           buffer->nsize - buffer->ndata);
   nb = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
                      buffer->nsize - buffer->ndata);
+  err_no = mysocketerrno();
   freelog(LOG_DEBUG, "my_readsocket nb=%d: %s",
-          nb, mystrsocketerror(mysocketerrno()));
+          nb, mystrsocketerror(err_no));
 
   if (nb > 0) {
     buffer->ndata += nb;
@@ -194,7 +196,7 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
   }
 
 #ifdef NONBLOCKING_SOCKETS
-  if (my_socket_would_block()) {
+  if (my_socket_would_block(err_no)) {
     return 0;
   }
 #endif
@@ -210,6 +212,7 @@ static int write_socket_data(struct connection *pc,
                              struct socket_packet_buffer *buf)
 {
   int count = 0, nput = 0, nblock = 0, ret = 0;
+  long err_no;
 
   if (pc == NULL || buf == NULL || buf->ndata <= 0
       || !pc->used || pc->is_closing) {
@@ -222,13 +225,14 @@ static int write_socket_data(struct connection *pc,
     freelog(LOG_DEBUG, "trying to write %d bytes to %s",
             nblock, conn_description(pc));
     nput = my_writesocket(pc->sock, buf->data + count, nblock);
+    err_no = mysocketerrno();
     freelog(LOG_DEBUG, "write returns nput=%d: %s",
-            nput, mystrsocketerror(mysocketerrno()));
+            nput, mystrsocketerror(err_no));
 
 
     if (nput == -1) {
 #ifdef NONBLOCKING_SOCKETS
-      if (my_socket_would_block()) {
+      if (my_socket_would_block(err_no)) {
         freelog(LOG_DEBUG, "write would block");
         break;
       }

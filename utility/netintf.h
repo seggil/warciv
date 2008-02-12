@@ -60,9 +60,9 @@ int my_writesocket(int sock, const void *buf, size_t size);
 void my_closesocket(int sock);
 void my_init_network(void);         
 void my_shutdown_network(void);
-bool my_socket_would_block(void);
-bool my_socket_operation_in_progess(void);
-int my_nonblock(int sockfd);
+bool my_socket_would_block(long err_no);
+bool my_socket_operation_in_progess(long err_no);
+int my_set_nonblock(int sockfd);
 
 bool is_net_service_resolved(const char *name, int port,
                              union my_sockaddr *addr);

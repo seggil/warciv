@@ -221,7 +221,7 @@ struct dns *dns_new(void)
     goto FAILED;
   }
   
-  if (my_nonblock(dns->sock) == -1) {
+  if (my_set_nonblock(dns->sock) == -1) {
     freelog(LOG_ERROR, _("Failed to set non-blocking mode on UDP socket: %s"),
 	    mystrsocketerror(mysocketerrno()));
     goto FAILED;
@@ -543,6 +543,7 @@ void dns_poll(struct dns *dns)
   struct sockaddr_in sa;
   socklen_t len = sizeof(sa);
   int nb;
+  long err_no;
 
   freelog(LOG_DEBUG, "dp dns_poll");
 
@@ -550,6 +551,7 @@ void dns_poll(struct dns *dns)
   nb = recvfrom(dns->sock, dns->buf + dns->buflen,
                 sizeof(dns->buf) - dns->buflen, 0,
                 (struct sockaddr *) &sa, &len);
+  err_no = mysocketerrno();
   freelog(LOG_DEBUG, "dp recvfrom got nb=%d, from %s",
           nb, inet_ntoa(sa.sin_addr));
 
@@ -561,7 +563,8 @@ void dns_poll(struct dns *dns)
   }
   
   if (nb < 0) {
-    if (my_socket_would_block() || my_socket_operation_in_progess()) {
+    if (my_socket_would_block(err_no)
+        || my_socket_operation_in_progess(err_no)) {
       freelog(LOG_DEBUG, "dp recvfrom would block");
     } else {
       freelog(LOG_ERROR, _("Failed reading DNS response: recvfrom: %s"),

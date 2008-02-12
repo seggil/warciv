@@ -896,7 +896,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   int nb = 0, count = 0, rem = 0;
   static const int READSZ = 4096;
   struct async_slist_ctx *ctx = data;
-  bool socket_would_block = FALSE;
+  long err_no = 0;
 
   assert(data != NULL);
   assert(ctx->sock == sock);
@@ -926,7 +926,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
 
   while (rem > 0) {
     nb = my_readsocket(ctx->sock, buf, rem > READSZ ? READSZ : rem);
-    socket_would_block = my_socket_would_block();
+    err_no = mysocketerrno();
     freelog(LOG_DEBUG, "mrc my_readsocket nb=%d", nb);
     if (nb <= 0) {
       break;
@@ -951,7 +951,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   freelog(LOG_DEBUG, "mrc count=%d (buflen=%d)", count, ctx->buflen);
 
   if (nb == -1) {		/* read error */
-    if (socket_would_block) {
+    if (my_socket_would_block(err_no)) {
       freelog(LOG_DEBUG, "mrc socket read would block");
       return TRUE;
     }
@@ -988,6 +988,7 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
 {
   int nb = 0;
   struct async_slist_ctx *ctx = data;
+  long err_no = 0;
 
   assert(ctx != NULL);
   assert(ctx->sock == sock);
@@ -1008,9 +1009,9 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
 
   while (ctx->buflen > 0) {
     nb = my_writesocket(ctx->sock, ctx->buf, ctx->buflen);
-    freelog(LOG_DEBUG, "mwc my_writesocket nb=%d sock=%d msg=\"%s\" "
-            "errno=%ld", nb, ctx->sock, mystrsocketerror(mysocketerrno()),
-            mysocketerrno());
+    err_no = mysocketerrno();
+    freelog(LOG_DEBUG, "mwc my_writesocket nb=%d sock=%d msg=\"%s\"",
+            nb, ctx->sock, mystrsocketerror(err_no));
     if (nb <= 0) {
       break;
     }
@@ -1023,7 +1024,7 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
   }
 
   if (nb < 0) {
-    if (my_socket_would_block()) {
+    if (my_socket_would_block(err_no)) {
       freelog(LOG_DEBUG, "mwc socket write would block");
       return TRUE;
     }
@@ -1100,6 +1101,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   int sock, res;
   struct async_slist_ctx *ctx = data;
   struct sockaddr *addr;
+  long err_no;
 
   freelog(LOG_DEBUG, "mnlc metaserver_name_lookup_callback: "
           "addr_result=%p data=%p", addr_result, data);
@@ -1125,7 +1127,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
 #ifndef WIN32_NATIVE
 /*   if we have winsock, we must let's glib to make this  */
 /*   socket in  non-blocking mode to prevent busy wait socket*/
-  if (-1 == my_nonblock(sock)) {
+  if (-1 == my_set_nonblock(sock)) {
     async_slist_error(ctx, _("Could not set non-blocking mode: %s"),
                       mystrsocketerror(mysocketerrno()));
     return;
@@ -1133,15 +1135,16 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
 #endif
 
   res = connect(sock, addr, sizeof(struct sockaddr));
+  err_no = mysocketerrno();
 
-  if (my_socket_operation_in_progess()
-      || my_socket_would_block()) {
+  if (my_socket_operation_in_progess(err_no)
+      || my_socket_would_block(err_no)) {
     res = 0;
   }
 
   if (res == -1) {
     async_slist_error(ctx, _("Connect operation failed: %s"),
-                      mystrsocketerror(mysocketerrno()));
+                      mystrsocketerror(err_no));
     return;
   }
 
@@ -1458,7 +1461,7 @@ int begin_lanserver_scan(void)
     return 0;
   }
 
-  my_nonblock(socklan);
+  my_set_nonblock(socklan);
 
   if (setsockopt(socklan, SOL_SOCKET, SO_REUSEADDR,
                  (char *)&opt, sizeof(opt)) == -1) {

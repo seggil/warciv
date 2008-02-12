@@ -1007,7 +1007,7 @@ static int server_accept_connection(int sockfd)
     } conn_list_iterate_end;
   }
 
-  if (-1 == my_nonblock(new_sock)) {
+  if (-1 == my_set_nonblock(new_sock)) {
     my_closesocket(new_sock);
     return -1;
   }
@@ -1145,7 +1145,7 @@ int server_open_socket(void)
             mystrsocketerror(mysocketerrno()));
   }
 
-  my_nonblock(socklan);
+  my_set_nonblock(socklan);
 
   group = get_multicast_group();
 

@@ -632,30 +632,30 @@ void my_shutdown_network(void)
   Returns true if errno indicates that the previous socket
   operation would block.
 ***************************************************************/
-bool my_socket_would_block(void)
+bool my_socket_would_block(long err_no)
 {
 #ifdef WIN32_NATIVE
-  return WSAGetLastError() == WSAEWOULDBLOCK;
+  return err_no == WSAEWOULDBLOCK;
 #else
-  return errno == EAGAIN || errno == EWOULDBLOCK;
+  return err_no == EAGAIN || err_no == EWOULDBLOCK;
 #endif
 }
 /***************************************************************
   Returns true if errno indicates that the previous socket
   is in progress.
 ***************************************************************/
-bool my_socket_operation_in_progess(void)
+bool my_socket_operation_in_progess(long err_no)
 {
 #ifdef WIN32_NATIVE
-  return WSAGetLastError() == WSAEINPROGRESS;
+  return err_no == WSAEINPROGRESS;
 #else
-  return errno == EINPROGRESS;
+  return err_no == EINPROGRESS;
 #endif
 }
 /***************************************************************
   Set socket to non-blocking.
 ***************************************************************/
-int my_nonblock(int sockfd)
+int my_set_nonblock(int sockfd)
 {
 #ifdef NONBLOCKING_SOCKETS
 #if defined (HAVE_FCNTL)
