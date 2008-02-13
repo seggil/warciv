@@ -7338,13 +7338,14 @@ static void show_ignore(struct connection *caller)
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
 
+#ifdef HAVE_MYSQL
 /**************************************************************************
   ...
 **************************************************************************/
 static void show_team_ratings(struct connection *caller, bool send_to_all)
 {
   enum game_types type = GT_NUM_TYPES;
-#ifdef HAVE_MYSQL
+
   if (team_count() <= 0) {
     return;
   }
@@ -7384,8 +7385,8 @@ static void show_team_ratings(struct connection *caller, bool send_to_all)
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   }
     
-#endif /* HAVE_MYSQL */
 }
+#endif /* HAVE_MYSQL */
 
 /**************************************************************************
   ...
@@ -7440,7 +7441,9 @@ static void show_teams(struct connection *caller, bool send_to_all)
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   }
 
+#ifdef HAVE_MYSQL
   show_team_ratings(caller, send_to_all);
+#endif /* HAVE_MYSQL */
 }
 
 /**************************************************************************
