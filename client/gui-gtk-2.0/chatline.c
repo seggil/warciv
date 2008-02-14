@@ -1116,6 +1116,10 @@ static void create_default_tag_patterns(struct tag_pattern_list *tpl)
                   TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED, 
                   "", "#FFFFFF", "#AA0000");
 
+  MK_TAG_PATTERN("new poll", "New poll ",
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#000000", "#FFF34D");
+
   MK_TAG_PATTERN("", "Vote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
                   | TPF_MATCH_AT_START, "vote stuff end", "", "");
   MK_TAG_PATTERN("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
