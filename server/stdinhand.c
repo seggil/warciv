@@ -3236,12 +3236,6 @@ static bool poll_command(struct connection *caller,
     return FALSE;
   }
   
-  if (vote_list_size(vote_list) > 0) {
-    cmd_reply(CMD_POLL, caller, C_FAIL,
-              _("You may not start a poll while other votes are running."));
-    return FALSE;
-  }
-
   /* Do nothing more, the vote system will display the message
    * and show who made the poll. */
 
