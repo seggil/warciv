@@ -2323,7 +2323,7 @@ static void load_ruleset_nations(struct section_file *file)
 	       secfile_lookup_str_default(file, "-", "%s.city_style", sec[i]));
     pl->city_style = get_style_by_name(temp_name);
     if (pl->city_style == -1) {
-      freelog(LOG_NORMAL,
+      freelog(LOG_VERBOSE,
 	      "Nation %s: city style %s is unknown, using default.", 
 	      pl->name_plural, temp_name);
       pl->city_style = 0;
@@ -3152,7 +3152,7 @@ void load_rulesets(void)
   ruleset_cache_free();
   ruleset_cache_init();
 
-  freelog(LOG_NORMAL, _("Loading rulesets"));
+  freelog(LOG_VERBOSE, "Loading rulesets");
 
   openload_ruleset_file(&techfile, "techs");
   load_tech_names(&techfile);
