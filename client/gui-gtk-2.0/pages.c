@@ -2292,7 +2292,7 @@ void voteinfo_gui_update(void)
   vote_count = voteinfo_list_size(voteinfo_queue);
   vi = voteinfo_queue_get_current(&index);
 
-  if (vote_count <= 0 || vi == NULL) {
+  if (!use_voteinfo_bar || vote_count <= 0 || vi == NULL) {
     gtk_widget_hide_all(vib->box);
     return;
   }

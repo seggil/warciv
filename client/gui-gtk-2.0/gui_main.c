@@ -151,7 +151,10 @@ client_option gui_options[] = {
   GEN_BOOL_OPTION(solid_unit_icon_bg,
 		  N_("Solid unit icon background color in city dialog")),
   GEN_BOOL_OPTION(better_fog,
-		  N_("Better fog-of-war drawing"))
+		  N_("Better fog-of-war drawing")),
+  GEN_BOOL_OPTION(use_voteinfo_bar,
+                  N_("Display the vote bar for new votes"))
+
 };
 const int num_gui_options = ARRAY_SIZE(gui_options);
 

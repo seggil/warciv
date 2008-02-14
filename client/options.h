@@ -57,6 +57,7 @@ extern bool show_split_message_window;
 extern bool do_not_recenter_overview;
 extern bool reload_pepsettings;
 extern bool use_digits_short_cuts;
+extern bool use_voteinfo_bar;
 
 enum client_option_type {
   COT_BOOL,

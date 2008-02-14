@@ -82,6 +82,7 @@ bool show_split_message_window = TRUE;
 bool do_not_recenter_overview = FALSE;
 bool reload_pepsettings = TRUE;
 bool use_digits_short_cuts = TRUE;
+bool use_voteinfo_bar = TRUE;
 
 
 /* This option is currently set by the client - not by the user. */
