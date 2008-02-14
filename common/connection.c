@@ -163,7 +163,8 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
 /**************************************************************************
   Read data from socket, and check if a packet is ready.
   Returns:
-    -1  :  an error occurred OR the connection was closed
+    -1  :  an error occurred
+    -2  :  the connection was closed
     >0  :  number of bytes read
     =0  :  non-blocking sockets only; no data read, would block
 **************************************************************************/
@@ -192,7 +193,7 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
 
   if (nb == 0) {
     freelog(LOG_DEBUG, "read_socket_data: peer disconnected");
-    return -1;
+    return -2;
   }
 
 #ifdef NONBLOCKING_SOCKETS
@@ -522,16 +523,17 @@ const char *conn_description(const struct connection *pconn)
   static const char *exit_state_name[] = {
     NULL,
     N_("unknown"),
-    N_("deconding error"),
+    N_("decoding error"),
     N_("ping timeout"),
     N_("network exception"),
     N_("buffer overflow"),
     N_("lagging connection"),
     N_("banned"),
     N_("auth failed"),
-    N_("cut connection"),
+    N_("connection cut"),
     N_("write error"),
-    N_("peer disconnected"),
+    N_("read error"),
+    N_("client disconnected"),
     N_("rejected")
   };
 

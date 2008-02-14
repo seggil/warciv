@@ -90,7 +90,8 @@ enum exit_state {
   ES_AUTH_FAILED,
   ES_CUT_COMMAND,
   ES_WRITE_ERROR,
-  ES_REMOTE_CLOSE,  /* FIXME Also used for read errors. */
+  ES_READ_ERROR,
+  ES_REMOTE_CLOSE,
   ES_REJECTED       /* handle_packet_input returned FALSE. */
 };
 

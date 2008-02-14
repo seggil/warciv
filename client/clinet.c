@@ -367,11 +367,11 @@ static int read_from_connection(struct connection *pc, bool block)
     }
 
     if (FD_ISSET(socket_fd, &readfs)) {
-      int nb;
+      int rv;
       
-      nb = read_socket_data(socket_fd, pc->buffer);
+      rv = read_socket_data(socket_fd, pc->buffer);
 
-      return nb;
+      return rv < 0 ? -1 : rv;
     }
   }
 }

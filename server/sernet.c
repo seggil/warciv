@@ -786,10 +786,12 @@ int sniff_packets(void)
 
         nb = read_socket_data(pconn->sock, pconn->buffer);
 	if (nb < 0) {
-          /* Read error or connection closed. */
-          /* FIXME It should distinguish between read errors
-           * and simple peer disconnects. */
-          server_break_connection(pconn, ES_REMOTE_CLOSE);
+          if (nb == -2) {
+            server_break_connection(pconn, ES_REMOTE_CLOSE);
+          } else {
+            /* Assume read error. */
+            server_break_connection(pconn, ES_READ_ERROR);
+          }
 	}
 
         while (TRUE) {
