@@ -1345,7 +1345,7 @@ struct settings_s settings[] = {
            N_("Update user ratings"),
            N_("0 - User ratings will not be affected by this game.\n"
               "1 - New ratings will be calculated based on the outcome "
-              "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 75)
+              "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 50)
 #endif
 
   GEN_BOOL("nopubliclinks", game.server.no_public_links, SSET_RULES_FLEXIBLE,
