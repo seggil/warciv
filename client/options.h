@@ -58,6 +58,7 @@ extern bool do_not_recenter_overview;
 extern bool reload_pepsettings;
 extern bool use_digits_short_cuts;
 extern bool use_voteinfo_bar;
+extern bool show_new_vote_in_front;
 
 enum client_option_type {
   COT_BOOL,

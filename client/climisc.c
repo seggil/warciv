@@ -1960,7 +1960,12 @@ void voteinfo_queue_add(int vote_no,
   vi->flags = flags;
   vi->is_poll = is_poll;
 
-  voteinfo_list_append(voteinfo_queue, vi);
+  if (show_new_vote_in_front) {
+    voteinfo_list_prepend(voteinfo_queue, vi);
+    voteinfo_queue_current_index = 0;
+  } else {
+    voteinfo_list_append(voteinfo_queue, vi);
+  }
 }
 
 /**************************************************************************

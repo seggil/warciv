@@ -153,8 +153,9 @@ client_option gui_options[] = {
   GEN_BOOL_OPTION(better_fog,
 		  N_("Better fog-of-war drawing")),
   GEN_BOOL_OPTION(use_voteinfo_bar,
-                  N_("Display the vote bar for new votes"))
-
+                  N_("Display the vote bar for new votes")),
+  GEN_BOOL_OPTION(show_new_vote_in_front,
+                  N_("New votes go to the front of the vote list"))
 };
 const int num_gui_options = ARRAY_SIZE(gui_options);
 
