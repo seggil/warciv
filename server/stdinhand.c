@@ -3266,13 +3266,6 @@ static bool emote_command(struct connection *caller,
     return FALSE;
   }
 
-  if (caller != NULL
-      && (caller->player == NULL || caller->observer)) {
-    cmd_reply(CMD_EMOTE, caller, C_REJECTED,
-              _("You can't emote if you have no body!"));
-    return FALSE;
-  }
-
   if (conn_is_muted(caller)) {
     cmd_reply(CMD_EMOTE, caller, C_REJECTED,
               _("You are not allowed to emote, you are muted!"));
