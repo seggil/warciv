@@ -126,7 +126,7 @@ struct fcdb_aliaslist {
 bool fcdb_record_game_start(void);
 bool fcdb_end_of_turn_update(void);
 bool fcdb_record_game_end(void);
-bool fcdb_load_player_ratings(int game_type);
+bool fcdb_load_player_ratings(int game_type, bool check_turns_played);
 struct fcdb_user_stats *fcdb_user_stats_new(const char *username);
 void fcdb_user_stats_free(struct fcdb_user_stats *fus);
 int fcdb_user_exists(const char *username);

@@ -788,6 +788,7 @@ static inline double glicko_E_function(double r, double rj, double gRDj)
   up, it might be complete bullshit.
 
   NB: Also sets rating and RD fields in team structs.
+  NB: Modifies global groupings array.
 **************************************************************************/
 void score_calculate_grouping_ratings(void)
 {
@@ -853,7 +854,7 @@ void score_calculate_grouping_ratings(void)
 }
 
 /**************************************************************************
-  ...
+  NB: Modifies global groupings and player structs.
 **************************************************************************/
 void score_propagate_grouping_ratings(void)
 {
@@ -917,6 +918,8 @@ void score_propagate_grouping_ratings(void)
   Glicko rating system extended to variable-sized groups of players. To
   understand what this code is trying to do, read what it is based on at
   http://math.bu.edu/people/mg/glicko/glicko.doc/glicko.html.
+
+  NB: Modifies global groupings and player structs.
 **************************************************************************/
 static void update_ratings(void)
 {
@@ -1038,7 +1041,7 @@ static void update_ratings(void)
 }
 
 /**************************************************************************
-  ...
+  NB: Modifies global grouping array.
 **************************************************************************/
 void score_assign_groupings(void)
 {
@@ -1079,7 +1082,7 @@ void score_assign_groupings(void)
 }
 
 /**************************************************************************
-  ...
+  NB: Modifies global grouping array.
 **************************************************************************/
 void score_update_grouping_results(void)
 {
@@ -1213,6 +1216,8 @@ void score_update_grouping_results(void)
 /**************************************************************************
   Propagate the groupings' results back to the players and teams, and
   calculate the fractional ranking for players.
+
+  NB: Modifies global groupings, player and team structs.
 **************************************************************************/
 void score_propagate_grouping_results(void)
 {
@@ -1284,7 +1289,7 @@ void score_evaluate_players(void)
   }
 
   /* Get the old ratings. */
-  if (!fcdb_load_player_ratings(game.server.fcdb.type)) {
+  if (!fcdb_load_player_ratings(game.server.fcdb.type, TRUE)) {
     notify_conn(NULL, _("Game: Though the server option 'rated' was set, "
         "player ratings cannot be updated because there was an error "
         "communicating with the database."));

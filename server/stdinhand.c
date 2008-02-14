@@ -1886,7 +1886,7 @@ static bool autoteam_command(struct connection *caller, char *str,
       return TRUE;
     }
 
-    if (!fcdb_load_player_ratings(GT_TEAM)) {
+    if (!fcdb_load_player_ratings(GT_TEAM, FALSE)) {
       cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
                 _("There was an error loading ratings from the database."));
       free_tokens(args, ntokens);
@@ -7343,10 +7343,16 @@ static void show_team_ratings(struct connection *caller, bool send_to_all)
     return;
   }
 
+  /* This will usually be GT_TEAM, but
+   * it could be GT_MIXED too, or some
+   * future game type. */
   type = game_determine_type();
 
-  if (type == GT_NUM_TYPES
-      || !fcdb_load_player_ratings(type)) {
+  /* Only reload ratings from the database if we are in
+   * pregame (when teams could change easily). */
+  if (server_state == PRE_GAME_STATE
+      && (type == GT_NUM_TYPES
+          || !fcdb_load_player_ratings(type, FALSE))) {
     /* Simply don't print anything more. */
     return;
   }

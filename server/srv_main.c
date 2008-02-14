@@ -2003,7 +2003,7 @@ MAIN_START_PLAYERS:
   /* NB: This is the one and only place this should be set. */
   game.server.fcdb.type = game_determine_type();
 
-  fcdb_load_player_ratings(game.server.fcdb.type);
+  fcdb_load_player_ratings(game.server.fcdb.type, FALSE);
   fcdb_record_game_start();
 
   send_game_state(game.game_connections, CLIENT_GAME_RUNNING_STATE);

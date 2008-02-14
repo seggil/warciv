@@ -1814,9 +1814,14 @@ bool fcdb_record_game_end(void)
 
 /**************************************************************************
   Fills player fcdb struct with rating information for the given game
-  type. May be called in pregame or during the game.
+  type. May be called in pregame or during the game. If the boolean
+  argument 'check_turns_played' is true, then ratings will be loaded
+  taking into account which user played the most significantly for
+  each given player.
+
+  NB: This function modifies the fcdb fields of the player structs.
 **************************************************************************/
-bool fcdb_load_player_ratings(int game_type)
+bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
@@ -1845,7 +1850,8 @@ bool fcdb_load_player_ratings(int game_type)
      * this player. */
     user_id_for_old_rating = 0;
 
-    if (pplayer->fcdb.player_id > 0 && game.server.fcdb.id > 0) {
+    if (check_turns_played && pplayer->fcdb.player_id > 0
+        && game.server.fcdb.id > 0) {
       /* Find all users that have been connected to this player
          and how many turns each of them were connected. */
       my_snprintf(buf, sizeof(buf),
@@ -1921,8 +1927,8 @@ bool fcdb_load_player_ratings(int game_type)
 
       mysql_free_result(res);
       res = NULL;
-    } else if (server_state == PRE_GAME_STATE
-               && pplayer->is_connected) {
+
+    } else if (pplayer->is_connected) {
       /* I assume is_connected == TRUE guarantees that
        * the user_name field is an actual user name. */
       if (!get_user_id(sock, pplayer->username,
