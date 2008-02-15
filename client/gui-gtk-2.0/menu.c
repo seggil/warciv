@@ -58,7 +58,7 @@
 #include "menu.h"
 
 /* Use it to manage buf size for char variables */
-#define LOG_MENU LOG_DEBUG
+#define LOG_MENU LOG_VERBOSE
 
 static GtkWidget *main_menubar = NULL;
 static GtkUIManager *main_uimanager = NULL;
@@ -155,7 +155,8 @@ static void menu_toggle_set_sensitive(GtkActionGroup *ptoggle_action_group,
 
   if (!action) {
     freelog(LOG_ERROR,
-            "Can't set sensitivity for non-existent menu %s in toggle action group",
+            "Can't set sensitivity for non-existent menu %s in toggle"
+            " action group",
             actionname);
     return;
   }
@@ -401,7 +402,8 @@ static void callback_game_pepsettings(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_pepsettings_load(GtkAction *action, gpointer user_data)
+static void callback_game_pepsettings_load(GtkAction *action,
+                                           gpointer user_data)
 {
   load_all_settings();
   init_menus();
@@ -410,7 +412,8 @@ static void callback_game_pepsettings_load(GtkAction *action, gpointer user_data
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_pepsettings_save(GtkAction *action, gpointer user_data)
+static void callback_game_pepsettings_save(GtkAction *action,
+                                           gpointer user_data)
 {
   save_all_settings();
 }
@@ -418,7 +421,8 @@ static void callback_game_pepsettings_save(GtkAction *action, gpointer user_data
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_server_options1(GtkAction *action, gpointer user_data)
+static void callback_game_server_options1(GtkAction *action, 
+                                          gpointer user_data)
 {
   send_report_request(REPORT_SERVER_OPTIONS1);
 }
@@ -426,7 +430,8 @@ static void callback_game_server_options1(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_server_options2(GtkAction *action, gpointer user_data)
+static void callback_game_server_options2(GtkAction *action, 
+                                          gpointer user_data)
 {
   send_report_request(REPORT_SERVER_OPTIONS2);
 }
@@ -520,8 +525,10 @@ static const char *load_menu_game(void)
     {"GAME_PEPSETTINGS_SAVE", GTK_STOCK_SAVE_AS, N_("Sa_ve PepClient Settings"),
      NULL, N_("Sa_ve PepClient Settings"),
      G_CALLBACK(callback_game_pepsettings_save)},
-    {"GAME_SERVER_OPTIONS1", GTK_STOCK_PREFERENCES, N_("_Initial Server Options"),
-     NULL, N_("_Initial Server Options"), G_CALLBACK(callback_game_server_options1)},
+    {"GAME_SERVER_OPTIONS1", GTK_STOCK_PREFERENCES,
+     N_("_Initial Server Options"),
+     NULL, N_("_Initial Server Options"),
+     G_CALLBACK(callback_game_server_options1)},
     {"GAME_SERVER_OPTIONS2", GTK_STOCK_PREFERENCES, N_("Server Optio_ns"),
      NULL, N_("Server Optio_ns"), G_CALLBACK(callback_game_server_options2)},
     {"GAME_SAVE_GAME", GTK_STOCK_SAVE_AS, N_("_Save Game _As..."),
@@ -771,8 +778,10 @@ static const char *load_menu_government(void)
      "<Shift>f", N_("_Find City"), G_CALLBACK(callback_government_find_city)},
     {"GOVERNMENT_WORKLISTS", NULL, N_("_Worklists"),
      "<Control>l", N_("_Worklists"), G_CALLBACK(callback_government_worklists)},
-    {"GOVERNMENT_CLEAR_SELECTED_WORKLISTS", NULL, N_("_Clear Selected Worklists"),
-     "<Control>w", N_("_Clear Selected Worklists"), G_CALLBACK(callback_government_clear_selected_worklists)},
+    {"GOVERNMENT_CLEAR_SELECTED_WORKLISTS", NULL,
+     N_("_Clear Selected Worklists"),
+     "<Control>w", N_("_Clear Selected Worklists"),
+     G_CALLBACK(callback_government_clear_selected_worklists)},
     {"GOVERNMENT_CHANGE", NULL, N_("_Change Government"), NULL, NULL, NULL},
   };
 
@@ -783,7 +792,8 @@ static const char *load_menu_government(void)
   gtk_action_group_add_actions(action_group_government, entries_government,
                                G_N_ELEMENTS(entries_government),
                                NULL);
-  gtk_ui_manager_insert_action_group(main_uimanager, action_group_government, 0);
+  gtk_ui_manager_insert_action_group(main_uimanager, 
+                                     action_group_government, 0);
 
   my_snprintf(buf, sizeof(buf),
               "<menu action=\"GOVERNMENT\">\n"
@@ -1057,7 +1067,8 @@ static const char *load_menu_view(void)
     {"VIEW_SHOW_MAP_GRID", NULL, N_("Map _Grid"),
      NULL, N_("Map _Grid"), G_CALLBACK(callback_view_show_map_grid), TRUE},
     {"VIEW_SHOW_NATIONAL_BORDERS", NULL, N_("National _Borders"),
-     NULL, N_("National _Borders"), G_CALLBACK(callback_view_show_national_borders), TRUE},
+     NULL, N_("National _Borders"), 
+     G_CALLBACK(callback_view_show_national_borders), TRUE},
     {"VIEW_SHOW_CITY_NAMES", NULL, N_("City _Names"),
      "<Control>g", N_("City _Names"),
      G_CALLBACK(callback_view_show_city_names), TRUE},
@@ -1067,7 +1078,8 @@ static const char *load_menu_view(void)
     {"VIEW_SHOW_CITY_PRODUCTIONS", NULL, N_("City _Productions"),
      "<Control>p", N_("City _Productions"),
      G_CALLBACK(callback_view_show_city_productions), TRUE},
-    {"VIEW_SHOW_CITY_PRODUCTION_BUY_COST", NULL, N_("City Production Buy _Cost"),
+    {"VIEW_SHOW_CITY_PRODUCTION_BUY_COST", NULL,
+     N_("City Production Buy _Cost"),
      NULL, N_("City Production Buy _Cost"),
      G_CALLBACK(callback_view_show_city_production_buy_cost), TRUE},
     {"VIEW_SHOW_CITY_TRADEROUTES", NULL, N_("City _Trade Routes"),
@@ -1078,7 +1090,8 @@ static const char *load_menu_view(void)
     {"VIEW_SHOW_COASTLINE", NULL, N_("C_oastline"),
      NULL, N_("C_oastline"), G_CALLBACK(callback_view_show_coastline), TRUE},
     {"VIEW_SHOW_ROADS_RAILS", NULL, N_("_Roads & Rails"),
-     NULL, N_("_Roads & Rails"), G_CALLBACK(callback_view_show_roads_rails), TRUE},
+     NULL, N_("_Roads & Rails"), 
+     G_CALLBACK(callback_view_show_roads_rails), TRUE},
     {"VIEW_SHOW_IRRIGATION", NULL, N_("_Irrigation"),
      NULL, N_("_Irrigation"), G_CALLBACK(callback_view_show_irrigation), TRUE},
     {"VIEW_SHOW_MINES", NULL, N_("_Mines"),
@@ -1117,7 +1130,8 @@ static const char *load_menu_view(void)
                                       toggle_entries_view,
                                       G_N_ELEMENTS(toggle_entries_view),
                                       NULL);
-  gtk_ui_manager_insert_action_group(main_uimanager, toggle_action_group_view, 0);
+  gtk_ui_manager_insert_action_group(main_uimanager,
+                                     toggle_action_group_view, 0);
 
   my_snprintf(buf, sizeof(buf), "%s",
               "<menu action=\"VIEW\">\n"
@@ -1364,7 +1378,8 @@ static void callback_order_connect_rail(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_order_connect_irrigate(GtkAction *action, gpointer user_data)
+static void callback_order_connect_irrigate(GtkAction *action,
+                                            gpointer user_data)
 {
   key_unit_connect(ACTIVITY_IRRIGATE);
 }
@@ -2243,14 +2258,16 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO", NULL, N_("_Delayed Goto"), NULL, NULL, NULL},
     {"DELAYED_GOTO_DELAYED_GOTO", NULL, N_("Delayed go_to"),
      "z", N_("Delayed go_to"), G_CALLBACK(callback_delayed_goto_delayed_goto)},
-    {"DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE", NULL, N_("Delayed pa_radrop or nuke"),
+    {"DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE", NULL,
+     N_("Delayed pa_radrop or nuke"),
      "<Control>z", N_("Delayed pa_radrop or nuke"),
      G_CALLBACK(callback_delayed_goto_delayed_paradrop_or_nuke)},
     {"DELAYED_GOTO_DELAYED_AIRLIFT", NULL, N_("Delayed _airlift"),
      "<Control>y", N_("Delayed _airlift"),
      G_CALLBACK(callback_delayed_goto_delayed_airlift)},
     {"DELAYED_GOTO_ADD_PAUSE", NULL, N_("_Add Pause"),
-     "<Control>b", N_("_Add Pause"), G_CALLBACK(callback_delayed_goto_add_pause)},
+     "<Control>b", N_("_Add Pause"),
+     G_CALLBACK(callback_delayed_goto_add_pause)},
     {"DELAYED_GOTO_EXECUTE_DELAYED_GOTO", NULL, N_("_Execute delayed goto"),
      "y", N_("_Execute delayed goto"),
      G_CALLBACK(callback_delayed_goto_execute_delayed_goto)},
@@ -2258,7 +2275,8 @@ static const char *load_menu_delayed_goto(void)
      "u", N_("_Clear delayed orders"),
      G_CALLBACK(callback_delayed_goto_clear_delayed_orders)},
     {"DELAYED_GOTO_MODE", NULL, N_("Delayed goto _mode"), NULL, NULL, NULL},
-    {"DELAYED_GOTO_AUTOMATIC", NULL, N_("_Automatic execution"), NULL, NULL, NULL},
+    {"DELAYED_GOTO_AUTOMATIC", NULL, N_("_Automatic execution"), 
+     NULL, NULL, NULL},
     {"DELAYED_GOTO_INCLUSIVE", NULL, N_("_Inclusive filter"), NULL, NULL, NULL},
     {"DELAYED_GOTO_EXCLUSIVE", NULL, N_("Exclusive filter"), NULL, NULL, NULL},
     {"DELAYED_GOTO_DG1", NULL, N_("Delayed goto selection") " _1",
@@ -2316,9 +2334,11 @@ static const char *load_menu_delayed_goto(void)
 
   GtkToggleActionEntry toggle_entries_delayed_goto_inclusive[] = {
     {"DELAYED_GOTO_INCLUSIVE_ALL", NULL, N_("_All units"),
-     NULL, N_("_All units"), G_CALLBACK(callback_delayed_goto_inclusive_all), TRUE},
+     NULL, N_("_All units"), G_CALLBACK(callback_delayed_goto_inclusive_all),
+     TRUE},
     {"DELAYED_GOTO_INCLUSIVE_NEW", NULL, N_("_New units"),
-     NULL, N_("_New units"), G_CALLBACK(callback_delayed_goto_inclusive_new), TRUE},
+     NULL, N_("_New units"), G_CALLBACK(callback_delayed_goto_inclusive_new),
+     TRUE},
     {"DELAYED_GOTO_INCLUSIVE_FORTIFIED", NULL, N_("_Fortified units"),
      NULL, N_("_Fortified units"),
      G_CALLBACK(callback_delayed_goto_inclusive_fortified), TRUE},
@@ -2346,9 +2366,11 @@ static const char *load_menu_delayed_goto(void)
 
   GtkToggleActionEntry toggle_entries_delayed_goto_exclusive[] = {
     {"DELAYED_GOTO_EXCLUSIVE_ALL", NULL, N_("_All units"),
-     NULL, N_("_All units"), G_CALLBACK(callback_delayed_goto_exclusive_all), TRUE},
+     NULL, N_("_All units"), G_CALLBACK(callback_delayed_goto_exclusive_all),
+     TRUE},
     {"DELAYED_GOTO_EXCLUSIVE_NEW", NULL, N_("_New units"),
-     NULL, N_("_New units"), G_CALLBACK(callback_delayed_goto_exclusive_new), TRUE},
+     NULL, N_("_New units"), G_CALLBACK(callback_delayed_goto_exclusive_new),
+     TRUE},
     {"DELAYED_GOTO_EXCLUSIVE_FORTIFIED", NULL, N_("_Fortified units"),
      NULL, N_("_Fortified units"),
      G_CALLBACK(callback_delayed_goto_exclusive_fortified), TRUE},
@@ -2408,7 +2430,8 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO_FAST_TILE", NULL,
      N_("All units of the same type on the tile (fast)"),
      "F10", N_("All units of the same type on the tile (fast)"), 1},
-    {"DELAYED_GOTO_FAST_TILE_ALL_TYPES", NULL, N_("All units on the tile (fast)"),
+    {"DELAYED_GOTO_FAST_TILE_ALL_TYPES", NULL,
+     N_("All units on the tile (fast)"),
      "F11", N_("All units on the tile (fast)"), 2},
     {"DELAYED_GOTO_FAST_CONTINENT", NULL,
      N_("All units of the same type on the continent (fast)"),
@@ -2619,7 +2642,8 @@ static void callback_airlift_airlift_select_airport_cities(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_airlift_clear_airlift_queue(GtkAction *action, gpointer user_data)
+static void callback_airlift_clear_airlift_queue(GtkAction *action,
+                                                 gpointer user_data)
 {
   struct unit *punit = get_unit_in_focus();
 
@@ -2633,7 +2657,8 @@ static void callback_airlift_clear_airlift_queue(GtkAction *action, gpointer use
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_airlift_show_cities_in_airlift_queue(GtkAction *action, gpointer user_data)
+static void callback_airlift_show_cities_in_airlift_queue(GtkAction *action,
+                                                          gpointer user_data)
 {
   airlift_queue_show(0);
 }
@@ -2956,45 +2981,41 @@ static void callback_airlift_aq6_show(GtkAction *action, gpointer user_data)
 *****************************************************************/
 static const char *get_accelerator(const char *uname, int aq)
 {
-  static char buf[128];
-
   if (aq != 0) {
     return NULL;
   }
 
-  if(!strcmp(uname,"Workers")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>w");
+  if (!strcmp(uname,"Workers")) {
+    return "<Shift><Control>w";
   } else if (!strcmp(uname,"Engineers")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>e");
+    return "<Shift><Control>e";
   } else if (!strcmp(uname,"Alpine Troops")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>l");
+    return "<Shift><Control>l";
   } else if (!strcmp(uname,"Riflemen")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>r");
+    return "<Shift><Control>r";
   } else if (!strcmp(uname,"Marines")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>m");
+    return "<Shift><Control>m";
   } else if (!strcmp(uname,"Paratroopers")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>p");
+    return "<Shift><Control>p";
   } else if  (!strcmp(uname,"Mech. Inf.")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>i");
+    return "<Shift><Control>i";
   } else if (!strcmp(uname,"Cavalry")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>c");
+    return "<Shift><Control>c";
   } else if (!strcmp(uname,"Armor")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>t");
+    return "<Shift><Control>t";
   } else if (!strcmp(uname,"Artillery")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>a");
+    return "<Shift><Control>a";
   } else if (!strcmp(uname,"Howitzer")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>h");
+    return "<Shift><Control>h";
   } else if (!strcmp(uname,"Diplomat")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>d");
+    return "<Shift><Control>d";
   } else if (!strcmp(uname,"Spy")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>s");
+    return "<Shift><Control>s";
   } else if (!strcmp(uname,"Fanatics")) {
-    my_snprintf(buf, sizeof(buf), "%s","<Shift><Control>f");
-  } else {
-    return NULL;
+    return "<Shift><Control>f";
   }
 
-  return buf;
+  return NULL;
 }
 
 /****************************************************************
@@ -3036,7 +3057,8 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
 {
   GtkRadioActionEntry radio_entries_airlift_unit[U_LAST];
   Unit_Type_id classes[CLASS_NUM][U_LAST];
-  int index[CLASS_NUM] = {0, 0, 0, 0}, i, j, k = 0;
+  int index[CLASS_NUM] = {0, 0, 0, 0};
+  int i, j, k = 0;
   char name[U_LAST][256];
   char accel[U_LAST][256];
   char buf[256];
@@ -3536,7 +3558,8 @@ static const char *load_menu_auto_caravan(void)
      N_("_Clear city list for trade plan"),
      NULL, N_("_Clear city list for trade plan"),
      G_CALLBACK(callback_auto_caravan_my_ai_clear_trade_city)},
-    {"AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE", NULL, N_("_Recalculate trade plan"),
+    {"AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE", NULL,
+     N_("_Recalculate trade plan"),
      NULL, N_("_Recalculate trade plan"),
      G_CALLBACK(callback_auto_caravan_my_ai_trade_recalculate)},
     {"AUTO_CARAVAN_MY_AI_ESTIMATE_TRADE", NULL, N_("Show trade _estimation"),
@@ -3546,14 +3569,18 @@ static const char *load_menu_auto_caravan(void)
      N_("Show the trade route _free slots"),
      NULL, N_("Show the trade route _free slots"),
      G_CALLBACK(callback_auto_caravan_my_ai_show_free_slots)},
-    {"AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES", NULL, N_("Show cities in _trade plan"),
+    {"AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES", NULL,
+     N_("Show cities in _trade plan"),
      NULL, N_("Show cities in _trade plan"),
      G_CALLBACK(callback_auto_caravan_my_ai_show_trade_cities)},
     {"AUTO_CARAVAN_MY_AI_TRADE_WITH", NULL, N_("_Set caravan destination"),
-     "j", N_("_Set caravan destination"), G_CALLBACK(callback_auto_caravan_my_ai_trade_with)},
+     "j", N_("_Set caravan destination"), 
+     G_CALLBACK(callback_auto_caravan_my_ai_trade_with)},
     {"AUTO_CARAVAN_MY_AI_CARAVAN", NULL, N_("Auto_matic caravan orders"),
-     "<Control>j", N_("Auto_matic caravan orders"), G_CALLBACK(callback_auto_caravan_my_ai_caravan)},
-    {"AUTO_CARAVAN_MY_AI_TRADE_EXECUTE", NULL, N_("_Execute all trade route orders"),
+     "<Control>j", N_("Auto_matic caravan orders"),
+     G_CALLBACK(callback_auto_caravan_my_ai_caravan)},
+    {"AUTO_CARAVAN_MY_AI_TRADE_EXECUTE", NULL,
+     N_("_Execute all trade route orders"),
      "<Shift>j", N_("_Execute all trade route orders"),
      G_CALLBACK(callback_auto_caravan_my_ai_trade_execute)}
   };
@@ -3564,7 +3591,8 @@ static const char *load_menu_auto_caravan(void)
   gtk_action_group_add_actions(action_group_auto_caravan, entries_auto_caravan,
                                G_N_ELEMENTS(entries_auto_caravan),
                                NULL);
-  gtk_ui_manager_insert_action_group(main_uimanager, action_group_auto_caravan, 0);
+  gtk_ui_manager_insert_action_group(main_uimanager,
+                                     action_group_auto_caravan, 0);
 
   my_snprintf(buf, sizeof(buf), "%s",
               "<menu action=\"AUTO_CARAVAN\">\n"
@@ -4323,113 +4351,136 @@ static const char *load_menu_multi_selection(void)
     {"MULTI_SELECTION_MS_SELECT", NULL, N_("Multi-selection _select"),
      "<Shift>c", N_("Multi-selection _select"),
      G_CALLBACK(callback_multi_selection_ms_select)},
-    {"MULTI_SELECTION_MS_ACTIVE_ALL", NULL, N_("Multi-selection _active all units"),
+    {"MULTI_SELECTION_MS_ACTIVE_ALL", NULL,
+     N_("Multi-selection _active all units"),
      "<Shift>b", N_("Multi-selection _active all units"),
      G_CALLBACK(callback_multi_selection_ms_active_all)},
     {"MULTI_SELECTION_MS_CLEAR", NULL, N_("Multi-selection _clear"),
      "<Shift>v", N_("Multi-selection _clear"),
      G_CALLBACK(callback_multi_selection_ms_clear)},
-    {"MULTI_SELECTION_MODE", NULL, N_("_Multi-Selection _mode"), NULL, NULL, NULL},
-    {"MULTI_SELECTION_INCLUSIVE", NULL, N_("Inclusive filter"), NULL, NULL, NULL},
-    {"MULTI_SELECTION_EXCLUSIVE", NULL, N_("Exclusive filter"), NULL, NULL, NULL},
+    {"MULTI_SELECTION_MODE", NULL, N_("_Multi-Selection _mode"),
+     NULL, NULL, NULL},
+    {"MULTI_SELECTION_INCLUSIVE", NULL, N_("Inclusive filter"), 
+     NULL, NULL, NULL},
+    {"MULTI_SELECTION_EXCLUSIVE", NULL, N_("Exclusive filter"),
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MY_AI_SPREAD", NULL, N_("Multi-selection sprea_d"),
      "<shift>s", N_("Multi-selection sprea_d"),
      G_CALLBACK(callback_multi_selection_my_ai_spread)},
-    {"MULTI_SELECTION_MS1", NULL, N_("Multi-selection") " _1", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS1", NULL, N_("Multi-selection") " _1",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS1_SELECT", NULL, N_("_Select"),
      "1", N_("_Select"), G_CALLBACK(callback_multi_selection_ms1_select)},
     {"MULTI_SELECTION_MS1_ADD", NULL, N_("_Add to current selection"),
      "<Shift>1", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms1_add)},
     {"MULTI_SELECTION_MS1_RECORD", NULL, N_("_Record"),
-     "<Control>1", N_("_Record"), G_CALLBACK(callback_multi_selection_ms1_record)},
+     "<Control>1", N_("_Record"),
+     G_CALLBACK(callback_multi_selection_ms1_record)},
     {"MULTI_SELECTION_MS1_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>1", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms1_clear)},
-    {"MULTI_SELECTION_MS2", NULL, N_("Multi-selection") " _2", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS2", NULL, N_("Multi-selection") " _2",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS2_SELECT", NULL, N_("_Select"),
      "2", N_("_Select"), G_CALLBACK(callback_multi_selection_ms2_select)},
     {"MULTI_SELECTION_MS2_ADD", NULL, N_("_Add to current selection"),
      "<Shift>2", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms2_add)},
     {"MULTI_SELECTION_MS2_RECORD", NULL, N_("_Record"),
-     "<Control>2", N_("_Record"), G_CALLBACK(callback_multi_selection_ms2_record)},
+     "<Control>2", N_("_Record"), 
+     G_CALLBACK(callback_multi_selection_ms2_record)},
     {"MULTI_SELECTION_MS2_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>2", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms2_clear)},
-    {"MULTI_SELECTION_MS3", NULL, N_("Multi-selection") " _3", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS3", NULL, N_("Multi-selection") " _3",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS3_SELECT", NULL, N_("_Select"),
      "3", N_("_Select"), G_CALLBACK(callback_multi_selection_ms3_select)},
     {"MULTI_SELECTION_MS3_ADD", NULL, N_("_Add to current selection"),
      "<Shift>3", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms3_add)},
     {"MULTI_SELECTION_MS3_RECORD", NULL, N_("_Record"),
-     "<Control>3", N_("_Record"), G_CALLBACK(callback_multi_selection_ms3_record)},
+     "<Control>3", N_("_Record"),
+     G_CALLBACK(callback_multi_selection_ms3_record)},
     {"MULTI_SELECTION_MS3_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>3", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms3_clear)},
-    {"MULTI_SELECTION_MS4", NULL, N_("Multi-selection") " _4", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS4", NULL, N_("Multi-selection") " _4",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS4_SELECT", NULL, N_("_Select"),
      "4", N_("_Select"), G_CALLBACK(callback_multi_selection_ms4_select)},
     {"MULTI_SELECTION_MS4_ADD", NULL, N_("_Add to current selection"),
      "<Shift>4", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms4_add)},
     {"MULTI_SELECTION_MS4_RECORD", NULL, N_("_Record"),
-     "<Control>4", N_("_Record"), G_CALLBACK(callback_multi_selection_ms4_record)},
+     "<Control>4", N_("_Record"),
+     G_CALLBACK(callback_multi_selection_ms4_record)},
     {"MULTI_SELECTION_MS4_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>4", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms4_clear)},
-    {"MULTI_SELECTION_MS5", NULL, N_("Multi-selection") " _5", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS5", NULL, N_("Multi-selection") " _5",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS5_SELECT", NULL, N_("_Select"),
      "5", N_("_Select"), G_CALLBACK(callback_multi_selection_ms5_select)},
     {"MULTI_SELECTION_MS5_ADD", NULL, N_("_Add to current selection"),
      "<Shift>5", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms5_add)},
     {"MULTI_SELECTION_MS5_RECORD", NULL, N_("_Record"),
-     "<Control>5", N_("_Record"), G_CALLBACK(callback_multi_selection_ms5_record)},
+     "<Control>5", N_("_Record"), 
+     G_CALLBACK(callback_multi_selection_ms5_record)},
     {"MULTI_SELECTION_MS5_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>5", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms5_clear)},
-    {"MULTI_SELECTION_MS6", NULL, N_("Multi-selection") " _6", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS6", NULL, N_("Multi-selection") " _6",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS6_SELECT", NULL, N_("_Select"),
      "6", N_("_Select"), G_CALLBACK(callback_multi_selection_ms6_select)},
     {"MULTI_SELECTION_MS6_ADD", NULL, N_("_Add to current selection"),
      "<Shift>6", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms6_add)},
     {"MULTI_SELECTION_MS6_RECORD", NULL, N_("_Record"),
-     "<Control>6", N_("_Record"), G_CALLBACK(callback_multi_selection_ms6_record)},
+     "<Control>6", N_("_Record"),
+     G_CALLBACK(callback_multi_selection_ms6_record)},
     {"MULTI_SELECTION_MS6_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>6", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms6_clear)},
-    {"MULTI_SELECTION_MS7", NULL, N_("Multi-selection") " _7", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS7", NULL, N_("Multi-selection") " _7",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS7_SELECT", NULL, N_("_Select"),
      "7", N_("_Select"), G_CALLBACK(callback_multi_selection_ms7_select)},
     {"MULTI_SELECTION_MS7_ADD", NULL, N_("_Add to current selection"),
      "<Shift>7", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms7_add)},
     {"MULTI_SELECTION_MS7_RECORD", NULL, N_("_Record"),
-     "<Control>7", N_("_Record"), G_CALLBACK(callback_multi_selection_ms7_record)},
+     "<Control>7", N_("_Record"),
+     G_CALLBACK(callback_multi_selection_ms7_record)},
     {"MULTI_SELECTION_MS7_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>7", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms7_clear)},
-    {"MULTI_SELECTION_MS8", NULL, N_("Multi-selection") " _8", NULL, NULL, NULL},
+    {"MULTI_SELECTION_MS8", NULL, N_("Multi-selection") " _8",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS8_SELECT", NULL, N_("_Select"),
      "8", N_("_Select"), G_CALLBACK(callback_multi_selection_ms8_select)},
     {"MULTI_SELECTION_MS8_ADD", NULL, N_("_Add to current selection"),
      "<Shift>8", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms8_add)},
     {"MULTI_SELECTION_MS8_RECORD", NULL, N_("_Record"),
-     "<Control>8", N_("_Record"), G_CALLBACK(callback_multi_selection_ms8_record)},
+     "<Control>8", N_("_Record"),
+     G_CALLBACK(callback_multi_selection_ms8_record)},
     {"MULTI_SELECTION_MS8_CLEAR", NULL, N_("_Clear"),
-     "<Control><Shift>8", N_("_Clear"), G_CALLBACK(callback_multi_selection_ms8_clear)},
-    {"MULTI_SELECTION_MS9", NULL, N_("Multi-selection") " _9", NULL, NULL, NULL},
+     "<Control><Shift>8", N_("_Clear"),
+     G_CALLBACK(callback_multi_selection_ms8_clear)},
+    {"MULTI_SELECTION_MS9", NULL, N_("Multi-selection") " _9",
+     NULL, NULL, NULL},
     {"MULTI_SELECTION_MS9_SELECT", NULL, N_("_Select"),
      "9", N_("_Select"), G_CALLBACK(callback_multi_selection_ms9_select)},
     {"MULTI_SELECTION_MS9_ADD", NULL, N_("_Add to current selection"),
      "<Shift>9", N_("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms9_add)},
     {"MULTI_SELECTION_MS9_RECORD", NULL, N_("_Record"),
-     "<Control>9", N_("_Record"), G_CALLBACK(callback_multi_selection_ms9_record)},
+     "<Control>9", N_("_Record"), 
+     G_CALLBACK(callback_multi_selection_ms9_record)},
     {"MULTI_SELECTION_MS9_CLEAR", NULL, N_("_Clear"),
      "<Control><Shift>9", N_("_Clear"),
      G_CALLBACK(callback_multi_selection_ms9_clear)}
@@ -4512,11 +4563,13 @@ static const char *load_menu_multi_selection(void)
   };
 
   GtkRadioActionEntry radio_entries_multi_selection_utype[] = {
-    {"MULTI_SELECTION_MODE_SAME_TYPE", NULL, N_("Only units with the _same type"),
+    {"MULTI_SELECTION_MODE_SAME_TYPE", NULL,
+     N_("Only units with the _same type"),
      "<Shift>F6", N_("Only units with the _same type"), UTYPE_SAME_TYPE},
     {"MULTI_SELECTION_MODE_SAME_MOVE_TYPE", NULL,
      N_("Only units with the same _move type"),
-     "<Shift>F7", N_("Only units with the same _move type"), UTYPE_SAME_MOVE_TYPE},
+     "<Shift>F7", N_("Only units with the same _move type"),
+     UTYPE_SAME_MOVE_TYPE},
     {"MULTI_SELECTION_MODE_ALL", NULL, N_("_All unit types"),
      "<Shift>F8", N_("_All unit types"), UTYPE_ALL}
   };
@@ -4526,10 +4579,12 @@ static const char *load_menu_multi_selection(void)
      "<Shift>F1", N_("_Single unit"), PLACE_SINGLE_UNIT},
     {"MULTI_SELECTION_MODE_IN_TRANSPORTER", NULL,
      N_("All _units in the same transporter"),
-     "<Shift>F2", N_("All _units in the same transporter"), PLACE_IN_TRANSPORTER},
+     "<Shift>F2", N_("All _units in the same transporter"),
+     PLACE_IN_TRANSPORTER},
     {"MULTI_SELECTION_MODE_ON_TILE", NULL, N_("All units on the _tile"),
      "<Shift>F3", N_("All units on the _tile"), PLACE_ON_TILE},
-    {"MULTI_SELECTION_MODE_ON_CONTINENT", NULL, N_("All units on the _continent"),
+    {"MULTI_SELECTION_MODE_ON_CONTINENT", NULL,
+     N_("All units on the _continent"),
      "<Shift>F4", N_("All units on the _continent"), PLACE_ON_CONTINENT},
     {"MULTI_SELECTION_MODE_EVERY_WHERE", NULL, N_("_All units"),
      "<Shift>F5", N_("_All units"), PLACE_EVERY_WHERE}
@@ -4538,10 +4593,12 @@ static const char *load_menu_multi_selection(void)
   action_group_multi_selection = gtk_action_group_new("GroupMultiSelection");
   gtk_action_group_set_translation_domain(action_group_multi_selection,
                                           textdomain(PACKAGE));
-  gtk_action_group_add_actions(action_group_multi_selection, entries_multi_selection,
+  gtk_action_group_add_actions(action_group_multi_selection, 
+                               entries_multi_selection,
                                G_N_ELEMENTS(entries_multi_selection),
                                NULL);
-  gtk_ui_manager_insert_action_group(main_uimanager, action_group_multi_selection, 0);
+  gtk_ui_manager_insert_action_group(main_uimanager,
+                                     action_group_multi_selection, 0);
 
   toggle_action_group_multi_selection =
     gtk_action_group_new("ToggleGroupMultiSelection");
@@ -4889,7 +4946,8 @@ static const char *load_menu_miscellaneous(void)
   GtkActionEntry entries_miscellaneous[] = {
     {"MISCELLANEOUS", NULL, N_("Misce_llaneous"), NULL, NULL, NULL},
     {"MISCELLANEOUS_AIR_PATROL", NULL, N_("Airplane _patrol"),
-     "e", N_("Airplane _patrol"), G_CALLBACK(callback_miscellaneous_air_patrol)},
+     "e", N_("Airplane _patrol"), 
+     G_CALLBACK(callback_miscellaneous_air_patrol)},
     {"MISCELLANEOUS_AIR_PATROL_DEST", NULL, N_("Airplane patrol _destination"),
      "<Control>e", N_("Airplane patrol _destination"),
      G_CALLBACK(callback_miscellaneous_air_patrol_dest)},
@@ -4905,7 +4963,8 @@ static const char *load_menu_miscellaneous(void)
     {"MISCELLANEOUS_SET_RALLIES", NULL, N_("_Set rallies for selected cities"),
      "<Shift>s", N_("_Set rallies for selected cities"),
      G_CALLBACK(callback_miscellaneous_set_rallies)},
-    {"MISCELLANEOUS_CLEAR_RALLIES", NULL, N_("_Clear rallies in selected cities"),
+    {"MISCELLANEOUS_CLEAR_RALLIES", NULL,
+     N_("_Clear rallies in selected cities"),
      "<shift>r", N_("_Clear rallies in selected cities"),
      G_CALLBACK(callback_miscellaneous_clear_rallies)},
     {"MISCELLANEOUS_MY_AI_EXECUTE", NULL, N_("E_xecute automatic orders"),
@@ -4914,7 +4973,8 @@ static const char *load_menu_miscellaneous(void)
     {"MISCELLANEOUS_MY_AI_FREE", NULL, N_("_Free automatic orders"),
      "<control>f", N_("_Free automatic orders") ,
      G_CALLBACK(callback_miscellaneous_my_ai_free)},
-    {"MISCELLANEOUS_MY_AI_EXECUTE_ALL", NULL, N_("Execute all automatic _orders"),
+    {"MISCELLANEOUS_MY_AI_EXECUTE_ALL", NULL,
+     N_("Execute all automatic _orders"),
      "<shift>m", N_("Execute all automatic _orders"),
      G_CALLBACK(callback_miscellaneous_my_ai_execute_all)},
   };
@@ -5205,7 +5265,8 @@ static const char *load_menu_report(void)
     {"REPORT_MESSAGES", NULL, N_("_Messages"),
      "<Control>F9", N_("_Messages"), G_CALLBACK(callback_report_messages)},
     {"REPORT_DEMOGRAPHIC", NULL, N_("_Demographics"),
-     "<Control>F11", N_("_Demographics"), G_CALLBACK(callback_report_demographic)},
+     "<Control>F11", N_("_Demographics"),
+     G_CALLBACK(callback_report_demographic)},
     {"REPORT_SPACESHIP", NULL, N_("S_paceship"),
      "<Control>F12", N_("S_paceship"), G_CALLBACK(callback_report_spaceship)}
   };
@@ -5499,10 +5560,8 @@ static void callback_addwidget(GtkUIManager *main_uimanager,
                                GtkWidget *p_widget,
                                GtkContainer *p_box)
 {
-  gtk_box_pack_start(GTK_BOX(p_box), p_widget, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(p_box), p_widget, TRUE, TRUE, 0);
   gtk_widget_show(p_widget);
-  return;
-
 }
 
 /****************************************************************
@@ -5512,6 +5571,7 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
 {
   char xmlmenu[32768];
   GError **error = NULL;
+  GtkWidget *tabulation;
 
   /*   widget for menu */
   main_menubar = gtk_hbox_new(FALSE, 0);
@@ -5562,6 +5622,10 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
   /*   draw menu */
   g_signal_connect(main_uimanager, "add_widget",
                    G_CALLBACK(callback_addwidget), main_menubar);
+
+  tabulation = gtk_ui_manager_get_widget(main_uimanager,
+                                         "/ui/menubar/HELP");
+  gtk_menu_item_set_right_justified(GTK_MENU_ITEM(tabulation), TRUE);
 
   if (menubar) {
     *menubar = main_menubar;
@@ -6461,7 +6525,8 @@ void update_airlift_menu(int i)
       strcpy(m, "_CLEAR");
       menu_set_sensitive(action_group_airlift, buf, TRUE);
       strcpy(m, "_EXECUTE");
-      menu_set_sensitive(action_group_airlift, buf, airlift_queue_get_unit_type(i) != U_LAST);
+      menu_set_sensitive(action_group_airlift, buf,
+                         airlift_queue_get_unit_type(i) != U_LAST);
       strcpy(m, "_SHOW");
       menu_set_sensitive(action_group_airlift, buf, TRUE);
       menu_set_sensitive(action_group_airlift,
