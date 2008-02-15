@@ -317,6 +317,8 @@ if test x$client != xno; then
   gui_sources="gui-$client"
 fi
 
+FC_DEPRECATED
+
 AC_SUBST(gui_sources)
 AC_SUBST(CLIENT_CFLAGS)
 AC_SUBST(CLIENT_LIBS)

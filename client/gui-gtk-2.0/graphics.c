@@ -115,8 +115,11 @@ void load_intro_gfx(void)
   PangoContext *context;
   PangoLayout *layout;
   PangoRectangle rect;
+  GdkScreen *screen;
 
-  context = gdk_pango_context_get();
+  screen = gdk_screen_get_default();
+
+  context = gdk_pango_context_get_for_screen(screen);
   layout = pango_layout_new(context);
   pango_layout_set_font_description(layout, main_font);
 
@@ -389,6 +392,11 @@ struct Sprite *load_gfxfile(const char *filename)
   SPRITE    *mysprite;
   int	     w, h;
   GError *pixbuf_error = NULL;
+  GdkColormap *colormap;
+  GdkScreen *screen;
+
+  screen = gdk_screen_get_default();
+  colormap = gdk_screen_get_default_colormap(screen);
 
   freelog(LOG_DEBUG, "load_gfxfile filename=\"%s\"", filename);
 
@@ -402,14 +410,16 @@ struct Sprite *load_gfxfile(const char *filename)
 
   w = gdk_pixbuf_get_width(im);
   h = gdk_pixbuf_get_height(im);
-  gdk_pixbuf_render_pixmap_and_mask(im, &mysprite->pixmap, &mysprite->mask, 1);
+  gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap, 
+                                                 &mysprite->pixmap,
+                                                 &mysprite->mask, 1);
 
   mysprite->has_mask  = (mysprite->mask != NULL);
   mysprite->width     = w;
   mysprite->height    = h;
 
   mysprite->pixbuf    = NULL;
-  mysprite->fogged = NULL;
+  mysprite->fogged    = NULL;
 
   g_object_unref(im);
 
@@ -511,13 +521,19 @@ SPRITE* sprite_scale(SPRITE *src, int new_w, int new_h)
 {
   GdkPixbuf *original, *im;
   SPRITE    *mysprite;
+  GdkColormap *colormap;
+  GdkScreen *screen;
+
+  screen = gdk_screen_get_default();
+  colormap = gdk_screen_get_default_colormap(screen);
 
   original = sprite_get_pixbuf(src);
   im = gdk_pixbuf_scale_simple(original, new_w, new_h, GDK_INTERP_BILINEAR);
 
-  mysprite=fc_malloc(sizeof(struct Sprite));
+  mysprite = fc_malloc(sizeof(struct Sprite));
 
-  gdk_pixbuf_render_pixmap_and_mask(im, &mysprite->pixmap, &mysprite->mask, 1);
+  gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap, &mysprite->pixmap,
+                                                 &mysprite->mask, 1);
 
   mysprite->has_mask  = (mysprite->mask != NULL);
   mysprite->width     = new_w;

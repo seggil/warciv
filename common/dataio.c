@@ -456,7 +456,7 @@ void dio_get_uint32(struct data_in *din, int *dest)
 **************************************************************************/
 void dio_get_bool8(struct data_in *din, bool * dest)
 {
-  int ival;
+  int ival = 0;
 
   dio_get_uint8(din, &ival);
 
@@ -490,7 +490,7 @@ void dio_get_bool32(struct data_in *din, bool * dest)
 **************************************************************************/
 void dio_get_sint8(struct data_in *din, int *dest)
 {
-  int tmp;
+  int tmp = 0;
 
   dio_get_uint8(din, &tmp);
   if (dest) {
@@ -597,7 +597,7 @@ void dio_get_bit_string(struct data_in *din, char *dest,
   }
 
   for (i = 0; i < npack;) {
-    int bit, byte_value;
+    int bit, byte_value = 0;
 
     dio_get_uint8(din, &byte_value);
     for (bit = 0; bit < 8 && i < npack; bit++, i++) {
@@ -643,7 +643,7 @@ void dio_get_worklist(struct data_in *din, struct worklist *pwl)
   dio_get_bool8(din, &pwl->is_valid);
 
   if (pwl->is_valid) {
-    int i, length;
+    int i, length = 0;
 
     strcpy(pwl->name,"xyz");
 
@@ -670,7 +670,7 @@ void dio_get_worklist(struct data_in *din, struct worklist *pwl)
 **************************************************************************/
 void dio_get_uint8_vec8(struct data_in *din, int **values, int stop_value)
 {
-  int count, inx;
+  int count = 0, inx;
 
   dio_get_uint8(din, &count);
   if (values) {
@@ -689,7 +689,7 @@ void dio_get_uint8_vec8(struct data_in *din, int **values, int stop_value)
 **************************************************************************/
 void dio_get_uint16_vec8(struct data_in *din, int **values, int stop_value)
 {
-  int count, inx;
+  int count = 0, inx;
 
   dio_get_uint8(din, &count);
   if (values) {
@@ -708,7 +708,7 @@ void dio_get_uint16_vec8(struct data_in *din, int **values, int stop_value)
 **************************************************************************/
 void dio_get_diplstate(struct data_in *din, struct player_diplstate *pds)
 {
-  int type;
+  int type = 0;
 
   dio_get_uint8(din, &type);
   pds->type = type;

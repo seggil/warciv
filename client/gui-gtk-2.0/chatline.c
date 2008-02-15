@@ -381,11 +381,18 @@ set_cursor_if_appropriate(GtkTextView    *text_view,
   gboolean hovering = FALSE;
   gint link_type;
   gpointer *data;
+  GdkDisplay *display;
+  GdkScreen *screen;
 
-  if (!hand_cursor)
-    hand_cursor = gdk_cursor_new(GDK_HAND2);
-  if (!regular_cursor)
-    regular_cursor = gdk_cursor_new(GDK_XTERM);
+  screen = gdk_screen_get_default();
+  display = gdk_screen_get_display(screen);
+
+  if (!hand_cursor) {
+    hand_cursor = gdk_cursor_new_for_display(display, GDK_HAND2);
+  }
+  if (!regular_cursor) {
+    regular_cursor = gdk_cursor_new_for_display(display, GDK_XTERM);
+  }
   
   buffer = gtk_text_view_get_buffer(text_view);
 

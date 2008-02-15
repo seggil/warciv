@@ -468,504 +468,512 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev, gpointer data)
           if ((ev->state & GDK_MOD1_MASK)) {
             /* <alt><shift><ctrl> */
             switch (keyval) {
-              case GDK_1:
-                request_unit_execute_delayed_goto(1);
-                return TRUE;
-
-              case GDK_2:
-                request_unit_execute_delayed_goto(2);
-                return TRUE;
-
-              case GDK_3:
-                request_unit_execute_delayed_goto(3);
-                return TRUE;
-
-              case GDK_4:
-                do_airlift_for(1, NULL);
-                return TRUE;
-
-              case GDK_5:
-                do_airlift_for(2, NULL);
-                return TRUE;
-
-              case GDK_6:
-                do_airlift_for(3, NULL);
-                return TRUE;
-
-              case GDK_7:
-                do_airlift_for(4, NULL);
-                return TRUE;
-
-              case GDK_8:
-                do_airlift_for(5, NULL);
-                return TRUE;
-
-              case GDK_9:
-                do_airlift_for(6, NULL);
-                return TRUE;
-
-              default:
-                break;
-            }
-          }
-          /* <shift><ctrl> */
-          switch (keyval) {
             case GDK_1:
-              multi_select_clear(1);
+              request_unit_execute_delayed_goto(1);
               return TRUE;
 
             case GDK_2:
-              multi_select_clear(2);
+              request_unit_execute_delayed_goto(2);
               return TRUE;
 
             case GDK_3:
-              multi_select_clear(3);
+              request_unit_execute_delayed_goto(3);
               return TRUE;
 
             case GDK_4:
-              multi_select_clear(4);
+              do_airlift_for(1, NULL);
               return TRUE;
 
             case GDK_5:
-              multi_select_clear(5);
+              do_airlift_for(2, NULL);
               return TRUE;
 
             case GDK_6:
-              multi_select_clear(6);
+              do_airlift_for(3, NULL);
               return TRUE;
 
             case GDK_7:
-              multi_select_clear(7);
+              do_airlift_for(4, NULL);
               return TRUE;
 
             case GDK_8:
-              multi_select_clear(8);
+              do_airlift_for(5, NULL);
               return TRUE;
 
             case GDK_9:
-              multi_select_clear(9);
+              do_airlift_for(6, NULL);
               return TRUE;
 
             default:
               break;
+            }
+          }
+          /* <shift><ctrl> */
+          switch (keyval) {
+          case GDK_1:
+            multi_select_clear(1);
+            return TRUE;
+
+          case GDK_2:
+            multi_select_clear(2);
+            return TRUE;
+
+          case GDK_3:
+            multi_select_clear(3);
+            return TRUE;
+
+          case GDK_4:
+            multi_select_clear(4);
+            return TRUE;
+
+          case GDK_5:
+            multi_select_clear(5);
+            return TRUE;
+
+          case GDK_6:
+            multi_select_clear(6);
+            return TRUE;
+
+          case GDK_7:
+            multi_select_clear(7);
+            return TRUE;
+
+          case GDK_8:
+            multi_select_clear(8);
+            return TRUE;
+
+          case GDK_9:
+            multi_select_clear(9);
+            return TRUE;
+
+          default:
+            break;
           }
         }
         if ((ev->state & GDK_MOD1_MASK)) {
           /* <alt><shift> */
           switch (keyval) {
-            case GDK_1:
-              delayed_goto_cat(0, 1);
-              return TRUE;
-
-            case GDK_2:
-              delayed_goto_cat(0, 2);
-              return TRUE;
-
-            case GDK_3:
-              delayed_goto_cat(0, 3);
-              return TRUE;
-
-            case GDK_4:
-              airlift_queue_cat(0, 1);
-              return TRUE;
-
-            case GDK_5:
-              airlift_queue_cat(0, 2);
-              return TRUE;
-
-              break;
-            case GDK_6:
-              airlift_queue_cat(0, 3);
-              return TRUE;
-
-            case GDK_7:
-              airlift_queue_cat(0, 4);
-              return TRUE;
-
-            case GDK_8:
-              airlift_queue_cat(0, 5);
-              return TRUE;
-
-            case GDK_9:
-              airlift_queue_cat(0, 6);
-              return TRUE;
-
-            default:
-              break;
-          }
-        }
-        /* <shift> */
-        switch (keyval) {
           case GDK_1:
-            multi_select_cat(0, 1);
+            delayed_goto_cat(0, 1);
             return TRUE;
 
           case GDK_2:
-            multi_select_cat(0, 2);
+            delayed_goto_cat(0, 2);
             return TRUE;
 
           case GDK_3:
-            multi_select_cat(0, 3);
+            delayed_goto_cat(0, 3);
             return TRUE;
 
           case GDK_4:
-            multi_select_cat(0, 4);
+            airlift_queue_cat(0, 1);
             return TRUE;
 
           case GDK_5:
-            multi_select_cat(0, 5);
+            airlift_queue_cat(0, 2);
             return TRUE;
 
+            break;
           case GDK_6:
-            multi_select_cat(0, 6);
+            airlift_queue_cat(0, 3);
             return TRUE;
 
           case GDK_7:
-            multi_select_cat(0, 7);
+            airlift_queue_cat(0, 4);
             return TRUE;
 
           case GDK_8:
-            multi_select_cat(0, 8);
+            airlift_queue_cat(0, 5);
             return TRUE;
 
           case GDK_9:
-            multi_select_cat(0, 9);
+            airlift_queue_cat(0, 6);
             return TRUE;
 
           default:
             break;
+          }
+        }
+        /* <shift> */
+        switch (keyval) {
+        case GDK_1:
+          multi_select_cat(0, 1);
+          return TRUE;
+
+        case GDK_2:
+          multi_select_cat(0, 2);
+          return TRUE;
+
+        case GDK_3:
+          multi_select_cat(0, 3);
+          return TRUE;
+
+        case GDK_4:
+          multi_select_cat(0, 4);
+          return TRUE;
+
+        case GDK_5:
+          multi_select_cat(0, 5);
+          return TRUE;
+
+        case GDK_6:
+          multi_select_cat(0, 6);
+          return TRUE;
+
+        case GDK_7:
+          multi_select_cat(0, 7);
+          return TRUE;
+
+        case GDK_8:
+          multi_select_cat(0, 8);
+          return TRUE;
+
+        case GDK_9:
+          multi_select_cat(0, 9);
+          return TRUE;
+
+        default:
+          break;
         }
       }
       if ((ev->state & GDK_CONTROL_MASK)) {
         if ((ev->state & GDK_MOD1_MASK)) {
           /* <alt><ctrl> */
           switch (keyval) {
-            case GDK_1:
-              delayed_goto_move(1, 0);
-              return TRUE;
-
-            case GDK_2:
-              delayed_goto_move(2, 0);
-              return TRUE;
-
-            case GDK_3:
-              delayed_goto_move(3, 0);
-              return TRUE;
-
-            case GDK_4:
-              airlift_queue_move(1, 0);
-              return TRUE;
-
-            case GDK_5:
-              airlift_queue_move(2, 0);
-              return TRUE;
-
-            case GDK_6:
-              airlift_queue_move(3, 0);
-              return TRUE;
-
-            case GDK_7:
-              airlift_queue_move(4, 0);
-              return TRUE;
-
-            case GDK_8:
-              airlift_queue_move(5, 0);
-              return TRUE;
-
-            case GDK_9:
-              airlift_queue_move(6, 0);
-              return TRUE;
-
-            default:
-              break;
-          }
-        }
-        /* <ctrl> */
-        switch (keyval) {
           case GDK_1:
-            multi_select_copy(1, 0);
+            delayed_goto_move(1, 0);
             return TRUE;
 
           case GDK_2:
-            multi_select_copy(2, 0);
+            delayed_goto_move(2, 0);
             return TRUE;
 
           case GDK_3:
-            multi_select_copy(3, 0);
+            delayed_goto_move(3, 0);
             return TRUE;
 
           case GDK_4:
-            multi_select_copy(4, 0);
+            airlift_queue_move(1, 0);
             return TRUE;
 
           case GDK_5:
-            multi_select_copy(5, 0);
+            airlift_queue_move(2, 0);
             return TRUE;
 
           case GDK_6:
-            multi_select_copy(6, 0);
+            airlift_queue_move(3, 0);
             return TRUE;
 
           case GDK_7:
-            multi_select_copy(7, 0);
+            airlift_queue_move(4, 0);
             return TRUE;
 
           case GDK_8:
-            multi_select_copy(8, 0);
+            airlift_queue_move(5, 0);
             return TRUE;
 
           case GDK_9:
-            multi_select_copy(9, 0);
+            airlift_queue_move(6, 0);
             return TRUE;
 
           default:
             break;
+          }
+        }
+        /* <ctrl> */
+        switch (keyval) {
+        case GDK_1:
+          multi_select_copy(1, 0);
+          return TRUE;
+
+        case GDK_2:
+          multi_select_copy(2, 0);
+          return TRUE;
+
+        case GDK_3:
+          multi_select_copy(3, 0);
+          return TRUE;
+
+        case GDK_4:
+          multi_select_copy(4, 0);
+          return TRUE;
+
+        case GDK_5:
+          multi_select_copy(5, 0);
+          return TRUE;
+
+        case GDK_6:
+          multi_select_copy(6, 0);
+          return TRUE;
+
+        case GDK_7:
+          multi_select_copy(7, 0);
+          return TRUE;
+
+        case GDK_8:
+          multi_select_copy(8, 0);
+          return TRUE;
+
+        case GDK_9:
+          multi_select_copy(9, 0);
+          return TRUE;
+
+        default:
+          break;
         }
       }
       /* <alt> */
       if ((ev->state & GDK_MOD1_MASK)) {
         switch (keyval) {
-          case GDK_1:
-            delayed_goto_copy(0, 1);
-            return TRUE;
+        case GDK_1:
+          delayed_goto_copy(0, 1);
+          return TRUE;
 
-          case GDK_2:
-            delayed_goto_copy(0, 2);
-            return TRUE;
+        case GDK_2:
+          delayed_goto_copy(0, 2);
+          return TRUE;
 
-          case GDK_3:
-            delayed_goto_copy(0, 3);
-            return TRUE;
+        case GDK_3:
+          delayed_goto_copy(0, 3);
+          return TRUE;
 
-          case GDK_4:
-            airlift_queue_copy(0, 1);
-            return TRUE;
+        case GDK_4:
+          airlift_queue_copy(0, 1);
+          return TRUE;
 
-          case GDK_5:
-            airlift_queue_copy(0, 2);
-            return TRUE;
+        case GDK_5:
+          airlift_queue_copy(0, 2);
+          return TRUE;
 
-          case GDK_6:
-            airlift_queue_copy(0, 3);
-            return TRUE;
+        case GDK_6:
+          airlift_queue_copy(0, 3);
+          return TRUE;
 
-          case GDK_7:
-            airlift_queue_copy(0, 4);
-            return TRUE;
+        case GDK_7:
+          airlift_queue_copy(0, 4);
+          return TRUE;
 
-          case GDK_8:
-            airlift_queue_copy(0, 5);
-            return TRUE;
+        case GDK_8:
+          airlift_queue_copy(0, 5);
+          return TRUE;
 
-          case GDK_9:
-            airlift_queue_copy(0, 6);
-            return TRUE;
+        case GDK_9:
+          airlift_queue_copy(0, 6);
+          return TRUE;
 
-          default:
-            break;
+        default:
+          break;
         }
       }
       /* Plain */
       if (hover_state == HOVER_AIRLIFT_DEST
           || hover_state == HOVER_DELAYED_AIRLIFT) {
         switch (keyval) {
-          case GDK_4:
-            need_city_for = 1;
-            return TRUE;
-
-          case GDK_5:
-            need_city_for = 2;
-            return TRUE;
-
-          case GDK_6:
-            need_city_for = 3;
-            return TRUE;
-
-          case GDK_7:
-            need_city_for = 4;
-            return TRUE;
-
-          case GDK_8:
-            need_city_for = 5;
-            return TRUE;
-
-          case GDK_9:
-            need_city_for = 6;
-            break;
-            return TRUE;
-
-            break;
+        case GDK_4:
+          need_city_for = 1;
+          return TRUE;
+          
+        case GDK_5:
+          need_city_for = 2;
+          return TRUE;
+          
+        case GDK_6:
+          need_city_for = 3;
+          return TRUE;
+          
+        case GDK_7:
+          need_city_for = 4;
+          return TRUE;
+          
+        case GDK_8:
+          need_city_for = 5;
+          return TRUE;
+          
+        case GDK_9:
+          need_city_for = 6;
+          return TRUE;
+          
+        default:
+          break;
         }
       }
       switch (keyval) {
-        case GDK_1:
-          multi_select_copy(0, 1);
-          return TRUE;
+      case GDK_1:
+        multi_select_copy(0, 1);
+        return TRUE;
 
-        case GDK_2:
-          multi_select_copy(0, 2);
-          return TRUE;
+      case GDK_2:
+        multi_select_copy(0, 2);
+        return TRUE;
 
-        case GDK_3:
-          multi_select_copy(0, 3);
-          return TRUE;
+      case GDK_3:
+        multi_select_copy(0, 3);
+        return TRUE;
 
-        case GDK_4:
-          multi_select_copy(0, 4);
-          return TRUE;
+      case GDK_4:
+        multi_select_copy(0, 4);
+        return TRUE;
 
-        case GDK_5:
-          multi_select_copy(0, 5);
-          return TRUE;
+      case GDK_5:
+        multi_select_copy(0, 5);
+        return TRUE;
 
-        case GDK_6:
-          multi_select_copy(0, 6);
-          return TRUE;
+      case GDK_6:
+        multi_select_copy(0, 6);
+        return TRUE;
 
-        case GDK_7:
-          multi_select_copy(0, 7);
-          return TRUE;
+      case GDK_7:
+        multi_select_copy(0, 7);
+        return TRUE;
 
-        case GDK_8:
-          multi_select_copy(0, 8);
-          return TRUE;
+      case GDK_8:
+        multi_select_copy(0, 8);
+        return TRUE;
 
-        case GDK_9:
-          multi_select_copy(0, 9);
-          return TRUE;
+      case GDK_9:
+        multi_select_copy(0, 9);
+        return TRUE;
 
-        default:
-          break;
+      default:
+        break;
       }
     }
 
     if ((ev->state & GDK_SHIFT_MASK)) {
       switch (ev->keyval) {
-        case GDK_Left:
-          scroll_mapview(DIR8_WEST);
-          return TRUE;
+      case GDK_Left:
+        scroll_mapview(DIR8_WEST);
+        return TRUE;
 
-        case GDK_Right:
-          scroll_mapview(DIR8_EAST);
-          return TRUE;
+      case GDK_Right:
+        scroll_mapview(DIR8_EAST);
+        return TRUE;
 
-        case GDK_Up:
-          scroll_mapview(DIR8_NORTH);
-          return TRUE;
+      case GDK_Up:
+        scroll_mapview(DIR8_NORTH);
+        return TRUE;
 
-        case GDK_Down:
-          scroll_mapview(DIR8_SOUTH);
-          return TRUE;
+      case GDK_Down:
+        scroll_mapview(DIR8_SOUTH);
+        return TRUE;
 
-        case GDK_Home:
-          key_center_capital();
-          break;
+      case GDK_Home:
+        key_center_capital();
+        return TRUE;
 
-        case GDK_Return:
-        case GDK_KP_Enter:
-          key_end_turn();
-          break;
+      case GDK_Return:
+      case GDK_KP_Enter:
+        key_end_turn();
+        return TRUE;
 
-        default:
-          break;
+      default:
+        break;
       }
     }
 
     switch (ev->keyval) {
-      case GDK_KP_Up:
-      case GDK_KP_8:
-      case GDK_8:
-	key_unit_move(DIR8_NORTH);
-	break;
+    case GDK_KP_Up:
+    case GDK_KP_8:
+    case GDK_8:
+      key_unit_move(DIR8_NORTH);
+      return TRUE;
 
-      case GDK_KP_Page_Up:
-      case GDK_KP_9:
-      case GDK_9:
-	key_unit_move(DIR8_NORTHEAST);
-	break;
+    case GDK_KP_Page_Up:
+    case GDK_KP_9:
+    case GDK_9:
+      key_unit_move(DIR8_NORTHEAST);
+      return TRUE;
 
-      case GDK_KP_Right:
-      case GDK_KP_6:
-      case GDK_6:
-	key_unit_move(DIR8_EAST);
-	break;
+    case GDK_KP_Right:
+    case GDK_KP_6:
+    case GDK_6:
+      key_unit_move(DIR8_EAST);
+      return TRUE;
 
-      case GDK_KP_Page_Down:
-      case GDK_KP_3:
-      case GDK_3:
-	key_unit_move(DIR8_SOUTHEAST);
-	break;
+    case GDK_KP_Page_Down:
+    case GDK_KP_3:
+    case GDK_3:
+      key_unit_move(DIR8_SOUTHEAST);
+      return TRUE;
 
-      case GDK_KP_Down:
-      case GDK_KP_2:
-      case GDK_2:
-	key_unit_move(DIR8_SOUTH);
-	break;
+    case GDK_KP_Down:
+    case GDK_KP_2:
+    case GDK_2:
+      return TRUE;
+      key_unit_move(DIR8_SOUTH);
+      break;
 
-      case GDK_KP_End:
-      case GDK_KP_1:
-      case GDK_1:
-	key_unit_move(DIR8_SOUTHWEST);
-	break;
+    case GDK_KP_End:
+    case GDK_KP_1:
+    case GDK_1:
+      key_unit_move(DIR8_SOUTHWEST);
+      return TRUE;
 
-      case GDK_KP_Left:
-      case GDK_KP_4:
-      case GDK_4:
-	key_unit_move(DIR8_WEST);
-	break;
+    case GDK_KP_Left:
+    case GDK_KP_4:
+    case GDK_4:
+      key_unit_move(DIR8_WEST);
+      return TRUE;
 
-      case GDK_KP_Home:		
-      case GDK_KP_7:
-      case GDK_7:
-	key_unit_move(DIR8_NORTHWEST);
-	break;
+    case GDK_KP_Home:		
+    case GDK_KP_7:
+    case GDK_7:
+      key_unit_move(DIR8_NORTHWEST);
+      return TRUE;
 
-      case GDK_KP_5: 
-      case GDK_KP_Begin:
-      case GDK_5:
-        key_recall_previous_focus_unit(); 
-        break;
+    case GDK_KP_5: 
+    case GDK_KP_Begin:
+    case GDK_5:
+      key_recall_previous_focus_unit(); 
+      return TRUE;
   
-      case GDK_Escape:
-        key_cancel_action();
-        break;
+    case GDK_Escape:
+      key_cancel_action();
+      return TRUE;
   
-      case GDK_n: /* shared by MENU_VIEW_SHOW_CITY_NAMES */
-        if (tiles_hilited_cities && (ev->state & GDK_CONTROL_MASK)) {
-          normalize_names_in_selected_cities();
-        } else {
-          return FALSE;
-        }
-        break;
-      case GDK_t:
-         /* Workaround for conflict with menu shortcuts. If you add other
-          key handlers here be sure to check menu.c for conflicts otherwise
-          you may get unexpected behavior. */
-        if (!(ev->state & GDK_CONTROL_MASK) && !(ev->state & GDK_SHIFT_MASK))
-        key_city_workers(w, ev);
-        else
-          return FALSE;
-        break;
-      case GDK_KP_Divide:
-        key_quickselect(SELECT_SEA);
-        break;
-
-      case GDK_KP_Multiply:
-        key_quickselect(SELECT_LAND);
-        break;
-
-      case GDK_b:
-        if (tiles_hilited_cities)
-          buy_production_in_selected_cities();
-        else
-          return FALSE;
-        break;
-
-      default:
+    case GDK_n: /* shared by MENU_VIEW_SHOW_CITY_NAMES */
+      if (tiles_hilited_cities && (ev->state & GDK_CONTROL_MASK)) {
+        normalize_names_in_selected_cities();
+        return TRUE;
+      } else {
         return FALSE;
+      }
+      break;
+
+    case GDK_t:
+      /* Workaround for conflict with menu shortcuts. If you add other
+         key handlers here be sure to check menu.c for conflicts otherwise
+         you may get unexpected behavior. */
+      if (!(ev->state & GDK_CONTROL_MASK) && !(ev->state & GDK_SHIFT_MASK)) {
+        key_city_workers(w, ev);
+        return TRUE;
+      } else {
+        return FALSE;
+      }
+      break;
+
+    case GDK_KP_Divide:
+      key_quickselect(SELECT_SEA);
+      return TRUE;
+
+    case GDK_KP_Multiply:
+      key_quickselect(SELECT_LAND);
+      return TRUE;
+
+    case GDK_b:
+      if (tiles_hilited_cities) {
+        buy_production_in_selected_cities();
+        return TRUE;
+      } else {
+        return FALSE;
+      }
+      break;
+        
+    default:
+      break;
     }
   }
-  return TRUE;
+  return FALSE;
 }
 
 /**************************************************************************
@@ -1006,7 +1014,7 @@ static void toggle_tearoff_window (GtkWidget *box,
   GtkWidget *w;
   gboolean active;
 
-  active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (toggle));
+  active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle));
 
   if (active) {
     w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1187,7 +1195,6 @@ void enable_menus(bool enable)
   if (enable) {
     setup_menus(toplevel, &main_menubar);
     gtk_box_pack_start(GTK_BOX(top_vbox), main_menubar, FALSE, FALSE, 0);
-    update_menus();
     gtk_widget_show_all(main_menubar);
   } else {
     gtk_widget_destroy(main_menubar);
@@ -1696,6 +1703,7 @@ void ui_main(int argc, char **argv)
   guint sig;
   GtkStyle *style;
   GtkSettings *gtksettings;
+  GdkScreen *screen;
 
   parse_options(argc, argv);
 
@@ -1755,7 +1763,8 @@ void ui_main(int argc, char **argv)
 
   civ_gc = gdk_gc_new(root_window);
 
-  gtksettings = gtk_settings_get_default();
+  screen = gdk_screen_get_default();
+  gtksettings = gtk_settings_get_for_screen(screen);
   /* kill gtk's default F10 handler */
   g_object_set(G_OBJECT(gtksettings), "gtk-menu-bar-accel", NULL, NULL);
 

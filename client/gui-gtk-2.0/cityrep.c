@@ -233,7 +233,7 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     ""
   };
 
-  gtk_menu_item_remove_submenu(parent_item);
+  gtk_menu_item_set_submenu(parent_item, NULL);
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(parent_item, menu);
 
@@ -615,7 +615,7 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
   struct cm_parameter parameter;
   GtkWidget *w;
 
-  gtk_menu_item_remove_submenu(parent_item);
+  gtk_menu_item_set_submenu(parent_item, NULL);
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(parent_item, menu);
 
@@ -706,9 +706,9 @@ static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
   struct player *plr = get_player_ptr();
   GtkWidget *menu, *item;
   int i;
-  bool sensitive=FALSE;
+  bool sensitive = FALSE;
 
-  gtk_menu_item_remove_submenu(parent_item);
+  gtk_menu_item_set_submenu(parent_item, NULL);
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(parent_item, menu);
   
@@ -911,11 +911,11 @@ static void create_city_report_dialog(bool make_modal)
       _("Arrange Workers"), CITY_AUTOARRANGE_WORKERS);
   city_autoarrange_workers_command = w;
 
-  w = gui_dialog_add_stockbutton (city_dialog_shell, GTK_STOCK_DELETE,
+  w = gui_dialog_add_stockbutton(city_dialog_shell, GTK_STOCK_DELETE,
       _("_Remove Prod."), CITY_REMOVE_CUR_PROD);
   city_clear_worklist_command = w;//*pepeto*
   
-  w = gui_dialog_add_stockbutton (city_dialog_shell, GTK_STOCK_CLEAR,
+  w = gui_dialog_add_stockbutton(city_dialog_shell, GTK_STOCK_CLEAR,
       _("_Clear Worklist"), CITY_CLEAR_WORKLIST);
   city_remove_cur_prod_command = w;
 

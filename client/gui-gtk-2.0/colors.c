@@ -66,17 +66,21 @@ GdkColor *colors_standard [COLOR_STD_LAST];
 *************************************************************/
 static void alloc_standard_colors (void)
 {
-  GdkColormap *cmap;
   int i;
+  GdkColormap *colormap;
+  GdkScreen *screen;
 
-  for (i=0, cmap=gtk_widget_get_default_colormap (); i<COLOR_STD_LAST; i++) {
+  screen = gdk_screen_get_default();
+  colormap = gdk_screen_get_default_colormap(screen);
+
+  for (i = 0; i<COLOR_STD_LAST; i++) {
     colors_standard[i]       = fc_malloc(sizeof(GdkColor));
 
     colors_standard[i]->red  = colors_standard_rgb[i].r<<8;
     colors_standard[i]->green= colors_standard_rgb[i].g<<8;
     colors_standard[i]->blue = colors_standard_rgb[i].b<<8;
   
-    gdk_rgb_find_color(cmap, colors_standard[i]);
+    gdk_rgb_find_color(colormap, colors_standard[i]);
   }
 }
 
@@ -86,10 +90,15 @@ static void alloc_standard_colors (void)
 enum Display_color_type get_visual(void)
 {
   GdkVisual *visual;
+  GdkColormap *colormap;
+  GdkScreen *screen;
 
-  gtk_widget_push_colormap (gdk_rgb_get_colormap());
+  screen = gdk_screen_get_default();
+  colormap = gdk_screen_get_default_colormap(screen);
 
-  visual = gtk_widget_get_default_visual();
+  gtk_widget_push_colormap(colormap);
+
+  visual = gdk_screen_get_rgb_visual(screen);
 
   if (visual->type == GDK_VISUAL_STATIC_GRAY) { 
     /* StaticGray, use black and white */

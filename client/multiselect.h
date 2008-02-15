@@ -164,7 +164,8 @@ typedef struct {
                                      * for setting dialog */
   int data; /* value passed on arg2 of each callback; */
   ap_callback callback[AUTO_VALUES_NUM]; /* callbacks for every event */
-  void *widget[AUTO_VALUES_NUM]; /* GtkWidget */
+  void *widget[AUTO_VALUES_NUM]; /* GtkWidget used in pepsetting*/
+  char namemenu[AUTO_VALUES_NUM][256]; /* acces name for menu */
 } automatic_processus;
 
 #define SPECLIST_TAG automatic_processus
@@ -300,7 +301,7 @@ void add_pause_delayed_goto(void);
 
 struct airlift_queue {
   struct tile_list *tlist;  /* The airlift sources */
-  void *widgets[U_LAST+1];  /* GtkWidget, for unit type menus */
+  char namemenu[U_LAST+1][256];  /* acces name for unit type menus */
   Unit_Type_id utype;       /* The selected unit type */
 };
 
@@ -311,12 +312,13 @@ void airlift_queue_clear(int aq);
 void airlift_queue_clear_all(void);
 void airlift_queue_copy(int dest, int src);
 const struct airlift_queue *airlift_queue_get(int aq);
-void *airlift_queue_get_menu_item(int aq, Unit_Type_id utype);
+const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype);
 Unit_Type_id airlift_queue_get_unit_type(int aq);
 void airlift_queue_init_all(void);
 void airlift_queue_move(int dest,int src);
 void airlift_queue_set(int aq, const struct airlift_queue *paq);
-void airlift_queue_set_menu_item(int aq, Unit_Type_id utype, void *widget);
+void airlift_queue_set_menu_name(int aq, Unit_Type_id utype, 
+				 const char *namemenu);
 void airlift_queue_set_unit_type(int aq, Unit_Type_id utype);
 void airlift_queue_show(int aq);
 int airlift_queue_size(int aq);

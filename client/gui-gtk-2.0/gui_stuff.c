@@ -370,6 +370,11 @@ void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
 {
   struct gui_dialog *dlg;
   GtkWidget *vbox, *action_area;
+  GtkSettings *gtksettings;
+  GdkScreen *screen;
+
+  screen = gdk_screen_get_default();
+  gtksettings = gtk_settings_get_for_screen(screen);
 
   dlg = fc_malloc(sizeof(*dlg));
   dialog_list = g_list_prepend(dialog_list, dlg);
@@ -421,7 +426,7 @@ void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
       gint w, h;
       char buf[256];
 
-      gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &w, &h);
+      gtk_icon_size_lookup_for_settings(gtksettings, GTK_ICON_SIZE_MENU, &w, &h);
 
       hbox = gtk_hbox_new(FALSE, 0);
 

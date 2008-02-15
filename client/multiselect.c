@@ -1034,8 +1034,7 @@ void delayed_goto_init_all(void)
       char buf[256], buf2[256];
 
       my_snprintf(buf, sizeof(buf),
-		  "<main>/Delayed Goto/Delayed goto selection %d/"
-		  "Automatic execution", i);
+		  "DELAYED_GOTO_DG%d_AUTOMATIC", i);
       my_snprintf(buf2, sizeof(buf2),
 		  _("Delayed goto queue %d automatic execution"), i);
       delayed_goto_list[i].pap =
@@ -1048,8 +1047,10 @@ void delayed_goto_init_all(void)
     } else {
       delayed_goto_list[0].pap = 
 	automatic_processus_new(PAGE_DG, AV_TO_FV(AUTO_WAR_DIPLSTATE),
-		                "<main>/Delayed Goto/Delayed goto auto",
-		                _("Delayed goto automatic execution"), 0,
+/* 		                "<main>/Delayed Goto/Delayed goto auto", */
+				"DELAYED_GOTO_AUTOMATIC",
+		                _("Delayed goto automatic execution"), 
+				0,
 		                AP_MAIN_CONNECT(request_execute_delayed_goto),
 				AP_CONNECT(AUTO_WAR_DIPLSTATE,
 					   request_player_execute_delayed_goto),
@@ -1465,12 +1466,12 @@ const struct airlift_queue *airlift_queue_get(int aq)
 /********************************************************************** 
   ...
 ***********************************************************************/
-void *airlift_queue_get_menu_item(int aq, Unit_Type_id utype)
+const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype)
 {
   aqassert(aq);
   assert(utype >= 0 && utype <= U_LAST);
 
-  return airlift_queues[aq].widgets[utype];
+  return airlift_queues[aq].namemenu[utype];
 }
 
 /********************************************************************** 
@@ -1494,7 +1495,7 @@ void airlift_queue_init_all(void)
     airlift_queues[i].tlist = tile_list_new();
     airlift_queues[i].utype = U_LAST;
     for (j = 0; j <= U_LAST; j++) {
-      airlift_queues[i].widgets[j] = NULL;
+      sz_strlcpy(airlift_queues[i].namemenu[j], "\0");
     }
   }
   airlift_is_initialized = TRUE;
@@ -1531,12 +1532,13 @@ void airlift_queue_set(int aq, const struct airlift_queue *paq)
 /********************************************************************** 
   ...
 ***********************************************************************/
-void airlift_queue_set_menu_item(int aq, Unit_Type_id utype, void *widget)
+void airlift_queue_set_menu_name(int aq, Unit_Type_id utype, 
+				 const char *namemenu)
 {
   aqassert(aq);
   assert(utype >= 0 && utype <= U_LAST);
 
-  airlift_queues[aq].widgets[utype] = widget;
+  sz_strlcpy(airlift_queues[aq].namemenu[utype], namemenu);
 }
 
 /********************************************************************** 

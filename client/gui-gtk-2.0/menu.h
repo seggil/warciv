@@ -17,10 +17,6 @@
 
 #include "menu_g.h"
 
-void init_menus(void);
-
 void setup_menus(GtkWidget *window, GtkWidget **menubar);
-
-extern GtkAccelGroup *	toplevel_accel;
 
 #endif  /* FC__MENU_H */

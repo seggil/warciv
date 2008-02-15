@@ -789,10 +789,13 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
   PangoRectangle rect, rect2, rect3;
   enum color_std color, color2;
   int extra_width = 0;
+  GdkScreen *screen;
   static PangoLayout *layout;
 
+  screen = gdk_screen_get_default();
+
   if (!layout) {
-    layout = pango_layout_new(gdk_pango_context_get());
+    layout = pango_layout_new(gdk_pango_context_get_for_screen(screen));
   }
 
   *width = *height = 0;
@@ -1192,6 +1195,11 @@ static void fog_sprite(struct Sprite *sprite)
   GdkPixbuf *fogged;
   guchar *pixel;
   const int bright = 65; /* Brightness percentage */
+  GdkColormap *colormap;
+  GdkScreen *screen;
+
+  screen = gdk_screen_get_default();
+  colormap = gdk_screen_get_default_colormap(screen);
 
   fogged = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
 			  sprite->width, sprite->height);
@@ -1211,8 +1219,8 @@ static void fog_sprite(struct Sprite *sprite)
     }
   }
 
-  gdk_pixbuf_render_pixmap_and_mask(fogged, &sprite->fogged,
-				    NULL, 0);
+  gdk_pixbuf_render_pixmap_and_mask_for_colormap(fogged, colormap, &sprite->fogged,
+                                                 NULL, 0);
   g_object_unref(fogged);
 }
 
@@ -1422,6 +1430,7 @@ void redraw_distance_tool(void)
   PangoLayout *layout;
   gchar text[128];
   int x0, x1, y0, y1;
+  GdkScreen *screen;
 
   tile_to_canvas_pos(&x0, &y0, dist_first_tile);
   tile_to_canvas_pos(&x1, &y1, dist_last_tile);
@@ -1433,7 +1442,8 @@ void redraw_distance_tool(void)
   gdk_gc_set_foreground(civ_gc, colors_standard[COLOR_STD_YELLOW]);
 
   gdk_draw_line(map_canvas->window, civ_gc, x0, y0, x1, y1);
-  context = gdk_pango_context_get();
+  screen = gdk_screen_get_default();
+  context = gdk_pango_context_get_for_screen(screen);
   layout = pango_layout_new(context);
   pango_layout_set_font_description(layout, main_font);
 

@@ -14,23 +14,18 @@
 #include <config.h>
 #endif
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <gtk/gtk.h>
 
 #include "fcintl.h"
-#include "gui_stuff.h"
-#include "gui_main.h"
-#include "style.h"
 #include "support.h"
-#include "resources.h"
+
 #include "chatline_common.h"
 
-/* #include "log.h" */
+#include "gui_main.h"
+#include "gui_stuff.h"
+#include "resources.h"
+
+#include "style.h"
 
 static GtkWidget *style_config_shell = NULL;
 
@@ -106,6 +101,22 @@ static struct styleconf styleconf[] = {
     NULL
   },
   {
+    N_("Vote Label"), "vote label", "Freeciv*.vote label",
+    NULL
+  },
+  {
+    N_("Vote Yes Button"), "vote yes button", "Freeciv*.vote yes button",
+    NULL
+  },
+  {
+    N_("Vote No Button"), "vote no button", "Freeciv*.vote no button",
+    NULL
+  },
+  {
+    N_("Vote Abstain Button"), "vote abstain button", "Freeciv*.vote abstain button",
+    NULL
+  },
+  {
     N_("Tooltips"), "tooltips", "gtk-tooltips*.*",
     NULL
   },
@@ -141,8 +152,10 @@ static void destroy_callback(GtkWidget *w,
 static void read_style_from_rc(void)
 {
   GtkSettings *gtksettings;
+  GdkScreen *screen;
 
-  gtksettings = gtk_settings_get_default();
+  screen = gdk_screen_get_default();
+  gtksettings = gtk_settings_get_for_screen(screen);
   style_iterate(sset){
     sset->style = 
       gtk_style_copy(gtk_rc_get_style_by_paths(gtksettings,
@@ -251,10 +264,12 @@ static void undo_callback(GtkWidget *w,
 static void reset_style(const char * stylebuf)
 {
   GtkSettings *gtksettings;
+  GdkScreen *screen;
   GtkStyle *style;
 
   gtk_rc_parse_string(stylebuf);
-  gtksettings = gtk_settings_get_default();
+  screen = gdk_screen_get_default();
+  gtksettings = gtk_settings_get_for_screen(screen);
   gtk_rc_reset_styles(gtksettings);
   
   /* font names shouldn't be in spec files! */

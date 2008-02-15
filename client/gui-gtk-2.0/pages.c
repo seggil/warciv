@@ -153,11 +153,14 @@ static gboolean intro_expose(GtkWidget *w, GdkEventExpose *ev)
 {
   static PangoLayout *layout;
   static int width, height;
+  GdkScreen *screen;
+
+  screen = gdk_screen_get_default();
 
   if (!layout) {
     char msgbuf[128];
 
-    layout = pango_layout_new(gdk_pango_context_get());
+    layout = pango_layout_new(gdk_pango_context_get_for_screen(screen));
     pango_layout_set_font_description(layout, main_font);
 
     my_snprintf(msgbuf, sizeof(msgbuf), "%s%s",
