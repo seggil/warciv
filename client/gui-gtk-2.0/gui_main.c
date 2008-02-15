@@ -905,9 +905,8 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
     case GDK_KP_Down:
     case GDK_KP_2:
     case GDK_2:
-      return TRUE;
       key_unit_move(DIR8_SOUTH);
-      break;
+      return TRUE;
 
     case GDK_KP_End:
     case GDK_KP_1:
