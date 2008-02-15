@@ -29,40 +29,40 @@
 ***********************************************************************/
 
 /* Selected units iterator macro. */
-#define multi_select_iterate(clear_selection, punit) {                    \
-  bool _clear_selection = clear_selection;                                \
-  struct unit *_punit, *_punit_next_focus = NULL;                         \
-  bool _cond = (multi_select_size(0) > 1);                                \
-  connection_do_buffer(&aconnection);                                     \
-  unit_list_iterate(multi_select_get_units_focus(), punit) {              \
-    _punit = punit;                                                       \
-    if ((_cond                                                            \
-         && !unit_satisfies_filter(punit, multi_select_inclusive_filter,  \
-				          multi_select_exclusive_filter)) \
-	|| punit->focus_status == FOCUS_DONE) {                           \
-      continue;                                                           \
+#define multi_select_iterate(clear_selection, punit) {                  \
+    bool _clear_selection = clear_selection;                            \
+    struct unit *_punit, *_punit_next_focus = NULL;                     \
+    bool _cond = (multi_select_size(0) > 1);                            \
+    connection_do_buffer(&aconnection);                                 \
+    unit_list_iterate(multi_select_get_units_focus(), punit) {          \
+      _punit = punit;                                                   \
+      if ((_cond                                                        \
+           && !unit_satisfies_filter(punit, multi_select_inclusive_filter, \
+                                     multi_select_exclusive_filter))    \
+          || punit->focus_status == FOCUS_DONE) {                       \
+        continue;                                                       \
+      }
+#define multi_select_iterate_end                                        \
+  if (unit_satisfies_filter(_punit, multi_select_inclusive_filter,      \
+                            multi_select_exclusive_filter)              \
+      &&_punit->focus_status == FOCUS_AVAIL) {                          \
+    _punit_next_focus = _punit;                                         \
+  }                                                                     \
+  } unit_list_iterate_end;                                              \
+    connection_do_unbuffer(&aconnection);                               \
+    if (_clear_selection || (_cond && !_punit_next_focus)) {            \
+      multi_select_clear(0);                                            \
+    } else if (_cond                                                    \
+               && !unit_satisfies_filter(get_unit_in_focus(),           \
+                                         multi_select_inclusive_filter, \
+                                         multi_select_exclusive_filter)) { \
+      if (_punit_next_focus) {                                          \
+        set_unit_focus(_punit_next_focus);                              \
+      } else {                                                          \
+        advance_unit_focus();                                           \
+      }                                                                 \
+    }                                                                   \
     }
-#define multi_select_iterate_end                                          \
-    if (unit_satisfies_filter(_punit, multi_select_inclusive_filter,      \
-                              multi_select_exclusive_filter)              \
-        &&_punit->focus_status == FOCUS_AVAIL) {                          \
-      _punit_next_focus = _punit;                                         \
-    }                                                                     \
-  } unit_list_iterate_end;                                                \
-  connection_do_unbuffer(&aconnection);                                   \
-  if (_clear_selection || (_cond && !_punit_next_focus)) {                \
-    multi_select_clear(0);                                                \
-  } else if (_cond                                                        \
-	     && !unit_satisfies_filter(get_unit_in_focus(),               \
-				       multi_select_inclusive_filter,     \
-				       multi_select_exclusive_filter)) {  \
-    if (_punit_next_focus) {                                              \
-      set_unit_focus(_punit_next_focus);                                  \
-    } else {                                                              \
-      advance_unit_focus();                                               \
-    }                                                                     \
-  }                                                                       \
-}
 
 /********************************************************************** 
   Filters and selection modes. This is a common code for multi-selection
@@ -110,8 +110,8 @@ enum utype_value {
 
 void filter_change(filter *pfilter, enum filter_value value);
 bool unit_satisfies_filter(struct unit *punit,
-			   filter inclusive_filter,
-			   filter exclusive_filter);
+                           filter inclusive_filter,
+                           filter exclusive_filter);
 
 /**************************************************************************
   Automatic processus allows to connect client functions to game events
@@ -145,15 +145,15 @@ enum automatic_value {
 #else /* DEBUG */
 #define AP_CONNECT(value,function) value, function
 #endif /* DEBUG */
-#define AP_MAIN_CONNECT(function)                    \
-	AP_CONNECT(AUTO_NEW_YEAR, function),         \
-	AP_CONNECT(AUTO_PRESS_TURN_DONE, function),  \
-	AP_CONNECT(AUTO_NO_UNIT_SELECTED, function), \
-	AP_CONNECT(AUTO_50_TIMEOUT, function),       \
-	AP_CONNECT(AUTO_80_TIMEOUT, function),       \
-	AP_CONNECT(AUTO_90_TIMEOUT, function),       \
-	AP_CONNECT(AUTO_95_TIMEOUT, function),       \
-	AP_CONNECT(AUTO_5_SECONDS, function)
+#define AP_MAIN_CONNECT(function)                       \
+  AP_CONNECT(AUTO_NEW_YEAR, function),                  \
+    AP_CONNECT(AUTO_PRESS_TURN_DONE, function),         \
+    AP_CONNECT(AUTO_NO_UNIT_SELECTED, function),        \
+    AP_CONNECT(AUTO_50_TIMEOUT, function),              \
+    AP_CONNECT(AUTO_80_TIMEOUT, function),              \
+    AP_CONNECT(AUTO_90_TIMEOUT, function),              \
+    AP_CONNECT(AUTO_95_TIMEOUT, function),              \
+    AP_CONNECT(AUTO_5_SECONDS, function)
 
 typedef void (*ap_callback)(void *arg1, int arg2);
 
@@ -171,7 +171,7 @@ typedef struct {
 #define SPECLIST_TAG automatic_processus
 #define SPECLIST_TYPE automatic_processus
 #include "speclist.h"
-#define automatic_processus_iterate(pitem) \
+#define automatic_processus_iterate(pitem)                              \
   TYPED_LIST_ITERATE(automatic_processus, get_automatic_processus(), pitem)
 #define automatic_processus_iterate_end  LIST_ITERATE_END
 
@@ -184,24 +184,27 @@ struct ap_timer {
 void ap_timers_init(void);
 void ap_timers_update(void);
 
-void auto_filter_change(automatic_processus *pap, enum automatic_value value);
+void auto_filter_change(automatic_processus *pap, 
+                        enum automatic_value value);
 void auto_filter_normalize(automatic_processus *pap);
-bool is_auto_value_allowed(automatic_processus *pap, enum automatic_value value);
+bool is_auto_value_allowed(automatic_processus *pap,
+                           enum automatic_value value);
 const char *ap_event_name(enum automatic_value event);
 void automatic_processus_event(enum automatic_value event, void *data);
 void automatic_processus_init(void);
-#define automatic_processus_new(page, default_auto_filter, menu, \
-                                description, data, ...) \
-  real_automatic_processus_new(__FILE__, __LINE__, page, default_auto_filter, \
-                               menu, description, data, __VA_ARGS__);
+#define automatic_processus_new(page, default_auto_filter, menu,        \
+                                description, data, ...)                 \
+  real_automatic_processus_new(__FILE__, __LINE__, page,                \
+                               default_auto_filter, menu,               \
+                               description, data, __VA_ARGS__);
 void automatic_processus_remove(automatic_processus *pap);
 const struct automatic_processus_list *get_automatic_processus(void);
 automatic_processus *find_automatic_processus_by_name(const char *path);
 automatic_processus *
-  real_automatic_processus_new(const char *file, const int line,
-			       enum peppage page, filter default_auto_filter,
-	                       const char *menu, const char *description,
-			       int data, ...);
+real_automatic_processus_new(const char *file, const int line,
+                             enum peppage page, filter default_auto_filter,
+                             const char *menu, const char *description,
+                             int data, ...);
 
 /**************************************************************************
   Unit multi selection tools.
@@ -256,7 +259,7 @@ struct delayed_goto_data {
 #define SPECLIST_TAG delayed_goto_data
 #define SPECLIST_TYPE struct delayed_goto_data
 #include "speclist.h"
-#define delayed_goto_data_list_iterate(alist, pitem) \
+#define delayed_goto_data_list_iterate(alist, pitem)            \
   TYPED_LIST_ITERATE(struct delayed_goto_data, alist, pitem)
 #define delayed_goto_data_list_iterate_end LIST_ITERATE_END
 
@@ -274,7 +277,7 @@ extern enum utype_value delayed_goto_utype;
 extern int delayed_para_or_nuke;
 extern int unit_limit;
 extern int need_tile_for;
-	
+
 void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile);
 void delayed_goto_cat(int dest, int src);
 void delayed_goto_clear(int dg);
@@ -318,7 +321,7 @@ void airlift_queue_init_all(void);
 void airlift_queue_move(int dest,int src);
 void airlift_queue_set(int aq, const struct airlift_queue *paq);
 void airlift_queue_set_menu_name(int aq, Unit_Type_id utype, 
-				 const char *namemenu);
+                                 const char *namemenu);
 void airlift_queue_set_unit_type(int aq, Unit_Type_id utype);
 void airlift_queue_show(int aq);
 int airlift_queue_size(int aq);

@@ -129,8 +129,8 @@ bool improvement_exists(Impr_Type_id id)
 
   if (!game.info.spacerace
       && (building_has_effect(id, EFT_SS_STRUCTURAL)
-	  || building_has_effect(id, EFT_SS_COMPONENT)
-	  || building_has_effect(id, EFT_SS_MODULE))) {
+          || building_has_effect(id, EFT_SS_COMPONENT)
+          || building_has_effect(id, EFT_SS_MODULE))) {
     /* This assumes that space parts don't have any other effects. */
     return FALSE;
   }
@@ -176,7 +176,7 @@ int impr_build_shield_cost(Impr_Type_id id)
 int impr_buy_gold_cost(Impr_Type_id id, int shields_in_stock)
 {
   int cost = 0, missing =
-      improvement_types[id].build_cost - shields_in_stock;
+    improvement_types[id].build_cost - shields_in_stock;
 
   if (building_has_effect(id, EFT_PROD_TO_GOLD)) {
     /* Can't buy capitalization. */
@@ -254,11 +254,11 @@ bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
   if (improvement_types[id].is_wonder) {
     /* a wonder is obsolete, as soon as *any* player researched the
        obsolete tech */
-   return game.info.global_advances[improvement_types[id].obsolete_by] != 0;
+    return game.info.global_advances[improvement_types[id].obsolete_by] != 0;
   }
 
   return (get_invention(pplayer, improvement_types[id].obsolete_by)
-	  ==TECH_KNOWN);
+          ==TECH_KNOWN);
 }
 
 /**************************************************************************
@@ -287,7 +287,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
 
     if (cont > 0 && pplayer->island_improv) {
       equiv_list[IR_ISLAND] =
-                          &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
+        &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
     }
   }
 
@@ -299,7 +299,7 @@ static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
  replaces it
 **************************************************************************/
 bool improvement_redundant(struct player *pplayer, const struct city *pcity,
-                          Impr_Type_id id, bool want_to_build)
+                           Impr_Type_id id, bool want_to_build)
 {
   enum impr_range i;
   Impr_Status *equiv_list[IR_LAST];
@@ -314,8 +314,8 @@ bool improvement_redundant(struct player *pplayer, const struct city *pcity,
   for (ept = improvement_types[id].equiv_repl; ept && *ept != B_LAST; ept++) {
     for (i = IR_CITY; i < IR_LAST; i++) {
       if (equiv_list[i]) {
-         Impr_Status stat = equiv_list[i][*ept];
-         if (stat != I_NONE && stat != I_OBSOLETE) return TRUE;
+        Impr_Status stat = equiv_list[i][*ept];
+        if (stat != I_NONE && stat != I_OBSOLETE) return TRUE;
       }
     }
   }
@@ -323,7 +323,8 @@ bool improvement_redundant(struct player *pplayer, const struct city *pcity,
   /* equiv_dupl makes buildings redundant, but that shouldn't stop you
      from building them if you really want to */
   if (!want_to_build) {
-    for (ept = improvement_types[id].equiv_dupl; ept && *ept != B_LAST; ept++) {
+    for (ept = improvement_types[id].equiv_dupl; ept 
+           && *ept != B_LAST; ept++) {
       for (i = IR_CITY; i < IR_LAST; i++) {
         if (equiv_list[i]) {
           Impr_Status stat = equiv_list[i][*ept];
@@ -434,7 +435,8 @@ bool can_player_build_improvement(struct player *p, Impr_Type_id id)
   returns TRUE if building is available with current tech OR will be
   available with future tech.  Returns FALSE if building is obsolete.
 **************************************************************************/
-bool can_player_eventually_build_improvement(struct player *p, Impr_Type_id id)
+bool can_player_eventually_build_improvement(struct player *p, 
+                                             Impr_Type_id id)
 {
   if (!improvement_exists(id)) {
     return FALSE;
@@ -448,7 +450,8 @@ bool can_player_eventually_build_improvement(struct player *p, Impr_Type_id id)
 /**************************************************************************
   Marks an improvment to the status
 **************************************************************************/
-void mark_improvement(struct city *pcity, Impr_Type_id id, Impr_Status status)
+void mark_improvement(struct city *pcity, Impr_Type_id id, 
+                      Impr_Status status)
 {
   enum impr_range range;
   Impr_Status *improvements = NULL, *equiv_list[IR_LAST];
@@ -490,7 +493,7 @@ void allot_island_improvs(void)
     city_list_iterate(pplayer->cities, pcity) {
       Continent_id cont = map_get_continent(pcity->tile);
       Impr_Status *improvs = 
-                           &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
+        &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
 
       built_impr_iterate(pcity, id) {
         if (improvement_types[id].equiv_range != IR_ISLAND) {
@@ -560,24 +563,25 @@ void improvements_update_obsolete(void)
 void improvements_update_redundant(struct player *pplayer, struct city *pcity,
                                    Continent_id cont, enum impr_range range)
 {
-#define CHECK_CITY_IMPR(_pcity)                                              \
-{                                                                            \
-  built_impr_iterate((_pcity), i) {                                          \
-    if ((_pcity)->improvements[i] == I_OBSOLETE) {                           \
-      continue;                                                              \
-    }                                                                        \
-                                                                             \
-    if (improvement_redundant(city_owner(_pcity), (_pcity), i, FALSE)) {     \
-      freelog(LOG_DEBUG,"%s in %s is redundant",                             \
-              improvement_types[i].name, (_pcity)->name);                    \
-      mark_improvement((_pcity), i, I_REDUNDANT);                            \
-    } else {                                                                 \
-      freelog(LOG_DEBUG,"%s in %s is active!",                               \
-             improvement_types[i].name, (_pcity)->name);                     \
-      mark_improvement((_pcity), i, I_ACTIVE);                               \
-    }                                                                        \
-  } built_impr_iterate_end;                                                  \
-}
+#define CHECK_CITY_IMPR(_pcity)                                         \
+  {                                                                     \
+    built_impr_iterate((_pcity), i) {                                   \
+      if ((_pcity)->improvements[i] == I_OBSOLETE) {                    \
+        continue;                                                       \
+      }                                                                 \
+                                                                        \
+      if (improvement_redundant(city_owner(_pcity),                     \
+                                (_pcity), i, FALSE)) {                  \
+        freelog(LOG_DEBUG,"%s in %s is redundant",                      \
+                improvement_types[i].name, (_pcity)->name);             \
+        mark_improvement((_pcity), i, I_REDUNDANT);                     \
+      } else {                                                          \
+        freelog(LOG_DEBUG,"%s in %s is active!",                        \
+                improvement_types[i].name, (_pcity)->name);             \
+        mark_improvement((_pcity), i, I_ACTIVE);                        \
+      }                                                                 \
+    } built_impr_iterate_end;                                           \
+  }
 
   switch (range) {
   case IR_NONE:

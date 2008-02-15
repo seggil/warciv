@@ -32,7 +32,7 @@
 #include "timing.h"
 
 #include "game.h"
-#include "government.h"		/* government_graphic() */
+#include "government.h" /* government_graphic() */
 #include "map.h"
 #include "player.h"
 
@@ -59,13 +59,13 @@
 #define LOG_UPDATE_QUEUE LOG_DEBUG
 
 static void pixmap_put_overlay_tile(GdkDrawable *pixmap,
-				    int canvas_x, int canvas_y,
-				    struct Sprite *ssprite);
+                                    int canvas_x, int canvas_y,
+                                    struct Sprite *ssprite);
 
 static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
-					 int canvas_x, int canvas_y,
-					 struct Sprite *ssprite,
-					 bool fog);
+                                         int canvas_x, int canvas_y,
+                                         struct Sprite *ssprite,
+                                         bool fog);
 
 /* the intro picture is held in this pixmap, which is scaled to
    the screen size */
@@ -119,54 +119,54 @@ void update_info_label( void )
 
   label = gtk_frame_get_label_widget(GTK_FRAME(main_frame_civ_name));
   gtk_label_set_text(GTK_LABEL(label),
-		     get_nation_name(get_player_ptr()->nation));
+                     get_nation_name(get_player_ptr()->nation));
 
   gtk_label_set_text(GTK_LABEL(main_label_info), get_info_label_text());
 
   sol = client_warming_sprite();
   flake = client_cooling_sprite();
   set_indicator_icons(client_research_sprite(),
-		      sol,
-		      flake,
-		      get_player_ptr()->government);
+                      sol,
+                      flake,
+                      get_player_ptr()->government);
 
   d=0;
   for (; d < get_player_ptr()->economic.luxury /10; d++) {
     struct Sprite *sprite = sprites.tax_luxury;
 
     gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
-			      sprite->pixmap, sprite->mask);
+                              sprite->pixmap, sprite->mask);
   }
  
   for (; d < (get_player_ptr()->economic.science
-	     + get_player_ptr()->economic.luxury) / 10; d++) {
+              + get_player_ptr()->economic.luxury) / 10; d++) {
     struct Sprite *sprite = sprites.tax_science;
 
     gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
-			      sprite->pixmap, sprite->mask);
+                              sprite->pixmap, sprite->mask);
   }
  
   for (; d < 10; d++) {
     struct Sprite *sprite = sprites.tax_gold;
 
     gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
-			      sprite->pixmap, sprite->mask);
+                              sprite->pixmap, sprite->mask);
   }
  
   update_timeout_label();
 
   /* update tooltips. */
   gtk_tooltips_set_tip(main_tips, econ_ebox,
-		       _("Shows your current luxury/science/tax rates;"
-			 "click to toggle them."), "");
+                       _("Shows your current luxury/science/tax rates;"
+                         "click to toggle them."), "");
 
   gtk_tooltips_set_tip(main_tips, bulb_ebox, get_bulb_tooltip(), "");
   gtk_tooltips_set_tip(main_tips, sun_ebox, get_global_warming_tooltip(),
-		       "");
+                       "");
   gtk_tooltips_set_tip(main_tips, flake_ebox, get_nuclear_winter_tooltip(),
-		       "");
+                       "");
   gtk_tooltips_set_tip(main_tips, government_ebox, get_government_tooltip(),
-		       "");
+                       "");
 }
 
 /**************************************************************************
@@ -178,7 +178,7 @@ void update_hover_cursor(void)
   bool cond = (punit ? hover_unit == punit->id : FALSE);
 
   switch (hover_state)
-  {
+    {
     case HOVER_NONE:
       gdk_window_set_cursor (root_window, NULL);
       break;
@@ -219,7 +219,7 @@ void update_hover_cursor(void)
     case HOVER_MY_AI_TRADE_CITY:
       gdk_window_set_cursor (root_window, trade_cursor);
       break;
-  }
+    }
 }
 
 /**************************************************************************
@@ -238,19 +238,19 @@ void update_unit_info_label(struct unit *punit)
 
   label = gtk_frame_get_label_widget(GTK_FRAME(unit_info_frame));
   gtk_label_set_text(GTK_LABEL(label),
-		     get_unit_info_label_text1(punit));
+                     get_unit_info_label_text1(punit));
 
   gtk_label_set_text(GTK_LABEL(unit_info_label),
-		     get_unit_info_label_text2(punit));
+                     get_unit_info_label_text2(punit));
 
   if(punit && hover_unit != punit->id
-    && hover_state != HOVER_NONE
-    && hover_state != HOVER_DELAYED_AIRLIFT
-    && hover_state != HOVER_AIRLIFT_SOURCE
-    && hover_state != HOVER_AIRLIFT_DEST
-    && hover_state != HOVER_RALLY_POINT
-    && hover_state != HOVER_MY_AI_TRADE) {
-      set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
+     && hover_state != HOVER_NONE
+     && hover_state != HOVER_DELAYED_AIRLIFT
+     && hover_state != HOVER_AIRLIFT_SOURCE
+     && hover_state != HOVER_AIRLIFT_DEST
+     && hover_state != HOVER_RALLY_POINT
+     && hover_state != HOVER_MY_AI_TRADE) {
+    set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
   }
   update_hover_cursor();
   update_unit_pix_label(punit);
@@ -277,11 +277,11 @@ void set_indicator_icons(int bulb, int sol, int flake, int gov)
   flake = CLIP(0, flake, NUM_TILES_PROGRESS-1);
 
   gtk_image_set_from_pixmap(GTK_IMAGE(bulb_label),
-			    sprites.bulb[bulb]->pixmap, NULL);
+                            sprites.bulb[bulb]->pixmap, NULL);
   gtk_image_set_from_pixmap(GTK_IMAGE(sun_label),
-			    sprites.warming[sol]->pixmap, NULL);
+                            sprites.warming[sol]->pixmap, NULL);
   gtk_image_set_from_pixmap(GTK_IMAGE(flake_label),
-			    sprites.cooling[flake]->pixmap, NULL);
+                            sprites.cooling[flake]->pixmap, NULL);
 
   if (game.ruleset_control.government_count==0) {
     /* HACK: the UNHAPPY citizen is used for the government
@@ -293,7 +293,7 @@ void set_indicator_icons(int bulb, int sol, int flake, int gov)
     gov_sprite = get_government(gov)->sprite;
   }
   gtk_image_set_from_pixmap(GTK_IMAGE(government_label),
-			    gov_sprite->pixmap, NULL);
+                            gov_sprite->pixmap, NULL);
 }
 
 /**************************************************************************
@@ -302,7 +302,7 @@ void set_indicator_icons(int bulb, int sol, int flake, int gov)
 void map_size_changed(void)
 {
   gtk_widget_set_size_request(overview_canvas,
-			      overview.width, overview.height);
+                              overview.width, overview.height);
   update_map_canvas_scrollbars_size();
 }
 
@@ -346,14 +346,15 @@ struct canvas *get_overview_window(void)
 /**************************************************************************
 ...
 **************************************************************************/
-gboolean overview_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
+gboolean overview_canvas_expose(GtkWidget *w, GdkEventExpose *ev,
+                                gpointer data)
 {
   if (!can_client_change_view()) {
     if (radar_gfx_sprite) {
       gdk_draw_drawable(overview_canvas->window, civ_gc,
-			radar_gfx_sprite->pixmap, ev->area.x, ev->area.y,
-			ev->area.x, ev->area.y,
-			ev->area.width, ev->area.height);
+                        radar_gfx_sprite->pixmap, ev->area.x, ev->area.y,
+                        ev->area.x, ev->area.y,
+                        ev->area.width, ev->area.height);
     }
     return TRUE;
   }
@@ -377,7 +378,7 @@ static bool map_configure = FALSE;
 ...
 **************************************************************************/
 gboolean map_canvas_configure(GtkWidget * w, GdkEventConfigure * ev,
-			      gpointer data)
+                              gpointer data)
 {
   if (map_canvas_resized(ev->width, ev->height)) {
     map_configure = TRUE;
@@ -405,21 +406,21 @@ gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
       }
 
       scaled_intro_sprite = sprite_scale(intro_gfx_sprite,
-					 w->allocation.width,
-					 w->allocation.height);
+                                         w->allocation.width,
+                                         w->allocation.height);
     }
 
     if (scaled_intro_sprite) {
       gdk_draw_drawable(map_canvas->window, civ_gc,
-			scaled_intro_sprite->pixmap,
-			ev->area.x, ev->area.y, ev->area.x, ev->area.y,
-			ev->area.width, ev->area.height);
+                        scaled_intro_sprite->pixmap,
+                        ev->area.x, ev->area.y, ev->area.x, ev->area.y,
+                        ev->area.width, ev->area.height);
       gtk_widget_queue_draw(overview_canvas);
       cleared = FALSE;
     } else {
       if (!cleared) {
-	gtk_widget_queue_draw(w);
-	cleared = TRUE;
+        gtk_widget_queue_draw(w);
+        cleared = TRUE;
       }
     }
     map_center = TRUE;
@@ -431,13 +432,13 @@ gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
 
     if (map_exists()) { /* do we have a map at all */
       gdk_draw_drawable(map_canvas->window, civ_gc, map_canvas_store,
-			ev->area.x, ev->area.y, ev->area.x, ev->area.y,
-			ev->area.width, ev->area.height);
+                        ev->area.x, ev->area.y, ev->area.x, ev->area.y,
+                        ev->area.width, ev->area.height);
       cleared = FALSE;
     } else {
       if (!cleared) {
         gtk_widget_queue_draw(w);
-	cleared = TRUE;
+        cleared = TRUE;
       }
     }
 
@@ -457,11 +458,11 @@ gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data)
   screen.
 **************************************************************************/
 static void base_flush_rectangle(int canvas_x, int canvas_y,
-		          int pixel_width, int pixel_height)
+                                 int pixel_width, int pixel_height)
 {
   gdk_draw_drawable(map_canvas->window, civ_gc, map_canvas_store,
-		    canvas_x, canvas_y, canvas_x, canvas_y,
-		    pixel_width, pixel_height);
+                    canvas_x, canvas_y, canvas_x, canvas_y,
+                    pixel_width, pixel_height);
 }
 
 /**************************************************************************
@@ -477,18 +478,18 @@ static gboolean unqueue_flush(gpointer data)
       int canvas_x, canvas_y;
 
       freelog(LOG_UPDATE_QUEUE, "unqueue_flush update tile (%d, %d)",
-	      TILE_XY(ptile));
+              TILE_XY(ptile));
       overview_update_tile(ptile);
 
       if (update_full) {
-	continue;
+        continue;
       }
 
       /* Add the tiles on the region to update */
       if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
         canvas_y += NORMAL_TILE_HEIGHT - UNIT_TILE_HEIGHT;
         update_queue_add_rectangle(canvas_x, canvas_y,
-				   UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
+                                   UNIT_TILE_WIDTH, UNIT_TILE_HEIGHT);
       }
     } tile_list_iterate_end;
     tile_list_free(tiles_to_update);
@@ -506,10 +507,10 @@ static gboolean unqueue_flush(gpointer data)
     /* Put sprites */
     for (i = 0; i < num; i++) {
       freelog(LOG_UPDATE_QUEUE, "put sprites in rectangle (%d, %d)-(%d, %d)",
-	      rectangles[i].x, rectangles[i].y,
-	      rectangles[i].width, rectangles[i].height);
+              rectangles[i].x, rectangles[i].y,
+              rectangles[i].width, rectangles[i].height);
       draw_map_canvas(rectangles[i].x, rectangles[i].y,
-	              rectangles[i].width, rectangles[i].height, DRAW_SPRITES);
+                      rectangles[i].width, rectangles[i].height, DRAW_SPRITES);
     }
     if (rectangles) {
       g_free(rectangles);
@@ -517,9 +518,9 @@ static gboolean unqueue_flush(gpointer data)
 
     /* Put map decoration */
     freelog(LOG_UPDATE_QUEUE, "put map deco in rectangle (%d, %d)-(%d, %d)",
-	    rectangle.x, rectangle.y, rectangle.width, rectangle.y);
+            rectangle.x, rectangle.y, rectangle.width, rectangle.y);
     draw_map_canvas(rectangle.x, rectangle.y,
-		    rectangle.width, rectangle.height, DRAW_DECORATION);
+                    rectangle.width, rectangle.height, DRAW_DECORATION);
 
     if (region_to_flush) {
       gdk_region_union(region_to_flush, region_to_update);
@@ -561,14 +562,14 @@ void queue_flush(void)
   later.
 **************************************************************************/
 void dirty_rect(int canvas_x, int canvas_y,
-		int pixel_width, int pixel_height)
+                int pixel_width, int pixel_height)
 {
   GdkRectangle rect = {.x = canvas_x, .y = canvas_y,
                        .width = pixel_width, .height = pixel_height};
   GdkRegion *region = gdk_region_rectangle(&rect);
 
   freelog(LOG_UPDATE_QUEUE, "dirty_rect (%d, %d)-(%d, %d)",
-	  canvas_x, canvas_y, pixel_width, pixel_height);
+          canvas_x, canvas_y, pixel_width, pixel_height);
   if (region_to_flush) {
     gdk_region_union(region_to_flush, region);
     gdk_region_destroy(region);
@@ -591,10 +592,10 @@ void dirty_all(void)
   screen.
 **************************************************************************/
 void flush_rectangle(int canvas_x, int canvas_y,
-		     int pixel_width, int pixel_height)
+                     int pixel_width, int pixel_height)
 {
   freelog(LOG_UPDATE_QUEUE, "flush_rectangle (%d, %d)-(%d, %d)",
-	  canvas_x, canvas_y, pixel_width, pixel_height);
+          canvas_x, canvas_y, pixel_width, pixel_height);
   base_flush_rectangle(canvas_x, canvas_y, pixel_width, pixel_height);
 
   if (region_to_flush) {
@@ -626,10 +627,10 @@ void flush_dirty(void)
   freelog(LOG_UPDATE_QUEUE, "flush_dirty (%d rectangles)", num);
   for (i = 0; i < num; i++) {
     freelog(LOG_UPDATE_QUEUE, "flush_dirty rectangle (%d, %d)-(%d, %d)",
-	    rectangles[i].x, rectangles[i].y,
-	    rectangles[i].width, rectangles[i].height);
+            rectangles[i].x, rectangles[i].y,
+            rectangles[i].width, rectangles[i].height);
     base_flush_rectangle(rectangles[i].x, rectangles[i].y,
-		         rectangles[i].width, rectangles[i].height);
+                         rectangles[i].width, rectangles[i].height);
   }
 
   if (rectangles) {
@@ -655,7 +656,7 @@ void gui_flush(void)
 void update_queue_add_tile(struct tile *ptile)
 {
   freelog(LOG_UPDATE_QUEUE, "update_queue_add_tile (%d, %d)",
-	  TILE_XY(ptile));
+          TILE_XY(ptile));
 
   if (!tiles_to_update) {
     tiles_to_update = tile_list_new();
@@ -673,7 +674,7 @@ void update_queue_add_tile(struct tile *ptile)
 void update_queue_remove_tile(struct tile *ptile)
 {
   freelog(LOG_UPDATE_QUEUE, "update_queue_remove_tile (%d, %d)",
-	  TILE_XY(ptile));
+          TILE_XY(ptile));
 
   if (tiles_to_update) {
     tile_list_unlink(tiles_to_update, ptile);
@@ -693,7 +694,7 @@ void update_queue_add_rectangle(int x, int y, int w, int h)
   GdkRegion *region;
 
   freelog(LOG_UPDATE_QUEUE, "update_queue_add_rectangle (%d, %d)-(%d, %d)",
-	  x, y, w, h);
+          x, y, w, h);
 
   rect.x = MAX(x, 0);
   rect.y = MAX(y, 0);
@@ -739,9 +740,9 @@ void move_update_queue(int vector_x, int vector_y)
   rectangle.x = MAX(rectangle.x + vector_x, 0);
   rectangle.y = MAX(rectangle.y + vector_y, 0);
   rectangle.width = MIN(rectangle.width,
-			mapview_canvas.store_width - rectangle.x);
+                        mapview_canvas.store_width - rectangle.x);
   rectangle.height = MIN(rectangle.height,
-			 mapview_canvas.store_height - rectangle.y);
+                         mapview_canvas.store_height - rectangle.y);
   gdk_region_destroy(region_to_update);
   if (rectangle.width > 0 && rectangle.height > 0) {
     region_to_update = gdk_region_rectangle(&rectangle);
@@ -782,137 +783,140 @@ void free_mapview_updates(void)
   city's tile).
 ****************************************************************************/
 void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
-		    struct city *pcity, int *width, int *height)
+                    struct city *pcity, int *width, int *height)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
-  static char buffer[512], buffer2[32], buffer3[64];
-  PangoRectangle rect, rect2, rect3;
-  enum color_std color, color2;
-  int extra_width = 0;
-  GdkScreen *screen;
-  static PangoLayout *layout;
+    static char buffer[512], buffer2[32], buffer3[64];
+    PangoRectangle rect, rect2, rect3;
+    enum color_std color, color2;
+    int extra_width = 0;
+    GdkScreen *screen;
+    static PangoLayout *layout;
 
-  screen = gdk_screen_get_default();
+    screen = gdk_screen_get_default();
 
-  if (!layout) {
-    layout = pango_layout_new(gdk_pango_context_get_for_screen(screen));
-  }
+    if (!layout) {
+      layout = pango_layout_new(gdk_pango_context_get_for_screen(screen));
+    }
 
-  *width = *height = 0;
+    *width = *height = 0;
 
-  canvas_x += NORMAL_TILE_WIDTH / 2;
-  canvas_y += NORMAL_TILE_HEIGHT;
+    canvas_x += NORMAL_TILE_WIDTH / 2;
+    canvas_y += NORMAL_TILE_HEIGHT;
 
-  if (draw_city_names) {
-    get_city_mapview_name_and_growth(pcity, buffer, sizeof(buffer),
-				     buffer2, sizeof(buffer2), &color);
-    get_city_mapview_traderoutes (pcity, buffer3, sizeof(buffer3), &color2);
+    if (draw_city_names) {
+      get_city_mapview_name_and_growth(pcity, buffer, sizeof(buffer),
+                                       buffer2, sizeof(buffer2), &color);
+      get_city_mapview_traderoutes (pcity, buffer3, sizeof(buffer3), &color2);
 
-    pango_layout_set_font_description(layout, main_font);
+      pango_layout_set_font_description(layout, main_font);
     
-    /* Calculate the width of a space, for hack below. */
+      /* Calculate the width of a space, for hack below. */
       pango_layout_set_text(layout, "M", -1);
       pango_layout_get_pixel_extents(layout, &rect, NULL);
       extra_width = rect.width;
       
-    pango_layout_set_text(layout, buffer, -1);
-    pango_layout_get_pixel_extents(layout, &rect, NULL);
+      pango_layout_set_text(layout, buffer, -1);
+      pango_layout_get_pixel_extents(layout, &rect, NULL);
     
-    /* HACK: put a character's worth of space between the two strings. */
-    if (buffer2[0] != '\0') {
-    rect.width += extra_width;
-    }
-
-    if (draw_city_growth && pcity->owner == get_player_idx()) {
-      /* We need to know the size of the growth text before
-	 drawing anything. */
-      pango_layout_set_font_description(layout, city_productions_font);
-      pango_layout_set_text(layout, buffer2, -1);
-      pango_layout_get_pixel_extents(layout, &rect2, NULL);
-
-      /* Now return the layout to its previous state. */
-      pango_layout_set_font_description(layout, main_font);
-      pango_layout_set_text(layout, buffer, -1);
-    } else {
-      rect2.width = 0;
-    }
-    if (draw_city_traderoutes && pcity->owner == get_player_idx()) {
-      /* We need to know the size of the trade routes text before
-	 drawing anything. */
-      pango_layout_set_font_description (layout, city_productions_font);
-      pango_layout_set_text (layout, buffer3, -1);
-      pango_layout_get_pixel_extents(layout, &rect3, NULL);
-      
-      /* Only add a space if there is some text before the trade routes text */
-      if (buffer[0] != '\0' && buffer2[0] == '\0')
+      /* HACK: put a character's worth of space between the two strings. */
+      if (buffer2[0] != '\0') {
         rect.width += extra_width;
-      else if (buffer2[0] != '\0')
-        rect2.width += extra_width;
+      }
+
+      if (draw_city_growth && pcity->owner == get_player_idx()) {
+        /* We need to know the size of the growth text before
+           drawing anything. */
+        pango_layout_set_font_description(layout, city_productions_font);
+        pango_layout_set_text(layout, buffer2, -1);
+        pango_layout_get_pixel_extents(layout, &rect2, NULL);
+
+        /* Now return the layout to its previous state. */
+        pango_layout_set_font_description(layout, main_font);
+        pango_layout_set_text(layout, buffer, -1);
+      } else {
+        rect2.width = 0;
+      }
+      if (draw_city_traderoutes && pcity->owner == get_player_idx()) {
+        /* We need to know the size of the trade routes text before
+           drawing anything. */
+        pango_layout_set_font_description (layout, city_productions_font);
+        pango_layout_set_text (layout, buffer3, -1);
+        pango_layout_get_pixel_extents(layout, &rect3, NULL);
       
-      /* Now return the layout to its previous state. */
-      pango_layout_set_font_description(layout, main_font);
-      pango_layout_set_text(layout, buffer, -1);
-    } else {
-      rect3.width = 0;
-    }
+        /* Only add a space if there is some text before the trade routes text */
+        if (buffer[0] != '\0' && buffer2[0] == '\0')
+          rect.width += extra_width;
+        else if (buffer2[0] != '\0')
+          rect2.width += extra_width;
+      
+        /* Now return the layout to its previous state. */
+        pango_layout_set_font_description(layout, main_font);
+        pango_layout_set_text(layout, buffer, -1);
+      } else {
+        rect3.width = 0;
+      }
 
 
-    gtk_draw_shadowed_string(pcanvas->v.pixmap,
-			     toplevel->style->black_gc,
-			     toplevel->style->white_gc,
-			     canvas_x - (rect.width + rect2.width + rect3.width) / 2,
-			     canvas_y + PANGO_ASCENT(rect), layout);
-
-    if (draw_city_growth && pcity->owner == get_player_idx()) {
-      pango_layout_set_font_description(layout, city_productions_font);
-      pango_layout_set_text(layout, buffer2, -1);
-      gdk_gc_set_foreground(civ_gc, colors_standard[color]);
       gtk_draw_shadowed_string(pcanvas->v.pixmap,
-			       toplevel->style->black_gc,
-			       civ_gc,
-			       canvas_x - (rect.width + rect2.width + rect3.width) / 2
-			       + rect.width,
-			       canvas_y + PANGO_ASCENT(rect)
-			       + rect.height / 2 - rect2.height / 2,
-			       layout);
+                               toplevel->style->black_gc,
+                               toplevel->style->white_gc,
+                               canvas_x - (rect.width + rect2.width 
+                                           + rect3.width) / 2,
+                               canvas_y + PANGO_ASCENT(rect), layout);
+
+      if (draw_city_growth && pcity->owner == get_player_idx()) {
+        pango_layout_set_font_description(layout, city_productions_font);
+        pango_layout_set_text(layout, buffer2, -1);
+        gdk_gc_set_foreground(civ_gc, colors_standard[color]);
+        gtk_draw_shadowed_string(pcanvas->v.pixmap,
+                                 toplevel->style->black_gc,
+                                 civ_gc,
+                                 canvas_x - (rect.width + rect2.width 
+                                             + rect3.width) / 2
+                                 + rect.width,
+                                 canvas_y + PANGO_ASCENT(rect)
+                                 + rect.height / 2 - rect2.height / 2,
+                                 layout);
+      }
+
+      if (draw_city_traderoutes && pcity->owner == get_player_idx()) {
+        pango_layout_set_font_description (layout, city_productions_font);
+        pango_layout_set_text (layout, buffer3, -1);
+        gdk_gc_set_foreground (civ_gc, colors_standard[color2]);
+        gtk_draw_shadowed_string (pcanvas->v.pixmap,
+                                  toplevel->style->black_gc,
+                                  civ_gc,
+                                  canvas_x - (rect.width + rect2.width 
+                                              + rect3.width) / 2
+                                  + rect.width + rect2.width,
+                                  canvas_y + PANGO_ASCENT (rect)
+                                  + rect.height / 2 - rect3.height / 2,
+                                  layout);
+      }
+
+      canvas_y += rect.height + 3;
+
+      *width = rect.width + rect2.width + rect3.width;
+      *height += rect.height + 3;
     }
 
-    if (draw_city_traderoutes && pcity->owner == get_player_idx()) {
-      pango_layout_set_font_description (layout, city_productions_font);
-      pango_layout_set_text (layout, buffer3, -1);
-      gdk_gc_set_foreground (civ_gc, colors_standard[color2]);
-      gtk_draw_shadowed_string (pcanvas->v.pixmap,
-                                toplevel->style->black_gc,
-                                civ_gc,
-                                canvas_x - (rect.width + rect2.width + rect3.width) / 2
-                                + rect.width + rect2.width,
-                                canvas_y + PANGO_ASCENT (rect)
-                                + rect.height / 2 - rect3.height / 2,
-                                layout);
+    if (draw_city_productions && (pcity->owner==get_player_idx())) {
+      get_city_mapview_production(pcity, buffer, sizeof(buffer));
+
+      pango_layout_set_font_description(layout, city_productions_font);
+      pango_layout_set_text(layout, buffer, -1);
+
+      pango_layout_get_pixel_extents(layout, &rect, NULL);
+      gtk_draw_shadowed_string(pcanvas->v.pixmap,
+                               toplevel->style->black_gc,
+                               toplevel->style->white_gc,
+                               canvas_x - rect.width / 2,
+                               canvas_y + PANGO_ASCENT(rect), layout);
+
+      *width = MAX(*width, rect.width);
+      *height += rect.height;
     }
-
-    canvas_y += rect.height + 3;
-
-    *width = rect.width + rect2.width + rect3.width;
-    *height += rect.height + 3;
-  }
-
-  if (draw_city_productions && (pcity->owner==get_player_idx())) {
-    get_city_mapview_production(pcity, buffer, sizeof(buffer));
-
-    pango_layout_set_font_description(layout, city_productions_font);
-    pango_layout_set_text(layout, buffer, -1);
-
-    pango_layout_get_pixel_extents(layout, &rect, NULL);
-    gtk_draw_shadowed_string(pcanvas->v.pixmap,
-			     toplevel->style->black_gc,
-			     toplevel->style->white_gc,
-			     canvas_x - rect.width / 2,
-			     canvas_y + PANGO_ASCENT(rect), layout);
-
-    *width = MAX(*width, rect.width);
-    *height += rect.height;
-  }
   }
 }
 
@@ -959,8 +963,8 @@ void put_unit_gpixmap_city_overlays(struct unit *punit, GtkPixcomm *p)
 ...
 **************************************************************************/
 static void pixmap_put_overlay_tile(GdkDrawable *pixmap,
-				    int canvas_x, int canvas_y,
-				    struct Sprite *ssprite)
+                                    int canvas_x, int canvas_y,
+                                    struct Sprite *ssprite)
 {
   if (!ssprite) {
     return;
@@ -970,9 +974,9 @@ static void pixmap_put_overlay_tile(GdkDrawable *pixmap,
   gdk_gc_set_clip_mask(civ_gc, ssprite->mask);
 
   gdk_draw_drawable(pixmap, civ_gc, ssprite->pixmap,
-		    0, 0,
-		    canvas_x, canvas_y,
-		    ssprite->width, ssprite->height);
+                    0, 0,
+                    canvas_x, canvas_y,
+                    ssprite->width, ssprite->height);
   gdk_gc_set_clip_mask(civ_gc, NULL);
 }
 
@@ -980,10 +984,10 @@ static void pixmap_put_overlay_tile(GdkDrawable *pixmap,
   Place part of a (possibly masked) sprite on a pixmap.
 **************************************************************************/
 static void pixmap_put_sprite(GdkDrawable *pixmap,
-			      int pixmap_x, int pixmap_y,
-			      struct Sprite *ssprite,
-			      int offset_x, int offset_y,
-			      int width, int height)
+                              int pixmap_x, int pixmap_y,
+                              struct Sprite *ssprite,
+                              int offset_x, int offset_y,
+                              int width, int height)
 {
   if (ssprite->mask) {
     gdk_gc_set_clip_origin(civ_gc, pixmap_x, pixmap_y);
@@ -991,10 +995,10 @@ static void pixmap_put_sprite(GdkDrawable *pixmap,
   }
 
   gdk_draw_drawable(pixmap, civ_gc, ssprite->pixmap,
-		    offset_x, offset_y,
-		    pixmap_x + offset_x, pixmap_y + offset_y,
-		    MIN(width, MAX(0, ssprite->width - offset_x)),
-		    MIN(height, MAX(0, ssprite->height - offset_y)));
+                    offset_x, offset_y,
+                    pixmap_x + offset_x, pixmap_y + offset_y,
+                    MIN(width, MAX(0, ssprite->width - offset_x)),
+                    MIN(height, MAX(0, ssprite->height - offset_y)));
 
   gdk_gc_set_clip_mask(civ_gc, NULL);
 }
@@ -1003,46 +1007,48 @@ static void pixmap_put_sprite(GdkDrawable *pixmap,
   Draw some or all of a sprite onto the mapview or citydialog canvas.
 **************************************************************************/
 void canvas_put_sprite(struct canvas *pcanvas,
-		       int canvas_x, int canvas_y,
-		       struct Sprite *sprite,
-		       int offset_x, int offset_y, int width, int height)
+                       int canvas_x, int canvas_y,
+                       struct Sprite *sprite,
+                       int offset_x, int offset_y, int width, int height)
 {
   switch (pcanvas->type) {
-    case CANVAS_PIXMAP:
-      pixmap_put_sprite(pcanvas->v.pixmap, canvas_x, canvas_y,
-	  sprite, offset_x, offset_y, width, height);
-      break;
-    case CANVAS_PIXCOMM:
-      gtk_pixcomm_copyto(pcanvas->v.pixcomm, sprite, canvas_x, canvas_y);
-      break;
-    case CANVAS_PIXBUF:
-      {
-	GdkPixbuf *src, *dst;
+  case CANVAS_PIXMAP:
+    pixmap_put_sprite(pcanvas->v.pixmap, canvas_x, canvas_y,
+                      sprite, offset_x, offset_y, width, height);
+    break;
+  case CANVAS_PIXCOMM:
+    gtk_pixcomm_copyto(pcanvas->v.pixcomm, sprite, canvas_x, canvas_y);
+    break;
+  case CANVAS_PIXBUF:
+    {
+      GdkPixbuf *src, *dst;
 
-	/* FIXME: is this right??? */
-	if (canvas_x < 0) {
-	  offset_x -= canvas_x;
-	  canvas_x = 0;
-	}
-	if (canvas_y < 0) {
-	  offset_y -= canvas_y;
-	  canvas_y = 0;
-	}
-
-
-	src = sprite_get_pixbuf(sprite);
-	dst = pcanvas->v.pixbuf;
-	gdk_pixbuf_composite(src, dst, canvas_x, canvas_y,
-	    MIN(width,
-	      MIN(gdk_pixbuf_get_width(dst), gdk_pixbuf_get_width(src))),
-	    MIN(height,
-	      MIN(gdk_pixbuf_get_height(dst), gdk_pixbuf_get_height(src))),
-	    canvas_x - offset_x, canvas_y - offset_y,
-	    1.0, 1.0, GDK_INTERP_NEAREST, 255);
+      /* FIXME: is this right??? */
+      if (canvas_x < 0) {
+        offset_x -= canvas_x;
+        canvas_x = 0;
       }
-      break;
-    default:
-      break;
+      if (canvas_y < 0) {
+        offset_y -= canvas_y;
+        canvas_y = 0;
+      }
+
+
+      src = sprite_get_pixbuf(sprite);
+      dst = pcanvas->v.pixbuf;
+      gdk_pixbuf_composite(src, dst, canvas_x, canvas_y,
+                           MIN(width,
+                               MIN(gdk_pixbuf_get_width(dst),
+                                   gdk_pixbuf_get_width(src))),
+                           MIN(height,
+                               MIN(gdk_pixbuf_get_height(dst), 
+                                   gdk_pixbuf_get_height(src))),
+                           canvas_x - offset_x, canvas_y - offset_y,
+                           1.0, 1.0, GDK_INTERP_NEAREST, 255);
+    }
+    break;
+  default:
+    break;
   } 
 }
 
@@ -1050,11 +1056,11 @@ void canvas_put_sprite(struct canvas *pcanvas,
   Draw a full sprite onto the mapview or citydialog canvas.
 **************************************************************************/
 void canvas_put_sprite_full(struct canvas *pcanvas,
-			    int canvas_x, int canvas_y,
-			    struct Sprite *sprite)
+                            int canvas_x, int canvas_y,
+                            struct Sprite *sprite)
 {
   canvas_put_sprite(pcanvas, canvas_x, canvas_y, sprite,
-		    0, 0, sprite->width, sprite->height);
+                    0, 0, sprite->width, sprite->height);
 }
 
 /****************************************************************************
@@ -1062,13 +1068,13 @@ void canvas_put_sprite_full(struct canvas *pcanvas,
   fog.
 ****************************************************************************/
 void canvas_put_sprite_fogged(struct canvas *pcanvas,
-			      int canvas_x, int canvas_y,
-			      struct Sprite *psprite,
-			      bool fog, int fog_x, int fog_y)
+                              int canvas_x, int canvas_y,
+                              struct Sprite *psprite,
+                              bool fog, int fog_x, int fog_y)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
     pixmap_put_overlay_tile_draw(pcanvas->v.pixmap, canvas_x, canvas_y,
-				 psprite, fog);
+                                 psprite, fog);
   }
 }
 
@@ -1076,27 +1082,28 @@ void canvas_put_sprite_fogged(struct canvas *pcanvas,
   Draw a filled-in colored rectangle onto the mapview or citydialog canvas.
 **************************************************************************/
 void canvas_put_rectangle(struct canvas *pcanvas,
-			  enum color_std color,
-			  int canvas_x, int canvas_y, int width, int height)
+                          enum color_std color,
+                          int canvas_x, int canvas_y, int width, int height)
 {
   GdkColor *col = colors_standard[color];
 
   switch (pcanvas->type) {
-    case CANVAS_PIXMAP:
-      gdk_gc_set_foreground(fill_bg_gc, col);
-      gdk_draw_rectangle(pcanvas->v.pixmap, fill_bg_gc, TRUE,
-	  canvas_x, canvas_y, width, height);
-      break;
-    case CANVAS_PIXCOMM:
-      gtk_pixcomm_fill(pcanvas->v.pixcomm, col);
-      break;
-    case CANVAS_PIXBUF:
-      gdk_pixbuf_fill(pcanvas->v.pixbuf,
-	  ((guint32)(col->red & 0xff00) << 16)
-	  | ((col->green & 0xff00) << 8) | (col->blue & 0xff00) | 0xff);
-      break;
-    default:
-      break;
+  case CANVAS_PIXMAP:
+    gdk_gc_set_foreground(fill_bg_gc, col);
+    gdk_draw_rectangle(pcanvas->v.pixmap, fill_bg_gc, TRUE,
+                       canvas_x, canvas_y, width, height);
+    break;
+  case CANVAS_PIXCOMM:
+    gtk_pixcomm_fill(pcanvas->v.pixcomm, col);
+    break;
+  case CANVAS_PIXBUF:
+    gdk_pixbuf_fill(pcanvas->v.pixbuf,
+                    ((guint32)(col->red & 0xff00) << 16)
+                    | ((col->green & 0xff00) << 8) 
+                    | (col->blue & 0xff00) | 0xff);
+    break;
+  default:
+    break;
   }
 }
 
@@ -1104,8 +1111,8 @@ void canvas_put_rectangle(struct canvas *pcanvas,
   Fill the area covered by the sprite with the given color.
 ****************************************************************************/
 void canvas_fill_sprite_area(struct canvas *pcanvas,
-			     struct Sprite *psprite, enum color_std color,
-			     int canvas_x, int canvas_y)
+                             struct Sprite *psprite, enum color_std color,
+                             int canvas_x, int canvas_y)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
     gdk_gc_set_clip_origin(fill_bg_gc, canvas_x, canvas_y);
@@ -1113,7 +1120,7 @@ void canvas_fill_sprite_area(struct canvas *pcanvas,
     gdk_gc_set_foreground(fill_bg_gc, colors_standard[color]);
 
     gdk_draw_rectangle(pcanvas->v.pixmap, fill_bg_gc, TRUE,
-		       canvas_x, canvas_y, psprite->width, psprite->height);
+                       canvas_x, canvas_y, psprite->width, psprite->height);
 
     gdk_gc_set_clip_mask(fill_bg_gc, NULL);
   }
@@ -1123,7 +1130,7 @@ void canvas_fill_sprite_area(struct canvas *pcanvas,
   Fill the area covered by the sprite with the given color.
 ****************************************************************************/
 void canvas_fog_sprite_area(struct canvas *pcanvas, struct Sprite *psprite,
-			    int canvas_x, int canvas_y)
+                            int canvas_x, int canvas_y)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
     gdk_gc_set_clip_origin(fill_tile_gc, canvas_x, canvas_y);
@@ -1133,7 +1140,7 @@ void canvas_fog_sprite_area(struct canvas *pcanvas, struct Sprite *psprite,
     gdk_gc_set_ts_origin(fill_tile_gc, canvas_x, canvas_y);
 
     gdk_draw_rectangle(pcanvas->v.pixmap, fill_tile_gc, TRUE,
-		       canvas_x, canvas_y, psprite->width, psprite->height);
+                       canvas_x, canvas_y, psprite->width, psprite->height);
 
     gdk_gc_set_clip_mask(fill_tile_gc, NULL); 
   }
@@ -1143,8 +1150,8 @@ void canvas_fog_sprite_area(struct canvas *pcanvas, struct Sprite *psprite,
   Draw a colored line onto the mapview or citydialog canvas.
 **************************************************************************/
 void canvas_put_line(struct canvas *pcanvas, enum color_std color,
-		     enum line_type ltype, int start_x, int start_y,
-		     int dx, int dy)
+                     enum line_type ltype, int start_x, int start_y,
+                     int dx, int dy)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
     GdkGC *gc = NULL;
@@ -1166,7 +1173,7 @@ void canvas_put_line(struct canvas *pcanvas, enum color_std color,
 
     gdk_gc_set_foreground(gc, colors_standard[color]);
     gdk_draw_line(pcanvas->v.pixmap, gc,
-		  start_x, start_y, start_x + dx, start_y + dy);
+                  start_x, start_y, start_x + dx, start_y + dy);
   }
 }
 
@@ -1174,13 +1181,13 @@ void canvas_put_line(struct canvas *pcanvas, enum color_std color,
   ...
 **************************************************************************/
 void canvas_copy(struct canvas *dest, struct canvas *src,
-		 int src_x, int src_y, int dest_x, int dest_y,
-		 int width, int height)
+                 int src_x, int src_y, int dest_x, int dest_y,
+                 int width, int height)
 {
   if (dest->type == src->type) {
     if (src->type == CANVAS_PIXMAP) {
       gdk_draw_drawable(dest->v.pixmap, fill_bg_gc, src->v.pixmap,
-			src_x, src_y, dest_x, dest_y, width, height);
+                        src_x, src_y, dest_x, dest_y, width, height);
     }
   }
 }
@@ -1202,16 +1209,16 @@ static void fog_sprite(struct Sprite *sprite)
   colormap = gdk_screen_get_default_colormap(screen);
 
   fogged = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
-			  sprite->width, sprite->height);
+                          sprite->width, sprite->height);
   gdk_pixbuf_get_from_drawable(fogged, sprite->pixmap, NULL,
-			       0, 0, 0, 0, sprite->width, sprite->height);
+                               0, 0, 0, 0, sprite->width, sprite->height);
 
   /* Iterate over all pixels, reducing brightness by 50%. */
   for (x = 0; x < sprite->width; x++) {
     for (y = 0; y < sprite->height; y++) {
       pixel = gdk_pixbuf_get_pixels(fogged)
-	+ y * gdk_pixbuf_get_rowstride(fogged)
-	+ x * gdk_pixbuf_get_n_channels(fogged);
+        + y * gdk_pixbuf_get_rowstride(fogged)
+        + x * gdk_pixbuf_get_n_channels(fogged);
 
       pixel[0] = pixel[0] * bright / 100;
       pixel[1] = pixel[1] * bright / 100;
@@ -1219,7 +1226,8 @@ static void fog_sprite(struct Sprite *sprite)
     }
   }
 
-  gdk_pixbuf_render_pixmap_and_mask_for_colormap(fogged, colormap, &sprite->fogged,
+  gdk_pixbuf_render_pixmap_and_mask_for_colormap(fogged, colormap,
+                                                 &sprite->fogged,
                                                  NULL, 0);
   g_object_unref(fogged);
 }
@@ -1228,9 +1236,9 @@ static void fog_sprite(struct Sprite *sprite)
 Only used for isometric view.
 **************************************************************************/
 static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
-					 int canvas_x, int canvas_y,
-					 struct Sprite *ssprite,
-					 bool fog)
+                                         int canvas_x, int canvas_y,
+                                         struct Sprite *ssprite,
+                                         bool fog)
 {
   if (!ssprite) {
     return;
@@ -1240,7 +1248,7 @@ static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
     fog_sprite(ssprite);
     if (!ssprite->fogged) {
       freelog(LOG_NORMAL,
-	      _("Better fog will only work in truecolor.  Disabling it"));
+              _("Better fog will only work in truecolor.  Disabling it"));
       better_fog = FALSE;
     }
   }
@@ -1250,17 +1258,17 @@ static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
     gdk_gc_set_clip_mask(fill_tile_gc, ssprite->mask);
 
     gdk_draw_drawable(pixmap, fill_tile_gc,
-		      ssprite->fogged,
-		      0, 0,
-		      canvas_x, canvas_y,
-		      ssprite->width, ssprite->height);
+                      ssprite->fogged,
+                      0, 0,
+                      canvas_x, canvas_y,
+                      ssprite->width, ssprite->height);
     gdk_gc_set_clip_mask(fill_tile_gc, NULL);
 
     return;
   }
 
   pixmap_put_sprite(pixmap, canvas_x, canvas_y, ssprite,
-		    0, 0, ssprite->width, ssprite->height);
+                    0, 0, ssprite->width, ssprite->height);
 
   /* I imagine this could be done more efficiently. Some pixels We first
      draw from the sprite, and then draw black afterwards. It would be much
@@ -1273,7 +1281,7 @@ static void pixmap_put_overlay_tile_draw(GdkDrawable *pixmap,
     gdk_gc_set_stipple(fill_tile_gc, black50);
 
     gdk_draw_rectangle(pixmap, fill_tile_gc, TRUE,
-		       canvas_x, canvas_y, ssprite->width, ssprite->height);
+                       canvas_x, canvas_y, ssprite->width, ssprite->height);
     gdk_gc_set_clip_mask(fill_tile_gc, NULL);
   }
 }
@@ -1287,8 +1295,8 @@ void put_cross_overlay_tile(struct tile *ptile)
 
   if (tile_to_canvas_pos(&canvas_x, &canvas_y, ptile)) {
     pixmap_put_overlay_tile(map_canvas->window,
-			    canvas_x, canvas_y,
-			    sprites.user.attention);
+                            canvas_x, canvas_y,
+                            sprites.user.attention);
   }
 }
 
@@ -1298,8 +1306,8 @@ void put_cross_overlay_tile(struct tile *ptile)
   drawing is left up to the GUI.
 ****************************************************************************/
 void put_city_worker(struct canvas *pcanvas,
-		     enum color_std color, enum city_tile_type worker,
-		     int canvas_x, int canvas_y)
+                     enum color_std color, enum city_tile_type worker,
+                     int canvas_x, int canvas_y)
 {
   if (pcanvas->type == CANVAS_PIXMAP) {
     if (worker == C_TILE_EMPTY) {
@@ -1319,8 +1327,8 @@ void put_city_worker(struct canvas *pcanvas,
     }
 
     gdk_draw_rectangle(pcanvas->v.pixmap, fill_tile_gc, TRUE,
-		       canvas_x, canvas_y,
-		       NORMAL_TILE_WIDTH, NORMAL_TILE_HEIGHT);
+                       canvas_x, canvas_y,
+                       NORMAL_TILE_WIDTH, NORMAL_TILE_HEIGHT);
 
     if (is_isometric) {
       gdk_gc_set_clip_mask(fill_tile_gc, NULL);
@@ -1354,16 +1362,16 @@ void update_map_canvas_scrollbars_size(void)
   map_vadj = gtk_adjustment_new(-1, ymin, ymax, ystep, ysize, ysize);
 
   gtk_range_set_adjustment(GTK_RANGE(map_horizontal_scrollbar),
-	GTK_ADJUSTMENT(map_hadj));
+                           GTK_ADJUSTMENT(map_hadj));
   gtk_range_set_adjustment(GTK_RANGE(map_vertical_scrollbar),
-	GTK_ADJUSTMENT(map_vadj));
+                           GTK_ADJUSTMENT(map_vadj));
 
   g_signal_connect(map_hadj, "value_changed",
-	G_CALLBACK(scrollbar_jump_callback),
-	GINT_TO_POINTER(TRUE));
+                   G_CALLBACK(scrollbar_jump_callback),
+                   GINT_TO_POINTER(TRUE));
   g_signal_connect(map_vadj, "value_changed",
-	G_CALLBACK(scrollbar_jump_callback),
-	GINT_TO_POINTER(FALSE));
+                   G_CALLBACK(scrollbar_jump_callback),
+                   GINT_TO_POINTER(FALSE));
 }
 
 /**************************************************************************

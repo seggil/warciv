@@ -48,24 +48,24 @@
 void filter_change(filter *pfilter, enum filter_value value)
 {
   switch (value) {
-    case FILTER_ALL:
-      *pfilter = *pfilter & FILTER_ALL ? *pfilter - FILTER_ALL : FILTER_ALL;
-      break;
-    case FILTER_OFF:
-      *pfilter = *pfilter & FILTER_OFF ? *pfilter - FILTER_OFF : FILTER_OFF;
-      break;
-    default:
-      if (*pfilter & value) {
-        *pfilter -= value;
-      } else {
-	if (*pfilter & FILTER_ALL) {
-	  *pfilter -= FILTER_ALL;
-	} else if (*pfilter & FILTER_OFF) {
-	  *pfilter -= FILTER_OFF;
-	}
-	*pfilter += value;
+  case FILTER_ALL:
+    *pfilter = *pfilter & FILTER_ALL ? *pfilter - FILTER_ALL : FILTER_ALL;
+    break;
+  case FILTER_OFF:
+    *pfilter = *pfilter & FILTER_OFF ? *pfilter - FILTER_OFF : FILTER_OFF;
+    break;
+  default:
+    if (*pfilter & value) {
+      *pfilter -= value;
+    } else {
+      if (*pfilter & FILTER_ALL) {
+        *pfilter -= FILTER_ALL;
+      } else if (*pfilter & FILTER_OFF) {
+        *pfilter -= FILTER_OFF;
       }
-      break;
+      *pfilter += value;
+    }
+    break;
   }
   if (*pfilter == 0) {
     *pfilter = FILTER_OFF;
@@ -77,7 +77,7 @@ void filter_change(filter *pfilter, enum filter_value value)
   doesn't satisfy any of the exclusive ones.
 ***********************************************************************/
 bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
-			                       filter exclusive_filter)
+                           filter exclusive_filter)
 {
   if (!punit
       || inclusive_filter & FILTER_OFF
@@ -86,35 +86,36 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
   }
   if (!(inclusive_filter & FILTER_ALL)
       && ((inclusive_filter & FILTER_NEW && !punit->is_new)
-	  || (inclusive_filter & FILTER_FORTIFIED
-	      && punit->activity != ACTIVITY_FORTIFIED)
-	  || (inclusive_filter & FILTER_SENTRIED
-	      && punit->activity != ACTIVITY_SENTRY)
-	  || (inclusive_filter & FILTER_AUTO
-	      && !punit->ai.control && !punit->my_ai.control)
-	  || (inclusive_filter & FILTER_VETERAN && punit->veteran == 0)
-	  || (inclusive_filter & FILTER_IDLE
-	      && punit->activity != ACTIVITY_IDLE)
+          || (inclusive_filter & FILTER_FORTIFIED
+              && punit->activity != ACTIVITY_FORTIFIED)
+          || (inclusive_filter & FILTER_SENTRIED
+              && punit->activity != ACTIVITY_SENTRY)
+          || (inclusive_filter & FILTER_AUTO
+              && !punit->ai.control && !punit->my_ai.control)
+          || (inclusive_filter & FILTER_VETERAN && punit->veteran == 0)
+          || (inclusive_filter & FILTER_IDLE
+              && punit->activity != ACTIVITY_IDLE)
           || (inclusive_filter & FILTER_ABLE_TO_MOVE
-	      && (punit->moves_left <= 0 || punit->virtual_moves_left <= 0))
+              && (punit->moves_left <= 0 || punit->virtual_moves_left <= 0))
           || (inclusive_filter & FILTER_MILITARY
-	      && !is_military_unit(punit)))) {
+              && !is_military_unit(punit)))) {
     return FALSE;
   }
   if (!(exclusive_filter & FILTER_OFF)
       && ((exclusive_filter&FILTER_NEW && punit->is_new)
           || (exclusive_filter & FILTER_FORTIFIED
-	      && punit->activity == ACTIVITY_FORTIFIED)
-	  || (exclusive_filter & FILTER_SENTRIED
-	      && punit->activity == ACTIVITY_SENTRY)
-	  || (exclusive_filter & FILTER_AUTO
-	      && (punit->ai.control || punit->my_ai.control))
-	  || (exclusive_filter & FILTER_VETERAN && punit->veteran > 0)
+              && punit->activity == ACTIVITY_FORTIFIED)
+          || (exclusive_filter & FILTER_SENTRIED
+              && punit->activity == ACTIVITY_SENTRY)
+          || (exclusive_filter & FILTER_AUTO
+              && (punit->ai.control || punit->my_ai.control))
+          || (exclusive_filter & FILTER_VETERAN && punit->veteran > 0)
           || (exclusive_filter & FILTER_IDLE
               && punit->activity == ACTIVITY_IDLE)
           || (exclusive_filter & FILTER_ABLE_TO_MOVE
               && punit->virtual_moves_left > 0)
-          || (exclusive_filter & FILTER_MILITARY && is_military_unit(punit)))) {
+          || (exclusive_filter & FILTER_MILITARY 
+              && is_military_unit(punit)))) {
     return FALSE;
   }
   return TRUE;
@@ -157,8 +158,8 @@ void ap_timers_init(void)
   for (i = 0; i < ap_timers_num; i++) {
     if (game.info.timeout > 0) {
       if (ap_timer_values[i] >= 0) {
-	ap_timers[i].seconds = (game.info.timeout
-				* (100 - ap_timer_values[i])) / 100;
+        ap_timers[i].seconds = (game.info.timeout
+                                * (100 - ap_timer_values[i])) / 100;
       } else /* if (ap_timer_values[i] < 0) */ {
         ap_timers[i].seconds =- ap_timer_values[i];
       }
@@ -175,10 +176,10 @@ void ap_timers_init(void)
 void ap_timers_update(void)
 {
   int i;
-	
+
   for (i = 0; i < ap_timers_num; i++) {
     if (ap_timers[i].npassed
-	&& game.info.seconds_to_turndone <= ap_timers[i].seconds) {
+        && game.info.seconds_to_turndone <= ap_timers[i].seconds) {
       automatic_processus_event(ap_timer_event[i], NULL);
       ap_timers[i].npassed = FALSE;
     }
@@ -195,9 +196,9 @@ void auto_filter_change(automatic_processus *pap, enum automatic_value value)
   }
   if (!is_auto_value_allowed(pap, value)) {
     freelog(LOG_ERROR,
-	    "Received a wrong value for automatic_processus '%s': %d",
-	    pap->description, value);
-	    
+            "Received a wrong value for automatic_processus '%s': %d",
+            pap->description, value);
+    
     return;
   }
 
@@ -205,19 +206,19 @@ void auto_filter_change(automatic_processus *pap, enum automatic_value value)
   static const int real_AUTO_OFF = AV_TO_FV(AUTO_OFF);
 
   switch (value) {
-    case AUTO_OFF:
-      pap->auto_filter = real_AUTO_OFF;
-      break;
-    default:
-      if(pap->auto_filter & real_value) {
-	pap->auto_filter -= real_value;
-      } else {
-	if (pap->auto_filter & real_AUTO_OFF) {
-	  pap->auto_filter = 0;
-	}
-	pap->auto_filter += real_value;
+  case AUTO_OFF:
+    pap->auto_filter = real_AUTO_OFF;
+    break;
+  default:
+    if(pap->auto_filter & real_value) {
+      pap->auto_filter -= real_value;
+    } else {
+      if (pap->auto_filter & real_AUTO_OFF) {
+        pap->auto_filter = 0;
       }
-      break;
+      pap->auto_filter += real_value;
+    }
+    break;
   }
   if (pap->auto_filter == 0) {
     pap->auto_filter = real_AUTO_OFF;
@@ -249,7 +250,8 @@ void auto_filter_normalize(automatic_processus *pap)
 /********************************************************************** 
   Returns TRUE iff there is a callback connected to the given event type.
 ***********************************************************************/
-bool is_auto_value_allowed(automatic_processus *pap, enum automatic_value value)
+bool is_auto_value_allowed(automatic_processus *pap,
+                           enum automatic_value value)
 {
   return pap ? pap->callback[value] != NULL : FALSE;
 }
@@ -271,7 +273,7 @@ void automatic_processus_event(enum automatic_value event, void *data)
   int real_event = AV_TO_FV(event);
 
   freelog(LOG_VERBOSE, "automatic_processus_event: receive signal ' %s '",
-	  ap_event_name(event));
+          ap_event_name(event));
   automatic_processus_iterate(pap) {
     if (pap->auto_filter & real_event) {
       assert(is_auto_value_allowed(pap, event));
@@ -299,9 +301,9 @@ void automatic_processus_init(void)
 **************************************************************************/
 automatic_processus *
 real_automatic_processus_new(const char *file, const int line,
-			     enum peppage page, filter default_auto_filter,
-	                     const char *menu, const char *description,
-			     int data, ...)
+                             enum peppage page, filter default_auto_filter,
+                             const char *menu, const char *description,
+                             int data, ...)
 {
   automatic_processus *pap = fc_malloc(sizeof(automatic_processus));
   filter auto_values_allowed = 0;
@@ -321,15 +323,15 @@ real_automatic_processus_new(const char *file, const int line,
        i = va_arg(callbacks,int)) {
     if (auto_values_allowed & AV_TO_FV(i)) {
       freelog(LOG_ERROR, "automatic_processus_new: receive many callbacks for "
-	                 "signal ' %s ' from %s, l.%d",
-	      ap_event_name(i), file, line);
+              "signal ' %s ' from %s, l.%d",
+              ap_event_name(i), file, line);
     }
     auto_values_allowed |= AV_TO_FV(i);
     pap->callback[i] = va_arg(callbacks, ap_callback);
 #ifdef DEBUG
     const char *callback_name = va_arg(callbacks,const char *);
     freelog(LOG_DEBUG, "connecting signal ' %s ' to ' %s () ' callback",
-	    ap_event_name(i), callback_name);
+            ap_event_name(i), callback_name);
 #endif /* DEBUG */
   }
   va_end(callbacks);
@@ -338,7 +340,7 @@ real_automatic_processus_new(const char *file, const int line,
   if (auto_values_allowed != (default_auto_filter | auto_values_allowed)
       && default_auto_filter != AV_TO_FV(AUTO_OFF)) {
     freelog(LOG_ERROR, "automatic_processus_new: receive a bad "
-	               "default_auto_filter form %s, l.%d", file, line);
+            "default_auto_filter form %s, l.%d", file, line);
     pap->default_auto_filter=AV_TO_FV(AUTO_OFF);
   } else {
     pap->default_auto_filter = default_auto_filter;
@@ -374,7 +376,7 @@ automatic_processus *find_automatic_processus_by_name(const char *name)
 {
   automatic_processus_iterate(pap) {
     if ((pap->menu[0] && !strcmp(pap->menu,name))
-	||(pap->description[0] && !strcmp(pap->description,name))) {
+        ||(pap->description[0] && !strcmp(pap->description,name))) {
       return pap;
     }
   } automatic_processus_iterate_end;
@@ -386,8 +388,8 @@ automatic_processus *find_automatic_processus_by_name(const char *name)
 /********************************************************************** 
   Unit multi-selection
 ***********************************************************************/
-#define msassert(multi) assert(multi_select_is_initialized    \
-                               && (multi) >= 0                \
+#define msassert(multi) assert(multi_select_is_initialized      \
+                               && (multi) >= 0                  \
                                && (multi) < MULTI_SELECT_NUM)
 
 /* 0 is the current focus, 1-9 are the battle groups */
@@ -446,10 +448,10 @@ void multi_select_add_unit(struct unit *punit)
     unit_list_append(multi_selection[0].ulist, punit);
     /* Maybe replace the current unit in focus. */
     if (!unit_satisfies_filter(get_unit_in_focus(),
-			       multi_select_inclusive_filter,
-			       multi_select_exclusive_filter)
-	&& unit_satisfies_filter(punit, multi_select_inclusive_filter,
-				        multi_select_exclusive_filter)) {
+                               multi_select_inclusive_filter,
+                               multi_select_exclusive_filter)
+        && unit_satisfies_filter(punit, multi_select_inclusive_filter,
+                                 multi_select_exclusive_filter)) {
       set_unit_focus(punit);
     }
   }
@@ -541,7 +543,7 @@ void multi_select_clear(int multi)
   } else {
     char buf[256];
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: Multi-selection %d cleared"), multi);
+                _("PepClient: Multi-selection %d cleared"), multi);
     append_output_window(buf);
   }
 }
@@ -583,7 +585,7 @@ void multi_select_copy(int dest, int src)
   unit_list_unlink_all(multi_selection[dest].ulist);
   unit_list_iterate(multi_selection[src].ulist, punit) {
     if (!dest || unit_satisfies_filter(punit, multi_select_inclusive_filter,
-					      multi_select_exclusive_filter)) {
+                                       multi_select_exclusive_filter)) {
       unit_list_append(multi_selection[dest].ulist, punit);
     }
   } unit_list_iterate_end;
@@ -595,13 +597,13 @@ void multi_select_copy(int dest, int src)
     } else {
       update_unit_info_label(get_unit_in_focus());
       my_snprintf(buf, sizeof(buf),
-		  _("PepClient: Multi-selection %d selected"), src);
+                  _("PepClient: Multi-selection %d selected"), src);
     }
   } else {
     int size = multi_select_size(dest);
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: Multi-selection %d: %d %s"), dest, size,
-		PL_("unit", "units", size));
+                _("PepClient: Multi-selection %d: %d %s"), dest, size,
+                PL_("unit", "units", size));
   }
   append_output_window(buf);
 }
@@ -649,11 +651,11 @@ void multi_select_remove_unit(struct unit *punit)
 
     unit_list_iterate(multi_selection[0].ulist, msunit) {
       if (unit_satisfies_filter(msunit, multi_select_inclusive_filter,
-				multi_select_exclusive_filter)) {
-	set_unit_focus(msunit);
-	return;
+                                multi_select_exclusive_filter)) {
+        set_unit_focus(msunit);
+        return;
       } else if(!pnuf) {
-	 pnuf = msunit;
+        pnuf = msunit;
       }
     } unit_list_iterate_end;
     if (pnuf) {
@@ -675,7 +677,7 @@ int multi_select_satisfies_filter(int multi)
   unit_list_iterate(multi_selection[multi].ulist, punit) {
     if (punit->focus_status != FOCUS_DONE
         && unit_satisfies_filter(punit, multi_select_inclusive_filter,
-			       multi_select_exclusive_filter)) {
+                                 multi_select_exclusive_filter)) {
       count++;
     }
   } unit_list_iterate_end;
@@ -690,7 +692,7 @@ Unit_Type_id multi_select_unit_type(int multi)
 {
   msassert(multi);
   assert(multi_selection[multi].punit_focus != NULL);
-	
+
   return multi_selection[multi].punit_focus->type;
 }
 
@@ -759,7 +761,7 @@ void multi_select_set_unit_focus(int multi, struct unit *punit)
 
   assert(is_unit_in_multi_select(multi, punit));
 
-  multi_selection[multi].punit_focus = punit;	
+  multi_selection[multi].punit_focus = punit;
 }
 
 /********************************************************************** 
@@ -788,7 +790,7 @@ void multi_select_wipe_up_unit(struct unit *punit)
       need_update_menus = TRUE;
     } else if (multi_selection[i].punit_focus == punit) {
       multi_selection[i].punit_focus =
-	unit_list_get(multi_selection[i].ulist, 0);
+        unit_list_get(multi_selection[i].ulist, 0);
     }
   }
 
@@ -824,25 +826,25 @@ void multi_select_select(void)
 
   unit_list_iterate(ulist, punit) {
     if (punit->owner != get_player_idx()
-	|| (multi_select_place == PLACE_IN_TRANSPORTER
-	    && punit->transported_by != punit_focus->transported_by)
-	|| (multi_select_place == PLACE_ON_CONTINENT
-	    && punit->tile->continent != punit_focus->tile->continent)
-	|| (multi_select_utype == UTYPE_SAME_MOVE_TYPE
-	    && unit_type(punit)->move_type != unit_type(punit_focus)->move_type)
-	|| (multi_select_utype == UTYPE_SAME_TYPE
-	    && punit->type != punit_focus->type)) {
+        || (multi_select_place == PLACE_IN_TRANSPORTER
+            && punit->transported_by != punit_focus->transported_by)
+        || (multi_select_place == PLACE_ON_CONTINENT
+            && punit->tile->continent != punit_focus->tile->continent)
+        || (multi_select_utype == UTYPE_SAME_MOVE_TYPE
+            && unit_type(punit)->move_type != unit_type(punit_focus)->move_type)
+        || (multi_select_utype == UTYPE_SAME_TYPE
+            && punit->type != punit_focus->type)) {
       continue;
     }
     multi_select_add_unit(punit);
     if (unit_satisfies_filter(punit, multi_select_inclusive_filter,
-			             multi_select_exclusive_filter)) {
+                              multi_select_exclusive_filter)) {
       punf = punit;
     }
   } unit_list_iterate_end;
 
   if (!unit_satisfies_filter(punit_focus, multi_select_inclusive_filter,
-			                  multi_select_exclusive_filter)
+                             multi_select_exclusive_filter)
       && punf) {
     punit_focus = punf;
     set_unit_focus(punf);
@@ -930,8 +932,8 @@ void delayed_goto_cat(int dest, int src)
     delayed_goto_list[dest].pplayer = delayed_goto_list[src].pplayer;
   }
   my_snprintf(buf, sizeof(buf),
-	      _("Warclient: Adding %d delayed orders to queue"),
-	      delayed_goto_size(src));
+              _("Warclient: Adding %d delayed orders to queue"),
+              delayed_goto_size(src));
   append_output_window(buf);
 }
 
@@ -953,10 +955,10 @@ void delayed_goto_clear(int dg)
   delayed_goto_list[dg].pplayer = NULL;
   if (dg != 0) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Delayed goto selection %d cleared"), dg);
+                _("Warclient: Delayed goto selection %d cleared"), dg);
   } else {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Delayed orders queue cleared"));
+                _("Warclient: Delayed orders queue cleared"));
   }
   append_output_window(buf);
   update_delayed_goto_menu(dg);
@@ -1000,12 +1002,12 @@ void delayed_goto_copy(int dest, int src)
   update_delayed_goto_menu(dest);
   if (dest) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Delayed goto selection %d: %d delayed orders"),
-		dest, delayed_goto_size(dest));
+                _("Warclient: Delayed goto selection %d: %d delayed orders"),
+                dest, delayed_goto_size(dest));
   } else {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Set %d delayed orders to queue"),
-		delayed_goto_size(src));
+                _("Warclient: Set %d delayed orders to queue"),
+                delayed_goto_size(src));
   }
   append_output_window(buf);
 }
@@ -1034,27 +1036,26 @@ void delayed_goto_init_all(void)
       char buf[256], buf2[256];
 
       my_snprintf(buf, sizeof(buf),
-		  "DELAYED_GOTO_DG%d_AUTOMATIC", i);
+                  "DELAYED_GOTO_DG%d_AUTOMATIC", i);
       my_snprintf(buf2, sizeof(buf2),
-		  _("Delayed goto queue %d automatic execution"), i);
+                  _("Delayed goto queue %d automatic execution"), i);
       delayed_goto_list[i].pap =
-	automatic_processus_new(PAGE_NUM, AV_TO_FV(AUTO_WAR_DIPLSTATE),
-				buf, buf2, i,
-		                AP_MAIN_CONNECT(request_execute_delayed_goto),
-				AP_CONNECT(AUTO_WAR_DIPLSTATE,
-					   request_player_execute_delayed_goto),
-				-1);
+        automatic_processus_new(PAGE_NUM, AV_TO_FV(AUTO_WAR_DIPLSTATE),
+                                buf, buf2, i,
+                                AP_MAIN_CONNECT(request_execute_delayed_goto),
+                                AP_CONNECT(AUTO_WAR_DIPLSTATE,
+                                           request_player_execute_delayed_goto),
+                                -1);
     } else {
       delayed_goto_list[0].pap = 
-	automatic_processus_new(PAGE_DG, AV_TO_FV(AUTO_WAR_DIPLSTATE),
-/* 		                "<main>/Delayed Goto/Delayed goto auto", */
-				"DELAYED_GOTO_AUTOMATIC",
-		                _("Delayed goto automatic execution"), 
-				0,
-		                AP_MAIN_CONNECT(request_execute_delayed_goto),
-				AP_CONNECT(AUTO_WAR_DIPLSTATE,
-					   request_player_execute_delayed_goto),
-				-1);
+        automatic_processus_new(PAGE_DG, AV_TO_FV(AUTO_WAR_DIPLSTATE),
+                                "DELAYED_GOTO_AUTOMATIC",
+                                _("Delayed goto automatic execution"), 
+                                0,
+                                AP_MAIN_CONNECT(request_execute_delayed_goto),
+                                AP_CONNECT(AUTO_WAR_DIPLSTATE,
+                                           request_player_execute_delayed_goto),
+                                -1);
     }
   }
   delayed_goto_is_initialized = TRUE;
@@ -1067,7 +1068,7 @@ void delayed_goto_move(int dest, int src)
 {
   dgassert(src);
   dgassert(dest);
-	
+
   delayed_goto_copy(dest, src);
   delayed_goto_clear(src);
 }
@@ -1117,18 +1118,18 @@ struct player *get_tile_player(struct tile *ptile)
   memset(count, 0, sizeof(count));
   unit_list_iterate(ptile->units, punit) {
     switch (pplayer_get_diplstate(get_player_ptr(), unit_owner(punit))->type) {
-      case DS_NEUTRAL:
-      case DS_WAR:
-      case DS_CEASEFIRE:
-      case DS_PEACE:
-      case DS_NO_CONTACT:
-	count[punit->owner]++;
-	if (best < 0 || count[punit->owner] > count[best]) {
-	  best = punit->owner;
-	}
-	break;
-      default:
-        return NULL;
+    case DS_NEUTRAL:
+    case DS_WAR:
+    case DS_CEASEFIRE:
+    case DS_PEACE:
+    case DS_NO_CONTACT:
+      count[punit->owner]++;
+      if (best < 0 || count[punit->owner] > count[best]) {
+        best = punit->owner;
+      }
+      break;
+    default:
+      return NULL;
     }
   } unit_list_iterate_end;
 
@@ -1155,7 +1156,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     } multi_select_iterate_end;
   } else {
     if (delayed_goto_place == PLACE_IN_TRANSPORTER
-	|| delayed_goto_place == PLACE_ON_TILE) {
+        || delayed_goto_place == PLACE_ON_TILE) {
       ulist = punit_focus->tile->units;
     } else {
       ulist = get_player_ptr()->units;
@@ -1163,16 +1164,16 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 
     unit_list_iterate(ulist, punit) {
       if (punit->owner != get_player_idx()
-	  || (delayed_goto_place == PLACE_IN_TRANSPORTER
-	      && punit->transported_by != punit_focus->transported_by)
-	  || (delayed_goto_place == PLACE_ON_CONTINENT
-	      && punit->tile->continent != punit_focus->tile->continent)
-	  || (delayed_goto_utype == UTYPE_SAME_MOVE_TYPE
-	      && unit_type(punit)->move_type !=
-	             unit_type(punit_focus)->move_type)
-	  || (delayed_goto_utype == UTYPE_SAME_TYPE
-	      && punit->type != punit_focus->type)) {
-	continue;
+          || (delayed_goto_place == PLACE_IN_TRANSPORTER
+              && punit->transported_by != punit_focus->transported_by)
+          || (delayed_goto_place == PLACE_ON_CONTINENT
+              && punit->tile->continent != punit_focus->tile->continent)
+          || (delayed_goto_utype == UTYPE_SAME_MOVE_TYPE
+              && unit_type(punit)->move_type !=
+              unit_type(punit_focus)->move_type)
+          || (delayed_goto_utype == UTYPE_SAME_TYPE
+              && punit->type != punit_focus->type)) {
+        continue;
       }
       delayed_goto_add_unit(0, punit->id, delayed_para_or_nuke, ptile);
       count++;
@@ -1185,7 +1186,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 
   char buf[256];
   my_snprintf(buf, sizeof(buf), _("Warclient: Adding %d %s goto %s to queue."),
-	      count, PL_("unit", "units", count), get_tile_info(ptile));
+              count, PL_("unit", "units", count), get_tile_info(ptile));
   append_output_window(buf);
   update_delayed_goto_menu(0);
 }
@@ -1242,7 +1243,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
 
   if (dg != 0) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Executing delayed goto selection %d"), dg);
+                _("Warclient: Executing delayed goto selection %d"), dg);
   } else {
     my_snprintf(buf, sizeof(buf), _("Warclient: Executing delayed goto"));
   }
@@ -1259,7 +1260,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
     if (!dgd->ptile) {
       /* No selected target: use the default one */
       if (ptile) {
-	dgd->ptile = ptile;
+        dgd->ptile = ptile;
       } else {
         continue;
       }
@@ -1278,23 +1279,23 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
       struct unit *punit = player_find_unit_by_id(get_player_ptr(), dgd->id);
 
       if (!punit) {
-	/* Unfortunately, it seems we already lost this unit :( */
+        /* Unfortunately, it seems we already lost this unit :( */
         delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);
         free(dgd);
         continue;
       }
 
       if (dgd->type == 0 || !unit_flag(punit, F_PARATROOPERS)) {
-	/* Normal move */
-	send_goto_unit_and_calculate_moves_left(punit, dgd->ptile);
-	punit->is_new = FALSE;
+        /* Normal move */
+        send_goto_unit_and_calculate_moves_left(punit, dgd->ptile);
+        punit->is_new = FALSE;
       } else {
-	/* Paradrop */
-	do_unit_paradrop_to(punit, dgd->ptile);
-	punit->is_new = FALSE;
+        /* Paradrop */
+        do_unit_paradrop_to(punit, dgd->ptile);
+        punit->is_new = FALSE;
       }
       if (dgd->type == 1 && unit_flag(punit, F_NUCLEAR)) {
-	/* Explode nuke */
+        /* Explode nuke */
         do_unit_nuke(punit);
       }
     }
@@ -1309,8 +1310,8 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
     delayed_goto_clear(dg);
   } else {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: %d delayed goto still remain into queue. "
-		  "Press Y to continue"), counter);
+                _("Warclient: %d delayed goto still remain into queue. "
+                  "Press Y to continue"), counter);
     append_output_window(buf);
   }
   update_delayed_goto_menu(dg);
@@ -1324,8 +1325,8 @@ void schedule_delayed_airlift(struct tile *ptile)
   char buf[256];
 
   my_snprintf(buf, sizeof(buf),
-	      _("Warclient: Scheduling delayed airlift for %s"),
-	      get_tile_info(ptile));
+              _("Warclient: Scheduling delayed airlift for %s"),
+              get_tile_info(ptile));
   append_output_window(buf);
   delayed_goto_add_unit(0, need_city_for, 2, ptile);
   update_delayed_goto_menu(0);
@@ -1346,8 +1347,8 @@ void add_pause_delayed_goto(void)
 /********************************************************************** 
   Airlift queues.
 ***********************************************************************/
-#define aqassert(aq) assert(airlift_is_initialized       \
-                            && (aq) >= 0                 \
+#define aqassert(aq) assert(airlift_is_initialized              \
+                            && (aq) >= 0                        \
                             && (aq) < AIRLIFT_QUEUE_NUM)
 
 int need_city_for = -1;
@@ -1382,8 +1383,8 @@ void airlift_queue_cat(int dest, int src)
     airlift_queues[dest].utype = airlift_queues[src].utype;
   }
   my_snprintf(buf, sizeof(buf),
-	      _("Warclient: Adding %d tiles to airlift queue"),
-	      airlift_queue_size(src));
+              _("Warclient: Adding %d tiles to airlift queue"),
+              airlift_queue_size(src));
   append_output_window(buf);
 }
 
@@ -1401,7 +1402,7 @@ void airlift_queue_clear(int aq)
   tile_list_unlink_all(airlift_queues[aq].tlist);
   if (aq != 0) {
     my_snprintf(buf, sizeof(buf), _("Warclient: Airlift queue %d cleared"),
-		airlift_queue_size(aq));
+                airlift_queue_size(aq));
   } else {
     my_snprintf(buf, sizeof(buf), _("Warclient: Airlift queue cleared"));
   }
@@ -1443,12 +1444,12 @@ void airlift_queue_copy(int dest, int src)
 
   if (dest != 0) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Airlift queue %d: %d selected tiles"),
-		dest, airlift_queue_size(dest));
+                _("Warclient: Airlift queue %d: %d selected tiles"),
+                dest, airlift_queue_size(dest));
   } else {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Set airlift queue %d on current "
-		  "airlift queue (%d tiles)"), src, airlift_queue_size(src));
+                _("Warclient: Set airlift queue %d on current "
+                  "airlift queue (%d tiles)"), src, airlift_queue_size(src));
   }
   append_output_window(buf);
 }
@@ -1533,7 +1534,7 @@ void airlift_queue_set(int aq, const struct airlift_queue *paq)
   ...
 ***********************************************************************/
 void airlift_queue_set_menu_name(int aq, Unit_Type_id utype, 
-				 const char *namemenu)
+                                 const char *namemenu)
 {
   aqassert(aq);
   assert(utype >= 0 && utype <= U_LAST);
@@ -1576,7 +1577,7 @@ void airlift_queue_show(int aq)
 
   tile_list_iterate(airlift_queues[aq].tlist, ptile) {
     cat_snprintf(buf, sizeof(buf), "%s %s",
-		 first ? "" : "," , get_tile_info(ptile));
+                 first ? "" : "," , get_tile_info(ptile));
     first = FALSE;
   } tile_list_iterate_end;
 
@@ -1615,14 +1616,14 @@ void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
     if (!multi) {
       tile_list_unlink(airlift_queues[0].tlist, ptile);
       my_snprintf(buf, sizeof(buf),
-		  _("Warclient: Remove city %s to autolift queue"),
-		  ptile->city->name);
+                  _("Warclient: Remove city %s to autolift queue"),
+                  ptile->city->name);
     }
   } else {
     tile_list_prepend(airlift_queues[0].tlist, ptile);
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Adding city %s to autolift queue"),
-		ptile->city->name);
+                _("Warclient: Adding city %s to autolift queue"),
+                ptile->city->name);
   }
 
   if (buf[0] != '\0') {
@@ -1667,14 +1668,14 @@ void do_airlift_for(int aq,struct city *pcity)
 
   tile_list_iterate(airlift_queues[aq].tlist, ptile) {
     if (!ptile->city
-	|| ptile->city->owner != get_player_idx()
-	|| unit_list_size(ptile->units) == 0) {
+        || ptile->city->owner != get_player_idx()
+        || unit_list_size(ptile->units) == 0) {
       continue;
     }
     unit_list_iterate(ptile->units, punit) {
       if (punit->type == airlift_queues[aq].utype) {
-	request_unit_airlift(punit, pcity);
-	break;
+        request_unit_airlift(punit, pcity);
+        break;
       }
     } unit_list_iterate_end;
   } tile_list_iterate_end;
@@ -1689,8 +1690,8 @@ void do_airlift(struct tile *ptile)
     char buf[256];
 
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: You cannot airlift there (%d, %d), no city"),
-		TILE_XY(ptile));
+                _("Warclient: You cannot airlift there (%d, %d), no city"),
+                TILE_XY(ptile));
     append_output_window(buf);
     return;
   }

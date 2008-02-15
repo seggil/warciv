@@ -22,32 +22,32 @@
 static void my_cell_renderer_color_init(MyCellRendererColor *cell);
 static void my_cell_renderer_color_class_init(MyCellRendererColorClass *klass);
 static void my_cell_renderer_color_get_property(GObject *object,
-						guint param_id, 
-						GValue *value,
-						GParamSpec *pspec);
+                                                guint param_id, 
+                                                GValue *value,
+                                                GParamSpec *pspec);
 
 static void my_cell_renderer_color_set_property(GObject *object,
-						guint param_id,
-						const GValue *value,
-						GParamSpec *pspec);
+                                                guint param_id,
+                                                const GValue *value,
+                                                GParamSpec *pspec);
 
 static void my_cell_renderer_color_finalize(GObject *gobject);
 
 
 static void my_cell_renderer_color_get_size(GtkCellRenderer *cell,
-					    GtkWidget *widget,
-					    GdkRectangle *cell_area,
-					    gint *x_offset,
-					    gint *y_offset,
-					    gint *width, gint *height);
+                                            GtkWidget *widget,
+                                            GdkRectangle *cell_area,
+                                            gint *x_offset,
+                                            gint *y_offset,
+                                            gint *width, gint *height);
 
 static void my_cell_renderer_color_render(GtkCellRenderer *cell,
-					  GdkWindow *window,
-					  GtkWidget *widget,
-					  GdkRectangle *background_area,
-					  GdkRectangle *cell_area,
-					  GdkRectangle *expose_area,
-					  guint flags);
+                                          GdkWindow *window,
+                                          GtkWidget *widget,
+                                          GdkRectangle *background_area,
+                                          GdkRectangle *cell_area,
+                                          GdkRectangle *expose_area,
+                                          guint flags);
 enum {
   PROP_COLOR = 1,
   PROP_XSIZE,
@@ -82,8 +82,8 @@ GType my_cell_renderer_color_get_type(void)
 
     /* Derive from GtkCellRenderer */
     cell_color_type = g_type_register_static(GTK_TYPE_CELL_RENDERER,
-					     "MyCellRendererColor",
-					     &info, 0);
+                                             "MyCellRendererColor",
+                                             &info, 0);
   }
 
   return cell_color_type;
@@ -126,19 +126,19 @@ static void my_cell_renderer_color_class_init(MyCellRendererColorClass *klass)
 
   /* Install our very own properties */
   pspec = g_param_spec_pointer("color",
-			       "Color",
-			       "The color to display (a pointer to GdkColor)",
-			       G_PARAM_READWRITE);
+                               "Color",
+                               "The color to display (a pointer to GdkColor)",
+                               G_PARAM_READWRITE);
   g_object_class_install_property(object_class, PROP_COLOR, pspec);
 
   pspec = g_param_spec_int("xsize", "Xsize",
-			   "Size in the x direction",
-			   0, 1000, 24, G_PARAM_READWRITE);
+                           "Size in the x direction",
+                           0, 1000, 24, G_PARAM_READWRITE);
   g_object_class_install_property(object_class, PROP_XSIZE, pspec);
 
   pspec = g_param_spec_int("ysize", "Ysize",
-			   "Size in the y direction",
-			   0, 1000, 16, G_PARAM_READWRITE);
+                           "Size in the y direction",
+                           0, 1000, 16, G_PARAM_READWRITE);
   g_object_class_install_property (object_class, PROP_YSIZE, pspec);
 }
 
@@ -160,9 +160,9 @@ static void my_cell_renderer_color_finalize(GObject *object)
 ...
 **************************************************************************/
 static void my_cell_renderer_color_get_property(GObject *object,
-						guint param_id,
-						GValue *value,
-						GParamSpec *psec)
+                                                guint param_id,
+                                                GValue *value,
+                                                GParamSpec *psec)
 {
   MyCellRendererColor *cell = MY_CELL_RENDERER_COLOR(object);
 
@@ -186,9 +186,9 @@ static void my_cell_renderer_color_get_property(GObject *object,
 ...
 **************************************************************************/
 static void my_cell_renderer_color_set_property(GObject *object,
-						guint param_id,
-						const GValue *value, 
-						GParamSpec *pspec)
+                                                guint param_id,
+                                                const GValue *value, 
+                                                GParamSpec *pspec)
 {
   MyCellRendererColor *cell = MY_CELL_RENDERER_COLOR(object);
   GdkColor *color;
@@ -226,12 +226,12 @@ GtkCellRenderer *my_cell_renderer_color_new(void)
 ...
 **************************************************************************/
 static void my_cell_renderer_color_get_size(GtkCellRenderer *cell,
-					    GtkWidget *widget,
-					    GdkRectangle *cell_area,
-					    gint *x_offset,
-					    gint *y_offset, 
-					    gint *width,
-					    gint *height)
+                                            GtkWidget *widget,
+                                            GdkRectangle *cell_area,
+                                            gint *x_offset,
+                                            gint *y_offset, 
+                                            gint *width,
+                                            gint *height)
 {
   MyCellRendererColor *mycell = MY_CELL_RENDERER_COLOR(cell);
   
@@ -265,12 +265,12 @@ static void my_cell_renderer_color_get_size(GtkCellRenderer *cell,
 ...
 **************************************************************************/
 static void my_cell_renderer_color_render(GtkCellRenderer *cellrend,
-					  GdkWindow *window,
-					  GtkWidget *widget,
-					  GdkRectangle *background_area,
-					  GdkRectangle *cell_area,
-					  GdkRectangle *expose_area, 
-					  guint flags)
+                                          GdkWindow *window,
+                                          GtkWidget *widget,
+                                          GdkRectangle *background_area,
+                                          GdkRectangle *cell_area,
+                                          GdkRectangle *expose_area, 
+                                          guint flags)
 {
   MyCellRendererColor *cell = MY_CELL_RENDERER_COLOR(cellrend);
   gint width, height;
@@ -284,7 +284,7 @@ static void my_cell_renderer_color_render(GtkCellRenderer *cellrend,
   }
 
   my_cell_renderer_color_get_size(cellrend, widget, cell_area,
-				  &x_offset, &y_offset, &width, &height);
+                                  &x_offset, &y_offset, &width, &height);
 
   width -= cellrend->xpad * 2;
   height -= cellrend->ypad * 2;
@@ -292,15 +292,15 @@ static void my_cell_renderer_color_render(GtkCellRenderer *cellrend,
   gc = gdk_gc_new(window);
   gdk_gc_set_rgb_fg_color(gc, cell->color);
   gdk_draw_rectangle(window, gc, TRUE,
-		     cell_area->x + x_offset + cellrend->xpad,
-		     cell_area->y + y_offset + cellrend->ypad,
-		     width, height);
+                     cell_area->x + x_offset + cellrend->xpad,
+                     cell_area->y + y_offset + cellrend->ypad,
+                     width, height);
 
   black.red = black.green = black.blue = 0;
   gdk_gc_set_rgb_fg_color (gc, &black);
   gdk_draw_rectangle(window, gc, FALSE,
-		     cell_area->x + x_offset + cellrend->xpad,
-		     cell_area->y + y_offset + cellrend->ypad,
-		     width, height);
+                     cell_area->x + x_offset + cellrend->xpad,
+                     cell_area->y + y_offset + cellrend->ypad,
+                     width, height);
   g_object_unref(gc);
 }
