@@ -777,11 +777,16 @@ static void base_load_dynamic_settings(struct section_file *psf)
     city_list_iterate(ttradecities, pcity) {
       my_ai_add_trade_city(pcity, TRUE);
     } city_list_iterate_end;
-    set_trade_planning(ttradeplan);
+    /*
+     * N.B.: my_ai_orders_free() could add some trade routes
+     * in the trade planning if the routes were planned. That's why, the 
+     * trade planning is overwritten AFTER with set_trade_planning().
+     */
     trade_route_list_iterate(ttraders, ptr) {
       my_ai_orders_free(ptr->punit);
       my_ai_trade_route_alloc(ptr);
     } trade_route_list_iterate_end;
+    set_trade_planning(ttradeplan);
     unit_list_iterate(tpatrolers, cunit) {
       struct unit *punit = player_find_unit_by_id(get_player_ptr(), cunit->id);
       my_ai_orders_free(punit);
