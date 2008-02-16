@@ -547,7 +547,7 @@ static const char *load_menu_game(void)
 
   action_group_game = gtk_action_group_new("GroupGame");
   gtk_action_group_set_translation_domain(action_group_game,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_game, entries_game,
                                G_N_ELEMENTS(entries_game),
                                NULL);
@@ -661,7 +661,7 @@ static const char *load_menu_government_type(const char *actionname)
 
   action_group_government_type = gtk_action_group_new("GroupGovernmentType");
   gtk_action_group_set_translation_domain(action_group_government_type,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
   my_snprintf(buf, sizeof(buf), "%s_-1", actionname);
 
@@ -741,7 +741,7 @@ static const char *load_menu_government_type(const char *actionname)
         G_CALLBACK(callback_government_revolution);
 
       gtk_action_group_set_translation_domain(action_group_government_type,
-                                              textdomain(PACKAGE));
+                                              PACKAGE);
 
       gtk_action_group_add_actions(action_group_government_type,
                                    &entries_government_type,
@@ -787,7 +787,7 @@ static const char *load_menu_government(void)
 
   action_group_government = gtk_action_group_new("GroupGovernment");
   gtk_action_group_set_translation_domain(action_group_government,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
   gtk_action_group_add_actions(action_group_government, entries_government,
                                G_N_ELEMENTS(entries_government),
@@ -1116,7 +1116,7 @@ static const char *load_menu_view(void)
 
   action_group_view = gtk_action_group_new("GroupView");
   gtk_action_group_set_translation_domain(action_group_view,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_view, entries_view,
                                G_N_ELEMENTS(entries_view),
                                NULL);
@@ -1124,7 +1124,7 @@ static const char *load_menu_view(void)
 
   toggle_action_group_view = gtk_action_group_new("ToggleGroupView");
   gtk_action_group_set_translation_domain(toggle_action_group_view,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
   gtk_action_group_add_toggle_actions(toggle_action_group_view,
                                       toggle_entries_view,
@@ -1534,7 +1534,7 @@ static const char *load_menu_order(void)
 
   action_group_order = gtk_action_group_new("GroupOrder");
   gtk_action_group_set_translation_domain(action_group_order,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
   gtk_action_group_add_actions(action_group_order, entries_order,
                                G_N_ELEMENTS(entries_order),
@@ -2229,7 +2229,7 @@ static const char *load_menu_delayed_goto_automatic(const char *actionname)
   my_snprintf(buf, sizeof(buf), "ToggleGroupDelayedGotoAutomatic%d", j-1);
   toggle_action_group_delayed_goto_automatic[j-1] = gtk_action_group_new(buf);
   gtk_action_group_set_translation_domain(toggle_action_group_delayed_goto_automatic[j-1],
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
 
   gtk_action_group_add_toggle_actions(toggle_action_group_delayed_goto_automatic[j-1],
@@ -2440,9 +2440,9 @@ static const char *load_menu_delayed_goto(void)
 
   action_group_delayed_goto = gtk_action_group_new("GroupDelayedGoto");
   gtk_action_group_set_translation_domain(action_group_delayed_goto,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_set_translation_domain(action_group_delayed_goto,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
   gtk_action_group_add_actions(action_group_delayed_goto, entries_delayed_goto,
                                G_N_ELEMENTS(entries_delayed_goto),
@@ -2452,7 +2452,7 @@ static const char *load_menu_delayed_goto(void)
   toggle_action_group_delayed_goto_inclusive =
     gtk_action_group_new("ToggleGroupDelayedGotoInclusive");
   gtk_action_group_set_translation_domain(toggle_action_group_delayed_goto_inclusive,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_toggle_actions(toggle_action_group_delayed_goto_inclusive,
                                       toggle_entries_delayed_goto_inclusive,
                                       G_N_ELEMENTS(toggle_entries_delayed_goto_inclusive),
@@ -2463,7 +2463,7 @@ static const char *load_menu_delayed_goto(void)
   toggle_action_group_delayed_goto_exclusive =
     gtk_action_group_new("ToggleGroupDelayedGotoExclusive");
   gtk_action_group_set_translation_domain(toggle_action_group_delayed_goto_exclusive,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_toggle_actions(toggle_action_group_delayed_goto_exclusive,
                                       toggle_entries_delayed_goto_exclusive,
                                       G_N_ELEMENTS(toggle_entries_delayed_goto_exclusive),
@@ -2474,7 +2474,7 @@ static const char *load_menu_delayed_goto(void)
   radio_action_group_delayed_goto_utype =
     gtk_action_group_new("RadioGroupDelayedGotoUtype");
   gtk_action_group_set_translation_domain(radio_action_group_delayed_goto_utype,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_delayed_goto_utype,
                                      radio_entries_delayed_goto_utype,
                                      G_N_ELEMENTS(radio_entries_delayed_goto_utype),
@@ -2487,7 +2487,7 @@ static const char *load_menu_delayed_goto(void)
   radio_action_group_delayed_goto_place =
     gtk_action_group_new("RadioGroupDelayedGotoPlace");
   gtk_action_group_set_translation_domain(radio_action_group_delayed_goto_place,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_delayed_goto_place,
                                      radio_entries_delayed_goto_place,
                                      G_N_ELEMENTS(radio_entries_delayed_goto_place),
@@ -2500,7 +2500,7 @@ static const char *load_menu_delayed_goto(void)
   radio_action_group_delayed_goto_utype_place =
     gtk_action_group_new("RadioGroupDelayedGotoUtypePlace");
   gtk_action_group_set_translation_domain(radio_action_group_delayed_goto_utype_place,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_delayed_goto_utype_place,
                                      radio_entries_delayed_goto_utype_place,
                                      G_N_ELEMENTS(radio_entries_delayed_goto_utype_place),
@@ -3189,7 +3189,7 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
   my_snprintf(buf, sizeof(buf), "RadioGroupAirlift%d", aq);
   radio_action_group_airlift_unit[aq] = gtk_action_group_new(buf);
   gtk_action_group_set_translation_domain(radio_action_group_airlift_unit[aq],
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_airlift_unit[aq],
                                      radio_entries_airlift_unit,
                                      k+1,
@@ -3334,7 +3334,7 @@ static const char *load_menu_airlift(void)
 
   action_group_airlift = gtk_action_group_new("GroupAirlift");
   gtk_action_group_set_translation_domain(action_group_airlift,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_airlift, entries_airlift,
                                G_N_ELEMENTS(entries_airlift),
                                NULL);
@@ -3587,7 +3587,7 @@ static const char *load_menu_auto_caravan(void)
 
   action_group_auto_caravan = gtk_action_group_new("GroupAutoCaravan");
   gtk_action_group_set_translation_domain(action_group_auto_caravan,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_auto_caravan, entries_auto_caravan,
                                G_N_ELEMENTS(entries_auto_caravan),
                                NULL);
@@ -4592,7 +4592,7 @@ static const char *load_menu_multi_selection(void)
 
   action_group_multi_selection = gtk_action_group_new("GroupMultiSelection");
   gtk_action_group_set_translation_domain(action_group_multi_selection,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_multi_selection, 
                                entries_multi_selection,
                                G_N_ELEMENTS(entries_multi_selection),
@@ -4603,7 +4603,7 @@ static const char *load_menu_multi_selection(void)
   toggle_action_group_multi_selection =
     gtk_action_group_new("ToggleGroupMultiSelection");
   gtk_action_group_set_translation_domain(toggle_action_group_multi_selection,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_toggle_actions(toggle_action_group_multi_selection,
                                       toggle_entries_multi_selection,
                                       G_N_ELEMENTS(toggle_entries_multi_selection),
@@ -4614,7 +4614,7 @@ static const char *load_menu_multi_selection(void)
   toggle_action_group_multi_selection_inclusive =
     gtk_action_group_new("ToggleGroupMultiSelectionInclusive");
   gtk_action_group_set_translation_domain(toggle_action_group_multi_selection_inclusive,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_toggle_actions(toggle_action_group_multi_selection_inclusive,
                                       toggle_entries_multi_selection_inclusive,
                                       G_N_ELEMENTS(toggle_entries_multi_selection_inclusive),
@@ -4625,7 +4625,7 @@ static const char *load_menu_multi_selection(void)
   toggle_action_group_multi_selection_exclusive =
     gtk_action_group_new("ToggleGroupMultiSelectionExclusive");
   gtk_action_group_set_translation_domain(toggle_action_group_multi_selection_exclusive,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_toggle_actions(toggle_action_group_multi_selection_exclusive,
                                       toggle_entries_multi_selection_exclusive,
                                       G_N_ELEMENTS(toggle_entries_multi_selection_exclusive),
@@ -4637,7 +4637,7 @@ static const char *load_menu_multi_selection(void)
   radio_action_group_multi_selection_utype =
     gtk_action_group_new("RadioGroupMultiSelectionUtype");
   gtk_action_group_set_translation_domain(radio_action_group_multi_selection_utype,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
 
   gtk_action_group_add_radio_actions(radio_action_group_multi_selection_utype,
                                      radio_entries_multi_selection_utype,
@@ -4651,7 +4651,7 @@ static const char *load_menu_multi_selection(void)
   radio_action_group_multi_selection_place =
     gtk_action_group_new("RadioGroupMultiSelectionPlace");
   gtk_action_group_set_translation_domain(radio_action_group_multi_selection_place,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_multi_selection_place,
                                      radio_entries_multi_selection_place,
                                      G_N_ELEMENTS(radio_entries_multi_selection_place),
@@ -5046,7 +5046,7 @@ static const char *load_menu_miscellaneous(void)
 
   action_group_miscellaneous = gtk_action_group_new("GroupMiscellaneous");
   gtk_action_group_set_translation_domain(action_group_miscellaneous,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_miscellaneous,
                                entries_miscellaneous,
                                G_N_ELEMENTS(entries_miscellaneous),
@@ -5057,7 +5057,7 @@ static const char *load_menu_miscellaneous(void)
   toggle_action_group_miscellaneous =
     gtk_action_group_new("ToggleGroupMiscellaneous");
   gtk_action_group_set_translation_domain(toggle_action_group_miscellaneous,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_toggle_actions(toggle_action_group_miscellaneous,
                                       toggle_entries_miscellaneous,
                                       G_N_ELEMENTS(toggle_entries_miscellaneous),
@@ -5069,7 +5069,7 @@ static const char *load_menu_miscellaneous(void)
   radio_action_group_miscellaneous_diplomat =
     gtk_action_group_new("RadioGroupMiscellaneouDiplomat");
   gtk_action_group_set_translation_domain(radio_action_group_miscellaneous_diplomat,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_miscellaneous_diplomat,
                                      radio_entries_miscellaneous_diplomat,
                                      G_N_ELEMENTS(radio_entries_miscellaneous_diplomat),
@@ -5082,7 +5082,7 @@ static const char *load_menu_miscellaneous(void)
   radio_action_group_miscellaneous_caravan =
     gtk_action_group_new("RadioGroupMiscellaneouCaravan");
   gtk_action_group_set_translation_domain(radio_action_group_miscellaneous_caravan,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_miscellaneous_caravan,
                                      radio_entries_miscellaneous_caravan,
                                      G_N_ELEMENTS(radio_entries_miscellaneous_caravan),
@@ -5095,7 +5095,7 @@ static const char *load_menu_miscellaneous(void)
   radio_action_group_miscellaneous_unit =
     gtk_action_group_new("RadioGroupMiscellaneouUnit");
   gtk_action_group_set_translation_domain(radio_action_group_miscellaneous_unit,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_radio_actions(radio_action_group_miscellaneous_unit,
                                      radio_entries_miscellaneous_unit,
                                      G_N_ELEMENTS(radio_entries_miscellaneous_unit),
@@ -5273,7 +5273,7 @@ static const char *load_menu_report(void)
 
   action_group_report = gtk_action_group_new("GroupReport");
   gtk_action_group_set_translation_domain(action_group_report,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_report, entries_report,
                                G_N_ELEMENTS(entries_report),
                                NULL);
@@ -5515,7 +5515,7 @@ static const char *load_menu_help(void)
 
   action_group_help = gtk_action_group_new("GroupHelp");
   gtk_action_group_set_translation_domain(action_group_help,
-                                          textdomain(PACKAGE));
+                                          PACKAGE);
   gtk_action_group_add_actions(action_group_help, entries_help,
                                G_N_ELEMENTS(entries_help),
                                NULL);
@@ -5710,7 +5710,7 @@ static void menu_rename(GtkActionGroup *paction_group,
 }
 
 /****************************************************************
-...
+... make invisible menu and insensitive because shortcuts works
 *****************************************************************/
 static void menu_set_visible(GtkActionGroup *paction_group,
                              const char *actionname,
@@ -5727,6 +5727,7 @@ static void menu_set_visible(GtkActionGroup *paction_group,
   }
 
   gtk_action_set_visible(action, visible);
+  gtk_action_set_sensitive(action, visible);
 }
 
 /****************************************************************
@@ -6644,7 +6645,8 @@ void start_turn_menus_udpate(void)
 {
   int i, j;
 
-  /* Airlift */
+  /* Airlift we suppose that only units build are able to airlift*/
+  /* if bribe or revolt city!!! what's append!*/
   for(i = 0; i < U_LAST; i++) {
     if (strcmp(airlift_queue_get_menu_name(0, i), "\0") <= 0 ) {
       continue;
@@ -6653,7 +6655,7 @@ void start_turn_menus_udpate(void)
       bool sensitive = can_player_unit_type(i);
       const char *buf =
         airlift_queue_get_menu_name(j, i);
-      menu_set_sensitive(radio_action_group_airlift_unit[j], buf, sensitive);
+      menu_set_visible(radio_action_group_airlift_unit[j], buf, sensitive);
     }
   }
 
