@@ -2441,8 +2441,6 @@ static const char *load_menu_delayed_goto(void)
   action_group_delayed_goto = gtk_action_group_new("GroupDelayedGoto");
   gtk_action_group_set_translation_domain(action_group_delayed_goto,
                                           PACKAGE);
-  gtk_action_group_set_translation_domain(action_group_delayed_goto,
-                                          PACKAGE);
 
   gtk_action_group_add_actions(action_group_delayed_goto, entries_delayed_goto,
                                G_N_ELEMENTS(entries_delayed_goto),
