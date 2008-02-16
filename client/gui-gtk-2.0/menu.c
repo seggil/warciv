@@ -1065,12 +1065,12 @@ static const char *load_menu_view(void)
 
   GtkToggleActionEntry toggle_entries_view[] = {
     {"VIEW_SHOW_MAP_GRID", NULL, N_("Map _Grid"),
-     NULL, N_("Map _Grid"), G_CALLBACK(callback_view_show_map_grid), TRUE},
+     "<Control>g", N_("Map _Grid"), G_CALLBACK(callback_view_show_map_grid), TRUE},
     {"VIEW_SHOW_NATIONAL_BORDERS", NULL, N_("National _Borders"),
      NULL, N_("National _Borders"), 
      G_CALLBACK(callback_view_show_national_borders), TRUE},
     {"VIEW_SHOW_CITY_NAMES", NULL, N_("City _Names"),
-     "<Control>g", N_("City _Names"),
+     "<Control>n", N_("City _Names"),
      G_CALLBACK(callback_view_show_city_names), TRUE},
     {"VIEW_SHOW_CITY_GROWTH_TURNS", NULL, N_("City G_rowth"),
      NULL, N_("City G_rowth"),
