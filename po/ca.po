@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ca\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-16 01:23+0100\n"
+"POT-Creation-Date: 2008-02-16 17:09+0100\n"
 "PO-Revision-Date: 2007-09-08 13:35+0200\n"
 "Last-Translator: Joan Creus <joan.creus at gmail dot com>\n"
 "Language-Team: Català <ca@li.org>\n"
@@ -1478,7 +1478,7 @@ msgstr "Líder"
 msgid "_Reset"
 msgstr "_Cimera"
 
-#: client/gui-gtk-2.0/chatline.c:2544 client/gui-gtk-2.0/menu.c:5473
+#: client/gui-gtk-2.0/chatline.c:2544 client/gui-gtk-2.0/menu.c:5471
 msgid "_Help"
 msgstr "_Ajuda"
 
@@ -1883,22 +1883,22 @@ msgstr "Vendre"
 #: client/gui-gtk-2.0/cityrep.c:814 client/gui-gtk-2.0/menu.c:2284
 #: client/gui-gtk-2.0/menu.c:2285 client/gui-gtk-2.0/menu.c:2301
 #: client/gui-gtk-2.0/menu.c:2302 client/gui-gtk-2.0/menu.c:2318
-#: client/gui-gtk-2.0/menu.c:2319 client/gui-gtk-2.0/menu.c:3236
-#: client/gui-gtk-2.0/menu.c:3237 client/gui-gtk-2.0/menu.c:3252
-#: client/gui-gtk-2.0/menu.c:3253 client/gui-gtk-2.0/menu.c:3268
-#: client/gui-gtk-2.0/menu.c:3269 client/gui-gtk-2.0/menu.c:3284
-#: client/gui-gtk-2.0/menu.c:3285 client/gui-gtk-2.0/menu.c:3302
-#: client/gui-gtk-2.0/menu.c:3303 client/gui-gtk-2.0/menu.c:3318
-#: client/gui-gtk-2.0/menu.c:3319 client/gui-gtk-2.0/menu.c:4372
-#: client/gui-gtk-2.0/menu.c:4373 client/gui-gtk-2.0/menu.c:4385
-#: client/gui-gtk-2.0/menu.c:4386 client/gui-gtk-2.0/menu.c:4398
-#: client/gui-gtk-2.0/menu.c:4399 client/gui-gtk-2.0/menu.c:4411
-#: client/gui-gtk-2.0/menu.c:4412 client/gui-gtk-2.0/menu.c:4424
-#: client/gui-gtk-2.0/menu.c:4425 client/gui-gtk-2.0/menu.c:4437
-#: client/gui-gtk-2.0/menu.c:4438 client/gui-gtk-2.0/menu.c:4450
-#: client/gui-gtk-2.0/menu.c:4451 client/gui-gtk-2.0/menu.c:4463
-#: client/gui-gtk-2.0/menu.c:4464 client/gui-gtk-2.0/menu.c:4476
-#: client/gui-gtk-2.0/menu.c:4477
+#: client/gui-gtk-2.0/menu.c:2319 client/gui-gtk-2.0/menu.c:3234
+#: client/gui-gtk-2.0/menu.c:3235 client/gui-gtk-2.0/menu.c:3250
+#: client/gui-gtk-2.0/menu.c:3251 client/gui-gtk-2.0/menu.c:3266
+#: client/gui-gtk-2.0/menu.c:3267 client/gui-gtk-2.0/menu.c:3282
+#: client/gui-gtk-2.0/menu.c:3283 client/gui-gtk-2.0/menu.c:3300
+#: client/gui-gtk-2.0/menu.c:3301 client/gui-gtk-2.0/menu.c:3316
+#: client/gui-gtk-2.0/menu.c:3317 client/gui-gtk-2.0/menu.c:4370
+#: client/gui-gtk-2.0/menu.c:4371 client/gui-gtk-2.0/menu.c:4383
+#: client/gui-gtk-2.0/menu.c:4384 client/gui-gtk-2.0/menu.c:4396
+#: client/gui-gtk-2.0/menu.c:4397 client/gui-gtk-2.0/menu.c:4409
+#: client/gui-gtk-2.0/menu.c:4410 client/gui-gtk-2.0/menu.c:4422
+#: client/gui-gtk-2.0/menu.c:4423 client/gui-gtk-2.0/menu.c:4435
+#: client/gui-gtk-2.0/menu.c:4436 client/gui-gtk-2.0/menu.c:4448
+#: client/gui-gtk-2.0/menu.c:4449 client/gui-gtk-2.0/menu.c:4461
+#: client/gui-gtk-2.0/menu.c:4462 client/gui-gtk-2.0/menu.c:4474
+#: client/gui-gtk-2.0/menu.c:4475
 msgid "_Select"
 msgstr "_Seleccionar"
 
@@ -2520,8 +2520,8 @@ msgstr "Tot"
 msgid "_Advances"
 msgstr "_Avenços"
 
-#: client/gui-gtk-2.0/diplodlg.c:311 client/gui-gtk-2.0/menu.c:5251
-#: client/gui-gtk-2.0/menu.c:5252
+#: client/gui-gtk-2.0/diplodlg.c:311 client/gui-gtk-2.0/menu.c:5249
+#: client/gui-gtk-2.0/menu.c:5250
 msgid "_Cities"
 msgstr "_Ciutats"
 
@@ -2946,7 +2946,7 @@ msgstr "(mai)"
 #. TRANS: "None" tech
 #: client/gui-gtk-2.0/helpdlg.c:295 client/gui-gtk-2.0/helpdlg.c:747
 #: client/gui-gtk-2.0/helpdlg.c:793 client/gui-gtk-2.0/helpdlg.c:826
-#: client/gui-gtk-2.0/menu.c:3117 client/gui-gtk-2.0/menu.c:3119
+#: client/gui-gtk-2.0/menu.c:3115 client/gui-gtk-2.0/menu.c:3117
 #: common/tech.c:617 server/settings.c:43
 msgid "None"
 msgstr "Cap"
@@ -3283,8 +3283,8 @@ msgid "C_ities"
 msgstr "Ciutats"
 
 #: client/gui-gtk-2.0/menu.c:1109 client/gui-gtk-2.0/menu.c:1110
-#: client/gui-gtk-2.0/menu.c:5253 client/gui-gtk-2.0/menu.c:5254
-#: client/gui-gtk-2.0/menu.c:5492 client/gui-gtk-2.0/menu.c:5493
+#: client/gui-gtk-2.0/menu.c:5251 client/gui-gtk-2.0/menu.c:5252
+#: client/gui-gtk-2.0/menu.c:5490 client/gui-gtk-2.0/menu.c:5491
 msgid "_Units"
 msgstr "_Unitats"
 
@@ -3303,32 +3303,32 @@ msgid "_Orders"
 msgstr "_Ordres"
 
 #: client/gui-gtk-2.0/menu.c:1470 client/gui-gtk-2.0/menu.c:1471
-#: client/gui-gtk-2.0/menu.c:5899 client/gui-gtk-2.0/menu.c:5903
+#: client/gui-gtk-2.0/menu.c:5898 client/gui-gtk-2.0/menu.c:5902
 msgid "_Build City"
 msgstr "_Bastir una ciutat"
 
 #: client/gui-gtk-2.0/menu.c:1472 client/gui-gtk-2.0/menu.c:1473
-#: client/gui-gtk-2.0/menu.c:5915 client/gui-gtk-2.0/menu.c:5922
+#: client/gui-gtk-2.0/menu.c:5914 client/gui-gtk-2.0/menu.c:5921
 msgid "Build _Road"
 msgstr "Const_ruir un camí"
 
 #: client/gui-gtk-2.0/menu.c:1474 client/gui-gtk-2.0/menu.c:1475
-#: client/gui-gtk-2.0/menu.c:5795
+#: client/gui-gtk-2.0/menu.c:5794
 msgid "Build _Irrigation"
 msgstr "_Irrigar"
 
 #: client/gui-gtk-2.0/menu.c:1476 client/gui-gtk-2.0/menu.c:1477
-#: client/gui-gtk-2.0/menu.c:5796
+#: client/gui-gtk-2.0/menu.c:5795
 msgid "Build _Mine"
 msgstr "Construir _Mina"
 
 #: client/gui-gtk-2.0/menu.c:1478 client/gui-gtk-2.0/menu.c:1479
-#: client/gui-gtk-2.0/menu.c:5797
+#: client/gui-gtk-2.0/menu.c:5796
 msgid "Transf_orm Terrain"
 msgstr "Transf_ormar el terreny"
 
 #: client/gui-gtk-2.0/menu.c:1480 client/gui-gtk-2.0/menu.c:1481
-#: client/gui-gtk-2.0/menu.c:5965
+#: client/gui-gtk-2.0/menu.c:5964
 msgid "Build _Fortress"
 msgstr "Construir _Fortificació"
 
@@ -3337,7 +3337,7 @@ msgid "Build Airbas_e"
 msgstr "Construir una Bas_e Aèria"
 
 #: client/gui-gtk-2.0/menu.c:1484 client/gui-gtk-2.0/menu.c:1485
-#: client/gui-gtk-2.0/menu.c:5974
+#: client/gui-gtk-2.0/menu.c:5973
 msgid "Clean _Pollution"
 msgstr "De_purar la Contaminació"
 
@@ -3350,7 +3350,7 @@ msgid "_Sentry"
 msgstr "_Sentinella"
 
 #: client/gui-gtk-2.0/menu.c:1490 client/gui-gtk-2.0/menu.c:1491
-#: client/gui-gtk-2.0/menu.c:5041 client/gui-gtk-2.0/menu.c:5042
+#: client/gui-gtk-2.0/menu.c:5039 client/gui-gtk-2.0/menu.c:5040
 #, fuzzy
 msgid "Sleep"
 msgstr "Unitats marítimes"
@@ -3381,7 +3381,7 @@ msgid "Wake up o_thers"
 msgstr "Despertar al_tres"
 
 #: client/gui-gtk-2.0/menu.c:1504 client/gui-gtk-2.0/menu.c:1505
-#: client/gui-gtk-2.0/menu.c:5982
+#: client/gui-gtk-2.0/menu.c:5981
 msgid "_Auto Settler"
 msgstr "Colon _automàtic"
 
@@ -3492,7 +3492,7 @@ msgstr ""
 msgid "_Inclusive filter"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:2281 client/gui-gtk-2.0/menu.c:4365
+#: client/gui-gtk-2.0/menu.c:2281 client/gui-gtk-2.0/menu.c:4363
 msgid "Exclusive filter"
 msgstr ""
 
@@ -3505,21 +3505,21 @@ msgstr "Selecció unitat"
 #: client/gui-gtk-2.0/menu.c:2286 client/gui-gtk-2.0/menu.c:2287
 #: client/gui-gtk-2.0/menu.c:2303 client/gui-gtk-2.0/menu.c:2304
 #: client/gui-gtk-2.0/menu.c:2320 client/gui-gtk-2.0/menu.c:2321
-#: client/gui-gtk-2.0/menu.c:3238 client/gui-gtk-2.0/menu.c:3239
-#: client/gui-gtk-2.0/menu.c:3254 client/gui-gtk-2.0/menu.c:3255
-#: client/gui-gtk-2.0/menu.c:3270 client/gui-gtk-2.0/menu.c:3271
-#: client/gui-gtk-2.0/menu.c:3286 client/gui-gtk-2.0/menu.c:3287
-#: client/gui-gtk-2.0/menu.c:3304 client/gui-gtk-2.0/menu.c:3305
-#: client/gui-gtk-2.0/menu.c:3320 client/gui-gtk-2.0/menu.c:3321
-#: client/gui-gtk-2.0/menu.c:4374 client/gui-gtk-2.0/menu.c:4375
-#: client/gui-gtk-2.0/menu.c:4387 client/gui-gtk-2.0/menu.c:4388
-#: client/gui-gtk-2.0/menu.c:4400 client/gui-gtk-2.0/menu.c:4401
-#: client/gui-gtk-2.0/menu.c:4413 client/gui-gtk-2.0/menu.c:4414
-#: client/gui-gtk-2.0/menu.c:4426 client/gui-gtk-2.0/menu.c:4427
-#: client/gui-gtk-2.0/menu.c:4439 client/gui-gtk-2.0/menu.c:4440
-#: client/gui-gtk-2.0/menu.c:4452 client/gui-gtk-2.0/menu.c:4453
-#: client/gui-gtk-2.0/menu.c:4465 client/gui-gtk-2.0/menu.c:4466
-#: client/gui-gtk-2.0/menu.c:4478 client/gui-gtk-2.0/menu.c:4479
+#: client/gui-gtk-2.0/menu.c:3236 client/gui-gtk-2.0/menu.c:3237
+#: client/gui-gtk-2.0/menu.c:3252 client/gui-gtk-2.0/menu.c:3253
+#: client/gui-gtk-2.0/menu.c:3268 client/gui-gtk-2.0/menu.c:3269
+#: client/gui-gtk-2.0/menu.c:3284 client/gui-gtk-2.0/menu.c:3285
+#: client/gui-gtk-2.0/menu.c:3302 client/gui-gtk-2.0/menu.c:3303
+#: client/gui-gtk-2.0/menu.c:3318 client/gui-gtk-2.0/menu.c:3319
+#: client/gui-gtk-2.0/menu.c:4372 client/gui-gtk-2.0/menu.c:4373
+#: client/gui-gtk-2.0/menu.c:4385 client/gui-gtk-2.0/menu.c:4386
+#: client/gui-gtk-2.0/menu.c:4398 client/gui-gtk-2.0/menu.c:4399
+#: client/gui-gtk-2.0/menu.c:4411 client/gui-gtk-2.0/menu.c:4412
+#: client/gui-gtk-2.0/menu.c:4424 client/gui-gtk-2.0/menu.c:4425
+#: client/gui-gtk-2.0/menu.c:4437 client/gui-gtk-2.0/menu.c:4438
+#: client/gui-gtk-2.0/menu.c:4450 client/gui-gtk-2.0/menu.c:4451
+#: client/gui-gtk-2.0/menu.c:4463 client/gui-gtk-2.0/menu.c:4464
+#: client/gui-gtk-2.0/menu.c:4476 client/gui-gtk-2.0/menu.c:4477
 #, fuzzy
 msgid "_Add to current selection"
 msgstr "Selecció unitat"
@@ -3527,21 +3527,21 @@ msgstr "Selecció unitat"
 #: client/gui-gtk-2.0/menu.c:2289 client/gui-gtk-2.0/menu.c:2290
 #: client/gui-gtk-2.0/menu.c:2306 client/gui-gtk-2.0/menu.c:2307
 #: client/gui-gtk-2.0/menu.c:2323 client/gui-gtk-2.0/menu.c:2324
-#: client/gui-gtk-2.0/menu.c:3241 client/gui-gtk-2.0/menu.c:3242
-#: client/gui-gtk-2.0/menu.c:3257 client/gui-gtk-2.0/menu.c:3258
-#: client/gui-gtk-2.0/menu.c:3273 client/gui-gtk-2.0/menu.c:3274
-#: client/gui-gtk-2.0/menu.c:3289 client/gui-gtk-2.0/menu.c:3290
-#: client/gui-gtk-2.0/menu.c:3307 client/gui-gtk-2.0/menu.c:3308
-#: client/gui-gtk-2.0/menu.c:3323 client/gui-gtk-2.0/menu.c:3324
-#: client/gui-gtk-2.0/menu.c:4377 client/gui-gtk-2.0/menu.c:4378
-#: client/gui-gtk-2.0/menu.c:4390 client/gui-gtk-2.0/menu.c:4391
-#: client/gui-gtk-2.0/menu.c:4403 client/gui-gtk-2.0/menu.c:4404
-#: client/gui-gtk-2.0/menu.c:4416 client/gui-gtk-2.0/menu.c:4417
-#: client/gui-gtk-2.0/menu.c:4429 client/gui-gtk-2.0/menu.c:4430
-#: client/gui-gtk-2.0/menu.c:4442 client/gui-gtk-2.0/menu.c:4443
-#: client/gui-gtk-2.0/menu.c:4455 client/gui-gtk-2.0/menu.c:4456
-#: client/gui-gtk-2.0/menu.c:4468 client/gui-gtk-2.0/menu.c:4469
-#: client/gui-gtk-2.0/menu.c:4481 client/gui-gtk-2.0/menu.c:4482
+#: client/gui-gtk-2.0/menu.c:3239 client/gui-gtk-2.0/menu.c:3240
+#: client/gui-gtk-2.0/menu.c:3255 client/gui-gtk-2.0/menu.c:3256
+#: client/gui-gtk-2.0/menu.c:3271 client/gui-gtk-2.0/menu.c:3272
+#: client/gui-gtk-2.0/menu.c:3287 client/gui-gtk-2.0/menu.c:3288
+#: client/gui-gtk-2.0/menu.c:3305 client/gui-gtk-2.0/menu.c:3306
+#: client/gui-gtk-2.0/menu.c:3321 client/gui-gtk-2.0/menu.c:3322
+#: client/gui-gtk-2.0/menu.c:4375 client/gui-gtk-2.0/menu.c:4376
+#: client/gui-gtk-2.0/menu.c:4388 client/gui-gtk-2.0/menu.c:4389
+#: client/gui-gtk-2.0/menu.c:4401 client/gui-gtk-2.0/menu.c:4402
+#: client/gui-gtk-2.0/menu.c:4414 client/gui-gtk-2.0/menu.c:4415
+#: client/gui-gtk-2.0/menu.c:4427 client/gui-gtk-2.0/menu.c:4428
+#: client/gui-gtk-2.0/menu.c:4440 client/gui-gtk-2.0/menu.c:4441
+#: client/gui-gtk-2.0/menu.c:4453 client/gui-gtk-2.0/menu.c:4454
+#: client/gui-gtk-2.0/menu.c:4466 client/gui-gtk-2.0/menu.c:4467
+#: client/gui-gtk-2.0/menu.c:4479 client/gui-gtk-2.0/menu.c:4480
 #, fuzzy
 msgid "_Record"
 msgstr "Camí"
@@ -3550,75 +3550,75 @@ msgstr "Camí"
 #: client/gui-gtk-2.0/menu.c:2295 client/gui-gtk-2.0/menu.c:2309
 #: client/gui-gtk-2.0/menu.c:2310 client/gui-gtk-2.0/menu.c:2312
 #: client/gui-gtk-2.0/menu.c:2326 client/gui-gtk-2.0/menu.c:2327
-#: client/gui-gtk-2.0/menu.c:2329 client/gui-gtk-2.0/menu.c:3243
-#: client/gui-gtk-2.0/menu.c:3244 client/gui-gtk-2.0/menu.c:3259
-#: client/gui-gtk-2.0/menu.c:3260 client/gui-gtk-2.0/menu.c:3275
-#: client/gui-gtk-2.0/menu.c:3276 client/gui-gtk-2.0/menu.c:3291
-#: client/gui-gtk-2.0/menu.c:3292 client/gui-gtk-2.0/menu.c:3309
-#: client/gui-gtk-2.0/menu.c:3310 client/gui-gtk-2.0/menu.c:3325
-#: client/gui-gtk-2.0/menu.c:3326 client/gui-gtk-2.0/menu.c:4380
-#: client/gui-gtk-2.0/menu.c:4381 client/gui-gtk-2.0/menu.c:4393
-#: client/gui-gtk-2.0/menu.c:4394 client/gui-gtk-2.0/menu.c:4406
-#: client/gui-gtk-2.0/menu.c:4407 client/gui-gtk-2.0/menu.c:4419
-#: client/gui-gtk-2.0/menu.c:4420 client/gui-gtk-2.0/menu.c:4432
-#: client/gui-gtk-2.0/menu.c:4433 client/gui-gtk-2.0/menu.c:4445
-#: client/gui-gtk-2.0/menu.c:4446 client/gui-gtk-2.0/menu.c:4458
-#: client/gui-gtk-2.0/menu.c:4459 client/gui-gtk-2.0/menu.c:4471
-#: client/gui-gtk-2.0/menu.c:4472 client/gui-gtk-2.0/menu.c:4484
-#: client/gui-gtk-2.0/menu.c:4485
+#: client/gui-gtk-2.0/menu.c:2329 client/gui-gtk-2.0/menu.c:3241
+#: client/gui-gtk-2.0/menu.c:3242 client/gui-gtk-2.0/menu.c:3257
+#: client/gui-gtk-2.0/menu.c:3258 client/gui-gtk-2.0/menu.c:3273
+#: client/gui-gtk-2.0/menu.c:3274 client/gui-gtk-2.0/menu.c:3289
+#: client/gui-gtk-2.0/menu.c:3290 client/gui-gtk-2.0/menu.c:3307
+#: client/gui-gtk-2.0/menu.c:3308 client/gui-gtk-2.0/menu.c:3323
+#: client/gui-gtk-2.0/menu.c:3324 client/gui-gtk-2.0/menu.c:4378
+#: client/gui-gtk-2.0/menu.c:4379 client/gui-gtk-2.0/menu.c:4391
+#: client/gui-gtk-2.0/menu.c:4392 client/gui-gtk-2.0/menu.c:4404
+#: client/gui-gtk-2.0/menu.c:4405 client/gui-gtk-2.0/menu.c:4417
+#: client/gui-gtk-2.0/menu.c:4418 client/gui-gtk-2.0/menu.c:4430
+#: client/gui-gtk-2.0/menu.c:4431 client/gui-gtk-2.0/menu.c:4443
+#: client/gui-gtk-2.0/menu.c:4444 client/gui-gtk-2.0/menu.c:4456
+#: client/gui-gtk-2.0/menu.c:4457 client/gui-gtk-2.0/menu.c:4469
+#: client/gui-gtk-2.0/menu.c:4470 client/gui-gtk-2.0/menu.c:4482
+#: client/gui-gtk-2.0/menu.c:4483
 #, fuzzy
 msgid "_Clear"
 msgstr "_Borrar la llista de missatges"
 
 #: client/gui-gtk-2.0/menu.c:2294 client/gui-gtk-2.0/menu.c:2311
-#: client/gui-gtk-2.0/menu.c:2328 client/gui-gtk-2.0/menu.c:3245
-#: client/gui-gtk-2.0/menu.c:3246 client/gui-gtk-2.0/menu.c:3261
-#: client/gui-gtk-2.0/menu.c:3262 client/gui-gtk-2.0/menu.c:3277
-#: client/gui-gtk-2.0/menu.c:3278 client/gui-gtk-2.0/menu.c:3293
-#: client/gui-gtk-2.0/menu.c:3294 client/gui-gtk-2.0/menu.c:3311
-#: client/gui-gtk-2.0/menu.c:3312 client/gui-gtk-2.0/menu.c:3327
-#: client/gui-gtk-2.0/menu.c:3328
+#: client/gui-gtk-2.0/menu.c:2328 client/gui-gtk-2.0/menu.c:3243
+#: client/gui-gtk-2.0/menu.c:3244 client/gui-gtk-2.0/menu.c:3259
+#: client/gui-gtk-2.0/menu.c:3260 client/gui-gtk-2.0/menu.c:3275
+#: client/gui-gtk-2.0/menu.c:3276 client/gui-gtk-2.0/menu.c:3291
+#: client/gui-gtk-2.0/menu.c:3292 client/gui-gtk-2.0/menu.c:3309
+#: client/gui-gtk-2.0/menu.c:3310 client/gui-gtk-2.0/menu.c:3325
+#: client/gui-gtk-2.0/menu.c:3326
 msgid "_Execute"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2336 client/gui-gtk-2.0/menu.c:2337
 #: client/gui-gtk-2.0/menu.c:2368 client/gui-gtk-2.0/menu.c:2369
 #: client/gui-gtk-2.0/menu.c:2410 client/gui-gtk-2.0/menu.c:2411
-#: client/gui-gtk-2.0/menu.c:4501 client/gui-gtk-2.0/menu.c:4502
-#: client/gui-gtk-2.0/menu.c:4534 client/gui-gtk-2.0/menu.c:4535
-#: client/gui-gtk-2.0/menu.c:4589 client/gui-gtk-2.0/menu.c:4590
+#: client/gui-gtk-2.0/menu.c:4499 client/gui-gtk-2.0/menu.c:4500
+#: client/gui-gtk-2.0/menu.c:4532 client/gui-gtk-2.0/menu.c:4533
+#: client/gui-gtk-2.0/menu.c:4587 client/gui-gtk-2.0/menu.c:4588
 #, fuzzy
 msgid "_All units"
 msgstr "Unitats aèries"
 
 #: client/gui-gtk-2.0/menu.c:2339 client/gui-gtk-2.0/menu.c:2340
 #: client/gui-gtk-2.0/menu.c:2371 client/gui-gtk-2.0/menu.c:2372
-#: client/gui-gtk-2.0/menu.c:4504 client/gui-gtk-2.0/menu.c:4505
-#: client/gui-gtk-2.0/menu.c:4537 client/gui-gtk-2.0/menu.c:4538
+#: client/gui-gtk-2.0/menu.c:4502 client/gui-gtk-2.0/menu.c:4503
+#: client/gui-gtk-2.0/menu.c:4535 client/gui-gtk-2.0/menu.c:4536
 #, fuzzy
 msgid "_New units"
 msgstr "Unitats marítimes"
 
 #: client/gui-gtk-2.0/menu.c:2342 client/gui-gtk-2.0/menu.c:2343
 #: client/gui-gtk-2.0/menu.c:2374 client/gui-gtk-2.0/menu.c:2375
-#: client/gui-gtk-2.0/menu.c:4507 client/gui-gtk-2.0/menu.c:4508
-#: client/gui-gtk-2.0/menu.c:4540 client/gui-gtk-2.0/menu.c:4541
+#: client/gui-gtk-2.0/menu.c:4505 client/gui-gtk-2.0/menu.c:4506
+#: client/gui-gtk-2.0/menu.c:4538 client/gui-gtk-2.0/menu.c:4539
 #, fuzzy
 msgid "_Fortified units"
 msgstr "_Fortificar unitat"
 
 #: client/gui-gtk-2.0/menu.c:2345 client/gui-gtk-2.0/menu.c:2346
 #: client/gui-gtk-2.0/menu.c:2377 client/gui-gtk-2.0/menu.c:2378
-#: client/gui-gtk-2.0/menu.c:4510 client/gui-gtk-2.0/menu.c:4511
-#: client/gui-gtk-2.0/menu.c:4543 client/gui-gtk-2.0/menu.c:4544
+#: client/gui-gtk-2.0/menu.c:4508 client/gui-gtk-2.0/menu.c:4509
+#: client/gui-gtk-2.0/menu.c:4541 client/gui-gtk-2.0/menu.c:4542
 #, fuzzy
 msgid "_Sentried units"
 msgstr "Unitats _Sentinella ocioses"
 
 #: client/gui-gtk-2.0/menu.c:2348 client/gui-gtk-2.0/menu.c:2349
 #: client/gui-gtk-2.0/menu.c:2380 client/gui-gtk-2.0/menu.c:2381
-#: client/gui-gtk-2.0/menu.c:4513 client/gui-gtk-2.0/menu.c:4514
-#: client/gui-gtk-2.0/menu.c:4546 client/gui-gtk-2.0/menu.c:4547
+#: client/gui-gtk-2.0/menu.c:4511 client/gui-gtk-2.0/menu.c:4512
+#: client/gui-gtk-2.0/menu.c:4544 client/gui-gtk-2.0/menu.c:4545
 #, fuzzy
 msgid "_Veteran units"
 msgstr "Unitats marítimes"
@@ -3631,67 +3631,67 @@ msgstr "Unitats aèries"
 
 #: client/gui-gtk-2.0/menu.c:2354 client/gui-gtk-2.0/menu.c:2355
 #: client/gui-gtk-2.0/menu.c:2386 client/gui-gtk-2.0/menu.c:2387
-#: client/gui-gtk-2.0/menu.c:4519 client/gui-gtk-2.0/menu.c:4520
-#: client/gui-gtk-2.0/menu.c:4552 client/gui-gtk-2.0/menu.c:4553
+#: client/gui-gtk-2.0/menu.c:4517 client/gui-gtk-2.0/menu.c:4518
+#: client/gui-gtk-2.0/menu.c:4550 client/gui-gtk-2.0/menu.c:4551
 #, fuzzy
 msgid "_Idle units"
 msgstr "Unitats marítimes"
 
 #: client/gui-gtk-2.0/menu.c:2357 client/gui-gtk-2.0/menu.c:2358
 #: client/gui-gtk-2.0/menu.c:2389 client/gui-gtk-2.0/menu.c:2390
-#: client/gui-gtk-2.0/menu.c:4522 client/gui-gtk-2.0/menu.c:4523
+#: client/gui-gtk-2.0/menu.c:4520 client/gui-gtk-2.0/menu.c:4521
 msgid "Units abl_e to move"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2360 client/gui-gtk-2.0/menu.c:2361
 #: client/gui-gtk-2.0/menu.c:2392 client/gui-gtk-2.0/menu.c:2393
-#: client/gui-gtk-2.0/menu.c:4525 client/gui-gtk-2.0/menu.c:4526
-#: client/gui-gtk-2.0/menu.c:4558 client/gui-gtk-2.0/menu.c:4559
+#: client/gui-gtk-2.0/menu.c:4523 client/gui-gtk-2.0/menu.c:4524
+#: client/gui-gtk-2.0/menu.c:4556 client/gui-gtk-2.0/menu.c:4557
 #, fuzzy
 msgid "_Military units"
 msgstr "Milicia"
 
 #: client/gui-gtk-2.0/menu.c:2363 client/gui-gtk-2.0/menu.c:2364
 #: client/gui-gtk-2.0/menu.c:2395 client/gui-gtk-2.0/menu.c:2396
-#: client/gui-gtk-2.0/menu.c:4528 client/gui-gtk-2.0/menu.c:4529
-#: client/gui-gtk-2.0/menu.c:4561 client/gui-gtk-2.0/menu.c:4562
+#: client/gui-gtk-2.0/menu.c:4526 client/gui-gtk-2.0/menu.c:4527
+#: client/gui-gtk-2.0/menu.c:4559 client/gui-gtk-2.0/menu.c:4560
 msgid "_Off"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2400 client/gui-gtk-2.0/menu.c:2401
-#: client/gui-gtk-2.0/menu.c:4578 client/gui-gtk-2.0/menu.c:4579
+#: client/gui-gtk-2.0/menu.c:4576 client/gui-gtk-2.0/menu.c:4577
 #, fuzzy
 msgid "_Single unit"
 msgstr "Unitats marítimes"
 
 #: client/gui-gtk-2.0/menu.c:2403 client/gui-gtk-2.0/menu.c:2404
-#: client/gui-gtk-2.0/menu.c:4581 client/gui-gtk-2.0/menu.c:4582
+#: client/gui-gtk-2.0/menu.c:4579 client/gui-gtk-2.0/menu.c:4580
 #, fuzzy
 msgid "All _units in the same transporter"
 msgstr "Selecció unitat"
 
 #: client/gui-gtk-2.0/menu.c:2406 client/gui-gtk-2.0/menu.c:2407
-#: client/gui-gtk-2.0/menu.c:4584 client/gui-gtk-2.0/menu.c:4585
+#: client/gui-gtk-2.0/menu.c:4582 client/gui-gtk-2.0/menu.c:4583
 msgid "All units on the _tile"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2408 client/gui-gtk-2.0/menu.c:2409
-#: client/gui-gtk-2.0/menu.c:4587 client/gui-gtk-2.0/menu.c:4588
+#: client/gui-gtk-2.0/menu.c:4585 client/gui-gtk-2.0/menu.c:4586
 msgid "All units on the _continent"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2415 client/gui-gtk-2.0/menu.c:2416
-#: client/gui-gtk-2.0/menu.c:4567 client/gui-gtk-2.0/menu.c:4568
+#: client/gui-gtk-2.0/menu.c:4565 client/gui-gtk-2.0/menu.c:4566
 msgid "Only units with the _same type"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2418 client/gui-gtk-2.0/menu.c:2419
-#: client/gui-gtk-2.0/menu.c:4570 client/gui-gtk-2.0/menu.c:4571
+#: client/gui-gtk-2.0/menu.c:4568 client/gui-gtk-2.0/menu.c:4569
 msgid "Only units with the same _move type"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2421 client/gui-gtk-2.0/menu.c:2422
-#: client/gui-gtk-2.0/menu.c:4573 client/gui-gtk-2.0/menu.c:4574
+#: client/gui-gtk-2.0/menu.c:4571 client/gui-gtk-2.0/menu.c:4572
 #, fuzzy
 msgid "_All unit types"
 msgstr "Totes les ciutats"
@@ -3719,468 +3719,468 @@ msgstr "Selecció unitat"
 msgid "All units of the same type on the continent (fast)"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3216
+#: client/gui-gtk-2.0/menu.c:3214
 #, fuzzy
 msgid "A_irlift"
 msgstr "Aerotransportar"
 
-#: client/gui-gtk-2.0/menu.c:3217 client/gui-gtk-2.0/menu.c:3250
-#: client/gui-gtk-2.0/menu.c:3266 client/gui-gtk-2.0/menu.c:3282
-#: client/gui-gtk-2.0/menu.c:3298 client/gui-gtk-2.0/menu.c:3316
-#: client/gui-gtk-2.0/menu.c:3332
+#: client/gui-gtk-2.0/menu.c:3215 client/gui-gtk-2.0/menu.c:3248
+#: client/gui-gtk-2.0/menu.c:3264 client/gui-gtk-2.0/menu.c:3280
+#: client/gui-gtk-2.0/menu.c:3296 client/gui-gtk-2.0/menu.c:3314
+#: client/gui-gtk-2.0/menu.c:3330
 #, fuzzy
 msgid "Airlift unit _type"
 msgstr "Aerotransportar a ciutat"
 
-#: client/gui-gtk-2.0/menu.c:3218 client/gui-gtk-2.0/menu.c:3219
+#: client/gui-gtk-2.0/menu.c:3216 client/gui-gtk-2.0/menu.c:3217
 #, fuzzy
 msgid "Set airlift _destination"
 msgstr "Escull un destí"
 
-#: client/gui-gtk-2.0/menu.c:3221 client/gui-gtk-2.0/menu.c:3222
+#: client/gui-gtk-2.0/menu.c:3219 client/gui-gtk-2.0/menu.c:3220
 #, fuzzy
 msgid "Set airlift _source"
 msgstr "Recursos especials"
 
-#: client/gui-gtk-2.0/menu.c:3225 client/gui-gtk-2.0/menu.c:3226
+#: client/gui-gtk-2.0/menu.c:3223 client/gui-gtk-2.0/menu.c:3224
 msgid "_Add all cities with airport in airlift queue"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3228 client/gui-gtk-2.0/menu.c:3229
+#: client/gui-gtk-2.0/menu.c:3226 client/gui-gtk-2.0/menu.c:3227
 msgid "_Clear airlift queue"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3232 client/gui-gtk-2.0/menu.c:3233
+#: client/gui-gtk-2.0/menu.c:3230 client/gui-gtk-2.0/menu.c:3231
 msgid "Show cities in airlift _queue"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3235 client/gui-gtk-2.0/menu.c:3251
-#: client/gui-gtk-2.0/menu.c:3267 client/gui-gtk-2.0/menu.c:3283
-#: client/gui-gtk-2.0/menu.c:3300 client/gui-gtk-2.0/menu.c:3317
+#: client/gui-gtk-2.0/menu.c:3233 client/gui-gtk-2.0/menu.c:3249
+#: client/gui-gtk-2.0/menu.c:3265 client/gui-gtk-2.0/menu.c:3281
+#: client/gui-gtk-2.0/menu.c:3298 client/gui-gtk-2.0/menu.c:3315
 #, fuzzy
 msgid "Airlift queue"
 msgstr "Aerotransportar"
 
-#: client/gui-gtk-2.0/menu.c:3248 client/gui-gtk-2.0/menu.c:3249
-#: client/gui-gtk-2.0/menu.c:3264 client/gui-gtk-2.0/menu.c:3265
-#: client/gui-gtk-2.0/menu.c:3280 client/gui-gtk-2.0/menu.c:3281
-#: client/gui-gtk-2.0/menu.c:3296 client/gui-gtk-2.0/menu.c:3297
-#: client/gui-gtk-2.0/menu.c:3314 client/gui-gtk-2.0/menu.c:3315
-#: client/gui-gtk-2.0/menu.c:3330 client/gui-gtk-2.0/menu.c:3331
+#: client/gui-gtk-2.0/menu.c:3246 client/gui-gtk-2.0/menu.c:3247
+#: client/gui-gtk-2.0/menu.c:3262 client/gui-gtk-2.0/menu.c:3263
+#: client/gui-gtk-2.0/menu.c:3278 client/gui-gtk-2.0/menu.c:3279
+#: client/gui-gtk-2.0/menu.c:3294 client/gui-gtk-2.0/menu.c:3295
+#: client/gui-gtk-2.0/menu.c:3312 client/gui-gtk-2.0/menu.c:3313
+#: client/gui-gtk-2.0/menu.c:3328 client/gui-gtk-2.0/menu.c:3329
 #, fuzzy
 msgid "_Show"
 msgstr "_Mostrar"
 
-#: client/gui-gtk-2.0/menu.c:3553
+#: client/gui-gtk-2.0/menu.c:3551
 #, fuzzy
 msgid "Auto _Caravan"
 msgstr "Caravana"
 
-#: client/gui-gtk-2.0/menu.c:3554 client/gui-gtk-2.0/menu.c:3555
+#: client/gui-gtk-2.0/menu.c:3552 client/gui-gtk-2.0/menu.c:3553
 msgid "_Add a city in trade plan"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3558 client/gui-gtk-2.0/menu.c:3559
+#: client/gui-gtk-2.0/menu.c:3556 client/gui-gtk-2.0/menu.c:3557
 msgid "_Clear city list for trade plan"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3562 client/gui-gtk-2.0/menu.c:3563
+#: client/gui-gtk-2.0/menu.c:3560 client/gui-gtk-2.0/menu.c:3561
 msgid "_Recalculate trade plan"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3565 client/gui-gtk-2.0/menu.c:3566
+#: client/gui-gtk-2.0/menu.c:3563 client/gui-gtk-2.0/menu.c:3564
 #, fuzzy
 msgid "Show trade _estimation"
 msgstr "Mostrar animació combat"
 
-#: client/gui-gtk-2.0/menu.c:3569 client/gui-gtk-2.0/menu.c:3570
+#: client/gui-gtk-2.0/menu.c:3567 client/gui-gtk-2.0/menu.c:3568
 #, fuzzy
 msgid "Show the trade route _free slots"
 msgstr "No existeix cap ruta de comerç."
 
-#: client/gui-gtk-2.0/menu.c:3573 client/gui-gtk-2.0/menu.c:3574
+#: client/gui-gtk-2.0/menu.c:3571 client/gui-gtk-2.0/menu.c:3572
 msgid "Show cities in _trade plan"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3576 client/gui-gtk-2.0/menu.c:3577
+#: client/gui-gtk-2.0/menu.c:3574 client/gui-gtk-2.0/menu.c:3575
 #, fuzzy
 msgid "_Set caravan destination"
 msgstr "Escull un destí"
 
-#: client/gui-gtk-2.0/menu.c:3579 client/gui-gtk-2.0/menu.c:3580
+#: client/gui-gtk-2.0/menu.c:3577 client/gui-gtk-2.0/menu.c:3578
 msgid "Auto_matic caravan orders"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3583 client/gui-gtk-2.0/menu.c:3584
+#: client/gui-gtk-2.0/menu.c:3581 client/gui-gtk-2.0/menu.c:3582
 #, fuzzy
 msgid "_Execute all trade route orders"
 msgstr "Rutes de comerç establertes"
 
-#: client/gui-gtk-2.0/menu.c:4350
+#: client/gui-gtk-2.0/menu.c:4348
 #, fuzzy
 msgid "_Multi-Selection"
 msgstr "Selecció unitat"
 
-#: client/gui-gtk-2.0/menu.c:4351 client/gui-gtk-2.0/menu.c:4352
+#: client/gui-gtk-2.0/menu.c:4349 client/gui-gtk-2.0/menu.c:4350
 msgid "Multi-selection _select"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4355 client/gui-gtk-2.0/menu.c:4356
+#: client/gui-gtk-2.0/menu.c:4353 client/gui-gtk-2.0/menu.c:4354
 msgid "Multi-selection _active all units"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4358 client/gui-gtk-2.0/menu.c:4359
+#: client/gui-gtk-2.0/menu.c:4356 client/gui-gtk-2.0/menu.c:4357
 msgid "Multi-selection _clear"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4361
+#: client/gui-gtk-2.0/menu.c:4359
 #, fuzzy
 msgid "_Multi-Selection _mode"
 msgstr "Selecció unitat"
 
-#: client/gui-gtk-2.0/menu.c:4363
+#: client/gui-gtk-2.0/menu.c:4361
 msgid "Inclusive filter"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4367 client/gui-gtk-2.0/menu.c:4368
+#: client/gui-gtk-2.0/menu.c:4365 client/gui-gtk-2.0/menu.c:4366
 msgid "Multi-selection sprea_d"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4370 client/gui-gtk-2.0/menu.c:4383
-#: client/gui-gtk-2.0/menu.c:4396 client/gui-gtk-2.0/menu.c:4409
-#: client/gui-gtk-2.0/menu.c:4422 client/gui-gtk-2.0/menu.c:4435
-#: client/gui-gtk-2.0/menu.c:4448 client/gui-gtk-2.0/menu.c:4461
-#: client/gui-gtk-2.0/menu.c:4474
+#: client/gui-gtk-2.0/menu.c:4368 client/gui-gtk-2.0/menu.c:4381
+#: client/gui-gtk-2.0/menu.c:4394 client/gui-gtk-2.0/menu.c:4407
+#: client/gui-gtk-2.0/menu.c:4420 client/gui-gtk-2.0/menu.c:4433
+#: client/gui-gtk-2.0/menu.c:4446 client/gui-gtk-2.0/menu.c:4459
+#: client/gui-gtk-2.0/menu.c:4472
 #, fuzzy
 msgid "Multi-selection"
 msgstr "Selecció unitat"
 
-#: client/gui-gtk-2.0/menu.c:4491 client/gui-gtk-2.0/menu.c:4492
+#: client/gui-gtk-2.0/menu.c:4489 client/gui-gtk-2.0/menu.c:4490
 msgid "Spread only in cities _with airport"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4495 client/gui-gtk-2.0/menu.c:4496
+#: client/gui-gtk-2.0/menu.c:4493 client/gui-gtk-2.0/menu.c:4494
 msgid "Allow spreadi_ng into allied cities"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4516 client/gui-gtk-2.0/menu.c:4517
-#: client/gui-gtk-2.0/menu.c:4549 client/gui-gtk-2.0/menu.c:4550
+#: client/gui-gtk-2.0/menu.c:4514 client/gui-gtk-2.0/menu.c:4515
+#: client/gui-gtk-2.0/menu.c:4547 client/gui-gtk-2.0/menu.c:4548
 #, fuzzy
 msgid "Aut_o units"
 msgstr "Unitats aèries"
 
-#: client/gui-gtk-2.0/menu.c:4555 client/gui-gtk-2.0/menu.c:4556
+#: client/gui-gtk-2.0/menu.c:4553 client/gui-gtk-2.0/menu.c:4554
 msgid "Units able to mov_e"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4947
+#: client/gui-gtk-2.0/menu.c:4945
 msgid "Misce_llaneous"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4948 client/gui-gtk-2.0/menu.c:4949
+#: client/gui-gtk-2.0/menu.c:4946 client/gui-gtk-2.0/menu.c:4947
 msgid "Airplane _patrol"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4951 client/gui-gtk-2.0/menu.c:4952
+#: client/gui-gtk-2.0/menu.c:4949 client/gui-gtk-2.0/menu.c:4950
 #, fuzzy
 msgid "Airplane patrol _destination"
 msgstr "Escull un destí"
 
-#: client/gui-gtk-2.0/menu.c:4954 client/gui-gtk-2.0/menu.c:4955
+#: client/gui-gtk-2.0/menu.c:4952 client/gui-gtk-2.0/menu.c:4953
 msgid "_Execute all patrol orders"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4957
+#: client/gui-gtk-2.0/menu.c:4955
 msgid "_Caravan action upon arrival"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4959 client/peptool.c:128
+#: client/gui-gtk-2.0/menu.c:4957 client/peptool.c:128
 #, fuzzy
 msgid "Diplomat action upon arrival"
 msgstr "Acció diplomàtica: Fallada"
 
-#: client/gui-gtk-2.0/menu.c:4961 client/peptool.c:148
+#: client/gui-gtk-2.0/menu.c:4959 client/peptool.c:148
 msgid "New unit default action"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4963 client/gui-gtk-2.0/menu.c:4964
+#: client/gui-gtk-2.0/menu.c:4961 client/gui-gtk-2.0/menu.c:4962
 msgid "_Set rallies for selected cities"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4967 client/gui-gtk-2.0/menu.c:4968
+#: client/gui-gtk-2.0/menu.c:4965 client/gui-gtk-2.0/menu.c:4966
 msgid "_Clear rallies in selected cities"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4970 client/gui-gtk-2.0/menu.c:4971
+#: client/gui-gtk-2.0/menu.c:4968 client/gui-gtk-2.0/menu.c:4969
 msgid "E_xecute automatic orders"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4973 client/gui-gtk-2.0/menu.c:4974
+#: client/gui-gtk-2.0/menu.c:4971 client/gui-gtk-2.0/menu.c:4972
 msgid "_Free automatic orders"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4977 client/gui-gtk-2.0/menu.c:4978
+#: client/gui-gtk-2.0/menu.c:4975 client/gui-gtk-2.0/menu.c:4976
 msgid "Execute all automatic _orders"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4983 client/gui-gtk-2.0/menu.c:4984
+#: client/gui-gtk-2.0/menu.c:4981 client/gui-gtk-2.0/menu.c:4982
 #, fuzzy
 msgid "Ignore allies"
 msgstr "nou prefixat"
 
-#: client/gui-gtk-2.0/menu.c:4986 client/gui-gtk-2.0/menu.c:4987
+#: client/gui-gtk-2.0/menu.c:4984 client/gui-gtk-2.0/menu.c:4985
 msgid "Lock new unit default action"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4989 client/gui-gtk-2.0/menu.c:4990
+#: client/gui-gtk-2.0/menu.c:4987 client/gui-gtk-2.0/menu.c:4988
 #, fuzzy
 msgid "Military units only"
 msgstr "Milicia"
 
-#: client/gui-gtk-2.0/menu.c:4992 client/gui-gtk-2.0/menu.c:4993
+#: client/gui-gtk-2.0/menu.c:4990 client/gui-gtk-2.0/menu.c:4991
 #, fuzzy
 msgid "Autowakeup _sentried units"
 msgstr "Atacar automàticament contra unitats terrestres"
 
-#: client/gui-gtk-2.0/menu.c:4995 client/gui-gtk-2.0/menu.c:4996
+#: client/gui-gtk-2.0/menu.c:4993 client/gui-gtk-2.0/menu.c:4994
 msgid "Move and _attack mode"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:5001 client/gui-gtk-2.0/menu.c:5002
-#: client/gui-gtk-2.0/menu.c:5024 client/gui-gtk-2.0/menu.c:5025
+#: client/gui-gtk-2.0/menu.c:4999 client/gui-gtk-2.0/menu.c:5000
+#: client/gui-gtk-2.0/menu.c:5022 client/gui-gtk-2.0/menu.c:5023
 #, fuzzy
 msgid "_Popup dialog"
 msgstr "_Obrir ciutat"
 
-#: client/gui-gtk-2.0/menu.c:5003 client/gui-gtk-2.0/menu.c:5004
+#: client/gui-gtk-2.0/menu.c:5001 client/gui-gtk-2.0/menu.c:5002
 #, fuzzy
 msgid "_Bribe unit"
 msgstr "Su_bornar la unitat enemiga"
 
-#: client/gui-gtk-2.0/menu.c:5005 client/gui-gtk-2.0/menu.c:5006
+#: client/gui-gtk-2.0/menu.c:5003 client/gui-gtk-2.0/menu.c:5004
 #, fuzzy
 msgid "_Sabotage unit (spy)"
 msgstr "_Sabotejar la ciutat"
 
-#: client/gui-gtk-2.0/menu.c:5007 client/gui-gtk-2.0/menu.c:5008
+#: client/gui-gtk-2.0/menu.c:5005 client/gui-gtk-2.0/menu.c:5006
 msgid "_Establish embassy"
 msgstr "_Establir una ambaixada"
 
-#: client/gui-gtk-2.0/menu.c:5009 client/gui-gtk-2.0/menu.c:5010
+#: client/gui-gtk-2.0/menu.c:5007 client/gui-gtk-2.0/menu.c:5008
 msgid "_Investigate city"
 msgstr "_Investigar la ciutat"
 
-#: client/gui-gtk-2.0/menu.c:5011 client/gui-gtk-2.0/menu.c:5012
+#: client/gui-gtk-2.0/menu.c:5009 client/gui-gtk-2.0/menu.c:5010
 msgid "_Sabotage city"
 msgstr "_Sabotejar la ciutat"
 
-#: client/gui-gtk-2.0/menu.c:5013 client/gui-gtk-2.0/menu.c:5014
+#: client/gui-gtk-2.0/menu.c:5011 client/gui-gtk-2.0/menu.c:5012
 #, fuzzy
 msgid "_Steal technology"
 msgstr "Robar _tecnologia"
 
-#: client/gui-gtk-2.0/menu.c:5015 client/gui-gtk-2.0/menu.c:5016
+#: client/gui-gtk-2.0/menu.c:5013 client/gui-gtk-2.0/menu.c:5014
 #, fuzzy
 msgid "_Incite revolt"
 msgstr "Incitar una _revolta"
 
-#: client/gui-gtk-2.0/menu.c:5017 client/gui-gtk-2.0/menu.c:5018
+#: client/gui-gtk-2.0/menu.c:5015 client/gui-gtk-2.0/menu.c:5016
 #, fuzzy
 msgid "_Poison city (spy)"
 msgstr "_Enverinar la ciutat"
 
-#: client/gui-gtk-2.0/menu.c:5019 client/gui-gtk-2.0/menu.c:5020
-#: client/gui-gtk-2.0/menu.c:5030 client/gui-gtk-2.0/menu.c:5031
+#: client/gui-gtk-2.0/menu.c:5017 client/gui-gtk-2.0/menu.c:5018
+#: client/gui-gtk-2.0/menu.c:5028 client/gui-gtk-2.0/menu.c:5029
 #, fuzzy
 msgid "_Keep going"
 msgstr "_Continuar movent-se"
 
-#: client/gui-gtk-2.0/menu.c:5026 client/gui-gtk-2.0/menu.c:5027
+#: client/gui-gtk-2.0/menu.c:5024 client/gui-gtk-2.0/menu.c:5025
 #, fuzzy
 msgid "_Establish trade route"
 msgstr "_Establir una ruta de comerç"
 
-#: client/gui-gtk-2.0/menu.c:5028 client/gui-gtk-2.0/menu.c:5029
+#: client/gui-gtk-2.0/menu.c:5026 client/gui-gtk-2.0/menu.c:5027
 #, fuzzy
 msgid "_Help building wonder"
 msgstr "_Ajudar a construir la meravella"
 
-#: client/gui-gtk-2.0/menu.c:5035 client/gui-gtk-2.0/menu.c:5036
+#: client/gui-gtk-2.0/menu.c:5033 client/gui-gtk-2.0/menu.c:5034
 #: common/unit.c:608
 msgid "Idle"
 msgstr "Inactiu"
 
-#: client/gui-gtk-2.0/menu.c:5037 client/gui-gtk-2.0/menu.c:5038
+#: client/gui-gtk-2.0/menu.c:5035 client/gui-gtk-2.0/menu.c:5036
 #: common/unit.c:624
 msgid "Sentry"
 msgstr "Sentinella"
 
-#: client/gui-gtk-2.0/menu.c:5039 client/gui-gtk-2.0/menu.c:5040
+#: client/gui-gtk-2.0/menu.c:5037 client/gui-gtk-2.0/menu.c:5038
 msgid "Fortify"
 msgstr "Fortificar"
 
-#: client/gui-gtk-2.0/menu.c:5043 client/gui-gtk-2.0/menu.c:5044
+#: client/gui-gtk-2.0/menu.c:5041 client/gui-gtk-2.0/menu.c:5042
 #, fuzzy
 msgid "Fortify or Sleep"
 msgstr "Fortificar"
 
-#: client/gui-gtk-2.0/menu.c:5250
+#: client/gui-gtk-2.0/menu.c:5248
 msgid "_Reports"
 msgstr "Info_rmes"
 
-#: client/gui-gtk-2.0/menu.c:5255 client/gui-gtk-2.0/menu.c:5256
+#: client/gui-gtk-2.0/menu.c:5253 client/gui-gtk-2.0/menu.c:5254
 msgid "_Players"
 msgstr "_Jugadors"
 
-#: client/gui-gtk-2.0/menu.c:5257 client/gui-gtk-2.0/menu.c:5258
+#: client/gui-gtk-2.0/menu.c:5255 client/gui-gtk-2.0/menu.c:5256
 msgid "_Economy"
 msgstr "_Economia"
 
-#: client/gui-gtk-2.0/menu.c:5259 client/gui-gtk-2.0/menu.c:5260
+#: client/gui-gtk-2.0/menu.c:5257 client/gui-gtk-2.0/menu.c:5258
 msgid "_Science"
 msgstr "C_iència"
 
-#: client/gui-gtk-2.0/menu.c:5261 client/gui-gtk-2.0/menu.c:5262
+#: client/gui-gtk-2.0/menu.c:5259 client/gui-gtk-2.0/menu.c:5260
 msgid "_Wonders of the World"
 msgstr "Mera_velles del món"
 
-#: client/gui-gtk-2.0/menu.c:5263 client/gui-gtk-2.0/menu.c:5264
+#: client/gui-gtk-2.0/menu.c:5261 client/gui-gtk-2.0/menu.c:5262
 msgid "_Top Five Cities"
 msgstr "Mi_llors cinc ciutats"
 
-#: client/gui-gtk-2.0/menu.c:5265 client/gui-gtk-2.0/menu.c:5266
+#: client/gui-gtk-2.0/menu.c:5263 client/gui-gtk-2.0/menu.c:5264
 msgid "_Messages"
 msgstr "_Missatges"
 
-#: client/gui-gtk-2.0/menu.c:5267 client/gui-gtk-2.0/menu.c:5268
+#: client/gui-gtk-2.0/menu.c:5265 client/gui-gtk-2.0/menu.c:5266
 msgid "_Demographics"
 msgstr "_Demografia"
 
-#: client/gui-gtk-2.0/menu.c:5270 client/gui-gtk-2.0/menu.c:5271
+#: client/gui-gtk-2.0/menu.c:5268 client/gui-gtk-2.0/menu.c:5269
 msgid "S_paceship"
 msgstr "_Nau espacial"
 
-#: client/gui-gtk-2.0/menu.c:5474 client/gui-gtk-2.0/menu.c:5475
+#: client/gui-gtk-2.0/menu.c:5472 client/gui-gtk-2.0/menu.c:5473
 msgid "Language_s"
 msgstr "Idiome_s"
 
-#: client/gui-gtk-2.0/menu.c:5476 client/gui-gtk-2.0/menu.c:5477
+#: client/gui-gtk-2.0/menu.c:5474 client/gui-gtk-2.0/menu.c:5475
 msgid "Co_nnecting"
 msgstr "Com co_nnectar"
 
-#: client/gui-gtk-2.0/menu.c:5478 client/gui-gtk-2.0/menu.c:5479
+#: client/gui-gtk-2.0/menu.c:5476 client/gui-gtk-2.0/menu.c:5477
 msgid "C_ontrols"
 msgstr "C_ontrols"
 
-#: client/gui-gtk-2.0/menu.c:5480 client/gui-gtk-2.0/menu.c:5481
+#: client/gui-gtk-2.0/menu.c:5478 client/gui-gtk-2.0/menu.c:5479
 msgid "C_hatline"
 msgstr "Línia de _xat"
 
-#: client/gui-gtk-2.0/menu.c:5482 client/gui-gtk-2.0/menu.c:5483
+#: client/gui-gtk-2.0/menu.c:5480 client/gui-gtk-2.0/menu.c:5481
 msgid "_Worklist Editor"
 msgstr "Editor llista treball (_W)"
 
-#: client/gui-gtk-2.0/menu.c:5484 client/gui-gtk-2.0/menu.c:5485
+#: client/gui-gtk-2.0/menu.c:5482 client/gui-gtk-2.0/menu.c:5483
 msgid "Citizen _Management"
 msgstr "Gestió ciutadans (_M)"
 
-#: client/gui-gtk-2.0/menu.c:5486 client/gui-gtk-2.0/menu.c:5487
+#: client/gui-gtk-2.0/menu.c:5484 client/gui-gtk-2.0/menu.c:5485
 msgid "_Playing"
 msgstr "Com _jugar"
 
-#: client/gui-gtk-2.0/menu.c:5488 client/gui-gtk-2.0/menu.c:5489
+#: client/gui-gtk-2.0/menu.c:5486 client/gui-gtk-2.0/menu.c:5487
 #, fuzzy
 msgid "_Warclient - PepClient"
 msgstr "Es_perar"
 
-#: client/gui-gtk-2.0/menu.c:5490 client/gui-gtk-2.0/menu.c:5491
+#: client/gui-gtk-2.0/menu.c:5488 client/gui-gtk-2.0/menu.c:5489
 msgid "City _Improvements"
 msgstr "E_dificis"
 
-#: client/gui-gtk-2.0/menu.c:5494 client/gui-gtk-2.0/menu.c:5495
+#: client/gui-gtk-2.0/menu.c:5492 client/gui-gtk-2.0/menu.c:5493
 msgid "Com_bat"
 msgstr "Com_bat"
 
-#: client/gui-gtk-2.0/menu.c:5496 client/gui-gtk-2.0/menu.c:5497
+#: client/gui-gtk-2.0/menu.c:5494 client/gui-gtk-2.0/menu.c:5495
 msgid "_ZOC"
 msgstr "_ZDC"
 
-#: client/gui-gtk-2.0/menu.c:5498 client/gui-gtk-2.0/menu.c:5499
+#: client/gui-gtk-2.0/menu.c:5496 client/gui-gtk-2.0/menu.c:5497
 msgid "Techno_logy"
 msgstr "Tecno_logia"
 
-#: client/gui-gtk-2.0/menu.c:5500 client/gui-gtk-2.0/menu.c:5501
+#: client/gui-gtk-2.0/menu.c:5498 client/gui-gtk-2.0/menu.c:5499
 msgid "_Terrain"
 msgstr "_Terreny"
 
-#: client/gui-gtk-2.0/menu.c:5502 client/gui-gtk-2.0/menu.c:5503
+#: client/gui-gtk-2.0/menu.c:5500 client/gui-gtk-2.0/menu.c:5501
 msgid "Won_ders"
 msgstr "Meravelles (_d)"
 
-#: client/gui-gtk-2.0/menu.c:5504 client/gui-gtk-2.0/menu.c:5505
+#: client/gui-gtk-2.0/menu.c:5502 client/gui-gtk-2.0/menu.c:5503
 msgid "_Government"
 msgstr "_Govern"
 
-#: client/gui-gtk-2.0/menu.c:5506 client/gui-gtk-2.0/menu.c:5507
+#: client/gui-gtk-2.0/menu.c:5504 client/gui-gtk-2.0/menu.c:5505
 msgid "Happin_ess"
 msgstr "F_elicitat"
 
-#: client/gui-gtk-2.0/menu.c:5508 client/gui-gtk-2.0/menu.c:5509
+#: client/gui-gtk-2.0/menu.c:5506 client/gui-gtk-2.0/menu.c:5507
 msgid "Space _Race"
 msgstr "Ca_rrera espacial"
 
-#: client/gui-gtk-2.0/menu.c:5510 client/gui-gtk-2.0/menu.c:5511
+#: client/gui-gtk-2.0/menu.c:5508 client/gui-gtk-2.0/menu.c:5509
 msgid "_Copying"
 msgstr "_Llicència"
 
-#: client/gui-gtk-2.0/menu.c:5512 client/gui-gtk-2.0/menu.c:5513
+#: client/gui-gtk-2.0/menu.c:5510 client/gui-gtk-2.0/menu.c:5511
 msgid "_About"
 msgstr "_Quant a"
 
-#: client/gui-gtk-2.0/menu.c:5787
+#: client/gui-gtk-2.0/menu.c:5786
 #, c-format
 msgid "Change to %s (_I)"
 msgstr "Canviar a %s (_I)"
 
-#: client/gui-gtk-2.0/menu.c:5788
+#: client/gui-gtk-2.0/menu.c:5787
 #, c-format
 msgid "Change to %s (_M)"
 msgstr "Canviar a %s (_M)"
 
-#: client/gui-gtk-2.0/menu.c:5789
+#: client/gui-gtk-2.0/menu.c:5788
 #, c-format
 msgid "Transf_orm to %s"
 msgstr "Transf_ormar en %s"
 
-#: client/gui-gtk-2.0/menu.c:5892
+#: client/gui-gtk-2.0/menu.c:5891
 msgid "Help _Build Wonder"
 msgstr "Ajudar a _Bastir Meravella"
 
-#: client/gui-gtk-2.0/menu.c:5896
+#: client/gui-gtk-2.0/menu.c:5895
 msgid "Add to City (_B)"
 msgstr "Afegir a ciutat (_B)"
 
-#: client/gui-gtk-2.0/menu.c:5909
+#: client/gui-gtk-2.0/menu.c:5908
 msgid "Make Trade _Route"
 msgstr "Fer _Ruta Comercial"
 
-#: client/gui-gtk-2.0/menu.c:5912
+#: client/gui-gtk-2.0/menu.c:5911
 msgid "Build _Railroad"
 msgstr "Construir fe_rrocarril"
 
-#: client/gui-gtk-2.0/menu.c:5935
+#: client/gui-gtk-2.0/menu.c:5934
 msgid "Bu_ild Farmland"
 msgstr "Constru_ir Horta"
 
-#: client/gui-gtk-2.0/menu.c:5957
+#: client/gui-gtk-2.0/menu.c:5956
 msgid "_Fortify"
 msgstr "_Fortificar"
 
-#: client/gui-gtk-2.0/menu.c:5971
+#: client/gui-gtk-2.0/menu.c:5970
 msgid "_Paradrop"
 msgstr "Llançar _paracaigudes"
 
-#: client/gui-gtk-2.0/menu.c:5979
+#: client/gui-gtk-2.0/menu.c:5978
 msgid "_Auto Attack"
 msgstr "_Autoatacar"
 
@@ -17604,6 +17604,11 @@ msgid ""
 "first established as an empire under the exiled Portuguese royal family. The "
 "empire lasted until the establishment of a republican government in 1889."
 msgstr ""
+"El Brasil va ser fundat com a colònia de Portugal, però va obtenir la "
+"independència el 1822 com a resultat de l'ocupació de Napoleó per la França "
+"napoleònica. El país va començar com a imperi dirigit per la família reial "
+"portuguesa a l'exili. L'imperi va durar fins l'establiment d'un govern "
+"republicà el 1889."
 
 #: data/nation/brazilian.ruleset:25 data/nation/iraqi.ruleset:22
 #: data/nation/roman.ruleset:40
@@ -18006,6 +18011,15 @@ msgid ""
 "out of the alliance, and the Catalans were finally defeated in 1714, losing "
 "their national rights as a result."
 msgstr ""
+"Durant l'Edat Mitjana, reis catalans van conquerir i dirigir un estol de "
+"regnes a la vora de la mar Mediterrània, des de la península Ibèrica fins a "
+"parts d'Itàlia i Grècia. Aquesta confederació/imperi es va convertir en una "
+"potència naval i comercial de l'àrea mediterrània. Els catalans van mantenir "
+"un govern propi després d'una unió dinàstica amb el regne veí de Castella, i "
+"van aliar-se amb Anglaterra i Àustria contra França i Castella durant la "
+"Guerra de Successió. El 1713, Anglaterra va signar el tractat d'Utrecht i va "
+"abandonar l'aliança, i els catalans van ser derrotats finalment el 1714, "
+"perdent els seus drets nacionals."
 
 #: data/nation/catalan.ruleset:32
 msgid "Primer Ministre"
@@ -19699,6 +19713,11 @@ msgid ""
 "North and South Korea as a result of the stalemate after the Korean war in "
 "1953."
 msgstr ""
+"Segons la llegenda, el primer regne coreà va ser fundat durant la "
+"prehistòria pels Tangun ancestrals a Manxúria del sud. Els regnes coreans "
+"van ser unificats el 668 pel rei Munmu. Avui en dia, la península coreana "
+"està dividida en dos estats, Corea del Nord i del Sud, com a resultat de "
+"l'armistici posterior a la guerra de Corea el 1953."
 
 #: data/nation/krev.ruleset:3
 #, fuzzy
@@ -20642,6 +20661,13 @@ msgid ""
 "North Africa, making it a regional superpower until its dissolution in the "
 "aftermath of WWI."
 msgstr ""
+"A principis del segle XIV Osman,un líder d'una tribu turca menor de l'oest "
+"d'Anatòlia, va conquerir totes les tribus veïnes. Un segle després la "
+"capital de Bizanci va caure sota el domini turc, cosa que va donar a "
+"l'imperi otomà accés a Europa. Els otomans van conquerir més endavant grans "
+"parts del sudest europeu, el món àrab islàmic així com Egipte i bona part "
+"del Nord d'Àfrica, convertint-se en una superpotència regional fins a la "
+"seva dissolució després de la Primera Guerra Mundial."
 
 #: data/nation/ottoman.ruleset:28 data/nation/tunisian.ruleset:29
 #, fuzzy
@@ -30193,7 +30219,7 @@ msgstr "Nova votació, núm. %d, per %s: %s."
 #: server/stdinhand.c:5886
 #, c-format
 msgid "Your new vote (\"%s\") was not legal or was not recognized."
-msgstr ""
+msgstr "El teu vot nou (\"%s\") no és legal o no s'ha reconegut."
 
 #: server/stdinhand.c:5943
 msgid "(server prompt)"

@@ -14,7 +14,7 @@ else
 fi
 
 for fichier in `ls *.po`; do
-    echo $fichier
-    msgmerge --compendium=$WORKDIR/po/$fichier $fichier freeciv.pot -o ${fichier}x
+    echo $fichier ${WORKDIR}/po/${fichier}
+    msgmerge --compendium=${WORKDIR}/po/${fichier} ${fichier} freeciv.pot -o ${fichier}x
     mv ${fichier}x $fichier
 done
