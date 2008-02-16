@@ -1951,17 +1951,20 @@ static void select_random_leader(void)
  *****************************************************************/
 static void select_random_race(void)
 {
+  int i, n;
+  const int MAX_DEFAULT_NATIONS = 4;
+  const gchar *nn;
+  char *nations[MAX_DEFAULT_NATIONS];
+  Nation_Type_id id;
   GtkTreeModel *model;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(races_nation_list));
 
-//*pepeto*
-  int i, n;
-  const gchar *nn;
-  char *nations[4]; /* set a default limit of 4 */
-  Nation_Type_id id;
+  /* Allow only ',' and ';' as separators (not ' ') so that
+   * nation names with spaces are parsed correctly. */
+  n = get_tokens(default_user_nation, nations,
+                 MAX_DEFAULT_NATIONS, ",;");
 
-  n = get_tokens(default_user_nation, nations, 4, " ,;");
   for (i = 0, id = NO_NATION_SELECTED; i < n; i++) {
     if (id == NO_NATION_SELECTED) {
       id = find_nation_by_name(nations[i]);

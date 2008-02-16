@@ -94,7 +94,7 @@ static client_option common_options[] = {
 		 NULL, NULL), 
   GEN_STR_OPTION(default_password, N_("Default password"),
                  NULL, NULL),
-  GEN_STR_OPTION(default_user_nation,        N_("Default player's nation"),
+  GEN_STR_OPTION(default_user_nation,        N_("Default player's nation(s)"),
 		 NULL, NULL), 
   GEN_STR_OPTION(default_user_tech_goal,        N_("Default player's technology goal"),
 		 NULL, NULL), 
