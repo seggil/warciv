@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-16 17:09+0100\n"
+"POT-Creation-Date: 2008-02-16 21:55+0100\n"
 "PO-Revision-Date: 2003-07-01 22:00+0200\n"
 "Last-Translator: Michael Stefaniuc <mstefani@redhat.com>\n"
 "Language-Team: Romanian <ro@li.org>\n"
@@ -2431,82 +2431,82 @@ msgstr "Stilul _Oraşelor:"
 msgid "L_egend"
 msgstr "L_egendă"
 
-#: client/gui-gtk-2.0/dialogs.c:2189
+#: client/gui-gtk-2.0/dialogs.c:2192
 msgid "You must select a nation."
 msgstr "Trebuie să alegeţi o naţiune."
 
-#: client/gui-gtk-2.0/dialogs.c:2194
+#: client/gui-gtk-2.0/dialogs.c:2197
 msgid "You must select your sex."
 msgstr "Trebuie să alegeţi sexul."
 
-#: client/gui-gtk-2.0/dialogs.c:2199
+#: client/gui-gtk-2.0/dialogs.c:2202
 msgid "You must select your city style."
 msgstr "Trebuie să alegeţi stilul de oraş"
 
-#: client/gui-gtk-2.0/dialogs.c:2208
+#: client/gui-gtk-2.0/dialogs.c:2211
 msgid "You must type a legal name."
 msgstr "Trebuie să introduceţi un nume valid."
 
-#: client/gui-gtk-2.0/dialogs.c:2525
+#: client/gui-gtk-2.0/dialogs.c:2528
 #, fuzzy
 msgid "PepClient settings"
 msgstr "Nu pot salva setările."
 
-#: client/gui-gtk-2.0/dialogs.c:2526
+#: client/gui-gtk-2.0/dialogs.c:2529
 #, fuzzy
 msgid "Reset"
 msgstr "_Contactează"
 
-#: client/gui-gtk-2.0/dialogs.c:2527
+#: client/gui-gtk-2.0/dialogs.c:2530
 #, fuzzy
 msgid "Load"
 msgstr "Stradă"
 
-#: client/gui-gtk-2.0/dialogs.c:2595
+#: client/gui-gtk-2.0/dialogs.c:2598
 #, fuzzy
 msgid "All units"
 msgstr "Unităţi aeriene"
 
-#: client/gui-gtk-2.0/dialogs.c:2601
+#: client/gui-gtk-2.0/dialogs.c:2604
 #, fuzzy
 msgid "New units"
 msgstr "Unităţi navale"
 
-#: client/gui-gtk-2.0/dialogs.c:2607
+#: client/gui-gtk-2.0/dialogs.c:2610
 #, fuzzy
 msgid "Fortified units"
 msgstr "Fortifică unitatea"
 
-#: client/gui-gtk-2.0/dialogs.c:2613
+#: client/gui-gtk-2.0/dialogs.c:2616
 #, fuzzy
 msgid "Sentried units"
 msgstr "_Ţine poziţia"
 
-#: client/gui-gtk-2.0/dialogs.c:2619
+#: client/gui-gtk-2.0/dialogs.c:2622
 #, fuzzy
 msgid "Veteran units"
 msgstr "Unităţi navale"
 
-#: client/gui-gtk-2.0/dialogs.c:2625
+#: client/gui-gtk-2.0/dialogs.c:2628
 #, fuzzy
 msgid "Auto units"
 msgstr "Unităţi aeriene"
 
-#: client/gui-gtk-2.0/dialogs.c:2631
+#: client/gui-gtk-2.0/dialogs.c:2634
 #, fuzzy
 msgid "Idle units"
 msgstr "Unităţi navale"
 
-#: client/gui-gtk-2.0/dialogs.c:2637
+#: client/gui-gtk-2.0/dialogs.c:2640
 msgid "Units able to move"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2643
+#: client/gui-gtk-2.0/dialogs.c:2646
 #, fuzzy
 msgid "Military units"
 msgstr "Militia"
 
-#: client/gui-gtk-2.0/dialogs.c:2649 client/multiselect.c:148
+#: client/gui-gtk-2.0/dialogs.c:2652 client/multiselect.c:148
 msgid "Off"
 msgstr ""
 
@@ -2696,30 +2696,30 @@ msgstr ""
 msgid "Report bugs at %s.\n"
 msgstr "Raportează erorile la <%s>.\n"
 
-#: client/gui-gtk-2.0/gui_main.c:1029
+#: client/gui-gtk-2.0/gui_main.c:1028
 msgid "Freeciv"
 msgstr "Freeciv"
 
-#: client/gui-gtk-2.0/gui_main.c:1448 client/gui-gtk-2.0/gui_main.c:1464
+#: client/gui-gtk-2.0/gui_main.c:1447 client/gui-gtk-2.0/gui_main.c:1463
 #: data/Freeciv.in:2645
 msgid "Turn Done"
 msgstr "Termină Runda"
 
-#: client/gui-gtk-2.0/gui_main.c:1464
+#: client/gui-gtk-2.0/gui_main.c:1463
 msgid "Shift+Return"
 msgstr "Shift+Return"
 
-#: client/gui-gtk-2.0/gui_main.c:1496
+#: client/gui-gtk-2.0/gui_main.c:1495
 #, fuzzy
 msgid "_Map"
 msgstr "_Hărţi"
 
-#: client/gui-gtk-2.0/gui_main.c:1586
+#: client/gui-gtk-2.0/gui_main.c:1585
 #, fuzzy
 msgid "_Chat"
 msgstr "Car de Luptă"
 
-#: client/gui-gtk-2.0/gui_main.c:1603 data/Freeciv.in:2836
+#: client/gui-gtk-2.0/gui_main.c:1602 data/Freeciv.in:2836
 msgid ""
 "Freeciv is free software and you are welcome to distribute copies of it\n"
 "under certain conditions; See the \"Copying\" item on the Help menu.\n"
@@ -2729,37 +2729,37 @@ msgstr ""
 "cu unele condiţii ; Vezi elementul \"Copying\" din meniul Help (Ajutor).\n"
 "Acum.. sări pe ei!"
 
-#: client/gui-gtk-2.0/gui_main.c:1620
+#: client/gui-gtk-2.0/gui_main.c:1619
 msgid "Allies Only"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1629
+#: client/gui-gtk-2.0/gui_main.c:1628
 msgid "More Time!"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1636
+#: client/gui-gtk-2.0/gui_main.c:1635
 msgid "Request Pause"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1643
+#: client/gui-gtk-2.0/gui_main.c:1642
 #, fuzzy
 msgid "Clear links"
 msgstr "Curăţa poluarea"
 
-#: client/gui-gtk-2.0/gui_main.c:1751
+#: client/gui-gtk-2.0/gui_main.c:1750
 #, fuzzy
 msgid "Freeciv "
 msgstr "Freeciv"
 
-#: client/gui-gtk-2.0/gui_main.c:1923
+#: client/gui-gtk-2.0/gui_main.c:1922
 msgid "Name:"
 msgstr "Nume:"
 
-#: client/gui-gtk-2.0/gui_main.c:1930
+#: client/gui-gtk-2.0/gui_main.c:1929
 msgid "Host:"
 msgstr "Gazdă:"
 
-#: client/gui-gtk-2.0/gui_main.c:2067
+#: client/gui-gtk-2.0/gui_main.c:2066
 #, c-format
 msgid ""
 "%s People\n"
@@ -2778,20 +2778,20 @@ msgstr ""
 "Cercetez %s: %d/%d\n"
 "Guvern: %s"
 
-#: client/gui-gtk-2.0/gui_main.c:2363
+#: client/gui-gtk-2.0/gui_main.c:2362
 msgid "Are you sure you want to quit?"
 msgstr "Sigur vrei să renunţi?"
 
-#: client/gui-gtk-2.0/gui_main.c:2456
+#: client/gui-gtk-2.0/gui_main.c:2455
 msgid "_YES"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2477
+#: client/gui-gtk-2.0/gui_main.c:2476
 #, fuzzy
 msgid "_NO"
 msgstr "_Ok"
 
-#: client/gui-gtk-2.0/gui_main.c:2498
+#: client/gui-gtk-2.0/gui_main.c:2497
 msgid "_ABSTAIN"
 msgstr ""
 
@@ -3531,10 +3531,9 @@ msgstr ""
 msgid "Exclusive filter"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:2282 client/gui-gtk-2.0/menu.c:2299
-#: client/gui-gtk-2.0/menu.c:2316
+#: client/gui-gtk-2.0/menu.c:2282
 #, fuzzy
-msgid "Delayed goto selection"
+msgid "Delayed goto selection _1"
 msgstr "Selectarea unităţi"
 
 #: client/gui-gtk-2.0/menu.c:2286 client/gui-gtk-2.0/menu.c:2287
@@ -3615,6 +3614,16 @@ msgstr "_Închide"
 #: client/gui-gtk-2.0/menu.c:3326
 msgid "_Execute"
 msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:2299
+#, fuzzy
+msgid "Delayed goto selection _2"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:2316
+#, fuzzy
+msgid "Delayed goto selection _3"
+msgstr "Selectarea unităţi"
 
 #: client/gui-gtk-2.0/menu.c:2336 client/gui-gtk-2.0/menu.c:2337
 #: client/gui-gtk-2.0/menu.c:2368 client/gui-gtk-2.0/menu.c:2369
@@ -3788,11 +3797,9 @@ msgstr ""
 msgid "Show cities in airlift _queue"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3233 client/gui-gtk-2.0/menu.c:3249
-#: client/gui-gtk-2.0/menu.c:3265 client/gui-gtk-2.0/menu.c:3281
-#: client/gui-gtk-2.0/menu.c:3298 client/gui-gtk-2.0/menu.c:3315
+#: client/gui-gtk-2.0/menu.c:3233
 #, fuzzy
-msgid "Airlift queue"
+msgid "Airlift queue _4"
 msgstr "Transportă aerian"
 
 #: client/gui-gtk-2.0/menu.c:3246 client/gui-gtk-2.0/menu.c:3247
@@ -3804,6 +3811,31 @@ msgstr "Transportă aerian"
 #, fuzzy
 msgid "_Show"
 msgstr "Ar_ată"
+
+#: client/gui-gtk-2.0/menu.c:3249
+#, fuzzy
+msgid "Airlift queue _5"
+msgstr "Transportă aerian"
+
+#: client/gui-gtk-2.0/menu.c:3265
+#, fuzzy
+msgid "Airlift queue _6"
+msgstr "Transportă aerian"
+
+#: client/gui-gtk-2.0/menu.c:3281
+#, fuzzy
+msgid "Airlift queue _7"
+msgstr "Transportă aerian"
+
+#: client/gui-gtk-2.0/menu.c:3298
+#, fuzzy
+msgid "Airlift queue _8"
+msgstr "Transportă aerian"
+
+#: client/gui-gtk-2.0/menu.c:3315
+#, fuzzy
+msgid "Airlift queue _9"
+msgstr "Transportă aerian"
 
 #: client/gui-gtk-2.0/menu.c:3551
 #, fuzzy
@@ -3880,13 +3912,49 @@ msgstr ""
 msgid "Multi-selection sprea_d"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4368 client/gui-gtk-2.0/menu.c:4381
-#: client/gui-gtk-2.0/menu.c:4394 client/gui-gtk-2.0/menu.c:4407
-#: client/gui-gtk-2.0/menu.c:4420 client/gui-gtk-2.0/menu.c:4433
-#: client/gui-gtk-2.0/menu.c:4446 client/gui-gtk-2.0/menu.c:4459
+#: client/gui-gtk-2.0/menu.c:4368
+#, fuzzy
+msgid "Multi-selection _1"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4381
+#, fuzzy
+msgid "Multi-selection _2"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4394
+#, fuzzy
+msgid "Multi-selection _3"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4407
+#, fuzzy
+msgid "Multi-selection _4"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4420
+#, fuzzy
+msgid "Multi-selection _5"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4433
+#, fuzzy
+msgid "Multi-selection _6"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4446
+#, fuzzy
+msgid "Multi-selection _7"
+msgstr "Selectarea unităţi"
+
+#: client/gui-gtk-2.0/menu.c:4459
+#, fuzzy
+msgid "Multi-selection _8"
+msgstr "Selectarea unităţi"
+
 #: client/gui-gtk-2.0/menu.c:4472
 #, fuzzy
-msgid "Multi-selection"
+msgid "Multi-selection _9"
 msgstr "Selectarea unităţi"
 
 #: client/gui-gtk-2.0/menu.c:4489 client/gui-gtk-2.0/menu.c:4490
@@ -5897,7 +5965,7 @@ msgstr "Metaserver"
 
 #: client/options.c:97
 #, fuzzy
-msgid "Default player's nation"
+msgid "Default player's nation(s)"
 msgstr "create <nume-jucător>"
 
 #: client/options.c:99
@@ -6867,29 +6935,29 @@ msgstr ""
 msgid "Dynamic settings were saved for an other game, they cannot be loaded"
 msgstr ""
 
-#: client/peptool.c:822
+#: client/peptool.c:827
 #, fuzzy
 msgid "PepClient: Settings loaded"
 msgstr "Nu pot salva setările."
 
-#: client/peptool.c:836
+#: client/peptool.c:841
 #, fuzzy, c-format
 msgid "PepClient: Cannot load setting file %s"
 msgstr "Fişierul de setări este %s"
 
-#: client/peptool.c:1015 client/peptool.c:1040 client/peptool.c:1048
-#: client/peptool.c:1065 client/peptool.c:1086 client/peptool.c:1099
-#: client/peptool.c:1112 client/peptool.c:1121 client/peptool.c:1132
-#: client/peptool.c:1167
+#: client/peptool.c:1020 client/peptool.c:1045 client/peptool.c:1053
+#: client/peptool.c:1070 client/peptool.c:1091 client/peptool.c:1104
+#: client/peptool.c:1117 client/peptool.c:1126 client/peptool.c:1137
+#: client/peptool.c:1172
 msgid "don't modify this!"
 msgstr ""
 
-#: client/peptool.c:1173
+#: client/peptool.c:1178
 #, fuzzy, c-format
 msgid "PepClient: Save failed, cannot write to file %s"
 msgstr "Nu pot scrie în fişierul %s"
 
-#: client/peptool.c:1176
+#: client/peptool.c:1181
 #, fuzzy, c-format
 msgid "PepClient: Saved settings to file %s"
 msgstr "Fişierul de setări este %s"

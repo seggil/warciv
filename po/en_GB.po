@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freeciv 1.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-16 17:09+0100\n"
+"POT-Creation-Date: 2008-02-16 21:55+0100\n"
 "PO-Revision-Date: 1999-10-21 20:02+0100\n"
 "Last-Translator: Robert Brady <rwb197@ecs.soton.ac.uk>\n"
 "Language-Team: \n"
@@ -2310,73 +2310,73 @@ msgstr ""
 msgid "L_egend"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2189
+#: client/gui-gtk-2.0/dialogs.c:2192
 msgid "You must select a nation."
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2194
+#: client/gui-gtk-2.0/dialogs.c:2197
 msgid "You must select your sex."
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2199
+#: client/gui-gtk-2.0/dialogs.c:2202
 msgid "You must select your city style."
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2208
+#: client/gui-gtk-2.0/dialogs.c:2211
 msgid "You must type a legal name."
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2525
+#: client/gui-gtk-2.0/dialogs.c:2528
 msgid "PepClient settings"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2526
+#: client/gui-gtk-2.0/dialogs.c:2529
 msgid "Reset"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2527
+#: client/gui-gtk-2.0/dialogs.c:2530
 msgid "Load"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2595
+#: client/gui-gtk-2.0/dialogs.c:2598
 msgid "All units"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2601
+#: client/gui-gtk-2.0/dialogs.c:2604
 msgid "New units"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2607
+#: client/gui-gtk-2.0/dialogs.c:2610
 msgid "Fortified units"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2613
+#: client/gui-gtk-2.0/dialogs.c:2616
 msgid "Sentried units"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2619
+#: client/gui-gtk-2.0/dialogs.c:2622
 #, fuzzy
 msgid "Veteran units"
 msgstr "Auto Centre on Units"
 
-#: client/gui-gtk-2.0/dialogs.c:2625
+#: client/gui-gtk-2.0/dialogs.c:2628
 #, fuzzy
 msgid "Auto units"
 msgstr "Auto Centre on Units"
 
-#: client/gui-gtk-2.0/dialogs.c:2631
+#: client/gui-gtk-2.0/dialogs.c:2634
 msgid "Idle units"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2637
+#: client/gui-gtk-2.0/dialogs.c:2640
 msgid "Units able to move"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2643
+#: client/gui-gtk-2.0/dialogs.c:2646
 msgid "Military units"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2649 client/multiselect.c:148
+#: client/gui-gtk-2.0/dialogs.c:2652 client/multiselect.c:148
 msgid "Off"
 msgstr ""
 
@@ -2564,63 +2564,63 @@ msgstr ""
 msgid "Report bugs at %s.\n"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1029
+#: client/gui-gtk-2.0/gui_main.c:1028
 msgid "Freeciv"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1448 client/gui-gtk-2.0/gui_main.c:1464
+#: client/gui-gtk-2.0/gui_main.c:1447 client/gui-gtk-2.0/gui_main.c:1463
 #: data/Freeciv.in:2645
 msgid "Turn Done"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1464
+#: client/gui-gtk-2.0/gui_main.c:1463
 msgid "Shift+Return"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1496
+#: client/gui-gtk-2.0/gui_main.c:1495
 msgid "_Map"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1586
+#: client/gui-gtk-2.0/gui_main.c:1585
 msgid "_Chat"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1603 data/Freeciv.in:2836
+#: client/gui-gtk-2.0/gui_main.c:1602 data/Freeciv.in:2836
 msgid ""
 "Freeciv is free software and you are welcome to distribute copies of it\n"
 "under certain conditions; See the \"Copying\" item on the Help menu.\n"
 "Now.. Go give'em hell!"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1620
+#: client/gui-gtk-2.0/gui_main.c:1619
 msgid "Allies Only"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1629
+#: client/gui-gtk-2.0/gui_main.c:1628
 msgid "More Time!"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1636
+#: client/gui-gtk-2.0/gui_main.c:1635
 msgid "Request Pause"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1643
+#: client/gui-gtk-2.0/gui_main.c:1642
 msgid "Clear links"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1751
+#: client/gui-gtk-2.0/gui_main.c:1750
 msgid "Freeciv "
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1923
+#: client/gui-gtk-2.0/gui_main.c:1922
 msgid "Name:"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1930
+#: client/gui-gtk-2.0/gui_main.c:1929
 msgid "Host:"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2067
+#: client/gui-gtk-2.0/gui_main.c:2066
 #, c-format
 msgid ""
 "%s People\n"
@@ -2632,19 +2632,19 @@ msgid ""
 "Government: %s"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2363
+#: client/gui-gtk-2.0/gui_main.c:2362
 msgid "Are you sure you want to quit?"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2456
+#: client/gui-gtk-2.0/gui_main.c:2455
 msgid "_YES"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2477
+#: client/gui-gtk-2.0/gui_main.c:2476
 msgid "_NO"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2498
+#: client/gui-gtk-2.0/gui_main.c:2497
 msgid "_ABSTAIN"
 msgstr ""
 
@@ -3331,9 +3331,8 @@ msgstr ""
 msgid "Exclusive filter"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:2282 client/gui-gtk-2.0/menu.c:2299
-#: client/gui-gtk-2.0/menu.c:2316
-msgid "Delayed goto selection"
+#: client/gui-gtk-2.0/menu.c:2282
+msgid "Delayed goto selection _1"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2286 client/gui-gtk-2.0/menu.c:2287
@@ -3411,6 +3410,14 @@ msgstr ""
 #: client/gui-gtk-2.0/menu.c:3310 client/gui-gtk-2.0/menu.c:3325
 #: client/gui-gtk-2.0/menu.c:3326
 msgid "_Execute"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:2299
+msgid "Delayed goto selection _2"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:2316
+msgid "Delayed goto selection _3"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:2336 client/gui-gtk-2.0/menu.c:2337
@@ -3568,10 +3575,8 @@ msgstr ""
 msgid "Show cities in airlift _queue"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3233 client/gui-gtk-2.0/menu.c:3249
-#: client/gui-gtk-2.0/menu.c:3265 client/gui-gtk-2.0/menu.c:3281
-#: client/gui-gtk-2.0/menu.c:3298 client/gui-gtk-2.0/menu.c:3315
-msgid "Airlift queue"
+#: client/gui-gtk-2.0/menu.c:3233
+msgid "Airlift queue _4"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:3246 client/gui-gtk-2.0/menu.c:3247
@@ -3581,6 +3586,26 @@ msgstr ""
 #: client/gui-gtk-2.0/menu.c:3312 client/gui-gtk-2.0/menu.c:3313
 #: client/gui-gtk-2.0/menu.c:3328 client/gui-gtk-2.0/menu.c:3329
 msgid "_Show"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:3249
+msgid "Airlift queue _5"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:3265
+msgid "Airlift queue _6"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:3281
+msgid "Airlift queue _7"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:3298
+msgid "Airlift queue _8"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:3315
+msgid "Airlift queue _9"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:3551
@@ -3651,12 +3676,40 @@ msgstr ""
 msgid "Multi-selection sprea_d"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4368 client/gui-gtk-2.0/menu.c:4381
-#: client/gui-gtk-2.0/menu.c:4394 client/gui-gtk-2.0/menu.c:4407
-#: client/gui-gtk-2.0/menu.c:4420 client/gui-gtk-2.0/menu.c:4433
-#: client/gui-gtk-2.0/menu.c:4446 client/gui-gtk-2.0/menu.c:4459
+#: client/gui-gtk-2.0/menu.c:4368
+msgid "Multi-selection _1"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4381
+msgid "Multi-selection _2"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4394
+msgid "Multi-selection _3"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4407
+msgid "Multi-selection _4"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4420
+msgid "Multi-selection _5"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4433
+msgid "Multi-selection _6"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4446
+msgid "Multi-selection _7"
+msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:4459
+msgid "Multi-selection _8"
+msgstr ""
+
 #: client/gui-gtk-2.0/menu.c:4472
-msgid "Multi-selection"
+msgid "Multi-selection _9"
 msgstr ""
 
 #: client/gui-gtk-2.0/menu.c:4489 client/gui-gtk-2.0/menu.c:4490
@@ -5518,7 +5571,7 @@ msgid "Default password"
 msgstr ""
 
 #: client/options.c:97
-msgid "Default player's nation"
+msgid "Default player's nation(s)"
 msgstr ""
 
 #: client/options.c:99
@@ -6457,28 +6510,28 @@ msgstr ""
 msgid "Dynamic settings were saved for an other game, they cannot be loaded"
 msgstr ""
 
-#: client/peptool.c:822
+#: client/peptool.c:827
 msgid "PepClient: Settings loaded"
 msgstr ""
 
-#: client/peptool.c:836
+#: client/peptool.c:841
 #, c-format
 msgid "PepClient: Cannot load setting file %s"
 msgstr ""
 
-#: client/peptool.c:1015 client/peptool.c:1040 client/peptool.c:1048
-#: client/peptool.c:1065 client/peptool.c:1086 client/peptool.c:1099
-#: client/peptool.c:1112 client/peptool.c:1121 client/peptool.c:1132
-#: client/peptool.c:1167
+#: client/peptool.c:1020 client/peptool.c:1045 client/peptool.c:1053
+#: client/peptool.c:1070 client/peptool.c:1091 client/peptool.c:1104
+#: client/peptool.c:1117 client/peptool.c:1126 client/peptool.c:1137
+#: client/peptool.c:1172
 msgid "don't modify this!"
 msgstr ""
 
-#: client/peptool.c:1173
+#: client/peptool.c:1178
 #, c-format
 msgid "PepClient: Save failed, cannot write to file %s"
 msgstr ""
 
-#: client/peptool.c:1176
+#: client/peptool.c:1181
 #, c-format
 msgid "PepClient: Saved settings to file %s"
 msgstr ""

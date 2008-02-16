@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Freeciv 1.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-16 17:09+0100\n"
+"POT-Creation-Date: 2008-02-16 21:55+0100\n"
 "PO-Revision-Date: 2003-06-05 11:16+0200\n"
 "Last-Translator: Gábor Takács <tg330@hszk.bme.hu>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
@@ -2477,81 +2477,81 @@ msgstr "_Városstílus"
 msgid "L_egend"
 msgstr "Légió"
 
-#: client/gui-gtk-2.0/dialogs.c:2189
+#: client/gui-gtk-2.0/dialogs.c:2192
 msgid "You must select a nation."
 msgstr "Választanod kell egy népet."
 
-#: client/gui-gtk-2.0/dialogs.c:2194
+#: client/gui-gtk-2.0/dialogs.c:2197
 msgid "You must select your sex."
 msgstr "Be kell állítanod a nemedet."
 
-#: client/gui-gtk-2.0/dialogs.c:2199
+#: client/gui-gtk-2.0/dialogs.c:2202
 msgid "You must select your city style."
 msgstr "Be kell állítanod a városaid stílusát."
 
-#: client/gui-gtk-2.0/dialogs.c:2208
+#: client/gui-gtk-2.0/dialogs.c:2211
 msgid "You must type a legal name."
 msgstr "Érvényes nevet kell beírnod."
 
-#: client/gui-gtk-2.0/dialogs.c:2525
+#: client/gui-gtk-2.0/dialogs.c:2528
 msgid "PepClient settings"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2526
+#: client/gui-gtk-2.0/dialogs.c:2529
 #, fuzzy
 msgid "Reset"
 msgstr "_Találkozó"
 
-#: client/gui-gtk-2.0/dialogs.c:2527
+#: client/gui-gtk-2.0/dialogs.c:2530
 #, fuzzy
 msgid "Load"
 msgstr "Út"
 
-#: client/gui-gtk-2.0/dialogs.c:2595
+#: client/gui-gtk-2.0/dialogs.c:2598
 #, fuzzy
 msgid "All units"
 msgstr "Légi egységek ellen"
 
-#: client/gui-gtk-2.0/dialogs.c:2601
+#: client/gui-gtk-2.0/dialogs.c:2604
 #, fuzzy
 msgid "New units"
 msgstr "Tengeri egységek ellen"
 
-#: client/gui-gtk-2.0/dialogs.c:2607
+#: client/gui-gtk-2.0/dialogs.c:2610
 #, fuzzy
 msgid "Fortified units"
 msgstr "Megerõsít"
 
-#: client/gui-gtk-2.0/dialogs.c:2613
+#: client/gui-gtk-2.0/dialogs.c:2616
 #, fuzzy
 msgid "Sentried units"
 msgstr "A tétlen egységek õrködjenek (_s)"
 
-#: client/gui-gtk-2.0/dialogs.c:2619
+#: client/gui-gtk-2.0/dialogs.c:2622
 #, fuzzy
 msgid "Veteran units"
 msgstr "Tengeri egységek ellen"
 
-#: client/gui-gtk-2.0/dialogs.c:2625
+#: client/gui-gtk-2.0/dialogs.c:2628
 #, fuzzy
 msgid "Auto units"
 msgstr "Légi egységek ellen"
 
-#: client/gui-gtk-2.0/dialogs.c:2631
+#: client/gui-gtk-2.0/dialogs.c:2634
 #, fuzzy
 msgid "Idle units"
 msgstr "Tengeri egységek ellen"
 
-#: client/gui-gtk-2.0/dialogs.c:2637
+#: client/gui-gtk-2.0/dialogs.c:2640
 msgid "Units able to move"
 msgstr ""
 
-#: client/gui-gtk-2.0/dialogs.c:2643
+#: client/gui-gtk-2.0/dialogs.c:2646
 #, fuzzy
 msgid "Military units"
 msgstr "Milícia"
 
-#: client/gui-gtk-2.0/dialogs.c:2649 client/multiselect.c:148
+#: client/gui-gtk-2.0/dialogs.c:2652 client/multiselect.c:148
 #, fuzzy
 msgid "Off"
 msgstr "ki"
@@ -2755,30 +2755,30 @@ msgstr ""
 msgid "Report bugs at %s.\n"
 msgstr "Hibajelentéseket a(z) <%s> címre küldj.\n"
 
-#: client/gui-gtk-2.0/gui_main.c:1029
+#: client/gui-gtk-2.0/gui_main.c:1028
 msgid "Freeciv"
 msgstr "Freeciv"
 
-#: client/gui-gtk-2.0/gui_main.c:1448 client/gui-gtk-2.0/gui_main.c:1464
+#: client/gui-gtk-2.0/gui_main.c:1447 client/gui-gtk-2.0/gui_main.c:1463
 #: data/Freeciv.in:2645
 msgid "Turn Done"
 msgstr "Kör vége"
 
-#: client/gui-gtk-2.0/gui_main.c:1464
+#: client/gui-gtk-2.0/gui_main.c:1463
 msgid "Shift+Return"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1496
+#: client/gui-gtk-2.0/gui_main.c:1495
 #, fuzzy
 msgid "_Map"
 msgstr "Térképek"
 
-#: client/gui-gtk-2.0/gui_main.c:1586
+#: client/gui-gtk-2.0/gui_main.c:1585
 #, fuzzy
 msgid "_Chat"
 msgstr "Harci Szekér"
 
-#: client/gui-gtk-2.0/gui_main.c:1603 data/Freeciv.in:2836
+#: client/gui-gtk-2.0/gui_main.c:1602 data/Freeciv.in:2836
 msgid ""
 "Freeciv is free software and you are welcome to distribute copies of it\n"
 "under certain conditions; See the \"Copying\" item on the Help menu.\n"
@@ -2789,37 +2789,37 @@ msgstr ""
 "(Lásd a \"Másolás\" pontot a Súgó menüben.)\n"
 "És most.. Adj nekik! :)"
 
-#: client/gui-gtk-2.0/gui_main.c:1620
+#: client/gui-gtk-2.0/gui_main.c:1619
 msgid "Allies Only"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1629
+#: client/gui-gtk-2.0/gui_main.c:1628
 msgid "More Time!"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1636
+#: client/gui-gtk-2.0/gui_main.c:1635
 msgid "Request Pause"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:1643
+#: client/gui-gtk-2.0/gui_main.c:1642
 #, fuzzy
 msgid "Clear links"
 msgstr "Szennyezést Eltakarít"
 
-#: client/gui-gtk-2.0/gui_main.c:1751
+#: client/gui-gtk-2.0/gui_main.c:1750
 #, fuzzy
 msgid "Freeciv "
 msgstr "Freeciv"
 
-#: client/gui-gtk-2.0/gui_main.c:1923
+#: client/gui-gtk-2.0/gui_main.c:1922
 msgid "Name:"
 msgstr "Név:"
 
-#: client/gui-gtk-2.0/gui_main.c:1930
+#: client/gui-gtk-2.0/gui_main.c:1929
 msgid "Host:"
 msgstr "Gazdagép:"
 
-#: client/gui-gtk-2.0/gui_main.c:2067
+#: client/gui-gtk-2.0/gui_main.c:2066
 #, c-format
 msgid ""
 "%s People\n"
@@ -2838,20 +2838,20 @@ msgstr ""
 "Kutatási alatt: %s: %d/%d\n"
 "Államforma: %s"
 
-#: client/gui-gtk-2.0/gui_main.c:2363
+#: client/gui-gtk-2.0/gui_main.c:2362
 msgid "Are you sure you want to quit?"
 msgstr "Biztosan ki szeretnél lépni?"
 
-#: client/gui-gtk-2.0/gui_main.c:2456
+#: client/gui-gtk-2.0/gui_main.c:2455
 msgid "_YES"
 msgstr ""
 
-#: client/gui-gtk-2.0/gui_main.c:2477
+#: client/gui-gtk-2.0/gui_main.c:2476
 #, fuzzy
 msgid "_NO"
 msgstr "_Rendben"
 
-#: client/gui-gtk-2.0/gui_main.c:2498
+#: client/gui-gtk-2.0/gui_main.c:2497
 msgid "_ABSTAIN"
 msgstr ""
 
@@ -3587,10 +3587,9 @@ msgstr ""
 msgid "Exclusive filter"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:2282 client/gui-gtk-2.0/menu.c:2299
-#: client/gui-gtk-2.0/menu.c:2316
+#: client/gui-gtk-2.0/menu.c:2282
 #, fuzzy
-msgid "Delayed goto selection"
+msgid "Delayed goto selection _1"
 msgstr "Egységválasztás"
 
 #: client/gui-gtk-2.0/menu.c:2286 client/gui-gtk-2.0/menu.c:2287
@@ -3671,6 +3670,16 @@ msgstr "Napló _törlése"
 #: client/gui-gtk-2.0/menu.c:3326
 msgid "_Execute"
 msgstr ""
+
+#: client/gui-gtk-2.0/menu.c:2299
+#, fuzzy
+msgid "Delayed goto selection _2"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:2316
+#, fuzzy
+msgid "Delayed goto selection _3"
+msgstr "Egységválasztás"
 
 #: client/gui-gtk-2.0/menu.c:2336 client/gui-gtk-2.0/menu.c:2337
 #: client/gui-gtk-2.0/menu.c:2368 client/gui-gtk-2.0/menu.c:2369
@@ -3844,11 +3853,9 @@ msgstr ""
 msgid "Show cities in airlift _queue"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:3233 client/gui-gtk-2.0/menu.c:3249
-#: client/gui-gtk-2.0/menu.c:3265 client/gui-gtk-2.0/menu.c:3281
-#: client/gui-gtk-2.0/menu.c:3298 client/gui-gtk-2.0/menu.c:3315
+#: client/gui-gtk-2.0/menu.c:3233
 #, fuzzy
-msgid "Airlift queue"
+msgid "Airlift queue _4"
 msgstr "Légi szállítás"
 
 #: client/gui-gtk-2.0/menu.c:3246 client/gui-gtk-2.0/menu.c:3247
@@ -3860,6 +3867,31 @@ msgstr "Légi szállítás"
 #, fuzzy
 msgid "_Show"
 msgstr "_Megjelenítés..."
+
+#: client/gui-gtk-2.0/menu.c:3249
+#, fuzzy
+msgid "Airlift queue _5"
+msgstr "Légi szállítás"
+
+#: client/gui-gtk-2.0/menu.c:3265
+#, fuzzy
+msgid "Airlift queue _6"
+msgstr "Légi szállítás"
+
+#: client/gui-gtk-2.0/menu.c:3281
+#, fuzzy
+msgid "Airlift queue _7"
+msgstr "Légi szállítás"
+
+#: client/gui-gtk-2.0/menu.c:3298
+#, fuzzy
+msgid "Airlift queue _8"
+msgstr "Légi szállítás"
+
+#: client/gui-gtk-2.0/menu.c:3315
+#, fuzzy
+msgid "Airlift queue _9"
+msgstr "Légi szállítás"
 
 #: client/gui-gtk-2.0/menu.c:3551
 #, fuzzy
@@ -3936,13 +3968,49 @@ msgstr ""
 msgid "Multi-selection sprea_d"
 msgstr ""
 
-#: client/gui-gtk-2.0/menu.c:4368 client/gui-gtk-2.0/menu.c:4381
-#: client/gui-gtk-2.0/menu.c:4394 client/gui-gtk-2.0/menu.c:4407
-#: client/gui-gtk-2.0/menu.c:4420 client/gui-gtk-2.0/menu.c:4433
-#: client/gui-gtk-2.0/menu.c:4446 client/gui-gtk-2.0/menu.c:4459
+#: client/gui-gtk-2.0/menu.c:4368
+#, fuzzy
+msgid "Multi-selection _1"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4381
+#, fuzzy
+msgid "Multi-selection _2"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4394
+#, fuzzy
+msgid "Multi-selection _3"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4407
+#, fuzzy
+msgid "Multi-selection _4"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4420
+#, fuzzy
+msgid "Multi-selection _5"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4433
+#, fuzzy
+msgid "Multi-selection _6"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4446
+#, fuzzy
+msgid "Multi-selection _7"
+msgstr "Egységválasztás"
+
+#: client/gui-gtk-2.0/menu.c:4459
+#, fuzzy
+msgid "Multi-selection _8"
+msgstr "Egységválasztás"
+
 #: client/gui-gtk-2.0/menu.c:4472
 #, fuzzy
-msgid "Multi-selection"
+msgid "Multi-selection _9"
 msgstr "Egységválasztás"
 
 #: client/gui-gtk-2.0/menu.c:4489 client/gui-gtk-2.0/menu.c:4490
@@ -5964,7 +6032,7 @@ msgstr "Alapértelmezett szerver"
 
 #: client/options.c:97
 #, fuzzy
-msgid "Default player's nation"
+msgid "Default player's nation(s)"
 msgstr "Alapértelmezett felhasználónév"
 
 #: client/options.c:99
@@ -6933,29 +7001,29 @@ msgstr ""
 msgid "Dynamic settings were saved for an other game, they cannot be loaded"
 msgstr ""
 
-#: client/peptool.c:822
+#: client/peptool.c:827
 #, fuzzy
 msgid "PepClient: Settings loaded"
 msgstr "Beállítások _mentése"
 
-#: client/peptool.c:836
+#: client/peptool.c:841
 #, fuzzy, c-format
 msgid "PepClient: Cannot load setting file %s"
 msgstr "Beállítások elmentve a(z) %s fájlba"
 
-#: client/peptool.c:1015 client/peptool.c:1040 client/peptool.c:1048
-#: client/peptool.c:1065 client/peptool.c:1086 client/peptool.c:1099
-#: client/peptool.c:1112 client/peptool.c:1121 client/peptool.c:1132
-#: client/peptool.c:1167
+#: client/peptool.c:1020 client/peptool.c:1045 client/peptool.c:1053
+#: client/peptool.c:1070 client/peptool.c:1091 client/peptool.c:1104
+#: client/peptool.c:1117 client/peptool.c:1126 client/peptool.c:1137
+#: client/peptool.c:1172
 msgid "don't modify this!"
 msgstr ""
 
-#: client/peptool.c:1173
+#: client/peptool.c:1178
 #, fuzzy, c-format
 msgid "PepClient: Save failed, cannot write to file %s"
 msgstr "Nem sikerült a mentés a(z) %s fájlba"
 
-#: client/peptool.c:1176
+#: client/peptool.c:1181
 #, fuzzy, c-format
 msgid "PepClient: Saved settings to file %s"
 msgstr "Beállítások elmentve a(z) %s fájlba"
