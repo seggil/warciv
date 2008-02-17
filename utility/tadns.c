@@ -684,7 +684,7 @@ void dns_queue(struct dns *dns,
      * reverse look up of 127.0.0.1. */
 
     sz_strlcpy((char *) query->addr, "localhost");
-    query->addrlen = (size_t) strlen(query->addr);
+    query->addrlen = (size_t) strlen((char *) query->addr);
     call_user(dns, query);
     destroy_query(dns, query);
     return;
