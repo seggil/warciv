@@ -678,6 +678,18 @@ void dns_queue(struct dns *dns,
   dns->tid = query->tid;
   query->expire = now + DNS_QUERY_TIMEOUT;
 
+  if (qtype == DNS_PTR_RECORD
+      && 0 == strcmp(name, "1.0.0.127.in-addr.arpa")) {
+    /* Don't bother asking the resolver for a
+     * reverse look up of 127.0.0.1. */
+
+    sz_strlcpy(query->addr, "localhost");
+    query->addrlen = strlen(query->addr);
+    call_user(dns, query);
+    destroy_query(dns, query);
+    return;
+  }
+
   /* copy over name, converted to lower case */
   for (p = query->name, i = 0;
        name[i] != '\0' && p < query->name + sizeof(query->name) - 1;
