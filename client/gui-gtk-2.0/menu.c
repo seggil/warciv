@@ -579,7 +579,7 @@ static const char *load_menu_game(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_game %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -757,7 +757,7 @@ static const char *load_menu_government_type(const char *actionname)
                                      0);
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_government_type %d",
-          (size_t) strlen(retbuf), (size_t) sizeof(retbuf));
+          (int) strlen(retbuf), (int) sizeof(retbuf));
 
   return retbuf;
 
@@ -810,7 +810,7 @@ static const char *load_menu_government(void)
               load_menu_government_type("GOVERNMENT_TYPE"));
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_government %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -1162,7 +1162,7 @@ static const char *load_menu_view(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_view %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -2242,7 +2242,7 @@ static const char *load_menu_delayed_goto_automatic(const char *actionname)
 
   freelog(LOG_MENU, "Strlen of buf = %d; "
           "Size of load_menu_delayed_goto_automatic %d",
-          (size_t) strlen(retbuf), (size_t) sizeof(retbuf));
+          (int) strlen(retbuf), (int) sizeof(retbuf));
 
   return retbuf;
 }
@@ -2605,7 +2605,7 @@ static const char *load_menu_delayed_goto(void)
                load_menu_delayed_goto_automatic("DELAYED_GOTO_DG3_AUTOMATIC"));
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_delayed_goto %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -3198,7 +3198,7 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
                                      radio_action_group_airlift_unit[aq], 0);
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_airlift_unit %d",
-          (size_t) strlen(retbuf), (size_t) sizeof(retbuf));
+          (int) strlen(retbuf), (int) sizeof(retbuf));
 
   return retbuf;
 }
@@ -3451,7 +3451,7 @@ static const char *load_menu_airlift(void)
                                                                   "AIRLIFT_AQ6_UNIT_TYPE")));
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_airlift %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -3608,7 +3608,7 @@ static const char *load_menu_auto_caravan(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_auto_caravan %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -4761,7 +4761,7 @@ static const char *load_menu_multi_selection(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_multi_selection %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -5152,7 +5152,7 @@ static const char *load_menu_miscellaneous(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_miscellaneous %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -5293,7 +5293,7 @@ static const char *load_menu_report(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_report %d",
-          (size_t) strlen(buf), (size_t) sizeof(buf));
+          (int) strlen(buf), (int) sizeof(buf));
 
   return buf;
 }
@@ -5546,7 +5546,7 @@ static const char *load_menu_help(void)
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_help %d",
-          (size_t) strlen(buf), (size_t)  sizeof(buf));
+          (int) strlen(buf), (int)  sizeof(buf));
 
   return buf;
 }
@@ -5601,7 +5601,7 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
                "</ui>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of xmlmenu %d",
-          (size_t) strlen(xmlmenu), (size_t) sizeof(xmlmenu));
+          (int) strlen(xmlmenu), (int) sizeof(xmlmenu));
 
   /*   read menu structure from file */
   gtk_ui_manager_add_ui_from_string(main_uimanager,
