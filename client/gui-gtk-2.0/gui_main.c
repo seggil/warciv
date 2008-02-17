@@ -155,7 +155,9 @@ client_option gui_options[] = {
   GEN_BOOL_OPTION(use_voteinfo_bar,
                   N_("Display the vote bar for new votes")),
   GEN_BOOL_OPTION(show_new_vote_in_front,
-                  N_("New votes go to the front of the vote list"))
+                  N_("New votes go to the front of the vote list")),
+  GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
+                  N_("Disable chatline scrolling-to-bottom when window is resized."))
 };
 const int num_gui_options = ARRAY_SIZE(gui_options);
 
@@ -423,7 +425,8 @@ static gboolean toplevel_configure(GtkWidget *w,
 {
   static int old_width = 0, old_height = 0;
 
-  if (event->width != old_width || event->height != old_height) {
+  if (!disable_chatline_scroll_on_window_resize
+      && (event->width != old_width || event->height != old_height)) {
 
     /* Often it happens that by resizing the window the scrollbar for the
      * chat window gets pushed up, causing the chatline to not scroll
