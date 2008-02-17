@@ -59,7 +59,7 @@
 #endif
 
 #define WARCLIENT_VERSION VER_STRINGIFY(MINOR_VERSION) "." \
-                          VER_STRINGIFY(PATCH_VERSION) ".7 devel"
+                          VER_STRINGIFY(PATCH_VERSION) ".8 devel"
 
 /* version informational strings */
 const char *freeciv_name_version(void);
