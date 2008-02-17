@@ -209,6 +209,8 @@ static gint timer_callback(gpointer data);
 gboolean show_conn_popup(GtkWidget *view, GdkEventButton *ev, gpointer data);
 static gboolean quit_dialog_callback(void);
 
+static guint chatline_scroll_callback_id = 0;
+
 #define NET_INPUT_CTX_MEMORY_GUARD 0xfece5ace
 
 /* used by add_net_input_callback and related functions */
@@ -385,7 +387,6 @@ static gboolean toplevel_handler(GtkWidget *w, GdkEventKey *ev,
 /**************************************************************************
 ...
 **************************************************************************/
-static guint chatline_scroll_callback_id = 0;
 static gboolean chatline_scroll_callback(gpointer data)
 {
   /* Why do we do it in such a convuluted fasion rather than calling
@@ -402,10 +403,14 @@ static gboolean chatline_scroll_callback(gpointer data)
 **************************************************************************/
 void queue_chatline_scroll_to_bottom(void)
 {
-  if (chatline_scroll_callback_id == 0) {
-    chatline_scroll_callback_id = g_idle_add(chatline_scroll_callback,
-                                             NULL);
+  guint id;
+
+  if (chatline_scroll_callback_id != 0) {
+    return;
   }
+
+  id = g_idle_add(chatline_scroll_callback, NULL);
+  chatline_scroll_callback_id = id;
 }
 
 /**************************************************************************
@@ -416,11 +421,20 @@ static gboolean toplevel_configure(GtkWidget *w,
                                    GdkEventConfigure *event,
                                    gpointer user_data)
 {
-  /* Often it happens that by resizing the window the scrollbar for the
-   * chat window gets pushed up, causing the chatline to not scroll
-   * automatically to the bottom when new messages arrives.
-   * This rectifies that situation. */
-  queue_chatline_scroll_to_bottom();
+  static int old_width = 0, old_height = 0;
+
+  if (event->width != old_width || event->height != old_height) {
+
+    /* Often it happens that by resizing the window the scrollbar for the
+     * chat window gets pushed up, causing the chatline to not scroll
+     * automatically to the bottom when new messages arrives.
+     * This rectifies that situation. */
+    queue_chatline_scroll_to_bottom();
+
+    old_width = event->width;
+    old_height = event->height;
+  }
+
   return FALSE; /* Continue propagating. */
 }
 
