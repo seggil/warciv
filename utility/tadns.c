@@ -683,8 +683,8 @@ void dns_queue(struct dns *dns,
     /* Don't bother asking the resolver for a
      * reverse look up of 127.0.0.1. */
 
-    sz_strlcpy(query->addr, "localhost");
-    query->addrlen = strlen(query->addr);
+    sz_strlcpy((char *) query->addr, "localhost");
+    query->addrlen = (size_t) strlen(query->addr);
     call_user(dns, query);
     destroy_query(dns, query);
     return;
