@@ -1178,6 +1178,17 @@ static bool is_allowed_player_name(struct player *pplayer,
     }
   } players_iterate_end;
 
+  if (nation == OBSERVER_NATION
+      && 0 == mystrcasecmp(name, OBSERVER_NAME)) {
+    if (error_buf) {
+      my_snprintf(error_buf, bufsz,
+          _("You may not call yourself '%s' playing as the %s nation."),
+          name, get_nation_name(nation));
+    }
+    return FALSE;
+  }
+
+
   /* Any name from the default list is always allowed. */
   if (is_default_nation_name(name, nation)) {
     return TRUE;
