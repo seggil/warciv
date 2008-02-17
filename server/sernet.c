@@ -784,7 +784,7 @@ int sniff_packets(void)
           continue;
         }
 
-        nb = read_socket_data(pconn->sock, pconn->buffer);
+        nb = read_socket_data(pconn, pconn->buffer);
 	if (nb < 0) {
           if (nb == -2) {
             server_break_connection(pconn, ES_REMOTE_CLOSE);

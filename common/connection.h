@@ -208,6 +208,11 @@ struct connection {
   /* Used to determine how the connection is broken */
   enum exit_state exit_state;
 
+  /* When a read or write socket operation fails,
+   * the error code (i.e. the return value of
+   * mysocketerrno()) is saved to this field. */
+  long error_code;
+
   void (*notify_of_writable_data) (struct connection *pc,
 				   bool data_available_and_socket_full);
 
@@ -321,7 +326,8 @@ void close_socket_set_callback(CLOSE_FUN fun);
 void call_close_socket_callback(struct connection *pc,
                                 enum exit_state state);
 
-int read_socket_data(int sock, struct socket_packet_buffer *buffer);
+int read_socket_data(struct connection *pc,
+                     struct socket_packet_buffer *buffer);
 int flush_connection_send_buffer_all(struct connection *pc);
 int send_connection_data(struct connection *pc, const unsigned char *data,
                          int len);

@@ -312,7 +312,6 @@ static int read_from_connection(struct connection *pc, bool block)
 
   for (;;) {
     fd_set readfs, writefs, exceptfs;
-    int socket_fd = pc->sock;
     bool have_data_for_server = (pc->used && pc->send_buffer
 				&& pc->send_buffer->ndata > 0);
     int n;
@@ -322,18 +321,18 @@ static int read_from_connection(struct connection *pc, bool block)
     tv.tv_usec = 0;
 
     MY_FD_ZERO(&readfs);
-    FD_SET(socket_fd, &readfs);
+    FD_SET(pc->sock, &readfs);
 
     MY_FD_ZERO(&exceptfs);
-    FD_SET(socket_fd, &exceptfs);
+    FD_SET(pc->sock, &exceptfs);
 
     if (have_data_for_server) {
       MY_FD_ZERO(&writefs);
-      FD_SET(socket_fd, &writefs);
-      n = select(socket_fd + 1, &readfs, &writefs, &exceptfs,
+      FD_SET(pc->sock, &writefs);
+      n = select(pc->sock + 1, &readfs, &writefs, &exceptfs,
 		 block ? NULL : &tv);
     } else {
-      n = select(socket_fd + 1, &readfs, NULL, &exceptfs,
+      n = select(pc->sock + 1, &readfs, NULL, &exceptfs,
 		 block ? NULL : &tv);
     }
 
@@ -358,18 +357,18 @@ static int read_from_connection(struct connection *pc, bool block)
       return -1;
     }
 
-    if (FD_ISSET(socket_fd, &exceptfs)) {
+    if (FD_ISSET(pc->sock, &exceptfs)) {
       return -1;
     }
 
-    if (have_data_for_server && FD_ISSET(socket_fd, &writefs)) {
+    if (have_data_for_server && FD_ISSET(pc->sock, &writefs)) {
       flush_connection_send_buffer_all(pc);
     }
 
-    if (FD_ISSET(socket_fd, &readfs)) {
+    if (FD_ISSET(pc->sock, &readfs)) {
       int rv;
       
-      rv = read_socket_data(socket_fd, pc->buffer);
+      rv = read_socket_data(pc, pc->buffer);
 
       return rv < 0 ? -1 : rv;
     }

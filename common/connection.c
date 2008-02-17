@@ -168,10 +168,24 @@ static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
     >0  :  number of bytes read
     =0  :  non-blocking sockets only; no data read, would block
 **************************************************************************/
-int read_socket_data(int sock, struct socket_packet_buffer *buffer)
+int read_socket_data(struct connection *pc,
+                     struct socket_packet_buffer *buffer)
 {
   int nb;
   long err_no;
+  int sock;
+
+  if (pc == NULL || buffer == NULL || !pc->used
+      || pc->is_closing || pc->sock < 0) {
+    /* Hmm, not the best way to "ignore" a "bad" call
+     * to this function. In any case, this situation
+     * should not happen very often. */
+    freelog(LOG_DEBUG, "Tried to read from an invalid connection: %s",
+            conn_description(pc));
+    return -1;
+  }
+
+  sock = pc->sock;
 
   if (!buffer_ensure_free_extra_space(buffer, MAX_LEN_PACKET)) {
     freelog(LOG_ERROR, "Failed to increase size of packet read buffer.");
@@ -183,6 +197,7 @@ int read_socket_data(int sock, struct socket_packet_buffer *buffer)
   nb = my_readsocket(sock, (char *) (buffer->data + buffer->ndata),
                      buffer->nsize - buffer->ndata);
   err_no = mysocketerrno();
+  pc->error_code = err_no;
   freelog(LOG_DEBUG, "my_readsocket nb=%d: %s",
           nb, mystrsocketerror(err_no));
 
@@ -227,6 +242,7 @@ static int write_socket_data(struct connection *pc,
             nblock, conn_description(pc));
     nput = my_writesocket(pc->sock, buf->data + count, nblock);
     err_no = mysocketerrno();
+    pc->error_code = err_no;
     freelog(LOG_DEBUG, "write returns nput=%d: %s",
             nput, mystrsocketerror(err_no));
 
@@ -554,9 +570,16 @@ const char *conn_description(const struct connection *pconn)
   } else {
     sz_strlcpy(buffer, "server");
   }
-  if (exit_state_name[pconn->exit_state]) {
-    cat_snprintf(buffer, sizeof(buffer),
-		 " (%s)", _(exit_state_name[pconn->exit_state]));
+  if (exit_state_name[pconn->exit_state] != NULL) {
+    if (pconn->exit_state == ES_READ_ERROR
+        || pconn->exit_state == ES_WRITE_ERROR) {
+      cat_snprintf(buffer, sizeof(buffer), " (%s: %s)",
+                   _(exit_state_name[pconn->exit_state]),
+                   mystrsocketerror(pconn->error_code));
+    } else {
+      cat_snprintf(buffer, sizeof(buffer), " (%s)",
+                   _(exit_state_name[pconn->exit_state]));
+    }
   } else if (!pconn->established) {
     sz_strlcat(buffer, _(" (connection incomplete)"));
     return buffer;
