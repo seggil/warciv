@@ -18,7 +18,7 @@
 #include "shared.h"		/* MAX_LEN_NAME */
 #include "version.h"
 
-#define PEPCLIENT_VERSION "Warclient - PepClient " WARCLIENT_VERSION
+#define PEPCLIENT_VERSION "Warclient - PepClient " WARCLIENT_VERSION_STRING
 
 /*
  * Every TIMER_INTERVAL milliseconds real_timer_callback is
