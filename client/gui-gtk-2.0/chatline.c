@@ -707,15 +707,17 @@ static int parse_unit_link(const char *str,
     return 0;
 
   id = atoi(idbuf);
-  if (id < 0)
+  if (id < 0) {
     return 0;
+  }
 
   punit = find_unit_by_id(id);
-  if (!punit)
+  if (!punit) {
     return 0;
+  }
 
   *tag = gtk_text_buffer_create_tag(buf, NULL,
-                                     "foreground", "blue",
+                                     "foreground", "cyan",
                                      "underline", PANGO_UNDERLINE_SINGLE,
                                      NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type",

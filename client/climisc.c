@@ -1731,7 +1731,7 @@ static enum color_std get_link_mark_color(struct map_link *pml)
     case LINK_CITY_ID_AND_NAME:
       return COLOR_STD_GREEN;
     case LINK_UNIT:
-      return COLOR_STD_OCEAN;
+      return COLOR_STD_RACE1; // Cyan
   }
   return COLOR_STD_BLACK;
 }
