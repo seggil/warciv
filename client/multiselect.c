@@ -515,7 +515,7 @@ void multi_select_cat(int dest, int src)
     }
   } unit_list_iterate_end;
   update_unit_info_label(get_unit_in_focus());
-  my_snprintf(buf, sizeof(buf), _("PepClient: Multi-selection %d added"), src);
+  my_snprintf(buf, sizeof(buf), _("Warclient: Multi-selection %d added"), src);
   append_output_window(buf);
 }
 
@@ -543,7 +543,7 @@ void multi_select_clear(int multi)
   } else {
     char buf[256];
     my_snprintf(buf, sizeof(buf),
-                _("PepClient: Multi-selection %d cleared"), multi);
+                _("Warclient: Multi-selection %d cleared"), multi);
     append_output_window(buf);
   }
 }
@@ -597,12 +597,12 @@ void multi_select_copy(int dest, int src)
     } else {
       update_unit_info_label(get_unit_in_focus());
       my_snprintf(buf, sizeof(buf),
-                  _("PepClient: Multi-selection %d selected"), src);
+                  _("Warclient: Multi-selection %d selected"), src);
     }
   } else {
     int size = multi_select_size(dest);
     my_snprintf(buf, sizeof(buf),
-                _("PepClient: Multi-selection %d: %d %s"), dest, size,
+                _("Warclient: Multi-selection %d: %d %s"), dest, size,
                 PL_("unit", "units", size));
   }
   append_output_window(buf);

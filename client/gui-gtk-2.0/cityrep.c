@@ -82,7 +82,7 @@ static struct gui_dialog *city_dialog_shell = NULL;
 
 enum {
   CITY_CENTER = 1, CITY_POPUP, CITY_BUY, CITY_CLEAR_WORKLIST,
-  CITY_AUTOARRANGE_WORKERS, CITY_REMOVE_CUR_PROD//*pepeto*
+  CITY_AUTOARRANGE_WORKERS, CITY_REMOVE_CUR_PROD
 };
 
 static GtkWidget *city_view;
@@ -99,30 +99,31 @@ static void recreate_sell_menu(void);
 struct sell_data { int count, gold, cid; };
 
 static GtkWidget *city_center_command, *city_popup_command, *city_buy_command;
-static GtkWidget *city_change_command, *city_clear_worklist_command, *city_remove_cur_prod_command;//*pepeto*
+static GtkWidget *city_change_command, *city_clear_worklist_command;
+static GtkWidget *city_remove_cur_prod_command;
 static GtkWidget *city_autoarrange_workers_command;
-static GtkWidget *city_last_command, *city_first_command, *city_next_command, *city_cma_command = NULL;//*pepeto*
-static GtkWidget *city_sell_command;
+static GtkWidget *city_last_command, *city_first_command, *city_next_command;
+static GtkWidget *city_cma_command = NULL, *city_sell_command;
 
 static GtkWidget *change_improvements_item;
 static GtkWidget *change_units_item;
 static GtkWidget *change_wonders_item;
-static GtkWidget *change_worklist_item;//*pepeto*
+static GtkWidget *change_worklist_item;
 
 static GtkWidget *last_improvements_item;
 static GtkWidget *last_units_item;
 static GtkWidget *last_wonders_item;
-static GtkWidget *last_worklist_item;//*pepeto*
+static GtkWidget *last_worklist_item;
 
 static GtkWidget *first_improvements_item;
 static GtkWidget *first_units_item;
 static GtkWidget *first_wonders_item;
-static GtkWidget *first_worklist_item;//*pepeto*
+static GtkWidget *first_worklist_item;
 
 static GtkWidget *next_improvements_item;
 static GtkWidget *next_units_item;
 static GtkWidget *next_wonders_item;
-static GtkWidget *next_worklist_item;//*pepeto*
+static GtkWidget *next_worklist_item;
 
 static GtkWidget *select_island_item;
 
@@ -700,15 +701,20 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
   gtk_widget_show_all(menu);
 }
 
+/****************************************************************
+ Create the cma entries in the change menu and the select menu. The
+ indices CMA_NONE (aka -1) and CMA_CUSTOM (aka -2) are
+ special. CMA_NONE signifies a preset of "none" and CMA_CUSTOM a
+ "custom" preset.
+*****************************************************************/
 static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
-					     GCallback callback)//*pepeto*
+					 GCallback callback)
 {
   struct player *plr = get_player_ptr();
   GtkWidget *menu, *item;
   int i;
   bool sensitive = FALSE;
 
-  gtk_menu_item_set_submenu(parent_item, NULL);
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(parent_item, menu);
   
@@ -718,10 +724,10 @@ static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
       g_signal_connect(item, "activate",
 		       G_CALLBACK(callback), GINT_TO_POINTER(i));
-		sensitive=TRUE;
+      sensitive = TRUE;
     }
   }
-  gtk_widget_set_sensitive(GTK_WIDGET(parent_item),sensitive);
+  gtk_widget_set_sensitive(GTK_WIDGET(parent_item), sensitive);
 
   gtk_widget_show_all(menu);
 }
@@ -913,7 +919,7 @@ static void create_city_report_dialog(bool make_modal)
 
   w = gui_dialog_add_stockbutton(city_dialog_shell, GTK_STOCK_DELETE,
       _("_Remove Prod."), CITY_REMOVE_CUR_PROD);
-  city_clear_worklist_command = w;//*pepeto*
+  city_clear_worklist_command = w;
   
   w = gui_dialog_add_stockbutton(city_dialog_shell, GTK_STOCK_CLEAR,
       _("_Clear Worklist"), CITY_CLEAR_WORKLIST);
@@ -1625,7 +1631,7 @@ static void create_change_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_improvements_item);
   change_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_wonders_item);
-  change_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  change_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), change_worklist_item);
 }
 
@@ -1657,7 +1663,7 @@ static void create_last_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), last_improvements_item);
   last_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), last_wonders_item);
-  last_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  last_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), last_worklist_item);
 }
 
@@ -1678,7 +1684,7 @@ static void create_first_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), first_improvements_item);
   first_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), first_wonders_item);
-  first_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  first_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), first_worklist_item);
 }
 
@@ -1699,7 +1705,7 @@ static void create_next_menu(GtkWidget *item)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_improvements_item);
   next_wonders_item = gtk_menu_item_new_with_label(_("Wonders"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_wonders_item);
-  next_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));//*pepeto*
+  next_worklist_item = gtk_menu_item_new_with_label(_("Worklist"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), next_worklist_item);
 }
 
@@ -1723,19 +1729,19 @@ static void popup_change_menu(GtkMenuShell *menu, gpointer data)
   n = gtk_tree_selection_count_selected_rows(city_selection);
 
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(change_improvements_item),
-				  FALSE, FALSE, CO_CHANGE,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   FALSE, FALSE, CO_CHANGE,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(change_units_item),
-				  TRUE, FALSE, CO_CHANGE,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   TRUE, FALSE, CO_CHANGE,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(change_wonders_item),
-				  FALSE, TRUE, CO_CHANGE,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   FALSE, TRUE, CO_CHANGE,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_worklist_to_menu_item(GTK_MENU_ITEM(change_worklist_item),
-				  G_CALLBACK(select_change_worklist_callback));//*pepeto*
+			       G_CALLBACK(select_change_worklist_callback));
 }
 
 /****************************************************************
@@ -1756,11 +1762,11 @@ static void popup_last_menu(GtkMenuShell *menu, gpointer data)
 				  city_can_build_impr_or_unit,
 				  G_CALLBACK(select_impr_or_unit_callback), n);
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(last_wonders_item),
-				  FALSE, TRUE, CO_LAST,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   FALSE, TRUE, CO_LAST,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_worklist_to_menu_item(GTK_MENU_ITEM(last_worklist_item),
-				  G_CALLBACK(select_last_worklist_callback));//*pepeto*
+			       G_CALLBACK(select_last_worklist_callback));
 }
 
 /****************************************************************
@@ -1781,11 +1787,11 @@ static void popup_first_menu(GtkMenuShell *menu, gpointer data)
 				  city_can_build_impr_or_unit,
 				  G_CALLBACK(select_impr_or_unit_callback), n);
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(first_wonders_item),
-				  FALSE, TRUE, CO_FIRST,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   FALSE, TRUE, CO_FIRST,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_worklist_to_menu_item(GTK_MENU_ITEM(first_worklist_item),
-				  G_CALLBACK(select_first_worklist_callback));//*pepeto*
+			       G_CALLBACK(select_first_worklist_callback));
 }
 
 /****************************************************************
@@ -1798,19 +1804,19 @@ static void popup_next_menu(GtkMenuShell *menu, gpointer data)
   n = gtk_tree_selection_count_selected_rows(city_selection);
 
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(next_improvements_item),
-				  FALSE, FALSE, CO_NEXT,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   FALSE, FALSE, CO_NEXT,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(next_units_item),
-				  TRUE, FALSE, CO_NEXT,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   TRUE, FALSE, CO_NEXT,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_impr_or_unit_to_menu_item(GTK_MENU_ITEM(next_wonders_item),
-				  FALSE, TRUE, CO_NEXT,
-				  city_can_build_impr_or_unit,
-				  G_CALLBACK(select_impr_or_unit_callback), n);
+				   FALSE, TRUE, CO_NEXT,
+				   city_can_build_impr_or_unit,
+				   G_CALLBACK(select_impr_or_unit_callback), n);
   append_worklist_to_menu_item(GTK_MENU_ITEM(next_worklist_item),
-				  G_CALLBACK(select_next_worklist_callback));//*pepeto*
+			       G_CALLBACK(select_next_worklist_callback));
 }
 
 /****************************************************************
@@ -2035,7 +2041,7 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
   n = gtk_tree_selection_count_selected_rows(selection);
 
   if (n == 0) {
-    gtk_widget_set_sensitive(city_cma_command, FALSE);//*pepeto*
+    gtk_widget_set_sensitive(city_cma_command, FALSE);
     gtk_widget_set_sensitive(city_change_command, FALSE);
     gtk_widget_set_sensitive(city_last_command, FALSE);
     gtk_widget_set_sensitive(city_first_command, FALSE);
@@ -2048,7 +2054,7 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_remove_cur_prod_command, FALSE);
     gtk_widget_set_sensitive(city_sell_command, FALSE);
   } else {
-    gtk_widget_set_sensitive(city_cma_command, can_client_issue_orders());//*pepeto*
+    gtk_widget_set_sensitive(city_cma_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_change_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_last_command, can_client_issue_orders());
     gtk_widget_set_sensitive(city_first_command, can_client_issue_orders());
@@ -2056,9 +2062,12 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_center_command, TRUE);
     gtk_widget_set_sensitive(city_popup_command, TRUE);
     gtk_widget_set_sensitive(city_buy_command, can_client_issue_orders());
-    gtk_widget_set_sensitive(city_clear_worklist_command, can_client_issue_orders());
-    gtk_widget_set_sensitive(city_remove_cur_prod_command, can_client_issue_orders());
-    gtk_widget_set_sensitive(city_autoarrange_workers_command, can_client_issue_orders());
+    gtk_widget_set_sensitive(city_clear_worklist_command,
+			     can_client_issue_orders());
+    gtk_widget_set_sensitive(city_remove_cur_prod_command,
+			     can_client_issue_orders());
+    gtk_widget_set_sensitive(city_autoarrange_workers_command,
+			     can_client_issue_orders());
     if (can_client_issue_orders()) {
       recreate_sell_menu();
     } else {

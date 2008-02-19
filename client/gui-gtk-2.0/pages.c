@@ -1371,7 +1371,7 @@ GtkWidget *create_start_page(void)
   g_signal_connect(button, "clicked", G_CALLBACK(popup_option_dialog), NULL);
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
 
-  button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES, _("_PepClient Options"));
+  button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES, _("_Warclient Options"));
   g_signal_connect(button, "clicked", G_CALLBACK(create_pepsetting_dialog), NULL);
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
 

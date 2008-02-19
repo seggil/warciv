@@ -48,11 +48,11 @@
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
-#include "menu.h"//*pepeto*
-#include "multiselect.h"//*pepeto*
+#include "menu.h"
+#include "multiselect.h"
 #include "options.h"
 #include "packhand.h"
-#include "peptool.h"
+#include "wc_settings.h"
 #include "tilespec.h"
 
 #include "dialogs.h"
@@ -85,18 +85,19 @@ static GtkWidget  *spy_sabotage_shell;
 static int         sabotage_improvement;
 
 /******************************************************************/
-#define SELECT_UNIT_READY  1
-#define SELECT_UNIT_SENTRY 2
-//*pepeto*
-#define SELECT_UNIT_SELECT 3
-#define SELECT_UNIT_ADD_TO_FOCUS 4
+enum {
+  SELECT_UNIT_READY = 1,
+  SELECT_UNIT_SENTRY,
+  SELECT_UNIT_SELECT,
+  SELECT_UNIT_ADD_TO_FOCUS
+};
 
 static GtkWidget *unit_select_dialog_shell;
 static GtkTreeStore *unit_select_store;
 static GtkWidget *unit_select_view;
 static GtkTreePath *unit_select_path;
 static struct tile *unit_select_ptile;
-static GtkTreeSelection *unit_select_selection;//*pepeto*
+static GtkTreeSelection *unit_select_selection;
 
 static void select_random_race(void);
   
@@ -1363,7 +1364,7 @@ static void refresh_unit_select_dialog(void)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static void unit_select_destroy_callback(GtkObject *object, gpointer data)
 {
@@ -1372,29 +1373,29 @@ static void unit_select_destroy_callback(GtkObject *object, gpointer data)
 }
 
 /****************************************************************
- ... *pepeto*
+  ...
 *****************************************************************/
 static void add_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
-			GtkTreeIter *it, gpointer data)
+			     GtkTreeIter *it, gpointer data)
 {
   gint id;
   struct unit *punit;
-  bool *focus_change=(bool *)data;
+  bool *focus_change = (bool *)data;
 
-  gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store),it,0,&id,-1);
-  if(!(punit=player_find_unit_by_id(get_player_ptr(),id)))
+  gtk_tree_model_get(GTK_TREE_MODEL(unit_select_store), it, 0, &id, -1);
+  if (!(punit = player_find_unit_by_id(get_player_ptr(), id))) {
     return;
-  if(*focus_change)
-  {
-	  set_unit_focus(punit);
-	  *focus_change=FALSE;
   }
-  else
-	  multi_select_add_or_remove_unit(punit);
+  if (*focus_change) {
+    set_unit_focus(punit);
+    *focus_change = FALSE;
+  } else {
+    multi_select_add_or_remove_unit(punit);
+  }
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
 {
@@ -1402,69 +1403,71 @@ static void unit_select_cmd_callback(GtkWidget *w, gint rid, gpointer data)
 
   switch (rid) {
   case SELECT_UNIT_READY:
-    {
-      struct unit *pmyunit = NULL;
+  {
+    struct unit *pmyunit = NULL;
 
-      unit_list_iterate(ptile->units, punit) {
-        if (get_player_idx() == punit->owner) {
-          pmyunit = punit;
+    unit_list_iterate(ptile->units, punit) {
+      if (get_player_idx() == punit->owner) {
+	pmyunit = punit;
 
-          /* Activate this unit. */
-			request_active_unit(punit);
-        }
-      } unit_list_iterate_end;
-
-      if (pmyunit) {
-        /* Put the focus on one of the activated units. */
-        set_unit_focus(pmyunit);
+	/* Activate this unit. */
+	request_active_unit(punit);
       }
+    } unit_list_iterate_end;
+
+    if (pmyunit) {
+      /* Put the focus on one of the activated units. */
+      set_unit_focus(pmyunit);
     }
     break;
-
+  }
   case SELECT_UNIT_SENTRY:
-    {
-      unit_list_iterate(ptile->units, punit) {
-        if (get_player_idx() == punit->owner) {
-          if ((punit->activity == ACTIVITY_IDLE) &&
-              !punit->ai.control &&
-              can_unit_do_activity(punit, ACTIVITY_SENTRY)) {
-            request_new_unit_activity(punit, ACTIVITY_SENTRY);
-          }
-        }
-      } unit_list_iterate_end;
+  {
+    unit_list_iterate(ptile->units, punit) {
+      if (get_player_idx() == punit->owner) {
+	if ((punit->activity == ACTIVITY_IDLE) &&
+	    !punit->ai.control &&
+	    can_unit_do_activity(punit, ACTIVITY_SENTRY)) {
+	  request_new_unit_activity(punit, ACTIVITY_SENTRY);
+	}
+      }
+    } unit_list_iterate_end;
+    break;
+  }
+  case SELECT_UNIT_SELECT:
+  {
+    if (gtk_tree_selection_count_selected_rows(unit_select_selection) < 1) {
+      break;
     }
-    break;
 
-//*pepeto*
-	case SELECT_UNIT_SELECT:
-	{
-		if(!gtk_tree_selection_count_selected_rows(unit_select_selection))
-			break;
-
-		bool focus_change=TRUE;
-		multi_select_clear(0);
-		gtk_tree_selection_selected_foreach(unit_select_selection,add_unit_iterate,(gpointer)&focus_change);
-		update_unit_info_label(get_unit_in_focus());
-		update_menus();
+    bool focus_change = TRUE;
+    multi_select_clear(0);
+    gtk_tree_selection_selected_foreach(unit_select_selection,
+					add_unit_iterate,
+					(gpointer)&focus_change);
+    update_unit_info_label(get_unit_in_focus());
+    update_menus();
     break;
-	}
-		
-	case SELECT_UNIT_ADD_TO_FOCUS:
-	{
-		if(!gtk_tree_selection_count_selected_rows(unit_select_selection))
-			break;
+  }
+  case SELECT_UNIT_ADD_TO_FOCUS:
+  {
+    if (gtk_tree_selection_count_selected_rows(unit_select_selection) < 1) {
+      break;
+    }
 
- 		bool focus_change=FALSE;
-		gtk_tree_selection_selected_foreach(unit_select_selection,add_unit_iterate,(gpointer)&focus_change);
- 		update_unit_info_label(get_unit_in_focus());
-		update_menus();
+    bool focus_change = FALSE;
+    gtk_tree_selection_selected_foreach(unit_select_selection,
+					add_unit_iterate,
+					(gpointer)&focus_change);
+    update_unit_info_label(get_unit_in_focus());
+    update_menus();
     break;
-	}
+  }
 
   default:
     break;
   }
-  
+
   gtk_widget_destroy(unit_select_dialog_shell);
 }
 
@@ -1478,13 +1481,14 @@ void popup_unit_select_dialog(struct tile *ptile)
   if (!unit_select_dialog_shell) {
     GtkTreeStore *store;
     GtkWidget *shell, *view, *sw, *hbox;
-    GtkWidget *ready_cmd, *sentry_cmd, *close_cmd, *select_cmd, *add_to_focus_cmd;//*pepeto*
+    GtkWidget *ready_cmd, *sentry_cmd, *close_cmd;
+    GtkWidget *select_cmd, *add_to_focus_cmd;
 
     static const char *titles[NUM_UNIT_SELECT_COLUMNS] = {
       N_("Unit"),
       N_("Name"),
-	  N_("Homecity"),
-	  N_("Veteran level")
+      N_("Homecity"),
+      N_("Veteran level")
     };
     static bool titles_done;
 
@@ -1534,7 +1538,7 @@ void popup_unit_select_dialog(struct tile *ptile)
 	  render = gtk_cell_renderer_text_new();
 	  gtk_tree_view_column_pack_start(column, render, TRUE);
 	  gtk_tree_view_column_set_attributes(column, render, "text", i, NULL);
-      gtk_tree_view_column_set_sort_column_id(column, i);//*pepeto*
+	  gtk_tree_view_column_set_sort_column_id(column, i);
 	  break;
 	default:
 	  render = gtk_cell_renderer_pixbuf_new();
@@ -1547,10 +1551,9 @@ void popup_unit_select_dialog(struct tile *ptile)
     }
 
     g_signal_connect(view, "row_activated",
-	G_CALLBACK(unit_select_row_activated), NULL);
-//*pepeto*
-	unit_select_selection=gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
-	gtk_tree_selection_set_mode(unit_select_selection,GTK_SELECTION_MULTIPLE);
+    G_CALLBACK(unit_select_row_activated), NULL);
+    unit_select_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
+    gtk_tree_selection_set_mode(unit_select_selection, GTK_SELECTION_MULTIPLE);
 
 
     sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1579,7 +1582,6 @@ void popup_unit_select_dialog(struct tile *ptile)
       GTK_BUTTON_BOX(GTK_DIALOG(shell)->action_area),
       sentry_cmd, TRUE);
 
-//*pepeto*
     select_cmd =
     gtk_dialog_add_button(GTK_DIALOG(shell),
       _("Select"), SELECT_UNIT_SELECT);
@@ -2525,7 +2527,7 @@ void create_pepsetting_dialog(void)
   int i;
 
   tips = gtk_tooltips_new();
-  win = gtk_dialog_new_with_buttons(_("PepClient settings"), NULL, 0,
+  win = gtk_dialog_new_with_buttons(_("Warclient settings"), NULL, 0,
 				    _("Reset"), 1,
 				    _("Load"), 2,
 				    GTK_STOCK_SAVE, 3,

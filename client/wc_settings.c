@@ -38,10 +38,10 @@
 #include "mapview_g.h"
 #include "multiselect.h"
 #include "myai.h"
-#include "peptool.h"
+#include "wc_settings.h"
 
 /********************************************************************** 
-  PepClient settings...
+  Warclient settings...
 ***********************************************************************/
 const char *pepsettings_file_name(void);
 
@@ -82,7 +82,7 @@ bool my_ai_trade_plan_change_homecity;
 ***********************************************************************/
 static struct pepsetting static_pepsettings[] = {
   PSGEN_INT(PAGE_PMAIN, load_pepsettings_mode,
-            N_("PepClient setting load mode"),
+            N_("Warclient setting load mode"),
             N_("0: Off\n"
                "1: Only static settings\n"
                "2: Only automatic execution values\n"
@@ -459,7 +459,7 @@ bool load_unit(struct section_file *psf, struct unit **ppunit,
 }
 
 /********************************************************************** 
-  Load the client options for PepClient.
+  Load the client options for Warclient.
 ***********************************************************************/
 static void base_load_static_settings(struct section_file *psf)
 {
@@ -549,7 +549,7 @@ static void base_load_static_settings(struct section_file *psf)
   else
 
 /********************************************************************** 
-  Load the game queues for PepClient.
+  Load the game queues for Warclient.
 ***********************************************************************/
 static void base_load_dynamic_settings(struct section_file *psf)
 {
@@ -824,7 +824,7 @@ free_datas:
   }
 
 end:
-  append_output_window(_("PepClient: Settings loaded"));
+  append_output_window(_("Warclient: Settings loaded"));
 }
 
 /********************************************************************** 
@@ -838,7 +838,7 @@ static struct section_file *open_pepsettings_file(void)
 
   if (!section_file_load(&sf, name)) {
     my_snprintf(buf, sizeof(buf),
-                _("PepClient: Cannot load setting file %s"), name);
+                _("Warclient: Cannot load setting file %s"), name);
     append_output_window(buf);
     return NULL;
   }
@@ -1175,10 +1175,10 @@ void save_all_settings(void)
   /* Save to disk */
   if (!section_file_save(&sf, name, 0)) {
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: Save failed, cannot write to file %s"), name);
+		_("Warclient: Save failed, cannot write to file %s"), name);
   } else {
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: Saved settings to file %s") ,name);
+		_("Warclient: Saved settings to file %s") ,name);
   }
 
   append_output_window(buf);

@@ -63,7 +63,7 @@
 #include "multiselect.h"
 #include "options.h"
 #include "pages_g.h"
-#include "peptool.h"
+#include "wc_settings.h"
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
 #include "spaceshipdlg_g.h"

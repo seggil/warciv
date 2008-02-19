@@ -253,10 +253,12 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
 	flag = TRUE;
       }
     }
-//*pepeto*
-	item = gtk_menu_item_new_with_label(_("All"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	g_signal_connect(item, "activate",G_CALLBACK(diplomacy_dialog_all_tech_callback),GINT_TO_POINTER((plr0->player_no << 8) | (plr1->player_no)));
+    item = gtk_menu_item_new_with_label(_("All"));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate",
+		     G_CALLBACK(diplomacy_dialog_all_tech_callback),
+		     GINT_TO_POINTER((plr0->player_no << 8)
+				     | (plr1->player_no)));
 
     item = gtk_menu_item_new_with_mnemonic(_("_Advances"));
     gtk_widget_set_sensitive(item, flag);
@@ -656,7 +658,7 @@ static void update_diplomacy_dialog(struct Diplomacy_dialog *pdialog)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static void diplomacy_dialog_tech_callback(GtkWidget *w, gpointer data)
 {
@@ -675,7 +677,7 @@ static void diplomacy_dialog_tech_callback(GtkWidget *w, gpointer data)
 }
 
 /****************************************************************
-... *pepeto*
+  ...
 *****************************************************************/
 static void diplomacy_dialog_all_tech_callback(GtkWidget *w, gpointer data)
 {
@@ -688,15 +690,15 @@ static void diplomacy_dialog_all_tech_callback(GtkWidget *w, gpointer data)
     other = giver;
   }
 
-    for (i = 1; i < game.ruleset_control.num_tech_types; i++) {
-      if (get_invention(get_player(giver), i) == TECH_KNOWN
-	  && (get_invention(get_player(dest), i) == TECH_UNKNOWN
-	      || get_invention(get_player(dest), i) == TECH_REACHABLE)
-          && tech_is_available(get_player(dest), i)) {
-  dsend_packet_diplomacy_create_clause_req(&aconnection, other, giver,
-					   CLAUSE_ADVANCE, i);
-		  }
-	  }
+  for (i = 1; i < game.ruleset_control.num_tech_types; i++) {
+    if (get_invention(get_player(giver), i) == TECH_KNOWN
+	&& (get_invention(get_player(dest), i) == TECH_UNKNOWN
+	    || get_invention(get_player(dest), i) == TECH_REACHABLE)
+	&& tech_is_available(get_player(dest), i)) {
+      dsend_packet_diplomacy_create_clause_req(&aconnection, other, giver,
+					       CLAUSE_ADVANCE, i);
+    }
+  }
 }
 
 /****************************************************************

@@ -40,7 +40,6 @@ extern GdkCursor * goto_cursor;
 extern GdkCursor * drop_cursor;
 extern GdkCursor * nuke_cursor;
 extern GdkCursor * patrol_cursor;
-//*pepeto
 extern GdkCursor * source_cursor;
 extern GdkCursor * dest_cursor;
 extern GdkCursor * trade_cursor;

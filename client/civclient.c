@@ -65,11 +65,11 @@
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "messagewin_g.h"
-#include "multiselect.h"//*pepeto* for automatic processus
+#include "multiselect.h"
 #include "options.h"
 #include "packhand.h"
 #include "pages_g.h"
-#include "peptool.h"//*pepeto*
+#include "wc_settings.h"
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
 #include "tilespec.h"
@@ -500,7 +500,11 @@ void send_goto_unit(struct unit *punit, struct tile *dest_tile)
 			 dest_tile->x, dest_tile->y);
 }
 
-void send_goto_unit_and_calculate_moves_left(struct unit *punit, struct tile *dest_tile)//*pepeto*
+/**************************************************************************
+...
+**************************************************************************/
+void send_goto_unit_and_calculate_moves_left(struct unit *punit,
+					     struct tile *dest_tile)
 {
   send_goto_unit(punit,dest_tile);
   if((punit->virtual_moves_left-=calculate_move_cost(punit,dest_tile))<0)

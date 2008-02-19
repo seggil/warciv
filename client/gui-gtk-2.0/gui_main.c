@@ -473,7 +473,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
   if (!client_is_observer()) {
     if (use_digits_short_cuts) {
       /* If this option is enabled, the keys GDK_1-GDK_9 are used 
-       * for PepClient features instead of units moves. This is
+       * for Warclient features instead of units moves. This is
        * useful for laptop users. */
       guint keyval;
 

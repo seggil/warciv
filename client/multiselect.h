@@ -17,7 +17,7 @@
 #include "unit.h"
 #include "unittype.h"
 
-#include "peptool.h"
+#include "wc_settings.h"
 
 /********************************************************************** 
   This file contains:

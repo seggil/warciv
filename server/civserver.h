@@ -15,6 +15,6 @@
 
 #include "version.h"
 
-#define PEPSERVER_VERSION "Warserver - PepServer " WARCLIENT_VERSION_STRING
+#define PEPSERVER_VERSION "Warserver " WARCLIENT_VERSION_STRING
 
 #endif /* FC__CIVSERVER_H */

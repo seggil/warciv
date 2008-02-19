@@ -52,7 +52,7 @@
 #include "control.h"		/* for fill_xxx */
 #include "multiselect.h"
 #include "options.h"		/* for fill_xxx */
-#include "peptool.h"
+#include "wc_settings.h"
 
 #include "tilespec.h"
 
@@ -3080,13 +3080,19 @@ struct unit *get_drawable_unit(struct tile *ptile, bool citymode)
   if (citymode && punit->owner == get_player_idx())
     return NULL;
 
-  if (!is_unit_in_multi_select(0,punit)//*pepeto* 
-	  || (!multi_select_blink_all && (punit->focus_status == FOCUS_DONE
-	  || !(punit==get_unit_in_focus() || (multi_select_blink && unit_satisfies_filter(punit, multi_select_inclusive_filter, multi_select_exclusive_filter)))))
-     || !focus_unit_hidden)
+  if (!is_unit_in_multi_select(0, punit)
+      || (!multi_select_blink_all
+	  && (punit->focus_status == FOCUS_DONE
+	      || !(punit==get_unit_in_focus()
+		   || (multi_select_blink
+		       && unit_satisfies_filter(punit,
+			      multi_select_inclusive_filter,
+			      multi_select_exclusive_filter)))))
+      || !focus_unit_hidden) {
     return punit;
-  else
+  } else {
     return NULL;
+  }
 }
 
 static void unload_all_sprites(void )

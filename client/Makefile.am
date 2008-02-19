@@ -51,6 +51,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/include -I$(top_srcdir)/common
 civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	attribute.h	\
 	attribute.c	\
+	audio.c         \
+	audio.h         \
+	audio_none.c    \
+	audio_none.h	\
 	citydlg_common.c \
 	citydlg_common.h \
 	cityrepdata.c	\
@@ -79,6 +83,10 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	mapview_common.h \
 	messagewin_common.c \
 	messagewin_common.h \
+	multiselect.c	\
+	multiselect.h	\
+	myai.c	\
+	myai.h	\
 	packhand.c	\
 	packhand.h	\
 	packhand_gen.h	\
@@ -93,16 +101,8 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	text.h	\
 	tilespec.c	\
 	tilespec.h	\
-	audio.c         \
-	audio.h         \
-	audio_none.c    \
-	audio_none.h	\
-	multiselect.c	\
-	multiselect.h	\
-	myai.c	\
-	myai.h	\
-	peptool.c	\
-	peptool.h
+	wc_settings.c	\
+	wc_settings.h
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
 fc_civclient_libs =	../utility/libcivutility.a	\

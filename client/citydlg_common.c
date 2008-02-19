@@ -31,7 +31,7 @@
 #include "clinet.h"
 #include "control.h"
 #include "mapview_common.h"
-#include "myai.h"//*pepeto*
+#include "myai.h"
 #include "options.h"		/* for concise_city_production */
 #include "tilespec.h"		/* for is_isometric */
 

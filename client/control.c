@@ -41,7 +41,7 @@
 #include "multiselect.h"
 #include "myai.h"
 #include "options.h"
-#include "peptool.h"
+#include "wc_settings.h"
 #include "tilespec.h"
 #include "unit.h"
 #include "control.h"
@@ -1911,13 +1911,13 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  my_ai_trade_route_alloc_city(msunit, pcity);
 	} else {
 	  append_output_window(
-	      _("PepClient: This unit is not able to trade"));
+	      _("Warclient: This unit is not able to trade"));
 	}
       } multi_select_iterate_end;
       update_unit_focus();
     } else {
       append_output_window(
-	  _("PepClient: You must select a city to trade with"));
+	  _("Warclient: You must select a city to trade with"));
     }
     hover_state = HOVER_NONE;
     hover_unit = 0;
@@ -1929,7 +1929,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	my_ai_add_trade_city(pcity, FALSE);
       } else {
 	append_output_window(
-	    _("PepClient: You can plan trade only in your own cities"));
+	    _("Warclient: You can plan trade only in your own cities"));
       }
     }
     hover_state = HOVER_NONE;

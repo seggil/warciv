@@ -18,7 +18,7 @@
 #include "unit.h"
 
 /********************************************************************** 
-  PepClient settings...
+  Warclient settings...
 ***********************************************************************/
 #define PEPSETTINGS_FILE_NAME ".pepsettings"
 

@@ -48,7 +48,6 @@
 #include "nuke_cursor_mask.xbm"
 #include "patrol_cursor.xbm"
 #include "patrol_cursor_mask.xbm"
-//*pepeto*
 #include "source_cursor.xbm"
 #include "source_cursor_mask.xbm"
 #include "dest_cursor.xbm"
@@ -63,7 +62,6 @@ GdkCursor *goto_cursor;
 GdkCursor *drop_cursor;
 GdkCursor *nuke_cursor;
 GdkCursor *patrol_cursor;
-//*pepeto
 GdkCursor *source_cursor;
 GdkCursor *dest_cursor;
 GdkCursor *trade_cursor;
@@ -295,7 +293,6 @@ void load_cursors(void)
   g_object_unref(pixmap);
   g_object_unref(mask);
 
-  //*pepeto
   /* airlift source */
   pixmap = gdk_bitmap_create_from_data(root_window, source_cursor_bits,
                                        source_cursor_width,

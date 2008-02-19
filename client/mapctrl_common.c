@@ -36,8 +36,8 @@
 #include "mapctrl_g.h"
 #include "mapview_g.h"
 #include "menu_g.h"
-#include "multiselect.h"//*pepeto*
-#include "peptool.h"//*pepeto*
+#include "multiselect.h"
+#include "wc_settings.h"
 #include "options.h"
 #include "tilespec.h"
 
@@ -119,8 +119,7 @@ static void define_tiles_within_rectangle(void)
 
   int x, y, x2, y2, xx, yy;
 
-//*pepeto*
-  bool first=TRUE;
+  bool first = TRUE;
   y = rec_corner_y;
   for (yy = 0; yy <= segments_y; yy++, y += inc_y) {
     x = rec_corner_x;
@@ -147,27 +146,23 @@ static void define_tiles_within_rectangle(void)
 	continue;
       }
 
-	  //*pepeto*: select unit too
-	if(multi_select_map_selection)
-	{
-	  unit_list_iterate(ptile->units,punit)
-	  {
-		  if(punit->owner==get_player_idx())
-		  {
-			  if(first)
-			  {
-				  multi_select_clear(0);
-				  set_unit_focus(punit);
-				  first=FALSE;
-			  }
-			  else
-				  multi_select_add_unit(punit);
-		  }
-	  } unit_list_iterate_end;
-          update_menus();
-          update_unit_info_label(get_unit_in_focus());
-	}
-	  
+      /* Select units */
+      if (multi_select_map_selection) {
+	unit_list_iterate(ptile->units, punit) {
+	  if (punit->owner == get_player_idx()) {
+	    if (first) {
+	      multi_select_clear(0);
+	      set_unit_focus(punit);
+	      first = FALSE;
+	    } else {
+	      multi_select_add_unit(punit);
+	    }
+	  }
+	} unit_list_iterate_end;
+	update_menus();
+	update_unit_info_label(get_unit_in_focus());
+      }
+
       /*  Tile passed all tests; process it.
        */
       if (ptile->city && ptile->city->owner == get_player_idx()) {

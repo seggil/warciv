@@ -43,7 +43,7 @@
 #include "menu_g.h"
 #include "multiselect.h"
 #include "myai.h"
-#include "peptool.h"
+#include "wc_settings.h"
 
 #define swap(type, data1, data2) { \
   type _data_ = data1; 		   \
@@ -612,7 +612,7 @@ void my_ai_trade_route_alloc(struct trade_route *ptr)
   ptr->ptr = NULL;
   update_trade_route(ptr);
   my_snprintf(buf, sizeof(buf),
-	      _("PepClient: Sending %s %d to establish trade route "
+	      _("Warclient: Sending %s %d to establish trade route "
 		"between %s and %s (%d %s, %d %s)"),
               unit_type(punit)->name, punit->id, ptr->pc1->name, ptr->pc2->name,
 	      ptr->moves_req, PL_("move", "moves", ptr->moves_req),
@@ -649,11 +649,11 @@ void my_ai_trade_route_alloc_city(struct unit *punit, struct city *pcity)
 
   if (!can_cities_trade(hcity, pcity)) {
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: A trade route is impossible between %s and %s."),
+		_("Warclient: A trade route is impossible between %s and %s."),
 		hcity->name, pcity->name);
   } else if (have_cities_trade_route(hcity, pcity)) {
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: %s and %s have already a trade route."),
+		_("Warclient: %s and %s have already a trade route."),
 		hcity->name, pcity->name);
   } else if ((ptr = trade_route_list_find_cities(trade_plan, hcity, pcity))) {
     /* A such trade route is already planned, take it */
@@ -665,14 +665,14 @@ void my_ai_trade_route_alloc_city(struct unit *punit, struct city *pcity)
   } else if (trade_route_list_size(trade_plan)
 	     && !my_ai_trade_manual_trade_route_enable) {
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: The trade route %s-%s is not planned, "
+		_("Warclient: The trade route %s-%s is not planned, "
 		  "the unit cannot execute this order."),
 		hcity->name, pcity->name);
   } else {
     my_ai_orders_free(punit);
     if (trade_route_list_size(trade_plan)) {
       my_snprintf(buf, sizeof(buf),
-		  _("PepClient: warning: the trade route %s-%s "
+		  _("Warclient: warning: the trade route %s-%s "
 		    "is not planned."), hcity->name, pcity->name);
     }
     my_ai_trade_route_alloc(trade_route_new(punit, hcity, pcity, FALSE));
@@ -718,7 +718,7 @@ void my_ai_trade_route_execute(struct unit *punit)
       release_trade(trade);
       connection_do_unbuffer(&aconnection);
       my_snprintf(buf, sizeof(buf),
-		  _("PepClient: %s establishing trade route between %s and %s"),
+		  _("Warclient: %s establishing trade route between %s and %s"),
 		  unit_name(punit->type), ptr->pc1->name, ptr->pc2->name);
       append_output_window(buf);
     } else if (my_ai_trade_level == LEVEL_BEST) {
@@ -739,7 +739,7 @@ void my_ai_trade_route_execute_all(void)
   }
 
   append_output_window(
-    _("PepClient: Executing all automatic trade route orders..."));
+    _("Warclient: Executing all automatic trade route orders..."));
 
   connection_do_buffer(&aconnection);
   unit_list_iterate(traders, punit) {
@@ -768,7 +768,7 @@ void my_ai_trade_route_free(struct unit *punit)
   trade_route_list_unlink(ptr->pc2->trade_routes, ptr);
   if (punit->tile != ptr->pc2->tile) {
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: Cancelling trade route between %s and %s"),
+		_("Warclient: Cancelling trade route between %s and %s"),
 		ptr->pc1->name, ptr->pc2->name);
     append_output_window(buf);
     if (ptr->planned) {
@@ -1148,7 +1148,7 @@ void show_cities_in_trade_plan(void)
   char buf[1024];
   bool first = TRUE;
 
-  sz_strlcpy(buf,_("PepClient: Cities in trade plan:"));
+  sz_strlcpy(buf,_("Warclient: Cities in trade plan:"));
   city_list_iterate(trade_cities, pcity) {
     cat_snprintf(buf, sizeof(buf), "%s %s", first ? "" : ",", pcity->name);
     first = FALSE;
@@ -1167,7 +1167,7 @@ void clear_my_ai_trade_cities(void)
   if (draw_city_traderoutes) {
     update_map_canvas_visible(MUT_NORMAL);
   }
-  append_output_window(_("PepClient: Trade city list cleared."));
+  append_output_window(_("Warclient: Trade city list cleared."));
   update_auto_caravan_menu();
 }
 
@@ -1190,11 +1190,11 @@ void show_free_slots_in_trade_plan(void)
     }
   } city_list_iterate_end;
   if (count == 0) {
-    append_output_window(_("PepClient: No trade route free slot."));
+    append_output_window(_("Warclient: No trade route free slot."));
   } else {
     char buf2[1024];
     my_snprintf(buf2, sizeof(buf2),
-		_("PepClient: %d trade route free %s: %s."),
+		_("Warclient: %d trade route free %s: %s."),
 		count, PL_("slot", "slots", count), buf);
     append_output_window(buf2);
   }
@@ -1210,7 +1210,7 @@ void recalculate_trade_plan(void)
   freelog(LOG_VERBOSE, "Calculating automatic trade routes.");
   calculate_trade_planning(buf, sizeof(buf));
   my_snprintf(buf2, sizeof(buf2),
-	      _("PepClient: Trade route plan calculation done%s%s."),
+	      _("Warclient: Trade route plan calculation done%s%s."),
 	      buf[0]== '\0' ? "" : ": ", buf);
   append_output_window(buf2);
   show_free_slots_in_trade_plan();
@@ -1234,12 +1234,12 @@ void my_ai_add_trade_city(struct city *pcity, bool multi)
     if (!multi) {
       city_list_unlink(trade_cities, pcity);
       my_snprintf(buf, sizeof(buf),
-		  _("PepClient: Remove city %s to trade plan"), pcity->name);
+		  _("Warclient: Remove city %s to trade plan"), pcity->name);
     }
   } else {
     city_list_append(trade_cities, pcity);
     my_snprintf(buf, sizeof(buf),
-		_("PepClient: Adding city %s to trade plan"), pcity->name);
+		_("Warclient: Adding city %s to trade plan"), pcity->name);
   }
 
   if (buf[0]) {
@@ -1285,7 +1285,7 @@ int estimate_non_ai_trade_route_number(struct city *pcity)
 void calculate_trade_estimation(void)
 {
   if (unit_list_size(traders) == 0 && !trade_route_list_size(non_ai_trade)) {
-    append_output_window(_("PepClient: No trade routes to estimate."));
+    append_output_window(_("Warclient: No trade routes to estimate."));
     return;
   }
 
@@ -1329,11 +1329,11 @@ void calculate_trade_estimation(void)
   } trade_route_list_iterate_end;
 
   /* Print the infos */
-  append_output_window(_("PepClient: Trade estimation:"));
+  append_output_window(_("Warclient: Trade estimation:"));
   for (i = 0; i < MAX_ESTIMATED_TURNS; i++) {
     if (ai_trade_count[i] > 0) {
       my_snprintf(buf, sizeof(buf),
-		  _("PepClient: %d %s - %d trade %s: %s."),
+		  _("Warclient: %d %s - %d trade %s: %s."),
 		  i, PL_("turn", "turns", i),
 		  /* TRANS: trade route(s) */
 		  ai_trade_count[i], PL_("route", "routes", ai_trade_count[i]),
@@ -1343,7 +1343,7 @@ void calculate_trade_estimation(void)
     if (non_ai_trade_count[i] > 0
 	&& my_ai_trade_manual_trade_route_enable) {
       my_snprintf(buf, sizeof(buf),
-		  _("PepClient: %d %s - (%d manual trade %s: %s)."),
+		  _("Warclient: %d %s - (%d manual trade %s: %s)."),
 	          i, PL_("turn", "turns", i), non_ai_trade_count[i],
 		  /* TRANS: trade route(s) */
 		  PL_("route", "routes", non_ai_trade_count[i]),
@@ -1522,7 +1522,7 @@ void my_ai_patrol_execute_all(void)
     return;
   }
 
-  append_output_window(_("PepClient: Executing patrol orders..."));
+  append_output_window(_("Warclient: Executing patrol orders..."));
 
   connection_do_buffer(&aconnection);
   unit_list_iterate(patrolers, punit) {
@@ -1983,7 +1983,7 @@ void my_ai_execute(void)
     return;
   }
 
-  append_output_window(_("PepClient: Executing all automatic orders..."));
+  append_output_window(_("Warclient: Executing all automatic orders..."));
   my_ai_trade_route_execute_all();
   my_ai_patrol_execute_all();
 }

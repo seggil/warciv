@@ -1058,7 +1058,7 @@ static void create_default_tag_patterns(struct tag_pattern_list *tpl)
   MK_TAG_PATTERN("Warclient message", "Warclient:",
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                  "", "#0000FF", "");
-  MK_TAG_PATTERN("PepClient message", "PepClient:",
+  MK_TAG_PATTERN("Warclient message", "Warclient:",
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                  "", "#0000FF", "");
 

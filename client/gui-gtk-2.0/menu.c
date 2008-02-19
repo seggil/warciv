@@ -31,7 +31,7 @@
 #include "multiselect.h"
 #include "myai.h"
 #include "options.h"
-#include "peptool.h"
+#include "wc_settings.h"
 
 #include "chatline.h"
 #include "cityrep.h"
@@ -517,13 +517,13 @@ static const char *load_menu_game(void)
      NULL, _("_Font Size"), G_CALLBACK(callback_game_style)},
     {"GAME_SAVE_SETTINGS", GTK_STOCK_SAVE_AS, _("Sa_ve Settings"),
      NULL, _("Sa_ve Settings"), G_CALLBACK(callback_game_save_settings)},
-    {"GAME_PEPSETTINGS", GTK_STOCK_PREFERENCES, _("PepClient _Options"),
-     NULL, _("PepClient _Options"), G_CALLBACK(callback_game_pepsettings)},
-    {"GAME_PEPSETTINGS_LOAD", GTK_STOCK_REDO, _("Lo_ad PepClient Settings"),
-     NULL, _("Lo_ad PepClient Settings"),
+    {"GAME_PEPSETTINGS", GTK_STOCK_PREFERENCES, _("Warclient _Options"),
+     NULL, _("Warclient _Options"), G_CALLBACK(callback_game_pepsettings)},
+    {"GAME_PEPSETTINGS_LOAD", GTK_STOCK_REDO, _("Lo_ad Warclient Settings"),
+     NULL, _("Lo_ad Warclient Settings"),
      G_CALLBACK(callback_game_pepsettings_load)},
-    {"GAME_PEPSETTINGS_SAVE", GTK_STOCK_SAVE_AS, _("Sa_ve PepClient Settings"),
-     NULL, _("Sa_ve PepClient Settings"),
+    {"GAME_PEPSETTINGS_SAVE", GTK_STOCK_SAVE_AS, _("Sa_ve Warclient Settings"),
+     NULL, _("Sa_ve Warclient Settings"),
      G_CALLBACK(callback_game_pepsettings_save)},
     {"GAME_SERVER_OPTIONS1", GTK_STOCK_PREFERENCES,
      _("_Initial Server Options"),
@@ -5483,8 +5483,8 @@ static const char *load_menu_help(void)
      NULL, _("Citizen _Management"), G_CALLBACK(callback_help_cma)},
     {"HELP_PLAYING", NULL, _("_Playing"),
      NULL, _("_Playing"), G_CALLBACK(callback_help_playing)},
-    {"HELP_WARCLIENT", NULL, _("_Warclient - PepClient"),
-     NULL, _("_Warclient - PepClient"), G_CALLBACK(callback_help_warclient)},
+    {"HELP_WARCLIENT", NULL, _("_Warclient - Warclient"),
+     NULL, _("_Warclient - Warclient"), G_CALLBACK(callback_help_warclient)},
     {"HELP_IMPROVEMENTS", NULL, _("City _Improvements"),
      NULL, _("City _Improvements"), G_CALLBACK(callback_help_improvements)},
     {"HELP_UNITS", NULL, _("_Units"),

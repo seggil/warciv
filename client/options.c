@@ -134,8 +134,8 @@ static client_option common_options[] = {
   GEN_STR_OPTION(city_name_formats,  N_("City name formats"), NULL, NULL),
   GEN_BOOL_OPTION(show_split_message_window,N_("Split chat and message window")),
   GEN_BOOL_OPTION(do_not_recenter_overview,N_("Do not recenter the overview for wrapped maps")),
-  GEN_BOOL_OPTION(reload_pepsettings, N_("Try to reload the last PepClient settings file")),
-  GEN_BOOL_OPTION(use_digits_short_cuts, N_("Use the shorts cuts 1-9 for PepClient features"))
+  GEN_BOOL_OPTION(reload_pepsettings, N_("Try to reload the last Warclient settings file")),
+  GEN_BOOL_OPTION(use_digits_short_cuts, N_("Use the shorts cuts 1-9 for Warclient features"))
 };
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION

@@ -33,7 +33,7 @@
 #include "goto.h"
 #include "multiselect.h"
 #include "myai.h"
-#include "peptool.h"
+#include "wc_settings.h"
 #include "text.h"
 
 /*
@@ -556,11 +556,13 @@ const char *get_unit_info_label_text1(struct unit *punit)
   if (punit) {
     struct unit_type *ptype = unit_type(punit);
 
-	int i=(multi_select_count_all?multi_select_size(0)-1:multi_select_satisfies_filter(0)-1);
-	if(i<=0)//*pepeto*
-    add("%s", ptype->name);
-	else
-		add("%s (+%d unit%s)",ptype->name,i,i>1?"s":"");
+    int i = multi_select_count_all ? multi_select_size(0) -1
+				   : multi_select_satisfies_filter(0) - 1;
+    if (i <= 0) {
+      add("%s", ptype->name);
+    } else {
+      add("%s (+%d %s)", ptype->name, i, PL_("unit", "units", i));
+    }
   }
   RETURN;
 }

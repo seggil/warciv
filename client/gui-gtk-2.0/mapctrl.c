@@ -40,7 +40,7 @@
 #include "inputdlg.h"
 #include "mapview.h"
 #include "menu.h"
-#include "multiselect.h"//*pepeto*
+#include "multiselect.h"
 #include "tilespec.h"
 #include "cma_core.h"
 #include "text.h"
@@ -235,7 +235,7 @@ gboolean butt_release_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 **************************************************************************/
 gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
-  static int press_waited=0;// *pepeto*
+  static int press_waited = 0;
   struct city *pcity = NULL;
   struct tile *ptile = NULL;
 
@@ -247,13 +247,12 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
   ptile = canvas_pos_to_tile(ev->x, ev->y);
   pcity = ptile ? ptile->city : NULL;
 
-//*pepeto*
-  if(press_waited>0)
-  {
-	  if(ev->type==GDK_2BUTTON_PRESS)
-		  return TRUE;
-	  else if(ev->type==GDK_BUTTON_PRESS)
-		  press_waited--;
+  if (press_waited > 0) {
+    if (ev->type == GDK_2BUTTON_PRESS) {
+      return TRUE;
+    } else if (ev->type == GDK_BUTTON_PRESS) {
+      press_waited--;
+    }
   }
 
   switch (ev->button) {
@@ -264,7 +263,8 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     if ((ev->state & GDK_SHIFT_MASK) && (ev->state & GDK_CONTROL_MASK)) {
       adjust_workers_button_pressed(ev->x, ev->y);
     }
-    /* <CONTROL> + LMB : Quickselect a sea unit or *pepeto*: select an unit without activation. */
+    /* <CONTROL> + LMB : Quickselect a sea unit or
+     * select an unit without activation. */
     else if (ev->state & GDK_CONTROL_MASK) {
       if(pcity) {
       action_button_pressed(ev->x, ev->y, SELECT_SEA);
@@ -275,7 +275,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
     }
       }
     }
-    /* <SHIFT> + LMB: *pepeto* select unit(s if double click). */
+    /* <SHIFT> + LMB: select unit(s if double click). */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
       if (ev->type == GDK_2BUTTON_PRESS) {
 	multi_select_add_units(ptile->units);
@@ -305,8 +305,8 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
              && hover_state == HOVER_NONE) {
       toggle_tile_hilite(ptile);
     }
-    /* double LMB: *pepeto* select units of the same type. */
-    else if(ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS)) {
+    /* double LMB: select units of the same type. */
+    else if (ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS)) {
       struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
       if (punit && punit->owner == get_player_idx()) {
 	multi_select_clear(0);

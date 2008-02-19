@@ -24,7 +24,7 @@
 
 #include "fcintl.h"
 #include "game.h"
-#include "log.h"//*pepeto*
+#include "log.h"
 #include "map.h"
 #include "packets.h"
 #include "player.h"

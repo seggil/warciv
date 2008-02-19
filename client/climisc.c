@@ -50,7 +50,7 @@ used throughout the client.
 #include "mapctrl_common.h"
 #include "mapview_g.h"
 #include "messagewin_common.h"
-#include "myai.h"//*pepeto*
+#include "myai.h"
 #include "packhand.h"
 #include "pages_g.h"
 #include "plrdlg_common.h"
@@ -258,7 +258,7 @@ void client_remove_city(struct city *pcity)
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
 	  get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
 
-  my_ai_city_free(pcity);//*pepeto*
+  my_ai_city_free(pcity);
 
   /* Explicitly remove all improvements, to properly remove any global effects
      and to handle the preservation of "destroyed" effects. */
