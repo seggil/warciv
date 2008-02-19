@@ -91,7 +91,7 @@ static struct unit * unpackage_unit(struct packet_unit_info *packet)
   punit->id = packet->id;
   punit->tile = map_pos_to_tile(packet->x, packet->y);
   punit->homecity = packet->homecity;
-  punit->virtual_moves_left = punit->moves_left = packet->movesleft;
+  punit->moves_left = packet->movesleft;
   punit->hp = packet->hp;
   punit->activity = packet->activity;
   punit->activity_count = packet->activity_count;
@@ -1314,7 +1314,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
     punit->veteran = packet_unit->veteran;
     punit->moves_left = packet_unit->moves_left;
-    punit->virtual_moves_left = packet_unit->virtual_moves_left;
     punit->bribe_cost = 0;
     punit->fuel = packet_unit->fuel;
     punit->goto_tile = packet_unit->goto_tile;

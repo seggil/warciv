@@ -50,9 +50,6 @@
   data1 = data2;		   \
   data2 =_data_;		   \
 }
-#define goto_and_request(punit, ptile)			 \
-  send_goto_unit_and_calculate_moves_left(punit, ptile); \
-  if (punit->virtual_moves_left >= 0)
 
 struct trade_city {
   struct city *pcity;                /* The pointed city */
@@ -155,8 +152,8 @@ void update_trade_route(struct trade_route *ptr)
 {
   ptr->trade = trade_between_cities(ptr->pc1, ptr->pc2);
   ptr->moves_req = calculate_best_move_trade_cost(ptr);
-  ptr->turns_req = ptr->moves_req > ptr->punit->virtual_moves_left
-                   ? (2 + ptr->moves_req - ptr->punit->virtual_moves_left)
+  ptr->turns_req = ptr->moves_req > ptr->punit->moves_left
+                   ? (2 + ptr->moves_req - ptr->punit->moves_left)
                      / unit_move_rate(ptr->punit) : 0;
 }
 
@@ -699,7 +696,9 @@ void my_ai_trade_route_execute(struct unit *punit)
   struct unit cunit = *punit; /* Use a copy to change datas. */
 
   if (cunit.homecity != ptr->pc1->id) {
-    goto_and_request((&cunit), ptr->pc1->tile) {
+    send_goto_unit(&cunit, ptr->pc1->tile);
+    cunit.moves_left -= calculate_move_cost(&cunit, ptr->pc1->tile);
+    if (cunit.moves_left >= 0) {
       dsend_packet_unit_change_homecity(&aconnection, punit->id, ptr->pc1->id);
       cunit.tile = ptr->pc1->tile;
       cunit.homecity = ptr->pc1->id;
@@ -708,7 +707,9 @@ void my_ai_trade_route_execute(struct unit *punit)
     }
   }
   if (cunit.homecity == ptr->pc1->id) {
-    goto_and_request((&cunit), ptr->pc2->tile) {
+    send_goto_unit(&cunit, ptr->pc2->tile);
+    cunit.moves_left -= calculate_move_cost(&cunit, ptr->pc2->tile);
+    if (cunit.moves_left >= 0) {
       char buf[256];
       genlist *trade;
 

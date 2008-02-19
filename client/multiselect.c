@@ -96,7 +96,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
           || (inclusive_filter & FILTER_IDLE
               && punit->activity != ACTIVITY_IDLE)
           || (inclusive_filter & FILTER_ABLE_TO_MOVE
-              && (punit->moves_left <= 0 || punit->virtual_moves_left <= 0))
+              && punit->moves_left <= 0)
           || (inclusive_filter & FILTER_MILITARY
               && !is_military_unit(punit)))) {
     return FALSE;
@@ -113,7 +113,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
           || (exclusive_filter & FILTER_IDLE
               && punit->activity == ACTIVITY_IDLE)
           || (exclusive_filter & FILTER_ABLE_TO_MOVE
-              && punit->virtual_moves_left > 0)
+              && punit->moves_left > 0)
           || (exclusive_filter & FILTER_MILITARY 
               && is_military_unit(punit)))) {
     return FALSE;
@@ -1287,7 +1287,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
 
       if (dgd->type == 0 || !unit_flag(punit, F_PARATROOPERS)) {
         /* Normal move */
-        send_goto_unit_and_calculate_moves_left(punit, dgd->ptile);
+        send_goto_unit(punit, dgd->ptile);
         punit->is_new = FALSE;
       } else {
         /* Paradrop */

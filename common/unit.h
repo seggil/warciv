@@ -141,7 +141,6 @@ struct unit {
   struct tile *tile;
   int homecity;
   int moves_left;
-  int virtual_moves_left;
   int hp;
   int veteran;
   int unhappiness;

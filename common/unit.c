@@ -1732,7 +1732,7 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->debug = FALSE;
   punit->fuel = unit_type(punit)->fuel;
   punit->hp = unit_type(punit)->hp;
-  punit->virtual_moves_left = punit->moves_left = unit_move_rate(punit);
+  punit->moves_left = unit_move_rate(punit);
   punit->moved = FALSE;
   punit->paradropped = FALSE;
   punit->done_moving = FALSE;
