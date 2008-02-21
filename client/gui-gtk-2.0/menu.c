@@ -2081,8 +2081,6 @@ static void callback_delayed_goto_fast_single(GtkAction *action,
 {
   menu_radio_set_active(radio_action_group_delayed_goto_place,
                         "DELAYED_GOTO_GOTO_SINGLE_UNIT");
-  menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                        "DELAYED_GOTO_GOTO_SAME_TYPE");
 }
 
 /****************************************************************
@@ -2093,8 +2091,6 @@ static void callback_delayed_goto_fast_tile(GtkAction *action,
 {
   menu_radio_set_active(radio_action_group_delayed_goto_place,
                         "DELAYED_GOTO_GOTO_ON_TILE");
-  menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                        "DELAYED_GOTO_GOTO_SAME_TYPE");
 }
 
 /****************************************************************
@@ -2105,8 +2101,6 @@ static void callback_delayed_goto_fast_continent(GtkAction *action,
 {
   menu_radio_set_active(radio_action_group_delayed_goto_place,
                         "DELAYED_GOTO_GOTO_ON_CONTINENT");
-  menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                        "DELAYED_GOTO_GOTO_SAME_TYPE");
 }
 
 /****************************************************************
@@ -2117,8 +2111,6 @@ static void callback_delayed_goto_fast_all(GtkAction *action,
 {
   menu_radio_set_active(radio_action_group_delayed_goto_place,
                         "DELAYED_GOTO_GOTO_EVERY_WHERE");
-  menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                        "DELAYED_GOTO_GOTO_SAME_TYPE");
 }
 
 /****************************************************************
