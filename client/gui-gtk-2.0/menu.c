@@ -79,8 +79,7 @@ static GtkActionGroup *toggle_action_group_delayed_goto_exclusive = NULL;
 static GtkActionGroup *toggle_action_group_delayed_goto_automatic[DELAYED_GOTO_NUM];
 static GtkActionGroup *radio_action_group_delayed_goto_utype = NULL;
 static GtkActionGroup *radio_action_group_delayed_goto_place = NULL;
-static GtkActionGroup *radio_action_group_delayed_goto_utype_place = NULL;
-static bool block_delayed_goto_utype_place = TRUE;
+static GtkActionGroup *action_group_delayed_goto_fast = NULL;
 
 static GtkActionGroup *action_group_airlift = NULL;
 static GtkActionGroup *radio_action_group_airlift_unit[AIRLIFT_QUEUE_NUM];
@@ -2062,10 +2061,6 @@ static void callback_delayed_goto_place(GtkAction *unusedaction,
                                         gpointer user_data)
 {
   delayed_goto_place = gtk_radio_action_get_current_value(action);
-  if (block_delayed_goto_utype_place) {
-    menu_radio_set_active(radio_action_group_delayed_goto_utype_place,
-                          "DELAYED_GOTO_FAST_UNSET");
-  }
 }
 
 /****************************************************************
@@ -2076,53 +2071,54 @@ static void callback_delayed_goto_utype(GtkAction *unusedaction,
                                         gpointer user_data)
 {
   delayed_goto_utype = gtk_radio_action_get_current_value(action);
-  if (block_delayed_goto_utype_place) {
-    menu_radio_set_active(radio_action_group_delayed_goto_utype_place,
-                          "DELAYED_GOTO_FAST_UNSET");
-  }
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_delayed_goto_utype_place(GtkAction *unusedaction,
-                                              GtkRadioAction *action,
+static void callback_delayed_goto_fast_single(GtkAction *action,
                                               gpointer user_data)
 {
-  int value = gtk_radio_action_get_current_value(action);
+  menu_radio_set_active(radio_action_group_delayed_goto_place,
+                        "DELAYED_GOTO_GOTO_SINGLE_UNIT");
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_SAME_TYPE");
+}
 
-  block_delayed_goto_utype_place = FALSE;
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_fast_tile(GtkAction *action,
+                                            gpointer user_data)
+{
+  menu_radio_set_active(radio_action_group_delayed_goto_place,
+                        "DELAYED_GOTO_GOTO_ON_TILE");
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_SAME_TYPE");
+}
 
-  switch (value) {
-  case -1:
-    break;
-  case 0:
-    menu_radio_set_active(radio_action_group_delayed_goto_place,
-                          "DELAYED_GOTO_GOTO_SINGLE_UNIT");
-    break;
-  case 1:
-    menu_radio_set_active(radio_action_group_delayed_goto_place,
-                          "DELAYED_GOTO_GOTO_ON_TILE");
-    menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                          "DELAYED_GOTO_GOTO_SAME_TYPE");
-    break;
-  case 2:
-    menu_radio_set_active(radio_action_group_delayed_goto_place,
-                          "DELAYED_GOTO_GOTO_ON_CONTINENT");
-    menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                          "DELAYED_GOTO_GOTO_SAME_TYPE");
-    break;
-  case 3:
-    menu_radio_set_active(radio_action_group_delayed_goto_place,
-                          "DELAYED_GOTO_GOTO_ON_TILE");
-    menu_radio_set_active(radio_action_group_delayed_goto_utype,
-                          "DELAYED_GOTO_GOTO_ALL");
-    break;
-  default:
-    assert(0);
-  }
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_fast_continent(GtkAction *action,
+                                                 gpointer user_data)
+{
+  menu_radio_set_active(radio_action_group_delayed_goto_place,
+                        "DELAYED_GOTO_GOTO_ON_CONTINENT");
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_SAME_TYPE");
+}
 
-  block_delayed_goto_utype_place = TRUE;
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_fast_all(GtkAction *action,
+                                           gpointer user_data)
+{
+  menu_radio_set_active(radio_action_group_delayed_goto_place,
+                        "DELAYED_GOTO_GOTO_EVERY_WHERE");
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_SAME_TYPE");
 }
 
 /****************************************************************
@@ -2422,20 +2418,43 @@ static const char *load_menu_delayed_goto(void)
      "<Alt><Shift>F8", _("_All unit types"), UTYPE_ALL}
   };
 
-  GtkRadioActionEntry radio_entries_delayed_goto_utype_place[] = {
-    {"DELAYED_GOTO_FAST_UNSET", NULL, _("Unsed"),
-     NULL, _("Unsed"), -1},
-    {"DELAYED_GOTO_FAST_SINGLE", NULL, _("Single unit (fast)"),
-     "F9", _("Single unit (fast)"), 0},
-    {"DELAYED_GOTO_FAST_TILE", NULL,
-     _("All units of the same type on the tile (fast)"),
-     "F10", _("All units of the same type on the tile (fast)"), 1},
-    {"DELAYED_GOTO_FAST_TILE_ALL_TYPES", NULL,
-     _("All units on the tile (fast)"),
-     "F11", _("All units on the tile (fast)"), 2},
-    {"DELAYED_GOTO_FAST_CONTINENT", NULL,
-     _("All units of the same type on the continent (fast)"),
-     "F12", _("All units of the same type on the continent (fast)"), 3}
+
+  /* Alternative (or "fast") DG mode shortcuts for players
+   * used to the old behaviour and to avoid ALT-F4 on windows. */
+
+  /* WTF: Why is there no user_data field in GtkActionEntry?!
+   * Now we have to make a separate callback for every single
+   * entry. :(
+   *
+   * Hmm, maybe we can call gtk_action_group_add_actions on
+   * each entry individually to get different user_data for
+   * each one. */
+
+  GtkActionEntry entries_delayed_goto_fast[] = {
+    { "DELAYED_GOTO_FAST_SINGLE", NULL,
+      _("Single unit"), "F9",
+      _("Alternative shortcut to set the delayed goto mode "
+        "to affect only single units."),
+      G_CALLBACK(callback_delayed_goto_fast_single)
+    },
+    { "DELAYED_GOTO_FAST_TILE", NULL,
+      _("Units of same type on tile"), "F10",
+      _("Alternative shortcut to set the delayed goto mode to affect "
+        "all units of the same type on the same tile."),
+      G_CALLBACK(callback_delayed_goto_fast_tile)
+    },
+    { "DELAYED_GOTO_FAST_CONTINENT", NULL,
+      _("Units of same type on continent"), "F11",
+      _("Alternative shortcut to set the delayed goto mode to affect "
+        "all units of the same type on the entire continent."),
+      G_CALLBACK(callback_delayed_goto_fast_continent)
+    },
+    { "DELAYED_GOTO_FAST_ALL", NULL,
+      _("Units of same type everywhere"), "F12",
+      _("Alternative shortcut to set the delayed goto mode to affect "
+        "all units of the same type everywhere."),
+      G_CALLBACK(callback_delayed_goto_fast_all)
+    }
   };
 
   action_group_delayed_goto = gtk_action_group_new("GroupDelayedGoto");
@@ -2495,18 +2514,16 @@ static const char *load_menu_delayed_goto(void)
   gtk_ui_manager_insert_action_group(main_uimanager,
                                      radio_action_group_delayed_goto_place, 0);
 
-  radio_action_group_delayed_goto_utype_place =
-    gtk_action_group_new("RadioGroupDelayedGotoUtypePlace");
-  gtk_action_group_set_translation_domain(radio_action_group_delayed_goto_utype_place,
+  action_group_delayed_goto_fast
+      = gtk_action_group_new("GroupDelayedGotoFast");
+  gtk_action_group_set_translation_domain(action_group_delayed_goto_fast,
                                           PACKAGE);
-  gtk_action_group_add_radio_actions(radio_action_group_delayed_goto_utype_place,
-                                     radio_entries_delayed_goto_utype_place,
-                                     G_N_ELEMENTS(radio_entries_delayed_goto_utype_place),
-                                     -1,
-                                     G_CALLBACK(callback_delayed_goto_utype_place),
-                                     NULL);
+  gtk_action_group_add_actions(action_group_delayed_goto_fast,
+      entries_delayed_goto_fast,
+      G_N_ELEMENTS(entries_delayed_goto_fast), NULL);
+
   gtk_ui_manager_insert_action_group(main_uimanager,
-                                     radio_action_group_delayed_goto_utype_place, 0);
+      action_group_delayed_goto_fast, 0);
 
   my_snprintf(buf, sizeof(buf),
               "<menu action=\"DELAYED_GOTO\">\n"
@@ -2528,11 +2545,10 @@ static const char *load_menu_delayed_goto(void)
               "<menuitem action=\"DELAYED_GOTO_GOTO_SAME_MOVE_TYPE\" />\n"
               "<menuitem action=\"DELAYED_GOTO_GOTO_ALL\" />\n"
               "<separator/>\n"
-              "<menuitem action=\"DELAYED_GOTO_FAST_UNSET\" />\n"
               "<menuitem action=\"DELAYED_GOTO_FAST_SINGLE\" />\n"
               "<menuitem action=\"DELAYED_GOTO_FAST_TILE\" />\n"
-              "<menuitem action=\"DELAYED_GOTO_FAST_TILE_ALL_TYPES\" />\n"
               "<menuitem action=\"DELAYED_GOTO_FAST_CONTINENT\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_FAST_ALL\" />\n"
               "</menu>\n"
               "<menu action=\"DELAYED_GOTO_AUTOMATIC\">\n"
               "%s"
