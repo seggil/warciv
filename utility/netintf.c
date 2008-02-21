@@ -209,7 +209,7 @@ static void dns_result_callback(const unsigned char *addr,
   assert(ctx != NULL);
   assert(ctx->callback != NULL);
 
-  if (addrlen == 4) {
+  if (addrlen == 4 && qtype == DNS_A_RECORD) {
     freelog(LOG_DEBUG, "drc got addr %d.%d.%d.%d",
             addr[0], addr[1], addr[2], addr[3]);
   }

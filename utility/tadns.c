@@ -57,6 +57,16 @@
 #define DNS_MAX           1025      /* Maximum host name */
 #define DNS_PACKET_LEN    2048 /* Buffer size for DNS packet */
 
+/* The DNS name query string that is made to
+ * try and do a reverse lookup on the localhost
+ * address 127.0.0.1. */
+#define LOCALHOST_RLQUERY "1.0.0.127.in-addr.arpa"
+
+/* Instead of sending a full reverse lookup query
+ * for LOCALHOST_RLQUERY, just return the following
+ * string as the hostname. */
+#define LOCALHOST_HOSTNAME "localhost"
+
 struct dns;
 
 #define QUERY_MEMORY_GUARD 0xbedabb1e
@@ -678,18 +688,6 @@ void dns_queue(struct dns *dns,
   dns->tid = query->tid;
   query->expire = now + DNS_QUERY_TIMEOUT;
 
-  if (qtype == DNS_PTR_RECORD
-      && 0 == strcmp(name, "1.0.0.127.in-addr.arpa")) {
-    /* Don't bother asking the resolver for a
-     * reverse look up of 127.0.0.1. */
-
-    sz_strlcpy((char *) query->addr, "localhost");
-    query->addrlen = (size_t) strlen((char *) query->addr);
-    call_user(dns, query);
-    destroy_query(dns, query);
-    return;
-  }
-
   /* copy over name, converted to lower case */
   for (p = query->name, i = 0;
        name[i] != '\0' && p < query->name + sizeof(query->name) - 1;
@@ -698,6 +696,26 @@ void dns_queue(struct dns *dns,
     *p = tolower(name[i]);
   }
   *p = '\0';
+
+  /* Don't bother asking the resolver for reverse look-up
+   * if the query is for 127.0.0.1. */
+  if (qtype == DNS_PTR_RECORD
+      && 0 == strcmp(name, LOCALHOST_RLQUERY)) {
+    size_t len;
+
+    /* On some strange platforms, strlen does not
+     * return a size_t apparently. */
+    len = (size_t) strlen(LOCALHOST_HOSTNAME) + 1;
+
+    len = MIN(len, sizeof(query->addr) - 1);
+    memcpy(query->addr, LOCALHOST_HOSTNAME, len);
+    query->addr[len - 1] = 0;
+    query->addrlen = len;
+
+    call_user(dns, query);
+    destroy_query(dns, query);
+    return;
+  }
 
   /* Prepare DNS packet header */
   header = (struct header *) pkt;
