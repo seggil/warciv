@@ -2074,11 +2074,15 @@ static void callback_delayed_goto_utype(GtkAction *unusedaction,
 }
 
 /****************************************************************
-  ...
+  "dgf" abbreviates "delayed_goto_fast" to avoid uncomfortably
+  long function names.
 *****************************************************************/
-static void callback_delayed_goto_fast_single(GtkAction *action,
-                                              gpointer user_data)
+static void callback_dgf_single(GtkAction *action,
+                                gpointer user_data)
 {
+  /* No need to change the DG type (i.e. modify
+   * radio_action_group_delayed_goto_utype) for
+   * single unit. */
   menu_radio_set_active(radio_action_group_delayed_goto_place,
                         "DELAYED_GOTO_GOTO_SINGLE_UNIT");
 }
@@ -2086,9 +2090,11 @@ static void callback_delayed_goto_fast_single(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_delayed_goto_fast_tile(GtkAction *action,
-                                            gpointer user_data)
+static void callback_dgf_tile_same_type(GtkAction *action,
+                                        gpointer user_data)
 {
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_SAME_TYPE");
   menu_radio_set_active(radio_action_group_delayed_goto_place,
                         "DELAYED_GOTO_GOTO_ON_TILE");
 }
@@ -2096,21 +2102,25 @@ static void callback_delayed_goto_fast_tile(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_delayed_goto_fast_continent(GtkAction *action,
-                                                 gpointer user_data)
+static void callback_dgf_tile_all_types(GtkAction *action,
+                                        gpointer user_data)
 {
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_ALL");
   menu_radio_set_active(radio_action_group_delayed_goto_place,
-                        "DELAYED_GOTO_GOTO_ON_CONTINENT");
+                        "DELAYED_GOTO_GOTO_ON_TILE");
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_delayed_goto_fast_all(GtkAction *action,
-                                           gpointer user_data)
+static void callback_dgf_continent_same_type(GtkAction *action,
+                                             gpointer user_data)
 {
+  menu_radio_set_active(radio_action_group_delayed_goto_utype,
+                        "DELAYED_GOTO_GOTO_SAME_TYPE");
   menu_radio_set_active(radio_action_group_delayed_goto_place,
-                        "DELAYED_GOTO_GOTO_EVERY_WHERE");
+                        "DELAYED_GOTO_GOTO_ON_CONTINENT");
 }
 
 /****************************************************************
@@ -2425,27 +2435,27 @@ static const char *load_menu_delayed_goto(void)
   GtkActionEntry entries_delayed_goto_fast[] = {
     { "DELAYED_GOTO_FAST_SINGLE", NULL,
       _("Single unit"), "F9",
-      _("Alternative shortcut to set the delayed goto mode "
-        "to affect only single units."),
-      G_CALLBACK(callback_delayed_goto_fast_single)
+      _("Alternative shortcut to set the delayed goto mode to affect "
+        "only single units."),
+      G_CALLBACK(callback_dgf_single)
     },
-    { "DELAYED_GOTO_FAST_TILE", NULL,
+    { "DELAYED_GOTO_FAST_TILE_SAME_TYPE", NULL,
       _("Units of same type on tile"), "F10",
       _("Alternative shortcut to set the delayed goto mode to affect "
         "all units of the same type on the same tile."),
-      G_CALLBACK(callback_delayed_goto_fast_tile)
+      G_CALLBACK(callback_dgf_tile_same_type)
     },
-    { "DELAYED_GOTO_FAST_CONTINENT", NULL,
-      _("Units of same type on continent"), "F11",
+    { "DELAYED_GOTO_FAST_TILE_ALL_TYPES", NULL,
+      _("All units on tile"), "F11",
+      _("Alternative shortcut to set the delayed goto mode to affect "
+        "all units of on the same tile."),
+      G_CALLBACK(callback_dgf_tile_all_types)
+    },
+    { "DELAYED_GOTO_FAST_CONTINENT_SAME_TYPE", NULL,
+      _("Units of same type on continent"), "F12",
       _("Alternative shortcut to set the delayed goto mode to affect "
         "all units of the same type on the entire continent."),
-      G_CALLBACK(callback_delayed_goto_fast_continent)
-    },
-    { "DELAYED_GOTO_FAST_ALL", NULL,
-      _("Units of same type everywhere"), "F12",
-      _("Alternative shortcut to set the delayed goto mode to affect "
-        "all units of the same type everywhere."),
-      G_CALLBACK(callback_delayed_goto_fast_all)
+      G_CALLBACK(callback_dgf_continent_same_type)
     }
   };
 
@@ -2538,9 +2548,9 @@ static const char *load_menu_delayed_goto(void)
               "<menuitem action=\"DELAYED_GOTO_GOTO_ALL\" />\n"
               "<separator/>\n"
               "<menuitem action=\"DELAYED_GOTO_FAST_SINGLE\" />\n"
-              "<menuitem action=\"DELAYED_GOTO_FAST_TILE\" />\n"
-              "<menuitem action=\"DELAYED_GOTO_FAST_CONTINENT\" />\n"
-              "<menuitem action=\"DELAYED_GOTO_FAST_ALL\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_FAST_TILE_SAME_TYPE\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_FAST_TILE_ALL_TYPES\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_FAST_CONTINENT_SAME_TYPE\" />\n"
               "</menu>\n"
               "<menu action=\"DELAYED_GOTO_AUTOMATIC\">\n"
               "%s"
