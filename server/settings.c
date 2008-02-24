@@ -799,6 +799,16 @@ struct settings_s settings[] = {
 	      "changes in tiles not observed."), NULL, 
 	   GAME_DEFAULT_FOGOFWAR)
 
+  GEN_INT("diplincitechance", game.server.diplincitechance,
+          SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
+          SSET_TO_CLIENT,
+          N_("Chance for spy return after mission"),
+          N_("The base chance of a spy returning from a successful "
+             "mission is diplincitechance percent (diplomats never "
+             "return)."),
+          NULL, GAME_MIN_DIPLINCITECHANCE, GAME_MAX_DIPLINCITECHANCE,
+          GAME_DEFAULT_DIPLINCITECHANCE)
+
   GEN_INT("diplbribechance", game.server.diplbribechance,
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
           SSET_TO_CLIENT,

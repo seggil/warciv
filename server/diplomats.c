@@ -759,27 +759,30 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   int revolt_cost;
 
   /* Fetch target civilization's player.  Sanity checks. */
-  if (!pcity)
+  if (!pcity) {
     return;
-  cplayer = city_owner (pcity);
-  if (!cplayer || pplayers_allied(cplayer, pplayer))
-    return;
+  }
 
-  freelog (LOG_DEBUG, "incite: unit: %d", pdiplomat->id);
+  cplayer = city_owner(pcity);
+  if (!cplayer || pplayers_allied(cplayer, pplayer)) {
+    return;
+  }
+
+  freelog(LOG_DEBUG, "incite: unit: %d", pdiplomat->id);
 
   /* Check for city from a bribable government. */
-  if (government_has_flag (get_gov_pcity (pcity), G_UNBRIBABLE)) {
+  if (government_has_flag(get_gov_pcity(pcity), G_UNBRIBABLE)) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
-		     _("Game: You can't subvert a city from this nation."));
-    freelog (LOG_DEBUG, "incite: city's government is unbribable");
+                     _("Game: You can't subvert a city from this nation."));
+    freelog(LOG_DEBUG, "incite: city's government is unbribable");
     return;
   }
 
   /* See if the city is subvertable. */
   if (get_city_bonus(pcity, EFT_NO_INCITE) > 0) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
-		     _("Game: You can't subvert this city."));
-    freelog (LOG_DEBUG, "incite: city is protected");
+                     _("Game: You can't subvert this city."));
+    freelog(LOG_DEBUG, "incite: city is protected");
     return;
   }
 
@@ -789,34 +792,36 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   /* If player doesn't have enough gold, can't incite a revolt. */
   if (pplayer->economic.gold < revolt_cost) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
-		     _("Game: You don't have enough gold to"
-		       " subvert %s. Cost was %d gold."), pcity->name,
-		     revolt_cost);
+                     _("Game: You don't have enough gold to"
+                       " subvert %s. Cost was %d gold."), pcity->name,
+                     revolt_cost);
     freelog(LOG_DEBUG, "incite: not enough gold");
     return;
   }
 
-  /* Check if the Diplomat/Spy succeeds against defending Diplomats/Spies. */
-  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat, 
+  /* Check if the Diplomat/Spy succeeds against defending
+   * Diplomats/Spies. */
+  if (!diplomat_infiltrate_tile(pplayer, cplayer, pdiplomat,
                                 pcity->tile)) {
     return;
   }
 
-  freelog (LOG_DEBUG, "incite: infiltrated");
+  freelog(LOG_DEBUG, "incite: infiltrated");
 
   /* Check if the Diplomat/Spy succeeds with his/her task. */
-  if (myrand (100) >= game.server.diplchance) {
+  if (myrand(100) >= game.server.diplincitechance) {
     notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_FAILED,
-		     _("Game: Your %s was caught in the attempt"
-		       " of inciting a revolt along with %d gold!"),
-		     unit_name(pdiplomat->type),revolt_cost);
+                     _("Game: Your %s was caught in the attempt"
+                       " of inciting a revolt along with %d gold!"),
+                     unit_name(pdiplomat->type), revolt_cost);
     notify_player_ex(cplayer, pcity->tile, E_ENEMY_DIPLOMAT_FAILED,
-		     _("Game: You caught %s %s attempting"
-		       " to incite a revolt in %s! %d gold recovered."),
-		     get_nation_name(pplayer->nation),
-		     unit_name(pdiplomat->type), pcity->name,revolt_cost);
- 	  pplayer->economic.gold -= revolt_cost;
-		cplayer->economic.gold += revolt_cost;//defender gets the gold
+                     _("Game: You caught %s %s attempting"
+                       " to incite a revolt in %s! %d gold recovered."),
+                     get_nation_name(pplayer->nation),
+                     unit_name(pdiplomat->type), pcity->name,
+                     revolt_cost);
+    pplayer->economic.gold -= revolt_cost;
+    cplayer->economic.gold += revolt_cost;  /* defender gets the gold */
     wipe_unit(pdiplomat);
     /* Update the players gold in the client */
     send_player_info(pplayer, pplayer);
@@ -824,7 +829,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
     return;
   }
 
-  freelog (LOG_DEBUG, "incite: succeeded");
+  freelog(LOG_DEBUG, "incite: succeeded");
 
   /* Subvert the city to your cause... */
 
@@ -840,17 +845,17 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
   gamelog(GAMELOG_LOSECITY, cplayer, pplayer, pcity, "incited to revolt");
 
   notify_player_ex(pplayer, pcity->tile, E_MY_DIPLOMAT_INCITE,
-		   _("Game: Revolt incited in %s, you now rule the city! "
-                   "Cost was %d gold."), pcity->name, revolt_cost);
+                   _("Game: Revolt incited in %s, you now rule the city! "
+                     "Cost was %d gold."), pcity->name, revolt_cost);
   notify_player_ex(cplayer, pcity->tile, E_ENEMY_DIPLOMAT_INCITE,
-		   _("Game: %s has revolted, %s influence suspected."),
-		   pcity->name, get_nation_name(pplayer->nation));
+                   _("Game: %s has revolted, %s influence suspected."),
+                   pcity->name, get_nation_name(pplayer->nation));
 
   pcity->shield_stock = 0;
   nullify_prechange_production(pcity);
 
   /* You get a technology advance, too! */
-  get_a_tech (pplayer, cplayer);
+  get_a_tech(pplayer, cplayer);
 
   /* this may cause a diplomatic incident */
   maybe_cause_incident(DIPLOMAT_INCITE, pplayer, NULL, pcity);
@@ -859,7 +864,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
      are within one square of the city) to the new owner.
      Remember that pcity is destroyed as part of the transfer,
      Which is why we do this last */
-  transfer_city (pplayer, pcity, 1, TRUE, TRUE, FALSE);
+  transfer_city(pplayer, pcity, 1, TRUE, TRUE, FALSE);
 
   /* Check if a spy survives her mission. Diplomats never do.
    * _After_ transferring the city, or the city area is first fogged
@@ -869,7 +874,7 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
 
   /* Update the players gold in the client */
   send_player_info(pplayer, pplayer);
-}  
+}
 
 /**************************************************************************
   Sabotage enemy city's improvement or production.

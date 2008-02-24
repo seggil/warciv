@@ -311,6 +311,7 @@ void game_init(void)
     game.server.dipldefchance = GAME_DEFAULT_DIPLDEFCHANCE;
     game.server.spyreturnchance = GAME_DEFAULT_SPYRETURNCHANCE;
     game.server.diplbribechance = GAME_DEFAULT_DIPLBRIBECHANCE;
+    game.server.diplincitechance = GAME_DEFAULT_DIPLINCITECHANCE;
     sz_strlcpy(game.server.start_units, GAME_DEFAULT_START_UNITS);
     game.server.dispersion  = GAME_DEFAULT_DISPERSION;
     game.server.citymindist = GAME_DEFAULT_CITYMINDIST;
