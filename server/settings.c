@@ -802,10 +802,9 @@ struct settings_s settings[] = {
   GEN_INT("diplincitechance", game.server.diplincitechance,
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
           SSET_TO_CLIENT,
-          N_("Chance for spy return after mission"),
-          N_("The base chance of a spy returning from a successful "
-             "mission is diplincitechance percent (diplomats never "
-             "return)."),
+          N_("Chance for inciting a city revolt"),
+          N_("The base chance of success for inciting a revolt in "
+             "an enemy city using a diplomatic unit."),
           NULL, GAME_MIN_DIPLINCITECHANCE, GAME_MAX_DIPLINCITECHANCE,
           GAME_DEFAULT_DIPLINCITECHANCE)
 
@@ -813,7 +812,7 @@ struct settings_s settings[] = {
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
           SSET_TO_CLIENT,
           N_("Chance in bribing an enemy unit"),
-          N_("The base chance of a diplomat/spy bribing another unit"
+          N_("The base chance of a diplomatic unit bribing another unit"
              "is given by this setting."),
           NULL, GAME_MIN_DIPLBRIBECHANCE, GAME_MAX_DIPLBRIBECHANCE,
           GAME_DEFAULT_DIPLBRIBECHANCE)
@@ -831,7 +830,7 @@ struct settings_s settings[] = {
   GEN_INT("dipldefchance", game.server.dipldefchance,
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
           SSET_TO_CLIENT,
-          N_("Chance in diplomat/spy contests"),
+          N_("Chance in diplomatic contests"),
           N_("A diplomatic unit acting against a city which has one or "
              "more defending diplomatic units has a dipldefchance "
              "(percent) base chance to defeat each such defender."
@@ -842,10 +841,12 @@ struct settings_s settings[] = {
 
   GEN_INT("diplchance", game.server.diplchance,
 	  SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
-          N_("Chance in diplomat/spy actions"),
+          N_("Chance in diplomatic actions"),
           /* xgettext:no-c-format */
-          N_("This value is the basic chance of success for diplomats and "
-             "spies. Veteran units are 50% more capable than non-veteran ones."),
+          N_("This value is the base chance of success for diplomatic "
+             "units in diplomatic activities not already covered by the "
+             "other diplomatic chance settings. Veteran units are "
+             "generally 50% more capable than non-veteran ones."),
           NULL, GAME_MIN_DIPLCHANCE, GAME_MAX_DIPLCHANCE,
           GAME_DEFAULT_DIPLCHANCE)
 
