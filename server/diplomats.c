@@ -386,113 +386,121 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
   bool vet = FALSE;
   struct unit *gained_unit = NULL;
   int total_cost = 0;
-  
-//do some checks for all units on tile first
+
+  /* do some checks for all units on tile first */
   unit_list_iterate_safe(ptile->units, pvictim) {
-  /* Fetch target unit's player.  Sanity checks. */
-  if (!pvictim)
-    return;
-  uplayer = unit_owner(pvictim);
-      /* We might make it allowable in peace with a liss of reputaion */
-  if (!uplayer || pplayers_allied(pplayer, uplayer))
-    return;
+    /* Fetch target unit's player.  Sanity checks. */
+    if (!pvictim)
+      return;
 
-  /* Update bribe cost. */
-    pvictim->bribe_cost = unit_bribe_cost (pvictim);
-      total_cost+= pvictim->bribe_cost;
+    uplayer = unit_owner(pvictim);
 
-  /* Check for unit from a bribable government. */
-  if (government_has_flag(get_gov_pplayer(unit_owner(pvictim)),
-			  G_UNBRIBABLE)) {
-    notify_player_ex(pplayer, pdiplomat->tile,
-		     E_MY_DIPLOMAT_FAILED,
-		     _("Game: You can't bribe a unit from this nation."));
-    freelog (LOG_DEBUG, "bribe-unit: unit's government is unbribable");
-    return;
-  }
+    /* We might make it allowable in peace with a liss of reputaion */
+    if (!uplayer || pplayers_allied(pplayer, uplayer))
+      return;
 
-      if (unit_flag(pvictim, F_UNBRIBABLE)) {
-        notify_player_ex(pplayer, pdiplomat->tile, E_MY_DIPLOMAT_FAILED,
-    		     _("Game: You cannot bribe %s!"), unit_name(pvictim->type));
-        return;
-      }
-  }unit_list_iterate_safe_end;
+    /* Update bribe cost. */
+    pvictim->bribe_cost = unit_bribe_cost(pvictim);
+    total_cost += pvictim->bribe_cost;
+
+    /* Check for unit from a bribable government. */
+    if (government_has_flag(get_gov_pplayer(unit_owner(pvictim)),
+                            G_UNBRIBABLE)) {
+      notify_player_ex(pplayer, pdiplomat->tile, E_MY_DIPLOMAT_FAILED,
+                       _("Game: You can't bribe a unit from this nation."));
+      freelog(LOG_DEBUG, "bribe-unit: unit's government is unbribable");
+      return;
+    }
+
+    if (unit_flag(pvictim, F_UNBRIBABLE)) {
+      notify_player_ex(pplayer, pdiplomat->tile, E_MY_DIPLOMAT_FAILED,
+                       _("Game: You cannot bribe %s!"),
+                       unit_name(pvictim->type));
+      return;
+    }
+  } unit_list_iterate_safe_end;
 
   /* If player doesn't have enough gold, can't bribe. */
   if (pplayer->economic.gold < total_cost) {
     notify_player_ex(pplayer, pdiplomat->tile,
-		     E_MY_DIPLOMAT_FAILED,
-		     _("Game: You don't have enough gold to"
-		       " bribe unit(s). Cost was %d gold."), total_cost);
-    freelog (LOG_DEBUG, "bribe-unit: not enough gold");
+                     E_MY_DIPLOMAT_FAILED,
+                     _("Game: You don't have enough gold to"
+                       " bribe unit(s). Cost was %d gold."), total_cost);
+    freelog(LOG_DEBUG, "bribe-unit: not enough gold");
     return;
   }
 
   /* Check if the Diplomat/Spy succeeds with his/her task. */
-  if (myrand (100) >= game.server.diplchance) {
+  if (myrand(100) >= game.server.diplbribechance) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_FAILED,
-		     _("Game: Your %s was caught in the attempt"
-		       " of bribing enemy unit(s) along with %d gold!"),
-		     unit_name(pdiplomat->type),total_cost);
+                     _("Game: Your %s was caught in the attempt"
+                       " of bribing enemy unit(s) along with %d gold!"),
+                     unit_name(pdiplomat->type), total_cost);
     notify_player_ex(uplayer, ptile, E_ENEMY_DIPLOMAT_FAILED,
-		     _("Game: You caught %s %s attempting"
-		       " to bribe unit(s)! %d gold recovered."),
-		     get_nation_name(pplayer->nation),
-		     unit_name(pdiplomat->type),total_cost);
+                     _("Game: You caught %s %s attempting"
+                       " to bribe unit(s)! %d gold recovered."),
+                     get_nation_name(pplayer->nation),
+                     unit_name(pdiplomat->type), total_cost);
 
- 	  pplayer->economic.gold -= total_cost;
-		uplayer->economic.gold += total_cost;//defender gets the gold
+    pplayer->economic.gold -= total_cost;
+    uplayer->economic.gold += total_cost; /* defender gets the gold */
+
     wipe_unit(pdiplomat);
+
     /* Update the players gold in the client */
     send_player_info(pplayer, pplayer);
     send_player_info(uplayer, uplayer);
+
     return;
   }
 
-  freelog (LOG_DEBUG, "bribe-unit: succeeded");
+  freelog(LOG_DEBUG, "bribe-unit: succeeded");
 
 
   unit_list_iterate_safe(ptile->units, pvictim) {
-      /* This may cause a diplomatic incident */
-      maybe_cause_incident(DIPLOMAT_BRIBE, pplayer, pvictim, NULL);
+    /* This may cause a diplomatic incident */
+    maybe_cause_incident(DIPLOMAT_BRIBE, pplayer, pvictim, NULL);
 
-  /* Convert the unit to your cause. Fog is lifted in the create algorithm. */
-  gained_unit = create_unit_full(pplayer, pvictim->tile,
-                                 pvictim->type, pvictim->veteran,
-                                 pdiplomat->homecity, pvictim->moves_left,
-                                 pvictim->hp, NULL);
+    /* Convert the unit to your cause. Fog is lifted in the create
+     * algorithm. */
+    gained_unit = create_unit_full(pplayer, pvictim->tile,
+                                   pvictim->type, pvictim->veteran,
+                                   pdiplomat->homecity,
+                                   pvictim->moves_left,
+                                   pvictim->hp, NULL);
 
-  /* Copy some more unit fields */
-  gained_unit->fuel        = pvictim->fuel;
-  gained_unit->paradropped = pvictim->paradropped;
+    /* Copy some more unit fields */
+    gained_unit->fuel = pvictim->fuel;
+    gained_unit->paradropped = pvictim->paradropped;
 
-  /* Inform owner about less than full fuel */
-  send_unit_info(pplayer, gained_unit);
+    /* Inform owner about less than full fuel */
+    send_unit_info(pplayer, gained_unit);
 
-      /* This costs! */
-      pplayer->economic.gold -= pvictim->bribe_cost;
-  
-  notify_player_ex(uplayer, pvictim->tile, E_ENEMY_DIPLOMAT_BRIBE,
-		   _("Game: Your %s was bribed by %s."),
-		   unit_name(pvictim->type), pplayer->name);
+    /* This costs! */
+    pplayer->economic.gold -= pvictim->bribe_cost;
 
-  /* Be sure to wipe the converted unit! */
-  wipe_unit(pvictim);
-  }unit_list_iterate_safe_end;
+    notify_player_ex(uplayer, pvictim->tile, E_ENEMY_DIPLOMAT_BRIBE,
+                     _("Game: Your %s was bribed by %s."),
+                     unit_name(pvictim->type), pplayer->name);
+
+    /* Be sure to wipe the converted unit! */
+    wipe_unit(pvictim);
+  } unit_list_iterate_safe_end;
 
   /* Check if the unit gained veteran level */
   vet = maybe_make_veteran(pdiplomat);
-  
+
   /* Notify everybody involved. */
   if (vet) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_BRIBE,
-		     _("Game: Your %s succeeded in bribing unit(s)"
-		        " and became more experienced. Cost was %d gold."),
-		     unit_name(pdiplomat->type), total_cost);
+                     _("Game: Your %s succeeded in bribing unit(s)"
+                       " and became more experienced. Cost was %d gold."),
+                     unit_name(pdiplomat->type), total_cost);
   } else {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_BRIBE,
-		     _("Game: Your %s succeeded in bribing unit(s)."
-		       "Cost was %d gold." ), unit_name(pdiplomat->type), total_cost);
+                     _("Game: Your %s succeeded in bribing unit(s)."
+                       "Cost was %d gold."), unit_name(pdiplomat->type),
+                     total_cost);
   }
 
   /* Now, try to move the briber onto the victim's square. */
@@ -501,7 +509,7 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
     pdiplomat->moves_left = 0;
   }
   if (player_find_unit_by_id(pplayer, diplomat_id)) {
-    send_unit_info (pplayer, pdiplomat);
+    send_unit_info(pplayer, pdiplomat);
   }
 
   /* Update clients. */

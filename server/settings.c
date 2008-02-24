@@ -799,12 +799,22 @@ struct settings_s settings[] = {
 	      "changes in tiles not observed."), NULL, 
 	   GAME_DEFAULT_FOGOFWAR)
 
+  GEN_INT("diplbribechance", game.server.diplbribechance,
+          SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
+          SSET_TO_CLIENT,
+          N_("Chance in bribing an enemy unit"),
+          N_("The base chance of a diplomat/spy bribing another unit"
+             "is given by this setting."),
+          NULL, GAME_MIN_DIPLBRIBECHANCE, GAME_MAX_DIPLBRIBECHANCE,
+          GAME_DEFAULT_DIPLBRIBECHANCE)
+
   GEN_INT("spyreturnchance", game.server.spyreturnchance,
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
           SSET_TO_CLIENT,
           N_("Chance for spy return after mission"),
-          N_("The chance of a spy returning from a successful mission "
-             "is spyreturnchance percent (diplomats never return)."),
+          N_("The base chance of a spy returning from a successful "
+             "mission is spyreturnchance percent (diplomats never "
+             "return)."),
           NULL, GAME_MIN_SPYRETURNCHANCE, GAME_MAX_SPYRETURNCHANCE,
           GAME_DEFAULT_SPYRETURNCHANCE)
 
@@ -814,7 +824,7 @@ struct settings_s settings[] = {
           N_("Chance in diplomat/spy contests"),
           N_("A diplomatic unit acting against a city which has one or "
              "more defending diplomatic units has a dipldefchance "
-             "(percent) chance to defeat each such defender."
+             "(percent) base chance to defeat each such defender."
 	     "Defending spies are generally twice as capable as "
              "diplomats."),
           NULL, GAME_MIN_DIPLDEFCHANCE, GAME_MAX_DIPLDEFCHANCE,
