@@ -799,6 +799,15 @@ struct settings_s settings[] = {
 	      "changes in tiles not observed."), NULL, 
 	   GAME_DEFAULT_FOGOFWAR)
 
+  GEN_INT("spyreturnchance", game.server.spyreturnchance,
+          SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
+          SSET_TO_CLIENT,
+          N_("Chance for spy return after mission"),
+          N_("The chance of a spy returning from a successful mission "
+             "is spyreturnchance percent (diplomats never return)."),
+          NULL, GAME_MIN_SPYRETURNCHANCE, GAME_MAX_SPYRETURNCHANCE,
+          GAME_DEFAULT_SPYRETURNCHANCE)
+
   GEN_INT("dipldefchance", game.server.dipldefchance,
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
           SSET_TO_CLIENT,
@@ -813,12 +822,10 @@ struct settings_s settings[] = {
 
   GEN_INT("diplchance", game.server.diplchance,
 	  SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
-	  N_("Chance in diplomat/spy actions"),
-	  /* xgettext:no-c-format */
-	  N_("The chance of a spy returning from a successful mission is "
-	     "diplchance percent (diplomats never return). This value is "
-	     "also the basic chance of success for diplomats and spies. "
-	     "Veteran units are 50% more capable than non-veteran ones."),
+          N_("Chance in diplomat/spy actions"),
+          /* xgettext:no-c-format */
+          N_("This value is the basic chance of success for diplomats and "
+             "spies. Veteran units are 50% more capable than non-veteran ones."),
           NULL, GAME_MIN_DIPLCHANCE, GAME_MAX_DIPLCHANCE,
           GAME_DEFAULT_DIPLCHANCE)
 

@@ -1247,8 +1247,8 @@ static bool diplomat_infiltrate_tile(struct player *pplayer,
   This determines if a diplomat/spy survives and escapes.
   If "pcity" is NULL, assume action was in the field.
 
-  Spies have a game.server.diplchance specified chance of survival (better 
-  if veteran):
+  Spies have a game.server.spyreturnchance specified chance of survival
+  (better if veteran):
     - Diplomats always die.
     - Escapes to home city.
     - Escapee may become a veteran.
@@ -1261,7 +1261,7 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
   bool vet;
   struct city *spyhome;
 
-  escapechance = game.server.diplchance + pdiplomat->veteran * 5;
+  escapechance = game.server.spyreturnchance + pdiplomat->veteran * 5;
   
   if (pcity) {
     ptile = pcity->tile;
@@ -1270,11 +1270,12 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
   }
   
   /* find closest city for escape target */
-  spyhome = find_closest_owned_city(unit_owner(pdiplomat), ptile, FALSE, NULL);
+  spyhome = find_closest_owned_city(unit_owner(pdiplomat),
+                                    ptile, FALSE, NULL);
 
-  if (spyhome
-      && unit_flag(pdiplomat, F_SPY)
-      && (myrand (100) < escapechance || unit_flag(pdiplomat, F_SUPERSPY))) {
+  if (spyhome && unit_flag(pdiplomat, F_SPY)
+      && (myrand (100) < escapechance
+          || unit_flag(pdiplomat, F_SUPERSPY))) {
     /* Attacking Spy/Diplomat survives. */
 
     /* may become a veteran */
@@ -1293,13 +1294,12 @@ static void diplomat_escape(struct player *pplayer, struct unit *pdiplomat,
     }
 
     /* being teleported costs all movement */
-    if (!teleport_unit_to_city (pdiplomat, spyhome, -1, FALSE)) {
-      send_unit_info (pplayer, pdiplomat);
+    if (!teleport_unit_to_city(pdiplomat, spyhome, -1, FALSE)) {
+      send_unit_info(pplayer, pdiplomat);
       freelog(LOG_ERROR, "Bug in diplomat_escape: Spy can't teleport.");
-      return;
     }
-
     return;
+
   } else {
     if (pcity) {
       notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_FAILED,
