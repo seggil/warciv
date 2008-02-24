@@ -799,20 +799,28 @@ struct settings_s settings[] = {
 	      "changes in tiles not observed."), NULL, 
 	   GAME_DEFAULT_FOGOFWAR)
 
+  GEN_INT("dipldefchance", game.server.dipldefchance,
+          SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL,
+          SSET_TO_CLIENT,
+          N_("Chance in diplomat/spy contests"),
+          N_("A diplomatic unit acting against a city which has one or "
+             "more defending diplomatic units has a dipldefchance "
+             "(percent) chance to defeat each such defender."
+	     "Defending spies are generally twice as capable as "
+             "diplomats."),
+          NULL, GAME_MIN_DIPLDEFCHANCE, GAME_MAX_DIPLDEFCHANCE,
+          GAME_DEFAULT_DIPLDEFCHANCE)
+
   GEN_INT("diplchance", game.server.diplchance,
 	  SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
-	  N_("Chance in diplomat/spy contests"),
+	  N_("Chance in diplomat/spy actions"),
 	  /* xgettext:no-c-format */
-	  N_("A diplomatic unit acting against a city which has one or "
-	     "more defending diplomatic units has a diplchance "
-	     "(percent) chance to defeat each such defender. Also, the "
-	     "chance of a spy returning from a successful mission is "
-	     "diplchance percent (diplomats never return).  This value is "
+	  N_("The chance of a spy returning from a successful mission is "
+	     "diplchance percent (diplomats never return). This value is "
 	     "also the basic chance of success for diplomats and spies. "
-	     "Defending spies are generally twice as capable as "
-	     "diplomats; veteran units are 50% more capable than "
-	     "non-veteran ones."), NULL, 
-	  GAME_MIN_DIPLCHANCE, GAME_MAX_DIPLCHANCE, GAME_DEFAULT_DIPLCHANCE)
+	     "Veteran units are 50% more capable than non-veteran ones."),
+          NULL, GAME_MIN_DIPLCHANCE, GAME_MAX_DIPLCHANCE,
+          GAME_DEFAULT_DIPLCHANCE)
 
   GEN_BOOL("spacerace", game.info.spacerace,
 	   SSET_RULES_FLEXIBLE, SSET_SCIENCE, SSET_VITAL, SSET_TO_CLIENT,

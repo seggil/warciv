@@ -100,6 +100,7 @@ struct civ_game {
     time_t turn_start;
 
     int diplchance;
+    int dipldefchance; /* Read as "diplomat defeat chance". */
     int citymindist;
     int civilwarsize;
     int contactturns;
@@ -391,6 +392,10 @@ extern bool is_server;
 #define GAME_DEFAULT_DIPLCHANCE      60
 #define GAME_MIN_DIPLCHANCE          1
 #define GAME_MAX_DIPLCHANCE          99
+
+#define GAME_DEFAULT_DIPLDEFCHANCE   60
+#define GAME_MIN_DIPLDEFCHANCE       1
+#define GAME_MAX_DIPLDEFCHANCE       99
 
 #define GAME_DEFAULT_FREECOST        0
 #define GAME_MIN_FREECOST            0

@@ -3314,6 +3314,8 @@ void game_load(struct section_file *file)
       game.server.diplchance = 100 - (10 * (game.server.diplchance - 1));
     }
   }
+  game.server.dipldefchance = secfile_lookup_int_default(file,
+      game.server.dipldefchance, "game.dipldefchance");
   game.server.aqueductloss = secfile_lookup_int_default(file, game.server.aqueductloss,
                                                  "game.aqueductloss");
   game.server.killcitizen = secfile_lookup_int_default(file, game.server.killcitizen,
@@ -3850,6 +3852,7 @@ void game_save(struct section_file *file)
   secfile_insert_bool(file, game.info.spacerace, "game.spacerace");
   secfile_insert_bool(file, game.server.auto_ai_toggle, "game.auto_ai_toggle");
   secfile_insert_int(file, game.server.diplchance, "game.diplchance");
+  secfile_insert_int(file, game.server.dipldefchance, "game.dipldefchance");
   secfile_insert_int(file, game.server.aqueductloss, "game.aqueductloss");
   secfile_insert_int(file, game.server.killcitizen, "game.killcitizen");
   secfile_insert_bool(file, game.server.turnblock, "game.turnblock");

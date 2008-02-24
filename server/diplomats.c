@@ -1118,11 +1118,12 @@ static void diplomat_charge_movement (struct unit *pdiplomat, struct tile *ptile
 
   - Return TRUE if the "attacker" succeeds.
 **************************************************************************/
-static bool diplomat_success_vs_defender (struct unit *pattacker, 
-	struct unit *pdefender, struct tile *pdefender_tile)
+static bool diplomat_success_vs_defender(struct unit *pattacker, 
+                                         struct unit *pdefender,
+                                         struct tile *pdefender_tile)
 {
-  int att = game.server.diplchance;
-  int def = 100 - game.server.diplchance;
+  int att = game.server.dipldefchance; /* I.e. "diplomat defeat chance". */
+  int def = 100 - game.server.dipldefchance;
 
   if (unit_flag(pdefender, F_SUPERSPY)) {
     return TRUE;
@@ -1142,8 +1143,8 @@ static bool diplomat_success_vs_defender (struct unit *pattacker,
 				      EFT_SPY_RESISTANT)) / 100;
   } else {
     if (tile_has_special(pdefender_tile, S_FORTRESS)
-       || tile_has_special(pdefender_tile, S_AIRBASE)) {
-	def = (def * 5) / 4;/* +25% */ 
+        || tile_has_special(pdefender_tile, S_AIRBASE)) {
+      def = (def * 5) / 4;/* +25% */ 
     }
   }
   

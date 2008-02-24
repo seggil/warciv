@@ -308,6 +308,7 @@ void game_init(void)
     game.server.pingtime = GAME_DEFAULT_PINGTIME;
     game.server.aifill = GAME_DEFAULT_AIFILL;
     game.server.diplchance  = GAME_DEFAULT_DIPLCHANCE;
+    game.server.dipldefchance  = GAME_DEFAULT_DIPLDEFCHANCE;
     sz_strlcpy(game.server.start_units, GAME_DEFAULT_START_UNITS);
     game.server.dispersion  = GAME_DEFAULT_DISPERSION;
     game.server.citymindist = GAME_DEFAULT_CITYMINDIST;
