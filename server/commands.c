@@ -176,7 +176,7 @@ const struct command commands[] = {
    N_("Start a poll.\n"),
    N_("If no other votes are running, a poll is started regarding the "
       "question you type in after the command."),
-   ECHO_ADMINS, VCF_WAITFORALL | VCF_ALWAYSVOTE, 50
+   ECHO_ADMINS, VCF_ALWAYSVOTE, 50
   },
   {"emote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
