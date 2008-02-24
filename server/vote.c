@@ -326,7 +326,6 @@ struct vote *vote_new(struct connection *caller,
      * help texts. */
     if (op->int_value == &game.info.timeout
         && sv->int_value > *op->int_value) {
-      pvote->flags |= VCF_FASTPASS;
       pvote->need_pc = 0.25;
     }
   }
