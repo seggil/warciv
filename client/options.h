@@ -61,6 +61,7 @@ extern bool use_voteinfo_bar;
 extern bool show_new_vote_in_front;
 extern bool disable_chatline_scroll_on_window_resize;
 extern bool always_show_votebar;
+extern bool do_not_show_votebar_if_not_player;
 
 enum client_option_type {
   COT_BOOL,

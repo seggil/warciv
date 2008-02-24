@@ -161,7 +161,9 @@ client_option gui_options[] = {
                      "is resized")),
   GEN_BOOL_OPTION(always_show_votebar,
                   N_("Do not hide the vote bar when there are no running "
-                     "votes"))
+                     "votes")),
+  GEN_BOOL_OPTION(do_not_show_votebar_if_not_player,
+                  N_("Do not show vote bar if not a player"))
 };
 const int num_gui_options = ARRAY_SIZE(gui_options);
 

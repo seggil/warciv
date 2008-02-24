@@ -86,6 +86,7 @@ bool use_voteinfo_bar = TRUE;
 bool show_new_vote_in_front = FALSE;
 bool disable_chatline_scroll_on_window_resize = FALSE;
 bool always_show_votebar = FALSE;
+bool do_not_show_votebar_if_not_player = FALSE;
 
 
 /* This option is currently set by the client - not by the user. */

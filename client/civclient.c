@@ -808,3 +808,12 @@ int get_player_idx(void)
 {
   return aconnection.player ? aconnection.player->player_no : -1;
 }
+
+/**************************************************************************
+  Returns TRUE if and only if the client is controlling a player.
+**************************************************************************/
+bool client_is_player(void)
+{
+  return !client_is_observer() && get_player_ptr() != NULL;
+}
+

@@ -2295,8 +2295,9 @@ void voteinfo_gui_update(void)
   vote_count = voteinfo_list_size(voteinfo_queue);
   vi = voteinfo_queue_get_current(&index);
 
-  if (!use_voteinfo_bar || (!always_show_votebar
-                            && (vote_count <= 0 || vi == NULL))) {
+  if (!use_voteinfo_bar
+      || (!always_show_votebar && (vote_count <= 0 || vi == NULL))
+      || (!client_is_player() && do_not_show_votebar_if_not_player)) {
     gtk_widget_hide_all(vib->box);
     return;
   }
