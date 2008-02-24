@@ -153,11 +153,15 @@ client_option gui_options[] = {
   GEN_BOOL_OPTION(better_fog,
                   N_("Better fog-of-war drawing")),
   GEN_BOOL_OPTION(use_voteinfo_bar,
-                  N_("Display the vote bar for new votes")),
+                  N_("Enable vote bar for displaying vote information")),
   GEN_BOOL_OPTION(show_new_vote_in_front,
                   N_("New votes go to the front of the vote list")),
   GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
-                  N_("Disable chatline scrolling-to-bottom when window is resized."))
+                  N_("Disable chatline scrolling-to-bottom when window "
+                     "is resized")),
+  GEN_BOOL_OPTION(always_show_votebar,
+                  N_("Do not hide the vote bar when there are no running "
+                     "votes"))
 };
 const int num_gui_options = ARRAY_SIZE(gui_options);
 

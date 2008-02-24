@@ -2295,20 +2295,21 @@ void voteinfo_gui_update(void)
   vote_count = voteinfo_list_size(voteinfo_queue);
   vi = voteinfo_queue_get_current(&index);
 
-  if (!use_voteinfo_bar || vote_count <= 0 || vi == NULL) {
+  if (!use_voteinfo_bar || (!always_show_votebar
+                            && (vote_count <= 0 || vi == NULL))) {
     gtk_widget_hide_all(vib->box);
     return;
   }
 
-  if (vi->resolved && vi->passed) {
+  if (vi != NULL && vi->resolved && vi->passed) {
     /* TRANS: Describing a vote that passed. */
     my_snprintf(status, sizeof(status), _("[passed]"));
     sz_strlcpy(color, "green");
-  } else if (vi->resolved && !vi->passed) {
+  } else if (vi != NULL && vi->resolved && !vi->passed) {
     /* TRANS: Describing a vote that failed. */
     my_snprintf(status, sizeof(status), _("[failed]"));
     sz_strlcpy(color, "red");
-  } else if (vi->remove_time > 0) {
+  } else if (vi != NULL && vi->remove_time > 0) {
     /* TRANS: Describing a vote that was removed. */
     my_snprintf(status, sizeof(status), _("[removed]"));
     sz_strlcpy(color, "grey");
@@ -2331,28 +2332,39 @@ void voteinfo_gui_update(void)
     sz_strlcpy(status, buf);
   }
 
-  escaped_desc = g_markup_escape_text(vi->desc, -1);
-  escaped_user = g_markup_escape_text(vi->user, -1);
-  if (vi->is_poll) {
-    my_snprintf(buf, sizeof(buf), _("%sPoll by %s: %s%s"),
-                ordstr, escaped_user, status, escaped_desc);
+  if (vi != NULL) {
+    escaped_desc = g_markup_escape_text(vi->desc, -1);
+    escaped_user = g_markup_escape_text(vi->user, -1);
+    if (vi->is_poll) {
+      my_snprintf(buf, sizeof(buf), _("%sPoll by %s: %s%s"),
+                  ordstr, escaped_user, status, escaped_desc);
+    } else {
+      my_snprintf(buf, sizeof(buf), _("%sVote %d by %s: %s%s"),
+                  ordstr, vi->vote_no, escaped_user, status,
+                  escaped_desc);
+    }
+    g_free(escaped_desc);
+    g_free(escaped_user);
   } else {
-    my_snprintf(buf, sizeof(buf), _("%sVote %d by %s: %s%s"),
-                ordstr, vi->vote_no, escaped_user, status,
-                escaped_desc);
+    buf[0] = '\0';
   }
-  g_free(escaped_desc);
-  g_free(escaped_user);
   gtk_label_set_markup(GTK_LABEL(vib->label), buf);
 
-  my_snprintf(buf, sizeof(buf), "%d", vi->yes);
-  gtk_label_set_text(GTK_LABEL(vib->yes_count_label), buf);
-  my_snprintf(buf, sizeof(buf), "%d", vi->no);
-  gtk_label_set_text(GTK_LABEL(vib->no_count_label), buf);
-  my_snprintf(buf, sizeof(buf), "%d", vi->abstain);
-  gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), buf);
+  if (vi != NULL)  {
+    my_snprintf(buf, sizeof(buf), "%d", vi->yes);
+    gtk_label_set_text(GTK_LABEL(vib->yes_count_label), buf);
+    my_snprintf(buf, sizeof(buf), "%d", vi->no);
+    gtk_label_set_text(GTK_LABEL(vib->no_count_label), buf);
+    my_snprintf(buf, sizeof(buf), "%d", vi->abstain);
+    gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), buf);
+  } else {
+    sz_strlcpy(buf, "-");
+    gtk_label_set_text(GTK_LABEL(vib->yes_count_label), buf);
+    gtk_label_set_text(GTK_LABEL(vib->no_count_label), buf);
+    gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), buf);
+  }
 
-  running = !vi->resolved && vi->remove_time == 0;
+  running = vi != NULL && !vi->resolved && vi->remove_time == 0;
 
   gtk_widget_set_sensitive(vib->yes_button, running);
   gtk_widget_set_sensitive(vib->no_button, running);
@@ -2360,11 +2372,13 @@ void voteinfo_gui_update(void)
 
   gtk_widget_show_all(vib->box);
 
-  if (vote_count == 1) {
+  if (vote_count <= 1) {
     gtk_widget_hide(vib->next_button);
   }
 
-  /* Showing the votebar when it was hidden
-   * previously makes the chatline scroll up. */
-  queue_chatline_scroll_to_bottom();
+  if (!always_show_votebar && vote_count == 1) {
+    /* Showing the votebar when it was hidden
+     * previously makes the chatline scroll up. */
+    queue_chatline_scroll_to_bottom();
+  }
 }
