@@ -3419,7 +3419,7 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
       return FALSE;
     default:
       for (x = 0; x < pmap->xsize; x++) {
-        for (y = 0; y < x; y++) {
+        for (y = -x; y < x; y++) {
           cases_iterate;
         }
       }
