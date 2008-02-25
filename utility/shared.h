@@ -243,7 +243,15 @@ struct datafile {
 #define datafile_list_iterate(list, pnode) \
   TYPED_LIST_ITERATE(struct datafile, list, pnode)
 #define datafile_list_iterate_end LIST_ITERATE_END
-                                                                               
+              
+/* A list of strings (i.e. 'char *'). */
+#define SPECLIST_TAG string
+#define SPECLIST_TYPE char
+#include "speclist.h"
+#define string_list_iterate(alist, pitem)\
+  TYPED_LIST_ITERATE(char, alist, pitem)
+#define string_list_iterate_end  LIST_ITERATE_END
+
 char *user_home_dir(void);
 const char *user_username(void);
 const char **datafilelist(const char *suffix);
