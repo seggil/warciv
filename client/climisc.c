@@ -100,56 +100,62 @@ static int voteinfo_queue_current_index = 0;
 /**************************************************************************
   ...
 **************************************************************************/
-void city_autonaming_add_used_name (const char *city_name)
+void city_autonaming_add_used_name(const char *city_name)
 {
-  char *cn = mystrdup (city_name);
-  
-  freelog (LOG_DEBUG, "city_autonaming_add_used_name \"%s\"", city_name);
+  char *cn = mystrdup(city_name);
 
-  if (!hash_insert (an_city_name_table, cn, NULL))
-    free (cn);
+  freelog(LOG_DEBUG, "city_autonaming_add_used_name \"%s\"", city_name);
+
+  if (!hash_insert(an_city_name_table, cn, NULL)) {
+    free(cn);
+  }
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-void city_autonaming_remove_used_name (const char *city_name)
+void city_autonaming_remove_used_name(const char *city_name)
 {
   void *key = NULL;
-  freelog (LOG_DEBUG, "city_autonaming_remove_used_name \"%s\"", city_name);
-  hash_delete_entry_full (an_city_name_table, city_name, &key);
-  if (key)
-    free (key);
+  freelog(LOG_DEBUG, "city_autonaming_remove_used_name \"%s\"", city_name);
+  hash_delete_entry_full(an_city_name_table, city_name, &key);
+  if (key) {
+    free(key);
+  }
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void city_clear_worklist (struct city *pcity)
+void city_clear_worklist(struct city *pcity)
 {
   struct worklist empty_worklist;
-  init_worklist (&empty_worklist);
-  city_set_worklist (pcity, &empty_worklist);
+  init_worklist(&empty_worklist);
+  city_set_worklist(pcity, &empty_worklist);
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void clear_worklists_in_selected_cities (void)
+void clear_worklists_in_selected_cities(void)
 {
   char buf[128];
-  if (!tiles_hilited_cities)
+  if (!tiles_hilited_cities) {
     return;
+  }
 
-  connection_do_buffer (&aconnection);
-  city_list_iterate (get_player_ptr()->cities, pcity) {
-    if (!is_city_hilited (pcity))
+  connection_do_buffer(&aconnection);
+  city_list_iterate(get_player_ptr()->cities, pcity) {
+    if (!is_city_hilited(pcity)) {
       continue;
-    city_clear_worklist (pcity);
-    my_snprintf (buf, sizeof(buf), _("Cleared worklist in %s."), pcity->name);
-    append_output_window (buf);    
+    }
+    city_clear_worklist(pcity);
+    my_snprintf(buf, sizeof(buf), _("Cleared worklist in %s."),
+                pcity->name);
+    append_output_window(buf);
   } city_list_iterate_end;
-  connection_do_unbuffer (&aconnection); 
-} 
+  connection_do_unbuffer(&aconnection);
+}
 
 /**************************************************************************
   Advance the worlist while the city can't build
@@ -184,29 +190,28 @@ void client_remove_unit(struct unit *punit)
   struct unit *ufocus = get_unit_in_focus();
 
   freelog(LOG_DEBUG, "removing unit %d, %s %s (%d %d) hcity %d",
-	  punit->id, get_nation_name(unit_owner(punit)->nation),
-	  unit_name(punit->type), TILE_XY(punit->tile), hc);
+          punit->id, get_nation_name(unit_owner(punit)->nation),
+          unit_name(punit->type), TILE_XY(punit->tile), hc);
 
   my_ai_orders_free(punit);
 
   if (punit == ufocus) {
     multi_select_wipe_up_unit(punit);
-    if(punit == get_unit_in_focus()) {
-    set_unit_focus(NULL);
-    game_remove_unit(punit);
-    advance_unit_focus();
+    if (punit == get_unit_in_focus()) {
+      set_unit_focus(NULL);
+      game_remove_unit(punit);
+      advance_unit_focus();
       if (!get_unit_in_focus()) {
         /* It was the last unit */
         automatic_processus_event(AUTO_NO_UNIT_SELECTED, NULL);
       }
-    }
-    else
+    } else {
       game_remove_unit(punit);
+    }
     punit = NULL;
   } else {
     /* calculate before punit disappears, use after punit removed: */
-    bool update = (ufocus
-		   && same_pos(ufocus->tile, punit->tile));
+    bool update = (ufocus && same_pos(ufocus->tile, punit->tile));
 
     multi_select_wipe_up_unit(punit);
     game_remove_unit(punit);
@@ -219,22 +224,21 @@ void client_remove_unit(struct unit *punit)
   pcity = map_get_city(ptile);
   if (pcity) {
     if (can_player_see_units_in_city(get_player_ptr(), pcity)) {
-      pcity->client.occupied =
-	(unit_list_size(pcity->tile->units) > 0);
+      pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
     }
 
     refresh_city_dialog(pcity);
     freelog(LOG_DEBUG, "map city %s, %s, (%d %d)", pcity->name,
-	    get_nation_name(city_owner(pcity)->nation),
-	    TILE_XY(pcity->tile));
+            get_nation_name(city_owner(pcity)->nation),
+            TILE_XY(pcity->tile));
   }
 
   pcity = player_find_city_by_id(get_player_ptr(), hc);
   if (pcity) {
     refresh_city_dialog(pcity);
     freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->name,
-	    get_nation_name(city_owner(pcity)->nation),
-	    TILE_XY(pcity->tile));
+            get_nation_name(city_owner(pcity)->nation),
+            TILE_XY(pcity->tile));
   }
 
   refresh_tile_mapcanvas(ptile, MUT_NORMAL);
@@ -249,13 +253,13 @@ void client_remove_city(struct city *pcity)
   struct tile *ptile = pcity->tile;
 
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
-	  get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
+          get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
 
   my_ai_city_free(pcity);
 
   /* Explicitly remove all improvements, to properly remove any global effects
      and to handle the preservation of "destroyed" effects. */
-  effect_update=FALSE;
+  effect_update = FALSE;
 
   built_impr_iterate(pcity, i) {
     effect_update = TRUE;
@@ -284,28 +288,26 @@ void client_change_all(cid x, cid y)
   int last_request_id = 0;
 
   my_snprintf(buf, sizeof(buf),
-	      _("Game: Changing production of every %s into %s."),
-	      fr_is_unit ? get_unit_type(fr_id)->name :
-	      get_improvement_name(fr_id),
-	      to_is_unit ? get_unit_type(to_id)->
-	      name : get_improvement_name(to_id));
+              _("Game: Changing production of every %s into %s."),
+              fr_is_unit ? get_unit_type(fr_id)->name :
+              get_improvement_name(fr_id),
+              to_is_unit ? get_unit_type(to_id)->
+              name : get_improvement_name(to_id));
   append_output_window(buf);
 
   connection_do_buffer(&aconnection);
-  city_list_iterate (get_player_ptr()->cities, pcity) {
+  city_list_iterate(get_player_ptr()->cities, pcity) {
     if (((fr_is_unit &&
-	  (pcity->is_building_unit) &&
-	  (pcity->currently_building == fr_id)) ||
-	 (!fr_is_unit &&
-	  !(pcity->is_building_unit) &&
-	  (pcity->currently_building == fr_id))) &&
-	((to_is_unit &&
-	  can_build_unit (pcity, to_id)) ||
-	 (!to_is_unit &&
-	  can_build_improvement (pcity, to_id))))
-      {
-	last_request_id = city_change_production(pcity, to_is_unit, to_id);
-      }
+          (pcity->is_building_unit) &&
+          (pcity->currently_building == fr_id)) ||
+         (!fr_is_unit &&
+          !(pcity->is_building_unit) &&
+          (pcity->currently_building == fr_id))) &&
+        ((to_is_unit &&
+          can_build_unit(pcity, to_id)) ||
+         (!to_is_unit && can_build_improvement(pcity, to_id)))) {
+      last_request_id = city_change_production(pcity, to_is_unit, to_id);
+    }
   } city_list_iterate_end;
 
   connection_do_unbuffer(&aconnection);
@@ -317,9 +319,7 @@ void client_change_all(cid x, cid y)
 ***************************************************************************/
 const char *get_embassy_status(struct player *me, struct player *them)
 {
-  if (me == them
-      || !them->is_alive
-      || !me->is_alive) {
+  if (me == them || !them->is_alive || !me->is_alive) {
     return "-";
   }
   if (player_has_embassy(me, them)) {
@@ -360,39 +360,39 @@ const char *get_vision_status(struct player *me, struct player *them)
 Copy a string that describes the given clause into the return buffer.
 **************************************************************************/
 void client_diplomacy_clause_string(char *buf, int bufsiz,
-				    struct Clause *pclause)
+                                    struct Clause *pclause)
 {
   struct city *pcity;
 
-  switch(pclause->type) {
+  switch (pclause->type) {
   case CLAUSE_ADVANCE:
     my_snprintf(buf, bufsiz, _("The %s give %s"),
-		get_nation_name_plural(pclause->from->nation),
-		get_tech_name(get_player_ptr(), pclause->value));
+                get_nation_name_plural(pclause->from->nation),
+                get_tech_name(get_player_ptr(), pclause->value));
     break;
   case CLAUSE_CITY:
     pcity = find_city_by_id(pclause->value);
     if (pcity) {
       my_snprintf(buf, bufsiz, _("The %s give %s"),
                   get_nation_name_plural(pclause->from->nation),
-		  pcity->name);
+                  pcity->name);
     } else {
-      my_snprintf(buf, bufsiz,_("The %s give unknown city."),
+      my_snprintf(buf, bufsiz, _("The %s give unknown city."),
                   get_nation_name_plural(pclause->from->nation));
     }
     break;
   case CLAUSE_GOLD:
     my_snprintf(buf, bufsiz, _("The %s give %d gold"),
-		get_nation_name_plural(pclause->from->nation),
-		pclause->value);
+                get_nation_name_plural(pclause->from->nation),
+                pclause->value);
     break;
   case CLAUSE_MAP:
     my_snprintf(buf, bufsiz, _("The %s give their worldmap"),
-		get_nation_name_plural(pclause->from->nation));
+                get_nation_name_plural(pclause->from->nation));
     break;
   case CLAUSE_SEAMAP:
     my_snprintf(buf, bufsiz, _("The %s give their seamap"),
-		get_nation_name_plural(pclause->from->nation));
+                get_nation_name_plural(pclause->from->nation));
     break;
   case CLAUSE_CEASEFIRE:
     my_snprintf(buf, bufsiz, _("The parties agree on a cease-fire"));
@@ -405,7 +405,7 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
     break;
   case CLAUSE_VISION:
     my_snprintf(buf, bufsiz, _("The %s gives shared vision"),
-		get_nation_name_plural(pclause->from->nation));
+                get_nation_name_plural(pclause->from->nation));
     break;
   case CLAUSE_EMBASSY:
     my_snprintf(buf, bufsiz, _("The %s gives an embassy"),
@@ -426,7 +426,7 @@ Return the sprite index for the research indicator.
 int client_research_sprite(void)
 {
   return (NUM_TILES_PROGRESS *
-	  get_player_ptr()->research.bulbs_researched) /
+          get_player_ptr()->research.bulbs_researched) /
       (total_bulbs_required(get_player_ptr()) + 1);
 }
 
@@ -441,8 +441,8 @@ int client_warming_sprite(void)
     index = MAX(0, game.info.heating);
   } else {
     index = MIN(NUM_TILES_PROGRESS,
-		(MAX(0, 4 + game.info.globalwarming) / 5) +
-		((NUM_TILES_PROGRESS / 2) - 1));
+                (MAX(0, 4 + game.info.globalwarming) / 5) +
+                ((NUM_TILES_PROGRESS / 2) - 1));
   }
   return index;
 }
@@ -458,8 +458,8 @@ int client_cooling_sprite(void)
     index = MAX(0, game.info.cooling);
   } else {
     index = MIN(NUM_TILES_PROGRESS,
-		(MAX(0, 4 + game.info.nuclearwinter) / 5) +
-		((NUM_TILES_PROGRESS / 2) - 1));
+                (MAX(0, 4 + game.info.nuclearwinter) / 5) +
+                ((NUM_TILES_PROGRESS / 2) - 1));
   }
   return index;
 }
@@ -502,12 +502,13 @@ void center_on_something(void)
      * a misuse of map.xsize and map.ysize (which are native dimensions),
      * it should give a sufficiently large radius. */
     iterate_outward(native_pos_to_tile(map.xsize / 2, map.ysize / 2),
-		    map.xsize + map.ysize, ptile) {
+                    map.xsize + map.ysize, ptile) {
       if (tile_get_known(ptile) != TILE_UNKNOWN) {
-	ctile = ptile;
-	break;
+        ctile = ptile;
+        break;
       }
-    } iterate_outward_end;
+    }
+    iterate_outward_end;
 
     center_tile_mapcanvas(ctile);
   }
@@ -533,7 +534,7 @@ cid cid_encode_from_city(struct city * pcity)
 /**************************************************************************
 ...
 **************************************************************************/
-void cid_decode(cid cid, bool *is_unit, int *id)
+void cid_decode(cid cid, bool * is_unit, int *id)
 {
   *is_unit = cid_is_unit(cid);
   *id = cid_id(cid);
@@ -562,10 +563,12 @@ wid wid_encode(bool is_unit, bool is_worklist, int id)
 {
   assert(!is_unit || !is_worklist);
 
-  if (is_unit)
+  if (is_unit) {
     return id + B_LAST;
-  if (is_worklist)
+  }
+  if (is_worklist) {
     return id + B_LAST + U_LAST;
+  }
   return id;
 }
 
@@ -596,52 +599,56 @@ int wid_id(wid wid)
 {
   assert(wid != WORKLIST_END);
 
-  if (wid >= B_LAST + U_LAST)
+  if (wid >= B_LAST + U_LAST) {
     return wid - (B_LAST + U_LAST);
-  if (wid >= B_LAST)
+  }
+  if (wid >= B_LAST) {
     return wid - B_LAST;
+  }
   return wid;
 }
 
 /****************************************************************
 ...
 *****************************************************************/
-bool city_can_build_impr_or_unit(struct city *pcity, cid cid)
+bool city_can_build_impr_or_unit(struct city * pcity, cid cid)
 {
-  if (cid_is_unit(cid))
+  if (cid_is_unit(cid)) {
     return can_build_unit(pcity, cid_id(cid));
-  else
+  } else {
     return can_build_improvement(pcity, cid_id(cid));
+  }
 }
 
 /****************************************************************
 ...
 *****************************************************************/
-bool city_can_sell_impr(struct city *pcity, cid cid)
+bool city_can_sell_impr(struct city * pcity, cid cid)
 {
   int id;
   id = cid_id(cid);
-  
-  if (cid_is_unit(cid))
+
+  if (cid_is_unit(cid)) {
     return FALSE;
-  else
-    return !pcity->did_sell && city_got_building(pcity, id)
-      && !is_wonder(id);
+  }
+
+  return !pcity->did_sell && city_got_building(pcity, id)
+    && !is_wonder(id);
 }
 
 /****************************************************************
 ...
 *****************************************************************/
-bool city_unit_supported(struct city *pcity, cid cid)
+bool city_unit_supported(struct city * pcity, cid cid)
 {
   if (cid_is_unit(cid)) {
     int unit_type = cid_id(cid);
 
     unit_list_iterate(pcity->units_supported, punit) {
-      if (punit->type == unit_type)
-	return TRUE;
-    }
-    unit_list_iterate_end;
+      if (punit->type == unit_type) {
+        return TRUE;
+      }
+    } unit_list_iterate_end;
   }
   return FALSE;
 }
@@ -649,16 +656,16 @@ bool city_unit_supported(struct city *pcity, cid cid)
 /****************************************************************
 ...
 *****************************************************************/
-bool city_unit_present(struct city *pcity, cid cid)
+bool city_unit_present(struct city * pcity, cid cid)
 {
   if (cid_is_unit(cid)) {
     int unit_type = cid_id(cid);
 
     unit_list_iterate(pcity->tile->units, punit) {
-      if (punit->type == unit_type)
-	return TRUE;
-    }
-    unit_list_iterate_end;
+      if (punit->type == unit_type) {
+        return TRUE;
+      }
+    } unit_list_iterate_end;
   }
   return FALSE;
 }
@@ -666,7 +673,7 @@ bool city_unit_present(struct city *pcity, cid cid)
 /****************************************************************************
   A TestCityFunc to tell whether the item is a building and is present.
 ****************************************************************************/
-bool city_building_present(struct city *pcity, cid cid)
+bool city_building_present(struct city * pcity, cid cid)
 {
   if (!cid_is_unit(cid)) {
     int impr_type = cid_id(cid);
@@ -684,8 +691,9 @@ static int my_cmp(const void *p1, const void *p2)
   const struct item *i1 = (const struct item *) p1;
   const struct item *i2 = (const struct item *) p2;
 
-  if (i1->section == i2->section)
+  if (i1->section == i2->section) {
     return mystrcasecmp(i1->descr, i2->descr);
+  }
   return (i1->section - i2->section);
 }
 
@@ -700,7 +708,7 @@ static int my_cmp(const void *p1, const void *p2)
  section 4: wonders
 **************************************************************************/
 void name_and_sort_items(int *pcids, int num_cids, struct item *items,
-			 bool show_cost, struct city *pcity)
+                         bool show_cost, struct city *pcity)
 {
   int i;
 
@@ -719,26 +727,27 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
     } else {
       name = get_impr_name_ex(pcity, id);
       if (building_has_effect(id, EFT_PROD_TO_GOLD)) {
-	cost = -1;
-	pitem->section = 1;
+        cost = -1;
+        pitem->section = 1;
       } else {
-	cost = impr_build_shield_cost(id);
-	if (is_wonder(id)) {
-      	  pitem->section = 4;
+        cost = impr_build_shield_cost(id);
+        if (is_wonder(id)) {
+          pitem->section = 4;
         } else {
-	  pitem->section = 0;
-	}
+          pitem->section = 0;
+        }
       }
     }
 
     if (show_cost) {
       if (cost < 0) {
-	my_snprintf(pitem->descr, sizeof(pitem->descr), "%s (XX)", name);
+        my_snprintf(pitem->descr, sizeof(pitem->descr), "%s (XX)", name);
       } else {
-	my_snprintf(pitem->descr, sizeof(pitem->descr), "%s (%d)", name, cost);
+        my_snprintf(pitem->descr, sizeof(pitem->descr), "%s (%d)", name,
+                    cost);
       }
     } else {
-      (void) mystrlcpy(pitem->descr, name, sizeof(pitem->descr));
+      mystrlcpy(pitem->descr, name, sizeof(pitem->descr));
     }
   }
 
@@ -749,14 +758,14 @@ void name_and_sort_items(int *pcids, int num_cids, struct item *items,
 ...
 **************************************************************************/
 int collect_cids1(cid * dest_cids, struct city **selected_cities,
-		  int num_selected_cities, bool append_units,
-		  bool append_wonders, bool change_prod,
-		  bool (*test_func) (struct city *, int))
+                  int num_selected_cities, bool append_units,
+                  bool append_wonders, bool change_prod,
+                  bool(*test_func) (struct city *, int))
 {
   cid first = append_units ? B_LAST : 0;
   cid last = (append_units
-	      ? game.ruleset_control.num_unit_types + B_LAST
-	      : game.ruleset_control.num_impr_types);
+              ? game.ruleset_control.num_unit_types + B_LAST
+              : game.ruleset_control.num_impr_types);
   cid cid;
   int items_used = 0;
 
@@ -764,24 +773,25 @@ int collect_cids1(cid * dest_cids, struct city **selected_cities,
     bool append = FALSE;
     int id = cid_id(cid);
 
-    if (!append_units && (append_wonders != is_wonder(id)))
+    if (!append_units && (append_wonders != is_wonder(id))) {
       continue;
+    }
 
     if (!change_prod) {
       city_list_iterate(get_player_ptr()->cities, pcity) {
-	append |= test_func(pcity, cid);
-      }
-      city_list_iterate_end;
+        append |= test_func(pcity, cid);
+      } city_list_iterate_end;
     } else {
       int i;
 
       for (i = 0; i < num_selected_cities; i++) {
-	append |= test_func(selected_cities[i], cid);
+        append |= test_func(selected_cities[i], cid);
       }
     }
 
-    if (!append)
+    if (!append) {
       continue;
+    }
 
     dest_cids[items_used] = cid;
     items_used++;
@@ -802,8 +812,7 @@ int collect_cids2(cid * dest_cids)
   memset(mapping, 0, sizeof(mapping));
   city_list_iterate(get_player_ptr()->cities, pcity) {
     mapping[cid_encode_from_city(pcity)] = TRUE;
-  }
-  city_list_iterate_end;
+  } city_list_iterate_end;
 
   for (cid = 0; cid < ARRAY_SIZE(mapping); cid++) {
     if (mapping[cid]) {
@@ -834,8 +843,8 @@ int collect_cids3(cid * dest_cids)
       dest_cids[cids_used] = cid_encode(TRUE, id);
       cids_used++;
     }
-  } unit_type_iterate_end
-
+  } unit_type_iterate_end;
+  
   return cids_used;
 }
 
@@ -850,17 +859,17 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
   impr_type_iterate(id) {
     bool can_build = can_player_build_improvement(get_player_ptr(), id);
     bool can_eventually_build =
-	can_player_eventually_build_improvement(get_player_ptr(), id);
+        can_player_eventually_build_improvement(get_player_ptr(), id);
 
     /* If there's a city, can the city build the improvement? */
     if (pcity) {
       can_build = can_build && can_build_improvement(pcity, id);
       can_eventually_build = can_eventually_build &&
-	  can_eventually_build_improvement(pcity, id);
+          can_eventually_build_improvement(pcity, id);
     }
 
     if ((advanced_tech && can_eventually_build) ||
-	(!advanced_tech && can_build)) {
+        (!advanced_tech && can_build)) {
       dest_cids[cids_used] = cid_encode(FALSE, id);
       cids_used++;
     }
@@ -869,17 +878,17 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
   unit_type_iterate(id) {
     bool can_build = can_player_build_unit(get_player_ptr(), id);
     bool can_eventually_build =
-	can_player_eventually_build_unit(get_player_ptr(), id);
+        can_player_eventually_build_unit(get_player_ptr(), id);
 
     /* If there's a city, can the city build the unit? */
     if (pcity) {
       can_build = can_build && can_build_unit(pcity, id);
       can_eventually_build = can_eventually_build &&
-	  can_eventually_build_unit(pcity, id);
+          can_eventually_build_unit(pcity, id);
     }
 
     if ((advanced_tech && can_eventually_build) ||
-	(!advanced_tech && can_build)) {
+        (!advanced_tech && can_build)) {
       dest_cids[cids_used] = cid_encode(TRUE, id);
       cids_used++;
     }
@@ -908,7 +917,7 @@ int collect_cids5(cid * dest_cids, struct city *pcity)
 /**************************************************************************
  Collect the wids of all possible targets of the given city.
 **************************************************************************/
-int collect_wids1(wid * dest_wids, struct city *pcity, bool wl_first, 
+int collect_wids1(wid * dest_wids, struct city *pcity, bool wl_first,
                   bool advanced_tech)
 {
   cid cids[U_LAST + B_LAST];
@@ -921,8 +930,8 @@ int collect_wids1(wid * dest_wids, struct city *pcity, bool wl_first,
     int i;
     for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
       if (get_player_ptr()->worklists[i].is_valid) {
-	dest_wids[wids_used] = wid_encode(FALSE, TRUE, i);
-	wids_used++;
+        dest_wids[wids_used] = wid_encode(FALSE, TRUE, i);
+        wids_used++;
       }
     }
   }
@@ -987,14 +996,14 @@ int num_present_units_in_city(struct city *pcity)
   Handles a chat message.
 **************************************************************************/
 void handle_event(char *message, struct tile *ptile,
-		  enum event_type event, int conn_id)
+                  enum event_type event, int conn_id)
 {
-  int where = MW_OUTPUT;	/* where to display the message */
-  
-  if (event >= E_LAST)  {
+  int where = MW_OUTPUT;        /* where to display the message */
+
+  if (event >= E_LAST) {
     /* Server may have added a new event; leave as MW_OUTPUT */
     freelog(LOG_NORMAL, "Unknown event type %d!", event);
-  } else if (event >= 0)  {
+  } else if (event >= 0) {
     where = messages_where[event];
   }
 
@@ -1021,7 +1030,7 @@ void handle_event(char *message, struct tile *ptile,
   handle_chat_msg.
 **************************************************************************/
 void create_event(struct tile *ptile, enum event_type event,
-		  const char *format, ...)
+                  const char *format, ...)
 {
   va_list ap;
   char message[MAX_LEN_MSG];
@@ -1043,9 +1052,9 @@ void write_chatline_content(const char *txt)
   struct tm *nowtm;
   FILE *fp;
 
-  now = time (NULL);
-  nowtm = localtime (&now);
-  strftime (logname, sizeof (logname), "civgame-%y%m%d-%H%M%S.log", nowtm);
+  now = time(NULL);
+  nowtm = localtime(&now);
+  strftime(logname, sizeof(logname), "civgame-%y%m%d-%H%M%S.log", nowtm);
   fp = fopen(logname, "w");
 
   append_output_window(_("Exporting output window to civgame.log ..."));
@@ -1111,7 +1120,7 @@ void reports_force_thaw(void)
 ...
 *************************************************************************/
 enum known_type map_get_known(const struct tile *ptile,
-			      struct player *pplayer)
+                              struct player *pplayer)
 {
   assert(pplayer == get_player_ptr());
   return tile_get_known(ptile);
@@ -1126,7 +1135,7 @@ static const char *int_to_string(int n, int min_size)
   int i, size;
 
   /* Calcul the size we need */
-  for (size = 1; (double)n / pow(26, size) >= 1; size++);
+  for (size = 1; (double) n / pow(26, size) >= 1; size++);
   assert(size < sizeof(buf));
 
   for (i = 0; i < min_size - size; i++) {
@@ -1146,84 +1155,94 @@ static const char *int_to_string(int n, int min_size)
 /**************************************************************************
   ...
 **************************************************************************/
-static int an_make_city_name (const char *format, char *buf, int buflen,
-                              struct autoname_data *ad)
+static int an_make_city_name(const char *format, char *buf, int buflen,
+                             struct autoname_data *ad)
 {
   const char *in = format;
   char *out = buf;
   int rem = buflen, len, fw = 0;
-  
+
   int *pcontinent_counter;
 
-  assert (buflen > 0);
+  assert(buflen > 0);
 
-  freelog (LOG_DEBUG, "amcn an_make_city_name format=\"%s\" ad=%p", format, ad);
+  freelog(LOG_DEBUG, "amcn an_make_city_name format=\"%s\" ad=%p", format,
+          ad);
 
   if (!*format) {
-    mystrlcpy (buf, ad->original_name, buflen);
-    return strlen (ad->original_name) + 1;
+    mystrlcpy(buf, ad->original_name, buflen);
+    return strlen(ad->original_name) + 1;
   }
 
-  pcontinent_counter = hash_lookup_data (an_continent_counter_table,
-                                         INT_TO_PTR (ad->continent_id));
+  pcontinent_counter = hash_lookup_data(an_continent_counter_table,
+                                        INT_TO_PTR(ad->continent_id));
   if (!pcontinent_counter) {
-    pcontinent_counter = fc_malloc (sizeof (int));
+    pcontinent_counter = fc_malloc(sizeof(int));
     *pcontinent_counter = 0;
-    hash_insert (an_continent_counter_table, INT_TO_PTR (ad->continent_id),
-                 pcontinent_counter);
+    hash_insert(an_continent_counter_table, INT_TO_PTR(ad->continent_id),
+                pcontinent_counter);
   }
 
-  freelog (LOG_DEBUG, "amcn   *pcontinent_counter = %d", *pcontinent_counter);
+  freelog(LOG_DEBUG, "amcn   *pcontinent_counter = %d",
+          *pcontinent_counter);
 
   if (ad->global_city_number <= 0) {
     ad->global_city_number = ++an_global_city_number_counter;
-    freelog (LOG_DEBUG, "amcn   assigned new global_city_number (%d)", ad->global_city_number);
+    freelog(LOG_DEBUG, "amcn   assigned new global_city_number (%d)",
+            ad->global_city_number);
   }
   if (ad->continent_city_number <= 0) {
     ad->continent_city_number = ++(*pcontinent_counter);
-    freelog (LOG_DEBUG, "amcn   assigned new continent_city_number (%d)", ad->continent_city_number);
+    freelog(LOG_DEBUG, "amcn   assigned new continent_city_number (%d)",
+            ad->continent_city_number);
   }
 
   while (rem > 1 && *in != '\0' && *in != ';') {
     if (*in == '%') {
       in++;
-      
+
       fw = 0;
-      while (my_isdigit (*in)) {
+      while (my_isdigit(*in)) {
         fw = (*in++ - '0') + 10 * fw;
       }
 
       switch (*in) {
-      case 'c': /* continent id */
+      case 'c':                /* continent id */
         len = my_snprintf(out, rem, "%0*d", fw, ad->continent_id);
         break;
-        
+
       case 'C':
-        len = my_snprintf(out, rem, "%s", int_to_string(ad->continent_id, fw));
+        len =
+            my_snprintf(out, rem, "%s",
+                        int_to_string(ad->continent_id, fw));
         break;
 
-      case 'g': /* global city counter */
+      case 'g':                /* global city counter */
         len = my_snprintf(out, rem, "%0*d", fw, ad->global_city_number);
         break;
-        
+
       case 'G':
-        len = my_snprintf(out, rem, "%s", int_to_string(ad->global_city_number, fw));
+        len =
+            my_snprintf(out, rem, "%s",
+                        int_to_string(ad->global_city_number, fw));
         break;
 
-      case 'n': /* per continent city counter */
+      case 'n':                /* per continent city counter */
         len = my_snprintf(out, rem, "%0*d", fw, ad->continent_city_number);
         break;
-        
+
       case 'N':
-        len = my_snprintf(out, rem, "%s", int_to_string(ad->continent_city_number, fw));
+        len =
+            my_snprintf(out, rem, "%s",
+                        int_to_string(ad->continent_city_number, fw));
         break;
 
-      case '%': /* a single percent sign */
+      case '%':                /* a single percent sign */
         *out = '%';
         len = 1;
         break;
-        
-      default: /* everything else */
+
+      default:                 /* everything else */
         if (rem > 2) {
           *out = '%';
           out[1] = *in;
@@ -1233,18 +1252,19 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
         }
         break;
       }
-      
+
       out += len;
       rem -= len;
-      if (*in == '\0')
+      if (*in == '\0') {
         break;
+      }
       in++;
     } else {
       *out++ = *in++;
       rem--;
     }
   }
-  
+
   if (rem == buflen) {
     buf[0] = 0;
     return 0;
@@ -1261,9 +1281,8 @@ static int an_make_city_name (const char *format, char *buf, int buflen,
 /**************************************************************************
   ...
 **************************************************************************/
-static int an_generate_city_name (char *buf, int buflen,
-                                  struct city *pcity,
-                                  char *err, int errlen)
+static int an_generate_city_name(char *buf, int buflen,
+                                 struct city *pcity, char *err, int errlen)
 {
   struct autoname_data *ad;
   int num_formats, len = -1, start_format_index;
@@ -1271,29 +1290,30 @@ static int an_generate_city_name (char *buf, int buflen,
   const char *format = NULL;
   bool name_exists = FALSE;
 
-  assert (an_city_name_formats != NULL);
+  assert(an_city_name_formats != NULL);
 
-  freelog (LOG_DEBUG, "agcn an_generate_city_name pcity->id=%d \"%s\"", pcity->id, pcity->name);
+  freelog(LOG_DEBUG, "agcn an_generate_city_name pcity->id=%d \"%s\"",
+          pcity->id, pcity->name);
 
-  num_formats = string_list_size (an_city_name_formats);
+  num_formats = string_list_size(an_city_name_formats);
 
   if (num_formats <= 1) {
-    my_snprintf (err, errlen, _("There are no city name formats defined. "
-                 "Try adding some to Local Options."));
+    my_snprintf(err, errlen, _("There are no city name formats defined. "
+                               "Try adding some to Local Options."));
     return 0;
   }
 
-  ad = hash_lookup_data (an_city_autoname_data_table, INT_TO_PTR (pcity->id));
+  ad = hash_lookup_data(an_city_autoname_data_table, INT_TO_PTR(pcity->id));
   if (!ad) {
-    ad = fc_malloc (sizeof (struct autoname_data));
-    freelog (LOG_DEBUG, "agcn   new ad %p", ad);
-    sz_strlcpy (ad->original_name, pcity->name);
+    ad = fc_malloc(sizeof(struct autoname_data));
+    freelog(LOG_DEBUG, "agcn   new ad %p", ad);
+    sz_strlcpy(ad->original_name, pcity->name);
     ad->city_id = pcity->id;
     ad->continent_id = pcity->tile->continent;
     ad->format_index = 1;
     ad->global_city_number = 0;
     ad->continent_city_number = 0;
-    hash_insert (an_city_autoname_data_table, INT_TO_PTR (pcity->id), ad);
+    hash_insert(an_city_autoname_data_table, INT_TO_PTR(pcity->id), ad);
   } else {
     ad->format_index++;
     ad->format_index %= num_formats;
@@ -1303,70 +1323,76 @@ static int an_generate_city_name (char *buf, int buflen,
   last_generated_name[0] = 0;
 
   for (;;) {
-    format = string_list_get (an_city_name_formats, ad->format_index);
-    freelog (LOG_DEBUG, "agcn   trying format \"%s\" [%d]", format, ad->format_index);
-    
-    len = an_make_city_name (format, buf, buflen, ad);
-    if (len <= 0)
-      break;
-    
-    if (!strcmp (buf, last_generated_name))
-      break;
-    
-    sz_strlcpy (last_generated_name, buf);
+    format = string_list_get(an_city_name_formats, ad->format_index);
+    freelog(LOG_DEBUG, "agcn   trying format \"%s\" [%d]", format,
+            ad->format_index);
 
-    name_exists = hash_key_exists (an_city_name_table, buf)
-      || !strcmp (pcity->name, buf);
-    
-    if (!name_exists)
+    len = an_make_city_name(format, buf, buflen, ad);
+    if (len <= 0) {
       break;
-    
+    }
+
+    if (!strcmp(buf, last_generated_name)) {
+      break;
+    }
+
+    sz_strlcpy(last_generated_name, buf);
+
+    name_exists = hash_key_exists(an_city_name_table, buf)
+        || !strcmp(pcity->name, buf);
+
+    if (!name_exists) {
+      break;
+    }
+
     ad->format_index++;
     ad->format_index %= num_formats;
-    
-    if (ad->format_index == start_format_index)
+
+    if (ad->format_index == start_format_index) {
       break;
+    }
   }
 
   if (name_exists) {
-    my_snprintf (err, errlen, _("A new name was not generated from "
-                                "the format \"%s\"."), format);
+    my_snprintf(err, errlen, _("A new name was not generated from "
+                               "the format \"%s\"."), format);
     return 0;
   }
 
   if (len <= 0) {
-    my_snprintf (err, errlen, _("Failed to generate name from "
-                                "format \"%s\"."), format);
+    my_snprintf(err, errlen, _("Failed to generate name from "
+                               "format \"%s\"."), format);
     return 0;
   }
-  
+
   return len;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
 static void an_parse_city_name_formats(void)
 {
   char *p, *q, buf[1024];
-  
-  freelog (LOG_DEBUG, "apcnf an_parse_city_name_formats");
 
-  assert (an_city_name_formats != NULL);
-  
+  freelog(LOG_DEBUG, "apcnf an_parse_city_name_formats");
+
+  assert(an_city_name_formats != NULL);
+
   string_list_iterate(an_city_name_formats, fmt) {
     free(fmt);
   } string_list_iterate_end;
   string_list_unlink_all(an_city_name_formats);
-  
+
   sz_strlcpy(buf, city_name_formats);
 
   freelog(LOG_DEBUG, "apcnf   adding special first format");
-  string_list_append(an_city_name_formats, mystrdup (""));
+  string_list_append(an_city_name_formats, mystrdup(""));
 
   freelog(LOG_DEBUG, "apcnf   parsing \"%s\"", city_name_formats);
-  
+
   for (p = buf; p && *p; p = q) {
-    if ((q = strchr (p, ';'))) {
+    if ((q = strchr(p, ';'))) {
       *q++ = 0;
     }
     remove_leading_trailing_spaces(p);
@@ -1379,109 +1405,116 @@ static void an_parse_city_name_formats(void)
     }
   }
 
-  freelog(LOG_DEBUG, "apcnf   parsed %d formats", string_list_size (an_city_name_formats));
+  freelog(LOG_DEBUG, "apcnf   parsed %d formats",
+          string_list_size(an_city_name_formats));
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void city_autonaming_init (void)
+void city_autonaming_init(void)
 {
-  freelog (LOG_DEBUG, "cai city_autonaming_init");
-  if (!an_city_name_table)
-    an_city_name_table = hash_new (hash_fval_string2, hash_fcmp_string);
-  if (!an_continent_counter_table)
-    an_continent_counter_table = hash_new (hash_fval_int, hash_fcmp_int);
-  if (!an_city_autoname_data_table)
-    an_city_autoname_data_table = hash_new (hash_fval_int, hash_fcmp_int);
-  
+  freelog(LOG_DEBUG, "cai city_autonaming_init");
+  if (!an_city_name_table) {
+    an_city_name_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  }
+  if (!an_continent_counter_table) {
+    an_continent_counter_table = hash_new(hash_fval_int, hash_fcmp_int);
+  }
+  if (!an_city_autoname_data_table) {
+    an_city_autoname_data_table = hash_new(hash_fval_int, hash_fcmp_int);
+  }
+
   if (!an_city_name_formats) {
     an_city_name_formats = string_list_new();
     an_global_city_number_counter = 0;
   }
 }
-  
+
 /**************************************************************************
   ...
 **************************************************************************/
-void city_autonaming_free (void)
+void city_autonaming_free(void)
 {
-  freelog (LOG_DEBUG, "caf city_autonaming_free");
+  freelog(LOG_DEBUG, "caf city_autonaming_free");
 
   /* NB we can't iterate over the hash entries and free the
      keys at the same time */
-  while (hash_num_entries (an_city_name_table) > 0) {
-    char *name = (char *) hash_key_by_number (an_city_name_table, 0);
-    hash_delete_entry (an_city_name_table, name);
-    freelog (LOG_DEBUG, "caf   freeing \"%s\"", name);
-    free (name);
+  while (hash_num_entries(an_city_name_table) > 0) {
+    char *name = (char *) hash_key_by_number(an_city_name_table, 0);
+    hash_delete_entry(an_city_name_table, name);
+    freelog(LOG_DEBUG, "caf   freeing \"%s\"", name);
+    free(name);
   }
-  hash_free (an_city_name_table);
+  hash_free(an_city_name_table);
   an_city_name_table = NULL;
 
-  hash_iterate (an_continent_counter_table, void *, key, int *, pcc) {
-    int id = PTR_TO_INT (key);
-    freelog (LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id, *pcc);
-    free (pcc);
+  hash_iterate(an_continent_counter_table, void *, key, int *, pcc)
+  {
+    int id = PTR_TO_INT(key);
+    freelog(LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id,
+            *pcc);
+    free(pcc);
   } hash_iterate_end;
-  freelog (LOG_DEBUG, "caf   deleting all in an_continent_counter_table");
-  hash_delete_all_entries (an_continent_counter_table);  
-  hash_free (an_continent_counter_table);
+  freelog(LOG_DEBUG, "caf   deleting all in an_continent_counter_table");
+  hash_delete_all_entries(an_continent_counter_table);
+  hash_free(an_continent_counter_table);
   an_continent_counter_table = NULL;
 
-  hash_iterate (an_city_autoname_data_table, void *, key,
-                struct autoname_data *, ad)
+  hash_iterate(an_city_autoname_data_table, void *, key,
+               struct autoname_data *, ad)
   {
-    int id = PTR_TO_INT (key);
-    freelog (LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
-    free (ad);
+    int id = PTR_TO_INT(key);
+    freelog(LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
+    free(ad);
   } hash_iterate_end;
-  freelog (LOG_DEBUG, "caf   deleting all in an_city_autoname_data_table");
-  hash_delete_all_entries (an_city_autoname_data_table);
-  hash_free (an_city_autoname_data_table);
+  freelog(LOG_DEBUG, "caf   deleting all in an_city_autoname_data_table");
+  hash_delete_all_entries(an_city_autoname_data_table);
+  hash_free(an_city_autoname_data_table);
   an_city_autoname_data_table = NULL;
 
   an_global_city_number_counter = 0;
 
   string_list_iterate(an_city_name_formats, fmt) {
-    free (fmt);
+    free(fmt);
   } city_list_iterate_end;
   string_list_free(an_city_name_formats);
   an_city_name_formats = NULL;
 }
-        
+
 /**************************************************************************
   ...
 **************************************************************************/
-void normalize_names_in_selected_cities (void)
+void normalize_names_in_selected_cities(void)
 {
   char buf[512], err[256];
 
-  freelog (LOG_DEBUG, "normalize_names_in_selected_cities");
-  
-  if (!tiles_hilited_cities)
+  freelog(LOG_DEBUG, "normalize_names_in_selected_cities");
+
+  if (!tiles_hilited_cities) {
     return;
+  }
 
   an_parse_city_name_formats();
 
-  connection_do_buffer (&aconnection);
-  city_list_iterate (get_player_ptr()->cities, pcity) {
-    if (!is_city_hilited (pcity))
+  connection_do_buffer(&aconnection);
+  city_list_iterate(get_player_ptr()->cities, pcity) {
+    if (!is_city_hilited(pcity)) {
       continue;
-    
-    if (an_generate_city_name (buf, sizeof (buf), pcity,
-                               err, sizeof (err)) > 0)
-    {
-      city_autonaming_add_used_name (buf);
-      city_rename (pcity, buf);
+    }
+
+    if (an_generate_city_name(buf, sizeof(buf), pcity,
+                              err, sizeof(err)) > 0) {
+      city_autonaming_add_used_name(buf);
+      city_rename(pcity, buf);
     } else {
-      my_snprintf (buf, sizeof (buf),
-          _("Warclient: Could not auto-rename city %s! %s"),
-          pcity->name, err);
-      append_output_window (buf);
+      my_snprintf(buf, sizeof(buf),
+                  _("Warclient: Could not auto-rename city %s! %s"),
+                  pcity->name, err);
+      append_output_window(buf);
     }
   } city_list_iterate_end;
-  connection_do_unbuffer (&aconnection);
+  connection_do_unbuffer(&aconnection);
 }
 
 /**************************************************************************
@@ -1503,8 +1536,8 @@ struct city *get_nearest_city(struct unit *punit, int *sq_dist)
       city_list_iterate(pplayer->cities, pcity_current) {
         int dist = sq_map_distance(pcity_current->tile, punit->tile);
         if (pcity_near_dist == -1 || dist < pcity_near_dist
-	    || (dist == pcity_near_dist
-		&& punit->owner == pcity_current->owner)) {
+            || (dist == pcity_near_dist
+                && punit->owner == pcity_current->owner)) {
           pcity_near = pcity_current;
           pcity_near_dist = dist;
         }
@@ -1533,9 +1566,9 @@ void cityrep_buy(struct city *pcity)
 
     assert(!pcity->is_building_unit);
     my_snprintf(buf, sizeof(buf),
-		_("Game: You don't buy %s in %s!"),
-		improvement_types[pcity->currently_building].name,
-		pcity->name);
+                _("Game: You don't buy %s in %s!"),
+                improvement_types[pcity->currently_building].name,
+                pcity->name);
     append_output_window(buf);
     return;
   }
@@ -1553,8 +1586,8 @@ void cityrep_buy(struct city *pcity)
     }
 
     my_snprintf(buf, sizeof(buf),
-		_("Game: %s costs %d gold and you only have %d gold."),
-		name, value, get_player_ptr()->economic.gold);
+                _("Game: %s costs %d gold and you only have %d gold."),
+                name, value, get_player_ptr()->economic.gold);
     append_output_window(buf);
   }
 }
@@ -1594,24 +1627,26 @@ void common_taxrates_callback(int i)
   Asks the server to buy production in all hilighted (i.e. selected
   cities).
 **************************************************************************/
-int buy_production_in_selected_cities (void)
+int buy_production_in_selected_cities(void)
 {
-  if (!tiles_hilited_cities)
+  if (!tiles_hilited_cities) {
     return 0;
+  }
 
-  connection_do_buffer (&aconnection);
-  city_list_iterate (get_player_ptr()->cities, pcity) {
-    
-    if (get_current_construction_bonus (pcity, EFT_PROD_TO_GOLD) > 0)
+  connection_do_buffer(&aconnection);
+  city_list_iterate(get_player_ptr()->cities, pcity) {
+
+    if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
       continue;
-
-    if (is_city_hilited (pcity)) {
-      city_buy_production (pcity);
     }
-    
+
+    if (is_city_hilited(pcity)) {
+      city_buy_production(pcity);
+    }
+
   } city_list_iterate_end;
-  connection_do_unbuffer (&aconnection);
-  
+  connection_do_unbuffer(&aconnection);
+
   return 1;
 }
 
@@ -1693,16 +1728,16 @@ void decrease_link_mark_turn_counters(void)
 static struct tile *get_link_mark_tile(struct map_link *pml)
 {
   switch (pml->type) {
-    case LINK_LOCATION:
-      return index_to_tile(pml->id);
-    case LINK_CITY:
-    case LINK_CITY_ID:
-    case LINK_CITY_ID_AND_NAME:
+  case LINK_LOCATION:
+    return index_to_tile(pml->id);
+  case LINK_CITY:
+  case LINK_CITY_ID:
+  case LINK_CITY_ID_AND_NAME:
     {
       struct city *pcity = find_city_by_id(pml->id);
       return pcity ? pcity->tile : NULL;
     }
-    case LINK_UNIT:
+  case LINK_UNIT:
     {
       struct unit *punit = find_unit_by_id(pml->id);
       return punit ? punit->tile : NULL;
@@ -1717,14 +1752,14 @@ static struct tile *get_link_mark_tile(struct map_link *pml)
 static enum color_std get_link_mark_color(struct map_link *pml)
 {
   switch (pml->type) {
-    case LINK_LOCATION:
-      return COLOR_STD_RED;
-    case LINK_CITY:
-    case LINK_CITY_ID:
-    case LINK_CITY_ID_AND_NAME:
-      return COLOR_STD_GREEN;
-    case LINK_UNIT:
-      return COLOR_STD_RACE1; // Cyan
+  case LINK_LOCATION:
+    return COLOR_STD_RED;
+  case LINK_CITY:
+  case LINK_CITY_ID:
+  case LINK_CITY_ID_AND_NAME:
+    return COLOR_STD_GREEN;
+  case LINK_UNIT:
+    return COLOR_STD_RACE1;     // Cyan
   }
   return COLOR_STD_BLACK;
 }
@@ -1791,24 +1826,24 @@ static void draw_link_mark(struct map_link *pml)
   y1 = canvas_y + NORMAL_TILE_HEIGHT - yd;
 
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x0, y0, xlen, 0);
+                  x0, y0, xlen, 0);
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x0, y0, 0, ylen);
-  
+                  x0, y0, 0, ylen);
+
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x1, y0, -xlen, 0);
+                  x1, y0, -xlen, 0);
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x1, y0, 0, ylen);
-  
+                  x1, y0, 0, ylen);
+
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x0, y1, xlen, 0);
+                  x0, y1, xlen, 0);
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x0, y1, 0, -ylen);
-  
+                  x0, y1, 0, -ylen);
+
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x1, y1, -xlen, 0);
+                  x1, y1, -xlen, 0);
   canvas_put_line(mapview_canvas.store, color, LINE_TILE_FRAME,
-		  x1, y1, 0, -ylen);
+                  x1, y1, 0, -ylen);
 }
 
 /********************************************************************** 
@@ -1827,12 +1862,14 @@ void draw_all_link_marks(void)
 void set_default_user_tech_goal(void)
 {
   Tech_Type_id goal;
-  
+
   goal = find_tech_by_name(default_user_tech_goal);
-  if(goal == A_LAST)
+  if (goal == A_LAST) {
     goal = find_tech_by_name_orig(default_user_tech_goal);
-  if(goal != A_LAST)
+  }
+  if (goal != A_LAST) {
     force_tech_goal(goal);
+  }
 }
 
 /**************************************************************************
@@ -1840,15 +1877,18 @@ void set_default_user_tech_goal(void)
 **************************************************************************/
 void force_tech_goal(Tech_Type_id goal)
 {
-  if(!tech_exists(goal))
+  if (!tech_exists(goal)) {
     return;
+  }
 
   Tech_Type_id next = get_next_tech(get_player_ptr(), goal);
-  if(next == A_UNSET)
+  if (next == A_UNSET) {
     return;
+  }
 
-  if(get_player_ptr()->ai.tech_goal != goal)
+  if (get_player_ptr()->ai.tech_goal != goal) {
     dsend_packet_player_tech_goal(&aconnection, goal);
+  }
   dsend_packet_player_research(&aconnection, next);
 }
 
@@ -1887,8 +1927,7 @@ void voteinfo_queue_check_removed(void)
   now = time(NULL);
   removed = voteinfo_list_new();
   voteinfo_list_iterate(voteinfo_queue, vi) {
-    if (vi != NULL && vi->remove_time > 0
-        && now - vi->remove_time > 2) {
+    if (vi != NULL && vi->remove_time > 0 && now - vi->remove_time > 2) {
       voteinfo_list_append(removed, vi);
     }
   } voteinfo_list_iterate_end;
@@ -1933,9 +1972,7 @@ void voteinfo_queue_remove(int vote_no)
 void voteinfo_queue_add(int vote_no,
                         const char *user,
                         const char *desc,
-                        int percent_required,
-                        int flags,
-                        bool is_poll)
+                        int percent_required, int flags, bool is_poll)
 {
   struct voteinfo *vi;
 
@@ -2024,7 +2061,7 @@ struct voteinfo *voteinfo_queue_get_current(int *pindex)
   if (voteinfo_queue == NULL) {
     return NULL;
   }
-  
+
   size = voteinfo_list_size(voteinfo_queue);
 
   if (size <= 0) {
