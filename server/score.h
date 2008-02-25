@@ -19,9 +19,20 @@
 /* In the terminology of the Glicko rating system,
  * we set a rating period to be 1 day and calibrate
  * the constant 'c' so that a player's rating becomes
- * unreliable if that player does not play for 2 months. */
+ * completely unreliable (RD=350) if that player does
+ * not play for 6 months.
+ *
+ * The formula to calculate a new c value is given by
+ *
+ * c = sqrt((350^2 - 50^2) / t_u)
+ *   = 346.410162 / sqrt(t_u)
+ *
+ * where t_u is number of ratings periods in the time
+ * it takes for a player's rating to become completely
+ * unreliable (in our case t_u = 180, i.e. approx. 180
+ * days in 6 months). */
 #define RATING_CONSTANT_SECONDS_PER_RATING_PERIOD 86400
-#define RATING_CONSTANT_C 44.7213595
+#define RATING_CONSTANT_C 25.819889
 
 /* ln(10)/400 */
 #define RATING_CONSTANT_Q 0.00575646273
