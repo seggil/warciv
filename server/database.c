@@ -2009,8 +2009,17 @@ FAILED:
   Fill the stats struct with statistics about the given user. Returns
   NULL on error. If the username is unknown, the 'id' field will be <= 0.
   Call fcdb_user_stats_free when done with the returned pointer.
+
+  If 'matchs' is not NULL and the given username matchs multiple
+  users when used in a pattern as '%username%' (i.e. using MySQL
+  pattern semantics), then it is filled with at most 50 matching
+  names.
+
+  NB: The caller must free the newly allocated strings inside 'matchs'
+  when done.
 **************************************************************************/
-struct fcdb_user_stats *fcdb_user_stats_new(const char *username)
+struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
+                                            struct string_list *matchs)
 {
 #ifdef HAVE_MYSQL
   MYSQL mysql, *sock = &mysql;
@@ -2023,14 +2032,61 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username)
   fcdb_connect_or_return(sock, NULL);
 
   fus = fc_calloc(1, sizeof(struct fcdb_user_stats));
+  
+  if (username == NULL || username[0] == '\0') {
+    /* Don't bother searching for an empty user name,
+     * just say that we don't know any like that. ;) */
+    fcdb_close(sock);
+    return fus;    
+  }
 
   if (!get_user_id(sock, username, &fus->id)) {
     goto ERROR;
   }
 
   if (fus->id <= 0) {
-    fcdb_close(sock);
-    return fus;
+    char pattern[MAX_LEN_NAME * 2 + 16];
+    int len = strlen(username);
+
+    for (i = 0, j = 0; i < len && j < sizeof(pattern) - 2; i++, j++) {
+      if (username[i] == '%' || username[i] == '_') {
+        pattern[j++] = '\\';
+      }
+      pattern[j] = username[i];
+    }
+    pattern[j] = '\0';
+
+    my_snprintf(buf, sizeof(buf),
+        "SELECT id, name FROM auth "
+        "  WHERE name IS NOT NULL "
+        "  AND name LIKE '%%%s%%' LIMIT 50",
+        fcdb_escape(sock, pattern));
+    fcdb_reset_escape_buffer();
+    if (!fcdb_execute(sock, buf)) {
+      goto ERROR;
+    }
+
+    res = mysql_store_result(sock);
+    num_rows = mysql_num_rows(res);
+
+    if (num_rows != 1) {
+      for (i = 0; i < num_rows; i++) {
+        row = mysql_fetch_row(res);
+        if (matchs != NULL) {
+          string_list_append(matchs, mystrdup(row[1]));
+        }
+      }
+    } else {
+      row = mysql_fetch_row(res);
+      fus->id = atoi(row[0]);
+    }
+
+    mysql_free_result(res);
+    
+    if (num_rows != 1) {
+      fcdb_close(sock);
+      return fus;
+    }
   }
 
   my_snprintf(buf, sizeof(buf), "SELECT name, email, createtime, "

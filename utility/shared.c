@@ -1589,3 +1589,21 @@ int strchrcount (const char *str, char c)
       n++;
   return n;
 }
+
+/**************************************************************************
+  Calls free on every string in the list and then frees the list
+  itself with string_list_free.
+**************************************************************************/
+void string_list_free_all(struct string_list *sl)
+{
+  char *s;
+
+  while (string_list_size(sl) > 0) {
+    s = string_list_get(sl, 0);
+    string_list_unlink(sl, s);
+    if (s != NULL) {
+      free(s);
+    }
+  }
+  string_list_free(sl);
+}

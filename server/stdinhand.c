@@ -2247,6 +2247,7 @@ static bool stats_command(struct connection *caller,
   struct fcdb_user_stats *fus;
   struct game_type_stats *gts;
   int i, recent[5], num_recent = ARRAY_SIZE(recent);
+  struct string_list *username_matchs = NULL;
 
   if (!srvarg.fcdb.enabled) {
     cmd_reply(CMD_STATS, caller, C_FAIL,
@@ -2271,16 +2272,29 @@ static bool stats_command(struct connection *caller,
     return TRUE;
   }
 
-  if (!(fus = fcdb_user_stats_new(username))
+  username_matchs = string_list_new();
+
+  if (!(fus = fcdb_user_stats_new(username, username_matchs))
       || !fcdb_get_recent_games(username, recent, &num_recent)) {
     cmd_reply(CMD_STATS, caller, C_FAIL,
               _("There was an error communicating with the database."));
+    string_list_free_all(username_matchs);
     return FALSE;
   }
 
   if (fus->id <= 0) {
-    cmd_reply(CMD_STATS, caller, C_FAIL,
-              _("No user named '%s' in the database."), username);
+    if (string_list_size(username_matchs) < 2) {
+      cmd_reply(CMD_STATS, caller, C_FAIL,
+                _("No user named '%s' in the database."), username);
+    } else {
+      cmd_reply(CMD_STATS, caller, C_FAIL,
+                _("The substring '%s' matchs more than one username:"),
+                username);
+      string_list_iterate(username_matchs, s) {
+        cmd_reply(CMD_STATS, caller, C_COMMENT, "%s", s);
+      } string_list_iterate_end;
+    }
+    string_list_free_all(username_matchs);
     fcdb_user_stats_free(fus);
     return FALSE;
   }
@@ -2319,6 +2333,7 @@ static bool stats_command(struct connection *caller,
     cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
   }
   fcdb_user_stats_free(fus);
+  string_list_free_all(username_matchs);
 
   if (num_recent > 0) {
     my_snprintf(buf, sizeof(buf), _("Recent rated games:"));

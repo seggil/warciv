@@ -123,11 +123,15 @@ struct fcdb_aliaslist {
   struct fcdb_aliaslist_entry *entries;
 };
 
+/* Forward declaration. */
+struct string_list;
+
 bool fcdb_record_game_start(void);
 bool fcdb_end_of_turn_update(void);
 bool fcdb_record_game_end(void);
 bool fcdb_load_player_ratings(int game_type, bool check_turns_played);
-struct fcdb_user_stats *fcdb_user_stats_new(const char *username);
+struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
+                                            struct string_list *matchs);
 void fcdb_user_stats_free(struct fcdb_user_stats *fus);
 int fcdb_user_exists(const char *username);
 bool fcdb_get_user_rating(const char *username,

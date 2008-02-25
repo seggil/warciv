@@ -252,6 +252,7 @@ struct datafile {
   TYPED_LIST_ITERATE(char, alist, pitem)
 #define string_list_iterate_end  LIST_ITERATE_END
 
+void string_list_free_all(struct string_list *sl);
 char *user_home_dir(void);
 const char *user_username(void);
 const char **datafilelist(const char *suffix);
