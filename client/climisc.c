@@ -60,14 +60,7 @@ used throughout the client.
 #include "climisc.h"
 
 
-#define SPECLIST_TAG city_name
-#define SPECLIST_TYPE char
-#include "speclist.h"
-#define city_name_list_iterate(alist, pitem)\
-  TYPED_LIST_ITERATE(char, alist, pitem)
-#define city_name_list_iterate_end  LIST_ITERATE_END
-
-static struct city_name_list *an_city_name_formats = NULL;
+static struct string_list *an_city_name_formats = NULL;
 static struct hash_table *an_continent_counter_table = NULL;
 static struct hash_table *an_city_name_table = NULL;
 static struct hash_table *an_city_autoname_data_table = NULL;
@@ -1282,7 +1275,7 @@ static int an_generate_city_name (char *buf, int buflen,
 
   freelog (LOG_DEBUG, "agcn an_generate_city_name pcity->id=%d \"%s\"", pcity->id, pcity->name);
 
-  num_formats = city_name_list_size (an_city_name_formats);
+  num_formats = string_list_size (an_city_name_formats);
 
   if (num_formats <= 1) {
     my_snprintf (err, errlen, _("There are no city name formats defined. "
@@ -1310,7 +1303,7 @@ static int an_generate_city_name (char *buf, int buflen,
   last_generated_name[0] = 0;
 
   for (;;) {
-    format = city_name_list_get (an_city_name_formats, ad->format_index);
+    format = string_list_get (an_city_name_formats, ad->format_index);
     freelog (LOG_DEBUG, "agcn   trying format \"%s\" [%d]", format, ad->format_index);
     
     len = an_make_city_name (format, buf, buflen, ad);
@@ -1360,15 +1353,15 @@ static void an_parse_city_name_formats(void)
 
   assert (an_city_name_formats != NULL);
   
-  city_name_list_iterate(an_city_name_formats, fmt) {
+  string_list_iterate(an_city_name_formats, fmt) {
     free(fmt);
-  } city_name_list_iterate_end;
-  city_name_list_unlink_all(an_city_name_formats);
+  } string_list_iterate_end;
+  string_list_unlink_all(an_city_name_formats);
   
   sz_strlcpy(buf, city_name_formats);
 
   freelog(LOG_DEBUG, "apcnf   adding special first format");
-  city_name_list_append(an_city_name_formats, mystrdup (""));
+  string_list_append(an_city_name_formats, mystrdup (""));
 
   freelog(LOG_DEBUG, "apcnf   parsing \"%s\"", city_name_formats);
   
@@ -1382,11 +1375,11 @@ static void an_parse_city_name_formats(void)
     }
     if (*p) {
       freelog(LOG_DEBUG, "apcnf   adding format to list \"%s\"", p);
-      city_name_list_append(an_city_name_formats, mystrdup(p));
+      string_list_append(an_city_name_formats, mystrdup(p));
     }
   }
 
-  freelog(LOG_DEBUG, "apcnf   parsed %d formats", city_name_list_size (an_city_name_formats));
+  freelog(LOG_DEBUG, "apcnf   parsed %d formats", string_list_size (an_city_name_formats));
 }
 
 /**************************************************************************
@@ -1403,7 +1396,7 @@ void city_autonaming_init (void)
     an_city_autoname_data_table = hash_new (hash_fval_int, hash_fcmp_int);
   
   if (!an_city_name_formats) {
-    an_city_name_formats = city_name_list_new();
+    an_city_name_formats = string_list_new();
     an_global_city_number_counter = 0;
   }
 }
@@ -1450,10 +1443,10 @@ void city_autonaming_free (void)
 
   an_global_city_number_counter = 0;
 
-  city_name_list_iterate(an_city_name_formats, fmt) {
+  string_list_iterate(an_city_name_formats, fmt) {
     free (fmt);
   } city_list_iterate_end;
-  city_name_list_free(an_city_name_formats);
+  string_list_free(an_city_name_formats);
   an_city_name_formats = NULL;
 }
         
