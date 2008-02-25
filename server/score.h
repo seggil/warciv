@@ -27,10 +27,10 @@
  * c = sqrt((350^2 - 50^2) / t_u)
  *   = 346.410162 / sqrt(t_u)
  *
- * where t_u is number of ratings periods in the time
- * it takes for a player's rating to become completely
- * unreliable (in our case t_u = 180, i.e. approx. 180
- * days in 6 months). */
+ * where t_u is the number of ratings periods in
+ * the time that it takes for a player's rating to
+ * become completely unreliable (in our case t_u =
+ * 180, i.e. approx. 180 days in 6 months). */
 #define RATING_CONSTANT_SECONDS_PER_RATING_PERIOD 86400
 #define RATING_CONSTANT_C 25.819889
 
