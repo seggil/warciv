@@ -473,7 +473,7 @@ static GdkPixbuf *get_flag(struct nation_type *nation)
 **************************************************************************/
 static void build_row(GtkTreeIter *it, int i)
 {
-  struct player *plr = get_player(i);
+  struct player *plr = get_player(i), *me = get_player_ptr();
   GdkPixbuf *pixbuf;
   gint style, weight;
   int k;
@@ -507,26 +507,30 @@ static void build_row(GtkTreeIter *it, int i)
     ncolumns - 1, (gint)i,
     -1);
 
-   /* now add some eye candy ... */
-   switch (pplayer_get_diplstate(get_player_ptr(), plr)->type) {
-   case DS_WAR:
-     weight = PANGO_WEIGHT_NORMAL;
-     style = PANGO_STYLE_ITALIC;
-     break;
-   case DS_ALLIANCE:
-   case DS_TEAM:
-     weight = PANGO_WEIGHT_BOLD;
-     style = PANGO_STYLE_NORMAL;
-     break;
-   default:
-     weight = PANGO_WEIGHT_NORMAL;
-     style = PANGO_STYLE_NORMAL;
-     break;
-   }
-   gtk_list_store_set(store, it,
-       num_player_dlg_columns, style,
-       num_player_dlg_columns + 1, weight,
-       -1);
+  /* now add some eye candy ... */
+  weight = PANGO_WEIGHT_NORMAL;
+  style = PANGO_STYLE_NORMAL;
+
+  if (plr != me) {
+    switch (pplayer_get_diplstate(me, plr)->type) {
+    case DS_WAR:
+      style = PANGO_STYLE_ITALIC;
+      break;
+    case DS_ALLIANCE:
+    case DS_TEAM:
+      weight = PANGO_WEIGHT_BOLD;
+      break;
+    default:
+      break;
+    }
+  } else {
+    /* Make our own row look the same as the
+     * rows of our teammates/allies. */
+    weight = PANGO_WEIGHT_BOLD;
+  }
+
+  gtk_list_store_set(store, it, num_player_dlg_columns, style,
+                     num_player_dlg_columns + 1, weight, -1);
 }
 
 
