@@ -2350,7 +2350,9 @@ bool fcdb_get_recent_games(const char *username,
 }
 
 /**************************************************************************
-  The 'id' parameter is the gam_id (a.k.a. game #) in the database.
+  The 'id' parameter is the game_id (a.k.a. game #) in the database.
+  If the given id does not match any known game then a newly allocated
+  struct fcdb_game_info pointer is returned with its id field set to 0.
 **************************************************************************/
 struct fcdb_game_info *fcdb_game_info_new(int id)
 {
@@ -2366,6 +2368,9 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
 
   fcdb_connect_or_return(sock, NULL);
 
+
+  /* Fetch information about the game. */
+
   my_snprintf(buf, sizeof(buf),
       "SELECT id, host, port, type, outcome, UNIX_TIMESTAMP(created), "
       "    UNIX_TIMESTAMP(last_update), last_turn_id"
@@ -2377,9 +2382,10 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) != 1) {
-    fgi->id = -1;
     mysql_free_result(res);
     fcdb_close(sock);
+
+    /* No game was found, returning with fgi->id set to 0. */
     return fgi;
   }
 
@@ -2406,6 +2412,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   mysql_free_result(res);
   res = NULL;
 
+
   if (last_turn_id > 0) {
     my_snprintf(buf, sizeof(buf),
         "SELECT turn_no FROM turns WHERE id = %d",
@@ -2427,6 +2434,9 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
     mysql_free_result(res);
     res = NULL;
   }
+
+  
+  /* Fetch information about players. */
 
   my_snprintf(buf, sizeof(buf),
       "SELECT p.name, p.creating_user_name, p.nation, "
@@ -2467,8 +2477,85 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   mysql_free_result(res);
   res = NULL;
 
+
+  /* Fetch the players' final scores. */
+
   my_snprintf(buf, sizeof(buf),
-      "SELECT name, result, rank FROM teams"
+      "SELECT ps.score FROM games AS g "
+      "  INNER JOIN turns AS t "
+      "    ON g.id = t.game_id"
+      "  INNER JOIN player_status AS ps"
+      "    ON t.id = ps.turn_id"
+      "  INNER JOIN players AS p"
+      "    ON p.id = ps.player_id"
+      "  WHERE g.id = %d"
+      "    AND g.last_turn_id IS NOT NULL"
+      "    AND t.id = g.last_turn_id"
+      "  ORDER BY p.rank",
+      id);
+  if (!fcdb_execute(sock, buf)) {
+    goto ERROR;
+  }
+
+  res = mysql_store_result(sock);
+  if (mysql_num_rows(res) != fgi->num_players) {
+    goto ERROR;
+  }
+
+  for (i = 0; i < fgi->num_players; i++) {
+    fpigi = &fgi->players[i];
+    row = mysql_fetch_row(res);
+    if (row[0]) {
+      fpigi->score = atof(row[0]);
+    }
+  }
+  mysql_free_result(res);
+  res = NULL;
+
+
+  /* Fetch the players' rating changes for this game. */
+
+  my_snprintf(buf, sizeof(buf),
+      "SELECT r.old_rating, r.old_rating_deviation, "
+      "    r.rating, r.rating_deviation "
+      "  FROM players AS p LEFT JOIN ratings AS r"
+      "    ON p.id = r.player_id"
+      "  WHERE p.game_id = %d"
+      "  ORDER BY p.rank",
+      id);
+  if (!fcdb_execute(sock, buf)) {
+    goto ERROR;
+  }
+
+  res = mysql_store_result(sock);
+  if (mysql_num_rows(res) != fgi->num_players) {
+    goto ERROR;
+  }
+
+  for (i = 0; i < fgi->num_players; i++) {
+    fpigi = &fgi->players[i];
+    row = mysql_fetch_row(res);
+    if (row[0]) {
+      fpigi->old_rating = atof(row[0]);
+    }
+    if (row[1]) {
+      fpigi->old_rd = atof(row[1]);
+    }
+    if (row[2]) {
+      fpigi->new_rating = atof(row[2]);
+    }
+    if (row[3]) {
+      fpigi->new_rd = atof(row[3]);
+    }
+  }
+  mysql_free_result(res);
+  res = NULL;
+
+
+  /* Fetch information about the teams. */
+
+  my_snprintf(buf, sizeof(buf),
+      "SELECT name, result, rank, score FROM teams"
       "  WHERE game_id = %d"
       "  ORDER BY rank",
       id);
@@ -2490,6 +2577,9 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
       }
       if (row[2]) {
         ftigi->rank = atof(row[2]);
+      }
+      if (row[3]) {
+        ftigi->score = atof(row[3]);
       }
     }
   }

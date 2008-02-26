@@ -60,6 +60,7 @@ struct fcdb_team_in_game_info {
   char name[MAX_LEN_NAME];
   char result[32];
   float rank;
+  float score;
 };
 
 struct fcdb_player_in_game_info {
@@ -69,6 +70,11 @@ struct fcdb_player_in_game_info {
   char team_name[MAX_LEN_NAME];
   char result[32];
   float rank;
+  float score;
+  double old_rating;
+  double old_rd;
+  double new_rating;
+  double new_rd;
 };
 
 struct fcdb_game_info {

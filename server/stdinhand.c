@@ -4624,7 +4624,7 @@ static void format_time_duration(time_t t, char *buf, int maxlen)
 static bool examine_command(struct connection *caller,
                             char *arg, bool check)
 {
-  int id, i;
+  int id, i, num_rating_changes;
   char buf[256];
   struct fcdb_game_info *fgi;
   struct fcdb_player_in_game_info *fpi;
@@ -4662,8 +4662,10 @@ static bool examine_command(struct connection *caller,
     return FALSE;
   }
 
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
   cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
             _("Information For Game #%d"), fgi->id);
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
   cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
             _("  Host: %-16s Port: %d"), fgi->host, fgi->port);
 
@@ -4678,25 +4680,28 @@ static bool examine_command(struct connection *caller,
             fgi->type, fgi->num_turns, fgi->outcome);
 
   if (fgi->num_teams > 0) {
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
               _("  Teams (%d):"), fgi->num_teams);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-              "    %-14s %7s %s", _("Name"), _("Rank"), _("Result"));
+              "    %-14s %7s %8s %8s",
+              _("Name"), _("Rank"), _("Score"), _("Result"));
     for (i = 0; i < fgi->num_teams; i++) {
       fti = &fgi->teams[i];
       cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-14s %7.1f %s",
-                fti->name, fti->rank + 1.0, fti->result);
+                "    %-14s %7.1f %8.1f %8s",
+                fti->name, fti->rank + 1.0, fti->score, fti->result);
     }
   }
 
   if (fgi->num_players > 0) {
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
               _("  Players (%d):"), fgi->num_players);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-              "    %-22s %-22s %-22s %-14s %7s %s",
+              "    %-22s %-22s %-22s %-14s %7s %8s %8s",
               _("Name"), _("User"), _("Nation"), _("Team"),
-              _("Rank"), _("Result"));
+              _("Rank"), _("Score"), _("Result"));
     for (i = 0; i < fgi->num_players; i++) {
       fpi = &fgi->players[i];
       if (fpi->team_name == NULL || fpi->team_name[0] == '\0') {
@@ -4705,11 +4710,44 @@ static bool examine_command(struct connection *caller,
         sz_strlcpy(buf, fpi->team_name);
       }
       cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-22s %-22s %-22s %-14s %7.1f %6s",
+                "    %-22s %-22s %-22s %-14s %7.1f %8.1f %8s",
                 fpi->name, fpi->user, fpi->nation, buf,
-                fpi->rank + 1.0, fpi->result);
+                fpi->rank + 1.0, fpi->score, fpi->result);
+    }
+
+    num_rating_changes = 0;
+    for (i = 0; i < fgi->num_players; i++) {
+      fpi = &fgi->players[i];
+      if (fpi->user[0] == '\0' || fpi->old_rating == 0.0
+          || fpi->new_rating == 0.0) {
+        continue;
+      }
+      num_rating_changes++;
+    }
+
+    if (num_rating_changes > 0) {
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s",
+                _("  Rating Changes:"));
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+                "    %-22s %12s %12s %12s %12s",
+                _("User"), _("Old Rating"), _("Old RD"),
+                _("New Rating"), _("New RD"));
+      for (i = 0; i < fgi->num_players; i++) {
+        fpi = &fgi->players[i];
+        if (fpi->user[0] == '\0' || fpi->old_rating == 0.0
+            || fpi->new_rating == 0.0) {
+          continue;
+        }
+        cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
+                  "    %-22s %12.2f %12.2f %12.2f %12.2f",
+                  fpi->user, fpi->old_rating, fpi->old_rd,
+                  fpi->new_rating, fpi->new_rd);
+      }
     }
   }
+
+  cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
 
 
   fcdb_game_info_free(fgi);
