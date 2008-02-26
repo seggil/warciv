@@ -4625,7 +4625,7 @@ static bool examine_command(struct connection *caller,
                             char *arg, bool check)
 {
   int id, i, num_rating_changes;
-  char buf[256];
+  char buf[256], fmt[128];
   struct fcdb_game_info *fgi;
   struct fcdb_player_in_game_info *fpi;
   struct fcdb_team_in_game_info *fti;
@@ -4680,28 +4680,62 @@ static bool examine_command(struct connection *caller,
             fgi->type, fgi->num_turns, fgi->outcome);
 
   if (fgi->num_teams > 0) {
+    int colmaxlen = 6;
+    
+    /* Pre-calculate the maximum required width
+     * of the 'Name' column. */
+    for (i = 0; i < fgi->num_teams; i++) {
+      fti = &fgi->teams[i];
+      colmaxlen = MAX(colmaxlen, strlen(fti->name) + 1);
+    }
+
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
               _("  Teams (%d):"), fgi->num_teams);
-    cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-              "    %-14s %7s %8s %8s",
+
+    my_snprintf(fmt, sizeof(fmt), "    %%-%ds %%7s %%8s %%8s",
+                colmaxlen);
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT, fmt,
               _("Name"), _("Rank"), _("Score"), _("Result"));
+
+    my_snprintf(fmt, sizeof(fmt), "    %%-%ds %%7.1f %%8.1f %%8s",
+                colmaxlen);
     for (i = 0; i < fgi->num_teams; i++) {
       fti = &fgi->teams[i];
-      cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-14s %7.1f %8.1f %8s",
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT, fmt,
                 fti->name, fti->rank + 1.0, fti->score, fti->result);
     }
   }
 
   if (fgi->num_players > 0) {
+    int cml_name = 6;
+    int cml_user = 6;
+    int cml_nation = 8;
+    int cml_team = 6;
+
+    for (i = 0; i < fgi->num_players; i++) {
+      fpi = &fgi->players[i];
+      cml_name = MAX(cml_name, strlen(fpi->name) + 1);
+      cml_user = MAX(cml_user, strlen(fpi->user) + 1);
+      cml_nation = MAX(cml_nation, strlen(fpi->nation) + 1);
+      cml_team = MAX(cml_team, strlen(fpi->team_name) + 1);
+    }
+
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
     cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
               _("  Players (%d):"), fgi->num_players);
-    cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-              "    %-22s %-22s %-22s %-14s %7s %8s %8s",
+
+    my_snprintf(fmt, sizeof(fmt),
+                "    %%-%ds %%-%ds %%-%ds %%-%ds %%7s %%8s %%8s",
+                cml_name, cml_user, cml_nation, cml_team);
+    cmd_reply(CMD_EXAMINE, caller, C_COMMENT, fmt,
               _("Name"), _("User"), _("Nation"), _("Team"),
               _("Rank"), _("Score"), _("Result"));
+
+    my_snprintf(fmt, sizeof(fmt),
+                "    %%-%ds %%-%ds %%-%ds %%-%ds %%7.1f %%8.1f %%8s",
+                cml_name, cml_user, cml_nation, cml_team);
+
     for (i = 0; i < fgi->num_players; i++) {
       fpi = &fgi->players[i];
       if (fpi->team_name == NULL || fpi->team_name[0] == '\0') {
@@ -4709,12 +4743,12 @@ static bool examine_command(struct connection *caller,
       } else {
         sz_strlcpy(buf, fpi->team_name);
       }
-      cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-22s %-22s %-22s %-14s %7.1f %8.1f %8s",
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT, fmt,
                 fpi->name, fpi->user, fpi->nation, buf,
                 fpi->rank + 1.0, fpi->score, fpi->result);
     }
 
+    cml_user = 6;
     num_rating_changes = 0;
     for (i = 0; i < fgi->num_players; i++) {
       fpi = &fgi->players[i];
@@ -4723,24 +4757,32 @@ static bool examine_command(struct connection *caller,
         continue;
       }
       num_rating_changes++;
+      cml_user = MAX(cml_user, strlen(fpi->user) + 1);
     }
 
     if (num_rating_changes > 0) {
       cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
       cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s",
                 _("  Rating Changes:"));
-      cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                "    %-22s %12s %12s %12s %12s",
+
+
+      my_snprintf(fmt, sizeof(fmt),
+                  "    %%-%ds %%12s %%12s %%12s %%12s",
+                  cml_user);
+      cmd_reply(CMD_EXAMINE, caller, C_COMMENT, fmt,
                 _("User"), _("Old Rating"), _("Old RD"),
                 _("New Rating"), _("New RD"));
+
       for (i = 0; i < fgi->num_players; i++) {
         fpi = &fgi->players[i];
         if (fpi->user[0] == '\0' || fpi->old_rating == 0.0
             || fpi->new_rating == 0.0) {
           continue;
         }
-        cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
-                  "    %-22s %12.2f %12.2f %12.2f %12.2f",
+        my_snprintf(fmt, sizeof(fmt),
+                    "    %%-%ds %%12.2f %%12.2f %%12.2f %%12.2f",
+                    cml_user);
+        cmd_reply(CMD_EXAMINE, caller, C_COMMENT, fmt,
                   fpi->user, fpi->old_rating, fpi->old_rd,
                   fpi->new_rating, fpi->new_rd);
       }
