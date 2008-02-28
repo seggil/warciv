@@ -99,7 +99,7 @@ void handle_unit_airlift(struct player *pplayer, int unit_id, int city_id)
   struct city *pcity = find_city_by_id(city_id);
 
   if (punit && pcity) {
-    (void) do_airline(punit, pcity);
+    do_airlift(punit, pcity);
   }
 }
 

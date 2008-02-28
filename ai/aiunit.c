@@ -151,7 +151,7 @@ static void ai_airlift(struct player *pplayer)
     }
     UNIT_LOG(LOG_DEBUG, transported, "airlifted to defend %s", 
              most_needed->name);
-    do_airline(transported, most_needed);
+    do_airlift(transported, most_needed);
   } while (TRUE);
 }
 

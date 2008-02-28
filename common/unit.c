@@ -185,31 +185,49 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
 }
 
 /**************************************************************************
-FIXME: Maybe we should allow airlifts between allies
+  ...
 **************************************************************************/
-bool unit_can_airlift_to(struct unit *punit, struct city *pcity)
+bool unit_can_airlift_to(struct unit *punit, struct city *destcity)
 {
-  if(punit->moves_left == 0)
-    return FALSE;
-  if (!punit->tile->city) {
-    return FALSE;
-  }
-  if (punit->tile->city == pcity) {
-    return FALSE;
-  }
-  if (punit->tile->city->owner != pcity->owner) {
-    if (!(game.ext_info.airliftingstyle & 2)
-       || !pplayers_allied(get_player(punit->owner),
-			   get_player(pcity->owner))) {
-      return FALSE;
-    }
-  }
-  if (!punit->tile->city->airlift
-      || (!pcity->airlift && (!(game.ext_info.airliftingstyle & 1)))) {
+  struct city *srccity;
+
+  if (punit == NULL || destcity == NULL
+      || punit->tile == NULL
+      || punit->tile->city == NULL) {
     return FALSE;
   }
-  if (!is_ground_unit(punit))
+  
+  if (punit->moves_left == 0) {
     return FALSE;
+  }
+
+  if (!is_ground_unit(punit)) {
+    return FALSE;
+  }
+
+  srccity = punit->tile->city;
+
+  if (srccity == destcity) {
+    return FALSE;
+  }
+
+  if (!srccity->airlift) {
+    return FALSE;
+  }
+
+  if (!destcity->airlift
+      && (game.ext_info.airliftingstyle == 0
+          || game.ext_info.airliftingstyle == 2)) {
+    return FALSE;
+  }
+
+  if (srccity->owner != destcity->owner
+      && !(pplayers_allied(get_player(punit->owner),
+                           get_player(destcity->owner))
+           && (game.ext_info.airliftingstyle == 2
+               || game.ext_info.airliftingstyle == 3))) {
+    return FALSE;
+  }
 
   return TRUE;
 }

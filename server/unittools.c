@@ -2128,33 +2128,34 @@ Move the unit if possible
 }
 
 /**************************************************************************
-  go by airline, if both cities have an airport and neither has been used this
-  turn the unit will be transported by it and have it's moves set to 0
+  ...
 **************************************************************************/
-bool do_airline(struct unit *punit, struct city *city2)
+bool do_airlift(struct unit *punit, struct city *city2)
 {
   struct tile *src_tile = punit->tile;
   struct city *city1 = src_tile->city;
 
-  if (!city1)
+  if (!city1) {
     return FALSE;
-  if (!unit_can_airlift_to(punit, city2))
+  }
+  if (!unit_can_airlift_to(punit, city2)) {
     return FALSE;
+  }
   if (get_transporter_occupancy(punit) > 0) {
     return FALSE;
   }
   city1->airlift = FALSE;
   city2->airlift = FALSE;
 
-  notify_player_ex(unit_owner(punit), city2->tile, E_NOEVENT,
-		   _("Game: %s transported succesfully."),
-		   unit_name(punit->type));
-
-  (void) move_unit(punit, city2->tile, punit->moves_left);
+  move_unit(punit, city2->tile, punit->moves_left);
 
   /* airlift fields have changed. */
   send_city_info(city_owner(city1), city1);
   send_city_info(city_owner(city2), city2);
+
+  notify_player_ex(unit_owner(punit), city2->tile, E_UNIT_RELOCATED,
+		   _("Game: %s airlifted from %s to %s successfully."),
+		   unit_name(punit->type), city1->name, city2->name);
 
   return TRUE;
 }

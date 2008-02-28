@@ -1942,7 +1942,6 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     return;
   } else if(ptile && hover_state == HOVER_AIRLIFT_DEST) {
     if (pcity) {
-      append_output_window(_("Warclient: Airlifting units"));
       do_airlift(ptile);
     } else {
       append_output_window(
