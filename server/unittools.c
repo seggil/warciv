@@ -2168,6 +2168,7 @@ bool do_airlift(struct unit *punit, struct city *city2)
 bool do_paradrop(struct unit *punit, struct tile *ptile)
 {
   struct player *pplayer = unit_owner(punit);
+  int move_cost;
 
   if (!unit_flag(punit, F_PARATROOPERS)) {
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
@@ -2225,32 +2226,30 @@ bool do_paradrop(struct unit *punit, struct tile *ptile)
     show_area(pplayer, ptile, srange);
 
     notify_player_ex(pplayer, ptile, E_UNIT_LOST,
-                     _("Game: Your %s paradropped into the ocean "
-                       "and was lost."),
+                     _("Game: Your %s unit drowned in the ocean."),
                      unit_type(punit)->name);
     server_remove_unit(punit);
     return TRUE;
   }
 
-  if ((ptile->city && pplayers_non_attack(pplayer, city_owner(ptile->city)))
+  if ((ptile->city && pplayers_non_attack(pplayer,
+                                          city_owner(ptile->city)))
       || is_non_allied_unit_tile(ptile, pplayer)) {
     int srange = unit_type(punit)->vision_range;
     show_area(pplayer, ptile, srange);
     maybe_make_contact(ptile, pplayer);
-    notify_player_ex(pplayer, ptile, E_UNIT_LOST_ATT,
-                     _("Game: Your %s was killed by enemy units at the "
-                       "paradrop destination."),
+    notify_player_ex(pplayer, ptile, E_UNIT_LOST,
+                     _("Game: Your %s unit was killed by enemy units "
+                       "while landing at the destination."),
                      unit_type(punit)->name);
     server_remove_unit(punit);
     return TRUE;
   }
 
   /* All ok */
-  {
-    int move_cost = unit_type(punit)->paratroopers_mr_sub;
-    punit->paradropped = TRUE;
-    return move_unit(punit, ptile, move_cost);
-  }
+  move_cost = unit_type(punit)->paratroopers_mr_sub;
+  punit->paradropped = TRUE;
+  return move_unit(punit, ptile, move_cost);
 }
 
 /**************************************************************************
