@@ -7427,6 +7427,8 @@ static void show_ignore(struct connection *caller)
 static void show_team_ratings(struct connection *caller, bool send_to_all)
 {
   enum game_types type = GT_NUM_TYPES;
+  char fmt[128];
+  int cml_name;
 
   if (team_count() <= 0) {
     return;
@@ -7449,21 +7451,30 @@ static void show_team_ratings(struct connection *caller, bool send_to_all)
   score_assign_groupings();
   score_calculate_grouping_ratings();
 
+  cml_name = 10;
+  team_iterate(pteam) {
+    cml_name = MAX(cml_name, strlen(get_team_name(pteam->id)) + 2);
+  } team_iterate_end;
+
+  my_snprintf(fmt, sizeof(fmt), "%s%%-%ds %%-10s %%-10s",
+              send_to_all ? "Server: " : "", cml_name);
+
   if (send_to_all) {
-    notify_conn(NULL, "Server: %-14s %-8s %-8s",
-                _("Team Name"), _("Rating"), _("RD"));
+    notify_conn(NULL, fmt, _("Team Name"), _("Rating"), _("RD"));
   } else {
-    cmd_reply(CMD_LIST, caller, C_COMMENT, "%-14s %-8s %-8s",
+    cmd_reply(CMD_LIST, caller, C_COMMENT, fmt,
               _("Team Name"), _("Rating"), _("RD"));
   }
 
+  my_snprintf(fmt, sizeof(fmt), "%s%%-%ds %%-10.2f %%-10.2f",
+              send_to_all ? "Server: " : "", cml_name);
+
   team_iterate(pteam) {
     if (send_to_all) {
-      notify_conn(NULL, "Server: %-14s %-8.2f %-8.2f",
-                  get_team_name(pteam->id), pteam->fcdb.rating,
-                  pteam->fcdb.rating_deviation);
+      notify_conn(NULL, fmt, get_team_name(pteam->id),
+                  pteam->fcdb.rating, pteam->fcdb.rating_deviation);
     } else {
-      cmd_reply(CMD_LIST, caller, C_COMMENT, "%-14s %-8.2f %-8.2f",
+      cmd_reply(CMD_LIST, caller, C_COMMENT, fmt,
                 get_team_name(pteam->id), pteam->fcdb.rating,
                 pteam->fcdb.rating_deviation);
     }
