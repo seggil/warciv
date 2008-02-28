@@ -4482,8 +4482,8 @@ static int rate_compare(const void *a, const void *b)
 static bool ratings_command(struct connection *caller,
                             char *arg, bool check)
 {
-  char buf[128];
-  int i;
+  char buf[128], fmt[128], fmt2[128];
+  int i, cml_pname, cml_uname;
   int type = GT_NUM_TYPES;
   struct rated_player list[game.info.nplayers];
 
@@ -4517,6 +4517,9 @@ static bool ratings_command(struct connection *caller,
   }
 
   i = 0;
+  cml_pname = 8;
+  cml_uname = 10;
+
   players_iterate(pplayer) {
     if (pplayer->is_observer || is_barbarian(pplayer)) {
       continue;
@@ -4525,6 +4528,8 @@ static bool ratings_command(struct connection *caller,
     list[i].player_name = pplayer->name;
     list[i].rating = 0;
     list[i].rd = 0;
+
+    cml_pname = MAX(cml_pname, strlen(pplayer->name) + 2);
 
     if (pplayer->fcdb.rated_user_name[0] != '\0') {
       if (!fcdb_get_user_rating(pplayer->fcdb.rated_user_name,
@@ -4549,6 +4554,7 @@ static bool ratings_command(struct connection *caller,
 
     player_get_rated_username(pplayer, list[i].username,
                               sizeof(list[i].username));
+    cml_uname = MAX(cml_uname, strlen(list[i].username) + 2);
     i++;
   } players_iterate_end;
 
@@ -4557,17 +4563,22 @@ static bool ratings_command(struct connection *caller,
 
   cmd_reply(CMD_RATINGS, caller, C_COMMENT, _("%s Ratings"), buf);
   cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
-  cmd_reply(CMD_RATINGS, caller, C_COMMENT, "%-20s %-20s %10s %10s",
+
+  my_snprintf(fmt, sizeof(fmt), "%%-%ds %%-%ds %%10s %%10s",
+              cml_pname, cml_uname);
+  cmd_reply(CMD_RATINGS, caller, C_COMMENT, fmt,
             _("Player"), _("Username"), _("Rating"), _("RD"));
+
+  my_snprintf(fmt2, sizeof(fmt2), "%%-%ds %%-%ds %%10.2f %%10.2f",
+              cml_pname, cml_uname);
+
   for (i = 0; i < game.info.nplayers; i++) {
     if (list[i].rating > 0.0) {
-      cmd_reply(CMD_RATINGS, caller, C_COMMENT,
-                "%-20s %-20s %10.2f %10.2f",
+      cmd_reply(CMD_RATINGS, caller, C_COMMENT, fmt2,
                 list[i].player_name, list[i].username,
                 list[i].rating, list[i].rd);
     } else {
-      cmd_reply(CMD_RATINGS, caller, C_COMMENT,
-                "%-20s %-20s %10s %10s",
+      cmd_reply(CMD_RATINGS, caller, C_COMMENT, fmt,
                 list[i].player_name, list[i].username,
                 _("<unrated>"), _("<unrated>"));
     }
