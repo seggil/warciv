@@ -2277,12 +2277,20 @@ static void unit_homecity_callback(GtkWidget * w, gpointer data)
 *****************************************************************/
 static void unit_upgrade_callback(GtkWidget *w, gpointer data)
 {
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(),
-					      (size_t) data);
+  struct unit *punit;
+  struct player *me = get_player_ptr();
+  int id;
   GtkWidget *shell;
   char buf[512];
 
-  if (!punit) {
+  if (me == NULL) {
+    return;
+  }
+
+  id = GPOINTER_TO_INT(data);
+  punit = player_find_unit_by_id(me, id);
+
+  if (punit == NULL) {
     return;
   }
 
@@ -2303,7 +2311,14 @@ static void unit_upgrade_callback(GtkWidget *w, gpointer data)
     gtk_dialog_set_default_response(GTK_DIALOG(shell), GTK_RESPONSE_YES);
 
     if (gtk_dialog_run(GTK_DIALOG(shell)) == GTK_RESPONSE_YES) {
-      request_unit_upgrade(punit);
+
+      /* Be sure that the player and unit still exist. */
+      me = get_player_ptr();
+      punit = player_find_unit_by_id(me, id);
+
+      if (punit != NULL) {
+        request_unit_upgrade(punit);
+      }
     }
     gtk_widget_destroy(shell);
   }

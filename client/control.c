@@ -1176,11 +1176,19 @@ void request_unit_change_homecity(struct unit *punit)
 **************************************************************************/
 void request_unit_upgrade(struct unit *punit)
 {
-  struct city *pcity = map_get_city(punit->tile);
-
-  if (pcity) {
-    dsend_packet_unit_upgrade(&aconnection, punit->id);
+  struct city *pcity;
+  
+  if (punit == NULL || punit->tile == NULL) {
+    return;
   }
+
+  pcity = map_get_city(punit->tile);
+
+  if (pcity == NULL) {
+    return;
+  }
+
+  dsend_packet_unit_upgrade(&aconnection, punit->id);
 }
 
 /**************************************************************************

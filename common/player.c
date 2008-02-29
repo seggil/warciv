@@ -374,11 +374,11 @@ struct unit *player_find_unit_by_id(const struct player *pplayer,
 {
   struct unit *punit = idex_lookup_unit(unit_id);
   
-  if(punit && (punit->owner==pplayer->player_no)) {
+  if (punit != NULL && pplayer != NULL
+      && unit_owner(punit) == pplayer) {
     return punit;
-  } else {
-    return NULL;
   }
+  return NULL;
 }
 
 /*************************************************************************
