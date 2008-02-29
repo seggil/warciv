@@ -4072,6 +4072,8 @@ static bool observe_command(struct connection *caller, char *str,
   cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s"),
             pconn->username, pplayer->name);
 
+  send_updated_vote_totals(NULL);
+
 CLEANUP:
   free_tokens(arg, ntokens);
   return res;
@@ -4246,6 +4248,8 @@ static bool take_command(struct connection *caller, char *str, bool check)
             _("AI") : _("Human"),
             pplayer->is_alive ? _("Alive") : _("Dead"));
 
+  send_updated_vote_totals(NULL);
+
 CLEANUP:
   free_tokens(arg, ntokens);
   return res;
@@ -4348,6 +4352,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   }
 
   cancel_connection_votes(pconn);
+  send_updated_vote_totals(NULL);
 
   if (!pplayer->is_connected) {
     /* aitoggle the player if no longer connected. */

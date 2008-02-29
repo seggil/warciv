@@ -46,6 +46,7 @@
 #include "spaceship.h"
 #include "spacerace.h"
 #include "unittools.h"
+#include "vote.h"
 
 #include "advmilitary.h"
 #include "aidata.h"
@@ -187,6 +188,8 @@ void do_tech_parasite_effect(struct player *pplayer)
 ****************************************************************************/
 void kill_dying_players(void)
 {
+  bool voter_died = FALSE;
+
   players_iterate(pplayer) {
     if (pplayer->is_alive) {
       if (unit_list_size(pplayer->units) == 0
@@ -194,10 +197,15 @@ void kill_dying_players(void)
 	pplayer->is_dying = TRUE;
       }
       if (pplayer->is_dying) {
-	kill_player(pplayer);
+        voter_died = voter_died || pplayer->is_connected;
+        kill_player(pplayer);
       }
     }
   } players_iterate_end;
+
+  if (voter_died) {
+    send_updated_vote_totals(NULL);
+  }
 }
 
 /**************************************************************************
@@ -1793,6 +1801,8 @@ void server_remove_player(struct player *pplayer)
 
   game_remove_player(pplayer);
   game_renumber_players(pplayer->player_no);
+
+  send_updated_vote_totals(NULL);
 }
 
 /**************************************************************************

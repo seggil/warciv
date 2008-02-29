@@ -470,14 +470,18 @@ void establish_new_connection(struct connection *pconn)
 
   send_conn_info(dest, game.est_connections);
   conn_list_append(game.est_connections, pconn);
+
+  send_running_votes(pconn);
+  send_updated_vote_totals(NULL);
+
   if (conn_list_size(game.est_connections) == 1) {
     /* First connection
      * Replace "restarting in x seconds" meta message */
      maybe_automatic_meta_message(default_meta_message_string());
-     (void) send_server_info_to_metaserver(META_INFO);
+     send_server_info_to_metaserver(META_INFO);
   }
   send_conn_info(game.est_connections, dest);
-  (void) send_server_info_to_metaserver(META_INFO);
+  send_server_info_to_metaserver(META_INFO);
 }
 
 /**************************************************************************
@@ -818,8 +822,6 @@ bool attach_connection_to_player(struct connection *pconn,
   conn_list_append(game.game_connections, pconn);
 
   restore_access_level(pconn);
-
-  send_running_votes(pconn);
 
   return TRUE;
 }

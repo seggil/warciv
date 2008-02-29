@@ -186,7 +186,7 @@ static void handle_readline_input_callback(char *line)
 
   con_prompt_enter();		/* just got an 'Enter' hit */
   line_internal = local_to_internal_string_malloc(line);
-  (void) handle_stdin_input(NULL, line_internal, FALSE);
+  handle_stdin_input(NULL, line_internal, FALSE);
   free(line_internal);
 
   readline_handled_input = TRUE;
@@ -222,6 +222,8 @@ static void close_connection(struct connection *pconn)
   connection_common_close(pconn);
 
   send_conn_info(pconn->self, game.est_connections);
+
+  send_updated_vote_totals(NULL);
 }
 
 /*****************************************************************************

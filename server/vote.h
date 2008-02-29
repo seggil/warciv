@@ -31,6 +31,7 @@ enum vote_type {
 /* Forward declarations. */
 struct connection;
 struct setting_value;
+struct conn_list;
 
 struct vote_cast {
   enum vote_type vote_cast;     /* see enum above */
@@ -87,5 +88,6 @@ struct vote *vote_new(struct connection *caller,
                       struct setting_value *sv);
 int describe_vote(struct vote *pvote, char *buf, int buflen);
 void send_running_votes(struct connection *pconn);
+void send_updated_vote_totals(struct conn_list *dest);
 
 #endif /* FC__VOTE_H */

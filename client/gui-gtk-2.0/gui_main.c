@@ -2538,6 +2538,12 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
   vib->abstain_count_label = label;
 
+  label = gtk_label_new("/0");
+  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+  gtk_widget_set_size_request(label, 24, -1);
+  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+  vib->voter_count_label = label;
+
   return vib;
 }
 

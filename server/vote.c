@@ -66,6 +66,9 @@ static void lsend_vote_new(struct conn_list *dest, struct vote *pvote)
     return;
   }
 
+  freelog(LOG_DEBUG, "lsend_vote_new %p (%d) --> %p",
+          pvote, pvote->vote_no, dest);
+
   packet.vote_no = pvote->vote_no;
   sz_strlcpy(packet.user, pconn->username);
   describe_vote(pvote, packet.desc, sizeof(packet.desc));
@@ -94,6 +97,19 @@ static void lsend_vote_update(struct conn_list *dest, struct vote *pvote,
                               int num_voters)
 {
   struct packet_vote_update packet;
+  struct connection *pconn;
+
+  if (pvote == NULL) {
+    return;
+  }
+
+  pconn = find_conn_by_id(pvote->caller_id);
+  if (pconn == NULL) {
+    return;
+  }
+
+  freelog(LOG_DEBUG, "lsend_vote_update %p (%d) --> %p",
+          pvote, pvote->vote_no, dest);
 
   packet.vote_no = pvote->vote_no;
   packet.yes = pvote->yes;
@@ -732,7 +748,8 @@ void handle_vote_submit(struct connection *pconn, int vote_no, int value)
 }
 
 /**************************************************************************
-  ...
+  Sends a packet_vote_new to pconn (if voteinfo capable) for every
+  currently running vote.
 **************************************************************************/
 void send_running_votes(struct connection *pconn)
 {
@@ -757,10 +774,34 @@ void send_running_votes(struct connection *pconn)
 
   connection_do_buffer(pconn);
   vote_list_iterate(vote_list, pvote) {
-    freelog(LOG_DEBUG, "Sending running vote %p %d.",
-            pvote, pvote->vote_no);
     lsend_vote_new(pconn->self, pvote);
-    lsend_vote_update(pconn->self, pvote, num_voters);
   } vote_list_iterate_end;
   connection_do_unbuffer(pconn);
+}
+
+/**************************************************************************
+  Sends a packet_vote_update to every voteinfo-capabale conn in dest. If
+  dest is NULL, then sends to all established connections.
+**************************************************************************/
+void send_updated_vote_totals(struct conn_list *dest)
+{
+  int num_voters;
+
+  if (vote_list == NULL || vote_list_size(vote_list) <= 0) {
+    return;
+  }
+
+  freelog(LOG_DEBUG, "Sending updated vote totals to conn_list %p", dest);
+
+  if (dest == NULL) {
+    dest = game.est_connections;
+  }
+
+  num_voters = count_voters();
+
+  conn_list_do_buffer(dest);
+  vote_list_iterate(vote_list, pvote) {
+    lsend_vote_update(dest, pvote, num_voters);
+  } vote_list_iterate_end;
+  conn_list_do_unbuffer(dest);
 }

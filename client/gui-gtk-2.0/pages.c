@@ -2358,11 +2358,13 @@ void voteinfo_gui_update(void)
     gtk_label_set_text(GTK_LABEL(vib->no_count_label), buf);
     my_snprintf(buf, sizeof(buf), "%d", vi->abstain);
     gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), buf);
+    my_snprintf(buf, sizeof(buf), "/%d", vi->num_voters);
+    gtk_label_set_text(GTK_LABEL(vib->voter_count_label), buf);
   } else {
-    sz_strlcpy(buf, "-");
-    gtk_label_set_text(GTK_LABEL(vib->yes_count_label), buf);
-    gtk_label_set_text(GTK_LABEL(vib->no_count_label), buf);
-    gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), buf);
+    gtk_label_set_text(GTK_LABEL(vib->yes_count_label), "-");
+    gtk_label_set_text(GTK_LABEL(vib->no_count_label), "-");
+    gtk_label_set_text(GTK_LABEL(vib->abstain_count_label), "-");
+    gtk_label_set_text(GTK_LABEL(vib->voter_count_label), "/-");
   }
 
   running = vi != NULL && !vi->resolved && vi->remove_time == 0;

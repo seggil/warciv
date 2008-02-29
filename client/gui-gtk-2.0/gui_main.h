@@ -45,6 +45,7 @@ struct voteinfo_bar {
   GtkWidget *yes_count_label;
   GtkWidget *no_count_label;
   GtkWidget *abstain_count_label;
+  GtkWidget *voter_count_label;
 };
 
 extern struct voteinfo_bar *ingame_votebar;
