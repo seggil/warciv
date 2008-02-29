@@ -1235,11 +1235,12 @@ void score_propagate_grouping_results(void)
       groupings[i].players[0]->rank = 0;
       do {
         ranksum = (double) j;
-        for (n = j + 1; n < groupings[i].num_players
-             && 0 == player_in_grouping_compare(&groupings[i].players[j],
-                                                &groupings[i].players[n]);
-             n++) {
-          ranksum += (double) n;
+        n = j + 1;
+        while (n < groupings[i].num_players
+               && player_in_grouping_compare(&groupings[i].players[j],
+                                             &groupings[i].players[n])
+               == 0) {
+          ranksum += (double) n++;
         }
         frank = ranksum / (double) (n - j);
         for (k = j; k < n; k++) {

@@ -4820,8 +4820,8 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
   int type = GT_NUM_TYPES;
   struct fcdb_topten_info *ftti = NULL;
   struct fcdb_topten_info_entry *tte = NULL;
-  char buf[64];
-  int i;
+  char buf[64], fmt[128];
+  int i, cml_name;
 
   if (!srvarg.fcdb.enabled) {
     cmd_reply(CMD_TOPTEN, caller, C_GENFAIL,
@@ -4859,17 +4859,29 @@ static bool topten_command(struct connection *caller, char *arg, bool check)
     return TRUE;
   }
 
+  cml_name = 6;
+  for (i = 0; i < ftti->count; i++) {
+    tte = &ftti->entries[i];
+    cml_name = MAX(cml_name, strlen(tte->user) + 2);
+  }
+
   cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
   cmd_reply(CMD_TOPTEN, caller, C_COMMENT, _("Top %s Players"), buf);
   cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
-  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, "%4s %-16s %10s %8s   %s",
-            _("Rank"), _("User"), _("Rating"), _("RD"),
-            _("Wins/Loses/Draws"));
+
+  my_snprintf(fmt, sizeof(fmt), "%%4s %%-%ds %%10s %%8s %%18s",
+              cml_name);
+  cmd_reply(CMD_TOPTEN, caller, C_COMMENT, fmt, _("Rank"), _("User"),
+            _("Rating"), _("RD"), _("Wins/Loses/Draws"));
+
+  my_snprintf(fmt, sizeof(fmt), "%%4d %%-%ds %%10.2f %%8.2f %%18s",
+              cml_name);
+
   for (i = 0; i < ftti->count; i++) {
     tte = &ftti->entries[i];
     my_snprintf(buf, sizeof(buf), "%d/%d/%d",
                 tte->wins, tte->loses, tte->draws);
-    cmd_reply(CMD_TOPTEN, caller, C_COMMENT, "%-4d %-16s %10.2f %8.2f   %s",
+    cmd_reply(CMD_TOPTEN, caller, C_COMMENT, fmt,
               i + 1, tte->user, tte->rating, tte->rd, buf);
   }
   cmd_reply(CMD_TOPTEN, caller, C_COMMENT, horiz_line);
