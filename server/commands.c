@@ -143,7 +143,7 @@ const struct command commands[] = {
    N_("Show current scores."),
    N_("For each connected client, pops up a window showing the current "
       "player scores."),
-   ECHO_ALL, VCF_FASTPASS, 25
+   ECHO_ALL, VCF_NONE, 25
   },
   {"wall",	ALLOW_ADMIN, ALLOW_ADMIN,
    N_("wall <message>"),
@@ -231,7 +231,7 @@ const struct command commands[] = {
       "without any arguments will show you the currently selected\n"
       "ruleset. Use /list rulesets to get the complete list of\n"
       "available rulesets."),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"metamessage", ALLOW_BASIC, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
@@ -275,7 +275,7 @@ const struct command commands[] = {
    /* TRANS: translate text between <> only */
    N_("aitoggle <player-name>"),
    N_("Toggle AI status of player."), NULL,
-   ECHO_PLAYERS, VCF_FASTPASS, 50
+   ECHO_PLAYERS, VCF_NONE, 50
   },
   {"take",    ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between [] and <> only */
@@ -311,7 +311,7 @@ const struct command commands[] = {
    N_("Create an AI player with a given name."),
    N_("The 'create' command is only available before the game has "
       "been started."),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"away",	ALLOW_BASIC, ALLOW_BASIC,
    N_("away\n"
@@ -328,7 +328,7 @@ const struct command commands[] = {
    N_("With no arguments, sets all AI players to skill level 'novice', and "
       "sets the default level for any new AI players to 'novice'.  With an "
       "argument, sets the skill level for that player only."),
-   ECHO_NONE, VCF_FASTPASS, 33
+   ECHO_NONE, VCF_NONE, 33
   },
   {"easy",	ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
@@ -338,7 +338,7 @@ const struct command commands[] = {
    N_("With no arguments, sets all AI players to skill level 'easy', and "
       "sets the default level for any new AI players to 'easy'.  With an "
       "argument, sets the skill level for that player only."),
-   ECHO_NONE, VCF_FASTPASS, 33
+   ECHO_NONE, VCF_NONE, 33
   },
   {"normal",	ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
@@ -348,7 +348,7 @@ const struct command commands[] = {
    N_("With no arguments, sets all AI players to skill level 'normal', and "
       "sets the default level for any new AI players to 'normal'.  With an "
       "argument, sets the skill level for that player only."),
-   ECHO_NONE, VCF_FASTPASS, 33
+   ECHO_NONE, VCF_NONE, 33
   },
   {"hard",	ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
@@ -358,7 +358,7 @@ const struct command commands[] = {
    N_("With no arguments, sets all AI players to skill level 'hard', and "
       "sets the default level for any new AI players to 'hard'.  With an "
       "argument, sets the skill level for that player only."),
-   ECHO_NONE, VCF_FASTPASS, 33
+   ECHO_NONE, VCF_NONE, 33
   },
   {"experimental",	ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
@@ -370,7 +370,7 @@ const struct command commands[] = {
       "argument, sets the skill level for that player only. THIS IS ONLY "
       "FOR TESTING OF NEW AI FEATURES! For ordinary servers, this option "
       "has no effect."),
-   ECHO_NONE, VCF_FASTPASS, 33
+   ECHO_NONE, VCF_NONE, 33
   },
   {"cmdlevel",	ALLOW_ADMIN, ALLOW_ADMIN, /* confusing at ALLOW_CTRL */
    /* TRANS: translate text between <> only */
@@ -403,7 +403,7 @@ const struct command commands[] = {
    N_("Every <turn> turns, add <value> to timeout timer, then add <turninc> "
       "to <turn> and multiply <value> by <valuemult>.  Use this command in "
       "concert with the option \"timeout\". Defaults are 0 0 0 1"),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"ignore", ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> and [] only */
@@ -447,7 +447,7 @@ const struct command commands[] = {
       "not listed will be assumed to have an equal, lowest skill level. "
       "Names may be abbreviated so long as they are not ambiguous."),
 #endif /* HAVE_MYSQL */
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"mute", ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> and [] only */
@@ -577,7 +577,7 @@ const struct command commands[] = {
    N_("Fully remove player from game."),
    N_("This *completely* removes a player from the game, including "
       "all cities and units etc. Works even in the middle of game. Use with care!"),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"save",	ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
@@ -611,7 +611,7 @@ const struct command commands[] = {
       "You can get a list of the available maps with /list maps.\n" 
       "<mapfile-name> can be the name of the mapfile or the number in the \n"
       "list of maps."),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"unloadmap",      ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
@@ -620,7 +620,7 @@ const struct command commands[] = {
    N_("Unload a filemap."),
    N_("Unload a map, that was loaded from a file (with /loadmap or /loadscenario)."
       "Use it if you want to play without a map after you have loaded a mapfile.\n"),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
     {"loadscenario",      ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
@@ -629,7 +629,7 @@ const struct command commands[] = {
    N_("Load scenario from file."),
    N_("Load a scenario from <scenariofile-name>. <scenariofile-name> "
       "can be the name of the mapfile or the number in the list of scenarios."),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"read",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
@@ -648,7 +648,7 @@ const struct command commands[] = {
    N_("Reset all server settings."),
    N_("Reset all settings and re-read the server start script, "
       "if there was one given with the --read server argument. "),
-   ECHO_ALL, VCF_FASTPASS, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"wmessage",	ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
