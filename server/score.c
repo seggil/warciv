@@ -866,7 +866,12 @@ void score_propagate_grouping_ratings(void)
     rd_change = groupings[i].new_rating_deviation
         - groupings[i].rating_deviation;
 
-    /* Use n*(n+1)/2 not (n-1)*n/2 since we add 1 to 'trank' below. */
+    /* Note 'sum' is the sum of all the trank (i.e. the rank of
+     * a player in his own team, with 1 being first place and
+     * groupings[i].num_players being that last place value)
+     * values used below. We use n*(n+1)/2 not (n-1)*n/2 since
+     * we trank values start at 1 (unlike most other internal
+     * rank values, which start at 0). */
     sum = groupings[i].num_players
         * (groupings[i].num_players + 1.0) / 2.0;
 
@@ -878,23 +883,27 @@ void score_propagate_grouping_ratings(void)
         new_r += rating_change;
       } else {
         /* The "pie/blame" allotment scheme:
-         * If the change is positive, 'better' members get a bigger
-         * piece of the pie. If the change is negative, 'worse' members
-         * get a bigger piece of the blame. */
+         * If the rating change is positive, "better" members get a
+         * bigger piece of the pie (i.e. the rating change). If the
+         * change is negative, "worse" members get a bigger piece of
+         * the blame. */
 
-        /* NB HIGHER rank means LOWER rank number,
-         * i.e. 0.0 is first place. */
+        /* NB: HIGHER score means LOWER rank, i.e. 0 is first place. */
 
-        /* Add 1 to the rank to avoid weight = 0. */
+        /* Add 1 to the in-team rank to avoid weight = 0. */
         trank = groupings[i].players[j]->rank + 1.0
                 - groupings[i].rank_offset;
-        weight = trank / sum;
 
         if (rating_change > 0) {
-          new_r += rating_change * (1 - weight);
-        } else {
-          new_r += rating_change * weight;
+          /* Flip the in-team rank so that players with
+           * a LOWER rank (i.e. higher score) get a BIGGER
+           * piece of the rating change. */
+          trank = groupings[i].num_players - trank + 1;
         }
+
+        weight = trank / sum;
+
+        new_r += rating_change * weight;
       }
 
       /* Whether alone or in a group, you get the
