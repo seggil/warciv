@@ -2122,6 +2122,8 @@ static bool unmute_command(struct connection *caller, char *str, bool check)
   cmd_reply(CMD_UNMUTE, caller, C_OK, _("User %s has been unmuted."),
             pconn->username);
 
+  send_updated_vote_totals(NULL);
+
   return TRUE;
 }
 
@@ -2221,6 +2223,8 @@ static bool mute_command(struct connection *caller, char *str, bool check)
       }
     }
   } conn_list_iterate_end;
+
+  send_updated_vote_totals(NULL);
 
   return TRUE;
 }
@@ -3147,7 +3151,7 @@ static bool vote_command(struct connection *caller,
                 pvote->vote_no, pvote->cmdline,
                 pvote->need_pc * 100 + 1,
                 pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
-                pvote->flags & VCF_NO_DISSENT ? _(" no dissent") : "",
+                pvote->flags & VCF_NODISSENT ? _(" no dissent") : "",
                 pvote->flags & VCF_FASTPASS ? _(" participation") : "",
                 pvote->yes, pvote->no, pvote->abstain, game.info.nplayers);
     } vote_list_iterate_end;
@@ -7244,41 +7248,54 @@ static void show_help_command(struct connection *caller,
 
   if ((cmd->game_level == ALLOW_CTRL || cmd->pregame_level == ALLOW_CTRL)
       && (cmd->vote_flags > VCF_NONE || cmd->vote_percent > 0)) {
-    if (cmd->vote_flags & VCF_NO_DISSENT) {
-      cmd_reply(help_cmd, caller, C_COMMENT, "  %s",
-                _("May only pass if there are no dissenting votes."));
-    }
-    if (cmd->vote_flags & VCF_UNANIMOUS) {
-      cmd_reply(help_cmd, caller, C_COMMENT, "  %s",
-                _("May only pass by unanimous vote."));
-    }
+    char buf[1024];
+    buf[0] = '\0';
+
     if (cmd->vote_flags & VCF_FASTPASS) {
       if (cmd->vote_percent > 0) {
-        cmd_reply(help_cmd, caller, C_COMMENT, _("  Passes by majority "
-                                                 "once more than %d%% of players have voted."),
-                  cmd->vote_percent);
+        cat_snprintf(buf, sizeof(buf),
+                     _("Passes by majority once more than "
+                       "%d%% of players have voted. "),
+                     cmd->vote_percent);
       } else {
-        cmd_reply(help_cmd, caller, C_COMMENT, "  %s",
-                  _("Passes by majority vote."));
+        sz_strlcat(buf, _("Passes by majority vote. "));
       }
     } else {
       if (cmd->vote_percent > 0) {
-        cmd_reply(help_cmd, caller, C_COMMENT,
-                  _("  Requires more than %d%% in favor to pass."),
-                  cmd->vote_percent);
+        cat_snprintf(buf, sizeof(buf),
+                     _("Requires more than %d%% in favor to pass. "),
+                     cmd->vote_percent);
       }
     }
 
+    if (cmd->vote_flags & VCF_NODISSENT) {
+      sz_strlcat(buf, _("May only pass if there are no "
+                        "dissenting votes. "));
+    }
+
+    if (cmd->vote_flags & VCF_UNANIMOUS) {
+      sz_strlcat(buf, _("May only pass by unanimous vote. "));
+    }
+
     if (cmd->vote_flags & VCF_WAITFORALL) {
-      cmd_reply(help_cmd, caller, C_COMMENT,
-                _("  The vote remains until all have voted or the voting "
-                  "period elapses."));
+      sz_strlcat(buf, _("The vote remains until all have voted "
+                        "or the voting period elapses. "));
     }
+
     if (cmd->vote_flags & VCF_ALWAYSVOTE) {
-      cmd_reply(help_cmd, caller, C_COMMENT,
-                _("  A vote will be started even if the user has "
-                  "an access level greater than 'basic'."));
+      sz_strlcat(buf, _("A vote will be started even if the user "
+                        "has an access level greater than 'basic'. "));
     }
+
+    if (cmd->vote_flags & VCF_NOPASSALONE) {
+      sz_strlcat(buf, _("If a vote could pass with only one voter "
+                        "in favor, then the percent required is "
+                        "increased until at least two votes in favor "
+                        "are needed. "));
+    }
+    wordwrap_string(buf, 76);
+    cmd_reply(help_cmd, caller, C_COMMENT, _("Voting:"));
+    cmd_reply_prefix(help_cmd, caller, C_COMMENT, "  ", "  %s", buf);
   }
 
   if (cmd->extra_help) {

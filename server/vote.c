@@ -343,6 +343,16 @@ struct vote *vote_new(struct connection *caller,
     if (op->int_value == &game.info.timeout
         && sv->int_value > *op->int_value) {
       pvote->need_pc = 0.25;
+      pvote->flags |= VCF_NOPASSALONE;
+    }
+  }
+
+  if (pvote->flags & VCF_NOPASSALONE) {
+    int num_voters = count_voters();
+    double min_pc = 1.0 / (double) num_voters;
+
+    if (num_voters > 1 && min_pc > pvote->need_pc) {
+      pvote->need_pc = MIN(0.5, 2.0 * min_pc);
     }
   }
 
@@ -415,7 +425,7 @@ static void check_vote(struct vote *pvote)
       rem_pc = (double) (num_voters - num_cast) / base;
     }
 
-    if (flags & VCF_NO_DISSENT && no_pc > 0.0) {
+    if (flags & VCF_NODISSENT && no_pc > 0.0) {
       resolve = TRUE;
     }
     if (flags & VCF_UNANIMOUS && yes_pc < 1.0) {
@@ -477,7 +487,7 @@ static void check_vote(struct vote *pvote)
   if (passed && flags & VCF_UNANIMOUS) {
     passed = yes_pc == 1.0;
   }
-  if (passed && flags & VCF_NO_DISSENT) {
+  if (passed && flags & VCF_NODISSENT) {
     passed = no_pc == 0.0;
   }
 
@@ -696,7 +706,7 @@ int describe_vote(struct vote *pvote, char *buf, int buflen)
          * agreement of the given percentage of players to pass. */
         _("%s (needs unanimous %0.0f%%)."),
         pvote->cmdline, MIN(100.0, pvote->need_pc * 100.0 + 1));
-  } else if (pvote->flags & VCF_NO_DISSENT) {
+  } else if (pvote->flags & VCF_NODISSENT) {
     ret = my_snprintf(buf, buflen,
         /* TRANS: Describing a new vote that can only pass
          * if there are no dissenting votes. */

@@ -143,7 +143,7 @@ const struct command commands[] = {
    N_("Show current scores."),
    N_("For each connected client, pops up a window showing the current "
       "player scores."),
-   ECHO_ALL, VCF_NONE, 25
+   ECHO_ALL, VCF_NOPASSALONE, 25
   },
   {"wall",	ALLOW_ADMIN, ALLOW_ADMIN,
    N_("wall <message>"),
@@ -458,7 +458,7 @@ const struct command commands[] = {
       "optional '# of turns' argument specifies how long this should "
       "go on for; zero implies forever. The default value, if left "
       "unspecified, is 3."),
-   ECHO_ADMINS, VCF_NONE, 50
+   ECHO_ADMINS, VCF_NOPASSALONE, 25
   },
   {"unmute", ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
@@ -467,7 +467,7 @@ const struct command commands[] = {
    N_("This command undoes what the /mute command did. The given "
       "user is again allowed to make public, private and ally "
       "messages and can create votes."),
-   ECHO_ADMINS, VCF_NONE, 50
+   ECHO_ADMINS, VCF_NOPASSALONE, 25
   },
 #ifdef HAVE_MYSQL
   {"stats", ALLOW_OBSERVER, ALLOW_OBSERVER,
@@ -569,7 +569,7 @@ const struct command commands[] = {
    N_("End the game.  If players are listed, these win the game."),
    N_("This command ends the game immediately and credits the given players, "
       "if any, with winning it."),
-   ECHO_ALL, VCF_NO_DISSENT, 50
+   ECHO_ALL, VCF_NODISSENT, 50
   },
   {"remove",	ALLOW_ADMIN, ALLOW_CTRL,
    /* TRANS: translate text between <> only */

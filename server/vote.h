@@ -16,12 +16,14 @@
 #include "shared.h" /* bool */
 
 enum vote_condition_flags {
-  VCF_NONE       = 0,
-  VCF_NO_DISSENT = (1 << 0), /* No 'no' votes.' */
-  VCF_UNANIMOUS  = (1 << 1), /* All must be 'yes' or 'abstain'. */
-  VCF_FASTPASS   = (1 << 2), /* Pass if 'yes' > 'no'. */
-  VCF_WAITFORALL = (1 << 3), /* Resolve only after timeout or all voted. */
-  VCF_ALWAYSVOTE = (1 << 4), /* Make a vote no matter what the cmdlev. */
+  VCF_NONE          = 0,
+  VCF_NODISSENT     = (1 << 0), /* No 'no' votes.' */
+  VCF_UNANIMOUS     = (1 << 1), /* All must be 'yes' or 'abstain'. */
+  VCF_FASTPASS      = (1 << 2), /* Pass if 'yes' > 'no'. */
+  VCF_WAITFORALL    = (1 << 3), /* Resolve only after all have voted. */
+  VCF_ALWAYSVOTE    = (1 << 4), /* Make a vote regardless of cmdlev. */
+  VCF_NOPASSALONE   = (1 << 5), /* Can't pass with just one vote for,
+                                 * when there is more than one voter. */
 };
 
 enum vote_type {
