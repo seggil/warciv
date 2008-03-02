@@ -881,6 +881,7 @@ void score_propagate_grouping_ratings(void)
 
       if (groupings[i].num_players == 1) {
         new_r += rating_change;
+        new_RD += rd_change;
       } else {
         /* The "pie/blame" allotment scheme:
          * If the rating change is positive, "better" members get a
@@ -904,13 +905,21 @@ void score_propagate_grouping_ratings(void)
         weight = trank / sum;
 
         new_r += rating_change * weight;
+
+        /* If the player ranks highly (i.e. near 1st place)
+         * in his team and the team wins, 'weight' will be
+         * larger. This corresponds to a higher certainty that
+         * the player played a role in the team's win, hence
+         * the RD change should be larger.
+         *
+         * Similarly, if the team loses and the player ranks
+         * lowly (i.e. near last place in the team), then it
+         * is probable that the player contributed more to the
+         * team's loss. Hence again 'weight' will be larger and
+         * the RD change larger as well. */
+        new_RD += rd_change * weight;
       }
 
-      /* Whether alone or in a group, you get the
-       * full RD change. This was added since it was
-       * observed that RDs decreased too slowly for 
-       * team games. */
-      new_RD += rd_change;
 
       /* As per Glicko's suggestion. */
       if (new_RD < RATING_CONSTANT_MINIMUM_RD) {
