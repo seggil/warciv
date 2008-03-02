@@ -898,7 +898,7 @@ static void create_city_report_dialog(bool make_modal)
   GtkWidget *w, *sw, *menubar;
   int i;
   
-  gui_dialog_new(&city_dialog_shell, GTK_NOTEBOOK(top_notebook));
+  gui_dialog_new_full(&city_dialog_shell, GTK_NOTEBOOK(top_notebook), 3);
   gui_dialog_set_title(city_dialog_shell, _("Cities"));
 
   gui_dialog_set_default_size(city_dialog_shell, -1, 420);

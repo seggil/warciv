@@ -1514,9 +1514,11 @@ static void setup_widgets(void)
   /* Map canvas and scrollbars */
 
   table = gtk_table_new(2, 2, FALSE);
-
   label = gtk_label_new_with_mnemonic(_("_Map"));
-  gtk_notebook_append_page(GTK_NOTEBOOK(top_notebook), table, label);
+
+  /* NB: callback_report_map in menu.c relies on
+   * the map tab being at position 0. */
+  gtk_notebook_insert_page(GTK_NOTEBOOK(top_notebook), table, label, 0);
   focus_chain = g_list_append(focus_chain, top_notebook);
 
   frame = gtk_frame_new(NULL);
@@ -1535,10 +1537,10 @@ static void setup_widgets(void)
   }
 
   gtk_widget_add_events(map_canvas, GDK_EXPOSURE_MASK
-                        |GDK_BUTTON_PRESS_MASK
-                        |GDK_BUTTON_RELEASE_MASK
-                        |GDK_KEY_PRESS_MASK
-                        |GDK_POINTER_MOTION_MASK);
+                        | GDK_BUTTON_PRESS_MASK
+                        | GDK_BUTTON_RELEASE_MASK
+                        | GDK_KEY_PRESS_MASK
+                        | GDK_POINTER_MOTION_MASK);
 
   gtk_widget_set_size_request(map_canvas, 510, 300);
   gtk_container_add(GTK_CONTAINER(frame), map_canvas);

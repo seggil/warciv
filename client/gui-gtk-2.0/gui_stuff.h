@@ -61,14 +61,14 @@ struct gui_dialog;
 
 typedef void (*GUI_DIALOG_RESPONSE_FUN)(struct gui_dialog *, int);
 
-struct gui_dialog
-{
+struct gui_dialog {
   /* public. */
   GtkWidget *vbox;
   GtkWidget *action_area;
 
   /* private. */
   enum gui_dialog_type type;
+  gint position;
 
   union {
     GtkWidget *window;
@@ -85,6 +85,8 @@ struct gui_dialog
 };
 
 void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook);
+void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
+                         gint position);
 void gui_dialog_set_default_response(struct gui_dialog *dlg, int response);
 GtkWidget *gui_dialog_add_button(struct gui_dialog *dlg,
     const char *text, int response);

@@ -5203,7 +5203,18 @@ static const char *load_menu_miscellaneous(void)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_cities(GtkAction *action, gpointer user_data)
+static void callback_report_map(GtkAction *action,
+                                gpointer user_data)
+{
+  /* NB: Page 0 is assumed to be the map view. */
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(top_notebook), 0);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_report_cities(GtkAction *action,
+                                   gpointer user_data)
 {
   raise_city_report_dialog();
 }
@@ -5211,7 +5222,8 @@ static void callback_report_cities(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_units(GtkAction *action, gpointer user_data)
+static void callback_report_units(GtkAction *action,
+                                  gpointer user_data)
 {
   raise_activeunits_report_dialog();
 }
@@ -5219,7 +5231,8 @@ static void callback_report_units(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_players(GtkAction *action, gpointer user_data)
+static void callback_report_players(GtkAction *action,
+                                    gpointer user_data)
 {
   raise_players_dialog();
 }
@@ -5227,7 +5240,8 @@ static void callback_report_players(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_economy(GtkAction *action, gpointer user_data)
+static void callback_report_economy(GtkAction *action,
+                                    gpointer user_data)
 {
   raise_economy_report_dialog();
 }
@@ -5235,7 +5249,8 @@ static void callback_report_economy(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_science(GtkAction *action, gpointer user_data)
+static void callback_report_science(GtkAction *action,
+                                    gpointer user_data)
 {
   raise_science_dialog();
 }
@@ -5243,7 +5258,8 @@ static void callback_report_science(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_wow(GtkAction *action, gpointer user_data)
+static void callback_report_wow(GtkAction *action,
+                                gpointer user_data)
 {
   send_report_request(REPORT_WONDERS_OF_THE_WORLD);
 }
@@ -5251,7 +5267,8 @@ static void callback_report_wow(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_top_cities(GtkAction *action, gpointer user_data)
+static void callback_report_top_cities(GtkAction *action,
+                                       gpointer user_data)
 {
   send_report_request(REPORT_TOP_5_CITIES);
 }
@@ -5259,7 +5276,8 @@ static void callback_report_top_cities(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_messages(GtkAction *action, gpointer user_data)
+static void callback_report_messages(GtkAction *action,
+                                     gpointer user_data)
 {
   raise_meswin_dialog();
 }
@@ -5267,7 +5285,8 @@ static void callback_report_messages(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_demographic(GtkAction *action, gpointer user_data)
+static void callback_report_demographic(GtkAction *action,
+                                        gpointer user_data)
 {
   send_report_request(REPORT_DEMOGRAPHIC);
 }
@@ -5275,7 +5294,8 @@ static void callback_report_demographic(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_report_spaceship(GtkAction *action, gpointer user_data)
+static void callback_report_spaceship(GtkAction *action,
+                                      gpointer user_data)
 {
   popup_spaceship_dialog(get_player_ptr());
 }
@@ -5289,12 +5309,14 @@ static const char *load_menu_report(void)
 
   GtkActionEntry entries_report[] = {
     {"REPORT", NULL, _("_Reports"), NULL, NULL, NULL},
-    {"REPORT_CITIES", NULL, _("_Cities"),
-     "F1", _("_Cities"), G_CALLBACK(callback_report_cities)},
+    {"REPORT_MAP", NULL, _("_Map"),
+     "F1", _("_Map"), G_CALLBACK(callback_report_map)},
     {"REPORT_UNITS", NULL, _("_Units"),
      "F2", _("_Units"), G_CALLBACK(callback_report_units)},
     {"REPORT_PLAYERS", NULL, _("_Players"),
      "F3", _("_Players"), G_CALLBACK(callback_report_players)},
+    {"REPORT_CITIES", NULL, _("_Cities"),
+     "F4", _("_Cities"), G_CALLBACK(callback_report_cities)},
     {"REPORT_ECONOMY", NULL, _("_Economy"),
      "F5", _("_Economy"), G_CALLBACK(callback_report_economy)},
     {"REPORT_SCIENCE", NULL, _("_Science"),
@@ -5322,9 +5344,10 @@ static const char *load_menu_report(void)
 
   my_snprintf(buf, sizeof(buf), "%s",
               "<menu action=\"REPORT\">\n"
-              "<menuitem action=\"REPORT_CITIES\" />\n"
+              "<menuitem action=\"REPORT_MAP\" />\n"
               "<menuitem action=\"REPORT_UNITS\" />\n"
               "<menuitem action=\"REPORT_PLAYERS\" />\n"
+              "<menuitem action=\"REPORT_CITIES\" />\n"
               "<menuitem action=\"REPORT_ECONOMY\" />\n"
               "<menuitem action=\"REPORT_SCIENCE\" />\n"
               "<separator/>\n"

@@ -361,17 +361,32 @@ static void gui_dialog_switch_page_handler(GtkNotebook *notebook,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
+{
+  gui_dialog_new_full(pdlg, notebook, -1);
+}
+
+/**************************************************************************
   Creates a new dialog. It will be a tab or a window depending on the
   current user setting of 'enable_tabs'.
   Sets pdlg to point to the dialog once it is create, Zeroes pdlg on
   dialog destruction.
+  The 'position' argument is the preferred place in the notebook tab
+  order. -1 indicates append to the end. 
 **************************************************************************/
-void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
+void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
+                         gint position)
 {
   struct gui_dialog *dlg;
-  GtkWidget *vbox, *action_area;
+  GtkWidget *vbox, *action_area, *window;
   GtkSettings *gtksettings;
   GdkScreen *screen;
+  GtkWidget *hbox, *label, *image, *button;
+  gint w, h;
+  char buf[256];
+
 
   screen = gdk_screen_get_default();
   gtksettings = gtk_settings_get_for_screen(screen);
@@ -392,7 +407,7 @@ void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
     vbox = gtk_hbox_new(FALSE, 0);
     action_area = gtk_vbutton_box_new();
     gtk_button_box_set_layout(GTK_BUTTON_BOX(action_area),
-	GTK_BUTTONBOX_SPREAD);
+                              GTK_BUTTONBOX_SPREAD);
   } else {
     vbox = gtk_vbox_new(FALSE, 0);
     action_area = gtk_hbox_new(FALSE, 0);
@@ -407,63 +422,60 @@ void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
   gtk_container_set_border_width(GTK_CONTAINER(action_area), 5);
 
   switch (dlg->type) {
+
   case GUI_DIALOG_WINDOW:
-    {
-      GtkWidget *window;
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_set_name(window, "Freeciv");
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_MOUSE);
+    setup_dialog(window, toplevel);
 
-      window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-      gtk_widget_set_name(window, "Freeciv");
-      gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_MOUSE);
-      setup_dialog(window, toplevel);
-
-      gtk_container_add(GTK_CONTAINER(window), vbox);
-      dlg->v.window = window;
-    }
+    gtk_container_add(GTK_CONTAINER(window), vbox);
+    dlg->v.window = window;
     break;
+
   case GUI_DIALOG_TAB:
-    {
-      GtkWidget *hbox, *label, *image, *button;
-      gint w, h;
-      char buf[256];
+    gtk_icon_size_lookup_for_settings(gtksettings, GTK_ICON_SIZE_MENU, &w, &h);
 
-      gtk_icon_size_lookup_for_settings(gtksettings, GTK_ICON_SIZE_MENU, &w, &h);
+    hbox = gtk_hbox_new(FALSE, 0);
 
-      hbox = gtk_hbox_new(FALSE, 0);
+    label = gtk_label_new(NULL);
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_misc_set_padding(GTK_MISC(label), 4, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
-      label = gtk_label_new(NULL);
-      gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-      gtk_misc_set_padding(GTK_MISC(label), 4, 0);
-      gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+    button = gtk_button_new();
+    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    g_signal_connect_swapped(button, "clicked",
+                             G_CALLBACK(gui_dialog_destroy), dlg);
 
-      button = gtk_button_new();
-      gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-      g_signal_connect_swapped(button, "clicked",
-	  G_CALLBACK(gui_dialog_destroy), dlg);
+    my_snprintf(buf, sizeof(buf), _("Close Tab:\n%s"), _("Ctrl+W"));
+    gtk_tooltips_set_tip(main_tips, button, buf, "");
 
-      my_snprintf(buf, sizeof(buf), _("Close Tab:\n%s"), _("Ctrl+W"));
-      gtk_tooltips_set_tip(main_tips, button, buf, "");
+    image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+    gtk_widget_set_size_request(button, w, h);
+    gtk_container_add(GTK_CONTAINER(button), image);
 
-      image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-      gtk_widget_set_size_request(button, w, h);
-      gtk_container_add(GTK_CONTAINER(button), image);
+    gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-      gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+    gtk_widget_show_all(hbox);
 
-      gtk_widget_show_all(hbox);
+    gtk_notebook_insert_page(GTK_NOTEBOOK(notebook), vbox, hbox, position);
+    dlg->v.tab.handler_id = g_signal_connect(notebook, "switch_page",
+        G_CALLBACK(gui_dialog_switch_page_handler), dlg);
 
-      gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox, hbox);
-      dlg->v.tab.handler_id =
-	g_signal_connect(notebook, "switch_page",
-	    G_CALLBACK(gui_dialog_switch_page_handler), dlg);
+    dlg->v.tab.label = label;
+    dlg->v.tab.notebook = GTK_WIDGET(notebook);
+    break;
 
-      dlg->v.tab.label = label;
-      dlg->v.tab.notebook = GTK_WIDGET(notebook);
-    }
+  default:
+    /* This is a programming error and must not happen. */
+    assert(FALSE);
     break;
   }
 
   dlg->vbox = vbox;
   dlg->action_area = action_area;
+  dlg->position = position;
 
   dlg->response_callback = gui_dialog_destroyed;
 

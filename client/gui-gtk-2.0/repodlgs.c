@@ -217,7 +217,7 @@ void create_science_dialog(bool make_modal)
   GtkCellRenderer *renderer;
   int i;
 
-  gui_dialog_new(&science_dialog_shell, GTK_NOTEBOOK(top_notebook));
+  gui_dialog_new_full(&science_dialog_shell, GTK_NOTEBOOK(top_notebook), 5);
   gui_dialog_set_title(science_dialog_shell, _("Science"));
 
   gui_dialog_add_button(science_dialog_shell,
@@ -717,7 +717,7 @@ void create_economy_report_dialog(bool make_modal)
 
   intl_slist(ARRAY_SIZE(titles), titles, &titles_done);
   
-  gui_dialog_new(&economy_dialog_shell, GTK_NOTEBOOK(top_notebook));
+  gui_dialog_new_full(&economy_dialog_shell, GTK_NOTEBOOK(top_notebook), 4);
   gui_dialog_set_title(economy_dialog_shell, _("Economy"));
 
   align = gtk_alignment_new(0.5, 0.0, 0.0, 1.0);
@@ -1022,7 +1022,7 @@ void create_activeunits_report_dialog(bool make_modal)
 
   intl_slist(ARRAY_SIZE(titles), titles, &titles_done);
 
-  gui_dialog_new(&activeunits_dialog_shell, GTK_NOTEBOOK(top_notebook));
+  gui_dialog_new_full(&activeunits_dialog_shell, GTK_NOTEBOOK(top_notebook), 1);
   gui_dialog_set_title(activeunits_dialog_shell, _("Units"));
 
   align = gtk_alignment_new(0.5, 0.0, 0.0, 1.0);
