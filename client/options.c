@@ -87,6 +87,7 @@ bool show_new_vote_in_front = FALSE;
 bool disable_chatline_scroll_on_window_resize = FALSE;
 bool always_show_votebar = FALSE;
 bool do_not_show_votebar_if_not_player = FALSE;
+bool warn_before_add_to_city = TRUE;
 
 
 /* This option is currently set by the client - not by the user. */
@@ -131,13 +132,21 @@ static client_option common_options[] = {
   GEN_BOOL_OPTION(concise_city_production,  N_("Concise City Production")),
   GEN_BOOL_OPTION(auto_turn_done,           N_("End Turn when done moving")),
   GEN_BOOL_OPTION(ask_city_name,            N_("Prompt for city names")),
-  GEN_BOOL_OPTION(popup_new_cities,         N_("Pop up city dialog for new cities")),
-  GEN_STR_OPTION(chat_time_format,  N_("Time format for chat messages"), NULL, NULL),
-  GEN_STR_OPTION(city_name_formats,  N_("City name formats"), NULL, NULL),
-  GEN_BOOL_OPTION(show_split_message_window,N_("Split chat and message window")),
-  GEN_BOOL_OPTION(do_not_recenter_overview,N_("Do not recenter the overview for wrapped maps")),
-  GEN_BOOL_OPTION(reload_pepsettings, N_("Try to reload the last Warclient settings file")),
-  GEN_BOOL_OPTION(use_digits_short_cuts, N_("Use the shorts cuts 1-9 for Warclient features"))
+  GEN_BOOL_OPTION(popup_new_cities,
+                  N_("Pop up city dialog for new cities")),
+  GEN_STR_OPTION(chat_time_format,
+                 N_("Time format for chat messages"), NULL, NULL),
+  GEN_STR_OPTION(city_name_formats, N_("City name formats"), NULL, NULL),
+  GEN_BOOL_OPTION(show_split_message_window,
+                  N_("Split chat and message window")),
+  GEN_BOOL_OPTION(do_not_recenter_overview,
+                  N_("Do not recenter the overview for wrapped maps")),
+  GEN_BOOL_OPTION(reload_pepsettings,
+                  N_("Try to reload the last Warclient settings file")),
+  GEN_BOOL_OPTION(use_digits_short_cuts,
+                  N_("Use the shorts cuts 1-9 for Warclient features")),
+  GEN_BOOL_OPTION(warn_before_add_to_city,
+                  N_("Warn before adding a settler to a city"))
 };
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION

@@ -1169,8 +1169,33 @@ static const char *load_menu_view(void)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_order_build_city(GtkAction *action, gpointer user_data)
+static void callback_order_build_city(GtkAction *action,
+                                      gpointer user_data)
 {
+  struct unit *punit = get_unit_in_focus();
+
+  if (warn_before_add_to_city && punit != NULL
+      && can_unit_add_to_city(punit)) {
+    GtkWidget *shell;
+    gint res;
+
+    shell = gtk_message_dialog_new(GTK_WINDOW(toplevel),
+                                   GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_YES_NO,
+                                   _("Add unit to city?"));
+    gtk_window_set_title(GTK_WINDOW(shell), _("Please Confirm"));
+    gtk_dialog_set_default_response(GTK_DIALOG(shell),
+                                    GTK_RESPONSE_NO);
+
+    res = gtk_dialog_run(GTK_DIALOG(shell));
+    gtk_widget_destroy(shell);
+
+    if (res != GTK_RESPONSE_YES) {
+      return;
+    }
+  }
+
   /* Also used to build wonder and add to city. */
   key_unit_build();
 }

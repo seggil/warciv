@@ -2422,14 +2422,14 @@ void key_unit_move(enum direction8 gui_dir)
 /**************************************************************************
   ...
 **************************************************************************/
-void key_unit_build (void)
+void key_unit_build(void)
 {
   if (!punit_focus) {
     return;
   }
   /* Enable the button for adding to a city in all cases, so we
    * get an eventual error message from the server if we try. */
-  if (can_unit_add_or_build_city (punit_focus)) {
+  if (can_unit_add_or_build_city(punit_focus)) {
     key_unit_build_city();
   } else {
     key_unit_build_wonder();
