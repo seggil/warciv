@@ -137,6 +137,12 @@ void popup_notify_dialog(const char *caption, const char *headline,
   static struct gui_dialog *shell;
   GtkWidget *vbox, *label, *headline_label, *sw;
 
+  if (enable_tabs && prevent_duplicate_notify_tabs) {
+    while (NULL != (shell = find_gui_dialog_by_title(caption))) {
+      gui_dialog_destroy(shell);
+    }
+  }
+
   gui_dialog_new(&shell, GTK_NOTEBOOK(bottom_notebook));
   gui_dialog_set_title(shell, caption);
 

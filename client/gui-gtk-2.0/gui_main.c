@@ -163,7 +163,9 @@ client_option gui_options[] = {
                   N_("Do not hide the vote bar when there are no running "
                      "votes")),
   GEN_BOOL_OPTION(do_not_show_votebar_if_not_player,
-                  N_("Do not show vote bar if not a player"))
+                  N_("Do not show vote bar if not a player")),
+  GEN_BOOL_OPTION(prevent_duplicate_notify_tabs,
+                  N_("New notify tabs replace those of the same name"))
 };
 const int num_gui_options = ARRAY_SIZE(gui_options);
 

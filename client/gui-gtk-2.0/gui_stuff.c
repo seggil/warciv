@@ -752,6 +752,22 @@ void gui_dialog_set_title(struct gui_dialog *dlg, const char *title)
 }
 
 /**************************************************************************
+  NB: Don't free or modify the returned pointer! It's not yours.
+**************************************************************************/
+const char *gui_dialog_get_title(const struct gui_dialog *dlg)
+{
+  switch (dlg->type) {
+  case GUI_DIALOG_WINDOW:
+    return gtk_window_get_title(GTK_WINDOW(dlg->v.window));
+    break;
+  case GUI_DIALOG_TAB:
+    return gtk_label_get_text(GTK_LABEL(dlg->v.tab.label));
+    break;
+  }
+  return NULL;
+}
+
+/**************************************************************************
   Destroy a dialog.
 **************************************************************************/
 void gui_dialog_destroy(struct gui_dialog *dlg)
@@ -794,3 +810,20 @@ void gui_dialog_response_set_callback(struct gui_dialog *dlg,
   dlg->response_callback = fun;
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+struct gui_dialog *find_gui_dialog_by_title(const char *title)
+{
+  GList *p;
+  struct gui_dialog *dlg;
+  
+  for (p = dialog_list; p != NULL; p = p->next) {
+    dlg = p->data;
+    if (0 == strcmp(title, gui_dialog_get_title(dlg))) {
+      return dlg;
+    }
+  }
+
+  return NULL;
+}

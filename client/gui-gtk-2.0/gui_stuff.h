@@ -106,5 +106,7 @@ void gui_dialog_destroy_all(void);
 GtkWidget *gui_dialog_get_toplevel(struct gui_dialog *dlg);
 void gui_dialog_response_set_callback(struct gui_dialog *dlg,
     GUI_DIALOG_RESPONSE_FUN fun);
+const char *gui_dialog_get_title(const struct gui_dialog *dlg);
+struct gui_dialog *find_gui_dialog_by_title(const char *title);
 
 #endif  /* FC__GUI_STUFF_H */
