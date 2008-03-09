@@ -166,6 +166,7 @@ void player_init(struct player *plr)
 
   plr->result = PR_NONE;
   plr->rank = RANK_NONE;
+  plr->team_rank = RANK_NONE;
 
   plr->fcdb.player_id = 0;
   plr->fcdb.rated_user_id = 0;

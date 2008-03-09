@@ -634,10 +634,9 @@ static void dump_groupings(void)
             "r=%f rd=%f",
             i, p, p->score, p->rank, p->result, p->rating,
             p->rating_deviation);
-    freelog(LOG_DEBUG, "    nr=%f nrd=%f num_players=%d num_alive=%d "
-            "rank_offset=%f",
+    freelog(LOG_DEBUG, "    nr=%f nrd=%f num_players=%d num_alive=%d",
             p->new_rating, p->new_rating_deviation, p->num_players,
-            p->num_alive, p->rank_offset);
+            p->num_alive);
     dump_grouping_players(p);
   }
   freelog(LOG_DEBUG, "END GROUPING DUMP");
@@ -712,7 +711,7 @@ static int grouping_compare(const void *va, const void *vb)
 /**************************************************************************
   NB Assumes score_cache has been filled in.
 **************************************************************************/
-static int player_in_grouping_compare(const void *va, const void *vb)
+static int player_compare(const void *va, const void *vb)
 {
   struct player *a, *b;
   a = *((struct player **) va);
@@ -892,8 +891,7 @@ void score_propagate_grouping_ratings(void)
         /* NB: HIGHER score means LOWER rank, i.e. 0 is first place. */
 
         /* Add 1 to the in-team rank to avoid weight = 0. */
-        trank = groupings[i].players[j]->rank + 1.0
-                - groupings[i].rank_offset;
+        trank = groupings[i].players[j]->team_rank + 1.0;
 
         if (rating_change > 0) {
           /* Flip the in-team rank so that players with
@@ -1100,12 +1098,56 @@ void score_assign_groupings(void)
 }
 
 /**************************************************************************
+  Calculate the fractional ranking of the 'nmemb' objects each of 'size'
+  bytes given in 'base' using the supplied comparison function 'cmp' and
+  recording the results into 'frac_ranks'.
+
+  NB: The elements of 'base' are assumed to be ordered already.
+  NB: The 'frac_ranks' array must have room for at least 'nmemb'
+  elements.
+**************************************************************************/
+static void calculate_fractional_ranking(void *base,
+                                         int nmemb,
+                                         size_t size,
+                                         float *frac_ranks,
+                                         int (*cmp)(const void *,
+                                                    const void *))
+{
+  int i, j, k;
+  float ranksum, frac_rank;
+  char *a = base;
+
+  if (nmemb < 1) {
+    return;
+  }
+
+  assert(base != NULL);
+  assert(frac_ranks != NULL);
+  assert(cmp != NULL);
+
+  i = 0;
+  frac_ranks[0] = 0;
+  do {
+    ranksum = i;
+    j = i + 1;
+    while (j < nmemb && 0 == cmp(a + i*size, a + j*size)) {
+      ranksum += (float) j++;
+    }
+    frac_rank = ranksum / (float) (j - i);
+    for (k = i; k < j; k++) {
+      frac_ranks[k] = frac_rank;
+    }
+    i = j;
+  } while (i < nmemb);
+  
+}
+/**************************************************************************
   NB: Modifies global grouping array.
 **************************************************************************/
 void score_update_grouping_results(void)
 {
-  int i, j, k, next_cmp;
-  double ranksum, frank;
+  int i, j, next_cmp;
+  float frac_ranks[MAX_NUM_PLAYERS];
   bool force_draw, force_loss;
 
   assert(num_groupings > 0);
@@ -1175,7 +1217,7 @@ void score_update_grouping_results(void)
     qsort(groupings[i].players,
           groupings[i].num_players,
           sizeof(struct player *),
-          player_in_grouping_compare);
+          player_compare);
   }
 
 #ifdef DEBUG
@@ -1214,65 +1256,32 @@ void score_update_grouping_results(void)
   }
 
   /* Assign fractional ranks based on the order. */
-  i = 0;
-  groupings[0].rank = 0;
-  do {
-    ranksum = (double) i;
-    j = i + 1;
-    while (j < num_groupings
-           && 0 == grouping_compare(&groupings[i], &groupings[j])) {
-      ranksum += (double) j++;
-    }
-    frank = ranksum / (double) (j - i);
-    for (k = i; k < j; k++) {
-      groupings[k].rank = frank;
-    }
-    i = j;
-  } while (i < num_groupings);
+  calculate_fractional_ranking(groupings,
+                               num_groupings,
+                               sizeof(struct grouping *),
+                               frac_ranks,
+                               grouping_compare);
+  for (i = 0; i < num_groupings; i++) {
+    groupings[i].rank = frac_ranks[i];
+  }
 }
 
 /**************************************************************************
   Propagate the groupings' results back to the players and teams, and
   calculate the fractional ranking for players.
 
+  NB: Assumes groupings' results and ranks have been calculated.
   NB: Modifies global groupings, player and team structs.
 **************************************************************************/
 void score_propagate_grouping_results(void)
 {
-  int i, j, k, rank_offset, n;
-  double ranksum, frank;
+  int i, j;
+  float frac_ranks[MAX_NUM_PLAYERS];
   struct team *pteam = NULL;
+  struct player *ranked[MAX_NUM_PLAYERS];
+  int num_ranked = 0;
 
-  rank_offset = 0;
-  for (i = 0; i < num_groupings; i++) {
-    if (groupings[i].num_players == 1) {
-      groupings[i].players[0]->rank = groupings[i].rank;      
-      groupings[i].players[0]->result = groupings[i].result;
-    } else {
-      j = 0;
-      groupings[i].players[0]->rank = 0;
-      do {
-        ranksum = (double) j;
-        n = j + 1;
-        while (n < groupings[i].num_players
-               && player_in_grouping_compare(&groupings[i].players[j],
-                                             &groupings[i].players[n])
-               == 0) {
-          ranksum += (double) n++;
-        }
-        frank = ranksum / (double) (n - j);
-        for (k = j; k < n; k++) {
-          groupings[i].players[k]->rank = frank + rank_offset;
-          groupings[i].players[k]->result = groupings[i].result;
-        }
-        j = n;
-      } while (j < groupings[i].num_players);
-    }
-    groupings[i].rank_offset = rank_offset;
-    rank_offset += groupings[i].num_players;
-  }
-
-  /* Propagate grouping results/ranks to teams. */
+  /* Copy grouping results/ranks to teams. */
   for (i = 0; i < num_groupings; i++) {
     if (!player_is_on_team(groupings[i].players[0])) {
       continue;
@@ -1283,6 +1292,42 @@ void score_propagate_grouping_results(void)
     }
     pteam->rank = groupings[i].rank;
     pteam->result = groupings[i].result;
+  }
+
+
+  for (i = 0; i < num_groupings; i++) {
+
+    /* Propagate grouping results to players. */
+    for (j = 0; j < groupings[i].num_players; j++) {
+      groupings[i].players[j]->result = groupings[i].result;
+    }
+
+    /* Calculate fractional team rank (the rank of
+     * the player only with respect to other members
+     * of the grouping). */
+    calculate_fractional_ranking(groupings[i].players,
+                                 groupings[i].num_players,
+                                 sizeof(struct player *),
+                                 frac_ranks,
+                                 player_compare);
+    for (j = 0; j < groupings[i].num_players; j++) {
+      groupings[i].players[j]->team_rank = frac_ranks[j];
+    }
+
+    /* Assemble the players into the ranked list. */
+    for (j = 0; j < groupings[i].num_players; j++) {
+      ranked[num_ranked++] = groupings[i].players[j];
+    }
+  }
+
+  /* Now calculate the overall fractional player rank. */
+  calculate_fractional_ranking(ranked,
+                               num_ranked,
+                               sizeof(struct player *),
+                               frac_ranks,
+                               player_compare);
+  for (i = 0; i < num_ranked; i++) {
+    ranked[i]->rank = frac_ranks[i];
   }
 }
 

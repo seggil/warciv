@@ -88,7 +88,6 @@ struct grouping {
   int num_alive;
   int result;
   double rank;
-  double rank_offset;
 
   double rating;
   double rating_deviation; /* i.e. standard deviation for the rating */

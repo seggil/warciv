@@ -235,9 +235,19 @@ struct player {
   bool debug;
 
   /* Game result for this player (to avoid duplicating winner/loser
-     evaluation). Uses PR_* enum. */
+   * evaluation). Uses PR_* enum. */
   int result;
-  float rank; /* May be fractional. */
+
+  /* The overall rank of the player with respect to every other
+   * player at the end of the game. May be fractional in the
+   * case of ties. 0 indicates 1st place, 1 second, etc.
+   * If the rank has not yet been calculated, this field
+   * is set to RANK_NONE. */
+  float rank;
+
+  /* The rank of the player within his own team only. If
+   * the player is not in a team, this will just be zero. */
+  float team_rank;
 
   struct {
     /* ID of this player in the game database, for the current game. */
