@@ -384,15 +384,32 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
   GtkSettings *gtksettings;
   GdkScreen *screen;
   GtkWidget *hbox, *label, *image, *button;
-  gint w, h;
+  gint w, h, pos;
   char buf[256];
+  GList *p = NULL;
 
 
   screen = gdk_screen_get_default();
   gtksettings = gtk_settings_get_for_screen(screen);
 
   dlg = fc_malloc(sizeof(*dlg));
-  dialog_list = g_list_prepend(dialog_list, dlg);
+
+  for (p = dialog_list; p != NULL; p = p->next) {
+    struct gui_dialog *odlg = p->data;
+
+    if (position >= 0 && odlg->position >= position) {
+      break;
+    }
+  }
+
+  if (dialog_list == NULL) {
+    dialog_list = g_list_prepend(dialog_list, dlg);
+  } else if (p == NULL) {
+    dialog_list = g_list_append(dialog_list, dlg);
+  } else {
+    dialog_list = g_list_insert_before(dialog_list, p, dlg);
+  }
+
 
   dlg->source = pdlg;
   *pdlg = dlg;
@@ -487,6 +504,29 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
       G_CALLBACK(gui_dialog_key_press_handler), dlg);
 
   g_object_set_data(G_OBJECT(vbox), "gui-dialog-data", dlg);
+
+
+  if (dlg->type != GUI_DIALOG_TAB) {
+    return;
+  }
+
+  if (notebook == GTK_NOTEBOOK(top_notebook)) {
+    /* 'pos' is set to 1 because the "Map" tab is at position 0.
+     * This is somewhat hackish :(. */
+    pos = 1;
+  } else {
+    pos = 0;
+  }
+
+  for (p = dialog_list; p != NULL; p = p->next, pos++) {
+    struct gui_dialog *odlg = p->data;
+    if (odlg == NULL || odlg->type != GUI_DIALOG_TAB
+        || GTK_NOTEBOOK(odlg->v.tab.notebook) != notebook) {
+      continue;
+    }
+    gtk_notebook_reorder_child(GTK_NOTEBOOK(odlg->v.tab.notebook),
+                               odlg->vbox, pos);
+  }
 }
 
 /**************************************************************************
