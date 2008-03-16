@@ -2602,6 +2602,9 @@ void create_pepsetting_dialog(void)
       pfd->filter = *((filter *)pset->data);
       ent = gtk_frame_new(_(pset->description));
       pbox = gtk_vbox_new(FALSE,0);
+
+      /* FIXME: Hard-coded dependence on filter enum
+       * in client/multiselect.h */
 	      
       cb = gtk_check_button_new_with_label(_("All units"));
       g_signal_connect(cb, "toggled",
@@ -2662,6 +2665,18 @@ void create_pepsetting_dialog(void)
 		       G_CALLBACK(pepfilter_changed_callback), ent);
       gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
       pfd->widget[9] = cb;
+
+      cb = gtk_check_button_new_with_label(_("Units with full moves"));
+      g_signal_connect(cb, "toggled",
+		       G_CALLBACK(pepfilter_changed_callback), ent);
+      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
+      pfd->widget[10] = cb;
+
+      cb = gtk_check_button_new_with_label(_("Units with full hp"));
+      g_signal_connect(cb, "toggled",
+		       G_CALLBACK(pepfilter_changed_callback), ent);
+      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
+      pfd->widget[11] = cb;
 
       gtk_container_add(GTK_CONTAINER(ent), pbox);
       gtk_box_pack_start(GTK_BOX(chbox[pset->page]), ent, FALSE, TRUE,0);

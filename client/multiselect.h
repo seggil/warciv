@@ -79,6 +79,12 @@
 /* filters RadioItems (All & Off)/CheckItems (all others) */
 typedef unsigned int filter;
 
+/* NB: Add values only to the end (i.e. do not add new
+ * filters in the middle). Otherwise strange things might
+ * happen when old dynamic settings are loaded. */
+/* NB: If you add/change the filters, be sure to update
+ * menu definitions in client/gui-gtk-2.0/menu.c and
+ * create_pepsetting_dialog in client/gui-gtk-2.0/dialogs.c ! */
 enum filter_value {
   FILTER_ALL          = 1 << 0,
   FILTER_NEW          = 1 << 1,
@@ -88,12 +94,12 @@ enum filter_value {
   FILTER_AUTO         = 1 << 5,
   FILTER_IDLE         = 1 << 6,
   FILTER_ABLE_TO_MOVE = 1 << 7,
-  FILTER_FULL_MOVES   = 1 << 8,
-  FILTER_MILITARY     = 1 << 9,
-  FILTER_FULL_HP      = 1 << 10,
-  FILTER_OFF          = 1 << 11,
+  FILTER_MILITARY     = 1 << 8,
+  FILTER_OFF          = 1 << 9,
+  FILTER_FULL_MOVES   = 1 << 10,
+  FILTER_FULL_HP      = 1 << 11,
 };
-#define FILTER_NUM 10
+#define FILTER_NUM 12
 
 /* selections mode */
 enum place_value {
