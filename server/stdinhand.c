@@ -3779,6 +3779,13 @@ static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
                                char *msg)
 {
   const char *allow;
+
+  if (pplayer->is_civil_war_split) {
+    mystrlcpy(msg, _("Sorry, you can't take a player created by a "
+                     "civil war."), MAX_LEN_MSG);
+    return FALSE;
+  }
+
   if (pplayer->is_observer) {
     if (!
         (allow =
@@ -4530,7 +4537,8 @@ static bool ratings_command(struct connection *caller,
   cml_uname = 10;
 
   players_iterate(pplayer) {
-    if (pplayer->is_observer || is_barbarian(pplayer)) {
+    if (pplayer->is_observer || is_barbarian(pplayer)
+        || pplayer->is_civil_war_split) {
       continue;
     }
 

@@ -219,6 +219,7 @@ struct player {
   struct player_ai ai;
   bool was_created;                    /* if the player was /created */
   bool is_connected;		       /* observers don't count */
+  bool is_civil_war_split;             /* if player was created by a civil war */
   struct connection *current_conn;     /* non-null while handling packet */
   struct conn_list *connections;       /* will replace conn */
   struct worklist worklists[MAX_NUM_WORKLISTS];

@@ -2257,6 +2257,9 @@ static void player_load(struct player *plr, int plrno,
     free(quoted);
   }
 
+  plr->is_civil_war_split = secfile_lookup_bool_default(file, FALSE,
+      "player%d.is_civil_war_split", plrno);
+
   if (has_capability("fcdb_save", savefile_options)) {
     plr->fcdb.player_id = secfile_lookup_int_default(file, 0, 
         "player%d.fcdb_player_id", plrno);
@@ -2999,6 +3002,9 @@ static void player_save(struct player *plr, int plrno,
     free(quoted);
   }
 #undef PART_SIZE
+
+  secfile_insert_bool(file, plr->is_civil_war_split,
+                      "player%d.is_civil_war_split", plrno);
 
   secfile_insert_int(file, plr->fcdb.player_id,
                      "player%d.fcdb_player_id", plrno);

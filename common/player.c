@@ -113,6 +113,7 @@ void player_init(struct player *plr)
   plr->is_connected = FALSE;
   plr->is_observer = FALSE;
   plr->was_created = FALSE;
+  plr->is_civil_war_split = FALSE;
   plr->is_alive=TRUE;
   plr->is_dying = FALSE;
   plr->embassy=0;

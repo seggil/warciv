@@ -1085,6 +1085,7 @@ void score_assign_groupings(void)
   players_iterate(pplayer) {
     if (player_is_on_team(pplayer)
         || is_barbarian(pplayer)
+        || pplayer->is_civil_war_split
         || pplayer->is_observer) {
       continue;
     }

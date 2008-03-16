@@ -2044,6 +2044,7 @@ static struct player *split_player(struct player *pplayer)
   cplayer->target_government = game.ruleset_control.default_government;
   assert(cplayer->revolution_finishes < 0);
   cplayer->capital = TRUE;
+  cplayer->is_civil_war_split = TRUE;
 
   /* cplayer is not yet part of players_iterate which goes only
      to game.info.nplayers. */

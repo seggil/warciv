@@ -1837,7 +1837,8 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
   fcdb_connect_or_return(sock, FALSE);
 
   players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || pplayer->is_observer) {
+    if (pplayer->is_civil_war_split || is_barbarian(pplayer)
+        || pplayer->is_observer) {
       continue;
     }
 
