@@ -182,8 +182,10 @@ void handle_server_join_reply(bool you_can_join, char *message,
     update_menus();
     set_client_page(PAGE_START);
 
-    /* we could always use hack, verify we're local */ 
-    send_client_wants_hack(challenge_file);
+    if (!do_not_request_hack) {
+      /* we could always use hack, verify we're local */ 
+      send_client_wants_hack(challenge_file);
+    }
 
     init_all_settings();
     if (reload_pepsettings) {

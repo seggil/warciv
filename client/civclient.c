@@ -92,6 +92,7 @@ char password[MAX_LEN_PASSWORD] = "\0";
 char metaserver[512] = "\0";
 int  server_port = -1;
 bool auto_connect = FALSE; /* TRUE = skip "Connect to Freeciv Server" dialog */
+bool do_not_request_hack = FALSE;
 
 static enum client_states client_state = CLIENT_BOOT_STATE;
 
@@ -255,6 +256,7 @@ int main(int argc, char *argv[])
                  _("  -m, --meta HOST\t"
                    "Connect to the metaserver at HOST\n"));
       fc_fprintf(stderr, _("  -n, --name NAME\tUse NAME as name\n"));
+      fc_fprintf(stderr, _("  -N, --No-hack\t\tDo not send hack request\n"));
       fc_fprintf(stderr,
                  _("  -p, --port PORT\tConnect to server port PORT\n"));
       fc_fprintf(stderr, _("  -P, --Plugin PLUGIN\tUse PLUGIN for sound "
@@ -289,6 +291,8 @@ int main(int argc, char *argv[])
       scriptfile = mystrdup(option);  /* never free()d */
     } else if ((option = get_option("--name", argv, &i, argc))) {
       sz_strlcpy(user_name, option);
+    } else if (is_option("--No-hack", argv[i])) {
+      do_not_request_hack = TRUE;
     } else if ((option = get_option("--meta", argv, &i, argc))) {
       sz_strlcpy(metaserver, option);
     } else if ((option = get_option("--Sound", argv, &i, argc))) {
