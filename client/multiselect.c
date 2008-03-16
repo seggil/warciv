@@ -1176,7 +1176,9 @@ void add_unit_to_delayed_goto(struct tile *ptile)
               && unit_type(punit)->move_type !=
               unit_type(punit_focus)->move_type)
           || (delayed_goto_utype == UTYPE_SAME_TYPE
-              && punit->type != punit_focus->type)) {
+              && punit->type != punit_focus->type)
+          || !unit_satisfies_filter(punit, delayed_goto_inclusive_filter,
+                                    delayed_goto_exclusive_filter)) {
         continue;
       }
       delayed_goto_add_unit(0, punit->id, delayed_para_or_nuke, ptile);
@@ -1185,6 +1187,8 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   }
 
   if (count == 0) {
+    append_output_window(_("Warclient: No units selected for "
+                           "delayed goto."));
     return;
   }
 
