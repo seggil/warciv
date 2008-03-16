@@ -97,6 +97,8 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
               && punit->activity != ACTIVITY_IDLE)
           || (inclusive_filter & FILTER_ABLE_TO_MOVE
               && punit->moves_left <= 0)
+          || (inclusive_filter & FILTER_FULL_MOVES
+              && punit->moves_left != unit_move_rate(punit))
           || (inclusive_filter & FILTER_MILITARY
               && !is_military_unit(punit)))) {
     return FALSE;
@@ -114,6 +116,8 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
               && punit->activity == ACTIVITY_IDLE)
           || (exclusive_filter & FILTER_ABLE_TO_MOVE
               && punit->moves_left > 0)
+          || (exclusive_filter & FILTER_FULL_MOVES
+              && punit->moves_left == unit_move_rate(punit))
           || (exclusive_filter & FILTER_MILITARY 
               && is_military_unit(punit)))) {
     return FALSE;

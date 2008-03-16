@@ -88,8 +88,9 @@ enum filter_value {
   FILTER_AUTO         = 1 << 5,
   FILTER_IDLE         = 1 << 6,
   FILTER_ABLE_TO_MOVE = 1 << 7,
-  FILTER_MILITARY     = 1 << 8,
-  FILTER_OFF          = 1 << 9,
+  FILTER_FULL_MOVES   = 1 << 8,
+  FILTER_MILITARY     = 1 << 9,
+  FILTER_OFF          = 1 << 10,
 };
 #define FILTER_NUM 10
 

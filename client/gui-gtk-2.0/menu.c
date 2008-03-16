@@ -232,6 +232,9 @@ static void update_delayed_goto_inclusive_filter_menu(void)
                          "DELAYED_GOTO_INCLUSIVE_ABLE_TO_MOVE",
                          delayed_goto_inclusive_filter & FILTER_ABLE_TO_MOVE);
   menu_toggle_set_active(toggle_action_group_delayed_goto_inclusive,
+                         "DELAYED_GOTO_INCLUSIVE_FULL_MOVES",
+                         delayed_goto_inclusive_filter & FILTER_FULL_MOVES);
+  menu_toggle_set_active(toggle_action_group_delayed_goto_inclusive,
                          "DELAYED_GOTO_INCLUSIVE_MILITARY",
                          delayed_goto_inclusive_filter & FILTER_MILITARY);
   menu_toggle_set_active(toggle_action_group_delayed_goto_inclusive,
@@ -268,6 +271,9 @@ static void update_delayed_goto_exclusive_filter_menu(void)
   menu_toggle_set_active(toggle_action_group_delayed_goto_exclusive,
                          "DELAYED_GOTO_EXCLUSIVE_ABLE_TO_MOVE",
                          delayed_goto_exclusive_filter & FILTER_ABLE_TO_MOVE);
+  menu_toggle_set_active(toggle_action_group_delayed_goto_exclusive,
+                         "DELAYED_GOTO_EXCLUSIVE_FULL_MOVES",
+                         delayed_goto_exclusive_filter & FILTER_FULL_MOVES);
   menu_toggle_set_active(toggle_action_group_delayed_goto_exclusive,
                          "DELAYED_GOTO_EXCLUSIVE_MILITARY",
                          delayed_goto_exclusive_filter & FILTER_MILITARY);
@@ -306,6 +312,9 @@ static void update_multi_selection_inclusive_filter_menu(void)
                          "MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE",
                          multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE);
   menu_toggle_set_active(toggle_action_group_multi_selection_inclusive,
+                         "MULTI_SELECTION_INCLUSIVE_FULL_MOVES",
+                         multi_select_inclusive_filter & FILTER_FULL_MOVES);
+  menu_toggle_set_active(toggle_action_group_multi_selection_inclusive,
                          "MULTI_SELECTION_INCLUSIVE_MILITARY",
                          multi_select_inclusive_filter & FILTER_MILITARY);
   menu_toggle_set_active(toggle_action_group_multi_selection_inclusive,
@@ -342,6 +351,9 @@ static void update_multi_selection_exclusive_filter_menu(void)
   menu_toggle_set_active(toggle_action_group_multi_selection_exclusive,
                          "MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE",
                          multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE);
+  menu_toggle_set_active(toggle_action_group_multi_selection_exclusive,
+                         "MULTI_SELECTION_EXCLUSIVE_FULL_MOVES",
+                         multi_select_exclusive_filter & FILTER_FULL_MOVES);
   menu_toggle_set_active(toggle_action_group_multi_selection_exclusive,
                          "MULTI_SELECTION_EXCLUSIVE_MILITARY",
                          multi_select_exclusive_filter & FILTER_MILITARY);
@@ -1920,6 +1932,19 @@ static void callback_delayed_goto_inclusive_able_to_move(GtkToggleAction *action
 /****************************************************************
   ...
 *****************************************************************/
+static void callback_delayed_goto_inclusive_full_moves(GtkToggleAction *action,
+                                                       gpointer user_data)
+{
+  if (!!(delayed_goto_inclusive_filter & FILTER_FULL_MOVES) ^
+      gtk_toggle_action_get_active(action)) {
+    filter_change(&delayed_goto_inclusive_filter, FILTER_FULL_MOVES);
+    update_delayed_goto_inclusive_filter_menu();
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
 static void callback_delayed_goto_inclusive_military(GtkToggleAction *action,
                                                      gpointer user_data)
 {
@@ -2045,6 +2070,20 @@ static void callback_delayed_goto_exclusive_able_to_move(GtkToggleAction *action
   if (!!(delayed_goto_exclusive_filter & FILTER_ABLE_TO_MOVE) ^
       gtk_toggle_action_get_active(action)) {
     filter_change(&delayed_goto_exclusive_filter, FILTER_ABLE_TO_MOVE);
+    update_delayed_goto_exclusive_filter_menu();
+  }
+
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_exclusive_full_moves(GtkToggleAction *action,
+                                                       gpointer user_data)
+{
+  if (!!(delayed_goto_exclusive_filter & FILTER_FULL_MOVES) ^
+      gtk_toggle_action_get_active(action)) {
+    filter_change(&delayed_goto_exclusive_filter, FILTER_FULL_MOVES);
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2371,7 +2410,7 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO_INCLUSIVE_VETERAN", NULL, _("_Veteran units"),
      NULL, _("_Veteran units"),
      G_CALLBACK(callback_delayed_goto_inclusive_veteran), TRUE},
-    {"DELAYED_GOTO_INCLUSIVE_AUTO", NULL, _("_Auto units"),
+    {"DELAYED_GOTO_INCLUSIVE_AUTO", NULL, _("A_uto units"),
      NULL, _("_Auto units"),
      G_CALLBACK(callback_delayed_goto_inclusive_auto), TRUE},
     {"DELAYED_GOTO_INCLUSIVE_IDLE", NULL, _("_Idle units"),
@@ -2380,7 +2419,10 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO_INCLUSIVE_ABLE_TO_MOVE", NULL, _("Units abl_e to move"),
      NULL, _("Units abl_e to move"),
      G_CALLBACK(callback_delayed_goto_inclusive_able_to_move), TRUE},
-    {"DELAYED_GOTO_INCLUSIVE_MILITARY", NULL, _("_Military units"),
+    {"DELAYED_GOTO_INCLUSIVE_FULL_MOVES", NULL, _("Units with full _moves"),
+     NULL, _("Units with full _moves"),
+     G_CALLBACK(callback_delayed_goto_inclusive_full_moves), TRUE},
+    {"DELAYED_GOTO_INCLUSIVE_MILITARY", NULL, _("Mili_tary units"),
      NULL, _("_Military units"),
      G_CALLBACK(callback_delayed_goto_inclusive_military), TRUE},
     {"DELAYED_GOTO_INCLUSIVE_OFF", NULL, _("_Off"),
@@ -2403,7 +2445,7 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO_EXCLUSIVE_VETERAN", NULL, _("_Veteran units"),
      NULL, _("_Veteran units"),
      G_CALLBACK(callback_delayed_goto_exclusive_veteran), TRUE},
-    {"DELAYED_GOTO_EXCLUSIVE_AUTO", NULL, _("_Auto units"),
+    {"DELAYED_GOTO_EXCLUSIVE_AUTO", NULL, _("A_uto units"),
      NULL, _("_Auto units"),
      G_CALLBACK(callback_delayed_goto_exclusive_auto), TRUE},
     {"DELAYED_GOTO_EXCLUSIVE_IDLE", NULL, _("_Idle units"),
@@ -2412,7 +2454,10 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO_EXCLUSIVE_ABLE_TO_MOVE", NULL, _("Units abl_e to move"),
      NULL, _("Units abl_e to move"),
      G_CALLBACK(callback_delayed_goto_exclusive_able_to_move), TRUE},
-    {"DELAYED_GOTO_EXCLUSIVE_MILITARY", NULL, _("_Military units"),
+    {"DELAYED_GOTO_EXCLUSIVE_FULL_MOVES", NULL, _("Units with full _moves"),
+     NULL, _("Units with full _moves"),
+     G_CALLBACK(callback_delayed_goto_exclusive_full_moves), TRUE},
+    {"DELAYED_GOTO_EXCLUSIVE_MILITARY", NULL, _("Mili_tary units"),
      NULL, _("_Military units"),
      G_CALLBACK(callback_delayed_goto_exclusive_military), TRUE},
     {"DELAYED_GOTO_EXCLUSIVE_OFF", NULL, _("_Off"),
@@ -2589,6 +2634,7 @@ static const char *load_menu_delayed_goto(void)
               "<menuitem action=\"DELAYED_GOTO_INCLUSIVE_AUTO\" />\n"
               "<menuitem action=\"DELAYED_GOTO_INCLUSIVE_IDLE\" />\n"
               "<menuitem action=\"DELAYED_GOTO_INCLUSIVE_ABLE_TO_MOVE\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_INCLUSIVE_FULL_MOVES\" />\n"
               "<menuitem action=\"DELAYED_GOTO_INCLUSIVE_MILITARY\" />\n"
               "<menuitem action=\"DELAYED_GOTO_INCLUSIVE_OFF\" />\n"
               "</menu>\n"
@@ -2601,6 +2647,7 @@ static const char *load_menu_delayed_goto(void)
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_AUTO\" />\n"
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_IDLE\" />\n"
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_ABLE_TO_MOVE\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_FULL_MOVES\" />\n"
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_MILITARY\" />\n"
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_OFF\" />\n"
               "</menu>\n",
@@ -4195,6 +4242,20 @@ static void callback_multi_selection_inclusive_able_to_move(GtkToggleAction *act
 /****************************************************************
   ...
 *****************************************************************/
+static void callback_multi_selection_inclusive_full_moves(GtkToggleAction *action,
+                                                          gpointer user_data)
+{
+  if (!!(multi_select_inclusive_filter & FILTER_FULL_MOVES) ^
+      gtk_toggle_action_get_active(action)) {
+    filter_change(&multi_select_inclusive_filter, FILTER_FULL_MOVES);
+    update_multi_selection_inclusive_filter_menu();
+    update_unit_info_label(get_unit_in_focus());
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
 static void callback_multi_selection_inclusive_military(GtkToggleAction *action,
                                                         gpointer user_data)
 {
@@ -4327,6 +4388,20 @@ static void callback_multi_selection_exclusive_able_to_move(GtkToggleAction *act
   if (!!(multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE) ^
       gtk_toggle_action_get_active(action)) {
     filter_change(&multi_select_exclusive_filter, FILTER_ABLE_TO_MOVE);
+    update_multi_selection_exclusive_filter_menu();
+    update_unit_info_label(get_unit_in_focus());
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_multi_selection_exclusive_full_moves(GtkToggleAction *action,
+                                                          gpointer user_data)
+{
+  if (!!(multi_select_exclusive_filter & FILTER_FULL_MOVES) ^
+      gtk_toggle_action_get_active(action)) {
+    filter_change(&multi_select_exclusive_filter, FILTER_FULL_MOVES);
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4563,6 +4638,9 @@ static const char *load_menu_multi_selection(void)
     {"MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE", NULL, _("Units abl_e to move"),
      NULL, _("Units abl_e to move"),
      G_CALLBACK(callback_multi_selection_inclusive_able_to_move), TRUE},
+    {"MULTI_SELECTION_INCLUSIVE_FULL_MOVES", NULL, _("Units with full _moves"),
+     NULL, _("Units with full _moves"),
+     G_CALLBACK(callback_multi_selection_inclusive_full_moves), TRUE},
     {"MULTI_SELECTION_INCLUSIVE_MILITARY", NULL, _("_Military units"),
      NULL, _("_Military units"),
      G_CALLBACK(callback_multi_selection_inclusive_military), TRUE},
@@ -4596,6 +4674,9 @@ static const char *load_menu_multi_selection(void)
     {"MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE", NULL, _("Units able to mov_e"),
      NULL, _("Units able to mov_e"),
      G_CALLBACK(callback_multi_selection_exclusive_able_to_move), TRUE},
+    {"MULTI_SELECTION_EXCLUSIVE_FULL_MOVES", NULL, _("Units with full _moves"),
+     NULL, _("Units with full _moves"),
+     G_CALLBACK(callback_multi_selection_exclusive_full_moves), TRUE},
     {"MULTI_SELECTION_EXCLUSIVE_MILITARY", NULL, _("_Military units"),
      NULL, _("_Military units"),
      G_CALLBACK(callback_multi_selection_exclusive_military), TRUE},
@@ -4728,6 +4809,7 @@ static const char *load_menu_multi_selection(void)
               "<menuitem action=\"MULTI_SELECTION_INCLUSIVE_AUTO\" />\n"
               "<menuitem action=\"MULTI_SELECTION_INCLUSIVE_IDLE\" />\n"
               "<menuitem action=\"MULTI_SELECTION_INCLUSIVE_ABLE_TO_MOVE\" />\n"
+              "<menuitem action=\"MULTI_SELECTION_INCLUSIVE_FULL_MOVES\" />\n"
               "<menuitem action=\"MULTI_SELECTION_INCLUSIVE_MILITARY\" />\n"
               "<menuitem action=\"MULTI_SELECTION_INCLUSIVE_OFF\" />\n"
               "</menu>\n"
@@ -4740,6 +4822,7 @@ static const char *load_menu_multi_selection(void)
               "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_AUTO\" />\n"
               "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_IDLE\" />\n"
               "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_ABLE_TO_MOVE\" />\n"
+              "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_FULL_MOVES\" />\n"
               "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_MILITARY\" />\n"
               "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_OFF\" />\n"
               "</menu>\n"
