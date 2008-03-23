@@ -106,9 +106,9 @@ void output_window_force_thaw()
 /**************************************************************************
   Add a line of text to the output ("chatline") window.
 **************************************************************************/
-void append_output_window (const char *msg)
+void append_output_window(const char *msg)
 {
-  append_output_window_full (msg, -1);
+  append_output_window_full(msg, -1);
 }
 
 /**************************************************************************

@@ -815,7 +815,7 @@ void real_append_output_window(const char *astring, int conn_id)
   bool previous_matched = FALSE, switch_next = FALSE, do_stop = FALSE;
   char *jump_target = "";
   struct match_result_list *matches;
-  const char *text;
+  char *text;
   int text_start_offset, offset;
 
   GtkTextBuffer *buf;
@@ -831,8 +831,7 @@ void real_append_output_window(const char *astring, int conn_id)
 
   text_start = gtk_text_buffer_create_mark(buf, NULL, &iter, TRUE);
   if (get_client_state() == CLIENT_GAME_RUNNING_STATE
-      || get_client_state() == CLIENT_GAME_OVER_STATE)
-  {
+      || get_client_state() == CLIENT_GAME_OVER_STATE) {
     append_text_with_links(buf, astring);
   } else {
     gtk_text_buffer_insert(buf, &iter, astring, -1);
@@ -878,7 +877,7 @@ void real_append_output_window(const char *astring, int conn_id)
     if (!match_tag_pattern(ptagpat, text, matches)) {
       previous_matched = FALSE;
       continue;
-  }
+    }
 
     previous_matched = TRUE;
 
@@ -926,6 +925,8 @@ void real_append_output_window(const char *astring, int conn_id)
   gtk_text_buffer_delete_mark(buf, insert_start);
   gtk_text_buffer_delete_mark(buf, scroll_target);
   gtk_text_buffer_delete_mark(buf, text_start);
+
+  g_free(text);
 }
 
 /**************************************************************************
@@ -1216,8 +1217,8 @@ static void textbuf_insert_time(GtkTextBuffer *buf, GtkTextIter *iter)
 ...
 **************************************************************************/
 static bool match_tag_pattern(struct tag_pattern *ptagpat,
-                               const char *text,
-                               struct match_result_list *matches)
+                              const char *text,
+                              struct match_result_list *matches)
 {
   bool res = FALSE;
   struct match_result *pmres = NULL;
