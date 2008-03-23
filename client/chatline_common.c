@@ -126,9 +126,10 @@ static void log_chat(const char *text)
   }
 
   if (!make_dir(chat_log_directory)) {
-    freelog(LOG_ERROR, "Failed to create directory \"%s\". "
-            "Chat logging will be disabled.", 
-            chat_log_directory);
+    long err_no = myerrno();
+    freelog(LOG_ERROR, "Failed to create directory \"%s\": %s",
+            chat_log_directory, mystrerror(err_no));
+    freelog(LOG_ERROR, "Disabling chat logging on error.");
     enable_chat_logging = FALSE;
     return;
   }
@@ -164,9 +165,17 @@ static void log_chat(const char *text)
   }
 
   strftime(datebuf, sizeof(datebuf), "[%H:%M:%S] ", nowtm);
-  fputs(datebuf, f);
-  fputs(text, f);
-  fputs("\n", f);
+
+  if (fputs(datebuf, f) == EOF
+      || fputs(text, f) == EOF
+      || fputs("\n", f) == EOF) {
+    long err_no = myerrno();
+    freelog(LOG_ERROR, "Failed to write to \"%s\": %s",
+            filepath, mystrerror(err_no));
+    freelog(LOG_ERROR, "Disabling chat logging on error.");
+    enable_chat_logging = FALSE;
+  }
+
   fclose(f);
 }
 
