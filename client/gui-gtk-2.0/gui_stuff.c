@@ -506,7 +506,7 @@ void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
   g_object_set_data(G_OBJECT(vbox), "gui-dialog-data", dlg);
 
 
-  if (dlg->type != GUI_DIALOG_TAB) {
+  if (dlg->type != GUI_DIALOG_TAB || dlg->position == -1) {
     return;
   }
 
