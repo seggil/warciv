@@ -524,6 +524,101 @@ static void callback_game_quit(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
+static void take_screenshot(void)
+{
+  GdkPixbuf *pixbuf = NULL;
+  gint width, height, num, len;
+  gchar *filepath = NULL, *p, *msg;
+  const gchar *homedir;
+  GError *error = NULL;
+
+  if (toplevel == NULL || toplevel->window == NULL) {
+    append_output_window(_("Warclient: There is no toplevel window!"));
+    goto CLEANUP;
+  }
+
+  gdk_drawable_get_size(GDK_DRAWABLE(toplevel->window),
+                        &width, &height);
+
+  if (width <= 0 || height <= 0) {
+    append_output_window(_("Warclient: Nothing to take a screenshot of."));
+    goto CLEANUP;
+  }
+
+  homedir = g_get_home_dir();
+  if (homedir == NULL) {
+    append_output_window(_("Warclient: Could not get home directory."));
+    goto CLEANUP;
+  }
+
+  len = strlen(homedir) + 64;
+  filepath = fc_malloc(len);
+  my_snprintf(filepath, len, "%s%scivclient000.png",
+              homedir, G_DIR_SEPARATOR_S);
+  p = strrchr(filepath, '0') - 2;
+
+  for (num = 1; num < 1000; num++) {
+    p[0] = '0' + num / 100;
+    p[1] = '0' + (num % 100) / 10;
+    p[2] = '0' + (num % 10);
+
+    if (!g_file_test(filepath, G_FILE_TEST_EXISTS)) {
+      break;
+    }
+  }
+
+  if (num >= 1000) {
+    append_output_window(_("Warclient: Too many existing screenshots!"));
+    goto CLEANUP;
+  }
+
+  pixbuf = gdk_pixbuf_get_from_drawable(NULL,
+      GDK_DRAWABLE(toplevel->window),
+      gdk_colormap_get_system(),
+      0, 0, 0, 0, width, height);
+
+  if (pixbuf == NULL) {
+    append_output_window(_("Warclient: Failed to get image data from "
+                           "window."));
+    goto CLEANUP;
+  }
+
+  if (!gdk_pixbuf_save(pixbuf, filepath, "png", &error, NULL)) {
+    msg = g_strdup_printf(_("Warclient: Failed to save screenshot to "
+                            "%s: %s"), filepath, error->message);
+    append_output_window(msg);
+    g_free(msg);
+    goto CLEANUP;
+  }
+
+  msg = g_strdup_printf(_("Warclient: Screenshot saved: %s"), filepath);
+  append_output_window(msg);
+  g_free(msg);
+
+CLEANUP:
+  if (filepath) {
+    free(filepath);
+  }
+  if (pixbuf) {
+    g_object_unref(pixbuf);
+  }
+  if (error) {
+    g_error_free(error);
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_game_take_screenshot(GtkAction *action,
+                                          gpointer user_data)
+{
+  take_screenshot();
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
 static const char *load_menu_game(void)
 {
   static char buf[1024];
@@ -562,6 +657,9 @@ static const char *load_menu_game(void)
      NULL, _("E_xport Log"), G_CALLBACK(callback_game_output_log)},
     {"GAME_CLEAR_OUTPUT", GTK_STOCK_CLEAR, _("Clear _Log"),
      NULL, _("Clear _Log"), G_CALLBACK(callback_game_clear_output)},
+    {"GAME_TAKE_SCREENSHOT", GTK_STOCK_CONVERT, _("_Take Screenshot"),
+     "Print", _("Save a png image of the entire window"),
+      G_CALLBACK(callback_game_take_screenshot)},
     {"GAME_LEAVE", GTK_STOCK_DISCONNECT, _("L_eave"),
      NULL, _("L_eave"), G_CALLBACK(callback_game_leave)},
     {"GAME_QUIT", GTK_STOCK_QUIT, _("_Quit"),
@@ -596,6 +694,7 @@ static const char *load_menu_game(void)
               "<separator/>\n"
               "<menuitem action=\"GAME_OUTPUT_LOG\" />\n"
               "<menuitem action=\"GAME_CLEAR_OUTPUT\" />\n"
+              "<menuitem action=\"GAME_TAKE_SCREENSHOT\" />\n"
               "<separator/>\n"
               "<menuitem action=\"GAME_LEAVE\" />\n"
               "<menuitem action=\"GAME_QUIT\" />\n"
