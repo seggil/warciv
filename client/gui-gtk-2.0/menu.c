@@ -658,7 +658,7 @@ static const char *load_menu_game(void)
     {"GAME_CLEAR_OUTPUT", GTK_STOCK_CLEAR, _("Clear _Log"),
      NULL, _("Clear _Log"), G_CALLBACK(callback_game_clear_output)},
     {"GAME_TAKE_SCREENSHOT", GTK_STOCK_CONVERT, _("_Take Screenshot"),
-     "Print", _("Save a png image of the entire window"),
+     "<Control>Print", _("Save a png image of the entire window"),
       G_CALLBACK(callback_game_take_screenshot)},
     {"GAME_LEAVE", GTK_STOCK_DISCONNECT, _("L_eave"),
      NULL, _("L_eave"), G_CALLBACK(callback_game_leave)},
