@@ -1529,6 +1529,7 @@ bool make_dir(const char *pathname)
   char file[PATH_MAX];
   char path[PATH_MAX];
   int rv = 0;
+  struct stat buf;
 
   interpret_tilde(file, sizeof(file), pathname);
   path[0] = '\0';
@@ -1543,13 +1544,24 @@ bool make_dir(const char *pathname)
   for (dir = strtok(file, "/"); dir; dir = strtok(NULL, "/")) {
     sz_strlcat(path, dir);
 
-#ifdef WIN32_NATIVE
-    rv = mkdir(path);
-#else
-    rv = mkdir(path, 0755);
-#endif
-    if (rv == -1) {
+    rv = stat(path, &buf);
+    if (rv == -1 && myerrno() != ENOENT) {
       break;
+    }
+
+    /* If a file with the same name as 'path' exists,
+     * we want to call mkdir anyway so that it sets
+     * errno for us. */
+
+    if (rv == -1 || !S_ISDIR(buf.st_mode)) {
+#ifdef WIN32_NATIVE
+      rv = mkdir(path);
+#else
+      rv = mkdir(path, 0755);
+#endif
+      if (rv == -1) {
+        break;
+      }
     }
 
     sz_strlcat(path, "/");
