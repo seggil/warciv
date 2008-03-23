@@ -1519,12 +1519,16 @@ void interpret_tilde(char* buf, size_t buf_size, const char* filename)
 /**************************************************************************
   If the directory "pathname" does not exist, recursively create all
   directories until it does.
+
+  Returns FALSE if an error occurs. Use myerrno() and mystrerror() to
+  find out what the problem was.
 **************************************************************************/
 bool make_dir(const char *pathname)
 {
   char *dir;
   char file[PATH_MAX];
   char path[PATH_MAX];
+  int rv = 0;
 
   interpret_tilde(file, sizeof(file), pathname);
   path[0] = '\0';
@@ -1540,15 +1544,18 @@ bool make_dir(const char *pathname)
     sz_strlcat(path, dir);
 
 #ifdef WIN32_NATIVE
-    mkdir(path);
+    rv = mkdir(path);
 #else
-    mkdir(path, 0755);
+    rv = mkdir(path, 0755);
 #endif
+    if (rv == -1) {
+      break;
+    }
 
     sz_strlcat(path, "/");
   }
 
-  return TRUE;
+  return rv != -1;
 }
 
 /**************************************************************************
