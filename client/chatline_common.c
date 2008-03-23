@@ -27,7 +27,9 @@
 #include "chatline_g.h"
 
 #include "chatline_common.h"
+#include "civclient.h"
 #include "clinet.h"
+#include "options.h"
 
 /* Stored up buffer of lines for the chatline */
 struct remaining {
@@ -104,6 +106,71 @@ void output_window_force_thaw()
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void log_chat(const char *text)
+{
+  FILE *f;
+  char filepath[MAX_LEN_PATH], datebuf[64];
+  const char *host;
+  int port;
+  time_t now;
+  struct tm *nowtm;
+
+  if (!enable_chat_logging) {
+    return;
+  }
+
+  if (chat_log_directory[0] == '\0') {
+    return;
+  }
+
+  if (!make_dir(chat_log_directory)) {
+    freelog(LOG_ERROR, "Failed to create directory \"%s\". "
+            "Chat logging will be disabled.", 
+            chat_log_directory);
+    enable_chat_logging = FALSE;
+    return;
+  }
+
+  if (server_host[0] == '\0') {
+    host = "NO_SERVER";
+  } else {
+    host = server_host;
+  }
+
+  if (server_port > 0) {
+    port = server_port;
+  } else {
+    port = 0;
+  }
+
+  now = time(NULL);
+  nowtm = localtime(&now);
+  strftime(datebuf, sizeof(datebuf), "%y%m%d", nowtm);
+
+  interpret_tilde(filepath, sizeof(filepath), chat_log_directory);
+  cat_snprintf(filepath, sizeof(filepath),
+               "%ccivclient_chatlog_%s_%s_%d.txt",
+               '/', datebuf, host, port);
+
+  if (!(f = fopen(filepath, "a"))) {
+    long err_no = myerrno();
+    freelog(LOG_ERROR, "Failed to open \"%s\" for appending: %s",
+            filepath, mystrerror(err_no));
+    freelog(LOG_ERROR, "Disabling chat logging on error.");
+    enable_chat_logging = FALSE;
+    return;
+  }
+
+  strftime(datebuf, sizeof(datebuf), "[%H:%M:%S] ", nowtm);
+  fputs(datebuf, f);
+  fputs(text, f);
+  fputs("\n", f);
+  fclose(f);
+}
+
+/**************************************************************************
   Add a line of text to the output ("chatline") window.
 **************************************************************************/
 void append_output_window(const char *msg)
@@ -126,4 +193,6 @@ void append_output_window_full(const char *astring, int conn_id)
     premain->text = mystrdup(astring);
     premain->conn_id = conn_id;
   }
+
+  log_chat(astring);  
 }

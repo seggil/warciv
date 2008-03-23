@@ -89,6 +89,8 @@ bool always_show_votebar = FALSE;
 bool do_not_show_votebar_if_not_player = FALSE;
 bool warn_before_add_to_city = TRUE;
 bool prevent_duplicate_notify_tabs = FALSE;
+bool enable_chat_logging = FALSE;
+char chat_log_directory[MAX_LEN_PATH] = "~/.freeciv/chatlogs";
 
 
 /* This option is currently set by the client - not by the user. */
@@ -147,7 +149,11 @@ static client_option common_options[] = {
   GEN_BOOL_OPTION(use_digits_short_cuts,
                   N_("Use the shorts cuts 1-9 for Warclient features")),
   GEN_BOOL_OPTION(warn_before_add_to_city,
-                  N_("Warn before adding a settler to a city"))
+                  N_("Warn before adding a settler to a city")),
+  GEN_BOOL_OPTION(enable_chat_logging,
+                  N_("Log all chat output to a file")),
+  GEN_STR_OPTION(chat_log_directory,
+                 N_("Directory where chat logs are to be saved"), NULL, NULL)
 };
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION
