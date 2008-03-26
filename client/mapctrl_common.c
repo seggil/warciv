@@ -311,7 +311,7 @@ void cancel_distance_tool(void)
 **************************************************************************/
 bool is_city_hilited(struct city *pcity)
 {
-  return pcity->tile->client.hilite == HILITE_CITY;
+  return pcity != NULL && pcity->tile->client.hilite == HILITE_CITY;
 }
 
 /**************************************************************************
