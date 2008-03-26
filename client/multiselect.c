@@ -537,7 +537,7 @@ void multi_select_cat(int dest, int src)
 
   update_unit_info_label(get_unit_in_focus());
   my_snprintf(buf, sizeof(buf),
-              _("Warclient: Multi-selection %d added"), src);
+              _("Warclient: Multi-selection %d added."), src);
   append_output_window(buf);
 }
 
@@ -566,7 +566,7 @@ void multi_select_clear(int multi)
   } else {
     char buf[256];
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: Multi-selection %d cleared"), multi);
+                _("Warclient: Multi-selection %d cleared."), multi);
     append_output_window(buf);
   }
 }
@@ -622,12 +622,12 @@ void multi_select_copy(int dest, int src)
     } else {
       update_unit_info_label(get_unit_in_focus());
       my_snprintf(buf, sizeof(buf),
-                  _("Warclient: Multi-selection %d selected"), src);
+                  _("Warclient: Multi-selection %d selected."), src);
     }
   } else {
     int size = multi_select_size(dest);
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: Multi-selection %d: %d %s"), dest, size,
+                _("Warclient: Multi-selection %d: %d %s."), dest, size,
                 PL_("unit", "units", size));
   }
   append_output_window(buf);
@@ -970,7 +970,7 @@ void delayed_goto_cat(int dest, int src)
   }
 
   my_snprintf(buf, sizeof(buf),
-              _("Warclient: Adding %d delayed orders to queue"),
+              _("Warclient: Adding %d delayed orders to queue."),
               delayed_goto_size(src));
   append_output_window(buf);
 }
@@ -996,10 +996,10 @@ void delayed_goto_clear(int dg)
 
   if (dg != 0) {
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: Delayed goto selection %d cleared"), dg);
+                _("Warclient: Delayed goto selection %d cleared."), dg);
   } else {
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: Delayed orders queue cleared"));
+                _("Warclient: Delayed orders queue cleared."));
   }
   append_output_window(buf);
   update_delayed_goto_menu(dg);
@@ -1045,13 +1045,12 @@ void delayed_goto_copy(int dest, int src)
   update_delayed_goto_menu(dest);
   if (dest) {
     my_snprintf(buf, sizeof(buf),
-                _
-                ("Warclient: Delayed goto selection %d: %d delayed orders"),
-                dest, delayed_goto_size(dest));
+        _("Warclient: Delayed goto selection %d: %d delayed order(s)."),
+        dest, delayed_goto_size(dest));
   } else {
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: Set %d delayed orders to queue"),
-                delayed_goto_size(src));
+        _("Warclient: Set %d delayed order(s) to queue."),
+        delayed_goto_size(src));
   }
   append_output_window(buf);
 }
