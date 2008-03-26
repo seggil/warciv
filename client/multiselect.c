@@ -220,12 +220,12 @@ void auto_filter_change(automatic_processus *pap,
     break;
   default:
     if (pap->auto_filter & real_value) {
-      pap->auto_filter -= real_value;
+      pap->auto_filter &= ~real_value;
     } else {
       if (pap->auto_filter & real_AUTO_OFF) {
         pap->auto_filter = 0;
       }
-      pap->auto_filter += real_value;
+      pap->auto_filter |= real_value;
     }
     break;
   }
@@ -244,12 +244,12 @@ void auto_filter_normalize(automatic_processus *pap)
   for (v = 0; v < AUTO_OFF; v++) {
     rv = AV_TO_FV(v);
     if (pap->auto_filter & rv && !is_auto_value_allowed(pap, v)) {
-      pap->auto_filter -= rv;
+      pap->auto_filter &= ~rv;
     }
   }
   rv = AV_TO_FV(AUTO_OFF);
   if (pap->auto_filter & rv) {
-    pap->auto_filter -= rv;
+    pap->auto_filter &= ~rv;
   }
   if (pap->auto_filter == 0) {
     pap->auto_filter = rv;

@@ -2361,8 +2361,8 @@ static void callback_menu_delayed_goto_automatic(GtkToggleAction *action,
     }
 
     for(i=0;i<AUTO_VALUES_NUM;i++){
-      my_snprintf(buf, sizeof(buf), "%s_%s",
-                  pap->menu, ap_event_name(i));
+      my_snprintf(buf, sizeof(buf), "%s_%d",
+                  pap->menu, i);
 
       if (is_auto_value_allowed(pap, i) &&
           strcmp(buf, gtk_action_get_name(GTK_ACTION(action))) == 0) {
