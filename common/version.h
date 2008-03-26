@@ -31,7 +31,7 @@
 #define PATCH_VERSION		9
 #endif
 #ifndef WARCLIENT_VERSION
-#define WARCLIENT_VERSION	10
+#define WARCLIENT_VERSION	11
 #endif
 #ifndef VERSION_LABEL
 #define VERSION_LABEL		""
