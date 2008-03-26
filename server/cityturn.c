@@ -480,7 +480,12 @@ void update_city_activities(struct player *pplayer)
 
   while (pplayer->economic.gold < 0 && sell_random_improvement(pplayer));
   while (pplayer->economic.gold < 0 && drop_random_unit(pplayer));
-  assert(pplayer->economic.gold >= 0);
+
+  /* If we still have negative gold at
+   * this point, just set it to zero. */
+  if (pplayer->economic.gold < 0) {
+    pplayer->economic.gold = 0;
+  }
 
   city_list_iterate(pplayer->cities, pcity) {
     send_city_info(NULL, pcity);
