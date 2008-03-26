@@ -842,6 +842,10 @@ static bool fcdb_insert_terrain_map(MYSQL *sock)
   static const char *INSERT_STMT
     = "INSERT INTO terrain_maps (game_id, map) VALUES (?, ?)";
 
+  if (!srvarg.fcdb.save_maps) {
+    return TRUE;
+  }
+
   /* Create the terrain map that we save in the database. */
   tmap = etm_encode_terrain_map();
   if (!tmap) {
@@ -965,6 +969,10 @@ static bool fcdb_insert_turn_map(MYSQL *sock, int turn_id)
 
   static const char *INSERT_STMT
     = "INSERT INTO turn_maps (turn_id, map) VALUES (?, ?)";
+
+  if (!srvarg.fcdb.save_maps) {
+    return TRUE;
+  }
 
   changed_list = tile_list_new();
   tmap = etm_encode_turn_map(game.server.fcdb.termap, changed_list);

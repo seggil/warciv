@@ -68,6 +68,7 @@ struct server_arguments {
   struct {
     bool enabled;           /* Defaults to FALSE. */
     int min_rated_turns;    /* Defaults to 30. */
+    bool save_maps;         /* Defaults to FALSE. */
   } fcdb;
 };
 

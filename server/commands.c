@@ -553,13 +553,16 @@ const struct command commands[] = {
     N_("fcdb\n"
        "fcdb on\n"
        "fcdb off\n"
-       "fcdb min_rated_turns <number>"),
+       "fcdb min_rated_turns <number>\n"
+       "fcdb save_maps <yes|no>\n"),
     N_("Game and rating database control.\n"),
     N_("If no arguments are given, show some information about the "
        "game database. Arguments 'on' and 'off' enable and "
        "disable database access respectively. The 'min_rated_turns' "
        "option controls the number of turns before a rated game "
-       "should be considered for updating user ratings."),
+       "should be considered for updating user ratings. The 'save_maps' "
+       "option controls whether the encoded terrain and turn maps "
+       "should be generated and saved to the database."),
     ECHO_NONE
   },
 #endif /* HAVE_MYSQL */

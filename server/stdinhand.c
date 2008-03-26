@@ -5070,10 +5070,10 @@ static bool aka_command(struct connection *caller,
 **************************************************************************/
 enum fcdb_args
 {
-  FCDB_ON, FCDB_OFF, FCDB_MIN_RATED_TURNS, FCDB_NUM_ARGS
+  FCDB_ON, FCDB_OFF, FCDB_MIN_RATED_TURNS, FCDB_SAVE_MAPS, FCDB_NUM_ARGS
 };
 static const char *const fcdb_args[] = {
-  "on", "off", "min_rated_turns", NULL
+  "on", "off", "min_rated_turns", "save_maps", NULL
 };
 static const char *fcdbarg_accessor(int i)
 {
@@ -5098,11 +5098,14 @@ static bool fcdb_command(struct connection *caller, char *arg, bool check)
 
   if (ntokens <= 0) {
     cmd_reply(CMD_FCDB, caller, C_COMMENT,
-              _("FCDB access is %s."),
+              _("FCDB access: %s."),
               srvarg.fcdb.enabled ? _("enabled") : _("disabled"));
     cmd_reply(CMD_FCDB, caller, C_COMMENT,
               _("Minimum turns for rated game: %d."),
               srvarg.fcdb.min_rated_turns);
+    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              _("Saving of encoded turn maps: %s."),
+              srvarg.fcdb.save_maps ? _("enabled") : _("disabled"));
     free_tokens(args, ntokens);
     return TRUE;
   }
@@ -5144,6 +5147,28 @@ static bool fcdb_command(struct connection *caller, char *arg, bool check)
     cmd_reply(CMD_FCDB, caller, C_OK,
               _("The minimum number of turns for a rated game has "
                 "been set to %d."), n);
+  } else if (ind == FCDB_SAVE_MAPS) {
+    if (ntokens < 2) {
+      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+                _("Missing 'on' or 'off' argument."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+    if (0 == strcmp(args[1], "yes") || 0 == strcmp(args[1], "y")
+        || 0 == strcmp(args[1], "on")) {
+      srvarg.fcdb.save_maps = TRUE;
+    } else if (0 == strcmp(args[1], "no") || 0 == strcmp(args[1], "n")
+        || 0 == strcmp(args[1], "off")) {
+      srvarg.fcdb.save_maps = FALSE;
+    } else {
+      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+                _("Invalid argument."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              _("Saving of encoded turn maps: %s."),
+              srvarg.fcdb.save_maps ? _("enabled") : _("disabled"));
   }
 
   free_tokens(args, ntokens);
