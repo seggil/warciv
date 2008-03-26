@@ -112,7 +112,7 @@ static void log_chat(const char *text)
 {
   FILE *f;
   char filepath[MAX_LEN_PATH], datebuf[64];
-  const char *host;
+  const char *host, *name;
   int port;
   time_t now;
   struct tm *nowtm;
@@ -146,14 +146,20 @@ static void log_chat(const char *text)
     port = 0;
   }
 
+  if (user_name[0] == '\0') {
+    name = "UNNAMED";
+  } else {
+    name = user_name;
+  }
+
   now = time(NULL);
   nowtm = localtime(&now);
   strftime(datebuf, sizeof(datebuf), "%y%m%d", nowtm);
 
   interpret_tilde(filepath, sizeof(filepath), chat_log_directory);
   cat_snprintf(filepath, sizeof(filepath),
-               "%ccivclient_chatlog_%s_%s_%d.txt",
-               '/', datebuf, host, port);
+               "%ccivclient_chatlog_%s_%s_%d_%s.txt",
+               '/', datebuf, host, port, name);
 
   if (!(f = fopen(filepath, "a"))) {
     long err_no = myerrno();
