@@ -31,7 +31,7 @@
 #define PATCH_VERSION		9
 #endif
 #ifndef WARCLIENT_VERSION
-#define WARCLIENT_VERSION	9
+#define WARCLIENT_VERSION	10
 #endif
 #ifndef VERSION_LABEL
 #define VERSION_LABEL		""
@@ -61,15 +61,9 @@
                        VER_STRINGIFY(PATCH_VERSION) VERSION_LABEL
 #endif
 
-#if (WARCLIENT_VERSION & 1)
-#define WARCLIENT_VERSION_STRING VER_STRINGIFY(MINOR_VERSION) "." \
-				 VER_STRINGIFY(PATCH_VERSION) "." \
-				 VER_STRINGIFY(WARCLIENT_VERSION) " devel"
-#else
 #define WARCLIENT_VERSION_STRING VER_STRINGIFY(MINOR_VERSION) "." \
 				 VER_STRINGIFY(PATCH_VERSION) "." \
 				 VER_STRINGIFY(WARCLIENT_VERSION)
-#endif
 
 /* version informational strings */
 const char *freeciv_name_version(void);
