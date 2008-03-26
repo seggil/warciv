@@ -99,7 +99,12 @@ enum filter_value {
   FILTER_FULL_MOVES   = 1 << 10,
   FILTER_FULL_HP      = 1 << 11,
 };
+
+/* NB: Must match the number of valid
+ * filter flags in enum filter_value. */
 #define FILTER_NUM 12
+
+#define FILTER_MAX_VALUE ((1 << FILTER_NUM) - 1)
 
 /* selections mode */
 enum place_value {

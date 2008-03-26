@@ -49,21 +49,19 @@ void filter_change(filter *pfilter, enum filter_value value)
 {
   switch (value) {
   case FILTER_ALL:
-    *pfilter = *pfilter & FILTER_ALL ? *pfilter - FILTER_ALL : FILTER_ALL;
-    break;
   case FILTER_OFF:
-    *pfilter = *pfilter & FILTER_OFF ? *pfilter - FILTER_OFF : FILTER_OFF;
+    *pfilter = *pfilter & value ? *pfilter & ~value : value;
     break;
   default:
     if (*pfilter & value) {
-      *pfilter -= value;
+      *pfilter &= ~value;
     } else {
       if (*pfilter & FILTER_ALL) {
-        *pfilter -= FILTER_ALL;
+        *pfilter &= ~FILTER_ALL;
       } else if (*pfilter & FILTER_OFF) {
-        *pfilter -= FILTER_OFF;
+        *pfilter &= ~FILTER_OFF;
       }
-      *pfilter += value;
+      *pfilter |= value;
     }
     break;
   }

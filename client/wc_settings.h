@@ -182,7 +182,7 @@ extern bool my_ai_trade_plan_change_homecity;
    DEFAULT_##value, MIN_##value, MAX_##value}
 #define PSGEN_FILTER(page, name, desc, value)     \
   {page, #name, desc, NULL, TYPE_FILTER, &name,   \
-   DEFAULT_##value, FILTER_ALL, FILTER_OFF}
+   DEFAULT_##value, 1, FILTER_MAX_VALUE}
 #define PSGEN_END {PAGE_NUM, NULL, NULL, NULL, TYPE_END, NULL, 0, 0, 0}
 
 const char *get_page_name(enum peppage page);
