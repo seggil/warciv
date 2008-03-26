@@ -111,7 +111,7 @@ void output_window_force_thaw()
 static void log_chat(const char *text)
 {
   FILE *f;
-  char filepath[MAX_LEN_PATH], datebuf[64];
+  char filepath[MAX_LEN_PATH], datebuf[64], *p;
   const char *host, *name;
   int port;
   time_t now;
@@ -158,8 +158,19 @@ static void log_chat(const char *text)
 
   interpret_tilde(filepath, sizeof(filepath), chat_log_directory);
   cat_snprintf(filepath, sizeof(filepath),
-               "%ccivclient_chatlog_%s_%s_%d_%s.txt",
+               "%cchatlog-%s-%s-%d-%s.txt",
                '/', datebuf, host, port, name);
+
+  /* Replace annoying characters with underscores. */
+  for (p = strrchr(filepath, '/') + 1; *p != '\0'; p++) {
+    if (my_isspace(*p) || *p == '\'' || *p == '"' || *p == '('
+        || *p == ')' || *p == '*' || *p == '&' || *p == '$'
+        || *p == '!' || *p == '#' || *p == ';' || *p == '>'
+        || *p == '<' || *p == '/' || *p == '\\' || *p == '{'
+        || *p == '}' || *p == '[' || *p == ']' || *p == '`') {
+      *p = '_';
+    }
+  }
 
   if (!(f = fopen(filepath, "a"))) {
     long err_no = myerrno();
