@@ -5814,7 +5814,7 @@ static const char *load_menu_help(void)
      NULL, _("Citizen _Management"), G_CALLBACK(callback_help_cma)},
     {"HELP_PLAYING", NULL, _("_Playing"),
      NULL, _("_Playing"), G_CALLBACK(callback_help_playing)},
-    {"HELP_WARCLIENT", NULL, _("_Warclient - Warclient"),
+    {"HELP_WARCLIENT", NULL, _("_Warclient"),
      NULL, _("_Warclient - Warclient"), G_CALLBACK(callback_help_warclient)},
     {"HELP_IMPROVEMENTS", NULL, _("City _Improvements"),
      NULL, _("City _Improvements"), G_CALLBACK(callback_help_improvements)},

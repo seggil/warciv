@@ -811,7 +811,7 @@ other player isn't getting a better deal than you expect.\
 ")
 
 [help_warclient]
-name = _("Warclient - PepClient")
+name = _("Warclient")
 text = _("\
 Autowakeup and sleeping units\n\
 =============================\n\
@@ -922,7 +922,7 @@ when pressing 'y'.\
 \n\n\
 If you do not want to execute all delayed orders at once \
 when you press 'y', you can limit the number of units that \
-will move in Game->PepClient Settings->Delayed goto->Unit limit. \
+will move in Game->Warclient Options->Delayed goto->Unit limit. \
 If unit limit isn't 0 (unlimited), Then press 'y' repeatedly.\
 \n\n\
 If you press 'ctrl'+'z' instead of 'z' and selected unit \
@@ -1033,7 +1033,7 @@ Multi-Selection\n\
 \n\
 The unit multi-selection tool allow to the user to select many units. \
 When the units are selected you can execute all commands \
-available on PepClient. It's the new code for mass orders.\
+available on Warclient. It's the new code for mass orders.\
 \n\n\
 The unit selection is like delayed goto selection: there a \
 selection mode, an inclusive filter and an exclusive filter. \
@@ -1081,7 +1081,7 @@ where there is an airport. If the Allow spreading into allied cities \
 is enabled, the units will be spread as well in your cities \
 than in the cities of your allies.\
 \n\n\
-The different options: (Game->PepClient settings->Multi-Selection)\n\
+The different options: (Game->Warclient options->Multi-Selection)\n\
 * Count all units in the selection, including excluded units: \
 when many units are selected, a number on the unit info label says \
 to you how many units are selected. If this option is enabled, it will \
@@ -1141,7 +1141,7 @@ Automatic Executions\n\
 \n\
 Some features can be executed automatically. \
 It's the case of airplane patrol, delayed goto and auto-caravans. \
-You can choose a value or many for them in Game->PepClient settings. \
+You can choose a value or many for them in Game->Warclient settings. \
 There is also a general execution of all automatic orders checkbox.\
 \n\n\
 The different defined signals are:\n\
