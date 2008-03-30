@@ -10,13 +10,13 @@ legend=_("Lojbanistan is a fictional place where people speak\
  (\"Time flies like an arrow. Fruit flies like a banana.\"),\
  culturally neutral and simple to learn.")
 leader=
- "lojbab",
- "noras",
- "banli ve cukta",	; John Woldemar Cowan
- "camgusmis",	; Robin Lee Powell
- "tsali",	; Arnt Richard Johansen
- "xorxes",	; Jorge Llambías
- "epkat"
+ "Lojbab",
+ "Noras",
+ "Banli ve Cukta",	; John Woldemar Cowan
+ "Camgusmis",	; Robin Lee Powell
+ "Tsali",	; Arnt Richard Johansen
+ "Xorxes",	; Jorge Llambías
+ "Epkat"
  
 leader_sex="Male", "Female", "Male", "Male", "Male", "Male", "Male"
 flag="f.jbonai"

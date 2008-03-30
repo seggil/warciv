@@ -2,7 +2,7 @@
 
 name=_("Observer")
 plural=_("?plural:Observers")
-leader="None"
+leader="Eye In The Sky"
 leader_sex="Male"
 flag="f.observer"
 flag_alt = "-"

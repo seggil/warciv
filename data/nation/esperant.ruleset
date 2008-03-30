@@ -7,12 +7,12 @@ class = _("Fictional")
 legend=_("The Esperants are a world community united by the Esperanto\
  language.")
 leader=
- "L.L. ZAMENHOF",
- "Théophile CART",
- "Fernand DORÉ",
- "Georges KERSAUDY",
- "Georges LAGRANGE",
- "Frederic PUJULÀ I VALLÈS"
+ "L. L. Zamenhof",
+ "Théophile Cart",
+ "Fernand Doré",
+ "Georges Kersuady",
+ "Georges Lagrange",
+ "Frederic Pujulà i Vallés"
  
 leader_sex="Male", "Male", "Male", "Male", "Male", "Male"
 flag="f.esperanto"

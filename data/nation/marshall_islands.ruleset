@@ -4,7 +4,7 @@ name=_("Marshall")
 plural=_("?plural:Marshalls")
 class=_("Fictional")
 
-leader= "no_name"
+leader= "John Marshall"
 leader_sex= "Male"
 
 flag="f.marshallislands"

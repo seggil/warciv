@@ -4,7 +4,7 @@ name=_("Iglu")
 plural=_("?plural:Iglu users") 
 class=_("Fictional")
 
-leader= ""
+leader= "A Cold Grumpy Man"
 leader_sex= "Male"
 	    
 flag="f.iglu"

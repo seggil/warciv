@@ -4,7 +4,7 @@ name=_("Krev")
 plural=_("?plural:Krevs")
 class=_("Fictional")
 
-leader= "blood"
+leader= "Blood"
 leader_sex= "Male"
 	    
 flag="f.krev"
