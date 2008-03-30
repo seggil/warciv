@@ -45,6 +45,24 @@ enum new_unit_action {
   ACTION_FORTIFY_OR_SLEEP
 };
 
+enum default_diplomat_unit_actions {
+  DDUA_POPUP_DIALOG = 0, /* Must be first. */
+  DDUA_BRIBE,
+  DDUA_SABOTAGE,
+  DDUA_KEEP_MOVING /* Must be last. */
+};
+
+enum default_diplomat_city_actions {
+  DDCA_POPUP_DIALOG = 0, /* Must be first. */
+  DDCA_EMBASSY,
+  DDCA_INVESTIGATE,
+  DDCA_SABOTAGE,
+  DDCA_STEAL_TECH,
+  DDCA_INCITE_REVOLT,
+  DDCA_POISON,
+  DDCA_KEEP_MOVING /* Must be last. */
+};
+
 extern int hover_unit; /* unit hover_state applies to */
 extern enum cursor_hover_state hover_state;
 extern enum unit_activity connect_activity;
@@ -55,7 +73,8 @@ extern bool moveandattack_state;
 extern int lastactivatedunit;
 extern int look_into_allied_city;
 extern int default_caravan_action;
-extern int default_diplomat_action;
+extern int default_diplomat_unit_action;
+extern int default_diplomat_city_action;
 extern bool default_diplomat_ignore_allies;
 extern bool focus_turn;
 extern enum new_unit_action default_action_type;

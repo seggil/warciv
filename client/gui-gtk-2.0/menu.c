@@ -95,7 +95,8 @@ static GtkActionGroup *radio_action_group_multi_selection_place = NULL;
 
 static GtkActionGroup *action_group_miscellaneous = NULL;
 static GtkActionGroup *toggle_action_group_miscellaneous = NULL;
-static GtkActionGroup *radio_action_group_miscellaneous_diplomat = NULL;
+static GtkActionGroup *radio_action_group_miscellaneous_diplomat_city = NULL;
+static GtkActionGroup *radio_action_group_miscellaneous_diplomat_unit = NULL;
 static GtkActionGroup *radio_action_group_miscellaneous_caravan = NULL;
 static GtkActionGroup *radio_action_group_miscellaneous_unit = NULL;
 
@@ -5214,11 +5215,23 @@ static void callback_miscellaneous_toggle_moveandattack(GtkToggleAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_miscellaneous_diplomat(GtkAction *unusedaction,
-                                            GtkRadioAction *action,
-                                            gpointer user_data)
+static void callback_miscellaneous_diplomat_city(GtkAction *unusedaction,
+                                                 GtkRadioAction *action,
+                                                 gpointer user_data)
 {
-  default_diplomat_action = gtk_radio_action_get_current_value(action);
+  default_diplomat_city_action
+      = gtk_radio_action_get_current_value(action);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_miscellaneous_diplomat_unit(GtkAction *unusedaction,
+                                                 GtkRadioAction *action,
+                                                 gpointer user_data)
+{
+  default_diplomat_unit_action
+      = gtk_radio_action_get_current_value(action);
 }
 
 /****************************************************************
@@ -5247,7 +5260,7 @@ static void callback_miscellaneous_unit(GtkAction *unusedaction,
 *****************************************************************/
 static const char *load_menu_miscellaneous(void)
 {
-  static char buf[2048];
+  static char buf[4096];
 
   GtkActionEntry entries_miscellaneous[] = {
     {"MISCELLANEOUS", NULL, _("Misce_llaneous"), NULL, NULL, NULL},
@@ -5262,7 +5275,9 @@ static const char *load_menu_miscellaneous(void)
      G_CALLBACK(callback_miscellaneous_patrol_execute)},
     {"MISCELLANEOUS_CARAVAN", NULL, _("_Caravan action upon arrival"),
      NULL, NULL, NULL},
-    {"MISCELLANEOUS_DIPLOMAT", NULL, _("Diplomat action upon arrival"),
+    {"MISCELLANEOUS_DIPLOMAT_UNIT", NULL, _("Diplomat default unit action"),
+     NULL, NULL, NULL},
+    {"MISCELLANEOUS_DIPLOMAT_CITY", NULL, _("Diplomat default city action"),
      NULL, NULL, NULL},
     {"MISCELLANEOUS_UNIT", NULL, _("New unit default action"),
      NULL, NULL, NULL},
@@ -5286,8 +5301,8 @@ static const char *load_menu_miscellaneous(void)
   };
 
   GtkToggleActionEntry toggle_entries_miscellaneous[] = {
-    {"MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES", NULL, _("Ignore allies"),
-     NULL, _("Ignore allies"),
+    {"MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES", NULL, _("Diplomats ignore allies"),
+     NULL, _("Diplomats will never try to act on allies"),
      G_CALLBACK(callback_miscellaneous_diplomat_ignore_allies), TRUE},
     {"MISCELLANEOUS_UNIT_LOCK", NULL, _("Lock new unit default action"),
      NULL, _("Lock new unit default action"),
@@ -5303,27 +5318,34 @@ static const char *load_menu_miscellaneous(void)
      G_CALLBACK(callback_miscellaneous_toggle_moveandattack), TRUE}
   };
 
-  GtkRadioActionEntry radio_entries_miscellaneous_diplomat[] = {
-    {"MISCELLANEOUS_DIPLOMAT_POPUP", NULL, _("_Popup dialog"),
-     NULL, _("_Popup dialog"), 0},
-    {"MISCELLANEOUS_DIPLOMAT_BRIBE", NULL, _("_Bribe unit"),
-     NULL, _("_Bribe unit"), 1},
-    {"MISCELLANEOUS_DIPLOMAT_SABOTAGE_UNIT", NULL, _("_Sabotage unit (spy)"),
-     NULL, _("_Sabotage unit (spy)"), 2},
-    {"MISCELLANEOUS_DIPLOMAT_EMBASSY", NULL, _("_Establish embassy"),
-     NULL, _("_Establish embassy"), 3},
-    {"MISCELLANEOUS_DIPLOMAT_INVESTIGATE", NULL, _("_Investigate city"),
-     NULL, _("_Investigate city"), 4},
-    {"MISCELLANEOUS_DIPLOMAT_SABOTAGE_CITY", NULL, _("_Sabotage city"),
-     NULL, _("_Sabotage city"), 5},
-    {"MISCELLANEOUS_DIPLOMAT_STEAL", NULL, _("_Steal technology"),
-     NULL, _("_Steal technology"), 6},
-    {"MISCELLANEOUS_DIPLOMAT_INCITE", NULL, _("_Incite revolt"),
-     NULL, _("_Incite revolt"), 7},
-    {"MISCELLANEOUS_DIPLOMAT_POISON", NULL, _("_Poison city (spy)"),
-     NULL, _("_Poison city (spy)"), 8},
-    {"MISCELLANEOUS_DIPLOMAT_NOTHING", NULL, _("_Keep going"),
-     NULL, _("_Keep going"), 9}
+  GtkRadioActionEntry radio_entries_miscellaneous_diplomat_unit[] = {
+    {"MISCELLANEOUS_DIPLOMAT_UNIT_POPUP", NULL, _("_Popup dialog"),
+     NULL, _("_Popup dialog"), DDUA_POPUP_DIALOG},
+    {"MISCELLANEOUS_DIPLOMAT_UNIT_BRIBE", NULL, _("_Bribe unit"),
+     NULL, _("_Bribe unit"), DDUA_BRIBE},
+    {"MISCELLANEOUS_DIPLOMAT_UNIT_SABOTAGE", NULL, _("_Sabotage unit (spy)"),
+     NULL, _("_Sabotage unit (spy)"), DDUA_SABOTAGE},
+    {"MISCELLANEOUS_DIPLOMAT_UNIT_NOTHING", NULL, _("_Keep moving"),
+     NULL, _("_Keep moving"), DDUA_KEEP_MOVING}
+  };
+
+  GtkRadioActionEntry radio_entries_miscellaneous_diplomat_city[] = {
+    {"MISCELLANEOUS_DIPLOMAT_CITY_POPUP", NULL, _("_Popup dialog"),
+     NULL, _("_Popup dialog"), DDCA_POPUP_DIALOG},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_EMBASSY", NULL, _("_Establish embassy"),
+     NULL, _("_Establish embassy"), DDCA_EMBASSY},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_INVESTIGATE", NULL, _("_Investigate city"),
+     NULL, _("_Investigate city"), DDCA_INVESTIGATE},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_SABOTAGE", NULL, _("_Sabotage city"),
+     NULL, _("_Sabotage city"), DDCA_SABOTAGE},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_STEAL", NULL, _("_Steal technology"),
+     NULL, _("_Steal technology"), DDCA_STEAL_TECH},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_INCITE", NULL, _("_Incite revolt"),
+     NULL, _("_Incite revolt"), DDCA_INCITE_REVOLT},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_POISON", NULL, _("_Poison city (spy)"),
+     NULL, _("_Poison city (spy)"), DDCA_POISON},
+    {"MISCELLANEOUS_DIPLOMAT_CITY_KEEP_MOVING", NULL, _("_Keep moving"),
+     NULL, _("_Keep moving"), DDCA_KEEP_MOVING}
   };
 
   GtkRadioActionEntry radio_entries_miscellaneous_caravan[] = {
@@ -5371,19 +5393,29 @@ static const char *load_menu_miscellaneous(void)
   gtk_ui_manager_insert_action_group(main_uimanager,
                                      toggle_action_group_miscellaneous, 0);
 
-
-  radio_action_group_miscellaneous_diplomat =
-    gtk_action_group_new("RadioGroupMiscellaneouDiplomat");
-  gtk_action_group_set_translation_domain(radio_action_group_miscellaneous_diplomat,
-                                          PACKAGE);
-  gtk_action_group_add_radio_actions(radio_action_group_miscellaneous_diplomat,
-                                     radio_entries_miscellaneous_diplomat,
-                                     G_N_ELEMENTS(radio_entries_miscellaneous_diplomat),
-                                     -1,
-                                     G_CALLBACK(callback_miscellaneous_diplomat),
-                                     NULL);
+  radio_action_group_miscellaneous_diplomat_unit =
+      gtk_action_group_new("RadioGroupMiscellaneouDiplomatUnit");
+  gtk_action_group_set_translation_domain(
+      radio_action_group_miscellaneous_diplomat_unit, PACKAGE);
+  gtk_action_group_add_radio_actions(
+      radio_action_group_miscellaneous_diplomat_unit,
+      radio_entries_miscellaneous_diplomat_unit,
+      G_N_ELEMENTS(radio_entries_miscellaneous_diplomat_unit), -1,
+      G_CALLBACK(callback_miscellaneous_diplomat_unit), NULL);
   gtk_ui_manager_insert_action_group(main_uimanager,
-                                     radio_action_group_miscellaneous_diplomat, 0);
+      radio_action_group_miscellaneous_diplomat_unit, 0);
+
+  radio_action_group_miscellaneous_diplomat_city =
+      gtk_action_group_new("RadioGroupMiscellaneouDiplomatCity");
+  gtk_action_group_set_translation_domain(
+      radio_action_group_miscellaneous_diplomat_city, PACKAGE);
+  gtk_action_group_add_radio_actions(
+      radio_action_group_miscellaneous_diplomat_city,
+      radio_entries_miscellaneous_diplomat_city,
+      G_N_ELEMENTS(radio_entries_miscellaneous_diplomat_city), -1,
+      G_CALLBACK(callback_miscellaneous_diplomat_city), NULL);
+  gtk_ui_manager_insert_action_group(main_uimanager,
+      radio_action_group_miscellaneous_diplomat_city, 0);
 
   radio_action_group_miscellaneous_caravan =
     gtk_action_group_new("RadioGroupMiscellaneouCaravan");
@@ -5423,20 +5455,23 @@ static const char *load_menu_miscellaneous(void)
               "<menuitem action=\"MISCELLANEOUS_CARAVAN_BUILD\" />\n"
               "<menuitem action=\"MISCELLANEOUS_CARAVAN_NOTHING\" />\n"
               "</menu>\n"
-              "<menu action=\"MISCELLANEOUS_DIPLOMAT\">\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_POPUP\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_BRIBE\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_SABOTAGE_UNIT\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_EMBASSY\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_INVESTIGATE\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_SABOTAGE_CITY\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_STEAL\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_INCITE\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_POISON\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_NOTHING\" />\n"
-              "<separator/>\n"
-              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES\" />\n"
+              "<menu action=\"MISCELLANEOUS_DIPLOMAT_UNIT\">\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_UNIT_POPUP\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_UNIT_BRIBE\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_UNIT_SABOTAGE\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_UNIT_NOTHING\" />\n"
               "</menu>\n"
+              "<menu action=\"MISCELLANEOUS_DIPLOMAT_CITY\">\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_POPUP\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_EMBASSY\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_INVESTIGATE\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_SABOTAGE\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_STEAL\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_INCITE\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_POISON\" />\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_CITY_KEEP_MOVING\" />\n"
+              "</menu>\n"
+              "<menuitem action=\"MISCELLANEOUS_DIPLOMAT_IGNORE_ALLIES\" />\n"
               "<separator/>\n"
               "<menu action=\"MISCELLANEOUS_UNIT\">\n"
               "<menuitem action=\"MISCELLANEOUS_UNIT_IDLE\" />\n"
@@ -6737,46 +6772,58 @@ void init_menus(void)
     break;
   }
 
-  switch (default_diplomat_action) {
-  case 0:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_POPUP");
+  switch (default_diplomat_unit_action) {
+  case DDUA_POPUP_DIALOG:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_unit,
+                          "MISCELLANEOUS_DIPLOMAT_UNIT_POPUP");
     break;
-  case 1:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_BRIBE");
+  case DDUA_BRIBE:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_unit,
+                          "MISCELLANEOUS_DIPLOMAT_UNIT_BRIBE");
     break;
-  case 2:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_SABOTAGE_UNIT");
+  case DDUA_SABOTAGE:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_unit,
+                          "MISCELLANEOUS_DIPLOMAT_UNIT_SABOTAGE");
     break;
-  case 3:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_EMBASSY");
+  case DDUA_KEEP_MOVING:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_unit,
+                          "MISCELLANEOUS_DIPLOMAT_UNIT_NOTHING");
     break;
-  case 4:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_INVESTIGATE");
+  default:
     break;
-  case 5:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_SABOTAGE_CITY");
+  }
+  
+  switch (default_diplomat_city_action) {
+  case DDCA_POPUP_DIALOG:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_POPUP");
+  case DDCA_EMBASSY:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_EMBASSY");
     break;
-  case 6:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_STEAL");
+  case DDCA_INVESTIGATE:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_INVESTIGATE");
     break;
-  case 7:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_INCITE");
+  case DDCA_SABOTAGE:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_SABOTAGE");
     break;
-  case 8:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_POISON");
+  case DDCA_STEAL_TECH:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_STEAL");
     break;
-  case 9:
-    menu_radio_set_active(radio_action_group_miscellaneous_diplomat,
-                          "MISCELLANEOUS_DIPLOMAT_NOTHING");
+  case DDCA_INCITE_REVOLT:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_INCITE");
+    break;
+  case DDCA_POISON:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_POISON");
+    break;
+  case DDCA_KEEP_MOVING:
+    menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
+                          "MISCELLANEOUS_DIPLOMAT_CITY_KEEP_MOVING");
     break;
   default:
     break;

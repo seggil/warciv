@@ -124,20 +124,26 @@ static struct pepsetting static_pepsettings[] = {
                "1: Establish trade route\n"
                "2: Help building wonder\n"
                "3: Keep going"), CARAVAN_ACTION),
-  PSGEN_INT(PAGE_PMAIN, default_diplomat_action,
-            N_("Diplomat action upon arrival"),
-            N_("The diplomats will execute this order when they "
-               "will arrive to a new destination.\n\n"
+  PSGEN_INT(PAGE_PMAIN, default_diplomat_unit_action,
+            N_("Diplomat action upon unit arrival"),
+            N_("Diplomats execute this order when they "
+               "arrive at another player's unit.\n\n"
                "0: Popup dialog\n"
                "1: Bribe unit\n"
                "2: Sabotage unit (spy)\n"
-               "3: Establish embassy\n"
-               "4: Investigate city\n"
-               "5: Sabotage city\n"
-               "6: Steal technology\n"
-               "7: Incite revolt\n"
-               "8: Poison city (spy)\n"
-               "9: Keep going"), DIPLOMAT_ACTION),
+               "3: Keep going"), DIPLOMAT_UNIT_ACTION),
+  PSGEN_INT(PAGE_PMAIN, default_diplomat_city_action,
+            N_("Diplomat action upon city arrival"),
+            N_("Diplomat execute this order when they "
+               "arrive at another player's city.\n\n"
+               "0: Popup dialog\n"
+               "1: Establish embassy\n"
+               "2: Investigate city\n"
+               "3: Sabotage city\n"
+               "4: Steal technology\n"
+               "5: Incite revolt\n"
+               "6: Poison city (spy)\n"
+               "7: Keep going"), DIPLOMAT_CITY_ACTION),
   PSGEN_BOOL(PAGE_PMAIN, default_diplomat_ignore_allies,
              N_("Diplomat ignores allies"),
              N_("If this option is set, diplomats and spies "

@@ -51,7 +51,8 @@ bool moveandattack_state;
 int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
 int default_caravan_action;
-int default_diplomat_action;
+int default_diplomat_unit_action;
+int default_diplomat_city_action;
 bool default_diplomat_ignore_allies;
 
 enum new_unit_action default_action_type;
@@ -662,7 +663,9 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
   }
 
   /* There can only be one dialog at a time: */
-  if (!default_diplomat_action && diplomat_dialog_is_open()) {
+  if (diplomat_dialog_is_open()
+      && default_diplomat_unit_action == DDUA_POPUP_DIALOG
+      && default_diplomat_city_action == DDCA_POPUP_DIALOG) {
     return;
   }
 
@@ -706,21 +709,23 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
         return;
       }
 
-      switch (default_diplomat_action) {
-	case 0: /* Popup */
+      switch (default_diplomat_unit_action) {
+	case DDUA_POPUP_DIALOG:
 	  popup_diplomat_dialog(pdiplomat, punit->tile);
 	  break;
-	case 1: /* Bribe unit */
+	case DDUA_BRIBE:
 	  request_diplomat_action(DIPLOMAT_BRIBE, diplomat_id, victim_id, 0);
 	  break;
-	case 2: /* Sabotage unit */
+	case DDUA_SABOTAGE:
 	  request_diplomat_action(SPY_SABOTAGE_UNIT, diplomat_id, victim_id, 0);
 	  break;
 	default:
 	  break;
       }
       return;
-    } else if (dipl_city_ok) {
+    }
+    
+    if (dipl_city_ok) {
       /* Target is a city */
 
       freelog(LOG_DEBUG, "dipl_city_ok");
@@ -731,29 +736,29 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
         return;
       }
 
-      switch (default_diplomat_action) {
-	case 0: /* Popup */
+      switch (default_diplomat_city_action) {
+	case DDCA_POPUP_DIALOG:
 	  popup_diplomat_dialog(pdiplomat, pcity->tile);
 	  break;
-	case 3: /* Embassy */
+	case DDCA_EMBASSY:
 	  request_diplomat_action(DIPLOMAT_EMBASSY, diplomat_id, victim_id, 0);
 	  break;
-	case 4: /* Investigate */
+	case DDCA_INVESTIGATE:
 	  request_diplomat_action(DIPLOMAT_INVESTIGATE, diplomat_id,
 				  victim_id, 0);
 	  break;
-	case 5: /* Sabotage city */
+	case DDCA_SABOTAGE:
 	  request_diplomat_action(DIPLOMAT_SABOTAGE, diplomat_id,
 				  victim_id, B_LAST);
 	  break;
-	case 6: /* Steal tech */
+	case DDCA_STEAL_TECH:
 	  request_diplomat_action(DIPLOMAT_STEAL, diplomat_id,
 				  victim_id, game.ruleset_control.num_tech_types);
 	  break;
-	case 7: /* Incite revolt */
+	case DDCA_INCITE_REVOLT:
 	  request_diplomat_action(DIPLOMAT_INCITE, diplomat_id, victim_id, 0);
 	  break;
-	case 8: /* Poison city */
+	case DDCA_POISON:
 	  request_diplomat_action(SPY_POISON, diplomat_id, victim_id, 0);
 	  break;
 	default:
