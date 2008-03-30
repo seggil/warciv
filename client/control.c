@@ -749,7 +749,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 	  break;
 	case DDCA_SABOTAGE:
 	  request_diplomat_action(DIPLOMAT_SABOTAGE, diplomat_id,
-				  victim_id, B_LAST);
+				  victim_id, B_LAST + 1);
 	  break;
 	case DDCA_STEAL_TECH:
 	  request_diplomat_action(DIPLOMAT_STEAL, diplomat_id,
