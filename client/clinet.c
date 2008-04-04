@@ -89,6 +89,7 @@
 #include "pages_g.h"
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
+#include "wc_settings.h"
 
 #include "clinet.h"
 
@@ -139,6 +140,9 @@ static void check_init_async_tables(void)
 **************************************************************************/
 static void close_socket_nomessage(struct connection *pc)
 {
+  if (!client_is_observer() && get_player_ptr() && save_pepsettings_on_exit) {
+    save_all_settings();
+  }
   connection_common_close(pc);
   remove_net_input();
   popdown_races_dialog(); 
