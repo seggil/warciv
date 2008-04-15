@@ -268,18 +268,13 @@ void close_connections_and_socket(void)
 }
 
 /*****************************************************************************
-  Used for errors and other strangeness.  As well as some direct uses, is
-  passed to packet routines as callback for when packet sending has a write
-  error.  Closes the connection cleanly, calling lost_connection_to_client()
-  to clean up server variables, notify other clients, etc.
-
-  NB!! You should almost always use server_break_connection instead of this
-  function.
+  NB!! Never call this function directly. Use server_break_connection
+  instead.
 *****************************************************************************/
 static void server_close_socket_callback(struct connection *pc)
 {
-  lost_connection_to_client(pc);
-  close_connection(pc);
+  /* Do as little as possible here to avoid recursive evil. */
+  pc->is_closing = TRUE;
 }
 
 /*****************************************************************************
@@ -877,6 +872,17 @@ int sniff_packets(void)
           server_break_connection(pconn, ES_LAGGING_CONN);
         }
       }
+    }
+
+    /* Now really close connections marked as 'is_closing'.
+     * Do this here to avoid recursive sending. */
+    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
+      pconn = &connections[i];
+      if (!pconn->used || !pconn->is_closing) {
+        continue;
+      }
+      lost_connection_to_client(pconn);
+      close_connection(pconn);
     }
 
     break;
