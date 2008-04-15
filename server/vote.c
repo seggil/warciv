@@ -375,6 +375,7 @@ static void check_vote(struct vote *pvote)
   int flags;
   double need_pc;
   char cmdline[MAX_LEN_CONSOLE_LINE];
+  const double MY_EPSILON = 0.000001;
 
   assert(vote_list != NULL);
 
@@ -417,7 +418,7 @@ static void check_vote(struct vote *pvote)
      * the voting pool. */
     base = num_voters - pvote->abstain;
 
-    if (base > 0.0) {
+    if (base > MY_EPSILON) {
       yes_pc = (double) pvote->yes / base;
       no_pc = (double) pvote->no / base;
 
@@ -425,10 +426,10 @@ static void check_vote(struct vote *pvote)
       rem_pc = (double) (num_voters - num_cast) / base;
     }
 
-    if (flags & VCF_NODISSENT && no_pc > 0.0) {
+    if (flags & VCF_NODISSENT && no_pc > MY_EPSILON) {
       resolve = TRUE;
     }
-    if (flags & VCF_UNANIMOUS && yes_pc < 1.0) {
+    if (flags & VCF_UNANIMOUS && yes_pc - 1.0 < -MY_EPSILON) {
       resolve = TRUE;
     }
 
@@ -441,19 +442,22 @@ static void check_vote(struct vote *pvote)
             /* Everyone voted. */
             || rem_pc == 0.0;
       } else {
-        /* We have enough yes votes. */
-        resolve = yes_pc > need_pc
+        resolve =
+            /* We have enough yes votes. */
+            (yes_pc - need_pc > MY_EPSILON)
             /* We have too many no votes. */
-            || no_pc >= 1.0 - need_pc
+            || (no_pc - 1.0 + need_pc > MY_EPSILON
+                || fabs(no_pc - 1.0 + need_pc) < MY_EPSILON)
             /* We can't get enough no votes. */
-            || no_pc + rem_pc < 1.0 - need_pc
+            || (no_pc + rem_pc - 1.0 + need_pc < -MY_EPSILON)
             /* We can't get enough yes votes. */
-            || yes_pc + rem_pc <= need_pc;
+            || (yes_pc + rem_pc - need_pc < -MY_EPSILON
+                || fabs(yes_pc + rem_pc - need_pc) < MY_EPSILON);
       }
     }
 
     /* Resolve if everyone voted already. */
-    if (!resolve && rem_pc == 0.0) {
+    if (!resolve && fabs(rem_pc) < MY_EPSILON) {
       resolve = TRUE;
     }
 
@@ -463,7 +467,7 @@ static void check_vote(struct vote *pvote)
     }
 
     /* Resolve this vote if everyone tries to abstain. */
-    if (!resolve && base == 0.0) {
+    if (!resolve && fabs(base) < MY_EPSILON) {
       resolve = TRUE;
     }
   }
@@ -481,14 +485,14 @@ static void check_vote(struct vote *pvote)
   if (flags & VCF_FASTPASS) {
     passed = yes_pc > no_pc && 1.0 - rem_pc > need_pc;
   } else {
-    passed = yes_pc > need_pc;
+    passed = yes_pc - need_pc > MY_EPSILON;
   }
 
   if (passed && flags & VCF_UNANIMOUS) {
-    passed = yes_pc == 1.0;
+    passed = fabs(yes_pc - 1.0) < MY_EPSILON;
   }
   if (passed && flags & VCF_NODISSENT) {
-    passed = no_pc == 0.0;
+    passed = fabs(no_pc) < MY_EPSILON;
   }
 
   if (passed) {
