@@ -290,7 +290,7 @@ void game_init(void)
     game.server.iterplacementcoefficient
         = GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT;
     game.server.maxconnections = GAME_DEFAULT_MAXCONNECTIONS;
-    game.server.maxconnectionsperhost = GAME_DEFAULT_MAXCONNECTIONSPERHOST;
+    game.server.maxhostconnections = GAME_DEFAULT_MAXHOSTCONNECTIONS;
     game.server.teamplacementtype = GAME_DEFAULT_TEAMPLACEMENTTYPE;
     game.server.rated = GAME_DEFAULT_RATED;
     game.server.no_public_links = GAME_DEFAULT_NO_PUBLIC_LINKS;

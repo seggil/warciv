@@ -3471,8 +3471,8 @@ void game_load(struct section_file *file)
           GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
       game.server.maxconnections = secfile_lookup_int_default(file,
           GAME_DEFAULT_MAXCONNECTIONS, "game.maxconnections");
-      game.server.maxconnectionsperhost = secfile_lookup_int_default(file,
-          GAME_DEFAULT_MAXCONNECTIONSPERHOST, "game.maxconnectionsperhost");
+      game.server.maxhostconnections = secfile_lookup_int_default(file,
+          GAME_DEFAULT_MAXHOSTCONNECTIONS, "game.maxhostconnections");
       game.server.bruteforcethreshold = secfile_lookup_int_default(file,
           GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
       game.server.iterplacementcoefficient = secfile_lookup_int_default(file,
@@ -3922,8 +3922,8 @@ void game_save(struct section_file *file)
 		      "game.nuclearwinteron");
   secfile_insert_int(file, game.server.maxconnections,
 		     "game.maxconnections");
-  secfile_insert_int(file, game.server.maxconnectionsperhost,
-		     "game.maxconnectionsperhost");
+  secfile_insert_int(file, game.server.maxhostconnections,
+		     "game.maxhostconnections");
   secfile_insert_int(file, game.server.bruteforcethreshold,
 		     "game.bruteforcethreshold");
   secfile_insert_int(file, game.server.iterplacementcoefficient,

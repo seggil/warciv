@@ -1358,15 +1358,15 @@ struct settings_s settings[] = {
 	  GAME_MIN_MAXCONNECTIONS, GAME_MAX_MAXCONNECTIONS,
           GAME_DEFAULT_MAXCONNECTIONS)
 
-  GEN_INT("maxconnectionsperhost", game.server.maxconnectionsperhost,
+  GEN_INT("maxhostconnections", game.server.maxhostconnections,
 	  SSET_RULES_FLEXIBLE, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Maximum number of connections per host to the server"),
 	  N_("New connection will be rejected if the total number\n"
              "of connections from the same host exceeds\n"
-	     "maxconnectionsperhost.\n"
+	     "maxhostconnections.\n"
              "0 means there is no limit."), NULL,
-	  GAME_MIN_MAXCONNECTIONSPERHOST, GAME_MAX_MAXCONNECTIONSPERHOST,
-          GAME_DEFAULT_MAXCONNECTIONSPERHOST)
+	  GAME_MIN_MAXHOSTCONNECTIONS, GAME_MAX_MAXHOSTCONNECTIONS,
+          GAME_DEFAULT_MAXHOSTCONNECTIONS)
 
   GEN_BOOL("multilinechat", srvarg.allow_multi_line_chat, SSET_RULES_FLEXIBLE,
 	   SSET_INTERNAL, SSET_RARE, SSET_SERVER_ONLY,

@@ -189,7 +189,7 @@ struct civ_game {
     } fcdb;
 
     int maxconnections;
-    int maxconnectionsperhost;
+    int maxhostconnections;
     int bruteforcethreshold;
     int iterplacementcoefficient;
     int teamplacementtype;
@@ -290,9 +290,9 @@ extern bool is_server;
 #define GAME_MIN_MAXCONNECTIONS     0
 #define GAME_MAX_MAXCONNECTIONS     MAX_NUM_CONNECTIONS
 
-#define GAME_DEFAULT_MAXCONNECTIONSPERHOST 4
-#define GAME_MIN_MAXCONNECTIONSPERHOST     0
-#define GAME_MAX_MAXCONNECTIONSPERHOST     MAX_NUM_CONNECTIONS
+#define GAME_DEFAULT_MAXHOSTCONNECTIONS 4
+#define GAME_MIN_MAXHOSTCONNECTIONS     0
+#define GAME_MAX_MAXHOSTCONNECTIONS     MAX_NUM_CONNECTIONS
 
 #define GAME_DEFAULT_TEAMPLACEMENTTYPE 0
 #define GAME_MIN_TEAMPLACEMENTTYPE     0

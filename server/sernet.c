@@ -1002,14 +1002,14 @@ static int server_accept_connection(int sockfd)
   }
 
   sz_strlcpy(ipaddr, inet_ntoa(fromend.sockaddr_in.sin_addr));
-  if (game.server.maxconnectionsperhost > 0) {
+  if (game.server.maxhostconnections > 0) {
     int count = 0;
 
     conn_list_iterate(game.all_connections, pconn) {
       if (strcmp(ipaddr, pconn->server.ipaddr) == 0) {
-	if (++count >= game.server.maxconnectionsperhost) {
+	if (++count >= game.server.maxhostconnections) {
 	  freelog(LOG_NORMAL, _("Maximum number of connections "
-			        "for this host exceeded."));
+			        "for host %s exceeded."), ipaddr);
 	  my_closesocket(new_sock);
 	  return -1;
 	}
