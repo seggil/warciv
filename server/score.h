@@ -20,7 +20,7 @@
  * we set a rating period to be 1 day and calibrate
  * the constant 'c' so that a player's rating becomes
  * completely unreliable (RD=350) if that player does
- * not play for 6 months.
+ * not play for a year.
  *
  * The formula to calculate a new c value is given by
  *
@@ -30,9 +30,9 @@
  * where t_u is the number of ratings periods in
  * the time that it takes for a player's rating to
  * become completely unreliable (in our case t_u =
- * 180, i.e. approx. 180 days in 6 months). */
+ * 365, i.e. the number of days in a year). */
 #define RATING_CONSTANT_SECONDS_PER_RATING_PERIOD 86400
-#define RATING_CONSTANT_C 25.819889
+#define RATING_CONSTANT_C 18.1319365819151
 
 /* ln(10)/400 */
 #define RATING_CONSTANT_Q 0.00575646273
