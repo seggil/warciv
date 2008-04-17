@@ -277,9 +277,7 @@ struct city {
     bool colored;
     int color_index;
 
-    /* Used by traderoute drawing code to avoid drawing
-       internal traderoutes twice */
-    bool traderoute_drawn[NUM_TRADEROUTES];
+    bool traderoute_drawing_disabled;
   } client;
 
   int steal;		      /* diplomats steal once; for spies, gets harder */

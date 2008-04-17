@@ -139,6 +139,7 @@ void city_autonaming_free(void);
 void city_autonaming_add_used_name(const char *city_name);
 void city_autonaming_remove_used_name(const char *city_name);
 void normalize_names_in_selected_cities(void);
+void toggle_traderoute_drawing_in_selected_cities(void);
 
 void link_marks_init(void);
 void link_marks_free(void);

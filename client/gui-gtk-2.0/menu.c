@@ -1175,6 +1175,19 @@ static void callback_view_show_fog_of_war(GtkToggleAction *action,
 /****************************************************************
   ...
 *****************************************************************/
+static void
+callback_view_toggle_selected_city_traderoutes(GtkAction *action,
+                                               gpointer userdata)
+{
+  toggle_traderoute_drawing_in_selected_cities();
+  menu_toggle_set_active(toggle_action_group_view,
+                         "VIEW_SHOW_CITY_TRADEROUTES",
+                         draw_city_traderoutes);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
 static const char *load_menu_view(void)
 {
   static char buf[2048];
@@ -1183,7 +1196,10 @@ static const char *load_menu_view(void)
     {"VIEW", NULL, _("_View"), NULL, NULL, NULL},
     {"VIEW_IMPROVEMENTS", NULL, _("_Improvements"), NULL, NULL, NULL},
     {"VIEW_CENTER_VIEW", NULL, _("Center _View"),
-     "c", _("Center _View"), G_CALLBACK(callback_view_center_view)}
+     "c", _("Center _View"), G_CALLBACK(callback_view_center_view)},
+    {"VIEW_TOGGLE_SELECTED_CITY_TRADEROUTES", NULL, _("Toggle Selected City Traderoutes"),
+      "<Shift>r", _("Toggle Selected City Traderoutes"),
+      G_CALLBACK(callback_view_toggle_selected_city_traderoutes)}
   };
 
   GtkToggleActionEntry toggle_entries_view[] = {
@@ -1265,6 +1281,7 @@ static const char *load_menu_view(void)
               "<menuitem action=\"VIEW_SHOW_CITY_PRODUCTIONS\" />\n"
               "<menuitem action=\"VIEW_SHOW_CITY_PRODUCTION_BUY_COST\" />\n"
               "<menuitem action=\"VIEW_SHOW_CITY_TRADEROUTES\" />\n"
+              "<menuitem action=\"VIEW_TOGGLE_SELECTED_CITY_TRADEROUTES\" />\n"
               "<separator/>\n"
               "<menuitem action=\"VIEW_SHOW_TERRAIN\" />\n"
               "<menuitem action=\"VIEW_SHOW_COASTLINE\" />\n"

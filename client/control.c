@@ -1517,11 +1517,20 @@ void request_toggle_city_production_buy_cost(void)
 **************************************************************************/
 void request_toggle_city_traderoutes(void)
 {
+  struct player *me = get_player_ptr();
+
   if (!can_client_change_view()) {
     return;
   }
 
   draw_city_traderoutes ^= 1;
+
+  if (me != NULL) {
+    city_list_iterate(me->cities, pcity) {
+      pcity->client.traderoute_drawing_disabled = !draw_city_traderoutes;
+    } city_list_iterate_end;
+  }
+
   update_map_canvas_visible(MUT_NORMAL);
 }
 

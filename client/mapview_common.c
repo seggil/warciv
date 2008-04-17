@@ -2741,29 +2741,65 @@ void init_mapcanvas_and_overview(void)
 {
 }
 
-#define draw_trade_routes(list, color)				    \
-if (list) {							    \
-  trade_route_list_iterate(*(list), ptr) {			    \
-    if (ptr->pc1 != src_pcity) {				    \
-      continue;							    \
-    }								    \
-								    \
-    dest_pcity = ptr->pc2;					    \
-    if (tile_visible_mapcanvas(src_pcity->tile)			    \
-	|| tile_visible_mapcanvas(dest_pcity->tile)) {		    \
-      tile_to_canvas_pos(&canvas_x, &canvas_y, src_pcity->tile);    \
-      canvas_x += NORMAL_TILE_WIDTH / 2;			    \
-      canvas_y += NORMAL_TILE_HEIGHT / 2;			    \
-								    \
-      tile_to_canvas_pos(&canvas_x2, &canvas_y2, dest_pcity->tile); \
-      canvas_x2 += NORMAL_TILE_WIDTH / 2;			    \
-      canvas_y2 += NORMAL_TILE_HEIGHT / 2;			    \
-								    \
-      canvas_put_line(mapview_canvas.store, color,		    \
-		      LINE_BORDER, canvas_x, canvas_y,		    \
-		      canvas_x2 - canvas_x, canvas_y2 - canvas_y);  \
-    }								    \
-  } trade_route_list_iterate_end;				    \
+/**************************************************************************
+  ...
+**************************************************************************/
+static void draw_traderoute_line(struct city *pcity_src,
+                                 struct city *pcity_dest,
+                                 enum color_std color)
+{
+  int canvas_x, canvas_y, canvas_x2, canvas_y2;
+  struct city *tmp;
+  struct tile *ptile1, *ptile2;
+
+  if (pcity_src == NULL || pcity_dest == NULL) {
+    return;
+  }
+
+  if (pcity_src->id < pcity_dest->id) {
+    tmp = pcity_src;
+    pcity_src = pcity_dest;
+    pcity_dest = tmp;
+  }
+
+  if (pcity_src->client.traderoute_drawing_disabled
+      && pcity_dest->client.traderoute_drawing_disabled) {
+    return;
+  }
+
+  if (pcity_src->client.traderoute_drawing_disabled
+      && pcity_dest->owner != get_player_idx()) {
+    return;
+  }
+
+  if (pcity_dest->client.traderoute_drawing_disabled
+      && pcity_src->owner != get_player_idx()) {
+    return;
+  }
+
+  ptile1 = pcity_src->tile;
+  ptile2 = pcity_dest->tile;
+
+  if (ptile1 == NULL || ptile2 == NULL) {
+    return;
+  }
+
+  if (!tile_visible_mapcanvas(ptile1)
+      && !tile_visible_mapcanvas(ptile2)) {
+    return;
+  }
+
+  tile_to_canvas_pos(&canvas_x, &canvas_y, ptile1);
+  canvas_x += NORMAL_TILE_WIDTH / 2;
+  canvas_y += NORMAL_TILE_HEIGHT / 2;
+
+  tile_to_canvas_pos(&canvas_x2, &canvas_y2, ptile2);
+  canvas_x2 += NORMAL_TILE_WIDTH / 2;
+  canvas_y2 += NORMAL_TILE_HEIGHT / 2;
+
+  canvas_put_line(mapview_canvas.store, color, LINE_BORDER,
+                  canvas_x, canvas_y, canvas_x2 - canvas_x,
+                  canvas_y2 - canvas_y);
 }
 
 /**************************************************************************
@@ -2774,67 +2810,34 @@ if (list) {							    \
 **************************************************************************/
 static void draw_traderoutes_for_city(struct city *src_pcity)
 {
-  int i, canvas_x, canvas_y, canvas_x2, canvas_y2;
+  int i;
   struct city *dest_pcity;
 
-  for (i=0; i<NUM_TRADEROUTES; i++) {
-    if (src_pcity->trade[i] == -1)
-      continue;
-
-    if (src_pcity->client.traderoute_drawn[i]) {
-      src_pcity->client.traderoute_drawn[i] = FALSE;
+  for (i = 0; i < NUM_TRADEROUTES; i++) {
+    if (src_pcity->trade[i] == -1) {
       continue;
     }
 
-    dest_pcity = find_city_by_id (src_pcity->trade[i]);
+    dest_pcity = find_city_by_id(src_pcity->trade[i]);
     if (dest_pcity == NULL) {
       continue;
     }
 
-    if (tile_visible_mapcanvas (src_pcity->tile)
-	|| tile_visible_mapcanvas (dest_pcity->tile)) {
-      tile_to_canvas_pos(&canvas_x, &canvas_y, src_pcity->tile);
-      canvas_x += NORMAL_TILE_WIDTH / 2;
-      canvas_y += NORMAL_TILE_HEIGHT / 2;
-  
-      tile_to_canvas_pos(&canvas_x2, &canvas_y2, dest_pcity->tile);
-      canvas_x2 += NORMAL_TILE_WIDTH / 2;
-      canvas_y2 += NORMAL_TILE_HEIGHT / 2;
-  
-      canvas_put_line(mapview_canvas.store, COLOR_STD_GROUND, LINE_BORDER,
-                      canvas_x, canvas_y, canvas_x2-canvas_x, canvas_y2-canvas_y);
-    }
-    
-    if (dest_pcity->owner == get_player_idx()) {
-      int j;
-      for (j = 0; j < NUM_TRADEROUTES; j++) {
-        if (dest_pcity->trade[j] == src_pcity->id) {
-          dest_pcity->client.traderoute_drawn[j] = TRUE;
-          break;
-        }
-      }
-    } /* eww */
+    draw_traderoute_line(src_pcity, dest_pcity,
+                         COLOR_STD_GROUND);
   }
 
   trade_route_list_iterate(src_pcity->trade_routes, ptr) {
+    if (ptr == NULL || ptr->pc1 == NULL || ptr->pc2 == NULL) {
+      continue;
+    }
     if (ptr->pc1 != src_pcity) {
       continue;
     }
     dest_pcity = ptr->pc2;
-    if (tile_visible_mapcanvas(src_pcity->tile)
-	|| tile_visible_mapcanvas(dest_pcity->tile)) {
-      tile_to_canvas_pos(&canvas_x, &canvas_y, src_pcity->tile);
-      canvas_x += NORMAL_TILE_WIDTH / 2;
-      canvas_y += NORMAL_TILE_HEIGHT / 2;
 
-      tile_to_canvas_pos(&canvas_x2, &canvas_y2, dest_pcity->tile);
-      canvas_x2+=NORMAL_TILE_WIDTH / 2;
-      canvas_y2+=NORMAL_TILE_HEIGHT / 2;
-			
-      canvas_put_line(mapview_canvas.store, COLOR_STD_YELLOW,
-		      LINE_BORDER, canvas_x, canvas_y,
-		      canvas_x2 - canvas_x, canvas_y2 - canvas_y);
-    }
+    draw_traderoute_line(src_pcity, dest_pcity,
+                         COLOR_STD_YELLOW);
   } trade_route_list_iterate_end;
 }
 
@@ -2844,31 +2847,16 @@ static void draw_traderoutes_for_city(struct city *src_pcity)
 static void draw_trade_route_list(const struct trade_route_list *ptrl,
 				  enum color_std color)
 {
-  struct tile *pt1, *pt2;
-  int canvas_x, canvas_y, canvas_x2, canvas_y2;
+  if (ptrl == NULL) {
+    return;
+  }
 
   trade_route_list_iterate(ptrl, ptr) {
-    if (tile_visible_mapcanvas(ptr->pc1->tile)
-	|| tile_visible_mapcanvas(ptr->pc2->tile)) {
-      if (ptr->pc1->id > ptr->pc2->id) {
-        pt1 = ptr->pc1->tile;
-        pt2 = ptr->pc2->tile;
-      } else {
-        pt1 = ptr->pc2->tile;
-        pt2 = ptr->pc1->tile;
-      }
-      tile_to_canvas_pos(&canvas_x, &canvas_y, pt1);
-      canvas_x += NORMAL_TILE_WIDTH / 2;
-      canvas_y += NORMAL_TILE_HEIGHT / 2;
-
-      tile_to_canvas_pos(&canvas_x2, &canvas_y2, pt2);
-      canvas_x2 += NORMAL_TILE_WIDTH / 2;
-      canvas_y2 += NORMAL_TILE_HEIGHT / 2;
-
-      canvas_put_line(mapview_canvas.store, color, LINE_BORDER,
-		      canvas_x, canvas_y,
-		      canvas_x2 - canvas_x, canvas_y2 - canvas_y);
+    if (!ptr || !ptr->pc1 || !ptr->pc2) {
+      continue;
     }
+
+    draw_traderoute_line(ptr->pc1, ptr->pc2, color);
   } trade_route_list_iterate_end;
 }
 

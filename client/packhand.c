@@ -753,7 +753,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   pcity->client.occupied = packet->occupied;
   pcity->client.happy = packet->happy;
   pcity->client.unhappy = packet->unhappy;
-  memset (pcity->client.traderoute_drawn, 0, sizeof(bool) * NUM_TRADEROUTES);
+  pcity->client.traderoute_drawing_disabled = FALSE;
 
   pcity->ppl_happy[4] = 0;
   pcity->ppl_content[4] = 0;

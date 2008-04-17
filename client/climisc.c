@@ -2135,3 +2135,30 @@ void voteinfo_queue_next(void)
     voteinfo_queue_current_index = 0;
   }
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void toggle_traderoute_drawing_in_selected_cities(void)
+{
+  struct player *me = get_player_ptr();
+
+  if (!me || !tiles_hilited_cities) {
+    return;
+  }
+
+  if (!draw_city_traderoutes) {
+    city_list_iterate(me->cities, pcity) {
+      pcity->client.traderoute_drawing_disabled = TRUE;
+    } city_list_iterate_end;
+    draw_city_traderoutes = TRUE;
+  }
+
+  city_list_iterate(me->cities, pcity) {
+    if (is_city_hilited(pcity)) {
+      pcity->client.traderoute_drawing_disabled ^= 1;
+    }
+  } city_list_iterate_end;
+
+  update_map_canvas_visible(MUT_NORMAL);
+}
