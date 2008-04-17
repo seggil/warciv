@@ -3146,13 +3146,12 @@ static bool vote_command(struct connection *caller,
     vote_list_iterate(vote_list, pvote) {
       i++;
       cmd_reply(CMD_VOTE, caller, C_COMMENT,
-                _("Vote %d \"%s\" (needs %0.0f%%%s%s%s): %d for, "
+                _("Vote %d \"%s\" (needs %0.0f%%%s%s): %d for, "
                   "%d against, and %d abstained out of %d players."),
                 pvote->vote_no, pvote->cmdline,
                 pvote->need_pc * 100 + 1,
                 pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
                 pvote->flags & VCF_NODISSENT ? _(" no dissent") : "",
-                pvote->flags & VCF_FASTPASS ? _(" participation") : "",
                 pvote->yes, pvote->no, pvote->abstain, game.info.nplayers);
     } vote_list_iterate_end;
 
@@ -7284,21 +7283,10 @@ static void show_help_command(struct connection *caller,
     char buf[1024];
     buf[0] = '\0';
 
-    if (cmd->vote_flags & VCF_FASTPASS) {
-      if (cmd->vote_percent > 0) {
-        cat_snprintf(buf, sizeof(buf),
-                     _("Passes by majority once more than "
-                       "%d%% of players have voted. "),
-                     cmd->vote_percent);
-      } else {
-        sz_strlcat(buf, _("Passes by majority vote. "));
-      }
-    } else {
-      if (cmd->vote_percent > 0) {
-        cat_snprintf(buf, sizeof(buf),
-                     _("Requires more than %d%% in favor to pass. "),
-                     cmd->vote_percent);
-      }
+    if (cmd->vote_percent > 0) {
+      cat_snprintf(buf, sizeof(buf),
+                   _("Requires more than %d%% in favor to pass. "),
+                   cmd->vote_percent);
     }
 
     if (cmd->vote_flags & VCF_NODISSENT) {

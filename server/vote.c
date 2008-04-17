@@ -434,26 +434,17 @@ static void check_vote(struct vote *pvote)
     }
 
     if (!resolve && !(flags & VCF_WAITFORALL)) {
-      if (flags & VCF_FASTPASS) {
-        /* We have enough votes and yes is in majority. */
-        resolve = (yes_pc > no_pc && 1.0 - rem_pc > need_pc)
-            /* Can't get enough yes votes from the remainder. */
-            || yes_pc + rem_pc <= no_pc
-            /* Everyone voted. */
-            || rem_pc == 0.0;
-      } else {
-        resolve =
-            /* We have enough yes votes. */
-            (yes_pc - need_pc > MY_EPSILON)
-            /* We have too many no votes. */
-            || (no_pc - 1.0 + need_pc > MY_EPSILON
-                || fabs(no_pc - 1.0 + need_pc) < MY_EPSILON)
-            /* We can't get enough no votes. */
-            || (no_pc + rem_pc - 1.0 + need_pc < -MY_EPSILON)
-            /* We can't get enough yes votes. */
-            || (yes_pc + rem_pc - need_pc < -MY_EPSILON
-                || fabs(yes_pc + rem_pc - need_pc) < MY_EPSILON);
-      }
+      resolve =
+          /* We have enough yes votes. */
+          (yes_pc - need_pc > MY_EPSILON)
+          /* We have too many no votes. */
+          || (no_pc - 1.0 + need_pc > MY_EPSILON
+              || fabs(no_pc - 1.0 + need_pc) < MY_EPSILON)
+          /* We can't get enough no votes. */
+          || (no_pc + rem_pc - 1.0 + need_pc < -MY_EPSILON)
+          /* We can't get enough yes votes. */
+          || (yes_pc + rem_pc - need_pc < -MY_EPSILON
+              || fabs(yes_pc + rem_pc - need_pc) < MY_EPSILON);
     }
 
     /* Resolve if everyone voted already. */
@@ -482,11 +473,7 @@ static void check_vote(struct vote *pvote)
     return;
   }
 
-  if (flags & VCF_FASTPASS) {
-    passed = yes_pc > no_pc && 1.0 - rem_pc > need_pc;
-  } else {
-    passed = yes_pc - need_pc > MY_EPSILON;
-  }
+  passed = yes_pc - need_pc > MY_EPSILON;
 
   if (passed && flags & VCF_UNANIMOUS) {
     passed = fabs(yes_pc - 1.0) < MY_EPSILON;
@@ -697,14 +684,7 @@ int describe_vote(struct vote *pvote, char *buf, int buflen)
   /* NB We don't handle votes with multiple
    * flags here. */
   
-  if (pvote->flags & VCF_FASTPASS) {
-    ret = my_snprintf(buf, buflen,
-        /* TRANS: Describing a new vote that is resolved (i.e.
-         * checked that it can pass) when the given percentage of
-         * players have voted. */
-        _("%s (needs %0.0f%% participation)."),
-        pvote->cmdline, MIN(100.0, pvote->need_pc * 100.0 + 1));
-  } else if (pvote->flags & VCF_UNANIMOUS) {
+  if (pvote->flags & VCF_UNANIMOUS) {
     ret = my_snprintf(buf, buflen,
         /* TRANS: Describing a new vote that requires unanimous
          * agreement of the given percentage of players to pass. */
