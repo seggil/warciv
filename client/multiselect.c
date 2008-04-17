@@ -619,9 +619,9 @@ void multi_select_copy(int dest, int src)
       set_unit_focus(multi_selection[0].punit_focus);
     } else {
       update_unit_info_label(get_unit_in_focus());
-      my_snprintf(buf, sizeof(buf),
-                  _("Warclient: Multi-selection %d selected."), src);
     }
+    my_snprintf(buf, sizeof(buf),
+		_("Warclient: Multi-selection %d selected."), src);
   } else {
     int size = multi_select_size(dest);
     my_snprintf(buf, sizeof(buf),
