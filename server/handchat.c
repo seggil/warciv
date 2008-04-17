@@ -164,10 +164,11 @@ static void chat_msg_to_player_multi(struct connection *sender,
 
   my_snprintf(message, sizeof(message), "[%s] %s", sender_name, msg);
   conn_list_iterate(pdest->connections, dest_conn) {
-    if (dest_conn != sender) {
-      dsend_packet_chat_msg(dest_conn, message,
-			    -1, -1, E_NOEVENT, sender->id);
+    if (dest_conn->observer || dest_conn == sender) {
+      continue;
     }
+    dsend_packet_chat_msg(dest_conn, message,
+                          -1, -1, E_NOEVENT, sender->id);
   } conn_list_iterate_end;
 
   con_write (C_COMMENT, "[%s -> %s] %s", sender_name, pdest->name, msg);
