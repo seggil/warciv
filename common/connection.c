@@ -59,6 +59,8 @@ char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
   "username"
 };
 
+static void clear_wgen(struct connection *pconn);
+
 /**************************************************************************
   Command access levels for client-side use; at present, they are only
   used to control access to server commands typed at the client chatline.
@@ -744,6 +746,8 @@ void connection_common_close(struct connection *pconn)
     ignore_list_free(pconn->server.ignore_list);
     pconn->server.ignore_list = NULL;
   }
+
+  clear_wgen(pconn);
 }
 
 /**************************************************************************
