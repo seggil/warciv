@@ -575,6 +575,15 @@ int sniff_packets(void)
       return 0;
     }
 
+    /* Generate connection write data. */
+    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
+      pconn = &connections[i];
+      if (!pconn->used) {
+        continue;
+      }
+      connection_generate_write_data(pconn);
+    }
+
     tv.tv_sec = 1;
     tv.tv_usec = 0;
 
@@ -845,7 +854,6 @@ int sniff_packets(void)
 	} /* decode packet loop */
       } /* connection iterate */
 
-      
       /* Handle user connection write readiness. */
       /* FIXME Code duplicated in force_flush_packets. */
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {

@@ -153,6 +153,14 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn);
     TYPED_LIST_ITERATE(struct conn_pattern, alist, ap)
 #define ignore_list_iterate_end  LIST_ITERATE_END
 
+typedef int (*data_generator_func)(void *context);
+typedef void (*context_free_func)(void *context);
+struct write_data_generator {
+  data_generator_func datagen;
+  void *context;
+  context_free_func ctxfree;
+};
+
 /***********************************************************
   The connection struct represents a single client or server
   at the other end of a network connection.
@@ -171,6 +179,8 @@ struct connection {
   bool observer;
   struct socket_packet_buffer *buffer;
   struct socket_packet_buffer *send_buffer;
+
+  struct write_data_generator *wgen;
 
   /* Cumulative fractional seconds that we have unsuccesfully
    * waited for this connection to become write ready. Reset
@@ -352,6 +362,12 @@ void conn_clear_packet_cache(struct connection *pconn);
 const char *conn_description(const struct connection *pconn);
 
 int get_next_request_id(int old_request_id);
+
+void connection_set_data_generator(struct connection *pconn,
+                                   data_generator_func datagen,
+                                   void *context,
+                                   context_free_func);
+void connection_generate_write_data(struct connection *pconn);
 
 extern const char blank_addr_str[];
 
