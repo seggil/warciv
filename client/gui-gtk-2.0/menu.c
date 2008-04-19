@@ -6586,7 +6586,7 @@ void init_menus(void)
     menu_set_visible(action_group_government, "GOVERNMENT", FALSE);
     menu_set_visible(action_group_view, "VIEW", FALSE);
     menu_set_visible(action_group_order, "ORDER", FALSE);
-    menu_set_visible(action_group_delayed_goto, "DELAYED GOTO", FALSE);
+    menu_set_visible(action_group_delayed_goto, "DELAYED_GOTO", FALSE);
     menu_set_visible(action_group_airlift, "AIRLIFT", FALSE);
     menu_set_visible(action_group_auto_caravan, "AUTO_CARAVAN", FALSE);
     menu_set_visible(action_group_multi_selection, "MULTI_SELECTION", FALSE);
