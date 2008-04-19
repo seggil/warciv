@@ -57,6 +57,7 @@ static GtkWidget *players_int_command;
 static GtkWidget *players_meet_command;
 static GtkWidget *players_war_command;
 static GtkWidget *players_vision_command;
+static GtkWidget *players_ignore_diplomacy_command;
 static GtkWidget *players_sship_command;
 static GtkListStore *store;
 static GtkTreeModel *model;
@@ -71,6 +72,8 @@ static void players_intel_callback(GtkMenuItem *item, gpointer data);
 static void players_sship_callback(GtkMenuItem *item, gpointer data);
 static void players_ai_toggle_callback(GtkMenuItem *item, gpointer data);
 static void players_ai_skill_callback(GtkMenuItem *item, gpointer data);
+static void players_ignore_diplomacy_toggled(GtkCheckMenuItem *item,
+                                             gpointer data);
 
 
 static void update_views(void);
@@ -111,6 +114,7 @@ static void update_players_menu(void)
 {
   GtkTreeModel *model;
   GtkTreeIter it;
+  GtkWidget *item;
 
   if (gtk_tree_selection_get_selected(players_selection, &model, &it)) {
     struct player *plr;
@@ -142,11 +146,20 @@ static void update_players_menu(void)
 
     gtk_widget_set_sensitive(players_meet_command, can_meet_with_player(plr));
     gtk_widget_set_sensitive(players_int_command, can_intel_with_player(plr));
+
+    item = players_ignore_diplomacy_command;
+    gtk_widget_set_sensitive(item, can_meet_with_player(plr));
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item),
+                                   player_get_ignore_diplomacy(plr));
     return;
   }
 
   gtk_widget_set_sensitive(players_meet_command, FALSE);
   gtk_widget_set_sensitive(players_int_command, FALSE);
+
+  item = players_ignore_diplomacy_command;
+  gtk_widget_set_sensitive(item, FALSE);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), FALSE);
 }
 
 /**************************************************************************
@@ -385,9 +398,17 @@ void create_players_dialog(void)
   gtk_widget_set_sensitive(players_war_command, FALSE);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), players_war_command);
 
-  players_vision_command=gtk_menu_item_new_with_mnemonic(_("_Withdraw vision"));
+  players_vision_command=gtk_menu_item_new_with_mnemonic(_("_Withdraw Vision"));
   gtk_widget_set_sensitive(players_vision_command, FALSE);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), players_vision_command);
+
+  item = gtk_check_menu_item_new_with_label(_("Ignore Diplomacy"));
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), FALSE);
+  gtk_widget_set_sensitive(item, FALSE);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "toggled",
+      G_CALLBACK(players_ignore_diplomacy_toggled), NULL);
+  players_ignore_diplomacy_command = item;
 
   sep = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), sep);
@@ -601,6 +622,7 @@ void players_meet_callback(GtkMenuItem *item, gpointer data)
 
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
 
+    player_set_ignore_diplomacy(get_player(plrno), FALSE);
     dsend_packet_diplomacy_init_meeting_req(&aconnection, plrno);
   }
 }
@@ -638,6 +660,30 @@ void players_vision_callback(GtkMenuItem *item, gpointer data)
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
     dsend_packet_diplomacy_cancel_pact(&aconnection, plrno, CLAUSE_VISION);
   }
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void players_ignore_diplomacy_toggled(GtkCheckMenuItem *item,
+                                             gpointer data)
+{
+  GtkTreeModel *model;
+  GtkTreeIter it;
+  gint plrno;
+  gboolean active;
+
+  if (!gtk_tree_selection_get_selected(players_selection, &model, &it)) {
+    return;
+  }
+
+  gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
+  if (!is_valid_player_id(plrno)) {
+    return;
+  }
+
+  active = gtk_check_menu_item_get_active(item);
+  player_set_ignore_diplomacy(get_player(plrno), active);
 }
 
 /**************************************************************************

@@ -123,6 +123,7 @@ void player_init(struct player *plr)
     plr->diplstates[i].has_reason_to_cancel = 0;
     plr->diplstates[i].contact_turns_left = 0;
   }
+  plr->ignore_diplomacy = FALSE;
   plr->city_style=0;            /* should be first basic style */
   plr->ai.control=FALSE;
   plr->ai.tech_goal = A_UNSET;
@@ -876,4 +877,26 @@ int player_get_username(const struct player *pplayer,
   }
 
   return len;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+bool player_get_ignore_diplomacy(const struct player *pplayer)
+{
+  if (pplayer == NULL) {
+    return FALSE;
+  }
+  return pplayer->ignore_diplomacy;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+void player_set_ignore_diplomacy(struct player *pplayer, bool value)
+{
+  if (pplayer == NULL) {
+    return;
+  }
+  pplayer->ignore_diplomacy = value;
 }

@@ -208,6 +208,7 @@ struct player {
   int embassy;
   int reputation;
   struct player_diplstate diplstates[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
+  bool ignore_diplomacy; /* Used by client for other players. */
   int city_style;
   struct unit_list *units;
   struct city_list *cities;
@@ -374,5 +375,8 @@ int player_get_username(const struct player *pplayer,
                         char *outbuf, int maxlen);
 
 const char *name_of_skill_level(int level);
+
+bool player_get_ignore_diplomacy(const struct player *pplayer);
+void player_set_ignore_diplomacy(struct player *pplayer, bool ignore);
 
 #endif  /* FC__PLAYER_H */

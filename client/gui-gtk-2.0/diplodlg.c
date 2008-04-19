@@ -110,7 +110,21 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
 *****************************************************************/
 void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
 {
-  popup_diplomacy_dialog(counterpart);
+  struct player *pplayer;
+  
+  if (!is_valid_player_id(counterpart)) {
+    return;
+  }
+  pplayer = get_player(counterpart);
+  if (pplayer == NULL) {
+    return;
+  }
+  if (player_get_ignore_diplomacy(pplayer)) {
+    dsend_packet_diplomacy_cancel_meeting_req(&aconnection,
+                                              counterpart);
+  } else {
+    popup_diplomacy_dialog(counterpart);
+  }
 }
 
 
