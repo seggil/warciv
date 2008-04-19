@@ -560,6 +560,11 @@ void load_ruleset_specific_options(void)
   struct section_file sf;
   char *name;
   int i;
+  struct player *me = get_player_ptr();
+
+  if (me == NULL) {
+    return;
+  }
 
   name = option_file_name();
   if (!name) {
@@ -571,14 +576,14 @@ void load_ruleset_specific_options(void)
 
   /* load global worklists */
   for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-    get_player_ptr()->worklists[i].is_valid =
+    me->worklists[i].is_valid =
 	secfile_lookup_bool_default(&sf, FALSE,
 				    "worklists.worklist%d.is_valid", i);
-    strcpy(get_player_ptr()->worklists[i].name,
+    strcpy(me->worklists[i].name,
            secfile_lookup_str_default(&sf, "",
                                       "worklists.worklist%d.name", i));
     load_global_worklist(&sf, "worklists.worklist%d", i, 
-                         &(get_player_ptr()->worklists[i]));
+                         &(me->worklists[i]));
   }
 
   section_file_free(&sf);
@@ -594,6 +599,7 @@ void save_options(void)
   char output_buffer[256];
   view_option *v;
   int i;
+  struct player *me = get_player_ptr();
 
   if(!name) {
     append_output_window(_("Save failed, cannot find a filename."));
@@ -641,15 +647,17 @@ void save_options(void)
                         player_dlg_columns[i].tagname);
   }
 
-  /* insert global worklists */
-  for(i = 0; i < MAX_NUM_WORKLISTS; i++){
-    if (get_player_ptr()->worklists[i].is_valid) {
-      secfile_insert_bool(&sf, get_player_ptr()->worklists[i].is_valid,
-			  "worklists.worklist%d.is_valid", i);
-      secfile_insert_str(&sf, get_player_ptr()->worklists[i].name,
-                         "worklists.worklist%d.name", i);
-      save_global_worklist(&sf, "worklists.worklist%d", i, 
-                           &(get_player_ptr()->worklists[i]));
+  if (me != NULL) {
+    /* insert global worklists */
+    for(i = 0; i < MAX_NUM_WORKLISTS; i++){
+      if (me->worklists[i].is_valid) {
+        secfile_insert_bool(&sf, me->worklists[i].is_valid,
+                            "worklists.worklist%d.is_valid", i);
+        secfile_insert_str(&sf, me->worklists[i].name,
+                           "worklists.worklist%d.name", i);
+        save_global_worklist(&sf, "worklists.worklist%d", i, 
+                             &(me->worklists[i]));
+      }
     }
   }
 
