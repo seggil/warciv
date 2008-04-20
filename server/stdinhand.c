@@ -4110,12 +4110,6 @@ static bool take_command(struct connection *caller, char *str, bool check)
   struct player *pplayer = NULL;
   bool res = FALSE;
 
-  if (server_state == GAME_OVER_STATE) {
-    cmd_reply(CMD_TAKE, caller, C_SYNTAX,
-              _("You cannot take player after the game ended"));
-    return FALSE;
-  }
-
   /******** PART I: fill pconn and pplayer ********/
   sz_strlcpy(buf, str);
   ntokens = get_tokens(buf, arg, 2, TOKEN_DELIMITERS);
