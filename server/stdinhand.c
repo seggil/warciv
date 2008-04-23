@@ -4683,6 +4683,13 @@ static bool examine_command(struct connection *caller,
     return FALSE;
   }
 
+  if (!fgi->completed && !(caller == NULL
+                           || caller->access_level >= ALLOW_ADMIN)) {
+    cmd_reply(CMD_EXAMINE, caller, C_REJECTED,
+              _("You may not examine game #%d."), id);
+    return FALSE;
+  }
+
   cmd_reply(CMD_EXAMINE, caller, C_COMMENT, "%s", horiz_line);
   cmd_reply(CMD_EXAMINE, caller, C_COMMENT,
             _("Information For Game #%d"), fgi->id);

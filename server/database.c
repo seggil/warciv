@@ -2406,6 +2406,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   }
   sz_strlcpy(fgi->type, row[3] != NULL ? row[3] : _("<not set>"));
   sz_strlcpy(fgi->outcome, row[4] != NULL ? row[4] : _("<not set>"));
+  fgi->completed = row[4] != NULL;
   fgi->created = atol(row[5]);
   if (row[6]) {
     fgi->duration = atol(row[6]) - fgi->created;

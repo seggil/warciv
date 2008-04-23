@@ -83,6 +83,7 @@ struct fcdb_game_info {
   int port;
   char type[32];
   char outcome[64];
+  bool completed;
   time_t created;
   time_t duration;
   int num_turns;
