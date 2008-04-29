@@ -720,24 +720,50 @@ void handle_diplomacy_init_meeting_req(struct player *pplayer,
 void send_diplomatic_meetings(struct connection *dest)
 {
   struct player *pplayer = dest->player;
+  bool player_accept, other_accept;
 
   if (!pplayer) {
     return;
   }
-  players_iterate(other_player) {
-    struct Treaty *ptreaty = find_treaty(pplayer, other_player);
 
-    if (ptreaty) {
-      dsend_packet_diplomacy_init_meeting(dest, pplayer->player_no,
-					  other_player->player_no);
-      clause_list_iterate(ptreaty->clauses, pclause) {
-	dsend_packet_diplomacy_create_clause(dest, pplayer->player_no,
-					     other_player->player_no,
-					     pclause->type,
-					     pclause->from->player_no);
-      } clause_list_iterate_end;
+  conn_list_do_buffer(pplayer->connections);
+  players_iterate(pother) {
+    struct Treaty *ptreaty;
+
+    if (pother == pplayer) {
+      continue;
     }
+    
+    ptreaty = find_treaty(pplayer, pother);
+
+    if (!ptreaty) {
+      continue;
+    }
+
+    dsend_packet_diplomacy_init_meeting(dest, pother->player_no,
+                                        ptreaty->plr0->player_no);
+
+    clause_list_iterate(ptreaty->clauses, pclause) {
+      dsend_packet_diplomacy_create_clause(dest, pother->player_no,
+                                           pclause->from->player_no,
+                                           pclause->type,
+                                           pclause->value);
+    } clause_list_iterate_end;
+
+    if (ptreaty->plr0 == pplayer) {
+      player_accept = ptreaty->accept0;
+      other_accept = ptreaty->accept1;
+    } else {
+      player_accept = ptreaty->accept1;
+      other_accept = ptreaty->accept0;
+    }
+
+    dlsend_packet_diplomacy_accept_treaty(pplayer->connections,
+                                          pother->player_no,
+                                          player_accept,
+                                          other_accept);
   } players_iterate_end;
+  conn_list_do_unbuffer(pplayer->connections);
 }
 
 /**************************************************************************

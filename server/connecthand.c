@@ -474,6 +474,10 @@ void establish_new_connection(struct connection *pconn)
   send_running_votes(pconn);
   send_updated_vote_totals(NULL);
 
+  if (server_state == RUN_GAME_STATE) {
+    send_diplomatic_meetings(pconn);
+  }
+
   if (conn_list_size(game.est_connections) == 1) {
     /* First connection
      * Replace "restarting in x seconds" meta message */
@@ -698,16 +702,6 @@ void lost_connection_to_client(struct connection *pconn)
      * At other times, the conn info (send_conn_info) is used by the client
      * to display player information.  See establish_new_connection(). */
     send_player_info(pplayer, NULL);
-  }
-
-  /* Cancel diplomacy meetings */
-  if (!pplayer->is_connected) { /* may be still true if multiple connections */
-    players_iterate(other_player) {
-      if (find_treaty(pplayer, other_player)) {
-	handle_diplomacy_cancel_meeting_req(pplayer,
-					    other_player->player_no);
-      }
-    } players_iterate_end;
   }
 
   if (game.server.is_new_game && !pplayer->is_connected	/* eg multiple controllers */
