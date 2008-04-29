@@ -2275,7 +2275,7 @@ void voteinfo_gui_update(void)
   struct voteinfo_bar *vib = NULL;
   struct voteinfo *vi = NULL;
   char buf[512], status[128], ordstr[128], color[32];
-  bool running;
+  bool running, need_scroll;
   gchar *escaped_desc, *escaped_user;
 
   if (get_client_page() == PAGE_START) {
@@ -2373,13 +2373,16 @@ void voteinfo_gui_update(void)
   gtk_widget_set_sensitive(vib->no_button, running);
   gtk_widget_set_sensitive(vib->abstain_button, running);
 
+  need_scroll = !GTK_WIDGET_VISIBLE(vib->box)
+    && chatline_is_scrolled_to_bottom();
+
   gtk_widget_show_all(vib->box);
 
   if (vote_count <= 1) {
     gtk_widget_hide(vib->next_button);
   }
 
-  if (!always_show_votebar && vote_count == 1) {
+  if (need_scroll) {
     /* Showing the votebar when it was hidden
      * previously makes the chatline scroll up. */
     queue_chatline_scroll_to_bottom();
