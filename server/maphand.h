@@ -82,7 +82,6 @@ void map_set_known(struct tile *ptile, struct player *pplayer);
 void map_clear_known(struct tile *ptile, struct player *pplayer);
 void map_know_all(struct player *pplayer);
 void map_know_and_see_all(struct player *pplayer);
-void wg_map_know_and_see_all(struct player *pplayer);
 void show_map_to_all(void);
 
 void player_map_allocate(struct player *pplayer);

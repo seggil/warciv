@@ -49,8 +49,8 @@ static int continent_sizes[MAP_NCONT];
 /* size of a given ocean in tiles */
 static int ocean_sizes[MAP_NCONT];
 
-struct wg_map_know_and_see_all_context {
-  struct connection *pconn;
+struct bg_map_know_and_see_all_context {
+  struct player *player;
   int index;
 };
 
@@ -1036,13 +1036,13 @@ void map_know_and_see_all(struct player *pplayer)
 /**************************************************************************
 ...
 **************************************************************************/
-static struct wg_map_know_and_see_all_context *
-new_wg_map_know_and_see_all_context(struct connection *pconn)
+static struct bg_map_know_and_see_all_context *
+new_bg_map_know_and_see_all_context(struct player *pplayer)
 {
-  struct wg_map_know_and_see_all_context *context;
+  struct bg_map_know_and_see_all_context *context;
 
   context = fc_calloc(1, sizeof(*context));
-  context->pconn = pconn;
+  context->player = pplayer;
 
   return context;
 }
@@ -1050,9 +1050,9 @@ new_wg_map_know_and_see_all_context(struct connection *pconn)
 /**************************************************************************
 ...
 **************************************************************************/
-static void free_wg_map_know_and_see_all_context(void *vc)
+static void free_bg_map_know_and_see_all_context(void *vc)
 {
-  struct wg_map_know_and_see_all_context *context = vc;
+  struct bg_map_know_and_see_all_context *context = vc;
 
   free(context);
 }
@@ -1060,57 +1060,87 @@ static void free_wg_map_know_and_see_all_context(void *vc)
 /**************************************************************************
 ...
 **************************************************************************/
-static int wg_map_know_and_see_all_one_iter(void *vc)
+static bool can_send_more(struct conn_list *dest)
 {
-  struct wg_map_know_and_see_all_context *context = vc;
-  struct connection *pconn;
-  struct tile *ptile;
+  const int MAXSIZE = 4096;
+  int min = MAXSIZE;
 
-  if (context == NULL) {
-    return -1;
+  if (!dest) {
+    return TRUE;
   }
 
-  pconn = context->pconn;
-  if (pconn == NULL || !pconn->used || !pconn->player
-      || pconn->is_closing || pconn->send_buffer == NULL) {
-    return -1;
-  }
-
-  while (context->index < MAX_MAP_INDEX) {
-    ptile = index_to_tile(context->index);
-    if (ptile == NULL) {
-      return -1;
+  conn_list_iterate(dest, pconn) {
+    if (!pconn || pconn->is_closing || !pconn->send_buffer) {
+      continue;
     }
-    unfog_area(pconn->player, ptile, 0);
-    context->index++;
+    min = MIN(min, pconn->send_buffer->ndata);
+  } conn_list_iterate_end;
 
-    if (pconn->send_buffer->ndata >= 4096) {
-      return pconn->send_buffer->ndata;
-    }
-  }
-
-  return 0;
+  return min < MAXSIZE;
 }
 
 /**************************************************************************
 ...
 **************************************************************************/
-void wg_map_know_and_see_all(struct player *pplayer)
+static bool bg_map_know_and_see_all_one_iter(void *vc)
 {
-  struct wg_map_know_and_see_all_context *context;
+  struct bg_map_know_and_see_all_context *context = vc;
+  struct player *pplayer;
+  struct tile *ptile;
+  bool rv;
+  int count;
 
-  conn_list_iterate(pplayer->connections, pconn) {
+  if (context == NULL) {
+    return FALSE;
+  }
 
-    if (pconn->observer || pconn->player == NULL) {
-      continue;
+  pplayer = context->player;
+
+  if (pplayer == NULL) {
+    return FALSE;
+  }
+
+  rv = FALSE;
+  count = 0;
+
+  conn_list_do_buffer(pplayer->connections);
+  while (context->index < MAX_MAP_INDEX) {
+    ptile = index_to_tile(context->index);
+    if (ptile == NULL) {
+      break;
     }
+    unfog_area(pplayer, ptile, 0);
+    context->index++;
 
-    context = new_wg_map_know_and_see_all_context(pconn);
-    connection_set_data_generator(pconn,
-        wg_map_know_and_see_all_one_iter, context,
-        free_wg_map_know_and_see_all_context);
+    if (count % 16 == 0) {
+      if (!can_send_more(pplayer->connections)) {
+        rv = TRUE;
+        break;
+      }
+    } else {
+      count++;
+    }
+  }
+  conn_list_do_unbuffer(pplayer->connections);
 
-  } conn_list_iterate_end;
+  return rv;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void bg_map_know_and_see_all(struct player *pplayer)
+{
+  struct bg_map_know_and_see_all_context *context;
+
+  if (pplayer->is_observer || is_barbarian(pplayer)) {
+    return;
+  }
+
+  context = new_bg_map_know_and_see_all_context(pplayer);
+  register_background_function(bg_map_know_and_see_all_one_iter,
+                               context,
+                               free_bg_map_know_and_see_all_context);
 }
 
 /**************************************************************************
@@ -1121,7 +1151,7 @@ void show_map_to_all(void)
   notify_conn(NULL, _("Server: Please wait patiently while map data "
                       "is being sent."));
   players_iterate(pplayer) {
-    wg_map_know_and_see_all(pplayer);
+    bg_map_know_and_see_all(pplayer);
   } players_iterate_end;
 }
 

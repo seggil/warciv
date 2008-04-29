@@ -59,8 +59,6 @@ char *conn_pattern_type_strs[NUM_CONN_PATTERN_TYPES] = {
   "username"
 };
 
-static void clear_wgen(struct connection *pconn);
-
 /**************************************************************************
   Command access levels for client-side use; at present, they are only
   used to control access to server commands typed at the client chatline.
@@ -746,8 +744,6 @@ void connection_common_close(struct connection *pconn)
     ignore_list_free(pconn->server.ignore_list);
     pconn->server.ignore_list = NULL;
   }
-
-  clear_wgen(pconn);
 }
 
 /**************************************************************************
@@ -883,90 +879,3 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 
   return FALSE;
 }
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static void clear_wgen(struct connection *pconn)
-{
-  struct write_data_generator *wgen;
-
-  if (pconn == NULL) {
-    return;
-  }
-
-  wgen = pconn->wgen;
-
-  if (wgen == NULL) {
-    return;
-  }
-
-  freelog(LOG_DEBUG, "clearing wgen %p pconn=%p", wgen, pconn);
-
-  if (wgen->ctxfree) {
-    wgen->ctxfree(wgen->context);
-  }
-  free(wgen);
-
-  pconn->wgen = NULL;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void connection_generate_write_data(struct connection *pconn)
-{
-  int rv;
-
-  if (!pconn->used || pconn->is_closing
-      || pconn->send_buffer == NULL
-      || pconn->wgen == NULL
-      || pconn->wgen->datagen == NULL) {
-    return;
-  }
-
-  connection_do_buffer(pconn);
-  rv = pconn->wgen->datagen(pconn->wgen->context);
-  connection_do_unbuffer(pconn);
-
-  freelog(LOG_DEBUG, "datagen pconn=%p rv=%d", pconn, rv);
-
-  if (rv <= 0) {
-    clear_wgen(pconn);
-  }
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void connection_set_data_generator(struct connection *pconn,
-                                   data_generator_func datagen,
-                                   void *context,
-                                   context_free_func ctxfree)
-{
-  struct write_data_generator *wgen;
-
-  assert(pconn != NULL);
-  assert(datagen != NULL);
-
-  wgen = pconn->wgen;
-
-  if (wgen != NULL) {
-    freelog(LOG_ERROR, "New data generator assignment removes previous one "
-            "for connection: %s", conn_description(pconn));
-    
-    clear_wgen(pconn);
-  }
-
-  freelog(LOG_DEBUG, "setting datagen %p for connection %p (%s), "
-          "context=%p ctxfree=%p",
-          datagen, pconn, conn_description(pconn), context, ctxfree);
-
-  wgen = fc_calloc(1, sizeof(*wgen));
-  wgen->datagen = datagen;
-  wgen->context = context;
-  wgen->ctxfree = ctxfree;
-
-  pconn->wgen = wgen;
-}
-

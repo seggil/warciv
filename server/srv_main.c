@@ -155,6 +155,25 @@ static unsigned char used_ids[8192]={0};
 /* server initialized flag */
 static bool has_been_srv_init = FALSE;
 
+
+struct bgfc {
+  background_func bgfunc;
+  void *context;
+  context_free_func ctxfree;
+  int id;
+};
+
+#define SPECLIST_TAG bgfc
+#define SPECLIST_TYPE struct bgfc
+#include "speclist.h"
+#define bgfc_list_iterate(alist, ap) \
+    TYPED_LIST_ITERATE(struct bgfc, alist, ap)
+#define bgfc_list_iterate_end  LIST_ITERATE_END
+
+static struct bgfc_list *background_functions;
+static int bgfc_id_counter;
+
+
 /**************************************************************************
   Initialize the game.server.seed.  This may safely be called multiple times.
 **************************************************************************/
@@ -213,6 +232,9 @@ void srv_init(void)
   srvarg.allow_multi_line_chat = FALSE;
 
   srvarg.save_ppm = FALSE;
+
+  background_functions = bgfc_list_new();
+  bgfc_id_counter = 0;
 
   /* mark as initialized */
   has_been_srv_init = TRUE;
@@ -2088,4 +2110,92 @@ void server_free_final(void)
   if (welcome_message) {
     free(welcome_message);
   }
+}
+
+/**************************************************************************
+ ...
+**************************************************************************/
+int register_background_function(background_func bf,
+                                 void *context,
+                                 context_free_func cff)
+{
+  struct bgfc *bc;
+
+  if (bf == NULL) {
+    return 0;
+  }
+
+  bc = fc_malloc(sizeof(*bc));
+  bc->bgfunc = bf;
+  bc->context = context;
+  bc->ctxfree = cff;
+  bc->id = ++bgfc_id_counter;
+
+  bgfc_list_append(background_functions, bc);
+
+  return bc->id;
+}
+
+/**************************************************************************
+ ...
+**************************************************************************/
+static void bgfc_free(struct bgfc *bc)
+{
+  if (!bc) {
+    return;
+  }
+
+  if (bc->ctxfree) {
+    bc->ctxfree(bc->context);
+  }
+
+  memset(bc, 0, sizeof(*bc));
+  free(bc);
+}
+
+/**************************************************************************
+ ...
+**************************************************************************/
+void unregister_background_function(int id)
+{
+  struct bgfc *bc = NULL;
+
+  bgfc_list_iterate(background_functions, p) {
+    if (p->id == id) {
+      bc = p;
+      break;
+    }
+  } bgfc_list_iterate_end;  
+
+  if (bc != NULL) {
+    bgfc_list_unlink(background_functions, bc);
+    bgfc_free(bc);
+  }
+}
+
+/**************************************************************************
+ ...
+**************************************************************************/
+void execute_background_functions(void)
+{
+  struct bgfc_list *del;
+
+  del = bgfc_list_new();
+
+  bgfc_list_iterate(background_functions, bc) {
+    if (!bc || !bc->bgfunc) {
+      continue;
+    }
+    if (!bc->bgfunc(bc->context)) {
+      bgfc_list_append(del, bc);
+    }
+  } bgfc_list_iterate_end;
+
+  bgfc_list_iterate(del, bc) {
+    bgfc_list_unlink(background_functions, bc);
+    bgfc_free(bc);
+  } bgfc_list_iterate_end;
+
+  bgfc_list_unlink_all(del);
+  bgfc_list_free(del);
 }

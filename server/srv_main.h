@@ -110,4 +110,12 @@ Nation_Type_id select_random_nation(const char* class);
 void send_select_nation(struct player *pplayer);
 void mark_nation_as_used(Nation_Type_id nation);
 
+typedef bool (*background_func)(void *context);
+typedef void (*context_free_func)(void *context);
+int register_background_function(background_func bf,
+                                 void *context,
+                                 context_free_func cff);
+void unregister_background_function(int id);
+void execute_background_functions(void);
+
 #endif /* FC__SRV_MAIN_H */
