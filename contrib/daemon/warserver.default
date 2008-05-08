@@ -1,0 +1,21 @@
+#-------------------------------------------------------------------
+# file: /etc/default/warserver
+#  settings for /etc/init.d/warserver and 
+#                    /usr/games/warserverd
+#
+# Thomas Drillich <th@drillich.com> 12/7/2007
+#-------------------------------------------------------------------	
+ENABLED=no					# set to yes to enable warserver
+RUNAS=freeciv					# run as user
+RUNGROUP=games				# run with group id
+RUNDIR=/home/freeciv			# run in directory
+PORTS="5555 5556"				# a blank separated list of portnumbers for civserver
+CIVPUBLISH=yes					# Publish the server to Metaserver
+SYSLOG=yes					# log operation to syslog
+CRASHRELOAD=yes				# automated reload on server crash ?
+CIVSERVER=/usr/games/civserver	# where to find the CIVSERVER
+ENGLISH=yes					# use english for server messages
+CORE=yes						# create coredump
+DEBUG=3						# debug mode 0 - 3
+
+

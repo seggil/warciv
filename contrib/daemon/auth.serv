@@ -1,0 +1,10 @@
+
+/authdb host localhost
+/authdb user <your freeciv db user>
+/authdb password <password for db user>
+/authdb database <database name>
+/authdb guests no
+/authdb newusers yes
+/authdb on
+/fcdb on
+

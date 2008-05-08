@@ -1,0 +1,58 @@
+This is a small HowTo on setting up civservers to run 
+endless in background using SysV init.
+
+Before you install the files create a separate user to run the civservers, eg. freeciv, with group "games" and 
+set the Variable ${RUNAS} to the users name and ${RUNDIR} to users home directory in warserver.default.
+
+Required binaries to run these scripts
+	sh					-- bourne shell or similar
+        start-stop-daemon		-- start programs into background and changing user id and working directory
+							/etc/init.d/warserver
+	/usr/bin/logger		-- log to syslog via shell scripts
+							warserverd ( if not existend it skips logging)
+        civserver				-- the warserver variant
+
+Files:
+	warserver.default - environment variables used by warserver.sysv.sh and warserverd
+		install as /etc/default/warserver
+
+	warserver.sysv.sh -- SysV init script which starts one warserverd for each port
+		install as /etc/init.d/warserver
+                create links from /etc/rc[2-5].d/S99_warserver to  /etc/init.d/warserver to start in that runlevels and
+		create link from /etc/rc6.d/K01_warserver to /etc/init.d/warserver to stop warservers at shutdown
+
+	warserverd -- wrapper which loops endless to start civservers with appropriate parameters
+
+	warserver.serv -- civservers default setup
+		install into /etc/freeciv
+
+	auth.serv	-- athorisation setup readed by warserver.serv
+		install into /etc/freeciv
+
+	action.list	-- default action list 
+		install into ${RUNDIR}
+
+	welcome		-- text which is published to players at login onto civserver
+		install into ${RUNDIR}
+
+Operation:
+Names written as ${NAME} are environment variables defined in /etc/default/warserver.
+
+/etc/init.d/warserver will run by init.d with parameter start at system start, reads /etc/default/warserver and exports
+Variables needed by the warserverd. At start /etc/init.d/warserver will spawn for each portnumber defined in ${PORTS} one
+/usr/games/warserver into background, it changes the uid of the running warserverd to ${RUNAS} and changes working directory
+to ${RUNDIR}.
+
+/usr/games/warserverd loops endless to run civserver on specific port, <portnum>.
+warserverd searches at first for ${RUNDIR}/<portnum>.serv as setup parameter for the civserver, otherwise it will check for
+/etc/freeciv/warserver.serv or ${RUNDIR}/warserver.serv. It creates the directories ${RUNDIR}/logs and ${RUNDIR}/savegames-<portnum>.
+In the directory ${RUNDIR}/logs the civserver will log his operation into cs-<portnum>.log. In the ${RUNDIR}/savegames-<portnum> directory
+the civserver will store savegames of each turn.
+If ${CRASHRELOAD} is set to yes it tries to reload the last running game after a sigseg exit of a civserver.
+
+
+If you like to have different server setups on different ports, just create a file ${RUNDIR}/<portnum>.serv add the line
+	/read /etc/freeciv/warserver.serv
+as first line and then add your changes.
+
+You have to edit auth.serv and /etc/default/warserver to setup the parameters to your needs.

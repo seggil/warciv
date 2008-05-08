@@ -1,0 +1,90 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Welcome to the Warserver %v  running at %h  port %p !
+The local time is %t.
+ ********************************************************************************
+     WARCLIENT is modpack freeciv that enhances the client's control of units and cities.
+  This makes control faster, which is good for multiplayer war games.
+     WARCLIENT modpack is available on Windows and Linux OS. See Warclient site :
+ 
+                        *****************************************
+                        *                                                       *
+                        *   http://freeciv.freeforums.org/    *
+                        *                                                       *
+                        *****************************************
+ 
+                                       WARNING
+ 
+      At the end of each turn, this server make a saving file. Due to my dynamic IP which
+  change about each week and some identification problem, you could ask me to reload
+  your aborted game. Sorry for this disagreement...
+ 
+ ********************************************************************************
+ 
+                   HOWTO GET WARCLIENT SOFTWARE MODPACK
+ 
+ ********************************************************************************
+ For all OS, you can also follow instruction describe in :
+ http://freeciv.freeforums.org/
+ and install yourself warclient but seems we have to do :(
+ 
+ For downloading latest sources :
+ svn co http://svn.gna.org/svn/freeciv-warclient/trunk
+ 
+ ********************************************************************************
+ 
+ For downloading latest warclient for windows :
+ 
+ ********************************************************************************
+ http://download.gna.org/freeciv-warclient/Pepclient02.0.9+0.9.5Devel-setup.exe
+ 
+ For Debian Packages read: http://download.gna.org/freeciv-warclient/
+
+ 
+ ********************************************************************************
+
+                                        PLEASE 
+  
+    - This server is not for micro games, I may end micro games.
+    - Don't change settings without mutual agreement between players.
+    - Be patient in pregame stage or leave.
+    - Beginners must read "http://www.freeciv.org/index.php/A_Succinct_Guide_to_2.09"
+    - Beginners can observe or ask the players, someone will answer.
+    - You need about 3 hours to play a game. Don't start if you don't have time.
+    - Don't run these servers with too many AI. AIs cause lag for all other servers
+      due to CPU usage. AI must be use only for replacing left players.
+ 
+ 
+           Thank you and Have nice game
+ 
+ 
+                               WHAT IS USEFULL TO KNOW                  
+ 
+     Message to specific player : "<playername>:<your message>"
+     Message to yours allies    : ". <your message>"
+     Spectate a player          : /obs <player>
+                  
+     N.B.: Remove brackets <> :)
+ 
+                       COMMANDS' LIST (need / before)
+ 
+    addaction        endgame         metatopic       start       
+    aitoggle         experimental    normal          take         
+    authdb           explain         novice          team       
+    autoteam         firstlevel      observe         timeoutincrease      
+    away             hard            quit            unban      
+    ban              help            read            unignore       
+    clearactionlist  ignore          remove          unloadmap       
+    cmdlevel         list            rfcstyle        vote        
+    create           load            rulesetdir      wall      
+    cut              loadactionlist  save            wfile      
+    debug            loadmap         saveactionlist  wmessage       
+    delaction        metaconnection  score           write                
+    detach           metamessage     serverid       
+    dnslookup        metapatches     set      
+    easy             metaserver      show       
+ 
+     SYNOPSIS AND DESCRIPTION ARE AVAILABLE BY TYPING "/help <command>"
+
+Be nice and have fun,
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

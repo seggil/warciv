@@ -1,0 +1,145 @@
+#!/bin/sh
+#-------------------------------------------------------------------------------------
+# /usr/games/warserverd <portnum>
+#	runs the civserver endless in background
+#      <portnum> is the port which the server should use
+# should be started by /etc/init.d/warserver
+#
+# required envirionment variables:
+#  CIVSERVER set to full pathname to civserver
+#  CIVPUBLISH no|yes -- if yes then this server should be publish 
+#                                     to the metaserver
+#  CRASHRELOAD no|yes -- try to reload last game after sigsegv
+#
+#
+# Thomas Drillich <th@drillich.com> 12/7/2007
+#-------------------------------------------------------------------------------------
+#set -x
+PORT=$1
+# writing savegames to directory, if empty dont write savegames
+SAVEDIR=savegames-$PORT
+#LOGGING -- directory, filename, number of backups
+LOGDIR=logs
+LOGFILE=$LOGDIR/cs-$PORT.log
+NUMLOGS=8
+# the name of setup which should be loaded at default
+DEFAULTSETUP=warserver.serv
+# respawn limit if server exited in less seconds sript will be finished
+RESPAWNLIMIT=5
+# changing umask -- that group can read and make changes
+umask 007
+# ensure that the server uses english for messages
+[ "x$ENGLISH" == "xyes" ] && {
+	export LANG=C
+	export LANGUAGE=C
+}
+
+# compress and rotate logfiles
+rotatelogs() {
+	pre=$1
+	ext=$2
+	for ((i=$NUMLOGS, j=i-1; $j>1; i--, j--)) 
+	do [ -f "$pre.$i.$ext" ] && mv "$pre.$i.$ext" "$pre.$j.$ext"
+	done
+	[ -f "$pre.$ext" ] && mv $pre.$ext $pre.1.$ext
+	[ -f "$pre" ] && gzip $pre
+}
+# log to syslog
+syslog() {
+	what=$1; shift
+	case $what in
+		err*) /usr/bin/logger -p local0.err -t "warserver[$PORT]" $@ ;;
+		debug) /usr/bin/logger -p local0.debug -t "warserver[$PORT]" $@ ;;
+		warn*) /usr/bin/logger -p local0.warning -t "warserver[$PORT]" $@ ;;
+		*) /usr/bin/logger -p local0.info -t "warserver[$PORT]" $@ ;;
+	esac
+}
+# check respawn
+respawncheck() {
+	    dur=$(($2 - $1))
+	    if [ $dur -lt 2 ] 
+	    then $LOG err "server runs only for $dur seconds -- seems errror on cmd -> exiting"
+		     exit 1
+	    else $LOG notice "exit after $dur seconds"
+	    fi
+}
+# build tarball on crash -- for later check
+buildcrashbackup() {
+	if [ "x$CORE" = "xyes" ] # only if coredump is enabled
+	then cb="crash-`date +%Y%m%d%H%M%S`.tar.bz2"
+	        ${LOG} write $cb
+	        [ -f "core" ] && cf=core || cf=''
+		tar cjf $cb  $cf ${SAVEDIR} ${LOGFILE}
+	fi
+}
+# don't log
+nop() { true; }
+# main
+if [ "x$CIVSERVER" == "x" -o ! -x "$CIVSERVER" ]
+then echo "CIVSERVER not set or wrong ($CIVSERVER) --> exiting"
+	exit 1
+fi
+# check PORT
+PORT=`echo $PORT | sed 's|[^[:digit:]]*||g'` # remove non digits
+if [ -z "$PORT" -o $PORT -lt 5000 -o $PORT -gt 65535 ]
+then # invalid port
+       echo "Invalid port selected, $PORT. --> exiting"
+       exit 1
+fi
+# shall I log to syslog ?
+if [ "x$SYSLOG" = "xyes" -a -x "/usr/bin/logger" ]
+then LOG=syslog
+else LOG=nop
+fi 
+# check CIVPUBLISH
+[ "x$CIVPUBLISH" = "xyes" ] && META="-m" || META=""
+# check if there is a port specific setup file
+if [ -f "${PORT}.serv" ]
+then SETUP="${PORT}.serv"
+elif [ -f "/etc/civ/${DEFAULTSETUP}" ]
+then SETUP=/etc/civ/$DEFAULTSETUP
+elif [ -f ${DEFAULTSETUP} ]
+then SETUP=${DEFAULTSETUP}
+else echo "No ${DEFAULTSETUP} nor ${PORT}.serv found --> exiting"
+	exit 1
+fi
+
+# check if setup file is there
+if [ ! -f "${SETUP}" ] ; then
+	echo "${SETUP} not here (`pwd`) --> exiting"
+	exit 1
+fi
+[ ! -d "${SAVEDIR}" ] && mkdir -p $SAVEDIR
+[ ! -d "${LOGDIR}" ] && mkdir -p $LOGDIR
+
+[ "x$SAVEDIR" != "x" ] && SAVE="-s $SAVEDIR" || SAVE=''
+
+## run the server ##
+while true ; do 
+	[ -f "${LOGFILE}" ] && rotatelogs $LOGFILE gz
+	rm -f ${SAVEDIR}/* # cleanup previous savegames
+	std=`date +%s` # secons since 00:00:00 1970-01-01 UTC
+	$LOG info starting server `date +%Y%m%d%H%M%S`
+	$CIVSERVER  $META $SAVE -r $SETUP -p $PORT -e -q 80  -l $LOGFILE $DEBUG
+	res=$? # get the return code
+	est=`date +%s`
+	case $res in
+		0) respawncheck $std $est
+		    $LOG info "normal game end `date +%Y%m%d%H%M%S` " 
+		    ;;
+		1) respawncheck $std $est
+		    buildcrashbackup
+		    $LOG err "program exit with error  `date +%Y%m%d%H%M%S`"
+                    ;;
+		139) $LOG err "program crash with sigsegv `date +%Y%m%d%H%M%S` "
+		        buildcrashbackup
+			if [ "x$CRASHRELOAD" = "xyes" ]
+			then [ -f "${LOGFILE}" ] && rotatelogs $LOGFILE gz
+			        last=`ls -t $SAVEDIR | awk '{print $1; exit}'`
+				$LOG info "try to reload game $last"
+				$CIVSERVER $META $SAVE -r $SETUP -p $PORT -e -q 80 -a -l $LOGFILE -f $SAVEDIR/$last $DEBUG
+			fi
+			;;
+		*) $LOG err "program exit with code $res `date +%Y%m%d%H%M%S` ";;
+	esac
+done

@@ -1,0 +1,43 @@
+version=1
+# Example Action List File 
+# -- !!! EDIT IT ON YOUR NEEDS !!! ---
+# Comments are ignored (as are blank lines). 
+# Rules are processed from top to bottom. 
+# NB: Bans have priority. 
+# 
+# To have the server use an action list file, 
+# use the command /loadactionlist <file>. 
+# 
+ 
+# ban by address 
+#ban address=1.2.3.4 
+ 
+# ban by hostname 
+#ban hostname=www.hostname.com 
+ 
+# same as previous 
+#ban www.hostname.com 
+ 
+# ban a domain 
+#ban *.evil.org 
+ 
+# ban by username 
+#ban username=l33td00d 
+ 
+# give admin access by address 
+#admin address=1.2.3.4 
+ 
+#basic username=woodswolf 
+ 
+# give hack access by hostname 
+#hack hostname=foo.bar.com 
+#hack address=192.168.1.* 
+hack username=td
+ 
+# ctrl access 
+#ctrl address=1.2.3.4 
+ 
+# all others get 'basic' access 
+basic * 
+
+
