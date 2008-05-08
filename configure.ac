@@ -571,6 +571,7 @@ AC_CONFIG_FILES([Makefile
 	  doc/nl/Makefile
 	  doc/sv/Makefile
 	  contrib/Makefile
+	  contrib/daemon/Makefile
 	  freeciv.spec:bootstrap/freeciv.spec.in
 	  bootstrap/undep.sh
 	  data/Freeciv
