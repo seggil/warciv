@@ -359,6 +359,10 @@ struct city *player_find_city_by_id(const struct player *pplayer,
 				    int city_id)
 {
   struct city *pcity = idex_lookup_city(city_id);
+
+  if (pplayer == NULL) {
+    return NULL;
+  }
   
   if(pcity && (pcity->owner==pplayer->player_no)) {
     return pcity;

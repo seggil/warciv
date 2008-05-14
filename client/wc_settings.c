@@ -418,15 +418,19 @@ bool load_tile(struct section_file *psf, struct tile **pptile,
   char buf[256];
   int x, y;
   va_list args;
+  const int INVALID_MAP_COORD = 0x1fffffff;
 
   va_start(args, format);
   my_vsnprintf(buf, sizeof(buf), format, args);
   va_end(args);
 
-  x = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "x");
-  y = secfile_lookup_int_default(psf, -1, "%s.%s", buf, "y");
+  x = secfile_lookup_int_default(psf, INVALID_MAP_COORD,
+                                 "%s.%s", buf, "x");
+  y = secfile_lookup_int_default(psf, INVALID_MAP_COORD,
+                                 "%s.%s", buf, "y");
 
-  if (!is_normal_map_pos(x, y)) {
+  if (x == INVALID_MAP_COORD || y == INVALID_MAP_COORD
+      || !is_normal_map_pos(x, y)) {
     /* Not a right tile in this game */
     return TRUE;
   }
@@ -664,15 +668,19 @@ static void base_load_dynamic_settings(struct section_file *psf)
       num = secfile_lookup_int_default(psf, 0,
 				       "dynamic.delayedgoto%ds.data_num", i);
       for (j = 0; j < num; j++) {
+        struct tile *loaded_tile = NULL;
+        load_tile(psf, &loaded_tile,
+                  "dynamic.delayedgoto%ds.data%d.tile", i, j);
+        if (loaded_tile == NULL) {
+          continue;
+        }
 	struct delayed_goto_data *pdgd =
 	  fc_malloc(sizeof(struct delayed_goto_data));
 	pdgd->id = secfile_lookup_int_default(psf, 0,
 		     "dynamic.delayedgoto%ds.data%d.id", i, j);
 	pdgd->type = secfile_lookup_int_default(psf, 0,
 		       "dynamic.delayedgoto%ds.data%d.type", i, j);
-	/* Here, we ignore the NULL tile */
-	load_tile(psf, &pdgd->ptile,
-		  "dynamic.delayedgoto%ds.data%d.tile", i, j);
+        pdgd->ptile = loaded_tile;
 	delayed_goto_data_list_append(tdelayedgoto[i].dglist, pdgd);
       }
       if (num > 0) {
@@ -1080,7 +1088,7 @@ void save_all_settings(void)
       secfile_insert_int(&sf, pdgd->id,
 			 "dynamic.delayedgoto%ds.data%d.id", i, j);
       secfile_insert_int(&sf, pdgd->type,
-			 "tdynamic.delayedgoto%ds.data%d.ype", i, j);
+			 "dynamic.delayedgoto%ds.data%d.type", i, j);
       save_tile(&sf, pdgd->ptile, "dynamic.delayedgoto%ds.data%d.tile", i, j);
       j++;
     } delayed_goto_data_list_iterate_end;
