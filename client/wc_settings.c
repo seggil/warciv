@@ -411,6 +411,8 @@ bool load_player(struct section_file *psf, struct player **ppplayer,
 
 /********************************************************************** 
   Load a tile from the file.
+  Returns TRUE if the load succeeded (*pptile will be set),
+  FALSE on error (*pptile will be unchanged).
 ***********************************************************************/
 bool load_tile(struct section_file *psf, struct tile **pptile,
 	       const char *format, ...)
@@ -419,6 +421,11 @@ bool load_tile(struct section_file *psf, struct tile **pptile,
   int x, y;
   va_list args;
   const int INVALID_MAP_COORD = 0x1fffffff;
+  struct tile *ptile = NULL;
+
+  if (!pptile) {
+    return TRUE;
+  }
 
   va_start(args, format);
   my_vsnprintf(buf, sizeof(buf), format, args);
@@ -429,18 +436,31 @@ bool load_tile(struct section_file *psf, struct tile **pptile,
   y = secfile_lookup_int_default(psf, INVALID_MAP_COORD,
                                  "%s.%s", buf, "y");
 
-  if (x == INVALID_MAP_COORD || y == INVALID_MAP_COORD
-      || !is_normal_map_pos(x, y)) {
-    /* Not a right tile in this game */
+  if (x == INVALID_MAP_COORD || y == INVALID_MAP_COORD) {
+    /* Secfile was missing the tile coordinates. */
+    return FALSE;
+  }
+
+  if (x == -1 && y == -1) {
+    /* Special NULL tile case. */
+    *pptile = NULL;
     return TRUE;
   }
 
-  *pptile = map_pos_to_tile(x, y);
-  if ((*pptile) == NULL) {
-    /* Shouldn't occur here */
-    return TRUE;
+  if (!is_normal_map_pos(x, y)) {
+    /* Not a right tile in this game */
+    return FALSE;
   }
-  return FALSE;
+
+  ptile = map_pos_to_tile(x, y);
+  if (ptile == NULL) {
+    /* Shouldn't occur here */
+    return FALSE;
+  }
+
+  *pptile = ptile;
+
+  return TRUE;
 }
 
 /********************************************************************** 
@@ -666,22 +686,24 @@ static void base_load_dynamic_settings(struct section_file *psf)
     /* Load the delayed goto queues */
     for (i = 0; i < DELAYED_GOTO_NUM; i++) {
       num = secfile_lookup_int_default(psf, 0,
-				       "dynamic.delayedgoto%ds.data_num", i);
+          "dynamic.delayedgoto%ds.data_num", i);
       for (j = 0; j < num; j++) {
+        struct delayed_goto_data *pdgd;
         struct tile *loaded_tile = NULL;
-        load_tile(psf, &loaded_tile,
-                  "dynamic.delayedgoto%ds.data%d.tile", i, j);
-        if (loaded_tile == NULL) {
+        bool load_ok;
+
+        load_ok = load_tile(psf, &loaded_tile,
+                            "dynamic.delayedgoto%ds.data%d.tile", i, j);
+        if (!load_ok) {
           continue;
         }
-	struct delayed_goto_data *pdgd =
-	  fc_malloc(sizeof(struct delayed_goto_data));
-	pdgd->id = secfile_lookup_int_default(psf, 0,
-		     "dynamic.delayedgoto%ds.data%d.id", i, j);
-	pdgd->type = secfile_lookup_int_default(psf, 0,
-		       "dynamic.delayedgoto%ds.data%d.type", i, j);
+        pdgd = fc_malloc(sizeof(*pdgd));
+        pdgd->id = secfile_lookup_int_default(psf, 0,
+            "dynamic.delayedgoto%ds.data%d.id", i, j);
+        pdgd->type = secfile_lookup_int_default(psf, 0,
+            "dynamic.delayedgoto%ds.data%d.type", i, j);
         pdgd->ptile = loaded_tile;
-	delayed_goto_data_list_append(tdelayedgoto[i].dglist, pdgd);
+        delayed_goto_data_list_append(tdelayedgoto[i].dglist, pdgd);
       }
       if (num > 0) {
 	load(player, pplayer, "dynamic.delayedgoto%ds.player", i);
