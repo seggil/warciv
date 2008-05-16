@@ -411,8 +411,8 @@ bool load_player(struct section_file *psf, struct player **ppplayer,
 
 /********************************************************************** 
   Load a tile from the file.
-  Returns TRUE if the load succeeded (*pptile will be set),
-  FALSE on error (*pptile will be unchanged).
+  Returns FALSE if the load succeeded (*pptile will be set),
+  TRUE on error (*pptile will be unchanged).
 ***********************************************************************/
 bool load_tile(struct section_file *psf, struct tile **pptile,
 	       const char *format, ...)
@@ -424,7 +424,8 @@ bool load_tile(struct section_file *psf, struct tile **pptile,
   struct tile *ptile = NULL;
 
   if (!pptile) {
-    return TRUE;
+    /* If the passed pointer is invalid, just do nothing. */
+    return FALSE;
   }
 
   va_start(args, format);
@@ -438,29 +439,29 @@ bool load_tile(struct section_file *psf, struct tile **pptile,
 
   if (x == INVALID_MAP_COORD || y == INVALID_MAP_COORD) {
     /* Secfile was missing the tile coordinates. */
-    return FALSE;
+    return TRUE;
   }
 
   if (x == -1 && y == -1) {
     /* Special NULL tile case. */
     *pptile = NULL;
-    return TRUE;
+    return FALSE;
   }
 
   if (!is_normal_map_pos(x, y)) {
     /* Not a right tile in this game */
-    return FALSE;
+    return TRUE;
   }
 
   ptile = map_pos_to_tile(x, y);
   if (ptile == NULL) {
     /* Shouldn't occur here */
-    return FALSE;
+    return TRUE;
   }
 
   *pptile = ptile;
 
-  return TRUE;
+  return FALSE;
 }
 
 /********************************************************************** 

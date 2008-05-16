@@ -926,10 +926,6 @@ void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
 {
   dgassert(dg);
 
-  if (id <= 0 || ptile == NULL) {
-    return;
-  }
-
   struct delayed_goto_data *dgd
     = fc_malloc(sizeof(struct delayed_goto_data));
 
