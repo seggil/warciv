@@ -645,6 +645,10 @@ static int parse_location_link(const char *str,
   
   if (2 != sscanf(str, "@L%d,%d", &x, &y))
     return 0;
+
+  if (!is_normal_map_pos(x, y)) {
+    return 0;
+  }
     
   p = str + 2;
   while (my_isdigit(*p) || *p == ',')
