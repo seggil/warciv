@@ -5985,6 +5985,13 @@ bool handle_stdin_input(struct connection * caller,
     return FALSE;
   }
 
+  if (conn_is_muted(caller) && cmd != CMD_START_GAME) {
+    cmd_reply(cmd, caller, C_REJECTED,
+              _("Since you are muted you are not allowed to use "
+                "this command."));
+    return FALSE;
+  }
+
   level = access_level(cmd);
 
   cptr_s = skip_leading_spaces(cptr_s);
