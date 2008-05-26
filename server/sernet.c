@@ -394,6 +394,25 @@ void force_flush_packets(void)
 }
 
 /*****************************************************************************
+  Now really close connections marked as 'is_closing'.
+  Do this here to avoid recursive sending.
+*****************************************************************************/
+static void really_close_connections(void)
+{
+  struct connection *pconn;
+  int i;
+
+  for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
+    pconn = &connections[i];
+    if (!pconn->used || !pconn->is_closing) {
+      continue;
+    }
+    lost_connection_to_client(pconn);
+    close_connection(pconn);
+  }
+}
+
+/*****************************************************************************
 Get and handle:
 - new connections,
 - input from connections,
@@ -668,6 +687,7 @@ int sniff_packets(void)
         }
 #else /* !__VMS */
 #ifndef SOCKET_ZERO_ISNT_STDIN
+        really_close_connections();
         continue;
 #endif /* SOCKET_ZERO_ISNT_STDIN */
 #endif /* !__VMS */
@@ -875,16 +895,7 @@ int sniff_packets(void)
       }
     }
 
-    /* Now really close connections marked as 'is_closing'.
-     * Do this here to avoid recursive sending. */
-    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
-      pconn = &connections[i];
-      if (!pconn->used || !pconn->is_closing) {
-        continue;
-      }
-      lost_connection_to_client(pconn);
-      close_connection(pconn);
-    }
+    really_close_connections();
 
     break;
 
