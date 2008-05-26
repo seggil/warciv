@@ -744,7 +744,7 @@ void *hash_delete_entry_full(struct hash_table *h, const void *key,
   struct hash_bucket *bucket;
 
   /* By not potentially resizing here, it is safe to call this function
-     in a has_iterate loop */
+     in a hash_iterate loop */
   /* hash_maybe_shrink(h); */
 
   bucket = internal_lookup(h, key, HASH_VAL(h,key));

@@ -92,7 +92,8 @@ enum exit_state {
   ES_WRITE_ERROR,
   ES_READ_ERROR,
   ES_REMOTE_CLOSE,
-  ES_REJECTED       /* handle_packet_input returned FALSE. */
+  ES_REJECTED,       /* handle_packet_input returned FALSE. */
+  ES_KICKED
 };
 
 /* get 'struct conn_list' and related functions: */

@@ -279,7 +279,14 @@ struct muteinfo {
   char *addr;
 };
 
-static struct hash_table *mute_table = NULL;
+static struct hash_table *mute_table;
+
+struct kickinfo {
+  time_t time_of_kick;
+  char addr[64];
+};
+
+static struct hash_table *kick_table;
 
 static const char horiz_line[] =
     "------------------------------------------------------------------------------";
@@ -345,6 +352,10 @@ void stdinhand_init(void)
   if (!mute_table) {
     mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
   }
+
+  if (!kick_table) {
+    kick_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  }
 }
 
 /**************************************************************************
@@ -396,9 +407,16 @@ void stdinhand_free(void)
       free(mi->addr);
       free(mi);
     } hash_iterate_end;
-    hash_delete_all_entries(mute_table);
     hash_free(mute_table);
     mute_table = NULL;
+  }
+
+  if (kick_table) {
+    hash_iterate(kick_table, void *, key, struct kickinfo *, ki) {
+      free(ki);
+    } hash_iterate_end;
+    hash_free(kick_table);
+    kick_table = NULL;
   }
 }
 
@@ -856,6 +874,107 @@ bool require_command(struct connection *caller, char *arg, bool check)
     }
   } conn_list_iterate_end;
 
+  return TRUE;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void kick_table_add(struct connection *pconn)
+{
+  struct kickinfo *ki;
+
+  if (!kick_table
+      || hash_key_exists(kick_table, pconn->server.ipaddr)) {
+    return;
+  }
+
+  ki = fc_calloc(1, sizeof(*ki));
+  ki->time_of_kick = time(NULL);
+  sz_strlcpy(ki->addr, pconn->server.ipaddr);
+  hash_insert(kick_table, ki->addr, ki);
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void kick_table_remove(struct connection *pconn)
+{
+  struct kickinfo *ki;
+
+  if (!kick_table) {
+    return;
+  }
+
+  ki = hash_delete_entry(kick_table, pconn->server.ipaddr);
+
+  if (ki) {
+    free(ki);
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+bool conn_is_kicked(struct connection *pconn, int *time_remaining)
+{
+  struct kickinfo *ki;
+  time_t now;
+
+  if (!kick_table) {
+    return FALSE;
+  }
+
+  if (!pconn) {
+    return FALSE;
+  }
+
+  ki = hash_lookup_data(kick_table, pconn->server.ipaddr);
+  
+  if (!ki) {
+    return FALSE;
+  }
+
+  now = time(NULL);
+  if (now - ki->time_of_kick > KICK_TIME) {
+    kick_table_remove(pconn);
+    return FALSE;
+  }
+
+  if (time_remaining) {
+    *time_remaining = KICK_TIME - (now - ki->time_of_kick);
+  }
+  return TRUE;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static bool kick_command(struct connection *caller, char *name, bool check)
+{
+  struct connection *pconn;
+  struct player *pplayer;
+  enum m_pre_result match_result;
+  bool was_connected;
+  
+  pconn = find_conn_by_user_prefix(name, &match_result);
+  if (!pconn) {
+    cmd_reply_no_such_conn(CMD_KICK, caller, name, match_result);
+    return FALSE;
+  }
+  
+  if (check) {
+    return TRUE;
+  }
+
+  pplayer = pconn->player;
+  was_connected = pplayer ? pplayer->is_connected : FALSE;
+  kick_table_add(pconn);
+  server_break_connection(pconn, ES_KICKED);
+
+  if (pplayer && was_connected && !pplayer->is_connected) {
+    sz_strlcpy(pplayer->username, ANON_USER_NAME);
+  }
   return TRUE;
 }
 
@@ -6227,6 +6346,8 @@ bool handle_stdin_input(struct connection * caller,
     return dnslookup_command(caller, arg, check);
   case CMD_REQUIRE:
     return require_command(caller, arg, check);
+  case CMD_KICK:
+    return kick_command(caller, arg, check);
   case CMD_RFCSTYLE:           /* see console.h for an explanation */
     if (!check) {
       con_set_style(!con_get_style());

@@ -20,11 +20,14 @@
   /* the character to mark chatlines as server commands */
 #define DEFAULT_ACTION_LIST_FILE "action.list"
 
+#define KICK_TIME 1800 /* i.e. 30 mins */
+
 void stdinhand_init(void);
 void stdinhand_turn(void);
 void stdinhand_free(void);
 
 bool conn_is_muted(struct connection *pconn);
+bool conn_is_kicked(struct connection *pconn, int *time_remaining);
 
 bool handle_stdin_input(struct connection *caller,
                         const char *str,

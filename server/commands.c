@@ -741,9 +741,17 @@ const struct command commands[] = {
        "require ?"),
     N_("Requires one or many capabilties to play."),
     N_("The users, who don't have this <capabilities> in their capability string, "
-       "cannot play on this server. Use the '?' argument to see the current\n"
+       "cannot play on this server. Use the '?' argument to see the current "
        "required capabilities."),
    ECHO_ALL, VCF_NONE, 0
+  },
+  {"kick", ALLOW_CTRL, ALLOW_CTRL,
+   /* TRANS: translate text between <> */
+    N_("kick <user>"),
+    N_("Cut a connection and disallow reconnect."),
+    N_("The connection given by the 'user' argument will be cut from the "
+       "server and not allowed to reconnect for 30 minutes."),
+    ECHO_ADMINS, VCF_NOPASSALONE, 50
   },
 
   {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,

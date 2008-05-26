@@ -517,6 +517,7 @@ bool handle_login_request(struct connection *pconn,
                           struct packet_server_join_req *req)
 {
   char msg[MAX_LEN_MSG];
+  int kick_time_remaining;
   
   freelog(LOG_NORMAL, _("Connection request from %s from %s%s"),
 	  req->username, pconn->addr, pconn->server.adns_id > 0 ?
@@ -525,6 +526,14 @@ bool handle_login_request(struct connection *pconn,
   remove_leading_trailing_spaces(req->username);
   if (!receive_username(pconn, req->username)) {
     reject_new_connection(_("You are banned from this server."), pconn);
+    return FALSE;
+  }
+
+  if (conn_is_kicked(pconn, &kick_time_remaining)) {
+    my_snprintf(msg, sizeof(msg), _("You have been kicked from this server "
+                                    "and cannot reconnect for %d seconds."),
+                kick_time_remaining);
+    reject_new_connection(msg, pconn);
     return FALSE;
   }
 

@@ -121,6 +121,7 @@ enum command_id {
   CMD_ADDACTION,
   CMD_DELACTION,
   CMD_REQUIRE,
+  CMD_KICK,
 
   /* undocumented */
   CMD_RFCSTYLE,
