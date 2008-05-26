@@ -956,6 +956,8 @@ static bool kick_command(struct connection *caller, char *name, bool check)
   struct player *pplayer;
   enum m_pre_result match_result;
   bool was_connected;
+  char ipaddr[MAX_LEN_ADDR];
+  struct conn_list *kick_list;
   
   pconn = find_conn_by_user_prefix(name, &match_result);
   if (!pconn) {
@@ -967,14 +969,28 @@ static bool kick_command(struct connection *caller, char *name, bool check)
     return TRUE;
   }
 
-  pplayer = pconn->player;
-  was_connected = pplayer ? pplayer->is_connected : FALSE;
-  kick_table_add(pconn);
-  server_break_connection(pconn, ES_KICKED);
+  sz_strlcpy(ipaddr, pconn->server.ipaddr);
+  kick_list = conn_list_new();
 
-  if (pplayer && was_connected && !pplayer->is_connected) {
-    sz_strlcpy(pplayer->username, ANON_USER_NAME);
-  }
+  conn_list_iterate(game.all_connections, pc) {
+    if (0 == mystrncasecmp(ipaddr, pc->server.ipaddr, MAX_LEN_ADDR)) {
+      conn_list_append(kick_list, pc);
+    }
+  } conn_list_iterate_end;
+
+  conn_list_iterate(kick_list, pc) {
+    pplayer = pc->player;
+    was_connected = pplayer ? pplayer->is_connected : FALSE;
+    kick_table_add(pc);
+    server_break_connection(pc, ES_KICKED);
+
+    if (pplayer && was_connected && !pplayer->is_connected) {
+      sz_strlcpy(pplayer->username, ANON_USER_NAME);
+    }
+  } conn_list_iterate_end;
+
+  conn_list_free(kick_list);
+
   return TRUE;
 }
 
