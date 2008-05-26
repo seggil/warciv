@@ -21,12 +21,15 @@
 
 #include "fcintl.h"
 #include "game.h"
+#include "log.h"
 #include "packets.h"
 #include "player.h"
 #include "shared.h"
 #include "support.h"
+#include "timing.h"
 
 #include "console.h"
+#include "plrhand.h"
 #include "srv_main.h"
 #include "stdinhand.h"
 
@@ -202,11 +205,51 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   char sender_name[MAX_LEN_CHAT_NAME], chat[MAX_LEN_MSG];
   char *cp;
   bool double_colon;
+  const char *end = message + MAX_LEN_MSG;
+
+  if (pconn->server.flood_timer
+      && pconn->access_level < ALLOW_ADMIN) {
+    double time_since_last_message;
+    int len;
+    double wait_interval, dfc;
+
+    len = 0;
+    for (cp = message; *cp != '\0' && cp < end; cp++) {
+      len++;
+    }
+    wait_interval = 2.0 + 20.0 * (double) len / MAX_LEN_MSG;
+
+    time_since_last_message = read_timer_seconds(pconn->server.flood_timer);
+    dfc = wait_interval - time_since_last_message;
+    clear_timer_start(pconn->server.flood_timer);
+
+    pconn->server.flood_counter += dfc;
+
+    if (pconn->server.flood_counter < 0.0) {
+      pconn->server.flood_counter = 0.0;
+      pconn->server.flood_warning_level = 0;
+    }
+
+    freelog(LOG_DEBUG, "flood control %s: len=%d wi=%.1f tslm=%.1f "
+            "dfc=%.1f fc=%.1f", conn_description(pconn), len,
+            wait_interval, time_since_last_message,
+            dfc, pconn->server.flood_counter);
+
+    if (pconn->server.flood_counter > 4.0) {
+      if (pconn->server.flood_warning_level == 0) {
+        notify_conn(pconn->self, _("Server: You are sending too many "
+                                   "messages! Please wait before trying "
+                                   "again or you will be ignored."));
+        pconn->server.flood_warning_level++;
+      }
+      return;
+    }
+  }
 
   /* this loop to prevent players from sending multiple lines
    * which can be abused */
   if(!srvarg.allow_multi_line_chat) {
-    for (cp = message; *cp != '\0'; cp++) {
+    for (cp = message; *cp != '\0' && cp < end; cp++) {
       if (*cp == '\n' || *cp == '\r') {
 	*cp='\0';
 	break;

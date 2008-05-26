@@ -42,6 +42,7 @@
 #include "netintf.h"
 #include "packets.h"
 #include "support.h"		/* mystr(n)casecmp */
+#include "timing.h"
 #include "wildcards.h"
 
 #include "connection.h"
@@ -693,9 +694,13 @@ void connection_common_init(struct connection *pconn)
   pconn->exit_state = ES_NONE;
   if (is_server) {
     pconn->server.ignore_list = ignore_list_new();
+    pconn->server.flood_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
   } else {
     pconn->server.ignore_list = NULL;
+    pconn->server.flood_timer = NULL;
   }
+  pconn->server.flood_counter = 0.0;
+  pconn->server.flood_warning_level = 0;
 
   init_packet_hashs(pconn);
 

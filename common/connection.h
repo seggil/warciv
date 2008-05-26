@@ -35,6 +35,7 @@
 
 struct hash_table;
 struct timer_list;
+struct timer;
 
 #define MAX_LEN_PACKET   4096
 
@@ -281,6 +282,10 @@ struct connection {
     /* Is TRUE when we need are waiting for the hostname before
      * complishing authentification and action list look up. */
     bool delay_establish;
+
+    struct timer *flood_timer;
+    double flood_counter;
+    int flood_warning_level;
   } server;
 
   /*
