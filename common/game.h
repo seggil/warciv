@@ -195,6 +195,7 @@ struct civ_game {
     int teamplacementtype;
     bool rated;
     bool no_public_links;
+    int kicktime;
   } server;
 };
 
@@ -309,6 +310,10 @@ extern bool is_server;
 #endif /* HAVE_MYSQL */
 
 #define GAME_DEFAULT_NO_PUBLIC_LINKS TRUE
+
+#define GAME_DEFAULT_KICKTIME 600
+#define GAME_MIN_KICKTIME 5
+#define GAME_MAX_KICKTIME 86400
 
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE

@@ -1391,6 +1391,15 @@ struct settings_s settings[] = {
               "1 - Public chat messages with links are rejected."),
            NULL, GAME_DEFAULT_NO_PUBLIC_LINKS)
 
+  GEN_INT("kicktime", game.server.kicktime, SSET_RULES_FLEXIBLE,
+          SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
+          N_("Time before a kicked user can reconnect"),
+          N_("Gives the time in seconds before a user kicked "
+             "using the 'kick' command may reconnect. Changing "
+             "this setting will affect users kicked in the past."),
+          NULL, GAME_MIN_KICKTIME, GAME_MAX_KICKTIME,
+          GAME_DEFAULT_KICKTIME)
+
   GEN_END
 };
 

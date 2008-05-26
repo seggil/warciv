@@ -936,13 +936,13 @@ bool conn_is_kicked(struct connection *pconn, int *time_remaining)
   }
 
   now = time(NULL);
-  if (now - ki->time_of_kick > KICK_TIME) {
+  if (now - ki->time_of_kick > game.server.kicktime) {
     kick_table_remove(pconn);
     return FALSE;
   }
 
   if (time_remaining) {
-    *time_remaining = KICK_TIME - (now - ki->time_of_kick);
+    *time_remaining = game.server.kicktime - (now - ki->time_of_kick);
   }
   return TRUE;
 }
