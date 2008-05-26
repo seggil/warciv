@@ -958,10 +958,35 @@ static bool kick_command(struct connection *caller, char *name, bool check)
   bool was_connected;
   char ipaddr[MAX_LEN_ADDR];
   struct conn_list *kick_list;
+  struct hash_table *unique_ipaddr_table;
+  int num_unique_connections;
+  const int MIN_UNIQUE_CONNS = 3;
   
   pconn = find_conn_by_user_prefix(name, &match_result);
   if (!pconn) {
     cmd_reply_no_such_conn(CMD_KICK, caller, name, match_result);
+    return FALSE;
+  }
+
+  if (pconn == caller) {
+    cmd_reply(CMD_KICK, caller, C_FAIL,
+              _("You may not kick yourself."));
+    return FALSE;
+  }
+
+  unique_ipaddr_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  conn_list_iterate(game.est_connections, pc) {
+    hash_insert(unique_ipaddr_table, pc->server.ipaddr, NULL);
+  } conn_list_iterate_end;
+
+  num_unique_connections = hash_num_entries(unique_ipaddr_table); 
+  hash_free(unique_ipaddr_table);
+
+  if (num_unique_connections < MIN_UNIQUE_CONNS) {
+    cmd_reply(CMD_KICK, caller, C_FAIL,
+              _("There must be at least %d unique connections "
+                "to the server for this command to be valid."),
+              MIN_UNIQUE_CONNS);
     return FALSE;
   }
   
