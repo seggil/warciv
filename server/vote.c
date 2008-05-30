@@ -74,7 +74,7 @@ static void lsend_vote_new(struct conn_list *dest, struct vote *pvote)
   describe_vote(pvote, packet.desc, sizeof(packet.desc));
 
   /* For possible future use. */
-  packet.percent_required = 100 * ((int) pvote->need_pc);
+  packet.percent_required = 100 * pvote->need_pc;
   packet.flags = pvote->flags;
   packet.is_poll = pvote->command_id == CMD_POLL;
 
@@ -748,10 +748,6 @@ void handle_vote_submit(struct connection *pconn, int vote_no, int value)
 void send_running_votes(struct connection *pconn)
 {
   int num_voters;
-
-  if (!connection_can_vote(pconn)) {
-    return;
-  }
 
   if (!has_capability("voteinfo", pconn->capability)) {
     return;

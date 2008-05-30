@@ -379,6 +379,7 @@ int main(int argc, char *argv[])
   init_city_report_data();
   init_player_dlg_common();
   settable_options_init();
+  voteinfo_queue_init();
 
   load_general_options();
 
@@ -525,7 +526,6 @@ void client_game_init()
   city_autonaming_init();
   control_queues_init();
   link_marks_init();
-  voteinfo_queue_init();
 }
 
 /**************************************************************************
@@ -534,7 +534,6 @@ void client_game_init()
 void client_game_free()
 {
   free_mapview_updates();
-  voteinfo_queue_free();
   city_autonaming_free();
   control_queues_free();
   clear_all_link_marks();
