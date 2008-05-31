@@ -30,6 +30,7 @@
 #include "support.h"
 #include "registry.h"
 
+#include "audio.h"
 #include "civclient.h"
 #include "climisc.h"
 #include "clinet.h"
@@ -75,6 +76,7 @@ enum {
   COLUMN_INACTIVE,
   COLUMN_SWITCH_NEXT,
   COLUMN_JUMP_TARGET,
+  COLUMN_SOUND_TAG,
 
   NUM_COLUMNS
 };
@@ -891,6 +893,10 @@ void real_append_output_window(const char *astring, int conn_id)
       switch_next = FALSE;
     }
 
+    if (ptagpat->sound_tag[0] != '\0') {
+      audio_play_sound(ptagpat->sound_tag, NULL);
+    }
+
     if (ptagpat->jump_target[0]) {
       jump_target = ptagpat->jump_target;
     }
@@ -970,6 +976,7 @@ void set_output_window_text(const char *text)
 **************************************************************************/
 struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
                                      int flags, const char *jump_target,
+                                     const char *sound_tag,
                                      const char *foreground_color,
                                      const char *background_color)
 {
@@ -979,12 +986,13 @@ struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
   assert(pattern != NULL);
   assert(jump_target != NULL);
   
-  ptagpat = fc_malloc(sizeof(struct tag_pattern));
+  ptagpat = fc_calloc(1, sizeof(struct tag_pattern));
 
   ptagpat->tag_name = mystrdup(name);
   ptagpat->pattern = mystrdup(pattern);
   ptagpat->flags = flags;
   ptagpat->jump_target = mystrdup(jump_target);
+  ptagpat->sound_tag = mystrdup(sound_tag);
 
   ptagpat->foreground_color = color_from_str(foreground_color);
   ptagpat->background_color = color_from_str(background_color);
@@ -999,6 +1007,10 @@ void tag_pattern_free(struct tag_pattern *ptagpat)
   free(ptagpat->tag_name);
   free(ptagpat->pattern);
   free(ptagpat->jump_target);
+  if (ptagpat->sound_tag != NULL) {
+    free(ptagpat->sound_tag);
+    ptagpat->sound_tag = NULL;
+  }
   if (ptagpat->foreground_color) {
     gdk_color_free(ptagpat->foreground_color);
   }
@@ -1038,7 +1050,7 @@ static void create_default_tag_patterns(struct tag_pattern_list *tpl)
   char buf[256];
 
 #define MK_TAG_PATTERN(name, pat, flags, jump, fg, bg) do{\
-    ptagpat = tag_pattern_new(name, pat, flags, jump, fg, bg);\
+    ptagpat = tag_pattern_new(name, pat, flags, jump, "", fg, bg);\
     tag_pattern_list_append(tpl, ptagpat);\
   } while (0)
 
@@ -1461,6 +1473,8 @@ void secfile_save_message_buffer_tag_patterns(struct section_file *file)
                        "chatline.tagpat%d.flags", i);
     secfile_insert_str(file, ptagpat->jump_target,
                        "chatline.tagpat%d.jump_target", i);
+    secfile_insert_str(file, ptagpat->sound_tag,
+                       "chatline.tagpat%d.sound_tag", i);
     
     secfile_insert_color(file, ptagpat->foreground_color,
                          "chatline.tagpat%d.foreground_color", i);
@@ -1496,6 +1510,10 @@ void secfile_load_message_buffer_tag_patterns(struct section_file *file)
         secfile_lookup_int(file, "chatline.tagpat%d.flags", i);
     ptagpat->jump_target = mystrdup(
         secfile_lookup_str(file, "chatline.tagpat%d.jump_target", i));
+    ptagpat->sound_tag = mystrdup(
+        secfile_lookup_str_default(file, "",
+                                   "chatline.tagpat%d.sound_tag", i));
+
 
     ptagpat->foreground_color = secfile_lookup_color(file,
         "chatline.tagpat%d.foreground_color", i);
@@ -1623,6 +1641,8 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
       "  JUMP - Not really a flag, but if it is non empty and the pattern"
       " matches, skips down in the list of patterns until it reaches the"
       " pattern whose name is equal to the given name.\n"
+      "  SOUND - If the pattern matches, the sound given by the sound-tag"
+      " will be played.\n"
       ), -1);
 
 
@@ -1852,6 +1872,10 @@ static void cell_edited(GtkCellRendererText *cell,
     free(ptagpat->jump_target);
     ptagpat->jump_target = mystrdup(new_text);
     break;
+  case COLUMN_SOUND_TAG:
+    free(ptagpat->sound_tag);
+    ptagpat->sound_tag = mystrdup(new_text);
+    break;
   default:
     assert(0); /* must never happend */
   }
@@ -1965,6 +1989,7 @@ static void add_columns(GtkTreeView *treeview,
   MK_FLAG_COLUMN(COLUMN_INACTIVE, "OFF", TPF_INACTIVE);
   MK_FLAG_COLUMN(COLUMN_SWITCH_NEXT, "SWITCH", TPF_SWITCH_NEXT);
   MK_STR_COLUMN(COLUMN_JUMP_TARGET, "JUMP", TRUE, TRUE, 70);
+  MK_STR_COLUMN(COLUMN_SOUND_TAG, "SOUND", TRUE, TRUE, 70);
 }
 /**************************************************************************
   ...
@@ -1987,6 +2012,7 @@ static void put_tag_pattern_into_store(GtkListStore *store,
                       COLUMN_INACTIVE, ptagpat->flags & TPF_INACTIVE,
                       COLUMN_SWITCH_NEXT, ptagpat->flags & TPF_SWITCH_NEXT,
                       COLUMN_JUMP_TARGET, ptagpat->jump_target,
+                      COLUMN_SOUND_TAG, ptagpat->sound_tag,
                       -1);
 }
 
@@ -2011,7 +2037,8 @@ static GtkTreeModel *create_model(struct tag_pattern_list *tmptagpats)
                              G_TYPE_BOOLEAN, /* ignore */
                              G_TYPE_BOOLEAN, /* active */
                              G_TYPE_BOOLEAN, /* switch next */
-                             G_TYPE_STRING); /* jump target */
+                             G_TYPE_STRING, /* jump target */
+                             G_TYPE_STRING); /* sound tag */
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     gtk_list_store_append(model, &iter);
     put_tag_pattern_into_store(model, &iter, ptagpat);
@@ -2057,6 +2084,7 @@ struct tag_pattern *tag_pattern_clone(struct tag_pattern *old)
   new->tag_name = mystrdup(old->tag_name);
   new->pattern = mystrdup(old->pattern);
   new->jump_target = mystrdup(old->jump_target);
+  new->sound_tag = mystrdup(old->sound_tag);
   new->flags = old->flags;
   new->foreground_color = old->foreground_color != NULL
       ? gdk_color_copy(old->foreground_color) : NULL;
@@ -2083,8 +2111,6 @@ static void move_tag_patterns(GtkWidget *w,
   GtkTreeRowReference *rowref;
   int *new_order, len, i, limit, tmp;
 
-/*xxxMYDEBUG   printf("move offset=%d\n", offset);*/
-  
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   model = g_object_get_data(G_OBJECT(dialog), "model");
   treeview = g_object_get_data(G_OBJECT(dialog), "treeview");
@@ -2216,7 +2242,7 @@ static void add_control_callback(GtkWidget *w, gpointer user_data)
 
   newname = gtk_entry_get_text(GTK_ENTRY(entry));
   ptagpat = tag_pattern_new(newname, "pattern", 
-                             TPF_IS_CONTROL_ONLY, "", NULL, NULL);
+                            TPF_IS_CONTROL_ONLY, "", "", NULL, NULL);
   gtk_entry_set_text(GTK_ENTRY(entry), "");
   
   add_tag_pattern(ptagpat, dialog);
@@ -2258,7 +2284,7 @@ static void add_callback(GtkWidget *w, gpointer user_data)
     }
   } tag_pattern_list_iterate_end;
   
-  ptagpat = tag_pattern_new(newname, "pattern", 0, "", NULL, NULL);
+  ptagpat = tag_pattern_new(newname, "pattern", 0, "", "", NULL, NULL);
   gtk_entry_set_text(GTK_ENTRY(entry), "");
   
   add_tag_pattern(ptagpat, dialog);
@@ -2303,8 +2329,6 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
   struct tag_pattern *ptagpat;
   GList *rows = NULL, *rowrefs = NULL, *p;
   GtkTreeRowReference *rowref;
-  
-/*xxxMYDEBUG   printf("delete_callback\n");*/
   
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   tags_to_delete = g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
@@ -2409,9 +2433,6 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
     (dialog), "colorsel"));
   gtk_window_set_transient_for (GTK_WINDOW(dialog),
                                 GTK_WINDOW(chatline_config_shell));
-
-/*xxxMYDEBUG  printf("  column=%d, i=%d, ptagpat=%p colorsel=%p\n", column, i,*/
-/*xxxMYDEBUG          ptagpat, colorsel);*/
 
   color.red = 0;
   color.green = 0;
@@ -2648,9 +2669,6 @@ static GtkWidget *create_chatline_config_shell(void)
   g_signal_connect(button, "clicked",
       G_CALLBACK(down_callback), dialog);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-  
-
 
   /* for easy access */
   g_object_set_data(G_OBJECT(dialog), "model", model);

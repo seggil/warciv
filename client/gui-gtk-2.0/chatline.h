@@ -53,6 +53,11 @@ struct tag_pattern {
      all subsequent patterns until we reach one whose
      tag_name matches jump_target */
   char *jump_target;
+
+  /* Sound file tag (defined in a soundspec file,
+   * e.g. stdsounds.soundspec) to be played when
+   * this pattern matches. "" for no sound. */
+  char *sound_tag;
   
   GdkColor *foreground_color;
   GdkColor *background_color;
@@ -76,7 +81,8 @@ void free_message_buffer_tag_patterns(void);
 void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete);
 struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
                                     int flags, const char *jump_target,
-                                    const char *fgcolor, const char *bgcolor);
+                                    const char *sound_tag, const char *fgcolor,
+                                    const char *bgcolor);
 void tag_pattern_free(struct tag_pattern *ptagpat);
 
 void secfile_save_message_buffer_tag_patterns(struct section_file *file);
