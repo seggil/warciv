@@ -554,7 +554,7 @@ static void base_load_static_settings(struct section_file *psf)
 #define load(type, data, ...)						       \
   freelog(LOG_DEBUG, "Loading one %s at %s, line %d",			       \
           #type, __FILE__, __LINE__);					       \
-  struct type *data;							       \
+  struct type *data = NULL;						       \
   if (load_##type(psf, &data, __VA_ARGS__)) {				       \
     freelog(LOG_NORMAL, _("Cannot load dynamics settings "		       \
 			  "(%s: line %d, wrong %s), aborting..."),	       \
@@ -849,9 +849,6 @@ free_datas:
     for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
       tile_list_free(tairliftqueue[i].tlist);
     }
-    trade_route_list_iterate(ttraders, ptr) {
-      free(ptr);
-    } trade_route_list_iterate_end;
     trade_route_list_free(ttraders);
     city_list_free(ttradecities);
     unit_list_iterate(tpatrolers, punit) {
