@@ -3497,7 +3497,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("There isn't any vote going on."));
       return FALSE;
-    } else if (!caller || caller->access_level == ALLOW_HACK) {
+    } else if (!caller || caller->access_level >= ALLOW_ADMIN) {
       clear_all_votes();
       notify_conn(NULL, _("Server: All votes have been removed."));
       return TRUE;
@@ -3511,7 +3511,7 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("No such vote (%d)."), vote_no);
       return FALSE;
-    } else if (caller && caller->access_level < ALLOW_HACK
+    } else if (caller && caller->access_level < ALLOW_ADMIN
                && caller->id != pvote->caller_id) {
       cmd_reply(CMD_CANCEL_VOTE, caller, C_FAIL,
                 _("You are not allowed to cancel this vote (%d)."),
