@@ -6783,7 +6783,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
       return TRUE;
     }
 
-    if (!caller->player || !caller->player->is_connected) {
+    if (!caller->player || caller->observer) {
       /* A detached or observer player can't do /start. */
       cmd_reply(CMD_START_GAME, caller, C_REJECTED,
                 _("You are not a player in the game!"));
