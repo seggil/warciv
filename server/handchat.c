@@ -447,19 +447,24 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 #undef EMOTICON_BELOW_EYES_CHARACTERS
 
   if (game.server.no_public_links && server_state == RUN_GAME_STATE) {
-    const char *p = strchr(message, '@');
+    const char *p, *s;
+    for (s = message; s[0] != '\0'; s = p + 1) {
+      if (!(p = strchr(s, '@'))) {
+        break;
+      }
 
-    /* Very simple chat link detection.
-     * NB this follows the format used in client/gui-gtk-2.0/chatline.c.
-     * If that changes, then this will break! */
-    if (p != NULL && p[1] != '\0' && my_isdigit(p[2])
-        && (p[1] == 'F' || p[1] == 'L' || p[1] == 'U' || p[1] == 'C'
-            || p[1] == 'I')) {
-      my_snprintf(chat, sizeof(chat),
-          _("Server: Public messages containing chat links are "
-            "not allowed."));
-      dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
-      return;
+      /* Simple chat link detection.
+       * NB this follows the format used in client/gui-gtk-2.0/chatline.c.
+       * If that changes, then this will break! */
+      if (p[1] != '\0' && (my_isdigit(p[2]) || p[2] == '"')
+          && (p[1] == 'F' || p[1] == 'L' || p[1] == 'U' || p[1] == 'C'
+              || p[1] == 'I')) {
+        my_snprintf(chat, sizeof(chat),
+            _("Server: Public messages containing chat links are "
+              "not allowed."));
+        dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
+        return;
+      }
     }
   }
 
