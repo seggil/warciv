@@ -196,6 +196,7 @@ struct civ_game {
     bool rated;
     bool no_public_links;
     int kicktime;
+    bool spectatorchat;
   } server;
 };
 
@@ -314,6 +315,8 @@ extern bool is_server;
 #define GAME_DEFAULT_KICKTIME 600
 #define GAME_MIN_KICKTIME 5
 #define GAME_MAX_KICKTIME 86400
+
+#define GAME_DEFAULT_SPECTATORCHAT 0
 
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE

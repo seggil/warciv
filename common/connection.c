@@ -885,3 +885,14 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 
   return FALSE;
 }
+
+/**************************************************************************
+  ...
+**************************************************************************/
+bool connection_controls_player(const struct connection *pconn)
+{
+  if (pconn == NULL) {
+    return FALSE;
+  }
+  return pconn->player != NULL && !pconn->observer;
+}

@@ -468,6 +468,14 @@ void establish_new_connection(struct connection *pconn)
     show_players(pconn);
   }
 
+  if (server_state == RUN_GAME_STATE
+      && game.server.spectatorchat
+      && !connection_controls_player(pconn)) {
+    notify_conn(dest, _("Server: Spectator chat is in effect. "
+                        "Your public messages will only be seen "
+                        "by users not in the game."));
+  }
+
   send_conn_info(dest, game.est_connections);
   conn_list_append(game.est_connections, pconn);
 

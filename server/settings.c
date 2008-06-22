@@ -1400,6 +1400,15 @@ struct settings_s settings[] = {
           NULL, GAME_MIN_KICKTIME, GAME_MAX_KICKTIME,
           GAME_DEFAULT_KICKTIME)
 
+  GEN_BOOL("spectatorchat", game.server.spectatorchat, SSET_RULES_FLEXIBLE,
+           SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
+           N_("Non-player messages only go to non-players"),
+           N_("If this setting is set to 1, then observer and detached "
+              "connection messages will only go to other non-player "
+              "connections. This affects public and ally messages "
+              "while the game is running only."),
+           NULL, GAME_DEFAULT_SPECTATORCHAT)
+
   GEN_END
 };
 

@@ -303,6 +303,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
       conn_list_iterate(aplayer->connections, dest) {
         if (is_ignored(pconn, dest))
           continue;
+        if (game.server.spectatorchat
+            && server_state == RUN_GAME_STATE
+            && !connection_controls_player(pconn)
+            && connection_controls_player(dest)) {
+          continue;
+        }
         dsend_packet_chat_msg(dest, chat, -1, -1,
 			     E_NOEVENT, pconn->id);
       } conn_list_iterate_end;
@@ -474,6 +480,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   con_puts(C_COMMENT, chat);
   conn_list_iterate(game.est_connections, dest) {
     if (is_ignored(pconn, dest)) {
+      continue;
+    }
+    if (game.server.spectatorchat
+        && server_state == RUN_GAME_STATE
+        && !connection_controls_player(pconn)
+        && connection_controls_player(dest)) {
       continue;
     }
     dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
