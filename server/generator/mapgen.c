@@ -3377,7 +3377,7 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
     dy = myrand(pmap->ysize / 10) - pmap->ysize / 20;
     rsx = sx + dx;
     rsy = sy + dy;
-  } while (rsx < 0 || rsx >= xmax || rsy < 0 || rsy >= ymax);
+  } while (rsx < 0 || rsx > xmax || rsy < 0 || rsy > ymax);
 
   /* game.server.teamplacementtype:
    * 0 - team players are placed as close as possible regardless of continents.
