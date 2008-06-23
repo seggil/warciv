@@ -18,5 +18,6 @@
 struct connection;
 
 void handle_chat_msg_req(struct connection *pc, char *message);
+bool conn_is_ignored(struct connection *pconn, struct connection *dest);
 
 #endif  /* FC__HANDCHAT_H */

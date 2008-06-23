@@ -57,6 +57,7 @@
 #include "diplhand.h"
 #include "gamehand.h"
 #include "gamelog.h"
+#include "handchat.h"
 #include "mapgen.h"
 #include "maphand.h"
 #include "meta.h"
@@ -3429,7 +3430,9 @@ static bool emote_command(struct connection *caller,
                           const char *str,
                           bool check)
 {
-  char buf[MAX_LEN_CONSOLE_LINE], name[MAX_LEN_NAME];
+  char buf[MAX_LEN_CONSOLE_LINE];
+  char chat[MAX_LEN_CONSOLE_LINE];
+  char name[MAX_LEN_NAME];
 
   sz_strlcpy(buf, str);
   remove_leading_trailing_spaces(buf);
@@ -3456,7 +3459,23 @@ static bool emote_command(struct connection *caller,
     sz_strlcpy(name, "Server console");
   }
 
-  notify_conn(NULL, "%c %s %s", caller ? '^' : '+', name, buf);
+  my_snprintf(chat, sizeof(chat), "%c %s %s",
+              caller ? '^' : '+', name, buf);
+
+  conn_list_iterate(game.est_connections, dest) {
+    if (conn_is_ignored(caller, dest)) {
+      continue;
+    }
+    if (game.server.spectatorchat
+        && server_state == RUN_GAME_STATE
+        && caller != NULL
+        && !connection_controls_player(caller)
+        && connection_controls_player(dest)) {
+      continue;
+    }
+    dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT,
+                          caller ? caller->id : -1);
+  } conn_list_iterate_end;
 
   return TRUE;
 }

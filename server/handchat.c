@@ -90,7 +90,7 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool is_ignored(struct connection *pconn, struct connection *dest)
+bool conn_is_ignored(struct connection *pconn, struct connection *dest)
 {
   if (pconn == dest || pconn == NULL || dest == NULL)
     return FALSE;
@@ -118,7 +118,7 @@ static void chat_msg_to_conn(struct connection *sender,
   form_chat_name(sender, sender_name, sizeof(sender_name));
   form_chat_name(dest, dest_name, sizeof(dest_name));
 
-  if (is_ignored(sender, dest)) {
+  if (conn_is_ignored(sender, dest)) {
     my_snprintf(message, sizeof(message),
         _("Server: You cannot send messages to %s; you are ignored."),
         dest_name);
@@ -151,7 +151,7 @@ static void chat_msg_to_player_multi(struct connection *sender,
   form_chat_name(sender, sender_name, sizeof(sender_name));
 
   dest = find_conn_by_user(pdest->username);
-  if (dest && is_ignored(sender, dest)) {
+  if (dest && conn_is_ignored(sender, dest)) {
     char dest_name[MAX_LEN_CHAT_NAME];
     form_chat_name(dest, dest_name, sizeof(dest_name));
 
@@ -301,7 +301,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
         continue;
       }
       conn_list_iterate(aplayer->connections, dest) {
-        if (is_ignored(pconn, dest))
+        if (conn_is_ignored(pconn, dest))
           continue;
         if (game.server.spectatorchat
             && server_state == RUN_GAME_STATE
@@ -479,7 +479,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 	      "<%s> %s", sender_name, message);
   con_puts(C_COMMENT, chat);
   conn_list_iterate(game.est_connections, dest) {
-    if (is_ignored(pconn, dest)) {
+    if (conn_is_ignored(pconn, dest)) {
       continue;
     }
     if (game.server.spectatorchat
