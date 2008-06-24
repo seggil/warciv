@@ -234,7 +234,6 @@ static void append_impr_or_unit_to_menu_item(GtkMenuItem *parent_item,
     ""
   };
 
-  gtk_menu_item_set_submenu(parent_item, NULL);
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(parent_item, menu);
 
