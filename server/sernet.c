@@ -1232,8 +1232,13 @@ void init_connections(void)
 static void start_processing_request(struct connection *pconn,
 				     int request_id)
 {
-  assert(request_id);
+  if (pconn == NULL || !pconn->used || pconn->is_closing) {
+    return;
+  }
+
+  assert(request_id != 0);
   assert(pconn->server.currently_processed_request_id == 0);
+
   freelog(LOG_DEBUG, "start processing packet %d from connection %d",
 	  request_id, pconn->id);
   send_packet_processing_started(pconn);
