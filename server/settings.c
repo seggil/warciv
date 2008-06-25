@@ -171,7 +171,7 @@ static bool maxplayers_callback(int value, const char **error_string)
   {name, sclass, to_client, short_help, extra_help, SSET_BOOL,          \
       scateg, slevel, "", &value, default, func,                        \
       NULL, 0, NULL, 0, 0,                                              \
-      NULL, NULL, NULL, 0, VCF_NONE, -1, -1},
+      NULL, NULL, NULL, VCF_NONE, 0, -1, -1},
 
 #define GEN_BOOL_FULL(name, value, sclass, scateg, slevel, to_client,   \
                       short_help, extra_help, func, default,            \
@@ -189,7 +189,7 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, "",                                               \
       NULL, FALSE, NULL,                                                \
       &value, default, func, min, max,                                  \
-      NULL, NULL, NULL, 0, VCF_NONE, -1, -1},
+      NULL, NULL, NULL, VCF_NONE, 0, -1, -1},
 
 #define GEN_INT_FULL(name, value, sclass, scateg, slevel, to_client,    \
                      reqcap, short_help, extra_help, func, min,         \
@@ -1408,14 +1408,15 @@ struct settings_s settings[] = {
               "1 - Public chat messages with links are rejected."),
            NULL, GAME_DEFAULT_NO_PUBLIC_LINKS)
 
-  GEN_INT("kicktime", game.server.kicktime, SSET_RULES_FLEXIBLE,
-          SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
-          N_("Time before a kicked user can reconnect"),
-          N_("Gives the time in seconds before a user kicked "
-             "using the 'kick' command may reconnect. Changing "
-             "this setting will affect users kicked in the past."),
-          NULL, GAME_MIN_KICKTIME, GAME_MAX_KICKTIME,
-          GAME_DEFAULT_KICKTIME)
+  GEN_INT_FULL("kicktime", game.server.kicktime, SSET_RULES_FLEXIBLE,
+               SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT, "",
+               N_("Time before a kicked user can reconnect"),
+               N_("Gives the time in seconds before a user kicked "
+                  "using the 'kick' command may reconnect. Changing "
+                  "this setting will affect users kicked in the past."),
+               NULL, GAME_MIN_KICKTIME, GAME_MAX_KICKTIME,
+               GAME_DEFAULT_KICKTIME,
+               VCF_NONE, 0, ALLOW_ADMIN, ALLOW_ADMIN)
 
   GEN_BOOL("spectatorchat", game.server.spectatorchat, SSET_RULES_FLEXIBLE,
            SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
