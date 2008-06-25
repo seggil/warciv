@@ -128,6 +128,11 @@ struct settings_s {
   /* Just like commands, settings have vote parameters. */
   int vote_flags;
   int vote_percent;
+
+  /* Same as for commands, except that -1 means
+   * to defer to the access level of the 'set' command. */
+  int pregame_level;
+  int game_level;
 };
 
 extern struct settings_s settings[];
@@ -143,6 +148,8 @@ struct setting_value {
 
 bool sset_is_changeable(int idx);
 bool sset_is_to_client(int idx);
+
+enum cmdlevel_id sset_access_level(int idx);
 
 void settings_init(void);
 void settings_reset(void);

@@ -18,6 +18,8 @@
 #include "fcintl.h"
 
 #include "connection.h"
+
+#include "srv_main.h"
 #include "stdinhand.h"
 #include "vote.h"
 
@@ -765,3 +767,17 @@ const struct command commands[] = {
    ECHO_ADMINS, VCF_NONE, 0
   }
 };
+
+
+/**************************************************************************
+  Return the access level of a command.
+**************************************************************************/
+enum cmdlevel_id command_access_level(enum command_id cmd)
+{
+  if (server_state == PRE_GAME_STATE) {
+    return commands[cmd].pregame_level;
+  } else {
+    return commands[cmd].game_level;
+  }
+}
+

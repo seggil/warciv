@@ -134,3 +134,5 @@ enum command_id {
 };
 
 extern const struct command commands[];
+
+enum cmdlevel_id command_access_level(enum command_id cmd);

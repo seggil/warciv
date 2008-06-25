@@ -422,27 +422,15 @@ void stdinhand_free(void)
 }
 
 /**************************************************************************
-  Return the access level of a command.
-**************************************************************************/
-static enum cmdlevel_id access_level(enum command_id cmd)
-{
-  if (server_state == PRE_GAME_STATE) {
-    return commands[cmd].pregame_level;
-  } else {
-    return commands[cmd].game_level;
-  }
-}
-
-/**************************************************************************
   Whether the caller can use the specified command. caller == NULL means 
   console.
 **************************************************************************/
 static bool may_use(struct connection *caller, enum command_id cmd)
 {
   if (!caller) {
-    return access_level(cmd) < ALLOW_NEVER;
+    return command_access_level(cmd) < ALLOW_NEVER;
   }
-  return caller->access_level >= access_level(cmd);
+  return caller->access_level >= command_access_level(cmd);
 }
 
 /**************************************************************************
@@ -469,7 +457,7 @@ static bool may_set_option(struct connection *caller, int option_idx)
   } else {
     int level = caller->access_level;
     return ((level == ALLOW_HACK)
-            || (level >= access_level(CMD_SET)
+            || (level >= sset_access_level(option_idx)
                 && sset_is_to_client(option_idx)));
   }
 }
@@ -6172,7 +6160,7 @@ bool handle_stdin_input(struct connection * caller,
     return FALSE;
   }
 
-  level = access_level(cmd);
+  level = command_access_level(cmd);
 
   cptr_s = skip_leading_spaces(cptr_s);
   sz_strlcpy(arg, cptr_s);
@@ -7557,7 +7545,7 @@ static void show_help_command_list(struct connection *caller,
 
     buf[0] = '\0';
     for (i = 0, j = 0; i < CMD_NUM; i++) {
-      enum cmdlevel_id level = access_level(i);
+      enum cmdlevel_id level = command_access_level(i);
 
       if (level == ALLOW_CTRL) {
         cat_snprintf(buf, sizeof(buf), "%-19s", commands[i].name);

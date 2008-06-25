@@ -19,8 +19,10 @@
 #include "log.h"
 #include "support.h"
 
+#include "connection.h"
 #include "map.h"
 
+#include "commands.h"
 #include "gamelog.h"
 #include "report.h"
 #include "settings.h"
@@ -164,52 +166,66 @@ static bool maxplayers_callback(int value, const char **error_string)
   return TRUE;
 }
 
-#define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,	\
-		 short_help, extra_help, func, default)			\
-  {name, sclass, to_client, short_help, extra_help, SSET_BOOL,		\
-      scateg, slevel, "", &value, default, func,			\
-      NULL, 0, NULL, 0, 0,						\
-      NULL, NULL, NULL, 0, VCF_NONE, 0},
+#define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,        \
+                 short_help, extra_help, func, default)                 \
+  {name, sclass, to_client, short_help, extra_help, SSET_BOOL,          \
+      scateg, slevel, "", &value, default, func,                        \
+      NULL, 0, NULL, 0, 0,                                              \
+      NULL, NULL, NULL, 0, VCF_NONE, -1, -1},
 
-#define GEN_BOOL_FULL(name, value, sclass, scateg, slevel, to_client,	\
+#define GEN_BOOL_FULL(name, value, sclass, scateg, slevel, to_client,   \
                       short_help, extra_help, func, default,            \
-                      vote_flags, vote_percent)	                        \
-  {name, sclass, to_client, short_help, extra_help, SSET_BOOL,		\
-      scateg, slevel, "", &value, default, func,			\
-      NULL, 0, NULL, 0, 0,						\
-      NULL, NULL, NULL, 0, vote_flags, vote_percent},
+                      vote_flags, vote_percent, pregame_level,          \
+                      game_level)                                       \
+  {name, sclass, to_client, short_help, extra_help, SSET_BOOL,          \
+      scateg, slevel, "", &value, default, func,                        \
+      NULL, 0, NULL, 0, 0,                                              \
+      NULL, NULL, NULL, 0, vote_flags, vote_percent,                    \
+      pregame_level, game_level},
 
-#define GEN_INT(name, value, sclass, scateg, slevel, to_client,		\
-		short_help, extra_help, func, min, max, default)	\
-  {name, sclass, to_client, short_help, extra_help, SSET_INT,		\
-      scateg, slevel, "",						\
-      NULL, FALSE, NULL,						\
-      &value, default, func, min, max,					\
-      NULL, NULL, NULL, 0, VCF_NONE, 0},
+#define GEN_INT(name, value, sclass, scateg, slevel, to_client,         \
+                short_help, extra_help, func, min, max, default)        \
+  {name, sclass, to_client, short_help, extra_help, SSET_INT,           \
+      scateg, slevel, "",                                               \
+      NULL, FALSE, NULL,                                                \
+      &value, default, func, min, max,                                  \
+      NULL, NULL, NULL, 0, VCF_NONE, -1, -1},
 
-#define GEN_STRING(name, value, sclass, scateg, slevel, to_client,	\
-		   short_help, extra_help, func, default)		\
-  {name, sclass, to_client, short_help, extra_help, SSET_STRING,	\
-      scateg, slevel, "",						\
-      NULL, FALSE, NULL,						\
-      NULL, 0, NULL, 0, 0,						\
-      value, default, func, sizeof(value), VCF_NONE, 0},
+#define GEN_INT_FULL(name, value, sclass, scateg, slevel, to_client,    \
+                     reqcap, short_help, extra_help, func, min,         \
+                     max, default, vote_flags, vote_percent,            \
+                     pregame_level, game_level)                         \
+  {name, sclass, to_client, short_help, extra_help, SSET_INT,           \
+      scateg, slevel, reqcap,                                           \
+      NULL, FALSE, NULL,                                                \
+      &value, default, func, min, max,                                  \
+      NULL, NULL, NULL, vote_flags, vote_percent,                       \
+      pregame_level, game_level},
 
-#define GEN_END							\
-  {NULL, SSET_LAST, SSET_SERVER_ONLY, NULL, NULL, SSET_INT,	\
-      SSET_NUM_CATEGORIES, SSET_NONE, "",			\
-      NULL, FALSE, NULL,					\
-      NULL, 0, NULL, 0, 0,					\
-      NULL, NULL, NULL, VCF_NONE, 0},
+#define GEN_STRING(name, value, sclass, scateg, slevel, to_client,      \
+                   short_help, extra_help, func, default)               \
+  {name, sclass, to_client, short_help, extra_help, SSET_STRING,        \
+      scateg, slevel, "",                                               \
+      NULL, FALSE, NULL,                                                \
+      NULL, 0, NULL, 0, 0,                                              \
+      value, default, func, sizeof(value), VCF_NONE, 0, -1, -1},
 
-#define GEN_INT_EXT(name, value, sclass, scateg, slevel, to_client, \
-                    reqcap,short_help, extra_help, func, min,       \
-                    max, default)                                   \
-  {name, sclass, to_client, short_help, extra_help, SSET_INT,	    \
-      scateg, slevel, reqcap,					    \
-      NULL, FALSE, NULL,					    \
-      &value, default, func, min, max,				    \
-      NULL, NULL, NULL, VCF_NONE, 0},
+#define GEN_STRING_FULL(name, value, sclass, scateg, slevel, to_client, \
+                        short_help, extra_help, func, default,          \
+                        vote_flags, vote_pc, pregame_level, game_level) \
+  {name, sclass, to_client, short_help, extra_help, SSET_STRING,        \
+      scateg, slevel, "",                                               \
+      NULL, FALSE, NULL,                                                \
+      NULL, 0, NULL, 0, 0,                                              \
+      value, default, func, sizeof(value),                              \
+      vote_flags, vote_pc, pregame_level, game_level},
+
+#define GEN_END                                                         \
+  {NULL, SSET_LAST, SSET_SERVER_ONLY, NULL, NULL, SSET_INT,             \
+      SSET_NUM_CATEGORIES, SSET_NONE, "",                               \
+      NULL, FALSE, NULL,                                                \
+      NULL, 0, NULL, 0, 0,                                              \
+      NULL, NULL, NULL, VCF_NONE, 0, -1, -1},
       
 struct settings_s settings[] = {
 
@@ -903,41 +919,42 @@ struct settings_s settings[] = {
    * affect what happens in the game, it just determines when the
    * players stop playing and look at the score.)
    */
-  GEN_STRING("allowtake", game.server.allow_take,
-	     SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
-             N_("Players that users are allowed to take"),
-             N_("This should be a string of characters, each of which "
-                "specifies a type or status of a civilization (player). "
-                "Clients will only be permitted to take "
-                "or observe those players which match one of the specified "
-                "letters. This only affects future uses of the take or "
-                "observe command; it is not retroactive. The characters "
-		"and their meanings are:\n"
-                "    o,O = Global observer\n"
-                "    b   = Barbarian players\n"
-                "    d   = Dead players\n"
-                "    a,A = AI players\n"
-                "    h,H = Human players\n"
-                "The first description on this list which matches a "
-                "player is the one which applies. Thus 'd' does not "
-                "include dead barbarians, 'a' does not include dead AI "
-                "players, and so on. Upper case letters apply before "
-                "the game has started, lower case letters afterwards.\n\n"
-                "Each character above may be followed by one of the "
-                "following numbers to allow or restrict the manner "
-                "of connection:\n\n"
-                "(none) = Controller allowed, observers allowed, "
-                "can displace connections. (Displacing a connection means "
-		"that you may take over a player, even if another user "
-		"already controls that player.)\n\n"
-                "1 = Controller allowed, observers allowed, "
-                "can't displace connections;\n\n"
-                "2 = Controller allowed, no observers allowed, "
-                "can displace connections;\n\n"
-                "3 = Controller allowed, no observers allowed, "
-                "can't displace connections;\n\n"
-                "4 = No controller allowed, observers allowed;\n\n"),
-                allowtake_callback, GAME_DEFAULT_ALLOW_TAKE)
+  GEN_STRING_FULL("allowtake", game.server.allow_take,
+                  SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
+                  N_("Players that users are allowed to take"),
+                  N_("This should be a string of characters, each of which "
+                     "specifies a type or status of a civilization (player). "
+                     "Clients will only be permitted to take "
+                     "or observe those players which match one of the specified "
+                     "letters. This only affects future uses of the take or "
+                     "observe command; it is not retroactive. The characters "
+                     "and their meanings are:\n"
+                     "    o,O = Global observer\n"
+                     "    b   = Barbarian players\n"
+                     "    d   = Dead players\n"
+                     "    a,A = AI players\n"
+                     "    h,H = Human players\n"
+                     "The first description on this list which matches a "
+                     "player is the one which applies. Thus 'd' does not "
+                     "include dead barbarians, 'a' does not include dead AI "
+                     "players, and so on. Upper case letters apply before "
+                     "the game has started, lower case letters afterwards.\n\n"
+                     "Each character above may be followed by one of the "
+                     "following numbers to allow or restrict the manner "
+                     "of connection:\n\n"
+                     "(none) = Controller allowed, observers allowed, "
+                     "can displace connections. (Displacing a connection means "
+                     "that you may take over a player, even if another user "
+                     "already controls that player.)\n\n"
+                     "1 = Controller allowed, observers allowed, "
+                     "can't displace connections;\n\n"
+                     "2 = Controller allowed, no observers allowed, "
+                     "can displace connections;\n\n"
+                     "3 = Controller allowed, no observers allowed, "
+                     "can't displace connections;\n\n"
+                     "4 = No controller allowed, observers allowed;\n\n"),
+                  allowtake_callback, GAME_DEFAULT_ALLOW_TAKE,
+                  VCF_NONE, 0, ALLOW_ADMIN, -1)
 
   GEN_BOOL("autotoggle", game.server.auto_ai_toggle,
 	   SSET_META, SSET_NETWORK, SSET_SITUATIONAL, SSET_TO_CLIENT,
@@ -1206,45 +1223,45 @@ struct settings_s settings[] = {
               "as a result of nuclear war."), NULL,
            GAME_DEFAULT_NUCLEARWINTERON)
 
-  GEN_INT_EXT("traderevenuestyle", game.traderoute_info.traderevenuestyle,
-	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-              "extroutes", /* required capability for non-default */
-	      N_("Trade revenue style"),
-	      N_("0 - standard freeciv 2.0.9\n"
-                 "1 - experimental\n"
-                 "2 - civ2 trade routes\n"
-                 "This setting affects how much trade cities"
-                 "generate after trade routes are established."), NULL,
-              GAME_MIN_TRADEREVENUESTYLE, GAME_MAX_TRADEREVENUESTYLE,
-              GAME_DEFAULT_TRADEREVENUESTYLE)
+  GEN_INT_FULL("traderevenuestyle", game.traderoute_info.traderevenuestyle,
+               SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+               "extroutes", /* required capability for non-default */
+               N_("Trade revenue style"),
+               N_("0 - standard freeciv 2.0.9\n"
+                  "1 - experimental\n"
+                  "2 - civ2 trade routes\n"
+                  "This setting affects how much trade cities"
+                  "generate after trade routes are established."), NULL,
+               GAME_MIN_TRADEREVENUESTYLE, GAME_MAX_TRADEREVENUESTYLE,
+               GAME_DEFAULT_TRADEREVENUESTYLE, VCF_NONE, 0, -1, -1)
 
-  GEN_INT_EXT("traderevenuepercentage", game.traderoute_info.traderevenuepct,
-	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-              "extroutes", /* required capability for non-default */
-	      N_("Trade revenue percentage"),
-	      N_("100 - default value"), NULL,
-	      GAME_MIN_TRADEREVENUEPCT, GAME_MAX_TRADEREVENUEPCT,
-              GAME_DEFAULT_TRADEREVENUEPCT)
+  GEN_INT_FULL("traderevenuepercentage", game.traderoute_info.traderevenuepct,
+               SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+               "extroutes", /* required capability for non-default */
+               N_("Trade revenue percentage"),
+               N_("100 - default value"), NULL,
+               GAME_MIN_TRADEREVENUEPCT, GAME_MAX_TRADEREVENUEPCT,
+               GAME_DEFAULT_TRADEREVENUEPCT, VCF_NONE, 0, -1, -1)
 
-  GEN_INT_EXT("caravanbonusstyle", game.traderoute_info.caravanbonusstyle,
-	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-              "extroutes", /* required capability for non-default */
-	      N_("Caravan bonus style"),
-	      N_("0 - standard freeciv 2.0.9\n"
-                 "1 - experimental\n"
-                 "This setting affects how much gold and science"
-                 "you get when a caravan arrives in a city."), NULL,
-	      GAME_MIN_CARAVANBONUSSTYLE, GAME_MAX_CARAVANBONUSSTYLE,
-              GAME_DEFAULT_CARAVANBONUSSTYLE)
+  GEN_INT_FULL("caravanbonusstyle", game.traderoute_info.caravanbonusstyle,
+               SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+               "extroutes", /* required capability for non-default */
+               N_("Caravan bonus style"),
+               N_("0 - standard freeciv 2.0.9\n"
+                  "1 - experimental\n"
+                  "This setting affects how much gold and science"
+                  "you get when a caravan arrives in a city."), NULL,
+               GAME_MIN_CARAVANBONUSSTYLE, GAME_MAX_CARAVANBONUSSTYLE,
+               GAME_DEFAULT_CARAVANBONUSSTYLE, VCF_NONE, 0, -1, -1)
 
-  GEN_INT_EXT("trademindist", game.traderoute_info.trademindist,
-	      SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
-              "extroutes", /* required capability for non-default */
-	      N_("Minimum trade distance"),
-	      N_("Minimum distance to establish trade route.\n"
-                 "9 is default"), NULL,
-	      GAME_MIN_TRADEMINDIST, GAME_MAX_TRADEMINDIST,
-              GAME_DEFAULT_TRADEMINDIST)
+  GEN_INT_FULL("trademindist", game.traderoute_info.trademindist,
+               SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+               "extroutes", /* required capability for non-default */
+               N_("Minimum trade distance"),
+               N_("Minimum distance to establish trade route.\n"
+                  "9 is default"), NULL,
+               GAME_MIN_TRADEMINDIST, GAME_MAX_TRADEMINDIST,
+               GAME_DEFAULT_TRADEMINDIST, VCF_NONE, 0, -1, -1)
 
   GEN_BOOL("futuretechsscore", game.ext_info.futuretechsscore, SSET_RULES,
 	   SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
@@ -1381,7 +1398,7 @@ struct settings_s settings[] = {
            N_("Update user ratings"),
            N_("0 - User ratings will not be affected by this game.\n"
               "1 - New ratings will be calculated based on the outcome "
-              "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 50)
+              "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 50, -1, -1)
 #endif
 
   GEN_BOOL("nopubliclinks", game.server.no_public_links, SSET_RULES_FLEXIBLE,
@@ -1493,7 +1510,7 @@ void settings_init(void)
 }
 
 /********************************************************************
-  
+  ...
 *********************************************************************/
 void settings_reset(void)
 {
@@ -1504,4 +1521,30 @@ void settings_reset(void)
       setting_set_to_default(i);
     }
   }
+}
+
+/********************************************************************
+  ...
+*********************************************************************/
+enum cmdlevel_id sset_access_level(int idx)
+{
+  struct settings_s *pset;
+  
+  if (!(0 <= idx && idx < SETTINGS_NUM)) {
+    return ALLOW_NEVER;
+  }
+
+  pset = settings + idx;
+
+  if (server_state == PRE_GAME_STATE) {
+    if (pset->pregame_level < 0) {
+      return command_access_level(CMD_SET);
+    }
+    return pset->pregame_level;
+  }
+
+  if (pset->game_level < 0) {
+    return command_access_level(CMD_SET);
+  }
+  return pset->game_level;
 }
