@@ -169,18 +169,22 @@ static bool maxplayers_callback(int value, const char **error_string)
 #define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,        \
                  short_help, extra_help, func, default)                 \
   {name, sclass, to_client, short_help, extra_help, SSET_BOOL,          \
-      scateg, slevel, "", &value, default, func,                        \
+      scateg, slevel, "",                                               \
+      &value, default, func,                                            \
       NULL, 0, NULL, 0, 0,                                              \
-      NULL, NULL, NULL, VCF_NONE, 0, -1, -1},
+      NULL, NULL, NULL, 0,                                              \
+      VCF_NONE, 0, -1, -1},
 
 #define GEN_BOOL_FULL(name, value, sclass, scateg, slevel, to_client,   \
                       short_help, extra_help, func, default,            \
                       vote_flags, vote_percent, pregame_level,          \
                       game_level)                                       \
   {name, sclass, to_client, short_help, extra_help, SSET_BOOL,          \
-      scateg, slevel, "", &value, default, func,                        \
+      scateg, slevel, "",                                               \
+      &value, default, func,                                            \
       NULL, 0, NULL, 0, 0,                                              \
-      NULL, NULL, NULL, 0, vote_flags, vote_percent,                    \
+      NULL, NULL, NULL, 0,                                              \
+      vote_flags, vote_percent,                                         \
       pregame_level, game_level},
 
 #define GEN_INT(name, value, sclass, scateg, slevel, to_client,         \
@@ -189,7 +193,8 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, "",                                               \
       NULL, FALSE, NULL,                                                \
       &value, default, func, min, max,                                  \
-      NULL, NULL, NULL, VCF_NONE, 0, -1, -1},
+      NULL, NULL, NULL, 0,                                              \
+      VCF_NONE, 0, -1, -1},
 
 #define GEN_INT_FULL(name, value, sclass, scateg, slevel, to_client,    \
                      reqcap, short_help, extra_help, func, min,         \
@@ -199,7 +204,8 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, reqcap,                                           \
       NULL, FALSE, NULL,                                                \
       &value, default, func, min, max,                                  \
-      NULL, NULL, NULL, vote_flags, vote_percent,                       \
+      NULL, NULL, NULL, 0,                                              \
+      vote_flags, vote_percent,                                         \
       pregame_level, game_level},
 
 #define GEN_STRING(name, value, sclass, scateg, slevel, to_client,      \
@@ -208,7 +214,8 @@ static bool maxplayers_callback(int value, const char **error_string)
       scateg, slevel, "",                                               \
       NULL, FALSE, NULL,                                                \
       NULL, 0, NULL, 0, 0,                                              \
-      value, default, func, sizeof(value), VCF_NONE, 0, -1, -1},
+      value, default, func, sizeof(value),                              \
+      VCF_NONE, 0, -1, -1},
 
 #define GEN_STRING_FULL(name, value, sclass, scateg, slevel, to_client, \
                         short_help, extra_help, func, default,          \

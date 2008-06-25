@@ -2606,6 +2606,16 @@ static void show_help_option(struct connection *caller,
   cmd_reply(help_cmd, caller, C_COMMENT,
             _("Status: %s"), (sset_is_changeable(id)
                               ? _("changeable") : _("fixed")));
+  if (op->pregame_level >= 0) {
+    cmd_reply(help_cmd, caller, C_COMMENT,
+              _("Pregame access level: %s"),
+              cmdlevel_name(op->pregame_level));
+  }
+  if (op->game_level >= 0) {
+    cmd_reply(help_cmd, caller, C_COMMENT,
+              _("Game access level: %s"),
+              cmdlevel_name(op->game_level));
+  }
   if (may_view_option(caller, id)) {
     switch (op->type) {
     case SSET_BOOL:
