@@ -1397,7 +1397,11 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     update_menus();
   }
 
-  non_ai_trade_change(punit,trade_action);
+  if (punit->owner == get_player_idx()) {
+    enable_airlift_unit_type_menu(punit->type);
+  }
+
+  non_ai_trade_change(punit, trade_action);
 
   return ret;
 }
@@ -1603,10 +1607,10 @@ static bool read_player_info_techs(struct player *pplayer,
     }
   } tech_type_iterate_end;
 
-  if (need_effect_update) {
+  if (need_effect_update && pplayer == get_player_ptr()) {
     improvements_update_obsolete();
     update_menus();
-    update_airlift_menu(0);
+    update_airlift_unit_types();
   }
 
   update_research(pplayer);

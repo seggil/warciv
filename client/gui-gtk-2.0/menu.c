@@ -7032,25 +7032,46 @@ static bool can_player_unit_type(Unit_Type_id utype)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
-void start_turn_menus_udpate(void)
+void enable_airlift_unit_type_menu(Unit_Type_id type)
+{
+  int i;
+
+  if (strcmp(airlift_queue_get_menu_name(0, type), "\0") <= 0 ) {
+    return;
+  }
+  for(i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+    menu_set_visible(radio_action_group_airlift_unit[i],
+		     airlift_queue_get_menu_name(i, type), TRUE);
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+void update_airlift_unit_types(void)
 {
   int i, j;
 
-  /* Airlift we suppose that only units build are able to airlift*/
-  /* if bribe or revolt city!!! what's append!*/
   for(i = 0; i < U_LAST; i++) {
     if (strcmp(airlift_queue_get_menu_name(0, i), "\0") <= 0 ) {
       continue;
     }
     for(j = 0; j < AIRLIFT_QUEUE_NUM; j++) {
-      bool sensitive = can_player_unit_type(i);
-      const char *buf =
-        airlift_queue_get_menu_name(j, i);
-      menu_set_visible(radio_action_group_airlift_unit[j], buf, sensitive);
+      menu_set_visible(radio_action_group_airlift_unit[j],
+		       airlift_queue_get_menu_name(j, i),
+		       can_player_unit_type(i));
     }
   }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+void start_turn_menus_udpate(void)
+{
+  update_airlift_unit_types();
 
   /* Miscellaneous */
   switch(default_action_type) {

@@ -17,6 +17,8 @@ void update_menus(void);
 void init_menus(void);
 
 void update_delayed_goto_menu(int i);
+void update_airlift_unit_types(void);
+void enable_airlift_unit_type_menu(Unit_Type_id type);
 void update_airlift_menu(int i);
 void update_auto_caravan_menu(void);
 void update_multi_selection_menu(int i);
