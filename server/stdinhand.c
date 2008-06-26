@@ -4595,6 +4595,47 @@ static void send_load_game_info(bool load_successful)
   lsend_packet_game_load(game.est_connections, &packet);
 }
 
+/**************************************************************************
+  ...
+**************************************************************************/
+static void format_time_duration(time_t t, char *buf, int maxlen)
+{
+  int seconds, minutes, hours, days;
+  bool space = FALSE;
+
+  seconds = t % 60;
+  minutes = (t / 60) % 60;
+  hours = (t / (60 * 60)) % 24;
+  days = t / (60 * 60 * 24);
+
+  if (maxlen <= 0) {
+    return;
+  }
+
+  buf[0] = '\0';
+
+  if (days > 0) {
+    cat_snprintf(buf, maxlen, "%d %s", days, PL_("day", "days", days));
+    space = TRUE;
+  }
+  if (hours > 0) {
+    cat_snprintf(buf, maxlen, "%s%d %s",
+                 space ? " " : "", hours, PL_("hour", "hours", hours));
+    space = TRUE;
+  }
+  if (minutes > 0) {
+    cat_snprintf(buf, maxlen, "%s%d %s",
+                 space ? " " : "",
+                 minutes, PL_("minute", "minutes", minutes));
+    space = TRUE;
+  }
+  if (seconds > 0) {
+    cat_snprintf(buf, maxlen, "%s%d %s",
+                 space ? " " : "",
+                 seconds, PL_("second", "seconds", seconds));
+  }
+}
+
 #ifdef HAVE_MYSQL               /* See note for mkstatdate. */
 /**************************************************************************
   Returns a value from enum game_types or -1 if there was a parse error.
@@ -4774,47 +4815,6 @@ static bool ratings_command(struct connection *caller,
   cmd_reply(CMD_RATINGS, caller, C_COMMENT, horiz_line);
 
   return TRUE;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static void format_time_duration(time_t t, char *buf, int maxlen)
-{
-  int seconds, minutes, hours, days;
-  bool space = FALSE;
-
-  seconds = t % 60;
-  minutes = (t / 60) % 60;
-  hours = (t / (60 * 60)) % 24;
-  days = t / (60 * 60 * 24);
-
-  if (maxlen <= 0) {
-    return;
-  }
-
-  buf[0] = '\0';
-
-  if (days > 0) {
-    cat_snprintf(buf, maxlen, "%d %s", days, PL_("day", "days", days));
-    space = TRUE;
-  }
-  if (hours > 0) {
-    cat_snprintf(buf, maxlen, "%s%d %s",
-                 space ? " " : "", hours, PL_("hour", "hours", hours));
-    space = TRUE;
-  }
-  if (minutes > 0) {
-    cat_snprintf(buf, maxlen, "%s%d %s",
-                 space ? " " : "",
-                 minutes, PL_("minute", "minutes", minutes));
-    space = TRUE;
-  }
-  if (seconds > 0) {
-    cat_snprintf(buf, maxlen, "%s%d %s",
-                 space ? " " : "",
-                 seconds, PL_("second", "seconds", seconds));
-  }
 }
 
 /**************************************************************************
