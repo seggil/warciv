@@ -1606,6 +1606,7 @@ static bool read_player_info_techs(struct player *pplayer,
   if (need_effect_update) {
     improvements_update_obsolete();
     update_menus();
+    update_airlift_menu(0);
   }
 
   update_research(pplayer);
