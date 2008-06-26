@@ -296,6 +296,8 @@ void game_init(void)
     game.server.no_public_links = GAME_DEFAULT_NO_PUBLIC_LINKS;
     game.server.kicktime = GAME_DEFAULT_KICKTIME;
     game.server.spectatorchat = GAME_DEFAULT_SPECTATORCHAT;
+    game.server.idlecut = GAME_DEFAULT_IDLECUT;
+    game.server.emptyreset = GAME_DEFAULT_EMPTYRESET;
     game.server.ruleset_loaded = FALSE;
     game.server.timeoutint = GAME_DEFAULT_TIMEOUTINT;
     game.server.timeoutintinc = GAME_DEFAULT_TIMEOUTINTINC;

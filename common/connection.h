@@ -94,7 +94,8 @@ enum exit_state {
   ES_READ_ERROR,
   ES_REMOTE_CLOSE,
   ES_REJECTED,       /* handle_packet_input returned FALSE. */
-  ES_KICKED
+  ES_KICKED,
+  ES_IDLECUT
 };
 
 /* get 'struct conn_list' and related functions: */
@@ -286,6 +287,10 @@ struct connection {
     struct timer *flood_timer;
     double flood_counter;
     int flood_warning_level;
+
+    /* Used for the idlecut setting. It holds the timestamp of
+     * the last "non-idle" action by the connection. */
+    time_t idle_time;
   } server;
 
   /*

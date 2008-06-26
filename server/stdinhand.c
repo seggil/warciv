@@ -8067,26 +8067,42 @@ void show_players(struct connection *caller)
 **************************************************************************/
 static void show_connections(struct connection *caller)
 {
-  char buf[MAX_LEN_CONSOLE_LINE];
   int n;
+
   n = conn_list_size(game.all_connections);
+
   cmd_reply(CMD_LIST, caller, C_COMMENT,
             _("List of connections to server (%d):"), n);
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+
   if (n == 0) {
     cmd_reply(CMD_LIST, caller, C_WARNING, _("<no connections>"));
+
   } else {
+    char buf[MAX_LEN_CONSOLE_LINE], timebuf[128];
+    time_t now, idle;
+
+    now = time(NULL);
+
     conn_list_iterate(game.all_connections, pconn) {
       sz_strlcpy(buf, conn_description(pconn));
       if (pconn->established) {
-        cat_snprintf(buf, sizeof(buf), " %s access",
+        cat_snprintf(buf, sizeof(buf), _(" %s access"),
                      cmdlevel_name(pconn->access_level));
       }
+      
+      idle = now - pconn->server.idle_time;
+      if (idle > 0) {
+        format_time_duration(idle, timebuf, sizeof(timebuf));
+        cat_snprintf(buf, sizeof(buf), _(" (idle %s)"), timebuf);
+      }
+
       cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
-      cmd_reply(CMD_LIST, caller, C_COMMENT, "  capabilities: %s",
+      cmd_reply(CMD_LIST, caller, C_COMMENT, _("  capabilities: %s"),
                 pconn->capability);
     } conn_list_iterate_end;
   }
+
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
 

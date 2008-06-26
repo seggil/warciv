@@ -70,7 +70,7 @@ struct fcdb_params fcdb = {
 #define MIN_PASSWORD_NUMS 0  /* minimum number of numbers required */
 
 #define MAX_AUTH_TRIES 3
-#define MAX_WAIT_TIME 300   /* max time we'll wait on a password */
+#define MAX_WAIT_TIME 30   /* max time we'll wait on a password */
 
 /* after each wrong guess for a password, the server waits this
  * many seconds to reply to the client */

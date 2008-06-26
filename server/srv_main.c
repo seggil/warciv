@@ -1045,6 +1045,8 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
 	    conn_description(pconn));
     return TRUE;
   }
+
+  conn_reset_idle_time(pconn);
   
   /* valid packets from established connections but non-players */
   if (type == PACKET_CHAT_MSG_REQ) {

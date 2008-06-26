@@ -89,4 +89,7 @@ void server_assign_nation(struct player *pplayer,
                           int city_style);
 bool server_assign_random_nation(struct player *pplayer);
 
+void conn_reset_idle_time(struct connection *pconn);
+void check_idle_connections(void);
+
 #endif /* FC__CONNECTHAND_H */

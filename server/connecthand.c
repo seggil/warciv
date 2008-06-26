@@ -973,3 +973,38 @@ void restore_access_level(struct connection *pconn)
   }
 }
 
+/**************************************************************************
+  Called when a connection does something to indicate that it is not
+  idle.
+**************************************************************************/
+void conn_reset_idle_time(struct connection *pconn)
+{
+  if (!pconn || !pconn->used || pconn->is_closing) {
+    return;
+  }
+  pconn->server.idle_time = time(NULL);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void check_idle_connections(void)
+{
+  time_t now;
+
+  if (game.server.idlecut <= 0) {
+    return;
+  }
+
+  now = time(NULL);
+  conn_list_iterate(game.all_connections, pconn) {
+    if (!pconn->used || pconn->is_closing
+        || pconn->server.idle_time <= 0
+        || pconn->access_level >= ALLOW_ADMIN) {
+      continue;
+    }
+    if (now >= pconn->server.idle_time + game.server.idlecut) {
+      server_break_connection(pconn, ES_IDLECUT);
+    }
+  } conn_list_iterate_end;
+}

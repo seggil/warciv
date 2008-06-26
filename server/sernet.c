@@ -81,6 +81,7 @@
 #include "database.h"
 #include "meta.h"
 #include "plrhand.h"
+#include "settings.h"
 #include "srv_main.h"
 #include "stdinhand.h"
 #include "vote.h"
@@ -400,7 +401,9 @@ void force_flush_packets(void)
 static void really_close_connections(void)
 {
   struct connection *pconn;
-  int i;
+  int i, num_connections_before;
+
+  num_connections_before = conn_list_size(game.all_connections);
 
   for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
     pconn = &connections[i];
@@ -409,6 +412,17 @@ static void really_close_connections(void)
     }
     lost_connection_to_client(pconn);
     close_connection(pconn);
+  }
+
+  if (game.server.emptyreset && server_state == PRE_GAME_STATE
+      && num_connections_before > 0
+      && conn_list_size(game.all_connections) <= 0) {
+    settings_reset();
+    if (srvarg.script_filename) {
+      read_init_script(NULL, srvarg.script_filename);
+    }
+    freelog(LOG_NORMAL, _("Settings reset because the server "
+                          "became empty (setting 'emptyreset')."));
   }
 }
 
@@ -577,7 +591,6 @@ int sniff_packets(void)
       game.server.last_ping = time(NULL);
     }
 
-
     /* if we've waited long enough after a failure, respond to the client */
     if (srvarg.auth.enabled) {
       conn_list_iterate(game.all_connections, pconn) {
@@ -587,6 +600,7 @@ int sniff_packets(void)
       } conn_list_iterate_end;
     }
 
+    check_idle_connections();
 
     /* Don't wait if timeout == -1 (i.e. on auto games) */
     if (server_state != PRE_GAME_STATE && game.info.timeout == -1) {
@@ -1072,6 +1086,8 @@ static int server_accept_connection(int sockfd)
   pconn->server.received_username = FALSE;
   pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
   pconn->server.delay_establish = FALSE;
+
+  conn_reset_idle_time(pconn);
 
   if (!receive_ip(pconn, ipaddr)) {
     /* Banned, but not an error. */

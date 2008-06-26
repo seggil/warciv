@@ -552,7 +552,8 @@ const char *conn_description(const struct connection *pconn)
     N_("read error"),
     N_("client disconnected"),
     N_("rejected"),
-    N_("kicked")
+    N_("kicked"),
+    N_("idle cut")
   };
 
   if (pconn == NULL) {

@@ -1434,6 +1434,28 @@ struct settings_s settings[] = {
               "while the game is running only."),
            NULL, GAME_DEFAULT_SPECTATORCHAT)
 
+  GEN_INT_FULL("idlecut", game.server.idlecut, SSET_RULES_FLEXIBLE,
+               SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT, "",
+               N_("Time before idle user is cut"),
+               N_("This settings controls how long (in seconds) a user's "
+                  "connection can be idle while connected to the server. "
+                  "Connections that idle for more than this time are "
+                  "cut. A value of zero for this setting means that "
+                  "idle connections are never cut."),
+               NULL, GAME_MIN_IDLECUT, GAME_MAX_IDLECUT,
+               GAME_DEFAULT_IDLECUT,
+               VCF_NONE, 0, ALLOW_ADMIN, ALLOW_ADMIN)
+
+  GEN_BOOL_FULL("emptyreset", game.server.emptyreset, SSET_RULES_FLEXIBLE,
+                SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
+                N_("Reset server settings when empty"),
+                N_("If this setting is set to 1, then the server  "
+                   "will automatically reset all settings when it "
+                   "becomes empty (i.e. there are no more connections). "
+                   "This only affects the server in pregame."),
+                NULL, GAME_DEFAULT_EMPTYRESET,
+                VCF_NONE, 0, ALLOW_ADMIN, ALLOW_ADMIN)
+
   GEN_END
 };
 
