@@ -11,11 +11,12 @@
 #include <config.h>
 #endif
 
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include <time.h>
 
 #ifdef HAVE_ARPA_INET_H
