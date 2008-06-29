@@ -2458,9 +2458,6 @@ static bool stats_command(struct connection *caller,
   cmd_reply(CMD_STATS, caller, C_COMMENT, _("Statistics for %s"),
             fus->username);
   cmd_reply(CMD_STATS, caller, C_COMMENT, horiz_line);
-  if (fus->email[0] != '\0') {
-    cmd_reply(CMD_STATS, caller, C_COMMENT, _("  Email: %s"), fus->email);
-  }
 
   cmd_reply(CMD_STATS, caller, C_COMMENT,
             _("  User Id: %-24d Login Count: %d"),
