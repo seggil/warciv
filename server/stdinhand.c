@@ -285,9 +285,14 @@ static struct hash_table *mute_table;
 struct kickinfo {
   time_t time_of_kick;
   char addr[64];
+  char user[MAX_LEN_NAME];
 };
 
-static struct hash_table *kick_table;
+static struct kickinfo *kickinfo_new(struct connection *pconn);
+static void kickinfo_free(struct kickinfo *ki);
+
+static struct hash_table *kick_table_by_addr;
+static struct hash_table *kick_table_by_user;
 
 static const char horiz_line[] =
     "------------------------------------------------------------------------------";
@@ -354,8 +359,11 @@ void stdinhand_init(void)
     mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
   }
 
-  if (!kick_table) {
-    kick_table = hash_new(hash_fval_string2, hash_fcmp_string);
+  if (!kick_table_by_addr) {
+    kick_table_by_addr = hash_new(hash_fval_string2, hash_fcmp_string);
+  }
+  if (!kick_table_by_user) {
+    kick_table_by_user = hash_new(hash_fval_string2, hash_fcmp_string);
   }
 }
 
@@ -412,12 +420,20 @@ void stdinhand_free(void)
     mute_table = NULL;
   }
 
-  if (kick_table) {
-    hash_iterate(kick_table, void *, key, struct kickinfo *, ki) {
-      free(ki);
+  if (kick_table_by_addr) {
+    hash_iterate(kick_table_by_addr, void *, key, struct kickinfo *, ki) {
+      kickinfo_free(ki);
     } hash_iterate_end;
-    hash_free(kick_table);
-    kick_table = NULL;
+    hash_free(kick_table_by_addr);
+    kick_table_by_addr = NULL;
+  }
+
+  if (kick_table_by_user) {
+    hash_iterate(kick_table_by_user, void *, key, struct kickinfo *, ki) {
+      kickinfo_free(ki);
+    } hash_iterate_end;
+    hash_free(kick_table_by_user);
+    kick_table_by_user = NULL;
   }
 }
 
@@ -869,19 +885,47 @@ bool require_command(struct connection *caller, char *arg, bool check)
 /**************************************************************************
 ...
 **************************************************************************/
-static void kick_table_add(struct connection *pconn)
+static struct kickinfo *kickinfo_new(struct connection *pconn)
 {
   struct kickinfo *ki;
-
-  if (!kick_table
-      || hash_key_exists(kick_table, pconn->server.ipaddr)) {
-    return;
-  }
 
   ki = fc_calloc(1, sizeof(*ki));
   ki->time_of_kick = time(NULL);
   sz_strlcpy(ki->addr, pconn->server.ipaddr);
-  hash_insert(kick_table, ki->addr, ki);
+  sz_strlcpy(ki->user, pconn->username);
+
+  return ki;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void kickinfo_free(struct kickinfo *ki)
+{
+  if (!ki) {
+    return;
+  }
+  free(ki);
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static void kick_table_add(struct connection *pconn)
+{
+  struct kickinfo *ki = NULL;
+
+  if (kick_table_by_addr
+      && !hash_key_exists(kick_table_by_addr, pconn->server.ipaddr)) {
+    ki = kickinfo_new(pconn);
+    hash_insert(kick_table_by_addr, ki->addr, ki);
+  }
+
+  if (kick_table_by_user
+      && !hash_key_exists(kick_table_by_addr, pconn->username)) {
+    ki = kickinfo_new(pconn);
+    hash_insert(kick_table_by_user, ki->user, ki);
+  }
 }
 
 /**************************************************************************
@@ -891,14 +935,17 @@ static void kick_table_remove(struct connection *pconn)
 {
   struct kickinfo *ki;
 
-  if (!kick_table) {
-    return;
+  if (kick_table_by_addr) {
+    ki = hash_delete_entry(kick_table_by_addr, pconn->server.ipaddr);
+    if (ki) {
+      free(ki);
+    }
   }
-
-  ki = hash_delete_entry(kick_table, pconn->server.ipaddr);
-
-  if (ki) {
-    free(ki);
+  if (kick_table_by_user) {
+    ki = hash_delete_entry(kick_table_by_user, pconn->username);
+    if (ki) {
+      free(ki);
+    }
   }
 }
 
@@ -907,10 +954,10 @@ static void kick_table_remove(struct connection *pconn)
 **************************************************************************/
 bool conn_is_kicked(struct connection *pconn, int *time_remaining)
 {
-  struct kickinfo *ki;
-  time_t now;
+  struct kickinfo *ki_addr, *ki_user;
+  time_t now, time_of_kick;
 
-  if (!kick_table) {
+  if (!kick_table_by_addr || !kick_table_by_user) {
     return FALSE;
   }
 
@@ -918,20 +965,29 @@ bool conn_is_kicked(struct connection *pconn, int *time_remaining)
     return FALSE;
   }
 
-  ki = hash_lookup_data(kick_table, pconn->server.ipaddr);
+  ki_addr = hash_lookup_data(kick_table_by_addr, pconn->server.ipaddr);
+  ki_user = hash_lookup_data(kick_table_by_user, pconn->username);
   
-  if (!ki) {
+  if (!ki_addr && !ki_user) {
     return FALSE;
   }
 
+  if (!ki_addr) {
+    time_of_kick = ki_user->time_of_kick;
+  } else if (!ki_user) {
+    time_of_kick = ki_addr->time_of_kick;
+  } else {
+    time_of_kick = MAX(ki_addr->time_of_kick, ki_user->time_of_kick);
+  }
+
   now = time(NULL);
-  if (now - ki->time_of_kick > game.server.kicktime) {
+  if (now - time_of_kick > game.server.kicktime) {
     kick_table_remove(pconn);
     return FALSE;
   }
 
   if (time_remaining) {
-    *time_remaining = game.server.kicktime - (now - ki->time_of_kick);
+    *time_remaining = game.server.kicktime - (now - time_of_kick);
   }
   return TRUE;
 }
