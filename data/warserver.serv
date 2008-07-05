@@ -98,5 +98,6 @@
 /set maxallies 1
 /set multilinechat 0
 /set techcoststyle 1
+/experimental
 
-/rulesetdir nowonder+1.2
+/rulesetdir nowonder+-1.2
