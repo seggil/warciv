@@ -2819,7 +2819,7 @@ void terrain_chance_init(void)
 *************************************************************************/
 void normalize_coord(struct gen8_map *pmap, int *x, int *y)
 {
-  while (*x < 0) {
+  while (* x < 0) {
     *x += pmap->xsize;
   }
   while (*x >= pmap->xsize) {
@@ -3355,7 +3355,7 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
                                          int sx, int sy,
                                          struct player **pplayers, size_t num)
 {
-  int dx, dy, rsx, rsy, xmax = pmap->xsize, ymax = pmap->ysize;
+  int rsx, rsy, xmax = pmap->xsize, ymax = pmap->ysize;
 
   if (myrand(100) < 50) {
     do_rotation(island);
@@ -3372,12 +3372,11 @@ bool place_island_on_map_for_team_player(struct gen8_map *pmap,
   if (!topo_has_flag(TF_WRAPY)) {
     ymax -= island->ysize;
   }
-  do {
-    dx = myrand(2 * island->xsize) - island->xsize;
-    dy = myrand(2 * island->ysize) - island->ysize;
-    rsx = sx + dx;
-    rsy = sy + dy;
-  } while (rsx < 0 || rsx >= xmax || rsy < 0 || rsy >= ymax);
+
+/* More or less... */
+#define RANDOM_LENGHT 5
+  rsx = MAX(MIN(myrand(RANDOM_LENGHT * 2 + 1) + sx - RANDOM_LENGHT, xmax), 0);
+  rsy = MAX(MIN(myrand(RANDOM_LENGHT * 2 + 1) + sy - RANDOM_LENGHT, ymax), 0);
 
   /* game.server.teamplacementtype:
    * 0 - team players are placed as close as possible regardless of continents.
@@ -3662,8 +3661,8 @@ static bool mapgenerator89(bool team_placement)
         dy = myrand(map.ysize);
       }
       for (i = 0; i < teams; i++) {
-        px[i] = map.xsize * i / teams + dx;
-        py[i] = map.ysize * i / teams + dy;
+        px[i] = (map.xsize * (2 * i + 1)) / (2 * teams) + dx;
+        py[i] = (map.ysize * (2 * i + 1)) / (2 * teams) + dy;
         normalize_coord(pmap, &px[i], &py[i]);
       }
 
