@@ -105,11 +105,13 @@ int main(int argc, char *argv[])
   /* yes we do have reasons ;)                                   */
   inx = 1;
   while (inx < argc) {
-    if ((option = get_option("--file", argv, &inx, argc)))
+    if ((option = get_option("--file", argv, &inx, argc))) {
       sz_strlcpy(srvarg.load_filename, option);
-    else if (is_option("--help", argv[inx])) {
+    } else if (is_option("--help", argv[inx])) {
       showhelp = TRUE;
       break;
+    } else if (is_option("--Hack-off", argv[inx])) {
+      srvarg.hack_request_disabled = TRUE;
     } else if ((option = get_option("--log", argv, &inx, argc)))
       srvarg.log_filename = option;
     else if ((option = get_option("--gamelog", argv, &inx, argc)))
@@ -201,6 +203,7 @@ int main(int argc, char *argv[])
 	       _("  -g, --gamelog FILE\tUse FILE as game logfile\n"));
     fc_fprintf(stderr,
 	       _("  -h, --help\t\tPrint a summary of the options\n"));
+    fc_fprintf(stderr, _("  -H, --Hack-off\tDisable hack challenge\n"));
     fc_fprintf(stderr, _("  -l, --log FILE\tUse FILE as logfile\n"));
     fc_fprintf(stderr, _("  -m, --meta\t\tNotify metaserver and "
 			 "send server's info\n"));

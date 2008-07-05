@@ -326,7 +326,7 @@ bool client_start_server(void)
 			DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
 			NULL, NULL, &si, &pi)) {
     append_output_window(_("Couldn't start the server."));
-    append_output_window(_("You'll have to " "start one manually. Sorry..."));
+    append_output_window(_("You'll have to start one manually. Sorry..."));
     return FALSE;
   }
   
@@ -363,6 +363,24 @@ bool client_start_server(void)
     return FALSE;
   }
 
+  return TRUE;
+#endif
+}
+
+/*************************************************************************
+  Sends the hard-coded commands for a local game. This should only be
+  called for local servers once we get hack access.
+*************************************************************************/
+void client_send_initial_commands(void)
+{
+  char buf[512];
+
+  /* Send new game defaults. */
+  send_chat("/set aifill 5");
+
+  my_snprintf(buf, sizeof(buf), "/%s", skill_level_names[0]);
+  send_chat(buf);
+
   /* We set the topology to match the view.
    *
    * When a typical player launches a game, he wants the map orientation to
@@ -383,9 +401,6 @@ bool client_start_server(void)
 	       | ((is_isometric && hex_height == 0) ? TF_ISO : 0)
 	       | ((hex_width != 0 || hex_height != 0) ? TF_HEX : 0)));
   send_chat(buf);
-
-  return TRUE;
-#endif
 }
 
 /*************************************************************************
@@ -482,6 +497,9 @@ void handle_single_want_hack_reply(bool you_have_hack)
     append_output_window(_("We have control of the server "
                          "(command access level hack)"));
     client_has_hack = TRUE;
+    if (is_server_running()) {
+      client_send_initial_commands();
+    }
   } else if (is_server_running()) {
     /* only output this if we started the server and we NEED hack */
     append_output_window(_("We can't take control of server, "

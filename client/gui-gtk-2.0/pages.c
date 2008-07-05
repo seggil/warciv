@@ -98,14 +98,20 @@ static int server_list_request_id = -1;
 **************************************************************************/
 static void start_new_game_callback(GtkWidget *w, gpointer data)
 {
-  if (is_server_running() || client_start_server()) {
-    char buf[512];
+  if (is_server_running()) {
+    return;
+  }
 
-    /* Send new game defaults. */
-    send_chat("/set aifill 5");
+  if (!client_start_server()) {
+    GtkWidget *dialog;
 
-    my_snprintf(buf, sizeof(buf), "/%s", skill_level_names[0]);
-    send_chat(buf);
+    dialog = gtk_message_dialog_new(GTK_WINDOW(toplevel),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+        _("Failed to start the server!\n"
+          "You will have to start it separately."));
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
   }
 }
 
@@ -1254,6 +1260,10 @@ static void ai_skill_callback(GtkWidget *w, gpointer data)
 static void ai_fill_callback(GtkWidget *w, gpointer data)
 {
   char buf[512];
+
+  if (!is_server_running() || !can_client_access_hack()) {
+    return;
+  }
 
   my_snprintf(buf, sizeof(buf), "/set aifill %d",
       gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w)));

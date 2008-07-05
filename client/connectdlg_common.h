@@ -21,6 +21,7 @@ Freeciv - Copyright (C) 2003 - The Freeciv Project
 
 bool client_start_server(void);
 void client_kill_server(bool force);
+void client_send_initial_commands(void);
 
 bool is_server_running(void);
 bool can_client_access_hack(void);

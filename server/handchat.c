@@ -92,8 +92,10 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 **************************************************************************/
 bool conn_is_ignored(struct connection *pconn, struct connection *dest)
 {
-  if (pconn == dest || pconn == NULL || dest == NULL)
+  if (pconn == dest || pconn == NULL || dest == NULL
+      || dest->access_level >= ALLOW_ADMIN) {
     return FALSE;
+  }
 
   ignore_list_iterate(dest->server.ignore_list, cp) {
     if (conn_pattern_match(cp, pconn)) {

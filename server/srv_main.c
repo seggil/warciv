@@ -233,6 +233,8 @@ void srv_init(void)
 
   srvarg.save_ppm = FALSE;
 
+  srvarg.hack_request_disabled = FALSE;
+
   background_functions = bgfc_list_new();
   bgfc_id_counter = 0;
 
