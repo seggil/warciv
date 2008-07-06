@@ -180,27 +180,25 @@ static struct unit *search_best_target(struct player *pplayer,
 }
 
 /**************************************************************************
-...
+  Returns TRUE if the unit survived.
 **************************************************************************/
 bool auto_attack_with_unit(struct player *pplayer,
 				  struct unit *punit)
 {
   int id = punit->id;
   struct unit *enemy;
-  int passnumber = 0;
   struct tile *stile = punit->tile;
-//  do {
-    enemy=search_best_target(pplayer,punit);
+
+  enemy = search_best_target(pplayer, punit);
 
   /* nothing found */
-      if(!enemy) {
-        freelog(LOG_VERBOSE, "no weak enemy found");
-        if(!passnumber)return TRUE;//if its 1st pass we return
-//            else break;//if its 2nd pass we break out of loop to return unit back to original tile
-      }
-  
-      freelog(LOG_VERBOSE, "launching attack");
-  
+  if (!enemy) {
+    freelog(LOG_VERBOSE, "no weak enemy found");
+    return TRUE;
+  }
+
+  freelog(LOG_VERBOSE, "launching attack");
+
   notify_player_ex(pplayer, enemy->tile, E_NOEVENT,
     		   _("Game: Auto-Attack: %s attacking %s's %s"),
     		   unit_name(punit->type),
@@ -208,27 +206,25 @@ bool auto_attack_with_unit(struct player *pplayer,
   
   set_unit_activity(punit, ACTIVITY_GOTO);
   punit->goto_tile = enemy->tile;
-  
+
+  if (unit_has_orders(punit)) {
+    free_unit_orders(punit);
+  }
+
   send_unit_info(NULL, punit);
-      do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
-  
-      punit = find_unit_by_id(id);//check if it survived
-//      passnumber++;
-//  }
-//  while(punit);//if survived we repeat
-  
-  if (punit) {//it survived, send unit back
+  do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
+
+  /* Check if the unit survived. */
+  if ((punit = find_unit_by_id(id))) {
     set_unit_activity(punit, ACTIVITY_GOTO);
     punit->goto_tile = stile;
     send_unit_info(NULL, punit);
-    
+
     do_unit_goto(punit, GOTO_MOVE_ANY, FALSE);
     return TRUE;
-}
-  else
-{
-    return FALSE;			/* true if unit survived */
-    }
+  } else {
+    return FALSE;
+  }
 }
 
 /**************************************************************************
