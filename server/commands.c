@@ -131,13 +131,16 @@ const struct command commands[] = {
       "show situational\n"
       "show rare\n"
       "show changed\n"
+      "show ruleset\n"
       "show <option-name>\n"
       "show <option-prefix>"),
    N_("Show server options."),
    N_("With no arguments, shows all server options (or available options, when "
       "used by clients).  With an argument, show only the named option, "
       "or options with that prefix. The argument \"changed\" will show only "
-      "options that have been changed from the default value."),
+      "options that have been changed from the default value. With the "
+      "the argument \"ruleset\", it will show only the current ruleset "
+      "directory name."),
    ECHO_NONE, VCF_NONE, 0
   },
   {"score",	ALLOW_CTRL, ALLOW_NEVER,
@@ -229,10 +232,8 @@ const struct command commands[] = {
    N_("rulesetdir <directory>\n"
       "rulesetdir <ruleset_id>"),
    N_("Choose new ruleset directory or modpack."),
-   N_("Choose new ruleset directory or modpack. Calling this\n "
-      "without any arguments will show you the currently selected\n"
-      "ruleset. Use /list rulesets to get the complete list of\n"
-      "available rulesets."),
+   N_("Choose new ruleset directory or modpack. Use /list rulesets to get "
+      "the complete list of available rulesets."),
    ECHO_ALL, VCF_NONE, 50
   },
   {"metamessage", ALLOW_BASIC, ALLOW_BASIC,

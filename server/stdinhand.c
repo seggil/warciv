@@ -2625,6 +2625,8 @@ static int lookup_option(const char *name)
   /* Check for option levels, first off */
   if (lookup_option_level(name) != SSET_NONE) {
     return -3;
+  } else if (mystrcasecmp("ruleset", name) == 0) {
+    return -4;
   }
   result = match_prefix(optname_accessor, SETTINGS_NUM, 0, mystrncasecmp,
                         name, &ind);
@@ -2746,7 +2748,7 @@ static bool explain_option(struct connection *caller, char *str, bool check)
     cmd = lookup_option(command);
     if (cmd >= 0 && cmd < SETTINGS_NUM) {
       show_help_option(caller, CMD_EXPLAIN, cmd);
-    } else if (cmd == -1 || cmd == -3) {
+    } else if (cmd == -1 || cmd == -3 || cmd == -4) {
       cmd_reply(CMD_EXPLAIN, caller, C_FAIL,
                 _("No explanation for that yet."));
       return FALSE;
@@ -3103,6 +3105,13 @@ static bool show_command(struct connection *caller, char *str, bool check)
     if (cmd == -3) {
       /* Option level */
       level = lookup_option_level(command);
+    }
+    if (cmd == -4) {
+      /* Ruleset */
+      cmd_reply(CMD_SHOW, caller, C_COMMENT,
+		_("Current ruleset directory is \"%s\""),
+		game.server.rulesetdir);
+      return TRUE;
     }
   } else {
     cmd = -1;                   /* to indicate that no comannd was specified */
@@ -6054,8 +6063,8 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
   remove_leading_trailing_spaces(filename);
   if ((str == NULL) || (strlen(str) == 0)) {
     cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
-              _("Current ruleset directory is \"%s\""),
-              game.server.rulesetdir);
+              _("You must give a ruleset name or number."
+		"Use /show ruleset to see the current ruleset."));
     return FALSE;
   } else if (caller && caller->access_level != ALLOW_HACK
              && (strchr(filename, '/') || filename[0] == '.')) {
