@@ -13956,7 +13956,7 @@ msgid ""
 "civilization's research rate."
 msgstr ""
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14135,7 +14135,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:838
+#: data/helpdata.txt:835
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -14554,7 +14554,7 @@ msgstr ""
 "puterea de atac şi cea de apărare a unităţi precum şi de abilitatea ei de a "
 "se mişca."
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -14604,7 +14604,7 @@ msgid ""
 "disband."
 msgstr ""
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -14614,7 +14614,7 @@ msgid ""
 "enemy cities."
 msgstr ""
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -14759,7 +14759,7 @@ msgid ""
 "is set to 1."
 msgstr ""
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -14805,7 +14805,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr ""
 
-#: data/helpdata.txt:1430
+#: data/helpdata.txt:1427
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"

@@ -12724,7 +12724,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr ""
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -13198,7 +13198,7 @@ msgid ""
 "civilization's research rate."
 msgstr ""
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -13239,7 +13239,7 @@ msgid ""
 "be transferred to the other duties mentioned previously."
 msgstr ""
 
-#: data/helpdata.txt:730
+#: data/helpdata.txt:727
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -13779,7 +13779,7 @@ msgid ""
 "unit's strength in attack and defense, and its ability to move."
 msgstr ""
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -13837,7 +13837,7 @@ msgid ""
 "disband."
 msgstr ""
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -13847,7 +13847,7 @@ msgid ""
 "enemy cities."
 msgstr ""
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -13992,7 +13992,7 @@ msgid ""
 "is set to 1."
 msgstr ""
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -14034,7 +14034,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr ""
 
-#: data/helpdata.txt:1430
+#: data/helpdata.txt:1427
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"

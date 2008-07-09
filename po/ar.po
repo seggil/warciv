@@ -13280,7 +13280,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  مدراء النظام الحاليون: "
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 #, fuzzy
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
@@ -13836,7 +13836,7 @@ msgstr ""
 "التقرير :: الحسم :: الفصل :: القضاء بحكم\n"
 " فيما بعد المحارب المستوطنون الـ المستوطن جديد المستوطن المستوطن العيش."
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 #, fuzzy
 msgid ""
 " 4. Building agriculture improvements.\n"
@@ -13887,7 +13887,7 @@ msgid ""
 "be transferred to the other duties mentioned previously."
 msgstr "إذا الطعام مواطنيين هذا مواطنيين."
 
-#: data/helpdata.txt:730
+#: data/helpdata.txt:727
 #, fuzzy
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
@@ -14523,7 +14523,7 @@ msgstr ""
 "الهواء وحدات الـ الهواء دوران قاعدة جوية الناقل الغوّاصة الـ أدوار وحدات "
 "وحدات مثل فارغ متى المقاتلون الخلسة المقاتلون الهواء."
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 #, fuzzy
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
@@ -14535,7 +14535,7 @@ msgid ""
 msgstr ""
 "مثل المروحيات وحدات المروحيات دوران قاعدة جوية متّحد الأمم على خلاف المروحيات."
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 #, fuzzy
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
@@ -14669,7 +14669,7 @@ msgid ""
 "doubled."
 msgstr "إذا."
 
-#: data/helpdata.txt:1380
+#: data/helpdata.txt:1377
 #, fuzzy
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
@@ -14703,7 +14703,7 @@ msgid ""
 "is set to 1."
 msgstr "إذا المقاتل المروحية المروحية."
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 #, fuzzy
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
@@ -32487,6 +32487,18 @@ msgstr ""
 #~ "Fundamentalist nations can maintain Fanatic units without having to pay "
 #~ "any shields for upkeep."
 #~ msgstr "الأصولي المتعصّب."
+
+#, fuzzy
+#~ msgid ""
+#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
+#~ "future diplomatic efforts providing the Ambassador is reputable."
+#~ msgstr "ملكك الـ السّفير."
+
+#, fuzzy
+#~ msgid ""
+#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
+#~ "untrustworthy"
+#~ msgstr "أنت"
 
 #~ msgid "Ah"
 #~ msgstr "آه"

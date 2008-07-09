@@ -575,20 +575,27 @@ void check_packet(struct data_in *din, struct connection *pc)
 void generic_handle_player_attribute_chunk(struct player *pplayer,
 					   const struct
 					   packet_player_attribute_chunk
-					   *chunk)
+					   *chunk,
+					   struct connection *pconn)
 {
   assert(chunk != NULL);
 
-  freelog(BASIC_PACKET_LOG_LEVEL, "received attribute chunk %u/%u %u "
-          "pplayer=%p",
-          (unsigned int) chunk->offset,
-          (unsigned int) chunk->total_length,
-          (unsigned int) chunk->chunk_length,
-          pplayer);
+  freelog(BASIC_PACKET_LOG_LEVEL, "received attribute chunk %u+%u->%u/%u "
+	  "pplayer=%p (%d, \"%s\")",
+	  (unsigned int) chunk->offset,
+	  (unsigned int) chunk->total_length,
+     	  (unsigned int) chunk->offset + chunk->total_length,
+	  (unsigned int) chunk->chunk_length,
+	  pplayer, pplayer->player_no, pplayer->name);
 
   /* Even though we are discarding the chunk, we can't
    * do anything without a valid player pointer. */
   if (pplayer == NULL) {
+    return;
+  }
+
+  if (!has_capability("AttrSerialFix", pconn->capability)) {
+    /* Discard attribute chunks from incompatible connection */
     return;
   }
 
@@ -648,6 +655,10 @@ void send_attribute_block(const struct player *pplayer,
     return;
   }
 
+  if (!has_capability("AttrSerialFix", pconn->capability)) {
+    return;
+  }
+
   assert(pplayer->attribute_block.length > 0 &&
 	 pplayer->attribute_block.length < MAX_ATTRIBUTE_BLOCK);
 
@@ -672,7 +683,8 @@ void send_attribute_block(const struct player *pplayer,
     if (packet.chunk_length < ATTRIBUTE_CHUNK_SIZE) {
       /* Last chunk is not full. Make sure that delta does
        * not use random data. */
-      memset(packet.data, 0, ATTRIBUTE_CHUNK_SIZE - packet.chunk_length);
+      memset(packet.data + packet.chunk_length, 0,
+             ATTRIBUTE_CHUNK_SIZE - packet.chunk_length);
     }
 
     send_packet_player_attribute_chunk(pconn, &packet);

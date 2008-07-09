@@ -585,6 +585,12 @@ void game_renumber_players(int plrno)
 {
   int i;
 
+  if (game.info.nplayers == 0) {
+    /* This happens in pregame, it's a bug that the nplayers is not being
+     * sent to the client and so is always zero. */
+    return;
+  }
+
   for (i = plrno; i < game.info.nplayers - 1; i++) {
     game.players[i] = game.players[i + 1];
     game.players[i].player_no = i;
@@ -593,12 +599,11 @@ void game_renumber_players(int plrno)
     } conn_list_iterate_end;
   }
 
-  if (game.info.nplayers > 0) {
-    game.info.nplayers--;
+  game.info.nplayers--;
+  assert(game.info.nplayers >= 0);
 
-    /* reinit former last player*/
-    player_init(&game.players[game.info.nplayers]);
-  }
+  /* reinit former last player*/
+  player_init(&game.players[game.info.nplayers]);
 }
 
 /**************************************************************************

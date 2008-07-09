@@ -28,10 +28,10 @@
 #define MINOR_VERSION		0
 #endif
 #ifndef PATCH_VERSION
-#define PATCH_VERSION		9
+#define PATCH_VERSION		10
 #endif
 #ifndef WARCLIENT_VERSION
-#define WARCLIENT_VERSION	12
+#define WARCLIENT_VERSION	1
 #endif
 #ifndef VERSION_LABEL
 #define VERSION_LABEL		""

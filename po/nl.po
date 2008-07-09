@@ -13829,7 +13829,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "   Huidige administrateurs: "
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14160,7 +14160,7 @@ msgid ""
 "  <ctrl>MMB:                Wake up sentried units\n"
 msgstr ""
 
-#: data/helpdata.txt:554
+#: data/helpdata.txt:551
 msgid ""
 "Area Selection mode (GTK):\n"
 "==========================\n"
@@ -14461,7 +14461,7 @@ msgstr ""
 "gedachten dat een grote bevolking zowel de produktiviteit als de "
 "onderzoekssnelheid van de wetenschappers vergroot."
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14529,7 +14529,7 @@ msgstr ""
 "worden gehaald door op het gebruikte landbouwvlak te klikken. Deze inwoner "
 "kan dan op andere eerder genoemde taken gezet worden."
 
-#: data/helpdata.txt:730
+#: data/helpdata.txt:727
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -14735,7 +14735,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:838
+#: data/helpdata.txt:835
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15201,7 +15201,7 @@ msgstr ""
 "hangt af van de sterkte van de eenheid in termen van aanval en verdediging "
 "en zijn mogelijkheden om te bewegen."
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15282,7 +15282,7 @@ msgstr ""
 "gebruikt worden om dorpen te onderzoeken; afhankelijk van de "
 "serverinstellingen kan een overgevlogen dorp ontbonden worden."
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -15299,7 +15299,7 @@ msgstr ""
 "u het Verenigde Naties wonder bezit. Anders dan bij andere luchteenheden, "
 "kan een Helicopter wél een vijandelijk stad innemen."
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15465,7 +15465,7 @@ msgstr ""
 " - Als de verdediger in een Fort is (en niet in een stad) dan wordt zijn "
 "sterkte verdubbeld."
 
-#: data/helpdata.txt:1380
+#: data/helpdata.txt:1377
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15504,7 +15504,7 @@ msgstr ""
 " - Als een Jachtvliegtuig een Helicopter aanvalt dan wordt de vuurkracht van "
 "de Helicopter de waarde 1."
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15565,7 +15565,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr "Gevechtsregels Aanpassen"
 
-#: data/helpdata.txt:1430
+#: data/helpdata.txt:1427
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"

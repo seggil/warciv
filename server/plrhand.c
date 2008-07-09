@@ -88,6 +88,19 @@ void do_dipl_cost(struct player *pplayer, Tech_Type_id new_tech)
 }
 
 /**************************************************************************
+  Make sure all research of players on the team is in sync with this
+  player's.
+**************************************************************************/
+static void sync_team_research(struct player *plr)
+{
+  players_iterate(pplayer) {
+    if (players_on_same_team(pplayer, plr) && pplayer->is_alive) {
+      pplayer->research = plr->research;
+    }
+  } players_iterate_end;
+}
+
+/**************************************************************************
 ...
 **************************************************************************/
 void do_free_cost(struct player *pplayer)
@@ -538,6 +551,8 @@ static void tech_researched(struct player* plr)
   plr->research.bulbs_researched = 
       MAX(plr->research.bulbs_researched - total_bulbs_required(plr), 0);
 
+  sync_team_research(plr);
+
   /* do all the updates needed after finding new tech */
   found_new_tech(plr, tech, TRUE, TRUE, A_NONE);
   
@@ -571,6 +586,9 @@ void update_tech(struct player *plr, int bulbs)
       update_tech(plr, 0);
     }
   }
+
+  /* Sanity check */ 
+  sync_team_research(plr);
 }
 
 /**************************************************************************
@@ -692,6 +710,10 @@ void choose_tech(struct player *plr, int tech)
     plr->research.changed_from = -1;
   }
   plr->research.researching=tech;
+
+  /* Update team research */
+  sync_team_research(plr);
+  
   if (plr->research.bulbs_researched > total_bulbs_required(plr)) {
     tech_researched(plr);
   }
@@ -2304,7 +2326,7 @@ void handle_player_attribute_chunk(struct player *pplayer,
 				   struct packet_player_attribute_chunk
 				   *chunk)
 {
-  generic_handle_player_attribute_chunk(pplayer, chunk);
+  generic_handle_player_attribute_chunk(pplayer, chunk, pplayer->current_conn);
 }
 
 /**************************************************************************

@@ -39,7 +39,7 @@ struct data_in;
  * Do not spend much time optimizing, you have no idea of the actual dynamic
  * path characteristics between systems, such as VPNs and tunnels.
  */
-#define ATTRIBUTE_CHUNK_SIZE    (2*1024)
+#define ATTRIBUTE_CHUNK_SIZE    (1400)
 
 enum report_type {
   REPORT_WONDERS_OF_THE_WORLD,
@@ -82,7 +82,8 @@ void send_attribute_block(const struct player *pplayer,
 void generic_handle_player_attribute_chunk(struct player *pplayer,
 					   const struct
 					   packet_player_attribute_chunk
-					   *chunk);
+					   *chunk,
+                                           struct connection *pconn);
 const char *get_packet_name(enum packet_type type);
 
 void pre_send_packet_chat_msg(struct connection *pc,

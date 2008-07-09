@@ -13818,7 +13818,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "Die heutigen Ansprechpartner:"
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -13831,7 +13831,7 @@ msgstr ""
 "\n"
 "  http://bugs.freeciv.org/"
 
-#: data/helpdata.txt:61
+#: data/helpdata.txt:60
 msgid ""
 "For more information about submitting bug reports see the file BUGS in the "
 "Freeciv distribution.  For more information in general, visit the Freeciv "
@@ -13901,7 +13901,7 @@ msgstr ""
 msgid "Connecting"
 msgstr "Verbindungsaufbau"
 
-#: data/helpdata.txt:403
+#: data/helpdata.txt:402
 msgid ""
 "Before a game is started, anyone can connect to the server by supplying its "
 "hostname and port number (5555 by default). If the server is started with "
@@ -13911,7 +13911,7 @@ msgstr ""
 "Adresse und Portnummer (Standard ist 5555) kennt. Falls der Server mit '-m' "
 "gestartet wurde, meldet er sich bei dem Metaserver"
 
-#: data/helpdata.txt:410
+#: data/helpdata.txt:409
 msgid ""
 "The client can fetch this page, too: use the Metaserver button in the "
 "connection dialog.  If it never shows any results, check if your WWW browser "
@@ -13932,7 +13932,7 @@ msgstr ""
 "\n"
 "  http://Proxyserver:Proxyport/"
 
-#: data/helpdata.txt:419
+#: data/helpdata.txt:418
 msgid ""
 "When the game has started, everyone can connect as any player who isn't "
 "already connected, including AI players.  Merely connecting to an AI player "
@@ -14470,7 +14470,7 @@ msgstr ""
 "B. Straßen, Bewässerungssysteme oder Bergwerke anlegen, um die Erträge zu "
 "verbessern."
 
-#: data/helpdata.txt:706
+#: data/helpdata.txt:705
 msgid ""
 " 5. Deciding where to build cities.\n"
 "\n"
@@ -15222,7 +15222,7 @@ msgstr ""
 "Unterhalt, beeinflussen die Stimmung der Bürger nicht, können feindliche "
 "Einheiten nicht angreifen und können keine Städte einnehmen."
 
-#: data/helpdata.txt:1278
+#: data/helpdata.txt:1277
 msgid ""
 "Sea units move on Ocean squares and into cities next to Ocean squares.  They "
 "can only be built by such cities.  The movement rate of sea units is "
@@ -15329,7 +15329,7 @@ msgstr ""
 "Standard Kampfregeln\n"
 "--------------------"
 
-#: data/helpdata.txt:1333
+#: data/helpdata.txt:1332
 msgid ""
 "When one unit attacks another unit, either the attacker will be destroyed, "
 "or the defender will be destroyed -- never both (unless the attacker was a "
@@ -15375,7 +15375,7 @@ msgstr ""
 " - Danach wird die Stärke mit dem Verteidigungswert des Geländes "
 "multipliziert."
 
-#: data/helpdata.txt:1356
+#: data/helpdata.txt:1355
 msgid ""
 " - Next, the defender's strength is doubled if it is a Pikeman unit "
 "defending against a mounted unit."
@@ -15391,7 +15391,7 @@ msgstr ""
 " - Ist der Verteidiger ein AEGIS Kreuzer und der Angreifer irgendein "
 "Flugkörper, wird die Verteidigung verfünffacht."
 
-#: data/helpdata.txt:1363
+#: data/helpdata.txt:1362
 msgid ""
 " - The defender's strength is doubled again if it is in a city with a SAM "
 "Battery and the attacker is an air unit (other than an Helicopter) or a "
@@ -15407,7 +15407,7 @@ msgid ""
 "attacks."
 msgstr " - SDI Verteidigung verdoppelt diese Stärke gegen Raketen nochmals."
 
-#: data/helpdata.txt:1370
+#: data/helpdata.txt:1369
 msgid ""
 " - If the attacker is a ship and the defender is in a city with a Coastal "
 "Defense, the defender's strength is doubled."
@@ -15440,7 +15440,7 @@ msgstr ""
 " - Bei Landeinheiten, die sich eingegraben haben oder in einer Stadt "
 "stationiert sind, wird die Stärke mit 1,5 multipliziert."
 
-#: data/helpdata.txt:1383
+#: data/helpdata.txt:1382
 msgid ""
 "If, after these modifications, the attacker has a strength of 0, it "
 "automatically loses.  Otherwise, if the defender has a strength of 0, the "
@@ -15516,7 +15516,7 @@ msgstr ""
 "Falls der siegende Angreifer eine Landeinheit ist und der Verteidiger sich "
 "in einer Stadt ohne Stadtmauern befand, wird die Stadt um 1 verkleinert."
 
-#: data/helpdata.txt:1422
+#: data/helpdata.txt:1421
 msgid ""
 "If the defender loses, and is not inside a city or fortress, all other units "
 "at the defender's location are destroyed along with the defender."
@@ -15557,7 +15557,7 @@ msgstr ""
 msgid " Combat example 1"
 msgstr " Kampfbeispiel 1"
 
-#: data/helpdata.txt:1441
+#: data/helpdata.txt:1440
 msgid ""
 "Suppose a veteran Cannon (A:8, D:1, HP:20, F:1) with 2/3 movement points "
 "left attacks a non-veteran Musketeer (A:3, D:3, HP:20, F:1) inside a city "
@@ -15566,7 +15566,7 @@ msgstr ""
 "Kanonen (Veteran, A:8, V:1, TP:20, FK:1) mit 2/3 Bewegungspunkten greifen "
 "Musketiere (A:3, V:3, TP:20, FK:1) in einer Stadt mit Stadtmauern im Wald an."
 
-#: data/helpdata.txt:1445
+#: data/helpdata.txt:1444
 msgid ""
 "The attacker's base strength is 8.  Veteran status makes this 12, but "
 "because it only has 2/3 movement points its final strength is 8."
@@ -15574,7 +15574,7 @@ msgstr ""
 "Die Angreifer haben eine Stärke von 8, die aufgrund ihres Veteranen-Status "
 "zu 12 wird. Da sie nur noch 2/3 Bewegungspunkte haben, wird daraus wieder 8."
 
-#: data/helpdata.txt:1448
+#: data/helpdata.txt:1447
 msgid ""
 "The defender's base strength is 3.  Because it is on a Forest tile, its "
 "strength becomes 4.5.  It is behind City Walls, so its strength is tripled, "

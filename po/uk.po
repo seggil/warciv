@@ -13884,7 +13884,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Поточн╕ адм╕н╕стратори: "
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 #, fuzzy
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
@@ -14483,7 +14483,7 @@ msgstr ""
 "що чим б╕льше населення, тим швидше росте продуктивн╕сть та швидк╕сть "
 "досл╕джень Вашо╖ цив╕л╕зац╕╖."
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14744,7 +14744,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:838
+#: data/helpdata.txt:835
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15202,7 +15202,7 @@ msgstr ""
 "Наск╕льки корисний кожний заг╕н для кожного з цих застосувань, залежить в╕д "
 "сили атаки та захисту, та можливост╕ рухатись."
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15280,7 +15280,7 @@ msgstr ""
 "використан╕ для вивчення хутор╕в; в залежность в╕д опц╕й сервера, хут╕р може "
 "бути розпущений."
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -15296,7 +15296,7 @@ msgstr ""
 "ав╕абаз╕, якщо ви не ма╓те дива Об'╓днанн╕ Нац╕╖. На в╕дм╕ну в╕д ╕нших "
 "ав╕ап╕дрозд╕л╕в, Гел╕коптери можуть захоплювати ворож╕ м╕ста."
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15445,7 +15445,7 @@ msgid ""
 "doubled."
 msgstr " - Якщо захисник в укр╕пленн╕ (не у м╕ст╕), його сила подвою╓ться."
 
-#: data/helpdata.txt:1380
+#: data/helpdata.txt:1377
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15482,7 +15482,7 @@ msgstr ""
 " - Якщо винищувач атаку╓ Гел╕коптер, сила вогню Гел╕коптера встановлю╓ться у "
 "1. "
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15539,7 +15539,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr "Модиф╕кац╕я Правил Бою"
 
-#: data/helpdata.txt:1430
+#: data/helpdata.txt:1427
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -33801,6 +33801,20 @@ msgstr ""
 #~ "\n"
 #~ "Фундаментал╕ськ╕ нац╕╖ можуть утримувати Фанат╕чн╕ загони не сплачуючи за "
 #~ "╖х утримання виробництвом."
+
+#~ msgid ""
+#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
+#~ "future diplomatic efforts providing the Ambassador is reputable."
+#~ msgstr ""
+#~ "Гра: Страчено Вашого %s у м╕ст╕ %s за п╕дозрою у шпигунств╕. %s п╕дтриму╓ "
+#~ "майбутн╕ д╕пломатичн╕ стосунки лише за умови гарно╖ репутац╕╖ у посла."
+
+#~ msgid ""
+#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
+#~ "untrustworthy"
+#~ msgstr ""
+#~ "Ви стратили %s, якого було над╕слано послом в╕д %s у м╕сто %s за п╕дозрою "
+#~ "у поганих д╕ях"
 
 #~ msgid "Ah"
 #~ msgstr "Ах"

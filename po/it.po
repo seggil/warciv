@@ -13900,7 +13900,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Amministratori attuali: "
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14236,7 +14236,7 @@ msgid ""
 "  <ctrl>MMB:                Wake up sentried units\n"
 msgstr ""
 
-#: data/helpdata.txt:554
+#: data/helpdata.txt:551
 msgid ""
 "Area Selection mode (GTK):\n"
 "==========================\n"
@@ -14536,7 +14536,7 @@ msgstr ""
 "viceversa. Ricordate che una maggiore popolazione accresce sia la "
 "produttività che il tasso di ricerca della vostra civiltà."
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14603,7 +14603,7 @@ msgstr ""
 "fattorie cliccando su un quadrante occupato da una fattoria; in tal modo il "
 "cittadino verrà traferito agli altri compiti su menzionati."
 
-#: data/helpdata.txt:730
+#: data/helpdata.txt:727
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -14807,7 +14807,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:838
+#: data/helpdata.txt:835
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15272,7 +15272,7 @@ msgstr ""
 "dipende dalla sua particolare forza in attacco e in difesa e dalla sua "
 "capacità di movimento."
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15353,7 +15353,7 @@ msgstr ""
 "seconda delle impostazioni del vostro server quando un villaggio viene "
 "sorvolato può essere abbandonato dai nativi."
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -15370,7 +15370,7 @@ msgstr ""
 "la Meraviglia Nazioni Unite. Diversamente dalle unità aeree possono "
 "conquistare le città nemiche."
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15529,7 +15529,7 @@ msgstr ""
 " - Se il difensore è all'interno di una fortezza (e non in una città), la "
 "sua forza è raddoppiata."
 
-#: data/helpdata.txt:1380
+#: data/helpdata.txt:1377
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15569,7 +15569,7 @@ msgstr ""
 " - Se un Caccia sta attaccando un Elicottero la capacità di fuoco "
 "dell'Elicottero viene portata a 1."
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15631,7 +15631,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr " Modifica alle regole di combattimento"
 
-#: data/helpdata.txt:1430
+#: data/helpdata.txt:1427
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -34181,6 +34181,21 @@ msgstr ""
 #~ "\n"
 #~ "Le nazioni fondamentaliste possono mantenere le unità di Fanatici senza "
 #~ "pagare alcun costo di mantenimento."
+
+#~ msgid ""
+#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
+#~ "future diplomatic efforts providing the Ambassador is reputable."
+#~ msgstr ""
+#~ "Gioco: il vostro %s, sospettato di spionaggio, è stato giustiziato a %s.  "
+#~ "Gli %s accettano futuri sforzi diplomatici a condizione che "
+#~ "l'ambasciatore sia rispettabile."
+
+#~ msgid ""
+#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
+#~ "untrustworthy"
+#~ msgstr ""
+#~ "Avete giustiziato un %s che gli %s hanno mandato a stabilire "
+#~ "un'ambasciata a %s, per essere stato inaffidabile"
 
 #~ msgid "Ah"
 #~ msgstr "Ah"

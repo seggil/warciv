@@ -13353,7 +13353,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr ""
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -13714,7 +13714,7 @@ msgid ""
 "10. Interacting with other players (Diplomacy).\n"
 msgstr ""
 
-#: data/helpdata.txt:650
+#: data/helpdata.txt:640
 msgid ""
 " 0. Choosing the first city site.\n"
 "\n"
@@ -13727,7 +13727,7 @@ msgid ""
 "possible."
 msgstr ""
 
-#: data/helpdata.txt:661
+#: data/helpdata.txt:651
 msgid ""
 " 1. Mapping the countryside.\n"
 "\n"
@@ -13795,7 +13795,7 @@ msgid ""
 "by the sea."
 msgstr ""
 
-#: data/helpdata.txt:715
+#: data/helpdata.txt:705
 msgid ""
 " 6. Taking care of the cities.\n"
 "\n"
@@ -14494,7 +14494,7 @@ msgid ""
 "terrain it occupies."
 msgstr ""
 
-#: data/helpdata.txt:1356
+#: data/helpdata.txt:1355
 msgid ""
 " - Next, the defender's strength is doubled if it is a Pikeman unit "
 "defending against a mounted unit."
@@ -14506,7 +14506,7 @@ msgid ""
 "(including missiles and Helicopters), the defense is quintupled."
 msgstr ""
 
-#: data/helpdata.txt:1363
+#: data/helpdata.txt:1362
 msgid ""
 " - The defender's strength is doubled again if it is in a city with a SAM "
 "Battery and the attacker is an air unit (other than an Helicopter) or a "
@@ -16969,6 +16969,29 @@ msgstr "?רבים:הודים"
 msgid "The Men of the West from J.R.R. Tolkien's Middle Earth fantasies."
 msgstr ""
 
+#. TRANS: The second letter in "Dunedain" and "Dunedan" should be
+#. TRANS: U+00FA LATIN SMALL LETTER U WITH ACUTE if available in
+#. TRANS: your charset.  In ISO-8859-1 (ISO Latin 1) this is 0xFA.
+#: data/nation/dunedain.ruleset:7
+msgid "Dunedain"
+msgstr ""
+
+#: data/nation/dunedain.ruleset:8
+#, fuzzy
+msgid "?plural:Dunedan"
+msgstr "?רבים:הודים"
+
+#: data/nation/dunedain.ruleset:9 data/nation/elvish.ruleset:6
+#: data/nation/hobbits.ruleset:5 data/nation/martian.ruleset:5
+#: data/nation/mordor.ruleset:5
+#, fuzzy
+msgid "Fictional"
+msgstr "מצבי"
+
+#: data/nation/dunedain.ruleset:10
+msgid "The Men of the West from J.R.R. Tolkien's Middle Earth fantasies."
+msgstr ""
+
 #: data/nation/dutch.ruleset:3
 msgid "Dutch"
 msgstr "הולנדי"
@@ -18930,6 +18953,10 @@ msgstr ""
 msgid "Protector"
 msgstr "לורד מגן"
 
+#: data/nation/persian.ruleset:15
+msgid "Shah"
+msgstr "שא"
+
 #: data/nation/phoenician.ruleset:3
 msgid "Phoenician"
 msgstr "פניקי"
@@ -19345,6 +19372,14 @@ msgid ""
 "Silesia is a region of southern Poland that was at one time an independent "
 "kingdom."
 msgstr ""
+
+#: data/nation/silesian.ruleset:21 data/nation/welsh.ruleset:21
+msgid "Prince"
+msgstr "נסיך"
+
+#: data/nation/silesian.ruleset:21 data/nation/welsh.ruleset:21
+msgid "Princess"
+msgstr "נסיכה"
 
 #: data/nation/singaporean.ruleset:15
 msgid "Singaporean"

@@ -13811,7 +13811,7 @@ msgid "  Present administrators: "
 msgstr "  現在の管理者: "
 
 # Daniel
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14406,7 +14406,7 @@ msgstr ""
 "がり、かつ、研究のスピードも上がるということを覚えておいてください。"
 
 # yasu
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -15126,7 +15126,7 @@ msgstr ""
 "部隊は攻撃、防御、偵察の三つの目的で使われます。各々の部隊がどの役にふさわし"
 "いかは、その部隊の攻撃力、防御力、移動力によって決まります。"
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15212,7 +15212,7 @@ msgstr ""
 "の土地でターンを過ごすと少し体力を失います。空中部隊と違い、ヘリコプターは敵"
 "の都市を占領できます。"
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15359,7 +15359,7 @@ msgid ""
 msgstr "- 防御側が要塞にいたら、その部隊の強さを二倍にします。"
 
 # yasu
-#: data/helpdata.txt:1380
+#: data/helpdata.txt:1377
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -33456,6 +33456,21 @@ msgstr ""
 #~ "熱狂兵は原理主義下でのみ作成できます。\n"
 #~ "\n"
 #~ "原理主義下では熱狂兵の維持に生産ポイントは必要ありません。"
+
+#~ msgid ""
+#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
+#~ "future diplomatic efforts providing the Ambassador is reputable."
+#~ msgstr ""
+#~ "Game: %sは%sでのスパイ容疑で死刑にされました。%sは大使の評判がよくなれば将"
+#~ "来の外交行動を歓迎します。"
+
+# clefs
+#~ msgid ""
+#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
+#~ "untrustworthy"
+#~ msgstr ""
+#~ "%2$sから大使館設立のため%3$sに派遣されて来た%1$sは信用できないので処刑しま"
+#~ "した。"
 
 # ntaka 何と訳せばよいやら、 Yap Ah Loy という人がいたらしいが、、、
 #~ msgid "Ah"

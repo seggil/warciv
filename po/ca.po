@@ -13857,7 +13857,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Administradors actuals: "
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -13869,7 +13869,7 @@ msgstr ""
 "\n"
 "  http://bugs.freeciv.org/"
 
-#: data/helpdata.txt:61
+#: data/helpdata.txt:60
 msgid ""
 "For more information about submitting bug reports see the file BUGS in the "
 "Freeciv distribution.  For more information in general, visit the Freeciv "
@@ -13930,7 +13930,7 @@ msgstr ""
 msgid "Connecting"
 msgstr "Com connectar"
 
-#: data/helpdata.txt:403
+#: data/helpdata.txt:402
 msgid ""
 "Before a game is started, anyone can connect to the server by supplying its "
 "hostname and port number (5555 by default). If the server is started with "
@@ -13940,7 +13940,7 @@ msgstr ""
 "proporcionant el seu nom de host i número de port (5555 per defecte). Si el "
 "servidor s'engega amb l'opció -m, s'anunciarà al metaservidor. "
 
-#: data/helpdata.txt:410
+#: data/helpdata.txt:409
 msgid ""
 "The client can fetch this page, too: use the Metaserver button in the "
 "connection dialog.  If it never shows any results, check if your WWW browser "
@@ -13960,7 +13960,7 @@ msgstr ""
 "\n"
 "abans d'engegar civclient."
 
-#: data/helpdata.txt:419
+#: data/helpdata.txt:418
 msgid ""
 "When the game has started, everyone can connect as any player who isn't "
 "already connected, including AI players.  Merely connecting to an AI player "
@@ -14499,7 +14499,7 @@ msgstr ""
 "utilitzant Colons per millorar les terres de conreu. La terra es pot "
 "millorar amb camins, irrigació, mines i d'altres."
 
-#: data/helpdata.txt:706
+#: data/helpdata.txt:705
 msgid ""
 " 5. Deciding where to build cities.\n"
 "\n"
@@ -14593,7 +14593,7 @@ msgstr ""
 "avenços que hagis fet. Les unitats diplomàtiques són molt útils en això i "
 "més endavant sortiran a compte."
 
-#: data/helpdata.txt:752
+#: data/helpdata.txt:751
 msgid ""
 " 8. Things to keep in mind.\n"
 "\n"
@@ -15256,7 +15256,7 @@ msgstr ""
 "manteniment, no tenen efectes sobre la felicitat dels ciutadans i no poden "
 "atacar unitats enemigues ni capturar ciutats enemigues."
 
-#: data/helpdata.txt:1278
+#: data/helpdata.txt:1277
 msgid ""
 "Sea units move on Ocean squares and into cities next to Ocean squares.  They "
 "can only be built by such cities.  The movement rate of sea units is "
@@ -15371,7 +15371,7 @@ msgstr ""
 "Regles de Combat per Defecte\n"
 "------------------------------"
 
-#: data/helpdata.txt:1333
+#: data/helpdata.txt:1332
 msgid ""
 "When one unit attacks another unit, either the attacker will be destroyed, "
 "or the defender will be destroyed -- never both (unless the attacker was a "
@@ -15418,7 +15418,7 @@ msgstr ""
 " - A continuació, la força del defensor es multiplica pel factor de defensa "
 "del terreny que ocupa."
 
-#: data/helpdata.txt:1356
+#: data/helpdata.txt:1355
 msgid ""
 " - Next, the defender's strength is doubled if it is a Pikeman unit "
 "defending against a mounted unit."
@@ -15434,7 +15434,7 @@ msgstr ""
 " - Si el defensor és un Creuer AEGIS que es defensa contra unitats aèries "
 "(inclosos míssils i helicòpters), la defensa es multiplica per cinc."
 
-#: data/helpdata.txt:1363
+#: data/helpdata.txt:1362
 msgid ""
 " - The defender's strength is doubled again if it is in a city with a SAM "
 "Battery and the attacker is an air unit (other than an Helicopter) or a "
@@ -15451,7 +15451,7 @@ msgstr ""
 " - La defensa SDI torna a doblar la força del defensor contra atacs de "
 "míssils."
 
-#: data/helpdata.txt:1370
+#: data/helpdata.txt:1369
 msgid ""
 " - If the attacker is a ship and the defender is in a city with a Coastal "
 "Defense, the defender's strength is doubled."
@@ -15484,7 +15484,7 @@ msgstr ""
 " - Per acabar, si el defensor és una unitat terrestre i està fortificat o a "
 "dintre d'una ciutat, la seva força es multiplica per 1,5."
 
-#: data/helpdata.txt:1383
+#: data/helpdata.txt:1382
 msgid ""
 "If, after these modifications, the attacker has a strength of 0, it "
 "automatically loses.  Otherwise, if the defender has a strength of 0, the "
@@ -15561,7 +15561,7 @@ msgstr ""
 "Si l'atacant és una unitat terrestre i guanya, i el defensor que perd està "
 "en una ciutat sense Muralles, la ciutat redueix en 1 punt la seva població."
 
-#: data/helpdata.txt:1422
+#: data/helpdata.txt:1421
 msgid ""
 "If the defender loses, and is not inside a city or fortress, all other units "
 "at the defender's location are destroyed along with the defender."
@@ -15602,7 +15602,7 @@ msgstr ""
 msgid " Combat example 1"
 msgstr " Exemple de combat 1"
 
-#: data/helpdata.txt:1441
+#: data/helpdata.txt:1440
 msgid ""
 "Suppose a veteran Cannon (A:8, D:1, HP:20, F:1) with 2/3 movement points "
 "left attacks a non-veteran Musketeer (A:3, D:3, HP:20, F:1) inside a city "
@@ -15612,7 +15612,7 @@ msgstr ""
 "de moviment, que ataca a un Mosqueter no veterà (A:3, D:3, V:20, PF:1) dins "
 "d'una ciutat amb Muralles construïda en una casella de Bosc."
 
-#: data/helpdata.txt:1445
+#: data/helpdata.txt:1444
 msgid ""
 "The attacker's base strength is 8.  Veteran status makes this 12, but "
 "because it only has 2/3 movement points its final strength is 8."
@@ -15620,7 +15620,7 @@ msgstr ""
 "La força d'atac de l'atacant és 8. La veterania ho converteix en 12, però "
 "com que només li queden 2/3 de moviment la força final és 8."
 
-#: data/helpdata.txt:1448
+#: data/helpdata.txt:1447
 msgid ""
 "The defender's base strength is 3.  Because it is on a Forest tile, its "
 "strength becomes 4.5.  It is behind City Walls, so its strength is tripled, "

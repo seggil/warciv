@@ -53,8 +53,10 @@
 #include "cityrep.h"
 
 #define NEG_VAL(x)  ((x)<0 ? (x) : (-x))
-#define CMA_NONE	(cmafec_preset_num())
-#define CMA_CUSTOM	(-2)
+
+/* Some versions of gcc have problems with negative values here (PR#39722). */
+#define CMA_NONE	(10000)
+#define CMA_CUSTOM	(10001)
 
 enum city_operation_type {
   CO_CHANGE, CO_LAST, CO_NEXT, CO_FIRST, CO_SELL, CO_NONE
@@ -577,15 +579,20 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
       controlled = cma_is_city_under_agent(pcity, &parameter);
       select = FALSE;
 
-      if (idx == CMA_CUSTOM && controlled
-          && cmafec_preset_get_index_of_parameter(&parameter) == -1) {
-        select = TRUE;
-      } else if (idx == CMA_NONE && !controlled) {
-        select = TRUE;
-      } else if (idx >= 0 && controlled &&
-        	 cm_are_parameter_equal(&parameter,
-        				cmafec_preset_get_parameter(idx))) {
-        select = TRUE;
+      if (idx == CMA_NONE) {
+        /* CMA_NONE selects not-controlled, all others require controlled */
+        if (!controlled) {
+          select = TRUE;
+        }
+      } else if (controlled) {
+        if (idx == CMA_CUSTOM) {
+          if (cmafec_preset_get_index_of_parameter(&parameter) == -1) {
+            select = TRUE;
+          }
+        } else if (cm_are_parameter_equal(&parameter,
+                                          cmafec_preset_get_parameter(idx))) {
+          select = TRUE;
+        }
       }
 
       if (select) {
@@ -604,8 +611,8 @@ static void select_cma_callback(GtkWidget * w, gpointer data)
 
 /****************************************************************
  Create the cma entries in the change menu and the select menu. The
- indices CMA_NONE (aka -1) and CMA_CUSTOM (aka -2) are
- special. CMA_NONE signifies a preset of "none" and CMA_CUSTOM a
+ indices CMA_NONE and CMA_CUSTOM are special.
+ CMA_NONE signifies a preset of "none" and CMA_CUSTOM a
  "custom" preset.
 *****************************************************************/
 static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
@@ -620,19 +627,19 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
   gtk_menu_item_set_submenu(parent_item, menu);
 
   if (change_cma) {
-    for (i = 0; i <= cmafec_preset_num(); i++) {
-      if ( i == CMA_NONE) {
-	w = gtk_menu_item_new_with_label(_("none"));
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), w);	
-      } else {
-	w = gtk_menu_item_new_with_label(cmafec_preset_get_descr(i));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
-      }
+    w = gtk_menu_item_new_with_label(_("none"));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
+    g_signal_connect(w, "activate", G_CALLBACK(select_cma_callback),
+		     GINT_TO_POINTER(CMA_NONE));
+    assert(GPOINTER_TO_INT(GINT_TO_POINTER(CMA_NONE)) == CMA_NONE);
+
+    for (i = 0; i < cmafec_preset_num(); i++) {
+      w = gtk_menu_item_new_with_label(cmafec_preset_get_descr(i));
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), w);
       g_signal_connect(w, "activate", G_CALLBACK(select_cma_callback),
 		       GINT_TO_POINTER(i));
-
+      assert(GPOINTER_TO_INT(GINT_TO_POINTER(i)) == i);
     }
-    
   } else {
     /* search for a "none" */
     int found;

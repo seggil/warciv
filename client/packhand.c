@@ -2094,6 +2094,7 @@ void handle_tile_info(struct packet_tile_info *packet)
   enum known_type old_known = ptile->known;
   bool tile_changed = FALSE;
   bool known_changed = FALSE;
+  bool renumbered = FALSE;
 
   if (ptile->terrain != packet->type) { /*terrain*/
     tile_changed = TRUE;
@@ -2157,13 +2158,17 @@ void handle_tile_info(struct packet_tile_info *packet)
     /* We're renumbering continents, somebody did a transform.
      * But we don't care about renumbering oceans since 
      * num_oceans is not kept at the client. */
-    map.num_continents = 0;
+    renumbered = TRUE;
   }
 
   ptile->continent = packet->continent;
 
   if (ptile->continent > map.num_continents) {
     map.num_continents = ptile->continent;
+    renumbered = TRUE;
+  }
+
+  if (renumbered) {
     allot_island_improvs();
   }
 
@@ -2848,12 +2853,12 @@ void handle_endgame_report(struct packet_endgame_report *packet)
 **************************************************************************/
 void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet)
 {
-  generic_handle_player_attribute_chunk(get_player_ptr(), packet);
+  generic_handle_player_attribute_chunk(get_player_ptr(), packet, &aconnection);
 
   if (packet->offset + packet->chunk_length == packet->total_length) {
     /* We successful received the last chunk. The attribute block is
        now complete. */
-      attribute_restore();
+    attribute_restore();
   }
 }
 

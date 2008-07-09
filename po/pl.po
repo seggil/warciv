@@ -13335,6 +13335,11 @@ msgstr ""
 msgid " Out Mes Pop"
 msgstr " Wyj Kom Okn"
 
+#: client/gui-win32/inteldlg.c:131
+#, fuzzy
+msgid "Researching: (Unknown)"
+msgstr "Badania:"
+
 # Nie jestem pewien...
 #: data/Freeciv.in:1314
 msgid "Rates"
@@ -13787,7 +13792,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Aktualni administratorzy: "
 
-#: data/helpdata.txt:56
+#: data/helpdata.txt:55
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14124,7 +14129,7 @@ msgid ""
 "  <ctrl>MMB:                Wake up sentried units\n"
 msgstr ""
 
-#: data/helpdata.txt:554
+#: data/helpdata.txt:551
 msgid ""
 "Area Selection mode (GTK):\n"
 "==========================\n"
@@ -14415,7 +14420,7 @@ msgstr ""
 "jest możliwa i lepsza(*przyp tłum)). Im większa populacja, tym większa "
 "produkcja i większa prędkość badań naukowych."
 
-#: data/helpdata.txt:698
+#: data/helpdata.txt:695
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14673,7 +14678,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:838
+#: data/helpdata.txt:835
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15130,7 +15135,7 @@ msgstr ""
 "Przydatność danej jednostki do tych celów zależy głównie od jej siły ataku/"
 "obrony oraz zdolności poruszania się."
 
-#: data/helpdata.txt:1260
+#: data/helpdata.txt:1257
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15209,7 +15214,7 @@ msgstr ""
 "zostać użyta do odkrywania wiosek. W zależności od opcji serwera wioska, nad "
 "którą przeleciano, może zniknąć."
 
-#: data/helpdata.txt:1297
+#: data/helpdata.txt:1294
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -15225,7 +15230,7 @@ msgstr ""
 "chyba że masz ONZ. W przeciwieństwie do zwykłych jednostek powietrznych "
 "helikoptery mogą przejmować miasta."
 
-#: data/helpdata.txt:1304
+#: data/helpdata.txt:1301
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15386,7 +15391,7 @@ msgstr ""
 " - Jeżeli obrońca znajduje się w fortecy (ale nie w mieście), jego siła jest "
 "podwajana."
 
-#: data/helpdata.txt:1380
+#: data/helpdata.txt:1377
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15426,7 +15431,7 @@ msgstr ""
 " - Jeżeli myśliwiec atakuje helikopter, to siła ognia helikoptera jest "
 "zmniejszana do 1."
 
-#: data/helpdata.txt:1395
+#: data/helpdata.txt:1392
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15487,7 +15492,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr " Zmienianie zasad walki"
 
-#: data/helpdata.txt:1430
+#: data/helpdata.txt:1427
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -33819,6 +33824,20 @@ msgstr ""
 #~ "\n"
 #~ "Jeżeli twoim ustrojem jest fundamentalizm utrzymanie fanatyków nic nie "
 #~ "kosztuje."
+
+#~ msgid ""
+#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
+#~ "future diplomatic efforts providing the Ambassador is reputable."
+#~ msgstr ""
+#~ "Gra: Twój %s, jako podejrzany o szpiegostwo, został zabity w m. %s. %s "
+#~ "czekają na innego ambasadora, ale o lepszej reputacji."
+
+#~ msgid ""
+#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
+#~ "untrustworthy"
+#~ msgstr ""
+#~ "Wykonałeś egzekucję na %s, którego %s wysłali, aby założył ambasadę w "
+#~ "mieście %s, gdyż był on niegodny zaufania"
 
 #~ msgid "Ah"
 #~ msgstr "Ah"

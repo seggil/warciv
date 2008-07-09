@@ -101,8 +101,8 @@ const char * const our_capability = our_capability_internal;
  * and it send it the real science cost you need to get a technology.
  */
 #define CAPABILITY "+2.0 conn_ping_info username_info new_hack " \
-                   "ReportFreezeFix extroutes extgameinfo exttechleakage " \
-                   "voteinfo"
+                   "ReportFreezeFix AttrSerialFix extroutes extgameinfo " \
+		   "exttechleakage voteinfo"
 
 
 void init_our_capability(void)
