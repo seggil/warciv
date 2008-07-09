@@ -13783,7 +13783,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Nuvaradne förvaltare: "
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14702,7 +14702,7 @@ msgstr ""
 "\n"
 "  - Vissa världsunder kunna föråldras genom utveckladet av vissa framsteg."
 
-#: data/helpdata.txt:757
+#: data/helpdata.txt:763
 msgid ""
 " 9. Making your own strategy for the game.\n"
 "\n"
@@ -14725,7 +14725,7 @@ msgstr ""
 "Där finns fler speltips och närmare upplysningar om hur man sätter sig i "
 "förbindelse med andra spelare."
 
-#: data/helpdata.txt:768
+#: data/helpdata.txt:774
 msgid ""
 " 10. Interacting with other players (Diplomacy).\n"
 "\n"
@@ -14853,7 +14853,7 @@ msgid ""
 "will carry out the selected action automatically."
 msgstr ""
 
-#: data/helpdata.txt:846
+#: data/helpdata.txt:852
 msgid ""
 "New unit default action\n"
 "=======================\n"
@@ -14976,7 +14976,7 @@ msgid ""
 "feature can be usefull when you already got many islands."
 msgstr ""
 
-#: data/helpdata.txt:975
+#: data/helpdata.txt:981
 msgid ""
 "Airplane Patrol\n"
 "===============\n"
@@ -15024,7 +15024,7 @@ msgid ""
 "trade route free slots (list of the cities which won't have 4 trade routes)."
 msgstr ""
 
-#: data/helpdata.txt:1024
+#: data/helpdata.txt:1030
 msgid ""
 "Multi-Selection\n"
 "===============\n"
@@ -15432,7 +15432,7 @@ msgstr ""
 msgid "Combat"
 msgstr "Kamp"
 
-#: data/helpdata.txt:1326
+#: data/helpdata.txt:1332
 msgid ""
 "Default Combat Rules\n"
 "---------------------"
@@ -15458,7 +15458,7 @@ msgstr "Först beräknas angriparens styrka."
 msgid " - If the attacker is a veteran, its strength is multiplied by 1.5."
 msgstr "  - Om angriparen är erfaren, mulitpliceras styrkan med 1.5."
 
-#: data/helpdata.txt:1336
+#: data/helpdata.txt:1342
 msgid ""
 " - \"Exhausted\" attackers are weaker: if the attacker has only 1/3 movement "
 "point left, its strength is divided by 3; if it has 2/3 movement point, its "
@@ -15552,7 +15552,7 @@ msgstr ""
 " - Slutligen; om försvararen är en landenhet och är befäst eller i en stad, "
 "multipliceras försvararens med 1.5."
 
-#: data/helpdata.txt:1377
+#: data/helpdata.txt:1383
 msgid ""
 "If, after these modifications, the attacker has a strength of 0, it "
 "automatically loses.  Otherwise, if the defender has a strength of 0, the "
@@ -15588,7 +15588,7 @@ msgid ""
 msgstr ""
 " - Om ett skepp angriper en landenhet på land sätts bådas eldkraft till 1."
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1398
 msgid ""
 "After these preliminaries, combat occurs, as long as both units are still "
 "alive (i.e., hit points are greater than 0).  Each round, a random number "
@@ -15665,7 +15665,7 @@ msgstr ""
 msgid " Combat example 1"
 msgstr " Kampexempel 1"
 
-#: data/helpdata.txt:1435
+#: data/helpdata.txt:1441
 msgid ""
 "Suppose a veteran Cannon (A:8, D:1, HP:20, F:1) with 2/3 movement points "
 "left attacks a non-veteran Musketeer (A:3, D:3, HP:20, F:1) inside a city "
@@ -15694,7 +15694,7 @@ msgstr ""
 "Försvararen befinner sig bakom en stadsmurar, så styrkan trefaldigas till "
 "13.5. Försvararen är en landenhet i en stad, så styrkan ökas till 20.25."
 
-#: data/helpdata.txt:1447
+#: data/helpdata.txt:1453
 msgid ""
 "Strength values inside the game are actually multiplied by 10, with "
 "fractions dropped, so the attacker's strength is 80, and the defender's "

@@ -13404,7 +13404,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Jelenlegi adminisztrátorok: "
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 #, fuzzy
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
@@ -14005,7 +14005,7 @@ msgstr ""
 "terepet a városok körül.  Tartsuk szem elõtt, hogy a nagy lakosság növeli a "
 "civilizációnk termelékenységét és kutatási sebességét is."
 
-#: data/helpdata.txt:695
+#: data/helpdata.txt:698
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14275,7 +14275,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:835
+#: data/helpdata.txt:838
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -14693,7 +14693,7 @@ msgstr ""
 "felderítésre.  Az, hogy egy adott egység mennyire alkalmas ezen feladatok "
 "ellátására, az egység támadóerejétõl, védõerejétõl és sebességétõl függ."
 
-#: data/helpdata.txt:1257
+#: data/helpdata.txt:1260
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -14762,7 +14762,7 @@ msgid ""
 "disband."
 msgstr ""
 
-#: data/helpdata.txt:1294
+#: data/helpdata.txt:1297
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -14772,7 +14772,7 @@ msgid ""
 "enemy cities."
 msgstr ""
 
-#: data/helpdata.txt:1301
+#: data/helpdata.txt:1304
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -14945,7 +14945,7 @@ msgid ""
 "is set to 1."
 msgstr ""
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1395
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15007,7 +15007,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr " Csataszabályok módosítása"
 
-#: data/helpdata.txt:1427
+#: data/helpdata.txt:1430
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -32580,20 +32580,6 @@ msgstr ""
 
 #~ msgid "Diplomat\\/Spy Actions"
 #~ msgstr "Diplomata\\/Kémtevékenység"
-
-#~ msgid ""
-#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
-#~ "future diplomatic efforts providing the Ambassador is reputable."
-#~ msgstr ""
-#~ "Játék: A(z) %3$s kivégezték a %1$s egységedet %2$s városában kémkedés "
-#~ "gyanúja miatt.  Egy jó hírû nagykövetet szívesen fogadnának."
-
-#~ msgid ""
-#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
-#~ "untrustworthy"
-#~ msgstr ""
-#~ "Kivégeztél egy %s egységet, akit a(z) %s küldtek %s városába "
-#~ "nagykövetséget alapítani."
 
 #~ msgid "Ah"
 #~ msgstr "Császár"

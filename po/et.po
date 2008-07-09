@@ -13423,7 +13423,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Praegused haldajad:"
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -13942,7 +13942,7 @@ msgstr ""
 "edasiarendamiseks linnade ümbruses. Tasub meeles pidada, et suurem rahvaarv "
 "tõstab nii su linna tootlikkust kui teadusuuringute kiirust."
 
-#: data/helpdata.txt:695
+#: data/helpdata.txt:698
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14007,7 +14007,7 @@ msgstr ""
 "põllumaalt, klõpsates selleks põllumaale, kus mõni kodanik töötab. Vabanenud "
 "kodaniku võid rakendada mõnes eelnevalt mainitud ametis."
 
-#: data/helpdata.txt:727
+#: data/helpdata.txt:730
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -14603,7 +14603,7 @@ msgstr ""
 "Selle, kui hästi mingi üksus millekski sobib, määravad ära tema kaitse- ja "
 "rünnakujõud ning liikumisoskus."
 
-#: data/helpdata.txt:1257
+#: data/helpdata.txt:1260
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -14681,7 +14681,7 @@ msgstr ""
 "külasid. Olenevalt serveri seadetest võib külast lennukiga üle lendamisel "
 "küla ka laiali joosta."
 
-#: data/helpdata.txt:1294
+#: data/helpdata.txt:1297
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -14697,7 +14697,7 @@ msgstr ""
 "välja arvatud juhul, kui sa oled ehitanud ÜRO ilmaime. Helikopterid saavad "
 "vastase linnu okupeerida."
 
-#: data/helpdata.txt:1301
+#: data/helpdata.txt:1304
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -14882,7 +14882,7 @@ msgid ""
 msgstr ""
 "- kui hävitaja ründab helikopterit, seatakse helikopteri tulejõud tasemele 1."
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1395
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -14939,7 +14939,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr "Lahingureeglite muutmine"
 
-#: data/helpdata.txt:1427
+#: data/helpdata.txt:1430
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -32155,20 +32155,6 @@ msgstr ""
 #~ msgid "Go\\/Airlift to City"
 #~ msgstr "Mine/lenda linna"
 
-#~ msgid ""
-#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
-#~ "future diplomatic efforts providing the Ambassador is reputable."
-#~ msgstr ""
-#~ "Mäng: Su %s hukati linnas %s kahlustatuna spionaažis.  %s loodavad "
-#~ "tulevikus diplomaatilistele suhetele kui Saadik on reputaabel."
-
-#~ msgid ""
-#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
-#~ "untrustworthy"
-#~ msgstr ""
-#~ "Sa võtsid pea maha %s-l, kelle %s saatis sinu juurde %s-sse saatkonda "
-#~ "rajama, sest ta pole usaldatav."
-
 #~ msgid "City: Released from citizen governor"
 #~ msgstr "Linn: Vabastati kubernerist"
 
@@ -34026,6 +34012,9 @@ msgstr ""
 
 #~ msgid "%s - %s citizens  Governor: %s"
 #~ msgstr "%s - %s linnaelanikku  Valitseja: %s"
+
+#~ msgid "Researching: Unknown(%d/-)"
+#~ msgstr "Uuritakse: Teadmata(%d/-)"
 
 #~ msgid "Server Options"
 #~ msgstr "Serveri seaded."

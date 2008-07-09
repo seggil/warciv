@@ -13932,7 +13932,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Administradores actuais: "
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 #, fuzzy
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
@@ -14538,7 +14538,7 @@ msgstr ""
 "população elevada aumenta a produtividade e o ritmo de pesquisa da sua "
 "civilização."
 
-#: data/helpdata.txt:695
+#: data/helpdata.txt:698
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14808,7 +14808,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:835
+#: data/helpdata.txt:838
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15272,7 +15272,7 @@ msgstr ""
 "depende da sua capacidade de ataque e defesa bem como da sua capacidade de "
 "movimento."
 
-#: data/helpdata.txt:1257
+#: data/helpdata.txt:1260
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15355,7 +15355,7 @@ msgstr ""
 "para explorar cabanas; dependendo de opções de servidor, uma cabana "
 "sobrevoada poderá disolver-se."
 
-#: data/helpdata.txt:1294
+#: data/helpdata.txt:1297
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -15372,7 +15372,7 @@ msgstr ""
 "maravilha das Nações Unidas.  Ao contrário das outras unidades aéreas, os "
 "Helicópteros podem capturar cidades inimigas."
 
-#: data/helpdata.txt:1301
+#: data/helpdata.txt:1304
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15533,7 +15533,7 @@ msgstr ""
 " - Se o defensor estiver numa fortaleza (e não numa cidade), a sua força é "
 "duplicada."
 
-#: data/helpdata.txt:1377
+#: data/helpdata.txt:1380
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15571,7 +15571,7 @@ msgstr ""
 " - Se um Caça estiver a atacar um Helicóptero o poder de fogo do Helicóptero "
 "é colocado a 1."
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1395
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -33739,21 +33739,6 @@ msgstr ""
 #~ "\n"
 #~ "Nações Fundamentalistas podem manter unidades Fanáticas sem terem de "
 #~ "pagar quaisquer escudos de manutenção."
-
-#~ msgid ""
-#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
-#~ "future diplomatic efforts providing the Ambassador is reputable."
-#~ msgstr ""
-#~ "Jogo: O seu %s foi executado em %s por suspeita de espionagem. Os %s "
-#~ "encorajam esforços diplomáticos futuros desde que o Embaixador tenha "
-#~ "reputação."
-
-#~ msgid ""
-#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
-#~ "untrustworthy"
-#~ msgstr ""
-#~ "Você executou um %s que os %s enviaram para criar uma embaixada em %s por "
-#~ "não ser de confiança"
 
 #~ msgid "Ah"
 #~ msgstr "Ah"

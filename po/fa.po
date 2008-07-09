@@ -13043,7 +13043,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr ""
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -13482,7 +13482,7 @@ msgid ""
 "civilization's research rate."
 msgstr ""
 
-#: data/helpdata.txt:695
+#: data/helpdata.txt:698
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -13523,7 +13523,7 @@ msgid ""
 "be transferred to the other duties mentioned previously."
 msgstr ""
 
-#: data/helpdata.txt:727
+#: data/helpdata.txt:730
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -14064,7 +14064,7 @@ msgid ""
 "unit's strength in attack and defense, and its ability to move."
 msgstr ""
 
-#: data/helpdata.txt:1257
+#: data/helpdata.txt:1260
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -14111,7 +14111,7 @@ msgid ""
 "disband."
 msgstr ""
 
-#: data/helpdata.txt:1294
+#: data/helpdata.txt:1297
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -14121,7 +14121,7 @@ msgid ""
 "enemy cities."
 msgstr ""
 
-#: data/helpdata.txt:1301
+#: data/helpdata.txt:1304
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -14266,7 +14266,7 @@ msgid ""
 "is set to 1."
 msgstr ""
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1395
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -14308,7 +14308,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr ""
 
-#: data/helpdata.txt:1427
+#: data/helpdata.txt:1430
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -30163,6 +30163,10 @@ msgstr ""
 #, fuzzy
 #~ msgid "%s - %s citizens  Governor: %s"
 #~ msgstr "%s - %s شهروند%s"
+
+#, fuzzy
+#~ msgid "Researching: Unknown(%d/-)"
+#~ msgstr "جستجو: %s(%d/%d)"
 
 #, fuzzy
 #~ msgid "Select Same Type"

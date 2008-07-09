@@ -13766,7 +13766,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Nåværende administratorer: "
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14094,7 +14094,7 @@ msgid ""
 "  <ctrl>MMB:                Wake up sentried units\n"
 msgstr ""
 
-#: data/helpdata.txt:551
+#: data/helpdata.txt:554
 msgid ""
 "Area Selection mode (GTK):\n"
 "==========================\n"
@@ -14391,7 +14391,7 @@ msgstr ""
 "nybyggeren til jordbruksforbedringer. Husk at en stor befolkning øker "
 "produktiviteten og sivilisasjonens forskningsfart."
 
-#: data/helpdata.txt:695
+#: data/helpdata.txt:698
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14457,7 +14457,7 @@ msgstr ""
 "ved å klikke på den okkuperte ruten. Denne borgeren kan deretter bli "
 "overført til en av de andre oppgavene som nevnt tidligere."
 
-#: data/helpdata.txt:727
+#: data/helpdata.txt:730
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -14654,7 +14654,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:835
+#: data/helpdata.txt:838
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15106,7 +15106,7 @@ msgstr ""
 "utforskning.  Hvor nyttig en enhet er for disse rollene kommer ann på dens "
 "styrker innen angrep, forsvar og flytt."
 
-#: data/helpdata.txt:1257
+#: data/helpdata.txt:1260
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15179,7 +15179,7 @@ msgstr ""
 "men dersom serveren er innstilt for det, kan hytter som blir overflydd bli "
 "ødelagt."
 
-#: data/helpdata.txt:1294
+#: data/helpdata.txt:1297
 msgid ""
 "Like air units, Helicopters can move on any square not occupied by an enemy "
 "unit or enemy city, and their movement rate is not affected by loss of "
@@ -15195,7 +15195,7 @@ msgstr ""
 "flybase, med mindre du har De Forente Nasjoner underverket. Helikopter kan "
 "overta fiendtlige byer."
 
-#: data/helpdata.txt:1301
+#: data/helpdata.txt:1304
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15352,7 +15352,7 @@ msgid ""
 msgstr ""
 " - Dersom forsvareren er i et fort (og ikke i en by) blir dens styrke doblet."
 
-#: data/helpdata.txt:1377
+#: data/helpdata.txt:1380
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15388,7 +15388,7 @@ msgid ""
 msgstr ""
 " - Dersom en jager angriper et helikopter blir ildkraften til helikopteret 1."
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1395
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15448,7 +15448,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr " Endre kampregler"
 
-#: data/helpdata.txt:1427
+#: data/helpdata.txt:1430
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -33679,21 +33679,6 @@ msgstr ""
 #~ "\n"
 #~ "Fundamentalistiske nasjonen kan opprettholde fanatiske enheter uten å "
 #~ "betale skjold i vedlikehold."
-
-#~ msgid ""
-#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
-#~ "future diplomatic efforts providing the Ambassador is reputable."
-#~ msgstr ""
-#~ "Spill: Din %s ble henrettet i %s på mistanke om spionasje. %s ønsker "
-#~ "velkommen framtidige diplomatiske forsøk gitt at Ambassadøren er "
-#~ "anstendig."
-
-#~ msgid ""
-#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
-#~ "untrustworthy"
-#~ msgstr ""
-#~ "Du henrettet en %s som %s sendte for å etablere ambassade i %s for ikke å "
-#~ "ha vært troverdig."
 
 #~ msgid "Ah"
 #~ msgstr "Ah"

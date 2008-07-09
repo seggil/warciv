@@ -13940,7 +13940,7 @@ msgstr ""
 msgid "  Present administrators: "
 msgstr "  Administrateurs actuels: "
 
-#: data/helpdata.txt:55
+#: data/helpdata.txt:56
 msgid ""
 "If you find any bugs, then please send us a bug report.  This is best done "
 "by visiting the Freeciv Bug Tracking System, at:\n"
@@ -14270,7 +14270,7 @@ msgid ""
 "  <ctrl>MMB:                Wake up sentried units\n"
 msgstr ""
 
-#: data/helpdata.txt:551
+#: data/helpdata.txt:554
 msgid ""
 "Area Selection mode (GTK):\n"
 "==========================\n"
@@ -14572,7 +14572,7 @@ msgstr ""
 "population importante accroît à la fois la production et le taux de "
 "recherche de votre civilisation."
 
-#: data/helpdata.txt:695
+#: data/helpdata.txt:698
 msgid ""
 " 4. Building agriculture improvements.\n"
 "\n"
@@ -14644,7 +14644,7 @@ msgstr ""
 "campagne en cliquant sur une case de campagne occupée. L'habitant peut alors "
 "être transféré vers une des autres activités mentionnées plus haut."
 
-#: data/helpdata.txt:727
+#: data/helpdata.txt:730
 msgid ""
 "    If you move all of your citizens into the city and right-click on the "
 "central tile of the farmland, the citizens will be rearranged to maximise "
@@ -14852,7 +14852,7 @@ msgid ""
 "move when enabled."
 msgstr ""
 
-#: data/helpdata.txt:835
+#: data/helpdata.txt:838
 msgid ""
 "Default diplomats and caravans actions\n"
 "======================================\n"
@@ -15317,7 +15317,7 @@ msgstr ""
 "reconnaissance. L'utilité d'une unité particulière dans chacun de ces rôles "
 "dépend de sa force en attaque, en défense et son aptitude à se mouvoir."
 
-#: data/helpdata.txt:1257
+#: data/helpdata.txt:1260
 msgid ""
 "There are four general types of unit: Land, Sea, Air, and Helicopter.  "
 "(Helicopters are sufficiently different from other air units that it is "
@@ -15418,7 +15418,7 @@ msgstr ""
 "autres unités aériennes, les Hélicoptères peuvent capturer des villes "
 "ennemies."
 
-#: data/helpdata.txt:1301
+#: data/helpdata.txt:1304
 msgid ""
 "Units which have been damaged in combat will regain hit points each turn in "
 "which they are not moved.  Normally, a unit which has not moved will regain "
@@ -15580,7 +15580,7 @@ msgstr ""
 " - si un défenseur est dans une forteresse (hors d'une ville), sa force est "
 "doublée ; "
 
-#: data/helpdata.txt:1377
+#: data/helpdata.txt:1380
 msgid ""
 " - Finally, if the defender is a ground unit, and is either fortified or "
 "inside a city, its strength is multiplied by 1.5."
@@ -15620,7 +15620,7 @@ msgstr ""
 " - Si un Chasseur attaque un hélicoptère, la puissance de feu de "
 "l'hélicoptère est réduite à 1."
 
-#: data/helpdata.txt:1392
+#: data/helpdata.txt:1395
 msgid ""
 " - If a ship is attacking a ground unit on land the firepower of both is set "
 "to 1."
@@ -15681,7 +15681,7 @@ msgstr ""
 msgid " Modifying Combat Rules"
 msgstr " Modifier les règles des combats"
 
-#: data/helpdata.txt:1427
+#: data/helpdata.txt:1430
 msgid ""
 "Modifying Combat Rules\n"
 "----------------------"
@@ -34461,21 +34461,6 @@ msgstr ""
 #~ "\n"
 #~ "Les pays sous régime Fondamentaliste peuvent supporter des Fanatiques "
 #~ "sans payer aucune ressource pour les soutenir."
-
-#~ msgid ""
-#~ "Game: Your %s was executed in %s on suspicion of spying.  The %s welcome "
-#~ "future diplomatic efforts providing the Ambassador is reputable."
-#~ msgstr ""
-#~ "Jeu : Votre %s, soupçonné d'espionnage, a été exécuté à %s. Les %s "
-#~ "acceptent de nouvelles tentatives diplomatiques à condition que "
-#~ "l'ambassadeur soit honorable."
-
-#~ msgid ""
-#~ "You executed a %s the %s had sent to establish an embassy in %s for being "
-#~ "untrustworthy"
-#~ msgstr ""
-#~ "Vous avez exécuté un %s que les %s avaient envoyé pour établir une "
-#~ "ambassade à %s pour avoir été indigne de confiance"
 
 #~ msgid "Ah"
 #~ msgstr "Ah"
