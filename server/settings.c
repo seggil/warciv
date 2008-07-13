@@ -166,6 +166,20 @@ static bool maxplayers_callback(int value, const char **error_string)
   return TRUE;
 }
 
+/*************************************************************************
+  Verify that a given idlecut value is valid.
+*************************************************************************/
+static bool idlecut_callback(int value, const char **error_string)
+{
+  if (0 < value && value < 30) {
+    *error_string =_("Idlecut cannot be less than 30 seconds.");
+    return FALSE;
+  }
+  *error_string = NULL;
+  return TRUE;
+}
+
+
 #define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,        \
                  short_help, extra_help, func, default)                 \
   {name, sclass, to_client, short_help, extra_help, SSET_BOOL,          \
@@ -1442,7 +1456,7 @@ struct settings_s settings[] = {
                   "Connections that idle for more than this time are "
                   "cut. A value of zero for this setting means that "
                   "idle connections are never cut."),
-               NULL, GAME_MIN_IDLECUT, GAME_MAX_IDLECUT,
+               idlecut_callback, GAME_MIN_IDLECUT, GAME_MAX_IDLECUT,
                GAME_DEFAULT_IDLECUT,
                VCF_NONE, 0, ALLOW_ADMIN, ALLOW_ADMIN)
 
