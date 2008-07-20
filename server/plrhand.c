@@ -1825,6 +1825,7 @@ void server_remove_player(struct player *pplayer)
   game_renumber_players(pplayer->player_no);
 
   send_updated_vote_totals(NULL);
+  players_reset_ready();
 }
 
 /**************************************************************************
@@ -2348,4 +2349,28 @@ void handle_player_turn_done(struct player *pplayer)
   check_for_full_turn_done();
 
   send_player_info(pplayer, NULL);
+}
+
+/**************************************************************************
+  Make all players "unready" (i.e. not started), and notify them of it.
+**************************************************************************/
+void players_reset_ready(void)
+{
+  if (server_state != PRE_GAME_STATE) {
+    return;
+  }
+  players_iterate(pplayer) {
+    if (!pplayer->is_started) {
+      continue;
+    }
+    pplayer->is_started = FALSE;
+    conn_list_iterate(pplayer->connections, pconn) {
+      if (pconn->observer) {
+        continue;
+      }
+      notify_conn(pconn->self, _("Server: Your ready state has been "
+                                 "reset because the game parameters "
+                                 "have changed."));
+    } conn_list_iterate_end;
+  } players_iterate_end;
 }

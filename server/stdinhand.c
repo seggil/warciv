@@ -2280,6 +2280,7 @@ static bool autoteam_command(struct connection *caller, char *str,
 
   free_team_names(team_names, n);
   show_teams(caller, TRUE);
+  players_reset_ready();
 
   return TRUE;
 }
@@ -3323,6 +3324,9 @@ static bool team_command(struct connection *caller, char *str, bool check)
 
 CLEANUP:
   free_tokens(arg, ntokens);
+  if (!check && res) {
+    players_reset_ready();
+  }
   return res;
 }
 
@@ -3998,6 +4002,7 @@ static bool set_command(struct connection *caller,
   }
 
   if (!check && do_update) {
+    players_reset_ready();
     send_server_info_to_metaserver(META_INFO);
 
     /* send any modified game parameters to the clients -- if sent
@@ -4593,6 +4598,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     /* actually do the removal */
     game_remove_player(pplayer);
     game_renumber_players(pplayer->player_no);
+    players_reset_ready();
   }
 
   cancel_connection_votes(pconn);

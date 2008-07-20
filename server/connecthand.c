@@ -435,6 +435,7 @@ void establish_new_connection(struct connection *pconn)
       restore_access_level(pconn);
     } else {
       sz_strlcpy(pconn->player->name, pconn->username);
+      players_reset_ready();
     }
   }
 
