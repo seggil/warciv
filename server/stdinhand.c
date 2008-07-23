@@ -6069,7 +6069,7 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
   remove_leading_trailing_spaces(filename);
   if ((str == NULL) || (strlen(str) == 0)) {
     cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
-              _("You must give a ruleset name or number."
+              _("You must give a ruleset name or number. "
 		"Use /show ruleset to see the current ruleset."));
     return FALSE;
   } else if (caller && caller->access_level != ALLOW_HACK
