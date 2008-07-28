@@ -5331,7 +5331,7 @@ static const char *load_menu_miscellaneous(void)
      NULL, _("Autowakeup _sentried units"),
      G_CALLBACK(callback_miscellaneous_toggle_wakeup), TRUE},
     {"MISCELLANEOUS_TOGGLE_MOVEANDATTACK", NULL, _("Move and _attack mode"),
-     NULL, _("Move and _attack mode"),
+     "<Control>a", _("Move and _attack mode"),
      G_CALLBACK(callback_miscellaneous_toggle_moveandattack), TRUE}
   };
 

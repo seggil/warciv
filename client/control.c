@@ -3045,10 +3045,9 @@ void key_toggle_moveandattack(void)
   static char txt[255];
 
   moveandattack_state ^= 1;
-  my_snprintf(txt, sizeof(txt),
-	      _("Warclient: move and attack mode is %s"),
-	      /* TRANS: moveandattack_state */
-	      moveandattack_state ? _("on") : _("off"));
+  my_snprintf(txt, sizeof(txt), moveandattack_state
+              ? _("Warclient: Move and attack mode is on.")
+              : _("Warclient: Move and attack mode is off."));
   append_output_window(txt);
 }
 
