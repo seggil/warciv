@@ -72,7 +72,9 @@ int my_ai_establish_trade_route_level;
 bool my_ai_trade_manual_trade_route_enable;
 bool my_ai_trade_external;
 int my_ai_trade_plan_level;
+#ifndef ASYNC_TRADE_PLANNING
 int my_ai_trade_plan_time_max;
+#endif
 bool my_ai_trade_plan_enable_free_slots;
 bool my_ai_trade_plan_recalculate_auto;
 bool my_ai_trade_plan_change_homecity;
@@ -259,10 +261,12 @@ static struct pepsetting static_pepsettings[] = {
              N_("Allow external trade"),
              N_("If this option is enabled, the client will take care about "
                 "about non-owned cities to trade with."), MY_AI_TRADE_EXTERNAL),
+#ifndef ASYNC_TRADE_PLANNING
   PSGEN_INT(PAGE_TRADE, my_ai_trade_plan_time_max,
             N_("Maximum time allowed to trade planning calculation"),
             N_("This value is in seconds.\n\n"
                "0: No limit"), MY_AI_TRADE_TIME),
+#endif
   PSGEN_BOOL(PAGE_TRADE, my_ai_trade_plan_recalculate_auto,
              N_("Automatic trade planning calcul"),
              N_("If this option is enabled, the trade planning will be "

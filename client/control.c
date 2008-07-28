@@ -3146,7 +3146,7 @@ void key_my_ai_trade_city(void)
       my_ai_add_trade_city(pcity, TRUE);
     } city_list_iterate_end;
     if (my_ai_trade_plan_recalculate_auto) {
-      recalculate_trade_plan();
+      trade_planning_calculation_start();
     }
   } else {
     hover_state = HOVER_MY_AI_TRADE_CITY;

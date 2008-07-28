@@ -19,6 +19,8 @@
 #include "nation.h"		/* Nation_Type_id */
 #include "terrain.h"		/* enum tile_special_type */
 
+#include "myai.h"
+
 struct packet_nations_selected_info;
 
 void popup_notify_goto_dialog(const char *headline, const char *lines,
@@ -43,6 +45,15 @@ void popup_bribe_dialog(struct unit *punit);
 void popup_sabotage_dialog(struct city *pcity);
 void popup_pillage_dialog(struct unit *punit,
 			  enum tile_special_type may_pillage);
+
+#ifdef ASYNC_TRADE_PLANNING
+void popup_trade_planning_calculation_info(void);
+void popdown_trade_planning_calculation_info(void);
+void update_trade_planning_calculation_info(void);
+
+void request_trade_planning_calculation_resume(void);
+void remove_trade_planning_calculation_resume_request(void);
+#endif	/* ASYNC_TRADE_PLANNING */
 
 void popdown_all_game_dialogs(void);
 

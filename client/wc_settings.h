@@ -17,6 +17,8 @@
 #include "map.h"
 #include "unit.h"
 
+#include "myai.h"
+
 /********************************************************************** 
   Warclient settings...
 ***********************************************************************/
@@ -71,7 +73,9 @@ extern enum my_ai_level my_ai_trade_level;
 extern int my_ai_establish_trade_route_level;
 extern bool my_ai_trade_external;
 extern bool my_ai_trade_manual_trade_route_enable;
+#ifndef ASYNC_TRADE_PLANNING
 extern int my_ai_trade_plan_time_max;
+#endif
 extern bool my_ai_trade_plan_recalculate_auto;
 extern bool my_ai_trade_plan_change_homecity;
 

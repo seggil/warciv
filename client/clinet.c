@@ -84,6 +84,7 @@
 #include "gui_main_g.h"		/* add_net_input(), remove_net_input() */
 #include "menu_g.h"
 #include "messagewin_g.h"
+#include "myai.h"
 #include "options.h"
 #include "packhand.h"
 #include "pages_g.h"
@@ -152,6 +153,7 @@ static void close_socket_nomessage(struct connection *pc)
    * Unfortunately doing it only in client_game_free is not
    * sufficient. */
   voteinfo_queue_init();
+  trade_planning_calculation_stop();
 
   set_client_page(PAGE_MAIN);
 

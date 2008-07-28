@@ -50,6 +50,7 @@
 #include "mapview.h"
 #include "menu.h"
 #include "multiselect.h"
+#include "myai.h"
 #include "options.h"
 #include "packhand.h"
 #include "wc_settings.h"
@@ -2741,3 +2742,157 @@ void create_pepsetting_dialog(void)
   gtk_widget_show_all(GTK_DIALOG(win)->vbox);
   gtk_widget_show(win);
 }
+
+
+
+#ifdef ASYNC_TRADE_PLANNING
+/*************************************************************************
+  Trade planning calculation window.
+*************************************************************************/
+
+static GtkWidget *trade_planning_calculation_info = NULL;
+static guint resume_request = 0;
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void tpc_callback(GtkWidget *window, gint rid, gpointer data)
+{
+  switch (rid) {
+  case GTK_RESPONSE_OK:
+    trade_planning_calculation_finish();
+    break;
+  case GTK_RESPONSE_CANCEL:
+    trade_planning_calculation_stop();
+    break;
+  default:
+    break;
+  }
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void tpc_destroy(GtkWidget *window, gpointer data)
+{
+  trade_planning_calculation_stop();
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void popup_trade_planning_calculation_info(void)
+{
+  if (trade_planning_calculation_info) {
+    return;
+  }
+
+  GtkWidget *vbox, *bar;
+
+  trade_planning_calculation_info =
+      gtk_dialog_new_with_buttons(_("Trade planning calculation"), NULL, 0,
+				  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				  GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+  setup_dialog(trade_planning_calculation_info, toplevel);
+
+  g_signal_connect(trade_planning_calculation_info, "response",
+		   G_CALLBACK(tpc_callback), NULL);
+  g_signal_connect(trade_planning_calculation_info, "destroy",
+		   G_CALLBACK(tpc_destroy), NULL);
+
+  vbox = GTK_DIALOG(trade_planning_calculation_info)->vbox;
+
+  bar = gtk_progress_bar_new();
+  gtk_box_pack_start(GTK_BOX(vbox), bar, 0, TRUE, TRUE);
+  g_object_set_data(G_OBJECT(trade_planning_calculation_info),
+		    "main_bar", bar);
+
+  bar = gtk_progress_bar_new();
+  gtk_box_pack_start(GTK_BOX(vbox), bar, 0, TRUE, TRUE);
+  g_object_set_data(G_OBJECT(trade_planning_calculation_info),
+		    "advance_bar", bar);
+
+  gtk_widget_show_all(vbox);
+  gtk_widget_show(trade_planning_calculation_info);
+
+  update_trade_planning_calculation_info();
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void popdown_trade_planning_calculation_info(void)
+{
+  if (trade_planning_calculation_info) {
+    gtk_widget_destroy(trade_planning_calculation_info);
+    trade_planning_calculation_info = NULL;
+  }
+}
+
+/* The pulsing progress bar will be update at this time (µs) */
+#define PULSE_TIME	200000
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void update_trade_planning_calculation_info(void)
+{
+  if (!trade_planning_calculation_info) {
+    return;
+  }
+
+  static clock_t last_time = 0;
+  char buf[256];
+  int num, max, moves;
+  GtkProgressBar *bar;
+  clock_t cur_time = clock();
+
+  if (cur_time > last_time + PULSE_TIME) {
+    bar = GTK_PROGRESS_BAR(g_object_get_data(
+	      G_OBJECT(trade_planning_calculation_info), "main_bar"));
+    gtk_progress_bar_pulse(bar);
+    last_time = cur_time;
+  }
+
+  bar = GTK_PROGRESS_BAR(g_object_get_data(
+	    G_OBJECT(trade_planning_calculation_info), "advance_bar"));
+  get_trade_planning_advancement(&num, &max, &moves);
+  gtk_progress_bar_set_fraction(bar, (gdouble) num / MAX(max, 1));
+  my_snprintf(buf, sizeof(buf), "%d/%d trade routes, %d moves",
+	      num, max, moves);
+  gtk_progress_bar_set_text(bar, buf);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static gboolean resume_callback(gpointer data)
+{
+  if (!trade_planning_calculation_resume()) {
+    resume_request = 0;
+    return FALSE;
+  }
+  return TRUE;
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void request_trade_planning_calculation_resume(void)
+{
+  if (resume_request == 0) {
+    resume_request = g_idle_add(resume_callback, NULL);
+  }
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void remove_trade_planning_calculation_resume_request(void)
+{
+  if (resume_request != 0) {
+    g_source_remove(resume_request);
+    resume_request = 0;
+  }
+}
+#endif	/* ASYNC_TRADE_PLANNING */

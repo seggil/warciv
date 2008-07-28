@@ -3734,7 +3734,7 @@ static void callback_auto_caravan_my_ai_clear_trade_city(GtkAction *action,
 static void callback_auto_caravan_my_ai_trade_recalculate(GtkAction *action,
                                                           gpointer user_data)
 {
-  recalculate_trade_plan();
+  trade_planning_calculation_start();
 }
 
 /****************************************************************

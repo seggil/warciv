@@ -13,6 +13,10 @@
 #ifndef FC__MYAI_H
 #define FC__MYAI_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "city.h"
 #include "unit.h"
 #include "shared.h"
@@ -41,7 +45,11 @@ void my_ai_free(void);
 /********************************************************************** 
   Trade functions.
 ***********************************************************************/
-#define MAX_ESTIMATED_TURNS 32
+#define MAX_ESTIMATED_TURNS	32
+
+#ifdef HAVE_UCONTEXT_H
+#define ASYNC_TRADE_PLANNING	1
+#endif
 
 void my_ai_trade_route_alloc(struct trade_route *ptr);
 void my_ai_trade_route_alloc_city(struct unit *punit, struct city *pcity);
@@ -61,10 +69,17 @@ const struct city_list *my_ai_get_trade_cities(void);
 
 void my_ai_add_trade_city(struct city *pcity, bool multi);
 void show_cities_in_trade_plan(void);
-void recalculate_trade_plan(void);
+void trade_planning_calculation_start(void);
+void trade_planning_calculation_finish(void);
+void trade_planning_calculation_stop(void);
+#ifdef ASYNC_TRADE_PLANNING
+bool trade_planning_calculation_resume(void);
+void get_trade_planning_advancement(int *trade_routes_num,
+				    int *max_trade_routes_num,
+				    int *total_moves);
+#endif
 void clear_my_ai_trade_cities(void);
 void show_free_slots_in_trade_plan(void);
-void recalculate_trade_plan(void);
 void calculate_trade_estimation(void);
 
 /********************************************************************** 
