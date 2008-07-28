@@ -2897,6 +2897,6 @@ void update_trade_route_line(struct city *pcity1, struct city *pcity2)
 		      ABS(canvas_y2 - canvas_y1) + NORMAL_TILE_HEIGHT,
 		      MUT_NORMAL);
   }
-  update_city_description(ptr->pcity1);
-  update_city_description(ptr->pcity2);
+  update_city_description(pcity1);
+  update_city_description(pcity2);
 }
