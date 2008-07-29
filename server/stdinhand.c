@@ -97,8 +97,8 @@ static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
 static bool observe_command(struct connection *caller, char *name,
                             bool check);
 static bool take_command(struct connection *caller, char *name, bool check);
-static bool detach_command(struct connection *caller, char *name,
-                           bool check);
+static bool detach_command(struct connection *caller, char *name, bool check);
+static bool attach_command(struct connection *caller, char *name, bool check);
 static bool start_command(struct connection *caller, char *name,
                           bool check);
 static bool end_command(struct connection *caller, char *str, bool check);
@@ -4625,6 +4625,101 @@ CLEANUP:
 }
 
 /**************************************************************************
+  Attempt to attach a connection to a new player.
+**************************************************************************/
+static bool attach_command(struct connection *caller, char *name, bool check)
+{
+  int ntokens = 0;
+  char buf[MAX_LEN_CONSOLE_LINE], *arg[1];
+  struct connection *pconn = NULL;
+  enum m_pre_result match_result;
+  bool res = FALSE;
+
+  if (server_state != PRE_GAME_STATE || !game.server.is_new_game) {
+    cmd_reply(CMD_ATTACH, caller, C_FAIL,
+              _("Cannot use /attach once the game has begun"));
+    return FALSE;
+  }
+
+  sz_strlcpy(buf, name);
+  ntokens = get_tokens(buf, arg, 1, TOKEN_DELIMITERS);
+
+  if (!caller && ntokens == 0) {
+    cmd_reply(CMD_ATTACH, caller, C_SYNTAX,
+              _("Usage: attach <connection-name>"));
+    goto CLEANUP;
+  }
+  /* Match the connection if the argument was given */
+  if (ntokens == 1
+      && !(pconn = find_conn_by_user_prefix(arg[0], &match_result))) {
+    cmd_reply_no_such_conn(CMD_ATTACH, caller, arg[0], match_result);
+    goto CLEANUP;
+  }
+
+  /* If no argument is given, the caller wants to attach himself */
+  if (!pconn) {
+    pconn = caller;
+  }
+
+  /* If pconn and caller are not the same, only continue 
+   * if we're console, or we have ALLOW_HACK */
+  if (pconn != caller && caller && caller->access_level != ALLOW_HACK) {
+    cmd_reply(CMD_ATTACH, caller, C_FAIL,
+              _("You can not attach other users."));
+    goto CLEANUP;
+  }
+
+  /* If already a player, don't do anything */
+  if (pconn->player && !pconn->observer) {
+    if (pconn == caller) {
+      cmd_reply(CMD_ATTACH, caller, C_FAIL, _("You are already a player"));
+    } else {
+      cmd_reply(CMD_ATTACH, caller, C_FAIL,
+		_("%s is already a player"), pconn->username);
+    }
+    goto CLEANUP;
+  }
+
+  /* Check maxplayers */
+  if (game.info.nplayers >= game.info.max_players
+      || game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS) {
+    cmd_reply(CMD_ATTACH, caller, C_FAIL,
+	      _("Can't add more players, server is full."));
+    goto CLEANUP;
+  }
+
+  if (!can_control_a_player(pconn, pconn == caller)) {
+    if (pconn != caller) {
+      cmd_reply(CMD_ATTACH, caller, C_FAIL,
+		_("%s is not allowed to control a player"), pconn->username);
+    }
+    goto CLEANUP;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  unattach_connection_from_player(pconn);
+
+  if (attach_connection_to_player(pconn, NULL)) {
+    res = TRUE;
+    sz_strlcpy(pconn->player->name, pconn->username);
+    players_reset_ready();
+    notify_conn(NULL, _("Server: %s now controls a player."), pconn->username);
+  } else {
+    cmd_reply(CMD_ATTACH, caller, C_FAIL,
+	      _("Failed to create a new player"));
+  }
+
+  send_conn_info(pconn->self, game.est_connections);
+
+CLEANUP:
+  free_tokens(arg, ntokens);
+  return res;
+}
+
+/**************************************************************************
   After a /load is completed, a reply is sent to all connections to tell
   them about the load.  This information is used by the conndlg to
   set up the graphical interface for starting the game.
@@ -6307,6 +6402,8 @@ bool handle_stdin_input(struct connection * caller,
       && caller->access_level < level) {
     cmd_reply(cmd, caller, C_FAIL,
               _("You are not allowed to use this command."));
+    cmd_reply(cmd, caller, C_FAIL,
+              _("You are not allowed to use this command."));
     return FALSE;
   }
 
@@ -6393,6 +6490,8 @@ bool handle_stdin_input(struct connection * caller,
     return observe_command(caller, arg, check);
   case CMD_DETACH:
     return detach_command(caller, arg, check);
+  case CMD_ATTACH:
+    return attach_command(caller, arg, check);
   case CMD_CREATE:
     return create_ai_player(caller, arg, check);
   case CMD_AWAY:

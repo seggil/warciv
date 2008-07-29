@@ -301,11 +301,19 @@ const struct command commands[] = {
    ECHO_NONE, VCF_NONE, 0
   },
   {"detach",    ALLOW_OBSERVER, ALLOW_OBSERVER,
-   /* TRANS: translate text between <> only */
-   N_("detach <connection-name>"),
+   /* TRANS: translate text between [] only */
+   N_("detach [connection-name]"),
    N_("detach from a player."),
    N_("Only the console and connections with cmdlevel 'hack' can force "
       "other connections to detach from a player."),
+   ECHO_ADMINS, VCF_NONE, 0
+  },
+  {"attach",    ALLOW_NEVER, ALLOW_OBSERVER,
+   /* TRANS: translate text between [] only */
+   N_("attach [connection-name]"),
+   N_("attach to a new player."),
+   N_("In the pregame, using this command will attach you to a new player "
+      "if you are not already player and if you are allowed to take a player."),
    ECHO_ADMINS, VCF_NONE, 0
   },
   {"create",	ALLOW_NEVER, ALLOW_CTRL,

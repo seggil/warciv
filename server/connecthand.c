@@ -816,7 +816,7 @@ bool attach_connection_to_player(struct connection *pconn,
   if (!pplayer) {
     if (game.info.nplayers >= game.info.max_players 
  	|| game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
- 	|| !can_control_a_player(pconn, TRUE) ) {
+ 	|| !can_control_a_player(pconn, TRUE)) {
       return FALSE; 
     } else {
       pplayer = &game.players[game.info.nplayers];

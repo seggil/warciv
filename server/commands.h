@@ -76,6 +76,7 @@ enum command_id {
   CMD_TAKE,
   CMD_OBSERVE,
   CMD_DETACH,
+  CMD_ATTACH,
   CMD_CREATE,
   CMD_AWAY,
   CMD_NOVICE,
