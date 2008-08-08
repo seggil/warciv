@@ -4002,7 +4002,6 @@ static bool set_command(struct connection *caller,
   }
 
   if (!check && do_update) {
-    players_reset_ready();
     send_server_info_to_metaserver(META_INFO);
 
     /* send any modified game parameters to the clients -- if sent
