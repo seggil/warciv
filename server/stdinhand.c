@@ -2280,7 +2280,6 @@ static bool autoteam_command(struct connection *caller, char *str,
 
   free_team_names(team_names, n);
   show_teams(caller, TRUE);
-  players_reset_ready();
 
   return TRUE;
 }
@@ -3324,9 +3323,6 @@ static bool team_command(struct connection *caller, char *str, bool check)
 
 CLEANUP:
   free_tokens(arg, ntokens);
-  if (!check && res) {
-    players_reset_ready();
-  }
   return res;
 }
 
@@ -4597,7 +4593,6 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     /* actually do the removal */
     game_remove_player(pplayer);
     game_renumber_players(pplayer->player_no);
-    players_reset_ready();
   }
 
   cancel_connection_votes(pconn);
@@ -4704,7 +4699,6 @@ static bool attach_command(struct connection *caller, char *name, bool check)
   if (attach_connection_to_player(pconn, NULL)) {
     res = TRUE;
     sz_strlcpy(pconn->player->name, pconn->username);
-    players_reset_ready();
     notify_conn(NULL, _("Server: %s now controls a player."), pconn->username);
   } else {
     cmd_reply(CMD_ATTACH, caller, C_FAIL,

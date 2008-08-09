@@ -105,5 +105,4 @@ void civil_war(struct player *pplayer);
 
 void update_players_after_alliance_breakup(struct player* pplayer,
                                           struct player* pplayer2);
-void players_reset_ready(void);
 #endif  /* FC__PLRHAND_H */
