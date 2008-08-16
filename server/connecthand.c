@@ -991,16 +991,27 @@ void conn_reset_idle_time(struct connection *pconn)
 void check_idle_connections(void)
 {
   time_t now;
+  int num_connections;
 
   if (game.server.idlecut <= 0) {
     return;
   }
 
   now = time(NULL);
+  num_connections = conn_list_size(game.est_connections);
+
+  if (server_state == PRE_GAME_STATE
+      && num_connections > 1) {
+    return;
+  }
+
   conn_list_iterate(game.all_connections, pconn) {
     if (!pconn->used || pconn->is_closing
         || pconn->server.idle_time <= 0
-        || pconn->access_level >= ALLOW_ADMIN) {
+        || pconn->access_level >= ALLOW_ADMIN
+        || (server_state == RUN_GAME_STATE
+            && pconn->observer
+            && num_connections > 1)) {
       continue;
     }
     if (now >= pconn->server.idle_time + game.server.idlecut) {
