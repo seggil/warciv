@@ -225,6 +225,7 @@ void srv_init(void)
   srvarg.fcdb.enabled = FALSE;
   srvarg.fcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
   srvarg.fcdb.save_maps = FALSE;
+  srvarg.fcdb.more_game_info = FALSE;
 
   srvarg.no_dns_lookup = FALSE;
 

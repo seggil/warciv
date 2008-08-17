@@ -69,6 +69,13 @@ struct server_arguments {
     bool enabled;           /* Defaults to FALSE. */
     int min_rated_turns;    /* Defaults to 30. */
     bool save_maps;         /* Defaults to FALSE. */
+
+    /* The current fcdb database format makes the
+     * full /examine command query too slow (several
+     * seconds) for databases with more than ~3000
+     * games. This is a temporary work-around until
+     * a better database format is implemented. */
+    bool more_game_info;    /* Defaults to FALSE. */
   } fcdb;
 };
 

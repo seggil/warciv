@@ -2488,78 +2488,82 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   res = NULL;
 
 
-  /* Fetch the players' final scores. */
+  if (srvarg.fcdb.more_game_info) {
 
-  my_snprintf(buf, sizeof(buf),
-      "SELECT ps.score FROM games AS g "
-      "  INNER JOIN turns AS t "
-      "    ON g.id = t.game_id"
-      "  INNER JOIN player_status AS ps"
-      "    ON t.id = ps.turn_id"
-      "  INNER JOIN players AS p"
-      "    ON p.id = ps.player_id"
-      "  WHERE g.id = %d"
-      "    AND g.last_turn_id IS NOT NULL"
-      "    AND t.id = g.last_turn_id"
-      "  ORDER BY p.rank",
-      id);
-  if (!fcdb_execute(sock, buf)) {
-    goto ERROR;
-  }
+    /* Fetch the players' final scores. */
 
-  res = mysql_store_result(sock);
-  if (mysql_num_rows(res) != fgi->num_players) {
-    goto ERROR;
-  }
-
-  for (i = 0; i < fgi->num_players; i++) {
-    fpigi = &fgi->players[i];
-    row = mysql_fetch_row(res);
-    if (row[0]) {
-      fpigi->score = atof(row[0]);
+    my_snprintf(buf, sizeof(buf),
+        "SELECT ps.score FROM games AS g "
+        "  INNER JOIN turns AS t "
+        "    ON g.id = t.game_id"
+        "  INNER JOIN player_status AS ps"
+        "    ON t.id = ps.turn_id"
+        "  INNER JOIN players AS p"
+        "    ON p.id = ps.player_id"
+        "  WHERE g.id = %d"
+        "    AND g.last_turn_id IS NOT NULL"
+        "    AND t.id = g.last_turn_id"
+        "  ORDER BY p.rank",
+        id);
+    if (!fcdb_execute(sock, buf)) {
+      goto ERROR;
     }
-  }
-  mysql_free_result(res);
-  res = NULL;
 
-
-  /* Fetch the players' rating changes for this game. */
-
-  my_snprintf(buf, sizeof(buf),
-      "SELECT r.old_rating, r.old_rating_deviation, "
-      "    r.rating, r.rating_deviation "
-      "  FROM players AS p LEFT JOIN ratings AS r"
-      "    ON p.id = r.player_id"
-      "  WHERE p.game_id = %d"
-      "  ORDER BY p.rank",
-      id);
-  if (!fcdb_execute(sock, buf)) {
-    goto ERROR;
-  }
-
-  res = mysql_store_result(sock);
-  if (mysql_num_rows(res) != fgi->num_players) {
-    goto ERROR;
-  }
-
-  for (i = 0; i < fgi->num_players; i++) {
-    fpigi = &fgi->players[i];
-    row = mysql_fetch_row(res);
-    if (row[0]) {
-      fpigi->old_rating = atof(row[0]);
+    res = mysql_store_result(sock);
+    if (mysql_num_rows(res) != fgi->num_players) {
+      goto ERROR;
     }
-    if (row[1]) {
-      fpigi->old_rd = atof(row[1]);
+
+    for (i = 0; i < fgi->num_players; i++) {
+      fpigi = &fgi->players[i];
+      row = mysql_fetch_row(res);
+      if (row[0]) {
+        fpigi->score = atof(row[0]);
+      }
     }
-    if (row[2]) {
-      fpigi->new_rating = atof(row[2]);
+    mysql_free_result(res);
+    res = NULL;
+
+
+    /* Fetch the players' rating changes for this game. */
+
+    my_snprintf(buf, sizeof(buf),
+        "SELECT r.old_rating, r.old_rating_deviation, "
+        "    r.rating, r.rating_deviation "
+        "  FROM players AS p LEFT JOIN ratings AS r"
+        "    ON p.id = r.player_id"
+        "  WHERE p.game_id = %d"
+        "  ORDER BY p.rank",
+        id);
+    if (!fcdb_execute(sock, buf)) {
+      goto ERROR;
     }
-    if (row[3]) {
-      fpigi->new_rd = atof(row[3]);
+
+    res = mysql_store_result(sock);
+    if (mysql_num_rows(res) != fgi->num_players) {
+      goto ERROR;
     }
-  }
-  mysql_free_result(res);
-  res = NULL;
+
+    for (i = 0; i < fgi->num_players; i++) {
+      fpigi = &fgi->players[i];
+      row = mysql_fetch_row(res);
+      if (row[0]) {
+        fpigi->old_rating = atof(row[0]);
+      }
+      if (row[1]) {
+        fpigi->old_rd = atof(row[1]);
+      }
+      if (row[2]) {
+        fpigi->new_rating = atof(row[2]);
+      }
+      if (row[3]) {
+        fpigi->new_rd = atof(row[3]);
+      }
+    }
+    mysql_free_result(res);
+    res = NULL;
+
+  } /* srvarg.fcdb.more_game_info == TRUE */
 
 
   /* Fetch information about the teams. */

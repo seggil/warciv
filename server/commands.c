@@ -565,7 +565,8 @@ const struct command commands[] = {
        "fcdb on\n"
        "fcdb off\n"
        "fcdb min_rated_turns <number>\n"
-       "fcdb save_maps <yes|no>\n"),
+       "fcdb save_maps <yes|no>\n"
+       "fcdb more_game_info <yes|no>\n"),
     N_("Game and rating database control.\n"),
     N_("If no arguments are given, show some information about the "
        "game database. Arguments 'on' and 'off' enable and "
@@ -573,7 +574,9 @@ const struct command commands[] = {
        "option controls the number of turns before a rated game "
        "should be considered for updating user ratings. The 'save_maps' "
        "option controls whether the encoded terrain and turn maps "
-       "should be generated and saved to the database."),
+       "should be generated and saved to the database. The "
+       "'more_game_info' option controls whether player scores and "
+       "rating changes should be queried for the examine command."),
     ECHO_NONE
   },
 #endif /* HAVE_MYSQL */

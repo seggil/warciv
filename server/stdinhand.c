@@ -5404,10 +5404,11 @@ static bool aka_command(struct connection *caller,
 **************************************************************************/
 enum fcdb_args
 {
-  FCDB_ON, FCDB_OFF, FCDB_MIN_RATED_TURNS, FCDB_SAVE_MAPS, FCDB_NUM_ARGS
+  FCDB_ON, FCDB_OFF, FCDB_MIN_RATED_TURNS, FCDB_SAVE_MAPS,
+  FCDB_MORE_GAME_INFO, FCDB_NUM_ARGS
 };
 static const char *const fcdb_args[] = {
-  "on", "off", "min_rated_turns", "save_maps", NULL
+  "on", "off", "min_rated_turns", "save_maps", "more_game_info", NULL
 };
 static const char *fcdbarg_accessor(int i)
 {
@@ -5440,6 +5441,9 @@ static bool fcdb_command(struct connection *caller, char *arg, bool check)
     cmd_reply(CMD_FCDB, caller, C_COMMENT,
               _("Saving of encoded turn maps: %s."),
               srvarg.fcdb.save_maps ? _("enabled") : _("disabled"));
+    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              _("Detailed /examine command output: %s."),
+              srvarg.fcdb.more_game_info ? _("enabled") : _("disabled"));
     free_tokens(args, ntokens);
     return TRUE;
   }
@@ -5503,7 +5507,30 @@ static bool fcdb_command(struct connection *caller, char *arg, bool check)
     cmd_reply(CMD_FCDB, caller, C_COMMENT,
               _("Saving of encoded turn maps: %s."),
               srvarg.fcdb.save_maps ? _("enabled") : _("disabled"));
+  } else if (ind == FCDB_MORE_GAME_INFO) {
+    if (ntokens < 2) {
+      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+                _("Missing 'on' or 'off' argument."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+    if (0 == strcmp(args[1], "yes") || 0 == strcmp(args[1], "y")
+        || 0 == strcmp(args[1], "on")) {
+      srvarg.fcdb.more_game_info = TRUE;
+    } else if (0 == strcmp(args[1], "no") || 0 == strcmp(args[1], "n")
+        || 0 == strcmp(args[1], "off")) {
+      srvarg.fcdb.more_game_info = FALSE;
+    } else {
+      cmd_reply(CMD_FCDB, caller, C_SYNTAX,
+                _("Invalid argument."));
+      free_tokens(args, ntokens);
+      return FALSE;
+    }
+    cmd_reply(CMD_FCDB, caller, C_COMMENT,
+              _("Detailed /examine command output: %s."),
+              srvarg.fcdb.more_game_info ? _("enabled") : _("disabled"));
   }
+
 
   free_tokens(args, ntokens);
   return TRUE;
