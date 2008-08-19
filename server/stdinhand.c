@@ -4986,7 +4986,7 @@ static bool examine_command(struct connection *caller,
   struct fcdb_team_in_game_info *fti;
 
   if (!srvarg.fcdb.enabled) {
-    cmd_reply(CMD_RATINGS, caller, C_GENFAIL,
+    cmd_reply(CMD_EXAMINE, caller, C_GENFAIL,
               _("This server does not have database support enabled."));
     return FALSE;
   }
