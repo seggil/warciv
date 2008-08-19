@@ -2022,8 +2022,14 @@ void set_client_page(enum client_pages new_page)
   case PAGE_MAIN:
     break;
   case PAGE_START:
-    if (start_page_entry) {
-      gtk_widget_grab_focus(start_page_entry);
+    if (start_message_area) {
+      gtk_widget_grab_focus(start_message_area);
+    }
+    if (old_page == PAGE_GAME && inputline && start_page_entry) {
+      /* Copy the game page entry to the start page entry */
+      gtk_entry_set_text(GTK_ENTRY(start_page_entry),
+			 gtk_entry_get_text(GTK_ENTRY(inputline)));
+      gtk_entry_set_text(GTK_ENTRY(inputline), "");
     }
     chatline_scroll_to_bottom();
     allied_chat_only = FALSE;
@@ -2039,6 +2045,12 @@ void set_client_page(enum client_pages new_page)
 			(scenario_selection));
     break;
   case PAGE_GAME:
+    if (old_page == PAGE_START && inputline && start_page_entry) {
+      /* Copy the game start entry to the start page entry */
+      gtk_entry_set_text(GTK_ENTRY(inputline),
+			 gtk_entry_get_text(GTK_ENTRY(start_page_entry)));
+      gtk_entry_set_text(GTK_ENTRY(start_page_entry), "");
+    }
     chatline_scroll_to_bottom();
     init_chat_buttons();
     break;

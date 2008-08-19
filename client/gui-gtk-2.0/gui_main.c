@@ -312,20 +312,21 @@ static gboolean toplevel_focus(GtkWidget *w, GtkDirectionType arg)
 /**************************************************************************
 ...
 **************************************************************************/
-void chatline_entry_append_text (const char *text)
+void chatline_entry_append_text(const char *text)
 {
   char buf[1024];
   const char *old;
   int len;
 
-  if (!inputline)
+  if (!inputline) {
     return;
+  }
 
-  old = gtk_entry_get_text (GTK_ENTRY (inputline));
-  len = strlen (old);
-  my_snprintf (buf, sizeof (buf), "%s%s%s", old,
-               len > 0 ? (old[len-1] == ' ' ? "": " ") : "", text);
-  gtk_entry_set_text (GTK_ENTRY (inputline), buf);
+  old = gtk_entry_get_text(GTK_ENTRY(inputline));
+  len = strlen(old);
+  my_snprintf(buf, sizeof (buf), "%s%s%s", old,
+	      len > 0 ? (old[len - 1] == ' ' ? "": " ") : "", text);
+  gtk_entry_set_text(GTK_ENTRY(inputline), buf);
 }
 
 /**************************************************************************
