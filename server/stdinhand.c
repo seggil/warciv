@@ -101,6 +101,8 @@ static bool detach_command(struct connection *caller, char *name, bool check);
 static bool attach_command(struct connection *caller, char *name, bool check);
 static bool start_command(struct connection *caller, char *name,
                           bool check);
+static bool unstart_command(struct connection *caller, char *name,
+                            bool check);
 static bool end_command(struct connection *caller, char *str, bool check);
 static bool ban_command(struct connection *caller, char *pattern,
                         bool check);
@@ -6422,8 +6424,6 @@ bool handle_stdin_input(struct connection * caller,
       && caller->access_level < level) {
     cmd_reply(cmd, caller, C_FAIL,
               _("You are not allowed to use this command."));
-    cmd_reply(cmd, caller, C_FAIL,
-              _("You are not allowed to use this command."));
     return FALSE;
   }
 
@@ -6633,6 +6633,8 @@ bool handle_stdin_input(struct connection * caller,
 #endif /* HAVE_MYSQL */
   case CMD_START_GAME:
     return start_command(caller, arg, check);
+  case CMD_UNSTART:
+    return unstart_command(caller, arg, check);
   case CMD_END_GAME:
     return end_command(caller, arg, check);
   case CMD_NUM:
@@ -7111,6 +7113,42 @@ static bool start_command(struct connection *caller, char *name, bool check)
   }
   assert(FALSE);
   return FALSE;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
+static bool unstart_command(struct connection *caller, char *name,
+                            bool check)
+{
+  if (server_state != PRE_GAME_STATE) {
+    cmd_reply(CMD_UNSTART, caller, C_REJECTED,
+              _("This command is meaningless at this time."));
+    return FALSE;
+  }
+
+  if (!caller || !caller->player || caller->observer) {
+    cmd_reply(CMD_UNSTART, caller, C_REJECTED,
+              _("You are not a player in the game!"));
+    return FALSE;
+  }
+
+  if (!caller->player->is_started) {
+    cmd_reply(CMD_UNSTART, caller, C_REJECTED,
+              _("You are already not ready to start the game."));
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  caller->player->is_started = FALSE;
+
+  notify_conn(NULL, _("Game: %s is not ready to start."),
+              caller->username);
+
+  return TRUE;
 }
 
 /**************************************************************************

@@ -93,23 +93,13 @@ const struct command commands[] = {
       "Note that this command now takes connection names, not player names."),
    ECHO_ALL, VCF_NONE, 50
   },
-  {"ban",	ALLOW_ADMIN, ALLOW_ADMIN,
-   /* TRANS: translate text between <> and [] only */
-   N_("ban [type=]<pattern>"),
-   N_("Ban a client connection."),
-   N_("The given pattern with optional type will be added to the action "
-      "list with action 'ban'. See /help addaction for a description of "
-      "valid type and pattern values."),
-   ECHO_ALL, VCF_NONE, 0
-  },
-  {"unban",	ALLOW_ADMIN, ALLOW_ADMIN,
-   /* TRANS: translate text between <> and [] only */
-   N_("unban [type=]<pattern>"),
-   N_("Unban a client connection."),
-   N_("Removes the action list entry with pattern <pattern> and "
-      "action 'ban' (if <type> is ommitted, it is assumed to be "
-      "'hostname'; it is also used to determine which entry to remove)."),
-   ECHO_ALL, VCF_NONE, 0
+  {"unstart", ALLOW_NONE, ALLOW_BASIC,
+   "unstart",
+   N_("Set your ready state to 'not ready'."),
+   N_("This command does the opposite of the start command: it "
+      "notifies the server and other players that you are not "
+      "ready to start the game."),
+   ECHO_NONE, VCF_NONE, 0
   },
 
   {"explain",	ALLOW_OBSERVER, ALLOW_OBSERVER,
@@ -766,6 +756,24 @@ const struct command commands[] = {
     N_("The connection given by the 'user' argument will be cut from the "
        "server and not allowed to reconnect for 30 minutes."),
     ECHO_ADMINS, VCF_NOPASSALONE, 50
+  },
+  {"ban",	ALLOW_ADMIN, ALLOW_ADMIN,
+   /* TRANS: translate text between <> and [] only */
+   N_("ban [type=]<pattern>"),
+   N_("Ban a client connection."),
+   N_("The given pattern with optional type will be added to the action "
+      "list with action 'ban'. See /help addaction for a description of "
+      "valid type and pattern values."),
+   ECHO_ALL, VCF_NONE, 0
+  },
+  {"unban",	ALLOW_ADMIN, ALLOW_ADMIN,
+   /* TRANS: translate text between <> and [] only */
+   N_("unban [type=]<pattern>"),
+   N_("Unban a client connection."),
+   N_("Removes the action list entry with pattern <pattern> and "
+      "action 'ban' (if <type> is ommitted, it is assumed to be "
+      "'hostname'; it is also used to determine which entry to remove)."),
+   ECHO_ALL, VCF_NONE, 0
   },
 
   {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,

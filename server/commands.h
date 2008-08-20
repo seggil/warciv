@@ -49,8 +49,7 @@ enum command_id {
   CMD_LIST,
   CMD_QUIT,
   CMD_CUT,
-  CMD_BAN,
-  CMD_UNBAN,
+  CMD_UNSTART,
 
   /* completely non-harmful: */
   CMD_EXPLAIN,
@@ -123,6 +122,8 @@ enum command_id {
   CMD_DELACTION,
   CMD_REQUIRE,
   CMD_KICK,
+  CMD_BAN,
+  CMD_UNBAN,
 
   /* undocumented */
   CMD_RFCSTYLE,
