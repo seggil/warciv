@@ -586,7 +586,8 @@ void generic_handle_player_attribute_chunk(struct player *pplayer,
 	  (unsigned int) chunk->total_length,
      	  (unsigned int) chunk->offset + chunk->total_length,
 	  (unsigned int) chunk->chunk_length,
-	  pplayer, pplayer->player_no, pplayer->name);
+	  pplayer, pplayer ? pplayer->player_no : -1,
+	  pplayer ? pplayer->name : "<none>");
 
   /* Even though we are discarding the chunk, we can't
    * do anything without a valid player pointer. */
