@@ -475,19 +475,20 @@ Unit Orders:\n\
 "), _("\
 Unit Movement:\n\
 ==============\n\
-  1: move south-west\n\
-  2: move south\n\
-  3: move south-east\n\
-  4: move west\n\
-  6: move east\n\
-  7: move north-west\n\
-  8: move north\n\
-  9: move north-east\n\
+         1: move south-west\n\
+         2: move south\n\
+         3: move south-east\n\
+         4: move west\n\
+         6: move east\n\
+         7: move north-west\n\
+         8: move north\n\
+         9: move north-east\n\
 \n\
-  5: focus on previous unit\n\
-  w: focus on next unit (wait)\n\
-  W: wake up other units on tile\n\
-  c: center view on unit\n\
+         5: focus on previous unit\n\
+         w: focus on next unit (wait)\n\
+         W: wake up other units on tile\n\
+         c: center view on unit\n\
+  <shift>o: toggle move and attack mode\n\
 "), _("\
 Unit Mass orders:\n\
 =================\n\
@@ -833,7 +834,8 @@ Move and attack mode\n\
 ====================\n\
 \n\
 Disabled by default, this feature allow to auto attack units after \
-a unit move when enabled.\
+a unit move when enabled. Use 'shift'+'o' to toggle the state of \
+this mode.\
 "), _("\
 Default diplomats and caravans actions\n\
 ======================================\n\
