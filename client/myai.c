@@ -1690,11 +1690,18 @@ void my_ai_patrol_alloc(struct unit *punit, struct tile *ptile)
 **************************************************************************/
 void my_ai_patrol_execute(struct unit *punit)
 {
+  struct tile *dest;
   if (!punit->my_ai.control || punit->my_ai.activity != MY_AI_PATROL) {
     return;
   }
 
-  struct tile *dest = (struct tile*)punit->my_ai.data;
+  dest = (struct tile*)punit->my_ai.data;
+  if (dest == NULL) {
+    freelog(LOG_ERROR, "NULL tile as airplane patrol destination"
+            " for punit=%p (id %d) ignored.", punit, punit->id);
+    return;
+  }
+
   int move_cost = calculate_move_cost(punit, dest);
 
   if (punit->fuel == 1) {
