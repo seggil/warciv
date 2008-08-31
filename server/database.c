@@ -1535,7 +1535,7 @@ bool fcdb_record_game_start(void)
 
   /* Record the initial players. */
   players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || pplayer->is_observer) {
+    if (is_barbarian(pplayer)) {
       continue;
     }
     if (!fcdb_insert_player(sock, pplayer)) {
@@ -1616,8 +1616,7 @@ bool fcdb_end_of_turn_update(void)
 
   /* Check to see if any new players have magically appeared. */
   players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || pplayer->is_observer
-        || pplayer->fcdb.player_id > 0) {
+    if (is_barbarian(pplayer) || pplayer->fcdb.player_id > 0) {
       continue;
     }
     if (!fcdb_insert_player(sock, pplayer)) {
@@ -1631,7 +1630,7 @@ bool fcdb_end_of_turn_update(void)
     int player_status_id, i;
     struct player *pplayer_ally;
 
-    if (is_barbarian(pplayer) || pplayer->is_observer) {
+    if (is_barbarian(pplayer)) {
       continue;
     }
 
@@ -1848,8 +1847,7 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
   fcdb_connect_or_return(sock, FALSE);
 
   players_iterate(pplayer) {
-    if (pplayer->is_civil_war_split || is_barbarian(pplayer)
-        || pplayer->is_observer) {
+    if (pplayer->is_civil_war_split || is_barbarian(pplayer)) {
       continue;
     }
 
