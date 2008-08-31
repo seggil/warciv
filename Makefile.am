@@ -45,6 +45,7 @@ EXTRA_DIST=	acconfig.old			\
 		m4/ac_path_lib.m4		\
 		m4/c99.m4			\
 		m4/debug.m4			\
+		m4/deprecated.m4		\
 		m4/esd.m4			\
 		m4/alsa.m4			\
 		m4/freetype2.m4			\
@@ -70,6 +71,7 @@ EXTRA_DIST=	acconfig.old			\
 		m4/sound.m4			\
 		m4/version.m4			\
 		m4/vsnprintf.m4			\
+		m4/win32-client.m4		\
 		m4/x.m4				\
 		vms/config.h_vms		\
 		vms/freeciv_h.vms		\

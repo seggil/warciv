@@ -49,7 +49,9 @@ libcivutility_a_SOURCES = \
 		tadns.h         \
 		timing.c	\
 		timing.h	\
-                md5.c           \
-                md5.h           \
+		md5.c           \
+		md5.h           \
 		wildcards.c     \
-		wildcards.h
+		wildcards.h	\
+		win32-ucontext.c \
+		win32-ucontext.h

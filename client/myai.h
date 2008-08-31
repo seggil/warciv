@@ -21,6 +21,15 @@
 #include "unit.h"
 #include "shared.h"
 
+#ifdef HAVE_UCONTEXT_H
+#include <ucontext.h>
+#else
+#ifdef WIN32_NATIVE
+#include "win32-ucontext.h"
+#endif /* WIN32_NATIVE */
+#endif /* HAVE_UCONTEXT_H */
+
+
 #include "multiselect.h"
 
 /********************************************************************** 
@@ -49,7 +58,11 @@ void my_ai_free(void);
 
 #ifdef HAVE_UCONTEXT_H
 #define ASYNC_TRADE_PLANNING	1
-#endif
+#else
+#ifdef WIN32_NATIVE
+#define ASYNC_TRADE_PLANNING	1
+#endif /* WIN32_NATIVE */
+#endif /* HAVE_UCONTEXT_H */
 
 void my_ai_trade_route_alloc(struct trade_route *ptr);
 void my_ai_trade_route_alloc_city(struct unit *punit, struct city *pcity);

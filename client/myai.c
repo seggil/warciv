@@ -20,10 +20,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef HAVE_UCONTEXT_H
-#include <ucontext.h>
-#endif
-
 #include "fcintl.h"
 #include "log.h"
 #include "mem.h"
@@ -995,6 +991,15 @@ void recursive_calculate_trade_planning(int start_city, int start_trade)
 	   * sizeof(struct trade_route *));
     trade_plan_calc->btconf = trade_plan_calc->ctconf;
   }
+#ifdef ASYNC_TRADE_PLANNING
+#ifdef WIN32_NATIVE
+  /* uc_link not working on windows. swapcontext at the end of the calculation */
+  if (start_city == 0 && start_trade == 1) {
+     swapcontext(&trade_plan_calc->interrupted_point,
+                 &trade_plan_calc->start_point);
+  }
+#endif
+#endif  /* ASYNC_TRADE_PLANNING */
 }
 
 /**************************************************************************
@@ -1033,6 +1038,9 @@ void trade_planning_calculation_start(void)
 		* sizeof(struct trade_route *) / 2);
 #ifdef ASYNC_TRADE_PLANNING
   trade_plan_calc->state = TPC_RUNNING;
+#ifdef WIN32_NATIVE
+  trade_plan_calc->interrupted_point.uc_stack.ss_flags=0;
+#endif /* WIN32_NATIVE */
   trade_plan_calc->interrupted_point.uc_link = &trade_plan_calc->start_point;
   trade_plan_calc->interrupted_point.uc_stack.ss_sp = fc_malloc(SIGSTKSZ);
   trade_plan_calc->interrupted_point.uc_stack.ss_size = SIGSTKSZ;
