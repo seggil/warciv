@@ -28,26 +28,29 @@
 #include <zlib.h>
 #endif
 
-#include "capstr.h"
-#include "connection.h"
 #include "fcintl.h"
-#include "government.h"
 #include "log.h"
 #include "md5.h"
-#include "packets.h"
 #include "registry.h"
 #include "shared.h"
 #include "support.h"
 #include "timing.h"
 
+#include "capstr.h"
+#include "city.h"
+#include "connection.h"
+#include "government.h"
+#include "packets.h"
+
 #include "connecthand.h"
-#include "database.h"
 #include "meta.h"
 #include "plrhand.h"
 #include "score.h"
 #include "sernet.h"
 #include "settings.h"
 #include "srv_main.h"
+
+#include "database.h"
 
 struct fcdb_params fcdb = {
 
