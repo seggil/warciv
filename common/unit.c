@@ -134,27 +134,36 @@ bool is_diplomat_action_available(struct unit *pdiplomat,
   if (pcity) {
     if (pcity->owner != pdiplomat->owner
        && real_map_distance(pdiplomat->tile, pcity->tile) <= 1) {
-      if(action==DIPLOMAT_SABOTAGE)
+      if (action == DIPLOMAT_SABOTAGE) {
 	return pplayers_at_war(unit_owner(pdiplomat), city_owner(pcity));
-      if(action==DIPLOMAT_MOVE)
+      }
+      if (action == DIPLOMAT_MOVE) {
         return pplayers_allied(unit_owner(pdiplomat), city_owner(pcity));
-      if (action == DIPLOMAT_EMBASSY && !is_barbarian(city_owner(pcity)) &&
-	  !player_has_embassy(unit_owner(pdiplomat), city_owner(pcity)))
+      }
+      if (action == DIPLOMAT_EMBASSY && !is_barbarian(city_owner(pcity))
+	  && !player_has_embassy(unit_owner(pdiplomat), city_owner(pcity))) {
 	return TRUE;
-      if(action==SPY_POISON &&
-	 pcity->size>1 &&
-	 unit_flag(pdiplomat, F_SPY))
+      }
+      if (action == SPY_POISON
+	  && pcity->size > 1
+	  && unit_flag(pdiplomat, F_SPY)) {
 	return pplayers_at_war(unit_owner(pdiplomat), city_owner(pcity));
-      if(action==DIPLOMAT_INVESTIGATE)
+      }
+      if (action == DIPLOMAT_INVESTIGATE) {
         return TRUE;
-      if (action == DIPLOMAT_STEAL && !is_barbarian(city_owner(pcity)))
+      }
+      if (action == DIPLOMAT_STEAL && !is_barbarian(city_owner(pcity))) {
 	return TRUE;
-      if(action==DIPLOMAT_INCITE)
+      }
+      if (action == DIPLOMAT_INCITE) {
         return !pplayers_allied(city_owner(pcity), unit_owner(pdiplomat));
-      if(action==DIPLOMAT_ANY_ACTION)
+      }
+      if (action == DIPLOMAT_ANY_ACTION) {
         return TRUE;
-      if (action==SPY_GET_SABOTAGE_LIST && unit_flag(pdiplomat, F_SPY))
+      }
+      if (action == SPY_GET_SABOTAGE_LIST && unit_flag(pdiplomat, F_SPY)) {
 	return pplayers_at_war(unit_owner(pdiplomat), city_owner(pcity));
+      }
     }
   } else { /* Action against a unit at a tile */
     /* If it is made possible to do action against allied units
@@ -1031,12 +1040,20 @@ bool can_unit_do_activity_targeted_at(struct unit *punit,
 }
 
 /**************************************************************************
+  Returns TRUE iff the unit can do air patrol.
+**************************************************************************/
+bool can_unit_do_air_patrol(struct unit *punit)
+{
+  return punit ? unit_type(punit)->fuel > 0 : FALSE;
+}
+
+/**************************************************************************
   assign a new task to a unit.
 **************************************************************************/
 void set_unit_activity(struct unit *punit, enum unit_activity new_activity)
 {
-  punit->activity=new_activity;
-  punit->activity_count=0;
+  punit->activity = new_activity;
+  punit->activity_count = 0;
   punit->activity_target = S_NO_SPECIAL;
   if (new_activity == ACTIVITY_IDLE && punit->moves_left > 0) {
     /* No longer done. */
@@ -1741,6 +1758,8 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
     punit->homecity = 0;
   }
   punit->goto_tile = NULL;
+  punit->air_patrol_tile = NULL;
+  punit->ptr = NULL;
   punit->veteran = veteran_level;
   punit->upkeep = 0;
   punit->upkeep_food = 0;
@@ -1768,10 +1787,6 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->ai.bodyguard = 0;
   punit->ai.charge = 0;
 
-  punit->my_ai.control = FALSE;
-  punit->my_ai.manalloc = FALSE;
-  punit->my_ai.activity = MY_AI_NONE;
-  punit->my_ai.data = NULL;
   punit->bribe_cost = -1; /* flag value */
   punit->transported_by = -1;
   punit->focus_status = FOCUS_AVAIL;

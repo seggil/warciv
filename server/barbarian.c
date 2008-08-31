@@ -25,15 +25,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "events.h"
 #include "fcintl.h"
-#include "game.h"
-#include "government.h"
 #include "log.h"
-#include "map.h"
-#include "nation.h"
 #include "rand.h"
 #include "support.h"
+
+#include "city.h"
+#include "events.h"
+#include "game.h"
+#include "government.h"
+#include "map.h"
+#include "nation.h"
 #include "tech.h"
 #include "terrain.h"
 

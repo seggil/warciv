@@ -52,7 +52,6 @@
 #include "control.h"		/* for fill_xxx */
 #include "multiselect.h"
 #include "options.h"		/* for fill_xxx */
-#include "wc_settings.h"
 
 #include "tilespec.h"
 
@@ -280,6 +279,18 @@ const char **get_tileset_list(void)
 }
 
 /**********************************************************************
+  ...
+***********************************************************************/
+const char *get_default_tilespec_name(void)
+{
+  if (isometric_view_supported()) {
+    return "isotrident"; /* Do not i18n! --dwp */
+  } else {
+    return "trident";    /* Do not i18n! --dwp */
+  }
+}
+
+/**********************************************************************
   Gets full filename for tilespec file, based on input name.
   Returned data is allocated, and freed by user as required.
   Input name may be null, in which case uses default.
@@ -288,14 +299,8 @@ const char **get_tileset_list(void)
 ***********************************************************************/
 static char *tilespec_fullname(const char *tileset_name)
 {
-  const char *tileset_default;
+  const char *tileset_default = get_default_tilespec_name();
   char *fname, *dname;
-
-  if (isometric_view_supported()) {
-    tileset_default = "isotrident"; /* Do not i18n! --dwp */
-  } else {
-    tileset_default = "trident";    /* Do not i18n! --dwp */
-  }
 
   if (!tileset_name || tileset_name[0] == '\0') {
     tileset_name = tileset_default;
@@ -514,8 +519,8 @@ void tilespec_reread(const char *tileset_name)
 **************************************************************************/
 void tilespec_reread_callback(struct client_option *option)
 {
-  assert(option->p_string_value && *option->p_string_value != '\0');
-  tilespec_reread(option->p_string_value);
+  assert(option->type == COT_STRING && *option->o.string.pvalue != '\0');
+  tilespec_reread(option->o.string.pvalue);
 }
 
 /**************************************************************************
@@ -1510,7 +1515,7 @@ static void tilespec_lookup_sprite_tags(void)
     break;
   }
 
-  for(i=0; i<4; i++) {
+  for (i = 0; i < 4; i++) {
     my_snprintf(buffer, sizeof(buffer), "tx.river_outlet_%c", dir_char[i]);
     SET_SPRITE(tx.river_outlet[i], buffer);
   }
@@ -2001,27 +2006,11 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
     ADD_SPRITE_FULL(sprites.unit.loaded);
   }
 
-  if (punit->my_ai.control) {
-    struct Sprite *s = NULL;
-    switch(punit->my_ai.activity) {
-      case MY_AI_TRADE_ROUTE:
-        s = sprites.unit.trade;
-        break;
-      case MY_AI_PATROL:
-        s = sprites.unit.patrol;
-        break;
-      default:
-        break;
-    }
-    if (!s) {
-      s = sprites.unit.auto_settler;
-    }
-    ADD_SPRITE_FULL(s);
-  } else if (punit->is_sleeping && sprites.unit.sleeping) {
+  if (punit->is_sleeping && sprites.unit.sleeping) {
     ADD_SPRITE_FULL(sprites.unit.sleeping);
-  } else if (punit->activity!=ACTIVITY_IDLE) {
+  } else if (punit->activity != ACTIVITY_IDLE) {
     struct Sprite *s = NULL;
-    switch(punit->activity) {
+    switch (punit->activity) {
     case ACTIVITY_MINE:
       s = sprites.unit.mine;
       break;
@@ -2080,7 +2069,9 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
     }
   }
 
-  if (unit_has_orders(punit)) {
+  if (punit->ptr) {
+    ADD_SPRITE_FULL(sprites.unit.trade);
+  } else if (unit_has_orders(punit)) {
     if (punit->orders.repeat) {
       ADD_SPRITE_FULL(sprites.unit.patrol);
     } else if (punit->activity != ACTIVITY_IDLE) {
@@ -3002,7 +2993,7 @@ enum color_std overview_tile_color(struct tile *ptile)
   }
   if ((pcity = map_get_city(ptile))) {
     pplayer = city_owner(pcity);
-    if (!pplayer || pplayer == get_player_ptr()) {
+    if (!pplayer || !get_player_ptr() || pplayer == get_player_ptr()) {
       return COLOR_STD_WHITE;
     } else {
       switch (pplayer_get_diplstate(pplayer, get_player_ptr())->type) {
@@ -3023,7 +3014,7 @@ enum color_std overview_tile_color(struct tile *ptile)
     }
   } else if ((punit=find_visible_unit(ptile))) {
     pplayer = unit_owner(punit);
-    if(!pplayer || pplayer == get_player_ptr()) {
+    if (!pplayer || !get_player_ptr() || pplayer == get_player_ptr()) {
       return COLOR_STD_YELLOW;
     } else {
       switch(pplayer_get_diplstate(pplayer, get_player_ptr())->type) {

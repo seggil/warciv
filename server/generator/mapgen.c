@@ -22,15 +22,18 @@
 #include <time.h>
 
 #include "fcintl.h"
-#include "game.h"
 #include "log.h"
-#include "map.h"
-#include "maphand.h" /* assign_continent_numbers(), MAP_NCONT */
 #include "mem.h"
-#include "nation.h"
-#include "player.h"
 #include "rand.h"
 #include "shared.h"
+
+#include "city.h"
+#include "game.h"
+#include "map.h"
+#include "nation.h"
+#include "player.h"
+
+#include "maphand.h" /* assign_continent_numbers(), MAP_NCONT */
 #include "srv_main.h"
 
 #include "height_map.h"

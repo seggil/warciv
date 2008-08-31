@@ -99,10 +99,17 @@ const char * const our_capability = our_capability_internal;
  *
  * "exttechleakage" was added to inform client of the news warserver settings,
  * and it send it the real science cost you need to get a technology.
+ *
+ * "voteinfo" allows the client to draw a voting bar when connected to a
+ * compatible server.
+ *
+ * "extglobalinfo" improves the global observer design. Also, a server with this
+ * capability is able to control the trade planning, the rally points,
+ * the air patrol positions...
  */
 #define CAPABILITY "+2.0 conn_ping_info username_info new_hack " \
                    "ReportFreezeFix AttrSerialFix extroutes extgameinfo " \
-		   "exttechleakage voteinfo"
+		   "exttechleakage voteinfo extglobalinfo"
 
 
 void init_our_capability(void)

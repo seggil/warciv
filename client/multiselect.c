@@ -43,14 +43,19 @@
 ***********************************************************************/
 
 /********************************************************************** 
-  Change the value of the filter to/of a given value.
+  Change the value of the filter to/of a given value. Should be the only
+  accessor function. It is dangerous to modify a filter manually.
+  Returns TRUE if other bits than the value are changed.
 ***********************************************************************/
-void filter_change(filter *pfilter, enum filter_value value)
+bool filter_change(filter *pfilter, enum filter_value value)
 {
+  bool ret = FALSE;
+
   switch (value) {
   case FILTER_ALL:
   case FILTER_OFF:
     *pfilter = *pfilter & value ? *pfilter & ~value : value;
+    ret = TRUE;
     break;
   default:
     if (*pfilter & value) {
@@ -58,8 +63,10 @@ void filter_change(filter *pfilter, enum filter_value value)
     } else {
       if (*pfilter & FILTER_ALL) {
         *pfilter &= ~FILTER_ALL;
+	ret = TRUE;
       } else if (*pfilter & FILTER_OFF) {
         *pfilter &= ~FILTER_OFF;
+	ret = TRUE;
       }
       *pfilter |= value;
     }
@@ -67,7 +74,10 @@ void filter_change(filter *pfilter, enum filter_value value)
   }
   if (*pfilter == 0) {
     *pfilter = FILTER_OFF;
+    ret = TRUE;
   }
+
+  return ret;
 }
 
 /********************************************************************** 
@@ -87,8 +97,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
               && punit->activity != ACTIVITY_FORTIFIED)
           || (inclusive_filter & FILTER_SENTRIED
               && punit->activity != ACTIVITY_SENTRY)
-          || (inclusive_filter & FILTER_AUTO
-              && !punit->ai.control && !punit->my_ai.control)
+          || (inclusive_filter & FILTER_AUTO && !punit->ai.control)
           || (inclusive_filter & FILTER_VETERAN && punit->veteran == 0)
           || (inclusive_filter & FILTER_IDLE
               && punit->activity != ACTIVITY_IDLE)
@@ -108,10 +117,8 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
               && punit->activity == ACTIVITY_FORTIFIED)
           || (exclusive_filter & FILTER_SENTRIED
               && punit->activity == ACTIVITY_SENTRY)
-          || (exclusive_filter & FILTER_AUTO
-              && (punit->ai.control || punit->my_ai.control))
-          || (exclusive_filter & FILTER_VETERAN
-              && punit->veteran > 0)
+          || (exclusive_filter & FILTER_AUTO && punit->ai.control)
+          || (exclusive_filter & FILTER_VETERAN && punit->veteran > 0)
           || (exclusive_filter & FILTER_IDLE
               && punit->activity == ACTIVITY_IDLE)
           || (exclusive_filter & FILTER_ABLE_TO_MOVE
@@ -127,276 +134,6 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
   return TRUE;
 }
 
-
-/********************************************************************** 
-  Automatic Processus
-***********************************************************************/
-#define ap_timers_num 5
-
-static struct automatic_processus_list *automatic_processus_list;
-static const int ap_timer_values[ap_timers_num] = { 50, 80, 90, 95, -5 };
-static const enum automatic_value ap_timer_event[ap_timers_num] = {
-  AUTO_50_TIMEOUT, AUTO_80_TIMEOUT, AUTO_90_TIMEOUT,
-  AUTO_95_TIMEOUT, AUTO_5_SECONDS
-};
-static struct ap_timer ap_timers[ap_timers_num];
-static const char *ap_events[] = {
-  N_("New Year"),
-  N_("Press 'turn done'"),
-  N_("No unit selected"),
-  N_("50% timeout"),
-  N_("80% timeout"),
-  N_("90% timeout"),
-  N_("95% timeout"),
-  N_("5 seconds before end turn"),
-  N_("Unit receives auto orders"),
-  N_("Player cancels diplomacy"),
-  N_("Off")
-};
-
-/********************************************************************** 
-  Init the timers.
-***********************************************************************/
-void ap_timers_init(void)
-{
-  int i;
-
-  for (i = 0; i < ap_timers_num; i++) {
-    if (game.info.timeout > 0) {
-      if (ap_timer_values[i] >= 0) {
-        ap_timers[i].seconds = (game.info.timeout
-                                * (100 - ap_timer_values[i])) / 100;
-      } else {
-        ap_timers[i].seconds = -ap_timer_values[i];
-      }
-    } else {
-      ap_timers[i].seconds = -1;
-    }
-    ap_timers[i].npassed = TRUE;
-  }
-}
-
-/********************************************************************** 
-  Update the timers and check if one event should be created.
-***********************************************************************/
-void ap_timers_update(void)
-{
-  int i;
-
-  for (i = 0; i < ap_timers_num; i++) {
-    if (ap_timers[i].npassed
-        && game.info.seconds_to_turndone <= ap_timers[i].seconds) {
-      automatic_processus_event(ap_timer_event[i], NULL);
-      ap_timers[i].npassed = FALSE;
-    }
-  }
-}
-
-/********************************************************************** 
-  Change the automatic_processus filter to/of the given value.
-***********************************************************************/
-void auto_filter_change(automatic_processus *pap,
-                        enum automatic_value value)
-{
-  int real_value = AV_TO_FV(value);
-  static const int real_AUTO_OFF = AV_TO_FV(AUTO_OFF);
-
-  if (!pap) {
-    return;
-  }
-  if (!is_auto_value_allowed(pap, value)) {
-    freelog(LOG_ERROR,
-            "Received a wrong value for automatic_processus '%s': %d",
-            pap->description, value);
-
-    return;
-  }
-
-  switch (value) {
-  case AUTO_OFF:
-    pap->auto_filter = real_AUTO_OFF;
-    break;
-  default:
-    if (pap->auto_filter & real_value) {
-      pap->auto_filter &= ~real_value;
-    } else {
-      if (pap->auto_filter & real_AUTO_OFF) {
-        pap->auto_filter = 0;
-      }
-      pap->auto_filter |= real_value;
-    }
-    break;
-  }
-  if (pap->auto_filter == 0) {
-    pap->auto_filter = real_AUTO_OFF;
-  }
-}
-
-/********************************************************************** 
-  Adapt the automatic_processus filter from a merged one.
-***********************************************************************/
-void auto_filter_normalize(automatic_processus *pap)
-{
-  int v, rv;
-
-  for (v = 0; v < AUTO_OFF; v++) {
-    rv = AV_TO_FV(v);
-    if (pap->auto_filter & rv && !is_auto_value_allowed(pap, v)) {
-      pap->auto_filter &= ~rv;
-    }
-  }
-  rv = AV_TO_FV(AUTO_OFF);
-  if (pap->auto_filter & rv) {
-    pap->auto_filter &= ~rv;
-  }
-  if (pap->auto_filter == 0) {
-    pap->auto_filter = rv;
-  }
-}
-
-/********************************************************************** 
-  Returns TRUE iff there is a callback connected to the given event type.
-***********************************************************************/
-bool is_auto_value_allowed(automatic_processus *pap,
-                           enum automatic_value value)
-{
-  return pap ? pap->callback[value] != NULL : FALSE;
-}
-
-/********************************************************************** 
-  Accessor function for event names.
-***********************************************************************/
-const char *ap_event_name(enum automatic_value event)
-{
-  assert(event >= 0 && event < AUTO_VALUES_NUM);
-  return ap_events[event];
-}
-
-/********************************************************************** 
-  Receive an new event.
-***********************************************************************/
-void automatic_processus_event(enum automatic_value event, void *data)
-{
-  int real_event = AV_TO_FV(event);
-
-  freelog(LOG_DEBUG, "automatic_processus_event: receive signal ' %s '",
-          ap_event_name(event));
-  automatic_processus_iterate(pap) {
-    if (pap->auto_filter & real_event) {
-      assert(is_auto_value_allowed(pap, event));
-      pap->callback[event](data, pap->data);
-    }
-  } automatic_processus_iterate_end;
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
-void automatic_processus_init(void)
-{
-  automatic_processus_list = automatic_processus_list_new();
-}
-
-/**************************************************************************
-  - default_auto_filter is the default filter
-    (value is an AV_TO_FV(enum automatic_value))
-  - page is the dialog page where this appears (or PAGE_NUM).
-  - path is the menu filter access. If there is no path, pass "" to the
-    function
-  - data is an constant int pass to arg2 to callback functions
-  - ... is all callback functions to connect (ended by -1). For exemple:
-    AP_CONNECT(AUTO_NEW_YEAR, my_callback), -1
-**************************************************************************/
-automatic_processus *real_automatic_processus_new(const char *file,
-                                                  const int line,
-                                                  enum peppage page,
-                                                  filter default_auto_filter,
-                                                  const char *menu,
-                                                  const char *description,
-                                                  int data, ...)
-{
-  automatic_processus *pap = fc_malloc(sizeof(automatic_processus));
-  filter auto_values_allowed = 0;
-  int i;
-  va_list callbacks;
-
-  /* init */
-  pap->page = page;
-  pap->data = data;
-  sz_strlcpy(pap->menu, menu);
-  sz_strlcpy(pap->description, description);
-  memset(pap->callback, 0, AUTO_VALUES_NUM * sizeof(ap_callback));
-
-  /* Be sure this will never happen */
-  pap->callback[AUTO_OFF] = (ap_callback) abort;
-
-  va_start(callbacks, data);
-  for (i = va_arg(callbacks, int); i >= 0 && i < AUTO_OFF;
-       i = va_arg(callbacks, int)) {
-    if (auto_values_allowed & AV_TO_FV(i)) {
-      freelog(LOG_ERROR,
-              "automatic_processus_new: multiple callbacks for "
-              "signal '%s' from %s line %d",
-              ap_event_name(i), file, line);
-    }
-    auto_values_allowed |= AV_TO_FV(i);
-    pap->callback[i] = va_arg(callbacks, ap_callback);
-#ifdef DEBUG
-    const char *callback_name = va_arg(callbacks, const char *);
-    freelog(LOG_DEBUG, "connecting signal '%s' to '%s' callback",
-            ap_event_name(i), callback_name);
-#endif /* DEBUG */
-  }
-  va_end(callbacks);
-
-  /* test for default_auto_filter */
-  if (auto_values_allowed != (default_auto_filter | auto_values_allowed)
-      && default_auto_filter != AV_TO_FV(AUTO_OFF)) {
-    freelog(LOG_ERROR, "automatic_processus_new: bad default "
-            "auto filter from %s line %d",
-            file, line);
-    pap->default_auto_filter = AV_TO_FV(AUTO_OFF);
-  } else {
-    pap->default_auto_filter = default_auto_filter;
-    pap->auto_filter = pap->default_auto_filter;
-  }
-
-  /* append on the list */
-  automatic_processus_list_append(automatic_processus_list, pap);
-  return pap;
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
-void automatic_processus_remove(automatic_processus *pap)
-{
-  automatic_processus_list_unlink(automatic_processus_list, pap);
-  free(pap);
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
-const struct automatic_processus_list *get_automatic_processus(void)
-{
-  return automatic_processus_list;
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
-automatic_processus *find_automatic_processus_by_name(const char *name)
-{
-  automatic_processus_iterate(pap) {
-    if ((pap->menu[0] && !strcmp(pap->menu, name))
-        || (pap->description[0] && !strcmp(pap->description, name))) {
-      return pap;
-    }
-  } automatic_processus_iterate_end;
-
-  return NULL;
-}
 
 
 /********************************************************************** 
@@ -414,6 +151,13 @@ filter multi_select_inclusive_filter;
 filter multi_select_exclusive_filter;
 enum place_value multi_select_place;
 enum utype_value multi_select_utype;
+
+bool multi_select_count_all;
+bool multi_select_blink_all;
+bool multi_select_blink;
+bool multi_select_map_selection;
+bool multi_select_spread_airport_cities;
+bool multi_select_spread_allied_cities;
 
 /********************************************************************** 
   ...
@@ -634,16 +378,6 @@ void multi_select_copy(int dest, int src)
 /********************************************************************** 
   ...
 ***********************************************************************/
-const struct multi_select *multi_select_get(int multi)
-{
-  msassert(multi);
-
-  return &multi_selection[multi];
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
 const struct unit_list *multi_select_get_units_focus(void)
 {
   return multi_selection[0].ulist;
@@ -724,40 +458,6 @@ Unit_Type_id multi_select_unit_type(int multi)
 }
 
 /********************************************************************** 
-  ...
-***********************************************************************/
-void multi_select_set(int multi, const struct multi_select *pms)
-{
-  assert(pms != NULL);
-  msassert(multi);
-
-  if (unit_list_size(pms->ulist) == 0) {
-    return;
-  }
-
-  if (multi == 0) {
-    unit_list_iterate(multi_selection[multi].ulist, punit) {
-      unit_list_unlink(multi_selection[multi].ulist, punit);
-      refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
-    } unit_list_iterate_end;
-  }
-
-  unit_list_unlink_all(multi_selection[multi].ulist);
-  unit_list_iterate(pms->ulist, punit) {
-    unit_list_append(multi_selection[multi].ulist, punit);
-  } unit_list_iterate_end;
-  multi_selection[multi].punit_focus = pms->punit_focus;
-
-  if (multi == 0) {
-    if (multi_selection[0].punit_focus != get_unit_in_focus()) {
-      set_unit_focus(multi_selection[0].punit_focus);
-    } else {
-      update_unit_info_label(get_unit_in_focus());
-    }
-  }
-}
-
-/********************************************************************** 
   Set one unit in a battle group.
 ***********************************************************************/
 void multi_select_set_unit(int multi, struct unit *punit)
@@ -799,6 +499,169 @@ int multi_select_size(int multi)
   msassert(multi);
 
   return unit_list_size(multi_selection[multi].ulist);
+}
+
+/**************************************************************************
+  Spread function
+**************************************************************************/
+struct scity {
+  int tdv, rdv;
+  int tav, rav;
+  struct city *pcity;
+  struct unit_list *ulist;
+};
+
+#define SPECLIST_TAG scity
+#define SPECLIST_TYPE struct scity
+#include "speclist.h"
+#define scity_list_iterate(alist,pitem) \
+  TYPED_LIST_ITERATE(struct scity, alist, pitem)
+#define scity_list_iterate_end LIST_ITERATE_END
+
+struct scity *find_weakest_city(struct scity_list *psclist);
+struct unit *find_best_unit(struct unit_list *pulist);
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct scity *find_weakest_city(struct scity_list *psclist)
+{
+  struct scity *wscity = NULL;
+
+  scity_list_iterate(psclist, pscity) {
+    if (unit_list_size(pscity->ulist) == 0) {
+      continue;
+    }
+    if (!wscity
+	|| pscity->rdv < wscity->rdv
+	|| (pscity->rdv == wscity->rdv
+	    && (pscity->tdv < wscity->tdv
+		|| (pscity->tdv == wscity->tdv
+		    && (pscity->rav < wscity->rav
+			|| (pscity->rav == wscity->rav
+			    && pscity->tav < wscity->rav)))))) {
+      wscity = pscity;
+    }
+  } scity_list_iterate_end;
+  return wscity;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct unit *find_best_unit(struct unit_list *pulist)
+{
+  struct unit *bunit = NULL;
+
+  unit_list_iterate(pulist, punit) {
+    if (!bunit
+	|| unit_type(punit)->defense_strength
+	   > unit_type(bunit)->defense_strength
+	|| (unit_type(punit)->defense_strength
+	    == unit_type(bunit)->defense_strength
+	    && unit_type(punit)->attack_strength
+	       > unit_type(bunit)->attack_strength))
+      bunit = punit;
+  } unit_list_iterate_end;
+  return bunit;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void multi_select_spread(void)
+{
+  if (multi_select_satisfies_filter(0) == 0) {
+    return;
+  }
+
+  struct scity_list *sclist;
+  struct scity *pscity = NULL;
+  Continent_id cid = get_unit_in_focus()->tile->continent;
+
+  /* get datas */
+  sclist = scity_list_new();
+  players_iterate(pplayer) {
+    if ((!multi_select_spread_allied_cities && pplayer != get_player_ptr())
+	|| !pplayers_allied(get_player_ptr(), pplayer)) {
+      continue;
+    }
+
+    city_list_iterate(pplayer->cities, pcity) {
+      if (pcity->tile->continent != cid
+	  || (multi_select_spread_airport_cities
+	      && get_city_bonus(pcity, EFT_AIRLIFT) == 0)) {
+        continue;
+      }
+      pscity = fc_malloc(sizeof(struct scity));
+      pscity->tdv = pscity->rdv = pscity->tav = pscity->rav = 0;
+      pscity->pcity = pcity;
+      pscity->ulist = unit_list_new();
+      scity_list_append(sclist, pscity);
+    } city_list_iterate_end;
+  } players_iterate_end;
+
+  if (scity_list_size(sclist) == 0) {
+    goto clean_up;
+  }
+  connection_do_buffer(&aconnection);
+  multi_select_iterate(FALSE, punit) {
+    struct unit_type *type = unit_type(punit);
+    struct scity *last = NULL;
+    bool multi = FALSE;
+
+    scity_list_iterate(sclist, pscity) {
+      if (calculate_move_cost(punit, pscity->pcity->tile) > punit->moves_left) {
+        continue;
+      }
+      unit_list_append(pscity->ulist, punit);
+      pscity->tdv += type->defense_strength;
+      pscity->tav += type->attack_strength;
+
+      if (last) {
+        multi = TRUE;
+      }
+      last = pscity;
+    } scity_list_iterate_end;
+    if (!multi && last) {
+      /* send if the unit can go to one only city */
+      send_goto_unit(punit, last->pcity->tile);
+      unit_list_unlink(pscity->ulist, punit);
+      last->tdv -= type->defense_strength;
+      last->tav -= type->attack_strength;
+      last->rdv += type->defense_strength;
+      last->rav += type->attack_strength;
+    }
+  } multi_select_iterate_end;
+
+  /* Execute */
+  while ((pscity = find_weakest_city(sclist))) {
+    struct unit *punit = find_best_unit(pscity->ulist);
+
+    if (punit) {
+      struct unit_type *type = unit_type(punit);
+      send_goto_unit(punit, pscity->pcity->tile);
+      pscity->rdv += type->defense_strength;
+      pscity->rav += type->attack_strength;
+      scity_list_iterate(sclist, pscity) {
+	if (!unit_list_find(pscity->ulist, punit->id)) {
+	  continue;
+	}
+        unit_list_unlink(pscity->ulist, punit);
+        pscity->tdv -= type->defense_strength;
+        pscity->tav -= type->attack_strength;
+      } scity_list_iterate_end;
+    }
+  }
+  connection_do_unbuffer(&aconnection);
+
+  /* Free datas */
+clean_up:
+  scity_list_iterate(sclist, pscity) {
+    unit_list_free(pscity->ulist);
+    free(pscity);
+  } scity_list_iterate_end;
+  scity_list_free(sclist);
 }
 
 /********************************************************************** 
@@ -882,24 +745,33 @@ void multi_select_select(void)
 }
 
 
+
 /********************************************************************** 
   Delayed goto.
 ***********************************************************************/
 #define dgassert(dg) assert(delayed_goto_is_initialized \
                             && (dg) >= 0                \
                             && (dg) < DELAYED_GOTO_NUM)
+#define auto_timers_num 5
 
 filter delayed_goto_inclusive_filter;
 filter delayed_goto_exclusive_filter;
 enum place_value delayed_goto_place;
 enum utype_value delayed_goto_utype;
 
-int delayed_para_or_nuke = 0;   /* 0 normal, 1 nuke/para, 2 airlift, 3 break */
-int unit_limit;                 /* 0 = unlimited */
-int need_tile_for = -1;
+enum delayed_goto_type delayed_goto_state;
+int delayed_goto_unit_limit;	/* 0 = unlimited */
+int delayed_goto_need_tile_for = -1;
+
 /* 0 is the current delayed queue, 1-3 are the extra queues */
-static struct delayed_goto delayed_goto_list[DELAYED_GOTO_NUM];
+struct delayed_goto delayed_goto_list[DELAYED_GOTO_NUM];
 static bool delayed_goto_is_initialized = FALSE;
+static const int auto_timer_values[auto_timers_num] = { 50, 80, 90, 95, -5 };
+static const enum automatic_execution auto_timer_event[auto_timers_num] = {
+  AUTO_50_TIMEOUT, AUTO_80_TIMEOUT, AUTO_90_TIMEOUT,
+  AUTO_95_TIMEOUT, AUTO_5_SECONDS
+};
+static struct auto_timer auto_timers[auto_timers_num];
 
 /********************************************************************** 
   Return a text info about a tile.
@@ -937,6 +809,77 @@ void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
 }
 
 /********************************************************************** 
+  Change the automatic_execution filter to/of the given value.
+  Returns TRUE if other bits than the value are changed.
+***********************************************************************/
+bool delayed_goto_auto_filter_change(filter *pfilter,
+				     enum automatic_execution value)
+{
+  bool ret = FALSE;
+
+  switch (value) {
+  case AUTO_OFF:
+    *pfilter = AUTO_OFF;
+    return TRUE;
+  default:
+    if (*pfilter & value) {
+      *pfilter &= ~value;
+    } else {
+      if (*pfilter & AUTO_OFF) {
+        *pfilter = 0;
+	ret = TRUE;
+      }
+      *pfilter |= value;
+    }
+    break;
+  }
+  if (*pfilter == 0) {
+    *pfilter = AUTO_OFF;
+    ret = TRUE;
+  }
+
+  return ret;
+}
+
+/********************************************************************** 
+  Init the timers.
+***********************************************************************/
+void delayed_goto_auto_timers_init(void)
+{
+  int i;
+
+  for (i = 0; i < auto_timers_num; i++) {
+    if (game.info.timeout > 0) {
+      if (auto_timer_values[i] >= 0) {
+        auto_timers[i].seconds = (game.info.timeout
+				  * (100 - auto_timer_values[i])) / 100;
+      } else {
+        auto_timers[i].seconds = -auto_timer_values[i];
+      }
+    } else {
+      auto_timers[i].seconds = -1;
+    }
+    auto_timers[i].npassed = TRUE;
+  }
+}
+
+/********************************************************************** 
+  Update the timers and check if one event should be created.
+***********************************************************************/
+void delayed_goto_auto_timers_update(void)
+{
+  int i;
+
+  for (i = 0; i < auto_timers_num; i++) {
+    if (auto_timers[i].npassed
+        && game.info.seconds_to_turndone <= auto_timers[i].seconds) {
+      delayed_goto_event(auto_timer_event[i], NULL);
+      auto_timers[i].npassed = FALSE;
+    }
+  }
+}
+
+/********************************************************************** 
   Add a delayed goto queue to an other.
 ***********************************************************************/
 void delayed_goto_cat(int dest, int src)
@@ -959,9 +902,11 @@ void delayed_goto_cat(int dest, int src)
     delayed_goto_add_unit(dest, dgd->id, dgd->type, dgd->ptile);
   } delayed_goto_data_list_iterate_end;
 
-  delayed_goto_list[dest].pap->auto_filter
-      |= delayed_goto_list[src].pap->auto_filter;
-  auto_filter_normalize(delayed_goto_list[dest].pap);
+  delayed_goto_list[dest].automatic_execution
+    |= delayed_goto_list[src].automatic_execution;
+  if (delayed_goto_list[dest].automatic_execution & AUTO_OFF) {
+    delayed_goto_list[dest].automatic_execution = AUTO_OFF;
+  }
 
   if (!delayed_goto_list[dest].pplayer) {
     delayed_goto_list[dest].pplayer = delayed_goto_list[src].pplayer;
@@ -1016,7 +961,6 @@ void delayed_goto_clear_all(void)
     } delayed_goto_data_list_iterate_end;
     delayed_goto_data_list_free(delayed_goto_list[i].dglist);
     delayed_goto_list[i].pplayer = NULL;
-    automatic_processus_remove(delayed_goto_list[i].pap);
   }
   delayed_goto_is_initialized = FALSE;
 }
@@ -1054,13 +998,53 @@ void delayed_goto_copy(int dest, int src)
 }
 
 /********************************************************************** 
-  Accessor function.
+  Receive an event. pplayer can be NULL.
 ***********************************************************************/
-const struct delayed_goto *delayed_goto_get(int dg)
+void delayed_goto_event(enum automatic_execution event, struct player *pplayer)
 {
-  dgassert(dg);
+  int i;
 
-  return &delayed_goto_list[dg];
+  freelog(LOG_DEBUG, "delayed_goto_event: receive signal %d", event);
+  for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+    if (delayed_goto_list[i].automatic_execution & event) {
+      if (pplayer) {
+	request_player_execute_delayed_goto(pplayer, i);
+      } else {
+	request_execute_delayed_goto(NULL, i);
+      }
+    }
+  }
+}
+
+/********************************************************************** 
+  ...
+***********************************************************************/
+const char *delayed_goto_get_auto_name(enum automatic_execution value)
+{
+  switch (value) {
+  case AUTO_NEW_YEAR:
+    return N_("Start of turn");
+  case AUTO_PRESS_TURN_DONE:
+    return N_("Turn done pressed");
+  case AUTO_NO_UNIT_SELECTED:
+    return N_("No unit in focus");
+  case AUTO_50_TIMEOUT:
+    return N_("50% of timeout");
+  case AUTO_80_TIMEOUT:
+    return N_("80% of timeout");
+  case AUTO_90_TIMEOUT:
+    return N_("90% of timeout");
+  case AUTO_95_TIMEOUT:
+    return N_("95% of timeout");
+  case AUTO_5_SECONDS:
+    return N_("5 seconds before turn done");
+  case AUTO_WAR_DIPLSTATE:
+    return N_("Targetted player declares war");
+  case AUTO_OFF:
+    return N_("Off");
+  }
+  /* Don't set as default case to be warned if we forgot to add a value */
+  return NULL;
 }
 
 /********************************************************************** 
@@ -1073,32 +1057,7 @@ void delayed_goto_init_all(void)
   for (i = 0; i < DELAYED_GOTO_NUM; i++) {
     delayed_goto_list[i].dglist = delayed_goto_data_list_new();
     delayed_goto_list[i].pplayer = NULL;
-    if (i != 0) {
-      char buf[256], buf2[256];
-
-      my_snprintf(buf, sizeof(buf), "DELAYED_GOTO_DG%d_AUTOMATIC", i);
-      my_snprintf(buf2, sizeof(buf2),
-                  _("Delayed goto queue %d automatic execution"), i);
-      delayed_goto_list[i].pap =
-          automatic_processus_new(PAGE_NUM, AV_TO_FV(AUTO_WAR_DIPLSTATE),
-                                  buf, buf2, i,
-                                  AP_MAIN_CONNECT
-                                  (request_execute_delayed_goto),
-                                  AP_CONNECT(AUTO_WAR_DIPLSTATE,
-                                             request_player_execute_delayed_goto),
-                                  -1);
-    } else {
-      delayed_goto_list[0].pap =
-          automatic_processus_new(PAGE_DG, AV_TO_FV(AUTO_WAR_DIPLSTATE),
-                                  "DELAYED_GOTO_AUTOMATIC",
-                                  _("Delayed goto automatic execution"),
-                                  0,
-                                  AP_MAIN_CONNECT
-                                  (request_execute_delayed_goto),
-                                  AP_CONNECT(AUTO_WAR_DIPLSTATE,
-                                             request_player_execute_delayed_goto),
-                                  -1);
-    }
+    delayed_goto_list[i].automatic_execution = AUTO_WAR_DIPLSTATE;
   }
   delayed_goto_is_initialized = TRUE;
 }
@@ -1113,25 +1072,6 @@ void delayed_goto_move(int dest, int src)
 
   delayed_goto_copy(dest, src);
   delayed_goto_clear(src);
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
-void delayed_goto_set(int dg, const struct delayed_goto *pdg)
-{
-  dgassert(dg);
-  assert(pdg);
-
-  if (delayed_goto_data_list_size(pdg->dglist) == 0) {
-    return;
-  }
-  delayed_goto_clear(dg);
-  delayed_goto_data_list_iterate(pdg->dglist, dgd) {
-    delayed_goto_add_unit(dg, dgd->id, dgd->type, dgd->ptile);
-  } delayed_goto_data_list_iterate_end;
-  delayed_goto_list[dg].pplayer = pdg->pplayer;
-  update_delayed_goto_menu(dg);
 }
 
 /********************************************************************** 
@@ -1198,7 +1138,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 
   if (delayed_goto_place == PLACE_SINGLE_UNIT) {
     multi_select_iterate(FALSE, punit) {
-      delayed_goto_add_unit(0, punit->id, delayed_para_or_nuke, ptile);
+      delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
       count++;
     } multi_select_iterate_end;
   } else {
@@ -1224,7 +1164,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
                                     delayed_goto_exclusive_filter)) {
         continue;
       }
-      delayed_goto_add_unit(0, punit->id, delayed_para_or_nuke, ptile);
+      delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
       count++;
     } unit_list_iterate_end;
   }
@@ -1270,7 +1210,7 @@ void request_unit_execute_delayed_goto(int dg)
   delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist, dgd) {
     if (!dgd->ptile && dgd->type != 3) {
       hover_state = HOVER_DELAYED_GOTO;
-      need_tile_for = dg;
+      delayed_goto_need_tile_for = dg;
       update_hover_cursor();
       return;
     }
@@ -1303,8 +1243,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
 
   connection_do_buffer(&aconnection);
   delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist, dgd) {
-    if (dgd->type == 3) {
-      /* Pause */
+    if (dgd->type == DGT_BREAK) {
       delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);
       free(dgd);
       break;
@@ -1319,14 +1258,13 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
       }
     }
 
-    if (unit_limit && (++counter > unit_limit)) {
+    if (delayed_goto_unit_limit && (++counter > delayed_goto_unit_limit)) {
       /* Check the unit limit */
       break;
     }
 
-    if (dgd->type == 2) {
-      /* Airlift */
-      need_city_for = dgd->id;
+    if (dgd->type == DGT_AIRLIFT) {
+      airlift_queue_need_city_for = dgd->id;
       do_airlift(dgd->ptile);
     } else {
       struct unit *punit =
@@ -1339,7 +1277,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
         continue;
       }
 
-      if (dgd->type == 0 || !unit_flag(punit, F_PARATROOPERS)) {
+      if (dgd->type == DGT_NORMAL || !unit_flag(punit, F_PARATROOPERS)) {
         /* Normal move */
         send_goto_unit(punit, dgd->ptile);
         punit->is_new = FALSE;
@@ -1348,7 +1286,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
         do_unit_paradrop_to(punit, dgd->ptile);
         punit->is_new = FALSE;
       }
-      if (dgd->type == 1 && unit_flag(punit, F_NUCLEAR)) {
+      if (dgd->type == DGT_NUKE_OR_PARADROP && unit_flag(punit, F_NUCLEAR)) {
         /* Explode nuke */
         do_unit_nuke(punit);
       }
@@ -1382,9 +1320,9 @@ void schedule_delayed_airlift(struct tile *ptile)
               _("Warclient: Scheduling delayed airlift for %s."),
               get_tile_info(ptile));
   append_output_window(buf);
-  delayed_goto_add_unit(0, need_city_for, 2, ptile);
+  delayed_goto_add_unit(0, airlift_queue_need_city_for, 2, ptile);
   update_delayed_goto_menu(0);
-  need_city_for = -1;
+  airlift_queue_need_city_for = -1;
 }
 
 /********************************************************************** 
@@ -1398,6 +1336,7 @@ void add_pause_delayed_goto(void)
 }
 
 
+
 /********************************************************************** 
   Airlift queues.
 ***********************************************************************/
@@ -1405,7 +1344,7 @@ void add_pause_delayed_goto(void)
                             && (aq) >= 0                        \
                             && (aq) < AIRLIFT_QUEUE_NUM)
 
-int need_city_for = -1;
+int airlift_queue_need_city_for = -1;
 /* 0 is the current one 1-6 are the extra ones (4-9 in the menus) */
 static struct airlift_queue airlift_queues[AIRLIFT_QUEUE_NUM];
 static bool airlift_is_initialized = FALSE;
@@ -1522,16 +1461,6 @@ void airlift_queue_copy(int dest, int src)
 /********************************************************************** 
   ...
 ***********************************************************************/
-const struct airlift_queue *airlift_queue_get(int aq)
-{
-  aqassert(aq);
-
-  return &airlift_queues[aq];
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
 const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype)
 {
   aqassert(aq);
@@ -1577,22 +1506,6 @@ void airlift_queue_move(int dest, int src)
 
   airlift_queue_copy(dest, src);
   airlift_queue_clear(src);
-}
-
-/********************************************************************** 
-  ...
-***********************************************************************/
-void airlift_queue_set(int aq, const struct airlift_queue *paq)
-{
-  aqassert(aq);
-
-  if (tile_list_size(paq->tlist) > 0) {
-    tile_list_unlink_all(airlift_queues[aq].tlist);
-    tile_list_iterate(paq->tlist, ptile) {
-      tile_list_append(airlift_queues[aq].tlist, ptile);
-    } tile_list_iterate_end;
-  }
-  airlift_queues[aq].utype = paq->utype;
 }
 
 /********************************************************************** 
@@ -1728,7 +1641,7 @@ void do_airlift_for(int aq, struct city *pcity)
 
   if (!pcity) {
     /* We need to select a city to airlift to, delay it... */
-    need_city_for = aq;
+    airlift_queue_need_city_for = aq;
     request_auto_airlift_destination_selection();
     return;
   }
@@ -1764,8 +1677,9 @@ void do_airlift(struct tile *ptile)
   }
 
   connection_do_buffer(&aconnection);
-  if (need_city_for >= 0 && need_city_for < AIRLIFT_QUEUE_NUM) {
-    do_airlift_for(need_city_for, ptile->city);
+  if (airlift_queue_need_city_for >= 0
+      && airlift_queue_need_city_for < AIRLIFT_QUEUE_NUM) {
+    do_airlift_for(airlift_queue_need_city_for, ptile->city);
   } else if (airlift_queue_size(0) && airlift_queues[0].utype != U_LAST) {
     do_airlift_for(0, ptile->city);
   } else {
@@ -1775,6 +1689,6 @@ void do_airlift(struct tile *ptile)
       do_airlift_for(i, ptile->city);
     }
   }
-  need_city_for = -1;
+  airlift_queue_need_city_for = -1;
   connection_do_unbuffer(&aconnection);
 }

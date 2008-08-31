@@ -215,45 +215,45 @@ void auto_arrange_workers(struct city *pcity)
    * priorities - this should be done via a separate set of variables. */
   if (pcity->size > 1) {
     if (pcity->size <= game.ruleset_control.notradesize) {
-      cmp.factor[FOOD] = 15;
+      cmp.factor[CM_FOOD] = 15;
     } else {
-      cmp.factor[FOOD] = 10;
+      cmp.factor[CM_FOOD] = 10;
     }
   } else {
     /* Growing to size 2 is the highest priority. */
-    cmp.factor[FOOD] = 20;
+    cmp.factor[CM_FOOD] = 20;
   }
-  cmp.factor[SHIELD] = 5;
-  cmp.factor[TRADE] = 0; /* Trade only provides gold/science. */
-  cmp.factor[GOLD] = 2;
-  cmp.factor[LUXURY] = 0; /* Luxury only influences happiness. */
-  cmp.factor[SCIENCE] = 2;
+  cmp.factor[CM_SHIELD] = 5;
+  cmp.factor[CM_TRADE] = 0; /* Trade only provides gold/science. */
+  cmp.factor[CM_GOLD] = 2;
+  cmp.factor[CM_LUXURY] = 0; /* Luxury only influences happiness. */
+  cmp.factor[CM_SCIENCE] = 2;
   cmp.happy_factor = 0;
 
-  cmp.minimal_surplus[FOOD] = 1;
-  cmp.minimal_surplus[SHIELD] = 1;
-  cmp.minimal_surplus[TRADE] = 0;
-  cmp.minimal_surplus[GOLD] = -FC_INFINITY;
-  cmp.minimal_surplus[LUXURY] = 0;
-  cmp.minimal_surplus[SCIENCE] = 0;
+  cmp.minimal_surplus[CM_FOOD] = 1;
+  cmp.minimal_surplus[CM_SHIELD] = 1;
+  cmp.minimal_surplus[CM_TRADE] = 0;
+  cmp.minimal_surplus[CM_GOLD] = -FC_INFINITY;
+  cmp.minimal_surplus[CM_LUXURY] = 0;
+  cmp.minimal_surplus[CM_SCIENCE] = 0;
 
   cm_query_result(pcity, &cmp, &cmr);
 
   if (!cmr.found_a_valid) {
     if (!pplayer->ai.control) {
       /* Drop surpluses and try again. */
-      cmp.minimal_surplus[FOOD] = 0;
-      cmp.minimal_surplus[SHIELD] = 0;
+      cmp.minimal_surplus[CM_FOOD] = 0;
+      cmp.minimal_surplus[CM_SHIELD] = 0;
       cm_query_result(pcity, &cmp, &cmr);
 
       if (!cmr.found_a_valid) {
 	/* Emergency management.  Get _some_ result.  This doesn't use
 	 * cm_init_emergency_parameter so we can keep the factors from
 	 * above. */
-	cmp.minimal_surplus[FOOD] = MIN(cmp.minimal_surplus[FOOD],
-					MIN(pcity->food_surplus, 0));
-	cmp.minimal_surplus[SHIELD] = MIN(cmp.minimal_surplus[SHIELD],
-					  MIN(pcity->shield_surplus, 0));
+	cmp.minimal_surplus[CM_FOOD] = MIN(cmp.minimal_surplus[CM_FOOD],
+					   MIN(pcity->food_surplus, 0));
+	cmp.minimal_surplus[CM_SHIELD] = MIN(cmp.minimal_surplus[CM_SHIELD],
+					     MIN(pcity->shield_surplus, 0));
 	cmp.require_happy = FALSE;
 	cmp.allow_disorder = TRUE;
 	cm_query_result(pcity, &cmp, &cmr);
@@ -266,19 +266,19 @@ void auto_arrange_workers(struct city *pcity)
 	}
       }
     } else {
-      cmp.minimal_surplus[FOOD] = 0;
-      cmp.minimal_surplus[SHIELD] = 0;
-      cmp.minimal_surplus[GOLD] = -FC_INFINITY;
+      cmp.minimal_surplus[CM_FOOD] = 0;
+      cmp.minimal_surplus[CM_SHIELD] = 0;
+      cmp.minimal_surplus[CM_GOLD] = -FC_INFINITY;
       cm_query_result(pcity, &cmp, &cmr);
 
       if (!cmr.found_a_valid) {
 	/* Emergency management.  Get _some_ result.  This doesn't use
 	 * cm_init_emergency_parameter so we can keep the factors from
 	 * above. */
-	cmp.minimal_surplus[FOOD] = MIN(cmp.minimal_surplus[FOOD],
-					MIN(pcity->food_surplus, 0));
-	cmp.minimal_surplus[SHIELD] = MIN(cmp.minimal_surplus[SHIELD],
-					  MIN(pcity->shield_surplus, 0));
+	cmp.minimal_surplus[CM_FOOD] = MIN(cmp.minimal_surplus[CM_FOOD],
+					   MIN(pcity->food_surplus, 0));
+	cmp.minimal_surplus[CM_SHIELD] = MIN(cmp.minimal_surplus[CM_SHIELD],
+					     MIN(pcity->shield_surplus, 0));
 	cmp.require_happy = FALSE;
 	cmp.require_happy = FALSE;
 	cmp.allow_disorder = TRUE;
@@ -1226,6 +1226,12 @@ static bool city_build_unit(struct player *pplayer, struct city *pcity)
 		        do_make_unit_veteran(pcity, pcity->currently_building),
 		        pcity->id, -1);
 
+    if (pcity->rally_point) {
+      punit->goto_tile = pcity->rally_point;
+      set_unit_activity(punit, ACTIVITY_GOTO);
+      pcity->rally_point = NULL;
+    }
+
     /* After we created the unit remove the citizen. This will also
        rearrange the worker to take into account the extra resources
        (food) needed. */
@@ -1243,8 +1249,7 @@ static bool city_build_unit(struct player *pplayer, struct city *pcity)
     notify_player_ex(pplayer, pcity->tile, E_UNIT_BUILT,
 		     /* TRANS: <city> is finished building <unit/building>. */
 		     _("Game: %s is finished building %s."),
-		     pcity->name,
-		     unit_types[pcity->currently_building].name);
+		     pcity->name, unit_types[pcity->currently_building].name);
 
     gamelog(GAMELOG_BUILD, pcity);
 

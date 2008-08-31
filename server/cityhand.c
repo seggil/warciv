@@ -438,3 +438,83 @@ void handle_city_incite_inq(struct connection *pc, int city_id)
 				  city_incite_cost(pplayer, pcity));
   }
 }
+
+/***************************************************************
+  ...
+***************************************************************/
+void handle_city_set_rally_point(struct player *pplayer, int city_id,
+				 int x, int y)
+{
+  struct city *pcity = player_find_city_by_id(pplayer, city_id);
+  struct tile *rally_point = map_pos_to_tile(x, y);
+
+  if (!pcity || !rally_point || rally_point == pcity->rally_point) {
+    return;
+  }
+
+  pcity->rally_point = rally_point;
+  send_city_info(pplayer, pcity);
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+void handle_city_clear_rally_point(struct player *pplayer, int city_id)
+{
+  struct city *pcity = player_find_city_by_id(pplayer, city_id);
+
+  if (!pcity || !pcity->rally_point) {
+    return;
+  }
+
+  pcity->rally_point = NULL;
+  send_city_info(pplayer, pcity);
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+void handle_city_manager_param(struct player *pplayer,
+			       struct packet_city_manager_param *packet)
+{
+  struct city *pcity = player_find_city_by_id(pplayer, packet->id);
+  struct cm_parameter param;
+  int i;
+
+  if (!pcity) {
+    return;
+  }
+
+  for (i = 0; i < CM_NUM_STATS; i++) {
+    param.minimal_surplus[i] = packet->minimal_surplus[i];
+    param.factor[i] = packet->factor[i];
+  }
+  param.require_happy = packet->require_happy;
+  param.happy_factor = packet->happy_factor;
+  param.allow_disorder = packet->allow_disorder;
+  param.allow_specialists = packet->allow_specialists;
+
+  if (0 != memcmp(&pcity->server.parameter, &param,
+		  sizeof(pcity->server.parameter))) {
+    /* The paramter changed */
+    pcity->server.managed = TRUE;
+    pcity->server.parameter = param;
+
+    /* Send info */
+    send_city_manager_param(NULL, packet, pplayer, FALSE);
+  }
+}
+
+/***************************************************************
+  ...
+***************************************************************/
+void handle_city_no_manager_param(struct player *pplayer, int city_id)
+{
+  struct city *pcity = player_find_city_by_id(pplayer, city_id);
+
+  if (!pcity || !pcity->server.managed) {
+    return;
+  }
+
+  clear_city_manager_param(pcity);
+}

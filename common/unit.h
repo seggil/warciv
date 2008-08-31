@@ -104,20 +104,6 @@ enum unit_upgrade_result {
   UR_NOT_ENOUGH_ROOM
 };
     
-enum my_ai_activity {
-  MY_AI_NONE,
-  MY_AI_TRADE_ROUTE,
-  MY_AI_PATROL,
-  MY_AI_LAST
-};
-
-struct unit_my_ai {
-  bool control;
-  bool manalloc;
-  enum my_ai_activity activity;
-  void *data;
-};
-
 struct unit_ai {
   bool control; /* 0: not automated    1: automated */
   enum ai_unit_task ai_role;
@@ -150,9 +136,10 @@ struct unit {
   int fuel;
   int bribe_cost;
   struct unit_ai ai;
-  struct unit_my_ai my_ai;
   enum unit_activity activity;
   struct tile *goto_tile; /* May be NULL. */
+  struct tile *air_patrol_tile;
+  struct trade_route *ptr; /* Only for caravans */
 
   /* The amount of work that has been done on the current activity.  This
    * is counted in turns but is multiplied by ACTIVITY_COUNT (which allows
@@ -332,6 +319,7 @@ bool can_unit_exist_at_tile(struct unit *punit, const struct tile *ptile);
 bool can_unit_survive_at_tile(struct unit *punit, const struct tile *ptile);
 bool can_unit_move_to_tile(struct unit *punit, const struct tile *ptile,
 			   bool igzoc);
+bool can_unit_do_air_patrol(struct unit *punit);
 enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
 					     struct player *unit_owner,
 					     enum unit_activity activity,

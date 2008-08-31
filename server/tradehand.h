@@ -10,16 +10,21 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__OPTIONDLG_H
-#define FC__OPTIONDLG_H
 
-#include <gtk/gtk.h>
+#ifndef FC__TRADE_HAND_H
+#define FC__TRADE_HAND_H
 
-void popup_option_dialog(void);
+#include "traderoute.h"
 
-void fullscreen_mode_callback(struct client_option *poption);
-void map_scrollbars_callback(struct client_option *poption);
-void mapview_redraw_callback(struct client_option *poption);
-void split_message_window_callback(struct client_option *poption);
+bool connection_supports_server_trade(struct connection *pconn);
 
-#endif  /* FC__OPTIONDLG_H */
+void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr);
+void send_trade_route_remove(struct conn_list *dest, struct trade_route *ptr);
+void server_remove_trade_route(struct trade_route *ptr);
+
+void server_establish_trade_route(struct city *pcity1, struct city *pcity2);
+void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
+                                struct city *pcity2);
+void trade_free_unit(struct unit *punit);
+
+#endif /* FC__TRADE_HAND_H */

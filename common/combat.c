@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <math.h>
 
+#include "city.h"
 #include "game.h"
 #include "log.h"
 #include "map.h"

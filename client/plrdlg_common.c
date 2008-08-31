@@ -118,7 +118,7 @@ static bool col_ai(struct player *plr)
 *******************************************************************/
 static const char *col_embassy(struct player *player)
 {
-  return get_embassy_status(get_player_ptr(), player);
+  return get_player_ptr() ? get_embassy_status(get_player_ptr(), player) : "-";
 }
 
 /******************************************************************
@@ -129,7 +129,7 @@ static const char *col_diplstate(struct player *player)
   static char buf[100];
   const struct player_diplstate *pds;
 
-  if (player == get_player_ptr()) {
+  if (!get_player_ptr() || player == get_player_ptr()) {
     return "-";
   } else {
     pds = pplayer_get_diplstate(get_player_ptr(), player);
@@ -148,7 +148,7 @@ static const char *col_diplstate(struct player *player)
 *******************************************************************/
 static const char *col_love(struct player *player)
 {
-  if (player == get_player_ptr() || !player->ai.control) {
+  if (!get_player_ptr() || player == get_player_ptr() || !player->ai.control) {
     return "-";
   } else {
     return love_text(player->ai.love[get_player_idx()]);
@@ -160,7 +160,7 @@ static const char *col_love(struct player *player)
 *******************************************************************/
 static const char *col_vision(struct player *player)
 {
-  return get_vision_status(get_player_ptr(), player);
+  return get_player_ptr() ? get_vision_status(get_player_ptr(), player) : "-";
 }
 
 /******************************************************************

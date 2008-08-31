@@ -29,6 +29,7 @@
 #include "map.h"
 #include "mem.h"
 #include "packets.h"
+#include "traderoute.h"
 
 #include "cm.h"
 
@@ -922,22 +923,23 @@ bool can_cities_trade(const struct city *pc1, const struct city *pc2)
   trade route is returned and its position (slot) is put into the slot
   variable.
 **************************************************************************/
-int get_city_min_trade_route(const struct city *pcity, int *slot)
+int get_city_min_trade_route(const struct city *pcity,
+			     struct trade_route **slot)
 {
-  int i, value = pcity->trade_value[0];
+  int value = FC_INFINITY;
 
   if (slot) {
-    *slot = 0;
+    *slot = NULL;
   }
   /* find min */
-  for (i = 1; i < NUM_TRADEROUTES; i++) {
-    if (value > pcity->trade_value[i]) {
+  established_trade_routes_iterate(pcity, ptr) {
+    if (value > ptr->value) {
       if (slot) {
-	*slot = i;
+	*slot = ptr;
       }
-      value = pcity->trade_value[i];
+      value = ptr->value;
     }
-  }
+  } established_trade_routes_iterate_end;
 
   return value;
 }
@@ -959,7 +961,7 @@ bool can_establish_trade_route(const struct city *pc1, const struct city *pc2)
     return FALSE;
   }
     
-  if (city_num_trade_routes(pc1) == NUM_TRADEROUTES) {
+  if (city_num_trade_routes(pc1) >= game.traderoute_info.maxtraderoutes) {
     trade = trade_between_cities(pc1, pc2);
     /* can we replace traderoute? */
     if (get_city_min_trade_route(pc1, NULL) >= trade) {
@@ -967,7 +969,7 @@ bool can_establish_trade_route(const struct city *pc1, const struct city *pc2)
     }
   }
   
-  if (city_num_trade_routes(pc2) == NUM_TRADEROUTES) {
+  if (city_num_trade_routes(pc2) >= game.traderoute_info.maxtraderoutes) {
     if (trade == -1) {
       trade = trade_between_cities(pc1, pc2);
     }
@@ -1043,13 +1045,12 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
 **************************************************************************/
 int city_num_trade_routes(const struct city *pcity)
 {
-  int i, n = 0;
+  int n = 0;
 
-  for (i = 0; i < NUM_TRADEROUTES; i++)
-    if (pcity->trade[i] != 0) {
-      n++;
-    }
-  
+  established_trade_routes_iterate(pcity, ptr) {
+    n++;
+  } established_trade_routes_iterate_end;
+
   return n;
 }
 
@@ -1097,15 +1098,8 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
 **************************************************************************/
 bool have_cities_trade_route(const struct city *pc1, const struct city *pc2)
 {
-  int i;
-  
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    if (pc1->trade[i] == pc2->id || pc2->trade[i] == pc1->id) {
-      /* Looks like they do have a traderoute. */
-      return TRUE;
-    }
-  }
-  return FALSE;
+  struct trade_route *ptr = game_trade_route_find(pc1, pc2);
+  return ptr ? ptr->status == TR_ESTABLISHED : FALSE;
 }
 
 /*************************************************************************
@@ -2015,7 +2009,6 @@ void get_food_trade_shields(const struct city *pcity, int *food, int *trade,
 **************************************************************************/
 static inline void set_food_trade_shields(struct city *pcity)
 {
-  int i;
   pcity->food_surplus = 0;
   pcity->shield_surplus = 0;
 
@@ -2025,11 +2018,10 @@ static inline void set_food_trade_shields(struct city *pcity)
   pcity->tile_trade = pcity->trade_prod;
   pcity->food_surplus = pcity->food_prod - pcity->size * 2;
 
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    pcity->trade_value[i] =
-	trade_between_cities(pcity, find_city_by_id(pcity->trade[i]));
-    pcity->trade_prod += pcity->trade_value[i];
-  }
+  established_trade_routes_iterate(pcity, ptr) {
+    ptr->value = trade_between_cities(ptr->pcity1, ptr->pcity2);
+    pcity->trade_prod += ptr->value;
+  } established_trade_routes_iterate_end;
   pcity->corruption = city_corruption(pcity, pcity->trade_prod);
   pcity->trade_prod -= pcity->corruption;
 
@@ -2193,15 +2185,13 @@ void generic_city_refresh(struct city *pcity,
   unhappy_city_check(pcity);
 
   if (refresh_trade_route_cities && pcity->tile_trade != prev_tile_trade) {
-    int i;
-
-    for (i = 0; i < NUM_TRADEROUTES; i++) {
-      struct city *pcity2 = find_city_by_id(pcity->trade[i]);
+    established_trade_routes_iterate(pcity, ptr) {
+      struct city *pcity2 = OTHER_CITY(ptr, pcity);
 
       if (pcity2) {
 	generic_city_refresh(pcity2, FALSE, send_unit_info);
       }
-    }
+    } established_trade_routes_iterate_end;
   }
 }
 
@@ -2445,7 +2435,6 @@ void city_styles_free(void)
 struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
 				 const char *name)
 {
-  int i;
   struct city *pcity;
 
   pcity = fc_malloc(sizeof(struct city));
@@ -2465,9 +2454,6 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->ppl_angry[4] = 0;
   pcity->was_happy = FALSE;
   pcity->steal = 0;
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    pcity->trade_value[i] = pcity->trade[i] = 0;
-  }
   pcity->food_stock = 0;
   pcity->shield_stock = 0;
   pcity->trade_prod = 0;
@@ -2536,16 +2522,20 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->client.occupied = FALSE;
   pcity->client.happy = pcity->client.unhappy = FALSE;
   pcity->client.colored = FALSE;
+  pcity->client.traderoute_drawing_disabled = FALSE;
 
   pcity->units_supported = unit_list_new();
   pcity->debug = FALSE;
 
   pcity->rally_point = NULL;
 
-  pcity->trade_routes = is_server ? NULL : trade_route_list_new();
+  pcity->trade_routes = trade_route_list_new();
 
   pcity->info_units_supported = NULL;
   pcity->info_units_present = NULL;
+
+  pcity->server.managed = FALSE;
+  memset(&pcity->server.parameter, 0, sizeof(pcity->server.parameter));
 
   return pcity;
 }
@@ -2558,6 +2548,10 @@ void remove_city_virtual(struct city *pcity)
 {
   unit_list_free(pcity->units_supported);
   if (pcity->trade_routes) {
+    if (trade_route_list_size(pcity->trade_routes) > 0) {
+      freelog(LOG_ERROR, "The trade route list of %s (%d) was not empty.",
+	      pcity->name, pcity->id);
+    }
     trade_route_list_free(pcity->trade_routes);
   }
   if (pcity->info_units_supported) {

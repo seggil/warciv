@@ -32,6 +32,7 @@
 #include "player.h"
 #include "shared.h"
 #include "support.h"
+#include "traderoute.h"
 
 #include "cityrep.h"
 #include "civclient.h"
@@ -42,6 +43,7 @@
 #include "climap.h"
 #include "clinet.h"
 #include "dialogs.h"
+#include "goto.h"
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
@@ -56,6 +58,7 @@
 #include "wldlg.h"
 #include "log.h"
 #include "text.h"
+#include "trade.h"
 #include "cityicon.ico"
 
 #include "citydlg.h"
@@ -148,6 +151,12 @@ struct city_dialog {
   struct cma_dialog *cma_editor;
 
   struct {
+    GtkListStore *established_trade_routes;
+    GtkListStore *in_route_trade_routes;
+    GtkListStore *planned_trade_routes;
+  } trade;
+
+  struct {
     GtkWidget *rename_command;
     GtkWidget *new_citizens_radio[3];
     GtkWidget *city_opts[NUM_CITY_OPTS];
@@ -223,6 +232,15 @@ static gboolean supported_unit_middle_callback(GtkWidget * w,
 static gboolean present_unit_middle_callback(GtkWidget * w,
 					     GdkEventButton * ev,
 					     gpointer data);
+static gboolean established_trade_routes_callback(GtkWidget * w,
+                                                  GdkEventButton * ev,
+                                                  gpointer data);
+static gboolean in_routes_trade_routes_callback(GtkWidget * w,
+                                                GdkEventButton * ev,
+                                                gpointer data);
+static gboolean planned_trade_routes_callback(GtkWidget * w,
+                                              GdkEventButton * ev,
+                                              gpointer data);
 
 static void unit_center_callback(GtkWidget * w, gpointer data);
 static void unit_activate_callback(GtkWidget * w, gpointer data);
@@ -351,7 +369,7 @@ void refresh_city_dialog(struct city *pcity)
 {
   struct city_dialog *pdialog = get_city_dialog(pcity);
 
-  if (city_owner(pcity) == get_player_ptr()) {
+  if (city_owner(pcity) == get_player_ptr() || !get_player_ptr()) {
     city_report_dialog_update_city(pcity);
     economy_report_dialog_update();
   }
@@ -370,7 +388,7 @@ void refresh_city_dialog(struct city *pcity)
   city_dialog_update_present_units(pdialog);
   city_dialog_update_tradelist(pdialog);
 
-  if (city_owner(pcity) == get_player_ptr()) {
+  if (city_owner(pcity) == get_player_ptr() || !get_player_ptr()) {
     bool have_present_units =
 	 (unit_list_size(pcity->tile->units) > 0);
     gboolean sensitive;
@@ -901,19 +919,118 @@ static void create_and_append_cma_page(struct city_dialog *pdialog)
 *****************************************************************/
 static void create_and_append_trade_page(struct city_dialog *pdialog)
 {
-  GtkWidget *page, *label;
+  GtkWidget *page, *label, *vbox, *view;
+  GtkCellRenderer *rend;
+  GtkTreeViewColumn *col;
   const char *tab_title = _("Trade Ro_utes");
 
-  page = gtk_hbox_new(TRUE, 0);
+  page = gtk_hbox_new(TRUE, 8);
 
   label = gtk_label_new_with_mnemonic(tab_title);
 
   gtk_notebook_append_page(GTK_NOTEBOOK(pdialog->notebook), page, label);
 
-  pdialog->overview.tradelist = gtk_label_new("Uninitialized.");
-  gtk_label_set_justify(GTK_LABEL(pdialog->overview.tradelist),
-			GTK_JUSTIFY_LEFT);
-  gtk_container_add(GTK_CONTAINER(page), pdialog->overview.tradelist);
+  /* City id, City name, Trade route value  */
+  pdialog->trade.established_trade_routes = gtk_list_store_new(3, G_TYPE_INT,
+                                                                  G_TYPE_STRING,
+                                                                  G_TYPE_INT);
+  /* This city id, City id, City name, Unit id, Turn number, Move cost */
+  pdialog->trade.in_route_trade_routes = gtk_list_store_new(6, G_TYPE_INT,
+                                                               G_TYPE_INT,
+                                                               G_TYPE_STRING,
+                                                               G_TYPE_INT,
+                                                               G_TYPE_INT,
+                                                               G_TYPE_INT);
+  /* This city id, City id, City name, Move cost */
+  pdialog->trade.planned_trade_routes = gtk_list_store_new(4, G_TYPE_INT,
+                                                              G_TYPE_INT,
+                                                              G_TYPE_STRING,
+                                                              G_TYPE_INT);
+
+  /* established_trade_routes */
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(page), vbox, TRUE, TRUE, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox),
+                     gtk_label_new(_("Established trade routes")),
+                     FALSE, FALSE, 0);
+
+  view = gtk_tree_view_new_with_model(
+           GTK_TREE_MODEL(pdialog->trade.established_trade_routes));
+  gtk_box_pack_start(GTK_BOX(vbox), view, TRUE, TRUE, 0);
+
+  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
+  g_signal_connect(view, "button-press-event",
+                   G_CALLBACK(established_trade_routes_callback), NULL);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("City"), rend,
+                                                 "text", 1, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("Value"), rend,
+                                                 "text", 2, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  /* in_route_trade_routes */
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(page), vbox, TRUE, TRUE, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox),
+                     gtk_label_new(_("Trade routes going to be established")),
+                     FALSE, FALSE, 0);
+
+  view = gtk_tree_view_new_with_model(
+           GTK_TREE_MODEL(pdialog->trade.in_route_trade_routes));
+  gtk_box_pack_start(GTK_BOX(vbox), view, TRUE, TRUE, 0);
+
+  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
+  g_signal_connect(view, "button-press-event",
+                   G_CALLBACK(in_routes_trade_routes_callback), NULL);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("City"), rend,
+                                                 "text", 2, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("Turns"), rend,
+                                                 "text", 4, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("Move cost"), rend,
+                                                 "text", 5, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  /* planned_trade_routes */
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(page), vbox, TRUE, TRUE, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox),
+                     gtk_label_new(_("Planned trade routes")),
+                     FALSE, FALSE, 0);
+
+  view = gtk_tree_view_new_with_model(
+           GTK_TREE_MODEL(pdialog->trade.planned_trade_routes));
+  gtk_box_pack_start(GTK_BOX(vbox), view, TRUE, TRUE, 0);
+
+  gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
+  g_signal_connect(view, "button-press-event",
+                   G_CALLBACK(planned_trade_routes_callback), NULL);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("City"), rend,
+                                                 "text", 2, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  rend = gtk_cell_renderer_text_new();
+  col = gtk_tree_view_column_new_with_attributes(_("Move cost"), rend,
+                                                 "text", 3, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+
+  city_dialog_update_tradelist(pdialog);
 
   gtk_widget_show_all(page);
 }
@@ -1153,7 +1270,7 @@ static struct city_dialog *create_city_dialog(struct city *pcity,
   create_and_append_worklist_page(pdialog);
 
   /* only create these tabs if not a spy */
-  if (pcity->owner == get_player_idx()) {
+  if (!get_player_ptr() || pcity->owner == get_player_idx()) {
 
     create_and_append_happiness_page(pdialog);
     create_and_append_cma_page(pdialog);
@@ -1161,7 +1278,7 @@ static struct city_dialog *create_city_dialog(struct city *pcity,
 
   create_and_append_trade_page(pdialog);
 
-  if (pcity->owner == get_player_idx()) {
+  if (!get_player_ptr() || pcity->owner == get_player_idx()) {
     create_and_append_settings_page(pdialog);
   } else {
     gtk_notebook_set_current_page(GTK_NOTEBOOK(pdialog->notebook),
@@ -1510,7 +1627,7 @@ static void city_dialog_update_supported_units(struct city_dialog *pdialog)
   int n, m, i;
   char buf[30];
 
-  if (pdialog->pcity->owner != get_player_idx()) {
+  if (get_player_ptr() && pdialog->pcity->owner != get_player_idx()) {
     units = pdialog->pcity->info_units_supported;
   } else {
     units = pdialog->pcity->units_supported;
@@ -1635,7 +1752,7 @@ static void city_dialog_update_present_units(struct city_dialog *pdialog)
   int n, m, i;
   char buf[30];
 
-  if (pdialog->pcity->owner != get_player_idx()) {
+  if (get_player_ptr() && pdialog->pcity->owner != get_player_idx()) {
     units = pdialog->pcity->info_units_present;
   } else {
     units = pdialog->pcity->tile->units;
@@ -1741,36 +1858,149 @@ static void city_dialog_update_present_units(struct city_dialog *pdialog)
 *****************************************************************/
 static void city_dialog_update_tradelist(struct city_dialog *pdialog)
 {
-  int i, x = 0, total = 0;
+  struct city *pother_city;
+  GtkTreeIter iter;
 
-  char cityname[64], buf[512];
+  /* Clear all */
+  gtk_list_store_clear(pdialog->trade.established_trade_routes);
+  gtk_list_store_clear(pdialog->trade.in_route_trade_routes);
+  gtk_list_store_clear(pdialog->trade.planned_trade_routes);
 
-  buf[0] = '\0';
+  trade_route_list_iterate(pdialog->pcity->trade_routes, ptr) {
+    pother_city = ptr->pcity1 == pdialog->pcity ? ptr->pcity2 : ptr->pcity1;
+    switch (ptr->status) {
+      case TR_NONE: /* Shouldn't occur */
+      case TR_PLANNED:
+        gtk_list_store_append(pdialog->trade.planned_trade_routes, &iter);
+        gtk_list_store_set(pdialog->trade.planned_trade_routes, &iter,
+                           0, pdialog->pcity->id,
+                           1, pother_city->id,
+                           2, pother_city->name,
+                           3, calculate_trade_move_cost(ptr),
+                           -1);
+        break;
+      case TR_IN_ROUTE:
+      case TR_PL_AND_IR:
+        ptr->move_cost = calculate_trade_move_cost(ptr);
+        ptr->move_turns = COST_TO_TURNS(ptr);
+        gtk_list_store_append(pdialog->trade.in_route_trade_routes, &iter);
+        gtk_list_store_set(pdialog->trade.in_route_trade_routes, &iter,
+                           0, pdialog->pcity->id,
+                           1, pother_city->id,
+                           2, pother_city->name,
+                           3, ptr->punit ? ptr->punit->id : 0,
+                           4, ptr->move_turns,
+                           5, ptr->move_cost,
+                           -1);
+        break;
+      case TR_ESTABLISHED:
+        gtk_list_store_append(pdialog->trade.established_trade_routes, &iter);
+        gtk_list_store_set(pdialog->trade.established_trade_routes, &iter,
+                           0, pother_city->id,
+                           1, pother_city->name,
+                           2, trade_between_cities(ptr->pcity1, ptr->pcity2),
+                           -1);
+        break;
+    }
+  } trade_route_list_iterate_end;
+}
 
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    if (pdialog->pcity->trade[i]) {
-      struct city *pcity;
-      x = 1;
-      total += pdialog->pcity->trade_value[i];
+/****************************************************************
+  Returns the number of city we can investigate.
+*****************************************************************/
+static int get_reachable_city_number(void)
+{
+  if (get_player_ptr()) {
+    return city_list_size(get_player_ptr()->cities);
+  }
 
-      if ((pcity = find_city_by_id(pdialog->pcity->trade[i]))) {
-	my_snprintf(cityname, sizeof(cityname), "%s", pcity->name);
-      } else {
-	my_snprintf(cityname, sizeof(cityname), _("%s"), _("Unknown"));
+  int count = 0;
+
+  players_iterate(pplayer) {
+    count += city_list_size(pplayer->cities);
+  } players_iterate_end;
+
+  return count;
+}
+
+/****************************************************************
+  Returns the next or previous city.
+*****************************************************************/
+static struct city *get_reachable_city(struct city *pcity, int dir)
+{
+  bool found = FALSE;
+
+  if (get_reachable_city_number() <= 1) {
+    return NULL;
+  }
+
+  if (get_player_ptr()) {
+    if (dir < 0) {
+      while (TRUE) {
+	TYPED_LIST_ITERATE_REV(struct city, get_player_ptr()->cities, acity) {
+	  if (acity == pcity) {
+	    if (found) {
+	      return NULL;
+	    }
+	    found = TRUE;
+	  } else if (found && !get_city_dialog(acity)) {
+	    return acity;
+	  }
+	} LIST_ITERATE_REV_END;
       }
-      my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		  _("Trade with %s gives %d trade.\n"),
-		  cityname, pdialog->pcity->trade_value[i]);
+    } else {
+      while (TRUE) {
+	city_list_iterate(get_player_ptr()->cities, acity) {
+	  if (acity == pcity) {
+	    if (found) {
+	      return NULL;
+	    }
+	    found = TRUE;
+	  } else if (found && !get_city_dialog(acity)) {
+	    return acity;
+	  }
+	} city_list_iterate_end;
+      }
     }
   }
-  if (!x) {
-    my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		_("No trade routes exist."));
+
+  if (dir < 0) {
+    int i = pcity->owner;
+    while (TRUE) {
+      for (; i >= 0; i--) {
+	TYPED_LIST_ITERATE_REV(struct city, get_player(i)->cities, acity) {
+	  if (acity == pcity) {
+	    if (found) {
+	      return NULL;
+	    }
+	    found = TRUE;
+	  } else if (found && !get_city_dialog(acity)) {
+	    return acity;
+	  }
+	} LIST_ITERATE_REV_END;
+      }
+      i = game.info.nplayers - 1;
+    }
   } else {
-    my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		_("Total trade from trade route %d"), total);
+    int i = pcity->owner;
+    while (TRUE) {
+      for (; i < game.info.nplayers; i++) {
+	city_list_iterate(get_player(i)->cities, acity) {
+	  if (acity == pcity) {
+	    if (found) {
+	      return NULL;
+	    }
+	    found = TRUE;
+	  } else if (found && !get_city_dialog(acity)) {
+	    return acity;
+	  }
+	} city_list_iterate_end;
+      }
+      i = 0;
+    }
   }
-  gtk_label_set_text(GTK_LABEL(pdialog->overview.tradelist), buf);
+
+  return NULL; // Shouldn't occur
 }
 
 /****************************************************************
@@ -1780,16 +2010,17 @@ static void city_dialog_update_tradelist(struct city_dialog *pdialog)
  note: we still need the sensitivity code in create_city_dialog()
  for the spied dialogs.
 *****************************************************************/
-static void city_dialog_update_prev_next()
+static void city_dialog_update_prev_next(void)
 {
   int count = 0;
-  int city_number = city_list_size(get_player_ptr()->cities);
+  int city_number = get_reachable_city_number();
 
   /* the first time, we see if all the city dialogs are open */
 
   dialog_list_iterate(dialog_list, pdialog) {
-    if (pdialog->pcity->owner == get_player_idx())
+    if (!get_player_ptr() || pdialog->pcity->owner == get_player_idx()) {
       count++;
+    }
   }
   dialog_list_iterate_end;
 
@@ -1801,7 +2032,7 @@ static void city_dialog_update_prev_next()
     dialog_list_iterate_end;
   } else {
     dialog_list_iterate(dialog_list, pdialog) {
-      if (pdialog->pcity->owner == get_player_idx()) {
+      if (!get_player_ptr() || pdialog->pcity->owner == get_player_idx()) {
 	gtk_widget_set_sensitive(pdialog->prev_command, TRUE);
 	gtk_widget_set_sensitive(pdialog->next_command, TRUE);
       }
@@ -1859,6 +2090,295 @@ static void city_menu_position(GtkMenu *menu, gint *x, gint *y,
 static void destroy_func(GtkWidget *w, gpointer data)
 {
   gtk_widget_destroy(w);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void center_on_city(GtkMenuItem *item, gpointer data)
+{
+  struct city *pcity = find_city_by_id(GPOINTER_TO_INT(data));
+
+  if (!pcity) {
+    return;
+  }
+
+  center_tile_mapcanvas(pcity->tile);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void open_city_dialog(GtkMenuItem *item, gpointer data)
+{
+  struct city *pcity = find_city_by_id(GPOINTER_TO_INT(data));
+
+  if (!pcity || (get_player_ptr() && pcity->owner != get_player_idx())) {
+    return;
+  }
+
+  popup_city_dialog(pcity, FALSE);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void center_on_unit(GtkMenuItem *item, gpointer data)
+{
+  struct unit *punit = find_unit_by_id(GPOINTER_TO_INT(data));
+
+  if (!punit) {
+    return;
+  }
+
+  center_tile_mapcanvas(punit->tile);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void stop_unit(GtkMenuItem *item, gpointer data)
+{
+  struct unit *punit = find_unit_by_id(GPOINTER_TO_INT(data));
+
+  if (!punit) {
+    return;
+  }
+
+  request_orders_cleared(punit);
+  request_new_unit_activity(punit, ACTIVITY_IDLE);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void cancel_trade_route(GtkMenuItem *item, gpointer data)
+{
+  unsigned long tr = GPOINTER_TO_INT(data);
+  struct city *pcity1, *pcity2;
+
+  pcity1 = find_city_by_id(tr >> 16);
+  pcity2 = find_city_by_id(tr & 0xFFFF);
+
+  if (!pcity1 || !pcity2) {
+    return;
+  }
+
+  request_cancel_trade_route(pcity1, pcity2);
+}
+
+/****************************************************************
+...
+*****************************************************************/
+static gboolean established_trade_routes_callback(GtkWidget * w,
+                                                  GdkEventButton * ev,
+                                                  gpointer data)
+{
+  /* Only right button please! */
+  if (ev->button != 3) {
+    return FALSE;
+  }
+
+  char buf[256];
+  int city_id;
+  struct city *pcity;
+  GtkWidget *menu, *item;
+  GtkTreeModel *model;
+  GtkTreePath *path;
+  GtkTreeIter iter;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+
+  if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(w), (gint)ev->x, (gint)ev->y,
+                                     &path, NULL, NULL, NULL)) {
+    return FALSE;
+  }
+
+  if (!gtk_tree_model_get_iter(model, &iter, path)) {
+    gtk_tree_path_free(path);
+    return FALSE;
+  }
+
+  gtk_tree_model_get(model, &iter, 0, &city_id, -1);
+  if (!(pcity = find_city_by_id(city_id))) {
+    return FALSE;
+  }
+
+  menu = gtk_menu_new();
+
+  my_snprintf(buf, sizeof(buf), _("Center on %s"), pcity->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(center_on_city), GINT_TO_POINTER(city_id));
+
+  if (!get_player_ptr() || pcity->owner == get_player_idx()) {
+    my_snprintf(buf, sizeof(buf), _("Open %s city dialog"), pcity->name);
+    item = gtk_menu_item_new_with_label(buf);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate",
+		     G_CALLBACK(open_city_dialog), GINT_TO_POINTER(city_id));
+  }
+
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
+
+  gtk_tree_path_free(path);
+  return TRUE;
+}
+
+/****************************************************************
+...
+*****************************************************************/
+static gboolean in_routes_trade_routes_callback(GtkWidget * w,
+                                                GdkEventButton * ev,
+                                                gpointer data)
+{
+  /* Only right button please! */
+  if (ev->button != 3) {
+    return FALSE;
+  }
+
+  char buf[256];
+  int city_id, city2_id, unit_id;
+  unsigned long tr;
+  struct city *pcity;
+  GtkWidget *menu, *item;
+  GtkTreeModel *model;
+  GtkTreePath *path;
+  GtkTreeIter iter;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+
+  if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(w), (gint)ev->x, (gint)ev->y,
+                                     &path, NULL, NULL, NULL)) {
+    return FALSE;
+  }
+
+  if (!gtk_tree_model_get_iter(model, &iter, path)) {
+    gtk_tree_path_free(path);
+    return FALSE;
+  }
+
+  gtk_tree_model_get(model, &iter, 0, &city2_id, 1, &city_id, 3, &unit_id, -1);
+  if (!(pcity = find_city_by_id(city_id))) {
+    return FALSE;
+  }
+  tr = ((unsigned long)city_id << 16) + city2_id;
+
+  menu = gtk_menu_new();
+
+  my_snprintf(buf, sizeof(buf), _("Center on %s"), pcity->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(center_on_city), GINT_TO_POINTER(city_id));
+
+  if (!get_player_ptr() || pcity->owner == get_player_idx()) {
+    my_snprintf(buf, sizeof(buf), _("Open %s city dialog"), pcity->name);
+    item = gtk_menu_item_new_with_label(buf);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate",
+		     G_CALLBACK(open_city_dialog), GINT_TO_POINTER(city_id));
+  }
+
+  item = gtk_menu_item_new_with_label(_("Center on unit"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(center_on_unit), GINT_TO_POINTER(unit_id));
+
+  if (can_client_issue_orders()) {
+    item = gtk_separator_menu_item_new();
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  
+    item = gtk_menu_item_new_with_label(_("Stop unit"));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate",
+                     G_CALLBACK(stop_unit), GINT_TO_POINTER(unit_id));
+  
+    item = gtk_menu_item_new_with_label(_("Cancel trade route"));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate", G_CALLBACK(cancel_trade_route),
+                     GINT_TO_POINTER(tr));
+  }
+
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
+
+  gtk_tree_path_free(path);
+  return TRUE;
+}
+
+/****************************************************************
+...
+*****************************************************************/
+static gboolean planned_trade_routes_callback(GtkWidget * w,
+                                              GdkEventButton * ev,
+                                              gpointer data)
+{
+  /* Only right button please! */
+  if (ev->button != 3) {
+    return FALSE;
+  }
+
+  char buf[256];
+  int city_id, city2_id;
+  unsigned long tr;
+  struct city *pcity;
+  GtkWidget *menu, *item;
+  GtkTreeModel *model;
+  GtkTreePath *path;
+  GtkTreeIter iter;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+
+  if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(w), (gint)ev->x, (gint)ev->y,
+                                     &path, NULL, NULL, NULL)) {
+    return FALSE;
+  }
+
+  if (!gtk_tree_model_get_iter(model, &iter, path)) {
+    gtk_tree_path_free(path);
+    return FALSE;
+  }
+
+  gtk_tree_model_get(model, &iter, 0, &city2_id, 1, &city_id, -1);
+  if (!(pcity = find_city_by_id(city_id))) {
+    return FALSE;
+  }
+  tr = ((unsigned long)city_id << 16) + city2_id;
+
+  menu = gtk_menu_new();
+
+  my_snprintf(buf, sizeof(buf), _("Center on %s"), pcity->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(center_on_city), GINT_TO_POINTER(city_id));
+
+  if (!get_player_ptr() || pcity->owner == get_player_idx()) {
+    my_snprintf(buf, sizeof(buf), _("Open %s city dialog"), pcity->name);
+    item = gtk_menu_item_new_with_label(buf);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate",
+		     G_CALLBACK(open_city_dialog), GINT_TO_POINTER(city_id));
+  }
+
+  if (can_client_issue_orders()) {
+    item = gtk_separator_menu_item_new();
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  
+    item = gtk_menu_item_new_with_label(_("Cancel trade route"));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_signal_connect(item, "activate", G_CALLBACK(cancel_trade_route),
+                     GINT_TO_POINTER(tr));
+  }
+
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
+
+  gtk_tree_path_free(path);
+  return TRUE;
 }
 
 /****************************************************************
@@ -2780,16 +3300,8 @@ static void close_city_dialog(struct city_dialog *pdialog)
 static void switch_city_callback(GtkWidget *w, gpointer data)
 {
   struct city_dialog *pdialog = (struct city_dialog *) data;
-  int i, j, dir, size = city_list_size(get_player_ptr()->cities);
-  struct city *new_pcity = NULL;
-
-  assert(dialog_list != NULL);
-  assert(size >= 1);
-  assert(pdialog->pcity->owner == get_player_idx());
-
-  if (size == 1) {
-    return;
-  }
+  int dir;
+  struct city *new_pcity;
 
   /* dir = 1 will advance to the city, dir = -1 will get previous */
   if (w == pdialog->next_command) {
@@ -2801,25 +3313,7 @@ static void switch_city_callback(GtkWidget *w, gpointer data)
     dir = 1;
   }
 
-  for (i = 0; i < size; i++) {
-    if (pdialog->pcity == city_list_get(get_player_ptr()->cities, i)) {
-      break;
-    }
-  }
-
-  assert(i < size);
-
-  for (j = 1; j < size; j++) {
-    struct city *other_pcity = city_list_get(get_player_ptr()->cities,
-					     (i + dir * j + size) % size);
-    struct city_dialog *other_pdialog = get_city_dialog(other_pcity);
-
-    assert(other_pdialog != pdialog);
-    if (!other_pdialog) {
-      new_pcity = other_pcity;
-      break;
-    }
-  }
+  new_pcity = get_reachable_city(pdialog->pcity, dir);
 
   if (!new_pcity) {
     /* Every other city has an open city dialog. */

@@ -404,8 +404,8 @@ PACKET_CITY_INFO=21; sc,lsend
   SINT16 food_surplus, shield_surplus, tile_trade;
   UINT16 food_stock, shield_stock, corruption;
 
-  UINT16 trade[NUM_TRADEROUTES];
-  UINT8 trade_value[NUM_TRADEROUTES];
+  UINT16 trade[OLD_NUM_TRADEROUTES];
+  UINT8 trade_value[OLD_NUM_TRADEROUTES];
 
   UINT16 luxury_total, tax_total, science_total;
 
@@ -428,6 +428,8 @@ PACKET_CITY_INFO=21; sc,lsend
   CITY_MAP city_map[CITY_MAP_SIZE * CITY_MAP_SIZE];
 
   BOOL did_buy, did_sell, was_happy, airlift, diplomat_investigate;
+
+  COORD rally_point_x, rally_point_y; add-cap(extglobalinfo)
 
   UINT8 city_options;
   TURN turn_founded;
@@ -620,6 +622,7 @@ PACKET_UNIT_INFO=49; is-info,sc,lsend
   UINT8 movesleft, hp, fuel, activity_count;
   UINT8 unhappiness, upkeep, upkeep_food, upkeep_gold, occupy;
   COORD goto_dest_x,goto_dest_y;
+  COORD air_patrol_x, air_patrol_y; add-cap(extglobalinfo)
   ACTIVITY activity;
   SPECIAL activity_target;
 
@@ -1338,6 +1341,7 @@ PACKET_TRADEROUTE_INFO=122;sc,is-info,handle-via-packet
   UINT8 traderevenuepct;
   UINT8 traderevenuestyle;
   UINT8 caravanbonusstyle;
+  UINT8 maxtraderoutes; add-cap(extglobalinfo)
 end
 
 /************** "extgameinfo" capability packet **********************/
@@ -1397,3 +1401,66 @@ PACKET_VOTE_SUBMIT=128;cs,is-info,handle-per-conn
   UINT32 vote_no;
   SINT8 value;
 end
+
+/************** "extglobalinfo" capability packets **********************/
+
+PACKET_TRADE_ROUTE_PLAN=130;cs,dsend
+  CITY city1, city2;
+end
+
+PACKET_TRADE_ROUTE_REMOVE=131;cs,sc,dsend
+  CITY city1, city2;
+end
+
+PACKET_UNIT_TRADE_ROUTE=132;cs,dsend
+  UNIT unit_id;
+  CITY city1, city2;
+end
+
+PACKET_TRADE_ROUTE_INFO=133;sc,handle-via-packet
+  CITY city1, city2;
+  UNIT unit_id;
+  UINT8 status; /* enum trade_route_status */
+end
+
+
+PACKET_CITY_SET_RALLY_POINT=138;cs,dsend
+  CITY id;
+  COORD x, y;
+end
+
+PACKET_CITY_CLEAR_RALLY_POINT=139;cs,dsend
+  CITY id;
+end
+
+
+PACKET_UNIT_AIR_PATROL=141;cs,dsend
+  UNIT id;
+  COORD x, y;
+end
+
+PACKET_UNIT_AIR_PATROL_STOP=142;cs,dsend
+  UNIT id;
+end
+
+
+/* CMA parameter */
+PACKET_CITY_MANAGER_PARAM=145;cs,sc,handle-via-packet
+  CITY id;
+  SINT16 minimal_surplus[CM_NUM_STATS];
+  BOOL require_happy;
+  BOOL allow_disorder;
+  BOOL allow_specialists;
+  UINT16 factor[CM_NUM_STATS];
+  UINT16 happy_factor;
+end
+
+PACKET_CITY_NO_MANAGER_PARAM=146;cs,sc,dsend
+  CITY id;
+end
+
+
+PACKET_PLAYER_INFO_REQ=150;cs,dsend,handle-per-conn
+  PLAYER id;
+end
+

@@ -81,6 +81,8 @@ libcivserver_a_SOURCES = \
 		stdinhand.c	\
 		stdinhand.h	\
 		stdinhand_info.h\
+		tradehand.c	\
+		tradehand.h	\
 		unithand.c	\
 		unithand.h	\
 		unittools.c	\

@@ -17,6 +17,7 @@
 #include "log.h"
 #include "fcintl.h"
 
+#include "city.h"
 #include "game.h"
 #include "map.h"
 

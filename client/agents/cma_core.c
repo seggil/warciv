@@ -108,7 +108,7 @@ static bool results_are_equal(struct city *pcity,
   T(specialists[SP_SCIENTIST]);
   T(specialists[SP_TAXMAN]);
 
-  for (stat = 0; stat < NUM_STATS; stat++) {
+  for (stat = 0; stat < CM_NUM_STATS; stat++) {
     T(surplus[stat]);
   }
 
@@ -519,11 +519,35 @@ void cma_put_city_under_agent(struct city *pcity,
   freelog(LOG_DEBUG, "cma_put_city_under_agent(city='%s'(%d))",
 	  pcity->name, pcity->id);
 
-  assert(city_owner(pcity) == get_player_ptr());
+  assert(city_owner(pcity) == get_player_ptr() || !get_player_ptr());
 
   cma_set_parameter(ATTR_CITY_CMA_PARAMETER, pcity->id, parameter);
 
-  cause_a_city_changed_for_agent("CMA", pcity);
+  if (can_client_issue_orders()) {
+    cause_a_city_changed_for_agent("CMA", pcity);
+  }
+
+  if (server_has_extglobalinfo && !client_is_observer()) {
+    if (cma_is_city_under_agent(pcity, NULL)) {
+      struct packet_city_manager_param packet;
+      int i;
+
+      packet.id = pcity->id;
+      for (i = 0; i < CM_NUM_STATS; i++) {
+	packet.minimal_surplus[i] = parameter->minimal_surplus[i];
+	packet.factor[i] = parameter->factor[i];
+      }
+      packet.require_happy = parameter->require_happy;
+      packet.allow_disorder = parameter->allow_disorder;
+      packet.allow_specialists = parameter->allow_specialists;
+      packet.happy_factor = parameter->happy_factor;
+
+      send_packet_city_manager_param(&aconnection, &packet);
+    } else {
+      /* Failed */
+      dsend_packet_city_no_manager_param(&aconnection, pcity->id);
+    }
+  }
 
   freelog(LOG_DEBUG, "cma_put_city_under_agent: return");
 }
@@ -536,6 +560,9 @@ void cma_release_city(struct city *pcity)
   release_city(pcity->id);
   refresh_city_dialog(pcity);
   city_report_dialog_update_city(pcity);
+  if (server_has_extglobalinfo && !client_is_observer()) {
+    dsend_packet_city_no_manager_param(&aconnection, pcity->id);
+  }
 }
 
 /****************************************************************************
@@ -585,7 +612,7 @@ bool cma_get_parameter(enum attr_city attr, int city_id,
   dio_get_uint8(&din, &version);
   assert(version == 2);
 
-  for (i = 0; i < NUM_STATS; i++) {
+  for (i = 0; i < CM_NUM_STATS; i++) {
     dio_get_sint16(&din, &parameter->minimal_surplus[i]);
     dio_get_sint16(&din, &parameter->factor[i]);
   }
@@ -617,7 +644,7 @@ void cma_set_parameter(enum attr_city attr, int city_id,
 
   dio_put_uint8(&dout, 2);
 
-  for (i = 0; i < NUM_STATS; i++) {
+  for (i = 0; i < CM_NUM_STATS; i++) {
     dio_put_sint16(&dout, parameter->minimal_surplus[i]);
     dio_put_sint16(&dout, parameter->factor[i]);
   }

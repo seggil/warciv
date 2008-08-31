@@ -46,13 +46,11 @@ static void form_chat_name(struct connection *pconn, char *buffer, size_t len)
 {
   struct player *pplayer = pconn->player;
 
-  if (pplayer) {
-    if (pconn->observer
-	|| strcmp(pplayer->name, ANON_PLAYER_NAME) == 0) {
-      my_snprintf(buffer, len, "(%s)", pconn->username);
-    } else {
-      my_snprintf(buffer, len, "%s", pplayer->name);
-    }
+  if (pconn->observer
+      || (pplayer && 0 == strcmp(pplayer->name, ANON_PLAYER_NAME))) {
+    my_snprintf(buffer, len, "(%s)", pconn->username);
+  } else if (pplayer) {
+    my_snprintf(buffer, len, "%s", pplayer->name);
   } else {
     my_snprintf(buffer, len, "[%s]", pconn->username);
   }
@@ -283,38 +281,47 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     char sender_name[MAX_LEN_CHAT_NAME];
 
     /* this won't work if we aren't attached to a player */
-    if (!pconn->player) {
+    if (!pconn->player && !pconn->observer) {
       my_snprintf(chat, sizeof(chat),
-                  _("Server: You are not attached to a player."));
+		  _("Server: You are not attached to a player."));
       dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
       return;
     }
 
     message[0] = ' '; /* replace command prefix */
     form_chat_name(pconn, sender_name, sizeof(sender_name));
-    my_snprintf(chat, sizeof(chat),
-                _("%s to allies: %s"), sender_name,
-                skip_leading_spaces(message));
-    con_puts (C_COMMENT, chat);
+    if (pconn->player) {
+      my_snprintf(chat, sizeof(chat),
+		  _("%s to allies: %s"), sender_name,
+		  skip_leading_spaces(message));
+    } else {
+      /* Case global observers */
+      my_snprintf(chat, sizeof(chat),
+		  _("%s to global observers: %s"), sender_name,
+		  skip_leading_spaces(message));
+    }
+    con_puts(C_COMMENT, chat);
+
     /* FIXME: there should be a special case for the sender, like in
      * chat_msg_to_player_multi(). */
-    players_iterate(aplayer) {
-      if (!pplayers_allied(pconn->player, aplayer)) {
-        continue;
+    conn_list_iterate(game.est_connections, dest) {
+      if (conn_is_ignored(pconn, dest)) {
+	continue;
       }
-      conn_list_iterate(aplayer->connections, dest) {
-        if (conn_is_ignored(pconn, dest))
-          continue;
-        if (game.server.spectatorchat
-            && server_state == RUN_GAME_STATE
-            && !connection_controls_player(pconn)
-            && connection_controls_player(dest)) {
-          continue;
-        }
-        dsend_packet_chat_msg(dest, chat, -1, -1,
-			     E_NOEVENT, pconn->id);
-      } conn_list_iterate_end;
-    } players_iterate_end;
+
+      if (game.server.spectatorchat
+	  && server_state == RUN_GAME_STATE
+	  && !connection_controls_player(pconn)
+	  && connection_controls_player(dest)) {
+	continue;
+      }
+
+      if (pconn->player ? pplayers_allied(pconn->player, dest->player)
+			: !dest->player && dest->observer) {
+        dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
+      }
+    } conn_list_iterate_end;
+
     return;
   }
 

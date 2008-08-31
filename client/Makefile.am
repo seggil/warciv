@@ -85,24 +85,22 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	messagewin_common.h \
 	multiselect.c	\
 	multiselect.h	\
-	myai.c	\
-	myai.h	\
+	options.c	\
+	options.h	\
 	packhand.c	\
 	packhand.h	\
 	packhand_gen.h	\
 	packhand_gen.c	\
 	plrdlg_common.c \
 	plrdlg_common.h \
-	options.c	\
-	options.h	\
 	repodlgs_common.c \
 	repodlgs_common.h \
 	text.c	\
 	text.h	\
 	tilespec.c	\
 	tilespec.h	\
-	wc_settings.c	\
-	wc_settings.h
+	trade.c	\
+	trade.h
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
 fc_civclient_libs =	../utility/libcivutility.a	\

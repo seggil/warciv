@@ -15,6 +15,8 @@
 
 #include "packets.h"
 
+#include "multiselect.h"
+
 enum cursor_hover_state {
   HOVER_NONE = 0,
   HOVER_GOTO,
@@ -24,12 +26,12 @@ enum cursor_hover_state {
   HOVER_PARADROP,
   HOVER_CONNECT,
   HOVER_PATROL,
-  HOVER_MYPATROL,
+  HOVER_AIR_PATROL,
   HOVER_AIRLIFT_SOURCE,
   HOVER_AIRLIFT_DEST,
   HOVER_RALLY_POINT,
-  HOVER_MY_AI_TRADE,
-  HOVER_MY_AI_TRADE_CITY,
+  HOVER_TRADE_CITY,
+  HOVER_TRADE_DEST
 };
 
 /* Selecting unit from a stack without popup. */
@@ -37,6 +39,12 @@ enum quickselect_type {
   SELECT_POPUP = 0, SELECT_SEA, SELECT_LAND
 };
 
+/*
+ * Hard-coded dependences in:
+ * - control.c
+ * - gui-gtk-2.0/menu.c
+ * - options.c: get_new_unit_action_name()
+ */
 enum new_unit_action {
   ACTION_IDLE,
   ACTION_SENTRY,
@@ -45,6 +53,25 @@ enum new_unit_action {
   ACTION_FORTIFY_OR_SLEEP
 };
 
+/*
+ * Hard-coded dependences in:
+ * - control.c
+ * - gui-gtk-2.0/menu.c
+ * - options.c: get_caravan_action_name()
+ */
+enum default_caravan_unit_actions {
+  DCA_POPUP_DIALOG = 0, /* Must be first. */
+  DCA_ESTABLISH_TRADEROUTE,
+  DCA_HELP_BUILD_WONDER,
+  DCA_KEEP_MOVING /* Must be last. */
+};
+
+/*
+ * Hard-coded dependences in:
+ * - control.c
+ * - gui-gtk-2.0/menu.c
+ * - options.c: get_diplomat_action_upon_unit_name()
+ */
 enum default_diplomat_unit_actions {
   DDUA_POPUP_DIALOG = 0, /* Must be first. */
   DDUA_BRIBE,
@@ -52,6 +79,12 @@ enum default_diplomat_unit_actions {
   DDUA_KEEP_MOVING /* Must be last. */
 };
 
+/*
+ * Hard-coded dependences in:
+ * - control.c
+ * - gui-gtk-2.0/menu.c
+ * - options.c: get_diplomat_action_upon_city_name()
+ */
 enum default_diplomat_city_actions {
   DDCA_POPUP_DIALOG = 0, /* Must be first. */
   DDCA_EMBASSY,
@@ -72,9 +105,9 @@ extern bool autowakeup_state;
 extern bool moveandattack_state;
 extern int lastactivatedunit;
 extern int look_into_allied_city;
-extern int default_caravan_action;
-extern int default_diplomat_unit_action;
-extern int default_diplomat_city_action;
+extern enum default_caravan_unit_actions default_caravan_action;
+extern enum default_diplomat_unit_actions default_diplomat_unit_action;
+extern enum default_diplomat_city_actions default_diplomat_city_action;
 extern bool default_diplomat_ignore_allies;
 extern bool focus_turn;
 extern enum new_unit_action default_action_type;
@@ -86,11 +119,8 @@ void request_auto_airlift_source_selection(void);
 void request_auto_airlift_destination_selection(void);
 
 void key_airplane_patrol(void);
-void city_set_rally_point(struct city *pcity,struct tile *ptile);
 
 void key_select_rally_point(void);
-void key_clear_rally_point_for_selected_cities(void);
-void check_rally_points(struct city *pcity, struct unit *punit);
 void check_new_unit_action(struct unit *punit);
 void key_unit_delayed_airlift(void);
 void key_add_pause_delayed_goto(void);
@@ -239,18 +269,15 @@ void key_unit_unload(void);
 void key_unit_unload_all(void);
 void key_unit_wait(void);
 void key_unit_wakeup_others(void);
-void key_unit_delayed_goto(int flg);
+void key_unit_delayed_goto(enum automatic_execution flag);
 void key_unit_execute_delayed_goto(void);
 void key_unit_clear_delayed_orders(void);
-void key_toggle_autowakeup(void);
+void key_add_trade_city(void);
+void key_auto_caravan_goto(void);
+void key_auto_caravan(void);
 void key_toggle_moveandattack(void);
-
 void key_unit_air_patrol(void);
-void key_toggle_spread_airport(void);
-void key_toggle_spread_ally(void);
-void key_my_ai_trade(void);
-void key_my_ai_trade_city(void);
-
+void key_unit_air_patrol_dest(void);
 void update_hover_cursor(void);
 
 /* don't change this unless you also put more entries in data/Freeciv */

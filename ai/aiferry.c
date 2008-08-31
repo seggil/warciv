@@ -17,6 +17,7 @@
 
 #include "log.h"
 
+#include "city.h"
 #include "game.h"
 #include "unit.h"
 

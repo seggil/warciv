@@ -104,8 +104,6 @@ int collect_cids2(cid * dest_cids);
 int collect_cids3(cid * dest_cids);
 int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech);
 int collect_cids5(cid * dest_cids, struct city *pcity);
-int collect_wids1(wid * dest_wids, struct city *pcity, bool wl_first, 
-		  bool advanced_tech);
 
 /* the number of units in city */
 int num_present_units_in_city(struct city* pcity);
@@ -129,11 +127,12 @@ void cityrep_buy(struct city *pcity);
 void common_taxrates_callback(int i);
 
 int buy_production_in_selected_cities(void);
+void set_rally_point_for_selected_cities(struct tile *ptile);
 
 void city_clear_worklist(struct city *pcity);
 void clear_worklists_in_selected_cities(void);
 void city_worklist_check(struct city *pcity, struct worklist *pwl);
-  
+
 void city_autonaming_init(void);
 void city_autonaming_free(void);
 void city_autonaming_add_used_name(const char *city_name);
@@ -151,6 +150,9 @@ void restore_link_mark(enum tag_link_types type, int id);
 
 void set_default_user_tech_goal(void);
 void force_tech_goal(Tech_Type_id goal);
+
+void execute_air_patrol_orders(void);
+void do_unit_air_patrol(struct unit *punit, struct tile *ptile);
 
 enum client_vote_type {
   CVT_NONE = 0,

@@ -34,6 +34,7 @@
 #include "spaceship.h"
 #include "support.h"
 #include "tech.h"
+#include "traderoute.h"
 #include "unit.h"
 
 #include "game.h"
@@ -188,6 +189,7 @@ void game_remove_city(struct city *pcity)
 	   get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
 	  pcity->tile->y);
 
+  check_removed_city(pcity);
   city_map_checked_iterate(pcity->tile, x, y, map_tile) {
     set_worker_city(pcity, x, y, C_TILE_EMPTY);
   } city_map_checked_iterate_end;
@@ -246,6 +248,7 @@ void game_init(void)
   game.traderoute_info.traderevenuepct = GAME_DEFAULT_TRADEREVENUEPCT;
   game.traderoute_info.caravanbonusstyle = GAME_DEFAULT_CARAVANBONUSSTYLE;
   game.traderoute_info.trademindist = GAME_DEFAULT_TRADEMINDIST;
+  game.traderoute_info.maxtraderoutes = GAME_DEFAULT_MAXTRADEROUTES;
 
   /* Ext-info --- Warserver */
   game.ext_info.futuretechsscore = GAME_DEFAULT_FUTURETECHSSCORE;
@@ -406,6 +409,7 @@ static void game_remove_all_players(void)
 ***************************************************************/
 void game_free(void)
 {
+  game_remove_all_trade_routes();
   game_remove_all_players();
   map_free();
   idex_free();
@@ -728,7 +732,7 @@ enum game_types game_determine_type(void)
   int max_team_size = 0;
 
   players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || pplayer->is_observer) {
+    if (is_barbarian(pplayer)) {
       continue;
     }
     if (!pplayer->is_connected

@@ -1525,18 +1525,18 @@ void notify_embassies(struct player *pplayer, struct player *exclude,
 void send_player_info_c(struct player *src, struct conn_list *dest)
 {
   players_iterate(pplayer) {
-    if(!src || pplayer==src) {
+    if (!src || pplayer == src) {
       struct packet_player_info info;
 
       package_player_common(pplayer, &info);
 
       conn_list_iterate(dest, pconn) {
-	if (pconn->player && pconn->player->is_observer) {
-	  /* Global observer. */
-	  package_player_info(pplayer, &info, pconn->player, INFO_FULL);
-	} else if (pconn->player) {
+	if (pconn->player) {
 	  /* Players (including regular observers) */
 	  package_player_info(pplayer, &info, pconn->player, INFO_MINIMUM);
+	} else if (pconn->observer) {
+	  /* Global observers */
+	  package_player_info(pplayer, &info, NULL, INFO_FULL);
 	} else {
 	  package_player_info(pplayer, &info, NULL, INFO_MINIMUM);
 	}
@@ -1567,25 +1567,25 @@ static void package_player_common(struct player *plr,
 {
   int i;
 
-  packet->playerno=plr->player_no;
+  packet->playerno = plr->player_no;
   sz_strlcpy(packet->name, plr->name);
   sz_strlcpy(packet->username, plr->username);
-  packet->nation=plr->nation;
-  packet->is_male=plr->is_male;
+  packet->nation = plr->nation;
+  packet->is_male = plr->is_male;
   packet->team = plr->team;
-  packet->city_style=plr->city_style;
+  packet->city_style = plr->city_style;
 
-  packet->is_alive=plr->is_alive;
-  packet->is_connected=plr->is_connected;
-  packet->ai=plr->ai.control;
+  packet->is_alive = plr->is_alive;
+  packet->is_connected = plr->is_connected;
+  packet->ai = plr->ai.control;
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
     packet->love[i] = plr->ai.love[i];
   }
   packet->barbarian_type = plr->ai.barbarian_type;
-  packet->reputation=plr->reputation;
+  packet->reputation = plr->reputation;
 
-  packet->turn_done=plr->turn_done;
-  packet->nturns_idle=plr->nturns_idle;
+  packet->turn_done = plr->turn_done;
+  packet->nturns_idle = plr->nturns_idle;
 }
 
 /**************************************************************************
@@ -2327,4 +2327,17 @@ void handle_player_turn_done(struct player *pplayer)
   check_for_full_turn_done();
 
   send_player_info(pplayer, NULL);
+}
+
+/**************************************************************************
+  Send a player_info packet every time we get this packet. The client
+  wish to have updated info to display to the user (pconn).
+**************************************************************************/
+void handle_player_info_req(struct connection *pconn, int player_id)
+{
+  struct player *pplayer = get_player(player_id);
+
+  if (pplayer) {
+    send_player_info_c(pplayer, pconn->self);
+  }
 }

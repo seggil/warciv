@@ -33,7 +33,7 @@ void init_worklist(struct worklist *pwl)
   int i;
 
   pwl->is_valid = TRUE;
-  strcpy(pwl->name, "a worklist");
+  pwl->name[0] = '\0';
 
   for (i = 0; i < MAX_LEN_WORKLIST; i++) {
     pwl->wlefs[i] = WEF_END;

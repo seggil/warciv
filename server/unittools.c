@@ -34,12 +34,15 @@
 #include "rand.h"
 #include "shared.h"
 #include "support.h"
+#include "traderoute.h"
 #include "unit.h"
 
+#include "autoattack.h"
 #include "barbarian.h"
 #include "citytools.h"
 #include "cityturn.h"
 #include "diplhand.h"
+#include "gamehand.h"
 #include "gamelog.h"
 #include "gotohand.h"
 #include "maphand.h"
@@ -47,9 +50,8 @@
 #include "sernet.h"
 #include "settlers.h"
 #include "srv_main.h"
+#include "tradehand.h"
 #include "unithand.h"
-#include "gamehand.h"
-#include "autoattack.h"
 
 #include "aiexplorer.h"
 #include "aitools.h"
@@ -761,6 +763,14 @@ static void update_unit_activity(struct unit *punit)
     if (punit->activity_count >= 1) {
       set_unit_activity(punit,ACTIVITY_FORTIFIED);
     }
+  }
+
+  if (punit->air_patrol_tile) {
+    /* Air patrol: don't execute now */
+    punit->goto_tile = punit->air_patrol_tile;
+    set_unit_activity(punit, ACTIVITY_GOTO);
+    do_unit_goto(punit, GOTO_MOVE_ANY, TRUE);
+    return;
   }
 
   if (activity==ACTIVITY_GOTO) {
@@ -1504,6 +1514,10 @@ static void server_remove_unit(struct unit *punit)
   struct tile *unit_tile = punit->tile;
   struct player *unitowner = unit_owner(punit);
 
+  if (punit->ptr) {
+    trade_free_unit(punit);
+  }
+
 #ifndef NDEBUG
   unit_list_iterate(punit->tile->units, pcargo) {
     assert(pcargo->transported_by != punit->id);
@@ -1804,6 +1818,14 @@ void package_unit(struct unit *punit, struct packet_unit_info *packet)
     packet->goto_dest_y = 255;
     assert(!is_normal_map_pos(255, 255));
   }
+  if (punit->air_patrol_tile) {
+    packet->air_patrol_x = punit->air_patrol_tile->x;
+    packet->air_patrol_y = punit->air_patrol_tile->y;
+  } else {
+    packet->air_patrol_x = 255;
+    packet->air_patrol_y = 255;
+    assert(!is_normal_map_pos(255, 255));
+  }
   packet->activity_target = punit->activity_target;
   packet->paradropped = punit->paradropped;
   packet->connecting = FALSE;
@@ -1992,24 +2014,20 @@ void send_unit_info(struct player *dest, struct unit *punit)
 **************************************************************************/
 void send_all_known_units(struct conn_list *dest)
 {
-  int p;
-  
   conn_list_do_buffer(dest);
   conn_list_iterate(dest, pconn) {
     struct player *pplayer = pconn->player;
     if (!pconn->player && !pconn->observer) {
       continue;
     }
-    for(p=0; p<game.info.nplayers; p++) { /* send the players units */
-      struct player *unitowner = &game.players[p];
+    players_iterate(unitowner) {
       unit_list_iterate(unitowner->units, punit) {
-	if (!pplayer
-	    || map_is_known_and_seen(punit->tile, pplayer)) {
+	if (!pplayer || map_is_known_and_seen(punit->tile, pplayer)) {
 	  send_unit_info_to_onlookers(pconn->self, punit,
 				      punit->tile, FALSE);
 	}
       } unit_list_iterate_end;
-    }
+    } players_iterate_end;
   } conn_list_iterate_end;
   conn_list_do_unbuffer(dest);
   force_flush_packets();
@@ -2896,6 +2914,9 @@ static bool maybe_cancel_patrol_due_to_enemy(struct unit *punit)
 ****************************************************************************/
 static void cancel_orders(struct unit *punit, char *dbg_msg)
 {
+  if (punit->ptr) {
+    trade_free_unit(punit);
+  }
   free_unit_orders(punit);
   send_unit_info(NULL, punit);
   freelog(LOG_DEBUG, "%s", dbg_msg);
@@ -2941,6 +2962,20 @@ bool execute_orders(struct unit *punit)
 
   while (TRUE) {
     struct unit_order order;
+
+    if (punit->ptr) {
+      if (punit->tile == punit->ptr->pcity1->tile
+	  && punit->moves_left > 0
+	  && punit->homecity != punit->ptr->pcity1->id) {
+	handle_unit_change_homecity(unit_owner(punit), punit->id,
+				    punit->ptr->pcity1->id);
+      } else if (punit->tile == punit->ptr->pcity2->tile
+		 && punit->homecity == punit->ptr->pcity1->id) {
+	unit_establish_trade_route(punit, punit->ptr->pcity1,
+				   punit->ptr->pcity2);
+	return FALSE;
+      }
+    }
 
     if (punit->moves_left == 0) {
       /* FIXME: this check won't work when actions take 0 MP. */
@@ -3097,6 +3132,18 @@ bool execute_orders(struct unit *punit)
     if (last_order) {
       assert(punit->has_orders == FALSE);
       freelog(LOG_DEBUG, "  stopping because orders are complete");
+      if (punit->ptr) {
+	/* Sometimes, we need to swap cities after the game was loaded. */
+	punit->ptr->move_cost = calculate_trade_move_cost(punit->ptr);
+	if (punit->tile == punit->ptr->pcity2->tile
+	    && punit->homecity == punit->ptr->pcity1->id) {
+	  unit_establish_trade_route(punit, punit->ptr->pcity1,
+				     punit->ptr->pcity2);
+	  return FALSE;
+	} else {
+	  trade_free_unit(punit);
+	}
+      }
       return TRUE;
     }
 

@@ -37,7 +37,6 @@
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "multiselect.h"
-#include "wc_settings.h"
 #include "options.h"
 #include "tilespec.h"
 

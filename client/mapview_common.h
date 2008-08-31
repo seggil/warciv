@@ -233,6 +233,6 @@ bool map_canvas_resized(int width, int height);
 void init_mapcanvas_and_overview(void);
 
 void draw_traderoutes(void);
-void update_trade_route_line(struct city *pcity1, struct city *pcity2);
+void update_trade_route_line(struct trade_route *ptr);
 
 #endif /* FC__MAPVIEW_COMMON_H */

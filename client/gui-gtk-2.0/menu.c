@@ -24,14 +24,15 @@
 #include "government.h"
 #include "packets.h"
 #include "unittype.h"
+#include "traderoute.h"
 
 #include "civclient.h"
+#include "climisc.h"
 #include "clinet.h"
 #include "connectdlg_common.h"
 #include "multiselect.h"
-#include "myai.h"
 #include "options.h"
-#include "wc_settings.h"
+#include "trade.h"
 
 #include "chatline.h"
 #include "cityrep.h"
@@ -51,7 +52,6 @@
 #include "gotodlg_g.h"
 #include "helpdlg_g.h"
 #include "mapview_g.h"
-#include "messagedlg_g.h"
 #include "ratesdlg_g.h"
 #include "spaceshipdlg_g.h"
 
@@ -59,6 +59,8 @@
 
 /* Use it to manage buf size for char variables */
 #define LOG_MENU LOG_VERBOSE
+
+#define BOOL(expression) ((expression) != 0)
 
 static GtkWidget *main_menubar = NULL;
 static GtkUIManager *main_uimanager = NULL;
@@ -386,22 +388,6 @@ static void callback_game_options(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_msg_options(GtkAction *action, gpointer user_data)
-{
-  popup_messageopt_dialog();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_game_chatline_colors(GtkAction *action, gpointer user_data)
-{
-  popup_chatline_config_dialog();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
 static void callback_game_style(GtkAction *action, gpointer user_data)
 {
   popup_style_config_dialog();
@@ -413,33 +399,6 @@ static void callback_game_style(GtkAction *action, gpointer user_data)
 static void callback_game_save_settings(GtkAction *action, gpointer user_data)
 {
   save_options();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_game_pepsettings(GtkAction *action, gpointer user_data)
-{
-  create_pepsetting_dialog();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_game_pepsettings_load(GtkAction *action,
-                                           gpointer user_data)
-{
-  load_all_settings();
-  init_menus();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_game_pepsettings_save(GtkAction *action,
-                                           gpointer user_data)
-{
-  save_all_settings();
 }
 
 /****************************************************************
@@ -628,22 +587,10 @@ static const char *load_menu_game(void)
     {"GAME", NULL, _("_Game"), NULL, NULL, NULL},
     {"GAME_OPTIONS", GTK_STOCK_PREFERENCES, _("Local _Options"),
      NULL, _("Local _Options"), G_CALLBACK(callback_game_options)},
-    {"GAME_MSG_OPTIONS", GTK_STOCK_PREFERENCES, _("_Message Options"),
-     NULL, _("_Message Options"), G_CALLBACK(callback_game_msg_options)},
-    {"GAME_CHATLINE_COLORS", GTK_STOCK_SELECT_COLOR, _("_Chat Colors"),
-     NULL, _("_Chat Colors"), G_CALLBACK(callback_game_chatline_colors)},
     {"GAME_STYLE", GTK_STOCK_SELECT_FONT, _("_Font Size"),
      NULL, _("_Font Size"), G_CALLBACK(callback_game_style)},
     {"GAME_SAVE_SETTINGS", GTK_STOCK_SAVE_AS, _("Sa_ve Settings"),
      NULL, _("Sa_ve Settings"), G_CALLBACK(callback_game_save_settings)},
-    {"GAME_PEPSETTINGS", GTK_STOCK_PREFERENCES, _("Warclient _Options"),
-     NULL, _("Warclient _Options"), G_CALLBACK(callback_game_pepsettings)},
-    {"GAME_PEPSETTINGS_LOAD", GTK_STOCK_REDO, _("Lo_ad Warclient Settings"),
-     NULL, _("Lo_ad Warclient Settings"),
-     G_CALLBACK(callback_game_pepsettings_load)},
-    {"GAME_PEPSETTINGS_SAVE", GTK_STOCK_SAVE_AS, _("Sa_ve Warclient Settings"),
-     NULL, _("Sa_ve Warclient Settings"),
-     G_CALLBACK(callback_game_pepsettings_save)},
     {"GAME_SERVER_OPTIONS1", GTK_STOCK_PREFERENCES,
      _("_Initial Server Options"),
      NULL, _("_Initial Server Options"),
@@ -678,14 +625,8 @@ static const char *load_menu_game(void)
   my_snprintf(buf, sizeof(buf),
               "<menu action=\"GAME\">\n"
               "<menuitem action=\"GAME_OPTIONS\" />\n"
-              "<menuitem action=\"GAME_MSG_OPTIONS\" />\n"
-              "<menuitem action=\"GAME_CHATLINE_COLORS\" />\n"
               "<menuitem action=\"GAME_STYLE\" />\n"
               "<menuitem action=\"GAME_SAVE_SETTINGS\" />\n"
-              "<separator/>\n"
-              "<menuitem action=\"GAME_PEPSETTINGS\" />\n"
-              "<menuitem action=\"GAME_PEPSETTINGS_LOAD\" />\n"
-              "<menuitem action=\"GAME_PEPSETTINGS_SAVE\" />\n"
               "<separator/>\n"
               "<menuitem action=\"GAME_SERVER_OPTIONS1\" />\n"
               "<menuitem action=\"GAME_SERVER_OPTIONS2\" />\n"
@@ -723,21 +664,6 @@ static void callback_government_find_city(GtkAction *action,
                                           gpointer user_data)
 {
   popup_find_dialog();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_government_worklists(GtkAction *action,
-                                          gpointer user_data)
-{
-  struct unit *punit = get_unit_in_focus();
-
-  if (punit && unit_flag(punit, F_SETTLERS)) {
-    key_unit_connect(ACTIVITY_RAILROAD);
-  } else {
-    popup_worklists_report();
-  }
 }
 
 /****************************************************************
@@ -899,8 +825,6 @@ static const char *load_menu_government(void)
      "<Shift>t", _("_Tax Rates"), G_CALLBACK(callback_government_tax_rate)},
     {"GOVERNMENT_FIND_CITY", NULL, _("_Find City"),
      "<Shift>f", _("_Find City"), G_CALLBACK(callback_government_find_city)},
-    {"GOVERNMENT_WORKLISTS", NULL, _("_Worklists"),
-     "<Control>l", _("_Worklists"), G_CALLBACK(callback_government_worklists)},
     {"GOVERNMENT_CLEAR_SELECTED_WORKLISTS", NULL,
      _("_Clear Selected Worklists"),
      "<Control>w", _("_Clear Selected Worklists"),
@@ -923,7 +847,6 @@ static const char *load_menu_government(void)
               "<menuitem action=\"GOVERNMENT_TAX_RATE\" />\n"
               "<separator/>\n"
               "<menuitem action=\"GOVERNMENT_FIND_CITY\" />\n"
-              "<menuitem action=\"GOVERNMENT_WORKLISTS\" />\n"
               "<menuitem action=\"GOVERNMENT_CLEAR_SELECTED_WORKLISTS\" />\n"
               "<separator/>\n"
               "<menu action=\"GOVERNMENT_CHANGE\">\n"
@@ -1505,7 +1428,7 @@ static void callback_order_wakeup_others(GtkAction *action, gpointer user_data)
 *****************************************************************/
 static void callback_order_auto_settler(GtkAction *action, gpointer user_data)
 {
-  if(get_unit_in_focus()) {
+  if (get_unit_in_focus()) {
     enable_auto_mode();
   }
 }
@@ -1531,13 +1454,7 @@ static void callback_order_connect_road(GtkAction *action, gpointer user_data)
 *****************************************************************/
 static void callback_order_connect_rail(GtkAction *action, gpointer user_data)
 {
-  struct unit *punit = get_unit_in_focus();
-
-  if (punit && unit_flag(punit, F_SETTLERS)) {
-    key_unit_connect(ACTIVITY_RAILROAD);
-  } else {
-    popup_worklists_report();
-  }
+  key_unit_connect(ACTIVITY_RAILROAD);
 }
 
 /****************************************************************
@@ -1960,9 +1877,9 @@ static void callback_delayed_goto_dg3_execute(GtkAction *action,
 static void callback_delayed_goto_inclusive_all(GtkToggleAction *action,
                                                 gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_ALL) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_ALL);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_ALL)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_ALL)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -1973,9 +1890,9 @@ static void callback_delayed_goto_inclusive_all(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_new(GtkToggleAction *action,
                                                 gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_NEW) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_NEW);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_NEW)
+      ^ gtk_toggle_action_get_active(action)
+      &&  filter_change(&delayed_goto_inclusive_filter, FILTER_NEW)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -1986,9 +1903,9 @@ static void callback_delayed_goto_inclusive_new(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_fortified(GtkToggleAction *action,
                                                       gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_FORTIFIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_FORTIFIED);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_FORTIFIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_FORTIFIED)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -1999,9 +1916,9 @@ static void callback_delayed_goto_inclusive_fortified(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_sentried(GtkToggleAction *action,
                                                      gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_SENTRIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_SENTRIED);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_SENTRIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_SENTRIED)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2012,9 +1929,9 @@ static void callback_delayed_goto_inclusive_sentried(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_veteran(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_VETERAN) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_VETERAN);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_VETERAN)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_VETERAN)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2025,9 +1942,9 @@ static void callback_delayed_goto_inclusive_veteran(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_auto(GtkToggleAction *action,
                                                  gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_AUTO) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_AUTO);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_AUTO)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_AUTO)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2038,9 +1955,9 @@ static void callback_delayed_goto_inclusive_auto(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_idle(GtkToggleAction *action,
                                                  gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_IDLE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_IDLE);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_IDLE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_IDLE)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2051,9 +1968,9 @@ static void callback_delayed_goto_inclusive_idle(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_able_to_move(GtkToggleAction *action,
                                                          gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_ABLE_TO_MOVE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_ABLE_TO_MOVE);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_ABLE_TO_MOVE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_ABLE_TO_MOVE)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2064,9 +1981,9 @@ static void callback_delayed_goto_inclusive_able_to_move(GtkToggleAction *action
 static void callback_delayed_goto_inclusive_full_moves(GtkToggleAction *action,
                                                        gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_FULL_MOVES) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_FULL_MOVES);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_FULL_MOVES)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_FULL_MOVES)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2077,9 +1994,9 @@ static void callback_delayed_goto_inclusive_full_moves(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_full_hp(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_FULL_HP) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_FULL_HP);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_FULL_HP)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_FULL_HP)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2090,9 +2007,9 @@ static void callback_delayed_goto_inclusive_full_hp(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_military(GtkToggleAction *action,
                                                      gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_MILITARY) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_MILITARY);
+  if (BOOL(delayed_goto_inclusive_filter & FILTER_MILITARY)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_MILITARY)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2103,9 +2020,9 @@ static void callback_delayed_goto_inclusive_military(GtkToggleAction *action,
 static void callback_delayed_goto_inclusive_off(GtkToggleAction *action,
                                                 gpointer user_data)
 {
-  if (!!(delayed_goto_inclusive_filter & FILTER_OFF) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_inclusive_filter, FILTER_OFF);
+  if ((delayed_goto_inclusive_filter & FILTER_OFF)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_inclusive_filter, FILTER_OFF)) {
     update_delayed_goto_inclusive_filter_menu();
   }
 }
@@ -2116,9 +2033,9 @@ static void callback_delayed_goto_inclusive_off(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_all(GtkToggleAction *action,
                                                 gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_ALL) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_ALL);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_ALL)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_ALL)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 }
@@ -2129,9 +2046,9 @@ static void callback_delayed_goto_exclusive_all(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_new(GtkToggleAction *action,
                                                 gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_NEW) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_NEW);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_NEW)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_NEW)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 }
@@ -2142,9 +2059,9 @@ static void callback_delayed_goto_exclusive_new(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_fortified(GtkToggleAction *action,
                                                       gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_FORTIFIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_FORTIFIED);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_FORTIFIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_FORTIFIED)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 }
@@ -2155,9 +2072,9 @@ static void callback_delayed_goto_exclusive_fortified(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_sentried(GtkToggleAction *action,
                                                      gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_SENTRIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_SENTRIED);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_SENTRIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_SENTRIED)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 }
@@ -2168,9 +2085,9 @@ static void callback_delayed_goto_exclusive_sentried(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_veteran(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_VETERAN) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_VETERAN);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_VETERAN)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_VETERAN)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2182,9 +2099,9 @@ static void callback_delayed_goto_exclusive_veteran(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_auto(GtkToggleAction *action,
                                                  gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_AUTO) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_AUTO);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_AUTO)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_AUTO)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 }
@@ -2195,9 +2112,9 @@ static void callback_delayed_goto_exclusive_auto(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_idle(GtkToggleAction *action,
                                                  gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_IDLE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_IDLE);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_IDLE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_IDLE)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2209,9 +2126,9 @@ static void callback_delayed_goto_exclusive_idle(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_able_to_move(GtkToggleAction *action,
                                                          gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_ABLE_TO_MOVE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_ABLE_TO_MOVE);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_ABLE_TO_MOVE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_ABLE_TO_MOVE)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2223,9 +2140,9 @@ static void callback_delayed_goto_exclusive_able_to_move(GtkToggleAction *action
 static void callback_delayed_goto_exclusive_full_moves(GtkToggleAction *action,
                                                        gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_FULL_MOVES) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_FULL_MOVES);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_FULL_MOVES)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_FULL_MOVES)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2237,9 +2154,9 @@ static void callback_delayed_goto_exclusive_full_moves(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_full_hp(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_FULL_HP) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_FULL_HP);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_FULL_HP)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_FULL_HP)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2251,9 +2168,9 @@ static void callback_delayed_goto_exclusive_full_hp(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_military(GtkToggleAction *action,
                                                      gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_MILITARY) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_MILITARY);
+  if (BOOL(delayed_goto_exclusive_filter & FILTER_MILITARY)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_MILITARY)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2265,9 +2182,9 @@ static void callback_delayed_goto_exclusive_military(GtkToggleAction *action,
 static void callback_delayed_goto_exclusive_off(GtkToggleAction *action,
                                                 gpointer user_data)
 {
-  if (!!(delayed_goto_exclusive_filter & FILTER_OFF) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&delayed_goto_exclusive_filter, FILTER_OFF);
+  if ((delayed_goto_exclusive_filter & FILTER_OFF) ^
+      gtk_toggle_action_get_active(action)
+      && filter_change(&delayed_goto_exclusive_filter, FILTER_OFF)) {
     update_delayed_goto_exclusive_filter_menu();
   }
 
@@ -2344,21 +2261,22 @@ static void callback_dgf_continent_same_type(GtkAction *action,
 }
 
 /****************************************************************
-  ... for automatic processus
+  ...
 *****************************************************************/
-static void update_automatic_processus_filter_menu(automatic_processus *pap,
-                                                   int j)
+static void update_delayed_goto_automatic_filter_menu(int dg)
 {
-  int i;
   char buf[256];
+  const char *str;
+  int i;
+  filter filter;
 
-  for (i = 0; i < AUTO_VALUES_NUM; i++) {
-    my_snprintf(buf, sizeof(buf), "%s_%d",
-                pap->menu, i);
-    if (is_auto_value_allowed(pap, i)) {
-      menu_toggle_set_active(toggle_action_group_delayed_goto_automatic[j],
-                             buf, pap->auto_filter & AV_TO_FV(i));
-    }
+  assert(dg >= 0 && dg < DELAYED_GOTO_NUM);
+
+  filter = delayed_goto_list[dg].automatic_execution;
+  for (i = 1; (str = delayed_goto_get_auto_name(i)); i <<= 1) {
+    my_snprintf(buf, sizeof(buf), "DELAYED_GOTO%d_AUTO%d", dg, i);
+    menu_toggle_set_active(toggle_action_group_delayed_goto_automatic[dg],
+			   buf, filter & i);
   }
 }
 
@@ -2368,94 +2286,65 @@ static void update_automatic_processus_filter_menu(automatic_processus *pap,
 static void callback_menu_delayed_goto_automatic(GtkToggleAction *action,
                                                  gpointer user_data)
 {
-  int j = GPOINTER_TO_INT(user_data);
-  int i;
   char buf[256];
+  const char *str;
+  int i, dg = GPOINTER_TO_INT(user_data);
 
-  automatic_processus_iterate(pap)
-  {
-    if(pap->menu[0]=='\0') {
-      continue;
-    }
+  assert(dg >= 0 && dg < DELAYED_GOTO_NUM);
 
-    for(i=0;i<AUTO_VALUES_NUM;i++){
-      my_snprintf(buf, sizeof(buf), "%s_%d",
-                  pap->menu, i);
-
-      if (is_auto_value_allowed(pap, i) &&
-          strcmp(buf, gtk_action_get_name(GTK_ACTION(action))) == 0) {
-
-        if (gtk_toggle_action_get_active(action) ^
-            (bool)(pap->auto_filter&AV_TO_FV(i)))
-          {
-            auto_filter_change(pap,i);
-            update_automatic_processus_filter_menu(pap, j);
-          }
-        return;
+  for (i = 1; (str = delayed_goto_get_auto_name(i)); i <<= 1) {
+    my_snprintf(buf, sizeof(buf), "DELAYED_GOTO%d_AUTO%d", dg, i);
+    if (0 == strcmp(buf, gtk_action_get_name(GTK_ACTION(action)))) {
+      if (BOOL(delayed_goto_list[dg].automatic_execution & i)
+	  ^ gtk_toggle_action_get_active(action)
+	  && delayed_goto_auto_filter_change(
+		 &delayed_goto_list[dg].automatic_execution, i)) {
+	update_delayed_goto_automatic_filter_menu(dg);
       }
     }
-  } automatic_processus_iterate_end;
+  }
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static const char *load_menu_delayed_goto_automatic(const char *actionname)
+static const char *load_menu_delayed_goto_automatic(const char *actionname,
+						    int dg)
 {
-  int i;
-  int j = 0;
-  int k = 0;
-  char buf[256];
-  GtkToggleActionEntry toggle_entries_delayed_goto_automatic[AUTO_VALUES_NUM];
-  char name[AUTO_VALUES_NUM][256];
-  char label[AUTO_VALUES_NUM][256];
+  GtkToggleActionEntry toggle_entries_delayed_goto_automatic[64];
+  char buf[256], name[64][256], label[64][256];
+  const char *str;
   static char retbuf[1024];
+  int i, j;
+
+  assert(dg >= 0 && dg < DELAYED_GOTO_NUM);
 
   retbuf[0] = '\0';
+  for (i = 1, j = 0; (str = delayed_goto_get_auto_name(i)); i <<= 1, j++) {
+    my_snprintf(name[j], sizeof(name[j]), "DELAYED_GOTO%d_AUTO%d", dg, i);
+    cat_snprintf(retbuf, sizeof(retbuf),
+		 "<menuitem action=\"%s\" />\n", name[j]);
+    sz_strlcpy(label[j], str);
+    toggle_entries_delayed_goto_automatic[j].name = name[j];
+    toggle_entries_delayed_goto_automatic[j].stock_id = NULL;
+    toggle_entries_delayed_goto_automatic[j].label = label[j];
+    toggle_entries_delayed_goto_automatic[j].accelerator = NULL;
+    toggle_entries_delayed_goto_automatic[j].tooltip = label[j];
+    toggle_entries_delayed_goto_automatic[j].callback =
+      G_CALLBACK(callback_menu_delayed_goto_automatic);
+    toggle_entries_delayed_goto_automatic[j].is_active = TRUE;
+  }
 
-  automatic_processus_iterate(pap)
-  {
-    j++;
-    if(pap->menu[0]=='\0' || strcmp(pap->menu, actionname) != 0) {
-      continue;
-    }
-    for (i=0;i<AUTO_VALUES_NUM;i++)
-      {
-        if(!is_auto_value_allowed(pap,i))
-          continue;
-        my_snprintf(buf, sizeof(buf), "%s_%d",
-                    pap->menu, i);
-        cat_snprintf(retbuf, sizeof(retbuf),
-                     "<menuitem action=\"%s\" />\n", buf);
-
-        sz_strlcpy(name[k], buf);
-        sz_strlcpy(label[k], ap_event_name(i));
-        toggle_entries_delayed_goto_automatic[k].name = name[k];
-        toggle_entries_delayed_goto_automatic[k].stock_id = NULL;
-        toggle_entries_delayed_goto_automatic[k].label = label[k];
-        toggle_entries_delayed_goto_automatic[k].accelerator = NULL;
-        toggle_entries_delayed_goto_automatic[k].tooltip = label[k];
-        toggle_entries_delayed_goto_automatic[k].callback =
-          G_CALLBACK(callback_menu_delayed_goto_automatic);
-        toggle_entries_delayed_goto_automatic[k].is_active = TRUE;
-        sz_strlcpy(pap->namemenu[k], name[k]);
-        k++;
-      }
-    break;
-  } automatic_processus_iterate_end;
-
-  my_snprintf(buf, sizeof(buf), "ToggleGroupDelayedGotoAutomatic%d", j-1);
-  toggle_action_group_delayed_goto_automatic[j-1] = gtk_action_group_new(buf);
-  gtk_action_group_set_translation_domain(toggle_action_group_delayed_goto_automatic[j-1],
+  my_snprintf(buf, sizeof(buf), "ToggleGroupDelayedGotoAutomatic%d", dg);
+  toggle_action_group_delayed_goto_automatic[dg] = gtk_action_group_new(buf);
+  gtk_action_group_set_translation_domain(toggle_action_group_delayed_goto_automatic[dg],
                                           PACKAGE);
 
-
-  gtk_action_group_add_toggle_actions(toggle_action_group_delayed_goto_automatic[j-1],
-                                      toggle_entries_delayed_goto_automatic,
-                                      k,
-                                      GINT_TO_POINTER(j-1));
+  gtk_action_group_add_toggle_actions(toggle_action_group_delayed_goto_automatic[dg],
+                                      toggle_entries_delayed_goto_automatic, j,
+                                      GINT_TO_POINTER(dg));
   gtk_ui_manager_insert_action_group(main_uimanager,
-                                     toggle_action_group_delayed_goto_automatic[j-1],
+                                     toggle_action_group_delayed_goto_automatic[dg],
                                      0);
 
   freelog(LOG_MENU, "Strlen of buf = %d; "
@@ -2815,7 +2704,7 @@ static const char *load_menu_delayed_goto(void)
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_MILITARY\" />\n"
               "<menuitem action=\"DELAYED_GOTO_EXCLUSIVE_OFF\" />\n"
               "</menu>\n",
-              load_menu_delayed_goto_automatic("DELAYED_GOTO_AUTOMATIC"));
+              load_menu_delayed_goto_automatic("DELAYED_GOTO_AUTOMATIC", 0));
 
   cat_snprintf(buf, sizeof(buf),
                "<separator/>\n"
@@ -2829,7 +2718,8 @@ static const char *load_menu_delayed_goto(void)
                "%s"
                "</menu>\n"
                "</menu>\n",
-               load_menu_delayed_goto_automatic("DELAYED_GOTO_DG1_AUTOMATIC"));
+               load_menu_delayed_goto_automatic("DELAYED_GOTO_DG1_AUTOMATIC",
+						1));
 
   cat_snprintf(buf, sizeof(buf),
                "<menu action=\"DELAYED_GOTO_DG2\">\n"
@@ -2842,7 +2732,8 @@ static const char *load_menu_delayed_goto(void)
                "%s"
                "</menu>\n"
                "</menu>\n",
-               load_menu_delayed_goto_automatic("DELAYED_GOTO_DG2_AUTOMATIC"));
+               load_menu_delayed_goto_automatic("DELAYED_GOTO_DG2_AUTOMATIC",
+						2));
 
   cat_snprintf(buf, sizeof(buf),
                "<menu action=\"DELAYED_GOTO_DG3\">\n"
@@ -2856,7 +2747,8 @@ static const char *load_menu_delayed_goto(void)
                "</menu>\n"
                "</menu>\n"
                "</menu>\n",
-               load_menu_delayed_goto_automatic("DELAYED_GOTO_DG3_AUTOMATIC"));
+               load_menu_delayed_goto_automatic("DELAYED_GOTO_DG3_AUTOMATIC",
+						3));
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_delayed_goto %d",
           (int) strlen(buf), (int) sizeof(buf));
@@ -3713,85 +3605,83 @@ static const char *load_menu_airlift(void)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_trade_city(GtkAction *action,
-                                                   gpointer user_data)
+static void callback_auto_caravan_add_trade_city(GtkAction *action,
+						 gpointer user_data)
 {
-  key_my_ai_trade_city();
+  key_add_trade_city();
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_clear_trade_city(GtkAction *action,
-                                                         gpointer user_data)
+static void callback_auto_caravan_clear_trade_cities(GtkAction *action,
+						    gpointer user_data)
 {
-  clear_my_ai_trade_cities();
+  clear_trade_city_list();
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_trade_recalculate(GtkAction *action,
-                                                          gpointer user_data)
+static void callback_auto_caravan_clear_trade_planning(GtkAction *action,
+						       gpointer user_data)
 {
-  trade_planning_calculation_start();
+  clear_trade_planning();
+}
+
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_auto_caravan_calculate_trade_planning(GtkAction *action,
+							   gpointer user_data)
+{
+  do_trade_planning_calculation();
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_estimate_trade(GtkAction *action,
-                                                       gpointer user_data)
+static void callback_auto_caravan_estimate_trade(GtkAction *action,
+						 gpointer user_data)
 {
-  calculate_trade_estimation();
+  show_trade_estimation();
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_show_free_slots(GtkAction *action,
-                                                        gpointer user_data)
+static void callback_auto_caravan_show_free_slots(GtkAction *action,
+						  gpointer user_data)
 {
-  show_free_slots_in_trade_plan();
+  show_free_slots_in_trade_planning(NULL);
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_show_trade_cities(GtkAction *action,
-                                                          gpointer user_data)
+static void callback_auto_caravan_show_trade_cities(GtkAction *action,
+						    gpointer user_data)
 {
-  show_cities_in_trade_plan();
+  show_cities_in_trade_planning();
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_trade_with(GtkAction *action,
-                                                   gpointer user_data)
+static void callback_auto_caravan_trade_with(GtkAction *action,
+					     gpointer user_data)
 {
-  key_my_ai_trade();
+  key_auto_caravan_goto();
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_auto_caravan_my_ai_caravan(GtkAction *action,
-                                                gpointer user_data)
+static void callback_auto_caravan_do_auto_caravan(GtkAction *action,
+						  gpointer user_data)
 {
-  multi_select_iterate(TRUE,punit)
-    {
-      my_ai_caravan(punit);
-    } multi_select_iterate_end;
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_auto_caravan_my_ai_trade_execute(GtkAction *action,
-                                                      gpointer user_data)
-{
-  my_ai_trade_route_execute_all();
+  key_auto_caravan();
 }
 
 /****************************************************************
@@ -3803,38 +3693,38 @@ static const char *load_menu_auto_caravan(void)
 
   GtkActionEntry entries_auto_caravan[] = {
     {"AUTO_CARAVAN", NULL, _("Auto _Caravan"), NULL, NULL, NULL},
-    {"AUTO_CARAVAN_MY_AI_TRADE_CITY", NULL, _("_Add a city in trade plan"),
-     "<Shift>a", _("_Add a city in trade plan"),
-     G_CALLBACK(callback_auto_caravan_my_ai_trade_city)},
-    {"AUTO_CARAVAN_MY_AI_CLEAR_TRADE_CITY", NULL,
-     _("_Clear city list for trade plan"),
-     NULL, _("_Clear city list for trade plan"),
-     G_CALLBACK(callback_auto_caravan_my_ai_clear_trade_city)},
-    {"AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE", NULL,
-     _("_Recalculate trade plan"),
-     NULL, _("_Recalculate trade plan"),
-     G_CALLBACK(callback_auto_caravan_my_ai_trade_recalculate)},
-    {"AUTO_CARAVAN_MY_AI_ESTIMATE_TRADE", NULL, _("Show trade _estimation"),
+    {"AUTO_CARAVAN_ADD_TRADE_CITY", NULL, _("_Add a city in trade planning"),
+     "<Shift>a", _("_Add a city in trade planning"),
+     G_CALLBACK(callback_auto_caravan_add_trade_city)},
+    {"AUTO_CARAVAN_CLEAR_TRADE_CITIES", NULL,
+     _("_Clear city list for trade planning"),
+     NULL, _("_Clear city list for trade planning"),
+     G_CALLBACK(callback_auto_caravan_clear_trade_cities)},
+    {"AUTO_CARAVAN_CLEAR_TRADE_PLANNING", NULL,
+     _("C_lear trade planning"),
+     NULL, _("C_lear trade planning"),
+     G_CALLBACK(callback_auto_caravan_clear_trade_planning)},
+    {"AUTO_CARAVAN_CALCULATE_TRADE_PLANNING", NULL,
+     _("Calculate trade _planning"),
+     NULL, _("Calculate trade _planning"),
+     G_CALLBACK(callback_auto_caravan_calculate_trade_planning)},
+    {"AUTO_CARAVAN_ESTIMATE_TRADE", NULL, _("Show trade _estimation"),
      NULL, _("Show trade _estimation"),
-     G_CALLBACK(callback_auto_caravan_my_ai_estimate_trade)},
-    {"AUTO_CARAVAN_MY_AI_SHOW_FREE_SLOTS", NULL,
+     G_CALLBACK(callback_auto_caravan_estimate_trade)},
+    {"AUTO_CARAVAN_SHOW_FREE_SLOTS", NULL,
      _("Show the trade route _free slots"),
      NULL, _("Show the trade route _free slots"),
-     G_CALLBACK(callback_auto_caravan_my_ai_show_free_slots)},
-    {"AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES", NULL,
-     _("Show cities in _trade plan"),
-     NULL, _("Show cities in _trade plan"),
-     G_CALLBACK(callback_auto_caravan_my_ai_show_trade_cities)},
-    {"AUTO_CARAVAN_MY_AI_TRADE_WITH", NULL, _("_Set caravan destination"),
+     G_CALLBACK(callback_auto_caravan_show_free_slots)},
+    {"AUTO_CARAVAN_SHOW_TRADE_CITIES", NULL,
+     _("Show cities in _trade planning"),
+     NULL, _("Show cities in _trade planning"),
+     G_CALLBACK(callback_auto_caravan_show_trade_cities)},
+    {"AUTO_CARAVAN_TRADE_WITH", NULL, _("_Set caravan destination"),
      "j", _("_Set caravan destination"), 
-     G_CALLBACK(callback_auto_caravan_my_ai_trade_with)},
-    {"AUTO_CARAVAN_MY_AI_CARAVAN", NULL, _("Auto_matic caravan orders"),
+     G_CALLBACK(callback_auto_caravan_trade_with)},
+    {"AUTO_CARAVAN_DO_AUTO_CARAVAN", NULL, _("Auto_matic caravan orders"),
      "<Control>j", _("Auto_matic caravan orders"),
-     G_CALLBACK(callback_auto_caravan_my_ai_caravan)},
-    {"AUTO_CARAVAN_MY_AI_TRADE_EXECUTE", NULL,
-     _("_Execute all trade route orders"),
-     "<Shift>j", _("_Execute all trade route orders"),
-     G_CALLBACK(callback_auto_caravan_my_ai_trade_execute)}
+     G_CALLBACK(callback_auto_caravan_do_auto_caravan)},
   };
 
   action_group_auto_caravan = gtk_action_group_new("GroupAutoCaravan");
@@ -3848,17 +3738,17 @@ static const char *load_menu_auto_caravan(void)
 
   my_snprintf(buf, sizeof(buf), "%s",
               "<menu action=\"AUTO_CARAVAN\">\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_TRADE_CITY\" />\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_CLEAR_TRADE_CITY\" />\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_ADD_TRADE_CITY\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_CLEAR_TRADE_CITIES\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_CLEAR_TRADE_PLANNING\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_CALCULATE_TRADE_PLANNING\" />\n"
               "<separator/>\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_ESTIMATE_TRADE\" />\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_SHOW_FREE_SLOTS\" />\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_ESTIMATE_TRADE\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_SHOW_FREE_SLOTS\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_SHOW_TRADE_CITIES\" />\n"
               "<separator/>\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_TRADE_WITH\" />\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_CARAVAN\" />\n"
-              "<menuitem action=\"AUTO_CARAVAN_MY_AI_TRADE_EXECUTE\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_TRADE_WITH\" />\n"
+              "<menuitem action=\"AUTO_CARAVAN_DO_AUTO_CARAVAN\" />\n"
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_auto_caravan %d",
@@ -3897,13 +3787,13 @@ static void callback_multi_selection_ms_clear(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_multi_selection_my_ai_spread(GtkAction *action,
-                                                  gpointer user_data)
+static void callback_multi_selection_spread(GtkAction *action,
+					    gpointer user_data)
 {
   if (tiles_hilited_cities) {
     key_select_rally_point();
   } else {
-    my_ai_spread_execute();
+    multi_select_spread();
   }
 }
 
@@ -4270,24 +4160,19 @@ static void callback_multi_selection_ms9_clear(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_multi_selection_my_ai_spread_airport(GtkToggleAction *action,
-                                                          gpointer user_data)
+static void callback_multi_selection_spread_airport(GtkToggleAction *action,
+						    gpointer user_data)
 {
-  if (spread_airport_cities ^
-      gtk_toggle_action_get_active(action)) {
-    key_toggle_spread_airport();
-  }
+  multi_select_spread_airport_cities = gtk_toggle_action_get_active(action);
 }
 
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_multi_selection_my_ai_spread_ally(GtkToggleAction *action,
-                                                       gpointer user_data)
+static void callback_multi_selection_spread_ally(GtkToggleAction *action,
+						 gpointer user_data)
 {
-  if (spread_allied_cities ^ gtk_toggle_action_get_active(action)) {
-    key_toggle_spread_ally();
-  }
+  multi_select_spread_allied_cities = gtk_toggle_action_get_active(action);
 }
 
 /****************************************************************
@@ -4296,9 +4181,9 @@ static void callback_multi_selection_my_ai_spread_ally(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_all(GtkToggleAction *action,
                                                    gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_ALL) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_ALL);
+  if (BOOL(multi_select_inclusive_filter & FILTER_ALL)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_ALL)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4310,13 +4195,12 @@ static void callback_multi_selection_inclusive_all(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_new(GtkToggleAction *action,
                                                    gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_NEW) ^
-      gtk_toggle_action_get_active(action))
-    {
-      filter_change(&multi_select_inclusive_filter, FILTER_NEW);
-      update_multi_selection_inclusive_filter_menu();
-      update_unit_info_label(get_unit_in_focus());
-    }
+  if (BOOL(multi_select_inclusive_filter & FILTER_NEW)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_NEW)) {
+    update_multi_selection_inclusive_filter_menu();
+    update_unit_info_label(get_unit_in_focus());
+  }
 }
 
 /****************************************************************
@@ -4325,9 +4209,9 @@ static void callback_multi_selection_inclusive_new(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_fortified(GtkToggleAction *action,
                                                          gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_FORTIFIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_FORTIFIED);
+  if (BOOL(multi_select_inclusive_filter & FILTER_FORTIFIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_FORTIFIED)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4339,9 +4223,9 @@ static void callback_multi_selection_inclusive_fortified(GtkToggleAction *action
 static void callback_multi_selection_inclusive_sentried(GtkToggleAction *action,
                                                         gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_SENTRIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_SENTRIED);
+  if (BOOL(multi_select_inclusive_filter & FILTER_SENTRIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_SENTRIED)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4353,9 +4237,9 @@ static void callback_multi_selection_inclusive_sentried(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_veteran(GtkToggleAction *action,
                                                        gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_VETERAN) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_VETERAN);
+  if (BOOL(multi_select_inclusive_filter & FILTER_VETERAN)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_VETERAN)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4367,9 +4251,9 @@ static void callback_multi_selection_inclusive_veteran(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_auto(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_AUTO) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_AUTO);
+  if (BOOL(multi_select_inclusive_filter & FILTER_AUTO)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_AUTO)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4381,9 +4265,9 @@ static void callback_multi_selection_inclusive_auto(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_idle(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_IDLE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_IDLE);
+  if (BOOL(multi_select_inclusive_filter & FILTER_IDLE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_IDLE)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4395,9 +4279,9 @@ static void callback_multi_selection_inclusive_idle(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_able_to_move(GtkToggleAction *action,
                                                             gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_ABLE_TO_MOVE);
+  if (BOOL(multi_select_inclusive_filter & FILTER_ABLE_TO_MOVE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_ABLE_TO_MOVE)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4409,9 +4293,9 @@ static void callback_multi_selection_inclusive_able_to_move(GtkToggleAction *act
 static void callback_multi_selection_inclusive_full_moves(GtkToggleAction *action,
                                                           gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_FULL_MOVES) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_FULL_MOVES);
+  if (BOOL(multi_select_inclusive_filter & FILTER_FULL_MOVES)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_FULL_MOVES)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4423,9 +4307,9 @@ static void callback_multi_selection_inclusive_full_moves(GtkToggleAction *actio
 static void callback_multi_selection_inclusive_full_hp(GtkToggleAction *action,
                                                        gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_FULL_HP) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_FULL_HP);
+  if (BOOL(multi_select_inclusive_filter & FILTER_FULL_HP)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_FULL_HP)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4437,9 +4321,9 @@ static void callback_multi_selection_inclusive_full_hp(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_military(GtkToggleAction *action,
                                                         gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_MILITARY) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_MILITARY);
+  if (BOOL(multi_select_inclusive_filter & FILTER_MILITARY)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_MILITARY)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4451,9 +4335,9 @@ static void callback_multi_selection_inclusive_military(GtkToggleAction *action,
 static void callback_multi_selection_inclusive_off(GtkToggleAction *action,
                                                    gpointer user_data)
 {
-  if (!!(multi_select_inclusive_filter & FILTER_OFF) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_inclusive_filter, FILTER_OFF);
+  if ((multi_select_inclusive_filter & FILTER_OFF)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_inclusive_filter, FILTER_OFF)) {
     update_multi_selection_inclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4465,9 +4349,9 @@ static void callback_multi_selection_inclusive_off(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_all(GtkToggleAction *action,
                                                    gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_ALL) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_ALL);
+  if (BOOL(multi_select_exclusive_filter & FILTER_ALL)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_ALL)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4479,9 +4363,9 @@ static void callback_multi_selection_exclusive_all(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_new(GtkToggleAction *action,
                                                    gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_NEW) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_NEW);
+  if (BOOL(multi_select_exclusive_filter & FILTER_NEW)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_NEW)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4493,9 +4377,9 @@ static void callback_multi_selection_exclusive_new(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_fortified(GtkToggleAction *action,
                                                          gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_FORTIFIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_FORTIFIED);
+  if (BOOL(multi_select_exclusive_filter & FILTER_FORTIFIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_FORTIFIED)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4507,9 +4391,9 @@ static void callback_multi_selection_exclusive_fortified(GtkToggleAction *action
 static void callback_multi_selection_exclusive_sentried(GtkToggleAction *action,
                                                         gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_SENTRIED) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_SENTRIED);
+  if (BOOL(multi_select_exclusive_filter & FILTER_SENTRIED)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_SENTRIED)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4521,9 +4405,9 @@ static void callback_multi_selection_exclusive_sentried(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_veteran(GtkToggleAction *action,
                                                        gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_VETERAN) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_VETERAN);
+  if (BOOL(multi_select_exclusive_filter & FILTER_VETERAN)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_VETERAN)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4535,9 +4419,9 @@ static void callback_multi_selection_exclusive_veteran(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_auto(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_AUTO) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_AUTO);
+  if (BOOL(multi_select_exclusive_filter & FILTER_AUTO)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_AUTO)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4549,9 +4433,9 @@ static void callback_multi_selection_exclusive_auto(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_idle(GtkToggleAction *action,
                                                     gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_IDLE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_IDLE);
+  if (BOOL(multi_select_exclusive_filter & FILTER_IDLE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_IDLE)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4563,9 +4447,9 @@ static void callback_multi_selection_exclusive_idle(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_able_to_move(GtkToggleAction *action,
                                                             gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_ABLE_TO_MOVE);
+  if (BOOL(multi_select_exclusive_filter & FILTER_ABLE_TO_MOVE)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_ABLE_TO_MOVE)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4577,9 +4461,9 @@ static void callback_multi_selection_exclusive_able_to_move(GtkToggleAction *act
 static void callback_multi_selection_exclusive_full_moves(GtkToggleAction *action,
                                                           gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_FULL_MOVES) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_FULL_MOVES);
+  if (BOOL(multi_select_exclusive_filter & FILTER_FULL_MOVES)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_FULL_MOVES)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4591,9 +4475,9 @@ static void callback_multi_selection_exclusive_full_moves(GtkToggleAction *actio
 static void callback_multi_selection_exclusive_full_hp(GtkToggleAction *action,
                                                        gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_FULL_HP) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_FULL_HP);
+  if (BOOL(multi_select_exclusive_filter & FILTER_FULL_HP)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_FULL_HP)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4605,9 +4489,9 @@ static void callback_multi_selection_exclusive_full_hp(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_military(GtkToggleAction *action,
                                                         gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_MILITARY) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_MILITARY);
+  if (BOOL(multi_select_exclusive_filter & FILTER_MILITARY)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_MILITARY)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4619,9 +4503,9 @@ static void callback_multi_selection_exclusive_military(GtkToggleAction *action,
 static void callback_multi_selection_exclusive_off(GtkToggleAction *action,
                                                    gpointer user_data)
 {
-  if (!!(multi_select_exclusive_filter & FILTER_OFF) ^
-      gtk_toggle_action_get_active(action)) {
-    filter_change(&multi_select_exclusive_filter, FILTER_OFF);
+  if ((multi_select_exclusive_filter & FILTER_OFF)
+      ^ gtk_toggle_action_get_active(action)
+      && filter_change(&multi_select_exclusive_filter, FILTER_OFF)) {
     update_multi_selection_exclusive_filter_menu();
     update_unit_info_label(get_unit_in_focus());
   }
@@ -4672,9 +4556,9 @@ static const char *load_menu_multi_selection(void)
      NULL, NULL, NULL},
     {"MULTI_SELECTION_EXCLUSIVE", NULL, _("Exclusive filter"),
      NULL, NULL, NULL},
-    {"MULTI_SELECTION_MY_AI_SPREAD", NULL, _("Multi-selection sprea_d"),
+    {"MULTI_SELECTION_SPREAD", NULL, _("Multi-selection sprea_d"),
      "<Shift>s", _("Multi-selection sprea_d"),
-     G_CALLBACK(callback_multi_selection_my_ai_spread)},
+     G_CALLBACK(callback_multi_selection_spread)},
     {"MULTI_SELECTION_MS1", NULL, _("Multi-selection _1"),
      NULL, NULL, NULL},
     {"MULTI_SELECTION_MS1_SELECT", NULL, _("_Select"),
@@ -4795,14 +4679,14 @@ static const char *load_menu_multi_selection(void)
   };
 
   GtkToggleActionEntry toggle_entries_multi_selection[] = {
-    {"MULTI_SELECTION_MY_AI_SPREAD_AIRPORT", NULL,
+    {"MULTI_SELECTION_SPREAD_AIRPORT", NULL,
      _("Spread only in cities _with airport"),
      NULL, _("Spread only in cities _with airport"),
-     G_CALLBACK(callback_multi_selection_my_ai_spread_airport), TRUE},
-    {"MULTI_SELECTION_MY_AI_SPREAD_ALLY", NULL,
+     G_CALLBACK(callback_multi_selection_spread_airport), TRUE},
+    {"MULTI_SELECTION_SPREAD_ALLY", NULL,
      _("Allow spreadi_ng into allied cities"),
      NULL, _("Allow spreadi_ng into allied cities"),
-     G_CALLBACK(callback_multi_selection_my_ai_spread_ally), TRUE}
+     G_CALLBACK(callback_multi_selection_spread_ally), TRUE}
   };
 
   GtkToggleActionEntry toggle_entries_multi_selection_inclusive[] = {
@@ -5027,9 +4911,9 @@ static const char *load_menu_multi_selection(void)
               "<menuitem action=\"MULTI_SELECTION_EXCLUSIVE_OFF\" />\n"
               "</menu>\n"
               "<separator/>\n"
-              "<menuitem action=\"MULTI_SELECTION_MY_AI_SPREAD\" />\n"
-              "<menuitem action=\"MULTI_SELECTION_MY_AI_SPREAD_AIRPORT\" />\n"
-              "<menuitem action=\"MULTI_SELECTION_MY_AI_SPREAD_ALLY\" />\n"
+              "<menuitem action=\"MULTI_SELECTION_SPREAD\" />\n"
+              "<menuitem action=\"MULTI_SELECTION_SPREAD_AIRPORT\" />\n"
+              "<menuitem action=\"MULTI_SELECTION_SPREAD_ALLY\" />\n"
               "<menu action=\"MULTI_SELECTION_MS1\">\n"
               "<menuitem action=\"MULTI_SELECTION_MS1_SELECT\" />\n"
               "<menuitem action=\"MULTI_SELECTION_MS1_ADD\" />\n"
@@ -5100,9 +4984,9 @@ static void callback_miscellaneous_air_patrol(GtkAction *action,
                                               gpointer user_data)
 {
   if (get_unit_in_focus()) {
-    if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE))
+    if (can_unit_do_activity(get_unit_in_focus(), ACTIVITY_AIRBASE)) {
       key_unit_airbase();
-    else {
+    } else {
       key_unit_air_patrol();
     }
   }
@@ -5114,16 +4998,7 @@ static void callback_miscellaneous_air_patrol(GtkAction *action,
 static void callback_miscellaneous_air_patrol_dest(GtkAction *action,
                                                    gpointer user_data)
 {
-  key_airplane_patrol();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_miscellaneous_patrol_execute(GtkAction *action,
-                                                  gpointer user_data)
-{
-  my_ai_patrol_execute_all();
+  key_unit_air_patrol_dest();
 }
 
 /****************************************************************
@@ -5135,7 +5010,7 @@ static void callback_miscellaneous_set_rallies(GtkAction *action,
   if (tiles_hilited_cities) {
     key_select_rally_point();
   } else {
-    my_ai_spread_execute();
+    multi_select_spread();
   }
 }
 
@@ -5145,39 +5020,7 @@ static void callback_miscellaneous_set_rallies(GtkAction *action,
 static void callback_miscellaneous_clear_rallies(GtkAction *action,
                                                  gpointer user_data)
 {
-  key_clear_rally_point_for_selected_cities();
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_miscellaneous_my_ai_execute(GtkAction *action,
-                                                 gpointer user_data)
-{
-  multi_select_iterate(TRUE,punit)
-    {
-      my_ai_unit_execute(punit);
-    } multi_select_iterate_end;
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_miscellaneous_my_ai_free(GtkAction *action,
-                                              gpointer user_data)
-{
-  unit_list_iterate(multi_select_get_units_focus(), punit) {
-    my_ai_orders_free(punit);
-  } unit_list_iterate_end;
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-static void callback_miscellaneous_my_ai_execute_all(GtkAction *action,
-                                                     gpointer user_data)
-{
-  my_ai_execute();
+  set_rally_point_for_selected_cities(NULL);
 }
 
 /****************************************************************
@@ -5213,9 +5056,7 @@ static void callback_miscellaneous_unit_military(GtkToggleAction *action,
 static void callback_miscellaneous_toggle_wakeup(GtkToggleAction *action,
                                                  gpointer user_data)
 {
-  if (autowakeup_state ^ gtk_toggle_action_get_active(action)) {
-    key_toggle_autowakeup();
-  }
+  autowakeup_state = gtk_toggle_action_get_active(action);
 }
 
 /****************************************************************
@@ -5287,9 +5128,6 @@ static const char *load_menu_miscellaneous(void)
     {"MISCELLANEOUS_AIR_PATROL_DEST", NULL, _("Airplane patrol _destination"),
      "<Control>e", _("Airplane patrol _destination"),
      G_CALLBACK(callback_miscellaneous_air_patrol_dest)},
-    {"MISCELLANEOUS_PATROL_EXECUTE", NULL, _("_Execute all patrol orders"),
-     "<Shift>e", _("_Execute all patrol orders"),
-     G_CALLBACK(callback_miscellaneous_patrol_execute)},
     {"MISCELLANEOUS_CARAVAN", NULL, _("_Caravan action upon arrival"),
      NULL, NULL, NULL},
     {"MISCELLANEOUS_DIPLOMAT_UNIT", NULL, _("Diplomat default unit action"),
@@ -5305,16 +5143,6 @@ static const char *load_menu_miscellaneous(void)
      _("_Clear rallies in selected cities"),
      "<Shift>r", _("_Clear rallies in selected cities"),
      G_CALLBACK(callback_miscellaneous_clear_rallies)},
-    {"MISCELLANEOUS_MY_AI_EXECUTE", NULL, _("E_xecute automatic orders"),
-     "<Control>m", _("E_xecute automatic orders"),
-     G_CALLBACK(callback_miscellaneous_my_ai_execute)},
-    {"MISCELLANEOUS_MY_AI_FREE", NULL, _("_Free automatic orders"),
-     "<Control>f", _("_Free automatic orders") ,
-     G_CALLBACK(callback_miscellaneous_my_ai_free)},
-    {"MISCELLANEOUS_MY_AI_EXECUTE_ALL", NULL,
-     _("Execute all automatic _orders"),
-     "<Shift>m", _("Execute all automatic _orders"),
-     G_CALLBACK(callback_miscellaneous_my_ai_execute_all)},
   };
 
   GtkToggleActionEntry toggle_entries_miscellaneous[] = {
@@ -5367,13 +5195,13 @@ static const char *load_menu_miscellaneous(void)
 
   GtkRadioActionEntry radio_entries_miscellaneous_caravan[] = {
     {"MISCELLANEOUS_CARAVAN_POPUP", NULL, _("_Popup dialog"),
-     NULL, _("_Popup dialog"), 0},
+     NULL, _("_Popup dialog"), DCA_POPUP_DIALOG},
     {"MISCELLANEOUS_CARAVAN_TRADE", NULL, _("_Establish trade route"),
-     NULL, _("_Establish trade route"), 1},
+     NULL, _("_Establish trade route"), DCA_ESTABLISH_TRADEROUTE},
     {"MISCELLANEOUS_CARAVAN_BUILD", NULL, _("_Help building wonder"),
-     NULL, _("_Help building wonder"), 2},
+     NULL, _("_Help building wonder"), DCA_HELP_BUILD_WONDER},
     {"MISCELLANEOUS_CARAVAN_NOTHING", NULL, _("_Keep going"),
-     NULL, _("_Keep going"), 3}
+     NULL, _("_Keep going"), DCA_KEEP_MOVING}
   };
 
   GtkRadioActionEntry radio_entries_miscellaneous_unit[] = {
@@ -5464,7 +5292,6 @@ static const char *load_menu_miscellaneous(void)
               "<menu action=\"MISCELLANEOUS\">\n"
               "<menuitem action=\"MISCELLANEOUS_AIR_PATROL\" />\n"
               "<menuitem action=\"MISCELLANEOUS_AIR_PATROL_DEST\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_PATROL_EXECUTE\" />\n"
               "<separator/>\n"
               "<menu action=\"MISCELLANEOUS_CARAVAN\">\n"
               "<menuitem action=\"MISCELLANEOUS_CARAVAN_POPUP\" />\n"
@@ -5505,10 +5332,6 @@ static const char *load_menu_miscellaneous(void)
               "<separator/>\n"
               "<menuitem action=\"MISCELLANEOUS_SET_RALLIES\" />\n"
               "<menuitem action=\"MISCELLANEOUS_CLEAR_RALLIES\" />\n"
-              "<separator/>\n"
-              "<menuitem action=\"MISCELLANEOUS_MY_AI_EXECUTE\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_MY_AI_FREE\" />\n"
-              "<menuitem action=\"MISCELLANEOUS_MY_AI_EXECUTE_ALL\" />\n"
               "</menu>\n");
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_miscellaneous %d",
@@ -5967,17 +5790,17 @@ void setup_menus(GtkWidget *window, GtkWidget **menubar)
               "<menubar>\n");
 
   /*   load group action for each items */
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_game());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_government());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_view());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_order());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_delayed_goto());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_airlift());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_auto_caravan());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_multi_selection());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_miscellaneous());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_report());
-  cat_snprintf(xmlmenu, sizeof(xmlmenu),"%s", load_menu_help());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_game());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_government());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_view());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_order());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_delayed_goto());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_airlift());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_auto_caravan());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_multi_selection());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_miscellaneous());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_report());
+  cat_snprintf(xmlmenu, sizeof(xmlmenu), "%s", load_menu_help());
 
   cat_snprintf(xmlmenu, sizeof(xmlmenu),
                "</menubar>\n"
@@ -6117,328 +5940,308 @@ static void menu_set_visible(GtkActionGroup *paction_group,
 void update_menus(void)
 {
   char buf[256];
+  int i;
+  struct unit *punit;
+  bool cond;
 
   if (!main_menubar || !can_client_change_view()) {
     return;
   }
 
-  if (can_client_change_view()) {
-    int i;
-    struct unit *punit;
-    bool cond;
-
+  if (can_client_issue_orders()) {
     /* Update governements available. */
     government_iterate(g) {
       if (g->index != game.ruleset_control.government_when_anarchy) {
-         my_snprintf(buf, sizeof(buf), "GOVERNMENT_TYPE_%d", g->index);
-         menu_set_sensitive(action_group_government_type, buf, 
-                            can_change_to_government(get_player_ptr(), 
-                                                     g->index));
-      } government_iterate_end;
-    }
-
-    menu_set_sensitive(action_group_report,
-                       "REPORT_SPACESHIP",
-                       (get_player_ptr()->spaceship.state!=SSHIP_NONE));
-
-    menu_toggle_set_sensitive(toggle_action_group_view,
-                              "VIEW_SHOW_CITY_GROWTH_TURNS",
-                              draw_city_names);
-    menu_toggle_set_sensitive(toggle_action_group_view,
-                              "VIEW_SHOW_COASTLINE",
-                              !draw_terrain);
-    menu_toggle_set_sensitive(toggle_action_group_view,
-                              "VIEW_SHOW_FOCUS_UNIT",
-                              !draw_units);
+	 my_snprintf(buf, sizeof(buf), "GOVERNMENT_TYPE_%d", g->index);
+	 menu_set_sensitive(action_group_government_type, buf, 
+			    can_change_to_government(get_player_ptr(), 
+						     g->index));
+      }
+    } government_iterate_end;
 
     for (i = 1; i < MULTI_SELECT_NUM; i++) {
       update_multi_selection_menu(i);
     }
+  }
 
-    /*      This should be done in a future version for all warclient menu items */
-    /*     menu_set_sensitive(action_group_miscellaneous,  */
-    /*          "MISCELLANEOUS_SET_RALLIES",  */
-    /*          tiles_hilited_cities); */
-    /*     Remaining part of this function: Update Orders menu */
+  menu_set_sensitive(action_group_report, "REPORT_SPACESHIP",
+		     get_player_ptr()
+		     && (get_player_ptr()->spaceship.state != SSHIP_NONE));
 
-    if (!can_client_issue_orders()) {
-      return;
-    }
+  menu_toggle_set_sensitive(toggle_action_group_view,
+			    "VIEW_SHOW_CITY_GROWTH_TURNS",
+			    draw_city_names);
+  menu_toggle_set_sensitive(toggle_action_group_view,
+			    "VIEW_SHOW_COASTLINE",
+			    !draw_terrain);
+  menu_toggle_set_sensitive(toggle_action_group_view,
+			    "VIEW_SHOW_FOCUS_UNIT",
+			    !draw_units);
 
-    if ((punit = get_unit_in_focus())) {
-      const char *irrfmt = _("Change to %s (_I)");
-      const char *minfmt = _("Change to %s (_M)");
-      const char *transfmt = _("Transf_orm to %s");
-      char irrtext[128], mintext[128], transtext[128];
-      const char *roadtext;
-      Terrain_type_id  ttype;
-      struct tile_type *      tinfo;
+  /*      This should be done in a future version for all warclient menu items */
+  /*     menu_set_sensitive(action_group_miscellaneous,  */
+  /*          "MISCELLANEOUS_SET_RALLIES",  */
+  /*          tiles_hilited_cities); */
+  /*     Remaining part of this function: Update Orders menu */
 
-      sz_strlcpy(irrtext, _("Build _Irrigation"));
-      sz_strlcpy(mintext, _("Build _Mine"));
-      sz_strlcpy(transtext, _("Transf_orm Terrain"));
+  if (!can_client_issue_orders()) {
+    return;
+  }
 
-      /* Enable the button for adding to a city in all cases, so we
-         get an eventual error message from the server if we try. */
-      menu_set_sensitive(action_group_order,
-                         "ORDER_BUILD_CITY",
-                         can_unit_add_or_build_city(punit) ||
-                         unit_can_help_build_wonder_here(punit));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_ROAD",
-                         (can_unit_do_activity(punit, ACTIVITY_ROAD) ||
-                          can_unit_do_activity(punit, ACTIVITY_RAILROAD) ||
-                          unit_can_est_traderoute_here(punit)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_IRRIGATE",
-                         can_unit_do_activity(punit, ACTIVITY_IRRIGATE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_MINE",
-                         can_unit_do_activity(punit, ACTIVITY_MINE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_TRANSFORM",
-                         can_unit_do_activity(punit, ACTIVITY_TRANSFORM));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_FORTRESS",
-                         (can_unit_do_activity(punit, ACTIVITY_FORTRESS) ||
-                          can_unit_do_activity(punit, ACTIVITY_FORTIFYING)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_AIRBASE",
-                         can_unit_do_activity(punit, ACTIVITY_AIRBASE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_POLLUTION",
-                         (can_unit_do_activity(punit, ACTIVITY_POLLUTION) ||
-                          can_unit_paradrop(punit)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_FALLOUT",
-                         can_unit_do_activity(punit, ACTIVITY_FALLOUT));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_SENTRY",
-                         can_unit_do_activity(punit, ACTIVITY_SENTRY));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_PILLAGE",
-                         can_unit_do_activity(punit, ACTIVITY_PILLAGE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_DISBAND",
-                         !unit_flag(punit, F_UNDISBANDABLE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_HOMECITY",
-                         can_unit_change_homecity(punit));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_UNLOAD_TRANSPORTER",
-                         get_transporter_occupancy(punit) > 0);
-      menu_set_sensitive(action_group_order,
-                         "ORDER_LOAD",
-                         can_unit_load(punit,
-                                       find_transporter_for_unit(punit,
-                                                                 punit->tile)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_UNLOAD",
-                         (can_unit_unload(punit,
-                                          find_unit_by_id(punit->transported_by))
-                          && can_unit_exist_at_tile(punit, punit->tile)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_WAKEUP_OTHERS",
-                         is_unit_activity_on_tile(ACTIVITY_SENTRY,
-                                                  punit->tile));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_AUTO_SETTLER",
-                         can_unit_do_auto(punit));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_AUTO_EXPLORE",
-                         can_unit_do_activity(punit, ACTIVITY_EXPLORE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_CONNECT_ROAD",
-                         can_unit_do_connect(punit, ACTIVITY_ROAD));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_CONNECT_RAIL",
-                         can_unit_do_connect(punit, ACTIVITY_RAILROAD));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_CONNECT_IRRIGATE",
-                         can_unit_do_connect(punit, ACTIVITY_IRRIGATE));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_RETURN",
-                         !(is_air_unit(punit) || is_heli_unit(punit)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_DIPLOMAT_DLG",
-                         (is_diplomat_unit(punit) &&
-                          diplomat_can_do_action(punit,
-                                                 DIPLOMAT_ANY_ACTION,
-                                                 punit->tile)));
-      menu_set_sensitive(action_group_order,
-                         "ORDER_NUKE",
-                         unit_flag(punit, F_NUCLEAR));
-      if (unit_flag(punit, F_HELP_WONDER)) {
-        menu_rename(action_group_order,
-                    "ORDER_BUILD_CITY",
-                    _("Help _Build Wonder"));
-      } else if (unit_flag(punit, F_CITIES)) {
-        if (map_get_city(punit->tile)) {
-          menu_rename(action_group_order,
-                      "ORDER_BUILD_CITY", _("Add to City (_B)"));
-        } else {
-          menu_rename(action_group_order,
-                      "ORDER_BUILD_CITY", _("_Build City"));
-        }
-      } else {
-        menu_rename(action_group_order,
-                    "ORDER_BUILD_CITY", _("_Build City"));
-      }
+  if ((punit = get_unit_in_focus())) {
+    const char *irrfmt = _("Change to %s (_I)");
+    const char *minfmt = _("Change to %s (_M)");
+    const char *transfmt = _("Transf_orm to %s");
+    char irrtext[128], mintext[128], transtext[128];
+    const char *roadtext;
+    Terrain_type_id  ttype;
+    struct tile_type *      tinfo;
 
-      if (unit_flag(punit, F_TRADE_ROUTE)) {
-        menu_rename(action_group_order,
-                    "ORDER_ROAD",
-                    _("Make Trade _Route"));
-      } else if (unit_flag(punit, F_SETTLERS)) {
-        if (map_has_special(punit->tile, S_ROAD)) {
-          roadtext = _("Build _Railroad");
-          road_activity=ACTIVITY_RAILROAD;
-        } else {
-          roadtext = _("Build _Road");
-          road_activity=ACTIVITY_ROAD;
-        }
-        menu_rename(action_group_order,
-                    "ORDER_ROAD", roadtext);
-      } else {
-        menu_rename(action_group_order,
-                    "ORDER_ROAD", _("Build _Road"));
-      }
+    sz_strlcpy(irrtext, _("Build _Irrigation"));
+    sz_strlcpy(mintext, _("Build _Mine"));
+    sz_strlcpy(transtext, _("Transf_orm Terrain"));
 
-      ttype = punit->tile->terrain;
-      tinfo = get_tile_type(ttype);
-      if (tinfo->irrigation_result != T_NONE
-          && tinfo->irrigation_result != ttype) {
-        my_snprintf(irrtext, sizeof(irrtext), irrfmt,
-                    get_tile_change_menu_text(punit->tile,
-                                              ACTIVITY_IRRIGATE));
-      } else if (map_has_special(punit->tile, S_IRRIGATION)
-                 && player_knows_techs_with_flag(get_player_ptr(),
-                                                 TF_FARMLAND)) {
-        sz_strlcpy(irrtext, _("Bu_ild Farmland"));
-      }
-      if (tinfo->mining_result != T_NONE
-          && tinfo->mining_result != ttype) {
-        my_snprintf(mintext, sizeof(mintext), minfmt,
-                    get_tile_change_menu_text(punit->tile, ACTIVITY_MINE));
-      }
-      if (tinfo->transform_result != T_NONE
-          && tinfo->transform_result != ttype) {
-        my_snprintf(transtext, sizeof(transtext), transfmt,
-                    get_tile_change_menu_text(punit->tile,
-                                              ACTIVITY_TRANSFORM));
-      }
+    /* Enable the button for adding to a city in all cases, so we
+       get an eventual error message from the server if we try. */
+    menu_set_sensitive(action_group_order,
+		       "ORDER_BUILD_CITY",
+		       can_unit_add_or_build_city(punit) ||
+		       unit_can_help_build_wonder_here(punit));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_ROAD",
+		       (can_unit_do_activity(punit, ACTIVITY_ROAD) ||
+			can_unit_do_activity(punit, ACTIVITY_RAILROAD) ||
+			unit_can_est_traderoute_here(punit)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_IRRIGATE",
+		       can_unit_do_activity(punit, ACTIVITY_IRRIGATE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_MINE",
+		       can_unit_do_activity(punit, ACTIVITY_MINE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_TRANSFORM",
+		       can_unit_do_activity(punit, ACTIVITY_TRANSFORM));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_FORTRESS",
+		       (can_unit_do_activity(punit, ACTIVITY_FORTRESS) ||
+			can_unit_do_activity(punit, ACTIVITY_FORTIFYING)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_AIRBASE",
+		       can_unit_do_activity(punit, ACTIVITY_AIRBASE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_POLLUTION",
+		       (can_unit_do_activity(punit, ACTIVITY_POLLUTION) ||
+			can_unit_paradrop(punit)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_FALLOUT",
+		       can_unit_do_activity(punit, ACTIVITY_FALLOUT));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_SENTRY",
+		       can_unit_do_activity(punit, ACTIVITY_SENTRY));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_PILLAGE",
+		       can_unit_do_activity(punit, ACTIVITY_PILLAGE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_DISBAND",
+		       !unit_flag(punit, F_UNDISBANDABLE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_HOMECITY",
+		       can_unit_change_homecity(punit));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_UNLOAD_TRANSPORTER",
+		       get_transporter_occupancy(punit) > 0);
+    menu_set_sensitive(action_group_order,
+		       "ORDER_LOAD",
+		       can_unit_load(punit,
+				     find_transporter_for_unit(punit,
+							       punit->tile)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_UNLOAD",
+		       (can_unit_unload(punit,
+					find_unit_by_id(punit->transported_by))
+			&& can_unit_exist_at_tile(punit, punit->tile)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_WAKEUP_OTHERS",
+		       is_unit_activity_on_tile(ACTIVITY_SENTRY,
+						punit->tile));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_AUTO_SETTLER",
+		       can_unit_do_auto(punit));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_AUTO_EXPLORE",
+		       can_unit_do_activity(punit, ACTIVITY_EXPLORE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_CONNECT_ROAD",
+		       can_unit_do_connect(punit, ACTIVITY_ROAD));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_CONNECT_RAIL",
+		       can_unit_do_connect(punit, ACTIVITY_RAILROAD));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_CONNECT_IRRIGATE",
+		       can_unit_do_connect(punit, ACTIVITY_IRRIGATE));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_RETURN",
+		       !(is_air_unit(punit) || is_heli_unit(punit)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_DIPLOMAT_DLG",
+		       (is_diplomat_unit(punit) &&
+			diplomat_can_do_action(punit,
+					       DIPLOMAT_ANY_ACTION,
+					       punit->tile)));
+    menu_set_sensitive(action_group_order,
+		       "ORDER_NUKE",
+		       unit_flag(punit, F_NUCLEAR));
+    if (unit_flag(punit, F_HELP_WONDER)) {
       menu_rename(action_group_order,
-                  "ORDER_IRRIGATE", irrtext);
-      menu_rename(action_group_order,
-                  "ORDER_MINE", mintext);
-      menu_rename(action_group_order,
-                  "ORDER_TRANSFORM", transtext);
-
-      if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
-        menu_rename(action_group_order,
-                    "ORDER_FORTRESS", _("_Fortify"));
-        menu_set_sensitive(action_group_order,
-                           "ORDER_SLEEP", FALSE);
+		  "ORDER_BUILD_CITY",
+		  _("Help _Build Wonder"));
+    } else if (unit_flag(punit, F_CITIES)) {
+      if (map_get_city(punit->tile)) {
+	menu_rename(action_group_order,
+		    "ORDER_BUILD_CITY", _("Add to City (_B)"));
       } else {
-        menu_set_sensitive(action_group_order,
-                           "ORDER_SLEEP", TRUE);
-        if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
-          menu_rename(action_group_order,
-                      "ORDER_FORTRESS", _("Build _Fortress"));
-        }
+	menu_rename(action_group_order,
+		    "ORDER_BUILD_CITY", _("_Build City"));
       }
-
-      if (unit_flag(punit, F_PARATROOPERS)) {
-        menu_rename(action_group_order,
-                    "ORDER_POLLUTION", _("_Paradrop"));
-      } else {
-        menu_rename(action_group_order,
-                    "ORDER_POLLUTION", _("Clean _Pollution"));
-      }
-
-      if (!unit_flag(punit, F_SETTLERS)) {
-        menu_rename(action_group_order,
-                    "ORDER_AUTO_SETTLER", _("_Auto Attack"));
-      } else {
-        menu_rename(action_group_order,
-                    "ORDER_AUTO_SETTLER", _("_Auto Settler"));
-      }
-
-      menu_set_sensitive(action_group_delayed_goto,
-                         "DELAYED_GOTO_DELAYED_GOTO", TRUE);
-      menu_set_sensitive(action_group_delayed_goto,
-                         "DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE", TRUE);
-
-      cond = (my_ai_enable && unit_type(punit)->fuel > 0);
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_AIR_PATROL",
-                         cond &&
-                         !can_unit_do_activity(punit, ACTIVITY_AIRBASE));
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_AIR_PATROL_DEST",
-                         cond);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MS_SELECT",
-                         TRUE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MS_ACTIVE_ALL", TRUE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MS_CLEAR",
-                         TRUE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MY_AI_SPREAD",
-                         TRUE);
-
-      cond = (my_ai_trade_level && unit_flag(punit, F_TRADE_ROUTE));
-      menu_set_sensitive(action_group_auto_caravan,
-                         "AUTO_CARAVAN_MY_AI_TRADE_WITH",
-                         my_ai_enable && cond);
-      menu_set_sensitive(action_group_auto_caravan,
-                         "AUTO_CARAVAN_MY_AI_CARAVAN",
-                         my_ai_enable && cond);
-
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_MY_AI_FREE",
-                         punit->my_ai.control);
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_MY_AI_EXECUTE",
-                         my_ai_enable && punit->my_ai.control);
-
-      menu_set_sensitive(action_group_order,
-                         "ORDER", TRUE);
     } else {
-      menu_set_sensitive(action_group_delayed_goto,
-                         "DELAYED_GOTO_DELAYED_GOTO", FALSE);
-      menu_set_sensitive(action_group_delayed_goto,
-                         "DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE",
-                         FALSE);
-
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_AIR_PATROL", FALSE);
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_AIR_PATROL_DEST", FALSE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MS_SELECT",
-                         FALSE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MS_ACTIVE_ALL", FALSE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MS_CLEAR", FALSE);
-      menu_set_sensitive(action_group_multi_selection,
-                         "MULTI_SELECTION_MY_AI_SPREAD", FALSE);
-
-      menu_set_sensitive(action_group_auto_caravan,
-                         "AUTO_CARAVAN_MY_AI_CARAVAN", FALSE);
-      menu_set_sensitive(action_group_auto_caravan,
-                         "AUTO_CARAVAN_MY_AI_TRADE_WITH", FALSE);
-
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_MY_AI_FREE", FALSE);
-      menu_set_sensitive(action_group_miscellaneous,
-                         "MISCELLANEOUS_MY_AI_EXECUTE", FALSE);
-
-      menu_set_sensitive(action_group_order, "ORDER", FALSE);
+      menu_rename(action_group_order,
+		  "ORDER_BUILD_CITY", _("_Build City"));
     }
+
+    if (unit_flag(punit, F_TRADE_ROUTE)) {
+      menu_rename(action_group_order,
+		  "ORDER_ROAD",
+		  _("Make Trade _Route"));
+    } else if (unit_flag(punit, F_SETTLERS)) {
+      if (map_has_special(punit->tile, S_ROAD)) {
+	roadtext = _("Build _Railroad");
+	road_activity=ACTIVITY_RAILROAD;
+      } else {
+	roadtext = _("Build _Road");
+	road_activity=ACTIVITY_ROAD;
+      }
+      menu_rename(action_group_order,
+		  "ORDER_ROAD", roadtext);
+    } else {
+      menu_rename(action_group_order,
+		  "ORDER_ROAD", _("Build _Road"));
+    }
+
+    ttype = punit->tile->terrain;
+    tinfo = get_tile_type(ttype);
+    if (tinfo->irrigation_result != T_NONE
+	&& tinfo->irrigation_result != ttype) {
+      my_snprintf(irrtext, sizeof(irrtext), irrfmt,
+		  get_tile_change_menu_text(punit->tile,
+					    ACTIVITY_IRRIGATE));
+    } else if (map_has_special(punit->tile, S_IRRIGATION)
+	       && player_knows_techs_with_flag(get_player_ptr(),
+					       TF_FARMLAND)) {
+      sz_strlcpy(irrtext, _("Bu_ild Farmland"));
+    }
+    if (tinfo->mining_result != T_NONE
+	&& tinfo->mining_result != ttype) {
+      my_snprintf(mintext, sizeof(mintext), minfmt,
+		  get_tile_change_menu_text(punit->tile, ACTIVITY_MINE));
+    }
+    if (tinfo->transform_result != T_NONE
+	&& tinfo->transform_result != ttype) {
+      my_snprintf(transtext, sizeof(transtext), transfmt,
+		  get_tile_change_menu_text(punit->tile,
+					    ACTIVITY_TRANSFORM));
+    }
+    menu_rename(action_group_order,
+		"ORDER_IRRIGATE", irrtext);
+    menu_rename(action_group_order,
+		"ORDER_MINE", mintext);
+    menu_rename(action_group_order,
+		"ORDER_TRANSFORM", transtext);
+
+    if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
+      menu_rename(action_group_order,
+		  "ORDER_FORTRESS", _("_Fortify"));
+      menu_set_sensitive(action_group_order,
+			 "ORDER_SLEEP", FALSE);
+    } else {
+      menu_set_sensitive(action_group_order,
+			 "ORDER_SLEEP", TRUE);
+      if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
+	menu_rename(action_group_order,
+		    "ORDER_FORTRESS", _("Build _Fortress"));
+      }
+    }
+
+    if (unit_flag(punit, F_PARATROOPERS)) {
+      menu_rename(action_group_order,
+		  "ORDER_POLLUTION", _("_Paradrop"));
+    } else {
+      menu_rename(action_group_order,
+		  "ORDER_POLLUTION", _("Clean _Pollution"));
+    }
+
+    if (!unit_flag(punit, F_SETTLERS)) {
+      menu_rename(action_group_order,
+		  "ORDER_AUTO_SETTLER", _("_Auto Attack"));
+    } else {
+      menu_rename(action_group_order,
+		  "ORDER_AUTO_SETTLER", _("_Auto Settler"));
+    }
+
+    menu_set_sensitive(action_group_delayed_goto,
+		       "DELAYED_GOTO_DELAYED_GOTO", TRUE);
+    menu_set_sensitive(action_group_delayed_goto,
+		       "DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE", TRUE);
+
+    cond = can_unit_do_air_patrol(punit);
+    menu_set_sensitive(action_group_miscellaneous,
+		       "MISCELLANEOUS_AIR_PATROL", cond
+		       && !can_unit_do_activity(punit, ACTIVITY_AIRBASE));
+    menu_set_sensitive(action_group_miscellaneous,
+		       "MISCELLANEOUS_AIR_PATROL_DEST", cond);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_MS_SELECT", TRUE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_MS_ACTIVE_ALL", TRUE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_MS_CLEAR", TRUE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_SPREAD", TRUE);
+
+    cond = unit_flag(punit, F_TRADE_ROUTE);
+    menu_set_sensitive(action_group_auto_caravan,
+		       "AUTO_CARAVAN_TRADE_WITH", cond);
+    menu_set_sensitive(action_group_auto_caravan,
+		       "AUTO_CARAVAN_DO_AUTO_CARAVAN", cond);
+
+    menu_set_sensitive(action_group_order,
+		       "ORDER", TRUE);
+  } else {
+    menu_set_sensitive(action_group_delayed_goto,
+		       "DELAYED_GOTO_DELAYED_GOTO", FALSE);
+    menu_set_sensitive(action_group_delayed_goto,
+		       "DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE",
+		       FALSE);
+
+    menu_set_sensitive(action_group_miscellaneous,
+		       "MISCELLANEOUS_AIR_PATROL", FALSE);
+    menu_set_sensitive(action_group_miscellaneous,
+		       "MISCELLANEOUS_AIR_PATROL_DEST", FALSE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_MS_SELECT",
+		       FALSE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_MS_ACTIVE_ALL", FALSE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_MS_CLEAR", FALSE);
+    menu_set_sensitive(action_group_multi_selection,
+		       "MULTI_SELECTION_SPREAD", FALSE);
+
+    menu_set_sensitive(action_group_auto_caravan,
+		       "AUTO_CARAVAN_DO_AUTO_CARAVAN", FALSE);
+    menu_set_sensitive(action_group_auto_caravan,
+		       "AUTO_CARAVAN_TRADE_WITH", FALSE);
+
+    menu_set_sensitive(action_group_order, "ORDER", FALSE);
   }
 }
 
@@ -6447,14 +6250,17 @@ void update_menus(void)
 *****************************************************************/
 static void menu_airlift_set_active(void)
 {
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
   int i;
   const char *buf;
 
-  for(i = 0; i < AIRLIFT_QUEUE_NUM; i++)
-    {
-      buf = airlift_queue_get_menu_name(i, airlift_queue_get_unit_type(i));
-      menu_radio_set_active(radio_action_group_airlift_unit[i], buf);
-    }
+  for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+    buf = airlift_queue_get_menu_name(i, airlift_queue_get_unit_type(i));
+    menu_radio_set_active(radio_action_group_airlift_unit[i], buf);
+  }
 }
 
 /****************************************************************
@@ -6535,28 +6341,22 @@ void update_auto_caravan_menu(void)
     return;
   }
 
-  bool cond = city_list_size(my_ai_get_trade_cities()) > 0;
+  bool cond = is_trade_city_list();
 
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_MY_AI_CLEAR_TRADE_CITY",
-                     cond);
+                     "AUTO_CARAVAN_CLEAR_TRADE_CITIES", cond);
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_MY_AI_SHOW_TRADE_CITIES", cond);
+                     "AUTO_CARAVAN_CLEAR_TRADE_PLANNING",
+                     is_trade_planning());
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_MY_AI_SHOW_FREE_SLOTS",
-                     cond);
+                     "AUTO_CARAVAN_SHOW_TRADE_CITIES", cond);
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_MY_AI_ESTIMATE_TRADE",
-                     (my_ai_trade_level
-                      && my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0) ||
-                     (my_ai_trade_manual_trade_route_enable &&
-                      trade_route_list_size(estimate_non_ai_trade_route()) > 0));
+                     "AUTO_CARAVAN_SHOW_FREE_SLOTS", cond);
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_MY_AI_TRADE_RECALCULATE", cond);
+                     "AUTO_CARAVAN_ESTIMATE_TRADE",
+		     is_trade_route_in_route());
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_MY_AI_TRADE_EXECUTE",
-                     my_ai_trade_level &&
-                     my_ai_count_activity(MY_AI_TRADE_ROUTE) > 0);
+                     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING", cond);
 }
 
 /****************************************************************
@@ -6608,8 +6408,13 @@ void init_menus(void)
 
   menu_set_sensitive(action_group_government, "GOVERNMENT_TAX_RATE",
                      game.ruleset_game.changable_tax && cond);
-  menu_set_sensitive(action_group_government, "GOVERNMENT_WORKLISTS", cond);
   menu_set_sensitive(action_group_government, "GOVERNMENT_CHANGE", cond);
+
+  cond = (get_player_ptr() != NULL);
+  menu_set_sensitive(action_group_report, "REPORT_CITIES", cond);
+  menu_set_sensitive(action_group_report, "REPORT_UNITS", cond);
+  menu_set_sensitive(action_group_report, "REPORT_ECONOMY", cond);
+  menu_set_sensitive(action_group_report, "REPORT_SCIENCE", cond);
 
   menu_toggle_set_active(toggle_action_group_view,
                          "VIEW_SHOW_MAP_GRID", draw_map_grid);
@@ -6677,8 +6482,6 @@ void init_menus(void)
     menu_radio_set_active(radio_action_group_delayed_goto_place,
                           "DELAYED_GOTO_GOTO_EVERY_WHERE");
     break;
-  default:
-    break;
   }
 
   switch (delayed_goto_utype) {
@@ -6693,8 +6496,6 @@ void init_menus(void)
   case UTYPE_ALL:
     menu_radio_set_active(radio_action_group_delayed_goto_utype,
                           "DELAYED_GOTO_GOTO_ALL");
-    break;
-  default:
     break;
   }
 
@@ -6736,8 +6537,6 @@ void init_menus(void)
     menu_radio_set_active(radio_action_group_multi_selection_place,
                           "MULTI_SELECTION_MODE_EVERY_WHERE");
     break;
-  default:
-    break;
   }
 
   switch (multi_select_utype) {
@@ -6753,39 +6552,35 @@ void init_menus(void)
     menu_radio_set_active(radio_action_group_multi_selection_utype,
                           "MULTI_SELECTION_MODE_ALL");
     break;
-  default:
-    break;
   }
 
   menu_toggle_set_active(toggle_action_group_multi_selection,
-                         "MULTI_SELECTION_MY_AI_SPREAD_AIRPORT",
-                         spread_airport_cities);
+                         "MULTI_SELECTION_SPREAD_AIRPORT",
+			 multi_select_spread_airport_cities);
   menu_toggle_set_active(toggle_action_group_multi_selection,
-                         "MULTI_SELECTION_MY_AI_SPREAD_ALLY",
-                         spread_allied_cities);
+                         "MULTI_SELECTION_SPREAD_ALLY",
+			 multi_select_spread_allied_cities);
 
   update_multi_selection_inclusive_filter_menu();
   update_multi_selection_exclusive_filter_menu();
 
   /* Miscellaneous menu */
   switch (default_caravan_action) {
-  case 0:
+  case DCA_POPUP_DIALOG:
     menu_radio_set_active(radio_action_group_miscellaneous_caravan,
                           "MISCELLANEOUS_CARAVAN_POPUP");
     break;
-  case 1:
+  case DCA_ESTABLISH_TRADEROUTE:
     menu_radio_set_active(radio_action_group_miscellaneous_caravan,
                           "MISCELLANEOUS_CARAVAN_TRADE");
     break;
-  case 2:
+  case DCA_HELP_BUILD_WONDER:
     menu_radio_set_active(radio_action_group_miscellaneous_caravan,
                           "MISCELLANEOUS_CARAVAN_BUILD");
     break;
-  case 3:
+  case DCA_KEEP_MOVING:
     menu_radio_set_active(radio_action_group_miscellaneous_caravan,
                           "MISCELLANEOUS_CARAVAN_NOTHING");
-    break;
-  default:
     break;
   }
 
@@ -6805,8 +6600,6 @@ void init_menus(void)
   case DDUA_KEEP_MOVING:
     menu_radio_set_active(radio_action_group_miscellaneous_diplomat_unit,
                           "MISCELLANEOUS_DIPLOMAT_UNIT_NOTHING");
-    break;
-  default:
     break;
   }
   
@@ -6842,8 +6635,6 @@ void init_menus(void)
     menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,
                           "MISCELLANEOUS_DIPLOMAT_CITY_KEEP_MOVING");
     break;
-  default:
-    break;
   }
 
   menu_toggle_set_active(toggle_action_group_miscellaneous,
@@ -6864,13 +6655,9 @@ void init_menus(void)
 
   update_miscellaneous_menu();
 
-  i = 0;
-  automatic_processus_iterate(pap) {
-    if(pap->menu[0]=='\0') {
-      continue;
-    }
-    update_automatic_processus_filter_menu(pap, i++);
-  } automatic_processus_iterate_end;
+  for (i = 0; i < DELAYED_GOTO_NUM; i++) {
+    update_delayed_goto_automatic_filter_menu(i);
+  }
 
   start_turn_menus_udpate();
   update_menus();
@@ -7005,13 +6792,6 @@ void update_miscellaneous_menu(void)
                      "MISCELLANEOUS_SET_RALLIES", cond);
   menu_set_sensitive(action_group_miscellaneous,
                      "MISCELLANEOUS_CLEAR_RALLIES", cond);
-  menu_set_sensitive(action_group_miscellaneous,
-                     "MISCELLANEOUS_MY_AI_EXECUTE_ALL",
-                     my_ai_enable && my_ai_count_activity(MY_AI_LAST));
-  menu_set_sensitive(action_group_miscellaneous,
-                     "MISCELLANEOUS_AIR_PATROL",
-                     my_ai_enable && my_ai_count_activity(MY_AI_PATROL));
-
 }
 
 /****************************************************************
@@ -7019,11 +6799,12 @@ void update_miscellaneous_menu(void)
 *****************************************************************/
 static bool can_player_unit_type(Unit_Type_id utype)
 {
-  if (can_player_build_unit(get_player_ptr(),utype))
+  if (can_player_build_unit(get_player_ptr(), utype)) {
     return TRUE;
+  }
 
-  unit_list_iterate(get_player_ptr()->units,punit) {
-    if (punit->type==utype) {
+  unit_list_iterate(get_player_ptr()->units, punit) {
+    if (punit->type == utype) {
       return TRUE;
     }
   } unit_list_iterate_end;
@@ -7036,6 +6817,10 @@ static bool can_player_unit_type(Unit_Type_id utype)
 *****************************************************************/
 void enable_airlift_unit_type_menu(Unit_Type_id type)
 {
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
   int i;
 
   if (strcmp(airlift_queue_get_menu_name(0, type), "\0") <= 0 ) {
@@ -7052,6 +6837,10 @@ void enable_airlift_unit_type_menu(Unit_Type_id type)
 *****************************************************************/
 void update_airlift_unit_types(void)
 {
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
   int i, j;
 
   for(i = 0; i < U_LAST; i++) {
@@ -7071,6 +6860,10 @@ void update_airlift_unit_types(void)
 *****************************************************************/
 void start_turn_menus_udpate(void)
 {
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
   update_airlift_unit_types();
 
   /* Miscellaneous */
@@ -7095,9 +6888,6 @@ void start_turn_menus_udpate(void)
     menu_radio_set_active(radio_action_group_miscellaneous_unit,
                           "MISCELLANEOUS_UNIT_FORTIFY_OR_SLEEP");
     break;
-  default:
-    break;
   }
-
 }
 

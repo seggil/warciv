@@ -19,19 +19,21 @@
 #include <time.h>
 
 #include "capability.h"
-#include "capstr.h"
-#include "events.h"
 #include "fcintl.h"
 #include "log.h"
 #include "mem.h"
-#include "packets.h"
-#include "player.h"
 #include "rand.h"
 #include "shared.h"
 #include "support.h"
-#include "version.h"
 #include "wildcards.h"
 
+#include "capstr.h"
+#include "events.h"
+#include "packets.h"
+#include "player.h"
+#include "version.h"
+
+#include "citytools.h"
 #include "database.h"
 #include "diplhand.h"
 #include "gamehand.h"
@@ -412,7 +414,10 @@ void establish_new_connection(struct connection *pconn)
       send_diplomatic_meetings(pconn);
       send_packet_thaw_hint(pconn);
       send_packet_start_turn(pconn);
-      if (server_state == GAME_OVER_STATE) {
+      if (server_state == RUN_GAME_STATE
+	  && !has_capability("extglobalinfo", pconn->capability)) {
+	reset_city_manager_params(pplayer);
+      } else if (server_state == GAME_OVER_STATE) {
 	report_final_scores(pconn->self);
 	report_game_rankings(pconn->self);
       }

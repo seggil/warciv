@@ -22,45 +22,46 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "city.h"
-#include "citydlg_common.h"
 #include "fcintl.h"
-#include "game.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "helpdlg.h"
-#include "inputdlg.h"
 #include "log.h"
 #include "mem.h"
+#include "registry.h"
+#include "support.h"
+
+#include "city.h"
+#include "game.h"
 #include "packets.h"
 #include "worklist.h"
-#include "support.h"
+
+#include "citydlg_common.h"
+#include "civclient.h"
 #include "climisc.h"
 #include "clinet.h"
 #include "options.h"
 #include "tilespec.h"
 
-#include "wldlg.h"
 #include "citydlg.h"
-#include "civclient.h"
+#include "gui_main.h"
+#include "gui_stuff.h"
+#include "helpdlg.h"
+#include "inputdlg.h"
 
-static GtkWidget *worklists_shell;
-static GtkWidget *worklists_list;
+#include "wldlg.h"
 
 enum {
-  WORKLISTS_NEW,
-  WORKLISTS_DELETE,
-  WORKLISTS_PROPERTIES,
-  WORKLISTS_CLOSE
+  WLC_NAME,
+  WLC_ID,
+
+  WLC_NUM
 };
 
-static GtkListStore *worklists_store;
-
+static GtkWidget *worklist_shell = NULL;
 static int max_unit_height = -1, max_unit_width = -1;
+
+static void popup_worklists_report(void);
 
 static void popup_worklist(struct worklist *pwl);
 static void popdown_worklist(struct worklist *pwl);
-
 
 /****************************************************************
 ...
@@ -93,226 +94,330 @@ static void update_max_unit_size(void)
   } unit_type_iterate_end;
 }
 
-
 /****************************************************************
-...
-*****************************************************************/
-static void worklists_destroy_callback(GtkWidget *w, gpointer data)
-{
-  worklists_shell = NULL;
-}
-
-
-/****************************************************************
-...
-*****************************************************************/
-void update_worklist_report_dialog(void)
-{
-  struct player *plr;
-  int i;
-  GtkTreeIter it;
-
-  if (!worklists_shell) {
-    return;
-  }
-
-  plr = get_player_ptr();
-
-  gtk_list_store_clear(worklists_store);
-  
-  for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-    if (plr->worklists[i].is_valid) {
-      gtk_list_store_append(worklists_store, &it);
-      
-       gtk_list_store_set(worklists_store, &it,
-			  0, plr->worklists[i].name,
-			  1, i,
-			  -1); 
-    }
-  }
-}
-
-/****************************************************************
-...
-*****************************************************************/
-static void worklists_response(GtkWidget *w, gint response)
-{
-  struct player *plr;
-  int i, pos;
-  GtkTreeSelection *selection;
-  GtkTreeModel *model;
-  GtkTreeIter it;
-
-  plr = get_player_ptr();
-
-  for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-    if (!plr->worklists[i].is_valid) {
-      break;
-    }
-  }
-  
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(worklists_list));
-
-  if (gtk_tree_selection_get_selected(selection, &model, &it)) {
-    gtk_tree_model_get(model, &it, 1, &pos, -1);
-  } else {
-    pos = -1;
-  }
-
- switch (response) {
-    case WORKLISTS_NEW:
-      /* No more worklist slots free.  (!!!Maybe we should tell the user?) */
-      if (i == MAX_NUM_WORKLISTS) {
-        return;
-      }
-
-      /* Validate this slot. */
-      init_worklist(&plr->worklists[i]);
-      plr->worklists[i].is_valid = TRUE;
-      strcpy(plr->worklists[i].name, _("new"));
-
-      update_worklist_report_dialog();
-      return;
-
-    case WORKLISTS_DELETE:
-      if (pos == -1) {
-	return;
-      }
-
-      popdown_worklist(&plr->worklists[pos]);
-
-      plr->worklists[pos].is_valid = FALSE;
-      plr->worklists[pos].name[0] = '\0';
-
-      update_worklist_report_dialog();
-      return;
-
-    case WORKLISTS_PROPERTIES:
-      if (pos == -1) {
-	return;
-      }
-
-      popup_worklist(&plr->worklists[pos]);
-      return;
-
-    default:
-      gtk_widget_destroy(worklists_shell);
-      return;
-  }
-}
-
-/****************************************************************
-...
+  ...
 *****************************************************************/
 static void cell_edited(GtkCellRendererText *cell,
 			const gchar *spath,
 			const gchar *text, gpointer data)
 {
+  struct worklist *temp_worklists =
+      (struct worklist *) g_object_get_data(G_OBJECT(data), "worklists");
+  GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(
+      g_object_get_data(G_OBJECT(data), "tree_view")));
   GtkTreePath *path;
   GtkTreeIter it;
-  int pos;
-  struct player *plr;
+  gint pos;
 
   path = gtk_tree_path_new_from_string(spath);
-  gtk_tree_model_get_iter(GTK_TREE_MODEL(worklists_store), &it, path);
-  
-  gtk_tree_model_get(GTK_TREE_MODEL(worklists_store), &it, 1, &pos, -1);
-  plr = get_player_ptr();
+  gtk_tree_model_get_iter(model, &it, path);
 
-  sz_strlcpy(plr->worklists[pos].name, text);
-  gtk_list_store_set(worklists_store, &it, 0, text, -1);
+  gtk_tree_model_get(model, &it, WLC_ID, &pos, -1);
+
+  sz_strlcpy(temp_worklists[pos].name, text);
+  gtk_list_store_set(GTK_LIST_STORE(model), &it, WLC_NAME, text, -1);
 
   gtk_tree_path_free(path);
 }
 
 /****************************************************************
+  ...
+*****************************************************************/
+static void update_tree_model(GObject *object)
+{
+  struct worklist *pwl, *temp_worklists =
+      (struct worklist *) g_object_get_data(object, "worklists");
+  GtkListStore *store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(
+      g_object_get_data(object, "tree_view"))));
+  GtkTreeIter it;
+  int i;
+  
+
+  gtk_list_store_clear(store);
+
+  /* Find an emtpy worklist */
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    pwl = &temp_worklists[i];
+    if (pwl->is_valid && pwl->name[0] != '\0') {
+      gtk_list_store_append(store, &it);
+      gtk_list_store_set(store, &it, WLC_NAME, pwl->name, WLC_ID, i, -1);
+    }
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+void apply_global_worklists(GtkWidget *widget)
+{
+  memcpy(global_worklists, g_object_get_data(G_OBJECT(widget), "worklists"),
+	 sizeof(global_worklists));
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+void refresh_global_worklists(GtkWidget *widget)
+{
+  memcpy(g_object_get_data(G_OBJECT(widget), "worklists"), global_worklists,
+	 sizeof(global_worklists));
+  update_tree_model(G_OBJECT(widget));
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+void reload_global_worklists(GtkWidget *widget, struct section_file *sf)
+{
+  struct worklist *pwl, *temp_worklists =
+      (struct worklist *) g_object_get_data(G_OBJECT(widget), "worklists");
+  int i;
+
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    pwl = &temp_worklists[i];
+    load_global_worklist(sf, "worklists.worklist%d", i, pwl);
+    pwl->is_valid = check_global_worklist(pwl);
+  }
+  update_tree_model(G_OBJECT(widget));
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+void reset_global_worklists(GtkWidget *widget)
+{
+  struct worklist *temp_worklists =
+      (struct worklist *) g_object_get_data(G_OBJECT(widget), "worklists");
+  int i;
+
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    init_worklist(&temp_worklists[i]);
+  }
+  update_tree_model(G_OBJECT(widget));
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void worklist_new_callback(GtkButton *button, gpointer data)
+{
+  struct worklist *pwl = NULL, *temp_worklists =
+      (struct worklist *) g_object_get_data(G_OBJECT(data), "worklists");
+  int i;
+
+  /* Find an emtpy worklist */
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    if (temp_worklists[i].name[0] == '\0') {
+      pwl = &temp_worklists[i];
+      break;
+    }
+  }
+
+  /* No emtpy worklist, try to find an invalid worklist */
+  if (!pwl) {
+    for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+      if (worklist_is_empty(&temp_worklists[i])
+	  || !temp_worklists[i].is_valid) {
+	pwl = &temp_worklists[i];
+	break;
+      }
+    }
+  }
+
+  /* No more worklist slots free.  (!!!Maybe we should tell the user?) */
+  if (!pwl) {
+    return;
+  }
+
+  /* Validate this slot. */
+  init_worklist(pwl);
+  pwl->is_valid = TRUE;
+  strcpy(pwl->name, _("new"));
+
+  update_tree_model(G_OBJECT(data));
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void worklist_delete_callback(GtkButton *button, gpointer data)
+{
+  struct worklist *pwl, *temp_worklists =
+      (struct worklist *) g_object_get_data(G_OBJECT(data), "worklists");
+  GtkTreeSelection *selection;
+  GtkTreeModel *model;
+  GtkTreeIter it;
+  gint pos;
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(g_object_get_data(
+		  G_OBJECT(data), "tree_view")));
+
+  if (!gtk_tree_selection_get_selected(selection, &model, &it)) {
+    return;
+  }
+  gtk_tree_model_get(model, &it, WLC_ID, &pos, -1);
+
+  pwl = &temp_worklists[pos];
+  popdown_worklist(pwl);
+
+  init_worklist(pwl);
+  pwl->is_valid = TRUE;
+
+  update_tree_model(G_OBJECT(data));
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void worklist_edit_callback(GtkButton *button, gpointer data)
+{
+  struct worklist *temp_worklists =
+      (struct worklist *) g_object_get_data(G_OBJECT(data), "worklists");
+  GtkTreeSelection *selection;
+  GtkTreeModel *model;
+  GtkTreeIter it;
+  gint pos;
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(g_object_get_data(
+		  G_OBJECT(data), "tree_view")));
+
+  if (!gtk_tree_selection_get_selected(selection, &model, &it)) {
+    return;
+  }
+  gtk_tree_model_get(model, &it, WLC_ID, &pos, -1);
+
+  popup_worklist(&temp_worklists[pos]);
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void destroy_callback(GtkWidget *widget, gpointer data)
+{
+  struct worklist *temp_worklists = (struct worklist *) data;
+  int i;
+
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    popdown_worklist(&temp_worklists[i]);
+  }
+
+  free((struct worklist *) data);
+}
+
+/****************************************************************
   Bring up the global worklist report.
 *****************************************************************/
-static GtkWidget *create_worklists_report(void)
+GtkWidget *create_worklists_report(void)
 {
-  GtkWidget *shell, *list;
-  GtkWidget *vbox, *label, *sw;
+  struct worklist *temp_worklists;
+  GtkWidget *vbox, *view, *sw, *label, *hbox, *button;
+  GtkListStore *store;
   GtkCellRenderer *rend;
 
-  shell = gtk_dialog_new_with_buttons(_("Edit worklists"),
-				      NULL,
-				      0,
-				      GTK_STOCK_NEW,
-				      WORKLISTS_NEW,
-				      GTK_STOCK_DELETE,
-				      WORKLISTS_DELETE,
-				      GTK_STOCK_PROPERTIES,
-				      WORKLISTS_PROPERTIES,
-				      GTK_STOCK_CLOSE,
-				      WORKLISTS_CLOSE,
-				      NULL);
-  setup_dialog(shell, toplevel);
-  gtk_window_set_position(GTK_WINDOW(shell), GTK_WIN_POS_MOUSE);
-  
-  g_signal_connect(shell, "response",
-		   G_CALLBACK(worklists_response), NULL);
-  g_signal_connect(shell, "destroy",
-		   G_CALLBACK(worklists_destroy_callback), NULL);
+  vbox = gtk_vbox_new(FALSE, 0);
 
-  vbox = gtk_vbox_new(FALSE, 2);
-  gtk_container_add(GTK_CONTAINER(GTK_DIALOG(shell)->vbox), vbox);
+  /* Create the temporary worklists */
+  temp_worklists = fc_malloc(sizeof(global_worklists));
+  memcpy(temp_worklists, global_worklists, sizeof(global_worklists));
+  g_object_set_data(G_OBJECT(vbox), "worklists", temp_worklists);
+  g_signal_connect(vbox, "destroy",
+		   G_CALLBACK(destroy_callback), temp_worklists);
 
-  worklists_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+  /* Tree view */
+  store = gtk_list_store_new(WLC_NUM, G_TYPE_STRING,	/* WLC_NAME */
+				      G_TYPE_INT);	/* WLC_ID */
 
-  list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(worklists_store));
-  g_object_unref(worklists_store);
-  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
+  view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+  g_object_unref(store);
+  g_object_set_data(G_OBJECT(vbox), "tree_view", view);
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
 
-  worklists_list = list;
-  
   rend = gtk_cell_renderer_text_new();
   g_object_set(rend, "editable", TRUE, NULL);
-  g_signal_connect(rend, "edited",
-		   G_CALLBACK(cell_edited), NULL);
-  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(list), -1, NULL,
-    rend, "text", 0, NULL);
+  g_signal_connect(rend, "edited", G_CALLBACK(cell_edited), vbox);
+  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view), -1, NULL,
+					      rend, "text", WLC_NAME, NULL);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 				      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				 GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-  gtk_container_add(GTK_CONTAINER(sw), list);
+  gtk_container_add(GTK_CONTAINER(sw), view);
 
-  gtk_widget_set_size_request(sw, -1, 200);
+  gtk_widget_set_size_request(sw, -1, 100);
 
   label = g_object_new(GTK_TYPE_LABEL,
 		       "use-underline", TRUE,
-		       "mnemonic-widget", list,
+		       "mnemonic-widget", view,
 		       "label", _("_Worklists:"),
 		       "xalign", 0.0, "yalign", 0.5, NULL);
 
   gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-  gtk_widget_show_all(vbox);
 
-  return shell;
+  /* Button bar */
+  hbox = gtk_hbox_new(TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 8);
+
+  button = gtk_button_new_from_stock(GTK_STOCK_NEW);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 5);
+  g_signal_connect(button, "clicked",
+		   G_CALLBACK(worklist_new_callback), vbox);
+
+  button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 5);
+  g_signal_connect(button, "clicked",
+		   G_CALLBACK(worklist_delete_callback), vbox);
+
+  button = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, TRUE, 5);
+  g_signal_connect(button, "clicked",
+		   G_CALLBACK(worklist_edit_callback), vbox);
+
+  gtk_widget_show_all(vbox);
+  return vbox;
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
-void popup_worklists_report(void)
+static void worklists_report_destroy(GtkWidget *widget, gpointer data)
 {
-  if (!worklists_shell) {
-    worklists_shell = create_worklists_report();
+  apply_global_worklists(GTK_WIDGET(data));
+  worklist_shell = NULL;
+}
 
-    update_worklist_report_dialog();
+/****************************************************************
+  ...
+*****************************************************************/
+static void popup_worklists_report(void)
+{
+  if (worklist_shell) {
+    return;
   }
 
-  gtk_window_present(GTK_WINDOW(worklists_shell));
+  GtkWidget *vbox;
+
+  worklist_shell = gtk_dialog_new();
+  gtk_window_set_title(GTK_WINDOW(worklist_shell), _("Edit worklists"));
+  gtk_window_set_position(GTK_WINDOW(worklist_shell), GTK_WIN_POS_MOUSE);
+
+  vbox = create_worklists_report();
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(worklist_shell)->vbox),
+		     vbox, TRUE, TRUE, 0);
+  g_signal_connect(worklist_shell, "destroy",
+		   G_CALLBACK(worklists_report_destroy), vbox);
+
+  update_tree_model(G_OBJECT(vbox));
+
+  gtk_widget_show(GTK_DIALOG(worklist_shell)->vbox);
+  gtk_widget_show(worklist_shell);
 }
 
 
-
-
 /****************************************************************
-...
+  ...
 *****************************************************************/
 struct worklist_data {
   struct worklist *pwl;
@@ -373,7 +478,7 @@ static GtkWidget *get_worklist(struct worklist *pwl)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static void insert_worklist(struct worklist *pwl, GtkWidget *editor)
 {
@@ -384,7 +489,7 @@ static void insert_worklist(struct worklist *pwl, GtkWidget *editor)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static void delete_worklist(struct worklist *pwl)
 {
@@ -394,7 +499,7 @@ static void delete_worklist(struct worklist *pwl)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static void worklist_response(GtkWidget *shell, gint response)
 {
@@ -411,8 +516,7 @@ static void popup_worklist(struct worklist *pwl)
   if (!(shell = get_worklist(pwl))) {
     GtkWidget *editor;
     
-    shell = gtk_dialog_new_with_buttons(pwl->name,
-					GTK_WINDOW(worklists_shell),
+    shell = gtk_dialog_new_with_buttons(pwl->name, NULL,
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_STOCK_CLOSE,
 					GTK_RESPONSE_CLOSE,
@@ -471,16 +575,14 @@ static void worklist_destroy(GtkWidget *editor, gpointer data)
 *****************************************************************/
 static void menu_item_callback(GtkMenuItem *item, struct worklist_data *ptr)
 {
-  struct player *plr;
   gint pos;
   struct worklist *pwl;
 
-  plr = get_player_ptr();
   pos = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "pos"));
 
-  pwl = &plr->worklists[pos];
+  pwl = &global_worklists[pos];
 
-  if (pwl->is_valid) {
+  if (pwl->is_valid && !worklist_is_empty(pwl)) {
     int i;
 
     for (i = 0; i < MAX_LEN_WORKLIST; i++) {
@@ -506,17 +608,17 @@ static void menu_item_callback(GtkMenuItem *item, struct worklist_data *ptr)
 *****************************************************************/
 static void popup_add_menu(GtkMenuShell *menu, gpointer data)
 {
-  struct player *plr;
+  struct worklist *pwl;
   int i;
   GtkWidget *item;
 
   gtk_container_foreach(GTK_CONTAINER(menu),
 			(GtkCallback) gtk_widget_destroy, NULL);
-  plr = get_player_ptr();
 
-  for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-    if (plr->worklists[i].is_valid) {
-      item = gtk_menu_item_new_with_label(plr->worklists[i].name);
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    pwl = &global_worklists[i];
+    if (pwl->is_valid && !worklist_is_empty(pwl)) {
+      item = gtk_menu_item_new_with_label(pwl->name);
       g_object_set_data(G_OBJECT(item), "pos", GINT_TO_POINTER(i));
       gtk_widget_show(item);
 
@@ -900,7 +1002,8 @@ static void src_selection_callback(GtkTreeSelection *selection, gpointer data)
   /* update widget sensitivity. */
   if (gtk_tree_selection_get_selected(selection, NULL, NULL)) {
     if (can_client_issue_orders()
-	&& ptr->pcity && city_owner(ptr->pcity) == get_player_ptr()) {
+	&& ptr->pcity
+	&& city_owner(ptr->pcity) == get_player_ptr()) {
       gtk_widget_set_sensitive(ptr->change_cmd, TRUE);
       gtk_widget_set_sensitive(ptr->prepend_cmd, TRUE);
       gtk_widget_set_sensitive(ptr->append_cmd, TRUE);
@@ -1448,9 +1551,9 @@ void refresh_worklist(GtkWidget *editor)
   /* update widget sensitivity. */
   sens = !ptr->pcity || (can_client_issue_orders() &&
                          city_owner(ptr->pcity) == get_player_ptr());
-  gtk_widget_set_sensitive (ptr->add_cmd, sens);
-  gtk_widget_set_sensitive (ptr->clear_cmd, sens);
-  gtk_widget_set_sensitive (ptr->dst_view, sens);
+  gtk_widget_set_sensitive(ptr->add_cmd, sens);
+  gtk_widget_set_sensitive(ptr->clear_cmd, sens);
+  gtk_widget_set_sensitive(ptr->dst_view, sens);
 }
 
 /****************************************************************

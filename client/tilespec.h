@@ -57,6 +57,7 @@ struct drawn_sprite {
   } data;
 };
 
+const char *get_default_tilespec_name(void);
 const char **get_tileset_list(void);
 
 bool tilespec_read_toplevel(const char *tileset_name);

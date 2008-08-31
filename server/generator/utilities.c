@@ -14,6 +14,7 @@
 #include <config.h>
 #endif
 
+#include "city.h"
 #include "map.h"
 
 #include "utilities.h"

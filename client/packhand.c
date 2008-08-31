@@ -19,56 +19,59 @@
 #include <string.h>
 
 #include "capability.h"
-#include "capstr.h"
-#include "events.h"
 #include "fcintl.h"
-#include "game.h"
-#include "government.h"
 #include "idex.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
+#include "support.h"
+
+#include "capstr.h"
+#include "events.h"
+#include "game.h"
+#include "government.h"
+#include "map.h"
 #include "nation.h"
 #include "packets.h"
 #include "player.h"
 #include "spaceship.h"
-#include "support.h"
+#include "traderoute.h"
 #include "unit.h"
 #include "worklist.h"
 
-#include "agents.h"
 #include "attribute.h"
 #include "audio.h"
-#include "chatline_g.h"
-#include "citydlg_g.h"
-#include "cityrep_g.h"
 #include "civclient.h"
 #include "climap.h"
 #include "climisc.h"
 #include "clinet.h"		/* aconnection */
 #include "connectdlg_common.h"
-#include "connectdlg_g.h"
 #include "control.h"
 #include "dialogs_g.h"
 #include "goto.h"               /* client_goto_init() */
+#include "helpdata.h"		/* boot_help_texts() */
+#include "multiselect.h"
+#include "options.h"
+#include "tilespec.h"
+#include "trade.h"
+
+#include "agents.h"
+#include "cma_core.h"
+
+#include "chatline_g.h"
+#include "citydlg_g.h"
+#include "cityrep_g.h"
+#include "connectdlg_g.h"
+#include "inteldlg_g.h"
 #include "graphics_g.h"
 #include "gui_main_g.h"
-#include "helpdata.h"		/* boot_help_texts() */
-#include "inteldlg_g.h"
 #include "mapctrl_g.h"		/* popup_newcity_dialog() */
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "messagewin_g.h"
-#include "myai.h"
-#include "multiselect.h"
-#include "options.h"
 #include "pages_g.h"
-#include "wc_settings.h"
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
 #include "spaceshipdlg_g.h"
-#include "tilespec.h"
-#include "wldlg_g.h"
 
 #include "packhand.h"
 
@@ -106,6 +109,11 @@ static struct unit * unpackage_unit(struct packet_unit_info *packet)
 				       packet->goto_dest_y);
   } else {
     punit->goto_tile = NULL;
+  }
+  if (server_has_extglobalinfo
+      && is_normal_map_pos(packet->air_patrol_x, packet->air_patrol_y)) {
+    punit->air_patrol_tile = map_pos_to_tile(packet->air_patrol_x,
+					     packet->air_patrol_y);
   }
   punit->activity_target = packet->activity_target;
   punit->paradropped = packet->paradropped;
@@ -187,10 +195,6 @@ void handle_server_join_reply(bool you_can_join, char *message,
       send_client_wants_hack(challenge_file);
     }
 
-    init_all_settings();
-    if (reload_pepsettings) {
-      load_static_settings();
-    }
   } else {
     my_snprintf(msg, sizeof(msg),
 		_("You were rejected from the game: %s"), message);
@@ -202,6 +206,7 @@ void handle_server_join_reply(bool you_can_join, char *message,
     gui_server_connect();
     set_client_page(PAGE_MAIN);
   }
+  server_has_extglobalinfo = has_capability("extglobalinfo", s_capability);
   if (strcmp(s_capability, our_capability) == 0) {
     return;
   }
@@ -253,7 +258,7 @@ void handle_unit_remove(int unit_id)
   agents_unit_remove(punit);
   client_remove_unit(punit);
 
-  if (powner == get_player_ptr()) {
+  if (get_player_ptr() && powner == get_player_ptr()) {
     activeunits_report_dialog_update();
   }
 }
@@ -371,6 +376,7 @@ void handle_game_state(int value)
 
   if (get_client_state() == CLIENT_SELECT_RACE_STATE
       && value == CLIENT_GAME_RUNNING_STATE
+      && get_player_ptr()
       && get_player_ptr()->nation == NO_NATION_SELECTED) {
     popdown_races_dialog();
   }
@@ -390,7 +396,7 @@ void handle_game_state(int value)
     
     free_intro_radar_sprites();
     agents_game_start();
-    ap_timers_init();
+    delayed_goto_auto_timers_init();
   }
 
   if (get_client_state() == CLIENT_GAME_OVER_STATE) {
@@ -415,10 +421,10 @@ void handle_city_info(struct packet_city_info *packet)
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool need_units_dialog_update = FALSE;
   struct city *pcity;
-  bool popup, update_descriptions = FALSE, name_changed = FALSE, change_wonder = FALSE;
+  bool popup, update_descriptions = FALSE, name_changed = FALSE;
   struct unit *pfocus_unit = get_unit_in_focus();
 
-  pcity=find_city_by_id(packet->id);
+  pcity = find_city_by_id(packet->id);
 
   if (pcity && (pcity->owner != packet->owner)) {
     city_autonaming_remove_used_name (pcity->name);
@@ -427,7 +433,7 @@ void handle_city_info(struct packet_city_info *packet)
     city_has_changed_owner = TRUE;
   }
 
-  if(!pcity) {
+  if (!pcity) {
     city_is_new = TRUE;
     pcity = create_city_virtual(get_player(packet->owner),
 				map_pos_to_tile(packet->x, packet->y),
@@ -436,8 +442,7 @@ void handle_city_info(struct packet_city_info *packet)
     idex_register_city(pcity);
     update_descriptions = TRUE;
     city_autonaming_add_used_name (packet->name);
-  }
-  else {
+  } else {
     city_is_new = FALSE;
 
     name_changed = (strcmp(pcity->name, packet->name) != 0);
@@ -467,7 +472,7 @@ void handle_city_info(struct packet_city_info *packet)
     }
     assert(pcity->id == packet->id);
   }
-  pcity->owner=packet->owner;
+  pcity->owner = packet->owner;
   pcity->tile = map_pos_to_tile(packet->x, packet->y);
   sz_strlcpy(pcity->name, packet->name);
   idex_register_city_name (pcity);
@@ -485,34 +490,78 @@ void handle_city_info(struct packet_city_info *packet)
 
   pcity->city_options = packet->city_options;
 
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    pcity->trade[i]=packet->trade[i];
-    pcity->trade_value[i]=packet->trade_value[i];
+  if (server_has_extglobalinfo) {
+    /* Rally point */
+    pcity->rally_point = is_normal_map_pos(packet->rally_point_x,
+					   packet->rally_point_y)
+	? map_pos_to_tile(packet->rally_point_x, packet->rally_point_y) : NULL;
+  } else if (get_client_state() < CLIENT_GAME_RUNNING_STATE) {
+    /* All existant cities were not loaded yet. To prevent that the trade
+     * routes would be missing with a player with a higher player numero,
+     * build a stack and build them later.
+     */
+    delayed_trade_routes_add(pcity->id, packet->trade, packet->trade_value);
+  } else {
+    bool found[OLD_NUM_TRADEROUTES];
+    memset(found, FALSE, sizeof(found));
+    /* Remove old trade routes */
+    established_trade_routes_iterate(pcity, ptr) {
+      for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+	if (OTHER_CITY(ptr, pcity)->id == packet->trade[i]) {
+	  ptr->value = packet->trade_value[i];
+	  found[i] = TRUE;
+	  break;
+	}
+      }
+      if (i >= OLD_NUM_TRADEROUTES) {
+	/* This one has been removed */
+	update_trade_route_line(ptr); /* Should be delayed */
+	game_trade_route_remove(ptr);
+      }
+    } established_trade_routes_iterate_end;
+    /* Check new trade routes */
+    for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
+      if (packet->trade[i] && packet->trade_value[i] && !found[i]) {
+	struct city *ocity = find_city_by_id(packet->trade[i]);
+	struct trade_route *ptr;
+
+	if (!ocity) {
+	  continue;
+	}
+	if ((ptr = game_trade_route_find(pcity, ocity))) {
+	  if (!ptr->punit || !trade_free_unit(ptr->punit)) {
+	    game_trade_route_remove(ptr);
+	  }
+	}
+	ptr = game_trade_route_add(pcity, ocity);
+	ptr->value = packet->trade_value[i];
+	ptr->status = TR_ESTABLISHED;
+	update_trade_route_line(ptr);
+      }
+    }
   }
-  
-  pcity->food_prod=packet->food_prod;
-  pcity->food_surplus=packet->food_surplus;
-  pcity->shield_prod=packet->shield_prod;
-  pcity->shield_surplus=packet->shield_surplus;
-  pcity->trade_prod=packet->trade_prod;
-  pcity->tile_trade=packet->tile_trade;
-  pcity->corruption=packet->corruption;
-  pcity->shield_waste=packet->shield_waste;
+
+  pcity->food_prod = packet->food_prod;
+  pcity->food_surplus = packet->food_surplus;
+  pcity->shield_prod = packet->shield_prod;
+  pcity->shield_surplus = packet->shield_surplus;
+  pcity->trade_prod = packet->trade_prod;
+  pcity->tile_trade = packet->tile_trade;
+  pcity->corruption = packet->corruption;
+  pcity->shield_waste = packet->shield_waste;
     
-  pcity->luxury_total=packet->luxury_total;
-  pcity->tax_total=packet->tax_total;
-  pcity->science_total=packet->science_total;
+  pcity->luxury_total = packet->luxury_total;
+  pcity->tax_total = packet->tax_total;
+  pcity->science_total = packet->science_total;
   
-  pcity->food_stock=packet->food_stock;
-  pcity->shield_stock=packet->shield_stock;
-  pcity->pollution=packet->pollution;
+  pcity->food_stock = packet->food_stock;
+  pcity->shield_stock = packet->shield_stock;
+  pcity->pollution = packet->pollution;
 
   if (city_is_new
       || pcity->is_building_unit != packet->is_building_unit
       || pcity->currently_building != packet->currently_building) {
     need_units_dialog_update = TRUE;
-	if((!pcity->is_building_unit&&is_wonder(pcity->currently_building))||(!packet->is_building_unit&&is_wonder(packet->currently_building)))
-	  change_wonder=TRUE;
   }
   pcity->is_building_unit=packet->is_building_unit;
   pcity->currently_building=packet->currently_building;
@@ -524,18 +573,18 @@ void handle_city_info(struct packet_city_info *packet)
 			    ARRAY_SIZE(pcity->improvements));
   }
   copy_worklist(&pcity->worklist, &packet->worklist);
-  pcity->did_buy=packet->did_buy;
-  pcity->did_sell=packet->did_sell;
-  pcity->was_happy=packet->was_happy;
-  pcity->airlift=packet->airlift;
+  pcity->did_buy = packet->did_buy;
+  pcity->did_sell = packet->did_sell;
+  pcity->was_happy = packet->was_happy;
+  pcity->airlift = packet->airlift;
 
-  pcity->turn_last_built=packet->turn_last_built;
+  pcity->turn_last_built = packet->turn_last_built;
   pcity->turn_founded = packet->turn_founded;
-  pcity->changed_from_id=packet->changed_from_id;
-  pcity->changed_from_is_unit=packet->changed_from_is_unit;
-  pcity->before_change_shields=packet->before_change_shields;
-  pcity->disbanded_shields=packet->disbanded_shields;
-  pcity->caravan_shields=packet->caravan_shields;
+  pcity->changed_from_id = packet->changed_from_id;
+  pcity->changed_from_is_unit = packet->changed_from_is_unit;
+  pcity->before_change_shields = packet->before_change_shields;
+  pcity->disbanded_shields = packet->disbanded_shields;
+  pcity->caravan_shields = packet->caravan_shields;
   pcity->last_turns_shield_surplus = packet->last_turns_shield_surplus;
 
   for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
@@ -565,7 +614,8 @@ void handle_city_info(struct packet_city_info *packet)
    * investigating an enemy city we can't.  In that case we don't update
    * the occupied flag at all: it's already been set earlier and we'll
    * get an update if it changes. */
-  if (can_player_see_units_in_city(get_player_ptr(), pcity)) {
+  if (!get_player_ptr()
+      || can_player_see_units_in_city(get_player_ptr(), pcity)) {
     pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
   }
 
@@ -661,8 +711,8 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
   }
 
   if (popup
-      && (!get_player_ptr()->ai.control || ai_popup_windows)
-      && can_client_issue_orders()) {
+      && can_client_issue_orders()
+      && (!get_player_ptr()->ai.control || ai_popup_windows)) {
     update_menus();
     if (!city_dialog_is_open(pcity)) {
       popup_city_dialog(pcity, FALSE);
@@ -700,7 +750,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool update_descriptions = FALSE, name_changed = FALSE;
 
-  pcity=find_city_by_id(packet->id);
+  pcity = find_city_by_id(packet->id);
 
   if (pcity && (pcity->owner != packet->owner)) {
     city_autonaming_remove_used_name (pcity->name);
@@ -711,41 +761,37 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 
   if (!pcity) {
     city_is_new = TRUE;
-    pcity = fc_malloc(sizeof(struct city));
+    pcity = create_city_virtual(get_player(packet->owner),
+				map_pos_to_tile(packet->x, packet->y),
+				packet->name);
     pcity->id = packet->id;
     idex_register_city(pcity);
     city_autonaming_add_used_name(packet->name);
-    pcity->rally_point = NULL;
-    pcity->trade_routes = trade_route_list_new();
-    pcity->units_supported = unit_list_new();
-    pcity->info_units_supported = NULL;
-    pcity->info_units_present = NULL;
-  }
-  else {
+  } else {
     city_is_new = FALSE;
 
-    name_changed = strcmp (pcity->name, packet->name) != 0;
+    name_changed = strcmp(pcity->name, packet->name) != 0;
     /* Check if city desciptions should be updated */
     if (draw_city_names && name_changed) {
       update_descriptions = TRUE;
     }
     
     if (name_changed) {
-      city_autonaming_remove_used_name (pcity->name);
-      city_autonaming_add_used_name (packet->name);
+      city_autonaming_remove_used_name(pcity->name);
+      city_autonaming_add_used_name(packet->name);
 
       idex_unregister_city_name (pcity);
     }
-    
+
     assert(pcity->id == packet->id);
   }
 
-  pcity->owner=packet->owner;
+  pcity->owner = packet->owner;
   pcity->tile = map_pos_to_tile(packet->x, packet->y);
   sz_strlcpy(pcity->name, packet->name);
-  idex_register_city_name (pcity);
-  
-  pcity->size=packet->size;
+  idex_register_city_name(pcity);
+
+  pcity->size = packet->size;
   pcity->tile_trade = packet->tile_trade;
 
   /* We can't actually see the internals of the city, but the server tells
@@ -782,47 +828,6 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     init_worklist(&pcity->worklist);
   }
 
-  /* This sets dumb values for everything else. This is not really required,
-     but just want to be at the safe side. */
-  {
-    int i;
-    int x, y;
-
-    specialist_type_iterate(sp) {
-      pcity->specialists[sp] = 0;
-    } specialist_type_iterate_end;
-    for (i = 0; i < NUM_TRADEROUTES; i++) {
-      pcity->trade[i] = 0;
-      pcity->trade_value[i] = 0;
-    }
-    pcity->food_prod          = 0;
-    pcity->food_surplus       = 0;
-    pcity->shield_prod        = 0;
-    pcity->shield_surplus     = 0;
-    pcity->trade_prod         = 0;
-    pcity->corruption         = 0;
-    pcity->luxury_total       = 0;
-    pcity->tax_total          = 0;
-    pcity->science_total      = 0;
-    pcity->food_stock         = 0;
-    pcity->shield_stock       = 0;
-    pcity->pollution          = 0;
-    pcity->city_options       = 0;
-    pcity->is_building_unit   = FALSE;
-    pcity->currently_building = 0;
-    init_worklist(&pcity->worklist);
-    pcity->airlift            = FALSE;
-    pcity->did_buy            = FALSE;
-    pcity->did_sell           = FALSE;
-    pcity->was_happy          = FALSE;
-
-    for (y = 0; y < CITY_MAP_SIZE; y++) {
-      for (x = 0; x < CITY_MAP_SIZE; x++) {
-	pcity->city_map[x][y] = C_TILE_EMPTY;
-      }
-    }
-  } /* Dumb values */
-
   if (city_is_new && !city_has_changed_owner) {
     agents_city_new(pcity);
   } else {
@@ -852,15 +857,17 @@ void handle_new_year(int year, int turn)
   assert(game.info.turn == turn);
   update_info_label();
 
-  automatic_processus_event(AUTO_NEW_YEAR,NULL);
+  delayed_goto_event(AUTO_NEW_YEAR,NULL);
 
-  player_set_unit_focus_status(get_player_ptr());
-  city_list_iterate(get_player_ptr()->cities, pcity) {
-    pcity->client.colored = FALSE;
-  } city_list_iterate_end;
-  unit_list_iterate(get_player_ptr()->units, punit) {
-    punit->client.colored = FALSE;
-  } unit_list_iterate_end;
+  if (get_player_ptr()) {
+    player_set_unit_focus_status(get_player_ptr());
+    city_list_iterate(get_player_ptr()->cities, pcity) {
+      pcity->client.colored = FALSE;
+    } city_list_iterate_end;
+    unit_list_iterate(get_player_ptr()->units, punit) {
+      punit->client.colored = FALSE;
+    } unit_list_iterate_end;
+  }
   update_unit_focus();
   auto_center_on_focus_unit();
 
@@ -870,7 +877,7 @@ void handle_new_year(int year, int turn)
   if (game.info.timeout > 0) {
     game.info.seconds_to_turndone = game.info.timeout;
     end_of_turn = time(NULL) + game.info.timeout;
-    ap_timers_init();
+    delayed_goto_auto_timers_init();
   }
 #if 0
   /* This information shouldn't be needed, but if it is this is the only
@@ -881,8 +888,10 @@ void handle_new_year(int year, int turn)
 
   update_map_canvas_visible(MUT_NORMAL);
 
-  if (sound_bell_at_new_turn &&
-      (!get_player_ptr()->ai.control || ai_manual_turn_done)) {
+  if (sound_bell_at_new_turn
+      && (!get_player_ptr()
+	  || !get_player_ptr()->ai.control
+	  || ai_manual_turn_done)) {
     create_event(NULL, E_TURN_BELL, _("Start of turn %d"), game.info.turn);
   }
 
@@ -905,8 +914,8 @@ void handle_before_new_year(void)
    */
   game.info.turn++;
   agents_before_new_turn();
-  autosave_settings();
   decrease_link_mark_turn_counters();
+  execute_air_patrol_orders();
 }
 
 /**************************************************************************
@@ -920,7 +929,9 @@ void handle_start_turn(void)
   turn_done_sent = FALSE;
   update_turn_done_button_state();
 
-  if(get_player_ptr()->ai.control && !ai_manual_turn_done) {
+  if (get_player_ptr()
+      && get_player_ptr()->ai.control
+      && !ai_manual_turn_done) {
     user_ended_turn();
   }
 
@@ -982,8 +993,10 @@ void handle_page_msg(char *message, enum event_type event)
     lines = "";
   }
 
-  if (!get_player_ptr()->ai.control || ai_popup_windows ||
-      event != E_BROADCAST_REPORT) {
+  if (!get_player_ptr()
+      || !get_player_ptr()->ai.control
+      || ai_popup_windows
+      || event != E_BROADCAST_REPORT) {
     popup_notify_dialog(caption, headline, lines);
     play_sound_for_event(event);
   }
@@ -996,7 +1009,7 @@ void handle_unit_info(struct packet_unit_info *packet)
 {
   struct unit *punit;
 
-  if (packet->owner != get_player_idx() ) {
+  if (get_player_ptr() && packet->owner != get_player_idx()) {
     freelog(LOG_ERROR, "Got packet_unit_info for unit of %s.",
             game.players[packet->owner].name);
   }
@@ -1039,7 +1052,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool check_focus = FALSE;     /* conservative focus change */
   bool moved = FALSE;
   bool ret = FALSE;
-  int trade_action=0;
+  bool need_execute_trade = FALSE;
   struct unit *focus_unit = get_unit_in_focus();
   
   punit = player_find_unit_by_id(get_player(packet_unit->owner),
@@ -1055,40 +1068,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       /* AI is cleared: keep focus */
       if (packet_unit->ai.control && punit == get_unit_in_focus()) {
         check_focus = TRUE;
-      }
-    }
-
-    struct city *tcity,*hcity;
-
-    if (punit->owner == get_player_idx()
-        && unit_flag(punit, F_TRADE_ROUTE)
-        && !punit->my_ai.control) {
-      if (((punit->activity == ACTIVITY_GOTO
-            && (packet_unit->activity != ACTIVITY_GOTO 
-                || punit->goto_tile != packet_unit->goto_tile))
-           || (unit_has_orders(punit)
-               && (!unit_has_orders(packet_unit)
-                   || punit->goto_tile != packet_unit->goto_tile)))
-          && punit->goto_tile
-	  && (tcity = punit->goto_tile->city)
-          && (hcity = player_find_city_by_id(get_player_ptr(), punit->homecity))
-          && can_cities_trade(hcity,tcity)
-          && !have_cities_trade_route(hcity,tcity)) {
-	trade_action |= 1;
-      }
-      if (((packet_unit->activity == ACTIVITY_GOTO
-            && (punit->activity != ACTIVITY_GOTO
-                || punit->goto_tile != packet_unit->goto_tile))
-           || (unit_has_orders(packet_unit)
-               && (!unit_has_orders(punit)
-                   || punit->goto_tile != packet_unit->goto_tile)))
-          && packet_unit->goto_tile
-          && (tcity = packet_unit->goto_tile->city)
-          && (hcity = player_find_city_by_id(get_player_ptr(),
-                                             packet_unit->homecity))
-          && can_cities_trade(hcity, tcity)
-          && !have_cities_trade_route(hcity, tcity)) {
-        trade_action |= 2;
       }
     }
 
@@ -1123,7 +1102,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
          request_new_unit_activity(punit, ACTIVITY_SENTRY);
          packet_unit->activity = ACTIVITY_SENTRY; /* Cheat here */
          check_focus = FALSE;
-      } else if (autowakeup_state 
+      } else if (get_player_ptr()
+		 && autowakeup_state 
 		 && wakeup_focus 
                  && !get_player_ptr()->ai.control
                  && punit->owner == get_player_idx()
@@ -1155,6 +1135,21 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       }
       punit->occupy = packet_unit->occupy;
       punit->transported_by = packet_unit->transported_by;
+
+      if (punit->ptr
+	  && !server_has_extglobalinfo
+	  && (!packet_unit->has_orders)){/*
+	      || packet_unit->orders.index >= packet_unit->orders.length - 1)) {*/
+	if ((packet_unit->homecity != punit->ptr->pcity1->id
+	     && packet_unit->tile == punit->ptr->pcity1->tile)
+	    || (packet_unit->homecity == punit->ptr->pcity1->id
+		&& packet_unit->tile == punit->ptr->pcity2->tile)) {
+	  need_execute_trade = TRUE;
+	} else {
+	  /* Has been stopped */
+	  trade_free_unit(punit);
+	}
+      }
 
       punit->has_orders = packet_unit->has_orders;
       punit->orders.length = packet_unit->orders.length;
@@ -1211,7 +1206,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       if (pcity && (pcity->id != punit->homecity)) {
 	refresh_city_dialog(pcity);
       }
-      if(punit == get_unit_in_focus()) {
+      if (punit == get_unit_in_focus()) {
         /* Update the orders menu -- the unit might have new abilities */
 	need_update_menus = TRUE;
       }
@@ -1240,8 +1235,9 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	repaint_unit = TRUE;
       }
 
-      if(pcity)  {
-	if (can_player_see_units_in_city(get_player_ptr(), pcity)) {
+      if (pcity)  {
+	if (!get_player_ptr()
+	    || can_player_see_units_in_city(get_player_ptr(), pcity)) {
 	  /* Unit moved out of a city - update the occupied status. */
 	  bool new_occupied =
 	    (unit_list_size(pcity->tile->units) > 0);
@@ -1252,14 +1248,16 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	  }
 	}
 
-        if(pcity->id==punit->homecity)
+        if (pcity->id == punit->homecity) {
 	  repaint_city = TRUE;
-	else
+	} else {
 	  refresh_city_dialog(pcity);
+	}
       }
       
-      if((pcity=map_get_city(punit->tile)))  {
-	if (can_player_see_units_in_city(get_player_ptr(), pcity)) {
+      if ((pcity = map_get_city(punit->tile)))  {
+	if (!get_player_ptr()
+	    || can_player_see_units_in_city(get_player_ptr(), pcity)) {
 	  /* Unit moved into a city - obviously it's occupied. */
 	  if (!pcity->client.occupied) {
 	    pcity->client.occupied = TRUE;
@@ -1267,19 +1265,22 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	  }
 	}
 
-        if(pcity->id == punit->homecity)
+        if (pcity->id == punit->homecity) {
 	  repaint_city = TRUE;
-	else
+	} else {
 	  refresh_city_dialog(pcity);
+	}
 	
-        if((unit_flag(punit, F_TRADE_ROUTE) || unit_flag(punit, F_HELP_WONDER))
-	   && (!get_player_ptr()->ai.control || ai_popup_windows)
-	   && punit->owner==get_player_idx()
-	   && !unit_has_orders(punit)
-           && punit->activity != ACTIVITY_GOTO
-	   && can_client_issue_orders()
-	   && (unit_can_help_build_wonder_here(punit)
-	       || unit_can_est_traderoute_here(punit))) {
+        if ((unit_flag(punit, F_TRADE_ROUTE)
+	     || unit_flag(punit, F_HELP_WONDER))
+	    && can_client_issue_orders()
+	    && (!get_player_ptr()->ai.control || ai_popup_windows)
+	    && punit->owner == get_player_idx()
+	    && !unit_has_orders(punit)
+	    && !punit->ptr
+	    && punit->activity != ACTIVITY_GOTO
+	    && (unit_can_help_build_wonder_here(punit)
+		|| unit_can_est_traderoute_here(punit))) {
 	  process_caravan_arrival(punit);
 	}
       }
@@ -1319,6 +1320,9 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     punit->bribe_cost = 0;
     punit->fuel = packet_unit->fuel;
     punit->goto_tile = packet_unit->goto_tile;
+    if (server_has_extglobalinfo) {
+      punit->air_patrol_tile = packet_unit->air_patrol_tile;
+    }
     punit->paradropped = packet_unit->paradropped;
     if (punit->done_moving != packet_unit->done_moving) {
       punit->done_moving = packet_unit->done_moving;
@@ -1335,8 +1339,15 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     unit_list_prepend(get_player(punit->owner)->units, punit);
     unit_list_prepend(punit->tile->units, punit);
 
-    if((pcity=find_city_by_id(punit->homecity))) {
+    if ((pcity = find_city_by_id(punit->homecity))) {
       unit_list_prepend(pcity->units_supported, punit);
+      if (!server_has_extglobalinfo
+	  && pcity->rally_point
+	  && punit->tile == pcity->tile) {
+	/* Check rally point */
+	send_goto_unit(punit, pcity->rally_point);
+	pcity->rally_point = NULL;
+      }
     }
 
     freelog(LOG_DEBUG, "New %s %s id %d (%d %d) hc %d %s", 
@@ -1352,17 +1363,15 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       pcity->client.occupied = TRUE;
     }
 
-    check_rally_points(pcity, punit);
     check_new_unit_action(punit);
 
-    struct city *hcity, *tcity; 
-    if(punit->owner==get_player_idx()&&unit_flag(punit,F_TRADE_ROUTE)&&packet_unit->activity==ACTIVITY_GOTO
-      &&packet_unit->goto_tile&&(tcity=packet_unit->goto_tile->city)&&(hcity=player_find_city_by_id(get_player_ptr(),packet_unit->homecity))
-      &&can_cities_trade(hcity,tcity)&&!have_cities_trade_route(hcity,tcity))
-      trade_action+=2;
   } /*** End of Create new unit ***/
 
   assert(punit != NULL);
+
+  if (need_execute_trade) {
+    execute_trade_orders(punit);
+  }
 
   if (punit == get_unit_in_focus()) {
     update_unit_info_label(punit);
@@ -1388,8 +1397,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     }
   }
 
-  if ((check_focus || get_unit_in_focus() == NULL) &&
-      !get_player_ptr()->ai.control) {
+  if ((check_focus || get_unit_in_focus() == NULL)
+      && get_player_ptr() && !get_player_ptr()->ai.control) {
     update_unit_focus();
   }
 
@@ -1400,8 +1409,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   if (punit->owner == get_player_idx()) {
     enable_airlift_unit_type_menu(punit->type);
   }
-
-  non_ai_trade_change(punit, trade_action);
 
   return ret;
 }
@@ -1499,6 +1506,9 @@ void handle_map_info(int xsize, int ysize, int topology_id)
 void handle_traderoute_info(struct packet_traderoute_info *packet)
 {
   game.traderoute_info = *packet;
+  if (!has_capability("extglobalinfo", aconnection.capability)) {
+    game.traderoute_info.maxtraderoutes = GAME_DEFAULT_MAXTRADEROUTES;
+  }
 }
 
 /**************************************************************************
@@ -1524,7 +1534,6 @@ void handle_game_info(struct packet_game_info *pinfo)
   boot_help = (can_client_change_view()
 	       && game.info.spacerace != pinfo->spacerace);
   timeout_changed = game.info.timeout != pinfo->timeout;
-  
 
   game.info = *pinfo;
 
@@ -1553,7 +1562,10 @@ void handle_game_info(struct packet_game_info *pinfo)
     improvement_status_init(game.improvements,
 			    ARRAY_SIZE(game.improvements));
 
-    aconnection.player = &game.players[pinfo->player_idx];
+    aconnection.player = ((pinfo->player_idx >= 0 
+			   && pinfo->player_idx
+			      < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS)
+			  ? get_player(pinfo->player_idx) : NULL);
   }
   for (i = 0; i < B_LAST /* game.ruleset_control.num_impr_types */ ; i++) {
     /* Only add in the improvement if it's in a "foreign" (i.e. unknown) city
@@ -1582,7 +1594,7 @@ void handle_game_info(struct packet_game_info *pinfo)
     boot_help_texts(); /* Reboot, after setting game.info.spacerace */
   }
   if (timeout_changed) {
-    ap_timers_init();
+    delayed_goto_auto_timers_init();
   }
 
   update_unit_focus();
@@ -1623,8 +1635,7 @@ static bool read_player_info_techs(struct player *pplayer,
 **************************************************************************/
 void set_government_choice(int government)
 {
-  if (government != get_player_ptr()->government
-      && can_client_issue_orders()) {
+  if (can_client_issue_orders() && government != get_player_ptr()->government) {
     dsend_packet_player_change_government(&aconnection, government);
   }
 }
@@ -1669,15 +1680,16 @@ void handle_player_info(struct packet_player_info *pinfo)
   }
 
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
-    if (pplayer->diplstates[i].type!=pinfo->diplstates[i].type) {
+    if (can_client_issue_orders()
+	&& pplayer->diplstates[i].type != pinfo->diplstates[i].type) {
       if (pplayer->diplstates[i].type != DS_WAR
 	  && pinfo->diplstates[i].type == DS_WAR
 	  && !(pplayer->diplstates[i].type == DS_NO_CONTACT
 	       && game.info.diplomacy >= 2)) {
 	if (pplayer == get_player_ptr()) {
-	  automatic_processus_event(AUTO_WAR_DIPLSTATE, get_player(i));
+	  delayed_goto_event(AUTO_WAR_DIPLSTATE, get_player(i));
 	} else if (i == get_player_idx()) {
-	  automatic_processus_event(AUTO_WAR_DIPLSTATE, pplayer);
+	  delayed_goto_event(AUTO_WAR_DIPLSTATE, pplayer);
 	}
       }
     }
@@ -1707,7 +1719,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   pplayer->research.bulbs_researched = pinfo->bulbs_researched;
   pplayer->research.techs_researched = pinfo->techs_researched;
   pplayer->research.researching=pinfo->researching;
-  if(has_capability("exttechleakage", aconnection.capability)) {
+  if (has_capability("exttechleakage", aconnection.capability)) {
     pplayer->research.researching_cost = pinfo->researching_cost;
   } else {
     pplayer->research.researching_cost = total_bulbs_required(pplayer);
@@ -1745,9 +1757,9 @@ void handle_player_info(struct packet_player_info *pinfo)
 
   pplayer->ai.barbarian_type = pinfo->barbarian_type;
   pplayer->revolution_finishes = pinfo->revolution_finishes;
-  if(pplayer->ai.control!=pinfo->ai)  {
+  if (pplayer->ai.control != pinfo->ai)  {
     pplayer->ai.control=pinfo->ai;
-    if(pplayer==get_player_ptr())  {
+    if (pplayer == get_player_ptr())  {
       my_snprintf(msg, sizeof(msg), _("AI Mode is now %s."),
 		  get_player_ptr()->ai.control?_("ON"):_("OFF"));
       append_output_window(msg);
@@ -1755,7 +1767,6 @@ void handle_player_info(struct packet_player_info *pinfo)
   }
 
   update_players_dialog();
-  update_worklist_report_dialog();
   upgrade_canvas_clipboard();
 
   if (pplayer == get_player_ptr() && can_client_change_view()) {
@@ -2768,7 +2779,8 @@ void handle_unit_bribe_info(int unit_id, int cost)
 
   if (punit) {
     punit->bribe_cost = cost;
-    if (!get_player_ptr()->ai.control || ai_popup_windows) {
+    if (get_player_ptr()
+	&& (!get_player_ptr()->ai.control || ai_popup_windows)) {
       popup_bribe_dialog(punit);
     }
   }
@@ -2783,7 +2795,8 @@ void handle_city_incite_info(int city_id, int cost)
 
   if (pcity) {
     pcity->incite_revolt_cost = cost;
-    if (!get_player_ptr()->ai.control || ai_popup_windows) {
+    if (get_player_ptr()
+	&& (!get_player_ptr()->ai.control || ai_popup_windows)) {
       popup_incite_dialog(pcity);
     }
   }
@@ -2794,11 +2807,11 @@ void handle_city_incite_info(int city_id, int cost)
 **************************************************************************/
 void handle_city_name_suggestion_info(int unit_id, char *name)
 {
-  struct unit *punit = player_find_unit_by_id(get_player_ptr(), unit_id);
-
   if (!can_client_issue_orders()) {
     return;
   }
+
+  struct unit *punit = player_find_unit_by_id(get_player_ptr(), unit_id);
 
   if (punit) {
     if (ask_city_name) {
@@ -2814,6 +2827,10 @@ void handle_city_name_suggestion_info(int unit_id, char *name)
 **************************************************************************/
 void handle_unit_diplomat_popup_dialog(int diplomat_id, int target_id)
 {
+  if (!get_player_ptr()) {
+    return;
+  }
+
   struct unit *pdiplomat =
       player_find_unit_by_id(get_player_ptr(), diplomat_id);
 
@@ -2828,6 +2845,10 @@ void handle_unit_diplomat_popup_dialog(int diplomat_id, int target_id)
 void handle_city_sabotage_list(int diplomat_id, int city_id,
 			       char *improvements)
 {
+  if (!get_player_ptr()) {
+    return;
+  }
+
   struct unit *punit = player_find_unit_by_id(get_player_ptr(), diplomat_id);
   struct city *pcity = find_city_by_id(city_id);
 
@@ -2853,6 +2874,10 @@ void handle_endgame_report(struct packet_endgame_report *packet)
 **************************************************************************/
 void handle_player_attribute_chunk(struct packet_player_attribute_chunk *packet)
 {
+  if (!get_player_ptr()) {
+    return;
+  }
+
   generic_handle_player_attribute_chunk(get_player_ptr(), packet, &aconnection);
 
   if (packet->offset + packet->chunk_length == packet->total_length) {
@@ -3114,4 +3139,53 @@ void handle_vote_resolve(int vote_no, bool passed)
   vi->passed = passed;
 
   voteinfo_gui_update();
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_city_manager_param(struct packet_city_manager_param *packet)
+{
+  struct city *pcity = find_city_by_id(packet->id);
+  struct cm_parameter parameter;
+  int i;
+
+  if (!pcity) {
+    return;
+  }
+
+  if (client_is_observer()
+      || get_client_state() < CLIENT_GAME_RUNNING_STATE) {
+    /* Observing or connecting */
+    for (i = 0; i < CM_NUM_STATS; i++) {
+      parameter.minimal_surplus[i] = packet->minimal_surplus[i];
+      parameter.factor[i] = packet->factor[i];
+    }
+    parameter.require_happy = packet->require_happy;
+    parameter.allow_disorder = packet->allow_disorder;
+    parameter.allow_specialists = packet->allow_specialists;
+    parameter.happy_factor = packet->happy_factor;
+
+    cma_put_city_under_agent(pcity, &parameter);
+    refresh_city_dialog(pcity);
+    city_report_dialog_update_city(pcity);
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_city_no_manager_param(int city_id)
+{
+  struct city *pcity = find_city_by_id(city_id);
+
+  if (!pcity) {
+    return;
+  }
+
+  if (client_is_observer()
+      || get_client_state() < CLIENT_GAME_RUNNING_STATE) {
+    /* Observing or connecting */
+    cma_release_city(pcity);
+  }
 }

@@ -20,12 +20,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "combat.h"
-#include "game.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
 #include "rand.h"
+
+#include "city.h"
+#include "combat.h"
+#include "game.h"
+#include "map.h"
 
 #include "airgoto.h"
 #include "maphand.h"

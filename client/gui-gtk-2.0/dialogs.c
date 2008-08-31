@@ -50,11 +50,10 @@
 #include "mapview.h"
 #include "menu.h"
 #include "multiselect.h"
-#include "myai.h"
 #include "options.h"
 #include "packhand.h"
-#include "wc_settings.h"
 #include "tilespec.h"
+#include "trade.h"
 
 #include "dialogs.h"
 #include "wldlg.h"
@@ -2275,477 +2274,8 @@ void popdown_all_game_dialogs(void)
   g_list_free(res);
 }
 
-/*************************************************************************
-  PepSettings dialog.
-*************************************************************************/
-struct filter_data
-{
-	filter filter;
-	GtkWidget *widget[FILTER_NUM];
-};
-
-void update_filter_buttons(struct filter_data *pfd);
-void update_autop_buttons(automatic_processus *cap);
-static void pepsetting_changed_callback(GtkWidget *widget, gpointer data) ;
-static void pepfilter_changed_callback(GtkWidget *widget, gpointer data);
-static void pepautop_changed_callback(GtkWidget *widget, gpointer data);
-void set_pepsetting(GtkWidget *w);
-void update_pepsettind_dialog(GtkWidget *w);
-static void pepsetting_callback(GtkWidget *win, gint rid, GtkWidget *w);
-static void pepsetting_destroy(GtkWidget *win, GtkWidget *w);
-
-/*************************************************************************
-  ...
-*************************************************************************/
-void update_filter_buttons(struct filter_data *pfd)
-{
-  int i;
-
-  for (i = 0; i < FILTER_NUM; i++) {
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pfd->widget[i]), 
-				 pfd->filter & (1 << i));
-  }
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-void update_autop_buttons(automatic_processus *cap)
-{
-  int i;
-
-  for(i = 0; i < AUTO_VALUES_NUM; i++) {
-    if (is_auto_value_allowed(cap, i)) {
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cap->widget[i]),
-				   cap->auto_filter&AV_TO_FV(i));
-    }
-  }
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-static void pepsetting_changed_callback(GtkWidget *widget,gpointer data) 
-{
-  g_object_set_data(G_OBJECT(widget), "changed", (gpointer)TRUE); 
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-static void pepfilter_changed_callback(GtkWidget *widget,gpointer data)
-{
-  GtkWidget *frame = (GtkWidget *)data;
-  struct filter_data *pfd=(struct filter_data *)g_object_get_data(G_OBJECT(frame),"data");
-  int i;
-
-  for (i = 0; i < FILTER_NUM; i++) {
-    if (widget == pfd->widget[i]) {
-      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))
-	  ^ !!(pfd->filter & (1 << i))) {
-	filter_change(&pfd->filter, 1 << i);
-	update_filter_buttons(pfd);
-      }
-      break;
-    }
-  }
-  g_object_set_data(G_OBJECT(frame),"changed",(gpointer)TRUE); 
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-static void pepautop_changed_callback(GtkWidget *widget,gpointer data)
-{
-  GtkWidget *frame = (GtkWidget *)data;
-  automatic_processus *cap =
-      (automatic_processus *)g_object_get_data(G_OBJECT(frame), "ap");
-  int i;
-
-  for (i = 0; i < AUTO_VALUES_NUM; i++) {
-    if (is_auto_value_allowed(cap, i) && widget == cap->widget[i]) {
-      if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))
-	 ^ !!(cap->auto_filter & AV_TO_FV(i))) {
-	auto_filter_change(cap, i);
-	update_autop_buttons(cap);
-      }
-      break;
-    }
-  }
-  g_object_set_data(G_OBJECT(frame),"changed",(gpointer)TRUE); 
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-void set_pepsetting(GtkWidget *w)
-{
-  GtkWidget *prev;
-
-  if (g_object_get_data(G_OBJECT(w), "changed")) {
-    struct pepsetting *pset =
-        (struct pepsetting *)g_object_get_data(G_OBJECT(w), "setting");
-    automatic_processus *pap, *cap =
-        (automatic_processus *)g_object_get_data(G_OBJECT(w),"ap");
-    int value;
-
-    if (pset) {
-      switch (pset->type) {
-	case TYPE_BOOL:
-	  value = (bool)gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));	
-	  *((bool *)pset->data) = value;
-	  break;
-	case TYPE_INT:
-	  value = (int)gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-	  *((int *)pset->data) = value;
-	  break;
-	case TYPE_FILTER:
-	  value = ((struct filter_data *)
-		   g_object_get_data(G_OBJECT(w),"data"))->filter;
-	  *((filter *)pset->data) = value;
-	  break;
-	default:
-	  value = 0;
-	  break;
-      }
-      freelog(LOG_VERBOSE,"settings '%s' set to %d", pset->name, value);
-    } else if (cap
-	       && (pap = find_automatic_processus_by_name(cap->description))) {
-      pap->auto_filter = cap->auto_filter;
-    }
-  }
-
-  prev = (GtkWidget *)g_object_get_data(G_OBJECT(w), "prev");
-  if (prev) {
-    set_pepsetting(prev);
-  }
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-void update_pepsettind_dialog(GtkWidget *w)
-{
-  GtkWidget *prev;
-  struct pepsetting *pset =
-      (struct pepsetting *)g_object_get_data(G_OBJECT(w), "setting");
-  automatic_processus *pap, *cap =
-      (automatic_processus *)g_object_get_data(G_OBJECT(w), "ap");
-
-  if (pset) {
-    switch (pset->type) {
-      case TYPE_BOOL:
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w),
-				     *((bool *)pset->data));
-	break;
-      case TYPE_INT:
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), *((int *)pset->data));
-	break;
-      case TYPE_FILTER:
-      {
-	struct filter_data *pfd = (struct filter_data *)
-	    g_object_get_data(G_OBJECT(w), "data");
-	pfd->filter = *((filter *)pset->data);
-	update_filter_buttons(pfd);
-	break;
-      }
-      default:
-	break;
-    }
-    g_object_set_data(G_OBJECT(w),"changed",FALSE);
-  } else if (cap
-	     && (pap = find_automatic_processus_by_name(cap->description))) {
-    cap->auto_filter = pap->auto_filter;
-    update_autop_buttons(cap);
-  }
-
-  prev = (GtkWidget *)g_object_get_data(G_OBJECT(w), "prev");
-  if (prev) {
-    update_pepsettind_dialog(prev);
-  }
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-static void pepsetting_callback(GtkWidget *win, gint rid, GtkWidget *w)
-{
-  switch (rid) {
-    case GTK_RESPONSE_OK:
-      set_pepsetting(w);
-      init_menus();
-    case GTK_RESPONSE_CANCEL:
-      gtk_widget_destroy(win);
-      break;
-    case GTK_RESPONSE_APPLY:
-      set_pepsetting(w);
-      init_menus();
-      update_pepsettind_dialog(w);
-      break;
-    case 1: /* Reset */
-      init_all_settings();
-      update_pepsettind_dialog(w);
-      break;
-    case 2: /* Load */
-      load_static_settings();
-      init_menus();
-      update_pepsettind_dialog(w);
-      break;
-    case 3: /* Save */
-      set_pepsetting(w);
-      save_all_settings();
-      update_pepsettind_dialog(w);
-      break;
-    default:
-      break;
-  }
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-static void pepsetting_destroy(GtkWidget *win, GtkWidget *w)
-{
-  while (w) {
-    struct pepsetting *pset = (struct pepsetting *)
-        g_object_get_data(G_OBJECT(w), "setting");
-    if (pset && pset->type == TYPE_FILTER) {
-      struct filter_data *pfd = (struct filter_data *)
-	  g_object_get_data(G_OBJECT(w), "data");
-      free(pfd);
-    }
-    automatic_processus *cap =
-        (automatic_processus *)g_object_get_data(G_OBJECT(w), "ap");
-    if (cap) {
-      free(cap);
-    }
-    w = (GtkWidget *)g_object_get_data(G_OBJECT(w), "prev");
-  }
-}
-
-/*************************************************************************
-  ...
-*************************************************************************/
-void create_pepsetting_dialog(void)
-{
-  GtkWidget *win, *book, *vbox[PAGE_NUM], *chbox[PAGE_NUM];
-  GtkWidget *label, *prev_widget = NULL;
-  GtkTooltips *tips;
-  int i;
-
-  tips = gtk_tooltips_new();
-  win = gtk_dialog_new_with_buttons(_("Warclient settings"), NULL, 0,
-				    _("Reset"), 1,
-				    _("Load"), 2,
-				    GTK_STOCK_SAVE, 3,
-				    GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
-				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-  gtk_dialog_set_has_separator(GTK_DIALOG(win), FALSE);
-  setup_dialog(win, toplevel);
-
-  book = gtk_notebook_new();
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(win)->vbox), book, FALSE, FALSE, 2);
-
-  for (i = 0; i < PAGE_NUM; i++) {
-    vbox[i] = gtk_vbox_new(FALSE, 2);
-    gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
-    label = gtk_label_new(get_page_name(i));
-    gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox[i], label);
-    chbox[i] = NULL;
-  }
-
-  pepsettings_iterate(pset) {
-    GtkWidget *ebox, *hbox, *ent;
-    char buf[256];
-
-    if (pset->type != TYPE_FILTER) {
-      hbox = gtk_hbox_new(FALSE, 0);
-      gtk_box_pack_start(GTK_BOX(vbox[pset->page]), hbox, FALSE, FALSE, 0);
-      ebox = gtk_event_box_new();
-      gtk_box_pack_start(GTK_BOX(hbox), ebox, FALSE, FALSE, 5);
-      label = gtk_label_new(_(pset->description));
-      gtk_container_add(GTK_CONTAINER(ebox),label);
-      if (pset->help_text) {
-	my_snprintf(buf, sizeof(buf), "%s\n\n%s",
-		    pset->name, _(pset->help_text));
-      } else {
-	strcpy(buf,pset->name);
-      }
-      gtk_tooltips_set_tip(tips, ebox, buf, NULL);
-
-      switch (pset->type) {
-	case TYPE_BOOL:
-	  ent = gtk_check_button_new();
-	  g_signal_connect(ent, "toggled",
-			   G_CALLBACK(pepsetting_changed_callback), NULL);
-	  break;
-	case TYPE_INT:
-	  ent = gtk_spin_button_new_with_range(pset->min, pset->max, 1);
-	  g_signal_connect(ent, "changed",
-			   G_CALLBACK(pepsetting_changed_callback), NULL);
-	  break;
-	default:
-	  continue;
-      }
-
-      gtk_box_pack_end(GTK_BOX(hbox), ent, FALSE, FALSE, 0);
-    } else {
-      if (!chbox[pset->page]) {
-	chbox[pset->page] = gtk_hbox_new(TRUE,0);
-	gtk_box_pack_start(GTK_BOX(vbox[pset->page]),
-			   chbox[pset->page], FALSE, FALSE, 0);
-      }
-      struct filter_data *pfd = fc_malloc(sizeof(struct filter_data));
-
-      GtkWidget *pbox, *cb;
-
-      pfd->filter = *((filter *)pset->data);
-      ent = gtk_frame_new(_(pset->description));
-      pbox = gtk_vbox_new(FALSE,0);
-
-      /* FIXME: Hard-coded dependence on filter enum
-       * in client/multiselect.h */
-	      
-      cb = gtk_check_button_new_with_label(_("All units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[0] = cb;
-
-      cb = gtk_check_button_new_with_label(_("New units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[1] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Fortified units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[2] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Sentried units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[3] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Veteran units"));
-      g_signal_connect(cb,"toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[4] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Auto units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[5] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Idle units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[6] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Units able to move"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[7] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Military units"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[8] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Off"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[9] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Units with full moves"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[10] = cb;
-
-      cb = gtk_check_button_new_with_label(_("Units with full hp"));
-      g_signal_connect(cb, "toggled",
-		       G_CALLBACK(pepfilter_changed_callback), ent);
-      gtk_box_pack_start(GTK_BOX(pbox), cb, FALSE, FALSE, 0);
-      pfd->widget[11] = cb;
-
-      gtk_container_add(GTK_CONTAINER(ent), pbox);
-      gtk_box_pack_start(GTK_BOX(chbox[pset->page]), ent, FALSE, TRUE,0);
-      g_object_set_data(G_OBJECT(ent), "data", pfd);
-    }
-    g_object_set_data(G_OBJECT(ent), "prev", prev_widget);
-    g_object_set_data(G_OBJECT(ent), "setting", pset);
-    g_object_set_data(G_OBJECT(ent), "ap", NULL);
-    g_object_set_data(G_OBJECT(ent), "changed", FALSE);
-    prev_widget = ent;
-  } pepsettings_iterate_end;
-
-  for (i = 0; i < PAGE_NUM; i++) {
-    chbox[i] = NULL;
-  }
-
-  automatic_processus_iterate(pap) {
-    if (pap->page >= PAGE_NUM) {
-      continue;
-    }
-
-    automatic_processus *cap = fc_malloc(sizeof(automatic_processus));
-    GtkWidget *frame, *pbox, *ent;
-    enum automatic_value v;
-
-    *cap = *pap;
-    frame = gtk_frame_new(_(cap->description));
-    pbox = gtk_vbox_new(FALSE, 0);
-    for (v = 0; v < AUTO_VALUES_NUM; v++) {
-      if (!is_auto_value_allowed(cap, v)) {
-	continue;
-      }
-
-      ent = gtk_check_button_new_with_label(ap_event_name(v));
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ent),
-				   cap->auto_filter & AV_TO_FV(i));
-      g_signal_connect(ent, "toggled",
-		       G_CALLBACK(pepautop_changed_callback), frame);
-      gtk_box_pack_start(GTK_BOX(pbox), ent, FALSE, FALSE, 0);
-      cap->widget[v] = ent;
-    }
-    gtk_container_add(GTK_CONTAINER(frame), pbox);
-    g_object_set_data(G_OBJECT(frame), "prev", prev_widget);
-    g_object_set_data(G_OBJECT(frame), "setting", NULL);
-    g_object_set_data(G_OBJECT(frame), "ap", cap);
-    g_object_set_data(G_OBJECT(frame), "changed", FALSE);
-    prev_widget = frame;
-
-    if (!chbox[cap->page]) {
-      chbox[cap->page] = gtk_hbox_new(TRUE, 0);
-      gtk_box_pack_end(GTK_BOX(vbox[cap->page]),
-		       chbox[cap->page], FALSE, FALSE, 0);
-    }
-    gtk_box_pack_end(GTK_BOX(chbox[cap->page]), frame, FALSE, TRUE, 0);
-  } automatic_processus_iterate_end;
-
-  update_pepsettind_dialog(prev_widget);
-  g_signal_connect(win, "response",
-		   G_CALLBACK(pepsetting_callback), prev_widget);
-  g_signal_connect(win, "destroy",
-		   G_CALLBACK(pepsetting_destroy), prev_widget);
-  gtk_widget_show_all(GTK_DIALOG(win)->vbox);
-  gtk_widget_show(win);
-}
 
 
-
-#ifdef ASYNC_TRADE_PLANNING
 /*************************************************************************
   Trade planning calculation window.
 *************************************************************************/
@@ -2758,15 +2288,19 @@ static guint resume_request = 0;
 *************************************************************************/
 static void tpc_callback(GtkWidget *window, gint rid, gpointer data)
 {
-  switch (rid) {
-  case GTK_RESPONSE_OK:
-    trade_planning_calculation_finish();
-    break;
-  case GTK_RESPONSE_CANCEL:
-    trade_planning_calculation_stop();
-    break;
-  default:
-    break;
+  struct trade_planning_calculation *pcalc = get_trade_planning_calculation();
+
+  if (pcalc) {
+    switch (rid) {
+    case GTK_RESPONSE_OK:
+      trade_planning_calculation_destroy(pcalc, TRUE);
+      break;
+    case GTK_RESPONSE_CANCEL:
+      trade_planning_calculation_destroy(pcalc, FALSE);
+      break;
+    default:
+      break;
+    }
   }
 }
 
@@ -2775,7 +2309,11 @@ static void tpc_callback(GtkWidget *window, gint rid, gpointer data)
 *************************************************************************/
 static void tpc_destroy(GtkWidget *window, gpointer data)
 {
-  trade_planning_calculation_stop();
+  struct trade_planning_calculation *pcalc = get_trade_planning_calculation();
+
+  if (pcalc) {
+    trade_planning_calculation_destroy(pcalc, FALSE);
+  }
 }
 
 /*************************************************************************
@@ -2842,6 +2380,7 @@ void update_trade_planning_calculation_info(void)
   }
 
   static clock_t last_time = 0;
+  struct trade_planning_calculation *pcalc = get_trade_planning_calculation();
   char buf[256];
   int num, max, moves;
   GtkProgressBar *bar;
@@ -2856,7 +2395,7 @@ void update_trade_planning_calculation_info(void)
 
   bar = GTK_PROGRESS_BAR(g_object_get_data(
 	    G_OBJECT(trade_planning_calculation_info), "advance_bar"));
-  get_trade_planning_advancement(&num, &max, &moves);
+  trade_planning_calculation_get_advancement(pcalc, &num, &max, &moves);
   gtk_progress_bar_set_fraction(bar, (gdouble) num / MAX(max, 1));
   my_snprintf(buf, sizeof(buf), "%d/%d trade routes, %d moves",
 	      num, max, moves);
@@ -2868,10 +2407,13 @@ void update_trade_planning_calculation_info(void)
 *************************************************************************/
 static gboolean resume_callback(gpointer data)
 {
-  if (!trade_planning_calculation_resume()) {
+  struct trade_planning_calculation *pcalc = get_trade_planning_calculation();
+
+  if (!pcalc || !trade_planning_calculation_resume(pcalc)) {
     resume_request = 0;
     return FALSE;
   }
+  update_trade_planning_calculation_info();
   return TRUE;
 }
 
@@ -2895,4 +2437,3 @@ void remove_trade_planning_calculation_resume_request(void)
     resume_request = 0;
   }
 }
-#endif	/* ASYNC_TRADE_PLANNING */

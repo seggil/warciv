@@ -19,17 +19,19 @@
 #include <stdio.h> /* for remove() */ 
 
 #include "capability.h"
-#include "events.h"
 #include "fcintl.h"
-#include "improvement.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
-#include "packets.h"
 #include "rand.h"
 #include "registry.h"
 #include "shared.h"
 #include "support.h"
+
+#include "city.h"
+#include "events.h"
+#include "improvement.h"
+#include "map.h"
+#include "packets.h"
 
 #include "connecthand.h"
 #include "maphand.h"
@@ -554,11 +556,6 @@ void init_new_game(void)
     struct start_position pos
       = map.start_positions[start_pos[pplayer->player_no]];
 
-    /* don't give any units to observer */
-    if (pplayer->is_observer) {
-      continue;
-    }
-
     /* Place the first unit. */
     place_starting_unit(pos.tile, pplayer, game.server.start_units[0]);
   } players_iterate_end;
@@ -569,11 +566,6 @@ void init_new_game(void)
     struct tile *ptile;
     struct start_position p
       = map.start_positions[start_pos[pplayer->player_no]];
-
-    /* don't give any units to observer */
-    if (pplayer->is_observer) {
-      continue;
-    }
 
     assert(!is_ocean(map_get_terrain(p.tile)));
 

@@ -45,6 +45,7 @@
 #include "settlers.h"
 #include "spacerace.h"
 #include "srv_main.h"
+#include "tradehand.h"
 #include "unittools.h"
 
 #include "aiexplorer.h"
@@ -80,6 +81,9 @@ void handle_unit_goto(struct player *pplayer, int unit_id, int x, int y)
     return;
   }
 
+  if (punit->ptr) {
+    trade_free_unit(punit);
+  }
   free_unit_orders(punit); /* This may reset punit->goto_tile also. */
 
   punit->goto_tile = ptile;
@@ -529,6 +533,10 @@ void handle_unit_change_activity(struct player *pplayer, int unit_id,
 
   if (!punit) {
     return;
+  }
+
+  if (punit->ptr) {
+    trade_free_unit(punit);
   }
 
   if (punit->activity != activity ||
@@ -1214,13 +1222,12 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
 /**************************************************************************
 ...
 **************************************************************************/
-static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id, struct city *pcity_dest)
+static bool base_handle_unit_establish_trade(struct player *pplayer,
+					     int unit_id, 
+					     struct city *pcity_dest)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity_out_of_home = NULL, *pcity_out_of_dest = NULL;
   struct city *pcity_homecity; 
-  int revenue, i;
-  bool home_full = FALSE, dest_full = FALSE, can_establish;
   
   if (!punit || !unit_flag(punit, F_TRADE_ROUTE)) {
     return FALSE;
@@ -1229,7 +1236,7 @@ static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id
   /* if no destination city is passed in,
    *  check whether the unit is already in the city */
   if (!pcity_dest) { 
-    pcity_dest = map_get_city(punit->tile);
+    pcity_dest = punit->tile->city;
   }
 
   if (!pcity_dest) {
@@ -1240,188 +1247,22 @@ static bool base_handle_unit_establish_trade(struct player *pplayer, int unit_id
 
   if (!pcity_homecity) {
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-		     _("Game: Sorry, your %s cannot establish"
+		     _("Sorry, your %s cannot establish"
 		       " a trade route because it has no home city"),
 		     unit_name(punit->type));
     return FALSE;
-   
   }
-
     
   if (!can_cities_trade(pcity_homecity, pcity_dest)) {
     notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
-		     _("Game: Sorry, your %s cannot establish"
+		     _("Sorry, your %s cannot establish"
 		       " a trade route between %s and %s"),
-		     unit_name(punit->type),pcity_homecity->name,
+		     unit_name(punit->type), pcity_homecity->name,
 		     pcity_dest->name);
     return FALSE;
   }
   
-  /* This part of code works like can_establish_trade_route, except
-   * that we actually do the action of making the trade route. */
-
-  /* If we can't make a new trade route we can still get the trade bonus. */
-  can_establish = !have_cities_trade_route(pcity_homecity, pcity_dest);
-    
-  if (can_establish) {
-    home_full = (city_num_trade_routes(pcity_homecity) == NUM_TRADEROUTES);
-    dest_full = (city_num_trade_routes(pcity_dest) == NUM_TRADEROUTES);
-  }
-  
-  if (home_full || dest_full) {
-    int slot, trade = trade_between_cities(pcity_homecity, pcity_dest);
-
-    /* See if there's a trade route we can cancel at the home city. */
-    if (home_full) {
-      if (get_city_min_trade_route(pcity_homecity, &slot) < trade) {
-	pcity_out_of_home = find_city_by_id(pcity_homecity->trade[slot]);
-	assert(pcity_out_of_home != NULL);
-      } else {
-	notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
-		     _("Game: Sorry, your %s cannot establish"
-		       " a trade route here!"), unit_name(punit->type));
-        notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
-		       _("      The city of %s already has %d "
-			 "better trade routes!"), pcity_homecity->name,
-		       NUM_TRADEROUTES);
-	can_establish = FALSE;
-      }
-    }
-    
-    /* See if there's a trade route we can cancel at the dest city. */
-    if (can_establish && dest_full) {
-      if (get_city_min_trade_route(pcity_dest, &slot) < trade) {
-	pcity_out_of_dest = find_city_by_id(pcity_dest->trade[slot]);
-	assert(pcity_out_of_dest != NULL);
-      } else {
-	notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
-		     _("Game: Sorry, your %s cannot establish"
-		       " a trade route here!"), unit_name(punit->type));
-        notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
-		       _("      The city of %s already has %d "
-			 "better trade routes!"), pcity_dest->name,
-		       NUM_TRADEROUTES);
-	can_establish = FALSE;
-      }
-    }
-
-    /* Now cancel the trade route from the home city. */
-    if (can_establish && pcity_out_of_home) {
-      remove_trade_route(pcity_homecity, pcity_out_of_home);
-      notify_player_ex(city_owner(pcity_out_of_home),
-		       pcity_out_of_home->tile, E_NOEVENT,
-		       _("Game: Sorry, %s has canceled the trade route "
-			 "from %s to your city %s."),
-		       city_owner(pcity_homecity)->name,
-		       pcity_homecity->name, pcity_out_of_home->name);
-    }
-
-    /* And the same for the dest city. */
-    if (can_establish && pcity_out_of_dest) {
-      remove_trade_route(pcity_dest, pcity_out_of_dest);
-      notify_player_ex(city_owner(pcity_out_of_dest),
-		       pcity_out_of_dest->tile, E_NOEVENT,
-		       _("Game: Sorry, %s has canceled the trade route "
-			 "from %s to your city %s."),
-		       city_owner(pcity_dest)->name,
-		       pcity_dest->name, pcity_out_of_dest->name);
-    }
-  }
-  
-  revenue = get_caravan_enter_city_trade_bonus(pcity_homecity, pcity_dest);
-  if (can_establish) {
-    /* establish traderoute */
-    for (i = 0; i < NUM_TRADEROUTES; i++) {
-      if (pcity_homecity->trade[i] == 0) {
-        pcity_homecity->trade[i] = pcity_dest->id;
-        break;
-      }
-    }
-    assert(i < NUM_TRADEROUTES);
-  
-    for (i = 0; i < NUM_TRADEROUTES; i++) {
-      if (pcity_dest->trade[i] == 0) {
-        pcity_dest->trade[i] = pcity_homecity->id;
-        break;
-      }
-    }
-    assert(i < NUM_TRADEROUTES);
-  } else {
-    /* enter marketplace */
-    revenue = (revenue + 2) / 3;
-  }
-  
-  conn_list_do_buffer(pplayer->connections);
-  notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
-		   _("Game: Your %s from %s has arrived in %s,"
-		     " and revenues amount to %d in gold and research."), 
-		   unit_name(punit->type), pcity_homecity->name,
-		   pcity_dest->name, revenue);
-  wipe_unit(punit);
-  pplayer->economic.gold += revenue;
-  update_tech(pplayer, revenue);
-  
-  if (can_establish) {
-    /* Refresh the cities. */
-    city_refresh(pcity_homecity);
-    city_refresh(pcity_dest);
-    if (pcity_out_of_home) {
-      city_refresh(pcity_out_of_home);
-    }
-    if (pcity_out_of_dest) {
-      city_refresh(pcity_out_of_dest);
-    }
-  
-    /* Notify the owners of the cities. */
-    send_city_info(pplayer, pcity_homecity);
-    send_city_info(city_owner(pcity_dest), pcity_dest);
-    if(pcity_out_of_home) {
-      send_city_info(city_owner(pcity_out_of_home), pcity_out_of_home);
-    }
-    if(pcity_out_of_dest) {
-      send_city_info(city_owner(pcity_out_of_dest), pcity_out_of_dest);
-    }
-
-    /* Notify each player about the other cities so that they know about
-     * the tile_trade value. */
-    if (pplayer != city_owner(pcity_dest)) {
-      send_city_info(city_owner(pcity_dest), pcity_homecity);
-      send_city_info(pplayer, pcity_dest);
-    }
-
-    if (pcity_out_of_home) {
-      if (city_owner(pcity_dest) != city_owner(pcity_out_of_home)) {
-        send_city_info(city_owner(pcity_dest), pcity_out_of_home);
-	 send_city_info(city_owner(pcity_out_of_home), pcity_dest);
-      }
-      if (pplayer != city_owner(pcity_out_of_home)) {
-        send_city_info(pplayer, pcity_out_of_home);
-	 send_city_info(city_owner(pcity_out_of_home), pcity_homecity);
-      }
-      if (pcity_out_of_dest && city_owner(pcity_out_of_home) !=
-					city_owner(pcity_out_of_dest)) {
-	 send_city_info(city_owner(pcity_out_of_home), pcity_out_of_dest);
-      }
-    }
-
-    if (pcity_out_of_dest) {
-      if (city_owner(pcity_dest) != city_owner(pcity_out_of_dest)) {
-        send_city_info(city_owner(pcity_dest), pcity_out_of_dest);
-	 send_city_info(city_owner(pcity_out_of_dest), pcity_dest);
-      }
-      if (pplayer != city_owner(pcity_out_of_dest)) {
-	 send_city_info(pplayer, pcity_out_of_dest);
-	 send_city_info(city_owner(pcity_out_of_dest), pcity_homecity);
-      }
-      if (pcity_out_of_home && city_owner(pcity_out_of_home) !=
-					city_owner(pcity_out_of_dest)) {
-	 send_city_info(city_owner(pcity_out_of_dest), pcity_out_of_home);
-      }
-    }
-  }
-  
-  send_player_info(pplayer, pplayer);
-  conn_list_do_unbuffer(pplayer->connections);
+  unit_establish_trade_route(punit, pcity_homecity, pcity_dest);
   return TRUE;
 }
 
@@ -1504,6 +1345,9 @@ void handle_unit_activity_request(struct unit *punit,
     enum unit_activity old_activity = punit->activity;
     enum tile_special_type old_target = punit->activity_target;
 
+    if (punit->ptr) {
+      trade_free_unit(punit);
+    }
     free_unit_orders(punit);
     set_unit_activity(punit, new_activity);
     send_unit_info(NULL, punit);
@@ -1524,6 +1368,9 @@ static void handle_unit_activity_request_targeted(struct unit *punit,
     enum unit_activity old_activity = punit->activity;
     enum tile_special_type old_target = punit->activity_target;
 
+    if (punit->ptr) {
+      trade_free_unit(punit);
+    }
     free_unit_orders(punit);
     set_unit_activity_targeted(punit, new_activity, new_target);
     send_unit_info(NULL, punit);    
@@ -1629,6 +1476,9 @@ void handle_unit_orders(struct player *pplayer,
     return;
   }
 
+  if (punit->ptr) {
+    trade_free_unit(punit);
+  }
 
   for (i = 0; i < packet->length; i++) {
     switch (packet->orders[i]) {
@@ -1712,4 +1562,38 @@ void handle_unit_orders(struct player *pplayer,
     /* Looks like the unit survived. */
     send_unit_info(NULL, punit);
   }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_unit_air_patrol(struct player *pplayer, int unit_id, int x, int y)
+{
+  struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
+  struct tile *ptile = map_pos_to_tile(x, y);
+
+  if (!punit
+      || !can_unit_do_air_patrol(punit)
+      || !ptile
+      || ptile == punit->air_patrol_tile) {
+    return;
+  }
+
+  punit->air_patrol_tile = ptile;
+  send_unit_info(pplayer, punit);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void handle_unit_air_patrol_stop(struct player *pplayer, int unit_id)
+{
+  struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
+
+  if (!punit || !punit->air_patrol_tile) {
+    return;
+  }
+
+  punit->air_patrol_tile = NULL;
+  send_unit_info(pplayer, punit);
 }

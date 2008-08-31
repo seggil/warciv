@@ -1284,6 +1284,15 @@ struct settings_s settings[] = {
                GAME_MIN_TRADEMINDIST, GAME_MAX_TRADEMINDIST,
                GAME_DEFAULT_TRADEMINDIST, VCF_NONE, 0, -1, -1)
 
+  GEN_INT_FULL("maxtraderoutes", game.traderoute_info.maxtraderoutes,
+	       SSET_RULES, SSET_ECONOMICS, SSET_RARE, SSET_TO_CLIENT,
+	       "extglobalinfo", /* required capability for non-default */
+	       N_("Maximum trade routes number for one city"),
+	       N_("Maximum trade routes number for one city.\n"
+		  "4 is default"), NULL,
+	       GAME_MIN_MAXTRADEROUTES, GAME_MAX_MAXTRADEROUTES,
+	       GAME_DEFAULT_MAXTRADEROUTES, VCF_NONE, 0, -1, -1)
+
   GEN_BOOL("futuretechsscore", game.ext_info.futuretechsscore, SSET_RULES,
 	   SSET_SCIENCE, SSET_RARE, SSET_TO_CLIENT,
            N_("Score for future techs"),

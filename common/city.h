@@ -15,20 +15,9 @@
 
 #include "fc_types.h"
 #include "improvement.h"
+#include "packets.h"
 #include "unit.h"		/* struct unit_list */
 #include "worklist.h"
-
-enum production_class_type {
-  TYPE_UNIT, TYPE_NORMAL_IMPROVEMENT, TYPE_WONDER
-};
-
-enum specialist_type {
-  SP_ELVIS, SP_SCIENTIST, SP_TAXMAN, SP_COUNT
-};
-
-enum city_tile_type {
-  C_TILE_EMPTY, C_TILE_WORKER, C_TILE_UNAVAILABLE
-};
 
 enum city_options {
   /* The first 4 are whether to auto-attack versus each unit move_type
@@ -56,21 +45,10 @@ enum city_options {
 #define CITYOPT_DEFAULT (CITYOPT_AUTOATTACK_BITS)
 
 
-/* Changing this requires updating CITY_TILES and network capabilities. */
-#define CITY_MAP_RADIUS 2
-
-/* Diameter of the workable city area.  Some places harcdode this number. */
-#define CITY_MAP_SIZE (CITY_MAP_RADIUS * 2 + 1) 
-
 /* Number of tiles a city can use */
 #define CITY_TILES city_tiles
 
 #define INCITE_IMPOSSIBLE_COST (1000 * 1000 * 1000)
-
-/*
- * Number of traderoutes a city can have.
- */
-#define NUM_TRADEROUTES		4
 
 /*
  * Size of the biggest possible city.
@@ -161,9 +139,6 @@ enum choice_type { CT_NONE = 0, CT_BUILDING = 0, CT_NONMIL, CT_ATTACKER,
 #define ASSERT_REAL_CHOICE_TYPE(type)                                    \
         assert(type >= 0 && type < CT_LAST /* && type != CT_NONE */ );
 
-#include "genlist.h"
-struct trade_route_list;
-
 struct ai_choice {
   int choice;            /* what the advisor wants */
   int want;              /* how bad it wants it (0-100) */
@@ -235,7 +210,6 @@ struct city {
   int specialists[SP_COUNT];
 
   /* trade routes */
-  int trade[NUM_TRADEROUTES], trade_value[NUM_TRADEROUTES];
   struct trade_route_list *trade_routes;
 
   /* the productions */
@@ -310,6 +284,10 @@ struct city {
 
     /* Used to build unit or city at the end of the turn. */
     bool delayed_build;
+
+    /* Used to share CMA paramters */
+    bool managed;
+    struct cm_parameter parameter;
   } server;
 
   int turn_founded;		/* In which turn was the city founded? */
@@ -323,21 +301,6 @@ struct city {
   struct ai_city ai;
   bool debug;
 };
-
-struct trade_route {
-  struct unit *punit;
-  struct city *pc1, *pc2;
-  struct trade_route *ptr;
-  int moves_req, turns_req, trade;
-  bool planned;
-};
-
-#define SPECLIST_TAG trade_route
-#define SPECLIST_TYPE struct trade_route
-#include "speclist.h"
-#define trade_route_list_iterate(alist,pitem) \
-    TYPED_LIST_ITERATE(struct trade_route,alist,pitem)
-#define trade_route_list_iterate_end  LIST_ITERATE_END
 
 /* city drawing styles */
 
@@ -474,7 +437,8 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2);
 int city_num_trade_routes(const struct city *pcity);
 int get_caravan_enter_city_trade_bonus(const struct city *pc1, 
                                        const struct city *pc2);
-int get_city_min_trade_route(const struct city *pcity, int *slot);
+int get_city_min_trade_route(const struct city *pcity,
+			     struct trade_route **slot);
   
 /* list functions */
 struct city *city_list_find_id(struct city_list *This, int id);

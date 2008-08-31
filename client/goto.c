@@ -1014,6 +1014,31 @@ void send_goto_route(struct unit *punit)
   pf_destroy_path(path);
 }
 
+/**************************************************************************
+  Send a simple goto order.
+**************************************************************************/
+void unit_goto(struct unit *punit, struct tile *ptile)
+{
+  if (!punit || !ptile) {
+    return;
+  }
+
+  struct pf_parameter parameter;
+  struct pf_map *map;
+  struct pf_path *path;
+
+  fill_client_goto_parameter(punit, &parameter);
+  map = pf_create_map(&parameter);
+  path = pf_get_path(map, ptile);
+
+  if (path) {
+    send_goto_path(punit, path, ACTIVITY_LAST);
+    pf_destroy_path(path);
+  }
+
+  pf_destroy_map(map);
+}
+
 /* ================= drawn functions ============================ */
 
 /********************************************************************** 
@@ -1138,7 +1163,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 ***************************************************************************/
 int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 {
-  if (!punit || !dest_tile) {
+  if (!punit) {
     return FC_INFINITY;
   }
 

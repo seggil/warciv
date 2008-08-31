@@ -185,8 +185,8 @@ struct packet_city_info {
   int food_stock;
   int shield_stock;
   int corruption;
-  int trade[NUM_TRADEROUTES];
-  int trade_value[NUM_TRADEROUTES];
+  int trade[OLD_NUM_TRADEROUTES];
+  int trade_value[OLD_NUM_TRADEROUTES];
   int luxury_total;
   int tax_total;
   int science_total;
@@ -209,6 +209,8 @@ struct packet_city_info {
   bool was_happy;
   bool airlift;
   bool diplomat_investigate;
+  int rally_point_x;
+  int rally_point_y;
   int city_options;
   int turn_founded;
 };
@@ -406,6 +408,8 @@ struct packet_unit_info {
   int occupy;
   int goto_dest_x;
   int goto_dest_y;
+  int air_patrol_x;
+  int air_patrol_y;
   enum unit_activity activity;
   enum tile_special_type activity_target;
   bool has_orders;
@@ -1053,6 +1057,7 @@ struct packet_traderoute_info {
   int traderevenuepct;
   int traderevenuestyle;
   int caravanbonusstyle;
+  int maxtraderoutes;
 };
 
 struct packet_extgame_info {
@@ -1101,6 +1106,67 @@ struct packet_vote_resolve {
 struct packet_vote_submit {
   int vote_no;
   int value;
+};
+
+struct packet_trade_route_plan {
+  int city1;
+  int city2;
+};
+
+struct packet_trade_route_remove {
+  int city1;
+  int city2;
+};
+
+struct packet_unit_trade_route {
+  int unit_id;
+  int city1;
+  int city2;
+};
+
+struct packet_trade_route_info {
+  int city1;
+  int city2;
+  int unit_id;
+  int status;
+};
+
+struct packet_city_set_rally_point {
+  int id;
+  int x;
+  int y;
+};
+
+struct packet_city_clear_rally_point {
+  int id;
+};
+
+struct packet_unit_air_patrol {
+  int id;
+  int x;
+  int y;
+};
+
+struct packet_unit_air_patrol_stop {
+  int id;
+};
+
+struct packet_city_manager_param {
+  int id;
+  int minimal_surplus[CM_NUM_STATS];
+  bool require_happy;
+  bool allow_disorder;
+  bool allow_specialists;
+  int factor[CM_NUM_STATS];
+  int happy_factor;
+};
+
+struct packet_city_no_manager_param {
+  int id;
+};
+
+struct packet_player_info_req {
+  int id;
 };
 
 enum packet_type {
@@ -1225,8 +1291,19 @@ enum packet_type {
   PACKET_VOTE_REMOVE,
   PACKET_VOTE_RESOLVE,
   PACKET_VOTE_SUBMIT,
+  PACKET_TRADE_ROUTE_PLAN = 130,         /* 130 */
+  PACKET_TRADE_ROUTE_REMOVE,
+  PACKET_UNIT_TRADE_ROUTE,
+  PACKET_TRADE_ROUTE_INFO,
   PACKET_FREEZE_CLIENT = 135,
   PACKET_THAW_CLIENT,
+  PACKET_CITY_SET_RALLY_POINT = 138,
+  PACKET_CITY_CLEAR_RALLY_POINT,
+  PACKET_UNIT_AIR_PATROL = 141,
+  PACKET_UNIT_AIR_PATROL_STOP,
+  PACKET_CITY_MANAGER_PARAM = 145,
+  PACKET_CITY_NO_MANAGER_PARAM,
+  PACKET_PLAYER_INFO_REQ = 150,          /* 150 */
 
   PACKET_LAST  /* leave this last */
 };
@@ -1725,6 +1802,48 @@ int send_packet_vote_resolve(struct connection *pc, const struct packet_vote_res
 
 struct packet_vote_submit *receive_packet_vote_submit(struct connection *pc, enum packet_type type);
 int send_packet_vote_submit(struct connection *pc, const struct packet_vote_submit *packet);
+
+struct packet_trade_route_plan *receive_packet_trade_route_plan(struct connection *pc, enum packet_type type);
+int send_packet_trade_route_plan(struct connection *pc, const struct packet_trade_route_plan *packet);
+int dsend_packet_trade_route_plan(struct connection *pc, int city1, int city2);
+
+struct packet_trade_route_remove *receive_packet_trade_route_remove(struct connection *pc, enum packet_type type);
+int send_packet_trade_route_remove(struct connection *pc, const struct packet_trade_route_remove *packet);
+int dsend_packet_trade_route_remove(struct connection *pc, int city1, int city2);
+
+struct packet_unit_trade_route *receive_packet_unit_trade_route(struct connection *pc, enum packet_type type);
+int send_packet_unit_trade_route(struct connection *pc, const struct packet_unit_trade_route *packet);
+int dsend_packet_unit_trade_route(struct connection *pc, int unit_id, int city1, int city2);
+
+struct packet_trade_route_info *receive_packet_trade_route_info(struct connection *pc, enum packet_type type);
+int send_packet_trade_route_info(struct connection *pc, const struct packet_trade_route_info *packet);
+
+struct packet_city_set_rally_point *receive_packet_city_set_rally_point(struct connection *pc, enum packet_type type);
+int send_packet_city_set_rally_point(struct connection *pc, const struct packet_city_set_rally_point *packet);
+int dsend_packet_city_set_rally_point(struct connection *pc, int id, int x, int y);
+
+struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point(struct connection *pc, enum packet_type type);
+int send_packet_city_clear_rally_point(struct connection *pc, const struct packet_city_clear_rally_point *packet);
+int dsend_packet_city_clear_rally_point(struct connection *pc, int id);
+
+struct packet_unit_air_patrol *receive_packet_unit_air_patrol(struct connection *pc, enum packet_type type);
+int send_packet_unit_air_patrol(struct connection *pc, const struct packet_unit_air_patrol *packet);
+int dsend_packet_unit_air_patrol(struct connection *pc, int id, int x, int y);
+
+struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop(struct connection *pc, enum packet_type type);
+int send_packet_unit_air_patrol_stop(struct connection *pc, const struct packet_unit_air_patrol_stop *packet);
+int dsend_packet_unit_air_patrol_stop(struct connection *pc, int id);
+
+struct packet_city_manager_param *receive_packet_city_manager_param(struct connection *pc, enum packet_type type);
+int send_packet_city_manager_param(struct connection *pc, const struct packet_city_manager_param *packet);
+
+struct packet_city_no_manager_param *receive_packet_city_no_manager_param(struct connection *pc, enum packet_type type);
+int send_packet_city_no_manager_param(struct connection *pc, const struct packet_city_no_manager_param *packet);
+int dsend_packet_city_no_manager_param(struct connection *pc, int id);
+
+struct packet_player_info_req *receive_packet_player_info_req(struct connection *pc, enum packet_type type);
+int send_packet_player_info_req(struct connection *pc, const struct packet_player_info_req *packet);
+int dsend_packet_player_info_req(struct connection *pc, int id);
 
 
 void delta_stats_report(void);

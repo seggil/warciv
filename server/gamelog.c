@@ -21,13 +21,15 @@
 #include <string.h>
 
 #include "fcintl.h"
-#include "government.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
+#include "support.h"
+
+#include "city.h"
+#include "government.h"
+#include "map.h"
 #include "score.h"
 #include "srv_main.h"
-#include "support.h"
 
 #include "gamelog.h"
 #include "stdinhand.h"

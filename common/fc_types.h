@@ -14,6 +14,8 @@
 #ifndef FC__FC_TYPES_H
 #define FC__FC_TYPES_H
 
+#include "shared.h"	/* bool type */
+
 /* This file serves to reduce the cross-inclusion of header files which
  * occurs when a type which is defined in one file is needed for a fuction
  * definition in another file */
@@ -27,6 +29,7 @@ struct city;
 struct government;
 struct player;
 struct tile;
+struct trade_route;
 struct unit;
 
 /* Changing these will probably break network compatability. */
@@ -35,6 +38,11 @@ struct unit;
 #define MAX_ID_LEN 33
 #define MAX_GRANARY_INIS 24
 #define MAX_LEN_STARTUNIT (20 + 1)
+
+/*
+ * Number of traderoutes a city can have in standard Freeciv.
+ */
+#define OLD_NUM_TRADEROUTES	4
 
 /* Server setting types.  Changing these will break network compatability. */
 enum sset_type {
@@ -80,5 +88,51 @@ enum direction8 {
 };
 #define DIR8_LAST 8
 #define DIR8_COUNT DIR8_LAST
+
+enum production_class_type {
+  TYPE_UNIT,
+  TYPE_NORMAL_IMPROVEMENT,
+  TYPE_WONDER
+};
+
+enum city_tile_type {
+  C_TILE_EMPTY,
+  C_TILE_WORKER,
+  C_TILE_UNAVAILABLE
+};
+
+enum specialist_type {
+  SP_ELVIS,
+  SP_SCIENTIST,
+  SP_TAXMAN,
+  SP_COUNT
+};
+
+/* Changing this requires updating CITY_TILES and network capabilities. */
+#define CITY_MAP_RADIUS 2
+
+/* Diameter of the workable city area.  Some places harcdode this number. */
+#define CITY_MAP_SIZE (CITY_MAP_RADIUS * 2 + 1) 
+
+enum cm_stat {
+  CM_FOOD,
+  CM_SHIELD,
+  CM_TRADE,
+  CM_GOLD,
+  CM_LUXURY,
+  CM_SCIENCE,
+  CM_NUM_STATS
+};
+
+/* A description of the goal. */
+struct cm_parameter {
+  int minimal_surplus[CM_NUM_STATS];
+  bool require_happy;
+  bool allow_disorder;
+  bool allow_specialists;
+
+  int factor[CM_NUM_STATS];
+  int happy_factor;
+};
 
 #endif /* FC__FC_TYPES_H */

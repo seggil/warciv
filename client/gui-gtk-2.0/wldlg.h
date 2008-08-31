@@ -15,15 +15,19 @@
 
 #include <gtk/gtk.h>
 
+#include "registry.h"
 #include "worklist.h"
 #include "improvement.h"
 #include "unittype.h"
+
 #include "climisc.h"
 
-#include "wldlg_g.h"
-
 /* the global worklist view. */
-void popup_worklists_report(void);
+void apply_global_worklists(GtkWidget *widget);
+void refresh_global_worklists(GtkWidget *widget);
+void reload_global_worklists(GtkWidget *widget, struct section_file *sf);
+void reset_global_worklists(GtkWidget *widget);
+GtkWidget *create_worklists_report(void);
 
 /* an individual worklist. */
 GtkWidget *create_worklist(void);

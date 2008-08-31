@@ -19,22 +19,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "database.h"
 #include "fcintl.h"
-#include "game.h"
-#include "improvement.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
-#include "player.h"
-#include "plrhand.h"
-#include "srv_main.h"
 #include "shared.h"
 #include "support.h"
+
+#include "city.h"
+#include "game.h"
+#include "improvement.h"
+#include "map.h"
+#include "player.h"
 #include "terrain.h"
-#include "score.h"
 #include "unit.h"
 
+#include "database.h"
+#include "plrhand.h"
+#include "srv_main.h"
+
+#include "score.h"
 
 /* Avoid having to recalculate civ scores all the time. */
 static int score_cache[MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS];
@@ -1085,8 +1088,7 @@ void score_assign_groupings(void)
   players_iterate(pplayer) {
     if (player_is_on_team(pplayer)
         || is_barbarian(pplayer)
-        || pplayer->is_civil_war_split
-        || pplayer->is_observer) {
+        || pplayer->is_civil_war_split) {
       continue;
     }
     groupings[i].players[0] = pplayer;
@@ -1156,7 +1158,7 @@ void score_update_grouping_results(void)
   /* Build the score cache, so we don't have to
      constantly call get_civ_score. */
   players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || pplayer->is_observer) {
+    if (is_barbarian(pplayer)) {
       continue;
     }
     score_cache[pplayer->player_no] = get_civ_score(pplayer);

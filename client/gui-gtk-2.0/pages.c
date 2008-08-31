@@ -1228,14 +1228,6 @@ static void game_options_callback(GtkWidget *w, gpointer data)
 /**************************************************************************
   ...
 **************************************************************************/
-static void configure_chatline_colors_callback(GtkWidget * w, gpointer data)
-{
-  popup_chatline_config_dialog();
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
 static void configure_style_callback(GtkWidget * w, gpointer data)
 {
   popup_style_config_dialog();
@@ -1366,12 +1358,6 @@ GtkWidget *create_start_page(void)
       G_CALLBACK(game_options_callback), NULL);
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 8);
 
-  button = gtk_stockbutton_new(GTK_STOCK_SELECT_COLOR,
-			       _("Configure C_hat Colors"));
-  g_signal_connect(button, "clicked",
-		   G_CALLBACK(configure_chatline_colors_callback), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
-
   button = gtk_stockbutton_new(GTK_STOCK_SELECT_FONT,
 			       _("Configure _Fonts"));
   g_signal_connect(button, "clicked",
@@ -1380,10 +1366,6 @@ GtkWidget *create_start_page(void)
 
   button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES, _("_Local Options"));
   g_signal_connect(button, "clicked", G_CALLBACK(popup_option_dialog), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
-
-  button = gtk_stockbutton_new(GTK_STOCK_PREFERENCES, _("_Warclient Options"));
-  g_signal_connect(button, "clicked", G_CALLBACK(create_pepsetting_dialog), NULL);
   gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
 
   align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);

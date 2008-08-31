@@ -318,8 +318,6 @@ static PlayerNameStatus test_player_name(char *name)
     return PNameTooLong;
   } else if (mystrcasecmp(name, ANON_PLAYER_NAME) == 0) {
     return PNameIllegal;
-  } else if (mystrcasecmp(name, OBSERVER_NAME) == 0) {
-    return PNameIllegal;
   }
   return PNameOk;
 }
@@ -1394,21 +1392,6 @@ static bool toggle_ai_player(struct connection *caller, char *arg,
   return TRUE;
 }
 
-/****************************************************************************
-  Return the number of non-observer players.  game.info.nplayers includes
-  observers so in some places this function should be called instead.
-****************************************************************************/
-static int get_num_nonobserver_players(void)
-{
-  int nplayers = 0;
-  players_iterate(pplayer) {
-    if (!pplayer->is_observer) {
-      nplayers++;
-    }
-  } players_iterate_end;
-  return nplayers;
-}
-
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1425,8 +1408,7 @@ static bool create_ai_player(struct connection *caller, char *arg,
 
   /* game.info.max_players is a limit on the number of non-observer players.
    * MAX_NUM_PLAYERS is a limit on all players. */
-  if (get_num_nonobserver_players() >= game.info.max_players
-      || game.info.nplayers >= MAX_NUM_PLAYERS) {
+  if (game.info.nplayers >= game.info.max_players) {
     cmd_reply(CMD_CREATE, caller, C_FAIL,
               _("Can't add more players, server is full."));
     return FALSE;
@@ -2189,13 +2171,6 @@ static bool autoteam_command(struct connection *caller, char *str,
         free_tokens(args, ntokens);
         return FALSE;
       }
-      if (pplayer->is_observer) {
-        cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
-                  _("You may not assign observers to a team (%s)."),
-                  pplayer->username);
-        free_tokens(args, ntokens);
-        return FALSE;
-      }
 
       player_ordering[i] = pplayer;
       player_ordered[pplayer->player_no] = TRUE;
@@ -2226,8 +2201,7 @@ static bool autoteam_command(struct connection *caller, char *str,
 
   /* Assign the remaining unordered players. */
   players_iterate(pplayer) {
-    if (pplayer->is_observer || is_barbarian(pplayer)
-        || player_ordered[pplayer->player_no]) {
+    if (is_barbarian(pplayer) || player_ordered[pplayer->player_no]) {
       continue;
     }
     player_ordering[num++] = pplayer;
@@ -3310,12 +3284,6 @@ static bool team_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
-  if (pplayer->is_observer) {
-    /* Not allowed! */
-    cmd_reply(CMD_TEAM, caller, C_SYNTAX, _("Cannot team an observer."));
-    goto CLEANUP;
-  }
-
   if (!check) {
     team_add_player(pplayer, arg[1]);
     cmd_reply(CMD_TEAM, caller, C_OK, _("Player %s set to team %s."),
@@ -4028,21 +3996,7 @@ static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
     return FALSE;
   }
 
-  if (pplayer->is_observer) {
-    if (!
-        (allow =
-         strchr(game.server.allow_take,
-                (game.server.is_new_game ? 'O' : 'o')))) {
-      if (will_obs) {
-        mystrlcpy(msg, _("Sorry, one can't observe globally in this game."),
-                  MAX_LEN_MSG);
-      } else {
-        mystrlcpy(msg, _("Sorry, you can't take a global observer. Observe "
-                         "it instead."), MAX_LEN_MSG);
-      }
-      return FALSE;
-    }
-  } else if (is_barbarian(pplayer)) {
+  if (is_barbarian(pplayer)) {
     if (!(allow = strchr(game.server.allow_take, 'b'))) {
       if (will_obs) {
         mystrlcpy(msg,
@@ -4126,8 +4080,7 @@ static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
  (see detach_command()). The console and those with ALLOW_HACK can
  use the two-argument command and force others to observe.
 **************************************************************************/
-static bool observe_command(struct connection *caller, char *str,
-                            bool check)
+static bool observe_command(struct connection *caller, char *str, bool check)
 {
   int ntokens = 0;
   char buf[MAX_LEN_CONSOLE_LINE], *arg[2], msg[MAX_LEN_MSG];
@@ -4182,8 +4135,32 @@ static bool observe_command(struct connection *caller, char *str,
     pconn = caller;
   }
 
-  /* if we have no pplayer, it means that we want to be a global observer */
-  if (!pplayer) {
+  /******** PART II: do the observing ********/
+  /* check allowtake for permission */
+  if (pplayer) {
+    if (!is_allowed_to_take(pplayer, TRUE, msg)) {
+      cmd_reply(CMD_OBSERVE, caller, C_FAIL, msg);
+      goto CLEANUP;
+    }
+
+    /* observing your own player (during pregame) makes no sense. */
+    if (pconn->player == pplayer && !pconn->observer
+	&& is_newgame && !pplayer->was_created) {
+      cmd_reply(CMD_OBSERVE, caller, C_FAIL,
+		_("%s already controls %s. Using 'observe' would remove %s"),
+		pconn->username, pplayer->name, pplayer->name);
+      goto CLEANUP;
+    }
+    /* attempting to observe a player you're already observing should fail. */
+    if (pconn->player == pplayer && pconn->observer) {
+      cmd_reply(CMD_OBSERVE, caller, C_FAIL,
+		_("%s is already observing %s."),
+		pconn->username, pplayer->name);
+      goto CLEANUP;
+    }
+
+  } else {
+    /* if we have no pplayer, it means that we want to be a global observer */
     const char *allow;
 
     if (!(allow = strchr(game.server.allow_take,
@@ -4200,72 +4177,19 @@ static bool observe_command(struct connection *caller, char *str,
       goto CLEANUP;
     }
 
-    /* check if a global observer has already been created */
-    players_iterate(aplayer) {
-      if (aplayer->is_observer) {
-        pplayer = aplayer;
-        break;
-      }
-    } players_iterate_end;
-
-    /* we need to create a new player */
-    if (!pplayer) {
-      if (game.info.nplayers >= MAX_NUM_PLAYERS) {
-        notify_conn(NULL,
-                    _("Game: A global observer cannot be created: too "
-                      "many regular players."));
-        goto CLEANUP;
-      }
-      pplayer = &game.players[game.info.nplayers];
-      server_player_init(pplayer, (server_state == RUN_GAME_STATE)
-                         || !game.server.is_new_game);
-      sz_strlcpy(pplayer->name, OBSERVER_NAME);
-      sz_strlcpy(pplayer->username, ANON_USER_NAME);
-      pplayer->is_connected = FALSE;
-      pplayer->is_observer = TRUE;
-      pplayer->capital = TRUE;
-      pplayer->turn_done = TRUE;
-      pplayer->embassy = 0;     /* no embassys */
-      pplayer->is_alive = FALSE;
-      pplayer->was_created = FALSE;
-      if ((server_state == RUN_GAME_STATE) || !game.server.is_new_game) {
-        pplayer->nation = OBSERVER_NATION;
-        init_tech(pplayer);
-        give_initial_techs(pplayer);
-        map_know_and_see_all(pplayer);
-      }
-
-      game.info.nplayers++;
-
-      /* tell everyone that game.info.nplayers has been updated */
-      send_game_info(NULL);
-      send_player_info(pplayer, NULL);
-
-      notify_conn(NULL, _("Game: A global observer has been created"));
+    if (!has_capability("extglobalinfo", pconn->capability)) {
+      cmd_reply(CMD_OBSERVE, caller, C_FAIL,
+		_("Sorry, you need the capability 'extglobalinfo' "
+		  "to observe globally in this game."));
+      goto CLEANUP;
     }
-  }
 
-  /******** PART II: do the observing ********/
-  /* check allowtake for permission */
-  if (!is_allowed_to_take(pplayer, TRUE, msg)) {
-    cmd_reply(CMD_OBSERVE, caller, C_FAIL, msg);
-    goto CLEANUP;
-  }
-
-  /* observing your own player (during pregame) makes no sense. */
-  if (pconn->player == pplayer && !pconn->observer
-      && is_newgame && !pplayer->was_created) {
-    cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-              _("%s already controls %s. Using 'observe' would remove %s"),
-              pconn->username, pplayer->name, pplayer->name);
-    goto CLEANUP;
-  }
-  /* attempting to observe a player you're already observing should fail. */
-  if (pconn->player == pplayer && pconn->observer) {
-    cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-              _("%s is already observing %s."),
-              pconn->username, pplayer->name);
-    goto CLEANUP;
+    if (!pconn->player && pconn->observer) {
+      cmd_reply(CMD_OBSERVE, caller, C_FAIL,
+		_("%s is already observing globally the game."),
+		pconn->username);
+      goto CLEANUP;
+    }
   }
 
   res = TRUE;                   /* all tests passed */
@@ -4273,18 +4197,12 @@ static bool observe_command(struct connection *caller, char *str,
     goto CLEANUP;
   }
 
-  /* if we want to switch players, reset the client */
-  if (pconn->player && server_state == RUN_GAME_STATE) {
-    send_game_state(pconn->self, CLIENT_PRE_GAME_STATE);
-    send_conn_info(game.est_connections, pconn->self);
-  }
-
   /* if the connection is already attached to a player,
    * unattach and cleanup old player (rename, remove, etc) */
-  if (pconn->player) {
+  if (pconn->player || pconn->observer) {
     char name[MAX_LEN_NAME];
     /* if a pconn->player is removed, we'll lose pplayer */
-    sz_strlcpy(name, pplayer->name);
+    sz_strlcpy(name, pplayer ? pplayer->name : "");
     detach_command(pconn, "", FALSE);
     /* find pplayer again, the pointer might have been changed */
     pplayer = find_player_by_name(name);
@@ -4299,7 +4217,13 @@ static bool observe_command(struct connection *caller, char *str,
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE;       /* do this before attach! */
 
-  attach_connection_to_player(pconn, pplayer);
+  if (pplayer) {
+    attach_connection_to_player(pconn, pplayer);
+  } else {
+    // case global observer
+    conn_list_append(game.game_connections, pconn);
+    restore_access_level(pconn);
+  }
 
   send_conn_info(pconn->self, game.est_connections);
 
@@ -4323,7 +4247,7 @@ static bool observe_command(struct connection *caller, char *str,
     send_packet_thaw_hint(pconn);
   }
   cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s"),
-            pconn->username, pplayer->name);
+	    pconn->username, pplayer ? pplayer->name : "the game globally");
 
   send_updated_vote_totals(NULL);
 
@@ -4399,13 +4323,6 @@ static bool take_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
-  /* you may not take over a global observer */
-  if (pplayer->is_observer) {
-    cmd_reply(CMD_TAKE, caller, C_FAIL, _("%s cannot be taken."),
-              pplayer->name);
-    goto CLEANUP;
-  }
-
   /* taking your own player makes no sense. */
   if (pconn->player == pplayer && !pconn->observer) {
     cmd_reply(CMD_TAKE, caller, C_FAIL, _("%s already controls %s"),
@@ -4418,12 +4335,6 @@ static bool take_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
-  /* if we want to switch players, reset the client if the game is running */
-  if (pconn->player && server_state == RUN_GAME_STATE) {
-    send_game_state(pconn->self, CLIENT_PRE_GAME_STATE);
-    send_player_info_c(NULL, pconn->self);
-    send_conn_info(game.est_connections, pconn->self);
-  }
   /* if we're taking another player with a user attached, 
    * forcibly detach the user from the player. */
   conn_list_iterate(pplayer->connections, aconn) {
@@ -4439,7 +4350,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
 
   /* if the connection is already attached to a player,
    * unattach and cleanup old player (rename, remove, etc) */
-  if (pconn->player) {
+  if (pconn->player || pconn->observer) {
     char name[MAX_LEN_NAME];
 
     /* if a pconn->player is removed, we'll lose pplayer */
@@ -4474,7 +4385,10 @@ static bool take_command(struct connection *caller, char *str, bool check)
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
     send_packet_start_turn(pconn);
-    if (server_state == GAME_OVER_STATE) {
+    if (server_state == RUN_GAME_STATE
+	&& !has_capability("extglobalinfo", pconn->capability)) {
+      reset_city_manager_params(pplayer);
+    } else if (server_state == GAME_OVER_STATE) {
       report_final_scores(pconn->self);
       report_game_rankings(pconn->self);
     }
@@ -4547,22 +4461,29 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   }
 
   pplayer = pconn->player;
+
   /* must have someone to detach from... */
-  if (!pplayer) {
+  if (!pplayer && !pconn->observer) {
     cmd_reply(CMD_DETACH, caller, C_FAIL,
               _("%s is not attached to any player."), pconn->username);
     goto CLEANUP;
   }
 
-  /* a special case for global observers: we don't want to remove the
-   * observer player in pregame if someone else is also observing it */
-  if (pplayer->is_observer && conn_list_size(pplayer->connections) > 1) {
-    one_obs_among_many = TRUE;
-  }
-
   res = TRUE;
   if (check) {
     goto CLEANUP;
+  }
+
+  /* actually do the detaching */
+  if (pplayer) {
+    unattach_connection_from_player(pconn);
+    cmd_reply(CMD_DETACH, caller, C_COMMENT,
+	      _("%s detaching from %s"), pconn->username, pplayer->name);
+  } else {
+    /* was global observer */
+    pconn->observer = FALSE;
+    conn_list_unlink(game.game_connections, pconn);
+    restore_access_level(pconn);
   }
 
   /* if we want to detach while the game is running, reset the client */
@@ -4573,46 +4494,44 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     send_conn_info(game.est_connections, pconn->self);
   }
 
-  /* actually do the detaching */
-  unattach_connection_from_player(pconn);
   send_conn_info(pconn->self, game.est_connections);
-  cmd_reply(CMD_DETACH, caller, C_COMMENT,
-            _("%s detaching from %s"), pconn->username, pplayer->name);
 
-  /* only remove the player if the game is new and in pregame, 
-   * the player wasn't /created, and no one is controlling it 
-   * and we were observing but no one else was... */
-  if (!pplayer->is_connected && !pplayer->was_created
-      && is_newgame && !one_obs_among_many) {
-    /* detach any observers */
-    conn_list_iterate(pplayer->connections, aconn) {
-      if (aconn->observer) {
-        unattach_connection_from_player(aconn);
-        send_conn_info(aconn->self, game.est_connections);
-        notify_conn(aconn->self, _("detaching from %s."), pplayer->name);
+  if (pplayer) {
+    /* only remove the player if the game is new and in pregame, 
+     * the player wasn't /created, and no one is controlling it 
+     * and we were observing but no one else was... */
+    if (!pplayer->is_connected && !pplayer->was_created
+	&& is_newgame && !one_obs_among_many) {
+      /* detach any observers */
+      conn_list_iterate(pplayer->connections, aconn) {
+	if (aconn->observer) {
+	  unattach_connection_from_player(aconn);
+	  send_conn_info(aconn->self, game.est_connections);
+	  notify_conn(aconn->self, _("detaching from %s."), pplayer->name);
+	}
+      } conn_list_iterate_end;
+      /* actually do the removal */
+      game_remove_player(pplayer);
+      game_renumber_players(pplayer->player_no);
+    }
+
+    cancel_connection_votes(pconn);
+    send_updated_vote_totals(NULL);
+
+    if (!pplayer->is_connected) {
+      /* aitoggle the player if no longer connected. */
+      if (game.server.auto_ai_toggle && !pplayer->ai.control) {
+	toggle_ai_player_direct(NULL, pplayer);
       }
-    } conn_list_iterate_end;
-    /* actually do the removal */
-    game_remove_player(pplayer);
-    game_renumber_players(pplayer->player_no);
-  }
-
-  cancel_connection_votes(pconn);
-  send_updated_vote_totals(NULL);
-
-  if (!pplayer->is_connected) {
-    /* aitoggle the player if no longer connected. */
-    if (game.server.auto_ai_toggle && !pplayer->ai.control) {
-      toggle_ai_player_direct(NULL, pplayer);
+      /* reset username if in pregame. */
+      if (is_newgame) {
+	sz_strlcpy(pplayer->username, ANON_USER_NAME);
+      }
     }
-    /* reset username if in pregame. */
-    if (is_newgame) {
-      sz_strlcpy(pplayer->username, ANON_USER_NAME);
-    }
-  }
 
-  if (server_state == RUN_GAME_STATE) {
-    gamelog(GAMELOG_PLAYER, pplayer);
+    if (server_state == RUN_GAME_STATE) {
+      gamelog(GAMELOG_PLAYER, pplayer);
+    }
   }
 
 CLEANUP:
@@ -4907,8 +4826,7 @@ static bool ratings_command(struct connection *caller,
   cml_uname = 10;
 
   players_iterate(pplayer) {
-    if (pplayer->is_observer || is_barbarian(pplayer)
-        || pplayer->is_civil_war_split) {
+    if (is_barbarian(pplayer) || pplayer->is_civil_war_split) {
       continue;
     }
 
@@ -6960,10 +6878,10 @@ static bool start_command(struct connection *caller, char *name, bool check)
                 game.info.max_players, map.num_start_positions);
         game.info.max_players = map.num_start_positions;
       }
-      if (get_num_nonobserver_players() > game.info.max_players) {
+      if (game.info.nplayers > game.info.max_players) {
         /* Because of the way player ids are renumbered during
            server_remove_player() this is correct */
-        while (get_num_nonobserver_players() > game.info.max_players) {
+        while (game.info.nplayers > game.info.max_players) {
           /* This may erronously remove observer players sometimes.  This
            * is a bug but non-fatal. */
           server_remove_player(get_player(game.info.max_players));
@@ -6977,7 +6895,7 @@ static bool start_command(struct connection *caller, char *name, bool check)
       }
     }
     /* check min_players */
-    if (get_num_nonobserver_players() < game.info.min_players) {
+    if (game.info.nplayers < game.info.min_players) {
       cmd_reply(CMD_START_GAME, caller, C_FAIL,
                 _("Not enough players, game will not start."));
       return FALSE;

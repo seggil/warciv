@@ -1133,7 +1133,7 @@ static void bg_map_know_and_see_all(struct player *pplayer)
 {
   struct bg_map_know_and_see_all_context *context;
 
-  if (pplayer->is_observer || is_barbarian(pplayer)) {
+  if (is_barbarian(pplayer)) {
     return;
   }
 

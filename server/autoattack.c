@@ -33,14 +33,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "combat.h"
-#include "events.h"
 #include "fcintl.h"
-#include "game.h"
 #include "log.h"
+#include "timing.h"
+
+#include "combat.h"
+#include "city.h"
+#include "events.h"
+#include "game.h"
 #include "map.h"
 #include "player.h"
-#include "timing.h"
 #include "unit.h"
 
 #include "gotohand.h"

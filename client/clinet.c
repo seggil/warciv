@@ -84,13 +84,11 @@
 #include "gui_main_g.h"		/* add_net_input(), remove_net_input() */
 #include "menu_g.h"
 #include "messagewin_g.h"
-#include "myai.h"
 #include "options.h"
 #include "packhand.h"
 #include "pages_g.h"
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
-#include "wc_settings.h"
 
 #include "clinet.h"
 
@@ -98,6 +96,7 @@ struct connection aconnection;
 static int socklan;
 static struct server_list *lan_servers;
 static union my_sockaddr server_addr;
+bool server_has_extglobalinfo = FALSE;
 
 #define ASYNC_SLIST_CTX_MEMORY_GUARD 0xadebac1e
 
@@ -141,8 +140,8 @@ static void check_init_async_tables(void)
 **************************************************************************/
 static void close_socket_nomessage(struct connection *pc)
 {
-  if (!client_is_observer() && get_player_ptr() && save_pepsettings_on_exit) {
-    save_all_settings();
+  if (save_options_on_exit) {
+    save_options();
   }
   connection_common_close(pc);
   remove_net_input();
@@ -153,7 +152,6 @@ static void close_socket_nomessage(struct connection *pc)
    * Unfortunately doing it only in client_game_free is not
    * sufficient. */
   voteinfo_queue_init();
-  trade_planning_calculation_stop();
 
   set_client_page(PAGE_MAIN);
 

@@ -29,24 +29,11 @@
 #include "city.h"		/* CITY_MAP_SIZE */
 #include "shared.h"		/* bool type */
 
-enum cm_stat { FOOD, SHIELD, TRADE, GOLD, LUXURY, SCIENCE, NUM_STATS };
-
-/* A description of the goal. */
-struct cm_parameter {
-  int minimal_surplus[NUM_STATS];
-  bool require_happy;
-  bool allow_disorder;
-  bool allow_specialists;
-
-  int factor[NUM_STATS];
-  int happy_factor;
-};
-
 /* A result which can examined. */
 struct cm_result {
   bool found_a_valid, disorder, happy;
 
-  int surplus[NUM_STATS];
+  int surplus[CM_NUM_STATS];
 
   bool worker_positions_used[CITY_MAP_SIZE][CITY_MAP_SIZE];
   int specialists[SP_COUNT];

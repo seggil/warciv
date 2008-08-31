@@ -16,6 +16,8 @@
 #endif
 
 #include "log.h"
+
+#include "city.h"
 #include "player.h"
 #include "unit.h"
 

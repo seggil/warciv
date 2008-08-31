@@ -20,6 +20,7 @@
 
 #include "mem.h"
 
+#include "city.h"
 #include "game.h"
 
 #include "pf_tools.h"

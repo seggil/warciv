@@ -28,51 +28,54 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "fciconv.h"
+#include "fcintl.h"
+#include "log.h"
+#include "mem.h"
+#include "netintf.h"
+#include "rand.h"
+#include "support.h"
+
 #include "capstr.h"
 #include "dataio.h"
 #include "diptreaty.h"
-#include "fciconv.h"
-#include "fcintl.h"
 #include "game.h"
 #include "idex.h"
-#include "log.h"
 #include "map.h"
-#include "mem.h"
-#include "netintf.h"
 #include "packets.h"
-#include "rand.h"
-#include "support.h"
 #include "version.h"
 
-#include "agents.h"
 #include "attribute.h"
 #include "audio.h"
-#include "chatline_g.h"
-#include "citydlg_g.h"
 #include "cityrepdata.h"
 #include "climisc.h"
 #include "clinet.h"
 #include "cma_core.h"		/* kludge */
 #include "connectdlg_common.h"  /* client_kill_server() */
-#include "connectdlg_g.h"
 #include "control.h" 
+#include "goto.h"
+#include "helpdata.h"		/* boot_help_texts() */
+#include "multiselect.h"
+#include "options.h"
+#include "packhand.h"
+#include "tilespec.h"
+#include "trade.h"
+
+#include "agents.h"
+
+#include "chatline_g.h"
+#include "citydlg_g.h"
+#include "connectdlg_g.h"
 #include "dialogs_g.h"
 #include "diplodlg_g.h"
-#include "goto.h"
 #include "gui_main_g.h"
-#include "helpdata.h"		/* boot_help_texts() */
 #include "mapctrl_g.h"
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "messagewin_g.h"
-#include "multiselect.h"
-#include "options.h"
-#include "packhand.h"
 #include "pages_g.h"
-#include "wc_settings.h"
 #include "plrdlg_g.h"
 #include "repodlgs_g.h"
-#include "tilespec.h"
 
 #include "civclient.h"
 
@@ -179,7 +182,7 @@ static bool my_adns_timer_cb (void *data)
 /**************************************************************************
   ...
 **************************************************************************/
-static void my_init_adns()
+static void my_init_adns(void)
 {
   adns_init();
   if (adns_is_available()) {
@@ -374,6 +377,7 @@ int main(int argc, char *argv[])
   /* register exit handler */
   atexit(at_exit);
 
+  client_options_init();
   chatline_common_init();
   init_messages_where();
   init_city_report_data();
@@ -490,7 +494,7 @@ void send_turn_done(void)
 
   attribute_flush();
 
-  automatic_processus_event(AUTO_PRESS_TURN_DONE,NULL);
+  delayed_goto_event(AUTO_PRESS_TURN_DONE, NULL);
   send_packet_player_turn_done(&aconnection);
 
   update_turn_done_button_state();
@@ -526,6 +530,7 @@ void client_game_init()
   city_autonaming_init();
   control_queues_init();
   link_marks_init();
+  trade_init();
 }
 
 /**************************************************************************
@@ -541,6 +546,7 @@ void client_game_free()
   free_help_texts();
   attribute_free();
   agents_free();
+  trade_free();
   game_free();
 }
 
@@ -559,11 +565,13 @@ void set_client_state(enum client_states newstate)
     /*
      * Extra kludge for end-game handling of the CMA.
      */
-    city_list_iterate(get_player_ptr()->cities, pcity) {
-      if (cma_is_city_under_agent(pcity, NULL)) {
-        cma_release_city(pcity);
-      }
-    } city_list_iterate_end;
+    if (get_player_ptr()) {
+      city_list_iterate(get_player_ptr()->cities, pcity) {
+	if (cma_is_city_under_agent(pcity, NULL)) {
+	  cma_release_city(pcity);
+	}
+      } city_list_iterate_end;
+    }
     popdown_all_city_dialogs();
     popdown_all_game_dialogs();
     set_unit_focus(NULL);
@@ -577,20 +585,23 @@ void set_client_state(enum client_states newstate)
        selecting nations.  (Want translated nation names in nation
        select dialog.)
     */
-    if (client_state==CLIENT_PRE_GAME_STATE
-	&& (newstate==CLIENT_SELECT_RACE_STATE
-	    || newstate==CLIENT_GAME_RUNNING_STATE)) {
+    if (client_state == CLIENT_PRE_GAME_STATE
+	&& (newstate == CLIENT_SELECT_RACE_STATE
+	    || newstate == CLIENT_GAME_RUNNING_STATE)) {
       translate_data_names();
       audio_stop();		/* stop intro sound loop */
     }
       
-    client_state=newstate;
+    client_state = newstate;
 
     if (client_state == CLIENT_GAME_RUNNING_STATE) {
-      load_ruleset_specific_options();
+      delayed_trade_routes_build();
+      check_ruleset_specific_options();
       create_event(NULL, E_GAME_START, _("Game started."));
       precalc_tech_data();
-      update_research(get_player_ptr());
+      if (get_player_ptr()) {
+	update_research(get_player_ptr());
+      }
       role_unit_precalcs();
       clear_notify_window();
       boot_help_texts();	/* reboot */
@@ -598,13 +609,10 @@ void set_client_state(enum client_states newstate)
       update_unit_focus();
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
-      if (!client_is_observer() && get_player_ptr()) {
-        if (reload_pepsettings) {
-          load_dynamic_settings();
-        }
-        if (game.info.turn == 0) {
-          set_default_user_tech_goal();
-        }
+      if (!client_is_observer()
+	  && get_player_ptr()
+	  && game.info.turn == 0) {
+	set_default_user_tech_goal();
       }
       init_menus();
 
@@ -722,8 +730,10 @@ void real_timer_callback(void)
     return;
   }
 
-  if (get_player_ptr()->is_connected && get_player_ptr()->is_alive &&
-      !get_player_ptr()->turn_done) {
+  if (get_player_ptr()
+      && get_player_ptr()->is_connected
+      && get_player_ptr()->is_alive
+      && !get_player_ptr()->turn_done) {
     int is_waiting = 0, is_moving = 0;
 
     players_iterate(pplayer) {
@@ -747,7 +757,7 @@ void real_timer_callback(void)
     curtime = time(NULL);
     game.info.seconds_to_turndone = MAX(end_of_turn - curtime, 0);
   }
-  ap_timers_update();
+  delayed_goto_auto_timers_update();
   update_timeout_label();
 }
 
@@ -768,7 +778,8 @@ bool can_client_issue_orders(void)
 **************************************************************************/
 bool can_meet_with_player(struct player *pplayer)
 {
-  return (could_meet_with_player(get_player_ptr(), pplayer)
+  return (get_player_ptr()
+	  && could_meet_with_player(get_player_ptr(), pplayer)
           && can_client_issue_orders());
 }
 
@@ -778,7 +789,12 @@ bool can_meet_with_player(struct player *pplayer)
 **************************************************************************/
 bool can_intel_with_player(struct player *pplayer)
 {
-  return could_intel_with_player(get_player_ptr(), pplayer);
+  if (get_player_ptr()) {
+    return could_intel_with_player(get_player_ptr(), pplayer);
+  } else {
+    /* Global observer */
+    return client_is_observer();
+  }
 }
 
 /**************************************************************************

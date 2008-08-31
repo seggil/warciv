@@ -86,9 +86,14 @@ struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
 void tag_pattern_free(struct tag_pattern *ptagpat);
 
 void secfile_save_message_buffer_tag_patterns(struct section_file *file);
-void secfile_load_message_buffer_tag_patterns(struct section_file *file);
+struct tag_pattern_list *
+    secfile_load_message_buffer_tag_patterns(struct section_file *file);
 
-void popup_chatline_config_dialog(void);
+GtkWidget *create_chatline_config(void);
+void apply_chatline_config(GtkWidget *widget);
+void refresh_chatline_config(GtkWidget *widget);
+void reset_chatline_config(GtkWidget *widget);
+void reload_chatline_config(GtkWidget *widget, struct section_file *sf);
 
 void set_message_buffer_view_link_handlers(GtkTextView *view);
 void insert_chat_link(struct tile *ptile, bool unit);

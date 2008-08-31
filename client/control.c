@@ -24,6 +24,8 @@
 #include "log.h"
 #include "map.h"
 #include "mem.h"
+#include "support.h"
+#include "unit.h"
 
 #include "audio.h"
 #include "chatline_g.h"
@@ -39,20 +41,18 @@
 #include "mapview_g.h"
 #include "menu_g.h"
 #include "multiselect.h"
-#include "myai.h"
 #include "options.h"
-#include "wc_settings.h"
 #include "tilespec.h"
-#include "unit.h"
+#include "trade.h"
+
 #include "control.h"
-#include "support.h"
 
 bool moveandattack_state;
 int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
-int default_caravan_action;
-int default_diplomat_unit_action;
-int default_diplomat_city_action;
+enum default_caravan_unit_actions default_caravan_action;
+enum default_diplomat_unit_actions default_diplomat_unit_action;
+enum default_diplomat_city_actions default_diplomat_city_action;
 bool default_diplomat_ignore_allies;
 
 enum new_unit_action default_action_type;
@@ -109,7 +109,6 @@ void control_queues_free(void)
   multi_select_clear_all();
   delayed_goto_clear_all();
   airlift_queue_clear_all();
-  my_ai_free();
 }
 
 /**************************************************************************
@@ -117,11 +116,9 @@ void control_queues_free(void)
 **************************************************************************/
 void control_queues_init(void)
 {
-  automatic_processus_init();
   multi_select_init_all();
   delayed_goto_init_all();
   airlift_queue_init_all();
-  my_ai_init();
 }
 
 /**************************************************************************
@@ -137,8 +134,8 @@ void set_hover_state(struct unit *punit, enum cursor_hover_state state,
   hover_state = state;
   connect_activity = activity;
   exit_goto_state();
-  need_tile_for = -1;
-  need_city_for = -1;
+  delayed_goto_need_tile_for = -1;
+  airlift_queue_need_city_for = -1;
 }
 
 /**************************************************************************
@@ -260,7 +257,6 @@ void update_unit_focus(void)
 	  && punit_focus->activity != ACTIVITY_GOTO)
       || punit_focus->done_moving
       || punit_focus->moves_left == 0 
-      || punit_focus->my_ai.control
       || punit_focus->ai.control) {
     if (punit_focus && moveandattack_state == 1) {
       /* Ignore focus change for move and attack mode */
@@ -290,6 +286,10 @@ struct unit *get_unit_in_focus(void)
 **************************************************************************/
 void advance_unit_focus(void)
 {
+  if (!get_player_ptr()) {
+    return;
+  }
+
   struct unit *punit_old_focus = punit_focus;
   struct unit *candidate = find_best_focus_candidate(FALSE);
 
@@ -333,7 +333,7 @@ void advance_unit_focus(void)
    */
   if (punit_old_focus && !punit_focus && non_ai_unit_focus) {
     if (focus_turn) {
-      automatic_processus_event(AUTO_NO_UNIT_SELECTED, NULL);
+      delayed_goto_event(AUTO_NO_UNIT_SELECTED, NULL);
       focus_turn = FALSE;
     }
     if (auto_turn_done) {
@@ -349,6 +349,10 @@ void advance_unit_focus(void)
 **************************************************************************/
 static struct unit *find_best_focus_candidate(bool accept_current)
 {
+  if (!get_player_ptr()) {
+    return NULL;
+  }
+
   struct unit *best_candidate;
   int best_dist = 99999;
   struct tile *ptile;
@@ -367,7 +371,6 @@ static struct unit *find_best_focus_candidate(bool accept_current)
 	&& !unit_has_orders(punit)
       && punit->moves_left > 0
       && !punit->done_moving
-      && !punit->my_ai.control
       && !punit->ai.control) {
         int d = sq_map_distance(punit->tile, ptile);
         if (d < best_dist) {
@@ -573,10 +576,6 @@ void set_units_in_combat(struct unit *pattacker, struct unit *pdefender)
 **************************************************************************/
 void process_caravan_arrival(struct unit *punit)
 {
-  if (punit && punit->my_ai.control) {
-    return;
-  }
-
   static genlist *arrival_queue = NULL;
   int *p_id;
 
@@ -594,7 +593,8 @@ void process_caravan_arrival(struct unit *punit)
   }
 
   /* There can only be one dialog at a time: */
-  if (!default_caravan_action && caravan_dialog_is_open()) {
+  if (default_caravan_action == DCA_POPUP_DIALOG
+      && caravan_dialog_is_open()) {
     return;
   }
   
@@ -614,19 +614,20 @@ void process_caravan_arrival(struct unit *punit)
       struct city *pcity_dest = map_get_city(punit->tile);
       struct city *pcity_homecity = find_city_by_id(punit->homecity);
 
-      /* If default_caravan_action == 0, popup dialog. */
-      if (!default_caravan_action && pcity_dest && pcity_homecity) {
+      if (default_caravan_action == DCA_POPUP_DIALOG
+	  && pcity_dest && pcity_homecity) {
 	popup_caravan_dialog(punit, pcity_homecity, pcity_dest);
 	return;
       } else {
         switch (default_caravan_action) {
-	  case 1:
+	  case DCA_POPUP_DIALOG:
+	  case DCA_KEEP_MOVING:
+	    break;
+	  case DCA_ESTABLISH_TRADEROUTE:
 	    dsend_packet_unit_establish_trade(&aconnection, punit->id); 
 	    break;
-	  case 2:
+	  case DCA_HELP_BUILD_WONDER:
 	    dsend_packet_unit_help_build_wonder(&aconnection, punit->id); 
-	    break;
-	  default: /* 3: do nothing */
 	    break;
         }
       }
@@ -719,7 +720,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
 	case DDUA_SABOTAGE:
 	  request_diplomat_action(SPY_SABOTAGE_UNIT, diplomat_id, victim_id, 0);
 	  break;
-	default:
+	case DDUA_KEEP_MOVING:
 	  break;
       }
       return;
@@ -813,7 +814,7 @@ void request_unit_delayed_goto(void)
 /**************************************************************************
   ... 
 **************************************************************************/
-void key_select_rally_point (void)
+void key_select_rally_point(void)
 {
   int n = 0;
 
@@ -826,7 +827,7 @@ void key_select_rally_point (void)
       n++;
     }
   } city_list_iterate_end;
-  
+
   if (n > 0) {
     char buf[128];
     my_snprintf(buf, sizeof (buf),
@@ -1802,115 +1803,24 @@ void check_new_unit_action(struct unit *punit)
   }
 
   switch (default_action_type) {
-    case ACTION_SENTRY:
-      request_unit_sentry(punit);
-      break;
-    case ACTION_FORTIFY:
+  case ACTION_IDLE:
+    break;
+  case ACTION_SENTRY:
+    request_unit_sentry(punit);
+    break;
+  case ACTION_FORTIFY:
+    request_unit_fortify(punit);
+    break;
+  case ACTION_SLEEP:
+    request_unit_sleep(punit);
+    break;
+  case ACTION_FORTIFY_OR_SLEEP:
+    if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
       request_unit_fortify(punit);
-      break;
-    case ACTION_SLEEP:
-      request_unit_sleep(punit);
-      break;
-    case ACTION_FORTIFY_OR_SLEEP:
-      if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
-        request_unit_fortify(punit);
-      } else {
-        request_unit_sentry(punit);
-      }
-      break;
-    default:
-      break;
-  }
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void key_clear_rally_point_for_selected_cities (void)
-{
-  char buf[1024];
-  int count = 0;
-  
-  if (!tiles_hilited_cities)
-    return;
-  
-  my_snprintf (buf, sizeof (buf), _("Warclient: Removed rally points: "));
-
-  city_list_iterate (get_player_ptr()->cities, pcity) {
-    if (!is_city_hilited(pcity) || !pcity->rally_point) {
-      continue;
+    } else {
+      request_unit_sentry(punit);
     }
-    cat_snprintf(buf, sizeof(buf), "%s%s (%d, %d)",
-                 ++count == 1 ? "" : ", ",
-		 pcity->name, TILE_XY(pcity->rally_point));
-    pcity->rally_point = NULL;
-  } city_list_iterate_end;
-
-  if (count > 0) {
-    sz_strlcat(buf, ".");
-    append_output_window(buf);
-  }
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void check_rally_points(struct city *pcity, struct unit *punit)
-{
-  if (!pcity || !pcity->rally_point || !punit || !punit->is_new) {
-    return;
-  }
-
-  send_goto_unit(punit, pcity->rally_point);
-  pcity->rally_point = NULL; /* Clear it */
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void city_set_rally_point(struct city *pcity, struct tile *ptile)
-{
-  if (!pcity || !ptile) {
-    return;
-  }
-  char buf[256];
-
-  pcity->rally_point = ptile;
-  my_snprintf(buf, sizeof(buf),
-	      _("Warclient: Rallying from %s to (%d, %d)\n"),
-	      pcity->name, TILE_XY(ptile));
-  append_output_window(buf);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static void set_rally_point_for_selected_cities(struct tile *ptile)
-{
-  char buf[256];
-  int count = 0;
-
-  if (!ptile) {
-    return;
-  }
-
-  my_snprintf(buf, sizeof(buf),
-	      _("Warclient: Rallying to (%d, %d) from: "), TILE_XY(ptile));
-
-  city_list_iterate(get_player_ptr()->cities, pcity) {
-    if (!is_city_hilited (pcity)) {
-      continue;
-    }
-
-    pcity->rally_point = ptile;
-
-    cat_snprintf(buf, sizeof(buf), "%s%s", count == 0 ? "" : ", ", pcity->name);
-    count++;
-  } city_list_iterate_end;
-
-  if (count) {
-    cat_snprintf(buf, sizeof(buf), ".");
-    append_output_window(buf);
+    break;
   }
 }
 
@@ -1924,38 +1834,16 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
   bool maybe_goto = FALSE;
 
-  if (punit && hover_state == HOVER_MY_AI_TRADE) {
-    if (pcity) {
-      multi_select_iterate(FALSE, msunit) {
-	if (unit_flag(msunit, F_TRADE_ROUTE)) {
-	  my_ai_trade_route_alloc_city(msunit, pcity);
-	} else {
-	  append_output_window(
-	      _("Warclient: This unit is not able to trade"));
-	}
-      } multi_select_iterate_end;
-      update_unit_focus();
-    } else {
-      append_output_window(
-	  _("Warclient: You must select a city to trade with"));
-    }
+  if (pcity && hover_state == HOVER_TRADE_CITY) {
+    add_city_in_trade_planning(pcity, TRUE);
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
-    return;
-  } else if (hover_state == HOVER_MY_AI_TRADE_CITY) {
-    if (pcity) {
-      if (pcity->owner == get_player_idx()) {
-	my_ai_add_trade_city(pcity, FALSE);
-      } else {
-	append_output_window(
-	    _("Warclient: You can plan trade only in your own cities"));
-      }
-    }
+  } else if (punit && pcity && hover_state == HOVER_TRADE_DEST) {
+    request_trade_route(pcity);
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
-    return;
   } else if (ptile && hover_state == HOVER_AIRLIFT_SOURCE) {
     add_city_to_auto_airlift_queue(ptile, FALSE);       
     hover_state = HOVER_NONE;
@@ -1969,23 +1857,16 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       append_output_window(
 	  _("Warclient: You need to select a tile with a city"));
     }
-    need_city_for = -1;
-    hover_state = HOVER_NONE;
-    hover_unit = 0;
-    update_hover_cursor();
-    return;
-  } else if (ptile && hover_state == HOVER_MYPATROL) {
-    multi_select_iterate(TRUE, punit) {
-      my_ai_patrol_alloc(punit, ptile);
-    } multi_select_iterate_end;
+    airlift_queue_need_city_for = -1;
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
     return;
   } else if (ptile && hover_state == HOVER_DELAYED_GOTO) {
-    if (need_tile_for >= 0 && need_tile_for < DELAYED_GOTO_NUM) {
-      request_execute_delayed_goto(ptile, need_tile_for);
-      need_tile_for = -1;
+    if (delayed_goto_need_tile_for >= 0
+	&& delayed_goto_need_tile_for < DELAYED_GOTO_NUM) {
+      request_execute_delayed_goto(ptile, delayed_goto_need_tile_for);
+      delayed_goto_need_tile_for = -1;
     } else {
       add_unit_to_delayed_goto(ptile);
     }
@@ -2058,7 +1939,12 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
 	  do_unit_patrol_to(punit, ptile);
 	} multi_select_iterate_end;
 	put_last_unit_focus();
-	break;	
+	break;
+      case HOVER_AIR_PATROL:
+	multi_select_iterate(FALSE, punit) {
+	  do_unit_air_patrol(punit, ptile);
+	} multi_select_iterate_end;
+        break;
       default:
 	break;
     }
@@ -2075,18 +1961,18 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     }
   }
   /* Otherwise use popups. */
-  else if (pcity && can_player_see_city_internals(get_player_ptr(), pcity)) {
+  else if (pcity
+	   && (!get_player_ptr()
+	       || can_player_see_city_internals(get_player_ptr(), pcity))) {
     popup_city_dialog(pcity, FALSE);
-  }
-  else if (unit_list_size(ptile->units) == 0 && !pcity
+  } else if (unit_list_size(ptile->units) == 0 && !pcity
            && punit_focus) {
     maybe_goto = keyboardless_goto;
-  }
-  else if (unit_list_size(ptile->units) == 1
-      && !unit_list_get(ptile->units, 0)->occupy) {
+  } else if (unit_list_size(ptile->units) == 1
+	     && !unit_list_get(ptile->units, 0)->occupy) {
     struct unit *punit = unit_list_get(ptile->units, 0);
     if (get_player_idx() == punit->owner) {
-      if(can_unit_do_activity(punit, ACTIVITY_IDLE)) {
+      if (can_unit_do_activity(punit, ACTIVITY_IDLE)) {
         maybe_goto = keyboardless_goto;
 	set_unit_focus_and_select(punit);
       }
@@ -2094,8 +1980,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       /* Don't hide the unit in the city. */
       popup_unit_select_dialog(ptile);
     }
-  }
-  else if (unit_list_size(ptile->units) > 0) {
+  } else if (unit_list_size(ptile->units) > 0) {
     /* The stack list is always popped up, even if it includes enemy units.
      * If the server doesn't want the player to know about them it shouldn't
      * tell him!  The previous behavior would only pop up the stack if you
@@ -2352,9 +2237,11 @@ void key_cancel_action(void)
 
   cancel_tile_hiliting();
 
-  if (hover_state == HOVER_GOTO || hover_state == HOVER_PATROL)
-    if (draw_goto_line)
+  if (hover_state == HOVER_GOTO || hover_state == HOVER_PATROL) {
+    if (draw_goto_line) {
       popped = goto_pop_waypoint();
+    }
+  }
 
   if (hover_state != HOVER_NONE && !popped) {
     struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
@@ -2369,18 +2256,16 @@ void key_cancel_action(void)
   if (hover_state == HOVER_DELAYED_GOTO
       || hover_state == HOVER_AIRLIFT_SOURCE
       || hover_state == HOVER_AIRLIFT_DEST
-      || hover_state == HOVER_MYPATROL
       || hover_state == HOVER_RALLY_POINT
       || hover_state == HOVER_DELAYED_AIRLIFT
-      || hover_state == HOVER_MY_AI_TRADE
-      || hover_state == HOVER_MY_AI_TRADE_CITY)
-  {
+      || hover_state == HOVER_TRADE_CITY
+      || hover_state == HOVER_TRADE_DEST) {
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
   }
-  need_tile_for = -1;
-  need_city_for = -1;
+  delayed_goto_need_tile_for = -1;
+  airlift_queue_need_city_for = -1;
 }
 
 /**************************************************************************
@@ -2613,16 +2498,16 @@ void key_unit_wait(void)
 /**************************************************************************
   ...
 **************************************************************************/
-void key_unit_delayed_goto(int flg)
+void key_unit_delayed_goto(enum automatic_execution flag)
 {
-  if(hover_state == HOVER_DELAYED_GOTO) {
-    delayed_para_or_nuke |= flg;
+  if (hover_state == HOVER_DELAYED_GOTO) {
+    delayed_goto_state = MAX(flag, delayed_goto_state);
     add_unit_to_delayed_goto(NULL);
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
   } else {
-    delayed_para_or_nuke = flg;
+    delayed_goto_state = flag;
     request_unit_delayed_goto();
   }
 }
@@ -3054,14 +2939,6 @@ void key_toggle_moveandattack(void)
 /**************************************************************************
   ...
 **************************************************************************/
-void key_toggle_autowakeup(void)
-{
-  autowakeup_state ^= 1;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
 void key_unit_delayed_airlift(void)
 {
   if (hover_state == HOVER_DELAYED_AIRLIFT) {
@@ -3086,73 +2963,66 @@ void key_add_pause_delayed_goto(void)
 /**************************************************************************
   ...
 **************************************************************************/
+void key_add_trade_city(void)
+{
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
+  if (tiles_hilited_cities) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
+      if (is_city_hilited(pcity)) {
+	add_city_in_trade_planning(pcity, FALSE);
+      }
+    } city_list_iterate_end;
+    update_auto_caravan_menu();
+  } else {
+    hover_state = HOVER_TRADE_CITY;
+    hover_unit = 0;
+    update_hover_cursor();
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void key_auto_caravan_goto(void)
+{
+  if (!punit_focus) {
+    return;
+  }
+  set_hover_state(punit_focus, HOVER_TRADE_DEST, ACTIVITY_LAST);
+  update_unit_info_label(punit_focus);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void key_auto_caravan(void)
+{
+  request_trade_route(NULL);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 void key_unit_air_patrol(void)
 {
   multi_select_iterate(FALSE, punit) {
-    my_ai_patrol_alloc(punit, punit->tile);
+    do_unit_air_patrol(punit, punit->tile);
   } multi_select_iterate_end;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-void key_toggle_spread_airport(void)
-{
-  spread_airport_cities ^= 1;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void key_toggle_spread_ally(void)
-{
-  spread_allied_cities ^= 1;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void key_airplane_patrol(void)
+void key_unit_air_patrol_dest(void)
 {
   if (!punit_focus) {
     return;
   }
-  set_hover_state(punit_focus, HOVER_MYPATROL, ACTIVITY_LAST);
+  set_hover_state(punit_focus, HOVER_AIR_PATROL, ACTIVITY_LAST);
   update_unit_info_label(punit_focus);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void key_my_ai_trade(void)
-{
-  if (!punit_focus) {
-    return;
-  }
-  set_hover_state(punit_focus, HOVER_MY_AI_TRADE, ACTIVITY_LAST);
-  update_unit_info_label(punit_focus);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-void key_my_ai_trade_city(void)
-{
-  if (tiles_hilited_cities) {
-    city_list_iterate (get_player_ptr()->cities, pcity) {
-      if (!is_city_hilited(pcity)) {
-        continue;
-      }
-      my_ai_add_trade_city(pcity, TRUE);
-    } city_list_iterate_end;
-    if (my_ai_trade_plan_recalculate_auto) {
-      trade_planning_calculation_start();
-    }
-  } else {
-    hover_state = HOVER_MY_AI_TRADE_CITY;
-    hover_unit = 0;
-    update_hover_cursor();
-  }
 }
 
 /**************************************************************************

@@ -310,7 +310,7 @@ void report_wonders_of_the_world(struct conn_list *dest)
 	cat_snprintf(buffer, sizeof(buffer), _("%s in %s (%s)\n"),
 		     get_impr_name_ex(pcity, i), pcity->name,
 		     get_nation_name(city_owner(pcity)->nation));
-      } else if(game.info.global_wonders[i] != 0) {
+      } else if (game.info.global_wonders[i] != 0) {
 	cat_snprintf(buffer, sizeof(buffer), _("%s has been DESTROYED\n"),
 		     get_improvement_type(i)->name);
       }
@@ -612,7 +612,7 @@ static void dem_line_item(char *outptr, size_t out_size,
 			  struct player *pplayer, struct dem_row *prow,
 			  int selcols)
 {
-  if (TEST_BIT(selcols, DEM_COL_QUANTITY)) {
+  if (pplayer && TEST_BIT(selcols, DEM_COL_QUANTITY)) {
     const char *text = prow->to_text(prow->get_value(pplayer));
 
     cat_snprintf(outptr, out_size, " %s", text);
@@ -620,7 +620,7 @@ static void dem_line_item(char *outptr, size_t out_size,
  		 18 - (int) get_internal_string_length(text), "");
   }
 
-  if (TEST_BIT(selcols, DEM_COL_RANK)) {
+  if (pplayer && TEST_BIT(selcols, DEM_COL_RANK)) {
     int basis = prow->get_value(pplayer);
     int place = 1;
 
@@ -637,15 +637,16 @@ static void dem_line_item(char *outptr, size_t out_size,
     cat_snprintf(outptr, out_size, " %6s", number_to_ordinal_string(place));
   }
 
-  if (TEST_BIT(selcols, DEM_COL_BEST)) {
+  if (!pplayer || TEST_BIT(selcols, DEM_COL_BEST)) {
     struct player *best_player = pplayer;
-    int best_value = prow->get_value(pplayer);
+    int best_value = pplayer ? prow->get_value(pplayer) : 0;
 
     players_iterate(other) {
       if (other->is_alive && !is_barbarian(other)) {
 	int value = prow->get_value(other);
 
-	if ((prow->greater_values_are_better && value > best_value)
+	if (!best_player
+	    || (prow->greater_values_are_better && value > best_value)
 	    || (!prow->greater_values_are_better && value < best_value)) {
 	  best_player = other;
 	  best_value = value;
@@ -653,7 +654,9 @@ static void dem_line_item(char *outptr, size_t out_size,
       }
     } players_iterate_end;
 
-    if(player_has_embassy(pplayer, best_player) && (pplayer != best_player)) {
+    if (!pplayer
+	|| (player_has_embassy(pplayer, best_player)
+	    && (pplayer != best_player))) {
       cat_snprintf(outptr, out_size, "   %s: %s",
 		   get_nation_name_plural(best_player->nation),
 		   prow->to_text(prow->get_value(best_player)));
@@ -739,15 +742,21 @@ void report_demographics(struct connection *pconn)
     }
   }
 
-  if (!pplayer || !pplayer->is_alive || !anyrows || selcols == 0) {
+  if ((!pconn->observer && !pplayer)
+      || (pplayer && !pplayer->is_alive)
+      || !anyrows || selcols == 0) {
     page_conn(pconn->self, _("Demographics Report:"),
 	      _("Sorry, the Demographics report is unavailable."), "");
     return;
   }
 
-  my_snprintf(civbuf, sizeof(civbuf), _("The %s of the %s"),
-	      get_government_name(pplayer->government),
-	      get_nation_name_plural(pplayer->nation));
+  if (pplayer) {
+    my_snprintf(civbuf, sizeof(civbuf), _("The %s of the %s"),
+		get_government_name(pplayer->government),
+		get_nation_name_plural(pplayer->nation));
+  } else {
+    civbuf[0] = '\0';
+  }
 
   buffer[0] = '\0';
   for (i = 0; i < ARRAY_SIZE(rowtable); i++) {
@@ -756,7 +765,7 @@ void report_demographics(struct connection *pconn)
 
       cat_snprintf(buffer, sizeof(buffer), "%s", name);
       cat_snprintf(buffer, sizeof(buffer), "%*s",
- 		   18 - (int) get_internal_string_length(name), "");
+		   18 - (int) get_internal_string_length(name), "");
       dem_line_item(buffer, sizeof(buffer), pplayer, &rowtable[i], selcols);
       sz_strlcat(buffer, "\n");
     }

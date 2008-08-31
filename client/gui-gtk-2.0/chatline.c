@@ -77,11 +77,11 @@ enum {
   COLUMN_SWITCH_NEXT,
   COLUMN_JUMP_TARGET,
   COLUMN_SOUND_TAG,
+  COLUMN_TAG_PATTERN,
 
   NUM_COLUMNS
 };
 
-static GtkWidget *chatline_config_shell = NULL;
 static GtkWidget *help_dialog = NULL;
 
 static void textbuf_insert_time(GtkTextBuffer *buf, GtkTextIter *iter);
@@ -89,8 +89,7 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
                                const char *buf, 
                                struct match_result_list *matches);
 static void match_result_list_free_data(struct match_result_list *matches);
-static void create_default_message_buffer_tag_patterns(void);
-static void create_default_tag_patterns(struct tag_pattern_list *tpl);
+static struct tag_pattern_list *create_default_tag_patterns(void);
 static void put_tag_pattern_into_store(GtkListStore *store,
                                         GtkTreeIter *iter,
                                         struct tag_pattern *ptagpat);
@@ -971,6 +970,7 @@ void set_output_window_text(const char *text)
 {
   gtk_text_buffer_set_text(message_buffer, text, -1);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1031,21 +1031,11 @@ void init_message_buffer_tag_patterns(void)
 }
 
 /**************************************************************************
-...
+  Returns a new tag pattern list.
 **************************************************************************/
-static void create_default_message_buffer_tag_patterns(void)
+static struct tag_pattern_list *create_default_tag_patterns(void)
 {
-  init_message_buffer_tag_patterns();
-  free_message_buffer_tag_patterns();
-  
-  create_default_tag_patterns(tagpats);
-}
-
-/**************************************************************************
-...
-**************************************************************************/
-static void create_default_tag_patterns(struct tag_pattern_list *tpl)
-{
+  struct tag_pattern_list *tpl = tag_pattern_list_new();
   struct tag_pattern *ptagpat;
   char buf[256];
 
@@ -1094,6 +1084,12 @@ static void create_default_tag_patterns(struct tag_pattern_list *tpl)
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
                   | TPF_NEGATE, "", "", "");
   MK_TAG_PATTERN("ally message", "to allies: ",
+                  TPF_REQUIRE_PREVIOUS_MATCH,
+                  "", "#551166", "");
+
+  MK_TAG_PATTERN("", "(", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START,
+		 "", "", "");
+  MK_TAG_PATTERN("global observer message", "to global observers: ",
                   TPF_REQUIRE_PREVIOUS_MATCH,
                   "", "#551166", "");
 
@@ -1207,7 +1203,10 @@ static void create_default_tag_patterns(struct tag_pattern_list *tpl)
   MK_TAG_PATTERN("name hilight", default_user_name,
                   TPF_APPLY_TO_MATCH | TPF_REQUIRE_PREVIOUS_MATCH,
                   "", "#000000", "#FFFF00");
+
+  return tpl;
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1295,6 +1294,7 @@ static void remove_tag_from_tag_table_func(gpointer key, gpointer value,
     gtk_text_tag_table_remove(table, tag);
   }
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1305,8 +1305,9 @@ void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete)
 
   init_message_buffer_tag_patterns();
 
-  if (!GTK_TEXT_BUFFER(message_buffer))
+  if (!GTK_TEXT_BUFFER(message_buffer)) {
     return;
+  }
   
   table = gtk_text_buffer_get_tag_table(message_buffer);
 
@@ -1348,6 +1349,7 @@ void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete)
     
   } tag_pattern_list_iterate_end;
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1356,9 +1358,9 @@ void free_message_buffer_tag_patterns(void)
   tag_pattern_list_iterate(tagpats, ptagpat) {
     tag_pattern_free(ptagpat);
   } tag_pattern_list_iterate_end;
-
   tag_pattern_list_unlink_all(tagpats);  
 }
+
 /**************************************************************************
   Note: does not actually free the passed in list itself, just all its
   data.
@@ -1384,6 +1386,7 @@ void secfile_save_chatline_colors(struct section_file *sf)
   secfile_insert_int(sf, version, "chatline.colors_version");
   secfile_save_message_buffer_tag_patterns(sf);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1391,17 +1394,22 @@ void secfile_load_chatline_colors(struct section_file *sf)
 {
   int version;
 
+  if (tagpats) {
+    tag_pattern_list_free_all(tagpats);
+  }
+
   version = secfile_lookup_int_default(sf, -1, "chatline.colors_version");
   if (version != COLORS_FORMAT_VERSION) {
     freelog(LOG_ERROR,
         _("Chatline tag pattern format has changed, settings in file "
           "\"%s\" will not be loaded(please save the new settings)."),
         sf->filename);
-    create_default_message_buffer_tag_patterns();
+    tagpats = create_default_tag_patterns();
   } else {
-    secfile_load_message_buffer_tag_patterns(sf);
+    tagpats = secfile_load_message_buffer_tag_patterns(sf);
   }
 }
+
 /**************************************************************************
   Result(if not NULL) must be freed(with gdk_color_free)  when no longer
   needed.
@@ -1429,6 +1437,7 @@ static GdkColor *secfile_lookup_color(struct section_file *file,
   color.blue = blue;
   return gdk_color_copy(&color);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1453,6 +1462,7 @@ static void secfile_insert_color(struct section_file *file, GdkColor *color,
   secfile_insert_int(file, color->green, "%s_g", buf);
   secfile_insert_int(file, color->blue, "%s_b", buf);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1483,23 +1493,23 @@ void secfile_save_message_buffer_tag_patterns(struct section_file *file)
     i++;
   } tag_pattern_list_iterate_end;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-void secfile_load_message_buffer_tag_patterns(struct section_file *file)
+struct tag_pattern_list *
+    secfile_load_message_buffer_tag_patterns(struct section_file *file)
 {
   int num, i;
+  struct tag_pattern_list *tpl;
   struct tag_pattern *ptagpat;
 
-  init_message_buffer_tag_patterns();
-  
   num = secfile_lookup_int_default(file, -1, "chatline.num_tagpats");
   if (num == -1) {
-    create_default_message_buffer_tag_patterns();
-    return;
+    return create_default_tag_patterns();
   }
-  free_message_buffer_tag_patterns();
-  
+
+  tpl = tag_pattern_list_new();
   for (i = 0; i < num; i++) {
     ptagpat = fc_malloc(sizeof(struct tag_pattern));
     ptagpat->tag_name = mystrdup(
@@ -1514,14 +1524,15 @@ void secfile_load_message_buffer_tag_patterns(struct section_file *file)
         secfile_lookup_str_default(file, "",
                                    "chatline.tagpat%d.sound_tag", i));
 
-
     ptagpat->foreground_color = secfile_lookup_color(file,
         "chatline.tagpat%d.foreground_color", i);
     ptagpat->background_color = secfile_lookup_color(file,
         "chatline.tagpat%d.background_color", i);
 
-    tag_pattern_list_append(tagpats, ptagpat);
+    tag_pattern_list_append(tpl, ptagpat);
   }
+
+  return tpl;
 }
 
 /**************************************************************************
@@ -1538,14 +1549,6 @@ void tag_pattern_list_free_data(struct tag_pattern_list *tpl)
 /**************************************************************************
   ...
 **************************************************************************/
-static void save_callback(GtkWidget *w,
-                           gpointer user_data)
-{
-  save_options();
-}
-/**************************************************************************
-  ...
-**************************************************************************/
 static GtkWidget *create_help_dialog(GtkWidget *parent)
 {
   GtkWidget *dialog, *text, *sw, *vbox, *button, *hbox;
@@ -1555,7 +1558,7 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
   /* create the window */
   dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(dialog),
-                        _("Chatline Color Configuration Help"));
+		       _("Chatline Color Configuration Help"));
   gtk_window_set_default_size(GTK_WINDOW(dialog), 300, 500);
   gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -1612,9 +1615,7 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
       " it) and press the \"Delete\" button(multiple patterns may be deleted"
       " this way at once."
       " To move patterns around use the \"Move Up\" and \"Move Down\""
-      " buttons. The \"Save\" button will save the current patterns in your"
-      " .civclientrc file. \"Reset\" will restore the"
-      " default patterns. Finally, the \"Clear\" button removes all patterns.\n"
+      " buttons.The \"Clear\" button removes all patterns.\n"
       "\n"
       "\n"
       "Flags\n"
@@ -1655,12 +1656,11 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-  
-  
   gtk_widget_show_all(dialog);
    
   return dialog;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1674,48 +1674,23 @@ static void help_callback(GtkWidget *w, gpointer user_data)
 
   gtk_window_present(GTK_WINDOW(help_dialog));
 }
-/**************************************************************************
-  ...
-**************************************************************************/
-static void reset_callback(GtkWidget *w, gpointer user_data)
-{
-  GtkWidget *dialog = (GtkWidget *) user_data;
-  struct tag_pattern_list *tmptagpats = NULL;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
-  
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  tag_pattern_list_free_data(tmptagpats);
-  create_default_tag_patterns(tmptagpats);
 
-  model = g_object_get_data(G_OBJECT(dialog), "model");
-  gtk_list_store_clear(GTK_LIST_STORE(model));
-  
-  tag_pattern_list_iterate(tmptagpats, ptagpat) {
-    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-    put_tag_pattern_into_store(GTK_LIST_STORE(model),
-                                &iter, ptagpat);
-  } tag_pattern_list_iterate_end;
-}
 /**************************************************************************
   ...
 **************************************************************************/
-static void apply_callback(GtkWidget *w,
-                            gpointer user_data)
+void apply_chatline_config(GtkWidget *widget)
 {
-  GtkWidget *dialog = (GtkWidget *) user_data;
-  struct tag_pattern_list *tmptagpats = NULL;
-  GHashTable *tags_to_delete = NULL;
+  struct tag_pattern_list *tmptagpats;
+  GHashTable *tags_to_delete;
   gpointer key, value;
 
-    
-  tags_to_delete = g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
-  tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
-  
+  tags_to_delete = g_object_get_data(G_OBJECT(widget), "tags_to_delete");
+  tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+
   tag_pattern_list_free_data(tagpats);
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     if (g_hash_table_lookup_extended(tags_to_delete, ptagpat->tag_name,
-                                      &key, &value)) {
+				     &key, &value)) {
       /* key is freed by the hash table */
       g_hash_table_remove(tags_to_delete, key);
     }
@@ -1723,44 +1698,98 @@ static void apply_callback(GtkWidget *w,
   } tag_pattern_list_iterate_end; 
 
   refresh_message_buffer_tag_patterns(tags_to_delete);
-    
+
   /* free memory used by hash table(also frees any leftover keys),
      i.e. we clear the hash table here */
   g_hash_table_destroy(tags_to_delete);
   tags_to_delete = g_hash_table_new_full(g_str_hash, g_str_equal,
                                          free, NULL);
-  g_object_set_data(G_OBJECT(dialog), "tags_to_delete", tags_to_delete);
+  g_object_set_data(G_OBJECT(widget), "tags_to_delete", tags_to_delete);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void refresh_chatline_config(GtkWidget *widget)
+{
+  struct tag_pattern_list *tmptagpats;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+  if (tmptagpats) {
+    tag_pattern_list_free_all(tmptagpats);
+  }
+  tmptagpats = tag_pattern_list_clone(tagpats);
+  g_object_set_data(G_OBJECT(widget), "tmptagpats", tmptagpats);
+
+  model = g_object_get_data(G_OBJECT(widget), "model");
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+  tag_pattern_list_iterate(tmptagpats, ptagpat) {
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    put_tag_pattern_into_store(GTK_LIST_STORE(model), &iter, ptagpat);
+  } tag_pattern_list_iterate_end;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void reset_chatline_config(GtkWidget *widget)
+{
+  struct tag_pattern_list *tmptagpats;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+  if (tmptagpats) {
+    tag_pattern_list_free_all(tmptagpats);
+  }
+  tmptagpats = create_default_tag_patterns();
+  g_object_set_data(G_OBJECT(widget), "tmptagpats", tmptagpats);
+
+  model = g_object_get_data(G_OBJECT(widget), "model");
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+  tag_pattern_list_iterate(tmptagpats, ptagpat) {
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    put_tag_pattern_into_store(GTK_LIST_STORE(model), &iter, ptagpat);
+  } tag_pattern_list_iterate_end;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void reload_chatline_config(GtkWidget *widget, struct section_file *sf)
+{
+  struct tag_pattern_list *tmptagpats;
+  int version = secfile_lookup_int_default(sf, -1, "chatline.colors_version");
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  if (version == COLORS_FORMAT_VERSION) {
+    tmptagpats = g_object_get_data(G_OBJECT(widget), "tmptagpats");
+    if (tmptagpats) {
+      tag_pattern_list_free_all(tmptagpats);
+    }
+    tmptagpats = secfile_load_message_buffer_tag_patterns(sf);
+    g_object_set_data(G_OBJECT(widget), "tmptagpats", tmptagpats);
+
+    model = g_object_get_data(G_OBJECT(widget), "model");
+    gtk_list_store_clear(GTK_LIST_STORE(model));
+    tag_pattern_list_iterate(tmptagpats, ptagpat) {
+      gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+      put_tag_pattern_into_store(GTK_LIST_STORE(model), &iter, ptagpat);
+    } tag_pattern_list_iterate_end;
+  }
 }
 
 /**************************************************************************
 ...
 **************************************************************************/
-static void cancel_callback(GtkWidget *w,
-                            gpointer user_data)
-{
-  GtkWidget *dialog = (GtkWidget *) user_data;
-  gtk_widget_destroy(dialog);
-}
-/**************************************************************************
-...
-**************************************************************************/
-static void ok_callback(GtkWidget *w,
-                            gpointer user_data)
-{
-  GtkWidget *dialog = (GtkWidget *) user_data;
-
-  apply_callback(NULL, dialog);
-  gtk_widget_destroy(dialog);
-}
-/**************************************************************************
-...
-**************************************************************************/
-static void destroy_callback(GtkWidget *w,
-                              gpointer user_data)
+static void destroy_callback(GtkWidget *w, gpointer user_data)
 {
   struct tag_pattern_list *tmptagpats;
   GHashTable *tags_to_delete;
-  
+
   tmptagpats = g_object_get_data(G_OBJECT(w), "tmptagpats");
   if (tmptagpats) {
     tag_pattern_list_free_all(tmptagpats);
@@ -1770,98 +1799,83 @@ static void destroy_callback(GtkWidget *w,
   if (tags_to_delete) {
     g_hash_table_destroy(tags_to_delete);
   }
-  chatline_config_shell = NULL;  
 
   if (help_dialog != NULL) {
     gtk_widget_hide(help_dialog);
   }
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
 static void toggle_pattern_flag(int flag, GtkTreeModel *model,
-                                 gchar *path_str, int column)
+				gchar *path_str, int column)
 {
   GtkTreeIter  iter;
   GtkTreePath *path;
   gboolean flagval;
-  struct tag_pattern_list *tmptagpats;
   struct tag_pattern *ptagpat;
   int i;
 
-  tmptagpats = g_object_get_data(G_OBJECT(chatline_config_shell),
-                                  "tmptagpats");
-  
   path = gtk_tree_path_new_from_string(path_str);
   gtk_tree_model_get_iter(model, &iter, path);
-  gtk_tree_model_get(model, &iter, column, &flagval, -1);
+  gtk_tree_model_get(model, &iter, column, &flagval,
+		     COLUMN_TAG_PATTERN, &ptagpat, -1);
 
-  
   i = gtk_tree_path_get_indices(path)[0];
-  ptagpat = tag_pattern_list_get(tmptagpats, i);
 
   flagval ^= 1;
   ptagpat->flags = flagval ? ptagpat->flags | flag
-                           : ptagpat->flags &(~flag);
+                           : ptagpat->flags & ~flag;
 
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_list_store_set(GTK_LIST_STORE(model), &iter, column, flagval, -1);
   gtk_tree_path_free(path);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static void flag_toggled(GtkCellRendererToggle *cell,
-                          gchar                 *path_str,
-                          gpointer               data)
+static void flag_toggled(GtkCellRendererToggle *cell, gchar *path_str,
+                         gpointer data)
 {
   GtkTreeModel *model;
   int col_idx = GPOINTER_TO_INT(data);
   int flag = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cell), "flag"));
   model = g_object_get_data(G_OBJECT(cell), "model");
-  toggle_pattern_flag(flag, model,
-                       path_str, col_idx);
+  toggle_pattern_flag(flag, model, path_str, col_idx);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static void notify_user_error(GtkWidget *dialog, char *msg)
+static void notify_user_error(GtkWidget *msglabel, char *msg)
 {
-  GtkWidget *msglabel;
   char buf[1024];
 
-  msglabel = g_object_get_data(G_OBJECT(dialog), "msglabel");
   assert(msglabel != NULL);
   
-  my_snprintf(buf, sizeof(buf), "<span foreground=\"red\">"
-               "%s</span>", msg);
+  my_snprintf(buf, sizeof(buf), "<span foreground=\"red\">%s</span>", msg);
   gtk_label_set_markup(GTK_LABEL(msglabel), buf);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static void cell_edited(GtkCellRendererText *cell,
-                         const gchar         *path_string,
-                         const gchar         *new_text,
-                         gpointer             data)
+static void cell_edited(GtkCellRendererText *cell, const gchar *path_string,
+			const gchar *new_text, gpointer data)
 {
-  GtkTreeModel *model = (GtkTreeModel *) data;
+  GtkTreeModel *model = data;
   GtkTreePath *path = gtk_tree_path_new_from_string(path_string);
   GtkTreeIter iter;
   int i;
   struct tag_pattern *ptagpat;
-  gpointer ptr;
-  struct tag_pattern_list *tmptagpats;
-
-  gint column = GPOINTER_TO_INT(
-      g_object_get_data(G_OBJECT(cell), "column"));
+  gint column = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(cell), "column"));
   gtk_tree_model_get_iter(model, &iter, path);
-  
+
   i = gtk_tree_path_get_indices(path)[0];
-  ptr = g_object_get_data(G_OBJECT(chatline_config_shell),
-                           "tmptagpats");
-  tmptagpats = (struct tag_pattern_list *) ptr;
-  ptagpat = tag_pattern_list_get(tmptagpats, i);
+  gtk_tree_model_get_iter(model, &iter, path);
+  gtk_tree_model_get(model, &iter, COLUMN_TAG_PATTERN, &ptagpat, -1);
   
   switch (column) {
   case COLUMN_PATTERN:
@@ -1883,6 +1897,7 @@ static void cell_edited(GtkCellRendererText *cell,
                       new_text, -1);
   gtk_tree_path_free(path);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1908,72 +1923,65 @@ static GtkWidget *create_my_color_selection_dialog(const char *title)
   
   return dialog;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static void add_columns(GtkTreeView *treeview,
-                         GtkTreeModel *model)
+static void add_columns(GtkTreeView *treeview, GtkTreeModel *model)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-#define MK_STR_COLUMN(col_idx, title, editable, resizable, minwidth) do {\
-  renderer = gtk_cell_renderer_text_new();\
-  g_object_set(renderer, "editable", editable, NULL);\
-  if (editable)\
-    g_signal_connect(renderer, "edited",\
-                      G_CALLBACK(cell_edited), model);\
-  g_object_set_data(G_OBJECT(renderer), "column",\
-                     GINT_TO_POINTER(col_idx));\
-  column = gtk_tree_view_column_new_with_attributes(title, renderer,\
-                                                     "text", col_idx,\
-                                                     NULL);\
-  gtk_tree_view_column_set_resizable(column, resizable);\
-  gtk_tree_view_column_set_min_width(column, minwidth);\
-  gtk_tree_view_append_column(treeview, column);\
-} while (0)
+#define MK_STR_COLUMN(col_idx, title, editable, resizable, minwidth)	     \
+  renderer = gtk_cell_renderer_text_new();				     \
+  g_object_set(renderer, "editable", editable, NULL);			     \
+  g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(col_idx)); \
+  if (editable) {							     \
+    g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited), model);    \
+  }									     \
+  column = gtk_tree_view_column_new_with_attributes(title, renderer,	     \
+						    "text", col_idx,	     \
+						    NULL);		     \
+  gtk_tree_view_column_set_resizable(column, resizable);		     \
+  gtk_tree_view_column_set_min_width(column, minwidth);			     \
+  gtk_tree_view_append_column(treeview, column);
 
-#define MK_FLAG_COLUMN(col_idx, title, flag) do {\
-  renderer = gtk_cell_renderer_toggle_new();\
-  g_object_set_data(G_OBJECT(renderer), "model", model);\
-  g_signal_connect(renderer, "toggled",\
-                    G_CALLBACK(flag_toggled),\
-                    GINT_TO_POINTER(col_idx));\
-  g_object_set_data(G_OBJECT(renderer), "flag", GINT_TO_POINTER(flag));\
-  column = gtk_tree_view_column_new_with_attributes(title, renderer,\
-                                                     "active", col_idx,\
-                                                     NULL);\
-  gtk_tree_view_append_column(treeview, column);\
-} while (0)
+#define MK_FLAG_COLUMN(col_idx, title, flag)				\
+  renderer = gtk_cell_renderer_toggle_new();				\
+  g_object_set_data(G_OBJECT(renderer), "model", model);		\
+  g_object_set_data(G_OBJECT(renderer), "flag", GINT_TO_POINTER(flag));	\
+  g_signal_connect(renderer, "toggled",					\
+		   G_CALLBACK(flag_toggled),				\
+		   GINT_TO_POINTER(col_idx));				\
+  column = gtk_tree_view_column_new_with_attributes(title, renderer,	\
+						    "active", col_idx,	\
+						    NULL);		\
+  gtk_tree_view_append_column(treeview, column);
 
   MK_STR_COLUMN(COLUMN_TAG_NAME, "Name", FALSE, TRUE, 70);
   MK_STR_COLUMN(COLUMN_PATTERN, "Pattern", TRUE, TRUE, 70);
-  
+
 
   /* Use custom renderer for foreground color */
   renderer = my_cell_renderer_color_new();
   g_object_set_data(G_OBJECT(renderer), "column",
                      GINT_TO_POINTER(COLUMN_FOREGROUND));
-  column = gtk_tree_view_column_new_with_attributes("Foreground",
-                                                     renderer,
-                                                     "color",
-                                                     COLUMN_FOREGROUND,
-                                                     NULL);
+  column = gtk_tree_view_column_new_with_attributes("Foreground", renderer,
+						    "color", COLUMN_FOREGROUND,
+						    NULL);
   g_object_set(G_OBJECT(renderer), "xsize", 24, "ysize", 16, NULL);
   gtk_tree_view_column_set_resizable(column, FALSE);
   gtk_tree_view_column_set_min_width(column, 40);
   gtk_tree_view_append_column(treeview, column);
-  
-  
+
+
   /* Use custom renderer for foreground color */
   renderer = my_cell_renderer_color_new();
   g_object_set_data(G_OBJECT(renderer), "column",
-                     GINT_TO_POINTER(COLUMN_BACKGROUND));
-  column = gtk_tree_view_column_new_with_attributes("Background",
-                                                     renderer,
-                                                     "color",
-                                                     COLUMN_BACKGROUND,
-                                                     NULL);
+		    GINT_TO_POINTER(COLUMN_BACKGROUND));
+  column = gtk_tree_view_column_new_with_attributes("Background", renderer,
+						    "color", COLUMN_BACKGROUND,
+						    NULL);
   g_object_set(G_OBJECT(renderer), "xsize", 24, "ysize", 16, NULL);
   gtk_tree_view_column_set_resizable(column, FALSE);
   gtk_tree_view_column_set_min_width(column, 40);
@@ -1991,6 +1999,7 @@ static void add_columns(GtkTreeView *treeview,
   MK_STR_COLUMN(COLUMN_JUMP_TARGET, "JUMP", TRUE, TRUE, 70);
   MK_STR_COLUMN(COLUMN_SOUND_TAG, "SOUND", TRUE, TRUE, 70);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -1999,30 +2008,30 @@ static void put_tag_pattern_into_store(GtkListStore *store,
                                         struct tag_pattern *ptagpat)
 {
   gtk_list_store_set(store, iter,
-                      COLUMN_TAG_NAME, ptagpat->tag_name,
-                      COLUMN_PATTERN, ptagpat->pattern,
-                      COLUMN_FOREGROUND, ptagpat->foreground_color,
-                      COLUMN_BACKGROUND, ptagpat->background_color,
-                      COLUMN_AT_START, ptagpat->flags & TPF_MATCH_AT_START,
-                      COLUMN_NEGATE, ptagpat->flags & TPF_NEGATE,
-                      COLUMN_PREVIOUS, ptagpat->flags & TPF_REQUIRE_PREVIOUS_MATCH,
-                      COLUMN_APPLY, ptagpat->flags & TPF_APPLY_TO_MATCH,
-                      COLUMN_STOP, ptagpat->flags & TPF_STOP_IF_MATCHED,
-                      COLUMN_IGNORE, ptagpat->flags & TPF_IGNORE_IF_MATCHED,
-                      COLUMN_INACTIVE, ptagpat->flags & TPF_INACTIVE,
-                      COLUMN_SWITCH_NEXT, ptagpat->flags & TPF_SWITCH_NEXT,
-                      COLUMN_JUMP_TARGET, ptagpat->jump_target,
-                      COLUMN_SOUND_TAG, ptagpat->sound_tag,
-                      -1);
+		     COLUMN_TAG_NAME, ptagpat->tag_name,
+		     COLUMN_PATTERN, ptagpat->pattern,
+		     COLUMN_FOREGROUND, ptagpat->foreground_color,
+		     COLUMN_BACKGROUND, ptagpat->background_color,
+                     COLUMN_AT_START, ptagpat->flags & TPF_MATCH_AT_START,
+                     COLUMN_NEGATE, ptagpat->flags & TPF_NEGATE,
+                     COLUMN_PREVIOUS, ptagpat->flags & TPF_REQUIRE_PREVIOUS_MATCH,
+                     COLUMN_APPLY, ptagpat->flags & TPF_APPLY_TO_MATCH,
+                     COLUMN_STOP, ptagpat->flags & TPF_STOP_IF_MATCHED,
+                     COLUMN_IGNORE, ptagpat->flags & TPF_IGNORE_IF_MATCHED,
+                     COLUMN_INACTIVE, ptagpat->flags & TPF_INACTIVE,
+                     COLUMN_SWITCH_NEXT, ptagpat->flags & TPF_SWITCH_NEXT,
+                     COLUMN_JUMP_TARGET, ptagpat->jump_target,
+                     COLUMN_SOUND_TAG, ptagpat->sound_tag,
+		     COLUMN_TAG_PATTERN, ptagpat,
+		     -1);
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static GtkTreeModel *create_model(struct tag_pattern_list *tmptagpats)
+static GtkTreeModel *create_model(void)
 {
   GtkListStore *model;
-  GtkTreeIter iter;
 
   model = gtk_list_store_new(NUM_COLUMNS,
                              G_TYPE_STRING, /* name */
@@ -2038,11 +2047,8 @@ static GtkTreeModel *create_model(struct tag_pattern_list *tmptagpats)
                              G_TYPE_BOOLEAN, /* active */
                              G_TYPE_BOOLEAN, /* switch next */
                              G_TYPE_STRING, /* jump target */
-                             G_TYPE_STRING); /* sound tag */
-  tag_pattern_list_iterate(tmptagpats, ptagpat) {
-    gtk_list_store_append(model, &iter);
-    put_tag_pattern_into_store(model, &iter, ptagpat);
-  } tag_pattern_list_iterate_end;
+                             G_TYPE_STRING, /* sound tag */
+			     G_TYPE_POINTER); /* the tag pattern struct */
 
   return GTK_TREE_MODEL(model);
 }
@@ -2096,9 +2102,7 @@ struct tag_pattern *tag_pattern_clone(struct tag_pattern *old)
 /**************************************************************************
   ...
 **************************************************************************/
-static void move_tag_patterns(GtkWidget *w,
-                               gpointer user_data,
-                               bool up)
+static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
 {
   GtkWidget *dialog = (GtkWidget *) user_data;
   GtkTreeModel *model;
@@ -2174,6 +2178,7 @@ static void move_tag_patterns(GtkWidget *w,
   g_list_foreach(rowrefs,(GFunc) gtk_tree_row_reference_free, NULL);
   g_list_free(rowrefs);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -2181,6 +2186,7 @@ static void down_callback(GtkWidget *w, gpointer user_data)
 {
   move_tag_patterns(w, user_data, FALSE);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -2188,6 +2194,7 @@ static void up_callback(GtkWidget *w, gpointer user_data)
 {
   move_tag_patterns(w, user_data, TRUE);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -2289,6 +2296,7 @@ static void add_callback(GtkWidget *w, gpointer user_data)
   
   add_tag_pattern(ptagpat, dialog);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -2312,6 +2320,7 @@ static void clear_callback(GtkWidget *w, gpointer user_data)
   model = g_object_get_data(G_OBJECT(dialog), "model");
   gtk_list_store_clear(GTK_LIST_STORE(model));
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -2368,12 +2377,13 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
   g_list_foreach(rowrefs,(GFunc) gtk_tree_row_reference_free, NULL);
   g_list_free(rowrefs);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
 static gboolean treeview_button_press_callback(GtkWidget *treeview,
-                                                GdkEventButton *event,
-                                                gpointer userdata)
+					       GdkEventButton *event,
+					       gpointer error_label)
 {
   GtkTreeModel *model;
   GtkTreeSelection *selection;
@@ -2381,7 +2391,6 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   GtkTreeViewColumn *col;
   GtkTreeIter iter;
   int i, column;
-  struct tag_pattern_list *tmptagpats;
   struct tag_pattern *ptagpat;
   GList *rendlist;
   GtkCellRenderer *renderer;
@@ -2390,59 +2399,56 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   gint response;
   GdkColor color;
 
-  if (!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
+  if (!(event->type == GDK_2BUTTON_PRESS && event->button == 1)) {
     return FALSE;
-  
+  }
+
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(treeview));
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
-  
-  tmptagpats = g_object_get_data(G_OBJECT(chatline_config_shell),
-                                  "tmptagpats");
-  
-  gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview),
-                                 event->x, event->y,
-                                 &path, &col,
-                                 NULL, NULL);
-  
+
+  gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y,
+                                &path, &col, NULL, NULL);
+
   i = gtk_tree_path_get_indices(path)[0];
   gtk_tree_model_get_iter(model, &iter, path);
+  gtk_tree_model_get(model, &iter, COLUMN_TAG_PATTERN, &ptagpat, -1);
   gtk_tree_path_free(path);
-  ptagpat = tag_pattern_list_get(tmptagpats, i);
-  
+
   if (tag_pattern_is_control_only(ptagpat)) {
-    notify_user_error(chatline_config_shell,
-                       _("This type of pattern may not have colors."));
+    notify_user_error(error_label,
+		      _("This type of pattern may not have colors."));
     return FALSE;
   }
 
   rendlist = gtk_tree_view_column_get_cell_renderers(col);
-  if (!rendlist)
+  if (!rendlist) {
     return FALSE;
+  }
 
   renderer = (GtkCellRenderer *) rendlist->data;
   g_list_free(rendlist);
 
-  column = GPOINTER_TO_INT(
-      g_object_get_data(G_OBJECT(renderer), "column"));
+  column = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(renderer), "column"));
 
-  if (column != COLUMN_FOREGROUND && column != COLUMN_BACKGROUND)
+  if (column != COLUMN_FOREGROUND && column != COLUMN_BACKGROUND) {
     return FALSE;
+  }
 
   dialog = create_my_color_selection_dialog("Select Color");
-  colorsel = GTK_COLOR_SELECTION(g_object_get_data(G_OBJECT
-    (dialog), "colorsel"));
-  gtk_window_set_transient_for (GTK_WINDOW(dialog),
-                                GTK_WINDOW(chatline_config_shell));
+  colorsel = GTK_COLOR_SELECTION(g_object_get_data(G_OBJECT(dialog),
+						   "colorsel"));
 
   color.red = 0;
   color.green = 0;
   color.blue = 0;
   
-  if (column == COLUMN_FOREGROUND && ptagpat->foreground_color)
+  if (column == COLUMN_FOREGROUND && ptagpat->foreground_color) {
     color = *ptagpat->foreground_color;
+  }
 
-  if (column == COLUMN_BACKGROUND && ptagpat->background_color)
+  if (column == COLUMN_BACKGROUND && ptagpat->background_color) {
     color = *ptagpat->background_color;
+  }
   
   gtk_color_selection_set_previous_color(colorsel, &color);
   gtk_color_selection_set_current_color(colorsel, &color);
@@ -2485,43 +2491,24 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
 
   return TRUE;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static GtkWidget *create_chatline_config_shell(void)
+GtkWidget *create_chatline_config(void)
 {
-  GtkWidget *dialog, *hbox, *sw, *treeview, *button, *vbox, *top_vbox,
-    *sep, *entry, *label;
+  GtkWidget *hbox, *sw, *treeview, *button, *vbox, *top_vbox;
+  GtkWidget *sep, *entry, *label;
   GtkTreeModel *model;
   GtkTreeSelection *sel;
-  struct tag_pattern_list *tmptagpats;
   GHashTable *tags_to_delete;
   
   tags_to_delete = g_hash_table_new_full(g_str_hash, g_str_equal, free, NULL);
-  tmptagpats = tag_pattern_list_clone(tagpats);
-  
-
-  /* create the window */
-  dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title(GTK_WINDOW(dialog),
-                        _("Chatline Color Configuration"));
-  gtk_window_set_default_size(GTK_WINDOW(dialog), 800, 600);
-  gtk_window_set_position(GTK_WINDOW(dialog),
-                           GTK_WIN_POS_CENTER_ON_PARENT);
-  gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
-  gtk_window_set_decorated(GTK_WINDOW(dialog), TRUE);
-  gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-
-  gtk_widget_set_name(dialog, "Freeciv");
-  setup_dialog(dialog, toplevel);
-
-  g_signal_connect(dialog, "destroy",
-      G_CALLBACK(destroy_callback), dialog);
-  
 
   /* layout boxes */
   vbox = gtk_vbox_new(FALSE, 10);
-  gtk_container_add(GTK_CONTAINER(dialog), vbox);
+
+  g_signal_connect(vbox, "destroy", G_CALLBACK(destroy_callback), vbox);
 
   top_vbox = gtk_vbox_new(FALSE, 10);
   gtk_box_pack_start(GTK_BOX(vbox), top_vbox, TRUE, TRUE, 0);
@@ -2529,71 +2516,30 @@ static GtkWidget *create_chatline_config_shell(void)
   sep = gtk_hseparator_new();
   gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 
-
-  /* apply/close buttons */
-  hbox = gtk_hbox_new(FALSE, 10);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-  
-  button = gtk_stockbutton_new(GTK_STOCK_CANCEL, _("_Cancel"));
-  gtk_widget_set_size_request(button, 120, 30);
-  g_signal_connect(button, "clicked",
-      G_CALLBACK(cancel_callback), dialog);
-  gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
-  button = gtk_stockbutton_new(GTK_STOCK_OK, _("_Ok"));
-  gtk_widget_set_size_request(button, 120, 30);
-  g_signal_connect(button, "clicked",
-      G_CALLBACK(ok_callback), dialog);
-  gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
-  button = gtk_stockbutton_new(GTK_STOCK_APPLY, _("_Apply"));
-  gtk_widget_set_size_request(button, 120, 30);
-  g_signal_connect(button, "clicked",
-      G_CALLBACK(apply_callback), dialog);
-  gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
-
-  /* save/reset/help buttons */
-  button = gtk_stockbutton_new(GTK_STOCK_SAVE, _("_Save"));
-  gtk_widget_set_size_request(button, 120, 30);
-  g_signal_connect(button, "clicked",
-      G_CALLBACK(save_callback), dialog);
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-  button = gtk_button_new_with_mnemonic(_("_Reset"));
-  gtk_widget_set_size_request(button, 120, 30);
-  g_signal_connect(button, "clicked",
-      G_CALLBACK(reset_callback), dialog);
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-  button = gtk_stockbutton_new(GTK_STOCK_HELP, _("_Help"));
-  gtk_widget_set_size_request(button, 120, 30);
-  g_signal_connect(button, "clicked",
-      G_CALLBACK(help_callback), dialog);
-  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-  
-
   /* create the scrolled window which will hold the treeview */
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-                                       GTK_SHADOW_ETCHED_IN);
+				      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
+				 GTK_POLICY_AUTOMATIC,
+				 GTK_POLICY_AUTOMATIC);
 
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(top_vbox),
                       hbox, TRUE, TRUE, 0);
   
   gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
-  
+
+  /* feedback label */
+  label = gtk_label_new("");
+  gtk_box_pack_start(GTK_BOX(top_vbox), label, FALSE, FALSE, 0);
 
   /* create the treeview */
-  model = create_model(tmptagpats);
+  model = create_model();
   
   treeview = gtk_tree_view_new_with_model(model);
   g_object_unref(model);
+  gtk_widget_set_size_request(treeview, -1, 200);
 
   gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), FALSE);
   gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
@@ -2602,16 +2548,10 @@ static GtkWidget *create_chatline_config_shell(void)
 
   add_columns(GTK_TREE_VIEW(treeview), model);
   g_signal_connect(G_OBJECT(treeview), "button-press-event",
-                    G_CALLBACK(treeview_button_press_callback), NULL);
+		   G_CALLBACK(treeview_button_press_callback), label);
   
   gtk_container_add(GTK_CONTAINER(sw), treeview);
  
-
-  /* feedback label */
-  label = gtk_label_new("");
-  gtk_box_pack_start(GTK_BOX(top_vbox), label, FALSE, FALSE, 0);
-  g_object_set_data(G_OBJECT(dialog), "msglabel", label);
-
   /* input entry */
   hbox = gtk_hbox_new(FALSE, 10);
   gtk_box_pack_start(GTK_BOX(top_vbox), hbox, FALSE, FALSE, 0);
@@ -2621,10 +2561,9 @@ static GtkWidget *create_chatline_config_shell(void)
   
   entry = gtk_entry_new();
   gtk_widget_set_size_request(entry, 100, -1);
-  g_signal_connect(G_OBJECT(entry), "activate",
-                    G_CALLBACK(add_callback),
-                    dialog);
-  g_object_set_data(G_OBJECT(dialog), "entry", entry);
+  g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(add_callback),
+		   vbox);
+  g_object_set_data(G_OBJECT(vbox), "entry", entry);
   gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
   
 
@@ -2632,65 +2571,54 @@ static GtkWidget *create_chatline_config_shell(void)
   hbox = gtk_hbox_new(FALSE, 10);
   gtk_box_pack_start(GTK_BOX(top_vbox), hbox, FALSE, FALSE, 0);
 
-  button = gtk_stockbutton_new(GTK_STOCK_CLEAR, _("Clear"));
-  gtk_widget_set_size_request(button, 120, 30);
+  button = gtk_stockbutton_new(GTK_STOCK_HELP, _("_Help"));
   g_signal_connect(button, "clicked",
-      G_CALLBACK(clear_callback), dialog);
+      G_CALLBACK(help_callback), vbox);
+  gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+  button = gtk_stockbutton_new(GTK_STOCK_CLEAR, _("Clear"));
+  g_signal_connect(button, "clicked",
+      G_CALLBACK(clear_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   
   button = gtk_stockbutton_new(GTK_STOCK_DELETE, _("D_elete"));
-  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
-      G_CALLBACK(delete_callback), dialog);
+      G_CALLBACK(delete_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   
   button = gtk_stockbutton_new(GTK_STOCK_ADD, _("A_dd"));
-  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
-      G_CALLBACK(add_callback), dialog);
+      G_CALLBACK(add_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   
   button = gtk_stockbutton_new(GTK_STOCK_ADD, _("Add Con_trol Pattern"));
-  gtk_widget_set_size_request(button, -1, 30); /* Too long */
   g_signal_connect(button, "clicked",
-      G_CALLBACK(add_control_callback), dialog);
+      G_CALLBACK(add_control_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
   
 
   /* up/down buttons */
   button = gtk_stockbutton_new(GTK_STOCK_GO_UP, _("Move _Up"));
-  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
-      G_CALLBACK(up_callback), dialog);
+      G_CALLBACK(up_callback), vbox);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   button = gtk_stockbutton_new(GTK_STOCK_GO_DOWN, _("Move Do_wn"));
-  gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
-      G_CALLBACK(down_callback), dialog);
+      G_CALLBACK(down_callback), vbox);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   /* for easy access */
-  g_object_set_data(G_OBJECT(dialog), "model", model);
-  g_object_set_data(G_OBJECT(dialog), "tmptagpats", tmptagpats);
-  g_object_set_data(G_OBJECT(dialog), "tags_to_delete", tags_to_delete);
-  g_object_set_data(G_OBJECT(dialog), "treeview", treeview);
+  g_object_set_data(G_OBJECT(vbox), "model", model);
+  g_object_set_data(G_OBJECT(vbox), "tmptagpats", NULL);
+  g_object_set_data(G_OBJECT(vbox), "tags_to_delete", tags_to_delete);
+  g_object_set_data(G_OBJECT(vbox), "treeview", treeview);
 
-  gtk_widget_show_all(dialog);
+  gtk_widget_show_all(vbox);
 
-  return dialog;
+  return vbox;
 }
-/**************************************************************************
-  ...
-**************************************************************************/
-void popup_chatline_config_dialog(void)
-{
-  if (!chatline_config_shell)  {
-    chatline_config_shell = create_chatline_config_shell();
-  }
-  
-  gtk_window_present(GTK_WINDOW(chatline_config_shell));
-}
+
 /**************************************************************************
   ...
 **************************************************************************/

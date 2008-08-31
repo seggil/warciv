@@ -311,6 +311,63 @@ bool server_handle_packet(enum packet_type type, void *packet,
       ((struct packet_vote_submit *)packet)->value);
     return TRUE;
 
+  case PACKET_TRADE_ROUTE_PLAN:
+    handle_trade_route_plan(pplayer,
+      ((struct packet_trade_route_plan *)packet)->city1,
+      ((struct packet_trade_route_plan *)packet)->city2);
+    return TRUE;
+
+  case PACKET_TRADE_ROUTE_REMOVE:
+    handle_trade_route_remove(pplayer,
+      ((struct packet_trade_route_remove *)packet)->city1,
+      ((struct packet_trade_route_remove *)packet)->city2);
+    return TRUE;
+
+  case PACKET_UNIT_TRADE_ROUTE:
+    handle_unit_trade_route(pplayer,
+      ((struct packet_unit_trade_route *)packet)->unit_id,
+      ((struct packet_unit_trade_route *)packet)->city1,
+      ((struct packet_unit_trade_route *)packet)->city2);
+    return TRUE;
+
+  case PACKET_CITY_SET_RALLY_POINT:
+    handle_city_set_rally_point(pplayer,
+      ((struct packet_city_set_rally_point *)packet)->id,
+      ((struct packet_city_set_rally_point *)packet)->x,
+      ((struct packet_city_set_rally_point *)packet)->y);
+    return TRUE;
+
+  case PACKET_CITY_CLEAR_RALLY_POINT:
+    handle_city_clear_rally_point(pplayer,
+      ((struct packet_city_clear_rally_point *)packet)->id);
+    return TRUE;
+
+  case PACKET_UNIT_AIR_PATROL:
+    handle_unit_air_patrol(pplayer,
+      ((struct packet_unit_air_patrol *)packet)->id,
+      ((struct packet_unit_air_patrol *)packet)->x,
+      ((struct packet_unit_air_patrol *)packet)->y);
+    return TRUE;
+
+  case PACKET_UNIT_AIR_PATROL_STOP:
+    handle_unit_air_patrol_stop(pplayer,
+      ((struct packet_unit_air_patrol_stop *)packet)->id);
+    return TRUE;
+
+  case PACKET_CITY_MANAGER_PARAM:
+    handle_city_manager_param(pplayer, packet);
+    return TRUE;
+
+  case PACKET_CITY_NO_MANAGER_PARAM:
+    handle_city_no_manager_param(pplayer,
+      ((struct packet_city_no_manager_param *)packet)->id);
+    return TRUE;
+
+  case PACKET_PLAYER_INFO_REQ:
+    handle_player_info_req(pconn,
+      ((struct packet_player_info_req *)packet)->id);
+    return TRUE;
+
   default:
     return FALSE;
   }

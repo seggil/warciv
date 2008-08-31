@@ -28,6 +28,7 @@
 #include "government.h"
 #include "packets.h"
 #include "player.h"
+#include "registry.h"
 #include "shared.h"
 #include "support.h"
 
@@ -38,8 +39,12 @@
 #include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
+#include "mapview_common.h"
+#include "menu_g.h"
+#include "messagedlg.h"
 #include "messagewin.h"
 #include "options.h"
+#include "wldlg.h"
 
 #include "ratesdlg.h"
 #include "optiondlg.h"
@@ -353,162 +358,837 @@ void popup_rates_dialog(void)
   gtk_window_present(GTK_WINDOW(rates_dialog_shell));
 }
 
+
+
+
 /**************************************************************************
   Option dialog 
 **************************************************************************/
+enum {
+  LC_INDEX,
+  LC_TEXT_ORIGIN,
+  LC_TEXT_TRANSLATED,
+  LC_NUM
+};
+
+enum {
+  RESPONSE_REFRESH,
+  RESPONSE_RESET,
+  RESPONSE_RELOAD,
+  RESPONSE_SAVE,
+  RESPONSE_APPLY,
+  RESPONSE_CANCEL,
+  RESPONSE_OK
+};
+
+/* Used for chat line */
+struct extra_option {
+  GtkWidget *widget;
+  char *name;
+  void (*apply_callback)(GtkWidget *);
+  void (*refresh_callback)(GtkWidget *);
+  void (*reset_callback)(GtkWidget *);
+  void (*reload_callback)(GtkWidget *, struct section_file *);
+};
+
+#define SPECLIST_TAG extra_option
+#define SPECLIST_TYPE struct extra_option
+#include "speclist.h"
+#define extra_options_iterate(poption) \
+  TYPED_LIST_ITERATE(struct extra_option, extra_options, poption)
+#define extra_options_iterate_end  LIST_ITERATE_END
 
 static GtkWidget *option_dialog_shell;
+static struct extra_option_list *extra_options;
 
 /**************************************************************************
-...
+  Callback for the full screen option.
 **************************************************************************/
-static void option_ok_command_callback(GtkWidget *widget, gpointer data)
+void fullscreen_mode_callback(struct client_option *poption)
 {
-  const char *dp;
-  bool b;
-  int val;
+  assert(poption->type == COT_BOOLEAN);
+  if (*poption->o.boolean.pvalue) {
+    gtk_window_fullscreen(GTK_WINDOW(toplevel));
+  } else {
+    gtk_window_unfullscreen(GTK_WINDOW(toplevel));
+  }
+}
 
-  client_options_iterate(o) {
-    switch (o->type) {
-    case COT_BOOL:
-      b = *(o->p_bool_value);
-      *(o->p_bool_value) = GTK_TOGGLE_BUTTON(o->p_gui_data)->active;
-      if (b != *(o->p_bool_value) && o->change_callback) {
-	(o->change_callback)(o);
-      }
-      break;
-    case COT_INT:
-      val = *(o->p_int_value);
-      dp = gtk_entry_get_text(GTK_ENTRY(o->p_gui_data));
-      sscanf(dp, "%d", o->p_int_value);
-      if (val != *(o->p_int_value) && o->change_callback) {
-	(o->change_callback)(o);
-      }
-      break;
-    case COT_STR:
-      if (o->p_string_vals) {
-	const char* new_value = 
-	  gtk_entry_get_text(GTK_ENTRY(GTK_BIN(o->p_gui_data)->child));
-	if (strcmp(o->p_string_value, new_value)) {
-	  mystrlcpy(o->p_string_value, new_value, o->string_length);
-	  if (o->change_callback) {
-	    (o->change_callback)(o);
-	  }
-	}
-      } else {
-	mystrlcpy(o->p_string_value,
-		  gtk_entry_get_text(GTK_ENTRY(o->p_gui_data)),
-		  o->string_length);
-      }
-      break;
-    }
-  } client_options_iterate_end;
-
-  if (map_scrollbars) {
+/**************************************************************************
+  Callback for the map scroll bars option.
+**************************************************************************/
+void map_scrollbars_callback(struct client_option *poption)
+{
+  assert(poption->type == COT_BOOLEAN);
+  if (*poption->o.boolean.pvalue) {
     gtk_widget_show(map_horizontal_scrollbar);
     gtk_widget_show(map_vertical_scrollbar);
   } else {
     gtk_widget_hide(map_horizontal_scrollbar);
     gtk_widget_hide(map_vertical_scrollbar);
   }
-  if (fullscreen_mode) {
-    gtk_window_fullscreen(GTK_WINDOW(toplevel));
-  } else {
-    gtk_window_unfullscreen(GTK_WINDOW(toplevel));
-  }
-  if (show_split_message_window) {
+}
+
+/**************************************************************************
+  Common callback to dedraw the map entierly.
+**************************************************************************/
+void mapview_redraw_callback(struct client_option *poption)
+{
+  update_map_canvas_visible(MUT_WRITE);
+}
+
+/**************************************************************************
+  Common callback to dedraw the map entierly.
+**************************************************************************/
+void split_message_window_callback(struct client_option *poption)
+{
+  assert(poption->type == COT_BOOLEAN);
+  if (*poption->o.boolean.pvalue) {
     gtk_widget_show(get_split_message_window());
   } else {
     gtk_widget_hide(get_split_message_window());
   }
-  option_dialog_shell = NULL;
 }
 
 
+/*************************************************************************
+  ...
+*************************************************************************/
+static void refresh_extra_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  struct extra_option *o = (struct extra_option *) data;
+
+  o->refresh_callback(o->widget);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void reset_extra_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  struct extra_option *o = (struct extra_option *) data;
+
+  o->reset_callback(o->widget);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void reload_extra_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  struct section_file sf;
+
+  if (section_file_load(&sf, option_file_name())) {
+    struct extra_option *o = (struct extra_option *) data;
+
+    o->reload_callback(o->widget, &sf);
+    section_file_free(&sf);
+  }
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void apply_extra_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  struct extra_option *o = (struct extra_option *) data;
+
+  o->apply_callback(o->widget);
+}
+
+/*************************************************************************
+  Called when a button is pressed.
+*************************************************************************/
+static gboolean extra_option_callback(GtkWidget *widget, GdkEventButton *event,
+				      gpointer data)
+{
+  /* Only right button please! */
+  if (event->button != 3) {
+    return FALSE;
+  }
+
+  GtkWidget *menu, *item;
+  struct extra_option *o = (struct extra_option *) data;
+  char buf[256];
+
+  menu = gtk_menu_new();
+
+  my_snprintf(buf, sizeof(buf), _("Refresh %s"), o->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(refresh_extra_option_callback), data);
+
+  my_snprintf(buf, sizeof(buf), _("Reset %s"), o->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(reset_extra_option_callback), data);
+
+  my_snprintf(buf, sizeof(buf), _("Reload %s"), o->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(reload_extra_option_callback), data);
+
+  my_snprintf(buf, sizeof(buf), _("Apply changes for %s"), o->name);
+  item = gtk_menu_item_new_with_label(buf);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(apply_extra_option_callback), data);
+
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
+
+  return TRUE;
+}
+
+/*************************************************************************
+  Create a new extra option structure.
+*************************************************************************/
+static void extra_option_new(GtkWidget *widget, GtkWidget *parent_box,
+			     const char *name, 
+			     void (*apply_callback)(GtkWidget *),
+			     void (*refresh_callback)(GtkWidget *),
+			     void (*reset_callback)(GtkWidget *),
+			     void (*reload_callback)(GtkWidget *,
+						     struct section_file *))
+{
+  struct extra_option *o = fc_malloc(sizeof(struct extra_option));
+  GtkWidget *ebox, *frame;
+
+  assert(NULL != widget);
+  assert(NULL != parent_box);
+  assert(NULL != name);
+  assert(NULL != apply_callback);
+  assert(NULL != refresh_callback);
+  assert(NULL != reset_callback);
+  assert(NULL != reload_callback);
+
+  o->widget = widget;
+  o->name = mystrdup(name);
+  o->apply_callback = apply_callback;
+  o->refresh_callback = refresh_callback;
+  o->reset_callback = reset_callback;
+  o->reload_callback = reload_callback;
+
+  ebox = gtk_event_box_new();
+  gtk_box_pack_end(GTK_BOX(parent_box), ebox, TRUE, TRUE, 0);
+  frame = gtk_frame_new(o->name);
+  gtk_container_add(GTK_CONTAINER(ebox), frame);
+  gtk_container_add(GTK_CONTAINER(frame), widget);
+  g_signal_connect(ebox, "button_press_event",
+		   G_CALLBACK(extra_option_callback), o);
+
+  extra_option_list_append(extra_options, o);
+}
+
+/*************************************************************************
+  Delete an extra option structure.
+*************************************************************************/
+static void extra_option_destroy(struct extra_option *o)
+{
+  free(o->name);
+  extra_option_list_unlink(extra_options, o);
+}
+
+
+/*************************************************************************
+  Attempt to set the string as active iterator.
+*************************************************************************/
+static void set_combo_to(GtkComboBox *combo, const char *untranslated)
+{
+  GtkTreeModel *model = gtk_combo_box_get_model(combo);
+  GtkTreeIter iter;
+  const char *str;
+
+  if (gtk_tree_model_get_iter_first(model, &iter)) {
+    do {
+      gtk_tree_model_get(model, &iter, LC_TEXT_ORIGIN, &str, -1);
+      if (0 == strcmp(untranslated, str)) {
+	gtk_combo_box_set_active_iter(combo, &iter);
+	return;
+      }
+    } while (gtk_tree_model_iter_next(model, &iter));
+  }
+}
+
+/*************************************************************************
+  Reset the check button to their right values.
+*************************************************************************/
+static void update_filter(struct client_option *o)
+{
+  assert(o->type == COT_FILTER);
+
+  GList *list;
+
+  for (list = GTK_BOX(gtk_bin_get_child(GTK_BIN(o->gui_data)))->children;
+       list; list = g_list_next(list)) {
+    GtkWidget *widget = ((GtkBoxChild *) list->data)->widget;
+    filter value;
+
+    value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget),
+					      "filter_value"));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
+				 o->o.filter.temp & value);
+  }
+}
+
+/*************************************************************************
+  Set the client options to its new values.
+*************************************************************************/
+static void apply_option_change(struct client_option *o)
+{
+  switch (o->type) {
+  case COT_BOOLEAN:
+    {
+      bool new_value = GTK_TOGGLE_BUTTON(o->gui_data)->active;
+      if (*o->o.boolean.pvalue != new_value) {
+	*o->o.boolean.pvalue = new_value;
+	if (o->change_callback) {
+	  (o->change_callback)(o);
+	}
+      }
+    }
+    break;
+  case COT_INTEGER:
+    {
+      int new_value =
+	  gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(o->gui_data));
+      if (*o->o.integer.pvalue != new_value) {
+	*o->o.integer.pvalue = new_value;
+	if (o->change_callback) {
+	  (o->change_callback)(o);
+	}
+      }
+    }
+    break;
+  case COT_STRING:
+  case COT_PASSWORD:
+    {
+      const char *new_value = o->o.string.val_accessor
+	  ? gtk_entry_get_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child))
+	  : gtk_entry_get_text(GTK_ENTRY(o->gui_data));
+      if (strcmp(o->o.string.pvalue, new_value)) {
+	mystrlcpy(o->o.string.pvalue, new_value, o->o.string.size);
+	if (o->change_callback) {
+	  (o->change_callback)(o);
+	}
+      }
+    }
+    break;
+  case COT_NUMBER_LIST:
+    {
+      GtkTreeIter iter;
+      int new_value;
+
+      if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(o->gui_data), &iter)) {
+	break;
+      }
+
+      gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(o->gui_data)),
+			 &iter, LC_INDEX, &new_value, -1);
+
+      if (*o->o.list.pvalue != new_value) {
+	*o->o.list.pvalue = new_value;
+	if (o->change_callback) {
+	  (o->change_callback)(o);
+	}
+      }
+    }
+    break;
+  case COT_FILTER:
+    if (*o->o.filter.pvalue != o->o.filter.temp) {
+      *o->o.filter.pvalue = o->o.filter.temp;
+      if (o->change_callback) {
+	(o->change_callback)(o);
+      }
+    }
+    break;
+  }
+}
+
+/*************************************************************************
+  Set all client options to their new values.
+*************************************************************************/
+static void apply_changes(void)
+{
+  client_options_iterate(o) {
+    apply_option_change(o);
+  } client_options_iterate_end;
+
+  extra_options_iterate(o) {
+    o->apply_callback(o->widget);
+  } extra_options_iterate_end;
+}
+
+/*************************************************************************
+  Set the options to its current value.
+*************************************************************************/
+static void refresh_option(struct client_option *o)
+{
+  switch (o->type) {
+  case COT_BOOLEAN:
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
+				 *o->o.boolean.pvalue);
+    break;
+  case COT_INTEGER:
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
+			      *o->o.integer.pvalue);
+    break;
+  case COT_STRING:
+  case COT_PASSWORD:
+    if (o->o.string.val_accessor) {
+      gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
+			 o->o.string.pvalue);
+    } else {
+      gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->o.string.pvalue);
+    }
+    break;
+  case COT_NUMBER_LIST:
+    set_combo_to(GTK_COMBO_BOX(o->gui_data),
+		 o->o.list.str_accessor(*o->o.list.pvalue));
+    break;
+  case COT_FILTER:
+    o->o.filter.temp = *o->o.filter.pvalue;
+    update_filter(o);
+    break;
+  }
+}
+
+/*************************************************************************
+  Set all options to their current values.
+*************************************************************************/
+static void refresh_option_dialog(void)
+{
+  client_options_iterate(o) {
+    refresh_option(o);
+  } client_options_iterate_end; 
+
+  extra_options_iterate(o) {
+    o->refresh_callback(o->widget);
+  } extra_options_iterate_end;
+}
+
+/*************************************************************************
+  Set the option to its default value and do not apply it.
+*************************************************************************/
+static void reset_option(struct client_option *o)
+{
+  switch (o->type) {
+  case COT_BOOLEAN:
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
+				 o->o.boolean.def);
+    break;
+  case COT_INTEGER:
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
+			      o->o.integer.def);
+    break;
+  case COT_STRING:
+  case COT_PASSWORD:
+    if (o->o.string.val_accessor) {
+      gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
+			 o->o.string.def);
+    } else {
+      gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->o.string.def);
+    }
+    break;
+  case COT_NUMBER_LIST:
+    set_combo_to(GTK_COMBO_BOX(o->gui_data),
+		 o->o.list.str_accessor(o->o.list.def));
+    break;
+  case COT_FILTER:
+    o->o.filter.temp = o->o.filter.def;
+    update_filter(o);
+    break;
+  }
+}
+
+/*************************************************************************
+  Set all options to their default values but do not apply it.
+*************************************************************************/
+static void reset_options(void)
+{
+  client_options_iterate(o) {
+    reset_option(o);
+  } client_options_iterate_end; 
+
+  extra_options_iterate(o) {
+    o->reset_callback(o->widget);
+  } extra_options_iterate_end;
+}
+
+/*************************************************************************
+  Read the option from the rc file and don't apply.
+*************************************************************************/
+static void reload_option(struct section_file *sf, struct client_option *o)
+{
+  switch (o->type) {
+  case COT_BOOLEAN:
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
+				 secfile_lookup_bool_default(sf,
+				     *o->o.boolean.pvalue,
+				     "client.%s", o->name));
+    break;
+  case COT_INTEGER:
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
+			      secfile_lookup_int_default(sf,
+				     *o->o.integer.pvalue,
+				     "client.%s", o->name));
+    break;
+  case COT_STRING:
+  case COT_PASSWORD:
+    if (o->o.string.val_accessor) {
+      gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
+			 secfile_lookup_str_default(sf, o->o.string.pvalue,
+						    "client.%s", o->name));
+    } else {
+      gtk_entry_set_text(GTK_ENTRY(o->gui_data),
+			 secfile_lookup_str_default(sf, o->o.string.pvalue,
+						    "client.%s", o->name));
+    }
+    break;
+  case COT_NUMBER_LIST:
+    set_combo_to(GTK_COMBO_BOX(o->gui_data),
+		 secfile_lookup_str_default(sf,
+		     o->o.list.str_accessor(o->o.list.def),
+		     "client.%s", o->name));
+    break;
+  case COT_FILTER:
+    o->o.filter.temp = secfile_lookup_filter_default(sf, *o->o.filter.pvalue,
+						     o, "client.%s", o->name);
+    update_filter(o);
+    break;
+  }
+}
+
+/*************************************************************************
+  Read all options from the rc file but don't apply.
+*************************************************************************/
+static void reload_options(void)
+{
+  struct section_file sf;
+
+  if (!section_file_load(&sf, option_file_name())) {
+    /* Cannot access to the option file */
+    return;  
+  }
+
+  client_options_iterate(o) {
+    reload_option(&sf, o);
+  } client_options_iterate_end;
+
+  extra_options_iterate(o) {
+    o->reload_callback(o->widget, &sf);
+  } extra_options_iterate_end;
+
+  section_file_free(&sf);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void refresh_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  refresh_option((struct client_option *) data);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void reset_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  reset_option((struct client_option *) data);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void reload_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  struct section_file sf;
+
+  if (section_file_load(&sf, option_file_name())) {
+    reload_option(&sf, (struct client_option *) data);
+    section_file_free(&sf);
+  }
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void apply_option_callback(GtkMenuItem *menuitem, gpointer data)
+{
+  apply_option_change((struct client_option *) data);
+  init_menus();
+}
+
+/*************************************************************************
+  Called when a button is pressed.
+*************************************************************************/
+static gboolean option_callback(GtkWidget *widget, GdkEventButton *event,
+				gpointer data)
+{
+  /* Only right button please! */
+  if (event->button != 3) {
+    return FALSE;
+  }
+
+  GtkWidget *menu, *item;
+
+  menu = gtk_menu_new();
+
+  item = gtk_menu_item_new_with_label(_("Refresh this option"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(refresh_option_callback), data);
+
+  item = gtk_menu_item_new_with_label(_("Reset this option"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(reset_option_callback), data);
+
+  item = gtk_menu_item_new_with_label(_("Reload this option"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(reload_option_callback), data);
+
+  item = gtk_menu_item_new_with_label(_("Apply the changes for this option"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+  g_signal_connect(item, "activate",
+                   G_CALLBACK(apply_option_callback), data);
+
+  gtk_widget_show_all(menu);
+  gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
+
+  return TRUE;
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void filter_changed_callback(GtkToggleButton *togglebutton,
+				    gpointer data)
+{
+  struct client_option *o = (struct client_option *) data;
+  filter value;
+
+  assert(o->type == COT_FILTER);
+
+  value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(togglebutton),
+					    "filter_value"));
+  if (((o->o.filter.temp & value) != 0)
+      ^ GTK_TOGGLE_BUTTON(togglebutton)->active
+      && o->o.filter.change(&o->o.filter.temp, value)) {
+    update_filter(o);
+  }
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void option_dialog_destroy(GtkWidget *window)
+{
+  option_dialog_shell = NULL;
+  extra_options_iterate(o) {
+    extra_option_destroy(o);
+  } extra_options_iterate_end;
+  extra_option_list_free(extra_options);
+  extra_options = NULL;
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void option_dialog_callback(GtkWidget *window, gint rid)
+{
+  switch (rid) {
+    case RESPONSE_REFRESH:
+      refresh_option_dialog();
+      break;
+    case RESPONSE_RESET:
+      reset_options();
+      break;
+    case RESPONSE_RELOAD:
+      reload_options();
+      break;
+    case RESPONSE_SAVE:
+      apply_changes();
+      save_options();
+      init_menus();
+      refresh_option_dialog();
+      break;
+    case RESPONSE_APPLY:
+      apply_changes();
+      init_menus();
+      refresh_option_dialog();
+      break;
+    case RESPONSE_OK:
+      apply_changes();
+      init_menus();
+      /* break not missing */
+    case RESPONSE_CANCEL:
+      gtk_widget_destroy(window);
+      break;
+  }
+}
+
 /****************************************************************
-... 
+  ... 
 *****************************************************************/
 static void create_option_dialog(void)
 {
-  GtkWidget *label, *table, *table2, *hbox;
+  GtkWidget *notebook, *sw, *vbox[COC_NUM], *hbox, *ebox;
+  GtkTooltips *tips;
   int i;
 
-  option_dialog_shell = gtk_dialog_new_with_buttons(_("Set local options"),
-  	NULL,
-	0,
-	GTK_STOCK_CLOSE,
-	GTK_RESPONSE_CLOSE,
-	NULL);
+  tips = gtk_tooltips_new();
+  option_dialog_shell =
+      gtk_dialog_new_with_buttons(_("Set local options"), NULL, 0,
+				  GTK_STOCK_REFRESH, RESPONSE_REFRESH,
+				  _("Reset"), RESPONSE_RESET,
+				  _("Reload"), RESPONSE_RELOAD,
+				  GTK_STOCK_SAVE, RESPONSE_SAVE,
+				  GTK_STOCK_APPLY, RESPONSE_APPLY,
+				  GTK_STOCK_CANCEL, RESPONSE_CANCEL,
+				  GTK_STOCK_OK, RESPONSE_OK, NULL);
+  gtk_widget_set_size_request(option_dialog_shell, -1, 600);
   setup_dialog(option_dialog_shell, toplevel);
-  gtk_dialog_set_default_response(GTK_DIALOG(option_dialog_shell),
-				  GTK_RESPONSE_CLOSE);
   g_signal_connect(option_dialog_shell, "response",
-		   G_CALLBACK(gtk_widget_destroy), NULL);
+		   G_CALLBACK(option_dialog_callback), NULL);
   g_signal_connect(option_dialog_shell, "destroy",
-		   G_CALLBACK(option_ok_command_callback), NULL);
-  gtk_window_set_position (GTK_WINDOW(option_dialog_shell), GTK_WIN_POS_MOUSE);
+		   G_CALLBACK(option_dialog_destroy), NULL);
 
-  table = gtk_table_new (num_options & 1 ? (num_options+1)/2
-                         : num_options/2, 2, FALSE);
-  table2 = gtk_table_new (num_options & 1 ? (num_options-1)/2
-                          : num_options/2, 2, FALSE);
-
-  hbox = gtk_hbox_new (TRUE, 8);
-  gtk_box_pack_start (GTK_BOX (hbox), table, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), table2, FALSE, FALSE, 0);
+  notebook = gtk_notebook_new();
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(option_dialog_shell)->vbox),
-                      hbox, FALSE, FALSE, 0);
+		     notebook, TRUE, TRUE, 2);
 
-  i = 0;
+  /* Build the pages */
+  for (i = 0; i < COC_NUM; i++) {
+    sw = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+				   GTK_POLICY_AUTOMATIC,
+				   GTK_POLICY_AUTOMATIC);
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), sw,
+			     gtk_label_new(get_option_category_name(i)));
+    vbox[i] = gtk_vbox_new(FALSE, 2);
+    gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox[i]);
+  }
+
+  /* Add client options */
   client_options_iterate(o) {
+    hbox = gtk_hbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox[o->category]), hbox, FALSE, FALSE, 0);
+    ebox = gtk_event_box_new();
+    g_signal_connect(ebox, "button_press_event",
+		     G_CALLBACK(option_callback), o);
+    gtk_box_pack_start(GTK_BOX(hbox), ebox, FALSE, FALSE, 5);
+    gtk_container_add(GTK_CONTAINER(ebox), gtk_label_new(_(o->description)));
+    gtk_tooltips_set_tip(tips, ebox, _(o->help_text), NULL);
+    o->gui_data = NULL;
     switch (o->type) {
-    case COT_BOOL:
-      label = gtk_label_new(_(o->description));
-      gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-      gtk_table_attach(GTK_TABLE(table), label, 0, 1, i, i+1,
-		       GTK_FILL, GTK_FILL | GTK_EXPAND,
-		       0, 0);
-      o->p_gui_data = (void *)gtk_check_button_new();
-      gtk_table_attach(GTK_TABLE(table), o->p_gui_data, 1, 2, i, i+1,
-		       GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND,
-		       0, 0);
+    case COT_BOOLEAN:
+      o->gui_data = gtk_check_button_new();
       break;
-    case COT_INT:
-      label = gtk_label_new(_(o->description));
-      gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-      gtk_table_attach(GTK_TABLE(table), label, 0, 1, i, i+1,
-		       GTK_FILL, GTK_FILL | GTK_EXPAND,
-		       0, 0);
-      o->p_gui_data = gtk_entry_new();
-      gtk_entry_set_max_length(GTK_ENTRY(o->p_gui_data), 5);
-      gtk_widget_set_size_request(GTK_WIDGET(o->p_gui_data), 45, -1);
-      gtk_table_attach(GTK_TABLE(table), o->p_gui_data, 1, 2, i, i+1,
-		       GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND,
-		       0, 0);
+    case COT_INTEGER:
+      o->gui_data = gtk_spin_button_new_with_range(o->o.integer.min,
+					      o->o.integer.max,
+					      MAX((o->o.integer.max
+						   - o->o.integer.max) / 50,
+						  1));
       break;
-    case COT_STR:
-      label = gtk_label_new(_(o->description));
-      gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-      gtk_table_attach(GTK_TABLE(table), label, 0, 1, i, i+1,
-		       GTK_FILL, GTK_FILL | GTK_EXPAND,
-		       0, 0);
-      if (o->p_string_vals) {
-        o->p_gui_data = gtk_combo_box_entry_new_text();
+    case COT_STRING:
+    case COT_PASSWORD:
+      if (o->o.string.val_accessor) {
+	const char **val;
+
+	o->gui_data = gtk_combo_box_entry_new_text();
+	for (val = o->o.string.val_accessor(); *val; val++) {
+	  gtk_combo_box_append_text(GTK_COMBO_BOX(o->gui_data), *val);
+	}
       } else {
-        o->p_gui_data = gtk_entry_new();
+	o->gui_data = gtk_entry_new();
+	if (o->type == COT_PASSWORD) {
+	  gtk_entry_set_visibility(GTK_ENTRY(o->gui_data), FALSE);
+	}
+	gtk_widget_set_size_request(o->gui_data, 300, -1);
       }
-      gtk_widget_set_size_request(GTK_WIDGET(o->p_gui_data), 150, -1);
-      gtk_table_attach(GTK_TABLE(table), o->p_gui_data, 1, 2, i, i+1,
-		       GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND,
-		       0, 0);
+      break;
+    case COT_NUMBER_LIST:
+      {
+	int i;
+	const char *str;
+	/* Use a double string list for translation */
+	GtkListStore *model = gtk_list_store_new(LC_NUM, G_TYPE_INT,
+						 G_TYPE_STRING, G_TYPE_STRING);
+	GtkCellRenderer *renderer;
+	GtkTreeIter iter;
+
+	o->gui_data = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
+	g_object_unref(model);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(o->gui_data),
+				   renderer, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(o->gui_data),
+				       renderer, "text",
+				       LC_TEXT_TRANSLATED, NULL);
+	for (i = 0; (str = o->o.list.str_accessor(i)); i++) {
+	  gtk_list_store_append(model, &iter);
+	  gtk_list_store_set(model, &iter,
+			     LC_INDEX, i,
+			     LC_TEXT_ORIGIN, str,
+			     LC_TEXT_TRANSLATED, _(str), -1);
+	}
+      }
+      break;
+    case COT_FILTER:
+      {
+	GtkWidget *fbox, *cb;
+	filter i;
+	const char *str;
+
+	o->gui_data = gtk_frame_new(NULL);
+	fbox = gtk_vbox_new(FALSE,0);
+	gtk_container_add(GTK_CONTAINER(o->gui_data), fbox);
+
+	for (i = 1; (str = o->o.filter.str_accessor(i)); i <<= 1) {
+	  cb = gtk_check_button_new_with_label(_(str));
+	  g_object_set_data(G_OBJECT(cb), "filter_value", GINT_TO_POINTER(i));
+	  g_signal_connect(cb, "toggled",
+			   G_CALLBACK(filter_changed_callback), o);
+	  gtk_box_pack_start(GTK_BOX(fbox), cb, FALSE, FALSE, 0);
+	}
+      }
       break;
     }
-    i++;
-    if ((num_options & 1 && i == num_options/2) || i == (num_options+1)/2)
-      table = table2;
-  } client_options_iterate_end;
+    if (o->gui_data) {
+      gtk_box_pack_end(GTK_BOX(hbox), o->gui_data, FALSE, FALSE, 0);
+    } else {
+      die("Couldn't create a line for option '%s'.", o->name);
+    }
+  } client_options_iterate_end;  
 
-  gtk_widget_show_all( GTK_DIALOG( option_dialog_shell )->vbox );
+  /* Extra options (e.g. chat colors) */
+  extra_options = extra_option_list_new();
+
+  extra_option_new(create_chatline_config(), vbox[COC_CHAT],
+		   _("Chat colors configuration"),
+		   apply_chatline_config, refresh_chatline_config,
+		   reset_chatline_config, reload_chatline_config);
+  extra_option_new(create_messages_configuration(), vbox[COC_MESSAGE],
+		   _("Message options"),
+		   apply_message_options, refresh_message_options,
+		   reset_message_options, reload_message_options);
+  if (get_client_state() >= CLIENT_SELECT_RACE_STATE) {
+    extra_option_new(create_worklists_report(), vbox[COC_GAMEPLAY],
+		     _("Global Worklists"),
+		     apply_global_worklists, refresh_global_worklists,
+		     reset_global_worklists, reload_global_worklists);
+  }
+
+  gtk_widget_show_all(GTK_DIALOG(option_dialog_shell)->vbox);
+  gtk_widget_show(option_dialog_shell);
 }
 
 /****************************************************************
@@ -516,39 +1196,8 @@ static void create_option_dialog(void)
 *****************************************************************/
 void popup_option_dialog(void)
 {
-  char valstr[64];
-
   if (!option_dialog_shell) {
     create_option_dialog();
   }
-
-  client_options_iterate(o) {
-    switch (o->type) {
-    case COT_BOOL:
-      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->p_gui_data),
-				   *(o->p_bool_value));
-      break;
-    case COT_INT:
-      my_snprintf(valstr, sizeof(valstr), "%d", *(o->p_int_value));
-      gtk_entry_set_text(GTK_ENTRY(o->p_gui_data), valstr);
-      break;
-    case COT_STR:
-      if (o->p_string_vals) {
-	int i;
-	const char **vals = (*o->p_string_vals) ();
-
-	for (i = 0; vals[i]; i++) {
-	  gtk_combo_box_append_text(GTK_COMBO_BOX(o->p_gui_data), vals[i]);
-	  if (strcmp(vals[i], o->p_string_value) == 0) {
-	    gtk_combo_box_set_active(GTK_COMBO_BOX(o->p_gui_data), i);
-	  }
- 	}
-      } else {
-	gtk_entry_set_text(GTK_ENTRY(o->p_gui_data), o->p_string_value);
-      }
-      break;
-    }
-  } client_options_iterate_end;
-
-  gtk_widget_show(option_dialog_shell);
+  refresh_option_dialog();
 }

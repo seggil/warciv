@@ -29,6 +29,7 @@
 #include "support.h"
 
 #include "civclient.h"
+#include "clinet.h"	/* aconnection, server_has_extglobalinfo */
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
@@ -114,6 +115,11 @@ void popup_intel_dialog(struct player *p)
 
   if (!(pdialog = get_intel_dialog(p))) {
     pdialog = create_intel_dialog(p);
+  }
+
+  if (server_has_extglobalinfo) {
+    /* Request an update */
+    dsend_packet_player_info_req(&aconnection, p->player_no);
   }
 
   update_intel_dialog(p);

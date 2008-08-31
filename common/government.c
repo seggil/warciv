@@ -17,6 +17,7 @@
 
 #include <assert.h>
 
+#include "city.h"
 #include "game.h"
 #include "log.h"
 #include "mem.h"

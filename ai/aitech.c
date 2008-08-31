@@ -17,9 +17,11 @@
 
 #include <string.h>
 
+#include "log.h"
+
+#include "city.h"
 #include "game.h"
 #include "government.h"
-#include "log.h"
 #include "player.h"
 #include "tech.h"
 

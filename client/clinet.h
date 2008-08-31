@@ -39,6 +39,8 @@ void input_from_server_till_request_got_processed(int fd,
 void disconnect_from_server(void);
 
 extern struct connection aconnection;
+extern bool server_has_extglobalinfo;
+
 /* this is the client's connection to the server */
 
 struct server

@@ -23,6 +23,7 @@
 #include "rand.h"
 #include "support.h"
 #include "timing.h"
+#include "traderoute.h"
 
 #include "graphics_g.h"
 #include "mapctrl_g.h"
@@ -36,9 +37,9 @@
 #include "goto.h"
 #include "gui_main_g.h"
 #include "mapview_common.h"
-#include "myai.h"
 #include "pages_g.h"
 #include "tilespec.h"
+#include "trade.h"
 
 struct mapview_canvas mapview_canvas;
 struct overview overview;
@@ -62,9 +63,7 @@ static void get_mapview_corners(int x[4], int y[4]);
 static void redraw_overview(void);
 static void dirty_overview(void);
 
-static void draw_traderoutes_for_city (struct city *src_pcity);
-static void draw_trade_route_list(const struct trade_route_list *ptrl,
-				  enum color_std color);
+static void draw_traderoutes_for_city(struct city *src_pcity);
 
 /**************************************************************************
 Returns the color the grid should have between tile (x1,y1) and
@@ -2271,9 +2270,9 @@ void get_city_mapview_traderoutes(struct city *pcity,
 				  enum color_std *traderoutes_color)
 {
   int num_traderoutes;
-  assert (pcity != NULL);
-  assert (traderoutes_buffer != NULL);
-  assert (traderoutes_color != NULL);
+  assert(pcity != NULL);
+  assert(traderoutes_buffer != NULL);
+  assert(traderoutes_color != NULL);
 
   if (!draw_city_traderoutes) {
     traderoutes_buffer[0] = '\0';
@@ -2284,13 +2283,14 @@ void get_city_mapview_traderoutes(struct city *pcity,
   num_traderoutes = city_num_trade_routes(pcity);
   my_snprintf(traderoutes_buffer, traderoutes_buffer_len,
 	      "[%d(+%d)/%d/%d]", num_traderoutes,
-              trade_route_list_size(pcity->trade_routes)
-	      + estimate_non_ai_trade_route_number(pcity),
-	      count_trade_routes(pcity), NUM_TRADEROUTES);
+	      in_route_trade_route_number(pcity),
+              trade_route_list_size(pcity->trade_routes),
+	      game.traderoute_info.maxtraderoutes);
 
-  if (num_traderoutes >= NUM_TRADEROUTES) {
+  if (num_traderoutes >= game.traderoute_info.maxtraderoutes) {
     *traderoutes_color = COLOR_STD_GROUND; /* i.e. green */
-  } else if (NUM_TRADEROUTES - 1 >= num_traderoutes && num_traderoutes > 0) {
+  } else if (num_traderoutes < game.traderoute_info.maxtraderoutes
+	     && num_traderoutes > 0) {
     *traderoutes_color = COLOR_STD_YELLOW;
   } else {
     *traderoutes_color = COLOR_STD_RED;
@@ -2744,12 +2744,11 @@ void init_mapcanvas_and_overview(void)
 /**************************************************************************
   ...
 **************************************************************************/
-static void draw_traderoute_line(struct city *pcity_src,
-                                 struct city *pcity_dest,
+static void draw_traderoute_line(struct trade_route *ptr,
                                  enum color_std color)
 {
   int canvas_x, canvas_y, canvas_x2, canvas_y2;
-  struct city *tmp;
+  struct city *pcity_src = ptr->pcity1, *pcity_dest = ptr->pcity2, *tmp;
   struct tile *ptile1, *ptile2;
 
   if (pcity_src == NULL || pcity_dest == NULL) {
@@ -2768,11 +2767,13 @@ static void draw_traderoute_line(struct city *pcity_src,
   }
 
   if (pcity_src->client.traderoute_drawing_disabled
+      &&  get_player_ptr()
       && pcity_dest->owner != get_player_idx()) {
     return;
   }
 
   if (pcity_dest->client.traderoute_drawing_disabled
+      &&  get_player_ptr()
       && pcity_src->owner != get_player_idx()) {
     return;
   }
@@ -2784,8 +2785,7 @@ static void draw_traderoute_line(struct city *pcity_src,
     return;
   }
 
-  if (!tile_visible_mapcanvas(ptile1)
-      && !tile_visible_mapcanvas(ptile2)) {
+  if (!tile_visible_mapcanvas(ptile1) && !tile_visible_mapcanvas(ptile2)) {
     return;
   }
 
@@ -2810,53 +2810,26 @@ static void draw_traderoute_line(struct city *pcity_src,
 **************************************************************************/
 static void draw_traderoutes_for_city(struct city *src_pcity)
 {
-  int i;
-  struct city *dest_pcity;
-
-  for (i = 0; i < NUM_TRADEROUTES; i++) {
-    if (src_pcity->trade[i] == -1) {
-      continue;
-    }
-
-    dest_pcity = find_city_by_id(src_pcity->trade[i]);
-    if (dest_pcity == NULL) {
-      continue;
-    }
-
-    draw_traderoute_line(src_pcity, dest_pcity,
-                         COLOR_STD_GROUND);
-  }
-
   trade_route_list_iterate(src_pcity->trade_routes, ptr) {
-    if (ptr == NULL || ptr->pc1 == NULL || ptr->pc2 == NULL) {
-      continue;
+    switch (ptr->status) {
+    case TR_NONE:
+      freelog(LOG_ERROR,
+	      "No trade route status for trade route between %s and %s.",
+	      ptr->pcity1->name, ptr->pcity2->name);
+      break;
+    case TR_PLANNED:
+      draw_traderoute_line(ptr, COLOR_STD_RED);
+      break;
+    case TR_IN_ROUTE:
+      draw_traderoute_line(ptr, COLOR_STD_WHITE);
+      break;
+    case TR_PL_AND_IR:
+      draw_traderoute_line(ptr, COLOR_STD_YELLOW);
+      break;
+    case TR_ESTABLISHED:
+      draw_traderoute_line(ptr, COLOR_STD_GROUND);
+      break;
     }
-    if (ptr->pc1 != src_pcity) {
-      continue;
-    }
-    dest_pcity = ptr->pc2;
-
-    draw_traderoute_line(src_pcity, dest_pcity,
-                         COLOR_STD_YELLOW);
-  } trade_route_list_iterate_end;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static void draw_trade_route_list(const struct trade_route_list *ptrl,
-				  enum color_std color)
-{
-  if (ptrl == NULL) {
-    return;
-  }
-
-  trade_route_list_iterate(ptrl, ptr) {
-    if (!ptr || !ptr->pc1 || !ptr->pc2) {
-      continue;
-    }
-
-    draw_traderoute_line(ptr->pc1, ptr->pc2, color);
   } trade_route_list_iterate_end;
 }
 
@@ -2865,30 +2838,35 @@ static void draw_trade_route_list(const struct trade_route_list *ptrl,
 **************************************************************************/
 void draw_traderoutes(void)
 {
-  if (!draw_city_traderoutes || !get_player_ptr()) {
+  if (!draw_city_traderoutes) {
     return;
   }
 
-  city_list_iterate(get_player_ptr()->cities, pcity) {
-    draw_traderoutes_for_city(pcity);
-  } city_list_iterate_end;
-  
-  draw_trade_route_list(my_ai_trade_plan_get(), COLOR_STD_RED);
-  if (my_ai_trade_manual_trade_route_enable) {
-    draw_trade_route_list(estimate_non_ai_trade_route(), COLOR_STD_ORANGE);
+  if (get_player_ptr()) {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
+      draw_traderoutes_for_city(pcity);
+    } city_list_iterate_end;
+  } else {
+    cities_iterate(pcity) {
+      draw_traderoutes_for_city(pcity);
+    } cities_iterate_end;
   }
 }
 
 /**************************************************************************
   Update the part of map a trade route should be drawn.
 **************************************************************************/
-void update_trade_route_line(struct city *pcity1, struct city *pcity2)
+void update_trade_route_line(struct trade_route *ptr)
 {
+  if (!draw_city_traderoutes) {
+    return;
+  }
+
   int canvas_x1, canvas_x2, canvas_y1, canvas_y2;
   int draw = 0;
 
-  draw += tile_to_canvas_pos(&canvas_x1, &canvas_y1, pcity1->tile);
-  draw += tile_to_canvas_pos(&canvas_x2, &canvas_y2, pcity2->tile);
+  draw += tile_to_canvas_pos(&canvas_x1, &canvas_y1, ptr->pcity1->tile);
+  draw += tile_to_canvas_pos(&canvas_x2, &canvas_y2, ptr->pcity2->tile);
 
   if (draw != 0) {
     update_map_canvas(MIN(canvas_x1, canvas_x2),
@@ -2897,6 +2875,6 @@ void update_trade_route_line(struct city *pcity1, struct city *pcity2)
 		      ABS(canvas_y2 - canvas_y1) + NORMAL_TILE_HEIGHT,
 		      MUT_NORMAL);
   }
-  update_city_description(pcity1);
-  update_city_description(pcity2);
+  update_city_description(ptr->pcity1);
+  update_city_description(ptr->pcity2);
 }

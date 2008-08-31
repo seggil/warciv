@@ -64,6 +64,7 @@ void send_city_info(struct player *dest, struct city *pcity);
 void send_city_info_at_tile(struct player *pviewer, struct conn_list *dest,
 			    struct city *pcity, struct tile *ptile);
 void send_all_known_cities(struct conn_list *dest);
+void send_all_known_trade_routes(struct conn_list *dest);
 void send_player_cities(struct player *pplayer);
 void package_city(struct city *pcity, struct packet_city_info *packet,
 		  bool dipl_invest);
@@ -77,7 +78,6 @@ void create_city(struct player *pplayer, struct tile *ptile,
 void remove_city(struct city *pcity);
 
 void establish_trade_route(struct city *pc1, struct city *pc2);
-void remove_trade_route(struct city *pc1, struct city *pc2);
 
 void do_sell_building(struct player *pplayer, struct city *pcity,
 		      Impr_Type_id id);
@@ -98,5 +98,15 @@ void sync_cities(void);
 bool can_place_worker_here(struct city *pcity, int city_x, int city_y);
 void check_city_workers(struct player *pplayer);
 void city_landlocked_sell_coastal_improvements(struct tile *ptile);
+
+void send_city_manager_param(struct conn_list *clist,
+			     struct packet_city_manager_param *packet,
+			     struct player *pplayer,
+			     bool include_player);
+void send_city_manager_info(struct conn_list *clist, struct city *pcity,
+			    bool include_player);
+void send_all_known_city_manager_infos(struct conn_list *clist);
+void clear_city_manager_param(struct city *pcity);
+void reset_city_manager_params(struct player *pplayer);
 
 #endif  /* FC__CITYTOOLS_H */

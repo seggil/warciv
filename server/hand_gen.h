@@ -73,5 +73,16 @@ void handle_conn_pong(struct connection *pc);
 void handle_spaceship_launch(struct player *pplayer);
 void handle_spaceship_place(struct player *pplayer, enum spaceship_place_type type, int num);
 void handle_vote_submit(struct connection *pc, int vote_no, int value);
+void handle_trade_route_plan(struct player *pplayer, int city1, int city2);
+void handle_trade_route_remove(struct player *pplayer, int city1, int city2);
+void handle_unit_trade_route(struct player *pplayer, int unit_id, int city1, int city2);
+void handle_city_set_rally_point(struct player *pplayer, int id, int x, int y);
+void handle_city_clear_rally_point(struct player *pplayer, int id);
+void handle_unit_air_patrol(struct player *pplayer, int id, int x, int y);
+void handle_unit_air_patrol_stop(struct player *pplayer, int id);
+struct packet_city_manager_param;
+void handle_city_manager_param(struct player *pplayer, struct packet_city_manager_param *packet);
+void handle_city_no_manager_param(struct player *pplayer, int id);
+void handle_player_info_req(struct connection *pc, int id);
 
 #endif /* FC__HAND_GEN_H */

@@ -85,14 +85,6 @@ GdkPixmap *overview_canvas_store;       /* this pixmap acts as a backing store
 int overview_canvas_store_width = 2 * 80;
 int overview_canvas_store_height = 2 * 50;
 
-/* Fullscreen is disabled by default for now because there's no way
- * to toggle it in pregame. */
-bool fullscreen_mode = FALSE;
-
-bool enable_tabs = TRUE;
-bool solid_unit_icon_bg = FALSE;
-bool better_fog = TRUE;
-
 bool allied_chat_only = FALSE;
 GtkWidget *allied_chat_toggle_button = NULL;
 
@@ -139,35 +131,6 @@ GtkWidget *bulb_ebox;
 GtkWidget *sun_ebox;
 GtkWidget *flake_ebox;
 GtkWidget *government_ebox;
-
-client_option gui_options[] = {
-  GEN_BOOL_OPTION(meta_accelerators,	N_("Use Alt/Meta for accelerators")),
-  GEN_BOOL_OPTION(map_scrollbars,	N_("Show Map Scrollbars")),
-  GEN_BOOL_OPTION(keyboardless_goto,	N_("Keyboardless goto")),
-  GEN_BOOL_OPTION(dialogs_on_top,	N_("Keep dialogs on top")),
-  GEN_BOOL_OPTION(show_task_icons,	N_("Show worklist task icons")),
-  GEN_BOOL_OPTION(fullscreen_mode,	N_("Fullscreen Mode")),
-  GEN_BOOL_OPTION(enable_tabs,		N_("Enable status report tabs")),
-  GEN_BOOL_OPTION(solid_unit_icon_bg,
-                  N_("Solid unit icon background color in city dialog")),
-  GEN_BOOL_OPTION(better_fog,
-                  N_("Better fog-of-war drawing")),
-  GEN_BOOL_OPTION(use_voteinfo_bar,
-                  N_("Enable vote bar for displaying vote information")),
-  GEN_BOOL_OPTION(show_new_vote_in_front,
-                  N_("New votes go to the front of the vote list")),
-  GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
-                  N_("Disable chatline scrolling-to-bottom when window "
-                     "is resized")),
-  GEN_BOOL_OPTION(always_show_votebar,
-                  N_("Do not hide the vote bar when there are no running "
-                     "votes")),
-  GEN_BOOL_OPTION(do_not_show_votebar_if_not_player,
-                  N_("Do not show vote bar if not a player")),
-  GEN_BOOL_OPTION(prevent_duplicate_notify_tabs,
-                  N_("New notify tabs replace those of the same name"))
-};
-const int num_gui_options = ARRAY_SIZE(gui_options);
 
 static GtkWidget *main_menubar;
 static GtkWidget *unit_pixmap_table;
@@ -802,27 +765,27 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
           || hover_state == HOVER_DELAYED_AIRLIFT) {
         switch (keyval) {
         case GDK_4:
-          need_city_for = 1;
+          airlift_queue_need_city_for = 1;
           return TRUE;
           
         case GDK_5:
-          need_city_for = 2;
+          airlift_queue_need_city_for = 2;
           return TRUE;
           
         case GDK_6:
-          need_city_for = 3;
+          airlift_queue_need_city_for = 3;
           return TRUE;
           
         case GDK_7:
-          need_city_for = 4;
+          airlift_queue_need_city_for = 4;
           return TRUE;
           
         case GDK_8:
-          need_city_for = 5;
+          airlift_queue_need_city_for = 5;
           return TRUE;
           
         case GDK_9:
-          need_city_for = 6;
+          airlift_queue_need_city_for = 6;
           return TRUE;
           
         default:
@@ -1902,12 +1865,12 @@ void update_conn_list_dialog(void)
     gtk_list_store_clear(conn_model);
     conn_list_iterate(game.est_connections, pconn) {
       gtk_list_store_append(conn_model, &it);
-      if (!pconn->player) {
-        my_snprintf(buf, sizeof(buf), "[%s]", pconn->username);
-      } else if (pconn->observer) {
+      if (pconn->observer) {
         my_snprintf(buf, sizeof(buf), "(%s)", pconn->username);
-      } else {
+      } else if (pconn->player) {
         my_snprintf(buf, sizeof(buf), "%s", pconn->username);
+      } else {
+        my_snprintf(buf, sizeof(buf), "[%s]", pconn->username);
       }
       gtk_list_store_set(conn_model, &it, 0, buf, 1, pconn, -1);
     } conn_list_iterate_end;

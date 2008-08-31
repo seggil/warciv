@@ -51,6 +51,8 @@ libcivcommon_a_SOURCES = \
 		tech.h		\
 		terrain.c	\
 		terrain.h	\
+		traderoute.c	\
+		traderoute.h	\
 		unit.c		\
 		unit.h		\
 		unittype.c	\

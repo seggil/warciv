@@ -254,7 +254,7 @@ void srv_init(void)
 **************************************************************************/
 static bool is_game_over(void)
 {
-  int barbs = 0, alive = 0, observers = 0;
+  int barbs = 0, alive = 0;
   bool all_allied;
   struct player *victor = NULL;
 
@@ -278,13 +278,11 @@ static bool is_game_over(void)
     if (is_barbarian(pplayer)) {
       barbs++;
     }
-    if (pplayer->is_observer) {
-      observers++;
-    }
+
   } players_iterate_end;
 
   /* the game does not quit if we are playing solo */
-  if (game.info.nplayers == (observers + barbs + 1)) {
+  if (game.info.nplayers == (barbs + 1)) {
     return FALSE;
   } 
 
@@ -395,7 +393,9 @@ void send_all_info(struct conn_list *dest)
   send_spaceship_info(NULL, dest);
   send_all_known_tiles(dest);
   send_all_known_cities(dest);
+  send_all_known_city_manager_infos(dest);
   send_all_known_units(dest);
+  send_all_known_trade_routes(dest); /* After units for complete info */
   send_player_turn_notifications(dest);
 }
 
@@ -1066,7 +1066,9 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
 
   pplayer = pconn->player;
 
-  if(!pplayer) {
+  if (!pplayer && !pconn->observer
+      && type != PACKET_REPORT_REQ
+      && type != PACKET_CONN_PONG) {
     /* don't support these yet */
     freelog(LOG_ERROR, "Received packet from non-player connection %s",
  	    conn_description(pconn));
@@ -1090,17 +1092,21 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
     return TRUE;
   }
 
-  pplayer->nturns_idle=0;
+  if (pplayer) {
+    if (!pconn->observer) {
+      pplayer->nturns_idle = 0;
+    }
 
-  if((!pplayer->is_alive || pconn->observer)
-     && !(type == PACKET_REPORT_REQ || type == PACKET_CONN_PONG)) {
-    freelog(LOG_ERROR, _("Got a packet of type %d from a "
-			 "dead or observer player"), type);
-    return TRUE;
+    if ((!pplayer->is_alive || pconn->observer)
+       && !(type == PACKET_REPORT_REQ || type == PACKET_CONN_PONG)) {
+      freelog(LOG_ERROR, _("Got a packet of type %d from a "
+			   "dead or observer player"), type);
+      return TRUE;
+    }
+
+    /* Make sure to set this back to NULL before leaving this function: */
+    pplayer->current_conn = pconn;
   }
-  
-  /* Make sure to set this back to NULL before leaving this function: */
-  pplayer->current_conn = pconn;
 
   if (!server_handle_packet(type, packet, pplayer, pconn)) {
     freelog(LOG_ERROR, "Received unknown packet %d from %s",
@@ -1111,7 +1117,10 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
     kill_dying_players();
   }
 
-  pplayer->current_conn = NULL;
+  if (pplayer) {
+    pplayer->current_conn = NULL;
+  }
+
   return TRUE;
 }
 
@@ -1205,16 +1214,6 @@ static bool is_allowed_player_name(struct player *pplayer,
       }
     }
   } players_iterate_end;
-
-  if (0 == mystrcasecmp(name, OBSERVER_NAME)) {
-    if (error_buf) {
-      my_snprintf(error_buf, bufsz,
-		  _("You may not call yourself '%s', "
-		    "reserved name for global observer."), name);
-    }
-    return FALSE;
-  }
-
 
   /* Any name from the default list is always allowed. */
   if (is_default_nation_name(name, nation)) {
@@ -1468,19 +1467,7 @@ static void generate_ai_players(void)
              game.info.max_players);
   }
 
-  /* we don't want aifill to count global observers unless 
-   * aifill = MAX_NUM_PLAYERS */
-  i = 0;
-  players_iterate(pplayer) {
-    if (pplayer->is_observer) {
-      i++;
-    }
-  } players_iterate_end;
-  if (game.server.aifill == MAX_NUM_PLAYERS) {
-    i = 0;
-  }
-
-  for(;game.info.nplayers < game.server.aifill + i;) {
+  for(i = 0; game.info.nplayers < game.server.aifill + i;) {
     nation = select_random_nation(common_class);
     assert(nation != NO_NATION_SELECTED);
     mark_nation_as_used(nation);
@@ -1670,8 +1657,8 @@ static void main_loop(void)
      * saves, from the point of view of restarting and AI players.
      * Post-increment so we don't count the first loop.
      */
-    if(save_counter >= game.server.save_nturns && game.server.save_nturns>0) {
-      save_counter=0;
+    if(save_counter >= game.server.save_nturns && game.server.save_nturns > 0) {
+      save_counter = 0;
       save_game_auto();
     }
     save_counter++;
@@ -1701,7 +1688,7 @@ static void main_loop(void)
     conn_list_do_unbuffer(game.game_connections);
 
     if (is_game_over()) {
-      server_state=GAME_OVER_STATE;
+      server_state = GAME_OVER_STATE;
     }
   }
 
@@ -1712,6 +1699,7 @@ static void main_loop(void)
 
   free_timer(eot_timer);
 }
+
 /**************************************************************************
   Server initialization.
 **************************************************************************/
@@ -1887,9 +1875,7 @@ MAIN_START_PLAYERS:
   server_state = RUN_GAME_STATE;
   players_iterate(pplayer) {
     ai_data_analyze_rulesets(pplayer);
-    if (pplayer->is_observer) {
-      pplayer->nation = OBSERVER_NATION;
-    } else if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control) {
+    if (pplayer->nation == NO_NATION_SELECTED && !pplayer->ai.control) {
       send_select_nation(pplayer);
       server_state = SELECT_RACES_STATE;
     }
@@ -2029,13 +2015,6 @@ MAIN_START_PLAYERS:
 
   if (game.server.is_new_game) {
     init_new_game();
-
-    /* give global observers the entire map */
-    players_iterate(pplayer) {
-      if (pplayer->is_observer) {
-        map_know_and_see_all(pplayer);
-      }
-    } players_iterate_end;
   }
 
   /* NB: This is the one and only place this should be set. */

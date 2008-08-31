@@ -111,7 +111,6 @@ void player_init(struct player *plr)
   plr->connections = conn_list_new();
   plr->current_conn = NULL;
   plr->is_connected = FALSE;
-  plr->is_observer = FALSE;
   plr->was_created = FALSE;
   plr->is_civil_war_split = FALSE;
   plr->is_alive=TRUE;
@@ -185,6 +184,9 @@ void player_init(struct player *plr)
 ***************************************************************/
 void player_set_unit_focus_status(struct player *pplayer)
 {
+  if (!pplayer) {
+    return;
+  }
   unit_list_iterate(pplayer->units, punit) 
     punit->focus_status = FOCUS_AVAIL;
   unit_list_iterate_end;

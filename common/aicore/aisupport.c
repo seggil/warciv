@@ -23,6 +23,7 @@
 #include "spaceship.h"
 #include "support.h"
 #include "tech.h"
+#include "traderoute.h"
 
 #include "aisupport.h"
 

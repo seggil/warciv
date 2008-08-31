@@ -13,7 +13,6 @@
 #ifndef FC__PLAYER_H
 #define FC__PLAYER_H
 
-#include "city.h"
 #include "connection.h"
 #include "fc_types.h"
 #include "improvement.h"	/* Impr_Status */
@@ -29,7 +28,6 @@
 
 #define ANON_PLAYER_NAME "noname"
 #define ANON_USER_NAME  "Unassigned"
-#define OBSERVER_NAME	"Observer"
 
 /*
  * pplayer->ai.barbarian_type uses this enum. Note that the values
@@ -197,7 +195,6 @@ struct player {
   bool turn_done;
   int nturns_idle;
   bool is_alive;
-  bool is_observer; /* is the player a global observer */ 
   bool is_dying; /* set once the player is in the process of dying */
   bool got_tech; /* set once the player is fully dead */
 
@@ -223,7 +220,6 @@ struct player {
   bool is_civil_war_split;             /* if player was created by a civil war */
   struct connection *current_conn;     /* non-null while handling packet */
   struct conn_list *connections;       /* will replace conn */
-  struct worklist worklists[MAX_NUM_WORKLISTS];
   struct player_tile *private_map;
   unsigned int gives_shared_vision; /* bitvector those that give you shared vision */
   unsigned int really_gives_vision; /* takes into account that p3 may see what p1 has via p2 */

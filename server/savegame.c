@@ -35,6 +35,7 @@
 #include "government.h"
 #include "idex.h"
 #include "map.h"
+#include "traderoute.h"
 #include "unit.h"
 #include "version.h"
 
@@ -56,6 +57,7 @@
 #include "spacerace.h"
 #include "srv_main.h"
 #include "stdinhand.h"
+#include "tradehand.h"
 #include "unittools.h"
 
 /* 
@@ -1512,6 +1514,35 @@ static void load_player_units(struct player *plr, int plrno,
        etc may use junk values).
     */
 
+    /* Trade route */
+    struct city *pcity1, *pcity2;
+    if ((pcity1 = find_city_by_id(secfile_lookup_int_default(file, -1,
+				  "player%d.u%d.trade_route_c1", plrno, i)))
+        && (pcity2 = find_city_by_id(secfile_lookup_int_default(file, -1,
+				     "player%d.u%d.trade_route_c2", plrno, i)))) {
+      struct trade_route *ptr = game_trade_route_find(pcity1, pcity2);
+
+      if (ptr) {
+        ptr->punit = punit;
+        punit->ptr = ptr;
+      } else {
+        freelog(LOG_ERROR, "Bad trade route for the unit id %d", punit->id);
+      }
+    }
+
+    /* Air patrol */
+    if (can_unit_do_air_patrol(punit)) {
+      int x, y;
+
+      x = secfile_lookup_int_default(file, -1, "player%d.u%d.air_patrol_x",
+				     plrno, i);
+      y = secfile_lookup_int_default(file, -1, "player%d.u%d.air_patrol_y",
+				     plrno, i);
+      if (is_normal_map_pos(x, y)) {
+	punit->air_patrol_tile = map_pos_to_tile(x, y);
+      }
+    }
+
     /* load the unit orders */
     if (has_capability("orders", savefile_options)) {
       int len = secfile_lookup_int_default(file, 0,
@@ -1600,6 +1631,8 @@ static void load_player_units(struct player *plr, int plrno,
 /****************************************************************************
   Load all information about player "plrno" into the structure pointed to
   by "plr".
+
+  Old global observers will be loaded as dead player.
 ****************************************************************************/
 static void player_load(struct player *plr, int plrno,
 			struct section_file *file,
@@ -1737,8 +1770,6 @@ static void player_load(struct player *plr, int plrno,
   plr->nturns_idle=0;
   plr->is_male=secfile_lookup_bool_default(file, TRUE, "player%d.is_male", plrno);
   plr->is_alive=secfile_lookup_bool(file, "player%d.is_alive", plrno);
-  plr->is_observer=secfile_lookup_bool_default(file, FALSE, 
-                                               "player%d.is_observer", plrno);
   plr->ai.control = secfile_lookup_bool(file, "player%d.ai.control", plrno);
   for (i = 0; i < MAX_NUM_PLAYERS; i++) {
     plr->ai.love[i]
@@ -1985,18 +2016,90 @@ static void player_load(struct player *plr, int plrno,
 			     game.ruleset_game.specialist_name[sp]);
     } specialist_type_iterate_end;
 
-    for (j = 0; j < NUM_TRADEROUTES; j++)
-      pcity->trade[j]=secfile_lookup_int(file, "player%d.c%d.traderoute%d",
-					 plrno, i, j);
-    
-    pcity->food_stock=secfile_lookup_int(file, "player%d.c%d.food_stock", 
-						 plrno, i);
-    pcity->shield_stock=secfile_lookup_int(file, "player%d.c%d.shield_stock", 
-						   plrno, i);
-    pcity->tile_trade=pcity->trade_prod=0;
-    pcity->anarchy=secfile_lookup_int(file, "player%d.c%d.anarchy", plrno,i);
-    pcity->rapture=secfile_lookup_int_default(file, 0, "player%d.c%d.rapture", plrno,i);
-    pcity->was_happy=secfile_lookup_bool(file, "player%d.c%d.was_happy", plrno,i);
+    /* Trade routes */
+    k = secfile_lookup_int_default(file, -1,
+                                   "player%d.c%d.wc_trade_route_num", plrno, i);
+    if (k >= 0) {
+      /* Was saved with warserver datas */
+      for (j = 0; j < k; j++) {
+        struct city *pother_city;
+        struct trade_route *ptr;
+        int cid;
+  
+        cid = secfile_lookup_int(file, "player%d.c%dw.wc_trade_route%d_city",
+                                 plrno, i, j);
+        if ((pother_city = find_city_by_id(cid))) {
+          /* Mean that the other city is loaded.
+           * If it's not the case, do nothing. */
+          ptr = game_trade_route_add(pcity, pother_city);
+          ptr->status =
+            secfile_lookup_int(file, "player%d.c%dw.wc_trade_route%d_status",
+                               plrno, i, j);
+        }
+      }
+    } else {
+      /* Standard freeciv */
+      for (j = 0; j < OLD_NUM_TRADEROUTES; j++) {
+        struct city *pother_city;
+        int cid;
+
+        cid = secfile_lookup_int(file, "player%d.c%d.traderoute%d",
+                                 plrno, i, j);
+        if ((pother_city = find_city_by_id(cid))) {
+          /* Mean that the other city is loaded.
+           * If it's not the case, do nothing. */
+          server_establish_trade_route(pcity, pother_city);
+        }
+      }
+    }
+
+    /* Rally point */
+    x = secfile_lookup_int_default(file, -1,
+                                   "player%d.c%d.rally_point_x", plrno, i);
+    y = secfile_lookup_int_default(file, -1,
+                                   "player%d.c%d.rally_point_y", plrno, i);
+
+    if (is_normal_map_pos(x, y)) {
+      pcity->rally_point = map_pos_to_tile(x, y);
+    } else {
+      pcity->rally_point = NULL;
+    }
+
+    /* City Manager parameter */
+    if (secfile_lookup_bool_default(file, FALSE,
+                                    "player%d.c%d.managed",
+                                    plrno, i)) {
+      pcity->server.managed = TRUE;
+      for (j = 0; j < CM_NUM_STATS; j++) {
+        pcity->server.parameter.minimal_surplus[j] =
+          secfile_lookup_int(file, "player%d.c%dw.minimal_surplus%d",
+                             plrno, i, j);
+        pcity->server.parameter.factor[j] =
+          secfile_lookup_int(file, "player%d.c%dw.factor%d",
+                             plrno, i, j);
+      }
+      pcity->server.parameter.require_happy =
+        secfile_lookup_bool(file, "player%d.c%dw.require_happy", plrno, i);
+      pcity->server.parameter.allow_disorder =
+        secfile_lookup_bool(file, "player%d.c%dw.allow_disorder", plrno, i);
+      pcity->server.parameter.allow_specialists =
+        secfile_lookup_bool(file, "player%d.c%dw.allow_specialists", plrno, i);
+      pcity->server.parameter.happy_factor =
+        secfile_lookup_int(file, "player%d.c%dw.happy_factor", plrno, i);
+    } else {
+      pcity->server.managed = FALSE;
+    }
+
+    pcity->food_stock = secfile_lookup_int(file, "player%d.c%d.food_stock", 
+					   plrno, i);
+    pcity->shield_stock = secfile_lookup_int(file, "player%d.c%d.shield_stock", 
+					     plrno, i);
+    pcity->tile_trade = pcity->trade_prod = 0;
+    pcity->anarchy = secfile_lookup_int(file, "player%d.c%d.anarchy", plrno, i);
+    pcity->rapture = secfile_lookup_int_default(file, 0, "player%d.c%d.rapture",
+						plrno, i);
+    pcity->was_happy = secfile_lookup_bool(file, "player%d.c%d.was_happy",
+					   plrno, i);
     pcity->is_building_unit=
       secfile_lookup_bool(file, 
 			 "player%d.c%d.is_building_unit", plrno, i);
@@ -2489,7 +2592,6 @@ static void player_save(struct player *plr, int plrno,
 
   secfile_insert_bool(file, plr->is_male, "player%d.is_male", plrno);
   secfile_insert_bool(file, plr->is_alive, "player%d.is_alive", plrno);
-  secfile_insert_bool(file, plr->is_observer, "player%d.is_observer", plrno);
   secfile_insert_bool(file, plr->ai.control, "player%d.ai.control", plrno);
   for (i = 0; i < MAX_NUM_PLAYERS; i++) {
     secfile_insert_int(file, plr->ai.love[i],
@@ -2680,6 +2782,29 @@ static void player_save(struct player *plr, int plrno,
     secfile_insert_bool(file, punit->paradropped, "player%d.u%d.paradropped", plrno, i);
     secfile_insert_int(file, punit->transported_by,
 		       "player%d.u%d.transported_by", plrno, i);
+
+    /* Trade route */
+    if (punit->ptr) {
+      secfile_insert_int(file, punit->ptr->pcity1->id,
+                         "player%d.u%d.trade_route_c1", plrno, i);
+      secfile_insert_int(file, punit->ptr->pcity2->id,
+                         "player%d.u%d.trade_route_c2", plrno, i);
+    } else {
+      secfile_insert_int(file, -1, "player%d.u%d.trade_route_c1", plrno, i);
+      secfile_insert_int(file, -1, "player%d.u%d.trade_route_c2", plrno, i);
+    }
+
+    /* Air patrol */
+    if (punit->air_patrol_tile) {
+      secfile_insert_int(file, punit->air_patrol_tile->x,
+                         "player%d.u%d.air_patrol_x", plrno, i);
+      secfile_insert_int(file, punit->air_patrol_tile->y,
+                         "player%d.u%d.air_patrol_y", plrno, i);
+    } else {
+      secfile_insert_int(file, -1, "player%d.u%d.air_patrol_x", plrno, i);
+      secfile_insert_int(file, -1, "player%d.u%d.air_patrol_y", plrno, i);
+    }
+
     if (punit->has_orders) {
       int len = punit->orders.length, j;
       char orders_buf[len + 1], dir_buf[len + 1], act_buf[len + 1];
@@ -2755,10 +2880,63 @@ static void player_save(struct player *plr, int plrno,
 			 game.ruleset_game.specialist_name[sp]);
     } specialist_type_iterate_end;
 
-    for (j = 0; j < NUM_TRADEROUTES; j++)
-      secfile_insert_int(file, pcity->trade[j], "player%d.c%d.traderoute%d", 
-			 plrno, i, j);
-    
+    /* Trade routes */
+    j = 0;
+    if (game.traderoute_info.maxtraderoutes <= OLD_NUM_TRADEROUTES) {
+      /* Then save like the standard freeciv. 
+       * If there are more trade routes, we cannot save or it will
+       * crash the next standard server which will load this game. */
+      established_trade_routes_iterate(pcity, ptr) {
+        secfile_insert_int(file, ptr->pcity1 == pcity ? ptr->pcity2->id
+                                                        : ptr->pcity1->id,
+                           "player%d.c%d.traderoute%d", plrno, i, j);
+        j++;
+      } established_trade_routes_iterate_end;
+    }
+    /* Fill, for compatibility */
+    while (j < OLD_NUM_TRADEROUTES) {
+      secfile_insert_int(file, 0, "player%d.c%d.traderoute%d", plrno, i, j);
+      j++;
+    }
+
+    /* Save warserver datas for trade routes.
+     * Note: don't save the unit here,
+     *       because the units are loaded after the cities. */
+    j = 0;
+    trade_route_list_iterate(pcity->trade_routes, ptr) {
+      secfile_insert_int(file, ptr->pcity1 == pcity ? ptr->pcity2->id
+                                                      : ptr->pcity1->id,
+                         "player%d.c%dw.wc_trade_route%d_city", plrno, i, j);
+      secfile_insert_int(file, ptr->status,
+                         "player%d.c%dw.wc_trade_route%d_status", plrno, i, j);
+      j++;
+    } trade_route_list_iterate_end;
+    secfile_insert_int(file, j, "player%d.c%d.wc_trade_route_num", plrno, i);
+
+    /* Rally point */
+    secfile_insert_int(file, pcity->rally_point ? pcity->rally_point->x : -1,
+		       "player%d.c%d.rally_point_x", plrno, i);
+    secfile_insert_int(file, pcity->rally_point ? pcity->rally_point->y : -1,
+		       "player%d.c%d.rally_point_y", plrno, i);
+
+    /* City Manager parameter */
+    secfile_insert_bool(file, pcity->server.managed, "player%d.c%d.managed",
+			plrno, i);
+    for (j = 0; j < CM_NUM_STATS; j++) {
+      secfile_insert_int(file, pcity->server.parameter.minimal_surplus[j],
+			 "player%d.c%dw.minimal_surplus%d", plrno, i, j);
+      secfile_insert_int(file, pcity->server.parameter.factor[j],
+			 "player%d.c%dw.factor%d", plrno, i, j);
+    }
+    secfile_insert_bool(file, pcity->server.parameter.require_happy,
+			"player%d.c%dw.require_happy", plrno, i);
+    secfile_insert_bool(file, pcity->server.parameter.allow_disorder,
+			"player%d.c%dw.allow_disorder", plrno, i);
+    secfile_insert_bool(file, pcity->server.parameter.allow_specialists,
+			"player%d.c%dw.allow_specialists", plrno, i);
+    secfile_insert_int(file, pcity->server.parameter.happy_factor,
+		       "player%d.c%dw.happy_factor", plrno, i);
+
     secfile_insert_int(file, pcity->food_stock, "player%d.c%d.food_stock", 
 		       plrno, i);
     secfile_insert_int(file, pcity->shield_stock, "player%d.c%d.shield_stock", 
@@ -3444,6 +3622,8 @@ void game_load(struct section_file *file)
           GAME_DEFAULT_TRADEREVENUESTYLE, "game.traderevenuestyle");
       game.traderoute_info.caravanbonusstyle = secfile_lookup_int_default(file,
           GAME_DEFAULT_CARAVANBONUSSTYLE, "game.caravanbonusstyle");
+      game.traderoute_info.maxtraderoutes = secfile_lookup_int_default(file,
+          GAME_DEFAULT_MAXTRADEROUTES, "game.maxtraderoutes");
       game.ext_info.futuretechsscore = secfile_lookup_bool_default(file,
           GAME_DEFAULT_FUTURETECHSSCORE, "game.futuretechsscore");
       game.ext_info.improvedautoattack = secfile_lookup_bool_default(file,
@@ -3476,7 +3656,8 @@ void game_load(struct section_file *file)
       game.server.bruteforcethreshold = secfile_lookup_int_default(file,
           GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
       game.server.iterplacementcoefficient = secfile_lookup_int_default(file,
-          GAME_DEFAULT_TRADEMINDIST, "game.iterplacementcoefficient");
+          GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT,
+	  "game.iterplacementcoefficient");
       game.server.teamplacementtype = secfile_lookup_int_default(file,
           GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
       game.ext_info.techleakagerate = secfile_lookup_int_default(file,
@@ -3896,6 +4077,8 @@ void game_save(struct section_file *file)
 		     "game.traderevenuestyle");
   secfile_insert_int(file, game.traderoute_info.caravanbonusstyle,
 		     "game.caravanbonusstyle");
+  secfile_insert_int(file, game.traderoute_info.maxtraderoutes,
+		     "game.maxtraderoutes");
   secfile_insert_bool(file, game.ext_info.futuretechsscore,
 		      "game.futuretechsscore");
   secfile_insert_bool(file, game.ext_info.improvedautoattack,

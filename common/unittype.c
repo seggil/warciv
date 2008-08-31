@@ -20,13 +20,15 @@
 
 #include "astring.h"
 #include "fcintl.h"
-#include "game.h"
-#include "government.h"
 #include "log.h"
 #include "mem.h"
-#include "player.h"
 #include "shared.h"
 #include "support.h"
+
+#include "city.h"
+#include "game.h"
+#include "government.h"
+#include "player.h"
 #include "tech.h"
 
 #include "unittype.h"

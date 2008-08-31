@@ -129,19 +129,24 @@ static void update_players_menu(void)
       gtk_widget_set_sensitive(players_sship_command, FALSE);
     }
 
-    switch (pplayer_get_diplstate(get_player_ptr(), get_player(plrno))->type) {
-    case DS_WAR:
-    case DS_NO_CONTACT:
+    if (get_player_ptr()) {
+      switch (pplayer_get_diplstate(get_player_ptr(), get_player(plrno))->type) {
+      case DS_WAR:
+      case DS_NO_CONTACT:
+	gtk_widget_set_sensitive(players_war_command, FALSE);
+	break;
+      default:
+	gtk_widget_set_sensitive(players_war_command,
+				 can_client_issue_orders()
+				 && get_player_idx() != plrno);
+      }
+    } else {
       gtk_widget_set_sensitive(players_war_command, FALSE);
-      break;
-    default:
-      gtk_widget_set_sensitive(players_war_command,
-			       can_client_issue_orders()
-			       && get_player_idx() != plrno);
     }
 
     gtk_widget_set_sensitive(players_vision_command,
 			     can_client_issue_orders()
+			     && get_player_ptr()
 			     && gives_shared_vision(get_player_ptr(), plr));
 
     gtk_widget_set_sensitive(players_meet_command, can_meet_with_player(plr));
@@ -502,7 +507,7 @@ static void build_row(GtkTreeIter *it, int i)
 
   for (k = 0; k < num_player_dlg_columns; k++) {
     struct player_dlg_column* pcol = &player_dlg_columns[k];
-    switch(pcol->type) {
+    switch (pcol->type) {
       case COL_TEXT:
       case COL_RIGHT_TEXT:
         p = (gchar*)(pcol->func(plr));
@@ -524,30 +529,30 @@ static void build_row(GtkTreeIter *it, int i)
   }
 
   /* The playerid */
-  gtk_list_store_set(store, it,
-    ncolumns - 1, (gint)i,
-    -1);
+  gtk_list_store_set(store, it, ncolumns - 1, (gint)i, -1);
 
   /* now add some eye candy ... */
   weight = PANGO_WEIGHT_NORMAL;
   style = PANGO_STYLE_NORMAL;
 
-  if (plr != me) {
-    switch (pplayer_get_diplstate(me, plr)->type) {
-    case DS_WAR:
-      style = PANGO_STYLE_ITALIC;
-      break;
-    case DS_ALLIANCE:
-    case DS_TEAM:
+  if (me) {
+    if (plr != me) {
+      switch (pplayer_get_diplstate(me, plr)->type) {
+      case DS_WAR:
+	style = PANGO_STYLE_ITALIC;
+	break;
+      case DS_ALLIANCE:
+      case DS_TEAM:
+	weight = PANGO_WEIGHT_BOLD;
+	break;
+      default:
+	break;
+      }
+    } else {
+      /* Make our own row look the same as the
+       * rows of our teammates/allies. */
       weight = PANGO_WEIGHT_BOLD;
-      break;
-    default:
-      break;
     }
-  } else {
-    /* Make our own row look the same as the
-     * rows of our teammates/allies. */
-    weight = PANGO_WEIGHT_BOLD;
   }
 
   gtk_list_store_set(store, it, num_player_dlg_columns, style,

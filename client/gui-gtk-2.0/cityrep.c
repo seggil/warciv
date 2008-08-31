@@ -708,15 +708,12 @@ static void append_cma_to_menu_item(GtkMenuItem *parent_item, bool change_cma)
 }
 
 /****************************************************************
- Create the cma entries in the change menu and the select menu. The
- indices CMA_NONE (aka -1) and CMA_CUSTOM (aka -2) are
- special. CMA_NONE signifies a preset of "none" and CMA_CUSTOM a
- "custom" preset.
+  ...
 *****************************************************************/
 static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
 					 GCallback callback)
 {
-  struct player *plr = get_player_ptr();
+  struct worklist *pwl;
   GtkWidget *menu, *item;
   int i;
   bool sensitive = FALSE;
@@ -724,12 +721,12 @@ static void append_worklist_to_menu_item(GtkMenuItem *parent_item,
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(parent_item, menu);
   
-  for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-    if (plr->worklists[i].is_valid) {
-      item = gtk_menu_item_new_with_label(plr->worklists[i].name);
+  for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
+    pwl = &global_worklists[i];
+    if (pwl->is_valid && !worklist_is_empty(pwl)) {
+      item = gtk_menu_item_new_with_label(pwl->name);
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-      g_signal_connect(item, "activate",
-		       G_CALLBACK(callback), GINT_TO_POINTER(i));
+      g_signal_connect(item, "activate", G_CALLBACK(callback), pwl);
       sensitive = TRUE;
     }
   }
@@ -1193,17 +1190,11 @@ static void worklist_change_worklist_iterate(GtkTreeModel *model,
 			                     GtkTreeIter *it,
                                              gpointer data)
 {
-  int i = GPOINTER_TO_INT(data);
-  struct worklist wl, *pwl;
+  struct worklist wl, *pwl = (struct worklist *) data;
   struct city *pcity;
   gpointer res;
 
-  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
-    return;
-  }
-
-  pwl = &get_player_ptr()->worklists[i];
-  if (!pwl->is_valid) {
+  if (!pwl->is_valid || worklist_is_empty(pwl)) {
     return;
   }
 
@@ -1267,17 +1258,11 @@ static void worklist_last_worklist_iterate(GtkTreeModel *model,
                                            GtkTreeIter *it,
                                            gpointer data)
 {
-  int i = GPOINTER_TO_INT(data);
-  struct worklist *pwl, wl;
+  struct worklist wl, *pwl = (struct worklist *) data;
   struct city *pcity;
   gpointer res;
 
-  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
-    return;
-  }
-
-  pwl = &get_player_ptr()->worklists[i];
-  if (!pwl->is_valid) {
+  if (!pwl->is_valid || worklist_is_empty(pwl)) {
     return;
   }
 
@@ -1306,19 +1291,13 @@ static void worklist_first_worklist_iterate(GtkTreeModel *model,
 			                    GtkTreeIter *it,
                                             gpointer data)
 {
-  int i = GPOINTER_TO_INT(data);
-  struct worklist *pwl, wl, temp;
+  struct worklist temp, wl, *pwl = (struct worklist *) data;
   struct city *pcity;
   gpointer res;
   int old_id;
   bool old_is_unit;
 
-  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
-    return;
-  }
-
-  pwl = &get_player_ptr()->worklists[i];
-  if (!pwl->is_valid) {
+  if (!pwl->is_valid || worklist_is_empty(pwl)) {
     return;
   }
 
@@ -1359,20 +1338,13 @@ static void worklist_next_worklist_iterate(GtkTreeModel *model,
 			                   GtkTreeIter *it,
                                            gpointer data)
 {
-  int i = GPOINTER_TO_INT(data);
-  struct worklist *pwl, wl;
+  struct worklist wl, *pwl = (struct worklist *) data;
   struct city *pcity;
   gpointer res;
 
-  if (i < 0 || i >= MAX_NUM_WORKLISTS) {
+  if (!pwl->is_valid || worklist_is_empty(pwl)) {
     return;
   }
-
-  pwl = &get_player_ptr()->worklists[i];
-  if (!pwl->is_valid) {
-    return;
-  }
-
 
   gtk_tree_model_get(model, it, 0, &res, -1);
   pcity = res;

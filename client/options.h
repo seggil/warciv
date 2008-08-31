@@ -14,7 +14,105 @@
 #define FC__OPTIONS_H
 
 #include "events.h"
+#include "registry.h"
 #include "shared.h"		/* bool type */
+#include "traderoute.h"		/* ASYNC_TRADE_PLANNING */
+#include "worklist.h"		/* MAX_NUM_WORKLISTS */
+
+#include "multiselect.h"	/* filter type */
+
+enum client_option_category {
+  COC_GRAPHICS,
+  COC_INTERFACE,
+  COC_SOUND,
+  COC_CHAT,
+  COC_MESSAGE,
+  COC_NETWORK,
+  COC_GAMEPLAY,
+  COC_MULTI_SELECTION,
+  COC_DELAYED_GOTO,
+  COC_TRADE,
+
+  COC_NUM
+};
+
+enum client_option_type {
+  COT_BOOLEAN,
+  COT_INTEGER,
+  COT_STRING,
+  COT_PASSWORD,
+  COT_NUMBER_LIST,
+  COT_FILTER
+};
+
+struct client_option {
+  const char const *name;
+  const char const *description;
+  const char const *help_text;
+  const enum client_option_category category;
+  const enum client_option_type type;
+
+  union {
+    struct {
+      bool *const pvalue;
+      const bool def;
+    } boolean;
+    struct {
+      int *const pvalue;
+      const int def, min, max;
+    } integer;
+    struct {
+      char *const pvalue;
+      const size_t size;
+      const char *def;
+      /* 
+       * A function to return a static NULL-terminated list of possible
+       * string values, or NULL for none. 
+       */
+      const char **(*const val_accessor)(void);
+    } string;
+    struct {
+      int *const pvalue;
+      const int def;
+      /* 
+       * A function to return static string values, or NULL for none. 
+       */
+      const char *(*const str_accessor)(int);
+    } list;
+    struct {
+      filter *const pvalue;
+      const filter def;
+      /* 
+       * A function which toggle a bit of the filter. It must return TRUE
+       * if other bits are also changed.
+       */
+      bool (*const change)(filter *, filter);
+      /* 
+       * A function to return static string values, or NULL for none. 
+       */
+      const char *(*const str_accessor)(filter);
+      filter temp;
+    } filter;
+  } o;
+  void (*const change_callback)(struct client_option *option);
+
+  /* volatile */
+  void *gui_data;
+};
+extern struct client_option *const options;
+extern const int num_options;
+
+#define client_options_iterate(o)                                           \
+{                                                                           \
+  int _i;                                                                   \
+  for (_i = 0; _i < num_options; _i++) {                                    \
+    struct client_option *o = options + _i;                                 \
+    {
+
+#define client_options_iterate_end                                          \
+    }                                                                       \
+  }                                                                         \
+}
 
 extern char default_user_name[512];
 extern char default_password[512];
@@ -26,6 +124,8 @@ extern char default_metaserver[512];
 extern char default_tileset_name[512];
 extern char default_sound_set_name[512];
 extern char default_sound_plugin_name[512];
+
+extern struct worklist global_worklists[MAX_NUM_WORKLISTS];
 
 /** Local Options: **/
 extern bool random_leader;
@@ -55,7 +155,6 @@ extern char chat_time_format[128];
 extern char city_name_formats[128];
 extern bool show_split_message_window;
 extern bool do_not_recenter_overview;
-extern bool reload_pepsettings;
 extern bool use_digits_short_cuts;
 extern bool use_voteinfo_bar;
 extern bool show_new_vote_in_front;
@@ -66,62 +165,18 @@ extern bool warn_before_add_to_city;
 extern bool prevent_duplicate_notify_tabs;
 extern bool enable_chat_logging;
 extern char chat_log_directory[MAX_LEN_PATH];
-
-enum client_option_type {
-  COT_BOOL,
-  COT_INT,
-  COT_STR
-};
-
-typedef struct client_option {
-  const char *name;
-  const char *description;
-  enum client_option_type type;
-  int *p_int_value;
-  bool *p_bool_value;
-  char *p_string_value;
-  size_t string_length;
-  void (*change_callback) (struct client_option * option);
-
-  /* 
-   * A function to return a static NULL-terminated list of possible
-   * string values, or NULL for none. 
-   */
-  const char **(*p_string_vals)(void);
-
-  /* volatile */
-  void *p_gui_data;
-} client_option;
-extern client_option *options;
-
-#define GEN_INT_OPTION(oname, desc) { #oname, desc, COT_INT, \
-                                      &oname, NULL, NULL, 0, NULL, \
-                                       NULL, NULL }
-#define GEN_BOOL_OPTION(oname, desc) { #oname, desc, COT_BOOL, \
-                                       NULL, &oname, NULL, 0, NULL, \
-                                       NULL, NULL }
-#define GEN_STR_OPTION(oname, desc, str_defaults, callback) \
-                                    { #oname, desc, COT_STR, \
-                                      NULL, NULL, oname, sizeof(oname), \
-                                      callback, str_defaults, NULL }
-
-extern int num_options;
-
-#define client_options_iterate(o)                                           \
-{                                                                           \
-  int _i;                                                                   \
-  for (_i = 0; _i < num_options; _i++) {                                    \
-    client_option *o = options + _i;                                        \
-    {
-
-#define client_options_iterate_end                                          \
-    }                                                                       \
-  }                                                                         \
-}
-
-/* GUI-specific options declared in gui-xxx but handled by common code. */
-extern const int num_gui_options;
-extern client_option gui_options[];
+#ifndef ASYNC_TRADE_PLANNING
+extern int trade_time_limit;
+#endif	/* ASYNC_TRADE_PLANNING */
+extern bool trade_mode_best_values;
+extern bool trade_mode_allow_free_other;
+extern bool trade_mode_internal_first;
+extern bool trade_mode_homecity_first;
+extern bool fullscreen_mode;
+extern bool enable_tabs;
+extern bool solid_unit_icon_bg;
+extern bool better_fog;
+extern bool save_options_on_exit;
 
 /** View Options: **/
 
@@ -163,13 +218,30 @@ extern unsigned int messages_where[];	/* OR-ed MW_ values [E_LAST] */
 extern int sorted_events[];	        /* [E_LAST], sorted by the
 					   translated message text */
 const char *get_message_text(enum event_type event);
-
+unsigned int get_default_messages_where(enum event_type type);
 void init_messages_where(void);
 
+void client_options_init(void);
+const char *option_file_name(void);
 void load_general_options(void);
-void load_ruleset_specific_options(void);
+void check_ruleset_specific_options(void);
 void save_options(void);
 const char *get_sound_tag_for_event(enum event_type event);
 bool is_city_event(enum event_type event);
+const char *get_option_category_name(enum client_option_category category);
 
+void save_global_worklist(struct section_file *file, const char *path, 
+			  int wlinx, struct worklist *pwl);
+void load_global_worklist(struct section_file *file, const char *path,
+			  int wlinx, struct worklist *pwl);
+bool check_global_worklist(struct worklist *pwl);
+
+filter secfile_lookup_filter_default(struct section_file *sf, filter def,
+				     struct client_option *o,
+				     const char *path, ...)
+				     fc__attribute((__format__
+						    (__printf__, 4, 5)));
+int revert_str_accessor(const char *(*str_accessor)(int), const char *str);
+filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
+				  const char *str);
 #endif  /* FC__OPTIONS_H */

@@ -59,10 +59,6 @@ gchar *ntoh_str(const gchar *netstr);
 extern PangoFontDescription *        main_font;
 extern PangoFontDescription *        city_productions_font;
 
-extern bool fullscreen_mode;
-extern bool enable_tabs;
-extern bool solid_unit_icon_bg;
-extern bool better_fog;
 extern bool allied_chat_only;
 
 void init_chat_buttons(void);

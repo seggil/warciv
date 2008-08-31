@@ -13,8 +13,11 @@
 #ifndef FC__MESSAGEDLG_H
 #define FC__MESSAGEDLG_H
 
-#include "messagedlg_g.h"
+void apply_message_options(GtkWidget *widget);
+void refresh_message_options(GtkWidget *widget);
+void reset_message_options(GtkWidget *widget);
+void reload_message_options(GtkWidget *widget, struct section_file *sf);
 
-/* nothing to add */
+GtkWidget *create_messages_configuration(void);
 
 #endif				/* FC__MESSAGEDLG_H */

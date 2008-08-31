@@ -50,12 +50,13 @@ used throughout the client.
 #include "mapctrl_common.h"
 #include "mapview_g.h"
 #include "messagewin_common.h"
-#include "myai.h"
+#include "multiselect.h"
 #include "packhand.h"
 #include "pages_g.h"
 #include "plrdlg_common.h"
 #include "repodlgs_common.h"
 #include "tilespec.h"
+#include "trade.h"
 
 #include "climisc.h"
 
@@ -193,7 +194,7 @@ void client_remove_unit(struct unit *punit)
           punit->id, get_nation_name(unit_owner(punit)->nation),
           unit_name(punit->type), TILE_XY(punit->tile), hc);
 
-  my_ai_orders_free(punit);
+  trade_free_unit(punit);
 
   if (punit == ufocus) {
     multi_select_wipe_up_unit(punit);
@@ -203,7 +204,7 @@ void client_remove_unit(struct unit *punit)
       advance_unit_focus();
       if (!get_unit_in_focus()) {
         /* It was the last unit */
-        automatic_processus_event(AUTO_NO_UNIT_SELECTED, NULL);
+	delayed_goto_event(AUTO_NO_UNIT_SELECTED, NULL);
       }
     } else {
       game_remove_unit(punit);
@@ -255,9 +256,9 @@ void client_remove_city(struct city *pcity)
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
           get_nation_name(city_owner(pcity)->nation), TILE_XY(ptile));
 
-  my_ai_city_free(pcity);
+  trade_remove_city(pcity);
 
-  /* Explicitly remove all improvements, to properly remove any global effects
+    /* Explicitly remove all improvements, to properly remove any global effects
      and to handle the preservation of "destroyed" effects. */
   effect_update = FALSE;
 
@@ -480,15 +481,15 @@ void center_on_something(void)
   can_slide = FALSE;
   if ((punit = get_unit_in_focus())) {
     center_tile_mapcanvas(punit->tile);
-  } else if ((pcity = find_palace(get_player_ptr()))) {
+  } else if (get_player_ptr() && (pcity = find_palace(get_player_ptr()))) {
     /* Else focus on the capital. */
     center_tile_mapcanvas(pcity->tile);
-  } else if (city_list_size(get_player_ptr()->cities) > 0) {
+  } else if (get_player_ptr() && city_list_size(get_player_ptr()->cities) > 0) {
     /* Just focus on any city. */
     pcity = city_list_get(get_player_ptr()->cities, 0);
     assert(pcity != NULL);
     center_tile_mapcanvas(pcity->tile);
-  } else if (unit_list_size(get_player_ptr()->units) > 0) {
+  } else if (get_player_ptr() && unit_list_size(get_player_ptr()->units) > 0) {
     /* Just focus on any unit. */
     punit = unit_list_get(get_player_ptr()->units, 0);
     assert(punit != NULL);
@@ -507,8 +508,7 @@ void center_on_something(void)
         ctile = ptile;
         break;
       }
-    }
-    iterate_outward_end;
+    } iterate_outward_end;
 
     center_tile_mapcanvas(ctile);
   }
@@ -857,9 +857,30 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
   int cids_used = 0;
 
   impr_type_iterate(id) {
-    bool can_build = can_player_build_improvement(get_player_ptr(), id);
-    bool can_eventually_build =
-        can_player_eventually_build_improvement(get_player_ptr(), id);
+    bool can_build;
+    bool can_eventually_build;
+
+    if (get_player_ptr()) {
+      can_build = can_player_build_improvement(get_player_ptr(), id);
+      can_eventually_build =
+	  can_player_eventually_build_improvement(get_player_ptr(), id);
+    } else {
+      can_build = FALSE;
+      players_iterate(pplayer) {
+	if (can_player_build_improvement(pplayer, id)) {
+	  can_build = TRUE;
+	  break;
+	}
+      } players_iterate_end;
+
+      can_eventually_build = FALSE;
+      players_iterate(pplayer) {
+	if (can_player_eventually_build_improvement(pplayer, id)) {
+	  can_eventually_build = TRUE;
+	  break;
+	}
+      } players_iterate_end;
+    }
 
     /* If there's a city, can the city build the improvement? */
     if (pcity) {
@@ -876,9 +897,30 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
   } impr_type_iterate_end;
 
   unit_type_iterate(id) {
-    bool can_build = can_player_build_unit(get_player_ptr(), id);
-    bool can_eventually_build =
-        can_player_eventually_build_unit(get_player_ptr(), id);
+    bool can_build;
+    bool can_eventually_build;
+
+    if (get_player_ptr()) {
+      can_build = can_player_build_unit(get_player_ptr(), id);
+      can_eventually_build =
+	  can_player_eventually_build_unit(get_player_ptr(), id);
+    } else {
+      can_build = FALSE;
+      players_iterate(pplayer) {
+	if (can_player_build_unit(pplayer, id)) {
+	  can_build = TRUE;
+	  break;
+	}
+      } players_iterate_end;
+
+      can_eventually_build = FALSE;
+      players_iterate(pplayer) {
+	if (can_player_eventually_build_unit(pplayer, id)) {
+	  can_eventually_build = TRUE;
+	  break;
+	}
+      } players_iterate_end;
+    }
 
     /* If there's a city, can the city build the unit? */
     if (pcity) {
@@ -912,52 +954,6 @@ int collect_cids5(cid * dest_cids, struct city *pcity)
   } built_impr_iterate_end;
 
   return cids_used;
-}
-
-/**************************************************************************
- Collect the wids of all possible targets of the given city.
-**************************************************************************/
-int collect_wids1(wid * dest_wids, struct city *pcity, bool wl_first,
-                  bool advanced_tech)
-{
-  cid cids[U_LAST + B_LAST];
-  int item, cids_used, wids_used = 0;
-  struct item items[U_LAST + B_LAST];
-
-  /* Fill in the global worklists now?                      */
-  /* perhaps judicious use of goto would be good here? -mck */
-  if (wl_first && get_player_ptr()->worklists[0].is_valid && pcity) {
-    int i;
-    for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-      if (get_player_ptr()->worklists[i].is_valid) {
-        dest_wids[wids_used] = wid_encode(FALSE, TRUE, i);
-        wids_used++;
-      }
-    }
-  }
-
-  /* Fill in improvements and units */
-  cids_used = collect_cids4(cids, pcity, advanced_tech);
-  name_and_sort_items(cids, cids_used, items, FALSE, pcity);
-
-  for (item = 0; item < cids_used; item++) {
-    cid cid = items[item].cid;
-    dest_wids[wids_used] = wid_encode(cid_is_unit(cid), FALSE, cid_id(cid));
-    wids_used++;
-  }
-
-  /* we didn't fill in the global worklists above */
-  if (!wl_first && get_player_ptr()->worklists[0].is_valid && pcity) {
-    int i;
-    for (i = 0; i < MAX_NUM_WORKLISTS; i++) {
-      if (get_player_ptr()->worklists[i].is_valid) {
-        dest_wids[wids_used] = wid_encode(FALSE, TRUE, i);
-        wids_used++;
-      }
-    }
-  }
-
-  return wids_used;
 }
 
 /**************************************************************************
@@ -1017,8 +1013,8 @@ void handle_event(char *message, struct tile *ptile,
   if (BOOL_VAL(where & MW_MESSAGES)) {
     add_notify_window(message, ptile, event);
   }
-  if (BOOL_VAL(where & MW_POPUP) &&
-      (!get_player_ptr()->ai.control || ai_popup_windows)) {
+  if (BOOL_VAL(where & MW_POPUP) && get_player_ptr()
+      && (!get_player_ptr()->ai.control || ai_popup_windows)) {
     popup_notify_goto_dialog(_("Popup Request"), message, ptile);
   }
 
@@ -1122,7 +1118,7 @@ void reports_force_thaw(void)
 enum known_type map_get_known(const struct tile *ptile,
                               struct player *pplayer)
 {
-  assert(pplayer == get_player_ptr());
+  assert(!get_player_ptr() || pplayer == get_player_ptr());
   return tile_get_known(ptile);
 }
 
@@ -2161,4 +2157,138 @@ void toggle_traderoute_drawing_in_selected_cities(void)
   } city_list_iterate_end;
 
   update_map_canvas_visible(MUT_NORMAL);
+}
+
+/********************************************************************** 
+  Rally point interface...
+  Is the server has the extglobalinfo capability, send infos to it.
+  Else, do all locally.
+  If ptile = NULL, remove it.
+***********************************************************************/
+void set_rally_point_for_selected_cities(struct tile *ptile)
+{
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
+  if (!tiles_hilited_cities) {
+    append_output_window(_("Warclient: You must select cities "
+			   "to set a rally points."));
+    return;
+  }
+
+  char buf[1024] = "\0", message[1024];
+  bool first = TRUE;
+
+  city_list_iterate(get_player_ptr()->cities, pcity) {
+    if (!is_city_hilited(pcity) || pcity->rally_point == ptile) {
+      continue;
+    }
+
+    if (ptile) {
+      cat_snprintf(buf, sizeof(buf), "%s%s", first ? "" : ", ", pcity->name);
+    } else {
+      cat_snprintf(buf, sizeof(buf), "%s%s (%d, %d)",
+                   first ? "" : ", ", pcity->name,
+                   TILE_XY(pcity->rally_point));
+    }
+    first = FALSE;
+
+    if (server_has_extglobalinfo) {
+      if (ptile) {
+	dsend_packet_city_set_rally_point(&aconnection, pcity->id,
+					  TILE_XY(ptile));
+      } else {
+	dsend_packet_city_clear_rally_point(&aconnection, pcity->id);
+      }
+    } else {
+      pcity->rally_point = ptile;
+    }
+  } city_list_iterate_end;
+
+  if (!first) {
+    if (ptile) {
+      my_snprintf(message, sizeof(message),
+		  _("Warclient: Set rally point (%d, %d) for: %s."),
+		  TILE_XY(ptile), buf);
+      append_output_window(message);
+    } else {
+      my_snprintf(message, sizeof(message),
+		  _("Warclient: Remove rally points for: %s."), buf);
+      append_output_window(message);
+    }
+  }
+}
+
+/********************************************************************** 
+  Execute all air patrol orders.
+***********************************************************************/
+void execute_air_patrol_orders(void)
+{
+  if (server_has_extglobalinfo || !can_client_issue_orders()) {
+    /* Should be done by the server */
+    return;
+  }
+
+  connection_do_buffer(&aconnection);
+  unit_list_iterate(get_player_ptr()->units, punit) {
+    if (punit->air_patrol_tile) {
+      send_goto_unit(punit, punit->air_patrol_tile);
+    }
+  } unit_list_iterate_end;
+  connection_do_unbuffer(&aconnection);
+}
+
+/********************************************************************** 
+  ...
+***********************************************************************/
+void do_unit_air_patrol(struct unit *punit, struct tile *ptile)
+{
+  char buf[1024];
+
+  if (!can_unit_do_air_patrol(punit)) {
+    append_output_window(_("Warclient: This unit cannot do air patrol."));
+    return;
+  }
+
+  /* Check what to do */
+  if (ptile == punit->air_patrol_tile) {
+    if (ptile == NULL) {
+      /* Was not patrolling */
+      return;
+    }
+    /* Stop patrol when the tile is the same */
+    ptile = NULL;
+  }
+
+  /* Print message */
+  if (ptile) {
+    if (punit->air_patrol_tile) {
+      my_snprintf(buf, sizeof(buf),
+		  _("Warclient: %s %d patrolling (%d, %d) "
+		    "instead of (%d, %d)."),
+		  unit_name(punit->type), punit->id,
+		  TILE_XY(ptile), TILE_XY(punit->air_patrol_tile));
+    } else {
+      my_snprintf(buf, sizeof(buf), _("Warclient: %s %d patrolling (%d, %d)."),
+		  unit_name(punit->type), punit->id, TILE_XY(ptile));
+    }
+  } else if (punit->air_patrol_tile) {
+    my_snprintf(buf, sizeof(buf),
+		_("Warclient: %s %d stopped patrolling (%d, %d)."),
+		unit_name(punit->type), punit->id,
+		TILE_XY(punit->air_patrol_tile));
+  }
+  append_output_window(buf);
+
+  /* Do the change */
+  if (server_has_extglobalinfo) {
+    if (ptile) {
+      dsend_packet_unit_air_patrol(&aconnection, punit->id, TILE_XY(ptile));
+    } else {
+      dsend_packet_unit_air_patrol_stop(&aconnection, punit->id);
+    }
+  } else {
+    punit->air_patrol_tile = ptile;
+  }
 }

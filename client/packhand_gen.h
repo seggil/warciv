@@ -116,5 +116,11 @@ void handle_vote_new(struct packet_vote_new *packet);
 void handle_vote_update(int vote_no, int yes, int no, int abstain, int num_voters);
 void handle_vote_remove(int vote_no);
 void handle_vote_resolve(int vote_no, bool passed);
+void handle_trade_route_remove(int city1, int city2);
+struct packet_trade_route_info;
+void handle_trade_route_info(struct packet_trade_route_info *packet);
+struct packet_city_manager_param;
+void handle_city_manager_param(struct packet_city_manager_param *packet);
+void handle_city_no_manager_param(int id);
 
 #endif /* FC__PACKHAND_GEN_H */

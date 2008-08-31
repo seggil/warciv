@@ -365,6 +365,25 @@ bool client_handle_packet(enum packet_type type, void *packet)
       ((struct packet_vote_resolve *)packet)->passed);
     return TRUE;
 
+  case PACKET_TRADE_ROUTE_REMOVE:
+    handle_trade_route_remove(
+      ((struct packet_trade_route_remove *)packet)->city1,
+      ((struct packet_trade_route_remove *)packet)->city2);
+    return TRUE;
+
+  case PACKET_TRADE_ROUTE_INFO:
+    handle_trade_route_info(packet);
+    return TRUE;
+
+  case PACKET_CITY_MANAGER_PARAM:
+    handle_city_manager_param(packet);
+    return TRUE;
+
+  case PACKET_CITY_NO_MANAGER_PARAM:
+    handle_city_no_manager_param(
+      ((struct packet_city_no_manager_param *)packet)->id);
+    return TRUE;
+
   default:
     return FALSE;
   }

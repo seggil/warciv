@@ -33,11 +33,9 @@ noinst_HEADERS = \
 	mapctrl_g.h	\
 	mapview_g.h	\
 	menu_g.h	\
-	messagedlg_g.h	\
 	messagewin_g.h	\
 	pages_g.h	\
 	plrdlg_g.h	\
 	ratesdlg_g.h	\
 	repodlgs_g.h	\
-	spaceshipdlg_g.h	\
-	wldlg_g.h
+	spaceshipdlg_g.h

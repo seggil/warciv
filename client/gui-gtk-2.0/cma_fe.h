@@ -38,9 +38,9 @@ struct cma_dialog {
   GtkWidget *active_label;
   GtkWidget *active_image;
   GtkWidget *active_command;
-  GtkAdjustment *minimal_surplus[NUM_STATS];
+  GtkAdjustment *minimal_surplus[CM_NUM_STATS];
   GtkWidget *happy_button;
-  GtkAdjustment *factor[NUM_STATS + 1];
+  GtkAdjustment *factor[CM_NUM_STATS + 1];
   GtkTooltips *tips;
   GtkTreeSelection *selection;
   GtkListStore *store;

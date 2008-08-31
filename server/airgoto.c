@@ -16,9 +16,11 @@
 #endif
 
 #include "log.h"
-#include "map.h"
 #include "mem.h"
 #include "pqueue.h"
+
+#include "city.h"
+#include "map.h"
 
 #include "gotohand.h"
 
