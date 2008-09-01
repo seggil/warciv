@@ -74,15 +74,29 @@ enum color_std get_grid_color(struct tile *tile1, enum direction8 dir)
   enum city_tile_type city_tile_type1, city_tile_type2;
   struct city *dummy_pcity;
   bool pos1_is_in_city_radius;
-  bool pos2_is_in_city_radius = FALSE;
+  bool pos2_is_in_city_radius;
   struct tile *tile2;
+  struct player *pplayer = get_player_ptr();
 
   if (!(tile2 = mapstep(tile1, dir))) {
     return COLOR_STD_BLACK;
   }
 
-  pos1_is_in_city_radius = player_in_city_radius(get_player_ptr(), tile1);
-  pos2_is_in_city_radius = player_in_city_radius(get_player_ptr(), tile2);
+  if (pplayer) {
+    pos1_is_in_city_radius = player_in_city_radius(pplayer, tile1);
+    pos2_is_in_city_radius = player_in_city_radius(pplayer, tile2);
+  } else {
+    pos1_is_in_city_radius = FALSE;
+    pos2_is_in_city_radius = FALSE;
+    players_iterate(aplayer) {
+      if (player_in_city_radius(aplayer, tile1)) {
+	pos1_is_in_city_radius = TRUE;
+      }
+      if (player_in_city_radius(aplayer, tile2)) {
+	pos2_is_in_city_radius = TRUE;
+      }
+    } players_iterate_end;
+  }
 
   if (!pos1_is_in_city_radius && !pos2_is_in_city_radius) {
     return COLOR_STD_BLACK;
@@ -2767,13 +2781,13 @@ static void draw_traderoute_line(struct trade_route *ptr,
   }
 
   if (pcity_src->client.traderoute_drawing_disabled
-      &&  get_player_ptr()
+      && get_player_ptr()
       && pcity_dest->owner != get_player_idx()) {
     return;
   }
 
   if (pcity_dest->client.traderoute_drawing_disabled
-      &&  get_player_ptr()
+      && get_player_ptr()
       && pcity_src->owner != get_player_idx()) {
     return;
   }
