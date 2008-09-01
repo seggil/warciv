@@ -52,5 +52,6 @@ void request_trade_planning_calculation_resume(void);
 void remove_trade_planning_calculation_resume_request(void);
 
 void popdown_all_game_dialogs(void);
+void popdown_all_game_dialogs_except_option_dialog(void);
 
 #endif  /* FC__DIALOGS_G_H */

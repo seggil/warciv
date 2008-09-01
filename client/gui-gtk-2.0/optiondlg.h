@@ -16,6 +16,7 @@
 #include <gtk/gtk.h>
 
 void popup_option_dialog(void);
+const GtkWidget *get_option_dialog_shell(void);
 
 void fullscreen_mode_callback(struct client_option *poption);
 void map_scrollbars_callback(struct client_option *poption);

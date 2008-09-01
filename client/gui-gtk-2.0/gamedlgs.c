@@ -1201,3 +1201,11 @@ void popup_option_dialog(void)
   }
   refresh_option_dialog();
 }
+
+/****************************************************************
+  ... 
+*****************************************************************/
+const GtkWidget *get_option_dialog_shell(void)
+{
+  return option_dialog_shell;
+}

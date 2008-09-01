@@ -26,37 +26,40 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "fcintl.h"
-#include "game.h"
-#include "government.h"
-#include "map.h"
 #include "log.h"
 #include "mem.h"
-#include "packets.h"
-#include "player.h"
 #include "rand.h"
 #include "support.h"
 
-#include "chatline.h"
-#include "citydlg.h"
+#include "game.h"
+#include "government.h"
+#include "map.h"
+#include "packets.h"
+#include "player.h"
+
 #include "civclient.h"
 #include "climisc.h"
 #include "clinet.h"
 #include "connectdlg_common.h"
 #include "control.h"
 #include "goto.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
-#include "mapview.h"
-#include "menu.h"
 #include "multiselect.h"
 #include "options.h"
 #include "packhand.h"
 #include "tilespec.h"
 #include "trade.h"
 
-#include "dialogs.h"
+#include "chatline.h"
+#include "citydlg.h"
+#include "graphics.h"
+#include "gui_main.h"
+#include "gui_stuff.h"
+#include "mapview.h"
+#include "menu.h"
+#include "optiondlg.h"
 #include "wldlg.h"
+
+#include "dialogs.h"
 
 /******************************************************************/
 GtkWidget *message_dialog_start(GtkWindow *parent, const gchar *name,
@@ -2255,6 +2258,25 @@ static void nuke_children(gpointer data, gpointer user_data)
 }
 
 /********************************************************************** 
+  This function is called when the tileset is reloaded.
+***********************************************************************/
+void popdown_all_game_dialogs_except_option_dialog(void)
+{
+  GList *res;
+
+  gui_dialog_destroy_all();
+
+  res = gtk_window_list_toplevels();
+  res = g_list_remove(res, (gconstpointer) get_option_dialog_shell());
+
+  g_list_foreach(res, (GFunc)g_object_ref, NULL);
+  g_list_foreach(res, nuke_children, toplevel);
+  g_list_foreach(res, (GFunc)g_object_unref, NULL);
+
+  g_list_free(res);
+}
+
+/********************************************************************** 
   This function is called when the client disconnects or the game is
   over.  It should close all dialog windows for that game.
 ***********************************************************************/
@@ -2263,7 +2285,6 @@ void popdown_all_game_dialogs(void)
   GList *res;
 
   gui_dialog_destroy_all();
-
 
   res = gtk_window_list_toplevels();
 

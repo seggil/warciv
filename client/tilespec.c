@@ -502,7 +502,7 @@ void tilespec_reread(const char *tileset_name)
        we don't want/need to redraw. */
     return;
   }
-  popdown_all_game_dialogs();
+  popdown_all_game_dialogs_except_option_dialog();
   generate_citydlg_dimensions();
   tileset_changed();
   can_slide = FALSE;
