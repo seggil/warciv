@@ -1085,7 +1085,7 @@ static void create_option_dialog(void)
 		     G_CALLBACK(option_callback), o);
     gtk_box_pack_start(GTK_BOX(hbox), ebox, FALSE, FALSE, 5);
     gtk_container_add(GTK_CONTAINER(ebox), gtk_label_new(_(o->description)));
-    gtk_tooltips_set_tip(tips, ebox, _(o->help_text), NULL);
+    gtk_tooltips_set_tip(tips, hbox, _(o->help_text), NULL);
     o->gui_data = NULL;
     switch (o->type) {
     case COT_BOOLEAN:
