@@ -316,8 +316,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 	continue;
       }
 
-      if (pconn->player ? pplayers_allied(pconn->player, dest->player)
-			: !dest->player && dest->observer) {
+      if ((pconn->player
+	   && dest->player
+	   && pplayers_allied(pconn->player, dest->player))
+	  || (!pconn->player
+	      && !dest->player
+	      && dest->observer)) {
         dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
       }
     } conn_list_iterate_end;
