@@ -1039,8 +1039,16 @@ static void option_dialog_callback(GtkWidget *window, gint rid)
 static void create_option_dialog(void)
 {
   GtkWidget *notebook, *sw, *vbox[COC_NUM], *hbox, *ebox;
+  static GtkStyle *style = NULL;
   GtkTooltips *tips;
   int i;
+  bool even[COC_NUM];
+
+  if (!style) {
+    style = gtk_style_new();
+    g_object_ref(style);
+    style->bg[GTK_STATE_NORMAL] = style->bg[GTK_STATE_INSENSITIVE];
+  }
 
   tips = gtk_tooltips_new();
   option_dialog_shell =
@@ -1074,18 +1082,28 @@ static void create_option_dialog(void)
     vbox[i] = gtk_vbox_new(FALSE, 2);
     gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox[i]);
+    even[i] = FALSE;
   }
 
   /* Add client options */
   client_options_iterate(o) {
-    hbox = gtk_hbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox[o->category]), hbox, FALSE, FALSE, 0);
     ebox = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(vbox[o->category]), ebox, FALSE, FALSE, 0);
     g_signal_connect(ebox, "button_press_event",
 		     G_CALLBACK(option_callback), o);
-    gtk_box_pack_start(GTK_BOX(hbox), ebox, FALSE, FALSE, 5);
-    gtk_container_add(GTK_CONTAINER(ebox), gtk_label_new(_(o->description)));
-    gtk_tooltips_set_tip(tips, hbox, _(o->help_text), NULL);
+    if (even[o->category]) {
+      gtk_widget_set_style(ebox, style);
+    }
+    even[o->category] ^= 1;
+
+    hbox = gtk_hbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(ebox), hbox);
+
+    gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_(o->description)),
+		       FALSE, FALSE, 5);
+
+    gtk_tooltips_set_tip(tips, ebox, _(o->help_text), NULL);
+
     o->gui_data = NULL;
     switch (o->type) {
     case COT_BOOLEAN:
