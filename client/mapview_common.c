@@ -65,6 +65,12 @@ static void dirty_overview(void);
 
 static void draw_traderoutes_for_city(struct city *src_pcity);
 
+struct line {
+  int x, y;
+  int width, height;
+};
+#define TR_LINE_NUM	2
+
 /**************************************************************************
 Returns the color the grid should have between tile (x1,y1) and
 (x2,y2).
@@ -2758,12 +2764,42 @@ void init_mapcanvas_and_overview(void)
 /**************************************************************************
   ...
 **************************************************************************/
+static int trade_route_to_canvas_pos(struct trade_route *ptr,
+				     struct line lines[TR_LINE_NUM])
+{
+  
+  int dx, dy;
+
+  if (!ptr) {
+    return 0;
+  }
+
+  base_map_distance_vector(&dx, &dy, TILE_XY(ptr->pcity1->tile),
+			   TILE_XY(ptr->pcity2->tile));
+  map_to_gui_pos(&lines[0].width, &lines[0].height, dx, dy);
+
+  tile_to_canvas_pos(&lines[0].x, &lines[0].y, ptr->pcity1->tile);
+  tile_to_canvas_pos(&lines[1].x, &lines[1].y, ptr->pcity2->tile);
+
+  if (lines[1].x - lines[0].x == lines[0].width
+      && lines[1].y - lines[0].y == lines[0].height) {
+    return 1;
+  }
+  lines[1].width = -lines[0].width;
+  lines[1].height = -lines[0].height;
+  return 2;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 static void draw_traderoute_line(struct trade_route *ptr,
                                  enum color_std color)
 {
-  int canvas_x, canvas_y, canvas_x2, canvas_y2;
   struct city *pcity_src = ptr->pcity1, *pcity_dest = ptr->pcity2, *tmp;
   struct tile *ptile1, *ptile2;
+  struct line lines[TR_LINE_NUM];
+  int i, draw;
 
   if (pcity_src == NULL || pcity_dest == NULL) {
     return;
@@ -2799,21 +2835,13 @@ static void draw_traderoute_line(struct trade_route *ptr,
     return;
   }
 
-  if (!tile_visible_mapcanvas(ptile1) && !tile_visible_mapcanvas(ptile2)) {
-    return;
+  draw = trade_route_to_canvas_pos(ptr, lines);
+  for (i = 0; i < draw; i++) {
+    canvas_put_line(mapview_canvas.store, color, LINE_BORDER,
+		    lines[i].x + NORMAL_TILE_WIDTH / 2,
+		    lines[i].y + NORMAL_TILE_HEIGHT / 2,
+		    lines[i].width, lines[i].height);
   }
-
-  tile_to_canvas_pos(&canvas_x, &canvas_y, ptile1);
-  canvas_x += NORMAL_TILE_WIDTH / 2;
-  canvas_y += NORMAL_TILE_HEIGHT / 2;
-
-  tile_to_canvas_pos(&canvas_x2, &canvas_y2, ptile2);
-  canvas_x2 += NORMAL_TILE_WIDTH / 2;
-  canvas_y2 += NORMAL_TILE_HEIGHT / 2;
-
-  canvas_put_line(mapview_canvas.store, color, LINE_BORDER,
-                  canvas_x, canvas_y, canvas_x2 - canvas_x,
-                  canvas_y2 - canvas_y);
 }
 
 /**************************************************************************
@@ -2876,18 +2904,13 @@ void update_trade_route_line(struct trade_route *ptr)
     return;
   }
 
-  int canvas_x1, canvas_x2, canvas_y1, canvas_y2;
-  int draw = 0;
+  struct line lines[TR_LINE_NUM];
+  int i, draw = trade_route_to_canvas_pos(ptr, lines);
 
-  draw += tile_to_canvas_pos(&canvas_x1, &canvas_y1, ptr->pcity1->tile);
-  draw += tile_to_canvas_pos(&canvas_x2, &canvas_y2, ptr->pcity2->tile);
-
-  if (draw != 0) {
-    update_map_canvas(MIN(canvas_x1, canvas_x2),
-		      MIN(canvas_y1, canvas_y2),
-		      ABS(canvas_x2 - canvas_x1) + NORMAL_TILE_WIDTH,
-		      ABS(canvas_y2 - canvas_y1) + NORMAL_TILE_HEIGHT,
-		      MUT_NORMAL);
+  for (i = 0; i < draw; i++) {
+    update_map_canvas(lines[i].x, lines[i].y,
+		      lines[i].width + NORMAL_TILE_WIDTH,
+		      lines[i].height + NORMAL_TILE_HEIGHT, MUT_NORMAL);
   }
   update_city_description(ptr->pcity1);
   update_city_description(ptr->pcity2);
