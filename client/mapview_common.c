@@ -2767,7 +2767,6 @@ void init_mapcanvas_and_overview(void)
 static int trade_route_to_canvas_pos(struct trade_route *ptr,
 				     struct line lines[TR_LINE_NUM])
 {
-  
   int dx, dy;
 
   if (!ptr) {

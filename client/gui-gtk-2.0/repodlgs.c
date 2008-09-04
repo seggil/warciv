@@ -1498,15 +1498,20 @@ static void settable_options_callback(GtkWidget *win, gint rid, GtkWidget *w)
 *************************************************************************/
 static void create_settable_options_dialog(void)
 {
-  GtkWidget *win, *book, **vbox, *label, *prev_widget = NULL;
+  GtkWidget *win, *book, **vbox, *prev_widget = NULL;
+  static GtkStyle *style = NULL;
   GtkTooltips *tips;
-  bool *used;
+  int num[num_options_categories];
   int i;
 
-  used = fc_malloc(num_options_categories * sizeof(bool));
+  if (!style) {
+    style = gtk_style_new();
+    g_object_ref(style);
+    style->bg[GTK_STATE_NORMAL] = style->bg[GTK_STATE_INSENSITIVE];
+  }
 
   for(i = 0; i < num_options_categories; i++){
-    used[i] = FALSE;
+    num[i] = 0;
   }
 
   tips = gtk_tooltips_new();
@@ -1532,8 +1537,8 @@ static void create_settable_options_dialog(void)
   for (i = 0; i < num_options_categories; i++) {
     vbox[i] = gtk_vbox_new(FALSE, 2);
     gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
-    label = gtk_label_new(_(options_categories[i]));
-    gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox[i], label);
+    gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox[i],
+			     gtk_label_new(_(options_categories[i])));
   }
 
   /* fill each category */
@@ -1541,18 +1546,21 @@ static void create_settable_options_dialog(void)
     GtkWidget *ebox, *hbox, *ent;
 
     /* create a box for the new option and insert it in the correct page */
-    hbox = gtk_hbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox[settable_options[i].category]), 
-                       hbox, FALSE, FALSE, 0);
-    used[settable_options[i].category] = TRUE;
-
-    /* create an event box for the option label */
     ebox = gtk_event_box_new();
-    gtk_box_pack_start(GTK_BOX(hbox), ebox, FALSE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(vbox[settable_options[i].category]), 
+                       ebox, FALSE, FALSE, 0);
+    if (num[settable_options[i].category]++ & 1) {
+      /* color it */
+      gtk_widget_set_style(ebox, style);
+    }
+
+    hbox = gtk_hbox_new(FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(ebox), hbox);
 
     /* insert the option short help as the label into the event box */
-    label = gtk_label_new(_(settable_options[i].short_help));
-    gtk_container_add(GTK_CONTAINER(ebox), label);
+    gtk_box_pack_start(GTK_BOX(hbox),
+		       gtk_label_new(_(settable_options[i].short_help)),
+		       FALSE, FALSE, 5);
 
     /* if we have extra help, use that as a tooltip */
     if (settable_options[i].extra_help[0] != '\0') {
@@ -1611,11 +1619,10 @@ static void create_settable_options_dialog(void)
 
   /* remove any unused categories pages */
   for (i = num_options_categories - 1; i >= 0; i--) {
-    if (!used[i]) {
+    if (num[i] == 0) {
       gtk_notebook_remove_page(GTK_NOTEBOOK(book), i);
     }
   }
-  free(used);
 
   g_signal_connect(win, "response",
 		   G_CALLBACK(settable_options_callback), prev_widget);
