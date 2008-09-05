@@ -1767,9 +1767,9 @@ void handle_player_info(struct packet_player_info *pinfo)
   }
 
   update_players_dialog();
-  upgrade_canvas_clipboard();
 
   if (pplayer == get_player_ptr() && can_client_change_view()) {
+    upgrade_canvas_clipboard();
     update_info_label();
   }
 
