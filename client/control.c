@@ -256,7 +256,8 @@ void update_unit_focus(void)
 	  && !unit_has_orders(punit_focus)
 	  && punit_focus->activity != ACTIVITY_GOTO)
       || punit_focus->done_moving
-      || punit_focus->moves_left == 0 
+      || punit_focus->moves_left == 0
+      || punit_focus->air_patrol_tile
       || punit_focus->ai.control) {
     if (punit_focus && moveandattack_state == 1) {
       /* Ignore focus change for move and attack mode */
@@ -368,9 +369,10 @@ static struct unit *find_best_focus_candidate(bool accept_current)
     if ((punit != punit_focus || accept_current)
       && punit->focus_status == FOCUS_AVAIL
       && punit->activity == ACTIVITY_IDLE
-	&& !unit_has_orders(punit)
+      && !unit_has_orders(punit)
       && punit->moves_left > 0
       && !punit->done_moving
+      && !punit->air_patrol_tile
       && !punit->ai.control) {
         int d = sq_map_distance(punit->tile, ptile);
         if (d < best_dist) {
