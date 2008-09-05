@@ -1091,6 +1091,7 @@ void remove_city(struct city *pcity)
 {
   struct player *pplayer = city_owner(pcity);
   struct tile *ptile = pcity->tile;
+  struct packet_city_remove packet = {.city_id = ptile->city->id};
   bool had_palace = pcity->improvements[game.palace_building] != I_NONE;
   char *city_name = mystrdup(pcity->name);
 
@@ -1175,6 +1176,12 @@ void remove_city(struct city *pcity)
       reality_check_city(other_player, ptile);
     }
   } players_iterate_end;
+  /* Send city remove to global observers */
+  conn_list_iterate(game.est_connections, pconn) {
+    if (!pconn->player && pconn->observer) {
+      send_packet_city_remove(pconn, &packet);
+    }
+  } conn_list_iterate_end;
   map_fog_pseudo_city_area(pplayer, ptile);
   reset_move_costs(ptile);
 
@@ -1243,8 +1250,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
    * We later remove a citizen. Lets check if we can save this since
    * the city will be destroyed.
    */
-    if (pcity->size <= 1)
-    {
+  if (pcity->size <= 1) {
     notify_player_ex(pplayer, pcity->tile, E_UNIT_WIN_ATT,
 		     _("Game: You destroy %s completely."), pcity->name);
     notify_player_ex(cplayer, pcity->tile, E_CITY_LOST, 
@@ -1252,8 +1258,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
 		     pcity->name, pplayer->name);
     gamelog(GAMELOG_LOSECITY, city_owner(pcity), pplayer, pcity, "destroyed");
     remove_city(pcity);
-        if (do_civil_war)
-        {
+    if (do_civil_war) {
       civil_war(cplayer);
     }
     return;
@@ -1264,8 +1269,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
   pplayer->economic.gold += coins;
   cplayer->economic.gold -= coins;
   send_player_info(cplayer, cplayer);
-    if (pcity->original != pplayer->player_no)
-    {
+  if (pcity->original != pplayer->player_no) {
     notify_player_ex(pplayer, pcity->tile, E_UNIT_WIN_ATT, 
 		     _("Game: You conquer %s, your lootings accumulate"
 		       " to %d gold!"), 
@@ -1275,9 +1279,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
 		       " from the city."),
 		     pplayer->name, pcity->name, coins);
     gamelog(GAMELOG_LOSECITY, city_owner(pcity), pplayer, pcity, "conquered");
-    }
-    else
-    {
+  } else {
     notify_player_ex(pplayer, pcity->tile, E_UNIT_WIN_ATT, 
 		     _("Game: You have liberated %s!"
 		       " Lootings accumulate to %d gold."),
@@ -1299,8 +1301,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
   transfer_city(pplayer, pcity , 0, TRUE, TRUE, TRUE);
   city_reduce_size(pcity, 1);
   send_player_info(pplayer, pplayer); /* Update techs */
-    if (do_civil_war)
-    {
+  if (do_civil_war) {
     civil_war(cplayer);
   }
 }
@@ -1771,15 +1772,14 @@ bool update_dumb_city(struct player *pplayer, struct city *pcity)
 /**************************************************************************
 Removes outdated (nonexistant) cities from a player
 **************************************************************************/
-void reality_check_city(struct player *pplayer,struct tile *ptile)
+void reality_check_city(struct player *pplayer, struct tile *ptile)
 {
   struct city *pcity;
   struct dumb_city *pdcity = map_get_player_tile(ptile, pplayer)->city;
-    if (pdcity)
-    {
+
+  if (pdcity) {
     pcity = ptile->city;
-        if (!pcity || (pcity && pcity->id != pdcity->id))
-        {
+    if (!pcity || (pcity && pcity->id != pdcity->id)) {
       dlsend_packet_city_remove(pplayer->connections, pdcity->id);
       free(pdcity);
       map_get_player_tile(ptile, pplayer)->city = NULL;
@@ -1796,8 +1796,7 @@ void reality_check_city(struct player *pplayer,struct tile *ptile)
 void do_sell_building(struct player *pplayer, struct city *pcity,
 		      Impr_Type_id id)
 {
-    if (!is_wonder(id))
-    {
+  if (!is_wonder(id)) {
     pplayer->economic.gold += impr_sell_gold(id);
     building_lost(pcity, id);
   }

@@ -1513,6 +1513,7 @@ static void server_remove_unit(struct unit *punit)
   struct city *phomecity = find_city_by_id(punit->homecity);
   struct tile *unit_tile = punit->tile;
   struct player *unitowner = unit_owner(punit);
+  struct packet_unit_remove packet = {.unit_id = punit->id};
 
   if (punit->ptr) {
     trade_free_unit(punit);
@@ -1533,11 +1534,18 @@ static void server_remove_unit(struct unit *punit)
     ai_unit_new_role(punit, AIUNIT_NONE, NULL);
   }
 
+  /** Notify players and player observers. */
   players_iterate(pplayer) {
     if (map_is_known_and_seen(unit_tile, pplayer)) {
-      dlsend_packet_unit_remove(pplayer->connections, punit->id);
+      lsend_packet_unit_remove(pplayer->connections, &packet);
     }
   } players_iterate_end;
+  /** Notify global observers. */
+  conn_list_iterate(game.est_connections, pconn) {
+    if (!pconn->player && pconn->observer) {
+      send_packet_unit_remove(pconn, &packet);
+    }
+  } conn_list_iterate_end;
 
   remove_unit_sight_points(punit);
 

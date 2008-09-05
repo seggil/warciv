@@ -224,7 +224,8 @@ void client_remove_unit(struct unit *punit)
 
   pcity = map_get_city(ptile);
   if (pcity) {
-    if (can_player_see_units_in_city(get_player_ptr(), pcity)) {
+    if (!get_player_ptr()
+	|| can_player_see_units_in_city(get_player_ptr(), pcity)) {
       pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
     }
 
