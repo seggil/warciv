@@ -111,7 +111,7 @@ static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
 static void popit(GdkEventButton *event, struct tile *ptile)
 {
   GtkWidget *p;
-  static struct tile *cross_list[2 + 1];
+  static struct tile *cross_list[4 + 1];
   struct tile **cross_head = cross_list;
   int i;
   static struct tmousepos mousepos;
@@ -119,7 +119,7 @@ static void popit(GdkEventButton *event, struct tile *ptile)
   bool is_orders;
 
   if (tile_get_known(ptile) >= TILE_KNOWN_FOGGED) {
-    p=gtk_window_new(GTK_WINDOW_POPUP);
+    p = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_set_app_paintable(p, TRUE);
     gtk_container_set_border_width(GTK_CONTAINER(p), 4);
     gtk_container_add(GTK_CONTAINER(p), gtk_label_new(popup_info_text(ptile)));
@@ -128,8 +128,18 @@ static void popit(GdkEventButton *event, struct tile *ptile)
 
     is_orders = show_unit_orders(punit);
 
-    if (punit && punit->goto_tile) {
-      *cross_head = punit->goto_tile;
+    if (punit) {
+      if (punit->goto_tile) {
+	*cross_head = punit->goto_tile;
+	cross_head++;
+      }
+      if (punit->air_patrol_tile) {
+	*cross_head = punit->air_patrol_tile;
+	cross_head++;
+      }
+    }
+    if (ptile->city && ptile->city->rally_point) {
+      *cross_head = ptile->city->rally_point;
       cross_head++;
     }
     *cross_head = ptile;
