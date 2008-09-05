@@ -564,7 +564,7 @@ int my_writesocket(int sock, const void *buf, size_t size)
 #ifdef WIN32_NATIVE
   return send(sock, buf, size, 0);
 #else
-  return write(sock, buf, size);
+  return send(sock, buf, size, MSG_NOSIGNAL);
 #endif
 }
 

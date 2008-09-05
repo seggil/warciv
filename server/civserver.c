@@ -59,13 +59,22 @@ static void signal_handler(int sig)
 {
   /* Exit on SIGQUIT. */
   if (sig == SIGQUIT) {
-    fc_fprintf(stderr, _("\nServer quitting on SIGQUIT\n"));
+    fprintf(stderr, "\nServer quitting on SIGQUIT.\n");
 
     /* Because the signal may have interrupted arbitrary code,
      * we use _exit here instead of exit so that we don't
      * accidentally call any "unsafe" functions here (see the
      * manual page for the signal function). */
     _exit(EXIT_SUCCESS);
+  }
+
+  if (sig == SIGPIPE) {
+    if (signal(SIGPIPE, signal_handler) == SIG_ERR) {
+      fprintf(stderr, "\nFailed to reset SIGPIPE handler"
+              " while handling SIGPIPE.\n");
+      _exit(EXIT_FAILURE);
+    }
+    return;
   }
 }
 #endif
@@ -244,7 +253,7 @@ int main(int argc, char *argv[])
 
   /* Ignore SIGPIPE, the error is handled by the return value
    * of the write call. */
-  if (signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
+  if (signal(SIGPIPE, signal_handler) == SIG_ERR) {
     fc_fprintf(stderr, _("Failed to ignore SIGPIPE: %s\n"),
                mystrerror(myerrno()));
     exit(EXIT_FAILURE);
