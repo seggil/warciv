@@ -2767,18 +2767,26 @@ void init_mapcanvas_and_overview(void)
 static int trade_route_to_canvas_pos(struct trade_route *ptr,
 				     struct line lines[TR_LINE_NUM])
 {
+  struct tile *ptile1, *ptile2;
   int dx, dy;
 
   if (!ptr) {
     return 0;
   }
 
-  base_map_distance_vector(&dx, &dy, TILE_XY(ptr->pcity1->tile),
-			   TILE_XY(ptr->pcity2->tile));
+  if (ptr->pcity1->id < ptr->pcity2->id) {
+    ptile1 = ptr->pcity1->tile;
+    ptile2 = ptr->pcity2->tile;
+  } else {
+    ptile1 = ptr->pcity2->tile;
+    ptile2 = ptr->pcity1->tile;
+  }
+
+  base_map_distance_vector(&dx, &dy, TILE_XY(ptile1), TILE_XY(ptile2));
   map_to_gui_pos(&lines[0].width, &lines[0].height, dx, dy);
 
-  tile_to_canvas_pos(&lines[0].x, &lines[0].y, ptr->pcity1->tile);
-  tile_to_canvas_pos(&lines[1].x, &lines[1].y, ptr->pcity2->tile);
+  tile_to_canvas_pos(&lines[0].x, &lines[0].y, ptile1);
+  tile_to_canvas_pos(&lines[1].x, &lines[1].y, ptile2);
 
   if (lines[1].x - lines[0].x == lines[0].width
       && lines[1].y - lines[0].y == lines[0].height) {
@@ -2907,9 +2915,23 @@ void update_trade_route_line(struct trade_route *ptr)
   int i, draw = trade_route_to_canvas_pos(ptr, lines);
 
   for (i = 0; i < draw; i++) {
-    update_map_canvas(lines[i].x, lines[i].y,
-		      lines[i].width + NORMAL_TILE_WIDTH,
-		      lines[i].height + NORMAL_TILE_HEIGHT, MUT_NORMAL);
+    int x, y, w, h;
+
+    if (lines[i].width >= 0) {
+      x = lines[i].x;
+      w = lines[i].width + NORMAL_TILE_WIDTH;
+    } else {
+      x = lines[i].x + lines[i].width;
+      w = -lines[i].width + NORMAL_TILE_WIDTH;
+    }
+    if (lines[i].height >= 0) {
+      y = lines[i].y;
+      h = lines[i].height + NORMAL_TILE_WIDTH;
+    } else {
+      y = lines[i].y + lines[i].height;
+      h = -lines[i].height + NORMAL_TILE_WIDTH;
+    }
+    update_map_canvas(x, y, w, h, MUT_NORMAL);
   }
   update_city_description(ptr->pcity1);
   update_city_description(ptr->pcity2);
