@@ -249,7 +249,7 @@ void clear_trade_city_list(void)
   * if the server is a warserver, then send its the changes
   * else, apply it locally.
 **************************************************************************/
-void clear_trade_planning(void)
+void clear_trade_planning(bool include_in_route)
 {
   if (!can_client_issue_orders()) {
     return;
@@ -265,7 +265,8 @@ void clear_trade_planning(void)
         struct city *pother_city = OTHER_CITY(ptr, pcity);
 
         /* Try to don't send the packet twice */
-        if (ptr->status == TR_PLANNED
+        if (((include_in_route && ptr->status & TR_PLANNED)
+	     || (!include_in_route && ptr->status == TR_PLANNED))
 	    && (pcity->owner != pother_city->owner
 		|| pcity->id < pother_city->id
 		|| !city_list_search(plist, pother_city))) {
@@ -278,10 +279,15 @@ void clear_trade_planning(void)
   } else {
     city_list_iterate(plist, pcity) {
       trade_route_list_iterate(pcity->trade_routes, ptr) {
-        if (ptr->status & TR_PLANNED) {
-          struct trade_route tr = *ptr;
-          game_trade_route_remove(ptr);
-          update_trade_route_infos(&tr);
+        if ((include_in_route && ptr->status & TR_PLANNED)
+	    || (!include_in_route && ptr->status == TR_PLANNED)) {
+	  struct trade_route tr = *ptr;
+
+	  ptr->status &= ~TR_PLANNED;
+	  if (ptr->status == TR_NONE) {
+	    game_trade_route_remove(ptr);
+	  }
+	  update_trade_route_infos(&tr);
         }
       } trade_route_list_iterate_end;
     } city_list_iterate_end;
@@ -325,7 +331,7 @@ static void trade_planning_apply(const struct trade_planning_calculation *pcalc,
   if (trade_route_list_size(trade_planning) > 0) {
     if (server_has_extglobalinfo) {
       connection_do_buffer(&aconnection);
-      clear_trade_planning();
+      clear_trade_planning(FALSE);
       trade_route_list_iterate(trade_planning, ptr) {
         dsend_packet_trade_route_plan(&aconnection, ptr->pcity1->id,
                                       ptr->pcity2->id);
@@ -333,7 +339,7 @@ static void trade_planning_apply(const struct trade_planning_calculation *pcalc,
       show_free_slot_arg = trade_planning;
       connection_do_unbuffer(&aconnection);
     } else {
-      clear_trade_planning();
+      clear_trade_planning(FALSE);
       trade_route_list_iterate(trade_planning, ptr) {
         struct trade_route *ntr
                 = game_trade_route_add(ptr->pcity1, ptr->pcity2);

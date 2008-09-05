@@ -3626,7 +3626,7 @@ static void callback_auto_caravan_clear_trade_cities(GtkAction *action,
 static void callback_auto_caravan_clear_trade_planning(GtkAction *action,
 						       gpointer user_data)
 {
-  clear_trade_planning();
+  clear_trade_planning(TRUE);
 }
 
 

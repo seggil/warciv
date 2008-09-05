@@ -25,7 +25,7 @@ void update_trade_route_infos(struct trade_route *ptr);
 void add_city_in_trade_planning(struct city *pcity, bool allow_remove);
 void trade_remove_city(struct city *pcity);
 void clear_trade_city_list(void);
-void clear_trade_planning(void);
+void clear_trade_planning(bool include_in_route);
 void do_trade_planning_calculation(void);
 struct trade_planning_calculation *get_trade_planning_calculation(void);
 

@@ -958,9 +958,7 @@ struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
           ntr->move_turns = COST_TO_TURNS(ntr);
           ptr->move_cost = calculate_trade_move_cost(ptr);
           ptr->move_turns = COST_TO_TURNS(ptr);
-          if (ntr->move_turns > ptr->move_turns
-              || (ntr->move_turns == ptr->move_turns
-                  && ntr->move_cost <= ptr->move_cost)) {
+          if (ntr->move_turns >= ptr->move_turns) {
             free(ntr);
             continue;
           }
