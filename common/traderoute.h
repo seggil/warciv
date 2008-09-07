@@ -58,7 +58,8 @@ struct trade_route {
   ((ptr)->punit ? ((ptr)->move_cost > (ptr)->punit->moves_left		\
 		   ? (unit_move_rate((ptr)->punit) + (ptr)->move_cost	\
 		      - (ptr)->punit->moves_left - 1)			\
-		     / unit_move_rate((ptr)->punit) : 0)		\
+		      / unit_move_rate((ptr)->punit)			\
+		   : ((ptr)->punit->moves_left == 0 ? 1 : 0))		\
    : ((ptr)->move_cost + 1) / SINGLE_MOVE)
 
 struct trade_route *game_trade_route_add(struct city *pcity1,
