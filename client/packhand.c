@@ -1053,6 +1053,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool moved = FALSE;
   bool ret = FALSE;
   bool need_execute_trade = FALSE;
+  bool need_free_trade = FALSE;
   struct unit *focus_unit = get_unit_in_focus();
   
   punit = player_find_unit_by_id(get_player(packet_unit->owner),
@@ -1138,8 +1139,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
       if (punit->ptr
 	  && !server_has_extglobalinfo
-	  && (!packet_unit->has_orders)){/*
-	      || packet_unit->orders.index >= packet_unit->orders.length - 1)) {*/
+	  && !packet_unit->has_orders) {
 	if ((packet_unit->homecity != punit->ptr->pcity1->id
 	     && packet_unit->tile == punit->ptr->pcity1->tile)
 	    || (packet_unit->homecity == punit->ptr->pcity1->id
@@ -1147,7 +1147,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	  need_execute_trade = TRUE;
 	} else {
 	  /* Has been stopped */
-	  trade_free_unit(punit);
+	  need_free_trade = TRUE;
 	}
       }
 
@@ -1371,6 +1371,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
   if (need_execute_trade) {
     execute_trade_orders(punit);
+  } else if (need_free_trade) {
+    trade_free_unit(punit);
   }
 
   if (punit == get_unit_in_focus()) {

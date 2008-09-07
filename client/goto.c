@@ -797,7 +797,7 @@ void request_orders_cleared(struct unit *punit)
 {
   struct packet_unit_orders p;
 
-  if (!can_client_issue_orders()) {
+  if (!can_client_issue_orders() || !unit_has_orders(punit)) {
     return;
   }
 
