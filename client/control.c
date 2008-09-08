@@ -946,13 +946,17 @@ void request_active_unit(struct unit *punit)
   if (!punit) {
     return;
   }
-  if (unit_has_orders(punit)) {
-    request_orders_cleared(punit);
+  if (!server_has_extglobalinfo && punit->ptr) {
+    trade_free_unit(punit);
+  } else {
+    if (unit_has_orders(punit)) {
+      request_orders_cleared(punit);
+    }
+    request_new_unit_activity(punit, ACTIVITY_IDLE);
   }
   if (punit->ai.control) {
     punit->ai.control = FALSE;
   }
-  request_new_unit_activity(punit, ACTIVITY_IDLE);
   punit->focus_status = FOCUS_AVAIL;
 }
 

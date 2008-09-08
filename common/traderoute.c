@@ -348,7 +348,7 @@ struct unit_order *make_unit_orders(struct trade_route *ptr, int *length)
   }
 
   /* Make a dynamic structure to return */
-  porders = fc_malloc((*length + 1) * sizeof(struct unit_order));
+  porders = fc_malloc(*length * sizeof(struct unit_order));
   for (i = 0; i < *length; i++) {
     porders[i] = orders[i];
   }

@@ -1146,8 +1146,12 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 	    || (packet_unit->homecity == punit->ptr->pcity1->id
 		&& packet_unit->tile == punit->ptr->pcity2->tile)) {
 	  need_execute_trade = TRUE;
-	} else {
-	  /* Has been stopped */
+	} else if (!punit->has_orders
+		   || punit->orders.index < punit->orders.length - 1) {
+	  /* This unit has been stopped.
+	   *
+	   * This test is made to handle Freeciv hack about last move failure.
+	   * Read note in file server/unittools.h, function execute_orders(). */
 	  need_free_trade = TRUE;
 	}
       }
@@ -1179,13 +1183,13 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
     if (punit->homecity != packet_unit->homecity) {
       /* change homecity */
       struct city *pcity;
-      if ((pcity=find_city_by_id(punit->homecity))) {
+      if ((pcity = find_city_by_id(punit->homecity))) {
 	unit_list_unlink(pcity->units_supported, punit);
 	refresh_city_dialog(pcity);
       }
       
       punit->homecity = packet_unit->homecity;
-      if ((pcity=find_city_by_id(punit->homecity))) {
+      if ((pcity = find_city_by_id(punit->homecity))) {
 	unit_list_prepend(pcity->units_supported, punit);
 	repaint_city = TRUE;
       }
