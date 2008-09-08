@@ -47,6 +47,8 @@
 #include "srv_main.h"
 #include "stdinhand.h"
 #include "stdinhand_info.h"
+#include "tradehand.h"
+#include "unittools.h"
 #include "vote.h"
 
 #include "connecthand.h"
@@ -414,10 +416,7 @@ void establish_new_connection(struct connection *pconn)
       send_diplomatic_meetings(pconn);
       send_packet_thaw_hint(pconn);
       send_packet_start_turn(pconn);
-      if (server_state == RUN_GAME_STATE
-	  && !has_capability("extglobalinfo", pconn->capability)) {
-	reset_city_manager_params(pplayer);
-      } else if (server_state == GAME_OVER_STATE) {
+      if (server_state == GAME_OVER_STATE) {
 	report_final_scores(pconn->self);
 	report_game_rankings(pconn->self);
       }
@@ -831,6 +830,16 @@ bool attach_connection_to_player(struct connection *pconn,
   if (!pconn->observer) {
     sz_strlcpy(pplayer->username, pconn->username);
     pplayer->is_connected = TRUE;
+    if (!has_capability("extglobalinfo", pconn->capability)) {
+      /*
+       * Reset all datas that an other user has set,
+       * because the new client cannot access to them.
+       */
+      reset_trade_route_planning(pplayer);
+      reset_air_patrol(pplayer);
+      reset_rally_points(pplayer);
+      reset_city_manager_params(pplayer);
+    }
   }
 
   pconn->player = pplayer;

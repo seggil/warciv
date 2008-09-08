@@ -29,27 +29,29 @@
 #define filename_completion_function rl_filename_completion_function
 #endif
 #endif
-#include "fciconv.h"
+
 #include "astring.h"
 #include "capability.h"
-#include "capstr.h"
-#include "events.h"
+#include "fciconv.h"
 #include "fcintl.h"
-#include "game.h"
 #include "hash.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
-#include "packets.h"
-#include "player.h"
 #include "rand.h"
 #include "registry.h"
 #include "shared.h" /* fc__attribute, bool type, etc. */
 #include "support.h"
 #include "timing.h"
+
+#include "capstr.h"
+#include "city.h"
+#include "events.h"
+#include "game.h"
+#include "map.h"
+#include "packets.h"
+#include "player.h"
 #include "version.h"
 
-#include "citytools.h"
 #include "commands.h"
 #include "connecthand.h"
 #include "console.h"
@@ -4385,10 +4387,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
     send_diplomatic_meetings(pconn);
     send_packet_thaw_hint(pconn);
     send_packet_start_turn(pconn);
-    if (server_state == RUN_GAME_STATE
-	&& !has_capability("extglobalinfo", pconn->capability)) {
-      reset_city_manager_params(pplayer);
-    } else if (server_state == GAME_OVER_STATE) {
+    if (server_state == GAME_OVER_STATE) {
       report_final_scores(pconn->self);
       report_game_rankings(pconn->self);
     }

@@ -3189,3 +3189,23 @@ bool unit_profits_of_watchtower(struct unit *punit)
 	  && player_knows_techs_with_flag(unit_owner(punit),
 					  TF_WATCHTOWER));
 }
+
+/****************************************************************************
+  Remove all air patrol tiles for a player. It is usually called
+  when a user take the player without the "extglobalinfo" capability.
+****************************************************************************/
+void reset_air_patrol(struct player *pplayer)
+{
+  if (!pplayer || server_state == GAME_OVER_STATE) {
+    return;
+  }
+
+  unit_list_iterate(pplayer->units, punit) {
+    if (punit->air_patrol_tile) {
+      punit->air_patrol_tile = NULL;
+      if (server_state == RUN_GAME_STATE) {
+	send_unit_info(NULL, punit);
+      }
+    }
+  } unit_list_iterate_end;
+}

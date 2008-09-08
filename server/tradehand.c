@@ -15,11 +15,12 @@
 #endif
 
 #include "capability.h"
+#include "fcintl.h"
+#include "log.h"
+
 #include "city.h"
 #include "connection.h"
-#include "fcintl.h"
 #include "game.h"
-#include "log.h"
 #include "traderoute.h"
 #include "player.h"
 #include "unit.h"
@@ -27,6 +28,7 @@
 #include "citytools.h"
 #include "cityturn.h"
 #include "plrhand.h"
+#include "srv_main.h"
 #include "unithand.h"
 #include "unittools.h"
 
@@ -343,14 +345,6 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
     }
   }
 
-  /* The research has changed, we have to update all
-   * players sharing it */
-  players_iterate(aplayer) {
-    if (!players_on_same_team(pplayer, aplayer)) {
-      continue;
-    }
-    send_player_info(aplayer, aplayer);
-  } players_iterate_end;
   conn_list_do_unbuffer(pplayer->connections);
 }
 
@@ -551,4 +545,33 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
   send_unit_info(NULL, punit);
   send_trade_route_info(NULL, ptr);
   execute_orders(punit);
+}
+
+/****************************************************************************
+  Remove all trade routes non-established. It is usually called
+  when a user take the player without the "extglobalinfo" capability.
+****************************************************************************/
+void reset_trade_route_planning(struct player *pplayer)
+{
+  if (!pplayer || server_state == GAME_OVER_STATE) {
+    return;
+  }
+
+  city_list_iterate(pplayer->cities, pcity) {
+    trade_route_list_iterate(pcity->trade_routes, ptr) {
+      if (ptr->status == TR_ESTABLISHED) {
+	continue;
+      } else if (server_state == RUN_GAME_STATE) {
+	server_remove_trade_route(ptr);
+      } else {
+	/* Do no notifications */
+	if (ptr->punit) {
+	  free_unit_orders(ptr->punit);
+	  set_unit_activity(ptr->punit, ACTIVITY_IDLE);
+	  ptr->punit->ptr = NULL;
+	}
+	game_trade_route_remove(ptr);
+      }
+    } trade_route_list_iterate_end;
+  } city_list_iterate_end;
 }

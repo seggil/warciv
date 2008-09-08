@@ -1336,24 +1336,18 @@ static void package_dumb_city(struct player* pplayer, struct tile *ptile,
   packet->y = ptile->y;
   sz_strlcpy(packet->name, pdcity->name);
   packet->size = pdcity->size;
-    if (pcity && pcity->id == pdcity->id && is_capital(pcity))
-    {
+  if (pcity && pcity->id == pdcity->id && is_capital(pcity)) {
     packet->capital = TRUE;
-    }
-    else
-    {
+  } else {
     packet->capital = FALSE;
   }
   packet->walls = pdcity->has_walls;
   packet->occupied = pdcity->occupied;
   packet->happy = pdcity->happy;
   packet->unhappy = pdcity->unhappy;
-    if (pcity && player_has_traderoute_with_city(pplayer, pcity))
-    {
+  if (pcity && player_has_traderoute_with_city(pplayer, pcity)) {
     packet->tile_trade = pcity->tile_trade;
-    }
-    else
-    {
+  } else {
     packet->tile_trade = 0;
   }
 }
@@ -1397,12 +1391,12 @@ static void broadcast_city_info(struct city *pcity)
   struct packet_city_info packet;
   struct packet_city_short_info sc_pack;
 
+  package_city(pcity, &packet, FALSE);
   /* Send to everyone who can see the city. */
   players_iterate(pplayer) {
     if (can_player_see_city_internals(pplayer, pcity)) {
       if (!nocity_send || pplayer != city_owner(pcity)) {
 	update_dumb_city(powner, pcity);
-	package_city(pcity, &packet, FALSE);
 	lsend_packet_city_info(powner->connections, &packet);
       }
     } else {
@@ -1420,7 +1414,6 @@ static void broadcast_city_info(struct city *pcity)
    */
   conn_list_iterate(game.game_connections, pconn) {
     if (!pconn->player && pconn->observer) {
-      package_city(pcity, &packet, FALSE);
       send_packet_city_info(pconn, &packet);
     }
   } conn_list_iterate_end;
@@ -1638,11 +1631,8 @@ void package_city(struct city *pcity, struct packet_city_info *packet,
   i = 0;
   if (game.traderoute_info.maxtraderoutes <= OLD_NUM_TRADEROUTES) {
     established_trade_routes_iterate(pcity, ptr) {
-      if (i >= OLD_NUM_TRADEROUTES) {
-        break;
-      }
-      packet->trade[i] = ptr->pcity1 == pcity ? ptr->pcity2->id
-                                                : ptr->pcity1->id;
+      assert(i < OLD_NUM_TRADEROUTES);
+      packet->trade[i] = OTHER_CITY(ptr, pcity)->id;
       packet->trade_value[i] = ptr->value;
       i++;
     } established_trade_routes_iterate_end;
@@ -2263,7 +2253,9 @@ void clear_city_manager_param(struct city *pcity)
   memset(&pcity->server.parameter, 0, sizeof(pcity->server.parameter));
 
   /* Notify */
-  send_city_manager_info(NULL, pcity, FALSE);
+  if (server_state == RUN_GAME_STATE) {
+    send_city_manager_info(NULL, pcity, FALSE);
+  }
 }
 
 /**************************************************************************
@@ -2272,11 +2264,40 @@ void clear_city_manager_param(struct city *pcity)
 **************************************************************************/
 void reset_city_manager_params(struct player *pplayer)
 {
-  if (!pplayer) {
+  if (!pplayer || server_state == GAME_OVER_STATE) {
     return;
   }
 
   city_list_iterate(pplayer->cities, pcity) {
     clear_city_manager_param(pcity);
+  } city_list_iterate_end;
+}
+
+/**************************************************************************
+  Clear all city rally points for a player. It is usually called
+  when a user take the player without the "extglobalinfo" capability.
+**************************************************************************/
+void reset_rally_points(struct player *pplayer)
+{
+  if (!pplayer || server_state == GAME_OVER_STATE) {
+    return;
+  }
+
+  city_list_iterate(pplayer->cities, pcity) {
+    if (pcity->rally_point) {
+      pcity->rally_point = NULL;
+      if (server_state == RUN_GAME_STATE) {
+	/* Notify */
+	struct packet_city_info packet;
+
+	package_city(pcity, &packet, FALSE);
+	lsend_packet_city_info(pplayer->connections, &packet);
+	conn_list_iterate(game.est_connections, pconn) {
+	  if (!pconn->player && pconn->observer) {
+	    send_packet_city_info(pconn, &packet);
+	  }
+	} conn_list_iterate_end;
+      }
+    }
   } city_list_iterate_end;
 }

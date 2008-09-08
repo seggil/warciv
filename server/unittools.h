@@ -83,4 +83,6 @@ void unload_unit_from_transporter(struct unit *punit);
 bool move_unit(struct unit *punit, struct tile *ptile, int move_cost);
 bool execute_orders(struct unit *punit);
 
+void reset_air_patrol(struct player *pplayer);
+
 #endif  /* FC__UNITTOOLS_H */
