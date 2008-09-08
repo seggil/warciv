@@ -521,7 +521,8 @@ void handle_city_info(struct packet_city_info *packet)
     } established_trade_routes_iterate_end;
     /* Check new trade routes */
     for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
-      if (packet->trade[i] && packet->trade_value[i] && !found[i]) {
+      /* N.B.: packet->trade_value[i] == 0 is valid. */
+      if (packet->trade[i] && !found[i]) {
 	struct city *ocity = find_city_by_id(packet->trade[i]);
 	struct trade_route *ptr;
 
