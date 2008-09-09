@@ -1305,8 +1305,8 @@ Args are really (struct city**), to sort an array of pointers.
 **************************************************************************/
 int city_name_compare(const void *p1, const void *p2)
 {
-  return mystrcasecmp( (*(const struct city**)p1)->name,
-		       (*(const struct city**)p2)->name );
+  return mystrcasecmp((*(const struct city**)p1)->name,
+		      (*(const struct city**)p2)->name);
 }
 
 /**************************************************************************
