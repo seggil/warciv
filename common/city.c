@@ -355,27 +355,21 @@ bool can_build_improvement_direct(const struct city *pcity, Impr_Type_id id)
   const struct impr_type *building = get_improvement_type(id);
 
   if (!can_player_build_improvement_direct(city_owner(pcity), id)) {
-//     freelog(LOG_VERBOSE,"can_player_build_improvement_direct failed for %i",id);
     return FALSE;
   }
 
   if (city_got_building(pcity, id)) {
-//     freelog(LOG_VERBOSE,"city_got_building failed for %i",id);
     return FALSE;
   }
 
   if (!city_has_terr_spec_gate(pcity, id)) {
-//     freelog(LOG_VERBOSE,"city_has_terr_spec_gate failed for %i",id);
     return FALSE;
   }
 
   if (building->bldg_req != B_LAST
       && !city_got_building(pcity, building->bldg_req)) {
-//     freelog(LOG_VERBOSE,"building->bldg_req != B_LAST && !city_got_building failed for %i",id);
     return FALSE;
   }
-
-//  freelog(LOG_VERBOSE,"returning result of improvement_redundant for %i",id);
 
   return !improvement_redundant(city_owner(pcity),pcity, id, TRUE);
 }
@@ -387,11 +381,9 @@ bool can_build_improvement_direct(const struct city *pcity, Impr_Type_id id)
 bool can_build_improvement(const struct city *pcity, Impr_Type_id id)
 {  
   if (!can_build_improvement_direct(pcity, id)) {
-//     freelog(LOG_VERBOSE,"can_build_improvement_direct failed for %i",id);
     return FALSE;
   }
   if (improvement_obsolete(city_owner(pcity), id)) {
-//     freelog(LOG_VERBOSE,"improvement_obsolete failed for %i",id);
     return FALSE;
   }
   return TRUE;
@@ -986,14 +978,15 @@ bool can_establish_trade_route(const struct city *pc1, const struct city *pc2)
   Return the trade that exists between these cities, assuming they have a
   trade route.
 **************************************************************************/
-int trade_between_cities(const struct city *pc1, const struct city *pc2)
+static int base_trade_between_cities(const struct city *pc1, int trade_tile1,
+				     const struct city *pc2, int trade_tile2)
 {
   int bonus = 0;
 
   if (game.traderoute_info.traderevenuestyle == 0) {
     /* Classic 2.0.9 */
     if (pc1 && pc2) {
-      bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
+      bonus = (trade_tile1 + trade_tile2 + 4) / 8;
 
       /* Double if on different continents. */
       if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
@@ -1007,28 +1000,28 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
   }  else if (game.traderoute_info.traderevenuestyle == 1) {
     /* Experimental revenue style */
     if (pc1 && pc2) {
-      bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 4;
+      bonus = (trade_tile1 + trade_tile2 + 4) / 4;
     }
   } else if (game.traderoute_info.traderevenuestyle == 2) {
     /* civ2 trade routes according to
      * http://www.civfanatics.com/civ2/strategy/scrolls/#Trade */
     if (pc1 && pc2) {
-      bonus = (pc1->tile_trade + pc2->tile_trade + 4) / 8;
+      bonus = (trade_tile1 + trade_tile2 + 4) / 8;
       
-      if(pc1->owner == pc2->owner) {
+      if (pc1->owner == pc2->owner) {
 	bonus = bonus / 1.5;
       }
       
-      if(map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
+      if (map_get_continent(pc1->tile) != map_get_continent(pc2->tile)) {
 	bonus *= 2;
       }
-      if(city_got_building(pc1, find_improvement_by_name_orig(_("Airport")))
+      if (city_got_building(pc1, find_improvement_by_name_orig(_("Airport")))
 	 && city_got_building(pc2,
 			      find_improvement_by_name_orig(_("Airport")))) {
 	  bonus *= 1.5;
       }
       
-      if(city_got_building(pc1,
+      if (city_got_building(pc1,
 			   find_improvement_by_name_orig(_("Super Highways")))) {
 	  bonus *= 1.5;
       }
@@ -1038,6 +1031,15 @@ int trade_between_cities(const struct city *pc1, const struct city *pc2)
   }
 
   return ((bonus * game.traderoute_info.traderevenuepct) / 100);
+}
+
+/**************************************************************************
+  Return the trade that exists between these cities, assuming they have a
+  trade route.
+**************************************************************************/
+int trade_between_cities(const struct city *pc1, const struct city *pc2)
+{
+  return base_trade_between_cities(pc1, pc1->tile_trade, pc2, pc2->tile_trade);
 }
 
 /**************************************************************************
@@ -1052,6 +1054,96 @@ int city_num_trade_routes(const struct city *pcity)
   } established_trade_routes_iterate_end;
 
   return n;
+}
+
+/**************************************************************************
+  Returns true if the tile may be available for the city.
+**************************************************************************/
+static bool tile_is_available_for_city(const struct city *pcity, int cx, int cy)
+{
+  struct tile *ptile;
+
+  if (get_worker_city(pcity, cx, cy) != C_TILE_UNAVAILABLE) {
+    /* Directly available. */
+    return TRUE;
+  }
+
+  if (!(ptile = city_map_to_map(pcity, cx, cy))) {
+    /* This tile doesn't exist (e.g. non-wrapped topologies). */
+    return FALSE;
+  }
+
+  if (!ptile->worked) {
+    /* Seems not available at all (e.g. unknown tile). */
+    return FALSE;
+  }
+
+  if (ptile->worked->owner == pcity->owner) {
+    /* We still can toggle workers. */
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int best_value(const void *a, const void *b)
+{
+  return *(int *)a < *(int *)b;
+}
+
+/**************************************************************************
+  Returns the maximum trade production of the tiles of the city.
+**************************************************************************/
+static int max_tile_trade(const struct city *pcity) {
+  int i, total;
+  int tile_trade[CITY_MAP_SIZE * CITY_MAP_SIZE];
+  size_t size = 0;
+  bool is_celebrating = base_city_celebrating(pcity);
+
+  /* Tile base */
+  total = base_city_get_trade_tile(CITY_MAP_RADIUS, CITY_MAP_RADIUS,
+				   pcity, is_celebrating);
+
+  /* Other tiles */
+  city_map_iterate(cx, cy) {
+    if (cx == CITY_MAP_RADIUS && cy == CITY_MAP_RADIUS) {
+      continue;
+    } else if (tile_is_available_for_city(pcity, cx, cy)) {
+      tile_trade[size++] = base_city_get_trade_tile(cx, cy, pcity,
+						    is_celebrating);
+    }
+  } city_map_iterate_end;
+
+  qsort(tile_trade, size, sizeof(*tile_trade), best_value);
+
+  for (i = 0; i < pcity->size && i < size; i++) {
+    total += tile_trade[i];
+  }
+
+  return total;
+}
+
+/**************************************************************************
+  Returns the maximum trade production of a city.
+**************************************************************************/
+static int max_trade_prod(const struct city *pcity) {
+  int trade_prod, tile_trade;
+  struct city *ocity;
+
+  /* Trade tile base */
+  tile_trade = trade_prod = max_tile_trade(pcity);
+
+  /* Add trade routes values */
+  established_trade_routes_iterate(pcity, ptr) {
+    ocity = OTHER_CITY(ptr, pcity);
+    trade_prod += base_trade_between_cities(pcity, tile_trade,
+					    ocity, max_tile_trade(ocity));
+  } established_trade_routes_iterate_end;
+
+  return trade_prod;
 }
 
 /**************************************************************************
@@ -1072,7 +1164,8 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
     /* Classic 2.0.9 */
     /* Should this be real_map_distance? */
     tb = real_map_distance(pc1->tile, pc2->tile) + 10;
-    tb = (tb * (pc1->trade_prod + pc2->trade_prod)) / 24;
+    tb = (tb * (max_trade_prod(pc1)
+		+ max_trade_prod(pc2))) / 24;
 
     /*  fudge factor to more closely approximate Civ2 behavior (Civ2 is
      * really very different -- this just fakes it a little better) */
@@ -1080,7 +1173,7 @@ int get_caravan_enter_city_trade_bonus(const struct city *pc1,
   } else if (game.traderoute_info.caravanbonusstyle == 1) {
     /* Experimental logarithmic bonus */
     bonus = pow(log(real_map_distance(pc1->tile, pc2->tile) + 20
-		    + pc1->trade_prod + pc2->trade_prod) * 2, 2);
+		    + max_trade_prod(pc1) + max_trade_prod(pc2)) * 2, 2);
     tb = (int)bonus;
   }
 
@@ -1474,10 +1567,11 @@ struct city *is_enemy_city_tile(const struct tile *ptile,
 {
   struct city *pcity = ptile->city;
 
-  if (pcity && pplayers_at_war(pplayer, city_owner(pcity)))
+  if (pcity && pplayers_at_war(pplayer, city_owner(pcity))) {
     return pcity;
-  else
+  } else {
     return NULL;
+  }
 }
 
 /**************************************************************************
@@ -1488,10 +1582,11 @@ struct city *is_allied_city_tile(const struct tile *ptile,
 {
   struct city *pcity = ptile->city;
 
-  if (pcity && pplayers_allied(pplayer, city_owner(pcity)))
+  if (pcity && pplayers_allied(pplayer, city_owner(pcity))) {
     return pcity;
-  else
+  } else {
     return NULL;
+  }
 }
 
 /**************************************************************************
@@ -1502,10 +1597,11 @@ struct city *is_non_attack_city_tile(const struct tile *ptile,
 {
   struct city *pcity = ptile->city;
 
-  if (pcity && pplayers_non_attack(pplayer, city_owner(pcity)))
+  if (pcity && pplayers_non_attack(pplayer, city_owner(pcity))) {
     return pcity;
-  else
+  } else {
     return NULL;
+  }
 }
 
 /**************************************************************************
@@ -1516,10 +1612,11 @@ struct city *is_non_allied_city_tile(const struct tile *ptile,
 {
   struct city *pcity = ptile->city;
 
-  if (pcity && !pplayers_allied(pplayer, city_owner(pcity)))
+  if (pcity && !pplayers_allied(pplayer, city_owner(pcity))) {
     return pcity;
-  else
+  } else {
     return NULL;
+  }
 }
 
 /**************************************************************************

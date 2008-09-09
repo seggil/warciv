@@ -1526,7 +1526,7 @@ static void load_player_units(struct player *plr, int plrno,
         ptr->punit = punit;
         punit->ptr = ptr;
       } else {
-        freelog(LOG_ERROR, "Bad trade route for the unit id %d", punit->id);
+        freelog(LOG_ERROR, "Wrong trade route for the unit id %d", punit->id);
       }
     }
 
@@ -1747,7 +1747,7 @@ static void player_load(struct player *plr, int plrno,
     plr->target_government = plr->government;
   }
 
-  plr->embassy=secfile_lookup_int(file, "player%d.embassy", plrno);
+  plr->embassy = secfile_lookup_int(file, "player%d.embassy", plrno);
 
   p = secfile_lookup_str_default(file, NULL, "player%d.city_style_by_name",
                                  plrno);
@@ -1768,8 +1768,8 @@ static void player_load(struct player *plr, int plrno,
   plr->city_style = c_s;
 
   plr->nturns_idle=0;
-  plr->is_male=secfile_lookup_bool_default(file, TRUE, "player%d.is_male", plrno);
-  plr->is_alive=secfile_lookup_bool(file, "player%d.is_alive", plrno);
+  plr->is_male = secfile_lookup_bool_default(file, TRUE, "player%d.is_male", plrno);
+  plr->is_alive = secfile_lookup_bool(file, "player%d.is_alive", plrno);
   plr->ai.control = secfile_lookup_bool(file, "player%d.ai.control", plrno);
   for (i = 0; i < MAX_NUM_PLAYERS; i++) {
     plr->ai.love[i]
