@@ -1525,6 +1525,8 @@ static void load_player_units(struct player *plr, int plrno,
       if (ptr) {
         ptr->punit = punit;
         punit->ptr = ptr;
+	/* This will swap cities if needed. */
+	calculate_trade_move_cost(ptr);
       } else {
         freelog(LOG_ERROR, "Wrong trade route for the unit id %d", punit->id);
       }

@@ -3141,8 +3141,6 @@ bool execute_orders(struct unit *punit)
       assert(punit->has_orders == FALSE);
       freelog(LOG_DEBUG, "  stopping because orders are complete");
       if (punit->ptr) {
-	/* Sometimes, we need to swap cities after the game was loaded. */
-	punit->ptr->move_cost = calculate_trade_move_cost(punit->ptr);
 	if (punit->tile == punit->ptr->pcity2->tile
 	    && punit->homecity == punit->ptr->pcity1->id) {
 	  unit_establish_trade_route(punit, punit->ptr->pcity1,

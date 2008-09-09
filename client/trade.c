@@ -415,11 +415,11 @@ void show_trade_estimation(void)
   city_list_iterate(get_player_ptr()->cities, pcity) {
     trade_route_list_iterate(pcity->trade_routes, ptr) {
       if (ptr->status & TR_IN_ROUTE
-	  && ptr->pcity1->owner == get_player_idx()) {
+	  && ptr->pcity1->owner == get_player_idx()
+	  /* Don't estimate them twice */
+	  && ptr->pcity1 == pcity) {
         i = calculate_trade_move_turns(ptr);
-	if (i >= MAX_ESTIMATED_TURNS
-	    /* Don't estimate them twice */
-	    || ptr->pcity1 != pcity) {
+	if (i >= MAX_ESTIMATED_TURNS) {
           continue;
         }
         cat_snprintf(buf[i], sizeof(buf[i]), "%s%s-%s",
