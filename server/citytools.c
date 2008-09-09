@@ -2291,9 +2291,11 @@ void reset_rally_points(struct player *pplayer)
 	struct packet_city_info packet;
 
 	package_city(pcity, &packet, FALSE);
-	lsend_packet_city_info(pplayer->connections, &packet);
 	conn_list_iterate(game.est_connections, pconn) {
-	  if (!pconn->player && pconn->observer) {
+	  if ((pconn->player == pplayer
+	       /* Else, unable to read rally points. */
+	       && has_capability("extglobalinfo", pconn->capability))
+	      || (!pconn->player && pconn->observer)) {
 	    send_packet_city_info(pconn, &packet);
 	  }
 	} conn_list_iterate_end;

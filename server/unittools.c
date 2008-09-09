@@ -20,20 +20,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "city.h"
-#include "combat.h"
-#include "events.h"
+#include "capability.h"
 #include "fcintl.h"
-#include "government.h"
-#include "idex.h"
 #include "log.h"
-#include "map.h"
 #include "mem.h"
-#include "packets.h"
-#include "player.h"
 #include "rand.h"
 #include "shared.h"
 #include "support.h"
+
+#include "city.h"
+#include "combat.h"
+#include "events.h"
+#include "government.h"
+#include "idex.h"
+#include "map.h"
+#include "packets.h"
+#include "player.h"
 #include "traderoute.h"
 #include "unit.h"
 
@@ -3202,7 +3204,18 @@ void reset_air_patrol(struct player *pplayer)
     if (punit->air_patrol_tile) {
       punit->air_patrol_tile = NULL;
       if (server_state == RUN_GAME_STATE) {
-	send_unit_info(NULL, punit);
+	/* Notify */
+	struct packet_unit_info packet;
+
+	package_unit(punit, &packet);
+	conn_list_iterate(game.est_connections, pconn) {
+	  if ((pconn->player == pplayer
+	       /* Else, unable to read air patrol tiles. */
+	       && has_capability("extglobalinfo", pconn->capability))
+	      || (!pconn->player && pconn->observer)) {
+	    send_packet_unit_info(pconn, &packet);
+	  }
+	} conn_list_iterate_end;
       }
     }
   } unit_list_iterate_end;
