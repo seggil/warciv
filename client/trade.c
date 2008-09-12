@@ -60,6 +60,12 @@ static struct delayed_trade_route_list *delayed_trade_routes = NULL;
 
 void request_unit_trade_route(struct unit *punit, struct city *pcity);
 
+struct toggle_worker_list;
+
+static struct toggle_worker_list *apply_trade_workers(struct city *pcity1,
+						      struct city *pcity2);
+static void release_trade_workers(struct toggle_worker_list *plist);
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -796,7 +802,13 @@ void execute_trade_orders(struct unit *punit)
   if (punit->tile != punit->ptr->pcity2->tile) {
     unit_goto(punit, punit->ptr->pcity2->tile);
   } else {
+    struct toggle_worker_list *plist;
+
+    connection_do_buffer(&aconnection);
+    plist = apply_trade_workers(punit->ptr->pcity1, punit->ptr->pcity2);
     dsend_packet_unit_establish_trade(&aconnection, punit->id);
+    release_trade_workers(plist);
+    connection_do_unbuffer(&aconnection);
   }
 }
 
@@ -833,6 +845,395 @@ bool trade_free_unit(struct unit *punit)
 
   return ret;
 }
+
+
+
+/**************************************************************************
+  Code to toggle workers before establishing a new trade route. This is
+  not used in new warservers, because the maximum value should be reached
+  in a such case.
+**************************************************************************/
+struct worked_tile {
+  struct tile *ptile; /* A pointer to the tile. */
+  int cx, cy;	      /* Coordonates for the city map. */
+  int trade_value;    /* The trade value of the tile. */
+  bool used;	      /* TRUE when the tile is used */
+};
+
+struct toggle_city {
+  struct city *pcity; /* The city */
+  int importance;     /* Importance of switching tiles for it */
+  struct worked_tile tiles[CITY_MAP_SIZE * CITY_MAP_SIZE];
+  size_t tiles_num;
+};
+
+struct toggle_worker {
+  struct city *pcity; /* The city */
+  int cx, cy;         /* Coordonates for the city map */
+  bool was_used;      /* Initial configuration */
+};
+
+#define SPECLIST_TAG toggle_worker
+#define SPECLIST_TYPE struct toggle_worker
+#include "speclist.h"
+
+/* Recursive iteration. */
+#define toggle_worker_list_iterate(list, ptw) \
+  TYPED_LIST_ITERATE_REV(struct toggle_worker, list, ptw)
+#define toggle_worker_list_iterate_end LIST_ITERATE_REV_END
+
+/**************************************************************************
+  Toggle a worker for the city. Ask the server to make the change.
+**************************************************************************/
+static struct toggle_worker *toggle_worker_new(struct city *pcity,
+					       int cx, int cy)
+{
+  struct toggle_worker *ptw = fc_malloc(sizeof(struct toggle_worker));
+
+  ptw->pcity = pcity;
+  ptw->cx = cx;
+  ptw->cy = cy;
+  ptw->was_used = pcity->city_map[cx][cy] == C_TILE_WORKER;
+
+  freelog(LOG_VERBOSE, "Apply: Toggling tile (%d, %d) to %s for %s",
+          TILE_XY(city_map_to_map(pcity, cx, cy)),
+	  ptw->was_used ? "specialist" : "worker", pcity->name);
+
+  if (ptw->was_used) {
+    dsend_packet_city_make_specialist(&aconnection, pcity->id, cx, cy);
+  } else {
+    dsend_packet_city_make_worker(&aconnection, pcity->id, cx, cy);
+  }
+
+  return ptw;
+}
+
+/**************************************************************************
+  Toggle a worker for the city. Ask the server to make the change.
+**************************************************************************/
+static void toggle_worker_free(struct toggle_worker *ptw)
+{
+  freelog(LOG_VERBOSE, "Release: Toggling tile (%d, %d) to %s for %s",
+          TILE_XY(city_map_to_map(ptw->pcity, ptw->cx, ptw->cy)),
+	  ptw->was_used ? "worker" : "specialist", ptw->pcity->name);
+
+  if (ptw->was_used) {
+    dsend_packet_city_make_worker(&aconnection, ptw->pcity->id,
+				  ptw->cx, ptw->cy);
+  } else {
+    dsend_packet_city_make_specialist(&aconnection, ptw->pcity->id,
+				      ptw->cx, ptw->cy);
+  }
+
+  free(ptw);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void sort_cities(struct toggle_city *cities, size_t size)
+{
+  int i, j;
+
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < i; j++) {
+      if (cities[i].importance > cities[j].importance) {
+	struct toggle_city tc = cities[i];
+	cities[i] = cities[j];
+	cities[j] = tc;
+      }
+    }
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void drop_worked_tile(struct toggle_city *tcity, size_t tile)
+{
+  assert(tcity->tiles_num > 0);
+  assert(tile < tcity->tiles_num);
+  if (tile != tcity->tiles_num - 1) {
+    memmove(&tcity->tiles[tile], &tcity->tiles[tile + 1],
+	    (tcity->tiles_num - tile - 1) * sizeof(struct worked_tile));
+  }
+  tcity->tiles_num--;
+}
+
+/**************************************************************************
+  Returns TRUE if any city can still use this tile.
+**************************************************************************/
+static bool can_steal_tile_to_cities(struct toggle_city *cities, size_t size,
+				     struct tile *ptile)
+{
+  struct toggle_city *tcity;
+  int i, j;
+
+  for (i = 0; i < size; i++) {
+    tcity = &cities[i];
+    if (tcity->pcity->tile == ptile) {
+      return FALSE;
+    }
+    for (j = 0; j < tcity->tiles_num && j < tcity->pcity->size; j++) {
+      if (tcity->tiles[j].ptile == ptile) {
+	if (tcity->pcity->size < tcity->tiles_num
+	    && tcity->tiles[tcity->pcity->size - 1].trade_value
+	       == tcity->tiles[tcity->pcity->size].trade_value) {
+	  /* We can use an other tile. */
+	  drop_worked_tile(tcity, j);
+	  return TRUE;
+	} else {
+	  /* This tile is more important for this city. */
+	  return FALSE;
+	}
+      }
+    }
+  }
+  /* No city requested it. */
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int best_trade(const void *a, const void *b)
+{
+  const struct worked_tile *pwta, *pwtb;
+
+  pwta = (const struct worked_tile *)a;
+  pwtb = (const struct worked_tile *)b;
+
+  return pwta->trade_value < pwtb->trade_value
+	 || (pwta->trade_value == pwtb->trade_value && !pwta->used);
+    
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void fill_worked_tiles(struct toggle_city *cities,
+			      size_t size, size_t vec)
+{
+  struct toggle_city *tcity = &cities[vec];
+  struct city *pcity = tcity->pcity;
+  bool is_celebrating = base_city_celebrating(pcity);
+  struct worked_tile *pwtile;
+  int i;
+
+  assert(vec < size);
+
+  /* Get informations. */
+  tcity->tiles_num = 0;
+  city_map_checked_iterate(pcity->tile, cx, cy, ptile) {
+    if (ptile == pcity->tile) {
+      continue;
+    }
+    if (ptile->worked
+	&& ptile->worked->owner != pcity->owner) {
+      continue;
+    }
+    if (!can_steal_tile_to_cities(cities, vec, ptile)) {
+      /* Check if we can use this tile form the previous cities. */
+      continue;
+    }
+
+    pwtile = &tcity->tiles[tcity->tiles_num++];
+    pwtile->ptile = ptile;
+    pwtile->cx = cx;
+    pwtile->cy = cy;
+    pwtile->trade_value =
+	base_city_get_trade_tile(cx, cy, pcity, is_celebrating);
+    pwtile->used = pcity->city_map[cx][cy] == C_TILE_WORKER;
+  } city_map_checked_iterate_end;
+
+  /* Sort them */
+  qsort(tcity->tiles, tcity->tiles_num, sizeof(*tcity->tiles), best_trade);
+
+  i = 0;
+  while (i < tcity->tiles_num && i < pcity->size) {
+    if (!can_steal_tile_to_cities(cities, vec, tcity->tiles[i].ptile)) {
+      drop_worked_tile(tcity, i);
+    } else {
+      i++;
+    }
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool city_is_in_list(struct toggle_city *cities, size_t size,
+			    struct city *pcity)
+{
+  int i;
+
+  for (i = 0; i < size; i++) {
+    if (cities[i].pcity == pcity) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static bool tile_is_in_list(struct worked_tile *tiles, size_t size,
+			    int cx, int cy)
+{
+  int i;
+
+  for (i = 0; i < size; i++) {
+    if (tiles[i].cx == cx && tiles[i].cy == cy) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+/**************************************************************************
+  Remove workers.
+**************************************************************************/
+static void city_set_specialists(struct toggle_city *cities, size_t size,
+				 size_t vec, struct toggle_worker_list *plist)
+{
+  struct toggle_city *tcity = &cities[vec];
+  struct city *pcity = tcity->pcity;
+  struct tile *ptile;
+  int i, cx, cy;
+
+  /* Check tiles used by others cities. */
+  for (i = 0; i < tcity->tiles_num && i < tcity->pcity->size; i++) {
+    ptile = tcity->tiles[i].ptile;
+
+    if (ptile->worked && ptile->worked != pcity) {
+      if (!city_is_in_list(cities, size, ptile->worked)
+	  && map_to_city_map(&cx, &cy, ptile->worked, ptile)) {
+	toggle_worker_list_append(plist,
+				  toggle_worker_new(ptile->worked, cx, cy));
+      }
+    }
+  }
+
+  /* Remove workers from tiles we won't use. */
+  city_map_iterate(cx, cy) {
+    if ((cx != CITY_MAP_RADIUS || cy != CITY_MAP_RADIUS)
+	&& pcity->city_map[cx][cy] == C_TILE_WORKER
+	&& !tile_is_in_list(tcity->tiles,
+			    MIN(tcity->tiles_num, tcity->pcity->size),
+			    cx, cy)) {
+      toggle_worker_list_append(plist, toggle_worker_new(pcity, cx, cy));
+    }
+  } city_map_iterate_end;
+}
+
+/**************************************************************************
+  Set new workers.
+**************************************************************************/
+static void city_set_workers(struct toggle_city *tcity,
+			     struct toggle_worker_list *plist)
+{
+  struct city *pcity = tcity->pcity;
+  struct worked_tile *pwtile;
+  int i;
+
+  for (i = 0; i < tcity->tiles_num && i < tcity->pcity->size; i++) {
+    pwtile = &tcity->tiles[i];
+    if (pcity->city_map[pwtile->cx][pwtile->cy] != C_TILE_WORKER) {
+      toggle_worker_list_append(plist, toggle_worker_new(pcity, pwtile->cx,
+							 pwtile->cy));
+    }
+  }
+}
+
+/**************************************************************************
+  Choose the best trade tiles for the cities.
+**************************************************************************/
+static struct toggle_worker_list *apply_trade_workers(struct city *pcity1,
+						      struct city *pcity2)
+{
+  size_t size = 2 * (1 + game.traderoute_info.maxtraderoutes);
+  struct toggle_city cities[size];
+  struct toggle_worker_list *plist = toggle_worker_list_new();
+  struct city *ocity;
+  int i = 0, player_idx = get_player_idx();
+
+  assert(server_has_extglobalinfo == FALSE);
+
+  /* Initialize */
+  if (pcity1->owner == player_idx) {
+    cities[i].pcity = pcity1;
+    cities[i].importance = 3;
+    i++;
+  }
+
+  if (pcity2->owner == player_idx) {
+    cities[i].pcity = pcity2;
+    cities[i].importance = 3;
+    i++;
+  }
+
+  established_trade_routes_iterate(pcity1, ptr) {
+    ocity = OTHER_CITY(ptr, pcity1);
+    if (ocity->owner != player_idx) {
+      continue;
+    }
+
+    cities[i].pcity = ocity;
+    cities[i].importance = have_cities_trade_route(pcity2, ocity) ? 2 : 1;
+    i++;
+  } established_trade_routes_iterate_end;
+
+  established_trade_routes_iterate(pcity2, ptr) {
+    ocity = OTHER_CITY(ptr, pcity1);
+    if (have_cities_trade_route(pcity1, ocity)
+	|| ocity->owner != player_idx) {
+      continue;
+    }
+
+    cities[i].pcity = ocity;
+    cities[i].importance = 1;
+    i++;
+  } established_trade_routes_iterate_end;
+
+  assert(i <= size);
+  size = i;
+  sort_cities(cities, size);
+
+  /* Find best configuration */
+  for (i = 0; i < size; i++) {
+    fill_worked_tiles(cities, size, i);
+  }
+
+  /* Make the list */
+  for (i = 0; i < size; i++) {
+    city_set_specialists(cities, size, i, plist);
+  }
+  for (i = 0; i < size; i++) {
+    city_set_workers(&cities[i], plist);
+  }
+
+  return plist;
+}
+
+/**************************************************************************
+  Toggle back the toggled workers.
+**************************************************************************/
+static void release_trade_workers(struct toggle_worker_list *plist)
+{
+  assert(server_has_extglobalinfo == FALSE);
+
+  if (!plist) {
+    return;
+  }
+
+  toggle_worker_list_iterate(plist, ptw) {
+    toggle_worker_free(ptw);
+  } toggle_worker_list_iterate_end;
+  toggle_worker_list_free(plist);
+}
+
+
 
 /**************************************************************************
   Add a trade route which will be added when all cities will be created.

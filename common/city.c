@@ -1063,7 +1063,7 @@ static bool tile_is_available_for_city(const struct city *pcity, int cx, int cy)
 {
   struct tile *ptile;
 
-  if (get_worker_city(pcity, cx, cy) != C_TILE_UNAVAILABLE) {
+  if (get_worker_city(pcity, cx, cy) == C_TILE_EMPTY) {
     /* Directly available. */
     return TRUE;
   }
