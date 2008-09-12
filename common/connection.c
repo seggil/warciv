@@ -588,11 +588,15 @@ const char *conn_description(const struct connection *pconn)
     return buffer;
   }
   if (pconn->player) {
-    cat_snprintf(buffer, sizeof(buffer), _(" (player %s)"),
-		 pconn->player->name);
-  }
-  if (pconn->observer) {
-    sz_strlcat(buffer, _(" (observer)"));
+    if (pconn->observer) {
+      cat_snprintf(buffer, sizeof(buffer), _(" (player %s observer)"),
+		   pconn->player->name);
+    } else {
+      cat_snprintf(buffer, sizeof(buffer), _(" (player %s)"),
+		   pconn->player->name);
+    }
+  } else if (pconn->observer) {
+    sz_strlcat(buffer, _(" (global observer)"));
   }
   return buffer;
 }
