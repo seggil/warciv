@@ -8125,6 +8125,7 @@ void show_players(struct connection *caller)
             game.info.nplayers);
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 
+  /* Players */
   if (game.info.nplayers == 0) {
     cmd_reply(CMD_LIST, caller, C_WARNING, _("<no players>"));
   } else {
@@ -8200,6 +8201,25 @@ void show_players(struct connection *caller)
       } conn_list_iterate_end;
     } players_iterate_end;
   }
+
+  /* Global observers */
+  n = 0;
+  global_observers_iterate(pconn) {
+    n++;
+  } global_observers_iterate_end;
+  if (n > 0) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+    cmd_reply(CMD_LIST, caller, C_COMMENT,
+	      PL_("%d global observer:", "%d global observers:", n), n);
+    global_observers_iterate(pconn) {
+      cmd_reply(CMD_LIST, caller, C_COMMENT,
+		_("  %s from %s (%s access), bufsize=%dkb"),
+		pconn->username, pconn->addr,
+		cmdlevel_name(pconn->access_level),
+		(pconn->send_buffer->nsize >> 10));
+    } global_observers_iterate_end;
+  }
+
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
 
