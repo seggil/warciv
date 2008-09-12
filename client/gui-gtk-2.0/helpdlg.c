@@ -21,30 +21,32 @@
 #include <string.h>
 
 #include <gtk/gtk.h>
-#include "gtkpixcomm.h"
 
-#include "city.h"
 #include "fcintl.h"
-#include "game.h"
-#include "government.h"
 #include "mem.h"
 #include "shared.h"
+#include "support.h"
+
+#include "city.h"
+#include "game.h"
+#include "government.h"
 #include "tech.h"
 #include "unit.h"
 #include "map.h"
-#include "support.h"
 #include "version.h"
 
 #include "climisc.h"
 #include "clinet.h"
 #include "civclient.h"
-#include "colors.h"
-#include "graphics.h"
-#include "gui_main.h"
-#include "gui_stuff.h"
 #include "helpdata.h"
 #include "options.h"
 #include "tilespec.h"
+
+#include "colors.h"
+#include "gtkpixcomm.h"
+#include "graphics.h"
+#include "gui_main.h"
+#include "gui_stuff.h"
 
 #include "helpdlg.h"
 
@@ -185,6 +187,7 @@ static void create_tech_tree(int tech, int levels, GtkTreeIter *parent)
   int	        bg;
   int           turns_to_tech;
   bool          original;
+  struct player *pplayer = get_player_ptr();
   GtkTreeIter   l;
   GValue        value = { 0, };
 
@@ -207,13 +210,18 @@ static void create_tech_tree(int tech, int levels, GtkTreeIter *parent)
     return;
   }
 
-  switch (get_invention(get_player_ptr(), tech)) {
-  case TECH_UNKNOWN:	      bg = COLOR_STD_RED;	      break;
-  case TECH_KNOWN:	      bg = COLOR_STD_GROUND;	      break;
-  case TECH_REACHABLE:        bg = COLOR_STD_YELLOW;	      break;
-  default:		      bg = COLOR_STD_WHITE;	      break;
+  if (client_is_global_observer()) {
+    bg = COLOR_STD_WHITE;
+    turns_to_tech = 0;
+  } else {
+    switch (get_invention(pplayer, tech)) {
+    case TECH_UNKNOWN:	      bg = COLOR_STD_RED;	      break;
+    case TECH_KNOWN:	      bg = COLOR_STD_GROUND;	      break;
+    case TECH_REACHABLE:        bg = COLOR_STD_YELLOW;	      break;
+    default:		      bg = COLOR_STD_WHITE;	      break;
+    }
+    turns_to_tech = num_unknown_techs_for_goal(pplayer, tech);
   }
-  turns_to_tech = num_unknown_techs_for_goal(get_player_ptr(), tech);
 
   /* l is the original in the tree. */
   original = !help_advances[tech];
@@ -222,7 +230,7 @@ static void create_tech_tree(int tech, int levels, GtkTreeIter *parent)
   help_advances[tech] = TRUE;
 
   g_value_init(&value, G_TYPE_STRING);
-  g_value_set_static_string(&value, get_tech_name(get_player_ptr(), tech));
+  g_value_set_static_string(&value, get_tech_name(pplayer, tech));
   gtk_tree_store_set_value(tstore, &l, 0, &value);
   g_value_unset(&value);
 
