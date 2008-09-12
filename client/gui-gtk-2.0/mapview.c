@@ -818,7 +818,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     if (draw_city_names) {
       get_city_mapview_name_and_growth(pcity, buffer, sizeof(buffer),
                                        buffer2, sizeof(buffer2), &color);
-      get_city_mapview_traderoutes (pcity, buffer3, sizeof(buffer3), &color2);
+      get_city_mapview_traderoutes(pcity, buffer3, sizeof(buffer3), &color2);
 
       pango_layout_set_font_description(layout, main_font);
     
