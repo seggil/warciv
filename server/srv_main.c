@@ -383,7 +383,9 @@ static bool is_game_over(void)
 void send_all_info(struct conn_list *dest)
 {
   conn_list_iterate(dest, pconn) {
-    send_attribute_block(pconn->player,pconn);
+    if (pconn->player) {
+      send_attribute_block(pconn->player, pconn);
+    }
   } conn_list_iterate_end;
 
   send_game_info(dest);

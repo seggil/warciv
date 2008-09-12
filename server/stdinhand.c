@@ -4186,7 +4186,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
       goto CLEANUP;
     }
 
-    if (!pconn->player && pconn->observer) {
+    if (connection_is_global_observer(pconn)) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
 		_("%s is already observing globally the game."),
 		pconn->username);

@@ -319,9 +319,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
       if ((pconn->player
 	   && dest->player
 	   && pplayers_allied(pconn->player, dest->player))
-	  || (!pconn->player
-	      && !dest->player
-	      && dest->observer)) {
+	  || (!pconn->player && connection_is_global_observer(dest))) {
         dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
       }
     } conn_list_iterate_end;
@@ -352,7 +350,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
      else complain (might be a typo-ed intended private message)
   */
   
-  cp=strchr(message, ':');
+  cp = strchr(message, ':');
 
   if (cp && (cp != &message[0])) {
     enum m_pre_result match_result_player, match_result_conn;

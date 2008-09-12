@@ -1177,11 +1177,9 @@ void remove_city(struct city *pcity)
     }
   } players_iterate_end;
   /* Send city remove to global observers */
-  conn_list_iterate(game.est_connections, pconn) {
-    if (!pconn->player && pconn->observer) {
-      send_packet_city_remove(pconn, &packet);
-    }
-  } conn_list_iterate_end;
+  global_observers_iterate(pconn) {
+    send_packet_city_remove(pconn, &packet);
+  } global_observers_iterate_end;
   map_fog_pseudo_city_area(pplayer, ptile);
   reset_move_costs(ptile);
 
@@ -1392,6 +1390,7 @@ static void broadcast_city_info(struct city *pcity)
   struct packet_city_short_info sc_pack;
 
   package_city(pcity, &packet, FALSE);
+
   /* Send to everyone who can see the city. */
   players_iterate(pplayer) {
     if (can_player_see_city_internals(pplayer, pcity)) {
@@ -1409,14 +1408,10 @@ static void broadcast_city_info(struct city *pcity)
     }
   } players_iterate_end;
 
-  /* send to non-player observers:
-   * should these only get dumb_city type info?
-   */
-  conn_list_iterate(game.game_connections, pconn) {
-    if (!pconn->player && pconn->observer) {
-      send_packet_city_info(pconn, &packet);
-    }
-  } conn_list_iterate_end;
+  /* Send to global observers */
+  global_observers_iterate(pconn) {
+    send_packet_city_info(pconn, &packet);
+  } global_observers_iterate_end;
 }
 
 /**************************************************************************
@@ -2230,7 +2225,7 @@ void send_all_known_city_manager_infos(struct conn_list *clist)
       city_list_iterate(pconn->player->cities, pcity) {
 	send_city_manager_info(pconn->self, pcity, TRUE);
       } city_list_iterate_end;
-    } else if (pconn->observer && !pconn->player) {
+    } else if (connection_is_global_observer(pconn)) {
       /* Global observer */
       cities_iterate(pcity) {
 	send_city_manager_info(pconn->self, pcity, TRUE);
@@ -2295,7 +2290,7 @@ void reset_rally_points(struct player *pplayer)
 	  if ((pconn->player == pplayer
 	       /* Else, unable to read rally points. */
 	       && has_capability("extglobalinfo", pconn->capability))
-	      || (!pconn->player && pconn->observer)) {
+	      || connection_is_global_observer(pconn)) {
 	    send_packet_city_info(pconn, &packet);
 	  }
 	} conn_list_iterate_end;

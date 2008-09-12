@@ -1265,12 +1265,9 @@ void update_tile_knowledge(struct tile *ptile)
   } players_iterate_end;
 
   /* Global observers */
-  conn_list_iterate(game.game_connections, pconn) {
-    struct player *pplayer = pconn->player;
-    if (!pplayer && pconn->observer) {
-      send_tile_info(pconn->self, ptile);
-    }
-  } conn_list_iterate_end;
+  global_observers_iterate(pconn) {
+    send_tile_info(pconn->self, ptile);
+  } global_observers_iterate_end;
 }
 
 /***************************************************************

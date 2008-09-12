@@ -1543,11 +1543,9 @@ static void server_remove_unit(struct unit *punit)
     }
   } players_iterate_end;
   /** Notify global observers. */
-  conn_list_iterate(game.est_connections, pconn) {
-    if (!pconn->player && pconn->observer) {
-      send_packet_unit_remove(pconn, &packet);
-    }
-  } conn_list_iterate_end;
+  global_observers_iterate(pconn) {
+    send_packet_unit_remove(pconn, &packet);
+  } global_observers_iterate_end;
 
   remove_unit_sight_points(punit);
 
@@ -1966,7 +1964,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
   conn_list_iterate(dest, pconn) {
     struct player *pplayer = pconn->player;
     
-    if ((!pplayer && pconn->observer) 
+    if (connection_is_global_observer(pconn)
 	|| (pplayer && pplayer->player_no == punit->owner)) {
       send_packet_unit_info(pconn, &info);
     } else if (pplayer) {
@@ -3212,7 +3210,7 @@ void reset_air_patrol(struct player *pplayer)
 	  if ((pconn->player == pplayer
 	       /* Else, unable to read air patrol tiles. */
 	       && has_capability("extglobalinfo", pconn->capability))
-	      || (!pconn->player && pconn->observer)) {
+	      || connection_is_global_observer(pconn)) {
 	    send_packet_unit_info(pconn, &packet);
 	  }
 	} conn_list_iterate_end;

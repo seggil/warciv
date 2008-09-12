@@ -80,13 +80,11 @@ void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr)
       } conn_list_iterate_end;
     }
     /* Send info to global observers */
-    conn_list_iterate(game.est_connections, pconn) {
-      if (!pconn->player
-	  && pconn->observer
-	  && connection_supports_server_trade(pconn)) {
+    global_observers_iterate(pconn) {
+      if (connection_supports_server_trade(pconn)) {
         send_packet_trade_route_info(pconn, &packet);
       }
-    } conn_list_iterate_end;
+    } global_observers_iterate_end;
   }
 }
 
@@ -151,13 +149,11 @@ void server_remove_trade_route(struct trade_route *ptr)
       } conn_list_iterate_end;
     }
     /* Send info to global observers */
-    conn_list_iterate(game.est_connections, pconn) {
-      if (!pconn->player
-	  && pconn->observer
-	  && connection_supports_server_trade(pconn)) {
+    global_observers_iterate(pconn) {
+      if (connection_supports_server_trade(pconn)) {
         send_packet_trade_route_remove(pconn, &packet);
       }
-    } conn_list_iterate_end;
+    } global_observers_iterate_end;
   }
 
   game_trade_route_remove(ptr);

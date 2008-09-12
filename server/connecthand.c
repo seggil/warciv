@@ -468,7 +468,7 @@ void establish_new_connection(struct connection *pconn)
   }
 
   /* if the game is running, players can just view the Players menu? --dwp */
-  if (server_state <= RUN_GAME_STATE || !pconn->player) {
+  if (server_state < RUN_GAME_STATE || !pconn->player) {
     show_players(pconn);
   }
 

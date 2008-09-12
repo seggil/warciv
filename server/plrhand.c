@@ -1380,7 +1380,7 @@ repeat_break_treaty:
   Notify specified connections of an event of specified type (from events.h)
   and specified (x,y) coords associated with the event.  Coords will only
   apply if game has started and the conn's player knows that tile (or
-  pconn->player==NULL && pconn->observer).  If coords are not required,
+  connection_is_global_observer(pconn)).  If coords are not required,
   caller should specify (x,y) = (-1,-1); otherwise make sure that the
   coordinates have been normalized.  For generic event use E_NOEVENT.
   (But current clients do not use (x,y) data for E_NOEVENT events.)
@@ -1403,7 +1403,7 @@ void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
   conn_list_iterate(dest, pconn) {
     if (server_state >= RUN_GAME_STATE
 	&& ptile /* special case, see above */
-	&& ((!pconn->player && pconn->observer)
+	&& (connection_is_global_observer(pconn)
 	    || (pconn->player && map_is_known(ptile, pconn->player)))) {
       genmsg.x = ptile->x;
       genmsg.y = ptile->y;

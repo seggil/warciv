@@ -660,11 +660,9 @@ static void send_combat(struct unit *pattacker, struct unit *pdefender,
 
   /* Send combat info to non-player observers as well.  They already know
    * about the unit so no unit_info is needed. */
-  conn_list_iterate(game.game_connections, pconn) {
-    if (!pconn->player && pconn->observer) {
-      send_packet_unit_combat_info(pconn, &combat);
-    }
-  } conn_list_iterate_end;
+  global_observers_iterate(pconn) {
+    send_packet_unit_combat_info(pconn, &combat);
+  } global_observers_iterate_end;
 }
 
 /**************************************************************************

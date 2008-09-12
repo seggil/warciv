@@ -896,8 +896,13 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 **************************************************************************/
 bool connection_controls_player(const struct connection *pconn)
 {
-  if (pconn == NULL) {
-    return FALSE;
-  }
-  return pconn->player != NULL && !pconn->observer;
+  return pconn && pconn->player && !pconn->observer;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+bool connection_is_global_observer(struct connection *pconn)
+{
+  return pconn && !pconn->player && pconn->observer;
 }
