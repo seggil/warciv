@@ -1073,6 +1073,11 @@ static bool tile_is_available_for_city(const struct city *pcity, int cx, int cy)
     return FALSE;
   }
 
+  if (ptile->city) {
+    /* This is a city center */
+    return FALSE;
+  }
+
   if (!ptile->worked) {
     /* Seems not available at all (e.g. unknown tile). */
     return FALSE;
