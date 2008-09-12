@@ -113,32 +113,33 @@ void update_timeout_label(void)
 **************************************************************************/
 void update_info_label(void)
 {
+  struct player *pplayer = get_player_ptr();
   int d;
   int sol, flake;
   GtkWidget *label;
 
-  if (get_player_ptr()) {
+  if (!client_is_global_observer()) {
     label = gtk_frame_get_label_widget(GTK_FRAME(main_frame_civ_name));
     gtk_label_set_text(GTK_LABEL(label),
-		       get_nation_name(get_player_ptr()->nation));
+		       get_nation_name(pplayer->nation));
 
     gtk_label_set_text(GTK_LABEL(main_label_info), get_info_label_text());
 
     sol = client_warming_sprite();
     flake = client_cooling_sprite();
     set_indicator_icons(client_research_sprite(), sol, flake,
-			get_player_ptr() ? get_player_ptr()->government : 0);
+			pplayer ? pplayer->government : 0);
 
     d = 0;
-    for (; d < get_player_ptr()->economic.luxury /10; d++) {
+    for (; d < pplayer->economic.luxury /10; d++) {
       struct Sprite *sprite = sprites.tax_luxury;
 
       gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
 				sprite->pixmap, sprite->mask);
     }
 
-    for (; d < (get_player_ptr()->economic.science
-		+ get_player_ptr()->economic.luxury) / 10; d++) {
+    for (; d < (pplayer->economic.science
+		+ pplayer->economic.luxury) / 10; d++) {
       struct Sprite *sprite = sprites.tax_science;
 
       gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
@@ -836,7 +837,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       }
 
       if (draw_city_growth
-	  && (!get_player_ptr() || pcity->owner == get_player_idx())) {
+	  && (client_is_global_observer()
+	      || pcity->owner == get_player_idx())) {
         /* We need to know the size of the growth text before
            drawing anything. */
         pango_layout_set_font_description(layout, city_productions_font);
@@ -850,7 +852,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
         rect2.width = 0;
       }
       if (draw_city_traderoutes
-	  && (!get_player_ptr() || pcity->owner == get_player_idx())) {
+	  && (client_is_global_observer()
+	      || pcity->owner == get_player_idx())) {
         /* We need to know the size of the trade routes text before
            drawing anything. */
         pango_layout_set_font_description (layout, city_productions_font);
@@ -879,7 +882,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
                                canvas_y + PANGO_ASCENT(rect), layout);
 
       if (draw_city_growth
-	  && (!get_player_ptr() || pcity->owner == get_player_idx())) {
+	  && (client_is_global_observer()
+	      || pcity->owner == get_player_idx())) {
         pango_layout_set_font_description(layout, city_productions_font);
         pango_layout_set_text(layout, buffer2, -1);
         gdk_gc_set_foreground(civ_gc, colors_standard[color]);
@@ -895,7 +899,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       }
 
       if (draw_city_traderoutes
-	  && (!get_player_ptr() || pcity->owner == get_player_idx())) {
+	  && (client_is_global_observer()
+	      || pcity->owner == get_player_idx())) {
         pango_layout_set_font_description (layout, city_productions_font);
         pango_layout_set_text (layout, buffer3, -1);
         gdk_gc_set_foreground (civ_gc, colors_standard[color2]);
@@ -917,7 +922,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     }
 
     if (draw_city_productions
-	&& (!get_player_ptr() || pcity->owner == get_player_idx())) {
+	&& (client_is_global_observer()
+	    || pcity->owner == get_player_idx())) {
       get_city_mapview_production(pcity, buffer, sizeof(buffer));
 
       pango_layout_set_font_description(layout, city_productions_font);

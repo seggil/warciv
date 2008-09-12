@@ -2052,23 +2052,22 @@ static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
   if(ev->button == 1) {
     GtkWidget *p;
     char buf[512];
+    struct player *pplayer = get_player_ptr();
     
     my_snprintf(buf, sizeof(buf),
                 _("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
                   "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
-                population_to_text(civ_population(get_player_ptr())),
+                population_to_text(civ_population(pplayer)),
                 textyear(game.info.year), game.info.turn,
-                get_player_ptr()->economic.gold,
-                player_get_expected_income(get_player_ptr()),
-                get_player_ptr()->economic.tax,
-                get_player_ptr()->economic.luxury,
-                get_player_ptr()->economic.science,
-
-                get_tech_name(get_player_ptr(),
-                              get_player_ptr()->research.researching),
-                get_player_ptr()->research.bulbs_researched,
-                total_bulbs_required(get_player_ptr()),
-                get_government_name(get_player_ptr()->government));
+                pplayer->economic.gold,
+                player_get_expected_income(pplayer),
+                pplayer->economic.tax,
+                pplayer->economic.luxury,
+                pplayer->economic.science,
+                get_tech_name(pplayer, pplayer->research.researching),
+                pplayer->research.bulbs_researched,
+                total_bulbs_required(pplayer),
+                get_government_name(pplayer->government));
     
     p = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_set_app_paintable(p, TRUE);

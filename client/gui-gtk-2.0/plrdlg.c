@@ -129,7 +129,7 @@ static void update_players_menu(void)
       gtk_widget_set_sensitive(players_sship_command, FALSE);
     }
 
-    if (get_player_ptr()) {
+    if (!client_is_global_observer()) {
       switch (pplayer_get_diplstate(get_player_ptr(), get_player(plrno))->type) {
       case DS_WAR:
       case DS_NO_CONTACT:
@@ -146,7 +146,7 @@ static void update_players_menu(void)
 
     gtk_widget_set_sensitive(players_vision_command,
 			     can_client_issue_orders()
-			     && get_player_ptr()
+			     && !client_is_global_observer()
 			     && gives_shared_vision(get_player_ptr(), plr));
 
     gtk_widget_set_sensitive(players_meet_command, can_meet_with_player(plr));

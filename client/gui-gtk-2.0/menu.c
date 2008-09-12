@@ -5965,7 +5965,7 @@ void update_menus(void)
   }
 
   menu_set_sensitive(action_group_report, "REPORT_SPACESHIP",
-		     get_player_ptr()
+		     !client_is_global_observer()
 		     && (get_player_ptr()->spaceship.state != SSHIP_NONE));
 
   menu_toggle_set_sensitive(toggle_action_group_view,

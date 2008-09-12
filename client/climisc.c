@@ -224,7 +224,7 @@ void client_remove_unit(struct unit *punit)
 
   pcity = map_get_city(ptile);
   if (pcity) {
-    if (!get_player_ptr()
+    if (client_is_global_observer()
 	|| can_player_see_units_in_city(get_player_ptr(), pcity)) {
       pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
     }
@@ -472,6 +472,7 @@ intro gfx.
 **************************************************************************/
 void center_on_something(void)
 {
+  struct player *pplayer;
   struct city *pcity;
   struct unit *punit;
 
@@ -479,20 +480,21 @@ void center_on_something(void)
     return;
   }
 
+  pplayer = get_player_ptr();
   can_slide = FALSE;
   if ((punit = get_unit_in_focus())) {
     center_tile_mapcanvas(punit->tile);
-  } else if (get_player_ptr() && (pcity = find_palace(get_player_ptr()))) {
+  } else if (pplayer && (pcity = find_palace(pplayer))) {
     /* Else focus on the capital. */
     center_tile_mapcanvas(pcity->tile);
-  } else if (get_player_ptr() && city_list_size(get_player_ptr()->cities) > 0) {
+  } else if (pplayer && city_list_size(pplayer->cities) > 0) {
     /* Just focus on any city. */
-    pcity = city_list_get(get_player_ptr()->cities, 0);
+    pcity = city_list_get(pplayer->cities, 0);
     assert(pcity != NULL);
     center_tile_mapcanvas(pcity->tile);
-  } else if (get_player_ptr() && unit_list_size(get_player_ptr()->units) > 0) {
+  } else if (pplayer && unit_list_size(pplayer->units) > 0) {
     /* Just focus on any unit. */
-    punit = unit_list_get(get_player_ptr()->units, 0);
+    punit = unit_list_get(pplayer->units, 0);
     assert(punit != NULL);
     center_tile_mapcanvas(punit->tile);
   } else {
@@ -855,16 +857,17 @@ int collect_cids3(cid * dest_cids)
 **************************************************************************/
 int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
 {
+  struct player *pplayer = get_player_ptr();
   int cids_used = 0;
 
   impr_type_iterate(id) {
     bool can_build;
     bool can_eventually_build;
 
-    if (get_player_ptr()) {
-      can_build = can_player_build_improvement(get_player_ptr(), id);
+    if (pplayer) {
+      can_build = can_player_build_improvement(pplayer, id);
       can_eventually_build =
-	  can_player_eventually_build_improvement(get_player_ptr(), id);
+	  can_player_eventually_build_improvement(pplayer, id);
     } else {
       can_build = FALSE;
       players_iterate(pplayer) {
@@ -901,10 +904,9 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
     bool can_build;
     bool can_eventually_build;
 
-    if (get_player_ptr()) {
-      can_build = can_player_build_unit(get_player_ptr(), id);
-      can_eventually_build =
-	  can_player_eventually_build_unit(get_player_ptr(), id);
+    if (pplayer) {
+      can_build = can_player_build_unit(pplayer, id);
+      can_eventually_build = can_player_eventually_build_unit(pplayer, id);
     } else {
       can_build = FALSE;
       players_iterate(pplayer) {
@@ -1591,6 +1593,7 @@ void cityrep_buy(struct city *pcity)
 
 void common_taxrates_callback(int i)
 {
+  struct player *pplayer;
   int tax_end, lux_end, sci_end, tax, lux, sci;
   int delta = 10;
 
@@ -1598,13 +1601,14 @@ void common_taxrates_callback(int i)
     return;
   }
 
-  lux_end = get_player_ptr()->economic.luxury;
-  sci_end = lux_end + get_player_ptr()->economic.science;
+  pplayer = get_player_ptr();
+  lux_end = pplayer->economic.luxury;
+  sci_end = lux_end + pplayer->economic.science;
   tax_end = 100;
 
-  lux = get_player_ptr()->economic.luxury;
-  sci = get_player_ptr()->economic.science;
-  tax = get_player_ptr()->economic.tax;
+  lux = pplayer->economic.luxury;
+  sci = pplayer->economic.science;
+  tax = pplayer->economic.tax;
 
   i *= 10;
   if (i < lux_end) {

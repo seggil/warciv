@@ -254,7 +254,7 @@ void popup_notify_goto_dialog(const char *headline, const char *lines,
 
     pcity = map_get_city(ptile);
     gtk_widget_set_sensitive(popcity_command,
-      (pcity && city_owner(pcity) == get_player_ptr()));
+      (pcity && pcity->owner == get_player_idx()));
   }
 
   g_object_set_data(G_OBJECT(shell), "tile", ptile);

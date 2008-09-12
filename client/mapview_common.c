@@ -2257,7 +2257,7 @@ void get_city_mapview_name_and_growth(struct city *pcity,
   my_snprintf(name_buffer, name_buffer_len, pcity->name);
 
   if (draw_city_growth
-      && (!get_player_ptr() || pcity->owner == get_player_idx())) {
+      && (client_is_global_observer() || pcity->owner == get_player_idx())) {
     int turns = city_turns_to_grow(pcity);
 
     if (turns == 0) {
@@ -2825,13 +2825,13 @@ static void draw_traderoute_line(struct trade_route *ptr,
   }
 
   if (pcity_src->client.traderoute_drawing_disabled
-      && get_player_ptr()
+      && !client_is_global_observer()
       && pcity_dest->owner != get_player_idx()) {
     return;
   }
 
   if (pcity_dest->client.traderoute_drawing_disabled
-      && get_player_ptr()
+      && !client_is_global_observer()
       && pcity_src->owner != get_player_idx()) {
     return;
   }
@@ -2892,14 +2892,14 @@ void draw_traderoutes(void)
     return;
   }
 
-  if (get_player_ptr()) {
-    city_list_iterate(get_player_ptr()->cities, pcity) {
-      draw_traderoutes_for_city(pcity);
-    } city_list_iterate_end;
-  } else {
+  if (client_is_global_observer()) {
     cities_iterate(pcity) {
       draw_traderoutes_for_city(pcity);
     } cities_iterate_end;
+  } else {
+    city_list_iterate(get_player_ptr()->cities, pcity) {
+      draw_traderoutes_for_city(pcity);
+    } city_list_iterate_end;
   }
 }
 

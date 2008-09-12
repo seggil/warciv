@@ -258,7 +258,7 @@ void handle_unit_remove(int unit_id)
   agents_unit_remove(punit);
   client_remove_unit(punit);
 
-  if (get_player_ptr() && powner == get_player_ptr()) {
+  if (!client_is_global_observer() && powner == get_player_ptr()) {
     activeunits_report_dialog_update();
   }
 }
@@ -376,7 +376,7 @@ void handle_game_state(int value)
 
   if (get_client_state() == CLIENT_SELECT_RACE_STATE
       && value == CLIENT_GAME_RUNNING_STATE
-      && get_player_ptr()
+      && !client_is_global_observer()
       && get_player_ptr()->nation == NO_NATION_SELECTED) {
     popdown_races_dialog();
   }
@@ -615,7 +615,7 @@ void handle_city_info(struct packet_city_info *packet)
    * investigating an enemy city we can't.  In that case we don't update
    * the occupied flag at all: it's already been set earlier and we'll
    * get an update if it changes. */
-  if (!get_player_ptr()
+  if (client_is_global_observer()
       || can_player_see_units_in_city(get_player_ptr(), pcity)) {
     pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
   }
@@ -670,7 +670,7 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
     pcity->info_units_present = unit_list_new();
     city_list_prepend(city_owner(pcity)->cities, pcity);
     map_set_city(pcity->tile, pcity);
-    if(pcity->owner==get_player_idx())
+    if (pcity->owner == get_player_idx())
       city_report_dialog_update();
 
     for(i=0; i<game.info.nplayers; i++) {
@@ -680,7 +680,7 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
       unit_list_iterate_end;
     }
   } else {
-    if(pcity->owner == get_player_idx()) {
+    if (pcity->owner == get_player_idx()) {
       city_report_dialog_update_city(pcity);
     }
   }
@@ -720,8 +720,7 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
     }
   }
 
-  if (!is_new && (pcity->owner==get_player_idx()
-		  || popup)) {
+  if (!is_new && (pcity->owner == get_player_idx() || popup)) {
     refresh_city_dialog(pcity);
   }
 
@@ -850,6 +849,8 @@ void handle_city_short_info(struct packet_city_short_info *packet)
 **************************************************************************/
 void handle_new_year(int year, int turn)
 {
+  struct player *pplayer;
+
   focus_turn = TRUE;
   game.info.year = year;
   /*
@@ -860,12 +861,12 @@ void handle_new_year(int year, int turn)
 
   delayed_goto_event(AUTO_NEW_YEAR,NULL);
 
-  if (get_player_ptr()) {
-    player_set_unit_focus_status(get_player_ptr());
-    city_list_iterate(get_player_ptr()->cities, pcity) {
+  if ((pplayer = get_player_ptr())) {
+    player_set_unit_focus_status(pplayer);
+    city_list_iterate(pplayer->cities, pcity) {
       pcity->client.colored = FALSE;
     } city_list_iterate_end;
-    unit_list_iterate(get_player_ptr()->units, punit) {
+    unit_list_iterate(pplayer->units, punit) {
       punit->client.colored = FALSE;
     } unit_list_iterate_end;
   }
@@ -883,15 +884,15 @@ void handle_new_year(int year, int turn)
 #if 0
   /* This information shouldn't be needed, but if it is this is the only
    * way we can get it. */
-  turn_gold_difference=get_player_ptr()->economic.gold-last_turn_gold_amount;
-  last_turn_gold_amount=get_player_ptr()->economic.gold;
+  turn_gold_difference = pplayer->economic.gold-last_turn_gold_amount;
+  last_turn_gold_amount = pplayer->economic.gold;
 #endif
 
   update_map_canvas_visible(MUT_NORMAL);
 
   if (sound_bell_at_new_turn
-      && (!get_player_ptr()
-	  || !get_player_ptr()->ai.control
+      && (!pplayer
+	  || !pplayer->ai.control
 	  || ai_manual_turn_done)) {
     create_event(NULL, E_TURN_BELL, _("Start of turn %d"), game.info.turn);
   }
@@ -1010,7 +1011,7 @@ void handle_unit_info(struct packet_unit_info *packet)
 {
   struct unit *punit;
 
-  if (get_player_ptr() && packet->owner != get_player_idx()) {
+  if (!client_is_global_observer() && packet->owner != get_player_idx()) {
     freelog(LOG_ERROR, "Got packet_unit_info for unit of %s.",
             game.players[packet->owner].name);
   }
@@ -1104,7 +1105,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
          request_new_unit_activity(punit, ACTIVITY_SENTRY);
          packet_unit->activity = ACTIVITY_SENTRY; /* Cheat here */
          check_focus = FALSE;
-      } else if (get_player_ptr()
+      } else if (!client_is_global_observer()
 		 && autowakeup_state 
 		 && wakeup_focus 
                  && !get_player_ptr()->ai.control
@@ -2834,7 +2835,7 @@ void handle_city_name_suggestion_info(int unit_id, char *name)
 **************************************************************************/
 void handle_unit_diplomat_popup_dialog(int diplomat_id, int target_id)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return;
   }
 
@@ -2852,7 +2853,7 @@ void handle_unit_diplomat_popup_dialog(int diplomat_id, int target_id)
 void handle_city_sabotage_list(int diplomat_id, int city_id,
 			       char *improvements)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return;
   }
 

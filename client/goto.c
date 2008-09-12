@@ -1126,12 +1126,13 @@ bool is_drawn_line(struct tile *ptile, int dir)
 ***************************************************************************/
 struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 {
+  struct player *pplayer = get_player_ptr();
   struct city *pcity = NULL;
   struct pf_parameter parameter;
   struct pf_map *map;
   struct pf_path *path = NULL;
 
-  if ((pcity = is_allied_city_tile(punit->tile, get_player_ptr()))) {
+  if ((pcity = is_allied_city_tile(punit->tile, pplayer))) {
     /* We're already on a city - don't go anywhere. */
     return NULL;
   }
@@ -1144,7 +1145,7 @@ struct pf_path *path_to_nearest_allied_city(struct unit *punit)
 
     pf_next_get_position(map, &pos);
 
-    if ((pcity = is_allied_city_tile(pos.tile, get_player_ptr()))) {
+    if ((pcity = is_allied_city_tile(pos.tile, pplayer))) {
       break;
     }
   }
@@ -1193,14 +1194,14 @@ int calculate_move_cost(struct unit *punit, struct tile *dest_tile)
 ***************************************************************************/
 struct tile *find_nearest_city(struct unit *punit, bool allies)
 {
+  struct player *pplayer = get_player_ptr();
   struct city *pcity = map_get_city(punit->tile);
   struct pf_parameter parameter;
   struct pf_map *map;
 
   if (pcity
-      && (city_owner(pcity) == get_player_ptr()
-	  || (allies && pplayers_allied(get_player_ptr(),
-					city_owner(pcity))))) {
+      && (city_owner(pcity) == pplayer
+	  || (allies && pplayers_allied(pplayer, city_owner(pcity))))) {
     return pcity->tile;
   }
 
@@ -1213,9 +1214,8 @@ struct tile *find_nearest_city(struct unit *punit, bool allies)
     pf_next_get_position(map, &pos);
 
     if ((pcity = map_get_city(pos.tile))
-	&& (city_owner(pcity) == get_player_ptr()
-	    || (allies
-		&& pplayers_allied(get_player_ptr(), city_owner(pcity))))) {
+	&& (city_owner(pcity) == pplayer
+	    || (allies && pplayers_allied(pplayer, city_owner(pcity))))) {
       break;
     }
   }

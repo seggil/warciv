@@ -287,7 +287,7 @@ struct unit *get_unit_in_focus(void)
 **************************************************************************/
 void advance_unit_focus(void)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return;
   }
 
@@ -350,7 +350,7 @@ void advance_unit_focus(void)
 **************************************************************************/
 static struct unit *find_best_focus_candidate(bool accept_current)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return NULL;
   }
 
@@ -1968,7 +1968,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   }
   /* Otherwise use popups. */
   else if (pcity
-	   && (!get_player_ptr()
+	   && (client_is_global_observer()
 	       || can_player_see_city_internals(get_player_ptr(), pcity))) {
     popup_city_dialog(pcity, FALSE);
   } else if (unit_list_size(ptile->units) == 0 && !pcity

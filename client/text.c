@@ -156,8 +156,8 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   char trade[16];
   int x, before_penalty;
   
-  struct government *gov = get_player_ptr() ? get_gov_pplayer(get_player_ptr())
-					    : NULL;
+  struct government *gov = client_is_global_observer()
+			       ? NULL : get_gov_pplayer(get_player_ptr());
 
   x = get_food_tile(ptile);
   before_penalty = gov ? gov->food_before_penalty : 0;
@@ -225,14 +225,14 @@ const char *popup_info_text(struct tile *ptile)
   if (game.ruleset_control.borders > 0 && !pcity) {
     struct player *owner = map_get_owner(ptile);
 
-    if (!get_player_ptr() && owner) {
+    if (client_is_global_observer() && owner) {
       /* TRANS: "Territory of Username (Polish)" */
       add_line(_("Territory of %s%s (%s)"),
 	       get_name_prefix(owner), get_proper_username(owner),
 	       get_nation_name_plural(owner->nation));
-    } else if (get_player_ptr() && owner == get_player_ptr()) {
+    } else if (!client_is_global_observer() && owner == get_player_ptr()) {
       add_line(_("Our Territory"));
-    } else if (get_player_ptr() && owner) {
+    } else if (!client_is_global_observer() && owner) {
       struct player_diplstate *ds =
 	  &get_player_ptr()->diplstates[owner->player_no];
       if (ds[owner->player_no].type == DS_CEASEFIRE) {
@@ -263,10 +263,10 @@ const char *popup_info_text(struct tile *ptile)
      * borders are in use). */
     struct player *owner = city_owner(pcity);
 
-    if ((!get_player_ptr() && owner) || owner == get_player_ptr()) {
+    if ((client_is_global_observer() && owner) || owner == get_player_ptr()) {
       /* TRANS: "City: Warsaw (Polish)" */
       add_line(_("City: %s (%s)"), pcity->name, get_nation_name(owner->nation));
-    } else if (get_player_ptr() && owner) {
+    } else if (!client_is_global_observer() && owner) {
       struct player_diplstate *ds =
 	  &get_player_ptr()->diplstates[owner->player_no];
       if (ds->type == DS_CEASEFIRE) {
@@ -319,7 +319,7 @@ const char *popup_info_text(struct tile *ptile)
     struct unit_type *ptype = unit_type(punit);
     char vet[1024] = "";
 
-    if ((!get_player_ptr() && owner) || owner == get_player_ptr()) {
+    if ((client_is_global_observer() && owner) || owner == get_player_ptr()) {
       struct city *pcity;
       char tmp[64] = {0};
 
@@ -542,13 +542,18 @@ const char *get_info_label_text(void)
 {
   INIT;
 
-  add_line(_("Population: %s"),
-	     population_to_text(civ_population(get_player_ptr())));
+  struct player *pplayer = get_player_ptr();
+
+  if (pplayer) {
+    add_line(_("Population: %s"),
+	       population_to_text(civ_population(pplayer)));
+  }
   add_line(_("Year: %s - T%d"), textyear(game.info.year), game.info.turn);
-  add_line(_("Gold: %d"), get_player_ptr()->economic.gold);
-  add_line(_("Tax: %d Lux: %d Sci: %d"), get_player_ptr()->economic.tax,
-	   get_player_ptr()->economic.luxury,
-	   get_player_ptr()->economic.science);
+  if (pplayer) {
+    add_line(_("Gold: %d"), pplayer->economic.gold);
+    add_line(_("Tax: %d Lux: %d Sci: %d"), pplayer->economic.tax,
+	     pplayer->economic.luxury, pplayer->economic.science);
+  }	
   RETURN;
 }
 
@@ -623,12 +628,12 @@ const char *get_bulb_tooltip(void)
 {
   INIT;
 
+  struct player *pplayer = get_player_ptr();
+
   add(_("Shows your progress in researching "
 	"the current technology.\n%s: %d/%d."),
-      get_tech_name(get_player_ptr(),
-		    get_player_ptr()->research.researching),
-      get_player_ptr()->research.bulbs_researched,
-      total_bulbs_required(get_player_ptr()));
+      get_tech_name(pplayer, pplayer->research.researching),
+      pplayer->research.bulbs_researched, total_bulbs_required(pplayer));
   RETURN;
 }
 
@@ -806,18 +811,20 @@ const char *get_report_title(const char *report_name)
 {
   INIT;
 
+  struct player *pplayer = get_player_ptr();
+
   add_line("%s", report_name);
 
   /* TRANS: "Republic of the Polish" */
   add_line(_("%s of the %s"),
-	   get_government_name(get_player_ptr()->government),
-	   get_nation_name_plural(get_player_ptr()->nation));
+	   get_government_name(pplayer->government),
+	   get_nation_name_plural(pplayer->nation));
 
   add_line("%s %s: %s",
-	   get_ruler_title(get_player_ptr()->government,
-			   get_player_ptr()->is_male,
-			   get_player_ptr()->nation), get_player_ptr()->name,
-	   textyear(game.info.year));
+	   get_ruler_title(pplayer->government,
+			   pplayer->is_male,
+			   pplayer->nation),
+	   pplayer->name, textyear(game.info.year));
   RETURN;
 }
 

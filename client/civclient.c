@@ -558,6 +558,7 @@ void set_client_state(enum client_states newstate)
   bool connect_error = (client_state == CLIENT_PRE_GAME_STATE)
       && (newstate == CLIENT_PRE_GAME_STATE);
   enum client_states oldstate = client_state;
+  struct player *pplayer = get_player_ptr();
 
   freelog(LOG_DEBUG, "set_client_state %d", newstate);
 
@@ -565,8 +566,8 @@ void set_client_state(enum client_states newstate)
     /*
      * Extra kludge for end-game handling of the CMA.
      */
-    if (get_player_ptr()) {
-      city_list_iterate(get_player_ptr()->cities, pcity) {
+    if (pplayer) {
+      city_list_iterate(pplayer->cities, pcity) {
 	if (cma_is_city_under_agent(pcity, NULL)) {
 	  cma_release_city(pcity);
 	}
@@ -599,8 +600,8 @@ void set_client_state(enum client_states newstate)
       check_ruleset_specific_options();
       create_event(NULL, E_GAME_START, _("Game started."));
       precalc_tech_data();
-      if (get_player_ptr()) {
-	update_research(get_player_ptr());
+      if (pplayer) {
+	update_research(pplayer);
       }
       role_unit_precalcs();
       clear_notify_window();
@@ -610,7 +611,7 @@ void set_client_state(enum client_states newstate)
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
       if (!client_is_observer()
-	  && get_player_ptr()
+	  && pplayer
 	  && game.info.turn == 0) {
 	set_default_user_tech_goal();
       }
@@ -709,19 +710,12 @@ void wait_till_request_got_processed(int request_id)
 }
 
 /**************************************************************************
-..
-**************************************************************************/
-bool client_is_observer(void)
-{
-  return aconnection.established && aconnection.observer;
-}
-
-/**************************************************************************
  This function should be called every 500ms. It lets the unit blink
  and update the timeout.
 **************************************************************************/
 void real_timer_callback(void)
 {
+  struct player *cplayer;
   time_t curtime;
 
   voteinfo_queue_check_removed();
@@ -730,10 +724,11 @@ void real_timer_callback(void)
     return;
   }
 
-  if (get_player_ptr()
-      && get_player_ptr()->is_connected
-      && get_player_ptr()->is_alive
-      && !get_player_ptr()->turn_done) {
+  cplayer = get_player_ptr();
+  if (cplayer
+      && cplayer->is_connected
+      && cplayer->is_alive
+      && !cplayer->turn_done) {
     int is_waiting = 0, is_moving = 0;
 
     players_iterate(pplayer) {
@@ -825,10 +820,25 @@ int get_player_idx(void)
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+bool client_is_observer(void)
+{
+  return aconnection.established && aconnection.observer;
+}
+
+/**************************************************************************
   Returns TRUE if and only if the client is controlling a player.
 **************************************************************************/
 bool client_is_player(void)
 {
-  return !client_is_observer() && get_player_ptr() != NULL;
+  return aconnection.established && connection_controls_player(&aconnection);
 }
 
+/**************************************************************************
+  Returns TRUE if and only if the client is opbserving globally the game.
+**************************************************************************/
+bool client_is_global_observer(void)
+{
+  return aconnection.established && connection_is_global_observer(&aconnection);
+}

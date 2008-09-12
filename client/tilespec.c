@@ -2988,17 +2988,17 @@ enum color_std overview_tile_color(struct tile *ptile)
 {
   struct unit *punit;
   struct city *pcity;
-  struct player *pplayer;
+  struct player *pplayer, *me = get_player_ptr();
 
   if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {
     return COLOR_STD_BLACK;
   }
   if ((pcity = map_get_city(ptile))) {
     pplayer = city_owner(pcity);
-    if (!pplayer || !get_player_ptr() || pplayer == get_player_ptr()) {
+    if (!pplayer || client_is_global_observer() || pplayer == me) {
       return COLOR_STD_WHITE;
     } else {
-      switch (pplayer_get_diplstate(pplayer, get_player_ptr())->type) {
+      switch (pplayer_get_diplstate(pplayer, me)->type) {
 	case DS_NO_CONTACT:
 	  if (game.info.diplomacy >= 2) {
             return COLOR_STD_FORANGE;
@@ -3016,10 +3016,10 @@ enum color_std overview_tile_color(struct tile *ptile)
     }
   } else if ((punit=find_visible_unit(ptile))) {
     pplayer = unit_owner(punit);
-    if (!pplayer || !get_player_ptr() || pplayer == get_player_ptr()) {
+    if (!pplayer || client_is_global_observer() || pplayer == me) {
       return COLOR_STD_YELLOW;
     } else {
-      switch(pplayer_get_diplstate(pplayer, get_player_ptr())->type) {
+      switch (pplayer_get_diplstate(pplayer, me)->type) {
         case DS_NO_CONTACT:
 	  if (game.info.diplomacy >= 2) {
 	    return COLOR_STD_RED;

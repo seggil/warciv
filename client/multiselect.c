@@ -1102,8 +1102,7 @@ struct player *get_tile_player(struct tile *ptile)
   memset(count, 0, sizeof(count));
 
   unit_list_iterate(ptile->units, punit) {
-    switch (pplayer_get_diplstate(get_player_ptr(), unit_owner(punit))->
-            type) {
+    switch (pplayer_get_diplstate(get_player_ptr(), unit_owner(punit))->type) {
     case DS_NEUTRAL:
     case DS_WAR:
     case DS_CEASEFIRE:

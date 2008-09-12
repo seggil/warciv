@@ -76,62 +76,61 @@ static void rates_set_values(int tax, int no_tax_scroll,
   int tax_lock, lux_lock, sci_lock;
   int maxrate;
   
-  tax_lock	= GTK_TOGGLE_BUTTON(rates_tax_toggle)->active;
-  lux_lock	= GTK_TOGGLE_BUTTON(rates_lux_toggle)->active;
-  sci_lock	= GTK_TOGGLE_BUTTON(rates_sci_toggle)->active;
+  tax_lock = GTK_TOGGLE_BUTTON(rates_tax_toggle)->active;
+  lux_lock = GTK_TOGGLE_BUTTON(rates_lux_toggle)->active;
+  sci_lock = GTK_TOGGLE_BUTTON(rates_sci_toggle)->active;
 
-  maxrate=get_government_max_rate(get_player_ptr()->government);
+  maxrate = get_government_max_rate(get_player_ptr()->government);
   /* This's quite a simple-minded "double check".. */
-  tax=MIN(tax, maxrate);
-  lux=MIN(lux, maxrate);
-  sci=MIN(sci, maxrate);
+  tax = MIN(tax, maxrate);
+  lux = MIN(lux, maxrate);
+  sci = MIN(sci, maxrate);
   
-  if(tax+sci+lux!=100)
-  {
-    if((tax!=rates_tax_value))
-    {
-      if(!lux_lock)
-	lux=MIN(MAX(100-tax-sci, 0), maxrate);
-      if(!sci_lock)
-	sci=MIN(MAX(100-tax-lux, 0), maxrate);
+  if (tax + sci + lux != 100) {
+    if ((tax != rates_tax_value)) {
+      if (!lux_lock) {
+	lux = MIN(MAX(100 - tax - sci, 0), maxrate);
+      }
+      if (!sci_lock) {
+	sci = MIN(MAX(100 - tax - lux, 0), maxrate);
+      }
+    } else if ((lux != rates_lux_value)) {
+      if (!tax_lock) {
+	tax = MIN(MAX(100 - lux - sci, 0), maxrate);
+      }
+      if (!sci_lock) {
+	sci = MIN(MAX(100 - lux - tax, 0), maxrate);
+      }
+    } else if ((sci != rates_sci_value)) {
+      if (!lux_lock) {
+	lux = MIN(MAX(100 - tax - sci, 0), maxrate);
+      }
+      if (!tax_lock) {
+	tax = MIN(MAX(100 - lux - sci, 0), maxrate);
+      }
     }
-    else if((lux!=rates_lux_value))
-    {
-      if(!tax_lock)
-	tax=MIN(MAX(100-lux-sci, 0), maxrate);
-      if(!sci_lock)
-	sci=MIN(MAX(100-lux-tax, 0), maxrate);
-    }
-    else if((sci!=rates_sci_value))
-    {
-      if(!lux_lock)
-	lux=MIN(MAX(100-tax-sci, 0), maxrate);
-      if(!tax_lock)
-	tax=MIN(MAX(100-lux-sci, 0), maxrate);
-    }
-    
-    if(tax+sci+lux!=100) {
-      tax=rates_tax_value;
-      lux=rates_lux_value;
-      sci=rates_sci_value;
 
-      rates_tax_value=-1;
-      rates_lux_value=-1;
-      rates_sci_value=-1;
+    if (tax + sci + lux != 100) {
+      tax = rates_tax_value;
+      lux = rates_lux_value;
+      sci = rates_sci_value;
 
-      no_tax_scroll=0;
-      no_lux_scroll=0;
-      no_sci_scroll=0;
+      rates_tax_value = -1;
+      rates_lux_value = -1;
+      rates_sci_value = -1;
+
+      no_tax_scroll = 0;
+      no_lux_scroll = 0;
+      no_sci_scroll = 0;
     }
 
   }
 
-  if(tax!=rates_tax_value) {
+  if (tax != rates_tax_value) {
     my_snprintf(buf, sizeof(buf), "%3d%%", tax);
     if (strcmp(buf, GTK_LABEL(rates_tax_label)->label) != 0)
 	gtk_label_set_text(GTK_LABEL(rates_tax_label), buf);
-    if(!no_tax_scroll)
-    {
+    if (!no_tax_scroll) {
 	g_signal_handler_block(rates_tax_adj, rates_tax_sig);
 	gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_tax_adj), tax/10 );
 	g_signal_handler_unblock(rates_tax_adj, rates_tax_sig);
@@ -139,12 +138,11 @@ static void rates_set_values(int tax, int no_tax_scroll,
     rates_tax_value=tax;
   }
 
-  if(lux!=rates_lux_value) {
+  if (lux != rates_lux_value) {
     my_snprintf(buf, sizeof(buf), "%3d%%", lux);
     if (strcmp(buf, GTK_LABEL(rates_lux_label)->label) != 0)
 	gtk_label_set_text(GTK_LABEL(rates_lux_label), buf);
-    if(!no_lux_scroll)
-    {
+    if (!no_lux_scroll) {
 	g_signal_handler_block(rates_lux_adj, rates_lux_sig);
 	gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_lux_adj), lux/10 );
 	g_signal_handler_unblock(rates_lux_adj, rates_lux_sig);
@@ -152,12 +150,11 @@ static void rates_set_values(int tax, int no_tax_scroll,
     rates_lux_value=lux;
   }
 
-  if(sci!=rates_sci_value) {
+  if (sci != rates_sci_value) {
     my_snprintf(buf, sizeof(buf), "%3d%%", sci);
     if (strcmp(buf, GTK_LABEL(rates_sci_label)->label) != 0)
 	gtk_label_set_text(GTK_LABEL(rates_sci_label),buf);
-    if(!no_sci_scroll)
-    {
+    if (!no_sci_scroll) {
 	g_signal_handler_block(rates_sci_adj, rates_sci_sig);
 	gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_sci_adj), sci/10 );
 	g_signal_handler_unblock(rates_sci_adj, rates_sci_sig);
@@ -172,28 +169,26 @@ static void rates_set_values(int tax, int no_tax_scroll,
 **************************************************************************/
 static void rates_changed_callback(GtkAdjustment *adj)
 {
-  int percent=adj->value;
+  int percent = adj->value;
 
-  if(adj==GTK_ADJUSTMENT(rates_tax_adj)) {
+  if (adj == GTK_ADJUSTMENT(rates_tax_adj)) {
     int tax_value;
 
-    tax_value=10*percent;
-    tax_value=MIN(tax_value, 100);
-    rates_set_values(tax_value,1, rates_lux_value,0, rates_sci_value,0);
-  }
-  else if(adj==GTK_ADJUSTMENT(rates_lux_adj)) {
+    tax_value = 10 * percent;
+    tax_value = MIN(tax_value, 100);
+    rates_set_values(tax_value, 1, rates_lux_value, 0, rates_sci_value, 0);
+  } else if (adj == GTK_ADJUSTMENT(rates_lux_adj)) {
     int lux_value;
 
-    lux_value=10*percent;
-    lux_value=MIN(lux_value, 100);
-    rates_set_values(rates_tax_value,0, lux_value,1, rates_sci_value,0);
-  }
-  else {
+    lux_value = 10 * percent;
+    lux_value = MIN(lux_value, 100);
+    rates_set_values(rates_tax_value, 0, lux_value, 1, rates_sci_value, 0);
+  } else {
     int sci_value;
 
-    sci_value=10*percent;
-    sci_value=MIN(sci_value, 100);
-    rates_set_values(rates_tax_value,0, rates_lux_value,0, sci_value,1);
+    sci_value = 10 * percent;
+    sci_value = MIN(sci_value, 100);
+    rates_set_values(rates_tax_value, 0, rates_lux_value, 0, sci_value, 1);
   }
 }
 
@@ -226,19 +221,16 @@ static void rates_destroy_callback(GtkWidget *widget, gpointer data)
 *****************************************************************/
 static GtkWidget *create_rates_dialog(void)
 {
-  GtkWidget     *shell;
-  GtkWidget	*frame, *hbox;
-
-  GtkWidget	*scale;
+  struct player *pplayer = get_player_ptr();
+  GtkWidget *shell;
+  GtkWidget *frame, *hbox;
+  GtkWidget *scale;
   
   shell = gtk_dialog_new_with_buttons(_("Select tax, luxury and science rates"),
-  	NULL,
-	0,
-	GTK_STOCK_CANCEL,
-	GTK_RESPONSE_CANCEL,
-	GTK_STOCK_OK,
-	GTK_RESPONSE_OK,
-	NULL);
+				      NULL, 0,
+				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				      GTK_STOCK_OK, GTK_RESPONSE_OK,
+				      NULL);
   setup_dialog(shell, toplevel);
   gtk_dialog_set_default_response(GTK_DIALOG(shell), GTK_RESPONSE_OK);
   gtk_window_set_position(GTK_WINDOW(shell), GTK_WIN_POS_MOUSE);
@@ -315,9 +307,9 @@ static GtkWidget *create_rates_dialog(void)
   gtk_widget_show_all( GTK_DIALOG( shell )->vbox );
   gtk_widget_show_all( GTK_DIALOG( shell )->action_area );
 
-  rates_tax_value=-1;
-  rates_lux_value=-1;
-  rates_sci_value=-1;
+  rates_tax_value = -1;
+  rates_lux_value = -1;
+  rates_sci_value = -1;
 
   rates_tax_sig =
     g_signal_connect_after(rates_tax_adj, "value_changed",
@@ -331,9 +323,9 @@ static GtkWidget *create_rates_dialog(void)
     g_signal_connect_after(rates_sci_adj, "value_changed",
 			   G_CALLBACK(rates_changed_callback), NULL);
 
-  rates_set_values( get_player_ptr()->economic.tax, 0,
-        	    get_player_ptr()->economic.luxury, 0,
-        	    get_player_ptr()->economic.science, 0 );
+  rates_set_values(pplayer->economic.tax, 0,
+        	   pplayer->economic.luxury, 0,
+        	   pplayer->economic.science, 0);
   return shell;
 }
 
@@ -346,13 +338,14 @@ static GtkWidget *create_rates_dialog(void)
 void popup_rates_dialog(void)
 {
   char buf[64];
+  int gov = get_player_ptr()->government;
 
-  if (!rates_dialog_shell)
+  if (!rates_dialog_shell) {
     rates_dialog_shell = create_rates_dialog();
+  }
 
   my_snprintf(buf, sizeof(buf), _("%s max rate: %d%%"),
-      get_government_name(get_player_ptr()->government),
-      get_government_max_rate(get_player_ptr()->government));
+      get_government_name(gov), get_government_max_rate(gov));
   gtk_label_set_text(GTK_LABEL(rates_gov_label), buf);
   
   gtk_window_present(GTK_WINDOW(rates_dialog_shell));

@@ -60,6 +60,7 @@ extern bool do_not_request_hack;
 void wait_till_request_got_processed(int request_id);
 bool client_is_observer(void);
 bool client_is_player(void);
+bool client_is_global_observer(void);
 void real_timer_callback(void);
 bool can_client_issue_orders(void);
 bool can_client_change_view(void);

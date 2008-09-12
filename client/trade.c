@@ -403,7 +403,7 @@ void do_trade_planning_calculation(void)
 #define MAX_ESTIMATED_TURNS 30
 void show_trade_estimation(void)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return;
   }
 
@@ -549,7 +549,7 @@ bool is_trade_city_list(void)
 **************************************************************************/
 bool is_trade_planning(void)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return FALSE;
   }
 
@@ -569,7 +569,7 @@ bool is_trade_planning(void)
 **************************************************************************/
 bool is_trade_route_in_route(void)
 {
-  if (!get_player_ptr()) {
+  if (client_is_global_observer()) {
     return FALSE;
   }
 
