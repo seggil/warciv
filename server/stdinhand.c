@@ -4488,7 +4488,6 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   /* if we want to detach while the game is running, reset the client */
   if (server_state >= RUN_GAME_STATE) {
     send_game_state(pconn->self, CLIENT_PRE_GAME_STATE);
-    send_game_info(pconn->self);
     send_player_info_c(NULL, pconn->self);
     send_conn_info(game.est_connections, pconn->self);
   }
