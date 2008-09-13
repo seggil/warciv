@@ -1884,6 +1884,7 @@ void handle_conn_info(struct packet_conn_info *pinfo)
       aconnection.observer = pconn->observer;
       aconnection.access_level = pconn->access_level;
       aconnection.player = pplayer;
+      update_info_table();
     }
   }
   update_players_dialog();

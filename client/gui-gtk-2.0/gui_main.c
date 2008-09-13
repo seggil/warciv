@@ -114,6 +114,7 @@ GtkWidget *main_label_info;
 GtkWidget *avbox, *ahbox, *vbox, *conn_box;
 GtkWidget* scroll_panel;
 
+static GtkWidget *info_table;
 GtkWidget *econ_label[10];
 GtkWidget *bulb_label;
 GtkWidget *sun_label;
@@ -131,6 +132,14 @@ GtkWidget *bulb_ebox;
 GtkWidget *sun_ebox;
 GtkWidget *flake_ebox;
 GtkWidget *government_ebox;
+
+/* For global observers */
+static GtkWidget *go_table;
+GtkWidget *go_sun_label;
+GtkWidget *go_flake_label;
+GtkWidget *go_timeout_label;
+GtkWidget *go_sun_ebox;
+GtkWidget *go_flake_ebox;
 
 static GtkWidget *main_menubar;
 static GtkWidget *unit_pixmap_table;
@@ -1355,6 +1364,7 @@ static void setup_widgets(void)
   gtk_table_set_row_spacing(GTK_TABLE(table), 0, 0);
   gtk_table_set_col_spacing(GTK_TABLE(table), 0, 0);
   gtk_box_pack_start(GTK_BOX(box), table, TRUE, FALSE, 0);
+  info_table = table;
 
   /* citizens for taxrates */
   ebox = gtk_event_box_new();
@@ -1452,8 +1462,42 @@ static void setup_widgets(void)
   my_snprintf(buf, sizeof(buf), "%s:\n%s", _("Turn Done"), _("Shift+Return"));
   gtk_tooltips_set_tip(main_tips, turn_done_button, buf, "");
 
-  /* Selected unit status */
+  /* Make the global observer version of the info table. */
+  box = gtk_hbox_new(FALSE, 0);
 
+  gtk_box_pack_start(GTK_BOX(avbox), box, FALSE, FALSE, 0);
+
+  table = gtk_table_new(1, 10, TRUE);
+  gtk_table_set_row_spacing(GTK_TABLE(table), 0, 0);
+  gtk_table_set_col_spacing(GTK_TABLE(table), 0, 0);
+  gtk_box_pack_start(GTK_BOX(box), table, TRUE, FALSE, 0);
+  go_table = table;
+
+  /* environmental, timeout */
+  ebox = gtk_event_box_new();
+  go_sun_label = gtk_image_new_from_pixmap(sprites.warming[0]->pixmap, NULL);
+  gtk_misc_set_alignment(GTK_MISC(go_sun_label), 0.0, 0.0);
+  gtk_misc_set_padding(GTK_MISC(go_sun_label), 0, 0);
+  gtk_container_add(GTK_CONTAINER(ebox), go_sun_label);
+  gtk_table_attach_defaults(GTK_TABLE(table), ebox, 0, 1, 0, 1);
+  go_sun_ebox = ebox;
+
+  ebox = gtk_event_box_new();
+  go_flake_label = gtk_image_new_from_pixmap(sprites.cooling[0]->pixmap, NULL);
+  gtk_misc_set_alignment(GTK_MISC(go_flake_label), 0.0, 0.0);
+  gtk_misc_set_padding(GTK_MISC(go_flake_label), 0, 0);
+  gtk_container_add(GTK_CONTAINER(ebox), go_flake_label);
+  gtk_table_attach_defaults(GTK_TABLE(table), ebox, 1, 2, 0, 1);
+  go_flake_ebox = ebox;
+
+  go_timeout_label = gtk_label_new("");
+
+  frame = gtk_frame_new(NULL);
+  gtk_widget_set_size_request(frame, SMALL_TILE_WIDTH, SMALL_TILE_HEIGHT);
+  gtk_table_attach_defaults(GTK_TABLE(table), frame, 2, 10, 0, 1);
+  gtk_container_add(GTK_CONTAINER(frame), go_timeout_label);
+
+  /* Selected unit status */
   unit_info_frame = gtk_frame_new("");
   gtk_box_pack_start(GTK_BOX(avbox), unit_info_frame, FALSE, FALSE, 0);
     
@@ -2049,25 +2093,25 @@ static gboolean show_info_button_release(GtkWidget *w, GdkEventButton *ev, gpoin
 **************************************************************************/
 static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
 {
-  if(ev->button == 1) {
+  if (ev->button == 1 && !client_is_global_observer()) {
     GtkWidget *p;
     char buf[512];
     struct player *pplayer = get_player_ptr();
-    
+
     my_snprintf(buf, sizeof(buf),
-                _("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
-                  "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
-                population_to_text(civ_population(pplayer)),
-                textyear(game.info.year), game.info.turn,
-                pplayer->economic.gold,
-                player_get_expected_income(pplayer),
-                pplayer->economic.tax,
-                pplayer->economic.luxury,
-                pplayer->economic.science,
-                get_tech_name(pplayer, pplayer->research.researching),
-                pplayer->research.bulbs_researched,
-                total_bulbs_required(pplayer),
-                get_government_name(pplayer->government));
+		_("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
+		  "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
+		population_to_text(civ_population(pplayer)),
+		textyear(game.info.year), game.info.turn,
+		pplayer->economic.gold,
+		player_get_expected_income(pplayer),
+		pplayer->economic.tax,
+		pplayer->economic.luxury,
+		pplayer->economic.science,
+		get_tech_name(pplayer, pplayer->research.researching),
+		pplayer->research.bulbs_researched,
+		total_bulbs_required(pplayer),
+		get_government_name(pplayer->government));
     
     p = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_set_app_paintable(p, TRUE);
@@ -2371,6 +2415,25 @@ static gboolean quit_dialog_callback(void)
   popup_quit_dialog();
   /* Stop emission of event. */
   return TRUE;
+}
+
+/****************************************************************
+  Toggle the main info table for player (and player observer)
+  and global observer if needed.
+****************************************************************/
+void update_info_table(void)
+{
+  if (client_is_global_observer()) {
+    gtk_widget_hide(info_table);
+    gtk_widget_hide(unit_info_label);
+    gtk_widget_hide(unit_info_frame);
+    gtk_widget_show(go_table);
+  } else {
+    gtk_widget_show(info_table);
+    gtk_widget_show(unit_info_label);
+    gtk_widget_show(unit_info_frame);
+    gtk_widget_hide(go_table);
+  }
 }
 
 /**************************************************************************

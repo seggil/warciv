@@ -105,7 +105,9 @@ void update_turn_done_button(bool do_restore)
 **************************************************************************/
 void update_timeout_label(void)
 {
-  gtk_label_set_text(GTK_LABEL(timeout_label), get_timeout_label_text());
+  gtk_label_set_text(GTK_LABEL(client_is_global_observer() ? go_timeout_label
+							   : timeout_label),
+		     get_timeout_label_text());
 }
 
 /**************************************************************************
@@ -118,7 +120,22 @@ void update_info_label(void)
   int sol, flake;
   GtkWidget *label;
 
-  if (!client_is_global_observer()) {
+  if (client_is_global_observer()) {
+    gtk_frame_set_label(GTK_FRAME(main_frame_civ_name), NULL);
+
+    gtk_label_set_text(GTK_LABEL(main_label_info), get_info_label_text());
+
+    sol = client_warming_sprite();
+    flake = client_cooling_sprite();
+    set_indicator_icons(-1, sol, flake, -1);
+
+    gtk_tooltips_set_tip(main_tips, go_sun_ebox, get_global_warming_tooltip(),
+			 "");
+    gtk_tooltips_set_tip(main_tips, go_flake_ebox, get_nuclear_winter_tooltip(),
+			 "");
+
+    gtk_widget_show(main_frame_civ_name);
+  } else if (pplayer) {
     label = gtk_frame_get_label_widget(GTK_FRAME(main_frame_civ_name));
     gtk_label_set_text(GTK_LABEL(label),
 		       get_nation_name(pplayer->nation));
@@ -282,30 +299,39 @@ GdkPixmap *get_thumb_pixmap(int onoff)
 **************************************************************************/
 void set_indicator_icons(int bulb, int sol, int flake, int gov)
 {
+  bool global_observer = client_is_global_observer();
   struct Sprite *gov_sprite;
 
-  bulb = CLIP(0, bulb, NUM_TILES_PROGRESS-1);
-  sol = CLIP(0, sol, NUM_TILES_PROGRESS-1);
-  flake = CLIP(0, flake, NUM_TILES_PROGRESS-1);
 
-  gtk_image_set_from_pixmap(GTK_IMAGE(bulb_label),
-                            sprites.bulb[bulb]->pixmap, NULL);
-  gtk_image_set_from_pixmap(GTK_IMAGE(sun_label),
+  if (!global_observer) {
+    bulb = CLIP(0, bulb, NUM_TILES_PROGRESS - 1);
+    gtk_image_set_from_pixmap(GTK_IMAGE(bulb_label),
+			      sprites.bulb[bulb]->pixmap, NULL);
+  }
+
+  sol = CLIP(0, sol, NUM_TILES_PROGRESS - 1);
+  gtk_image_set_from_pixmap(GTK_IMAGE(global_observer ? go_sun_label
+						      : sun_label),
                             sprites.warming[sol]->pixmap, NULL);
-  gtk_image_set_from_pixmap(GTK_IMAGE(flake_label),
+
+  flake = CLIP(0, flake, NUM_TILES_PROGRESS - 1);
+  gtk_image_set_from_pixmap(GTK_IMAGE(global_observer ? go_flake_label
+						      : go_flake_label),
                             sprites.cooling[flake]->pixmap, NULL);
 
-  if (game.ruleset_control.government_count==0) {
-    /* HACK: the UNHAPPY citizen is used for the government
-     * when we don't know any better. */
-    struct citizen_type c = {.type = CITIZEN_UNHAPPY};
+  if (!global_observer) {
+    if (game.ruleset_control.government_count == 0) {
+      /* HACK: the UNHAPPY citizen is used for the government
+       * when we don't know any better. */
+      struct citizen_type c = {.type = CITIZEN_UNHAPPY};
 
-    gov_sprite = get_citizen_sprite(c, 0, NULL);
-  } else {
-    gov_sprite = get_government(gov)->sprite;
+      gov_sprite = get_citizen_sprite(c, 0, NULL);
+    } else {
+      gov_sprite = get_government(gov)->sprite;
+    }
+    gtk_image_set_from_pixmap(GTK_IMAGE(government_label),
+			      gov_sprite->pixmap, NULL);
   }
-  gtk_image_set_from_pixmap(GTK_IMAGE(government_label),
-                            gov_sprite->pixmap, NULL);
 }
 
 /**************************************************************************

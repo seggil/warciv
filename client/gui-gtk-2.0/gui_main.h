@@ -93,6 +93,11 @@ extern GtkWidget *	bulb_ebox;
 extern GtkWidget *	sun_ebox;
 extern GtkWidget *	flake_ebox;
 extern GtkWidget *	government_ebox;
+extern GtkWidget *      go_sun_label;
+extern GtkWidget *      go_flake_label;
+extern GtkWidget *      go_timeout_label;
+extern GtkWidget *      go_sun_ebox;
+extern GtkWidget *      go_flake_ebox;
 extern GtkWidget *      map_canvas;             /* GtkDrawingArea */
 extern GtkWidget *      overview_canvas;        /* GtkDrawingArea */
 extern GtkWidget *      timeout_label;

@@ -42,6 +42,8 @@ void remove_timer_callback (int id);
 void set_unit_icon(int idx, struct unit *punit);
 void set_unit_icons_more_arrow(bool onoff);
 
+void update_info_table(void);
+
 extern const char *client_string;
 
 #endif  /* FC__GUI_MAIN_G_H */
