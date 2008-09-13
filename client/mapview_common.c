@@ -1579,6 +1579,10 @@ void draw_map_canvas(int canvas_x, int canvas_y,
   bool full;
   struct canvas *tmp;
 
+  if (!aconnection.established) {
+    return;
+  }
+
   canvas_x = MAX(canvas_x, 0);
   canvas_y = MAX(canvas_y, 0);
   width = MIN(mapview_canvas.store_width - canvas_x, width);
