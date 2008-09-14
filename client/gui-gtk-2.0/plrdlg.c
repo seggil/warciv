@@ -565,6 +565,10 @@ static void build_row(GtkTreeIter *it, int i)
 **************************************************************************/
 void update_players_dialog(void)
 {
+  if (!aconnection.established) {
+    return;
+  }
+
   if (players_dialog_shell && !is_plrdlg_frozen()) {
     gboolean exists[game.info.nplayers];
     gint i;
@@ -600,12 +604,12 @@ void update_players_dialog(void)
     }
 
     players_iterate(pplayer) {
-	if (!exists[pplayer->player_no]) {
-		
-	  gtk_list_store_append(store, &it);
+      if (!exists[pplayer->player_no]) {
+	      
+	gtk_list_store_append(store, &it);
 
-	  build_row(&it, pplayer->player_no);
-	}
+	build_row(&it, pplayer->player_no);
+      }
     } players_iterate_end;
 
     update_players_menu();
