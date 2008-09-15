@@ -555,7 +555,7 @@ extern bool is_server;
 #define GAME_OLD_DEFAULT_SKILL_LEVEL 5  /* normal; for old save games */
 
 #define GAME_DEFAULT_DEMOGRAPHY      "NASRLPEMOqrb"
-#define GAME_DEFAULT_ALLOW_TAKE      "H1A1h1a1d3O3o3" /* COMPAT */
+#define GAME_DEFAULT_ALLOW_TAKE      "H1A1h1a1d3Oo"
 
 #define GAME_DEFAULT_COMPRESS_LEVEL 6    /* if we have compression */
 #define GAME_MIN_COMPRESS_LEVEL     0
