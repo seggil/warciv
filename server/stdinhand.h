@@ -39,6 +39,7 @@ void show_players(struct connection *caller);
 void clearallactions(void);
 
 bool load_command(struct connection *caller, char *arg, bool check);
+bool unloadmap_command(struct connection *caller, bool check);
 
 bool require_command(struct connection *caller, char *arg, bool check);
 

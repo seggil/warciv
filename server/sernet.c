@@ -418,6 +418,20 @@ static void really_close_connections(void)
   if (game.server.emptyreset && server_state == PRE_GAME_STATE
       && num_connections_before > 0
       && conn_list_size(game.all_connections) <= 0) {
+    if (game.server.is_new_game) { /* Not for loaded games. */
+      if (map_is_loaded()) {
+	/* Unload the map if loaded. */
+	unloadmap_command(NULL, FALSE);
+      }
+
+      /* Remove (created) players. */
+      while (game.info.nplayers > 0) {
+	team_remove_player(get_player(0));
+	server_remove_player(get_player(0));
+      }
+    }
+
+    /* Reset settings. */
     settings_reset();
     if (srvarg.script_filename) {
       read_init_script(NULL, srvarg.script_filename);

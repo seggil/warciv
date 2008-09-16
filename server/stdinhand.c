@@ -5790,7 +5790,7 @@ static bool loadmap_command(struct connection *caller, char *str,
 /**************************************************************************
   ...
 **************************************************************************/
-static bool unloadmap_command(struct connection *caller, bool check)
+bool unloadmap_command(struct connection *caller, bool check)
 {
   if (server_state != PRE_GAME_STATE) {
     cmd_reply(CMD_UNLOADMAP, caller, C_FAIL,
