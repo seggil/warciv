@@ -137,8 +137,13 @@ void update_info_label(void)
     gtk_widget_show(main_frame_civ_name);
   } else if (pplayer) {
     label = gtk_frame_get_label_widget(GTK_FRAME(main_frame_civ_name));
-    gtk_label_set_text(GTK_LABEL(label),
-		       get_nation_name(pplayer->nation));
+    if (label) {
+      gtk_label_set_text(GTK_LABEL(label),
+			 get_nation_name(pplayer->nation));
+    } else {
+      gtk_frame_set_label(GTK_FRAME(main_frame_civ_name),
+			  get_nation_name(pplayer->nation));
+    }
 
     gtk_label_set_text(GTK_LABEL(main_label_info), get_info_label_text());
 
