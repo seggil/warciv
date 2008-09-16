@@ -1000,9 +1000,7 @@ bool conn_is_kicked(struct connection *pconn, int *time_remaining)
 static bool kick_command(struct connection *caller, char *name, bool check)
 {
   struct connection *pconn;
-  struct player *pplayer;
   enum m_pre_result match_result;
-  bool was_connected;
   char ipaddr[MAX_LEN_ADDR];
   struct conn_list *kick_list;
   struct hash_table *unique_ipaddr_table;
@@ -1038,7 +1036,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
       return FALSE;
     }
   }
-  
+
   if (check) {
     return TRUE;
   }
@@ -1053,14 +1051,13 @@ static bool kick_command(struct connection *caller, char *name, bool check)
   } conn_list_iterate_end;
 
   conn_list_iterate(kick_list, pc) {
-    pplayer = pc->player;
-    was_connected = pplayer ? pplayer->is_connected : FALSE;
+    if (connection_controls_player(pc)) {
+      /* Unassign the username. */
+      sz_strlcpy(pc->player->username, ANON_USER_NAME);
+    }
+
     kick_table_add(pc);
     server_break_connection(pc, ES_KICKED);
-
-    if (pplayer && was_connected && !pplayer->is_connected) {
-      sz_strlcpy(pplayer->username, ANON_USER_NAME);
-    }
   } conn_list_iterate_end;
 
   conn_list_free(kick_list);
@@ -7180,27 +7177,45 @@ static bool ban_command(struct connection *caller, char *pattern,
   struct user_action *pua;
   int type = CPT_HOSTNAME;
   char buf[1024], err[256];
+
   if (pattern) {
     sz_strlcpy(buf, pattern);
     remove_leading_trailing_spaces(buf);
   }
+
   if (!pattern || !buf[0]) {
     cmd_reply(CMD_BAN, caller, C_FAIL,
               _("This command requires an an argument. Try /help ban."));
     return FALSE;
   }
+
   if (!parse_conn_pattern(pattern, buf, sizeof(buf), &type,
                           err, sizeof(err))) {
     cmd_reply(CMD_BAN, caller, C_SYNTAX,
               _("Incorrect syntax: %s. Try /help ban."), err);
     return FALSE;
   }
-  if (check)
+
+  if (check) {
     return TRUE;
+  }
+
   pua = user_action_new(buf, type, ACTION_BAN);
   user_action_list_prepend(on_connect_user_actions, pua);
   conn_pattern_as_str(pua->conpat, buf, sizeof(buf));
   cmd_reply(CMD_BAN, caller, C_COMMENT, _("%s has been banned."), buf);
+
+  conn_list_iterate(game.all_connections, pconn) {
+    if (conn_pattern_match(pua->conpat, pconn)) {
+      if (connection_controls_player(pconn)) {
+	/* Unassign the username. */
+	sz_strlcpy(pconn->player->username, ANON_USER_NAME);
+      }
+
+      server_break_connection(pconn, ES_BANNED);
+    }
+  } conn_list_iterate_end;
+
   return TRUE;
 }
 
@@ -7514,8 +7529,6 @@ static bool cut_client_connection(struct connection *caller, char *name,
 {
   enum m_pre_result match_result;
   struct connection *ptarget;
-  struct player *pplayer;
-  bool was_connected;
 
   ptarget = find_conn_by_user_prefix(name, &match_result);
   if (!ptarget) {
@@ -7524,15 +7537,16 @@ static bool cut_client_connection(struct connection *caller, char *name,
   } else if (check) {
     return TRUE;
   }
-  pplayer = ptarget->player;
-  was_connected = pplayer ? pplayer->is_connected : FALSE;
+
+  if (connection_controls_player(ptarget)) {
+    /* Unassign the username. */
+    sz_strlcpy(ptarget->player->username, ANON_USER_NAME);
+  }
+
   cmd_reply(CMD_CUT, caller, C_DISCONNECTED,
             _("Cutting connection %s."), ptarget->username);
   server_break_connection(ptarget, ES_CUT_COMMAND);
-  /* if we cut the connection, unassign the login name */
-  if (pplayer && was_connected && !pplayer->is_connected) {
-    sz_strlcpy(pplayer->username, ANON_USER_NAME);
-  }
+
   return TRUE;
 }
 
