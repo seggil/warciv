@@ -6356,7 +6356,8 @@ void update_auto_caravan_menu(void)
                      "AUTO_CARAVAN_ESTIMATE_TRADE",
 		     is_trade_route_in_route());
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING", cond);
+                     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING",
+		     cond && are_trade_cities_built());
 }
 
 /****************************************************************

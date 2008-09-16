@@ -1649,6 +1649,8 @@ void draw_map_canvas(int canvas_x, int canvas_y,
 
     draw_all_link_marks();
 
+    draw_non_built_trade_cities();
+
     /* Draw the goto lines on top of the whole thing. This is done last as
      * we want it completely on top.
      *

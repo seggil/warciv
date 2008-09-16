@@ -14,6 +14,8 @@
 #ifndef FC__TRADE_ROUTE_H
 #define FC__TRADE_ROUTE_H
 
+#include "map.h"	/* struct tile_list */
+
 enum trade_route_status {
   TR_NONE = 0,
   TR_PLANNED = 1 << 0,
@@ -88,6 +90,8 @@ struct city_list;
 struct player;
 struct trade_planning_calculation;	/* Opaque type */
 
+int trade_planning_precalculation(const struct tile_list *ptlist,
+				  size_t size, int *free_slots);
 struct trade_planning_calculation *trade_planning_calculation_new(
     struct player *pplayer, const struct city_list *pclist,
 #ifndef ASYNC_TRADE_PLANNING

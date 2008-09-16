@@ -19,24 +19,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "city.h"
 #include "fcintl.h"
-#include "game.h"
 #include "log.h"
 #include "mem.h"
-#include "player.h"
-#include "unit.h"
 #include "shared.h"
 #include "support.h"
 
-#include "chatline_g.h"
+#include "city.h"
+#include "game.h"
+#include "player.h"
+#include "unit.h"
+
 #include "civclient.h"
+#include "climisc.h"
 #include "clinet.h"
 #include "control.h"
 #include "goto.h"
+#include "multiselect.h"
+
+#include "chatline_g.h"
 #include "mapview_g.h"
 #include "menu_g.h"
-#include "multiselect.h"
 
 /********************************************************************** 
   Filters...
@@ -772,24 +775,6 @@ static const enum automatic_execution auto_timer_event[auto_timers_num] = {
   AUTO_95_TIMEOUT, AUTO_5_SECONDS
 };
 static struct auto_timer auto_timers[auto_timers_num];
-
-/********************************************************************** 
-  Return a text info about a tile.
-***********************************************************************/
-static char *get_tile_info(struct tile *ptile)
-{
-  static char buf[256];
-  struct city *pcity;
-
-  if (!ptile) {
-    my_snprintf(buf, sizeof(buf), _("(unknown tile)"));
-  } else if ((pcity = map_get_city(ptile))) {
-    my_snprintf(buf, sizeof(buf), "%s", pcity->name);
-  } else {
-    my_snprintf(buf, sizeof(buf), "(%d, %d)", ptile->x, ptile->y);
-  }
-  return buf;
-}
 
 /********************************************************************** 
   Add a delayed goto structure in a queue.

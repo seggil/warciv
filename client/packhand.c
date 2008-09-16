@@ -636,6 +636,10 @@ void handle_city_info(struct packet_city_info *packet)
   handle_city_packet_common(pcity, city_is_new, popup,
 			    packet->diplomat_investigate);
 
+  if (city_is_new) {
+    trade_city_new(pcity);
+  }
+
   /* Update the description if necessary. */
   if (update_descriptions) {
     update_city_description(pcity);

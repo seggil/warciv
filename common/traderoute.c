@@ -429,6 +429,10 @@ void recursive_calculate_trade_planning(
 ****************************************************************************/
 static int get_real_trade_route_number(struct city *pcity)
 {
+  if (!pcity) {
+    return 0;
+  }
+
   int count = 0;
 
   trade_route_list_iterate(pcity->trade_routes, ptr) {
@@ -447,6 +451,62 @@ static bool cities_will_have_trade(struct city *pcity1, struct city *pcity2)
 {
   struct trade_route *ptr = game_trade_route_find(pcity1, pcity2);
   return ptr && ptr->status > TR_PLANNED ? TRUE : FALSE;
+}
+
+/****************************************************************************
+  Precalculation function.
+
+  ptlist: The source tiles.
+  size: the number of elements of the integer array (should be
+	equal to tile_list_size(ptlist)).
+  free_slots: an editable integer array. This will set how many free slots there
+	      is for each tile index.
+
+  Returns the total number of free slots or -1 on failure.
+****************************************************************************/
+int trade_planning_precalculation(const struct tile_list *ptlist,
+				  size_t size, int *free_slots)
+{
+  if (game.traderoute_info.maxtraderoutes == 0) {
+    return 0;
+  }
+
+  struct city *pcity, *pcity2;
+  int i = 0, total = 0, fs;
+
+  tile_list_iterate(ptlist, ptile) {
+    if (i >= size) {
+      freelog(LOG_ERROR, "Not enough space to write all free slots.");
+      return -1;
+    }
+
+    pcity = ptile->city;
+    fs = game.traderoute_info.maxtraderoutes;
+
+    tile_list_iterate(ptlist, ptile2) {
+      pcity2 = ptile2->city;
+
+      if (pcity && pcity2) {
+	if (!cities_will_have_trade(pcity, pcity2)
+	    && can_cities_trade(pcity, pcity2)) {
+	  fs--;
+	}
+      } else if (map_distance(ptile, ptile2)
+	         >= game.traderoute_info.trademindist) {
+        fs--;
+      }
+      if (fs <= 0) {
+	break;
+      }
+    } tile_list_iterate_end;
+
+    free_slots[i] = fs;
+    total += fs;
+
+    i++;
+  } tile_list_iterate_end;
+
+  return total;
 }
 
 /****************************************************************************

@@ -41,6 +41,7 @@ const char *get_embassy_status(struct player *me, struct player *them);
 const char *get_vision_status(struct player *me, struct player *them);
 void client_diplomacy_clause_string(char *buf, int bufsiz,
 				    struct Clause *pclause);
+char *get_tile_info(struct tile *ptile);
 
 int client_research_sprite(void);
 int client_warming_sprite(void);

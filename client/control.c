@@ -1840,8 +1840,8 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   struct unit *punit = player_find_unit_by_id(get_player_ptr(), hover_unit);
   bool maybe_goto = FALSE;
 
-  if (pcity && hover_state == HOVER_TRADE_CITY) {
-    add_city_in_trade_planning(pcity, TRUE);
+  if (ptile && hover_state == HOVER_TRADE_CITY) {
+    add_tile_in_trade_planning(ptile, TRUE);
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
@@ -2978,7 +2978,7 @@ void key_add_trade_city(void)
   if (tiles_hilited_cities) {
     city_list_iterate(get_player_ptr()->cities, pcity) {
       if (is_city_hilited(pcity)) {
-	add_city_in_trade_planning(pcity, FALSE);
+	add_tile_in_trade_planning(pcity->tile, FALSE);
       }
     } city_list_iterate_end;
     update_auto_caravan_menu();

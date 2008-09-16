@@ -422,6 +422,24 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
   }
 }
 
+/********************************************************************** 
+  Return a text info about a tile.
+***********************************************************************/
+char *get_tile_info(struct tile *ptile)
+{
+  static char buf[256];
+  struct city *pcity;
+
+  if (!ptile) {
+    my_snprintf(buf, sizeof(buf), _("(unknown tile)"));
+  } else if ((pcity = map_get_city(ptile))) {
+    my_snprintf(buf, sizeof(buf), "%s", pcity->name);
+  } else {
+    my_snprintf(buf, sizeof(buf), "(%d, %d)", ptile->x, ptile->y);
+  }
+  return buf;
+}
+
 /**************************************************************************
 Return the sprite index for the research indicator.
 **************************************************************************/
