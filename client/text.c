@@ -263,10 +263,17 @@ const char *popup_info_text(struct tile *ptile)
      * borders are in use). */
     struct player *owner = city_owner(pcity);
 
-    if ((client_is_global_observer() && owner) || owner == get_player_ptr()) {
+    if (client_is_global_observer()) {
+      /* TRANS: "City: Warsaw | Username (Polish)" */
+      add_line(_("City: %s | %s%s (%s)"),
+	       pcity->name,
+	       get_name_prefix(owner),
+	       get_proper_username(owner),
+	       get_nation_name(owner->nation));
+    } else if (owner == get_player_ptr()) {
       /* TRANS: "City: Warsaw (Polish)" */
       add_line(_("City: %s (%s)"), pcity->name, get_nation_name(owner->nation));
-    } else if (!client_is_global_observer() && owner) {
+    } else {
       struct player_diplstate *ds =
 	  &get_player_ptr()->diplstates[owner->player_no];
       if (ds->type == DS_CEASEFIRE) {
@@ -319,7 +326,20 @@ const char *popup_info_text(struct tile *ptile)
     struct unit_type *ptype = unit_type(punit);
     char vet[1024] = "";
 
-    if ((client_is_global_observer() && owner) || owner == get_player_ptr()) {
+    if (client_is_global_observer()) {
+      struct city *pcity;
+      char tmp[64] = {0};
+
+      pcity = find_city_by_id(punit->homecity);
+      if (pcity) {
+	my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
+      }
+      /* TRANS: "Unit: Musketeers | Username (Polish/Warsaw)" */
+      add_line(_("Unit: %s | %s%s (%s%s)"), ptype->name,
+	       get_name_prefix(owner),
+	       get_proper_username(owner),
+	       get_nation_name(owner->nation), tmp);
+    } else if (owner == get_player_ptr()) {
       struct city *pcity;
       char tmp[64] = {0};
 
@@ -330,7 +350,7 @@ const char *popup_info_text(struct tile *ptile)
       /* TRANS: "Unit: Musketeers (Polish/Warsaw)" */
       add_line(_("Unit: %s (%s%s)"), ptype->name,
 	       get_nation_name(owner->nation), tmp);
-    } else if (owner) {
+    } else {
       struct player_diplstate *ds =
 	  &get_player_ptr()->diplstates[owner->player_no];
       if (ds->type == DS_CEASEFIRE) {
