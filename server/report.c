@@ -742,7 +742,7 @@ void report_demographics(struct connection *pconn)
     }
   }
 
-  if (connection_is_global_observer(pconn)
+  if ((!pconn->observer && !pplayer)
       || (pplayer && !pplayer->is_alive)
       || !anyrows || selcols == 0) {
     page_conn(pconn->self, _("Demographics Report:"),
