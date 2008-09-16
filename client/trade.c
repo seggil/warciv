@@ -214,7 +214,7 @@ void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove)
       update_auto_caravan_menu();
       refresh_tile_mapcanvas(ptile, MUT_NORMAL);
     }
-  } else {
+  } else if (!terrain_has_flag(map_get_terrain(ptile), TER_NO_CITIES)) {
     tile_list_append(trade_cities, ptile);
     my_snprintf(buf, sizeof(buf),
 		_("Warclient: Adding %s to the trade planning."),
@@ -433,6 +433,40 @@ void do_trade_planning_calculation(void)
 }
 
 /**************************************************************************
+  Do a precalculation of the trade planning to check potential free slots.
+**************************************************************************/
+void do_trade_planning_precalculation(void)
+{
+  char buf[1024], message[1024];
+  size_t size = tile_list_size(trade_cities);
+  int free_slots[size], total, i;
+  bool first = TRUE;
+
+  total = trade_planning_precalculation(trade_cities, size, free_slots);
+  if (total >= 0) {
+    if (total == 0) {
+      sz_strlcpy(message, "no free slot");
+    } else {
+      my_snprintf(message, sizeof(message),
+		  PL_("%d free slot: ", "%d free slots: ", total), total);
+      for (i = 0; i < size; i++) {
+	if (free_slots[i] > 0) {
+	  cat_snprintf(message, sizeof(message), "%s%s (%d)",
+		       first ? "" : ", ",
+		       get_tile_info(tile_list_get(trade_cities, i)),
+		       free_slots[i]);
+	  first = FALSE;
+	}
+      }
+    }
+
+    my_snprintf(buf, sizeof(buf),
+		_("Warclient: Trade planning estimation: %s."), message);
+    append_output_window(buf);
+  }
+}
+
+/**************************************************************************
   Try to guess when the newt caravans will arrive.
 **************************************************************************/
 #define MAX_ESTIMATED_TURNS 30
@@ -494,7 +528,7 @@ void show_trade_estimation(void)
 **************************************************************************/
 void show_cities_in_trade_planning(void)
 {
-  if(tile_list_size(trade_cities) <= 0) {
+  if (tile_list_size(trade_cities) <= 0) {
     append_output_window(_("Warclient: No city in the trade city list."));
     return;
   }
@@ -545,62 +579,36 @@ static int get_trade_route_num(struct city *pcity,
 **************************************************************************/
 void show_free_slots_in_trade_planning(struct trade_route_list *ptrlist)
 {
-  if (are_trade_cities_built()) {
-    struct city *pcity;
-    char buf[1024] = "\0";
-    int num = 0, missing;
+  struct city *pcity;
+  char buf[1024] = "\0";
+  int num = 0, missing;
 
-    tile_list_iterate(trade_cities, ptile) {
-      pcity = ptile->city;
+  tile_list_iterate(trade_cities, ptile) {
+    pcity = ptile->city;
+    if (pcity) {
       missing = game.traderoute_info.maxtraderoutes
 		- (ptrlist ? get_trade_route_num(pcity, ptrlist)
 			   : trade_route_list_size(pcity->trade_routes));
-      if (missing > 0) {
-	cat_snprintf(buf, sizeof(buf), "%s%s (%d)",
-		     num > 0 ? ", " : "", pcity->name, missing);
-	num += missing;
-      }
-    } tile_list_iterate_end;
-
-    if (num > 0) {
-      char text[1024];
-
-      my_snprintf(text, sizeof(text),
-		  PL_("Warclient: %d trade route free slot: %s.",
-		      "Warclient: %d trade route free slots: %s.", num),
-		  num, buf);
-      append_output_window(text);
     } else {
-      append_output_window(_("Warclient: No trade free slot."));
+      missing = game.traderoute_info.maxtraderoutes;
     }
+    if (missing > 0) {
+      cat_snprintf(buf, sizeof(buf), "%s%s (%d)",
+		   num > 0 ? ", " : "", get_tile_info(ptile), missing);
+      num += missing;
+    }
+  } tile_list_iterate_end;
+
+  if (num > 0) {
+    char text[1024];
+
+    my_snprintf(text, sizeof(text),
+		PL_("Warclient: %d trade route free slot: %s.",
+		    "Warclient: %d trade route free slots: %s.", num),
+		num, buf);
+    append_output_window(text);
   } else {
-    char buf[1024], message[1024];
-    size_t size = tile_list_size(trade_cities);
-    int free_slots[size], total, i;
-    bool first = TRUE;
-
-    total = trade_planning_precalculation(trade_cities, size, free_slots);
-    if (total >= 0) {
-      if (total == 0) {
-	sz_strlcpy(message, "no free slot");
-      } else {
-	my_snprintf(message, sizeof(message),
-		    PL_("%d free slot: ", "%d free slots: ", total), total);
-	for (i = 0; i < size; i++) {
-	  if (free_slots[i] > 0) {
-	    cat_snprintf(message, sizeof(message), "%s%s (%d)",
-			 first ? "" : ", ",
-			 get_tile_info(tile_list_get(trade_cities, i)),
-			 free_slots[i]);
-	    first = FALSE;
-	  }
-	}
-      }
-
-      my_snprintf(buf, sizeof(buf),
-		  _("Warclient: Trade planning estimation: %s."), message);
-      append_output_window(buf);
-    }
+    append_output_window(_("Warclient: No trade free slot."));
   }
 }
 

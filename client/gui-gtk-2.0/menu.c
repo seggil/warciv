@@ -3636,7 +3636,11 @@ static void callback_auto_caravan_clear_trade_planning(GtkAction *action,
 static void callback_auto_caravan_calculate_trade_planning(GtkAction *action,
 							   gpointer user_data)
 {
-  do_trade_planning_calculation();
+  if (are_trade_cities_built()) {
+    do_trade_planning_calculation();
+  } else {
+    do_trade_planning_precalculation();
+  }
 }
 
 /****************************************************************
@@ -6355,9 +6359,12 @@ void update_auto_caravan_menu(void)
   menu_set_sensitive(action_group_auto_caravan,
                      "AUTO_CARAVAN_ESTIMATE_TRADE",
 		     is_trade_route_in_route());
+  menu_rename(action_group_auto_caravan,
+	      "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING",
+	      are_trade_cities_built() ? _("Calculate trade _planning")
+				       : _("_Precalculate trade planning"));
   menu_set_sensitive(action_group_auto_caravan,
-                     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING",
-		     cond && are_trade_cities_built());
+		     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING", cond);
 }
 
 /****************************************************************

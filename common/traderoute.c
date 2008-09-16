@@ -484,6 +484,10 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
     fs = game.traderoute_info.maxtraderoutes;
 
     tile_list_iterate(ptlist, ptile2) {
+      if (ptile == ptile2) {
+	continue;
+      }
+
       pcity2 = ptile2->city;
 
       if (pcity && pcity2) {
