@@ -30,9 +30,16 @@ enum player_dlg_column_type {
   COL_RIGHT_TEXT    /* right aligned text */
 };
 
+enum conn_flag {
+  CF_COMMON,
+  CF_PLAYER,
+  CF_GLOBAL_OBSERVER
+};
+
 struct player_dlg_column {
   bool show;
   enum player_dlg_column_type type;
+  enum conn_flag flag;
   const char *title;			/* already translated */
   const char *(*func)(struct player*);	/* if type = COL_*TEXT */
   bool (*bool_func)(struct player*);	/* if type = COL_BOOLEAN */
@@ -46,5 +53,6 @@ void init_player_dlg_common(void);
 int player_dlg_default_sort_column(void);
 
 const char *player_addr_hack(struct player *pplayer);
+bool column_can_be_visible(struct player_dlg_column *pcol);
 
 #endif  /* FC__PLRDLG_COMMON_H */

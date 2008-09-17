@@ -118,8 +118,8 @@ static bool col_ai(struct player *plr)
 *******************************************************************/
 static const char *col_embassy(struct player *player)
 {
-  return client_is_observer() ? "-"
-			      : get_embassy_status(get_player_ptr(), player);
+  return client_is_global_observer()
+	     ? "-" : get_embassy_status(get_player_ptr(), player);
 }
 
 /******************************************************************
@@ -165,6 +165,68 @@ static const char *col_vision(struct player *player)
 {
   return client_is_global_observer()
 	     ? "-" : get_vision_status(get_player_ptr(), player);
+}
+
+/******************************************************************
+ ...
+*******************************************************************/
+static const char *col_population(struct player *player)
+{
+  return population_to_text(civ_population(player));
+}
+
+/******************************************************************
+ ...
+*******************************************************************/
+static const char *col_gold(struct player *player)
+{
+  static char buf[100];
+
+  my_snprintf(buf, sizeof(buf), "%d (%+d)",
+	      player->economic.gold, player_get_expected_income(player));
+
+  return buf;
+}
+
+/******************************************************************
+ ...
+*******************************************************************/
+static const char *col_research(struct player *player)
+{
+  static char buf[100];
+
+  if (player->research.researching != A_NOINFO) {
+    my_snprintf(buf, sizeof(buf), "%s(%d/%d) (%+d)",
+		get_tech_name(player, player->research.researching),
+		player->research.bulbs_researched,
+		player->research.researching_cost,
+		player_get_expected_bulbs(player));
+  } else {
+    my_snprintf(buf, sizeof(buf), _("(Unknown) (%+d)"),
+		player_get_expected_bulbs(player));
+  }
+
+  return buf;
+}
+
+/******************************************************************
+ ...
+*******************************************************************/
+static const char *col_science_goal(struct player *player)
+{
+  static char buf[100];
+
+  if (player->ai.tech_goal != A_UNSET) {
+    int steps = num_unknown_techs_for_goal(player, player->ai.tech_goal);
+
+    my_snprintf(buf, sizeof(buf), "%s (%d %s)",
+		get_tech_name(player, player->ai.tech_goal),
+		steps, PL_("step", "steps", steps));
+  } else {
+    sz_strlcpy(buf, "-");
+  }
+
+  return buf;
 }
 
 /******************************************************************
@@ -224,22 +286,26 @@ static const char *col_idle(struct player *plr)
  ...
 *******************************************************************/
 struct player_dlg_column player_dlg_columns[] = {
-  {TRUE, COL_TEXT, N_("?Player:Name"), col_name, NULL, "name"},
-  {FALSE, COL_TEXT, N_("Username"), col_username, NULL, "username"},
-  {TRUE, COL_FLAG, N_("Flag"), NULL, NULL, "flag"},
-  {TRUE, COL_TEXT, N_("Nation"), col_nation, NULL, "nation"},
-  {TRUE, COL_COLOR, N_("Border"), NULL, NULL, "border"},
-  {TRUE, COL_TEXT, N_("Team"), col_team, NULL, "team"},
-  {TRUE, COL_BOOLEAN, N_("AI"), NULL, col_ai, "ai"},
-  {TRUE, COL_TEXT, N_("Attitude"), col_love, NULL, "attitude"},
-  {TRUE, COL_TEXT, N_("Embassy"), col_embassy, NULL, "embassy"},
-  {TRUE, COL_TEXT, N_("Dipl.State"), col_diplstate, NULL, "diplstate"},
-  {TRUE, COL_TEXT, N_("Vision"), col_vision, NULL, "vision"},
-  {TRUE, COL_TEXT, N_("Reputation"), col_reputation, NULL, "reputation"},
-  {TRUE, COL_TEXT, N_("State"), col_state, NULL, "state"},
-  {FALSE, COL_TEXT, N_("?Player_dlg:Host"), col_host, NULL, "host"},
-  {FALSE, COL_RIGHT_TEXT, N_("?Player_dlg:Idle"), col_idle, NULL, "idle"},
-  {FALSE, COL_RIGHT_TEXT, N_("Ping"), get_ping_time_text, NULL, "ping"}
+  {TRUE, COL_TEXT, CF_COMMON, N_("?Player:Name"), col_name, NULL, "name"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("Username"), col_username, NULL, "username"},
+  {TRUE, COL_FLAG, CF_COMMON, N_("Flag"), NULL, NULL, "flag"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("Nation"), col_nation, NULL, "nation"},
+  {TRUE, COL_COLOR, CF_COMMON, N_("Border"), NULL, NULL, "border"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("Team"), col_team, NULL, "team"},
+  {TRUE, COL_BOOLEAN, CF_COMMON, N_("AI"), NULL, col_ai, "ai"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Attitude"), col_love, NULL, "attitude"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Embassy"), col_embassy, NULL, "embassy"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Dipl.State"), col_diplstate, NULL, "diplstate"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Vision"), col_vision, NULL, "vision"},
+  {TRUE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Population"), col_population, NULL, "population"},
+  {TRUE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Gold"), col_gold, NULL, "gold"},
+  {TRUE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Research"), col_research, NULL, "research"},
+  {FALSE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Science goal"), col_science_goal, NULL, "goal"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("Reputation"), col_reputation, NULL, "reputation"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("State"), col_state, NULL, "state"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("?Player_dlg:Host"), col_host, NULL, "host"},
+  {FALSE, COL_RIGHT_TEXT, CF_COMMON, N_("?Player_dlg:Idle"), col_idle, NULL, "idle"},
+  {FALSE, COL_RIGHT_TEXT, CF_COMMON, N_("Ping"), get_ping_time_text, NULL, "ping"}
 };
 
 const int num_player_dlg_columns = ARRAY_SIZE(player_dlg_columns);
@@ -284,3 +350,15 @@ const char *player_addr_hack(struct player *pplayer)
 
   return blank_addr_str;
 }   
+
+/****************************************************************************
+  Return TRUE if this column can be visible.
+****************************************************************************/
+bool column_can_be_visible(struct player_dlg_column *pcol)
+{
+  if (client_is_global_observer()) {
+    return pcol->flag != CF_PLAYER;
+  } else {
+    return pcol->flag != CF_GLOBAL_OBSERVER;
+  }
+}

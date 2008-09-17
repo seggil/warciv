@@ -265,8 +265,12 @@ static GtkWidget* create_show_menu(void)
   for (i = 1; i < num_player_dlg_columns; i++) {
     GtkWidget *item;    
     struct player_dlg_column *pcol;
-    
+
     pcol = &player_dlg_columns[i];
+    if (!column_can_be_visible(pcol)) {
+      continue;
+    }
+
     item = gtk_check_menu_item_new_with_label(pcol->title);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), pcol->show);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -778,10 +782,12 @@ static void update_views(void)
   int i;
 
   for (i = 0; i < num_player_dlg_columns; i++) {
+    struct player_dlg_column *pcol = &player_dlg_columns[i];
     GtkTreeViewColumn *col;
 
     col = gtk_tree_view_get_column(GTK_TREE_VIEW(players_list), i);
-    gtk_tree_view_column_set_visible(col, player_dlg_columns[i].show);
+    gtk_tree_view_column_set_visible(col,
+				     column_can_be_visible(pcol) && pcol->show);
   }
 };
 

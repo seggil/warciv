@@ -363,7 +363,7 @@ void update_intel_dialog(struct player *p)
 	    break;
 	  case LABEL_GOLD:
 	    my_snprintf(buf, sizeof(buf), "%d", p->economic.gold);
-	    if (client_is_global_observer) {
+	    if (client_is_global_observer()) {
 	      cat_snprintf(buf, sizeof(buf), " (%+d)",
 			   player_get_expected_income(p));
 	    }
@@ -382,12 +382,12 @@ void update_intel_dialog(struct player *p)
 	      my_snprintf(buf, sizeof(buf), "%s(%d/%d)",
 		  get_tech_name(p, p->research.researching),
 		  p->research.bulbs_researched,  p->research.researching_cost);
-	      if (client_is_global_observer()) {
-		cat_snprintf(buf, sizeof(buf), " (%+d)",
-			     player_get_expected_bulbs(p));
-	      }
 	    } else {
 	      my_snprintf(buf, sizeof(buf), _("(Unknown)"));
+	    }
+	    if (client_is_global_observer()) {
+	      cat_snprintf(buf, sizeof(buf), " (%+d)",
+			   player_get_expected_bulbs(p));
 	    }
 	    if (p->ai.tech_goal != A_UNSET
 		&& p->ai.tech_goal != p->research.researching) {
