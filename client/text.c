@@ -518,20 +518,17 @@ const char *science_dialog_text(void)
 {
   int turns_to_advance;
   struct player *plr = get_player_ptr();
-  int ours = 0, theirs = -1;
+  int ours = player_get_expected_bulbs(plr), theirs = -1;
   INIT;
 
   /* Sum up science */
   players_iterate(pplayer) {
     enum diplstate_type ds = pplayer_get_diplstate(plr, pplayer)->type;
 
-    if (plr == pplayer) {
-      city_list_iterate(pplayer->cities, pcity) {
-        ours += pcity->science_total;
-      } city_list_iterate_end;
-    } else if (ds == DS_TEAM) {
-      if (theirs == -1)
+    if (plr != pplayer && ds == DS_TEAM) {
+      if (theirs == -1) {
         theirs = 0;
+      }
       theirs += pplayer->research.bulbs_last_turn;
     }
   } players_iterate_end;

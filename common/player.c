@@ -440,6 +440,23 @@ int player_get_expected_income(struct player *pplayer)
 }
 
 /**************************************************************************
+  Return the expected bulb income of the player this turn.
+
+  This function depends on pcity->science_total being set for all cities, so
+  make sure the player's cities have been refreshed.
+**************************************************************************/
+int player_get_expected_bulbs(struct player *pplayer)
+{
+  int bulbs = 0;
+
+  city_list_iterate(pplayer->cities, pcity) {
+    bulbs += pcity->science_total;
+  } city_list_iterate_end;
+
+  return bulbs;
+}
+
+/**************************************************************************
  Returns TRUE iff the player knows at least one tech which has the
  given flag.
 **************************************************************************/

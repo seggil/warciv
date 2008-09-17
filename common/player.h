@@ -311,6 +311,7 @@ bool player_knows_techs_with_flag(struct player *pplayer,
 				 enum tech_flag_id flag);
 int num_known_tech_with_flag(struct player *pplayer, enum tech_flag_id flag);
 int player_get_expected_income(struct player *pplayer);
+int player_get_expected_bulbs(struct player *pplayer);
 
 void player_limit_to_government_rates(struct player *pplayer);
 
