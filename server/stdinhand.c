@@ -4610,7 +4610,9 @@ static bool attach_command(struct connection *caller, char *name, bool check)
     return TRUE;
   }
 
-  unattach_connection_from_player(pconn);
+  if (pconn->player || pconn->observer) {
+    detach_command(pconn, "", FALSE);
+  }
 
   if (attach_connection_to_player(pconn, NULL)) {
     res = TRUE;
