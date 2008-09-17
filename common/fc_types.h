@@ -135,4 +135,17 @@ struct cm_parameter {
   int happy_factor;
 };
 
+/* Link definitions */
+#define LINK_PREFIX '@'
+#define TILE_LINK_LETTER 'L'
+#define TILE_LINK_PREFIX "@L"
+#define CITY_NAME_LINK_LETTER 'C'
+#define CITY_NAME_LINK_PREFIX "@C"
+#define CITY_ID_LINK_LETTER 'I'
+#define CITY_ID_LINK_PREFIX "@I"
+#define CITY_LINK_LETTER 'F'
+#define CITY_LINK_PREFIX "@F"
+#define UNIT_LINK_LETTER 'U'
+#define UNIT_LINK_PREFIX "@U"
+
 #endif /* FC__FC_TYPES_H */

@@ -89,6 +89,7 @@ struct map_link {
 #define map_link_list_iterate_end LIST_ITERATE_END
 
 static struct map_link_list *link_marks = NULL;
+static int link_marks_draw_off = 0;
 
 static void draw_link_mark(struct map_link *pml);
 
@@ -423,7 +424,7 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
 }
 
 /********************************************************************** 
-  Return a text info about a tile.
+  Return a text info about a tile with link mark.
 ***********************************************************************/
 char *get_tile_info(struct tile *ptile)
 {
@@ -433,9 +434,9 @@ char *get_tile_info(struct tile *ptile)
   if (!ptile) {
     my_snprintf(buf, sizeof(buf), _("(unknown tile)"));
   } else if ((pcity = map_get_city(ptile))) {
-    my_snprintf(buf, sizeof(buf), "%s", pcity->name);
+    insert_city_link(buf, sizeof(buf), pcity);
   } else {
-    my_snprintf(buf, sizeof(buf), "(%d, %d)", ptile->x, ptile->y);
+    insert_tile_link(buf, sizeof(buf), ptile);
   }
   return buf;
 }
@@ -1677,6 +1678,7 @@ void link_marks_init(void)
   if (!link_marks) {
     link_marks = map_link_list_new();
   }
+  link_marks_draw_off = 0;
 }
 
 /********************************************************************** 
@@ -1726,6 +1728,25 @@ void clear_all_link_marks(void)
   } map_link_list_iterate_end;
 
   update_map_canvas_visible(MUT_NORMAL);
+}
+
+/********************************************************************** 
+  Disable to make new links.
+***********************************************************************/
+void link_marks_disable_drawing(void)
+{
+  link_marks_draw_off++;
+}
+
+/********************************************************************** 
+  Re-enable to make new links.
+***********************************************************************/
+void link_marks_enable_drawing(void)
+{
+  if (--link_marks_draw_off < 0) {
+    freelog(LOG_ERROR, "Got to many link_marks_enable_drawing().");
+    link_marks_draw_off = 0;
+  }
 }
 
 /********************************************************************** 
@@ -1788,6 +1809,10 @@ static enum color_std get_link_mark_color(struct map_link *pml)
 ***********************************************************************/
 void add_link_mark(enum tag_link_types type, int id)
 {
+  if (link_marks_draw_off > 0) {
+    return;
+  }
+
   struct map_link *pml = find_link_mark(type, id);
   struct tile *ptile;
 

@@ -210,7 +210,9 @@ void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove)
       my_snprintf(buf, sizeof(buf),
 		  _("Warclient: Removing %s to the trade planning."),
 		  get_tile_info(ptile));
+      link_marks_disable_drawing();
       append_output_window(buf);
+      link_marks_enable_drawing();
       update_auto_caravan_menu();
       refresh_tile_mapcanvas(ptile, MUT_NORMAL);
     }
@@ -219,7 +221,9 @@ void add_tile_in_trade_planning(struct tile *ptile, bool allow_remove)
     my_snprintf(buf, sizeof(buf),
 		_("Warclient: Adding %s to the trade planning."),
 		get_tile_info(ptile));
+    link_marks_disable_drawing();
     append_output_window(buf);
+    link_marks_enable_drawing();
     refresh_tile_mapcanvas(ptile, MUT_NORMAL);
     if (allow_remove) {
       update_auto_caravan_menu();
@@ -460,9 +464,11 @@ void do_trade_planning_precalculation(void)
       }
     }
 
+    link_marks_disable_drawing();
     my_snprintf(buf, sizeof(buf),
 		_("Warclient: Trade planning estimation: %s."), message);
     append_output_window(buf);
+    link_marks_enable_drawing();
   }
 }
 
@@ -543,7 +549,9 @@ void show_cities_in_trade_planning(void)
     first = FALSE;
   } tile_list_iterate_end;
 
+  link_marks_disable_drawing();
   append_output_window(buf);
+  link_marks_enable_drawing();
 }
 
 /**************************************************************************
@@ -606,7 +614,9 @@ void show_free_slots_in_trade_planning(struct trade_route_list *ptrlist)
 		PL_("Warclient: %d trade route free slot: %s.",
 		    "Warclient: %d trade route free slots: %s.", num),
 		num, buf);
+    link_marks_disable_drawing();
     append_output_window(text);
+    link_marks_enable_drawing();
   } else {
     append_output_window(_("Warclient: No trade free slot."));
   }

@@ -1159,10 +1159,12 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     return;
   }
 
+  link_marks_disable_drawing();
   my_snprintf(buf, sizeof(buf),
               _("Warclient: Adding %d %s goto %s to queue."), count,
               PL_("unit", "units", count), get_tile_info(ptile));
   append_output_window(buf);
+  link_marks_enable_drawing();
   update_delayed_goto_menu(0);
 }
 
@@ -1300,10 +1302,12 @@ void schedule_delayed_airlift(struct tile *ptile)
 {
   char buf[256];
 
+  link_marks_disable_drawing();
   my_snprintf(buf, sizeof(buf),
               _("Warclient: Scheduling delayed airlift for %s."),
               get_tile_info(ptile));
   append_output_window(buf);
+  link_marks_enable_drawing();
   delayed_goto_add_unit(0, airlift_queue_need_city_for, 2, ptile);
   update_delayed_goto_menu(0);
   airlift_queue_need_city_for = -1;
@@ -1544,7 +1548,9 @@ void airlift_queue_show(int aq)
   } tile_list_iterate_end;
 
   cat_snprintf(buf, sizeof(buf), ".");
+  link_marks_disable_drawing();
   append_output_window(buf);
+  link_marks_enable_drawing();
 }
 
 /********************************************************************** 
@@ -1580,18 +1586,19 @@ void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
       tile_list_unlink(airlift_queues[0].tlist, ptile);
       my_snprintf(buf, sizeof(buf),
                   _("Warclient: Removed city %s from the auto "
-                    "airlift queue."),
-                  ptile->city->name);
+                    "airlift queue."), get_tile_info(ptile));
     }
   } else {
     tile_list_prepend(airlift_queues[0].tlist, ptile);
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Adding city %s to auto airlift queue."),
-                ptile->city->name);
+                get_tile_info(ptile));
   }
 
   if (buf[0] != '\0') {
+    link_marks_disable_drawing();
     append_output_window(buf);
+    link_marks_enable_drawing();
   }
   if (!multi) {
     update_airlift_menu(0);

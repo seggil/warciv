@@ -101,65 +101,6 @@ static GdkCursor *regular_cursor = NULL;
 /**************************************************************************
   ...
 **************************************************************************/
-static void link_escape_city_name(char *buf, int buflen, const char *name)
-{
-  const char *end = buf + buflen - 1;
-  while (buf < end) {
-    if (*name == '"' || *name == '\\') {
-      *buf++ = '\\';
-      if (buf == end)
-        break;
-      *buf++ = '"';
-      name++;
-    } else {
-      *buf++ = *name++;
-    }
-  }
-  *buf++ = 0;
-}
-
-/**************************************************************************
-  NB If you change any of the chat link formats, be sure to change
-  the detection code in server/handchat.c as well!
-**************************************************************************/
-static int insert_city_name_and_id_link(char *buf, int buflen,
-                                        struct tile *ptile)
-{
-  char safename[256];
-  int nb;
-  
-  assert(ptile != NULL);
-  assert(ptile->city != NULL);
-
-  link_escape_city_name(safename, sizeof(safename), ptile->city->name);
-  nb = my_snprintf(buf, buflen, "@F%d\"%s\"", ptile->city->id, safename);
-  return nb;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static int insert_location_link(char *buf, int buflen, struct tile *ptile)
-{
-  assert(ptile != NULL);
-
-  return my_snprintf(buf, buflen, "@L%d,%d", ptile->x, ptile->y);
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static int insert_unit_link(char *buf, int buflen, struct unit *punit)
-{
-  assert(punit != NULL);
-
-  return my_snprintf(buf, buflen, "@U%d\"%s\"",
-                     punit->id, unit_name_orig(punit->type));
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
 void insert_chat_link(struct tile *ptile, bool unit)
 {
   char buf[256];
@@ -172,9 +113,9 @@ void insert_chat_link(struct tile *ptile, bool unit)
     }
     insert_unit_link(buf, sizeof(buf), punit);
   } else if (ptile->city) {
-    insert_city_name_and_id_link(buf, sizeof(buf), ptile);
+    insert_city_link(buf, sizeof(buf), ptile->city);
   } else {
-    insert_location_link(buf, sizeof(buf), ptile);
+    insert_tile_link(buf, sizeof(buf), ptile);
   }
   chatline_entry_append_text(buf);
   gtk_widget_grab_focus(inputline);
@@ -423,9 +364,11 @@ set_cursor_if_appropriate(GtkTextView    *text_view,
     }
   }
 
-  if (tags) 
+  if (tags) {
     g_slist_free(tags);
+  }
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -444,6 +387,7 @@ motion_notify_event(GtkWidget      *text_view,
   gdk_window_get_pointer(text_view->window, NULL, NULL, NULL);
   return FALSE;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -463,68 +407,76 @@ visibility_notify_event(GtkWidget          *text_view,
 
   return FALSE;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
 void set_message_buffer_view_link_handlers(GtkTextView *view)
 {
   g_signal_connect(view, "event-after",
-                    G_CALLBACK(event_after), NULL);
+		   G_CALLBACK(event_after), NULL);
   g_signal_connect(view, "motion-notify-event",
-                    G_CALLBACK(motion_notify_event), NULL);
+		   G_CALLBACK(motion_notify_event), NULL);
   g_signal_connect(view, "visibility-notify-event",
-                    G_CALLBACK(visibility_notify_event), NULL);
+		   G_CALLBACK(visibility_notify_event), NULL);
 
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static int parse_city_id_and_name_link(const char *str, 
-                                        GtkTextBuffer *buf,
-                                        GtkTextTag **tag,
-                                        char *newtext,
-                                        int newtext_maxlen)
+static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
+				       GtkTextTag **tag, char *newtext,
+				       int newtext_maxlen)
 {
   const char *p = str;
   char *q, idbuf[32];
   int id;
   struct city *pcity;
-  
-  if (*p != '@' || p[1] != 'F')
+
+  if (strncmp(p, CITY_LINK_PREFIX, sizeof(CITY_LINK_PREFIX) - 1) != 0) {
     return 0;
-  p += 2;
+  }
+
+  p += sizeof(CITY_LINK_PREFIX) - 1;
   q = idbuf;
   while (*p && my_isdigit(*p)) {
-    if (q >= idbuf + sizeof(idbuf))
+    if (q >= idbuf + sizeof(idbuf)) {
       return 0;
+    }
     *q++ = *p++;
   }
   *q = 0;
 
-  if (*p != '"')
+  if (*p != '"') {
     return 0;
+  }
   while (*p) {
     if (*p == '\\') {
       p++;
-      if (!*p)
+      if (!*p) {
         break;
+      }
     }
     p++;
-    if (*p == '"')
+    if (*p == '"') {
       break;
+    }
   }
 
-  if (*p++ != '"')
+  if (*p++ != '"') {
     return 0;
+  }
 
   id = atoi(idbuf);
-  if (id < 0)
+  if (id < 0) {
     return 0;
+  }
 
   pcity = find_city_by_id(id);
-  if (!pcity)
+  if (!pcity) {
     return 0;
+  }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                      "foreground", "green",
@@ -539,40 +491,44 @@ static int parse_city_id_and_name_link(const char *str,
 
   my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
   
-  return(int)(p - str);
+  return (int) (p - str);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static int parse_city_id_link(const char *str, 
-                               GtkTextBuffer *buf,
-                               GtkTextTag **tag,
-                               char *newtext,
-                               int newtext_maxlen)
+static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
+			      GtkTextTag **tag, char *newtext,
+			      int newtext_maxlen)
 {
   const char *p = str;
   char *q, idbuf[32];
   int id;
   struct city *pcity;
   
-  if (*p != '@' || p[1] != 'I')
+  if (strncmp(p, CITY_ID_LINK_PREFIX, sizeof(CITY_ID_LINK_PREFIX) - 1) != 0) {
     return 0;
-  p += 2;
+  }
+
+  p += sizeof(CITY_ID_LINK_PREFIX) - 1;
   q = idbuf;
   while (*p && my_isdigit(*p)) {
-    if (q >= idbuf + sizeof(idbuf))
+    if (q >= idbuf + sizeof(idbuf)) {
       return 0;
+    }
     *q++ = *p++;
   }
   *q = 0;
 
   id = atoi(idbuf);
-  if (id < 0)
+  if (id < 0) {
     return 0;
+  }
 
   pcity = find_city_by_id(id);
-  if (!pcity)
+  if (!pcity) {
     return 0;
+  }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                      "foreground", "green",
@@ -587,35 +543,39 @@ static int parse_city_id_link(const char *str,
 
   my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
   
-  return(int)(p - str);
+  return (int) (p - str);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static int parse_city_link(const char *str, 
-                            GtkTextBuffer *buf,
-                            GtkTextTag **tag,
-                            char *newtext,
-                            int newtext_maxlen)
+static int parse_city_link(const char *str, GtkTextBuffer *buf,
+			   GtkTextTag **tag, char *newtext,
+			   int newtext_maxlen)
 {
   const char *p = str;
   char city_name[MAX_LEN_NAME], *q;
   struct city *pcity;
-  
-  if (*p != '@' || p[1] != 'C' || p[2] != '"')
+
+  if (strncmp(p, CITY_NAME_LINK_PREFIX "\"",
+	      sizeof(CITY_NAME_LINK_PREFIX)) != 0) {
     return 0;
-  p += 3;
+  }
+
+  p += sizeof(CITY_NAME_LINK_PREFIX);
   q = city_name;
   while (*p && *p != '"') {
-    if (q >= city_name + sizeof(city_name))
+    if (q >= city_name + sizeof(city_name)) {
       return 0;
+    }
     *q++ = *p++;
   }
   p++;
   *q = 0;
 
-  if (!(pcity = find_city_by_name_fast(city_name)))
+  if (!(pcity = find_city_by_name_fast(city_name))) {
     return 0;
+  }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                      "foreground", "green",
@@ -630,30 +590,31 @@ static int parse_city_link(const char *str,
 
   my_snprintf(newtext, newtext_maxlen, "%s", city_name);
   
-  return(int)(p - str);
+  return (int) (p - str);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static int parse_location_link(const char *str,
-                                GtkTextBuffer *buf,
-                                GtkTextTag **tag,
-                                char *newtext,
-                                int newtext_maxlen)
+static int parse_location_link(const char *str, GtkTextBuffer *buf,
+			       GtkTextTag **tag, char *newtext,
+			       int newtext_maxlen)
 {
   const char *p;
   int x, y;
   
-  if (2 != sscanf(str, "@L%d,%d", &x, &y))
+  if (2 != sscanf(str, TILE_LINK_PREFIX "%d,%d", &x, &y)) {
     return 0;
+  }
 
   if (!is_normal_map_pos(x, y)) {
     return 0;
   }
     
   p = str + 2;
-  while (my_isdigit(*p) || *p == ',')
+  while (my_isdigit(*p) || *p == ',') {
     p++;
+  }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                      "foreground", "red",
@@ -668,48 +629,54 @@ static int parse_location_link(const char *str,
 
   add_link_mark(LINK_LOCATION, map_pos_to_index(x, y));
 
-  return(int)(p - str);
+  return (int) (p - str);
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
-static int parse_unit_link(const char *str, 
-                            GtkTextBuffer *buf,
-                            GtkTextTag **tag,
-                            char *newtext,
-                            int newtext_maxlen)
+static int parse_unit_link(const char *str, GtkTextBuffer *buf,
+			   GtkTextTag **tag, char *newtext,
+			   int newtext_maxlen)
 {
   const char *p = str;
   char *q, idbuf[32];
   int id;
   struct unit *punit;
 
-  if (*p != '@' || p[1] != 'U')
+  if (strncmp(p, UNIT_LINK_PREFIX, sizeof(UNIT_LINK_PREFIX) - 1) != 0) {
     return 0;
-  p += 2;
+  }
+
+  p += sizeof(UNIT_LINK_PREFIX) - 1;
   q = idbuf;
   while (*p && my_isdigit(*p)) {
-    if (q >= idbuf + sizeof(idbuf))
+    if (q >= idbuf + sizeof(idbuf)) {
       return 0;
+    }
     *q++ = *p++;
   }
   *q = 0;
 
-  if (*p != '"')
+  if (*p != '"') {
     return 0;
+  }
   while (*p) {
     if (*p == '\\') {
       p++;
-      if (!*p)
+      if (!*p) {
         break;
+      }
     }
     p++;
-    if (*p == '"')
+    if (*p == '"') {
       break;
+    }
   }
 
-  if (*p++ != '"')
+  if (*p++ != '"') {
     return 0;
+  }
 
   id = atoi(idbuf);
   if (id < 0) {
@@ -734,15 +701,14 @@ static int parse_unit_link(const char *str,
 
   my_snprintf(newtext, newtext_maxlen, "%s", unit_name(punit->type));
   
-  return(int)(p - str);
+  return (int) (p - str);
 }
 
 /**************************************************************************
   NB If you change any of the chat link formats, be sure to change
   the detection code in server/handchat.c as well!
 **************************************************************************/
-static void append_text_with_links(GtkTextBuffer *buf,
-                                    const char *astring)
+static void append_text_with_links(GtkTextBuffer *buf, const char *astring)
 {
   const char *p, *q, *s;
   char newtext[256];
@@ -752,21 +718,21 @@ static void append_text_with_links(GtkTextBuffer *buf,
 
   gtk_text_buffer_get_end_iter(buf, &iter);
 
-  for (s = p = astring; *p &&(q = strchr(p, '@')); p = q) {
+  for (s = p = astring; *p &&(q = strchr(p, LINK_PREFIX)); p = q) {
     switch (q[1]) {
-    case 'L':
+    case TILE_LINK_LETTER:
       n = parse_location_link(q, buf, &tag, newtext, sizeof(newtext));
       break;
-    case 'C':
+    case CITY_NAME_LINK_LETTER:
       n = parse_city_link(q, buf, &tag, newtext, sizeof(newtext));
       break;
-    case 'I':
+    case CITY_ID_LINK_LETTER:
       n = parse_city_id_link(q, buf, &tag, newtext, sizeof(newtext));
       break;
-    case 'F':
+    case CITY_LINK_LETTER:
       n = parse_city_id_and_name_link(q, buf, &tag, newtext, sizeof(newtext));
       break;
-    case 'U':
+    case UNIT_LINK_LETTER:
       n = parse_unit_link(q, buf, &tag, newtext, sizeof(newtext));
       break;
     default:

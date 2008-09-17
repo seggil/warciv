@@ -21,12 +21,7 @@ void clear_output_window(void);
 
 struct section_file;
 
-void secfile_save_chatline_colors (struct section_file *sf);
-void secfile_load_chatline_colors (struct section_file *sf);
-
-struct section_file;
-
-void secfile_save_chatline_colors (struct section_file *sf);
-void secfile_load_chatline_colors (struct section_file *sf);
+void secfile_save_chatline_colors(struct section_file *sf);
+void secfile_load_chatline_colors(struct section_file *sf);
 
 #endif  /* FC__CHATLINE_G_H */

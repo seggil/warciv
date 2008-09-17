@@ -466,7 +466,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   if (game.server.no_public_links && server_state == RUN_GAME_STATE) {
     const char *p, *s;
     for (s = message; *s != '\0'; s = p) {
-      if (!(p = strchr(s, '@'))) {
+      if (!(p = strchr(s, LINK_PREFIX))) {
         break;
       }
       
@@ -474,7 +474,11 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
        * NB this follows the format used in client/gui-gtk-2.0/chatline.c.
        * If that changes, then this will break! */
       p++;
-      if (*p == 'F' || *p == 'L' || *p == 'U' || *p == 'C' || *p == 'I') {
+      if (*p == TILE_LINK_LETTER
+	  || *p == CITY_NAME_LINK_LETTER
+	  || *p == CITY_ID_LINK_LETTER
+	  || *p == CITY_LINK_LETTER
+	  || *p == UNIT_LINK_LETTER) {
         my_snprintf(chat, sizeof(chat),
             _("Server: Public messages containing chat links are "
               "not allowed."));

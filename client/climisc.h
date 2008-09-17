@@ -144,6 +144,8 @@ void toggle_traderoute_drawing_in_selected_cities(void);
 void link_marks_init(void);
 void link_marks_free(void);
 void clear_all_link_marks(void);
+void link_marks_disable_drawing(void);
+void link_marks_enable_drawing(void);
 void decrease_link_mark_turn_counters(void);
 void draw_all_link_marks(void);
 void add_link_mark(enum tag_link_types type, int id);

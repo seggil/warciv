@@ -24,12 +24,17 @@
 #include "packets.h"
 #include "support.h"
 
-#include "chatline_g.h"
+#include "city.h"
+#include "map.h"
+#include "unit.h"
 
-#include "chatline_common.h"
 #include "civclient.h"
 #include "clinet.h"
 #include "options.h"
+
+#include "chatline_g.h"
+
+#include "chatline_common.h"
 
 /* Stored up buffer of lines for the chatline */
 struct remaining {
@@ -221,4 +226,61 @@ void append_output_window_full(const char *astring, int conn_id)
   }
 
   log_chat(astring);  
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void link_escape_city_name(char *buf, size_t buflen, const char *name)
+{
+  const char *end = buf + buflen - 1;
+  while (buf < end) {
+    if (*name == '"' || *name == '\\') {
+      *buf++ = '\\';
+      if (buf == end) {
+        break;
+      }
+      *buf++ = '"';
+      name++;
+    } else {
+      *buf++ = *name++;
+    }
+  }
+  *buf++ = 0;
+}
+
+/**************************************************************************
+  NB If you change any of the chat link formats, be sure to change
+  the detection code in server/handchat.c as well!
+**************************************************************************/
+int insert_city_link(char *buf, size_t buflen, struct city *pcity)
+{
+  char safename[256];
+
+  assert(pcity != NULL);
+
+  link_escape_city_name(safename, sizeof(safename), pcity->name);
+  return my_snprintf(buf, buflen,
+		     CITY_LINK_PREFIX "%d\"%s\"", pcity->id, safename);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+int insert_tile_link(char *buf, size_t buflen, struct tile *ptile)
+{
+  assert(ptile != NULL);
+
+  return my_snprintf(buf, buflen, TILE_LINK_PREFIX "%d,%d", TILE_XY(ptile));
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+int insert_unit_link(char *buf, size_t buflen, struct unit *punit)
+{
+  assert(punit != NULL);
+
+  return my_snprintf(buf, buflen, UNIT_LINK_PREFIX "%d\"%s\"",
+                     punit->id, unit_name_orig(punit->type));
 }
