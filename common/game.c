@@ -92,9 +92,10 @@ Count the # of thousand citizen in a civilisation.
 **************************************************************************/
 int civ_population(struct player *pplayer)
 {
-  int ppl=0;
+  int ppl = 0;
+
   city_list_iterate(pplayer->cities, pcity)
-    ppl+=city_population(pcity);
+    ppl += city_population(pcity);
   city_list_iterate_end;
   return ppl;
 }

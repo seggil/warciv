@@ -127,13 +127,21 @@ struct government *find_government_by_name_orig(const char *name)
 }
 
 /****************************************************************************
+  Returns TRUE iff the given government exists.
+****************************************************************************/
+bool government_exists(int gov)
+{
+  return game.ruleset_control.government_count > 0 && gov >= 0
+	 && gov < game.ruleset_control.government_count
+	 && governments[gov].index == gov;
+}
+
+/****************************************************************************
   Return the government with the given ID.
 ****************************************************************************/
 struct government *get_government(int gov)
 {
-  assert(game.ruleset_control.government_count > 0 && gov >= 0
-	 && gov < game.ruleset_control.government_count);
-  assert(governments[gov].index == gov);
+  assert(government_exists(gov));
   return &governments[gov];
 }
 
@@ -190,10 +198,13 @@ const char *get_ruler_title(int gov, bool male, int nation)
 ***************************************************************/
 int get_government_max_rate(int type)
 {
-  if(type == G_MAGIC)
+  if (type == G_MAGIC) {
     return 100;
-  if (governments && type >= 0 && type < game.ruleset_control.government_count)
+  }
+  if (governments && type >= 0
+      && type < game.ruleset_control.government_count) {
     return governments[type].max_rate;
+  }
   return 50;
 }
 
@@ -202,8 +213,9 @@ Added for civil war probability computation - Kris Bubendorfer
 ***************************************************************/
 int get_government_civil_war_prob(int type)
 {
-  if(type >= 0 && type < game.ruleset_control.government_count)
+  if (type >= 0 && type < game.ruleset_control.government_count) {
     return governments[type].civil_war;
+  }
   return 0;
 }
 
@@ -212,8 +224,9 @@ int get_government_civil_war_prob(int type)
 ***************************************************************/
 const char *get_government_name(int type)
 {
-  if(type >= 0 && type < game.ruleset_control.government_count)
+  if (type >= 0 && type < game.ruleset_control.government_count) {
     return governments[type].name;
+  }
   return "";
 }
 
@@ -227,8 +240,7 @@ bool can_change_to_government(struct player *pplayer, int government)
 {
   int req;
 
-  assert(game.ruleset_control.government_count > 0 &&
-	 government >= 0 && government < game.ruleset_control.government_count);
+  assert(government_exists(government));
 
   req = governments[government].required_tech;
   if (!tech_is_available(pplayer, req)) {
