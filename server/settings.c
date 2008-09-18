@@ -1542,7 +1542,8 @@ static void setting_set_to_default(int idx)
       (*pset->int_value) = pset->int_default_value;
       break;
     case SSET_STRING:
-      sz_strlcpy(pset->string_value, pset->string_default_value);
+      mystrlcpy(pset->string_value, pset->string_default_value,
+		pset->string_value_size);
       break;
     default:
       die("Setting %d has a wrong type (%d)", idx, pset->type);
