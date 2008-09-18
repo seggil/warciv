@@ -425,6 +425,8 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
 
 /********************************************************************** 
   Return a text info about a tile with link mark.
+  Do not call this function both in a list of format arguments because
+  it returns a static buffer.
 ***********************************************************************/
 char *get_tile_info(struct tile *ptile)
 {
@@ -2225,7 +2227,7 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
     return;
   }
 
-  char buf[1024] = "\0", message[1024];
+  char buf[1024] = "\0", message[1024], city_name[256];
   bool first = TRUE;
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
@@ -2233,12 +2235,13 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
       continue;
     }
 
+    sz_strlcpy(city_name, get_tile_info(pcity->tile));
     if (ptile) {
-      cat_snprintf(buf, sizeof(buf), "%s%s", first ? "" : ", ", pcity->name);
+      cat_snprintf(buf, sizeof(buf), "%s%s", first ? "" : ", ", city_name);
     } else {
-      cat_snprintf(buf, sizeof(buf), "%s%s (%d, %d)",
-                   first ? "" : ", ", pcity->name,
-                   TILE_XY(pcity->rally_point));
+      cat_snprintf(buf, sizeof(buf), "%s%s %s",
+                   first ? "" : ", ", city_name,
+                   get_tile_info(pcity->rally_point));
     }
     first = FALSE;
 
@@ -2255,16 +2258,18 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
   } city_list_iterate_end;
 
   if (!first) {
+    link_marks_disable_drawing();
     if (ptile) {
       my_snprintf(message, sizeof(message),
-		  _("Warclient: Set rally point (%d, %d) for: %s."),
-		  TILE_XY(ptile), buf);
+		  _("Warclient: Set rally point %s for: %s."),
+		  get_tile_info(ptile), buf);
       append_output_window(message);
     } else {
       my_snprintf(message, sizeof(message),
 		  _("Warclient: Remove rally points for: %s."), buf);
       append_output_window(message);
     }
+    link_marks_enable_drawing();
   }
 }
 
@@ -2312,22 +2317,28 @@ void do_unit_air_patrol(struct unit *punit, struct tile *ptile)
   /* Print message */
   if (ptile) {
     if (punit->air_patrol_tile) {
+      char tile_info[32];
+
+      /* Note, it is a static buffer, we cannot use one both. */
+      sz_strlcpy(tile_info, get_tile_info(ptile));
       my_snprintf(buf, sizeof(buf),
-		  _("Warclient: %s %d patrolling (%d, %d) "
-		    "instead of (%d, %d)."),
+		  _("Warclient: %s %d patrolling %s "
+		    "instead of %s."),
 		  unit_name(punit->type), punit->id,
-		  TILE_XY(ptile), TILE_XY(punit->air_patrol_tile));
+		  tile_info, get_tile_info(punit->air_patrol_tile));
     } else {
-      my_snprintf(buf, sizeof(buf), _("Warclient: %s %d patrolling (%d, %d)."),
-		  unit_name(punit->type), punit->id, TILE_XY(ptile));
+      my_snprintf(buf, sizeof(buf), _("Warclient: %s %d patrolling %s."),
+		  unit_name(punit->type), punit->id, get_tile_info(ptile));
     }
   } else if (punit->air_patrol_tile) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: %s %d stopped patrolling (%d, %d)."),
+		_("Warclient: %s %d stopped patrolling %s."),
 		unit_name(punit->type), punit->id,
-		TILE_XY(punit->air_patrol_tile));
+		get_tile_info(punit->air_patrol_tile));
   }
+  link_marks_disable_drawing();
   append_output_window(buf);
+  link_marks_enable_drawing();
 
   /* Do the change */
   if (server_has_extglobalinfo) {

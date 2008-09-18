@@ -1660,10 +1660,11 @@ void do_airlift(struct tile *ptile)
     char buf[256];
 
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: You cannot airlift there (%d, %d); "
-                  "no city exists."),
-                TILE_XY(ptile));
+                _("Warclient: You cannot airlift there %s; no city exists."),
+                get_tile_info(ptile));
+    link_marks_disable_drawing();
     append_output_window(buf);
+    link_marks_enable_drawing();
     return;
   }
 
