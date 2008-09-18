@@ -538,7 +538,7 @@ void center_on_unit(void)
 void key_city_workers(GtkWidget *w, GdkEventKey *ev)
 {
   int x, y;
-  
+
   gdk_window_get_pointer(map_canvas->window, &x, &y, NULL);
   key_city_overlay(x, y);
 }

@@ -451,6 +451,16 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
     return TRUE;
   }
 
+  if (ev->keyval == GDK_t
+      && !(ev->state & GDK_CONTROL_MASK)
+      && !(ev->state & GDK_SHIFT_MASK)) {
+    /* Workaround for conflict with menu shortcuts. If you add other
+       key handlers here be sure to check menu.c for conflicts otherwise
+       you may get unexpected behavior. */
+    key_city_workers(w, ev);
+    return TRUE;
+  }
+
   if (!client_is_observer()) {
     if (use_digits_short_cuts) {
       /* If this option is enabled, the keys GDK_1-GDK_9 are used 
@@ -937,18 +947,6 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
     case GDK_n: /* shared by MENU_VIEW_SHOW_CITY_NAMES */
       if (tiles_hilited_cities && (ev->state & GDK_CONTROL_MASK)) {
         normalize_names_in_selected_cities();
-        return TRUE;
-      } else {
-        return FALSE;
-      }
-      break;
-
-    case GDK_t:
-      /* Workaround for conflict with menu shortcuts. If you add other
-         key handlers here be sure to check menu.c for conflicts otherwise
-         you may get unexpected behavior. */
-      if (!(ev->state & GDK_CONTROL_MASK) && !(ev->state & GDK_SHIFT_MASK)) {
-        key_city_workers(w, ev);
         return TRUE;
       } else {
         return FALSE;

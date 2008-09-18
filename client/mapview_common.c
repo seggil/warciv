@@ -2116,13 +2116,14 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
 {
   struct city *pcity = ptile->worked, *closest_city;
   struct unit *closest_settler = NULL, *best_settler = NULL;
+  bool global_observer = client_is_global_observer();
 
   if (punit) {
     *punit = NULL;
   }
 
   if (pcity) {
-    if (pcity->owner == get_player_idx()) {
+    if (global_observer || pcity->owner == get_player_idx()) {
       /* rule a */
       return pcity;
     } else {
@@ -2136,7 +2137,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
 
   city_map_checked_iterate(ptile, city_x, city_y, tile1) {
     pcity = map_get_city(tile1);
-    if (pcity && pcity->owner == get_player_idx()
+    if (pcity && (global_observer || pcity->owner == get_player_idx())
 	&& get_worker_city(pcity, CITY_MAP_SIZE - 1 - city_x,
 			   CITY_MAP_SIZE - 1 - city_y) == C_TILE_EMPTY) {
       /*
@@ -2166,7 +2167,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
 
     if (tile1) {
       unit_list_iterate(tile1->units, psettler) {
-	if (psettler->owner == get_player_idx()
+	if ((global_observer || psettler->owner == get_player_idx())
 	    && unit_flag(psettler, F_CITIES)
 	    && city_can_be_built_here(psettler->tile, psettler)) {
 	  if (!closest_settler) {
