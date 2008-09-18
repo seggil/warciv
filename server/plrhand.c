@@ -252,6 +252,7 @@ void kill_player(struct player *pplayer) {
          a radius of 3, give verbose messages of every unit transferred,
          and raze buildings according to raze chance (also removes palace) */
       transfer_city(get_player(pcity->original), pcity, 3, TRUE, TRUE, TRUE);
+      send_city_info(NULL, pcity);
     }
   } city_list_iterate_end;
 
@@ -2271,6 +2272,7 @@ void civil_war(struct player *pplayer)
 	 resolved stack conflicts for each city we would teleport the first
 	 of the units we met since the other would have another owner */
 	transfer_city(cplayer, pcity, -1, FALSE, FALSE, FALSE);
+	send_city_info(NULL, pcity);
 	freelog(LOG_VERBOSE, "%s declares allegiance to %s",
 		pcity->name, cplayer->name);
 	notify_player_ex(pplayer, pcity->tile, E_CITY_LOST,

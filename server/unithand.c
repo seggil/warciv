@@ -814,8 +814,9 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
     city_refresh(pcity);
     send_city_info(NULL, pcity);
   }
-  if (unit_flag(punit, F_ONEATTACK)) 
+  if (unit_flag(punit, F_ONEATTACK)) {
     punit->moves_left = 0;
+  }
   pwinner = (punit->hp > 0) ? punit : pdefender;
   plooser = (pdefender->hp > 0) ? punit : pdefender;
 
@@ -1144,7 +1145,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
       }
       /* Taking over a city is considered a move, so fall through */
     }
-  } 
+  }
 
   /*** Phase 4: OK now move the unit ***/
 

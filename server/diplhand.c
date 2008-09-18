@@ -448,6 +448,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
           gamelog(GAMELOG_LOSECITY, pgiver, pdest, pcity, "acquired");
           gamelog(GAMELOG_TREATY, GL_CITY, pgiver, pdest, pcity);
 	  transfer_city(pdest, pcity, -1, TRUE, TRUE, FALSE);
+	  send_city_info(NULL, pcity);
 	  break;
 	}
       case CLAUSE_CEASEFIRE:

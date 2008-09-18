@@ -940,8 +940,7 @@ void transfer_city(struct player *ptaker, struct city *pcity,
       || (!pcity->is_building_unit
                 && !can_build_improvement(pcity, pcity->currently_building))) {
     advisor_choose_build(ptaker, pcity);
-  } 
-  send_city_info(NULL, pcity);
+  }
   /* What wasn't obsolete for the old owner may be so now. */
   remove_obsolete_buildings_city(pcity, TRUE);
   if (terrain_control.may_road
@@ -1217,21 +1216,18 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
 
   /* If not at war, may peacefully enter city. Or, if we cannot occupy
    * the city, this unit entering will not trigger the effects below. */
-  if (!pplayers_at_war(pplayer, cplayer)
-            || !COULD_OCCUPY(punit))
-    {
+  if (!pplayers_at_war(pplayer, cplayer)) {
     return;
   }
   /* Okay, we're at war - invader captures/destroys city... */
-  
+
   /* If a capital is captured, then spark off a civil war 
      - Kris Bubendorfer
      Also check spaceships --dwp
   */
   if (is_capital(pcity)
       && (cplayer->spaceship.state == SSHIP_STARTED
-                || cplayer->spaceship.state == SSHIP_LAUNCHED))
-    {
+                || cplayer->spaceship.state == SSHIP_LAUNCHED)) {
     spaceship_lost(cplayer);
   }
   
@@ -1240,8 +1236,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
       && game.info.nplayers < game.ruleset_control.playable_nation_count
       && game.server.civilwarsize < GAME_MAX_CIVILWARSIZE
       && get_num_human_and_ai_players() < MAX_NUM_PLAYERS
-            && civil_war_triggered(cplayer))
-    {
+      && civil_war_triggered(cplayer)) {
     do_civil_war = TRUE;
   }
   /* 
@@ -1298,6 +1293,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
    * the size is reduced. */
   transfer_city(pplayer, pcity , 0, TRUE, TRUE, TRUE);
   city_reduce_size(pcity, 1);
+  send_city_info(NULL, pcity);
   send_player_info(pplayer, pplayer); /* Update techs */
   if (do_civil_war) {
     civil_war(cplayer);
@@ -1565,12 +1561,15 @@ void send_city_info_at_tile(struct player *pviewer, struct conn_list *dest,
       update_dumb_city(powner, pcity);
       package_city(pcity, &packet, FALSE);
       lsend_packet_city_info(dest, &packet);
+      global_observers_iterate(pconn) {
+	send_packet_city_info(pconn, &packet);
+      } global_observers_iterate_end;
     }
   } else {
     /* send info to non-owner */
-    if (!pviewer) {	/* observer */
+    if (!pviewer) {	/* global observer */
       if (pcity) {
-	package_city(pcity, &packet, FALSE);   /* should be dumb_city info? */
+	package_city(pcity, &packet, FALSE);
 	lsend_packet_city_info(dest, &packet);
       }
     } else {
@@ -1931,6 +1930,7 @@ bool city_can_work_tile(struct city *pcity, int city_x, int city_y)
   }
   return TRUE;
 }
+
 /**************************************************************************
 Sets tile worked status.
 city_x, city_y is in city map coords.
@@ -1957,21 +1957,22 @@ static void server_set_tile_city(struct city *pcity, int city_x, int city_y,
   /* Update adjacent cities. */
   {
     struct tile *ptile = city_map_to_map(pcity, city_x, city_y);
-        map_city_radius_iterate(ptile, tile1)
-        {
+
+    map_city_radius_iterate(ptile, tile1) {
       struct city *pcity2 = map_get_city(tile1);
-            if (pcity2 && pcity2 != pcity)
-            {
+
+      if (pcity2 && pcity2 != pcity) {
 	int city_x2, city_y2;
 	bool is_valid;
+
 	is_valid = map_to_city_map(&city_x2, &city_y2, pcity2, ptile);
 	assert(is_valid);
 	update_city_tile_status(pcity2, city_x2, city_y2);
       }
-        }
-        map_city_radius_iterate_end;
+    } map_city_radius_iterate_end;
   }
 }
+
 /**************************************************************************
 city_x, city_y is in city map coords.
 You need to call sync_cities for the affected cities to be synced with the
@@ -2008,12 +2009,10 @@ void server_set_worker_city(struct city *pcity, int city_x, int city_y)
 bool update_city_tile_status_map(struct city *pcity, struct tile *ptile)
 {
   int city_x, city_y;
-    if (map_to_city_map(&city_x, &city_y, pcity, ptile))
-    {
+
+  if (map_to_city_map(&city_x, &city_y, pcity, ptile)) {
     return update_city_tile_status(pcity, city_x, city_y);
-    }
-    else
-    {
+  } else {
     return FALSE;
   }
 }
@@ -2035,11 +2034,10 @@ static bool update_city_tile_status(struct city *pcity, int city_x,
   assert(is_valid_city_coords(city_x, city_y));
   current = get_worker_city(pcity, city_x, city_y);
   is_available = city_can_work_tile(pcity, city_x, city_y);
-    switch (current)
-    {
+
+  switch (current) {
   case C_TILE_WORKER:
-        if (!is_available)
-        {
+    if (!is_available) {
       server_set_tile_city(pcity, city_x, city_y, C_TILE_UNAVAILABLE);
       pcity->specialists[SP_ELVIS]++; /* keep city sanity */
       auto_arrange_workers(pcity); /* will place the displaced */
@@ -2048,15 +2046,13 @@ static bool update_city_tile_status(struct city *pcity, int city_x,
     }
     break;
   case C_TILE_UNAVAILABLE:
-        if (is_available)
-        {
+    if (is_available) {
       server_set_tile_city(pcity, city_x, city_y, C_TILE_EMPTY);
       result = TRUE;
     }
     break;
   case C_TILE_EMPTY:
-        if (!is_available)
-        {
+    if (!is_available) {
       server_set_tile_city(pcity, city_x, city_y, C_TILE_UNAVAILABLE);
     }
     break;
@@ -2078,7 +2074,7 @@ void sync_cities(void)
     city_list_iterate(pplayer->cities, pcity) {
       /* sending will set synced to 1. */
       if (!pcity->synced) {
-	  send_city_info(pplayer, pcity);
+	send_city_info(pplayer, pcity);
       }
     } city_list_iterate_end;
   } players_iterate_end;

@@ -643,7 +643,7 @@ static void update_unit_activity(struct unit *punit)
     }  
   }
 
-  if (activity==ACTIVITY_POLLUTION) {
+  if (activity == ACTIVITY_POLLUTION) {
     if (total_activity (punit->tile, ACTIVITY_POLLUTION)
 	>= map_clean_pollution_time(punit->tile)) {
       map_clear_special(punit->tile, S_POLLUTION);
@@ -651,7 +651,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
 
-  if (activity==ACTIVITY_FALLOUT) {
+  if (activity == ACTIVITY_FALLOUT) {
     if (total_activity (punit->tile, ACTIVITY_FALLOUT)
 	>= map_clean_fallout_time(punit->tile)) {
       map_clear_special(punit->tile, S_FALLOUT);
@@ -659,7 +659,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
 
-  if (activity==ACTIVITY_FORTRESS) {
+  if (activity == ACTIVITY_FORTRESS) {
     if (total_activity (punit->tile, ACTIVITY_FORTRESS)
 	>= map_build_fortress_time(punit->tile)) {
       map_set_special(punit->tile, S_FORTRESS);
@@ -683,7 +683,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
 
-  if (activity==ACTIVITY_AIRBASE) {
+  if (activity == ACTIVITY_AIRBASE) {
     if (total_activity (punit->tile, ACTIVITY_AIRBASE)
 	>= map_build_airbase_time(punit->tile)) {
       map_set_special(punit->tile, S_AIRBASE);
@@ -691,7 +691,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
   
-  if (activity==ACTIVITY_IRRIGATE) {
+  if (activity == ACTIVITY_IRRIGATE) {
     if (total_activity (punit->tile, ACTIVITY_IRRIGATE) >=
         map_build_irrigation_time(punit->tile)) {
       Terrain_type_id old = map_get_terrain(punit->tile);
@@ -701,7 +701,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
 
-  if (activity==ACTIVITY_ROAD) {
+  if (activity == ACTIVITY_ROAD) {
     if (total_activity (punit->tile, ACTIVITY_ROAD)
 	+ total_activity (punit->tile, ACTIVITY_RAILROAD) >=
         map_build_road_time(punit->tile)) {
@@ -710,7 +710,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
 
-  if (activity==ACTIVITY_RAILROAD) {
+  if (activity == ACTIVITY_RAILROAD) {
     if (total_activity (punit->tile, ACTIVITY_RAILROAD)
 	>= map_build_rail_time(punit->tile)) {
       map_set_special(punit->tile, S_RAILROAD);
@@ -718,7 +718,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
   
-  if (activity==ACTIVITY_MINE) {
+  if (activity == ACTIVITY_MINE) {
     if (total_activity (punit->tile, ACTIVITY_MINE) >=
         map_build_mine_time(punit->tile)) {
       Terrain_type_id old = map_get_terrain(punit->tile);
@@ -729,7 +729,7 @@ static void update_unit_activity(struct unit *punit)
     }
   }
 
-  if (activity==ACTIVITY_TRANSFORM) {
+  if (activity == ACTIVITY_TRANSFORM) {
     if (total_activity (punit->tile, ACTIVITY_TRANSFORM) >=
         map_transform_time(punit->tile)) {
       Terrain_type_id old = map_get_terrain(punit->tile);
@@ -761,7 +761,7 @@ static void update_unit_activity(struct unit *punit)
     } adjc_iterate_end;
   }
 
-  if (activity==ACTIVITY_FORTIFYING) {
+  if (activity == ACTIVITY_FORTIFYING) {
     if (punit->activity_count >= 1) {
       set_unit_activity(punit,ACTIVITY_FORTIFIED);
     }
@@ -775,7 +775,7 @@ static void update_unit_activity(struct unit *punit)
     return;
   }
 
-  if (activity==ACTIVITY_GOTO) {
+  if (activity == ACTIVITY_GOTO) {
     if (!punit->ai.control && (!is_military_unit(punit) ||
        punit->ai.passenger != 0 || !pplayer->ai.control)) {
 /* autosettlers otherwise waste time; idling them breaks assignment */
@@ -795,8 +795,7 @@ static void update_unit_activity(struct unit *punit)
   send_unit_info(NULL, punit);
 
   unit_list_iterate(ptile->units, punit2) {
-    if (!can_unit_continue_current_activity(punit2))
-    {
+    if (!can_unit_continue_current_activity(punit2)) {
       handle_unit_activity_request(punit2, ACTIVITY_IDLE);
     }
   } unit_list_iterate_end;
@@ -2566,11 +2565,13 @@ static void handle_unit_move_consequences(struct unit *punit,
   /*  struct government *g = get_gov_pplayer(pplayer);*/
   bool refresh_homecity = FALSE;
 
-  if (punit->homecity != 0)
+  if (punit->homecity != 0) {
     homecity = find_city_by_id(punit->homecity);
+  }
 
-  if (tocity)
+  if (tocity) {
     handle_unit_enter_city(punit, tocity);
+  }
 
   /* We only do this for non-AI players to now make sure the AI turns
      doesn't take too long. Perhaps we should make a special refresh_city
@@ -2685,7 +2686,8 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
   struct tile *psrctile = punit->tile;
   struct city *pcity;
   struct unit *ptransporter = NULL;
-  bool bUnitSurvived = TRUE; // this is to check whether unit survived auto attack
+  /* This is to check whether unit survived auto attack. */
+  bool bunitsurvived = TRUE;
     
   conn_list_do_buffer(pplayer->connections);
 
@@ -2836,29 +2838,28 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
   } square_iterate_end;
 
   handle_unit_move_consequences(punit, psrctile, pdesttile);
-  maybe_make_contact(pdesttile, unit_owner(punit)); // make contact first as unit can be killed
-  bUnitSurvived = wakeup_neighbor_sentries(punit); // this can kill punit if auto attack is on
+  /* Make contact first as unit can be killed. */
+  maybe_make_contact(pdesttile, unit_owner(punit));
+  /* This can kill punit if auto attack is on. */
+  bunitsurvived = wakeup_neighbor_sentries(punit);
 
   conn_list_do_unbuffer(pplayer->connections);
 
-  if(bUnitSurvived)
-  {
-    // unit survived auto attack
+  if (bunitsurvived) {
+    /* Unit survived auto attack. */
 
-  /* Note, an individual call to move_unit may leave things in an unstable
-   * state (e.g., negative transporter capacity) if more than one unit is
-   * being moved at a time (e.g., bounce unit) and they are not done in the
-   * right order.  This is probably not a bug. */
+    /* Note, an individual call to move_unit may leave things in an unstable
+     * state (e.g., negative transporter capacity) if more than one unit is
+     * being moved at a time (e.g., bounce unit) and they are not done in the
+     * right order.  This is probably not a bug. */
 
-  if (map_has_special(pdesttile, S_HUT)) {
-    return unit_enter_hut(punit);
+    if (map_has_special(pdesttile, S_HUT)) {
+      return unit_enter_hut(punit);
+    } else {
+      return TRUE;
+    }
   } else {
-    return TRUE;
-  }
-}
-  else
-  {
-    // unit got killed
+    /* Unit got killed. */
     return FALSE;
   }
 }
