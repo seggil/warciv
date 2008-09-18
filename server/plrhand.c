@@ -1615,8 +1615,14 @@ static void package_player_info(struct player *plr,
     info_level = min_info_level;
   }
 
-  packet->gold            = plr->economic.gold;
-  packet->government      = plr->government;
+  if (info_level >= INFO_MEETING) {
+    packet->gold = plr->economic.gold;
+    packet->government = plr->government;
+  } else {
+    packet->gold = 0;
+    packet->government = 255;
+    assert(!government_exists(255));
+  }
 
   /* Send diplomatic status of the player to everyone they are in
    * contact with. */
@@ -1737,13 +1743,13 @@ static void package_player_info(struct player *plr,
 static enum plr_info_level player_info_level(struct player *plr,
 					     struct player *receiver)
 {
-  if (plr == receiver) {
+  if (!receiver || plr == receiver) {
     return INFO_FULL;
   }
-  if (receiver && player_has_embassy(receiver, plr)) {
+  if (player_has_embassy(receiver, plr)) {
     return INFO_EMBASSY;
   }
-  if (receiver && could_intel_with_player(receiver, plr)) {
+  if (could_intel_with_player(receiver, plr)) {
     return INFO_MEETING;
   }
   return INFO_MINIMUM;
