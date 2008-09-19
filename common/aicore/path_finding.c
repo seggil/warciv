@@ -31,7 +31,7 @@
 
 /* Since speed is quite important to us and alloccation of large arrays is
  * slow, we try to pack info in the smallest types possible */
-typedef short mapindex_t;
+typedef unsigned short mapindex_t;
 typedef unsigned char utiny_t;
 
 /* ===================== Internal structures ====================== */
@@ -419,7 +419,7 @@ static struct pf_map *create_map(bool with_danger)
 {
   struct pf_map *pf_map = fc_calloc(1, sizeof(struct pf_map));
 
-  pf_map->lattice = fc_malloc(MAX_MAP_INDEX * sizeof(struct pf_node));
+  pf_map->lattice = fc_malloc(sizeof(struct pf_node) * MAX_MAP_INDEX);
   pf_map->queue = pq_create(INITIAL_QUEUE_SIZE);
   pf_map->status = fc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status)));
 
@@ -1021,7 +1021,7 @@ static bool danger_iterate_map(struct pf_map *pf_map)
 
   pf_map->tile = index_to_tile(index);
 
-  if (pf_map->status[pf_map->tile->index] == NS_WAITING) {
+  if (pf_map->status[index] == NS_WAITING) {
     /* We've already returned this node once, skip it */
     freelog(LOG_DEBUG, "Considering waiting at (%d, %d)",
 	    pf_map->tile->x, pf_map->tile->y);

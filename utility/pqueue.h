@@ -15,7 +15,7 @@
 
 #include "shared.h"
 
-typedef short pq_data_t;
+typedef unsigned short pq_data_t;
 struct pqueue;
 
 struct pqueue *pq_create(int initial_size);

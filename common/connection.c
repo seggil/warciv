@@ -306,7 +306,7 @@ int flush_connection_send_buffer_all(struct connection *pc)
 
   ret = write_socket_data(pc, pc->send_buffer);
 
-  if (pc->notify_of_writable_data) {
+  if (pc->notify_of_writable_data && pc->send_buffer) {
     pc->notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
   }
 

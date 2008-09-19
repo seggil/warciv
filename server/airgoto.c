@@ -205,7 +205,7 @@ struct pqueue *refuel_iterate_init(struct player *pplayer,
 {
   struct refuel *tmp;   
   struct pqueue *rp_queue = pq_create(MAP_MAX_WIDTH);
-  short index;
+  unsigned short index;
 
   /* List of all refuel points of the player!  
    * TODO: Should cache the results */
@@ -248,7 +248,7 @@ struct refuel *refuel_iterate_next(struct pqueue *rp_list)
   /* Get the next nearest point from the queue
    * (ignoring already processed ones) */
   do {
-    short int index = -1;
+    unsigned short int index = -1;
 
     (void) pq_remove(rp_list, &index);
 
