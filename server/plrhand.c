@@ -252,7 +252,6 @@ void kill_player(struct player *pplayer) {
          a radius of 3, give verbose messages of every unit transferred,
          and raze buildings according to raze chance (also removes palace) */
       transfer_city(get_player(pcity->original), pcity, 3, TRUE, TRUE, TRUE);
-      send_city_info(NULL, pcity);
     }
   } city_list_iterate_end;
 

@@ -865,7 +865,6 @@ void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
      Remember that pcity is destroyed as part of the transfer,
      Which is why we do this last */
   transfer_city(pplayer, pcity, 1, TRUE, TRUE, FALSE);
-  send_city_info(NULL, pcity);
 
   /* Check if a spy survives her mission. Diplomats never do.
    * _After_ transferring the city, or the city area is first fogged

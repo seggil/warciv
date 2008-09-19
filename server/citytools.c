@@ -941,6 +941,7 @@ void transfer_city(struct player *ptaker, struct city *pcity,
                 && !can_build_improvement(pcity, pcity->currently_building))) {
     advisor_choose_build(ptaker, pcity);
   }
+  send_city_info(NULL, pcity);
   /* What wasn't obsolete for the old owner may be so now. */
   remove_obsolete_buildings_city(pcity, TRUE);
   if (terrain_control.may_road
