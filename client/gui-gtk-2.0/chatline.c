@@ -103,7 +103,11 @@ static GdkCursor *regular_cursor = NULL;
 **************************************************************************/
 void insert_chat_link(struct tile *ptile, bool unit)
 {
-  char buf[256];
+  GtkEditable *editable = GTK_EDITABLE(inputline);
+  char link[256];
+  gint start_pos = gtk_editable_get_position(editable), pos = start_pos;
+  gchar *chars = gtk_editable_get_chars(editable, MAX(pos - 1, 0), pos + 1);
+  size_t len = strlen(chars);
 
   if (unit) {
     struct unit *punit = find_visible_unit(ptile);
@@ -111,14 +115,23 @@ void insert_chat_link(struct tile *ptile, bool unit)
       append_output_window(_("Warclient: No visible unit on this tile."));
       return;
     }
-    insert_unit_link(buf, sizeof(buf), punit);
+    insert_unit_link(link, sizeof(link), punit);
   } else if (ptile->city) {
-    insert_city_link(buf, sizeof(buf), ptile->city);
+    insert_city_link(link, sizeof(link), ptile->city);
   } else {
-    insert_tile_link(buf, sizeof(buf), ptile);
+    insert_tile_link(link, sizeof(link), ptile);
   }
-  chatline_entry_append_text(buf);
+
+  if (start_pos > 0 && len > 0 && chars[0] != ' ') {
+    gtk_editable_insert_text(editable, " ", 1, &pos);
+  }
+  gtk_editable_insert_text(editable, link, strlen(link), &pos);
+  if (len == 0 || chars[start_pos > 0 ? 1 : 0] != ' ') {
+    gtk_editable_insert_text(editable, " ", 1, &pos);
+  }
   gtk_widget_grab_focus(inputline);
+  gtk_editable_set_position(editable, pos);
+  g_free(chars);
 }
 
 /**************************************************************************

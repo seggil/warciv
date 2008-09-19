@@ -1921,6 +1921,7 @@ GtkWidget *create_nation_page(void)
 void set_client_page(enum client_pages new_page)
 {
   enum client_pages old_page;
+  int entry_pos = -1;
 
   old_page = current_page;
 
@@ -1955,6 +1956,9 @@ void set_client_page(enum client_pages new_page)
   case PAGE_MAIN:
     break;
   case PAGE_START:
+    if (GTK_WIDGET_HAS_FOCUS(inputline)) {
+      entry_pos = gtk_editable_get_position(GTK_EDITABLE(inputline));
+    }
     if (is_server_running()) {
       gtk_widget_show(start_options_table);
       update_start_page();
@@ -1965,6 +1969,9 @@ void set_client_page(enum client_pages new_page)
   case PAGE_NATION:
     break;
   case PAGE_GAME:
+    if (GTK_WIDGET_HAS_FOCUS(start_page_entry)) {
+      entry_pos = gtk_editable_get_position(GTK_EDITABLE(start_page_entry));
+    }
     enable_menus(TRUE);
     break;
   case PAGE_LOAD:
@@ -2012,9 +2019,14 @@ void set_client_page(enum client_pages new_page)
       gtk_entry_set_text(GTK_ENTRY(start_page_entry),
 			 gtk_entry_get_text(GTK_ENTRY(inputline)));
       gtk_entry_set_text(GTK_ENTRY(inputline), "");
+      if (entry_pos >= 0) {
+	gtk_widget_grab_focus(start_page_entry);
+	gtk_editable_set_position(GTK_EDITABLE(start_page_entry), entry_pos);
+      }
     }
     chatline_scroll_to_bottom();
     allied_chat_only = FALSE;
+    gtk_widget_grab_focus(start_page_entry);
     break;
   case PAGE_NATION:
     gtk_tree_view_focus(gtk_tree_selection_get_tree_view(nation_selection));
@@ -2032,6 +2044,10 @@ void set_client_page(enum client_pages new_page)
       gtk_entry_set_text(GTK_ENTRY(inputline),
 			 gtk_entry_get_text(GTK_ENTRY(start_page_entry)));
       gtk_entry_set_text(GTK_ENTRY(start_page_entry), "");
+      if (entry_pos >= 0) {
+	gtk_widget_grab_focus(inputline);
+	gtk_editable_set_position(GTK_EDITABLE(inputline), entry_pos);
+      }
     }
     chatline_scroll_to_bottom();
     init_chat_buttons();
