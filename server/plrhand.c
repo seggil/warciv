@@ -1620,8 +1620,7 @@ static void package_player_info(struct player *plr,
     packet->government = plr->government;
   } else {
     packet->gold = 0;
-    packet->government = 255;
-    assert(!government_exists(255));
+    packet->government = game.ruleset_control.government_when_anarchy;
   }
 
   /* Send diplomatic status of the player to everyone they are in
