@@ -1204,6 +1204,7 @@ static void textbuf_insert_time(GtkTextBuffer *buf, GtkTextIter *iter)
     gtk_text_buffer_insert(buf, iter, " ", -1);
   }
 }
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1226,18 +1227,20 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
     }
     return res;
   }
-  
+
   for (curpos = text;; curpos = p + patlen) {
-    if (!(p = strstr(curpos, ptagpat->pattern)))
+    if (!(p = strstr(curpos, ptagpat->pattern))) {
       break;
-    if ((ptagpat->flags & TPF_MATCH_AT_START) && p != text)
+    }
+    if ((ptagpat->flags & TPF_MATCH_AT_START) && p != text) {
       break;
+    }
     res = TRUE;
 
     pmres = fc_malloc(sizeof(struct match_result));
     match_result_list_append(matches, pmres);
     if (ptagpat->flags & TPF_APPLY_TO_MATCH) {
-      pmres->start = p - text;
+      pmres->start = g_utf8_pointer_to_offset(text, p);
       pmres->end = pmres->start + patlen;
     } else {
       pmres->start = 0;
@@ -1245,8 +1248,9 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
       break;
     }
 
-    if (ptagpat->flags & TPF_MATCH_AT_START)
+    if (ptagpat->flags & TPF_MATCH_AT_START) {
       break;
+    }
   }
 
   res = (ptagpat->flags & TPF_NEGATE) ? !res : res;
