@@ -258,6 +258,7 @@ void update_unit_focus(void)
       || punit_focus->done_moving
       || punit_focus->moves_left == 0
       || punit_focus->air_patrol_tile
+      || punit_focus->ptr
       || punit_focus->ai.control) {
     if (punit_focus && moveandattack_state == 1) {
       /* Ignore focus change for move and attack mode */
@@ -373,6 +374,7 @@ static struct unit *find_best_focus_candidate(bool accept_current)
       && punit->moves_left > 0
       && !punit->done_moving
       && !punit->air_patrol_tile
+      && !punit->ptr
       && !punit->ai.control) {
         int d = sq_map_distance(punit->tile, ptile);
         if (d < best_dist) {

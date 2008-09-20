@@ -100,7 +100,8 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
               && punit->activity != ACTIVITY_FORTIFIED)
           || (inclusive_filter & FILTER_SENTRIED
               && punit->activity != ACTIVITY_SENTRY)
-          || (inclusive_filter & FILTER_AUTO && !punit->ai.control)
+          || (inclusive_filter & FILTER_AUTO
+	      && !punit->ai.control && !punit->air_patrol_tile && !punit->ptr)
           || (inclusive_filter & FILTER_VETERAN && punit->veteran == 0)
           || (inclusive_filter & FILTER_IDLE
               && punit->activity != ACTIVITY_IDLE)
@@ -120,7 +121,8 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
               && punit->activity == ACTIVITY_FORTIFIED)
           || (exclusive_filter & FILTER_SENTRIED
               && punit->activity == ACTIVITY_SENTRY)
-          || (exclusive_filter & FILTER_AUTO && punit->ai.control)
+          || (exclusive_filter & FILTER_AUTO
+	      && (punit->ai.control || punit->air_patrol_tile || punit->ptr))
           || (exclusive_filter & FILTER_VETERAN && punit->veteran > 0)
           || (exclusive_filter & FILTER_IDLE
               && punit->activity == ACTIVITY_IDLE)
