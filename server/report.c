@@ -250,7 +250,7 @@ void report_top_five_cities(struct conn_list *dest)
     size[i].city = NULL;
   }
 
-  players_iterate(pplayer) {
+  shuffled_players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
       int value_of_pcity = pcity->size + nr_wonders(pcity) * WONDER_FACTOR;
 
@@ -261,7 +261,7 @@ void report_top_five_cities(struct conn_list *dest)
 	      secompare);
       }
     } city_list_iterate_end;
-  } players_iterate_end;
+  } shuffled_players_iterate_end;
 
   buffer[0] = '\0';
   for (i = 0; i < NUM_BEST_CITIES; i++) {
