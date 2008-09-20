@@ -641,7 +641,7 @@ bool is_trade_planning(void)
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
     trade_route_list_iterate(pcity->trade_routes, ptr) {
-      if (ptr->status == TR_PLANNED) {
+      if (ptr->status & TR_PLANNED) {
         return TRUE;
       }
     } trade_route_list_iterate_end;
