@@ -47,14 +47,13 @@ client/mapview_common.c
 client/messagewin_common.c
 client/multiselect.c
 client/multiselect.h
-client/myai.c
 client/options.c
 client/packhand.c
 client/plrdlg_common.c
 client/repodlgs_common.c
 client/text.c
 client/tilespec.c
-client/wc_settings.c
+client/trade.c
 common/aicore/cm.c
 common/city.c
 common/connection.c
@@ -63,6 +62,7 @@ common/game.c
 common/map.c
 common/player.c
 common/tech.c
+common/traderoute.c
 common/unit.c
 common/unittype.c
 common/version.c
@@ -386,6 +386,7 @@ server/srv_main.c
 server/stdinhand.c
 server/unithand.c
 server/unittools.c
+server/tradehand.c
 server/vote.c
 utility/astring.h
 utility/fciconv.c

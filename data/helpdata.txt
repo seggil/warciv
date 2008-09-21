@@ -1021,7 +1021,7 @@ Then from menu select, Auto caravan->Calculate trade planning. \
 \n\n\
 You can press 'ctrl'+'t' to see your suggested traderoutes at map.\
 \n\n\
-
+\
 Auto-Caravans\n\
 =============\n\
 \n\
