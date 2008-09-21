@@ -441,7 +441,6 @@ Unit Orders:\n\
    <ctrl>e: set airplane patrol destination (air units)\n\
          f: (f)ortify unit  (military units)\n\
          f: build (f)ortress  (settler/worker units)\n\
-   <ctrl>f: cancel automatic orders (auto-trade, patrol, ...)\n\
          g: unit (g)oto  (then left-click mouse to select destination)\n\
          g: add a (g)oto waypoint (when in goto mode)\n\
   <shift>g: return to the nearest city\n\
@@ -455,7 +454,6 @@ Unit Orders:\n\
    <ctrl>l: connect rai(l) (settler/worker units)\n\
   <shift>g: go/air(l)ift to city\n\
          m: build (m)ine or convert terrain (settler/worker units)\n\
-   <ctrl>m: execute automatic orders (auto-trade, patrol, ...)\n\
          n: clean (n)uclear fallout\n\
   <shift>n: explode (N)uclear\n\
          o: transf(o)rm terrain (engineer unit)\n\
@@ -495,9 +493,6 @@ Unit Mass orders:\n\
   <shift>b: active all selected units\n\
    <ctrl>b: add a (b)reak in the the delayed goto queue\n\
   <shift>c: select many units\n\
-  <shift>e: execute all airplane patrol orders\n\
-  <shift>j: execute all auto-traderoute orders\n\
-  <shift>m: execute all automatic orders\n\
   <shift>s: spread the selected units in the city of the continent\n\
          u: clear the delayed goto queue\n\
   <shift>v: clear the unit selection\n\
@@ -952,11 +947,11 @@ Automated airlifting\n\
 ====================\n\
 \n\
 Automated airlifting works only on standard 2.0.7 server, \
-0.8.x or 0.9.x warserver. It doesn't work on standard 2.0.8 \
+0.8.x or later warserver. It doesn't work on standard 2.0.8 \
 server as you would expect since you can only airlift one \
 unit between 2 cities with an airport.\
 \n\n\
-First of all select unit type from Airlift->airlift \
+First of all select unit type from Airlift->Airlift \
 unit type.\
 \n\n\
 Then press 'shift'+'z' and click on a city on the map to \
@@ -996,37 +991,47 @@ end of turn.\
 Air units will keep going to their destination tiles at \
 the beginning of each turn.\
 \n\n\
-Press 'e' (if the unit is on the patrol tile), 'e'+'e' (else) \
-or 'shift'+'f' (both cases) to cancel the orders of a unit.\
+Press 'e' (if the unit is on the patrol tile) or 'e'+'e' (else) \
+to cancel the orders of a unit.\
 \n\n\
 Very useful for AWACS patrolling far away protected by \
 AEGIS or stealth fighters blocking every mountain and hill \
 during attack or defence.\
 "), _("\
-Auto-Caravans\n\
-=============\n\
+Trade Planning\n\
+===============\n\
 \n\
-When all your cities are built, select the cities you want \
+Trade planning can be done in two ways, before or after construction of cities. \
+\n\n\
+To do planning before cities are built, press 'shift'+'a' or hold 'shift'+'a' + click \
+on each tile of your planed cities you want traderoutes for individually. 2 clicks \
+on one tile means remove the city of the list.\
+Then from menu select, Auto caravan->Precalculate trade planning \
+to see trade calculations, or if you need to restart over, you can select \
+Auto caravan->Clear trade planning. After you build all cities or build \
+new road select Auto caravan->Calculate trade planning. \
+\n\n\
+To do planning after all your cities are built, select the cities you want \
 to have traderoutes. Either right click, drag your mouse \
 over all your cities and then unselect inland cities with \
 left click and then press 'shift'+'a' or hold 'shift'+'a' + click \
-on each city you want traderoutes for individually. 2 click \
-on one city means remove the city of the list.\
+on each city you want traderoutes for individually. 2 clicks \
+on one city means remove the city of the list. \
+Then from menu select, Auto caravan->Calculate trade planning. \
 \n\n\
-Then press 'ctrl'+'t' to see your suggested traderoutes at map.\
+You can press 'ctrl'+'t' to see your suggested traderoutes at map.\
 \n\n\
+
+Auto-Caravans\n\
+=============\n\
+\n\
 When caravans are built, press 'ctrl'+'j' to auto-send them. \
 Or press 'j' to choose a city to trade with. When you are done \
 trading, you can press 'ctrl'+'t' again to hide the traderoutes.\
 \n\n\
-To execute only 1 caravan orders, select it and press 'ctrl'+'m'. \
-To cancel an automatic caravan, select it and press 'ctrl'+'f', \
-the informations about the trade route of this caravan \
-(at the left of the map) should be removed.\
-\n\n\
 You can see some informations about this trade planning at \
 Auto caravan->Show trade estimation (list of the running caravans) or \
-Auto caravan->Show trade route free slots (list of the cities \
+Auto caravan->Show the trade route free slots (list of the cities \
 which won't have 4 trade routes).\
 "), _("\
 Multi-Selection\n\
