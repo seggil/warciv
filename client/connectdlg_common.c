@@ -336,7 +336,7 @@ bool client_start_server(void)
 # endif
  
   /* a reasonable number of tries */ 
-  while (connect_to_server(user_name, "localhost", internal_server_port, 
+  while (connect_to_server(default_user_name, "localhost", internal_server_port, 
                            buf, sizeof(buf)) == -1) {
     myusleep(WAIT_BETWEEN_TRIES);
 #ifdef HAVE_WORKING_FORK
@@ -518,7 +518,7 @@ void send_start_saved_game(void)
   send_chat("/set timeout 0");
   send_chat("/set autotoggle 1");
   my_snprintf(buf, sizeof(buf), "/take \"%s\" \"%s\"",
-      	      user_name, player_name);
+      	      default_user_name, player_name);
   send_chat(buf);
   send_chat("/start");
 }

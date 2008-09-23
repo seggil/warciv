@@ -138,11 +138,12 @@ static int try_to_autoconnect(gpointer data)
     freelog(LOG_FATAL,
 	    _("Failed to contact server \"%s\" at port "
 	      "%d as \"%s\" after %d attempts"),
-	    server_host, server_port, user_name, count);
+	    default_server_host, default_server_port,
+	    default_user_name, count);
     exit(EXIT_FAILURE);
   }
 
-  switch (try_to_connect(user_name, errbuf, sizeof(errbuf))) {
+  switch (try_to_connect(default_user_name, errbuf, sizeof(errbuf))) {
   case 0:			/* Success! */
     return FALSE;		/*  Tells GTK not to call this
 				   function again */
@@ -163,7 +164,8 @@ static int try_to_autoconnect(gpointer data)
     freelog(LOG_FATAL,
 	    _("Error contacting server \"%s\" at port %d "
 	      "as \"%s\":\n %s\n"),
-	    server_host, server_port, user_name, errbuf);
+	    default_server_host, default_server_port,
+	    default_user_name, errbuf);
     exit(EXIT_FAILURE);
   }
 }
@@ -183,16 +185,16 @@ void server_autoconnect()
   my_snprintf(buf, sizeof(buf),
 	      _("Auto-connecting to server \"%s\" at port %d "
 		"as \"%s\" every %f second(s) for %d times"),
-	      server_host, server_port, user_name,
-	      0.001 * AUTOCONNECT_INTERVAL,
-	      MAX_AUTOCONNECT_ATTEMPTS);
+	      default_server_host, default_server_port, default_user_name,
+	      0.001 * AUTOCONNECT_INTERVAL, MAX_AUTOCONNECT_ATTEMPTS);
   append_output_window(buf);
 
-  if (get_server_address(server_host, server_port, buf, sizeof(buf)) < 0) {
+  if (get_server_address(default_server_host, default_server_port,
+			 buf, sizeof(buf)) < 0) {
     freelog(LOG_FATAL,
 	    _("Error contacting server \"%s\" at port %d "
 	      "as \"%s\":\n %s\n"),
-	    server_host, server_port, user_name, buf);
+	    default_server_host, default_server_port, default_user_name, buf);
     exit(EXIT_FAILURE);
   }
   if (try_to_autoconnect(NULL)) {

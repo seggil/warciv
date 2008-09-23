@@ -1940,7 +1940,7 @@ static void select_random_leader(void)
     gtk_combo_box_remove_text(GTK_COMBO_BOX(races_leader), 0);
   }
 
-  gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), user_name);
+  gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), default_user_name);
   leaders = get_nation_leaders(selected_nation, &num_races_leader);
   for (i = 0 ; i < num_races_leader ; i++) {
     gtk_combo_box_append_text(GTK_COMBO_BOX(races_leader), leaders[i].name);

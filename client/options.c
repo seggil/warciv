@@ -581,13 +581,15 @@ static struct client_option client_options[] = {
 		      N_("This is the soundset that will be used.  Changing "
 			 "this is the same as using the -S command-line "
 			 "parameter."),
-		      COC_SOUND, "stdsounds", get_soundset_list, NULL),
+		      COC_SOUND, "stdsounds",
+		      get_soundset_list, audio_change_soundset),
   GEN_STR_LIST_OPTION(default_sound_plugin_name, N_("Default sound plugin"),
 		      N_("If you have a problem with sound, try changing the "
 			 "sound plugin.  The new plugin won't take effect "
 			 "until you restart Freeciv.  Changing this is the "
 			 "same as using the -P command-line option."),
-		      COC_SOUND, "", get_soundplugin_list, NULL),
+		      COC_SOUND, "",
+		      get_soundplugin_list, audio_change_plugin),
   GEN_BOOL_OPTION(sound_bell_at_new_turn, N_("Sound bell at new turn"),
 		  N_("Set this option to have a \"bell\" event be generated "
 		     "at the start of a new turn.  You can control the "

@@ -44,13 +44,6 @@ void client_remove_all_cli_conn(void);
 
 extern char *logfile;
 extern char *scriptfile;
-extern char sound_plugin_name[512];
-extern char sound_set_name[512];
-extern char server_host[512];
-extern char user_name[512];
-extern char password[MAX_LEN_PASSWORD];
-extern char metaserver[512];
-extern int  server_port;
 extern bool auto_connect;
 extern bool waiting_for_end_turn;
 extern bool turn_done_sent;

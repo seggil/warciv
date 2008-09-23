@@ -409,7 +409,7 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
   /* request in progress! */
   server_list_request_id = id;
   my_snprintf(buf, sizeof(buf),
-	      _("Requesting server list from %s..."), metaserver);
+	      _("Requesting server list from %s..."), default_metaserver);
   append_network_statusbar(buf);
   return TRUE;
 }
@@ -679,10 +679,10 @@ void handle_authentication_req(enum authentication_type type, char *message)
   case AUTH_LOGIN_FIRST:
     /* if we magically have a password already present in 'password'
      * then, use that and skip the password entry dialog */
-    if (password[0] != '\0') {
+    if (default_password[0] != '\0') {
       struct packet_authentication_reply reply;
 
-      sz_strlcpy(reply.password, password);
+      sz_strlcpy(reply.password, default_password);
       send_packet_authentication_reply(&aconnection, &reply);
       return;
     } else {
@@ -715,23 +715,26 @@ static void connect_callback(GtkWidget *w, gpointer data)
 
   switch (connection_status) {
   case LOGIN_TYPE:
-    sz_strlcpy(user_name, gtk_entry_get_text(GTK_ENTRY(network_login)));
-    sz_strlcpy(server_host, gtk_entry_get_text(GTK_ENTRY(network_host)));
-    server_port = atoi(gtk_entry_get_text(GTK_ENTRY(network_port)));
+    sz_strlcpy(default_user_name,
+	       gtk_entry_get_text(GTK_ENTRY(network_login)));
+    sz_strlcpy(default_server_host,
+	       gtk_entry_get_text(GTK_ENTRY(network_host)));
+    default_server_port = atoi(gtk_entry_get_text(GTK_ENTRY(network_port)));
   
-    if (connect_to_server(user_name, server_host, server_port,
-                          errbuf, sizeof(errbuf)) != -1) {
+    if (connect_to_server(default_user_name, default_server_host,
+			  default_server_port, errbuf, sizeof(errbuf)) != -1) {
     } else {
       append_network_statusbar(errbuf);
     }
     break; 
   case NEW_PASSWORD_TYPE:
     if (w != network_password) {
-      sz_strlcpy(password, gtk_entry_get_text(GTK_ENTRY(network_password)));
+      sz_strlcpy(default_password,
+		 gtk_entry_get_text(GTK_ENTRY(network_password)));
       sz_strlcpy(reply.password,
 	  gtk_entry_get_text(GTK_ENTRY(network_confirm_password)));
-      if (strncmp(reply.password, password, MAX_LEN_NAME) == 0) {
-	password[0] = '\0';
+      if (strncmp(reply.password, default_password, MAX_LEN_NAME) == 0) {
+	default_password[0] = '\0';
 	send_packet_authentication_reply(&aconnection, &reply);
 
 	set_connection_state(WAITING_TYPE);
@@ -869,9 +872,9 @@ static void update_network_page(void)
   gtk_tree_selection_unselect_all(lan_selection);
   gtk_tree_selection_unselect_all(meta_selection);
 
-  gtk_entry_set_text(GTK_ENTRY(network_login), user_name);
-  gtk_entry_set_text(GTK_ENTRY(network_host), server_host);
-  my_snprintf(buf, sizeof(buf), "%d", server_port);
+  gtk_entry_set_text(GTK_ENTRY(network_login), default_user_name);
+  gtk_entry_set_text(GTK_ENTRY(network_host), default_server_host);
+  my_snprintf(buf, sizeof(buf), "%d", default_server_port);
   gtk_entry_set_text(GTK_ENTRY(network_port), buf);
 
   set_connection_state(LOGIN_TYPE);
@@ -1814,17 +1817,17 @@ static void update_nation_page(struct packet_game_load *packet)
     GtkTreeIter iter;
     char message[MAX_LEN_MSG];
 
-    my_snprintf(message, sizeof(message), "/create %s", user_name);
+    my_snprintf(message, sizeof(message), "/create %s", default_user_name);
     send_chat(message);
-    my_snprintf(message, sizeof(message), "/ai %s", user_name);
+    my_snprintf(message, sizeof(message), "/ai %s", default_user_name);
     send_chat(message);
-    my_snprintf(message, sizeof(message), "/take \"%s\"", user_name);
+    my_snprintf(message, sizeof(message), "/take \"%s\"", default_user_name);
     send_chat(message);
 
     /* create a false entry */
     gtk_list_store_append(nation_store, &iter);
     gtk_list_store_set(nation_store, &iter,
-		       0, user_name, 3, _("Alive"), 4, _("Human"), -1);
+		       0, default_user_name, 3, _("Alive"), 4, _("Human"), -1);
   }
 }
 

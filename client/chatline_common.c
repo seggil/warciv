@@ -139,22 +139,22 @@ static void log_chat(const char *text)
     return;
   }
 
-  if (server_host[0] == '\0') {
+  if (default_server_host[0] == '\0') {
     host = "NO_SERVER";
   } else {
-    host = server_host;
+    host = default_server_host;
   }
 
-  if (server_port > 0) {
-    port = server_port;
+  if (default_server_port > 0) {
+    port = default_server_port;
   } else {
     port = 0;
   }
 
-  if (user_name[0] == '\0') {
+  if (default_user_name[0] == '\0') {
     name = "UNNAMED";
   } else {
-    name = user_name;
+    name = default_user_name;
   }
 
   now = time(NULL);

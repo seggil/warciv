@@ -51,7 +51,7 @@
 #define SNDSPEC_SUFFIX		".soundspec"
 
 /* keep it open throughout */
-static struct section_file tagstruct, *tagfile = &tagstruct;
+static struct section_file tagstruct, *tagfile = NULL;
 
 static struct audio_plugin plugins[MAX_NUM_PLUGINS];
 static int num_plugins_used = 0;
@@ -110,36 +110,38 @@ void audio_add_plugin(struct audio_plugin *p)
 bool audio_select_plugin(const char *const name)
 {
   int i;
-  bool found = FALSE;
 
   for (i = 0; i < num_plugins_used; i++) {
     if (strcmp(plugins[i].name, name) == 0) {
-      found = TRUE;
       break;
     }
   }
 
-  if (found && i != selected_plugin) {
+  if (i >= num_plugins_used) {
+    freelog(LOG_ERROR,
+	    "Plugin '%s' isn't available. Available are %s", name,
+	    audio_get_all_plugin_names());
+    return FALSE;
+  }
+
+  if (i == selected_plugin) {
+    return TRUE;
+  }
+
+  if (selected_plugin >= 0) {
     freelog(LOG_DEBUG, "Shutting down %s", plugins[selected_plugin].name);
     plugins[selected_plugin].stop();
     plugins[selected_plugin].wait();
     plugins[selected_plugin].shutdown();
   }
 
-  if (!found) {
-    freelog(LOG_FATAL,
-	    _("Plugin '%s' isn't available. Available are %s"), name,
-	    audio_get_all_plugin_names());
-    exit(EXIT_FAILURE);
-  }
-
   if (!plugins[i].init()) {
-    freelog(LOG_ERROR, _("Plugin %s found but can't be initialized."), name);
+    freelog(LOG_ERROR, "Plugin %s found but can't be initialized.", name);
     return FALSE;
   }
 
   selected_plugin = i;
-  freelog(LOG_VERBOSE, _("Plugin '%s' is now selected"),
+  freelog(LOG_NORMAL, _("Plugin '%s' is now selected"),
 	  plugins[selected_plugin].name);
   return TRUE;
 }
@@ -152,7 +154,6 @@ void audio_init()
 {
   audio_none_init();
   assert(num_plugins_used == 1);
-  selected_plugin = 0;
 
 #ifdef ESD
   audio_esd_init();
@@ -175,16 +176,15 @@ void audio_init()
   Returns the filename for the given soundset. Returns NULL if
   soundset couldn't be found. Caller has to free the return value.
 **************************************************************************/
-static const char *soundspec_fullname(const char *soundset_name)
+static char *soundspec_fullname(char *soundset_name, size_t size)
 {
   const char *soundset_default = "stdsounds";	/* Do not i18n! */
-  char *fname = fc_malloc(strlen(soundset_name) + strlen(SNDSPEC_SUFFIX) + 1);
+  char fname[strlen(soundset_name) + strlen(SNDSPEC_SUFFIX) + 1];
   char *dname;
 
   sprintf(fname, "%s%s", soundset_name, SNDSPEC_SUFFIX);
 
   dname = datafilename(fname);
-  free(fname);
 
   if (dname) {
     return mystrdup(dname);
@@ -195,107 +195,132 @@ static const char *soundspec_fullname(const char *soundset_name)
     return NULL;
   }
 
-  freelog(LOG_ERROR, _("Couldn't find soundset \"%s\" trying \"%s\"."),
+  freelog(LOG_ERROR, "Couldn't find soundset \"%s\" trying \"%s\".",
 	  soundset_name, soundset_default);
-  return soundspec_fullname(soundset_default);
+  mystrlcpy(soundset_name, soundset_default, size);
+  return soundspec_fullname(soundset_name, size);
+}
+
+/**************************************************************************
+  Select the right plugin or set plugin_name to "none".
+**************************************************************************/
+static void audio_set_plugin(char *plugin_name, size_t size)
+{
+  if (*plugin_name == '\0' || !audio_select_plugin(plugin_name)) {
+    mystrlcpy(plugin_name, "none", size);
+    assert(audio_select_plugin(plugin_name)); /* Must always work! */
+  }
+
+  if (strcmp(plugin_name, "none") == 0) {
+    freelog(LOG_VERBOSE, "Proceeding with sound support disabled");
+  }
+}
+
+/**************************************************************************
+  Select the right soundset spec file or set spec_name "".
+**************************************************************************/
+static void audio_set_soundset(char *spec_name, size_t size)
+{
+  char *filename;
+  char *file_capstr;
+  char us_capstr[] = "+soundspec";
+
+  freelog(LOG_VERBOSE, "Initializing sound using %s...", spec_name);
+  filename = soundspec_fullname(spec_name, size);
+
+  if (tagfile) {
+    section_file_free(tagfile);
+  } else {
+    tagfile = &tagstruct;
+  }
+
+  if (!filename) {
+    freelog(LOG_ERROR, "Cannot find sound spec-file \"%s\".", spec_name);
+    freelog(LOG_NORMAL, _("To get sound you need to download a sound set!"));
+    freelog(LOG_NORMAL, _("Get sound sets from <%s>."),
+	    "ftp://ftp.freeciv.org/freeciv/contrib/audio/soundsets");
+    freelog(LOG_NORMAL, _("Will continue with disabled sounds."));
+    *spec_name = '\0';
+    tagfile = NULL;
+    return;
+  }
+
+  if (!section_file_load(tagfile, filename)) {
+    freelog(LOG_ERROR, "Could not load sound spec-file: %s", filename);
+    free(filename);
+    *spec_name = '\0';
+    tagfile = NULL;
+    return;
+  }
+
+  free(filename);
+
+  file_capstr = secfile_lookup_str(tagfile, "soundspec.options");
+  if (!has_capabilities(us_capstr, file_capstr)) {
+    freelog(LOG_NORMAL, _("sound spec-file appears incompatible:"));
+    freelog(LOG_NORMAL, _("file: \"%s\""), filename);
+    freelog(LOG_NORMAL, _("file options: %s"), file_capstr);
+    freelog(LOG_NORMAL, _("supported options: %s"), us_capstr);
+    *spec_name = '\0';
+    section_file_free(tagfile);
+    tagfile = NULL;
+    return;
+  }
+
+  if (!has_capabilities(file_capstr, us_capstr)) {
+    freelog(LOG_NORMAL, _("sound spec-file claims required option(s)"
+			 " which we don't support:"));
+    freelog(LOG_NORMAL, _("file: \"%s\""), filename);
+    freelog(LOG_NORMAL, _("file options: %s"), file_capstr);
+    freelog(LOG_NORMAL, _("supported options: %s"), us_capstr);
+    *spec_name = '\0';
+    section_file_free(tagfile);
+    tagfile = NULL;
+    return;
+  }
+
+  freelog(LOG_VERBOSE, "soundset is %s.", spec_name);
 }
 
 /**************************************************************************
   Initialize audio system and autoselect a plugin
 **************************************************************************/
-void audio_real_init(const char *const spec_name,
-		     const char *const prefered_plugin_name)
+void audio_real_init(void)
 {
-  const char *filename;
-  char *file_capstr;
-  char us_capstr[] = "+soundspec";
-
-  if (strcmp(prefered_plugin_name, "none") == 0) {
-    /* We explicitly choose none plugin, silently skip the code below */
-    freelog(LOG_VERBOSE, _("Proceeding with sound support disabled"));
-    tagfile = NULL;
-    return;
-  }
-  if (num_plugins_used == 1) {
+  if (strcmp(default_sound_plugin_name, "none") != 0 && num_plugins_used == 1) {
     /* We only have the dummy plugin, skip the code but issue an advertise */
     freelog(LOG_NORMAL, _("No real audio plugin present, "
       "proceeding with sound support disabled"));
     freelog(LOG_NORMAL,
       _("For sound support, install either esound or SDL_mixer"));
-    freelog(LOG_NORMAL, 
+    freelog(LOG_NORMAL,
       _("Esound: http://www.tux.org/~ricdude/EsounD.html"));
     freelog(LOG_NORMAL, _("SDL_mixer: http://www.libsdl.org/"
       "projects/SDL_mixer/index.html"));
-    tagfile = NULL;
-    return;
-  }
-  if (!spec_name) {
-    freelog(LOG_FATAL, _("No sound spec-file given!"));
-    exit(EXIT_FAILURE);
-  }
-  freelog(LOG_VERBOSE, "Initializing sound using %s...", spec_name);
-  filename = soundspec_fullname(spec_name);
-  if (!filename) {
-    freelog(LOG_ERROR, _("Cannot find sound spec-file \"%s\"."), spec_name);
-    freelog(LOG_ERROR, _("To get sound you need to download a sound set!"));
-    freelog(LOG_ERROR, _("Get sound sets from <%s>."),
-	    "ftp://ftp.freeciv.org/freeciv/contrib/audio/soundsets");
-    freelog(LOG_ERROR, _("Will continue with disabled sounds."));
-    tagfile = NULL;
-    return;
-  }
-  if (!section_file_load(tagfile, filename)) {
-    freelog(LOG_FATAL, _("Could not load sound spec-file: %s"), filename);
-    exit(EXIT_FAILURE);
   }
 
-  file_capstr = secfile_lookup_str(tagfile, "soundspec.options");
-  if (!has_capabilities(us_capstr, file_capstr)) {
-    freelog(LOG_FATAL, _("sound spec-file appears incompatible:"));
-    freelog(LOG_FATAL, _("file: \"%s\""), filename);
-    freelog(LOG_FATAL, _("file options: %s"), file_capstr);
-    freelog(LOG_FATAL, _("supported options: %s"), us_capstr);
-    exit(EXIT_FAILURE);
-  }
-  if (!has_capabilities(file_capstr, us_capstr)) {
-    freelog(LOG_FATAL, _("sound spec-file claims required option(s)"
-			 " which we don't support:"));
-    freelog(LOG_FATAL, _("file: \"%s\""), filename);
-    freelog(LOG_FATAL, _("file options: %s"), file_capstr);
-    freelog(LOG_FATAL, _("supported options: %s"), us_capstr);
-    exit(EXIT_FAILURE);
-  }
-
-  free((void *) filename);
+  audio_set_plugin(default_sound_plugin_name,
+		   sizeof(default_sound_plugin_name));
+  audio_set_soundset(default_sound_set_name,
+		     sizeof(default_sound_set_name));
 
   atexit(audio_shutdown);
+}
 
-  if (prefered_plugin_name[0] != '\0') {
-    if (!audio_select_plugin(prefered_plugin_name))
-      freelog(LOG_NORMAL, _("Proceeding with sound support disabled"));
-    return;
-  }
+/**************************************************************************
+  ...
+**************************************************************************/
+void audio_change_soundset(struct client_option *option)
+{
+  audio_set_soundset(option->o.string.pvalue, option->o.string.size);
+}
 
-#ifdef SDL
-  if (audio_select_plugin("sdl")) return; 
-#endif
-#ifdef ESD
-  if (audio_select_plugin("esd")) return; 
-#endif
-#ifdef ALSA
-  if (audio_select_plugin("alsa")) return;
-#endif
-#ifdef WINMM
-  if (audio_select_plugin("winmm")) return;
-#endif
-#ifdef AMIGA
-  if (audio_select_plugin("amiga")) return;
-#endif
-  freelog(LOG_ERROR,
-    _("No real audio subsystem managed to initialize!"));
-  freelog(LOG_ERROR,
-    _("Perhaps there is some misconfigurationg or bad permissions"));
-  freelog(LOG_NORMAL, _("Proceeding with sound support disabled"));
+/**************************************************************************
+  ...
+**************************************************************************/
+void audio_change_plugin(struct client_option *option)
+{
+  audio_set_plugin(option->o.string.pvalue, option->o.string.size);
 }
 
 /**************************************************************************

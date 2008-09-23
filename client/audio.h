@@ -15,6 +15,8 @@
 
 #include "shared.h"		/* bool type */
 
+#include "options.h"		/* struct client_option */
+
 #define MAX_AUDIO_NAME_LEN		20
 #define MAX_AUDIO_DESCR_LEN		200
 
@@ -32,11 +34,13 @@ const char **get_soundplugin_list(void);
 const char **get_soundset_list(void);
 
 void audio_init(void);
-void audio_real_init(const char *const spec_name,
-		     const char *const prefered_plugin_name);
+void audio_real_init(void);
 void audio_add_plugin(struct audio_plugin *p);
 void audio_shutdown(void);
 void audio_stop(void);
+
+void audio_change_soundset(struct client_option *option);
+void audio_change_plugin(struct client_option *option);
 
 void audio_play_sound(const char *const tag, char *const alt_tag);
 void audio_play_music(const char *const tag, char *const alt_tag);

@@ -134,6 +134,19 @@ static void my_wait(void)
 **************************************************************************/
 static void quit_sdl_audio(void)
 {
+  int i;
+
+  /* remove all buffers */
+  for (i = 0; i < MIX_CHANNELS; i++) {
+    if (samples[i].wave) {
+      Mix_FreeChunk(samples[i].wave);
+    }
+  }
+  Mix_HaltMusic();
+  Mix_FreeMusic(mus);
+
+  Mix_CloseAudio();
+
   if (SDL_WasInit(SDL_INIT_VIDEO)) {
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
   } else {
@@ -161,22 +174,8 @@ static int init_sdl_audio(void)
 **************************************************************************/
 static void my_shutdown(void)
 {
-  int i;
-
   my_stop();
   my_wait();
-
-  /* remove all buffers */
-  for (i = 0; i < MIX_CHANNELS; i++) {
-    if (samples[i].wave) {
-      Mix_FreeChunk(samples[i].wave);
-    }
-  }
-  Mix_HaltMusic();
-  Mix_FreeMusic(mus);
-
-  Mix_CloseAudio();
-  quit_sdl_audio();
 }
 
 /**************************************************************************
@@ -184,11 +183,17 @@ static void my_shutdown(void)
 **************************************************************************/
 static bool my_init(void)
 {
+  static bool initialized = FALSE;
+
   /* Initialize variables */
   const int audio_rate = MIX_DEFAULT_FREQUENCY;
   const int audio_format = MIX_DEFAULT_FORMAT;
   const int audio_channels = 2;
   int i;
+
+  if (initialized) {
+    return TRUE;
+  }
 
   if (init_sdl_audio() < 0) {
     return FALSE;
@@ -196,8 +201,6 @@ static bool my_init(void)
 
   if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
     freelog(LOG_ERROR, "Error calling Mix_OpenAudio");
-    /* try something else */
-    quit_sdl_audio();
     return FALSE;
   }
 
@@ -207,6 +210,9 @@ static bool my_init(void)
   }
   /* sanity check, for now; add volume controls later */
   Mix_Volume(-1, MIX_MAX_VOLUME);
+
+  atexit(quit_sdl_audio);
+  initialized = TRUE;
   return TRUE;
 }
 

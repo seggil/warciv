@@ -913,6 +913,8 @@ static void reload_option_callback(GtkMenuItem *menuitem, gpointer data)
 static void apply_option_callback(GtkMenuItem *menuitem, gpointer data)
 {
   apply_option_change((struct client_option *) data);
+  /* May have changed from the callback */
+  refresh_option((struct client_option *) data);
   init_menus();
 }
 

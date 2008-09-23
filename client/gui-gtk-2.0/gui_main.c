@@ -1697,17 +1697,17 @@ void ui_init(void)
   log_set_callback(log_callback_utf8);
 
   /* convert inputs */
-  s = g_locale_to_utf8(user_name, -1, NULL, NULL, NULL);
-  sz_strlcpy(user_name, s);
+  s = g_locale_to_utf8(default_user_name, -1, NULL, NULL, NULL);
+  sz_strlcpy(default_user_name, s);
   g_free(s);
 
   /* this is silly, but i don't want the UI to barf on erroneous input */
-  s = g_locale_to_utf8(metaserver, -1, NULL, NULL, NULL);
-  sz_strlcpy(metaserver, s);
+  s = g_locale_to_utf8(default_metaserver, -1, NULL, NULL, NULL);
+  sz_strlcpy(default_metaserver, s);
   g_free(s);
 
-  s = g_locale_to_utf8(server_host, -1, NULL, NULL, NULL);
-  sz_strlcpy(server_host, s);
+  s = g_locale_to_utf8(default_server_host, -1, NULL, NULL, NULL);
+  sz_strlcpy(default_server_host, s);
   g_free(s);
 }
 

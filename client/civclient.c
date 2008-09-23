@@ -86,14 +86,6 @@ time_t end_of_turn;
 
 char *logfile = NULL;
 char *scriptfile = NULL;
-static char tileset_name[512] = "\0";
-char sound_plugin_name[512] = "\0";
-char sound_set_name[512] = "\0";
-char server_host[512] = "\0";
-char user_name[512] = "\0";
-char password[MAX_LEN_PASSWORD] = "\0";
-char metaserver[512] = "\0";
-int  server_port = -1;
 bool auto_connect = FALSE; /* TRUE = skip "Connect to Freeciv Server" dialog */
 bool do_not_request_hack = FALSE;
 
@@ -215,6 +207,14 @@ int main(int argc, char *argv[])
   int ui_options = 0;
   bool ui_separator = FALSE;
   char *option = NULL;
+  char tileset_name[512] = "\0";
+  char sound_plugin_name[512] = "\0";
+  char sound_set_name[512] = "\0";
+  char server_host[512] = "\0";
+  char user_name[512] = "\0";
+  char password[MAX_LEN_PASSWORD] = "\0";
+  char metaserver[512] = "\0";
+  int  server_port = -1;
 
   /* Load win32 post-crash debugger */
 #ifdef WIN32_NATIVE
@@ -387,29 +387,29 @@ int main(int argc, char *argv[])
 
   load_general_options();
 
-  if (tileset_name[0] == '\0') {
-    sz_strlcpy(tileset_name, default_tileset_name);
+  if (tileset_name[0] != '\0') {
+    sz_strlcpy(default_tileset_name, tileset_name);
   }
-  if (sound_set_name[0] == '\0') {
-    sz_strlcpy(sound_set_name, default_sound_set_name);
+  if (sound_set_name[0] != '\0') {
+    sz_strlcpy(default_sound_set_name, sound_set_name);
   }
-  if (sound_plugin_name[0] == '\0') {
-    sz_strlcpy(sound_plugin_name, default_sound_plugin_name);
+  if (sound_plugin_name[0] != '\0') {
+    sz_strlcpy(default_sound_plugin_name, sound_plugin_name);
   }
-  if (server_host[0] == '\0') {
-    sz_strlcpy(server_host, default_server_host);
+  if (server_host[0] != '\0') {
+    sz_strlcpy(default_server_host, server_host);
   }
-  if (user_name[0] == '\0') {
-    sz_strlcpy(user_name, default_user_name);
+  if (user_name[0] != '\0') {
+    sz_strlcpy(default_user_name, user_name);
   }
-  if (password[0] == '\0') {
-    sz_strlcpy(password, default_password);
+  if (password[0] != '\0') {
+    sz_strlcpy(default_password, password);
   }
-  if (metaserver[0] == '\0') {
-    sz_strlcpy(metaserver, default_metaserver);
+  if (metaserver[0] != '\0') {
+    sz_strlcpy(default_metaserver, metaserver);
   }
-  if (server_port == -1) {
-    server_port = default_server_port;
+  if (server_port != -1) {
+    default_server_port = server_port;
   }
 
 
@@ -418,12 +418,12 @@ int main(int argc, char *argv[])
   mysrand(time(NULL));
 
   boot_help_texts();
-  if (!tilespec_read_toplevel(tileset_name)) {
+  if (!tilespec_read_toplevel(default_tileset_name)) {
     /* get tile sizes etc */
     exit(EXIT_FAILURE);
   }
 
-  audio_real_init(sound_set_name, sound_plugin_name);
+  audio_real_init();
   audio_play_music("music_start", NULL);
 
   /* run gui-specific client */

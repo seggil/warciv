@@ -1231,12 +1231,12 @@ int create_server_list_async(char *errbuf, int n_errbuf,
   assert(errbuf != NULL);
   errbuf[0] = '\0';
 
-  urlpath = my_lookup_httpd(metaname, &metaport, metaserver);
+  urlpath = my_lookup_httpd(metaname, &metaport, default_metaserver);
   if (!urlpath) {
     my_snprintf(errbuf, n_errbuf,
           _("Invalid $http_proxy or metaserver value (\"%s\");"
             " must start with \"http://\"."),
-          metaserver);
+          default_metaserver);
     return -1;
   }
 
@@ -1314,7 +1314,7 @@ struct server_list *create_server_list(char *errbuf, int n_errbuf)
   int metaport;
   char str[MAX_LEN_PACKET];
 
-  urlpath = my_lookup_httpd(metaname, &metaport, metaserver);
+  urlpath = my_lookup_httpd(metaname, &metaport, default_metaserver);
   if (!urlpath) {
     mystrlcpy(errbuf, _("Invalid $http_proxy or metaserver value, must "
                         "start with 'http://'"),
