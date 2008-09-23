@@ -48,7 +48,6 @@
 #include "control.h"
 
 bool moveandattack_state;
-int ignore_focus_change_for_unit = 0;
 bool autowakeup_state;
 enum default_caravan_unit_actions default_caravan_action;
 enum default_diplomat_unit_actions default_diplomat_unit_action;
@@ -262,8 +261,7 @@ void update_unit_focus(void)
       || punit_focus->ai.control) {
     if (punit_focus && moveandattack_state == 1) {
       /* Ignore focus change for move and attack mode */
-      if (ignore_focus_change_for_unit == punit_focus->id
-	  && punit_focus->ai.control) {
+      if (punit_focus->ai.control) {
 	return;
       }
     }
@@ -2129,7 +2127,6 @@ void attack_after_move(struct unit *punit)
   if (moveandattack_state
       && can_unit_do_auto(punit)
       && is_military_unit(punit)) {
-    ignore_focus_change_for_unit = punit->id;
     request_unit_auto(punit);
     request_new_unit_activity(punit, ACTIVITY_IDLE);
   }
