@@ -62,20 +62,22 @@ const struct command commands[] = {
 
   {"list",	ALLOW_OBSERVER, ALLOW_OBSERVER,
    "list\n"
-   "list players\n"
-   "list connections\n"
    "list actionlist\n"
-   "list teams\n"
+   "list connections\n"
    "list ignore\n"
    "list maps\n"
-   "list scenario\n"
+   "list mutes\n"
+   "list players\n"
    "list rulesets\n"
-   "list mutes",
+   "list scenarios\n"
+   "list teams\n"
+   "list votes",
    N_("Show a list of various things."),
-   N_("Show a list of players, list of connections to the server, the "
-      "action list, the teams and the players in them, your ignore "
-      "list, all maps, scenarios, rulesets, or muted users on the server. "
-      "The argument may be abbreviated, and defaults to 'players' if absent."),
+   N_("Show the action list, a list of connections to the server, your "
+      "ignore list, all maps, a list of muted users on the server, a list "
+      "of players, all rulesets, all scenarios, the teams and the players "
+      "in them or all running votes. The argument may be abbreviated, "
+      "and defaults to 'players' if absent."),
    ECHO_NONE, VCF_NONE, 0
   },
   {"quit",	ALLOW_HACK, ALLOW_HACK,
@@ -147,10 +149,9 @@ const struct command commands[] = {
       "entered."),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"vote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
+  {"vote",	ALLOW_BASIC,	ALLOW_BASIC,
    /* TRANS: translate text between [] only */
-   N_("vote\n"
-      "vote yes|no|abstain [vote number]"),
+   N_("vote yes|no|abstain [vote number]"),
    N_("Cast a vote."),
       /* xgettext:no-c-format */
    N_("A player with basic level access issuing a control level command "
@@ -161,8 +162,7 @@ const struct command commands[] = {
       "at a time. The vote will pass immediately if more than half of the "
       "players vote for it, or fail immediately if at least half of the "
       "players vote against it. If one full turn elapses the vote fails "
-      "if not enough votes were cast one way or the other. Without "
-      "arguments, it lists the status of currently running votes."),
+      "if not enough votes were cast one way or the other."),
    ECHO_NONE, VCF_NONE, 0
   },
   {"poll",	ALLOW_CTRL,	ALLOW_CTRL,

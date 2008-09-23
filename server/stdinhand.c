@@ -87,6 +87,7 @@ static bool show_help(struct connection *caller, char *arg);
 static bool show_list(struct connection *caller, char *arg);
 static void show_connections(struct connection *caller);
 static void show_actionlist(struct connection *caller);
+static void show_votes(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
 static void show_rulesets(struct connection *caller);
 static bool show_scenarios(struct connection *caller);
@@ -3335,24 +3336,8 @@ static bool vote_command(struct connection *caller,
   ntokens = get_tokens(buf, arg, 2, TOKEN_DELIMITERS);
 
   if (ntokens == 0) {
-    vote_list_iterate(vote_list, pvote) {
-      i++;
-      cmd_reply(CMD_VOTE, caller, C_COMMENT,
-                _("Vote %d \"%s\" (needs %0.0f%%%s%s): %d for, "
-                  "%d against, and %d abstained out of %d players."),
-                pvote->vote_no, pvote->cmdline,
-                pvote->need_pc * 100 + 1,
-                pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
-                pvote->flags & VCF_NODISSENT ? _(" no dissent") : "",
-                pvote->yes, pvote->no, pvote->abstain, game.info.nplayers);
-    } vote_list_iterate_end;
-
-    if (i == 0) {
-      cmd_reply(CMD_VOTE, caller, C_COMMENT,
-                _("There are no votes going on."));
-    }
-
-    return TRUE;
+    cmd_reply(CMD_VOTE, caller, C_SYNTAX, usage);
+    goto CLEANUP;
   } else if (!connection_can_vote(caller)) {
     cmd_reply(CMD_VOTE, caller, C_FAIL,
               _("You are not allowed to use this command."));
@@ -8061,14 +8046,13 @@ static bool show_mutes(struct connection *caller)
 **************************************************************************/
 enum LIST_ARGS
 {
-  LIST_PLAYERS, LIST_CONNECTIONS, LIST_ACTIONLIST,
-  LIST_TEAMS, LIST_IGNORE, LIST_MAPS, LIST_SCENARIOS,
-  LIST_RULESETS, LIST_MUTES,
+  LIST_ACTIONLIST, LIST_CONNECTIONS, LIST_IGNORE, LIST_MAPS, LIST_MUTES,
+  LIST_PLAYERS, LIST_RULESETS, LIST_SCENARIOS, LIST_TEAMS, LIST_VOTES,
   LIST_ARG_NUM                  /* Must be last */
 };
 static const char *const list_args[] = {
-  "players", "connections", "actionlist", "teams", "ignore",
-  "maps", "scenarios", "rulesets", "mutes",
+  "actionlist", "connections", "ignore", "maps", "mutes",
+  "players", "rulesets", "scenarios", "teams", "votes",
   NULL
 };
 static const char *listarg_accessor(int i)
@@ -8096,30 +8080,33 @@ static bool show_list(struct connection *caller, char *arg)
     ind = LIST_PLAYERS;
   }
   switch (ind) {
-  case LIST_PLAYERS:
-    show_players(caller);
-    return TRUE;
-  case LIST_CONNECTIONS:
-    show_connections(caller);
-    return TRUE;
   case LIST_ACTIONLIST:
     show_actionlist(caller);
     return TRUE;
-  case LIST_TEAMS:
-    show_teams(caller, FALSE);
+  case LIST_CONNECTIONS:
+    show_connections(caller);
     return TRUE;
   case LIST_IGNORE:
     show_ignore(caller);
     return TRUE;
   case LIST_MAPS:
     return showmaplist_command(caller);
-  case LIST_SCENARIOS:
-    return show_scenarios(caller);
+  case LIST_MUTES:
+    show_mutes(caller);
+    return TRUE;
+  case LIST_PLAYERS:
+    show_players(caller);
+    return TRUE;
   case LIST_RULESETS:
     show_rulesets(caller);
     return TRUE;
-  case LIST_MUTES:
-    show_mutes(caller);
+  case LIST_SCENARIOS:
+    return show_scenarios(caller);
+  case LIST_TEAMS:
+    show_teams(caller, FALSE);
+    return TRUE;
+  case LIST_VOTES:
+    show_votes(caller);
     return TRUE;
   default:
     cmd_reply(CMD_LIST, caller, C_FAIL,
@@ -8312,6 +8299,28 @@ static void show_actionlist(struct connection *caller)
     cmd_reply(CMD_LIST, caller, C_COMMENT, "%d %s", i++, buf);
   } user_action_list_iterate_end;
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
+/**************************************************************************
+  List all running votes. Moved from /vote command.
+**************************************************************************/
+static void show_votes(struct connection *caller)
+{
+  if (vote_list_size(vote_list) > 0) {
+    vote_list_iterate(vote_list, pvote) {
+      cmd_reply(CMD_VOTE, caller, C_COMMENT,
+		_("Vote %d \"%s\" (needs %0.0f%%%s%s): %d for, "
+		  "%d against, and %d abstained out of %d players."),
+		pvote->vote_no, pvote->cmdline,
+		pvote->need_pc * 100 + 1,
+		pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
+		pvote->flags & VCF_NODISSENT ? _(" no dissent") : "",
+		pvote->yes, pvote->no, pvote->abstain, game.info.nplayers);
+    } vote_list_iterate_end;
+  } else {
+    cmd_reply(CMD_VOTE, caller, C_COMMENT,
+	      _("There are no votes going on."));
+  }
 }
 
 #ifdef HAVE_LIBREADLINE
