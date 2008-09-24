@@ -42,6 +42,7 @@ void cancel_tile_hiliting(void);
 void toggle_tile_hilite(struct tile *ptile);
 
 void key_city_overlay(int canvas_x, int canvas_y);
+void key_cities_overlay(int canvas_x, int canvas_y);
 
 void clipboard_copy_production(struct tile *ptile);
 void clipboard_paste_production(struct city *pcity);

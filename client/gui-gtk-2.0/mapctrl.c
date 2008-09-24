@@ -537,8 +537,18 @@ void center_on_unit(void)
 **************************************************************************/
 void key_city_workers(GtkWidget *w, GdkEventKey *ev)
 {
+  static time_t old_time = 0;
+  static int old_x = -1, old_y = -1;
+  clock_t new_time = time(NULL);
   int x, y;
 
   gdk_window_get_pointer(map_canvas->window, &x, &y, NULL);
-  key_city_overlay(x, y);
+  if (new_time <= old_time + 1 && x == old_x && y == old_y) {
+    key_cities_overlay(x, y);
+  } else {
+    key_city_overlay(x, y);
+  }
+  old_time = new_time;
+  old_x = x;
+  old_y = y;
 }

@@ -392,6 +392,56 @@ void key_city_overlay(int canvas_x, int canvas_y)
 }
 
 /**************************************************************************
+  The user pressed the overlay-city button (t) twice.
+**************************************************************************/
+void key_cities_overlay(int canvas_x, int canvas_y)
+{
+  struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
+
+  if (can_client_change_view() && ptile) {
+    struct city *pcity = find_city_or_settler_near_tile(ptile, NULL);
+    int num = 0;
+    bool toggle_on;
+
+    if (client_is_global_observer()) {
+      cities_iterate(pcity) {
+	if (pcity->client.colored) {
+	  if (++num >= 2) {
+	    /* No need more */
+	    break;
+	  }
+	}
+      } cities_iterate_end;
+    } else {
+      city_list_iterate(get_player_ptr()->cities, pcity) {
+	if (pcity->client.colored) {
+	  if (++num >= 2) {
+	    /* No need more */
+	    break;
+	  }
+	}
+      } city_list_iterate_end;
+    }
+
+    toggle_on = num == 0 || (num == 1 && pcity && pcity->client.colored);
+
+    if (client_is_global_observer()) {
+      cities_iterate(pcity) {
+	if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
+	  toggle_city_color(pcity);
+	}
+      } cities_iterate_end;
+    } else {
+      city_list_iterate(get_player_ptr()->cities, pcity) {
+	if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
+	  toggle_city_color(pcity);
+	}
+      } city_list_iterate_end;
+    }
+  }
+}
+
+/**************************************************************************
  Shift-Left-Click on owned city or any visible unit to copy.
 **************************************************************************/
 void clipboard_copy_production(struct tile *ptile)
