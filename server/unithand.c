@@ -1000,7 +1000,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
   }
 
 
-  if (punit->moves_left<=0)  {
+  if (punit->moves_left <= 0)  {
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
                      _("Game: This unit has no moves left."));
     return FALSE;

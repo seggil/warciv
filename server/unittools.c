@@ -2100,6 +2100,7 @@ static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
     }
 
     city_reduce_size(pcity, pcity->size / 2);
+    send_city_info(NULL, pcity);
   }
 
   if (!is_ocean(map_get_terrain(ptile)) && myrand(2) == 1) {

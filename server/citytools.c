@@ -1217,7 +1217,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
 
   /* If not at war, may peacefully enter city. Or, if we cannot occupy
    * the city, this unit entering will not trigger the effects below. */
-  if (!pplayers_at_war(pplayer, cplayer)) {
+  if (!pplayers_at_war(pplayer, cplayer) || !COULD_OCCUPY(punit)) {
     return;
   }
   /* Okay, we're at war - invader captures/destroys city... */
