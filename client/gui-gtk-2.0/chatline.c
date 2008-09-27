@@ -126,7 +126,8 @@ void insert_chat_link(struct tile *ptile, bool unit)
     gtk_editable_insert_text(editable, " ", 1, &pos);
   }
   gtk_editable_insert_text(editable, link, strlen(link), &pos);
-  if (len == 0 || chars[start_pos > 0 ? 1 : 0] != ' ') {
+  if (chars[start_pos > 0 ? 1 : 0] != '\0'
+      && chars[start_pos > 0 ? 1 : 0] != ' ') {
     gtk_editable_insert_text(editable, " ", 1, &pos);
   }
   gtk_widget_grab_focus(inputline);
