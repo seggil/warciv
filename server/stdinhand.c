@@ -3974,7 +3974,7 @@ static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
 {
   const char *allow;
 
-  if (pplayer->is_civil_war_split) {
+  if (pplayer->is_civil_war_split && !will_obs) {
     mystrlcpy(msg, _("Sorry, you can't take a player created by a "
                      "civil war."), MAX_LEN_MSG);
     return FALSE;
