@@ -1316,8 +1316,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
 	if (unit_flag(punit, F_NUCLEAR)) {
           /* Move nuke */
 	  send_goto_unit(punit, dgd->ptile);
-	  if (real_map_distance(punit->tile, dgd->ptile) * SINGLE_MOVE
-	      > punit->moves_left) {
+	  if (calculate_move_cost(punit, dgd->ptile) > punit->moves_left) {
 	    /* Cannot reach */
 	    request_new_unit_activity(punit, ACTIVITY_IDLE);
 	    /* FIXME: Should we stop the execution of the whole queue? */
