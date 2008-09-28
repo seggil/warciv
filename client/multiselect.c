@@ -1109,6 +1109,27 @@ struct player *get_tile_player(struct tile *ptile)
 }
 
 /********************************************************************** 
+  ...
+***********************************************************************/
+static bool unit_can_do_delayed_action(struct unit *punit,
+				       enum delayed_goto_type dgtype)
+{
+  switch (dgtype) {
+  case DGT_NORMAL:
+    return TRUE;
+  case DGT_NUKE:
+    return unit_flag(punit, F_NUCLEAR);
+  case DGT_PARADROP:
+    return unit_flag(punit, F_PARATROOPERS);
+  case DGT_AIRLIFT:
+  case DGT_BREAK:
+    return FALSE;
+  }
+  freelog(LOG_ERROR, "Unkown delayed goto type varient (%d).", dgtype);
+  return FALSE;
+}
+
+/********************************************************************** 
   Add units to delayed goto queue.
 ***********************************************************************/
 void add_unit_to_delayed_goto(struct tile *ptile)
@@ -1117,7 +1138,6 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   struct unit_list *ulist;
   int count = 0;
   char buf[256];
-  bool has_nuclear = FALSE, has_para = FALSE; /* FIXME: Hackish. */
 
   if (!punit_focus || hover_state != HOVER_DELAYED_GOTO) {
     return;
@@ -1125,10 +1145,10 @@ void add_unit_to_delayed_goto(struct tile *ptile)
 
   if (delayed_goto_place == PLACE_SINGLE_UNIT) {
     multi_select_iterate(FALSE, punit) {
-      delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
-      has_nuclear = has_nuclear || unit_flag(punit, F_NUCLEAR);
-      has_para = has_para || unit_flag(punit, F_PARATROOPERS);
-      count++;
+      if (unit_can_do_delayed_action(punit, delayed_goto_state)) {
+	delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
+	count++;
+      }
     } multi_select_iterate_end;
   } else {
     if (delayed_goto_place == PLACE_IN_TRANSPORTER
@@ -1150,12 +1170,11 @@ void add_unit_to_delayed_goto(struct tile *ptile)
           || (delayed_goto_utype == UTYPE_SAME_TYPE
               && punit->type != punit_focus->type)
           || !unit_satisfies_filter(punit, delayed_goto_inclusive_filter,
-                                    delayed_goto_exclusive_filter)) {
+                                    delayed_goto_exclusive_filter)
+	  || !unit_can_do_delayed_action(punit, delayed_goto_state)) {
         continue;
       }
       delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
-      has_nuclear = has_nuclear || unit_flag(punit, F_NUCLEAR);
-      has_para = has_para || unit_flag(punit, F_PARATROOPERS);
       count++;
     } unit_list_iterate_end;
   }
@@ -1166,20 +1185,27 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     return;
   }
 
-  link_marks_disable_drawing();
-  if (delayed_goto_state == DGT_NUKE_OR_PARADROP && has_nuclear) {
-    my_snprintf(buf, sizeof(buf),
-                _("Warclient: Adding %d %s NUCLEAR DETONATION to queue."),
-                count, PL_("unit", "units", count));
-  } else if (delayed_goto_state == DGT_NUKE_OR_PARADROP && has_para) {
-    my_snprintf(buf, sizeof(buf),
-                _("Warclient: Adding %d %s paradrop to %s to queue."),
-                count, PL_("unit", "units", count), get_tile_info(ptile));
-  } else {
+  switch (delayed_goto_state) {
+  case DGT_NORMAL:
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Adding %d %s goto %s to queue."), count,
                 PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+  case DGT_NUKE:
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s NUCLEAR DETONATION to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+  case DGT_PARADROP:
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s paradrop to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+    break;
+  default:
+    return;
   }
+
+  link_marks_disable_drawing();
   append_output_window(buf);
   link_marks_enable_drawing();
   update_delayed_goto_menu(0);
@@ -1211,7 +1237,7 @@ void request_unit_execute_delayed_goto(int dg)
   }
   /* Check if there is a unkown tile, then ask the user to pick it first */
   delayed_goto_data_list_iterate(delayed_goto_list[dg].dglist, dgd) {
-    if (!dgd->ptile && dgd->type != 3) {
+    if (!dgd->ptile && dgd->type != DGT_BREAK) {
       hover_state = HOVER_DELAYED_GOTO;
       delayed_goto_need_tile_for = dg;
       update_hover_cursor();
@@ -1280,20 +1306,38 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
         continue;
       }
 
-      if (dgd->type == DGT_NORMAL) {
+      switch (dgd->type) {
+      case DGT_NORMAL:
         /* Normal move */
-        send_goto_unit(punit, dgd->ptile);
+	send_goto_unit(punit, dgd->ptile);
         punit->is_new = FALSE;
-      } else if (dgd->type == DGT_NUKE_OR_PARADROP) {
-        if (unit_flag(punit, F_PARATROOPERS)) {
+	break;
+      case DGT_NUKE:
+	if (unit_flag(punit, F_NUCLEAR)) {
+          /* Move nuke */
+	  send_goto_unit(punit, dgd->ptile);
+	  if (real_map_distance(punit->tile, dgd->ptile) * SINGLE_MOVE
+	      > punit->moves_left) {
+	    /* Cannot reach */
+	    request_new_unit_activity(punit, ACTIVITY_IDLE);
+	    /* FIXME: Should we stop the execution of the whole queue? */
+	  } else {
+	    /* Boom! */
+	    do_unit_nuke(punit);
+	  }
+	  punit->is_new = FALSE;
+	}
+	break;
+      case DGT_PARADROP:
+	if (unit_flag(punit, F_PARATROOPERS)) {
           /* Paradrop */
-          do_unit_paradrop_to(punit, dgd->ptile);
-          punit->is_new = FALSE;
-        } else if (unit_flag(punit, F_NUCLEAR)) {
-          /* Explode nuke */
-          do_unit_nuke(punit);
-        }
-        /* FIXME: What if the unit has both flags? */
+	  do_unit_paradrop_to(punit, dgd->ptile);
+	  punit->is_new = FALSE;
+	}
+	break;
+      default:
+	freelog(LOG_ERROR, "Unkown delayed goto type varient (%d).", dgd->type);
+	break;
       }
     }
     delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);

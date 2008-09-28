@@ -813,6 +813,7 @@ void request_unit_delayed_goto(void)
   set_hover_state(punit_focus, HOVER_DELAYED_GOTO, ACTIVITY_LAST);
   update_unit_info_label(punit_focus);
 }
+
 /**************************************************************************
   ... 
 **************************************************************************/
@@ -2505,9 +2506,9 @@ void key_unit_wait(void)
 **************************************************************************/
 void key_unit_delayed_goto(enum delayed_goto_type dgtype)
 {
-  if (hover_state == HOVER_DELAYED_GOTO) {
-    /* XXX Is this code ever executed, and if so, why "MAX"? */
-    delayed_goto_state = MAX(dgtype, delayed_goto_state);
+  if (hover_state == HOVER_DELAYED_GOTO && delayed_goto_state == dgtype) {
+    /* The user pressed the short cut twice. This means that he is requesting
+     * a delayed goto to non-defined tile). */
     add_unit_to_delayed_goto(NULL);
     hover_state = HOVER_NONE;
     hover_unit = 0;

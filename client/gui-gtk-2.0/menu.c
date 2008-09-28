@@ -1682,10 +1682,35 @@ static void callback_delayed_goto_delayed_goto(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_delayed_goto_delayed_paradrop_or_nuke(GtkAction *action,
-                                                           gpointer user_data)
+static void callback_delayed_goto_delayed_nuke(GtkAction *action,
+					       gpointer user_data)
 {
-  key_unit_delayed_goto(DGT_NUKE_OR_PARADROP);
+  struct unit *punit = get_unit_in_focus();
+
+  if (punit) {
+    if (unit_flag(punit, F_NUCLEAR)) {
+      key_unit_delayed_goto(DGT_NUKE);
+    } else if (unit_flag(punit, F_PARATROOPERS)) {
+      key_unit_delayed_goto(DGT_PARADROP);
+    }
+  }
+}
+
+/****************************************************************
+  ...
+*****************************************************************/
+static void callback_delayed_goto_delayed_paradrop(GtkAction *action,
+						   gpointer user_data)
+{
+  struct unit *punit = get_unit_in_focus();
+
+  if (punit) {
+    if (unit_flag(punit, F_PARATROOPERS)) {
+      key_unit_delayed_goto(DGT_PARADROP);
+    } else if (unit_flag(punit, F_NUCLEAR)) {
+      key_unit_delayed_goto(DGT_NUKE);
+    }
+  }
 }
 
 /****************************************************************
@@ -2365,10 +2390,12 @@ static const char *load_menu_delayed_goto(void)
     {"DELAYED_GOTO", NULL, _("_Delayed Goto"), NULL, NULL, NULL},
     {"DELAYED_GOTO_DELAYED_GOTO", NULL, _("Delayed go_to"),
      "z", _("Delayed go_to"), G_CALLBACK(callback_delayed_goto_delayed_goto)},
-    {"DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE", NULL,
-     _("Delayed pa_radrop or nuke"),
-     "<Control>z", _("Delayed pa_radrop or nuke"),
-     G_CALLBACK(callback_delayed_goto_delayed_paradrop_or_nuke)},
+    {"DELAYED_GOTO_DELAYED_NUKE", NULL,
+     _("Delayed _nuke"), "<Control>z", _("Delayed _nuke"),
+     G_CALLBACK(callback_delayed_goto_delayed_nuke)},
+    {"DELAYED_GOTO_DELAYED_PARADROP", NULL,
+     _("Delayed _paradrop"), "<Control>z", _("Delayed _paradrop"),
+     G_CALLBACK(callback_delayed_goto_delayed_paradrop)},
     {"DELAYED_GOTO_DELAYED_AIRLIFT", NULL, _("Delayed _airlift"),
      "<Control>y", _("Delayed _airlift"),
      G_CALLBACK(callback_delayed_goto_delayed_airlift)},
@@ -2651,7 +2678,8 @@ static const char *load_menu_delayed_goto(void)
   my_snprintf(buf, sizeof(buf),
               "<menu action=\"DELAYED_GOTO\">\n"
               "<menuitem action=\"DELAYED_GOTO_DELAYED_GOTO\" />\n"
-              "<menuitem action=\"DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_DELAYED_NUKE\" />\n"
+              "<menuitem action=\"DELAYED_GOTO_DELAYED_PARADROP\" />\n"
               "<menuitem action=\"DELAYED_GOTO_DELAYED_AIRLIFT\" />\n"
               "<menuitem action=\"DELAYED_GOTO_ADD_PAUSE\" />\n"
               "<menuitem action=\"DELAYED_GOTO_EXECUTE_DELAYED_GOTO\" />\n"
@@ -6194,7 +6222,11 @@ void update_menus(void)
     menu_set_sensitive(action_group_delayed_goto,
 		       "DELAYED_GOTO_DELAYED_GOTO", TRUE);
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE", TRUE);
+		       "DELAYED_GOTO_DELAYED_NUKE",
+		       unit_flag(punit, F_NUCLEAR));
+    menu_set_sensitive(action_group_delayed_goto,
+		       "DELAYED_GOTO_DELAYED_PARADROP",
+		       unit_flag(punit, F_PARATROOPERS));
 
     cond = can_unit_do_air_patrol(punit);
     menu_set_sensitive(action_group_miscellaneous,
@@ -6223,8 +6255,9 @@ void update_menus(void)
     menu_set_sensitive(action_group_delayed_goto,
 		       "DELAYED_GOTO_DELAYED_GOTO", FALSE);
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_PARADROP_OR_NUKE",
-		       FALSE);
+		       "DELAYED_GOTO_DELAYED_NUKE", FALSE);
+    menu_set_sensitive(action_group_delayed_goto,
+		       "DELAYED_GOTO_DELAYED_PARADROP", FALSE);
 
     menu_set_sensitive(action_group_miscellaneous,
 		       "MISCELLANEOUS_AIR_PATROL", FALSE);

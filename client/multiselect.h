@@ -183,7 +183,8 @@ void multi_select_select(void);
 
 enum delayed_goto_type {
   DGT_NORMAL = 0,
-  DGT_NUKE_OR_PARADROP,
+  DGT_NUKE,
+  DGT_PARADROP,
   DGT_AIRLIFT,
   DGT_BREAK
 };
