@@ -1117,6 +1117,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   struct unit_list *ulist;
   int count = 0;
   char buf[256];
+  bool has_nuclear = FALSE, has_para = FALSE; /* FIXME: Hackish. */
 
   if (!punit_focus || hover_state != HOVER_DELAYED_GOTO) {
     return;
@@ -1125,6 +1126,8 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   if (delayed_goto_place == PLACE_SINGLE_UNIT) {
     multi_select_iterate(FALSE, punit) {
       delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
+      has_nuclear = has_nuclear || unit_flag(punit, F_NUCLEAR);
+      has_para = has_para || unit_flag(punit, F_PARATROOPERS);
       count++;
     } multi_select_iterate_end;
   } else {
@@ -1151,6 +1154,8 @@ void add_unit_to_delayed_goto(struct tile *ptile)
         continue;
       }
       delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
+      has_nuclear = has_nuclear || unit_flag(punit, F_NUCLEAR);
+      has_para = has_para || unit_flag(punit, F_PARATROOPERS);
       count++;
     } unit_list_iterate_end;
   }
@@ -1162,9 +1167,19 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   }
 
   link_marks_disable_drawing();
-  my_snprintf(buf, sizeof(buf),
-              _("Warclient: Adding %d %s goto %s to queue."), count,
-              PL_("unit", "units", count), get_tile_info(ptile));
+  if (delayed_goto_state == DGT_NUKE_OR_PARADROP && has_nuclear) {
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s NUCLEAR DETONATION to queue."),
+                count, PL_("unit", "units", count));
+  } else if (delayed_goto_state == DGT_NUKE_OR_PARADROP && has_para) {
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s paradrop to %s to queue."),
+                count, PL_("unit", "units", count), get_tile_info(ptile));
+  } else {
+    my_snprintf(buf, sizeof(buf),
+                _("Warclient: Adding %d %s goto %s to queue."), count,
+                PL_("unit", "units", count), get_tile_info(ptile));
+  }
   append_output_window(buf);
   link_marks_enable_drawing();
   update_delayed_goto_menu(0);
