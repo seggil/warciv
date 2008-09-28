@@ -269,7 +269,7 @@ void key_unit_unload(void);
 void key_unit_unload_all(void);
 void key_unit_wait(void);
 void key_unit_wakeup_others(void);
-void key_unit_delayed_goto(enum automatic_execution flag);
+void key_unit_delayed_goto(enum delayed_goto_type dgtype);
 void key_unit_execute_delayed_goto(void);
 void key_unit_clear_delayed_orders(void);
 void key_add_trade_city(void);

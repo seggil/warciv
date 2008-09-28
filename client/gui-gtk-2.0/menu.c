@@ -1676,7 +1676,7 @@ static const char *load_menu_order(void)
 static void callback_delayed_goto_delayed_goto(GtkAction *action,
                                                gpointer user_data)
 {
-  key_unit_delayed_goto(0);
+  key_unit_delayed_goto(DGT_NORMAL);
 }
 
 /****************************************************************
@@ -1685,7 +1685,7 @@ static void callback_delayed_goto_delayed_goto(GtkAction *action,
 static void callback_delayed_goto_delayed_paradrop_or_nuke(GtkAction *action,
                                                            gpointer user_data)
 {
-  key_unit_delayed_goto(1);
+  key_unit_delayed_goto(DGT_NUKE_OR_PARADROP);
 }
 
 /****************************************************************

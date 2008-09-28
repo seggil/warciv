@@ -2503,16 +2503,17 @@ void key_unit_wait(void)
 /**************************************************************************
   ...
 **************************************************************************/
-void key_unit_delayed_goto(enum automatic_execution flag)
+void key_unit_delayed_goto(enum delayed_goto_type dgtype)
 {
   if (hover_state == HOVER_DELAYED_GOTO) {
-    delayed_goto_state = MAX(flag, delayed_goto_state);
+    /* XXX Is this code ever executed, and if so, why "MAX"? */
+    delayed_goto_state = MAX(dgtype, delayed_goto_state);
     add_unit_to_delayed_goto(NULL);
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
   } else {
-    delayed_goto_state = flag;
+    delayed_goto_state = dgtype;
     request_unit_delayed_goto();
   }
 }

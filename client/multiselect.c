@@ -1265,18 +1265,20 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
         continue;
       }
 
-      if (dgd->type == DGT_NORMAL || !unit_flag(punit, F_PARATROOPERS)) {
+      if (dgd->type == DGT_NORMAL) {
         /* Normal move */
         send_goto_unit(punit, dgd->ptile);
         punit->is_new = FALSE;
-      } else {
-        /* Paradrop */
-        do_unit_paradrop_to(punit, dgd->ptile);
-        punit->is_new = FALSE;
-      }
-      if (dgd->type == DGT_NUKE_OR_PARADROP && unit_flag(punit, F_NUCLEAR)) {
-        /* Explode nuke */
-        do_unit_nuke(punit);
+      } else if (dgd->type == DGT_NUKE_OR_PARADROP) {
+        if (unit_flag(punit, F_PARATROOPERS)) {
+          /* Paradrop */
+          do_unit_paradrop_to(punit, dgd->ptile);
+          punit->is_new = FALSE;
+        } else if (unit_flag(punit, F_NUCLEAR)) {
+          /* Explode nuke */
+          do_unit_nuke(punit);
+        }
+        /* FIXME: What if the unit has both flags? */
       }
     }
     delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);
