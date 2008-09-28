@@ -542,12 +542,11 @@ static void cma_iterate(GtkTreeModel *model, GtkTreePath *path,
   gtk_tree_model_get(GTK_TREE_MODEL(city_model), it, 0, &res, -1);
   pcity = res;
 
-   if (idx == CMA_NONE) {
-     cma_release_city(pcity);
-   } else {
-     cma_put_city_under_agent(pcity, cmafec_preset_get_parameter(idx));
-   }
-   refresh_city_dialog(pcity);
+  if (idx == CMA_NONE) {
+    cma_release_city(pcity);
+  } else {
+    cma_put_city_under_agent(pcity, cmafec_preset_get_parameter(idx));
+  }
 }
 
 /****************************************************************
@@ -1120,10 +1119,8 @@ static void city_select_building_callback(GtkMenuItem *item, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-static void autoarrange_workers_iterate (GtkTreeModel *model,
-                                         GtkTreePath *path,
-                                         GtkTreeIter *it,
-                                         gpointer data)
+static void autoarrange_workers_iterate(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *it, gpointer data)
 {
   gpointer res;
   struct city *pcity;
@@ -1139,7 +1136,6 @@ static void autoarrange_workers_iterate (GtkTreeModel *model,
        no longer work... */
     city_toggle_worker(pcity, CITY_MAP_RADIUS, CITY_MAP_RADIUS);
   }
-  refresh_city_dialog(pcity);
 }
 
 /****************************************************************

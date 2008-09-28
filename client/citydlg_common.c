@@ -604,7 +604,7 @@ bool city_set_queue(struct city *pcity, struct worklist *pqueue)
   } else {
     /* You naughty boy, you can't erase the current production. Nyah! */
     if (worklist_is_empty(&pcity->worklist)) {
-      refresh_city_dialog(pcity);
+      return FALSE;
     } else {
       city_set_worklist(pcity, &copy);
     }

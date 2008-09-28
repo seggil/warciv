@@ -558,7 +558,7 @@ void cma_put_city_under_agent(struct city *pcity,
 void cma_release_city(struct city *pcity)
 {
   release_city(pcity->id);
-  refresh_city_dialog(pcity);
+  refresh_city_dialog(pcity, UPDATE_CMA);
   city_report_dialog_update_city(pcity);
   if (server_has_extglobalinfo && !client_is_observer()) {
     dsend_packet_city_no_manager_param(&aconnection, pcity->id);

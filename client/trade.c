@@ -108,8 +108,8 @@ void trade_free(void)
 void update_trade_route_infos(struct trade_route *ptr)
 {
   if (ptr) {
-    refresh_city_dialog(ptr->pcity1);
-    refresh_city_dialog(ptr->pcity2);
+    refresh_city_dialog(ptr->pcity1, UPDATE_TRADE);
+    refresh_city_dialog(ptr->pcity2, UPDATE_TRADE);
   }
   update_auto_caravan_menu();
 }
@@ -188,8 +188,8 @@ void handle_trade_route_remove(int city1, int city2)
   update_trade_route_line(ptr);
   game_trade_route_remove(ptr);
 
-  refresh_city_dialog(pcity1);
-  refresh_city_dialog(pcity2);
+  refresh_city_dialog(pcity1, UPDATE_TRADE);
+  refresh_city_dialog(pcity2, UPDATE_TRADE);
   update_auto_caravan_menu();
 }
 

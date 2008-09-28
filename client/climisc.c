@@ -230,7 +230,7 @@ void client_remove_unit(struct unit *punit)
       pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
     }
 
-    refresh_city_dialog(pcity);
+    refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
     freelog(LOG_DEBUG, "map city %s, %s, (%d %d)", pcity->name,
             get_nation_name(city_owner(pcity)->nation),
             TILE_XY(pcity->tile));
@@ -238,7 +238,7 @@ void client_remove_unit(struct unit *punit)
 
   pcity = player_find_city_by_id(get_player_ptr(), hc);
   if (pcity) {
-    refresh_city_dialog(pcity);
+    refresh_city_dialog(pcity, UPDATE_SUPPORTED_UNITS);
     freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->name,
             get_nation_name(city_owner(pcity)->nation),
             TILE_XY(pcity->tile));

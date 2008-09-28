@@ -1355,17 +1355,9 @@ void request_unit_patrol(void)
 void request_unit_sentry(struct unit *punit)
 {
   if (punit->is_sleeping) {
-    struct city *pcity = find_city_by_id(punit->homecity);
-
     punit->is_sleeping = FALSE;
     refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
-
-    if (pcity) {
-      refresh_city_dialog(pcity);
-    }
-    if (punit->tile->city && punit->tile->city != pcity) {
-      refresh_city_dialog(punit->tile->city);
-    }
+    refresh_unit_city_dialogs(punit);
     update_unit_focus();
   } else if (punit->activity!=ACTIVITY_SENTRY &&
              can_unit_do_activity(punit, ACTIVITY_SENTRY)) {
@@ -1397,16 +1389,9 @@ void request_unit_sleep(struct unit *punit)
     punit->is_sleeping = TRUE;
 
     if (punit->activity == ACTIVITY_SENTRY) {
-      struct city *pcity = find_city_by_id(punit->homecity);
 
       refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
-
-      if (pcity) {
-        refresh_city_dialog(pcity);
-      }
-      if (punit->tile->city && punit->tile->city != pcity) {
-        refresh_city_dialog(punit->tile->city);
-      }
+      refresh_unit_city_dialogs(punit);
       update_unit_focus();
     } else {
       punit->is_new = FALSE;

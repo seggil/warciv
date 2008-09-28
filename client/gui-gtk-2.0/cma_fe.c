@@ -145,7 +145,7 @@ static gboolean button_press_callback(GtkTreeView *view, GdkEventButton *ev,
 
       cmafec_get_fe_parameter(pdialog->pcity, &param);
       cma_put_city_under_agent(pdialog->pcity, &param);
-      refresh_city_dialog(pdialog->pcity);
+      refresh_city_dialog(pdialog->pcity, UPDATE_CMA);
     }
   }
   gtk_tree_path_free(path);
@@ -512,7 +512,7 @@ static void cma_activate_preset_callback(GtkTreeView *view, GtkTreePath *path,
     cma_release_city(pdialog->pcity);
     cma_put_city_under_agent(pdialog->pcity, pparam);
   }
-  refresh_city_dialog(pdialog->pcity);
+  refresh_city_dialog(pdialog->pcity, UPDATE_CMA);
 }
 
 /**************************************************************************
@@ -689,7 +689,7 @@ static void cma_active_callback(GtkWidget *w, gpointer data)
     cmafec_get_fe_parameter(pdialog->pcity, &param);
     cma_put_city_under_agent(pdialog->pcity, &param);
   }
-  refresh_city_dialog(pdialog->pcity);
+  refresh_city_dialog(pdialog->pcity, UPDATE_CMA);
 }
 
 /****************************************************************
@@ -743,7 +743,7 @@ static void hscale_changed(GtkAdjustment *get, gpointer data)
   if (cma_is_city_under_agent(pdialog->pcity, NULL)) {
     cma_release_city(pdialog->pcity);
     cma_put_city_under_agent(pdialog->pcity, &param);
-    refresh_city_dialog(pdialog->pcity);
+    refresh_city_dialog(pdialog->pcity, UPDATE_CMA);
   } else {
     refresh_cma_dialog(pdialog->pcity, DONT_REFRESH_HSCALES);
   }

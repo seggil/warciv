@@ -3067,11 +3067,13 @@ struct unit *get_drawable_unit(struct tile *ptile, bool citymode)
 {
   struct unit *punit = find_visible_unit(ptile);
 
-  if (!punit)
+  if (!punit) {
     return NULL;
+  }
 
-  if (citymode && punit->owner == get_player_idx())
+  if (citymode && punit->owner == get_player_idx()) {
     return NULL;
+  }
 
   if (!is_unit_in_multi_select(0, punit)
       || (!multi_select_blink_all

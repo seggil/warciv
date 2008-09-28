@@ -88,8 +88,13 @@ struct unit_node {
     TYPED_VECTOR_ITERATE(struct unit_node, list, elt)
 #define unit_node_vector_iterate_end  VECTOR_ITERATE_END
 
-enum { OVERVIEW_PAGE, WORKLIST_PAGE,
-  HAPPINESS_PAGE, CMA_PAGE, TRADE_PAGE, MISC_PAGE
+enum city_page {
+  OVERVIEW_PAGE,
+  WORKLIST_PAGE,
+  HAPPINESS_PAGE,
+  CMA_PAGE,
+  TRADE_PAGE,
+  MISC_PAGE
 };
 
 enum info_style { NORMAL, ORANGE, RED, NUM_INFO_STYLES };
@@ -177,6 +182,8 @@ struct city_dialog {
   int cwidth;
 
   bool is_modal;
+
+  enum city_update need_update;
 };
 
 static GdkBitmap *icon_bitmap;
@@ -184,8 +191,9 @@ static GtkRcStyle *info_label_style[NUM_INFO_STYLES] = { NULL, NULL, NULL };
 
 static struct dialog_list *dialog_list = NULL;
 static int canvas_width, canvas_height;
-static int new_dialog_def_page = OVERVIEW_PAGE;
-static int last_page = OVERVIEW_PAGE;
+static enum city_page new_dialog_def_page = OVERVIEW_PAGE;
+static enum city_page last_page = OVERVIEW_PAGE;
+static guint update_request = 0;
 
 /****************************************/
 
@@ -346,7 +354,7 @@ void reset_city_dialogs(void)
 }
 
 /****************************************************************
-...
+  ...
 *****************************************************************/
 static struct city_dialog *get_city_dialog(struct city *pcity)
 {
@@ -363,11 +371,113 @@ static struct city_dialog *get_city_dialog(struct city *pcity)
 }
 
 /****************************************************************
+  ...
+*****************************************************************/
+static void real_update_city_dialog(struct city_dialog *pdialog)
+{
+  struct city *pcity = pdialog->pcity;
+  enum city_update need_update = pdialog->need_update;
+
+  if (need_update & UPDATE_TITLE) {
+    city_dialog_update_title(pdialog);
+  }
+  if (need_update & UPDATE_CITIZENS) {
+    city_dialog_update_citizens(pdialog);
+  }
+  if (need_update & UPDATE_INFORMATION) {
+    city_dialog_update_information(pdialog->overview.info_label, pdialog);
+  }
+  if (need_update & (UPDATE_MAP | UPDATE_CMA)) {
+    city_dialog_update_map(pdialog);
+  }
+  if (need_update & UPDATE_BUILDING) {
+    city_dialog_update_building(pdialog);
+  }
+  if (need_update & UPDATE_IMPROVEMENTS) {
+    city_dialog_update_improvement_list(pdialog);
+  }
+  if (need_update & UPDATE_SUPPORTED_UNITS) {
+    city_dialog_update_supported_units(pdialog);
+  }
+  if (need_update & UPDATE_PRESENT_UNITS) {
+    city_dialog_update_present_units(pdialog);
+  }
+  if (need_update & UPDATE_TRADE) {
+    city_dialog_update_tradelist(pdialog);
+  }
+
+  if (pcity->owner == get_player_idx()
+      || client_is_global_observer()) {
+    if (need_update & (UPDATE_WORKLIST | UPDATE_BUILDING)) {
+      refresh_worklist(pdialog->production.worklist);
+    }
+
+    if (need_update & UPDATE_IMPROVEMENTS) {
+      city_dialog_update_information(pdialog->happiness.info_label, pdialog);
+    }
+    if (need_update & UPDATE_HAPPINESS) {
+      refresh_happiness_dialog(pdialog->pcity);
+    }
+
+    if (need_update & UPDATE_CMA) {
+      refresh_cma_dialog(pdialog->pcity, REFRESH_ALL);
+    }
+
+    if (need_update & UPDATE_PRESENT_UNITS) {
+      gtk_widget_set_sensitive(pdialog->show_units_command,
+			       can_client_issue_orders() &&
+			       unit_list_size(pcity->tile->units) > 0);
+    }
+
+    if (need_update & UPDATE_BUILDING) {
+      gboolean sensitive = (city_buy_cost(pdialog->pcity) > 0
+			    && can_client_issue_orders());
+      gtk_widget_set_sensitive(pdialog->overview.buy_command, sensitive);
+      gtk_widget_set_sensitive(pdialog->production.buy_command, sensitive);
+    }
+  } else {
+    /* Set the buttons we do not want live while a Diplomat investigates */
+    gtk_widget_set_sensitive(pdialog->overview.buy_command, FALSE);
+    gtk_widget_set_sensitive(pdialog->production.buy_command, FALSE);
+    gtk_widget_set_sensitive(pdialog->show_units_command, FALSE);
+  }
+
+  pdialog->need_update = UPDATE_NOTHING;
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static gboolean update_city_dialogs_callback(gpointer data)
+{
+  dialog_list_iterate(dialog_list, pdialog) {
+    if (pdialog->need_update != UPDATE_NOTHING) {
+      real_update_city_dialog(pdialog);
+    }
+  } dialog_list_iterate_end;
+
+  update_request = 0;
+  return FALSE;
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void request_update_city_dialog(void)
+{
+  if (update_request == 0) {
+    update_request = g_idle_add(update_city_dialogs_callback, NULL);
+  }
+}
+
+/****************************************************************
 ...
 *****************************************************************/
-void refresh_city_dialog(struct city *pcity)
+void refresh_city_dialog(struct city *pcity, enum city_update update)
 {
   struct city_dialog *pdialog = get_city_dialog(pcity);
+
+  assert(pcity != NULL);
 
   if (pcity->owner == get_player_idx()
       || client_is_global_observer()) {
@@ -375,46 +485,9 @@ void refresh_city_dialog(struct city *pcity)
     economy_report_dialog_update();
   }
 
-  if (!pdialog) {
-    return;
-  }
-
-  city_dialog_update_title(pdialog);
-  city_dialog_update_citizens(pdialog);
-  city_dialog_update_information(pdialog->overview.info_label, pdialog);
-  city_dialog_update_map(pdialog);
-  city_dialog_update_building(pdialog);
-  city_dialog_update_improvement_list(pdialog);
-  city_dialog_update_supported_units(pdialog);
-  city_dialog_update_present_units(pdialog);
-  city_dialog_update_tradelist(pdialog);
-
-  if (pcity->owner == get_player_idx()
-      || client_is_global_observer()) {
-    bool have_present_units =
-	 (unit_list_size(pcity->tile->units) > 0);
-    gboolean sensitive;
-
-    refresh_worklist(pdialog->production.worklist);
-
-    city_dialog_update_information(pdialog->happiness.info_label, pdialog);
-    refresh_happiness_dialog(pdialog->pcity);
-
-    refresh_cma_dialog(pdialog->pcity, REFRESH_ALL);
-
-    gtk_widget_set_sensitive(pdialog->show_units_command,
-			     can_client_issue_orders() &&
-			     have_present_units);
-
-    sensitive = (city_buy_cost(pdialog->pcity) > 0
-	&& can_client_issue_orders());
-    gtk_widget_set_sensitive(pdialog->overview.buy_command, sensitive);
-    gtk_widget_set_sensitive(pdialog->production.buy_command, sensitive);
-  } else {
-    /* Set the buttons we do not want live while a Diplomat investigates */
-    gtk_widget_set_sensitive(pdialog->overview.buy_command, FALSE);
-    gtk_widget_set_sensitive(pdialog->production.buy_command, FALSE);
-    gtk_widget_set_sensitive(pdialog->show_units_command, FALSE);
+  if (pdialog) {
+    pdialog->need_update |= update;
+    request_update_city_dialog();
   }
 }
 
@@ -423,17 +496,15 @@ void refresh_city_dialog(struct city *pcity)
 *****************************************************************/
 void refresh_unit_city_dialogs(struct unit *punit)
 {
-  struct city *pcity_sup, *pcity_pre;
-  struct city_dialog *pdialog;
+  struct city *pcity;
 
-  pcity_sup = find_city_by_id(punit->homecity);
-  pcity_pre = map_get_city(punit->tile);
+  if ((pcity = find_city_by_id(punit->homecity))) {
+    refresh_city_dialog(pcity, UPDATE_SUPPORTED_UNITS);
+  }
 
-  if (pcity_sup && (pdialog = get_city_dialog(pcity_sup)))
-    city_dialog_update_supported_units(pdialog);
-
-  if (pcity_pre && (pdialog = get_city_dialog(pcity_pre)))
-    city_dialog_update_present_units(pdialog);
+  if ((pcity = map_get_city(punit->tile))) {
+    refresh_city_dialog(pcity, UPDATE_PRESENT_UNITS);
+  }
 }
 
 /****************************************************************
@@ -1032,8 +1103,6 @@ static void create_and_append_trade_page(struct city_dialog *pdialog)
                                                  "text", 3, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
 
-  city_dialog_update_tradelist(pdialog);
-
   gtk_widget_show_all(page);
 }
 
@@ -1222,7 +1291,7 @@ static struct city_dialog *create_city_dialog(struct city *pcity,
   pdialog->happiness.map_canvas_pixmap = NULL;  /* ditto */
   pdialog->map_canvas_store = gdk_pixmap_new(root_window, canvas_width,
 					     canvas_height, -1);
-
+  pdialog->need_update = UPDATE_NOTHING;
 
   pdialog->shell = gtk_dialog_new_with_buttons(pcity->name, NULL, 0, NULL);
   setup_dialog(pdialog->shell, toplevel);
@@ -1341,7 +1410,8 @@ static struct city_dialog *create_city_dialog(struct city *pcity,
 
   dialog_list_prepend(dialog_list, pdialog);
 
-  refresh_city_dialog(pdialog->pcity);
+  pdialog->need_update = UPDATE_ALL;
+  real_update_city_dialog(pdialog);
 
   /* need to do this every time a new dialog is opened. */
   city_dialog_update_prev_next();
@@ -1514,7 +1584,7 @@ static void city_dialog_update_map(struct city_dialog *pdialog)
   /* draw to real window */
   draw_city_map_canvas(pdialog);
 
-  if(cma_is_city_under_agent(pdialog->pcity, NULL)) {
+  if (cma_is_city_under_agent(pdialog->pcity, NULL)) {
     gtk_widget_set_sensitive(pdialog->overview.map_canvas, FALSE);
     if (pdialog->happiness.map_canvas) {
       gtk_widget_set_sensitive(pdialog->happiness.map_canvas, FALSE);
@@ -3347,5 +3417,5 @@ static void switch_city_callback(GtkWidget *w, gpointer data)
   can_slide = TRUE;
   set_cityopt_values(pdialog);	/* need not be in refresh_city_dialog */
 
-  refresh_city_dialog(pdialog->pcity);
+  refresh_city_dialog(pdialog->pcity, UPDATE_ALL);
 }
