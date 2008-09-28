@@ -225,7 +225,17 @@ void update_hover_cursor(void)
   case HOVER_DELAYED_GOTO:
     if (cond || (delayed_goto_need_tile_for >= 0
 		 && delayed_goto_need_tile_for < DELAYED_GOTO_NUM)) {
-      cursor = goto_cursor;
+      switch (delayed_goto_state) {
+      case DGT_NUKE:
+	cursor = nuke_cursor;
+	break;
+      case DGT_PARADROP:
+	cursor = drop_cursor;
+	break;
+      default:
+	cursor = goto_cursor;
+	break;
+      }
     }
     break;
   case HOVER_NUKE:
