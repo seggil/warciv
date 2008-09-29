@@ -45,6 +45,8 @@ bool require_command(struct connection *caller, char *arg, bool check);
 
 void toggle_ai_player_direct(struct connection *caller,
 			     struct player *pplayer);
+bool is_allowed_to_take(struct player *pplayer, bool will_obs,
+                        char *msgbuf, int msgbuf_len);
 
 #ifdef HAVE_LIBREADLINE
 #ifdef HAVE_NEWLIBREADLINE

@@ -95,8 +95,6 @@ static bool show_mutes(struct connection *caller);
 static bool set_ai_level(struct connection *caller, char *name, int level,
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
-static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
-                               char *msg);
 static bool observe_command(struct connection *caller, char *name,
                             bool check);
 static bool take_command(struct connection *caller, char *name, bool check);
@@ -3967,96 +3965,82 @@ static bool set_command(struct connection *caller,
 }
 
 /**************************************************************************
- check game.server.allow_take for permission to take or observe a player
+ Check game.server.allow_take for permission to take or observe a player.
+ If the result is FALSE and 'msgbuf' is non-NULL, then it is filled with
+ the reason why the take/observe is not allowed.
 **************************************************************************/
-static bool is_allowed_to_take(struct player *pplayer, bool will_obs,
-                               char *msg)
+bool is_allowed_to_take(struct player *pplayer, bool will_obs,
+                        char *msgbuf, int msgbuf_len)
 {
-  const char *allow;
+  const char *allow, *msg = NULL;
 
   if (pplayer->is_civil_war_split && !will_obs) {
-    mystrlcpy(msg, _("Sorry, you can't take a player created by a "
-                     "civil war."), MAX_LEN_MSG);
-    return FALSE;
+    msg = _("Sorry, you can't take a player created by a civil war.");
+    goto FAILED;
   }
 
   if (is_barbarian(pplayer)) {
     if (!(allow = strchr(game.server.allow_take, 'b'))) {
       if (will_obs) {
-        mystrlcpy(msg,
-                  _("Sorry, one can't observe barbarians in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't observe barbarians in this game.");
       } else {
-        mystrlcpy(msg, _("Sorry, one can't take barbarians in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't take barbarians in this game.");
       }
-      return FALSE;
+      goto FAILED;
     }
   } else if (!pplayer->is_alive) {
     if (!(allow = strchr(game.server.allow_take, 'd'))) {
       if (will_obs) {
-        mystrlcpy(msg,
-                  _("Sorry, one can't observe dead players in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't observe dead players in this game.");
       } else {
-        mystrlcpy(msg,
-                  _("Sorry, one can't take dead players in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't take dead players in this game.");
       }
-      return FALSE;
+      goto FAILED;
     }
   } else if (pplayer->ai.control) {
-    if (!
-        (allow =
-         strchr(game.server.allow_take,
-                (game.server.is_new_game ? 'A' : 'a')))) {
+    if (!(allow = strchr(game.server.allow_take,
+                         game.server.is_new_game ? 'A' : 'a'))) {
       if (will_obs) {
-        mystrlcpy(msg,
-                  _("Sorry, one can't observe AI players in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't observe AI players in this game.");
       } else {
-        mystrlcpy(msg, _("Sorry, one can't take AI players in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't take AI players in this game.");
       }
-      return FALSE;
+      goto FAILED;
     }
   } else {
-    if (!
-        (allow =
-         strchr(game.server.allow_take,
-                (game.server.is_new_game ? 'H' : 'h')))) {
+    if (!(allow = strchr(game.server.allow_take,
+                         game.server.is_new_game ? 'H' : 'h'))) {
       if (will_obs) {
-        mystrlcpy(msg,
-                  _("Sorry, one can't observe human players in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't observe human players in this game.");
       } else {
-        mystrlcpy(msg,
-                  _("Sorry, one can't take human players in this game."),
-                  MAX_LEN_MSG);
+        msg = _("Sorry, one can't take human players in this game.");
       }
-      return FALSE;
+      goto FAILED;
     }
   }
   allow++;
   if (will_obs && (*allow == '2' || *allow == '3')) {
-    mystrlcpy(msg, _("Sorry, one can't observe in this game."),
-              MAX_LEN_MSG);
-    return FALSE;
+    msg = _("Sorry, one can't observe in this game.");
+    goto FAILED;
   }
   if (!will_obs && *allow == '4') {
-    mystrlcpy(msg, _("Sorry, one can't take players in this game."),
-              MAX_LEN_MSG);
-    return FALSE;
+    msg = _("Sorry, one can't take players in this game.");
+    goto FAILED;
   }
   if (!will_obs && pplayer->is_connected
       && (*allow == '1' || *allow == '3')) {
-    mystrlcpy(msg,
-              _("Sorry, one can't take players already connected "
-                "in this game."), MAX_LEN_MSG);
-    return FALSE;
+    msg = _("Sorry, one can't take players already connected "
+            "in this game.");
+    goto FAILED;
   }
 
   return TRUE;
+
+FAILED:
+  if (msg && msgbuf) {
+    mystrlcpy(msgbuf, msg, msgbuf_len);
+  }
+  return FALSE;
 }
 
 /**************************************************************************
@@ -4122,7 +4106,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   /******** PART II: do the observing ********/
   /* check allowtake for permission */
   if (pplayer) {
-    if (!is_allowed_to_take(pplayer, TRUE, msg)) {
+    if (!is_allowed_to_take(pplayer, TRUE, msg, sizeof(msg))) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL, msg);
       goto CLEANUP;
     }
@@ -4302,7 +4286,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
   }
 
   /* check allowtake for permission */
-  if (!is_allowed_to_take(pplayer, FALSE, msg)) {
+  if (!is_allowed_to_take(pplayer, FALSE, msg, sizeof(msg))) {
     cmd_reply(CMD_TAKE, caller, C_FAIL, msg);
     goto CLEANUP;
   }
