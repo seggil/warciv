@@ -110,10 +110,11 @@ void astr_free(struct astring *astr)
 ****************************************************************************/
 static void vadd(struct astring *astr, const char *format, va_list ap)
 {
-  size_t new_len;
+  size_t new_len, nb;
   char buf[1024];
 
-  if (my_vsnprintf(buf, sizeof(buf), format, ap) == -1) {
+  nb = my_vsnprintf(buf, sizeof(buf), format, ap);
+  if (nb == -1) {
     die("Formatted string bigger than %lu bytes",
         (unsigned long)sizeof(buf));
   }
@@ -121,16 +122,33 @@ static void vadd(struct astring *astr, const char *format, va_list ap)
   /* Avoid calling strlen with NULL. */
   astr_minsize(astr, 1);
 
-  new_len = strlen(astr->str) + strlen(buf) + 1;
+  new_len = astr->len + nb + 1;
 
   astr_minsize(astr, new_len);
-  mystrlcat(astr->str, buf, astr->n_alloc);
+  astr->len = mystrlcat(astr->str, buf, astr->n_alloc);
 }
 
 /****************************************************************************
-  Add the text to the string.
+  Append the text to the string.
 ****************************************************************************/
-void astr_add(struct astring *astr, const char *format, ...)
+void astr_append(struct astring *astr, const char *s)
+{
+  size_t new_len;
+
+  if (!astr || !astr->str || !s || s[0] == '\0') {
+    return;
+  }
+
+  new_len = astr->len + strlen(s) + 1;
+
+  astr_minsize(astr, new_len);
+  astr->len = mystrlcat(astr->str, s, astr->n_alloc);
+}
+
+/****************************************************************************
+  Append the text to the string printf style.
+****************************************************************************/
+void astr_append_printf(struct astring *astr, const char *format, ...)
 {
   va_list args;
 
@@ -152,4 +170,38 @@ void astr_clear(struct astring *astr)
     astr_minsize(astr, 1);
   }
   astr->str[0] = '\0';
+  astr->len = 0;
+}
+
+/**********************************************************************
+  Returns the length of the string, like strlen.
+***********************************************************************/
+size_t astr_size(struct astring *astr)
+{
+  if (!astr) {
+    return 0;
+  }
+  return astr->len;
+}
+
+/**********************************************************************
+  Returns the total size of the internal buffer.
+***********************************************************************/
+size_t astr_capacity(struct astring *astr)
+{
+  if (!astr) {
+    return 0;
+  }
+  return astr->n_alloc;
+}
+
+/**********************************************************************
+  Returns a const pointer to the internal buffer, or NULL if none.
+***********************************************************************/
+const char *astr_get_data(struct astring *astr)
+{
+  if (!astr) {
+    return NULL;
+  }
+  return astr->str;
 }

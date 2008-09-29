@@ -25,6 +25,7 @@
 
 struct astring {
   char *str;			/* the string */
+  size_t len;			/* length of the string */
   size_t n;			/* size most recently requested */
   size_t n_alloc;		/* total allocated */
 };
@@ -33,13 +34,17 @@ struct astring {
  * Notice a static astring var is exactly this already.
  * For athing need to call ath_init() due to size.
  */
-#define ASTRING_INIT  { NULL, 0, 0 }
+#define ASTRING_INIT  { NULL, 0, 0, 0 }
 
 void astr_init(struct astring *astr);
 void astr_minsize(struct astring *astr, size_t n);
 void astr_free(struct astring *astr);
 void astr_clear(struct astring *astr);
-void astr_add(struct astring *astr, const char *format, ...)
+void astr_append(struct astring *astr, const char *s);
+void astr_append_printf(struct astring *astr, const char *format, ...)
       fc__attribute((__format__(__printf__, 2, 3)));
+size_t astr_size(struct astring *astr);
+size_t astr_capacity(struct astring *astr);
+const char *astr_get_data(struct astring *astr);
 
 #endif  /* FC__ASTRING_H */
