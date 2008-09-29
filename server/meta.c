@@ -40,6 +40,7 @@
 #include <winsock2.h>
 #endif
 
+#include "astring.h"
 #include "capstr.h"
 #include "connection.h"
 #include "dataio.h"
@@ -54,6 +55,7 @@
 #include "civserver.h"
 #include "console.h"
 #include "srv_main.h"
+#include "stdinhand.h"
 
 #include "meta.h"
 
@@ -235,13 +237,11 @@ static void metaserver_failed(void)
 *************************************************************************/
 static bool send_to_metaserver(enum meta_flag flag)
 {
-  static char msg[8192];
-  static char str[8192];
-  int rest = sizeof(str);
-  int n = 0;
-  char *s = str;
-  char host[512];
-  char state[20];
+  struct astring headers, content;
+  int available_players = 0;
+  char host[512], state[20], type[15];
+  const char *nation;
+  struct connection *pconn;
   int sock;
 
   if (!server_is_open
@@ -301,46 +301,37 @@ static bool send_to_metaserver(enum meta_flag flag)
     sz_strlcpy(host, "unknown");
   }
 
-  my_snprintf(s, rest, "host=%s&port=%d&state=%s&", host, srvarg.port, state);
-  s = end_of_strn(s, &rest);
+  astr_init(&content);
+  astr_minsize(&content, 1024);
+
+  astr_append_printf(&content, "host=%s", my_url_encode(host));
+  astr_append_printf(&content, "&port=%d", srvarg.port);
+  astr_append_printf(&content, "&state=%s", my_url_encode(state));
 
   if (flag == META_GOODBYE) {
-    mystrlcpy(s, "bye=1&", rest);
-    s = end_of_strn(s, &rest);
+    astr_append(&content, "&bye=1");
   } else {
-    my_snprintf(s, rest, "version=%s&", my_url_encode(VERSION_STRING));
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "patches=%s&", 
-                my_url_encode(get_meta_patches_string()));
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "capability=%s&", my_url_encode(our_capability));
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "topic=%s&",
-                my_url_encode(get_meta_topic_string()));
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "serverid=%s&",
-                my_url_encode(srvarg.serverid));
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "message=%s&",
-                my_url_encode(get_meta_message_string()));
-    s = end_of_strn(s, &rest);
+    astr_append_printf(&content, "&version=%s",
+                       my_url_encode(VERSION_STRING));
+    astr_append_printf(&content, "&patches=%s", 
+                       my_url_encode(get_meta_patches_string()));
+    astr_append_printf(&content, "&capability=%s",
+                       my_url_encode(our_capability));
+    astr_append_printf(&content, "&topic=%s",
+                       my_url_encode(get_meta_topic_string()));
+    astr_append_printf(&content, "&serverid=%s",
+                       my_url_encode(srvarg.serverid));
+    astr_append_printf(&content, "&message=%s",
+                       my_url_encode(get_meta_message_string()));
 
     /* NOTE: send info for ALL players or none at all. */
     if (get_num_human_and_ai_players() == 0) {
-      mystrlcpy(s, "dropplrs=1&", rest);
-      s = end_of_strn(s, &rest);
+      astr_append(&content, "&dropplrs=1");
     } else {
-      n = 0; /* a counter for players_available */
+      available_players = 0;
 
       players_iterate(plr) {
-        bool is_player_available = TRUE;
-        char type[15];
-        struct connection *pconn = find_conn_by_user(plr->username);
+        pconn = find_conn_by_user(plr->username);
 
         if (!plr->is_alive) {
           sz_strlcpy(type, "Dead");
@@ -352,110 +343,71 @@ static bool send_to_metaserver(enum meta_flag flag)
           sz_strlcpy(type, "Human");
         }
 
-        my_snprintf(s, rest, "plu[]=%s&", my_url_encode(plr->username));
-        s = end_of_strn(s, &rest);
+        astr_append_printf(&content, "&plu[]=%s",
+                           my_url_encode(plr->username));
+        astr_append_printf(&content, "&plt[]=%s", type);
+        astr_append_printf(&content, "&pll[]=%s",
+                           my_url_encode(plr->name));
 
-        my_snprintf(s, rest, "plt[]=%s&", type);
-        s = end_of_strn(s, &rest);
-
-        my_snprintf(s, rest, "pll[]=%s&", my_url_encode(plr->name));
-        s = end_of_strn(s, &rest);
-
-        my_snprintf(s, rest, "pln[]=%s&",
-                    my_url_encode(plr->nation != NO_NATION_SELECTED 
-                                  ? get_nation_name_plural(plr->nation)
-                                  : "none"));
-        s = end_of_strn(s, &rest);
-
-        my_snprintf(s, rest, "plh[]=%s&",
-                    pconn ? my_url_encode(pconn->addr) : "");
-        s = end_of_strn(s, &rest);
-
-        /* is this player available to take?
-         * TODO: there's some duplication here with 
-         * stdinhand.c:is_allowed_to_take() */
-        if (is_barbarian(plr) && !strchr(game.server.allow_take, 'b')) {
-          is_player_available = FALSE;
-        } else if (!plr->is_alive && !strchr(game.server.allow_take, 'd')) {
-          is_player_available = FALSE;
-        } else if (plr->ai.control
-            && !strchr(game.server.allow_take, (game.server.is_new_game ? 'A' : 'a'))) {
-          is_player_available = FALSE;
-        } else if (!plr->ai.control
-            && !strchr(game.server.allow_take, (game.server.is_new_game ? 'H' : 'h'))) {
-          is_player_available = FALSE;
+        if (plr->nation != NO_NATION_SELECTED) {
+          nation = get_nation_name_plural(plr->nation);
+        } else {
+          nation = "none";
         }
+        astr_append_printf(&content, "&pln[]=%s", nation);
+        astr_append_printf(&content, "&plh[]=%s", pconn
+                           ? my_url_encode(pconn->addr) : "");
 
-        if (pconn) {
-          is_player_available = FALSE;
-        }
-
-        if (is_player_available) {
-          n++;
+        if (is_allowed_to_take(plr, FALSE, NULL, 0)) {
+          available_players++;
         }
       } players_iterate_end;
 
-      /* send the number of available players. */
-      my_snprintf(s, rest, "available=%d&", n);
-      s = end_of_strn(s, &rest);
+      astr_append_printf(&content, "&available=%d", available_players);
     }
 
     /* send some variables: should be listed in inverted order
      * FIXME: these should be input from the settings array */
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("timeout"), game.info.timeout);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("year"), game.info.year);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("turn"), game.info.turn);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("endyear"), game.info.end_year);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("minplayers"), game.info.min_players);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("maxplayers"), game.info.max_players);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%s&",
-                my_url_encode("allowtake"), game.server.allow_take);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("generator"), map.generator);
-    s = end_of_strn(s, &rest);
-
-    my_snprintf(s, rest, "vn[]=%s&vv[]=%d&",
-                my_url_encode("size"), map.size);
-    s = end_of_strn(s, &rest);
+    astr_append_printf(&content, "&vn[]=timeout&vv[]=%d",
+                       game.info.timeout);
+    astr_append_printf(&content, "&vn[]=year&vv[]=%d",
+                       game.info.year);
+    astr_append_printf(&content, "&vn[]=turn&vv[]=%d",
+                       game.info.turn);
+    astr_append_printf(&content, "&vn[]=endyear&vv[]=%d",
+                       game.info.end_year);
+    astr_append_printf(&content, "&vn[]=minplayers&vv[]=%d",
+                       game.info.min_players);
+    astr_append_printf(&content, "&vn[]=maxplayers&vv[]=%d",
+                       game.info.max_players);
+    astr_append_printf(&content, "&vn[]=allowtake&vv[]=%s",
+                       game.server.allow_take);
+    astr_append_printf(&content, "&vn[]=generator&vv[]=%d",
+                       map.generator);
+    astr_append_printf(&content, "&vn[]=size&vv[]=%d",
+                       map.size);
   }
 
-  n = my_snprintf(msg, sizeof(msg),
-    "POST %s HTTP/1.1\r\n"
-    "Host: %s:%d\r\n"
-    "Content-Type: application/x-www-form-urlencoded; charset=\"utf-8\"\r\n"
-    "Content-Length: %lu\r\n"
-    "\r\n"
-    "%s\r\n",
-    metaserver_path,
-    metaname,
-    metaport,
-    (unsigned long) (sizeof(str) - rest + 1),
-    str
-  );
+  astr_init(&headers);
+  astr_minsize(&headers, 512);
+  astr_append_printf(&headers, "POST %s HTTP/1.1\r\n", metaserver_path);
+  astr_append_printf(&headers, "Host: %s:%d\r\n", metaname, metaport);
+  astr_append(&headers, "Content-Type: application/x-www-form-urlencoded;"
+              " charset=\"utf-8\"\r\n");
+  astr_append_printf(&headers, "Content-Length: %d\r\n",
+                     astr_size(&content));
+  astr_append(&headers, "\r\n");
 
-  my_writesocket(sock, msg, n);
+  /* sic: These two bytes are not included in Content-Length. */
+  astr_append(&content, "\r\n");
+
+  my_writesocket(sock, astr_get_data(&headers), astr_size(&headers));
+  my_writesocket(sock, astr_get_data(&content), astr_size(&content));
 
   my_closesocket(sock);
+
+  astr_free(&headers);
+  astr_free(&content);
 
   return TRUE;
 }
