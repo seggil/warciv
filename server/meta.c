@@ -395,7 +395,7 @@ static bool send_to_metaserver(enum meta_flag flag)
   astr_append(&headers, "Content-Type: application/x-www-form-urlencoded;"
               " charset=\"utf-8\"\r\n");
   astr_append_printf(&headers, "Content-Length: %d\r\n",
-                     astr_size(&content));
+                     (int) astr_size(&content));
   astr_append(&headers, "\r\n");
 
   /* sic: These two bytes are not included in Content-Length. */
