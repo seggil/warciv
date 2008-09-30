@@ -1370,7 +1370,7 @@ void schedule_delayed_airlift(struct tile *ptile)
               get_tile_info(ptile));
   append_output_window(buf);
   link_marks_enable_drawing();
-  delayed_goto_add_unit(0, airlift_queue_need_city_for, 2, ptile);
+  delayed_goto_add_unit(0, airlift_queue_need_city_for, DGT_AIRLIFT, ptile);
   update_delayed_goto_menu(0);
   airlift_queue_need_city_for = -1;
 }
@@ -1381,7 +1381,7 @@ void schedule_delayed_airlift(struct tile *ptile)
 void add_pause_delayed_goto(void)
 {
   append_output_window(_("Warclient: Adding pause in delayed goto."));
-  delayed_goto_add_unit(0, 0, 3, NULL);
+  delayed_goto_add_unit(0, 0, DGT_BREAK, NULL);
   update_delayed_goto_menu(0);
 }
 
