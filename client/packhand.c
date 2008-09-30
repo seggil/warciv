@@ -425,6 +425,7 @@ void handle_city_info(struct packet_city_info *packet)
   enum city_update needs_update =
     UPDATE_TITLE | UPDATE_INFORMATION | UPDATE_CITIZENS | UPDATE_HAPPINESS;
   struct unit *pfocus_unit = get_unit_in_focus();
+  struct tile *ptile;
 
   pcity = find_city_by_id(packet->id);
 
@@ -435,10 +436,28 @@ void handle_city_info(struct packet_city_info *packet)
     city_has_changed_owner = TRUE;
   }
 
+  ptile = map_pos_to_tile(packet->x, packet->y);
+  if (!ptile) {
+    if (!pcity || !pcity->tile) {
+      freelog(LOG_ERROR, "handle_city_info: got invalid "
+              "city tile (%d, %d), ignoring packet!",
+              packet->x, packet->y);
+      /* Nothing more that we can safely do. */
+      return;
+
+    } else {
+      freelog(LOG_ERROR, "handle_city_info: got invalid "
+              "city tile (%d, %d), keeping old tile.",
+              packet->x, packet->y);
+      ptile = pcity->tile;
+      /* Maybe it was just the x,y fields that were wrong,
+       * so try to handle the rest of the packet. */
+    }
+  }
+
   if (!pcity) {
     city_is_new = TRUE;
-    pcity = create_city_virtual(get_player(packet->owner),
-				map_pos_to_tile(packet->x, packet->y),
+    pcity = create_city_virtual(get_player(packet->owner), ptile,
 				packet->name);
     pcity->id = packet->id;
     idex_register_city(pcity);
@@ -482,7 +501,7 @@ void handle_city_info(struct packet_city_info *packet)
   }
 
   pcity->owner = packet->owner;
-  pcity->tile = map_pos_to_tile(packet->x, packet->y);
+  pcity->tile = ptile;
   sz_strlcpy(pcity->name, packet->name);
   idex_register_city_name (pcity);
   
@@ -772,6 +791,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   struct city *pcity;
   bool city_is_new, city_has_changed_owner = FALSE, need_effect_update = FALSE;
   bool update_descriptions = FALSE, name_changed = FALSE;
+  struct tile *ptile;
 
   pcity = find_city_by_id(packet->id);
 
@@ -782,10 +802,28 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     city_has_changed_owner = TRUE;
   }
 
+  ptile = map_pos_to_tile(packet->x, packet->y);
+  if (!ptile) {
+    if (!pcity || !pcity->tile) {
+      freelog(LOG_ERROR, "handle_city_short_info: got invalid "
+              "city tile (%d, %d), ignoring packet!",
+              packet->x, packet->y);
+      /* Nothing more that we can safely do. */
+      return;
+
+    } else {
+      freelog(LOG_ERROR, "handle_city_short_info: got invalid "
+              "city tile (%d, %d), keeping old tile.",
+              packet->x, packet->y);
+      ptile = pcity->tile;
+      /* Maybe it was just the x,y fields that were wrong,
+       * so try to handle the rest of the packet. */
+    }
+  }
+
   if (!pcity) {
     city_is_new = TRUE;
-    pcity = create_city_virtual(get_player(packet->owner),
-				map_pos_to_tile(packet->x, packet->y),
+    pcity = create_city_virtual(get_player(packet->owner), ptile,
 				packet->name);
     pcity->id = packet->id;
     idex_register_city(pcity);
@@ -810,7 +848,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   }
 
   pcity->owner = packet->owner;
-  pcity->tile = map_pos_to_tile(packet->x, packet->y);
+  pcity->tile = ptile;
   sz_strlcpy(pcity->name, packet->name);
   idex_register_city_name(pcity);
 
