@@ -286,7 +286,7 @@ struct unit *get_unit_in_focus(void)
 **************************************************************************/
 void advance_unit_focus(void)
 {
-  if (client_is_global_observer()) {
+  if (client_is_global_observer() || map_is_empty()) {
     return;
   }
 
