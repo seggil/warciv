@@ -471,8 +471,6 @@ void handle_city_info(struct packet_city_info *packet)
     if (name_changed) {
       city_autonaming_remove_used_name (pcity->name);
       city_autonaming_add_used_name (packet->name);
-      needs_update |= UPDATE_TITLE;
-      
       idex_unregister_city_name (pcity);
     }
 
