@@ -491,10 +491,8 @@ void establish_new_connection(struct connection *pconn)
   }
 
   if (conn_list_size(game.est_connections) == 1) {
-    /* First connection
-     * Replace "restarting in x seconds" meta message */
-     maybe_automatic_meta_message(default_meta_message_string());
-     send_server_info_to_metaserver(META_INFO);
+    /* First connection: replace "restarting in x seconds". */
+    maybe_automatic_meta_message(default_meta_message_string());
   }
   send_conn_info(game.est_connections, dest);
   send_server_info_to_metaserver(META_INFO);

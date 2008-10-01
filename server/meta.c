@@ -239,9 +239,8 @@ static bool send_to_metaserver(enum meta_flag flag)
 {
   struct astring headers, content;
   int available_players = 0;
-  char host[512], state[20], type[15];
-  const char *nation;
-  struct connection *pconn;
+  char buf[512];
+  const char *nation, *type, *state;
   int sock;
 
   if (!server_is_open
@@ -280,31 +279,31 @@ static bool send_to_metaserver(enum meta_flag flag)
 
   switch(server_state) {
   case PRE_GAME_STATE:
-    sz_strlcpy(state, "Pregame");
+    state = "Pregame";
     break;
   case SELECT_RACES_STATE:
-    sz_strlcpy(state, "Nation Select");
+    state = "Nation Select";
     break;
   case RUN_GAME_STATE:
-    sz_strlcpy(state, "Running");
+    state = "Running";
     break;
   case GAME_OVER_STATE:
-    sz_strlcpy(state, "Game Ended");
+    state = "Game Ended";
     break;
   default:
-    sz_strlcpy(state, "Unknown");
+    state = "Unknown";
     break;
   }
 
   /* get hostname */
-  if (my_gethostname(host, sizeof(host)) != 0) {
-    sz_strlcpy(host, "unknown");
+  if (my_gethostname(buf, sizeof(buf)) != 0) {
+    sz_strlcpy(buf, "unknown");
   }
 
   astr_init(&content);
   astr_minsize(&content, 1024);
 
-  astr_append_printf(&content, "host=%s", my_url_encode(host));
+  astr_append_printf(&content, "host=%s", my_url_encode(buf));
   astr_append_printf(&content, "&port=%d", srvarg.port);
   astr_append_printf(&content, "&state=%s", my_url_encode(state));
 
@@ -324,23 +323,24 @@ static bool send_to_metaserver(enum meta_flag flag)
     astr_append_printf(&content, "&message=%s",
                        my_url_encode(get_meta_message_string()));
 
-    /* NOTE: send info for ALL players or none at all. */
-    if (get_num_human_and_ai_players() == 0) {
+    if (get_num_human_and_ai_players() < 1
+        && conn_list_size(game.est_connections) < 1) {
       astr_append(&content, "&dropplrs=1");
     } else {
       available_players = 0;
 
       players_iterate(plr) {
+        struct connection *pconn;
         pconn = find_conn_by_user(plr->username);
 
         if (!plr->is_alive) {
-          sz_strlcpy(type, "Dead");
+          type = "Dead";
         } else if (is_barbarian(plr)) {
-          sz_strlcpy(type, "Barbarian");
+          type = "Barbarian";
         } else if (plr->ai.control) {
-          sz_strlcpy(type, "A.I.");
+          type = "A.I.";
         } else {
-          sz_strlcpy(type, "Human");
+          type = "Human";
         }
 
         astr_append_printf(&content, "&plu[]=%s",
@@ -362,6 +362,35 @@ static bool send_to_metaserver(enum meta_flag flag)
           available_players++;
         }
       } players_iterate_end;
+
+      conn_list_iterate(game.est_connections, pconn) {
+        if (pconn->player && !pconn->observer) {
+          continue;
+        }
+
+        /* NB: For this hack to work, player names (pll)
+         * must be unique. */
+
+        if (pconn->player && pconn->observer) {
+          type = "Observer";
+          my_snprintf(buf, sizeof(buf), "*(%s) %d",
+                      pconn->player->name, pconn->id);
+        } else if (!pconn->player && pconn->observer) {
+          type = "Observer";
+          my_snprintf(buf, sizeof(buf), "*global %d", pconn->id);
+        } else {
+          type = "Detached";
+          my_snprintf(buf, sizeof(buf), "*detached %d", pconn->id);
+        }
+          
+        astr_append_printf(&content, "&plu[]=%s",
+                           my_url_encode(pconn->username));
+        astr_append_printf(&content, "&plt[]=%s", type);
+        astr_append_printf(&content, "&pll[]=%s", my_url_encode(buf));
+        astr_append(&content, "&pln[]=none");
+        astr_append_printf(&content, "&plh[]=%s",
+                           my_url_encode(pconn->addr));
+      } conn_list_iterate_end;
 
       astr_append_printf(&content, "&available=%d", available_players);
     }

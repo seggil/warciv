@@ -4214,10 +4214,11 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     send_player_info(NULL, NULL);
     send_packet_thaw_hint(pconn);
   }
-  cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s"),
+  cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s."),
 	    pconn->username, pplayer ? pplayer->name : "the game globally");
 
   send_updated_vote_totals(NULL);
+  send_server_info_to_metaserver(META_INFO);
 
 CLEANUP:
   free_tokens(arg, ntokens);
@@ -4375,6 +4376,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
             pplayer->is_alive ? _("Alive") : _("Dead"));
 
   send_updated_vote_totals(NULL);
+  send_server_info_to_metaserver(META_INFO);
 
 CLEANUP:
   free_tokens(arg, ntokens);
@@ -4481,6 +4483,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 
     cancel_connection_votes(pconn);
     send_updated_vote_totals(NULL);
+    send_server_info_to_metaserver(META_INFO);
 
     if (!pplayer->is_connected) {
       /* aitoggle the player if no longer connected. */
@@ -4593,6 +4596,8 @@ static bool attach_command(struct connection *caller, char *name, bool check)
   }
 
   send_conn_info(pconn->self, game.est_connections);
+  send_updated_vote_totals(NULL);
+  send_server_info_to_metaserver(META_INFO);
 
 CLEANUP:
   free_tokens(arg, ntokens);
