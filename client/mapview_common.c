@@ -2944,3 +2944,23 @@ void update_trade_route_line(struct trade_route *ptr)
   update_city_description(ptr->pcity1);
   update_city_description(ptr->pcity2);
 }
+
+/**************************************************************************
+  Return the string name corresponding to the overview mode.
+**************************************************************************/
+const char *overview_mode_get_name(int ovm)
+{
+  switch (ovm) {
+  case OVM_CLASSIC:
+    return _("Classic");
+    break;
+  case OVM_TEAM:
+    return _("Team");
+    break;
+  default:
+    break;
+  }
+  
+  /* Should not happen, but just in case. */
+  return _("<Invalid>");
+}

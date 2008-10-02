@@ -3046,3 +3046,13 @@ void put_last_unit_focus(void)
   update_unit_info_label(punit_focus);
   plast = NULL;
 }
+
+/**************************************************************************
+  Cycle through the available overview modes.
+**************************************************************************/
+void key_cycle_overview_modes(void)
+{
+  overview_mode = (overview_mode + 1) % NUM_OVERVIEW_MODES;
+  update_overview_mode_label();
+  refresh_overview_canvas();
+}

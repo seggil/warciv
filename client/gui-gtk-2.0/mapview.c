@@ -1537,3 +1537,17 @@ void tileset_changed(void)
   reset_unit_table();
   blank_max_unit_size();
 }
+
+/**************************************************************************
+  Update the displayed name of the overview mode.
+**************************************************************************/
+void update_overview_mode_label(void)
+{
+  const char *name;
+
+  if (!overview_mode_label) {
+    return;
+  }
+  name = overview_mode_get_name(overview_mode);
+  gtk_label_set_text(GTK_LABEL(overview_mode_label), name);
+}

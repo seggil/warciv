@@ -26,6 +26,7 @@ void update_unit_info_label(struct unit *punit);
 void update_timeout_label(void);
 void update_turn_done_button(bool do_restore);
 void update_city_descriptions(void);
+void update_overview_mode_label(void);
 void set_indicator_icons(int bulb, int sol, int flake, int gov);
 
 void map_size_changed(void);

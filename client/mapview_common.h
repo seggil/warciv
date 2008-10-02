@@ -45,6 +45,13 @@ struct mapview_canvas {
   struct canvas *store, *tmp_store;
 };
 
+enum overview_modes {
+  OVM_CLASSIC = 0,
+  OVM_TEAM,
+
+  NUM_OVERVIEW_MODES
+};
+
 /* Holds all information about the overview aka minimap. */
 struct overview {
   /* The following fields are controlled by mapview_common.c. */
@@ -228,6 +235,7 @@ void overview_to_map_pos(int *map_x, int *map_y,
 void refresh_overview_canvas(void);
 void overview_update_tile(struct tile *ptile);
 void set_overview_dimensions(int width, int height);
+const char *overview_mode_get_name(int ovm);
 
 bool map_canvas_resized(int width, int height);
 void init_mapcanvas_and_overview(void);

@@ -39,6 +39,7 @@
 #include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
+#include "mapview.h"
 #include "mapview_common.h"
 #include "menu_g.h"
 #include "messagedlg.h"
@@ -443,6 +444,14 @@ void split_message_window_callback(struct client_option *poption)
   }
 }
 
+/****************************************************************
+  ... 
+*****************************************************************/
+void overview_mode_option_callback(struct client_option *poption)
+{
+  update_overview_mode_label();
+  refresh_overview_canvas();
+}
 
 /*************************************************************************
   ...

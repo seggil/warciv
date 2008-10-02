@@ -36,6 +36,7 @@
 #include "clinet.h"
 #include "cma_fec.h"
 #include "control.h"
+#include "mapview_common.h"
 #include "multiselect.h"
 #include "plrdlg_common.h"
 #include "tilespec.h"
@@ -47,6 +48,7 @@ void fullscreen_mode_callback(struct client_option *poption);
 void map_scrollbars_callback(struct client_option *poption);
 void mapview_redraw_callback(struct client_option *poption);
 void split_message_window_callback(struct client_option *poption);
+void overview_mode_option_callback(struct client_option *poption);
 
 static const char *category_name[COC_NUM] = {
   N_("Graphics"),		/* COC_GRAPHICS */
@@ -113,6 +115,7 @@ bool warn_before_add_to_city;
 bool prevent_duplicate_notify_tabs;
 bool enable_chat_logging;
 char chat_log_directory[MAX_LEN_PATH];
+int overview_mode;
 #ifndef ASYNC_TRADE_PLANNING
 int trade_time_limit;
 #endif	/* ASYNC_TRADE_PLANNING */
@@ -611,6 +614,11 @@ static struct client_option client_options[] = {
                  N_("Directory where chat logs are to be saved"),
 		 N_("This option affect where the log file will be placed."),
 		 COC_CHAT, "~/.freeciv/chatlogs", NULL),
+  GEN_INT_OPTION(overview_mode, N_("Overview display mode"),
+                 N_("This setting controls how tiles, cities, and units "
+                    "are drawn in the map overview window"),
+                 COC_GRAPHICS, OVM_CLASSIC, OVM_CLASSIC,
+                 NUM_OVERVIEW_MODES - 1, overview_mode_option_callback),
   GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
 		  N_("Disable chatline scrolling"),
                   N_("If this option is turned to on, the chatline won't"

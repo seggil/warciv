@@ -82,6 +82,7 @@ GtkWidget *map_vertical_scrollbar;
 GtkWidget *overview_canvas;             /* GtkDrawingArea */
 GdkPixmap *overview_canvas_store;       /* this pixmap acts as a backing store 
                                          * for the overview_canvas widget */
+GtkWidget *overview_mode_label;
 int overview_canvas_store_width = 2 * 80;
 int overview_canvas_store_height = 2 * 50;
 
@@ -111,8 +112,8 @@ GdkPixmap *mask_bitmap;
 GtkWidget *main_frame_civ_name;
 GtkWidget *main_label_info;
 
-GtkWidget *avbox, *ahbox, *vbox, *conn_box;
-GtkWidget* scroll_panel;
+GtkWidget *conn_box;
+GtkWidget *scroll_panel;
 
 static GtkWidget *info_table;
 GtkWidget *econ_label[10];
@@ -169,6 +170,9 @@ static gboolean show_info_button_release(GtkWidget *w, GdkEventButton *ev,
                                          gpointer data);
 static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev,
                                 gpointer data);
+static gboolean overview_mode_label_click(GtkWidget *w,
+                                          GdkEventButton *ev,
+                                          gpointer data);
 
 static void end_turn_callback(GtkWidget *w, gpointer data);
 static gboolean get_net_input(GIOChannel *source, GIOCondition cond,
@@ -414,8 +418,12 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
   }
 
   if (ev->keyval == GDK_Tab) {
-    if (!GTK_WIDGET_HAS_FOCUS(inputline)) {
-      gtk_widget_grab_focus(inputline);
+    if (ev->state & GDK_CONTROL_MASK) {
+      key_cycle_overview_modes();
+    } else {
+      if (!GTK_WIDGET_HAS_FOCUS(inputline)) {
+        gtk_widget_grab_focus(inputline);
+      }
     }
     return TRUE;
   }
@@ -1217,7 +1225,8 @@ static void request_pause_callback(void)
 **************************************************************************/
 static void setup_widgets(void)
 {
-  GtkWidget *box, *ebox, *hbox, *sbox, *align, *label, *button;
+  GtkWidget *box, *ebox, *hbox, *hbox2, *sbox, *vbox, *avbox, *ahbox;
+  GtkWidget *align, *label, *button;
   GtkWidget *frame, *table, *table2, *paned, *sw, *text, *splitmsgs;
   GtkStyle *style;
   GList *focus_chain = NULL;
@@ -1225,7 +1234,7 @@ static void setup_widgets(void)
   char buf[256];
   struct Sprite *sprite;
 
-  GtkWidget *notebook, *statusbar, *toplevel_vpaned;
+  GtkWidget *notebook, *statusbar, *toplevel_vpaned, *overview_box;
 
   message_buffer = gtk_text_buffer_new(NULL);
   refresh_message_buffer_tag_patterns (NULL);
@@ -1282,29 +1291,47 @@ static void setup_widgets(void)
 
   /* overview canvas */
   ahbox = detached_widget_new();
-  gtk_container_add(GTK_CONTAINER(vbox), ahbox);
+  gtk_box_pack_start(GTK_BOX(vbox), ahbox, FALSE, FALSE, 0);
   avbox = detached_widget_fill(ahbox, TRUE);
 
   align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
   gtk_box_pack_start(GTK_BOX(avbox), align, TRUE, TRUE, 0);
 
-  overview_canvas = gtk_drawing_area_new();
+  overview_box = gtk_vbox_new(FALSE, 4);
+  gtk_container_add(GTK_CONTAINER(align), overview_box);
 
+  ebox = gtk_event_box_new();
+  gtk_widget_add_events(ebox, GDK_BUTTON_PRESS_MASK);
+  g_signal_connect(ebox, "button_press_event",
+                   G_CALLBACK(overview_mode_label_click), NULL);
+  gtk_box_pack_start(GTK_BOX(overview_box), ebox, FALSE, FALSE, 0);
+
+  hbox2 = gtk_hbox_new(FALSE, 0);
+  gtk_container_add(GTK_CONTAINER(ebox), hbox2);
+
+  label = gtk_label_new(_("Overview mode:"));
+  gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+  gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
+
+  label = gtk_label_new(NULL);
+  gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+  gtk_box_pack_start(GTK_BOX(hbox2), label, TRUE, TRUE, 0);
+  overview_mode_label = label;
+  update_overview_mode_label();
+
+  overview_canvas = gtk_drawing_area_new();
+  gtk_widget_set_size_request(overview_canvas, 160, 100);
   gtk_widget_add_events(overview_canvas, GDK_EXPOSURE_MASK
                         |GDK_BUTTON_PRESS_MASK
                         |GDK_POINTER_MOTION_MASK);
-
-  gtk_widget_set_size_request(overview_canvas, 160, 100);
-  gtk_container_add(GTK_CONTAINER(align), overview_canvas);
-
   g_signal_connect(overview_canvas, "expose_event",
                    G_CALLBACK(overview_canvas_expose), NULL);
-
   g_signal_connect(overview_canvas, "motion_notify_event",
                    G_CALLBACK(move_overviewcanvas), NULL);
-
   g_signal_connect(overview_canvas, "button_press_event",
                    G_CALLBACK(butt_down_overviewcanvas), NULL);
+  gtk_box_pack_start(GTK_BOX(overview_box), overview_canvas,
+                     TRUE, TRUE, 0);
 
   /* The rest */
 
@@ -2555,3 +2582,14 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   return vib;
 }
 
+/**************************************************************************
+  Handle a mouse click on the overview mode label.
+**************************************************************************/
+static gboolean overview_mode_label_click(GtkWidget *w,
+                                          GdkEventButton *ev,
+                                          gpointer data)
+{
+  key_cycle_overview_modes();
+
+  return TRUE;
+}

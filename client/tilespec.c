@@ -2976,15 +2976,49 @@ void tilespec_free_city_tiles(int count)
 ***********************************************************************/
 enum color_std player_color(struct player *pplayer)
 {
+  if (!pplayer) {
+    return COLOR_STD_LAST;
+  }
+
   return COLOR_STD_RACE0 +
     (pplayer->player_no %
      (COLOR_STD_RACE13 - COLOR_STD_RACE0 + 1));
 }
 
 /**********************************************************************
-  Return color for overview map tile.
+  Return some color for this player's team. If the player is not
+  on a team, then this is just the player number. Otherwise it is
+  the number of players added to the team number.
+
+  Note: There are only 14 colors defined anyway.
+  NB: Team struct is not consistent on the client side, so team_*
+  functions will not work.
+  FIXME: Most of the colors do not contrast well with the terrain
+  and with each other.
 ***********************************************************************/
-enum color_std overview_tile_color(struct tile *ptile)
+static enum color_std player_team_color(struct player *pplayer)
+{
+  int n, team;
+  const int num_colors = COLOR_STD_RACE13 - COLOR_STD_RACE0 + 1;
+  enum color_std color_no;
+
+  if (!pplayer) {
+    return COLOR_STD_LAST;
+  }
+
+  team = pplayer->team;
+  n = (team == TEAM_NONE ? pplayer->player_no
+       : team + game.info.nplayers);
+
+  color_no = COLOR_STD_RACE0 + (n % num_colors);
+
+  return color_no;
+}
+
+/**********************************************************************
+  Return color for overview map tile in classic freeciv style.
+***********************************************************************/
+static enum color_std classic_overview_tile_color(struct tile *ptile)
 {
   struct unit *punit;
   struct city *pcity;
@@ -2993,25 +3027,26 @@ enum color_std overview_tile_color(struct tile *ptile)
   if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {
     return COLOR_STD_BLACK;
   }
+
   if ((pcity = map_get_city(ptile))) {
     pplayer = city_owner(pcity);
     if (!pplayer || client_is_global_observer() || pplayer == me) {
       return COLOR_STD_WHITE;
     } else {
       switch (pplayer_get_diplstate(pplayer, me)->type) {
-	case DS_NO_CONTACT:
-	  if (game.info.diplomacy >= 2) {
-            return COLOR_STD_FORANGE;
-          }
-	case DS_NEUTRAL:
-	case DS_PEACE:
-	case DS_CEASEFIRE:
-	  return COLOR_STD_CYAN;
-	case DS_ALLIANCE:
-	case DS_TEAM:
-	  return COLOR_STD_FGREEN;
-	default: /* DS_WAR */
-	  return COLOR_STD_FORANGE;
+      case DS_NO_CONTACT:
+        if (game.info.diplomacy >= 2) {
+          return COLOR_STD_FORANGE;
+        }
+      case DS_NEUTRAL:
+      case DS_PEACE:
+      case DS_CEASEFIRE:
+        return COLOR_STD_CYAN;
+      case DS_ALLIANCE:
+      case DS_TEAM:
+        return COLOR_STD_FGREEN;
+      default: /* DS_WAR */
+        return COLOR_STD_FORANGE;
       }
     }
   } else if ((punit=find_visible_unit(ptile))) {
@@ -3020,22 +3055,24 @@ enum color_std overview_tile_color(struct tile *ptile)
       return COLOR_STD_YELLOW;
     } else {
       switch (pplayer_get_diplstate(pplayer, me)->type) {
-        case DS_NO_CONTACT:
-	  if (game.info.diplomacy >= 2) {
-	    return COLOR_STD_RED;
-          }
-	case DS_NEUTRAL:
-	case DS_PEACE:
-	case DS_CEASEFIRE:
-	  return COLOR_STD_ORANGE;
-	case DS_ALLIANCE:
-	case DS_TEAM:
-	  return COLOR_STD_GREEN;
-	default: /* DS_WAR */
-	  return COLOR_STD_RED;
+      case DS_NO_CONTACT:
+        if (game.info.diplomacy >= 2) {
+          return COLOR_STD_RED;
+        }
+      case DS_NEUTRAL:
+      case DS_PEACE:
+      case DS_CEASEFIRE:
+        return COLOR_STD_ORANGE;
+      case DS_ALLIANCE:
+      case DS_TEAM:
+        return COLOR_STD_GREEN;
+      default: /* DS_WAR */
+        return COLOR_STD_RED;
       }
     }
-  } else if (is_ocean(ptile->terrain)) {
+  }
+
+  if (is_ocean(ptile->terrain)) {
     if (tile_get_known(ptile) == TILE_KNOWN_FOGGED && draw_fog_of_war) {
       return COLOR_STD_RACE4;
     } else {
@@ -3050,6 +3087,67 @@ enum color_std overview_tile_color(struct tile *ptile)
   }
 
   return COLOR_STD_LAST;
+}
+
+/**********************************************************************
+  Return color for overview map tile with better emphasis on teams.
+***********************************************************************/
+static enum color_std team_overview_tile_color(struct tile *ptile)
+{
+  struct unit *punit;
+  struct city *pcity;
+  struct player *pplayer, *me;
+  bool is_fogged;
+
+  if (!ptile || tile_get_known(ptile) == TILE_UNKNOWN) {
+    return COLOR_STD_BLACK;
+  }
+
+  me = get_player_ptr();
+
+  /* Cities */
+  pcity = map_get_city(ptile);
+  if (pcity) {
+    pplayer = city_owner(pcity);
+
+    return (me ? (players_on_same_team(pplayer, me) 
+                  ? COLOR_STD_GREEN : COLOR_STD_RED)
+            : player_team_color(pplayer));
+  }
+
+  /* Units */
+  punit = find_visible_unit(ptile);
+  if (punit) {
+    pplayer = unit_owner(punit);
+
+    return (me ? (players_on_same_team(pplayer, me) 
+                  ? COLOR_STD_FGREEN : COLOR_STD_FRED)
+            : player_team_color(pplayer));
+  }
+
+  /* Terrain */
+  is_fogged = (tile_get_known(ptile) == TILE_KNOWN_FOGGED && draw_fog_of_war);
+  return (is_ocean(ptile->terrain)
+          ? (is_fogged ? COLOR_STD_RACE4 : COLOR_STD_OCEAN)
+          : (is_fogged ? COLOR_STD_BACKGROUND : COLOR_STD_GROUND));
+}
+
+/**********************************************************************
+  Return color for overview map tile.
+***********************************************************************/
+enum color_std overview_tile_color(struct tile *ptile)
+{
+  switch (overview_mode) {
+  case OVM_CLASSIC:
+    return classic_overview_tile_color(ptile);
+    break;
+  case OVM_TEAM:
+    return team_overview_tile_color(ptile);
+    break;
+  default:
+    break;
+  }
+  return classic_overview_tile_color(ptile);
 }
 
 /**********************************************************************
