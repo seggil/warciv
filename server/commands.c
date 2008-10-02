@@ -459,7 +459,7 @@ const struct command commands[] = {
       "optional '# of turns' argument specifies how long this should "
       "go on for; zero implies forever. The default value, if left "
       "unspecified, is 3."),
-   ECHO_ADMINS, VCF_NOPASSALONE, 25
+   ECHO_ADMINS, VCF_NOPASSALONE, 40
   },
   {"unmute", ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
