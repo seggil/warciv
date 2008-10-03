@@ -3140,13 +3140,14 @@ enum color_std overview_tile_color(struct tile *ptile)
   switch (overview_mode) {
   case OVM_CLASSIC:
     return classic_overview_tile_color(ptile);
-    break;
   case OVM_TEAM:
     return team_overview_tile_color(ptile);
-    break;
-  default:
+  case NUM_OVERVIEW_MODES:
+    /* Not a valid case */
     break;
   }
+  /* Don't set as default case to be warned if we forgot to add a value */
+  freelog(LOG_ERROR, "Unkown overview mode varriant (%d)", overview_mode);
   return classic_overview_tile_color(ptile);
 }
 

@@ -1543,11 +1543,9 @@ void tileset_changed(void)
 **************************************************************************/
 void update_overview_mode_label(void)
 {
-  const char *name;
-
   if (!overview_mode_label) {
     return;
   }
-  name = overview_mode_get_name(overview_mode);
-  gtk_label_set_text(GTK_LABEL(overview_mode_label), name);
+  gtk_label_set_text(GTK_LABEL(overview_mode_label),
+		     _(overview_mode_get_name(overview_mode)));
 }

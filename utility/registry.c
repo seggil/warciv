@@ -1070,13 +1070,13 @@ int secfile_lookup_int(struct section_file *my_section_file,
   my_vsnprintf(buf, sizeof(buf), path, ap);
   va_end(ap);
 
-  if(!(pentry=section_file_lookup_internal(my_section_file, buf))) {
+  if (!(pentry=section_file_lookup_internal(my_section_file, buf))) {
     freelog(LOG_FATAL, "sectionfile %s doesn't contain a '%s' entry",
 	    secfile_filename(my_section_file), buf);
     exit(EXIT_FAILURE);
   }
 
-  if(pentry->svalue) {
+  if (pentry->svalue) {
     freelog(LOG_FATAL, "sectionfile %s entry '%s' doesn't contain an integer",
 	    secfile_filename(my_section_file), buf);
     exit(EXIT_FAILURE);
@@ -1101,13 +1101,13 @@ int secfile_lookup_int_default(struct section_file *my_section_file,
   my_vsnprintf(buf, sizeof(buf), path, ap);
   va_end(ap);
 
-  if (!(pentry=section_file_lookup_internal(my_section_file, buf))) {
+  if (!(pentry = section_file_lookup_internal(my_section_file, buf))) {
     return def;
   }
-  if(pentry->svalue) {
-    freelog(LOG_FATAL, "sectionfile %s contains a '%s', but string not integer",
+  if (pentry->svalue) {
+    freelog(LOG_ERROR, "sectionfile %s contains a '%s', but string not integer",
 	    secfile_filename(my_section_file), buf);
-    exit(EXIT_FAILURE);
+    return def;
   }
   return pentry->ivalue;
 }
@@ -1166,10 +1166,10 @@ bool secfile_lookup_bool_default(struct section_file *my_section_file,
   if(!(pentry=section_file_lookup_internal(my_section_file, buf))) {
     return def;
   }
-  if(pentry->svalue) {
-    freelog(LOG_FATAL, "sectionfile %s contains a '%s', but string not integer",
+  if (pentry->svalue) {
+    freelog(LOG_ERROR, "sectionfile %s contains a '%s', but string not integer",
 	    secfile_filename(my_section_file), buf);
-    exit(EXIT_FAILURE);
+    return def;
   }
 
   if (pentry->ivalue != 0 && pentry->ivalue != 1) {
@@ -1196,14 +1196,14 @@ char *secfile_lookup_str_default(struct section_file *my_section_file,
   my_vsnprintf(buf, sizeof(buf), path, ap);
   va_end(ap);
 
-  if(!(pentry=section_file_lookup_internal(my_section_file, buf))) {
+  if (!(pentry=section_file_lookup_internal(my_section_file, buf))) {
     return (char *) def;
   }
 
-  if(!pentry->svalue) {
-    freelog(LOG_FATAL, "sectionfile %s contains a '%s', but integer not string",
+  if (!pentry->svalue) {
+    freelog(LOG_ERROR, "sectionfile %s contains a '%s', but integer not string",
 	    secfile_filename(my_section_file), buf);
-    exit(EXIT_FAILURE);
+    return (char *) def;
   }
   
   return pentry->svalue;

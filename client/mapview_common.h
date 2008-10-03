@@ -235,7 +235,7 @@ void overview_to_map_pos(int *map_x, int *map_y,
 void refresh_overview_canvas(void);
 void overview_update_tile(struct tile *ptile);
 void set_overview_dimensions(int width, int height);
-const char *overview_mode_get_name(int ovm);
+const char *overview_mode_get_name(enum overview_modes ovm);
 
 bool map_canvas_resized(int width, int height);
 void init_mapcanvas_and_overview(void);

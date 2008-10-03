@@ -2946,21 +2946,19 @@ void update_trade_route_line(struct trade_route *ptr)
 }
 
 /**************************************************************************
-  Return the string name corresponding to the overview mode.
+  Return the string name (unstranslated) corresponding to the overview mode.
 **************************************************************************/
-const char *overview_mode_get_name(int ovm)
+const char *overview_mode_get_name(enum overview_modes ovm)
 {
   switch (ovm) {
   case OVM_CLASSIC:
-    return _("Classic");
-    break;
+    return N_("Classic");
   case OVM_TEAM:
-    return _("Team");
-    break;
-  default:
+    return N_("Team");
+  case NUM_OVERVIEW_MODES:
+    /* Not a valid case */
     break;
   }
-  
-  /* Should not happen, but just in case. */
-  return _("<Invalid>");
+  /* Don't set as default case to be warned if we forgot to add a value */
+  return NULL;
 }

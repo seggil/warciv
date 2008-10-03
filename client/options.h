@@ -165,7 +165,7 @@ extern bool warn_before_add_to_city;
 extern bool prevent_duplicate_notify_tabs;
 extern bool enable_chat_logging;
 extern char chat_log_directory[MAX_LEN_PATH];
-extern int overview_mode;
+extern enum overview_modes overview_mode;
 #ifndef ASYNC_TRADE_PLANNING
 extern int trade_time_limit;
 #endif	/* ASYNC_TRADE_PLANNING */
