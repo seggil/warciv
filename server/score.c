@@ -45,6 +45,8 @@ static int score_cache[MAX_NUM_PLAYERS+MAX_NUM_BARBARIANS];
 static struct grouping groupings[MAX_NUM_PLAYERS];
 static int num_groupings = 0;
 
+typedef int (*compare_func_t)(const void *, const void *);
+
 /**************************************************************************
   Allocates, fills and returns a land area claim map.
   Call free_landarea_map(&cmap) to free allocated memory.
@@ -607,8 +609,13 @@ static void dump_grouping_players(const struct grouping *p)
   int j;
   struct player *pp;
 
+  freelog(LOG_DEBUG, "dump_grouping_players grouping=%p", p);
   for (j = 0; j < p->num_players; j++) {
     pp = p->players[j];
+    if (!pp) {
+      freelog(LOG_DEBUG, "  player %d @ %p !!!", j, pp);
+      continue;
+    }
     freelog(LOG_DEBUG, "  player %d @ %p: %s user=%s score=%d rank=%f "
             "result=%d player_id=%d",
             j, pp, pp->name, pp->username, get_civ_score(pp), pp->rank,
@@ -625,6 +632,20 @@ static void dump_grouping_players(const struct grouping *p)
 /**************************************************************************
   ...
 **************************************************************************/
+static void dump_grouping(const struct grouping *p, int i)
+{
+  freelog(LOG_DEBUG, "grouping %d @ %p: score=%f rank=%f result=%d "
+          "r=%f rd=%f",
+          i, p, p->score, p->rank, p->result, p->rating,
+          p->rating_deviation);
+  freelog(LOG_DEBUG, "    nr=%f nrd=%f num_players=%d num_alive=%d",
+          p->new_rating, p->new_rating_deviation, p->num_players,
+          p->num_alive);
+  dump_grouping_players(p);
+}
+/**************************************************************************
+  ...
+**************************************************************************/
 static void dump_groupings(void)
 {
   struct grouping *p;
@@ -633,14 +654,7 @@ static void dump_groupings(void)
   freelog(LOG_DEBUG, "BEGIN GROUPING DUMP num_groupings=%d",
           num_groupings); 
   for (i = 0, p = groupings; i < num_groupings; i++, p++) {
-    freelog(LOG_DEBUG, "grouping %d @ %p: score=%f rank=%f result=%d "
-            "r=%f rd=%f",
-            i, p, p->score, p->rank, p->result, p->rating,
-            p->rating_deviation);
-    freelog(LOG_DEBUG, "    nr=%f nrd=%f num_players=%d num_alive=%d",
-            p->new_rating, p->new_rating_deviation, p->num_players,
-            p->num_alive);
-    dump_grouping_players(p);
+    dump_grouping(p, i);
   }
   freelog(LOG_DEBUG, "END GROUPING DUMP");
 }
@@ -649,7 +663,7 @@ static void dump_groupings(void)
 /**************************************************************************
   ...
 **************************************************************************/
-#if 0   /* FOR DEBUGGING ONLY */
+#if 0   /* FOR HARDCORE DEBUGGING ONLY */
 static int real_grouping_compare(const void *va, const void *vb);
 static int grouping_compare(const void *va, const void *vb)
 {
@@ -660,10 +674,10 @@ static int grouping_compare(const void *va, const void *vb)
   b = (const struct grouping *) vb;
 
   r = real_grouping_compare(a, b);
-  fprintf(stderr, "about to compare:\n");
-  dump_grouping(stderr, a);
-  dump_grouping(stderr, b);
-  fprintf(stderr, "grouping_compare(%p, %p) = %d\n", a, b, r);
+  freelog(LOG_DEBUG, "about to compare (%p, %p):", a, b);
+  dump_grouping(a, -1);
+  dump_grouping(b, -2);
+  freelog(LOG_DEBUG, "grouping_compare(%p, %p) = %d", a, b, r);
   return r;
 }
 static int real_grouping_compare(const void *va, const void *vb)
@@ -685,6 +699,12 @@ static int grouping_compare(const void *va, const void *vb)
     return -1;
   if (a->result != PR_WIN && b->result == PR_WIN)
     return 1;
+  if (a->result == PR_LOSE && b->result != PR_LOSE)
+    return 1;
+  if (a->result != PR_LOSE && b->result == PR_LOSE)
+    return -1;
+  if (a->result == PR_DRAW && b->result == PR_DRAW)
+    return 0;
   if (a->result == PR_DRAW && b->result != PR_DRAW)
     return -1;
   if (a->result != PR_DRAW && b->result == PR_DRAW)
@@ -720,14 +740,27 @@ static int player_compare(const void *va, const void *vb)
   a = *((struct player **) va);
   b = *((struct player **) vb);
 
-  if (a->is_alive && !b->is_alive) {
+  if (a->result == PR_WIN && b->result != PR_WIN)
     return -1;
-  }
-  if (!a->is_alive && b->is_alive) {
+  if (a->result != PR_WIN && b->result == PR_WIN)
     return 1;
-  }
-  return score_cache[b->player_no]
-    - score_cache[a->player_no];
+  if (a->result == PR_LOSE && b->result != PR_LOSE)
+    return 1;
+  if (a->result != PR_LOSE && b->result == PR_LOSE)
+    return -1;
+  if (a->result == PR_DRAW && b->result == PR_DRAW)
+    return 0;
+  if (a->result == PR_DRAW && b->result != PR_DRAW)
+    return -1;
+  if (a->result != PR_DRAW && b->result == PR_DRAW)
+    return 1;
+
+  if (a->is_alive && !b->is_alive)
+    return -1;
+  if (!a->is_alive && b->is_alive)
+    return 1;
+
+  return score_cache[b->player_no] - score_cache[a->player_no];
 }
 
 /**************************************************************************
@@ -872,7 +905,7 @@ void score_propagate_grouping_ratings(void)
      * a player in his own team, with 1 being first place and
      * groupings[i].num_players being that last place value)
      * values used below. We use n*(n+1)/2 not (n-1)*n/2 since
-     * we trank values start at 1 (unlike most other internal
+     * the trank values start at 1 (unlike most other internal
      * rank values, which start at 0). */
     sum = groupings[i].num_players
         * (groupings[i].num_players + 1.0) / 2.0;
@@ -1021,7 +1054,7 @@ static void update_ratings(void)
          * 3. Result only:
          *    PR_WIN  ==> sj = 1.0
          *    PR_DRAW ==> sj = 0.5
-         *    PR_LOSS ==> sj = 0.0
+         *    PR_LOSE ==> sj = 0.0
          * 4. Weighted score: like (2) but using scores instead of
          *    ranks.
         */
@@ -1113,12 +1146,14 @@ static void calculate_fractional_ranking(void *base,
                                          int nmemb,
                                          size_t size,
                                          float *frac_ranks,
-                                         int (*cmp)(const void *,
-                                                    const void *))
+                                         compare_func_t cmp)
 {
   int i, j, k;
   float ranksum, frac_rank;
   char *a = base;
+
+  freelog(LOG_DEBUG, "calculate_fractional_ranking base=%p nmemb=%d "
+          "size=%d", base, nmemb, size);
 
   if (nmemb < 1) {
     return;
@@ -1129,12 +1164,13 @@ static void calculate_fractional_ranking(void *base,
   assert(cmp != NULL);
 
   i = 0;
-  frac_ranks[0] = 0;
+  frac_ranks[0] = 0.0;
   do {
-    ranksum = i;
+    ranksum = (float) i;
     j = i + 1;
-    while (j < nmemb && 0 == cmp(a + i*size, a + j*size)) {
-      ranksum += (float) j++;
+    while (j < nmemb && 0 == cmp(a + (j-1)*size, a + j*size)) {
+      ranksum += (float) j;
+      j++;
     }
     frac_rank = ranksum / (float) (j - i);
     for (k = i; k < j; k++) {
@@ -1200,53 +1236,64 @@ void score_update_grouping_results(void)
 
     if (force_draw && groupings[i].result == PR_NONE) {
       groupings[i].result = PR_DRAW;
-    }
-    if (force_loss && groupings[i].result == PR_NONE) {
+    } else if (force_loss && groupings[i].result == PR_NONE) {
       groupings[i].result = PR_LOSE;
     }
   }
 
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "Groupings after result assignment:");
+  dump_groupings();
+#endif
+
   /* Sort the groupings, and the players within the groupings. */
 
-  qsort(groupings,
-        num_groupings,
-        sizeof(struct grouping),
+  qsort(groupings, num_groupings, sizeof(struct grouping),
         grouping_compare);
 
   for (i = 0; i < num_groupings; i++) {
     if (groupings[i].num_players < 2) {
       continue;
     }
-    qsort(groupings[i].players,
-          groupings[i].num_players,
-          sizeof(struct player *),
-          player_compare);
+    freelog(LOG_DEBUG, "sorting players in grouping %d", i);
+    qsort(groupings[i].players, groupings[i].num_players,
+          sizeof(struct player *), player_compare);
   }
 
 #ifdef DEBUG
-  freelog(LOG_DEBUG, "Groupings after qsort:");
+  freelog(LOG_DEBUG, "Groupings after sort:");
   dump_groupings();
 #endif
 
   /* Fill in unset results based on the order. */
 
   if (groupings[0].result == PR_NONE) {
-    if (num_groupings > 1
-        && 0 == grouping_compare(&groupings[0], &groupings[1])) {
-      next_cmp = 0;
-      i = 1;
-      groupings[0].result = PR_DRAW;
-      do {
-        i++;
-        next_cmp = grouping_compare(&groupings[i-1], &groupings[i]);
-        groupings[i-1].result = PR_DRAW;
-      } while (i < num_groupings && 0 == next_cmp);
-    } else {
+    if (num_groupings < 2) {
       if (game.server.fcdb.type == GT_SOLO
           && game.server.fcdb.outcome != GOC_ENDED_BY_SPACESHIP) {
         groupings[0].result = PR_LOSE;
       } else {
         groupings[0].result = PR_WIN;
+      }
+    } else {
+      next_cmp = grouping_compare(&groupings[0], &groupings[1]);
+      groupings[0].result = PR_DRAW;
+      if (next_cmp != 0) {
+        groupings[0].result = PR_WIN;
+      } else {
+        i = 0;
+        while (TRUE) {
+          i++;
+          if (i >= num_groupings - 1) {
+            groupings[i].result = PR_DRAW;
+            break;
+          }
+          next_cmp = grouping_compare(&groupings[i], &groupings[i+1]);
+          groupings[i].result = PR_DRAW;
+          if (next_cmp != 0) {
+            break;
+          }
+        }
       }
     }
   }
@@ -1258,15 +1305,26 @@ void score_update_grouping_results(void)
     groupings[i].result = PR_LOSE;
   }
 
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "Groupings after result assignment:");
+  dump_groupings();
+#endif
+
   /* Assign fractional ranks based on the order. */
   calculate_fractional_ranking(groupings,
                                num_groupings,
-                               sizeof(struct grouping *),
+                               sizeof(struct grouping),
                                frac_ranks,
                                grouping_compare);
   for (i = 0; i < num_groupings; i++) {
     groupings[i].rank = frac_ranks[i];
   }
+
+#ifdef DEBUG
+  freelog(LOG_DEBUG, "Groupings after fractional ranking:");
+  dump_groupings();
+#endif
+
 }
 
 /**************************************************************************
