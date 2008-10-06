@@ -105,6 +105,7 @@ static bool start_command(struct connection *caller, char *name,
 static bool unstart_command(struct connection *caller, char *name,
                             bool check);
 static bool end_command(struct connection *caller, char *str, bool check);
+static bool draw_command(struct connection *caller, char *str, bool check);
 static bool ban_command(struct connection *caller, char *pattern,
                         bool check);
 static bool unban_command(struct connection *caller, char *pattern,
@@ -6526,6 +6527,8 @@ bool handle_stdin_input(struct connection * caller,
     return unstart_command(caller, arg, check);
   case CMD_END_GAME:
     return end_command(caller, arg, check);
+  case CMD_DRAW:
+    return draw_command(caller, arg, check);
   case CMD_NUM:
   case CMD_UNRECOGNIZED:
   case CMD_AMBIGUOUS:
@@ -6621,6 +6624,43 @@ cleanup:
     free(arg[i]);
   }
   return result;
+}
+
+/**************************************************************************
+  End the game and make the result a tie.
+**************************************************************************/
+static bool draw_command(struct connection *caller, char *str, bool check)
+{
+  if (server_state != RUN_GAME_STATE) {
+    cmd_reply(CMD_DRAW, caller, C_FAIL,
+              _("Cannot end the game: no game running."));
+    return FALSE;
+  }
+
+  if (game.server.fcdb.type == GT_SOLO) {
+    cmd_reply(CMD_DRAW, caller, C_REJECTED,
+              _("This command is not allowed for SOLO games."));
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  game.server.fcdb.outcome = GOC_ENDED_BY_VOTE;
+  players_iterate(pplayer) {
+    pplayer->result = PR_DRAW;
+  } players_iterate_end;
+  team_iterate(pteam) {
+    pteam->result = PR_DRAW;
+  } players_iterate_end;
+
+  server_state = GAME_OVER_STATE;
+  force_end_of_sniff = TRUE;
+  cmd_reply(CMD_DRAW, caller, C_OK,
+            _("The game ends in a draw. The server will restart "
+              "once all clients have disconnected."));
+  return TRUE;
 }
 
 /**************************************************************************

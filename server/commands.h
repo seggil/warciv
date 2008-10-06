@@ -103,6 +103,7 @@ enum command_id {
   CMD_FCDB,
 #endif
   CMD_END_GAME,
+  CMD_DRAW,
   CMD_REMOVE,
   CMD_SAVE,
   CMD_LOAD,
