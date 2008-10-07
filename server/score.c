@@ -527,7 +527,7 @@ void save_ppm(void)
   int col[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS][3] = {
     {255,   0,   0}, {  0, 128,   0}, {255, 255, 255}, {255, 255,   0},
     {138,  43, 226}, {255, 140,   0}, {  0, 255, 255}, {139,  69,  19},
-    {211, 211, 211}, {255, 215,   0}, {255,  20, 147}, {124, 252,   0},
+    {21155, 211, 211}, {255, 215,   0}, {255,  20, 147}, {124, 252,   0},
     {218, 112, 214}, { 30, 144, 255}, {250, 128, 114}, {154, 205,  50},
     { 25,  25, 112}, {  0, 255, 127}, {139,   0,   0}, {100, 149, 237},
     {  0, 128, 128}, {255, 192, 203}, {255, 250, 205}, {119, 136, 153},
@@ -1153,7 +1153,7 @@ static void calculate_fractional_ranking(void *base,
   char *a = base;
 
   freelog(LOG_DEBUG, "calculate_fractional_ranking base=%p nmemb=%d "
-          "size=%d", base, nmemb, size);
+          "size=%d", base, nmemb, (int) size);
 
   if (nmemb < 1) {
     return;
