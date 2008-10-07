@@ -196,6 +196,7 @@ void client_remove_unit(struct unit *punit)
           unit_name(punit->type), TILE_XY(punit->tile), hc);
 
   trade_free_unit(punit);
+  refresh_city_dialog_maps(punit->tile);
 
   if (punit == ufocus) {
     multi_select_wipe_up_unit(punit);

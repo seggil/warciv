@@ -675,3 +675,19 @@ int city_rename(struct city *pcity, const char *name)
 {
   return dsend_packet_city_rename(&aconnection, pcity->id, name);
 }
+
+/**************************************************************************
+  Update all city dialog maps which can see that tile.
+**************************************************************************/
+void refresh_city_dialog_maps(struct tile *ptile)
+{
+  struct city *pcity;
+  bool global_observer = client_is_global_observer();
+
+  city_map_checked_iterate(ptile, cx, cy, itr_tile) {
+    if ((pcity = map_get_city(itr_tile))
+	&& (global_observer || pcity->owner == get_player_idx())) {
+      refresh_city_dialog(pcity, UPDATE_MAP);
+    }
+  } city_map_checked_iterate_end;
+}

@@ -1349,6 +1349,9 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       if (punit->ptr) {
 	update_trade_route_infos(punit->ptr);
       }
+
+      refresh_city_dialog_maps(old_tile);
+      refresh_city_dialog_maps(punit->tile);
     }  /*** End of Change position. ***/
 
     if (punit->unhappiness != packet_unit->unhappiness) {
@@ -2271,16 +2274,18 @@ void handle_tile_info(struct packet_tile_info *packet)
   /* refresh tiles */
   if (can_client_change_view()) {
     /* the tile itself */
-    if (tile_changed || old_known!=ptile->known) {
+    if (tile_changed || old_known != ptile->known) {
       refresh_tile_mapcanvas(ptile, MUT_DRAW);
+      refresh_city_dialog_maps(ptile);
     }
 
     /* if the terrain or the specials of the tile
        have changed it affects the adjacent tiles */
     if (tile_changed) {
       adjc_iterate(ptile, tile1) {
-	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED)
+	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED) {
 	  refresh_tile_mapcanvas(tile1, MUT_NORMAL);
+	}
       }
       adjc_iterate_end;
       return;
@@ -2290,8 +2295,9 @@ void handle_tile_info(struct packet_tile_info *packet)
        removed here */
     if (old_known == TILE_UNKNOWN && packet->known >= TILE_KNOWN_FOGGED) {     
       cardinal_adjc_iterate(ptile, tile1) {
-	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED)
+	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED) {
 	  refresh_tile_mapcanvas(tile1, MUT_NORMAL);
+	}
       } cardinal_adjc_iterate_end;
     }
   }
