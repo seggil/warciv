@@ -1510,7 +1510,7 @@ void send_city_info(struct player *dest, struct city *pcity)
     send_city_info_at_tile(dest, dest->connections, pcity, pcity->tile);
   }
 
-  if (dest == city_owner(pcity)) {
+  if (!dest || dest->player_no == pcity->owner) {
     /* Send trade routes infos. */
     trade_route_list_iterate(pcity->trade_routes, ptr) {
       send_trade_route_info(dest ? dest->connections : NULL, ptr);
