@@ -106,6 +106,7 @@ static GtkWidget *city_remove_cur_prod_command;
 static GtkWidget *city_autoarrange_workers_command;
 static GtkWidget *city_last_command, *city_first_command, *city_next_command;
 static GtkWidget *city_cma_command = NULL, *city_sell_command;
+static GtkWidget *city_total_buy_cost_label;
 
 static GtkWidget *change_improvements_item;
 static GtkWidget *change_units_item;
@@ -935,11 +936,17 @@ static void create_city_report_dialog(bool make_modal)
       _("_Popup"), CITY_POPUP);
   city_popup_command = w;
 
+  w = gtk_label_new(NULL);
+  gtk_widget_set_size_request(w, 100, -1);
+  gtk_box_pack_start(GTK_BOX(city_dialog_shell->action_area),
+                     w, FALSE, FALSE, 0);
+  city_total_buy_cost_label = w;
+
   w = gui_dialog_add_stockbutton(city_dialog_shell, GTK_STOCK_EXECUTE,
       _("_Buy"), CITY_BUY);
   city_buy_command = w;
-
   
+
   gui_dialog_add_button(city_dialog_shell,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
@@ -2011,6 +2018,7 @@ static void popup_select_menu(GtkMenuShell *menu, gpointer data)
 static void city_selection_changed_callback(GtkTreeSelection *selection)
 {
   int n;
+  int total = 0;
 
   n = gtk_tree_selection_count_selected_rows(selection);
 
@@ -2043,10 +2051,39 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
     gtk_widget_set_sensitive(city_autoarrange_workers_command,
 			     can_client_issue_orders());
     if (can_client_issue_orders()) {
+      GList *rows, *p;
+      GtkTreeModel *model;
+      GtkTreePath *path;
+      GtkTreeIter iter;
+      gpointer res;
+      struct city *pcity;
+
+      rows = gtk_tree_selection_get_selected_rows(selection, &model);
+      for (p = rows; p != NULL; p = p->next) {
+        path = p->data;
+        if (gtk_tree_model_get_iter(model, &iter, path)) {
+          gtk_tree_model_get(model, &iter, 0, &res, -1);
+          pcity = res;
+          if (pcity != NULL) {
+            total += city_buy_cost(pcity);
+          }
+        }
+        gtk_tree_path_free(path);
+      }
+      g_list_free(rows);
+
       recreate_sell_menu();
     } else {
       gtk_widget_set_sensitive(city_sell_command, FALSE);
     }
+  }
+
+  if (total > 0) {
+    char buf[64];
+    my_snprintf(buf, sizeof(buf), _("Buy Cost: %d"), total);
+    gtk_label_set_text(GTK_LABEL(city_total_buy_cost_label), buf);
+  } else {
+    gtk_label_set_text(GTK_LABEL(city_total_buy_cost_label), NULL);
   }
 }
 
