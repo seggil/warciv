@@ -722,7 +722,8 @@ static int parse_unit_link(const char *str, GtkTextBuffer *buf,
   NB If you change any of the chat link formats, be sure to change
   the detection code in server/handchat.c as well!
 **************************************************************************/
-static void append_text_with_links(GtkTextBuffer *buf, const char *astring)
+static void append_text_with_links(GtkTextBuffer *buf,
+				   const char *astring, const char *end)
 {
   const char *p, *q, *s;
   char newtext[256];
@@ -732,7 +733,7 @@ static void append_text_with_links(GtkTextBuffer *buf, const char *astring)
 
   gtk_text_buffer_get_end_iter(buf, &iter);
 
-  for (s = p = astring; *p &&(q = strchr(p, LINK_PREFIX)); p = q) {
+  for (s = p = astring; *p && (q = strchr(p, LINK_PREFIX)) && q < end; p = q) {
     switch (q[1]) {
     case TILE_LINK_LETTER:
       n = parse_location_link(q, buf, &tag, newtext, sizeof(newtext));
@@ -755,18 +756,21 @@ static void append_text_with_links(GtkTextBuffer *buf, const char *astring)
     }
 
     if (n > 0) {
-      if (s < q)
-        gtk_text_buffer_insert(buf, &iter, s,(int)(q - s));
+      if (s < q) {
+        gtk_text_buffer_insert(buf, &iter, s, (int)(q - s));
+      }
       gtk_text_buffer_insert_with_tags(buf, &iter, newtext, -1, tag, NULL);
+      g_object_unref(tag);
       q += n;
       s = q;
     } else {
       q++;
     }
-  } 
-  
-  if (*s)
-    gtk_text_buffer_insert(buf, &iter, s, -1);
+  }
+
+  if (s < end && *s) {
+    gtk_text_buffer_insert(buf, &iter, s, end - s);
+  }
 }
 
 /**************************************************************************
@@ -801,11 +805,19 @@ void real_append_output_window(const char *astring, int conn_id)
   char *jump_target = "";
   struct match_result_list *matches;
   char *text;
+  const char *end_utf8;
   int text_start_offset, offset;
 
   GtkTextBuffer *buf;
   GtkTextIter iter, start, end;
   GtkTextMark *insert_start, *text_start, *scroll_target;
+
+  if (!g_utf8_validate(astring, -1, &end_utf8)
+      && (!end_utf8 || end_utf8 <= astring)) {
+    freelog(LOG_VERBOSE,
+	    "Got a non-valid utf8 string to print in the chatline.");
+    return;
+  }
 
   buf = message_buffer;
   gtk_text_buffer_get_end_iter(buf, &iter);
@@ -817,9 +829,9 @@ void real_append_output_window(const char *astring, int conn_id)
   text_start = gtk_text_buffer_create_mark(buf, NULL, &iter, TRUE);
   if (get_client_state() == CLIENT_GAME_RUNNING_STATE
       || get_client_state() == CLIENT_GAME_OVER_STATE) {
-    append_text_with_links(buf, astring);
+    append_text_with_links(buf, astring, end_utf8);
   } else {
-    gtk_text_buffer_insert(buf, &iter, astring, -1);
+    gtk_text_buffer_insert(buf, &iter, astring, end_utf8 - astring);
   }
 
   matches = match_result_list_new();
