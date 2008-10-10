@@ -73,6 +73,7 @@ enum {
   COLUMN_APPLY,
   COLUMN_STOP,
   COLUMN_IGNORE,
+  COLUMN_INSENSITIVE,
   COLUMN_INACTIVE,
   COLUMN_SWITCH_NEXT,
   COLUMN_JUMP_TARGET,
@@ -198,6 +199,7 @@ static bool tag_pattern_is_control_only(struct tag_pattern *ptagpat)
 {
     return ptagpat->flags & TPF_IS_CONTROL_ONLY;
 }
+
 /**************************************************************************
   ...
 **************************************************************************/
@@ -845,7 +847,9 @@ void real_append_output_window(const char *astring, int conn_id)
 
     if (jump_target[0]) {
       if (!ptagpat->tag_name[0]
-          || 0 != strcmp(ptagpat->tag_name, jump_target)) {
+	  || 0 != (ptagpat->flags & TPF_INSENSITIVE
+		   ? mystrcasecmp(ptagpat->tag_name, jump_target)
+		   : strcmp(ptagpat->tag_name, jump_target))) {
         continue;
       }
       jump_target = "";
@@ -1038,24 +1042,24 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
 
   MK_TAG_PATTERN("game start", "All players are ready",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-                  "", "#00FF00", "#115511");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+		 "", "#00FF00", "#115511");
   MK_TAG_PATTERN("", "Game: All players are ready",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-                  "", "#00FF00", "#115511");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+		 "", "#00FF00", "#115511");
 
   MK_TAG_PATTERN("server prompt", "(server prompt):",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-                  "", "#FF0000", "#BEBEBE");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+		 "", "#FF0000", "#BEBEBE");
   MK_TAG_PATTERN("game message", "Game:",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-                  "", "#8B0000", "");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+		 "", "#8B0000", "");
   MK_TAG_PATTERN("server message", "Server:",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-                  "", "#8B0000", "");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+		 "", "#8B0000", "");
   MK_TAG_PATTERN("option message", "Option:",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-                  "", "#8B0000", "");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+		 "", "#8B0000", "");
   MK_TAG_PATTERN("Warclient message", "Warclient:",
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                  "", "#0000FF", "");
@@ -1065,136 +1069,136 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
   MK_TAG_PATTERN("chat message", "<", TPF_MATCH_AT_START, "", "#00008B", "");
   MK_TAG_PATTERN("private message", "*", TPF_MATCH_AT_START,
-                  "", "#A020F0", "");
+		 "", "#A020F0", "");
   MK_TAG_PATTERN("private message 2", "[", TPF_MATCH_AT_START,
-                  "", "#A020F0", "");
+		 "", "#A020F0", "");
   MK_TAG_PATTERN("private message sent", "->*", TPF_MATCH_AT_START,
-                  "", "#A020F0", "");
+		 "", "#A020F0", "");
   MK_TAG_PATTERN("private message sent 2", "->[", TPF_MATCH_AT_START,
                  "", "#A020F0", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_NEGATE, "", "", "");
+		 | TPF_NEGATE, "", "", "");
   MK_TAG_PATTERN("ally message", "to allies: ",
-                  TPF_REQUIRE_PREVIOUS_MATCH,
-                  "", "#551166", "");
+		 TPF_REQUIRE_PREVIOUS_MATCH,
+		 "", "#551166", "");
 
   MK_TAG_PATTERN("", "(", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START,
 		 "", "", "");
   MK_TAG_PATTERN("global observer message", "to global observers: ",
-                  TPF_REQUIRE_PREVIOUS_MATCH,
-                  "", "#551166", "");
+		 TPF_REQUIRE_PREVIOUS_MATCH,
+		 "", "#551166", "");
 
   MK_TAG_PATTERN("player emote", "^ ", TPF_MATCH_AT_START, "", "#006D6E", "");
   MK_TAG_PATTERN("server emote", "+ ", TPF_MATCH_AT_START, "", "#8C0015", "");
   
 
   MK_TAG_PATTERN("", "/show: ", TPF_IS_CONTROL_ONLY
-                  | TPF_MATCH_AT_START | TPF_NEGATE,
-                  "end of show stuff", "", "");
+		 | TPF_MATCH_AT_START | TPF_NEGATE,
+		 "end of show stuff", "", "");
   MK_TAG_PATTERN("", "/show: All",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Vital",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Rare",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: +",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Try",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Option",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: ------------",
-                  TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-                  | TPF_STOP_IF_MATCHED, "", "", "");
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+		 | TPF_STOP_IF_MATCHED, "", "", "");
   
   MK_TAG_PATTERN("", "/show", TPF_IS_CONTROL_ONLY
-                  | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("changed options", "=",
-                  TPF_NEGATE | TPF_REQUIRE_PREVIOUS_MATCH
-                  | TPF_STOP_IF_MATCHED, "", "#FF0000", "");
+		 TPF_NEGATE | TPF_REQUIRE_PREVIOUS_MATCH
+		 | TPF_STOP_IF_MATCHED, "", "#FF0000", "");
   MK_TAG_PATTERN("end of show stuff", "", TPF_IS_CONTROL_ONLY,
-                  "", "", "");
+		 "", "", "");
 
 
   MK_TAG_PATTERN("new vote", "New vote",
-                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED, 
-                  "", "#FFFFFF", "#AA0000");
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED, 
+		 "", "#FFFFFF", "#AA0000");
 
   MK_TAG_PATTERN("new poll", "New poll ",
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                  "", "#000000", "#FFF34D");
 
   MK_TAG_PATTERN("", "Vote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
-                  | TPF_MATCH_AT_START, "vote stuff end", "", "");
+		 | TPF_MATCH_AT_START, "vote stuff end", "", "");
   MK_TAG_PATTERN("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
-                  "", "#006400", "#AAFFAA");
+		 "", "#006400", "#AAFFAA");
   MK_TAG_PATTERN("vote failed", " failed ", TPF_STOP_IF_MATCHED,
-                  "", "#8B0000", "#FFAAAA");
+		 "", "#8B0000", "#FFAAAA");
   MK_TAG_PATTERN("voted yes", "voted yes", TPF_STOP_IF_MATCHED,
-                  "", "#000000", "#C8FFD5");
+		 "", "#000000", "#C8FFD5");
   MK_TAG_PATTERN("voted no", "voted no", TPF_STOP_IF_MATCHED,
-                  "", "#000000", "#FFD2D2");
+		 "", "#000000", "#FFD2D2");
   MK_TAG_PATTERN("abstained", "chose to abstain", TPF_STOP_IF_MATCHED,
-                  "", "#000000", "#E8E8E8");
+		 "", "#000000", "#E8E8E8");
   MK_TAG_PATTERN("vote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
 
 
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY 
-                  | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("not ready", "not ready",
-                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
-                  "", "#FF0000", "");
+		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
+		 "", "#FF0000", "");
 
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY
-                  | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("no nation", ", Human)", TPF_REQUIRE_PREVIOUS_MATCH,
-                  "", "#FF0000", "");
+		 "", "#FF0000", "");
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY
-                  | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("", ", Human, team ",
-                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_IS_CONTROL_ONLY,
-                  "", "", "");
+		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_IS_CONTROL_ONLY,
+		 "", "", "");
   MK_TAG_PATTERN("no nation", " ready)",
-                  TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
-                  "", "#FF0000", "");
+		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
+		 "", "#FF0000", "");
   
 
   my_snprintf(buf, sizeof(buf), "<%s>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-                  | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
   my_snprintf(buf, sizeof(buf), "<(%s)>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-                  | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
   my_snprintf(buf, sizeof(buf), "<[%s]>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-                  | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
   my_snprintf(buf, sizeof(buf), "%s to allies:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-                  | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
   my_snprintf(buf, sizeof(buf), "(%s) to allies:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-                  | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY 
-                  | TPF_MATCH_AT_START, "name hilight", "", "");
+		 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", "*", TPF_IS_CONTROL_ONLY 
-                  | TPF_MATCH_AT_START, "name hilight", "", "");
+		 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", "[", TPF_IS_CONTROL_ONLY
-                  | TPF_MATCH_AT_START, "name hilight", "", "");
+		 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", " to allies:", TPF_IS_CONTROL_ONLY,
-                  "name hilight", "", "");
+		 "name hilight", "", "");
   MK_TAG_PATTERN("", "", TPF_IS_CONTROL_ONLY 
-                  | TPF_STOP_IF_MATCHED, "", "", "");
-  MK_TAG_PATTERN("name hilight", default_user_name,
-                  TPF_APPLY_TO_MATCH | TPF_REQUIRE_PREVIOUS_MATCH,
-                  "", "#000000", "#FFFF00");
+		 | TPF_STOP_IF_MATCHED, "", "", "");
+  MK_TAG_PATTERN("name hilight", default_user_name, TPF_APPLY_TO_MATCH
+		 | TPF_REQUIRE_PREVIOUS_MATCH | TPF_INSENSITIVE,
+		 "", "#000000", "#FFFF00");
 
   return tpl;
 }
@@ -1221,6 +1225,29 @@ static void textbuf_insert_time(GtkTextBuffer *buf, GtkTextIter *iter)
 /**************************************************************************
 ...
 **************************************************************************/
+static const char *utf8_strcasestr(const char *haystack, const char *needle)
+{
+  gchar *up_haystack = g_utf8_strup(haystack, -1);
+  gchar *up_needle = g_utf8_strup(needle, -1);
+  gchar *start = up_haystack;
+  glong haystack_len = g_utf8_strlen(up_haystack, -1);
+  glong needle_len = g_utf8_strlen(up_needle, -1);
+
+  for (; haystack_len >= needle_len; up_haystack++, haystack_len--) {
+    if (memcmp(up_haystack, up_needle, needle_len) == 0) {
+      g_free(start);
+      g_free(up_needle);
+      return haystack + (up_haystack - start);
+    }
+  }
+  g_free(start);
+  g_free(up_needle);
+  return NULL;
+}
+
+/**************************************************************************
+...
+**************************************************************************/
 static bool match_tag_pattern(struct tag_pattern *ptagpat,
                               const char *text,
                               struct match_result_list *matches)
@@ -1242,7 +1269,9 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
   }
 
   for (curpos = text;; curpos = p + patlen) {
-    if (!(p = strstr(curpos, ptagpat->pattern))) {
+    if (!(p = (ptagpat->flags & TPF_INSENSITIVE
+	       ? utf8_strcasestr(curpos, ptagpat->pattern)
+	       : strstr(curpos, ptagpat->pattern)))) {
       break;
     }
     if ((ptagpat->flags & TPF_MATCH_AT_START) && p != text) {
@@ -1990,6 +2019,7 @@ static void add_columns(GtkTreeView *treeview, GtkTreeModel *model)
   MK_FLAG_COLUMN(COLUMN_APPLY, "MULTI", TPF_APPLY_TO_MATCH);
   MK_FLAG_COLUMN(COLUMN_STOP, "STOP", TPF_STOP_IF_MATCHED);
   MK_FLAG_COLUMN(COLUMN_IGNORE, "IGNORE", TPF_IGNORE_IF_MATCHED);
+  MK_FLAG_COLUMN(COLUMN_INSENSITIVE, "INSENT", TPF_INSENSITIVE);
   MK_FLAG_COLUMN(COLUMN_INACTIVE, "OFF", TPF_INACTIVE);
   MK_FLAG_COLUMN(COLUMN_SWITCH_NEXT, "SWITCH", TPF_SWITCH_NEXT);
   MK_STR_COLUMN(COLUMN_JUMP_TARGET, "JUMP", TRUE, TRUE, 70);
@@ -2014,6 +2044,7 @@ static void put_tag_pattern_into_store(GtkListStore *store,
                      COLUMN_APPLY, ptagpat->flags & TPF_APPLY_TO_MATCH,
                      COLUMN_STOP, ptagpat->flags & TPF_STOP_IF_MATCHED,
                      COLUMN_IGNORE, ptagpat->flags & TPF_IGNORE_IF_MATCHED,
+		     COLUMN_INSENSITIVE, ptagpat->flags & TPF_INSENSITIVE,
                      COLUMN_INACTIVE, ptagpat->flags & TPF_INACTIVE,
                      COLUMN_SWITCH_NEXT, ptagpat->flags & TPF_SWITCH_NEXT,
                      COLUMN_JUMP_TARGET, ptagpat->jump_target,
@@ -2040,6 +2071,7 @@ static GtkTreeModel *create_model(void)
                              G_TYPE_BOOLEAN, /* apply to match */
                              G_TYPE_BOOLEAN, /* stop */
                              G_TYPE_BOOLEAN, /* ignore */
+                             G_TYPE_BOOLEAN, /* insensitive */
                              G_TYPE_BOOLEAN, /* active */
                              G_TYPE_BOOLEAN, /* switch next */
                              G_TYPE_STRING, /* jump target */

@@ -27,15 +27,16 @@ void inputline_return(GtkEntry *w, gpointer data);
 void set_output_window_text(const char *text);
 
 enum tag_pattern_flags {
-  TPF_MATCH_AT_START                  = 0x001,
-  TPF_APPLY_TO_MATCH                  = 0x002,
-  TPF_IGNORE_IF_MATCHED               = 0x004,
-  TPF_STOP_IF_MATCHED                 = 0x008,
-  TPF_REQUIRE_PREVIOUS_MATCH          = 0x010,
-  TPF_NEGATE                          = 0x020,
-  TPF_INACTIVE                        = 0x040,
-  TPF_SWITCH_NEXT                     = 0x080,
-  TPF_IS_CONTROL_ONLY                 = 0x100,
+  TPF_MATCH_AT_START		= 0x001,
+  TPF_APPLY_TO_MATCH		= 0x002,
+  TPF_IGNORE_IF_MATCHED		= 0x004,
+  TPF_STOP_IF_MATCHED		= 0x008,
+  TPF_REQUIRE_PREVIOUS_MATCH	= 0x010,
+  TPF_NEGATE			= 0x020,
+  TPF_INACTIVE			= 0x040,
+  TPF_SWITCH_NEXT		= 0x080,
+  TPF_IS_CONTROL_ONLY		= 0x100,
+  TPF_INSENSITIVE		= 0x200
 };
 
 struct tag_pattern {
