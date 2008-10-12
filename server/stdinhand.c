@@ -151,7 +151,7 @@ static char *two_team_suggestions[][2] = {
   {"FANATICS", "HERETICS"},
   {"TITANS", "OLYMPIANS"},
   {"BOURGEOISIE", "PROLETARIAT"},
-  {"VOTERS", "POLITCIANS"},
+  {"VOTERS", "POLITICIANS"},
   {"OPTIMATES", "POPULARES"},
   {"BLOODS", "CRIPS"},
   {"TRIADS", "YAKUZA"},
