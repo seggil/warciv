@@ -7855,7 +7855,7 @@ static void show_team_ratings(struct connection *caller, bool send_to_all)
   char fmt[128];
   int cml_name;
 
-  if (team_count() <= 0) {
+  if (team_count() <= 0 || !srvarg.fcdb.enabled) {
     return;
   }
 
