@@ -19,6 +19,7 @@
 #define SERVER_COMMAND_PREFIX '/'
   /* the character to mark chatlines as server commands */
 #define DEFAULT_ACTION_LIST_FILE "action.list"
+#define DEFAULT_TEAM_NAMES_FILE "team_names.txt"
 
 void stdinhand_init(void);
 void stdinhand_turn(void);

@@ -26,6 +26,7 @@ SERVER_FILES = \
 	nowonder+1.2.serv	\
 	tournament.serv	\
 	warserver.serv	\
+	team_names.txt	\
 	example-actions.txt	\
 	example-welcome.txt	\
 	auth.sql	\

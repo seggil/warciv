@@ -130,154 +130,6 @@ bool clearactionlist_command(struct connection *caller,
 static bool loadscenario_command(struct connection *caller, char *str,
                                  bool check);
 
-/* Team names contributed by book, Pendragon, hima,
- * Not Logged In, Zachron and many more from the
- * multiplayer freeciv community. Thanks people! */
-static char *two_team_suggestions[][2] = {
-  {"ALPHA", "BETA"},
-  {"GOOD", "EVIL"},
-  {"CAPULETS", "MONTAGUES"},
-  {"BLACK", "WHITE"},
-  {"GREY", "GREYER"},
-  {"FAT", "SLIM"},
-  {"NAUGHTY", "NICE"},
-  {"COPS", "ROBBERS"},
-  {"ZERG", "PROTOSS"},
-  {"ORCS", "HUMANS"},
-  {"LILLIPUT", "BLEFUSCU"},
-  {"HALF_FULL", "HALF_EMPTY"},
-  {"SHEEP", "WOLVES"},
-  {"BIG_ENDIAN", "LITTLE_ENDIAN"},
-  {"FANATICS", "HERETICS"},
-  {"TITANS", "OLYMPIANS"},
-  {"BOURGEOISIE", "PROLETARIAT"},
-  {"VOTERS", "POLITICIANS"},
-  {"OPTIMATES", "POPULARES"},
-  {"BLOODS", "CRIPS"},
-  {"TRIADS", "YAKUZA"},
-  {"SCIENTOLOGISTS", "AUM_SHINRIKYO"},
-  {"PEOPLES_TEMPLE", "HEAVENS_GATE"},
-  {"DARK", "LIGHT"},
-  {"YOUNG", "OLD"},
-  {"KITTENS", "PUPPIES"},
-  {"FRUITS", "VEGETABLES"},
-  {"POINTERS", "REFERENCES"},
-  {"CLASSES", "STRUCTS"},
-  {"INTS", "FLOATS"},
-  {"LEGS", "BREASTS"},
-  {"BOYS", "GIRLS"},
-  {"PLUS", "MINUS"},
-  {"POSITIVE", "NEGATIVE"},
-  {"YIN", "YANG"},
-  {"CATS", "DOGS"},
-  {"ARM", "CORE"},
-  {"NOD", "GDI"},
-  {"FELLOWSHIP", "MORDOR"},
-  {"GALACTIC_EMPIRE", "REBEL_ALLIANCE"},
-  {"AXIS", "ALLIES"},
-  {"NATO", "WARZAW_PACT"},
-  {"DEMOCRATS", "REPUBLICANS"},
-  {"TORIES", "LABOUR"},
-  {"CIA", "KGB"},
-  {"MACS", "PCS"},
-  {"LEFT", "RIGHT"},
-  {"NORTH", "SOUTH"},
-  {"EAST", "WEST"},
-  {"ANGELS", "DEMONS"},
-  {"ATREIDES", "HARKONNEN"},
-  {"INDULGENCE", "ABSTINENCE"},
-  {"PIMPS", "DEALERS"},
-  {"APPLES", "ORANGES"},
-  {"FOO", "BAR"},
-  {"CATHODES", "ANODES"},
-  {"SEEDERS", "LEECHERS"},
-  {"FIRE", "WATER"},
-  {"ELVES", "TROLLS"},
-  {"DRAGONS", "KNIGHTS"},
-  {"BEAUTY", "TRUTH"},
-  {"POLAR", "RECTANGULAR"},
-  {"SINES", "COSINES"},
-  {"DOCTORS", "PATIENTS"},
-  {"EUKARYOTES", "PROKARYOTES"},
-  {"COBOL", "FORTRAN"},
-  {"FERMIONS", "BOSONS"},
-  {"NINJAS", "PIRATES"},
-  {"WEYL", "RICCI"},
-  {"HARD", "SOFT"},
-  {"ANARCHISTS", "COMMUNISTS"},
-  {"LOYALISTS", "FASCISTS"},
-  {"MODS", "ROCKERS"},
-  {"GUNS", "ROSES"},
-  {"TOP", "BOTTOM"},
-  {"UP", "DOWN"},
-  {"BEER", "LAGER"},
-  {"ORANGE", "BLUE"},
-  {"BLUNT", "SHARP"},
-  {"TRUTH", "BEAUTY"},
-  {"SWORDS", "PLOUGHSHARES"},
-  {"CHICKENS", "EGGS"},
-  {"HIPPIES", "YUPPIES"},
-  {"HALLOWEEN", "CHRISTMAS"},
-  {"FINAL_FANTASY", "DRAGON_QUEST"},
-  {"TREKKIES", "JEDIS"},
-  {"SALT", "PEPPER"},
-  {"EAST_COAST", "WEST_COAST"},
-  {"PEPSI", "COKE"},
-  {"BOOKS", "MOVIES"},
-  {"NARNIA", "MIDDLE_EARTH"},
-  {"THE_SIMPSONS", "SOUTHPARK"},
-  {"LADIES", "GENTLEMEN"},
-  {"SMALLPOX", "LARGEPOX"},
-  {"DIGITAL", "ANALOGUE"},
-  {"PACIFISTS", "MILITARISTS"},
-  {"GREENPEACE", "CORPORATIONS"},
-  {"CHESS", "CHECKERS"},
-  {"CRUSADERS", "PAGANS"},
-  {"JIHADISTS", "INFIDELS"},
-  {"HEGEMONY", "OUSTERS"},
-  {"VORLONS", "SHADOWS"},
-  {"IMPERIALISTS", "SEPARATISTS"},
-  {"THEISTS", "ATHEISTS"},
-  {"POLYTHEISTS", "MONOTHEISTS"},
-  {"WINDOWS", "LINUX"},
-};
-static char *three_team_suggestions[][3] = {
-  {"HERBIVORES", "CARNIVORES", "OMNIVORES"},
-  {"RED", "GREEN", "BLUE"},
-  {"ALPHA", "BETA", "GAMMA"},
-  {"YES", "NO", "MAYBE"},
-  {"ABORT", "RETRY", "FAIL"},
-  {"READY", "SET", "GO"},
-  {"BREAKFAST", "LUNCH", "DINNER"},
-  {"SUBJECT", "OBJECT", "VERB"},
-  {"ROCK", "PAPER", "SCISSORS"},
-  {"LEFT", "RIGHT", "CENTER"},
-  {"ENDOMORPHS", "MESOMORPHS", "ECTOMORPHS"},
-  {"ID", "EGO", "SUPEREGO"},
-  {"REPTILES", "MAMMALS", "INSECTS"},
-  {"DEMOCRATS", "REPUBLICANS", "INDEPENDANTS"},
-  {"TERRAN", "ZERG", "PROTOSS"},
-  {"HALLOWEEN", "CHRISTMAS", "THANKSGIVING"},
-  {"KETCHUP", "MUSTARD", "MAYONAISE"},
-  {"CHOCOLATE", "VANILLA", "STRAWBERRY"},
-  {"STREET_FIGHTER", "MORTAL_KOMBAT", "DEAD_OR_ALIVE"},
-};
-
-static char *four_team_suggestions[][4] = {
-  {"ATREIDES", "HARKONNEN", "ORDOS", "CORRINO"},
-  {"NORTH", "SOUTH", "WEST", "EAST"},
-  {"CYAN", "MAGENTA", "YELLOW", "BLACK"},
-  {"UP", "DOWN", "LEFT", "RIGHT"},
-  {"ELECTROMAGNETISM", "GRAVITY", "STRONG", "WEAK"},
-  {"EARTH", "WIND", "FIRE", "WATER"},
-  {"GUANINE", "CYTOSINE", "THYMINE", "ADENINE"},
-  {"ORCS", "HUMANS", "UNDEAD", "NIGHT_ELVES"},
-  {"PEACHES", "PLUMS", "APRICOTS", "POMAGRANATES"},
-  {"COTTON", "WOOL", "SILK", "POLYESTER"},
-  {"GRYFFINDOR", "HUFFLEPUFF", "RAVENCLAW", "SLITHERYN"},
-  {"VINYL", "8TRACK", "CASSETTE", "CD"},
-};
-
 struct muteinfo {
   int conn_id;
   int turns_left;
@@ -1935,12 +1787,15 @@ static bool unignore_command(struct connection *caller,
 static void free_team_names(char **p, int n)
 {
   int i;
-  if (!p)
+
+  if (!p) {
     return;
+  }
 
   for (i = 0; i < n; i++) {
-    if (p[i])
+    if (p[i]) {
       free(p[i]);
+    }
   }
   free(p);
 }
@@ -1950,30 +1805,45 @@ static void free_team_names(char **p, int n)
 **************************************************************************/
 static char **create_team_names(int n)
 {
-  int i, r;
-  char buf[256];
-  char **p = fc_malloc(n * sizeof(char *));
-  if (n <= 0)
+  struct section_file sfile;
+  char buf[256], *sfilename, **team_names, **suggestions;
+  int i, rand, dim;
+
+  if (n <= 0) {
     return NULL;
-  if (n == 2) {
-    r = myrand(sizeof(two_team_suggestions) / (n * sizeof(char *)));
-    for (i = 0; i < n; i++)
-      p[i] = mystrdup(two_team_suggestions[r][i]);
-  } else if (n == 3) {
-    r = myrand(sizeof(three_team_suggestions) / (n * sizeof(char *)));
-    for (i = 0; i < n; i++)
-      p[i] = mystrdup(three_team_suggestions[r][i]);
-  } else if (n == 4) {
-    r = myrand(sizeof(four_team_suggestions) / (n * sizeof(char *)));
-    for (i = 0; i < n; i++)
-      p[i] = mystrdup(four_team_suggestions[r][i]);
-  } else {
-    for (i = 0; i < n; i++) {
-      my_snprintf(buf, sizeof(buf), "TEAM-%d", i + 1);
-      p[i] = mystrdup(buf);
-    }
   }
-  return p;
+
+  team_names = fc_malloc(n * sizeof(char *));
+
+  sfilename = datafilename(DEFAULT_TEAM_NAMES_FILE);
+  if (sfilename && section_file_load_nodup(&sfile, sfilename)) {
+    suggestions = secfile_lookup_str_vec(&sfile, &dim,
+					 "%d_teams.suggestions", n);
+
+    if (!suggestions) {
+      freelog(LOG_VERBOSE, "No suggestions for %d teams", n);
+      section_file_free(&sfile);
+      goto default_team_names;
+    }
+
+    rand = myrand(dim / n) * n;
+    for (i = 0; i < n; i++) {
+      team_names[i] = mystrdup(_(suggestions[rand + i]));
+    }
+    section_file_free(&sfile);
+    return team_names;
+  } else {
+    freelog(LOG_VERBOSE, "Cannot open default team names file: \"%s\"",
+	    DEFAULT_TEAM_NAMES_FILE);
+  }
+
+default_team_names:
+  for (i = 0; i < n; i++) {
+    my_snprintf(buf, sizeof(buf), _("TEAM-%d"), i + 1);
+    team_names[i] = mystrdup(buf);
+  }
+
+  return team_names;
 }
 
 #ifdef HAVE_MYSQL

@@ -333,6 +333,7 @@ data/nowonder-1.2/terrain.ruleset
 data/nowonder+-1.2/terrain.ruleset
 data/nowonder-1.2/units.ruleset
 data/nowonder+-1.2/units.ruleset
+data/team_names.txt
 data/tournament/buildings.ruleset
 data/tournament/cities.ruleset
 data/tournament/governments.ruleset
