@@ -1171,20 +1171,20 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   
 
   my_snprintf(buf, sizeof(buf), "<%s>", default_user_name);
-  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
+		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "<(%s)>", default_user_name);
-  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
+		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "<[%s]>", default_user_name);
-  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
+		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "%s to allies:", default_user_name);
-  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
+		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "(%s) to allies:", default_user_name);
-  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY 
-		 | TPF_STOP_IF_MATCHED | TPF_MATCH_AT_START, "", "", "");
+  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
+		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY 
 		 | TPF_MATCH_AT_START, "name hilight", "", "");
