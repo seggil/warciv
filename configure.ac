@@ -38,8 +38,6 @@ AC_DEFINE_UNQUOTED(IS_BETA_VERSION, $IS_BETA_VERSION, [Is this a beta veersion])
 dnl Initialize automake stuff
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 
-AM_MAINTAINER_MODE
-
 dnl checks for mysql, sets MYSQL_LIBS, MYSQL_CFLAGS
 FC_CHECK_MYSQL
 
