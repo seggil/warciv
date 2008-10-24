@@ -68,6 +68,7 @@
 #include "connectdlg_g.h"
 #include "dialogs_g.h"
 #include "diplodlg_g.h"
+#include "graphics_g.h"
 #include "gui_main_g.h"
 #include "mapctrl_g.h"
 #include "mapview_g.h"
@@ -616,6 +617,12 @@ void set_client_state(enum client_states newstate)
 	set_default_user_tech_goal();
       }
       init_menus();
+
+      /* Find something sensible to display instead of the intro gfx. */
+      center_on_something();
+      
+      free_intro_radar_sprites();
+      agents_game_start();
 
     } else if (client_state == CLIENT_PRE_GAME_STATE) {
       popdown_all_city_dialogs();

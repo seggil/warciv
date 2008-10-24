@@ -62,7 +62,6 @@
 #include "cityrep_g.h"
 #include "connectdlg_g.h"
 #include "inteldlg_g.h"
-#include "graphics_g.h"
 #include "gui_main_g.h"
 #include "mapctrl_g.h"		/* popup_newcity_dialog() */
 #include "mapview_g.h"
@@ -391,11 +390,10 @@ void handle_game_state(int value)
     update_unit_focus();
     update_unit_info_label(get_unit_in_focus());
 
-    /* Find something sensible to display instead of the intro gfx. */
-    center_on_something();
-    
-    free_intro_radar_sprites();
-    agents_game_start();
+    if (auto_center_each_turn) {
+      center_on_something();
+    }
+
     delayed_goto_auto_timers_init();
   }
 
