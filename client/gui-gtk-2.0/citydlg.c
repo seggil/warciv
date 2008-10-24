@@ -2352,7 +2352,7 @@ static gboolean in_routes_trade_routes_callback(GtkWidget * w,
   g_signal_connect(item, "activate",
                    G_CALLBACK(center_on_city), GINT_TO_POINTER(city_id));
 
-  if (!client_is_global_observer() || pcity->owner == get_player_idx()) {
+  if (client_is_global_observer() || pcity->owner == get_player_idx()) {
     my_snprintf(buf, sizeof(buf), _("Open %s city dialog"), pcity->name);
     item = gtk_menu_item_new_with_label(buf);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
