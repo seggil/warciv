@@ -506,6 +506,7 @@ Cities commands:\n\
 ================\n\
         <shift>a: add the city in the trade planning\n\
                b: buy for selected cities\n\
+        <shift>q: toggle traderoutes lines for selected cities\n\
         <shift>r: remove the rally point for selected cities\n\
         <shift>s: select a rally point for selected cities\n\
         <shift>u: clear the airlift queue\n\
@@ -1020,8 +1021,7 @@ on one city means remove the city of the list. \
 Then from menu select, Auto caravan->Calculate trade planning. \
 \n\n\
 You can press 'ctrl'+'t' to see your suggested traderoutes at map.\
-\n\n\
-\
+"), _("\
 Auto-Caravans\n\
 =============\n\
 \n\
