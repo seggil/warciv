@@ -231,6 +231,9 @@ static void create_store(void)
     case COL_RIGHT_TEXT:
       model_types[i] = G_TYPE_STRING;
       break;
+    case COL_INT:
+      model_types[i] = G_TYPE_INT;
+      break;
     }
   }
   /* special (invisible rows) - Text style, weight and player id */
@@ -312,6 +315,7 @@ void create_players_dialog(void)
     struct player_dlg_column *pcol;
     GtkCellRenderer *renderer;
     GtkTreeViewColumn *col;
+    gfloat align = 0.0;
 
     pcol = &player_dlg_columns[i];
     col = NULL;
@@ -336,6 +340,10 @@ void create_players_dialog(void)
       col = gtk_tree_view_column_new_with_attributes(pcol->title, renderer,
              "color", i, NULL);
       break;
+    case COL_RIGHT_TEXT:
+      align += 0.5;
+    case COL_INT:
+      align += 0.5;
     case COL_TEXT:
       renderer = gtk_cell_renderer_text_new();
       g_object_set(renderer, "style-set", TRUE, "weight-set", TRUE, NULL);
@@ -346,25 +354,12 @@ void create_players_dialog(void)
 	  "weight", num_player_dlg_columns + 1,
 	  NULL);
       gtk_tree_view_column_set_sort_column_id(col, i);
-      break;
-    case COL_RIGHT_TEXT:
-      renderer = gtk_cell_renderer_text_new();
-      g_object_set(renderer, "style-set", TRUE, "weight-set", TRUE, NULL);
 
-      col = gtk_tree_view_column_new_with_attributes(pcol->title, renderer,
-	  "text", i,
-	  "style", num_player_dlg_columns,
-	  "weight", num_player_dlg_columns + 1,
-	  NULL);
-      gtk_tree_view_column_set_sort_column_id(col, i);
-
-      if (pcol->type == COL_RIGHT_TEXT) {
-	g_object_set(renderer, "xalign", 1.0, NULL);
-	gtk_tree_view_column_set_alignment(col, 1.0);
-      }
+      g_object_set(renderer, "xalign", align, NULL);
+      gtk_tree_view_column_set_alignment(col, align);
       break;
     }
-    
+
     if (col) {
       gtk_tree_view_append_column(GTK_TREE_VIEW(players_list), col);
     }
@@ -507,16 +502,17 @@ static void build_row(GtkTreeIter *it, int i)
   GdkPixbuf *pixbuf;
   gint style, weight;
   int k;
-  gchar *p;
 
   for (k = 0; k < num_player_dlg_columns; k++) {
     struct player_dlg_column* pcol = &player_dlg_columns[k];
     switch (pcol->type) {
       case COL_TEXT:
       case COL_RIGHT_TEXT:
-        p = (gchar*)(pcol->func(plr));
-	gtk_list_store_set(store, it, k, p, -1);
+	gtk_list_store_set(store, it, k, (gchar *) pcol->string_func(plr), -1);
 	break;
+      case COL_INT:
+	gtk_list_store_set(store, it, k, (gint) pcol->int_func(plr), -1);
+        break;
       case COL_FLAG:
         pixbuf = get_flag(get_nation_by_plr(plr));
         /* The cell renderer makes a deep copy of the pixbuf. */
@@ -527,7 +523,7 @@ static void build_row(GtkTreeIter *it, int i)
         gtk_list_store_set(store, it, k, colors_standard[player_color(plr)], -1);
 	break;
       case COL_BOOLEAN:
-        gtk_list_store_set(store, it, k, (gboolean)pcol->bool_func(plr), -1);
+        gtk_list_store_set(store, it, k, (gboolean) pcol->bool_func(plr), -1);
 	break;
     }
   }

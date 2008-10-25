@@ -27,7 +27,8 @@ enum player_dlg_column_type {
   COL_COLOR,
   COL_BOOLEAN,
   COL_TEXT,
-  COL_RIGHT_TEXT    /* right aligned text */
+  COL_RIGHT_TEXT,
+  COL_INT
 };
 
 enum conn_flag {
@@ -40,10 +41,11 @@ struct player_dlg_column {
   bool show;
   enum player_dlg_column_type type;
   enum conn_flag flag;
-  const char *title;			/* already translated */
-  const char *(*func)(struct player*);	/* if type = COL_*TEXT */
-  bool (*bool_func)(struct player*);	/* if type = COL_BOOLEAN */
-  const char *tagname;			/* for save_options */
+  const char *title;				/* already translated */
+  const char *(*string_func)(struct player *);	/* if type = COL_*TEXT */
+  int (*int_func)(struct player *);		/* if type = COL_INT */
+  bool (*bool_func)(struct player *);		/* if type = COL_BOOLEAN */
+  const char *tagname;				/* for save_options */
 };
 
 extern struct player_dlg_column player_dlg_columns[];

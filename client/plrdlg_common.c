@@ -186,57 +186,41 @@ static const char *col_vision(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_cities(struct player *player)
+static int col_cities(struct player *player)
 {
-  static char buf[100];
-
-  my_snprintf(buf, sizeof(buf), "%4d", city_list_size(player->cities));
-
-  return buf;
+  return city_list_size(player->cities);
 }
 
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_units(struct player *player)
+static int col_units(struct player *player)
 {
-  static char buf[100];
-
-  my_snprintf(buf, sizeof(buf), "%4d", unit_list_size(player->units));
-
-  return buf;
+  return unit_list_size(player->units);
 }
 
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_population(struct player *player)
+static int col_population(struct player *player)
 {
-  return population_to_text(civ_population(player));
+  return civ_population(player);
 }
 
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_gold(struct player *player)
+static int col_gold(struct player *player)
 {
-  static char buf[100];
-
-  my_snprintf(buf, sizeof(buf), "%6d", player->economic.gold);
-
-  return buf;
+  return player->economic.gold;
 }
 
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_income(struct player *player)
+static int col_income(struct player *player)
 {
-  static char buf[100];
-
-  my_snprintf(buf, sizeof(buf), "%+4d", player_get_expected_income(player));
-
-  return buf;
+  return player_get_expected_income(player);
 }
 
 /******************************************************************
@@ -261,13 +245,9 @@ static const char *col_research(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_bulbs(struct player *player)
+static int col_bulbs(struct player *player)
 {
-  static char buf[100];
-
-  my_snprintf(buf, sizeof(buf), "%+4d", player_get_expected_bulbs(player));
-
-  return buf;
+  return player_get_expected_bulbs(player);
 }
 
 /******************************************************************
@@ -293,52 +273,37 @@ static const char *col_science_goal(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_techs(struct player *player)
+static int col_techs(struct player *player)
 {
-  static char buf[100];
-
-  if (player->research.techs_researched > 0) {
-    /* We always know A_NONE, so remove one tech in the counter. */
-    my_snprintf(buf, sizeof(buf), "%3d", player->research.techs_researched - 1);
-  } else {
-    sz_strlcpy(buf, "-");
-  }
-
-  return buf;
+  return MAX(player->research.techs_researched - 1, 0);
 }
 
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_production(struct player *player)
+static int col_production(struct player *player)
 {
-  static char buf[100];
   int prod = 0;
 
   city_list_iterate(player->cities, pcity) {
     prod += pcity->shield_surplus;
   } city_list_iterate_end;
 
-  my_snprintf(buf, sizeof(buf), "%4d", prod);
-
-  return buf;
+  return prod;
 }
 
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_economics(struct player *player)
+static int col_economics(struct player *player)
 {
-  static char buf[100];
   int eco = 0;
 
   city_list_iterate(player->cities, pcity) {
     eco += pcity->trade_prod;
   } city_list_iterate_end;
 
-  my_snprintf(buf, sizeof(buf), "%4d", eco);
-
-  return buf;
+  return eco;
 }
 
 /******************************************************************
@@ -399,53 +364,47 @@ static const char *col_host(struct player *player)
 /******************************************************************
  ...
 *******************************************************************/
-static const char *col_idle(struct player *plr)
+static int col_idle(struct player *plr)
 {
-  int idle;
-  static char buf[100];
-
   if (plr->nturns_idle > 3) {
-    idle = plr->nturns_idle - 1;
-  } else {
-    idle = 0;
+    return plr->nturns_idle - 1;
   }
-  my_snprintf(buf, sizeof(buf), "%d", idle);
-  return buf;
+  return 0;
 }
 
 /******************************************************************
  ...
 *******************************************************************/
 struct player_dlg_column player_dlg_columns[] = {
-  {TRUE, COL_TEXT, CF_COMMON, N_("?Player:Name"), col_name, NULL, "name"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Username"), col_username, NULL, "username"},
-  {TRUE, COL_FLAG, CF_COMMON, N_("Flag"), NULL, NULL, "flag"},
-  {TRUE, COL_TEXT, CF_COMMON, N_("Nation"), col_nation, NULL, "nation"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Government"), col_government, NULL, "government"},
-  {TRUE, COL_COLOR, CF_COMMON, N_("Border"), NULL, NULL, "border"},
-  {TRUE, COL_TEXT, CF_COMMON, N_("Team"), col_team, NULL, "team"},
-  {TRUE, COL_BOOLEAN, CF_COMMON, N_("AI"), NULL, col_ai, "ai"},
-  {TRUE, COL_TEXT, CF_PLAYER, N_("Attitude"), col_love, NULL, "attitude"},
-  {TRUE, COL_TEXT, CF_PLAYER, N_("Embassy"), col_embassy, NULL, "embassy"},
-  {TRUE, COL_TEXT, CF_PLAYER, N_("Dipl.State"), col_diplstate, NULL, "diplstate"},
-  {TRUE, COL_TEXT, CF_PLAYER, N_("Vision"), col_vision, NULL, "vision"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Cities"), col_cities, NULL, "cities"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Units"), col_units, NULL, "units"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Population"), col_population, NULL, "population"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Gold"), col_gold, NULL, "gold"},
-  {FALSE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Income"), col_income, NULL, "income"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Research"), col_research, NULL, "research"},
-  {FALSE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Bulbs"), col_bulbs, NULL, "bulbs"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Science goal"), col_science_goal, NULL, "goal"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Techs"), col_techs, NULL, "techs"},
-  {TRUE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Production"), col_production, NULL, "production"},
-  {TRUE, COL_TEXT, CF_GLOBAL_OBSERVER, N_("Economics"), col_economics, NULL, "economics"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("Rates"), col_rates, NULL, "rates"},
-  {TRUE, COL_TEXT, CF_COMMON, N_("Reputation"), col_reputation, NULL, "reputation"},
-  {TRUE, COL_TEXT, CF_COMMON, N_("State"), col_state, NULL, "state"},
-  {FALSE, COL_TEXT, CF_COMMON, N_("?Player_dlg:Host"), col_host, NULL, "host"},
-  {FALSE, COL_RIGHT_TEXT, CF_COMMON, N_("?Player_dlg:Idle"), col_idle, NULL, "idle"},
-  {FALSE, COL_RIGHT_TEXT, CF_COMMON, N_("Ping"), get_ping_time_text, NULL, "ping"}
+  {TRUE, COL_TEXT, CF_COMMON, N_("?Player:Name"), col_name, NULL, NULL, "name"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("Username"), col_username, NULL, NULL, "username"},
+  {TRUE, COL_FLAG, CF_COMMON, N_("Flag"), NULL, NULL, NULL, "flag"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("Nation"), col_nation, NULL, NULL, "nation"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("Government"), col_government, NULL, NULL, "government"},
+  {TRUE, COL_COLOR, CF_COMMON, N_("Border"), NULL, NULL, NULL, "border"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("Team"), col_team, NULL, NULL, "team"},
+  {TRUE, COL_BOOLEAN, CF_COMMON, N_("AI"), NULL, NULL, col_ai, "ai"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Attitude"), col_love, NULL, NULL, "attitude"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Embassy"), col_embassy, NULL, NULL, "embassy"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Dipl.State"), col_diplstate, NULL, NULL, "diplstate"},
+  {TRUE, COL_TEXT, CF_PLAYER, N_("Vision"), col_vision, NULL, NULL, "vision"},
+  {FALSE, COL_INT, CF_COMMON, N_("Cities"), NULL, col_cities, NULL, "cities"},
+  {FALSE, COL_INT, CF_COMMON, N_("Units"), NULL, col_units, NULL, "units"},
+  {FALSE, COL_INT, CF_COMMON, N_("Population"), NULL, col_population, NULL, "population"},
+  {FALSE, COL_INT, CF_COMMON, N_("Gold"), NULL, col_gold, NULL, "gold"},
+  {FALSE, COL_INT, CF_GLOBAL_OBSERVER, N_("Income"), NULL, col_income, NULL, "income"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("Research"), col_research, NULL, NULL, "research"},
+  {FALSE, COL_INT, CF_GLOBAL_OBSERVER, N_("Bulbs"), NULL, col_bulbs, NULL, "bulbs"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("Science goal"), col_science_goal, NULL, NULL, "goal"},
+  {FALSE, COL_INT, CF_COMMON, N_("Techs"), NULL, col_techs, NULL, "techs"},
+  {TRUE, COL_INT, CF_GLOBAL_OBSERVER, N_("Production"), NULL, col_production, NULL, "production"},
+  {TRUE, COL_INT, CF_GLOBAL_OBSERVER, N_("Economics"), NULL, col_economics, NULL, "economics"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("Rates"), col_rates, NULL, NULL, "rates"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("Reputation"), col_reputation, NULL, NULL, "reputation"},
+  {TRUE, COL_TEXT, CF_COMMON, N_("State"), col_state, NULL, NULL, "state"},
+  {FALSE, COL_TEXT, CF_COMMON, N_("?Player_dlg:Host"), col_host, NULL, NULL, "host"},
+  {FALSE, COL_INT, CF_COMMON, N_("?Player_dlg:Idle"), NULL, col_idle, NULL, "idle"},
+  {FALSE, COL_RIGHT_TEXT, CF_COMMON, N_("Ping"), get_ping_time_text, NULL, NULL, "ping"}
 };
 
 const int num_player_dlg_columns = ARRAY_SIZE(player_dlg_columns);
