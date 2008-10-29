@@ -2065,6 +2065,10 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
           gtk_tree_model_get(model, &iter, 0, &res, -1);
           pcity = res;
           if (pcity != NULL) {
+            /* Make sure the city still exists. */
+            pcity = find_city_by_id(pcity->id);
+          }
+          if (pcity != NULL) {
             total += city_buy_cost(pcity);
           }
         }
