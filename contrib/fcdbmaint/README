@@ -1,0 +1,9 @@
+These are 2 perl scripts to maintain freeciv database.
+
+To run the perl scripts you need the perl modules,
+DBI, DBD::mysql, Getopt::Mixed, Time::localtime,
+Digest::MD5.
+
+fcdbdelete -- delete entries in freeciv database
+fcdbmain -- maintenace tool to operate on freeciv database
+fcdb.cfg -- configuration file for programs above

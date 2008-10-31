@@ -1,0 +1,441 @@
+#!/usr/bin/perl -w
+#-------------------------------------------------------------------------------------------------------------
+# perl script to delete entries in freeciv database
+#
+use DBI qw(:sql_types);
+use Getopt::Mixed "nextOption";
+use IO qw(File);;
+use Time::localtime;
+use Digest::MD5 qw(md5_hex);
+use feature ":5.10";
+use strict;
+# default configuration file name
+my $dcfg='fcdb.cfg';
+# search path
+my $spath="/etc/freeciv:/usr/etc/freeciv:.";
+# defaults
+my $defaults={
+	'db'=>'freeciv',				# database name
+	'dbuser'=>'freeciv',			# db user
+	'dbpass'=>'freeciv',			# db password
+	'gamesinterval'=>'3 month',		# games older than should be deleted
+	'loginloginterval'=>'6 month',	# loginlogs older than should be deleted
+	'unusedlogins'=>'1 week'		# unused logins should be deleted
+};
+# 
+my($FC);
+#-------------------------------------------------------------------------------------------------------------
+# read configuration file
+sub readcfg($$) {
+	my $cf=shift();
+	my $go=shift();
+	my ($o,$var,$val);
+	my $fh = new IO::File;
+	unless($cf) { # find configuration
+		foreach (split(/:/, $spath)) {
+			if ( -f "$_/$dcfg" ) {
+				$cf="$_/$dcfg";
+				last;
+			}
+		}
+	}
+	if( $fh->open($cf) ) {
+		while(<$fh>) {
+			chomp();
+			s/#.*$//g; # remove comments
+			s/\s*$//g; # remove trailing whitespace
+			next unless($_);
+			($var,$val)=split(/=/);
+			$o->{$var}=$val;
+		}
+		$fh->close();
+	} else {
+		printf STDERR "can't open $cf on reading \n";
+		exit(1);
+	}
+	foreach (keys(%{$o})) { # overwrite defaults
+		$defaults->{$_}=$o->{$_};
+	}
+	# overwrite defaults with cmdline parameter
+	foreach(keys(%{$go})) {
+		$defaults->{$_}=$go->{$_};
+	}
+}
+#-------------------------------------------------------------------------------------------------------------
+# list nicks .. like /stat <nick> command
+sub do_list {
+	my @nicks=@_;
+	my(%n,$nick,$res,$ad);
+	grep($n{$_}++, @nicks); # avoid doubles
+	@nicks=sort(keys(%n)); # and sort them
+
+	my ($cn)=$FC->prepare(q(select id, name, password, email, createtime, 
+			accesstime, address, createaddress, logincount 
+			from auth where name=?))
+		or die "can't prepare statement: $DBI::errstr";
+	# get game_types and amount of games played of that type
+	my($gt)=$FC->prepare(q(select game_type,COUNT(game_type)
+			FROM ratings 
+			WHERE user_id=?
+			GROUP by game_type))
+		or die "can't prepare statement: $DBI::errstr";
+	# get results per game_type
+	my($rt)=$FC->prepare(q(SELECT r.game_type, p.result, COUNT(p.result)
+			FROM ratings AS r INNER JOIN players AS p
+			ON r.player_id = p.id
+			WHERE r.user_id = ? 
+			GROUP BY r.game_type, p.result
+			ORDER by r.game_type, p.result
+		)) or die "can't prepare statement: $DBI::errstr";
+	# get ratings per game_type
+	my($rat)=$FC->prepare(q{
+		SELECT game_type,rating, rating_deviation FROM ratings
+		WHERE id in (SELECT MAX(id) FROM ratings WHERE user_id = ? GROUP by game_type )
+		}) or die "can't prepare statement: $DBI::errstr";
+	# resent rated games 
+	my($rg)=$FC->prepare(q(
+		SELECT g.id FROM games AS g INNER JOIN ratings AS r ON g.id = r.game_id
+        	WHERE r.user_id=?
+        	ORDER BY g.id DESC
+		LIMIT 5
+	)) or die "can't prepare statement: $DBI::errstr";
+#          AND r.game_type= ?
+
+	foreach $nick (@nicks) {
+		my(%gt,$id,$type,$ratv,$dev,$count,$ad,$ct,$at,$tm);
+		unless($cn->execute($nick) ) { 
+			printf("Nick %s does not exist.\n", $nick);
+		  	next;
+		} 
+		if($cn->rows < 1) {
+			printf("%s:does not exist\n",$nick);
+			next();
+		} elsif($cn->rows > 1) {
+			printf("%s:has multiple entries.\n", $nick);
+		}
+		$cn->bind_col(1,\$id);
+		$ad=$cn->fetchrow_hashref();
+		# convert time_t to localtime string
+		$tm=localtime($ad->{createtime});
+		$ct=sprintf("%4d-%02d-%02d %02d:%02d:%02d", 
+			$tm->year + 1900, $tm->mon,$tm->mday,$tm->hour,$tm->min,$tm->sec);
+		$tm=localtime($ad->{accesstime});
+		$at=sprintf("%4d-%02d-%02d %02d:%02d:%02d", 
+			$tm->year + 1900, $tm->mon,$tm->mday,$tm->hour,$tm->min,$tm->sec);
+		# print ito
+		printf("%s:\tuser id:%-24d Login Count:%d\n",$ad->{name},$id,$ad->{logincount});
+		printf("\temail:      %-21s\n", $ad->{email} ? $ad->{email} : 'unset' );
+		printf("\tcreated:    %-21s from %s\n", $ct, $ad->{createaddress});
+		printf("\tlast login: %-21s from %s\n", $at, $ad->{address});
+		printf("\tpassword blocked!\n") if($ad->{password} eq 'x');
+		unless($gt->execute($id)) {
+			printf(" not rated\n");
+			next;
+		}
+		while( ($type,$count)=$gt->fetchrow_array() ) {
+			$gt{$type}{count}=$count;
+		}
+		unless($rt->execute($id)) {
+			printf(" not rated\n");
+			next;
+		}
+		while ( my($type,$res,$cnt)=$rt->fetchrow_array()) {
+			$gt{$type}{$res}=$cnt;
+		}
+		unless($rat->execute($id)) {
+			printf(" not rated\n");
+			next;
+		}
+		while ( ($type,$ratv,$dev)=$rat->fetchrow_array()) {
+			$gt{$type}{rat}=$ratv;
+			$gt{$type}{dev}=$dev;
+		}
+		if( keys(%gt) ) {
+			printf("\t%-10s %5s %6s %6s %13s %10s %8s\n", 
+				'Game Type','Wins','Loses','Draws','Total Played','Rating','RD');
+			foreach $type (keys(%gt)) {
+				printf( "\t%-10s %5d %6d %6d %13d %10.2f %8.2f\n",
+					$type,
+					($gt{$type}{win} ? $gt{$type}{win} : 0),
+					($gt{$type}{lose} ? $gt{$type}{lose} : 0),
+					($gt{$type}{draw} ? $gt{$type}{draw} : 0),
+					($gt{$type}{count} ? $gt{$type}{count} : 0),
+					($gt{$type}{rat} ? $gt{$type}{rat} : 0),
+					($gt{$type}{dev} ? $gt{$type}{dev} : 0)
+				);
+			}
+		}
+		# last rated games
+		unless($rg->execute($id )  && $rg->rows() > 0) { 
+			print("\n");
+			next; 
+		}
+		print("\tresent rated games:");
+		while( ($type)=$rg->fetchrow_array() ) {
+			printf(" %d", $type);
+		}
+		print("\n\n");
+	}
+}
+#-------------------------------------------------------------------------------------------------------------
+# set_mail
+# set email address in auth table
+sub set_mail {
+	my($r);
+	my($mail)=shift();
+	my($sm)=$FC->do(q(UPDATE auth set email=') . $mail . q{' where name in ('} . join("','",@_) . q{')});
+	return($sm ? 1 : 0 );
+}
+#-------------------------------------------------------------------------------------------------------------
+# add_nick
+#
+sub add_nick($$;$) {
+	my($nick,$pass,$mail)=@_;
+	$pass=md5_hex($pass);
+	my($st)=$FC->prepare(q{INSERT INTO 
+			auth (name,password,email,createtime,accesstime,address,createaddress)
+			 values (?,?,?,unix_timestamp(),unix_timestamp(),'127.0.0.1','127.0.0.1')
+		});
+	my($res)=$st->execute($nick,$pass,$mail ? $mail : undef());
+	return($res ? 1 : 0);
+}
+#-------------------------------------------------------------------------------------------------------------
+# set_password
+sub set_password($$) {
+	my($pass,$nick)=@_;
+	$pass=md5_hex($pass);
+	my($st)=$FC->do(q{UPDATE auth set password='} . $pass . q{' where name='} . $nick . q{'});
+	return($st ? 1 : 0);
+}
+#-------------------------------------------------------------------------------------------------------------
+# do_delete
+#	remove nicks
+sub do_delete {
+    my($nick,$nid,$r);
+	my($ni)=$FC->prepare(q(SELECT id from auth where name=?));
+
+	foreach $nick (@_) {
+		$FC->begin_work();
+		printf("Removing %s:\n", $nick);
+		if( $ni->execute($nick) ) {
+			$ni->bind_col(1,\$nid);
+			if($ni->fetch()) {
+				$r=$FC->do(q{DELETE from ratings where user_id=?},undef, $nid);
+				printf("\t%-5d entries deleted from ratings\n",$r);
+			}
+		}
+		$r=$FC->do(q{DELETE from loginlog where name=?},undef, $nick);
+		printf("\t%-5d entries deleted from loginlog\n",$r);
+		$r=$FC->do(q{DELETE from auth where name=?},undef, $nick);
+		printf("\t%-5d entries deleted from auth\n",$r);
+		$FC->commit();
+	}
+}
+#-------------------------------------------------------------------------------------------------------------
+# do_search
+sub do_search {
+	my($f,%r,@s,$nick,@r,$qn,@ids,$sx,$tm,$ta,$tc);
+	my($sa)=$FC->prepare(q(SELECT id from auth where name like ? or email like ?));
+	
+
+	grep($r{$_}++, @_); # avoid doubles
+	@s=sort(keys(%r));
+	# get id's
+	foreach $nick (@s) {
+		$qn="\%$nick\%";
+		if($sa->execute($qn,$qn)) {
+			$sa->bind_col(1,\$qn);
+			while($sa->fetch()) {
+				push(@ids, $qn);
+			}
+		}
+	}
+	%r=(); # reset
+	grep($r{$_}++,@ids);
+	@ids=keys(%r);
+	$sx= $FC->prepare(q{SELECT * from auth where id in (} . join(',',@ids) . q{) order by name} );
+	if($sx->execute()) {
+		printf("%-20s | %-5s | %-6s | %-10s | %-15s | %-10s | %-15s | %s \n",
+			'Nick', 'Id','LCount','Created','From','Last','From', 'eMail');
+		while($qn=$sx->fetchrow_hashref()) {
+			$tm=localtime($qn->{accesstime});
+			$ta=sprintf("%4d-%02d-%02d", 
+				$tm->year + 1900, $tm->mon,$tm->mday);
+			$tm=localtime($qn->{createtime});
+			$tc=sprintf("%4d-%02d-%02d", 
+				$tm->year + 1900, $tm->mon,$tm->mday);
+			printf("%-20s | %5d | %6d | %-10s | %15s | %-10s | %15s | %s \n",
+				$qn->{name}, $qn->{id}, $qn->{logincount},$tc,$qn->{createaddress},
+				$ta,$qn->{address},$qn->{email} ? $qn->{email} : '');
+
+		}
+	}
+}
+#-------------------------------------------------------------------------------------------------------------
+# print the help message
+sub print_help() {
+	exec('perldoc','-U',$0);
+	exit(1);
+}
+#-------------------------------------------------------------------------------------------------------------
+# parse options
+my($cfg,$go,$do,$val,@nicks,%nicks);
+
+Getopt::Mixed::init("h help>h a add>a p pass>p  s search>s d delete>d l list>l m=s email>m db=s  dbuser=s dbpass=s config=s");
+$do=undef();
+while( ($_,$val)=nextOption()) {
+	given($_) {
+		when(/db/) { $go->{'db'}=$val; } 
+		when(/dbuser/) { $go->{'dbuser'}=$val;}
+		when(/dbpass/) { $go->{'dbpass'}=$val;}
+		when(/config/) { $cfg=$val; }
+		when(/a/) {$do='add';}
+		when(/d/) {$do='delete';}
+		when(/l/) {$do='list' unless($do);}
+		when(/s/) {$do='search';}
+		when(/p/) { $do='pass';}
+		when(/m/) { 
+			$go->{email}=$val;
+			$do='mail' unless($do);
+		}
+		when(/s/) { $do='search';}
+		when(/h/) {print_help();};
+	}
+}
+Getopt::Mixed::cleanup();
+readcfg($cfg,$go);
+# connect to the database
+$FC=DBI->connect(
+	"dbi:mysql:$defaults->{db}",
+	$defaults->{dbuser},
+	$defaults->{dbpass});
+
+die "Can't connect to database $defaults->{db}"
+	unless($FC);
+# switch what to do
+
+given($do) {
+	$_='' unless($_);
+	when(/check/) { do_check(@ARGV);}
+	when(/delete/) { do_delete(@ARGV);}
+	when(/list/) { 
+		if($go->{email}) {
+			@nicks=@ARGV;
+			push(@nicks, mail2nick($go->{email}));
+			do_list(keys(%nicks));
+		} else {
+			do_list(@ARGV);
+		}
+	}
+	when(/add/) { add_nick($ARGV[0],$ARGV[1],$go->{email});}
+	when(/mail/) { set_mail($go->{email}, @ARGV);}
+	when(/pass/) { set_password($ARGV[0],$ARGV[1]);}
+	when(/search/) {do_search(@ARGV, $go->{email});}
+	default { print_help();}
+}
+__END__
+=pod
+
+=head1 fcdbmaint -- administer freeciv database
+
+=head2 Synopsis 
+
+fcdmaint [OPTIONS] [ <nick> [<nick>]]
+
+=head2 Description
+
+fcdbmaint is a tool to administer the freeciv database.
+
+=head2 OPTIONS 
+
+=over 2
+
+=item -a || --add <nick> <password>
+
+Add nick to database, arguments to fcdbmaint are <nick> <password>,
+if email address is given via -m option the email address is submitted to database.
+
+=item --config <file>
+
+Use configuration file <file> instead of default configuration fcdb.cfg
+
+=item --db <database>
+
+use database instead of default database freeciv
+
+=item --dbpass <pass>
+
+Use password <pass> instead of default password
+
+=item --dbuser <name>
+
+Log into database using username <name> instead of default 
+
+=item -d || --delete <nick> [ <nick> ]
+
+Delete nicks from database, this will remove all entries assigned to nicks from auth, loginlog and ratings table.
+
+=item -l || --list <nick> [ <nick> ]
+
+List information about nicks, if a email address is defined with option (-m),
+all nicks with email address will also listed.
+
+=item -m || --email  <address> <nick> [ <nick> ]
+
+Updates auth table sets the email column to <address> for each given nick.
+
+=item -p || -pass <password> <nick> [ <nick> ]
+
+Change password of nick.
+
+=item -s || --search <nick> [ <nick> ]
+
+Search for nicks like <nick> or email 
+
+=back
+=head2 Configuration file format 
+
+The confguration file "fcdb.cfg" contains the default variables to setup
+fcdbdelete.
+
+=over 2
+
+=item db=<db>
+
+the freeciv database name.
+
+=item dbuser=<user>
+
+the username to connect to the database.
+
+=item dbpass=<pass>
+
+the password to use on logon to the database.
+
+=back
+
+=head2 Configuration file format 
+
+The confguration file, default "fcdb.cfg", contains the setup to run fcdbdelete.
+
+=over 2
+
+=item db=<db>
+
+the freeciv database name.
+
+=item dbuser=<user>
+
+the username to connect to the database.
+
+=item dbpass=<pass>
+
+the password to use on logon to the database.
+
+=back
+
+=head2 Author
+
+Thomas Drillich <th@drillich.com>
+
+=cut

@@ -1,0 +1,247 @@
+#!/usr/bin/perl -w
+#-------------------------------------------------------------------------------------------------------------
+# perl script to delete entries in freeciv database
+#
+use DBI;
+use Getopt::Mixed "nextOption";
+use IO qw(File);;
+use feature ":5.10";
+use strict;
+# default configuration file name
+my $dcfg='fcdb.cfg';
+my $spath="/etc/freeciv:/usr/etc/freeciv:.";
+my $defaults={
+	'db'=>'freeciv',				# database name
+	'dbuser'=>'freeciv',			# db user
+	'dbpass'=>'freeciv',			# db password
+	'gamesinterval'=>'3 month',		# games older than should be deleted
+	'loginloginterval'=>'6 month',	# loginlogs older than should be deleted
+	'unusedlogins'=>'1 week'		# unused logins should be deleted
+};
+#-------------------------------------------------------------------------------------------------------------
+# read configuration file
+sub readcfg($) {
+	my $cf=shift();
+	my ($o,$var,$val);
+	my $fh = new IO::File;
+	if( $fh->open($cf) ) {
+		while(<$fh>) {
+			chomp();
+			s/#.*$//g; # remove comments
+			s/\s*$//g; # remove trailing whitespace
+			next unless($_);
+			($var,$val)=split(/=/);
+			$o->{$var}=$val;
+		}
+		$fh->close();
+	} else {
+		printf STDERR "can't open $cf on reading \n";
+		exit(1);
+	}
+	return($o);
+}
+#-------------------------------------------------------------------------------------------------------------
+# print error message and rollback sql commands
+sub rollback($$) {
+	my ($db,$msg)=@_;
+	printf(STDERR $msg, $db->errstr());
+	$db->rollback();
+}
+#-------------------------------------------------------------------------------------------------------------
+# parse options
+my($cfg,$go,$val,$FC,$cnt,$err,$tab,$do);
+
+Getopt::Mixed::init("h help>h d=s db>d u=s dbuser>u p=s dbpass>p c=s config>c");
+while( ($_,$val)=nextOption()) {
+	given($_) {
+              when(/d/) { $go->{'db'}=$val; } 
+              when(/u/) { $go->{'dbuser'}=$val;}
+              when(/p/) { $go->{'dbpass'}=$val;}
+              when(/c/) { $cfg=$val; }
+              when(/h/) {
+		exec('perldoc','-U',$0);
+		exit(1);
+		}
+	}
+}
+Getopt::Mixed::cleanup();
+
+unless($cfg) { # find configuration
+	foreach (split(/:/, $spath)) {
+		if ( -f "$_/$dcfg" ) {
+			$cfg="$_/$dcfg";
+			last;
+		}
+	}
+}
+if($cfg) { # read configuration
+	my $o=readcfg($cfg);
+	foreach (keys(%{$o})) { # overwrite defaults
+		$defaults->{$_}=$o->{$_};
+	}
+}
+# overwrite defaults with cmdline parameter
+foreach(keys(%{$go})) {
+	$defaults->{$_}=$go->{$_};
+}
+# connect to the database
+$FC=DBI->connect(
+	"dbi:mysql:$defaults->{db}",
+	$defaults->{dbuser},
+	$defaults->{dbpass});
+
+die "Can't connect to database $defaults->{db}"
+	unless($FC);
+
+WORK: {
+	$FC->begin_work() or die $FC->errstr();
+	# loginlog
+	$cnt = $FC->do("DELETE FROM loginlog 
+		WHERE logintime < (now() - interval $defaults->{loginloginterval})");
+	if($FC->err) {
+		rollback($FC,  "can't delete entries in loginlog, reason %s\n");
+		last WORK;
+	}
+	printf("%d entries deleted from loginlog\n",$cnt);
+	# unused logins after 
+	$cnt = $FC->do("
+		DELETE FROM auth
+			WHERE  email is NULL 
+			AND accesstime < ( now() - interval $defaults->{unusedlogins}) 
+			AND id not in (SELECT distinct user_id FROM ratings)
+	");
+	if($FC->err) {
+		rollback($FC,  "can't delete unused login entries in auth, reason %s\n");
+		last WORK;
+	}
+	printf("%d entries deleted from auth\n",$cnt);
+	# delete obsolete entries in allies
+	$cnt = $FC->do("
+	DELETE allies from allies  INNER JOIN player_status INNER JOIN players INNER JOIN games
+	WHERE allies.player_status_id = player_status.id
+	        and player_status.player_id = players.id
+                and players.game_id = games.id
+		and games.last_update < (now() - interval $defaults->{gamesinterval})
+	");
+	if($FC->err) {
+		rollback($FC,  "can't delete obsolete allies entries reason %s\n");
+		last WORK;
+	}
+	printf("%d entries deleted from allies entries\n",$cnt);
+	# remove obsolete turns, turn_maps, changed_terrain
+	foreach $tab ('turn_maps','changed_terrain', 'player_status') {
+		$cnt = $FC->do("
+			DELETE $tab FROM $tab INNER JOIN turns INNER JOIN games
+			WHERE $tab.turn_id = turns.id
+			and turns.game_id = games.id
+			and  games.last_update < (now() - interval $defaults->{gamesinterval})
+		");
+		if($FC->err) {
+			rollback($FC,  "can't delete obsolete turns in $tab, reason %s\n");
+			last WORK;
+		}
+		printf("%d entries deleted from %s\n",$cnt,$tab);
+	}
+	# delete obsolete entries 
+	foreach $tab ('turns','players','teams','terrain_maps','non_default_settings','ratings') {
+		$cnt = $FC->do("
+			DELETE $tab from $tab 
+			INNER JOIN games as g on g.id = $tab.game_id
+			WHERE g.last_update < (now() - interval $defaults->{gamesinterval})
+		");
+		if($FC->err) {
+			rollback($FC,  "can't delete obsolete entries in $tab reason %s\n");
+			last WORK;
+		}
+		printf("%d entries deleted from %s\n",$cnt,$tab);
+	}
+	# at least delete the obsolete entries in games
+	$cnt = $FC->do("
+		DELETE  FROM  games 
+		WHERE  games.last_update < (now() - interval $defaults->{gamesinterval})
+	");
+	if($FC->err) {
+		rollback($FC,  "can't delete obsolete games reason %s\n");
+		last WORK;
+	}
+	printf("%d entries deleted from games\n",$cnt);
+	# when all jobs done
+	$FC->commit();	
+}
+__END__
+=pod
+
+=head1 fcdbdelete -- delete entries from freeciv database
+
+=head2 Synopsis 
+
+fcdbdelete [OPTIONS]
+
+=head2 Description
+
+fcdbdelete removes entries from the freeciv database.
+
+
+=head2 OPTIONS 
+
+=over 2
+
+=item -c || --config <file>
+
+Use configuration file <file> instead of default file "fcdb.cfg", searched in
+/etc/freeciv, /usr/etc/freeciv and curren directory.
+
+=item -d || --db <db>
+
+Use database <db> instead of default database "freeciv".
+
+=item -h || --help
+
+Print this help.
+
+=item -p || --dbpass <pass>
+
+Use password <pass> instead of default password.
+
+=item -u || --dbuser <username>
+
+=back
+
+=head2 Configuration file format 
+
+The confguration file, default "fcdb.cfg", contains the setup to run fcdbdelete.
+
+=over 2
+
+=item db=<db>
+
+the freeciv database name.
+
+=item dbuser=<user>
+
+the username to connect to the database.
+
+=item dbpass=<pass>
+
+the password to use on logon to the database.
+
+=item gamesinterval=<interval>
+
+All games older than (now - <interval>) should be deleted,
+see http://dev.mysql.com/doc/refman/5.0/en/date-and-time-functions.html.
+
+=item loginloginterval=<interval>
+
+All entries in table "loginlog" older than (now - <interval>) should be deleted.
+
+=item unusedlogins=<interval>
+
+All unused (unrated) logins should be deleted after (now() - <interval>).
+
+=back
+
+=head2 Author
+
+Thomas Drillich <th@drillich.com>
+
+=cut
