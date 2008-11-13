@@ -252,7 +252,7 @@ bool client_start_server(void)
 
     /* include the port to avoid duplication */
     if (logfile) {
-      fd = open(logfile, O_WRONLY | O_CREAT, 0644);
+      fd = open(logfile, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
 
       if (fd != 1) {
         dup2(fd, 1);
