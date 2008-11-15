@@ -586,13 +586,13 @@ const struct command commands[] = {
       "a draw. That is, the game counts as a tie for all players."),
    ECHO_ALL, VCF_NODISSENT, 50
   },
-  {"remove",	ALLOW_ADMIN, ALLOW_CTRL,
+  {"remove",	ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("remove <player-name>"),
    N_("Fully remove player from game."),
    N_("This *completely* removes a player from the game, including "
       "all cities and units etc. Works even in the middle of game. Use with care!"),
-   ECHO_ALL, VCF_NONE, 50
+   ECHO_ALL, VCF_NODISSENT, 75
   },
   {"save",	ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
