@@ -4059,7 +4059,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   if (pplayer) {
     attach_connection_to_player(pconn, pplayer);
   } else {
-    // case global observer
+    /* case global observer */
     conn_list_append(game.game_connections, pconn);
     restore_access_level(pconn);
   }
@@ -4316,7 +4316,9 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   if (pplayer) {
     unattach_connection_from_player(pconn);
     cmd_reply(CMD_DETACH, caller, C_COMMENT,
-	      _("%s detaching from %s"), pconn->username, pplayer->name);
+	      _("%s detaching from %s."), pconn->username, pplayer->name);
+    notify_conn(NULL, _("Server: %s has detached from player %s."),
+                pconn->username, pplayer->name);
   } else {
     /* was global observer */
     pconn->observer = FALSE;
@@ -4344,7 +4346,9 @@ static bool detach_command(struct connection *caller, char *str, bool check)
 	if (aconn->observer) {
 	  unattach_connection_from_player(aconn);
 	  send_conn_info(aconn->self, game.est_connections);
-	  notify_conn(aconn->self, _("detaching from %s."), pplayer->name);
+	  notify_conn(aconn->self, _("Server: You are no longer "
+                                     "observing player %s."),
+                      pplayer->name);
 	}
       } conn_list_iterate_end;
       /* actually do the removal */
