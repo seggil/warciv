@@ -2545,6 +2545,10 @@ static void get_mapview_corners(int x[4], int y[4])
 **************************************************************************/
 void refresh_overview_canvas(void)
 {
+  if (!aconnection.established) {
+    return;
+  }
+
   whole_map_iterate(ptile) {
     overview_update_tile(ptile);
   } whole_map_iterate_end;
@@ -2556,6 +2560,10 @@ void refresh_overview_canvas(void)
 **************************************************************************/
 void overview_update_tile(struct tile *ptile)
 {
+  if (!aconnection.established) {
+    return;
+  }
+
   /* Base overview positions are just like natural positions, but scaled to
    * the overview tile dimensions. */
   do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
