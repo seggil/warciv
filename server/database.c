@@ -2906,13 +2906,15 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
   MYSQL_ROW row;
   int i;
   char addr[256], caddr[256];
+  char safe_user[MAX_LEN_NAME * 2 + 1];
 
   fcdb_connect_or_return(sock, NULL);
 
+  mysql_real_escape_string(sock, safe_user, user, strlen(user));
   my_snprintf(buf, sizeof(buf),
     "SELECT id, address, createaddress FROM auth "
     "  WHERE name = '%s'",
-    user);
+    safe_user);
   fcdb_execute_or_return(sock, buf, NULL);
 
   fal = fc_calloc(1, sizeof(struct fcdb_aliaslist));
