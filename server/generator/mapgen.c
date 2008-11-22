@@ -3488,7 +3488,7 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island)
 *************************************************************************/
 static bool mapgenerator89(bool team_placement)
 {
-  struct gen8_map *pmap, *island1, *island2, *island3;
+  struct gen8_map *pmap, *main_island, *small_island;
   int i, x , y, iter;
   int playermass, islandmass1 , islandmass2, islandmass3;
   int min_island_size = map.tinyisles ? 1 : 2;
@@ -3635,13 +3635,9 @@ static bool mapgenerator89(bool team_placement)
       islandmass3 = min_island_size;
     }
 
-    /* Create the islands */
-    freelog(LOG_VERBOSE, "Making island1");
-    island1 = create_fair_island(islandmass1, players_per_island);
-    freelog(LOG_VERBOSE, "Making island2");
-    island2 = create_fair_island(islandmass2, 0);
-    freelog(LOG_VERBOSE, "Making island3");
-    island3 = create_fair_island(islandmass3, 0);
+    /* Create the main island */
+    freelog(LOG_VERBOSE, "Making the main island");
+    main_island = create_fair_island(islandmass1, players_per_island);
 
     freelog(LOG_VERBOSE, "Placing islands on the map");
     if (team_placement && game.ext_info.teamplacement) {
@@ -3705,11 +3701,12 @@ static bool mapgenerator89(bool team_placement)
 	      continue;
 	    }
 
-            if (!place_island_on_map_for_team_player(pmap, island1, tpd[i].x,
-                                                     tpd[i].y, pplayers, num)) {
-              freelog(LOG_VERBOSE, "Cannot place island1 for player %d, "
-                                   "team %d (%d, %d)",
-                      pplayer->player_no, i, tpd[i].x, tpd[i].y);
+            if (!place_island_on_map_for_team_player(pmap, main_island,
+						     tpd[i].x, tpd[i].y,
+						     pplayers, num)) {
+              freelog(LOG_VERBOSE,
+		      "Cannot place the main island for player %d, team %d "
+		      "(%d, %d)", pplayer->player_no, i, tpd[i].x, tpd[i].y);
               done = FALSE;
               break;
             }
@@ -3740,8 +3737,8 @@ static bool mapgenerator89(bool team_placement)
 	  if (++count < players_per_island) {
 	    continue;
 	  }
-          if (!place_island_on_map(pmap, island1)) {
-            freelog(LOG_VERBOSE, "Cannot place island1 for player %d",
+          if (!place_island_on_map(pmap, main_island)) {
+            freelog(LOG_VERBOSE, "Cannot place the main island for player %d",
                     pplayer->player_no);
             done = FALSE;
             break;
@@ -3753,8 +3750,8 @@ static bool mapgenerator89(bool team_placement)
     } else /* if (!team_placement || !game.ext_info.teamplacement) */ {
       freelog(LOG_VERBOSE, "Team placement not requiered");
       for (i = 0; i < game.info.nplayers; i += players_per_island) {
-        if (!place_island_on_map(pmap, island1)) {
-          freelog(LOG_VERBOSE, "Cannot place island1 for player %d", i);
+        if (!place_island_on_map(pmap, main_island)) {
+          freelog(LOG_VERBOSE, "Cannot place the main island for player %d", i);
           done = FALSE;
           break;
         }
@@ -3762,26 +3759,30 @@ static bool mapgenerator89(bool team_placement)
     }
     if (done) {
       for (i = 0; i < game.info.nplayers; i++) {
-        if (!place_island_on_map(pmap, island2)) {
-          freelog(LOG_VERBOSE, "Cannot place island2 for player %d", i);
+	small_island = create_fair_island(islandmass2, 0);
+        if (!place_island_on_map(pmap, small_island)) {
+          freelog(LOG_VERBOSE, "Cannot place a small island for player %d", i);
           done = FALSE;
+	  free_map(small_island);
           break;
         }
+	free_map(small_island);
       }
     }
     if (done) {
       for (i = 0; i < game.info.nplayers; i++) {
-        if (!place_island_on_map(pmap, island3)) {
-          freelog(LOG_VERBOSE, "Cannot place island3 for player %d", i);
+	small_island = create_fair_island(islandmass3, 0);
+        if (!place_island_on_map(pmap, small_island)) {
+          freelog(LOG_VERBOSE, "Cannot place a small island for player %d", i);
           done = FALSE;
+	  free_map(small_island);
           break;
         }
+	free_map(small_island);
       }
     }
 
-    free_map(island1);
-    free_map(island2);
-    free_map(island3);
+    free_map(main_island);
     if (!done) {
       free_map(pmap);
       destroy_tmap();
