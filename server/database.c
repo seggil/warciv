@@ -216,7 +216,8 @@ bool authenticate_user(struct connection *pconn, char *username)
       }
       break;
     case AUTH_DB_SUCCESS:
-      freelog(LOG_VERBOSE, "AUTH_DB_SUCCESS: About to send authentification packet to %s",pconn->username);
+      freelog(LOG_VERBOSE, "AUTH_DB_SUCCESS: "
+	      "About to send authentification packet to %s", pconn->username);
       /* we found a user */
       my_snprintf(buffer, sizeof(buffer), _("Enter password for %s:"),
                   pconn->username);
@@ -228,12 +229,13 @@ bool authenticate_user(struct connection *pconn, char *username)
     case AUTH_DB_NOT_FOUND:
       /* we couldn't find the user, he is new */
       if (srvarg.auth.allow_newusers) {
-        freelog(LOG_VERBOSE, "AUTH_DB_NOT_FOUND: About to send authentification packet to %s",pconn->username);
+        freelog(LOG_VERBOSE, "AUTH_DB_NOT_FOUND: "
+		"About to send authentification packet to %s", pconn->username);
         sz_strlcpy(buffer, _("Enter a new password (and remember it)."));
         dsend_packet_authentication_req(pconn, AUTH_NEWUSER_FIRST, buffer);
         pconn->server.auth_settime = time(NULL);
         pconn->server.status = AS_REQUESTING_NEW_PASS;
-        freelog(LOG_VERBOSE, "Auth packet %s sent",pconn->username);
+        freelog(LOG_VERBOSE, "Auth packet %s sent", pconn->username);
       } else {
         reject_new_connection(_("This server allows only preregistered "
                                 "users. Sorry."), pconn);
@@ -280,6 +282,7 @@ static void create_salt(struct connection *pconn)
   set_myrand_state(old_state);
 }
 
+#ifdef HAVE_MYSQL
 /**************************************************************************
   Create an md5 check sum from the password and salt and put it in 'dest'.
   NB: 'dest' is assumed to be able to hold DIGEST_HEX_BYTES + 1 bytes
@@ -297,6 +300,7 @@ static void create_salted_md5sum(const char *password, int passlen,
   memcpy(buf + SALT_LEN, password, rem);
   create_md5sum(buf, SALT_LEN + rem, dest);
 }
+#endif /* HAVE_MYSQL */
 
 /**************************************************************************
   Receives a password from a client and verifies it.
@@ -494,6 +498,7 @@ static bool is_good_password(const char *password, char *msg)
   return TRUE;
 }
 
+#ifdef HAVE_MYSQL
 /**************************************************************************
   Returns TRUE if the connection's password salt is not empty.
 ***************************************************************************/
@@ -504,6 +509,7 @@ static bool has_salt(const struct connection *pconn)
   }
   return pconn->server.salt != 0;
 }
+#endif /* HAVE_MYQL */
 
 /**************************************************************************
   Check if the password with length len matches that given in 
