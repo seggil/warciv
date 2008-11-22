@@ -707,6 +707,22 @@ static void apply_option_change(struct client_option *o)
       }
     }
     break;
+  case COT_VOLUME:
+    {
+      int new_value =
+#ifdef GTK_SCALE_BUTTON
+	  gtk_scale_button_get_value(GTK_SCALE_BUTTON(o->gui_data));
+#else
+	  gtk_range_get_value(GTK_RANGE(o->gui_data));
+#endif /* GTK_SCALE_BUTTON */
+      if (*o->o.integer.pvalue != new_value) {
+	*o->o.integer.pvalue = new_value;
+	if (o->change_callback) {
+	  (o->change_callback)(o);
+	}
+      }
+    }
+    break;
   }
 }
 
@@ -755,6 +771,14 @@ static void refresh_option(struct client_option *o)
     o->o.filter.temp = *o->o.filter.pvalue;
     update_filter(o);
     break;
+  case COT_VOLUME:
+#ifdef GTK_SCALE_BUTTON
+    gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
+			       *o->o.integer.pvalue);
+#else
+    gtk_range_set_value(GTK_RANGE(o->gui_data), *o->o.integer.pvalue);
+#endif /* GTK_SCALE_BUTTON */
+    break;
   }
 }
 
@@ -802,6 +826,14 @@ static void reset_option(struct client_option *o)
   case COT_FILTER:
     o->o.filter.temp = o->o.filter.def;
     update_filter(o);
+    break;
+  case COT_VOLUME:
+#ifdef GTK_SCALE_BUTTON
+    gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
+			       o->o.integer.def);
+#else
+    gtk_range_set_value(GTK_RANGE(o->gui_data), o->o.integer.def);
+#endif /* GTK_SCALE_BUTTON */
     break;
   }
 }
@@ -860,6 +892,17 @@ static void reload_option(struct section_file *sf, struct client_option *o)
     o->o.filter.temp = secfile_lookup_filter_default(sf, *o->o.filter.pvalue,
 						     o, "client.%s", o->name);
     update_filter(o);
+    break;
+  case COT_VOLUME:
+#ifdef GTK_SCALE_BUTTON
+    gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
+			       secfile_lookup_int_default(sf,
+				   *o->o.integer.pvalue, "client.%s", o->name));
+#else
+    gtk_range_set_value(GTK_RANGE(o->gui_data),
+			secfile_lookup_int_default(sf,
+			    *o->o.integer.pvalue, "client.%s", o->name));
+#endif /* GTK_SCALE_BUTTON */
     break;
   }
 }
@@ -1117,7 +1160,7 @@ static void create_option_dialog(void)
       o->gui_data = gtk_spin_button_new_with_range(o->o.integer.min,
 					      o->o.integer.max,
 					      MAX((o->o.integer.max
-						   - o->o.integer.max) / 50,
+						   - o->o.integer.min) / 50,
 						  1));
       break;
     case COT_STRING:
@@ -1181,6 +1224,32 @@ static void create_option_dialog(void)
 			   G_CALLBACK(filter_changed_callback), o);
 	  gtk_box_pack_start(GTK_BOX(fbox), cb, FALSE, FALSE, 0);
 	}
+      }
+      break;
+    case COT_VOLUME:
+      {
+#ifdef GTK_SCALE_BUTTON
+	GtkObject *adjustment;
+
+	o->gui_data = gtk_volume_button_new();
+	adjustment = gtk_adjustment_new(*o->o.integer.pvalue,
+					o->o.integer.min,
+					o->o.integer.max,
+					MAX((o->o.integer.max
+					     - o->o.integer.min) / 50, 1),
+					 0, 1);
+	gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(o->gui_data),
+					GTK_ADJUSTMENT(adjustment));
+	gtk_object_destroy(adjustment);
+#else
+	o->gui_data = gtk_hscale_new_with_range(o->o.integer.min,
+						o->o.integer.max,
+						MAX((o->o.integer.max
+						     - o->o.integer.min) / 50,
+						    1));
+	gtk_widget_set_size_request(GTK_WIDGET(o->gui_data),
+				    o->o.integer.max - o->o.integer.min, -1);
+#endif /* GTK_SCALE_BUTTON */
       }
       break;
     }

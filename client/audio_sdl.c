@@ -127,6 +127,15 @@ static void my_wait(void)
 }
 
 /**************************************************************************
+  Set the volume for all channels.
+**************************************************************************/
+static void my_set_volume(int volume)
+{
+  my_wait();
+  Mix_Volume(-1, volume);
+}
+
+/**************************************************************************
   Quit SDL.  If the video is still in use (by gui-sdl), just quit the
   subsystem.
 
@@ -208,8 +217,6 @@ static bool my_init(void)
   for (i = 0; i < MIX_CHANNELS; i++) {
     samples[i].wave = NULL;
   }
-  /* sanity check, for now; add volume controls later */
-  Mix_Volume(-1, MIX_MAX_VOLUME);
 
   atexit(quit_sdl_audio);
   initialized = TRUE;
@@ -231,5 +238,12 @@ void audio_sdl_init(void)
   self.stop = my_stop;
   self.wait = my_wait;
   self.play = my_play;
+
+#ifdef AUDIO_VOLUME
+  self.min_volume = 0;
+  self.max_volume = MIX_MAX_VOLUME;
+  self.set_volume = my_set_volume;
+#endif /* AUDIO_VOLUME */
+
   audio_add_plugin(&self);
 }

@@ -1401,6 +1401,19 @@ static void match_result_list_free_data(struct match_result_list *matches)
   } match_result_list_iterate_end;
   match_result_list_unlink_all(matches);
 }
+
+/**************************************************************************
+  Create default chat colors tag patterns when we cannot reach the rc file.
+**************************************************************************/
+void create_default_chatline_colors(void)
+{
+  if (tagpats) {
+    tag_pattern_list_free_all(tagpats);
+  }
+
+  tagpats = create_default_tag_patterns();
+}
+
 /**************************************************************************
   ...
 **************************************************************************/

@@ -42,7 +42,8 @@ enum client_option_type {
   COT_STRING,
   COT_PASSWORD,
   COT_NUMBER_LIST,
-  COT_FILTER
+  COT_FILTER,
+  COT_VOLUME
 };
 
 struct client_option {
@@ -131,6 +132,9 @@ extern struct worklist global_worklists[MAX_NUM_WORKLISTS];
 extern bool random_leader;
 extern bool solid_color_behind_units;
 extern bool sound_bell_at_new_turn;
+#ifdef AUDIO_VOLUME
+extern int sound_volume;
+#endif /* AUDIO_VOLUME */
 extern int smooth_move_unit_msec;
 extern int smooth_center_slide_msec;
 extern bool do_combat_animation;
