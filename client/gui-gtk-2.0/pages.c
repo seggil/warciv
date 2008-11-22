@@ -1267,6 +1267,22 @@ static void ai_fill_callback(GtkWidget *w, gpointer data)
 }
 
 /**************************************************************************
+  Clear logs callback.
+**************************************************************************/
+static void start_clear_callback(GtkWidget *w, gpointer data)
+{
+  clear_output_window();
+}
+
+/**************************************************************************
+  Export logs callback.
+**************************************************************************/
+static void start_export_callback(GtkWidget *w, gpointer data)
+{
+  log_output_window();
+}
+
+/**************************************************************************
   start game callback.
 **************************************************************************/
 static void start_start_callback(GtkWidget *w, gpointer data)
@@ -1445,6 +1461,16 @@ GtkWidget *create_start_page(void)
   gtk_box_set_spacing(GTK_BOX(bbox), 12);
   gtk_box_pack_start(GTK_BOX(sbox), bbox, FALSE, FALSE, 0);
 
+  button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+  gtk_container_add(GTK_CONTAINER(bbox), button);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+  g_signal_connect(button, "clicked", G_CALLBACK(start_clear_callback), NULL);
+
+  button = gtk_stockbutton_new(GTK_STOCK_FILE, _("_Export"));
+  gtk_container_add(GTK_CONTAINER(bbox), button);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
+  g_signal_connect(button, "clicked", G_CALLBACK(start_export_callback), NULL);
+
   button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
   gtk_container_add(GTK_CONTAINER(bbox), button);
   g_signal_connect(button, "clicked", G_CALLBACK(main_callback), NULL);
@@ -1452,6 +1478,7 @@ GtkWidget *create_start_page(void)
   button = gtk_stockbutton_new(GTK_STOCK_EXECUTE, _("_Start"));
   g_signal_connect(button, "clicked",
       G_CALLBACK(start_start_callback), NULL);
+  gtk_button_set_focus_on_click(GTK_BUTTON(button), FALSE);
   gtk_container_add(GTK_CONTAINER(bbox), button);
 
   return box;
