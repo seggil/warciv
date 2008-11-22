@@ -467,49 +467,123 @@ static bool cities_will_have_trade(struct city *pcity1, struct city *pcity2)
 int trade_planning_precalculation(const struct tile_list *ptlist,
 				  size_t size, int *free_slots)
 {
+  struct precalc_city {
+    struct tile *ptile;
+    struct city *pcity;
+    int free_slots;
+    int trade_routes_num;
+    bool *trade_routes;
+  } cities[size];
+  struct precalc_city *pc1, *pc2;
+  int i, j, total = 0;
+
   if (game.traderoute_info.maxtraderoutes == 0) {
     return 0;
   }
 
-  struct city *pcity, *pcity2;
-  int i = 0, total = 0, fs;
+  assert(size >= tile_list_size(ptlist));
 
+  /* Initialize */
+  i = 0;
+  pc1 = cities;
   tile_list_iterate(ptlist, ptile) {
-    if (i >= size) {
-      freelog(LOG_ERROR, "Not enough space to write all free slots.");
-      return -1;
+    pc1->ptile = ptile;
+    pc1->pcity = map_get_city(ptile);
+    pc1->free_slots = game.traderoute_info.maxtraderoutes
+      - get_real_trade_route_number(pc1->pcity);
+    pc1->trade_routes_num = 0;
+    pc1->trade_routes = fc_malloc(size * sizeof(bool));
+    memset(pc1->trade_routes, FALSE, size * sizeof(bool));
+
+    /* Check for earlier cities in the list */
+    for (j = 0, pc2 = cities; j < i; j++, pc2++) {
+      if (pc1->free_slots > 0 && pc2->free_slots > 0) {
+	if (pc1->pcity && pc2->pcity) {
+	  if (can_cities_trade(pc1->pcity, pc2->pcity)
+	      && !cities_will_have_trade(pc1->pcity, pc2->pcity)) {
+	    pc1->trade_routes[j] = TRUE;
+	    pc1->trade_routes_num++;
+	    pc2->trade_routes[i] = TRUE;
+	    pc2->trade_routes_num++;
+	  }
+	} else {
+	  if (map_distance(pc1->ptile, pc2->ptile)
+	      >= game.traderoute_info.trademindist) {
+	    pc1->trade_routes[j] = TRUE;
+	    pc1->trade_routes_num++;
+	    pc2->trade_routes[i] = TRUE;
+	    pc2->trade_routes_num++;
+	  }
+	}
+      }
     }
 
-    pcity = ptile->city;
-    fs = game.traderoute_info.maxtraderoutes;
-
-    tile_list_iterate(ptlist, ptile2) {
-      if (ptile == ptile2) {
-	continue;
-      }
-
-      pcity2 = ptile2->city;
-
-      if (pcity && pcity2) {
-	if (!cities_will_have_trade(pcity, pcity2)
-	    && can_cities_trade(pcity, pcity2)) {
-	  fs--;
-	}
-      } else if (map_distance(ptile, ptile2)
-	         >= game.traderoute_info.trademindist) {
-        fs--;
-      }
-      if (fs <= 0) {
-	break;
-      }
-    } tile_list_iterate_end;
-
-    free_slots[i] = fs;
-    total += fs;
-
     i++;
+    pc1++;
   } tile_list_iterate_end;
 
+  /* Look for free slots */
+  do {
+    pc2 = NULL;
+    j = -1;
+    /* Find the hardest */
+    for (i = 0, pc1 = cities; i < size; i++, pc1++) {
+      if (pc1->trade_routes_num > 0
+          && pc1->trade_routes_num <= pc1->free_slots) {
+        if (!pc2
+            || pc1->free_slots - pc1->trade_routes_num
+               > pc2->free_slots - pc2->trade_routes_num) {
+          j = i;
+	  pc2 = pc1;
+        }
+      }
+    }
+    if (pc2 && j >= 0) {
+      /* Give it all its trade routes */
+      for (i = 0, pc1 = cities; i < size; i++, pc1++) {
+        if (pc2->trade_routes[i] && pc1->free_slots > 0) {
+	  pc1->free_slots--;
+	  pc1->trade_routes_num--;
+	  pc1->trade_routes[j] = FALSE;
+	  pc2->free_slots--;
+	  pc2->trade_routes_num--;
+	  pc2->trade_routes[i] = FALSE;
+
+          /*
+           * If the city doesn't have free slots anymore,
+           * clear its possible trade routes
+           */
+          if (pc1->free_slots == 0) {
+	    struct precalc_city *pc3;
+            int k;
+
+            for (k = 0, pc3 = cities; k < size; k++, pc3++) {
+              if (pc1->trade_routes[k]) {
+                pc1->trade_routes[k] = FALSE;
+		pc1->trade_routes_num--;
+                pc3->trade_routes[i] = FALSE;
+		pc3->trade_routes_num--;
+              }
+            }
+            assert(pc1->trade_routes_num == 0);
+          }
+        }
+      }
+      assert(pc2->trade_routes_num == 0);
+    }
+  } while (pc2 && j >= 0);
+
+  /* Get and free datas */
+  for (i = 0, pc1 = cities; i < size; i++, pc1++) {
+    if (pc1->free_slots > pc1->trade_routes_num) {
+      free_slots[i] = pc1->free_slots - pc1->trade_routes_num;
+      total += free_slots[i];
+    } else {
+      free_slots[i] = 0;
+    }
+    free(pc1->trade_routes);
+  }
+  
   return total;
 }
 
