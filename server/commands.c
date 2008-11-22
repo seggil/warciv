@@ -64,6 +64,7 @@ const struct command commands[] = {
    "list\n"
    "list actionlist\n"
    "list connections\n"
+   "list idle\n"
    "list ignore\n"
    "list maps\n"
    "list mutes\n"
@@ -73,11 +74,11 @@ const struct command commands[] = {
    "list teams\n"
    "list votes",
    N_("Show a list of various things."),
-   N_("Show the action list, a list of connections to the server, your "
-      "ignore list, all maps, a list of muted users on the server, a list "
-      "of players, all rulesets, all scenarios, the teams and the players "
-      "in them or all running votes. The argument may be abbreviated, "
-      "and defaults to 'players' if absent."),
+   N_("Show the action list, a list of connections to the server, the idle "
+      "connections, your ignore list, all maps, a list of muted users on the "
+      "server, a list of players, all rulesets, all scenarios, the teams "
+      "and the players in them or all running votes. The argument may be "
+      "abbreviated, and defaults to 'players' if absent."),
    ECHO_NONE, VCF_NONE, 0
   },
   {"quit",	ALLOW_HACK, ALLOW_HACK,

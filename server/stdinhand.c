@@ -7702,6 +7702,64 @@ static bool show_help(struct connection *caller, char *arg)
 /**************************************************************************
   ...
 **************************************************************************/
+static int idle_compare(const void *a, const void *b)
+{
+  return (*(struct connection **)a)->server.idle_time
+    < (*(struct connection **)b)->server.idle_time;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void show_idle(struct connection *caller)
+{
+  size_t size = conn_list_size(game.est_connections);
+  struct connection *connections[size], *pconn;
+  char timebuf[128];
+  time_t idle, now = time(NULL);
+  bool first = TRUE;
+  int i;
+
+  if (size == 0 || (size == 1 && caller)) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "Nobody is idle.");
+    return;
+  }
+
+  i = 0;
+  conn_list_iterate(game.est_connections, pconn) {
+    connections[i++] = pconn;
+  } conn_list_iterate_end;
+
+  qsort(connections, size, sizeof(struct connection *), idle_compare);
+
+  for (i = 0; i < size; i++) {
+    pconn = connections[i];
+    idle = now - pconn->server.idle_time;
+
+    if (idle <= 0) {
+      continue;
+    }
+
+    if (first) {
+      cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+      first = FALSE;
+    }
+
+    format_time_duration(idle, timebuf, sizeof(timebuf));
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%s: idle for %s",
+	      pconn->username, timebuf);
+  }
+
+  if (first) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "Nobody is idle.");
+  } else {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 static void show_ignore(struct connection *caller)
 {
   int n = 1;
@@ -7947,15 +8005,33 @@ static bool show_mutes(struct connection *caller)
 /**************************************************************************
   'list' arguments
 **************************************************************************/
-enum LIST_ARGS
-{
-  LIST_ACTIONLIST, LIST_CONNECTIONS, LIST_IGNORE, LIST_MAPS, LIST_MUTES,
-  LIST_PLAYERS, LIST_RULESETS, LIST_SCENARIOS, LIST_TEAMS, LIST_VOTES,
+enum LIST_ARGS {
+  LIST_ACTIONLIST,
+  LIST_CONNECTIONS,
+  LIST_IDLE,
+  LIST_IGNORE,
+  LIST_MAPS, 
+  LIST_MUTES,
+  LIST_PLAYERS,
+  LIST_RULESETS,
+  LIST_SCENARIOS,
+  LIST_TEAMS,
+  LIST_VOTES,
+
   LIST_ARG_NUM                  /* Must be last */
 };
 static const char *const list_args[] = {
-  "actionlist", "connections", "ignore", "maps", "mutes",
-  "players", "rulesets", "scenarios", "teams", "votes",
+  "actionlist",
+  "connections",
+  "idle",
+  "ignore",
+  "maps",
+  "mutes",
+  "players",
+  "rulesets",
+  "scenarios",
+  "teams",
+  "votes",
   NULL
 };
 static const char *listarg_accessor(int i)
@@ -7988,6 +8064,9 @@ static bool show_list(struct connection *caller, char *arg)
     return TRUE;
   case LIST_CONNECTIONS:
     show_connections(caller);
+    return TRUE;
+  case LIST_IDLE:
+    show_idle(caller);
     return TRUE;
   case LIST_IGNORE:
     show_ignore(caller);
