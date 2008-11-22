@@ -191,6 +191,22 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
 }
 
 /****************************************************************************
+  Build the nation info text. e.g. "Polish, team first).
+****************************************************************************/
+static const char *get_player_nation_name(struct player *pplayer)
+{
+  INIT;
+
+  add("%s", get_nation_name(pplayer->nation));
+
+  if (pplayer->team != TEAM_NONE) {
+    add(_(", team %s"), get_team_name(pplayer->team));
+  }
+
+  RETURN;
+}
+
+/****************************************************************************
   Text to popup on a middle-click in the mapview.
 ****************************************************************************/
 const char *popup_info_text(struct tile *ptile)
@@ -244,7 +260,7 @@ const char *popup_info_text(struct tile *ptile)
 		     turns),
 		 get_name_prefix(owner),
 		 get_proper_username(owner),
-		 get_nation_name(owner->nation), turns);
+		 get_player_nation_name(owner), turns);
       } else {
 	/* TRANS: "Territory of friendly Username (Polish)".  See the
 	 * ?nation adjectives. */
@@ -252,7 +268,7 @@ const char *popup_info_text(struct tile *ptile)
 		 diplo_nation_plural_adjectives[ds[owner->player_no].type],
 		 get_name_prefix(owner),
 		 get_proper_username(owner),
-		 get_nation_name_plural(owner->nation));
+		 get_player_nation_name(owner));
       }
     } else {
       add_line(_("Unclaimed territory"));
@@ -269,10 +285,10 @@ const char *popup_info_text(struct tile *ptile)
 	       pcity->name,
 	       get_name_prefix(owner),
 	       get_proper_username(owner),
-	       get_nation_name(owner->nation));
+	       get_player_nation_name(owner));
     } else if (owner == get_player_ptr()) {
       /* TRANS: "City: Warsaw (Polish)" */
-      add_line(_("City: %s (%s)"), pcity->name, get_nation_name(owner->nation));
+      add_line(_("City: %s (%s)"), pcity->name, get_player_nation_name(owner));
     } else {
       struct player_diplstate *ds =
 	  &get_player_ptr()->diplstates[owner->player_no];
@@ -286,14 +302,14 @@ const char *popup_info_text(struct tile *ptile)
 		 pcity->name,
 		 get_name_prefix(owner),
 		 get_proper_username(owner),
-		 turns, get_nation_name(owner->nation));
+		 turns, get_player_nation_name(owner));
       } else {
 	/* TRANS: "City: Warsaw | Username (friendly, Polish)" */
 	add_line(_("City: %s | %s%s (%s, %s)"), pcity->name,
 		 get_name_prefix(owner),
 		 get_proper_username(owner),
 		 diplo_city_adjectives[ds->type],
-		 get_nation_name(owner->nation));
+		 get_player_nation_name(owner));
       }
     }
     if (city_got_citywalls(pcity)) {
@@ -338,7 +354,7 @@ const char *popup_info_text(struct tile *ptile)
       add_line(_("Unit: %s | %s%s (%s%s)"), ptype->name,
 	       get_name_prefix(owner),
 	       get_proper_username(owner),
-	       get_nation_name(owner->nation), tmp);
+	       get_player_nation_name(owner), tmp);
     } else if (owner == get_player_ptr()) {
       struct city *pcity;
       char tmp[64] = {0};
@@ -349,7 +365,7 @@ const char *popup_info_text(struct tile *ptile)
       }
       /* TRANS: "Unit: Musketeers (Polish/Warsaw)" */
       add_line(_("Unit: %s (%s%s)"), ptype->name,
-	       get_nation_name(owner->nation), tmp);
+	       get_player_nation_name(owner), tmp);
     } else {
       struct player_diplstate *ds =
 	  &get_player_ptr()->diplstates[owner->player_no];
@@ -363,14 +379,14 @@ const char *popup_info_text(struct tile *ptile)
 		 ptype->name,
 		 get_name_prefix(owner),
 		 get_proper_username(owner),
-		 turns, get_nation_name(owner->nation));
+		 turns, get_player_nation_name(owner));
       } else {
 	/* TRANS: "Unit: Musketeers | Username (friendly, Polish)" */
 	add_line(_("Unit: %s | %s%s (%s, %s)"), ptype->name,
 		 get_name_prefix(owner),
 		 get_proper_username(owner),
 		 diplo_city_adjectives[ds->type],
-		 get_nation_name(owner->nation));
+		 get_player_nation_name(owner));
       }
     }
 
