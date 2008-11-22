@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Simple bash script to add a 'salt' column to the
+# freeciv auth table.
+
+# You may need to modify the following as per your setup.
+mysql=mysql
+user=root
+password=
+database=freeciv
+table=auth
+
+cmd="ALTER TABLE $table ADD COLUMN salt INT DEFAULT 0 AFTER password"
+
+passarg=
+if test "x$password" != "x" ; then
+  passarg="-p$password"
+fi
+
+$mysql -u$user $passarg -B -e"$cmd" $database
+rc=$?
+if test $rc -eq 0 ; then
+  echo "Database altered succesfully!"
+else
+  echo -e "\nHmm... something went wrong.\n"
+  echo "Check that the parameters set at the top of this"
+  echo "script file are correct, or do the following SQL"
+  echo -e "command manually:\n"
+  echo "$cmd;"
+fi

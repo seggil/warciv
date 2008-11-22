@@ -1101,6 +1101,8 @@ static int server_accept_connection(int sockfd)
   pconn->server.received_username = FALSE;
   pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
   pconn->server.delay_establish = FALSE;
+  memset(pconn->server.password, 0, sizeof(pconn->server.password));
+  pconn->server.salt = 0;
 
   conn_reset_idle_time(pconn);
 

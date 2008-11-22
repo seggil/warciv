@@ -221,6 +221,7 @@ void srv_init(void)
   srvarg.auth.enabled = FALSE;
   srvarg.auth.allow_guests = FALSE;
   srvarg.auth.allow_newusers = FALSE;
+  srvarg.auth.salted = FALSE;
 
   srvarg.fcdb.enabled = FALSE;
   srvarg.fcdb.min_rated_turns = RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT;
@@ -1764,6 +1765,8 @@ void srv_main(void)
         && !read_init_script(NULL, srvarg.script_filename)) {
       exit(EXIT_FAILURE);
     }
+
+    fcdb_check_salted_passwords();
 
     srv_loop();
 

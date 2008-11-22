@@ -23,6 +23,7 @@ void get_unique_guest_name(char *name);
 bool authenticate_user(struct connection *pconn, char *username);
 void process_authentication_status(struct connection *pconn);
 bool handle_authentication_reply(struct connection *pc, char *password);
+bool fcdb_check_salted_passwords(void);
 
 struct fcdb_params {
   char host[256];

@@ -336,6 +336,7 @@ void establish_new_connection(struct connection *pconn)
 
   /* zero out the password */
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
+  pconn->server.salt = 0;
   /* send off login_replay packet */
   packet.you_can_join = TRUE;
   sz_strlcpy(packet.capability, our_capability);
@@ -507,6 +508,7 @@ void reject_new_connection(const char *msg, struct connection *pconn)
 
   /* zero out the password */
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
+  pconn->server.salt = 0;
 
   packet.you_can_join = FALSE;
   sz_strlcpy(packet.capability, our_capability);

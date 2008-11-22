@@ -10,6 +10,7 @@ CREATE TABLE auth (
   id int(11) NOT NULL auto_increment,
   name varchar(32) default NULL,
   password varchar(32) default NULL,
+  salt int default 0,
   email varchar(128) default NULL,
   createtime int(11) default NULL,
   accesstime int(11) default NULL,

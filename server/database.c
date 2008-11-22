@@ -31,6 +31,7 @@
 #include "fcintl.h"
 #include "log.h"
 #include "md5.h"
+#include "rand.h"
 #include "registry.h"
 #include "shared.h"
 #include "support.h"
@@ -191,7 +192,7 @@ bool authenticate_user(struct connection *pconn, char *username)
 
     sz_strlcpy(pconn->username, username);
 
-    switch(load_user(pconn)) {
+    switch (load_user(pconn)) {
     case AUTH_DB_ERROR:
       if (srvarg.auth.allow_guests) {
         sz_strlcpy(tmpname, pconn->username);
@@ -254,6 +255,50 @@ bool authenticate_user(struct connection *pconn, char *username)
 }
 
 /**************************************************************************
+  Create the random salt for a new password.
+**************************************************************************/
+static void create_salt(struct connection *pconn)
+{
+  RANDOM_STATE old_state;
+
+  if (!pconn) {
+    return;
+  }
+
+  if (!srvarg.auth.salted) {
+    pconn->server.salt = 0;
+    return;
+  }
+
+  /* Save and restore the global rand state. */
+  old_state = get_myrand_state();
+
+  /* FIXME: Is this cryptographically sound? */
+  mysrand(time(NULL) + pconn->id);
+  pconn->server.salt = (int) myrand(MAX_UINT32);
+
+  set_myrand_state(old_state);
+}
+
+/**************************************************************************
+  Create an md5 check sum from the password and salt and put it in 'dest'.
+  NB: 'dest' is assumed to be able to hold DIGEST_HEX_BYTES + 1 bytes
+  (don't forget the +1 for the terminating '\0').
+**************************************************************************/
+static void create_salted_md5sum(const char *password, int passlen,
+                                 int salt, char *dest)
+{
+  const int SALT_LEN = sizeof(int);
+  char buf[MAX_LEN_PASSWORD + SALT_LEN + 64];
+  int rem;
+
+  memcpy(buf, &salt, SALT_LEN);
+  rem = MIN(passlen, sizeof(buf) - SALT_LEN);
+  memcpy(buf + SALT_LEN, password, rem);
+  create_md5sum(buf, SALT_LEN + rem, dest);
+}
+
+/**************************************************************************
   Receives a password from a client and verifies it.
 **************************************************************************/
 bool handle_authentication_reply(struct connection *pconn, char *password)
@@ -278,6 +323,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
     /* the new password is good, create a database entry for
      * this user; we establish the connection in handle_db_lookup */
     sz_strlcpy(pconn->server.password, password);
+    create_salt(pconn);
 
     if (!save_user(pconn)) {
       notify_conn(pconn->self, 
@@ -448,25 +494,39 @@ static bool is_good_password(const char *password, char *msg)
   return TRUE;
 }
 
+/**************************************************************************
+  Returns TRUE if the connection's password salt is not empty.
+***************************************************************************/
+static bool has_salt(const struct connection *pconn)
+{
+  if (!pconn) {
+    return FALSE;
+  }
+  return pconn->server.salt != 0;
+}
 
 /**************************************************************************
   Check if the password with length len matches that given in 
   pconn->server.password.
 ***************************************************************************/
 static bool check_password(struct connection *pconn, 
-                           const char *password, int len)
+                           const char *password, int passlen)
 {
 #ifdef HAVE_MYSQL
   bool password_ok = FALSE;
-  char buffer[512] = "";
-  char checksum[DIGEST_HEX_BYTES];
+  char buffer[1024] = "";
+  char checksum[DIGEST_HEX_BYTES + 1];
   MYSQL *sock, mysql;
   char escaped_name[MAX_LEN_NAME * 2 + 1];
 
   /* do the password checking right here */
-  create_md5sum(password, len, checksum);
-  password_ok = 0 == strncmp(checksum, pconn->server.password,
-                             DIGEST_HEX_BYTES);
+  if (srvarg.auth.salted && has_salt(pconn)) {
+    create_salted_md5sum(password, passlen, pconn->server.salt, checksum);
+  } else {
+    create_md5sum(password, passlen, checksum);
+  }
+  password_ok = (0 == strncmp(checksum, pconn->server.password,
+                              DIGEST_HEX_BYTES));
 
   /* we don't really need the stuff below here to 
    * verify password, this is just logging */
@@ -508,6 +568,22 @@ static bool check_password(struct connection *pconn,
       mysql_close(sock);
       return password_ok;
     }
+
+    /* Create a new salt if this user doesn't have one. */
+    if (srvarg.auth.salted && !has_salt(pconn)) {
+      create_salt(pconn);
+      create_salted_md5sum(password, passlen, pconn->server.salt,
+                           checksum);
+      my_snprintf(buffer, sizeof(buffer),
+          "UPDATE %s SET password = '%s', salt = %d WHERE name = '%s'",
+          AUTH_TABLE, checksum, pconn->server.salt, escaped_name);
+      if (mysql_query(sock, buffer)) {
+        freelog(LOG_ERROR, "password salt update failed for "
+                "user: %s (%s)", pconn->username, mysql_error(sock));
+        mysql_close(sock);
+        return password_ok;
+      }
+    }
   }
 
 
@@ -545,10 +621,17 @@ static enum authdb_status load_user(struct connection *pconn)
   mysql_real_escape_string(sock, escaped_name, pconn->username,
                            strlen(pconn->username));
 
-  /* select the password from the entry */
-  my_snprintf(buffer, sizeof(buffer), 
-              "select password from %s where name = '%s'",
-              AUTH_TABLE, escaped_name);
+  if (srvarg.auth.salted) {
+    /* select password and salt from the entry */
+    my_snprintf(buffer, sizeof(buffer),
+                "select password, salt from %s where name = '%s'",
+                AUTH_TABLE, escaped_name);
+  } else {
+    /* select just the password from the entry */
+    my_snprintf(buffer, sizeof(buffer),
+                "select password from %s where name = '%s'",
+                AUTH_TABLE, escaped_name);
+  }
 
   if (mysql_query(sock, buffer)) {
     freelog(LOG_ERROR, "db_load query failed for user: %s (%s)",
@@ -578,6 +661,14 @@ static enum authdb_status load_user(struct connection *pconn)
   row = mysql_fetch_row(res);
   mystrlcpy(pconn->server.password, row[0],
             sizeof(pconn->server.password));
+  if (srvarg.auth.salted) {
+    if (row[1] != NULL) {
+      pconn->server.salt = atoi(row[1]);
+    } else {
+      pconn->server.salt = 0;
+    }
+  }
+
   mysql_free_result(res);
 
   if (mysql_query(sock, buffer)) {
@@ -600,7 +691,8 @@ static bool save_user(struct connection *pconn)
   char buffer[1024] = "";
   MYSQL *sock, mysql;
   char escaped_name[MAX_LEN_NAME * 2 + 1];
-  char escaped_password[MAX_LEN_PASSWORD * 2 + 1];
+  char checksum[DIGEST_HEX_BYTES + 1];
+  int passlen;
 
   mysql_init(&mysql);
 
@@ -615,19 +707,32 @@ static bool save_user(struct connection *pconn)
 
   mysql_real_escape_string(sock, escaped_name, pconn->username,
                            strlen(pconn->username));
-  mysql_real_escape_string(sock, escaped_password,
-                           pconn->server.password,
-                           strlen(pconn->server.password));
+
+  passlen = strlen(pconn->server.password);
+  if (srvarg.auth.salted) {
+    create_salted_md5sum(pconn->server.password, passlen,
+                         pconn->server.salt, checksum);
+  } else {
+    create_md5sum(pconn->server.password, passlen, checksum);
+  }
 
   /* insert new user into table. we insert the following things: name
-   * md5sum of the password, the creation time in seconds, the accesstime
-   * also in seconds from 1970, the users address (twice) and the
-   * logincount */
-  my_snprintf(buffer, sizeof(buffer), "insert into %s values "
-          "(NULL, '%s', md5('%s'), NULL, unix_timestamp(), "
-          "unix_timestamp(), '%s', '%s', 0)",
-          AUTH_TABLE, escaped_name, escaped_password,
-          pconn->server.ipaddr, pconn->server.ipaddr);
+   * md5sum of the password (with salt if enabled), the creation time
+   * in seconds, the accesstime also in seconds from 1970, the users
+   * address (twice) and the logincount */
+  if (srvarg.auth.salted) {
+    my_snprintf(buffer, sizeof(buffer), "insert into %s values "
+                "(NULL, '%s', '%s', %d, NULL, unix_timestamp(), "
+                "unix_timestamp(), '%s', '%s', 0)",
+                AUTH_TABLE, escaped_name, checksum, pconn->server.salt,
+                pconn->server.ipaddr, pconn->server.ipaddr);
+  } else {
+    my_snprintf(buffer, sizeof(buffer), "insert into %s values "
+                "(NULL, '%s', '%s', NULL, unix_timestamp(), "
+                "unix_timestamp(), '%s', '%s', 0)",
+                AUTH_TABLE, escaped_name, checksum,
+                pconn->server.ipaddr, pconn->server.ipaddr);
+  }
 
   if (mysql_query(sock, buffer)) {
     freelog(LOG_ERROR, "db_save insert failed for new user: %s (%s)",
@@ -1340,8 +1445,8 @@ static bool get_user_id(MYSQL *sock, const char *user_name, int *id)
   *id = 0;
 
   my_snprintf(buf, sizeof(buf),
-      "SELECT id FROM auth WHERE name = '%s'",
-      fcdb_escape(sock, user_name));
+      "SELECT id FROM %s WHERE name = '%s'",
+      AUTH_TABLE, fcdb_escape(sock, user_name));
   fcdb_reset_escape_buffer();
   fcdb_execute_or_return(sock, buf, FALSE);
 
@@ -1868,13 +1973,13 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
           "SELECT a.id, a.name, COUNT(*) AS turn_count"
           "  FROM turns AS t INNER JOIN player_status AS ps"
           "      ON t.id = ps.turn_id"
-          "    INNER JOIN auth AS a"
+          "    INNER JOIN %s AS a"
           "      ON ps.user_name = a.name"
           "  WHERE t.game_id = %d AND ps.user_name IS NOT NULL"
           "    AND ps.player_id = %d"
           "  GROUP BY a.id"
           "  ORDER BY turn_count DESC",
-          game.server.fcdb.id, pplayer->fcdb.player_id);
+          AUTH_TABLE, game.server.fcdb.id, pplayer->fcdb.player_id);
 
       if (!fcdb_execute(sock, buf)) {
         goto FAILED;
@@ -1964,8 +2069,8 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
       if (rate_user) {
         pplayer->fcdb.rated_user_id = user_id_for_old_rating;
         my_snprintf(buf, sizeof(buf),
-          "SELECT name FROM auth WHERE id = %d",
-          user_id_for_old_rating);
+          "SELECT name FROM %s WHERE id = %d",
+          AUTH_TABLE, user_id_for_old_rating);
         if (!fcdb_execute(sock, buf)) {
           goto FAILED;
         }
@@ -2067,10 +2172,10 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
     pattern[j] = '\0';
 
     my_snprintf(buf, sizeof(buf),
-        "SELECT id, name FROM auth "
+        "SELECT id, name FROM %s "
         "  WHERE name IS NOT NULL "
         "  AND name LIKE '%%%s%%' LIMIT 50",
-        fcdb_escape(sock, pattern));
+        AUTH_TABLE, fcdb_escape(sock, pattern));
     fcdb_reset_escape_buffer();
     if (!fcdb_execute(sock, buf)) {
       goto ERROR;
@@ -2100,8 +2205,8 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
   }
 
   my_snprintf(buf, sizeof(buf), "SELECT name, email, createtime, "
-      "accesstime, address, createaddress, logincount FROM auth "
-      "WHERE id = '%d'", fus->id);
+      "accesstime, address, createaddress, logincount FROM %s "
+      "WHERE id = '%d'", AUTH_TABLE, fus->id);
   if (!fcdb_execute(sock, buf)) {
     goto ERROR;
   }
@@ -2656,14 +2761,14 @@ struct fcdb_topten_info *fcdb_topten_info_new(int type)
 
   my_snprintf(buf, sizeof(buf),
       "SELECT a.id, a.name, r.rating, r.rating_deviation"
-      "  FROM auth AS a INNER JOIN ratings AS r INNER JOIN ("
+      "  FROM %s AS a INNER JOIN ratings AS r INNER JOIN ("
       "    SELECT MAX(id) AS last_id FROM ratings"
       "      WHERE game_type = '%s'"
       "      GROUP BY user_id) AS rm"
       "    ON r.id = rm.last_id AND a.id = r.user_id"
       "  ORDER BY r.rating DESC"
       "  LIMIT 10",
-      game_type_name_orig(type));
+      AUTH_TABLE, game_type_name_orig(type));
   fcdb_execute_or_return(sock, buf, NULL);
 
   res = mysql_store_result(sock);
@@ -2906,15 +3011,13 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
   MYSQL_ROW row;
   int i;
   char addr[256], caddr[256];
-  char safe_user[MAX_LEN_NAME * 2 + 1];
 
   fcdb_connect_or_return(sock, NULL);
 
-  mysql_real_escape_string(sock, safe_user, user, strlen(user));
   my_snprintf(buf, sizeof(buf),
-    "SELECT id, address, createaddress FROM auth "
-    "  WHERE name = '%s'",
-    safe_user);
+    "SELECT id, address, createaddress FROM %s WHERE name = '%s'",
+    AUTH_TABLE, fcdb_escape(sock, user));
+  fcdb_reset_escape_buffer();
   fcdb_execute_or_return(sock, buf, NULL);
 
   fal = fc_calloc(1, sizeof(struct fcdb_aliaslist));
@@ -2937,23 +3040,23 @@ struct fcdb_aliaslist *fcdb_aliaslist_new(const char *user)
   if (addr[0] != '\0' || caddr[0] != '\0') {
     if (addr[0] != '\0' && caddr[0] != '\0') {
       my_snprintf(buf, sizeof(buf),
-        "SELECT id, name FROM auth"
+        "SELECT id, name FROM %s"
         "  WHERE (address = '%s' OR address = '%s'"
         "    OR createaddress = '%s' OR createaddress = '%s')"
         "    AND id != %d",
-        addr, caddr, addr, caddr, fal->id);
+        AUTH_TABLE, addr, caddr, addr, caddr, fal->id);
     } else if (addr[0] != '\0') {
       my_snprintf(buf, sizeof(buf),
-        "SELECT id, name FROM auth"
+        "SELECT id, name FROM %s"
         "  WHERE (address = '%s' OR createaddress = '%s')"
         "    AND id != %d",
-        addr, addr, fal->id);
+        AUTH_TABLE, addr, addr, fal->id);
     } else {
       my_snprintf(buf, sizeof(buf),
-        "SELECT id, name FROM auth"
+        "SELECT id, name FROM %s"
         "  WHERE (address = '%s' OR createaddress = '%s')"
         "    AND id != %d",
-        caddr, caddr, fal->id);
+        AUTH_TABLE, caddr, caddr, fal->id);
     }
     if (!fcdb_execute(sock, buf)) {
       fcdb_aliaslist_free(fal);
@@ -2998,4 +3101,43 @@ void fcdb_aliaslist_free(struct fcdb_aliaslist *fal)
     fal->entries = NULL;
   }
   free(fal);
+}
+
+/**************************************************************************
+  Returns TRUE and sets srvarg.auth.salted if the auth database supports
+  salted passwords. Otherwise, returns FALSE and a warning message is
+  printed in the server console.
+**************************************************************************/
+bool fcdb_check_salted_passwords(void)
+{
+#ifdef HAVE_MYSQL
+  MYSQL mysql, *sock = &mysql;
+  MYSQL_RES *res;
+  unsigned count;
+
+  fcdb_connect_or_return(sock, FALSE);
+
+  res = mysql_list_fields(sock, AUTH_TABLE, "salt");
+  count = mysql_num_fields(res);
+  mysql_free_result(res);
+
+  if (count != 1) {
+    freelog(LOG_ERROR,
+        "\n******************* Database Warning ******************\n\n"
+        "The auth table '%s' in database '%s' does not\n"
+        "support salted passwords. Using salt would improve the\n"
+        "security of the users' passwords. The script authsalt in\n"
+        "the contrib diretory can be used to modify your current\n"
+        "auth table to support password salt.\n",
+        AUTH_TABLE, fcdb.dbname);
+    srvarg.auth.salted = FALSE;
+    return FALSE;
+  }
+
+  srvarg.auth.salted = TRUE;
+  return TRUE;
+#endif /* HAVE_MYSQL */
+
+  srvarg.auth.salted = FALSE;
+  return FALSE;
 }

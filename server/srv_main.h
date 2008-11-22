@@ -56,6 +56,7 @@ struct server_arguments {
     bool enabled;            /* defaults to FALSE */
     bool allow_guests;       /* defaults to TRUE */
     bool allow_newusers;     /* defaults to TRUE */
+    bool salted;             /* defaults to FALSE */
   } auth;
 
   bool no_dns_lookup; /* defaults to FALSE */
