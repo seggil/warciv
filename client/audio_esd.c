@@ -193,5 +193,12 @@ void audio_esd_init(void)
   self.stop = my_stop;
   self.wait = my_wait;
   self.play = my_play;
+
+#ifdef AUDIO_VOLUME
+  self.min_volume = 0;
+  self.max_volume = 0;
+  self.set_volume = NULL;
+#endif /* AUDIO_VOLUME */
+
   audio_add_plugin(&self);
 }
