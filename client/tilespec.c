@@ -3007,8 +3007,8 @@ static enum color_std player_team_color(struct player *pplayer)
   }
 
   team = pplayer->team;
-  n = (team == TEAM_NONE ? pplayer->player_no
-       : team + game.info.nplayers);
+  n = (team != TEAM_NONE ? team
+       : pplayer->player_no + team_count());
 
   color_no = COLOR_STD_RACE0 + (n % num_colors);
 
