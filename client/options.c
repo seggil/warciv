@@ -82,9 +82,6 @@ struct worklist global_worklists[MAX_NUM_WORKLISTS];
 bool random_leader;
 bool solid_color_behind_units;
 bool sound_bell_at_new_turn;
-#ifdef AUDIO_VOLUME
-int sound_volume;
-#endif /* AUDIO_VOLUME */
 int  smooth_move_unit_msec;
 int smooth_center_slide_msec;
 bool do_combat_animation;
@@ -415,24 +412,6 @@ static const char *get_filter_value_name(enum filter_value value)
   .change_callback = ocb,						       \
 }
 
-#define GEN_VOLUME_OPTION(oname, odesc, ohelp, ocat, odef, omin, omax, ocb) \
-{									    \
-  .name = #oname,							    \
-  .description = odesc,							    \
-  .help_text = ohelp,							    \
-  .category = ocat,							    \
-  .type = COT_VOLUME,							    \
-  .o = {								    \
-    .integer = {							    \
-      .pvalue = &oname,							    \
-      .def = odef,							    \
-      .min = omin,							    \
-      .max = omax							    \
-    }									    \
-  },									    \
-  .change_callback = ocb,						    \
-}
-
 static struct client_option client_options[] = {
   GEN_STR_LIST_OPTION(default_tileset_name, N_("Tileset"),
 		      N_("By changing this option you change the active "
@@ -626,14 +605,6 @@ static struct client_option client_options[] = {
 		     "behavior of the \"bell\" event by editing the message "
 		     "options."),
 		  COC_SOUND, FALSE, NULL),
-#ifdef AUDIO_VOLUME
-  GEN_VOLUME_OPTION(sound_volume, N_("Volume"),
-		    N_("This parameter controls the volume of the sounds. "
-		       "Note that this option is currently only supported "
-		       "by the SDL plugin."),
-		    COC_SOUND, AUDIO_VOLUME_MAX, AUDIO_VOLUME_MIN,
-		    AUDIO_VOLUME_MAX, audio_change_volume),
-#endif /* AUDIO_VOLUME */
 
   GEN_STR_OPTION(chat_time_format, N_("Time format for chat messages"),
 		 N_("All chat window messages will be prefixed by this "
@@ -1176,7 +1147,6 @@ void client_options_init(void)
       *o->o.boolean.pvalue = o->o.boolean.def;
       break;
     case COT_INTEGER:
-    case COT_VOLUME:
       assert(o->o.integer.def >= o->o.integer.min);
       assert(o->o.integer.def <= o->o.integer.max);
       *o->o.integer.pvalue = o->o.integer.def;
@@ -1350,7 +1320,6 @@ void load_general_options(void)
   }
   if (!section_file_load(&sf, name)) {
     create_default_cma_presets();
-    create_default_chatline_colors();
     return;  
   }
 
@@ -1362,17 +1331,9 @@ void load_general_options(void)
 				      prefix, o->name);
       break;
     case COT_INTEGER:
-    case COT_VOLUME:
       *o->o.integer.pvalue =
 	  secfile_lookup_int_default(&sf, o->o.integer.def, "%s.%s",
 				      prefix, o->name);
-      if (*o->o.integer.pvalue < o->o.integer.min
-	  || *o->o.integer.pvalue > o->o.integer.max) {
-	freelog(LOG_ERROR, "The option '%s' (%d) is out of scale [%d, %d], "
-		"using default...", o->name, *o->o.integer.pvalue,
-		o->o.integer.min, o->o.integer.max);
-	*o->o.integer.pvalue = o->o.integer.def;
-      }
       break;
     case COT_STRING:
     case COT_PASSWORD:
@@ -1478,7 +1439,6 @@ void save_options(void)
       secfile_insert_bool(&sf, *o->o.boolean.pvalue, "client.%s", o->name);
       break;
     case COT_INTEGER:
-    case COT_VOLUME:
       secfile_insert_int(&sf, *o->o.integer.pvalue, "client.%s", o->name);
       break;
     case COT_STRING:

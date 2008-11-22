@@ -21,7 +21,6 @@ void clear_output_window(void);
 
 struct section_file;
 
-void create_default_chatline_colors(void);
 void secfile_save_chatline_colors(struct section_file *sf);
 void secfile_load_chatline_colors(struct section_file *sf);
 

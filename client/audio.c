@@ -54,8 +54,8 @@
 static struct section_file tagstruct, *tagfile = NULL;
 
 static struct audio_plugin plugins[MAX_NUM_PLUGINS];
-static struct audio_plugin *selected_plugin = NULL;
 static int num_plugins_used = 0;
+static int selected_plugin = -1;
 
 /**********************************************************************
   Returns a static, NULL-terminated list of all sound plugins
@@ -97,7 +97,7 @@ const char **get_soundset_list(void)
 /**************************************************************************
   Add a plugin.
 **************************************************************************/
-void audio_add_plugin(const struct audio_plugin *p)
+void audio_add_plugin(struct audio_plugin *p)
 {
   assert(num_plugins_used < MAX_NUM_PLUGINS);
   memcpy(&plugins[num_plugins_used], p, sizeof(struct audio_plugin));
@@ -109,11 +109,10 @@ void audio_add_plugin(const struct audio_plugin *p)
 **************************************************************************/
 bool audio_select_plugin(const char *const name)
 {
-  struct audio_plugin *plugin;
   int i;
 
-  for (i = 0, plugin = plugins; i < num_plugins_used; i++, plugin++) {
-    if (strcmp(plugin->name, name) == 0) {
+  for (i = 0; i < num_plugins_used; i++) {
+    if (strcmp(plugins[i].name, name) == 0) {
       break;
     }
   }
@@ -125,26 +124,25 @@ bool audio_select_plugin(const char *const name)
     return FALSE;
   }
 
-  if (plugin == selected_plugin) {
-    /* We already selected this one */
+  if (i == selected_plugin) {
     return TRUE;
   }
 
-  if (selected_plugin) {
-    freelog(LOG_DEBUG, "Shutting down %s", selected_plugin->name);
-    selected_plugin->stop();
-    selected_plugin->wait();
-    selected_plugin->shutdown();
+  if (selected_plugin >= 0) {
+    freelog(LOG_DEBUG, "Shutting down %s", plugins[selected_plugin].name);
+    plugins[selected_plugin].stop();
+    plugins[selected_plugin].wait();
+    plugins[selected_plugin].shutdown();
   }
 
-  if (!plugin->init()) {
+  if (!plugins[i].init()) {
     freelog(LOG_ERROR, "Plugin %s found but can't be initialized.", name);
     return FALSE;
   }
 
-  selected_plugin = plugin;
+  selected_plugin = i;
   freelog(LOG_NORMAL, _("Plugin '%s' is now selected"),
-	  selected_plugin->name);
+	  plugins[selected_plugin].name);
   return TRUE;
 }
 
@@ -305,9 +303,6 @@ void audio_real_init(void)
 		   sizeof(default_sound_plugin_name));
   audio_set_soundset(default_sound_set_name,
 		     sizeof(default_sound_set_name));
-#ifdef AUDIO_VOLUME
-  audio_set_volume(sound_volume);
-#endif /* AUDIO_VOLUME */
 
   atexit(audio_shutdown);
 }
@@ -352,7 +347,7 @@ static bool audio_play_tag(const char *tag, bool repeat)
     }
   }
 
-  return selected_plugin->play(tag, fullpath, repeat);
+  return plugins[selected_plugin].play(tag, fullpath, repeat);
 }
 
 /**************************************************************************
@@ -396,7 +391,7 @@ void audio_play_music(const char *const tag, char *const alt_tag)
 **************************************************************************/
 void audio_stop()
 {
-  selected_plugin->stop();
+  plugins[selected_plugin].stop();
 }
 
 /**************************************************************************
@@ -408,8 +403,8 @@ void audio_shutdown()
   audio_stop();
 
   audio_play_sound("e_game_quit", NULL);
-  selected_plugin->wait();
-  selected_plugin->shutdown();
+  plugins[selected_plugin].wait();
+  plugins[selected_plugin].shutdown();
 
   if (tagfile) {
     section_file_free(tagfile);
@@ -437,46 +432,3 @@ const char *audio_get_all_plugin_names()
   sz_strlcat(buffer, "]");
   return buffer;
 }
-
-#ifdef AUDIO_VOLUME
-/**************************************************************************
-  Set the volume level.
-**************************************************************************/
-void audio_set_volume(int volume)
-{
-  if (!selected_plugin || !selected_plugin->set_volume) {
-    /* Cannot set volume */
-    return;
-  }
-
-  assert(AUDIO_VOLUME_MIN < AUDIO_VOLUME_MAX);
-  assert(selected_plugin->min_volume < selected_plugin->max_volume);
-
-  /* Unsure we are in a correct scale */
-  if (volume > AUDIO_VOLUME_MAX) {
-    volume = AUDIO_VOLUME_MAX;
-  } else if (volume < AUDIO_VOLUME_MIN) {
-    volume = AUDIO_VOLUME_MIN;
-  }
-
-  /* Modify the value to be in the plugin scale */
-  volume = selected_plugin->min_volume
-    + ((volume - AUDIO_VOLUME_MIN)
-       * (selected_plugin->max_volume - selected_plugin->min_volume))
-      / (AUDIO_VOLUME_MAX - AUDIO_VOLUME_MIN);
-
-  assert(volume >= selected_plugin->min_volume
-	 && volume <= selected_plugin->max_volume);
-
-  /* Really set the volume now */
-  selected_plugin->set_volume(volume);
-}
-
-/**************************************************************************
-  Set the volume level, option callback.
-**************************************************************************/
-void audio_change_volume(struct client_option *option)
-{
-  audio_set_volume(*option->o.integer.pvalue);
-}
-#endif /* AUDIO_VOLUME */
