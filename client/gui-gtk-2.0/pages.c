@@ -778,6 +778,7 @@ static void meta_player_tree_store_append(struct server *pserver, int nplayers,
   struct players *pplayer, *pobserver;
   GtkTreeIter parent, iter;
   int i, j;
+  size_t name_len;
 
   for (i = 0, pplayer = pserver->players; i < nplayers; i++, pplayer++) {
     if (0 == mystrcasecmp(type, pplayer->type)) {
@@ -788,13 +789,14 @@ static void meta_player_tree_store_append(struct server *pserver, int nplayers,
 			 MPL_COL_HOST, pplayer->host,
 			 MPL_COL_TYPE, pplayer->type,
 			 MPL_COL_NATION, pplayer->nation, -1);
+      name_len = strlen(pplayer->name);
       /* Check for observers */
       for (j = 0, pobserver = pserver->players; j < nplayers;
 	   j++, pobserver++) {
 	if (pobserver->name[0] == '*'
 	    && pobserver->name[1] == '('
-	    && 0 == strncmp(pobserver->name + 2,
-			    pplayer->name, strlen(pplayer->name))) {
+	    && 0 == strncmp(pobserver->name + 2, pplayer->name, name_len)
+	    && pobserver->name[2 + name_len] == ')') {
 	  gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
 	  gtk_tree_store_set(meta_player_tree_store, &iter,
 			     MPL_COL_USER, pobserver->user,
