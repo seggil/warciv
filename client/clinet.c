@@ -605,7 +605,6 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
 
   for (i = 0; i < nservers; i++) {
     char *host, *port, *version, *state, *message, *nplayers, *patches;
-    int n;
     struct server *pserver =
 	(struct server *) fc_malloc(sizeof(struct server));
 
@@ -628,16 +627,16 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
     pserver->patches = mystrdup(patches);
 
     nplayers = secfile_lookup_str_default(file, "0", "server%d.nplayers", i);
-    pserver->nplayers = mystrdup(nplayers);
-    n = atoi(nplayers);
+    pserver->nplayers = atoi(nplayers);
 
-    if (n > 0) {
-      pserver->players = fc_malloc(n * sizeof(*pserver->players));
+    if (pserver->nplayers > 0) {
+      pserver->players =
+	fc_malloc(pserver->nplayers * sizeof(*pserver->players));
     } else {
       pserver->players = NULL;
     }
       
-    for (j = 0; j < n; j++) {
+    for (j = 0; j < pserver->nplayers; j++) {
       char *name, *user, *nation, *type, *host;
 
       name = secfile_lookup_str_default(file, "", 
@@ -1354,7 +1353,6 @@ void delete_server_list(struct server_list *server_list)
 {
   server_list_iterate(server_list, ptmp) {
     int i;
-    int n = atoi(ptmp->nplayers);
 
     free(ptmp->host);
     free(ptmp->port);
@@ -1364,7 +1362,7 @@ void delete_server_list(struct server_list *server_list)
     free(ptmp->patches);
 
     if (ptmp->players) {
-      for (i = 0; i < n; i++) {
+      for (i = 0; i < ptmp->nplayers; i++) {
         free(ptmp->players[i].name);
         free(ptmp->players[i].user);
         free(ptmp->players[i].type);
@@ -1373,7 +1371,6 @@ void delete_server_list(struct server_list *server_list)
       }
       free(ptmp->players);
     }
-    free(ptmp->nplayers);
 
     if (ptmp->vars) {
       for (i = 0; i < ptmp->nvars; i++) {
@@ -1590,7 +1587,7 @@ struct server_list *get_lan_server_list(void)
     pserver->version = mystrdup(version);
     pserver->patches = mystrdup("Cannot be read");
     pserver->state = mystrdup(status);
-    pserver->nplayers = mystrdup(players);
+    pserver->nplayers = atoi(players);
     pserver->message = mystrdup(message);
     pserver->players = NULL;
     pserver->nvars = 0;

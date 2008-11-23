@@ -284,10 +284,37 @@ static GtkWidget *network_password_label, *network_password;
 static GtkWidget *network_confirm_password_label, *network_confirm_password;
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static int get_real_player_number(struct server *pserver)
+{
+  struct players *pplayer;
+  int i, nplayers = 0;
+
+  if (!pserver->players) {
+    /* We don't have the list to verify */
+    return pserver->nplayers;
+  }
+
+  for (i = 0, pplayer = pserver->players; i < pserver->nplayers;
+       i++, pplayer++) {
+    /* All 'player' cases */
+    if (0 == mystrcasecmp("Human", pplayer->type)
+	|| 0 == mystrcasecmp("AI", pplayer->type)
+	|| 0 == mystrcasecmp("Dead", pplayer->type)
+	|| 0 == mystrcasecmp("Barbarian", pplayer->type)) {
+      nplayers++;
+    }
+  }
+
+  return nplayers;
+}
+
+/**************************************************************************
   update a server list.
 **************************************************************************/
 static void update_server_list(GtkTreeSelection *selection,
-			       GtkListStore * store,
+			       GtkListStore *store,
 			       struct server_list *list)
 {
   const gchar *host, *port;
@@ -307,21 +334,16 @@ static void update_server_list(GtkTreeSelection *selection,
 
   server_list_iterate(list, pserver) {
     GtkTreeIter it;
-    gchar *row[7];
 
     gtk_list_store_append(store, &it);
-
-    row[0] = pserver->host;
-    row[1] = pserver->port;
-    row[2] = pserver->version;
-    row[3] = pserver->patches;
-    row[4] = _(pserver->state);
-    row[5] = pserver->nplayers;
-    row[6] = pserver->message;
-
     gtk_list_store_set(store, &it,
-		       0, row[0], 1, row[1], 2, row[2], 3, row[3],
-		       4, row[4], 5, row[5], 6, row[6], -1);
+		       0, pserver->host,
+		       1, pserver->port,
+		       2, pserver->version,
+		       3, pserver->patches,
+		       4, _(pserver->state),
+		       5, get_real_player_number(pserver), 
+		       6, pserver->message, -1);
 
     if (strcmp(host, pserver->host) == 0 && strcmp(port, pserver->port) == 0) {
       gtk_tree_selection_select_iter(selection, &it);
@@ -772,7 +794,7 @@ static void network_activate_callback(GtkTreeView *view,
 /**************************************************************************
   ...
 **************************************************************************/
-static void meta_player_tree_store_append(struct server *pserver, int nplayers,
+static void meta_player_tree_store_append(struct server *pserver,
 					  const char *type)
 {
   struct players *pplayer, *pobserver;
@@ -780,7 +802,8 @@ static void meta_player_tree_store_append(struct server *pserver, int nplayers,
   int i, j;
   size_t name_len;
 
-  for (i = 0, pplayer = pserver->players; i < nplayers; i++, pplayer++) {
+  for (i = 0, pplayer = pserver->players; i < pserver->nplayers;
+       i++, pplayer++) {
     if (0 == mystrcasecmp(type, pplayer->type)) {
       gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
       gtk_tree_store_set(meta_player_tree_store, &parent,
@@ -791,7 +814,7 @@ static void meta_player_tree_store_append(struct server *pserver, int nplayers,
 			 MPL_COL_NATION, pplayer->nation, -1);
       name_len = strlen(pplayer->name);
       /* Check for observers */
-      for (j = 0, pobserver = pserver->players; j < nplayers;
+      for (j = 0, pobserver = pserver->players; j < pserver->nplayers;
 	   j++, pobserver++) {
 	if (pobserver->name[0] == '*'
 	    && pobserver->name[1] == '('
@@ -812,15 +835,15 @@ static void meta_player_tree_store_append(struct server *pserver, int nplayers,
   ...
 **************************************************************************/
 static void
-meta_player_tree_store_append_global_observers(struct server *pserver,
-					       int nplayers)
+meta_player_tree_store_append_global_observers(struct server *pserver)
 {
   struct players *pobserver;
   GtkTreeIter parent, iter;
   int i;
   bool first = TRUE;
 
-  for (i = 0, pobserver = pserver->players; i < nplayers; i++, pobserver++) {
+  for (i = 0, pobserver = pserver->players; i < pserver->nplayers;
+       i++, pobserver++) {
     if (0 == mystrcasecmp("Observer", pobserver->type)
 	&& 0 == mystrncasecmp("*global", pobserver->name, 7)) {
       if (first) {
@@ -842,15 +865,15 @@ meta_player_tree_store_append_global_observers(struct server *pserver,
 /**************************************************************************
   ...
 **************************************************************************/
-static void meta_player_tree_store_append_detached_conn(struct server *pserver,
-							int nplayers)
+static void meta_player_tree_store_append_detached_conn(struct server *pserver)
 {
   struct players *pdetached;
   GtkTreeIter parent, iter;
   int i;
   bool first = TRUE;
 
-  for (i = 0, pdetached = pserver->players; i < nplayers; i++, pdetached++) {
+  for (i = 0, pdetached = pserver->players; i < pserver->nplayers;
+       i++, pdetached++) {
     if (0 == mystrcasecmp("Detached", pdetached->type)) {
       if (first) {
 	gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
@@ -873,8 +896,8 @@ static void meta_player_tree_store_append_detached_conn(struct server *pserver,
 **************************************************************************/
 static void update_metaplayerlist(GtkTreePath * path)
 {
-  int i, nplayers;
   struct server *pserver;
+  int i;
 
   gtk_tree_store_clear(meta_player_tree_store);
 
@@ -889,14 +912,12 @@ static void update_metaplayerlist(GtkTreePath * path)
     return;
   }
 
-  nplayers = atoi(pserver->nplayers);
-
-  meta_player_tree_store_append(pserver, nplayers, "Human");
-  meta_player_tree_store_append(pserver, nplayers, "AI");
-  meta_player_tree_store_append(pserver, nplayers, "Dead");
-  meta_player_tree_store_append(pserver, nplayers, "Barbarian");
-  meta_player_tree_store_append_global_observers(pserver, nplayers);
-  meta_player_tree_store_append_detached_conn(pserver, nplayers);
+  meta_player_tree_store_append(pserver, "Human");
+  meta_player_tree_store_append(pserver, "AI");
+  meta_player_tree_store_append(pserver, "Dead");
+  meta_player_tree_store_append(pserver, "Barbarian");
+  meta_player_tree_store_append_global_observers(pserver);
+  meta_player_tree_store_append_detached_conn(pserver);
 }
 
 /**************************************************************************
@@ -1118,7 +1139,7 @@ GtkWidget *create_network_page(void)
   /* LAN pane. */
   lan_store = gtk_list_store_new(7, G_TYPE_STRING, G_TYPE_STRING,
 				 G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_INT,
                                  G_TYPE_STRING);
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(lan_store));
@@ -1156,7 +1177,7 @@ GtkWidget *create_network_page(void)
   /* Metaserver pane. */
   meta_store = gtk_list_store_new(7, G_TYPE_STRING, G_TYPE_STRING,
 				  G_TYPE_STRING, G_TYPE_STRING,
-				  G_TYPE_STRING, G_TYPE_STRING,
+				  G_TYPE_STRING, G_TYPE_INT,
 				  G_TYPE_STRING);
 
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(meta_store));

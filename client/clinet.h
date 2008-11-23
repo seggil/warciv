@@ -61,7 +61,7 @@ struct server {
     char *nation;
   } *players;
 
-  char *nplayers;
+  int nplayers;
 
   int nvars;
   struct vars {
