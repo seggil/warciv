@@ -55,8 +55,8 @@ GtkListStore *conn_model;
 static GtkWidget *start_options_table;
 
 static GtkListStore *load_store, *scenario_store,
-  *nation_store, *meta_store, *lan_store,
-  *metaplayerlist_store, *variables_store;
+  *nation_store, *meta_store, *lan_store, *variables_store;
+static GtkTreeStore *meta_player_tree_store;
 
 enum metaplayerlist_column_ids {
   MPL_COL_NAME,
@@ -770,36 +770,131 @@ static void network_activate_callback(GtkTreeView *view,
 }
 
 /**************************************************************************
+  ...
+**************************************************************************/
+static void meta_player_tree_store_append(struct server *pserver, int nplayers,
+					  const char *type)
+{
+  struct players *pplayer, *pobserver;
+  GtkTreeIter parent, iter;
+  int i, j;
+
+  for (i = 0, pplayer = pserver->players; i < nplayers; i++, pplayer++) {
+    if (0 == mystrcasecmp(type, pplayer->type)) {
+      gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
+      gtk_tree_store_set(meta_player_tree_store, &parent,
+			 MPL_COL_NAME, pplayer->name,
+			 MPL_COL_USER, pplayer->user,
+			 MPL_COL_HOST, pplayer->host,
+			 MPL_COL_TYPE, pplayer->type,
+			 MPL_COL_NATION, pplayer->nation, -1);
+      /* Check for observers */
+      for (j = 0, pobserver = pserver->players; j < nplayers;
+	   j++, pobserver++) {
+	if (pobserver->name[0] == '*'
+	    && pobserver->name[1] == '('
+	    && 0 == strncmp(pobserver->name + 2,
+			    pplayer->name, strlen(pplayer->name))) {
+	  gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
+	  gtk_tree_store_set(meta_player_tree_store, &iter,
+			     MPL_COL_USER, pobserver->user,
+			     MPL_COL_HOST, pobserver->host,
+			     MPL_COL_TYPE, pobserver->type, -1);
+	}
+      }
+    }
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void
+meta_player_tree_store_append_global_observers(struct server *pserver,
+					       int nplayers)
+{
+  struct players *pobserver;
+  GtkTreeIter parent, iter;
+  int i;
+  bool first = TRUE;
+
+  for (i = 0, pobserver = pserver->players; i < nplayers; i++, pobserver++) {
+    if (0 == mystrcasecmp("Observer", pobserver->type)
+	&& 0 == mystrncasecmp("*global", pobserver->name, 7)) {
+      if (first) {
+	gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
+	gtk_tree_store_set(meta_player_tree_store, &parent,
+			   MPL_COL_NAME, "Global observers", -1);
+	first = FALSE;
+      }
+
+      gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
+      gtk_tree_store_set(meta_player_tree_store, &iter,
+			 MPL_COL_USER, pobserver->user,
+			 MPL_COL_HOST, pobserver->host,
+			 MPL_COL_TYPE, pobserver->type, -1);
+    }
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void meta_player_tree_store_append_detached_conn(struct server *pserver,
+							int nplayers)
+{
+  struct players *pdetached;
+  GtkTreeIter parent, iter;
+  int i;
+  bool first = TRUE;
+
+  for (i = 0, pdetached = pserver->players; i < nplayers; i++, pdetached++) {
+    if (0 == mystrcasecmp("Detached", pdetached->type)) {
+      if (first) {
+	gtk_tree_store_append(meta_player_tree_store, &parent, NULL);
+	gtk_tree_store_set(meta_player_tree_store, &parent,
+			   MPL_COL_NAME, "Detached", -1);
+	first = FALSE;
+      }
+
+      gtk_tree_store_append(meta_player_tree_store, &iter, &parent);
+      gtk_tree_store_set(meta_player_tree_store, &iter,
+			 MPL_COL_USER, pdetached->user,
+			 MPL_COL_HOST, pdetached->host,
+			 MPL_COL_TYPE, pdetached->type, -1);
+    }
+  }
+}
+
+/**************************************************************************
   update the player list for the server given by path
 **************************************************************************/
 static void update_metaplayerlist(GtkTreePath * path)
 {
   int i, nplayers;
   struct server *pserver;
-  GtkTreeIter iter;
 
-  gtk_list_store_clear(metaplayerlist_store);
+  gtk_tree_store_clear(meta_player_tree_store);
 
-  if (!internet_server_list || !path)
+  if (!internet_server_list || !path) {
     return;
+  }
 
   i = gtk_tree_path_get_indices(path)[0];
   pserver = server_list_get(internet_server_list, i);
 
-  if (!pserver)
+  if (!pserver) {
     return;
+  }
 
   nplayers = atoi(pserver->nplayers);
 
-  for (i = 0; i < nplayers; i++) {
-    gtk_list_store_append(metaplayerlist_store, &iter);
-    gtk_list_store_set(metaplayerlist_store, &iter,
-		       MPL_COL_NAME, pserver->players[i].name,
-		       MPL_COL_USER, pserver->players[i].user,
-		       MPL_COL_HOST, pserver->players[i].host,
-		       MPL_COL_TYPE, pserver->players[i].type,
-		       MPL_COL_NATION, pserver->players[i].nation, -1);
-  }
+  meta_player_tree_store_append(pserver, nplayers, "Human");
+  meta_player_tree_store_append(pserver, nplayers, "AI");
+  meta_player_tree_store_append(pserver, nplayers, "Dead");
+  meta_player_tree_store_append(pserver, nplayers, "Barbarian");
+  meta_player_tree_store_append_global_observers(pserver, nplayers);
+  meta_player_tree_store_append_detached_conn(pserver, nplayers);
 }
 
 /**************************************************************************
@@ -889,15 +984,15 @@ static GtkWidget *create_metaplayerlist_view()
   GtkCellRenderer *rend;
   GtkTreeSelection *selection;
 
-  metaplayerlist_store = gtk_list_store_new(MPL_NUM_COLUMNS,
-                                            G_TYPE_STRING,	/* name */
-					    G_TYPE_STRING,	/* user */
-					    G_TYPE_STRING,	/* host */
-					    G_TYPE_STRING,	/* type */
-					    G_TYPE_STRING);	/* nation */
+  meta_player_tree_store = gtk_tree_store_new(MPL_NUM_COLUMNS,
+					      G_TYPE_STRING,	/* name */
+					      G_TYPE_STRING,	/* user */
+					      G_TYPE_STRING,	/* host */
+					      G_TYPE_STRING,	/* type */
+					      G_TYPE_STRING);	/* nation */
 
-  view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(metaplayerlist_store));
-  g_object_unref(metaplayerlist_store);
+  view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(meta_player_tree_store));
+  g_object_unref(meta_player_tree_store);
   gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));

@@ -43,8 +43,7 @@ extern bool server_has_extglobalinfo;
 
 /* this is the client's connection to the server */
 
-struct server
-{
+struct server {
   char *host;
   char *port;
   char *capability;
@@ -54,8 +53,7 @@ struct server
   char *topic;
   char *message;
 
-  struct players
-  {
+  struct players {
     char *name;
     char *user;
     char *type;
@@ -66,8 +64,7 @@ struct server
   char *nplayers;
 
   int nvars;
-  struct vars
-  {
+  struct vars {
     char *name;
     char *value;
   } *vars;
