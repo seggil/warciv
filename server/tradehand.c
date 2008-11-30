@@ -101,7 +101,7 @@ void send_trade_route_remove(struct conn_list *dest, struct trade_route *ptr)
   packet.city1 = ptr->pcity1->id;
   packet.city2 = ptr->pcity2->id;
 
-  conn_list_iterate(city_owner(ptr->pcity1)->connections, pconn) {
+  conn_list_iterate(dest, pconn) {
     if (connection_supports_server_trade(pconn)) {
       send_packet_trade_route_remove(pconn, &packet);
     }
