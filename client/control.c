@@ -3048,11 +3048,10 @@ void put_last_unit_focus(void)
 }
 
 /**************************************************************************
-  Cycle through the available overview modes.
+  Cycle through the available player colors modes.
 **************************************************************************/
-void key_cycle_overview_modes(void)
+void key_cycle_player_colors_modes(void)
 {
-  overview_mode = (overview_mode + 1) % NUM_OVERVIEW_MODES;
-  update_overview_mode_label();
-  refresh_overview_canvas();
+  player_colors_mode = (player_colors_mode + 1) % NUM_PLAYER_COLORS_MODES;
+  player_colors_mode_changed();
 }

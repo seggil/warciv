@@ -597,6 +597,7 @@ void set_client_state(enum client_states newstate)
     client_state = newstate;
 
     if (client_state == CLIENT_GAME_RUNNING_STATE) {
+      player_colors_init();
       delayed_trade_routes_build();
       check_ruleset_specific_options();
       create_event(NULL, E_GAME_START, _("Game started."));

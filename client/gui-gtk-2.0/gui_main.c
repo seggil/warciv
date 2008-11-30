@@ -82,7 +82,7 @@ GtkWidget *map_vertical_scrollbar;
 GtkWidget *overview_canvas;             /* GtkDrawingArea */
 GdkPixmap *overview_canvas_store;       /* this pixmap acts as a backing store 
                                          * for the overview_canvas widget */
-GtkWidget *overview_mode_label;
+GtkWidget *player_colors_mode_label;
 int overview_canvas_store_width = 2 * 80;
 int overview_canvas_store_height = 2 * 50;
 
@@ -170,9 +170,9 @@ static gboolean show_info_button_release(GtkWidget *w, GdkEventButton *ev,
                                          gpointer data);
 static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev,
                                 gpointer data);
-static gboolean overview_mode_label_click(GtkWidget *w,
-                                          GdkEventButton *ev,
-                                          gpointer data);
+static gboolean player_colors_mode_label_click(GtkWidget *w,
+					       GdkEventButton *ev,
+					       gpointer data);
 
 static void end_turn_callback(GtkWidget *w, gpointer data);
 static gboolean get_net_input(GIOChannel *source, GIOCondition cond,
@@ -419,7 +419,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
 
   if (ev->keyval == GDK_Tab) {
     if (ev->state & GDK_CONTROL_MASK) {
-      key_cycle_overview_modes();
+      key_cycle_player_colors_modes();
     } else {
       if (!GTK_WIDGET_HAS_FOCUS(inputline)) {
         gtk_widget_grab_focus(inputline);
@@ -1303,21 +1303,21 @@ static void setup_widgets(void)
   ebox = gtk_event_box_new();
   gtk_widget_add_events(ebox, GDK_BUTTON_PRESS_MASK);
   g_signal_connect(ebox, "button_press_event",
-                   G_CALLBACK(overview_mode_label_click), NULL);
+                   G_CALLBACK(player_colors_mode_label_click), NULL);
   gtk_box_pack_start(GTK_BOX(overview_box), ebox, FALSE, FALSE, 0);
 
   hbox2 = gtk_hbox_new(FALSE, 0);
   gtk_container_add(GTK_CONTAINER(ebox), hbox2);
 
-  label = gtk_label_new(_("Overview mode:"));
+  label = gtk_label_new(_("Player colors mode:"));
   gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
   gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
 
   label = gtk_label_new(NULL);
   gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
   gtk_box_pack_start(GTK_BOX(hbox2), label, TRUE, TRUE, 0);
-  overview_mode_label = label;
-  update_overview_mode_label();
+  player_colors_mode_label = label;
+  update_player_colors_mode_label();
 
   overview_canvas = gtk_drawing_area_new();
   gtk_widget_set_size_request(overview_canvas, 160, 100);
@@ -2583,13 +2583,13 @@ struct voteinfo_bar *create_voteinfo_bar(void)
 }
 
 /**************************************************************************
-  Handle a mouse click on the overview mode label.
+  Handle a mouse click on the player colors mode label.
 **************************************************************************/
-static gboolean overview_mode_label_click(GtkWidget *w,
-                                          GdkEventButton *ev,
-                                          gpointer data)
+static gboolean player_colors_mode_label_click(GtkWidget *w,
+					       GdkEventButton *ev,
+					       gpointer data)
 {
-  key_cycle_overview_modes();
+  key_cycle_player_colors_modes();
 
   return TRUE;
 }

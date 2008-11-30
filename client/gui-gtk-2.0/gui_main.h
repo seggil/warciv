@@ -100,7 +100,7 @@ extern GtkWidget *      go_sun_ebox;
 extern GtkWidget *      go_flake_ebox;
 extern GtkWidget *      map_canvas;             /* GtkDrawingArea */
 extern GtkWidget *      overview_canvas;        /* GtkDrawingArea */
-extern GtkWidget *      overview_mode_label;
+extern GtkWidget *      player_colors_mode_label;
 extern GtkWidget *      timeout_label;
 extern GtkWidget *      turn_done_button;
 extern GtkWidget *      unit_info_label;

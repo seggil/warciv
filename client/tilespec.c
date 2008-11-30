@@ -45,6 +45,7 @@
 #include "dialogs_g.h"
 #include "graphics_g.h"
 #include "mapview_g.h"		/* for update_map_canvas_visible */
+#include "plrdlg_g.h"
 
 #include "civclient.h"		/* for get_client_state() */
 #include "climap.h"		/* for tile_get_known() */
@@ -197,6 +198,12 @@ static struct hash_table *terrain_hash;
   the location of the foc unit are ever drawn.
 */
 static bool focus_unit_hidden = FALSE;
+
+/* The vector of overview color for every player. */
+static enum color_std player_color[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
+
+/* The maximal number of usable colors */
+#define PLAYER_COLORS_NUM (COLOR_STD_RACE13 - COLOR_STD_RACE0 + 1)
 
 static struct Sprite* lookup_sprite_tag_alt(const char *tag, const char *alt,
 					    bool required, const char *what,
@@ -1996,7 +2003,7 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
       ADD_SPRITE(get_unit_nation_flag_sprite(punit),
 		 DRAW_FULL, TRUE, flag_offset_x, flag_offset_y);
     } else {
-      ADD_BG(player_color(unit_owner(punit)));
+      ADD_BG(get_player_color(unit_owner(punit)));
     }
   }
 
@@ -2684,9 +2691,9 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
   /* Set up background color. */
   if (solid_color_behind_units) {
     if (do_draw_unit) {
-      ADD_BG(player_color(unit_owner(punit)));
+      ADD_BG(get_player_color(unit_owner(punit)));
     } else if (pcity && draw_cities) {
-      ADD_BG(player_color(city_owner(pcity)));
+      ADD_BG(get_player_color(city_owner(pcity)));
     }
   } else if (!draw_terrain) {
     if (ptile) {
@@ -2765,7 +2772,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
       ADD_SPRITE(get_city_nation_flag_sprite(pcity),
 		 DRAW_FULL, TRUE, flag_offset_x, flag_offset_y);
     } else {
-      ADD_BG(player_color(city_owner(pcity)));
+      ADD_BG(get_player_color(city_owner(pcity)));
     }
     ADD_SPRITE_FULL(get_city_sprite(pcity));
     if (pcity->client.occupied) {
@@ -2974,45 +2981,23 @@ void tilespec_free_city_tiles(int count)
   A hack added to avoid returning more that COLOR_STD_RACE13.
   But really there should be more colors available -- jk.
 ***********************************************************************/
-enum color_std player_color(struct player *pplayer)
+enum color_std get_player_color(struct player *pplayer)
 {
-  if (!pplayer) {
-    return COLOR_STD_LAST;
-  }
-
-  return COLOR_STD_RACE0 +
-    (pplayer->player_no %
-     (COLOR_STD_RACE13 - COLOR_STD_RACE0 + 1));
+  return pplayer ? player_color[pplayer->player_no] : COLOR_STD_LAST;
 }
 
+
+
 /**********************************************************************
-  Return some color for this player's team. If the player is not
-  on a team, then this is just the player number. Otherwise it is
-  the number of players added to the team number.
-
-  Note: There are only 14 colors defined anyway.
-  NB: Team struct is not consistent on the client side, so team_*
-  functions will not work.
-  FIXME: Most of the colors do not contrast well with the terrain
-  and with each other.
+  ...
 ***********************************************************************/
-static enum color_std player_team_color(struct player *pplayer)
+static void classic_player_colors_init(void)
 {
-  int n, team;
-  const int num_colors = COLOR_STD_RACE13 - COLOR_STD_RACE0 + 1;
-  enum color_std color_no;
+  int i;
 
-  if (!pplayer) {
-    return COLOR_STD_LAST;
+  for (i = 0; i < ARRAY_SIZE(player_color); i++) {
+    player_color[i] = COLOR_STD_RACE0 + (i % PLAYER_COLORS_NUM);
   }
-
-  team = pplayer->team;
-  n = (team != TEAM_NONE ? team
-       : pplayer->player_no + team_count());
-
-  color_no = COLOR_STD_RACE0 + (n % num_colors);
-
-  return color_no;
 }
 
 /**********************************************************************
@@ -3089,6 +3074,41 @@ static enum color_std classic_overview_tile_color(struct tile *ptile)
   return COLOR_STD_LAST;
 }
 
+
+
+/**********************************************************************
+  As long as the team couldn't be changed while the game is running,
+  we can init those colors when the game starts.
+***********************************************************************/
+static void team_player_colors_init(void)
+{
+  int team, i, n = 0;
+  bool at_least_one;
+
+  /* Give team colors */
+  for (team = 0; team < MAX_NUM_TEAMS; team++) {
+    at_least_one = FALSE;
+    players_iterate(pplayer) {
+      if (pplayer->team == team) {
+	at_least_one = TRUE;
+	player_color[pplayer->player_no] =
+	  COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM);
+      }
+    } players_iterate_end;
+    if (at_least_one) {
+      n++;
+    }
+  }
+
+  /* Other colors */
+  for (i = 0; i < ARRAY_SIZE(player_color); i++) {
+    if (i >= game.info.nplayers || game.players[i].team == TEAM_NONE) {
+      player_color[i] = COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM);
+      n++;
+    }
+  }
+}
+
 /**********************************************************************
   Return color for overview map tile with better emphasis on teams.
 ***********************************************************************/
@@ -3112,7 +3132,7 @@ static enum color_std team_overview_tile_color(struct tile *ptile)
 
     return (me ? (players_on_same_team(pplayer, me) 
                   ? COLOR_STD_GREEN : COLOR_STD_RED)
-            : player_team_color(pplayer));
+            : get_player_color(pplayer));
   }
 
   /* Units */
@@ -3122,7 +3142,7 @@ static enum color_std team_overview_tile_color(struct tile *ptile)
 
     return (me ? (players_on_same_team(pplayer, me) 
                   ? COLOR_STD_FGREEN : COLOR_STD_FRED)
-            : player_team_color(pplayer));
+            : get_player_color(pplayer));
   }
 
   /* Terrain */
@@ -3132,23 +3152,88 @@ static enum color_std team_overview_tile_color(struct tile *ptile)
           : (is_fogged ? COLOR_STD_BACKGROUND : COLOR_STD_GROUND));
 }
 
+
+
+/**********************************************************************
+  ...
+***********************************************************************/
+void player_colors_init(void)
+{
+  switch (player_colors_mode) {
+  case PCM_CLASSIC:
+    classic_player_colors_init();
+    return;
+  case PCM_TEAM:
+    team_player_colors_init();
+    return;
+  case NUM_PLAYER_COLORS_MODES:
+    /* Not a valid case */
+    break;
+  }
+  /* Don't set as default case to be warned if we forgot to add a value */
+  freelog(LOG_ERROR, "Unkown player colors mode varriant (%d)",
+	  player_colors_mode);
+  classic_player_colors_init();
+}
+
 /**********************************************************************
   Return color for overview map tile.
 ***********************************************************************/
 enum color_std overview_tile_color(struct tile *ptile)
 {
-  switch (overview_mode) {
-  case OVM_CLASSIC:
+  switch (player_colors_mode) {
+  case PCM_CLASSIC:
     return classic_overview_tile_color(ptile);
-  case OVM_TEAM:
+  case PCM_TEAM:
     return team_overview_tile_color(ptile);
-  case NUM_OVERVIEW_MODES:
+  case NUM_PLAYER_COLORS_MODES:
     /* Not a valid case */
     break;
   }
   /* Don't set as default case to be warned if we forgot to add a value */
-  freelog(LOG_ERROR, "Unkown overview mode varriant (%d)", overview_mode);
+  freelog(LOG_ERROR, "Unkown player colors mode varriant (%d)",
+	  player_colors_mode);
   return classic_overview_tile_color(ptile);
+}
+
+/**************************************************************************
+  Return the string name (unstranslated) corresponding to the
+  player colors mode.
+**************************************************************************/
+const char *player_colors_mode_get_name(enum player_colors_modes mode)
+{
+  switch (mode) {
+  case PCM_CLASSIC:
+    return N_("Classic");
+  case PCM_TEAM:
+    return N_("Team");
+  case NUM_PLAYER_COLORS_MODES:
+    /* Not a valid case */
+    break;
+  }
+  /* Don't set as default case to be warned if we forgot to add a value */
+  return NULL;
+}
+
+/**************************************************************************
+  Update all it should be updated.
+**************************************************************************/
+void player_colors_mode_changed(void)
+{
+  /* Reset colors */
+  player_colors_init();
+  update_player_colors_mode_label();
+  refresh_overview_canvas();
+  update_map_canvas_visible(MUT_NORMAL);	/* for borders color */
+  update_players_dialog();			/* for borders color */
+}
+
+/****************************************************************
+  ... 
+*****************************************************************/
+void player_colors_mode_option_callback(struct client_option *poption)
+{
+  player_colors_mode_changed();
 }
 
 /**********************************************************************

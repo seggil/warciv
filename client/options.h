@@ -46,6 +46,13 @@ enum client_option_type {
   COT_VOLUME
 };
 
+enum player_colors_modes {
+  PCM_CLASSIC = 0,
+  PCM_TEAM,
+
+  NUM_PLAYER_COLORS_MODES
+};
+
 struct client_option {
   const char const *name;
   const char const *description;
@@ -170,7 +177,7 @@ extern bool warn_before_add_to_city;
 extern bool prevent_duplicate_notify_tabs;
 extern bool enable_chat_logging;
 extern char chat_log_directory[MAX_LEN_PATH];
-extern enum overview_modes overview_mode;
+enum player_colors_modes player_colors_mode;
 #ifndef ASYNC_TRADE_PLANNING
 extern int trade_time_limit;
 #endif	/* ASYNC_TRADE_PLANNING */

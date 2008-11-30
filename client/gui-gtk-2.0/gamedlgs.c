@@ -45,6 +45,7 @@
 #include "messagedlg.h"
 #include "messagewin.h"
 #include "options.h"
+#include "plrdlg_g.h"
 #include "wldlg.h"
 
 #include "ratesdlg.h"
@@ -442,15 +443,6 @@ void split_message_window_callback(struct client_option *poption)
   } else {
     gtk_widget_hide(get_split_message_window());
   }
-}
-
-/****************************************************************
-  ... 
-*****************************************************************/
-void overview_mode_option_callback(struct client_option *poption)
-{
-  update_overview_mode_label();
-  refresh_overview_canvas();
 }
 
 /*************************************************************************

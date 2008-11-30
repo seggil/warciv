@@ -278,7 +278,7 @@ void key_auto_caravan(void);
 void key_toggle_moveandattack(void);
 void key_unit_air_patrol(void);
 void key_unit_air_patrol_dest(void);
-void key_cycle_overview_modes(void);
+void key_cycle_player_colors_modes(void);
 void update_hover_cursor(void);
 
 /* don't change this unless you also put more entries in data/Freeciv */

@@ -48,7 +48,6 @@ void fullscreen_mode_callback(struct client_option *poption);
 void map_scrollbars_callback(struct client_option *poption);
 void mapview_redraw_callback(struct client_option *poption);
 void split_message_window_callback(struct client_option *poption);
-void overview_mode_option_callback(struct client_option *poption);
 
 static const char *category_name[COC_NUM] = {
   N_("Graphics"),		/* COC_GRAPHICS */
@@ -119,7 +118,7 @@ bool warn_before_add_to_city;
 bool prevent_duplicate_notify_tabs;
 bool enable_chat_logging;
 char chat_log_directory[MAX_LEN_PATH];
-enum overview_modes overview_mode;
+enum player_colors_modes player_colors_mode;
 #ifndef ASYNC_TRADE_PLANNING
 int trade_time_limit;
 #endif	/* ASYNC_TRADE_PLANNING */
@@ -515,6 +514,14 @@ static struct client_option client_options[] = {
                   N_("If this option is enabled, the client won't show the "
 		     "vote bar if you are not a player."),
 		  COC_GRAPHICS, FALSE, NULL),
+  GEN_NUM_LIST_OPTION(player_colors_mode, N_("Player colors display mode"),
+		      N_("This setting controls how the player colors are "
+			 "attributed to every player. Also, it controls "
+			 "how tiles, cities, and units are drawn in the map "
+			 "overview window"),
+		      COC_GRAPHICS, PCM_CLASSIC,
+		      player_colors_mode_get_name,
+		      player_colors_mode_option_callback),
 
   GEN_BOOL_OPTION(ai_popup_windows, N_("Popup dialogs in AI Mode"),
 		  N_("Disable this option if you do not want to "
@@ -649,11 +656,6 @@ static struct client_option client_options[] = {
                  N_("Directory where chat logs are to be saved"),
 		 N_("This option affect where the log file will be placed."),
 		 COC_CHAT, "~/.freeciv/chatlogs", NULL),
-  GEN_NUM_LIST_OPTION(overview_mode, N_("Overview display mode"),
-		      N_("This setting controls how tiles, cities, and units "
-			 "are drawn in the map overview window"),
-		      COC_GRAPHICS, OVM_CLASSIC,
-		      overview_mode_get_name, overview_mode_option_callback),
   GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
 		  N_("Disable chatline scrolling"),
                   N_("If this option is turned to on, the chatline won't"

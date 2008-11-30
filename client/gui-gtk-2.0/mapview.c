@@ -1539,13 +1539,13 @@ void tileset_changed(void)
 }
 
 /**************************************************************************
-  Update the displayed name of the overview mode.
+  Update the displayed name of the player colors mode.
 **************************************************************************/
-void update_overview_mode_label(void)
+void update_player_colors_mode_label(void)
 {
-  if (!overview_mode_label) {
+  if (!player_colors_mode_label) {
     return;
   }
-  gtk_label_set_text(GTK_LABEL(overview_mode_label),
-		     _(overview_mode_get_name(overview_mode)));
+  gtk_label_set_text(GTK_LABEL(player_colors_mode_label),
+		     _(player_colors_mode_get_name(player_colors_mode)));
 }

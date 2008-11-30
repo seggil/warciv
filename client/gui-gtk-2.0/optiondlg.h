@@ -22,6 +22,5 @@ void fullscreen_mode_callback(struct client_option *poption);
 void map_scrollbars_callback(struct client_option *poption);
 void mapview_redraw_callback(struct client_option *poption);
 void split_message_window_callback(struct client_option *poption);
-void overview_mode_option_callback(struct client_option *poption);
 
 #endif  /* FC__OPTIONDLG_H */

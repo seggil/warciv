@@ -1347,12 +1347,12 @@ static void tile_draw_borders(struct canvas *pcanvas,
 	  && tile_get_known(adjc_tile) != TILE_UNKNOWN
 	  && this_owner != (adjc_owner = map_get_owner(adjc_tile))) {
 	if (this_owner) {
-	  canvas_put_line(pcanvas, player_color(this_owner), LINE_BORDER,
+	  canvas_put_line(pcanvas, get_player_color(this_owner), LINE_BORDER,
 			  canvas_x + start_x, canvas_y + start_y,
 			  end_x - start_x, end_y - start_y);
 	}
 	if (adjc_owner) {
-	  canvas_put_line(pcanvas, player_color(adjc_owner), LINE_BORDER,
+	  canvas_put_line(pcanvas, get_player_color(adjc_owner), LINE_BORDER,
 			  canvas_x + start_x,
 			  canvas_y + start_y - BORDER_WIDTH,
 			  end_x - start_x, end_y - start_y);
@@ -1368,7 +1368,7 @@ static void tile_draw_borders(struct canvas *pcanvas,
 			      &start_x, &start_y, &end_x, &end_y)
 	  && tile_get_known(adjc_tile) != TILE_UNKNOWN
 	  && this_owner != (adjc_owner = map_get_owner(adjc_tile))) {
-	canvas_put_line(pcanvas, player_color(this_owner), LINE_BORDER,
+	canvas_put_line(pcanvas, get_player_color(this_owner), LINE_BORDER,
 			canvas_x + start_x, canvas_y + start_y,
 			end_x - start_x, end_y - start_y);
       }
@@ -2951,22 +2951,4 @@ void update_trade_route_line(struct trade_route *ptr)
   }
   update_city_description(ptr->pcity1);
   update_city_description(ptr->pcity2);
-}
-
-/**************************************************************************
-  Return the string name (unstranslated) corresponding to the overview mode.
-**************************************************************************/
-const char *overview_mode_get_name(enum overview_modes ovm)
-{
-  switch (ovm) {
-  case OVM_CLASSIC:
-    return N_("Classic");
-  case OVM_TEAM:
-    return N_("Team");
-  case NUM_OVERVIEW_MODES:
-    /* Not a valid case */
-    break;
-  }
-  /* Don't set as default case to be warned if we forgot to add a value */
-  return NULL;
 }

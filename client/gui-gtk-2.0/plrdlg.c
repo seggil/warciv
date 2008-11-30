@@ -520,7 +520,8 @@ static void build_row(GtkTreeIter *it, int i)
         g_object_unref(pixbuf);
 	break;
       case COL_COLOR:
-        gtk_list_store_set(store, it, k, colors_standard[player_color(plr)], -1);
+        gtk_list_store_set(store, it, k,
+			   colors_standard[get_player_color(plr)], -1);
 	break;
       case COL_BOOLEAN:
         gtk_list_store_set(store, it, k, (gboolean) pcol->bool_func(plr), -1);
