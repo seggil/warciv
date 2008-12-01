@@ -449,6 +449,10 @@ void clipboard_copy_production(struct tile *ptile)
   char msg[MAX_LEN_MSG];
   struct city *pcity = ptile->city;
 
+  if (!client_is_player()) {
+    return;
+  }
+
   if (pcity) {
     if (pcity->owner != get_player_idx())  {
       return;
