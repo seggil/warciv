@@ -199,6 +199,7 @@ struct civ_game {
     bool spectatorchat;
     int idlecut;
     bool emptyreset;
+    int triremestyle;
   } server;
 };
 
@@ -329,6 +330,10 @@ extern bool is_server;
 #define GAME_MAX_IDLECUT 8639999
 
 #define GAME_DEFAULT_EMPTYRESET TRUE
+
+#define GAME_DEFAULT_TRIREMESTYLE 0
+#define GAME_MIN_TRIREMESTYLE 0
+#define GAME_MAX_TRIREMESTYLE 1
 
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE

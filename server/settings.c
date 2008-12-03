@@ -1479,6 +1479,25 @@ struct settings_s settings[] = {
                 NULL, GAME_DEFAULT_EMPTYRESET,
                 VCF_NONE, 0, ALLOW_ADMIN, ALLOW_ADMIN)
 
+  GEN_INT("triremestyle", game.server.triremestyle, SSET_RULES_FLEXIBLE,
+          SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
+          N_("Trireme ocean loss behaviour"),
+          N_("This setting controls how triremes are handled by the "
+             "server. Changing this setting will affect how and why "
+             "triremes will be lost when in ocean tiles.\n"
+             "0 - Classic freeciv random chance when not at coast.\n"
+             "1 - Experimental deterministic loss. With this mode\n"
+             "    set, triremes will always die under the following\n"
+             "    circumstances:\n"
+             "    - Trireme tech researched: not at coast.\n"
+             "    - Seafaring tech researched: not at coast and more\n"
+             "      than 3 tiles away from home continent.\n"
+             "    - Navigation tech researched: never.\n"
+             "The \"home continent\" is the continent of the home city "
+             "of the trireme, or of the owner's capital."), NULL,
+          GAME_MIN_TRIREMESTYLE, GAME_MAX_TRIREMESTYLE,
+          GAME_DEFAULT_TRIREMESTYLE)
+
   GEN_END
 };
 

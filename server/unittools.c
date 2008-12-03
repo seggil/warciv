@@ -250,6 +250,57 @@ static void do_upgrade_effects(struct player *pplayer)
 }
 
 /***************************************************************************
+  Helper function for trireme_is_too_far().
+****************************************************************************/
+static int dist_from_home_continent(const struct unit *punit)
+{
+  const struct city *pcity;
+
+  pcity = find_city_by_id(punit->homecity);
+  if (pcity == NULL) {
+    pcity = find_palace(get_player(punit->owner));
+  }
+
+  if (pcity != NULL) {
+    Continent_id cont = map_get_continent(pcity->tile);
+
+    iterate_outward(punit->tile, 4, ptile) {
+      if (cont == map_get_continent(ptile)) {
+        return real_map_distance(punit->tile, ptile);
+      }
+    } iterate_outward_end;
+  }
+
+  return FC_INFINITY;
+}
+
+/***************************************************************************
+  Return TRUE if the trireme is too far out according to the rules of
+  game.server.triremestyle=1.
+****************************************************************************/
+static bool trireme_is_too_far(const struct unit *punit)
+{
+  struct player *pplayer;
+  const struct tile *ptile;
+
+  pplayer = get_player(punit->owner);
+  ptile = punit->tile;
+
+  if (get_player_bonus(pplayer, EFT_NO_SINK_DEEP) > 0
+      || player_knows_techs_with_flag(pplayer, TF_REDUCE_TRIREME_LOSS2)
+      || is_safe_ocean(ptile)) {
+    return FALSE;
+  }
+
+  if (player_knows_techs_with_flag(pplayer, TF_REDUCE_TRIREME_LOSS1)
+      && dist_from_home_continent(punit) <= 3) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/***************************************************************************
   1. Do Leonardo's Workshop upgrade if applicable.
 
   2. Restore/decrease unit hitpoints.
@@ -291,25 +342,36 @@ void player_restore_units(struct player *pplayer)
 
     /* 4) Check for units on unsafe terrains. */
     if (unit_flag(punit, F_TRIREME)) {
-      /* Triremes away from coast have a chance of death. */
-      /* Note if a trireme died on a TER_UNSAFE terrain, this would
-       * erronously give the high seas message.  This is impossible under
-       * the current rulesets. */
-      int loss_chance = unit_loss_pct(pplayer, punit->tile, punit);
+      if (game.server.triremestyle == 1) {
+        if (trireme_is_too_far(punit)) {
+          notify_player_ex(pplayer, punit->tile, E_UNIT_LOST,
+                           _("Game: Your %s has been lost on the high "
+                             "seas."), unit_name(punit->type));
+          gamelog(GAMELOG_UNITLOSS, punit, NULL, "lost at sea");
+          wipe_unit(punit);
+          continue; /* Continue iterating... */
+        }
+      } else {
+        /* Triremes away from coast have a chance of death. */
+        /* Note if a trireme died on a TER_UNSAFE terrain, this would
+         * erronously give the high seas message.  This is impossible
+         * under the current rulesets. */
+        int loss_chance = unit_loss_pct(pplayer, punit->tile, punit);
 
-      if (myrand(100) < loss_chance) {
-        notify_player_ex(pplayer, punit->tile, E_UNIT_LOST, 
-                         _("Game: Your %s has been lost on the high seas."),
-                         unit_name(punit->type));
-        gamelog(GAMELOG_UNITLOSS, punit, NULL, "lost at sea");
-        wipe_unit(punit);
-        continue; /* Continue iterating... */
-      } else if (loss_chance > 0) {
-        if (maybe_make_veteran(punit)) {
-	  notify_player_ex(pplayer, punit->tile, E_UNIT_BECAME_VET,
-                           _("Game: Your %s survived on the high seas "
-	                   "and became more experienced!"), 
-                           unit_name(punit->type));
+        if (myrand(100) < loss_chance) {
+          notify_player_ex(pplayer, punit->tile, E_UNIT_LOST,
+                           _("Game: Your %s has been lost on the high "
+                             "seas."), unit_name(punit->type));
+          gamelog(GAMELOG_UNITLOSS, punit, NULL, "lost at sea");
+          wipe_unit(punit);
+          continue; /* Continue iterating... */
+        } else if (loss_chance > 0) {
+          if (maybe_make_veteran(punit)) {
+            notify_player_ex(pplayer, punit->tile, E_UNIT_BECAME_VET,
+                             _("Game: Your %s survived on the high seas "
+                               "and became more experienced!"),
+                             unit_name(punit->type));
+          }
         }
       }
     } else if (!(is_air_unit(punit) || is_heli_unit(punit))

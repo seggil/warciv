@@ -302,6 +302,7 @@ void game_init(void)
     game.server.spectatorchat = GAME_DEFAULT_SPECTATORCHAT;
     game.server.idlecut = GAME_DEFAULT_IDLECUT;
     game.server.emptyreset = GAME_DEFAULT_EMPTYRESET;
+    game.server.triremestyle = GAME_DEFAULT_TRIREMESTYLE;
     game.server.ruleset_loaded = FALSE;
     game.server.timeoutint = GAME_DEFAULT_TIMEOUTINT;
     game.server.timeoutintinc = GAME_DEFAULT_TIMEOUTINTINC;
