@@ -1554,6 +1554,9 @@ void refresh_worklist(GtkWidget *editor)
   gtk_widget_set_sensitive(ptr->add_cmd, sens);
   gtk_widget_set_sensitive(ptr->clear_cmd, sens);
   gtk_widget_set_sensitive(ptr->dst_view, sens);
+
+  /* Sometimes, the destination widget is not updated for an unknown reason. */
+  gtk_widget_queue_draw(ptr->dst_view);
 }
 
 /****************************************************************
