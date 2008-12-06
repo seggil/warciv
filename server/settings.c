@@ -1334,8 +1334,8 @@ struct settings_s settings[] = {
            N_("0 - off\n"
               "1 - on\n"
               "Ignore ruleset if ruleset and pregame settings differs\n"
-              "Must be set to 1 if slow invasions are off or tech leakage is on\n"
-              "or kill stack is off."), NULL,
+              "Must be set to 1 if slow invasions are off, tech leakage\n"
+	      "is on, techcoststyle isn't 1 or kill stack is off."), NULL,
            GAME_DEFAULT_IGNORERULESET)
 
   GEN_BOOL("slowinvasions", game.ruleset_control.slow_invasions, SSET_RULES,

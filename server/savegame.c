@@ -184,7 +184,7 @@
 " diplchance_percent worklists2 map_editor known32fix turn " \
 "attributes watchtower rulesetdir client_worklists orders " \
 "startunits turn_last_built improvement_order technology_order " \
-"warserver_08_13 fcdb_save"
+"fcdb_save"
 
 static const char hex_chars[] = "0123456789abcdef";
 
@@ -3615,55 +3615,64 @@ void game_load(struct section_file *file)
     game.server.dispersion = secfile_lookup_int_default(file,
         GAME_DEFAULT_DISPERSION, "game.dispersion");
 
-    if (has_capability("warserver_08_13", savefile_options)) {
-      game.traderoute_info.trademindist = secfile_lookup_int_default(file,
-          GAME_DEFAULT_TRADEMINDIST, "game.trademindist");
-      game.traderoute_info.traderevenuepct = secfile_lookup_int_default(file,
-          GAME_DEFAULT_TRADEREVENUEPCT, "game.traderevenuepct");
-      game.traderoute_info.traderevenuestyle = secfile_lookup_int_default(file,
-          GAME_DEFAULT_TRADEREVENUESTYLE, "game.traderevenuestyle");
-      game.traderoute_info.caravanbonusstyle = secfile_lookup_int_default(file,
-          GAME_DEFAULT_CARAVANBONUSSTYLE, "game.caravanbonusstyle");
-      game.traderoute_info.maxtraderoutes = secfile_lookup_int_default(file,
-          GAME_DEFAULT_MAXTRADEROUTES, "game.maxtraderoutes");
-      game.ext_info.futuretechsscore = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_FUTURETECHSSCORE, "game.futuretechsscore");
-      game.ext_info.improvedautoattack = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_IMPROVEDAUTOATTACK, "game.improvedautoattack");
-      game.ext_info.stackbribing = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_STACKBRIBING, "game.stackbribing");
-      game.ext_info.experimentalbribingcost = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_EXPERIMENTALBRIBINGCOST,
-          "game.experimentalbribingcost");
-      game.ext_info.techtrading = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_TECHTRADING, "game.techtrading");
-      game.ext_info.ignoreruleset = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_IGNORERULESET, "game.ignoreruleset");
-      game.ext_info.goldtrading = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_GOLDTRADING, "game.goldtrading");
-      game.ext_info.citytrading = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_CITYTRADING, "game.citytrading");
-      game.ext_info.airliftingstyle = secfile_lookup_int_default(file,
-          GAME_DEFAULT_AIRLIFTINGSTYLE, "game.airliftingstyle");
-      game.ext_info.teamplacement = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_TEAMPLACEMENT, "game.teamplacement");
-      game.ext_info.globalwarmingon = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_GLOBALWARMINGON, "game.globalwarmingon");
-      game.ext_info.nuclearwinteron = secfile_lookup_bool_default(file,
-          GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
-      game.server.maxconnections = secfile_lookup_int_default(file,
-          GAME_DEFAULT_MAXCONNECTIONS, "game.maxconnections");
-      game.server.maxhostconnections = secfile_lookup_int_default(file,
-          GAME_DEFAULT_MAXHOSTCONNECTIONS, "game.maxhostconnections");
-      game.server.bruteforcethreshold = secfile_lookup_int_default(file,
-          GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
-      game.server.iterplacementcoefficient = secfile_lookup_int_default(file,
-          GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT,
-	  "game.iterplacementcoefficient");
-      game.server.teamplacementtype = secfile_lookup_int_default(file,
-          GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
-      game.ext_info.techleakagerate = secfile_lookup_int_default(file,
-          GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
+    /* Warserver settings */
+    game.traderoute_info.trademindist = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TRADEMINDIST, "game.trademindist");
+    game.traderoute_info.traderevenuepct = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TRADEREVENUEPCT, "game.traderevenuepct");
+    game.traderoute_info.traderevenuestyle = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TRADEREVENUESTYLE, "game.traderevenuestyle");
+    game.traderoute_info.caravanbonusstyle = secfile_lookup_int_default(file,
+	GAME_DEFAULT_CARAVANBONUSSTYLE, "game.caravanbonusstyle");
+    game.traderoute_info.maxtraderoutes = secfile_lookup_int_default(file,
+	GAME_DEFAULT_MAXTRADEROUTES, "game.maxtraderoutes");
+    game.ext_info.futuretechsscore = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_FUTURETECHSSCORE, "game.futuretechsscore");
+    game.ext_info.improvedautoattack = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_IMPROVEDAUTOATTACK, "game.improvedautoattack");
+    game.ext_info.stackbribing = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_STACKBRIBING, "game.stackbribing");
+    game.ext_info.experimentalbribingcost = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_EXPERIMENTALBRIBINGCOST, "game.experimentalbribingcost");
+    game.ext_info.techtrading = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_TECHTRADING, "game.techtrading");
+    game.ext_info.goldtrading = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_GOLDTRADING, "game.goldtrading");
+    game.ext_info.citytrading = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_CITYTRADING, "game.citytrading");
+    game.ext_info.airliftingstyle = secfile_lookup_int_default(file,
+	GAME_DEFAULT_AIRLIFTINGSTYLE, "game.airliftingstyle");
+    game.ext_info.teamplacement = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_TEAMPLACEMENT, "game.teamplacement");
+    game.ext_info.globalwarmingon = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_GLOBALWARMINGON, "game.globalwarmingon");
+    game.ext_info.nuclearwinteron = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_NUCLEARWINTERON, "game.nuclearwinteron");
+    game.server.bruteforcethreshold = secfile_lookup_int_default(file,
+	GAME_DEFAULT_BRUTEFORCETHRESHOLD, "game.bruteforcethreshold");
+    game.server.iterplacementcoefficient = secfile_lookup_int_default(file,
+	GAME_DEFAULT_ITERPLACEMENTCOEFFICIENT,
+	"game.iterplacementcoefficient");
+    game.server.teamplacementtype = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TEAMPLACEMENTTYPE, "game.teamplacementtype");
+    game.ext_info.techleakagerate = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
+    game.server.triremestyle = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TRIREMESTYLE, "game.triremestyle");
+
+    /* Warserver 'ignoreruleset' settings. */
+    game.ext_info.ignoreruleset = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_IGNORERULESET, "game.ignoreruleset");
+    if (game.ext_info.ignoreruleset) {
+      /* Overwrite ruleset settings */
+      game.ruleset_control.slow_invasions = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_SLOWINVASIONS, "game.slowinvasions");
+      game.ruleset_game.killstack = secfile_lookup_bool_default(file,
+	GAME_DEFAULT_KILLSTACK, "game.killstack");
+      game.ruleset_game.tech_leakage = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TECHLEAKAGE, "game.techleakage");
+      game.ruleset_game.tech_cost_style = secfile_lookup_int_default(file,
+	GAME_DEFAULT_TECHCOSTSTYLE, "game.techcoststyle");
     }
 
     if (has_capability("fcdb_save", savefile_options)) {
@@ -4070,7 +4079,7 @@ void game_save(struct section_file *file)
   secfile_insert_int(file, game.server.watchtower_extra_vision, "game.watchtower_extra_vision");
   secfile_insert_int(file, game.server.allowed_city_names, "game.allowed_city_names");
 
-  /* warserver settings (capability warserver_08_13) */
+  /* Warserver settings. */
   secfile_insert_int(file, game.traderoute_info.trademindist,
 		     "game.trademindist");
   secfile_insert_int(file, game.traderoute_info.traderevenuepct,
@@ -4091,8 +4100,6 @@ void game_save(struct section_file *file)
 		      "game.experimentalbribingcost");
   secfile_insert_bool(file, game.ext_info.techtrading,
 		      "game.techtrading");
-  secfile_insert_bool(file, game.ext_info.ignoreruleset,
-		      "game.ignoreruleset");
   secfile_insert_bool(file, game.ext_info.goldtrading,
 		      "game.goldtrading");
   secfile_insert_bool(file, game.ext_info.citytrading,
@@ -4105,10 +4112,6 @@ void game_save(struct section_file *file)
 		      "game.globalwarmingon");
   secfile_insert_bool(file, game.ext_info.nuclearwinteron,
 		      "game.nuclearwinteron");
-  secfile_insert_int(file, game.server.maxconnections,
-		     "game.maxconnections");
-  secfile_insert_int(file, game.server.maxhostconnections,
-		     "game.maxhostconnections");
   secfile_insert_int(file, game.server.bruteforcethreshold,
 		     "game.bruteforcethreshold");
   secfile_insert_int(file, game.server.iterplacementcoefficient,
@@ -4117,6 +4120,20 @@ void game_save(struct section_file *file)
 		     "game.teamplacementtype");
   secfile_insert_int(file, game.ext_info.techleakagerate,
 		     "game.techleakagerate");
+
+  /* Warserver 'ignoreruleset' settings. */
+  secfile_insert_bool(file, game.ext_info.ignoreruleset,
+		      "game.ignoreruleset");
+  if (game.ext_info.ignoreruleset) {
+    secfile_insert_bool(file, game.ruleset_control.slow_invasions,
+			"game.slowinvasions");
+    secfile_insert_bool(file, game.ruleset_game.killstack,
+			"game.killstack");
+    secfile_insert_int(file, game.ruleset_game.tech_leakage,
+		       "game.techleakage");
+    secfile_insert_int(file, game.ruleset_game.tech_cost_style,
+		       "game.techcoststyle");
+  }
 
   /* FCDB related data that should be restored when the game is loaded. */
   secfile_insert_int(file, game.server.fcdb.id, "game.server_fcdb_id");
