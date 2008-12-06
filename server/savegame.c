@@ -4120,6 +4120,8 @@ void game_save(struct section_file *file)
 		     "game.teamplacementtype");
   secfile_insert_int(file, game.ext_info.techleakagerate,
 		     "game.techleakagerate");
+  secfile_insert_int(file, game.server.triremestyle,
+		     "game.triremestyle");
 
   /* Warserver 'ignoreruleset' settings. */
   secfile_insert_bool(file, game.ext_info.ignoreruleset,
