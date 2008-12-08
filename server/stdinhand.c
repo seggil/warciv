@@ -86,6 +86,7 @@ static bool cut_client_connection(struct connection *caller, char *name,
 static bool show_help(struct connection *caller, char *arg);
 static bool show_list(struct connection *caller, char *arg);
 static void show_connections(struct connection *caller);
+static void show_capabilities(struct connection *caller);
 static void show_actionlist(struct connection *caller);
 static void show_votes(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
@@ -8008,6 +8009,7 @@ static bool show_mutes(struct connection *caller)
 enum LIST_ARGS {
   LIST_ACTIONLIST,
   LIST_CONNECTIONS,
+  LIST_CAPABILITIES,
   LIST_IDLE,
   LIST_IGNORE,
   LIST_MAPS, 
@@ -8023,6 +8025,7 @@ enum LIST_ARGS {
 static const char *const list_args[] = {
   "actionlist",
   "connections",
+  "capabilities",
   "idle",
   "ignore",
   "maps",
@@ -8064,6 +8067,9 @@ static bool show_list(struct connection *caller, char *arg)
     return TRUE;
   case LIST_CONNECTIONS:
     show_connections(caller);
+    return TRUE;
+  case LIST_CAPABILITIES:
+    show_capabilities(caller);
     return TRUE;
   case LIST_IDLE:
     show_idle(caller);
@@ -8213,6 +8219,8 @@ void show_players(struct connection *caller)
 **************************************************************************/
 static void show_connections(struct connection *caller)
 {
+  char buf[MAX_LEN_CONSOLE_LINE], timebuf[128];
+  time_t now, idle;
   int n;
 
   n = conn_list_size(game.all_connections);
@@ -8223,31 +8231,53 @@ static void show_connections(struct connection *caller)
 
   if (n == 0) {
     cmd_reply(CMD_LIST, caller, C_WARNING, _("<no connections>"));
-
-  } else {
-    char buf[MAX_LEN_CONSOLE_LINE], timebuf[128];
-    time_t now, idle;
-
-    now = time(NULL);
-
-    conn_list_iterate(game.all_connections, pconn) {
-      sz_strlcpy(buf, conn_description(pconn));
-      if (pconn->established) {
-        cat_snprintf(buf, sizeof(buf), _(" %s access"),
-                     cmdlevel_name(pconn->access_level));
-      }
-      
-      idle = now - pconn->server.idle_time;
-      if (idle > 0) {
-        format_time_duration(idle, timebuf, sizeof(timebuf));
-        cat_snprintf(buf, sizeof(buf), _(" (idle %s)"), timebuf);
-      }
-
-      cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
-      cmd_reply(CMD_LIST, caller, C_COMMENT, _("  capabilities: %s"),
-                pconn->capability);
-    } conn_list_iterate_end;
+    return;
   }
+
+  now = time(NULL);
+
+  conn_list_iterate(game.all_connections, pconn) {
+    my_snprintf(buf, sizeof(buf), "%d ", pconn->id);
+    sz_strlcat(buf, conn_description(pconn));
+    if (pconn->established) {
+      cat_snprintf(buf, sizeof(buf), _(" %s access"),
+                   cmdlevel_name(pconn->access_level));
+    }
+
+    idle = now - pconn->server.idle_time;
+    if (idle > 0) {
+      format_time_duration(idle, timebuf, sizeof(timebuf));
+      cat_snprintf(buf, sizeof(buf), _(" (idle %s)"), timebuf);
+    }
+
+    cmd_reply(CMD_LIST, caller, C_COMMENT, "%s", buf);
+  } conn_list_iterate_end;
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
+/**************************************************************************
+  List all connections' capabilities.
+**************************************************************************/
+static void show_capabilities(struct connection *caller)
+{
+  int n;
+
+  n = conn_list_size(game.all_connections);
+
+  if (n == 0) {
+    cmd_reply(CMD_LIST, caller, C_WARNING, _("No connections."));
+    return;
+  }
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT,
+            _("List of connection capabilities:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+
+  conn_list_iterate(game.all_connections, pconn) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, _("%d %s: %s"),
+              pconn->id, pconn->username, pconn->capability);
+  } conn_list_iterate_end;
 
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
