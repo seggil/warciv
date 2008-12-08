@@ -8244,6 +8244,11 @@ static void show_connections(struct connection *caller)
                    cmdlevel_name(pconn->access_level));
     }
 
+    if (pconn->ping_time > 0.0) {
+      cat_snprintf(buf, sizeof(buf), " %d ms",
+                   (int) (1000 * pconn->ping_time));
+    }
+
     idle = now - pconn->server.idle_time;
     if (idle > 0) {
       format_time_duration(idle, timebuf, sizeof(timebuf));
