@@ -3930,7 +3930,8 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   enum m_pre_result result;
   struct connection *pconn = NULL;
   struct player *pplayer = NULL;
-  bool res = FALSE;
+  bool res = FALSE, need_full_update = FALSE;
+  struct hash_table *affected_players = NULL;
 
   /******** PART I: fill pconn and pplayer ********/
   sz_strlcpy(buf, str);
@@ -4037,20 +4038,30 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
+  affected_players = hash_new(hash_fval_keyval, hash_fcmp_keyval);
+
   /* if the connection is already attached to a player,
    * unattach and cleanup old player (rename, remove, etc) */
   if (pconn->player || pconn->observer) {
     char name[MAX_LEN_NAME];
+    struct player *new_pplayer;
     /* if a pconn->player is removed, we'll lose pplayer */
     sz_strlcpy(name, pplayer ? pplayer->name : "");
     detach_command(pconn, "", FALSE);
     /* find pplayer again, the pointer might have been changed */
-    pplayer = find_player_by_name(name);
+    new_pplayer = find_player_by_name(name);
+    if (new_pplayer != pplayer) {
+      need_full_update = TRUE;
+    } else {
+      hash_insert(affected_players, pplayer, pplayer);
+    }
+    pplayer = new_pplayer;
   }
   /* we don't want the connection's username on another player */
   players_iterate(aplayer) {
     if (strncmp(aplayer->username, pconn->username, MAX_LEN_NAME) == 0) {
       sz_strlcpy(aplayer->username, ANON_USER_NAME);
+      hash_insert(affected_players, aplayer, aplayer);
     }
   } players_iterate_end;
 
@@ -4059,18 +4070,26 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
   if (pplayer) {
     attach_connection_to_player(pconn, pplayer);
+    hash_insert(affected_players, pplayer, pplayer);
   } else {
     /* case global observer */
     conn_list_append(game.game_connections, pconn);
     restore_access_level(pconn);
   }
 
+  conn_list_do_buffer(game.est_connections);
   send_conn_info(pconn->self, game.est_connections);
 
   if (server_state >= RUN_GAME_STATE) {
     send_packet_freeze_hint(pconn);
     send_rulesets(pconn->self);
-    send_player_info(NULL, NULL);
+    if (need_full_update) {
+      send_player_info(NULL, NULL);
+    } else {
+      hash_iterate(affected_players, struct player *, aplayer, void *, dummy) {
+        send_player_info(aplayer, NULL);
+      } hash_iterate_end;
+    }
     send_all_info(pconn->self);
     send_game_state(pconn->self, CLIENT_GAME_RUNNING_STATE);
     send_diplomatic_meetings(pconn);
@@ -4083,16 +4102,28 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   } else if (server_state == SELECT_RACES_STATE) {
     send_packet_freeze_hint(pconn);
     send_rulesets(pconn->self);
-    send_player_info(NULL, NULL);
+    if (need_full_update) {
+      send_player_info(NULL, NULL);
+    } else {
+      hash_iterate(affected_players, struct player *, aplayer, void *, dummy) {
+        send_player_info(aplayer, NULL);
+      } hash_iterate_end;
+    }
     send_packet_thaw_hint(pconn);
   }
+
   cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s."),
 	    pconn->username, pplayer ? pplayer->name : "the game globally");
 
   send_updated_vote_totals(NULL);
+  conn_list_do_unbuffer(game.est_connections);
+
   send_server_info_to_metaserver(META_INFO);
 
 CLEANUP:
+  if (affected_players != NULL) {
+    hash_free(affected_players);
+  }
   free_tokens(arg, ntokens);
   return res;
 }
