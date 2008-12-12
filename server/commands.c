@@ -386,7 +386,7 @@ const struct command commands[] = {
       "to users via the client chatline.  The available levels are:\n"
       "    none  -  no commands\n"
       "    observer -  observer commands only\n"
-      "    basic -  baisc commands only\n"
+      "    basic -  basic commands only\n"
       "    ctrl  -  commands that affect the game and users\n"
       "    admin -  includes banning, unbanning and removing players\n"
       "    hack  -  *all* commands - dangerous!\n"
