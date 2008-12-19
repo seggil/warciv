@@ -1338,6 +1338,9 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
               _("You cannot remove player after the game ended."));
     return FALSE;
   }
+  if (check) {
+    return TRUE;
+  }
   sz_strlcpy(name, pplayer->name);
   if (!(game.server.is_new_game && (server_state == PRE_GAME_STATE ||
                                     server_state == SELECT_RACES_STATE))) {
@@ -1345,9 +1348,6 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
               _("Removed player %s from the game."), name);
     pplayer->is_dying = TRUE;
     kill_player(pplayer);
-    return TRUE;
-  }
-  if (check) {
     return TRUE;
   }
   team_remove_player(pplayer);
