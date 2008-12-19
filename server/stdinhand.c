@@ -3932,6 +3932,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   struct player *pplayer = NULL;
   bool res = FALSE, need_full_update = FALSE;
   struct hash_table *affected_players = NULL;
+  time_t time_left, time_passed;
 
   /******** PART I: fill pconn and pplayer ********/
   sz_strlcpy(buf, str);
@@ -4027,10 +4028,21 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
     if (connection_is_global_observer(pconn)) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-		_("%s is already observing globally the game."),
+		_("%s already is a global observer."),
 		pconn->username);
       goto CLEANUP;
     }
+  }
+
+  time_passed = time(NULL) - game.server.turn_start;
+  time_left = game.info.timeout - time_passed;
+  if (caller != NULL && caller->access_level < ALLOW_ADMIN
+      && server_state == RUN_GAME_STATE  && game.info.timeout > 0
+      && (time_left < 5 || time_passed < 5)) {
+    cmd_reply(CMD_OBSERVE, caller, C_REJECTED,
+              _("You may not observe at this time, "
+                "please try again later."));
+    goto CLEANUP;
   }
 
   res = TRUE;                   /* all tests passed */
