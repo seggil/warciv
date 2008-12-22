@@ -250,6 +250,11 @@ struct player {
   struct {
     /* ID of this player in the game database, for the current game. */
     int player_id;
+
+    /* This table keeps track of which users played for this
+     * player in the current game. The information is used
+     * to determine who should get updated ratings. */
+    struct hash_table *turns_played_table;
     
     /* These fields are filled in by fcdb_load_player_ratings. */
     int rated_user_id;
@@ -375,5 +380,34 @@ const char *name_of_skill_level(int level);
 
 bool player_get_ignore_diplomacy(const struct player *pplayer);
 void player_set_ignore_diplomacy(struct player *pplayer, bool ignore);
+
+
+struct turns_played_info {
+  char username[MAX_LEN_NAME];
+  int turns;
+};
+
+void player_setup_turns_played(struct player *plr);
+void player_free_turns_played(struct player *plr);
+int player_get_turns_played(const struct player *plr, const char *username);
+void player_set_turns_played(struct player *plr, const char *username,
+                             int turns);
+
+#define player_turns_played_iterate(ARG_plr, NAME_user, NAME_turns)\
+do {\
+  if (!(ARG_plr) || !(ARG_plr)->fcdb.turns_played_table) {\
+    break;\
+  }\
+  const char *NAME_user;\
+  int NAME_turns;\
+  hash_iterate((ARG_plr)->fcdb.turns_played_table,\
+               void *, dummy, struct turns_played_info *, tp) {\
+    NAME_user = tp->username;\
+    NAME_turns = tp->turns;
+
+#define player_turns_played_iterate_end\
+  } hash_iterate_end;\
+} while (FALSE)
+
 
 #endif  /* FC__PLAYER_H */

@@ -29,6 +29,7 @@
 #endif
 
 #include "fcintl.h"
+#include "hash.h"
 #include "log.h"
 #include "md5.h"
 #include "rand.h"
@@ -1652,6 +1653,7 @@ bool fcdb_record_game_start(void)
     if (!fcdb_insert_player(sock, pplayer)) {
       return FALSE;
     }
+    player_setup_turns_played(pplayer);
   } players_iterate_end;
 
   fcdb_commit(sock);
@@ -1805,12 +1807,17 @@ bool fcdb_end_of_turn_update(void)
     /* Record controlling user if any. */
     if (pplayer->is_connected
         && 0 != strcmp(pplayer->username, ANON_USER_NAME)) {
+      int turns;
+
       my_snprintf(buf, sizeof(buf), "UPDATE player_status "
           "SET user_name = '%s' WHERE id = %d",
           fcdb_escape(sock, pplayer->username),
           player_status_id);
       fcdb_reset_escape_buffer();
       fcdb_execute_or_return(sock, buf, FALSE);
+
+      turns = player_get_turns_played(pplayer, pplayer->username);
+      player_set_turns_played(pplayer, pplayer->username, turns + 1);
     }
 
     /* Record whether the player is controlled by an ai. */
@@ -1881,6 +1888,7 @@ bool fcdb_record_game_end(void)
         pplayer->rank,
         pplayer->fcdb.player_id);
     fcdb_execute_or_return(sock, buf, FALSE);
+    player_free_turns_played(pplayer);
   } players_iterate_end;
 
   /* Record team results and ranks. */
@@ -1949,7 +1957,6 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
   char buf[1024];
   MYSQL_RES *res = NULL;
   MYSQL_ROW row;
-  int num_users = 0;
   int user_id_for_old_rating;
   bool rate_user;
 
@@ -1963,92 +1970,46 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
     }
 
     /* Whether the user should get a rating update.
-     * False for AIs and players for which more than
-     * one user played for a sufficiently long time. */
+     * False for AIs. */
     rate_user = TRUE;
 
     /* The user id from which to get the old rating of
      * this player. */
     user_id_for_old_rating = 0;
 
-    if (check_turns_played && pplayer->fcdb.player_id > 0
-        && game.server.fcdb.id > 0) {
-      /* Find all users that have been connected to this player
-         and how many turns each of them were connected. */
-      my_snprintf(buf, sizeof(buf),
-          "SELECT a.id, a.name, COUNT(*) AS turn_count"
-          "  FROM turns AS t INNER JOIN player_status AS ps"
-          "      ON t.id = ps.turn_id"
-          "    INNER JOIN %s AS a"
-          "      ON ps.user_name = a.name"
-          "  WHERE t.game_id = %d AND ps.user_name IS NOT NULL"
-          "    AND ps.player_id = %d"
-          "  GROUP BY a.id"
-          "  ORDER BY turn_count DESC",
-          AUTH_TABLE, game.server.fcdb.id, pplayer->fcdb.player_id);
+    if (check_turns_played) {
+      int most_turns = 0;
+      const char *most_user = NULL;
 
-      if (!fcdb_execute(sock, buf)) {
-        goto FAILED;
-      }
-
-      /* NB Must mysql_free_result(res) when done. */
-      res = mysql_store_result(sock);
-      num_users = mysql_num_rows(res);
-
-      freelog(LOG_DEBUG, "got num_users=%d for player %p fcdb id=%d",
-              num_users, pplayer, pplayer->fcdb.player_id);
-
-      if (num_users > 0) {
-        MYSQL_ROW row1; /* id, name, turn_count. */
-        int tc1;
-
-        row1 = mysql_fetch_row(res);
-        tc1 = atoi(row1[2]);
-
-        if (num_users > 1) {
-          MYSQL_ROW row2;
-          int tc2;
-
-          row2 = mysql_fetch_row(res);
-          tc2 = atoi(row2[2]);
-
-          if (abs(tc1 - tc2) < 5) {
-            /* Don't rate the user if someone else played almost
-             * as much as he/she did. */
-            notify_conn(NULL, _("Server: Cannot decide which user "
-                "should be rated for player %s: %s (played %d turns), "
-                "%s (played %d turns). This player will be assumed to "
-                "have the rating of user %s, and neither user will "
-                "receive updated ratings."),
-                pplayer->name, row1[1], tc1, row2[1],
-                tc2, row1[1]);
-            rate_user = FALSE;
-          }
+      player_turns_played_iterate(pplayer, username, turns) {
+        if (turns > most_turns) {
+          most_turns = turns;
+          most_user = username;
         }
+      } player_turns_played_iterate_end;
 
-        /* The following check is only performed if enough turns
-         * have been played in the game for the game to be rated
-         * at all (if not, the function game_can_be_rated in
-         * score.c will handle the check). */
-        if (rate_user && game.info.turn >= srvarg.fcdb.min_rated_turns
-            && tc1 < srvarg.fcdb.min_rated_turns) {
-          notify_conn(NULL, _("Server: User %s will not receive an "
-              "updated rating because not enough turns were played "
-              "(only played %d, which is less than the minimum of %d)."),
-              row1[1], tc1, srvarg.fcdb.min_rated_turns);
-          rate_user = FALSE;
-        }
-        user_id_for_old_rating = atoi(row1[0]);
-      } else {
-        /* No user for this player at all...
-         * Assume it is an AI. */
-        user_id_for_old_rating = 0;
+      if (!most_user) {
         rate_user = FALSE;
       }
 
-      mysql_free_result(res);
-      res = NULL;
+      /* The following check is only performed if enough turns
+       * have been played in the game for the game to be rated
+       * at all (if not, the function game_can_be_rated in
+       * score.c will handle the check). */
+      if (rate_user && game.info.turn >= srvarg.fcdb.min_rated_turns
+          && most_turns < srvarg.fcdb.min_rated_turns) {
+        notify_conn(NULL, _("Server: User %s will not receive an updated "
+                            "rating because not enough turns were played "
+                            "(only played %d, which is less than the "
+                            "minimum of %d)."),
+                    most_user, most_turns, srvarg.fcdb.min_rated_turns);
+        rate_user = FALSE;
+      }
 
+      if (!get_user_id(sock, most_user, &user_id_for_old_rating)) {
+        rate_user = FALSE;
+        user_id_for_old_rating = 0;
+      }
     } else if (pplayer->is_connected) {
       /* I assume is_connected == TRUE guarantees that
        * the user_name field is an actual user name. */

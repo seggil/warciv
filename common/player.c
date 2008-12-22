@@ -21,6 +21,7 @@
 #include "fcintl.h"
 #include "game.h"
 #include "government.h"
+#include "hash.h"
 #include "idex.h"
 #include "improvement.h"
 #include "map.h"
@@ -177,6 +178,7 @@ void player_init(struct player *plr)
   plr->fcdb.last_rating_timestamp = 0;
   plr->fcdb.new_rating = 0;
   plr->fcdb.new_rating_deviation = 0;
+  player_free_turns_played(plr);
 }
 
 /***************************************************************
@@ -922,4 +924,88 @@ void player_set_ignore_diplomacy(struct player *pplayer, bool value)
     return;
   }
   pplayer->ignore_diplomacy = value;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+void player_set_turns_played(struct player *plr, const char *username,
+                             int turns)
+{
+  struct hash_table *h;
+  struct turns_played_info *tp;
+
+  if (!plr || !username) {
+    return;
+  }
+
+  h = plr->fcdb.turns_played_table;
+  if (!h) {
+    return;
+  }
+
+  tp = hash_lookup_data(h, username);
+  if (!tp) {
+    tp = fc_malloc(sizeof(*tp));
+    sz_strlcpy(tp->username, username);
+    hash_insert(h, tp->username, tp);
+  }
+  tp->turns = turns;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+void player_setup_turns_played(struct player *plr)
+{
+  struct hash_table *h;
+
+  player_free_turns_played(plr);
+
+  h = hash_new(hash_fval_string2, hash_fcmp_string);
+  plr->fcdb.turns_played_table = h;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+int player_get_turns_played(const struct player *plr, const char *username)
+{
+  struct hash_table *h;
+  struct turns_played_info *tp;
+
+  if (!plr || !username) {
+    return 0;
+  }
+
+  h = plr->fcdb.turns_played_table;
+  if (!h) {
+    return 0;
+  }
+
+  tp = hash_lookup_data(h, username);
+  return tp ? tp->turns : 0;
+}
+
+/****************************************************************************
+  ...
+****************************************************************************/
+void player_free_turns_played(struct player *plr)
+{
+  struct hash_table *h;
+  if (!plr) {
+    return;
+  }
+
+  h = plr->fcdb.turns_played_table;
+  if (h) {
+    hash_iterate(h, char *, unused, struct turns_played_info *, tp) {
+      if (tp) {
+        free(tp);
+      }
+    } hash_iterate_end;
+    hash_free(h);
+  }
+
+  plr->fcdb.turns_played_table = NULL;
 }
