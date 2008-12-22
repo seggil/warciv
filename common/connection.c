@@ -895,7 +895,7 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool connection_controls_player(const struct connection *pconn)
+bool conn_controls_player(const struct connection *pconn)
 {
   return pconn && pconn->player && !pconn->observer;
 }
@@ -903,7 +903,29 @@ bool connection_controls_player(const struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool connection_is_global_observer(struct connection *pconn)
+bool conn_is_global_observer(const struct connection *pconn)
 {
   return pconn && !pconn->player && pconn->observer;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+struct player *conn_get_player(const struct connection *pconn)
+{
+  if (!pconn) {
+    return NULL;
+  }
+  return pconn->player;
+}
+
+/**************************************************************************
+  NB: If 'pconn' is NULL, this function will return ALLOW_NONE.
+**************************************************************************/
+enum cmdlevel_id conn_get_access(const struct connection *pconn)
+{
+  if (!pconn) {
+    return ALLOW_NONE; /* Would not want to give hack on error... */
+  }
+  return pconn->access_level;
 }

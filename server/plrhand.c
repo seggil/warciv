@@ -1380,7 +1380,7 @@ repeat_break_treaty:
   Notify specified connections of an event of specified type (from events.h)
   and specified (x,y) coords associated with the event.  Coords will only
   apply if game has started and the conn's player knows that tile (or
-  connection_is_global_observer(pconn)).  If coords are not required,
+  conn_is_global_observer(pconn)).  If coords are not required,
   caller should specify (x,y) = (-1,-1); otherwise make sure that the
   coordinates have been normalized.  For generic event use E_NOEVENT.
   (But current clients do not use (x,y) data for E_NOEVENT events.)
@@ -1403,7 +1403,7 @@ void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
   conn_list_iterate(dest, pconn) {
     if (server_state >= RUN_GAME_STATE
 	&& ptile /* special case, see above */
-	&& (connection_is_global_observer(pconn)
+	&& (conn_is_global_observer(pconn)
 	    || (pconn->player && map_is_known(ptile, pconn->player)))) {
       genmsg.x = ptile->x;
       genmsg.y = ptile->y;
@@ -1513,6 +1513,37 @@ void notify_embassies(struct player *pplayer, struct player *exclude,
       lsend_packet_chat_msg(other_player->connections, &genmsg);
     }
   } players_iterate_end;
+}
+
+/**************************************************************************
+  Send message to all players on the given team (including observers of
+  those players), and to all detached or global observer connections.
+  If the team is NULL, sends to all connnections.
+**************************************************************************/
+void notify_team(const struct team *pteam, const char *format, ...)
+{
+  struct conn_list *dest = game.est_connections;
+  va_list args;
+
+  if (pteam) {
+    const struct player *pplayer;
+    dest = conn_list_new();
+    conn_list_iterate(game.est_connections, pconn) {
+      pplayer = conn_get_player(pconn);
+      if (pplayer && pplayer->team != pteam->id) {
+        continue;
+      }
+      conn_list_append(dest, pconn);
+    } conn_list_iterate_end;
+  }
+
+  va_start(args, format);
+  vnotify_conn_ex(dest, NULL, E_NOEVENT, format, args);
+  va_end(args);
+
+  if (pteam) {
+    conn_list_free(dest);
+  }
 }
 
 /**************************************************************************

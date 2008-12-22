@@ -23,6 +23,7 @@ enum vote_condition_flags {
   VCF_ALWAYSVOTE    = (1 << 3), /* Make a vote regardless of cmdlev. */
   VCF_NOPASSALONE   = (1 << 4), /* Can't pass with just one vote for,
                                  * when there is more than one voter. */
+  VCF_TEAMONLY      = (1 << 5)  /* Only team members can vote on it. */
 };
 
 enum vote_type {
@@ -76,7 +77,8 @@ void voting_turn(void);
 
 void clear_all_votes(void);
 void cancel_connection_votes(struct connection *pconn);
-bool connection_can_vote(struct connection *pconn);
+bool conn_can_vote(const struct connection *pconn,
+                   const struct vote *pvote);
 struct vote *get_vote_by_no(int vote_no);
 void connection_vote(struct connection *pconn,
                      struct vote *pvote,
@@ -87,6 +89,9 @@ struct vote *vote_new(struct connection *caller,
                       const char *allargs,
                       int command_id,
                       struct setting_value *sv);
+const struct connection *vote_get_caller(const struct vote *pvote);
+bool vote_is_team_only(const struct vote *pvote);
+const struct team *vote_get_team(const struct vote *pvote);
 int describe_vote(struct vote *pvote, char *buf, int buflen);
 void send_running_votes(struct connection *pconn);
 void send_updated_vote_totals(struct conn_list *dest);

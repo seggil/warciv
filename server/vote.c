@@ -36,12 +36,12 @@ int vote_number_sequence = 0;
 /**************************************************************************
   ...
 **************************************************************************/
-static int count_voters(void)
+static int count_voters(const struct vote *pvote)
 {
   int num_voters = 0;
 
   conn_list_iterate(game.est_connections, pconn) {
-    if (connection_can_vote(pconn)) {
+    if (conn_can_vote(pconn, pvote)) {
       num_voters++;
     }
   } conn_list_iterate_end;
@@ -83,7 +83,8 @@ static void lsend_vote_new(struct conn_list *dest, struct vote *pvote)
   }
 
   conn_list_iterate(dest, conn) {
-    if (!has_capability("voteinfo", conn->capability)) {
+    if (!has_capability("voteinfo", conn->capability)
+        || !conn_can_vote(conn, pvote)) {
       continue;
     }
     send_packet_vote_new(conn, &packet);
@@ -121,11 +122,12 @@ static void lsend_vote_update(struct conn_list *dest, struct vote *pvote,
     dest = game.est_connections;
   }
 
-  conn_list_iterate(dest, pconn) {
-    if (!has_capability("voteinfo", pconn->capability)) {
+  conn_list_iterate(dest, aconn) {
+    if (!has_capability("voteinfo", aconn->capability)
+        || !conn_can_vote(aconn, pvote)) {
       continue;
     }
-    send_packet_vote_update(pconn, &packet);
+    send_packet_vote_update(aconn, &packet);
   } conn_list_iterate_end;
 }
 
@@ -135,6 +137,10 @@ static void lsend_vote_update(struct conn_list *dest, struct vote *pvote,
 static void lsend_vote_remove(struct conn_list *dest, struct vote *pvote)
 {
   struct packet_vote_remove packet;
+
+  if (!pvote) {
+    return;
+  }
 
   packet.vote_no = pvote->vote_no;
 
@@ -158,6 +164,10 @@ static void lsend_vote_resolve(struct conn_list *dest,
 {
   struct packet_vote_resolve packet;
 
+  if (!pvote) {
+    return;
+  }
+
   packet.vote_no = pvote->vote_no;
   packet.passed = passed;
 
@@ -166,7 +176,8 @@ static void lsend_vote_resolve(struct conn_list *dest,
   }
 
   conn_list_iterate(dest, pconn) {
-    if (!has_capability("voteinfo", pconn->capability)) {
+    if (!has_capability("voteinfo", pconn->capability)
+        || !conn_can_vote(pconn, pvote)) {
       continue;
     }
     send_packet_vote_resolve(pconn, &packet);
@@ -223,31 +234,42 @@ void clear_all_votes(void)
   vote_list_unlink_all(vote_list);
 }
 
-/**************************************************************************
+/***************************************************************************
   ...
-**************************************************************************/
-static bool connection_is_player(struct connection *pconn)
+***************************************************************************/
+bool vote_is_team_only(const struct vote *pvote)
 {
-  return pconn && pconn->player && !pconn->observer
-      && pconn->player->is_alive;
+  return pvote && (pvote->flags & VCF_TEAMONLY);
 }
 
-/**************************************************************************
-  Cannot vote if:
+/***************************************************************************
+  A user cannot vote if:
     * is muted
     * is not connected
     * access level < basic
     * isn't a player
-**************************************************************************/
-bool connection_can_vote(struct connection *pconn)
+    * the vote is a team vote and not on the caller's team
+  NB: If 'pvote' is NULL, then the team condition is not checked.
+***************************************************************************/
+bool conn_can_vote(const struct connection *pconn, const struct vote *pvote)
 {
-  if (conn_is_muted(pconn)) {
+  if (!pconn || conn_is_muted(pconn) || !conn_controls_player(pconn)
+      || conn_get_access(pconn) < ALLOW_BASIC) {
     return FALSE;
   }
-  if (connection_is_player(pconn) && pconn->access_level >= ALLOW_BASIC) {
-    return TRUE;
+
+  if (vote_is_team_only(pvote)) {
+    const struct player *pplayer, *caller_plr;
+
+    pplayer = conn_get_player(pconn);
+    caller_plr = conn_get_player(vote_get_caller(pvote));
+    if (!pplayer || !caller_plr ||
+        !players_on_same_team(pplayer, caller_plr)) {
+      return FALSE;
+    }
   }
-  return FALSE;
+
+  return TRUE;
 }
 
 /**************************************************************************
@@ -298,7 +320,7 @@ struct vote *vote_new(struct connection *caller,
 
   assert(vote_list != NULL);
 
-  if (!connection_can_vote(caller)) {
+  if (!conn_can_vote(caller, NULL)) {
     return NULL;
   }
 
@@ -348,7 +370,7 @@ struct vote *vote_new(struct connection *caller,
   }
 
   if (pvote->flags & VCF_NOPASSALONE) {
-    int num_voters = count_voters();
+    int num_voters = count_voters(pvote);
     double min_pc = 1.0 / (double) num_voters;
 
     if (num_voters > 1 && min_pc > pvote->need_pc) {
@@ -376,6 +398,8 @@ static void check_vote(struct vote *pvote)
   double need_pc;
   char cmdline[MAX_LEN_CONSOLE_LINE];
   const double MY_EPSILON = 0.000001;
+  const char *title;
+  const struct team *pteam = NULL;
 
   assert(vote_list != NULL);
 
@@ -383,11 +407,11 @@ static void check_vote(struct vote *pvote)
   pvote->no = 0;
   pvote->abstain = 0;
 
-  num_voters = count_voters();
+  num_voters = count_voters(pvote);
 
   vote_cast_list_iterate(pvote->votes_cast, pvc) {
     if (!(pconn = find_conn_by_id(pvc->conn_id))
-        || !connection_can_vote(pconn)) {
+        || !conn_can_vote(pconn, pvote)) {
       continue;
     }
     num_cast++;
@@ -482,18 +506,18 @@ static void check_vote(struct vote *pvote)
     passed = fabs(no_pc) < MY_EPSILON;
   }
 
+  title = vote_is_team_only(pvote) ? _("Teamvote") : _("Vote");
+  pteam = vote_get_team(pvote);
   if (passed) {
-    notify_conn(NULL, _("Vote %d \"%s\" is passed %d to %d with "
-                        "%d abstentions and %d who did not vote."),
-                pvote->vote_no, pvote->cmdline,
-                pvote->yes, pvote->no,
-                pvote->abstain, num_voters - num_cast);
+    notify_team(pteam, _("%s %d \"%s\" is passed %d to %d with "
+                         "%d abstentions and %d who did not vote."),
+                title, pvote->vote_no, pvote->cmdline, pvote->yes,
+                pvote->no, pvote->abstain, num_voters - num_cast);
   } else {
-    notify_conn(NULL, _("Vote %d \"%s\" failed with %d against, %d for, "
-                        "%d abstentions and %d who did not vote."),
-                pvote->vote_no, pvote->cmdline,
-                pvote->no, pvote->yes,
-                pvote->abstain, num_voters - num_cast);
+    notify_team(pteam, _("%s %d \"%s\" failed with %d against, %d for, "
+                         "%d abstentions and %d who did not vote."),
+                title, pvote->vote_no, pvote->cmdline, pvote->no,
+                pvote->yes, pvote->abstain, num_voters - num_cast);
   }
 
   lsend_vote_resolve(NULL, pvote, passed);
@@ -502,33 +526,33 @@ static void check_vote(struct vote *pvote)
     if (!(pconn = find_conn_by_id(pvc->conn_id))) {
       freelog(LOG_ERROR, "Got a vote from a lost connection");
       continue;
-    } else if (!connection_can_vote(pconn)) {
+    } else if (!conn_can_vote(pconn, pvote)) {
       freelog(LOG_ERROR, "Got a vote from a non-voting connection");
       continue;
     }
 
     switch (pvc->vote_cast) {
     case VOTE_YES:
-      notify_conn(NULL, _("Vote %d: %s voted yes."),
-                  pvote->vote_no, pconn->username);
+      notify_team(pteam, _("%s %d: %s voted yes."),
+                  title, pvote->vote_no, pconn->username);
       break;
     case VOTE_NO:
-      notify_conn(NULL, _("Vote %d: %s voted no."),
-                  pvote->vote_no, pconn->username);
+      notify_team(pteam, _("%s %d: %s voted no."),
+                  title, pvote->vote_no, pconn->username);
       break;
     case VOTE_ABSTAIN:
-      notify_conn(NULL, _("Vote %d: %s chose to abstain."),
-                  pvote->vote_no, pconn->username);
+      notify_team(pteam, _("%s %d: %s chose to abstain."),
+                  title, pvote->vote_no, pconn->username);
       break;
     default:
       break;
     }
   } vote_cast_list_iterate_end;
 
-  /* Remove the vote before to exexute the command because it's the
+  /* Remove the vote before executing the command because it's the
    * cause of many crashes due to the /cut command:
    *   - If the caller is the target.
-   *   - If the target is voted to this vote. */
+   *   - If the target votes on this vote. */
   sz_strlcpy(cmdline, pvote->cmdline);
   remove_vote(pvote);
 
@@ -597,7 +621,7 @@ void connection_vote(struct connection *pconn,
 
   struct vote_cast *pvc;
 
-  if (!connection_can_vote(pconn)) {
+  if (!conn_can_vote(pconn, pvote)) {
     return;
   }
 
@@ -747,24 +771,22 @@ void handle_vote_submit(struct connection *pconn, int vote_no, int value)
 **************************************************************************/
 void send_running_votes(struct connection *pconn)
 {
-  int num_voters;
-
-  if (!has_capability("voteinfo", pconn->capability)) {
+  if (!pconn || !has_capability("voteinfo", pconn->capability)) {
     return;
   }
 
-  if (vote_list == NULL || vote_list_size(vote_list) <= 0) {
+  if (!vote_list || vote_list_size(vote_list) < 1) {
     return;
   }
 
   freelog(LOG_DEBUG, "Sending running votes to %s.",
           conn_description(pconn));
 
-  num_voters = count_voters();
-
   connection_do_buffer(pconn);
   vote_list_iterate(vote_list, pvote) {
-    lsend_vote_new(pconn->self, pvote);
+    if (conn_can_vote(pconn, pvote)) {
+      lsend_vote_new(pconn->self, pvote);
+    }
   } vote_list_iterate_end;
   connection_do_unbuffer(pconn);
 }
@@ -787,11 +809,32 @@ void send_updated_vote_totals(struct conn_list *dest)
     dest = game.est_connections;
   }
 
-  num_voters = count_voters();
-
   conn_list_do_buffer(dest);
   vote_list_iterate(vote_list, pvote) {
+    num_voters = count_voters(pvote);
     lsend_vote_update(dest, pvote, num_voters);
   } vote_list_iterate_end;
   conn_list_do_unbuffer(dest);
+}
+
+/**************************************************************************
+  Returns the connection that called this vote.
+**************************************************************************/
+const struct connection *vote_get_caller(const struct vote *pvote)
+{
+  return find_conn_by_id(pvote->caller_id);
+}
+
+/**************************************************************************
+  Return the team of the caller of this teamvote, or NULL if the vote
+  is not a teamvote.
+**************************************************************************/
+const struct team *vote_get_team(const struct vote *pvote)
+{
+  const struct player *pplayer;
+  if (!pvote || !vote_is_team_only(pvote)) {
+    return NULL;
+  }
+  pplayer = conn_get_player(vote_get_caller(pvote));
+  return pplayer ? team_get_by_id(pplayer->team) : NULL;
 }

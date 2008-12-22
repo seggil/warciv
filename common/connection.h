@@ -112,7 +112,7 @@ struct connection;
 
 #define global_observers_iterate(pconn)		   \
     conn_list_iterate(game.est_connections, pconn) \
-      if (connection_is_global_observer(pconn)) {
+      if (conn_is_global_observer(pconn)) {
 #define global_observers_iterate_end } conn_list_iterate_end
 
 /***********************************************************
@@ -372,7 +372,10 @@ int get_next_request_id(int old_request_id);
 
 extern const char blank_addr_str[];
 
-bool connection_controls_player(const struct connection *pconn);
-bool connection_is_global_observer(struct connection *pconn);
+bool conn_controls_player(const struct connection *pconn);
+bool conn_is_global_observer(const struct connection *pconn);
+struct player *conn_get_player(const struct connection *pconn);
+enum cmdlevel_id conn_get_access(const struct connection *pconn);
+
 
 #endif  /* FC__CONNECTION_H */

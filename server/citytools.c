@@ -2222,7 +2222,7 @@ void send_all_known_city_manager_infos(struct conn_list *clist)
       city_list_iterate(pconn->player->cities, pcity) {
 	send_city_manager_info(pconn->self, pcity, TRUE);
       } city_list_iterate_end;
-    } else if (connection_is_global_observer(pconn)) {
+    } else if (conn_is_global_observer(pconn)) {
       /* Global observer */
       cities_iterate(pcity) {
 	send_city_manager_info(pconn->self, pcity, TRUE);
@@ -2287,7 +2287,7 @@ void reset_rally_points(struct player *pplayer)
 	  if ((pconn->player == pplayer
 	       /* Else, unable to read rally points. */
 	       && has_capability("extglobalinfo", pconn->capability))
-	      || connection_is_global_observer(pconn)) {
+	      || conn_is_global_observer(pconn)) {
 	    send_packet_city_info(pconn, &packet);
 	  }
 	} conn_list_iterate_end;

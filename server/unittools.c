@@ -2025,7 +2025,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
   conn_list_iterate(dest, pconn) {
     struct player *pplayer = pconn->player;
     
-    if (connection_is_global_observer(pconn)
+    if (conn_is_global_observer(pconn)
 	|| (pplayer && pplayer->player_no == punit->owner)) {
       send_packet_unit_info(pconn, &info);
     } else if (pplayer) {
@@ -3274,7 +3274,7 @@ void reset_air_patrol(struct player *pplayer)
 	  if ((pconn->player == pplayer
 	       /* Else, unable to read air patrol tiles. */
 	       && has_capability("extglobalinfo", pconn->capability))
-	      || connection_is_global_observer(pconn)) {
+	      || conn_is_global_observer(pconn)) {
 	    send_packet_unit_info(pconn, &packet);
 	  }
 	} conn_list_iterate_end;

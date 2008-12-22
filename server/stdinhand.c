@@ -786,7 +786,7 @@ static void kick_table_add(struct connection *pconn)
 /**************************************************************************
 ...
 **************************************************************************/
-static void kick_table_remove(struct connection *pconn)
+static void kick_table_remove(const struct connection *pconn)
 {
   struct kickinfo *ki;
 
@@ -807,7 +807,7 @@ static void kick_table_remove(struct connection *pconn)
 /**************************************************************************
   ...
 **************************************************************************/
-bool conn_is_kicked(struct connection *pconn, int *time_remaining)
+bool conn_is_kicked(const struct connection *pconn, int *time_remaining)
 {
   struct kickinfo *ki_addr, *ki_user;
   time_t now, time_of_kick;
@@ -904,7 +904,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
   } conn_list_iterate_end;
 
   conn_list_iterate(kick_list, pc) {
-    if (connection_controls_player(pc)) {
+    if (conn_controls_player(pc)) {
       /* Unassign the username. */
       sz_strlcpy(pc->player->username, ANON_USER_NAME);
     }
@@ -2133,7 +2133,7 @@ static bool autoteam_command(struct connection *caller, char *str,
 /**************************************************************************
  ...
 **************************************************************************/
-bool conn_is_muted(struct connection * pconn)
+bool conn_is_muted(const struct connection *pconn)
 {
   if (!pconn) {
     return FALSE;
@@ -3208,7 +3208,7 @@ static bool vote_command(struct connection *caller,
   if (ntokens == 0) {
     cmd_reply(CMD_VOTE, caller, C_SYNTAX, usage);
     goto CLEANUP;
-  } else if (!connection_can_vote(caller)) {
+  } else if (!conn_can_vote(caller, NULL)) {
     cmd_reply(CMD_VOTE, caller, C_FAIL,
               _("You are not allowed to use this command."));
     goto CLEANUP;
@@ -3251,6 +3251,12 @@ static bool vote_command(struct connection *caller,
 
   if (!(pvote = get_vote_by_no(which))) {
     cmd_reply(CMD_VOTE, caller, C_FAIL, _("No such vote (%d)."), which);
+    goto CLEANUP;
+  }
+
+  if (!conn_can_vote(caller, pvote)) {
+    cmd_reply(CMD_VOTE, caller, C_FAIL,
+              _("You are not allowed to vote on that."));
     goto CLEANUP;
   }
 
@@ -3353,8 +3359,8 @@ static bool emote_command(struct connection *caller,
     if (game.server.spectatorchat
         && server_state == RUN_GAME_STATE
         && caller != NULL
-        && !connection_controls_player(caller)
-        && connection_controls_player(dest)) {
+        && !conn_controls_player(caller)
+        && conn_controls_player(dest)) {
       continue;
     }
     dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT,
@@ -4026,7 +4032,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
       goto CLEANUP;
     }
 
-    if (connection_is_global_observer(pconn)) {
+    if (conn_is_global_observer(pconn)) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
 		_("%s already is a global observer."),
 		pconn->username);
@@ -6186,7 +6192,7 @@ bool handle_stdin_input(struct connection * caller,
     level = sset_access_level(sv.setting_idx);
   }
 
-  if (connection_can_vote(caller)
+  if (conn_can_vote(caller, NULL)
       && !check && (caller->access_level == ALLOW_BASIC
                     || (commands[cmd].vote_flags & VCF_ALWAYSVOTE))
       && level == ALLOW_CTRL) {
@@ -6203,18 +6209,19 @@ bool handle_stdin_input(struct connection * caller,
     if (handle_stdin_input(caller, full_command, TRUE)
         && (vote = vote_new(caller, allargs, cmd, &sv))) {
       char votedesc[MAX_LEN_CONSOLE_LINE];
+      const char *what;
 
       describe_vote(vote, votedesc, sizeof(votedesc));
 
       if (cmd == CMD_POLL) {
-        notify_conn(NULL, _("New poll (vote %d) by %s: %s"),
-                    vote->vote_no, caller->username,
-                    votedesc);
+        what = _("New poll");
+      } else if (vote_is_team_only(vote)) {
+        what = _("New teamvote");
       } else {
-        notify_conn(NULL, _("New vote (number %d) by %s: %s"),
-                    vote->vote_no, caller->username,
-                    votedesc);
+        what = _("New vote");
       }
+      notify_team(vote_get_team(vote), _("%s (number %d) by %s: %s"),
+                  what, vote->vote_no, caller->username, votedesc);
 
       /* Vote on your own suggestion. */
       connection_vote(caller, vote, VOTE_YES);
@@ -7142,7 +7149,7 @@ static bool ban_command(struct connection *caller, char *pattern,
 
   conn_list_iterate(game.all_connections, pconn) {
     if (conn_pattern_match(pua->conpat, pconn)) {
-      if (connection_controls_player(pconn)) {
+      if (conn_controls_player(pconn)) {
 	/* Unassign the username. */
 	sz_strlcpy(pconn->player->username, ANON_USER_NAME);
       }
@@ -7473,7 +7480,7 @@ static bool cut_client_connection(struct connection *caller, char *name,
     return TRUE;
   }
 
-  if (connection_controls_player(ptarget)) {
+  if (conn_controls_player(ptarget)) {
     /* Unassign the username. */
     sz_strlcpy(ptarget->player->username, ANON_USER_NAME);
   }
@@ -8367,18 +8374,28 @@ static void show_actionlist(struct connection *caller)
 **************************************************************************/
 static void show_votes(struct connection *caller)
 {
-  if (vote_list_size(vote_list) > 0) {
+  int count = 0;
+  const char *title;
+
+  if (vote_list != NULL) {
     vote_list_iterate(vote_list, pvote) {
+      if (!conn_can_vote(caller, pvote)) {
+        continue;
+      }
+      title = vote_is_team_only(pvote) ? _("Teamvote") : _("Vote");
       cmd_reply(CMD_VOTE, caller, C_COMMENT,
-		_("Vote %d \"%s\" (needs %0.0f%%%s%s): %d for, "
-		  "%d against, and %d abstained out of %d players."),
-		pvote->vote_no, pvote->cmdline,
-		pvote->need_pc * 100 + 1,
-		pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
-		pvote->flags & VCF_NODISSENT ? _(" no dissent") : "",
-		pvote->yes, pvote->no, pvote->abstain, game.info.nplayers);
+                _("%s %d \"%s\" (needs %0.0f%%%s%s): %d for, "
+                  "%d against, and %d abstained out of %d players."),
+                title, pvote->vote_no, pvote->cmdline,
+                MIN(100, pvote->need_pc * 100 + 1),
+                pvote->flags & VCF_UNANIMOUS ? _(" unanimous") : "",
+                pvote->flags & VCF_NODISSENT ? _(" no dissent") : "",
+                pvote->yes, pvote->no, pvote->abstain, game.info.nplayers);
+      count++;
     } vote_list_iterate_end;
-  } else {
+  }
+
+  if (count == 0) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT,
 	      _("There are no votes going on."));
   }

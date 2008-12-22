@@ -279,6 +279,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   /* Send to allies command */
   if (message[0] == ALLIESCHAT_COMMAND_PREFIX) {
     char sender_name[MAX_LEN_CHAT_NAME];
+    const struct player *pconn_plr, *dest_plr;
 
     /* this won't work if we aren't attached to a player */
     if (!pconn->player && !pconn->observer) {
@@ -311,15 +312,15 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 
       if (game.server.spectatorchat
 	  && server_state == RUN_GAME_STATE
-	  && !connection_controls_player(pconn)
-	  && connection_controls_player(dest)) {
+	  && !conn_controls_player(pconn)
+	  && conn_controls_player(dest)) {
 	continue;
       }
 
-      if ((pconn->player
-	   && dest->player
-	   && pplayers_allied(pconn->player, dest->player))
-	  || (!pconn->player && connection_is_global_observer(dest))) {
+      pconn_plr = conn_get_player(pconn);
+      dest_plr = conn_get_player(dest);
+      if ((pconn_plr && dest_plr && pplayers_allied(pconn_plr, dest_plr))
+          || (!pconn_plr && conn_is_global_observer(dest))) {
         dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
       }
     } conn_list_iterate_end;
@@ -499,8 +500,8 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     }
     if (game.server.spectatorchat
         && server_state == RUN_GAME_STATE
-        && !connection_controls_player(pconn)
-        && connection_controls_player(dest)) {
+        && !conn_controls_player(pconn)
+        && conn_controls_player(dest)) {
       continue;
     }
     dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);

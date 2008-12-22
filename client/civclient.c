@@ -840,7 +840,7 @@ bool client_is_observer(void)
 **************************************************************************/
 bool client_is_player(void)
 {
-  return aconnection.established && connection_controls_player(&aconnection);
+  return aconnection.established && conn_controls_player(&aconnection);
 }
 
 /**************************************************************************
@@ -848,5 +848,5 @@ bool client_is_player(void)
 **************************************************************************/
 bool client_is_global_observer(void)
 {
-  return aconnection.established && connection_is_global_observer(&aconnection);
+  return aconnection.established && conn_is_global_observer(&aconnection);
 }

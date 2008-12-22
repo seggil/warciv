@@ -59,6 +59,8 @@ void notify_player(const struct player *pplayer, const char *format, ...)
 void notify_embassies(struct player *pplayer, struct player *exclude,
 		      const char *format, ...)
 		      fc__attribute((__format__ (__printf__, 3, 4)));
+void notify_team(const struct team *pteam, const char *format, ...)
+                 fc__attribute((__format__ (__printf__, 2, 3)));
 void notify_enabled(bool yes);
 
 struct conn_list *player_reply_dest(struct player *pplayer);
