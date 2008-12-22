@@ -72,6 +72,7 @@
 #include "sernet.h"
 #include "settings.h"
 #include "srv_main.h"
+#include "unittools.h"
 #include "vote.h"
 
 #include "advmilitary.h" /* assess_danger_player() */
@@ -1356,6 +1357,144 @@ static bool remove_player(struct connection *caller, char *arg, bool check)
     cmd_reply(CMD_REMOVE, caller, C_OK,
               _("Removed player %s from the game."), name);
   }
+  return TRUE;
+}
+
+/***************************************************************************
+...
+***************************************************************************/
+static bool switch_command(struct connection *caller, char *str, bool check)
+{
+  char *arg[2];
+  int ntokens;
+  enum m_pre_result match_result;
+  const struct player *pplayer1, *pplayer2;
+  struct tile *start1 = NULL, *start2 = NULL;
+  const struct team *pteam;
+  int i;
+
+  if (caller && !conn_controls_player(caller)) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("Only players are allowed to use this command."));
+    return FALSE;
+  }
+
+  if (server_state != RUN_GAME_STATE || game.info.turn != 0) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("You may not switch positions at this time."));
+    return FALSE;
+  }
+
+  ntokens = get_tokens(str, arg, 2, TOKEN_DELIMITERS);
+  if (ntokens != 2) {
+    cmd_reply(CMD_SWITCH, caller, C_SYNTAX,
+              _("Usage: switch <player 1> <player 2>"));
+    free_tokens(arg, ntokens);
+    return FALSE;
+  }
+
+  pplayer1 = find_player_by_name_prefix(arg[0], &match_result);
+  if (!pplayer1) {
+    cmd_reply_no_such_player(CMD_SWITCH, caller, arg[0], match_result);
+    free_tokens(arg, ntokens);
+    return FALSE;
+  }
+
+  pplayer2 = find_player_by_name_prefix(arg[1], &match_result);
+  if (!pplayer2) {
+    cmd_reply_no_such_player(CMD_SWITCH, caller, arg[1], match_result);
+    free_tokens(arg, ntokens);
+    return FALSE;
+  }
+
+  free_tokens(arg, ntokens);
+
+  if (pplayer1 == pplayer2) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("Switching the same player would be useless."));
+    return FALSE;
+  }
+
+  if (!players_on_same_team(pplayer1, pplayer2)) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("The players %s and %s are not on the same team."),
+              pplayer1->name, pplayer2->name);
+    return FALSE;
+  }
+
+  if (check && !players_on_same_team(conn_get_player(caller), pplayer1)) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("The switched players must be on your team!"));
+    return FALSE;
+  }
+
+  if (city_list_size(pplayer1->cities) > 0) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("Player %s already built a city, switch not allowed."),
+              pplayer1->name);
+    return FALSE;
+  }
+
+  if (city_list_size(pplayer2->cities) > 0) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("Player %s already built a city, switch not allowed."),
+              pplayer2->name);
+    return FALSE;
+  }
+
+  if (!map.start_positions) {
+    cmd_reply(CMD_SWITCH, caller, C_GENFAIL,
+              _("No start position data, switch impossible."));
+    return FALSE;
+  }
+
+  for (i = 0; i < game.info.nplayers && (!start1 || !start2); i++) {
+    if (!start1 && map.start_positions[i].nation == pplayer1->nation) {
+      start1 = map.start_positions[i].tile;
+      continue;
+    }
+    if (!start2 && map.start_positions[i].nation == pplayer2->nation) {
+      start2 = map.start_positions[i].tile;
+      continue;
+    }
+  }
+
+  if (!start1) {
+    cmd_reply(CMD_SWITCH, caller, C_GENFAIL,
+              _("Could not find start position for player %s."),
+              pplayer1->name);
+    return FALSE;
+  }
+
+  if (!start2) {
+    cmd_reply(CMD_SWITCH, caller, C_GENFAIL,
+              _("Could not find start position for player %s."),
+              pplayer2->name);
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  /* Beam me up scotty! */
+
+  unit_list_iterate(pplayer1->units, punit) {
+    free_unit_orders(punit);
+    move_unit(punit, start2, 0);
+  } unit_list_iterate_end;
+  notify_conn(pplayer1->connections, _("Game: You were teleported!"));
+
+  unit_list_iterate(pplayer2->units, punit) {
+    free_unit_orders(punit);
+    move_unit(punit, start1, 0);
+  } unit_list_iterate_end;
+  notify_conn(pplayer2->connections, _("Game: You were teleported!"));
+
+  pteam = team_get_by_id(pplayer1->team);
+  notify_team(pteam, _("Server: %s and %s have switched positions."),
+              pplayer1->name, pplayer2->name);
+
   return TRUE;
 }
 
@@ -6294,6 +6433,8 @@ bool handle_stdin_input(struct connection * caller,
   switch (cmd) {
   case CMD_REMOVE:
     return remove_player(caller, arg, check);
+  case CMD_SWITCH:
+    return switch_command(caller, arg, check);
   case CMD_SAVE:
     return save_command(caller, arg, check);
   case CMD_LOAD:
@@ -7599,6 +7740,13 @@ static void show_help_command(struct connection *caller,
                         "increased until at least two votes in favor "
                         "are needed. "));
     }
+
+    if (cmd->vote_flags & VCF_TEAMONLY) {
+      sz_strlcat(buf, _("Vote is only possible on a team, and only "
+                        "team members will see the vote and be able "
+                        "to vote on it. "));
+    }
+
     wordwrap_string(buf, 76);
     cmd_reply(help_cmd, caller, C_COMMENT, _("Voting:"));
     cmd_reply_prefix(help_cmd, caller, C_COMMENT, "  ", "  %s", buf);

@@ -105,6 +105,7 @@ enum command_id {
   CMD_END_GAME,
   CMD_DRAW,
   CMD_REMOVE,
+  CMD_SWITCH,
   CMD_SAVE,
   CMD_LOAD,
   CMD_LOADMAP,

@@ -597,6 +597,15 @@ const struct command commands[] = {
       "all cities and units etc. Works even in the middle of game. Use with care!"),
    ECHO_ALL, VCF_NODISSENT, 75
   },
+  {"switch",	ALLOW_CTRL, ALLOW_NONE,
+   /* TRANS: translate text between <> only */
+   N_("switch <first player> <second player>"),
+   N_("Switch player positions."),
+   N_("If it's the first turn and neither player has built any cities, "
+      "this command starts a team vote to move the first player's initial "
+      "units to the second player's start position and vice-versa."),
+   ECHO_ADMINS, VCF_TEAMONLY | VCF_NOPASSALONE | VCF_NODISSENT, 75
+  },
   {"save",	ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
    N_("save\n"
