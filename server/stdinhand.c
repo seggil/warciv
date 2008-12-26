@@ -89,6 +89,7 @@ static bool show_list(struct connection *caller, char *arg);
 static void show_connections(struct connection *caller);
 static void show_capabilities(struct connection *caller);
 static void show_actionlist(struct connection *caller);
+static void show_allow(struct connection *caller);
 static void show_votes(struct connection *caller);
 static void show_teams(struct connection *caller, bool send_to_all);
 static void show_rulesets(struct connection *caller);
@@ -112,6 +113,10 @@ static bool ban_command(struct connection *caller, char *pattern,
                         bool check);
 static bool unban_command(struct connection *caller, char *pattern,
                           bool check);
+static bool allow_command(struct connection *caller, const char *arg,
+                          bool check);
+static bool disallow_command(struct connection *caller,
+                             const char *arg, bool check);
 static bool addaction_command(struct connection *caller, char *pattern,
                               bool check);
 static bool delaction_command(struct connection *caller, char *pattern,
@@ -151,6 +156,43 @@ static void kickinfo_free(struct kickinfo *ki);
 
 static struct hash_table *kick_table_by_addr;
 static struct hash_table *kick_table_by_user;
+
+
+struct allow_entry {
+  const char *name;
+  bool allowed;
+  char fmt[32];
+};
+
+enum user_allow_behavior {
+  UAB_OBSERVE = 0,
+  UAB_GLOBAL_OBSERVE,
+  UAB_PLAYER_OBSERVE,
+  UAB_TAKE,
+  UAB_OTHER_TAKE,
+  UAB_AI_TAKE,
+  UAB_DEAD_ATTACH,
+  UAB_DISPLACE,
+  UAB_SWITCH,
+
+  NUM_ALLOWS
+};
+
+/* NB: Must match enum user_allow_behavior. */
+static struct allow_entry allows[] = {
+  { "observe", TRUE },
+  { "global observe", TRUE },
+  { "player observe", TRUE },
+  { "take", TRUE },
+  { "other take", TRUE },
+  { "ai take", TRUE },
+  { "dead attach", FALSE },
+  { "displace", FALSE },
+  { "switch", TRUE }
+};
+
+static bool is_allowed(enum user_allow_behavior uab);
+
 
 static const char horiz_line[] =
     "------------------------------------------------------------------------------";
@@ -211,6 +253,8 @@ static enum command_id command_named(const char *token,
 **************************************************************************/
 void stdinhand_init(void)
 {
+  int len[NUM_ALLOWS], max = 0, i;
+
   if (!mute_table) {
     mute_table = hash_new(hash_fval_string2, hash_fcmp_string);
   }
@@ -220,6 +264,18 @@ void stdinhand_init(void)
   }
   if (!kick_table_by_user) {
     kick_table_by_user = hash_new(hash_fval_string2, hash_fcmp_string);
+  }
+
+  for (i = 0; i < NUM_ALLOWS; i++) {
+    len[i] = strlen(allows[i].name);
+    if (len[i] > max) {
+      max = len[i];
+    }
+  }
+
+  for (i = 0; i < NUM_ALLOWS; i++) {
+    snprintf(allows[i].fmt, sizeof(allows[i].fmt),
+             "%%s:%%-%ds%%s", max - len[i] + 5);
   }
 }
 
@@ -1372,6 +1428,12 @@ static bool switch_command(struct connection *caller, char *str, bool check)
   struct tile *start1 = NULL, *start2 = NULL;
   const struct team *pteam;
   int i;
+
+  if (!is_allowed(UAB_SWITCH)) {
+    cmd_reply(CMD_SWITCH, caller, C_FAIL,
+              _("Switching is not allowed in this game."));
+    return FALSE;
+  }
 
   if (caller && !conn_controls_player(caller)) {
     cmd_reply(CMD_SWITCH, caller, C_FAIL,
@@ -3982,73 +4044,104 @@ static bool set_command(struct connection *caller,
 }
 
 /**************************************************************************
- Check game.server.allow_take for permission to take or observe a player.
- If the result is FALSE and 'msgbuf' is non-NULL, then it is filled with
- the reason why the take/observe is not allowed.
+  Returns TRUE if the given behavior is allowed.
 **************************************************************************/
-bool is_allowed_to_take(struct player *pplayer, bool will_obs,
-                        char *msgbuf, int msgbuf_len)
+static bool is_allowed(enum user_allow_behavior uab)
 {
-  const char *allow, *msg = NULL;
+  if (!(0 <= uab && uab < NUM_ALLOWS)) {
+    return FALSE;
+  }
+  return allows[uab].allowed;
+}
 
-  if (pplayer->is_civil_war_split && !will_obs) {
+/**************************************************************************
+  Check for permissions to take or observe a player. If the result is FALSE
+  and 'msgbuf' is non-NULL, then it is filled with the reason why the take
+  or observe is not allowed. If 'will_obs' is TRUE, pplayer may be NULL to
+  test for global observer; otherwise pplayer must not be NULL. 'caller'
+  may be NULL; it is used only for testing if another user may take a
+  player originally controlled by another user.
+**************************************************************************/
+bool is_allowed_to_attach(const struct player *pplayer,
+                          const struct connection *caller,
+                          bool will_obs, char *msgbuf, int msgbuf_len)
+{
+  const char *msg = NULL;
+
+  /* Taking or observing a player created by a
+   * civil war split is never allowed. */
+  if (pplayer && pplayer->is_civil_war_split && !will_obs) {
     msg = _("Sorry, you can't take a player created by a civil war.");
     goto FAILED;
   }
 
+  /* Taking or observing a barbarian is never allowed. */
   if (is_barbarian(pplayer)) {
-    if (!(allow = strchr(game.server.allow_take, 'b'))) {
-      if (will_obs) {
-        msg = _("Sorry, one can't observe barbarians in this game.");
-      } else {
-        msg = _("Sorry, one can't take barbarians in this game.");
-      }
+    if (will_obs) {
+      msg = _("Sorry, one can't observe barbarians in this game.");
+    } else {
+      msg = _("Sorry, one can't take barbarians in this game.");
+    }
+    goto FAILED;
+  }
+
+  if (pplayer && !pplayer->is_alive && !is_allowed(UAB_DEAD_ATTACH)) {
+    msg = _("Sorry, one can't attach to dead players in this game.");
+    goto FAILED;
+  }
+
+  if (will_obs) {
+    /* All observer cases. */
+
+    if (!is_allowed(UAB_OBSERVE)) {
+      msg = _("Sorry, one can't observe in this game.");
       goto FAILED;
     }
-  } else if (!pplayer->is_alive) {
-    if (!(allow = strchr(game.server.allow_take, 'd'))) {
-      if (will_obs) {
-        msg = _("Sorry, one can't observe dead players in this game.");
-      } else {
-        msg = _("Sorry, one can't take dead players in this game.");
-      }
+
+    if (!pplayer && !is_allowed(UAB_GLOBAL_OBSERVE)) {
+      msg = _("Sorry, one can't observe globally in this game.");
       goto FAILED;
     }
-  } else if (pplayer->ai.control) {
-    if (!(allow = strchr(game.server.allow_take,
-                         game.server.is_new_game ? 'A' : 'a'))) {
-      if (will_obs) {
-        msg = _("Sorry, one can't observe AI players in this game.");
-      } else {
-        msg = _("Sorry, one can't take AI players in this game.");
-      }
+
+    if (pplayer && !is_allowed(UAB_PLAYER_OBSERVE)) {
+      msg = _("Sorry, one can't observe players in this game.");
       goto FAILED;
     }
+
   } else {
-    if (!(allow = strchr(game.server.allow_take,
-                         game.server.is_new_game ? 'H' : 'h'))) {
-      if (will_obs) {
-        msg = _("Sorry, one can't observe human players in this game.");
-      } else {
-        msg = _("Sorry, one can't take human players in this game.");
-      }
+    /* All 'take' cases. */
+
+    if (!is_allowed(UAB_TAKE)) {
+      msg = _("Sorry, one can't take players in this game.");
       goto FAILED;
     }
-  }
-  allow++;
-  if (will_obs && (*allow == '2' || *allow == '3')) {
-    msg = _("Sorry, one can't observe in this game.");
-    goto FAILED;
-  }
-  if (!will_obs && *allow == '4') {
-    msg = _("Sorry, one can't take players in this game.");
-    goto FAILED;
-  }
-  if (!will_obs && pplayer->is_connected
-      && (*allow == '1' || *allow == '3')) {
-    msg = _("Sorry, one can't take players already connected "
-            "in this game.");
-    goto FAILED;
+
+    /* Programming error. */
+    if (!pplayer) {
+      msg = _("Can't take an invalid player.");
+      freelog(LOG_ERROR, "NULL player checked for take "
+              "permissions in is_allowed_to_attach().");
+      goto FAILED;
+    }
+
+    if (caller && 0 != strcmp(pplayer->username, ANON_USER_NAME)
+        && 0 != strcmp(pplayer->username, caller->username)
+        && !is_allowed(UAB_OTHER_TAKE)) {
+      msg = _("Sorry, one can't take players originally controlled "
+              "by another user in this game.");
+      goto FAILED;
+    }
+
+    if (pplayer->ai.control && !is_allowed(UAB_AI_TAKE)) {
+      msg = _("Sorry, one can't take AI players in this game.");
+      goto FAILED;
+    }
+
+    if (pplayer->is_connected && !is_allowed(UAB_DISPLACE)) {
+      msg = _("Sorry, one can't take players already connected "
+              "in this game.");
+      goto FAILED;
+    }
   }
 
   return TRUE;
@@ -4123,13 +4216,14 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   }
 
   /******** PART II: do the observing ********/
-  /* check allowtake for permission */
-  if (pplayer) {
-    if (!is_allowed_to_take(pplayer, TRUE, msg, sizeof(msg))) {
-      cmd_reply(CMD_OBSERVE, caller, C_FAIL, msg);
-      goto CLEANUP;
-    }
 
+  /* check allowtake for permission */
+  if (!is_allowed_to_attach(pplayer, caller, TRUE, msg, sizeof(msg))) {
+    cmd_reply(CMD_OBSERVE, caller, C_FAIL, msg);
+    goto CLEANUP;
+  }
+
+  if (pplayer) {
     /* observing your own player (during pregame) makes no sense. */
     if (pconn->player == pplayer && !pconn->observer
 	&& is_newgame && !pplayer->was_created) {
@@ -4148,21 +4242,6 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
   } else {
     /* if we have no pplayer, it means that we want to be a global observer */
-    const char *allow;
-
-    if (!(allow = strchr(game.server.allow_take,
-                         (game.server.is_new_game ? 'O' : 'o')))) {
-      cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-                _("Sorry, one can't observe globally in this game."));
-      goto CLEANUP;
-    }
-    allow++;
-
-    if (*allow == '2' || *allow == '3') {
-      cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-                _("Sorry, one can't observe globally in this game."));
-      goto CLEANUP;
-    }
 
     if (!has_capability("extglobalinfo", pconn->capability)) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
@@ -4347,7 +4426,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
   }
 
   /* check allowtake for permission */
-  if (!is_allowed_to_take(pplayer, FALSE, msg, sizeof(msg))) {
+  if (!is_allowed_to_attach(pplayer, caller, FALSE, msg, sizeof(msg))) {
     cmd_reply(CMD_TAKE, caller, C_FAIL, msg);
     goto CLEANUP;
   }
@@ -6491,6 +6570,10 @@ bool handle_stdin_input(struct connection * caller,
     return ban_command(caller, arg, check);
   case CMD_UNBAN:
     return unban_command(caller, arg, check);
+  case CMD_ALLOW:
+    return allow_command(caller, arg, check);
+  case CMD_DISALLOW:
+    return disallow_command(caller, arg, check);
   case CMD_ADDACTION:
     return addaction_command(caller, arg, check);
   case CMD_DELACTION:
@@ -6769,13 +6852,6 @@ static bool check_settings_for_rated_game(void)
     { &game.ext_info.experimentalbribingcost, TRUE}
   };
 
-  struct standard_string_setting {
-    const char *psetting;
-    const char *standard_value;
-  } sss[] = {
-    { game.server.allow_take, "H4h1a1" }
-  };
-
   struct settings_s *op;
   bool ok = TRUE, checked = FALSE;
   int i;
@@ -6900,25 +6976,7 @@ static bool check_settings_for_rated_game(void)
       break;
 
     case SSET_STRING:
-      for (i = 0; i < ARRAY_SIZE(sss); i++) {
-        if (sss[i].psetting == op->string_value) {
-          if (0 != strcmp(sss[i].standard_value, op->string_value)) {
-            notify_conn(NULL, _("Game: The setting '%s' is not "
-                                "at the standard value of \"%s\"."),
-                        op->name, sss[i].standard_value);
-            ok = FALSE;
-          }
-          checked = TRUE;
-          break;
-        }
-      }
-      if (!checked
-          && 0 != strcmp(op->string_value, op->string_default_value)) {
-        notify_conn(NULL, _("Game: The setting '%s' is not "
-                            "at the default value of \"%s\"."),
-                    op->name, op->string_default_value);
-        ok = FALSE;
-      }
+      /* No string settings checked. */
       break;
 
     default:
@@ -7344,6 +7402,98 @@ static bool unban_command(struct connection *caller,
                 "user actions."), pattern);
   }
   return found;
+}
+
+/*********************************************************************
+  String accessor for allow/disallow command arguments.
+*********************************************************************/
+static const char *allow_accessor(int i)
+{
+  return allows[i].name;
+}
+
+/*********************************************************************
+  See the help text for the /allow command.
+*********************************************************************/
+static bool allow_command(struct connection *caller, const char *arg,
+                          bool check)
+{
+  enum m_pre_result result;
+  int uab;
+
+  result = match_prefix(allow_accessor, NUM_ALLOWS,
+                        0, mystrncasecmp, arg, &uab);
+
+  if (result == M_PRE_AMBIGUOUS) {
+    cmd_reply(CMD_ALLOW, caller, C_SYNTAX,
+              _("The argument \"%s\" is ambigious."), arg);
+    return FALSE;
+  } else if (result > M_PRE_AMBIGUOUS) {
+    cmd_reply(CMD_ALLOW, caller, C_SYNTAX,
+              /* TRANS: Do not translate "/help allow". */
+              _("Invalid argument \"%s\". See /help allow."), arg);
+    return FALSE;
+  }
+
+  if (allows[uab].allowed) {
+    cmd_reply(CMD_ALLOW, caller, C_FAIL,
+              _("\'%s\' is already allowed."), allows[uab].name);
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  allows[uab].allowed = TRUE;
+  cmd_reply(CMD_ALLOW, caller, C_OK, _("'%s' set to allowed."),
+            allows[uab].name);
+  notify_conn(NULL, _("Server: '%s' is now ALLOWED."),
+              allows[uab].name);
+
+  return TRUE;
+}
+
+/*********************************************************************
+  See the help text for the /disallow command.
+*********************************************************************/
+static bool disallow_command(struct connection *caller,
+                             const char *arg, bool check)
+{
+  enum m_pre_result result;
+  int uab;
+
+  result = match_prefix(allow_accessor, NUM_ALLOWS,
+                        0, mystrncasecmp, arg, &uab);
+
+  if (result == M_PRE_AMBIGUOUS) {
+    cmd_reply(CMD_DISALLOW, caller, C_SYNTAX,
+              _("The argument \"%s\" is ambigious."), arg);
+    return FALSE;
+  } else if (result > M_PRE_AMBIGUOUS) {
+    cmd_reply(CMD_DISALLOW, caller, C_SYNTAX,
+              /* TRANS: Do not translate "/help disallow". */
+              _("Invalid argument \"%s\". See /help disallow."), arg);
+    return FALSE;
+  }
+
+  if (!allows[uab].allowed) {
+    cmd_reply(CMD_ALLOW, caller, C_FAIL,
+              _("\'%s\' is already disallowed."), allows[uab].name);
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  allows[uab].allowed = FALSE;
+  cmd_reply(CMD_DISALLOW, caller, C_OK, _("'%s' set to disallowed."),
+            allows[uab].name);
+  notify_conn(NULL, _("Server: '%s' is now NOT allowed."),
+              allows[uab].name);
+
+  return TRUE;
 }
 
 /********************************************************************
@@ -8207,6 +8357,7 @@ static bool show_mutes(struct connection *caller)
 **************************************************************************/
 enum LIST_ARGS {
   LIST_ACTIONLIST,
+  LIST_ALLOW,
   LIST_CONNECTIONS,
   LIST_CAPABILITIES,
   LIST_IDLE,
@@ -8223,6 +8374,7 @@ enum LIST_ARGS {
 };
 static const char *const list_args[] = {
   "actionlist",
+  "allow",
   "connections",
   "capabilities",
   "idle",
@@ -8263,6 +8415,9 @@ static bool show_list(struct connection *caller, char *arg)
   switch (ind) {
   case LIST_ACTIONLIST:
     show_actionlist(caller);
+    return TRUE;
+  case LIST_ALLOW:
+    show_allow(caller);
     return TRUE;
   case LIST_CONNECTIONS:
     show_connections(caller);
@@ -8514,6 +8669,22 @@ static void show_actionlist(struct connection *caller)
     user_action_as_str(pua, buf, sizeof(buf));
     cmd_reply(CMD_LIST, caller, C_COMMENT, "%d %s", i++, buf);
   } user_action_list_iterate_end;
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+}
+
+/**************************************************************************
+  List what user behaviours are allowed (see /allow, /disallow).
+**************************************************************************/
+static void show_allow(struct connection *caller)
+{
+  int i;
+
+  cmd_reply(CMD_LIST, caller, C_COMMENT, _("Current allow status:"));
+  cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+  for (i = 0; i < NUM_ALLOWS; i++) {
+    cmd_reply(CMD_LIST, caller, C_COMMENT, allows[i].fmt, allows[i].name,
+              " ", allows[i].allowed ? "allowed" : "disallowed");
+  }
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
 
@@ -8967,3 +9138,61 @@ char **freeciv_completion(char *text, int start, int end)
   return (matches);
 }
 #endif /* HAVE_LIBREADLINE */
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void make_safe_savename(char *out, int outlen, const char *in)
+{
+  const char *limit;
+
+  for (limit = out + outlen; *in && out < limit; in++) {
+    *out++ = (*in == ' ' ? '_' : *in);
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void save_allow_state(struct section_file *file)
+{
+  int uab;
+  char name[32];
+
+  if (!file) {
+    return;
+  }
+
+  for (uab = 0; uab < NUM_ALLOWS; uab++) {
+    make_safe_savename(name, sizeof(name), allows[uab].name);
+    secfile_insert_bool(file, allows[uab].allowed,
+                        "game.allow.%s", name);
+  }
+
+  /* FIXME: Save dummy value for compatibility. */
+  secfile_insert_str(file, "H1A1h1a1d3Oo", "game.allow_take");
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void load_allow_state(struct section_file *file)
+{
+  int uab;
+  char name[32];
+  bool v;
+
+  if (!file) {
+    return;
+  }
+
+  for (uab = 0; uab < NUM_ALLOWS; uab++) {
+    make_safe_savename(name, sizeof(name), allows[uab].name);
+    v = secfile_lookup_bool_default(file, allows[uab].allowed,
+                                    "game.allow.%s", name);
+    allows[uab].allowed = v;
+  }
+
+  /* FIXME: Load dummy value for compatibility. */
+  secfile_lookup_str_default(file, "H1A1h1a1d3Oo", "game.allow_take");
+}

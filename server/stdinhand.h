@@ -46,8 +46,13 @@ bool require_command(struct connection *caller, char *arg, bool check);
 
 void toggle_ai_player_direct(struct connection *caller,
 			     struct player *pplayer);
-bool is_allowed_to_take(struct player *pplayer, bool will_obs,
-                        char *msgbuf, int msgbuf_len);
+bool is_allowed_to_attach(const struct player *pplayer,
+                          const struct connection *caller, bool will_obs,
+                          char *msgbuf, int msgbuf_len);
+
+struct section_file;
+void save_allow_state(struct section_file *file);
+void load_allow_state(struct section_file *file);
 
 #ifdef HAVE_LIBREADLINE
 #ifdef HAVE_NEWLIBREADLINE

@@ -126,6 +126,8 @@ enum command_id {
   CMD_KICK,
   CMD_BAN,
   CMD_UNBAN,
+  CMD_ALLOW,
+  CMD_DISALLOW,
 
   /* undocumented */
   CMD_RFCSTYLE,

@@ -750,7 +750,7 @@ bool players_on_same_team(const struct player *pplayer1,
 **************************************************************************/
 bool is_barbarian(const struct player *pplayer)
 {
-  return pplayer->ai.barbarian_type != NOT_A_BARBARIAN;
+  return pplayer && pplayer->ai.barbarian_type != NOT_A_BARBARIAN;
 }
 
 /**************************************************************************

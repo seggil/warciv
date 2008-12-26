@@ -358,7 +358,6 @@ void game_init(void)
     game.palace_building = B_LAST;
     game.land_defend_building = B_LAST;
     sz_strlcpy(game.server.demography, GAME_DEFAULT_DEMOGRAPHY);
-    sz_strlcpy(game.server.allow_take, GAME_DEFAULT_ALLOW_TAKE);
     game.server.save_options.save_random = TRUE;
     game.server.save_options.save_players = TRUE;
     game.server.save_options.save_known = TRUE;

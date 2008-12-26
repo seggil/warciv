@@ -71,48 +71,6 @@ static bool autotoggle_callback(bool value, const char **reject_message)
 }
 
 /*************************************************************************
-  Verify that a given allowtake string is valid.  See
-  game.server.allow_take.
-*************************************************************************/
-static bool allowtake_callback(const char *value, const char **error_string)
-{
-  int len = strlen(value), i;
-  bool havecharacter_state = FALSE;
-
-  /* We check each character individually to see if it's valid.  This
-   * does not check for duplicate entries.
-   *
-   * We also track the state of the machine.  havecharacter_state is
-   * true if the preceeding character was a primary label, e.g.
-   * NHhAadb.  It is false if the preceeding character was a modifier
-   * or if this is the first character. */
-
-  for (i = 0; i < len; i++) {
-    /* Check to see if the character is a primary label. */
-    if (strchr("HhAadbOo", value[i])) {
-      havecharacter_state = TRUE;
-      continue;
-    }
-
-    /* If we've already passed a primary label, check to see if the
-     * character is a modifier. */
-    if (havecharacter_state && strchr("1234", value[i])) {
-      havecharacter_state = FALSE;
-      continue;
-    }
-
-    /* Looks like the character was invalid. */
-    *error_string = _("Allowed take string contains invalid\n"
-		      "characters.  Try \"help allowtake\".");
-    return FALSE;
-  }
-
-  /* All characters were valid. */
-  *error_string = NULL;
-  return TRUE;
-}
-
-/*************************************************************************
   Verify that a given startunits string is valid.  See
   game.server.start_units.
 *************************************************************************/
@@ -940,42 +898,6 @@ struct settings_s settings[] = {
    * affect what happens in the game, it just determines when the
    * players stop playing and look at the score.)
    */
-  GEN_STRING_FULL("allowtake", game.server.allow_take,
-                  SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
-                  N_("Players that users are allowed to take"),
-                  N_("This should be a string of characters, each of which "
-                     "specifies a type or status of a civilization (player). "
-                     "Clients will only be permitted to take "
-                     "or observe those players which match one of the specified "
-                     "letters. This only affects future uses of the take or "
-                     "observe command; it is not retroactive. The characters "
-                     "and their meanings are:\n"
-                     "    o,O = Global observer\n"
-                     "    b   = Barbarian players\n"
-                     "    d   = Dead players\n"
-                     "    a,A = AI players\n"
-                     "    h,H = Human players\n"
-                     "The first description on this list which matches a "
-                     "player is the one which applies. Thus 'd' does not "
-                     "include dead barbarians, 'a' does not include dead AI "
-                     "players, and so on. Upper case letters apply before "
-                     "the game has started, lower case letters afterwards.\n\n"
-                     "Each character above may be followed by one of the "
-                     "following numbers to allow or restrict the manner "
-                     "of connection:\n\n"
-                     "(none) = Controller allowed, observers allowed, "
-                     "can displace connections. (Displacing a connection means "
-                     "that you may take over a player, even if another user "
-                     "already controls that player.)\n\n"
-                     "1 = Controller allowed, observers allowed, "
-                     "can't displace connections;\n\n"
-                     "2 = Controller allowed, no observers allowed, "
-                     "can displace connections;\n\n"
-                     "3 = Controller allowed, no observers allowed, "
-                     "can't displace connections;\n\n"
-                     "4 = No controller allowed, observers allowed;\n\n"),
-                  allowtake_callback, GAME_DEFAULT_ALLOW_TAKE,
-                  VCF_NONE, 0, ALLOW_ADMIN, -1)
 
   GEN_BOOL("autotoggle", game.server.auto_ai_toggle,
 	   SSET_META, SSET_NETWORK, SSET_SITUATIONAL, SSET_TO_CLIENT,

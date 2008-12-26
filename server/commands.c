@@ -63,6 +63,7 @@ const struct command commands[] = {
   {"list",	ALLOW_OBSERVER, ALLOW_OBSERVER,
    "list\n"
    "list actionlist\n"
+   "list allow\n"
    "list connections\n"
    "list capabilites\n"
    "list idle\n"
@@ -75,12 +76,13 @@ const struct command commands[] = {
    "list teams\n"
    "list votes",
    N_("Show a list of various things."),
-   N_("Show the action list, a list of connections to the server, the "
-      "capabilities of those connections, idle connections, your ignore "
-      "list, all maps, a list of muted users on the server, a list of "
-      "players, all rulesets, all scenarios, the teams and the players "
-      "in them or all running votes. The argument may be abbreviated, "
-      "and defaults to 'players' if absent."),
+   N_("Show the action list, allowed connection behaviors, a list of "
+      "connections to the server, the capabilities of those "
+      "connections, idle connections, your ignore list, all maps, a "
+      "list of muted users on the server, a list of players, all "
+      "rulesets, all scenarios, the teams and the players in them or "
+      "all running votes. The argument may be abbreviated, and "
+      "defaults to 'players' if absent."),
    ECHO_NONE, VCF_NONE, 0
   },
   {"quit",	ALLOW_HACK, ALLOW_HACK,
@@ -794,6 +796,29 @@ const struct command commands[] = {
       "action 'ban' (if <type> is ommitted, it is assumed to be "
       "'hostname'; it is also used to determine which entry to remove)."),
    ECHO_ALL, VCF_NONE, 0
+  },
+  {"allow", ALLOW_CTRL, ALLOW_CTRL,
+   /* TRANS: translate text between <> */
+   N_("allow <something>"),
+   N_("Allow certain connection behaviors."),
+   N_("This command controls what users are allowed to do with "
+      "respect to taking players, observing, and using the "
+      "/switch command. The 'other take' argument controls "
+      "whether a user may take a player they did not originally "
+      "control. Argument names may be abbreviated. To see a list "
+      "of possible arguments and their current values, use /list "
+      "allow."),
+   ECHO_ADMINS, VCF_NONE, 50
+  },
+  {"disallow", ALLOW_CTRL, ALLOW_CTRL,
+   /* TRANS: translate text between <> */
+   N_("disallow <something>"),
+   N_("Disallow certain connection behaviors."),
+   N_("This command does the opposite of the /allow command: "
+      "it disables types of connection behaviors. Argument "
+      "names may be abbreviated. To see a list of possible "
+      "arguments and their current values, use /list allow."),
+   ECHO_ADMINS, VCF_NONE, 50
   },
 
   {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,

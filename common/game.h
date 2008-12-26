@@ -158,7 +158,6 @@ struct civ_game {
     } incite_cost;
 
     char demography[MAX_LEN_DEMOGRAPHY];
-    char allow_take[MAX_LEN_ALLOW_TAKE];
 
     /* Used by the map editor to control game_save;
      * could be used by the server too */
@@ -560,7 +559,6 @@ extern bool is_server;
 #define GAME_OLD_DEFAULT_SKILL_LEVEL 5  /* normal; for old save games */
 
 #define GAME_DEFAULT_DEMOGRAPHY      "NASRLPEMOqrb"
-#define GAME_DEFAULT_ALLOW_TAKE      "H1A1h1a1d3Oo"
 
 #define GAME_DEFAULT_COMPRESS_LEVEL 6    /* if we have compression */
 #define GAME_MIN_COMPRESS_LEVEL     0
