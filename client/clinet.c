@@ -108,7 +108,6 @@ struct async_slist_ctx {
   data_free_func_t datafree;
   char errbuf[128];
   int sock;
-  bool connected;
   bool have_data_to_write;
   int input_id;
   int req_id;
@@ -998,16 +997,17 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
   freelog(LOG_DEBUG, "mwc metaserver_write_cb ctx=%p flags=%d", ctx, flags);
 
   if (flags & INPUT_ERROR) {
-    async_slist_error(ctx, _("Input error while waiting to write server list "
-                             "request."));
-    return FALSE;		/* remove input callback */
+    async_slist_error(ctx, _("Failed to connect to metaserver."));
+    return FALSE;              /* remove input callback */
   }
 
   if (flags & INPUT_CLOSED) {
-    async_slist_error(ctx, _("Metaserver closed the connection before "
-                             "we finised sending the request."));
-    return FALSE;		/* remove input callback */
+    async_slist_error(ctx, _("Metaserver closed the connection "
+                             "before it was even established!"));
+    return FALSE;              /* remove input callback */
   }
+
+  freelog(LOG_DEBUG, "mwc connection to metaserver succeeded");
 
   while (ctx->buflen > 0) {
     nb = my_writesocket(ctx->sock, ctx->buf, ctx->buflen);
@@ -1054,53 +1054,10 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
 /**************************************************************************
   ...
 **************************************************************************/
-static bool metaserver_connected_cb(int sock, int flags, void *data)
-{
-  struct async_slist_ctx *ctx = data;
-  int len;
-
-  freelog(LOG_DEBUG, "mcc metaserver_connected_cb sock=%d flags=%d "
-          "data=%p", sock, flags, data);
-
-  assert(ctx != NULL);
-  assert(sock == ctx->sock);
-
-  if (flags & INPUT_ERROR) {
-    async_slist_error(ctx, _("Failed to connect to metaserver."));
-    return FALSE;
-  }
-
-  if (flags & INPUT_CLOSED) {
-    async_slist_error(ctx, _("Metaserver closed the connection "
-                             "before it was even established!"));
-    return FALSE;
-  }
-
-  freelog(LOG_DEBUG, "mcc connection to metaserver succeeded");
-
-  ctx->connected = TRUE;
-  ctx->have_data_to_write = TRUE;
-  len = generate_server_list_http_request(ctx->buf,
-      sizeof(ctx->buf), ctx->urlpath, ctx->metaname, ctx->metaport);
-  ctx->buflen = len;
-
-  freelog(LOG_DEBUG, "mcc %d byte generated request copied to "
-          "write buffer", len);
-
-  ctx->input_id = add_net_input_callback(sock,
-      INPUT_WRITE, metaserver_write_cb, ctx, NULL);
-
-  freelog(LOG_DEBUG, "mcc waiting for socket %d to become writable", sock);
-  return FALSE;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
 static void
 metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
 {
-  int sock, res;
+  int sock, res, len;
   struct async_slist_ctx *ctx = data;
   struct sockaddr *addr;
   long err_no;
@@ -1151,11 +1108,20 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   }
 
   ctx->sock = sock;
-  ctx->connected = FALSE;
-  ctx->have_data_to_write = FALSE;
+  ctx->have_data_to_write = TRUE;
+  len = generate_server_list_http_request(ctx->buf, sizeof(ctx->buf),
+                                          ctx->urlpath, ctx->metaname,
+                                          ctx->metaport);
+  ctx->buflen = len;
+
+  freelog(LOG_DEBUG, "mnlc %d byte generated request copied to "
+          "write buffer", len);
+
   ctx->input_id = add_net_input_callback(sock,
       INPUT_WRITE | INPUT_CLOSED | INPUT_ERROR,
-      metaserver_connected_cb, ctx, NULL);
+      metaserver_write_cb, ctx, NULL);
+
+  freelog(LOG_DEBUG, "mnlc waiting for socket %d to become writable", sock);
 }
 
 /**************************************************************************
