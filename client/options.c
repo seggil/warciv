@@ -794,6 +794,11 @@ static struct client_option client_options[] = {
 		     "to select units with the yellow rectangle "
 		     "(Dragging right click)."),
 		  COC_MULTI_SELECTION, FALSE, NULL),
+  GEN_BOOL_OPTION(multi_select_double_click, N_("Double-click multiselect"),
+		  N_("If this option is set then double clicking on a unit "
+                     "will add all visible units of the same type to the "
+                     "unit multiselection."),
+		  COC_MULTI_SELECTION, TRUE, NULL),
   GEN_BOOL_OPTION(multi_select_spread_airport_cities,
 		  N_("Spread only in cities with airport"),
 		  N_("If this option is enabled, spreading units command "

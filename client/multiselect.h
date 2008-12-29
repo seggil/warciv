@@ -152,6 +152,7 @@ extern bool multi_select_blink;
 extern bool multi_select_map_selection;
 extern bool multi_select_spread_airport_cities;
 extern bool multi_select_spread_allied_cities;
+extern bool multi_select_double_click;
 
 bool is_unit_in_multi_select(int multi, struct unit *punit);
 void multi_select_active_all(int multi);

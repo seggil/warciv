@@ -163,6 +163,7 @@ bool multi_select_blink;
 bool multi_select_map_selection;
 bool multi_select_spread_airport_cities;
 bool multi_select_spread_allied_cities;
+bool multi_select_double_click;
 
 /********************************************************************** 
   ...

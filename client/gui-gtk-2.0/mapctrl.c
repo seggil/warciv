@@ -316,7 +316,8 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       toggle_tile_hilite(ptile);
     }
     /* double LMB: select units of the same type. */
-    else if (ptile && !pcity && (ev->type == GDK_2BUTTON_PRESS)) {
+    else if (ptile && !pcity && ev->type == GDK_2BUTTON_PRESS
+             && multi_select_double_click) {
       struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
       if (punit && punit->owner == get_player_idx()) {
 	multi_select_clear(0);
