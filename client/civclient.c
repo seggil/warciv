@@ -80,6 +80,12 @@
 
 #include "civclient.h"
 
+
+/* The address and port of the server we are
+ * currenly connected or trying to connect to. */
+char server_host[512] = "\0";
+int server_port = -1;
+
 /* this is used in strange places, and is 'extern'd where
    needed (hence, it is not 'extern'd in civclient.h) */
 bool is_server = FALSE;
@@ -211,11 +217,9 @@ int main(int argc, char *argv[])
   char tileset_name[512] = "\0";
   char sound_plugin_name[512] = "\0";
   char sound_set_name[512] = "\0";
-  char server_host[512] = "\0";
   char user_name[512] = "\0";
   char password[MAX_LEN_PASSWORD] = "\0";
   char metaserver[512] = "\0";
-  int  server_port = -1;
 
   /* Load win32 post-crash debugger */
 #ifdef WIN32_NATIVE
@@ -397,8 +401,8 @@ int main(int argc, char *argv[])
   if (sound_plugin_name[0] != '\0') {
     sz_strlcpy(default_sound_plugin_name, sound_plugin_name);
   }
-  if (server_host[0] != '\0') {
-    sz_strlcpy(default_server_host, server_host);
+  if (server_host[0] == '\0') {
+    sz_strlcpy(server_host, default_server_host);
   }
   if (user_name[0] != '\0') {
     sz_strlcpy(default_user_name, user_name);
@@ -409,8 +413,8 @@ int main(int argc, char *argv[])
   if (metaserver[0] != '\0') {
     sz_strlcpy(default_metaserver, metaserver);
   }
-  if (server_port != -1) {
-    default_server_port = server_port;
+  if (server_port == -1) {
+    server_port = default_server_port;
   }
 
 

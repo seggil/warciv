@@ -739,13 +739,12 @@ static void connect_callback(GtkWidget *w, gpointer data)
   case LOGIN_TYPE:
     sz_strlcpy(default_user_name,
 	       gtk_entry_get_text(GTK_ENTRY(network_login)));
-    sz_strlcpy(default_server_host,
+    sz_strlcpy(server_host,
 	       gtk_entry_get_text(GTK_ENTRY(network_host)));
-    default_server_port = atoi(gtk_entry_get_text(GTK_ENTRY(network_port)));
+    server_port = atoi(gtk_entry_get_text(GTK_ENTRY(network_port)));
   
-    if (connect_to_server(default_user_name, default_server_host,
-			  default_server_port, errbuf, sizeof(errbuf)) != -1) {
-    } else {
+    if (-1 == connect_to_server(default_user_name, server_host,
+                                server_port, errbuf, sizeof(errbuf))) {
       append_network_statusbar(errbuf);
     }
     break; 
@@ -991,8 +990,8 @@ static void update_network_page(void)
   gtk_tree_selection_unselect_all(meta_selection);
 
   gtk_entry_set_text(GTK_ENTRY(network_login), default_user_name);
-  gtk_entry_set_text(GTK_ENTRY(network_host), default_server_host);
-  my_snprintf(buf, sizeof(buf), "%d", default_server_port);
+  gtk_entry_set_text(GTK_ENTRY(network_host), server_host);
+  my_snprintf(buf, sizeof(buf), "%d", server_port);
   gtk_entry_set_text(GTK_ENTRY(network_port), buf);
 
   set_connection_state(LOGIN_TYPE);

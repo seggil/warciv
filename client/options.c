@@ -672,15 +672,15 @@ static struct client_option client_options[] = {
 		    "connections to a server."),
 		 COC_NETWORK, "", NULL),
   GEN_STR_OPTION(default_server_host, N_("Default server"),
-		 N_("This is the default server hostname that will be used "
-		    "in the connection dialogs or with the -a command-line "
-		    "parameter."),
-		 COC_NETWORK, "localhost", NULL),
+                 N_("This is the server hostname that will be used in "
+                    "the connection dialogs or with the -a command-line "
+                    "parameter when none is explicitly given."),
+                 COC_NETWORK, "localhost", NULL),
   GEN_INT_OPTION(default_server_port, N_("Default server's port"),
-		 N_("This is the default server port that will be used "
-		    "in the connection dialogs or with the -a command-line "
-		    "parameter."),
-		 COC_NETWORK, DEFAULT_SOCK_PORT, 0, 9999, NULL),
+                 N_("This is the server port that will be used in the "
+                    "connection dialogs or with the -a command-line "
+                    "parameter when none is explicitly given."),
+                 COC_NETWORK, DEFAULT_SOCK_PORT, 0, 9999, NULL),
   GEN_STR_OPTION(default_metaserver, N_("Default metaserver"),
 		 N_("The metaserver is a host that the client contacts to "
 		    "find out about games on the internet.  Don't change "

@@ -1733,8 +1733,8 @@ void ui_init(void)
   sz_strlcpy(default_metaserver, s);
   g_free(s);
 
-  s = g_locale_to_utf8(default_server_host, -1, NULL, NULL, NULL);
-  sz_strlcpy(default_server_host, s);
+  s = g_locale_to_utf8(server_host, -1, NULL, NULL, NULL);
+  sz_strlcpy(server_host, s);
   g_free(s);
 }
 

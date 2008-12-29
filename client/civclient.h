@@ -42,6 +42,8 @@ enum client_states get_client_state(void);
 void client_remove_cli_conn(struct connection *pconn);
 void client_remove_all_cli_conn(void);
 
+extern char server_host[512];
+extern int server_port;
 extern char *logfile;
 extern char *scriptfile;
 extern bool auto_connect;

@@ -135,11 +135,9 @@ static int try_to_autoconnect(gpointer data)
   count++;
 
   if (count >= MAX_AUTOCONNECT_ATTEMPTS) {
-    freelog(LOG_FATAL,
-	    _("Failed to contact server \"%s\" at port "
-	      "%d as \"%s\" after %d attempts"),
-	    default_server_host, default_server_port,
-	    default_user_name, count);
+    freelog(LOG_FATAL, _("Failed to contact server \"%s\" at port "
+                         "%d as \"%s\" after %d attempts"),
+            server_host, server_port, default_user_name, count);
     exit(EXIT_FAILURE);
   }
 
@@ -161,11 +159,9 @@ static int try_to_autoconnect(gpointer data)
     }
     return TRUE;		/*  Tells GTK to keep calling this function */
   default:			/* All other errors are fatal */
-    freelog(LOG_FATAL,
-	    _("Error contacting server \"%s\" at port %d "
-	      "as \"%s\":\n %s\n"),
-	    default_server_host, default_server_port,
-	    default_user_name, errbuf);
+    freelog(LOG_FATAL, _("Error contacting server \"%s\" at port %d "
+                         "as \"%s\":\n %s\n"),
+            server_host, server_port, default_user_name, errbuf);
     exit(EXIT_FAILURE);
   }
 }
@@ -182,19 +178,17 @@ void server_autoconnect()
 {
   char buf[512];
 
-  my_snprintf(buf, sizeof(buf),
-	      _("Auto-connecting to server \"%s\" at port %d "
-		"as \"%s\" every %f second(s) for %d times"),
-	      default_server_host, default_server_port, default_user_name,
-	      0.001 * AUTOCONNECT_INTERVAL, MAX_AUTOCONNECT_ATTEMPTS);
+  my_snprintf(buf, sizeof(buf), _("Auto-connecting to server \"%s\" at "
+                                  "port %d as \"%s\" every %f second(s) "
+                                  "for %d times"),
+              server_host, server_port, default_user_name,
+              0.001 * AUTOCONNECT_INTERVAL, MAX_AUTOCONNECT_ATTEMPTS);
   append_output_window(buf);
 
-  if (get_server_address(default_server_host, default_server_port,
-			 buf, sizeof(buf)) < 0) {
-    freelog(LOG_FATAL,
-	    _("Error contacting server \"%s\" at port %d "
-	      "as \"%s\":\n %s\n"),
-	    default_server_host, default_server_port, default_user_name, buf);
+  if (-1 == get_server_address(server_host, server_port, buf, sizeof(buf))) {
+    freelog(LOG_FATAL, _("Error contacting server \"%s\" at port %d "
+                         "as \"%s\":\n %s\n"),
+            server_host, server_port, default_user_name, buf);
     exit(EXIT_FAILURE);
   }
   if (try_to_autoconnect(NULL)) {

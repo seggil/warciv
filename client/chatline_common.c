@@ -139,14 +139,14 @@ static void log_chat(const char *text)
     return;
   }
 
-  if (default_server_host[0] == '\0') {
+  if (server_host[0] == '\0') {
     host = "NO_SERVER";
   } else {
-    host = default_server_host;
+    host = server_host;
   }
 
-  if (default_server_port > 0) {
-    port = default_server_port;
+  if (server_port > 0) {
+    port = server_port;
   } else {
     port = 0;
   }
