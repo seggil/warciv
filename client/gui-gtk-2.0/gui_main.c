@@ -1309,7 +1309,7 @@ static void setup_widgets(void)
   hbox2 = gtk_hbox_new(FALSE, 0);
   gtk_container_add(GTK_CONTAINER(ebox), hbox2);
 
-  label = gtk_label_new(_("Player colors mode:"));
+  label = gtk_label_new(_("Colors:"));
   gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
   gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
 
