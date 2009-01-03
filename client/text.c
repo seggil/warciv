@@ -629,7 +629,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
 	player_find_city_by_id(get_player_ptr(), punit->homecity);
     int infrastructure = get_tile_infrastructure_set(punit->tile);
 
-    add_line(unit_activity_text(punit));
+    add_line("%s", unit_activity_text(punit));
     if (hover_unit == punit->id) {
       add_line(_("Turns to target: %d"), get_goto_turns());
     } else {

@@ -2261,7 +2261,7 @@ void get_city_mapview_name_and_growth(struct city *pcity,
     return;
   }
 
-  my_snprintf(name_buffer, name_buffer_len, pcity->name);
+  mystrlcpy(name_buffer, pcity->name, name_buffer_len);
 
   if (draw_city_growth
       && (client_is_global_observer() || pcity->owner == get_player_idx())) {

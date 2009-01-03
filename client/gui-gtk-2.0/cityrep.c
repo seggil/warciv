@@ -501,7 +501,7 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
         my_snprintf(buf, sizeof(buf),
                     _("Are you sure to sell those %s?"), imprname);
         w = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
-                                   GTK_BUTTONS_YES_NO, buf);
+                                   GTK_BUTTONS_YES_NO, "%s", buf);
         res = gtk_dialog_run(GTK_DIALOG(w));
         gtk_widget_destroy(w);
         if (res == GTK_RESPONSE_NO) {
@@ -519,7 +519,7 @@ static void select_impr_or_unit_callback(GtkWidget *w, gpointer data)
                       imprname);
         }
         w = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL,
-            GTK_MESSAGE_INFO, GTK_BUTTONS_OK, buf);
+            GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", buf);
         gtk_dialog_run(GTK_DIALOG(w));
         gtk_widget_destroy(w);
       }
