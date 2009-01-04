@@ -2602,6 +2602,18 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
       gtk_widget_set_sensitive(item, FALSE);
     }
 
+    item = gtk_separator_menu_item_new();
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+    item = gtk_menu_item_new_with_mnemonic(_("_Disband unit"));
+    g_signal_connect(item, "activate",
+      G_CALLBACK(unit_disband_callback),
+      GINT_TO_POINTER(punit->id));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+    item = gtk_separator_menu_item_new();
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
     if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)
         || punit->activity == ACTIVITY_FORTIFIED) {
       item = gtk_menu_item_new_with_mnemonic(_("_Fortify unit"));
@@ -2642,15 +2654,6 @@ static gboolean present_unit_callback(GtkWidget * w, GdkEventButton * ev,
     if (can_upgrade_unittype(get_player_ptr(), punit->type) == -1) {
       gtk_widget_set_sensitive(item, FALSE);
     }
-
-    item = gtk_separator_menu_item_new();
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-
-    item = gtk_menu_item_new_with_mnemonic(_("_Disband unit"));
-    g_signal_connect(item, "activate",
-      G_CALLBACK(unit_disband_callback),
-      GINT_TO_POINTER(punit->id));
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
     gtk_widget_show_all(menu);
 
