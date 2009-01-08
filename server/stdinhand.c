@@ -7446,8 +7446,6 @@ static bool allow_command(struct connection *caller, const char *arg,
   }
 
   allows[uab].allowed = TRUE;
-  cmd_reply(CMD_ALLOW, caller, C_OK, _("'%s' set to allowed."),
-            allows[uab].name);
   notify_conn(NULL, _("Server: '%s' is now ALLOWED."),
               allows[uab].name);
 
@@ -7488,8 +7486,6 @@ static bool disallow_command(struct connection *caller,
   }
 
   allows[uab].allowed = FALSE;
-  cmd_reply(CMD_DISALLOW, caller, C_OK, _("'%s' set to disallowed."),
-            allows[uab].name);
   notify_conn(NULL, _("Server: '%s' is now NOT allowed."),
               allows[uab].name);
 
