@@ -1194,7 +1194,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     break;
   case DGT_NUKE:
     my_snprintf(buf, sizeof(buf),
-                _("Warclient: Adding %d %s NUCLEAR DETONATION to %s to queue."),
+                _("Warclient: Adding %d %s NUCLEAR DETONATION at %s to queue."),
                 count, PL_("unit", "units", count), get_tile_info(ptile));
     break;
   case DGT_PARADROP:
