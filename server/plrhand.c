@@ -1516,9 +1516,8 @@ void notify_embassies(struct player *pplayer, struct player *exclude,
 }
 
 /**************************************************************************
-  Send message to all players on the given team (including observers of
-  those players), and to all detached or global observer connections.
-  If the team is NULL, sends to all connnections.
+  Send message to all players on the given team, including observers of
+  those players. If the team is NULL, sends to all connnections.
 **************************************************************************/
 void notify_team(const struct team *pteam, const char *format, ...)
 {
@@ -1526,15 +1525,15 @@ void notify_team(const struct team *pteam, const char *format, ...)
   va_list args;
 
   if (pteam) {
-    const struct player *pplayer;
     dest = conn_list_new();
-    conn_list_iterate(game.est_connections, pconn) {
-      pplayer = conn_get_player(pconn);
-      if (pplayer && pplayer->team != pteam->id) {
+    players_iterate(pplayer) {
+      if (pplayer->team != pteam->id) {
         continue;
       }
-      conn_list_append(dest, pconn);
-    } conn_list_iterate_end;
+      conn_list_iterate(pplayer->connections, pconn) {
+        conn_list_append(dest, pconn);
+      } conn_list_iterate_end;
+    } players_iterate_end;
   }
 
   va_start(args, format);
