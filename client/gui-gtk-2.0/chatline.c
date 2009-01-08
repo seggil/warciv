@@ -1135,6 +1135,11 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                  "", "#000000", "#FFF34D");
 
+  MK_TAG_PATTERN("new teamvote", "New teamvote ",
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#FFFFFF", "#5555CC");
+
+
   MK_TAG_PATTERN("", "Vote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
 		 | TPF_MATCH_AT_START, "vote stuff end", "", "");
   MK_TAG_PATTERN("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
@@ -1148,6 +1153,21 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   MK_TAG_PATTERN("abstained", "chose to abstain", TPF_STOP_IF_MATCHED,
 		 "", "#000000", "#E8E8E8");
   MK_TAG_PATTERN("vote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
+
+
+  MK_TAG_PATTERN("", "Teamvote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
+		 | TPF_MATCH_AT_START, "teamvote stuff end", "", "");
+  MK_TAG_PATTERN("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
+		 "", "#006400", "#AAFFAA");
+  MK_TAG_PATTERN("vote failed", " failed ", TPF_STOP_IF_MATCHED,
+		 "", "#8B0000", "#FFAAAA");
+  MK_TAG_PATTERN("voted yes", "voted yes", TPF_STOP_IF_MATCHED,
+		 "", "#000000", "#C8FFD5");
+  MK_TAG_PATTERN("voted no", "voted no", TPF_STOP_IF_MATCHED,
+		 "", "#000000", "#FFD2D2");
+  MK_TAG_PATTERN("abstained", "chose to abstain", TPF_STOP_IF_MATCHED,
+		 "", "#000000", "#E8E8E8");
+  MK_TAG_PATTERN("teamvote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
 
 
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY 
