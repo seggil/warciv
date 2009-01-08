@@ -161,6 +161,7 @@ static struct hash_table *kick_table_by_user;
 struct allow_entry {
   const char *name;
   bool allowed;
+  bool default_value;
   char fmt[32];
 };
 
@@ -178,18 +179,22 @@ enum user_allow_behavior {
   NUM_ALLOWS
 };
 
+#define GEN_ALLOW(name, def) { name, def, def, "%s: %s" }
+
 /* NB: Must match enum user_allow_behavior. */
 static struct allow_entry allows[] = {
-  { "observe", TRUE },
-  { "global observe", TRUE },
-  { "player observe", TRUE },
-  { "take", TRUE },
-  { "other take", TRUE },
-  { "ai take", TRUE },
-  { "dead attach", FALSE },
-  { "displace", FALSE },
-  { "switch", TRUE }
+  GEN_ALLOW("observe", TRUE),
+  GEN_ALLOW("global observe", TRUE),
+  GEN_ALLOW("player observe", TRUE),
+  GEN_ALLOW("take", TRUE),
+  GEN_ALLOW("other take", TRUE),
+  GEN_ALLOW("ai take", TRUE),
+  GEN_ALLOW("dead attach", FALSE),
+  GEN_ALLOW("displace", FALSE),
+  GEN_ALLOW("switch", TRUE)
 };
+
+#undef GEN_ALLOW
 
 static bool is_allowed(enum user_allow_behavior uab);
 
@@ -267,6 +272,7 @@ void stdinhand_init(void)
   }
 
   for (i = 0; i < NUM_ALLOWS; i++) {
+    allows[i].allowed = allows[i].default_value;
     len[i] = strlen(allows[i].name);
     if (len[i] > max) {
       max = len[i];
