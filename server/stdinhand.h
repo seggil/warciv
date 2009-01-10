@@ -50,6 +50,23 @@ bool is_allowed_to_attach(const struct player *pplayer,
                           const struct connection *caller, bool will_obs,
                           char *msgbuf, int msgbuf_len);
 
+enum user_allow_behavior {
+  UAB_OBSERVE = 0,
+  UAB_GLOBAL_OBSERVE,
+  UAB_PLAYER_OBSERVE,
+  UAB_TAKE,
+  UAB_OTHER_TAKE,
+  UAB_AI_TAKE,
+  UAB_DEAD_ATTACH,
+  UAB_DISPLACE,
+  UAB_SWITCH,
+  UAB_PAUSE,
+
+  NUM_ALLOWS
+};
+
+bool is_allowed(enum user_allow_behavior uab);
+
 struct section_file;
 void save_allow_state(struct section_file *file);
 void load_allow_state(struct section_file *file);

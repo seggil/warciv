@@ -165,23 +165,9 @@ struct allow_entry {
   char fmt[32];
 };
 
-enum user_allow_behavior {
-  UAB_OBSERVE = 0,
-  UAB_GLOBAL_OBSERVE,
-  UAB_PLAYER_OBSERVE,
-  UAB_TAKE,
-  UAB_OTHER_TAKE,
-  UAB_AI_TAKE,
-  UAB_DEAD_ATTACH,
-  UAB_DISPLACE,
-  UAB_SWITCH,
-
-  NUM_ALLOWS
-};
-
 #define GEN_ALLOW(name, def) { name, def, def, "%s: %s" }
 
-/* NB: Must match enum user_allow_behavior. */
+/* NB: Must match enum user_allow_behavior in stdinhand.h. */
 static struct allow_entry allows[] = {
   GEN_ALLOW("observe", TRUE),
   GEN_ALLOW("global observe", TRUE),
@@ -191,12 +177,13 @@ static struct allow_entry allows[] = {
   GEN_ALLOW("ai take", TRUE),
   GEN_ALLOW("dead attach", FALSE),
   GEN_ALLOW("displace", FALSE),
-  GEN_ALLOW("switch", TRUE)
+  GEN_ALLOW("switch", TRUE),
+  GEN_ALLOW("pause", TRUE)
 };
 
 #undef GEN_ALLOW
 
-static bool is_allowed(enum user_allow_behavior uab);
+bool is_allowed(enum user_allow_behavior uab);
 
 
 static const char horiz_line[] =
@@ -4052,7 +4039,7 @@ static bool set_command(struct connection *caller,
 /**************************************************************************
   Returns TRUE if the given behavior is allowed.
 **************************************************************************/
-static bool is_allowed(enum user_allow_behavior uab)
+bool is_allowed(enum user_allow_behavior uab)
 {
   if (!(0 <= uab && uab < NUM_ALLOWS)) {
     return FALSE;

@@ -920,8 +920,9 @@ struct settings_s settings[] = {
 	     "time is up, then the turn ends automatically. Zero "
 	     "means there is no timeout.  Use this with the command "
 	     "\"incrementaltimeout\" to have a dynamic timer. Note that "
-             "as a special case, voting to increase the timeout requires "
-             "only that 25% of the players vote in favor."), NULL,
+             "if 'pause' is allowed (see /help allow), voting to increase "
+             "the timeout requires only that 33% of the players vote in "
+             "favor."), NULL,
 	   GAME_MIN_TIMEOUT, GAME_MAX_TIMEOUT, GAME_DEFAULT_TIMEOUT)
 
   GEN_INT("timeaddenemymove", game.server.timeoutaddenemymove,

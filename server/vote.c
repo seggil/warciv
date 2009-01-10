@@ -362,9 +362,9 @@ struct vote *vote_new(struct connection *caller,
     /* Extra special kludge for the timeout setting.
      * NB If this is changed, do not forget to update
      * help texts. */
-    if (op->int_value == &game.info.timeout
+    if (op->int_value == &game.info.timeout && is_allowed(UAB_PAUSE)
         && sv->int_value > *op->int_value) {
-      pvote->need_pc = 0.25;
+      pvote->need_pc = 0.33;
       pvote->flags |= VCF_NOPASSALONE;
     }
   }
