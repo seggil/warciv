@@ -3398,7 +3398,7 @@ static const char *load_menu_airlift(void)
      "<Control><Shift>z", _("_Add all cities with airport in airlift queue"),
      G_CALLBACK(callback_airlift_airlift_select_airport_cities)},
     {"AIRLIFT_CLEAR_AIRLIFT_QUEUE", NULL, _("_Clear airlift queue"),
-     "<Shift>u", _("_Clear airlift queue"),
+     NULL, _("_Clear airlift queue"),
      G_CALLBACK(callback_airlift_clear_airlift_queue)},
     {"AIRLIFT_SHOW_CITIES_IN_AIRLIFT_QUEUE", NULL,
      _("Show cities in airlift _queue"),
