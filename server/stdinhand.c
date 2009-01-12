@@ -3618,19 +3618,18 @@ static bool cancel_vote_command(struct connection *caller, char *arg,
 
   if (caller) {
     if (caller->id == pvote->caller_id) {
-      notify_conn(NULL,
-                  _("Server: %s cancelled his vote \"%s\" (number %d)."),
+      notify_team(vote_get_team(pvote), _("Server: %s cancelled his vote "
+                                          "\"%s\" (number %d)."),
                   caller->username, pvote->cmdline, pvote->vote_no);
     } else {
-      notify_conn(NULL,
-                  _("Server: %s cancelled the vote \"%s\" (number %d)."),
+      notify_team(vote_get_team(pvote), _("Server: %s cancelled the vote "
+                                          "\"%s\" (number %d)."),
                   caller->username, pvote->cmdline, pvote->vote_no);
     }
   } else {
     /* Server prompt */
-    notify_conn(NULL,
-                _
-                ("Server: The vote \"%s\" (number %d) has been cancelled."),
+    notify_team(vote_get_team(pvote),_("Server: The vote \"%s\" (number "
+                                       "%d) has been cancelled."),
                 pvote->cmdline, pvote->vote_no);
   }
   /* Make it after, prevent crashs about a free pointer (pvote). */
