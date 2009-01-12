@@ -1417,10 +1417,10 @@ static bool switch_command(struct connection *caller, char *str, bool check)
   char *arg[2];
   int ntokens;
   enum m_pre_result match_result;
-  const struct player *pplayer1, *pplayer2;
-  struct tile *start1 = NULL, *start2 = NULL;
   const struct team *pteam;
-  int i;
+  struct player *pplayer1, *pplayer2;
+  struct unit_list *player2_units;
+  struct unit *aunit;
 
   if (!is_allowed(UAB_SWITCH)) {
     cmd_reply(CMD_SWITCH, caller, C_FAIL,
@@ -1503,48 +1503,35 @@ static bool switch_command(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  for (i = 0; i < game.info.nplayers && (!start1 || !start2); i++) {
-    if (!start1 && map.start_positions[i].nation == pplayer1->nation) {
-      start1 = map.start_positions[i].tile;
-      continue;
-    }
-    if (!start2 && map.start_positions[i].nation == pplayer2->nation) {
-      start2 = map.start_positions[i].tile;
-      continue;
-    }
-  }
-
-  if (!start1) {
-    cmd_reply(CMD_SWITCH, caller, C_GENFAIL,
-              _("Could not find start position for player %s."),
-              pplayer1->name);
-    return FALSE;
-  }
-
-  if (!start2) {
-    cmd_reply(CMD_SWITCH, caller, C_GENFAIL,
-              _("Could not find start position for player %s."),
-              pplayer2->name);
-    return FALSE;
-  }
-
   if (check) {
     return TRUE;
   }
 
-  /* Beam me up scotty! */
+  conn_list_do_buffer(game.est_connections);
 
-  unit_list_iterate(pplayer1->units, punit) {
-    free_unit_orders(punit);
-    move_unit(punit, start2, 0);
-  } unit_list_iterate_end;
-  notify_conn(pplayer1->connections, _("Game: You were teleported!"));
-
+  player2_units = unit_list_new();
   unit_list_iterate(pplayer2->units, punit) {
-    free_unit_orders(punit);
-    move_unit(punit, start1, 0);
+    unit_list_append(player2_units, punit);
   } unit_list_iterate_end;
-  notify_conn(pplayer2->connections, _("Game: You were teleported!"));
+
+  unit_list_iterate_safe(pplayer1->units, punit) {
+    aunit = create_unit_full(pplayer2, punit->tile,
+                             punit->type, punit->veteran,
+                             0, punit->moves_left,
+                             punit->hp, NULL);
+    wipe_unit(punit);
+  } unit_list_iterate_safe_end;
+
+  unit_list_iterate(player2_units, punit) {
+    aunit = create_unit_full(pplayer1, punit->tile,
+                             punit->type, punit->veteran,
+                             0, punit->moves_left,
+                             punit->hp, NULL);
+    wipe_unit(punit);
+  } unit_list_iterate_end;
+  unit_list_free(player2_units);
+
+  conn_list_do_unbuffer(game.est_connections);
 
   pteam = team_get_by_id(pplayer1->team);
   notify_team(pteam, _("Server: %s and %s have switched positions."),
