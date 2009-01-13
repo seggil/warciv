@@ -1519,6 +1519,11 @@ static bool switch_command(struct connection *caller, char *str, bool check)
                              punit->type, punit->veteran,
                              0, punit->moves_left,
                              punit->hp, NULL);
+
+    /* Copy some more unit fields. Probably useless... */
+    aunit->fuel = punit->fuel;
+    aunit->paradropped = punit->paradropped;
+
     wipe_unit(punit);
   } unit_list_iterate_safe_end;
 
@@ -1527,6 +1532,11 @@ static bool switch_command(struct connection *caller, char *str, bool check)
                              punit->type, punit->veteran,
                              0, punit->moves_left,
                              punit->hp, NULL);
+
+    /* Copy some more unit fields. Probably useless... */
+    aunit->fuel = punit->fuel;
+    aunit->paradropped = punit->paradropped;
+
     wipe_unit(punit);
   } unit_list_iterate_end;
   unit_list_free(player2_units);
