@@ -211,10 +211,9 @@ static bool is_default_city_name(const char *name, struct player *pplayer)
 {
   struct nation_type *nation = get_nation_by_plr(pplayer);
   int choice;
-    for (choice = 0; nation->city_names[choice].name; choice++)
-    {
-        if (mystrcasecmp(name, nation->city_names[choice].name) == 0)
-        {
+
+  for (choice = 0; nation->city_names[choice].name; choice++) {
+    if (mystrcasecmp(name, nation->city_names[choice].name) == 0) {
       return TRUE;
     }
   }
@@ -223,27 +222,25 @@ static bool is_default_city_name(const char *name, struct player *pplayer)
 }
 
 /****************************************************************
-Searches through a city name list (a struct city_name array)
-to pick the best available city name, and returns a pointer to
-it.  The function checks if the city name is available and calls
-evaluate_city_name_priority to determine the priority of the
-city name.  If the list has no valid entries in it, NULL will be
-returned.
+  Searches through a city name list (a struct city_name array)
+  to pick the best available city name, and returns a pointer to
+  it.  The function checks if the city name is available and calls
+  evaluate_city_name_priority to determine the priority of the
+  city name.  If the list has no valid entries in it, NULL will be
+  returned.
 *****************************************************************/
 static char *search_for_city_name(struct tile *ptile, struct city_name *city_names,
 				  struct player *pplayer)
 {
   int choice, best_priority = -1;
   char* best_name = NULL;
-    for (choice = 0; city_names[choice].name; choice++)
-    {
+
+  for (choice = 0; city_names[choice].name; choice++) {
     if (!game_find_city_by_name(city_names[choice].name)
-                && is_allowed_city_name(pplayer, city_names[choice].name, NULL, 0))
-        {
+	&& is_allowed_city_name(pplayer, city_names[choice].name, NULL, 0)) {
       int priority = evaluate_city_name_priority(ptile, &city_names[choice],
 						 choice);
-            if (best_priority == -1 || priority < best_priority)
-            {
+      if (best_priority == -1 || priority < best_priority) {
 	best_priority = priority;
 	best_name = city_names[choice].name;
       }
@@ -251,42 +248,44 @@ static char *search_for_city_name(struct tile *ptile, struct city_name *city_nam
   }
   return best_name;
 }
+
 /**************************************************************************
   Returns true is the string is empty or all white space.
 **************************************************************************/
 static bool is_white_space_str(const char *s)
 {
-    while (*s)
-    {
-        if (!my_isspace(*s++))
+  while (*s) {
+    if (!my_isspace(*s++)) {
             return FALSE;
     }
-    return TRUE;
+  }
+  return TRUE;
 }
+
 /**************************************************************************
-Checks, if a city name is allowed for a player. If not, reports a
-reason for rejection. There's 4 different modes:
-0: no restrictions,
-1: a city name has to be unique to player
-2: a city name has to be globally unique
-3: a city name has to be globally unique, and players can't use names
-   that are in another player's default city names. (E.g., Swedish may not
-   call new cities or rename old cities as Helsinki, because it's in
-   Finns' default city names.  Duplicated names may be used by
-   either nation.)
+  Checks, if a city name is allowed for a player. If not, reports a
+  reason for rejection. There's 4 different modes:
+  0: no restrictions,
+  1: a city name has to be unique to player
+  2: a city name has to be globally unique
+  3: a city name has to be globally unique, and players can't use names
+     that are in another player's default city names. (E.g., Swedish may not
+     call new cities or rename old cities as Helsinki, because it's in
+     Finns' default city names.  Duplicated names may be used by
+     either nation.)
 **************************************************************************/
 bool is_allowed_city_name(struct player *pplayer, const char *city_name,
 			  char *error_buf, size_t bufsz)
 {
   struct connection *pconn = find_conn_by_user(pplayer->username);
-    if (is_white_space_str(city_name))
-    {
-        if (error_buf)
-        {
-            my_snprintf(error_buf, bufsz, _("The city name cannot be empty!"));
-        }
-        return FALSE;
+
+  if (is_white_space_str(city_name)) {
+    if (error_buf) {
+      my_snprintf(error_buf, bufsz, _("The city name cannot be empty!"));
     }
+    return FALSE;
+  }
+
   /* Mode 1: A city name has to be unique for each player. */
   if (game.server.allowed_city_names == 1
       && city_list_find_name(pplayer->cities, city_name)) {
@@ -296,43 +295,40 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
     }
     return FALSE;
   }
+
   /* Modes 2,3: A city name has to be globally unique. */
-  if ((game.server.allowed_city_names == 2 || game.server.allowed_city_names == 3)
-            && game_find_city_by_name(city_name))
-    {
-        if (error_buf)
-        {
+  if ((game.server.allowed_city_names == 2
+       || game.server.allowed_city_names == 3)
+      && game_find_city_by_name(city_name)) {
+    if (error_buf) {
       my_snprintf(error_buf, bufsz,
 		  _("A city called %s already exists."), city_name);
     }
     return FALSE;
   }
+
   /* General rule: any name in our ruleset is allowed. */
-    if (is_default_city_name(city_name, pplayer))
-    {
+  if (is_default_city_name(city_name, pplayer)) {
     return TRUE;
   }
+
   /* 
    * Mode 3: Check that the proposed city name is not in another
    * player's default city names.  Note the name will already have been
    * allowed if it is in this player's default city names list.
    */
-    if (game.server.allowed_city_names == 3)
-    {
+  if (game.server.allowed_city_names == 3) {
     struct player *pother = NULL;
-        players_iterate(player2)
-        {
-            if (player2 != pplayer && is_default_city_name(city_name, player2))
-            {
+
+    players_iterate(player2) {
+      if (player2 != pplayer && is_default_city_name(city_name, player2)) {
 	pother = player2;
 	break;
       }
-        }
-        players_iterate_end;
-        if (pother != NULL)
-        {
-            if (error_buf)
-            {
+    } players_iterate_end;
+
+    if (pother != NULL) {
+      if (error_buf) {
 	my_snprintf(error_buf, bufsz, _("Can't use %s as a city name. It is "
 					"reserved for %s."),
 		    city_name, get_nation_name_plural(pother->nation));
@@ -349,10 +345,8 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
    * original nation are exhausted and the backup nations have non-ascii
    * names in them. */
   if (!is_ascii_name(city_name)
-            && (!pconn || pconn->access_level != ALLOW_HACK))
-    {
-        if (error_buf)
-        {
+      && (!pconn || pconn->access_level != ALLOW_HACK)) {
+    if (error_buf) {
       my_snprintf(error_buf, bufsz,
 		  _("%s is not a valid name. Only ASCII or "
 		    "ruleset names are allowed for cities."),
@@ -361,18 +355,17 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
     return FALSE;
   }
 
-
   return TRUE;
 }
 
 /****************************************************************
-Come up with a default name when a new city is about to be built.
-Handle running out of names etc. gracefully.  Maybe we should keep
-track of which names have been rejected by the player, so that we do
-not suggest them again?
-Returned pointer points into internal data structures or static
-buffer etc, and should be considered read-only (and not freed)
-by caller.
+  Come up with a default name when a new city is about to be built.
+  Handle running out of names etc. gracefully.  Maybe we should keep
+  track of which names have been rejected by the player, so that we do
+  not suggest them again?
+  Returned pointer points into internal data structures or static
+  buffer etc, and should be considered read-only (and not freed)
+  by caller.
 *****************************************************************/
 char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
 {
@@ -412,12 +405,11 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
   queue_size = 1;
   nation_list[0] = pplayer->nation;
   nations_selected[pplayer->nation] = TRUE;
-    while (i < game.ruleset_control.nation_count)
-    {
-        for (; i < queue_size; i++)
-        {
+  while (i < game.ruleset_control.nation_count) {
+    for (; i < queue_size; i++) {
       struct nation_type *nation;
       char *name;
+
       {
 	/* Pick a random nation from the queue. */
 	const int which = i + myrand(queue_size - i);
@@ -429,13 +421,13 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
       nation = get_nation_by_idx(nation_list[i]);
       name = search_for_city_name(ptile, nation->city_names, pplayer);
       freelog(LOG_DEBUG, "Looking through %s.", nation->name);
-            if (name)
-            {
+
+      if (name) {
 	return name;
       }
+
       /* Append the nation's parent nations into the search tree. */
-            for (j = 0; nation->parent_nations[j] != NO_NATION_SELECTED; j++)
-            {
+      for (j = 0; nation->parent_nations[j] != NO_NATION_SELECTED; j++) {
 	n = nation->parent_nations[j];
                 if (!nations_selected[n])
                 {
@@ -445,12 +437,11 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
 	  freelog(LOG_DEBUG, "Parent %s.", get_nation_by_idx(n)->name);
 	}
       }
+
       /* Append the nation's civil war nations into the search tree. */
-            for (j = 0; nation->civilwar_nations[j] != NO_NATION_SELECTED; j++)
-            {
+      for (j = 0; nation->civilwar_nations[j] != NO_NATION_SELECTED; j++) {
 	n = nation->civilwar_nations[j];
-                if (!nations_selected[n])
-                {
+        if (!nations_selected[n]) {
 	  nation_list[queue_size] = n;
 	  nations_selected[n] = TRUE;
 	  queue_size++;
@@ -458,11 +449,10 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
 	}
       }
     }
+
     /* Append all remaining nations. */
-        for (n = 0; n < game.ruleset_control.nation_count; n++)
-        {
-            if (!nations_selected[n])
-            {
+    for (n = 0; n < game.ruleset_control.nation_count; n++) {
+      if (!nations_selected[n]) {
 	nation_list[queue_size] = n;
 	nations_selected[n] = TRUE;
 	queue_size++;
@@ -470,15 +460,14 @@ char *city_name_suggestion(struct player *pplayer, struct tile *ptile)
       }
     }
   }
-    for (i = 1; i <= num_tiles; i++ )
-    {
+
+  for (i = 1; i <= num_tiles; i++ ) {
     my_snprintf(tempname, MAX_LEN_NAME, _("City no. %d"), i);
-        if (!game_find_city_by_name(tempname))
-        {
+    if (!game_find_city_by_name(tempname)) {
       return tempname;
     }
   }
-  
+
   /* This had better be impossible! */
   assert(FALSE);
   sz_strlcpy(tempname, _("A poorly-named city"));
@@ -529,35 +518,27 @@ int build_points_left(struct city *pcity)
 **************************************************************************/
 int do_make_unit_veteran(struct city *pcity, Unit_Type_id id)
 {
-  /* we current don't have any wonder or building that have influence on 
-     settler/worker units */
-    if (unit_type_flag(id, F_SETTLERS) || unit_type_flag(id, F_CITIES))
-    {
+  /* We current don't have any wonder or building that have influence on 
+   * settler/worker units. */
+  if (unit_type_flag(id, F_SETTLERS) || unit_type_flag(id, F_CITIES)) {
     return 0;
   }
-  
-    if (unit_type_flag(id, F_DIPLOMAT))
-    {
+
+  if (unit_type_flag(id, F_DIPLOMAT)) {
     return (government_has_flag(get_gov_pcity(pcity), 
                                 G_BUILD_VETERAN_DIPLOMAT) ? 1 : 0);
   }
-    
-    if (is_ground_unittype(id))
-    {
+
+  if (is_ground_unittype(id)) {
     return (get_city_bonus(pcity, EFT_LAND_VETERAN) > 0) ? 1 : 0;
-    }
-    else
-    {
-        if (is_water_unit(id))
-        {
+  } else {
+    if (is_water_unit(id)) {
       return (get_city_bonus(pcity, EFT_SEA_VETERAN) > 0) ? 1 : 0;
-        }
-        else
-        {
+    } else {
       return (get_city_bonus(pcity, EFT_AIR_VETERAN) > 0) ? 1 : 0;
     }
   }
-  
+
   return 0;
 }
 
@@ -598,45 +579,38 @@ int city_science_bonus(struct city *pcity)
 }
 
 /*********************************************************************
-Note: the old unit is not wiped here.
+  Note: the old unit is not wiped here.
 ***********************************************************************/
 static void transfer_unit(struct unit *punit, struct city *tocity,
 			  bool verbose)
 {
   struct player *from_player = unit_owner(punit);
   struct player *to_player = city_owner(tocity);
-    if (from_player == to_player)
-    {
+
+  if (from_player == to_player) {
     freelog(LOG_VERBOSE, "Changed homecity of %s's %s to %s",
 	    from_player->name, unit_name(punit->type), tocity->name);
-        if (verbose)
-        {
+    if (verbose) {
       notify_player(from_player, _("Game: Changed homecity of %s to %s."),
 		    unit_name(punit->type), tocity->name);
     }
-    }
-    else
-    {
+  } else {
     struct city *in_city = map_get_city(punit->tile);
-        if (in_city)
-        {
+
+    if (in_city) {
       freelog(LOG_VERBOSE, "Transfered %s in %s from %s to %s",
 	      unit_name(punit->type), in_city->name,
 	      from_player->name, to_player->name);
-            if (verbose)
-            {
-	notify_player(from_player, _("Game: Transfered %s in %s from %s to %s."),
+      if (verbose) {
+	notify_player(from_player,
+		      _("Game: Transfered %s in %s from %s to %s."),
 		      unit_name(punit->type), in_city->name,
 		      from_player->name, to_player->name);
       }
-        }
-        else
-        {
+    } else {
       freelog(LOG_VERBOSE, "Transfered %s from %s to %s",
-	      unit_name(punit->type),
-	      from_player->name, to_player->name);
-            if (verbose)
-            {
+	      unit_name(punit->type), from_player->name, to_player->name);
+      if (verbose) {
 	notify_player(from_player, _("Game: Transfered %s from %s to %s."),
 		      unit_name(punit->type),
 		      from_player->name, to_player->name);
@@ -654,22 +628,22 @@ static void transfer_unit(struct unit *punit, struct city *tocity,
 }
 
 /*********************************************************************
- Units in a bought city are transferred to the new owner, units 
- supported by the city, but held in other cities are updated to
- reflect those cities as their new homecity.  Units supported 
- by the bought city, that are not in a city square may be deleted.
+  Units in a bought city are transferred to the new owner, units 
+  supported by the city, but held in other cities are updated to
+  reflect those cities as their new homecity.  Units supported 
+  by the bought city, that are not in a city square may be deleted.
 
- - Kris Bubendorfer <Kris.Bubendorfer@MCS.VUW.AC.NZ>
+  - Kris Bubendorfer <Kris.Bubendorfer@MCS.VUW.AC.NZ>
 
-pplayer: The player recieving the units if they are not disbanded and
-         are not in a city
-pvictim: The owner of the city the units are transferred from.
-units:   A list of units to be transferred, typically a cities unit list.
-pcity:   Default city the units are transferred to.
-exclude_city: The units cannot be transferred to this city.
-kill_outside: Units outside this range are deleted. -1 means no units
-              are deleted.
-verbose: Messages are sent to the involved parties.
+  pplayer: The player recieving the units if they are not disbanded and
+	   are not in a city
+  pvictim: The owner of the city the units are transferred from.
+  units:   A list of units to be transferred, typically a cities unit list.
+  pcity:   Default city the units are transferred to.
+  exclude_city: The units cannot be transferred to this city.
+  kill_outside: Units outside this range are deleted. -1 means no units
+		are deleted.
+  verbose: Messages are sent to the involved parties.
 ***********************************************************************/
 void transfer_city_units(struct player *pplayer, struct player *pvictim, 
 			 struct unit_list *units, struct city *pcity,
@@ -732,34 +706,34 @@ void transfer_city_units(struct player *pplayer, struct player *pvictim,
        In cases where the cargo can be left without transport the calling
        function should take that into account. */
     wipe_unit(vunit);
+  } unit_list_iterate_safe_end;
 }
-    unit_list_iterate_safe_end;
-}
+
 /**********************************************************************
-dist_nearest_city (in ai.c) does not seem to do what I want or expect
-this function finds the closest friendly city to pos x,y.  I'm sure 
-there must be a similar function somewhere, I just can't find it.
+  dist_nearest_city (in ai.c) does not seem to do what I want or expect
+  this function finds the closest friendly city to pos x,y.  I'm sure 
+  there must be a similar function somewhere, I just can't find it.
 
-                               - Kris Bubendorfer 
+				 - Kris Bubendorfer 
 
-If sea_required, returned city must be adjacent to ocean.
-If pexclcity, do not return it as the closest city.
-Returns NULL if no satisfactory city can be found.
+  If sea_required, returned city must be adjacent to ocean.
+  If pexclcity, do not return it as the closest city.
+  Returns NULL if no satisfactory city can be found.
 ***********************************************************************/
 struct city *find_closest_owned_city(struct player *pplayer, struct tile *ptile,
 				     bool sea_required, struct city *pexclcity)
 {
   int dist = -1;
   struct city *rcity = NULL;
-  city_list_iterate(pplayer->cities, pcity)
-    if ((real_map_distance(ptile, pcity->tile) < dist || dist == -1) &&
-        (!sea_required || is_ocean_near_tile(pcity->tile)) &&
-            (!pexclcity || (pexclcity != pcity)))
-    {
+
+  city_list_iterate(pplayer->cities, pcity) {
+    if ((real_map_distance(ptile, pcity->tile) < dist || dist == -1)
+	&& (!sea_required || is_ocean_near_tile(pcity->tile))
+	&& (!pexclcity || (pexclcity != pcity))) {
       dist = real_map_distance(ptile, pcity->tile);
       rcity = pcity;
     }
-  city_list_iterate_end;
+  } city_list_iterate_end;
 
   return rcity;
 }
@@ -780,14 +754,11 @@ static void raze_city(struct city *pcity)
   /* land barbarians are more likely to destroy city improvements */
   if (is_land_barbarian(city_owner(pcity)))
     razechance += 30;
-    built_impr_iterate(pcity, i)
-    {
-        if (!is_wonder(i) && (myrand(100) < razechance))
-        {
-      pcity->improvements[i]=I_NONE;
+    built_impr_iterate(pcity, i) {
+    if (!is_wonder(i) && (myrand(100) < razechance)) {
+      pcity->improvements[i] = I_NONE;
     }
-    }
-    built_impr_iterate_end;
+  } built_impr_iterate_end;
   nullify_prechange_production(pcity);
   pcity->shield_stock = 0;
 }
@@ -800,8 +771,8 @@ static void build_free_palace(struct player *pplayer,
 {
   int size = city_list_size(pplayer->cities);
   struct city *pnew_capital;
-    if (size == 0)
-    {
+
+  if (size == 0) {
     /* The last city was removed or transferred to the enemy. R.I.P. */
     return;
   }
@@ -1815,16 +1786,17 @@ void change_build_target(struct player *pplayer, struct city *pcity,
 {
   const char *name;
   const char *source;
+
   /* If the city is already building this thing, don't do anything */
-  if (pcity->is_building_unit == is_unit &&
-            pcity->currently_building == target)
-    {
+  if (pcity->is_building_unit == is_unit
+      && pcity->currently_building == target) {
     return;
   }
+
   /* Is the city no longer building a wonder? */
-  if(!pcity->is_building_unit && is_wonder(pcity->currently_building) &&
-            (event != E_IMP_AUTO && event != E_WORKLIST))
-    {
+  if (!pcity->is_building_unit
+      && is_wonder(pcity->currently_building)
+      && (event != E_IMP_AUTO && event != E_WORKLIST)) {
     /* If the build target is changed because of an advisor's suggestion or
        because the worklist advances, then the wonder was completed -- 
        don't announce that the player has *stopped* building that wonder. 
@@ -1845,43 +1817,42 @@ void change_build_target(struct player *pplayer, struct city *pcity,
   pcity->is_building_unit = is_unit;
 
   /* What's the name of the target? */
-  if (is_unit)
+  if (is_unit) {
     name = unit_types[pcity->currently_building].name;
-  else
+  } else {
     name = improvement_types[pcity->currently_building].name;
-    switch (event)
-    {
-    case E_WORKLIST:
-        source = _(" from the worklist");
-        break;
-/* Should we give the AI auto code credit?
-    case E_IMP_AUTO: source = _(" as suggested by the AI advisor"); break;
-*/
-    default:
-        source = "";
-        break;
   }
+
+  switch (event) {
+  case E_WORKLIST:
+    source = _(" from the worklist");
+    break;
+/* Should we give the AI auto code credit?
+ *  case E_IMP_AUTO: source = _(" as suggested by the AI advisor"); break;
+ */
+  default:
+    source = "";
+    break;
+  }
+
   /* Tell the player what's up. */
   /* FIXME: this may give bad grammar when translated if the 'source'
    * string can have multiple values. */
-    if (event != E_NOEVENT)
-    {
+  if (event != E_NOEVENT) {
     notify_player_ex(pplayer, pcity->tile, event,
 		     /* TRANS: "<city> is building <production><source>." */
 		     _("Game: %s is building %s%s."),
 		     pcity->name, name, source);
-    }
-    else
-    {
+  } else {
     notify_player_ex(pplayer, pcity->tile, E_CITY_PRODUCTION_CHANGED,
 		     /* TRANS: "<city> is building <production>." */
 		     _("Game: %s is building %s."), 
 		     pcity->name, name);
   }
+
   /* If the city is building a wonder, tell the rest of the world
-     about it. */
-    if (!pcity->is_building_unit && is_wonder(pcity->currently_building))
-    {
+   * about it. */
+  if (!pcity->is_building_unit && is_wonder(pcity->currently_building)) {
     notify_player_ex(NULL, pcity->tile, E_WONDER_STARTED,
 		     _("Game: The %s have started building The %s in %s."),
 		     get_nation_name_plural(pplayer->nation),
@@ -1907,26 +1878,22 @@ city_x, city_y is in city map coords.
 bool city_can_work_tile(struct city *pcity, int city_x, int city_y)
 {
   struct tile *ptile;
-    if (!(ptile = city_map_to_map(pcity, city_x, city_y)))
-    {
+
+  if (!(ptile = city_map_to_map(pcity, city_x, city_y))) {
     return FALSE;
   }
-  
+
   if (is_enemy_unit_tile(ptile, city_owner(pcity))
-            && !is_city_center(city_x, city_y))
-    {
+      && !is_city_center(city_x, city_y)) {
     return FALSE;
   }
-    if (!map_is_known(ptile, city_owner(pcity)))
-    {
+  if (!map_is_known(ptile, city_owner(pcity))) {
     return FALSE;
   }
-    if (ptile->worked && ptile->worked != pcity)
-    {
+  if (ptile->worked && ptile->worked != pcity) {
     return FALSE;
   }
-    if (ptile->owner && ptile->owner->player_no != pcity->owner)
-    {
+  if (ptile->owner && ptile->owner->player_no != pcity->owner) {
     return FALSE;
   }
   return TRUE;
