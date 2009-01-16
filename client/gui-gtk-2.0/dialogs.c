@@ -290,7 +290,7 @@ static void diplomat_bribe_callback(GtkWidget *w, gpointer data)
 /****************************************************************
 ...
 *****************************************************************/
-void popup_bribe_dialog(struct unit *punit)
+void popup_bribe_dialog(struct unit *punit, int cost)
 {
   GtkWidget *shell;
 
@@ -300,11 +300,11 @@ void popup_bribe_dialog(struct unit *punit)
                                  GTK_STOCK_OK, NULL, NULL, NULL);
     gtk_window_present(GTK_WINDOW(shell));
     return;
-  } else if (get_player_ptr()->economic.gold >= punit->bribe_cost) {
+  } else if (get_player_ptr()->economic.gold >= cost) {
     shell = gtk_message_dialog_new(NULL, 0,
       GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
       _("Bribe unit for %d gold?\nTreasury contains %d gold."),
-      punit->bribe_cost, get_player_ptr()->economic.gold);
+      cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Bribe Enemy Unit"));
     setup_dialog(shell, toplevel);
   } else {
@@ -312,7 +312,7 @@ void popup_bribe_dialog(struct unit *punit)
       0,
       GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
       _("Bribing the unit costs %d gold.\nTreasury contains %d gold."),
-      punit->bribe_cost, get_player_ptr()->economic.gold);
+      cost, get_player_ptr()->economic.gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Traitors Demand Too Much!"));
     setup_dialog(shell, toplevel);
   }
@@ -742,32 +742,32 @@ static void incite_response(GtkWidget *w, gint response)
 /****************************************************************
 Popup the yes/no dialog for inciting, since we know the cost now
 *****************************************************************/
-void popup_incite_dialog(struct city *pcity)
+void popup_incite_dialog(struct city *pcity, int cost)
 {
+  int gold = get_player_ptr()->economic.gold;
   GtkWidget *shell;
-  
-  if (pcity->incite_revolt_cost == INCITE_IMPOSSIBLE_COST) {
-    shell = gtk_message_dialog_new(NULL,
-      0,
-      GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
-      _("You can't incite a revolt in %s."),
-      pcity->name);
+
+  if (cost == INCITE_IMPOSSIBLE_COST) {
+    shell = gtk_message_dialog_new(NULL, 0,
+				   GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
+				   _("You can't incite a revolt in %s."),
+				   pcity->name);
     gtk_window_set_title(GTK_WINDOW(shell), _("City can't be incited!"));
-  setup_dialog(shell, toplevel);
-  } else if (get_player_ptr()->economic.gold >= pcity->incite_revolt_cost) {
-    shell = gtk_message_dialog_new(NULL,
-      0,
-      GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-      _("Incite a revolt for %d gold?\nTreasury contains %d gold."),
-      pcity->incite_revolt_cost, get_player_ptr()->economic.gold);
+    setup_dialog(shell, toplevel);
+  } else if (gold >= cost) {
+    shell = gtk_message_dialog_new(NULL, 0,
+				   GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+				   _("Incite a revolt for %d gold?\n"
+				     "Treasury contains %d gold."),
+				   cost, gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Incite a Revolt!"));
     setup_dialog(shell, toplevel);
   } else {
-    shell = gtk_message_dialog_new(NULL,
-      0,
-      GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
-      _("Inciting a revolt costs %d gold.\nTreasury contains %d gold."),
-      pcity->incite_revolt_cost, get_player_ptr()->economic.gold);
+    shell = gtk_message_dialog_new(NULL, 0,
+				   GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE,
+				   _("Inciting a revolt costs %d gold.\n"
+				     "Treasury contains %d gold."),
+				   cost, gold);
     gtk_window_set_title(GTK_WINDOW(shell), _("Traitors Demand Too Much!"));
     setup_dialog(shell, toplevel);
   }

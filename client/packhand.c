@@ -1382,7 +1382,6 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
 
     punit->veteran = packet_unit->veteran;
     punit->moves_left = packet_unit->moves_left;
-    punit->bribe_cost = 0;
     punit->fuel = packet_unit->fuel;
     punit->goto_tile = packet_unit->goto_tile;
     if (server_has_extglobalinfo) {
@@ -2853,10 +2852,9 @@ void handle_unit_bribe_info(int unit_id, int cost)
   struct unit *punit = find_unit_by_id(unit_id);
 
   if (punit) {
-    punit->bribe_cost = cost;
     if (get_player_ptr()
 	&& (!get_player_ptr()->ai.control || ai_popup_windows)) {
-      popup_bribe_dialog(punit);
+      popup_bribe_dialog(punit, cost);
     }
   }
 }
@@ -2869,10 +2867,9 @@ void handle_city_incite_info(int city_id, int cost)
   struct city *pcity = find_city_by_id(city_id);
 
   if (pcity) {
-    pcity->incite_revolt_cost = cost;
     if (get_player_ptr()
 	&& (!get_player_ptr()->ai.control || ai_popup_windows)) {
-      popup_incite_dialog(pcity);
+      popup_incite_dialog(pcity, cost);
     }
   }
 }

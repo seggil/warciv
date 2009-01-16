@@ -134,7 +134,6 @@ struct unit {
   int upkeep_food;
   int upkeep_gold;
   int fuel;
-  int bribe_cost;
   struct unit_ai ai;
   enum unit_activity activity;
   struct tile *goto_tile; /* May be NULL. */

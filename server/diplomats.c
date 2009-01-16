@@ -390,18 +390,19 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
   /* do some checks for all units on tile first */
   unit_list_iterate_safe(ptile->units, pvictim) {
     /* Fetch target unit's player.  Sanity checks. */
-    if (!pvictim)
+    if (!pvictim) {
       return;
+    }
 
     uplayer = unit_owner(pvictim);
 
     /* We might make it allowable in peace with a liss of reputaion */
-    if (!uplayer || pplayers_allied(pplayer, uplayer))
+    if (!uplayer || pplayers_allied(pplayer, uplayer)) {
       return;
+    }
 
-    /* Update bribe cost. */
-    pvictim->bribe_cost = unit_bribe_cost(pvictim);
-    total_cost += pvictim->bribe_cost;
+    /* Calculate bribe cost. */
+    total_cost += unit_bribe_cost(pvictim);
 
     /* Check for unit from a bribable government. */
     if (government_has_flag(get_gov_pplayer(unit_owner(pvictim)),
@@ -430,6 +431,9 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
     return;
   }
 
+  /* This costs! */
+  pplayer->economic.gold -= total_cost;
+
   /* Check if the Diplomat/Spy succeeds with his/her task. */
   if (myrand(100) >= game.server.diplbribechance) {
     notify_player_ex(pplayer, ptile, E_MY_DIPLOMAT_FAILED,
@@ -442,7 +446,6 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
                      get_nation_name(pplayer->nation),
                      unit_name(pdiplomat->type), total_cost);
 
-    pplayer->economic.gold -= total_cost;
     uplayer->economic.gold += total_cost; /* defender gets the gold */
 
     wipe_unit(pdiplomat);
@@ -475,9 +478,6 @@ void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 
     /* Inform owner about less than full fuel */
     send_unit_info(pplayer, gained_unit);
-
-    /* This costs! */
-    pplayer->economic.gold -= pvictim->bribe_cost;
 
     notify_player_ex(uplayer, pvictim->tile, E_ENEMY_DIPLOMAT_BRIBE,
                      _("Game: Your %s was bribed by %s."),
@@ -1446,40 +1446,53 @@ int unit_bribe_cost(struct unit *punit)
   int default_hp = unit_type(punit)->hp;
   int shield_cost = unit_build_shield_cost(punit->type);
 
-  if(game.ext_info.experimentalbribingcost) {//experimental cost
-		struct city *pcity = map_get_city(punit->tile);
-  	cost = 2 * shield_cost + (shield_cost * shield_cost) / 20;//basic cost
-		cost = (int)(cost * (1 + (float)punit->veteran/2));//multiply by veterancy, veteran unit = *1.5 cost
-		if (map_has_special(punit->tile, S_FORTRESS) && !pcity) {//multiply by fort defence factor
-	    cost *= (terrain_control.fortress_defense_bonus) / 100;
-		}
-		if ((pcity || punit->activity==ACTIVITY_FORTIFIED) && is_ground_unittype(punit->type)) {
-	    cost = (cost * 3) / 2;//multiply by 1.5 if unit is fortified
-  	}
-		cost = (int)(cost * (float)get_tile_type(punit->tile->terrain)->defense_bonus)/10;//multiply by terrain defence bonus
-	} else {//standard cost
-  cost = unit_owner(punit)->economic.gold + 750;
-  capital = find_palace(unit_owner(punit));
-  if (capital) {
-    int tmp = map_distance(capital->tile, punit->tile);
-    dist=MIN(32, tmp);
+  if (game.ext_info.experimentalbribingcost) {
+    /* Experimental cost. */
+    struct city *pcity = map_get_city(punit->tile);
+
+    /* Base cost. */
+    cost = 2 * shield_cost + (shield_cost * shield_cost) / 20;
+    /* Multiply by veterancy, veteran unit = *1.5 cost. */
+    cost = (int)(cost * (1 + (float)punit->veteran / 2));
+    if (map_has_special(punit->tile, S_FORTRESS) && !pcity) {
+      /* Multiply by fort defence factor. */
+      cost *= (terrain_control.fortress_defense_bonus) / 100;
+    }
+    if ((pcity || punit->activity==ACTIVITY_FORTIFIED)
+	&& is_ground_unittype(punit->type)) {
+      /* Multiply by 1.5 if unit is fortified. */
+      cost = (cost * 3) / 2;
+    }
+    /* Multiply by terrain defence bonus. */
+    cost = (int)(cost * (float)
+		 get_tile_type(punit->tile->terrain)->defense_bonus) / 10;
+  } else {
+    /* Standard cost. */
+    cost = unit_owner(punit)->economic.gold + 750;
+    capital = find_palace(unit_owner(punit));
+    if (capital) {
+      int tmp = map_distance(capital->tile, punit->tile);
+      dist = MIN(32, tmp);
+    } else {
+      dist = 32;
+    }
+    if (g->fixed_corruption_distance != 0) {
+      dist = MIN(g->fixed_corruption_distance, dist);
+    }
+    cost /= dist + 2;
+
+    cost *= unit_build_shield_cost(punit->type) / 10;
+
+    /* FIXME: This is a weird one - should be replaced */
+    if (unit_flag(punit, F_CITIES)) {
+      cost /= 2;
+    }
+
+    cost = (int) ((float) cost / (float) 2
+        + ((float) punit->hp / (float) default_hp)
+        * ((float) cost / (float) 2));
   }
-  else
-    dist=32;
-  if (g->fixed_corruption_distance != 0)
-    dist = MIN(g->fixed_corruption_distance, dist);
-  cost /= dist + 2;
 
-  cost *= unit_build_shield_cost(punit->type) / 10;
-
-  /* FIXME: This is a weird one - should be replaced */
-  if (unit_flag(punit, F_CITIES)) 
-    cost/=2;
-
-  cost = (int)((float)cost/(float)2 + ((float)punit->hp/(float)default_hp) * ((float)cost/(float)2));
-	}
-
-  
   return cost;
 }
 

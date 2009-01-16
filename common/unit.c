@@ -1787,7 +1787,6 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->ai.bodyguard = 0;
   punit->ai.charge = 0;
 
-  punit->bribe_cost = -1; /* flag value */
   punit->transported_by = -1;
   punit->focus_status = FOCUS_AVAIL;
   punit->ord_map = 0;
