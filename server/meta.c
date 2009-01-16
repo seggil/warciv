@@ -409,8 +409,6 @@ static bool send_to_metaserver(enum meta_flag flag)
                        game.info.min_players);
     astr_append_printf(&content, "&vn[]=maxplayers&vv[]=%d",
                        game.info.max_players);
-    astr_append_printf(&content, "&vn[]=allowtake&vv[]=%s",
-                       "H1A1h1a1d3Oo"); /* FIXME: dummy value. */
     astr_append_printf(&content, "&vn[]=generator&vv[]=%d",
                        map.generator);
     astr_append_printf(&content, "&vn[]=size&vv[]=%d",
