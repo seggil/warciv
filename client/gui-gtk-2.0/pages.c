@@ -300,7 +300,7 @@ static int get_real_player_number(struct server *pserver)
        i++, pplayer++) {
     /* All 'player' cases */
     if (0 == mystrcasecmp("Human", pplayer->type)
-	|| 0 == mystrcasecmp("AI", pplayer->type)
+	|| 0 == mystrcasecmp("A.I.", pplayer->type)
 	|| 0 == mystrcasecmp("Dead", pplayer->type)
 	|| 0 == mystrcasecmp("Barbarian", pplayer->type)) {
       nplayers++;
@@ -912,7 +912,7 @@ static void update_metaplayerlist(GtkTreePath * path)
   }
 
   meta_player_tree_store_append(pserver, "Human");
-  meta_player_tree_store_append(pserver, "AI");
+  meta_player_tree_store_append(pserver, "A.I.");
   meta_player_tree_store_append(pserver, "Dead");
   meta_player_tree_store_append(pserver, "Barbarian");
   meta_player_tree_store_append_global_observers(pserver);
