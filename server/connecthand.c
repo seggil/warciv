@@ -437,11 +437,12 @@ void establish_new_connection(struct connection *pconn)
       notify_conn(dest, _("Server: Couldn't attach your connection to new player."));
       freelog(LOG_VERBOSE, "%s is not attached to a player",
 	      pconn->username);
-      restore_access_level(pconn);
     } else {
       sz_strlcpy(pconn->player->name, pconn->username);
     }
   }
+
+  restore_access_level(pconn);
 
   /* remind the connection who he is */
   if (!pconn->player) {
