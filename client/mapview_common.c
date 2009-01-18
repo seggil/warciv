@@ -71,6 +71,14 @@ struct line {
 };
 #define TR_LINE_NUM	2
 
+
+struct nuke_graphic_info {
+  int x, y;
+  int width, height;
+};
+static int clear_nuke_tid = 0;
+
+
 /**************************************************************************
 Returns the color the grid should have between tile (x1,y1) and
 (x2,y2).
@@ -1280,6 +1288,21 @@ void put_red_frame_tile(struct canvas *pcanvas,
 }
 
 /****************************************************************************
+  Clear the previously drawn nuke picture.
+****************************************************************************/
+static bool clear_nuke_graphic(void *data)
+{
+  struct nuke_graphic_info *ngi = data;
+  if (!ngi) {
+    return FALSE;
+  }
+  update_map_canvas(ngi->x, ngi->y, ngi->width, ngi->height, MUT_NORMAL);
+  free(ngi);
+  clear_nuke_tid = 0;
+  return FALSE;
+}
+
+/****************************************************************************
   Animate the nuke explosion at map(x, y).
 ****************************************************************************/
 void put_nuke_mushroom_pixmaps(struct tile *ptile)
@@ -1312,9 +1335,17 @@ void put_nuke_mushroom_pixmaps(struct tile *ptile)
   redraw_selection_rectangle();
   gui_flush();
 
-  myusleep(1000000);
+  if (clear_nuke_tid == 0) {
+    struct nuke_graphic_info *ngi;
+    ngi = fc_calloc(1, sizeof(*ngi));
+    ngi->x = canvas_x;
+    ngi->y = canvas_y;
+    ngi->width = width;
+    ngi->height = height;
 
-  update_map_canvas(canvas_x, canvas_y, width, height, MUT_NORMAL);
+    /* Erase the nuke graphic in 1 second. */
+    clear_nuke_tid = add_timer_callback(1000, clear_nuke_graphic, ngi);
+  }
 }
 
 /**************************************************************************
