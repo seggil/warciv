@@ -1524,7 +1524,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
     aunit->fuel = punit->fuel;
     aunit->paradropped = punit->paradropped;
 
-    wipe_unit(punit);
+    wipe_unit_spec_safe(punit, FALSE, TRUE);
   } unit_list_iterate_safe_end;
 
   unit_list_iterate(player2_units, punit) {
@@ -1537,7 +1537,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
     aunit->fuel = punit->fuel;
     aunit->paradropped = punit->paradropped;
 
-    wipe_unit(punit);
+    wipe_unit_spec_safe(punit, FALSE, TRUE);
   } unit_list_iterate_end;
   unit_list_free(player2_units);
 

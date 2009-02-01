@@ -87,19 +87,19 @@ int find_a_unit_type(int role, int role_tech)
   int i, num=0;
 
   if (role_tech != -1) {
-    for(i=0; i<num_role_units(role_tech); i++) {
+    for (i = 0; i < num_role_units(role_tech); i++) {
       int iunit = get_role_unit(role_tech, i);
       if (game.info.global_advances[get_unit_type(iunit)->tech_requirement] >= 2) {
 	which[num++] = iunit;
       }
     }
   }
-  if(num==0) {
-    for(i=0; i<num_role_units(role); i++) {
+  if (num == 0) {
+    for (i = 0; i < num_role_units(role); i++) {
       which[num++] = get_role_unit(role, i);
     }
   }
-  if(num==0) {
+  if (num == 0) {
     /* Ruleset code should ensure there is at least one unit for each
      * possibly-required role, or check before calling this function.
      */
@@ -940,7 +940,7 @@ static void update_unit_activity(struct unit *punit)
 			 punit2->tile, E_UNIT_LOST,
 			 _("Game: Disbanded your %s due to changing"
 			   " land to sea."), unit_name(punit2->type));
-	wipe_unit_spec_safe(punit2, FALSE);
+	wipe_unit_spec_safe(punit2, FALSE, FALSE);
 	goto START;
       }
     } unit_list_iterate_safe_end;
@@ -1001,7 +1001,7 @@ static void update_unit_activity(struct unit *punit)
 			 punit2->tile, E_UNIT_LOST,
 			 _("Game: Disbanded your %s due to changing"
 			   " sea to land."), unit_name(punit2->type));
-	wipe_unit_spec_safe(punit2, FALSE);
+	wipe_unit_spec_safe(punit2, FALSE, FALSE);
 	goto START;
       }
     } unit_list_iterate_safe_end;
@@ -1570,7 +1570,7 @@ struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
 We remove the unit and see if it's disappearance has affected the homecity
 and the city it was in.
 **************************************************************************/
-static void server_remove_unit(struct unit *punit)
+static void server_remove_unit(struct unit *punit, bool ignore_gameloss)
 {
   struct city *pcity = map_get_city(punit->tile);
   struct city *phomecity = find_city_by_id(punit->homecity);
@@ -1611,7 +1611,9 @@ static void server_remove_unit(struct unit *punit)
   remove_unit_sight_points(punit);
 
   /* check if this unit had F_GAMELOSS flag */
-  if (unit_flag(punit, F_GAMELOSS) && unit_owner(punit)->is_alive) {
+  if (!ignore_gameloss
+      && unit_flag(punit, F_GAMELOSS)
+      && unit_owner(punit)->is_alive) {
     notify_conn_ex(game.est_connections, punit->tile, E_UNIT_LOST,
                    _("Unable to defend %s, %s has lost the game."),
                    unit_name(punit->type), unit_owner(punit)->name);
@@ -1654,7 +1656,8 @@ static void server_remove_unit(struct unit *punit)
   Remove the unit, and passengers if it is a carrying any. Remove the 
   _minimum_ number, eg there could be another boat on the square.
 **************************************************************************/
-void wipe_unit_spec_safe(struct unit *punit, bool wipe_cargo)
+void wipe_unit_spec_safe(struct unit *punit,
+			 bool wipe_cargo, bool ignore_gameloss)
 {
   struct tile *ptile = punit->tile;
   struct player *pplayer = unit_owner(punit);
@@ -1685,7 +1688,7 @@ void wipe_unit_spec_safe(struct unit *punit, bool wipe_cargo)
   wipe_cargo &= is_ground_units_transport(punit);
 
   /* Now remove the unit. */
-  server_remove_unit(punit);
+  server_remove_unit(punit, ignore_gameloss);
 
   /* Finally reassign, bounce, or destroy all ground units at this location.
    * There's no need to worry about air units; they can fly away. */
@@ -1702,7 +1705,7 @@ void wipe_unit_spec_safe(struct unit *punit, bool wipe_cargo)
 	    && pcargo->transported_by == -1
 	    && !unit_flag(pcargo, F_UNDISBANDABLE)
 	    && !unit_flag(pcargo, F_GAMELOSS)) {
-	  server_remove_unit(pcargo);
+	  server_remove_unit(pcargo, FALSE);
 	  if (++capacity >= 0) {
 	    break;
 	  }
@@ -1730,7 +1733,7 @@ void wipe_unit_spec_safe(struct unit *punit, bool wipe_cargo)
 			     unit_type(pcargo)->name,
 			     ptype->name);
 	    gamelog(GAMELOG_UNITLOSS, pcargo, NULL, "transport lost");
-	    server_remove_unit(pcargo);
+	    server_remove_unit(pcargo, FALSE);
 	  }
 	  if (++capacity >= 0) {
 	    break;
@@ -1763,7 +1766,7 @@ void wipe_unit_spec_safe(struct unit *punit, bool wipe_cargo)
 **************************************************************************/
 void wipe_unit(struct unit *punit)
 {
-  wipe_unit_spec_safe(punit, TRUE);
+  wipe_unit_spec_safe(punit, TRUE, FALSE);
 }
 
 /**************************************************************************
@@ -1849,7 +1852,7 @@ void kill_unit(struct unit *pkiller, struct unit *punit)
 			 unit_name(pkiller->type));
 
         gamelog(GAMELOG_UNITLOSS, punit2, destroyer);
-	wipe_unit_spec_safe(punit2, FALSE);
+	wipe_unit_spec_safe(punit2, FALSE, FALSE);
       }
     }
     unit_list_iterate_end;
@@ -2144,7 +2147,7 @@ static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
 		       unit_owner(punit)->name,
 		       unit_name(punit->type));
     }
-    wipe_unit_spec_safe(punit, FALSE);
+    wipe_unit_spec_safe(punit, FALSE, FALSE);
   } unit_list_iterate_end;
 
   if (pcity) {
@@ -2317,7 +2320,7 @@ bool do_paradrop(struct unit *punit, struct tile *ptile)
     notify_player_ex(pplayer, ptile, E_UNIT_LOST,
                      _("Game: Your %s unit drowned in the ocean."),
                      unit_type(punit)->name);
-    server_remove_unit(punit);
+    server_remove_unit(punit, FALSE);
     return TRUE;
   }
 
@@ -2331,7 +2334,7 @@ bool do_paradrop(struct unit *punit, struct tile *ptile)
                      _("Game: Your %s unit was killed by enemy units "
                        "while landing at the destination."),
                      unit_type(punit)->name);
-    server_remove_unit(punit);
+    server_remove_unit(punit, FALSE);
     return TRUE;
   }
 

@@ -58,7 +58,8 @@ struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
 			      int homecity_id, int moves_left, int hp_left,
 			      struct unit *ptrans);
 void wipe_unit(struct unit *punit);
-void wipe_unit_spec_safe(struct unit *punit, bool wipe_cargo);
+void wipe_unit_spec_safe(struct unit *punit,
+			 bool wipe_cargo, bool ignore_gameloss);
 void kill_unit(struct unit *pkiller, struct unit *punit);
 
 /* sending to client */
