@@ -964,9 +964,12 @@ static void network_list_callback(GtkTreeSelection *select, gpointer data)
 
   /* only one server can be selected in either list. */
   if (select == meta_selection) {
+    GtkTreePath *path;
     gtk_tree_selection_unselect_all(lan_selection);
-    update_metaplayerlist(gtk_tree_model_get_path(model, &it));
-    update_variableslist(gtk_tree_model_get_path(model, &it));
+    path = gtk_tree_model_get_path(model, &it);
+    update_metaplayerlist(path);
+    update_variableslist(path);
+    gtk_tree_path_free(path);
   } else {
     gtk_tree_selection_unselect_all(meta_selection);
     update_metaplayerlist(NULL);
