@@ -4581,6 +4581,10 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     pconn->observer = FALSE;
     conn_list_unlink(game.game_connections, pconn);
     restore_access_level(pconn);
+    cmd_reply(CMD_DETACH, caller, C_COMMENT,
+	      _("%s detaching from global observer."), pconn->username);
+    notify_conn(NULL, _("Server: %s has detached from global observer."),
+                pconn->username);
   }
 
   /* if we want to detach while the game is running, reset the client */
