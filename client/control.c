@@ -2580,9 +2580,19 @@ void key_unit_auto_settle(void)
 **************************************************************************/
 void key_unit_disband(void)
 {
-  multi_select_iterate(TRUE, punit) {
-    request_unit_disband(punit);
-  } multi_select_iterate_end;
+  switch (multi_select_size(0)) {
+  case 0:
+    /* Nothing to do */
+    break;
+  case 1:
+    /* Single unit mode */
+    popup_disband_unit(get_unit_in_focus());
+    break;
+  default:
+    /* Multi units mode */
+    popup_disband_units_focus();
+    break;
+  }
 }
 
 /**************************************************************************

@@ -2458,3 +2458,92 @@ void remove_trade_planning_calculation_resume_request(void)
     resume_request = 0;
   }
 }
+
+
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void disband_unit(gpointer data, gpointer dump)
+{
+  struct unit *punit = player_find_unit_by_id(get_player_ptr(),
+					      GPOINTER_TO_INT(data));
+
+  if (punit) {
+    request_unit_disband(punit);
+  }
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void disband_unit_response(GtkWidget *w, gint response, gpointer data)
+{
+  if (response == GTK_RESPONSE_YES) {
+    disband_unit(data, NULL);
+  }
+  gtk_widget_destroy(w);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void popup_disband_unit(const struct unit *punit)
+{
+  GtkWidget *dialog;
+
+  if (!punit || !can_client_issue_orders()) {
+    return;
+  }
+
+  dialog = gtk_message_dialog_new(NULL, 0,
+				  GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+				  _("Are you sure to want to disband this %s?"),
+				  unit_name(punit->type));
+  gtk_window_set_title(GTK_WINDOW(dialog), _("Disband unit"));
+  setup_dialog(dialog, toplevel);
+  g_signal_connect(dialog, "response", G_CALLBACK(disband_unit_response),
+		   GINT_TO_POINTER(punit->id));
+  gtk_window_present(GTK_WINDOW(dialog));
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+static void disband_units_response(GtkWidget *w, gint response, gpointer data)
+{
+  GList *list = (GList *) data;
+
+  if (response == GTK_RESPONSE_YES) {
+    g_list_foreach(list, disband_unit, NULL);
+  }
+  g_list_free(list);
+  gtk_widget_destroy(w);
+}
+
+/*************************************************************************
+  ...
+*************************************************************************/
+void popup_disband_units_focus(void)
+{
+  GtkWidget *dialog;
+  GList *list = NULL;
+
+  if (!can_client_issue_orders()) {
+    return;
+  }
+
+  multi_select_iterate(FALSE, punit) {
+    list = g_list_append(list, GINT_TO_POINTER(punit->id));
+  } multi_select_iterate_end;
+
+  dialog = gtk_message_dialog_new(NULL, 0,
+				  GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+				  _("Are you sure to want to disband "
+				    "those %d units?"), g_list_length(list));
+  gtk_window_set_title(GTK_WINDOW(dialog), _("Disband units"));
+  setup_dialog(dialog, toplevel);
+  g_signal_connect(dialog, "response",
+		   G_CALLBACK(disband_units_response), list);
+  gtk_window_present(GTK_WINDOW(dialog));
+}

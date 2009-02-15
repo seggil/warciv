@@ -51,6 +51,9 @@ void update_trade_planning_calculation_info(void);
 void request_trade_planning_calculation_resume(void);
 void remove_trade_planning_calculation_resume_request(void);
 
+void popup_disband_unit(const struct unit *punit);
+void popup_disband_units_focus(void);
+
 void popdown_all_game_dialogs(void);
 void popdown_all_game_dialogs_except_option_dialog(void);
 
