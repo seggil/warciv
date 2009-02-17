@@ -57,7 +57,7 @@
 /set spyreturnchance 60
 /set dipldefchance 60
 /set diplchance 60
-/set spacerace 1
+/set spacerace 0
 /set civilwarsize 10
 /set contactturns 20
 /set savepalace 1
@@ -113,5 +113,6 @@
 /set spectatorchat 0
 /set idlecut 1800
 /set emptyreset 1
+/set triremestyle 1
 
 /rulesetdir nowonder+-1.2
