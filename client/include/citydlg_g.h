@@ -40,6 +40,7 @@ void popup_city_dialog(struct city *pcity, bool make_modal);
 void popdown_city_dialog(struct city *pcity);
 void popdown_all_city_dialogs(void);
 void refresh_city_dialog(struct city *pcity, enum city_update update);
+void refresh_all_city_dialogs(enum city_update update);
 void refresh_unit_city_dialogs(struct unit *punit);
 bool city_dialog_is_open(struct city *pcity);
 

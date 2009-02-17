@@ -1794,11 +1794,11 @@ void handle_player_info(struct packet_player_info *pinfo)
   } else {
     pplayer->research.researching_cost = total_bulbs_required(pplayer);
   }
-  pplayer->future_tech=pinfo->future_tech;
-  pplayer->ai.tech_goal=pinfo->tech_goal;
+  pplayer->future_tech = pinfo->future_tech;
+  pplayer->ai.tech_goal = pinfo->tech_goal;
   
   if (can_client_change_view() && pplayer == get_player_ptr()) {
-      science_dialog_update();
+    science_dialog_update();
     if (poptechup) {
       if (!get_player_ptr()->ai.control || ai_popup_windows) {
 	popup_science_dialog(FALSE);
@@ -1811,6 +1811,8 @@ void handle_player_info(struct packet_player_info *pinfo)
       if (get_unit_in_focus()) {
 	update_menus();
       }
+      /* Maybe the list has changed. */
+      refresh_all_city_dialogs(UPDATE_WORKLIST);
     }
     economy_report_dialog_update();
     activeunits_report_dialog_update();
@@ -1820,15 +1822,15 @@ void handle_player_info(struct packet_player_info *pinfo)
   if (pplayer == get_player_ptr() && pplayer->turn_done != pinfo->turn_done) {
     update_turn_done_button_state();
   }
-  pplayer->turn_done=pinfo->turn_done;
+  pplayer->turn_done = pinfo->turn_done;
 
-  pplayer->nturns_idle=pinfo->nturns_idle;
-  pplayer->is_alive=pinfo->is_alive;
+  pplayer->nturns_idle = pinfo->nturns_idle;
+  pplayer->is_alive = pinfo->is_alive;
 
   pplayer->ai.barbarian_type = pinfo->barbarian_type;
   pplayer->revolution_finishes = pinfo->revolution_finishes;
   if (pplayer->ai.control != pinfo->ai)  {
-    pplayer->ai.control=pinfo->ai;
+    pplayer->ai.control = pinfo->ai;
     if (pplayer == get_player_ptr())  {
       my_snprintf(msg, sizeof(msg), _("AI Mode is now %s."),
 		  get_player_ptr()->ai.control?_("ON"):_("OFF"));

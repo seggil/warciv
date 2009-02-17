@@ -408,7 +408,8 @@ static void real_update_city_dialog(struct city_dialog *pdialog)
 
   if (pcity->owner == get_player_idx()
       || client_is_global_observer()) {
-    if (need_update & (UPDATE_WORKLIST | UPDATE_BUILDING)) {
+    if (need_update
+	& (UPDATE_WORKLIST | UPDATE_BUILDING | UPDATE_IMPROVEMENTS)) {
       refresh_worklist(pdialog->production.worklist);
     }
 
@@ -487,6 +488,19 @@ void refresh_city_dialog(struct city *pcity, enum city_update update)
 
   if (pdialog) {
     pdialog->need_update |= update;
+    request_update_city_dialog();
+  }
+}
+
+/****************************************************************
+...
+*****************************************************************/
+void refresh_all_city_dialogs(enum city_update update)
+{
+  if (dialog_list_size(dialog_list) > 0) {
+    dialog_list_iterate(dialog_list, pdialog) {
+      pdialog->need_update |= update;
+    } dialog_list_iterate_end;
     request_update_city_dialog();
   }
 }
