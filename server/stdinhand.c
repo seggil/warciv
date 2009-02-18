@@ -6398,8 +6398,7 @@ bool handle_stdin_input(struct connection * caller,
   }
 
 
-  if (cmd == CMD_SET) {
-    parse_set_arguments(arg, &sv);
+  if (cmd == CMD_SET && parse_set_arguments(arg, &sv)) {
     level = sset_access_level(sv.setting_idx);
   }
 
