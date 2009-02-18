@@ -483,6 +483,7 @@ void show_trade_estimation(void)
   }
 
   char buf[MAX_ESTIMATED_TURNS][1024];
+  char city1_name[MAX_LEN_NAME], city2_name[MAX_LEN_NAME];
   int i, count[MAX_ESTIMATED_TURNS];
   bool at_least_one = FALSE;
 
@@ -503,9 +504,10 @@ void show_trade_estimation(void)
 	if (i >= MAX_ESTIMATED_TURNS) {
           continue;
         }
+	insert_city_link(city1_name, sizeof(city1_name), ptr->pcity1);
+	insert_city_link(city2_name, sizeof(city2_name), ptr->pcity2);
         cat_snprintf(buf[i], sizeof(buf[i]), "%s%s-%s",
-                     count[i] > 0 ? ", " : "",
-                     ptr->pcity1->name, ptr->pcity2->name);
+                     count[i] > 0 ? ", " : "", city1_name, city2_name);
         count[i]++;
         at_least_one = TRUE;
       }
@@ -515,6 +517,8 @@ void show_trade_estimation(void)
   /* Print infos */
   if (at_least_one) {
     char text[1024];
+
+    link_marks_disable_drawing();
     append_output_window(_("Warclient: Trade estimation:"));
     for(i = 0; i < MAX_ESTIMATED_TURNS; i++) {
       if (count[i] > 0) {
@@ -524,6 +528,7 @@ void show_trade_estimation(void)
 	append_output_window(text);
       }
     }
+    link_marks_enable_drawing();
   } else {
     append_output_window(_("Warclient: No trade route to estimate."));
   }
@@ -729,7 +734,7 @@ void request_unit_trade_route(struct unit *punit, struct city *pcity)
   struct city *phome_city;
   struct unit *ounit;
   int moves, turns;
-  char buf[1024];
+  char buf[1024], city1_name[MAX_LEN_NAME], city2_name[MAX_LEN_NAME];
 
   if (pcity) {
     if (!(phome_city = player_find_city_by_id(get_player_ptr(),
@@ -740,23 +745,30 @@ void request_unit_trade_route(struct unit *punit, struct city *pcity)
       return;
     }
 
+    insert_city_link(city1_name, sizeof(city1_name), phome_city);
+    insert_city_link(city2_name, sizeof(city2_name), pcity);
+
     if (!can_cities_trade(phome_city, pcity)
         || !can_establish_trade_route(phome_city, pcity)) {
+      link_marks_disable_drawing();
       my_snprintf(buf, sizeof(buf),
 		  _("Warclient: You cannot create a trade "
 		    "route between %s and %s."),
-		  phome_city->name, pcity->name);
+		  city1_name, city2_name);
       append_output_window(buf);
+      link_marks_enable_drawing();
       return;
     }
 
     if ((ptr = game_trade_route_find(phome_city, pcity))) {
       if (ptr->status & TR_IN_ROUTE) {
+	link_marks_disable_drawing();
 	my_snprintf(buf, sizeof(buf),
 		    _("Warclient: The trade route between %s and %s "
 		      "is already going to be established."),
-		    phome_city->name, pcity->name);
+		    city1_name, city2_name);
 	append_output_window(buf);
+	link_marks_enable_drawing();
         return;
       }
     } else {
@@ -764,11 +776,13 @@ void request_unit_trade_route(struct unit *punit, struct city *pcity)
             >= game.traderoute_info.maxtraderoutes
           || trade_route_list_size(pcity->trade_routes)
                >= game.traderoute_info.maxtraderoutes) {
+	link_marks_disable_drawing();
 	my_snprintf(buf, sizeof(buf),
 		    _("Warclient: Warning: the trade route "
 		      "between %s and %s was not planned."),
-		    phome_city->name, pcity->name);
+		    city1_name, city2_name);
 	append_output_window(buf);
+	link_marks_enable_drawing();
       }
       ptr = game_trade_route_add(phome_city, pcity);
     }
@@ -786,6 +800,10 @@ void request_unit_trade_route(struct unit *punit, struct city *pcity)
     return;
   }
 
+  insert_city_link(city1_name, sizeof(city1_name), ptr->pcity1);
+  insert_city_link(city2_name, sizeof(city2_name), ptr->pcity2);
+
+  link_marks_disable_drawing();
   if ((ounit = ptr->punit)) {
     /* Free it */
     ounit->ptr = NULL;
@@ -794,8 +812,7 @@ void request_unit_trade_route(struct unit *punit, struct city *pcity)
     my_snprintf(buf, sizeof(buf),
 		_("Warclient: The %s id %d which was going to establish a "
 		  "trade route between %s and %s, has been stopped."),
-		unit_name(ounit->type), ounit->id,
-		ptr->pcity1->name, ptr->pcity2->name);
+		unit_name(ounit->type), ounit->id, city1_name, city2_name);
     append_output_window(buf);
   }
 
@@ -810,11 +827,11 @@ void request_unit_trade_route(struct unit *punit, struct city *pcity)
   my_snprintf(buf, sizeof(buf),
 	      _("Warclient: Sending the %s id %d to establish a "
 		"trade route between %s and %s (%d %s, %d %s)."),
-	      unit_name(punit->type), punit->id,
-	      ptr->pcity1->name, ptr->pcity2->name,
+	      unit_name(punit->type), punit->id, city1_name, city2_name,
 	      moves, PL_("move", "moves", moves),
 	      turns, PL_("turn", "turns", turns));
   append_output_window(buf);
+  link_marks_enable_drawing();
 
   if (ounit) {
     /* Alloc a trade route for this stopped unit */
