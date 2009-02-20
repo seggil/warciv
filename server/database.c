@@ -2059,6 +2059,11 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
       }
     } else {
       score_assign_ai_rating(pplayer, game_type);
+
+      /* Make sure we are not putting AI ratings
+       * into the database. */
+      pplayer->fcdb.rated_user_id = 0;
+      pplayer->fcdb.rated_user_name[0] = '\0';
     }
   } players_iterate_end;
   
