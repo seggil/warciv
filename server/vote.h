@@ -79,6 +79,8 @@ void clear_all_votes(void);
 void cancel_connection_votes(struct connection *pconn);
 bool conn_can_vote(const struct connection *pconn,
                    const struct vote *pvote);
+bool conn_can_see_vote(const struct connection *pconn,
+		       const struct vote *pvote);
 struct vote *get_vote_by_no(int vote_no);
 void connection_vote(struct connection *pconn,
                      struct vote *pvote,

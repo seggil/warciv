@@ -272,6 +272,34 @@ bool conn_can_vote(const struct connection *pconn, const struct vote *pvote)
   return TRUE;
 }
 
+/***************************************************************************
+  Usually, all users can see, except in the team vote case.
+***************************************************************************/
+bool conn_can_see_vote(const struct connection *pconn, const struct vote *pvote)
+{
+  if (!pconn) {
+    return FALSE;
+  }
+
+  if (conn_is_global_observer(pconn)) {
+    /* All is visible for global observer. */
+    return TRUE;
+  }
+
+  if (vote_is_team_only(pvote)) {
+    const struct player *pplayer, *caller_plr;
+
+    pplayer = conn_get_player(pconn);
+    caller_plr = conn_get_player(vote_get_caller(pvote));
+    if (!pplayer || !caller_plr ||
+        !players_on_same_team(pplayer, caller_plr)) {
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
 /**************************************************************************
   ...
 **************************************************************************/

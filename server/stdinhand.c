@@ -8686,7 +8686,7 @@ static void show_votes(struct connection *caller)
 
   if (vote_list != NULL) {
     vote_list_iterate(vote_list, pvote) {
-      if (!conn_can_vote(caller, pvote)) {
+      if (!conn_can_see_vote(caller, pvote)) {
         continue;
       }
       title = vote_is_team_only(pvote) ? _("Teamvote") : _("Vote");
