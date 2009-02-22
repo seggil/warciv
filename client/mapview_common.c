@@ -1610,7 +1610,7 @@ void draw_map_canvas(int canvas_x, int canvas_y,
   bool full;
   struct canvas *tmp;
 
-  if (!aconnection.established) {
+  if (get_client_state() < CLIENT_GAME_RUNNING_STATE) {
     return;
   }
 
@@ -2576,7 +2576,7 @@ static void get_mapview_corners(int x[4], int y[4])
 **************************************************************************/
 void refresh_overview_canvas(void)
 {
-  if (!aconnection.established) {
+  if (get_client_state() < CLIENT_GAME_RUNNING_STATE) {
     return;
   }
 
@@ -2591,7 +2591,7 @@ void refresh_overview_canvas(void)
 **************************************************************************/
 void overview_update_tile(struct tile *ptile)
 {
-  if (!aconnection.established) {
+  if (get_client_state() < CLIENT_GAME_RUNNING_STATE) {
     return;
   }
 
