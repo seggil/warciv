@@ -70,7 +70,7 @@
  * skill. This is currently only used by the /autoteam
  * command to determine whether to use individual player
  * ratings for ordering. */
-#define RATING_CONSTANT_RELIABLE_RD 200.0
+#define RATING_CONSTANT_RELIABLE_RD 300.0
 
 /* A user must play for at least this many turns before
  * being eligible for a rating update. */
