@@ -4159,7 +4159,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   struct player *pplayer = NULL;
   bool res = FALSE, need_full_update = FALSE;
   struct hash_table *affected_players = NULL;
-  time_t time_left, time_passed;
+  time_t now, time_left, time_passed;
 
   /******** PART I: fill pconn and pplayer ********/
   sz_strlcpy(buf, str);
@@ -4247,14 +4247,27 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     }
   }
 
-  time_passed = time(NULL) - game.server.turn_start;
+  now = time(NULL);
+
+  time_passed = now - game.server.turn_start;
   time_left = game.info.timeout - time_passed;
   if (caller != NULL && caller->access_level < ALLOW_ADMIN
-      && server_state == RUN_GAME_STATE  && game.info.timeout > 0
+      && server_state == RUN_GAME_STATE && game.info.timeout > 0
       && (time_left < 5 || time_passed < 5)) {
     cmd_reply(CMD_OBSERVE, caller, C_REJECTED,
               _("You may not observe at this time, "
                 "please try again later."));
+    goto CLEANUP;
+  }
+
+  if (caller != NULL && caller->access_level < ALLOW_ADMIN
+      && server_state == RUN_GAME_STATE
+      && now - caller->server.last_obs_time < 30) {
+    cmd_reply(CMD_OBSERVE, caller, C_REJECTED,
+              _("You must wait at least 30 seconds "
+                "between uses of this command, or "
+                "from the time of connecting to "
+                "this server, to use this command."));
     goto CLEANUP;
   }
 
@@ -4292,6 +4305,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE;       /* do this before attach! */
+  pconn->server.last_obs_time = now;
 
   if (pplayer) {
     attach_connection_to_player(pconn, pplayer);
