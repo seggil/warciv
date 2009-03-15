@@ -2203,18 +2203,23 @@ void do_nuclear_explosion(struct player *pplayer, struct tile *ptile)
 }
 
 /**************************************************************************
-Move the unit if possible 
-  if the unit has less moves than it costs to enter a square, we roll the dice:
-  1) either succeed
-  2) or have it's moves set to 0
-  a unit can always move atleast once
+  For fracmovestyle=0, move the unit if possible: if the unit has less
+  moves than it costs to enter a square, we roll the dice:
+    1) either succeed
+    2) or have it's moves set to 0
+  A unit can always move at least once.
+  For fracmovestyle=1, always succeed if the unit has non-zero moves left.
 **************************************************************************/
- bool try_move_unit(struct unit *punit, struct tile *dst_tile)
+bool try_move_unit(struct unit *punit, struct tile *dst_tile)
 {
-  if (myrand(1 + map_move_cost(punit, dst_tile)) > punit->moves_left
-      && punit->moves_left<unit_move_rate(punit)) {
-    punit->moves_left=0;
-    send_unit_info(unit_owner(punit), punit);
+  if (game.server.fracmovestyle == 1) {
+    /* Nothing, just fall through to the return. */
+  } else {
+    if (myrand(1 + map_move_cost(punit, dst_tile)) > punit->moves_left
+        && punit->moves_left < unit_move_rate(punit)) {
+      punit->moves_left = 0;
+      send_unit_info(unit_owner(punit), punit);
+    }
   }
   return punit->moves_left > 0;
 }

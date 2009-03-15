@@ -1421,6 +1421,16 @@ struct settings_s settings[] = {
           GAME_MIN_TRIREMESTYLE, GAME_MAX_TRIREMESTYLE,
           GAME_DEFAULT_TRIREMESTYLE)
 
+  GEN_INT("fracmovestyle", game.server.fracmovestyle, SSET_GAME_INIT,
+          SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
+          N_("How to handle fractional unit moves"),
+          N_("This setting controls whether units with only 1/3 or "
+             "2/3 moves left are able to move to adjacent tiles.\n"
+             "0 - Freeciv 2.0 random chance.\n"
+             "1 - Freeciv 2.1 style where the move always succeeds."),
+          NULL, GAME_MIN_FRACMOVESTYLE, GAME_MAX_FRACMOVESTYLE,
+          GAME_DEFAULT_FRACMOVESTYLE)
+
   GEN_END
 };
 

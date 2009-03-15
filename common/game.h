@@ -199,6 +199,7 @@ struct civ_game {
     int idlecut;
     bool emptyreset;
     int triremestyle;
+    int fracmovestyle;
   } server;
 };
 
@@ -333,6 +334,10 @@ extern bool is_server;
 #define GAME_DEFAULT_TRIREMESTYLE 0
 #define GAME_MIN_TRIREMESTYLE 0
 #define GAME_MAX_TRIREMESTYLE 1
+
+#define GAME_DEFAULT_FRACMOVESTYLE 0
+#define GAME_MIN_FRACMOVESTYLE 0
+#define GAME_MAX_FRACMOVESTYLE 1
 
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE
