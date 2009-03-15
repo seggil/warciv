@@ -442,6 +442,107 @@ static void really_close_connections(void)
 }
 
 /*****************************************************************************
+  Check the given connection's socket for read readiness in the given fd_set,
+  and read in as much data as possible without blocking. Returns TRUE if some
+  data exists in the connection's buffer (either read just now or left over
+  from earlier).
+*****************************************************************************/
+static bool check_read_data(struct connection *pconn, fd_set *preadfs)
+{
+  if (!pconn || !pconn->used || pconn->is_closing || !pconn->buffer) {
+    return FALSE;
+  }
+
+  assert(preadfs != NULL);
+
+  if (FD_ISSET(pconn->sock, preadfs)) {
+    int nb = read_socket_data(pconn, pconn->buffer);
+    if (nb < 0) {
+      if (nb == -2) {
+        server_break_connection(pconn, ES_REMOTE_CLOSE);
+      } else {
+        /* Assume read error. */
+        server_break_connection(pconn, ES_READ_ERROR);
+      }
+      return FALSE;
+    }
+  }
+
+  return pconn->buffer->ndata > 0;
+}
+
+/*****************************************************************************
+  Decode and handle one packet in the connection's buffer. Returns TRUE if
+  there could be more packets left to decode.
+*****************************************************************************/
+static bool decode_packet_data(struct connection *pconn)
+{
+  void *packet;
+  enum packet_type type;
+  bool result, accepted;
+
+#if PROCESSING_TIME_STATISTICS
+  int err;
+  struct timeval start, end;
+  struct timezone tz;
+  long us;
+#endif
+
+  if (!pconn) {
+    return FALSE;
+  }
+  packet = get_packet_from_connection(pconn, &type, &result);
+
+  if (!result) {
+    return FALSE;
+  }
+
+  pconn->server.packets_received++;
+  pconn->server.last_request_id_seen =
+    get_next_request_id(pconn->server.last_request_id_seen);
+
+#if PROCESSING_TIME_STATISTICS
+  err = gettimeofday(&start, &tz);
+  assert(!err);
+#endif
+
+  connection_do_buffer(pconn);
+  start_processing_request(pconn, pconn->server.
+                           last_request_id_seen);
+  accepted = handle_packet_input(pconn, packet, type);
+  if (packet) {
+    free(packet);
+    packet = NULL;
+  }
+
+  /* Maybe changed */
+  if (!pconn->used) {
+    return FALSE;
+  }
+
+  finish_processing_request(pconn);
+  connection_do_unbuffer(pconn);
+  if (!accepted) {
+    server_break_connection(pconn, ES_REJECTED);
+  }
+
+#if PROCESSING_TIME_STATISTICS
+  err = gettimeofday(&end, &tz);
+  assert(!err);
+
+  us = ((end.tv_sec - start.tv_sec) * 1000000 +
+        end.tv_usec - start.tv_usec);
+
+  freelog(LOG_NORMAL,
+          "processed request %d in %ld.%03ldms",
+          pconn->server.last_request_id_seen, us / 1000,
+          us % 1000);
+#endif /* PROCESSING_TIME_STATISTICS */
+
+  return !pconn->is_closing;
+}
+
+/*****************************************************************************
 Get and handle:
 - new connections,
 - input from connections,
@@ -455,7 +556,7 @@ functions.  That is, other functions should not need to do so.  --dwp
 *****************************************************************************/
 int sniff_packets(void)
 {
-  int i, nb, rv;
+  int i, rv;
   int max_desc;
   fd_set readfs, writefs, exceptfs;
   struct timeval tv;
@@ -812,89 +913,44 @@ int sniff_packets(void)
 
 #endif /* !SOCKET_ZERO_ISNT_STDIN */
 
-    { 
-      /* Check input from a user connections. */
+    {
+      struct connection *rconns[MAX_NUM_CONNECTIONS];
+      int rconn_count = 0;
+
+      /* Check and read players' input first, in random order. */
+      shuffled_players_iterate(pplayer) {
+        conn_list_iterate(pplayer->connections, aconn) {
+          if (!aconn->observer && check_read_data(aconn, &readfs)) {
+            rconns[rconn_count++] = aconn;
+          }
+        } conn_list_iterate_end;
+      } shuffled_players_iterate_end;
+
+      /* Check and read in all other users' input. */
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
-        void *packet;
-        enum packet_type type;
-        bool result, accepted;
-
-#if PROCESSING_TIME_STATISTICS
-        int err;
-        struct timeval start, end;
-        struct timezone tz;
-        long us;
-#endif
-
-  	pconn = &connections[i];
-
-	if (!pconn->used || !FD_ISSET(pconn->sock, &readfs)) {
-          continue;
+        pconn = &connections[i];
+        if (pconn->used && (!pconn->player || pconn->observer)
+            && check_read_data(pconn, &readfs)) {
+          rconns[rconn_count++] = pconn;
         }
+      }
 
-        nb = read_socket_data(pconn, pconn->buffer);
-	if (nb < 0) {
-          if (nb == -2) {
-            server_break_connection(pconn, ES_REMOTE_CLOSE);
+      /* Decode and handle packets read above. We iterate
+       * through all connections that read some data and
+       * handle one packet at a time from each connection. */
+      while (TRUE) {
+        bool done = TRUE;
+        for (i = 0; i < rconn_count; i++) {
+          if (decode_packet_data(rconns[i])) {
+            done = FALSE;
           } else {
-            /* Assume read error. */
-            server_break_connection(pconn, ES_READ_ERROR);
+            rconns[i] = NULL;
           }
-	}
-
-        while (TRUE) {
-          /* decode "freeciv packets" from real packet */
-          packet = get_packet_from_connection(pconn, &type, &result);
-
-          if (!result) {
-            break;
-          }
-
-          pconn->server.packets_received++;
-
-          pconn->server.last_request_id_seen =
-              get_next_request_id(pconn->server.last_request_id_seen);
-
-#if PROCESSING_TIME_STATISTICS
-          err = gettimeofday(&start, &tz);
-          assert(!err);
-#endif
-          connection_do_buffer(pconn);
-          start_processing_request(pconn,
-                                   pconn->server.
-                                   last_request_id_seen);
-          accepted = handle_packet_input(pconn, packet, type);
-          if (packet) {
-            free(packet);
-            packet = NULL;
-          }
-
-          /* Maybe changed */
-          if (!pconn->used) {
-            break;
-          }
-
-          finish_processing_request(pconn);
-          connection_do_unbuffer(pconn);
-          if (!accepted) {
-            server_break_connection(pconn, ES_REJECTED);
-          }
-
-#if PROCESSING_TIME_STATISTICS
-          err = gettimeofday(&end, &tz);
-          assert(!err);
-
-          us = (end.tv_sec - start.tv_sec) * 1000000 +
-              end.tv_usec - start.tv_usec;
-
-          freelog(LOG_NORMAL,
-                  "processed request %d in %ld.%03ldms",
-                  pconn->server.last_request_id_seen, us / 1000,
-                  us % 1000);
-#endif /* PROCESSING_TIME_STATISTICS */
-
-	} /* decode packet loop */
-      } /* connection iterate */
+        }
+        if (done) {
+          break;
+        }
+      }
 
       /* Handle user connection write readiness. */
       /* FIXME Code duplicated in force_flush_packets. */
@@ -911,7 +967,7 @@ int sniff_packets(void)
           flush_connection_send_buffer_all(pconn);
           continue;
         }
-        
+
         pconn->write_wait_time += secs_waited;
 
         if (game.server.tcpwritetimeout > 0
