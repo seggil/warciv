@@ -895,7 +895,7 @@ int sniff_packets(void)
       char buf[BUF_SIZE + 1];
       char *buf_internal;
 
-      nb = read(0, buf, BUF_SIZE);
+      int nb = read(0, buf, BUF_SIZE);
       if (nb <= 0) {
         handle_stdin_close();
         nb = 0; /* Avoid buffer underrun below. */
