@@ -1978,7 +1978,6 @@ struct player *shuffled_player(int i)
   assert(i>=0 && i<game.info.nplayers);
   
   if (shuffled_nplayers == 0) {
-    freelog(LOG_ERROR, "shuffled_player() called before shuffled");
     return &game.players[i];
   }
   /* This shouldn't happen: */
