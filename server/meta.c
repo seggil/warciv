@@ -66,6 +66,8 @@ static char  metaname[MAX_LEN_ADDR];
 static int   metaport;
 static char *metaserver_path;
 
+#define META_USER_AGENT "Mozilla/5.001 (windows; U; NT4.0; en-us) Gecko/25250101"
+
 static char meta_patches[256] = PEPSERVER_VERSION;
 static char meta_topic[256] = "NEW GAME";
 static char meta_message[256] = "NEW GAME";
@@ -418,6 +420,7 @@ static bool send_to_metaserver(enum meta_flag flag)
   astr_init(&headers);
   astr_minsize(&headers, 512);
   astr_append_printf(&headers, "POST %s HTTP/1.1\r\n", metaserver_path);
+  astr_append_printf(&headers, "User-Agent: %s\r\n", META_USER_AGENT);
   astr_append_printf(&headers, "Host: %s:%d\r\n", metaname, metaport);
   astr_append(&headers, "Content-Type: application/x-www-form-urlencoded;"
               " charset=\"utf-8\"\r\n");
