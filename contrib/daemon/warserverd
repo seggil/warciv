@@ -91,8 +91,12 @@ if [ "x$SYSLOG" = "xyes" -a -x "/usr/bin/logger" ]
 then LOG=syslog
 else LOG=nop
 fi 
-# check CIVPUBLISH
-[ "x$CIVPUBLISH" = "xyes" ] && META="-m" || META=""
+# check CIVPUBLISH and the METASERVER
+if [ "x$CIVPUBLISH" = "xyes" ] 
+then META="-m" 
+	[ "$METASERVER" ] && META="$META -M $METASERVER"
+else META=""
+fi
 # check if there is a port specific setup file
 if [ -f "${PORT}.serv" ]
 then SETUP="${PORT}.serv"
