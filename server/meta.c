@@ -246,21 +246,6 @@ static bool send_to_metaserver(enum meta_flag flag)
   const char *nation, *type, *state;
   int sock;
 
-  if (!server_is_open
-      && !srvarg.metaserver_no_send
-      && srvarg.metaserver_fail_wait_time > 0
-      && last_metaserver_fail > 0)
-  {
-    time_t now = time(NULL);
-    if (now - last_metaserver_fail > srvarg.metaserver_fail_wait_time) {
-      freelog (LOG_VERBOSE,
-         _("Reopening connection to metaserver after waiting for %d "
-            "seconds since the last failure."),
-          (int) (now - last_metaserver_fail));
-      server_open_meta();
-    }
-  }
-
   if (!server_is_open) {
     return FALSE;
   }
@@ -537,7 +522,7 @@ bool is_metaserver_open(void)
 bool send_server_info_to_metaserver(enum meta_flag flag)
 {
   static struct timer *last_send_timer = NULL;
-  static bool want_update;
+  static bool want_update = FALSE;
   double last_send_time = 0.0;
 
   /* if we're bidding farewell, ignore all timers */
@@ -566,6 +551,25 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
    * we've exceeded the refresh interval */
   if (flag == META_REFRESH && !want_update && last_send_time != 0.0
       && last_send_time < METASERVER_REFRESH_INTERVAL) {
+    return FALSE;
+  }
+
+  if (!server_is_open
+      && !srvarg.metaserver_no_send
+      && srvarg.metaserver_fail_wait_time > 0
+      && last_metaserver_fail > 0)
+  {
+    time_t now = time(NULL);
+    if (now - last_metaserver_fail > srvarg.metaserver_fail_wait_time) {
+      freelog (LOG_VERBOSE,
+         _("Reopening connection to metaserver after waiting for %d "
+            "seconds since the last failure."),
+          (int) (now - last_metaserver_fail));
+      server_open_meta();
+    }
+  }
+
+  if (!server_is_open) {
     return FALSE;
   }
 
