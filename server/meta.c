@@ -60,6 +60,7 @@
 #include "meta.h"
 
 static bool server_is_open = FALSE;
+static int metaname_lookup_id;
 
 static union my_sockaddr meta_addr;
 static char  metaname[MAX_LEN_ADDR];
@@ -447,7 +448,27 @@ static bool send_to_metaserver(enum meta_flag flag)
 *************************************************************************/
 void server_close_meta(void)
 {
+  if (metaname_lookup_id > 0) {
+    cancel_net_lookup_service(metaname_lookup_id);
+    metaname_lookup_id = 0;
+  }
   server_is_open = FALSE;
+}
+
+/*************************************************************************
+  Async callback for metaserver host name resolution.
+*************************************************************************/
+static void metaname_lookup_callback(union my_sockaddr *addr, void *data)
+{
+  metaname_lookup_id = 0;
+  if (addr == NULL) {
+    freelog(LOG_ERROR, _("Metaserver: bad address: [%s:%d]."),
+            metaname, metaport);
+    metaserver_failed();
+    return;
+  }
+  meta_addr.sockaddr_in = addr->sockaddr_in;
+  server_is_open = TRUE;
 }
 
 /*************************************************************************
@@ -455,7 +476,13 @@ void server_close_meta(void)
 *************************************************************************/
 void server_open_meta(void)
 {
+  int id;
   const char *path;
+
+  if (metaname_lookup_id > 0) {
+    cancel_net_lookup_service(metaname_lookup_id);
+    metaname_lookup_id = 0;
+  }
  
   if (metaserver_path) {
     free(metaserver_path);
@@ -471,12 +498,19 @@ void server_open_meta(void)
   
   metaserver_path = mystrdup(path);
 
-  if (!net_lookup_service(metaname, metaport, &meta_addr)) {
-    freelog(LOG_ERROR, _("Metaserver: bad address: [%s:%d]."),
+  id = net_lookup_service_async(metaname, metaport,
+                                metaname_lookup_callback,
+                                NULL, NULL);
+  if (id < 0) {
+    freelog(LOG_ERROR, _("Metaserver: internal error in "
+                         "net_lookup_service_async() for "
+                         "lookup of %s:%d."),
             metaname, metaport);
     metaserver_failed();
     return;
   }
+
+  metaname_lookup_id = id;
 
   if (meta_patches[0] == '\0') {
     set_meta_patches_string(default_meta_patches_string());
@@ -487,8 +521,6 @@ void server_open_meta(void)
   if (meta_message[0] == '\0') {
     set_meta_message_string(default_meta_message_string());
   }
-
-  server_is_open = TRUE;
 }
 
 /**************************************************************************
