@@ -764,6 +764,11 @@ int sniff_packets(void)
       max_desc = MAX(adns_get_socket_fd(), max_desc);
     }
 
+    if (metaserver_get_socket() != -1) {
+      FD_SET(metaserver_get_socket(), &writefs);
+      max_desc = MAX(metaserver_get_socket(), max_desc);
+    }
+
     /* For any messages occuring after this, don't generate a new prompt. */
     con_prompt_off();
 
@@ -833,6 +838,11 @@ int sniff_packets(void)
     if (FD_ISSET(sock, &exceptfs)) {
       /* handle Ctrl-Z suspend/resume */
       continue;
+    }
+
+    if (metaserver_get_socket() != -1
+        && FD_ISSET(metaserver_get_socket(), &writefs)) {
+      metaserver_handle_write_ready();
     }
 
     if (FD_ISSET(sock, &readfs)) {

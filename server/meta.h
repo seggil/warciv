@@ -55,4 +55,7 @@ bool is_metaserver_open(void);
 
 bool send_server_info_to_metaserver(enum meta_flag flag);
 
+int metaserver_get_socket(void);
+void metaserver_handle_write_ready(void);
+
 #endif /* FC__META_H */

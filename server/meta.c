@@ -67,6 +67,12 @@ static char  metaname[MAX_LEN_ADDR];
 static int   metaport;
 static char *metaserver_path;
 
+static int metaserver_sock = -1;
+static char *metaserver_buffer;
+static int metaserver_buffer_length;
+static int metaserver_buffer_offset;
+static int metaserver_success_count;
+
 #define META_USER_AGENT "Mozilla/5.001 (windows; U; NT4.0; en-us) Gecko/25250101"
 
 static char meta_patches[256] = PEPSERVER_VERSION;
@@ -236,34 +242,18 @@ static void metaserver_failed(void)
 }
 
 /*************************************************************************
- construct the POST message and send info to metaserver.
+  Contructs the metaserver POST message and returns it in a dynamically
+  allocated buffer. The size of the buffer is returned in 'pbuflen'.
+  NB: You must free() the return value when it is no longer needed.
 *************************************************************************/
-static bool send_to_metaserver(enum meta_flag flag)
+static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
 {
   struct astring headers, content;
-  int available_players = 0;
-  char buf[512];
+  int available_players = 0, len;
+  char buf[512], *ret;
   const char *nation, *type, *state;
-  int sock;
 
-  if (!server_is_open) {
-    return FALSE;
-  }
-
-  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    freelog(LOG_ERROR, "Metaserver: can't open stream socket: %s",
-	    mystrsocketerror(mysocketerrno()));
-    metaserver_failed();
-    return FALSE;
-  }
-
-  if (connect(sock, (struct sockaddr *) &meta_addr, sizeof(meta_addr)) == -1) {
-    freelog(LOG_ERROR, "Metaserver: connect failed: %s",
-            mystrsocketerror(mysocketerrno()));
-    metaserver_failed();
-    my_closesocket(sock);
-    return FALSE;
-  }
+  assert(pbuflen != NULL);
 
   switch(server_state) {
   case PRE_GAME_STATE:
@@ -417,13 +407,89 @@ static bool send_to_metaserver(enum meta_flag flag)
   /* sic: These two bytes are not included in Content-Length. */
   astr_append(&content, "\r\n");
 
-  my_writesocket(sock, astr_get_data(&headers), astr_size(&headers));
-  my_writesocket(sock, astr_get_data(&content), astr_size(&content));
-
-  my_closesocket(sock);
-
+  len = astr_size(&headers) + astr_size(&content);
+  *pbuflen = len;
+  ret = fc_malloc(len);
+  memcpy(ret, astr_get_data(&headers), astr_size(&headers));
+  memcpy(ret + astr_size(&headers), astr_get_data(&content),
+         astr_size(&content));
   astr_free(&headers);
   astr_free(&content);
+
+  return ret;
+}
+
+/*************************************************************************
+  Create the a non-blocking socket and start the connection to the
+  metaserver. Also generate the POST message and place it in the buffer.
+
+  Returns FALSE on error.
+*************************************************************************/
+static bool send_to_metaserver(enum meta_flag flag)
+{
+  int sock, len;
+
+  if (!server_is_open) {
+    return FALSE;
+  }
+
+  if (metaserver_sock != -1) {
+    my_closesocket(metaserver_sock);
+    metaserver_sock = -1;
+  }
+  if (metaserver_buffer != NULL) {
+    free(metaserver_buffer);
+    metaserver_buffer = NULL;
+    metaserver_buffer_offset = 0;
+  }
+
+  /* Don't bother sending BYE to a metaserver we
+   * never successfully sent any data to anyway. */
+  if (flag == META_GOODBYE && metaserver_success_count < 1) {
+    return TRUE;
+  }
+
+  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    freelog(LOG_ERROR, "Metaserver: can't open stream socket: %s",
+	    mystrsocketerror(mysocketerrno()));
+    metaserver_failed();
+    return FALSE;
+  }
+
+  /* Use non-blocking mode and the select loop in sniff_packets()
+   * for all metaserver updates except for the BYE message. This
+   * is because the BYE message is sent right before server exit,
+   * and so we cannot wait for a call to select(). */
+  if (flag != META_GOODBYE && my_set_nonblock(sock) == -1) {
+    freelog(LOG_ERROR, "Metaserver: set non-blocking mode failed: %s",
+            mystrsocketerror(mysocketerrno()));
+    metaserver_failed();
+    my_closesocket(sock);
+    return FALSE;
+  }
+
+  if (connect(sock, (struct sockaddr *) &meta_addr, sizeof(meta_addr)) == -1) {
+    long err_no = mysocketerrno();
+
+    if (!my_socket_would_block(err_no)
+        && !my_socket_operation_in_progess(err_no)) {
+      freelog(LOG_ERROR, "Metaserver: connect failed: %s",
+              mystrsocketerror(err_no));
+      metaserver_failed();
+      my_closesocket(sock);
+      return FALSE;
+    }
+  }
+
+  metaserver_buffer = generate_metaserver_post(flag, &len);
+  metaserver_buffer_length = len;
+  metaserver_buffer_offset = 0;
+  metaserver_sock = sock;
+
+  if (flag == META_GOODBYE) {
+    /* Send BYE message directly, bypassing the select loop. */
+    metaserver_handle_write_ready();
+  }
 
   return TRUE;
 }
@@ -454,6 +520,7 @@ static void metaname_lookup_callback(union my_sockaddr *addr, void *data)
   }
   meta_addr.sockaddr_in = addr->sockaddr_in;
   server_is_open = TRUE;
+  metaserver_success_count = 0;
 }
 
 /*************************************************************************
@@ -581,4 +648,70 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
   clear_timer_start(last_send_timer);
   want_update = FALSE;
   return send_to_metaserver(flag);
+}
+
+/**************************************************************************
+  Returns the non-blocking socket connected to the metaserver, or -1.
+**************************************************************************/
+int metaserver_get_socket(void)
+{
+  return metaserver_sock;
+}
+
+/**************************************************************************
+  Send any pending data in the metaserver buffer. If there is no more data
+  or an error occurs, close the connection and free the buffer memory. If
+  the write would block, just update the buffer offset according to how
+  much data was sent.
+**************************************************************************/
+void metaserver_handle_write_ready(void)
+{
+  char *data;
+  int len, nb, count;
+  long err;
+
+  if (metaserver_sock == -1) {
+    return;
+  }
+
+  if (metaserver_buffer == NULL) {
+    my_closesocket(metaserver_sock);
+    metaserver_sock = -1;
+    return;
+  }
+
+  data = metaserver_buffer + metaserver_buffer_offset;
+  len = metaserver_buffer_length - metaserver_buffer_offset;
+  count = 0;
+
+  while (len > 0) {
+    nb = my_writesocket(metaserver_sock, data, len);
+    err = mysocketerrno();
+    if (nb == -1) {
+      if (my_socket_would_block(err)) {
+        break;
+      }
+      freelog(LOG_ERROR, "Metaserver: socket write failed: %s",
+              mystrsocketerror(err));
+      goto DONE;
+    }
+    data += nb;
+    len -= nb;
+    count += nb;
+  }
+
+  if (len > 0) {
+    metaserver_buffer_offset += count;
+    return;
+  }
+
+  metaserver_success_count++;
+
+DONE:
+  my_closesocket(metaserver_sock);
+  metaserver_sock = -1;
+  free(metaserver_buffer);
+  metaserver_buffer = NULL;
+  metaserver_buffer_length = 0;
+  metaserver_buffer_offset = 0;
 }
