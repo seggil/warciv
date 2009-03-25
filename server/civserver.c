@@ -130,6 +130,8 @@ int main(int argc, char *argv[])
     else if ((option = get_option("--Metaserver", argv, &inx, argc))) {
       sz_strlcpy(srvarg.metaserver_addr, argv[inx]);
       srvarg.metaserver_no_send = FALSE;      /* --Metaserver implies --meta */
+    } else if ((option = get_option("--xHost", argv, &inx, argc))) {
+	    sz_strlcpy(srvarg.metasendhost, argv[inx]); /* -- hostname to send to metaserver */
     } else if (is_option("--no-dns-lookup", argv[inx])) {
       srvarg.no_dns_lookup = TRUE;
     } else if ((option = get_option("--port", argv, &inx, argc))) {
@@ -218,6 +220,8 @@ int main(int argc, char *argv[])
 			 "send server's info\n"));
     fc_fprintf(stderr, _("  -M, --Metaserver ADDR\tSet ADDR "
 			 "as metaserver address\n"));
+    fc_fprintf(stderr, _("  -x, --xHost <fqdn hostname>\tSend this hostname "
+		    "to Metaserver\n"));
     fc_fprintf(stderr, _("  -n, --no-dns-lookup\tDo not lookup "
 			 "the hostname of new connections\n"));
 

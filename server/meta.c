@@ -273,15 +273,10 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
     break;
   }
 
-  /* get hostname */
-  if (my_gethostname(buf, sizeof(buf)) != 0) {
-    sz_strlcpy(buf, "unknown");
-  }
-
   astr_init(&content);
   astr_minsize(&content, 1024);
 
-  astr_append_printf(&content, "host=%s", my_url_encode(buf));
+  astr_append_printf(&content, "host=%s", my_url_encode(srvarg.metasendhost));
   astr_append_printf(&content, "&port=%d", srvarg.port);
   astr_append_printf(&content, "&state=%s", my_url_encode(state));
 
