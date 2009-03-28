@@ -20,4 +20,6 @@ CIVPUBLISH=no					# Publish the server to Metaserver
 #METASERVER=http://www.cazfi.net/freeciv/metaserver/
 	# link to alternate metaserver should be normally empty
 
+#SENDHOST=dummydoo.some.net	
+	# send this name to metaserver instead of resolved hostname
 

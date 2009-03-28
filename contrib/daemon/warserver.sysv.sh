@@ -20,7 +20,7 @@ OPTIONS="-q"
 # if subprocess should dump core on crash
 [ "x$CORE" = "xyes" ] && ulimit -c unlimited 
 
-export CIVSERVER CIVPUBLISH SYSLOG CRASHRELOAD CORE ENGLISH DEBUG METASERVER
+export CIVSERVER CIVPUBLISH SYSLOG CRASHRELOAD CORE ENGLISH DEBUG METASERVER SENDHOST
 
 . /lib/lsb/init-functions
 

@@ -1,3 +1,9 @@
+warclient (2.0.10+0.10.5-rev1509-2) unstable; urgency=high
+
+  * amd64 version
+
+ -- drillich <"Thomas Drillich <th@drillich.com>">  Thu, 26 Mar 2009 18:34:18 +0100
+
 warclient (2.0.10+0.10.5+rev1495-1) unstable; urgency=high
 
   *  New upstream release.

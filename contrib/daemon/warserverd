@@ -95,6 +95,8 @@ fi
 if [ "x$CIVPUBLISH" = "xyes" ] 
 then META="-m" 
 	[ "$METASERVER" ] && META="$META -M $METASERVER"
+	# check if server should send specific servername
+	[ "$SENDHOST" ] && META="$META --xHost $SENDHOST"
 else META=""
 fi
 # check if there is a port specific setup file
