@@ -301,14 +301,14 @@ static void unmute_conn_by_mi(struct muteinfo *mi)
 **************************************************************************/
 void stdinhand_turn(void)
 {
-  hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+  hash_kv_iterate(mute_table, void *, key, struct muteinfo *, mi) {
     if (mi->turns_left > 0) {
       mi->turns_left--;
       if (mi->turns_left == 0) {
         unmute_conn_by_mi(mi);
       }
     }
-  } hash_iterate_end;
+  } hash_kv_iterate_end;
 }
 
 /**************************************************************************
@@ -317,26 +317,26 @@ void stdinhand_turn(void)
 void stdinhand_free(void)
 {
   if (mute_table) {
-    hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+    hash_kv_iterate(mute_table, void *, key, struct muteinfo *, mi) {
       free(mi->addr);
       free(mi);
-    } hash_iterate_end;
+    } hash_kv_iterate_end;
     hash_free(mute_table);
     mute_table = NULL;
   }
 
   if (kick_table_by_addr) {
-    hash_iterate(kick_table_by_addr, void *, key, struct kickinfo *, ki) {
+    hash_kv_iterate(kick_table_by_addr, void *, key, struct kickinfo *, ki) {
       kickinfo_free(ki);
-    } hash_iterate_end;
+    } hash_kv_iterate_end;
     hash_free(kick_table_by_addr);
     kick_table_by_addr = NULL;
   }
 
   if (kick_table_by_user) {
-    hash_iterate(kick_table_by_user, void *, key, struct kickinfo *, ki) {
+    hash_kv_iterate(kick_table_by_user, void *, key, struct kickinfo *, ki) {
       kickinfo_free(ki);
-    } hash_iterate_end;
+    } hash_kv_iterate_end;
     hash_free(kick_table_by_user);
     kick_table_by_user = NULL;
   }
@@ -4325,9 +4325,9 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     if (need_full_update) {
       send_player_info(NULL, NULL);
     } else {
-      hash_iterate(affected_players, struct player *, aplayer, void *, dummy) {
+      hash_keys_iterate(affected_players, aplayer) {
         send_player_info(aplayer, NULL);
-      } hash_iterate_end;
+      } hash_keys_iterate_end;
     }
     send_all_info(pconn->self);
     send_game_state(pconn->self, CLIENT_GAME_RUNNING_STATE);
@@ -4344,9 +4344,9 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     if (need_full_update) {
       send_player_info(NULL, NULL);
     } else {
-      hash_iterate(affected_players, struct player *, aplayer, void *, dummy) {
+      hash_keys_iterate(affected_players, aplayer) {
         send_player_info(aplayer, NULL);
-      } hash_iterate_end;
+      } hash_keys_iterate_end;
     }
     send_packet_thaw_hint(pconn);
   }
@@ -8385,7 +8385,7 @@ static bool show_mutes(struct connection *caller)
   cmd_reply(CMD_LIST, caller, C_COMMENT, "%-32s %s",
             _("Username / Address"), _("Turns left"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
-  hash_iterate(mute_table, void *, key, struct muteinfo *, mi) {
+  hash_kv_iterate(mute_table, void *, key, struct muteinfo *, mi) {
     pconn = find_conn_by_id(mi->conn_id);
     if (mi->turns_left > 0) {
       cmd_reply(CMD_LIST, caller, C_COMMENT, _("%-32s %d"),
@@ -8394,7 +8394,7 @@ static bool show_mutes(struct connection *caller)
       cmd_reply(CMD_LIST, caller, C_COMMENT, _("%-32s forever"),
                 pconn ? pconn->username : mi->addr);
     }
-  } hash_iterate_end;
+  } hash_kv_iterate_end;
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   return TRUE;
 }

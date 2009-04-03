@@ -332,9 +332,9 @@ static struct query *find_cached_query(struct dns *dns,
   freelog(LOG_DEBUG, "fcq buckets=%d", hash_num_buckets(dns->cache));
   freelog(LOG_DEBUG, "fcq deleted=%d", hash_num_deleted(dns->cache));
 
-  hash_iterate(dns->cache, char *, name, struct query *, pq) {
+  hash_kv_iterate(dns->cache, char *, name, struct query *, pq) {
     freelog(LOG_DEBUG, "fcq \"%s\" --> query %p", name, pq);
-  } hash_iterate_end;
+  } hash_kv_iterate_end;
 #endif
   
   q = hash_lookup_data(dns->cache, name);
@@ -355,14 +355,17 @@ static struct query *find_active_query(struct dns *dns, uint16_t tid)
 **************************************************************************/
 void dns_cancel(struct dns *dns, const void *userdata)
 {
+  struct query *query;
+
   freelog(LOG_DEBUG, "dns_cancel dns=%p userdata=%p", dns, userdata);
 
-  hash_iterate(dns->active, void *, key, struct query *, query) {
+  hash_values_iterate(dns->active, value) {
+    query = value;
     if (query->userdata == userdata) {
       destroy_query(dns, query);
       break;
     }
-  } hash_iterate_end;
+  } hash_values_iterate_end;
 }
 
 /**************************************************************************
@@ -793,12 +796,14 @@ void dns_queue(struct dns *dns,
 void dns_check_expired(struct dns *dns)
 {
   time_t now;
+  struct query *query;
 
   now = time(NULL);
   freelog(LOG_DEBUG, "dce dns_check_expired dns=%p now=%lu", dns, now);
   
   /* Cleanup expired active queries */
-  hash_iterate(dns->active, void *, key, struct query *, query) {
+  hash_values_iterate(dns->active, value) {
+    query = value;
     if (query->expire < now) {
       freelog(LOG_DEBUG, "dce active query timeout tid=%x expire=%lu",
               query->tid, query->expire);
@@ -806,14 +811,14 @@ void dns_check_expired(struct dns *dns)
       call_user(dns, query);
       destroy_query(dns, query);
     }
-  } hash_iterate_end;
+  } hash_values_iterate_end;
   
   /* Cleanup cached queries */
-  hash_iterate(dns->cache, char *, name, struct query *, query) {
+  hash_kv_iterate(dns->cache, char *, name, struct query *, query) {
     if (query->expire < now) {
       freelog(LOG_DEBUG, "dce query expired in cache tid=%x expire=%lu "
               "(name \"%s\")", query->tid, query->expire, name);
       destroy_query(dns, query);
     }
-  } hash_iterate_end;
+  } hash_kv_iterate_end;
 }

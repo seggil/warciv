@@ -20,6 +20,8 @@
 
 #include "shared.h"		/* bool type */
 
+struct hash_table;
+
 /* Function typedefs: */
 typedef unsigned int (*hash_val_fn_t)(const void *, unsigned int);
 typedef int (*hash_cmp_fn_t)(const void *, const void *);
@@ -76,57 +78,53 @@ unsigned int hash_num_entries(const struct hash_table *h);
 unsigned int hash_num_buckets(const struct hash_table *h);
 unsigned int hash_num_deleted(const struct hash_table *h);
 
-enum Bucket_State { BUCKET_UNUSED=0, BUCKET_USED, BUCKET_DELETED };
+bool hash_set_no_shrink(struct hash_table *h,
+                        bool no_shrink);
 
-/* internal bucket (don't use!) */
-struct hash_bucket {
-  enum Bucket_State used;
-  const void *key;
-  const void *data;
-  unsigned int hash_val;	/* to avoid recalculating, or an extra fcmp,
-                             in lookup */
-};
-
-/* opaque type (don't peek!) */
-struct hash_table {
-  struct hash_bucket *buckets;
-  hash_val_fn_t fval;
-  hash_cmp_fn_t fcmp;
-  unsigned int num_buckets;
-  unsigned int num_entries;	/* does not included deleted entries */
-  unsigned int num_deleted;
-  bool frozen;			/* do not auto-resize when set */
-};
-
-
-/**************************************************************************
-  Iterates over all keys, values in the hash table. It is now safe to
-  delete entries in the table while iterating.
-  NB If the key type is not a pointer (e.g. it is "int") be sure to use a
-     conversion macro (e.g. PTR_TO_INT) instead of just setting key_type
-     to int below.
-  NB It is not safe to insert or replace hash entries while iterating since
-     those functions might cause the table to resize resulting in all
-     manner of mayhem.
-***************************************************************************/
-#define hash_iterate(phash_table, key_type, keyvar, value_type, valuevar)\
-{\
-  int hi__i;\
-  key_type keyvar;\
-  value_type valuevar;\
-  for (hi__i = 0; hi__i < (phash_table)->num_buckets; ++hi__i) {\
-    struct hash_bucket *hi__bucket = &(phash_table)->buckets[hi__i];\
-    if (hi__bucket->used != BUCKET_USED)\
-      continue;\
-    keyvar = (key_type) hi__bucket->key;\
-    valuevar = (value_type) hi__bucket->data;
-
-#define hash_iterate_end \
-  }\
-}
-    
 #define hash_maybe_expand(htab) hash_maybe_resize((htab), TRUE)
 #define hash_maybe_shrink(htab) hash_maybe_resize((htab), FALSE)
 void hash_maybe_resize (struct hash_table *h, bool expandingp);
+
+#include "iterator.h"
+
+struct hash_iter;
+size_t hash_iter_sizeof(void);
+
+struct iterator *hash_key_iter_init(struct hash_iter *it,
+                                    const struct hash_table *h);
+#define hash_keys_iterate(ARG_ht, NAME_key)\
+  generic_iterate(struct hash_iter, void *, NAME_key,\
+                  hash_iter_sizeof, hash_key_iter_init, (ARG_ht))
+#define hash_keys_iterate_end generic_iterate_end
+
+struct iterator *hash_value_iter_init(struct hash_iter *it,
+                                      const struct hash_table *h);
+#define hash_values_iterate(ARG_ht, NAME_value)\
+  generic_iterate(struct hash_iter, void *, NAME_value,\
+                  hash_iter_sizeof, hash_value_iter_init, (ARG_ht))
+#define hash_values_iterate_end generic_iterate_end
+
+struct iterator *hash_iter_init(struct hash_iter *it,
+                                const struct hash_table *h);
+void *hash_iter_get_key(const struct iterator *hash_iter);
+void *hash_iter_get_value(const struct iterator *hash_iter);
+#define hash_iterate(ARG_ht, NAME_iter)\
+  generic_iterate(struct hash_iter, struct iterator *, NAME_iter,\
+                  hash_iter_sizeof, hash_iter_init, (ARG_ht))
+#define hash_iterate_end generic_iterate_end
+
+#define hash_kv_iterate(ARG_ht, TYPE_key, NAME_key, TYPE_value, NAME_value)\
+  do {\
+    TYPE_key NAME_key;\
+    TYPE_value NAME_value;\
+    generic_iterate(struct hash_iter, struct iterator *, MY_iter,\
+                    hash_iter_sizeof, hash_iter_init, (ARG_ht)) {\
+      NAME_key = (TYPE_key) hash_iter_get_key(MY_iter);\
+      NAME_value = (TYPE_value) hash_iter_get_value(MY_iter);
+
+#define hash_kv_iterate_end\
+    } generic_iterate_end;\
+  } while (0)
+
 
 #endif  /* FC__HASH_H */

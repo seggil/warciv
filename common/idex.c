@@ -82,11 +82,11 @@ void idex_free(void)
   }
 
   if (idex_city_name_hash) {
-    hash_iterate(idex_city_name_hash, void *, key, void *, val) {
+    hash_keys_iterate(idex_city_name_hash, key) {
       if (key) {
         free(key);
       }
-    } hash_iterate_end;
+    } hash_keys_iterate_end;
     hash_free(idex_city_name_hash);
     idex_city_name_hash = NULL;
   }

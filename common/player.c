@@ -999,11 +999,11 @@ void player_free_turns_played(struct player *plr)
 
   h = plr->fcdb.turns_played_table;
   if (h) {
-    hash_iterate(h, char *, unused, struct turns_played_info *, tp) {
+    hash_values_iterate(h, tp) {
       if (tp) {
         free(tp);
       }
-    } hash_iterate_end;
+    } hash_values_iterate_end;
     hash_free(h);
   }
 

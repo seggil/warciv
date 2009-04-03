@@ -400,13 +400,13 @@ do {\
   }\
   const char *NAME_user;\
   int NAME_turns;\
-  hash_iterate((ARG_plr)->fcdb.turns_played_table,\
-               void *, dummy, struct turns_played_info *, tp) {\
+  hash_kv_iterate((ARG_plr)->fcdb.turns_played_table,\
+                  void *, dummy, struct turns_played_info *, tp) {\
     NAME_user = tp->username;\
     NAME_turns = tp->turns;
 
 #define player_turns_played_iterate_end\
-  } hash_iterate_end;\
+  } hash_kv_iterate_end;\
 } while (FALSE)
 
 

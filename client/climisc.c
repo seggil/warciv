@@ -1470,25 +1470,25 @@ void city_autonaming_free(void)
   hash_free(an_city_name_table);
   an_city_name_table = NULL;
 
-  hash_iterate(an_continent_counter_table, void *, key, int *, pcc)
+  hash_kv_iterate(an_continent_counter_table, void *, key, int *, pcc)
   {
     int id = PTR_TO_INT(key);
     freelog(LOG_DEBUG, "caf   freeing counter for continent %d (%d)", id,
             *pcc);
     free(pcc);
-  } hash_iterate_end;
+  } hash_kv_iterate_end;
   freelog(LOG_DEBUG, "caf   deleting all in an_continent_counter_table");
   hash_delete_all_entries(an_continent_counter_table);
   hash_free(an_continent_counter_table);
   an_continent_counter_table = NULL;
 
-  hash_iterate(an_city_autoname_data_table, void *, key,
+  hash_kv_iterate(an_city_autoname_data_table, void *, key,
                struct autoname_data *, ad)
   {
     int id = PTR_TO_INT(key);
     freelog(LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
     free(ad);
-  } hash_iterate_end;
+  } hash_kv_iterate_end;
   freelog(LOG_DEBUG, "caf   deleting all in an_city_autoname_data_table");
   hash_delete_all_entries(an_city_autoname_data_table);
   hash_free(an_city_autoname_data_table);
