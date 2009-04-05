@@ -1431,6 +1431,14 @@ struct settings_s settings[] = {
           NULL, GAME_MIN_FRACMOVESTYLE, GAME_MAX_FRACMOVESTYLE,
           GAME_DEFAULT_FRACMOVESTYLE)
 
+  GEN_INT("endturn", game.server.endturn,
+          SSET_META, SSET_SOCIOLOGY, SSET_VITAL, SSET_TO_CLIENT,
+          N_("Turn the game ends"),
+          N_("The game will end at the end of the given turn. This is "
+             "equivalent to using the /endgame command with no arguments "
+             "at that time. If this setting is zero, it will be ignored."),
+          NULL, GAME_MIN_ENDTURN, GAME_MAX_ENDTURN, GAME_DEFAULT_ENDTURN)
+
   GEN_END
 };
 

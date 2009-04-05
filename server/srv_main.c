@@ -278,6 +278,12 @@ static bool is_game_over(void)
     return TRUE;
   }
 
+  if (game.server.endturn > 0 && game.info.turn > game.server.endturn) {
+    notify_conn_ex(game.est_connections, NULL, E_GAME_END,
+                   _("Game: End turn has been reached."));
+    return TRUE;
+  }
+
   /* count barbarians and observers */
   players_iterate(pplayer) {
     if (is_barbarian(pplayer)) {

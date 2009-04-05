@@ -200,6 +200,7 @@ struct civ_game {
     bool emptyreset;
     int triremestyle;
     int fracmovestyle;
+    int endturn;
   } server;
 };
 
@@ -338,6 +339,10 @@ extern bool is_server;
 #define GAME_DEFAULT_FRACMOVESTYLE 1
 #define GAME_MIN_FRACMOVESTYLE 0
 #define GAME_MAX_FRACMOVESTYLE 1
+
+#define GAME_DEFAULT_ENDTURN 0
+#define GAME_MIN_ENDTURN 0
+#define GAME_MAX_ENDTURN 999999
 
 #define GAME_DEFAULT_EXPERIMENTALBRIBINGCOST FALSE /* COMPAT */
 #define GAME_DEFAULT_IGNORERULESET FALSE

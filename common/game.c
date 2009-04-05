@@ -304,6 +304,7 @@ void game_init(void)
     game.server.emptyreset = GAME_DEFAULT_EMPTYRESET;
     game.server.triremestyle = GAME_DEFAULT_TRIREMESTYLE;
     game.server.fracmovestyle = GAME_DEFAULT_FRACMOVESTYLE;
+    game.server.endturn = GAME_DEFAULT_ENDTURN;
     game.server.ruleset_loaded = FALSE;
     game.server.timeoutint = GAME_DEFAULT_TIMEOUTINT;
     game.server.timeoutintinc = GAME_DEFAULT_TIMEOUTINTINC;
