@@ -22,6 +22,7 @@
 #include "events.h"
 #include "fcintl.h"
 #include "game.h"
+#include "iterator.h"
 #include "log.h"
 #include "mem.h"
 #include "registry.h"
@@ -66,8 +67,6 @@ static const char *category_name[COC_NUM] = {
 
 char default_user_name[512];
 char default_password[512];
-char default_user_nation[512];
-char default_user_tech_goal[512];
 char default_server_host[512];
 int  default_server_port;
 char default_metaserver[512];
@@ -105,7 +104,12 @@ bool popup_new_cities;
 bool keyboardless_goto;
 bool show_task_icons;
 char chat_time_format[128];
-char city_name_formats[128];
+struct string_vector *city_name_formats = NULL;
+static const char *default_city_name_formats[] = {
+  "island%c-city%2n", "city%3g", NULL
+};
+struct string_vector *default_user_nation = NULL;
+struct string_vector *default_user_tech_goal = NULL;
 bool show_split_message_window;
 bool do_not_recenter_overview;
 bool use_digits_short_cuts;
@@ -304,7 +308,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,							 \
   .category = ocat,							 \
   .type = COT_INTEGER,							 \
-  .o = {								 \
+  {									 \
     .integer = {							 \
       .pvalue = &oname,							 \
       .def = odef,							 \
@@ -321,7 +325,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,					      \
   .category = ocat,					      \
   .type = COT_BOOLEAN,					      \
-  .o = {						      \
+  {							      \
     .boolean = {					      \
       .pvalue = &oname,					      \
       .def = odef,					      \
@@ -336,7 +340,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,					     \
   .category = ocat,					     \
   .type = COT_STRING,					     \
-  .o = {						     \
+  {							     \
     .string = {						     \
       .pvalue = oname,					     \
       .size = sizeof(oname),				     \
@@ -353,7 +357,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,					     \
   .category = ocat,					     \
   .type = COT_PASSWORD,					     \
-  .o = {						     \
+  {							     \
     .string = {						     \
       .pvalue = oname,					     \
       .size = sizeof(oname),				     \
@@ -370,7 +374,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,							\
   .category = ocat,							\
   .type = COT_STRING,							\
-  .o = {								\
+  {									\
     .string = {								\
       .pvalue = oname,							\
       .size = sizeof(oname),						\
@@ -381,20 +385,35 @@ static const char *get_filter_value_name(enum filter_value value)
   .change_callback = ocb,						\
 }
 
-#define GEN_NUM_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb)	\
-{ .name = #oname,							\
-  .description = odesc,							\
-  .help_text = ohelp,							\
-  .category = ocat,							\
-  .type = COT_NUMBER_LIST,						\
-  .o = {								\
-    .list = {								\
-      .pvalue = (int *)(void *) &oname,					\
-      .def = odef,							\
-      .str_accessor = (const char *(*)(int)) oacc			\
-    }									\
-  },									\
-  .change_callback = ocb,						\
+#define GEN_STR_VEC_OPTION(oname, odesc, ohelp, ocat, odef, ocb) \
+{ .name = #oname,						 \
+  .description = odesc,						 \
+  .help_text = ohelp,						 \
+  .category = ocat,						 \
+  .type = COT_STRING_VEC,					 \
+  {								 \
+    .string_vec = {						 \
+      .pvector = &oname,						 \
+      .def = odef,						 \
+    }								 \
+  },								 \
+  .change_callback = ocb,					 \
+}
+
+#define GEN_ENUM_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb) \
+{ .name = #oname,							 \
+  .description = odesc,							 \
+  .help_text = ohelp,							 \
+  .category = ocat,							 \
+  .type = COT_ENUM_LIST,						 \
+  {									 \
+    .enum_list = {							 \
+      .pvalue = (int *)(void *) &oname,					 \
+      .def = odef,							 \
+      .str_accessor = (const char *(*)(int)) oacc			 \
+    }									 \
+  },									 \
+  .change_callback = ocb,						 \
 }
 
 #define GEN_FILTER_OPTION(oname, odesc, ohelp, ocat, odef, ochange, oacc, ocb) \
@@ -403,7 +422,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,							       \
   .category = ocat,							       \
   .type = COT_FILTER,							       \
-  .o = {								       \
+  {									       \
     .filter = {								       \
       .pvalue = &oname,							       \
       .def = odef,							       \
@@ -421,7 +440,7 @@ static const char *get_filter_value_name(enum filter_value value)
   .help_text = ohelp,							    \
   .category = ocat,							    \
   .type = COT_VOLUME,							    \
-  .o = {								    \
+  {									    \
     .integer = {							    \
       .pvalue = &oname,							    \
       .def = odef,							    \
@@ -514,14 +533,14 @@ static struct client_option client_options[] = {
                   N_("If this option is enabled, the client won't show the "
 		     "vote bar if you are not a player."),
 		  COC_GRAPHICS, FALSE, NULL),
-  GEN_NUM_LIST_OPTION(player_colors_mode, N_("Player colors display mode"),
-		      N_("This setting controls how the player colors are "
-			 "attributed to every player. Also, it controls "
-			 "how tiles, cities, and units are drawn in the map "
-			 "overview window"),
-		      COC_GRAPHICS, PCM_CLASSIC,
-		      player_colors_mode_get_name,
-		      player_colors_mode_option_callback),
+  GEN_ENUM_LIST_OPTION(player_colors_mode, N_("Player colors display mode"),
+		       N_("This setting controls how the player colors are "
+			  "attributed to every player. Also, it controls "
+			  "how tiles, cities, and units are drawn in the map "
+			  "overview window"),
+		       COC_GRAPHICS, PCM_CLASSIC,
+		       player_colors_mode_get_name,
+		       player_colors_mode_option_callback),
 
   GEN_BOOL_OPTION(ai_popup_windows, N_("Popup dialogs in AI Mode"),
 		  N_("Disable this option if you do not want to "
@@ -692,29 +711,30 @@ static struct client_option client_options[] = {
 		     "saved when the client disconnects form the server."),
 		  COC_NETWORK, TRUE, NULL),
 
-  GEN_STR_OPTION(default_user_nation, N_("Default player's nation(s)"),
-		 N_("A list of nations names whose the first existant nation "
-		    "will be proposed to you by default."),
-		 COC_GAMEPLAY, "", NULL),
-  GEN_STR_OPTION(default_user_tech_goal, N_("Default player's technology goal"),
-		 N_("This technology name will be used as first technology "
-		    "goal when the game will start."),
-		 COC_GAMEPLAY, "", NULL),
+  GEN_STR_VEC_OPTION(default_user_nation, N_("Default player's nation(s)"),
+		     N_("A list of nations names whose the first existant "
+			"nation will be proposed to you by default."),
+		     COC_GAMEPLAY, NULL, NULL),
+  GEN_STR_VEC_OPTION(default_user_tech_goal,
+		     N_("Default player's technology goal(s)"),
+		     N_("The first existant technology will be used as first "
+			"technology goal when the game will start."),
+		     COC_GAMEPLAY, NULL, NULL),
   GEN_BOOL_OPTION(random_leader, N_("Select random leader name"),
 		  N_("If this option is disabled, your login name will be used "
 		     "as default to select your leader name."),
 		  COC_GAMEPLAY, FALSE, NULL),
-  GEN_STR_OPTION(city_name_formats, N_("City name formats"),
-		 N_("Here set your different city name formats for "
-                    "auto-naming, separed by a ; . The format may contain "
-		    "this following escape sequences:\n"
-		    " %c: the continent number.\n"
-		    " %C: the continent number as string.\n"
-		    " %n: the city numero on this continent.\n"
-		    " %n: the city numero on this continent as string.\n"
-		    " %g: a global numero.\n"
-		    " %G: a global numero as string."),
-		 COC_GAMEPLAY, "island%c-city%2n;city%3g", NULL),
+  GEN_STR_VEC_OPTION(city_name_formats, N_("City name formats"),
+		     N_("Here set your different city name formats for "
+			"auto-naming. The format may contain this following "
+			"escape sequences:\n"
+			" %c: the continent number.\n"
+			" %C: the continent number as a string.\n"
+			" %n: the city numero on this continent.\n"
+			" %n: the city numero on this continent as a string.\n"
+			" %g: a global numero.\n"
+			" %G: a global numero as a string."),
+		 COC_GAMEPLAY, default_city_name_formats, NULL),
   GEN_BOOL_OPTION(autowakeup_state, N_("Autowakeup sentried units"),
 		  N_("If disable, sentried units cannot wake up. "
 		     "All sentried units are considered as sleeping."),
@@ -724,23 +744,24 @@ static struct client_option client_options[] = {
 		     "autoattack after every move. Note that will cancel "
 		     "the path for the next turn."),
 		  COC_GAMEPLAY, FALSE, NULL),
-  GEN_NUM_LIST_OPTION(default_caravan_action, N_("Caravan action upon arrival"),
-		      N_("The caravans will execute this order when they "
-			 "will arrive to a destination city."),
-		      COC_GAMEPLAY, DCA_POPUP_DIALOG,
-		      get_caravan_action_name, NULL),
-  GEN_NUM_LIST_OPTION(default_diplomat_unit_action,
-		      N_("Diplomat action upon unit arrival"),
-		      N_("Diplomats execute this order when they "
-			 "arrive at another player's unit."),
-		      COC_GAMEPLAY, DDUA_POPUP_DIALOG,
-		      get_diplomat_action_upon_unit_name, NULL),
-  GEN_NUM_LIST_OPTION(default_diplomat_city_action,
-		     N_("Diplomat action upon city arrival"),
-		     N_("Diplomat execute this order when they "
-			"arrive at another player's city."),
-		     COC_GAMEPLAY, DDCA_POPUP_DIALOG,
-		     get_diplomat_action_upon_city_name, NULL),
+  GEN_ENUM_LIST_OPTION(default_caravan_action,
+		       N_("Caravan action upon arrival"),
+		       N_("The caravans will execute this order when they "
+			  "will arrive to a destination city."),
+		       COC_GAMEPLAY, DCA_POPUP_DIALOG,
+		       get_caravan_action_name, NULL),
+  GEN_ENUM_LIST_OPTION(default_diplomat_unit_action,
+		       N_("Diplomat action upon unit arrival"),
+		       N_("Diplomats execute this order when they "
+			  "arrive at another player's unit."),
+		       COC_GAMEPLAY, DDUA_POPUP_DIALOG,
+		       get_diplomat_action_upon_unit_name, NULL),
+  GEN_ENUM_LIST_OPTION(default_diplomat_city_action,
+		       N_("Diplomat action upon city arrival"),
+		       N_("Diplomat execute this order when they "
+			  "arrive at another player's city."),
+		       COC_GAMEPLAY, DDCA_POPUP_DIALOG,
+		       get_diplomat_action_upon_city_name, NULL),
   GEN_BOOL_OPTION(default_diplomat_ignore_allies,
 		  N_("Diplomat ignores allies"),
 		  N_("If this option is set, diplomats and spies "
@@ -748,11 +769,11 @@ static struct client_option client_options[] = {
 		     "they will pass over them instead of performing "
 		     "an action."),
 		  COC_GAMEPLAY, TRUE, NULL),
-  GEN_NUM_LIST_OPTION(default_action_type, N_("New unit default action"),
-		      N_("The new created units will do this activity "
-			 "automaticely."),
-		      COC_GAMEPLAY, ACTION_IDLE,
-		      get_new_unit_action_name, NULL),
+  GEN_ENUM_LIST_OPTION(default_action_type, N_("New unit default action"),
+		       N_("The new created units will do this activity "
+			  "automaticely."),
+		       COC_GAMEPLAY, ACTION_IDLE,
+		       get_new_unit_action_name, NULL),
   GEN_BOOL_OPTION(default_action_locked, N_("Lock the new unit default action"),
 		  N_("If this setting is disabled, the new unit default action "
 		     "will be canceled every turn"),
@@ -763,16 +784,16 @@ static struct client_option client_options[] = {
 		     "default action."),
 		  COC_GAMEPLAY, TRUE, NULL),
 
-  GEN_NUM_LIST_OPTION(multi_select_place, N_("Multi-selection place mode"),
-		      N_("This option affects where the units "
-			 "will be selected."),
-		      COC_MULTI_SELECTION, PLACE_ON_CONTINENT,
-		      get_place_mode_name, NULL),
-  GEN_NUM_LIST_OPTION(multi_select_utype, N_("Multi-selection unit type mode"),
-		      N_("This option affects what kinds of units "
-			 "will be selected."),
-		      COC_MULTI_SELECTION, UTYPE_SAME_TYPE,
-		      get_utype_mode_name, NULL),
+  GEN_ENUM_LIST_OPTION(multi_select_place, N_("Multi-selection place mode"),
+		       N_("This option affects where the units "
+			  "will be selected."),
+		       COC_MULTI_SELECTION, PLACE_ON_CONTINENT,
+		       get_place_mode_name, NULL),
+  GEN_ENUM_LIST_OPTION(multi_select_utype, N_("Multi-selection unit type mode"),
+		       N_("This option affects what kinds of units "
+			  "will be selected."),
+		       COC_MULTI_SELECTION, UTYPE_SAME_TYPE,
+		       get_utype_mode_name, NULL),
   GEN_BOOL_OPTION(multi_select_count_all,
 		  N_("Count all units in the selection"),
 		  N_("If this option is enabled, the unit count "
@@ -833,16 +854,16 @@ static struct client_option client_options[] = {
 		    "delayed goto queue can exexute at once. 0 means "
 		    "unlimited units."),
 		 COC_DELAYED_GOTO, 0, 0, 1000, NULL),
-  GEN_NUM_LIST_OPTION(delayed_goto_place, N_("Delayed goto place mode"),
-		      N_("This option affects where the units "
-			 "will be selected."),
-		      COC_DELAYED_GOTO, PLACE_ON_TILE,
-		      get_place_mode_name, NULL),
-  GEN_NUM_LIST_OPTION(delayed_goto_utype, N_("Delayed goto unit type mode"),
-		      N_("This option affects what kinds of units will be "
-			 "selected."),
-		      COC_DELAYED_GOTO, UTYPE_SAME_TYPE,
-		      get_utype_mode_name, NULL),
+  GEN_ENUM_LIST_OPTION(delayed_goto_place, N_("Delayed goto place mode"),
+		       N_("This option affects where the units "
+			  "will be selected."),
+		       COC_DELAYED_GOTO, PLACE_ON_TILE,
+		       get_place_mode_name, NULL),
+  GEN_ENUM_LIST_OPTION(delayed_goto_utype, N_("Delayed goto unit type mode"),
+		       N_("This option affects what kinds of units will be "
+			  "selected."),
+		       COC_DELAYED_GOTO, UTYPE_SAME_TYPE,
+		       get_utype_mode_name, NULL),
   GEN_FILTER_OPTION(delayed_goto_inclusive_filter,
 		    N_("Delayed goto inclusive filter"),
 		    N_("This condition filter will be used to determinate "
@@ -900,6 +921,12 @@ static struct client_option client_options[] = {
 #undef GEN_INT_OPTION
 #undef GEN_BOOL_OPTION
 #undef GEN_STR_OPTION
+#undef GEN_PWD_OPTION
+#undef GEN_STR_LIST_OPTION
+#undef GEN_STR_VEC_OPTION
+#undef GEN_ENUM_LIST_OPTION
+#undef GEN_FILTER_OPTION
+#undef GEN_VOLUME_OPTION
 
 struct client_option *const options = client_options;
 const int num_options = ARRAY_SIZE(client_options);
@@ -1164,7 +1191,7 @@ void init_messages_where(void)
 	    events[i].descr_orig, events[i].descr);
   }
 
-  for(i=0;i<E_LAST;i++)  {
+  for (i = 0; i < E_LAST; i++)  {
     sorted_events[i] = i;
   }
   qsort(sorted_events, E_LAST, sizeof(int), compar_message_texts);
@@ -1180,79 +1207,49 @@ void client_options_init(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_BOOLEAN:
-      *o->o.boolean.pvalue = o->o.boolean.def;
-      break;
+      *o->boolean.pvalue = o->boolean.def;
+      continue;
     case COT_INTEGER:
     case COT_VOLUME:
-      assert(o->o.integer.def >= o->o.integer.min);
-      assert(o->o.integer.def <= o->o.integer.max);
-      *o->o.integer.pvalue = o->o.integer.def;
-      break;
+      assert(o->integer.def >= o->integer.min);
+      assert(o->integer.def <= o->integer.max);
+      *o->integer.pvalue = o->integer.def;
+      continue;
     case COT_STRING:
     case COT_PASSWORD:
       /* HACK: fix default username */
-      if (o->o.string.pvalue == default_user_name) {
-	o->o.string.def = user_username();
+      if (o->string.pvalue == default_user_name) {
+	o->string.def = user_username();
       }
       /* HACK: fix default tileset */
-      if (o->o.string.pvalue == default_tileset_name) {
-	o->o.string.def = get_default_tilespec_name();
+      if (o->string.pvalue == default_tileset_name) {
+	o->string.def = get_default_tilespec_name();
       }
-      mystrlcpy(o->o.string.pvalue, o->o.string.def, o->o.string.size);
-      break;
-    case COT_NUMBER_LIST:
-      assert(NULL != o->o.list.str_accessor);
-      assert(NULL != o->o.list.str_accessor(o->o.list.def));
-      *o->o.list.pvalue = o->o.list.def;
-      break;
+      mystrlcpy(o->string.pvalue, o->string.def, o->string.size);
+      continue;
+    case COT_STRING_VEC:
+      *o->string_vec.pvector = string_vector_new();
+      if (o->string_vec.def) {
+	/* Fill with default values. */
+	string_vector_store(*o->string_vec.pvector, o->string_vec.def, -1);
+	string_vector_remove_empty(*o->string_vec.pvector);
+      }
+      continue;
+    case COT_ENUM_LIST:
+      assert(NULL != o->enum_list.str_accessor);
+      assert(NULL != o->enum_list.str_accessor(o->enum_list.def));
+      *o->enum_list.pvalue = o->enum_list.def;
+      continue;
     case COT_FILTER:
-      *o->o.filter.pvalue = o->o.filter.def;      
-      break;
+      *o->filter.pvalue = o->filter.def;      
+      continue;
     }
+    die("Option type not supported for '%s' (%d).", o->name, o->type);
   } client_options_iterate_end;
 
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
     init_worklist(&global_worklists[i]);
   }
-}
-
-/****************************************************************
-  ...
-*****************************************************************/
-filter secfile_lookup_filter_default(struct section_file *sf, filter def,
-				     struct client_option *o,
-				     const char *path, ...)
-{
-  va_list args;
-  char buf[256];
-  char **vec;
-  int i, size;
-  bool ok = FALSE;
-  filter ret = 0, f;
-
-  assert(o && o->type == COT_FILTER);
-
-  va_start(args, path);
-  my_vsnprintf(buf, sizeof(buf), path, args);
-  va_end(args);
-
-  vec = secfile_lookup_str_vec(sf, &size, "%s", buf);
-  if (!vec || !size) {
-    return def;
-  }
-
-  for (i = 0; i < size; i++) {
-    f = filter_revert_str_accessor(o->o.filter.str_accessor, vec[i]);
-    if (f) {
-      o->o.filter.change(&ret, f);
-      ok = TRUE;
-    } else {
-      freelog(LOG_NORMAL, _("The value '%s' is not supported for '%s'"),
-	      vec[i], o->name);
-    }
-  }
-
-  return ok ? ret : def;
 }
 
 /****************************************************************
@@ -1339,13 +1336,145 @@ const char *option_file_name(void)
 }
 
 /****************************************************************
+  This loads a boolean option from the rc file.
+*****************************************************************/
+bool load_option_bool(struct section_file *file,
+		      struct client_option *o, bool def)
+{
+  assert(file != NULL);
+  assert(o != NULL && o->type == COT_BOOLEAN);
+
+  return secfile_lookup_bool_default(file, def, "client.%s", o->name);
+}
+
+/****************************************************************
+  This loads a integer option from the rc file.
+*****************************************************************/
+int load_option_int(struct section_file *file,
+		    struct client_option *o, int def)
+{
+  int value;
+
+  assert(file != NULL);
+  assert(o != NULL && (o->type == COT_INTEGER || o->type == COT_VOLUME));
+
+  value = secfile_lookup_int_default(file, def, "client.%s", o->name);
+
+  if (value < o->integer.min || value > o->integer.max) {
+    freelog(LOG_ERROR,
+	    "The value %d for option '%s' is out of scale [%d, %d].",
+	    value, o->name, o->integer.min, o->integer.max);
+    return def;
+  }
+
+  return value;
+}
+
+/****************************************************************
+  This loads a string option from the rc file.
+*****************************************************************/
+const char *load_option_string(struct section_file *file,
+			       struct client_option *o, const char *def)
+{
+  assert(file != NULL);
+  assert(o != NULL && (o->type == COT_STRING || o->type == COT_PASSWORD));
+
+  return secfile_lookup_str_default(file, def, "client.%s", o->name);
+}
+
+/****************************************************************
+  This loads a string vector option from the rc file. The value is
+  stored in vector.
+*****************************************************************/
+void load_option_string_vec(struct section_file *file,
+			    struct client_option *o,
+			    const char *const *def,
+			    struct string_vector *vector)
+{
+  char **vec;
+  int size;
+
+  assert(file != NULL);
+  assert(o != NULL && o->type == COT_STRING_VEC);
+  assert(vector != NULL);
+
+  vec = secfile_lookup_str_vec(file, &size, "client.%s", o->name);
+  if (!vec || !size) {
+    if (def) {
+      string_vector_store(vector, def, -1);
+      string_vector_remove_empty(vector);
+    } else {
+      string_vector_remove_all(vector);
+    }
+    return;
+  }
+
+  string_vector_store(vector, (const char **) vec, size);
+  string_vector_remove_empty(vector);
+}
+
+/****************************************************************
+  This loads an enum option (saved as a string) from the rc file.
+*****************************************************************/
+int load_option_enum_list(struct section_file *file,
+			  struct client_option *o, int def)
+{
+  int value;
+
+  assert(file != NULL);
+  assert(o != NULL && o->type == COT_ENUM_LIST);
+
+  value = revert_str_accessor(o->enum_list.str_accessor,
+			      secfile_lookup_str_default(file, NULL,
+							 "client.%s", o->name));
+  if (value == -1) {
+    /* Failed, see comment in revert_str_accessor(). */
+    return def;
+  }
+
+  return value;
+}
+
+/****************************************************************
+  This loads a filter (saved as many strings) option from the rc file.
+*****************************************************************/
+filter load_option_filter(struct section_file *file,
+			  struct client_option *o, filter def)
+{
+  char **vec;
+  int i, size;
+  bool ok = FALSE;
+  filter ret = 0, f;
+
+  assert(file != NULL);
+  assert(o != NULL && o->type == COT_FILTER);
+  
+  vec = secfile_lookup_str_vec(file, &size, "client.%s", o->name);
+  if (!vec || !size) {
+    return def;
+  }
+
+  for (i = 0; i < size; i++) {
+    f = filter_revert_str_accessor(o->filter.str_accessor, vec[i]);
+    if (f) {
+      o->filter.change(&ret, f);
+      ok = TRUE;
+    } else {
+      freelog(LOG_NORMAL, _("The value '%s' is not supported for option '%s'."),
+	      vec[i], o->name);
+    }
+  }
+
+  return ok ? ret : def;
+}
+
+/****************************************************************
  this loads from the rc file any options which are not ruleset specific 
  it is called on client init.
 *****************************************************************/
 void load_general_options(void)
 {
   struct section_file sf;
-  const char * const prefix = "client";
   const char *name;
   int i, num;
   view_option *v;
@@ -1364,64 +1493,47 @@ void load_general_options(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_BOOLEAN:
-      *o->o.boolean.pvalue =
-	  secfile_lookup_bool_default(&sf, o->o.boolean.def, "%s.%s",
-				      prefix, o->name);
+      *o->boolean.pvalue = load_option_bool(&sf, o, o->boolean.def);
       break;
     case COT_INTEGER:
     case COT_VOLUME:
-      *o->o.integer.pvalue =
-	  secfile_lookup_int_default(&sf, o->o.integer.def, "%s.%s",
-				      prefix, o->name);
-      if (*o->o.integer.pvalue < o->o.integer.min
-	  || *o->o.integer.pvalue > o->o.integer.max) {
-	freelog(LOG_ERROR, "The option '%s' (%d) is out of scale [%d, %d], "
-		"using default...", o->name, *o->o.integer.pvalue,
-		o->o.integer.min, o->o.integer.max);
-	*o->o.integer.pvalue = o->o.integer.def;
-      }
+      *o->integer.pvalue = load_option_int(&sf, o, o->integer.def);
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      mystrlcpy(o->o.string.pvalue,
-		secfile_lookup_str_default(&sf, o->o.string.def, "%s.%s",
-                     prefix, o->name), o->o.string.size);
+      mystrlcpy(o->string.pvalue, load_option_string(&sf, o, o->string.def),
+		o->string.size);
       break;
-    case COT_NUMBER_LIST:
-      *o->o.list.pvalue =
-	  revert_str_accessor(o->o.list.str_accessor,
-			      secfile_lookup_str_default(&sf, NULL, "%s.%s",
-							 prefix, o->name));
-      if (*o->o.list.pvalue == -1) {
-	*o->o.list.pvalue = o->o.list.def;
-      }
+    case COT_STRING_VEC:
+      load_option_string_vec(&sf, o, o->string_vec.def, *o->string_vec.pvector);
+      break;
+    case COT_ENUM_LIST:
+      *o->enum_list.pvalue =
+	  load_option_enum_list(&sf, o, o->enum_list.def);
       break;
     case COT_FILTER:
-      *o->o.filter.pvalue = secfile_lookup_filter_default(&sf, o->o.filter.def,
-							  o, "%s.%s",
-							  prefix, o->name);
+      *o->filter.pvalue = load_option_filter(&sf, o, o->filter.def);
       break;
     }
   } client_options_iterate_end;
   for (v = view_options; v->name; v++) {
     *(v->p_value) =
-	secfile_lookup_bool_default(&sf, *(v->p_value), "%s.%s", prefix,
-				    v->name);
+	secfile_lookup_bool_default(&sf, *(v->p_value), "client.%s", v->name);
   }
   for (i = 0; i < E_LAST; i++) {
     messages_where[i] =
       secfile_lookup_int_default(&sf, messages_where[i],
-				 "%s.message_where_%02d", prefix, i);
+				 "client.message_where_%02d", i);
   }
   for (i = 1; i < num_city_report_spec(); i++) {
     bool *ip = city_report_spec_show_ptr(i);
-    *ip = secfile_lookup_bool_default(&sf, *ip, "%s.city_report_%s", prefix,
-				     city_report_spec_tagname(i));
+    *ip = secfile_lookup_bool_default(&sf, *ip, "client.city_report_%s",
+				      city_report_spec_tagname(i));
   }
   
   for(i = 1; i < num_player_dlg_columns; i++) {
     bool *show = &(player_dlg_columns[i].show);
-    *show = secfile_lookup_bool_default(&sf, *show, "%s.player_dlg_%s", prefix,
+    *show = secfile_lookup_bool_default(&sf, *show, "client.player_dlg_%s",
                                         player_dlg_columns[i].tagname);
   }
 
@@ -1482,18 +1594,29 @@ void save_options(void)
   client_options_iterate(o) {
     switch (o->type) {
     case COT_BOOLEAN:
-      secfile_insert_bool(&sf, *o->o.boolean.pvalue, "client.%s", o->name);
+      secfile_insert_bool(&sf, *o->boolean.pvalue, "client.%s", o->name);
       break;
     case COT_INTEGER:
     case COT_VOLUME:
-      secfile_insert_int(&sf, *o->o.integer.pvalue, "client.%s", o->name);
+      secfile_insert_int(&sf, *o->integer.pvalue, "client.%s", o->name);
       break;
     case COT_STRING:
     case COT_PASSWORD:
-      secfile_insert_str(&sf, o->o.string.pvalue, "client.%s", o->name);
+      secfile_insert_str(&sf, o->string.pvalue, "client.%s", o->name);
       break;
-    case COT_NUMBER_LIST:
-      secfile_insert_str(&sf, o->o.list.str_accessor(*o->o.list.pvalue),
+    case COT_STRING_VEC:
+      if (string_vector_size(*o->string_vec.pvector) > 0) {
+	secfile_insert_str_vec(&sf, string_vector_data(*o->string_vec.pvector),
+			       string_vector_size(*o->string_vec.pvector),
+			       "client.%s", o->name);
+      } else {
+	/* Insert an empty string that will be removed at next load
+	 * to overwrite the default. */
+	secfile_insert_str(&sf, "", "client.%s", o->name);
+      }
+      break;
+    case COT_ENUM_LIST:
+      secfile_insert_str(&sf, o->enum_list.str_accessor(*o->enum_list.pvalue),
 			 "client.%s", o->name);
       break;
     case COT_FILTER:
@@ -1501,12 +1624,12 @@ void save_options(void)
 #define MAX_VALUES 64
 	const char *values[MAX_VALUES]; 
 	size_t size = 0, vec;
-	filter f = *o->o.filter.pvalue;
+	filter f = *o->filter.pvalue;
 
-	for (f = *o->o.filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
+	for (f = *o->filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
 	     f >>= 1, vec++) {
 	  if (f & 1) {
-	    values[size++] = o->o.filter.str_accessor(1 << vec);
+	    values[size++] = o->filter.str_accessor(1 << vec);
 	  }
 	}
 	if (f != 0) {

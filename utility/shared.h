@@ -325,6 +325,8 @@ struct string_vector *string_vector_new(void);
 void string_vector_destroy(struct string_vector *psv);
 
 void string_vector_reserve(struct string_vector *psv, size_t reserve);
+void string_vector_store(struct string_vector *psv,
+			 const char *const *vec, size_t size);
 void string_vector_prepend(struct string_vector *psv, const char *string);
 void string_vector_append(struct string_vector *psv, const char *string);
 void string_vector_insert(struct string_vector *psv,
@@ -333,8 +335,12 @@ bool string_vector_set(struct string_vector *psv,
 		       size_t index, const char *string);
 bool string_vector_remove(struct string_vector *psv, size_t index);
 void string_vector_remove_all(struct string_vector *psv);
+void string_vector_remove_empty(struct string_vector *psv);
+void string_vector_copy(struct string_vector *dest,
+			const struct string_vector *src);
 
 size_t string_vector_size(const struct string_vector *psv);
+const char *const *string_vector_data(const struct string_vector *psv);
 bool string_vector_index_valid(const struct string_vector *psv, size_t index);
 const char *string_vector_get(const struct string_vector *psv, size_t index);
 

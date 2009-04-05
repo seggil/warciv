@@ -41,7 +41,8 @@ enum client_option_type {
   COT_INTEGER,
   COT_STRING,
   COT_PASSWORD,
-  COT_NUMBER_LIST,
+  COT_STRING_VEC,
+  COT_ENUM_LIST,
   COT_FILTER,
   COT_VOLUME
 };
@@ -80,13 +81,17 @@ struct client_option {
       const char **(*const val_accessor)(void);
     } string;
     struct {
+      struct string_vector **pvector;
+      const char *const *const def;
+    } string_vec;
+    struct {
       int *const pvalue;
       const int def;
       /* 
        * A function to return static string values, or NULL for none. 
        */
       const char *(*const str_accessor)(int);
-    } list;
+    } enum_list;
     struct {
       filter *const pvalue;
       const filter def;
@@ -101,7 +106,7 @@ struct client_option {
       const char *(*const str_accessor)(filter);
       filter temp;
     } filter;
-  } o;
+  };
   void (*const change_callback)(struct client_option *option);
 
   /* volatile */
@@ -124,8 +129,6 @@ extern const int num_options;
 
 extern char default_user_name[512];
 extern char default_password[512];
-extern char default_user_nation[512];
-extern char default_user_tech_goal[512];
 extern char default_server_host[512];
 extern int default_server_port; 
 extern char default_metaserver[512];
@@ -164,7 +167,9 @@ extern bool update_city_text_in_refresh_tile;
 extern bool keyboardless_goto;
 extern bool show_task_icons;
 extern char chat_time_format[128];
-extern char city_name_formats[128];
+extern struct string_vector *city_name_formats;
+extern struct string_vector *default_user_nation;
+extern struct string_vector *default_user_tech_goal;
 extern bool show_split_message_window;
 extern bool do_not_recenter_overview;
 extern bool use_digits_short_cuts;
@@ -235,10 +240,27 @@ unsigned int get_default_messages_where(enum event_type type);
 void init_messages_where(void);
 
 void client_options_init(void);
+void client_options_free(void);
 const char *option_file_name(void);
-void load_general_options(void);
 void check_ruleset_specific_options(void);
 void save_options(void);
+
+void load_general_options(void);
+bool load_option_bool(struct section_file *file,
+		      struct client_option *o, bool def);
+int load_option_int(struct section_file *file,
+		    struct client_option *o, int def);
+const char *load_option_string(struct section_file *file,
+			       struct client_option *o, const char *def);
+void load_option_string_vec(struct section_file *file,
+			    struct client_option *o,
+			    const char *const *def,
+			    struct string_vector *vector);
+int load_option_enum_list(struct section_file *file,
+			  struct client_option *o, int def);
+filter load_option_filter(struct section_file *file,
+			  struct client_option *o, filter def);
+
 const char *get_sound_tag_for_event(enum event_type event);
 bool is_city_event(enum event_type event);
 const char *get_option_category_name(enum client_option_category category);
@@ -249,11 +271,6 @@ void load_global_worklist(struct section_file *file, const char *path,
 			  int wlinx, struct worklist *pwl);
 bool check_global_worklist(struct worklist *pwl);
 
-filter secfile_lookup_filter_default(struct section_file *sf, filter def,
-				     struct client_option *o,
-				     const char *path, ...)
-				     fc__attribute((__format__
-						    (__printf__, 4, 5)));
 int revert_str_accessor(const char *(*str_accessor)(int), const char *str);
 filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
 				  const char *str);

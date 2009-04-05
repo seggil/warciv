@@ -317,7 +317,7 @@ void audio_real_init(void)
 **************************************************************************/
 void audio_change_soundset(struct client_option *option)
 {
-  audio_set_soundset(option->o.string.pvalue, option->o.string.size);
+  audio_set_soundset(option->string.pvalue, option->string.size);
 }
 
 /**************************************************************************
@@ -325,7 +325,7 @@ void audio_change_soundset(struct client_option *option)
 **************************************************************************/
 void audio_change_plugin(struct client_option *option)
 {
-  audio_set_plugin(option->o.string.pvalue, option->o.string.size);
+  audio_set_plugin(option->string.pvalue, option->string.size);
 }
 
 /**************************************************************************
@@ -477,6 +477,6 @@ void audio_set_volume(int volume)
 **************************************************************************/
 void audio_change_volume(struct client_option *option)
 {
-  audio_set_volume(*option->o.integer.pvalue);
+  audio_set_volume(*option->integer.pvalue);
 }
 #endif /* AUDIO_VOLUME */

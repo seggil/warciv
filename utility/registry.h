@@ -61,7 +61,7 @@ void secfile_insert_str_comment(struct section_file *my_section_file,
 				const char *path, ...)
                                 fc__attribute((__format__ (__printf__, 4, 5)));
 void secfile_insert_str_vec(struct section_file *my_section_file, 
-			    const char **values, int dim,
+			    const char *const *values, int dim,
 			    const char *path, ...)
                             fc__attribute((__format__ (__printf__, 4, 5)));
 

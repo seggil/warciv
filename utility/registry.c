@@ -1030,7 +1030,7 @@ void secfile_insert_str_comment(struct section_file *my_section_file,
   section_file for both reading and writing.
 **************************************************************************/
 void secfile_insert_str_vec(struct section_file *my_section_file,
-			    const char **values, int dim,
+			    const char *const *values, int dim,
 			    const char *path, ...)
 {
   struct entry *pentry;

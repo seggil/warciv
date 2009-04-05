@@ -1714,7 +1714,9 @@ void string_vector_destroy(struct string_vector *psv)
 **************************************************************************/
 void string_vector_reserve(struct string_vector *psv, size_t reserve)
 {
-  if (reserve == 0) {
+  if (reserve == psv->size) {
+    return;
+  } else if (reserve == 0) {
     string_vector_remove_all(psv);
     return;
   } else if (!psv->vec) {
@@ -1734,6 +1736,28 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
     psv->vec = fc_realloc(psv->vec, reserve * sizeof(char *));
   }
   psv->size = reserve;
+}
+
+/**************************************************************************
+  Stores the string vector from a normal vector. If size == -1, it will
+  assume it is a NULL terminated vector.
+**************************************************************************/
+void string_vector_store(struct string_vector *psv,
+			 const char *const *vec, size_t size)
+{
+  if (size == -1) {
+    string_vector_remove_all(psv);
+    for (; *vec; vec++) {
+      string_vector_append(psv, *vec);
+    }
+  } else {
+    size_t i;
+
+    string_vector_reserve(psv, size);
+    for (i = 0; i < size; i++, vec++) {
+      string_vector_set(psv, i, *vec);
+    }
+  }
 }
 
 /**************************************************************************
@@ -1798,6 +1822,12 @@ bool string_vector_remove(struct string_vector *psv, size_t index)
     return FALSE;
   }
 
+  if (psv->size == 1) {
+    /* It is the last. */
+    string_vector_remove_all(psv);
+    return TRUE;
+  }
+
   string_free(psv->vec[index]);
   memmove(psv->vec + index, psv->vec + index + 1,
 	  (psv->size - index - 1) * sizeof(char *));
@@ -1828,11 +1858,72 @@ void string_vector_remove_all(struct string_vector *psv)
 }
 
 /**************************************************************************
+  Remove all empty strings from the vector and removes all leading and
+  trailing spaces.
+**************************************************************************/
+void string_vector_remove_empty(struct string_vector *psv)
+{
+  size_t i;
+  char *str;
+
+  if (!psv->vec) {
+    return;
+  }
+
+  for (i = 0; i < psv->size;) {
+    str = psv->vec[i];
+
+    if (!str) {
+      string_vector_remove(psv, i);
+      continue;
+    }
+
+    remove_leading_trailing_spaces(str);
+    if (str[0] == '\0') {
+      string_vector_remove(psv, i);
+      continue;
+    }
+
+    i++;
+  }
+}
+
+/**************************************************************************
+  Copy a string vector.
+**************************************************************************/
+void string_vector_copy(struct string_vector *dest,
+			const struct string_vector *src)
+{
+  size_t i;
+  char **p;
+  char *const *l;
+
+  if (!src->vec) {
+    string_vector_remove_all(dest);
+    return;
+  }
+
+  string_vector_reserve(dest, src->size);
+  for (i = 0, p = dest->vec, l = src->vec; i < dest->size; i++, p++, l++) {
+    string_free(*p);
+    *p = string_duplicate(*l);
+  }
+}
+
+/**************************************************************************
   Returns the size of the vector.
 **************************************************************************/
 size_t string_vector_size(const struct string_vector *psv)
 {
   return psv->size;
+}
+
+/**************************************************************************
+  Returns the datas of the vector.
+**************************************************************************/
+const char *const *string_vector_data(const struct string_vector *psv)
+{
+  return (const char **) psv->vec;
 }
 
 /**************************************************************************
