@@ -3658,6 +3658,8 @@ void game_load(struct section_file *file)
 	GAME_DEFAULT_TECHLEAKAGERATE, "game.techleakagerate");
     game.server.triremestyle = secfile_lookup_int_default(file,
 	GAME_DEFAULT_TRIREMESTYLE, "game.triremestyle");
+    game.server.fracmovestyle = secfile_lookup_int_default(file,
+	GAME_DEFAULT_FRACMOVESTYLE, "game.fracmovestyle");
 
     /* Warserver 'ignoreruleset' settings. */
     game.ext_info.ignoreruleset = secfile_lookup_bool_default(file,
@@ -4121,6 +4123,8 @@ void game_save(struct section_file *file)
 		     "game.techleakagerate");
   secfile_insert_int(file, game.server.triremestyle,
 		     "game.triremestyle");
+  secfile_insert_int(file, game.server.fracmovestyle,
+		     "game.fracmovestyle");
 
   /* Warserver 'ignoreruleset' settings. */
   secfile_insert_bool(file, game.ext_info.ignoreruleset,
