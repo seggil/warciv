@@ -317,5 +317,55 @@ typedef void (*data_free_func_t) (void *data);
 #define UINT16_T_TO_PTR(i) ((void *)(long)(i))
 #define PTR_TO_UINT32_T(p) ((uint32_t)(long)(p))
 #define UINT32_T_TO_PTR(i) ((void *)(long)(i))
-  
+
+/* String vector. */
+struct string_vector;
+
+struct string_vector *string_vector_new(void);
+void string_vector_destroy(struct string_vector *psv);
+
+void string_vector_reserve(struct string_vector *psv, size_t reserve);
+void string_vector_prepend(struct string_vector *psv, const char *string);
+void string_vector_append(struct string_vector *psv, const char *string);
+void string_vector_insert(struct string_vector *psv,
+			  size_t index, const char *string);
+bool string_vector_set(struct string_vector *psv,
+		       size_t index, const char *string);
+bool string_vector_remove(struct string_vector *psv, size_t index);
+void string_vector_remove_all(struct string_vector *psv);
+
+size_t string_vector_size(const struct string_vector *psv);
+bool string_vector_index_valid(const struct string_vector *psv, size_t index);
+const char *string_vector_get(const struct string_vector *psv, size_t index);
+
+/* String vector iterator. */
+struct iterator; /* Generic iterator, defined in iterator.h. */
+struct string_iter;
+
+size_t string_iter_sizeof(void);
+struct iterator *string_iter_init(struct string_iter *iter,
+				  const struct string_vector *psv);
+
+/* Functions to use while the iteration. */
+const char *string_iter_get_string(const struct iterator *string_iter);
+size_t string_iter_get_index(const struct iterator *string_iter);
+
+void string_iter_insert_before(const struct iterator *string_iter,
+			       const char *string);
+void string_iter_insert_after(const struct iterator *string_iter,
+			      const char *string);
+void string_iter_set(struct iterator *string_iter, const char *string);
+void string_iter_remove(struct iterator *string_iter);
+
+#define string_vector_iterate(ARG_sv, NAME_string) \
+  generic_iterate(struct string_iter, const char *, NAME_string, \
+                  string_iter_sizeof, string_iter_init, (ARG_sv))
+#define string_vector_iterate_end generic_iterate_end
+
+#define string_iter_iterate(ARG_sv, NAME_iter) \
+  generic_iter_iterate(struct string_iter, NAME_iter, \
+                  string_iter_sizeof, string_iter_init, (ARG_sv))
+
+#define string_iter_iterate_end generic_iter_iterate_end
+
 #endif  /* FC__SHARED_H */

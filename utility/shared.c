@@ -46,6 +46,7 @@
 #include "astring.h"
 #include "fciconv.h"
 #include "fcintl.h"
+#include "iterator.h"
 #include "log.h"
 #include "mem.h"
 #include "support.h"
@@ -1651,4 +1652,340 @@ void string_list_free_all(struct string_list *sl)
     }
   }
   string_list_free(sl);
+}
+
+
+
+/**************************************************************************
+  String vector: utility to make an easy resizable vector of string.
+  Note that all string are duplicate in the vector.
+**************************************************************************/
+struct string_vector
+{
+  char **vec;
+  size_t size;
+};
+
+/**************************************************************************
+  Free a string.
+**************************************************************************/
+static void string_free(char *string)
+{
+  if (string) {
+    free(string);
+  }
+}
+
+/**************************************************************************
+  Duplicate a string.
+**************************************************************************/
+static char *string_duplicate(const char *string)
+{
+  if (string) {
+    return mystrdup(string);
+  }
+  return NULL;
+}
+
+/**************************************************************************
+  Create a new string vector.
+**************************************************************************/
+struct string_vector *string_vector_new(void)
+{
+  struct string_vector *psv = fc_malloc(sizeof(struct string_vector));
+
+  psv->vec = NULL;
+  psv->size = 0;
+
+  return psv;
+}
+
+/**************************************************************************
+  Destroy a string vector.
+**************************************************************************/
+void string_vector_destroy(struct string_vector *psv)
+{
+  string_vector_remove_all(psv);
+  free(psv);
+}
+
+/**************************************************************************
+  Set the size of the vector.
+**************************************************************************/
+void string_vector_reserve(struct string_vector *psv, size_t reserve)
+{
+  if (reserve == 0) {
+    string_vector_remove_all(psv);
+    return;
+  } else if (!psv->vec) {
+    /* Initial reserve */
+    psv->vec = fc_calloc(reserve, sizeof(char *));
+  } else if (reserve > psv->size) {
+    /* Expand the vector. */
+    psv->vec = fc_realloc(psv->vec, reserve * sizeof(char *));
+    memset(psv->vec + psv->size, 0, (reserve - psv->size) * sizeof(char *));
+  } else {
+    /* Shrink the vector: free the extra strings. */
+    size_t i;
+
+    for (i = psv->size - 1; i >= reserve; i--) {
+      string_free(psv->vec[i]);
+    }
+    psv->vec = fc_realloc(psv->vec, reserve * sizeof(char *));
+  }
+  psv->size = reserve;
+}
+
+/**************************************************************************
+  Insert a string at the start of the vector.
+**************************************************************************/
+void string_vector_prepend(struct string_vector *psv, const char *string)
+{
+  string_vector_reserve(psv, psv->size + 1);
+  memmove(psv->vec + 1, psv->vec, (psv->size - 1) * sizeof(char *));
+  psv->vec[0] = string_duplicate(string);
+}
+
+/**************************************************************************
+  Insert a string at the end of the vector.
+**************************************************************************/
+void string_vector_append(struct string_vector *psv, const char *string)
+{
+  string_vector_reserve(psv, psv->size + 1);
+  psv->vec[psv->size - 1] = string_duplicate(string);
+}
+
+/**************************************************************************
+  Insert a string at the index of the vector.
+**************************************************************************/
+void string_vector_insert(struct string_vector *psv,
+			  size_t index, const char *string)
+{
+  if (index <= 0) {
+    string_vector_prepend(psv, string);
+  } else if (index >= psv->size) {
+    string_vector_append(psv, string);
+  } else {
+    string_vector_reserve(psv, psv->size + 1);
+    memmove(psv->vec + index + 1, psv->vec + index,
+	    (psv->size - index - 1) * sizeof(char *));
+    psv->vec[index] = string_duplicate(string);
+  }
+}
+
+/**************************************************************************
+  Replace a string at the index of the vector.
+  Returns TRUE if the element has been really set.
+**************************************************************************/
+bool string_vector_set(struct string_vector *psv,
+		       size_t index, const char *string)
+{
+  if (string_vector_index_valid(psv, index)) {
+    string_free(psv->vec[index]);
+    psv->vec[index] = string_duplicate(string);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**************************************************************************
+  Remove the string at the index from the vector.
+  Returns TRUE if the element has been really removed.
+**************************************************************************/
+bool string_vector_remove(struct string_vector *psv, size_t index)
+{
+  if (!string_vector_index_valid(psv, index)) {
+    return FALSE;
+  }
+
+  string_free(psv->vec[index]);
+  memmove(psv->vec + index, psv->vec + index + 1,
+	  (psv->size - index - 1) * sizeof(char *));
+  psv->vec[psv->size - 1] = NULL; /* Do not attempt to free this data. */
+  string_vector_reserve(psv, psv->size - 1);
+
+  return TRUE;
+}
+
+/**************************************************************************
+  Remove all strings from the vector.
+**************************************************************************/
+void string_vector_remove_all(struct string_vector *psv)
+{
+  size_t i;
+  char **p;
+
+  if (!psv->vec) {
+    return;
+  }
+
+  for (i = 0, p = psv->vec; i < psv->size; i++, p++) {
+    string_free(*p);
+  }
+  free(psv->vec);
+  psv->vec = NULL;
+  psv->size = 0;
+}
+
+/**************************************************************************
+  Returns the size of the vector.
+**************************************************************************/
+size_t string_vector_size(const struct string_vector *psv)
+{
+  return psv->size;
+}
+
+/**************************************************************************
+  Returns TRUE if the index is valid.
+**************************************************************************/
+bool string_vector_index_valid(const struct string_vector *psv, size_t index)
+{
+  return index >= 0 && index < psv->size;
+}
+
+/**************************************************************************
+  Returns the string at the index of the vector.
+**************************************************************************/
+const char *string_vector_get(const struct string_vector *psv, size_t index)
+{
+  return string_vector_index_valid(psv, index) ? psv->vec[index] : NULL;
+}
+
+/**************************************************************************
+  String vector iterator, derived from generic iterator. See also struct
+  iterator in iterator.h for more informations.
+**************************************************************************/
+struct string_iter
+{
+  struct iterator vtable;
+  union {
+    struct string_vector *psv;
+    const struct string_vector *pcsv;
+  };
+  size_t index;
+  bool removed;
+};
+
+#define STRING_ITER(p) ((struct string_iter *)(p))
+
+/**************************************************************************
+  Returns the size of the string vector iterator.
+**************************************************************************/
+size_t string_iter_sizeof(void)
+{
+  return sizeof(struct string_iter);
+}
+
+/**************************************************************************
+  If the previous iterator has been removed with string_iter_remove(),
+  we just point to the next string, which have the same index.
+**************************************************************************/
+static void string_iter_next(struct iterator *string_iter)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  if (iter->removed) {
+    iter->removed = FALSE;
+  } else {
+    iter->index++;
+  }
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static void *string_iter_get(const struct iterator *string_iter)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  return (void *) string_vector_get(iter->pcsv, iter->index);
+}
+
+/**************************************************************************
+  Returns TRUE if the iterator is valid.
+**************************************************************************/
+static bool string_iter_valid(const struct iterator *string_iter)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  return string_vector_index_valid(iter->pcsv, iter->index);
+}
+
+/**************************************************************************
+  Initialize a vector for string iteration.
+**************************************************************************/
+struct iterator *string_iter_init(struct string_iter *iter,
+				  const struct string_vector *psv)
+{
+  iter->vtable.next = string_iter_next;
+  iter->vtable.get = string_iter_get;
+  iter->vtable.valid = string_iter_valid;
+  iter->pcsv = psv;
+  iter->index = 0;
+  iter->removed = FALSE;
+
+  return ITERATOR(iter);
+}
+
+/**************************************************************************
+  Returns the string of the iterator.
+**************************************************************************/
+const char *string_iter_get_string(const struct iterator *string_iter)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  return string_vector_get(iter->pcsv, iter->index);
+}
+
+/**************************************************************************
+  Returns the index of the iterator.
+**************************************************************************/
+size_t string_iter_get_index(const struct iterator *string_iter)
+{
+  return STRING_ITER(string_iter)->index;
+}
+
+/**************************************************************************
+  Insert a string before the iterator.
+**************************************************************************/
+void string_iter_insert_before(const struct iterator *string_iter,
+			       const char *string)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  string_vector_insert(iter->psv, iter->index, string);
+}
+
+/**************************************************************************
+  Insert a string after the iterator.
+**************************************************************************/
+void string_iter_insert_after(const struct iterator *string_iter,
+			      const char *string)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  string_vector_insert(iter->psv, iter->index + 1, string);
+}
+
+/**************************************************************************
+  Initialize a vector for string iteration.
+**************************************************************************/
+void string_iter_set(struct iterator *string_iter, const char *string)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  string_vector_set(iter->psv, iter->index, string);
+}
+
+/**************************************************************************
+  Initialize a vector for string iteration.
+**************************************************************************/
+void string_iter_remove(struct iterator *string_iter)
+{
+  struct string_iter *iter = STRING_ITER(string_iter);
+
+  if (string_vector_remove(iter->psv, iter->index)) {
+    /* Prevent to jump over a string in the iteration. */
+    iter->removed = TRUE;
+  }
 }

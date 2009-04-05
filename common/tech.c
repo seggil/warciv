@@ -593,18 +593,13 @@ bool is_future_tech(Tech_Type_id tech)
   return tech == A_FUTURE;
 }
 
-#define SPECVEC_TAG string
-#define SPECVEC_TYPE char *
-#include "specvec.h"
-
 /**************************************************************************
  Return the name of the given tech. You don't have to free the return
  pointer.
 **************************************************************************/
 const char *get_tech_name(struct player *pplayer, Tech_Type_id tech)
 {
-  static struct string_vector future;
-  int i;
+  static struct string_vector *future = NULL;
 
   /* We don't return a static buffer because that would break anything that
    * needed to work with more than one name at a time. */
@@ -617,19 +612,20 @@ const char *get_tech_name(struct player *pplayer, Tech_Type_id tech)
     return _("None");
   case A_FUTURE:
     /* pplayer->future_tech == 0 means "Future Tech. 1". */
-    for (i = future.size; i <= pplayer->future_tech; i++) {
-      char *ptr = NULL;
-
-      string_vector_append(&future, &ptr);
+    if (!future) {
+      future = string_vector_new();
     }
-    if (!future.p[pplayer->future_tech]) {
+    if (string_vector_size(future) < pplayer->future_tech) {
+      string_vector_reserve(future, pplayer->future_tech);
+    }
+    if (!string_vector_get(future, pplayer->future_tech)) {
       char buffer[1024];
 
       my_snprintf(buffer, sizeof(buffer), _("Future Tech. %d"),
 		  pplayer->future_tech + 1);
-      future.p[pplayer->future_tech] = mystrdup(buffer);
+      string_vector_set(future, pplayer->future_tech, buffer);
     }
-    return future.p[pplayer->future_tech];
+    return string_vector_get(future, pplayer->future_tech);
   default:
     /* Includes A_NONE */
     if (!tech_exists(tech)) {
