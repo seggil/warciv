@@ -1978,22 +1978,23 @@ static void select_random_race(void)
     if (NO_NATION_SELECTED != id) {
       GtkTreePath *path;
       GtkTreeIter iter;
+      Nation_Type_id nation;
       gboolean chosen;
 
-      path = gtk_tree_path_new();
-      gtk_tree_path_append_index(path, id);
-
-      if (gtk_tree_model_get_iter(model, &iter, path)) {
-	gtk_tree_model_get(model, &iter, 1, &chosen, -1);
-	if (!chosen) {
-	  gtk_tree_view_set_cursor(GTK_TREE_VIEW(races_nation_list),
-				   path, NULL, FALSE);
-	  gtk_tree_path_free(path);
-	  return;
+      gtk_tree_model_get_iter_first(model, &iter);
+      do {
+	gtk_tree_model_get(model, &iter, 0, &nation, 1, &chosen, -1);
+	if (nation == id) {
+	  if (!chosen) {
+	    path = gtk_tree_model_get_path(model, &iter);
+	    gtk_tree_view_set_cursor(GTK_TREE_VIEW(races_nation_list),
+				     path, NULL, FALSE);
+	    gtk_tree_path_free(path);
+	    return;
+	  }
+	  break;
 	}
-      }
-      gtk_tree_path_free(path);
-      id = NO_NATION_SELECTED;
+      } while (gtk_tree_model_iter_next(model, &iter));
     }
   } string_vector_iterate_end;
 
