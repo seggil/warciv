@@ -86,4 +86,32 @@ do {\
   }\
 } while (FALSE)
 
+/***************************************************************************
+  Iteration macro for iterators derived from the 'iterator' base class.
+  Usually you would define a specific iteration macro for each derived
+  iterator type. The meaning of the arguments is as follows:
+
+  TYPE_it - The type of the derived iterator. E.g. 'struct foo_iter'.
+  NAME_it - The name of the iterator variable which will be iterated.
+  FUNC_size - A function that returns the total size in bytes of a
+              'TYPE_it'.
+  FUNC_init - A "construtor" for 'TYPE_it' objects. It returns a pointer to
+              a 'struct iterator' and takes as its first argument a pointer
+              to memory large enough to hold a 'TYPE_it' (this amount must
+              match the result of FUNC_size()). NB: This function must not
+              return NULL; it must return a valid iterator pointing to the
+              first element in the sequence, or an invalid iterator.
+  ... - Zero or more extra arguments that 'FUNC_init' expects.
+***************************************************************************/
+#define generic_iter_iterate(TYPE_it, NAME_it, FUNC_size, FUNC_init, ...)\
+do {\
+  char MY_mem_##NAME_it[FUNC_size()];\
+  struct iterator *NAME_it =\
+    FUNC_init((TYPE_it *)(void *) MY_mem_##NAME_it , ## __VA_ARGS__);\
+  for (; iterator_valid(NAME_it); iterator_next(NAME_it)) {
+
+#define generic_iter_iterate_end\
+  }\
+} while (FALSE)
+
 #endif /* FC__ITERATOR_H */

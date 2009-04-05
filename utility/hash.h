@@ -109,22 +109,22 @@ struct iterator *hash_iter_init(struct hash_iter *it,
 void *hash_iter_get_key(const struct iterator *hash_iter);
 void *hash_iter_get_value(const struct iterator *hash_iter);
 #define hash_iterate(ARG_ht, NAME_iter)\
-  generic_iterate(struct hash_iter, struct iterator *, NAME_iter,\
+  generic_iter_iterate(struct hash_iter, NAME_iter,\
                   hash_iter_sizeof, hash_iter_init, (ARG_ht))
-#define hash_iterate_end generic_iterate_end
+#define hash_iterate_end generic_iter_iterate_end
 
 #define hash_kv_iterate(ARG_ht, TYPE_key, NAME_key, TYPE_value, NAME_value)\
   do {\
     TYPE_key NAME_key;\
     TYPE_value NAME_value;\
-    generic_iterate(struct hash_iter, struct iterator *, MY_iter,\
+    generic_iter_iterate(struct hash_iter, MY_iter,\
                     hash_iter_sizeof, hash_iter_init, (ARG_ht)) {\
       NAME_key = (TYPE_key) hash_iter_get_key(MY_iter);\
       NAME_value = (TYPE_value) hash_iter_get_value(MY_iter);
 
 #define hash_kv_iterate_end\
-    } generic_iterate_end;\
-  } while (0)
+    } generic_iter_iterate_end;\
+  } while (FALSE)
 
 
 #endif  /* FC__HASH_H */
