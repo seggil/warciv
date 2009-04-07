@@ -135,6 +135,7 @@ bool enable_tabs;
 bool solid_unit_icon_bg;
 bool better_fog;
 bool save_options_on_exit;
+bool chatline_autocomplementation;
 
 /* This option is currently set by the client - not by the user. */
 bool update_city_text_in_refresh_tile = TRUE;
@@ -677,8 +678,15 @@ static struct client_option client_options[] = {
 		 COC_CHAT, "~/.freeciv/chatlogs", NULL),
   GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
 		  N_("Disable chatline scrolling"),
-                  N_("If this option is turned to on, the chatline won't"
+                  N_("If this option is turned to on, the chatline won't "
 		     "be scrolled to the bottom when the window is resized."),
+		  COC_CHAT, FALSE, NULL),
+  GEN_BOOL_OPTION(chatline_autocomplementation,
+		  N_("Use tabulation key fpr player or user name "
+		     "autocomplementation"),
+                  N_("If this option is turned to on, the tabulation key "
+		     "will be use on chat line to complete the word you "
+		     "are typing with the name of a player or a user."),
 		  COC_CHAT, FALSE, NULL),
 
   GEN_STR_OPTION(default_user_name, N_("Default player's login name"),

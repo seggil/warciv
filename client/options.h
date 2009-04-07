@@ -195,6 +195,7 @@ extern bool enable_tabs;
 extern bool solid_unit_icon_bg;
 extern bool better_fog;
 extern bool save_options_on_exit;
+extern bool chatline_autocomplementation;
 
 /** View Options: **/
 

@@ -293,6 +293,14 @@ gboolean inputline_handler(GtkWidget *w, GdkEventKey *ev)
   void *data = NULL;
   gint keypress = FALSE;
 
+  if (ev->keyval == GDK_Tab && chatline_autocomplementation) {
+    return chatline_autocomplement();
+  }
+
+  if (ev->keyval == GDK_Tab && chatline_autocomplementation) {
+    return chatline_autocomplement(GTK_EDITABLE(w));
+  }
+
   if (ev->keyval == GDK_Up) {
     keypress = TRUE;
 
@@ -420,10 +428,8 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
   if (ev->keyval == GDK_Tab) {
     if (ev->state & GDK_CONTROL_MASK) {
       key_cycle_player_colors_modes();
-    } else {
-      if (!GTK_WIDGET_HAS_FOCUS(inputline)) {
-        gtk_widget_grab_focus(inputline);
-      }
+    } else if (!GTK_WIDGET_HAS_FOCUS(inputline)) {
+      gtk_widget_grab_focus(inputline);
     }
     return TRUE;
   }

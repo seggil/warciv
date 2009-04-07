@@ -101,4 +101,8 @@ void insert_chat_link(struct tile *ptile, bool unit);
 void chatline_scroll_to_bottom(void);
 bool chatline_is_scrolled_to_bottom(void);
 
+bool chatline_autocomplement(void);
+
+bool chatline_autocomplement(GtkEditable *editable);
+
 #endif  /* FC__CHATLINE_H */
