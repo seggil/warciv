@@ -294,10 +294,6 @@ gboolean inputline_handler(GtkWidget *w, GdkEventKey *ev)
   gint keypress = FALSE;
 
   if (ev->keyval == GDK_Tab && chatline_autocomplementation) {
-    return chatline_autocomplement();
-  }
-
-  if (ev->keyval == GDK_Tab && chatline_autocomplementation) {
     return chatline_autocomplement(GTK_EDITABLE(w));
   }
 
