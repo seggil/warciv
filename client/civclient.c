@@ -449,6 +449,7 @@ void ui_exit(void)
   client_remove_all_cli_conn();
 
   client_game_free();
+  client_options_free();
 
   exit(EXIT_SUCCESS);
 }

@@ -1253,6 +1253,31 @@ void client_options_init(void)
 }
 
 /****************************************************************
+  Free all options which needs it.
+*****************************************************************/
+void client_options_free(void)
+{
+  client_options_iterate(o) {
+    switch (o->type) {
+    case COT_STRING_VEC:
+      if (NULL != *o->string_vec.pvector) {
+	string_vector_destroy(*o->string_vec.pvector);
+	*o->string_vec.pvector = NULL;
+      }
+      break;
+    case COT_BOOLEAN:
+    case COT_INTEGER:
+    case COT_VOLUME:
+    case COT_STRING:
+    case COT_PASSWORD:
+    case COT_ENUM_LIST:
+    case COT_FILTER:
+      break;
+    }
+  } client_options_iterate_end;
+}
+
+/****************************************************************
   Revert the str_accessor. Find an index by name.
   Returns -1 on error.
 *****************************************************************/
