@@ -105,7 +105,7 @@ static void ai_choose_help_wonder(struct city *pcity,
       
       /* Desire for the wonder we are going to help - as much as we want to
        * build it we want to help building it as well. */
-      int want = pcity->ai.building_want[acity->currently_building];
+      int want = pcity->server.ai.building_want[acity->currently_building];
 
       /* Distance to wonder city was established after ai_manage_buildings()
        * and before this.  If we just started building a wonder during
@@ -114,7 +114,7 @@ static void ai_choose_help_wonder(struct city *pcity,
        * warmap generation than there would be otherwise. -- Syela *
        * Value of 8 is a total guess and could be wrong, but it's still better
        * than 0. -- Syela */
-      int dist = pcity->ai.distance_to_wonder_city * 8 / 
+      int dist = pcity->server.ai.distance_to_wonder_city * 8 / 
         get_unit_type(unit_type)->move_rate;
 
       want -= dist;
@@ -164,7 +164,7 @@ void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
      * ai_manage_cities.  The expand value is the % that the AI should
      * value expansion (basically to handicap easier difficutly levels)
      * and is set when the difficulty level is changed (stdinhand.c). */
-    int want = pcity->ai.settler_want * pplayer->ai.expand / 100;
+    int want = pcity->server.ai.settler_want * pplayer->ai.expand / 100;
 
     /* Allowing multiple settlers per city now. I think this is correct.
      * -- Syela */
@@ -186,12 +186,12 @@ void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
   if (unit_type != U_LAST
       && est_food >= utype_food_cost(get_unit_type(unit_type), gov)) {
     /* founder_want calculated in settlers.c, called from ai_manage_cities(). */
-    int want = pcity->ai.founder_want;
+    int want = pcity->server.ai.founder_want;
 
     if (want > choice->want) {
       CITY_LOG(LOG_DEBUG, pcity, "desires founders with passion %d", want);
       choice->want = want;
-      choice->need_boat = pcity->ai.founder_boat;
+      choice->need_boat = pcity->server.ai.founder_boat;
       choice->type = CT_NONMIL;
       ai_choose_role_unit(pplayer, pcity, choice, F_CITIES, want);
       

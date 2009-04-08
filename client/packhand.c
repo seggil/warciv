@@ -708,8 +708,8 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
   int i;
 
   if (is_new) {
-    pcity->info_units_supported = unit_list_new();
-    pcity->info_units_present = unit_list_new();
+    pcity->client.info_units_supported = unit_list_new();
+    pcity->client.info_units_present = unit_list_new();
     city_list_prepend(city_owner(pcity)->cities, pcity);
     map_set_city(pcity->tile, pcity);
     if (pcity->owner == get_player_idx()) {
@@ -1516,23 +1516,23 @@ void handle_unit_short_info(struct packet_unit_short_info *packet)
     /* New serial number -- clear (free) everything */
     if (last_serial_num != packet->serial_num) {
       last_serial_num = packet->serial_num;
-      unit_list_iterate(pcity->info_units_supported, psunit) {
+      unit_list_iterate(pcity->client.info_units_supported, psunit) {
 	destroy_unit_virtual(psunit);
       } unit_list_iterate_end;
-      unit_list_unlink_all(pcity->info_units_supported);
-      unit_list_iterate(pcity->info_units_present, ppunit) {
+      unit_list_unlink_all(pcity->client.info_units_supported);
+      unit_list_iterate(pcity->client.info_units_present, ppunit) {
 	destroy_unit_virtual(ppunit);
       } unit_list_iterate_end;
-      unit_list_unlink_all(pcity->info_units_present);
+      unit_list_unlink_all(pcity->client.info_units_present);
     }
 
     /* Okay, append a unit struct to the proper list. */
     punit = unpackage_short_unit(packet);
     if (packet->packet_use == UNIT_INFO_CITY_SUPPORTED) {
-      unit_list_prepend(pcity->info_units_supported, punit);
+      unit_list_prepend(pcity->client.info_units_supported, punit);
     } else {
       assert(packet->packet_use == UNIT_INFO_CITY_PRESENT);
-      unit_list_prepend(pcity->info_units_present, punit);
+      unit_list_prepend(pcity->client.info_units_present, punit);
     }
 
     /* Done with special case. */

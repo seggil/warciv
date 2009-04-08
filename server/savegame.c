@@ -2003,14 +2003,15 @@ static void player_load(struct player *plr, int plrno,
     alloc_id(pcity->id);
     idex_register_city(pcity);
     
-    if (section_file_lookup(file, "player%d.c%d.original", plrno, i))
-      pcity->original = secfile_lookup_int(file, "player%d.c%d.original", 
-					   plrno,i);
-    else 
-      pcity->original = plrno;
-    pcity->size=secfile_lookup_int(file, "player%d.c%d.size", plrno, i);
+    if (section_file_lookup(file, "player%d.c%d.original", plrno, i)) {
+      pcity->server.original = secfile_lookup_int(file, "player%d.c%d.original",
+						  plrno, i);
+    } else {
+      pcity->server.original = plrno;
+    }
+    pcity->size = secfile_lookup_int(file, "player%d.c%d.size", plrno, i);
 
-    pcity->steal=secfile_lookup_int(file, "player%d.c%d.steal", plrno, i);
+    pcity->server.steal = secfile_lookup_int(file, "player%d.c%d.steal", plrno, i);
 
     specialist_type_iterate(sp) {
       pcity->specialists[sp]
@@ -2168,7 +2169,7 @@ static void player_load(struct player *plr, int plrno,
 				 "player%d.c%d.last_turns_shield_surplus",
 				 plrno, i);
 
-    pcity->synced = FALSE; /* must re-sync with clients */
+    pcity->server.synced = FALSE; /* must re-sync with clients */
 
     pcity->turn_founded =
 	secfile_lookup_int_default(file, -2, "player%d.c%d.turn_founded",
@@ -2283,8 +2284,8 @@ static void player_load(struct player *plr, int plrno,
     }
 
     /* FIXME: remove this when the urgency is properly recalculated. */
-    pcity->ai.urgency = secfile_lookup_int_default(file, 0, 
-				"player%d.c%d.ai.urgency", plrno, i);
+    pcity->server.ai.urgency =
+      secfile_lookup_int_default(file, 0, "player%d.c%d.ai.urgency", plrno, i);
 
     map_set_city(pcity->tile, pcity);
 
@@ -2872,10 +2873,11 @@ static void player_save(struct player *plr, int plrno,
     secfile_insert_int(file, pcity->tile->nat_x, "player%d.c%d.x", plrno, i);
     secfile_insert_int(file, pcity->tile->nat_y, "player%d.c%d.y", plrno, i);
     secfile_insert_str(file, pcity->name, "player%d.c%d.name", plrno, i);
-    secfile_insert_int(file, pcity->original, "player%d.c%d.original", 
+    secfile_insert_int(file, pcity->server.original, "player%d.c%d.original", 
 		       plrno, i);
     secfile_insert_int(file, pcity->size, "player%d.c%d.size", plrno, i);
-    secfile_insert_int(file, pcity->steal, "player%d.c%d.steal", plrno, i);
+    secfile_insert_int(file, pcity->server.steal,
+		       "player%d.c%d.steal", plrno, i);
     specialist_type_iterate(sp) {
       secfile_insert_int(file, pcity->specialists[sp],
 			 "player%d.c%d.n%s", plrno, i,
@@ -3039,7 +3041,7 @@ static void player_save(struct player *plr, int plrno,
     worklist_save(file, "player%d.c%d", plrno, i, &pcity->worklist);
 
     /* FIXME: remove this when the urgency is properly recalculated. */
-    secfile_insert_int(file, pcity->ai.urgency,
+    secfile_insert_int(file, pcity->server.ai.urgency,
 		       "player%d.c%d.ai.urgency", plrno, i);
   } city_list_iterate_end;
 

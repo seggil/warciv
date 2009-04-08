@@ -1169,7 +1169,7 @@ void make_partisans(struct city *pcity)
     return;
   if (!tech_exists(game.server.u_partisan)
       || game.info.global_advances[game.server.u_partisan] == 0
-      || pcity->original != pcity->owner)
+      || pcity->server.original != pcity->owner)
     return;
 
   if (!government_has_flag(get_gov_pcity(pcity), G_INSPIRES_PARTISANS))
@@ -2446,7 +2446,7 @@ static void hut_get_city(struct unit *punit)
     }
 
     /* Init ai.choice. Handling ferryboats might use it. */
-    init_choice(&punit->tile->city->ai.choice);
+    init_choice(&punit->tile->city->server.ai.choice);
 
   } else {
     notify_player_ex(pplayer, punit->tile, E_HUT_SETTLER,

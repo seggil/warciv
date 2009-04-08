@@ -663,7 +663,7 @@ static bool aiferry_find_interested_city(struct unit *pferry)
     pcity = map_get_city(pos.tile);
     
     if (pcity && pcity->owner == pferry->owner
-        && (pcity->ai.choice.need_boat 
+        && (pcity->server.ai.choice.need_boat 
             || (pcity->is_building_unit
 		&& unit_has_role(pcity->currently_building, L_FERRYBOAT)))) {
       bool really_needed = TRUE;

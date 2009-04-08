@@ -86,7 +86,7 @@ static bool ai_do_build_city(struct player *pplayer, struct unit *punit)
   initialize_infrastructure_cache(pplayer);
 
   /* Init ai.choice. Handling ferryboats might use it. */
-  init_choice(&pcity->ai.choice);
+  init_choice(&pcity->server.ai.choice);
 
   return TRUE;
 }
@@ -918,7 +918,8 @@ static int evaluate_improvements(struct unit *punit,
 	time = mv_turns
 	  + get_turns_for_activity_at(punit, ACTIVITY_IRRIGATE, ptile);
 	consider_settler_action(pplayer, ACTIVITY_IRRIGATE, -1,
-				pcity->ai.irrigate[i][j], oldv, in_use, time,
+				pcity->server.ai.irrigate[i][j],
+				oldv, in_use, time,
 				&best_newv, &best_oldv, best_act, best_tile,
 				ptile);
 
@@ -926,7 +927,8 @@ static int evaluate_improvements(struct unit *punit,
 	  time = mv_turns
 	    + get_turns_for_activity_at(punit, ACTIVITY_TRANSFORM, ptile);
 	  consider_settler_action(pplayer, ACTIVITY_TRANSFORM, -1,
-				  pcity->ai.transform[i][j], oldv, in_use, time,
+				  pcity->server.ai.transform[i][j],
+				  oldv, in_use, time,
 				  &best_newv, &best_oldv, best_act, best_tile,
 				  ptile);
 	}
@@ -934,7 +936,8 @@ static int evaluate_improvements(struct unit *punit,
 	time = mv_turns
 	  + get_turns_for_activity_at(punit, ACTIVITY_MINE, ptile);
 	consider_settler_action(pplayer, ACTIVITY_MINE, -1,
-				pcity->ai.mine[i][j], oldv, in_use, time,
+				pcity->server.ai.mine[i][j],
+				oldv, in_use, time,
 				&best_newv, &best_oldv, best_act, best_tile,
 				ptile);
 
@@ -943,7 +946,8 @@ static int evaluate_improvements(struct unit *punit,
 	    + get_turns_for_activity_at(punit, ACTIVITY_ROAD, ptile);
 	  consider_settler_action(pplayer, ACTIVITY_ROAD,
 				  road_bonus(ptile, S_ROAD) * 5,
-				  pcity->ai.road[i][j], oldv, in_use, time,
+				  pcity->server.ai.road[i][j],
+				  oldv, in_use, time,
 				  &best_newv, &best_oldv, best_act, best_tile,
 				  ptile);
 
@@ -952,8 +956,8 @@ static int evaluate_improvements(struct unit *punit,
 	    time += get_turns_for_activity_at(punit, ACTIVITY_RAILROAD, ptile);
 	    consider_settler_action(pplayer, ACTIVITY_ROAD,
 				    road_bonus(ptile, S_RAILROAD) * 3,
-				    pcity->ai.railroad[i][j], oldv,
-				    in_use, time,
+				    pcity->server.ai.railroad[i][j],
+				    oldv, in_use, time,
 				    &best_newv, &best_oldv,
 				    best_act, best_tile,
 				    ptile);
@@ -964,7 +968,8 @@ static int evaluate_improvements(struct unit *punit,
 	    + get_turns_for_activity_at(punit, ACTIVITY_RAILROAD, ptile);
 	  consider_settler_action(pplayer, ACTIVITY_RAILROAD,
 				  road_bonus(ptile, S_RAILROAD) * 3,
-				  pcity->ai.railroad[i][j], oldv, in_use, time,
+				  pcity->server.ai.railroad[i][j],
+				  oldv, in_use, time,
 				  &best_newv, &best_oldv,
 				  best_act, best_tile,
 				  ptile);
@@ -975,7 +980,8 @@ static int evaluate_improvements(struct unit *punit,
 	    + get_turns_for_activity_at(punit, ACTIVITY_POLLUTION, ptile);
 	  consider_settler_action(pplayer, ACTIVITY_POLLUTION,
 				  pplayer->ai.warmth,
-				  pcity->ai.detox[i][j], oldv, in_use, time,
+				  pcity->server.ai.detox[i][j],
+				  oldv, in_use, time,
 				  &best_newv, &best_oldv,
 				  best_act, best_tile,
 				  ptile);
@@ -986,7 +992,8 @@ static int evaluate_improvements(struct unit *punit,
 	    + get_turns_for_activity_at(punit, ACTIVITY_FALLOUT, ptile);
 	  consider_settler_action(pplayer, ACTIVITY_FALLOUT,
 				  pplayer->ai.warmth,
-				  pcity->ai.derad[i][j], oldv, in_use, time,
+				  pcity->server.ai.derad[i][j],
+				  oldv, in_use, time,
 				  &best_newv, &best_oldv,
 				  best_act, best_tile,
 				  ptile);
@@ -996,10 +1003,13 @@ static int evaluate_improvements(struct unit *punit,
 	freelog(LOG_DEBUG,
 		"(%d %d) I=%+-4d O=%+-4d M=%+-4d R=%+-4d RR=%+-4d P=%+-4d N=%+-4d",
 		i, j,
-		pcity->ai.irrigate[i][j], pcity->ai.transform[i][j],
-		pcity->ai.mine[i][j], pcity->ai.road[i][j],
-		pcity->ai.railroad[i][j], pcity->ai.detox[i][j],
-		pcity->ai.derad[i][j]);
+		pcity->server.ai.irrigate[i][j],
+		pcity->server.ai.transform[i][j],
+		pcity->server.ai.mine[i][j],
+		pcity->server.ai.road[i][j],
+		pcity->server.ai.railroad[i][j],
+		pcity->server.ai.detox[i][j],
+		pcity->server.ai.derad[i][j]);
 #endif
       } /* end if we are a legal destination */
     } city_map_checked_iterate_end;
@@ -1191,13 +1201,13 @@ void initialize_infrastructure_cache(struct player *pplayer)
     int best = best_worker_tile_value(pcity);
 
     city_map_iterate(city_x, city_y) {
-      pcity->ai.detox[city_x][city_y] = -1;
-      pcity->ai.derad[city_x][city_y] = -1;
-      pcity->ai.mine[city_x][city_y] = -1;
-      pcity->ai.irrigate[city_x][city_y] = -1;
-      pcity->ai.transform[city_x][city_y] = -1;
-      pcity->ai.road[city_x][city_y] = -1;
-      pcity->ai.railroad[city_x][city_y] = -1;
+      pcity->server.ai.detox[city_x][city_y] = -1;
+      pcity->server.ai.derad[city_x][city_y] = -1;
+      pcity->server.ai.mine[city_x][city_y] = -1;
+      pcity->server.ai.irrigate[city_x][city_y] = -1;
+      pcity->server.ai.transform[city_x][city_y] = -1;
+      pcity->server.ai.road[city_x][city_y] = -1;
+      pcity->server.ai.railroad[city_x][city_y] = -1;
     } city_map_iterate_end;
 
     city_map_checked_iterate(pcity->tile,
@@ -1207,23 +1217,23 @@ void initialize_infrastructure_cache(struct player *pplayer)
       enum tile_special_type old_special = ptile->special;
 #endif
 
-      pcity->ai.detox[city_x][city_y]
+      pcity->server.ai.detox[city_x][city_y]
 	= ai_calc_pollution(pcity, city_x, city_y, best, ptile);
-      pcity->ai.derad[city_x][city_y] =
+      pcity->server.ai.derad[city_x][city_y] =
 	ai_calc_fallout(pcity, pplayer, city_x, city_y, best, ptile);
-      pcity->ai.mine[city_x][city_y]
+      pcity->server.ai.mine[city_x][city_y]
 	= ai_calc_mine(pcity, city_x, city_y, ptile);
-      pcity->ai.irrigate[city_x][city_y]
+      pcity->server.ai.irrigate[city_x][city_y]
         = ai_calc_irrigate(pcity, pplayer, city_x, city_y, ptile);
-      pcity->ai.transform[city_x][city_y]
+      pcity->server.ai.transform[city_x][city_y]
 	= ai_calc_transform(pcity, city_x, city_y, ptile);
 
       /* road_bonus() is handled dynamically later; it takes into
        * account settlers that have already been assigned to building
        * roads this turn. */
-      pcity->ai.road[city_x][city_y]
+      pcity->server.ai.road[city_x][city_y]
 	= ai_calc_road(pcity, pplayer, city_x, city_y, ptile);
-      pcity->ai.railroad[city_x][city_y] =
+      pcity->server.ai.railroad[city_x][city_y] =
 	ai_calc_railroad(pcity, pplayer, city_x, city_y, ptile);
 
       /* Make sure nothing was accidentally changed by these calculations. */
@@ -1250,7 +1260,8 @@ void auto_settlers_player(struct player *pplayer)
   /* Initialize the infrastructure cache, which is used shortly. */
   initialize_infrastructure_cache(pplayer);
 
-  pplayer->ai.warmth = WARMING_FACTOR * (game.info.heating > game.server.warminglevel ? 2 : 1);
+  pplayer->ai.warmth =
+    WARMING_FACTOR * (game.info.heating > game.server.warminglevel ? 2 : 1);
 
   freelog(LOG_DEBUG, "Warmth = %d, game.info.globalwarming=%d",
 	  pplayer->ai.warmth, game.info.globalwarming);
@@ -1458,9 +1469,10 @@ void contemplate_new_city(struct city *pcity)
 	if(player_cities > MAX_AI_CITIES) {
 		FOUNDER_WANT_MULTIPLIER=MAX_AI_CITIES*(player_cities-MAX_AI_CITIES);
 	}
-    pcity->ai.founder_want = (result.virt_boat ? 
-			      -result.result : result.result)/MIN(MIN_FOUNDER_WANT_MODIFIER,FOUNDER_WANT_MULTIPLIER);
-    pcity->ai.founder_boat = result.overseas;
+    pcity->server.ai.founder_want =
+      (result.virt_boat ? -result.result : result.result)
+      / MIN(MIN_FOUNDER_WANT_MODIFIER, FOUNDER_WANT_MULTIPLIER);
+    pcity->server.ai.founder_boat = result.overseas;
   }
   free(virtualunit);
 }
@@ -1507,5 +1519,5 @@ void contemplate_terrain_improvements(struct city *pcity)
            ai->stats.workers[ptile->continent], 
            ai->stats.cities[ptile->continent]);
   assert(want >= 0);
-  pcity->ai.settler_want = want;
+  pcity->server.ai.settler_want = want;
 }

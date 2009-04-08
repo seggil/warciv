@@ -246,12 +246,13 @@ void kill_player(struct player *pplayer) {
   palace = game.server.savepalace;
   game.server.savepalace = FALSE; /* moving it around is dumb */
   city_list_iterate(pplayer->cities, pcity) {
-    if ((pcity->original != pplayer->player_no)
-        && (get_player(pcity->original)->is_alive)) {
+    if ((pcity->server.original != pplayer->player_no)
+        && (get_player(pcity->server.original)->is_alive)) {
       /* Transfer city to original owner, kill all its units outside of
          a radius of 3, give verbose messages of every unit transferred,
          and raze buildings according to raze chance (also removes palace) */
-      transfer_city(get_player(pcity->original), pcity, 3, TRUE, TRUE, TRUE);
+      transfer_city(get_player(pcity->server.original),
+		    pcity, 3, TRUE, TRUE, TRUE);
     }
   } city_list_iterate_end;
 

@@ -719,8 +719,8 @@ void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
      
   /* too bad plr->score isn't kept up to date. */
   city_list_iterate(plr->cities, acity)
-    danger += acity->ai.danger;
-    downtown += acity->ai.downtown;
+    danger += acity->server.ai.danger;
+    downtown += acity->server.ai.downtown;
     cities++;
   city_list_iterate_end;
 
@@ -735,17 +735,17 @@ void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
 	    && pcity->shield_stock >= impr_build_shield_cost(i) / 2)
 	|| (!is_building_other_wonder(pcity)
 	    /* otherwise caravans will be killed! */
-	    && pcity->ai.grave_danger == 0
-	    && pcity->ai.downtown * cities >= downtown
-	    && pcity->ai.danger * cities <= danger)) {
+	    && pcity->server.ai.grave_danger == 0
+	    && pcity->server.ai.downtown * cities >= downtown
+	    && pcity->server.ai.danger * cities <= danger)) {
       /* Is this too many restrictions? */
       /* trying to keep wonders in safe places with easy caravan
        * access -- Syela */
-      if(pcity->ai.building_want[i]>want) {
+      if(pcity->server.ai.building_want[i]>want) {
 	/* we have to do the can_build check to avoid Built Granary.
 	 * Now Building Granary. */
         if (can_build_improvement(pcity, i)) {
-          want = pcity->ai.building_want[i];
+          want = pcity->server.ai.building_want[i];
           id = i;
         } else {
 	  freelog(LOG_DEBUG, "%s can't build %s", pcity->name,

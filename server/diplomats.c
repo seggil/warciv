@@ -571,7 +571,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   /* Check if the Diplomat/Spy succeeds with his/her task. */
   /* (Twice as difficult if target is specified.) */
   /* (If already stolen from, impossible for Diplomats and harder for Spies.) */
-  if ((pcity->steal > 0) && (!unit_flag (pdiplomat, F_SPY))) {
+  if ((pcity->server.steal > 0) && (!unit_flag (pdiplomat, F_SPY))) {
     /* Already stolen from: Diplomat always fails! */
     count = 1;
     freelog (LOG_DEBUG, "steal-tech: difficulty: impossible");
@@ -579,7 +579,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
     /* Determine difficulty. */
     count = 1;
     if (technology < game.ruleset_control.num_tech_types) count++;
-    count += pcity->steal;
+    count += pcity->server.steal;
     freelog (LOG_DEBUG, "steal-tech: difficulty: %d", count);
     /* Determine success or failure. */
     while (count > 0) {
@@ -725,7 +725,7 @@ void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
   send_player_info(pplayer, pplayer);
 
   /* Record the theft. */
-  (pcity->steal)++;
+  (pcity->server.steal)++;
 
   /* this may cause a diplomatic incident */
   maybe_cause_incident(DIPLOMAT_STEAL, pplayer, NULL, pcity);

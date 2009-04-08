@@ -964,7 +964,7 @@ void create_city(struct player *pplayer, struct tile *ptile,
   send_tile_info(NULL, ptile);
 
   pcity = create_city_virtual(pplayer, ptile, name);
-  pcity->ai.trade_want = TRADE_WEIGHTING;
+  pcity->server.ai.trade_want = TRADE_WEIGHTING;
   pcity->id = get_next_id_number();
   idex_register_city(pcity);
 
@@ -1032,7 +1032,7 @@ void create_city(struct player *pplayer, struct tile *ptile,
    * warmap (but not the GOTOmap warmap) which meant the AI was very reluctant
    * to use ferryboats. I really should have identified this sooner. -- Syela */
 
-  pcity->synced = FALSE;
+  pcity->server.synced = FALSE;
   send_city_info(NULL, pcity);
   sync_cities(); /* Will also send pcity. */
 
@@ -1234,7 +1234,7 @@ void handle_unit_enter_city(struct unit *punit, struct city *pcity)
   pplayer->economic.gold += coins;
   cplayer->economic.gold -= coins;
   send_player_info(cplayer, cplayer);
-  if (pcity->original != pplayer->player_no) {
+  if (pcity->server.original != pplayer->player_no) {
     notify_player_ex(pplayer, pcity->tile, E_UNIT_WIN_ATT, 
 		     _("Game: You conquer %s, your lootings accumulate"
 		       " to %d gold!"), 
@@ -1473,7 +1473,7 @@ void send_city_info(struct player *dest, struct city *pcity)
     return;
   }
   if (!dest || dest == city_owner(pcity)) {
-    pcity->synced = TRUE;
+    pcity->server.synced = TRUE;
   }
   if (!dest) {
     broadcast_city_info(pcity);
@@ -1920,7 +1920,7 @@ static void server_set_tile_city(struct city *pcity, int city_x, int city_y,
   assert(current != type);
 
   set_worker_city(pcity, city_x, city_y, type);
-  pcity->synced = FALSE;
+  pcity->server.synced = FALSE;
 
   /* Update adjacent cities. */
   {
@@ -2041,7 +2041,7 @@ void sync_cities(void)
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
       /* sending will set synced to 1. */
-      if (!pcity->synced) {
+      if (!pcity->server.synced) {
 	send_city_info(pplayer, pcity);
       }
     } city_list_iterate_end;

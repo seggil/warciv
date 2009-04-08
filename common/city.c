@@ -2531,6 +2531,27 @@ void city_styles_free(void)
 }
 
 /**************************************************************************
+  Return the minimal size of the city structure.
+**************************************************************************/
+static size_t struct_city_size(void)
+{
+  static size_t size = 0;
+
+  if (!size) {
+    static struct city city;
+ 
+    size = sizeof(city) - MAX(sizeof(city.server), sizeof(city.client));
+
+    size += is_server ? MAX(sizeof(city.server),
+			    abs(sizeof(city.server) - sizeof(city.client)))
+		      : MAX(sizeof(city.client),
+			    abs(sizeof(city.server) - sizeof(city.client)));
+  }
+
+  return size;
+}
+
+/**************************************************************************
   Create virtual skeleton for a city.  It does not register the city so 
   the id is set to 0.  All other values are more or less sane defaults.
 **************************************************************************/
@@ -2539,7 +2560,7 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
 {
   struct city *pcity;
 
-  pcity = fc_malloc(sizeof(struct city));
+  pcity = fc_malloc(struct_city_size());
 
   pcity->id = 0;
   pcity->owner = pplayer->player_no;
@@ -2555,12 +2576,10 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->ppl_unhappy[4] = 0;
   pcity->ppl_angry[4] = 0;
   pcity->was_happy = FALSE;
-  pcity->steal = 0;
   pcity->food_stock = 0;
   pcity->shield_stock = 0;
   pcity->trade_prod = 0;
   pcity->tile_trade = 0;
-  pcity->original = pplayer->player_no;
 
   /* Initialise improvements list */
   improvement_status_init(pcity->improvements,
@@ -2596,20 +2615,6 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->rapture = 0;
   pcity->city_options = CITYOPT_DEFAULT;
 
-  pcity->ai.founder_want = 0; /* calculating this is really expensive */
-  pcity->ai.next_founder_want_recalc = 0; /* turns to recalc found_want */
-  pcity->ai.trade_want = 1; /* we always want some */
-  memset(pcity->ai.building_want, 0, sizeof(pcity->ai.building_want));
-  pcity->ai.danger = 0;
-  pcity->ai.urgency = 0;
-  pcity->ai.grave_danger = 0;
-  pcity->ai.wallvalue = 0;
-  pcity->ai.downtown = 0;
-  pcity->ai.invasion = 0;
-  pcity->ai.bcost = 0;
-  pcity->ai.attack = 0;
-  pcity->ai.next_recalc = 0;
-
   pcity->corruption = 0;
   pcity->shield_waste = 0;
   pcity->shield_bonus = 100;
@@ -2618,27 +2623,42 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->science_bonus = 100;
 
   pcity->units_supported = unit_list_new();
-  pcity->debug = FALSE;
 
   pcity->rally_point = NULL;
 
   pcity->trade_routes = trade_route_list_new();
 
-  pcity->info_units_supported = NULL;
-  pcity->info_units_present = NULL;
-
   if (is_server) {
     pcity->server.workers_frozen = 0;
     pcity->server.needs_arrange = FALSE;
+    pcity->server.steal = 0;
     pcity->server.delayed_build = FALSE;
-
+    pcity->server.original = pplayer->player_no;
     pcity->server.managed = FALSE;
     memset(&pcity->server.parameter, 0, sizeof(pcity->server.parameter));
+
+    pcity->server.ai.founder_want = 0; /* calculating this is really expensive */
+    pcity->server.ai.next_founder_want_recalc = 0; /* turns to recalc found_want */
+    pcity->server.ai.trade_want = 1; /* we always want some */
+    memset(pcity->server.ai.building_want, 0,
+	   sizeof(pcity->server.ai.building_want));
+    pcity->server.ai.danger = 0;
+    pcity->server.ai.urgency = 0;
+    pcity->server.ai.grave_danger = 0;
+    pcity->server.ai.wallvalue = 0;
+    pcity->server.ai.downtown = 0;
+    pcity->server.ai.invasion = 0;
+    pcity->server.ai.bcost = 0;
+    pcity->server.ai.attack = 0;
+    pcity->server.ai.next_recalc = 0;
+    pcity->server.debug = FALSE;
   } else {
     pcity->client.occupied = FALSE;
     pcity->client.happy = pcity->client.unhappy = FALSE;
     pcity->client.colored = FALSE;
     pcity->client.traderoute_drawing_disabled = FALSE;
+    pcity->client.info_units_supported = NULL;
+    pcity->client.info_units_present = NULL;
   }
 
   return pcity;
@@ -2658,11 +2678,13 @@ void remove_city_virtual(struct city *pcity)
     }
     trade_route_list_free(pcity->trade_routes);
   }
-  if (pcity->info_units_supported) {
-    unit_list_free(pcity->info_units_supported);
-  }
-  if (pcity->info_units_present) {
-    unit_list_free(pcity->info_units_present);
+  if (!is_server) {
+    if (pcity->client.info_units_supported) {
+      unit_list_free(pcity->client.info_units_supported);
+    }
+    if (pcity->client.info_units_present) {
+      unit_list_free(pcity->client.info_units_present);
+    }
   }
   free(pcity);
 }

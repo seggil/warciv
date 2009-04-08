@@ -988,7 +988,7 @@ int num_supported_units_in_city(struct city *pcity)
   struct unit_list *plist;
 
   if (pcity->owner != get_player_idx()) {
-    plist = pcity->info_units_supported;
+    plist = pcity->client.info_units_supported;
   } else {
     plist = pcity->units_supported;
   }
@@ -1004,7 +1004,7 @@ int num_present_units_in_city(struct city *pcity)
   struct unit_list *plist;
 
   if (pcity->owner != get_player_idx()) {
-    plist = pcity->info_units_present;
+    plist = pcity->client.info_units_present;
   } else {
     plist = pcity->tile->units;
   }

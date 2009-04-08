@@ -89,7 +89,7 @@ void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
   va_list ap;
   int minlevel = MIN(LOGLEVEL_CITY, level);
 
-  if (pcity->debug) {
+  if (pcity->server.debug) {
     minlevel = LOG_NORMAL;
   } else if (minlevel > fc_log_level) {
     return;
@@ -98,15 +98,15 @@ void CITY_LOG(int level, struct city *pcity, const char *msg, ...)
   my_snprintf(buffer, sizeof(buffer), "%s's %s(%d,%d) [s%d d%d u%d g%d] ",
               city_owner(pcity)->name, pcity->name,
               pcity->tile->x, pcity->tile->y, pcity->size,
-              pcity->ai.danger, pcity->ai.urgency,
-              pcity->ai.grave_danger);
+              pcity->server.ai.danger, pcity->server.ai.urgency,
+              pcity->server.ai.grave_danger);
 
   va_start(ap, msg);
   my_vsnprintf(buffer2, sizeof(buffer2), msg, ap);
   va_end(ap);
 
   cat_snprintf(buffer, sizeof(buffer), buffer2);
-  if (pcity->debug) {
+  if (pcity->server.debug) {
     notify_conn(game.est_connections, buffer);
   }
   freelog(minlevel, buffer);
@@ -134,7 +134,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
     if (punit->id == 0) {
       struct city *pcity = map_get_city(punit->tile);
 
-      if (pcity && pcity->debug) {
+      if (pcity && pcity->server.debug) {
         minlevel = LOG_NORMAL;
         messwin = TRUE;
       }

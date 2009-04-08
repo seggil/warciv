@@ -89,7 +89,7 @@ void city_refresh(struct city *pcity)
    generic_city_refresh(pcity, TRUE, send_unit_info);
    /* AI would calculate this 1000 times otherwise; better to do it
       once -- Syela */
-   pcity->ai.trade_want =
+   pcity->server.ai.trade_want =
        TRADE_WEIGHTING - city_corruption(pcity, TRADE_WEIGHTING);
 }
 
@@ -1370,8 +1370,8 @@ int city_incite_cost(struct player *pplayer, struct city *pcity)
   }
 
   /* Buy back is cheap, conquered cities are also cheap */
-  if (pcity->owner != pcity->original) {
-    if (pplayer->player_no == pcity->original) {
+  if (pcity->owner != pcity->server.original) {
+    if (pplayer->player_no == pcity->server.original) {
       cost /= 2;            /* buy back: 50% price reduction */
     } else {
       cost = cost * 2 / 3;  /* buy conquered: 33% price reduction */
@@ -1477,25 +1477,24 @@ static void update_city_activity(struct player *pplayer, struct city *pcity)
 			 get_ruler_title(pplayer->government, pplayer->is_male,
 					 pplayer->nation),
 			 pcity->name);
-      pcity->rapture=0;
+      pcity->rapture = 0;
     }
-    pcity->was_happy=city_happy(pcity);
+    pcity->was_happy = city_happy(pcity);
 
     /* City population updated here, after the rapture stuff above. --Jing */
     {
-      int id=pcity->id;
+      int id = pcity->id;
       city_populate(pcity);
-      if(!player_find_city_by_id(pplayer, id))
+      if (!player_find_city_by_id(pplayer, id)) {
 	return;
+      }
     }
 
-    pcity->is_updated=TRUE;
-
-    pcity->did_sell=FALSE;
+    pcity->did_sell = FALSE;
     pcity->did_buy = FALSE;
     pcity->airlift = (get_city_bonus(pcity, EFT_AIRLIFT) > 0);
     update_tech(pplayer, pcity->science_total);
-    pplayer->economic.gold+=pcity->tax_total;
+    pplayer->economic.gold += pcity->tax_total;
     /* Pay for units */
     unit_list_iterate_safe(pcity->units_supported, punit) {
       pplayer->economic.gold -= punit->upkeep_gold;

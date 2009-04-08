@@ -168,7 +168,7 @@ static int base_want(struct player *pplayer, struct city *pcity,
 
   /* Stir, then compare notes */
   city_range_iterate(pcity, pplayer->cities, ai->impr_range[id], acity) {
-    final_want += city_want(pplayer, acity, ai) - acity->ai.worth;
+    final_want += city_want(pplayer, acity, ai) - acity->server.ai.worth;
   } city_range_iterate_end;
 
   /* Restore */
@@ -241,7 +241,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	  case EFT_PROD_TO_GOLD:
             /* Since coinage contains some entirely spurious ruleset values,
              * we need to return here with some spurious want. */
-            pcity->ai.building_want[id] = TRADE_WEIGHTING;
+            pcity->server.ai.building_want[id] = TRADE_WEIGHTING;
             return;
           /* These have already been evaluated in base_want() */
           case EFT_CAPITAL_CITY:
@@ -507,11 +507,11 @@ static void adjust_building_want_by_effects(struct city *pcity,
   v -= pimpr->build_cost / (pcity->shield_surplus * 10 + 1);
 
   /* Set */
-  pcity->ai.building_want[id] = v;
+  pcity->server.ai.building_want[id] = v;
 }
 
 /************************************************************************** 
-  Prime pcity->ai.building_want[]
+  Prime pcity->server.ai.building_want[]
 **************************************************************************/
 void ai_manage_buildings(struct player *pplayer)
 /* TODO:  RECALC_SPEED should be configurable to ai difficulty. -kauf  */
@@ -521,7 +521,7 @@ void ai_manage_buildings(struct player *pplayer)
 
   /* First find current worth of cities and cache this. */
   city_list_iterate(pplayer->cities, acity) {
-    acity->ai.worth = city_want(pplayer, acity, ai);
+    acity->server.ai.worth = city_want(pplayer, acity, ai);
   } city_list_iterate_end;
 
   impr_type_iterate(id) {
@@ -530,10 +530,11 @@ void ai_manage_buildings(struct player *pplayer)
       continue;
     }
     city_list_iterate(pplayer->cities, pcity) {
-      if (pplayer->ai.control && pcity->ai.next_recalc > game.info.turn) {
+      if (pplayer->ai.control
+	  && pcity->server.ai.next_recalc > game.info.turn) {
         continue; /* do not recalc yet */
       } else {
-        pcity->ai.building_want[id] = 0; /* do recalc */
+        pcity->server.ai.building_want[id] = 0; /* do recalc */
       }
       if (city_got_building(pcity, id)
           || pcity->shield_surplus == 0
@@ -543,17 +544,17 @@ void ai_manage_buildings(struct player *pplayer)
       }
       adjust_building_want_by_effects(pcity, id);
       CITY_LOG(LOG_DEBUG, pcity, "want to build %s with %d", 
-               get_improvement_name(id), pcity->ai.building_want[id]);
+               get_improvement_name(id), pcity->server.ai.building_want[id]);
     } city_list_iterate_end;
   } impr_type_iterate_end;
 
   /* Reset recalc counter */
   city_list_iterate(pplayer->cities, pcity) {
-    if (pcity->ai.next_recalc <= game.info.turn) {
+    if (pcity->server.ai.next_recalc <= game.info.turn) {
       /* This will spread recalcs out so that no one turn end is 
        * much longer than others */
-      pcity->ai.next_recalc = game.info.turn + myrand(RECALC_SPEED)
-	                      + RECALC_SPEED;
+      pcity->server.ai.next_recalc = game.info.turn + myrand(RECALC_SPEED)
+				     + RECALC_SPEED;
     }
   } city_list_iterate_end;
 }
@@ -585,17 +586,17 @@ static void establish_city_distances(struct player *pplayer,
     wonder_continent = 0;
   }
 
-  pcity->ai.downtown = 0;
+  pcity->server.ai.downtown = 0;
   city_list_iterate(pplayer->cities, othercity) {
     distance = WARMAP_COST(othercity->tile);
     if (wonder_continent != 0
         && map_get_continent(othercity->tile) == wonder_continent) {
-      othercity->ai.distance_to_wonder_city = distance;
+      othercity->server.ai.distance_to_wonder_city = distance;
     }
 
     /* How many people near enough would help us? */
     distance += moverate - 1; distance /= moverate;
-    pcity->ai.downtown += MAX(0, 5 - distance);
+    pcity->server.ai.downtown += MAX(0, 5 - distance);
   } city_list_iterate_end;
 }
 
@@ -647,8 +648,8 @@ static void ai_barbarian_choose_build(struct player *pplayer,
 
 /************************************************************************** 
   Chooses what the city will build.  Is called after the military advisor
-  put it's choice into pcity->ai.choice and "settler advisor" put settler
-  want into pcity->founder_*.
+  put it's choice into pcity->server.ai.choice and "settler advisor" put
+  settler want into pcity->founder_*.
 
   Note that AI cheats -- it suffers no penalty for switching from unit to 
   improvement, etc.
@@ -661,80 +662,80 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
 
   if (ai_handicap(pplayer, H_AWAY)
       && city_built_last_turn(pcity)
-      && pcity->ai.urgency == 0) {
+      && pcity->server.ai.urgency == 0) {
     /* Don't change existing productions unless we have to. */
     return;
   }
 
   if( is_barbarian(pplayer) ) {
-    ai_barbarian_choose_build(pplayer, &(pcity->ai.choice));
+    ai_barbarian_choose_build(pplayer, &(pcity->server.ai.choice));
   } else {
     /* FIXME: 101 is the "overriding military emergency" indicator */
-    if (pcity->ai.choice.want <= 100 || pcity->ai.urgency == 0) { 
+    if (pcity->server.ai.choice.want <= 100 || pcity->server.ai.urgency == 0) { 
       domestic_advisor_choose_build(pplayer, pcity, &newchoice);
-      copy_if_better_choice(&newchoice, &(pcity->ai.choice));
+      copy_if_better_choice(&newchoice, &(pcity->server.ai.choice));
     }
   }
 
   /* Fallbacks */
-  if (pcity->ai.choice.want == 0) {
+  if (pcity->server.ai.choice.want == 0) {
     /* Fallbacks do happen with techlevel 0, which is now default. -- Per */
     CITY_LOG(LOG_VERBOSE, pcity, "Falling back - didn't want to build soldiers,"
 	     " settlers, or buildings");
-    pcity->ai.choice.want = 1;
+    pcity->server.ai.choice.want = 1;
     if (best_role_unit(pcity, F_TRADE_ROUTE) != U_LAST) {
-      pcity->ai.choice.choice = best_role_unit(pcity, F_TRADE_ROUTE);
-      pcity->ai.choice.type = CT_NONMIL;
+      pcity->server.ai.choice.choice = best_role_unit(pcity, F_TRADE_ROUTE);
+      pcity->server.ai.choice.type = CT_NONMIL;
     } else if (can_build_improvement(pcity,
 				     game.ruleset_control.default_building)) {
-      pcity->ai.choice.choice = game.ruleset_control.default_building;
-      pcity->ai.choice.type = CT_BUILDING;
+      pcity->server.ai.choice.choice = game.ruleset_control.default_building;
+      pcity->server.ai.choice.type = CT_BUILDING;
     } else if (best_role_unit(pcity, F_SETTLERS) != U_LAST) {
-      pcity->ai.choice.choice = best_role_unit(pcity, F_SETTLERS);
-      pcity->ai.choice.type = CT_NONMIL;
+      pcity->server.ai.choice.choice = best_role_unit(pcity, F_SETTLERS);
+      pcity->server.ai.choice.type = CT_NONMIL;
     } else {
       CITY_LOG(LOG_VERBOSE, pcity, "Cannot even build a fallback "
 	       "(caravan/coinage/settlers). Fix the ruleset!");
-      pcity->ai.choice.want = 0;
+      pcity->server.ai.choice.want = 0;
     }
   }
 
-  if (pcity->ai.choice.want != 0) { 
-    ASSERT_REAL_CHOICE_TYPE(pcity->ai.choice.type);
+  if (pcity->server.ai.choice.want != 0) { 
+    ASSERT_REAL_CHOICE_TYPE(pcity->server.ai.choice.type);
 
     CITY_LOG(LOG_DEBUG, pcity, "wants %s with desire %d.",
-	     (is_unit_choice_type(pcity->ai.choice.type) ?
-	      unit_name(pcity->ai.choice.choice) :
-	      get_improvement_name(pcity->ai.choice.choice)),
-	     pcity->ai.choice.want);
+	     (is_unit_choice_type(pcity->server.ai.choice.type) ?
+	      unit_name(pcity->server.ai.choice.choice) :
+	      get_improvement_name(pcity->server.ai.choice.choice)),
+	     pcity->server.ai.choice.want);
     
     if (!pcity->is_building_unit && is_wonder(pcity->currently_building) 
-	&& (is_unit_choice_type(pcity->ai.choice.type) 
-	    || pcity->ai.choice.choice != pcity->currently_building))
+	&& (is_unit_choice_type(pcity->server.ai.choice.type) 
+	    || pcity->server.ai.choice.choice != pcity->currently_building))
       notify_player_ex(NULL, pcity->tile, E_WONDER_STOPPED,
 		       _("Game: The %s have stopped building The %s in %s."),
 		       get_nation_name_plural(pplayer->nation),
 		       get_impr_name_ex(pcity, pcity->currently_building),
 		       pcity->name);
     
-    if (pcity->ai.choice.type == CT_BUILDING 
-	&& is_wonder(pcity->ai.choice.choice)
+    if (pcity->server.ai.choice.type == CT_BUILDING 
+	&& is_wonder(pcity->server.ai.choice.choice)
 	&& (pcity->is_building_unit 
-	    || pcity->currently_building != pcity->ai.choice.choice)) {
+	    || pcity->currently_building != pcity->server.ai.choice.choice)) {
       notify_player_ex(NULL, pcity->tile, E_WONDER_STARTED,
 		       _("Game: The %s have started building The %s in %s."),
 		       get_nation_name_plural(city_owner(pcity)->nation),
-		       get_impr_name_ex(pcity, pcity->ai.choice.choice),
+		       get_impr_name_ex(pcity, pcity->server.ai.choice.choice),
 		       pcity->name);
-      pcity->currently_building = pcity->ai.choice.choice;
-      pcity->is_building_unit = is_unit_choice_type(pcity->ai.choice.type);
+      pcity->currently_building = pcity->server.ai.choice.choice;
+      pcity->is_building_unit = is_unit_choice_type(pcity->server.ai.choice.type);
 
       /* Help other cities to send caravans to us */
       generate_warmap(pcity, NULL);
       establish_city_distances(pplayer, pcity);
     } else {
-      pcity->currently_building = pcity->ai.choice.choice;
-      pcity->is_building_unit   = is_unit_choice_type(pcity->ai.choice.type);
+      pcity->currently_building = pcity->server.ai.choice.choice;
+      pcity->is_building_unit   = is_unit_choice_type(pcity->server.ai.choice.type);
     }
   }
 }
@@ -816,7 +817,7 @@ static void ai_spend_gold(struct player *pplayer)
     unit_list_iterate_safe(ptile->units, punit) {
       if (unit_has_role(punit->type, L_EXPLORER)
           && pcity->id == punit->homecity
-          && pcity->ai.urgency == 0) {
+          && pcity->server.ai.urgency == 0) {
         CITY_LOG(LOG_BUY, pcity, "disbanding %s to increase production",
                  unit_name(punit->type));
 	handle_unit_disband(pplayer,punit->id);
@@ -833,10 +834,10 @@ static void ai_spend_gold(struct player *pplayer)
     /* Find highest wanted item on the buy list */
     init_choice(&bestchoice);
     city_list_iterate(pplayer->cities, acity) {
-      if (acity->ai.choice.want > bestchoice.want && ai_fuzzy(pplayer, TRUE)) {
-        bestchoice.choice = acity->ai.choice.choice;
-        bestchoice.want = acity->ai.choice.want;
-        bestchoice.type = acity->ai.choice.type;
+      if (acity->server.ai.choice.want > bestchoice.want && ai_fuzzy(pplayer, TRUE)) {
+        bestchoice.choice = acity->server.ai.choice.choice;
+        bestchoice.want = acity->server.ai.choice.want;
+        bestchoice.type = acity->server.ai.choice.type;
         pcity = acity;
       }
     } city_list_iterate_end;
@@ -847,18 +848,18 @@ static void ai_spend_gold(struct player *pplayer)
     }
 
     /* Not dealing with this city a second time */
-    pcity->ai.choice.want = 0;
+    pcity->server.ai.choice.want = 0;
 
     ASSERT_REAL_CHOICE_TYPE(bestchoice.type);
 
     /* Try upgrade units at danger location (high want is usually danger) */
-    if (pcity->ai.urgency > 1) {
+    if (pcity->server.ai.urgency > 1) {
       if (bestchoice.type == CT_BUILDING && is_wonder(bestchoice.choice)) {
         CITY_LOG(LOG_BUY, pcity, "Wonder being built in dangerous position!");
       } else {
         /* If we have urgent want, spend more */
         int upgrade_limit = limit;
-        if (pcity->ai.urgency > 1) {
+        if (pcity->server.ai.urgency > 1) {
           upgrade_limit = pplayer->ai.est_upkeep;
         }
         /* Upgrade only military units now */
@@ -914,15 +915,15 @@ static void ai_spend_gold(struct player *pplayer)
 
     if (pplayer->economic.gold - pplayer->ai.est_upkeep >= buycost
         && (!expensive 
-            || (pcity->ai.grave_danger != 0 && assess_defense(pcity) == 0)
-            || (bestchoice.want > 200 && pcity->ai.urgency > 1))) {
+            || (pcity->server.ai.grave_danger != 0 && assess_defense(pcity) == 0)
+            || (bestchoice.want > 200 && pcity->server.ai.urgency > 1))) {
       /* Buy stuff */
       CITY_LOG(LOG_BUY, pcity, "Crash buy of %s for %d (want %d)",
                bestchoice.type != CT_BUILDING ? unit_name(bestchoice.choice)
                : get_improvement_name(bestchoice.choice), buycost,
                bestchoice.want);
       really_handle_city_buy(pplayer, pcity);
-    } else if (pcity->ai.grave_danger != 0 
+    } else if (pcity->server.ai.grave_danger != 0 
                && bestchoice.type == CT_DEFENDER
                && assess_defense(pcity) == 0) {
       /* We have no gold but MUST have a defender */
@@ -974,7 +975,7 @@ void ai_manage_cities(struct player *pplayer)
   initialize_infrastructure_cache(pplayer);
   city_list_iterate(pplayer->cities, pcity) {
     /* Note that this function mungs the seamap, but we don't care */
-    military_advisor_choose_build(pplayer, pcity, &pcity->ai.choice);
+    military_advisor_choose_build(pplayer, pcity, &pcity->server.ai.choice);
     /* because establish_city_distances doesn't need the seamap
      * it determines downtown and distance_to_wondercity, 
      * which ai_city_choose_build will need */
@@ -982,12 +983,12 @@ void ai_manage_cities(struct player *pplayer)
     /* Will record its findings in pcity->settler_want */ 
     contemplate_terrain_improvements(pcity);
 
-    if (pcity->ai.next_founder_want_recalc <= game.info.turn) {
+    if (pcity->server.ai.next_founder_want_recalc <= game.info.turn) {
       /* Will record its findings in pcity->founder_want */ 
       contemplate_new_city(pcity);
       /* Avoid recalculating all the time.. */
-      pcity->ai.next_founder_want_recalc = game.info.turn + myrand(RECALC_SPEED)
-	                                   + RECALC_SPEED;
+      pcity->server.ai.next_founder_want_recalc =
+	game.info.turn + myrand(RECALC_SPEED) + RECALC_SPEED;
     } 
   } city_list_iterate_end;
 

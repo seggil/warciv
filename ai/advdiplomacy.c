@@ -416,7 +416,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
       } else {
         worth *= 15;
       }
-      if (aplayer->player_no == offer->original) {
+      if (aplayer->player_no == offer->server.original) {
         /* Let them buy back their own city cheaper. */
         worth /= 2;
       }

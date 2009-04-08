@@ -240,22 +240,9 @@ struct city {
 
   struct unit_list *units_supported;
 
-  struct {
-    /* Only used at the client (the serer is omniscient). */
-    bool occupied;
-    bool happy, unhappy;
-
-    /* The color is an index into the city_colors array in mapview_common */
-    bool colored;
-    int color_index;
-
-    bool traderoute_drawing_disabled;
-  } client;
-
-  int steal;		      /* diplomats steal once; for spies, gets harder */
   /* turn states */
   bool did_buy;
-  bool did_sell, is_updated;
+  bool did_sell;
   int turn_last_built;	      /* The last year in which something was built */
   int changed_from_id;	      /* If changed this turn, what changed from (id) */
   bool changed_from_is_unit;   /* If changed this turn, what changed from (unit?) */
@@ -267,37 +254,59 @@ struct city {
   int rapture;                /* rapture rounds count */ 
   bool was_happy;
   bool airlift;
-  int original;			/* original owner */
   int city_options;		/* bitfield; positions as enum city_options */
-
-  /* server variable. indicates if the city map is synced with the client. */
-  bool synced;
-  struct {
-    /* If > 0, workers will not be rearranged until they are unfrozen. */
-    int workers_frozen;
-
-    /* If set, workers need to be arranged when the city is unfrozen.  Only
-     * set inside auto_arrange_workers. */
-    bool needs_arrange;
-
-    /* Used to build unit or city at the end of the turn. */
-    bool delayed_build;
-
-    /* Used to share CMA paramters */
-    bool managed;
-    struct cm_parameter parameter;
-  } server;
 
   int turn_founded;		/* In which turn was the city founded? */
 
   struct tile *rally_point;
 
-  /* info for dipl/spy investigation -- used only in client */
-  struct unit_list *info_units_supported;
-  struct unit_list *info_units_present;
+  union {
+    struct {
+      /* Only used at the client (the server is omniscient). */
+      bool occupied;
+      bool happy, unhappy;
 
-  struct ai_city ai;
-  bool debug;
+      /* Info for dipl/spy investigation. */
+      struct unit_list *info_units_supported;
+      struct unit_list *info_units_present;
+
+      /* The color is an index into the city_colors array in mapview_common */
+      bool colored;
+      int color_index;
+
+      bool traderoute_drawing_disabled;
+    } client;
+
+    struct {
+      /* Indicates if the city map is synced with the client. */
+      bool synced;
+
+      /* If > 0, workers will not be rearranged until they are unfrozen. */
+      int workers_frozen;
+
+      /* If set, workers need to be arranged when the city is unfrozen.  Only
+       * set inside auto_arrange_workers. */
+      bool needs_arrange;
+
+      /* Diplomats steal once; for spies, gets harder */
+      int steal;
+
+      /* Original owner */
+      int original;
+
+      /* Used to build unit or city at the end of the turn. */
+      bool delayed_build;
+
+      /* Used to share CMA paramters */
+      bool managed;
+      struct cm_parameter parameter;
+
+      struct ai_city ai;
+      bool debug;
+    } server;
+  };
+
+  /* Nothing behind the union please! */
 };
 
 /* city drawing styles */
