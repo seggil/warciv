@@ -3663,7 +3663,7 @@ void game_load(struct section_file *file)
     game.server.fracmovestyle = secfile_lookup_int_default(file,
 	GAME_DEFAULT_FRACMOVESTYLE, "game.fracmovestyle");
     game.server.endturn = secfile_lookup_int_default(file,
-	GAME_DEFAULT_FRACMOVESTYLE, "game.endturn");
+	GAME_DEFAULT_ENDTURN, "game.endturn");
 
     /* Warserver 'ignoreruleset' settings. */
     game.ext_info.ignoreruleset = secfile_lookup_bool_default(file,
