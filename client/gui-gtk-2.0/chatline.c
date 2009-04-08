@@ -2837,8 +2837,6 @@ bool chatline_autocomplement(GtkEditable *editable)
     pos -= prefix_len;
     gtk_editable_insert_text(editable, name[0], strlen(name[0]), &pos);
     gtk_editable_set_position(editable, pos);
-    g_free(chars);
-    return TRUE;
   } else if (num > 1) {
     my_snprintf(buf, sizeof(buf), _("Suggestions: %s"), name[0]);
     for (i = 1; i < num; i++) {

@@ -2596,10 +2596,6 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->rapture = 0;
   pcity->city_options = CITYOPT_DEFAULT;
 
-  pcity->server.workers_frozen = 0;
-  pcity->server.needs_arrange = FALSE;
-  pcity->server.delayed_build = FALSE;
-
   pcity->ai.founder_want = 0; /* calculating this is really expensive */
   pcity->ai.next_founder_want_recalc = 0; /* turns to recalc found_want */
   pcity->ai.trade_want = 1; /* we always want some */
@@ -2621,11 +2617,6 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->tax_bonus = 100;
   pcity->science_bonus = 100;
 
-  pcity->client.occupied = FALSE;
-  pcity->client.happy = pcity->client.unhappy = FALSE;
-  pcity->client.colored = FALSE;
-  pcity->client.traderoute_drawing_disabled = FALSE;
-
   pcity->units_supported = unit_list_new();
   pcity->debug = FALSE;
 
@@ -2636,8 +2627,19 @@ struct city *create_city_virtual(struct player *pplayer, struct tile *ptile,
   pcity->info_units_supported = NULL;
   pcity->info_units_present = NULL;
 
-  pcity->server.managed = FALSE;
-  memset(&pcity->server.parameter, 0, sizeof(pcity->server.parameter));
+  if (is_server) {
+    pcity->server.workers_frozen = 0;
+    pcity->server.needs_arrange = FALSE;
+    pcity->server.delayed_build = FALSE;
+
+    pcity->server.managed = FALSE;
+    memset(&pcity->server.parameter, 0, sizeof(pcity->server.parameter));
+  } else {
+    pcity->client.occupied = FALSE;
+    pcity->client.happy = pcity->client.unhappy = FALSE;
+    pcity->client.colored = FALSE;
+    pcity->client.traderoute_drawing_disabled = FALSE;
+  }
 
   return pcity;
 }

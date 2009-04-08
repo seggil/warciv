@@ -1412,7 +1412,7 @@ bool is_my_zoc(struct player *pplayer, const struct tile *ptile0)
       struct city *pcity = is_non_allied_city_tile(ptile, pplayer);
 
       if (pcity 
-          && (pcity->client.occupied 
+          && ((!is_server && pcity->client.occupied)
               || map_get_known(ptile, pplayer) == TILE_KNOWN_FOGGED)) {
         /* If the city is fogged, we assume it's occupied */
         return FALSE;
@@ -1793,10 +1793,12 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->ord_city = 0;
   set_unit_activity(punit, ACTIVITY_IDLE);
   punit->occupy = 0;
-  punit->client.colored = FALSE;
   punit->has_orders = FALSE;
   punit->is_new = TRUE;
   punit->is_sleeping = FALSE;
+  if (!is_server) {
+    punit->client.colored = FALSE;
+  }
 
   return punit;
 }

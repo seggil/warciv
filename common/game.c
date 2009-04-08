@@ -404,7 +404,9 @@ static void game_remove_all_players(void)
   }
 
   game.info.nplayers = 0;
-  game.server.nbarbarians = 0;
+  if (is_server) {
+    game.server.nbarbarians = 0;
+  }
 }
 
 /***************************************************************

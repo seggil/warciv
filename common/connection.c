@@ -563,7 +563,7 @@ const char *conn_description(const struct connection *pconn)
   buffer[0] = '\0';
 
   if (pconn->username[0] != '\0') {
-    if (!strcmp(pconn->addr, pconn->server.ipaddr)) {
+    if (!is_server || !strcmp(pconn->addr, pconn->server.ipaddr)) {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
                   pconn->username, pconn->addr); 
     } else {
@@ -700,13 +700,10 @@ void connection_common_init(struct connection *pconn)
   if (is_server) {
     pconn->server.ignore_list = ignore_list_new();
     pconn->server.flood_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
-  } else {
-    pconn->server.ignore_list = NULL;
-    pconn->server.flood_timer = NULL;
+    pconn->server.flood_counter = 0.0;
+    pconn->server.flood_warning_level = 0;
+    pconn->server.last_obs_time = 0;
   }
-  pconn->server.flood_counter = 0.0;
-  pconn->server.flood_warning_level = 0;
-  pconn->server.last_obs_time = 0;
 
   init_packet_hashs(pconn);
 
@@ -750,7 +747,7 @@ void connection_common_close(struct connection *pconn)
   free_compression_queue(pconn);
   free_packet_hashes(pconn);
 
-  if (pconn->server.ignore_list) {
+  if (is_server) {
     ignore_list_iterate(pconn->server.ignore_list, cp) {
       conn_pattern_free(cp);
     } ignore_list_iterate_end;
@@ -881,7 +878,7 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn)
 {
   switch (cp->type) {
     case CPT_ADDRESS:
-      return wildcardfit(cp->pattern, pconn->server.ipaddr);
+      return is_server ? wildcardfit(cp->pattern, pconn->server.ipaddr) : FALSE;
     case CPT_HOSTNAME:
       return wildcardfit(cp->pattern, pconn->addr);
     case CPT_USERNAME:
