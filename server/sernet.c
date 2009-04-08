@@ -220,7 +220,7 @@ static void close_connection(struct connection *pconn)
   conn_list_unlink(game.game_connections, pconn);
 
   pconn->player = NULL;
-  pconn->access_level = ALLOW_NONE;
+  pconn->server.access_level = ALLOW_NONE;
   connection_common_close(pconn);
 
   send_conn_info(pconn->self, game.est_connections);
@@ -276,7 +276,7 @@ void close_connections_and_socket(void)
 static void server_close_socket_callback(struct connection *pc)
 {
   /* Do as little as possible here to avoid recursive evil. */
-  pc->is_closing = TRUE;
+  pc->server.is_closing = TRUE;
 }
 
 /*****************************************************************************
@@ -327,7 +327,7 @@ void force_flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
       pconn = &connections[i];
-      if (!pconn->used || pconn->is_closing
+      if (!pconn->used || pconn->server.is_closing
           || pconn->send_buffer == NULL
           || pconn->send_buffer->ndata <= 0) {
         continue;
@@ -363,7 +363,7 @@ void force_flush_packets(void)
 
     for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
       pconn = &connections[i];
-      if (!pconn->used || pconn->is_closing
+      if (!pconn->used || pconn->server.is_closing
           || pconn->send_buffer == NULL
           || pconn->send_buffer->ndata <= 0) {
         continue;
@@ -408,7 +408,7 @@ static void really_close_connections(void)
 
   for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
     pconn = &connections[i];
-    if (!pconn->used || !pconn->is_closing) {
+    if (!pconn->used || !pconn->server.is_closing) {
       continue;
     }
     lost_connection_to_client(pconn);
@@ -449,7 +449,7 @@ static void really_close_connections(void)
 *****************************************************************************/
 static bool check_read_data(struct connection *pconn, fd_set *preadfs)
 {
-  if (!pconn || !pconn->used || pconn->is_closing || !pconn->buffer) {
+  if (!pconn || !pconn->used || pconn->server.is_closing || !pconn->buffer) {
     return FALSE;
   }
 
@@ -539,7 +539,7 @@ static bool decode_packet_data(struct connection *pconn)
           us % 1000);
 #endif /* PROCESSING_TIME_STATISTICS */
 
-  return !pconn->is_closing;
+  return !pconn->server.is_closing;
 }
 
 /*****************************************************************************
@@ -673,7 +673,7 @@ int sniff_packets(void)
 
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
-        if (!pconn->used || pconn->is_closing
+        if (!pconn->used || pconn->server.is_closing
             || !pconn->established
             || !pconn->server.ping_timers) {
           continue;
@@ -690,7 +690,7 @@ int sniff_packets(void)
             || pconn->ping_time > game.server.pingtimeout) {
 
           /* Disconnect timed-out users, except for hack-level ones. */
-          if (pconn->access_level == ALLOW_HACK) {
+          if (pconn->server.access_level == ALLOW_HACK) {
             freelog(LOG_NORMAL, _("Ignoring ping timeout for "
                                   "hack-level connection %s."),
                     conn_description(pconn));
@@ -967,7 +967,7 @@ int sniff_packets(void)
       for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
         pconn = &connections[i];
 
-        if (!pconn->used || pconn->is_closing
+        if (!pconn->used || pconn->server.is_closing
             || pconn->send_buffer == NULL
             || pconn->send_buffer->ndata <= 0) {
           continue;
@@ -1147,8 +1147,7 @@ static int server_accept_connection(int sockfd)
   pconn->observer = FALSE;
   pconn->player = NULL;
   pconn->capability[0] = '\0';
-  pconn->is_closing = FALSE;
-  pconn->notify_of_writable_data = NULL;
+  pconn->server.is_closing = FALSE;
   pconn->server.currently_processed_request_id = 0;
   pconn->server.last_request_id_seen = 0;
   pconn->server.auth_tries = 0;
@@ -1165,7 +1164,8 @@ static int server_accept_connection(int sockfd)
   pconn->addr[0] = '\0';
   pconn->server.adns_id = -1;
   pconn->server.received_username = FALSE;
-  pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
+  pconn->server.granted_access_level = ALLOW_NONE;
+  pconn->server.access_level = ALLOW_NONE;
   pconn->server.delay_establish = FALSE;
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
   pconn->server.salt = 0;
@@ -1332,7 +1332,7 @@ void init_connections(void)
 static void start_processing_request(struct connection *pconn,
 				     int request_id)
 {
-  if (pconn == NULL || !pconn->used || pconn->is_closing) {
+  if (pconn == NULL || !pconn->used || pconn->server.is_closing) {
     return;
   }
 
@@ -1350,7 +1350,7 @@ static void start_processing_request(struct connection *pconn,
 **************************************************************************/
 static void finish_processing_request(struct connection *pconn)
 {
-  if (pconn == NULL || !pconn->used || pconn->is_closing
+  if (pconn == NULL || !pconn->used || pconn->server.is_closing
       || pconn->server.currently_processed_request_id <= 0) {
     return;
   }

@@ -1239,7 +1239,7 @@ static bool is_allowed_player_name(struct player *pplayer,
     /* FIXME: is there a better way to determine if a *player* has hack
      * access? */
   if (!is_ascii_name(name)
-      && (!pconn || pconn->access_level != ALLOW_HACK)) {
+      && (!pconn || pconn->server.access_level != ALLOW_HACK)) {
     if (error_buf) {
       my_snprintf(error_buf, bufsz, _("Please choose a name containing "
 				      "only ASCII characters."));

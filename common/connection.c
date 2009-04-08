@@ -124,8 +124,7 @@ void close_socket_set_callback(CLOSE_FUN fun)
 /**************************************************************************
   Call the callback to close the socket.
 **************************************************************************/
-void call_close_socket_callback(struct connection *pc,
-                                enum exit_state state)
+void call_close_socket_callback(struct connection *pc, enum exit_state state)
 {
   assert(pc != NULL);
   assert(close_callback != NULL);
@@ -177,7 +176,7 @@ int read_socket_data(struct connection *pc,
   int sock;
 
   if (pc == NULL || buffer == NULL || !pc->used
-      || pc->is_closing || pc->sock < 0) {
+      || (is_server && pc->server.is_closing) || pc->sock < 0) {
     /* Hmm, not the best way to "ignore" a "bad" call
      * to this function. In any case, this situation
      * should not happen very often. */
@@ -232,7 +231,7 @@ static int write_socket_data(struct connection *pc,
   long err_no;
 
   if (pc == NULL || buf == NULL || buf->ndata <= 0
-      || !pc->used || pc->is_closing) {
+      || !pc->used || (is_server && pc->server.is_closing)) {
     return 0;
   }
 
@@ -297,7 +296,7 @@ int flush_connection_send_buffer_all(struct connection *pc)
 {
   int ret = 0;
 
-  if (pc == NULL || !pc->used || pc->is_closing
+  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
       || pc->send_buffer == NULL || pc->send_buffer->ndata <= 0) {
     return 0;
   }
@@ -306,8 +305,8 @@ int flush_connection_send_buffer_all(struct connection *pc)
 
   ret = write_socket_data(pc, pc->send_buffer);
 
-  if (pc->notify_of_writable_data && pc->send_buffer) {
-    pc->notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
+  if (!is_server && pc->client.notify_of_writable_data && pc->send_buffer) {
+    pc->client.notify_of_writable_data(pc, pc->send_buffer->ndata > 0);
   }
 
   return ret;
@@ -322,7 +321,7 @@ static bool add_connection_data(struct connection *pc,
 {
   struct socket_packet_buffer *buf;
 
-  if (pc == NULL || !pc->used || pc->is_closing
+  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
       || pc->send_buffer == NULL || data == NULL || len <= 0) {
     return TRUE;
   }
@@ -349,7 +348,7 @@ static bool add_connection_data(struct connection *pc,
 int send_connection_data(struct connection *pc, const unsigned char *data,
                          int len)
 {
-  if (pc == NULL || !pc->used || pc->is_closing
+  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
       || pc->send_buffer == NULL || data == NULL || len <= 0) {
     return 0;
   }
@@ -373,7 +372,7 @@ int send_connection_data(struct connection *pc, const unsigned char *data,
 **************************************************************************/
 void connection_do_buffer(struct connection *pc)
 {
-  if (pc == NULL || !pc->used || pc->is_closing
+  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
       || pc->send_buffer == NULL) {
     return;
   }
@@ -391,7 +390,7 @@ void connection_do_buffer(struct connection *pc)
 **************************************************************************/
 void connection_do_unbuffer(struct connection *pc)
 {
-  if (pc == NULL || !pc->used || pc->is_closing
+  if (pc == NULL || !pc->used || (is_server && pc->server.is_closing)
       || pc->send_buffer == NULL) {
     return;
   }
@@ -695,9 +694,10 @@ void connection_common_init(struct connection *pconn)
   pconn->buffer = new_socket_packet_buffer();
   pconn->send_buffer = new_socket_packet_buffer();
   pconn->statistics.bytes_send = 0;
-  pconn->access_level = pconn->granted_access_level = ALLOW_NONE;
   pconn->exit_state = ES_NONE;
   if (is_server) {
+    pconn->server.access_level = ALLOW_NONE;
+    pconn->server.granted_access_level = ALLOW_NONE;
     pconn->server.ignore_list = ignore_list_new();
     pconn->server.flood_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
     pconn->server.flood_counter = 0.0;
@@ -922,8 +922,8 @@ struct player *conn_get_player(const struct connection *pconn)
 **************************************************************************/
 enum cmdlevel_id conn_get_access(const struct connection *pconn)
 {
-  if (!pconn) {
+  if (!pconn || !is_server) {
     return ALLOW_NONE; /* Would not want to give hack on error... */
   }
-  return pconn->access_level;
+  return pconn->server.access_level;
 }

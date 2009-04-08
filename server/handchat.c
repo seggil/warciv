@@ -91,7 +91,7 @@ static void complain_ambiguous(struct connection *pconn, const char *name,
 bool conn_is_ignored(struct connection *pconn, struct connection *dest)
 {
   if (pconn == dest || pconn == NULL || dest == NULL
-      || dest->access_level >= ALLOW_ADMIN) {
+      || dest->server.access_level >= ALLOW_ADMIN) {
     return FALSE;
   }
 
@@ -208,7 +208,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   const char *end = message + MAX_LEN_MSG;
 
   if (pconn->server.flood_timer
-      && pconn->access_level < ALLOW_ADMIN) {
+      && pconn->server.access_level < ALLOW_ADMIN) {
     double time_since_last_message;
     int len;
     double wait_interval, dfc;

@@ -1070,7 +1070,7 @@ static bool can_send_more(struct conn_list *dest)
   }
 
   conn_list_iterate(dest, pconn) {
-    if (!pconn || pconn->is_closing || !pconn->send_buffer) {
+    if (!pconn || pconn->server.is_closing || !pconn->send_buffer) {
       continue;
     }
     min = MIN(min, pconn->send_buffer->ndata);

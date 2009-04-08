@@ -200,19 +200,6 @@ struct connection {
    */
   char capability[MAX_LEN_CAPSTR];
 
-  /* 
-   * "access_level" stores the access granted to the client
-   * corresponding to this connection.
-   */
-  enum cmdlevel_id access_level;
-  enum cmdlevel_id granted_access_level; /* access level granted by the action list */
-
-  /* Something has occurred that should have closed the
-   * connection, but the closing has been postponed. If
-   * this field is TRUE, under no circumstances should
-   * writing be done to the connection. */
-  bool is_closing;
-
   /* Used to determine how the connection is broken */
   enum exit_state exit_state;
 
@@ -220,92 +207,6 @@ struct connection {
    * the error code (i.e. the return value of
    * mysocketerrno()) is saved to this field. */
   long error_code;
-
-  void (*notify_of_writable_data) (struct connection *pc,
-				   bool data_available_and_socket_full);
-
-  struct {
-    /* 
-     * Increases for every packet send to the server.
-     */
-    int last_request_id_used;
-
-    /* 
-     * Increases for every received PACKET_PROCESSING_FINISHED packet.
-     */
-    int last_processed_request_id_seen;
-
-    /* 
-     * Holds the id of the request which caused this packet. Can be
-     * zero.
-     */
-    int request_id_of_currently_handled_packet;
-  } client;
-
-  struct {
-    /* 
-     * Holds the id of the request which is processed now. Can be
-     * zero.
-     */
-    int currently_processed_request_id;
-
-    /* 
-     * Will increase for every received packet.
-     */
-    int last_request_id_seen;
-
-    /* 
-     * The start times of the PACKET_CONN_PING which have been sent
-     * but weren't PACKET_CONN_PONGed yet? 
-     */
-    struct timer_list *ping_timers;
-   
-    /* Holds number of tries for authentication from client. */
-    int auth_tries;
-
-    /* the time that the server will respond after receiving an auth reply.
-     * this is used to throttle the connection. Also used to reject a 
-     * connection if we've waited too long for a password. */
-    time_t auth_settime;
-
-    /* used to follow where the connection is in the authentication process */
-    enum auth_status status;
-    char password[MAX_LEN_PASSWORD];
-    int salt; /* At least 32-bits. */
-
-    /* for reverse lookup and blacklisting in db */
-    char ipaddr[MAX_LEN_ADDR];
-    
-    unsigned int packets_received;
-    unsigned int delay_counter;
-
-    struct ignore_list *ignore_list;
- 
-    bool received_username;
-
-    /* Request id of asynchronous dns query, if applicable. */
-    int adns_id;
-
-    /* Is TRUE when we need are waiting for the hostname before
-     * complishing authentification and action list look up. */
-    bool delay_establish;
-
-    struct timer *flood_timer;
-    double flood_counter;
-    int flood_warning_level;
-
-    /* Used for the idlecut setting. It holds the timestamp of
-     * the last "non-idle" action by the connection. */
-    time_t idle_time;
-
-    /* The time when this connection last changed observer
-     * status. This is used to disallow users using the
-     * observe command too frequently and lagging the server.
-     * This value is also set to the current time when a
-     * connection is accepted by the server. This is so that
-     * users cannot observe immediately after connecting. */
-    time_t last_obs_time;
-  } server;
 
   /*
    * Called before an incoming packet is processed. The packet_type
@@ -339,6 +240,109 @@ struct connection {
   struct {
     int bytes_send;
   } statistics;
+
+  union {
+    /* Specific client datas. */
+    struct {
+      void (*notify_of_writable_data) (struct connection *pc,
+				       bool data_available_and_socket_full);
+
+      /* 
+       * Increases for every packet send to the server.
+       */
+      int last_request_id_used;
+
+      /* 
+       * Increases for every received PACKET_PROCESSING_FINISHED packet.
+       */
+      int last_processed_request_id_seen;
+
+      /* 
+       * Holds the id of the request which caused this packet. Can be
+       * zero.
+       */
+      int request_id_of_currently_handled_packet;
+    } client;
+
+    /* Specific server datas. */
+    struct {
+      /* 
+       * "access_level" stores the access granted to the client
+       * corresponding to this connection.
+       */
+      enum cmdlevel_id access_level;
+      enum cmdlevel_id granted_access_level; /* access level granted by the action list */
+
+      /* Something has occurred that should have closed the
+       * connection, but the closing has been postponed. If
+       * this field is TRUE, under no circumstances should
+       * writing be done to the connection. */
+      bool is_closing;
+
+      /* 
+       * Holds the id of the request which is processed now. Can be
+       * zero.
+       */
+      int currently_processed_request_id;
+
+      /* 
+       * Will increase for every received packet.
+       */
+      int last_request_id_seen;
+
+      /* 
+       * The start times of the PACKET_CONN_PING which have been sent
+       * but weren't PACKET_CONN_PONGed yet? 
+       */
+      struct timer_list *ping_timers;
+     
+      /* Holds number of tries for authentication from client. */
+      int auth_tries;
+
+      /* the time that the server will respond after receiving an auth reply.
+       * this is used to throttle the connection. Also used to reject a 
+       * connection if we've waited too long for a password. */
+      time_t auth_settime;
+
+      /* used to follow where the connection is in the authentication process */
+      enum auth_status status;
+      char password[MAX_LEN_PASSWORD];
+      int salt; /* At least 32-bits. */
+
+      /* for reverse lookup and blacklisting in db */
+      char ipaddr[MAX_LEN_ADDR];
+      
+      unsigned int packets_received;
+      unsigned int delay_counter;
+
+      struct ignore_list *ignore_list;
+   
+      bool received_username;
+
+      /* Request id of asynchronous dns query, if applicable. */
+      int adns_id;
+
+      /* Is TRUE when we need are waiting for the hostname before
+       * complishing authentification and action list look up. */
+      bool delay_establish;
+
+      struct timer *flood_timer;
+      double flood_counter;
+      int flood_warning_level;
+
+      /* Used for the idlecut setting. It holds the timestamp of
+       * the last "non-idle" action by the connection. */
+      time_t idle_time;
+
+      /* The time when this connection last changed observer
+       * status. This is used to disallow users using the
+       * observe command too frequently and lagging the server.
+       * This value is also set to the current time when a
+       * connection is accepted by the server. This is so that
+       * users cannot observe immediately after connecting. */
+      time_t last_obs_time;
+    } server;
+  };
 };
 
 

@@ -161,22 +161,28 @@ static void grant_access_level(struct connection *pconn)
           "(%s from %s)!", pconn->id, pconn->username, pconn->addr);
       break;
     case ACTION_GIVE_NONE:
-      pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
+      pconn->server.granted_access_level = ALLOW_NONE;
+      pconn->server.access_level = ALLOW_NONE;
       break;
     case ACTION_GIVE_OBSERVER:
-      pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
+      pconn->server.granted_access_level = ALLOW_OBSERVER;
+      pconn->server.access_level = ALLOW_OBSERVER;
       break;
     case ACTION_GIVE_BASIC:
-      pconn->granted_access_level = pconn->access_level = ALLOW_BASIC;
+      pconn->server.granted_access_level = ALLOW_BASIC;
+      pconn->server.access_level = ALLOW_BASIC;
       break;
     case ACTION_GIVE_CTRL:
-      pconn->granted_access_level = pconn->access_level = ALLOW_CTRL;
+      pconn->server.granted_access_level = ALLOW_CTRL;
+      pconn->server.access_level = ALLOW_CTRL;
       break;
     case ACTION_GIVE_ADMIN:
-      pconn->granted_access_level = pconn->access_level = ALLOW_ADMIN;
+      pconn->server.granted_access_level = ALLOW_ADMIN;
+      pconn->server.access_level = ALLOW_ADMIN;
       break;
     case ACTION_GIVE_HACK:
-      pconn->granted_access_level = pconn->access_level = ALLOW_HACK;
+      pconn->server.granted_access_level = ALLOW_HACK;
+      pconn->server.access_level = ALLOW_HACK;
       break;
     default:
       if (user_action_list_size(on_connect_user_actions) > 0) {
@@ -186,17 +192,19 @@ static void grant_access_level(struct connection *pconn)
                   "have access level 'none'."),
                 pconn->id, pconn->username, pconn->server.ipaddr);
       }
-      pconn->granted_access_level = pconn->access_level = ALLOW_NONE;
+      pconn->server.granted_access_level = ALLOW_NONE;
+      pconn->server.access_level = ALLOW_NONE;
       return;
   }
 
-  if (pconn->access_level > ALLOW_OBSERVER 
+  if (pconn->server.access_level > ALLOW_OBSERVER 
       && !can_control_a_player(pconn, FALSE)) {
-    pconn->granted_access_level = pconn->access_level = ALLOW_OBSERVER;
+    pconn->server.granted_access_level = ALLOW_OBSERVER;
+    pconn->server.access_level = ALLOW_OBSERVER;
   }
 
   freelog(LOG_VERBOSE, "Giving access '%s' to connection %d (%s from %s).",
-	  cmdlevel_name(pconn->granted_access_level),
+	  cmdlevel_name(pconn->server.granted_access_level),
 	  pconn->id, pconn->username, pconn->addr);
 }
 
@@ -327,7 +335,7 @@ void establish_new_connection(struct connection *pconn)
   /* Give a warning if we give access NONE when the hack
    * challenge is disabled and there is no action list. */
   if (user_action_list_size(on_connect_user_actions) == 0
-      && pconn->access_level == ALLOW_NONE
+      && pconn->server.access_level == ALLOW_NONE
       && srvarg.hack_request_disabled) {
     freelog(LOG_NORMAL, _("Warning: Without an action list, connection %d "
                           "(%s) has been set to access level NONE."),
@@ -708,7 +716,7 @@ void lost_connection_to_client(struct connection *pconn)
    * trigger an error on send and recurse back to here.
    * Safe to unlink even if not in list: */
   conn_list_unlink(game.est_connections, pconn);
-  pconn->is_closing = TRUE;
+  pconn->server.is_closing = TRUE;
   notify_conn(game.est_connections, _("Game: Lost connection: %s."), desc);
 
   if (!pplayer) {
@@ -756,7 +764,7 @@ static void package_conn_info(struct connection *pconn,
   packet->established  = pconn->established;
   packet->player_num   = pconn->player ? pconn->player->player_no : -1;
   packet->observer     = pconn->observer;
-  packet->access_level = pconn->access_level;
+  packet->access_level = pconn->server.access_level;
 
   sz_strlcpy(packet->username, pconn->username);
   sz_strlcpy(packet->addr, pconn->addr);
@@ -977,14 +985,14 @@ struct user_action *user_action_new(const char *pattern, int type,
 void restore_access_level(struct connection *pconn)
 {
   /* Restore previous privileges. */
-  pconn->access_level = pconn->granted_access_level;
+  pconn->server.access_level = pconn->server.granted_access_level;
 
   /* Detached connections must have at most the same privileges as
    * observers, unless the action list gave them something higher
    * than ALLOW_BASIC in the first place. */
   if ((pconn->observer || !pconn->player)
-      && pconn->access_level == ALLOW_BASIC) {
-    pconn->access_level = ALLOW_OBSERVER;
+      && pconn->server.access_level == ALLOW_BASIC) {
+    pconn->server.access_level = ALLOW_OBSERVER;
   }
 }
 
@@ -994,7 +1002,7 @@ void restore_access_level(struct connection *pconn)
 **************************************************************************/
 void conn_reset_idle_time(struct connection *pconn)
 {
-  if (!pconn || !pconn->used || pconn->is_closing) {
+  if (!pconn || !pconn->used || pconn->server.is_closing) {
     return;
   }
   pconn->server.idle_time = time(NULL);
@@ -1021,9 +1029,9 @@ void check_idle_connections(void)
   }
 
   conn_list_iterate(game.all_connections, pconn) {
-    if (!pconn->used || pconn->is_closing
+    if (!pconn->used || pconn->server.is_closing
         || pconn->server.idle_time <= 0
-        || pconn->access_level >= ALLOW_ADMIN
+        || pconn->server.access_level >= ALLOW_ADMIN
         || (server_state == RUN_GAME_STATE
             && pconn->observer
             && num_connections > 1)) {

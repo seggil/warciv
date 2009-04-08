@@ -1937,7 +1937,7 @@ void handle_conn_info(struct packet_conn_info *pinfo)
     pconn->id = pinfo->id;
     pconn->established = pinfo->established;
     pconn->observer = pinfo->observer;
-    pconn->access_level = pinfo->access_level;
+    /* pinfo->access_level sent but not used in client side. */
     pconn->player = pplayer;
     sz_strlcpy(pconn->username, pinfo->username);
     sz_strlcpy(pconn->addr, pinfo->addr);
@@ -1946,7 +1946,6 @@ void handle_conn_info(struct packet_conn_info *pinfo)
     if (pinfo->id == aconnection.id) {
       aconnection.established = pconn->established;
       aconnection.observer = pconn->observer;
-      aconnection.access_level = pconn->access_level;
       aconnection.player = pplayer;
       update_info_table();
     }

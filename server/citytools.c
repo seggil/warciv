@@ -345,7 +345,7 @@ bool is_allowed_city_name(struct player *pplayer, const char *city_name,
    * original nation are exhausted and the backup nations have non-ascii
    * names in them. */
   if (!is_ascii_name(city_name)
-      && (!pconn || pconn->access_level != ALLOW_HACK)) {
+      && (!pconn || pconn->server.access_level != ALLOW_HACK)) {
     if (error_buf) {
       my_snprintf(error_buf, bufsz,
 		  _("%s is not a valid name. Only ASCII or "
