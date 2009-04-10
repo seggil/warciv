@@ -443,7 +443,7 @@ void team_remove_player(struct player *pplayer)
 
   teams[pplayer->team].member_count--;
   /* no other team members left? remove team! */
-  if(teams[pplayer->team].member_count == 0) {
+  if (teams[pplayer->team].member_count == 0) {
     teams[pplayer->team].id = TEAM_NONE;
     num_teams--;
   }

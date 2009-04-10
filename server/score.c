@@ -882,8 +882,8 @@ void score_calculate_grouping_ratings(void)
       /* Set corresponding fcdb fields in team structures. */
       struct team *pteam = team_get_by_id(groupings[i].players[0]->team);
 
-      pteam->fcdb.rating = groupings[i].rating;
-      pteam->fcdb.rating_deviation = groupings[i].rating_deviation;
+      pteam->server.fcdb.rating = groupings[i].rating;
+      pteam->server.fcdb.rating_deviation = groupings[i].rating_deviation;
     }
   }
 }
@@ -1082,8 +1082,8 @@ static void update_ratings(void)
       /* Set corresponding fcdb fields in team structures. */
       struct team *pteam = team_get_by_id(groupings[i].players[0]->team);
 
-      pteam->fcdb.new_rating = groupings[i].new_rating;
-      pteam->fcdb.new_rating_deviation = groupings[i].new_rating_deviation;
+      pteam->server.fcdb.new_rating = groupings[i].new_rating;
+      pteam->server.fcdb.new_rating_deviation = groupings[i].new_rating_deviation;
     }
   }
 
@@ -1208,7 +1208,7 @@ void score_update_grouping_results(void)
       struct team *pteam = team_get_by_id(groupings[i].players[0]->team);
 
       assert(pteam != NULL);
-      groupings[i].score = pteam->score;
+      groupings[i].score = pteam->server.score;
     }
   }
 
@@ -1351,8 +1351,8 @@ void score_propagate_grouping_results(void)
     if (!pteam) {
       continue;
     }
-    pteam->rank = groupings[i].rank;
-    pteam->result = groupings[i].result;
+    pteam->server.rank = groupings[i].rank;
+    pteam->server.result = groupings[i].result;
   }
 
 
@@ -1449,7 +1449,7 @@ void score_calculate_team_scores(void)
       sum += (double) get_civ_score(pplayer);
     } players_iterate_end;
 
-    pteam->score = sum / (double) pteam->member_count;
+    pteam->server.score = sum / (double) pteam->member_count;
   } team_iterate_end;
 }
 

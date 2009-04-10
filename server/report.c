@@ -152,8 +152,8 @@ static int secompare(const void *a, const void *b)
 **************************************************************************/
 static int team_score_compare(const void *a, const void *b)
 {
-  return (*((const struct team **)b))->score
-         - (*((const struct team **)a))->score;
+  return (*((const struct team **)b))->server.score
+         - (*((const struct team **)a))->server.score;
 }
 
 static const char *greatness[MAX_NUM_PLAYERS] = {
@@ -1146,7 +1146,7 @@ void report_progress_scores(void)
     for (i = 0; i < team_num; i++) {
       cat_snprintf(buffer, sizeof(buffer), _("%2d: %-16s %.1f\n"),
 		   i + 1, get_team_name(sorted_teams[i]->id),
-		   sorted_teams[i]->score);
+		   sorted_teams[i]->server.score);
     }
 
     page_conn(game.game_connections,

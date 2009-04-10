@@ -1897,8 +1897,8 @@ bool fcdb_record_game_end(void)
     my_snprintf(buf, sizeof(buf), "UPDATE teams "
         "SET score = %f, rank = %f, result = '%s'"
         "WHERE game_id = %d AND STRCMP(name, '%s') = 0",
-        pteam->score, pteam->rank, result_name_orig(pteam->result),
-        game.server.fcdb.id,
+        pteam->server.score, pteam->server.rank,
+	result_name_orig(pteam->server.result), game.server.fcdb.id,
         fcdb_escape(sock, get_team_name(pteam->id)));
     fcdb_reset_escape_buffer();
     fcdb_execute_or_return(sock, buf, FALSE);

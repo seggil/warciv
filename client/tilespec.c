@@ -3082,23 +3082,20 @@ static enum color_std classic_overview_tile_color(struct tile *ptile)
 ***********************************************************************/
 static void team_player_colors_init(void)
 {
-  int team, i, n = 0;
-  bool at_least_one;
+  int i, n = 0;
 
   /* Give team colors */
-  for (team = 0; team < MAX_NUM_TEAMS; team++) {
-    at_least_one = FALSE;
-    players_iterate(pplayer) {
-      if (pplayer->team == team) {
-	at_least_one = TRUE;
-	player_color[pplayer->player_no] =
-	  COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM);
-      }
-    } players_iterate_end;
-    if (at_least_one) {
+  team_iterate(pteam) {
+    if (pteam->member_count > 0) {
+      players_iterate(pplayer) {
+	if (pplayer->team == pteam->id) {
+	  player_color[pplayer->player_no] =
+	    COLOR_STD_RACE0 + (n % PLAYER_COLORS_NUM);
+	}
+      } players_iterate_end;
       n++;
     }
-  }
+  } team_iterate_end;
 
   /* Other colors */
   for (i = 0; i < ARRAY_SIZE(player_color); i++) {

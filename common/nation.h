@@ -106,13 +106,15 @@ struct team {
   int member_count;
   Team_Type_id id; /* equal to array index if active, else TEAM_NONE */
 
-  float score;
-  float rank;
-  int result;
   struct {
-    double rating, rating_deviation;
-    double new_rating, new_rating_deviation;
-  } fcdb;
+    float score;
+    float rank;
+    int result;
+    struct {
+      double rating, rating_deviation;
+      double new_rating, new_rating_deviation;
+    } fcdb;
+  } server;
 };
 
 Nation_Type_id find_nation_by_name(const char *name);

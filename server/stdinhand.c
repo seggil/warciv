@@ -6809,7 +6809,7 @@ static bool draw_command(struct connection *caller, char *str, bool check)
     pplayer->result = PR_DRAW;
   } players_iterate_end;
   team_iterate(pteam) {
-    pteam->result = PR_DRAW;
+    pteam->server.result = PR_DRAW;
   } players_iterate_end;
 
   server_state = GAME_OVER_STATE;
@@ -8264,11 +8264,12 @@ static void show_team_ratings(struct connection *caller, bool send_to_all)
   team_iterate(pteam) {
     if (send_to_all) {
       notify_conn(NULL, fmt, get_team_name(pteam->id),
-                  pteam->fcdb.rating, pteam->fcdb.rating_deviation);
+                  pteam->server.fcdb.rating,
+		  pteam->server.fcdb.rating_deviation);
     } else {
       cmd_reply(CMD_LIST, caller, C_COMMENT, fmt,
-                get_team_name(pteam->id), pteam->fcdb.rating,
-                pteam->fcdb.rating_deviation);
+                get_team_name(pteam->id), pteam->server.fcdb.rating,
+                pteam->server.fcdb.rating_deviation);
     }
   } team_iterate_end;
 

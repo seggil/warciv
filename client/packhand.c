@@ -1730,19 +1730,22 @@ void handle_player_info(struct packet_player_info *pinfo)
 
   sz_strlcpy(pplayer->name, pinfo->name);
 
-  pplayer->nation=pinfo->nation;
-  pplayer->is_male=pinfo->is_male;
-  pplayer->team = pinfo->team;
+  pplayer->nation = pinfo->nation;
+  pplayer->is_male = pinfo->is_male;
+  if (pplayer->team != pinfo->team) {
+    team_remove_player(pplayer);
+    team_add_player(pplayer, get_team_name(pinfo->team));
+  }
 
-  pplayer->economic.gold=pinfo->gold;
-  pplayer->economic.tax=pinfo->tax;
-  pplayer->economic.science=pinfo->science;
-  pplayer->economic.luxury=pinfo->luxury;
-  pplayer->government=pinfo->government;
+  pplayer->economic.gold = pinfo->gold;
+  pplayer->economic.tax = pinfo->tax;
+  pplayer->economic.science = pinfo->science;
+  pplayer->economic.luxury = pinfo->luxury;
+  pplayer->government = pinfo->government;
   pplayer->target_government = pinfo->target_government;
-  pplayer->embassy=pinfo->embassy;
+  pplayer->embassy = pinfo->embassy;
   pplayer->gives_shared_vision = pinfo->gives_shared_vision;
-  pplayer->city_style=pinfo->city_style;
+  pplayer->city_style = pinfo->city_style;
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
     pplayer->ai.love[i] = pinfo->love[i];
   }
