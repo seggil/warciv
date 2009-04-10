@@ -124,9 +124,9 @@ static bool delaction_command(struct connection *caller, char *pattern,
 static bool reset_command(struct connection *caller, bool check);
 
 #define ACTION_LIST_FILE_VERSION 1
-static int load_action_list_v0(const char *filename);
-static int load_action_list_v1(const char *filename);
-static int load_action_list(const char *filename);
+static struct user_action_list *load_action_list_v0(const char *filename);
+static struct user_action_list *load_action_list_v1(const char *filename);
+static struct user_action_list *load_action_list(const char *filename);
 static int save_action_list(const char *filename);
 bool loadactionlist_command(struct connection *caller,
                             char *filename, bool check);
@@ -7505,28 +7505,36 @@ static bool disallow_command(struct connection *caller,
 bool loadactionlist_command(struct connection * caller,
                             char *arg, bool check)
 {
+  struct user_action_list *action_list;
   char safename[512], *filename = NULL;
-  int ret;
-  if (check)
+
+  if (check) {
     return TRUE;
+  }
   if (arg) {
     sz_strlcpy(safename, arg);
     remove_leading_trailing_spaces(safename);
     filename = safename;
   }
 
-  if (!filename || !filename[0])
+  if (!filename || !filename[0]) {
     filename = DEFAULT_ACTION_LIST_FILE;
+  }
 
-  ret = load_action_list(filename);
-  if (ret == -1) {
+  action_list = load_action_list(filename);
+  if (NULL == action_list) {
     cmd_reply(CMD_LOADACTIONLIST, caller, C_FAIL,
               _("Could not load action list from %s."), filename);
     return FALSE;
   }
+
+  clear_all_on_connect_user_actions();
+  user_action_list_free(on_connect_user_actions);
+  on_connect_user_actions = action_list;
+
   cmd_reply(CMD_LOADACTIONLIST, caller, C_COMMENT,
-            _("Added %d action(s) from %s to the action list."),
-            ret, filename);
+            _("Loaded %d action(s) from %s to the action list."),
+            user_action_list_size(on_connect_user_actions), filename);
   return TRUE;
 }
 
@@ -7537,8 +7545,10 @@ bool saveactionlist_command(struct connection * caller,
                             char *filename, bool check)
 {
   int ret;
-  if (!filename || filename[0] == '\0')
+
+  if (!filename || filename[0] == '\0') {
     filename = DEFAULT_ACTION_LIST_FILE;
+  }
   ret = save_action_list(filename);
   if (ret == -1) {
     cmd_reply(CMD_SAVEACTIONLIST, caller, C_FAIL,
@@ -7556,11 +7566,14 @@ bool saveactionlist_command(struct connection * caller,
 bool clearactionlist_command(struct connection * caller,
                              char *filename, bool check)
 {
-  if (check)
+  if (check) {
     return TRUE;
+  }
+
   clear_all_on_connect_user_actions();
   cmd_reply(CMD_CLEARACTIONLIST, caller, C_COMMENT,
             _("Action list cleared."));
+
   return TRUE;
 }
 
@@ -7571,107 +7584,126 @@ static int get_action_list_file_version(const char *line)
 {
   static const char *VERSTR = "version=";
   int version;
-  if (strncmp(VERSTR, line, strlen(VERSTR)))
+
+  if (strncmp(VERSTR, line, strlen(VERSTR))) {
     return 0;
+  }
   version = atoi(line + strlen(VERSTR));
+
   return version > 0 ? version : 0;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static int load_action_list_v0(const char *filename)
+static struct user_action_list *load_action_list_v0(const char *filename)
 {
+  struct user_action_list *action_list;
   FILE *file;
   char line[1024], *p;
   char addr[1024];
   int actionid;
-  int len, count;
+  size_t len;
+
   if (!(file = fopen(filename, "r"))) {
-    freelog(LOG_ERROR, "Could not open action list file %s: %s",
+    freelog(LOG_ERROR, "Could not open action list file %s: %s.",
             filename, mystrerror(myerrno()));
-    return -1;
+    return NULL;
   }
-  count = 0;
+
+  action_list = user_action_list_new();
   while (fgets(line, sizeof(line), file)) {
     len = strlen(line);
-    if (len <= 0)
+    if (len <= 0) {
       continue;
+    }
     /* Remove leading and trailing whitespace */
     p = line + len - 1;
-    while (p != line && my_isspace(*p))
+    while (p != line && my_isspace(*p)) {
       *p-- = '\0';
+    }
     p = line;
-    while (*p != '\0' && my_isspace(*p))
+    while (*p != '\0' && my_isspace(*p)) {
       p++;
-    if (strlen(p) <= 0)
+    }
+    if (strlen(p) <= 0) {
       continue;
+    }
     /* Skip comments */
-    if (*p == '#')
+    if (*p == '#') {
       continue;
+    }
     if (sscanf(p, "%s %d", addr, &actionid) == 2) {
       struct user_action *pua;
 
-      if (actionid < 0 || actionid >= NUM_ACTION_TYPES)
+      if (actionid < 0 || actionid >= NUM_ACTION_TYPES) {
         continue;
+      }
 
       pua = user_action_new(!strcmp(addr, "ALL") ? "*" : addr,
                             CPT_HOSTNAME, actionid);
-      user_action_list_append(on_connect_user_actions, pua);
-    } else
-      continue;
-    count++;
+      user_action_list_append(action_list, pua);
+    }
   }
   fclose(file);
-  freelog(LOG_VERBOSE, "Loaded %d action list item%s from %s",
-          count, count == 0 || count > 1 ? "s" : "", filename);
-  return count;
+
+  freelog(LOG_VERBOSE, "Loaded %d action list item(s) from %s.",
+          user_action_list_size(action_list), filename);
+
+  return action_list;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static int load_action_list_v1(const char *filename)
+static struct user_action_list *load_action_list_v1(const char *filename)
 {
+  struct user_action_list *action_list;
   FILE *file;
   char line[1024], *p, pat[512], err[128];
   int action, type;
-  int count = 0, lc = 0, i;
+  int lc = 0, i;
   struct user_action *pua;
   int ver;
+
   if (!(file = fopen(filename, "r"))) {
-    freelog(LOG_ERROR, _("Could not open action list file %s: %s."),
+    freelog(LOG_ERROR, "Could not open action list file %s: %s.",
             filename, mystrerror(myerrno()));
-    return -1;
+    return NULL;
   }
+
   /* Version line */
   fgets(line, sizeof(line), file);
   ver = get_action_list_file_version(line);
   if (ver != ACTION_LIST_FILE_VERSION) {
-    freelog(LOG_ERROR, _("Unrecognized action list file version: "
-                         "got %d, but expected %d."),
+    freelog(LOG_ERROR, "Unrecognized action list file version: "
+		       "got %d, but expected %d.",
             ver, ACTION_LIST_FILE_VERSION);
-    return -1;
+    return NULL;
   }
+
+  action_list = user_action_list_new();
   while (fgets(line, sizeof(line), file)) {
     lc++;
-    if ((p = strchr(line, '#')))
+    if ((p = strchr(line, '#'))) {
       *p = 0;
+    }
     remove_leading_trailing_spaces(line);
-    if (strlen(line) <= 0)
+    if (strlen(line) <= 0) {
       continue;
+    }
     if (!(p = strchr(line, ' '))) {
-      freelog(LOG_ERROR, _("Syntax error on line %d of "
-                           "action list file %s: action part of rule not "
-                           "found."), lc, filename);
+      freelog(LOG_ERROR, "Syntax error on line %d of "
+			 "action list file %s: action part of rule not "
+			 "found.", lc, filename);
       continue;
     }
     *p++ = 0;
 
     type = CPT_HOSTNAME;
     if (!parse_conn_pattern(p, pat, sizeof(pat), &type, err, sizeof(err))) {
-      freelog(LOG_ERROR, _("Syntax error on line %d of "
-                           "action list file %s: %s."), lc, filename, p);
+      freelog(LOG_ERROR, "Syntax error on line %d of "
+			 "action list file %s: %s.", lc, filename, p);
       continue;
     }
 
@@ -7688,35 +7720,38 @@ static int load_action_list_v1(const char *filename)
       }
     }
     if (action < 0 || action >= NUM_ACTION_TYPES) {
-      freelog(LOG_ERROR, _("Syntax error on line %d of "
-                           "action list file %s: unrecognized action \"%s\"."),
+      freelog(LOG_ERROR, "Syntax error on line %d of "
+			 "action list file %s: unrecognized action \"%s\".",
               lc, filename, line);
       continue;
     }
     pua = user_action_new(pat, type, action);
-    user_action_list_append(on_connect_user_actions, pua);
-    count++;
+    user_action_list_append(action_list, pua);
   }
   fclose(file);
-  freelog(LOG_VERBOSE, "Loaded %d action%s from %s (version %d)",
-          count, count == 0 || count > 1 ? "s" : "", filename, ver);
-  return count;
+
+  freelog(LOG_VERBOSE, "Loaded %d action(s) from %s (version %d)",
+          user_action_list_size(action_list), filename, ver);
+
+  return action_list;
 }
 
 /**************************************************************************
  Read the hostnames in the given filename and adds them to the action list.
  Assumes that action has been initialized.
 **************************************************************************/
-static int load_action_list(const char *filename)
+static struct user_action_list *load_action_list(const char *filename)
 {
   FILE *file;
   char line[64];
   int version;
+
   if (!(file = fopen(filename, "r"))) {
-    freelog(LOG_ERROR, _("Could not open action list file %s: %s"),
+    freelog(LOG_ERROR, "Could not open action list file %s: %s.",
             filename, mystrerror(myerrno()));
-    return -1;
+    return NULL;
   }
+
   fgets(line, sizeof(line), file);
   fclose(file);
   version = get_action_list_file_version(line);
@@ -7725,9 +7760,11 @@ static int load_action_list(const char *filename)
   } else if (version == ACTION_LIST_FILE_VERSION) {
     return load_action_list_v1(filename);
   }
-  freelog(LOG_ERROR, _("Unrecognized action list file version for "
-                       "file %s: %d"), filename, version);
-  return -1;
+
+  freelog(LOG_ERROR, "Unrecognized action list file version for "
+		     "file %s: %d", filename, version);
+
+  return NULL;
 }
 
 /**************************************************************************
@@ -7752,8 +7789,8 @@ static int save_action_list(const char *filename)
     len++;
   } user_action_list_iterate_end;
   fclose(file);
-  freelog(LOG_VERBOSE, "Saved %d action list item%s to %s",
-          len, len == 0 || len > 1 ? "s" : "", filename);
+  freelog(LOG_VERBOSE, "Saved %d action list item(s) to %s",
+          len, filename);
   return len;
 }
 
