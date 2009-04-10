@@ -2172,7 +2172,7 @@ This was once very ugly...
 void handle_tile_info(struct packet_tile_info *packet)
 {
   struct tile *ptile = map_pos_to_tile(packet->x, packet->y);
-  enum known_type old_known = ptile->known;
+  enum known_type old_known = ptile->client.known;
   bool tile_changed = FALSE;
   bool known_changed = FALSE;
   bool renumbered = FALSE;
@@ -2198,31 +2198,27 @@ void handle_tile_info(struct packet_tile_info *packet)
       tile_changed = TRUE;
     }
   }
-  if (ptile->known != packet->known) {
+  if (ptile->client.known != packet->known) {
     known_changed = TRUE;
   }
-  ptile->known = packet->known;
+  ptile->client.known = packet->known;
 
   if (packet->spec_sprite[0] != '\0') {
     if (!ptile->spec_sprite
 	|| strcmp(ptile->spec_sprite, packet->spec_sprite) != 0) {
-      if (ptile->spec_sprite) {
-	free(ptile->spec_sprite);
-      }
-      ptile->spec_sprite = mystrdup(packet->spec_sprite);
+      map_set_spec_sprite(ptile, packet->spec_sprite);
       tile_changed = TRUE;
     }
   } else {
     if (ptile->spec_sprite) {
-      free(ptile->spec_sprite);
-      ptile->spec_sprite = NULL;
+      map_set_spec_sprite(ptile, NULL);
       tile_changed = TRUE;
     }
   }
 
   reset_move_costs(ptile);
 
-  if (ptile->known <= TILE_KNOWN_FOGGED && old_known == TILE_KNOWN) {
+  if (ptile->client.known <= TILE_KNOWN_FOGGED && old_known == TILE_KNOWN) {
     /* This is an error.  So first we log the error, then make an assertion.
      * But for NDEBUG clients we fix the error. */
     unit_list_iterate(ptile->units, punit) {
@@ -2258,9 +2254,9 @@ void handle_tile_info(struct packet_tile_info *packet)
      * A tile can only change if it was known before and is still
      * known. In the other cases the tile is new or removed.
      */
-    if (known_changed && ptile->known == TILE_KNOWN) {
+    if (known_changed && ptile->client.known == TILE_KNOWN) {
       agents_tile_new(ptile);
-    } else if (known_changed && ptile->known == TILE_KNOWN_FOGGED) {
+    } else if (known_changed && ptile->client.known == TILE_KNOWN_FOGGED) {
       agents_tile_remove(ptile);
     } else {
       agents_tile_changed(ptile);
@@ -2270,7 +2266,7 @@ void handle_tile_info(struct packet_tile_info *packet)
   /* refresh tiles */
   if (can_client_change_view()) {
     /* the tile itself */
-    if (tile_changed || old_known != ptile->known) {
+    if (tile_changed || old_known != ptile->client.known) {
       refresh_tile_mapcanvas(ptile, MUT_DRAW);
       refresh_city_dialog_maps(ptile);
     }

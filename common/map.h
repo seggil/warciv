@@ -42,27 +42,34 @@ enum tile_hilite {
                        ((ptile) ? (ptile)->y : -1)
 
 struct tile {
-  const int x, y; /* Cartesian (map) coordinates of the tile. */
-  const int nat_x, nat_y; /* Native coordinates of the tile. */
-  const int index; /* Index coordinate of the tile. */
+  const int x, y;		/* Cartesian (map) coordinates of the tile. */
+  const int nat_x, nat_y;	/* Native coordinates of the tile. */
+  const int index;		/* Index coordinate of the tile. */
   Terrain_type_id terrain;
   enum tile_special_type special;
   struct city *city;
   struct unit_list *units;
-  unsigned int known;   /* A bitvector on the server side, an
-			   enum known_type on the client side.
-			   Player_no is index */
-  int assigned; /* these can save a lot of CPU usage -- Syela */
-  struct city *worked;      /* city working tile, or NULL if none */
   Continent_id continent;
-  signed char move_cost[8]; /* don't know if this helps! */
-  struct player *owner;     /* Player owning this tile, or NULL. */
-  struct {
-    /* Area Selection in client. */
-    enum tile_hilite hilite;
-    int mark_ttl;
-  } client;
-  char *spec_sprite;
+  signed char move_cost[DIR8_COUNT];	/* don't know if this helps! */
+  struct city *worked;		/* city working tile, or NULL if none */
+  struct player *owner;		/* Player owning this tile, or NULL. */
+  char *spec_sprite;		/* Maybe for scenarios? Not sure... -- Pepeto */
+
+  union {
+    /* Client specific datas. */
+    struct {
+      enum known_type known;
+      enum tile_hilite hilite;	/* Area Selection in client. */
+    } client;
+
+    /* Server specific datas. */
+    struct {
+      unsigned int known;	/* A bitvector on the server side, an
+				 * enum known_type on the client side.
+				 * Player_no is index */
+      int assigned;		/* these can save a lot of CPU usage -- Syela */
+    } server;
+  };
 };
 
 /****************************************************************
@@ -151,7 +158,7 @@ struct tile_type {
 struct civ_map {
   struct packet_map_info info;
 
-  enum direction8 valid_dirs[8], cardinal_dirs[8];
+  enum direction8 valid_dirs[DIR8_COUNT], cardinal_dirs[DIR8_COUNT];
   int num_valid_dirs, num_cardinal_dirs;
   struct iter_index *iterate_outwards_indices;
   int num_iterate_outwards_indices;
@@ -228,6 +235,7 @@ int get_direction_for_step(const struct tile *src_tile,
 
 void map_set_continent(struct tile *ptile, Continent_id val);
 Continent_id map_get_continent(const struct tile *ptile);
+void map_set_spec_sprite(struct tile *ptile, const char *sprite);
 
 void initialize_move_costs(void);
 void reset_move_costs(struct tile *ptile);
@@ -595,8 +603,8 @@ const char* dir_get_name(enum direction8 dir);
 bool is_valid_dir(enum direction8 dir);
 bool is_cardinal_dir(enum direction8 dir);
 
-extern const int DIR_DX[8];
-extern const int DIR_DY[8];
+extern const int DIR_DX[DIR8_COUNT];
+extern const int DIR_DY[DIR8_COUNT];
 
 /* Used for network transmission; do not change. */
 #define MAP_TILE_OWNER_NULL	 MAX_UINT8

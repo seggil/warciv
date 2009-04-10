@@ -580,12 +580,10 @@ static void map_tiles_load(struct section_file *file)
   assign_continent_numbers(FALSE);
 
   whole_map_iterate(ptile) {
-    ptile->spec_sprite = secfile_lookup_str_default(file, NULL,
-				"map.spec_sprite_%d_%d",
-				ptile->nat_x, ptile->nat_y);
-    if (ptile->spec_sprite) {
-      ptile->spec_sprite = mystrdup(ptile->spec_sprite);
-    }
+    map_set_spec_sprite(ptile,
+			secfile_lookup_str_default(file, NULL,
+						   "map.spec_sprite_%d_%d",
+						   ptile->nat_x, ptile->nat_y));
   } whole_map_iterate_end;
 }
 
@@ -646,31 +644,31 @@ static void map_load(struct section_file *file)
     /* get 4-bit segments of the first half of the 32-bit "known" field */
     LOAD_MAP_DATA(ch, nat_y, ptile,
 		  secfile_lookup_str(file, "map.a%03d", nat_y),
-		  ptile->known = ascii_hex2bin(ch, 0));
+		  ptile->server.known = ascii_hex2bin(ch, 0));
     LOAD_MAP_DATA(ch, nat_y, ptile,
 		  secfile_lookup_str(file, "map.b%03d", nat_y),
-		  ptile->known |= ascii_hex2bin(ch, 1));
+		  ptile->server.known |= ascii_hex2bin(ch, 1));
     LOAD_MAP_DATA(ch, nat_y, ptile,
 		  secfile_lookup_str(file, "map.c%03d", nat_y),
-		  ptile->known |= ascii_hex2bin(ch, 2));
+		  ptile->server.known |= ascii_hex2bin(ch, 2));
     LOAD_MAP_DATA(ch, nat_y, ptile,
 		  secfile_lookup_str(file, "map.d%03d", nat_y),
-		  ptile->known |= ascii_hex2bin(ch, 3));
+		  ptile->server.known |= ascii_hex2bin(ch, 3));
 
     if (has_capability("known32fix", savefile_options)) {
       /* get 4-bit segments of the second half of the 32-bit "known" field */
       LOAD_MAP_DATA(ch, nat_y, ptile,
 		    secfile_lookup_str(file, "map.e%03d", nat_y),
-		    ptile->known |= ascii_hex2bin(ch, 4));
+		    ptile->server.known |= ascii_hex2bin(ch, 4));
       LOAD_MAP_DATA(ch, nat_y, ptile,
 		    secfile_lookup_str(file, "map.g%03d", nat_y),
-		    ptile->known |= ascii_hex2bin(ch, 5));
+		    ptile->server.known |= ascii_hex2bin(ch, 5));
       LOAD_MAP_DATA(ch, nat_y, ptile,
 		    secfile_lookup_str(file, "map.h%03d", nat_y),
-		    ptile->known |= ascii_hex2bin(ch, 6));
+		    ptile->server.known |= ascii_hex2bin(ch, 6));
       LOAD_MAP_DATA(ch, nat_y, ptile,
 		    secfile_lookup_str(file, "map.i%03d", nat_y),
-		    ptile->known |= ascii_hex2bin(ch, 7));
+		    ptile->server.known |= ascii_hex2bin(ch, 7));
     }
   }
 
@@ -751,21 +749,21 @@ static void map_save(struct section_file *file)
 
     /* put 4-bit segments of the 32-bit "known" field */
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.a%03d",
-			 bin2ascii_hex(ptile->known, 0));
+			 bin2ascii_hex(ptile->server.known, 0));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.b%03d",
-			 bin2ascii_hex(ptile->known, 1));
+			 bin2ascii_hex(ptile->server.known, 1));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.c%03d",
-			 bin2ascii_hex(ptile->known, 2));
+			 bin2ascii_hex(ptile->server.known, 2));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.d%03d",
-			 bin2ascii_hex(ptile->known, 3));
+			 bin2ascii_hex(ptile->server.known, 3));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.e%03d",
-			 bin2ascii_hex(ptile->known, 4));
+			 bin2ascii_hex(ptile->server.known, 4));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.g%03d",
-			 bin2ascii_hex(ptile->known, 5));
+			 bin2ascii_hex(ptile->server.known, 5));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.h%03d",
-			 bin2ascii_hex(ptile->known, 6));
+			 bin2ascii_hex(ptile->server.known, 6));
     SAVE_NORMAL_MAP_DATA(ptile, file, "map.i%03d",
-			 bin2ascii_hex(ptile->known, 7));
+			 bin2ascii_hex(ptile->server.known, 7));
   }
 }
 

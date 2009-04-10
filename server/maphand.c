@@ -940,7 +940,7 @@ void show_area(struct player *pplayer, struct tile *ptile, int len)
 ***************************************************************/
 bool map_is_known(const struct tile *ptile, struct player *pplayer)
 {
-  return TEST_BIT(ptile->known, pplayer->player_no);
+  return TEST_BIT(ptile->server.known, pplayer->player_no);
 }
 
 /***************************************************************
@@ -948,7 +948,7 @@ bool map_is_known(const struct tile *ptile, struct player *pplayer)
 ***************************************************************/
 bool map_is_known_and_seen(const struct tile *ptile, struct player *pplayer)
 {
-  return TEST_BIT(ptile->known, pplayer->player_no)
+  return TEST_BIT(ptile->server.known, pplayer->player_no)
       && ((pplayer->private_map + ptile->index)->seen != 0);
 }
 
@@ -997,7 +997,7 @@ static void map_change_own_seen(struct tile *ptile, struct player *pplayer,
 ***************************************************************/
 void map_set_known(struct tile *ptile, struct player *pplayer)
 {
-  ptile->known |= (1u<<pplayer->player_no);
+  ptile->server.known |= (1u << pplayer->player_no);
 }
 
 /***************************************************************
@@ -1005,7 +1005,7 @@ void map_set_known(struct tile *ptile, struct player *pplayer)
 ***************************************************************/
 void map_clear_known(struct tile *ptile, struct player *pplayer)
 {
-  ptile->known &= ~(1u<<pplayer->player_no);
+  ptile->server.known &= ~(1u << pplayer->player_no);
 }
 
 /***************************************************************

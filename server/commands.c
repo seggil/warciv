@@ -720,7 +720,7 @@ const struct command commands[] = {
    /* TRANS: translate text between <> only */
    N_("loadactionlist <filename>"),
    N_("Load actions from a file."),
-   N_("Reads user actions from the given file and adds them to the "
+   N_("Reads user actions from the given file and sets them to the "
       "action list applied to connecting users."),
    ECHO_ADMINS, VCF_NONE, 0
   },

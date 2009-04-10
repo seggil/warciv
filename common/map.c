@@ -355,20 +355,22 @@ void map_init_topology(bool set_sizes)
 ***************************************************************/
 static void tile_init(struct tile *ptile)
 {
-  ptile->terrain  = T_UNKNOWN;
-  ptile->special  = S_NO_SPECIAL;
-  ptile->known    = 0;
+  ptile->terrain = T_UNKNOWN;
+  ptile->special = S_NO_SPECIAL;
   ptile->continent = 0;
-  ptile->city     = NULL;
+  ptile->city = NULL;
   ptile->units = unit_list_new();
-  ptile->worked   = NULL; /* pointer to city working tile */
-  ptile->assigned = 0; /* bitvector */
-  ptile->owner    = NULL; /* Tile not claimed by any nation. */
-  if (!is_server) {
-    ptile->client.hilite = HILITE_NONE; /* Area Selection in client. */
-    ptile->client.mark_ttl = 0;
-  }
+  ptile->worked = NULL;			/* Pointer to city working tile. */
+  ptile->owner = NULL;			/* Tile not claimed by any nation. */
   ptile->spec_sprite = NULL;
+
+  if (is_server) {
+    ptile->server.known = 0;
+    ptile->server.assigned = 0;		/* Bitvector. */
+  } else {
+    ptile->client.known = TILE_UNKNOWN;
+    ptile->client.hilite = HILITE_NONE;	/* Area Selection in client. */
+  }
 }
 
 /****************************************************************************
@@ -1297,6 +1299,21 @@ Continent_id map_get_continent(const struct tile *ptile)
 void map_set_continent(struct tile *ptile, Continent_id val)
 {
   ptile->continent = val;
+}
+
+/***************************************************************
+...
+***************************************************************/
+void map_set_spec_sprite(struct tile *ptile, const char *sprite)
+{
+  if (ptile->spec_sprite) {
+    free(ptile->spec_sprite);
+  }
+  if (sprite && sprite[0] != '\0') {
+    ptile->spec_sprite = mystrdup(sprite);
+  } else {
+    ptile->spec_sprite = NULL;
+  }
 }
 
 /***************************************************************
