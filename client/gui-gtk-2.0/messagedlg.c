@@ -286,29 +286,37 @@ static gboolean button_press_callback(GtkWidget *view,
 
   menu = gtk_menu_new();
 
-  item = gtk_menu_item_new_with_label(_("Refresh this message option"));
+  item = gtk_image_menu_item_new_with_label(_("Refresh this message option"));
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+      gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(refresh_message_option_callback),
 		   GINT_TO_POINTER(ev));
 
-  item = gtk_menu_item_new_with_label(_("Reset this message option"));
+  item = gtk_image_menu_item_new_with_label(_("Reset this message option"));
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+      gtk_image_new_from_stock(GTK_STOCK_CLEAR, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(reset_message_option_callback),
 		   GINT_TO_POINTER(ev));
 
-  item = gtk_menu_item_new_with_label(_("Reload this message option"));
+  item = gtk_image_menu_item_new_with_label(_("Reload this message option"));
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+      gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(reload_message_option_callback),
 		   GINT_TO_POINTER(ev));
 
-  item = gtk_menu_item_new_with_label(_("Apply the changes for "
-					"this message option"));
+  item = gtk_image_menu_item_new_with_label(_("Apply the changes for "
+					      "this message option"));
+  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
+      gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
