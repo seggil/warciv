@@ -2736,14 +2736,10 @@ bool chatline_is_scrolled_to_bottom(void)
 **************************************************************************/
 static const char *get_player_or_user_name(int id)
 {
-  if (id >= game.info.nplayers) {
-    struct connection *pconn = conn_list_get(game.all_connections, 
-					     id -= game.info.nplayers);
+  size_t size = conn_list_size(game.all_connections);
 
-    return pconn ? pconn->username : NULL;
-  }
-
-  return get_player(id)->name;
+  return id >= size ? get_player(id - size)->name
+		    : conn_list_get(game.all_connections, id)->username;
 }
 
 /**************************************************************************
@@ -2805,7 +2801,7 @@ static int check_player_or_user_name(const char *prefix, const char **matches,
 **************************************************************************/
 bool chatline_autocomplement(GtkEditable *editable)
 {
-#define MAX_MATCHES 5
+#define MAX_MATCHES 10
   const char *name[MAX_MATCHES];
   char buf[MAX_LEN_NAME * MAX_MATCHES];
   gint pos;
@@ -2817,7 +2813,7 @@ bool chatline_autocomplement(GtkEditable *editable)
   pos = gtk_editable_get_position(editable);
   chars = gtk_editable_get_chars(editable, 0, pos);
   for (p = chars + strlen(chars) - 1; p >= chars; p = g_utf8_prev_char(p)) {
-    if (my_isspace(*p)) {
+    if (!g_unichar_isalnum(g_utf8_get_char(p))) {
       break;
     }
   }
