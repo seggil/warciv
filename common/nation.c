@@ -396,6 +396,23 @@ int team_count_members(Team_Type_id id)
 }
 
 /***************************************************************
+  Set a player to a team.
+***************************************************************/
+void team_id_add_player(struct player *pplayer, Team_Type_id id)
+{
+  assert(id < MAX_NUM_TEAMS && id >= 0);
+
+  if (teams[id].id == TEAM_NONE) {
+    /* Init a new team. */
+    teams[id].id = id;
+    num_teams++;
+    teams[id].member_count = 0;
+  }
+  pplayer->team = id;
+  teams[id].member_count++;
+}
+
+/***************************************************************
   Set a player to a team. Removes previous team affiliation,
   creates a new team if it does not exist.
 ***************************************************************/

@@ -1734,7 +1734,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   pplayer->is_male = pinfo->is_male;
   if (pplayer->team != pinfo->team) {
     team_remove_player(pplayer);
-    team_add_player(pplayer, get_team_name(pinfo->team));
+    team_id_add_player(pplayer, pinfo->team);
   }
 
   pplayer->economic.gold = pinfo->gold;
