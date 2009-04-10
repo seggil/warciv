@@ -129,7 +129,7 @@ static bool is_valid_start_pos(const struct tile *ptile, const void *dataptr)
   cont_size = get_continent_size(cont);
   island = islands + islands_index[cont];
   for (i = 0; i < pdata->count; i++) {
-    struct tile *tile1 = map.start_positions[i].tile;
+    struct tile *tile1 = map.server.start_positions[i].tile;
 
     if ((map_get_continent(ptile) == map_get_continent(tile1)
 	 && (real_map_distance(ptile, tile1) * 1000 / pdata->min_value
@@ -200,7 +200,7 @@ bool create_start_positions(enum start_mode mode)
   int min_goodies_per_player = 2000;
   int total_goodies = 0;
   /* this is factor is used to maximize land used in extreme little maps */
-  float efactor =  game.info.nplayers / map.size / 4; 
+  float efactor =  game.info.nplayers / map.server.size / 4; 
   bool failure = FALSE;
   bool is_tmap = temperature_is_initialized();
 
@@ -358,14 +358,14 @@ bool create_start_positions(enum start_mode mode)
   assert(game.info.nplayers <= data.count + sum);
 
   /* now search for the best place and set start_positions */
-  map.start_positions = fc_realloc(map.start_positions,
-				   game.info.nplayers
-				   * sizeof(*map.start_positions));
+  map.server.start_positions = fc_realloc(map.server.start_positions,
+					  game.info.nplayers
+					  * sizeof(*map.server.start_positions));
   while (data.count < game.info.nplayers) {
     if ((ptile = rand_map_pos_filtered(&data, is_valid_start_pos))) {
       islands[islands_index[(int) map_get_continent(ptile)]].starters--;
-      map.start_positions[data.count].tile = ptile;
-      map.start_positions[data.count].nation = NO_NATION_SELECTED;
+      map.server.start_positions[data.count].tile = ptile;
+      map.server.start_positions[data.count].nation = NO_NATION_SELECTED;
       freelog(LOG_DEBUG,
 	      "Adding %d,%d as starting position %d, %d goodies on islands.",
 	      TILE_XY(ptile), data.count,
@@ -385,7 +385,7 @@ bool create_start_positions(enum start_mode mode)
       }
     }
   }
-  map.num_start_positions = game.info.nplayers;
+  map.server.num_start_positions = game.info.nplayers;
 
   free(islands);
   free(islands_index);

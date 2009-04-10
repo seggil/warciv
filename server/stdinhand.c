@@ -1497,7 +1497,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
     return FALSE;
   }
 
-  if (!map.start_positions) {
+  if (!map.server.start_positions) {
     cmd_reply(CMD_SWITCH, caller, C_GENFAIL,
               _("No start position data, switch impossible."));
     return FALSE;
@@ -6836,8 +6836,8 @@ static bool check_settings_for_rated_game(void)
     int *psetting;
     int standard_value;
   } sis[] = {
-    { &map.autosize, 108},
-    { &map.landpercent, 17},      /* landmass */
+    { &map.server.autosize, 108},
+    { &map.server.landpercent, 17},      /* landmass */
     { &game.ext_info.airliftingstyle, 1},
     { &game.traderoute_info.traderevenuestyle, 1},
     { &game.traderoute_info.caravanbonusstyle, 1},
@@ -6848,8 +6848,8 @@ static bool check_settings_for_rated_game(void)
     bool *psetting;
     bool standard_value;
   } sbs[] = {
-    { &map.tinyisles, TRUE},
-    { &map.alltemperate, TRUE},
+    { &map.server.tinyisles, TRUE},
+    { &map.server.alltemperate, TRUE},
     { &game.ext_info.techtrading, FALSE},
     { &game.ext_info.goldtrading, FALSE},
     { &game.ext_info.citytrading, FALSE},
@@ -6922,8 +6922,8 @@ static bool check_settings_for_rated_game(void)
     }
 
     if (map_is_loaded()
-        && (op->int_value == &map.size
-            || op->int_value == &map.landpercent)) {
+        && (op->int_value == &map.server.size
+            || op->int_value == &map.server.landpercent)) {
       /* When a game is reloaded, ignore map setting changes
        * due to autosize. */
       continue;
@@ -7010,16 +7010,16 @@ static bool start_command(struct connection *caller, char *name, bool check)
   case PRE_GAME_STATE:
     /* Sanity check scenario */
     if (game.server.is_new_game && !check) {
-      if (map.num_start_positions > 0
-          && game.info.max_players > map.num_start_positions) {
+      if (map.server.num_start_positions > 0
+          && game.info.max_players > map.server.num_start_positions) {
         /* If we load a pre-generated map (i.e., a scenario) it is possible
          * to increase the number of players beyond the number supported by
          * the scenario.  The solution is a hack: cut the extra players
          * when the game starts. */
         freelog(LOG_VERBOSE, _("Reduced maxplayers from %i to %i to fit "
                                "to the number of start positions."),
-                game.info.max_players, map.num_start_positions);
-        game.info.max_players = map.num_start_positions;
+                game.info.max_players, map.server.num_start_positions);
+        game.info.max_players = map.server.num_start_positions;
       }
       if (game.info.nplayers > game.info.max_players) {
         /* Because of the way player ids are renumbered during

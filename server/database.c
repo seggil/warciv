@@ -42,6 +42,7 @@
 #include "city.h"
 #include "connection.h"
 #include "government.h"
+#include "map.h"
 #include "packets.h"
 
 #include "connecthand.h"
@@ -1307,10 +1308,10 @@ static char *etm_encode_terrain_map(void)
             FCDB_ETM_DICT_LEN, game.ruleset_control.terrain_count);
     return NULL;
   }
-  if (map.xsize > 255 || map.ysize > 255) {
+  if (map.info.xsize > 255 || map.info.ysize > 255) {
     freelog(LOG_ERROR, _("Cannot encode map with dimensions %dx%d: "
                          "too large!"),
-            map.xsize, map.ysize);
+            map.info.xsize, map.info.ysize);
     return NULL;
   }
 
@@ -1319,16 +1320,16 @@ static char *etm_encode_terrain_map(void)
 
   termap[0] = FCDB_ETM_FILE_IDENTIFIER;
   termap[1] = FCDB_ETM_VERSION;
-  termap[2] = map.xsize;
-  termap[3] = map.ysize;
+  termap[2] = map.info.xsize;
+  termap[3] = map.info.ysize;
 
   init_etm_dict(termap);
   init_etm_rdict(termap);
 
   rdict = get_termap_rdict(termap);
 
-  for (j = 0; j < map.ysize; j++) {
-    for (i = 0; i < map.xsize; i++) {
+  for (j = 0; j < map.info.ysize; j++) {
+    for (i = 0; i < map.info.xsize; i++) {
       ptile = native_pos_to_tile(i, j);
       index = get_tile_termap_index(ptile);
       termap[index] = etm_encode_terrain(ptile, rdict);
@@ -1366,8 +1367,8 @@ static char *etm_encode_turn_map(const char *termap,
 
   rdict = get_termap_rdict(termap);
 
-  for (j = 0; j < map.ysize; j++) {
-    for (i = 0; i < map.xsize; i++) {
+  for (j = 0; j < map.info.ysize; j++) {
+    for (i = 0; i < map.info.xsize; i++) {
       ptile = native_pos_to_tile(i, j);
       if (ptile->city) {
         enc = city_owner(ptile->city)->player_no;

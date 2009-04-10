@@ -39,7 +39,7 @@ int map_colatitude(const struct tile *ptile)
 {
   double x, y;
   
-  if (map.alltemperate) {
+  if (map.server.alltemperate) {
     /* An all-temperate map has "average" temperature everywhere.
      *
      * TODO: perhaps there should be a random temperature variation. */
@@ -208,8 +208,8 @@ static void set_sizes(double size, int Xratio, int Yratio)
 	   / (float)(Xratio * Yratio * iso * even * even)) + 0.49;
 
   /* Now build xsize and ysize value as described above. */
-  map.xsize = Xratio * i_size * even;
-  map.ysize = Yratio * i_size * even * iso;
+  map.info.xsize = Xratio * i_size * even;
+  map.info.ysize = Yratio * i_size * even * iso;
 
   /* Now make sure the size isn't too large for this ratio.  If it is
    * then decrease the size and try again. */
@@ -221,16 +221,17 @@ static void set_sizes(double size, int Xratio, int Yratio)
 
   /* If the ratio is too big for some topology the simplest way to avoid
    * this error is to set the maximum size smaller for all topologies! */
-  if (map.size > size + 0.9) {
+  if (map.server.size > size + 0.9) {
     /* Warning when size is set uselessly big */ 
     freelog(LOG_ERROR,
 	    "Requested size of %d is too big for this topology.",
-	    map.size);
+	    map.server.size);
   }
-  map.size = (float)(map.xsize * map.ysize) / 1000.0 + 0.5;
+  map.server.size = (float)(map.info.xsize * map.info.ysize) / 1000.0 + 0.5;
   freelog(LOG_VERBOSE,
 	  "Creating a map of size %d x %d = %d tiles (%d requested).",
-	  map.xsize, map.ysize, map.xsize * map.ysize, (int)(req_size * 1000));
+	  map.info.xsize, map.info.ysize,
+	  map.info.xsize * map.info.ysize, (int)(req_size * 1000));
 }
 
 /*
@@ -257,18 +258,20 @@ void generator_init_topology(bool autosize)
     const int default_ratios[4][2] =
       {AUTO_RATIO_FLAT, AUTO_RATIO_CLASSIC,
        AUTO_RATIO_URANUS, AUTO_RATIO_TORUS};
-    const int id = 0x3 & map.topology_id;
-    req_size = map.size;
+    const int id = 0x3 & map.info.topology_id;
+    req_size = map.server.size;
 
     assert(TF_WRAPX == 0x1 && TF_WRAPY == 0x2);
 
-    if (map.autosize) {
-      req_size = (double)(game.info.nplayers * map.autosize) / (10 * map.landpercent);
-      if(req_size < 0.6)
+    if (map.server.autosize) {
+      req_size = (double)(game.info.nplayers * map.server.autosize)
+	  / (10 * map.server.landpercent);
+      if (req_size < 0.6) {
         req_size = 0.6;
-      map.size = req_size;
+      }
+      map.server.size = req_size;
     }
-    if (map.generator == 4 || map.generator == 5) {
+    if (map.server.generator == 4 || map.server.generator == 5) {
       set_sizes(req_size, 2, 1);
     } else {
     /* Set map.xsize and map.ysize based on map.size. */
@@ -277,26 +280,29 @@ void generator_init_topology(bool autosize)
   }
 
   /* adjust landmass? */
-  if (map.autosize) {
-    int old_landmass = map.landpercent;
+  if (map.server.autosize) {
+    int old_landmass = map.server.landpercent;
 
-    req_size = (double)(map.xsize * map.ysize) / (100 * game.info.nplayers);
-    while (map.landpercent > MAP_MIN_LANDMASS
-	   && abs(map.autosize - req_size * map.landpercent)
-    	      > abs(map.autosize - (double)req_size * (map.landpercent - 1))) {
-    	map.landpercent--;
+    req_size = (double)(map.info.xsize * map.info.ysize)
+	/ (100 * game.info.nplayers);
+    while (map.server.landpercent > MAP_MIN_LANDMASS
+	   && abs(map.server.autosize - req_size * map.server.landpercent)
+    	      > abs(map.server.autosize
+			- (double) req_size * (map.server.landpercent - 1))) {
+    	map.server.landpercent--;
     } 
-    while(map.landpercent < MAP_MAX_LANDMASS
-	  && abs(map.autosize - req_size * map.landpercent)
-    	     > abs(map.autosize - (double)req_size * (map.landpercent + 1))) {
-    	map.landpercent++;
+    while(map.server.landpercent < MAP_MAX_LANDMASS
+	  && abs(map.server.autosize - req_size * map.server.landpercent)
+    	     > abs(map.server.autosize
+		       - (double) req_size * (map.server.landpercent + 1))) {
+    	map.server.landpercent++;
     }
-    if (map.landpercent != old_landmass) {
+    if (map.server.landpercent != old_landmass) {
       freelog(LOG_VERBOSE, "landmass ajdusted from %d to %d",
-	      old_landmass, map.landpercent);
+	      old_landmass, map.server.landpercent);
       /* TRANS: don't translate "landmass" */
       notify_conn(NULL, _("landmass has been adjusted from %d to %d"),
-		  old_landmass, map.landpercent);
+		  old_landmass, map.server.landpercent);
     }
   }
 
@@ -314,7 +320,7 @@ void generator_init_topology(bool autosize)
    * exept if separate poles is set
    */
   if (!topo_has_flag(TF_WRAPX) || !topo_has_flag(TF_WRAPY)) {
-    if (map.separatepoles) {
+    if (map.server.separatepoles) {
       /* with separatepoles option strip poles are useless */
       ice_base_colatitude =
 	  (MAX(0, 100 * COLD_LEVEL / 3 - 1 *  MAX_COLATITUDE) 

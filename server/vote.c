@@ -15,13 +15,16 @@
 #include <config.h>
 #endif
 
-#include "capability.h"
-#include "connection.h"
+#include <math.h>
+
 #include "fcintl.h"
 #include "log.h"
+#include "support.h"
+
+#include "capability.h"
+#include "connection.h"
 #include "packets.h"
 #include "player.h"
-#include "support.h"
 
 #include "commands.h"
 #include "console.h"

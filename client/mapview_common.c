@@ -374,10 +374,10 @@ static void normalize_gui_pos(int *gui_x, int *gui_y)
    * doesn't necessarily do. */
   MAP_TO_NATIVE_POS(&nat_x, &nat_y, map_x, map_y);
   if (topo_has_flag(TF_WRAPX)) {
-    nat_x = FC_WRAP(nat_x, map.xsize);
+    nat_x = FC_WRAP(nat_x, map.info.xsize);
   }
   if (topo_has_flag(TF_WRAPY)) {
-    nat_y = FC_WRAP(nat_y, map.ysize);
+    nat_y = FC_WRAP(nat_y, map.info.ysize);
   }
   NATIVE_TO_MAP_POS(&map_x, &map_y, nat_x, nat_y);
 
@@ -625,7 +625,7 @@ void get_mapview_scroll_window(int *xmin, int *ymin, int *xmax, int *ymax,
     NATIVE_TO_MAP_POS(xmin, ymin, 0, 0);
     map_to_gui_pos(xmin, ymin, *xmin, *ymin);
 
-    NATIVE_TO_MAP_POS(xmax, ymax, map.xsize - 1, map.ysize - 1);
+    NATIVE_TO_MAP_POS(xmax, ymax, map.info.xsize - 1, map.info.ysize - 1);
     map_to_gui_pos(xmax, ymax, *xmax, *ymax);
     *xmax += NORMAL_TILE_WIDTH;
     *ymax += NORMAL_TILE_HEIGHT;
@@ -657,13 +657,13 @@ void get_mapview_scroll_window(int *xmin, int *ymin, int *xmax, int *ymax,
     NATIVE_TO_MAP_POS(&map_x, &map_y, 0, 0);
     map_to_gui_pos(&gui_x1, &gui_y1, map_x, map_y);
 
-    NATIVE_TO_MAP_POS(&map_x, &map_y, map.xsize - 1, 0);
+    NATIVE_TO_MAP_POS(&map_x, &map_y, map.info.xsize - 1, 0);
     map_to_gui_pos(&gui_x2, &gui_y2, map_x, map_y);
 
-    NATIVE_TO_MAP_POS(&map_x, &map_y, 0, map.ysize - 1);
+    NATIVE_TO_MAP_POS(&map_x, &map_y, 0, map.info.ysize - 1);
     map_to_gui_pos(&gui_x3, &gui_y3, map_x, map_y);
 
-    NATIVE_TO_MAP_POS(&map_x, &map_y, map.xsize - 1, map.ysize - 1);
+    NATIVE_TO_MAP_POS(&map_x, &map_y, map.info.xsize - 1, map.info.ysize - 1);
     map_to_gui_pos(&gui_x4, &gui_y4, map_x, map_y);
 
     *xmin = MIN(gui_x1, MIN(gui_x2, gui_x3)) - mapview_canvas.width / 2;

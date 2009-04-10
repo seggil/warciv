@@ -85,10 +85,7 @@ bool client_handle_packet(enum packet_type type, void *packet)
     return TRUE;
 
   case PACKET_MAP_INFO:
-    handle_map_info(
-      ((struct packet_map_info *)packet)->xsize,
-      ((struct packet_map_info *)packet)->ysize,
-      ((struct packet_map_info *)packet)->topology_id);
+    handle_map_info(packet);
     return TRUE;
 
   case PACKET_NUKE_TILE_INFO:

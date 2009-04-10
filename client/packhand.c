@@ -1553,11 +1553,9 @@ void handle_unit_short_info(struct packet_unit_short_info *packet)
   Receive information about the map size and topology from the server.  We
   initialize some global variables at the same time.
 ****************************************************************************/
-void handle_map_info(int xsize, int ysize, int topology_id)
+void handle_map_info(struct packet_map_info *map_info)
 {
-  map.xsize = xsize;
-  map.ysize = ysize;
-  map.topology_id = topology_id;
+  map.info = *map_info;
 
   /* Parameter is FALSE so that sizes are kept unchanged. */
   map_init_topology(FALSE);
@@ -1567,7 +1565,7 @@ void handle_map_info(int xsize, int ysize, int topology_id)
 
   generate_citydlg_dimensions();
 
-  set_overview_dimensions(map.xsize, map.ysize);
+  set_overview_dimensions(map.info.xsize, map.info.ysize);
 }
 
 /**************************************************************************

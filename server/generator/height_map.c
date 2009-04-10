@@ -36,7 +36,7 @@ void normalize_hmap_poles(void)
       hmap(ptile) = 0;
     } else if (map_colatitude(ptile) < 2 * ICE_BASE_LEVEL) {
       hmap(ptile) *= map_colatitude(ptile) / (2.5 * ICE_BASE_LEVEL);
-    } else if (map.separatepoles 
+    } else if (map.server.separatepoles 
 	       && map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
       hmap(ptile) *= 0.1;
     } else if (map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
@@ -56,7 +56,7 @@ void renormalize_hmap_poles(void)
       /* Nothing. */
     } else if (map_colatitude(ptile) < 2 * ICE_BASE_LEVEL) {
       hmap(ptile) *= (2.5 * ICE_BASE_LEVEL) / map_colatitude(ptile);
-    } else if (map.separatepoles 
+    } else if (map.server.separatepoles 
 	       && map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
       hmap(ptile) *= 10;
     } else if (map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
@@ -101,10 +101,12 @@ static void gen5rec(int step, int x0, int y0, int x1, int y1)
     return;
   }
 
-  if (x1 == map.xsize)
+  if (x1 == map.info.xsize) {
     x1wrap = 0;
-  if (y1 == map.ysize)
+  }
+  if (y1 == map.info.ysize) {
     y1wrap = 0;
+  }
 
   val[0][0] = hmap(native_pos_to_tile(x0, y0));
   val[0][1] = hmap(native_pos_to_tile(x0, y1wrap));
@@ -175,13 +177,13 @@ void make_pseudofractal1_hmap(int extra_div)
   int xdiv2 = xdiv + (xnowrap ? 1 : 0);
   int ydiv2 = ydiv + (ynowrap ? 1 : 0);
 
-  int xmax = map.xsize - (xnowrap ? 1 : 0);
-  int ymax = map.ysize - (ynowrap ? 1 : 0);
+  int xmax = map.info.xsize - (xnowrap ? 1 : 0);
+  int ymax = map.info.ysize - (ynowrap ? 1 : 0);
   int xn, yn;
   /* just need something > log(max(xsize, ysize)) for the recursion */
-  int step = map.xsize + map.ysize; 
+  int step = map.info.xsize + map.info.ysize; 
   /* edges are avoided more strongly as this increases */
-  int avoidedge = (100 - map.landpercent) * step / 100 + step / 3; 
+  int avoidedge = (100 - map.server.landpercent) * step / 100 + step / 3; 
 
   height_map = fc_malloc(sizeof(int) * MAX_MAP_INDEX);
 

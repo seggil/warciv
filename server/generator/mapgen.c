@@ -73,7 +73,7 @@ enum river_map_type {RS_BLOCKED = 0, RS_RIVER = 1};
    A value of 2 means river.                            -Erik Sigra */
 static int *river_map;
 
-#define HAS_POLES (map.temperature < 70 && !map.alltemperate  )
+#define HAS_POLES (map.server.temperature < 70 && !map.server.alltemperate  )
 
 /* These are the old parameters of terrains types in %
    TODO: they depend on the hardcoded terrains */
@@ -240,7 +240,7 @@ static bool terrain_is_too_high(struct tile *ptile,
 /**************************************************************************
   make_relief() will convert all squares that are higher than thill to
   mountains and hills. Note that thill will be adjusted according to
-  the map.steepness value, so increasing map.mountains will result in
+  the map.server.steepness value, so increasing map.mountains will result in
   more hills and mountains.
 **************************************************************************/
 static void make_relief(void)
@@ -248,7 +248,7 @@ static void make_relief(void)
   /* Calculate the mountain level.  map.mountains specifies the percentage
    * of land that is turned into hills and mountains. */
   hmap_mountain_level = ((hmap_max_level - hmap_shore_level)
-			 * (100 - map.steepness)) / 100 + hmap_shore_level;
+			 * (100 - map.server.steepness)) / 100 + hmap_shore_level;
 
   whole_map_iterate(ptile) {
     if (not_placed(ptile) &&
@@ -291,7 +291,7 @@ static void make_polar(void)
 ************************************************************************/
 static bool ok_for_separate_poles(struct tile *ptile)
 {
-  if (!map.separatepoles) {
+  if (!map.server.separatepoles) {
     return TRUE;
   }
   adjc_iterate(ptile, tile1) {
@@ -803,7 +803,7 @@ static void make_rivers(void)
       /* The size of the map (poles counted in river_pct). */
       map_num_tiles() *
       /* Rivers need to be on land only. */
-      map.landpercent /
+      map.server.landpercent /
       /* Adjustment value. Tested by me. Gives no rivers with 'set
 	 rivers 0', gives a reasonable amount of rivers with default
 	 settings and as many rivers as possible with 'set rivers 100'. */
@@ -875,7 +875,7 @@ static void make_rivers(void)
 	    || iteration_counter >= RIVERS_MAXTRIES / 10 * 9)) {
 
       /* Reset river_map before making a new river. */
-      for (i = 0; i < map.xsize * map.ysize; i++) {
+      for (i = 0; i < map.info.xsize * map.info.ysize; i++) {
 	river_map[i] = 0;
       }
 
@@ -920,7 +920,7 @@ static void make_rivers(void)
 
 /**************************************************************************
   make land simply does it all based on a generated heightmap
-  1) with map.landpercent it generates a ocean/grassland map 
+  1) with map.server.landpercent it generates a ocean/grassland map 
   2) it then calls the above functions to generate the different terrains
 **************************************************************************/
 static void make_land(void)
@@ -929,7 +929,7 @@ static void make_land(void)
   if (HAS_POLES) {
     normalize_hmap_poles();
   }
-  hmap_shore_level = (hmap_max_level * (100 - map.landpercent)) / 100;
+  hmap_shore_level = (hmap_max_level * (100 - map.server.landpercent)) / 100;
   ini_hmap_low_level();
   whole_map_iterate(ptile) {
     map_set_terrain(ptile, T_UNKNOWN); /* set as oceans count is used */
@@ -1029,7 +1029,7 @@ static void print_mapgen_map(void)
 static void free_mapgenerator67(bool autosize, int old_topology_id)
 {
   map_free();
-  map.topology_id = old_topology_id;
+  map.info.topology_id = old_topology_id;
   generator_init_topology(autosize);
   map_allocate();
   adjust_terrain_param();
@@ -1046,30 +1046,30 @@ FIXME: Some continent numbers are unused at the end of this function, fx
 
   If "autosize" is specified then mapgen will automatically size the map
   based on the map.size server parameter and the specified topology.  If
-  not map.xsize and map.ysize will be used.
+  not map.info.xsize and map.info.ysize will be used.
 **************************************************************************/
 void map_fractal_generate(bool autosize)
 {
   /* save the current random state: */
   RANDOM_STATE rstate = get_myrand_state();
  
-  if (map.seed == 0) {
-    map.seed = (myrand(MAX_UINT32) ^ time(NULL)) & (MAX_UINT32 >> 1);
+  if (map.server.seed == 0) {
+    map.server.seed = (myrand(MAX_UINT32) ^ time(NULL)) & (MAX_UINT32 >> 1);
   }
 
-  mysrand(map.seed);
+  mysrand(map.server.seed);
 
   /* don't generate tiles with mapgen==0 as we've loaded them from file */
   /* also, don't delete (the handcrafted!) tiny islands in a scenario */
-  if (map.generator != 0) {
-    int old_topology_id = map.topology_id;
+  if (map.server.generator != 0) {
+    int old_topology_id = map.info.topology_id;
 
-    if (map.generator == 4 || map.generator == 5) {
+    if (map.server.generator == 4 || map.server.generator == 5) {
       /* Other topologies would break the gen. */
-      map.topology_id = TF_WRAPX;
-    } else if (map.generator == 6 || map.generator == 7) {
+      map.info.topology_id = TF_WRAPX;
+    } else if (map.server.generator == 6 || map.server.generator == 7) {
       /* Don't support topologies > 3 */
-      map.topology_id &= TF_WRAPX | TF_WRAPY;
+      map.info.topology_id &= TF_WRAPX | TF_WRAPY;
     }
 
     generator_init_topology(autosize);
@@ -1078,66 +1078,66 @@ void map_fractal_generate(bool autosize)
 
     /* if one mapgenerator fails, it will choose another mapgenerator */
     /* with a lower number to try again */
-    if (map.generator == 5) {
+    if (map.server.generator == 5) {
       if (!mapgenerator67(TRUE)) {
         free_mapgenerator67(autosize, old_topology_id);
       }
-    } else if (map.generator == 4) {
+    } else if (map.server.generator == 4) {
       if (!mapgenerator67(FALSE)) {
         free_mapgenerator67(autosize, old_topology_id);
       }
-    } else if (map.generator == 6) {
+    } else if (map.server.generator == 6) {
       if (!mapgenerator89(FALSE)) {
-	map.topology_id = old_topology_id;
+	map.info.topology_id = old_topology_id;
       }
-    } else if (map.generator == 7) {
+    } else if (map.server.generator == 7) {
       if (!mapgenerator89(TRUE)) {
-	map.topology_id = old_topology_id;
+	map.info.topology_id = old_topology_id;
       }
     }
 
-    if (map.topology_id != old_topology_id) {
+    if (map.info.topology_id != old_topology_id) {
       /* Now, it's sure we changed it. */
       freelog(LOG_VERBOSE, "topology had been changed fom %d to %d",
-	      old_topology_id, map.topology_id);
+	      old_topology_id, map.info.topology_id);
       /* TRANS: don't translate "topology" */
       notify_conn(NULL, _("Server: topology had been changed fom %d to %d"),
-		  old_topology_id, map.topology_id);
+		  old_topology_id, map.info.topology_id);
     }
 
-    if (map.generator == 3) {
+    if (map.server.generator == 3) {
       /* 2 or 3 players per isle? */
-      if (map.startpos == 2 || (map.startpos == 3)) { 
+      if (map.server.startpos == 2 || (map.server.startpos == 3)) { 
 	mapgenerator4();
       }
-      if (map.startpos <= 1) {
+      if (map.server.startpos <= 1) {
 	/* single player per isle */
 	mapgenerator3();
       }
-      if (map.startpos == 4) {
+      if (map.server.startpos == 4) {
 	/* "variable" single player */
 	mapgenerator2();
       }
     }
 
-    if (map.generator == 2) {
-      make_pseudofractal1_hmap(1 + ((map.startpos == 0
-				     || map.startpos == 3)
+    if (map.server.generator == 2) {
+      make_pseudofractal1_hmap(1 + ((map.server.startpos == 0
+				     || map.server.startpos == 3)
 				    ? 0 : game.info.nplayers));
     }
 
-    if (map.generator == 1) {
+    if (map.server.generator == 1) {
       make_random_hmap(MAX(1, 1 + SQSIZE 
-			   - (map.startpos ? game.info.nplayers / 4 : 0)));
+			   - (map.server.startpos ? game.info.nplayers / 4 : 0)));
     }
 
     /* if hmap only generator make anything else */
-    if (map.generator == 1 || map.generator == 2) {
+    if (map.server.generator == 1 || map.server.generator == 2) {
       make_land();
       free(height_map);
       height_map = NULL;
     }
-    if (!map.tinyisles) {
+    if (!map.server.tinyisles) {
       remove_tiny_islands();
     }
   }
@@ -1147,12 +1147,12 @@ void map_fractal_generate(bool autosize)
   }
 
   /* some scenarios already provide specials */
-  if (!map.have_specials) {
-    add_specials(map.riches);
+  if (!map.server.have_specials) {
+    add_specials(map.server.riches);
   }
 
-  if (!map.have_huts) {
-    make_huts(map.huts); 
+  if (!map.server.have_huts) {
+    make_huts(map.server.huts); 
   }
 
   /* restore previous random state: */
@@ -1161,24 +1161,24 @@ void map_fractal_generate(bool autosize)
 
   /* We don't want random start positions in a scenario which already
    * provides them. */
-  if (map.num_start_positions == 0) {
+  if (map.server.num_start_positions == 0) {
     enum start_mode mode = MT_ALL;
     bool success;
     
-    switch (map.generator) {
+    switch (map.server.generator) {
     case 0:
     case 1:
-      mode = map.startpos;
+      mode = map.server.startpos;
       break;
     case 2:
-      if (map.startpos == 0) {
+      if (map.server.startpos == 0) {
         mode = MT_ALL;
       } else {
-        mode = map.startpos;
+        mode = map.server.startpos;
       }
       break;
     case 3:
-      if (map.startpos <= 1 || (map.startpos == 4)) {
+      if (map.server.startpos <= 1 || (map.server.startpos == 4)) {
         mode = MT_SINGLE;
       } else {
 	mode = MT_2or3;
@@ -1222,26 +1222,26 @@ void map_fractal_generate(bool autosize)
 **************************************************************************/
 static void adjust_terrain_param(void)
 {
-  int polar = 2 * ICE_BASE_LEVEL * map.landpercent / MAX_COLATITUDE ;
-  float factor = (100.0 - polar - map.steepness * 0.8 ) / 10000;
+  int polar = 2 * ICE_BASE_LEVEL * map.server.landpercent / MAX_COLATITUDE ;
+  float factor = (100.0 - polar - map.server.steepness * 0.8 ) / 10000;
 
 
-  mountain_pct = factor * map.steepness * 90;
+  mountain_pct = factor * map.server.steepness * 90;
 
   /* 27 % if wetness == 50 & */
-  forest_pct = factor * (map.wetness * 40 + 700) ; 
+  forest_pct = factor * (map.server.wetness * 40 + 700) ; 
   jungle_pct = forest_pct * (MAX_COLATITUDE - TROPICAL_LEVEL) /
                (MAX_COLATITUDE * 2);
   forest_pct -= jungle_pct;
 
   /* 3 - 11 % */
-  river_pct = (100 - polar) * (3 + map.wetness / 12) / 100;
+  river_pct = (100 - polar) * (3 + map.server.wetness / 12) / 100;
 
   /* 6 %  if wetness == 50 && temperature == 50 */
   swamp_pct = factor * MAX(0, 
-			   (map.wetness * 9 - 150 + map.temperature * 6));
+			   (map.server.wetness * 9 - 150 + map.server.temperature * 6));
   desert_pct =factor * MAX(0,
-		(map.temperature * 15 - 250 + (100 - map.wetness) * 10)) ;
+		(map.server.temperature * 15 - 250 + (100 - map.server.wetness) * 10)) ;
 }
 
 /****************************************************************************
@@ -1334,7 +1334,7 @@ static void add_specials(int prob)
     }
   } whole_map_iterate_end;
   
-  map.have_specials = TRUE;
+  map.server.have_specials = TRUE;
 }
 
 /**************************************************************************
@@ -1355,9 +1355,9 @@ static struct tile *get_random_map_position_from_state(
   int xn, yn;
 
   assert((pstate->e - pstate->w) > 0);
-  assert((pstate->e - pstate->w) < map.xsize);
+  assert((pstate->e - pstate->w) < map.info.xsize);
   assert((pstate->s - pstate->n) > 0);
-  assert((pstate->s - pstate->n) < map.ysize);
+  assert((pstate->s - pstate->n) < map.info.ysize);
 
   xn = pstate->w + myrand(pstate->e - pstate->w);
   yn = pstate->n + myrand(pstate->s - pstate->n);
@@ -1584,10 +1584,10 @@ static bool create_island(int islemass, struct gen234_state *pstate)
   int i;
   long int tries=islemass*(2+islemass/20)+99;
   bool j;
-  struct tile *ptile = native_pos_to_tile(map.xsize / 2, map.ysize / 2);
+  struct tile *ptile = native_pos_to_tile(map.info.xsize / 2, map.info.ysize / 2);
 
-  memset(height_map, '\0', sizeof(int) * map.xsize * map.ysize);
-  hmap(native_pos_to_tile(map.xsize / 2, map.ysize / 2)) = 1;
+  memset(height_map, '\0', sizeof(int) * map.info.xsize * map.info.ysize);
+  hmap(native_pos_to_tile(map.info.xsize / 2, map.info.ysize / 2)) = 1;
   pstate->n = ptile->nat_y - 1;
   pstate->w = ptile->nat_x - 1;
   pstate->s = ptile->nat_y + 2;
@@ -1600,10 +1600,10 @@ static bool create_island(int islemass, struct gen234_state *pstate)
 	&& hmap(ptile) == 0 && count_card_adjc_elevated_tiles(ptile) > 0) {
       hmap(ptile) = 1;
       i--;
-      if (ptile->nat_y >= pstate->s - 1 && pstate->s < map.ysize - 2) {
+      if (ptile->nat_y >= pstate->s - 1 && pstate->s < map.info.ysize - 2) {
 	pstate->s++;
       }
-      if (ptile->nat_x >= pstate->e - 1 && pstate->e < map.xsize - 2) {
+      if (ptile->nat_x >= pstate->e - 1 && pstate->e < map.info.xsize - 2) {
 	pstate->e++;
       }
       if (ptile->nat_y <= pstate->n && pstate->n > 2) {
@@ -1695,12 +1695,12 @@ static bool make_island(int islemass, int starters,
     }
 
     /* isle creation does not perform well for nonsquare islands */
-    if (islemass > (map.ysize - 6) * (map.ysize - 6)) {
-      islemass = (map.ysize - 6) * (map.ysize - 6);
+    if (islemass > (map.info.ysize - 6) * (map.info.ysize - 6)) {
+      islemass = (map.info.ysize - 6) * (map.info.ysize - 6);
     }
 
-    if (islemass > (map.xsize - 2) * (map.xsize - 2)) {
-      islemass = (map.xsize - 2) * (map.xsize - 2);
+    if (islemass > (map.info.xsize - 2) * (map.info.xsize - 2)) {
+      islemass = (map.info.xsize - 2) * (map.info.xsize - 2);
     }
 
     i = islemass;
@@ -1767,7 +1767,7 @@ static bool make_island(int islemass, int starters,
 **************************************************************************/
 static void initworld(struct gen234_state *pstate)
 {
-  height_map = fc_malloc(sizeof(int) * map.ysize * map.xsize);
+  height_map = fc_malloc(sizeof(int) * map.info.ysize * map.info.xsize);
   create_placed_map(); /* land tiles which aren't placed yet */
   create_tmap(FALSE);
   
@@ -1813,15 +1813,15 @@ static void mapgenerator2(void)
    *     10% in small. */ 
   int bigfrac = 70, midfrac = 20, smallfrac = 10;
 
-  if (map.landpercent > 85) {
+  if (map.server.landpercent > 85) {
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-		map.generator);
-    map.generator = 1;
+		map.server.generator);
+    map.server.generator = 1;
     return;
   }
 
-  pstate->totalmass = ((map.ysize - 6 - spares) * map.landpercent 
-                       * (map.xsize - spares)) / 100;
+  pstate->totalmass = ((map.info.ysize - 6 - spares) * map.server.landpercent 
+                       * (map.info.xsize - spares)) / 100;
   totalweight = 100 * game.info.nplayers;
 
   assert(!placed_map_is_initialized());
@@ -1863,8 +1863,8 @@ static void mapgenerator2(void)
     /* We could never make adequately big islands. */
     freelog(LOG_NORMAL, _("Falling back to generator %d."), 1);
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-		map.generator);
-    map.generator = 1;
+		map.server.generator);
+    map.server.generator = 1;
 
     /* init world created this map, destroy it before abort */
     destroy_placed_map();
@@ -1887,7 +1887,7 @@ static void mapgenerator2(void)
   free(height_map);
   height_map = NULL;
 
-  if (checkmass > map.xsize + map.ysize + totalweight) {
+  if (checkmass > map.info.xsize + map.info.ysize + totalweight) {
     freelog(LOG_VERBOSE, "%ld mass left unplaced", checkmass);
   }
 }
@@ -1906,23 +1906,23 @@ static void mapgenerator3(void)
   struct gen234_state state;
   struct gen234_state *pstate = &state;
 
-  if (map.landpercent > 80) {
+  if (map.server.landpercent > 80) {
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-		map.generator);
-    map.generator = 2;
+		map.server.generator);
+    map.server.generator = 2;
     return;
   }
 
   pstate->totalmass =
-      ((map.ysize - 6 - spares) * map.landpercent * (map.xsize - spares)) /
+      ((map.info.ysize - 6 - spares) * map.server.landpercent * (map.info.xsize - spares)) /
       100;
 
   bigislands= game.info.nplayers;
 
-  landmass = (map.xsize * (map.ysize - 6) * map.landpercent)/100;
+  landmass = (map.info.xsize * (map.info.ysize - 6) * map.server.landpercent)/100;
   /* subtracting the arctics */
-  if (landmass > 3 * map.ysize + game.info.nplayers * 3){
-    landmass -= 3 * map.ysize;
+  if (landmass > 3 * map.info.ysize + game.info.nplayers * 3){
+    landmass -= 3 * map.info.ysize;
   }
 
 
@@ -1934,9 +1934,9 @@ static void mapgenerator3(void)
     islandmass= (landmass)/(bigislands);
   }
 
-  if (map.xsize < 40 || map.ysize < 40 || map.landpercent > 80) { 
+  if (map.info.xsize < 40 || map.info.ysize < 40 || map.server.landpercent > 80) { 
     freelog(LOG_NORMAL, _("Falling back to generator %d."), 2); 
-    map.generator = 2;
+    map.server.generator = 2;
     return; 
   }
 
@@ -1986,7 +1986,7 @@ static void mapgenerator3(void)
     
   if (j == 1500) {
     freelog(LOG_NORMAL, _("Generator 3 left %li landmass unplaced."), checkmass);
-  } else if (checkmass > map.xsize + map.ysize) {
+  } else if (checkmass > map.info.xsize + map.info.ysize) {
     freelog(LOG_VERBOSE, "%ld mass left unplaced", checkmass);
   }
 }
@@ -2006,25 +2006,25 @@ static void mapgenerator4(void)
 
   /* no islands with mass >> sqr(min(xsize,ysize)) */
 
-  if (game.info.nplayers < 2 || map.landpercent > 80) {
+  if (game.info.nplayers < 2 || map.server.landpercent > 80) {
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-		map.generator);
-    map.startpos = 1;
+		map.server.generator);
+    map.server.startpos = 1;
     return;
   }
 
-  if (map.landpercent > 60) {
+  if (map.server.landpercent > 60) {
     bigweight=30;
-  } else if (map.landpercent > 40) {
+  } else if (map.server.landpercent > 40) {
     bigweight=50;
   } else {
     bigweight=70;
   }
 
-  spares = (map.landpercent - 5) / 30;
+  spares = (map.server.landpercent - 5) / 30;
 
   pstate->totalmass =
-      ((map.ysize - 6 - spares) * map.landpercent * (map.xsize - spares)) /
+      ((map.info.ysize - 6 - spares) * map.server.landpercent * (map.info.xsize - spares)) /
       100;
 
   /*!PS: The weights NEED to sum up to totalweight (dammit) */
@@ -2054,7 +2054,7 @@ static void mapgenerator4(void)
   free(height_map);
   height_map = NULL;
 
-  if (checkmass > map.xsize + map.ysize + totalweight) {
+  if (checkmass > map.info.xsize + map.info.ysize + totalweight) {
     freelog(LOG_VERBOSE, "%ld mass left unplaced", checkmass);
   }
 }
@@ -2186,16 +2186,16 @@ static int should_erode(int x, int y)
 static void erode_map(int polar_height) 
 {
   int x, y;
-  for (x = 0; x < map.xsize; x++) {
-    for (y = polar_height; y < map.ysize - polar_height; y++) {
+  for (x = 0; x < map.info.xsize; x++) {
+    for (y = polar_height; y < map.info.ysize - polar_height; y++) {
       if (should_erode(x, y)) {
 	map_set_terrain(native_pos_to_tile(x, y), T6_ERODE_LAND);
       }
     }
   }
   
-  for (x = 0; x < map.xsize; x++) {
-    for (y = polar_height; y < map.ysize - polar_height; y++) {
+  for (x = 0; x < map.info.xsize; x++) {
+    for (y = polar_height; y < map.info.ysize - polar_height; y++) {
       if (map_get_terrain(native_pos_to_tile(x, y)) == T6_ERODE_LAND) {
 	map_set_terrain(native_pos_to_tile(x, y), T6_TEMP_OCEAN);
       }
@@ -2243,16 +2243,16 @@ static int should_dilate(int x, int y)
 static void dilate_map(int polar_height) 
 {
   int x, y;
-  for (x = 0; x < map.xsize; x++) {
-    for (y = polar_height; y < map.ysize - polar_height; y++) {
+  for (x = 0; x < map.info.xsize; x++) {
+    for (y = polar_height; y < map.info.ysize - polar_height; y++) {
       if (should_dilate(x, y)) {
 	map_set_terrain(native_pos_to_tile(x, y), T6_DILATE_LAND);
       }
     }
   }
   
-  for (x = 0; x < map.xsize; x++) {
-    for (y = polar_height; y < map.ysize - polar_height; y++) {
+  for (x = 0; x < map.info.xsize; x++) {
+    for (y = polar_height; y < map.info.ysize - polar_height; y++) {
       if (map_get_terrain(native_pos_to_tile(x, y)) == T6_DILATE_LAND) {
 	map_set_terrain(native_pos_to_tile(x, y), T6_TEMP_LAND);
       }
@@ -2364,7 +2364,7 @@ static bool create_peninsula(int x, int y, int player_number,
     }
 
     /* connect to central ocean */
-    for (cy = map.ysize / 2; cy != top_location; cy += direction) {
+    for (cy = map.info.ysize / 2; cy != top_location; cy += direction) {
       ptile = native_pos_to_tile(x + width / 2, cy);
       if(ptile != NULL) {
         map_set_perm_ocean(ptile);
@@ -2378,7 +2378,7 @@ static bool create_peninsula(int x, int y, int player_number,
       ptile = native_pos_to_tile(cx, cy);
       if(ptile != NULL) {
         map_set_terrain(ptile, T6_PERM_LAND);
-        hmap(ptile) = myrand((hmap_max_level * map.steepness)/100) + hmap_shore_level;
+        hmap(ptile) = myrand((hmap_max_level * map.server.steepness)/100) + hmap_shore_level;
       }
     }
   }
@@ -2390,13 +2390,13 @@ static bool create_peninsula(int x, int y, int player_number,
       ptile = native_pos_to_tile(cx, cy);
       if(ptile != NULL) {
         map_set_terrain(ptile, T6_PERM_LAND);
-        hmap(ptile) = myrand((hmap_max_level * map.steepness)/100) + hmap_shore_level;
+        hmap(ptile) = myrand((hmap_max_level * map.server.steepness)/100) + hmap_shore_level;
       }
     }
   }
 
-  map.start_positions[player_number].tile = native_pos_to_tile(x + width / 2, y);
-  map.start_positions[player_number].nation = NO_NATION_SELECTED;
+  map.server.start_positions[player_number].tile = native_pos_to_tile(x + width / 2, y);
+  map.server.start_positions[player_number].nation = NO_NATION_SELECTED;
 
   return TRUE;
 }
@@ -2425,18 +2425,18 @@ static bool mapgenerator67(bool make_roads)
   int peninsulas = game.info.nplayers;
   int peninsulas_on_one_side = (peninsulas + 1) / 2;
   int isthmus_width = 10;
-  int neck_height = (map.ysize / 8) | 1; 
+  int neck_height = (map.info.ysize / 8) | 1; 
   int polar_height = 3;
-  int max_peninsula_width_with_ocean = (map.xsize - isthmus_width) / (peninsulas_on_one_side);
+  int max_peninsula_width_with_ocean = (map.info.xsize - isthmus_width) / (peninsulas_on_one_side);
   int max_peninsula_width = max_peninsula_width_with_ocean / 1.5f;
   int peninsula_separation = max_peninsula_width_with_ocean - max_peninsula_width;
   
-  int max_peninsula_height = map.ysize / 2 - polar_height - neck_height;
+  int max_peninsula_height = map.info.ysize / 2 - polar_height - neck_height;
   int neck_width = MIN(6,max_peninsula_width - 1);
   int min_peninsula_width = neck_width;
   int min_peninsula_height = MIN(neck_height, 5);
   int peninsula_area = MAX((max_peninsula_width * max_peninsula_height * 
-			    map.landpercent) / 100, 
+			    map.server.landpercent) / 100, 
 			   min_peninsula_width * min_peninsula_height);
   int i, x, y;
 
@@ -2452,54 +2452,54 @@ static bool mapgenerator67(bool make_roads)
 	    min_peninsula_width, max_peninsula_width,
 	    min_peninsula_height, max_peninsula_height, peninsula_area);
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-		map.generator);
-    map.generator = 3;
+		map.server.generator);
+    map.server.generator = 3;
     return FALSE;
   }
 
-  height_map = fc_malloc(sizeof(int) * map.xsize * map.ysize);
+  height_map = fc_malloc(sizeof(int) * map.info.xsize * map.info.ysize);
 
   freelog(LOG_VERBOSE, "Creating temporary ocean");
   /* initialize everything to temp ocean */
-  for (y = 0; y < map.ysize; y++)
-    for (x = 0; x < map.xsize; x++) {
+  for (y = 0; y < map.info.ysize; y++)
+    for (x = 0; x < map.info.xsize; x++) {
       map_set_terrain(native_pos_to_tile(x, y), T6_TEMP_OCEAN);
       hmap(native_pos_to_tile(x, y)) = 0;
     }
 
   freelog(LOG_VERBOSE, "Creating permanent ocean");
   /* create central perm ocean */
-  y = map.ysize / 2;
-  for (x = isthmus_width; x < map.xsize; x++) {
+  y = map.info.ysize / 2;
+  for (x = isthmus_width; x < map.info.xsize; x++) {
     map_set_terrain(native_pos_to_tile(x, y), T6_PERM_OCEAN);
     hmap(native_pos_to_tile(x, y)) = 0;
   }
 
   freelog(LOG_VERBOSE, "Creating polar regions");
   /* create polar regions */
-  for (x = 0; x < map.xsize; x++) {
+  for (x = 0; x < map.info.xsize; x++) {
     for (y = 0; y < polar_height; y++) {
       int rand_num = myrand(9);
       map_set_terrain(native_pos_to_tile(x, y), rand_num > 7 ? T_ARCTIC :
 		      (rand_num < 2 ? T_HILLS : T_TUNDRA));
       rand_num = myrand(9);
-      map_set_terrain(native_pos_to_tile(x, map.ysize - 1 - y), rand_num > 7 ? T_ARCTIC :
+      map_set_terrain(native_pos_to_tile(x, map.info.ysize - 1 - y), rand_num > 7 ? T_ARCTIC :
 		      (rand_num < 2 ? T_HILLS : T_TUNDRA));
     }
   }
 
   map.num_continents = 1;
-  map.start_positions = fc_realloc(map.start_positions,
+  map.server.start_positions = fc_realloc(map.server.start_positions,
 				   game.info.nplayers
-				   * sizeof(*map.start_positions));
-  map.num_start_positions = game.info.nplayers;
+				   * sizeof(*map.server.start_positions));
+  map.server.num_start_positions = game.info.nplayers;
 
   freelog(LOG_VERBOSE, "Creating isthmus");
   /* create isthmus central strip */
   x = isthmus_width / 2;
-  for (y = polar_height; y < map.ysize - polar_height; y++) {
+  for (y = polar_height; y < map.info.ysize - polar_height; y++) {
     map_set_terrain(native_pos_to_tile(x, y), T6_PERM_LAND);
-    hmap(native_pos_to_tile(x, y)) = myrand((hmap_max_level * map.steepness)/100) + hmap_shore_level;
+    hmap(native_pos_to_tile(x, y)) = myrand((hmap_max_level * map.server.steepness)/100) + hmap_shore_level;
   }
 
   freelog(LOG_VERBOSE, "Creating peninsulas");
@@ -2524,14 +2524,14 @@ static bool mapgenerator67(bool make_roads)
       } 
     } 
     y = (direction == -1)
-	? height + polar_height : map.ysize - 1 - height - polar_height;
+	? height + polar_height : map.info.ysize - 1 - height - polar_height;
     if (!create_peninsula(x + x_offset, y, i, width, height, direction,
 			  neck_height, neck_width, neck_offset)) {
       freelog(LOG_ERROR, _("mapgenerator67: create_peninsula failed"));
       notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-	 	  map.generator);
-      map.generator = 3;
-      map.num_start_positions = 0;
+	 	  map.server.generator);
+      map.server.generator = 3;
+      map.server.num_start_positions = 0;
       free(height_map);
       height_map = NULL;
       return FALSE;
@@ -2542,25 +2542,25 @@ static bool mapgenerator67(bool make_roads)
   freelog(LOG_VERBOSE, "Creating random islands");
   /* create some 1x1 islands and add random land near existing land */
   { 
-    int consider_height = map.ysize - 2 * polar_height;
-    int consider_height_for_isles = map.ysize
+    int consider_height = map.info.ysize - 2 * polar_height;
+    int consider_height_for_isles = map.info.ysize
                                     - 2 * (min_peninsula_height + polar_height);
     int desired_squares = 
-      (consider_height * map.xsize * map.landpercent) / 200;
+      (consider_height * map.info.xsize * map.server.landpercent) / 200;
     int bailout_number = desired_squares * 30;/* to prevent very long loops*/
-    int seed = (consider_height * map.xsize) / 150; /* number of seed islands */
+    int seed = (consider_height * map.info.xsize) / 150; /* number of seed islands */
     desired_squares = MAX(0, desired_squares - seed);
     /* create up to seed number of small 1x1 islands */
     freelog(LOG_VERBOSE, "Seed is %i, shorelevel is %i, seedcoeff %i",
-	    seed, hmap_shore_level, (consider_height * map.xsize) / 150);
+	    seed, hmap_shore_level, (consider_height * map.info.xsize) / 150);
     while (bailout_number > 0 && seed > 0) {
-      x = myrand(map.xsize);
+      x = myrand(map.info.xsize);
       y = myrand(consider_height_for_isles) + min_peninsula_height + polar_height;
       /* if we find temporary ocean, convert it to land */
       if (map_get_terrain(native_pos_to_tile(x, y)) == T6_TEMP_OCEAN) {
 	map_set_terrain(native_pos_to_tile(x, y), T6_TEMP_LAND);
 	hmap(native_pos_to_tile(x, y)) =
-	    myrand((hmap_max_level * map.steepness) / 100) + hmap_shore_level;
+	    myrand((hmap_max_level * map.server.steepness) / 100) + hmap_shore_level;
 	seed--;
         freelog(LOG_VERBOSE, "Created 1x1 island at %i,%i, with height %i",
 		x, y, hmap(native_pos_to_tile(x, y)));
@@ -2569,12 +2569,12 @@ static bool mapgenerator67(bool make_roads)
     }
     /* create random new land */
     while (bailout_number > 0 && desired_squares > 0) {
-      x = myrand(map.xsize);
+      x = myrand(map.info.xsize);
       y = myrand(consider_height) + polar_height;
       if (random_new_land(x, y) == TS_NEW_LAND) {
 	map_set_terrain(native_pos_to_tile(x, y), T6_TEMP_LAND);
 	hmap(native_pos_to_tile(x, y)) =
-	    myrand((hmap_max_level * map.steepness) / 100) + hmap_shore_level;
+	    myrand((hmap_max_level * map.server.steepness) / 100) + hmap_shore_level;
 	desired_squares--;
       }
       bailout_number--;
@@ -2588,8 +2588,8 @@ static bool mapgenerator67(bool make_roads)
 
   freelog(LOG_VERBOSE, "Converting temporary terrain to real terrain");
   /* translate temp terrain to real terrain */
-  for (x = 0; x < map.xsize; x++) {
-    for (y = polar_height; y < map.ysize - polar_height; y++) {
+  for (x = 0; x < map.info.xsize; x++) {
+    for (y = polar_height; y < map.info.ysize - polar_height; y++) {
       int terrain = map_get_terrain(native_pos_to_tile(x, y));
       if (terrain == T6_TEMP_LAND) {
 	map_set_terrain(native_pos_to_tile(x, y), T_GRASSLAND);
@@ -2615,7 +2615,7 @@ static bool mapgenerator67(bool make_roads)
   freelog(LOG_VERBOSE, "Building polar regions road");
   /* build polar regions road */
   if (make_roads) {
-    for (x = 0; x < map.xsize; x++) {
+    for (x = 0; x < map.info.xsize; x++) {
       y = polar_height - 1;
       if (map_build_road_time(native_pos_to_tile(x, y - 1))
 	  < map_build_road_time(native_pos_to_tile(x, y))) {
@@ -2623,7 +2623,7 @@ static bool mapgenerator67(bool make_roads)
       } else {
 	map_set_special(native_pos_to_tile(x, y), S_ROAD);
       }
-      y = map.ysize - polar_height;
+      y = map.info.ysize - polar_height;
       if (map_build_road_time(native_pos_to_tile(x, y + 1))
 	  < map_build_road_time(native_pos_to_tile(x, y))) {
 	map_set_special(native_pos_to_tile(x, y + 1), S_ROAD);
@@ -2638,7 +2638,7 @@ static bool mapgenerator67(bool make_roads)
   if (make_roads) {
     int last_x, middle_x = isthmus_width / 2;
     last_x = middle_x;
-    for (y = polar_height - 1; y < map.ysize - polar_height + 1; y++) {
+    for (y = polar_height - 1; y < map.info.ysize - polar_height + 1; y++) {
       int best_x = middle_x;
       int min_build = map_build_road_time(native_pos_to_tile(middle_x, y));
       for (x = MAX(last_x - 1, middle_x - 1);
@@ -2777,10 +2777,10 @@ bool place_island_on_map(struct gen8_map *pmap, struct gen8_map *island);
 *************************************************************************/
 void startpos_init(void)
 {
-  map.num_start_positions = 0;
-  map.start_positions =
-      fc_realloc(map.start_positions,
-                 game.info.nplayers * sizeof(*map.start_positions));
+  map.server.num_start_positions = 0;
+  map.server.start_positions =
+      fc_realloc(map.server.start_positions,
+                 game.info.nplayers * sizeof(*map.server.start_positions));
 }
 
 /*************************************************************************
@@ -2788,10 +2788,10 @@ void startpos_init(void)
 *************************************************************************/
 void startpos_new(int x, int y, Nation_Type_id nation)
 {
-  assert(map.num_start_positions < game.info.nplayers);
-  map.start_positions[map.num_start_positions].tile = native_pos_to_tile(x, y);
-  map.start_positions[map.num_start_positions].nation = nation;
-  map.num_start_positions++;
+  assert(map.server.num_start_positions < game.info.nplayers);
+  map.server.start_positions[map.server.num_start_positions].tile = native_pos_to_tile(x, y);
+  map.server.start_positions[map.server.num_start_positions].nation = nation;
+  map.server.num_start_positions++;
 }
 
 /*************************************************************************
@@ -2799,9 +2799,9 @@ void startpos_new(int x, int y, Nation_Type_id nation)
 *************************************************************************/
 void terrain_chance_init(void)
 {
-  double temp_rate = (double)map.temperature * map.temperature / 500;
-  double steep_rate = (double)map.steepness * map.steepness / 180;
-  double wet_rate = (double)map.wetness * map.wetness / 500;
+  double temp_rate = (double)map.server.temperature * map.server.temperature / 500;
+  double steep_rate = (double)map.server.steepness * map.server.steepness / 180;
+  double wet_rate = (double)map.server.wetness * map.server.wetness / 500;
   double tropic_rate = (double)(temp_rate + wet_rate) / 2;
 
   gen8_chance[T_ARCTIC] = 0;
@@ -3134,7 +3134,7 @@ struct gen8_map *create_fair_island(int size, int startpos)
 
       int terrain = temp->tiles[tx][ty].terrain;
 
-      if (myrand(1000) < map.riches) {
+      if (myrand(1000) < map.server.riches) {
         if (get_tile_type(terrain)->special_1_name[0] != '\0'
             && (get_tile_type(terrain)->special_2_name[0] == '\0'
                 || (myrand(100) < 50))) {
@@ -3171,7 +3171,7 @@ struct gen8_map *create_fair_island(int size, int startpos)
   }
   
   /* Make river */
-  n = (size * myrand(map.wetness * map.wetness)) / 50000;
+  n = (size * myrand(map.server.wetness * map.server.wetness)) / 50000;
   c = i = 0;
   while (c < n) {
     i++;
@@ -3491,8 +3491,8 @@ static bool mapgenerator89(bool team_placement)
   struct gen8_map *pmap, *main_island, *small_island;
   int i, x , y, iter;
   int playermass, islandmass1 , islandmass2, islandmass3;
-  int min_island_size = map.tinyisles ? 1 : 2;
-  int players_per_island = 1, old_startpos = map.startpos;
+  int min_island_size = map.server.tinyisles ? 1 : 2;
+  int players_per_island = 1, old_startpos = map.server.startpos;
   int players_without_team = 0;
   bool done = FALSE;
 
@@ -3512,12 +3512,12 @@ static bool mapgenerator89(bool team_placement)
    * 2 = Try to place two players per continent.
    * 3 = Try to place all players on a single continent.
    * 4 = Place players depending on size of continents. */
-  switch (map.startpos) {
+  switch (map.server.startpos) {
     case 2:
       players_per_island = 2;
       if (game.info.nplayers & 1) {
 	/* Cannot do it, must be a odd number of players */
-	map.startpos = 0;
+	map.server.startpos = 0;
 	players_per_island = 1;
       } else {
 	int team_count = 0;
@@ -3527,16 +3527,16 @@ static bool mapgenerator89(bool team_placement)
 	} team_iterate_end;
 	if (team_count > 0 && players_without_team > 0) {
 	  /* This isn't a team game or an ffa */
-	  map.startpos = 0;
+	  map.server.startpos = 0;
 	  players_per_island = 1;
 	} else if (team_placement) {
 	  if (players_without_team & 1) {
-	    map.startpos = 0;
+	    map.server.startpos = 0;
 	    players_per_island = 1;
 	  } else {
 	    team_iterate(pteam) {
 	      if (team_count_members(pteam->id) & 1) {
-		map.startpos = 0;
+		map.server.startpos = 0;
 		players_per_island = 1;
 		break;
 	      }
@@ -3555,28 +3555,28 @@ static bool mapgenerator89(bool team_placement)
 	    players_per_island = ref;
 	  } else if (team_count_members(pteam->id) != ref) {
 	    /* All teams doesn't have the same number of players :( */
-	    map.startpos = 0;
+	    map.server.startpos = 0;
 	    players_per_island = 1;
 	    break;
 	  }
 	} team_iterate_end;
       } else {
 	/* Cannot do it with this generator */
-	map.startpos = 0;
+	map.server.startpos = 0;
 	players_per_island = 1;
       }
       break;
     default:
       break;
   }
-  if (map.startpos != old_startpos) {
+  if (map.server.startpos != old_startpos) {
     freelog(LOG_VERBOSE,
 	    "Generator 8/9 Couldn't support startpos %d, changing to %d",
-	    old_startpos, map.startpos);
+	    old_startpos, map.server.startpos);
     /* TRANS: don't translate "startpos" */
     notify_conn(NULL, _("Server: Generator %d failed to use "
 			"startpos %d, using %d"),
-		map.generator, old_startpos, map.startpos);
+		map.server.generator, old_startpos, map.server.startpos);
   }
 
   terrain_chance_init();
@@ -3586,7 +3586,7 @@ static bool mapgenerator89(bool team_placement)
 
     /* Initialize */
     startpos_init();
-    pmap = create_map(map.xsize, map.ysize);
+    pmap = create_map(map.info.xsize, map.info.ysize);
 
     create_placed_map();
     create_tmap(FALSE);
@@ -3603,9 +3603,9 @@ static bool mapgenerator89(bool team_placement)
       make_polar();
     }
 
-    i = (map.xsize * map.ysize * map.landpercent) / 100;
-    for (x = 0; x < map.xsize; x++) {
-      for (y = 0; y < map.ysize; y++) {
+    i = (map.info.xsize * map.info.ysize * map.server.landpercent) / 100;
+    for (x = 0; x < map.info.xsize; x++) {
+      for (y = 0; y < map.info.ysize; y++) {
         struct tile *ptile = native_pos_to_tile(x, y);
         if (map_get_terrain(ptile) != T_OCEAN) {
           i--;
@@ -3654,14 +3654,14 @@ static bool mapgenerator89(bool team_placement)
 
       /* Generate start posistions for each team */
       if (topo_has_flag(TF_WRAPX)) {
-        dx = myrand(map.xsize);
+        dx = myrand(map.info.xsize);
       }
       if (topo_has_flag(TF_WRAPY)) {
-        dy = myrand(map.ysize);
+        dy = myrand(map.info.ysize);
       }
       for (i = 0; i < teams; i++) {
-        px[i] = (map.xsize * (2 * i + 1)) / (2 * teams) + dx;
-        py[i] = (map.ysize * (2 * i + 1)) / (2 * teams) + dy;
+        px[i] = (map.info.xsize * (2 * i + 1)) / (2 * teams) + dx;
+        py[i] = (map.info.ysize * (2 * i + 1)) / (2 * teams) + dy;
         normalize_coord(pmap, &px[i], &py[i]);
       }
 
@@ -3793,16 +3793,16 @@ static bool mapgenerator89(bool team_placement)
   /* Cannot generate the map :( */
   if (!done) {
     notify_conn(NULL, _("Server: Cannot create a such map with generator %d"),
-		map.generator);
+		map.server.generator);
     startpos_init();
-    map.generator = 3;
+    map.server.generator = 3;
     return FALSE;
   }
 
   /* Apply to the map */
   freelog(LOG_VERBOSE, "Setup terrain");
-  for (x = 0; x < map.xsize; x++) {
-    for (y = 0; y < map.ysize; y++) {
+  for (x = 0; x < map.info.xsize; x++) {
+    for (y = 0; y < map.info.ysize; y++) {
       struct tile *ptile = native_pos_to_tile(x, y);
       map_set_terrain(ptile, pmap->tiles[x][y].terrain);
       if (pmap->tiles[x][y].spec == 1) {
@@ -3816,7 +3816,7 @@ static bool mapgenerator89(bool team_placement)
       }
     }
   }
-  map.have_specials = TRUE;
+  map.server.have_specials = TRUE;
 
   free_map(pmap);
   destroy_placed_map();

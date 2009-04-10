@@ -203,33 +203,35 @@ int calculate_team_distance(struct tile *ptile1, struct tile *ptile2)
 }
 
 /****************************************************************************
-   Calculate score for the best starting positions with regard to teams
+  Calculate score for the best starting positions with regard to teams
+  If nobody is on team, score is 0.
 ****************************************************************************/
-int calculate_score(int *start_pos)//if nobody is on team, score is 0
+int calculate_score(int *start_pos)
 {
-    int score = 0;
-    int x, y;
-    for (x = 0; x < game.info.nplayers; x++ ) {
-        for (y = x + 1; y < game.info.nplayers; y++ ) {
-            if(start_pos[x] == start_pos[y]) {
-                score += calculate_team_distance(map.start_positions[x].tile,
-                                                 map.start_positions[y].tile);
-            }
-        }
+  int score = 0;
+  int x, y;
+
+  for (x = 0; x < game.info.nplayers; x++ ) {
+    for (y = x + 1; y < game.info.nplayers; y++ ) {
+      if (start_pos[x] == start_pos[y]) {
+	score += calculate_team_distance(map.server.start_positions[x].tile,
+					 map.server.start_positions[y].tile);
+      }
     }
-    return score;
+  }
+  return score;
 }
 
 /*****************************************************************************
-   Simple swap
+  Simple swap
 *****************************************************************************/
 void swap_int(int *a, int *b)
 {
-    int c;
-    
-    c = *a;
-    *a = *b;
-    *b = c;
+  int c;
+
+  c = *a;
+  *a = *b;
+  *b = c;
 }
 
 /****************************************************************************
@@ -238,119 +240,142 @@ void swap_int(int *a, int *b)
 ****************************************************************************/
 void shuffle_start_positions_by_iter(int *start_pos)
 {
-    int tabtabu[game.info.nplayers][game.info.nplayers];
-    int i,x,y, found = 1;
-    int tmp;
-    int score, best_local_score = 0, best_local_x = 0, best_local_y = 0;
+  int tabtabu[game.info.nplayers][game.info.nplayers];
+  int i,x,y, found = 1;
+  int tmp;
+  int score, best_local_score = 0, best_local_x = 0, best_local_y = 0;
 
-    while(found && (repeat < game.info.nplayers*game.server.iterplacementcoefficient)) {//limit # of iterations
-        repeat++;
-        if(repeat % (game.info.nplayers*game.server.iterplacementcoefficient/8)==0) {
-    	   notify_conn(NULL, _("Iterative team placement in progress, %i%% complete"), repeat*100/(game.info.nplayers*game.server.iterplacementcoefficient));
-        }
-        found = 0;
-        best_local_score = 99999999;
-        for (x = 0; x < game.info.nplayers; x++ ) {
-            for (y = x + 1; y < game.info.nplayers; y++ ) {
-                if(start_pos[x] == start_pos[y])continue;//same teams, no reason to swap
-                if(tabtabu[x][y]>0)tabtabu[x][y]--;
-                swap_int(&start_pos[x], &start_pos[y]);
-                score = calculate_score(start_pos);//calculate how much this swap is worth
-                swap_int(&start_pos[x], &start_pos[y]);
-                if(!tabtabu[x][y] && (score < best_local_score)) {//exchange starting positions
-                    best_local_score = score;
-                    best_local_x = x;//candidate for exchange
-                    best_local_y = y;
-                    found = 1;
-                }
-            }
-        }
-        if(found && (best_local_score < best_score)) {//new best solution found
-            tmp = start_pos[best_local_x];
-            start_pos[best_local_x] = start_pos[best_local_y];
-            start_pos[best_local_y] = tmp;
-            best_score = best_local_score;
-            freelog(LOG_VERBOSE, "Exchanging (%i,%i) with score %i",best_local_x,best_local_y,best_score);
-            tabtabu[best_local_x][best_local_y] += game.info.nplayers;
-            for (i = 0; i < game.info.nplayers; i++ ) {//remember new best solution
-                best_team_pos[i] = start_pos[i];
-            }
-        } else if(found){//other solution found which is worse than the best one
-            tmp = start_pos[best_local_x];
-            start_pos[best_local_x] = start_pos[best_local_y];
-            start_pos[best_local_y] = tmp;
-            //but we do not rewrite the best solution found
-            //we remember that we did this exchange
-            tabtabu[best_local_x][best_local_y] += game.info.nplayers;            
-        }
-    }    
-}
-
-
-/****************************************************************************
-   Calculate score for the current starting positions with regard to teams
-   - optimized variant
-   - used in brute force
-****************************************************************************/
-int calculate_delta_score(int *start_pos, int depth)//if nobody is in team, score is 0
-{
-    int score = 0;
-    static int x;
-    assert(start_pos != NULL && depth >= 0 && depth < MAX_NUM_PLAYERS);
-    for (x = 0; x < depth; x++) {
-        if(start_pos[x] == start_pos[depth]) {//then they are on the same team
-            score += calculate_team_distance(map.start_positions[x].tile,
-                                             map.start_positions[depth].tile);
-        }
+  while (found
+	 && (repeat < game.info.nplayers
+	     /* Limit # of iterations. */
+	     * game.server.iterplacementcoefficient)) {
+    repeat++;
+    if (repeat % (game.info.nplayers * game.server.iterplacementcoefficient / 8)
+	== 0) {
+      notify_conn(NULL,
+		  _("Iterative team placement in progress, %d%% complete."),
+		  repeat * 100 / (game.info.nplayers
+				  * game.server.iterplacementcoefficient));
     }
-    return score;
+    found = 0;
+    best_local_score = 99999999;
+    for (x = 0; x < game.info.nplayers; x++ ) {
+      for (y = x + 1; y < game.info.nplayers; y++ ) {
+	if (start_pos[x] == start_pos[y]) {
+	  /* Same teams, no reason to swap. */
+	  continue;
+	}
+	if (tabtabu[x][y] > 0) {
+	  tabtabu[x][y]--;
+	}
+	swap_int(&start_pos[x], &start_pos[y]);
+	/* Calculate how much this swap is worth. */
+	score = calculate_score(start_pos);
+	swap_int(&start_pos[x], &start_pos[y]);
+	if (!tabtabu[x][y] && score < best_local_score) {
+	  /* Exchange starting positions. */
+	  best_local_score = score;
+	  best_local_x = x; /* Candidate for exchange. */
+	  best_local_y = y;
+	  found = 1;
+	}
+      }
+    }
+    if (found && best_local_score < best_score) {
+      /* New best solution found. */
+      tmp = start_pos[best_local_x];
+      start_pos[best_local_x] = start_pos[best_local_y];
+      start_pos[best_local_y] = tmp;
+      best_score = best_local_score;
+      freelog(LOG_VERBOSE, "Exchanging (%d, %d) with score %d.",
+	      best_local_x, best_local_y, best_score);
+      tabtabu[best_local_x][best_local_y] += game.info.nplayers;
+      for (i = 0; i < game.info.nplayers; i++ ) {
+	/* Remember new best solution. */
+	best_team_pos[i] = start_pos[i];
+      }
+    } else if (found) {
+      /* Other solution found which is worse than the best one. */
+      tmp = start_pos[best_local_x];
+      start_pos[best_local_x] = start_pos[best_local_y];
+      start_pos[best_local_y] = tmp;
+      /* But we do not rewrite the best solution found
+       * we remember that we did this exchange. */
+      tabtabu[best_local_x][best_local_y] += game.info.nplayers;
+    }
+  }
+}
+
+
+/****************************************************************************
+  Calculate score for the current starting positions with regard to teams
+  - optimized variant
+  - used in brute force
+  If nobody is in team, score is 0.
+****************************************************************************/
+int calculate_delta_score(int *start_pos, int depth)
+{
+  int score = 0;
+  static int x;
+
+  assert(start_pos != NULL && depth >= 0 && depth < MAX_NUM_PLAYERS);
+  for (x = 0; x < depth; x++) {
+    if(start_pos[x] == start_pos[depth]) {
+      /* Then they are on the same team. */
+      score += calculate_team_distance(map.server.start_positions[x].tile,
+				       map.server.start_positions[depth].tile);
+    }
+  }
+  return score;
 }
 
 /****************************************************************************
-   Pruning brute force algorithm
+  Pruning brute force algorithm
 ****************************************************************************/
 void find_pos_by_brute_force(int *positions, int a)
 {
-    static int depth = 0;
-    static int score = 0;
-    int tmpscore;
-    int i,p;
+  static int depth = 0;
+  static int score = 0;
+  int tmpscore;
+  int i, p;
 
-    assert(positions != NULL && a >= 0 && a < MAX_NUM_TEAMS+1);
-//add team to pos [depth]
-    positions[depth] = a;
-    mapping[a].member_count--;
-    
-    tmpscore = calculate_delta_score(positions, depth);
-    score+= tmpscore;
-    
-    if(depth == (game.info.nplayers - 1)) {//enough players
-        repeat++;    
-        if (score < best_score) {
-            for (p = 0; p < game.info.nplayers; p++ ) {
-                best_team_pos[p] = positions[p];
-            }
-            best_score = score;
-            freelog(LOG_VERBOSE, "New best score %i",best_score);
-            brute_force_found_solution = TRUE;
-        }
-    } else {    //we continue adding players
-        depth++;
-    
-        if(score < best_score) {
-            //choose next team for [depth+1] position
-            for (i = 0; i < mappings; i++ ) {
-                if(mapping[i].member_count > 0) {
-                    find_pos_by_brute_force(positions, i);
-                }
-            }
-        }    
-        depth--;
+  assert(positions != NULL && a >= 0 && a < MAX_NUM_TEAMS + 1);
+  /* Add team to pos [depth]. */
+  positions[depth] = a;
+  mapping[a].member_count--;
+
+  tmpscore = calculate_delta_score(positions, depth);
+  score += tmpscore;
+
+  if (depth == (game.info.nplayers - 1)) {
+    /* Enough players. */
+    repeat++;    
+    if (score < best_score) {
+      for (p = 0; p < game.info.nplayers; p++ ) {
+	best_team_pos[p] = positions[p];
+      }
+      best_score = score;
+      freelog(LOG_VERBOSE, "New best score %d.", best_score);
+      brute_force_found_solution = TRUE;
     }
-//remove player from pos [depth]
-    positions[depth] = -1;
-    mapping[a].member_count++;
-    score-= tmpscore;    
+  } else {
+    /* We continue adding players. */
+    depth++;
+
+    if (score < best_score) {
+      /* Choose next team for [depth+1] position. */
+      for (i = 0; i < mappings; i++ ) {
+	if (mapping[i].member_count > 0) {
+	  find_pos_by_brute_force(positions, i);
+	}
+      }
+    }
+    depth--;
+  }
+  /* Remove player from pos [depth]. */
+  positions[depth] = -1;
+  mapping[a].member_count++;
+  score -= tmpscore;
 }
 
 /****************************************************************************
@@ -358,8 +383,8 @@ void find_pos_by_brute_force(int *positions, int a)
 ****************************************************************************/
 void clean_start_pos(int *positions)
 {
-    assert(positions != NULL);
-    memset(positions, -1, sizeof(int) * game.info.nplayers);
+  assert(positions != NULL);
+  memset(positions, -1, sizeof(int) * game.info.nplayers);
 }
 
 /****************************************************************************
@@ -367,31 +392,33 @@ void clean_start_pos(int *positions)
 ****************************************************************************/
 void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
 {
-    int i;
-    bool error = FALSE;
-    Team_Type_id team_id;
-    
-    freelog(LOG_VERBOSE, "entry");
-    /*starting positions were assigned to team indexes
-      in team mapping*/
-    for (i = 0; i < game.info.nplayers; i++ ) {
-        assert(best_team_pos[i] >= 0 && best_team_pos[i] < MAX_NUM_TEAMS+1);
-        team_id = mapping[best_team_pos[i]].team_id;
-        freelog(LOG_VERBOSE, "Assigning position %i to team index %i, team_id %i",i,best_team_pos[i],mapping[best_team_pos[i]].team_id);
-        error = TRUE;
-        players_iterate(pplayer)
-            if(pplayer->team == team_id && pplayer->team_placement_flag == FALSE) {
-                freelog(LOG_VERBOSE, "Assigning position %i to player %i",i,pplayer->player_no);
-                pplayer->team_placement_flag = TRUE;
-                best_start_pos[pplayer->player_no] = i;
-                error = FALSE;
-                break;
-            }
-        players_iterate_end
-        assert(!error);
-    }
-    freelog(LOG_VERBOSE, "exit");    
+  int i;
+  bool error = FALSE;
+  Team_Type_id team_id;
+
+  freelog(LOG_VERBOSE, "entry");
+  /* Starting positions were assigned to team indexes in team mapping. */
+  for (i = 0; i < game.info.nplayers; i++ ) {
+    assert(best_team_pos[i] >= 0 && best_team_pos[i] < MAX_NUM_TEAMS+1);
+    team_id = mapping[best_team_pos[i]].team_id;
+    freelog(LOG_VERBOSE, "Assigning position %d to team index %d, team_id %d.",
+	    i, best_team_pos[i], mapping[best_team_pos[i]].team_id);
+    error = TRUE;
+    players_iterate(pplayer) {
+      if (pplayer->team == team_id && pplayer->team_placement_flag == FALSE) {
+	freelog(LOG_VERBOSE, "Assigning position %d to player %d",
+		i, pplayer->player_no);
+	pplayer->team_placement_flag = TRUE;
+	best_start_pos[pplayer->player_no] = i;
+	error = FALSE;
+	break;
+      }
+    } players_iterate_end
+    assert(!error);
+  }
+  freelog(LOG_VERBOSE, "exit");    
 }
+
 /****************************************************************************
    Calculate team mapping for brute force placement algorithm.
    Team mapping is needed because we want to consider players with TEAM_NONE
@@ -399,20 +426,22 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
 ****************************************************************************/
 void calculate_team_mapping(void)
 {
-    freelog(LOG_DEBUG, "entry");
-    mapping[0].team_id = TEAM_NONE;
-    mapping[0].member_count = team_count_members(TEAM_NONE);
-    freelog(LOG_VERBOSE, "Team TEAM_NONE has %i members",mapping[0].member_count);
-    mappings = 1;
-    
-    team_iterate(pteam)
-        mapping[mappings].team_id = pteam->id;
-        mapping[mappings].member_count = pteam->member_count;
-        freelog(LOG_VERBOSE, "Team %i has %i members",pteam->id, pteam->member_count);
-        mappings++;
-    team_iterate_end
-    freelog(LOG_VERBOSE, "Total mappings %i",mappings);
-    freelog(LOG_DEBUG, "exit");
+  freelog(LOG_DEBUG, "entry");
+  mapping[0].team_id = TEAM_NONE;
+  mapping[0].member_count = team_count_members(TEAM_NONE);
+  freelog(LOG_VERBOSE, "Team TEAM_NONE has %d members",
+	  mapping[0].member_count);
+  mappings = 1;
+  
+  team_iterate(pteam) {
+    mapping[mappings].team_id = pteam->id;
+    mapping[mappings].member_count = pteam->member_count;
+    freelog(LOG_VERBOSE, "Team %d has %d members",
+	    pteam->id, pteam->member_count);
+    mappings++;
+  } team_iterate_end
+  freelog(LOG_VERBOSE, "Total mappings %d",mappings);
+  freelog(LOG_DEBUG, "exit");
 }
 
 /****************************************************************************
@@ -421,6 +450,7 @@ void calculate_team_mapping(void)
 int get_team_mapping(Team_Type_id team)
 {
   int i;
+
   for (i = 0; i < mappings; i++) {
     if (mapping[i].team_id == team) {
       return i;
@@ -447,32 +477,33 @@ void shuffle_start_positions(int *start_pos)
 
     best_start_pos[i] = -1;
     team_pos[i] = best_team_pos[i] = get_team_mapping(pplayer->team);
-    freelog(LOG_VERBOSE, "Setting team pos %i = %i", i, team_pos[i]);
+    freelog(LOG_VERBOSE, "Setting team pos %d = %d.", i, team_pos[i]);
   }
   best_score = calculate_score(best_team_pos);
-  freelog(LOG_VERBOSE, "Current best score is %i", best_score);
+  freelog(LOG_VERBOSE, "Current best score is %d.", best_score);
 
-  if (game.info.nplayers <= game.server.bruteforcethreshold) {  //brute force for small number of players
-    notify_conn(NULL, _("Using brute force team placement algorithm"));
-    freelog(LOG_VERBOSE, "Using brute force algorithm");
+  if (game.info.nplayers <= game.server.bruteforcethreshold) {
+    /* Brute force for small number of players. */
+    notify_conn(NULL, _("Using brute force team placement algorithm?"));
+    freelog(LOG_VERBOSE, "Using brute force algorithm?");
     clean_start_pos(team_pos);
     for (i = 0; i < mappings; i++) {
       if (mapping[i].member_count > 0) {
         find_pos_by_brute_force(team_pos, i);
       }
       notify_conn(NULL,
-                  _("Brute force team placement in progress, %i%% complete"),
+                  _("Brute force team placement in progress, %d%% complete."),
                   (i + 1) * 100 / mappings);
     }
   } else {
-    freelog(LOG_VERBOSE, "Using iterative team placement algorithm");
-    notify_conn(NULL, _("Using iterative team placement algorithm"));
+    freelog(LOG_VERBOSE, "Using iterative team placement algorithm.");
+    notify_conn(NULL, _("Using iterative team placement algorithm."));
     shuffle_start_positions_by_iter(team_pos);
   }
   assign_players_to_positions(best_team_pos, best_start_pos);
 
-  freelog(LOG_VERBOSE, "Iterations: %i", repeat);
-  freelog(LOG_VERBOSE, "Final score checked: %i",
+  freelog(LOG_VERBOSE, "Iterations: %d.", repeat);
+  freelog(LOG_VERBOSE, "Final score checked: %d.",
           calculate_score(best_team_pos));
   for (i = 0; i < game.info.nplayers; i++) { //restore best solution
     start_pos[i] = best_start_pos[i];
@@ -485,7 +516,7 @@ void init_new_game(void)
 {
   const int NO_START_POS = -1;
   int start_pos[game.info.nplayers];
-  bool pos_used[map.num_start_positions];
+  bool pos_used[map.server.num_start_positions];
   int i, num_used = 0;
 
   init_game_id();
@@ -495,13 +526,13 @@ void init_new_game(void)
 
   /* First set up some data fields. */
   freelog(LOG_VERBOSE, "Placing players at start positions.");
-  for (i = 0; i < map.num_start_positions; i++) {
-    Nation_Type_id n = map.start_positions[i].nation;
+  for (i = 0; i < map.server.num_start_positions; i++) {
+    Nation_Type_id n = map.server.start_positions[i].nation;
 
     pos_used[i] = FALSE;
     freelog(LOG_VERBOSE, "%3d : (%2d,%2d) : %d : %s",
-	    i, map.start_positions[i].tile->x,
-	    map.start_positions[i].tile->y,
+	    i, map.server.start_positions[i].tile->x,
+	    map.server.start_positions[i].tile->y,
 	    n, (n >= 0 ? get_nation_name(n) : ""));
   }
   players_iterate(pplayer) {
@@ -511,9 +542,9 @@ void init_new_game(void)
   /* Second, assign a nation to a start position for that nation. */
   freelog(LOG_VERBOSE, "Assigning matching nations.");
   players_iterate(pplayer) {
-    for (i = 0; i < map.num_start_positions; i++) {
+    for (i = 0; i < map.server.num_start_positions; i++) {
       assert(pplayer->nation != NO_NATION_SELECTED);
-      if (pplayer->nation == map.start_positions[i].nation) {
+      if (pplayer->nation == map.server.start_positions[i].nation) {
 	freelog(LOG_VERBOSE, "Start_pos %d matches player %d (%s).",
 		i, pplayer->player_no, get_nation_name(pplayer->nation));
 	start_pos[pplayer->player_no] = i;
@@ -527,9 +558,9 @@ void init_new_game(void)
   freelog(LOG_VERBOSE, "Assigning random nations.");
   players_iterate(pplayer) {
     if (start_pos[pplayer->player_no] == NO_START_POS) {
-      int which = myrand(map.num_start_positions - num_used);
+      int which = myrand(map.server.num_start_positions - num_used);
 
-      for (i = 0; i < map.num_start_positions; i++) {
+      for (i = 0; i < map.server.num_start_positions; i++) {
 	if (!pos_used[i]) {
 	  if (which == 0) {
 	    freelog(LOG_VERBOSE,
@@ -547,14 +578,14 @@ void init_new_game(void)
     assert(start_pos[pplayer->player_no] != NO_START_POS);
   } players_iterate_end;
 
-  if (game.ext_info.teamplacement && map.generator != 7) {
+  if (game.ext_info.teamplacement && map.server.generator != 7) {
     shuffle_start_positions(start_pos);
   }
 
   /* Loop over all players, creating their initial units... */
   players_iterate(pplayer) {
     struct start_position pos
-      = map.start_positions[start_pos[pplayer->player_no]];
+      = map.server.start_positions[start_pos[pplayer->player_no]];
 
     /* Place the first unit. */
     place_starting_unit(pos.tile, pplayer, game.server.start_units[0]);
@@ -565,7 +596,7 @@ void init_new_game(void)
     int i, x, y;
     struct tile *ptile;
     struct start_position p
-      = map.start_positions[start_pos[pplayer->player_no]];
+      = map.server.start_positions[start_pos[pplayer->player_no]];
 
     assert(!is_ocean(map_get_terrain(p.tile)));
 

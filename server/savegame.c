@@ -79,11 +79,11 @@
 #define SAVE_MAP_DATA(ptile, line,					    \
                       GET_XY_CHAR, SECFILE_INSERT_LINE)                     \
 {                                                                           \
-  char line[map.xsize + 1];                                                 \
+  char line[map.info.xsize + 1];                                                 \
   int _nat_x, _nat_y;							    \
                                                                             \
-  for (_nat_y = 0; _nat_y < map.ysize; _nat_y++) {			    \
-    for (_nat_x = 0; _nat_x < map.xsize; _nat_x++) {			    \
+  for (_nat_y = 0; _nat_y < map.info.ysize; _nat_y++) {			    \
+    for (_nat_x = 0; _nat_x < map.info.xsize; _nat_x++) {			    \
       struct tile *ptile = native_pos_to_tile(_nat_x, _nat_y);		    \
 									    \
       line[_nat_x] = (GET_XY_CHAR);                                         \
@@ -92,7 +92,7 @@
               "data: '%c' %d", line[_nat_x], line[_nat_x]);                 \
       }                                                                     \
     }                                                                       \
-    line[map.xsize] = '\0';                                                 \
+    line[map.info.xsize] = '\0';                                                 \
     (SECFILE_INSERT_LINE);                                                  \
   }                                                                         \
 }
@@ -141,11 +141,11 @@
   int _nat_x, _nat_y;							    \
                                                                             \
   bool _warning_printed = FALSE;                                            \
-  for (_nat_y = 0; _nat_y < map.ysize; _nat_y++) {			    \
+  for (_nat_y = 0; _nat_y < map.info.ysize; _nat_y++) {			    \
     const int nat_y = _nat_y;						    \
     const char *_line = (SECFILE_LOOKUP_LINE);                              \
                                                                             \
-    if (!_line || strlen(_line) != map.xsize) {                             \
+    if (!_line || strlen(_line) != map.info.xsize) {                             \
       if (!_warning_printed) {                                              \
         /* TRANS: Error message. */                                         \
         freelog(LOG_ERROR, _("The save file contains incomplete "           \
@@ -158,7 +158,7 @@
         } else {                                                            \
           /* TRANS: Error message. */                                       \
           freelog(LOG_ERROR, _("Reason: line too short "                    \
-                  "(expected %d got %lu"), map.xsize,                       \
+                  "(expected %d got %lu"), map.info.xsize,                       \
                   (unsigned long) strlen(_line));                           \
         }                                                                   \
         /* Do not translate.. */                                            \
@@ -168,7 +168,7 @@
       }                                                                     \
       continue;                                                             \
     }                                                                       \
-    for (_nat_x = 0; _nat_x < map.xsize; _nat_x++) {			    \
+    for (_nat_x = 0; _nat_x < map.info.xsize; _nat_x++) {			    \
       const char ch = _line[_nat_x];                                        \
       struct tile *ptile = native_pos_to_tile(_nat_x, _nat_y);		    \
                                                                             \
@@ -516,7 +516,7 @@ static void map_startpos_load(struct section_file *file)
       }
       
       nation_id = find_nation_by_name_orig(nation);
-      if (nation_id == NO_NATION_SELECTED && map.startpos!=5) {
+      if (nation_id == NO_NATION_SELECTED && map.server.startpos != 5) {
 	freelog(LOG_NORMAL,
 	        _("Warning: Unknown nation %s for starting position no %d"),
 		nation,
@@ -531,25 +531,25 @@ static void map_startpos_load(struct section_file *file)
       start_positions[j].nation = nation_id;
       j++;
     }
-    map.num_start_positions = j;
-    if (map.num_start_positions > 0) {
-      map.start_positions = fc_realloc(map.start_positions,
-  	                               map.num_start_positions
-				       * sizeof(*map.start_positions));
+    map.server.num_start_positions = j;
+    if (map.server.num_start_positions > 0) {
+      map.server.start_positions = fc_realloc(map.server.start_positions,
+  	                               map.server.num_start_positions
+				       * sizeof(*map.server.start_positions));
       for (i = 0; i < j; i++) {
-        map.start_positions[i] = start_positions[i];
+        map.server.start_positions[i] = start_positions[i];
       }
     }
   }
   
 
-  if (map.num_start_positions
-      && map.num_start_positions < game.info.max_players) {
+  if (map.server.num_start_positions
+      && map.server.num_start_positions < game.info.max_players) {
     freelog(LOG_VERBOSE,
 	    _("Number of starts (%d) are lower than max_players (%d),"
 	      " lowering max_players."),
- 	    map.num_start_positions, game.info.max_players);
-    game.info.max_players = map.num_start_positions;
+ 	    map.server.num_start_positions, game.info.max_players);
+    game.info.max_players = map.server.num_start_positions;
   }
 }
 
@@ -558,14 +558,14 @@ load the tile map from a savegame file
 ***************************************************************/
 static void map_tiles_load(struct section_file *file)
 {
-  map.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
-					       "map.topology_id");
+  map.info.topology_id = secfile_lookup_int_default(file, MAP_ORIGINAL_TOPO,
+						    "map.topology_id");
 
   /* In some cases we read these before, but not always, and
    * its safe to read them again:
    */
-  map.xsize=secfile_lookup_int(file, "map.width");
-  map.ysize=secfile_lookup_int(file, "map.height");
+  map.info.xsize = secfile_lookup_int(file, "map.width");
+  map.info.ysize = secfile_lookup_int(file, "map.height");
 
   /* With a FALSE parameter [xy]size are not changed by this call. */
   map_init_topology(FALSE);
@@ -605,7 +605,7 @@ static void map_rivers_overlay_load(struct section_file *file)
   LOAD_MAP_DATA(ch, line, ptile,
 		secfile_lookup_str_default(file, NULL, "map.n%03d", line),
 		ptile->special |= (ascii_hex2bin(ch, 2) & S_RIVER));
-  map.have_rivers_overlay = TRUE;
+  map.server.have_rivers_overlay = TRUE;
 }
 
 /***************************************************************
@@ -624,7 +624,7 @@ static void map_load(struct section_file *file)
   if (secfile_lookup_bool_default(file, TRUE, "game.save_starts")) {
     map_startpos_load(file);
   } else {
-    map.num_start_positions = 0;
+    map.server.num_start_positions = 0;
   }
 
   /* get 4-bit segments of 16-bit "special" field. */
@@ -674,7 +674,7 @@ static void map_load(struct section_file *file)
     }
   }
 
-  map.have_specials = TRUE;
+  map.server.have_specials = TRUE;
 }
 
 /***************************************************************
@@ -691,17 +691,18 @@ static void map_save(struct section_file *file)
   /* Old freecivs expect map.is_earth to be present in the savegame. */
   secfile_insert_bool(file, FALSE, "map.is_earth");
 
-  secfile_insert_bool(file, game.server.save_options.save_starts, "game.save_starts");
+  secfile_insert_bool(file, game.server.save_options.save_starts,
+		      "game.save_starts");
   if (game.server.save_options.save_starts) {
-    for (i=0; i<map.num_start_positions; i++) {
-      struct tile *ptile = map.start_positions[i].tile;
+    for (i = 0; i < map.server.num_start_positions; i++) {
+      struct tile *ptile = map.server.start_positions[i].tile;
 
       secfile_insert_int(file, ptile->nat_x, "map.r%dsx", i);
       secfile_insert_int(file, ptile->nat_y, "map.r%dsy", i);
 
-      if (map.start_positions[i].nation != NO_NATION_SELECTED) {
+      if (map.server.start_positions[i].nation != NO_NATION_SELECTED) {
 	const char *nation = 
-	  get_nation_name_orig(map.start_positions[i].nation);
+	  get_nation_name_orig(map.server.start_positions[i].nation);
 
 	secfile_insert_str(file, nation, "map.r%dsnation", i);
       }
@@ -719,8 +720,8 @@ static void map_save(struct section_file *file)
   SAVE_NORMAL_MAP_DATA(ptile, file, "map.t%03d",
 		       terrain2char(ptile->terrain));
 
-  if (!map.have_specials) {
-    if (map.have_rivers_overlay) {
+  if (!map.server.have_specials) {
+    if (map.server.have_rivers_overlay) {
       /* 
        * Save the rivers overlay map; this is a special case to allow
        * re-saving scenarios which have rivers overlay data.  This only
@@ -3332,8 +3333,8 @@ void game_load(struct section_file *file)
   int technology_order_size = 0;
   const char *name;
 
-  map.generator = 0;
-  map.is_fixed = TRUE;
+  map.server.generator = 0;
+  map.server.is_fixed = TRUE;
 
   game.server.version = secfile_lookup_int_default(file, 0, "game.version");
   tmp_server_state = (enum server_states)
@@ -3687,41 +3688,41 @@ void game_load(struct section_file *file)
           0, "game.server_fcdb_type");
     }
 
-    map.topology_id = secfile_lookup_int_default(file,
+    map.info.topology_id = secfile_lookup_int_default(file,
         MAP_ORIGINAL_TOPO, "map.topology_id");
-    map.size = secfile_lookup_int_default(file,
+    map.server.size = secfile_lookup_int_default(file,
         MAP_DEFAULT_SIZE, "map.size");
-    map.riches = secfile_lookup_int(file, "map.riches");
-    map.huts = secfile_lookup_int(file, "map.huts");
-    map.generator = secfile_lookup_int(file, "map.generator");
-    map.seed = secfile_lookup_int(file, "map.seed");
-    map.landpercent = secfile_lookup_int(file, "map.landpercent");
-    map.wetness = secfile_lookup_int_default(file,
+    map.server.riches = secfile_lookup_int(file, "map.riches");
+    map.server.huts = secfile_lookup_int(file, "map.huts");
+    map.server.generator = secfile_lookup_int(file, "map.generator");
+    map.server.seed = secfile_lookup_int(file, "map.seed");
+    map.server.landpercent = secfile_lookup_int(file, "map.landpercent");
+    map.server.wetness = secfile_lookup_int_default(file,
         MAP_DEFAULT_WETNESS, "map.wetness");
-    map.steepness = secfile_lookup_int_default(file,
+    map.server.steepness = secfile_lookup_int_default(file,
         MAP_DEFAULT_STEEPNESS, "map.steepness");
-    map.have_huts = secfile_lookup_bool_default(file,
+    map.server.have_huts = secfile_lookup_bool_default(file,
         TRUE, "map.have_huts");
-    map.temperature = secfile_lookup_int_default(file,
+    map.server.temperature = secfile_lookup_int_default(file,
         MAP_DEFAULT_TEMPERATURE, "map.temperature");
-    map.alltemperate = secfile_lookup_bool_default(file,
+    map.server.alltemperate = secfile_lookup_bool_default(file,
         MAP_DEFAULT_ALLTEMPERATE, "map.alltemperate");
-    map.tinyisles = secfile_lookup_bool_default(file,
+    map.server.tinyisles = secfile_lookup_bool_default(file,
         MAP_DEFAULT_TINYISLES, "map.tinyisles");
-    map.separatepoles = secfile_lookup_bool_default(file,
+    map.server.separatepoles = secfile_lookup_bool_default(file,
         MAP_DEFAULT_SEPARATE_POLES, "map.separatepoles");
-    map.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
+    map.server.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
 
     if (has_capability("startoptions", savefile_options)) {
-      map.xsize = secfile_lookup_int(file, "map.width");
-      map.ysize = secfile_lookup_int(file, "map.height");
+      map.info.xsize = secfile_lookup_int(file, "map.width");
+      map.info.ysize = secfile_lookup_int(file, "map.height");
     } else {
       /* old versions saved with these names in PRE_GAME_STATE: */
-      map.xsize = secfile_lookup_int(file, "map.xsize");
-      map.ysize = secfile_lookup_int(file, "map.ysize");
+      map.info.xsize = secfile_lookup_int(file, "map.xsize");
+      map.info.ysize = secfile_lookup_int(file, "map.ysize");
     }
 
-    if (tmp_server_state == PRE_GAME_STATE && map.generator == 0) {
+    if (tmp_server_state == PRE_GAME_STATE && map.server.generator == 0) {
       /* generator 0 = map done with map editor */
       /* aka a "scenario" */
       if (has_capability("specials", savefile_options)) {
@@ -3973,13 +3974,13 @@ void game_save(struct section_file *file)
   
   sz_strlcpy(options, SAVEFILE_OPTIONS);
   if (game.server.is_new_game) {
-    if (map.num_start_positions>0) {
+    if (map.server.num_start_positions > 0) {
       sz_strlcat(options, " startpos");
     }
-    if (map.have_specials) {
+    if (map.server.have_specials) {
       sz_strlcat(options, " specials");
     }
-    if (map.have_rivers_overlay && !map.have_specials) {
+    if (map.server.have_rivers_overlay && !map.server.have_specials) {
       sz_strlcat(options, " riversoverlay");
     }
   }
@@ -4167,24 +4168,24 @@ void game_save(struct section_file *file)
      * The first two used to be saved as "map.xsize" and "map.ysize"
      * when PRE_GAME_STATE, but I'm standardizing on width,height --dwp
      */
-    secfile_insert_int(file, map.topology_id, "map.topology_id");
-    secfile_insert_int(file, map.size, "map.size");
-    secfile_insert_int(file, map.xsize, "map.width");
-    secfile_insert_int(file, map.ysize, "map.height");
+    secfile_insert_int(file, map.info.topology_id, "map.topology_id");
+    secfile_insert_int(file, map.server.size, "map.size");
+    secfile_insert_int(file, map.info.xsize, "map.width");
+    secfile_insert_int(file, map.info.ysize, "map.height");
     secfile_insert_str(file, game.server.start_units, "game.start_units");
     secfile_insert_int(file, game.server.dispersion, "game.dispersion");
-    secfile_insert_int(file, map.seed, "map.seed");
-    secfile_insert_int(file, map.landpercent, "map.landpercent");
-    secfile_insert_int(file, map.riches, "map.riches");
-    secfile_insert_int(file, map.wetness, "map.wetness");
-    secfile_insert_int(file, map.steepness, "map.steepness");
-    secfile_insert_int(file, map.huts, "map.huts");
-    secfile_insert_int(file, map.generator, "map.generator");
-    secfile_insert_bool(file, map.have_huts, "map.have_huts");
-    secfile_insert_int(file, map.temperature, "map.temperature");
-    secfile_insert_bool(file, map.alltemperate, "map.alltemperate");
-    secfile_insert_bool(file, map.tinyisles, "map.tinyisles");
-    secfile_insert_bool(file, map.separatepoles, "map.separatepoles");
+    secfile_insert_int(file, map.server.seed, "map.seed");
+    secfile_insert_int(file, map.server.landpercent, "map.landpercent");
+    secfile_insert_int(file, map.server.riches, "map.riches");
+    secfile_insert_int(file, map.server.wetness, "map.wetness");
+    secfile_insert_int(file, map.server.steepness, "map.steepness");
+    secfile_insert_int(file, map.server.huts, "map.huts");
+    secfile_insert_int(file, map.server.generator, "map.generator");
+    secfile_insert_bool(file, map.server.have_huts, "map.have_huts");
+    secfile_insert_int(file, map.server.temperature, "map.temperature");
+    secfile_insert_bool(file, map.server.alltemperate, "map.alltemperate");
+    secfile_insert_bool(file, map.server.tinyisles, "map.tinyisles");
+    secfile_insert_bool(file, map.server.separatepoles, "map.separatepoles");
   } 
 
   secfile_insert_int(file, game.server.seed, "game.randseed");
@@ -4281,8 +4282,8 @@ bool game_loadmap(struct section_file *file)
     return FALSE;
   }
 
-  map.generator = 0;
-  map.is_fixed = TRUE;
+  map.server.generator = 0;
+  map.server.is_fixed = TRUE;
 
   set_meta_topic_string(secfile_lookup_str_default(file,
       default_meta_topic_string(), "game.metatopic"));
@@ -4294,25 +4295,25 @@ bool game_loadmap(struct section_file *file)
   game.server.dispersion = secfile_lookup_int_default(file, 0, "game.dispersion");
   game.info.max_players = secfile_lookup_int(file, "game.max_players");
 
-  map.topology_id = secfile_lookup_int_default(file,
+  map.info.topology_id = secfile_lookup_int_default(file,
       MAP_ORIGINAL_TOPO, "map.topology_id");
   /* map.seed = secfile_lookup_int_default(file, "map.seed"); */
 
-  map.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
+  map.server.startpos = secfile_lookup_int_default(file, 4, "map.startpos");
 
-  map.xsize = secfile_lookup_int(file, "map.width");
-  map.ysize = secfile_lookup_int(file, "map.height");
+  map.info.xsize = secfile_lookup_int(file, "map.width");
+  map.info.ysize = secfile_lookup_int(file, "map.height");
 
   if (!game.server.ruleset_loaded) {
     freelog(LOG_DEBUG, "Starting loading rulesets");
     load_rulesets();
   }
   freelog(LOG_DEBUG, "Starting loading maptiles");
-  map.have_specials = TRUE;
+  map.server.have_specials = TRUE;
   map_tiles_load(file);
 
   freelog(LOG_DEBUG, "Starting loading startpositions");
-  if (map.startpos == 5) {
+  if (map.server.startpos == 5) {
     map_startpos_load(file);
     freelog(LOG_DEBUG, "Finished loading startpositions");
   }

@@ -476,7 +476,8 @@ static void update_environmental_upset(enum tile_special_type cause,
   } else {
     *accum -= *level;
     if (myrand(200) <= *accum) {
-      upset_action_fn((map.xsize / 10) + (map.ysize / 10) + ((*accum) * 5));
+      upset_action_fn((map.info.xsize / 10) + (map.info.ysize / 10)
+		      + ((*accum) * 5));
       *accum = 0;
       *level+=4;
     }
@@ -1848,11 +1849,11 @@ MAIN_START_PLAYERS:
 
   send_rulesets(game.est_connections);
 
-  if (map.num_start_positions > 0) {
+  if (map.server.num_start_positions > 0) {
     start_nations = TRUE;
 
-    for (i = 0; i < map.num_start_positions; i++) {
-      if (map.start_positions[i].nation == NO_NATION_SELECTED) {
+    for (i = 0; i < map.server.num_start_positions; i++) {
+      if (map.server.start_positions[i].nation == NO_NATION_SELECTED) {
         start_nations = FALSE;
         break;
       }
@@ -1865,8 +1866,8 @@ MAIN_START_PLAYERS:
     for (i = 0; i < game.ruleset_control.nation_count; i++) {
       nations_available[i] = FALSE;
     }
-    for (i = 0; i < map.num_start_positions; i++) {
-      nations_available[map.start_positions[i].nation] = TRUE;
+    for (i = 0; i < map.server.num_start_positions; i++) {
+      nations_available[map.server.start_positions[i].nation] = TRUE;
     }
 
   } else {
@@ -1937,9 +1938,9 @@ MAIN_START_PLAYERS:
     generate_ai_players();
   }
 
-  /* If we have a tile map, and map.generator==0, call map_fractal_generate
-   * anyway to make the specials, huts and continent numbers. */
-  if (map_is_empty() || (map.generator == 0 && game.server.is_new_game)) {
+  /* If we have a tile map, and map.server.generator == 0, call
+   * map_fractal_generate anyway to make the specials, huts and continent numbers. */
+  if (map_is_empty() || (map.server.generator == 0 && game.server.is_new_game)) {
     map_fractal_generate(TRUE);
   }
 

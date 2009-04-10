@@ -169,7 +169,7 @@ bool map_is_empty(void)
 ***************************************************************/
 bool map_is_loaded(void)
 {
-  return map.is_fixed == TRUE;
+  return is_server && map.server.is_fixed == TRUE;
 }
 
 /***************************************************************
@@ -177,36 +177,39 @@ bool map_is_loaded(void)
 ***************************************************************/
 void map_init(void)
 {
-  map.topology_id = MAP_DEFAULT_TOPO;
-  map.size = MAP_DEFAULT_SIZE;
-  map.autosize = MAP_DEFAULT_AUTOSIZE;
+  map.info.topology_id = MAP_DEFAULT_TOPO;
 
   /* The [xy]size values are set in map_init_topology.  It is initialized
    * to a non-zero value because some places erronously use these values
    * before they're initialized. */
-  map.xsize = MAP_MIN_LINEAR_SIZE;  
-  map.ysize = MAP_MIN_LINEAR_SIZE;
+  map.info.xsize = MAP_MIN_LINEAR_SIZE;  
+  map.info.ysize = MAP_MIN_LINEAR_SIZE;
 
-  map.seed = MAP_DEFAULT_SEED;
-  map.riches                = MAP_DEFAULT_RICHES;
-  map.huts                  = MAP_DEFAULT_HUTS;
-  map.landpercent           = MAP_DEFAULT_LANDMASS;
-  map.wetness               = MAP_DEFAULT_WETNESS;
-  map.steepness             = MAP_DEFAULT_STEEPNESS;
-  map.generator             = MAP_DEFAULT_GENERATOR;
-  map.startpos              = MAP_DEFAULT_STARTPOS;
-  map.tinyisles             = MAP_DEFAULT_TINYISLES;
-  map.separatepoles         = MAP_DEFAULT_SEPARATE_POLES;
-  map.alltemperate          = MAP_DEFAULT_ALLTEMPERATE;
-  map.temperature           = MAP_DEFAULT_TEMPERATURE;
-  map.tiles                 = NULL;
-  map.num_continents        = 0;
-  map.num_oceans            = 0;
-  map.num_start_positions   = 0;
-  map.have_specials         = FALSE;
-  map.have_rivers_overlay   = FALSE;
-  map.have_huts             = FALSE;
-  map.is_fixed              = FALSE;
+  map.num_continents = 0;
+  map.tiles = NULL;
+
+  if (is_server) {
+    map.server.size = MAP_DEFAULT_SIZE;
+    map.server.autosize = MAP_DEFAULT_AUTOSIZE;
+    map.server.seed = MAP_DEFAULT_SEED;
+    map.server.riches = MAP_DEFAULT_RICHES;
+    map.server.huts = MAP_DEFAULT_HUTS;
+    map.server.landpercent = MAP_DEFAULT_LANDMASS;
+    map.server.wetness = MAP_DEFAULT_WETNESS;
+    map.server.steepness = MAP_DEFAULT_STEEPNESS;
+    map.server.generator = MAP_DEFAULT_GENERATOR;
+    map.server.startpos = MAP_DEFAULT_STARTPOS;
+    map.server.tinyisles = MAP_DEFAULT_TINYISLES;
+    map.server.separatepoles = MAP_DEFAULT_SEPARATE_POLES;
+    map.server.alltemperate = MAP_DEFAULT_ALLTEMPERATE;
+    map.server.temperature = MAP_DEFAULT_TEMPERATURE;
+    map.server.num_oceans = 0;
+    map.server.num_start_positions = 0;
+    map.server.have_specials = FALSE;
+    map.server.have_rivers_overlay = FALSE;
+    map.server.have_huts = FALSE;
+    map.server.is_fixed = FALSE;
+  }
 }
 
 /**************************************************************************
@@ -232,8 +235,8 @@ static void generate_map_indices(void)
    *
    * Thus the "center" position below is just an arbitrary point.  We choose
    * the center of the map to make the min/max values (below) simpler. */
-  nat_center_x = map.xsize / 2;
-  nat_center_y = map.ysize / 2;
+  nat_center_x = map.info.xsize / 2;
+  nat_center_y = map.info.ysize / 2;
   NATIVE_TO_MAP_POS(&map_center_x, &map_center_y,
 		    nat_center_x, nat_center_y);
 
@@ -254,15 +257,15 @@ static void generate_map_indices(void)
    * case we're not concerned with going too far and wrapping around, so we
    * just have to make sure we go far enough if we're at one edge of the
    * map. */
-  nat_min_x = (topo_has_flag(TF_WRAPX) ? 0 : (nat_center_x - map.xsize + 1));
-  nat_min_y = (topo_has_flag(TF_WRAPY) ? 0 : (nat_center_y - map.ysize + 1));
+  nat_min_x = (topo_has_flag(TF_WRAPX) ? 0 : (nat_center_x - map.info.xsize + 1));
+  nat_min_y = (topo_has_flag(TF_WRAPY) ? 0 : (nat_center_y - map.info.ysize + 1));
 
   nat_max_x = (topo_has_flag(TF_WRAPX)
-	       ? (map.xsize - 1)
-	       : (nat_center_x + map.xsize - 1));
+	       ? (map.info.xsize - 1)
+	       : (nat_center_x + map.info.xsize - 1));
   nat_max_y = (topo_has_flag(TF_WRAPY)
-	       ? (map.ysize - 1)
-	       : (nat_center_y + map.ysize - 1));
+	       ? (map.info.ysize - 1)
+	       : (nat_center_y + map.info.ysize - 1));
   tiles = (nat_max_x - nat_min_x + 1) * (nat_max_y - nat_min_y + 1);
 
   array = fc_realloc(array, tiles * sizeof(*array));
@@ -304,11 +307,11 @@ static void generate_map_indices(void)
 /****************************************************************************
   map_init_topology needs to be called after map.topology_id is changed.
 
-  If map.size is changed, map.xsize and map.ysize must be set before
+  If map.size is changed, map.info.xsize and map.info.ysize must be set before
   calling map_init_topology(TRUE).  This is done by the mapgen code
   (server) and packhand code (client).
 
-  If map.xsize and map.ysize are changed, call map_init_topology(FALSE) to
+  If map.info.xsize and map.info.ysize are changed, call map_init_topology(FALSE) to
   calculate map.size.  This should be done in the client or when loading
   savegames, since the [xy]size values are already known.
 ****************************************************************************/
@@ -316,13 +319,13 @@ void map_init_topology(bool set_sizes)
 {
   enum direction8 dir;
 
-  if (!set_sizes) {
-    /* Set map.size based on map.xsize and map.ysize. */
-    map.size = (float)(map.xsize * map.ysize) / 1000.0 + 0.5;
+  if (is_server && !set_sizes) {
+    /* Set map.size based on map.info.xsize and map.info.ysize. */
+    map.server.size = (float)(map.info.xsize * map.info.ysize) / 1000.0 + 0.5;
   }
   
   /* sanity check for iso topologies*/
-  assert(!MAP_IS_ISOMETRIC || (map.ysize % 2) == 0);
+  assert(!MAP_IS_ISOMETRIC || (map.info.ysize % 2) == 0);
 
   /* The size and ratio must satisfy the minimum and maximum *linear*
    * restrictions on width */
@@ -397,17 +400,17 @@ static inline struct tile *base_native_pos_to_tile(int nat_x, int nat_y)
 {
   /* If the position is out of range in a non-wrapping direction, it is
    * unreal. */
-  if (!((topo_has_flag(TF_WRAPX) || (nat_x >= 0 && nat_x < map.xsize))
-	&& (topo_has_flag(TF_WRAPY) || (nat_y >= 0 && nat_y < map.ysize)))) {
+  if (!((topo_has_flag(TF_WRAPX) || (nat_x >= 0 && nat_x < map.info.xsize))
+	&& (topo_has_flag(TF_WRAPY) || (nat_y >= 0 && nat_y < map.info.ysize)))) {
     return NULL;
   }
 
   /* Wrap in X and Y directions, as needed. */
   if (topo_has_flag(TF_WRAPX)) {
-    nat_x = FC_WRAP(nat_x, map.xsize);
+    nat_x = FC_WRAP(nat_x, map.info.xsize);
   }
   if (topo_has_flag(TF_WRAPY)) {
-    nat_y = FC_WRAP(nat_y, map.ysize);
+    nat_y = FC_WRAP(nat_y, map.info.ysize);
   }
 
   return map.tiles + native_pos_to_index(nat_x, nat_y);
@@ -490,15 +493,15 @@ static void tile_free(struct tile *ptile)
 
 /**************************************************************************
   Allocate space for map, and initialise the tiles.
-  Uses current map.xsize and map.ysize.
+  Uses current map.info.xsize and map.info.ysize.
 **************************************************************************/
 void map_allocate(void)
 {
   freelog(LOG_DEBUG, "map_allocate (was %p) (%d,%d)",
-	  map.tiles, map.xsize, map.ysize);
+	  map.tiles, map.info.xsize, map.info.ysize);
 
   assert(map.tiles == NULL);
-  map.tiles = fc_malloc(map.xsize * map.ysize * sizeof(struct tile));
+  map.tiles = fc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
   whole_map_iterate(ptile) {
     int index, nat_x, nat_y, map_x, map_y;
 
@@ -1431,7 +1434,7 @@ bool is_normal_map_pos(int x, int y)
   int nat_x, nat_y;
 
   MAP_TO_NATIVE_POS(&nat_x, &nat_y, x, y);
-  return nat_x >= 0 && nat_x < map.xsize && nat_y >= 0 && nat_y < map.ysize;
+  return nat_x >= 0 && nat_x < map.info.xsize && nat_y >= 0 && nat_y < map.info.ysize;
 }
 
 /**************************************************************************
@@ -1465,10 +1468,10 @@ struct tile *nearest_real_tile(int x, int y)
 
   MAP_TO_NATIVE_POS(&nat_x, &nat_y, x, y);
   if (!topo_has_flag(TF_WRAPX)) {
-    nat_x = CLIP(0, nat_x, map.xsize - 1);
+    nat_x = CLIP(0, nat_x, map.info.xsize - 1);
   }
   if (!topo_has_flag(TF_WRAPY)) {
-    nat_y = CLIP(0, nat_y, map.ysize - 1);
+    nat_y = CLIP(0, nat_y, map.info.ysize - 1);
   }
   NATIVE_TO_MAP_POS(&x, &y, nat_x, nat_y);
 
@@ -1480,7 +1483,7 @@ Returns the total number of (real) positions (or tiles) on the map.
 **************************************************************************/
 int map_num_tiles(void)
 {
-  return map.xsize * map.ysize;
+  return map.info.xsize * map.info.ysize;
 }
 
 /****************************************************************************
@@ -1501,12 +1504,12 @@ void base_map_distance_vector(int *dx, int *dy,
     *dx = x1 - x0;
     *dy = y1 - y0;
     if (topo_has_flag(TF_WRAPX)) {
-      /* Wrap dx to be in [-map.xsize/2, map.xsize/2). */
-      *dx = FC_WRAP(*dx + map.xsize / 2, map.xsize) - map.xsize / 2;
+      /* Wrap dx to be in [-map.info.xsize/2, map.info.xsize/2). */
+      *dx = FC_WRAP(*dx + map.info.xsize / 2, map.info.xsize) - map.info.xsize / 2;
     }
     if (topo_has_flag(TF_WRAPY)) {
-      /* Wrap dy to be in [-map.ysize/2, map.ysize/2). */
-      *dy = FC_WRAP(*dy + map.ysize / 2, map.ysize) - map.ysize / 2;
+      /* Wrap dy to be in [-map.info.ysize/2, map.info.ysize/2). */
+      *dy = FC_WRAP(*dy + map.info.ysize / 2, map.info.ysize) - map.info.ysize / 2;
     }
 
     /* Convert the native delta vector back to a pair of map positions. */
@@ -1534,8 +1537,8 @@ void base_map_distance_vector(int *dx, int *dy,
   (See also: real_map_distance, map_distance, and sq_map_distance.)
 
   With the standard topology the ranges of the return value are:
-    -map.xsize/2 <= dx <= map.xsize/2
-    -map.ysize   <  dy <  map.ysize
+    -map.info.xsize/2 <= dx <= map.info.xsize/2
+    -map.info.ysize   <  dy <  map.info.ysize
 ****************************************************************************/
 void map_distance_vector(int *dx, int *dy,
 			 const struct tile *tile0,
@@ -1587,7 +1590,7 @@ struct tile *rand_neighbour(const struct tile *ptile)
 **************************************************************************/
 struct tile *rand_map_pos(void)
 {
-  int nat_x = myrand(map.xsize), nat_y = myrand(map.ysize);
+  int nat_x = myrand(map.info.xsize), nat_y = myrand(map.info.ysize);
 
   return native_pos_to_tile(nat_x, nat_y);
 }
@@ -1604,18 +1607,18 @@ struct tile *rand_map_pos_filtered(void *data,
 {
   struct tile *ptile;
   int tries = 0;
-  const int max_tries = map.xsize * map.ysize / ACTIVITY_FACTOR;
+  const int max_tries = map.info.xsize * map.info.ysize / ACTIVITY_FACTOR;
 
   /* First do a few quick checks to find a spot.  The limit on number of
    * tries could use some tweaking. */
   do {
-    ptile = map.tiles + myrand(map.xsize * map.ysize);
+    ptile = map.tiles + myrand(map.info.xsize * map.info.ysize);
   } while (filter && !filter(ptile, data) && ++tries < max_tries);
 
   /* If that fails, count all available spots and pick one.
    * Slow but reliable. */
   if (tries == max_tries) {
-    int count = 0, positions[map.xsize * map.ysize];
+    int count = 0, positions[map.info.xsize * map.info.ysize];
 
     whole_map_iterate(ptile) {
       if (filter(ptile, data)) {

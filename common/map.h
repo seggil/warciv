@@ -18,6 +18,7 @@
 
 #include "fc_types.h"
 
+#include "packets.h"
 #include "player.h"
 #include "terrain.h"
 #include "unit.h"
@@ -148,40 +149,44 @@ struct tile_type {
 };
 
 struct civ_map {
-  int topology_id;
+  struct packet_map_info info;
+
   enum direction8 valid_dirs[8], cardinal_dirs[8];
   int num_valid_dirs, num_cardinal_dirs;
   struct iter_index *iterate_outwards_indices;
   int num_iterate_outwards_indices;
-  int size; /* used to calculate [xy]size */
-  int autosize; /* used to calculate [xy]size / player number */
-  int xsize, ysize; /* native dimensions */
-  int seed;
-  int riches;
-  int huts;
-  int landpercent;
-  int generator;
-  int startpos;
-  bool is_fixed;
-  bool tinyisles;
-  bool separatepoles;
-  bool alltemperate;
-  int temperature;
-  int wetness;
-  int steepness;
-  int num_start_positions;
-  bool have_specials;
-  bool have_huts;
-  bool have_rivers_overlay;	/* only applies if !have_specials */
+
   int num_continents;
-  int num_oceans;               /* not updated at the client */
   struct tile *tiles;
 
-  /* Only used by server. */
-  struct start_position {
-    struct tile *tile;
-    Nation_Type_id nation; /* May be NO_NATION_SELECTED. */
-  } *start_positions;	/* allocated at runtime */
+  /* Specific server datas. */
+  struct {
+    int size; /* used to calculate [xy]size */
+    int autosize; /* used to calculate [xy]size / player number */
+    int seed;
+    int riches;
+    int huts;
+    int landpercent;
+    int generator;
+    int startpos;
+    bool is_fixed;
+    bool tinyisles;
+    bool separatepoles;
+    bool alltemperate;
+    int temperature;
+    int wetness;
+    int steepness;
+    int num_start_positions;
+    bool have_specials;
+    bool have_huts;
+    bool have_rivers_overlay;	/* only applies if !have_specials */
+    int num_oceans;               /* not updated at the client */
+
+    struct start_position {
+      struct tile *tile;
+      Nation_Type_id nation; /* May be NO_NATION_SELECTED. */
+    } *start_positions;	/* allocated at runtime */
+  } server;
 };
 
 enum topo_flag {
@@ -195,7 +200,7 @@ enum topo_flag {
 
 #define MAP_IS_ISOMETRIC (topo_has_flag(TF_ISO) || topo_has_flag(TF_HEX))
 
-#define CURRENT_TOPOLOGY (map.topology_id)
+#define CURRENT_TOPOLOGY (map.info.topology_id)
 
 #define topo_has_flag(flag) ((CURRENT_TOPOLOGY & (flag)) != 0)
 
@@ -228,12 +233,12 @@ void initialize_move_costs(void);
 void reset_move_costs(struct tile *ptile);
 
 /* Maximum value of index (for sanity checks and allocations) */
-#define MAX_MAP_INDEX (map.xsize * map.ysize)
+#define MAX_MAP_INDEX (map.info.xsize * map.info.ysize)
 
 #ifdef DEBUG
 #define CHECK_MAP_POS(x,y) assert(is_normal_map_pos((x),(y)))
-#define CHECK_NATIVE_POS(x, y) assert((x) >= 0 && (x) < map.xsize \
-				      && (y) >= 0 && (y) < map.ysize)
+#define CHECK_NATIVE_POS(x, y) assert((x) >= 0 && (x) < map.info.xsize \
+				      && (y) >= 0 && (y) < map.info.ysize)
 #define CHECK_INDEX(index) assert((index) >= 0 && (index) < MAX_MAP_INDEX)
 #else
 #define CHECK_MAP_POS(x,y) ((void)0)
@@ -243,33 +248,33 @@ void reset_move_costs(struct tile *ptile);
 
 #define native_pos_to_index(nat_x, nat_y)                                   \
   (CHECK_NATIVE_POS((nat_x), (nat_y)),					    \
-   (nat_x) + (nat_y) * map.xsize)
+   (nat_x) + (nat_y) * map.info.xsize)
 #define index_to_native_pos(pnat_x, pnat_y, index)                          \
-  (*(pnat_x) = (index) % map.xsize,                                         \
-   *(pnat_y) = (index) / map.xsize)
+  (*(pnat_x) = (index) % map.info.xsize,                                         \
+   *(pnat_y) = (index) / map.info.xsize)
 
 /* Obscure math.  See explanation in doc/HACKING. */
 #define NATIVE_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                     \
   (MAP_IS_ISOMETRIC							    \
    ? (*(pmap_x) = ((nat_y) + ((nat_y) & 1)) / 2 + (nat_x),                  \
-      *(pmap_y) = (nat_y) - *(pmap_x) + map.xsize)                          \
+      *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                          \
    : (*(pmap_x) = (nat_x), *(pmap_y) = (nat_y)))
 
 #define MAP_TO_NATIVE_POS(pnat_x, pnat_y, map_x, map_y)                     \
   (MAP_IS_ISOMETRIC							    \
-   ? (*(pnat_y) = (map_x) + (map_y) - map.xsize,                            \
+   ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                            \
       *(pnat_x) = (2 * (map_x) - *(pnat_y) - (*(pnat_y) & 1)) / 2)          \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
 
 #define NATURAL_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                    \
   (MAP_IS_ISOMETRIC							    \
    ? (*(pmap_x) = ((nat_y) + (nat_x)) / 2,                                  \
-      *(pmap_y) = (nat_y) - *(pmap_x) + map.xsize)                          \
+      *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                          \
    : (*(pmap_x) = (nat_x), *(pmap_y) = (nat_y)))
 
 #define MAP_TO_NATURAL_POS(pnat_x, pnat_y, map_x, map_y)                    \
   (MAP_IS_ISOMETRIC							    \
-   ? (*(pnat_y) = (map_x) + (map_y) - map.xsize,                            \
+   ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                            \
       *(pnat_x) = 2 * (map_x) - *(pnat_y))                                  \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
 
@@ -305,17 +310,17 @@ void reset_move_costs(struct tile *ptile);
 }
 
 /* Width and height of the map, in native coordinates. */
-#define NATIVE_WIDTH map.xsize
-#define NATIVE_HEIGHT map.ysize
+#define NATIVE_WIDTH map.info.xsize
+#define NATIVE_HEIGHT map.info.ysize
 
 /* Width and height of the map, in natural coordinates. */
-#define NATURAL_WIDTH (MAP_IS_ISOMETRIC ? 2 * map.xsize : map.xsize)
-#define NATURAL_HEIGHT map.ysize
+#define NATURAL_WIDTH (MAP_IS_ISOMETRIC ? 2 * map.info.xsize : map.info.xsize)
+#define NATURAL_HEIGHT map.info.ysize
 
 #define MAP_WIDTH  \
-  (MAP_IS_ISOMETRIC ? (map.xsize + map.ysize / 2) : map.xsize)
+  (MAP_IS_ISOMETRIC ? (map.info.xsize + map.info.ysize / 2) : map.info.xsize)
 #define MAP_HEIGHT \
-  (MAP_IS_ISOMETRIC ? (map.xsize + map.ysize / 2) : map.ysize)
+  (MAP_IS_ISOMETRIC ? (map.info.xsize + map.info.ysize / 2) : map.info.ysize)
   
 static inline int map_pos_to_index(int map_x, int map_y);
 
@@ -696,8 +701,8 @@ static inline bool is_border_tile(const struct tile *ptile, int dist)
 
   return (ptile->nat_x < xdist 
 	  || ptile->nat_y < ydist
-	  || ptile->nat_x >= map.xsize - xdist
-	  || ptile->nat_y >= map.ysize - ydist);
+	  || ptile->nat_x >= map.info.xsize - xdist
+	  || ptile->nat_y >= map.info.ysize - ydist);
 }
 
 /* An arbitrary somewhat integer value.  Activity times are multiplied by

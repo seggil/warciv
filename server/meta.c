@@ -41,15 +41,17 @@
 #endif
 
 #include "astring.h"
-#include "capstr.h"
-#include "connection.h"
-#include "dataio.h"
 #include "fcintl.h"
 #include "log.h"
 #include "mem.h"
 #include "netintf.h"
 #include "support.h"
 #include "timing.h"
+
+#include "capstr.h"
+#include "connection.h"
+#include "dataio.h"
+#include "map.h"
 #include "version.h"
 
 #include "civserver.h"
@@ -383,9 +385,9 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
     astr_append_printf(&content, "&vn[]=maxplayers&vv[]=%d",
                        game.info.max_players);
     astr_append_printf(&content, "&vn[]=generator&vv[]=%d",
-                       map.generator);
+                       map.server.generator);
     astr_append_printf(&content, "&vn[]=size&vv[]=%d",
-                       map.size);
+                       map.server.size);
   }
 
   astr_init(&headers);

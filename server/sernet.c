@@ -17,6 +17,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,17 +65,19 @@
 #include "fciconv.h"
 
 #include "capability.h"
-#include "dataio.h"
-#include "events.h"
 #include "fcintl.h"
 #include "hash.h"
 #include "log.h"
 #include "mem.h"
 #include "netintf.h"
-#include "packets.h"
 #include "shared.h"
 #include "support.h"
 #include "timing.h"
+
+#include "dataio.h"
+#include "events.h"
+#include "map.h"
+#include "packets.h"
 
 #include "connecthand.h"
 #include "console.h"

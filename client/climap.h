@@ -17,7 +17,7 @@
 #include "map.h"                /* enum direction8 */
 #include "terrain.h"            /* enum known_type */
 
-#define map_exists() (map.xsize != 0)
+#define map_exists() (map.info.xsize != 0)
 
 enum known_type tile_get_known(const struct tile *ptile);
 

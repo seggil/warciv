@@ -213,12 +213,12 @@ static void init_warmap(struct tile *orig_tile, enum unit_move_type move_type)
   case HELI_MOVING:
   case AIR_MOVING:
     assert(sizeof(*warmap.cost) == sizeof(char));
-    memset(warmap.cost, MAXCOST, map.xsize * map.ysize);
+    memset(warmap.cost, MAXCOST, map.info.xsize * map.info.ysize);
     WARMAP_COST(orig_tile) = 0;
     break;
   case SEA_MOVING:
     assert(sizeof(*warmap.seacost) == sizeof(char));
-    memset(warmap.seacost, MAXCOST, map.xsize * map.ysize);
+    memset(warmap.seacost, MAXCOST, map.info.xsize * map.info.ysize);
     WARMAP_SEACOST(orig_tile) = 0;
     break;
   default:
@@ -820,7 +820,7 @@ static bool find_the_shortest_path(struct unit *punit,
   /*** Succeeded. The vector at the destination indicates which way we get there.
      Now backtrack to remove all the blind paths ***/
   assert(sizeof(*warmap.vector) == sizeof(char));
-  memset(warmap.vector, 0, map.xsize * map.ysize);
+  memset(warmap.vector, 0, map.info.xsize * map.info.ysize);
 
   init_queue();
   add_to_mapqueue(0, dest_tile);

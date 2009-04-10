@@ -102,7 +102,7 @@ static void recalculate_lake_surrounders(void)
 {
   int i;
 
-  for (i = 1; i <= map.num_oceans; i++) {
+  for (i = 1; i <= map.server.num_oceans; i++) {
     lake_surrounders[i] = 0;
   }
   
@@ -125,11 +125,11 @@ static void recalculate_lake_surrounders(void)
 
 /**************************************************************************
   Assigns continent and ocean numbers to all tiles, and set
-  map.num_continents and map.num_oceans.  Recalculates continent and
+  map.num_continents and map.server.num_oceans.  Recalculates continent and
   ocean sizes, and lake_surrounders[] arrays.
 
   Continents have numbers 1 to map.num_continents _inclusive_.
-  Oceans have (negative) numbers -1 to -map.num_oceans _inclusive_.
+  Oceans have (negative) numbers -1 to -map.server.num_oceans _inclusive_.
 
   If skip_unsafe is specified then unsafe terrains are not used to
   connect continents.  This is useful for generator code so that polar
@@ -147,7 +147,7 @@ void assign_continent_numbers(bool skip_unsafe)
   
   /* Initialize */
   map.num_continents = 0;
-  map.num_oceans = 0;
+  map.server.num_oceans = 0;
 
   whole_map_iterate(ptile) {
     map_set_continent(ptile, 0);
@@ -168,9 +168,10 @@ void assign_continent_numbers(bool skip_unsafe)
 	assert(map.num_continents < MAP_NCONT);
 	assign_continent_flood(ptile, TRUE, map.num_continents, skip_unsafe);
       } else {
-	map.num_oceans++;
-	assert(map.num_oceans < MAP_NCONT);
-	assign_continent_flood(ptile, FALSE, -map.num_oceans, skip_unsafe);
+	map.server.num_oceans++;
+	assert(map.server.num_oceans < MAP_NCONT);
+	assign_continent_flood(ptile, FALSE,
+			       -map.server.num_oceans, skip_unsafe);
       }
     }
   } whole_map_iterate_end;
@@ -178,7 +179,7 @@ void assign_continent_numbers(bool skip_unsafe)
   recalculate_lake_surrounders();
 
   freelog(LOG_VERBOSE, "Map has %d continents and %d oceans", 
-	  map.num_continents, map.num_oceans);
+	  map.num_continents, map.server.num_oceans);
 }
 
 static void player_tile_init(struct tile *ptile, struct player *pplayer);
@@ -419,7 +420,7 @@ void send_all_known_tiles(struct conn_list *dest)
 
   whole_map_iterate(ptile) {
     tiles_sent++;
-    if ((tiles_sent % map.xsize) == 0) {
+    if ((tiles_sent % map.info.xsize) == 0) {
       conn_list_do_unbuffer(dest);
       force_flush_packets();
       conn_list_do_buffer(dest);
@@ -766,13 +767,7 @@ void fog_area(struct player *pplayer, struct tile *ptile, int len)
 **************************************************************************/
 void send_map_info(struct conn_list *dest)
 {
-  struct packet_map_info minfo;
-
-  minfo.xsize=map.xsize;
-  minfo.ysize=map.ysize;
-  minfo.topology_id = map.topology_id;
- 
-  lsend_packet_map_info(dest, &minfo);
+  lsend_packet_map_info(dest, &map.info);
 }
 
 /**************************************************************************
@@ -1157,12 +1152,12 @@ void show_map_to_all(void)
 
 /***************************************************************
   Allocate space for map, and initialise the tiles.
-  Uses current map.xsize and map.ysize.
+  Uses current map.info.xsize and map.info.ysize.
 ****************************************************************/
 void player_map_allocate(struct player *pplayer)
 {
   pplayer->private_map =
-    fc_malloc(map.xsize*map.ysize*sizeof(struct player_tile));
+    fc_malloc(map.info.xsize * map.info.ysize * sizeof(struct player_tile));
   whole_map_iterate(ptile) {
     player_tile_init(ptile, pplayer);
   } whole_map_iterate_end;

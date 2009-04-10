@@ -519,15 +519,16 @@ void center_on_something(void)
     assert(punit != NULL);
     center_tile_mapcanvas(punit->tile);
   } else {
-    struct tile *ctile = native_pos_to_tile(map.xsize / 2, map.ysize / 2);
+    struct tile *ctile = native_pos_to_tile(map.info.xsize / 2,
+					    map.info.ysize / 2);
 
     /* Just any known tile will do; search near the middle first. */
     /* Iterate outward from the center tile.  We have to give a radius that
      * is guaranteed to be larger than the map will be.  Although this is
      * a misuse of map.xsize and map.ysize (which are native dimensions),
      * it should give a sufficiently large radius. */
-    iterate_outward(native_pos_to_tile(map.xsize / 2, map.ysize / 2),
-                    map.xsize + map.ysize, ptile) {
+    iterate_outward(native_pos_to_tile(map.info.xsize / 2, map.info.ysize / 2),
+                    map.info.xsize + map.info.ysize, ptile) {
       if (tile_get_known(ptile) != TILE_UNKNOWN) {
         ctile = ptile;
         break;

@@ -177,7 +177,7 @@ void ai_data_turn_init(struct player *pplayer)
   /*** Threats ***/
 
   ai->num_continents    = map.num_continents;
-  ai->num_oceans        = map.num_oceans;
+  ai->num_oceans        = map.server.num_oceans;
   ai->threats.continent = fc_calloc(ai->num_continents + 1, sizeof(bool));
   ai->threats.invasions = FALSE;
   ai->threats.air       = FALSE;
@@ -468,7 +468,7 @@ struct ai_data *ai_data_get(struct player *pplayer)
   struct ai_data *ai = &aidata[pplayer->player_no];
 
   if (ai->num_continents != map.num_continents
-      || ai->num_oceans != map.num_oceans) {
+      || ai->num_oceans != map.server.num_oceans) {
     /* we discovered more continents, recalculate! */
     ai_data_turn_done(pplayer);
     ai_data_turn_init(pplayer);

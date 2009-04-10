@@ -98,22 +98,22 @@ static char when_char(int when)
  * instance it should be "%c" for characters.  The data is printed in a
  * native orientation to make it easier to read.  
  */
-#define WRITE_MAP_DATA(type, map_char_expr)        \
-{                                                  \
-  int nat_x, nat_y;                                \
-  for (nat_x = 0; nat_x < map.xsize; nat_x++) {    \
-    printf("%d", nat_x % 10);                      \
-  }                                                \
-  putchar('\n');                                   \
-  for (nat_y = 0; nat_y < map.ysize; nat_y++) {    \
-    printf("%d ", nat_y % 10);                     \
-    for (nat_x = 0; nat_x < map.xsize; nat_x++) {  \
-      int x, y;                                    \
-      NATIVE_TO_MAP_POS(&x, &y, nat_x,nat_y);      \
-      printf(type, map_char_expr);                 \
-    }                                              \
-    printf(" %d\n", nat_y % 10);                   \
-  }                                                \
+#define WRITE_MAP_DATA(type, map_char_expr)		\
+{							\
+  int nat_x, nat_y;					\
+  for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {	\
+    printf("%d", nat_x % 10);				\
+  }							\
+  putchar('\n');					\
+  for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {	\
+    printf("%d ", nat_y % 10);				\
+    for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {	\
+      int x, y;						\
+      NATIVE_TO_MAP_POS(&x, &y, nat_x,nat_y);		\
+      printf(type, map_char_expr);			\
+    }							\
+    printf(" %d\n", nat_y % 10);			\
+  }							\
 }
 
 /**************************************************************************
@@ -166,7 +166,7 @@ static void build_landarea_map_new(struct claim_map *pcmap)
 {
   int nbytes;
 
-  nbytes = map.xsize * map.ysize * sizeof(struct claim_cell);
+  nbytes = map.info.xsize * map.info.ysize * sizeof(struct claim_cell);
   pcmap->claims = fc_malloc(nbytes);
   memset(pcmap->claims, 0, nbytes);
 
@@ -178,7 +178,7 @@ static void build_landarea_map_new(struct claim_map *pcmap)
   pcmap->player_owndarea = fc_malloc(nbytes);
   memset(pcmap->player_owndarea, 0, nbytes);
 
-  nbytes = 2 * map.xsize * map.ysize * sizeof(*pcmap->edges);
+  nbytes = 2 * map.info.xsize * map.info.ysize * sizeof(*pcmap->edges);
   pcmap->edges = fc_malloc(nbytes);
 
   players_iterate(pplayer) {
@@ -265,7 +265,7 @@ static void build_landarea_map_expand(struct claim_map *pcmap)
   struct tile **thisedge;
   struct tile **nextedge;
 
-  midedge = &pcmap->edges[map.xsize * map.ysize];
+  midedge = &pcmap->edges[map.info.xsize * map.info.ysize];
 
   for (accum = 1, turn = 1; accum > 0; turn++) {
     thisedge = ((turn & 0x1) == 1) ? pcmap->edges : midedge;
@@ -574,11 +574,11 @@ void save_ppm(void)
             pplayer->name);
   }
 
-  fprintf(fp, "%d %d\n", map.xsize, map.ysize);
+  fprintf(fp, "%d %d\n", map.info.xsize, map.info.ysize);
   fprintf(fp, "255\n");
 
-  for (j = 0; j < map.ysize; j++) {
-    for (i = 0; i < map.xsize; i++) {
+  for (j = 0; j < map.info.ysize; j++) {
+    for (i = 0; i < map.info.xsize; i++) {
        struct tile *ptile = native_pos_to_tile(i, j);
        int *color;
 

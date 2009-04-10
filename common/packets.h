@@ -20,7 +20,6 @@ struct data_in;
 #include "diptreaty.h"
 #include "events.h"
 #include "improvement.h"
-#include "map.h"
 #include "player.h"
 #include "shared.h"		/* MAX_LEN_NAME, MAX_LEN_ADDR */
 #include "spaceship.h"
