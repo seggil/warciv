@@ -2750,7 +2750,7 @@ static const char *get_player_or_user_name(int id)
   max_matches - The maximum of matches.
   match_len - The length of the string used to returns matches.
 
-  return the number of the matches names.
+  Returns the number of the matches names.
 **************************************************************************/
 static int check_player_or_user_name(const char *prefix, const char **matches,
 				     int max_matches)
@@ -2796,6 +2796,38 @@ static int check_player_or_user_name(const char *prefix, const char **matches,
 }
 
 /**************************************************************************
+  Find the larger common prefix.
+
+  prefixes - A list of prefixes.
+  num_prefixes - The number of prefixes.
+  buf - The buffer to set.
+  buf_len - The maximal size of the buffer.
+
+  Returns the lenght of the common prefix (in bytes).
+**************************************************************************/
+static size_t get_common_prefix(const char *const *prefixes,
+				size_t num_prefixes,
+				char *buf, size_t buf_len)
+{
+  const char *p;
+  char *q;
+  size_t i;
+
+  mystrlcpy(buf, prefixes[0], buf_len);
+  for (i = 1; i < num_prefixes; i++) {
+    for (p = prefixes[i], q = buf; *p != '\0' && *q != '\0';
+	 p = g_utf8_next_char(p), q = g_utf8_next_char(q)) {
+      if (g_utf8_get_char(p) != g_utf8_get_char(q)) {
+	*q = '\0';
+	break;
+      }
+    }
+  }
+
+ return strlen(buf);
+}
+
+/**************************************************************************
   Autocomplements the input line with a player or user name.
   Returns FALSE if there is not string to complete.
 **************************************************************************/
@@ -2834,6 +2866,12 @@ bool chatline_autocomplement(GtkEditable *editable)
     gtk_editable_insert_text(editable, name[0], strlen(name[0]), &pos);
     gtk_editable_set_position(editable, pos);
   } else if (num > 1) {
+    if (get_common_prefix(name, num, buf, sizeof(buf)) > prefix_len) {
+      gtk_editable_delete_text(editable, pos - prefix_len, pos);
+      pos -= prefix_len;
+      gtk_editable_insert_text(editable, buf, strlen(buf), &pos);
+      gtk_editable_set_position(editable, pos);
+    }
     my_snprintf(buf, sizeof(buf), _("Suggestions: %s"), name[0]);
     for (i = 1; i < num; i++) {
       cat_snprintf(buf, sizeof(buf), ", %s", name[i]);

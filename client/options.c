@@ -687,7 +687,7 @@ static struct client_option client_options[] = {
                   N_("If this option is turned to on, the tabulation key "
 		     "will be use on chat line to complete the word you "
 		     "are typing with the name of a player or a user."),
-		  COC_CHAT, FALSE, NULL),
+		  COC_CHAT, TRUE, NULL),
 
   GEN_STR_OPTION(default_user_name, N_("Default player's login name"),
 		 N_("This is the default login username that will be used "
