@@ -1526,7 +1526,21 @@ static void create_option_dialog(void)
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_(o->description)),
 		       FALSE, FALSE, 5);
 
-    gtk_tooltips_set_tip(tips, ebox, _(o->help_text), NULL);
+    if (o->type == COT_STRING_VEC) {
+      /* Add extra help text for editing. */
+      const char *string_vec_help =
+	_("You can add, remove, edit or move strings with clicking "
+	  "with the right button on the entry box. You can click left "
+	  "to start to edit and drag strings with the left button to "
+	  "move them.");
+      const char *help_text = _(o->help_text); /* Translate now! */
+      char buf[strlen(string_vec_help) + strlen(help_text) + 16];
+
+      my_snprintf(buf, sizeof(buf), "%s\n\n%s", help_text, string_vec_help);
+      gtk_tooltips_set_tip(tips, ebox, buf, NULL);
+    } else {
+      gtk_tooltips_set_tip(tips, ebox, _(o->help_text), NULL);
+    }
 
     o->gui_data = NULL;
     switch (o->type) {

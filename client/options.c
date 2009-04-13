@@ -682,7 +682,7 @@ static struct client_option client_options[] = {
 		     "be scrolled to the bottom when the window is resized."),
 		  COC_CHAT, FALSE, NULL),
   GEN_BOOL_OPTION(chatline_autocomplementation,
-		  N_("Use tabulation key fpr player or user name "
+		  N_("Use tabulation key for player or user name "
 		     "autocomplementation"),
                   N_("If this option is turned to on, the tabulation key "
 		     "will be use on chat line to complete the word you "
