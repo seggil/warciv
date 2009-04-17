@@ -2077,7 +2077,9 @@ static int fill_unit_sprite_array(struct drawn_sprite *sprs,
   }
 
   if (punit->ptr) {
-    ADD_SPRITE_FULL(sprites.unit.trade);
+    if (sprites.unit.trade != NULL) {
+      ADD_SPRITE_FULL(sprites.unit.trade);
+    }
   } else if (punit->air_patrol_tile) {
     ADD_SPRITE_FULL(sprites.unit.patrol);
   } else if (unit_has_orders(punit)) {
