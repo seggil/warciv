@@ -2552,9 +2552,16 @@ static void player_save(struct player *plr, int plrno,
 {
   int i;
   char invs[A_LAST+1];
-  struct player_spaceship *ship = &plr->spaceship;
-  struct ai_data *ai = ai_data_get(plr);
+  struct player_spaceship *ship;
+  struct ai_data *ai;
   struct government *gov;
+
+  if (!plr || !file) {
+    return;
+  }
+
+  ship = &plr->spaceship;
+  ai = ai_data_get(plr);
 
   secfile_insert_str(file, plr->name, "player%d.name", plrno);
   secfile_insert_str(file, plr->username, "player%d.username", plrno);
