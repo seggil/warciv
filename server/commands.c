@@ -820,6 +820,26 @@ const struct command commands[] = {
       "arguments and their current values, use /list allow."),
    ECHO_ADMINS, VCF_NONE, 50
   },
+  {"pause", ALLOW_CTRL, ALLOW_NONE,
+   "pause",
+   N_("Pause the game."),
+   N_("This command pauses the game, which means that the turn "
+      "timeout will be disabled and no units will be able to "
+      "move. The game can be resumed using the /unpause command."),
+   ECHO_ADMINS, VCF_NONE, 50
+  },
+  {"unpause", ALLOW_CTRL, ALLOW_NONE,
+   /* TRANS: Translate only text between []. */
+   N_("unpause [seconds until turn change = 60]"),
+   N_("Resume a paused game."),
+   N_("This command undoes the effect of the /pause command. "
+      "The optional argument gives the number of seconds to "
+      "wait before ending this turn, and must be at least 10. "
+      "If omitted a value of 60 seconds will be used. Once "
+      "the turn has changed the turn timeout will be restored "
+      "to what it was before the pause."),
+   ECHO_ADMINS, VCF_NONE, 50
+  },
 
   {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,
    "rfcstyle",

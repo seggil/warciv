@@ -58,6 +58,11 @@ int best_start_pos[MAX_NUM_PLAYERS];
 int best_score = 0;
 int repeat = 0;
 
+
+static time_t time_of_pause = 0;
+static time_t saved_timeout_value = 0;
+
+
 /****************************************************************************
   prototypes
 ****************************************************************************/
@@ -706,6 +711,8 @@ void send_game_info(struct conn_list *dest)
 **************************************************************************/
 int update_timeout(void)
 {
+  game_restore_timeout();
+
   /* if there's no timer or we're doing autogame, do nothing */
   if (game.info.timeout < 1 || game.server.timeoutint == 0) {
     return game.info.timeout;
@@ -843,4 +850,63 @@ void handle_single_want_hack_req(struct connection *pc,
   }
 
   dsend_packet_single_want_hack_reply(pc, you_have_hack);
+}
+
+/**************************************************************************
+  Returns TRUE if the game is currently paused.
+**************************************************************************/
+bool game_is_paused(void)
+{
+  return time_of_pause > 0;
+}
+
+/**************************************************************************
+  Pause or unpause the game. The return value is zero if paused is TRUE,
+  otherwise it is the time when the game was previously paused.
+**************************************************************************/
+time_t game_set_pause(bool pause)
+{
+  time_t ret;
+
+  if (pause) {
+    if (time_of_pause == 0) {
+      time_of_pause = time(NULL);
+    }
+    return 0;
+  }
+
+  ret = time_of_pause;
+  time_of_pause = 0;
+  return ret;
+}
+
+/**************************************************************************
+  Saves the current value of game.info.timeout so that it can be restored
+  later by game_restore_timeout().
+**************************************************************************/
+void game_save_timeout(void)
+{
+  saved_timeout_value = game.info.timeout;
+}
+
+/**************************************************************************
+  Sets game.info.timeout to the previously saved value. You should probably
+  call send_game_info(NULL) after to send the new value to all clients.
+
+  NB: The saved timeout value is cleared by this function.
+**************************************************************************/
+void game_restore_timeout(void)
+{
+  if (saved_timeout_value != 0) {
+    game.info.timeout = saved_timeout_value;
+    saved_timeout_value = 0;
+  }
+}
+
+/**************************************************************************
+  Returns the timeout value previously saved by game_save_timeout().
+**************************************************************************/
+int game_get_saved_timeout(void)
+{
+  return saved_timeout_value;
 }

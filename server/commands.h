@@ -128,6 +128,8 @@ enum command_id {
   CMD_UNBAN,
   CMD_ALLOW,
   CMD_DISALLOW,
+  CMD_PAUSE,
+  CMD_UNPAUSE,
 
   /* undocumented */
   CMD_RFCSTYLE,

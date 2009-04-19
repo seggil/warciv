@@ -34,4 +34,10 @@ void handle_single_want_hack_req(struct connection *pc,
     				 const struct packet_single_want_hack_req
 				 *packet);
 
+bool game_is_paused(void);
+time_t game_set_pause(bool paused);
+void game_save_timeout(void);
+int game_get_saved_timeout(void);
+void game_restore_timeout(void);
+
 #endif  /* FC__GAMEHAND_H */

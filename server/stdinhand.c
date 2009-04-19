@@ -117,6 +117,10 @@ static bool allow_command(struct connection *caller, const char *arg,
                           bool check);
 static bool disallow_command(struct connection *caller,
                              const char *arg, bool check);
+static bool pause_command(struct connection *caller, const char *arg,
+                          bool check);
+static bool unpause_command(struct connection *caller, const char *arg,
+                            bool check);
 static bool addaction_command(struct connection *caller, char *pattern,
                               bool check);
 static bool delaction_command(struct connection *caller, char *pattern,
@@ -6581,6 +6585,10 @@ bool handle_stdin_input(struct connection * caller,
     return allow_command(caller, arg, check);
   case CMD_DISALLOW:
     return disallow_command(caller, arg, check);
+  case CMD_PAUSE:
+    return pause_command(caller, arg, check);
+  case CMD_UNPAUSE:
+    return unpause_command(caller, arg, check);
   case CMD_ADDACTION:
     return addaction_command(caller, arg, check);
   case CMD_DELACTION:
@@ -7495,6 +7503,85 @@ static bool disallow_command(struct connection *caller,
   allows[uab].allowed = FALSE;
   notify_conn(NULL, _("Server: '%s' is now NOT allowed."),
               allows[uab].name);
+
+  return TRUE;
+}
+
+/*********************************************************************
+  Implementation of the pause command.
+*********************************************************************/
+static bool pause_command(struct connection *caller, const char *arg,
+                          bool check)
+{
+  if (game_is_paused()) {
+    cmd_reply(CMD_PAUSE, caller, C_FAIL,
+              _("The game is already paused."));
+    return FALSE;
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  game_save_timeout();
+  game_set_pause(TRUE);
+  game.info.timeout = 0;
+  send_game_info(NULL);
+
+  notify_conn(NULL, "%s",
+              _("Game: *********************************************"));
+  notify_conn(NULL, "%s",
+              _("Game:            The game is PAUSED."));
+  notify_conn(NULL, "%s",
+              _("Game: *********************************************"));
+
+  return TRUE;
+}
+
+/*********************************************************************
+  Implementation of the unpause command.
+*********************************************************************/
+static bool unpause_command(struct connection *caller, const char *s,
+                            bool check)
+{
+  char arg[256], timestr[256];
+  int seconds = 60;
+  time_t time_paused, now;
+
+  if (!game_is_paused()) {
+    cmd_reply(CMD_UNPAUSE, caller, C_FAIL,
+              _("The game is not paused."));
+    return FALSE;
+  }
+
+  sz_strlcpy(arg, s);
+  remove_leading_trailing_spaces(arg);
+
+  if (arg[0] != '\0') {
+    seconds = atoi(arg);
+    if (seconds < 10) {
+      cmd_reply(CMD_UNPAUSE, caller, C_SYNTAX, "%s",
+                _("The optional argument must be at least 10 seconds."));
+      return FALSE;
+    }
+  }
+
+  if (check) {
+    return TRUE;
+  }
+
+  now = time(NULL);
+  time_paused = now - game_set_pause(FALSE);
+  game.server.turn_start = now;
+  game.info.timeout = seconds;
+  send_game_info(NULL);
+
+  format_time_duration(time_paused, timestr, sizeof(timestr));
+  notify_conn(NULL, _("Game: The game has been resumed after being "
+                      "paused for %s."), timestr);
+  notify_conn(NULL, _("Server: The timeout value of %d will be "
+                      "restored after the turn change in %d seconds."),
+              game_get_saved_timeout(), seconds);
 
   return TRUE;
 }

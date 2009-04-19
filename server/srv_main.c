@@ -989,6 +989,21 @@ int get_next_id_number(void)
 }
 
 /**************************************************************************
+  Returns TRUE if the given packet type should be handled during a pause.
+**************************************************************************/
+static bool packet_is_allowed_during_pause(int type)
+{
+  return type != PACKET_UNIT_MOVE
+    && type != PACKET_UNIT_BUILD_CITY
+    && type != PACKET_UNIT_GOTO
+    && type != PACKET_UNIT_ORDERS
+    && type != PACKET_UNIT_AUTO
+    && type != PACKET_UNIT_PARADROP_TO
+    && type != PACKET_UNIT_NUKE
+    && type != PACKET_UNIT_AIRLIFT;
+}
+
+/**************************************************************************
 Returns 0 if connection should be closed (because the clients was
 rejected). Returns 1 else.
 **************************************************************************/
@@ -1118,6 +1133,11 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
       return TRUE;
     }
 
+    if (game_is_paused() && !packet_is_allowed_during_pause(type)) {
+      /* Silently discard. */
+      return TRUE;
+    }
+
     /* Make sure to set this back to NULL before leaving this function: */
     pplayer->current_conn = pconn;
   }
@@ -1146,6 +1166,11 @@ void check_for_full_turn_done(void)
   /* fixedlength is only applicable if we have a timeout set */
   if (game.server.fixedlength && game.info.timeout != 0)
     return;
+
+  /* Do not end the turn if we are paused. */
+  if (game_is_paused()) {
+    return;
+  }
 
   players_iterate(pplayer) {
     if (game.server.turnblock) {
