@@ -846,6 +846,10 @@ bool can_unit_do_activity_targeted(struct unit *punit,
 				   enum unit_activity activity,
 				   enum tile_special_type target)
 {
+  if (!punit) {
+    return FALSE;
+  }
+
   return can_unit_do_activity_targeted_at(punit, activity, target,
 					  punit->tile);
 }
@@ -863,8 +867,15 @@ bool can_unit_do_activity_targeted_at(struct unit *punit,
 				      enum tile_special_type target,
 				      const struct tile *ptile)
 {
-  struct player *pplayer = unit_owner(punit);
-  struct tile_type *type = get_tile_type(ptile->terrain);
+  struct player *pplayer;
+  struct tile_type *type;
+
+  if (!punit || !ptile) {
+    return FALSE;
+  }
+
+  pplayer = unit_owner(punit);
+  type = get_tile_type(ptile->terrain);
 
   switch(activity) {
   case ACTIVITY_IDLE:
