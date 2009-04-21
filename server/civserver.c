@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
   }
 
   if (showvers && !showhelp) {
-    fc_fprintf(stderr, "%s %s\n", freeciv_name_version(), PEPSERVER_VERSION);
+    fc_fprintf(stderr, "%s %s\n", freeciv_name_version(), WARSERVER_VERSION);
     exit(EXIT_SUCCESS);
   }
   con_write(C_VERSION, _("This is the server for %s"), freeciv_name_version());

@@ -77,7 +77,7 @@ static int metaserver_success_count;
 
 #define META_USER_AGENT "Mozilla/5.001 (windows; U; NT4.0; en-us) Gecko/25250101"
 
-static char meta_patches[256] = PEPSERVER_VERSION;
+static char meta_patches[256] = WARSERVER_VERSION;
 static char meta_topic[256] = "NEW GAME";
 static char meta_message[256] = "NEW GAME";
 

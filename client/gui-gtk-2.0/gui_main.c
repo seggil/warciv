@@ -1789,7 +1789,7 @@ void ui_main(int argc, char **argv)
     gtk_window_fullscreen(GTK_WINDOW(toplevel));
   }
   
-  gtk_window_set_title(GTK_WINDOW (toplevel), _("Freeciv "PEPCLIENT_VERSION));
+  gtk_window_set_title(GTK_WINDOW (toplevel), _("Freeciv " WARCLIENT_FULL_VERSION));
 
   g_signal_connect(toplevel, "delete_event",
                    G_CALLBACK(quit_dialog_callback), NULL);
