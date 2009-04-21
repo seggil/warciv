@@ -74,6 +74,19 @@ AC_ARG_ENABLE(client,
 esac], [client=yes])
 AM_CONDITIONAL(CLIENT, test x$client != xno)
 
+AC_ARG_ENABLE([svnrev],
+[  --disable-svnrev         do not add svn revision information to
+                           version number [default=yes]],
+[case "${enableval}" in
+  yes) svnrev=true  ;;
+  no)  svnrev=false ;;
+  *)   AC_MSG_ERROR([bad value ${enableval} for --enable-svnrev]) ;;
+esac], [svnrev=true])
+AM_CONDITIONAL([SVNREV], [test x$svnrev = xtrue])
+if test x$svnrev = xtrue ; then
+  AC_DEFINE([SVNREV], [1], [Add svn revision information to version number])
+fi
+
 AC_ARG_ENABLE(make_data,
 [  --disable-make-data     do not recurse make into data directories
                           (ok to disable unless you will 'make install')],

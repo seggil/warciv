@@ -39,6 +39,8 @@ EXTRA_DIST=	acconfig.old			\
 		diff_ignore			\
 		bootstrap/civ.in		\
 		bootstrap/ser.in		\
+		bootstrap/fc_svnrev_gen.h.in    \
+		bootstrap/generate_svnrev.sh    \
 		bootstrap/freeciv.desktop.in	\
 		bootstrap/freeciv.spec.in	\
 		bootstrap/undep.sh.in		\
