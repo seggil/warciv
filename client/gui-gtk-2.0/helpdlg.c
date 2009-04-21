@@ -131,7 +131,10 @@ static void set_title_topic(char *topic)
 {
   if (strcmp(topic, "Freeciv") == 0 || strcmp(topic, "About") == 0
       || strcmp(topic, _("About")) == 0) {
-    gtk_frame_set_label(GTK_FRAME(help_frame), freeciv_name_version());
+    char version[256];
+    my_snprintf(version, sizeof(version), "%s %s",
+                freeciv_name_version(), warclient_name_version());
+    gtk_frame_set_label(GTK_FRAME(help_frame), version);
   } else {
     gtk_frame_set_label(GTK_FRAME(help_frame), topic);
   }

@@ -188,7 +188,8 @@ int main(int argc, char *argv[])
                warclient_name_version());
     exit(EXIT_SUCCESS);
   }
-  con_write(C_VERSION, _("This is the server for %s"), freeciv_name_version());
+  con_write(C_VERSION, _("This is the server for %s %s"),
+            freeciv_name_version(), warclient_name_version());
   con_write(C_COMMENT, _("You can learn a lot about Freeciv at %s"),
 	    WEBSITE_URL);
 
