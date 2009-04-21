@@ -19,12 +19,37 @@
 #include "shared.h"
 #include "support.h"
 
+#include "game.h"
 #include "version.h"
 
 #ifdef SVNREV
 #include "fc_svnrev_gen.h"
 #endif /* SVNREV */
 
+
+/**********************************************************************
+  Returns a static string containing the full warclient project version
+  information, including svn revision information if available, and
+  correctly modified for the client and server.
+
+  The returned string should generally be added after the string from
+  freeciv_name_version().
+***********************************************************************/
+const char *warclient_name_version(void)
+{
+  static char buf[256] = "";
+  const char *progname = !is_server ? "Warclient" : "Warserver";
+
+#if defined(SVNREV) && !defined(FC_SVNREV_OFF)
+  my_snprintf(buf, sizeof(buf), "%s %s (%s)", progname,
+              WARCLIENT_VERSION_STRING, fc_svn_revision());
+#else
+  my_snprintf(buf, sizeof(buf), "%s %s ", progname,
+              WARCLIENT_VERSION_STRING);
+#endif
+
+  return buf;
+}
 
 /**********************************************************************
   ...
@@ -36,9 +61,6 @@ const char *freeciv_name_version(void)
 #if IS_BETA_VERSION
   my_snprintf(msgbuf, sizeof (msgbuf), _("Freeciv version %s %s"),
               VERSION_STRING, _("(beta version)"));
-#elif defined(SVNREV) && !defined(FC_SVNREV_OFF)
-  my_snprintf(msgbuf, sizeof (msgbuf), _("Freeciv version %s (%s)"),
-              VERSION_STRING, fc_svn_revision());
 #else
   my_snprintf(msgbuf, sizeof (msgbuf), _("Freeciv version %s"),
               VERSION_STRING);

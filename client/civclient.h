@@ -18,10 +18,6 @@
 #include "shared.h"		/* MAX_LEN_NAME */
 #include "version.h"
 
-/* Since the project and client are both called "warclient",
- * we need to do this somewhat awkward name work-around. */
-#define WARCLIENT_FULL_VERSION "Warclient " WARCLIENT_VERSION_STRING
-
 /*
  * Every TIMER_INTERVAL milliseconds real_timer_callback is
  * called. TIMER_INTERVAL has to stay 500 because real_timer_callback

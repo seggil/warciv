@@ -77,7 +77,7 @@ static int metaserver_success_count;
 
 #define META_USER_AGENT "Mozilla/5.001 (windows; U; NT4.0; en-us) Gecko/25250101"
 
-static char meta_patches[256] = WARSERVER_VERSION;
+static char meta_patches[256] = "";
 static char meta_topic[256] = "NEW GAME";
 static char meta_message[256] = "NEW GAME";
 
@@ -88,7 +88,7 @@ static time_t last_metaserver_fail = 0;
 *************************************************************************/
 const char *default_meta_patches_string(void)
 {
-  return meta_patches;
+  return warclient_name_version();
 }
 
 /*************************************************************************
@@ -96,7 +96,7 @@ const char *default_meta_patches_string(void)
 *************************************************************************/
 const char *default_meta_topic_string(void)
 {
-  return meta_topic;
+  return "NEW GAME";
 }
 
 /*************************************************************************

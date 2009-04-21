@@ -290,8 +290,8 @@ int main(int argc, char *argv[])
                    "\t\t\tTry \"%s -- --help\" for more.\n"), argv[0]);
       exit(EXIT_SUCCESS);
     } else if (is_option("--version", argv[i])) {
-      fc_fprintf(stderr, "%s %s " WARCLIENT_FULL_VERSION "\n",
-                 freeciv_name_version(), client_string);
+      fc_fprintf(stderr, "%s %s %s\n", freeciv_name_version(),
+                 client_string, warclient_name_version());
       exit(EXIT_SUCCESS);
     } else if ((option = get_option("--log", argv, &i, argc))) {
       logfile = mystrdup(option); /* never free()d */

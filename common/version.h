@@ -61,12 +61,15 @@
                        VER_STRINGIFY(PATCH_VERSION) VERSION_LABEL
 #endif
 
+/* NB: You should almost always use the function
+ * warclient_name_version() instead of this macro. */
 #define WARCLIENT_VERSION_STRING VER_STRINGIFY(MINOR_VERSION) "." \
 				 VER_STRINGIFY(PATCH_VERSION) "." \
 				 VER_STRINGIFY(WARCLIENT_VERSION)
 
 /* version informational strings */
 const char *freeciv_name_version(void);
+const char *warclient_name_version(void);
 const char *word_version(void);
 const char *fc_svn_revision(void);
 

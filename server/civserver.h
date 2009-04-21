@@ -15,6 +15,4 @@
 
 #include "version.h"
 
-#define WARSERVER_VERSION "Warserver " WARCLIENT_VERSION_STRING
-
 #endif /* FC__CIVSERVER_H */
