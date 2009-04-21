@@ -21,6 +21,7 @@
 #include "support.h"
 
 #include "capstr.h"
+#include "fc_svnrev_gen.h"
 
 static char our_capability_internal[MAX_LEN_CAPSTR];
 const char * const our_capability = our_capability_internal;
@@ -107,7 +108,8 @@ const char * const our_capability = our_capability_internal;
  * capability is able to control the trade planning, the rally points,
  * the air patrol positions...
  */
-#define CAPABILITY "+2.0 conn_ping_info username_info new_hack " \
+#define CAPABILITY_BASE "+2.0"
+#define CAPABILITY_EXTRA "conn_ping_info username_info new_hack " \
                    "ReportFreezeFix AttrSerialFix extroutes extgameinfo " \
 		   "exttechleakage voteinfo extglobalinfo"
 
@@ -116,9 +118,22 @@ void init_our_capability(void)
 {
   const char *s;
 
-  s = getenv("FREECIV_CAPS");
-  if (!s) {
-    s = CAPABILITY;
+  if ((s = getenv("FREECIV_CAPS"))) {
+    sz_strlcpy(our_capability_internal, s);
+  } else {
+    sz_strlcpy(our_capability_internal, CAPABILITY_BASE);
+#if !defined(FC_SVNREV_OFF)
+    char svncap[64], *p;
+    sz_strlcpy(svncap, FC_SVNREV);
+    for (p = svncap; *p; p++) {
+      if (*p == ' ') {
+        *p = '_';
+      }
+    }
+    sz_strlcat(our_capability_internal, " svn_");
+    sz_strlcat(our_capability_internal, svncap);
+#endif
+    sz_strlcat(our_capability_internal, " ");
+    sz_strlcat(our_capability_internal, CAPABILITY_EXTRA);
   }
-  sz_strlcpy(our_capability_internal, s);
 }
