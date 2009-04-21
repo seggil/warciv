@@ -18,6 +18,8 @@
 #include "shared.h"		/* MAX_LEN_NAME */
 #include "version.h"
 
+/* Since the project and client are both called "warclient",
+ * we need to do this somewhat awkward name work-around. */
 #define WARCLIENT_FULL_VERSION "Warclient " WARCLIENT_VERSION_STRING
 
 /*
