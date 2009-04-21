@@ -19,7 +19,6 @@
 #include "shared.h"
 #include "support.h"
 
-#include "game.h"
 #include "version.h"
 
 #ifdef SVNREV
@@ -38,7 +37,7 @@
 const char *warclient_name_version(void)
 {
   static char buf[256] = "";
-  const char *progname = !is_server ? "Warclient" : "Warserver";
+  const char *progname = "Warclient";
 
 #if defined(SVNREV) && !defined(FC_SVNREV_OFF)
   my_snprintf(buf, sizeof(buf), "%s %s (%s)", progname,
