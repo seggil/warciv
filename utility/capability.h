@@ -18,5 +18,6 @@
 
 bool has_capability(const char *cap, const char *capstr);
 bool has_capabilities(const char *us, const char *them);
+bool has_svn_revision(int svnrev, const char *capstr);
 
 #endif  /* FC__CAPABILITY_H */

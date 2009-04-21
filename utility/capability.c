@@ -87,3 +87,49 @@ bool has_capabilities(const char *us, const char *them)
     us = next+1;
   }
 }
+
+/***************************************************************************
+  Returns TRUE if there exists a (possibly modified) svn revision number
+  in the capability string and it is greater than or equal to 'svnrev'.
+
+  NB! SVN revisions were only added to the capability string starting with
+  r1556. Do not test for specific revisions lower than this.
+***************************************************************************/
+bool has_svn_revision(int svnrev, const char *capstr)
+{
+  const char *p, *end;
+  char buf[32], *q;
+  int n;
+
+  if (svnrev < 1 || !capstr || capstr[0] == '\0') {
+    return FALSE;
+  }
+
+  p = strstr(capstr, " svn_");
+  if (!p) {
+    return FALSE;
+  }
+
+  p += 5;
+  while (*p && *p != '\0' && *p != ' ' && *p != 'r') {
+    p++;
+  }
+  if (*p != 'r') {
+    return FALSE;
+  }
+  p++;
+
+  q = buf;
+  end = buf + sizeof(buf) - 1;
+  while (my_isdigit(*p) && q < end) {
+    *q++ = *p++;
+  }
+  *q = '\0';
+
+  n = atoi(buf);
+  if (n < 1) {
+    return FALSE;
+  }
+
+  return n >= svnrev;
+}
