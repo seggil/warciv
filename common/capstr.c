@@ -20,8 +20,11 @@
 #include "connection.h"		/* MAX_LEN_CAPSTR */
 #include "support.h"
 
-#include "capstr.h"
+#ifdef SVNREV
 #include "fc_svnrev_gen.h"
+#endif /* SVNREV */
+
+#include "capstr.h"
 
 static char our_capability_internal[MAX_LEN_CAPSTR];
 const char * const our_capability = our_capability_internal;
