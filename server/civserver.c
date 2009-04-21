@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
   }
 
   if (showvers && !showhelp) {
-    fc_fprintf(stderr, "%s %s\n", freeciv_name_version(),
+    fc_fprintf(stderr, "%s %s server\n", freeciv_name_version(),
                warclient_name_version());
     exit(EXIT_SUCCESS);
   }
