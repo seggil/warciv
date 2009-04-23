@@ -3932,6 +3932,13 @@ static bool set_command(struct connection *caller,
     return FALSE;
   }
 
+  if (op->int_value == &game.info.timeout && game_is_paused()) {
+    cmd_reply(CMD_SET, caller, C_REJECTED,
+              _("Timeout cannot be changed while the game is "
+                "paused. Use /unpause."));
+    return FALSE;
+  }
+
   if (map_is_loaded() && op->category == SSET_GEOLOGY) {
     cmd_reply(CMD_SET, caller, C_BOUNCE, _("A fixed Map is loaded, "
                                            "geological settings can't be modified.\n"
