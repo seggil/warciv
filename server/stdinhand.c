@@ -6369,6 +6369,13 @@ bool handle_stdin_input(struct connection * caller,
   /* copy the full command, in case we need it for voting purposes. */
   sz_strlcpy(full_command, cptr_s);
 
+  /* HACK: Replace the old command string sent by the "Request pause"
+   * button with the new /pause command. */
+  if (0 == strcmp(full_command, "set timeout 600 --- I need a pause!")) {
+    sz_strlcpy(full_command, "pause --- I need a pause!");
+  }
+  cptr_s = full_command;
+
   /* cptr_s points now to the beginning of the real command. It has
    * skipped leading whitespace, the SERVER_COMMAND_PREFIX and any
    * other non-alphanumeric characters.
