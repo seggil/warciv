@@ -7519,6 +7519,12 @@ static bool pause_command(struct connection *caller, const char *arg,
     return FALSE;
   }
 
+  if (!is_allowed(UAB_PAUSE)) {
+    cmd_reply(CMD_PAUSE, caller, C_REJECTED,
+              _("Pausing is disabled. See /help allow."));
+    return FALSE;
+  }
+
   if (check) {
     return TRUE;
   }

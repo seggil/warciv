@@ -825,7 +825,8 @@ const struct command commands[] = {
    N_("Pause the game."),
    N_("This command pauses the game, which means that the turn "
       "timeout will be disabled and no units will be able to "
-      "move. The game can be resumed using the /unpause command."),
+      "move. The game can be resumed using the /unpause command. "
+      "The /allow command can be used to disable pausing."),
    ECHO_ADMINS, VCF_NONE, 50
   },
   {"unpause", ALLOW_CTRL, ALLOW_NONE,
