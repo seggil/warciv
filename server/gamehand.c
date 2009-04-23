@@ -882,11 +882,14 @@ time_t game_set_pause(bool pause)
 
 /**************************************************************************
   Saves the current value of game.info.timeout so that it can be restored
-  later by game_restore_timeout().
+  later by game_restore_timeout(). Takes care not to overwrite a previously
+  saved value when /pause is used more than once in the same turn.
 **************************************************************************/
 void game_save_timeout(void)
 {
-  saved_timeout_value = game.info.timeout;
+  if (saved_timeout_value == 0) {
+    saved_timeout_value = game.info.timeout;
+  }
 }
 
 /**************************************************************************
