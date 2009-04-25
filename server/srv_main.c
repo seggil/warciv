@@ -1134,7 +1134,17 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
     }
 
     if (game_is_paused() && !packet_is_allowed_during_pause(type)) {
-      /* Silently discard. */
+      static time_t warn_times[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
+      time_t now = time(NULL);
+
+      if (warn_times[pplayer->player_no] == 0
+          || now - warn_times[pplayer->player_no] > 20) {
+        notify_conn(pconn->self, "%s",
+                    _("Server: You may not move units during a pause. "
+                      "When the game is unpaused you will have some "
+                      "time to finish the turn. See /help unpause."));
+        warn_times[pplayer->player_no] = now;
+      }
       return TRUE;
     }
 
