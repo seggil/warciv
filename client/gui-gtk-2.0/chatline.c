@@ -1083,8 +1083,8 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 		 TPF_REQUIRE_PREVIOUS_MATCH,
 		 "", "#551166", "");
 
-  MK_TAG_PATTERN("", "(", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START,
-		 "", "", "");
+  MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_NEGATE, "", "", "");
   MK_TAG_PATTERN("global observer message", "to global observers: ",
 		 TPF_REQUIRE_PREVIOUS_MATCH,
 		 "", "#551166", "");
@@ -1205,6 +1205,9 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   my_snprintf(buf, sizeof(buf), "(%s) to allies:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
 		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+  my_snprintf(buf, sizeof(buf), "(%s) to global observers:", default_user_name);
+  MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
+		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY 
 		 | TPF_MATCH_AT_START, "name hilight", "", "");
@@ -1213,6 +1216,8 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   MK_TAG_PATTERN("", "[", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", " to allies:", TPF_IS_CONTROL_ONLY,
+		 "name hilight", "", "");
+  MK_TAG_PATTERN("", " to global observers:", TPF_IS_CONTROL_ONLY,
 		 "name hilight", "", "");
   MK_TAG_PATTERN("", "", TPF_IS_CONTROL_ONLY 
 		 | TPF_STOP_IF_MATCHED, "", "", "");
