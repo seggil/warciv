@@ -24,6 +24,7 @@ SERVER_FILES = \
 	warruleset-1.2.serv	\
 	warruleset-1.3.serv	\
 	nowonder+1.2.serv	\
+	nowonder+-1.3.serv	\
 	tournament.serv	\
 	warserver.serv	\
 	team_names.txt	\
@@ -51,6 +52,8 @@ EXTRA_DIST = \
 	history.serv	\
 	warruleset-1.2.serv	\
 	warruleset-1.3.serv	\
+	nowonder+1.2.serv	\
+	nowonder+-1.3.serv	\
 	tournament.serv	\
 	warserver.serv	\
 	example-actions.txt	\
@@ -72,6 +75,7 @@ SERVERDATADIRS =	\
 	warruleset-1.2	\
 	warruleset-1.3	\
 	nowonder+-1.2	\
+	nowonder+-1.3	\
 	nowonder-1.2	\
 	duel	\
 	experimental	\

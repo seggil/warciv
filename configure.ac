@@ -549,6 +549,7 @@ AC_CONFIG_FILES([Makefile
 	  data/warruleset-1.2/Makefile
 	  data/warruleset-1.3/Makefile
 	  data/nowonder+-1.2/Makefile
+	  data/nowonder+-1.3/Makefile
 	  data/nowonder-1.2/Makefile
 	  data/tournament/Makefile
 	  data/duel/Makefile
