@@ -102,5 +102,7 @@ slow_invasions = 1
 killstack               = 1
 
 [description]
-description = _("Same as warruleset1.2 with 2 wonders: Manhattan and Apollo\n\
- (Apollo doesn't reveal the map)")
+description = _("Based on warruleset1.2 but:\n\
+* The only wonders are Manhattan and Apollo.\n\
+* Apollo does not reveal the map.\n\
+* Philosophy does not give a free advance.")
