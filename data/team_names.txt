@@ -112,7 +112,9 @@ suggestions =
   _("IMPERIALISTS"), _("SEPARATISTS"),
   _("THEISTS"), _("ATHEISTS"),
   _("POLYTHEISTS"), _("MONOTHEISTS"),
-  _("WINDOWS"), _("LINUX")
+  _("WINDOWS"), _("LINUX"),
+  _("CURSED"), _("BLESSED"),
+  _("MASOCHISTS"), _("SADISTS")
 
 [3_teams]
 suggestions =
