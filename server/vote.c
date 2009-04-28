@@ -389,6 +389,16 @@ struct vote *vote_new(struct connection *caller,
     if (op->vote_percent > 0) {
       pvote->need_pc = (double) op->vote_percent / 100.0;
     }
+
+    /* Vote reduction hack for 30 second timeout increases.
+     * NB: If this is changed, be sure to update help text. */
+    if (op->int_value == &game.info.timeout) {
+      int diff = sv->int_value - *op->int_value;
+      if (0 < diff && diff <= 30) {
+        pvote->need_pc = 0.33;
+        pvote->flags |= VCF_NOPASSALONE;
+      }
+    }
   }
 
   if (pvote->flags & VCF_NOPASSALONE) {

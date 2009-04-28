@@ -918,8 +918,10 @@ struct settings_s settings[] = {
           /* xgettext:no-c-format */
 	  N_("If all players have not hit \"Turn Done\" before this "
 	     "time is up, then the turn ends automatically. Zero "
-	     "means there is no timeout.  Use this with the command "
-	     "\"incrementaltimeout\" to have a dynamic timer."), NULL,
+	     "means there is no timeout. Use this with the command "
+	     "\"incrementaltimeout\" to have a dynamic timer. As a "
+             "special case, voting to increase the timeout by 30 "
+             "seconds or less requires only 33% in favor."), NULL,
 	   GAME_MIN_TIMEOUT, GAME_MAX_TIMEOUT, GAME_DEFAULT_TIMEOUT)
 
   GEN_INT("timeaddenemymove", game.server.timeoutaddenemymove,
