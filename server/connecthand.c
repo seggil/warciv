@@ -485,11 +485,18 @@ void establish_new_connection(struct connection *pconn)
   }
 
   if (server_state == RUN_GAME_STATE
-      && game.server.spectatorchat
+      && game.server.spectatorchat != 0
       && !conn_controls_player(pconn)) {
-    notify_conn(dest, _("Server: Spectator chat is in effect. "
-                        "Your public messages will only be seen "
-                        "by users not in the game."));
+    if (game.server.spectatorchat == 1) {
+      notify_conn(dest, _("Server: Spectator chat is in effect. "
+                          "Your public messages will only be seen "
+                          "by users not in the game. See /help "
+                          "spectatorchat."));
+    } else if (game.server.spectatorchat == 2) {
+      notify_conn(dest, _("Server: Spectator chat is in effect. "
+                          "Private or ally messages to players are "
+                          "not allowed. See /help spectatorchat."));
+    }
   }
 
   send_conn_info(dest, game.est_connections);

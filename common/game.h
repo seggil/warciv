@@ -195,7 +195,7 @@ struct civ_game {
     bool rated;
     bool no_public_links;
     int kicktime;
-    bool spectatorchat;
+    int spectatorchat;
     int idlecut;
     bool emptyreset;
     int triremestyle;
@@ -325,6 +325,8 @@ extern bool is_server;
 #define GAME_MAX_KICKTIME 86400
 
 #define GAME_DEFAULT_SPECTATORCHAT 0
+#define GAME_MIN_SPECTATORCHAT 0
+#define GAME_MAX_SPECTATORCHAT 2
 
 #define GAME_DEFAULT_IDLECUT 1800
 #define GAME_MIN_IDLECUT 0

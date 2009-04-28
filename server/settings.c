@@ -1370,14 +1370,20 @@ struct settings_s settings[] = {
                GAME_DEFAULT_KICKTIME,
                VCF_NONE, 0, ALLOW_ADMIN, ALLOW_ADMIN)
 
-  GEN_BOOL("spectatorchat", game.server.spectatorchat, SSET_RULES_FLEXIBLE,
+  GEN_INT("spectatorchat", game.server.spectatorchat, SSET_RULES_FLEXIBLE,
            SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT,
-           N_("Non-player messages only go to non-players"),
-           N_("If this setting is set to 1, then observer and detached "
-              "connection messages will only go to other non-player "
-              "connections. This affects public and ally messages "
-              "while the game is running only."),
-           NULL, GAME_DEFAULT_SPECTATORCHAT)
+           N_("How to handle non-player messages"),
+           N_("This setting controls whether non-player messages "
+              "can reach players in the game.\n"
+              "0 - All messages are handled normally.\n"
+              "1 - Non-player public/ally messages only go to other\n"
+              "    non-players.\n"
+              "2 - All non-public non-player messages are only seen\n"
+              "    by other non-players.\n"
+              "If you are worried that observers may be giving private "
+              "hints to other players, use the value 2 for this setting."),
+           NULL, GAME_MIN_SPECTATORCHAT, GAME_MAX_SPECTATORCHAT,
+           GAME_DEFAULT_SPECTATORCHAT)
 
   GEN_INT_FULL("idlecut", game.server.idlecut, SSET_RULES_FLEXIBLE,
                SSET_INTERNAL, SSET_RARE, SSET_TO_CLIENT, "",

@@ -104,6 +104,16 @@ bool conn_is_ignored(struct connection *pconn, struct connection *dest)
 }
 
 /**************************************************************************
+  Returns TRUE if spectatorchat=2 condition should be applied to pconn.
+**************************************************************************/
+static bool chat_is_restricted(const struct connection *pconn)
+{
+  return (game.server.spectatorchat == 2
+          && server_state == RUN_GAME_STATE
+          && !conn_controls_player(pconn));
+}
+
+/**************************************************************************
   Send private message to single connection.
 **************************************************************************/
 static void chat_msg_to_conn(struct connection *sender,
@@ -121,6 +131,15 @@ static void chat_msg_to_conn(struct connection *sender,
   if (conn_is_ignored(sender, dest)) {
     my_snprintf(message, sizeof(message),
         _("Server: You cannot send messages to %s; you are ignored."),
+        dest_name);
+    dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
+    return;
+  }
+
+  if (chat_is_restricted(sender) && conn_controls_player(dest)) {
+    my_snprintf(message, sizeof(message),
+        _("Server: You cannot send messages to %s; you are not allowed "
+          "to send messages to players. See /help spectatorchat."),
         dest_name);
     dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
     return;
@@ -162,6 +181,17 @@ static void chat_msg_to_player_multi(struct connection *sender,
     return;
   }
   
+  if (chat_is_restricted(sender) && conn_controls_player(dest)) {
+    char dest_name[MAX_LEN_CHAT_NAME];
+    form_chat_name(dest, dest_name, sizeof(dest_name));
+    my_snprintf(message, sizeof(message),
+        _("Server: You cannot send messages to %s; you are not allowed "
+          "to send messages to players. See /help spectatorchat."),
+        dest_name);
+    dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
+    return;
+  }
+
   my_snprintf(message, sizeof(message), "->[%s] %s", pdest->name, msg);
   dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
 
@@ -292,9 +322,13 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     message[0] = ' '; /* replace command prefix */
     form_chat_name(pconn, sender_name, sizeof(sender_name));
     if (pconn->player) {
-      my_snprintf(chat, sizeof(chat),
-		  _("%s to allies: %s"), sender_name,
-		  skip_leading_spaces(message));
+      if (chat_is_restricted(pconn)) {
+        my_snprintf(chat, sizeof(chat), _("%s to observers: %s"),
+                    sender_name, skip_leading_spaces(message));
+      } else {
+        my_snprintf(chat, sizeof(chat), _("%s to allies: %s"),
+                    sender_name, skip_leading_spaces(message));
+      }
     } else {
       /* Case global observers */
       my_snprintf(chat, sizeof(chat),
@@ -310,15 +344,20 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
 	continue;
       }
 
-      if (game.server.spectatorchat
+      if (game.server.spectatorchat == 1
 	  && server_state == RUN_GAME_STATE
 	  && !conn_controls_player(pconn)
 	  && conn_controls_player(dest)) {
 	continue;
       }
 
+      if (chat_is_restricted(pconn) && conn_controls_player(dest)) {
+        continue;
+      }
+
       pconn_plr = conn_get_player(pconn);
       dest_plr = conn_get_player(dest);
+
       if ((pconn_plr && dest_plr && pplayers_allied(pconn_plr, dest_plr))
           || (!pconn_plr && conn_is_global_observer(dest))) {
         dsend_packet_chat_msg(dest, chat, -1, -1, E_NOEVENT, pconn->id);
@@ -498,7 +537,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     if (conn_is_ignored(pconn, dest)) {
       continue;
     }
-    if (game.server.spectatorchat
+    if (game.server.spectatorchat == 1
         && server_state == RUN_GAME_STATE
         && !conn_controls_player(pconn)
         && conn_controls_player(dest)) {
