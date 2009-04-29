@@ -334,7 +334,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
         } else {
           sz_strlcpy(nation, "none");
         }
-        astr_append_printf(&content, "&pln[]=%s", nation);
+        astr_append_printf(&content, "&pln[]=%s", my_url_encode(nation));
         astr_append_printf(&content, "&plh[]=%s", pconn
                            ? my_url_encode(pconn->addr) : "");
 
