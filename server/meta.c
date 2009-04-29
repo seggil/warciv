@@ -252,8 +252,8 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
 {
   struct astring headers, content;
   int available_players = 0, len;
-  char buf[512], *ret;
-  const char *nation, *type, *state;
+  char buf[512], *ret, nation[128];
+  const char *type, *state;
 
   assert(pbuflen != NULL);
 
@@ -325,9 +325,14 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
                            my_url_encode(plr->name));
 
         if (plr->nation != NO_NATION_SELECTED) {
-          nation = get_nation_name_plural(plr->nation);
+          if (plr->team != TEAM_NONE) {
+            my_snprintf(nation, sizeof(nation), "T%d %s", plr->team,
+                        get_nation_name_plural(plr->nation));
+          } else {
+            sz_strlcpy(nation, get_nation_name_plural(plr->nation));
+          }
         } else {
-          nation = "none";
+          sz_strlcpy(nation, "none");
         }
         astr_append_printf(&content, "&pln[]=%s", nation);
         astr_append_printf(&content, "&plh[]=%s", pconn
