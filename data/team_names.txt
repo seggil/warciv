@@ -48,7 +48,7 @@ suggestions =
   _("FELLOWSHIP"), _("MORDOR"),
   _("GALACTIC_EMPIRE"), _("REBEL_ALLIANCE"),
   _("AXIS"), _("ALLIES"),
-  _("NATO"), _("WARZAW_PACT"),
+  _("NATO"), _("WARSAW_PACT"),
   _("DEMOCRATS"), _("REPUBLICANS"),
   _("TORIES"), _("LABOUR"),
   _("CIA"), _("KGB"),
