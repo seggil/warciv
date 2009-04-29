@@ -1138,12 +1138,11 @@ void reports_force_thaw(void)
 }
 
 /*************************************************************************
-...
+  On the client side, 'pplayer' is not used at all.
 *************************************************************************/
 enum known_type map_get_known(const struct tile *ptile,
                               struct player *pplayer)
 {
-  assert(!get_player_ptr() || pplayer == get_player_ptr());
   return tile_get_known(ptile);
 }
 
