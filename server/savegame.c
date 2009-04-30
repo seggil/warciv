@@ -3134,7 +3134,7 @@ static void player_save(struct player *plr, int plrno,
     size_t bytes_adjust = bytes_at_colon % 3;
     int current_part_nr;
     int parts;
-    char part[PART_SIZE + 1];
+    char part[PART_SIZE + 64];
 
     secfile_insert_int(file, plr->attribute_block.length,
 		       "player%d.attribute_v2_block_length", plrno);
@@ -3155,7 +3155,8 @@ static void player_save(struct player *plr, int plrno,
 		       "player%d.attribute_v2_block_parts", plrno);
 
     if (parts > 1) {
-      size_t size_of_current_part = PART_SIZE + bytes_adjust;
+      size_t size_of_current_part = MIN(sizeof(part) - 1,
+                                        PART_SIZE + bytes_adjust);
 
       /* first line can be longer */
       memcpy(part, quoted, size_of_current_part);
