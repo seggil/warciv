@@ -1860,13 +1860,24 @@ int get_transporter_occupancy(struct unit *ptrans)
 struct unit *find_transporter_for_unit(struct unit *pcargo,
 				       const struct tile *ptile)
 { 
+  struct unit *trans_ret = NULL;
+
+  if (!ptile) {
+    return NULL;
+  }
+
   unit_list_iterate(ptile->units, ptrans) {
     if (can_unit_load(pcargo, ptrans)) {
-      return ptrans;
+      if (ptrans->activity == ACTIVITY_IDLE) {
+        return ptrans;
+      }
+      if (trans_ret == NULL) {
+        trans_ret = ptrans;
+      }
     }
   } unit_list_iterate_end;
 
-  return NULL;
+  return trans_ret;
 }
 
 /***************************************************************************
