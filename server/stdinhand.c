@@ -1423,7 +1423,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
   enum m_pre_result match_result;
   const struct team *pteam;
   struct player *pplayer1, *pplayer2;
-  struct unit_list *player2_units;
+  struct unit_list *player2_units, *player1_units;
   struct unit *aunit;
 
   if (!is_allowed(UAB_SWITCH)) {
@@ -1515,10 +1515,15 @@ static bool switch_command(struct connection *caller, char *str, bool check)
 
   player2_units = unit_list_new();
   unit_list_iterate(pplayer2->units, punit) {
-    unit_list_append(player2_units, punit);
+    unit_list_prepend(player2_units, punit);
   } unit_list_iterate_end;
 
-  unit_list_iterate_safe(pplayer1->units, punit) {
+  player1_units = unit_list_new();
+  unit_list_iterate(pplayer1->units, punit) {
+    unit_list_prepend(player1_units, punit);
+  } unit_list_iterate_end;
+
+  unit_list_iterate(player1_units, punit) {
     aunit = create_unit_full(pplayer2, punit->tile,
                              punit->type, punit->veteran,
                              0, punit->moves_left,
@@ -1529,7 +1534,7 @@ static bool switch_command(struct connection *caller, char *str, bool check)
     aunit->paradropped = punit->paradropped;
 
     wipe_unit_spec_safe(punit, FALSE, TRUE);
-  } unit_list_iterate_safe_end;
+  } unit_list_iterate_end;
 
   unit_list_iterate(player2_units, punit) {
     aunit = create_unit_full(pplayer1, punit->tile,
@@ -1543,6 +1548,8 @@ static bool switch_command(struct connection *caller, char *str, bool check)
 
     wipe_unit_spec_safe(punit, FALSE, TRUE);
   } unit_list_iterate_end;
+
+  unit_list_free(player1_units);
   unit_list_free(player2_units);
 
   conn_list_do_unbuffer(game.est_connections);
