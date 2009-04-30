@@ -136,6 +136,7 @@ bool solid_unit_icon_bg;
 bool better_fog;
 bool save_options_on_exit;
 bool chatline_autocomplementation;
+bool disable_custom_dns;
 
 /* This option is currently set by the client - not by the user. */
 bool update_city_text_in_refresh_tile = TRUE;
@@ -924,6 +925,15 @@ static struct client_option client_options[] = {
 		     "the trade routes you can establish from the caravan "
                      "homecity."),
 		  COC_TRADE, TRUE, NULL),
+  GEN_BOOL_OPTION(disable_custom_dns, N_("Use system DNS functions"),
+                  N_("Warclient uses custom domain name lookup code "
+                     "for speed and efficiency. On some systems though, "
+                     "this may not work well with installed firewalls "
+                     "or other security measures (e.g. windows vista). "
+                     "If you find that metaserver queries do not work "
+                     "try enabling this option. Otherwise you should "
+                     "probably leave it disabled."),
+                  COC_NETWORK, FALSE, NULL),
 };
 
 #undef GEN_INT_OPTION

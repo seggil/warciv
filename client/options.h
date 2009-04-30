@@ -196,6 +196,7 @@ extern bool solid_unit_icon_bg;
 extern bool better_fog;
 extern bool save_options_on_exit;
 extern bool chatline_autocomplementation;
+extern bool disable_custom_dns;
 
 /** View Options: **/
 

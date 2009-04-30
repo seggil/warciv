@@ -1220,8 +1220,23 @@ int create_server_list_async(char *errbuf, int n_errbuf,
   ctx->req_id = -1;
   ctx->nlsa_id = -1;
 
-  nlsa_id = net_lookup_service_async(metaname, metaport,
-      metaserver_name_lookup_callback, ctx, NULL);
+  if (disable_custom_dns) {
+    union my_sockaddr addr;
+    if (!net_lookup_service(metaname, metaport, &addr)) {
+      my_snprintf(errbuf, n_errbuf,
+                  _("Failed looking up metaserver hostname "
+                    "%s:%d (using system DNS)"),
+                  metaname, metaport);
+      destroy_async_slist_ctx(ctx);
+      return -1;
+    } else {
+      metaserver_name_lookup_callback(&addr, ctx);
+      nlsa_id = 0;
+    }
+  } else {
+    nlsa_id = net_lookup_service_async(metaname, metaport,
+        metaserver_name_lookup_callback, ctx, NULL);
+  }
   freelog(LOG_DEBUG, "csla got nlsa_id = %d", nlsa_id);
 
   if (nlsa_id == -1) {
