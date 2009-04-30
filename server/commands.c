@@ -606,7 +606,7 @@ const struct command commands[] = {
    N_("If it's the first turn and neither player has built any cities, "
       "this command starts a team vote to move the first player's initial "
       "units to the second player's start position and vice-versa."),
-   ECHO_ADMINS, VCF_TEAMONLY | VCF_NOPASSALONE | VCF_NODISSENT, 75
+   ECHO_ADMINS, VCF_TEAMONLY | VCF_NOPASSALONE | VCF_NODISSENT, 50
   },
   {"save",	ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
