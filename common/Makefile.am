@@ -77,7 +77,7 @@ if SVNREV
 # fc_svnrev_gen.h must be generated before it can be included.
 # Automatic dependencies are only generated during first
 # build. We need dependency for that first build.
-capstr.o version.o : fc_svnrev_gen.h
+BUILT_SOURCES += fc_svnrev_gen.h
 
 .PHONY : fc_svnrev_gen.h
 fc_svnrev_gen.h :
