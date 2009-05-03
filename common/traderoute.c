@@ -697,6 +697,11 @@ void recursive_calculate_trade_planning(
       tcity2->trade_routes[i] = ptr;
       tcity2->trade_routes_num++;
     }
+
+    if (pcalc->btconf.free_slots <= 0) {
+      /* If we continue, we will keep free slots, so it's not necessary. */
+      break;
+    }
   }
 
   /* Is the best configuration? */
