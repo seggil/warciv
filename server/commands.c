@@ -584,7 +584,7 @@ const struct command commands[] = {
    N_("End the game.  If players are listed, these win the game."),
    N_("This command ends the game immediately and credits the given players, "
       "if any, with winning it."),
-   ECHO_ALL, VCF_NODISSENT, 50
+   ECHO_ALL, VCF_NONE, 66
   },
   {"draw", ALLOW_CTRL, ALLOW_NEVER,
    /* TRANS: translate text between <> only */
@@ -592,7 +592,7 @@ const struct command commands[] = {
    N_("Draw the game."),
    N_("This command ends the game immediately and makes the result "
       "a draw. That is, the game counts as a tie for all players."),
-   ECHO_ALL, VCF_NODISSENT, 50
+   ECHO_ALL, VCF_NONE, 66
   },
   {"remove",	ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
