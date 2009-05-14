@@ -1172,7 +1172,6 @@ static int server_accept_connection(int sockfd)
   pconn->server.delay_establish = FALSE;
   memset(pconn->server.password, 0, sizeof(pconn->server.password));
   pconn->server.salt = 0;
-  pconn->server.last_obs_time = time(NULL);
 
   conn_reset_idle_time(pconn);
 

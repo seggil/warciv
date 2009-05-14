@@ -702,7 +702,8 @@ void connection_common_init(struct connection *pconn)
     pconn->server.flood_timer = new_timer_start(TIMER_USER, TIMER_ACTIVE);
     pconn->server.flood_counter = 0.0;
     pconn->server.flood_warning_level = 0;
-    pconn->server.last_obs_time = 0;
+    pconn->server.observe_requested = FALSE;
+    pconn->server.observe_target = NULL;
   }
 
   init_packet_hashs(pconn);

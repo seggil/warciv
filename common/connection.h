@@ -334,13 +334,9 @@ struct connection {
        * the last "non-idle" action by the connection. */
       time_t idle_time;
 
-      /* The time when this connection last changed observer
-       * status. This is used to disallow users using the
-       * observe command too frequently and lagging the server.
-       * This value is also set to the current time when a
-       * connection is accepted by the server. This is so that
-       * users cannot observe immediately after connecting. */
-      time_t last_obs_time;
+      /* Used for postponing observer switch until turn change. */
+      bool observe_requested;
+      struct player *observe_target;
     } server;
   };
 };

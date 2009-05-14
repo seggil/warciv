@@ -292,7 +292,10 @@ const struct command commands[] = {
       "other connections to observe a player. If you're not one of these, "
       "only the [player-name] argument is allowed. If the console gives no "
       "player-name or the connection uses no arguments, then the connection "
-      "is attached to a global observer."),
+      "is attached to a global observer. If the game is running and you "
+      "are not a server admin, your observe request will be queued until "
+      "the next turn change (you can cancel pending requests using the "
+      "/detach command)."),
    ECHO_NONE, VCF_NONE, 0
   },
   {"detach",    ALLOW_OBSERVER, ALLOW_OBSERVER,

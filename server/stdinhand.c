@@ -98,6 +98,8 @@ static bool show_mutes(struct connection *caller);
 static bool set_ai_level(struct connection *caller, char *name, int level,
                          bool check);
 static bool set_away(struct connection *caller, char *name, bool check);
+static void setup_observer(struct connection *pconn,
+                           struct player *pplayer);
 static bool observe_command(struct connection *caller, char *name,
                             bool check);
 static bool take_command(struct connection *caller, char *name, bool check);
@@ -313,6 +315,12 @@ void stdinhand_turn(void)
       }
     }
   } hash_kv_iterate_end;
+
+  conn_list_iterate(game.est_connections, pconn) {
+    if (pconn->server.observe_requested) {
+      setup_observer(pconn, pconn->server.observe_target);
+    }
+  } conn_list_iterate_end;
 }
 
 /**************************************************************************
@@ -4176,9 +4184,7 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   enum m_pre_result result;
   struct connection *pconn = NULL;
   struct player *pplayer = NULL;
-  bool res = FALSE, need_full_update = FALSE;
-  struct hash_table *affected_players = NULL;
-  time_t now, time_left, time_passed;
+  bool res = FALSE;
 
   /******** PART I: fill pconn and pplayer ********/
   sz_strlcpy(buf, str);
@@ -4266,34 +4272,44 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     }
   }
 
-  now = time(NULL);
-
-  time_passed = now - game.server.turn_start;
-  time_left = game.info.timeout - time_passed;
-  if (caller != NULL && caller->server.access_level < ALLOW_ADMIN
-      && server_state == RUN_GAME_STATE && game.info.timeout > 0
-      && (time_left < 5 || time_passed < 5)) {
-    cmd_reply(CMD_OBSERVE, caller, C_REJECTED,
-              _("You may not observe at this time, "
-                "please try again later."));
-    goto CLEANUP;
-  }
-
-  if (caller != NULL && caller->server.access_level < ALLOW_ADMIN
-      && server_state == RUN_GAME_STATE
-      && now - caller->server.last_obs_time < 30) {
-    cmd_reply(CMD_OBSERVE, caller, C_REJECTED,
-              _("You must wait at least 30 seconds "
-                "between uses of this command, or "
-                "from the time of connecting to "
-                "this server, to use this command."));
-    goto CLEANUP;
-  }
-
   res = TRUE;                   /* all tests passed */
   if (check) {
     goto CLEANUP;
   }
+
+  if (caller != NULL && caller->server.access_level < ALLOW_ADMIN
+      && server_state == RUN_GAME_STATE && game.info.timeout > 0) {
+    pconn->server.observe_requested = TRUE;
+    pconn->server.observe_target = pplayer;
+    if (pplayer) {
+      notify_conn(caller->self, _("Server: You will be attached as "
+                                  "an observer of player %s during "
+                                  "the next turn change."),
+                  pplayer->name);
+    } else {
+      notify_conn(caller->self, _("Server: You will become a global "
+                                  "observer during the next turn "
+                                  "change."));
+    }
+    return TRUE;
+  }
+
+  setup_observer(pconn, pplayer);
+
+CLEANUP:
+  free_tokens(arg, ntokens);
+  return res;
+}
+
+/**************************************************************************
+  Actually do the changes necessary to make an observer. Assumes that all
+  relevant checks have already been made.
+**************************************************************************/
+static void setup_observer(struct connection *pconn,
+                           struct player *pplayer)
+{
+  struct hash_table *affected_players = NULL;
+  bool need_full_update = FALSE;
 
   affected_players = hash_new(hash_fval_keyval, hash_fcmp_keyval);
 
@@ -4324,7 +4340,8 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
   /* attach pconn to new player as an observer */
   pconn->observer = TRUE;       /* do this before attach! */
-  pconn->server.last_obs_time = now;
+  pconn->server.observe_requested = FALSE;
+  pconn->server.observe_target = NULL;
 
   if (pplayer) {
     attach_connection_to_player(pconn, pplayer);
@@ -4370,20 +4387,15 @@ static bool observe_command(struct connection *caller, char *str, bool check)
     send_packet_thaw_hint(pconn);
   }
 
-  cmd_reply(CMD_OBSERVE, caller, C_OK, _("%s now observes %s."),
-	    pconn->username, pplayer ? pplayer->name : "the game globally");
+  cmd_reply(CMD_OBSERVE, NULL, C_OK, _("%s now observes %s."),
+            pconn->username, pplayer ? pplayer->name : "the game globally");
 
   send_updated_vote_totals(NULL);
   conn_list_do_unbuffer(game.est_connections);
 
   send_server_info_to_metaserver(META_INFO);
 
-CLEANUP:
-  if (affected_players != NULL) {
-    hash_free(affected_players);
-  }
-  free_tokens(arg, ntokens);
-  return res;
+  hash_free(affected_players);
 }
 
 /**************************************************************************
@@ -4589,6 +4601,13 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   }
 
   pplayer = pconn->player;
+
+  if (pconn->server.observe_requested) {
+    pconn->server.observe_requested = FALSE;
+    pconn->server.observe_target = NULL;
+    cmd_reply(CMD_DETACH, caller, C_COMMENT,
+              _("Your previous observe request has been cancelled."));
+  }
 
   /* must have someone to detach from... */
   if (!pplayer && !pconn->observer) {
