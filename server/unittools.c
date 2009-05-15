@@ -2014,6 +2014,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
   struct packet_unit_info info;
   struct packet_unit_short_info sinfo;
   bool new_information_for_enemy = FALSE;
+  bool info_packaged = FALSE, sinfo_packaged = FALSE;
 
   if (!dest) {
     dest = game.game_connections;
@@ -2022,14 +2023,15 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
 /* maybe the wrong position for that, but this is the lowlevel function
  * where we check if we have to increase timeout, or remove_turn_done */
   
-  package_unit(punit, &info);
-  package_short_unit(punit, &sinfo, UNIT_INFO_IDENTITY, FALSE, FALSE);
-            
   conn_list_iterate(dest, pconn) {
     struct player *pplayer = pconn->player;
     
     if (conn_is_global_observer(pconn)
 	|| (pplayer && pplayer->player_no == punit->owner)) {
+      if (!info_packaged) {
+        package_unit(punit, &info);
+        info_packaged = TRUE;
+      }
       send_packet_unit_info(pconn, &info);
     } else if (pplayer) {
       bool see_in_old;
@@ -2044,6 +2046,10 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
 
       if (see_in_new || see_in_old) {
         /* First send movement */
+        if (!sinfo_packaged) {
+          package_short_unit(punit, &sinfo, UNIT_INFO_IDENTITY, FALSE, FALSE);
+          sinfo_packaged = TRUE;
+        }
         send_packet_unit_short_info(pconn, &sinfo);
 
         if (!see_in_new) {
