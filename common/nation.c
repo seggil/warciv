@@ -400,6 +400,10 @@ int team_count_members(Team_Type_id id)
 ***************************************************************/
 void team_id_add_player(struct player *pplayer, Team_Type_id id)
 {
+  if (TEAM_NONE == id) {
+    return;
+  }
+
   assert(id < MAX_NUM_TEAMS && id >= 0);
 
   if (teams[id].id == TEAM_NONE) {
