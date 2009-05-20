@@ -51,7 +51,9 @@ void meswin_freeze(void)
 void meswin_thaw(void)
 {
   frozen_level--;
-  assert(frozen_level >= 0);
+  if (frozen_level < 0) {
+    frozen_level = 0;
+  }
   if (frozen_level == 0) {
     update_meswin_dialog();
   }

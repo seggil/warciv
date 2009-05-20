@@ -87,7 +87,9 @@ void output_window_freeze()
 void output_window_thaw()
 {
   frozen_level--;
-  assert(frozen_level >= 0);
+  if (frozen_level < 0) {
+    frozen_level = 0;
+  }
 
   if (frozen_level == 0) {
     remaining_list_iterate(remains, pline) {

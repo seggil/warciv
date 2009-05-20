@@ -51,7 +51,9 @@ void plrdlg_freeze(void)
 void plrdlg_thaw(void)
 {
   frozen_level--;
-  assert(frozen_level >= 0);
+  if (frozen_level < 0) {
+    frozen_level = 0;
+  }
   if (frozen_level == 0) {
     update_players_dialog();
   }
