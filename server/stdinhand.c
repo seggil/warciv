@@ -318,6 +318,10 @@ void stdinhand_turn(void)
 
   conn_list_iterate(game.est_connections, pconn) {
     if (pconn->server.observe_requested) {
+      if (!conn_get_player(pconn) && !conn_is_global_observer(pconn)) {
+        send_packet_freeze_client(pconn);
+        connection_do_buffer(pconn);
+      }
       setup_observer(pconn, pconn->server.observe_target);
     }
   } conn_list_iterate_end;
