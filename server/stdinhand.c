@@ -2327,10 +2327,15 @@ static bool autoteam_command(struct connection *caller, char *str,
 #endif
 
   notify_conn(NULL, _("Server: Assigning all players to %d teams."), n);
+
+  /* Clear existing teams. */
+  players_iterate(pplayer) {
+    team_remove_player(pplayer);
+  } players_iterate_end;
+
   team_names = create_team_names(n);
 
   for (i = 0, t = 0, step = 1; i < num; i++) {
-    team_remove_player(player_ordering[i]);
     team_add_player(player_ordering[i], team_names[t]);
 
     /* Do the "ABBAABB...", "ABCCBAABCCBA...", etc. assignment. */
