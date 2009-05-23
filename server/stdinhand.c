@@ -317,6 +317,18 @@ void stdinhand_turn(void)
     }
   } hash_kv_iterate_end;
 
+  conn_list_iterate(game.est_connections, pconn) {
+    if (pconn->server.observe_requested
+	&& !conn_get_player(pconn) 
+	&& !conn_is_global_observer(pconn)) {
+	  /* HACK: The inverts queries will be sent 
+	   * later at the end of the turn. */
+        send_packet_freeze_client(pconn);
+        connection_do_buffer(pconn);
+      }
+    }
+  } conn_list_iterate_end;
+
   process_observe_requests();
 }
 
@@ -4415,10 +4427,6 @@ static void process_observe_requests(void)
       } else {
         notify_conn(pconn->self, "%s", _("Server: Processing your request "
                                          "to observe globally..."));
-      }
-      if (!conn_get_player(pconn) && !conn_is_global_observer(pconn)) {
-        send_packet_freeze_client(pconn);
-        connection_do_buffer(pconn);
       }
       setup_observer(pconn, target);
     }
