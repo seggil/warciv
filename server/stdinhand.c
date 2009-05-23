@@ -100,6 +100,7 @@ static bool set_ai_level(struct connection *caller, char *name, int level,
 static bool set_away(struct connection *caller, char *name, bool check);
 static void setup_observer(struct connection *pconn,
                            struct player *pplayer);
+static void process_observe_requests(void);
 static bool observe_command(struct connection *caller, char *name,
                             bool check);
 static bool take_command(struct connection *caller, char *name, bool check);
@@ -316,24 +317,7 @@ void stdinhand_turn(void)
     }
   } hash_kv_iterate_end;
 
-  conn_list_iterate(game.est_connections, pconn) {
-    if (pconn->server.observe_requested) {
-      struct player *target = pconn->server.observe_target;
-      if (target) {
-        notify_conn(pconn->self, _("Server: Processing your "
-                                   "request to observe %s..."),
-                    target->name);
-      } else {
-        notify_conn(pconn->self, "%s", _("Server: Processing your request "
-                                         "to observe globally..."));
-      }
-      if (!conn_get_player(pconn) && !conn_is_global_observer(pconn)) {
-        send_packet_freeze_client(pconn);
-        connection_do_buffer(pconn);
-      }
-      setup_observer(pconn, target);
-    }
-  } conn_list_iterate_end;
+  process_observe_requests();
 }
 
 /**************************************************************************
@@ -4417,6 +4401,31 @@ static void setup_observer(struct connection *pconn,
 }
 
 /**************************************************************************
+  Process all observe requests of the users.
+**************************************************************************/
+static void process_observe_requests(void)
+{
+  conn_list_iterate(game.est_connections, pconn) {
+    if (pconn->server.observe_requested) {
+      struct player *target = pconn->server.observe_target;
+      if (target) {
+        notify_conn(pconn->self, _("Server: Processing your "
+                                   "request to observe %s..."),
+                    target->name);
+      } else {
+        notify_conn(pconn->self, "%s", _("Server: Processing your request "
+                                         "to observe globally..."));
+      }
+      if (!conn_get_player(pconn) && !conn_is_global_observer(pconn)) {
+        send_packet_freeze_client(pconn);
+        connection_do_buffer(pconn);
+      }
+      setup_observer(pconn, target);
+    }
+  } conn_list_iterate_end;
+}
+
+/**************************************************************************
   Take over a player. If a connection already has control of that player, 
   disallow it. 
 
@@ -7598,6 +7607,8 @@ static bool pause_command(struct connection *caller, const char *arg,
               _("Game:            The game is PAUSED."));
   notify_conn(NULL, "%s",
               _("Game: *********************************************"));
+
+  process_observe_requests();
 
   return TRUE;
 }
