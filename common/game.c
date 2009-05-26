@@ -344,6 +344,7 @@ void game_init(void)
     game.server.nbarbarians = 0;
     game.server.occupychance = GAME_DEFAULT_OCCUPYCHANCE;
     game.server.revolution_length = GAME_DEFAULT_REVOLUTION_LENGTH;
+    game.server.revealmap = GAME_DEFAULT_REVEALMAP;
     sz_strlcpy(game.server.save_name, GAME_DEFAULT_SAVE_NAME);
     game.server.save_nturns = 10;
 #ifdef HAVE_LIBZ

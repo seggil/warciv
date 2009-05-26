@@ -201,6 +201,7 @@ struct civ_game {
     int triremestyle;
     int fracmovestyle;
     int endturn;
+    bool revealmap;
   } server;
 };
 
@@ -596,6 +597,8 @@ extern bool is_server;
 #define GAME_DEFAULT_REVOLUTION_LENGTH 2
 #define GAME_MIN_REVOLUTION_LENGTH 0
 #define GAME_MAX_REVOLUTION_LENGTH 10
+
+#define GAME_DEFAULT_REVEALMAP 0
 
 #define GAME_START_YEAR -4000
 

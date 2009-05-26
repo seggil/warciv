@@ -1444,6 +1444,13 @@ struct settings_s settings[] = {
              "at that time. If this setting is zero, it will be ignored."),
           NULL, GAME_MIN_ENDTURN, GAME_MAX_ENDTURN, GAME_DEFAULT_ENDTURN)
 
+  GEN_BOOL("revealmap", game.server.revealmap, SSET_GAME_INIT,
+           SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
+           N_("Reveal the map at game start"),
+           N_("If this setting is enabled, the entire map will be "
+              "visible to all players from the start of the game."),
+          NULL, GAME_DEFAULT_REVEALMAP)
+
   GEN_END
 };
 

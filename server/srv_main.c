@@ -2068,6 +2068,12 @@ MAIN_START_PLAYERS:
     init_new_game();
   }
 
+  if (game.server.revealmap) {
+    players_iterate(pplayer) {
+      map_know_all(pplayer);
+    } players_iterate_end;
+  }
+
   /* NB: This is the one and only place this should be set. */
   game.server.fcdb.type = game_determine_type();
 
