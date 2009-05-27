@@ -1448,7 +1448,9 @@ struct settings_s settings[] = {
            SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
            N_("Reveal the map at game start"),
            N_("If this setting is enabled, the entire map will be "
-              "visible to all players from the start of the game."),
+              "known to all players from the start of the game, though "
+              "it will still be fogged (depending on the fogofwar "
+              "setting)."),
           NULL, GAME_DEFAULT_REVEALMAP)
 
   GEN_END
