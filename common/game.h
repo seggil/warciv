@@ -465,7 +465,7 @@ extern bool is_server;
 #define GAME_MIN_CITYMINDIST         0 /* if 0, ruleset will overwrite this */
 #define GAME_MAX_CITYMINDIST         5
 
-#define GAME_DEFAULT_CIVILWARSIZE    10
+#define GAME_DEFAULT_CIVILWARSIZE    15
 #define GAME_MIN_CIVILWARSIZE        6
 #define GAME_MAX_CIVILWARSIZE        1000
 
