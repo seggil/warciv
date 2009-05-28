@@ -393,6 +393,9 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
                        map.server.generator);
     astr_append_printf(&content, "&vn[]=size&vv[]=%d",
                        map.server.size);
+
+    astr_append_printf(&content, "&vn[]=ruleset&vv[]=%s",
+                       my_url_encode(game.server.rulesetdir));
   }
 
   astr_init(&headers);
