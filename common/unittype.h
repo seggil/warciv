@@ -117,6 +117,7 @@ enum unit_flag_id {
   F_BOMBARDER,        /* Has the ability to bombard */
   F_CITYBUSTER,       /* Gets double firepower against cities */
   F_NOBUILD,          /* Unit cannot be built (barb leader etc) */
+  F_ONEATTACK_MOVE,   /* One attack, but can move afterwards. */
   F_LAST
 };
 #define F_MAX 64

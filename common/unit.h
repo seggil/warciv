@@ -153,6 +153,7 @@ struct unit {
   bool debug;
   bool moved;
   bool paradropped;
+  bool attacked; /* For F_ONEATTACK_MOVE. */
 
   /* This value is set if the unit is done moving for this turn. This
    * information is used by the client.  The invariant is:

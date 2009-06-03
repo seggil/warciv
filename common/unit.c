@@ -1784,6 +1784,7 @@ struct unit *create_unit_virtual(struct player *pplayer, struct city *pcity,
   punit->moved = FALSE;
   punit->paradropped = FALSE;
   punit->done_moving = FALSE;
+  punit->attacked = FALSE;
   if (is_barbarian(pplayer)) {
     punit->fuel = BARBARIAN_LIFE;
   }

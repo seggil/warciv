@@ -817,6 +817,9 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
   if (unit_flag(punit, F_ONEATTACK)) {
     punit->moves_left = 0;
   }
+  if (unit_flag(punit, F_ONEATTACK_MOVE)) {
+    punit->attacked = TRUE;
+  }
   pwinner = (punit->hp > 0) ? punit : pdefender;
   plooser = (pdefender->hp > 0) ? punit : pdefender;
 
@@ -1114,6 +1117,13 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
     victim = get_defender(punit, pdesttile);
 
     if (victim) {
+      if (unit_flag(punit, F_ONEATTACK_MOVE) && punit->attacked) {
+        notify_player_ex(pplayer, punit->tile, E_NOEVENT,
+                         _("Game: Your %s unit has already attacked "
+                           "this turn."), unit_name(punit->type));
+        return FALSE;
+      }
+
       /* Must be physically able to attack EVERY unit there */
       if (!can_unit_attack_all_at_tile(punit, pdesttile)) {
         notify_player_ex(pplayer, punit->tile, E_NOEVENT,

@@ -828,6 +828,9 @@ void helptext_unit(char *buf, int i, const char *user_text)
   } else if(unit_type_flag(i, F_ONEATTACK)) {
     sprintf(buf + strlen(buf),
 	    _("* Making an attack ends this unit's turn.\n"));
+  } else if(unit_type_flag(i, F_ONEATTACK_MOVE)) {
+    sprintf(buf + strlen(buf),
+	    _("* This unit can only attack once per turn.\n"));
   }
   if (unit_type_flag(i, F_NUCLEAR)) {
     sprintf(buf + strlen(buf),

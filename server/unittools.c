@@ -488,6 +488,7 @@ static void unit_restore_movepoints(struct player *pplayer, struct unit *punit)
 {
   punit->moves_left = unit_move_rate(punit);
   punit->done_moving = FALSE;
+  punit->attacked = FALSE;
 }
 
 /**************************************************************************
