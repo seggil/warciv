@@ -2037,6 +2037,7 @@ static char **create_team_names(int n)
 
   sfilename = datafilename(DEFAULT_TEAM_NAMES_FILE);
   if (sfilename && section_file_load_nodup(&sfile, sfilename)) {
+    RANDOM_STATE old_rand_state;
     suggestions = secfile_lookup_str_vec(&sfile, &dim,
 					 "%d_teams.suggestions", n);
 
@@ -2046,7 +2047,10 @@ static char **create_team_names(int n)
       goto default_team_names;
     }
 
+    old_rand_state = get_myrand_state();
+    mysrand(time(NULL));
     rand = myrand(dim / n) * n;
+    set_myrand_state(old_rand_state);
     for (i = 0; i < n; i++) {
       team_names[i] = mystrdup(_(suggestions[rand + i]));
     }
