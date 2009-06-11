@@ -42,15 +42,33 @@
 
 #include "ruleset.h"
 
+
+/* Our ruleset capability strings. */
+#define RULESET_CAPSTR_TECHS        "+1.9"
+#define RULESET_CAPSTR_CITIES       "+1.9"
+#define RULESET_CAPSTR_GOVERNMENTS  "+1.9"
+#define RULESET_CAPSTR_UNITS        "+1.9 OneAttackMove"
+#define RULESET_CAPSTR_TERRAIN      "+1.9"
+#define RULESET_CAPSTR_BUILDINGS    "+1.10.1"
+#define RULESET_CAPSTR_NATIONS      "+1.9"
+#define RULESET_CAPSTR_GAME         "+1.11.1"
+
+
 static const char name_too_long[] = "Name \"%s\" too long; truncating.";
 #define check_name(name) (check_strlen(name, MAX_LEN_NAME, name_too_long))
 #define name_strlcpy(dst, src) ((void) sz_loud_strlcpy(dst, src, name_too_long))
 
+static bool real_openload_ruleset_file(const char *rulesetdir,
+                                       struct section_file *file,
+                                       const char *whichset);
 static void openload_ruleset_file(struct section_file *file,
-				  const char *whichset);
-static char *check_ruleset_capabilities(struct section_file *file,
-					const char *us_capstr,
-					const char *filename);
+                                  const char *whichset);
+static const char *real_check_ruleset_capabilities(struct section_file *file,
+                                                   const char *us_capstr,
+                                                   const char *filename);
+static const char *check_ruleset_capabilities(struct section_file *file,
+                                              const char *us_capstr,
+                                              const char *filename);
 
 static int lookup_tech(struct section_file *file, const char *prefix,
 		       const char *entry, bool required, const char *filename,
@@ -137,18 +155,20 @@ static char *valid_ruleset_filename(const char *subdir, const char *whichset)
 /**************************************************************************
   Do initial section_file_load on a ruleset file.
   "whichset" = "techs", "units", "buildings", "terrain", ...
-  Calls exit(EXIT_FAILURE) on failure.
+  Return FALSE on failure.
 **************************************************************************/
-static void openload_ruleset_file(struct section_file *file, const char *whichset)
+static bool real_openload_ruleset_file(const char *rulesetdir,
+                                       struct section_file *file,
+                                       const char *whichset)
 {
   char sfilename[512];
-  char *dfilename = valid_ruleset_filename(game.server.rulesetdir, whichset);
+  char *dfilename = valid_ruleset_filename(rulesetdir, whichset);
 
   if (!dfilename) {
-    freelog(LOG_FATAL,
+    freelog(LOG_ERROR,
 	    /* TRANS: message for an obscure ruleset error. */
 	    _("Could not find a readable \"%s\" ruleset file."), whichset);
-    exit(EXIT_FAILURE);
+    return FALSE;
   }
 
   /* Need to save a copy of the filename for following message, since
@@ -157,42 +177,78 @@ static void openload_ruleset_file(struct section_file *file, const char *whichse
   sz_strlcpy(sfilename, dfilename);
 
   if (!section_file_load_nodup(file, sfilename)) {
-    freelog(LOG_FATAL,
+    freelog(LOG_ERROR,
 	    /* TRANS: message for an obscure ruleset error. */
 	    _("Could not load ruleset file \"%s\"."), sfilename);
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**************************************************************************
+  Do initial section_file_load on a ruleset file.
+  "whichset" = "techs", "units", "buildings", "terrain", ...
+  Calls exit(EXIT_FAILURE) on failure.
+**************************************************************************/
+static void openload_ruleset_file(struct section_file *file,
+                                  const char *whichset)
+{
+  if (!real_openload_ruleset_file(game.server.rulesetdir,
+                                  file, whichset)) {
+    freelog(LOG_FATAL, _("Failed to open ruleset file."));
     exit(EXIT_FAILURE);
   }
 }
 
 /**************************************************************************
-  Ruleset files should have a capabilities string datafile.options
+  Ruleset files should have a capabilities string datafile.options.
   This gets and returns that string, and checks that the required
-  capabilities specified are satisified.
+  capabilities specified are satisified. Returns NULL on failure.
 **************************************************************************/
-static char *check_ruleset_capabilities(struct section_file *file,
-					const char *us_capstr, const char *filename)
+static const char *real_check_ruleset_capabilities(struct section_file *f,
+                                                   const char *us_capstr,
+                                                   const char *filename)
 {
-  char *datafile_options;
+  const char *datafile_options;
   
-  datafile_options = secfile_lookup_str(file, "datafile.options");
+  datafile_options = secfile_lookup_str(f, "datafile.options");
   if (!has_capabilities(us_capstr, datafile_options)) {
-    freelog(LOG_FATAL, _("Ruleset datafile appears incompatible:"));
-    freelog(LOG_FATAL, _("file: \"%s\""), filename);
-    freelog(LOG_FATAL, _("file options: %s"), datafile_options);
-    freelog(LOG_FATAL, _("supported options: %s"), us_capstr);
-    exit(EXIT_FAILURE);
+    freelog(LOG_ERROR, _("Ruleset datafile appears incompatible:"));
+    freelog(LOG_ERROR, _("file: \"%s\""), filename);
+    freelog(LOG_ERROR, _("file options: %s"), datafile_options);
+    freelog(LOG_ERROR, _("supported options: %s"), us_capstr);
+    return NULL;
   }
   if (!has_capabilities(datafile_options, us_capstr)) {
-    freelog(LOG_FATAL, _("Ruleset datafile claims required option(s)"
+    freelog(LOG_ERROR, _("Ruleset datafile claims required option(s)"
 			 " which we don't support:"));
-    freelog(LOG_FATAL, _("file: \"%s\""), filename);
-    freelog(LOG_FATAL, _("file options: %s"), datafile_options);
-    freelog(LOG_FATAL, _("supported options: %s"), us_capstr);
-    exit(EXIT_FAILURE);
+    freelog(LOG_ERROR, _("file: \"%s\""), filename);
+    freelog(LOG_ERROR, _("file options: %s"), datafile_options);
+    freelog(LOG_ERROR, _("supported options: %s"), us_capstr);
+    return NULL;
   }
   return datafile_options;
 }
 
+/**************************************************************************
+  Ruleset files should have a capabilities string datafile.options.
+  This gets and returns that string, and checks that the required
+  capabilities specified are satisified. Dies on failure.
+**************************************************************************/
+static const char *check_ruleset_capabilities(struct section_file *file,
+                                              const char *us_capstr,
+                                              const char *filename)
+{
+  const char *ret;
+
+  ret = real_check_ruleset_capabilities(file, us_capstr, filename);
+  if (!ret) {
+    freelog(LOG_FATAL, _("Ruleset is not compatible."));
+    exit(EXIT_FAILURE);
+  }
+  return ret;
+}
 
 /**************************************************************************
  Lookup a string prefix.entry in the file and return the corresponding
@@ -556,7 +612,7 @@ static void load_ruleset_techs(struct section_file *file)
   int i;
   const char *filename = secfile_filename(file);
   
-  (void) check_ruleset_capabilities(file, "+1.9", filename);
+  check_ruleset_capabilities(file, RULESET_CAPSTR_TECHS, filename);
   sec = secfile_get_secnames_prefix(file, "advance_", &num_techs);
 
   /* Initialize dummy tech A_NONE */
@@ -738,7 +794,7 @@ static void load_ruleset_units(struct section_file *file)
   char **vnlist, **def_vnlist;
   int *vblist, *def_vblist;
 
-  (void) check_ruleset_capabilities(file, "+1.9", filename);
+  check_ruleset_capabilities(file, RULESET_CAPSTR_UNITS, filename);
 
   /*
    * Load up expanded veteran system values.
@@ -1165,7 +1221,7 @@ static void load_ruleset_buildings(struct section_file *file)
   struct impr_type *b;
   const char *filename = secfile_filename(file);
 
-  (void) check_ruleset_capabilities(file, "+1.10.1", filename);
+  check_ruleset_capabilities(file, RULESET_CAPSTR_BUILDINGS, filename);
 
   /* Parse effect source equivalency groups. */
   sec = secfile_get_secnames_prefix(file, "group_", &nval);
@@ -1536,14 +1592,14 @@ static void load_terrain_names(struct section_file *file)
 **************************************************************************/
 static void load_ruleset_terrain(struct section_file *file)
 {
-  char *datafile_options;
+  const char *datafile_options;
   int nval;
   char **sec;
   int j;
   const char *filename = secfile_filename(file);
 
-  datafile_options =
-    check_ruleset_capabilities(file, "+1.9", filename);
+  datafile_options
+    = check_ruleset_capabilities(file, RULESET_CAPSTR_TERRAIN, filename);
 
   /* options */
   terrain_control.may_road =
@@ -1778,7 +1834,7 @@ static void load_ruleset_governments(struct section_file *file)
   char **sec, **slist;
   const char *filename = secfile_filename(file);
 
-  (void) check_ruleset_capabilities(file, "+1.9", filename);
+  check_ruleset_capabilities(file, RULESET_CAPSTR_GOVERNMENTS, filename);
 
   sec = secfile_get_secnames_prefix(file, "government_", &nval);
 
@@ -2222,7 +2278,7 @@ static void load_ruleset_nations(struct section_file *file)
   char **techs, **leaders, **sec, **civilwar_nations;
   const char *filename = secfile_filename(file);
 
-  (void) check_ruleset_capabilities(file, "+1.9", filename);
+  check_ruleset_capabilities(file, RULESET_CAPSTR_NATIONS, filename);
 
   sec = secfile_get_secnames_prefix(file, "nation", &nval);
 
@@ -2525,7 +2581,7 @@ static void load_ruleset_cities(struct section_file *file)
   const char *filename = secfile_filename(file);
   char **specialist_names;
 
-  (void) check_ruleset_capabilities(file, "+1.9", filename);
+  check_ruleset_capabilities(file, RULESET_CAPSTR_CITIES, filename);
 
   /* Specialist options */
   specialist_names = secfile_lookup_str_vec(file, &nval, "specialist.types");
@@ -2621,8 +2677,8 @@ static void load_ruleset_game()
 
   openload_ruleset_file(&file, "game");
   filename = secfile_filename(&file);
-  (void) check_ruleset_capabilities(&file, "+1.11.1", filename);
-  (void) section_file_lookup(&file, "datafile.description");	/* unused */
+  check_ruleset_capabilities(&file, RULESET_CAPSTR_GAME, filename);
+  section_file_lookup(&file, "datafile.description");	/* unused */
 
   game.ruleset_game.min_city_center_food =
     secfile_lookup_int(&file, "civstyle.min_city_center_food");
@@ -3214,33 +3270,65 @@ void send_rulesets(struct conn_list *dest)
 }
 
 /**************************************************************************
-  Check if the path contains all required ruleset files.
+  Check if the path contains all required ruleset files. If 'check_capstr'
+  is TRUE, the ruleset files are also opened and their capabilities tested.
+
+  NB: With 'check_capstr' set to TRUE this function is very slow.
 **************************************************************************/
-bool is_valid_ruleset(const char *path, char *verror, size_t verror_size)
+bool is_valid_ruleset(const char *path, char *verror, size_t verror_size,
+                      bool check_capstr)
 {
-  static const char *required_files[] = {
-    "techs",
-    "buildings",
-    "governments",
-    "units",
-    "terrain",
-    "cities",
-    "nations",
-    NULL
+  struct part {
+    const char *name, *capstr;
   };
-  char filename[256];
-  int i;
+  static const struct part parts[] = {
+    { "techs", RULESET_CAPSTR_TECHS },
+    { "buildings", RULESET_CAPSTR_BUILDINGS },
+    { "governments", RULESET_CAPSTR_GOVERNMENTS },
+    { "units", RULESET_CAPSTR_UNITS },
+    { "terrain", RULESET_CAPSTR_TERRAIN },
+    { "cities", RULESET_CAPSTR_CITIES },
+    { "nations", RULESET_CAPSTR_NATIONS },
+    { "game", RULESET_CAPSTR_GAME },
+    { NULL, NULL }
+  };
+  const char *sfilename;
+  char filename[256];;
+  const struct part *ppart;
+  struct section_file sf;
 
-  for (i = 0; required_files[i]; i++) {
-    my_snprintf(filename, sizeof(filename), "%s/%s.ruleset",
-                path, required_files[i]);
-
-    if (!datafilename(filename)) {
+  for (ppart = parts; ppart->name; ppart++) {
+    if (!check_capstr) {
+      my_snprintf(filename, sizeof(filename), "%s/%s.ruleset",
+                  path, ppart->name);
+      if (!datafilename(filename)) {
+        if (verror) {
+          my_snprintf(verror, verror_size, _("%s file not found"),
+                      ppart->name);
+        }
+        return FALSE;
+      }
+      continue;
+    }
+    if (!real_openload_ruleset_file(path, &sf, ppart->name)) {
       if (verror) {
-        my_snprintf(verror, verror_size, _("%s file not found"), filename);
+        my_snprintf(verror, verror_size,
+                    _("Failed to open %s ruleset file."),
+                    ppart->name);
       }
       return FALSE;
     }
+    sfilename = secfile_filename(&sf);
+    if (!real_check_ruleset_capabilities(&sf, ppart->capstr, sfilename)) {
+      if (verror) {
+        my_snprintf(verror, verror_size,
+                    _("Ruleset file %s for %s is not compatible."),
+                    filename, ppart->name);
+      }
+      section_file_free(&sf);
+      return FALSE;
+    }
+    section_file_free(&sf);
   }
 
   return TRUE;
@@ -3257,7 +3345,8 @@ char **get_rulesets_list(void)
 
   for (i = j = 0; datafiles[i] && j < MAX_NUM_RULESETS; i++) {
     /* ignore hiden files and recursive research */
-    if (datafiles[i][0] != '.' && is_valid_ruleset(datafiles[i], NULL, 0)) {
+    if (datafiles[i][0] != '.'
+        && is_valid_ruleset(datafiles[i], NULL, 0, FALSE)) {
       rulesest[j++] = datafiles[i];
     } else {
       free(datafiles[i]);

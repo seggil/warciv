@@ -6336,7 +6336,7 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
       return FALSE;
     }
   }
-  if (!is_valid_ruleset(filename, verror, sizeof(verror))) {
+  if (!is_valid_ruleset(filename, verror, sizeof(verror), TRUE)) {
     cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
               _("\"%s\" is not a valid directory: %s"), filename, verror);
     return FALSE;
