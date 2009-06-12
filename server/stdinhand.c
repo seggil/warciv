@@ -8165,74 +8165,6 @@ static void show_ignore(struct connection *caller)
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
 }
 
-#ifdef HAVE_MYSQL
-/**************************************************************************
-  ...
-**************************************************************************/
-static void show_team_ratings(struct connection *caller, bool send_to_all)
-{
-  enum game_types type = GT_NUM_TYPES;
-  char fmt[128];
-  int cml_name;
-
-  if (team_count() <= 0 || !srvarg.fcdb.enabled) {
-    return;
-  }
-
-  /* This will usually be GT_TEAM, but
-   * it could be GT_MIXED too, or some
-   * future game type. */
-  type = game_determine_type();
-
-  /* Only reload ratings from the database if we are in
-   * pregame (when teams could change easily). */
-  if (server_state == PRE_GAME_STATE
-      && (type == GT_NUM_TYPES
-          || !fcdb_load_player_ratings(type, FALSE))) {
-    /* Simply don't print anything more. */
-    return;
-  }
-
-  score_assign_groupings();
-  score_calculate_grouping_ratings();
-
-  cml_name = 10;
-  team_iterate(pteam) {
-    cml_name = MAX(cml_name, strlen(get_team_name(pteam->id)) + 2);
-  } team_iterate_end;
-
-  my_snprintf(fmt, sizeof(fmt), "%s%%-%ds %%-10s %%-10s",
-              send_to_all ? "Server: " : "", cml_name);
-
-  if (send_to_all) {
-    notify_conn(NULL, fmt, _("Team Name"), _("Rating"), _("RD"));
-  } else {
-    cmd_reply(CMD_LIST, caller, C_COMMENT, fmt,
-              _("Team Name"), _("Rating"), _("RD"));
-  }
-
-  my_snprintf(fmt, sizeof(fmt), "%s%%-%ds %%-10.2f %%-10.2f",
-              send_to_all ? "Server: " : "", cml_name);
-
-  team_iterate(pteam) {
-    if (send_to_all) {
-      notify_conn(NULL, fmt, get_team_name(pteam->id),
-                  pteam->server.fcdb.rating,
-		  pteam->server.fcdb.rating_deviation);
-    } else {
-      cmd_reply(CMD_LIST, caller, C_COMMENT, fmt,
-                get_team_name(pteam->id), pteam->server.fcdb.rating,
-                pteam->server.fcdb.rating_deviation);
-    }
-  } team_iterate_end;
-
-  if (!send_to_all) {
-    cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
-  }
-    
-}
-#endif /* HAVE_MYSQL */
-
 /**************************************************************************
   ...
 **************************************************************************/
@@ -8285,10 +8217,6 @@ static void show_teams(struct connection *caller, bool send_to_all)
   if (!send_to_all) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   }
-
-#ifdef HAVE_MYSQL
-  show_team_ratings(caller, send_to_all);
-#endif /* HAVE_MYSQL */
 }
 
 /**************************************************************************
