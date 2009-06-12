@@ -38,6 +38,7 @@
 #include "diplhand.h"
 #include "gamehand.h"
 #include "gamelog.h"
+#include "handchat.h"
 #include "maphand.h"
 #include "meta.h"
 #include "plrhand.h"
@@ -398,7 +399,7 @@ void establish_new_connection(struct connection *pconn)
   freelog(LOG_NORMAL, _("%s has connected from %s."),
           pconn->username, pconn->addr);
   conn_list_iterate(game.est_connections, aconn) {
-    if (aconn != pconn) {
+    if (aconn != pconn && !conn_is_ignored(pconn, aconn)) {
       notify_conn(aconn->self, _("Server: %s has connected from %s."),
                   pconn->username, pconn->addr);
     }
@@ -726,7 +727,11 @@ void lost_connection_to_client(struct connection *pconn)
    * Safe to unlink even if not in list: */
   conn_list_unlink(game.est_connections, pconn);
   pconn->server.is_closing = TRUE;
-  notify_conn(game.est_connections, _("Game: Lost connection: %s."), desc);
+  conn_list_iterate(game.est_connections, aconn) {
+    if (!conn_is_ignored(pconn, aconn)) {
+      notify_conn(aconn->self, _("Server: Lost connection: %s."), desc);
+    }
+  } conn_list_iterate_end;
 
   if (!pplayer) {
     return;
