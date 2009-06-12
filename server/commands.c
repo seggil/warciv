@@ -437,25 +437,11 @@ const struct command commands[] = {
    ECHO_NONE, VCF_NONE, 0
   },
   {"autoteam", ALLOW_NEVER, ALLOW_CTRL, /* require vote in pregame */
-   /* TRANS: translate text between <> only (NOT in []) */
-#ifdef HAVE_MYSQL
-   N_("autoteam <# of teams> [rating|ranking|rated|rank]\n"
-      "autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"),
+   /* TRANS: translate text between <> and [] only */
+   N_("autoteam <# of teams>"),
    N_("Assign teams automatically."),
-   N_("Generate the given number of teams assuming that players' "
-      "relative strength is given by their rating (if the rating "
-      "database is enabled), or as ordered in the supplied list. "
-      "Players not listed will be assumed to have an equal, lowest"
-      "skill level. Names may be abbreviated so long as they are "
-      "not ambiguous."),
-#else
-   N_("autoteam <# of teams> list <best player; 2nd best; 3rd; etc.>"),
-   N_("Assign teams automatically."),
-   N_("Generate the given number of teams assuming that players' "
-      "relative strength is as ordered in the supplied list. Players "
-      "not listed will be assumed to have an equal, lowest skill level. "
-      "Names may be abbreviated so long as they are not ambiguous."),
-#endif /* HAVE_MYSQL */
+   N_("Create the given number of teams and randomly assign players "
+      "to them. If the number is zero, current teams are cleared."),
    ECHO_ALL, VCF_NONE, 50
   },
   {"mute", ALLOW_CTRL, ALLOW_CTRL,

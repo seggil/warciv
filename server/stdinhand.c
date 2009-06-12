@@ -2070,35 +2070,16 @@ default_team_names:
   return team_names;
 }
 
-#ifdef HAVE_MYSQL
-/**************************************************************************
-  ...
-**************************************************************************/
-static int autoteam_rated_player_cmp(const void *va, const void *vb)
-{
-  const struct player *a, *b;
-  a = *(const struct player **) va;
-  b = *(const struct player **) vb;
-
-  return b->fcdb.rating - a->fcdb.rating;
-}
-#endif
-
 /**************************************************************************
   ...
 **************************************************************************/
 static bool autoteam_command(struct connection *caller, char *str,
                              bool check)
 {
-  char *p, *q, buf[1024], **team_names = NULL;
-  int n, i, num, t, step;
-  int num_unordered = 0;
-  struct player *player_ordering[MAX_NUM_PLAYERS];
-  bool player_ordered[MAX_NUM_PLAYERS];
-  enum m_pre_result result;
-  int ntokens;
-  char *args[3];
-  bool default_by_rating = FALSE;
+  const int maxp = MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS;
+  struct player *players[maxp], *tmp;
+  int n, i, t, r, count = 0;
+  char **team_names = NULL;
 
   if (server_state != PRE_GAME_STATE || !game.server.is_new_game) {
     cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
@@ -2106,250 +2087,49 @@ static bool autoteam_command(struct connection *caller, char *str,
     return FALSE;
   }
 
-  ntokens = get_tokens_full(str, args, 3, TOKEN_DELIMITERS, TRUE);
-
-  if (ntokens < 1) {
+  if (sscanf(str, "%d", &n) != 1) {
     cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
               _("Missing number argument. See /help autoteam."));
-    free_tokens(args, ntokens);
     return FALSE;
   }
 
-  for (p = args[0]; *p; p++) {
-    if (!my_isdigit(*p)) {
-      cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-                _("The first argument must be an non-negative integer."));
-      free_tokens(args, ntokens);
-      return FALSE;
-    }
-  }
-
-  n = atoi(args[0]);
   if (n < 0 || n > game.info.nplayers) {
     cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-              _("Invalid number argument. See /help autoteam."));
-    free_tokens(args, ntokens);
+              _("The first argument must be an non-negative "
+                "integer less than the total number of players."));
     return FALSE;
   }
 
-  if (n == 0) {
-    if (!check) {
-      team_clear_teams();
-      notify_conn(NULL, _("Server: Teams cleared."));
-    }
-    free_tokens(args, ntokens);
+  if (check) {
     return TRUE;
   }
 
-  memset(player_ordered, 0, sizeof(player_ordered));
-  num = 0;
+  team_clear_teams();
 
-#ifdef HAVE_MYSQL
-  default_by_rating = TRUE;
-#endif
-
-  if ((ntokens == 1 && default_by_rating)
-      || (ntokens == 2 && (0 == strcmp(args[1], "rating")
-                           || 0 == strcmp(args[1], "ranking")
-                           || 0 == strcmp(args[1], "rated")
-                           || 0 == strcmp(args[1], "rank")))) {
-
-#ifdef HAVE_MYSQL
-    int num_unreliable = 0;
-
-    if (!srvarg.fcdb.enabled) {
-      cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
-                _("Cannot use ratings to assign teams because "
-                  "database support is not enabled."));
-      free_tokens(args, ntokens);
-      return FALSE;
-    }
-
-    if (check) {
-      free_tokens(args, ntokens);
-      return TRUE;
-    }
-
-    if (!fcdb_load_player_ratings(GT_TEAM, FALSE)) {
-      cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
-                _("There was an error loading ratings from the database."));
-      free_tokens(args, ntokens);
-      return FALSE;
-    }
-
-    players_iterate(pplayer) {
-      if (pplayer->fcdb.rating <= 0.0) {
-        continue;
-      }
-
-      if (pplayer->fcdb.rating_deviation > RATING_CONSTANT_RELIABLE_RD) {
-        /* If the player's RD is too high (i.e. they haven't played
-         * enough recent games for their real rating to be reliably
-         * determined), then don't use their rating for the ordering. */
-        num_unreliable++;
-        continue;
-      }
-
-      player_ordering[num++] = pplayer;
-      player_ordered[pplayer->player_no] = TRUE;
-    } players_iterate_end;
-
-    if (num > 1) {
-      qsort(player_ordering, num, sizeof(struct player *),
-            autoteam_rated_player_cmp);
-    }
-#ifdef DEBUG
-    freelog(LOG_DEBUG, "autoteam by rating, ordering after sort:");
-    for (i = 0; i < num; i++) {
-      freelog(LOG_DEBUG, "  %d: %p %s %f RD=%f", i, player_ordering[i],
-              player_ordering[i]->name, player_ordering[i]->fcdb.rating,
-              player_ordering[i]->fcdb.rating_deviation);
-    }
-#endif
-
-    notify_conn(NULL, _("Server: Ordering players by their TEAM rating."));
-    if (num_unreliable > 0) {
-      notify_conn(NULL, _("Server: %d %s not used for ordering "
-                          "because of unreliability (RD > %.0f)."),
-                  num_unreliable,
-                  PL_("rating", "ratings", num_unreliable),
-                  RATING_CONSTANT_RELIABLE_RD);
-    }
-#else
-    cmd_reply(CMD_AUTOTEAM, caller, C_GENFAIL,
-              _("Cannot use ratings to assign teams because "
-                "database support is not enabled."));
-    free_tokens(args, ntokens);
-    return FALSE;
-
-#endif /* HAVE_MYSQL */
-
-  } else if ((ntokens == 1 && !default_by_rating)
-             || (ntokens >= 2 && 0 == strcmp(args[1], "list"))) {
-
-    p = ntokens > 2 ? args[2] : NULL;
-    num = 0;
-    for (i = 0; p != NULL && i < MAX_NUM_PLAYERS; i++) {
-      struct player *pplayer;
-
-      while (*p && my_isspace(*p)) {
-        p++;
-      }
-      for (q = buf; *p && *p != ';';) {
-        *q++ = *p++;
-      }
-      if (*p == ';') {
-        p++;
-      }
-      *q++ = 0;
-      if (!*buf) {
-        break;
-      }
-
-      pplayer = find_player_by_name_prefix(buf, &result);
-      if (!pplayer) {
-        cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
-                  _("There is no player corresponding to \"%s\"."), buf);
-        free_tokens(args, ntokens);
-        return FALSE;
-      }
-
-      assert(0 <= pplayer->player_no);
-      assert(pplayer->player_no < MAX_NUM_PLAYERS);
-
-      if (player_ordered[pplayer->player_no]) {
-        cmd_reply(CMD_AUTOTEAM, caller, C_FAIL,
-                  _("%s is in the list more than once!"),
-                  pplayer->username);
-        free_tokens(args, ntokens);
-        return FALSE;
-      }
-
-      player_ordering[i] = pplayer;
-      player_ordered[pplayer->player_no] = TRUE;
-      num++;
-    }
-
-    if (check) {
-      free_tokens(args, ntokens);
-      return TRUE;
-    }
-
-    if (num > 0) {
-      notify_conn(NULL, _("Server: Ordering players using the provided "
-                          "list of %d %s."),
-                  num, PL_("player", "players", num));
-    } else {
-      notify_conn(NULL, _("Server: Ordering players arbitrarily."));
-    }
-  } else {
-    /* TRANS: do not translate "/help autoteam". */
-    cmd_reply(CMD_AUTOTEAM, caller, C_SYNTAX,
-              _("Invalid syntax. Please read /help autoteam."));
-    free_tokens(args, ntokens);
-    return FALSE;
+  if (n == 0) {
+    notify_conn(NULL, _("Server: Teams cleared."));
+    return TRUE;
   }
 
-  free_tokens(args, ntokens);
-
-  /* Assign the remaining unordered players. */
-  players_iterate(pplayer) {
-    if (is_barbarian(pplayer) || player_ordered[pplayer->player_no]) {
-      continue;
-    }
-    player_ordering[num++] = pplayer;
-    player_ordered[pplayer->player_no] = TRUE;
-    num_unordered++;
-  } players_iterate_end;
-
-  /* Shuffle the unordered players so that consecutive
-   * calls to autoteam will generate different teams. */
-  for (i = 0; i < num_unordered; i++) {
-    int pos, cur;
-    struct player *tmp;
-
-    cur = num - num_unordered + i;
-    pos = cur + myrand(num_unordered - i);
-    tmp = player_ordering[cur];
-    player_ordering[cur] = player_ordering[pos];
-    player_ordering[pos] = tmp;
-  }
-
-#ifdef DEBUG
-  freelog(LOG_DEBUG, "autoteam num=%d num_unordered=%d",
-          num, num_unordered);
-  freelog(LOG_DEBUG, "autoteam player ordering:");
-  for (i = 0; i < num; i++) {
-    freelog(LOG_DEBUG, "  %d: %p %s", i, player_ordering[i],
-            player_ordering[i]->name);
-  }
-#endif
-
-  notify_conn(NULL, _("Server: Assigning all players to %d teams."), n);
-
-  /* Clear existing teams. */
-  players_iterate(pplayer) {
-    team_remove_player(pplayer);
-  } players_iterate_end;
+  notify_conn(NULL, _("Server: Randomly assigning all "
+                      "players to %d teams."), n);
 
   team_names = create_team_names(n);
 
-  for (i = 0, t = 0, step = 1; i < num; i++) {
-    team_add_player(player_ordering[i], team_names[t]);
+  players_iterate(pplayer) {
+    players[count++] = pplayer;
+  } players_iterate_end;
 
-    /* Do the "ABBAABB...", "ABCCBAABCCBA...", etc. assignment. */
-    t = t + step;
-    if (step == 1) {
-      if (t == n) {
-        step = -1;
-        t = n - 1;
-      }
-    } else {                    /* step == -1 */
-      if (t < 0) {
-        step = 1;
-        t = 0;
-      }
+  for (i = 0, t = 0; i < count; i++) {
+    r = i + myrand(count - i);
+    if (r != i) {
+      tmp = players[r];
+      players[r] = players[i];
+      players[i] = tmp;
     }
+
+    team_add_player(players[i], team_names[t]);
+    t = (t + 1) % n;
   }
 
   free_team_names(team_names, n);
