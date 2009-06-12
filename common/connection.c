@@ -788,15 +788,25 @@ void conn_clear_packet_cache(struct connection *pc)
 /**************************************************************************
 ...
 **************************************************************************/
+static const char *connpat_accessor(int i)
+{
+  return conn_pattern_type_strs[i];
+}
+
+/**************************************************************************
+...
+**************************************************************************/
 bool parse_conn_pattern(const char *pattern, char *buf,
                         int buflen, int *ptype,
                         char *errbuf, int errbuflen)
 {
   char tmp[1024], *p;
-  int type, i;
+  enum m_pre_result res;
+  int type;
 
-  if (!pattern)
+  if (!pattern) {
     return FALSE;
+  }
 
   sz_strlcpy(tmp, pattern);
   remove_leading_trailing_spaces(tmp);
@@ -807,27 +817,26 @@ bool parse_conn_pattern(const char *pattern, char *buf,
   }
 
   type = CPT_HOSTNAME;
-  if (ptype && *ptype != NUM_CONN_PATTERN_TYPES)
+  if (ptype && *ptype != NUM_CONN_PATTERN_TYPES) {
     type = *ptype;
+  }
 
   if ((p = strchr(tmp, '='))) {
     *p++ = 0;
     type = NUM_CONN_PATTERN_TYPES;
-    for (i = 0; i < NUM_CONN_PATTERN_TYPES; i++) {
-      if (!mystrcasecmp(tmp, conn_pattern_type_strs[i])) {
-	type = i;
-	break;
-      }
-    }
-    if (type == NUM_CONN_PATTERN_TYPES) {
+
+    res = match_prefix(connpat_accessor, NUM_CONN_PATTERN_TYPES,
+                       0, mystrncasecmp, tmp, &type);
+    if (res >= M_PRE_AMBIGUOUS || type == NUM_CONN_PATTERN_TYPES) {
       my_snprintf(errbuf, errbuflen, _("Invalid pattern type \"%s\""), tmp);
       return FALSE;
     }
   } else {
     p = tmp;
   }
-  if (ptype)
+  if (ptype) {
     *ptype = type;
+  }
   mystrlcpy(buf, p, buflen);
 
   return TRUE;
