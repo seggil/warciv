@@ -6744,6 +6744,10 @@ static bool check_settings_for_rated_game(void)
     return TRUE;
   }
 
+  if (!game_type_supports_rating(type)) {
+    game.server.rated = FALSE;
+  }
+
   if (!game.server.rated || type == GT_MIXED) {
     /* For unrated games or 'mixed' type games, any settings are ok. */
     return TRUE;

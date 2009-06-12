@@ -58,6 +58,8 @@ enum game_types {
   GT_NUM_TYPES
 };
 
+bool game_type_supports_rating(enum game_types gtype);
+
 struct civ_game {
   /* Main game packets */
   struct packet_game_info info; /* Use send_game_info() */

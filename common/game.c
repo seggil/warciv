@@ -836,3 +836,11 @@ const char *game_outcome_name(enum game_outcomes outcome)
   assert(0 <= outcome && outcome < GOC_NUM_OUTCOMES);
   return _(game_outcome_strings[outcome]);
 }
+
+/**************************************************************************
+  Returns TRUE if it makes sense for the given game type to be rated.
+**************************************************************************/
+bool game_type_supports_rating(enum game_types gtype)
+{
+  return gtype == GT_DUEL || gtype == GT_FFA;
+}

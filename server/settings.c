@@ -137,6 +137,21 @@ static bool idlecut_callback(int value, const char **error_string)
   return TRUE;
 }
 
+/*************************************************************************
+  Verify that a given 'rated' value is valid.
+*************************************************************************/
+static bool rated_callback(bool value, const char **error)
+{
+  int gtype = game_determine_type();
+
+  if (value && !game_type_supports_rating(gtype)) {
+    *error = _("The current game type cannot be rated.");
+    return FALSE;
+  }
+  *error = NULL;
+  return TRUE;
+}
+
 
 #define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,        \
                  short_help, extra_help, func, default)                 \
@@ -1350,7 +1365,10 @@ struct settings_s settings[] = {
            N_("Update user ratings"),
            N_("0 - User ratings will not be affected by this game.\n"
               "1 - New ratings will be calculated based on the outcome "
-              "of this game."), NULL, GAME_DEFAULT_RATED, VCF_NONE, 50, -1, -1)
+              "of this game.\n"
+              "Note that the only game types that can be rated are "
+              "duels and FFAs."),
+           rated_callback, GAME_DEFAULT_RATED, VCF_NONE, 50, -1, -1)
 #endif
 
   GEN_BOOL("nopubliclinks", game.server.no_public_links, SSET_RULES_FLEXIBLE,
