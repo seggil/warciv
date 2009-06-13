@@ -137,6 +137,7 @@ static bool idlecut_callback(int value, const char **error_string)
   return TRUE;
 }
 
+#ifdef HAVE_MYSQL
 /*************************************************************************
   Verify that a given 'rated' value is valid.
 *************************************************************************/
@@ -151,6 +152,8 @@ static bool rated_callback(bool value, const char **error)
   *error = NULL;
   return TRUE;
 }
+#endif /* HAVE_MYSQL */
+
 
 
 #define GEN_BOOL(name, value, sclass, scateg, slevel, to_client,        \
