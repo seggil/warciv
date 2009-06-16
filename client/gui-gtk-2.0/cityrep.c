@@ -42,6 +42,7 @@
 #include "mapview.h"
 #include "mapctrl.h"    /* is_city_hilited() */
 #include "mapview_common.h"
+#include "menu.h"
 #include "optiondlg.h"
 #include "options.h"
 #include "repodlgs.h"
@@ -80,6 +81,7 @@ static void create_last_menu(GtkWidget *item);
 static void create_first_menu(GtkWidget *item);
 static void create_next_menu(GtkWidget *item);
 static void create_sell_menu(GtkWidget *item);
+static void create_airlift_menu(GtkWidget * item);
 
 static struct gui_dialog *city_dialog_shell = NULL;
 
@@ -107,6 +109,7 @@ static GtkWidget *city_remove_cur_prod_command;
 static GtkWidget *city_autoarrange_workers_command;
 static GtkWidget *city_last_command, *city_first_command, *city_next_command;
 static GtkWidget *city_cma_command = NULL, *city_sell_command;
+static GtkWidget *city_airlift_command;
 static GtkWidget *city_total_buy_cost_label;
 
 static GtkWidget *change_improvements_item;
@@ -828,6 +831,12 @@ static GtkWidget *create_city_report_menubar(void)
   item = gtk_menu_item_new_with_mnemonic(_("S_how"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
   update_view_menu(item);
+  
+  item = gtk_menu_item_new_with_mnemonic(_("_Airlift"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
+  city_airlift_command = item;
+  create_airlift_menu(item);
+   
   return menubar;
 }
 
@@ -2090,6 +2099,7 @@ static void city_selection_changed_callback(GtkTreeSelection *selection)
   gtk_widget_set_sensitive(city_clear_worklist_command, plr_may);
   gtk_widget_set_sensitive(city_remove_cur_prod_command, plr_may);
   gtk_widget_set_sensitive(city_autoarrange_workers_command, plr_may);
+  gtk_widget_set_sensitive(city_airlift_command, plr_may);
 
   update_total_buy_cost();
   if (plr_may) {
@@ -2148,5 +2158,63 @@ void toggle_city_hilite(struct city *pcity, bool on_off)
         itree_unselect(city_selection, &it);
       break;
     }
+  }
+}
+
+/*************************************************************************
+  Add one selected city from city list to specified airlifting queue.
+*************************************************************************/
+static void airlift_queue_add_city_iterate(GtkTreeModel *model,
+                                           GtkTreePath *path,
+                                           GtkTreeIter *it, gpointer data)
+{
+  struct city *pcity;
+  gint id;
+
+  gtk_tree_model_get(model, it, 1, &id, -1);
+  pcity = find_city_by_id(id);
+  add_city_to_specific_auto_airlift_queue(GPOINTER_TO_INT(data), pcity);
+}
+
+
+/*************************************************************************
+  Callback function for setting Airlift Queue.
+*************************************************************************/
+static void set_queue_callback(GtkMenuShell *menu, gpointer data)
+{
+  int aq = GPOINTER_TO_INT(data);
+
+  airlift_queue_clear(aq);
+  gtk_tree_selection_selected_foreach(city_selection,
+                                      airlift_queue_add_city_iterate,
+                                      data);
+  update_airlift_menu(aq);
+}
+
+/****************************************************************
+  Create Airlift Menu.
+****************************************************************/
+static void create_airlift_menu(GtkWidget *parent)
+{
+  int i;
+  GtkWidget *menu;
+  GtkWidget *item;
+
+  menu = gtk_menu_new();
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  for (i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
+    if (i == 0) {
+      item = gtk_menu_item_new_with_label(_("Airlift queue main"));
+    } else {
+      char str[64];
+
+      my_snprintf(str, sizeof(str), _("Airlift queue %d"),
+		  DELAYED_GOTO_NUM + i - 1);
+      item = gtk_menu_item_new_with_label(str);
+    }
+    g_signal_connect(item, "activate", G_CALLBACK(set_queue_callback),
+		     GINT_TO_POINTER(i));
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   }
 }

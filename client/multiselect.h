@@ -279,7 +279,7 @@ struct airlift_queue {
 
 extern int airlift_queue_need_city_for;
 
-void airlift_queue_cat(int dest,int src);
+void airlift_queue_cat(int dest, int src);
 void airlift_queue_clear(int aq);
 void airlift_queue_clear_all(void);
 void airlift_queue_copy(int dest, int src);
@@ -287,7 +287,7 @@ const struct airlift_queue *airlift_queue_get(int aq);
 const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype);
 Unit_Type_id airlift_queue_get_unit_type(int aq);
 void airlift_queue_init_all(void);
-void airlift_queue_move(int dest,int src);
+void airlift_queue_move(int dest, int src);
 void airlift_queue_set_menu_name(int aq, Unit_Type_id utype, 
                                  const char *namemenu);
 void airlift_queue_set_unit_type(int aq, Unit_Type_id utype);
@@ -295,6 +295,7 @@ void airlift_queue_show(int aq);
 int airlift_queue_size(int aq);
 
 void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi);
+void add_city_to_specific_auto_airlift_queue(int aq, struct city *pcity);
 void request_auto_airlift_source_selection_with_airport(void);
 void do_airlift_for(int aq, struct city *pcity);
 void do_airlift(struct tile *ptile);

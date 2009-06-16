@@ -1450,7 +1450,7 @@ void airlift_queue_clear(int aq)
   if (aq != 0) {
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Airlift queue %d cleared."),
-                airlift_queue_size(aq));
+                aq + DELAYED_GOTO_NUM - 1);
   } else {
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: Airlift queue cleared."));
@@ -1599,7 +1599,7 @@ void airlift_queue_show(int aq)
 
   sz_strlcpy(buf, _("Warclient: Cities in airlift queue:"));
   if (aq != 0) {
-    cat_snprintf(buf, sizeof(buf), " %d:", aq);
+    cat_snprintf(buf, sizeof(buf), " %d:", aq + DELAYED_GOTO_NUM - 1);
   } else {
     cat_snprintf(buf, sizeof(buf), ":");
   }
@@ -1746,4 +1746,36 @@ void do_airlift(struct tile *ptile)
   }
   airlift_queue_need_city_for = -1;
   connection_do_unbuffer(&aconnection);
+}
+
+/***********************************************************************
+  Add a city to the specified airlift queue. If multi is FALSE, it will
+  remove the tile if the tile is already in the queue.
+************************************************************************/
+void add_city_to_specific_auto_airlift_queue(int aq, struct city *pcity)
+{
+  char buf[256] = "\0";
+
+  aqassert(aq);
+
+  if (!pcity
+      || !pcity->tile
+      || tile_list_search(airlift_queues[aq].tlist, pcity->tile)) {
+    return;
+  }
+
+  tile_list_prepend(airlift_queues[aq].tlist, pcity->tile);
+  if (aq == 0) {
+    my_snprintf(buf, sizeof(buf),
+		_("Warclient: Adding city %s to auto airlift queue."),
+		get_tile_info(pcity->tile));
+  } else {
+    my_snprintf(buf, sizeof(buf),
+		_("Warclient: Adding city %s to auto airlift queue %d."),
+		get_tile_info(pcity->tile), aq + DELAYED_GOTO_NUM - 1);
+  }
+
+  link_marks_disable_drawing();
+  append_output_window(buf);
+  link_marks_enable_drawing();
 }
