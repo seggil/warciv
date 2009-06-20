@@ -74,7 +74,7 @@
 
 /* A user must play for at least this many turns before
  * being eligible for a rating update. */
-#define RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT 30
+#define RATING_CONSTANT_PLAYER_MINIMUM_TURN_COUNT 20
 
 /* Scores differing by less than this are considered equal. */
 #define MINIMUM_SCORE_DIFFERENCE 1.0
