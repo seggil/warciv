@@ -106,4 +106,5 @@ description = _("Based on warruleset1.2 but:\n\
 * The only wonders are Manhattan and Apollo.\n\
 * Apollo does not reveal the map.\n\
 * Philosophy does not give a free advance.\n\
-* Bomber type units are cheaper and can move after attacking.")
+* Bomber type units are cheaper and can move after attacking.\n\
+* Submarines have 4 moves instead of 5.")
