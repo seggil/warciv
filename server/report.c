@@ -1094,11 +1094,6 @@ void make_history_report(void)
   set_myrand_state(old);
 
   historian_generic(report);
-  
-  report++;
-  if (report > HISTORIAN_LAST) {
-    report = HISTORIAN_FIRST;
-  }
 }
 
 /**************************************************************************
