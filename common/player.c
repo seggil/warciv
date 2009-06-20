@@ -179,6 +179,10 @@ void player_init(struct player *plr)
   plr->fcdb.new_rating = 0;
   plr->fcdb.new_rating_deviation = 0;
   player_free_turns_played(plr);
+
+  plr->score.units_built = 0;
+  plr->score.units_killed = 0;
+  plr->score.units_lost = 0;
 }
 
 /***************************************************************

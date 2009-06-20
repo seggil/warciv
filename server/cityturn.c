@@ -673,6 +673,7 @@ static void city_populate(struct city *pcity)
 			 pcity->name, unit_type(punit)->name);
  
         gamelog(GAMELOG_UNITLOSS, punit, NULL, "famine");
+        unit_owner(punit)->score.units_lost++;
         wipe_unit(punit);
 
 	pcity->food_stock = (city_granary_size(pcity->size)
@@ -1252,6 +1253,7 @@ static bool city_build_unit(struct player *pplayer, struct city *pcity)
 		     pcity->name, unit_types[pcity->currently_building].name);
 
     gamelog(GAMELOG_BUILD, pcity);
+    pplayer->score.units_built++;
 
     /* If there's something in the worklist, change the build
        target. If there's nothing there, worklist_change_build_target

@@ -336,6 +336,7 @@ void player_restore_units(struct player *pplayer)
           _("Game: Your %s has run out of hit points."), 
           unit_name(punit->type));
       gamelog(GAMELOG_UNITLOSS, punit, NULL, "out of hp");
+      pplayer->score.units_lost++;
       wipe_unit(punit);
       continue; /* Continue iterating... */
     }
@@ -348,6 +349,7 @@ void player_restore_units(struct player *pplayer)
                            _("Game: Your %s has been lost on the high "
                              "seas."), unit_name(punit->type));
           gamelog(GAMELOG_UNITLOSS, punit, NULL, "lost at sea");
+          pplayer->score.units_lost++;
           wipe_unit(punit);
           continue; /* Continue iterating... */
         }
@@ -363,6 +365,7 @@ void player_restore_units(struct player *pplayer)
                            _("Game: Your %s has been lost on the high "
                              "seas."), unit_name(punit->type));
           gamelog(GAMELOG_UNITLOSS, punit, NULL, "lost at sea");
+          pplayer->score.units_lost++;
           wipe_unit(punit);
           continue; /* Continue iterating... */
         } else if (loss_chance > 0) {
@@ -383,6 +386,7 @@ void player_restore_units(struct player *pplayer)
 		       _("Game: Your %s has been lost on unsafe terrain."),
 		       unit_name(punit->type));
       gamelog(GAMELOG_UNITLOSS, punit, NULL, "unsafe terrain");
+      pplayer->score.units_lost++;
       wipe_unit(punit);
       continue;			/* Continue iterating... */
     }
@@ -433,6 +437,7 @@ void player_restore_units(struct player *pplayer)
 		       _("Game: Your %s has run out of fuel."),
 		       unit_name(punit->type));
       gamelog(GAMELOG_UNITLOSS, punit, NULL, "fuel");
+      pplayer->score.units_lost++;
       wipe_unit(punit);
     } 
   } unit_list_iterate_safe_end;
@@ -1734,6 +1739,7 @@ void wipe_unit_spec_safe(struct unit *punit,
 			     unit_type(pcargo)->name,
 			     ptype->name);
 	    gamelog(GAMELOG_UNITLOSS, pcargo, NULL, "transport lost");
+	    pplayer->score.units_lost++;
 	    server_remove_unit(pcargo, FALSE);
 	  }
 	  if (++capacity >= 0) {
@@ -1811,6 +1817,8 @@ void kill_unit(struct unit *pkiller, struct unit *punit)
 		     unit_name(pkiller->type), loc_str);
 
     gamelog(GAMELOG_UNITLOSS, punit, destroyer);
+    pplayer->score.units_lost++;
+    destroyer->score.units_killed++;
     wipe_unit(punit);
   } else { /* unitcount > 1 */
     int i;
@@ -1844,15 +1852,17 @@ void kill_unit(struct unit *pkiller, struct unit *punit)
 
     /* remove the units */
     unit_list_iterate(punit->tile->units, punit2) {
-      if (pplayers_at_war(unit_owner(pkiller), unit_owner(punit2))) {
-	notify_player_ex(unit_owner(punit2), 
-			 punit2->tile, E_UNIT_LOST,
+      pplayer = unit_owner(punit2);
+      if (pplayers_at_war(unit_owner(pkiller), pplayer)) {
+	notify_player_ex(pplayer, punit2->tile, E_UNIT_LOST,
 			 _("Game: %s lost to an attack"
 			   " from %s's %s."),
 			 unit_type(punit2)->name, destroyer->name,
 			 unit_name(pkiller->type));
 
         gamelog(GAMELOG_UNITLOSS, punit2, destroyer);
+        destroyer->score.units_killed++;
+        pplayer->score.units_lost++;
 	wipe_unit_spec_safe(punit2, FALSE, FALSE);
       }
     }
@@ -2141,19 +2151,21 @@ static void sentry_transported_idle_units(struct unit *ptrans)
 static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
 {
   struct city *pcity = map_get_city(ptile);
+  struct player *owner;
 
   unit_list_iterate(ptile->units, punit) {
-    notify_player_ex(unit_owner(punit), ptile, E_UNIT_LOST,
+    owner = unit_owner(punit);
+    notify_player_ex(owner, ptile, E_UNIT_LOST,
 		     _("Game: Your %s was nuked by %s."),
 		     unit_name(punit->type),
-		     pplayer == unit_owner(punit) ? _("yourself") : pplayer->name);
-    if (unit_owner(punit) != pplayer) {
-      notify_player_ex(pplayer,
-		       ptile, E_UNIT_WIN,
-		       _("Game: %s's %s was nuked."),
-		       unit_owner(punit)->name,
-		       unit_name(punit->type));
+		     pplayer == owner ? _("yourself") : pplayer->name);
+    if (owner != pplayer) {
+      notify_player_ex(pplayer, ptile, E_UNIT_WIN,
+                       _("Game: %s's %s was nuked."),
+                       owner->name, unit_name(punit->type));
+      pplayer->score.units_killed++;
     }
+    owner->score.units_lost++;
     wipe_unit_spec_safe(punit, FALSE, FALSE);
   } unit_list_iterate_end;
 
@@ -2332,6 +2344,7 @@ bool do_paradrop(struct unit *punit, struct tile *ptile)
     notify_player_ex(pplayer, ptile, E_UNIT_LOST,
                      _("Game: Your %s unit drowned in the ocean."),
                      unit_type(punit)->name);
+    pplayer->score.units_lost++;
     server_remove_unit(punit, FALSE);
     return TRUE;
   }

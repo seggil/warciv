@@ -120,6 +120,10 @@ struct player_score {
   int bnp;
   int mfg;
   int spaceship;
+  int units_built;  /* Number of units this player produced. */
+  int units_killed; /* Number of enemy units killed. */
+  int units_lost;   /* Number of own units that died,
+                     * by combat or otherwise. */
 };
 
 struct player_ai {

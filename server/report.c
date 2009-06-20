@@ -1163,6 +1163,7 @@ void report_final_scores(struct conn_list *dest)
   int i, j = 0;
   struct player_score_entry size[game.info.nplayers];
   struct packet_endgame_report packet;
+  char buffer[4096], head_line[256];
 
   if (!dest) {
     dest = game.game_connections;
@@ -1197,6 +1198,23 @@ void report_final_scores(struct conn_list *dest)
   }  
 
   lsend_packet_endgame_report(dest, &packet);
+
+
+  /* Report unit statistics in a way that is
+   * compatible with old clients. */
+  my_snprintf(head_line, sizeof(head_line), "%-16s %8s %8s %8s",
+              Q_("?Player:Name"), Q_("?Units:Built"),
+              Q_("?Units:Killed"), Q_("?Units:Lost"));
+  buffer[0] = '\0';
+
+  players_iterate(pplayer) {
+    cat_snprintf(buffer, sizeof(buffer), "%-16s %8d %8d %8d\n",
+                 pplayer->name,
+                 pplayer->score.units_built,
+                 pplayer->score.units_killed,
+                 pplayer->score.units_lost);
+  } players_iterate_end;
+  page_conn(dest, _("Unit Statistics:"), head_line, buffer);
 }	
 
 /**************************************************************************
