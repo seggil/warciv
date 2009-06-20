@@ -1069,8 +1069,9 @@ log_civ_score_disable:
 **************************************************************************/
 void make_history_report(void)
 {
-  static enum historian_type report = HISTORIAN_FIRST;
-  static int time_to_report=20;
+  enum historian_type report;
+  static int time_to_report = 20;
+  RANDOM_STATE old;
 
   if (game.server.scorelog) {
     log_civ_score();
@@ -1086,7 +1087,11 @@ void make_history_report(void)
     return;
   }
 
-  time_to_report=myrand(20) + 20;
+  old = get_myrand_state();
+  mysrand(time(NULL));
+  time_to_report = myrand(6) + 5;
+  report = myrand(HISTORIAN_LAST + 1);
+  set_myrand_state(old);
 
   historian_generic(report);
   
