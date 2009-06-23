@@ -575,6 +575,7 @@ AC_CONFIG_FILES([Makefile
 	  server/generator/Makefile
 	  server/lua/Makefile
 	  server/lua/src/Makefile
+	  server/lua/mysql/Makefile
 	  manual/Makefile
 	  intl/Makefile
 	  po/Makefile.in

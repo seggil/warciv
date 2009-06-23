@@ -92,14 +92,20 @@ libcivserver_a_SOURCES = \
 		vote.c		\
 		vote.h
 
+if HAVE_MYSQL
+LUASQL_MYSQL_LIB=./lua/mysql/libluasql_mysql.a
+endif
+
 civserver_DEPENDENCIES = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ./libcivserver.a \
       ../utility/libcivutility.a ../common/aicore/libaicore.a \
-      ./generator/libgenerator.a ./lua/src/liblua.a
+      ./generator/libgenerator.a ./lua/src/liblua.a \
+      $(LUASQL_MYSQL_LIB)
 civserver_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ./libcivserver.a @INTLLIBS@ \
       ../utility/libcivutility.a ../common/libcivcommon.a ../ai/libcivai.a \
       ../utility/libcivutility.a ./libcivserver.a ../utility/libcivutility.a \
       ../common/aicore/libaicore.a ./generator/libgenerator.a \
-      ./lua/src/liblua.a $(MYSQL_LIBS) $(SERVER_LIBS) $(SERVERICON)
+      ./lua/src/liblua.a $(MYSQL_LIBS) $(SERVER_LIBS) $(SERVERICON) \
+      $(LUASQL_MYSQL_LIB)
 
