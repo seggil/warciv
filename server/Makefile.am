@@ -1,10 +1,12 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS=	generator
+SUBDIRS = generator lua
 
 bin_PROGRAMS = civserver
 noinst_LIBRARIES = libcivserver.a
-AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/../common -I$(srcdir)/../ai -I../intl -I$(top_srcdir)/common/aicore -I$(srcdir)/generator @MYSQL_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/../common \
+	      -I$(srcdir)/../ai -I../intl -I$(top_srcdir)/common/aicore \
+	      -I$(srcdir)/generator -I$(srcdir)/lua/src @MYSQL_CFLAGS@
 
 
 ## Above, note -I../intl instead of -I$(top_srdir/intl) is deliberate.
@@ -93,11 +95,11 @@ libcivserver_a_SOURCES = \
 civserver_DEPENDENCIES = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ./libcivserver.a \
       ../utility/libcivutility.a ../common/aicore/libaicore.a \
-      ./generator/libgenerator.a
+      ./generator/libgenerator.a ./lua/src/liblua.a
 civserver_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ./libcivserver.a @INTLLIBS@ \
       ../utility/libcivutility.a ../common/libcivcommon.a ../ai/libcivai.a \
       ../utility/libcivutility.a ./libcivserver.a ../utility/libcivutility.a \
       ../common/aicore/libaicore.a ./generator/libgenerator.a \
-      $(MYSQL_LIBS) $(SERVER_LIBS) $(SERVERICON)
+      ./lua/src/liblua.a $(MYSQL_LIBS) $(SERVER_LIBS) $(SERVERICON)
 

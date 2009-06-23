@@ -573,6 +573,8 @@ AC_CONFIG_FILES([Makefile
 	  client/gui-gtk-2.0/Makefile
 	  server/Makefile
 	  server/generator/Makefile
+	  server/lua/Makefile
+	  server/lua/src/Makefile
 	  manual/Makefile
 	  intl/Makefile
 	  po/Makefile.in
