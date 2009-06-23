@@ -17,6 +17,10 @@ OUTPUTDIR=$(cd "$2/common" ; pwd)
 REVSTATE="OFF"
 REV="dist"
 
+if test -e "$1/NO_GEN_SVNREV" ; then
+  exit
+fi
+
 (cd "$INPUTDIR"
  # Check that all commands required by this script are available
  # If not, we will not claim to know which svn revision this is
