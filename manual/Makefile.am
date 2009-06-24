@@ -8,13 +8,19 @@ AM_CPPFLAGS = -I$(top_srcdir)/server -I$(top_srcdir)/utility -I$(top_srcdir)/com
 civmanual_SOURCES = \
 		civmanual.c
 
+if HAVE_MYSQL
+LUASQL_MYSQL_LIB=../server/lua/mysql/libluasql_mysql.a
+endif
+
 # This is a bit of a hack.  The program links in with the server lib
 # but also uses some files from the client.
 civmanual_DEPENDENCIES = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ../server/libcivserver.a \
       ../utility/libcivutility.a ../common/aicore/libaicore.a \
       ../client/helpdata.o \
-      ../server/generator/libgenerator.a
+      ../server/generator/libgenerator.a \
+      ../server/lua/src/liblua.a \
+      $(LUASQL_MYSQL_LIB)
 civmanual_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../ai/libcivai.a ../utility/libcivutility.a ../server/libcivserver.a \
       @INTLLIBS@ ../client/helpdata.o \
@@ -23,4 +29,6 @@ civmanual_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../utility/libcivutility.a \
       ../common/aicore/libaicore.a \
       ../server/generator/libgenerator.a \
-      $(SERVER_LIBS) $(MYSQL_LIBS)
+      $(SERVER_LIBS) $(MYSQL_LIBS) \
+      ../server/lua/src/liblua.a \
+      $(LUASQL_MYSQL_LIB)
