@@ -3,11 +3,12 @@ dnl Process this file with autoconf to produce a configure script.
 
 dnl Initialize with some random file to ensure the source is here.
 AC_INIT
-AC_PREREQ(2.52)
+AC_PREREQ(2.55)
 AC_CONFIG_SRCDIR([common/game.c])
 AC_CONFIG_AUX_DIR(bootstrap) # This can't be quoted or automake will fail
 AM_CONFIG_HEADER(config.h)
-AC_CANONICAL_TARGET
+AC_CANONICAL_HOST
+AC_GNU_SOURCE
 
 PACKAGE=freeciv
 
@@ -37,6 +38,8 @@ AC_DEFINE_UNQUOTED(IS_BETA_VERSION, $IS_BETA_VERSION, [Is this a beta veersion])
 
 dnl Initialize automake stuff
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
+
+dnl 
 
 dnl checks for mysql, sets MYSQL_LIBS, MYSQL_CFLAGS
 FC_CHECK_MYSQL
@@ -305,6 +308,12 @@ AC_CHECK_LIB(z, gzgets, ,
 AC_CHECK_HEADER(zlib.h, , 
   AC_MSG_ERROR([zlib found but not zlib.h.  
 You may need to install a zlib \"development\" package.]))
+
+gl_FUNC_MKSTEMP
+if test x$gl_cv_func_working_mkstemp = xyes ; then
+  AC_DEFINE([HAVE_MKSTEMP], [1], [Have working mkstemp])
+fi
+AC_CHECK_FUNCS([isatty popen _longjmp])
 
 dnl Check and choose clients
 if test x$client != xno; then
