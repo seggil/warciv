@@ -2121,6 +2121,7 @@ void server_game_init(void)
   diplhand_init();
   stdinhand_init();
   voting_init();
+  database_init();
 }
 
 /**************************************************************************
@@ -2131,6 +2132,7 @@ void server_game_free(void)
   diplhand_free();
   stdinhand_free();
   voting_free();
+  database_free();
 
   server_free_player_maps();
 

@@ -3114,3 +3114,86 @@ bool fcdb_check_salted_passwords(void)
   srvarg.auth.salted = FALSE;
   return FALSE;
 }
+
+
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+#ifdef HAVE_MYSQL
+#include "lua/mysql/ls_mysql.h"
+#endif
+
+static lua_State *database_lua_state;
+
+/**************************************************************************
+  Returns TRUE if the script was successfully loaded.
+**************************************************************************/
+static bool load_script(lua_State *L, const char *filename)
+{
+  const char *dfn, *error;
+  int rv;
+
+  dfn = datafilename(filename);
+  if (!dfn) {
+    freelog(LOG_ERROR, "load_script: \"%s\" not in data path.", filename);
+    return FALSE;
+  }
+
+  rv = luaL_loadfile(L, dfn);
+  if (rv != 0) {
+    error = lua_tostring(L, -1);
+    if (rv == LUA_ERRSYNTAX) {
+      freelog(LOG_ERROR, "load_script: syntax error: %s", error);
+    } else if (rv == LUA_ERRFILE) {
+      freelog(LOG_ERROR, "load_script: load failed: %s", error);
+    } else if (rv == LUA_ERRMEM) {
+      freelog(LOG_ERROR, "load_script: out of memory: %s", error);
+    } else {
+      freelog(LOG_ERROR, "load_script: unknown error (%d): %s", rv, error);
+    }
+    lua_pop(L, 1);
+    return FALSE;
+  }
+
+  rv = lua_pcall(L, 0, 0, 0);
+  if (rv != 0) {
+    error = lua_tostring(L, -1);
+    if (rv == LUA_ERRRUN) {
+      freelog(LOG_ERROR, "load_script: runtime error: %s", error);
+    } else if (rv == LUA_ERRMEM) {
+      freelog(LOG_ERROR, "load_script: out of memory: %s", error);
+    } else {
+      freelog(LOG_ERROR, "load_script: unknown error (%d): %s", rv, error);
+    }
+    lua_pop(L, 1);
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void database_init(void)
+{
+  lua_State *L;
+
+  L = luaL_newstate();
+  luaL_openlibs(L);
+#ifdef HAVE_MYSQL
+  luaopen_luasql_mysql(L);
+#endif
+
+  load_script(L, "database.lua");
+
+  database_lua_state = L;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void database_free(void)
+{
+  lua_close(database_lua_state);
+}

@@ -15,10 +15,13 @@
 
 #include "shared.h"
 
-struct connection;
+void database_init(void);
+void database_free(void);
 
 bool is_guest_name(const char *name);
 void get_unique_guest_name(char *name);
+
+struct connection;
 
 bool authenticate_user(struct connection *pconn, char *username);
 void process_authentication_status(struct connection *pconn);
