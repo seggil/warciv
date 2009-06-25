@@ -32,7 +32,8 @@ SERVER_FILES = \
 	example-actions.txt	\
 	example-welcome.txt	\
 	auth.sql	\
-	fcdb.sql
+	fcdb.sql	\
+	database.lua
 else
 SERVER_FILES =
 endif
@@ -61,7 +62,8 @@ EXTRA_DIST = \
 	example-actions.txt	\
 	example-welcome.txt	\
 	auth.sql	\
-	fcdb.sql
+	fcdb.sql	\
+	database.lua
 
 if CLIENT
 CLIENTDATADIRS = misc flags isotrident trident isophex stdsounds
