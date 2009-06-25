@@ -3175,12 +3175,52 @@ static bool load_script(lua_State *L, const char *filename)
 /**************************************************************************
   ...
 **************************************************************************/
+static int wraplua_freelog(lua_State *L)
+{
+  int loglevel = luaL_checkinteger(L, 1);
+  const char *msg = luaL_checkstring(L, 2);
+  freelog(loglevel, "%s", msg);
+  return 0;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int luaopen_freeciv(lua_State *L)
+{
+  static const struct luaL_reg funcs[] = {
+    {"freelog", wraplua_freelog},
+    {NULL, NULL},
+  };
+
+  luaL_register(L, "freeciv", funcs);
+
+#define SET_ENUM(x)\
+  lua_pushliteral(L, #x);\
+  lua_pushinteger(L, x);\
+  lua_rawset(L, -3);
+
+  SET_ENUM(LOG_FATAL);
+  SET_ENUM(LOG_ERROR);
+  SET_ENUM(LOG_NORMAL);
+  SET_ENUM(LOG_VERBOSE);
+  SET_ENUM(LOG_DEBUG);
+
+#undef SET_ENUM
+
+  return 1;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 void database_init(void)
 {
   lua_State *L;
 
   L = luaL_newstate();
   luaL_openlibs(L);
+  luaopen_freeciv(L);
 #ifdef HAVE_MYSQL
   luaopen_luasql_mysql(L);
 #endif
