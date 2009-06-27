@@ -937,3 +937,13 @@ enum cmdlevel_id conn_get_access(const struct connection *pconn)
   }
   return pconn->server.access_level;
 }
+
+/**************************************************************************
+  Returns TRUE if the connection is valid, i.e. not NULL, not closed, not
+  closing, etc.
+**************************************************************************/
+bool conn_is_valid(const struct connection *pconn)
+{
+  return (pconn && pconn->used
+          && !(is_server && pconn->server.is_closing));
+}

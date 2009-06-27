@@ -384,6 +384,7 @@ bool conn_controls_player(const struct connection *pconn);
 bool conn_is_global_observer(const struct connection *pconn);
 struct player *conn_get_player(const struct connection *pconn);
 enum cmdlevel_id conn_get_access(const struct connection *pconn);
+bool conn_is_valid(const struct connection *pconn);
 
 
 #endif  /* FC__CONNECTION_H */
