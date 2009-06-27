@@ -360,6 +360,22 @@ static int conn_close (lua_State *L) {
 
 
 /*
+** Escapes a string for use within an SQL statement.
+** Returns a string with the escaped string.
+*/
+static int conn_escape (lua_State *L) {
+        conn_data *conn = getconnection (L);
+        size_t len;
+        const char *from = luaL_checklstring (L, 2, &len);
+        char to[len*2+1];
+        len = mysql_real_escape_string (conn->my_conn, to, from, len);
+        /* Never fails apparently. */
+        lua_pushlstring (L, to, len);
+        return 1;
+}
+
+
+/*
 ** Execute an SQL statement.
 ** Return a Cursor object if the statement is a query, otherwise
 ** return the number of tuples affected by the statement.
@@ -504,6 +520,7 @@ static void create_metatables (lua_State *L) {
 	};
     struct luaL_reg connection_methods[] = {
         {"close", conn_close},
+        {"escape", conn_escape},
         {"execute", conn_execute},
         {"commit", conn_commit},
         {"rollback", conn_rollback},
