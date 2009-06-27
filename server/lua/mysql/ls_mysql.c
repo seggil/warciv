@@ -5,6 +5,10 @@
 ** $Id: ls_mysql.c,v 1.24 2007/08/22 18:37:06 tomas Exp $
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
