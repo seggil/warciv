@@ -3123,7 +3123,19 @@ bool fcdb_check_salted_passwords(void)
 #include "lua/mysql/ls_mysql.h"
 #endif
 
+
+struct w_conn {
+  struct connection *pconn;
+};
+#define W_CONN_CLASS "freeciv wrapped connection"
+
+
+static bool check_script_function(lua_State *L, const char *scriptname,
+                                  const char *funcname);
+
+
 static lua_State *database_lua_state;
+
 
 /**************************************************************************
   Returns TRUE if the script was successfully loaded.
@@ -3175,7 +3187,7 @@ static bool load_script(lua_State *L, const char *filename)
 /**************************************************************************
   ...
 **************************************************************************/
-static int wraplua_freelog(lua_State *L)
+static int w_freelog(lua_State *L)
 {
   int loglevel = luaL_checkinteger(L, 1);
   const char *msg = luaL_checkstring(L, 2);
@@ -3186,14 +3198,95 @@ static int wraplua_freelog(lua_State *L)
 /**************************************************************************
   ...
 **************************************************************************/
+static struct w_conn *check_w_conn(lua_State *L)
+{
+  struct w_conn *wc;
+  wc = (struct w_conn *) luaL_checkudata(L, 1, W_CONN_CLASS);
+  luaL_argcheck(L, wc != NULL, 1, "freeciv connection expected");
+  luaL_argcheck(L, conn_is_valid(wc->pconn), 1, "invalid connection");
+  return wc;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int w_conn_get_username(lua_State *L)
+{
+  struct w_conn *wc = check_w_conn(L);
+  lua_pushstring(L, wc->pconn->username);
+  return 1;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int w_conn_set_password(lua_State *L)
+{
+  struct w_conn *wc = check_w_conn(L);
+  size_t len;
+  const char *pass = luaL_checklstring(L, 2, &len);
+  sz_strlcpy(wc->pconn->server.password, pass);
+  return 0;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int w_conn_set_salt(lua_State *L)
+{
+  struct w_conn *wc = check_w_conn(L);
+  int salt = luaL_checkinteger(L, 2);
+  wc->pconn->server.salt = salt;
+  return 0;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+static int get_db_params(lua_State *L)
+{
+  lua_newtable(L);
+
+#define SET_PARAM(x)\
+  lua_pushliteral(L, #x);\
+  lua_pushstring(L, fcdb.x);\
+  lua_rawset(L, -3)
+
+  SET_PARAM(host);
+  SET_PARAM(user);
+  SET_PARAM(password);
+  SET_PARAM(dbname);
+
+#undef SET_PARAM
+
+  return 1;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 static int luaopen_freeciv(lua_State *L)
 {
-  static const struct luaL_reg funcs[] = {
-    {"freelog", wraplua_freelog},
-    {NULL, NULL},
+  static const struct luaL_reg freeciv_funcs[] = {
+    {"freelog", w_freelog},
+    {"get_db_params", get_db_params},
+    {NULL, NULL}
   };
 
-  luaL_register(L, "freeciv", funcs);
+  static const struct luaL_reg w_conn_methods[] = {
+    {"get_username", w_conn_get_username},
+    {"set_password", w_conn_set_password},
+    {"set_salt", w_conn_set_salt},
+    {NULL, NULL}
+  };
+
+  luaL_newmetatable(L, W_CONN_CLASS);
+  lua_pushstring(L, "__index");
+  lua_pushvalue(L, -2);
+  lua_settable(L, -3);
+  luaL_register(L, NULL, w_conn_methods);
+
+  luaL_register(L, "freeciv", freeciv_funcs);
 
 #define SET_ENUM(x)\
   lua_pushliteral(L, #x);\
@@ -3206,6 +3299,10 @@ static int luaopen_freeciv(lua_State *L)
   SET_ENUM(LOG_VERBOSE);
   SET_ENUM(LOG_DEBUG);
 
+  SET_ENUM(AUTH_DB_ERROR);
+  SET_ENUM(AUTH_DB_SUCCESS);
+  SET_ENUM(AUTH_DB_NOT_FOUND);
+
 #undef SET_ENUM
 
   return 1;
@@ -3214,9 +3311,29 @@ static int luaopen_freeciv(lua_State *L)
 /**************************************************************************
   ...
 **************************************************************************/
+static bool check_script_function(lua_State *L, const char *scriptname,
+                                  const char *funcname)
+{
+  bool defined;
+  lua_getglobal(L, funcname);
+  defined = lua_isfunction(L, -1);
+  lua_pop(L, 1);
+
+  if (!defined) {
+    freelog(LOG_ERROR, "Database script \"%s\" does not define a \"%s\" "
+            "function.", scriptname, funcname);
+  }
+
+  return defined;
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
 void database_init(void)
 {
   lua_State *L;
+  static const char *SCRIPT_NAME = "database.lua";
 
   L = luaL_newstate();
   luaL_openlibs(L);
@@ -3225,7 +3342,9 @@ void database_init(void)
   luaopen_luasql_mysql(L);
 #endif
 
-  load_script(L, "database.lua");
+  load_script(L, SCRIPT_NAME);
+  check_script_function(L, SCRIPT_NAME, "load_user");
+  check_script_function(L, SCRIPT_NAME, "save_user");
 
   database_lua_state = L;
 }
@@ -3236,4 +3355,22 @@ void database_init(void)
 void database_free(void)
 {
   lua_close(database_lua_state);
+}
+
+/**************************************************************************
+  ...
+**************************************************************************/
+void database_reload(void)
+{
+  freelog(LOG_VERBOSE, _("Reinitializing database interface."));
+  conn_list_iterate(game.all_connections, pconn) {
+    if (!pconn->established) {
+      freelog(LOG_NORMAL, _("Closing non-established connection due "
+              "to database shutdown: %s"), conn_description(pconn));
+      server_break_connection(pconn, ES_AUTH_FAILED);
+    }
+  } conn_list_iterate_end;
+  database_free();
+  database_init();
+  freelog(LOG_NORMAL, _("Database interface reinitialized."));
 }

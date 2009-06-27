@@ -17,6 +17,7 @@
 
 void database_init(void);
 void database_free(void);
+void database_reload(void);
 
 bool is_guest_name(const char *name);
 void get_unique_guest_name(char *name);
