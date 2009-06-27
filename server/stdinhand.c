@@ -5446,11 +5446,12 @@ enum AUTHDB_ARGS
   AUTHDB_ARG_OFF,
   AUTHDB_ARG_GUESTS,
   AUTHDB_ARG_NEWUSERS,
+  AUTHDB_ARG_RELOAD,
   AUTHDB_NUM_ARGS,
 };
 static const char *const authdb_args[] = {
   "host", "user", "password", "database", "on", "off", "guests",
-  "newusers", NULL
+  "newusers", "reload", NULL
 };
 static const char *authdbarg_accessor(int i)
 {
@@ -5502,6 +5503,9 @@ static bool authdb_command(struct connection *caller, char *arg, bool check)
   } else if (ind == AUTHDB_ARG_OFF) {
     srvarg.auth.enabled = FALSE;
     cmd_reply(CMD_AUTHDB, caller, C_COMMENT, "Authorization disabled.");
+    return TRUE;
+  } else if (ind == AUTHDB_ARG_RELOAD) {
+    database_reload();
     return TRUE;
   }
   if (!lastarg) {

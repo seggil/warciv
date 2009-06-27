@@ -529,6 +529,7 @@ const struct command commands[] = {
    N_("authdb\n"
       "authdb on\n"
       "authdb off\n"
+      "authdb reload\n"
       "authdb host <hostname>\n"
       "authdb user <username>\n"
       "authdb password <password>\n"
