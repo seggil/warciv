@@ -28,6 +28,14 @@
 #include <zlib.h>
 #endif
 
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+
+#ifdef HAVE_MYSQL
+#include "lua/mysql/ls_mysql.h"
+#endif
+
 #include "fcintl.h"
 #include "hash.h"
 #include "log.h"
@@ -49,6 +57,7 @@
 #include "meta.h"
 #include "plrhand.h"
 #include "score.h"
+#include "script.h"
 #include "sernet.h"
 #include "settings.h"
 #include "srv_main.h"
@@ -155,6 +164,9 @@ static char etm_encode_terrain(const struct tile *ptile,
 } while(0)
 
 #endif /* HAVE_MYSQL */
+
+
+static lua_State *database_lua_state;
 
 
 /**************************************************************************
@@ -3116,134 +3128,10 @@ bool fcdb_check_salted_passwords(void)
 }
 
 
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
-#ifdef HAVE_MYSQL
-#include "lua/mysql/ls_mysql.h"
-#endif
-
-
-struct w_conn {
-  struct connection *pconn;
-};
-#define W_CONN_CLASS "freeciv wrapped connection"
-
-
-static bool check_script_function(lua_State *L, const char *scriptname,
-                                  const char *funcname);
-
-
-static lua_State *database_lua_state;
-
-
-/**************************************************************************
-  Returns TRUE if the script was successfully loaded.
-**************************************************************************/
-static bool load_script(lua_State *L, const char *filename)
-{
-  const char *dfn, *error;
-  int rv;
-
-  dfn = datafilename(filename);
-  if (!dfn) {
-    freelog(LOG_ERROR, "load_script: \"%s\" not in data path.", filename);
-    return FALSE;
-  }
-
-  rv = luaL_loadfile(L, dfn);
-  if (rv != 0) {
-    error = lua_tostring(L, -1);
-    if (rv == LUA_ERRSYNTAX) {
-      freelog(LOG_ERROR, "load_script: syntax error: %s", error);
-    } else if (rv == LUA_ERRFILE) {
-      freelog(LOG_ERROR, "load_script: load failed: %s", error);
-    } else if (rv == LUA_ERRMEM) {
-      freelog(LOG_ERROR, "load_script: out of memory: %s", error);
-    } else {
-      freelog(LOG_ERROR, "load_script: unknown error (%d): %s", rv, error);
-    }
-    lua_pop(L, 1);
-    return FALSE;
-  }
-
-  rv = lua_pcall(L, 0, 0, 0);
-  if (rv != 0) {
-    error = lua_tostring(L, -1);
-    if (rv == LUA_ERRRUN) {
-      freelog(LOG_ERROR, "load_script: runtime error: %s", error);
-    } else if (rv == LUA_ERRMEM) {
-      freelog(LOG_ERROR, "load_script: out of memory: %s", error);
-    } else {
-      freelog(LOG_ERROR, "load_script: unknown error (%d): %s", rv, error);
-    }
-    lua_pop(L, 1);
-    return FALSE;
-  }
-
-  return TRUE;
-}
-
 /**************************************************************************
   ...
 **************************************************************************/
-static int w_freelog(lua_State *L)
-{
-  int loglevel = luaL_checkinteger(L, 1);
-  const char *msg = luaL_checkstring(L, 2);
-  freelog(loglevel, "%s", msg);
-  return 0;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static struct w_conn *check_w_conn(lua_State *L)
-{
-  struct w_conn *wc;
-  wc = (struct w_conn *) luaL_checkudata(L, 1, W_CONN_CLASS);
-  luaL_argcheck(L, wc != NULL, 1, "freeciv connection expected");
-  luaL_argcheck(L, conn_is_valid(wc->pconn), 1, "invalid connection");
-  return wc;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static int w_conn_get_username(lua_State *L)
-{
-  struct w_conn *wc = check_w_conn(L);
-  lua_pushstring(L, wc->pconn->username);
-  return 1;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static int w_conn_set_password(lua_State *L)
-{
-  struct w_conn *wc = check_w_conn(L);
-  size_t len;
-  const char *pass = luaL_checklstring(L, 2, &len);
-  sz_strlcpy(wc->pconn->server.password, pass);
-  return 0;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static int w_conn_set_salt(lua_State *L)
-{
-  struct w_conn *wc = check_w_conn(L);
-  int salt = luaL_checkinteger(L, 2);
-  wc->pconn->server.salt = salt;
-  return 0;
-}
-
-/**************************************************************************
-  ...
-**************************************************************************/
-static int get_db_params(lua_State *L)
+static int get_params(lua_State *L)
 {
   lua_newtable(L);
 
@@ -3265,66 +3153,38 @@ static int get_db_params(lua_State *L)
 /**************************************************************************
   ...
 **************************************************************************/
-static int luaopen_freeciv(lua_State *L)
+static int create_checksum(lua_State *L)
 {
-  static const struct luaL_reg freeciv_funcs[] = {
-    {"freelog", w_freelog},
-    {"get_db_params", get_db_params},
-    {NULL, NULL}
-  };
+  size_t len;
+  const char *password = luaL_checklstring(L, 1, &len);
+  bool have_salt = !lua_isnoneornil(L, 2);
+  char checksum[DIGEST_HEX_BYTES + 1];
 
-  static const struct luaL_reg w_conn_methods[] = {
-    {"get_username", w_conn_get_username},
-    {"set_password", w_conn_set_password},
-    {"set_salt", w_conn_set_salt},
-    {NULL, NULL}
-  };
+  if (have_salt) {
+    int salt = luaL_checkinteger(L, 2);
+    create_salted_md5sum(password, len, salt, checksum);
+  } else {
+    create_md5sum(password, len, checksum);
+  }
 
-  luaL_newmetatable(L, W_CONN_CLASS);
-  lua_pushstring(L, "__index");
-  lua_pushvalue(L, -2);
-  lua_settable(L, -3);
-  luaL_register(L, NULL, w_conn_methods);
-
-  luaL_register(L, "freeciv", freeciv_funcs);
-
-#define SET_ENUM(x)\
-  lua_pushliteral(L, #x);\
-  lua_pushinteger(L, x);\
-  lua_rawset(L, -3);
-
-  SET_ENUM(LOG_FATAL);
-  SET_ENUM(LOG_ERROR);
-  SET_ENUM(LOG_NORMAL);
-  SET_ENUM(LOG_VERBOSE);
-  SET_ENUM(LOG_DEBUG);
-
-  SET_ENUM(AUTH_DB_ERROR);
-  SET_ENUM(AUTH_DB_SUCCESS);
-  SET_ENUM(AUTH_DB_NOT_FOUND);
-
-#undef SET_ENUM
-
+  lua_pushstring(L, checksum);
   return 1;
 }
 
 /**************************************************************************
   ...
 **************************************************************************/
-static bool check_script_function(lua_State *L, const char *scriptname,
-                                  const char *funcname)
+static int luaopen_freeciv_database(lua_State *L)
 {
-  bool defined;
-  lua_getglobal(L, funcname);
-  defined = lua_isfunction(L, -1);
-  lua_pop(L, 1);
+  static const struct luaL_reg database_funcs[] = {
+    {"get_params", get_params},
+    {"create_checksum", create_checksum},
+    {NULL, NULL}
+  };
 
-  if (!defined) {
-    freelog(LOG_ERROR, "Database script \"%s\" does not define a \"%s\" "
-            "function.", scriptname, funcname);
-  }
+  luaL_register(L, "freeciv.database", database_funcs);
 
-  return defined;
+  return 1;
 }
 
 /**************************************************************************
@@ -3341,10 +3201,22 @@ void database_init(void)
 #ifdef HAVE_MYSQL
   luaopen_luasql_mysql(L);
 #endif
+  luaopen_freeciv_database(L);
 
-  load_script(L, SCRIPT_NAME);
-  check_script_function(L, SCRIPT_NAME, "load_user");
-  check_script_function(L, SCRIPT_NAME, "save_user");
+#define SET_ENUM(x)\
+  lua_pushliteral(L, #x);\
+  lua_pushinteger(L, x);\
+  lua_rawset(L, -3);
+
+  SET_ENUM(AUTH_DB_ERROR);
+  SET_ENUM(AUTH_DB_SUCCESS);
+  SET_ENUM(AUTH_DB_NOT_FOUND);
+#undef SET_ENUM
+
+  script_load(L, SCRIPT_NAME);
+
+  script_check_func(L, SCRIPT_NAME, "load_user");
+  script_check_func(L, SCRIPT_NAME, "save_user");
 
   database_lua_state = L;
 }
@@ -3354,7 +3226,9 @@ void database_init(void)
 **************************************************************************/
 void database_free(void)
 {
-  lua_close(database_lua_state);
+  lua_State *L = database_lua_state;
+
+  lua_close(L);
 }
 
 /**************************************************************************

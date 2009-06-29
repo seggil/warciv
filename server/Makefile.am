@@ -70,6 +70,8 @@ libcivserver_a_SOURCES = \
 		savegame.h	\
 		score.c		\
 		score.h		\
+		script.c	\
+		script.h	\
 		sernet.c	\
 		sernet.h	\
 		settings.c	\
