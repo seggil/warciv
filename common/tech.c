@@ -615,8 +615,8 @@ const char *get_tech_name(struct player *pplayer, Tech_Type_id tech)
     if (!future) {
       future = string_vector_new();
     }
-    if (string_vector_size(future) < pplayer->future_tech) {
-      string_vector_reserve(future, pplayer->future_tech);
+    if (string_vector_size(future) <= pplayer->future_tech) {
+      string_vector_reserve(future, pplayer->future_tech + 1);
     }
     if (!string_vector_get(future, pplayer->future_tech)) {
       char buffer[1024];
