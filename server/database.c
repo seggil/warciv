@@ -3150,6 +3150,7 @@ static int get_params(lua_State *L)
   return 1;
 }
 
+#ifdef HAVE_MYSQL
 /**************************************************************************
   ...
 **************************************************************************/
@@ -3170,6 +3171,7 @@ static int create_checksum(lua_State *L)
   lua_pushstring(L, checksum);
   return 1;
 }
+#endif /* HAVE_MYSQL */
 
 /**************************************************************************
   ...
@@ -3178,7 +3180,9 @@ static int luaopen_freeciv_database(lua_State *L)
 {
   static const struct luaL_reg database_funcs[] = {
     {"get_params", get_params},
+#ifdef HAVE_MYSQL
     {"create_checksum", create_checksum},
+#endif /* HAVE_MYSQL */
     {NULL, NULL}
   };
 
