@@ -114,7 +114,9 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
   struct player *pother;
   bool *player_accept, *other_accept;
 
-  if (!is_valid_player_id(counterpart) || pplayer->player_no == counterpart) {
+  if (!pplayer
+      || !is_valid_player_id(counterpart)
+      || pplayer->player_no == counterpart) {
     return;
   }
 
@@ -553,7 +555,9 @@ void handle_diplomacy_remove_clause_req(struct player *pplayer,
   struct Treaty *ptreaty;
   struct player *pgiver, *pother;
 
-  if (!is_valid_player_id(counterpart) || pplayer->player_no == counterpart
+  if (!pplayer
+      || !is_valid_player_id(counterpart)
+      || pplayer->player_no == counterpart
       || !is_valid_player_id(giver)) {
     return;
   }
@@ -593,7 +597,9 @@ void handle_diplomacy_create_clause_req(struct player *pplayer,
   struct Treaty *ptreaty;
   struct player *pgiver, *pother;
 
-  if (!is_valid_player_id(counterpart) || pplayer->player_no == counterpart
+  if (!pplayer
+      || !is_valid_player_id(counterpart)
+      || pplayer->player_no == counterpart
       || !is_valid_player_id(giver)) {
     return;
   }
@@ -669,7 +675,9 @@ static void really_diplomacy_cancel_meeting(struct player *pplayer,
 void handle_diplomacy_cancel_meeting_req(struct player *pplayer,
 					 int counterpart)
 {
-  if (!is_valid_player_id(counterpart) || pplayer->player_no == counterpart) {
+  if (!pplayer
+      || !is_valid_player_id(counterpart)
+      || pplayer->player_no == counterpart) {
     return;
   }
 
@@ -684,7 +692,9 @@ void handle_diplomacy_init_meeting_req(struct player *pplayer,
 {
   struct player *pother;
 
-  if (!is_valid_player_id(counterpart) || pplayer->player_no == counterpart) {
+  if (!pplayer
+      || !is_valid_player_id(counterpart)
+      || pplayer->player_no == counterpart) {
     return;
   }
 
