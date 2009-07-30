@@ -92,7 +92,7 @@ static void lsend_vote_new(struct conn_list *dest, struct vote *pvote)
 
   conn_list_iterate(dest, conn) {
     if (!has_capability("voteinfo", conn->capability)
-        || !conn_can_vote(conn, pvote)) {
+        || !conn_can_see_vote(conn, pvote)) {
       continue;
     }
     send_packet_vote_new(conn, &packet);
@@ -130,7 +130,7 @@ static void lsend_vote_update(struct conn_list *dest, struct vote *pvote,
 
   conn_list_iterate(dest, aconn) {
     if (!has_capability("voteinfo", aconn->capability)
-        || !conn_can_vote(aconn, pvote)) {
+        || !conn_can_see_vote(aconn, pvote)) {
       continue;
     }
     send_packet_vote_update(aconn, &packet);
@@ -183,7 +183,7 @@ static void lsend_vote_resolve(struct conn_list *dest,
 
   conn_list_iterate(dest, pconn) {
     if (!has_capability("voteinfo", pconn->capability)
-        || !conn_can_vote(pconn, pvote)) {
+        || !conn_can_see_vote(pconn, pvote)) {
       continue;
     }
     send_packet_vote_resolve(pconn, &packet);
@@ -837,8 +837,9 @@ void send_running_votes(struct connection *pconn)
 
   connection_do_buffer(pconn);
   vote_list_iterate(vote_list, pvote) {
-    if (conn_can_vote(pconn, pvote)) {
+    if (conn_can_see_vote(pconn, pvote)) {
       lsend_vote_new(pconn->self, pvote);
+      lsend_vote_update(pconn->self, pvote, count_voters(pvote));
     }
   } vote_list_iterate_end;
   connection_do_unbuffer(pconn);
