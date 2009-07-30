@@ -1048,6 +1048,16 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
 		 "", "#00FF00", "#115511");
 
+  MK_TAG_PATTERN("connection lost", "Server: Lost connection: ",
+		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START,
+		 "", "", "");
+  MK_TAG_PATTERN("", " (player ",
+		 TPF_IS_CONTROL_ONLY | TPF_REQUIRE_PREVIOUS_MATCH,
+		 "", "", "");
+  MK_TAG_PATTERN("", " observer)", TPF_REQUIRE_PREVIOUS_MATCH
+                 | TPF_NEGATE | TPF_STOP_IF_MATCHED,
+		 "", "#FFFFFF", "#000000");
+
   MK_TAG_PATTERN("server prompt", "(server prompt):",
 		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
 		 "", "#FF0000", "#BEBEBE");
