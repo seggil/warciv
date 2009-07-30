@@ -28,13 +28,16 @@
 
 #include "commands.h"
 #include "console.h"
+#include "gamehand.h"
 #include "plrhand.h"
 #include "settings.h"
+#include "srv_main.h"
 #include "stdinhand.h"
 #include "vote.h"
 
 struct vote_list *vote_list = NULL;
 int vote_number_sequence = 0;
+int last_server_vote = -1;
 
 /**************************************************************************
   ...
@@ -58,22 +61,24 @@ static int count_voters(const struct vote *pvote)
 static void lsend_vote_new(struct conn_list *dest, struct vote *pvote)
 {
   struct packet_vote_new packet;
-  struct connection *pconn;
+  struct connection *pconn = NULL;
 
   if (pvote == NULL) {
     return;
   }
 
-  pconn = find_conn_by_id(pvote->caller_id);
-  if (pconn == NULL) {
-    return;
+  if (pvote->caller_id != 0) {
+    pconn = find_conn_by_id(pvote->caller_id);
+    if (pconn == NULL) {
+      return;
+    }
   }
 
   freelog(LOG_DEBUG, "lsend_vote_new %p (%d) --> %p",
           pvote, pvote->vote_no, dest);
 
   packet.vote_no = pvote->vote_no;
-  sz_strlcpy(packet.user, pconn->username);
+  sz_strlcpy(packet.user, pconn ? pconn->username : _("(server prompt)"));
   describe_vote(pvote, packet.desc, sizeof(packet.desc));
 
   /* For possible future use. */
@@ -101,14 +106,12 @@ static void lsend_vote_update(struct conn_list *dest, struct vote *pvote,
                               int num_voters)
 {
   struct packet_vote_update packet;
-  struct connection *pconn;
 
   if (pvote == NULL) {
     return;
   }
 
-  pconn = find_conn_by_id(pvote->caller_id);
-  if (pconn == NULL) {
+  if (pvote->caller_id != 0 && !find_conn_by_id(pvote->caller_id)) {
     return;
   }
 
@@ -348,19 +351,23 @@ struct vote *vote_new(struct connection *caller,
                       struct setting_value *sv)
 {
   struct vote *pvote;
+  char votedesc[MAX_LEN_CONSOLE_LINE];
+  const char *what;
 
   assert(vote_list != NULL);
 
-  if (!conn_can_vote(caller, NULL)) {
-    return NULL;
-  }
+  if (caller) {
+    if (!conn_can_vote(caller, NULL)) {
+      return NULL;
+    }
 
-  /* Cancel previous vote */
-  remove_vote(get_vote_by_caller(caller));
+    /* Cancel previous vote */
+    remove_vote(get_vote_by_caller(caller));
+  }
 
   /* Make a new vote */
   pvote = fc_malloc(sizeof(struct vote));
-  pvote->caller_id = caller->id;
+  pvote->caller_id = caller ? caller->id : 0;
   pvote->command_id = command_id;
 
   my_snprintf(pvote->cmdline, sizeof(pvote->cmdline), "%s%s%s",
@@ -411,6 +418,19 @@ struct vote *vote_new(struct connection *caller,
   }
 
   lsend_vote_new(NULL, pvote);
+
+  describe_vote(pvote, votedesc, sizeof(votedesc));
+
+  if (pvote->command_id == CMD_POLL) {
+    what = _("New poll");
+  } else if (vote_is_team_only(pvote)) {
+    what = _("New teamvote");
+  } else {
+    what = _("New vote");
+  }
+  notify_team(vote_get_team(pvote), _("%s (number %d) by %s: %s"),
+              what, pvote->vote_no,
+              caller ? caller->username : _("(server prompt)"), votedesc);
 
   return pvote;
 }
@@ -694,6 +714,7 @@ void voting_init(void)
   if (!vote_list) {
     vote_list = vote_list_new();
     vote_number_sequence = 0;
+    last_server_vote = -1;
   }
 }
 
@@ -869,4 +890,30 @@ const struct team *vote_get_team(const struct vote *pvote)
   }
   pplayer = conn_get_player(vote_get_caller(pvote));
   return pplayer ? team_get_by_id(pplayer->team) : NULL;
+}
+
+/**************************************************************************
+  The server makes a vote
+**************************************************************************/
+void server_request_pause_vote(void)
+{
+  struct vote *pvote;
+
+  if (game_is_paused()
+      || count_voters(NULL) == 0
+      || server_state != RUN_GAME_STATE) {
+    return;
+  }
+
+  if (last_server_vote != -1
+      && (pvote = get_vote_by_no(last_server_vote))
+      && pvote->command_id == CMD_PAUSE) {
+    /* There is already a vote for pause. */
+    return;
+  }
+
+  if ((pvote = vote_new(NULL, "", CMD_PAUSE, NULL))) {
+    lsend_vote_update(NULL, pvote, count_voters(pvote));
+    last_server_vote = pvote->vote_no;
+  }
 }

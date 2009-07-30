@@ -6299,21 +6299,6 @@ bool handle_stdin_input(struct connection * caller,
     /* Check if the vote command would succeed. */
     if (handle_stdin_input(caller, full_command, TRUE)
         && (vote = vote_new(caller, allargs, cmd, &sv))) {
-      char votedesc[MAX_LEN_CONSOLE_LINE];
-      const char *what;
-
-      describe_vote(vote, votedesc, sizeof(votedesc));
-
-      if (cmd == CMD_POLL) {
-        what = _("New poll");
-      } else if (vote_is_team_only(vote)) {
-        what = _("New teamvote");
-      } else {
-        what = _("New vote");
-      }
-      notify_team(vote_get_team(vote), _("%s (number %d) by %s: %s"),
-                  what, vote->vote_no, caller->username, votedesc);
-
       /* Vote on your own suggestion. */
       connection_vote(caller, vote, VOTE_YES);
       return TRUE;

@@ -714,6 +714,8 @@ void lost_connection_to_client(struct connection *pconn)
 {
   struct player *pplayer = pconn->player;
   const char *desc = conn_description(pconn);
+  bool maybe_need_pause = (server_state == RUN_GAME_STATE
+                           && pplayer && !pconn->observer);
 
   freelog(LOG_NORMAL, _("Lost connection: %s."), desc);
 
@@ -764,6 +766,10 @@ void lost_connection_to_client(struct connection *pconn)
     gamelog(GAMELOG_PLAYER, pplayer);
 
     check_for_full_turn_done();
+  }
+
+  if (maybe_need_pause) {
+    server_request_pause_vote();
   }
 }
 
