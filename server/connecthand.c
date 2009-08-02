@@ -769,7 +769,7 @@ void lost_connection_to_client(struct connection *pconn)
   }
 
   if (maybe_need_pause) {
-    server_request_pause_vote();
+    server_request_pause_vote(pconn);
   }
 }
 

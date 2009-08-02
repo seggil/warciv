@@ -98,6 +98,6 @@ int describe_vote(struct vote *pvote, char *buf, int buflen);
 void send_running_votes(struct connection *pconn);
 void send_updated_vote_totals(struct conn_list *dest);
 
-void server_request_pause_vote(void);
+void server_request_pause_vote(struct connection *pconn);
 
 #endif /* FC__VOTE_H */

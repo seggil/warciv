@@ -896,9 +896,10 @@ const struct team *vote_get_team(const struct vote *pvote)
 /**************************************************************************
   The server makes a vote
 **************************************************************************/
-void server_request_pause_vote(void)
+void server_request_pause_vote(struct connection *pconn)
 {
   struct vote *pvote;
+  char buf[256];
 
   if (game_is_paused()
       || count_voters(NULL) == 0
@@ -913,8 +914,18 @@ void server_request_pause_vote(void)
     return;
   }
 
-  if ((pvote = vote_new(NULL, "", CMD_PAUSE, NULL))) {
+  if (pconn) {
+    my_snprintf(buf, sizeof(buf), "--- %s is lost", pconn->username);
+  } else {
+    buf[0] = '\0';
+  }
+
+  if ((pvote = vote_new(NULL, buf, CMD_PAUSE, NULL))) {
     lsend_vote_update(NULL, pvote, count_voters(pvote));
+    /* HACK: initialize some fields which will be sent to the clients. */
+    pvote->yes = 0;
+    pvote->no = 0;
+    pvote->abstain = 0;
     last_server_vote = pvote->vote_no;
   }
 }
