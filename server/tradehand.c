@@ -70,9 +70,7 @@ void send_trade_route_info(struct conn_list *dest, struct trade_route *ptr)
     } conn_list_iterate_end;
     /* Maybe send to the city2 owner */
     if (ptr->pcity1->owner != ptr->pcity2->owner
-        && (ptr->status == TR_ESTABLISHED
-            || player_has_embassy(city_owner(ptr->pcity2),
-				  city_owner(ptr->pcity1)))) {
+        && ptr->status == TR_ESTABLISHED) {
       conn_list_iterate(city_owner(ptr->pcity2)->connections, pconn) {
         if (connection_supports_server_trade(pconn)) {
           send_packet_trade_route_info(pconn, &packet);
@@ -152,10 +150,7 @@ void server_remove_trade_route(struct trade_route *ptr)
     }
   } conn_list_iterate_end;
   /* Maybe send to the city2 owner */
-  if (pcity1->owner != pcity2->owner
-      && (status == TR_ESTABLISHED
-	  || player_has_embassy(city_owner(pcity2),
-				city_owner(pcity1)))) {
+  if (pcity1->owner != pcity2->owner && status == TR_ESTABLISHED) {
     conn_list_iterate(city_owner(pcity2)->connections, pconn) {
       if (connection_supports_server_trade(pconn)) {
 	send_packet_trade_route_remove(pconn, &packet);
