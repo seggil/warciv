@@ -1207,7 +1207,7 @@ static void allied_chat_button_toggled(GtkToggleButton *button,
 **************************************************************************/
 static void request_more_time_callback(void)
 {
-  int new_timeout = game.info.timeout + 30;
+  int new_timeout = game.info.timeout + 20;
   char buf[256];
   my_snprintf(buf, sizeof(buf), "/set timeout %d --- I need more time!",
               new_timeout);
