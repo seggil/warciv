@@ -862,6 +862,8 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 		     unit_name(pwinner->type),
 		     get_location_str_at(unit_owner(plooser),
 					 pwinner->tile));
+    pplayer->score.units_lost++;
+    unit_owner(pwinner)->score.units_killed++;
     wipe_unit(plooser);
   } else {
     /* The defender lost, the attacker punit lives! */
