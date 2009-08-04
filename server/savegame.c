@@ -1944,6 +1944,14 @@ static void player_load(struct player *plr, int plrno,
     }
   } players_iterate_end;
 
+  /* Unit statistics. */
+  plr->score.units_built =
+    secfile_lookup_int_default(file, 0, "player%d.units_built", plrno);
+  plr->score.units_killed =
+    secfile_lookup_int_default(file, 0, "player%d.units_killed", plrno);
+  plr->score.units_lost =
+    secfile_lookup_int_default(file, 0, "player%d.units_lost", plrno);
+
   { /* spacerace */
     struct player_spaceship *ship = &plr->spaceship;
     char prefix[32];
@@ -2704,6 +2712,14 @@ static void player_save(struct player *plr, int plrno,
     vision[i] = '\0';
     secfile_insert_str(file, vision, "player%d.gives_shared_vision", plrno);
   }
+
+  /* Unit statistics. */
+  secfile_insert_int(file, plr->score.units_built,
+                     "player%d.units_built", plrno);
+  secfile_insert_int(file, plr->score.units_killed,
+                     "player%d.units_killed", plrno);
+  secfile_insert_int(file, plr->score.units_lost,
+                     "player%d.units_lost", plrno);
 
   secfile_insert_int(file, ship->state, "player%d.spaceship.state", plrno);
 
