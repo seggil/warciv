@@ -1741,6 +1741,8 @@ static void main_loop(void)
     }
   }
 
+  clear_all_votes(); /* Prevent some problems about commands. */
+
   /* 
    * This will thaw the reports and agents at the client.
    */
