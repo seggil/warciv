@@ -1097,17 +1097,18 @@ static int server_accept_connection(int sockfd)
   freelog(LOG_DEBUG, "sac server_accept_connection sockfd=%d", sockfd);
   fromlen = sizeof(fromend);
 
+  if ((new_sock = accept(sockfd, &fromend.sockaddr, &fromlen)) == -1) {
+    freelog(LOG_ERROR, "accept failed: %s",
+            mystrsocketerror(mysocketerrno()));
+    return -1;
+  }
+
   if ((game.server.maxconnections > 0)
       && (conn_list_size(game.all_connections)
           > game.server.maxconnections)) {
     freelog(LOG_NORMAL, _("Maximum number of connections "
 			  "for this server exceeded."));
-    return -1;
-  }
-
-  if ((new_sock = accept(sockfd, &fromend.sockaddr, &fromlen)) == -1) {
-    freelog(LOG_ERROR, "accept failed: %s",
-            mystrsocketerror(mysocketerrno()));
+    my_closesocket(new_sock);
     return -1;
   }
 
