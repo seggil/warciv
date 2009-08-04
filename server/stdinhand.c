@@ -7376,6 +7376,12 @@ static bool pause_command(struct connection *caller, const char *arg,
     return FALSE;
   }
 
+  if (server_state != RUN_GAME_STATE) {
+    cmd_reply(CMD_PAUSE, caller, C_REJECTED,
+              _("Cannot pause right now."));
+    return FALSE;
+  }
+
   if (check) {
     return TRUE;
   }
@@ -7410,6 +7416,12 @@ static bool unpause_command(struct connection *caller, const char *s,
   if (!game_is_paused()) {
     cmd_reply(CMD_UNPAUSE, caller, C_FAIL,
               _("The game is not paused."));
+    return FALSE;
+  }
+
+  if (server_state != RUN_GAME_STATE) {
+    cmd_reply(CMD_PAUSE, caller, C_REJECTED,
+              _("Cannot unpause right now."));
     return FALSE;
   }
 
