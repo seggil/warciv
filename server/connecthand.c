@@ -715,7 +715,8 @@ void lost_connection_to_client(struct connection *pconn)
   struct player *pplayer = pconn->player;
   const char *desc = conn_description(pconn);
   bool maybe_need_pause = (server_state == RUN_GAME_STATE
-                           && pplayer && !pconn->observer);
+                           && pplayer && !pconn->observer
+                           && pplayer->is_alive);
 
   freelog(LOG_NORMAL, _("Lost connection: %s."), desc);
 
