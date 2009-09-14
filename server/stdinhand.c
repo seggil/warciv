@@ -4075,7 +4075,9 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   }
 
   if (caller != NULL && caller->server.access_level < ALLOW_ADMIN
-      && server_state == RUN_GAME_STATE && game.info.timeout > 0) {
+      && server_state == RUN_GAME_STATE && game.info.timeout > 0
+      /* Magic number to don't wait if the timeout is really to big. */
+      && game.info.timeout < game.info.turn * 4) {
     pconn->server.observe_requested = TRUE;
     pconn->server.observe_target = pplayer;
     if (pplayer) {
