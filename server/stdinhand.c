@@ -6321,50 +6321,40 @@ bool handle_stdin_input(struct connection * caller,
 
 
   if (!check) {
-    struct conn_list *echolist = conn_list_new();
+    struct conn_list *echolist = NULL;
 
     switch (commands[cmd].echo_mode) {
-
     case ECHO_NONE:
       break;
-
     case ECHO_USER:
-      if (caller)
-        conn_list_append(echolist, caller);
+      if (caller) {
+        echolist = caller->self;
+      }
       break;
-
-    case ECHO_PLAYERS:
-      conn_list_iterate(game.est_connections, pconn) {
-        if (pconn->player && !pconn->observer) {
-          conn_list_append(echolist, pconn);
-        }
-      } conn_list_iterate_end;
-      break;
-
     case ECHO_ADMINS:
+      echolist = conn_list_new();
+
       conn_list_iterate(game.est_connections, pconn) {
         if (pconn->server.access_level >= ALLOW_ADMIN) {
           conn_list_append(echolist, pconn);
         }
       } conn_list_iterate_end;
       break;
-
     case ECHO_ALL:
-      conn_list_iterate(game.est_connections, pconn) {
-        conn_list_append(echolist, pconn);
-      } conn_list_iterate_end;
+      echolist = game.est_connections;
       break;
-
     default:
       assert(0 /* should not happend */ );
       break;
     }
 
-    if (conn_list_size(echolist) > 0) {
+    if (echolist) {
       notify_conn(echolist, "%s: '%s %s'", caller ? caller->username
                   : _("(server prompt)"), command, arg);
     }
-    conn_list_free(echolist);
+    if (commands[cmd].echo_mode == ECHO_ADMINS) {
+      conn_list_free(echolist);
+    }
   }
 
   switch (cmd) {

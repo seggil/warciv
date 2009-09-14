@@ -14,7 +14,6 @@
 enum echo_type {
   ECHO_NONE = 0,
   ECHO_USER,
-  ECHO_PLAYERS, /* i.e. all with basic access and above */
   ECHO_ADMINS, /* i.e. all with admin access and above */
   ECHO_ALL,
 };

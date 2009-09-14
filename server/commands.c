@@ -208,7 +208,7 @@ const struct command commands[] = {
   {"set",	ALLOW_CTRL, ALLOW_BASIC,
    N_("set <option-name> <value>"),
    N_("Set server option."), NULL,
-   ECHO_PLAYERS,
+   ECHO_ALL,
    /* NB: Options may have their own values that
     * override these vote parameters. */
    VCF_NONE, 50
@@ -221,7 +221,7 @@ const struct command commands[] = {
       "A team is a group of players that start out allied, with shared "
       "vision and embassies, and fight together to achieve team victory "
       "with averaged individual scores."),
-   ECHO_PLAYERS, VCF_NONE, 0
+   ECHO_ALL, VCF_NONE, 0
   },
   {"rulesetdir", ALLOW_NEVER, ALLOW_CTRL,
    N_("rulesetdir <directory>\n"
@@ -273,7 +273,7 @@ const struct command commands[] = {
    /* TRANS: translate text between <> only */
    N_("aitoggle <player-name>"),
    N_("Toggle AI status of player."), NULL,
-   ECHO_PLAYERS, VCF_NONE, 50
+   ECHO_ALL, VCF_NONE, 50
   },
   {"take",    ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between [] and <> only */
