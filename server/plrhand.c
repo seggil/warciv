@@ -2265,6 +2265,10 @@ void civil_war(struct player *pplayer)
   int i, j;
   struct player *cplayer;
 
+  if (!game.server.civilwar) {
+    return;
+  }
+
   if (game.info.nplayers >= MAX_NUM_PLAYERS) {
     /* No space to make additional player */
     freelog(LOG_NORMAL, _("Could not throw %s into civil war - too many "

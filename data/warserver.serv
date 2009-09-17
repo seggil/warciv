@@ -114,5 +114,9 @@
 /set idlecut 1800
 /set emptyreset 1
 /set triremestyle 1
+/set fracmovestyle 1
+/set endturn 0
+/set revealmap 0
+/set civilwar 0
 
 /rulesetdir nowonder+-1.3

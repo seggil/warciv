@@ -204,6 +204,7 @@ struct civ_game {
     int fracmovestyle;
     int endturn;
     bool revealmap;
+    bool civilwar;
   } server;
 };
 
@@ -601,6 +602,8 @@ extern bool is_server;
 #define GAME_MAX_REVOLUTION_LENGTH 10
 
 #define GAME_DEFAULT_REVEALMAP 0
+
+#define GAME_DEFAULT_CIVILWAR 1
 
 #define GAME_START_YEAR -4000
 

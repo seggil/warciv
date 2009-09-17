@@ -3687,6 +3687,10 @@ void game_load(struct section_file *file)
 	GAME_DEFAULT_FRACMOVESTYLE, "game.fracmovestyle");
     game.server.endturn = secfile_lookup_int_default(file,
 	GAME_DEFAULT_ENDTURN, "game.endturn");
+    game.server.revealmap = secfile_lookup_int_default(file,
+	GAME_DEFAULT_REVEALMAP, "game.revealmap");
+    game.server.civilwar = secfile_lookup_int_default(file,
+	GAME_DEFAULT_CIVILWAR, "game.civilwar");
 
     /* Warserver 'ignoreruleset' settings. */
     game.ext_info.ignoreruleset = secfile_lookup_bool_default(file,
@@ -4154,6 +4158,10 @@ void game_save(struct section_file *file)
 		     "game.fracmovestyle");
   secfile_insert_int(file, game.server.endturn,
 		     "game.endturn");
+  secfile_insert_int(file, game.server.revealmap,
+		     "game.revealmap");
+  secfile_insert_int(file, game.server.civilwar,
+		     "game.civilwar");
 
   /* Warserver 'ignoreruleset' settings. */
   secfile_insert_bool(file, game.ext_info.ignoreruleset,

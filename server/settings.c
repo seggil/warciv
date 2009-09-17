@@ -1474,6 +1474,13 @@ struct settings_s settings[] = {
               "setting)."),
           NULL, GAME_DEFAULT_REVEALMAP)
 
+  GEN_BOOL("civilwar", game.server.civilwar, SSET_RULES_FLEXIBLE,
+           SSET_MILITARY, SSET_SITUATIONAL, SSET_TO_CLIENT,
+           N_("Enables the civil war and player split"),
+           N_("If this setting is disabled, losing you capital will never "
+              "make a civil war, and losing the half of your ressources."),
+          NULL, GAME_DEFAULT_CIVILWAR)
+
   GEN_END
 };
 
