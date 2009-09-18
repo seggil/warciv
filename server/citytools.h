@@ -109,6 +109,7 @@ void send_all_known_city_manager_infos(struct conn_list *clist);
 void clear_city_manager_param(struct city *pcity);
 void reset_city_manager_params(struct player *pplayer);
 
+void clear_rally_point(struct city *pcity, bool send_info);
 void reset_rally_points(struct player *pplayer);
 
 #endif  /* FC__CITYTOOLS_H */

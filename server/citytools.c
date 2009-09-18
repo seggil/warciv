@@ -816,6 +816,8 @@ void transfer_city(struct player *ptaker, struct city *pcity,
   char old_city_name[MAX_LEN_NAME];
   assert(pgiver != ptaker);
 
+  clear_city_manager_param(pcity);
+  clear_rally_point(pcity, FALSE); /* info will be passed after. */
   freeze_workers(pcity);
   unit_list_iterate(pcity->units_supported, punit) {
     unit_list_prepend(old_city_units, punit);
@@ -2233,6 +2235,32 @@ void reset_city_manager_params(struct player *pplayer)
 }
 
 /**************************************************************************
+  Clear the rally point for one city.
+**************************************************************************/
+void clear_rally_point(struct city *pcity, bool send_info)
+{
+  if (!pcity || !pcity->rally_point) {
+    return;
+  }
+
+  pcity->rally_point = NULL;
+  if (send_info && server_state == RUN_GAME_STATE) {
+    /* Notify */
+    struct packet_city_info packet;
+
+    package_city(pcity, &packet, FALSE);
+    conn_list_iterate(game.est_connections, pconn) {
+      if ((pconn->player == city_owner(pcity)
+           /* Else, unable to read rally points. */
+           && has_capability("extglobalinfo", pconn->capability))
+          || conn_is_global_observer(pconn)) {
+        send_packet_city_info(pconn, &packet);
+      }
+    } conn_list_iterate_end;
+  }
+}
+
+/**************************************************************************
   Clear all city rally points for a player. It is usually called
   when a user take the player without the "extglobalinfo" capability.
 **************************************************************************/
@@ -2243,22 +2271,6 @@ void reset_rally_points(struct player *pplayer)
   }
 
   city_list_iterate(pplayer->cities, pcity) {
-    if (pcity->rally_point) {
-      pcity->rally_point = NULL;
-      if (server_state == RUN_GAME_STATE) {
-	/* Notify */
-	struct packet_city_info packet;
-
-	package_city(pcity, &packet, FALSE);
-	conn_list_iterate(game.est_connections, pconn) {
-	  if ((pconn->player == pplayer
-	       /* Else, unable to read rally points. */
-	       && has_capability("extglobalinfo", pconn->capability))
-	      || conn_is_global_observer(pconn)) {
-	    send_packet_city_info(pconn, &packet);
-	  }
-	} conn_list_iterate_end;
-      }
-    }
+    clear_rally_point(pcity, TRUE);
   } city_list_iterate_end;
 }
