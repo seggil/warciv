@@ -442,8 +442,9 @@ void set_message_buffer_view_link_handlers(GtkTextView *view)
   ...
 **************************************************************************/
 static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
-				       GtkTextTag **tag, char *newtext,
-				       int newtext_maxlen)
+                                       GtkTextTag **tag, char *newtext,
+                                       size_t newtext_maxlen,
+                                       bool draw_links)
 {
   const char *p = str;
   char *q, idbuf[32];
@@ -495,15 +496,15 @@ static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
   }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
-                                     "foreground", "green",
-                                     "underline", PANGO_UNDERLINE_SINGLE,
-                                     NULL);
-  g_object_set_data(G_OBJECT(*tag), "link_type",
-                     GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id",
-                     GINT_TO_POINTER(id)); 
+                                    "foreground", "green",
+                                    "underline", PANGO_UNDERLINE_SINGLE,
+                                    NULL);
+  g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
+  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(id)); 
 
-  add_link_mark(LINK_CITY, id);
+  if (draw_links) {
+    add_link_mark(LINK_CITY, id);
+  }
 
   my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
   
@@ -514,8 +515,8 @@ static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
   ...
 **************************************************************************/
 static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
-			      GtkTextTag **tag, char *newtext,
-			      int newtext_maxlen)
+                              GtkTextTag **tag, char *newtext,
+                              size_t newtext_maxlen, bool draw_links)
 {
   const char *p = str;
   char *q, idbuf[32];
@@ -547,13 +548,11 @@ static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
   }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
-                                     "foreground", "green",
-                                     "underline", PANGO_UNDERLINE_SINGLE,
-                                     NULL);
-  g_object_set_data(G_OBJECT(*tag), "link_type",
-                     GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id",
-                     GINT_TO_POINTER(id)); 
+                                    "foreground", "green",
+                                    "underline", PANGO_UNDERLINE_SINGLE,
+                                    NULL);
+  g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
+  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(id)); 
 
   add_link_mark(LINK_CITY, id);
 
@@ -566,8 +565,8 @@ static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
   ...
 **************************************************************************/
 static int parse_city_link(const char *str, GtkTextBuffer *buf,
-			   GtkTextTag **tag, char *newtext,
-			   int newtext_maxlen)
+                           GtkTextTag **tag, char *newtext,
+                           size_t newtext_maxlen, bool draw_links)
 {
   const char *p = str;
   char city_name[MAX_LEN_NAME], *q;
@@ -594,15 +593,15 @@ static int parse_city_link(const char *str, GtkTextBuffer *buf,
   }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
-                                     "foreground", "green",
-                                     "underline", PANGO_UNDERLINE_SINGLE,
-                                     NULL);
-  g_object_set_data(G_OBJECT(*tag), "link_type",
-                     GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id",
-                     GINT_TO_POINTER(pcity->id)); 
+                                    "foreground", "green",
+                                    "underline", PANGO_UNDERLINE_SINGLE,
+                                    NULL);
+  g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
+  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(pcity->id)); 
 
-  add_link_mark(LINK_CITY, pcity->id);
+  if (draw_links) {
+    add_link_mark(LINK_CITY, pcity->id);
+  }
 
   my_snprintf(newtext, newtext_maxlen, "%s", city_name);
   
@@ -613,8 +612,8 @@ static int parse_city_link(const char *str, GtkTextBuffer *buf,
   ...
 **************************************************************************/
 static int parse_location_link(const char *str, GtkTextBuffer *buf,
-			       GtkTextTag **tag, char *newtext,
-			       int newtext_maxlen)
+                               GtkTextTag **tag, char *newtext,
+                               size_t newtext_maxlen, bool draw_links)
 {
   const char *p;
   int x, y;
@@ -633,17 +632,19 @@ static int parse_location_link(const char *str, GtkTextBuffer *buf,
   }
   
   *tag = gtk_text_buffer_create_tag(buf, NULL,
-                                     "foreground", "red",
-                                     "underline", PANGO_UNDERLINE_SINGLE,
-                                     NULL);
+                                    "foreground", "red",
+                                    "underline", PANGO_UNDERLINE_SINGLE,
+                                    NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type",
-                     GINT_TO_POINTER(LINK_LOCATION));
+                    GINT_TO_POINTER(LINK_LOCATION));
   g_object_set_data(G_OBJECT(*tag), "x", GINT_TO_POINTER(x)); 
   g_object_set_data(G_OBJECT(*tag), "y", GINT_TO_POINTER(y));
 
   my_snprintf(newtext, newtext_maxlen, "(%d, %d)", x, y);
 
-  add_link_mark(LINK_LOCATION, map_pos_to_index(x, y));
+  if (draw_links) {
+    add_link_mark(LINK_LOCATION, map_pos_to_index(x, y));
+  }
 
   return (int) (p - str);
 }
@@ -652,8 +653,8 @@ static int parse_location_link(const char *str, GtkTextBuffer *buf,
   ...
 **************************************************************************/
 static int parse_unit_link(const char *str, GtkTextBuffer *buf,
-			   GtkTextTag **tag, char *newtext,
-			   int newtext_maxlen)
+                           GtkTextTag **tag, char *newtext,
+                           size_t newtext_maxlen, bool draw_links)
 {
   const char *p = str;
   char *q, idbuf[32];
@@ -705,15 +706,15 @@ static int parse_unit_link(const char *str, GtkTextBuffer *buf,
   }
 
   *tag = gtk_text_buffer_create_tag(buf, NULL,
-                                     "foreground", "cyan",
-                                     "underline", PANGO_UNDERLINE_SINGLE,
-                                     NULL);
-  g_object_set_data(G_OBJECT(*tag), "link_type",
-                     GINT_TO_POINTER(LINK_UNIT));
-  g_object_set_data(G_OBJECT(*tag), "unit_id",
-                     GINT_TO_POINTER(id)); 
+                                    "foreground", "cyan",
+                                    "underline", PANGO_UNDERLINE_SINGLE,
+                                    NULL);
+  g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_UNIT));
+  g_object_set_data(G_OBJECT(*tag), "unit_id", GINT_TO_POINTER(id)); 
 
-  add_link_mark(LINK_UNIT, id);
+  if (draw_links) {
+    add_link_mark(LINK_UNIT, id);
+  }
 
   my_snprintf(newtext, newtext_maxlen, "%s", unit_name(punit->type));
   
@@ -724,8 +725,8 @@ static int parse_unit_link(const char *str, GtkTextBuffer *buf,
   NB If you change any of the chat link formats, be sure to change
   the detection code in server/handchat.c as well!
 **************************************************************************/
-static void append_text_with_links(GtkTextBuffer *buf,
-				   const char *astring, const char *end)
+static void append_text_with_links(GtkTextBuffer *buf, const char *astring,
+                                   const char *end, bool draw_links)
 {
   const char *p, *q, *s;
   char newtext[256];
@@ -738,19 +739,24 @@ static void append_text_with_links(GtkTextBuffer *buf,
   for (s = p = astring; *p && (q = strchr(p, LINK_PREFIX)) && q < end; p = q) {
     switch (q[1]) {
     case TILE_LINK_LETTER:
-      n = parse_location_link(q, buf, &tag, newtext, sizeof(newtext));
+      n = parse_location_link(q, buf, &tag, newtext,
+                              sizeof(newtext), draw_links);
       break;
     case CITY_NAME_LINK_LETTER:
-      n = parse_city_link(q, buf, &tag, newtext, sizeof(newtext));
+      n = parse_city_link(q, buf, &tag, newtext,
+                          sizeof(newtext), draw_links);
       break;
     case CITY_ID_LINK_LETTER:
-      n = parse_city_id_link(q, buf, &tag, newtext, sizeof(newtext));
+      n = parse_city_id_link(q, buf, &tag, newtext,
+                             sizeof(newtext), draw_links);
       break;
     case CITY_LINK_LETTER:
-      n = parse_city_id_and_name_link(q, buf, &tag, newtext, sizeof(newtext));
+      n = parse_city_id_and_name_link(q, buf, &tag, newtext,
+                                      sizeof(newtext), draw_links);
       break;
     case UNIT_LINK_LETTER:
-      n = parse_unit_link(q, buf, &tag, newtext, sizeof(newtext));
+      n = parse_unit_link(q, buf, &tag, newtext,
+                          sizeof(newtext), draw_links);
       break;
     default:
       n = 0;
@@ -831,7 +837,7 @@ void real_append_output_window(const char *astring, int conn_id)
   text_start = gtk_text_buffer_create_mark(buf, NULL, &iter, TRUE);
   if (get_client_state() == CLIENT_GAME_RUNNING_STATE
       || get_client_state() == CLIENT_GAME_OVER_STATE) {
-    append_text_with_links(buf, astring, end_utf8);
+    append_text_with_links(buf, astring, end_utf8, conn_id != -1);
   } else {
     gtk_text_buffer_insert(buf, &iter, astring, end_utf8 - astring);
   }

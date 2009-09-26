@@ -1206,9 +1206,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
     return;
   }
 
-  link_marks_disable_drawing();
   append_output_window(buf);
-  link_marks_enable_drawing();
   update_delayed_goto_menu(0);
 }
 
@@ -1365,12 +1363,10 @@ void schedule_delayed_airlift(struct tile *ptile)
 {
   char buf[256];
 
-  link_marks_disable_drawing();
   my_snprintf(buf, sizeof(buf),
               _("Warclient: Scheduling delayed airlift for %s."),
               get_tile_info(ptile));
   append_output_window(buf);
-  link_marks_enable_drawing();
   delayed_goto_add_unit(0, airlift_queue_need_city_for, DGT_AIRLIFT, ptile);
   update_delayed_goto_menu(0);
   airlift_queue_need_city_for = -1;
@@ -1611,9 +1607,7 @@ void airlift_queue_show(int aq)
   } tile_list_iterate_end;
 
   cat_snprintf(buf, sizeof(buf), ".");
-  link_marks_disable_drawing();
   append_output_window(buf);
-  link_marks_enable_drawing();
 }
 
 /********************************************************************** 
@@ -1659,9 +1653,7 @@ void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
   }
 
   if (buf[0] != '\0') {
-    link_marks_disable_drawing();
     append_output_window(buf);
-    link_marks_enable_drawing();
   }
   if (!multi) {
     update_airlift_menu(0);
@@ -1725,9 +1717,7 @@ void do_airlift(struct tile *ptile)
     my_snprintf(buf, sizeof(buf),
                 _("Warclient: You cannot airlift there %s; no city exists."),
                 get_tile_info(ptile));
-    link_marks_disable_drawing();
     append_output_window(buf);
-    link_marks_enable_drawing();
     return;
   }
 
@@ -1775,7 +1765,5 @@ void add_city_to_specific_auto_airlift_queue(int aq, struct city *pcity)
 		get_tile_info(pcity->tile), aq + DELAYED_GOTO_NUM - 1);
   }
 
-  link_marks_disable_drawing();
   append_output_window(buf);
-  link_marks_enable_drawing();
 }

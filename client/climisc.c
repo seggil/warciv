@@ -88,7 +88,6 @@ struct map_link {
 #define map_link_list_iterate_end LIST_ITERATE_END
 
 static struct map_link_list *link_marks = NULL;
-static int link_marks_draw_off = 0;
 
 static void draw_link_mark(struct map_link *pml);
 
@@ -1060,7 +1059,7 @@ void create_event(struct tile *ptile, enum event_type event,
   my_vsnprintf(message, sizeof(message), format, ap);
   va_end(ap);
 
-  handle_event(message, ptile, event, aconnection.id);
+  handle_event(message, ptile, event, -1);
 }
 
 /**************************************************************************
@@ -1625,7 +1624,6 @@ void link_marks_init(void)
   if (!link_marks) {
     link_marks = map_link_list_new();
   }
-  link_marks_draw_off = 0;
 }
 
 /********************************************************************** 
@@ -1675,25 +1673,6 @@ void clear_all_link_marks(void)
   } map_link_list_iterate_end;
 
   update_map_canvas_visible(MUT_NORMAL);
-}
-
-/********************************************************************** 
-  Disable to make new links.
-***********************************************************************/
-void link_marks_disable_drawing(void)
-{
-  link_marks_draw_off++;
-}
-
-/********************************************************************** 
-  Re-enable to make new links.
-***********************************************************************/
-void link_marks_enable_drawing(void)
-{
-  if (--link_marks_draw_off < 0) {
-    freelog(LOG_ERROR, "Got to many link_marks_enable_drawing().");
-    link_marks_draw_off = 0;
-  }
 }
 
 /********************************************************************** 
@@ -1756,10 +1735,6 @@ static enum color_std get_link_mark_color(struct map_link *pml)
 ***********************************************************************/
 void add_link_mark(enum tag_link_types type, int id)
 {
-  if (link_marks_draw_off > 0) {
-    return;
-  }
-
   struct map_link *pml = find_link_mark(type, id);
   struct tile *ptile;
 
@@ -2207,7 +2182,6 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
   } city_list_iterate_end;
 
   if (!first) {
-    link_marks_disable_drawing();
     if (ptile) {
       my_snprintf(message, sizeof(message),
 		  _("Warclient: Set rally point %s for: %s."),
@@ -2218,7 +2192,6 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
 		  _("Warclient: Remove rally points for: %s."), buf);
       append_output_window(message);
     }
-    link_marks_enable_drawing();
   }
 }
 
@@ -2285,9 +2258,7 @@ void do_unit_air_patrol(struct unit *punit, struct tile *ptile)
 		unit_name(punit->type), punit->id,
 		get_tile_info(punit->air_patrol_tile));
   }
-  link_marks_disable_drawing();
   append_output_window(buf);
-  link_marks_enable_drawing();
 
   /* Do the change */
   if (server_has_extglobalinfo) {
