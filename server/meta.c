@@ -514,18 +514,19 @@ void server_close_meta(void)
 /*************************************************************************
   Async callback for metaserver host name resolution.
 *************************************************************************/
-static void metaname_lookup_callback(union my_sockaddr *addr, void *data)
+static bool metaname_lookup_callback(union my_sockaddr *addr, void *data)
 {
   metaname_lookup_id = 0;
   if (addr == NULL) {
     freelog(LOG_ERROR, _("Metaserver: bad address: [%s:%d]."),
             metaname, metaport);
     metaserver_failed();
-    return;
+    return FALSE;
   }
   meta_addr.sockaddr_in = addr->sockaddr_in;
   server_is_open = TRUE;
   metaserver_success_count = 0;
+  return TRUE;
 }
 
 /*************************************************************************

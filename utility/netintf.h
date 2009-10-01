@@ -85,40 +85,41 @@ const char *my_url_encode(const char *txt);
      data - The context data passed in to the adns lookup
             function.
   If the query fails, addr is set to NULL and addrlen to 0.
+  Returns FALSE if the query is already cancelled.
 ***************************************************************/
-typedef void (*adns_result_callback_t) (const unsigned char *addr,
+typedef bool (*adns_result_callback_t) (const unsigned char *addr,
                                         int addrlen,
                                         void *data);
 
-int adns_lookup_full (const char *query_data,
-                      enum dns_query_type query_type,
-                      adns_result_callback_t cb,
-                      void *data,
-                      data_free_func_t datafree);
-int adns_lookup (const char *name,
-                 adns_result_callback_t cb,
-                 void *data,
-                 data_free_func_t datafree);
-int adns_reverse_lookup (union my_sockaddr *sa,
-                         adns_result_callback_t cb,
-                         void *data,
-                         data_free_func_t datafree);
-void *adns_cancel (int id);
-void adns_init (void);
-void adns_free (void);
-bool adns_is_available (void);
-int adns_get_socket_fd (void);
-void adns_poll (void);
-void adns_check_expired (void);
+int adns_lookup_full(const char *query_data,
+                     enum dns_query_type query_type,
+                     adns_result_callback_t cb,
+                     void *data,
+                     data_free_func_t datafree);
+int adns_lookup(const char *name,
+                adns_result_callback_t cb,
+                void *data,
+                data_free_func_t datafree);
+int adns_reverse_lookup(union my_sockaddr *sa,
+                        adns_result_callback_t cb,
+                        void *data,
+                        data_free_func_t datafree);
+void *adns_cancel(int id);
+void adns_init(void);
+void adns_free(void);
+bool adns_is_available(void);
+int adns_get_socket_fd(void);
+void adns_poll(void);
+void adns_check_expired(void);
 
 union my_sockaddr;
-typedef void (*net_lookup_result_callback_t) (union my_sockaddr *addr,
+typedef bool (*net_lookup_result_callback_t) (union my_sockaddr *addr,
                                               void *data);
-int net_lookup_service_async (const char *name,
-                              int port,
-                              net_lookup_result_callback_t cb,
-                              void *data,
-                              data_free_func_t datafree);
-void *cancel_net_lookup_service (int id);
+int net_lookup_service_async(const char *name,
+                             int port,
+                             net_lookup_result_callback_t cb,
+                             void *data,
+                             data_free_func_t datafree);
+void *cancel_net_lookup_service(int id);
 
 #endif  /* FC__NETINTF_H */

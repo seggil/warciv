@@ -217,9 +217,13 @@ static void dns_result_callback(const unsigned char *addr,
   freelog(LOG_DEBUG, "drc calling %p userdata=%p",
           ctx->callback, ctx->userdata);
   if (addrlen <= 0) {
-    (*ctx->callback) (NULL, 0, ctx->userdata);
+    if (!(*ctx->callback) (NULL, 0, ctx->userdata)) {
+      return;
+    }
   } else {
-    (*ctx->callback) (addr, addrlen, ctx->userdata);
+    if (!(*ctx->callback) (addr, addrlen, ctx->userdata)) {
+      return;
+    }
   }
 
   if (ctx->req_id == -1) {
@@ -413,7 +417,7 @@ static void destroy_net_lookup_ctx(struct net_lookup_ctx *ctx)
 /***************************************************************************
   ...
 ***************************************************************************/
-static void adns_result_callback(const unsigned char *address,
+static bool adns_result_callback(const unsigned char *address,
                                  int addrlen, void *data)
 {
   struct net_lookup_ctx *ctx = data;
@@ -431,18 +435,25 @@ static void adns_result_callback(const unsigned char *address,
     memcpy(&sock->sin_addr, address, addrlen);
     freelog(LOG_DEBUG, "arc calling %p userdata %p with found address",
             ctx->callback, ctx->userdata);
-    (*ctx->callback) (ctx->addr, ctx->userdata);
+    if (!(*ctx->callback) (ctx->addr, ctx->userdata)) {
+      return FALSE;
+    }
   } else {
     /* host name could not be resolved */
     freelog(LOG_DEBUG, "arc calling %p userdata %p, address NOT found",
             ctx->callback, ctx->userdata);
-    (*ctx->callback) (NULL, ctx->userdata);
+    if (!(*ctx->callback) (NULL, ctx->userdata)) {
+      return FALSE;
+    }
   }
 
   if (ctx->req_id > 0) { 
     /* we were called indirectly, so it's ok to free ctx */
     destroy_net_lookup_ctx(ctx);
+    return FALSE;
   }
+
+  return TRUE;
 }
 
 /***************************************************************************

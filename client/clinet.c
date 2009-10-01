@@ -1054,8 +1054,8 @@ static bool metaserver_write_cb(int sock, int flags, void *data)
 /**************************************************************************
   ...
 **************************************************************************/
-static void
-metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
+static bool metaserver_name_lookup_callback(union my_sockaddr *addr_result,
+                                            void *data)
 {
   int sock, res, len;
   struct async_slist_ctx *ctx = data;
@@ -1071,7 +1071,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
 
   if (!addr_result) {
     async_slist_error(ctx, _("Failed looking up host"));
-    return;
+    return TRUE;
   }
 
   addr = &addr_result->sockaddr;
@@ -1079,7 +1079,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   if (-1 == (sock = socket(AF_INET, SOCK_STREAM, 0))) {
     async_slist_error(ctx, _("Socket call failed: %s"),
                       mystrsocketerror(mysocketerrno()));
-    return;
+    return TRUE;
   }
   ctx->sock = sock;
 
@@ -1089,7 +1089,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   if (-1 == my_set_nonblock(sock)) {
     async_slist_error(ctx, _("Could not set non-blocking mode: %s"),
                       mystrsocketerror(mysocketerrno()));
-    return;
+    return TRUE;
   }
 #endif
 
@@ -1104,7 +1104,7 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
   if (res == -1) {
     async_slist_error(ctx, _("Connect operation failed: %s"),
                       mystrsocketerror(err_no));
-    return;
+    return TRUE;
   }
 
   ctx->sock = sock;
@@ -1122,6 +1122,8 @@ metaserver_name_lookup_callback(union my_sockaddr *addr_result, void *data)
       metaserver_write_cb, ctx, NULL);
 
   freelog(LOG_DEBUG, "mnlc waiting for socket %d to become writable", sock);
+
+  return TRUE;
 }
 
 /**************************************************************************
@@ -1235,7 +1237,8 @@ int create_server_list_async(char *errbuf, int n_errbuf,
     }
   } else {
     nlsa_id = net_lookup_service_async(metaname, metaport,
-        metaserver_name_lookup_callback, ctx, NULL);
+                                       metaserver_name_lookup_callback,
+                                       ctx, NULL);
   }
   freelog(LOG_DEBUG, "csla got nlsa_id = %d", nlsa_id);
 

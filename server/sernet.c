@@ -1040,7 +1040,7 @@ static const char *makeup_connection_name(int *id)
 /********************************************************************
   ...
 ********************************************************************/
-static void reverse_lookup_cb(const unsigned char *addr,
+static bool reverse_lookup_cb(const unsigned char *addr,
                               int addrlen, void *data)
 {
   struct connection *pconn = data;
@@ -1053,7 +1053,7 @@ static void reverse_lookup_cb(const unsigned char *addr,
 
   if (!pconn->used) {
     freelog(LOG_DEBUG, "rlc callback for non-existant pconn!");
-    return;
+    return TRUE;
   }
 
   pconn->server.adns_id = -1;
@@ -1069,6 +1069,8 @@ static void reverse_lookup_cb(const unsigned char *addr,
             pconn->username);
     receive_hostname(pconn, NULL);
   }
+
+  return TRUE;
 }
 
 /********************************************************************
@@ -1185,7 +1187,8 @@ static int server_accept_connection(int sockfd)
     if (adns_is_available()) {
       freelog(LOG_DEBUG, "sac making adns request");
       pconn->server.adns_id = adns_reverse_lookup(&fromend,
-          reverse_lookup_cb, pconn, NULL);
+                                                  reverse_lookup_cb,
+                                                  pconn, NULL);
       freelog(LOG_DEBUG, "sac got adns_id=%d", pconn->server.adns_id);
       if (pconn->server.adns_id == 0) {
         /* reverse_lookup_cb called already */

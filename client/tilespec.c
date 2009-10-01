@@ -317,7 +317,9 @@ static char *tilespec_fullname(const char *tileset_name)
    * it here, since this is the only place where we know it.  Note this
    * also means if you do "civ -t foo" this will change your *default*
    * tileset to 'foo'. */
-  sz_strlcpy(default_tileset_name, tileset_name);
+  if (default_tileset_name != tileset_name) {
+    sz_strlcpy(default_tileset_name, tileset_name);
+  }
 
   fname = fc_malloc(strlen(tileset_name) + strlen(TILESPEC_SUFFIX) + 1);
   sprintf(fname, "%s%s", tileset_name, TILESPEC_SUFFIX);
