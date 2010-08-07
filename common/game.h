@@ -543,7 +543,7 @@ extern bool is_server;
 #define GAME_MAX_PINGTIME            1800
 
 #define GAME_DEFAULT_PINGTIMEOUT     60
-#define GAME_MIN_PINGTIMEOUT         60
+#define GAME_MIN_PINGTIMEOUT         10
 #define GAME_MAX_PINGTIMEOUT         1800
 
 #define GAME_DEFAULT_NOTRADESIZE     0
