@@ -8142,17 +8142,23 @@ static void show_idle(struct connection *caller)
   }
 }
 
-/**************************************************************************
-  ...
-**************************************************************************/
-static void show_ignore(struct connection *caller)
+/****************************************************************************
+  Show the current ignored pattern of caller to itself.
+****************************************************************************/
+static bool show_ignore(struct connection *caller)
 {
   int n = 1;
   char buf[128];
-  if (ignore_list_size(caller->server.ignore_list) <= 0) {
+
+  if (NULL == caller) {
+    cmd_reply(CMD_IGNORE, caller, C_FAIL,
+              _("That would be rather silly, since you are not a player."));
+    return FALSE;
+  } else if (ignore_list_size(caller->server.ignore_list) <= 0) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list is empty."));
-    return;
+    return TRUE;
   }
+
   cmd_reply(CMD_LIST, caller, C_COMMENT, _("Your ignore list:"));
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
   ignore_list_iterate(caller->server.ignore_list, cp) {
@@ -8160,6 +8166,8 @@ static void show_ignore(struct connection *caller)
     cmd_reply(CMD_LIST, caller, C_COMMENT, "%d: %s", n++, buf);
   } ignore_list_iterate_end;
   cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
+
+  return TRUE;
 }
 
 /**************************************************************************
@@ -8393,8 +8401,7 @@ static bool show_list(struct connection *caller, char *arg)
     show_idle(caller);
     return TRUE;
   case LIST_IGNORE:
-    show_ignore(caller);
-    return TRUE;
+    return show_ignore(caller);
   case LIST_MAPS:
     return showmaplist_command(caller);
   case LIST_MUTES:
