@@ -1272,24 +1272,30 @@ static void setup_widgets(void)
 
   main_tips = gtk_tooltips_new();
 
-  /* the window is divided into two panes. "top" and "message window" */ 
-  paned = gtk_vpaned_new();
-  toplevel_vpaned = paned;
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
-                           paned, NULL);
-
   /* *** everything in the top *** */
 
   top_vbox = gtk_vbox_new(FALSE, 5);
-  gtk_paned_pack1(GTK_PANED(paned), top_vbox, TRUE, FALSE);
-
   hbox = gtk_hbox_new(FALSE, 0);
-  gtk_box_pack_end(GTK_BOX(top_vbox), hbox, TRUE, TRUE, 0);
+  paned = gtk_vpaned_new();
+  toplevel_vpaned = paned;
+
+  if (small_display_layout) {
+    /* The window is divided into two horizontal panels: overview +
+     * civinfo + unitinfo, main view + message window. */
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), top_vbox, NULL);
+    gtk_box_pack_end(GTK_BOX(top_vbox), hbox, TRUE, TRUE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), paned, TRUE, TRUE, 0);
+  } else {
+    /* The window is divided into two vertical panes: overview +
+     * + civinfo + unitinfo + main view, message window. */
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), paned, NULL);
+    gtk_paned_pack1(GTK_PANED(paned), top_vbox, TRUE, FALSE);
+    gtk_box_pack_end(GTK_BOX(top_vbox), hbox, TRUE, TRUE, 0);
+  }
 
   /* this holds the overview canvas, production info, etc. */
   vbox = gtk_vbox_new(FALSE, 3);
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-
 
   /* overview canvas */
   ahbox = detached_widget_new();
@@ -1297,7 +1303,7 @@ static void setup_widgets(void)
   avbox = detached_widget_fill(ahbox, TRUE);
 
   align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
-  gtk_box_pack_start(GTK_BOX(avbox), align, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(avbox), align, FALSE, FALSE, 0);
 
   overview_box = gtk_vbox_new(FALSE, 4);
   gtk_container_add(GTK_CONTAINER(align), overview_box);
@@ -1338,7 +1344,7 @@ static void setup_widgets(void)
   /* The rest */
 
   ahbox = detached_widget_new();
-  gtk_container_add(GTK_CONTAINER(vbox), ahbox);
+  gtk_box_pack_start(GTK_BOX(vbox), ahbox, TRUE, TRUE, 0);
   avbox = detached_widget_fill(ahbox, TRUE);
 
   /* Info on player's civilization, when game is running. */
@@ -1364,7 +1370,7 @@ static void setup_widgets(void)
 
   /* make a box so the table will be centered */
   box = gtk_hbox_new(FALSE, 0);
-  
+
   gtk_box_pack_start(GTK_BOX(avbox), box, FALSE, FALSE, 0);
 
   table = gtk_table_new(3, 10, TRUE);
@@ -1377,7 +1383,7 @@ static void setup_widgets(void)
   ebox = gtk_event_box_new();
   gtk_table_attach_defaults(GTK_TABLE(table), ebox, 0, 10, 0, 1);
   econ_ebox = ebox;
-  
+
   table2 = gtk_table_new(1, 10, TRUE);
   gtk_table_set_row_spacing(GTK_TABLE(table2), 0, 0);
   gtk_table_set_col_spacing(GTK_TABLE(table2), 0, 0);
@@ -1523,10 +1529,16 @@ static void setup_widgets(void)
   unit_pixmap_table = table;
   populate_unit_pixmap_table();
 
-  top_notebook = gtk_notebook_new();  
+  /* The top notebook containing the map view and dialogs. */
+
+  top_notebook = gtk_notebook_new();
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(top_notebook), GTK_POS_BOTTOM);
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(top_notebook), TRUE);
-  gtk_box_pack_start(GTK_BOX(hbox), top_notebook, TRUE, TRUE, 0);
+  if (small_display_layout) {
+    gtk_paned_pack1(GTK_PANED(paned), top_notebook, TRUE, TRUE);
+  } else {
+    gtk_box_pack_start(GTK_BOX(hbox), top_notebook, TRUE, TRUE, 0);
+  }
 
   /* Map canvas and scrollbars */
 

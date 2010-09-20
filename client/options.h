@@ -180,6 +180,7 @@ extern bool always_show_votebar;
 extern bool do_not_show_votebar_if_not_player;
 extern bool warn_before_add_to_city;
 extern bool prevent_duplicate_notify_tabs;
+extern bool small_display_layout;
 extern bool enable_chat_logging;
 extern char chat_log_directory[MAX_LEN_PATH];
 enum player_colors_modes player_colors_mode;

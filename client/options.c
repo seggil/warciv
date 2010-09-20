@@ -120,6 +120,7 @@ bool always_show_votebar;
 bool do_not_show_votebar_if_not_player;
 bool warn_before_add_to_city;
 bool prevent_duplicate_notify_tabs;
+bool small_display_layout;
 bool enable_chat_logging;
 char chat_log_directory[MAX_LEN_PATH];
 enum player_colors_modes player_colors_mode;
@@ -634,6 +635,16 @@ static struct client_option client_options[] = {
                   N_("If this option is turned on, new notify tabs will "
 		     "replace those of the same name."),
 		  COC_INTERFACE, FALSE, NULL),
+  GEN_BOOL_OPTION(small_display_layout,
+                  N_("Arrange widgets for small displays"),
+                  N_("If this option is enabled, widgets in the main "
+                     "window will be arrange so that they take up the "
+                     "least amount of total screen space. Specifically, "
+                     "the left panel containing the overview, player "
+                     "status, and the unit information box will be "
+                     "extended over the entire left side of the window. "
+                     "This option requires a restart in order to take "
+                     "effect."), COC_INTERFACE, TRUE, NULL),
 
   GEN_STR_LIST_OPTION(default_sound_set_name, N_("Default name of sound set"),
 		      N_("This is the soundset that will be used.  Changing "
