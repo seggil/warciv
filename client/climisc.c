@@ -1145,30 +1145,53 @@ enum known_type map_get_known(const struct tile *ptile,
   return tile_get_known(ptile);
 }
 
-/********************************************************************** 
+/****************************************************************************
   Convert a integer in string. The string will be completed with spaces.
-***********************************************************************/
-static const char *int_to_string(int n, int min_size)
+****************************************************************************/
+static bool int_to_string(int integer, size_t min_size,
+                          char *buf, size_t buf_len)
 {
-  static char buf[16];
-  int i, size;
+  static const char chars[] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+  };
+  static const size_t chars_num = sizeof(chars);
+  size_t size = 1, i;
+  int n = integer;
 
-  /* Calcul the size we need */
-  for (size = 1; (double) n / pow(26, size) >= 1; size++);
-  assert(size < sizeof(buf));
+  if (0 > integer || min_size >= buf_len || NULL == buf) {
+    return FALSE;
+  }
 
-  for (i = 0; i < min_size - size; i++) {
+  /* Calculate the length of string produce by 'n'. */
+  while (chars_num <= n) {
+    n /= chars_num;
+    size++;
+  }
+
+  if (size >= buf_len) {
+    return FALSE;       /* Buffer not enough big. */
+  }
+
+  if (size < min_size) {
     /* Complete with spaces */
-    buf[i] = ' ';
+    for (i = 0; i < min_size - size; i++) {
+      buf[i] = ' ';
+    }
+  } else {
+    i = 0;
   }
-  while (size > 0 && n > 0) {
-    buf[i] = (n / pow(26, --size)) + 0x41;
-    n -= n / pow(26, size);
-    i++;
-  }
-  buf[i] = '\0';
 
-  return buf;
+  /* Append chars. */
+  n = integer;
+  do {
+    buf[i++] = chars[n % chars_num];
+    n /= chars_num;
+  } while (0 < n);
+
+  return TRUE;
 }
 
 /**************************************************************************
@@ -1179,6 +1202,7 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
 {
   const char *in = format;
   char *out = buf;
+  char int_buf[32];
   int rem = buflen, len, fw = 0;
 
   int *pcontinent_counter;
@@ -1231,9 +1255,11 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
         break;
 
       case 'C':
-        len =
-            my_snprintf(out, rem, "%s",
-                        int_to_string(ad->continent_id, fw));
+        if (int_to_string(ad->continent_id, fw, int_buf, sizeof(int_buf))) {
+          len = my_snprintf(out, rem, "%s", int_buf);
+        } else {
+          len = 0;
+        }
         break;
 
       case 'g':                /* global city counter */
@@ -1241,9 +1267,12 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
         break;
 
       case 'G':
-        len =
-            my_snprintf(out, rem, "%s",
-                        int_to_string(ad->global_city_number, fw));
+        if (int_to_string(ad->global_city_number, fw,
+                          int_buf, sizeof(int_buf))) {
+          len = my_snprintf(out, rem, "%s", int_buf);
+        } else {
+          len = 0;
+        }
         break;
 
       case 'n':                /* per continent city counter */
@@ -1251,9 +1280,12 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
         break;
 
       case 'N':
-        len =
-            my_snprintf(out, rem, "%s",
-                        int_to_string(ad->continent_city_number, fw));
+        if (int_to_string(ad->continent_city_number, fw,
+                          int_buf, sizeof(int_buf))) {
+          len = my_snprintf(out, rem, "%s", int_buf);
+        } else {
+          len = 0;
+        }
         break;
 
       case '%':                /* a single percent sign */
