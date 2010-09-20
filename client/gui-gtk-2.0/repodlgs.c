@@ -1496,7 +1496,7 @@ static void settable_options_callback(GtkWidget *win, gint rid, GtkWidget *w)
 *************************************************************************/
 static void create_settable_options_dialog(void)
 {
-  GtkWidget *win, *book, **vbox, *prev_widget = NULL;
+  GtkWidget *win, *book, *sw, **vbox, *prev_widget = NULL;
   static GtkStyle *style = NULL;
   GtkTooltips *tips;
   int num[num_options_categories];
@@ -1527,16 +1527,22 @@ static void create_settable_options_dialog(void)
 
   /* create a notebook for the options */
   book = gtk_notebook_new();
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(win)->vbox), book, FALSE, FALSE, 2);
+  gtk_widget_set_size_request(book, -1, 500);
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(win)->vbox), book, TRUE, TRUE, 2);
 
   /* create a number of notebook pages for each category */
   vbox = fc_malloc(num_options_categories * sizeof(GtkWidget *));
 
   for (i = 0; i < num_options_categories; i++) {
+    sw = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+                                   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    gtk_notebook_append_page(GTK_NOTEBOOK(book), sw,
+                             gtk_label_new(_(options_categories[i])));
+
     vbox[i] = gtk_vbox_new(FALSE, 2);
     gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
-    gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox[i],
-			     gtk_label_new(_(options_categories[i])));
+    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox[i]);
   }
 
   /* fill each category */
