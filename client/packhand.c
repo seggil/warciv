@@ -1639,7 +1639,7 @@ void handle_game_info(struct packet_game_info *pinfo)
     /* Only add in the improvement if it's in a "foreign" (i.e. unknown) city
      * and has equiv_range==World - otherwise we deal with it in its home
      * city anyway */
-    if (is_wonder(i) && improvement_types[i].equiv_range == EFR_WORLD
+    if (is_wonder(i) && improvement_types[i].equiv_range == IR_WORLD
 	&& !find_city_by_id(game.info.global_wonders[i])) {
       if (game.info.global_wonders[i] <= 0 && game.improvements[i] != I_NONE) {
         game.improvements[i] = I_NONE;
