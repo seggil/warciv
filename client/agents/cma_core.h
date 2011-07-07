@@ -28,9 +28,9 @@
  * the sum over base*factor. The base depends upon the factor_target.
  */
 
-#include "cm.h"
+#include "aicore/cm.h"
 
-#include "attribute.h"
+#include "../attribute.h"
 
 /*
  * Called once per client start.

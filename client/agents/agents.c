@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -25,11 +25,11 @@
 #include "mem.h"
 #include "timing.h"
 
-#include "civclient.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../clinet.h"
 #include "cma_core.h"
 #include "cma_fec.h"
-#include "mapctrl_g.h"
+#include "../include/mapctrl_g.h"
 #include "sha.h"
 
 #include "agents.h"

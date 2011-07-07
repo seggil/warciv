@@ -17,7 +17,7 @@
 **************************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -30,7 +30,7 @@
 #include "support.h"
 
 #include "agents.h"
-#include "attribute.h"
+#include "../attribute.h"
 
 #include "cma_fec.h"
 
