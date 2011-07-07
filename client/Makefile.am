@@ -112,5 +112,4 @@ civclient_DEPENDENCIES = $(fc_civclient_libs)
 civclient_LDADD        = $(fc_civclient_libs) $(fc_civclient_libs) \
 	@INTLLIBS@ @CLIENT_LIBS@ @SOUND_LIBS@ $(CLIENTICON)
 desktopfiledir = $(prefix)/share/applications
-desktopfile_DATA = \
-	freeciv.desktop
+desktopfile_DATA = freeciv.desktop

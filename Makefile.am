@@ -29,13 +29,12 @@ DSUBDIRS =
 endif
 
 
-SUBDIRS=	$(DSUBDIRS) intl utility common tests win32 $(SSUBDIRS) $(CSUBDIRS) po doc $(MSUBDIRS) contrib
+SUBDIRS= $(DSUBDIRS) intl utility common tests win32 $(SSUBDIRS) $(CSUBDIRS) \
+         po doc $(MSUBDIRS) contrib
 
-EXTRA_DIST=	acconfig.old			\
-		autogen.sh 			\
+EXTRA_DIST=	autogen.sh 			\
 		config.mac.h			\
 		configure.ac			\
-		configure.in			\
 		diff_ignore			\
 		bootstrap/civ.in		\
 		bootstrap/ser.in		\
@@ -44,12 +43,21 @@ EXTRA_DIST=	acconfig.old			\
 		bootstrap/freeciv.desktop.in	\
 		bootstrap/freeciv.spec.in	\
 		bootstrap/undep.sh.in		\
+		debian/changelog		\
+		debian/compat			\
+		debian/control			\
+		debian/copyright		\
+		debian/rules			\
+		debian/warclient*		\
+		debian/watch			\
+		debian/patches/01_configure_ac_localedir.dpatch		\
+		debian/patches/series		\
 		m4/ac_path_lib.m4		\
+		m4/alsa.m4			\
 		m4/c99.m4			\
 		m4/debug.m4			\
 		m4/deprecated.m4		\
 		m4/esd.m4			\
-		m4/alsa.m4			\
 		m4/freetype2.m4			\
 		m4/gettext.m4			\
 		m4/gettimeofday.m4		\

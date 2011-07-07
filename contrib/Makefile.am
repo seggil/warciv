@@ -13,7 +13,7 @@ SSUBDIRS =
 endif
 
 ## Override automake so that "make install"  put these in proper place
-pkgdatadir = $(docdir)/@PACKAGE@/contrib
+pkgdatadir = $(datadir)/@PACKAGE@/contrib
 
 pkgdata_DATA = block_tor_exit_nodes.sh
 

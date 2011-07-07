@@ -62,16 +62,17 @@ libcivcommon_a_SOURCES = \
 		version.c	\
 		version.h
 
-BUILT_SOURCES = packets_gen.c packets_gen.h fc_svnrev_gen.h
+#BUILT_SOURCES = packets_gen.c packets_gen.h fc_svnrev_gen.h
+BUILT_SOURCES = fc_svnrev_gen.h
 
 # ./generate_packets makes both packets_gen.[ch]
 # Feed the dependence through a fake intermediate file to avoid
 # a race condition in a parallel build (like make -j2).
-packets_gen.h packets_gen.c: packets_generate
-.INTERMEDIATE: packets_generate
-packets_generate: packets.def generate_packets.py
-	./generate_packets.py
-	touch packets_generate
+#packets_gen.h packets_gen.c: packets_generate
+#.INTERMEDIATE: packets_generate
+#packets_generate: packets.def generate_packets.py
+#	./generate_packets.py
+#	touch packets_generate
 
 if SVNREV
 # fc_svnrev_gen.h must be generated before it can be included.
@@ -84,8 +85,6 @@ fc_svnrev_gen.h :
 	$(top_srcdir)/bootstrap/generate_svnrev.sh $(top_srcdir) $(top_builddir)
 
 endif
-
-
 
 #libcivcommon_a_DEPENDENCIES = ../utility/libcivutility.a
 #libcivcommon_a_LIBADD       = ../utility/libcivutility.a

@@ -110,4 +110,3 @@ civserver_LDADD        = ../utility/libcivutility.a ../common/libcivcommon.a \
       ../common/aicore/libaicore.a ./generator/libgenerator.a \
       ./lua/src/liblua.a $(MYSQL_LIBS) $(SERVER_LIBS) $(SERVERICON) \
       $(LUASQL_MYSQL_LIB)
-
