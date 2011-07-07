@@ -1583,10 +1583,10 @@ void package_city(struct city *pcity, struct packet_city_info *packet,
   sz_strlcpy(packet->name, pcity->name);
   packet->size = pcity->size;
   for (i = 0; i < 5; i++) {
-    packet->ppl_happy[i] = pcity->ppl_happy[i];
-    packet->ppl_content[i] = pcity->ppl_content[i];
-    packet->ppl_unhappy[i] = pcity->ppl_unhappy[i];
-    packet->ppl_angry[i] = pcity->ppl_angry[i];
+    packet->people_happy[i] = pcity->people_happy[i];
+    packet->people_content[i] = pcity->people_content[i];
+    packet->people_unhappy[i] = pcity->people_unhappy[i];
+    packet->people_angry[i] = pcity->people_angry[i];
   }
   packet->specialists[SP_ELVIS] = pcity->specialists[SP_ELVIS];
   packet->specialists[SP_SCIENTIST] = pcity->specialists[SP_SCIENTIST];
