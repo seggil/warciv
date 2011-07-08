@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -422,7 +422,7 @@ void client_diplomacy_clause_string(char *buf, int bufsiz,
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Return a text info about a tile with link mark.
   Do not call this function both in a list of format arguments because
   it returns a static buffer.
@@ -868,7 +868,7 @@ int collect_cids3(cid * dest_cids)
       cids_used++;
     }
   } unit_type_iterate_end;
-  
+
   return cids_used;
 }
 
@@ -1202,15 +1202,15 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
 {
   const char *in = format;
   char *out = buf;
-  char int_buf[32];
+  //char int_buf[32];
   int rem = buflen, len, fw = 0;
 
   int *pcontinent_counter;
 
   assert(buflen > 0);
 
-  freelog(LOG_DEBUG, "amcn an_make_city_name format=\"%s\" ad=%p", format,
-          ad);
+  freelog(LOG_DEBUG, "%s an_make_city_name format=\"%s\" ad=%p", __LINE__,
+          format, ad);
 
   if (!format) {
     mystrlcpy(buf, ad->original_name, buflen);
@@ -1226,18 +1226,18 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
                 pcontinent_counter);
   }
 
-  freelog(LOG_DEBUG, "amcn   *pcontinent_counter = %d",
+  freelog(LOG_DEBUG, "%s   *pcontinent_counter = %d", __FILE__,
           *pcontinent_counter);
 
   if (ad->global_city_number <= 0) {
     ad->global_city_number = ++an_global_city_number_counter;
-    freelog(LOG_DEBUG, "amcn   assigned new global_city_number (%d)",
+    freelog(LOG_DEBUG, "%s   assigned new global_city_number (%d)", __FILE__,
             ad->global_city_number);
   }
   if (ad->continent_city_number <= 0) {
     ad->continent_city_number = ++(*pcontinent_counter);
-    freelog(LOG_DEBUG, "amcn   assigned new continent_city_number (%d)",
-            ad->continent_city_number);
+    freelog(LOG_DEBUG, "%s   assigned new continent_city_number (%d)",
+            __FILE__, ad->continent_city_number);
   }
 
   while (rem > 1 && *in != '\0' && *in != ';') {
@@ -1255,11 +1255,7 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
         break;
 
       case 'C':
-        if (int_to_string(ad->continent_id, fw, int_buf, sizeof(int_buf))) {
-          len = my_snprintf(out, rem, "%s", int_buf);
-        } else {
-          len = 0;
-        }
+        len = my_snprintf(out, rem, "%s", int_to_string(ad->continent_id, fw));
         break;
 
       case 'g':                /* global city counter */
@@ -1267,12 +1263,8 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
         break;
 
       case 'G':
-        if (int_to_string(ad->global_city_number, fw,
-                          int_buf, sizeof(int_buf))) {
-          len = my_snprintf(out, rem, "%s", int_buf);
-        } else {
-          len = 0;
-        }
+        len = my_snprintf(out, rem, "%s",
+                          int_to_string(ad->global_city_number, fw));
         break;
 
       case 'n':                /* per continent city counter */
@@ -1280,12 +1272,8 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
         break;
 
       case 'N':
-        if (int_to_string(ad->continent_city_number, fw,
-                          int_buf, sizeof(int_buf))) {
-          len = my_snprintf(out, rem, "%s", int_buf);
-        } else {
-          len = 0;
-        }
+        len = my_snprintf(out, rem, "%s",
+                          int_to_string(ad->continent_city_number, fw));
         break;
 
       case '%':                /* a single percent sign */
@@ -1358,6 +1346,7 @@ static int an_generate_city_name(char *buf, int buflen,
   if (!ad) {
     ad = fc_malloc(sizeof(struct autoname_data));
     freelog(LOG_DEBUG, "agcn   new ad %p", ad);
+    //printf("%s   new ad %p\n", __FILE__, ad);
     sz_strlcpy(ad->original_name, pcity->name);
     ad->city_id = pcity->id;
     ad->continent_id = pcity->tile->continent;
@@ -1375,7 +1364,7 @@ static int an_generate_city_name(char *buf, int buflen,
 
   for (;;) {
     format = string_vector_get(city_name_formats, ad->format_index);
-    freelog(LOG_DEBUG, "agcn   trying format \"%s\" [%d]", format,
+    freelog(LOG_DEBUG, "%S   trying format \"%s\" [%d]", __FILE__, format,
             ad->format_index);
 
     len = an_make_city_name(format, buf, buflen, ad);
@@ -1496,11 +1485,13 @@ void normalize_names_in_selected_cities(void)
   connection_do_buffer(&aconnection);
   city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!is_city_hilited(pcity)) {
+      //printf("not highlighted city=%s\n", &pcity->name[0]);
       continue;
     }
 
     if (an_generate_city_name(buf, sizeof(buf), pcity,
                               err, sizeof(err)) > 0) {
+      //printf("highlighted city=%s\n", &pcity->name[0]);
       city_autonaming_add_used_name(buf);
       city_rename(pcity, buf);
     } else {
@@ -1648,7 +1639,7 @@ int buy_production_in_selected_cities(void)
   return 1;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Init.
 ***********************************************************************/
 void link_marks_init(void)
@@ -1658,7 +1649,7 @@ void link_marks_init(void)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Find a link mark in the list.
 ***********************************************************************/
 static struct map_link *find_link_mark(enum tag_link_types type, int id)
@@ -1672,7 +1663,7 @@ static struct map_link *find_link_mark(enum tag_link_types type, int id)
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Create a new link mark.
 ***********************************************************************/
 static struct map_link *map_link_new(enum tag_link_types type, int id)
@@ -1686,7 +1677,7 @@ static struct map_link *map_link_new(enum tag_link_types type, int id)
   return pml;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Remove a link mark.
 ***********************************************************************/
 static void map_link_remove(struct map_link *pml)
@@ -1695,7 +1686,7 @@ static void map_link_remove(struct map_link *pml)
   free(pml);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Clear all visible links.
 ***********************************************************************/
 void clear_all_link_marks(void)
@@ -1707,7 +1698,7 @@ void clear_all_link_marks(void)
   update_map_canvas_visible(MUT_NORMAL);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Decrease the link marks turn counter.
 ***********************************************************************/
 void decrease_link_mark_turn_counters(void)
@@ -1720,7 +1711,7 @@ void decrease_link_mark_turn_counters(void)
   } map_link_list_iterate_end;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Returns the location of the pointed mark.
 ***********************************************************************/
 static struct tile *get_link_mark_tile(struct map_link *pml)
@@ -1744,7 +1735,7 @@ static struct tile *get_link_mark_tile(struct map_link *pml)
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Returns the color of the pointed mark.
 ***********************************************************************/
 static enum color_std get_link_mark_color(struct map_link *pml)
@@ -1762,7 +1753,7 @@ static enum color_std get_link_mark_color(struct map_link *pml)
   return COLOR_STD_BLACK;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a visible link.
 ***********************************************************************/
 void add_link_mark(enum tag_link_types type, int id)
@@ -1781,7 +1772,7 @@ void add_link_mark(enum tag_link_types type, int id)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a visible link for 1 turn.
 ***********************************************************************/
 void restore_link_mark(enum tag_link_types type, int id)
@@ -1802,7 +1793,7 @@ void restore_link_mark(enum tag_link_types type, int id)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Print a link mark.
 ***********************************************************************/
 static void draw_link_mark(struct map_link *pml)
@@ -1844,7 +1835,7 @@ static void draw_link_mark(struct map_link *pml)
                   x1, y1, 0, -ylen);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Draw all link marks.
 ***********************************************************************/
 void draw_all_link_marks(void)
@@ -2165,7 +2156,7 @@ void toggle_traderoute_drawing_in_selected_cities(void)
   update_map_canvas_visible(MUT_NORMAL);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Rally point interface...
   Is the server has the extglobalinfo capability, send infos to it.
   Else, do all locally.
@@ -2227,7 +2218,7 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Execute all air patrol orders.
 ***********************************************************************/
 void execute_air_patrol_orders(void)
@@ -2246,7 +2237,7 @@ void execute_air_patrol_orders(void)
   connection_do_unbuffer(&aconnection);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void do_unit_air_patrol(struct unit *punit, struct tile *ptile)

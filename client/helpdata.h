@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ char *helptext_unit_upkeep_str(int i);
 #define help_items_iterate(pitem) {       \
         const struct help_item *pitem;    \
         help_iter_start();                \
-        while((pitem=help_iter_next())) {   
+        while((pitem=help_iter_next())) {
 #define help_items_iterate_end }}
 
 #endif  /* FC__HELPDATA_H */

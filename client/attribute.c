@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2001 - R. Falke
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
    *   uint32 entries;
    *   uint32 total_size_in_bytes;
    * } preamble;
-   * 
+   *
    * struct {
    *   uint32 value_size;
    *   char key[], char value[];
@@ -199,8 +199,8 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
 }
 
 /****************************************************************************
-  This data was serialized (above), sent as an opaque data packet to the 
-  server, stored in a savegame, retrieved from the savegame, sent as an 
+  This data was serialized (above), sent as an opaque data packet to the
+  server, stored in a savegame, retrieved from the savegame, sent as an
   opaque data packet back to the client, and now is ready to be restored.
   Check everything!
 *****************************************************************************/
@@ -424,7 +424,7 @@ void attribute_set(int key, int id, int x, int y, size_t data_length,
  Low-level function to get an attribute. If data hasn't enough space
  to hold the attribute data isn't set to the attribute. Returns the
  actual size of the attribute. Can be zero if the attribute is
- unset. To get the size of an attribute use 
+ unset. To get the size of an attribute use
    size = attribute_get(key, id, x, y, 0, NULL)
 *****************************************************************************/
 size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,

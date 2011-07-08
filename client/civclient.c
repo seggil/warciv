@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -101,9 +101,9 @@ static enum client_states client_state = CLIENT_BOOT_STATE;
 /* TRUE if an end turn request is blocked by busy agents */
 bool waiting_for_end_turn = FALSE;
 
-/* 
+/*
  * TRUE for the time between sending PACKET_TURN_DONE and receiving
- * PACKET_NEW_YEAR. 
+ * PACKET_NEW_YEAR.
  */
 bool turn_done_sent = FALSE;
 
@@ -598,7 +598,7 @@ void set_client_state(enum client_states newstate)
       translate_data_names();
       audio_stop();		/* stop intro sound loop */
     }
-      
+
     client_state = newstate;
 
     if (client_state == CLIENT_GAME_RUNNING_STATE) {
@@ -626,7 +626,7 @@ void set_client_state(enum client_states newstate)
 
       /* Find something sensible to display instead of the intro gfx. */
       center_on_something();
-      
+
       free_intro_radar_sprites();
       agents_game_start();
 
@@ -659,7 +659,7 @@ void set_client_state(enum client_states newstate)
 	server_autoconnect();
 	auto_connect = FALSE;	/* don't try this again */
       }
-    } 
+    }
   }
 
   update_turn_done_button_state();
@@ -781,7 +781,7 @@ bool can_client_issue_orders(void)
 }
 
 /**************************************************************************
-  Returns TRUE iff the client can do diplomatic meetings with another 
+  Returns TRUE iff the client can do diplomatic meetings with another
   given player.
 **************************************************************************/
 bool can_meet_with_player(struct player *pplayer)
@@ -792,7 +792,7 @@ bool can_meet_with_player(struct player *pplayer)
 }
 
 /**************************************************************************
-  Returns TRUE iff the client can get intelligence from another 
+  Returns TRUE iff the client can get intelligence from another
   given player.
 **************************************************************************/
 bool can_intel_with_player(struct player *pplayer)

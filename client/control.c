@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -200,7 +200,7 @@ void set_unit_focus(struct unit *punit)
     punit->focus_status = FOCUS_AVAIL;
     refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
   }
-  
+
   /* avoid the old focus unit disappearing: */
   if (punit_old_focus
       && (!punit || !same_pos(punit_old_focus->tile, punit->tile))) {
@@ -281,7 +281,7 @@ struct unit *get_unit_in_focus(void)
  This function may be called from packhand.c, via update_unit_focus(),
  as a result of packets indicating change in activity for a unit. Also
  called when user press the "Wait" command.
- 
+
  FIXME: Add feature to focus only units of a certain category.
 **************************************************************************/
 void advance_unit_focus(void)
@@ -317,15 +317,15 @@ void advance_unit_focus(void)
 
   set_unit_focus(candidate);
 
-  /* 
+  /*
    * Is the unit which just lost focus a non-AI unit? If yes this
-   * enables the auto end turn. 
+   * enables the auto end turn.
    */
   if (punit_old_focus && !punit_old_focus->ai.control) {
     non_ai_unit_focus = TRUE;
   }
 
-  /* 
+  /*
    * Handle auto-turn-done mode: If a unit was in focus (did move),
    * but now none are (no more to move) and there was at least one
    * non-AI unit this turn which was focused, then fake a Turn Done
@@ -502,12 +502,12 @@ void blink_active_unit(void)
   Update unit icons (and arrow) in the information display, for specified
   punit as the active unit and other units on the same square.  In practice
   punit is almost always (or maybe strictly always?) the focus unit.
-  
+
   Static vars store some info on current (ie previous) state, to avoid
   unnecessary redraws; initialise to "flag" values to always redraw first
   time.  In principle we _might_ need more info (eg ai.control, connecting),
   but in practice this is enough?
-  
+
   Used to store unit_ids for below units, to use for callbacks (now done
   inside gui-dep set_unit_icon()), but even with ids here they would not
   be enough information to know whether to redraw -- instead redraw every
@@ -536,7 +536,7 @@ void update_unit_pix_label(struct unit *punit)
 	i++;
       }
     } unit_list_iterate_end;
-    
+
     if (i > num_units_below) {
       set_unit_icons_more_arrow(TRUE);
     } else {
@@ -599,10 +599,10 @@ void process_caravan_arrival(struct unit *punit)
       && caravan_dialog_is_open()) {
     return;
   }
-  
+
   while (genlist_size(arrival_queue) > 0) {
     int id;
-    
+
     p_id = genlist_get(arrival_queue, 0);
     genlist_unlink(arrival_queue, p_id);
     id = *p_id;
@@ -626,10 +626,10 @@ void process_caravan_arrival(struct unit *punit)
 	  case DCA_KEEP_MOVING:
 	    break;
 	  case DCA_ESTABLISH_TRADEROUTE:
-	    dsend_packet_unit_establish_trade(&aconnection, punit->id); 
+	    dsend_packet_unit_establish_trade(&aconnection, punit->id);
 	    break;
 	  case DCA_HELP_BUILD_WONDER:
-	    dsend_packet_unit_help_build_wonder(&aconnection, punit->id); 
+	    dsend_packet_unit_help_build_wonder(&aconnection, punit->id);
 	    break;
         }
       }
@@ -727,7 +727,7 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       }
       return;
     }
-    
+
     if (dipl_city_ok) {
       /* Target is a city */
 
@@ -815,7 +815,7 @@ void request_unit_delayed_goto(void)
 }
 
 /**************************************************************************
-  ... 
+  ...
 **************************************************************************/
 void key_select_rally_point(void)
 {
@@ -824,7 +824,7 @@ void key_select_rally_point(void)
   if (!tiles_hilited_cities) {
     return;
   }
-  
+
   city_list_iterate(get_player_ptr()->cities, pcity) {
     if (is_city_hilited(pcity)) {
       n++;
@@ -895,7 +895,7 @@ static bool is_activity_on_tile(struct tile *ptile,
 
   This function is client-specific.
 **************************************************************************/
-bool can_unit_do_connect(struct unit *punit, enum unit_activity activity) 
+bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
 {
   struct player *pplayer = unit_owner(punit);
   Terrain_type_id terrain = map_get_terrain(punit->tile);
@@ -1178,7 +1178,7 @@ void request_unit_disband(struct unit *punit)
 void request_unit_change_homecity(struct unit *punit)
 {
   struct city *pcity = map_get_city(punit->tile);
-  
+
   if (pcity) {
     dsend_packet_unit_change_homecity(&aconnection, punit->id, pcity->id);
   }
@@ -1190,7 +1190,7 @@ void request_unit_change_homecity(struct unit *punit)
 void request_unit_upgrade(struct unit *punit)
 {
   struct city *pcity;
-  
+
   if (punit == NULL || punit->tile == NULL) {
     return;
   }
@@ -1430,7 +1430,7 @@ void request_unit_pillage(struct unit *punit)
 /**************************************************************************
   Toggle display of grid lines on the map
 **************************************************************************/
-void request_toggle_map_grid(void) 
+void request_toggle_map_grid(void)
 {
   if (!can_client_change_view()) {
     return;
@@ -1443,7 +1443,7 @@ void request_toggle_map_grid(void)
 /**************************************************************************
   Toggle display of national borders on the map
 **************************************************************************/
-void request_toggle_map_borders(void) 
+void request_toggle_map_borders(void)
 {
   if (!can_client_change_view()) {
     return;
@@ -1465,7 +1465,7 @@ void request_toggle_city_names(void)
   draw_city_names ^= 1;
   update_map_canvas_visible(MUT_NORMAL);
 }
- 
+
 /**************************************************************************
   Toggle display of city growth (turns-to-grow)
 **************************************************************************/
@@ -1837,7 +1837,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     hover_unit = 0;
     update_hover_cursor();
   } else if (ptile && hover_state == HOVER_AIRLIFT_SOURCE) {
-    add_city_to_auto_airlift_queue(ptile, FALSE);       
+    add_city_to_auto_airlift_queue(ptile, FALSE);
     hover_state = HOVER_NONE;
     hover_unit = 0;
     update_hover_cursor();
@@ -2168,7 +2168,7 @@ void do_unit_paradrop_to(struct unit *punit, struct tile *ptile)
 {
   dsend_packet_unit_paradrop_to(&aconnection, punit->id, ptile->x, ptile->y);
 }
- 
+
 /**************************************************************************
   Patrol to a location.
 **************************************************************************/
@@ -2193,7 +2193,7 @@ void do_unit_patrol_to(struct unit *punit, struct tile *ptile)
 
   set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
 }
- 
+
 /**************************************************************************
   "Connect" to the given location.
 **************************************************************************/
@@ -2218,7 +2218,7 @@ void do_unit_connect(struct unit *punit, struct tile *ptile,
 
   set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
 }
- 
+
 /**************************************************************************
  The 'Escape' key.
 **************************************************************************/

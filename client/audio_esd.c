@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,15 +40,15 @@ static int music_id = -1;
 static int last_sample = 0;
 static int sock = -1;
 
-/* 
+/*
  * Note that esd_sample_kill is unimplemented in the current version
- * of esdlib. 
+ * of esdlib.
  *
  * This plugin employs an array of samples which are stored in the esd
  * daemon. Already stored samples are cached. A variable points to
  * last used slot in the array, and is incremented after each new
  * added sample. If this slot already has a sample, it is killed and
- * freed to make way for the new one. 
+ * freed to make way for the new one.
  */
 
 /**************************************************************************

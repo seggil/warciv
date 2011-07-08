@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ bool disable_custom_dns;
 /* This option is currently set by the client - not by the user. */
 bool update_city_text_in_refresh_tile = TRUE;
 
-/********************************************************************** 
+/**********************************************************************
   Caravan action names accessor.
 ***********************************************************************/
 static const char *get_caravan_action_name(
@@ -162,7 +162,7 @@ static const char *get_caravan_action_name(
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Diplomat action upon unit names accessor.
 ***********************************************************************/
 static const char *get_diplomat_action_upon_unit_name(
@@ -182,7 +182,7 @@ static const char *get_diplomat_action_upon_unit_name(
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Diplomat action upon city names accessor.
 ***********************************************************************/
 static const char *get_diplomat_action_upon_city_name(
@@ -210,7 +210,7 @@ static const char *get_diplomat_action_upon_city_name(
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   New unit action names accessor.
 ***********************************************************************/
 static const char *get_new_unit_action_name(enum new_unit_action action)
@@ -231,7 +231,7 @@ static const char *get_new_unit_action_name(enum new_unit_action action)
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Place mode name accessor.
 ***********************************************************************/
 static const char *get_place_mode_name(enum place_value place)
@@ -252,7 +252,7 @@ static const char *get_place_mode_name(enum place_value place)
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Unit type mode name accessor.
 ***********************************************************************/
 static const char *get_utype_mode_name(enum utype_value type)
@@ -269,7 +269,7 @@ static const char *get_utype_mode_name(enum utype_value type)
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Unit type mode name accessor.
 ***********************************************************************/
 static const char *get_filter_value_name(enum filter_value value)
@@ -687,7 +687,7 @@ static struct client_option client_options[] = {
   GEN_STR_OPTION(chat_log_directory,
                  N_("Directory where chat logs are to be saved"),
 		 N_("This option affect where the log file will be placed."),
-		 COC_CHAT, "~/.freeciv/chatlogs", NULL),
+		 COC_CHAT, "~/.warciv/chatlogs", NULL),
   GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
 		  N_("Disable chatline scrolling"),
                   N_("If this option is turned to on, the chatline won't "
@@ -1125,9 +1125,9 @@ static struct {
   GEN_EV_TERMINATOR
 };
 
-/* 
+/*
  * Maps from enum event_type to indexes of events[]. Set by
- * init_messages_where. 
+ * init_messages_where.
  */
 static int event_to_index[E_LAST];
 
@@ -1158,7 +1158,7 @@ static int compar_message_texts(const void *i1, const void *i2)
 {
   int j1 = *(const int*)i1;
   int j2 = *(const int*)i2;
-  
+
   return mystrcasecmp(get_message_text(j1), get_message_text(j2));
 }
 
@@ -1270,7 +1270,7 @@ void client_options_init(void)
       *o->enum_list.pvalue = o->enum_list.def;
       continue;
     case COT_FILTER:
-      *o->filter.pvalue = o->filter.def;      
+      *o->filter.pvalue = o->filter.def;
       continue;
     }
     die("Option type not supported for '%s' (%d).", o->name, o->type);
@@ -1353,7 +1353,7 @@ filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
 
 /****************************************************************
  The "options" file handles actual "options", and also view options,
- message options, city report settings, cma settings, and 
+ message options, city report settings, cma settings, and
  saved global worklists
 *****************************************************************/
 
@@ -1380,7 +1380,7 @@ const char *option_file_name(void)
       return NULL;
     }
     mystrlcpy(name_buffer, name, 231);
-    sz_strlcat(name_buffer, "/.civclientrc");
+    sz_strlcat(name_buffer, "/.warclientrc");
 #else
     mystrlcpy(name_buffer, OPTION_FILE_NAME, sizeof(name_buffer));
 #endif
@@ -1502,7 +1502,7 @@ filter load_option_filter(struct section_file *file,
 
   assert(file != NULL);
   assert(o != NULL && o->type == COT_FILTER);
-  
+
   vec = secfile_lookup_str_vec(file, &size, "client.%s", o->name);
   if (!vec || !size) {
     return def;
@@ -1523,7 +1523,7 @@ filter load_option_filter(struct section_file *file,
 }
 
 /****************************************************************
- this loads from the rc file any options which are not ruleset specific 
+ this loads from the rc file any options which are not ruleset specific
  it is called on client init.
 *****************************************************************/
 void load_general_options(void)
@@ -1541,7 +1541,7 @@ void load_general_options(void)
   if (!section_file_load(&sf, name)) {
     create_default_cma_presets();
     create_default_chatline_colors();
-    return;  
+    return;
   }
 
   client_options_iterate(o) {
@@ -1584,14 +1584,14 @@ void load_general_options(void)
     *ip = secfile_lookup_bool_default(&sf, *ip, "client.city_report_%s",
 				      city_report_spec_tagname(i));
   }
-  
+
   for(i = 1; i < num_player_dlg_columns; i++) {
     bool *show = &(player_dlg_columns[i].show);
     *show = secfile_lookup_bool_default(&sf, *show, "client.player_dlg_%s",
                                         player_dlg_columns[i].tagname);
   }
 
-  /* Load cma presets. If cma.number_of_presets doesn't exist, don't load 
+  /* Load cma presets. If cma.number_of_presets doesn't exist, don't load
    * any, the order here should be reversed to keep the order the same */
   num = secfile_lookup_int_default(&sf, -1, "cma.number_of_presets");
   if (num == -1) {
@@ -1601,7 +1601,7 @@ void load_general_options(void)
       load_cma_preset(&sf, i);
     }
   }
- 
+
   /* Load global worklists: we always do it, to don't lose datas. Not however,
    * that is_valid will be set only in check_ruleset_specific_options(). */
   for (i = 0; i < ARRAY_SIZE(global_worklists); i++) {
@@ -1609,7 +1609,7 @@ void load_general_options(void)
   }
 
   secfile_load_chatline_colors (&sf);
- 
+
   section_file_free(&sf);
 }
 
@@ -1627,7 +1627,7 @@ void check_ruleset_specific_options(void)
 }
 
 /****************************************************************
-... 
+...
 *****************************************************************/
 void save_options(void)
 {
@@ -1676,7 +1676,7 @@ void save_options(void)
     case COT_FILTER:
       {
 #define MAX_VALUES 64
-	const char *values[MAX_VALUES]; 
+	const char *values[MAX_VALUES];
 	size_t size = 0, vec;
 	filter f = *o->filter.pvalue;
 
@@ -1712,7 +1712,7 @@ void save_options(void)
 		       "client.city_report_%s",
 		       city_report_spec_tagname(i));
   }
-  
+
   for (i = 1; i < num_player_dlg_columns; i++) {
     secfile_insert_bool(&sf, player_dlg_columns[i].show,
                         "client.player_dlg_%s",
@@ -1758,7 +1758,7 @@ static void load_cma_preset(struct section_file *file, int inx)
   const char *name;
   int i;
 
-  name = secfile_lookup_str_default(file, "preset", 
+  name = secfile_lookup_str_default(file, "preset",
 				    "cma.preset%d.name", inx);
   for (i = 0; i < CM_NUM_STATS; i++) {
     parameter.minimal_surplus[i] =
@@ -1799,7 +1799,7 @@ static void save_cma_preset(struct section_file *file, char *name,
 }
 
 /****************************************************************
-... 
+...
 *****************************************************************/
 const char *get_sound_tag_for_event(enum event_type event)
 {

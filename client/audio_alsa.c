@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - J. Pello
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ static int snd_mmap_run(void)
      * Of course, we could adapt the code below, but it is easier to leave it
      * this way as long as ALSA's input format matches audiofile's output.
      */
-    if (area[0].step != 32 
+    if (area[0].step != 32
         || area[1].step != 32
         || area[0].addr != area[1].addr) {
       snd_pcm_mmap_commit (sound_handle, offset, 0);
@@ -324,7 +324,7 @@ static bool my_play(const char *tag, const char *fullpath, bool repeat)
 ***********************************************************************/
 static bool my_init(void)
 {
-  if (snd_pcm_open(&sound_handle, "default", SND_PCM_STREAM_PLAYBACK, 0) 
+  if (snd_pcm_open(&sound_handle, "default", SND_PCM_STREAM_PLAYBACK, 0)
       < 0)  {
     return FALSE;
   }

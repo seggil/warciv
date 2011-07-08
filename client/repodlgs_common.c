@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ void get_economy_report_data(struct improvement_entry *entries,
 }
 
 /******************************************************************
-  Returns an array of units with gold_upkeep. Number of units in 
+  Returns an array of units with gold_upkeep. Number of units in
   the array is added to num_entries_used.
 ******************************************************************/
 void get_economy_report_units_data(struct unit_entry *entries,
@@ -231,13 +231,13 @@ void settable_options_free(void)
 void handle_options_settable_control(
                                struct packet_options_settable_control *packet)
 {
-  int i; 
+  int i;
 
   settable_options_free();
 
   options_categories = fc_malloc(packet->ncategories * sizeof(char *));
   num_options_categories = packet->ncategories;
-  
+
   for (i = 0; i < num_options_categories; i++) {
     options_categories[i] = mystrdup(packet->category_names[i]);
   }

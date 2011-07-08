@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -238,7 +238,7 @@ void trade_city_new(struct city *pcity)
 
   if (tile_list_search(trade_cities, pcity->tile)
       && are_trade_cities_built()) {
-    update_auto_caravan_menu();	
+    update_auto_caravan_menu();
   }
 }
 
@@ -373,7 +373,7 @@ static void trade_planning_apply(const struct trade_planning_calculation *pcalc,
       trade_route_list_iterate(trade_planning, ptr) {
         struct trade_route *ntr
                 = game_trade_route_add(ptr->pcity1, ptr->pcity2);
-  
+
         ntr->status = TR_PLANNED;
       } trade_route_list_iterate_end;
       if (draw_city_traderoutes) {
@@ -1117,7 +1117,7 @@ static int best_trade(const void *a, const void *b)
 
   return pwta->trade_value < pwtb->trade_value
 	 || (pwta->trade_value == pwtb->trade_value && !pwta->used);
-    
+
 }
 
 /**************************************************************************

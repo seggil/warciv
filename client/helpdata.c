@@ -143,7 +143,7 @@ static void insert_generated_table(const char* name, char* outbuf)
 static struct help_item *new_help_item(int type)
 {
   struct help_item *pitem;
-  
+
   pitem = fc_malloc(sizeof(struct help_item));
   pitem->topic = NULL;
   pitem->text = NULL;
@@ -198,7 +198,7 @@ void boot_help_texts(void)
     /* free memory allocated last time booted */
     free_help_texts();
     freelog(LOG_VERBOSE, "Rebooting help texts");
-  }    
+  }
 
   filename = datafilename("helpdata.txt");
   if (!filename) {
@@ -217,7 +217,7 @@ void boot_help_texts(void)
   for(isec=0; isec<nsec; isec++) {
     const char *gen_str =
       secfile_lookup_str_default(sf, NULL, "%s.generate", sec[isec]);
-    
+
     if (gen_str) {
       enum help_page_type current_type = HELP_ANY;
       if (!booted) {
@@ -326,14 +326,14 @@ void boot_help_texts(void)
 	continue;
       }
     }
-    
+
     /* It wasn't a "generate" node: */
-    
+
     pitem = new_help_item(HELP_TEXT);
     pitem->topic = mystrdup(_(secfile_lookup_str(sf, "%s.name", sec[isec])));
-    
+
     paras = secfile_lookup_str_vec(sf, &npara, "%s.text", sec[isec]);
-    
+
     long_buffer[0] = '\0';
     for (i=0; i<npara; i++) {
       char *para = paras[i];
@@ -385,7 +385,7 @@ int num_help_items(void)
 const struct help_item *get_help_item(int pos)
 {
   int size;
-  
+
   check_help_nodes_init();
   size = help_list_size(help_nodes);
   if (pos < 0 || pos > size) {
@@ -427,7 +427,7 @@ get_help_item_spec(const char *name, enum help_page_type htype, int *pos)
     idx++;
   }
   help_list_iterate_end;
-  
+
   if(!pitem) {
     idx = -1;
     vitem.topic = vtopic;
@@ -469,7 +469,7 @@ void help_iter_start(void)
 const struct help_item *help_iter_next(void)
 {
   const struct help_item *pitem;
-  
+
   check_help_nodes_init();
   pitem = ITERATOR_PTR(help_nodes_iterator);
   if (pitem) {
@@ -485,12 +485,12 @@ const struct help_item *help_iter_next(void)
   All these helptext_* functions have a pretty crappy interface:
   we just write to buf and hope that its long enough.
   But I'm not going to fix it right now --dwp.
-  
+
   Could also reduce amount/length of strlen's by inserting
   a few 'buf += strlen(buf)'.
 
   These functions should always ensure final buf is null-terminated.
-  
+
   Also, in principle these could be auto-generated once, inserted
   into pitem->text, and then don't need to keep re-generating them.
   Only thing to be careful of would be changeable data, but don't
@@ -510,7 +510,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
 			const char *user_text)
 {
   struct impr_type *imp = &improvement_types[which];
-  
+
   assert(buf);
   buf[0] = '\0';
 
@@ -627,7 +627,7 @@ static int techs_with_flag_string(enum tech_flag_id flag,
   buf[0] = '\0';
   techs_with_flag_iterate(flag, tech_id) {
     const char *name = get_tech_name(get_player_ptr(), tech_id);
-    
+
     if (buf[0] == '\0') {
       my_snprintf(buf, bufsz, "%s", name);
     } else {
@@ -653,7 +653,7 @@ void helptext_unit(char *buf, int i, const char *user_text)
     return;
   }
   utype = get_unit_type(i);
-  
+
   buf[0] = '\0';
   if (unit_type_flag(i, F_NOBUILD)) {
     sprintf(buf + strlen(buf),
@@ -956,7 +956,7 @@ void helptext_unit(char *buf, int i, const char *user_text)
 	strcat(astr.str, deli_str);
       }
     }
-    
+
     assert(num_allowed_units > 0);
 
     sprintf(buf + strlen(buf),
@@ -969,7 +969,7 @@ void helptext_unit(char *buf, int i, const char *user_text)
   }
   if (strlen(buf) > 0) {
     sprintf(buf + strlen(buf), "\n");
-  } 
+  }
   if (utype->helptext && utype->helptext[0] != '\0') {
     sprintf(buf + strlen(buf), "%s\n\n", _(utype->helptext));
   }
@@ -1094,9 +1094,9 @@ void helptext_tech(char *buf, int i, const char *user_text)
 void helptext_terrain(char *buf, int i, const char *user_text)
 {
   struct tile_type *pt;
-  
+
   buf[0] = '\0';
-  
+
   if (i<0 || i>=T_COUNT)
     return;
   pt = get_tile_type(i);
@@ -1147,9 +1147,9 @@ void helptext_terrain(char *buf, int i, const char *user_text)
 void helptext_government(char *buf, int i, const char *user_text)
 {
   struct government *gov = get_government(i);
-  
+
   buf[0] = '\0';
-  
+
   if (gov->helptext[0] != '\0') {
     sprintf(buf, "%s\n\n", _(gov->helptext));
   }

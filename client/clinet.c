@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ static void close_socket_nomessage(struct connection *pc)
   }
   connection_common_close(pc);
   remove_net_input();
-  popdown_races_dialog(); 
+  popdown_races_dialog();
   close_connection_dialog();
 
   /* We need to clear the voteinfo when a client disconnects.
@@ -240,7 +240,7 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
     mystrlcpy(errbuf, _("Connection in progress."), errbufsize);
     return -1;
   }
-  
+
   if ((aconnection.sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     mystrlcpy(errbuf, mystrsocketerror(mysocketerrno()),
                      errbufsize);
@@ -273,7 +273,7 @@ int try_to_connect(const char *username, char *errbuf, int errbufsize)
   sz_strlcpy(req.version_label, VERSION_LABEL);
   sz_strlcpy(req.capability, our_capability);
   sz_strlcpy(req.username, username);
-  
+
   send_packet_server_join_req(&aconnection, &req);
 
   return 0;
@@ -287,7 +287,7 @@ void disconnect_from_server(void)
   const bool force = !aconnection.used;
 
   attribute_flush();
-  /* If it's internal server - kill him 
+  /* If it's internal server - kill him
    * We assume that we are always connected to the internal server  */
   if (!force) {
     client_kill_server(FALSE);
@@ -297,7 +297,7 @@ void disconnect_from_server(void)
     client_kill_server(TRUE);
   }
   append_network_statusbar(_("Disconnected from server."));
-}  
+}
 
 /**************************************************************************
 A wrapper around read_socket_data() which also handles the case the
@@ -370,7 +370,7 @@ static int read_from_connection(struct connection *pc, bool block)
 
     if (FD_ISSET(pc->sock, &readfs)) {
       int rv;
-      
+
       rv = read_socket_data(pc, pc->buffer);
 
       return rv < 0 ? -1 : rv;
@@ -416,7 +416,7 @@ void input_from_server(int fd)
  the PACKET_PROCESSING_FINISHED packet for the given request is
  received.
 **************************************************************************/
-void input_from_server_till_request_got_processed(int fd, 
+void input_from_server_till_request_got_processed(int fd,
 						  int expected_request_id)
 {
   assert(expected_request_id);
@@ -536,7 +536,7 @@ static char *win_uname()
     break;
   }
 
-  GetSystemInfo(&sysinfo); 
+  GetSystemInfo(&sysinfo);
   switch (sysinfo.wProcessorArchitecture) {
     case PROCESSOR_ARCHITECTURE_INTEL:
       {
@@ -547,7 +547,7 @@ static char *win_uname()
 	  ptype = 6;
 	else
 	  ptype = sysinfo.wProcessorLevel;
-	
+
 	my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
       }
       break;
@@ -634,11 +634,11 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
     } else {
       pserver->players = NULL;
     }
-      
+
     for (j = 0; j < pserver->nplayers; j++) {
       char *name, *user, *nation, *type, *host;
 
-      name = secfile_lookup_str_default(file, "", 
+      name = secfile_lookup_str_default(file, "",
                                         "server%d.player%d.name", i, j);
       pserver->players[j].name = mystrdup(name);
 
@@ -650,7 +650,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
                                         "server%d.player%d.type", i, j);
       pserver->players[j].type = mystrdup(type);
 
-      host = secfile_lookup_str_default(file, "", 
+      host = secfile_lookup_str_default(file, "",
                                         "server%d.player%d.host", i, j);
       pserver->players[j].host = mystrdup(host);
 
@@ -698,7 +698,7 @@ static int generate_server_list_http_request(char *buf, int buflen,
   int len;
 #ifdef HAVE_UNAME
   struct utsname un;
-#endif 
+#endif
 
 #ifdef HAVE_UNAME
   uname(&un);
@@ -797,7 +797,7 @@ static void destroy_async_slist_ctx(void *data)
     my_closesocket(ctx->sock);
     ctx->sock = -1;
   }
-  
+
   if (ctx->req_id > 0) {
     freelog(LOG_DEBUG, "dasc deleting ctx=%p req_id=%d from aslr table",
             ctx, ctx->req_id);
@@ -858,7 +858,7 @@ static void process_metaserver_response(struct async_slist_ctx *ctx)
   newbuf = fc_malloc(sizeof(ctx->buf));
   newsize = ctx->buflen;
 
-  /* Prevent \" sequences in files which would produce problem for secfile_lookup 
+  /* Prevent \" sequences in files which would produce problem for secfile_lookup
      Insert space character between \ and " */
   for (i = 0, j = 0; i < ctx->buflen; i++, j++) {
     if (i > 0 && ctx->buf[i-1] == '\\' && ctx->buf[i] == '"' ) {
@@ -1243,7 +1243,7 @@ int create_server_list_async(char *errbuf, int n_errbuf,
   freelog(LOG_DEBUG, "csla got nlsa_id = %d", nlsa_id);
 
   if (nlsa_id == -1) {
-    my_snprintf(errbuf, n_errbuf, 
+    my_snprintf(errbuf, n_errbuf,
         _("Could not initiate an asynchronous name lookup "
           "for metaserver %s:%d"), metaname, metaport);
     freelog(LOG_DEBUG, "csla destroying ctx %p", ctx);
@@ -1372,7 +1372,7 @@ void delete_server_list(struct server_list *server_list)
 }
 
 /**************************************************************************
-  Broadcast an UDP package to all servers on LAN, requesting information 
+  Broadcast an UDP package to all servers on LAN, requesting information
   about the server. The packet is send to all Freeciv servers in the same
   multicast group as the client.
 **************************************************************************/
@@ -1409,14 +1409,14 @@ int begin_lanserver_scan(void)
 
   /* Set the Time-to-Live field for the packet  */
   ttl = SERVER_LAN_TTL;
-  if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)&ttl, 
+  if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)&ttl,
                  sizeof(ttl))) {
     freelog(LOG_ERROR, "setsockopt failed: %s",
             mystrsocketerror(mysocketerrno()));
     return 0;
   }
 
-  if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char*)&opt, 
+  if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (const char*)&opt,
                  sizeof(opt))) {
     freelog(LOG_ERROR, "setsockopt failed: %s",
             mystrsocketerror(mysocketerrno()));
@@ -1426,7 +1426,7 @@ int begin_lanserver_scan(void)
   dio_output_init(&dout, buffer, sizeof(buffer));
   dio_put_uint8(&dout, SERVER_LAN_VERSION);
   size = dio_output_used(&dout);
- 
+
 
   if (sendto(sock, buffer, size, 0, &addr.sockaddr, sizeof(addr)) < 0) {
     freelog(LOG_ERROR, "sendto failed: %s",
@@ -1452,10 +1452,10 @@ int begin_lanserver_scan(void)
     freelog(LOG_ERROR, "SO_REUSEADDR failed: %s",
             mystrsocketerror(mysocketerrno()));
   }
-                                                                               
+
   memset(&addr, 0, sizeof(addr));
   addr.sockaddr_in.sin_family = AF_INET;
-  addr.sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY); 
+  addr.sockaddr_in.sin_addr.s_addr = htonl(INADDR_ANY);
   addr.sockaddr_in.sin_port = htons(SERVER_LAN_PORT + 1);
 
   if (bind(socklan, &addr.sockaddr, sizeof(addr)) < 0) {
@@ -1466,7 +1466,7 @@ int begin_lanserver_scan(void)
 
   mreq.imr_multiaddr.s_addr = inet_addr(group);
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-  if (setsockopt(socklan, IPPROTO_IP, IP_ADD_MEMBERSHIP, 
+  if (setsockopt(socklan, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                  (const char*)&mreq, sizeof(mreq)) < 0) {
     freelog(LOG_ERROR, "setsockopt failed: %s",
             mystrsocketerror(mysocketerrno()));
@@ -1480,7 +1480,7 @@ int begin_lanserver_scan(void)
 
 /**************************************************************************
   Listens for UDP packets broadcasted from a server that responded
-  to the request-packet sent from the client. 
+  to the request-packet sent from the client.
 **************************************************************************/
 struct server_list *get_lan_server_list(void)
 {
@@ -1532,7 +1532,7 @@ struct server_list *get_lan_server_list(void)
   dio_input_init(&din, msgbuf, sizeof(msgbuf));
   fromlen = sizeof(fromend);
 
-  /* Try to receive a packet from a server. */ 
+  /* Try to receive a packet from a server. */
   if (0 < recvfrom(socklan, msgbuf, sizeof(msgbuf), 0,
                    &fromend.sockaddr, &fromlen)) {
     struct server *pserver;
@@ -1556,15 +1556,15 @@ struct server_list *get_lan_server_list(void)
 
     /* UDP can send duplicate or delayed packets. */
     server_list_iterate(lan_servers, aserver) {
-      if (!mystrcasecmp(aserver->host, servername) 
+      if (!mystrcasecmp(aserver->host, servername)
           && !mystrcasecmp(aserver->port, port)) {
 	goto again;
-      } 
+      }
     } server_list_iterate_end;
 
     freelog(LOG_DEBUG,
             ("Received a valid announcement from a server on the LAN."));
-    
+
     pserver =  (struct server*)fc_malloc(sizeof(struct server));
     pserver->host = mystrdup(servername);
     pserver->port = mystrdup(port);
@@ -1588,7 +1588,7 @@ struct server_list *get_lan_server_list(void)
 /**************************************************************************
   Closes the socket listening on the lan and frees the list of LAN servers.
 **************************************************************************/
-void finish_lanserver_scan(void) 
+void finish_lanserver_scan(void)
 {
   my_closesocket(socklan);
   delete_server_list(lan_servers);

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ struct specfile {
   char *file_name;
 };
 
-/* 
+/*
  * Information about an individual sprite. All fields except 'sprite' are
  * filled at the time of the scan of the specfile. 'Sprite' is
  * set/cleared on demand in load_sprite/unload_sprite.
@@ -323,7 +323,7 @@ static char *tilespec_fullname(const char *tileset_name)
 
   fname = fc_malloc(strlen(tileset_name) + strlen(TILESPEC_SUFFIX) + 1);
   sprintf(fname, "%s%s", tileset_name, TILESPEC_SUFFIX);
-  
+
   dname = datafilename(fname);
   free(fname);
 
@@ -350,7 +350,7 @@ static bool check_tilespec_capabilities(struct section_file *file,
 					const char *filename)
 {
   char *file_capstr = secfile_lookup_str(file, "%s.options", which);
-  
+
   if (!has_capabilities(us_capstr, file_capstr)) {
     freelog(LOG_ERROR, _("%s file appears incompatible:\n"
 			 "file: \"%s\"\n"
@@ -893,7 +893,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   c = secfile_lookup_str(file, "tilespec.main_intro_file");
   main_intro_filename = tilespec_gfx_filename(c);
   freelog(LOG_DEBUG, "intro file %s", main_intro_filename);
-  
+
   c = secfile_lookup_str(file, "tilespec.minimap_intro_file");
   minimap_intro_filename = tilespec_gfx_filename(c);
   freelog(LOG_DEBUG, "radar file %s", minimap_intro_filename);
@@ -1067,7 +1067,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
     struct specfile *sf = fc_malloc(sizeof(*sf));
 
     freelog(LOG_DEBUG, "spec file %s", spec_filenames[i]);
-    
+
     sf->big_sprite = NULL;
     sf->file_name = mystrdup(datafilename_required(spec_filenames[i]));
     scan_specfile(sf, duplicates_ok);
@@ -1077,7 +1077,7 @@ bool tilespec_read_toplevel(const char *tileset_name)
   free(spec_filenames);
 
   section_file_check_unused(file, fname);
-  
+
   section_file_free(file);
   freelog(LOG_VERBOSE, "finished reading %s", fname);
   free(fname);
@@ -1152,7 +1152,7 @@ static char *valid_index_str(int index)
 
   return c;
 }
-     
+
 /* Not very safe, but convenient: */
 #define SET_SPRITE(field, tag) do {                       \
        sprites.field = load_sprite(tag);                  \
@@ -1242,14 +1242,14 @@ static void tilespec_setup_citizen_types(void)
 
 /**********************************************************************
   Initialize 'sprites' structure based on hardwired tags which
-  freeciv always requires. 
+  freeciv always requires.
 ***********************************************************************/
 static void tilespec_lookup_sprite_tags(void)
 {
   char buffer[512];
   const char dir_char[] = "nsew";
   int i;
-  
+
   assert(sprite_hash != NULL);
 
   SET_SPRITE(treaty_thumb[0], "treaty.disagree_thumb_down");
@@ -1288,7 +1288,7 @@ static void tilespec_lookup_sprite_tags(void)
     SET_SPRITE(road.isolated, "r.road_isolated");
     SET_SPRITE(rail.isolated, "r.rail_isolated");
   }
-  
+
   if (roadstyle == 0) {
     /* Roadstyle 0 has just 8 additional sprites for both road and rail:
      * one for the road/rail going off in each direction. */
@@ -1371,7 +1371,7 @@ static void tilespec_lookup_sprite_tags(void)
 		num_tiles_explode_unit++);
   } while (sprite_exists(buffer));
   num_tiles_explode_unit--;
-    
+
   if (num_tiles_explode_unit==0) {
     sprites.explode.unit = NULL;
   } else {
@@ -1387,27 +1387,27 @@ static void tilespec_lookup_sprite_tags(void)
   SET_SPRITE(unit.auto_attack,  "unit.auto_attack");
   SET_SPRITE(unit.auto_settler, "unit.auto_settler");
   SET_SPRITE(unit.auto_explore, "unit.auto_explore");
-  SET_SPRITE(unit.fallout,	"unit.fallout");
-  SET_SPRITE(unit.fortified,	"unit.fortified");     
-  SET_SPRITE(unit.fortifying,	"unit.fortifying");     
+  SET_SPRITE(unit.fallout,      "unit.fallout");
+  SET_SPRITE(unit.fortified,    "unit.fortified");
+  SET_SPRITE(unit.fortifying,   "unit.fortifying");
   SET_SPRITE(unit.fortress,     "unit.fortress");
   SET_SPRITE(unit.airbase,      "unit.airbase");
-  SET_SPRITE(unit.go_to,	"unit.goto");     
+  SET_SPRITE(unit.go_to,        "unit.goto");
   SET_SPRITE(unit.irrigate,     "unit.irrigate");
   SET_SPRITE(unit.mine,	        "unit.mine");
-  SET_SPRITE(unit.pillage,	"unit.pillage");
+  SET_SPRITE(unit.pillage,      "unit.pillage");
   SET_SPRITE(unit.pollution,    "unit.pollution");
   SET_SPRITE(unit.road,	        "unit.road");
-  SET_SPRITE(unit.sentry,	"unit.sentry");      
-  sprites.unit.sleeping = load_sprite("unit.sleeping");
-  SET_SPRITE(unit.stack,	"unit.stack");
-  sprites.unit.loaded = load_sprite("unit.loaded");
-  sprites.unit.trade = load_sprite("unit.trade");
+  SET_SPRITE(unit.sentry,       "unit.sentry");
+  sprites.unit.sleeping =       load_sprite("unit.sleeping");
+  SET_SPRITE(unit.stack,        "unit.stack");
+  sprites.unit.loaded =         load_sprite("unit.loaded");
+  sprites.unit.trade =          load_sprite("unit.trade");
   SET_SPRITE(unit.transform,    "unit.transform");
   SET_SPRITE(unit.connect,      "unit.connect");
   SET_SPRITE(unit.patrol,       "unit.patrol");
-  SET_SPRITE(unit.lowfuel, "unit.lowfuel");
-  SET_SPRITE(unit.tired, "unit.tired");
+  SET_SPRITE(unit.lowfuel,      "unit.lowfuel");
+  SET_SPRITE(unit.tired,        "unit.tired");
 
   for(i=0; i<NUM_TILES_HP_BAR; i++) {
     my_snprintf(buffer, sizeof(buffer), "unit.hp_%d", i*10);
@@ -1453,7 +1453,7 @@ static void tilespec_lookup_sprite_tags(void)
   SET_SPRITE(upkeep.gold[0], "upkeep.gold");
   SET_SPRITE(upkeep.gold[1], "upkeep.gold2");
   SET_SPRITE(upkeep.shield, "upkeep.shield");
-  
+
   SET_SPRITE(user.attention, "user.attention");
 
   SET_SPRITE(tx.fallout,    "tx.fallout");
@@ -1554,7 +1554,7 @@ static struct Sprite* lookup_sprite_tag_alt(const char *tag, const char *alt,
 					    const char *name)
 {
   struct Sprite *sp;
-  
+
   /* (should get sprite_hash before connection) */
   if (!sprite_hash) {
     die("attempt to lookup for %s %s before sprite_hash setup", what, name);
@@ -1587,7 +1587,7 @@ static struct Sprite* lookup_sprite_tag_alt(const char *tag, const char *alt,
 void tilespec_setup_unit_type(int id)
 {
   struct unit_type *ut = get_unit_type(id);
-  
+
   ut->sprite = lookup_sprite_tag_alt(ut->graphic_str, ut->graphic_alt,
 				     unit_type_exists(id), "unit_type",
 				     ut->name);
@@ -1636,7 +1636,7 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
   struct terrain_drawing_data *draw;
   char buffer1[MAX_LEN_NAME + 20];
   int i, l;
-  
+
   if (tt->terrain_name[0] == '\0') {
     return;
   }
@@ -1841,10 +1841,10 @@ void tilespec_setup_tile_type(Terrain_type_id terrain)
 void tilespec_setup_government(int id)
 {
   struct government *gov = get_government(id);
-  
+
   gov->sprite = lookup_sprite_tag_alt(gov->graphic_str, gov->graphic_alt,
 				      TRUE, "government", gov->name);
-  
+
   /* should probably do something if NULL, eg generic default? */
 }
 
@@ -1897,7 +1897,7 @@ static struct Sprite *get_city_sprite(struct city *pcity)
   style = get_city_style(pcity);    /* get style and match the best tile */
                                     /* based on city size                */
   for( size=0; size < city_styles[style].tiles_num; size++)
-    if( pcity->size < city_styles[style].tresh[size]) 
+    if( pcity->size < city_styles[style].tresh[size])
       break;
 
   if (is_isometric) {
@@ -2329,7 +2329,7 @@ static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
       }
     }
   } else {
-    /* Roadstyle 2 is a very simple method that lets us simply retrieve 
+    /* Roadstyle 2 is a very simple method that lets us simply retrieve
      * entire finished tiles, with a bitwise index of the presence of
      * roads in each direction. */
 
@@ -2369,7 +2369,7 @@ static int fill_road_rail_sprite_array(struct drawn_sprite *sprs,
   }
 
   /* Draw isolated rail/road separately (styles 0 and 1 only). */
-  if (roadstyle == 0 || roadstyle == 1) { 
+  if (roadstyle == 0 || roadstyle == 1) {
     if (draw_single_rail) {
       ADD_SPRITE_SIMPLE(sprites.rail.isolated);
     } else if (draw_single_road) {
@@ -2738,7 +2738,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
       }
       ADD_SPRITE_SIMPLE(sprites.tx.spec_river[tileno]);
     }
-  
+
     sprs += fill_road_rail_sprite_array(sprs,
 					tspecial, tspecial_near, pcity);
 
@@ -2759,7 +2759,7 @@ int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
 	&& sprites.terrain[ttype]->mine) {
       ADD_SPRITE_SIMPLE(sprites.terrain[ttype]->mine);
     }
-    
+
     if (draw_specials && contains_special(tspecial, S_HUT)) {
       ADD_SPRITE_SIMPLE(sprites.tx.village);
     }
@@ -3131,7 +3131,7 @@ static enum color_std team_overview_tile_color(struct tile *ptile)
   if (pcity) {
     pplayer = city_owner(pcity);
 
-    return (me ? (players_on_same_team(pplayer, me) 
+    return (me ? (players_on_same_team(pplayer, me)
                   ? COLOR_STD_GREEN : COLOR_STD_RED)
             : get_player_color(pplayer));
   }
@@ -3141,7 +3141,7 @@ static enum color_std team_overview_tile_color(struct tile *ptile)
   if (punit) {
     pplayer = unit_owner(punit);
 
-    return (me ? (players_on_same_team(pplayer, me) 
+    return (me ? (players_on_same_team(pplayer, me)
                   ? COLOR_STD_FGREEN : COLOR_STD_FRED)
             : get_player_color(pplayer));
   }
@@ -3230,7 +3230,7 @@ void player_colors_mode_changed(void)
 }
 
 /****************************************************************
-  ... 
+  ...
 *****************************************************************/
 void player_colors_mode_option_callback(struct client_option *poption)
 {

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - R. Falke
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ void add_notify_window(char *message, struct tile *ptile,
   messages[messages_total].visited = FALSE;
   messages_total++;
 
-  /* 
+  /*
    * Update the city_ok fields of all messages since the city may have
    * changed owner.
    */

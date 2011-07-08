@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ void handle_server_join_reply(bool you_can_join, char *message,
     set_client_page(PAGE_START);
 
     if (!do_not_request_hack) {
-      /* we could always use hack, verify we're local */ 
+      /* we could always use hack, verify we're local */
       send_client_wants_hack(challenge_file);
     }
 
@@ -379,7 +379,7 @@ void handle_game_state(int value)
       && get_player_ptr()->nation == NO_NATION_SELECTED) {
     popdown_races_dialog();
   }
-  
+
   set_client_state(value);
 
   if (get_client_state() == CLIENT_GAME_RUNNING_STATE) {
@@ -402,7 +402,7 @@ void handle_game_state(int value)
 
     update_info_label();
     update_unit_focus();
-    update_unit_info_label(NULL); 
+    update_unit_info_label(NULL);
   }
 
   if (changed && can_client_change_view()) {
@@ -500,13 +500,13 @@ void handle_city_info(struct packet_city_info *packet)
   pcity->tile = ptile;
   sz_strlcpy(pcity->name, packet->name);
   idex_register_city_name (pcity);
-  
+
   pcity->size = packet->size;
   for (i = 0; i < 5; i++) {
-    pcity->ppl_happy[i] = packet->ppl_happy[i];
-    pcity->ppl_content[i] = packet->ppl_content[i];
-    pcity->ppl_unhappy[i] = packet->ppl_unhappy[i];
-    pcity->ppl_angry[i] = packet->ppl_angry[i];
+    pcity->people_happy[i] = packet->people_happy[i];
+    pcity->people_content[i] = packet->people_content[i];
+    pcity->people_unhappy[i] = packet->people_unhappy[i];
+    pcity->people_angry[i] = packet->people_angry[i];
   }
   specialist_type_iterate(sp) {
     pcity->specialists[sp] = packet->specialists[sp];
@@ -576,11 +576,11 @@ void handle_city_info(struct packet_city_info *packet)
   pcity->tile_trade = packet->tile_trade;
   pcity->corruption = packet->corruption;
   pcity->shield_waste = packet->shield_waste;
-    
+
   pcity->luxury_total = packet->luxury_total;
   pcity->tax_total = packet->tax_total;
   pcity->science_total = packet->science_total;
-  
+
   pcity->food_stock = packet->food_stock;
   pcity->shield_stock = packet->shield_stock;
   pcity->pollution = packet->pollution;
@@ -632,7 +632,7 @@ void handle_city_info(struct packet_city_info *packet)
       set_worker_city(pcity, x, y, packet->city_map[i]);
     }
   }
-  
+
   impr_type_iterate(i) {
     if (!city_is_new
 	&& ((pcity->improvements[i] == I_NONE
@@ -717,7 +717,7 @@ static void handle_city_packet_common(struct city *pcity, bool is_new,
     }
 
     for (i = 0; i < game.info.nplayers; i++) {
-      unit_list_iterate(game.players[i].units, punit) 
+      unit_list_iterate(game.players[i].units, punit)
 	if (punit->homecity == pcity->id) {
 	  unit_list_prepend(pcity->units_supported, punit);
 	}
@@ -832,7 +832,7 @@ void handle_city_short_info(struct packet_city_short_info *packet)
     if (draw_city_names && name_changed) {
       update_descriptions = TRUE;
     }
-    
+
     if (name_changed) {
       city_autonaming_remove_used_name(pcity->name);
       city_autonaming_add_used_name(packet->name);
@@ -858,16 +858,16 @@ void handle_city_short_info(struct packet_city_short_info *packet)
   pcity->client.unhappy = packet->unhappy;
   pcity->client.traderoute_drawing_disabled = FALSE;
 
-  pcity->ppl_happy[4] = 0;
-  pcity->ppl_content[4] = 0;
-  pcity->ppl_unhappy[4] = 0;
-  pcity->ppl_angry[4] = 0;
+  pcity->people_happy[4] = 0;
+  pcity->people_content[4] = 0;
+  pcity->people_unhappy[4] = 0;
+  pcity->people_angry[4] = 0;
   if (packet->happy) {
-    pcity->ppl_happy[4] = pcity->size;
+    pcity->people_happy[4] = pcity->size;
   } else if (packet->unhappy) {
-    pcity->ppl_unhappy[4] = pcity->size;
+    pcity->people_unhappy[4] = pcity->size;
   } else {
-    pcity->ppl_content[4] = pcity->size;
+    pcity->people_content[4] = pcity->size;
   }
 
   if (city_is_new) {
@@ -1010,8 +1010,8 @@ void play_sound_for_event(enum event_type type)
   if (sound_tag) {
     audio_play_sound(sound_tag, NULL);
   }
-}  
-  
+}
+
 /**************************************************************************
   Handle a message packet.  This includes all messages - both
   in-game messages and chats from other players.
@@ -1027,7 +1027,7 @@ void handle_chat_msg(char *message, int x, int y,
 
   handle_event(message, ptile, event, conn_id);
 }
- 
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1114,7 +1114,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
   bool need_execute_trade = FALSE;
   bool need_free_trade = FALSE;
   struct unit *focus_unit = get_unit_in_focus();
-  
+
   punit = player_find_unit_by_id(get_player(packet_unit->owner),
 				 packet_unit->id);
 
@@ -1164,8 +1164,8 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
          packet_unit->activity = ACTIVITY_SENTRY; /* Cheat here */
          check_focus = FALSE;
       } else if (!client_is_global_observer()
-		 && autowakeup_state 
-		 && wakeup_focus 
+		 && autowakeup_state
+		 && wakeup_focus
                  && !get_player_ptr()->ai.control
                  && punit->owner == get_player_idx()
                  && punit->activity == ACTIVITY_SENTRY
@@ -1177,7 +1177,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
         set_unit_focus(punit);
         check_focus = FALSE; /* and keep it */
 
-        /* Autocenter on Wakeup, regardless of the local option 
+        /* Autocenter on Wakeup, regardless of the local option
          * "auto_center_on_unit". */
         if (!tile_visible_and_not_on_border_mapcanvas(punit->tile)) {
           center_tile_mapcanvas(punit->tile);
@@ -1416,7 +1416,7 @@ static bool handle_unit_packet_common(struct unit *packet_unit)
       }
     }
 
-    freelog(LOG_DEBUG, "New %s %s id %d (%d %d) hc %d %s", 
+    freelog(LOG_DEBUG, "New %s %s id %d (%d %d) hc %d %s",
 	    get_nation_name(unit_owner(punit)->nation),
 	    unit_name(punit->type), TILE_XY(punit->tile), punit->id,
 	    punit->homecity, (homecity ? homecity->name : _("(unknown)")));
@@ -1797,7 +1797,7 @@ void handle_player_info(struct packet_player_info *pinfo)
   }
   pplayer->future_tech = pinfo->future_tech;
   pplayer->ai.tech_goal = pinfo->tech_goal;
-  
+
   if (can_client_change_view() && pplayer == get_player_ptr()) {
     science_dialog_update();
     if (poptechup) {
@@ -1892,7 +1892,7 @@ void handle_conn_info(struct packet_conn_info *pinfo)
 	  pinfo->observer, (int)pinfo->access_level);
   freelog(LOG_DEBUG, "conn_info \"%s\" \"%s\" \"%s\"",
 	  pinfo->username, pinfo->addr, pinfo->capability);
-  
+
   if (!pinfo->used) {
     /* Forget the connection */
     if (!pconn) {
@@ -1905,10 +1905,10 @@ void handle_conn_info(struct packet_conn_info *pinfo)
     /* Add or update the connection.  Note the connection may refer to
      * a player we don't know about yet. */
     struct player *pplayer =
-      ((pinfo->player_num >= 0 
+      ((pinfo->player_num >= 0
         && pinfo->player_num < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS)
        ? get_player(pinfo->player_num) : NULL);
-    
+
     if (!pconn) {
       freelog(LOG_VERBOSE, "Server reports new connection %d %s",
 	      pinfo->id, pinfo->username);
@@ -1998,7 +1998,7 @@ static bool spaceship_autoplace(struct player *pplayer,
 {
   int i, num;
   enum spaceship_place_type type;
-  
+
   if (ship->modules > (ship->habitation + ship->life_support
 		       + ship->solar_panels)) {
     /* "nice" governments prefer to keep success 100%;
@@ -2050,7 +2050,7 @@ static bool spaceship_autoplace(struct player *pplayer,
        modules, or else finally in numerical order.
     */
     int req = -1;
-    
+
     if (!ship->structure[0]) {
       /* if we don't have the first structural, place that! */
       type = SSHIP_PLACE_STRUCTURAL;
@@ -2058,7 +2058,7 @@ static bool spaceship_autoplace(struct player *pplayer,
       dsend_packet_spaceship_place(&aconnection, type, num);
       return TRUE;
     }
-    
+
     if (ship->habitation >= 1
 	&& !ship->structure[modules_info[0].required]) {
       req = modules_info[0].required;
@@ -2103,7 +2103,7 @@ static bool spaceship_autoplace(struct player *pplayer,
     /* sanity: */
     assert(req!=-1);
     assert(!ship->structure[req]);
-    
+
     /* Now we want to find a structural we can build which leads to req.
        This loop should bottom out, because everything leads back to s0,
        and we made sure above that we do s0 first.
@@ -2127,7 +2127,7 @@ void handle_spaceship_info(struct packet_spaceship_info *p)
   int i;
   struct player *pplayer = &game.players[p->player_num];
   struct player_spaceship *ship = &pplayer->spaceship;
-  
+
   ship->state        = p->sship_state;
   ship->structurals  = p->structurals;
   ship->components   = p->components;
@@ -2145,7 +2145,7 @@ void handle_spaceship_info(struct packet_spaceship_info *p)
   ship->energy_rate  = p->energy_rate;
   ship->success_rate = p->success_rate;
   ship->travel_time  = p->travel_time;
-  
+
   for(i=0; i<NUM_SS_STRUCTURALS; i++) {
     if (p->structure[i] == '0') {
       ship->structure[i] = FALSE;
@@ -2236,7 +2236,7 @@ void handle_tile_info(struct packet_tile_info *packet)
   if (ptile->continent != packet->continent && ptile->continent != 0
       && packet->continent > 0) {
     /* We're renumbering continents, somebody did a transform.
-     * But we don't care about renumbering oceans since 
+     * But we don't care about renumbering oceans since
      * num_oceans is not kept at the client. */
     renumbered = TRUE;
   }
@@ -2253,7 +2253,7 @@ void handle_tile_info(struct packet_tile_info *packet)
   }
 
   if (known_changed || tile_changed) {
-    /* 
+    /*
      * A tile can only change if it was known before and is still
      * known. In the other cases the tile is new or removed.
      */
@@ -2288,7 +2288,7 @@ void handle_tile_info(struct packet_tile_info *packet)
 
     /* the "furry edges" on tiles adjacent to an TILE_UNKNOWN tile are
        removed here */
-    if (old_known == TILE_UNKNOWN && packet->known >= TILE_KNOWN_FOGGED) {     
+    if (old_known == TILE_UNKNOWN && packet->known >= TILE_KNOWN_FOGGED) {
       cardinal_adjc_iterate(ptile, tile1) {
 	if (tile_get_known(tile1) >= TILE_KNOWN_FOGGED) {
 	  refresh_tile_mapcanvas(tile1, MUT_NORMAL);
@@ -2476,7 +2476,7 @@ void handle_ruleset_tech(struct packet_ruleset_tech *p)
   a->preset_cost = p->preset_cost;
   a->num_reqs = p->num_reqs;
   a->helptext = mystrdup(p->helptext);
-  
+
   tilespec_setup_tech_type(p->id);
 }
 
@@ -2578,7 +2578,7 @@ void handle_ruleset_building(struct packet_ruleset_building *p)
     } impr_type_iterate_end;
   }
 #endif
-  
+
   tilespec_setup_impr_type(p->id);
 }
 
@@ -2607,12 +2607,12 @@ void handle_ruleset_government(struct packet_ruleset_government *p)
   gov->empire_size_mod   = p->empire_size_mod;
   gov->empire_size_inc   = p->empire_size_inc;
   gov->rapture_size      = p->rapture_size;
-  
+
   gov->unit_happy_cost_factor  = p->unit_happy_cost_factor;
   gov->unit_shield_cost_factor = p->unit_shield_cost_factor;
   gov->unit_food_cost_factor   = p->unit_food_cost_factor;
   gov->unit_gold_cost_factor   = p->unit_gold_cost_factor;
-  
+
   gov->free_happy          = p->free_happy;
   gov->free_shield         = p->free_shield;
   gov->free_food           = p->free_food;
@@ -2639,16 +2639,16 @@ void handle_ruleset_government(struct packet_ruleset_government *p)
   gov->corruption_distance_factor = p->corruption_distance_factor;
   gov->extra_corruption_distance = p->extra_corruption_distance;
   gov->corruption_max_distance_cap = p->corruption_max_distance_cap;
-  
+
   gov->waste_level           = p->waste_level;
   gov->fixed_waste_distance  = p->fixed_waste_distance;
   gov->waste_distance_factor = p->waste_distance_factor;
   gov->extra_waste_distance  = p->extra_waste_distance;
   gov->waste_max_distance_cap = p->waste_max_distance_cap;
-  
+
   gov->flags               = p->flags;
   gov->num_ruler_titles    = p->num_ruler_titles;
-    
+
   sz_strlcpy(gov->name_orig, p->name);
   gov->name = gov->name_orig;
   sz_strlcpy(gov->graphic_str, p->graphic_str);
@@ -2658,7 +2658,7 @@ void handle_ruleset_government(struct packet_ruleset_government *p)
 				sizeof(struct ruler_title));
 
   gov->helptext = mystrdup(p->helptext);
-  
+
   tilespec_setup_government(p->id);
 }
 
@@ -2742,11 +2742,11 @@ void handle_ruleset_terrain(struct packet_ruleset_terrain *p)
   t->fortress_time = p->fortress_time;
   t->clean_pollution_time = p->clean_pollution_time;
   t->clean_fallout_time = p->clean_fallout_time;
-  
+
   t->flags = p->flags;
 
   t->helptext = mystrdup(p->helptext);
-  
+
   tilespec_setup_tile_type(p->id);
 }
 
@@ -2819,7 +2819,7 @@ void handle_ruleset_city(struct packet_ruleset_city *packet)
     return;
   }
   cs = &city_styles[id];
-  
+
   cs->techreq = packet->techreq;
   cs->replaced_by = packet->replaced_by;
 
@@ -2932,7 +2932,7 @@ void handle_city_sabotage_list(int diplomat_id, int city_id,
 }
 
 /**************************************************************************
- Pass the packet on to be displayed in a gui-specific endgame dialog. 
+ Pass the packet on to be displayed in a gui-specific endgame dialog.
 **************************************************************************/
 void handle_endgame_report(struct packet_endgame_report *packet)
 {
@@ -3114,7 +3114,7 @@ void handle_server_shutdown(void)
 }
 
 /**************************************************************************
-  Add group data to ruleset cache.  
+  Add group data to ruleset cache.
 **************************************************************************/
 void handle_ruleset_cache_group(struct packet_ruleset_cache_group *packet)
 {
@@ -3130,7 +3130,7 @@ void handle_ruleset_cache_group(struct packet_ruleset_cache_group *packet)
 }
 
 /**************************************************************************
-  Add effect data to ruleset cache.  
+  Add effect data to ruleset cache.
 **************************************************************************/
 void handle_ruleset_cache_effect(struct packet_ruleset_cache_effect *packet)
 {

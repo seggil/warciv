@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ const char **get_soundplugin_list(void)
 {
   static const char* plugin_list[MAX_NUM_PLUGINS + 1];
   int i;
-  
+
   for (i = 0; i < num_plugins_used; i++) {
     plugin_list[i] = plugins[i].name;
   }

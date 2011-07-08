@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ bool filter_change(filter *pfilter, enum filter_value value)
   return ret;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Returns TRUE iff the unit satisfy all inclusive conditions and
   doesn't satisfy any of the exclusive ones.
 ***********************************************************************/
@@ -141,7 +141,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
 
 
 
-/********************************************************************** 
+/**********************************************************************
   Unit multi-selection
 ***********************************************************************/
 #define msassert(multi) assert(multi_select_is_initialized      \
@@ -165,7 +165,7 @@ bool multi_select_spread_airport_cities;
 bool multi_select_spread_allied_cities;
 bool multi_select_double_click;
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 bool is_unit_in_multi_select(int multi, struct unit *punit)
@@ -180,7 +180,7 @@ bool is_unit_in_multi_select(int multi, struct unit *punit)
   return FALSE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Request IDLE action to the selected units.
 ***********************************************************************/
 void multi_select_active_all(int multi)
@@ -196,7 +196,7 @@ void multi_select_active_all(int multi)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_add_unit(struct unit *punit)
@@ -226,7 +226,7 @@ void multi_select_add_unit(struct unit *punit)
   refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add if the unit is not in focus, else remove.
 ***********************************************************************/
 void multi_select_add_or_remove_unit(struct unit *punit)
@@ -238,7 +238,7 @@ void multi_select_add_or_remove_unit(struct unit *punit)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_add_units(struct unit_list *ulist)
@@ -248,7 +248,7 @@ void multi_select_add_units(struct unit_list *ulist)
   } unit_list_iterate_end;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_blink_update(void)
@@ -260,7 +260,7 @@ void multi_select_blink_update(void)
   } unit_list_iterate_end;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a battle group in an other.
 ***********************************************************************/
 void multi_select_cat(int dest, int src)
@@ -289,7 +289,7 @@ void multi_select_cat(int dest, int src)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_clear(int multi)
@@ -319,7 +319,7 @@ void multi_select_clear(int multi)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_clear_all(void)
@@ -333,7 +333,7 @@ void multi_select_clear_all(void)
   multi_select_is_initialized = FALSE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_copy(int dest, int src)
@@ -381,7 +381,7 @@ void multi_select_copy(int dest, int src)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 const struct unit_list *multi_select_get_units_focus(void)
@@ -389,7 +389,7 @@ const struct unit_list *multi_select_get_units_focus(void)
   return multi_selection[0].ulist;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_init_all(void)
@@ -403,7 +403,7 @@ void multi_select_init_all(void)
   multi_select_is_initialized = TRUE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_remove_unit(struct unit *punit)
@@ -432,7 +432,7 @@ void multi_select_remove_unit(struct unit *punit)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Return the number of selected units which statisfy the filters.
 ***********************************************************************/
 int multi_select_satisfies_filter(int multi)
@@ -452,7 +452,7 @@ int multi_select_satisfies_filter(int multi)
   return count;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 Unit_Type_id multi_select_unit_type(int multi)
@@ -463,7 +463,7 @@ Unit_Type_id multi_select_unit_type(int multi)
   return multi_selection[multi].punit_focus->type;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Set one unit in a battle group.
 ***********************************************************************/
 void multi_select_set_unit(int multi, struct unit *punit)
@@ -485,7 +485,7 @@ void multi_select_set_unit(int multi, struct unit *punit)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void multi_select_set_unit_focus(int multi, struct unit *punit)
@@ -497,7 +497,7 @@ void multi_select_set_unit_focus(int multi, struct unit *punit)
   multi_selection[multi].punit_focus = punit;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 int multi_select_size(int multi)
@@ -670,7 +670,7 @@ clean_up:
   scity_list_free(sclist);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Remove all reference to one unit (called in client_remove_unit).
 ***********************************************************************/
 void multi_select_wipe_up_unit(struct unit *punit)
@@ -695,7 +695,7 @@ void multi_select_wipe_up_unit(struct unit *punit)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Use the selection mode and the filters to select units.
 ***********************************************************************/
 void multi_select_select(void)
@@ -752,7 +752,7 @@ void multi_select_select(void)
 
 
 
-/********************************************************************** 
+/**********************************************************************
   Delayed goto.
 ***********************************************************************/
 #define dgassert(dg) assert(delayed_goto_is_initialized \
@@ -779,7 +779,7 @@ static const enum automatic_execution auto_timer_event[auto_timers_num] = {
 };
 static struct auto_timer auto_timers[auto_timers_num];
 
-/********************************************************************** 
+/**********************************************************************
   Add a delayed goto structure in a queue.
 ***********************************************************************/
 void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
@@ -796,7 +796,7 @@ void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
   delayed_goto_list[dg].pplayer = get_tile_player(ptile);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Change the automatic_execution filter to/of the given value.
   Returns TRUE if other bits than the value are changed.
 ***********************************************************************/
@@ -829,7 +829,7 @@ bool delayed_goto_auto_filter_change(filter *pfilter,
   return ret;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Init the timers.
 ***********************************************************************/
 void delayed_goto_auto_timers_init(void)
@@ -851,7 +851,7 @@ void delayed_goto_auto_timers_init(void)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Update the timers and check if one event should be created.
 ***********************************************************************/
 void delayed_goto_auto_timers_update(void)
@@ -867,7 +867,7 @@ void delayed_goto_auto_timers_update(void)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a delayed goto queue to an other.
 ***********************************************************************/
 void delayed_goto_cat(int dest, int src)
@@ -906,7 +906,7 @@ void delayed_goto_cat(int dest, int src)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Clear an queue.
 ***********************************************************************/
 void delayed_goto_clear(int dg)
@@ -936,7 +936,7 @@ void delayed_goto_clear(int dg)
   update_delayed_goto_menu(dg);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Free all...
 ***********************************************************************/
 void delayed_goto_clear_all(void)
@@ -953,7 +953,7 @@ void delayed_goto_clear_all(void)
   delayed_goto_is_initialized = FALSE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Copy a queue to an other.
 ***********************************************************************/
 void delayed_goto_copy(int dest, int src)
@@ -985,7 +985,7 @@ void delayed_goto_copy(int dest, int src)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Receive an event. pplayer can be NULL.
 ***********************************************************************/
 void delayed_goto_event(enum automatic_execution event, struct player *pplayer)
@@ -1004,7 +1004,7 @@ void delayed_goto_event(enum automatic_execution event, struct player *pplayer)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 const char *delayed_goto_get_auto_name(enum automatic_execution value)
@@ -1035,7 +1035,7 @@ const char *delayed_goto_get_auto_name(enum automatic_execution value)
   return NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Init all...
 ***********************************************************************/
 void delayed_goto_init_all(void)
@@ -1050,7 +1050,7 @@ void delayed_goto_init_all(void)
   delayed_goto_is_initialized = TRUE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Copy a queue to an other and clear the source.
 ***********************************************************************/
 void delayed_goto_move(int dest, int src)
@@ -1062,7 +1062,7 @@ void delayed_goto_move(int dest, int src)
   delayed_goto_clear(src);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Return the size of the queue.
 ***********************************************************************/
 int delayed_goto_size(int dg)
@@ -1072,7 +1072,7 @@ int delayed_goto_size(int dg)
   return delayed_goto_data_list_size(delayed_goto_list[dg].dglist);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Try to evaluate the target player for the given tile.
 ***********************************************************************/
 struct player *get_tile_player(struct tile *ptile)
@@ -1109,7 +1109,7 @@ struct player *get_tile_player(struct tile *ptile)
   return best >= 0 ? get_player(best) : NULL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 static bool unit_can_do_delayed_action(struct unit *punit,
@@ -1130,7 +1130,7 @@ static bool unit_can_do_delayed_action(struct unit *punit,
   return FALSE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add units to delayed goto queue.
 ***********************************************************************/
 void add_unit_to_delayed_goto(struct tile *ptile)
@@ -1210,7 +1210,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   update_delayed_goto_menu(0);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Maybe execute a delayed goto queue after a
   player cancel diplomacy event.
 ***********************************************************************/
@@ -1224,7 +1224,7 @@ void request_player_execute_delayed_goto(struct player *pplayer, int dg)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Execute a delated queue.
 ***********************************************************************/
 void request_unit_execute_delayed_goto(int dg)
@@ -1246,7 +1246,7 @@ void request_unit_execute_delayed_goto(int dg)
   request_execute_delayed_goto(NULL, dg);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Really execute it...
 ***********************************************************************/
 void request_execute_delayed_goto(struct tile *ptile, int dg)
@@ -1356,7 +1356,7 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
   update_delayed_goto_menu(dg);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a airlift request in the delayed queue.
 ***********************************************************************/
 void schedule_delayed_airlift(struct tile *ptile)
@@ -1372,7 +1372,7 @@ void schedule_delayed_airlift(struct tile *ptile)
   airlift_queue_need_city_for = -1;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a pause in the delayed queue.
 ***********************************************************************/
 void add_pause_delayed_goto(void)
@@ -1384,7 +1384,7 @@ void add_pause_delayed_goto(void)
 
 
 
-/********************************************************************** 
+/**********************************************************************
   Airlift queues.
 ***********************************************************************/
 #define aqassert(aq) assert(airlift_is_initialized              \
@@ -1396,7 +1396,7 @@ int airlift_queue_need_city_for = -1;
 static struct airlift_queue airlift_queues[AIRLIFT_QUEUE_NUM];
 static bool airlift_is_initialized = FALSE;
 
-/********************************************************************** 
+/**********************************************************************
   Add an airlift queue in an other.
 ***********************************************************************/
 void airlift_queue_cat(int dest, int src)
@@ -1429,7 +1429,7 @@ void airlift_queue_cat(int dest, int src)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Clear an airlift queue.
 ***********************************************************************/
 void airlift_queue_clear(int aq)
@@ -1456,7 +1456,7 @@ void airlift_queue_clear(int aq)
   update_airlift_menu(aq);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void airlift_queue_clear_all(void)
@@ -1469,7 +1469,7 @@ void airlift_queue_clear_all(void)
   airlift_is_initialized = FALSE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Copy an airlift queue to an other.
 ***********************************************************************/
 void airlift_queue_copy(int dest, int src)
@@ -1505,7 +1505,7 @@ void airlift_queue_copy(int dest, int src)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype)
@@ -1516,7 +1516,7 @@ const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype)
   return airlift_queues[aq].namemenu[utype];
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 Unit_Type_id airlift_queue_get_unit_type(int aq)
@@ -1526,7 +1526,7 @@ Unit_Type_id airlift_queue_get_unit_type(int aq)
   return airlift_queues[aq].utype;
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void airlift_queue_init_all(void)
@@ -1543,7 +1543,7 @@ void airlift_queue_init_all(void)
   airlift_is_initialized = TRUE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Copy an airlift queue to an other and free the source queue.
 ***********************************************************************/
 void airlift_queue_move(int dest, int src)
@@ -1555,7 +1555,7 @@ void airlift_queue_move(int dest, int src)
   airlift_queue_clear(src);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void airlift_queue_set_menu_name(int aq, Unit_Type_id utype,
@@ -1567,7 +1567,7 @@ void airlift_queue_set_menu_name(int aq, Unit_Type_id utype,
   sz_strlcpy(airlift_queues[aq].namemenu[utype], namemenu);
 }
 
-/********************************************************************** 
+/**********************************************************************
   ...
 ***********************************************************************/
 void airlift_queue_set_unit_type(int aq, Unit_Type_id utype)
@@ -1579,7 +1579,7 @@ void airlift_queue_set_unit_type(int aq, Unit_Type_id utype)
   update_airlift_menu(aq);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Show the cities in the queue.
 ***********************************************************************/
 void airlift_queue_show(int aq)
@@ -1610,7 +1610,7 @@ void airlift_queue_show(int aq)
   append_output_window(buf);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Returns the size of the airlift queue.
 ***********************************************************************/
 int airlift_queue_size(int aq)
@@ -1620,7 +1620,7 @@ int airlift_queue_size(int aq)
   return tile_list_size(airlift_queues[aq].tlist);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add a city to the current airlift queue. If multi is FALSE, it will
   remove the tile if the tile is already in the queue.
 ***********************************************************************/
@@ -1660,7 +1660,7 @@ void add_city_to_auto_airlift_queue(struct tile *ptile, bool multi)
   }
 }
 
-/********************************************************************** 
+/**********************************************************************
   Add all cities with an airport in the current airlift queue.
 ***********************************************************************/
 void request_auto_airlift_source_selection_with_airport(void)
@@ -1674,7 +1674,7 @@ void request_auto_airlift_source_selection_with_airport(void)
   update_airlift_menu(0);
 }
 
-/********************************************************************** 
+/**********************************************************************
   Do airlift for a given airlift queue.
 ***********************************************************************/
 void do_airlift_for(int aq, struct city *pcity)
@@ -1706,7 +1706,7 @@ void do_airlift_for(int aq, struct city *pcity)
   } tile_list_iterate_end;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Do massive airlift...
 ***********************************************************************/
 void do_airlift(struct tile *ptile)

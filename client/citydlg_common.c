@@ -216,13 +216,13 @@ void get_city_dialog_production(struct city *pcity,
   int turns, cost, stock;
 
   if (pcity == NULL) {
-    /* 
+    /*
      * Some GUIs use this to build a "filler string" so that they can
      * properly size the widget to hold the string.  This has some
      * obvious problems; the big one is that we have two forms of time
      * information: "XXX turns" and "never".  Later this may need to
      * be extended to return the longer of the two; in the meantime
-     * translators can fudge it by changing this "filler" string. 
+     * translators can fudge it by changing this "filler" string.
      */
     mystrlcpy(buffer, Q_("?filler:XXX/XXX XXX turns"), buffer_len);
     return;
@@ -391,16 +391,16 @@ void get_city_citizen_types(struct city *pcity, int index,
   int i = 0, n;
   assert(index >= 0 && index < 5);
 
-  for (n = 0; n < pcity->ppl_happy[index]; n++, i++) {
+  for (n = 0; n < pcity->people_happy[index]; n++, i++) {
     citizens[i].type = CITIZEN_HAPPY;
   }
-  for (n = 0; n < pcity->ppl_content[index]; n++, i++) {
+  for (n = 0; n < pcity->people_content[index]; n++, i++) {
     citizens[i].type = CITIZEN_CONTENT;
   }
-  for (n = 0; n < pcity->ppl_unhappy[index]; n++, i++) {
+  for (n = 0; n < pcity->people_unhappy[index]; n++, i++) {
     citizens[i].type = CITIZEN_UNHAPPY;
   }
-  for (n = 0; n < pcity->ppl_angry[index]; n++, i++) {
+  for (n = 0; n < pcity->people_angry[index]; n++, i++) {
     citizens[i].type = CITIZEN_ANGRY;
   }
 
@@ -445,7 +445,7 @@ void city_rotate_specialist(struct city *pcity, int citizen_index)
     city_change_specialist(pcity, from, to);
   }
 }
-    
+
 /**************************************************************************
   Activate all units on the given map tile.
 **************************************************************************/

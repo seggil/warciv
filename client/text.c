@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - The Freeciv Poject
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
  */
 #define GROW_TMP_SIZE	(1024)
 
-/* 
+/*
  * Initial size of the buffer for each function.  It may later be
  * grown as needed.
  */
@@ -78,7 +78,7 @@ static inline const char *get_name_prefix(struct player *plr)
 }
 
 /****************************************************************************
-  
+
 ****************************************************************************/
 static inline const char *get_proper_username(struct player *plr)
 {
@@ -155,7 +155,7 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   char shields[16];
   char trade[16];
   int x, before_penalty;
-  
+
   struct government *gov = client_is_global_observer()
 			       ? NULL : get_gov_pplayer(get_player_ptr());
 
@@ -185,7 +185,7 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   } else {
     my_snprintf(trade, sizeof(trade), "%d", x);
   }
-  
+
   my_snprintf(s, sizeof(s), "%s/%s/%s", food, shields, trade);
   return s;
 }
@@ -218,19 +218,19 @@ const char *popup_info_text(struct tile *ptile)
   const char *diplo_nation_plural_adjectives[DS_LAST] =
     {Q_("?nation:Neutral"), Q_("?nation:Hostile"),
      "" /* unused, DS_CEASEFIRE*/,
-     Q_("?nation:Peaceful"), Q_("?nation:Friendly"), 
+     Q_("?nation:Peaceful"), Q_("?nation:Friendly"),
     Q_("?nation:Mysterious"), Q_("?nation:Friendly(team)")
   };
   const char *diplo_city_adjectives[DS_LAST] =
     {Q_("?city:Neutral"), Q_("?city:Hostile"),
      "" /*unused, DS_CEASEFIRE */,
      Q_("?city:Peaceful"), Q_("?city:Friendly"), Q_("?city:Mysterious"),
-    Q_("?city:Friendly(team)")
-  };
+     Q_("?city:Friendly(team)")
+    };
   INIT;
 
-  add_line(_("Location: (%d, %d) [%d]"), 
-	   ptile->x, ptile->y, ptile->continent); 
+  add_line(_("Location: (%d, %d) [%d]"),
+           ptile->x, ptile->y, ptile->continent);
   add_line(_("Native coordinates: (%d, %d)"), ptile->nat_x, ptile->nat_y);
 
   add_line(_("Terrain: %s"),  map_get_tile_info_text(ptile));
@@ -419,14 +419,14 @@ const char *popup_info_text(struct tile *ptile)
     /* TRANS: A is attack power, D is defense power, FP is firepower,
      * HP is hitpoints (current and max). */
     add_line(_("A:%d D:%d FP:%d HP:%d/%d%s"),
-	     ptype->attack_strength, 
-	     ptype->defense_strength, ptype->firepower, punit->hp, 
-	     ptype->hp, vet);
+             ptype->attack_strength,
+             ptype->defense_strength, ptype->firepower, punit->hp,
+             ptype->hp, vet);
     if (owner == get_player_ptr() && unit_list_size(ptile->units) >= 2) {
       /* TRANS: "5 more" units on this tile */
       add(_("  (%d more)"), unit_list_size(ptile->units) - 1);
     }
-  } 
+  }
   RETURN;
 }
 
@@ -586,7 +586,7 @@ const char *get_info_label_text(void)
     add_line(_("Gold: %d"), pplayer->economic.gold);
     add_line(_("Tax: %d Lux: %d Sci: %d"), pplayer->economic.tax,
 	     pplayer->economic.luxury, pplayer->economic.science);
-  }	
+  }
   RETURN;
 }
 
@@ -598,7 +598,7 @@ const char *get_info_label_text(void)
 const char *get_unit_info_label_text1(struct unit *punit)
 {
   INIT;
-  
+
   if (punit) {
     struct unit_type *ptype = unit_type(punit);
 

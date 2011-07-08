@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -442,7 +442,7 @@ void init_player_dlg_common()
   observers.
 **************************************************************************/
 const char *player_addr_hack(struct player *pplayer)
-{ 
+{
   conn_list_iterate(pplayer->connections, pconn) {
     if (!pconn->observer) {
       return pconn->addr;
@@ -450,7 +450,7 @@ const char *player_addr_hack(struct player *pplayer)
   } conn_list_iterate_end;
 
   return blank_addr_str;
-}   
+}
 
 /****************************************************************************
   Return TRUE if this column can be visible.

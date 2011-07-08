@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -73,37 +73,37 @@ static const char *cr_entry_hstate_verbose(const struct city *pcity)
 static const char *cr_entry_workers(const struct city *pcity)
 {
   static char buf[32];
-  my_snprintf(buf, sizeof(buf), "%d/%d/%d/%d", pcity->ppl_happy[4],
-	      pcity->ppl_content[4], pcity->ppl_unhappy[4],
-	      pcity->ppl_angry[4]);
+  my_snprintf(buf, sizeof(buf), "%d/%d/%d/%d", pcity->people_happy[4],
+	      pcity->people_content[4], pcity->people_unhappy[4],
+	      pcity->people_angry[4]);
   return buf;
 }
 
 static const char *cr_entry_happy(const struct city *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->ppl_happy[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_happy[4]);
   return buf;
 }
 
 static const char *cr_entry_content(const struct city *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->ppl_content[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_content[4]);
   return buf;
 }
 
 static const char *cr_entry_unhappy(const struct city *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->ppl_unhappy[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_unhappy[4]);
   return buf;
 }
 
 static const char *cr_entry_angry(const struct city *pcity)
 {
   static char buf[8];
-  my_snprintf(buf, sizeof(buf), "%2d", pcity->ppl_angry[4]);
+  my_snprintf(buf, sizeof(buf), "%2d", pcity->people_angry[4]);
   return buf;
 }
 
@@ -229,8 +229,8 @@ static const char *cr_entry_resources(const struct city *pcity)
 {
   static char buf[32];
   my_snprintf(buf, sizeof(buf), "%d/%d/%d",
-	      pcity->food_surplus, 
-	      pcity->shield_surplus, 
+	      pcity->food_surplus,
+	      pcity->shield_surplus,
 	      pcity->trade_prod);
   return buf;
 }
@@ -344,7 +344,7 @@ static const char *cr_entry_building(const struct city *pcity)
   const char *from_worklist =
     worklist_is_empty(&pcity->worklist) ? "" :
     concise_city_production ? "*" : _("(worklist)");
-	
+
   if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
     my_snprintf(buf, sizeof(buf), "%s (%d/X/X/X)%s",
 		get_impr_name_ex(pcity, pcity->currently_building),
@@ -405,7 +405,7 @@ static const char *cr_entry_cma(const struct city *pcity)
  */
 
 /* This generates the function name and the tagname: */
-#define FUNC_TAG(var)  cr_entry_##var, #var 
+#define FUNC_TAG(var)  cr_entry_##var, #var
 
 struct city_report_spec city_report_specs[] = {
   { TRUE, -15, 0, NULL,  N_("?city:Name"),      N_("City Name"),

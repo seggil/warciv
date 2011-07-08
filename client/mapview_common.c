@@ -61,6 +61,8 @@ static void base_canvas_to_map_pos(int *map_x, int *map_y,
 static void center_tile_overviewcanvas(struct tile *ptile);
 static void get_mapview_corners(int x[4], int y[4]);
 static void redraw_overview(void);
+static void redraw_viewrect(struct canvas *dest);
+static void redraw_viewrect_small(struct canvas *dest);
 static void dirty_overview(void);
 
 static void draw_traderoutes_for_city(struct city *src_pcity);
@@ -142,7 +144,7 @@ void map_to_gui_vector(int *gui_dx, int *gui_dy, int map_dx, int map_dy)
      * Convert the map coordinates to isometric GUI
      * coordinates.  We'll make tile map(0,0) be the origin, and
      * transform like this:
-     * 
+     *
      *                     3
      * 123                2 6
      * 456 -> becomes -> 1 5 9
@@ -1987,10 +1989,10 @@ void undraw_segment(struct tile *src_tile, enum direction8 dir)
   This function is called to decrease a unit's HP smoothly in battle
   when combat_animation is turned on.
 ****************************************************************************/
-void decrease_unit_hp_smooth(struct unit *punit0, int hp0, 
+void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
 			     struct unit *punit1, int hp1)
 {
-  static struct timer *anim_timer = NULL; 
+  static struct timer *anim_timer = NULL;
   struct unit *losing_unit = (hp0 == 0 ? punit0 : punit1);
   int canvas_x, canvas_y, i;
 
@@ -2009,7 +2011,7 @@ void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
 
   if (num_tiles_explode_unit > 0
       && tile_to_canvas_pos(&canvas_x, &canvas_y, losing_unit->tile)) {
-    
+
     refresh_tile_mapcanvas(losing_unit->tile, MUT_DRAW);
     canvas_copy(mapview_canvas.tmp_store, mapview_canvas.store,
 		canvas_x, canvas_y, canvas_x, canvas_y,
@@ -2177,7 +2179,7 @@ struct city *find_city_or_settler_near_tile(struct tile *ptile,
        * city (perhaps an unseen enemy city) may be working it,
        * causing it to be marked as C_TILE_UNAVAILABLE.
        */
-      
+
       if (pcity->tile->client.hilite == HILITE_CITY) {
 	/* rule c */
 	return pcity;
@@ -2248,7 +2250,7 @@ void get_city_mapview_production(struct city *pcity,
   } else {
     coststr[0] = '\0';
   }
-				
+
   if (pcity->is_building_unit) {
     struct unit_type *punit_type =
 		get_unit_type(pcity->currently_building);
@@ -2445,7 +2447,7 @@ static void center_tile_overviewcanvas(struct tile *ptile)
       } else {
 	overview.map_y0 = 0;
       }
-    } 
+    }
     redraw_overview();
   } do_in_natural_pos_end;
 }
@@ -2606,18 +2608,18 @@ void overview_update_tile(struct tile *ptile)
 	if (overview_x > overview.width - OVERVIEW_TILE_WIDTH) {
 	  /* This tile is shown half on the left and half on the right
 	   * side of the overview.  So we have to draw it in two parts. */
-	  canvas_put_rectangle(overview.store, 
+	  canvas_put_rectangle(overview.store,
 			       overview_tile_color(ptile),
 			       overview_x - overview.width, overview_y,
-			       OVERVIEW_TILE_WIDTH, OVERVIEW_TILE_HEIGHT); 
-	}     
+			       OVERVIEW_TILE_WIDTH, OVERVIEW_TILE_HEIGHT);
+	}
       } else {
 	/* Clip half tile left and right.
 	 * See comment in map_to_overview_pos. */
 	overview_x -= OVERVIEW_TILE_SIZE;
       }
-    } 
-    
+    }
+
     canvas_put_rectangle(overview.store,
 			 overview_tile_color(ptile),
 			 overview_x, overview_y,
@@ -2719,7 +2721,7 @@ void set_overview_dimensions(int width, int height)
   }
 
   overview.height = OVERVIEW_TILE_HEIGHT * height;
-  overview.width = OVERVIEW_TILE_WIDTH * width + shift; 
+  overview.width = OVERVIEW_TILE_WIDTH * width + shift;
 
   if (overview.store) {
     canvas_free(overview.store);

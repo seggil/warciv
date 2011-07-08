@@ -46,7 +46,7 @@ struct mapview_canvas {
 };
 
 /* Holds all information about the overview aka minimap. */
-struct overview {
+struct overview_s {
   /* The following fields are controlled by mapview_common.c. */
   int map_x0, map_y0;
   int width, height;		/* Size in pixels. */
@@ -54,7 +54,7 @@ struct overview {
 };
 
 extern struct mapview_canvas mapview_canvas;
-extern struct overview overview;
+extern struct overview_s overview;
 
 /* HACK: Callers can set this to FALSE to disable sliding.  It should be
  * reenabled afterwards. */
@@ -198,7 +198,7 @@ bool show_unit_orders(struct unit *punit);
 void draw_segment(struct tile *ptile, enum direction8 dir);
 void undraw_segment(struct tile *ptile, enum direction8 dir);
 
-void decrease_unit_hp_smooth(struct unit *punit0, int hp0, 
+void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
 			     struct unit *punit1, int hp1);
 void move_unit_map_canvas(struct unit *punit,
 			  struct tile *ptile, int dx, int dy);
