@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - A. Gorshenev
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 This is the simple historian agent.
 It just saves the last states of all tiles and units.
 The trick is just to call this agent the last of all
-so it still keeps old values whereas all other agents 
+so it still keeps old values whereas all other agents
 allready got the new ones.
 **************************************************************************/
 

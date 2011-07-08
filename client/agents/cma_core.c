@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2001 - R. Falke
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ static bool check_city(int city_id, struct cm_parameter *parameter)
   }
 
   return TRUE;
-}  
+}
 
 /****************************************************************************
  Change the actual city setting to the given result. Returns TRUE iff
@@ -384,7 +384,7 @@ static void handle_city(struct city *pcity)
     freelog(HANDLE_CITY_LOG_LEVEL2, "  try %d", i);
 
     if (!check_city(city_id, &parameter)) {
-      handled = TRUE;	
+      handled = TRUE;
       break;
     }
 

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2001 - R. Falke
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -355,7 +355,7 @@ void agents_free(void)
   int i;
 
   /* FIXME: doing this will wipe out any presets on disconnect.
-   * a proper solution should be to split up the client_free functions 
+   * a proper solution should be to split up the client_free functions
    * for a simple disconnect and a client quit. for right now, we just
    * let the OS free the memory on exit instead of doing it ourselves. */
   /* cmafec_free(); */

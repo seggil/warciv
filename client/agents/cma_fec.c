@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2001 - R. Falke
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,8 +54,8 @@ struct cma_preset {
 static struct preset_list *preset_list = NULL;
 
 /****************************************************************************
- Is called if the game removes a city. It will clear the 
- "fe parameter" attribute to reduce the size of the savegame.   
+ Is called if the game removes a city. It will clear the
+ "fe parameter" attribute to reduce the size of the savegame.
 *****************************************************************************/
 static void city_remove(int city_id)
 {
