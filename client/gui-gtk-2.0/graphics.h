@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
 SPRITE *crop_blankspace(SPRITE *s);
 
 GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src);
-  
+
 /********************************************************************
  NOTE: the pixmap and mask of a sprite must not change after this
        function is called!

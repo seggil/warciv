@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -115,18 +115,18 @@ void refresh_spaceship_dialog(struct player *pplayer)
     gui_dialog_set_response_sensitive(pdialog->shell,
 	GTK_RESPONSE_ACCEPT, FALSE);
   }
-  
+
   spaceship_dialog_update_info(pdialog);
   spaceship_dialog_update_image(pdialog);
 }
 
 /****************************************************************
-popup the dialog 10% inside the main-window 
+popup the dialog 10% inside the main-window
 *****************************************************************/
 void popup_spaceship_dialog(struct player *pplayer)
 {
   struct spaceship_dialog *pdialog;
-  
+
   if(!(pdialog=get_spaceship_dialog(pplayer)))
     pdialog=create_spaceship_dialog(pplayer);
 
@@ -134,12 +134,12 @@ void popup_spaceship_dialog(struct player *pplayer)
 }
 
 /****************************************************************
-popdown the dialog 
+popdown the dialog
 *****************************************************************/
 void popdown_spaceship_dialog(struct player *pplayer)
 {
   struct spaceship_dialog *pdialog;
-  
+
   if((pdialog=get_spaceship_dialog(pplayer)))
     gui_dialog_destroy(pdialog->shell);
 }
@@ -154,7 +154,7 @@ static gboolean spaceship_image_canvas_expose(GtkWidget *widget,
 					      gpointer data)
 {
   struct spaceship_dialog *pdialog;
-  
+
   pdialog=(struct spaceship_dialog *)data;
   spaceship_dialog_update_image(pdialog);
   return TRUE;
@@ -166,7 +166,7 @@ static gboolean spaceship_image_canvas_expose(GtkWidget *widget,
 static void spaceship_destroy_callback(GtkWidget *w, gpointer data)
 {
   struct spaceship_dialog *pdialog = (struct spaceship_dialog *)data;
-  
+
   dialog_list_unlink(dialog_list, pdialog);
 
   free(pdialog);
@@ -189,7 +189,7 @@ static void spaceship_response(struct gui_dialog *dlg, int response)
     break;
   }
 }
-  
+
 /****************************************************************
 ...
 *****************************************************************/
@@ -197,7 +197,7 @@ struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
 {
   struct spaceship_dialog *pdialog;
   GtkWidget *hbox, *frame;
-  
+
   pdialog=fc_malloc(sizeof(struct spaceship_dialog));
   pdialog->pplayer=pplayer;
 
@@ -228,7 +228,7 @@ struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
   gtk_widget_set_events(pdialog->image_canvas, GDK_EXPOSURE_MASK);
   gtk_container_add(GTK_CONTAINER(frame), pdialog->image_canvas);
   gtk_widget_realize(pdialog->image_canvas);
-  
+
   g_signal_connect(pdialog->image_canvas, "expose_event",
 		   G_CALLBACK(spaceship_image_canvas_expose), pdialog);
 
@@ -267,7 +267,7 @@ parts differently.
 *****************************************************************/
 void spaceship_dialog_update_image(struct spaceship_dialog *pdialog)
 {
-  int i, j, k, x, y;  
+  int i, j, k, x, y;
   struct Sprite *sprite = sprites.spaceship.habitation;   /* for size */
   struct player_spaceship *ship = &pdialog->pplayer->spaceship;
 
@@ -291,7 +291,7 @@ void spaceship_dialog_update_image(struct spaceship_dialog *pdialog)
 	             sprites.spaceship.solar_panels);
     gdk_gc_set_clip_origin(civ_gc, x, y);
     gdk_gc_set_clip_mask(civ_gc, sprite->mask);
-    gdk_draw_drawable(pdialog->image_canvas->window, civ_gc, sprite->pixmap, 
+    gdk_draw_drawable(pdialog->image_canvas->window, civ_gc, sprite->pixmap,
 	      0, 0,
 	      x, y,
 	      sprite->width, sprite->height);

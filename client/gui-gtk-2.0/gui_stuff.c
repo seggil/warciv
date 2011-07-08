@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ GtkWidget *gtk_stockbutton_new(const gchar *stock, const gchar *label_text)
   GtkWidget *hbox;
   GtkWidget *align;
   GtkWidget *button;
-  
+
   button = gtk_button_new();
 
   label = gtk_label_new_with_mnemonic(label_text);
@@ -145,7 +145,7 @@ void itree_next(ITree *it)
 void itree_set(ITree *it, ...)
 {
   va_list ap;
-  
+
   va_start(ap, it);
   gtk_tree_store_set_valist(GTK_TREE_STORE(it->model), &it->it, ap);
   va_end(ap);
@@ -157,7 +157,7 @@ void itree_set(ITree *it, ...)
 void itree_get(ITree *it, ...)
 {
   va_list ap;
-  
+
   va_start(ap, it);
   gtk_tree_model_get_valist(it->model, &it->it, ap);
   va_end(ap);
@@ -317,7 +317,7 @@ static gint gui_dialog_delete_handler(GtkWidget *widget,
 
   /* emit response signal. */
   gui_dialog_response(dlg, GTK_RESPONSE_DELETE_EVENT);
-                                                                               
+
   /* do the destroy by default. */
   return FALSE;
 }
@@ -374,7 +374,7 @@ void gui_dialog_new(struct gui_dialog **pdlg, GtkNotebook *notebook)
   Sets pdlg to point to the dialog once it is create, Zeroes pdlg on
   dialog destruction.
   The 'position' argument is the preferred place in the notebook tab
-  order. -1 indicates append to the end. 
+  order. -1 indicates append to the end.
 **************************************************************************/
 void gui_dialog_new_full(struct gui_dialog **pdlg, GtkNotebook *notebook,
                          gint position)
@@ -857,7 +857,7 @@ struct gui_dialog *find_gui_dialog_by_title(const char *title)
 {
   GList *p;
   struct gui_dialog *dlg;
-  
+
   for (p = dialog_list; p != NULL; p = p->next) {
     dlg = p->data;
     if (0 == strcmp(title, gui_dialog_get_title(dlg))) {

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,12 +44,12 @@ struct tag_pattern {
      be "" if this pattern does not correspond
      to a GtkTextTag (e.g. just used for control flow) */
   char *tag_name;
-  
+
   /* text to match, if "", matches anything */
   char *pattern;
 
   int flags; /* TPF_* above */
-  
+
   /* tag_name of the pattern to jump to, i.e. skip
      all subsequent patterns until we reach one whose
      tag_name matches jump_target */
@@ -59,7 +59,7 @@ struct tag_pattern {
    * e.g. stdsounds.soundspec) to be played when
    * this pattern matches. "" for no sound. */
   char *sound_tag;
-  
+
   GdkColor *foreground_color;
   GdkColor *background_color;
 };

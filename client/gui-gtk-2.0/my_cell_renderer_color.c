@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 static void my_cell_renderer_color_init(MyCellRendererColor *cell);
 static void my_cell_renderer_color_class_init(MyCellRendererColorClass *klass);
 static void my_cell_renderer_color_get_property(GObject *object,
-                                                guint param_id, 
+                                                guint param_id,
                                                 GValue *value,
                                                 GParamSpec *pspec);
 
@@ -187,7 +187,7 @@ static void my_cell_renderer_color_get_property(GObject *object,
 **************************************************************************/
 static void my_cell_renderer_color_set_property(GObject *object,
                                                 guint param_id,
-                                                const GValue *value, 
+                                                const GValue *value,
                                                 GParamSpec *pspec)
 {
   MyCellRendererColor *cell = MY_CELL_RENDERER_COLOR(object);
@@ -200,7 +200,7 @@ static void my_cell_renderer_color_set_property(GObject *object,
       cell->color = gdk_color_copy (color);
     } else {
       cell->color = NULL;
-    } 
+    }
     break;
   case PROP_XSIZE:
     cell->xsize = g_value_get_int (value);
@@ -229,12 +229,12 @@ static void my_cell_renderer_color_get_size(GtkCellRenderer *cell,
                                             GtkWidget *widget,
                                             GdkRectangle *cell_area,
                                             gint *x_offset,
-                                            gint *y_offset, 
+                                            gint *y_offset,
                                             gint *width,
                                             gint *height)
 {
   MyCellRendererColor *mycell = MY_CELL_RENDERER_COLOR(cell);
-  
+
   gint calc_width;
   gint calc_height;
 
@@ -269,7 +269,7 @@ static void my_cell_renderer_color_render(GtkCellRenderer *cellrend,
                                           GtkWidget *widget,
                                           GdkRectangle *background_area,
                                           GdkRectangle *cell_area,
-                                          GdkRectangle *expose_area, 
+                                          GdkRectangle *expose_area,
                                           guint flags)
 {
   MyCellRendererColor *cell = MY_CELL_RENDERER_COLOR(cellrend);

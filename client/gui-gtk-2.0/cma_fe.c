@@ -173,7 +173,7 @@ static void cell_data_func(GtkTreeViewColumn *col, GtkCellRenderer *cell,
   struct cm_parameter param;
   GtkTreePath *path;
 
-  gtk_tree_model_get(model, it, 0, &s1, -1); 
+  gtk_tree_model_get(model, it, 0, &s1, -1);
   path = gtk_tree_model_get_path(model, it);
   i1 = gtk_tree_path_get_indices(path) [0];
   gtk_tree_path_free(path);
@@ -614,7 +614,7 @@ static gboolean cma_preset_key_pressed_callback(GtkWidget *w, GdkEventKey *ev,
 
 
 /**************************************************************************
- callback for del_preset 
+ callback for del_preset
 **************************************************************************/
 static void cma_del_preset_callback(GtkWidget *w, gpointer data)
 {
@@ -670,7 +670,7 @@ static void cma_preset_remove_response(GtkWidget *w, gint response,
     city_report_dialog_update();
   }
   gtk_widget_destroy(w);
-  
+
   pdialog->preset_remove_shell = NULL;
 }
 
@@ -694,7 +694,7 @@ static void cma_active_callback(GtkWidget *w, gpointer data)
 
 /****************************************************************
  called to adjust the sliders when a preset is selected
- notice that we don't want to call update_result here. 
+ notice that we don't want to call update_result here.
 *****************************************************************/
 static void set_hscales(const struct cm_parameter *const parameter,
 			struct cma_dialog *pdialog)

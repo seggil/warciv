@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ static void players_ignore_diplomacy_toggled(GtkCheckMenuItem *item,
 static void update_views(void);
 
 /**************************************************************************
-popup the dialog 10% inside the main-window 
+popup the dialog 10% inside the main-window
 **************************************************************************/
 void popup_players_dialog(void)
 {
@@ -122,7 +122,7 @@ static void update_players_menu(void)
 
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
     plr = get_player(plrno);
-  
+
     if (plr->spaceship.state != SSHIP_NONE) {
       gtk_widget_set_sensitive(players_sship_command, TRUE);
     } else {
@@ -240,9 +240,9 @@ static void create_store(void)
   model_types[i++] = G_TYPE_INT;
   model_types[i++] = G_TYPE_INT;
   model_types[i++] = G_TYPE_INT;
-  
+
   ncolumns = i;
-  store = gtk_list_store_newv(ncolumns, model_types);  
+  store = gtk_list_store_newv(ncolumns, model_types);
   model = GTK_TREE_MODEL(store);
 }
 
@@ -266,7 +266,7 @@ static GtkWidget* create_show_menu(void)
   GtkWidget *menu = gtk_menu_new();
 
   for (i = 1; i < num_player_dlg_columns; i++) {
-    GtkWidget *item;    
+    GtkWidget *item;
     struct player_dlg_column *pcol;
 
     pcol = &player_dlg_columns[i];
@@ -606,7 +606,7 @@ void update_players_dialog(void)
 
     players_iterate(pplayer) {
       if (!exists[pplayer->player_no]) {
-	      
+
 	gtk_list_store_append(store, &it);
 
 	build_row(&it, pplayer->player_no);

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -353,7 +353,7 @@ static void help_box_hide(void)
   gtk_widget_hide(help_wtable);
   gtk_widget_hide(help_utable);
   gtk_widget_hide(help_ttable);
-  
+
   gtk_widget_hide(unit_tile);
 
   gtk_widget_hide(help_vbox);
@@ -392,14 +392,14 @@ static void activated_topic(GtkTreeView *view, gpointer data)
   if (!path) {
     return;
   }
-  
+
   gtk_tree_model_get(model, &it, 1, &pitem, -1);
 
   if (help_history_pos >= 0 &&
       g_ptr_array_index(help_history, help_history_pos) == (gpointer) pitem) {
     return;
   }
-  
+
   help_update_dialog(pitem);
 
   /* add to history. */
@@ -600,7 +600,7 @@ static void create_help_dialog(void)
   help_vbox = gtk_vbox_new(FALSE, 1);
   gtk_container_set_border_width(GTK_CONTAINER(help_vbox), 5);
   gtk_box_pack_start(GTK_BOX(help_box), help_vbox, FALSE, FALSE, 0);
-					     
+
   text = gtk_text_view_new();
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text), FALSE);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text), FALSE);
@@ -693,9 +693,9 @@ static void help_update_improvement(const struct help_item *pitem,
 				    char *title, int which)
 {
   char buf[64000];
-  
+
   create_help_page(HELP_IMPROVEMENT);
-  
+
   if (which<game.ruleset_control.num_impr_types) {
     struct impr_type *imp = &improvement_types[which];
     sprintf(buf, "%d", impr_build_shield_cost(which));
@@ -722,7 +722,7 @@ static void help_update_improvement(const struct help_item *pitem,
   gtk_text_buffer_set_text(help_text, buf, -1);
   gtk_widget_show(help_text_sw);
 }
-  
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -1094,7 +1094,7 @@ static void help_update_terrain(const struct help_item *pitem,
   }
 
   helptext_terrain(buf, i, pitem->text);
-  
+
   gtk_text_buffer_set_text(help_text, buf, -1);
   gtk_widget_show(help_text_sw);
 
@@ -1161,7 +1161,7 @@ static void help_update_dialog(const struct help_item *pitem)
     break;
   case HELP_TEXT:
   default:
-    /* it was a pure text item */ 
+    /* it was a pure text item */
     create_help_page(HELP_TEXT);
 
     gtk_text_buffer_set_text(help_text, pitem->text, -1);

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -175,7 +175,7 @@ static gboolean intro_expose(GtkWidget *w, GdkEventExpose *ev)
 
     pango_layout_get_pixel_size(layout, &width, &height);
   }
- 
+
   gtk_draw_shadowed_string(w->window,
 			   w->style->black_gc,
 			   w->style->white_gc,
@@ -227,7 +227,7 @@ GtkWidget *create_main_page(void)
   gtk_container_add(GTK_CONTAINER(bbox), button);
   g_signal_connect(button, "clicked",
       G_CALLBACK(start_new_game_callback), NULL);
-  
+
   button = gtk_button_new_with_mnemonic(_("Start _Scenario Game"));
   gtk_size_group_add_widget(size, button);
   gtk_container_add(GTK_CONTAINER(bbox), button);
@@ -342,7 +342,7 @@ static void update_server_list(GtkTreeSelection *selection,
 		       2, pserver->version,
 		       3, pserver->patches,
 		       4, _(pserver->state),
-		       5, get_real_player_number(pserver), 
+		       5, get_real_player_number(pserver),
 		       6, pserver->message, -1);
 
     if (strcmp(host, pserver->host) == 0 && strcmp(port, pserver->port) == 0) {
@@ -368,7 +368,7 @@ static void server_list_created_callback(struct server_list *new_server_list,
   if (!new_server_list) {
     if (server_list_request_id > 0) {
       cancel_async_server_list_request(server_list_request_id);
-      my_snprintf(msg, sizeof(msg), 
+      my_snprintf(msg, sizeof(msg),
 		  _("Could not get server list: %s"), error);
       append_network_statusbar(msg);
       server_list_request_id = -1;
@@ -386,7 +386,7 @@ static void server_list_created_callback(struct server_list *new_server_list,
   append_network_statusbar(msg);
 
   internet_server_list = new_server_list;
-  
+
   update_server_list(meta_selection, meta_store, internet_server_list);
 }
 
@@ -401,7 +401,7 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
   if (!adns_is_available()) {
     /* if (internet_server_list)
       delete_server_list(internet_server_list);*/
-    
+
     internet_server_list = create_server_list(errbuf, n_errbuf);
 
     update_server_list(meta_selection, meta_store, internet_server_list);
@@ -437,7 +437,7 @@ static bool get_meta_list(char *errbuf, int n_errbuf)
 }
 
 /**************************************************************************
-  this function frees the list of LAN servers on timeout destruction. 
+  this function frees the list of LAN servers on timeout destruction.
 **************************************************************************/
 static void get_lan_destroy(gpointer data)
 {
@@ -473,7 +473,7 @@ static void update_network_lists(void)
     append_network_statusbar(errbuf);
   }
 
-  if (lan_timer == 0) { 
+  if (lan_timer == 0) {
     if (begin_lanserver_scan()) {
       lan_timer = g_timeout_add_full(G_PRIORITY_DEFAULT, 1000,
 	  get_lan_list, NULL, get_lan_destroy);
@@ -485,8 +485,8 @@ static void update_network_lists(void)
   network connection state defines.
 **************************************************************************/
 enum connection_state {
-  LOGIN_TYPE, 
-  NEW_PASSWORD_TYPE, 
+  LOGIN_TYPE,
+  NEW_PASSWORD_TYPE,
   ENTER_PASSWORD_TYPE,
   WAITING_TYPE
 };
@@ -721,7 +721,7 @@ void handle_authentication_req(enum authentication_type type, char *message)
 
 /**************************************************************************
  if on the network page, switch page to the login page (with new server
- and port). if on the login page, send connect and/or authentication 
+ and port). if on the login page, send connect and/or authentication
  requests to the server.
 **************************************************************************/
 static void connect_callback(GtkWidget *w, gpointer data)
@@ -742,12 +742,12 @@ static void connect_callback(GtkWidget *w, gpointer data)
     sz_strlcpy(server_host,
 	       gtk_entry_get_text(GTK_ENTRY(network_host)));
     server_port = atoi(gtk_entry_get_text(GTK_ENTRY(network_port)));
-  
+
     if (-1 == connect_to_server(default_user_name, server_host,
                                 server_port, errbuf, sizeof(errbuf))) {
       append_network_statusbar(errbuf);
     }
-    break; 
+    break;
   case NEW_PASSWORD_TYPE:
     if (w != network_password) {
       sz_strlcpy(default_password,
@@ -759,7 +759,7 @@ static void connect_callback(GtkWidget *w, gpointer data)
 	send_packet_authentication_reply(&aconnection, &reply);
 
 	set_connection_state(WAITING_TYPE);
-      } else { 
+      } else {
 	append_network_statusbar(_("Passwords don't match, enter password."));
 	set_connection_state(NEW_PASSWORD_TYPE);
       }
@@ -1455,7 +1455,7 @@ GtkWidget *create_start_page(void)
   spin = gtk_spin_button_new_with_range(1, MAX_NUM_PLAYERS, 1);
   start_aifill_spin = spin;
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), 0);
-  gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(spin), 
+  gtk_spin_button_set_update_policy(GTK_SPIN_BUTTON(spin),
                                     GTK_UPDATE_IF_VALID);
   g_signal_connect_after(spin, "value_changed",
                          G_CALLBACK(ai_fill_callback), NULL);
@@ -1563,7 +1563,7 @@ GtkWidget *create_start_page(void)
   }
   gtk_box_pack_start(GTK_BOX(vbox), pregame_votebar->box,
                      FALSE, FALSE, 0);
-  
+
 
   /* Chat entry and buttons. */
 
@@ -1615,7 +1615,7 @@ void handle_game_load(struct packet_game_load *packet)
    * reloaded network games. */
   if (can_client_access_hack() && packet->load_successful) {
     update_nation_page(packet);
-      
+
     set_client_page(PAGE_NATION);
   }
 }
@@ -1716,7 +1716,7 @@ GtkWidget *create_load_page(void)
   gtk_tree_selection_set_mode(load_selection, GTK_SELECTION_SINGLE);
 
   g_signal_connect(view, "row_activated", G_CALLBACK(load_callback), NULL);
-  
+
   sbox = gtk_vbox_new(FALSE, 2);
   gtk_container_add(GTK_CONTAINER(align), sbox);
 
@@ -1842,7 +1842,7 @@ GtkWidget *create_scenario_page(void)
 
   g_signal_connect(view, "row_activated",
                    G_CALLBACK(scenario_callback), NULL);
-  
+
   sbox = gtk_vbox_new(FALSE, 2);
   gtk_container_add(GTK_CONTAINER(align), sbox);
 
@@ -1943,7 +1943,7 @@ static void update_nation_page(struct packet_game_load *packet)
     GdkPixbuf *flag;
 
     gtk_list_store_append(nation_store, &iter);
-    gtk_list_store_set(nation_store, &iter, 
+    gtk_list_store_set(nation_store, &iter,
 	0, packet->name[i],
 	2, packet->nation_name[i],
 	3, packet->is_alive[i] ? _("Alive") : _("Dead"),
@@ -1995,7 +1995,7 @@ GtkWidget *create_nation_page(void)
   nation_store = gtk_list_store_new(5, G_TYPE_STRING, GDK_TYPE_PIXBUF,
 				    G_TYPE_STRING, G_TYPE_STRING,
 				    G_TYPE_STRING);
-  
+
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(nation_store));
   nation_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
   g_object_unref(nation_store);
@@ -2031,7 +2031,7 @@ GtkWidget *create_nation_page(void)
                        "label", _("Choose a _nation to play:"),
 		       "xalign", 0.0, "yalign", 0.5, NULL);
   gtk_box_pack_start(GTK_BOX(sbox), label, FALSE, FALSE, 2);
-  
+
   sw = gtk_scrolled_window_new(NULL,NULL);
   gtk_container_add(GTK_CONTAINER(sw), view);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
@@ -2433,7 +2433,7 @@ void popup_save_dialog(void)
     create_save_dialog();
   }
   update_save_dialog();
- 
+
   gtk_window_present(GTK_WINDOW(save_dialog_shell));
 }
 

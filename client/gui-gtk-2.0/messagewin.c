@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ enum {
 #define N_MSG_VIEW 24	       /* max before scrolling happens */
 
 /****************************************************************
-popup the dialog 10% inside the main-window 
+popup the dialog 10% inside the main-window
 *****************************************************************/
 void popup_meswin_dialog(void)
 {
@@ -154,7 +154,7 @@ static void meswin_cell_data_func(GtkTreeViewColumn *col,
 		 "weight", PANGO_WEIGHT_BOLD, NULL);
   }
 }
-					     
+
 /****************************************************************
 ...
 *****************************************************************/
@@ -164,7 +164,7 @@ static void create_meswin_store(void)
                                     G_TYPE_STRING,
                                     G_TYPE_BOOLEAN);
 }
-					     
+
 /****************************************************************
 ...
 *****************************************************************/
@@ -208,7 +208,7 @@ static void create_meswin_dialog(void)
   cmd = gui_dialog_add_stockbutton(meswin_shell, GTK_STOCK_JUMP_TO,
       _("Goto _location"), CMD_GOTO);
   gtk_widget_set_sensitive(cmd, FALSE);
-  
+
   cmd = gui_dialog_add_stockbutton(meswin_shell, GTK_STOCK_ZOOM_IN,
       _("_Popup City"), CMD_POPCITY);
   gtk_widget_set_sensitive(cmd, FALSE);
@@ -358,7 +358,7 @@ static gboolean split_message_button_press(GtkWidget *treeview,
     return FALSE;
 
   if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview),
-                                     (gint) event->x, 
+                                     (gint) event->x,
                                      (gint) event->y,
                                      &path, NULL, NULL, NULL))
   {
@@ -384,7 +384,7 @@ GtkWidget *get_split_message_window(void)
   GtkWidget *sw, *vbox, *label, *view;
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *col;
-  
+
   if (split_message_window)
     return split_message_window;
 
@@ -408,7 +408,7 @@ GtkWidget *get_split_message_window(void)
   gtk_tree_view_columns_autosize(GTK_TREE_VIEW(view));
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
   split_message_view = view;
-  
+
   renderer = gtk_cell_renderer_text_new();
   col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
   	"text", 0, NULL);
@@ -420,6 +420,6 @@ GtkWidget *get_split_message_window(void)
 
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
   split_message_window = vbox;
-  
+
   return split_message_window;
 }

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ void really_close_connection_dialog(void)
  close and destroy the dialog but only if we don't have a local
  server running (that we started).
 **************************************************************************/
-void close_connection_dialog() 
-{   
+void close_connection_dialog()
+{
   if (!is_server_running()) {
     really_close_connection_dialog();
   }
@@ -100,7 +100,7 @@ static void filesel_response_callback(GtkWidget *w, gint id, gpointer data)
 GtkWidget *create_file_selection(const char *title, bool is_save)
 {
   GtkWidget *filesel;
-  
+
   /* Create the selector */
   filesel = gtk_file_selection_new(title);
   setup_dialog(filesel, toplevel);

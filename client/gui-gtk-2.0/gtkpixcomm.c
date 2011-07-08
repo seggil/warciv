@@ -24,7 +24,7 @@
  * Modified by the GTK+ Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GTK+ Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
+ * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 /*
@@ -122,7 +122,7 @@ gtk_pixcomm_destroy(GtkObject *object)
   GtkPixcomm *p = GTK_PIXCOMM(object);
 
   g_object_freeze_notify(G_OBJECT(p));
-  
+
   if (p->actions) {
     g_array_free(p->actions, TRUE);
   }
@@ -230,7 +230,7 @@ gtk_pixcomm_expose(GtkWidget *widget, GdkEventExpose *ev)
 	+ ((widget->allocation.width - widget->requisition.width) *
 	  xalign)
 	+ 0.5);
-    y = floor(widget->allocation.y + misc->ypad 
+    y = floor(widget->allocation.y + misc->ypad
 	+ ((widget->allocation.height - widget->requisition.height) *
 	  misc->yalign)
 	+ 0.5);

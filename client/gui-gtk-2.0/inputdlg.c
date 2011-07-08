@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ const char *input_dialog_get_input(GtkWidget *button)
 {
   const char *dp;
   GtkWidget *winput;
-      
+
   winput=g_object_get_data(G_OBJECT(button->parent->parent->parent),
 	"iinput");
-  
+
   dp=gtk_entry_get_text(GTK_ENTRY(winput));
- 
+
   return dp;
 }
 
@@ -55,14 +55,14 @@ void input_dialog_destroy(GtkWidget *button)
 /****************************************************************
 ...
 *****************************************************************/
-GtkWidget *input_dialog_create(GtkWindow *parent, const char *dialogname, 
+GtkWidget *input_dialog_create(GtkWindow *parent, const char *dialogname,
 			       const char *text, const char *postinputtest,
-			       GCallback ok_callback, gpointer ok_cli_data, 
+			       GCallback ok_callback, gpointer ok_cli_data,
 			       GCallback cancel_callback,
 			       gpointer cancel_cli_data)
 {
   GtkWidget *shell, *label, *input, *ok, *cancel;
-  
+
   shell = gtk_dialog_new_with_buttons(dialogname,
         parent,
         GTK_DIALOG_DESTROY_WITH_PARENT,

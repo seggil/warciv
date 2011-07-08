@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -67,9 +67,9 @@ static gboolean popit_button_release(GtkWidget *w, GdkEventButton *event)
   Put the popup on a smart position, after the real size of the widget is
   known: left of the cursor if within the right half of the map, and vice
   versa; displace the popup so as not to obscure it by the mouse cursor;
-  stay always within the map if possible. 
+  stay always within the map if possible.
 **************************************************************************/
-static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc, 
+static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
 					   gpointer data)
 {
   struct tmousepos *mousepos = data;
@@ -157,7 +157,7 @@ static void popit(GdkEventButton *event, struct tile *ptile)
     mousepos.y = event->y;
 
     g_signal_connect(p, "size-allocate",
-		     G_CALLBACK(popupinfo_positioning_callback), 
+		     G_CALLBACK(popupinfo_positioning_callback),
 		     &mousepos);
 
     gtk_widget_show_all(p);
@@ -329,7 +329,7 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
 	    if (tunit->owner == get_player_idx() && tunit->type == punit->type) {
 	      multi_select_add_unit(tunit);
 	    }
-	    if (unit_satisfies_filter(tunit, multi_select_inclusive_filter, 
+	    if (unit_satisfies_filter(tunit, multi_select_inclusive_filter,
 				      multi_select_exclusive_filter))
 	    nfu = tunit;
 	  } unit_list_iterate_end;

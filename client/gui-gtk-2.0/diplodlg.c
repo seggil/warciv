@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
 
 struct Diplomacy_dialog {
   struct Treaty *treaty;
-  
+
   GtkWidget *shell;
 
   GtkWidget *menu0;
@@ -68,7 +68,7 @@ struct Diplomacy_dialog {
 
 static struct dialog_list *dialog_list = NULL;
 
-static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0, 
+static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0,
 						 struct player *plr1);
 
 static struct Diplomacy_dialog *find_diplomacy_dialog(int other_player_id);
@@ -111,7 +111,7 @@ void handle_diplomacy_accept_treaty(int counterpart, bool I_accepted,
 void handle_diplomacy_init_meeting(int counterpart, int initiated_from)
 {
   struct player *pplayer;
-  
+
   if (!is_valid_player_id(counterpart)) {
     return;
   }
@@ -175,7 +175,7 @@ void handle_diplomacy_remove_clause(int counterpart, int giver,
 }
 
 /****************************************************************
-popup the dialog 10% inside the main-window 
+popup the dialog 10% inside the main-window
 *****************************************************************/
 static void popup_diplomacy_dialog(int other_player_id)
 {
@@ -200,7 +200,7 @@ static void popup_diplomacy_dialog(int other_player_id)
 static void popup_add_menu(GtkMenuShell *parent, gpointer data)
 {
   struct Diplomacy_dialog *pdialog;
-  
+
   gpointer plr;
   struct player *plr0, *plr1;
 
@@ -286,8 +286,8 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
 
   /****************************************************************
   Creates a sorted list of plr0's cities, excluding the capital and
-  any cities not visible to plr1.  This means that you can only trade 
-  cities visible to requesting player.  
+  any cities not visible to plr1.  This means that you can only trade
+  cities visible to requesting player.
 
 			      - Kris Bubendorfer
   *****************************************************************/
@@ -309,7 +309,7 @@ static void popup_add_menu(GtkMenuShell *parent, gpointer data)
     } city_list_iterate_end;
 
     qsort(city_list_ptrs, i, sizeof(struct city *), city_name_compare);
-    
+
     menu = gtk_menu_new();
 
     for (j = 0; j < i; j++) {
@@ -395,7 +395,7 @@ static void row_callback(GtkTreeView *view, GtkTreePath *path,
 
   index = gtk_tree_path_get_indices(path);
 
-  i = 0; 
+  i = 0;
   clause_list_iterate(pdialog->treaty->clauses, pclause) {
     if (i == index[0]) {
       dsend_packet_diplomacy_remove_clause_req(&aconnection,
@@ -444,14 +444,14 @@ static void diplomacy_response(GtkWidget *w, gint response, gpointer data)
 					      pdialog->treaty->plr1->
 					      player_no);
     gtk_widget_destroy(w);
-    break; 
+    break;
   }
 }
 
 /****************************************************************
 ...
 *****************************************************************/
-static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0, 
+static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0,
 							struct player *plr1)
 {
   GtkWidget *shell, *vbox, *bottom, *hbox, *table;
@@ -633,7 +633,7 @@ static struct Diplomacy_dialog *create_diplomacy_dialog(struct player *plr0,
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuitem);
   g_object_set_data(G_OBJECT(menu), "plr", plr1);
   g_signal_connect(menu, "show", G_CALLBACK(popup_add_menu), pdialog);
-  
+
   gtk_widget_show_all(bottom);
 
   g_signal_connect(view, "row_activated", G_CALLBACK(row_callback), pdialog);
@@ -742,7 +742,7 @@ static void diplomacy_dialog_map_callback(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *)data;
   struct player *pgiver;
-  
+
   pgiver = (struct player *)g_object_get_data(G_OBJECT(w), "plr");
 
   dsend_packet_diplomacy_create_clause_req(&aconnection,
@@ -757,7 +757,7 @@ static void diplomacy_dialog_seamap_callback(GtkWidget *w, gpointer data)
 {
   struct Diplomacy_dialog *pdialog = (struct Diplomacy_dialog *)data;
   struct player *pgiver;
-  
+
   pgiver = (struct player *)g_object_get_data(G_OBJECT(w), "plr");
 
   dsend_packet_diplomacy_create_clause_req(&aconnection,
@@ -873,7 +873,7 @@ static void diplo_dialog_returnkey(GtkWidget *w, gpointer data)
   struct player *pgiver =
       (struct player *) g_object_get_data(G_OBJECT(w), "plr");
   int amount = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-  
+
   if (amount >= 0 && amount <= pgiver->economic.gold) {
     dsend_packet_diplomacy_create_clause_req(&aconnection,
 					     pdialog->treaty->plr1->

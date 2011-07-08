@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -117,10 +117,10 @@ static struct happiness_dialog *create_happiness_dialog(struct city *pcity)
 
   for (i = 0; i < NUM_HAPPINESS_MODIFIERS; i++) {
     GtkWidget *box;
-    
+
     box = gtk_vbox_new(FALSE, 2);
     gtk_box_pack_start(GTK_BOX(vbox), box, FALSE, FALSE, 0);
-    
+
     pdialog->hpixmaps[i] = gtk_pixcomm_new(PIXCOMM_WIDTH, PIXCOMM_HEIGHT);
     gtk_box_pack_start(GTK_BOX(box), pdialog->hpixmaps[i], FALSE, FALSE, 0);
 
@@ -299,7 +299,7 @@ static void happiness_dialog_update_units(struct happiness_dialog *pdialog)
     bptr = end_of_strn(bptr, &nleft);
 
     my_snprintf(bptr, nleft, _("%d per unit). "), g->martial_law_per);
-  } 
+  }
   else if (uhcfac > 0) {
     my_snprintf(bptr, nleft,
 		_("Military units in the field may cause unhappiness. "));

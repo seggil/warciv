@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ static void update_tree_model(GObject *object)
       g_object_get_data(object, "tree_view"))));
   GtkTreeIter it;
   int i;
-  
+
 
   gtk_list_store_clear(store);
 
@@ -469,7 +469,7 @@ static GtkWidget *get_worklist(struct worklist *pwl)
 {
   if (hash) {
     gpointer ret;
-    
+
     ret = g_hash_table_lookup(hash, pwl);
     return ret;
   } else {
@@ -515,7 +515,7 @@ static void popup_worklist(struct worklist *pwl)
 
   if (!(shell = get_worklist(pwl))) {
     GtkWidget *editor;
-    
+
     shell = gtk_dialog_new_with_buttons(pwl->name, NULL,
 					GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_STOCK_CLOSE,
@@ -525,7 +525,7 @@ static void popup_worklist(struct worklist *pwl)
     gtk_window_set_position(GTK_WINDOW(shell), GTK_WIN_POS_MOUSE);
     g_signal_connect(shell, "response", G_CALLBACK(worklist_response), NULL);
     gtk_window_set_default_size(GTK_WINDOW(shell), 500, 400);
-  
+
     editor = create_worklist();
     reset_worklist(editor, pwl, NULL);
     insert_worklist(pwl, editor);
@@ -545,7 +545,7 @@ static void popup_worklist(struct worklist *pwl)
 static void popdown_worklist(struct worklist *pwl)
 {
   GtkWidget *shell;
-  
+
   if ((shell = get_worklist(pwl))) {
     GtkWidget *parent;
 
@@ -562,7 +562,7 @@ static void worklist_destroy(GtkWidget *editor, gpointer data)
   struct worklist_data *ptr;
 
   ptr = data;
-  
+
   if (ptr->pwl) {
     delete_worklist(ptr->pwl);
   }
@@ -649,7 +649,7 @@ static void clear_callback (GtkWidget *w, gpointer data)
   struct worklist_data *ptr;
   GtkTreeModel *dst_model;
   GtkTreeIter it;
-  
+
   ptr = data;
   dst_model = GTK_TREE_MODEL (ptr->dst);
 
@@ -660,7 +660,7 @@ static void clear_callback (GtkWidget *w, gpointer data)
   /* Advance past the first work list entry. */
   if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (ptr->dst), &it))
     return;
-  
+
   /* Remove all subsequent work list entries. */
   while (gtk_list_store_remove (GTK_LIST_STORE(dst_model), &it))
     ;
@@ -878,7 +878,7 @@ static void src_row_callback(GtkTreeView *view, GtkTreePath *path,
   if (!GTK_WIDGET_IS_SENSITIVE(ptr->dst_view)) {
     return;
   }
-  
+
   src_model = GTK_TREE_MODEL(ptr->src);
   dst_model = GTK_TREE_MODEL(ptr->dst);
 
@@ -922,13 +922,13 @@ static gboolean src_key_press_callback(GtkWidget *w, GdkEventKey *ev,
 				       gpointer data)
 {
   struct worklist_data *ptr;
-    
+
   ptr = data;
 
   if (!GTK_WIDGET_IS_SENSITIVE(ptr->dst_view)) {
     return FALSE;
   }
-  
+
   if ((ev->state & GDK_SHIFT_MASK) && ev->keyval == GDK_Insert) {
     queue_prepend(ptr);
     return TRUE;
@@ -1175,7 +1175,7 @@ static void populate_view(GtkTreeView *view, struct city **ppcity,
     g_object_set_data(G_OBJECT(rend), "column", GINT_TO_POINTER(pos));
 
     gtk_tree_view_insert_column_with_data_func(view,
-        i, titles[i], rend, cell_render_func, ppcity, NULL); 
+        i, titles[i], rend, cell_render_func, ppcity, NULL);
     col = gtk_tree_view_get_column(view, i);
 
     if (pos >= 2) {
@@ -1220,7 +1220,7 @@ GtkWidget *create_worklist(void)
   ptr->future = FALSE;
 
 
-  /* create shell. */ 
+  /* create shell. */
   editor = gtk_vbox_new(FALSE, 6);
   g_signal_connect(editor, "destroy", G_CALLBACK(worklist_destroy), ptr);
   g_object_set_data(G_OBJECT(editor), "data", ptr);
@@ -1472,7 +1472,7 @@ void refresh_worklist(GtkWidget *editor)
 
   ptr = g_object_get_data(G_OBJECT(editor), "data");
   pwl = ptr->pwl;
-  
+
   if (!pwl) {
     return;
   }
@@ -1570,13 +1570,13 @@ static void commit_worklist(struct worklist_data *ptr)
   int i;
 
   pwl = ptr->pwl;
-  
+
   if (!pwl) {
     return;
   }
 
   model = GTK_TREE_MODEL(ptr->dst);
-  
+
   init_worklist(&queue);
   sz_strlcpy(queue.name, pwl->name);
 

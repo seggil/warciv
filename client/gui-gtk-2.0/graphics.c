@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -248,7 +248,7 @@ void load_cursors(void)
                                        goto_cursor_mask_height);
   goto_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
                                            white, black,
-                                           goto_cursor_x_hot, 
+                                           goto_cursor_x_hot,
                                            goto_cursor_y_hot);
   g_object_unref(pixmap);
   g_object_unref(mask);
@@ -262,7 +262,7 @@ void load_cursors(void)
                                        drop_cursor_mask_height);
   drop_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
                                            white, black,
-                                           drop_cursor_x_hot, 
+                                           drop_cursor_x_hot,
                                            drop_cursor_y_hot);
   g_object_unref(pixmap);
   g_object_unref(mask);
@@ -306,7 +306,7 @@ void load_cursors(void)
                                              source_cursor_y_hot);
   g_object_unref(pixmap);
   g_object_unref(mask);
- 
+
   /* airlift destination */
   pixmap = gdk_bitmap_create_from_data(root_window, dest_cursor_bits,
                                        dest_cursor_width,
@@ -316,11 +316,11 @@ void load_cursors(void)
                                        dest_cursor_mask_height);
   dest_cursor = gdk_cursor_new_from_pixmap(pixmap, mask,
                                            white, black,
-                                           dest_cursor_x_hot, 
+                                           dest_cursor_x_hot,
                                            dest_cursor_y_hot);
   g_object_unref(pixmap);
   g_object_unref(mask);
- 
+
   /*trade */
   pixmap = gdk_bitmap_create_from_data(root_window, trade_cursor_bits,
                                        trade_cursor_width,
@@ -340,7 +340,7 @@ void load_cursors(void)
  Create a new sprite with the given pixmap, dimensions, and
  (optional) mask.
 ***************************************************************************/
-SPRITE *ctor_sprite_mask( GdkPixmap *mypixmap, GdkPixmap *mask, 
+SPRITE *ctor_sprite_mask( GdkPixmap *mypixmap, GdkPixmap *mask,
                           int width, int height )
 {
   SPRITE *mysprite = fc_calloc(1, sizeof(SPRITE));
@@ -403,7 +403,7 @@ struct Sprite *load_gfxfile(const char *filename)
   freelog(LOG_DEBUG, "load_gfxfile filename=\"%s\"", filename);
 
   if (!(im = gdk_pixbuf_new_from_file(filename,&pixbuf_error))) {
-    freelog(LOG_FATAL, "Failed reading graphics file: %s \n" 
+    freelog(LOG_FATAL, "Failed reading graphics file: %s \n"
             "Error : %s\n", filename,pixbuf_error->message);
     exit(EXIT_FAILURE);
   }
@@ -412,7 +412,7 @@ struct Sprite *load_gfxfile(const char *filename)
 
   w = gdk_pixbuf_get_width(im);
   h = gdk_pixbuf_get_height(im);
-  gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap, 
+  gdk_pixbuf_render_pixmap_and_mask_for_colormap(im, colormap,
                                                  &mysprite->pixmap,
                                                  &mysprite->mask, 1);
 
@@ -493,9 +493,9 @@ void create_overlay_unit(struct canvas *pcanvas, int i)
   }
 
   /* Finally, put a picture of the unit in the tile */
-  canvas_put_sprite(pcanvas, 0, 0, type->sprite, 
-                    (x2 + x1 - width) / 2, (y1 + y2 - height) / 2, 
-                    UNIT_TILE_WIDTH - (x2 + x1 - width) / 2, 
+  canvas_put_sprite(pcanvas, 0, 0, type->sprite,
+                    (x2 + x1 - width) / 2, (y1 + y2 - height) / 2,
+                    UNIT_TILE_WIDTH - (x2 + x1 - width) / 2,
                     UNIT_TILE_HEIGHT - (y1 + y2 - height) / 2);
 }
 
@@ -643,7 +643,7 @@ GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src)
 
   w = src->width;
   h = src->height;
-  
+
   /* convert pixmap */
   dst = gdk_pixbuf_new(GDK_COLORSPACE_RGB, src->mask != NULL, 8, w, h);
   gdk_pixbuf_get_from_drawable(dst, src->pixmap, NULL, 0, 0, 0, 0, w, h);
@@ -687,7 +687,7 @@ GdkPixbuf *sprite_get_pixbuf(SPRITE *sprite)
   if (!sprite) {
     return NULL;
   }
-  
+
   if (!sprite->pixbuf) {
     sprite->pixbuf = gdk_pixbuf_new_from_sprite(sprite);
   }

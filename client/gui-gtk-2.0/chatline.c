@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright(C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ static GtkWidget *help_dialog = NULL;
 
 static void textbuf_insert_time(GtkTextBuffer *buf, GtkTextIter *iter);
 static bool match_tag_pattern(struct tag_pattern *ptagpat,
-                               const char *buf, 
+                               const char *buf,
                                struct match_result_list *matches);
 static void match_result_list_free_data(struct match_result_list *matches);
 static struct tag_pattern_list *create_default_tag_patterns(void);
@@ -142,7 +142,7 @@ void insert_chat_link(struct tile *ptile, bool unit)
 static bool is_public_message(const char *s)
 {
   const char *p;
-  
+
   if (s[0] == '/' || s[0] == '.') {
     return FALSE;
   }
@@ -204,7 +204,7 @@ static bool tag_pattern_is_control_only(struct tag_pattern *ptagpat)
   ...
 **************************************************************************/
 static void
-follow_if_link(GtkWidget   *text_view, 
+follow_if_link(GtkWidget   *text_view,
                 GtkTextIter *iter)
 {
   GSList *tags = NULL, *tagp = NULL;
@@ -244,7 +244,7 @@ follow_if_link(GtkWidget   *text_view,
       ptile = pcity->tile;
       break;
 
-    case LINK_LOCATION: 
+    case LINK_LOCATION:
       x = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(tag), "x"));
       y = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(tag), "y"));
       ptile = map_pos_to_tile(x, y);
@@ -281,7 +281,7 @@ follow_if_link(GtkWidget   *text_view,
     gtk_widget_grab_focus(GTK_WIDGET(map_canvas));
   }
 
-  if (tags) 
+  if (tags)
     g_slist_free(tags);
 }
 /**************************************************************************
@@ -313,7 +313,7 @@ event_after(GtkWidget *text_view,
     return FALSE;
   }
 
-  gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(text_view), 
+  gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(text_view),
                                          GTK_TEXT_WINDOW_WIDGET,
                                          event->x, event->y, &x, &y);
 
@@ -351,17 +351,17 @@ set_cursor_if_appropriate(GtkTextView    *text_view,
   if (!regular_cursor) {
     regular_cursor = gdk_cursor_new_for_display(display, GDK_XTERM);
   }
-  
+
   buffer = gtk_text_view_get_buffer(text_view);
 
   gtk_text_view_get_iter_at_location(text_view, &iter, x, y);
-  
+
   tags = gtk_text_iter_get_tags(&iter);
   for (tagp = tags;  tagp != NULL;  tagp = tagp->next) {
     GtkTextTag *tag = tagp->data;
     data = g_object_get_data(G_OBJECT(tag), "link_type");
     link_type = GPOINTER_TO_INT(data);
-    
+
     if (data != 0) {
       hovering = TRUE;
       break;
@@ -394,7 +394,7 @@ motion_notify_event(GtkWidget      *text_view,
 {
   gint x, y;
 
-  gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(text_view), 
+  gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(text_view),
                                          GTK_TEXT_WINDOW_WIDGET,
                                          event->x, event->y, &x, &y);
 
@@ -412,10 +412,10 @@ visibility_notify_event(GtkWidget          *text_view,
                          GdkEventVisibility *event)
 {
   gint wx, wy, bx, by;
-  
+
   gdk_window_get_pointer(text_view->window, &wx, &wy, NULL);
-  
-  gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(text_view), 
+
+  gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(text_view),
                                          GTK_TEXT_WINDOW_WIDGET,
                                          wx, wy, &bx, &by);
 
@@ -494,20 +494,20 @@ static int parse_city_id_and_name_link(const char *str, GtkTextBuffer *buf,
   if (!pcity) {
     return 0;
   }
-  
+
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                     "foreground", "green",
                                     "underline", PANGO_UNDERLINE_SINGLE,
                                     NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(id)); 
+  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(id));
 
   if (draw_links) {
     add_link_mark(LINK_CITY, id);
   }
 
   my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
-  
+
   return (int) (p - str);
 }
 
@@ -522,7 +522,7 @@ static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
   char *q, idbuf[32];
   int id;
   struct city *pcity;
-  
+
   if (strncmp(p, CITY_ID_LINK_PREFIX, sizeof(CITY_ID_LINK_PREFIX) - 1) != 0) {
     return 0;
   }
@@ -546,18 +546,18 @@ static int parse_city_id_link(const char *str, GtkTextBuffer *buf,
   if (!pcity) {
     return 0;
   }
-  
+
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                     "foreground", "green",
                                     "underline", PANGO_UNDERLINE_SINGLE,
                                     NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(id)); 
+  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(id));
 
   add_link_mark(LINK_CITY, id);
 
   my_snprintf(newtext, newtext_maxlen, "%s", pcity->name);
-  
+
   return (int) (p - str);
 }
 
@@ -591,20 +591,20 @@ static int parse_city_link(const char *str, GtkTextBuffer *buf,
   if (!(pcity = find_city_by_name_fast(city_name))) {
     return 0;
   }
-  
+
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                     "foreground", "green",
                                     "underline", PANGO_UNDERLINE_SINGLE,
                                     NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_CITY));
-  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(pcity->id)); 
+  g_object_set_data(G_OBJECT(*tag), "city_id", GINT_TO_POINTER(pcity->id));
 
   if (draw_links) {
     add_link_mark(LINK_CITY, pcity->id);
   }
 
   my_snprintf(newtext, newtext_maxlen, "%s", city_name);
-  
+
   return (int) (p - str);
 }
 
@@ -617,7 +617,7 @@ static int parse_location_link(const char *str, GtkTextBuffer *buf,
 {
   const char *p;
   int x, y;
-  
+
   if (2 != sscanf(str, TILE_LINK_PREFIX "%d,%d", &x, &y)) {
     return 0;
   }
@@ -625,19 +625,19 @@ static int parse_location_link(const char *str, GtkTextBuffer *buf,
   if (!is_normal_map_pos(x, y)) {
     return 0;
   }
-    
+
   p = str + 2;
   while (my_isdigit(*p) || *p == ',') {
     p++;
   }
-  
+
   *tag = gtk_text_buffer_create_tag(buf, NULL,
                                     "foreground", "red",
                                     "underline", PANGO_UNDERLINE_SINGLE,
                                     NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type",
                     GINT_TO_POINTER(LINK_LOCATION));
-  g_object_set_data(G_OBJECT(*tag), "x", GINT_TO_POINTER(x)); 
+  g_object_set_data(G_OBJECT(*tag), "x", GINT_TO_POINTER(x));
   g_object_set_data(G_OBJECT(*tag), "y", GINT_TO_POINTER(y));
 
   my_snprintf(newtext, newtext_maxlen, "(%d, %d)", x, y);
@@ -710,14 +710,14 @@ static int parse_unit_link(const char *str, GtkTextBuffer *buf,
                                     "underline", PANGO_UNDERLINE_SINGLE,
                                     NULL);
   g_object_set_data(G_OBJECT(*tag), "link_type", GINT_TO_POINTER(LINK_UNIT));
-  g_object_set_data(G_OBJECT(*tag), "unit_id", GINT_TO_POINTER(id)); 
+  g_object_set_data(G_OBJECT(*tag), "unit_id", GINT_TO_POINTER(id));
 
   if (draw_links) {
     add_link_mark(LINK_UNIT, id);
   }
 
   my_snprintf(newtext, newtext_maxlen, "%s", unit_name(punit->type));
-  
+
   return (int) (p - str);
 }
 
@@ -880,7 +880,7 @@ void real_append_output_window(const char *astring, int conn_id)
     if (ptagpat->flags & TPF_REQUIRE_PREVIOUS_MATCH && !previous_matched) {
       continue;
     }
-    
+
     if (!match_tag_pattern(ptagpat, text, matches)) {
       previous_matched = FALSE;
       continue;
@@ -987,7 +987,7 @@ struct tag_pattern *tag_pattern_new(const char *name, const char *pattern,
   assert(name != NULL);
   assert(pattern != NULL);
   assert(jump_target != NULL);
-  
+
   ptagpat = fc_calloc(1, sizeof(struct tag_pattern));
 
   ptagpat->tag_name = mystrdup(name);
@@ -1081,7 +1081,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
                  "", "#0000FF", "");
 
   MK_TAG_PATTERN("commands", "/", TPF_MATCH_AT_START, "", "#006400", "");
-  
+
 
   MK_TAG_PATTERN("chat message", "<", TPF_MATCH_AT_START, "", "#00008B", "");
   MK_TAG_PATTERN("private message", "*", TPF_MATCH_AT_START,
@@ -1113,7 +1113,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
   MK_TAG_PATTERN("player emote", "^ ", TPF_MATCH_AT_START, "", "#006D6E", "");
   MK_TAG_PATTERN("server emote", "+ ", TPF_MATCH_AT_START, "", "#8C0015", "");
-  
+
 
   MK_TAG_PATTERN("", "/show: ", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START | TPF_NEGATE,
@@ -1139,7 +1139,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   MK_TAG_PATTERN("", "/show: ------------",
 		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
 		 | TPF_STOP_IF_MATCHED, "", "", "");
-  
+
   MK_TAG_PATTERN("", "/show", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("changed options", "=",
@@ -1150,7 +1150,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
 
   MK_TAG_PATTERN("new vote", "New vote",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED, 
+		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
 		 "", "#FFFFFF", "#AA0000");
 
   MK_TAG_PATTERN("new poll", "New poll ",
@@ -1192,7 +1192,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   MK_TAG_PATTERN("teamvote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
 
 
-  MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY 
+  MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("not ready", "not ready",
 		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
@@ -1210,7 +1210,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   MK_TAG_PATTERN("no nation", " ready)",
 		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
 		 "", "#FF0000", "");
-  
+
 
   my_snprintf(buf, sizeof(buf), "<%s>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
@@ -1234,9 +1234,9 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
 		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
 
-  MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY 
+  MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START, "name hilight", "", "");
-  MK_TAG_PATTERN("", "*", TPF_IS_CONTROL_ONLY 
+  MK_TAG_PATTERN("", "*", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", "[", TPF_IS_CONTROL_ONLY
 		 | TPF_MATCH_AT_START, "name hilight", "", "");
@@ -1246,7 +1246,7 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 		 "name hilight", "", "");
   MK_TAG_PATTERN("", " to observers:", TPF_IS_CONTROL_ONLY,
 		 "name hilight", "", "");
-  MK_TAG_PATTERN("", "", TPF_IS_CONTROL_ONLY 
+  MK_TAG_PATTERN("", "", TPF_IS_CONTROL_ONLY
 		 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("name hilight", default_user_name, TPF_APPLY_TO_MATCH
 		 | TPF_REQUIRE_PREVIOUS_MATCH | TPF_INSENSITIVE,
@@ -1385,7 +1385,7 @@ void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete)
   if (!GTK_TEXT_BUFFER(message_buffer)) {
     return;
   }
-  
+
   table = gtk_text_buffer_get_tag_table(message_buffer);
 
   if (tags_to_delete) {
@@ -1394,7 +1394,7 @@ void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete)
                          table);
   }
 
-  
+
   tag_pattern_list_iterate(tagpats, ptagpat) {
     if (tag_pattern_is_control_only(ptagpat)) {
       continue;
@@ -1404,7 +1404,7 @@ void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete)
       tag = gtk_text_tag_new(ptagpat->tag_name);
       gtk_text_tag_table_add(table, tag);
     }
-    
+
     if (ptagpat->foreground_color) {
       g_object_set(G_OBJECT(tag),
                     "foreground-gdk", ptagpat->foreground_color,
@@ -1423,7 +1423,7 @@ void refresh_message_buffer_tag_patterns(GHashTable *tags_to_delete)
       g_object_set(G_OBJECT(tag), "background-set",
                     FALSE, NULL);
     }
-    
+
   } tag_pattern_list_iterate_end;
 }
 
@@ -1435,7 +1435,7 @@ void free_message_buffer_tag_patterns(void)
   tag_pattern_list_iterate(tagpats, ptagpat) {
     tag_pattern_free(ptagpat);
   } tag_pattern_list_iterate_end;
-  tag_pattern_list_unlink_all(tagpats);  
+  tag_pattern_list_unlink_all(tagpats);
 }
 
 /**************************************************************************
@@ -1472,7 +1472,7 @@ void create_default_chatline_colors(void)
 void secfile_save_chatline_colors(struct section_file *sf)
 {
   int version = COLORS_FORMAT_VERSION;
-  
+
   secfile_insert_int(sf, version, "chatline.colors_version");
   secfile_save_message_buffer_tag_patterns(sf);
 }
@@ -1521,7 +1521,7 @@ static GdkColor *secfile_lookup_color(struct section_file *file,
   blue = secfile_lookup_int(file, "%s_b", buf);
   if (red == -1 || green == -1 || blue == -1)
     return NULL;
-  
+
   color.red = red;
   color.green = green;
   color.blue = blue;
@@ -1547,7 +1547,7 @@ static void secfile_insert_color(struct section_file *file, GdkColor *color,
     secfile_insert_int(file, -1, "%s_b", buf);
     return;
   }
-  
+
   secfile_insert_int(file, color->red, "%s_r", buf);
   secfile_insert_int(file, color->green, "%s_g", buf);
   secfile_insert_int(file, color->blue, "%s_b", buf);
@@ -1575,7 +1575,7 @@ void secfile_save_message_buffer_tag_patterns(struct section_file *file)
                        "chatline.tagpat%d.jump_target", i);
     secfile_insert_str(file, ptagpat->sound_tag,
                        "chatline.tagpat%d.sound_tag", i);
-    
+
     secfile_insert_color(file, ptagpat->foreground_color,
                          "chatline.tagpat%d.foreground_color", i);
     secfile_insert_color(file, ptagpat->background_color,
@@ -1606,7 +1606,7 @@ struct tag_pattern_list *
         secfile_lookup_str(file, "chatline.tagpat%d.tag_name", i));
     ptagpat->pattern = mystrdup(
         secfile_lookup_str(file, "chatline.tagpat%d.pattern", i));
-    ptagpat->flags = 
+    ptagpat->flags =
         secfile_lookup_int(file, "chatline.tagpat%d.flags", i);
     ptagpat->jump_target = mystrdup(
         secfile_lookup_str(file, "chatline.tagpat%d.jump_target", i));
@@ -1632,7 +1632,7 @@ void tag_pattern_list_free_data(struct tag_pattern_list *tpl)
 {
   tag_pattern_list_iterate(tpl, ptagpat) {
     tag_pattern_free(ptagpat);
-  } tag_pattern_list_iterate_end; 
+  } tag_pattern_list_iterate_end;
   tag_pattern_list_unlink_all(tpl);
 }
 
@@ -1747,7 +1747,7 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
   gtk_widget_show_all(dialog);
-   
+
   return dialog;
 }
 
@@ -1785,7 +1785,7 @@ void apply_chatline_config(GtkWidget *widget)
       g_hash_table_remove(tags_to_delete, key);
     }
     tag_pattern_list_append(tagpats, tag_pattern_clone(ptagpat));
-  } tag_pattern_list_iterate_end; 
+  } tag_pattern_list_iterate_end;
 
   refresh_message_buffer_tag_patterns(tags_to_delete);
 
@@ -1884,7 +1884,7 @@ static void destroy_callback(GtkWidget *w, gpointer user_data)
   if (tmptagpats) {
     tag_pattern_list_free_all(tmptagpats);
   }
-  
+
   tags_to_delete = g_object_get_data(G_OBJECT(w), "tags_to_delete");
   if (tags_to_delete) {
     g_hash_table_destroy(tags_to_delete);
@@ -1944,7 +1944,7 @@ static void notify_user_error(GtkWidget *msglabel, char *msg)
   char buf[1024];
 
   assert(msglabel != NULL);
-  
+
   my_snprintf(buf, sizeof(buf), "<span foreground=\"red\">%s</span>", msg);
   gtk_label_set_markup(GTK_LABEL(msglabel), buf);
 }
@@ -1966,7 +1966,7 @@ static void cell_edited(GtkCellRendererText *cell, const gchar *path_string,
   i = gtk_tree_path_get_indices(path)[0];
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, COLUMN_TAG_PATTERN, &ptagpat, -1);
-  
+
   switch (column) {
   case COLUMN_PATTERN:
     free(ptagpat->pattern);
@@ -1994,7 +1994,7 @@ static void cell_edited(GtkCellRendererText *cell, const gchar *path_string,
 static GtkWidget *create_my_color_selection_dialog(const char *title)
 {
   GtkWidget *dialog, *colorsel;
-  
+
   dialog = gtk_dialog_new_with_buttons(title, NULL, 0,
                                         "_No Color", GTK_RESPONSE_REJECT,
                                         "_Cancel", GTK_RESPONSE_CANCEL,
@@ -2006,11 +2006,11 @@ static GtkWidget *create_my_color_selection_dialog(const char *title)
   g_object_set_data(G_OBJECT(dialog), "colorsel", colorsel);
   gtk_color_selection_set_has_palette(
       GTK_COLOR_SELECTION(colorsel), FALSE);
-  
+
   gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),
                      colorsel);
   gtk_widget_show(colorsel);
-  
+
   return dialog;
 }
 
@@ -2076,8 +2076,8 @@ static void add_columns(GtkTreeView *treeview, GtkTreeModel *model)
   gtk_tree_view_column_set_resizable(column, FALSE);
   gtk_tree_view_column_set_min_width(column, 40);
   gtk_tree_view_append_column(treeview, column);
-  
-  
+
+
   MK_FLAG_COLUMN(COLUMN_AT_START, "BEGIN", TPF_MATCH_AT_START);
   MK_FLAG_COLUMN(COLUMN_NEGATE, "NOT", TPF_NEGATE);
   MK_FLAG_COLUMN(COLUMN_PREVIOUS, "PREV", TPF_REQUIRE_PREVIOUS_MATCH);
@@ -2179,7 +2179,7 @@ void tag_pattern_list_free_all(struct tag_pattern_list *tpl)
 struct tag_pattern *tag_pattern_clone(struct tag_pattern *old)
 {
   struct tag_pattern *new = fc_malloc(sizeof(struct tag_pattern));
-  
+
   new->tag_name = mystrdup(old->tag_name);
   new->pattern = mystrdup(old->pattern);
   new->jump_target = mystrdup(old->jump_target);
@@ -2216,7 +2216,7 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
   rows = gtk_tree_selection_get_selected_rows(selection, NULL);
   if (g_list_length(rows) <= 0)
     return;
-  
+
   for (p = rows; p != NULL; p = g_list_next(p)) {
     rowref = gtk_tree_row_reference_new(model, p->data);
     rowrefs = g_list_append(rowrefs, rowref);
@@ -2228,7 +2228,7 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
   new_order = fc_malloc(sizeof(int) * len);
   for (i=0; i<len; i++)
     new_order[i] = i;
-  
+
   limit = up ? 0 : len - 1;
   p = up ? rowrefs : g_list_last(rowrefs);
   for (; p != NULL; p = up ? g_list_next(p) : g_list_previous(p)) {
@@ -2236,9 +2236,9 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
     path = gtk_tree_row_reference_get_path(rowref);
     if (!path)
       continue;
-  
+
     i = gtk_tree_path_get_indices(path)[0];
-    
+
     if (i == limit) {
       limit += up ? 1 : -1;
       continue;
@@ -2258,7 +2258,7 @@ static void move_tag_patterns(GtkWidget *w, gpointer user_data, bool up)
     tag_pattern_list_append(tmptagpats, tpv[i]);
   }
   free(tpv);
-  
+
   gtk_list_store_reorder(GTK_LIST_STORE(model), new_order);
   free(new_order);
 
@@ -2302,12 +2302,12 @@ static void add_tag_pattern(struct tag_pattern *ptagpat,
   GtkTreePath *path;
   int i;
   GtkTreeIter iter;
-  
+
   treeview = g_object_get_data(G_OBJECT(dialog), "treeview");
   selection = gtk_tree_view_get_selection(treeview);
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   model = g_object_get_data(G_OBJECT(dialog), "model");
-  
+
   rows = gtk_tree_selection_get_selected_rows(selection, NULL);
   if (g_list_length(rows) > 0) {
     path = (GtkTreePath *) g_list_nth_data(rows, 0);
@@ -2336,15 +2336,15 @@ static void add_control_callback(GtkWidget *w, gpointer user_data)
   const char *newname = "";
 
   dialog = (GtkWidget *) user_data;
-  
+
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   entry = g_object_get_data(G_OBJECT(dialog), "entry");
 
   newname = gtk_entry_get_text(GTK_ENTRY(entry));
-  ptagpat = tag_pattern_new(newname, "pattern", 
+  ptagpat = tag_pattern_new(newname, "pattern",
                             TPF_IS_CONTROL_ONLY, "", "", NULL, NULL);
   gtk_entry_set_text(GTK_ENTRY(entry), "");
-  
+
   add_tag_pattern(ptagpat, dialog);
 }
 /**************************************************************************
@@ -2358,7 +2358,7 @@ static void add_callback(GtkWidget *w, gpointer user_data)
   const char *newname = "";
 
   dialog = (GtkWidget *) user_data;
-  
+
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   entry = g_object_get_data(G_OBJECT(dialog), "entry");
 
@@ -2373,7 +2373,7 @@ static void add_callback(GtkWidget *w, gpointer user_data)
     if (tag_pattern_is_control_only(ptagpat)) {
       continue;
     }
-      
+
     if (!strcmp(newname, ptagpat->tag_name)) {
       char buf[512];
       my_snprintf(buf, sizeof(buf),
@@ -2383,10 +2383,10 @@ static void add_callback(GtkWidget *w, gpointer user_data)
       return;
     }
   } tag_pattern_list_iterate_end;
-  
+
   ptagpat = tag_pattern_new(newname, "pattern", 0, "", "", NULL, NULL);
   gtk_entry_set_text(GTK_ENTRY(entry), "");
-  
+
   add_tag_pattern(ptagpat, dialog);
 }
 
@@ -2399,14 +2399,14 @@ static void clear_callback(GtkWidget *w, gpointer user_data)
   struct tag_pattern_list *tmptagpats = NULL;
   GtkTreeModel *model;
   GHashTable *tags_to_delete = NULL;
-  
+
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   tags_to_delete = g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
 
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     g_hash_table_replace(tags_to_delete, mystrdup(ptagpat->tag_name), NULL);
   } tag_pattern_list_iterate_end;
-  
+
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   tag_pattern_list_free_data(tmptagpats);
 
@@ -2431,18 +2431,18 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
   struct tag_pattern *ptagpat;
   GList *rows = NULL, *rowrefs = NULL, *p;
   GtkTreeRowReference *rowref;
-  
+
   tmptagpats = g_object_get_data(G_OBJECT(dialog), "tmptagpats");
   tags_to_delete = g_object_get_data(G_OBJECT(dialog), "tags_to_delete");
   model = g_object_get_data(G_OBJECT(dialog), "model");
   treeview = g_object_get_data(G_OBJECT(dialog), "treeview");
 
   selection = gtk_tree_view_get_selection(treeview);
-  
+
   rows = gtk_tree_selection_get_selected_rows(selection, NULL);
   if (g_list_length(rows) <= 0)
     return;
-                                               
+
   for (p = rows; p != NULL; p = g_list_next(p)) {
     rowref = gtk_tree_row_reference_new(model, p->data);
     rowrefs = g_list_append(rowrefs, rowref);
@@ -2455,13 +2455,13 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
     path = gtk_tree_row_reference_get_path(rowref);
     if (!path)
       continue;
-  
+
     i = gtk_tree_path_get_indices(path)[0];
     if (!gtk_tree_model_get_iter(model, &iter, path))
       continue;
-    
+
     gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-    
+
     ptagpat = tag_pattern_list_get(tmptagpats, i);
     tag_pattern_list_unlink(tmptagpats, ptagpat);
     g_hash_table_replace(tags_to_delete, mystrdup(ptagpat->tag_name), NULL);
@@ -2534,7 +2534,7 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   color.red = 0;
   color.green = 0;
   color.blue = 0;
-  
+
   if (column == COLUMN_FOREGROUND && ptagpat->foreground_color) {
     color = *ptagpat->foreground_color;
   }
@@ -2542,12 +2542,12 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   if (column == COLUMN_BACKGROUND && ptagpat->background_color) {
     color = *ptagpat->background_color;
   }
-  
+
   gtk_color_selection_set_previous_color(colorsel, &color);
   gtk_color_selection_set_current_color(colorsel, &color);
-  
+
   response = gtk_dialog_run(GTK_DIALOG(dialog));
-  
+
   if (response == GTK_RESPONSE_OK) {
     gtk_color_selection_get_current_color(colorsel,
                                            &color);
@@ -2569,7 +2569,7 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
   } else if (response == GTK_RESPONSE_REJECT) {
     gtk_list_store_set(GTK_LIST_STORE(model), &iter, column,
                         NULL, -1);
-    
+
     if (column == COLUMN_FOREGROUND) {
       if (ptagpat->foreground_color)
         gdk_color_free(ptagpat->foreground_color);
@@ -2595,7 +2595,7 @@ GtkWidget *create_chatline_config(void)
   GtkTreeModel *model;
   GtkTreeSelection *sel;
   GHashTable *tags_to_delete;
-  
+
   tags_to_delete = g_hash_table_new_full(g_str_hash, g_str_equal, free, NULL);
 
   /* layout boxes */
@@ -2620,7 +2620,7 @@ GtkWidget *create_chatline_config(void)
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(top_vbox),
                       hbox, TRUE, TRUE, 0);
-  
+
   gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
 
   /* feedback label */
@@ -2629,7 +2629,7 @@ GtkWidget *create_chatline_config(void)
 
   /* create the treeview */
   model = create_model();
-  
+
   treeview = gtk_tree_view_new_with_model(model);
   g_object_unref(model);
   gtk_widget_set_size_request(treeview, -1, 200);
@@ -2642,23 +2642,23 @@ GtkWidget *create_chatline_config(void)
   add_columns(GTK_TREE_VIEW(treeview), model);
   g_signal_connect(G_OBJECT(treeview), "button-press-event",
 		   G_CALLBACK(treeview_button_press_callback), label);
-  
+
   gtk_container_add(GTK_CONTAINER(sw), treeview);
- 
+
   /* input entry */
   hbox = gtk_hbox_new(FALSE, 10);
   gtk_box_pack_start(GTK_BOX(top_vbox), hbox, FALSE, FALSE, 0);
-  
+
   label = gtk_label_new(_("Input:"));
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-  
+
   entry = gtk_entry_new();
   gtk_widget_set_size_request(entry, 100, -1);
   g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(add_callback),
 		   vbox);
   g_object_set_data(G_OBJECT(vbox), "entry", entry);
   gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
-  
+
 
   /* add/delete etc. controls */
   hbox = gtk_hbox_new(FALSE, 10);
@@ -2673,22 +2673,22 @@ GtkWidget *create_chatline_config(void)
   g_signal_connect(button, "clicked",
       G_CALLBACK(clear_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
+
   button = gtk_stockbutton_new(GTK_STOCK_DELETE, _("D_elete"));
   g_signal_connect(button, "clicked",
       G_CALLBACK(delete_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
+
   button = gtk_stockbutton_new(GTK_STOCK_ADD, _("A_dd"));
   g_signal_connect(button, "clicked",
       G_CALLBACK(add_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
+
   button = gtk_stockbutton_new(GTK_STOCK_ADD, _("Add Con_trol Pattern"));
   g_signal_connect(button, "clicked",
       G_CALLBACK(add_control_callback), vbox);
   gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
+
 
   /* up/down buttons */
   button = gtk_stockbutton_new(GTK_STOCK_GO_UP, _("Move _Up"));

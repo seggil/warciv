@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -404,7 +404,7 @@ static void callback_game_save_settings(GtkAction *action, gpointer user_data)
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_server_options1(GtkAction *action, 
+static void callback_game_server_options1(GtkAction *action,
                                           gpointer user_data)
 {
   send_report_request(REPORT_SERVER_OPTIONS1);
@@ -413,7 +413,7 @@ static void callback_game_server_options1(GtkAction *action,
 /****************************************************************
   ...
 *****************************************************************/
-static void callback_game_server_options2(GtkAction *action, 
+static void callback_game_server_options2(GtkAction *action,
                                           gpointer user_data)
 {
   send_report_request(REPORT_SERVER_OPTIONS2);
@@ -699,12 +699,12 @@ static const char *load_menu_government_type(const char *actionname)
   char label[10][256];
   char stock[10][256];
   GdkPixbuf *pixbuf;
-  GdkPixbuf *pixbuf2;  
+  GdkPixbuf *pixbuf2;
   GdkColormap *colormap;
   GdkScreen *screen;
   GtkIconSet* icon;
   GtkIconFactory *icon_factory;
-  
+
   screen = gdk_screen_get_default();
   colormap = gdk_screen_get_default_colormap(screen);
 
@@ -736,24 +736,24 @@ static const char *load_menu_government_type(const char *actionname)
       struct Sprite *gsprite;
 
       assert ((g->index+1) < 10);
-      
+
       icon_factory = gtk_icon_factory_new();
-      
+
       my_snprintf(buf, sizeof(buf), "%s_%d", actionname, g->index);
       sz_strlcpy(name[g->index+1], buf);
       cat_snprintf(retbuf, sizeof(retbuf),
                    "<menuitem action=\"%s\" />\n", buf);
-      
+
       my_snprintf(buf, sizeof(buf), "%s...", g->name);
       sz_strlcpy(label[g->index+1], buf);
-      
+
       entries_government_type.name = name[g->index+1];
       entries_government_type.label = label[g->index+1];
-      
+
       if ((gsprite = g->sprite)) {
         my_snprintf(buf, sizeof(buf), "STOCK_GOUV_%d", (g->index+1));
         sz_strlcpy(stock[g->index+1], buf);
-        
+
         pixbuf = NULL;
         pixbuf = gdk_pixbuf_get_from_drawable(pixbuf,
                                               gsprite->pixmap,
@@ -762,28 +762,28 @@ static const char *load_menu_government_type(const char *actionname)
                                               gsprite->width,
                                               gsprite->height);
 
-        pixbuf2 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 
+        pixbuf2 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8,
                                  gsprite->height, gsprite->height);
 
         gdk_pixbuf_fill(pixbuf2, 0xffffff00);
 
-        gdk_pixbuf_composite(pixbuf, pixbuf2, 0, 0, 
+        gdk_pixbuf_composite(pixbuf, pixbuf2, 0, 0,
                              gsprite->width, gsprite->height, 0, 0, 1, 1,
                              GDK_INTERP_HYPER, 255);
-        
+
         freelog(LOG_MENU, "pixbuf= %p index=%d", pixbuf, g->index);
-        
+
         icon = gtk_icon_set_new_from_pixbuf(pixbuf2);
         gtk_icon_factory_add(icon_factory, stock[g->index+1], icon);
 
         g_object_unref(pixbuf2);
         g_object_unref(pixbuf);
-        
+
         entries_government_type.stock_id = stock[g->index+1];
       } else {
         entries_government_type.stock_id = NULL;
       }
-      
+
       entries_government_type.accelerator = NULL;
       entries_government_type.tooltip = label[g->index+1];
       entries_government_type.callback =
@@ -839,7 +839,7 @@ static const char *load_menu_government(void)
   gtk_action_group_add_actions(action_group_government, entries_government,
                                G_N_ELEMENTS(entries_government),
                                NULL);
-  gtk_ui_manager_insert_action_group(main_uimanager, 
+  gtk_ui_manager_insert_action_group(main_uimanager,
                                      action_group_government, 0);
 
   my_snprintf(buf, sizeof(buf),
@@ -1129,7 +1129,7 @@ static const char *load_menu_view(void)
     {"VIEW_SHOW_MAP_GRID", NULL, _("Map _Grid"),
      "<Control>g", _("Map _Grid"), G_CALLBACK(callback_view_show_map_grid), TRUE},
     {"VIEW_SHOW_NATIONAL_BORDERS", NULL, _("National _Borders"),
-     NULL, _("National _Borders"), 
+     NULL, _("National _Borders"),
      G_CALLBACK(callback_view_show_national_borders), TRUE},
     {"VIEW_SHOW_CITY_NAMES", NULL, _("City _Names"),
      "<Control>n", _("City _Names"),
@@ -1152,7 +1152,7 @@ static const char *load_menu_view(void)
     {"VIEW_SHOW_COASTLINE", NULL, _("C_oastline"),
      NULL, _("C_oastline"), G_CALLBACK(callback_view_show_coastline), TRUE},
     {"VIEW_SHOW_ROADS_RAILS", NULL, _("_Roads & Rails"),
-     NULL, _("_Roads & Rails"), 
+     NULL, _("_Roads & Rails"),
      G_CALLBACK(callback_view_show_roads_rails), TRUE},
     {"VIEW_SHOW_IRRIGATION", NULL, _("_Irrigation"),
      NULL, _("_Irrigation"), G_CALLBACK(callback_view_show_irrigation), TRUE},
@@ -2409,7 +2409,7 @@ static const char *load_menu_delayed_goto(void)
      "u", _("_Clear delayed orders"),
      G_CALLBACK(callback_delayed_goto_clear_delayed_orders)},
     {"DELAYED_GOTO_MODE", NULL, _("Delayed goto _mode"), NULL, NULL, NULL},
-    {"DELAYED_GOTO_AUTOMATIC", NULL, _("_Automatic execution"), 
+    {"DELAYED_GOTO_AUTOMATIC", NULL, _("_Automatic execution"),
      NULL, NULL, NULL},
     {"DELAYED_GOTO_INCLUSIVE", NULL, _("_Inclusive filter"), NULL, NULL, NULL},
     {"DELAYED_GOTO_EXCLUSIVE", NULL, _("Exclusive filter"), NULL, NULL, NULL},
@@ -3238,7 +3238,7 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
   const char *bufaccel;
   GdkPixbuf *pixbuf;
   GdkPixbuf *pixbuf1;
-  GdkPixbuf *pixbuf2;  
+  GdkPixbuf *pixbuf2;
   GdkColormap *colormap;
   GdkScreen *screen;
   GtkIconSet* icon;
@@ -3296,16 +3296,16 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
     if (index[i] == 0) {
       continue; /* No unit type in this class */
     }
-    
+
     cat_snprintf(retbuf, sizeof(retbuf), "<separator/>\n");
-    
+
     for (j = 0; j < index[i]; j++, k++) {
       struct Sprite *gsprite;
 
       icon_factory = gtk_icon_factory_new();
       if ((gsprite = get_unit_type(classes[i][j])->sprite)) {
         my_snprintf(buf, sizeof(buf), "STOCK_UNIT_%d", classes[i][j]);
-        
+
         pixbuf = NULL;
         pixbuf = gdk_pixbuf_get_from_drawable(pixbuf,
                                               gsprite->pixmap,
@@ -3314,17 +3314,17 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
                                               gsprite->width,
                                               gsprite->height);
 
-        pixbuf1 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 
+        pixbuf1 = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
                                  gsprite->width, gsprite->width);
 
         gdk_pixbuf_fill(pixbuf1, 0xffffff00);
 
-        gdk_pixbuf_composite(pixbuf, pixbuf1, 0, 0, 
+        gdk_pixbuf_composite(pixbuf, pixbuf1, 0, 0,
                              gsprite->width, gsprite->width, -25, -20,
                              1.8,
                              1.8,
                              GDK_INTERP_HYPER, 255);
-        
+
         pixbuf2 = gdk_pixbuf_add_alpha(pixbuf1, TRUE, 255, 255, 255);
 
         icon = gtk_icon_set_new_from_pixbuf(pixbuf2);
@@ -3344,7 +3344,7 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
       sz_strlcpy(name[k + 1], buf);
       radio_entries_airlift_unit[k+1].name = name[k + 1];
       radio_entries_airlift_unit[k+1].stock_id = NULL;
-      
+
       radio_entries_airlift_unit[k+1].label = unit_name(classes[i][j]);
       if (( bufaccel = get_accelerator(unit_name_orig(classes[i][j]), aq))) {
         sz_strlcpy(accel[k + 1], bufaccel);
@@ -3357,7 +3357,7 @@ static const char *load_menu_airlift_unit(int aq, GtkAction *paction)
       airlift_queue_set_menu_name(aq, classes[i][j], name[k + 1]);
     }
   }
- 
+
   my_snprintf(buf, sizeof(buf), "RadioGroupAirlift%d", aq);
   radio_action_group_airlift_unit[aq] = gtk_action_group_new(buf);
   gtk_action_group_set_translation_domain(radio_action_group_airlift_unit[aq],
@@ -3752,7 +3752,7 @@ static const char *load_menu_auto_caravan(void)
      NULL, _("Show cities in _trade planning"),
      G_CALLBACK(callback_auto_caravan_show_trade_cities)},
     {"AUTO_CARAVAN_TRADE_WITH", NULL, _("_Set caravan destination"),
-     "j", _("_Set caravan destination"), 
+     "j", _("_Set caravan destination"),
      G_CALLBACK(callback_auto_caravan_trade_with)},
     {"AUTO_CARAVAN_DO_AUTO_CARAVAN", NULL, _("Auto_matic caravan orders"),
      "<Control>j", _("Auto_matic caravan orders"),
@@ -4584,7 +4584,7 @@ static const char *load_menu_multi_selection(void)
      G_CALLBACK(callback_multi_selection_ms_clear)},
     {"MULTI_SELECTION_MODE", NULL, _("_Multi-Selection _mode"),
      NULL, NULL, NULL},
-    {"MULTI_SELECTION_INCLUSIVE", NULL, _("Inclusive filter"), 
+    {"MULTI_SELECTION_INCLUSIVE", NULL, _("Inclusive filter"),
      NULL, NULL, NULL},
     {"MULTI_SELECTION_EXCLUSIVE", NULL, _("Exclusive filter"),
      NULL, NULL, NULL},
@@ -4612,7 +4612,7 @@ static const char *load_menu_multi_selection(void)
      "<Shift>2", _("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms2_add)},
     {"MULTI_SELECTION_MS2_RECORD", NULL, _("_Record"),
-     "<Control>2", _("_Record"), 
+     "<Control>2", _("_Record"),
      G_CALLBACK(callback_multi_selection_ms2_record)},
     {"MULTI_SELECTION_MS2_CLEAR", NULL, _("_Clear"),
      "<Control><Shift>2", _("_Clear"),
@@ -4651,7 +4651,7 @@ static const char *load_menu_multi_selection(void)
      "<Shift>5", _("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms5_add)},
     {"MULTI_SELECTION_MS5_RECORD", NULL, _("_Record"),
-     "<Control>5", _("_Record"), 
+     "<Control>5", _("_Record"),
      G_CALLBACK(callback_multi_selection_ms5_record)},
     {"MULTI_SELECTION_MS5_CLEAR", NULL, _("_Clear"),
      "<Control><Shift>5", _("_Clear"),
@@ -4703,7 +4703,7 @@ static const char *load_menu_multi_selection(void)
      "<Shift>9", _("_Add to current selection"),
      G_CALLBACK(callback_multi_selection_ms9_add)},
     {"MULTI_SELECTION_MS9_RECORD", NULL, _("_Record"),
-     "<Control>9", _("_Record"), 
+     "<Control>9", _("_Record"),
      G_CALLBACK(callback_multi_selection_ms9_record)},
     {"MULTI_SELECTION_MS9_CLEAR", NULL, _("_Clear"),
      "<Control><Shift>9", _("_Clear"),
@@ -4829,7 +4829,7 @@ static const char *load_menu_multi_selection(void)
   action_group_multi_selection = gtk_action_group_new("GroupMultiSelection");
   gtk_action_group_set_translation_domain(action_group_multi_selection,
                                           PACKAGE);
-  gtk_action_group_add_actions(action_group_multi_selection, 
+  gtk_action_group_add_actions(action_group_multi_selection,
                                entries_multi_selection,
                                G_N_ELEMENTS(entries_multi_selection),
                                NULL);
@@ -5155,7 +5155,7 @@ static const char *load_menu_miscellaneous(void)
   GtkActionEntry entries_miscellaneous[] = {
     {"MISCELLANEOUS", NULL, _("Misce_llaneous"), NULL, NULL, NULL},
     {"MISCELLANEOUS_AIR_PATROL", NULL, _("Airplane _patrol"),
-     "e", _("Airplane _patrol"), 
+     "e", _("Airplane _patrol"),
      G_CALLBACK(callback_miscellaneous_air_patrol)},
     {"MISCELLANEOUS_AIR_PATROL_DEST", NULL, _("Airplane patrol _destination"),
      "<Control>e", _("Airplane patrol _destination"),
@@ -5985,8 +5985,8 @@ void update_menus(void)
     government_iterate(g) {
       if (g->index != game.ruleset_control.government_when_anarchy) {
 	 my_snprintf(buf, sizeof(buf), "GOVERNMENT_TYPE_%d", g->index);
-	 menu_set_sensitive(action_group_government_type, buf, 
-			    can_change_to_government(get_player_ptr(), 
+	 menu_set_sensitive(action_group_government_type, buf,
+			    can_change_to_government(get_player_ptr(),
 						     g->index));
       }
     } government_iterate_end;
@@ -6643,7 +6643,7 @@ void init_menus(void)
                           "MISCELLANEOUS_DIPLOMAT_UNIT_NOTHING");
     break;
   }
-  
+
   switch (default_diplomat_city_action) {
   case DDCA_POPUP_DIALOG:
     menu_radio_set_active(radio_action_group_miscellaneous_diplomat_city,

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,14 +72,14 @@ static void rates_changed_callback(GtkAdjustment *adj);
 /**************************************************************************
 ...
 **************************************************************************/
-static void rates_set_values(int tax, int no_tax_scroll, 
+static void rates_set_values(int tax, int no_tax_scroll,
 			     int lux, int no_lux_scroll,
 			     int sci, int no_sci_scroll)
 {
   char buf[64];
   int tax_lock, lux_lock, sci_lock;
   int maxrate;
-  
+
   tax_lock = GTK_TOGGLE_BUTTON(rates_tax_toggle)->active;
   lux_lock = GTK_TOGGLE_BUTTON(rates_lux_toggle)->active;
   sci_lock = GTK_TOGGLE_BUTTON(rates_sci_toggle)->active;
@@ -89,7 +89,7 @@ static void rates_set_values(int tax, int no_tax_scroll,
   tax = MIN(tax, maxrate);
   lux = MIN(lux, maxrate);
   sci = MIN(sci, maxrate);
-  
+
   if (tax + sci + lux != 100) {
     if ((tax != rates_tax_value)) {
       if (!lux_lock) {
@@ -221,7 +221,7 @@ static void rates_destroy_callback(GtkWidget *widget, gpointer data)
 
 
 /****************************************************************
-... 
+...
 *****************************************************************/
 static GtkWidget *create_rates_dialog(void)
 {
@@ -229,7 +229,7 @@ static GtkWidget *create_rates_dialog(void)
   GtkWidget *shell;
   GtkWidget *frame, *hbox;
   GtkWidget *scale;
-  
+
   shell = gtk_dialog_new_with_buttons(_("Select tax, luxury and science rates"),
 				      NULL, 0,
 				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -337,7 +337,7 @@ static GtkWidget *create_rates_dialog(void)
 
 
 /****************************************************************
-... 
+...
 *****************************************************************/
 void popup_rates_dialog(void)
 {
@@ -351,7 +351,7 @@ void popup_rates_dialog(void)
   my_snprintf(buf, sizeof(buf), _("%s max rate: %d%%"),
       get_government_name(gov), get_government_max_rate(gov));
   gtk_label_set_text(GTK_LABEL(rates_gov_label), buf);
-  
+
   gtk_window_present(GTK_WINDOW(rates_dialog_shell));
 }
 
@@ -359,7 +359,7 @@ void popup_rates_dialog(void)
 
 
 /**************************************************************************
-  Option dialog 
+  Option dialog
 **************************************************************************/
 enum {
   LC_INDEX,
@@ -551,7 +551,7 @@ static gboolean extra_option_callback(GtkWidget *widget, GdkEventButton *event,
   Create a new extra option structure.
 *************************************************************************/
 static void extra_option_new(GtkWidget *widget, GtkWidget *parent_box,
-			     const char *name, 
+			     const char *name,
 			     void (*apply_callback)(GtkWidget *),
 			     void (*refresh_callback)(GtkWidget *),
 			     void (*reset_callback)(GtkWidget *),
@@ -936,7 +936,7 @@ static void string_vec_store(struct client_option *o)
   size = gtk_tree_model_iter_n_children(model, NULL);
 
   string_vector_reserve(*o->string_vec.pvector, size);
-  
+
   if (!gtk_tree_model_get_iter_first(model, &iter)) {
     return;
   }
@@ -1124,7 +1124,7 @@ static void refresh_option_dialog(void)
 {
   client_options_iterate(o) {
     refresh_option(o);
-  } client_options_iterate_end; 
+  } client_options_iterate_end;
 
   extra_options_iterate(o) {
     o->refresh_callback(o->widget);
@@ -1194,7 +1194,7 @@ static void reset_options(void)
 {
   client_options_iterate(o) {
     reset_option(o);
-  } client_options_iterate_end; 
+  } client_options_iterate_end;
 
   extra_options_iterate(o) {
     o->reset_callback(o->widget);
@@ -1284,7 +1284,7 @@ static void reload_options(void)
 
   if (!section_file_load(&sf, option_file_name())) {
     /* Cannot access to the option file */
-    return;  
+    return;
   }
 
   client_options_iterate(o) {
@@ -1458,7 +1458,7 @@ static void option_dialog_callback(GtkWidget *window, gint rid)
 }
 
 /****************************************************************
-  ... 
+  ...
 *****************************************************************/
 static void create_option_dialog(void)
 {
@@ -1670,7 +1670,7 @@ static void create_option_dialog(void)
     } else {
       die("Couldn't create a line for option '%s'.", o->name);
     }
-  } client_options_iterate_end;  
+  } client_options_iterate_end;
 
   /* Extra options (e.g. chat colors) */
   extra_options = extra_option_list_new();
@@ -1695,7 +1695,7 @@ static void create_option_dialog(void)
 }
 
 /****************************************************************
-... 
+...
 *****************************************************************/
 void popup_option_dialog(void)
 {
@@ -1706,7 +1706,7 @@ void popup_option_dialog(void)
 }
 
 /****************************************************************
-  ... 
+  ...
 *****************************************************************/
 const GtkWidget *get_option_dialog_shell(void)
 {

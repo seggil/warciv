@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ static void alloc_standard_colors (void)
     colors_standard[i]->red  = colors_standard_rgb[i].r<<8;
     colors_standard[i]->green= colors_standard_rgb[i].g<<8;
     colors_standard[i]->blue = colors_standard_rgb[i].b<<8;
-  
+
     gdk_rgb_find_color(colormap, colors_standard[i]);
   }
 }
@@ -100,7 +100,7 @@ enum Display_color_type get_visual(void)
 
   visual = gdk_screen_get_rgb_visual(screen);
 
-  if (visual->type == GDK_VISUAL_STATIC_GRAY) { 
+  if (visual->type == GDK_VISUAL_STATIC_GRAY) {
     /* StaticGray, use black and white */
     freelog(LOG_VERBOSE, "found B/W display.");
     return BW_DISPLAY;
@@ -143,14 +143,14 @@ void free_color_system(void)
 GdkColor *color_from_str(const char *str)
 {
   GdkColor color;
-  
+
   if (!str || !str[0])
     return NULL;
-  
+
   if (!gdk_color_parse(str, &color)) {
     freelog(LOG_ERROR, _("Could not parse color from \"%s\""), str);
     return NULL;
   }
-  
+
   return gdk_color_copy(&color);
 }

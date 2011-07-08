@@ -133,10 +133,10 @@ static void change_style(GtkFontButton *widget, gpointer data)
 {
   struct styleconf *tstyleconf = data;
 
-  tstyleconf->style->font_desc = 
+  tstyleconf->style->font_desc =
     pango_font_description_from_string(gtk_font_button_get_font_name(widget));
 }
-					 
+
 /**************************************************************************
 ...
 **************************************************************************/
@@ -157,7 +157,7 @@ static void read_style_from_rc(void)
   screen = gdk_screen_get_default();
   gtksettings = gtk_settings_get_for_screen(screen);
   style_iterate(sset){
-    sset->style = 
+    sset->style =
       gtk_style_copy(gtk_rc_get_style_by_paths(gtksettings,
 					       sset->stylewidget,
 					       NULL, G_TYPE_NONE));
@@ -187,7 +187,7 @@ static gchar *colorstr(const GdkColor *color)
 static void create_style_str(char *buf, int buflen)
 {
   char *p = buf, *tmp;
-  
+
 #define SSCAT(fmt, arg) do {						\
     p += my_snprintf(p, buflen - (unsigned) (p - buf), (fmt), (arg));	\
   } while(0)
@@ -222,7 +222,7 @@ static void create_style_str(char *buf, int buflen)
     SSCAT("widget \"%s\" ", sset->stylewidget);
     SSCAT("style \"%s\"\n", sset->stylename);
   } style_iterate_end;
-    
+
 #undef SSCAT
 }
 
@@ -245,7 +245,7 @@ static void undo_callback(GtkWidget *w,
   char *tmp;
   GtkWidget *sel, *hbox;
   GtkWidget *dialog = (GtkWidget *) user_data;
- 
+
   read_style_from_rc();
 
   style_iterate(sset)
@@ -259,7 +259,7 @@ static void undo_callback(GtkWidget *w,
 }
 
 /**************************************************************************
-  ... 
+  ...
 **************************************************************************/
 static void reset_style(const char * stylebuf)
 {
@@ -271,7 +271,7 @@ static void reset_style(const char * stylebuf)
   screen = gdk_screen_get_default();
   gtksettings = gtk_settings_get_for_screen(screen);
   gtk_rc_reset_styles(gtksettings);
-  
+
   /* font names shouldn't be in spec files! */
   style = gtk_rc_get_style_by_paths(gtksettings,
 				    "Freeciv*.city names",
@@ -281,7 +281,7 @@ static void reset_style(const char * stylebuf)
   }
   g_object_ref(style);
   main_font = style->font_desc;
-  
+
   style = gtk_rc_get_style_by_paths(gtksettings,
 				    "Freeciv*.city productions",
 				    NULL, G_TYPE_NONE);
@@ -355,7 +355,7 @@ static void ok_callback(GtkWidget *w,
 			gpointer user_data)
 {
   GtkWidget *dialog = (GtkWidget *) user_data;
-  
+
   apply_callback(NULL, dialog);
   gtk_widget_destroy (dialog);
 }
@@ -379,7 +379,7 @@ static GtkWidget *create_style_config_shell(void)
   gtk_window_set_resizable(GTK_WINDOW (dialog), TRUE);
   gtk_window_set_decorated(GTK_WINDOW (dialog), TRUE);
   gtk_container_set_border_width (GTK_CONTAINER(dialog), 5);
-  
+
   gtk_widget_set_name(dialog, "Freeciv");
   setup_dialog(dialog, toplevel);
 
@@ -414,7 +414,7 @@ static GtkWidget *create_style_config_shell(void)
 
   style_iterate(sset){
     hbox = gtk_hbox_new(TRUE, 5);
-    
+
     g_object_set_data(G_OBJECT (dialog), sset->stylename, hbox);
 
     label = g_object_new(GTK_TYPE_LABEL,
@@ -433,7 +433,7 @@ static GtkWidget *create_style_config_shell(void)
     gtk_font_button_set_title(GTK_FONT_BUTTON(sel), sset->styletitle);
     g_signal_connect(sel, "font-set" , G_CALLBACK(change_style), sset);
     g_object_set_data (G_OBJECT(hbox), "fontname", sel);
-    
+
     gtk_box_pack_start(GTK_BOX(hbox), sel , TRUE, TRUE, 0);
 
     gtk_box_pack_start(GTK_BOX(vbox2), hbox , TRUE, TRUE, 0);
@@ -445,26 +445,26 @@ static GtkWidget *create_style_config_shell(void)
   /* Cancel, Valid, Apply buttons */
   hbox = gtk_hbox_new(TRUE, 10);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-  
+
   button = gtk_stockbutton_new(GTK_STOCK_CANCEL, _("_Cancel"));
   gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
 		   G_CALLBACK(cancel_callback), dialog);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
+
   button = gtk_stockbutton_new(GTK_STOCK_OK, _("_Ok"));
   gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
 		   G_CALLBACK(ok_callback), dialog);
   gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-  
+
   button = gtk_stockbutton_new(GTK_STOCK_APPLY, _("_Apply"));
   gtk_widget_set_size_request(button, 120, 30);
   g_signal_connect(button, "clicked",
 		   G_CALLBACK(apply_callback), dialog);
   gtk_box_pack_start(GTK_BOX (hbox), button, FALSE, FALSE, 0);
 
-  
+
   /* save/undo/reset buttons */
   hbox = gtk_hbox_new(TRUE, 10);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -505,6 +505,6 @@ void popup_style_config_dialog(void)
   if (!style_config_shell)  {
     style_config_shell = create_style_config_shell();
   }
-  
+
   gtk_window_present(GTK_WINDOW(style_config_shell));
 }

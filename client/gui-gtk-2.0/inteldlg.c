@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ static struct intel_dialog *get_intel_dialog(struct player *pplayer)
 }
 
 /****************************************************************
-... 
+...
 *****************************************************************/
 void popup_intel_dialog(struct player *p)
 {
@@ -151,10 +151,10 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
   GtkTreeViewColumn *col;
 
   int i;
- 
+
   pdialog = fc_malloc(sizeof(*pdialog));
   pdialog->pplayer = p;
- 
+
   shell = gtk_dialog_new_with_buttons(NULL,
       NULL,
       0,
@@ -174,7 +174,7 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
   notebook = gtk_notebook_new();
   gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_BOTTOM);
   gtk_container_add(GTK_CONTAINER(GTK_DIALOG(shell)->vbox), notebook);
- 
+
   /* overview tab. */
   table = gtk_table_new(ARRAY_SIZE(table_text), 2, FALSE);
 
@@ -351,7 +351,7 @@ void update_intel_dialog(struct player *p)
 
 	switch (i) {
 	  case LABEL_RULER:
-	    my_snprintf(buf, sizeof(buf), "%s %s", 
+	    my_snprintf(buf, sizeof(buf), "%s %s",
 		get_ruler_title(p->government, p->is_male, p->nation), p->name);
 	    break;
 	  case LABEL_GOVERNMENT:

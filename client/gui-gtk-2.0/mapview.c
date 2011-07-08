@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ void update_info_label(void)
   } else {
     gtk_widget_hide(main_frame_civ_name);
   }
- 
+
   update_timeout_label();
 }
 
@@ -411,7 +411,7 @@ gboolean overview_canvas_expose(GtkWidget *w, GdkEventExpose *ev,
     }
     return TRUE;
   }
-  
+
   refresh_overview_canvas();
   return TRUE;
 }
@@ -863,15 +863,15 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       get_city_mapview_traderoutes(pcity, buffer3, sizeof(buffer3), &color2);
 
       pango_layout_set_font_description(layout, main_font);
-    
+
       /* Calculate the width of a space, for hack below. */
       pango_layout_set_text(layout, "M", -1);
       pango_layout_get_pixel_extents(layout, &rect, NULL);
       extra_width = rect.width;
-      
+
       pango_layout_set_text(layout, buffer, -1);
       pango_layout_get_pixel_extents(layout, &rect, NULL);
-    
+
       /* HACK: put a character's worth of space between the two strings. */
       if (buffer2[0] != '\0') {
         rect.width += extra_width;
@@ -900,13 +900,13 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
         pango_layout_set_font_description (layout, city_productions_font);
         pango_layout_set_text (layout, buffer3, -1);
         pango_layout_get_pixel_extents(layout, &rect3, NULL);
-      
+
         /* Only add a space if there is some text before the trade routes text */
         if (buffer[0] != '\0' && buffer2[0] == '\0')
           rect.width += extra_width;
         else if (buffer2[0] != '\0')
           rect2.width += extra_width;
-      
+
         /* Now return the layout to its previous state. */
         pango_layout_set_font_description(layout, main_font);
         pango_layout_set_text(layout, buffer, -1);
@@ -918,7 +918,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       gtk_draw_shadowed_string(pcanvas->v.pixmap,
                                toplevel->style->black_gc,
                                toplevel->style->white_gc,
-                               canvas_x - (rect.width + rect2.width 
+                               canvas_x - (rect.width + rect2.width
                                            + rect3.width) / 2,
                                canvas_y + PANGO_ASCENT(rect), layout);
 
@@ -931,7 +931,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
         gtk_draw_shadowed_string(pcanvas->v.pixmap,
                                  toplevel->style->black_gc,
                                  civ_gc,
-                                 canvas_x - (rect.width + rect2.width 
+                                 canvas_x - (rect.width + rect2.width
                                              + rect3.width) / 2
                                  + rect.width,
                                  canvas_y + PANGO_ASCENT(rect)
@@ -948,7 +948,7 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
         gtk_draw_shadowed_string (pcanvas->v.pixmap,
                                   toplevel->style->black_gc,
                                   civ_gc,
-                                  canvas_x - (rect.width + rect2.width 
+                                  canvas_x - (rect.width + rect2.width
                                               + rect3.width) / 2
                                   + rect.width + rect2.width,
                                   canvas_y + PANGO_ASCENT (rect)
@@ -1006,12 +1006,12 @@ void put_unit_gpixmap(struct unit *punit, GtkPixcomm *p)
   FIXME:
   For now only two food, two gold one shield and two masks can be drawn per
   unit, the proper way to do this is probably something like what Civ II does.
-  (One food/shield/mask drawn N times, possibly one top of itself. -- SKi 
+  (One food/shield/mask drawn N times, possibly one top of itself. -- SKi
 **************************************************************************/
 void put_unit_gpixmap_city_overlays(struct unit *punit, GtkPixcomm *p)
 {
   struct canvas store;
- 
+
   store.type = CANVAS_PIXCOMM;
   store.v.pixcomm = p;
 
@@ -1032,7 +1032,7 @@ static void pixmap_put_overlay_tile(GdkDrawable *pixmap,
   if (!ssprite) {
     return;
   }
-      
+
   gdk_gc_set_clip_origin(civ_gc, canvas_x, canvas_y);
   gdk_gc_set_clip_mask(civ_gc, ssprite->mask);
 
@@ -1104,7 +1104,7 @@ void canvas_put_sprite(struct canvas *pcanvas,
                                MIN(gdk_pixbuf_get_width(dst),
                                    gdk_pixbuf_get_width(src))),
                            MIN(height,
-                               MIN(gdk_pixbuf_get_height(dst), 
+                               MIN(gdk_pixbuf_get_height(dst),
                                    gdk_pixbuf_get_height(src))),
                            canvas_x - offset_x, canvas_y - offset_y,
                            1.0, 1.0, GDK_INTERP_NEAREST, 255);
@@ -1112,7 +1112,7 @@ void canvas_put_sprite(struct canvas *pcanvas,
     break;
   default:
     break;
-  } 
+  }
 }
 
 /**************************************************************************
@@ -1162,7 +1162,7 @@ void canvas_put_rectangle(struct canvas *pcanvas,
   case CANVAS_PIXBUF:
     gdk_pixbuf_fill(pcanvas->v.pixbuf,
                     ((guint32)(col->red & 0xff00) << 16)
-                    | ((col->green & 0xff00) << 8) 
+                    | ((col->green & 0xff00) << 8)
                     | (col->blue & 0xff00) | 0xff);
     break;
   default:
@@ -1205,7 +1205,7 @@ void canvas_fog_sprite_area(struct canvas *pcanvas, struct Sprite *psprite,
     gdk_draw_rectangle(pcanvas->v.pixmap, fill_tile_gc, TRUE,
                        canvas_x, canvas_y, psprite->width, psprite->height);
 
-    gdk_gc_set_clip_mask(fill_tile_gc, NULL); 
+    gdk_gc_set_clip_mask(fill_tile_gc, NULL);
   }
 }
 
