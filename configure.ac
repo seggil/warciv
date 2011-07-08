@@ -309,6 +309,11 @@ AC_CHECK_HEADER(zlib.h, ,
   AC_MSG_ERROR([zlib found but not zlib.h.  
 You may need to install a zlib \"development\" package.]))
 
+AC_CHECK_LIBM
+if test $ac_cv_lib_m_cos = yes; then
+  LIBS="$LIBS -lm"
+fi
+
 gl_FUNC_MKSTEMP
 if test x$gl_cv_func_working_mkstemp = xyes ; then
   AC_DEFINE([HAVE_MKSTEMP], [1], [Have working mkstemp])
@@ -455,12 +460,12 @@ AC_TRY_COMPILE([#include <signal.h>],[signal (SIGPIPE, SIG_IGN)],
                [AC_MSG_RESULT([no])])
 
 dnl export where the datadir is going to be installed
-FC_EXPAND_DIR(FREECIV_DATADIR, "$datadir/freeciv")
+FC_EXPAND_DIR(FREECIV_DATADIR, "$datadir/warciv")
 
 if test x"$MINGW32" = xyes; then
-  DEFAULT_DATA_PATH=".;data;~/.freeciv;$datadir/freeciv"
+  DEFAULT_DATA_PATH=".;data;~/.warciv;$datadir/warciv"
 else
-  DEFAULT_DATA_PATH=".:data:~/.freeciv:$datadir/freeciv"
+  DEFAULT_DATA_PATH=".:data:~/.warciv:$datadir/warciv"
 fi
 CPPFLAGS="$CPPFLAGS -DDEFAULT_DATA_PATH=\"\\\"$DEFAULT_DATA_PATH\\\"\""
 
