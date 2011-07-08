@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
   This module contains replacements for functions which are not
   available on all platforms.  Where the functions are available
   natively, these are (mostly) just wrappers.
@@ -20,7 +20,7 @@
   alternative would be to use the "standard" function name, and
   provide the implementation only if required.  However the method
   here has some advantages:
-  
+
    - We can provide definite prototypes in support.h, rather than
    worrying about whether a system prototype exists, and if so where,
    and whether it is correct.  (Note that whether or not configure
@@ -113,7 +113,7 @@ int mystrncasecmp(const char *str0, const char *str1, size_t n)
   return strncasecmp (str0, str1, n);
 #else
   size_t i;
-  
+
   for (i = 0; i < n && my_tolower(*str0) == my_tolower(*str1);
        i++, str0++, str1++) {
     if (*str0 == '\0') {
@@ -307,7 +307,7 @@ size_t mystrlcat(char *dest, const char *src, size_t n)
 #else
   {
     size_t num_to_copy, len_dest, len_src;
-    
+
     len_dest = strlen(dest);
     assert(len_dest<n);
     /* Otherwise have bad choice of leaving dest not nul-terminated
@@ -315,10 +315,10 @@ size_t mystrlcat(char *dest, const char *src, size_t n)
      * a post-condition of mystrlcat), or modifying dest before end
      * of existing string (which breaks strcat semantics).
      */
-       
+
     dest += len_dest;
     n -= len_dest;
-    
+
     len_src = strlen(src);
     num_to_copy = (len_src >= n) ? n-1 : len_src;
     if (num_to_copy>0)
@@ -350,12 +350,12 @@ size_t mystrlcat(char *dest, const char *src, size_t n)
  [glibc is correct.  Viz.
 
  PRINTF(3)           Linux Programmer's Manual           PRINTF(3)
- 
+
  (Thus until glibc 2.0.6.  Since glibc 2.1 these functions follow the
  C99 standard and return the number of characters (excluding the
  trailing '\0') which would have been written to the final string if
  enough space had been available.)]
- 
+
  The method is simply to malloc (first time called) a big internal
  buffer, longer than any result is likely to be (for non-malicious
  usage), then vsprintf to that buffer, and copy the appropriate
@@ -365,7 +365,7 @@ size_t mystrlcat(char *dest, const char *src, size_t n)
 
  Before rushing to provide a 100% safe replacement version, consider
  the following advantages of this method:
- 
+
  - It is very simple, so not likely to have many bugs (other than
  arguably the core design bug regarding absolute safety), nor need
  maintenance.
@@ -405,7 +405,7 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
   {
     /* Don't use fc_malloc() or freelog() here, since they may call
        my_vsnprintf() if it fails.  */
- 
+
     static char *buf;
     size_t len;
 
@@ -440,7 +440,7 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
       return -1;
     }
   }
-#endif  
+#endif
 }
 
 int my_snprintf(char *str, size_t n, const char *format, ...)
@@ -449,7 +449,7 @@ int my_snprintf(char *str, size_t n, const char *format, ...)
   va_list ap;
 
   assert(format != NULL);
-  
+
   va_start(ap, format);
   ret = my_vsnprintf(str, n, format, ap);
   va_end(ap);

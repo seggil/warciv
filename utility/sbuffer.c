@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ static void sbuf_expand(struct sbuffer *sb)
   void *prev_buffer;
 
   assert(sb && (sb->size>0));
-  
+
   prev_buffer = sb->buffer;
   sb->buffer = fc_malloc(sb->size);
 
@@ -96,9 +96,9 @@ static void sbuf_expand(struct sbuffer *sb)
 static void sbuf_align(struct sbuffer *sb)
 {
   int align_offset;
-  
+
   assert(sb && (sb->offset>0));
-  
+
   align_offset = sb->offset % SBUF_ALIGN_SIZE;
   if (align_offset != 0) {
     sb->offset += SBUF_ALIGN_SIZE - align_offset;
@@ -125,7 +125,7 @@ static struct sbuffer *sbuf_new_size(size_t size)
 }
 
 /**************************************************************************
-  Get a new initialized sbuffer, using default buffer size: 
+  Get a new initialized sbuffer, using default buffer size:
 **************************************************************************/
 struct sbuffer *sbuf_new(void)
 {
@@ -138,7 +138,7 @@ struct sbuffer *sbuf_new(void)
 void *sbuf_malloc(struct sbuffer *sb, size_t size)
 {
   void *ret;
-  
+
   assert(sb && sb->buffer && (sb->size>0) && (sb->offset>0));
   assert(size > 0 && size <= (sb->size-SBUF_ALIGN_SIZE));
 
@@ -163,7 +163,7 @@ char *sbuf_strdup(struct sbuffer *sb, const char *str)
 {
   size_t size = strlen(str)+1;
   char *ret;
-  
+
   assert(sb && sb->buffer && (sb->size>0) && (sb->offset>0));
   assert(size <= (sb->size-sizeof(char*)));
 
@@ -185,7 +185,7 @@ char *sbuf_strdup(struct sbuffer *sb, const char *str)
 void sbuf_free(struct sbuffer *sb)
 {
   assert(sb && sb->buffer);
-  
+
   do {
     void *next = *(char **)sb->buffer;
     free(sb->buffer);

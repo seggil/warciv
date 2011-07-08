@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,17 +11,17 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
   An IO layer to support transparent compression/uncompression.
   (Currently only "required" functionality is supported.)
 
   There are various reasons for making this a full-blown module
   instead of just defining a few macros:
-  
+
   - Ability to switch between compressed and uncompressed at run-time
     (zlib with compression level 0 saves uncompressed, but still with
     gzip header, so non-zlib server cannot read the savefile).
-    
+
   - Flexibility to add other methods if desired (eg, bzip2, arbitrary
     external filter program, etc).
 
@@ -161,7 +161,7 @@ fz_FILE *fz_from_stream(FILE *stream)
 int fz_fclose(fz_FILE *fp)
 {
   int retval = 0;
-  
+
   switch(fp->method) {
 #ifdef HAVE_LIBZ
   case FZ_ZLIB:
@@ -190,7 +190,7 @@ int fz_fclose(fz_FILE *fp)
 char *fz_fgets(char *buffer, int size, fz_FILE *fp)
 {
   char *retval = 0;
-  
+
   switch(fp->method) {
 #ifdef HAVE_LIBZ
   case FZ_ZLIB:
@@ -209,7 +209,7 @@ char *fz_fgets(char *buffer, int size, fz_FILE *fp)
 
 /***************************************************************
   Print formated, like fprintf.
-  
+
   Note: zlib doesn't have gzvfprintf, but thats ok because its
   fprintf only does similar to what we do here (print to fixed
   buffer), and in addition this way we get to use our safe
@@ -222,9 +222,9 @@ int fz_fprintf(fz_FILE *fp, const char *format, ...)
 {
   va_list ap;
   int retval = 0;
-  
+
   va_start(ap, format);
-  
+
   switch(fp->method) {
 #ifdef HAVE_LIBZ
   case FZ_ZLIB:
@@ -258,7 +258,7 @@ int fz_fprintf(fz_FILE *fp, const char *format, ...)
 int fz_ferror(fz_FILE *fp)
 {
   int retval = 0;
-  
+
   switch(fp->method) {
 #ifdef HAVE_LIBZ
   case FZ_ZLIB:
@@ -289,7 +289,7 @@ int fz_ferror(fz_FILE *fp)
 const char *fz_strerror(fz_FILE *fp)
 {
   const char *retval = 0;
-  
+
   switch(fp->method) {
 #ifdef HAVE_LIBZ
   case FZ_ZLIB:

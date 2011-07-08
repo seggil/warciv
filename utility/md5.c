@@ -79,7 +79,7 @@ void create_md5sum(const char *input, int len, char *output)
 }
 
 /**************************************************************************
-  Initialize structure containing state of computation. 
+  Initialize structure containing state of computation.
   (RFC 1321, 3.3: Step 3)
 **************************************************************************/
 void md5_init_ctx(struct md5_ctx *ctx)

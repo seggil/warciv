@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 #endif
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif 
+#endif
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -156,7 +156,7 @@ void adns_init(void)
 {
   dns = dns_new();
   if (dns == NULL) {
-    freelog(LOG_ERROR, 
+    freelog(LOG_ERROR,
 	    _("Failed to initialize asynchronous DNS resolver."));
   }
 }
@@ -205,7 +205,7 @@ static void dns_result_callback(const unsigned char *addr,
   freelog(LOG_DEBUG, "drc dns_result_callback data=%p "
           " qtype=%d hostname=\"%s\" addrlen=%lu",
           data, qtype, hostname, (long unsigned) addrlen);
-  
+
   assert(ctx != NULL);
   assert(ctx->callback != NULL);
 
@@ -310,7 +310,7 @@ int adns_lookup_full(const char *query_data,
     ret = 0;
   } else {
     ctx->req_id = ++adns_request_id;
-    freelog(LOG_DEBUG, "alf hash_insert req_id=%d adns_ctx=%p", 
+    freelog(LOG_DEBUG, "alf hash_insert req_id=%d adns_ctx=%p",
             ctx->req_id, ctx);
     hash_insert(adns_request_table, INT_TO_PTR(ctx->req_id), ctx);
     ret = ctx->req_id;
@@ -359,7 +359,7 @@ void *adns_cancel(int id)
     assert(ctx->req_id == id);
     dns_cancel(dns, ctx);
     if (ctx->datafree) {
-      freelog(LOG_DEBUG, "ac calling datafree %p on userdata %p", 
+      freelog(LOG_DEBUG, "ac calling datafree %p on userdata %p",
               ctx->datafree, ctx->userdata);
       (*ctx->datafree) (ctx->userdata);
     } else {
@@ -376,9 +376,9 @@ void *adns_cancel(int id)
 ***************************************************************************/
 static void destroy_net_lookup_ctx(struct net_lookup_ctx *ctx)
 {
-  
+
   freelog(LOG_DEBUG, "dnlc destroy_net_lookup_ctx %p", ctx);
-           
+
   if (!ctx) {
     return;
   }
@@ -447,7 +447,7 @@ static bool adns_result_callback(const unsigned char *address,
     }
   }
 
-  if (ctx->req_id > 0) { 
+  if (ctx->req_id > 0) {
     /* we were called indirectly, so it's ok to free ctx */
     destroy_net_lookup_ctx(ctx);
     return FALSE;
@@ -466,7 +466,7 @@ void *cancel_net_lookup_service(int id)
   void *ret = NULL;
 
   freelog(LOG_DEBUG, "cnls cancel_net_lookup_service id=%d", id);
-  
+
   check_init_lookup_tables();
 
   freelog(LOG_DEBUG, "cnls hash_delete_entry in nlst id=%d", id);
@@ -479,7 +479,7 @@ void *cancel_net_lookup_service(int id)
   assert(ctx->req_id == id);
 
   if (ctx->datafree) {
-    freelog(LOG_DEBUG, "cnls calling datafree %p on %p", 
+    freelog(LOG_DEBUG, "cnls calling datafree %p on %p",
             ctx->datafree, ctx->userdata);
     (*ctx->datafree) (ctx->userdata);
   } else {
@@ -514,7 +514,7 @@ int net_lookup_service_async(const char *name, int port,
   ctx->addr = fc_calloc(1, sizeof(union my_sockaddr));
   ctx->req_id = 0;
   ctx->adns_id = -1;
-  
+
   if (is_net_service_resolved(name, port, ctx->addr)) {
     freelog(LOG_DEBUG, "nlsa is_net_service_resolved returns TRUE");
     if (ctx->callback != NULL) {
@@ -526,7 +526,7 @@ int net_lookup_service_async(const char *name, int port,
     destroy_net_lookup_ctx(ctx);
     return 0;
   }
-  
+
   /* this may call adns_result_callback directly */
   adns_id = adns_lookup(name, adns_result_callback, ctx, NULL);
   freelog(LOG_DEBUG, "nlsa got adns_id=%d", adns_id);
@@ -537,7 +537,7 @@ int net_lookup_service_async(const char *name, int port,
     destroy_net_lookup_ctx(ctx);
     return -1;
   }
-  
+
   if (adns_id == 0) {
     /* adns_result_callback called already, no lookup required */
     freelog(LOG_DEBUG, "nlsa destroying net_lookup_ctx %p", ctx);
@@ -552,7 +552,7 @@ int net_lookup_service_async(const char *name, int port,
           ctx, ctx->req_id);
   hash_insert(net_lookup_service_table,
               INT_TO_PTR(ctx->req_id), ctx);
-  
+
   return ctx->req_id;
 }
 /***************************************************************
@@ -711,7 +711,7 @@ int my_set_nonblock(int sockfd)
 #endif /* NONBLOCKING_SOCKETS */
   return 0;
 }
-  
+
 /***************************************************************************
   Returns true if the name is already resolved. Also fills in sockaddr_in
   parts of addr that do no require name resolution.
@@ -728,7 +728,7 @@ bool is_net_service_resolved(const char *name, int port,
     sock->sin_addr.s_addr = htonl(INADDR_ANY);
     return TRUE;
   }
-  
+
 #ifdef HAVE_INET_ATON
   if (inet_aton(name, &sock->sin_addr) != 0) {
     return TRUE;
@@ -738,10 +738,10 @@ bool is_net_service_resolved(const char *name, int port,
     return TRUE;
   }
 #endif
-  
+
   return FALSE;
 }
- 
+
 /***************************************************************************
   Look up the service at hostname:port and fill in *sa.
 ***************************************************************************/
@@ -749,19 +749,19 @@ bool net_lookup_service(const char *name, int port, union my_sockaddr *addr)
 {
   struct hostent *hp;
   struct sockaddr_in *sock = &addr->sockaddr_in;
-  
+
   if (is_net_service_resolved(name, port, addr))
     return TRUE;
-  
+
   hp = gethostbyname(name);
   if (!hp || hp->h_addrtype != AF_INET) {
     return FALSE;
   }
-  
+
   memcpy(&sock->sin_addr, hp->h_addr, hp->h_length);
   return TRUE;
 }
- 
+
 /*************************************************************************
   Writes buf to socket and returns the response in an fz_FILE.
   Use only on blocking sockets.
@@ -769,27 +769,27 @@ bool net_lookup_service(const char *name, int port, union my_sockaddr *addr)
 fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 {
   FILE *fp;
-  
+
 #ifdef HAVE_FDOPEN
   fp = fdopen(sock, "r+b");
   if (fwrite(buf, 1, size, fp) != size) {
     die("socket %d: write error", sock);
   }
   fflush(fp);
-  
+
   /* we don't use my_closesocket on sock here since when fp is closed
    * sock will also be closed. fdopen doesn't dup the socket descriptor. */
 #else
   {
     char tmp[4096];
     int n;
-    
+
     fp = my_tmpfile();
-    
+
     if (fp == NULL) {
       return NULL;
     }
-    
+
     my_writesocket(sock, buf, size);
 
     while ((n = my_readsocket(sock, tmp, sizeof(tmp))) > 0) {
@@ -798,16 +798,16 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
       }
     }
     fflush(fp);
-    
+
     my_closesocket(sock);
-    
+
     rewind(fp);
   }
 #endif
-  
+
   return fz_from_stream(fp);
 }
- 
+
 /*************************************************************************
   Returns a valid httpd server and port, plus the path to the resource
   at the url location.
@@ -815,7 +815,7 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 const char *my_lookup_httpd(char *server, int *port, const char *url)
 {
   const char *purl, *str, *ppath, *pport;
-  
+
   if ((purl = getenv("http_proxy")) && purl[0] != '\0') {
     if (strncmp(purl, "http://", strlen("http://")) != 0) {
       return NULL;
@@ -828,12 +828,12 @@ const char *my_lookup_httpd(char *server, int *port, const char *url)
     }
     str = url;
   }
-  
+
   str += strlen("http://");
 
   pport = strchr(str, ':');
   ppath = strchr(str, '/');
-  
+
   /* snarf server. */
   server[0] = '\0';
 
@@ -888,7 +888,7 @@ const char *my_url_encode(const char *txt)
   if (sizeof(buf) <= (3*strlen(txt))) {
     return "";
   }
-  
+
   for (ptr = buf; *txt != '\0'; txt++) {
     ch = (unsigned char) *txt;
 
@@ -906,9 +906,9 @@ const char *my_url_encode(const char *txt)
   return buf;
 }
 
-/************************************************************************** 
+/**************************************************************************
   Finds the next (lowest) free port.
-**************************************************************************/ 
+**************************************************************************/
 int find_next_free_port(int starting_port)
 {
   int port, s = socket(AF_INET, SOCK_STREAM, 0);
@@ -929,6 +929,6 @@ int find_next_free_port(int starting_port)
   }
 
   my_closesocket(s);
-  
+
   return port;
 }

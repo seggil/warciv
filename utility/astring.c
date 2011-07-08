@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
   Allocated/allocatable strings (and things?)
   original author: David Pfitzner <dwp@mso.anu.edu.au>
 
@@ -71,14 +71,14 @@ void astr_minsize(struct astring *astr, size_t n)
 {
   int n1;
   bool was_null = (astr->n == 0);
-  
+
   assert(astr != NULL);
-  
+
   astr->n = n;
   if (n <= astr->n_alloc) {
     return;
   }
-  
+
   /* allocated more if this is only a small increase on before: */
   n1 = (3*(astr->n_alloc+10)) / 2;
   astr->n_alloc = (n > n1) ? n : n1;
@@ -97,7 +97,7 @@ void astr_free(struct astring *astr)
   struct astring zero_astr = ASTRING_INIT;
 
   assert(astr != NULL);
-  
+
   if (astr->n_alloc > 0) {
     assert(astr->str != NULL);
     free(astr->str);

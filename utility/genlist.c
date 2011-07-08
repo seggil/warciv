@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
    data, and pointers to the next and previous elements:
 */
 struct _genlist_link {
-  genlist_link *next, *prev; 
+  genlist_link *next, *prev;
   void *dataptr;
 };
 
@@ -142,11 +142,11 @@ void genlist_unlink(genlist *pgenlist, void *punlink)
 {
   if (pgenlist->nelements > 0) {
     genlist_link *plink = pgenlist->head_link;
-    
+
     while (plink != NULL && plink->dataptr != punlink) {
       plink = plink->next;
     }
-    
+
     if (plink) {
       if (pgenlist->head_link == plink) {
 	 pgenlist->head_link = plink->next;
@@ -249,7 +249,7 @@ static genlist_link *find_genlist_position(const genlist *pgenlist, int pos)
 
 /************************************************************************
  Sort the elements of a genlist.
- 
+
  The comparison function should be a function usable by qsort; note
  that the const void * arguments to compar should really be "pointers to
  void*", where the void* being pointed to are the genlist dataptrs.
@@ -272,9 +272,9 @@ void genlist_sort(genlist *pgenlist, int (*compar)(const void *, const void *))
   for (i = 0, myiter = pgenlist->head_link; i < n; i++, myiter = myiter->next) {
     sortbuf[i] = genlist_link_get_data(myiter);
   }
-  
+
   qsort(sortbuf, n, sizeof(*sortbuf), compar);
-  
+
   for (i = 0, myiter = pgenlist->head_link; i < n; i++, myiter = myiter->next) {
     myiter->dataptr = sortbuf[i];
   }

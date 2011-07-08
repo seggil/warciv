@@ -169,16 +169,16 @@ static int getdnsip(struct dns *dns)
   char subkey[512], value[128], *key =
     "SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces";
 
-  if ((err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey)) 
+  if ((err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &hKey))
       != ERROR_SUCCESS) {
     freelog(LOG_ERROR, "Cannot open registry key %s: %d", key, err);
   } else {
     for (i = 0, tlen =  sizeof(subkey);
-         RegEnumKeyEx(hKey, i, subkey, &tlen, NULL, NULL, NULL, NULL) == 
+         RegEnumKeyEx(hKey, i, subkey, &tlen, NULL, NULL, NULL, NULL) ==
 	   ERROR_SUCCESS;
          i++, tlen =  sizeof(subkey)) {
       DWORD type, len = sizeof(value);
-      if (RegOpenKeyEx(hKey, subkey, 0, KEY_ALL_ACCESS, &hSub) 
+      if (RegOpenKeyEx(hKey, subkey, 0, KEY_ALL_ACCESS, &hSub)
 	  == ERROR_SUCCESS
           && (RegQueryValueEx(hSub, "DhcpNameServer", 0,
                               &type, value, &len) == ERROR_SUCCESS
@@ -227,19 +227,19 @@ struct dns *dns_new(void)
 
   dns = fc_calloc(1, sizeof(struct dns));
   dns->sock = -1;
-  
+
   if ((dns->sock = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
     freelog(LOG_ERROR, _("Failed to create UDP socket: %s"),
             mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
-  
+
   if (my_set_nonblock(dns->sock) == -1) {
     freelog(LOG_ERROR, _("Failed to set non-blocking mode on UDP socket: %s"),
 	    mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
- 
+
   if (getdnsip(dns) == -1) {
     freelog(LOG_ERROR, _("Could not find address of DNS resolver host."));
     goto FAILED;
@@ -257,18 +257,18 @@ struct dns *dns_new(void)
              mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
-  
+
   dns->active = hash_new(hash_fval_uint16_t, hash_fcmp_uint16_t);
   dns->cache = hash_new(hash_fval_string, hash_fcmp_string_ci);
 
   /* Not cryptographically strong, but good enough here for now. */
   seed = (uint32_t) time(NULL);
   dns->tid = hash_fval_uint32_t(UINT32_T_TO_PTR(seed), 0xffffffff);
-  
+
   return dns;
-  
+
 FAILED:
-  dns_destroy(dns);  
+  dns_destroy(dns);
   return NULL;
 }
 
@@ -336,7 +336,7 @@ static struct query *find_cached_query(struct dns *dns,
     freelog(LOG_DEBUG, "fcq \"%s\" --> query %p", name, pq);
   } hash_kv_iterate_end;
 #endif
-  
+
   q = hash_lookup_data(dns->cache, name);
   freelog(LOG_DEBUG, "fcq %sfound query=%p", q ? "" : "NOT ", q);
   return q;
@@ -399,7 +399,7 @@ static void parse_udp(struct dns *dns)
   bool found = FALSE;
 
   freelog(LOG_DEBUG, "pu parse_udp");
-  
+
   /* We sent 1 query. The response must also have a query count of 1. */
   header = (struct header *) dns->buf;
   if (ntohs(header->nqueries) != 1) {
@@ -420,7 +420,7 @@ static void parse_udp(struct dns *dns)
           header->flags, flags);
   rcode = flags & 0x000f;
   freelog(LOG_DEBUG, "pu rcode=%d", rcode);
-  
+
   if (rcode == 1) {
     freelog(LOG_ERROR, _("DNS query failed: query format error."));
     goto QUERY_FAILED;
@@ -503,15 +503,15 @@ static void parse_udp(struct dns *dns)
     if (p + dlen > e) {
       return;
     }
-    
+
     ttl = ntohl(*((uint32_t *) (p - 6)));
     q->expire = time(NULL) + (time_t) ttl;
     if (q->expire < 0) {
       q->expire = (time_t) INT_MAX;
     }
-    freelog(LOG_DEBUG, "pu got ttl=%u, set expire=%ld", 
+    freelog(LOG_DEBUG, "pu got ttl=%u, set expire=%ld",
             ttl, q->expire);
-    
+
     if (q->qtype == DNS_MX_RECORD) {
       /* Skip 2 byte preference field */
       fetch((const unsigned char *) (dns->buf),
@@ -577,7 +577,7 @@ void dns_poll(struct dns *dns)
             inet_ntoa(sa.sin_addr), inet_ntoa(dns->sa.sin_addr));
     return;
   }
-  
+
   if (nb < 0) {
     if (my_socket_would_block(err_no)
         || my_socket_operation_in_progess(err_no)) {
@@ -587,22 +587,22 @@ void dns_poll(struct dns *dns)
               mystrsocketerror(mysocketerrno()));
     }
   }
-  
+
   if (nb > 0) {
     dns->buflen += nb;
     if (dns->buflen > sizeof(struct header)) {
       parse_udp(dns);
     } else {
-      freelog(LOG_VERBOSE, 
+      freelog(LOG_VERBOSE,
 	      _("Ignoring UDP packet since it is smaller "
 		"than the size of a DNS packet header (%lu < %lu)."),
-	      (long unsigned) dns->buflen, 
+	      (long unsigned) dns->buflen,
 	      (long unsigned) sizeof(struct header));
     }
   }
 
   dns->buflen = 0;
-  
+
 }
 
 /**************************************************************************
@@ -666,7 +666,7 @@ void dns_queue(struct dns *dns,
   freelog(LOG_DEBUG, "dq dns_queue dns=%p userdata=%p name=\"%s\""
           " qtype=%d callback=%p", dns, userdata, name, qtype,
           callback);
-  
+
   /* Search the cache first */
   if ((query = find_cached_query(dns, qtype, name)) != NULL) {
     freelog(LOG_DEBUG, "dq found cached query for \"%s\": query %p",
@@ -771,7 +771,7 @@ void dns_queue(struct dns *dns,
     freelog(LOG_DEBUG, "dq sending dns packet n=%d to resolver=%s", n,
             resolver);
   }
-  
+
   nb = sendto(dns->sock, pkt, n, 0, (struct sockaddr *) &dns->sa,
               sizeof(dns->sa));
 
@@ -800,7 +800,7 @@ void dns_check_expired(struct dns *dns)
 
   now = time(NULL);
   freelog(LOG_DEBUG, "dce dns_check_expired dns=%p now=%lu", dns, now);
-  
+
   /* Cleanup expired active queries */
   hash_values_iterate(dns->active, value) {
     query = value;
@@ -812,7 +812,7 @@ void dns_check_expired(struct dns *dns)
       destroy_query(dns, query);
     }
   } hash_values_iterate_end;
-  
+
   /* Cleanup cached queries */
   hash_kv_iterate(dns->cache, char *, name, struct query *, query) {
     if (query->expire < now) {

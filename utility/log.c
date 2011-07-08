@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ int log_parse_level_str(const char *level_str)
   int n = 0;			/* number of filenames */
   int i;
   int level;
-  
+
 #ifdef DEBUG
   const int max_level = LOG_DEBUG;
 #else
@@ -78,7 +78,7 @@ int log_parse_level_str(const char *level_str)
     logd_files = NULL;
   }
   logd_init_counter++;
-  
+
   c = level_str;
   n = 0;
   while((c = strchr(c, ':'))) {
@@ -118,10 +118,10 @@ int log_parse_level_str(const char *level_str)
   logd_num_files = n;
   logd_files = (struct logd_fileinfo *)
     fc_malloc(n * sizeof(struct logd_fileinfo));
-  
+
   dup = mystrdup(c+2);
   tok = strtok(dup, ":");
-  
+
   if (!tok) {
     fc_fprintf(stderr, _("Badly formed log level argument \"%s\".\n"),
 	       level_str);
@@ -177,7 +177,7 @@ int log_parse_level_str(const char *level_str)
 
 /**************************************************************************
   Initialise the log module. Either 'filename' or 'callback' may be NULL.
-  If both are NULL, print to stderr. If both are non-NULL, both callback, 
+  If both are NULL, print to stderr. If both are non-NULL, both callback,
   and fprintf to file.
 **************************************************************************/
 void log_init(const char *filename, int initial_level,
@@ -211,7 +211,7 @@ void log_set_callback(log_callback_fn callback)
 }
 
 /**************************************************************************
-  Return an updated struct logdebug_afile_info: 
+  Return an updated struct logdebug_afile_info:
 **************************************************************************/
 struct logdebug_afile_info logdebug_update(const char *file)
 {
@@ -281,7 +281,7 @@ void vreal_freelog(int level, const char *message, va_list ap)
 
     if (log_filename) {
       if(!(fs=fopen(log_filename, "a"))) {
-	fc_fprintf(stderr, _("Couldn't open logfile: %s for appending.\n"), 
+	fc_fprintf(stderr, _("Couldn't open logfile: %s for appending.\n"),
 		log_filename);
 	exit(EXIT_FAILURE);
       }
@@ -290,7 +290,7 @@ void vreal_freelog(int level, const char *message, va_list ap)
     }
 
     my_vsnprintf(bufbuf1 ? bufbuf[1] : bufbuf[0], MAX_LEN_LOG_LINE, message, ap);
-    
+
     if(level==prev_level && 0==strncmp(bufbuf[0],bufbuf[1],MAX_LEN_LOG_LINE-1)){
       repeated++;
       if(repeated==next){
@@ -299,8 +299,8 @@ void vreal_freelog(int level, const char *message, va_list ap)
 		        "last message repeated %d times",
 			repeated-prev), repeated-prev);
 	if (repeated>2) {
-	  cat_snprintf(buf, sizeof(buf), 
-	               PL_(" (total %d repeat)", " (total %d repeats)", repeated), 
+	  cat_snprintf(buf, sizeof(buf),
+	               PL_(" (total %d repeat)", " (total %d repeats)", repeated),
 		       repeated);
 	}
 	log_write(fs, prev_level, buf);
@@ -314,13 +314,13 @@ void vreal_freelog(int level, const char *message, va_list ap)
 	  log_write(fs, prev_level, bufbuf1 ? bufbuf[0] : bufbuf[1]);
 	} else {
           my_snprintf(buf, sizeof(buf),
-                      PL_("last message repeated %d time", 
-                          "last message repeated %d times", repeated - prev), 
+                      PL_("last message repeated %d time",
+                          "last message repeated %d times", repeated - prev),
                       repeated - prev);
 	  if (repeated > 2) {
-	    cat_snprintf(buf, sizeof(buf), 
+	    cat_snprintf(buf, sizeof(buf),
 	                 PL_(" (total %d repeat)", " (total %d repeats)",
-			     repeated), 
+			     repeated),
 			 repeated);
 	  }
 	  log_write(fs, prev_level, buf);

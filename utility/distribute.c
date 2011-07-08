@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ void distribute(int number, int groups, int *ratios, int *result)
   const int original_number = number;
 #endif
 
-  /* 
+  /*
    * Distribution of a number of items into a number of groups with a given
    * ratio.  This follows a modified Hare/Niemeyer algorithm (also known
    * as "Hamilton's Method"):

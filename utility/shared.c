@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -118,9 +118,9 @@ char *create_centered_string(const char *s)
   }
   if(maxlen<curlen)
     maxlen=curlen;
-  
+
   r=rn=fc_malloc(nlines*(maxlen+1));
-  
+
   curlen=0;
   for(cp0=cp=s; *cp != '\0'; cp++) {
     if(*cp!='\n')
@@ -189,7 +189,7 @@ bool is_option(const char *option_name,char *option)
 }
 
 /***************************************************************
-  Like strcspn but also handles quotes, i.e. *reject chars are 
+  Like strcspn but also handles quotes, i.e. *reject chars are
   ignored if they are inside single or double quotes.
 ***************************************************************/
 static size_t my_strcspn(const char *s, const char *reject)
@@ -220,9 +220,9 @@ static size_t my_strcspn(const char *s, const char *reject)
  Splits the string into tokens. The individual tokens are
  returned. The delimiterset can freely be chosen.
 
- i.e. "34 abc 54 87" with a delimiterset of " " will yield 
+ i.e. "34 abc 54 87" with a delimiterset of " " will yield
       tokens={"34", "abc", "54", "87"}
- 
+
  Part of the input string can be quoted (single or double) to embedded
  delimiter into tokens. For example,
    command 'a name' hard "1,2,3,4,5" 99
@@ -284,7 +284,7 @@ int get_tokens_full(const char *str,
         str++;
       }
     }
-  
+
     tokens[token] = fc_malloc(len + 1);
     (void) mystrlcpy(tokens[token], str, len + 1);	/* adds the '\0' */
 
@@ -417,7 +417,7 @@ bool is_ascii_name(const char *name)
 
   /* must not be NULL or empty */
   if (!name || *name == '\0') {
-    return FALSE; 
+    return FALSE;
   }
 
   /* must begin and end with some non-space character */
@@ -449,7 +449,7 @@ bool is_ascii_name(const char *name)
 const char *textyear(int year)
 {
   static char y[32];
-  if (year<0) 
+  if (year<0)
     my_snprintf(y, sizeof(y), _("%d BC"), -year);
   else
     my_snprintf(y, sizeof(y), _("%d AD"), year);
@@ -503,7 +503,7 @@ const char *skip_leading_spaces(const char *s)
 static void remove_leading_spaces(char *s)
 {
   const char *t;
-  
+
   assert(s!=NULL);
   t = skip_leading_spaces(s);
   if (t != s) {
@@ -522,7 +522,7 @@ void remove_trailing_spaces(char *s)
 {
   char *t;
   size_t len;
-  
+
   assert(s!=NULL);
   len = strlen(s);
   if (len > 0) {
@@ -553,7 +553,7 @@ void remove_leading_trailing_spaces(char *s)
 static void remove_trailing_char(char *s, char trailing)
 {
   char *t;
-  
+
   assert(s!=NULL);
   t = s + strlen(s) -1;
   while(t>=s && (*t) == trailing) {
@@ -571,7 +571,7 @@ int wordwrap_string(char *s, int len)
 {
   int num_lines = 0;
   int slen = strlen(s);
-  
+
   /* At top of this loop, s points to the rest of string,
    * either at start or after inserted newline: */
  top:
@@ -579,7 +579,7 @@ int wordwrap_string(char *s, int len)
     char *c;
 
     num_lines++;
-    
+
     /* check if there is already a newline: */
     for(c=s; c<s+len; c++) {
       if (*c == '\n') {
@@ -588,7 +588,7 @@ int wordwrap_string(char *s, int len)
 	goto top;
       }
     }
-    
+
     /* find space and break: */
     for(c=s+len; c>s; c--) {
       if (my_isspace(*c)) {
@@ -634,11 +634,11 @@ char *end_of_strn(char *str, int *nleft)
   return str + len;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Check the length of the given string.  If the string is too long,
   log errmsg, which should be a string in printf-format taking up to
   two arguments: the string and the length.
-**********************************************************************/ 
+**********************************************************************/
 bool check_strlen(const char *str, size_t len, const char *errmsg)
 {
   if (strlen(str) >= len) {
@@ -649,7 +649,7 @@ bool check_strlen(const char *str, size_t len, const char *errmsg)
   return FALSE;
 }
 
-/********************************************************************** 
+/**********************************************************************
   Call check_strlen() on str and then strlcpy() it into buffer.
 **********************************************************************/
 size_t loud_strlcpy(char *buffer, const char *str, size_t len,
@@ -659,17 +659,17 @@ size_t loud_strlcpy(char *buffer, const char *str, size_t len,
   return mystrlcpy(buffer, str, len);
 }
 
-/********************************************************************** 
+/**********************************************************************
  cat_snprintf is like a combination of my_snprintf and mystrlcat;
  it does snprintf to the end of an existing string.
- 
+
  Like mystrlcat, n is the total length available for str, including
  existing contents and trailing nul.  If there is no extra room
- available in str, does not change the string. 
+ available in str, does not change the string.
 
  Also like mystrlcat, returns the final length that str would have
  had without truncation.  I.e., if return is >= n, truncation occurred.
-**********************************************************************/ 
+**********************************************************************/
 int cat_snprintf(char *str, size_t n, const char *format, ...)
 {
   size_t len;
@@ -679,10 +679,10 @@ int cat_snprintf(char *str, size_t n, const char *format, ...)
   assert(format != NULL);
   assert(str != NULL);
   assert(n>0);
-  
+
   len = strlen(str);
   assert(len < n);
-  
+
   va_start(ap, format);
   ret = my_vsnprintf(str+len, n-len, format, ap);
   va_end(ap);
@@ -721,7 +721,7 @@ char *user_home_dir(void)
 #else
   static bool init = FALSE;
   static char *home_dir = NULL;
-  
+
   if (!init) {
     char *env = getenv("HOME");
     if (env) {
@@ -749,7 +749,7 @@ char *user_home_dir(void)
 /***************************************************************************
   Returns string which gives user's username, as specified by $USER or
   as given in password file for this user's uid, or a made up name if
-  we can't get either of the above. 
+  we can't get either of the above.
   Gets value once, and then caches result.
   Note the caller should not mess with returned string.
 ***************************************************************************/
@@ -861,9 +861,9 @@ static const char **get_data_dirs(int *num_dirs)
     path = DEFAULT_DATA_PATH;
   }
   assert(path != NULL);
-  
+
   path2 = mystrdup(path);	/* something we can strtok */
-    
+
   tok = strtok(path2, PATH_SEPARATOR);
   do {
     int i;			/* strlen(tok), or -1 as flag */
@@ -873,7 +873,7 @@ static const char **get_data_dirs(int *num_dirs)
     if (strcmp(tok, "/") != 0) {
       remove_trailing_char(tok, '/');
     }
-      
+
     i = strlen(tok);
     if (tok[0] == '~') {
       if (i > 1 && tok[1] != '/') {
@@ -919,7 +919,7 @@ static const char **get_data_dirs(int *num_dirs)
   dirs[num] = NULL;
 
   free(path2);
-  
+
   if (num_dirs) {
     *num_dirs = num;
   }
@@ -1028,7 +1028,7 @@ const char **datafilelist(const char* suffix)
   If the specified 'filename' is NULL, the returned string contains
   the effective data path.  (But this should probably only be used for
   debug output.)
-  
+
   Returns NULL if the specified filename cannot be found in any of the
   data directories.  (A file is considered "found" if it can be
   read-opened.)  The returned pointer points to static memory, so this
@@ -1058,11 +1058,11 @@ char *datafilename(const char *filename)
     }
     return realfile.str;
   }
-  
+
   for (i = 0; i < num_dirs; i++) {
     struct stat buf;		/* see if we can open the file or directory */
     size_t len = strlen(dirs[i]) + strlen(filename) + 2;
-    
+
     astr_minsize(&realfile, len);
     my_snprintf(realfile.str, len, "%s/%s", dirs[i], filename);
     if (stat(realfile.str, &buf) == 0) {
@@ -1103,7 +1103,7 @@ void free_datafile_list(struct datafile_list *pdl)
   if (!pdl) {
     return;
   }
-  
+
   datafile_list_iterate(pdl, pfile) {
     if (pfile) {
       if (pfile->name) {
@@ -1227,7 +1227,7 @@ struct datafile_list *datafilelist_infix(const char *subpath,
 char *datafilename_required(const char *filename)
 {
   char *dname;
-  
+
   assert(filename!=NULL);
   dname = datafilename(filename);
 
@@ -1249,7 +1249,7 @@ char *datafilename_required(const char *filename)
 ***************************************************************************/
 void init_nls(void)
 {
-  /* 
+  /*
    * Setup the cached locale numeric formatting information. Defaults
    * are as appropriate for the US.
    */
@@ -1515,11 +1515,11 @@ char *get_multicast_group(void)
   static bool init = FALSE;
   static char *group = NULL;
   static char *default_multicast_group = "225.0.0.1";
-  
+
   if (!init) {
     char *env = getenv("FREECIV_MULTICAST_GROUP");
     if (env) {
-      group = mystrdup(env);	        
+      group = mystrdup(env);
     } else {
       group = mystrdup(default_multicast_group);
     }

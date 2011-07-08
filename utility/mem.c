@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 /**********************************************************************
  Do whatever we should do when malloc fails.
  At the moment this just prints a log message and calls exit(EXIT_FAILURE)
-**********************************************************************/ 
+**********************************************************************/
 static void handle_alloc_failure(size_t size, const char *called_as,
 				 int line, const char *file)
 {
@@ -64,14 +64,14 @@ static void sanity_check_size(size_t size, const char *called_as,
 /**********************************************************************
  Function used by fc_malloc macro, malloc() replacement
  No need to check return value.
-**********************************************************************/ 
+**********************************************************************/
 void *fc_real_malloc(size_t size,
 		     const char *called_as, int line, const char *file)
 {
   void *ptr;
 
   sanity_check_size(size, called_as, line, file);
-    
+
   ptr = malloc(size);
   if (!ptr) {
     handle_alloc_failure(size, called_as, line, file);
@@ -82,12 +82,12 @@ void *fc_real_malloc(size_t size,
 /**********************************************************************
  Function used by fc_realloc macro, realloc() replacement
  No need to check return value.
-**********************************************************************/ 
+**********************************************************************/
 void *fc_real_realloc(void *ptr, size_t size,
 		      const char *called_as, int line, const char *file)
 {
   void *new_ptr;
-  
+
   if (!ptr) {
     return fc_real_malloc(size, called_as, line, file);
   }
@@ -110,13 +110,13 @@ void *fc_real_realloc(void *ptr, size_t size,
  Except this function doesn't support calloc-ing more memory than
  can be expressing using a single size_t, but that's not likely
  to be a problem.
-**********************************************************************/ 
+**********************************************************************/
 void *fc_real_calloc(size_t nelem, size_t elsize,
 		     const char *called_as, int line, const char *file)
 {
   size_t size = nelem*elsize;	/* potential overflow */
   void *ptr;
-    
+
   ptr = fc_real_malloc(size, called_as, line, file);
   memset(ptr, 0, size);
   return ptr;
@@ -126,7 +126,7 @@ void *fc_real_calloc(size_t nelem, size_t elsize,
  Function used by mystrdup macro, strdup() replacement
  No need to check return value.
 ***************************************************************/
-char *real_mystrdup(const char *str, 
+char *real_mystrdup(const char *str,
 		    const char *called_as, int line, const char *file)
 {
   char *dest = fc_real_malloc(strlen(str)+1, called_as, line, file);

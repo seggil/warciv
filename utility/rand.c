@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 /*************************************************************************
-   The following random number generator can be found in _The Art of 
+   The following random number generator can be found in _The Art of
    Computer Programming Vol 2._ (2nd ed) by Donald E. Knuth. (C)  1998.
    The algorithm is described in section 3.2.2 as Mitchell and Moore's
    variant of a standard additive number generator.  Note that the
@@ -69,7 +69,7 @@ static RANDOM_STATE rand_state;
   Then max <= MAX_UINT32 implies
 	 size * divisor <= (MAX_UINT32+1)
   thus   divisor <= (MAX_UINT32+1)/size
-  
+
   Need to calculate this divisor.  Want divisor as large as possible
   given above contraint, but it doesn't hurt us too much if it is a
   bit smaller (just have to repeat more often).  Calculation exactly
@@ -77,20 +77,20 @@ static RANDOM_STATE rand_state;
   directly representable in type RANDOM_TYPE, so we do instead:
          divisor = MAX_UINT32/size
 *************************************************************************/
-RANDOM_TYPE myrand(RANDOM_TYPE size) 
+RANDOM_TYPE myrand(RANDOM_TYPE size)
 {
   RANDOM_TYPE new_rand, divisor, max;
   int bailout = 0;
 
   assert(rand_state.is_init);
-    
+
   if (size > 1) {
     divisor = MAX_UINT32 / size;
     max = size * divisor - 1;
   } else {
     /* size == 0 || size == 1 */
 
-    /* 
+    /*
      * These assignments are only here to make the compiler
      * happy. Since each usage is guarded with a if(size>1).
      */
@@ -124,14 +124,14 @@ RANDOM_TYPE myrand(RANDOM_TYPE size)
   /* freelog(LOG_DEBUG, "rand(%u) = %u", size, new_rand); */
 
   return new_rand;
-} 
+}
 
 /*************************************************************************
   Initialize the generator; see comment at top of file.
 *************************************************************************/
-void mysrand(RANDOM_TYPE seed) 
-{ 
-    int  i; 
+void mysrand(RANDOM_TYPE seed)
+{
+    int  i;
 
     rand_state.v[0]=(seed & MAX_UINT32);
 
@@ -155,7 +155,7 @@ void mysrand(RANDOM_TYPE seed)
     for (i=0; i<10000; i++) {
       (void) myrand(MAX_UINT32);
     }
-} 
+}
 
 /*************************************************************************
   Return whether the current state has been initialized.

@@ -37,7 +37,7 @@ struct pqueue {
 
 /**********************************************************************
   Initialize the queue.
- 
+
   initial_size is the numer of queue items for which memory should be
   preallocated, that is, the initial size of the item array the queue
   uses. If you insert more than n items to the queue, another n items
@@ -98,7 +98,7 @@ void pq_insert(struct pqueue *q, pq_data_t datum, int datum_priority)
 /*******************************************************************
   Remove the highest-ranking item from the queue and store it in
   dest. dest maybe NULL.
- 
+
   Return value:
      TRUE   The value of the item that has been removed.
      FALSE  No item could be removed, because the queue was empty.
@@ -143,7 +143,7 @@ bool pq_remove(struct pqueue * q, pq_data_t *dest)
 
 /*********************************************************************
   Store the highest-ranking item in dest without removing it
- 
+
   Return values:
      TRUE   dest was set.
      FALSE  The queue is empty.
