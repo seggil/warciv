@@ -18,10 +18,12 @@ REVSTATE="OFF"
 REV="dist"
 
 if test -e "$1/NO_GEN_SVNREV" ; then
+  echo "NO_GEN_SVNREV"
   exit
 fi
 
-(cd "$INPUTDIR"
+(echo "GENERATE_SVN_REV"
+ cd "$INPUTDIR"
  # Check that all commands required by this script are available
  # If not, we will not claim to know which svn revision this is
  # (REVSTATE will be OFF)
