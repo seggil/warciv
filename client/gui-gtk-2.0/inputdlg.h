@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget *input_dialog_create(GtkWindow *parent, const char *dialogname, 
+GtkWidget *input_dialog_create(GtkWindow *parent, const char *dialogname,
 			       const char *text, const char *postinputtest,
-			       GCallback ok_callback, gpointer ok_cli_data, 
+			       GCallback ok_callback, gpointer ok_cli_data,
 			       GCallback cancel_callback,
 			       gpointer cancel_cli_data);
 
