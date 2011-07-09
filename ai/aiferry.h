@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 
 struct pf_path;
 
-/* 
+/*
  * Initialize ferrybaot-related statistics in the ai data.
  */
 void aiferry_init_stats(struct player *pplayer);
 
-/* 
- * Find the nearest boat.  Can be called from inside the continents too 
+/*
+ * Find the nearest boat.  Can be called from inside the continents too
  */
 int aiferry_find_boat(struct unit *punit, int cap, struct pf_path **path);
 
@@ -35,7 +35,7 @@ int aiferry_find_boat(struct unit *punit, int cap, struct pf_path **path);
 void aiferry_clear_boat(struct unit *punit);
 
 /*
- * Go to the destination by hitching a ride on a boat.  Will try to find 
+ * Go to the destination by hitching a ride on a boat.  Will try to find
  * a beachhead but it works better if (dest_x, dest_y) is on the coast.
  */
 bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,

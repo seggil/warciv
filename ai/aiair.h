@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 struct ai_choice;
 
 void ai_manage_airunit(struct player *pplayer, struct unit *punit);
-bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity, 
+bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity,
 			    struct ai_choice *choice);
 
 int ai_evaluate_tile_for_attack(struct unit *punit, struct tile *dst_tile);

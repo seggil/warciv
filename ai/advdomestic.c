@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,17 +42,17 @@
 /***************************************************************************
  * Evaluate the need for units (like caravans) that aid wonder construction.
  * If another city is building wonder and needs help but pplayer is not
- * advanced enough to build caravans, the corresponding tech will be 
+ * advanced enough to build caravans, the corresponding tech will be
  * stimulated.
  ***************************************************************************/
 static void ai_choose_help_wonder(struct city *pcity,
 				  struct ai_choice *choice)
 {
   struct player *pplayer = city_owner(pcity);
-  /* Continent where the city is --- we won't be aiding any wonder 
+  /* Continent where the city is --- we won't be aiding any wonder
    * construction on another continent */
   Continent_id continent = map_get_continent(pcity->tile);
-  /* Total count of caravans available or already being built 
+  /* Total count of caravans available or already being built
    * on this continent */
   int caravans = 0;
   /* The type of the caravan */
@@ -83,9 +83,9 @@ static void ai_choose_help_wonder(struct city *pcity,
 
   /* Check all wonders in our cities being built, if one isn't worth a little
    * help */
-  city_list_iterate(pplayer->cities, acity) {  
+  city_list_iterate(pplayer->cities, acity) {
     unit_type = best_role_unit(pcity, F_HELP_WONDER);
-    
+
     if (unit_type == U_LAST) {
       /* We cannot build such units yet
        * but we will consider it to stimulate science */
@@ -102,7 +102,7 @@ static void ai_choose_help_wonder(struct city *pcity,
         && acity != pcity
         && (build_points_left(acity)
 	    > unit_build_shield_cost(unit_type) * caravans)) {
-      
+
       /* Desire for the wonder we are going to help - as much as we want to
        * build it we want to help building it as well. */
       int want = pcity->server.ai.building_want[acity->currently_building];
@@ -114,11 +114,11 @@ static void ai_choose_help_wonder(struct city *pcity,
        * warmap generation than there would be otherwise. -- Syela *
        * Value of 8 is a total guess and could be wrong, but it's still better
        * than 0. -- Syela */
-      int dist = pcity->server.ai.distance_to_wonder_city * 8 / 
+      int dist = pcity->server.ai.distance_to_wonder_city * 8 /
         get_unit_type(unit_type)->move_rate;
 
       want -= dist;
-      
+
       if (can_build_unit_direct(pcity, unit_type)) {
         if (want > choice->want) {
           choice->want = want;
@@ -135,7 +135,7 @@ static void ai_choose_help_wonder(struct city *pcity,
   } city_list_iterate_end;
 }
 
-/************************************************************************** 
+/**************************************************************************
   This function should fill the supplied choice structure.
 
   If want is 0, this advisor doesn't want anything.
@@ -170,7 +170,7 @@ void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
      * -- Syela */
 
     if (want > 0) {
-      CITY_LOG(LOG_DEBUG, pcity, "desires terrain improvers with passion %d", 
+      CITY_LOG(LOG_DEBUG, pcity, "desires terrain improvers with passion %d",
                want);
       choice->want = want;
       choice->type = CT_NONMIL;
@@ -194,7 +194,7 @@ void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
       choice->need_boat = pcity->server.ai.founder_boat;
       choice->type = CT_NONMIL;
       ai_choose_role_unit(pplayer, pcity, choice, F_CITIES, want);
-      
+
     } else if (want < -choice->want) {
       /* We need boats to colonize! */
       CITY_LOG(LOG_DEBUG, pcity, "desires founders with passion %d and asks"
@@ -211,7 +211,7 @@ void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
     struct ai_choice cur;
 
     init_choice(&cur);
-    /* Consider building caravan-type units to aid wonder construction */  
+    /* Consider building caravan-type units to aid wonder construction */
     ai_choose_help_wonder(pcity, &cur);
     copy_if_better_choice(&cur, choice);
 

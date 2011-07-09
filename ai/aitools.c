@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,15 +78,15 @@ int military_amortize(struct player *pplayer, struct city *pcity,
 }
 
 /**********************************************************************
-  There are some signs that a player might be dangerous: We are at 
-  war with him, he has lousy reputation, he has done lots of ignoble 
+  There are some signs that a player might be dangerous: We are at
+  war with him, he has lousy reputation, he has done lots of ignoble
   things to us, he is an ally of one of our enemies (a ticking bomb
   to be sure), or he is our war target.
 ***********************************************************************/
 bool is_player_dangerous(struct player *pplayer, struct player *aplayer)
 {
   struct ai_data *ai = ai_data_get(pplayer);
-  struct ai_dip_intel *adip 
+  struct ai_dip_intel *adip
     = &ai->diplomacy.player_intel[aplayer->player_no];
 
   return (pplayer != aplayer)
@@ -142,7 +142,7 @@ bool ai_unit_execute_path(struct unit *punit, struct pf_path *path)
 
 /****************************************************************************
   A helper function for ai_gothere.  Estimates the dangers we will
-  be facing at our destination and tries to find/request a bodyguard if 
+  be facing at our destination and tries to find/request a bodyguard if
   needed.
 ****************************************************************************/
 static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
@@ -152,7 +152,7 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   unsigned int danger = 0;
   struct city *dcity;
   struct tile *ptile;
-  
+
   if (is_barbarian(unit_owner(punit))) {
     /* barbarians must have more courage (ie less brains) */
     punit->ai.bodyguard = BODYGUARD_NONE;
@@ -169,8 +169,8 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   if (dcity && HOSTILE_PLAYER(pplayer, ai, city_owner(dcity))) {
     /* Assume enemy will build another defender, add it's attack strength */
     int d_type = ai_choose_defender_versus(dcity, punit->type);
-    danger += 
-      unittype_att_rating(d_type, do_make_unit_veteran(dcity, d_type), 
+    danger +=
+      unittype_att_rating(d_type, do_make_unit_veteran(dcity, d_type),
                           SINGLE_MOVE, unit_types[d_type].hp);
   }
   danger *= POWER_DIVIDER;
@@ -184,14 +184,14 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   ptile = punit->tile;
   /* We look for the bodyguard where we stand. */
   if (!unit_list_find(ptile->units, punit->ai.bodyguard)) {
-    int my_def = (punit->hp 
+    int my_def = (punit->hp
                   * unit_type(punit)->veteran[punit->veteran].power_fact
 		  * unit_type(punit)->defense_strength
                   * POWER_FACTOR);
-    
+
     if (danger >= my_def) {
-      UNIT_LOG(LOGLEVEL_BODYGUARD, punit, 
-               "want bodyguard @(%d, %d) danger=%d, my_def=%d", 
+      UNIT_LOG(LOGLEVEL_BODYGUARD, punit,
+               "want bodyguard @(%d, %d) danger=%d, my_def=%d",
                TILE_XY(dest_tile), danger, my_def);
       punit->ai.bodyguard = BODYGUARD_WANTED;
     } else {
@@ -204,15 +204,15 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
 
 #define LOGLEVEL_GOTHERE LOG_DEBUG
 /****************************************************************************
-  This is ferry-enabled goto.  Should not normally be used for non-ferried 
+  This is ferry-enabled goto.  Should not normally be used for non-ferried
   units (i.e. planes or ships), use ai_unit_goto instead.
 
-  Return values: TRUE if got to or next to our destination, FALSE otherwise. 
+  Return values: TRUE if got to or next to our destination, FALSE otherwise.
 
   TODO: A big one is rendezvous points.  When this is implemented, we won't
   have to be at the coast to ask for a boat to come to us.
 
-  You MUST have warmap created before calling this function in order for 
+  You MUST have warmap created before calling this function in order for
   find_beachhead to work here. This requirement should be removed.
 ****************************************************************************/
 bool ai_gothere(struct player *pplayer, struct unit *punit,
@@ -229,7 +229,7 @@ bool ai_gothere(struct player *pplayer, struct unit *punit,
   /* FIXME: If bodyguard is _really_ necessary, don't go anywhere */
   ai_gothere_bodyguard(punit, dest_tile);
 
-  if (punit->transported_by > 0 
+  if (punit->transported_by > 0
       || !goto_is_sane(punit, dest_tile, TRUE)) {
     /* Must go by boat, call an aiferryboat function */
     if (!aiferry_gobyboat(pplayer, punit, dest_tile)) {
@@ -237,7 +237,7 @@ bool ai_gothere(struct player *pplayer, struct unit *punit,
     }
   }
 
-  /* Go where we should be going if we can, and are at our destination 
+  /* Go where we should be going if we can, and are at our destination
    * if we are on a ferry */
   if (goto_is_sane(punit, dest_tile, TRUE) && punit->moves_left > 0) {
     punit->goto_tile = dest_tile;
@@ -257,11 +257,11 @@ bool ai_gothere(struct player *pplayer, struct unit *punit,
     /* We probably just landed, release our boat */
     aiferry_clear_boat(punit);
   }
-  
+
   /* Dead unit shouldn't reach this point */
   CHECK_UNIT(punit);
-  
-  return (same_pos(punit->tile, dest_tile) 
+
+  return (same_pos(punit->tile, dest_tile)
           || is_tiles_adjacent(punit->tile, dest_tile));
 }
 
@@ -294,7 +294,7 @@ bool ai_unit_goto(struct unit *punit, struct tile *ptile)
 
 /**************************************************************************
   Ensure unit sanity by telling charge that we won't bodyguard it anymore,
-  tell bodyguard it can roam free if our job is done, add and remove city 
+  tell bodyguard it can roam free if our job is done, add and remove city
   spot reservation, and set destination. If we set a unit to hunter, also
   reserve its target, and try to load it with cruise missiles or nukes
   to bring along.
@@ -396,7 +396,7 @@ bool ai_unit_make_homecity(struct unit *punit, struct city *pcity)
      * so it would be stupid to give it one. There can also be good reasons
      * why it doesn't have a homecity. */
     /* However, until we can do something more useful with them, we
-       will assign explorers to a city so that they can be disbanded for 
+       will assign explorers to a city so that they can be disbanded for
        the greater good -- Per */
     return FALSE;
   }
@@ -411,7 +411,7 @@ bool ai_unit_make_homecity(struct unit *punit, struct city *pcity)
 /**************************************************************************
   Move a bodyguard along with another unit. We assume that unit has already
   been moved to (x, y) which is a valid, safe coordinate, and that our
-  bodyguard has not. This is an ai_unit_* auxiliary function, do not use 
+  bodyguard has not. This is an ai_unit_* auxiliary function, do not use
   elsewhere.
 **************************************************************************/
 static void ai_unit_bodyguard_move(int unitid, struct tile *ptile)
@@ -563,7 +563,7 @@ If (pplayer != NULL) it looks for cities known to pplayer
 **************************************************************************/
 struct city *dist_nearest_city(struct player *pplayer, struct tile *ptile,
                                bool everywhere, bool enemy)
-{ 
+{
   struct city *pc=NULL;
   int best_dist = -1;
   Continent_id con = map_get_continent(ptile);
@@ -611,7 +611,7 @@ int stack_cost(struct unit *pdef)
     /* Only one unit dies if attack is successful */
     victim_cost = unit_build_shield_cost(pdef->type);
   }
-  
+
   return victim_cost;
 }
 
@@ -669,11 +669,11 @@ void copy_if_better_choice(struct ai_choice *cur, struct ai_choice *best)
 {
   if (cur->want > best->want) {
     freelog(LOG_DEBUG, "Overriding choice (%s, %d) with (%s, %d)",
-	    (best->type == CT_BUILDING ? 
-	     get_improvement_name(best->choice) : unit_types[best->choice].name), 
-	    best->want, 
-	    (cur->type == CT_BUILDING ? 
-	     get_improvement_name(cur->choice) : unit_types[cur->choice].name), 
+	    (best->type == CT_BUILDING ?
+	     get_improvement_name(best->choice) : unit_types[best->choice].name),
+	    best->want,
+	    (cur->type == CT_BUILDING ?
+	     get_improvement_name(cur->choice) : unit_types[cur->choice].name),
 	    cur->want);
     best->choice =cur->choice;
     best->want = cur->want;
@@ -714,9 +714,9 @@ void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
   int downtown = 0, cities = 0;
   int want=0;
   struct player *plr;
-        
+
   plr = city_owner(pcity);
-     
+
   /* too bad plr->score isn't kept up to date. */
   city_list_iterate(plr->cities, acity)
     danger += acity->server.ai.danger;
@@ -768,10 +768,10 @@ void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
 
 /**********************************************************************
   "The following evaluates the unhappiness caused by military units
-  in the field (or aggressive) at a city when at Republic or 
+  in the field (or aggressive) at a city when at Republic or
   Democracy.
 
-  Now generalised somewhat for government rulesets, though I'm not 
+  Now generalised somewhat for government rulesets, though I'm not
   sure whether it is fully general for all possible parameters/
   combinations." --dwp
 **********************************************************************/
@@ -785,7 +785,7 @@ bool ai_assess_military_unhappiness(struct city *pcity,
   if (g->unit_happy_cost_factor == 0) {
     return FALSE;
   }
-  
+
   free_happy  = citygov_free_happy(pcity, g);
 
   /* ??  This does the right thing for normal Republic and Democ -- dwp */
@@ -814,12 +814,12 @@ bool ai_assess_military_unhappiness(struct city *pcity,
       happy_cost--;
     }
     adjust_city_free_cost(&free_happy, &happy_cost);
-    
+
     if (happy_cost > 0) {
       unhap += happy_cost;
     }
   } unit_list_iterate_end;
- 
+
   if (unhap < 0) {
     unhap = 0;
   }

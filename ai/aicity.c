@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ int ai_eval_calc_city(struct city *pcity, struct ai_data *ai)
 /**************************************************************************
   Calculates city want from some input values.
 **************************************************************************/
-static inline int city_want(struct player *pplayer, struct city *acity, 
+static inline int city_want(struct player *pplayer, struct city *acity,
                             struct ai_data *ai)
 {
   int want = 0, food, trade, shields, lux, sci, tax;
@@ -149,7 +149,7 @@ static inline int city_want(struct player *pplayer, struct city *acity,
   Calculates want for some buildings by actually adding the building and
   measuring the effect.
 **************************************************************************/
-static int base_want(struct player *pplayer, struct city *pcity, 
+static int base_want(struct player *pplayer, struct city *pcity,
                      Impr_Type_id id)
 {
   struct ai_data *ai = ai_data_get(pplayer);
@@ -185,7 +185,7 @@ static int base_want(struct player *pplayer, struct city *pcity,
   return final_want;
 }
 
-/************************************************************************** 
+/**************************************************************************
   Calculate effects. A few base variables:
     c - number of cities we have in current range
     u - units we have of currently affected type
@@ -198,7 +198,7 @@ static int base_want(struct player *pplayer, struct city *pcity,
   IDEA: Calculate per-continent aggregates of various data, and use this
   for wonders below for better wonder placements.
 **************************************************************************/
-static void adjust_building_want_by_effects(struct city *pcity, 
+static void adjust_building_want_by_effects(struct city *pcity,
                                             Impr_Type_id id)
 {
   struct player *pplayer = city_owner(pcity);
@@ -216,7 +216,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
   /* Base want is calculated above using a more direct approach. */
   v += base_want(pplayer, pcity, id);
   if (v != 0) {
-    CITY_LOG(LOG_DEBUG, pcity, "%s base_want is %d (range=%d)", 
+    CITY_LOG(LOG_DEBUG, pcity, "%s base_want is %d (range=%d)",
              get_improvement_name(id), v, ai->impr_range[id]);
   }
 
@@ -310,7 +310,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    v += c * 4 + (amount / 7) * pcity->food_surplus;
 	    break;
 	  case EFT_AIRLIFT:
-            /* FIXME: We need some smart algorithm here. The below is 
+            /* FIXME: We need some smart algorithm here. The below is
              * totally braindead. */
 	    v += c + MIN(ai->stats.units.land, 13);
 	    break;
@@ -359,7 +359,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	  case EFT_SIZE_UNLIMIT:
 	    amount = 20; /* really big city */
 	    /* there not being a break here is deliberate, mind you */
-	  case EFT_SIZE_ADJ: 
+	  case EFT_SIZE_ADJ:
             if (!city_can_grow_to(pcity, pcity->size + 1)) {
 	      v += pcity->food_surplus * ai->food_priority * amount;
               if (pcity->size == game.ruleset_control.aqueduct_size) {
@@ -445,7 +445,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    if (ai_handicap(pplayer, H_DEFENSIVE)) {
 	      v += amount / 15; /* make AI slow */
 	    }
-	    v += (ai->threats.air && ai->threats.continent[ptile->continent]) 
+	    v += (ai->threats.air && ai->threats.continent[ptile->continent])
 	      ? amount/10 * 5 + amount/10 * c : c;
 	    break;
 	  case EFT_MISSILE_DEFEND:
@@ -475,8 +475,8 @@ static void adjust_building_want_by_effects(struct city *pcity,
 	    }
 	    break;
           case EFT_REGEN_REPUTATION:
-            v += (GAME_MAX_REPUTATION - pplayer->reputation) * 50 / 
-	            GAME_MAX_REPUTATION + 
+            v += (GAME_MAX_REPUTATION - pplayer->reputation) * 50 /
+	            GAME_MAX_REPUTATION +
 	          amount * 4;
             break;
 	  case EFT_GAIN_AI_LOVE:
@@ -510,7 +510,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
   pcity->server.ai.building_want[id] = v;
 }
 
-/************************************************************************** 
+/**************************************************************************
   Prime pcity->server.ai.building_want[]
 **************************************************************************/
 void ai_manage_buildings(struct player *pplayer)
@@ -543,7 +543,7 @@ void ai_manage_buildings(struct player *pplayer)
         continue; /* Don't build redundant buildings */
       }
       adjust_building_want_by_effects(pcity, id);
-      CITY_LOG(LOG_DEBUG, pcity, "want to build %s with %d", 
+      CITY_LOG(LOG_DEBUG, pcity, "want to build %s with %d",
                get_improvement_name(id), pcity->server.ai.building_want[id]);
     } city_list_iterate_end;
   } impr_type_iterate_end;
@@ -551,7 +551,7 @@ void ai_manage_buildings(struct player *pplayer)
   /* Reset recalc counter */
   city_list_iterate(pplayer->cities, pcity) {
     if (pcity->server.ai.next_recalc <= game.info.turn) {
-      /* This will spread recalcs out so that no one turn end is 
+      /* This will spread recalcs out so that no one turn end is
        * much longer than others */
       pcity->server.ai.next_recalc = game.info.turn + myrand(RECALC_SPEED)
 				     + RECALC_SPEED;
@@ -559,19 +559,19 @@ void ai_manage_buildings(struct player *pplayer)
   } city_list_iterate_end;
 }
 
-/*************************************************************************** 
-  This function computes distances between cities for purpose of building 
-  crowds of water-consuming Caravans or smoggish Freights which want to add 
+/***************************************************************************
+  This function computes distances between cities for purpose of building
+  crowds of water-consuming Caravans or smoggish Freights which want to add
   their brick to the wonder being built in pcity.
 
-  At the function entry point, our warmap is intact.  We need to do two 
-  things: (1) establish "downtown" for THIS city (which is an estimate of 
-  how much help we can expect when building a wonder) and 
+  At the function entry point, our warmap is intact.  We need to do two
+  things: (1) establish "downtown" for THIS city (which is an estimate of
+  how much help we can expect when building a wonder) and
   (2) establish distance to pcity for ALL cities on our continent.
 
   If there are more than one wondercity, things will get a bit random.
 ****************************************************************************/
-static void establish_city_distances(struct player *pplayer, 
+static void establish_city_distances(struct player *pplayer,
 				     struct city *pcity)
 {
   int distance;
@@ -605,10 +605,10 @@ static void establish_city_distances(struct player *pplayer,
 
   TODO: Move this into advmilitary.c
   TODO: It will be called for each city but doesn't depend on the city,
-  maybe cache it?  Although barbarians don't normally have many cities, 
+  maybe cache it?  Although barbarians don't normally have many cities,
   so can be a bigger bother to cache it.
 **************************************************************************/
-static void ai_barbarian_choose_build(struct player *pplayer, 
+static void ai_barbarian_choose_build(struct player *pplayer,
 				      struct ai_choice *choice)
 {
   Unit_Type_id bestunit = -1;
@@ -646,12 +646,12 @@ static void ai_barbarian_choose_build(struct player *pplayer,
   }
 }
 
-/************************************************************************** 
+/**************************************************************************
   Chooses what the city will build.  Is called after the military advisor
   put it's choice into pcity->server.ai.choice and "settler advisor" put
   settler want into pcity->founder_*.
 
-  Note that AI cheats -- it suffers no penalty for switching from unit to 
+  Note that AI cheats -- it suffers no penalty for switching from unit to
   improvement, etc.
 **************************************************************************/
 static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
@@ -671,7 +671,7 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
     ai_barbarian_choose_build(pplayer, &(pcity->server.ai.choice));
   } else {
     /* FIXME: 101 is the "overriding military emergency" indicator */
-    if (pcity->server.ai.choice.want <= 100 || pcity->server.ai.urgency == 0) { 
+    if (pcity->server.ai.choice.want <= 100 || pcity->server.ai.urgency == 0) {
       domestic_advisor_choose_build(pplayer, pcity, &newchoice);
       copy_if_better_choice(&newchoice, &(pcity->server.ai.choice));
     }
@@ -700,7 +700,7 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
     }
   }
 
-  if (pcity->server.ai.choice.want != 0) { 
+  if (pcity->server.ai.choice.want != 0) {
     ASSERT_REAL_CHOICE_TYPE(pcity->server.ai.choice.type);
 
     CITY_LOG(LOG_DEBUG, pcity, "wants %s with desire %d.",
@@ -708,19 +708,19 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
 	      unit_name(pcity->server.ai.choice.choice) :
 	      get_improvement_name(pcity->server.ai.choice.choice)),
 	     pcity->server.ai.choice.want);
-    
-    if (!pcity->is_building_unit && is_wonder(pcity->currently_building) 
-	&& (is_unit_choice_type(pcity->server.ai.choice.type) 
+
+    if (!pcity->is_building_unit && is_wonder(pcity->currently_building)
+	&& (is_unit_choice_type(pcity->server.ai.choice.type)
 	    || pcity->server.ai.choice.choice != pcity->currently_building))
       notify_player_ex(NULL, pcity->tile, E_WONDER_STOPPED,
 		       _("Game: The %s have stopped building The %s in %s."),
 		       get_nation_name_plural(pplayer->nation),
 		       get_impr_name_ex(pcity, pcity->currently_building),
 		       pcity->name);
-    
-    if (pcity->server.ai.choice.type == CT_BUILDING 
+
+    if (pcity->server.ai.choice.type == CT_BUILDING
 	&& is_wonder(pcity->server.ai.choice.choice)
-	&& (pcity->is_building_unit 
+	&& (pcity->is_building_unit
 	    || pcity->currently_building != pcity->server.ai.choice.choice)) {
       notify_player_ex(NULL, pcity->tile, E_WONDER_STARTED,
 		       _("Game: The %s have started building The %s in %s."),
@@ -740,7 +740,7 @@ static void ai_city_choose_build(struct player *pplayer, struct city *pcity)
   }
 }
 
-/************************************************************************** 
+/**************************************************************************
 ...
 **************************************************************************/
 static void try_to_sell_stuff(struct player *pplayer, struct city *pcity)
@@ -755,8 +755,8 @@ static void try_to_sell_stuff(struct player *pplayer, struct city *pcity)
   } impr_type_iterate_end;
 }
 
-/************************************************************************** 
-  Increase maxbuycost.  This variable indicates (via ai_gold_reserve) to 
+/**************************************************************************
+  Increase maxbuycost.  This variable indicates (via ai_gold_reserve) to
   the tax selection code how much money do we need for buying stuff.
 **************************************************************************/
 static void increase_maxbuycost(struct player *pplayer, int new_value)
@@ -764,7 +764,7 @@ static void increase_maxbuycost(struct player *pplayer, int new_value)
   pplayer->ai.maxbuycost = MAX(pplayer->ai.maxbuycost, new_value);
 }
 
-/************************************************************************** 
+/**************************************************************************
   Try to upgrade a city's units. limit is the last amount of gold we can
   end up with after the upgrade. military is if we want to upgrade non-
   military or military units.
@@ -801,7 +801,7 @@ static void ai_upgrade_units(struct city *pcity, int limit, bool military)
   } unit_list_iterate_end;
 }
 
-/************************************************************************** 
+/**************************************************************************
   Buy and upgrade stuff!
 **************************************************************************/
 static void ai_spend_gold(struct player *pplayer)
@@ -809,7 +809,7 @@ static void ai_spend_gold(struct player *pplayer)
   struct ai_choice bestchoice;
   int cached_limit = ai_gold_reserve(pplayer);
 
-  /* Disband explorers that are at home but don't serve a purpose. 
+  /* Disband explorers that are at home but don't serve a purpose.
    * FIXME: This is a hack, and should be removed once we
    * learn how to ferry explorers to new land. */
   city_list_iterate(pplayer->cities, pcity) {
@@ -824,7 +824,7 @@ static void ai_spend_gold(struct player *pplayer)
       }
     } unit_list_iterate_safe_end;
   } city_list_iterate_end;
-  
+
   do {
     int limit = cached_limit; /* cached_limit is our gold reserve */
     struct city *pcity = NULL;
@@ -894,7 +894,7 @@ static void ai_spend_gold(struct player *pplayer)
       }
     } else {
       /* We are not a settler. Therefore we increase the cash need we
-       * balance our buy desire with to keep cash at hand for emergencies 
+       * balance our buy desire with to keep cash at hand for emergencies
        * and for upgrades */
       limit *= 2;
     }
@@ -914,7 +914,7 @@ static void ai_spend_gold(struct player *pplayer)
      * to sell everything in it of non-military value */
 
     if (pplayer->economic.gold - pplayer->ai.est_upkeep >= buycost
-        && (!expensive 
+        && (!expensive
             || (pcity->server.ai.grave_danger != 0 && assess_defense(pcity) == 0)
             || (bestchoice.want > 200 && pcity->server.ai.urgency > 1))) {
       /* Buy stuff */
@@ -923,7 +923,7 @@ static void ai_spend_gold(struct player *pplayer)
                : get_improvement_name(bestchoice.choice), buycost,
                bestchoice.want);
       really_handle_city_buy(pplayer, pcity);
-    } else if (pcity->server.ai.grave_danger != 0 
+    } else if (pcity->server.ai.grave_danger != 0
                && bestchoice.type == CT_DEFENDER
                && assess_defense(pcity) == 0) {
       /* We have no gold but MUST have a defender */
@@ -943,7 +943,7 @@ static void ai_spend_gold(struct player *pplayer)
     ai_upgrade_units(pcity, cached_limit, FALSE);
   } city_list_iterate_end;
 
-  freelog(LOG_BUY, "%s wants to keep %d in reserve (tax factor %d)", 
+  freelog(LOG_BUY, "%s wants to keep %d in reserve (tax factor %d)",
           pplayer->name, cached_limit, pplayer->ai.maxbuycost);
 }
 
@@ -977,19 +977,19 @@ void ai_manage_cities(struct player *pplayer)
     /* Note that this function mungs the seamap, but we don't care */
     military_advisor_choose_build(pplayer, pcity, &pcity->server.ai.choice);
     /* because establish_city_distances doesn't need the seamap
-     * it determines downtown and distance_to_wondercity, 
+     * it determines downtown and distance_to_wondercity,
      * which ai_city_choose_build will need */
     establish_city_distances(pplayer, pcity);
-    /* Will record its findings in pcity->settler_want */ 
+    /* Will record its findings in pcity->settler_want */
     contemplate_terrain_improvements(pcity);
 
     if (pcity->server.ai.next_founder_want_recalc <= game.info.turn) {
-      /* Will record its findings in pcity->founder_want */ 
+      /* Will record its findings in pcity->founder_want */
       contemplate_new_city(pcity);
       /* Avoid recalculating all the time.. */
       pcity->server.ai.next_founder_want_recalc =
 	game.info.turn + myrand(RECALC_SPEED) + RECALC_SPEED;
-    } 
+    }
   } city_list_iterate_end;
 
   city_list_iterate(pplayer->cities, pcity) {
@@ -1000,7 +1000,7 @@ void ai_manage_cities(struct player *pplayer)
 }
 
 /**************************************************************************
-... 
+...
 **************************************************************************/
 static bool building_unwanted(struct player *plr, Impr_Type_id i)
 {
@@ -1016,15 +1016,15 @@ static void ai_sell_obsolete_buildings(struct city *pcity)
   struct player *pplayer = city_owner(pcity);
 
   built_impr_iterate(pcity, i) {
-    if(!is_wonder(i) 
+    if(!is_wonder(i)
        && !building_has_effect(i, EFT_LAND_DEFEND)
 	      /* selling city walls is really, really dumb -- Syela */
        && (is_building_replaced(pcity, i)
 	   || building_unwanted(city_owner(pcity), i))) {
       do_sell_building(pplayer, pcity, i);
       notify_player_ex(pplayer, pcity->tile, E_IMP_SOLD,
-		       _("Game: %s is selling %s (not needed) for %d."), 
-		       pcity->name, get_improvement_name(i), 
+		       _("Game: %s is selling %s (not needed) for %d."),
+		       pcity->name, get_improvement_name(i),
 		       impr_sell_gold(i));
       return; /* max 1 building each turn */
     }
@@ -1048,7 +1048,7 @@ static void ai_sell_obsolete_buildings(struct city *pcity)
   "I don't care how slow this is; it will very rarely be used." -- Syela
 
   Syela is wrong. It happens quite too often, mostly due to unhappiness.
-  Also, most of the time we are unable to resolve the situation. 
+  Also, most of the time we are unable to resolve the situation.
 **************************************************************************/
 static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
 #define LOG_EMERGENCY LOG_DEBUG
@@ -1100,10 +1100,10 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
   } unit_list_iterate_safe_end;
 
   if (CITY_EMERGENCY(pcity)) {
-    freelog(LOG_EMERGENCY, "Emergency in %s remains unresolved", 
+    freelog(LOG_EMERGENCY, "Emergency in %s remains unresolved",
             pcity->name);
   } else {
-    freelog(LOG_EMERGENCY, 
+    freelog(LOG_EMERGENCY,
             "Emergency in %s resolved by disbanding unit(s)", pcity->name);
   }
 

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 struct ai_tech_choice {
   Tech_Type_id choice;   /* The id of the most needed tech */
   int want;              /* Want of the most needed tech */
-  int current_want;      /* Want of the tech which currenlty researched 
+  int current_want;      /* Want of the tech which currenlty researched
 			  * or is our current goal */
 };
 
@@ -47,13 +47,13 @@ struct ai_tech_choice {
 static Tech_Type_id get_wonder_tech(struct player *plr)
 {
   Impr_Type_id building = get_nation_by_plr(plr)->goals.wonder;
-  
+
   if (improvement_exists(building)
       && game.info.global_wonders[building] == 0
       && !wonder_obsolete(building)) {
     Tech_Type_id tech = improvement_types[building].tech_req;
 
-    if (tech_is_available(plr, tech) 
+    if (tech_is_available(plr, tech)
         && get_invention(plr, tech) != TECH_KNOWN) {
       return tech;
     }
@@ -77,21 +77,21 @@ static Tech_Type_id ai_next_tech_goal_default(struct player *pplayer)
   /* Find the closest of the national tech goals */
   for (i = 0 ; i < MAX_NUM_TECH_GOALS; i++) {
     Tech_Type_id j = prace->goals.tech[i];
-    if (!tech_is_available(pplayer, j) 
+    if (!tech_is_available(pplayer, j)
         || get_invention(pplayer, j) == TECH_KNOWN) {
       continue;
     }
     dist = num_unknown_techs_for_goal(pplayer, j);
-    if (dist < bestdist) { 
+    if (dist < bestdist) {
       bestdist = dist;
       goal = j;
       break; /* remove this to restore old functionality -- Syela */
     }
-  } 
+  }
 
   /* Find the requirement for the national wonder */
   tech = get_wonder_tech(pplayer);
-  if (tech != A_UNSET 
+  if (tech != A_UNSET
       && num_unknown_techs_for_goal(pplayer, tech) < bestdist) {
     goal = tech;
   }
@@ -100,20 +100,20 @@ static Tech_Type_id ai_next_tech_goal_default(struct player *pplayer)
 }
 
 /**************************************************************************
-  Massage the numbers provided to us by ai.tech_want into unrecognizable 
+  Massage the numbers provided to us by ai.tech_want into unrecognizable
   pulp.
 
   TODO: Write a transparent formula.
 
-  Notes: 1. num_unknown_techs_for_goal returns 0 for known techs, 1 if tech 
+  Notes: 1. num_unknown_techs_for_goal returns 0 for known techs, 1 if tech
   is immediately available etc.
-  2. A tech is reachable means we can research it now; tech is available 
+  2. A tech is reachable means we can research it now; tech is available
   means it's on our tech tree (different nations can have different techs).
   3. ai.tech_want is usually upped by each city, so it is divided by number
   of cities here.
   4. A tech isn't a requirement of itself.
 **************************************************************************/
-static void ai_select_tech(struct player *pplayer, 
+static void ai_select_tech(struct player *pplayer,
 			   struct ai_tech_choice *choice,
 			   struct ai_tech_choice *goal)
 {
@@ -125,13 +125,13 @@ static void ai_select_tech(struct player *pplayer,
   memset(values, 0, sizeof(values));
   memset(goal_values, 0, sizeof(goal_values));
 
-  /* Fill in values for the techs: want of the tech 
+  /* Fill in values for the techs: want of the tech
    * + average want of those we will discover en route */
   tech_type_iterate(i) {
     int steps = num_unknown_techs_for_goal(pplayer, i);
 
     /* We only want it if we haven't got it (so AI is human after all) */
-    if (steps > 0) { 
+    if (steps > 0) {
       values[i] += pplayer->ai.tech_want[i];
       tech_type_iterate(k) {
 	if (is_tech_a_req_for_goal(pplayer, k, i)) {
@@ -149,7 +149,7 @@ static void ai_select_tech(struct player *pplayer,
       continue;
     }
 
-    goal_values[i] = values[i];      
+    goal_values[i] = values[i];
     tech_type_iterate(k) {
       if (is_tech_a_req_for_goal(pplayer, k, i)) {
 	goal_values[i] += values[k];
@@ -179,13 +179,13 @@ static void ai_select_tech(struct player *pplayer,
       newgoal = i;
     }
   } tech_type_iterate_end;
-  freelog(LOG_DEBUG, "%s wants %s with desire %d (%d).", 
-	  pplayer->name, get_tech_name(pplayer, newtech), values[newtech], 
+  freelog(LOG_DEBUG, "%s wants %s with desire %d (%d).",
+	  pplayer->name, get_tech_name(pplayer, newtech), values[newtech],
 	  pplayer->ai.tech_want[newtech]);
   if (choice) {
     choice->choice = newtech;
     choice->want = values[newtech] / num_cities_nonzero;
-    choice->current_want = 
+    choice->current_want =
       values[pplayer->research.researching] / num_cities_nonzero;
   }
 
@@ -204,9 +204,9 @@ static void ai_select_tech(struct player *pplayer,
 }
 
 /**************************************************************************
-  Choose our next tech goal.  Called by the server when a new tech is 
-  discovered to determine new goal and, from it, the new tech to be 
-  researched, which is quite stupid since ai_manage_tech sets a goal in 
+  Choose our next tech goal.  Called by the server when a new tech is
+  discovered to determine new goal and, from it, the new tech to be
+  researched, which is quite stupid since ai_manage_tech sets a goal in
   ai.tech_goal and we should either respect it or not bother doing it.
 
   TODO: Kill this function.
@@ -228,7 +228,7 @@ void ai_next_tech_goal(struct player *pplayer)
 }
 
 /**************************************************************************
-  Use AI tech hints provided in governments.ruleset to up corresponding 
+  Use AI tech hints provided in governments.ruleset to up corresponding
   tech wants.
 
   TODO: The hints structure is too complicated, simplify.
@@ -239,11 +239,11 @@ static void ai_use_gov_tech_hint(struct player *pplayer)
 
   for (i = 0; i < MAX_NUM_TECH_LIST; i++) {
     struct ai_gov_tech_hint *hint = &ai_gov_tech_hints[i];
-    
+
     if (hint->tech == A_LAST) {
       break;
     }
-    
+
     if (get_invention(pplayer, hint->tech) != TECH_KNOWN) {
       int steps = num_unknown_techs_for_goal(pplayer, hint->tech);
 
@@ -300,7 +300,7 @@ void ai_manage_tech(struct player *pplayer)
    * is practically never used, see the comment for ai_next_tech_goal */
   if (goal.choice != pplayer->ai.tech_goal) {
     freelog(LOG_DEBUG, "%s change goal from %s (want=%d) to %s (want=%d)",
-	    pplayer->name, get_tech_name(pplayer, pplayer->ai.tech_goal), 
+	    pplayer->name, get_tech_name(pplayer, pplayer->ai.tech_goal),
 	    goal.current_want, get_tech_name(pplayer, goal.choice),
 	    goal.want);
     choose_tech_goal(pplayer, goal.choice);

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
 
 #include "fc_types.h"
 
-/* 
+/*
  * This file and aidata.c contains global data structures for the AI
- * and some of the functions that fill them with useful values at the 
- * start of every turn. 
+ * and some of the functions that fill them with useful values at the
+ * start of every turn.
  */
 
 enum ai_improvement_status {

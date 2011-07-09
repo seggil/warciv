@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
     2: perrin [ti12 co6 lo5 e]  Increased love for a (now 9)
   where ti is timer, co countdown and lo love for target, who is e.
 **************************************************************************/
-void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai, 
+void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
                 const char *msg, ...)
 {
   char targetbuffer[250];
@@ -62,7 +62,7 @@ void PLAYER_LOG(int level, struct player *pplayer, struct ai_data *ai,
   my_snprintf(buffer, sizeof(buffer), "%s %s%s%s ", pplayer->name,
               ai->diplomacy.target ? targetbuffer : "",
               ai->diplomacy.spacerace_leader &&
-              ai->diplomacy.spacerace_leader->player_no == pplayer->player_no ? 
+              ai->diplomacy.spacerace_leader->player_no == pplayer->player_no ?
                 "(spacelead) " : "",
               ai->diplomacy.alliance_leader->player_no == pplayer->player_no ?
                 "(*)" : "");
@@ -150,7 +150,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
   } else {
     gx = gy = -1;
   }
-  
+
   my_snprintf(buffer, sizeof(buffer), "%s's %s[%d] (%d,%d)->(%d,%d){%d,%d} ",
               unit_owner(punit)->name, unit_type(punit)->name,
               punit->id, punit->tile->x, punit->tile->y,

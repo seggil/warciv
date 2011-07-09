@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,9 +50,9 @@
 /****************************************************************************
   A man builds a city
   With banks and cathedrals
-  A man melts the sand so he can 
+  A man melts the sand so he can
   See the world outside
-  A man makes a car 
+  A man makes a car
   And builds a road to run them on
   A man dreams of leaving
   but he always stays behind
@@ -83,24 +83,24 @@ static void ai_manage_spaceship(struct player *pplayer)
 /**************************************************************************
   Set tax/science/luxury rates.
 
-  TODO: Add general support for luxuries: select the luxury rate at which 
-  all cities are content and the trade output (minus what is consumed by 
-  luxuries) is maximal.  For this we need some more information from the 
+  TODO: Add general support for luxuries: select the luxury rate at which
+  all cities are content and the trade output (minus what is consumed by
+  luxuries) is maximal.  For this we need some more information from the
   city management code.
 
   TODO: Audit the use of pplayer->ai.maxbuycost in the code elsewhere,
   then add support for it here.
 **************************************************************************/
-static void ai_manage_taxes(struct player *pplayer) 
+static void ai_manage_taxes(struct player *pplayer)
 {
-  int maxrate = (ai_handicap(pplayer, H_RATES) 
+  int maxrate = (ai_handicap(pplayer, H_RATES)
                  ? get_government_max_rate(pplayer->government) : 100);
   bool celebrate = TRUE;
   int can_celebrate = 0, total_cities = 0;
   struct government *g = get_gov_pplayer(pplayer);
 
   /* Find minimum tax rate which gives us a positive balance. We assume
-   * that we want science most and luxuries least here, and reverse or 
+   * that we want science most and luxuries least here, and reverse or
    * modify this assumption later. on */
 
   /* First set tax to the minimal available number */
@@ -138,8 +138,8 @@ static void ai_manage_taxes(struct player *pplayer)
   }
 
   /* Should we celebrate? */
-  /* TODO: In the future, we should check if we should 
-   * celebrate for other reasons than growth. Currently 
+  /* TODO: In the future, we should check if we should
+   * celebrate for other reasons than growth. Currently
    * this is ignored. Maybe we need ruleset AI hints. */
   if (government_has_flag(g, G_RAPTURE_CITY_GROWTH)) {
     int luxrate = pplayer->economic.luxury;
@@ -197,8 +197,8 @@ static void ai_manage_taxes(struct player *pplayer)
       pplayer->economic.luxury = luxrate;
       pplayer->economic.science = scirate;
       city_list_iterate(pplayer->cities, pcity) {
-        /* KLUDGE: Must refresh to restore the original values which 
-         * were clobbered in cm_query_result, after the tax rates 
+        /* KLUDGE: Must refresh to restore the original values which
+         * were clobbered in cm_query_result, after the tax rates
          * were changed.  This is because the cm_query_result() calls
          * generic_city_refresh(). */
         generic_city_refresh(pcity, TRUE, NULL);
@@ -220,7 +220,7 @@ static void ai_manage_taxes(struct player *pplayer)
     pplayer->economic.tax = science;
   }
 
-  assert(pplayer->economic.tax + pplayer->economic.luxury 
+  assert(pplayer->economic.tax + pplayer->economic.luxury
          + pplayer->economic.science == 100);
   freelog(LOGLEVEL_TAX, "%s rates: Sci %d Lux%d Tax %d NetIncome %d "
           "celeb=(%d/%d)", pplayer->name, pplayer->economic.science,
@@ -235,7 +235,7 @@ static void ai_manage_taxes(struct player *pplayer)
   our GDP (total ai_eval_calc_city) under this government.  If the very
   best of the governments is not available to us (it is not yet discovered),
   we record it in the goal.gov structure with the aim of wanting the
-  necessary tech more.  The best of the available governments is recorded 
+  necessary tech more.  The best of the available governments is recorded
   in goal.revolution.  We record the want of each government, and only
   recalculate this data every ai->govt_reeval_turns turns.
 
@@ -322,7 +322,7 @@ void ai_best_government(struct player *pplayer)
 
   /* Figure out which government is the best for us this turn. */
   government_iterate(gov) {
-    if (ai->government_want[gov->index] > best_val 
+    if (ai->government_want[gov->index] > best_val
         && can_change_to_government(pplayer, gov->index)) {
       best_val = ai->government_want[gov->index];
       ai->goal.revolution = gov->index;
@@ -359,7 +359,7 @@ static void ai_manage_government(struct player *pplayer)
   }
   pplayer->ai.tech_want[ai->goal.govt.req] += ai->goal.govt.val;
   freelog(LOG_DEBUG, "%s wants %s with want %d", pplayer->name,
-          get_tech_name(pplayer, ai->goal.govt.req), 
+          get_tech_name(pplayer, ai->goal.govt.req),
           pplayer->ai.tech_want[ai->goal.govt.req]);
 }
 
@@ -374,24 +374,24 @@ void ai_do_first_activities(struct player *pplayer)
    * us and make ai_mange_units and Co act upon this information, trying
    * to eliminate the source of danger */
 
-  ai_manage_units(pplayer); 
+  ai_manage_units(pplayer);
   /* STOP.  Everything else is at end of turn. */
 }
 
 /**************************************************************************
-  Activities to be done by AI _after_ human turn.  Here we respond to 
-  dangers created by human and AI opposition by ordering defenders in 
-  cities and setting taxes accordingly.  We also do other duties.  
+  Activities to be done by AI _after_ human turn.  Here we respond to
+  dangers created by human and AI opposition by ordering defenders in
+  cities and setting taxes accordingly.  We also do other duties.
 
-  We do _not_ move units here, otherwise humans complain that AI moves 
+  We do _not_ move units here, otherwise humans complain that AI moves
   twice.
 **************************************************************************/
 void ai_do_last_activities(struct player *pplayer)
 {
   ai_manage_government(pplayer);
-  ai_manage_taxes(pplayer); 
+  ai_manage_taxes(pplayer);
   ai_manage_cities(pplayer);
-  ai_manage_tech(pplayer); 
+  ai_manage_tech(pplayer);
   ai_manage_spaceship(pplayer);
 }
 

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - The Freeciv Team
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ struct cityresult {
   int result;             /* amortized and adjusted total value */
   int corruption, waste;
   bool overseas;          /* have to use boat to get there */
-  bool virt_boat;         /* virtual boat was used in search, 
+  bool virt_boat;         /* virtual boat was used in search,
 			   * so need to build one */
   struct tile *other_tile;/* coords to best other tile */
   int o_x, o_y;           /* city-relative coords for other tile */
@@ -36,7 +36,7 @@ struct cityresult {
 void cityresult_fill(struct player *pplayer,
                      struct ai_data *ai,
                      struct cityresult *result);
-void find_best_city_placement(struct unit *punit, struct cityresult *best, 
+void find_best_city_placement(struct unit *punit, struct cityresult *best,
 			      bool look_for_boat, bool use_virt_boat);
 void ai_settler_init(struct player *pplayer);
 void print_cityresult(struct player *pplayer, struct cityresult *cr,

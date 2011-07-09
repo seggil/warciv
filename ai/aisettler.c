@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - The Freeciv Team
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
 #include <config.h>
 #endif
 
-#include <stdio.h>  
-#include <string.h>  
+#include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "city.h"
@@ -29,7 +29,7 @@
 #include "path_finding.h"
 #include "pf_tools.h"
 #include "player.h"
-#include "support.h" 
+#include "support.h"
 #include "timing.h"
 
 #include "citytools.h"
@@ -49,12 +49,12 @@
 #include "aisettler.h"
 
 /* COMMENTS */
-/* 
+/*
    This code tries hard to do the right thing, including looking
    into the future (wrt to government), and also doing this in a
    modpack friendly manner. However, there are some pieces missing.
 
-   A tighter integration into the city management code would 
+   A tighter integration into the city management code would
    give more optimal city placements, since existing cities could
    move their workers around to give a new city better placement.
    Occasionally you will see cities being placed sub-optimally
@@ -89,7 +89,7 @@
 /* Percentage bonus to city locations near an ocean. */
 #define NAVAL_EMPHASIS 20
 
-/* Modifier for defense bonus that is applied to city location want. 
+/* Modifier for defense bonus that is applied to city location want.
  * This is % of defense % to increase want by. */
 #define DEFENSE_EMPHASIS 20
 
@@ -101,7 +101,7 @@ static struct {
 } *cachemap;
 
 /**************************************************************************
-  Fill cityresult struct with useful info about the city spot. It must 
+  Fill cityresult struct with useful info about the city spot. It must
   contain valid x, y coordinates and total should be zero.
 
   We assume whatever best government we are aiming for.
@@ -212,7 +212,7 @@ void cityresult_fill(struct player *pplayer,
     /* Baseline is a size one city (city center + best extra tile). */
     result->total = result->city_center + result->best_other;
   } else if (result->best_other != -1) {
-    /* Baseline is best extra tile only. This is why making new cities 
+    /* Baseline is best extra tile only. This is why making new cities
      * is so darn good. */
     result->total = result->best_other;
   } else {
@@ -227,7 +227,7 @@ void cityresult_fill(struct player *pplayer,
      * never make cities. */
     if (game.ruleset_control.fulltradesize == 1) {
       result->corruption = ai->science_priority
-	* city_corruption(pcity, 
+	* city_corruption(pcity,
 			  result->citymap[result->o_x][result->o_y].trade
 			  + result->citymap[2][2].trade);
     } else {
@@ -270,7 +270,7 @@ void cityresult_fill(struct player *pplayer,
 static bool food_starvation(struct cityresult *result)
 {
   /* Avoid starvation: We must have enough food to grow. */
-  return (result->citymap[2][2].food 
+  return (result->citymap[2][2].food
           + result->citymap[result->o_x][result->o_y].food < 3);
 }
 
@@ -291,7 +291,7 @@ static bool shield_starvation(struct cityresult *result)
 static int defense_bonus(struct cityresult *result, struct ai_data *ai)
 {
   /* Defense modification (as tie breaker mostly) */
-  int defense_bonus = 
+  int defense_bonus =
             get_tile_type(map_get_terrain(result->tile))->defense_bonus;
   if (map_has_special(result->tile, S_RIVER)) {
     defense_bonus +=
@@ -328,7 +328,7 @@ void print_cityresult(struct player *pplayer, struct cityresult *cr,
           "%4d %4d %4d %4d %4d\n"
           "%4d %4d %4d %4d %4d\n"
           "     %4d %4d %4d", cr->tile->x, cr->tile->y,
-          cr->citymap[1][0].reserved, cr->citymap[2][0].reserved, 
+          cr->citymap[1][0].reserved, cr->citymap[2][0].reserved,
           cr->citymap[3][0].reserved, cr->citymap[0][1].reserved,
           cr->citymap[1][1].reserved, cr->citymap[2][1].reserved,
           cr->citymap[3][1].reserved, cr->citymap[4][1].reserved,
@@ -352,10 +352,10 @@ void print_cityresult(struct player *pplayer, struct cityresult *cr,
 #undef M
   freelog(LOG_NORMAL, "city center %d + best other(%d, %d) %d - corr %d "
           "- waste %d\n"
-          "+ remaining %d + defense bonus %d + naval bonus %d = %d (%d)", 
+          "+ remaining %d + defense bonus %d + naval bonus %d = %d (%d)",
           cr->city_center, cr->other_tile->x, cr->other_tile->y,
 	  cr->best_other,
-          cr->corruption, cr->waste, cr->remaining, defense_bonus(cr, ai), 
+          cr->corruption, cr->waste, cr->remaining, defense_bonus(cr, ai),
           naval_bonus(cr, ai), cr->total, cr->result);
   if (food_starvation(cr)) {
     freelog(LOG_NORMAL, " ** FOOD STARVATION **");
@@ -366,14 +366,14 @@ void print_cityresult(struct player *pplayer, struct cityresult *cr,
 }
 
 /**************************************************************************
-  Calculates the desire for founding a new city at (x, y). The citymap 
-  ensures that we do not build cities too close to each other. If we 
+  Calculates the desire for founding a new city at (x, y). The citymap
+  ensures that we do not build cities too close to each other. If we
   return result->total == 0, then no place was found.
 **************************************************************************/
 static void city_desirability(struct player *pplayer, struct ai_data *ai,
                               struct unit *punit, struct tile *ptile,
                               struct cityresult *result)
-{  
+{
   struct city *pcity = map_get_city(ptile);
 
   assert(punit && ai && pplayer && result);
@@ -446,12 +446,12 @@ void ai_settler_init(struct player *pplayer)
 }
 
 /**************************************************************************
-  Find nearest and best city placement in a PF iteration according to 
-  "parameter".  The value in "boat_cost" is both the penalty to pay for 
-  using a boat and an indicator (boat_cost!=0) if a boat was used at all. 
+  Find nearest and best city placement in a PF iteration according to
+  "parameter".  The value in "boat_cost" is both the penalty to pay for
+  using a boat and an indicator (boat_cost!=0) if a boat was used at all.
   The result is returned in "best".
 
-  Return value is TRUE if found something better than what was originally 
+  Return value is TRUE if found something better than what was originally
   in "best".
 
   TODO: Transparently check if we should add ourselves to an existing city.
@@ -459,7 +459,7 @@ void ai_settler_init(struct player *pplayer)
 static bool settler_map_iterate(struct pf_parameter *parameter,
 				struct unit *punit,
 				struct cityresult *best,
-				struct player *pplayer, 
+				struct player *pplayer,
 				int boat_cost)
 {
   struct cityresult result;
@@ -533,10 +533,10 @@ static bool settler_map_iterate(struct pf_parameter *parameter,
 /**************************************************************************
   Find nearest and best city placement or (TODO) a city to immigrate to.
 
-  Option look_for_boat forces to find a boat before cosidering going 
+  Option look_for_boat forces to find a boat before cosidering going
   overseas.  Option use_virt_boat allows to use virtual boat but only
-  if punit is in a coastal city right now (should only be used by 
-  virtual units).  I guess it won't hurt to remove this condition, PF 
+  if punit is in a coastal city right now (should only be used by
+  virtual units).  I guess it won't hurt to remove this condition, PF
   will just give no positions.
 **************************************************************************/
 void find_best_city_placement(struct unit *punit, struct cityresult *best,
@@ -571,8 +571,8 @@ void find_best_city_placement(struct unit *punit, struct cityresult *best,
     ferry = find_unit_by_id(ferry_id);
   }
 
-  if (ferry 
-      || (use_virt_boat && is_ocean_near_tile(punit->tile) 
+  if (ferry
+      || (use_virt_boat && is_ocean_near_tile(punit->tile)
           && map_get_city(punit->tile))) {
     if (!ferry) {
       /* No boat?  Get a virtual one! */
@@ -598,9 +598,9 @@ void find_best_city_placement(struct unit *punit, struct cityresult *best,
 
     /* FIXME: Maybe penalty for using an existing boat is too high?
      * We shouldn't make the penalty for building a new boat too high though.
-     * Building a new boat is like a war against a weaker enemy -- 
+     * Building a new boat is like a war against a weaker enemy --
      * good for the economy. (c) Bush family */
-    if (settler_map_iterate(&parameter, punit, best, pplayer, 
+    if (settler_map_iterate(&parameter, punit, best, pplayer,
 			    unit_type(ferry)->build_cost)) {
       best->overseas = TRUE;
       best->virt_boat = (ferry->id == 0);

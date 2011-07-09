@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ struct pf_path;
 
 extern Unit_Type_id simple_ai_types[U_LAST];
 
-void ai_manage_units(struct player *pplayer); 
+void ai_manage_units(struct player *pplayer);
 void ai_manage_unit(struct player *pplayer, struct unit *punit);
 void ai_manage_military(struct player *pplayer,struct unit *punit);
 struct city *find_nearest_safe_city(struct unit *punit);
@@ -56,11 +56,11 @@ int look_for_charge(struct player *pplayer, struct unit *punit,
                     struct unit **aunit, struct city **acity);
 
 int turns_to_enemy_city(Unit_Type_id our_type, struct city *acity,
-                        int speed, bool go_by_boat, 
+                        int speed, bool go_by_boat,
                         struct unit *boat, Unit_Type_id boattype);
-int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile, 
+int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile,
                         Unit_Type_id enemy_type);
-int find_something_to_kill(struct player *pplayer, struct unit *punit, 
+int find_something_to_kill(struct player *pplayer, struct unit *punit,
 			   struct tile **ptile);
 bool find_beachhead(struct unit *punit, struct tile *dst_tile,
 		    struct tile **ptile);

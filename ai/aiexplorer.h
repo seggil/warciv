@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "fc_types.h"
 
 /*
- * Handle eXplore mode of a unit (explorers are always in eXplore mode 
+ * Handle eXplore mode of a unit (explorers are always in eXplore mode
  * for AI) - explores unknown territory, finds huts.
  *
  * Returns whether there is any more territory to be explored.
@@ -26,9 +26,9 @@
 bool ai_manage_explorer(struct unit *punit);
 
 /*
- * TODO: Enable AI build new explorers.  Either (the old way) write a 
- * function yo estimate a city's want to build an explorer or 
- * (the new way) estimate nation-wide want for explorers and find a city 
+ * TODO: Enable AI build new explorers.  Either (the old way) write a
+ * function yo estimate a city's want to build an explorer or
+ * (the new way) estimate nation-wide want for explorers and find a city
  * which will build them.
  */
 

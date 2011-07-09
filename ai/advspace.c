@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ bool ai_spaceship_autoplace(struct player *pplayer, struct player_spaceship *shi
   enum spaceship_place_type type;
   int num, i;
   bool retval = FALSE;
-  
+
   while (ship->modules > (ship->habitation + ship->life_support
 		       + ship->solar_panels)) {
-    
+
     type =
       (ship->habitation==0)   ? SSHIP_PLACE_HABITATION :
       (ship->life_support==0) ? SSHIP_PLACE_LIFE_SUPPORT :
@@ -85,14 +85,14 @@ bool ai_spaceship_autoplace(struct player *pplayer, struct player_spaceship *shi
        modules, or else finally in numerical order.
     */
     int req = -1;
-    
+
     if (!ship->structure[0]) {
       /* if we don't have the first structural, place that! */
       type = SSHIP_PLACE_STRUCTURAL;
       num = 0;
       handle_spaceship_place(pplayer, type, num);
     }
-    
+
     if (ship->habitation >= 1
 	&& !ship->structure[modules_info[0].required]) {
       req = modules_info[0].required;
@@ -137,7 +137,7 @@ bool ai_spaceship_autoplace(struct player *pplayer, struct player_spaceship *shi
     /* sanity: */
     assert(req!=-1);
     assert(!ship->structure[req]);
-    
+
     /* Now we want to find a structural we can build which leads to req.
        This loop should bottom out, because everything leads back to s0,
        and we made sure above that we do s0 first.

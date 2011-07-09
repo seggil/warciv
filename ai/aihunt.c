@@ -38,10 +38,10 @@
 #include "aihunt.h"
 
 /**************************************************************************
-  We don't need a hunter in this city if we already have one. Return 
+  We don't need a hunter in this city if we already have one. Return
   existing hunter if any.
 **************************************************************************/
-static struct unit *ai_hunter_find(struct player *pplayer, 
+static struct unit *ai_hunter_find(struct player *pplayer,
                                    struct city *pcity)
 {
   unit_list_iterate(pcity->units_supported, punit) {
@@ -128,7 +128,7 @@ static void ai_hunter_missile_want(struct player *pplayer,
     if (ai_hunter_qualify(pplayer, punit)
         && (unit_flag(punit, F_MISSILE_CARRIER)
             || unit_flag(punit, F_CARRIER))) {
-      /* There is a potential hunter in our city which we can equip 
+      /* There is a potential hunter in our city which we can equip
        * with a missile. Do it. */
       have_hunter = TRUE;
       break;
@@ -148,7 +148,7 @@ static void ai_hunter_missile_want(struct player *pplayer,
     }
 
     /* FIXME: We need to store some data that can tell us if
-     * enemy transports are protected by anti-missile technology. 
+     * enemy transports are protected by anti-missile technology.
      * In this case, want nuclear much more! */
     desire = (ut->hp
               * MIN(ut->attack_strength, 30) /* nuke fix */
@@ -222,11 +222,11 @@ void ai_hunter_choice(struct player *pplayer, struct city *pcity,
   }
 
   if (best_sea_hunter >= 0) {
-    eval_hunter_want(pplayer, pcity, choice, best_sea_hunter, 
+    eval_hunter_want(pplayer, pcity, choice, best_sea_hunter,
                      do_make_unit_veteran(pcity, best_sea_hunter));
   }
   if (best_land_hunter >= 0) {
-    eval_hunter_want(pplayer, pcity, choice, best_land_hunter, 
+    eval_hunter_want(pplayer, pcity, choice, best_land_hunter,
                      do_make_unit_veteran(pcity, best_land_hunter));
   }
 }
@@ -295,7 +295,7 @@ int ai_hunter_findjob(struct player *pplayer, struct unit *punit)
 	       unit_type(target)->name, TILE_XY(target->tile),
                target->id, dist1, dist2);
       /* We can't attack units stationary in cities. */
-      if (map_get_city(target->tile) 
+      if (map_get_city(target->tile)
           && (dist2 == 0 || dist1 == dist2)) {
         continue;
       }
@@ -328,8 +328,8 @@ int ai_hunter_findjob(struct player *pplayer, struct unit *punit)
       stackthreat += stackcost;
       stackthreat /= real_map_distance(punit->tile, target->tile) + 1;
       UNIT_LOG(LOGLEVEL_HUNT, punit, "considering hunting %s's %s(%d, %d) id "
-               "id %d with want %d, dist1 %d, dist2 %d", 
-               unit_owner(defender)->name, unit_type(defender)->name, 
+               "id %d with want %d, dist1 %d, dist2 %d",
+               unit_owner(defender)->name, unit_type(defender)->name,
                TILE_XY(defender->tile), defender->id, stackthreat, dist1,
                dist2);
       /* TO DO: probably ought to WAG down targets of players we are not (yet)
@@ -385,7 +385,7 @@ static void ai_hunter_try_launch(struct player *pplayer,
         }
         unit_list_iterate(pos.tile->units, victim) {
           struct unit_type *ut = unit_type(victim);
-          enum diplstate_type ds = pplayer_get_diplstate(pplayer, 
+          enum diplstate_type ds = pplayer_get_diplstate(pplayer,
                                                          unit_owner(victim))->type;
 
           if (ds != DS_WAR) {
@@ -394,7 +394,7 @@ static void ai_hunter_try_launch(struct player *pplayer,
           if (victim == target) {
             sucker = victim;
             UNIT_LOG(LOGLEVEL_HUNT, missile, "found primary target %d(%d, %d)"
-                     " dist %d", victim->id, TILE_XY(victim->tile), 
+                     " dist %d", victim->id, TILE_XY(victim->tile),
                      pos.total_MC);
             break; /* Our target! Get him!!! */
           }

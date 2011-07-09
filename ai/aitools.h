@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,16 +37,16 @@ enum bodyguard_enum {
   BODYGUARD_NONE
 };
 
-int military_amortize(struct player *pplayer, struct city *pcity, 
+int military_amortize(struct player *pplayer, struct city *pcity,
                       int value, int delay, int build_cost);
 int stack_cost(struct unit *pdef);
 
 bool ai_unit_execute_path(struct unit *punit, struct pf_path *path);
-bool ai_gothere(struct player *pplayer, struct unit *punit, 
+bool ai_gothere(struct player *pplayer, struct unit *punit,
                 struct tile *dst_tile);
 bool ai_unit_goto(struct unit *punit, struct tile *ptile);
 
-void ai_unit_new_role(struct unit *punit, enum ai_unit_task task, 
+void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
                       struct tile *ptile);
 bool ai_unit_make_homecity(struct unit *punit, struct city *pcity);
 bool ai_unit_attack(struct unit *punit, struct tile *ptile);

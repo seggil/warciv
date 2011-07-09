@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 
 #include "fc_types.h"
 
-void ai_manage_tech(struct player *pplayer); 
+void ai_manage_tech(struct player *pplayer);
 void ai_next_tech_goal(struct player *pplayer);
 
 #endif  /* FC__AITECH_H */

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2003 - The Freeciv Team
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ void ai_diplomacy_actions(struct player *pplayer);
 
 void ai_treaty_evaluate(struct player *pplayer, struct player *aplayer,
                         struct Treaty *ptreaty);
-void ai_treaty_accepted(struct player *pplayer, struct player *aplayer, 
+void ai_treaty_accepted(struct player *pplayer, struct player *aplayer,
                         struct Treaty *ptreaty);
 
 #endif

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ static void ai_data_city_impr_calc(struct player *pplayer, struct ai_data *ai)
       break;
       }
     } effect_type_vector_iterate_end;
-    
+
   } impr_type_iterate_end;
 }
 
@@ -163,10 +163,10 @@ static void count_my_units(struct player *pplayer)
   can see what.
 
   FIXME: We should try to find the lowest common defence strength of our
-  defending units, and ignore enemy units that are incapable of harming 
+  defending units, and ignore enemy units that are incapable of harming
   us, instead of just checking attack strength > 1.
 **************************************************************************/
-void ai_data_turn_init(struct player *pplayer) 
+void ai_data_turn_init(struct player *pplayer)
 {
   struct ai_data *ai = &aidata[pplayer->player_no];
   int i, nuke_units = num_role_units(F_NUCLEAR);
@@ -192,7 +192,7 @@ void ai_data_turn_init(struct player *pplayer)
 
     /* The idea is that if there aren't any hostile cities on
      * our continent, the danger of land attacks is not big
-     * enough to warrant city walls. Concentrate instead on 
+     * enough to warrant city walls. Concentrate instead on
      * coastal fortresses and hunting down enemy transports. */
     city_list_iterate(aplayer->cities, acity) {
       Continent_id continent = map_get_continent(acity->tile);
@@ -225,7 +225,7 @@ void ai_data_turn_init(struct player *pplayer)
 	      }
 	    } adjc_iterate_end;
 	  }
-        } 
+        }
         continue;
       }
 
@@ -251,7 +251,7 @@ void ai_data_turn_init(struct player *pplayer)
     /* Check for nuke capability */
     for (i = 0; i < nuke_units; i++) {
       Unit_Type_id nuke = get_role_unit(F_NUCLEAR, i);
-      if (can_player_build_unit_direct(aplayer, nuke)) { 
+      if (can_player_build_unit_direct(aplayer, nuke)) {
         ai->threats.nuclear = 1;
       }
     }
@@ -270,7 +270,7 @@ void ai_data_turn_init(struct player *pplayer)
     Continent_id continent = map_get_continent(ptile);
 
     if (is_ocean(ptile->terrain)) {
-      if (ai->explore.sea_done && ai_handicap(pplayer, H_TARGETS) 
+      if (ai->explore.sea_done && ai_handicap(pplayer, H_TARGETS)
           && !map_is_known(ptile, pplayer)) {
 	/* We're not done there. */
         ai->explore.sea_done = FALSE;
@@ -283,7 +283,7 @@ void ai_data_turn_init(struct player *pplayer)
       /* we don't need more explaining, we got the point */
       continue;
     }
-    if (map_has_special(ptile, S_HUT) 
+    if (map_has_special(ptile, S_HUT)
         && (!ai_handicap(pplayer, H_HUTS)
              || map_is_known(ptile, pplayer))) {
       ai->explore.land_done = FALSE;
@@ -340,8 +340,8 @@ void ai_data_turn_init(struct player *pplayer)
   ai->diplomacy.acceptable_reputation_for_ceasefire =
            GAME_DEFAULT_REPUTATION / 3;
 
-  /* Set per-player variables. We must set all players, since players 
-   * can be created during a turn, and we don't want those to have 
+  /* Set per-player variables. We must set all players, since players
+   * can be created during a turn, and we don't want those to have
    * invalid values. */
   for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
     struct player *aplayer = get_player(i);
@@ -382,7 +382,7 @@ void ai_data_turn_init(struct player *pplayer)
     ai->diplomacy.alliance_leader = ally_strongest;
   }
   ai->diplomacy.spacerace_leader = player_leading_spacerace();
-  
+
   ai->diplomacy.production_leader = NULL;
   players_iterate(aplayer) {
     if (ai->diplomacy.production_leader == NULL
@@ -393,9 +393,9 @@ void ai_data_turn_init(struct player *pplayer)
 
   /*** Priorities ***/
 
-  /* NEVER set these to zero! Weight values are usually multiplied by 
-   * these values, so be careful with them. They are used in city 
-   * and government calculations, and food and shields should be 
+  /* NEVER set these to zero! Weight values are usually multiplied by
+   * these values, so be careful with them. They are used in city
+   * and government calculations, and food and shields should be
    * slightly bigger because we only look at surpluses there. They
    * are all WAGs. */
   ai->food_priority = FOOD_WEIGHTING;
@@ -418,8 +418,8 @@ void ai_data_turn_init(struct player *pplayer)
   /*** Interception engine ***/
 
   /* We are tracking a unit if punit->ai.cur_pos is not NULL. If we
-   * are not tracking, start tracking by setting cur_pos. If we are, 
-   * fill prev_pos with previous cur_pos. This way we get the 
+   * are not tracking, start tracking by setting cur_pos. If we are,
+   * fill prev_pos with previous cur_pos. This way we get the
    * necessary coordinates to calculate a probably trajectory. */
   players_iterate(aplayer) {
     if (!aplayer->is_alive || aplayer == pplayer) {

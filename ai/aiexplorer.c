@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,27 +45,27 @@ static int likely_ocean(struct tile *ptile, struct player *pplayer)
     /* we've seen the tile already. */
     return (is_ocean(map_get_terrain(ptile)) ? 100 : 0);
   }
-  
+
   /* Now we're going to do two things at once. We're going to see if
    * we know any cardinally adjacent tiles, since knowing one will
    * give a guaranteed value for the centre tile. Also, we're going
    * to count the non-cardinal (diagonal) tiles, and see how many
-   * of them are ocean, which gives a guess for the ocean-ness of 
+   * of them are ocean, which gives a guess for the ocean-ness of
    * the centre tile. */
   sum = 50;
   adjc_dir_iterate(ptile, ptile1, dir) {
     if (map_is_known(ptile1, pplayer)) {
       if (is_cardinal_dir(dir)) {
-	/* If a tile is cardinally adjacent, we can tell if the 
+	/* If a tile is cardinally adjacent, we can tell if the
 	 * central tile is ocean or not by the appearance of
-	 * the adjacent tile. So, given that we can tell, 
+	 * the adjacent tile. So, given that we can tell,
 	 * it's fair to look at the actual tile. */
         return (is_ocean(map_get_terrain(ptile)) ? 100 : 0);
       } else {
 	/* We're diagonal to the tile in question. So we can't
 	 * be sure what the central tile is, but the central
-	 * tile is likely to be the same as the nearby tiles. 
-	 * If all 4 are water, return 90; if all 4 are land, 
+	 * tile is likely to be the same as the nearby tiles.
+	 * If all 4 are water, return 90; if all 4 are land,
 	 * return 10. */
         sum += (is_ocean(map_get_terrain(ptile1)) ? 10 : -10);
       }
@@ -76,7 +76,7 @@ static int likely_ocean(struct tile *ptile, struct player *pplayer)
 }
 
 /***************************************************************
-Is a tile likely to be coastline, given information that the 
+Is a tile likely to be coastline, given information that the
 player actually has.
 ***************************************************************/
 static bool is_likely_coastline(struct tile *ptile, struct player *pplayer)
@@ -90,17 +90,17 @@ static bool is_likely_coastline(struct tile *ptile, struct player *pplayer)
     }
     /* If all t values are 50, likely stays at 50. If all approach zero,
      * ie are unlikely to be ocean, the tile is likely to be coastline, so
-     * likely will approach 100. If all approach 100, likely will 
+     * likely will approach 100. If all approach 100, likely will
      * approach zero. */
     likely += (50 - t) / 8;
-    
+
   } adjc_iterate_end;
 
   return (likely > 50);
 }
 
 /***************************************************************
-Is there a chance that a trireme would be lost, given information that 
+Is there a chance that a trireme would be lost, given information that
 the player actually has.
 ***************************************************************/
 static bool is_likely_trireme_loss(struct player *pplayer,
@@ -111,7 +111,7 @@ static bool is_likely_trireme_loss(struct player *pplayer,
    * the ship.  To make this really useful for ai planning purposes, we'd
    * need to confirm that we can exist/move at the x,y location we are given.
    */
-  if ((likely_ocean(ptile, pplayer) < 50) || 
+  if ((likely_ocean(ptile, pplayer) < 50) ||
       is_likely_coastline(ptile, pplayer) ||
       get_player_bonus(pplayer, EFT_NO_SINK_DEEP) > 0) {
     return FALSE;
@@ -126,7 +126,7 @@ In general, we want to discover unknown terrain of the opposite kind to
 our natural terrain, i.e. pedestrians like ocean and boats like land.
 Even if terrain is known, but of opposite kind, we still want it
 -- so that we follow the shoreline.
-We also would like discovering tiles which can be harvested by our cities -- 
+We also would like discovering tiles which can be harvested by our cities --
 because that improves citizen placement. We do not currently do this, see
 comment below.
 **************************************************************************/
@@ -135,7 +135,7 @@ comment below.
 #define KNOWN_SAME_TER_SCORE   0
 #define KNOWN_DIFF_TER_SCORE   51
 
-/* The maximum number of tiles that the unit might uncover in a move. 
+/* The maximum number of tiles that the unit might uncover in a move.
  * #define MAX_NEW_TILES          (1 + 4 * (unit_type(punit)->vision_range))
  * The previous line would be ideal, but we'd like these to be constants
  * for efficiency, so pretend vision_range == 1 */
@@ -147,7 +147,7 @@ comment below.
  * As above, set vision_range == 1 */
 #define VISION_TILES           9
 
-/* The desirability of the best tile possible without cities or huts. 
+/* The desirability of the best tile possible without cities or huts.
  * TER_SCORE is given per 1% of certainty about the terrain, so
  * muliply by 100 to compensate. */
 #define BEST_NORMAL_TILE       \
@@ -159,11 +159,11 @@ comment below.
 #define OWN_CITY_SCORE         (BEST_NORMAL_TILE + 1)
 
 /* And we value exploring huts even more than our own cities. */
-#define HUT_SCORE              (OWN_CITY_SCORE + 1) 
+#define HUT_SCORE              (OWN_CITY_SCORE + 1)
 
 #define BEST_POSSIBLE_SCORE    (HUT_SCORE + BEST_NORMAL_TILE)
 
-static int explorer_desirable(struct tile *ptile, struct player *pplayer, 
+static int explorer_desirable(struct tile *ptile, struct player *pplayer,
                               struct unit *punit)
 {
   int land_score, ocean_score, known_land_score, known_ocean_score;
@@ -173,10 +173,10 @@ static int explorer_desirable(struct tile *ptile, struct player *pplayer,
 
   /* First do some checks that would make a tile completely non-desirable.
    * If we're a trireme and we could die at the given tile, or if there
-   * is a city on the tile, or if the tile is not accessible, or if the 
+   * is a city on the tile, or if the tile is not accessible, or if the
    * tile is on a different continent, or if we're a barbarian and
    * the tile has a hut, don't go there. */
-  if ((unit_flag(punit, F_TRIREME) && 
+  if ((unit_flag(punit, F_TRIREME) &&
        is_likely_trireme_loss(pplayer, ptile))
       || map_get_city(ptile)
       || (is_barbarian(pplayer) && map_has_special(ptile, S_HUT))) {
@@ -203,12 +203,12 @@ static int explorer_desirable(struct tile *ptile, struct player *pplayer,
     if (!map_is_known(ptile1, pplayer)) {
       unknown++;
 
-      /* FIXME: we should add OWN_CITY_SCORE to desirable if the tile 
+      /* FIXME: we should add OWN_CITY_SCORE to desirable if the tile
        * can be harvested by a city of ours. Just calculating this each
        * time becomes rather expensive. Jason Short suggests:
        * It should be easy to generate this information once, for
-       * the entire world.  It can be used by everyone and only 
-       * sometimes needs to be recalculated (actually all changes 
+       * the entire world.  It can be used by everyone and only
+       * sometimes needs to be recalculated (actually all changes
        * only require local recalculation, but that could be unstable). */
 
       desirable += (ocean * ocean_score + (100 - ocean) * land_score);
@@ -216,7 +216,7 @@ static int explorer_desirable(struct tile *ptile, struct player *pplayer,
       if(is_tiles_adjacent(ptile, ptile1)) {
 	/* we don't value staying offshore from land,
 	 * only adjacent. Otherwise destroyers do the wrong thing. */
-	desirable += (ocean * known_ocean_score 
+	desirable += (ocean * known_ocean_score
                       + (100 - ocean) * known_land_score);
       }
     }
@@ -239,7 +239,7 @@ static int explorer_desirable(struct tile *ptile, struct player *pplayer,
 }
 
 /**************************************************************************
-  Handle eXplore mode of a unit (explorers are always in eXplore mode 
+  Handle eXplore mode of a unit (explorers are always in eXplore mode
   for AI) - explores unknown territory, finds huts.
 
   Returns whether there is any more territory to be explored.
@@ -250,7 +250,7 @@ bool ai_manage_explorer(struct unit *punit)
   /* Loop prevention */
   int init_moves = punit->moves_left;
 
-  /* The log of the want of the most desirable tile, 
+  /* The log of the want of the most desirable tile,
    * given nearby water, cities, etc. */
   double log_most_desirable = -FC_INFINITY;
 
@@ -260,7 +260,7 @@ bool ai_manage_explorer(struct unit *punit)
    * order to be better than the current most_desirable tile. */
   int max_dist = FC_INFINITY;
 
-  /* Coordinates of most desirable tile. Initialized to make 
+  /* Coordinates of most desirable tile. Initialized to make
    * compiler happy. Also MC to the best tile. */
   struct tile *best_tile = NULL;
   int best_MC = FC_INFINITY;
@@ -286,13 +286,13 @@ bool ai_manage_explorer(struct unit *punit)
     struct pf_position pos;
 
     pf_next_get_position(map, &pos);
-    
+
     /* Our callback should insure this. */
     assert(map_is_known(pos.tile, pplayer));
-    
+
     desirable = explorer_desirable(pos.tile, pplayer, punit);
 
-    if (desirable <= 0) { 
+    if (desirable <= 0) {
       /* Totally non-desirable tile. No need to continue. */
       continue;
     }
@@ -300,20 +300,20 @@ bool ai_manage_explorer(struct unit *punit)
     /* take the natural log */
     log_desirable = log(desirable);
 
-    /* Ok, the way we calculate goodness is taking the base tile 
+    /* Ok, the way we calculate goodness is taking the base tile
      * desirability amortized by the time it takes to get there:
      *
      *     goodness = desirability * DIST_FACTOR^total_MC
      *
      * TODO: JDS notes that we should really make our exponential
      *       term dimensionless by dividing by move_rate.
-     * 
+     *
      * We want to truncate our search, so we calculate a maximum distance
      * that we would move to find the tile with the most possible desirability
      * (BEST_POSSIBLE_SCORE) that gives us the same goodness as the current
      * tile position we're looking at. Therefore we have:
      *
-     *   desirability * DIST_FACTOR^total_MC = 
+     *   desirability * DIST_FACTOR^total_MC =
      *               BEST_POSSIBLE_SCORE * DIST_FACTOR^(max distance)      (1)
      *
      * and then solve for max_dist. We only want to change max_dist when
@@ -321,7 +321,7 @@ bool ai_manage_explorer(struct unit *punit)
      * the conditional below. It looks cryptic, but all it is is testing which
      * of two goodnesses is bigger after taking the natural log of both sides.
      */
-    if (log_desirable + pos.total_MC * logDF 
+    if (log_desirable + pos.total_MC * logDF
 	> log_most_desirable + best_MC * logDF) {
 
       log_most_desirable = log_desirable;
@@ -342,7 +342,7 @@ bool ai_manage_explorer(struct unit *punit)
 
   /* Go to the best tile found. */
   if (best_tile != NULL) {
-    /* TODO: read the path off the map we made.  Then we can make a path 
+    /* TODO: read the path off the map we made.  Then we can make a path
      * which goes beside the unknown, with a good EC callback... */
     if (!ai_unit_goto(punit, best_tile)) {
       /* Died?  Strange... */
@@ -351,11 +351,11 @@ bool ai_manage_explorer(struct unit *punit)
     if (punit->moves_left > 0) {
       /* We can still move on... */
       if (punit->moves_left < init_moves) {
-	/* At least we moved (and maybe even got to where we wanted).  
-         * Let's do more exploring. 
+	/* At least we moved (and maybe even got to where we wanted).
+         * Let's do more exploring.
          * (Checking only whether our position changed is unsafe: can allow
          * yoyoing on a RR) */
-	return ai_manage_explorer(punit);          
+	return ai_manage_explorer(punit);
       } else {
 	/* Something went wrong. What to do but return?
 	 * Answer: if we're a trireme we could get to this point,
@@ -363,7 +363,7 @@ bool ai_manage_explorer(struct unit *punit)
 	 * in which case the goto code is simply requesting a
 	 * one turn delay (the next tile we would occupy is not safe).
 	 * In that case, we should just wait. */
-        if (unit_flag(punit, F_TRIREME) 
+        if (unit_flag(punit, F_TRIREME)
             && (punit->moves_left != unit_move_rate(punit))) {
           /* we're a trireme with non-full complement of movement points,
            * so wait until next turn. */

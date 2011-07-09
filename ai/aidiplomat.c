@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2002 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ void ai_choose_diplomat_defensive(struct player *pplayer,
     Unit_Type_id u = best_role_unit(pcity, F_DIPLOMAT);
 
     if (u < U_LAST) {
-       freelog(LOG_DIPLOMAT_BUILD, 
+       freelog(LOG_DIPLOMAT_BUILD,
                "A defensive diplomat will be built in city %s.", pcity->name);
        choice->want = 16000; /* diplomat more important than soldiers */
        pcity->server.ai.urgency = 1;
@@ -215,7 +215,7 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
       return;
     }
 
-    want = military_amortize(pplayer, pcity, want, time_to_dest, 
+    want = military_amortize(pplayer, pcity, want, time_to_dest,
                              unit_build_shield_cost(u));
 
     if (!player_has_embassy(pplayer, city_owner(acity))
@@ -229,9 +229,9 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
       freelog(LOG_DIPLOMAT_BUILD,
               "%s, %s: %s is desired with want %d to spy in %s (incite "
               "want %d cost %d gold %d, tech theft want %d, ttd %d)",
-              pplayer->name, pcity->name, ut->name, want, acity->name, 
-              gain_incite, incite_cost, 
-              pplayer->economic.gold - pplayer->ai.est_upkeep, 
+              pplayer->name, pcity->name, ut->name, want, acity->name,
+              gain_incite, incite_cost,
+              pplayer->economic.gold - pplayer->ai.est_upkeep,
               gain_theft, time_to_dest);
       choice->want = want;
       choice->type = CT_NONMIL; /* so we don't build barracks for it */
@@ -282,7 +282,7 @@ static void ai_diplomat_city(struct unit *punit, struct city *ctarget)
     return; /* Don't do the rest to allies */
   }
 
-  if (count_tech > 0 
+  if (count_tech > 0
       && (ctarget->server.steal == 0 || unit_flag(punit, F_SPY))) {
     T(DIPLOMAT_STEAL,0);
   } else {
@@ -311,7 +311,7 @@ static void ai_diplomat_city(struct unit *punit, struct city *ctarget)
 }
 
 /**************************************************************************
-  Returns (in ctarget) the closest city to send diplomats against, or NULL 
+  Returns (in ctarget) the closest city to send diplomats against, or NULL
   if none available on this continent.  punit can be virtual.
 **************************************************************************/
 static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
@@ -342,7 +342,7 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
 
     if (aplayer == pplayer || is_barbarian(aplayer)
         || (pplayers_allied(pplayer, aplayer) && has_embassy)) {
-      continue; 
+      continue;
     }
 
     incite_cost = city_incite_cost(pplayer, acity);
@@ -354,7 +354,7 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
      * 2. stealing techs OR
      * 3. inciting revolt */
     if (!has_embassy
-        || (acity->server.steal == 0 && pplayer->research.techs_researched < 
+        || (acity->server.steal == 0 && pplayer->research.techs_researched <
             aplayer->research.techs_researched && !dipldef)
         || (incite_cost < (pplayer->economic.gold - pplayer->ai.est_upkeep)
             && can_incite && !dipldef)) {
@@ -378,7 +378,7 @@ static struct city *ai_diplomat_defend(struct player *pplayer,
   struct city *ctarget = NULL;
   struct city *pcity = map_get_city(punit->tile);
 
-  if (pcity 
+  if (pcity
       && count_diplomats_on_tile(pcity->tile) == 1
       && pcity->server.ai.urgency > 0) {
     /* Danger and we are only diplomat present - stay. */
@@ -433,7 +433,7 @@ static struct city *ai_diplomat_defend(struct player *pplayer,
   the ordeal, FALSE if not or we expended all our movement.
   Will try to bribe a ship on the coast as well as land stuff.
 **************************************************************************/
-static bool ai_diplomat_bribe_nearby(struct player *pplayer, 
+static bool ai_diplomat_bribe_nearby(struct player *pplayer,
                                      struct unit *punit, struct pf_map *map)
 {
   int gold_avail = pplayer->economic.gold - pplayer->ai.est_upkeep;
@@ -501,7 +501,7 @@ static bool ai_diplomat_bribe_nearby(struct player *pplayer,
 
       ptile = mapstep(pos.tile, DIR_REVERSE(pos.dir_to_here));
       path = pf_get_path(map, ptile);
-      if (!path || !ai_unit_execute_path(punit, path) 
+      if (!path || !ai_unit_execute_path(punit, path)
           || punit->moves_left <= 0) {
         pf_destroy_path(path);
         return FALSE;
@@ -530,9 +530,9 @@ static bool ai_diplomat_bribe_nearby(struct player *pplayer,
 }
 
 /**************************************************************************
-  If we are the only diplomat in a threatened city, defend against enemy 
-  actions. The passive defense is set by game.server.diplchance.  The active 
-  defense is to bribe units which end their move nearby. Our next trick is 
+  If we are the only diplomat in a threatened city, defend against enemy
+  actions. The passive defense is set by game.server.diplchance.  The active
+  defense is to bribe units which end their move nearby. Our next trick is
   to look for enemy cities on our continent and do our diplomat things.
 
   FIXME: It is important to establish contact with all civilizations, so
@@ -566,7 +566,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
   pcity = map_get_city(punit->tile); /* we may have moved */
   if (pcity && count_diplomats_on_tile(punit->tile) == 1
       && (pcity->server.ai.diplomat_threat || pcity->server.ai.urgency > 0)) {
-    UNIT_LOG(LOG_DIPLOMAT, punit, "stays to protect %s (urg %d)", 
+    UNIT_LOG(LOG_DIPLOMAT, punit, "stays to protect %s (urg %d)",
              pcity->name, pcity->server.ai.urgency);
     ai_unit_new_role(punit, AIUNIT_NONE, NULL); /* abort mission */
     pf_destroy_map(map);
@@ -603,7 +603,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
     }
   }
 
-  /* We may need a new map now. Both because we cannot get paths from an 
+  /* We may need a new map now. Both because we cannot get paths from an
    * old map, and we need paths to move, and because fctd below requires
    * a new map for its iterator. */
   if (!same_pos(parameter.start_tile, punit->tile)
@@ -629,7 +629,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
                                              punit->type, map)) != NULL) {
       task = AIUNIT_DEFEND_HOME;
       UNIT_LOG(LOG_DIPLOMAT, punit, "going to defend %s", ctarget->name);
-    } else if ((ctarget = find_closest_owned_city(pplayer, punit->tile, 
+    } else if ((ctarget = find_closest_owned_city(pplayer, punit->tile,
 						  TRUE, NULL)) != NULL) {
       /* This should only happen if the entire continent was suddenly
        * conquered. So we head for closest coastal city and wait for someone
@@ -643,7 +643,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
     }
 
     ai_unit_new_role(punit, task, ctarget->tile);
-    assert(punit->moves_left > 0 && ctarget 
+    assert(punit->moves_left > 0 && ctarget
            && punit->ai.ai_role != AIUNIT_NONE);
   }
 
