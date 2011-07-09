@@ -11,5 +11,5 @@ libagents_a_SOURCES = 		\
 	cma_core.h 		\
 	cma_fec.c		\
 	cma_fec.h		\
-	sha.c                   \
-	sha.h                   
+	sha.c           \
+	sha.h
