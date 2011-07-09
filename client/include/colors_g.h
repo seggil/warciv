@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 #ifndef FC__COLORS_G_H
 #define FC__COLORS_G_H
 
-enum color_std { 
+enum color_std {
   COLOR_STD_BLACK, COLOR_STD_WHITE, COLOR_STD_RED,
   COLOR_STD_YELLOW, COLOR_STD_CYAN,
   COLOR_STD_GROUND, COLOR_STD_OCEAN,
