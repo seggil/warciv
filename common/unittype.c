@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,12 +43,12 @@ static const char *move_type_names[] = {
   "Land", "Sea", "Heli", "Air"
 };
 static const char *flag_names[] = {
-  "TradeRoute" ,"HelpWonder", "Missile", "IgZOC", "NonMil", "IgTer", 
-  "Carrier", "OneAttack", "Pikemen", "Horse", "IgWall", "FieldUnit", 
+  "TradeRoute" ,"HelpWonder", "Missile", "IgZOC", "NonMil", "IgTer",
+  "Carrier", "OneAttack", "Pikemen", "Horse", "IgWall", "FieldUnit",
   "AEGIS", "Fighter", "Marines", "Partial_Invis", "Settlers", "Diplomat",
   "Trireme", "Nuclear", "Spy", "Transform", "Paratroopers",
   "Airbase", "Cities", "IgTired", "Missile_Carrier", "No_Land_Attack",
-  "AddToCity", "Fanatic", "GameLoss", "Unique", "Unbribable", 
+  "AddToCity", "Fanatic", "GameLoss", "Unique", "Unbribable",
   "Undisbandable", "SuperSpy", "NoHome", "NoVeteran", "Bombarder",
   "CityBuster", "NoBuild", "OneAttack_Move"
 };
@@ -80,7 +80,7 @@ bool unit_type_exists(Unit_Type_id id)
 {
   if (id < 0 || id >= U_LAST || id >= game.ruleset_control.num_unit_types)
     return FALSE;
-  else 
+  else
     return unit_types[id].tech_requirement!=A_LAST;
 }
 
@@ -445,7 +445,7 @@ enum unit_flag_id unit_flag_from_str(const char *s)
   enum unit_flag_id i;
 
   assert(ARRAY_SIZE(flag_names) == F_LAST);
-  
+
   for(i=0; i<F_LAST; i++) {
     if (mystrcasecmp(flag_names[i], s)==0) {
       return i;
@@ -463,7 +463,7 @@ enum unit_role_id unit_role_from_str(const char *s)
   enum unit_role_id i;
 
   assert(ARRAY_SIZE(role_names) == (L_LAST - L_FIRST));
-  
+
   for(i=L_FIRST; i<L_LAST; i++) {
     if (mystrcasecmp(role_names[i-L_FIRST], s)==0) {
       return i;
@@ -497,10 +497,10 @@ bool can_player_build_unit_direct(struct player *p, Unit_Type_id id)
     return FALSE;
   if (unit_type_flag(id, F_UNIQUE)) {
     /* FIXME: This could be slow if we have lots of units. We could
-     * consider keeping an array of unittypes updated with this info 
+     * consider keeping an array of unittypes updated with this info
      * instead. */
     unit_list_iterate(p->units, punit) {
-      if (punit->type == id) { 
+      if (punit->type == id) {
         return FALSE;
       }
     } unit_list_iterate_end;
@@ -523,7 +523,7 @@ Whether player can build given unit somewhere;
 returns 0 if unit is obsolete.
 **************************************************************************/
 bool can_player_build_unit(struct player *p, Unit_Type_id id)
-{  
+{
   if (!can_player_build_unit_direct(p, id))
     return FALSE;
   while(unit_type_exists((id = unit_types[id].obsoleted_by)))
@@ -598,7 +598,7 @@ changed due to rulesets in client).
 void role_unit_precalcs(void)
 {
   int i;
-  
+
   if(!first_init) {
     for(i=0; i<L_LAST; i++) {
       free(with_role[i]);
@@ -647,7 +647,7 @@ Unit_Type_id best_role_unit(struct city *pcity, int role)
 {
   Unit_Type_id u;
   int j;
-  
+
   assert((role>=0 && role<F_LAST) || (role>=L_FIRST && role<L_LAST));
 
   for(j=n_with_role[role]-1; j>=0; j--) {

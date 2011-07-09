@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ bool worklist_peek_ith(const struct worklist *pwl, int *id, bool *is_unit,
 void worklist_advance(struct worklist *pwl)
 {
   worklist_remove(pwl, 0);
-}  
+}
 
 /****************************************************************
 ...
@@ -154,10 +154,10 @@ bool worklist_append(struct worklist *pwl, int id, bool is_unit)
   if (next_index >= MAX_LEN_WORKLIST) {
     return FALSE;
   }
-  
+
   pwl->wlefs[next_index] = (is_unit ? WEF_UNIT : WEF_IMPR);
   pwl->wlids[next_index] = id;
-  
+
   if (next_index + 1 < MAX_LEN_WORKLIST) {
     pwl->wlefs[next_index + 1] = WEF_END;
     pwl->wlids[next_index + 1] = 0;
@@ -189,17 +189,17 @@ bool worklist_insert(struct worklist *pwl, int id, bool is_unit, int idx)
 	  sizeof(pwl->wlefs[0]) * (len - idx));
   memmove(&pwl->wlids[idx + 1], &pwl->wlids[idx],
 	  sizeof(pwl->wlids[0]) * (len - idx));
-  
+
   pwl->wlefs[idx] = (is_unit ? WEF_UNIT : WEF_IMPR);
   pwl->wlids[idx] = id;
-  
+
   /* Since we don't copy the WEF_END, need to reinsert it at the end
    * if there is room. */
   if (len + 1 < MAX_LEN_WORKLIST) {
     pwl->wlefs[len + 1] = WEF_END;
     pwl->wlids[len + 1] = 0;
   }
-  
+
   return TRUE;
 }
 

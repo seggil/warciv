@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ const char * const our_capability = our_capability_internal;
  * "struct connection" has a capability string, which gives the
  * capability of the executable at the other end of the connection.
  * So for the client, the capability of the server is in
- * aconnection.capability, and for the server, the capabilities of 
+ * aconnection.capability, and for the server, the capabilities of
  * connected clients are in game.players[i]->conn.capability
  * The client now also knows the capabilities of other clients,
  * via game.players[i]->conn.capability.
@@ -93,12 +93,12 @@ const char * const our_capability = our_capability_internal;
  *   - Avoid adding a new manditory capbility to the development branch for
  *     as long as possible.  We want to maintain network compatibility with
  *     the stable branch for as long as possible.
- * 	 
- * "extroutes" means the client or server supports configurable traderoute 	 
- * parameters (e.g. trademindist, traderevenuestyle, etc.). This is 	 
- * currently only supported by warserver 0.8.11a and above. 	 
- * 	 
- * "extgameinfo" was added to inform client of some warserver settings it 	 
+ *
+ * "extroutes" means the client or server supports configurable traderoute
+ * parameters (e.g. trademindist, traderevenuestyle, etc.). This is
+ * currently only supported by warserver 0.8.11a and above.
+ *
+ * "extgameinfo" was added to inform client of some warserver settings it
  * was unaware of before.
  *
  * "exttechleakage" was added to inform client of the news warserver settings,

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ struct impr_type *get_improvement_type(Impr_Type_id id)
 **************************************************************************/
 const char *get_improvement_name(Impr_Type_id id)
 {
-  return get_improvement_type(id)->name; 
+  return get_improvement_type(id)->name;
 }
 
 /****************************************************************************
@@ -160,7 +160,7 @@ const char *get_improvement_name(Impr_Type_id id)
 ****************************************************************************/
 const char *get_improvement_name_orig(Impr_Type_id id)
 {
-  return get_improvement_type(id)->name_orig; 
+  return get_improvement_type(id)->name_orig;
 }
 
 /****************************************************************************
@@ -246,7 +246,7 @@ Impr_Type_id find_improvement_by_name_orig(const char *s)
 /**************************************************************************
  Returns 1 if the improvement is obsolete, now also works for wonders
 **************************************************************************/
-bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id) 
+bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
 {
   if (!tech_exists(improvement_types[id].obsolete_by)) {
     return FALSE;
@@ -269,7 +269,7 @@ bool improvement_obsolete(const struct player *pplayer, Impr_Type_id id)
 static void fill_ranges_improv_lists(Impr_Status *equiv_list[IR_LAST],
                                      const struct city *pcity,
                                      struct player *pplayer)
-{ 
+{
   Continent_id cont = 0;
   enum impr_range i;
 
@@ -324,7 +324,7 @@ bool improvement_redundant(struct player *pplayer, const struct city *pcity,
   /* equiv_dupl makes buildings redundant, but that shouldn't stop you
      from building them if you really want to */
   if (!want_to_build) {
-    for (ept = improvement_types[id].equiv_dupl; ept 
+    for (ept = improvement_types[id].equiv_dupl; ept
            && *ept != B_LAST; ept++) {
       for (i = IR_CITY; i < IR_LAST; i++) {
         if (equiv_list[i]) {
@@ -350,7 +350,7 @@ bool wonder_obsolete(Impr_Type_id id)
 **************************************************************************/
 void improvement_status_init(Impr_Status * improvements, size_t elements)
 {
-  /* 
+  /*
    * Since this function is called with elements!=game.ruleset_control.num_impr_types
    * impr_type_iterate can't used here.
    */
@@ -436,7 +436,7 @@ bool can_player_build_improvement(struct player *p, Impr_Type_id id)
   returns TRUE if building is available with current tech OR will be
   available with future tech.  Returns FALSE if building is obsolete.
 **************************************************************************/
-bool can_player_eventually_build_improvement(struct player *p, 
+bool can_player_eventually_build_improvement(struct player *p,
                                              Impr_Type_id id)
 {
   if (!improvement_exists(id)) {
@@ -451,7 +451,7 @@ bool can_player_eventually_build_improvement(struct player *p,
 /**************************************************************************
   Marks an improvment to the status
 **************************************************************************/
-void mark_improvement(struct city *pcity, Impr_Type_id id, 
+void mark_improvement(struct city *pcity, Impr_Type_id id,
                       Impr_Status status)
 {
   enum impr_range range;
@@ -472,7 +472,7 @@ void mark_improvement(struct city *pcity, Impr_Type_id id,
 
 /**************************************************************************
   Redimensions the lists of island-range improvements when number of
-  continents changes. 
+  continents changes.
 **************************************************************************/
 void allot_island_improvs(void)
 {
@@ -483,45 +483,45 @@ void allot_island_improvs(void)
                                         (map.num_continents + 1)
                                         * game.ruleset_control.num_impr_types
                                         * sizeof(Impr_Status));
-  
+
     /* We index into this array with the continent number, so don't use zero */
     for (i = 1; i <= map.num_continents; i++) {
       improvement_status_init(&pplayer->island_improv[i * game.ruleset_control.num_impr_types],
                               game.ruleset_control.num_impr_types);
-    } 
+    }
 
     /* Fill the lists with existent improvements with Island equiv_range */
     city_list_iterate(pplayer->cities, pcity) {
       Continent_id cont = map_get_continent(pcity->tile);
-      Impr_Status *improvs = 
+      Impr_Status *improvs =
         &pplayer->island_improv[cont * game.ruleset_control.num_impr_types];
 
       built_impr_iterate(pcity, id) {
         if (improvement_types[id].equiv_range != IR_ISLAND) {
           continue;
         }
-    
+
         improvs[id] = pcity->improvements[id];
       } built_impr_iterate_end;
     } city_list_iterate_end;
   } players_iterate_end;
 
-  improvements_update_redundant(NULL, NULL, 0, IR_WORLD);  
-}   
+  improvements_update_redundant(NULL, NULL, 0, IR_WORLD);
+}
 
 /**************************************************************************
-  Update the obsolete status of all improvements. This needs to be done 
+  Update the obsolete status of all improvements. This needs to be done
   when a tech is discovered.
 
   For all players since wonders are obsoleted when anybody discovers the
   obsolescence tech.
 
-  If we marked something as obsolete, we need to call 
-  improvements_update_redundant(), since it might have made something 
+  If we marked something as obsolete, we need to call
+  improvements_update_redundant(), since it might have made something
   unredundant.
 **************************************************************************/
 void improvements_update_obsolete(void)
-{   
+{
   bool did_mark = FALSE;
 
   players_iterate(pplayer) {
@@ -547,18 +547,18 @@ void improvements_update_obsolete(void)
 /**************************************************************************
   Update the redundancy status of all improvements.
 
-  This needs to be done: 
+  This needs to be done:
    o When an improvement is made obsolete (by tech discovery).
    o When an improvement is built.
    o When an improvement is destroyed.
-   o When islands are reallotted: cities might be 'rearranged' into 
+   o When islands are reallotted: cities might be 'rearranged' into
      equiv_range.
 
-  We only check improvements within the equiv_range range. 
+  We only check improvements within the equiv_range range.
 
-  N.B. We do not need to do multiple iterations: an 
-  improvement making another improvement redundant does not depend on 
-  whether it itself it redundant or not. having been built is all that 
+  N.B. We do not need to do multiple iterations: an
+  improvement making another improvement redundant does not depend on
+  whether it itself it redundant or not. having been built is all that
   counts.
 **************************************************************************/
 void improvements_update_redundant(struct player *pplayer, struct city *pcity,
@@ -616,5 +616,5 @@ void improvements_update_redundant(struct player *pplayer, struct city *pcity,
     break;
   }
 
-#undef CHECK_CITY_IMPR 
+#undef CHECK_CITY_IMPR
 }

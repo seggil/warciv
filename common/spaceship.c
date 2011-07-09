@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ spaceship (eg, if/when capital-capture effect implemented).
 void spaceship_init(struct player_spaceship *ship)
 {
   int i;
-  
+
   ship->structurals = ship->components = ship->modules = 0;
   for(i=0; i<NUM_SS_STRUCTURALS; i++) {
     ship->structure[i] = FALSE;

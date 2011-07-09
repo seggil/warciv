@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -472,7 +472,7 @@ struct connection *find_conn_by_user_prefix(const char *user_name,
   *result = match_prefix(connection_accessor,
 			 conn_list_size(game.all_connections),
 			 MAX_LEN_NAME-1, mystrncasecmp, user_name, &ind);
-  
+
   if (*result < M_PRE_AMBIGUOUS) {
     return conn_list_get(game.all_connections, ind);
   } else {
@@ -564,7 +564,7 @@ const char *conn_description(const struct connection *pconn)
   if (pconn->username[0] != '\0') {
     if (!is_server || !strcmp(pconn->addr, pconn->server.ipaddr)) {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s"),
-                  pconn->username, pconn->addr); 
+                  pconn->username, pconn->addr);
     } else {
       my_snprintf(buffer, sizeof(buffer), _("%s from %s, ip %s"),
                   pconn->username, pconn->addr, pconn->server.ipaddr);

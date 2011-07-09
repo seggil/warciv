@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
 
   return  (game.info.diplomacy == 0      /* Unlimited diplomacy */
 	   || (game.info.diplomacy == 1  /* Human diplomacy only */
-	       && !pplayer->ai.control 
+	       && !pplayer->ai.control
 	       && !aplayer->ai.control)
 	   || (game.info.diplomacy == 2  /* AI diplomacy only */
 	       && pplayer->ai.control
@@ -56,7 +56,7 @@ bool could_meet_with_player(struct player *pplayer, struct player *aplayer)
           && aplayer->is_alive
           && pplayer != aplayer
           && diplomacy_possible(pplayer,aplayer)
-          && (player_has_embassy(aplayer, pplayer) 
+          && (player_has_embassy(aplayer, pplayer)
               || player_has_embassy(pplayer, aplayer)
               || pplayer->diplstates[aplayer->player_no].contact_turns_left > 0
               || aplayer->diplstates[pplayer->player_no].contact_turns_left > 0)
@@ -107,7 +107,7 @@ void treaty_free(struct Treaty *ptreaty)
 /****************************************************************
 ...
 *****************************************************************/
-bool remove_clause(struct Treaty *ptreaty, struct player *pfrom, 
+bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
 		  enum clause_type type, int val)
 {
   clause_list_iterate(ptreaty->clauses, pclause) {
@@ -130,11 +130,11 @@ bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
 /****************************************************************
 ...
 *****************************************************************/
-bool add_clause(struct Treaty *ptreaty, struct player *pfrom, 
+bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
 		enum clause_type type, int val)
 {
   struct Clause *pclause;
-  enum diplstate_type ds = 
+  enum diplstate_type ds =
                      pplayer_get_diplstate(ptreaty->plr0, ptreaty->plr1)->type;
 
   if (type < 0 || type >= CLAUSE_LAST) {
@@ -146,16 +146,16 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
     freelog(LOG_ERROR, "Illegal tech value %i in clause.", val);
     return FALSE;
   }
-  
+
   if (!game.ext_info.goldtrading && type == CLAUSE_GOLD) {
     return FALSE;
-  } 
+  }
   if (!game.ext_info.techtrading && type == CLAUSE_ADVANCE) {
     return FALSE;
-  } 
+  }
   if (!game.ext_info.citytrading && type == CLAUSE_CITY) {
     return FALSE;
-  } 
+  }
 
   if (is_pact_clause(type)
       && ((ds == DS_PEACE && type == CLAUSE_PEACE)
@@ -163,7 +163,7 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
           || (ds == DS_CEASEFIRE && type == CLAUSE_CEASEFIRE))) {
     /* we already have this diplomatic state */
     freelog(LOG_ERROR, "Illegal treaty suggested between %s and %s - they "
-                       "already have this treaty level.", ptreaty->plr0->name, 
+                       "already have this treaty level.", ptreaty->plr0->name,
                        ptreaty->plr1->name);
     return FALSE;
   }
@@ -192,13 +192,13 @@ bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
       return TRUE;
     }
   } clause_list_iterate_end;
-   
+
   pclause = (struct Clause *)fc_malloc(sizeof(struct Clause));
 
   pclause->type = type;
   pclause->from = pfrom;
   pclause->value = val;
-  
+
   clause_list_append(ptreaty->clauses, pclause);
 
   ptreaty->accept0 = FALSE;

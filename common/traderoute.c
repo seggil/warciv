@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ static int calculate_default_move_cost(struct city *pcity1, struct city *pcity2)
 {
   struct pf_parameter *pparameter = get_caravan_parameter(city_owner(pcity1),
                                                           pcity1->tile);
-  struct pf_map *pmap = pf_create_map(pparameter);
+  struct path_finding_map *pmap = pf_create_map(pparameter);
   struct pf_position position;
 
   if (!pf_get_position(pmap, pcity2->tile, &position)) {
@@ -112,7 +112,7 @@ static int base_calculate_move_cost(struct unit *punit, struct tile *ptile1,
                                                         struct tile *ptile2)
 {
   struct pf_parameter parameter;
-  struct pf_map *pmap;
+  struct path_finding_map *pmap;
   struct pf_position position;
 
   pft_fill_unit_parameter(&parameter, punit);
@@ -278,7 +278,7 @@ static bool add_move_orders(struct unit *punit, struct unit_order *porders,
                             struct tile *otile, struct tile *dtile)
 {
   struct pf_parameter parameter;
-  struct pf_map *pmap;
+  struct path_finding_map *pmap;
   struct pf_path *ppath;
   int i;
 
@@ -583,7 +583,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
     }
     free(pc1->trade_routes);
   }
-  
+
   return total;
 }
 
@@ -760,7 +760,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   struct trade_planning_calculation *pcalc;
   struct trade_city *tcity1, *tcity2;
   struct pf_parameter *pparameter = get_caravan_parameter(pplayer, NULL);
-  struct pf_map *map;
+  struct path_finding_map *map;
   struct pf_position pos;
   int i, j;
 
@@ -912,7 +912,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
 	   pcalc->ctconf.trade_routes_num * sizeof(struct trade_route *));
   }
   pcalc->btconf = pcalc->ctconf;
-  
+
   if (pcalc->btconf.free_slots == 0) {
     /* Already finished */
     trade_planning_calculation_destroy(pcalc, TRUE);

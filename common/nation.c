@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ return 1 (meaning male).
 bool get_nation_leader_sex(Nation_Type_id nation, const char *name)
 {
   int i;
-  
+
   if (!bounds_check_nation_id(nation, LOG_ERROR, "get_nation_leader_sex")) {
     return FALSE;
   }
@@ -153,7 +153,7 @@ checks if given leader name exist for given nation.
 bool check_nation_leader_name(Nation_Type_id nation, const char *name)
 {
   int i;
-  
+
   if (!bounds_check_nation_id(nation, LOG_ERROR, "check_nation_leader_name")) {
     return TRUE;			/* ? */
   }
@@ -177,7 +177,7 @@ const char *get_nation_name_plural(Nation_Type_id nation)
 }
 
 /***************************************************************
-Returns pointer to a nation 
+Returns pointer to a nation
 ***************************************************************/
 struct nation_type *get_nation_by_plr(struct player *plr)
 {
@@ -223,12 +223,12 @@ static void nation_free(Nation_Type_id nation)
     free(p->leaders);
     p->leaders = NULL;
   }
-  
+
   if (p->class) {
     free(p->class);
     p->class = NULL;
   }
-  
+
   if (p->legend) {
     free(p->legend);
     p->legend = NULL;
@@ -269,7 +269,7 @@ void nations_free()
 }
 
 /***************************************************************
- deallocates an array of city names. needs to be separate so 
+ deallocates an array of city names. needs to be separate so
  server can use it individually (misc_city_names)
 ***************************************************************/
 void nation_city_names_free(struct city_name *city_names)
@@ -277,7 +277,7 @@ void nation_city_names_free(struct city_name *city_names)
   int i;
 
   if (city_names) {
-    /* 
+    /*
      * Unfortunately, this monstrosity of a loop is necessary given
      * the setup of city_names.  But that setup does make things
      * simpler elsewhere.
@@ -301,7 +301,7 @@ int get_nation_city_style(Nation_Type_id nation)
 }
 
 /***************************************************************
-  Returns the id of a team given its name, or TEAM_NONE if 
+  Returns the id of a team given its name, or TEAM_NONE if
   not found.
 ***************************************************************/
 Team_Type_id team_find_by_name(const char *team_name)
@@ -389,7 +389,7 @@ int team_count_members(Team_Type_id id)
 
   players_iterate(pplayer) {
     if (pplayer->team == id) {
-      count++;    
+      count++;
     }
   } players_iterate_end
   return count;

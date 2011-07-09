@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -71,15 +71,15 @@ void dio_set_put_conv_callback(DIO_PUT_CONV_FUN fun)
  Returns FALSE if the destination isn't large enough or the source was
  bad.
 **************************************************************************/
-static bool get_conv(char *dst, size_t ndst, const char *src,
-		     size_t nsrc)
+static bool get_conv(char *dst, size_t dst_len, const char *src,
+		     size_t src_len)
 {
-  size_t len = nsrc;		/* length to copy, not including null */
+  size_t len = src_len;		/* length to copy, not including null */
   bool ret = TRUE;
 
-  if (ndst > 0 && len >= ndst) {
+  if (dst_len > 0 && len >= dst_len) {
     ret = FALSE;
-    len = ndst - 1;
+    len = dst_len - 1;
   }
 
   memcpy(dst, src, len);

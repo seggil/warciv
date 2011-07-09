@@ -199,12 +199,12 @@ struct city {
   int size;
 
   /* How the citizens feel:
-     ppl_*[0] is distribution before any of the modifiers below.
-     ppl_*[1] is distribution after luxury.
-     ppl_*[2] is distribution after after building effects.
-     ppl_*[3] is distribution after units enfored martial order.
-     ppl_*[4] is distribution after wonders. (final result.) */
-  int ppl_happy[5], ppl_content[5], ppl_unhappy[5], ppl_angry[5];
+     people_*[0] is distribution before any of the modifiers below.
+     people_*[1] is distribution after luxury.
+     people_*[2] is distribution after after building effects.
+     people_*[3] is distribution after units enfored martial order.
+     people_*[4] is distribution after wonders. (final result.) */
+  int people_happy[5], people_content[5], people_unhappy[5], people_angry[5];
 
   /* Specialists */
   int specialists[SP_COUNT];

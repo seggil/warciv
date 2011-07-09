@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2004 - The Freeciv Team
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -490,7 +490,7 @@ void ruleset_cache_free(void)
       effect_list_free(get_building_effects(j, i));
     }
   }
-  
+
   effect_group_list_free(groups);
   groups = NULL;
 

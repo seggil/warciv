@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ void map_init(void)
   /* The [xy]size values are set in map_init_topology.  It is initialized
    * to a non-zero value because some places erronously use these values
    * before they're initialized. */
-  map.info.xsize = MAP_MIN_LINEAR_SIZE;  
+  map.info.xsize = MAP_MIN_LINEAR_SIZE;
   map.info.ysize = MAP_MIN_LINEAR_SIZE;
 
   map.num_continents = 0;
@@ -323,7 +323,7 @@ void map_init_topology(bool set_sizes)
     /* Set map.size based on map.info.xsize and map.info.ysize. */
     map.server.size = (float)(map.info.xsize * map.info.ysize) / 1000.0 + 0.5;
   }
-  
+
   /* sanity check for iso topologies*/
   assert(!MAP_IS_ISOMETRIC || (map.info.ysize % 2) == 0);
 
@@ -558,7 +558,7 @@ enum tile_special_type get_special_by_name(const char * name)
   for (i = 0; i < ARRAY_SIZE(tile_special_type_names); i++) {
     if (0 == strcmp(name, tile_special_type_names[i]))
       return st;
-      
+
     st <<= 1;
   }
 
@@ -685,7 +685,7 @@ int map_distance(const struct tile *tile0, const struct tile *tile1)
 }
 
 /*************************************************************************
-  This is used in mapgen for rivers going into ocen.  The name is 
+  This is used in mapgen for rivers going into ocen.  The name is
   intentionally made awkward to prevent people from using it in place of
   is_ocean_near_tile
 *************************************************************************/
@@ -735,7 +735,7 @@ bool is_sea_usable(const struct tile *ptile)
 ***************************************************************/
 int get_tile_food_base(const struct tile *ptile)
 {
-  if (tile_has_special(ptile, S_SPECIAL_1)) 
+  if (tile_has_special(ptile, S_SPECIAL_1))
     return get_tile_type(ptile->terrain)->food_special_1;
   else if (tile_has_special(ptile, S_SPECIAL_2))
     return get_tile_type(ptile->terrain)->food_special_2;
@@ -778,7 +778,7 @@ const char *map_get_infrastructure_text(enum tile_special_type spe)
 {
   static char s[64];
   char *p;
-  
+
   s[0] = '\0';
 
   /* Since railroad requires road, Road/Railroad is redundant */
@@ -991,7 +991,7 @@ static void clear_dirtiness(struct tile *ptile)
 void map_irrigate_tile(struct tile *ptile)
 {
   Terrain_type_id now, result;
-  
+
   now = ptile->terrain;
   result = get_tile_type(now)->irrigation_result;
 
@@ -1022,10 +1022,10 @@ void map_irrigate_tile(struct tile *ptile)
 void map_mine_tile(struct tile *ptile)
 {
   Terrain_type_id now, result;
-  
+
   now = ptile->terrain;
   result = get_tile_type(now)->mining_result;
-  
+
   if (now == result) {
     map_set_special(ptile, S_MINE);
   } else if (result != T_NONE) {
@@ -1063,7 +1063,7 @@ void change_terrain(struct tile *ptile, Terrain_type_id type)
      that feature.  (With current rules, this should only clear mines,
      but I'm including both cases in the most general form for possible
      future ruleset expansion. -GJW) */
-  
+
   if (get_tile_type(type)->mining_result != type)
     map_clear_special(ptile, S_MINE);
 
@@ -1077,10 +1077,10 @@ void change_terrain(struct tile *ptile, Terrain_type_id type)
 void map_transform_tile(struct tile *ptile)
 {
   Terrain_type_id now, result;
-  
+
   now = ptile->terrain;
   result = get_tile_type(now)->transform_result;
-  
+
   if (result != T_NONE) {
     change_terrain(ptile, result);
   }
@@ -1125,8 +1125,8 @@ static int tile_move_cost_ptrs(struct unit *punit,
   bool cardinal_move;
 
   if (game.ruleset_control.slow_invasions
-      && punit 
-      && is_ground_unit(punit) 
+      && punit
+      && is_ground_unit(punit)
       && is_ocean(t1->terrain)
       && !is_ocean(t2->terrain)) {
     /* Ground units moving from sea to land lose all their movement
@@ -1357,7 +1357,7 @@ bool tile_has_special(const struct tile *ptile,
 {
   return contains_special(ptile->special, special);
 }
-  
+
 /***************************************************************
  Returns TRUE iff the given special is found in the given set.
 ***************************************************************/
@@ -1573,8 +1573,8 @@ struct tile *rand_neighbour(const struct tile *ptile)
   int n;
   struct tile *tile1;
 
-  /* 
-   * list of all 8 directions 
+  /*
+   * list of all 8 directions
    */
   enum direction8 dirs[8] = {
     DIR8_NORTHWEST, DIR8_NORTH, DIR8_NORTHEAST, DIR8_WEST, DIR8_EAST,
@@ -1850,7 +1850,7 @@ bool is_singular_tile(const struct tile *ptile, int dist)
     /* Iso-natural coordinates are doubled in scale. */
     dist *= MAP_IS_ISOMETRIC ? 2 : 1;
 
-    return ((!topo_has_flag(TF_WRAPX) 
+    return ((!topo_has_flag(TF_WRAPX)
 	     && (ntl_x < dist || ntl_x >= NATURAL_WIDTH - dist))
 	    || (!topo_has_flag(TF_WRAPY)
 		&& (ntl_y < dist || ntl_y >= NATURAL_HEIGHT - dist)));

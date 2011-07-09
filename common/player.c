@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static const char *player_result_strings[PR_NUM_PLAYER_RESULTS] = {
   We are not at war with any of p2's allies. Note that for an
   alliance to be made, we need to check this both ways.
 
-  The reason for this is to avoid the dread 'love-love-hate' 
+  The reason for this is to avoid the dread 'love-love-hate'
   triad, in which p1 is allied to p2 is allied to p3 is at
   war with p1. These lead to strange situations.
 ***************************************************************/
@@ -193,7 +193,7 @@ void player_set_unit_focus_status(struct player *pplayer)
   if (!pplayer) {
     return;
   }
-  unit_list_iterate(pplayer->units, punit) 
+  unit_list_iterate(pplayer->units, punit)
     punit->focus_status = FOCUS_AVAIL;
   unit_list_iterate_end;
 }
@@ -250,7 +250,7 @@ struct player *find_player_by_user(const char *name)
       return pplayer;
     }
   } players_iterate_end;
-  
+
   return NULL;
 }
 
@@ -299,7 +299,7 @@ bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
     struct city *pcity = map_get_city(ptile1);
     if (pcity && pplayers_allied(city_owner(pcity), pplayer)) {
       return TRUE;
-    }  
+    }
     unit_list_iterate(ptile1->units, punit2) {
       if (pplayers_allied(unit_owner(punit2), pplayer)) {
 	return TRUE;
@@ -371,7 +371,7 @@ struct city *player_find_city_by_id(const struct player *pplayer,
   if (pplayer == NULL) {
     return NULL;
   }
-  
+
   if(pcity && (pcity->owner==pplayer->player_no)) {
     return pcity;
   } else {
@@ -388,7 +388,7 @@ struct unit *player_find_unit_by_id(const struct player *pplayer,
 				    int unit_id)
 {
   struct unit *punit = idex_lookup_unit(unit_id);
-  
+
   if (punit != NULL && pplayer != NULL
       && unit_owner(punit) == pplayer) {
     return punit;
@@ -521,7 +521,7 @@ void player_limit_to_government_rates(struct player *pplayer)
 }
 
 /**************************************************************************
-Locate the city where the players palace is located, (NULL Otherwise) 
+Locate the city where the players palace is located, (NULL Otherwise)
 **************************************************************************/
 struct city *find_palace(struct player *pplayer)
 {
@@ -645,10 +645,10 @@ const char *reputation_text(const int rep)
 **************************************************************************/
 const char *diplstate_text(const enum diplstate_type type)
 {
-  static const char *ds_names[DS_LAST] = 
+  static const char *ds_names[DS_LAST] =
   {
     N_("?diplomatic_state:Neutral"),
-    N_("?diplomatic_state:War"), 
+    N_("?diplomatic_state:War"),
     N_("?diplomatic_state:Cease-fire"),
     N_("?diplomatic_state:Peace"),
     N_("?diplomatic_state:Alliance"),
