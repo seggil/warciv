@@ -1,5 +1,5 @@
 # This is spec file provided by www.freeciv.org
-# We strongly suggest that you base the RPM which will be 
+# We strongly suggest that you base the RPM which will be
 # included in your distribution on this file.
 
 %define version_full @VERSION@
@@ -49,28 +49,28 @@ Provides: %name-client-gui = %version-%release
 Requires: %name-common = %version-%release
 
 %description
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
+Freeciv is a free turn-based multiplayer strategy game, in which each
+player becomes the leader of a civilization, fighting to obtain the
 ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
+Players of Civilization II by Microprose should feel at home, since
 one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
+Freeciv is maintained by an international team of coders and
+enthusiasts, and is easily one of the most fun and addictive network
+games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
 See http://freeciv.freeforums.org/.
 
 %description common
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
+Freeciv is a free turn-based multiplayer strategy game, in which each
+player becomes the leader of a civilization, fighting to obtain the
 ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
+Players of Civilization II by Microprose should feel at home, since
 one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
+Freeciv is maintained by an international team of coders and
+enthusiasts, and is easily one of the most fun and addictive network
+games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
@@ -79,14 +79,14 @@ See http://freeciv.freeforums.org/.
 This package contains files common for client ans server.
 
 %description server
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
+Freeciv is a free turn-based multiplayer strategy game, in which each
+player becomes the leader of a civilization, fighting to obtain the
 ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
+Players of Civilization II by Microprose should feel at home, since
 one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
+Freeciv is maintained by an international team of coders and
+enthusiasts, and is easily one of the most fun and addictive network
+games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
@@ -95,14 +95,14 @@ See http://freeciv.freeforums.org/.
 This package contains Freeciv server.
 
 %description client
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
+Freeciv is a free turn-based multiplayer strategy game, in which each
+player becomes the leader of a civilization, fighting to obtain the
 ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
+Players of Civilization II by Microprose should feel at home, since
 one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
+Freeciv is maintained by an international team of coders and
+enthusiasts, and is easily one of the most fun and addictive network
+games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
@@ -111,14 +111,14 @@ See http://freeciv.freeforums.org/.
 This package contains Freeciv client common files.
 
 %description client-gtk2
-Freeciv is a free turn-based multiplayer strategy game, in which each 
-player becomes the leader of a civilization, fighting to obtain the 
+Freeciv is a free turn-based multiplayer strategy game, in which each
+player becomes the leader of a civilization, fighting to obtain the
 ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since 
+Players of Civilization II by Microprose should feel at home, since
 one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and 
-enthusiasts, and is easily one of the most fun and addictive network 
-games out there! 
+Freeciv is maintained by an international team of coders and
+enthusiasts, and is easily one of the most fun and addictive network
+games out there!
 Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
@@ -219,43 +219,43 @@ rm -fr %buildroot
 %doc doc/README.delta doc/README.effects
 #README.graphics and README.sound are included in client package
 %doc doc/README.scorelog doc/TODO
-%{_gamesdatadir}/%{name}/1.14style		  
-%{_gamesdatadir}/%{name}/civ1			  
-%{_gamesdatadir}/%{name}/civ1.serv		  
-%{_gamesdatadir}/%{name}/civ2			  
-%{_gamesdatadir}/%{name}/civ2.serv		  
-%{_gamesdatadir}/%{name}/default			  
-%{_gamesdatadir}/%{name}/duel			  
-%{_gamesdatadir}/%{name}/exemple-actions.txt	  
-%{_gamesdatadir}/%{name}/exemple-welcome.txt	  
-%{_gamesdatadir}/%{name}/experimental		  
-%{_gamesdatadir}/%{name}/Freeciv.in		  
-%{_gamesdatadir}/%{name}/freeciv.rc		  
-%{_gamesdatadir}/%{name}/freeciv.rc-2.0		  
-%{_gamesdatadir}/%{name}/graphics			  
-%{_gamesdatadir}/%{name}/history			  
-%{_gamesdatadir}/%{name}/history.serv		  
-%{_gamesdatadir}/%{name}/maps			  
-%{_gamesdatadir}/%{name}/nation			  
-%{_gamesdatadir}/%{name}/nowonder+1.2		  
-%{_gamesdatadir}/%{name}/nowonder+1.2.serv	  
-%{_gamesdatadir}/%{name}/scenario			  
-%{_gamesdatadir}/%{name}/stdsounds		  
-%{_gamesdatadir}/%{name}/stdsounds.soundspec	  
-%{_gamesdatadir}/%{name}/tournament		  
-%{_gamesdatadir}/%{name}/tournament.serv		  
-%{_gamesdatadir}/%{name}/warruleset-1.2		  
-%{_gamesdatadir}/%{name}/warruleset-1.2.serv	  
-%{_gamesdatadir}/%{name}/warruleset-1.3		  
-%{_gamesdatadir}/%{name}/warruleset-1.3.serv	  
-%{_gamesdatadir}/%{name}/warserver.serv             
+%{_gamesdatadir}/%{name}/1.14style
+%{_gamesdatadir}/%{name}/civ1
+%{_gamesdatadir}/%{name}/civ1.serv
+%{_gamesdatadir}/%{name}/civ2
+%{_gamesdatadir}/%{name}/civ2.serv
+%{_gamesdatadir}/%{name}/default
+%{_gamesdatadir}/%{name}/duel
+%{_gamesdatadir}/%{name}/exemple-actions.txt
+%{_gamesdatadir}/%{name}/exemple-welcome.txt
+%{_gamesdatadir}/%{name}/experimental
+%{_gamesdatadir}/%{name}/Freeciv.in
+%{_gamesdatadir}/%{name}/freeciv.rc
+%{_gamesdatadir}/%{name}/freeciv.rc-2.0
+%{_gamesdatadir}/%{name}/graphics
+%{_gamesdatadir}/%{name}/history
+%{_gamesdatadir}/%{name}/history.serv
+%{_gamesdatadir}/%{name}/maps
+%{_gamesdatadir}/%{name}/nation
+%{_gamesdatadir}/%{name}/nowonder+1.2
+%{_gamesdatadir}/%{name}/nowonder+1.2.serv
+%{_gamesdatadir}/%{name}/scenario
+%{_gamesdatadir}/%{name}/stdsounds
+%{_gamesdatadir}/%{name}/stdsounds.soundspec
+%{_gamesdatadir}/%{name}/tournament
+%{_gamesdatadir}/%{name}/tournament.serv
+%{_gamesdatadir}/%{name}/warruleset-1.2
+%{_gamesdatadir}/%{name}/warruleset-1.2.serv
+%{_gamesdatadir}/%{name}/warruleset-1.3
+%{_gamesdatadir}/%{name}/warruleset-1.3.serv
+%{_gamesdatadir}/%{name}/warserver.serv
 %{_mandir}/man6/civserver.6
 
 %files client
 %defattr(644,root,root,0755)
 %doc COPYING NEWS
 %doc doc/README.graphics doc/README.sound doc/HOWTOPLAY
-%{_gamesdatadir}/%{name}/fonts			  
+%{_gamesdatadir}/%{name}/fonts
 %{_gamesdatadir}/%{name}/flags
 %{_gamesdatadir}/%{name}/isotrident
 %{_gamesdatadir}/%{name}/misc
