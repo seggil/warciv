@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2003 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
 
 /*************************************************************
   A cost function for SEA_MOVING.  Allows shore bombardment.
-  Should be used in conjunction with a TB callback which 
+  Should be used in conjunction with a TB callback which
   prohibits going through an enemy city/tile.
 *************************************************************/
 static int seamove(const struct tile *ptile, enum direction8 dir,
@@ -60,7 +60,7 @@ static int single_airmove(const struct tile *ptile, enum direction8 dir,
 }
 
 /*************************************************************
-  A cost function for SEA_MOVING.  Does not allow shore 
+  A cost function for SEA_MOVING.  Does not allow shore
   bombardment.
 *************************************************************/
 static int seamove_no_bombard(const struct tile *ptile, enum direction8 dir,
@@ -77,7 +77,7 @@ static int seamove_no_bombard(const struct tile *ptile, enum direction8 dir,
 }
 
 /************************************************************
-  A cost function for a sea unit which allows going one step 
+  A cost function for a sea unit which allows going one step
   into the land (shore bombardment).
   Things to remember: we should prevent going from land to
   anywhere, unless we are leaving a friendly city, in which
@@ -118,8 +118,8 @@ static int sea_attack_move(const struct tile *src_tile, enum direction8 dir,
   return PF_IMPOSSIBLE_MC;
 }
 
-/************************************************************ 
-  LAND_MOVE cost function for a unit 
+/************************************************************
+  LAND_MOVE cost function for a unit
 ************************************************************/
 static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
 			    const struct tile *ptile1,
@@ -141,7 +141,7 @@ static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
     }
   } else if (is_ocean(ptile->terrain)) {
     if (!BV_ISSET(param->unit_flags, F_MARINES)
-        && (is_non_allied_unit_tile(ptile1, param->owner) 
+        && (is_non_allied_unit_tile(ptile1, param->owner)
             || is_non_allied_city_tile(ptile1, param->owner))) {
       move_cost = PF_IMPOSSIBLE_MC;
     } else {
@@ -154,7 +154,7 @@ static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
   return move_cost;
 }
 
-/******************************************************************* 
+/*******************************************************************
   LAND_MOVE cost function for a unit, but taking into account
   possibilities of attacking.
 *******************************************************************/
@@ -177,7 +177,7 @@ static int land_attack_move(const struct tile *src_tile, enum direction8 dir,
     /* Sea-to-Land. */
     if (!is_non_allied_unit_tile(tgt_tile, param->owner)
         && !is_non_allied_city_tile(tgt_tile, param->owner)) {
-      move_cost 
+      move_cost
         = get_tile_type(tgt_tile->terrain)->movement_cost * SINGLE_MOVE;
     } else if (BV_ISSET(param->unit_flags, F_MARINES)) {
       /* Can attack!! */
@@ -205,10 +205,10 @@ static int land_attack_move(const struct tile *src_tile, enum direction8 dir,
 }
 
 
-/************************************************************ 
+/************************************************************
   A cost function for a land unit, which allows going into
-  the ocean (with moves costing SINGLE_MOVE).  It is 
-  recommended to use dont_cross_ocean TB callback with this 
+  the ocean (with moves costing SINGLE_MOVE).  It is
+  recommended to use dont_cross_ocean TB callback with this
   one, so we don't venture too far into the ocean ;)
 
   Alternatively, we can change the flow to
@@ -239,7 +239,7 @@ static int land_overlap_move(const struct tile *ptile, enum direction8 dir,
   return move_cost;
 }
 
-/************************************************************ 
+/************************************************************
   Reversed LAND_MOVE cost function for a unit.
   Will be used. DO NOT REMOVE.
 ************************************************************/
@@ -271,8 +271,8 @@ static int reverse_move_unit(const struct tile *tile0, enum direction8 dir,
 }
 #endif
 
-/************************************************************ 
-  IGTER_MOVE cost function for a unit 
+/************************************************************
+  IGTER_MOVE cost function for a unit
 ************************************************************/
 static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
 			   const struct tile *ptile1,
@@ -293,7 +293,7 @@ static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
     }
   } else if (is_ocean(ptile->terrain)) {
     if (!BV_ISSET(param->unit_flags, F_MARINES)
-        && (is_non_allied_unit_tile(ptile1, param->owner) 
+        && (is_non_allied_unit_tile(ptile1, param->owner)
             || is_non_allied_city_tile(ptile1, param->owner))) {
       move_cost = PF_IMPOSSIBLE_MC;
     } else {
@@ -305,7 +305,7 @@ static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
   return move_cost;
 }
 
-/************************************************************ 
+/************************************************************
   Reversed IGTER_MOVE cost function for a unit.
   Will be used. DO NOT REMOVE.
 ************************************************************/
@@ -359,7 +359,7 @@ static int afraid_of_dark_forest(const struct tile *ptile,
 /* ===================== Tile Behaviour Callbacks ==================== */
 
 /*********************************************************************
-  A callback for maps overlapping one square into the ocean.  Insures 
+  A callback for maps overlapping one square into the ocean.  Insures
   that we don't continue walking over ocean.
 *********************************************************************/
 static enum tile_behavior dont_cross_ocean(const struct tile *ptile,
@@ -372,8 +372,8 @@ static enum tile_behavior dont_cross_ocean(const struct tile *ptile,
   return TB_NORMAL;
 }
 
-/********************************************************************** 
-  PF callback to prohibit going into the unknown.  Also makes sure we 
+/**********************************************************************
+  PF callback to prohibit going into the unknown.  Also makes sure we
   don't plan to attack anyone.
 ***********************************************************************/
 enum tile_behavior no_fights_or_unknown(const struct tile *ptile,
@@ -389,7 +389,7 @@ enum tile_behavior no_fights_or_unknown(const struct tile *ptile,
   return TB_NORMAL;
 }
 
-/********************************************************************** 
+/**********************************************************************
   PF callback to prohibit attacking anyone.
 ***********************************************************************/
 enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
@@ -416,7 +416,7 @@ static bool trireme_is_pos_dangerous(const struct tile *ptile,
 {
   /*hack for warclient*/
   return FALSE;
-  
+
   /* Assume that unknown tiles are unsafe. */
   if (known == TILE_UNKNOWN) {
     return TRUE;
@@ -425,7 +425,7 @@ static bool trireme_is_pos_dangerous(const struct tile *ptile,
   /* We test TER_UNSAFE even though under the current ruleset there is no
    * way for a trireme to be on a TER_UNSAFE tile. */
   /* Unsafe or unsafe-ocean tiles without cities are dangerous. */
-  return ((terrain_has_flag(ptile->terrain, TER_UNSAFE) 
+  return ((terrain_has_flag(ptile->terrain, TER_UNSAFE)
 	  || (is_ocean(ptile->terrain) && !is_safe_ocean(ptile)))
 	  && ptile->city == NULL);
 }
@@ -438,7 +438,7 @@ static bool is_pos_dangerous(const struct tile *ptile, enum known_type known,
 {
   /*hack for warclient*/
   return FALSE;
-  
+
   /* Unsafe tiles without cities are dangerous. */
   return (terrain_has_flag(ptile->terrain, TER_UNSAFE)
 	  && ptile->city == NULL);
@@ -476,7 +476,7 @@ void pft_fill_unit_parameter(struct pf_parameter *parameter,
     die("unknown move_type");
   }
 
-  if (unit_type(punit)->move_type == LAND_MOVING 
+  if (unit_type(punit)->move_type == LAND_MOVING
       && !unit_flag(punit, F_IGZOC)) {
     parameter->get_zoc = is_my_zoc;
   } else {
@@ -494,7 +494,7 @@ void pft_fill_unit_parameter(struct pf_parameter *parameter,
 }
 
 /**********************************************************************
-  Switch on one tile overlapping into the sea/land 
+  Switch on one tile overlapping into the sea/land
   ("sea/land bombardment")
 **********************************************************************/
 void pft_fill_unit_overlap_param(struct pf_parameter *parameter,
@@ -543,7 +543,7 @@ void pft_fill_unit_attack_param(struct pf_parameter *parameter,
     die("Unsupported move_type");
   }
 
-  if (unit_type(punit)->move_type == LAND_MOVING 
+  if (unit_type(punit)->move_type == LAND_MOVING
       && !unit_flag(punit, F_IGZOC)) {
     parameter->get_zoc = is_my_zoc;
   } else {

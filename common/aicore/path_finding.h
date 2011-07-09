@@ -41,7 +41,7 @@
  *
  *   path: a list of steps which leads from the start to the end
  *
- *   move cost (MC): move cost of a _single_ step.  MC is always >= 0. 
+ *   move cost (MC): move cost of a _single_ step.  MC is always >= 0.
  *     [The parameter can specify what the MC of a step into the unknown is
  *      to be (this is a constant for each map).  This defaults to a
  *      slightly large value meaning unknown tiles are avoided slightly.
@@ -57,10 +57,10 @@
  *   tells us whether we can enter and leave tile as normal (see enum
  *   tile_behavior).
  *
- *   total_MC: (effective) move cost of the whole path.  Calculated
+ *   total_MC: (effective) Move Cost of the whole path.  Calculated
  *   depending on the turn mode (see FORMULAE below).
  *
- *   total_EC: extra cost of the whole path (just sum of ECs of all
+ *   total_EC: Extra Cost of the whole path (just sum of ECs of all
  *   tiles).
  *
  *   total_CC: combined cost of the whole path (see below).
@@ -78,8 +78,8 @@
  * (2) How dangerous it is (or how much does it cost in terms of
  *     resources).
  *
- * We use MC (and total_MC) to describe (1) and use EC (and total_EC) to
- * describe (2).  Of course, when it comes to selecting the "best" path,
+ * We use Move Cost (and total_MC) to describe (1) and use Extra Cost (and total_EC)
+ * to describe (2).  Of course, when it comes to selecting the "best" path,
  * we need to compromise between taking the shortest road and taking the
  * safest road.  To that end, we use the "combined cost", calculated as
  *   total_CC = PF_TURN_FACTOR * total_MC + move_rate * total_EC,
@@ -89,12 +89,12 @@
  * avoid PF_TURN_FACTOR worth of danger.  Note that if ECs are kept
  * significantly lower than PF_TURN_FACTOR, the total_EC will only act as a
  * tie-breaker between equally long paths.
- * 
- * Note, that the user is expected to ask "So this best path, how long will 
+ *
+ * Note, that the user is expected to ask "So this best path, how long will
  * it take me to walk it?".  For that reason we keep our accounts of MCs and
  * ECs separately, as one cannot answer the above question basing on
  * total_CC alone.
- * 
+ *
  * The above setup allows us to find elegant solutions to rather involved
  * questions.  A good example would be designing a road from A to B:
  * ================
@@ -107,18 +107,18 @@
  *   .---.
  * a possible solution
  *  A-----B
- *   ..... 
+ *   .....
  *   .---.
  * the best solution (utilize existing road)
  *  A.....B
  *   \.../
  *   .---.
- * 
+ *
  * To solve the problem we simply declare that
  *   MC between any two tiles shall be MOVE_COST_ROAD
  *   EC of any tile shall be the time to construct a road there
  * =================
- * 
+ *
  * In some cases we would like to impose extra restrictions on the
  * paths/tiles we want to consider.  For example, a trireme might want to
  * never enter deep sea.  A chariot, would like to find paths going to
@@ -126,19 +126,19 @@
  * through an additional tile_behaviour callback,  which would return
  * TB_IGNORE for tiles we don't want to visit and TB_DONT_LEAVE for tiles
  * we won't be able to leave (at least alive).
- * 
- * There are few other options in the path-finding, including "omniscience" 
- * (if true, all tiles are assumed to be KNOWN) and "get_zoc" callback (if 
- * not NULL, we will consider restrictions imposed upon our movements by 
+ *
+ * There are few other options in the path-finding, including "omniscience"
+ * (if true, all tiles are assumed to be KNOWN) and "get_zoc" callback (if
+ * not NULL, we will consider restrictions imposed upon our movements by
  * zones of control).
  *
- *  
+ *
  * FORMULAE:
  *   For calculating total_MC (given particular tile_behaviour)
- *     - TM_NONE: total_MC = sum of MC
+ *     - TM_NONE: total_MC = sum of Move Cost
  *     - TM_CAPPED: total_MC = sum of MIN(MC, move_rate)
  *     - TM_*_TIME: total_MC = ((turn + 1) * move_rate - moves_left)
- *  
+ *
  *   For calculating total_CC:
  *     total_CC = PF_TURN_FACTOR * total_MC + move_rate * total_EC
  *
@@ -180,14 +180,14 @@
  *
  * You may call pf_get_path multiple times with the same pf_map.
  *
- * B) the caller doesn't know the map position of the goal yet (but knows 
+ * B) the caller doesn't know the map position of the goal yet (but knows
  * what he is looking for, e.g. a port) and wants to iterate over
  * all paths in order of increasing costs (total_CC):
  *
  * struct pf_parameter parameter;
  * struct pf_map *pf_map;
  * struct pf_path path;
- * 
+ *
  * // fill parameter (see below)
  *
  * pf_map = pf_create_map(&parameter);
@@ -203,7 +203,7 @@
  * Depending on the kind of information required, the first part of the
  * while-body may look like:
  *
- *  1) information (for example the total MC or the number of turns) on the 
+ *  1) information (for example the total MC or the number of turns) on the
  *  next nearest position:
  *     struct pf_position pos;
  *     pf_next_get_position(pf_map, &pos);
@@ -244,7 +244,7 @@
 /* Specifies the way path-finding will treat a tile. */
 enum tile_behavior {
   TB_IGNORE,			/* This one will be ignored */
-  TB_DONT_LEAVE,		/* Paths can lead _to_ such tile, 
+  TB_DONT_LEAVE,		/* Paths can lead _to_ such tile,
 				 * but are not allowed to go _through_ */
   TB_NORMAL			/* Well, normal */
 };
@@ -253,7 +253,7 @@ enum tile_behavior {
  * (struct pf_position) are computed. */
 enum turn_mode {
   /* No turn numbers or moves_left are used at all. The fields "turn"
-   * and "moves_left" of struct pf_position will always be set to -1 in 
+   * and "moves_left" of struct pf_position will always be set to -1 in
    * this mode. */
   TM_NONE,
 
@@ -292,7 +292,7 @@ struct pf_path {
  * from pf_tools.[ch] to fill the parameter.
  *
  * All callbacks get the parameter passed to pf_create_map as the last
- * argument. 
+ * argument.
  *
  * Examples of callbacks can be found in pf_tools.c*/
 struct pf_parameter {
@@ -310,7 +310,7 @@ struct pf_parameter {
   /* Callback to get MC of a move from (from_x, from_y) to (to_x,
    * to_y) and in the direction dir. Note that the callback can
    * calculate (to_x, to_y) by itself based on (from_x, from_y) and
-   * dir. Excessive information (to_x, to_y) is provided to ease the 
+   * dir. Excessive information (to_x, to_y) is provided to ease the
    * implementation of the callback. */
   int (*get_MC) (const struct tile *from_tile, enum direction8 dir,
 		 const struct tile *to_tile, struct pf_parameter * param);
@@ -330,10 +330,10 @@ struct pf_parameter {
 		 struct pf_parameter * param);
 
   /* Although the rules governing ZoC are universal, the amount of
-   * information available at server and client is different. To 
-   * compensate for it, we might need to supply our own version 
-   * of "common" is_my_zoc.  Also AI might need to partially ignore 
-   * ZoC for strategic planning purposes (take into account enemy cities 
+   * information available at server and client is different. To
+   * compensate for it, we might need to supply our own version
+   * of "common" is_my_zoc.  Also AI might need to partially ignore
+   * ZoC for strategic planning purposes (take into account enemy cities
    * but not units for example).
    * If this callback is NULL, ZoC are ignored.*/
   bool (*get_zoc) (struct player *pplayer, const struct tile *ptile);
@@ -344,8 +344,8 @@ struct pf_parameter {
   bool (*is_pos_dangerous) (const struct tile *ptile, enum known_type,
                             struct pf_parameter * param);
 
-  /* This is a jumbo callback which overrides all previous ones.  It takes 
-   * care of everything (ZOC, known, costs etc).  
+  /* This is a jumbo callback which overrides all previous ones.  It takes
+   * care of everything (ZOC, known, costs etc).
    * Variables:
    *   from_x, from_y        -- position of the source tile
    *   from_cost, from_extra -- costs of the source tile
@@ -361,7 +361,7 @@ struct pf_parameter {
    * - compare it to the ones recorded at dest tile
    * - if new cost are not better, return -1
    * - if new costs are better, record them in to_cost/to_extra and return
-   *   the cost-of-the-path which is the overall measure of goodness of the 
+   *   the cost-of-the-path which is the overall measure of goodness of the
    *   path (less is better) and used to order newly discovered locations. */
   int (*get_costs) (const struct tile *from_tile,
 		    enum direction8 dir,

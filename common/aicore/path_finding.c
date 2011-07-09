@@ -957,7 +957,7 @@ static bool danger_iterate_map(struct pf_map *pf_map)
 	      free(d_node1->danger_segment);
 	      d_node1->danger_segment = NULL;
 	    }
-            /* We don't consider waiting to get to a safe tile as 
+            /* We don't consider waiting to get to a safe tile as
              * "real" waiting */
 	    d_node1->waited = FALSE;
 	  }
@@ -969,7 +969,7 @@ static bool danger_iterate_map(struct pf_map *pf_map)
 	/* We will update costs if:
 	 * 1: we are here for the first time
 	 * 2: we can possibly go further across dangerous area or
-	 * 3: we can have lower extra and will not 
+	 * 3: we can have lower extra and will not
 	 *    overwrite anything useful */
 	if (pf_map->status[index1] == NS_UNINIT
 	    || (get_moves_left(pf_map, cost)
@@ -995,7 +995,7 @@ static bool danger_iterate_map(struct pf_map *pf_map)
       && pf_map->status[pf_map->tile->index] != NS_WAITING
       && (get_moves_left(pf_map, node->cost)
 	  < pf_map->params->move_rate)) {
-    /* Consider waiting at this node. 
+    /* Consider waiting at this node.
      * To do it, put it back into queue. */
     pf_map->status[pf_map->tile->index] = NS_WAITING;
     pq_insert(pf_map->queue, pf_map->tile->index,
@@ -1074,7 +1074,7 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
       /* We are in the normal node and dir_to_here field is valid */
       dir_next = node->dir_to_here;
       /* d_node->danger_segment is the indicator of what lies ahead
-       * if it's non-NULL, we are entering a danger segment, 
+       * if it's non-NULL, we are entering a danger segment,
        * if it's NULL, we are not on one so danger_seg should be NULL */
       danger_seg = d_node->danger_segment;
       segment_index = 0;
@@ -1091,7 +1091,7 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
   }
 
   /* Allocate memory for path */
-  path->positions 
+  path->positions
     = fc_malloc(length * sizeof(struct pf_position));
   path->length = length;
 
@@ -1113,11 +1113,11 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
         path->positions[i].total_EC = node->extra_cost;
         path->positions[i].turn = get_turn(pf_map, node->cost) + 1;
         path->positions[i].moves_left = pf_map->params->move_rate;
-        path->positions[i].total_MC 
+        path->positions[i].total_MC
           = ((path->positions[i].turn - 1) * pf_map->params->move_rate
              + pf_map->params->moves_left_initially);
         path->positions[i].dir_to_next_pos = dir_next;
-        /* Set old_waited so that we record -1 as a direction at the step 
+        /* Set old_waited so that we record -1 as a direction at the step
          * we were going to wait */
         old_waited = TRUE;
         i--;
@@ -1136,9 +1136,9 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
       assert(danger_seg != NULL);
       path->positions[i].total_MC = danger_seg[segment_index].cost;
       path->positions[i].total_EC = danger_seg[segment_index].extra_cost;
-    } 
+    }
     path->positions[i].turn = get_turn(pf_map, path->positions[i].total_MC);
-    path->positions[i].moves_left 
+    path->positions[i].moves_left
       = get_moves_left(pf_map, path->positions[i].total_MC);
     path->positions[i].total_MC -= pf_map->params->move_rate
       - pf_map->params->moves_left_initially;
@@ -1156,7 +1156,7 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
       /* We are in the normal node and dir_to_here field is valid */
       dir_next = node->dir_to_here;
       /* d_node->danger_segment is the indicator of what lies ahead
-       * if it's non-NULL, we are entering a danger segment, 
+       * if it's non-NULL, we are entering a danger segment,
        * if it's NULL, we are not on one so danger_seg should be NULL */
       danger_seg = d_node->danger_segment;
       segment_index = 0;
@@ -1193,7 +1193,7 @@ static struct pf_path *danger_get_path(struct pf_map *pf_map,
     return NULL;
   }
 
-  if (status == NS_PROCESSED || status == NS_WAITING 
+  if (status == NS_PROCESSED || status == NS_WAITING
       || same_pos(ptile, pf_map->tile)) {
     /* We already reached (x,y) */
     return danger_construct_path(pf_map, ptile);

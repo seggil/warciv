@@ -91,19 +91,19 @@ void citymap_turn_init(struct player *pplayer)
 
 /**************************************************************************
   This function reserves a single tile for a (possibly virtual) city with
-  a settler's or a city's id. Then it 'crowds' tiles that this city can 
+  a settler's or a city's id. Then it 'crowds' tiles that this city can
   use to make them less attractive to other cities we may consider making.
 **************************************************************************/
 void citymap_reserve_city_spot(struct tile *ptile, int id)
 {
 #ifdef DEBUG
-  freelog(LOG_CITYMAP, "id %d reserving (%d, %d), was %d", 
+  freelog(LOG_CITYMAP, "id %d reserving (%d, %d), was %d",
           id, TILE_XY(ptile), citymap[ptile->index]);
   assert(citymap[ptile->index] >= 0);
 #endif
 
   /* Tiles will now be "reserved" by actual workers, so free excess
-   * reservations. Also mark tiles for city overlapping, or 
+   * reservations. Also mark tiles for city overlapping, or
    * 'crowding'. */
   map_city_radius_iterate(ptile, ptile1) {
     if (citymap[ptile1->index] == -id) {

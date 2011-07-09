@@ -684,7 +684,7 @@ static void apply_solution(struct cm_state *state,
 
 /****************************************************************************
   Convert the city's surplus numbers into an array.  Get the happy/disorder
-  values, too.  This fills in the surplus array and disorder and happy 
+  values, too.  This fills in the surplus array and disorder and happy
   values based on the city's data.
 ****************************************************************************/
 static void get_city_surplus(const struct city *pcity,
@@ -1072,7 +1072,7 @@ static void clean_lattice(struct tile_type_vector *lattice,
   struct tile_type_vector tofree;
   bool forced_loop = FALSE;
 
-  /* We collect the types we want to remove and free them in one fell 
+  /* We collect the types we want to remove and free them in one fell
      swoop at the end, in order to avoid memory errors.  */
   tile_type_vector_init(&tofree);
 
