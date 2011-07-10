@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -479,7 +479,7 @@ extern bool is_server;
 #define GAME_DEFAULT_RAPTUREDELAY    1
 #define GAME_MIN_RAPTUREDELAY        1
 #define GAME_MAX_RAPTUREDELAY        99 /* 99 practicaly disables rapturing */
- 
+
 #define GAME_DEFAULT_SAVEPALACE      TRUE
 
 #define GAME_DEFAULT_NATURALCITYNAMES TRUE

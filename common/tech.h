@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ enum tech_flag_id {
   TF_FORTRESS,  /* "Settler" unit types can build fortress */
   TF_WATCHTOWER, /* Units get enhanced visionrange in a fortress (=fortress acts also as a watchtower) */
   TF_POPULATION_POLLUTION_INC,  /* Increase the pollution factor created by popultaion by one */
-  TF_TRADE_REVENUE_REDUCE, /* When known by the player establishing a trade route 
+  TF_TRADE_REVENUE_REDUCE, /* When known by the player establishing a trade route
                               reduces the initial revenue by cumulative factors of 2/3 */
   TF_AIRBASE,   /* "Airbase" unit types can build Airbases */
   TF_FARMLAND,  /* "Settler" unit types can build farmland */
@@ -86,19 +86,19 @@ struct advance {
   char *helptext;
 
   struct Sprite *sprite;		/* icon of tech. */
-	  
-  /* 
-   * Message displayed to the first player to get a bonus tech 
+
+  /*
+   * Message displayed to the first player to get a bonus tech
    */
   char *bonus_message;
 
-  /* 
+  /*
    * Cost of advance in bulbs as specified in ruleset. -1 means that
    * no value was set in ruleset. Server send this to client.
    */
   int preset_cost;
 
-  /* 
+  /*
    * Number of requirements this technology has _including_
    * itself. Precalculated at server then send to client.
    */

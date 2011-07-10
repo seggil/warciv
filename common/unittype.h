@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@ typedef int Unit_Type_id;
   related uses, though these use already plain int rather than
   Unit_Type_id?  (Ideally, these should probably have used U_LAST as
   the flag value instead of (-1).)
-  
+
   Decided to just use 'int' for several reasons:
   - "natural integer type" may be faster on some platforms
     (size advantage of using smaller type probably negligible);
   - avoids any potential problems with (-1) values as mentioned above;
   - avoids imposing any more limitations that there are already.
 */
-  
+
 #define U_LAST MAX_NUM_ITEMS
 /*
   U_LAST is a value which is guaranteed to be larger than all
@@ -75,25 +75,25 @@ typedef enum unit_class_id Unit_Class_id;
    (It is easier to go from i to (1<<i) than the reverse.)
    See data/default/units.ruleset for documentation of their effects.
 */
-enum unit_flag_id { 
+enum unit_flag_id {
   F_TRADE_ROUTE=0,
   F_HELP_WONDER,
-  F_MISSILE,   
-  F_IGZOC,     
-  F_NONMIL,      
-  F_IGTER,       
-  F_CARRIER,     
-  F_ONEATTACK,   
-  F_PIKEMEN,     
-  F_HORSE,       
-  F_IGWALL,      
-  F_FIELDUNIT,   
-  F_AEGIS,       
-  F_FIGHTER,     
-  F_MARINES,     
-  F_PARTIAL_INVIS,    /* Invisibile except when adjacent (Submarine) */   
+  F_MISSILE,
+  F_IGZOC,
+  F_NONMIL,
+  F_IGTER,
+  F_CARRIER,
+  F_ONEATTACK,
+  F_PIKEMEN,
+  F_HORSE,
+  F_IGWALL,
+  F_FIELDUNIT,
+  F_AEGIS,
+  F_FIGHTER,
+  F_MARINES,
+  F_PARTIAL_INVIS,    /* Invisibile except when adjacent (Submarine) */
   F_SETTLERS,         /* Does not include ability to found cities */
-  F_DIPLOMAT,    
+  F_DIPLOMAT,
   F_TRIREME,          /* Trireme sinking effect */
   F_NUCLEAR,          /* Nuclear attack effect */
   F_SPY,              /* Enhanced spy abilities */
@@ -216,7 +216,7 @@ struct unit_type {
 
   /* Values for bombardment */
   int bombard_rate;
-  
+
   char *helptext;
 };
 

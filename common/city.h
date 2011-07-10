@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ enum city_options {
   /* The first 4 are whether to auto-attack versus each unit move_type
    * from with auto-attack units within this city.  Note that these
    * should stay the first four, and must stay in the same order as
-   * enum unit_move_type.  
+   * enum unit_move_type.
    *
    * The next is whether building a settler at size 1 disbands a city.
    *
@@ -116,7 +116,7 @@ extern int city_tiles;
  * coordinates hidden. */
 #define map_city_radius_iterate(city_tile, itr_tile)     \
 {                                                                 \
-  city_map_checked_iterate(city_tile, _cx, _cy, itr_tile) { 
+  city_map_checked_iterate(city_tile, _cx, _cy, itr_tile) {
 
 #define map_city_radius_iterate_end                               \
   } city_map_checked_iterate_end;                                 \
@@ -153,16 +153,16 @@ struct ai_city {
   unsigned int danger;          /* danger to be compared to assess_defense */
   bool diplomat_threat;         /* enemy diplomat or spy is near the city */
   bool has_diplomat;            /* this city has diplomat or spy defender */
-  unsigned int urgency;         /* how close the danger is; if zero, 
+  unsigned int urgency;         /* how close the danger is; if zero,
                                    bodyguards can leave */
   unsigned int grave_danger;    /* danger, should show positive feedback */
-  int wallvalue;                /* how much it helps for defenders to be 
+  int wallvalue;                /* how much it helps for defenders to be
                                    ground units */
   int trade_want;               /* saves a zillion calculations */
   struct ai_choice choice;      /* to spend gold in the right place only */
-  int downtown;                 /* distance from neighbours, for locating 
+  int downtown;                 /* distance from neighbours, for locating
                                    wonders wisely */
-  int distance_to_wonder_city;  /* wondercity will set this for us, 
+  int distance_to_wonder_city;  /* wondercity will set this for us,
                                    avoiding paradox */
   bool celebrate;               /* try to celebrate in this city */
 
@@ -215,7 +215,7 @@ struct city {
   /* the productions */
   int food_prod, food_surplus;
   /* Shield production is shields produced minus shield_waste*/
-  int shield_prod, shield_surplus, shield_waste; 
+  int shield_prod, shield_surplus, shield_waste;
   int trade_prod, corruption, tile_trade;
 
   /* Cached values for CPU savings. */
@@ -223,15 +223,15 @@ struct city {
 
   /* the totals */
   int luxury_total, tax_total, science_total;
-  
+
   /* the physics */
   int food_stock;
   int shield_stock;
   int pollution;
-   
+
   bool is_building_unit;    /* boolean unit/improvement */
   int currently_building;
-  
+
   Impr_Status improvements[B_LAST];
 
   struct worklist worklist;
@@ -250,8 +250,8 @@ struct city {
   int caravan_shields;        /* If caravan has helped city to build wonder. */
   int before_change_shields;  /* If changed this turn, shields before penalty */
   int last_turns_shield_surplus; /* The surplus we had last turn. */
-  int anarchy;		      /* anarchy rounds count */ 
-  int rapture;                /* rapture rounds count */ 
+  int anarchy;		      /* anarchy rounds count */
+  int rapture;                /* rapture rounds count */
   bool was_happy;
   bool airlift;
   int city_options;		/* bitfield; positions as enum city_options */
@@ -363,8 +363,8 @@ bool city_rapture_grow(const struct city *pcity);
 
 /* city related improvement and unit functions */
 
-bool city_has_terr_spec_gate(const struct city *pcity, Impr_Type_id id); 
-int improvement_upkeep(const struct city *pcity, Impr_Type_id i); 
+bool city_has_terr_spec_gate(const struct city *pcity, Impr_Type_id id);
+int improvement_upkeep(const struct city *pcity, Impr_Type_id i);
 bool can_build_improvement_direct(const struct city *pcity, Impr_Type_id id);
 bool can_build_improvement(const struct city *pcity, Impr_Type_id id);
 bool can_eventually_build_improvement(const struct city *pcity,
@@ -374,7 +374,7 @@ bool can_build_unit_direct(const struct city *pcity, Unit_Type_id id);
 bool can_eventually_build_unit(const struct city *pcity, Unit_Type_id id);
 bool city_can_use_specialist(const struct city *pcity,
 			     Specialist_type_id type);
-bool city_got_building(const struct city *pcity,  Impr_Type_id id); 
+bool city_got_building(const struct city *pcity,  Impr_Type_id id);
 bool is_capital(const struct city *pcity);
 bool city_got_citywalls(const struct city *pcity);
 bool building_replaced(const struct city *pcity, Impr_Type_id id);
@@ -426,7 +426,7 @@ int base_city_get_food_tile(int city_x, int city_y,
 			    const struct city *pcity, bool is_celebrating);
 
 void set_worker_city(struct city *pcity, int city_x, int city_y,
-		     enum city_tile_type type); 
+		     enum city_tile_type type);
 enum city_tile_type get_worker_city(const struct city *pcity, int city_x,
 				    int city_y);
 void get_worker_on_map_position(const struct tile *ptile,
@@ -442,11 +442,11 @@ bool can_establish_trade_route(const struct city *pc1, const struct city *pc2);
 bool have_cities_trade_route(const struct city *pc1, const struct city *pc2);
 int trade_between_cities(const struct city *pc1, const struct city *pc2);
 int city_num_trade_routes(const struct city *pcity);
-int get_caravan_enter_city_trade_bonus(const struct city *pc1, 
+int get_caravan_enter_city_trade_bonus(const struct city *pc1,
                                        const struct city *pc2);
 int get_city_min_trade_route(const struct city *pcity,
 			     struct trade_route **slot);
-  
+
 /* list functions */
 struct city *city_list_find_id(struct city_list *This, int id);
 struct city *city_list_find_name(struct city_list *This, const char *name);

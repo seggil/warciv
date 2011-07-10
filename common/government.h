@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,9 +58,9 @@ struct ruler_title
   int  nation;
   const char *male_title; /* Translated string - doesn't need freeing. */
   const char *female_title; /* Translated string - doesn't need freeing. */
-  
+
   /* untranslated copies: */
-  char male_title_orig[MAX_LEN_NAME];    
+  char male_title_orig[MAX_LEN_NAME];
   char female_title_orig[MAX_LEN_NAME];
 };
 
@@ -100,13 +100,13 @@ struct government
   int   unit_shield_cost_factor;
   int   unit_food_cost_factor;
   int   unit_gold_cost_factor;
-  
+
   /* base cost that a city does not have to "pay" for */
   int   free_happy;
   int   free_shield;
   int   free_food;
   int   free_gold;
-  
+
   /* government production penalties -- SKi */
   int   trade_before_penalty;
   int   shields_before_penalty;
@@ -134,7 +134,7 @@ struct government
   int   corruption_distance_factor;
   int   extra_corruption_distance;
   int   corruption_max_distance_cap;
-  
+
   /* waste modifiers, see governments.ruleset for more detail */
   int   waste_level;
   int   waste_modifier;
@@ -142,13 +142,13 @@ struct government
   int   waste_distance_factor;
   int   extra_waste_distance;
   int   waste_max_distance_cap;
-    
+
   /* other flags: bits in enum government_flag_id order,
      use government_has_flag() to access */
   int   flags;
 
   struct Sprite *sprite;
-  
+
   char *helptext;
 };
 
@@ -187,7 +187,7 @@ const char *get_ruler_title(int gov, bool male, int nation);
 
 bool can_change_to_government(struct player *pplayer, int government);
 
-void set_ruler_title(struct government *gov, int nation, 
+void set_ruler_title(struct government *gov, int nation,
                      const char *male, const char *female);
 void governments_alloc(int num);
 void governments_free(void);

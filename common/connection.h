@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ struct connection {
   bool established;		/* have negotiated initial packets */
   struct player *player;	/* NULL for connections not yet associated
 				   with a specific player */
-  /* 
+  /*
    * connection is "observer", not controller; may be observing
    * specific player, or all (implementation incomplete).
    */
@@ -189,12 +189,12 @@ struct connection {
   double write_wait_time;
 
   double ping_time;
-  
+
   struct conn_list *self;     /* list with this connection as single element */
   char username[MAX_LEN_NAME];
   char addr[MAX_LEN_ADDR];
 
-  /* 
+  /*
    * "capability" gives the capability string of the executable (be it
    * a client or server) at the other end of the connection.
    */
@@ -247,17 +247,17 @@ struct connection {
       void (*notify_of_writable_data) (struct connection *pc,
 				       bool data_available_and_socket_full);
 
-      /* 
+      /*
        * Increases for every packet send to the server.
        */
       int last_request_id_used;
 
-      /* 
+      /*
        * Increases for every received PACKET_PROCESSING_FINISHED packet.
        */
       int last_processed_request_id_seen;
 
-      /* 
+      /*
        * Holds the id of the request which caused this packet. Can be
        * zero.
        */
@@ -266,7 +266,7 @@ struct connection {
 
     /* Specific server datas. */
     struct {
-      /* 
+      /*
        * "access_level" stores the access granted to the client
        * corresponding to this connection.
        */
@@ -279,28 +279,28 @@ struct connection {
        * writing be done to the connection. */
       bool is_closing;
 
-      /* 
+      /*
        * Holds the id of the request which is processed now. Can be
        * zero.
        */
       int currently_processed_request_id;
 
-      /* 
+      /*
        * Will increase for every received packet.
        */
       int last_request_id_seen;
 
-      /* 
+      /*
        * The start times of the PACKET_CONN_PING which have been sent
-       * but weren't PACKET_CONN_PONGed yet? 
+       * but weren't PACKET_CONN_PONGed yet?
        */
       struct timer_list *ping_timers;
-     
+
       /* Holds number of tries for authentication from client. */
       int auth_tries;
 
       /* the time that the server will respond after receiving an auth reply.
-       * this is used to throttle the connection. Also used to reject a 
+       * this is used to throttle the connection. Also used to reject a
        * connection if we've waited too long for a password. */
       time_t auth_settime;
 
@@ -311,12 +311,12 @@ struct connection {
 
       /* for reverse lookup and blacklisting in db */
       char ipaddr[MAX_LEN_ADDR];
-      
+
       unsigned int packets_received;
       unsigned int delay_counter;
 
       struct ignore_list *ignore_list;
-   
+
       bool received_username;
 
       /* Request id of asynchronous dns query, if applicable. */

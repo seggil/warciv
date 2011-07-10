@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 #define OBSERVER_NATION (game.ruleset_control.nation_count - 2)
 
-/* 
+/*
  * Purpose of this constant is to catch invalid ruleset and network
  * data and to allow static allocation of the nation_info packet.
  */
@@ -57,7 +57,7 @@ typedef int ternary;
 struct city_name {
   char* name;
   ternary river;
-  ternary terrain[MAX_NUM_TERRAINS];	
+  ternary terrain[MAX_NUM_TERRAINS];
 };
 
 struct leader {

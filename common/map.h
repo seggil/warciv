@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -329,7 +329,7 @@ void reset_move_costs(struct tile *ptile);
   (MAP_IS_ISOMETRIC ? (map.info.xsize + map.info.ysize / 2) : map.info.xsize)
 #define MAP_HEIGHT \
   (MAP_IS_ISOMETRIC ? (map.info.xsize + map.info.ysize / 2) : map.info.ysize)
-  
+
 static inline int map_pos_to_index(int map_x, int map_y);
 
 /* index_to_map_pos(int *, int *, int) inverts map_pos_to_index */
@@ -475,7 +475,7 @@ extern struct terrain_misc terrain_control;
 
 #define iterate_outward_end iterate_outward_dxy_end
 
-/* 
+/*
  * Iterate through all tiles in a square with given center and radius.
  * The position (x_itr, y_itr) that is returned will be normalized;
  * unreal positions will be automatically discarded. (dx_itr, dy_itr)
@@ -498,10 +498,10 @@ extern struct terrain_misc terrain_control;
 
 #define square_iterate_end  square_dxy_iterate_end
 
-/* 
+/*
  * Iterate through all tiles in a circle with given center and squared
  * radius.  Positions returned will have adjusted (x, y); unreal
- * positions will be automatically discarded. 
+ * positions will be automatically discarded.
  */
 #define circle_iterate(center_tile, sq_radius, tile_itr)		    \
 {                                                                           \
@@ -513,7 +513,7 @@ extern struct terrain_misc terrain_control;
 #define circle_iterate_end                                                  \
     }                                                                       \
   } square_dxy_iterate_end;                                                 \
-}									       
+}
 
 /* Iterate through all map positions adjacent to the given center map
  * position, with normalization.  The order of positions is unspecified. */
@@ -707,7 +707,7 @@ static inline bool is_border_tile(const struct tile *ptile, int dist)
   int xdist = dist;
   int ydist = (MAP_IS_ISOMETRIC ? (2 * dist) : dist);
 
-  return (ptile->nat_x < xdist 
+  return (ptile->nat_x < xdist
 	  || ptile->nat_y < ydist
 	  || ptile->nat_x >= map.info.xsize - xdist
 	  || ptile->nat_y >= map.info.ysize - ydist);

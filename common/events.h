@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ enum event_type {
   E_DIPLOMACY,
   E_CITY_PRODUCTION_CHANGED,
   E_TREATY_EMBASSY,
-  /* 
+  /*
    * Note: If you add a new event, make sure you make a similar change
    * to the events array in client/options.c using GEN_EV and to
    * data/stdsounds.spec.

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,12 +41,12 @@ enum unit_orders {
 };
 
 enum unit_focus_status {
-  FOCUS_AVAIL, FOCUS_WAIT, FOCUS_DONE  
+  FOCUS_AVAIL, FOCUS_WAIT, FOCUS_DONE
 };
 
 enum diplomat_actions {
   DIPLOMAT_BRIBE, DIPLOMAT_EMBASSY, DIPLOMAT_SABOTAGE,
-  DIPLOMAT_STEAL, DIPLOMAT_INCITE, SPY_POISON, 
+  DIPLOMAT_STEAL, DIPLOMAT_INCITE, SPY_POISON,
   DIPLOMAT_INVESTIGATE, SPY_SABOTAGE_UNIT,
   SPY_GET_SABOTAGE_LIST,
   DIPLOMAT_MOVE,	/* move onto city square - only for allied cities */
@@ -103,7 +103,7 @@ enum unit_upgrade_result {
   UR_NOT_CITY_OWNER,
   UR_NOT_ENOUGH_ROOM
 };
-    
+
 struct unit_ai {
   bool control; /* 0: not automated    1: automated */
   enum ai_unit_task ai_role;
@@ -259,7 +259,7 @@ int get_activity_rate_this_turn(struct unit *punit);
 int get_turns_for_activity_at(struct unit *punit,
 			      enum unit_activity activity,
 			      const struct tile *ptile);
-bool can_unit_do_auto(struct unit *punit); 
+bool can_unit_do_auto(struct unit *punit);
 bool is_unit_activity_on_tile(enum unit_activity activity,
 			      const struct tile *ptile);
 enum tile_special_type get_unit_tile_pillage_set(const struct tile *ptile);

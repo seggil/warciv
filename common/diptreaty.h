@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #include "shared.h"		/* bool type */
 
 enum clause_type { CLAUSE_ADVANCE, CLAUSE_GOLD, CLAUSE_MAP,
-		   CLAUSE_SEAMAP, CLAUSE_CITY, 
+		   CLAUSE_SEAMAP, CLAUSE_CITY,
 		   CLAUSE_CEASEFIRE, CLAUSE_PEACE, CLAUSE_ALLIANCE,
 		   CLAUSE_VISION, CLAUSE_UNUSED, CLAUSE_EMBASSY,
 		   CLAUSE_LAST };
@@ -50,9 +50,9 @@ bool could_meet_with_player(struct player *pplayer, struct player *aplayer);
 bool could_intel_with_player(struct player *pplayer, struct player *aplayer);
 
 struct Treaty *treaty_new(struct player *plr0, struct player *plr1);
-bool add_clause(struct Treaty *ptreaty, struct player *pfrom, 
+bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
 	        enum clause_type type, int val);
-bool remove_clause(struct Treaty *ptreaty, struct player *pfrom, 
+bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
 		   enum clause_type type, int val);
 void treaty_free(struct Treaty *ptreaty);
 
