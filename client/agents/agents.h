@@ -14,7 +14,7 @@
 #ifndef FC__CLIENT_AGENTS_AGENTS_H
 #define FC__CLIENT_AGENTS_AGENTS_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 
@@ -74,9 +74,9 @@ void agents_tile_remove(struct tile *ptile);
 
 /* called from agents */
 void cause_a_city_changed_for_agent(const char *name_of_calling_agent,
-				    struct city *pcity);
+                                    struct city *pcity);
 void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
-				    struct unit *punit);
+                                    struct unit *punit);
 void wait_for_requests(const char *agent_name, int first_request_id,
-		       int last_request_id);
+                       int last_request_id);
 #endif

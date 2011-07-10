@@ -39,11 +39,11 @@ void cma_init(void);
 
 /* Change the actual city setting. */
 bool cma_apply_result(struct city *pcity,
-		      const struct cm_result *const result);
+                      const struct cm_result *const result);
 
 /* Till a call of cma_release_city the city will be managed by the agent. */
 void cma_put_city_under_agent(struct city *pcity,
-			      const struct cm_parameter *const parameter);
+                              const struct cm_parameter *const parameter);
 
 /* Release the city from the agent. */
 void cma_release_city(struct city *pcity);
@@ -54,12 +54,12 @@ void cma_release_city(struct city *pcity);
  * only valid if cma_is_city_under_agent returns true.
  */
 bool cma_is_city_under_agent(const struct city *pcity,
-			     struct cm_parameter *parameter);
+                             struct cm_parameter *parameter);
 
 /***************** utility methods *************************************/
 bool cma_get_parameter(enum attr_city attr, int city_id,
-		       struct cm_parameter *parameter);
+                       struct cm_parameter *parameter);
 void cma_set_parameter(enum attr_city attr, int city_id,
-		       const struct cm_parameter *parameter);
+                       const struct cm_parameter *parameter);
 
 #endif

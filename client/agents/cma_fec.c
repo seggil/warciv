@@ -34,9 +34,9 @@
 
 #include "cma_fec.h"
 
-#define RESULT_COLUMNS		10
-#define BUFFER_SIZE		100
-#define MAX_LEN_PRESET_NAME	80
+#define RESULT_COLUMNS          10
+#define BUFFER_SIZE             100
+#define MAX_LEN_PRESET_NAME     80
 
 struct cma_preset {
   char *descr;
@@ -94,7 +94,7 @@ void cmafec_free(void)
  Sets the front-end parameter.
 **************************************************************************/
 void cmafec_set_fe_parameter(struct city *pcity,
-			     const struct cm_parameter *const parameter)
+                             const struct cm_parameter *const parameter)
 {
   cma_set_parameter(ATTR_CITY_CMAFE_PARAMETER, pcity->id, parameter);
 }
@@ -189,7 +189,7 @@ const struct cm_parameter *cmafec_preset_get_parameter(int index)
  parameter. Returns -1 if no preset could be found.
 **************************************************************************/
 int cmafec_preset_get_index_of_parameter(const struct cm_parameter
-					 *const parameter)
+                                         *const parameter)
 {
   int i;
 
@@ -229,7 +229,7 @@ const char *cmafec_get_short_descr_of_city(const struct city *pcity)
  preset could be found.
 **************************************************************************/
 const char *cmafec_get_short_descr(const struct cm_parameter *const
-				   parameter)
+                                   parameter)
 {
   int index = cmafec_preset_get_index_of_parameter(parameter);
 
@@ -270,7 +270,7 @@ static const char *get_city_growth_string(struct city *pcity, int surplus)
     }
   }
   my_snprintf(buffer, sizeof(buffer), PL_("%d turn", "%d turns", turns),
-	      turns);
+              turns);
   return buffer;
 }
 
@@ -312,7 +312,7 @@ static const char *get_prod_complete_string(struct city *pcity, int surplus)
     }
   }
   my_snprintf(buffer, sizeof(buffer), PL_("%d turn", "%d turns", turns),
-	      turns);
+              turns);
   return buffer;
 }
 
@@ -320,10 +320,10 @@ static const char *get_prod_complete_string(struct city *pcity, int surplus)
 ...
 **************************************************************************/
 const char *cmafec_get_result_descr(struct city *pcity,
-				    const struct cm_result *const
-				    result,
-				    const struct cm_parameter *const
-				    parameter)
+                                    const struct cm_result *const
+                                    result,
+                                    const struct cm_parameter *const
+                                    parameter)
 {
   int j;
   char buf[RESULT_COLUMNS][BUFFER_SIZE];
@@ -338,30 +338,30 @@ const char *cmafec_get_result_descr(struct city *pcity,
     }
 
     my_snprintf(buf[6], BUFFER_SIZE, "%d/%s%s",
-		pcity->size - cm_count_specialist(pcity, result),
-		specialists_string(result->specialists),
-		result->happy ? _(" happy") : "");
+                pcity->size - cm_count_specialist(pcity, result),
+                specialists_string(result->specialists),
+                result->happy ? _(" happy") : "");
 
     my_snprintf(buf[7], BUFFER_SIZE, "%s",
-		get_city_growth_string(pcity, result->surplus[CM_FOOD]));
+                get_city_growth_string(pcity, result->surplus[CM_FOOD]));
     my_snprintf(buf[8], BUFFER_SIZE, "%s",
-		get_prod_complete_string(pcity, result->surplus[CM_SHIELD]));
+                get_prod_complete_string(pcity, result->surplus[CM_SHIELD]));
     my_snprintf(buf[9], BUFFER_SIZE, "%s",
-		cmafec_get_short_descr(parameter));
+                cmafec_get_short_descr(parameter));
   }
 
   my_snprintf(buffer, sizeof(buffer),
-	      _("Name: %s\n"
-		"Food:       %10s Gold:    %10s\n"
-		"Production: %10s Luxury:  %10s\n"
-		"Trade:      %10s Science: %10s\n"
-		"\n"
-		"    People (W/E/S/T): %s\n"
-		"          City grows: %s\n"
-		"Production completed: %s"),
-	      buf[9], buf[CM_FOOD], buf[CM_GOLD], buf[CM_SHIELD],
-	      buf[CM_LUXURY], buf[CM_TRADE], buf[CM_SCIENCE],
-	      buf[6], buf[7], buf[8]);
+              _("Name: %s\n"
+                "Food:       %10s Gold:    %10s\n"
+                "Production: %10s Luxury:  %10s\n"
+                "Trade:      %10s Science: %10s\n"
+                "\n"
+                "    People (W/E/S/T): %s\n"
+                "          City grows: %s\n"
+                "Production completed: %s"),
+              buf[9], buf[CM_FOOD], buf[CM_GOLD], buf[CM_SHIELD],
+              buf[CM_LUXURY], buf[CM_TRADE], buf[CM_SCIENCE],
+              buf[6], buf[7], buf[8]);
 
   freelog(LOG_DEBUG, "\n%s", buffer);
   return buffer;

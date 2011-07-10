@@ -34,12 +34,12 @@
 
 #include "agents.h"
 
-#define DEBUG_REQUEST_IDS		FALSE
-#define DEBUG_TODO_LISTS		FALSE
-#define META_CALLBACKS_LOGLEVEL		LOG_DEBUG
-#define PRINT_STATS_LOGLEVEL		LOG_DEBUG
-#define DEBUG_FREEZE			FALSE
-#define MAX_AGENTS			10
+#define DEBUG_REQUEST_IDS               FALSE
+#define DEBUG_TODO_LISTS                FALSE
+#define META_CALLBACKS_LOGLEVEL         LOG_DEBUG
+#define PRINT_STATS_LOGLEVEL            LOG_DEBUG
+#define DEBUG_FREEZE                    FALSE
+#define MAX_AGENTS                      10
 
 struct my_agent;
 
@@ -83,7 +83,7 @@ static bool currently_running = FALSE;
   Return TRUE iff the two agent calls are equal.
 ****************************************************************************/
 static bool calls_are_equal(const struct call *pcall1,
-			    const struct call *pcall2)
+                            const struct call *pcall2)
 {
   if (pcall1->type != pcall2->type && pcall1->cb_type != pcall2->cb_type) {
     return FALSE;
@@ -107,8 +107,8 @@ static bool calls_are_equal(const struct call *pcall1,
  agents.calls list add the call to this list.
 ***********************************************************************/
 static void enqueue_call(struct my_agent *agent,
-			 enum oct type,
-			 enum callback_type cb_type, ...)
+                         enum oct type,
+                         enum callback_type cb_type, ...)
 {
   va_list ap;
   struct call *pcall2;
@@ -165,7 +165,7 @@ static void enqueue_call(struct my_agent *agent,
  Helper.
 ***********************************************************************/
 static int my_call_sort(const struct call * const *ppa,
-			const struct call * const *ppb)
+                        const struct call * const *ppb)
 {
   return (*ppa)->agent->agent.level - (*ppb)->agent->agent.level;
 }
@@ -309,11 +309,11 @@ static bool is_outstanding_request(struct my_agent *agent)
       agent->last_outstanding_request_id >=
       aconnection.client.request_id_of_currently_handled_packet) {
     freelog(LOG_DEBUG,
-	    "A:%s: ignoring packet; outstanding [%d..%d] got=%d",
-	    agent->agent.name,
-	    agent->first_outstanding_request_id,
-	    agent->last_outstanding_request_id,
-	    aconnection.client.request_id_of_currently_handled_packet);
+            "A:%s: ignoring packet; outstanding [%d..%d] got=%d",
+            agent->agent.name,
+            agent->first_outstanding_request_id,
+            agent->last_outstanding_request_id,
+            aconnection.client.request_id_of_currently_handled_packet);
     return TRUE;
   }
   return FALSE;
@@ -325,12 +325,12 @@ static bool is_outstanding_request(struct my_agent *agent)
 static void print_stats(struct my_agent *agent)
 {
   freelog(PRINT_STATS_LOGLEVEL,
-	  "A:%s: waited %fs in total for network; "
-	  "requests=%d; waited %d times",
-	  agent->agent.name,
-	  read_timer_seconds(agent->stats.network_wall_timer),
-	  agent->stats.wait_at_network_requests,
-	  agent->stats.wait_at_network);
+          "A:%s: waited %fs in total for network; "
+          "requests=%d; waited %d times",
+          agent->agent.name,
+          read_timer_seconds(agent->stats.network_wall_timer),
+          agent->stats.wait_at_network_requests,
+          agent->stats.wait_at_network);
 }
 
 /***********************************************************************
@@ -514,9 +514,9 @@ void agents_unit_changed(struct unit *punit)
   int i;
 
   freelog(LOG_DEBUG,
-	  "A: agents_unit_changed(unit=%d) type=%s pos=(%d,%d) owner=%s",
-	  punit->id, unit_types[punit->type].name, TILE_XY(punit->tile),
-	  unit_owner(punit)->name);
+          "A: agents_unit_changed(unit=%d) type=%s pos=(%d,%d) owner=%s",
+          punit->id, unit_types[punit->type].name, TILE_XY(punit->tile),
+          unit_owner(punit)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct my_agent *agent = &agents.entries[i];
@@ -540,9 +540,9 @@ void agents_unit_new(struct unit *punit)
   int i;
 
   freelog(LOG_DEBUG,
-	  "A: agents_new_unit(unit=%d) type=%s pos=(%d,%d) owner=%s",
-	  punit->id, unit_types[punit->type].name, TILE_XY(punit->tile),
-	  unit_owner(punit)->name);
+          "A: agents_new_unit(unit=%d) type=%s pos=(%d,%d) owner=%s",
+          punit->id, unit_types[punit->type].name, TILE_XY(punit->tile),
+          unit_owner(punit)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct my_agent *agent = &agents.entries[i];
@@ -567,9 +567,9 @@ void agents_unit_remove(struct unit *punit)
   int i;
 
   freelog(LOG_DEBUG,
-	  "A: agents_remove_unit(unit=%d) type=%s pos=(%d,%d) owner=%s",
-	  punit->id, unit_types[punit->type].name, TILE_XY(punit->tile),
-	  unit_owner(punit)->name);
+          "A: agents_remove_unit(unit=%d) type=%s pos=(%d,%d) owner=%s",
+          punit->id, unit_types[punit->type].name, TILE_XY(punit->tile),
+          unit_owner(punit)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct my_agent *agent = &agents.entries[i];
@@ -594,7 +594,7 @@ void agents_city_changed(struct city *pcity)
   int i;
 
   freelog(LOG_DEBUG, "A: agents_city_changed(city='%s'(%d)) owner=%s",
-	  pcity->name, pcity->id, city_owner(pcity)->name);
+          pcity->name, pcity->id, city_owner(pcity)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct my_agent *agent = &agents.entries[i];
@@ -619,9 +619,9 @@ void agents_city_new(struct city *pcity)
   int i;
 
   freelog(LOG_DEBUG,
-	  "A: agents_city_new(city='%s'(%d)) pos=(%d,%d) owner=%s",
-	  pcity->name, pcity->id, TILE_XY(pcity->tile),
-	  city_owner(pcity)->name);
+          "A: agents_city_new(city='%s'(%d)) pos=(%d,%d) owner=%s",
+          pcity->name, pcity->id, TILE_XY(pcity->tile),
+          city_owner(pcity)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct my_agent *agent = &agents.entries[i];
@@ -646,9 +646,9 @@ void agents_city_remove(struct city *pcity)
   int i;
 
   freelog(LOG_DEBUG,
-	  "A: agents_city_remove(city='%s'(%d)) pos=(%d,%d) owner=%s",
-	  pcity->name, pcity->id, TILE_XY(pcity->tile),
-	  city_owner(pcity)->name);
+          "A: agents_city_remove(city='%s'(%d)) pos=(%d,%d) owner=%s",
+          pcity->name, pcity->id, TILE_XY(pcity->tile),
+          city_owner(pcity)->name);
 
   for (i = 0; i < agents.entries_used; i++) {
     struct my_agent *agent = &agents.entries[i];
@@ -742,17 +742,17 @@ void agents_tile_new(struct tile *ptile)
  request has been processed by the server.
 ***********************************************************************/
 void wait_for_requests(const char *agent_name, int first_request_id,
-		       int last_request_id)
+                       int last_request_id)
 {
   struct my_agent *agent = find_agent_by_name(agent_name);
 
   if (DEBUG_REQUEST_IDS) {
     freelog(LOG_NORMAL, "A:%s: wait_for_request(ids=[%d..%d])",
-	    agent->agent.name, first_request_id, last_request_id);
+            agent->agent.name, first_request_id, last_request_id);
   }
 
   assert(first_request_id != 0 && last_request_id != 0
-	 && first_request_id <= last_request_id);
+         && first_request_id <= last_request_id);
   assert(agent->first_outstanding_request_id == 0);
   agent->first_outstanding_request_id = first_request_id;
   agent->last_outstanding_request_id = last_request_id;
@@ -767,7 +767,7 @@ void wait_for_requests(const char *agent_name, int first_request_id,
 
   if (DEBUG_REQUEST_IDS) {
     freelog(LOG_NORMAL, "A:%s: wait_for_request: ids=[%d..%d]; got it",
-	    agent->agent.name, first_request_id, last_request_id);
+            agent->agent.name, first_request_id, last_request_id);
   }
 
   agent->first_outstanding_request_id = 0;
@@ -779,7 +779,7 @@ void wait_for_requests(const char *agent_name, int first_request_id,
  Adds a specific call for the given agent.
 ***********************************************************************/
 void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
-				    struct unit *punit)
+                                    struct unit *punit)
 {
   struct my_agent *agent = find_agent_by_name(name_of_calling_agent);
 
@@ -792,7 +792,7 @@ void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
  Adds a specific call for the given agent.
 ***********************************************************************/
 void cause_a_city_changed_for_agent(const char *name_of_calling_agent,
-				    struct city *pcity)
+                                    struct city *pcity)
 {
   struct my_agent *agent = find_agent_by_name(name_of_calling_agent);
 

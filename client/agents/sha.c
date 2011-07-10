@@ -41,7 +41,7 @@ static struct unit_list *previous_units = NULL;
 static void sha_tile_update(struct tile *ptile)
 {
   freelog(LOG_DEBUG, "sha got tile: %d ~= (%d, %d)",
-	  ptile->index, TILE_XY(ptile));
+          ptile->index, TILE_XY(ptile));
 
 #if 0
   previous_tiles[ptile->index] = *ptile;
@@ -69,7 +69,7 @@ static void sha_unit_new(int id)
 {
   struct unit *punit = find_unit_by_id(id);
   struct unit *pold_unit = create_unit_virtual(get_player(punit->owner),
-					       NULL, 0, 0);
+                                               NULL, 0, 0);
 
   freelog(LOG_DEBUG, "sha got unit: %d", id);
 
