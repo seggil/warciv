@@ -186,7 +186,7 @@ static void ai_gothere_bodyguard(struct unit *punit, struct tile *dest_tile)
   if (!unit_list_find(ptile->units, punit->ai.bodyguard)) {
     int my_def = (punit->hp
                   * unit_type(punit)->veteran[punit->veteran].power_fact
-		  * unit_type(punit)->defense_strength
+                  * unit_type(punit)->defense_strength
                   * POWER_FACTOR);
 
     if (danger >= my_def) {
@@ -242,7 +242,7 @@ bool ai_gothere(struct player *pplayer, struct unit *punit,
   if (goto_is_sane(punit, dest_tile, TRUE) && punit->moves_left > 0) {
     punit->goto_tile = dest_tile;
     UNIT_LOG(LOGLEVEL_GOTHERE, punit, "Walking to (%d,%d)",
-	     dest_tile->x, dest_tile->y);
+             dest_tile->x, dest_tile->y);
     if (!ai_unit_goto(punit, dest_tile)) {
       /* died */
       return FALSE;
@@ -300,7 +300,7 @@ bool ai_unit_goto(struct unit *punit, struct tile *ptile)
   to bring along.
 **************************************************************************/
 void ai_unit_new_role(struct unit *punit, enum ai_unit_task task,
-		      struct tile *ptile)
+                      struct tile *ptile)
 {
   struct unit *charge = find_unit_by_id(punit->ai.charge);
   struct unit *bodyguard = find_unit_by_id(punit->ai.bodyguard);
@@ -581,10 +581,10 @@ struct city *dist_nearest_city(struct player *pplayer, struct tile *ptile,
       /* Find the closest city known to the player with a matching
        * continent. */
       if ((best_dist == -1 || city_dist < best_dist)
-	  && (everywhere || con == 0
-	      || con == map_get_continent(pcity->tile))
-	  && (!pplayer || map_is_known(pcity->tile, pplayer))) {
-	best_dist = city_dist;
+          && (everywhere || con == 0
+              || con == map_get_continent(pcity->tile))
+          && (!pplayer || map_is_known(pcity->tile, pplayer))) {
+        best_dist = city_dist;
         pc = pcity;
       }
     } city_list_iterate_end;
@@ -669,12 +669,12 @@ void copy_if_better_choice(struct ai_choice *cur, struct ai_choice *best)
 {
   if (cur->want > best->want) {
     freelog(LOG_DEBUG, "Overriding choice (%s, %d) with (%s, %d)",
-	    (best->type == CT_BUILDING ?
-	     get_improvement_name(best->choice) : unit_types[best->choice].name),
-	    best->want,
-	    (cur->type == CT_BUILDING ?
-	     get_improvement_name(cur->choice) : unit_types[cur->choice].name),
-	    cur->want);
+            (best->type == CT_BUILDING ?
+             get_improvement_name(best->choice) : unit_types[best->choice].name),
+            best->want,
+            (cur->type == CT_BUILDING ?
+             get_improvement_name(cur->choice) : unit_types[cur->choice].name),
+            cur->want);
     best->choice =cur->choice;
     best->want = cur->want;
     best->type = cur->type;
@@ -692,10 +692,10 @@ static bool is_building_other_wonder(struct city *pcity)
 
   city_list_iterate(pplayer->cities, acity) {
     if (pcity != acity
-	&& !acity->is_building_unit
-	&& is_wonder(acity->currently_building)
-	&& (map_get_continent(acity->tile)
-	    == map_get_continent(pcity->tile))) {
+        && !acity->is_building_unit
+        && is_wonder(acity->currently_building)
+        && (map_get_continent(acity->tile)
+            == map_get_continent(pcity->tile))) {
       return TRUE;
     }
   } city_list_iterate_end;
@@ -731,33 +731,33 @@ void ai_advisor_choose_building(struct city *pcity, struct ai_choice *choice)
       continue; /* Humans should not be advised to build wonders or palace */
     }
     if (!is_wonder(i)
-	|| (!pcity->is_building_unit && is_wonder(pcity->currently_building)
-	    && pcity->shield_stock >= impr_build_shield_cost(i) / 2)
-	|| (!is_building_other_wonder(pcity)
-	    /* otherwise caravans will be killed! */
-	    && pcity->server.ai.grave_danger == 0
-	    && pcity->server.ai.downtown * cities >= downtown
-	    && pcity->server.ai.danger * cities <= danger)) {
+        || (!pcity->is_building_unit && is_wonder(pcity->currently_building)
+            && pcity->shield_stock >= impr_build_shield_cost(i) / 2)
+        || (!is_building_other_wonder(pcity)
+            /* otherwise caravans will be killed! */
+            && pcity->server.ai.grave_danger == 0
+            && pcity->server.ai.downtown * cities >= downtown
+            && pcity->server.ai.danger * cities <= danger)) {
       /* Is this too many restrictions? */
       /* trying to keep wonders in safe places with easy caravan
        * access -- Syela */
       if(pcity->server.ai.building_want[i]>want) {
-	/* we have to do the can_build check to avoid Built Granary.
-	 * Now Building Granary. */
+        /* we have to do the can_build check to avoid Built Granary.
+         * Now Building Granary. */
         if (can_build_improvement(pcity, i)) {
           want = pcity->server.ai.building_want[i];
           id = i;
         } else {
-	  freelog(LOG_DEBUG, "%s can't build %s", pcity->name,
-		  get_improvement_name(i));
-	}
+          freelog(LOG_DEBUG, "%s can't build %s", pcity->name,
+                  get_improvement_name(i));
+        }
       } /* id is the building we like the best */
     }
   } impr_type_iterate_end;
 
   if (want != 0) {
     freelog(LOG_DEBUG, "AI_Chosen: %s with desire = %d for %s",
-	    get_improvement_name(id), want, pcity->name);
+            get_improvement_name(id), want, pcity->name);
   } else {
     freelog(LOG_DEBUG, "AI_Chosen: None for %s", pcity->name);
   }
@@ -801,9 +801,9 @@ bool ai_assess_military_unhappiness(struct city *pcity,
     /* See discussion/rules in common/city.c:city_support() */
     if (!unit_being_aggressive(punit)) {
       if (is_field_unit(punit)) {
-	happy_cost = 1;
+        happy_cost = 1;
       } else {
-	happy_cost = 0;
+        happy_cost = 0;
       }
     }
     if (happy_cost <= 0) {

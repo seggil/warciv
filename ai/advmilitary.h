@@ -20,9 +20,9 @@ struct ai_choice;
 
 Unit_Type_id ai_choose_defender_versus(struct city *pcity, Unit_Type_id v);
 void military_advisor_choose_tech(struct player *pplayer,
-				  struct ai_choice *choice);
+                                  struct ai_choice *choice);
 void  military_advisor_choose_build(struct player *pplayer, struct city *pcity,
-				    struct ai_choice *choice);
+                                    struct ai_choice *choice);
 void assess_danger_player(struct player *pplayer);
 int assess_defense_quadratic(struct city *pcity);
 int assess_defense_unit(struct city *pcity, struct unit *punit, bool igwall);

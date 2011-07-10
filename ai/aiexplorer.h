@@ -13,7 +13,7 @@
 #ifndef FC__AIEXPLORER_H
 #define FC__AIEXPLORER_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 

@@ -214,17 +214,17 @@ void ai_data_turn_init(struct player *pplayer)
         /* The idea is that while our enemies don't have any offensive
          * seaborne units, we don't have to worry. Go on the offensive! */
         if (unit_type(punit)->attack_strength > 1) {
-	  if (is_ocean(map_get_terrain(punit->tile))) {
-	    Continent_id continent = map_get_continent(punit->tile);
-	    ai->threats.ocean[-continent] = TRUE;
-	  } else {
-	    adjc_iterate(punit->tile, tile2) {
-	      if (is_ocean(map_get_terrain(tile2))) {
-	        Continent_id continent = map_get_continent(tile2);
-	        ai->threats.ocean[-continent] = TRUE;
-	      }
-	    } adjc_iterate_end;
-	  }
+          if (is_ocean(map_get_terrain(punit->tile))) {
+            Continent_id continent = map_get_continent(punit->tile);
+            ai->threats.ocean[-continent] = TRUE;
+          } else {
+            adjc_iterate(punit->tile, tile2) {
+              if (is_ocean(map_get_terrain(tile2))) {
+                Continent_id continent = map_get_continent(tile2);
+                ai->threats.ocean[-continent] = TRUE;
+              }
+            } adjc_iterate_end;
+          }
         }
         continue;
       }
@@ -272,7 +272,7 @@ void ai_data_turn_init(struct player *pplayer)
     if (is_ocean(ptile->terrain)) {
       if (ai->explore.sea_done && ai_handicap(pplayer, H_TARGETS)
           && !map_is_known(ptile, pplayer)) {
-	/* We're not done there. */
+        /* We're not done there. */
         ai->explore.sea_done = FALSE;
         ai->explore.ocean[-continent] = TRUE;
       }
@@ -486,10 +486,10 @@ void ai_data_init(struct player *pplayer)
 
   ai->govt_reeval = 0;
   ai->government_want = fc_realloc(ai->government_want,
-				   ((game.ruleset_control.government_count + 1)
-				    * sizeof(*ai->government_want)));
+                                   ((game.ruleset_control.government_count + 1)
+                                    * sizeof(*ai->government_want)));
   memset(ai->government_want, 0, (game.ruleset_control.government_count + 1)
-	                         * sizeof(*ai->government_want));
+                                 * sizeof(*ai->government_want));
 
   ai->diplomacy.target = NULL;
   ai->diplomacy.strategy = WIN_OPEN;

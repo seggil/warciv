@@ -20,6 +20,6 @@
 struct player_spaceship;
 
 bool ai_spaceship_autoplace(struct player *pplayer,
-			    struct player_spaceship *ship);
+                            struct player_spaceship *ship);
 
 #endif  /* FC__ADVSPACE_H */

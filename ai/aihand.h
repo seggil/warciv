@@ -14,7 +14,7 @@
 #define FC__AIHAND_H
 
 #include "fc_types.h"
-#include "city.h"		/* enum choice_type */
+#include "city.h"               /* enum choice_type */
 
 void ai_do_first_activities(struct player *pplayer);
 void ai_do_last_activities(struct player *pplayer);

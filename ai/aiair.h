@@ -13,7 +13,7 @@
 #ifndef FC__AIAIR_H
 #define FC__AIAIR_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 
@@ -21,7 +21,7 @@ struct ai_choice;
 
 void ai_manage_airunit(struct player *pplayer, struct unit *punit);
 bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity,
-			    struct ai_choice *choice);
+                            struct ai_choice *choice);
 
 int ai_evaluate_tile_for_attack(struct unit *punit, struct tile *dst_tile);
 

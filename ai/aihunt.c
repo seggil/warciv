@@ -292,7 +292,7 @@ int ai_hunter_findjob(struct player *pplayer, struct unit *punit)
       }
       UNIT_LOG(LOGLEVEL_HUNT, punit, "considering chasing %s(%d, %d) id %d "
                "dist1 %d dist2 %d",
-	       unit_type(target)->name, TILE_XY(target->tile),
+               unit_type(target)->name, TILE_XY(target->tile),
                target->id, dist1, dist2);
       /* We can't attack units stationary in cities. */
       if (map_get_city(target->tile)
@@ -304,7 +304,7 @@ int ai_hunter_findjob(struct player *pplayer, struct unit *punit)
           && dist1 >= dist2) {
         UNIT_LOG(LOGLEVEL_HUNT, punit, "giving up racing %s (%d, %d)->(%d, %d)",
                  unit_type(target)->name,
-		 target->ai.prev_pos ? (*target->ai.prev_pos)->x : -1,
+                 target->ai.prev_pos ? (*target->ai.prev_pos)->x : -1,
                  target->ai.prev_pos ? (*target->ai.prev_pos)->y : -1,
                  TILE_XY(target->tile));
         continue;
@@ -456,7 +456,7 @@ bool ai_hunter_manage(struct player *pplayer, struct unit *punit)
     return FALSE;
   }
   UNIT_LOG(LOGLEVEL_HUNT, punit, "hunting %d(%d, %d)",
-	   target->id, TILE_XY(target->tile));
+           target->id, TILE_XY(target->tile));
   sanity_target = target->id;
 
   /* Check if we can nuke it */

@@ -13,7 +13,7 @@
 #ifndef FC__AIFERRY_H
 #define FC__AIFERRY_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 
@@ -39,7 +39,7 @@ void aiferry_clear_boat(struct unit *punit);
  * a beachhead but it works better if (dest_x, dest_y) is on the coast.
  */
 bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,
-		      struct tile *dst_tile);
+                      struct tile *dst_tile);
 
 /*
  * Main boat managing function.  Gets units on board to where they want to

@@ -23,7 +23,7 @@
  *
  * The constant may be changed since it isn't externally visible used.
  */
-#define POWER_DIVIDER 	(POWER_FACTOR * 3)
+#define POWER_DIVIDER   (POWER_FACTOR * 3)
 
 /* Simple military power macros */
 #define DEFENCE_POWER(punit) \
@@ -61,9 +61,9 @@ int turns_to_enemy_city(Unit_Type_id our_type, struct city *acity,
 int turns_to_enemy_unit(Unit_Type_id our_type, int speed, struct tile *ptile,
                         Unit_Type_id enemy_type);
 int find_something_to_kill(struct player *pplayer, struct unit *punit,
-			   struct tile **ptile);
+                           struct tile **ptile);
 bool find_beachhead(struct unit *punit, struct tile *dst_tile,
-		    struct tile **ptile);
+                    struct tile **ptile);
 
 int build_cost_balanced(Unit_Type_id type);
 int unittype_att_rating(Unit_Type_id type, int veteran,

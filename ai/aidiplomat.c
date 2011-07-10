@@ -268,7 +268,7 @@ static void ai_diplomat_city(struct unit *punit, struct city *ctarget)
   handle_unit_activity_request(punit, ACTIVITY_IDLE);
 
 #define T(my_act,my_val)                                            \
-  if (diplomat_can_do_action(punit, my_act, ctarget->tile)) {	    \
+  if (diplomat_can_do_action(punit, my_act, ctarget->tile)) {       \
     freelog(LOG_DIPLOMAT, "Player %s's diplomat %d does " #my_act   \
             " on %s", pplayer->name, punit->id, ctarget->name);     \
     handle_unit_diplomat_action(pplayer, punit->id, my_act,         \
@@ -511,7 +511,7 @@ static bool ai_diplomat_bribe_nearby(struct player *pplayer,
 
     if (diplomat_can_do_action(punit, DIPLOMAT_BRIBE, pos.tile)) {
       handle_unit_diplomat_action(pplayer, punit->id, DIPLOMAT_BRIBE,
-				  unit_list_get(ptile->units, 0)->id, -1);
+                                  unit_list_get(ptile->units, 0)->id, -1);
       /* autoattack might kill us as we move in */
       if (find_unit_by_id(sanity) && punit->moves_left > 0) {
         return TRUE;
@@ -630,7 +630,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
       task = AIUNIT_DEFEND_HOME;
       UNIT_LOG(LOG_DIPLOMAT, punit, "going to defend %s", ctarget->name);
     } else if ((ctarget = find_closest_owned_city(pplayer, punit->tile,
-						  TRUE, NULL)) != NULL) {
+                                                  TRUE, NULL)) != NULL) {
       /* This should only happen if the entire continent was suddenly
        * conquered. So we head for closest coastal city and wait for someone
        * to code ferrying for diplomats, or hostile attacks from the sea. */
@@ -650,7 +650,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
   CHECK_UNIT(punit);
   if (ctarget == NULL) {
     UNIT_LOG(LOG_ERROR, punit, "ctarget not set (role==%d)",
-	     punit->ai.ai_role);
+             punit->ai.ai_role);
     pf_destroy_map(map);
     return;
   }

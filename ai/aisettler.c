@@ -227,28 +227,28 @@ void cityresult_fill(struct player *pplayer,
      * never make cities. */
     if (game.ruleset_control.fulltradesize == 1) {
       result->corruption = ai->science_priority
-	* city_corruption(pcity,
-			  result->citymap[result->o_x][result->o_y].trade
-			  + result->citymap[2][2].trade);
+        * city_corruption(pcity,
+                          result->citymap[result->o_x][result->o_y].trade
+                          + result->citymap[2][2].trade);
     } else {
       result->corruption = 0;
     }
     result->waste = ai->shield_priority
       * city_waste(pcity,
-		   result->citymap[result->o_x][result->o_y].shield
-		   + result->citymap[2][2].shield);
+                   result->citymap[result->o_x][result->o_y].shield
+                   + result->citymap[2][2].shield);
   } else {
     /* Deduct difference in corruption and waste for real cities. Note that it
      * is possible (with notradesize) that we _gain_ value here. */
     pcity->size++;
     result->corruption = ai->science_priority
       * (city_corruption(pcity,
-			 result->citymap[result->o_x][result->o_y].trade)
-	 - pcity->corruption);
+                         result->citymap[result->o_x][result->o_y].trade)
+         - pcity->corruption);
     result->waste = ai->shield_priority
       * (city_waste(pcity,
-		    result->citymap[result->o_x][result->o_y].shield)
-	 - pcity->shield_waste);
+                    result->citymap[result->o_x][result->o_y].shield)
+         - pcity->shield_waste);
     pcity->size--;
   }
   result->total -= result->corruption;
@@ -354,7 +354,7 @@ void print_cityresult(struct player *pplayer, struct cityresult *cr,
           "- waste %d\n"
           "+ remaining %d + defense bonus %d + naval bonus %d = %d (%d)",
           cr->city_center, cr->other_tile->x, cr->other_tile->y,
-	  cr->best_other,
+          cr->best_other,
           cr->corruption, cr->waste, cr->remaining, defense_bonus(cr, ai),
           naval_bonus(cr, ai), cr->total, cr->result);
   if (food_starvation(cr)) {
@@ -399,7 +399,7 @@ static void city_desirability(struct player *pplayer, struct ai_data *ai,
   }
 
   if (pcity && (pcity->size + unit_pop_value(punit->type)
-		> game.ruleset_control.add_to_size_limit)) {
+                > game.ruleset_control.add_to_size_limit)) {
     /* Can't exceed population limit. */
     return;
   }
@@ -457,10 +457,10 @@ void ai_settler_init(struct player *pplayer)
   TODO: Transparently check if we should add ourselves to an existing city.
 **************************************************************************/
 static bool settler_map_iterate(struct pf_parameter *parameter,
-				struct unit *punit,
-				struct cityresult *best,
-				struct player *pplayer,
-				int boat_cost)
+                                struct unit *punit,
+                                struct cityresult *best,
+                                struct player *pplayer,
+                                int boat_cost)
 {
   struct cityresult result;
   int best_turn = 0; /* Which turn we found the best fit */
@@ -540,7 +540,7 @@ static bool settler_map_iterate(struct pf_parameter *parameter,
   will just give no positions.
 **************************************************************************/
 void find_best_city_placement(struct unit *punit, struct cityresult *best,
-			      bool look_for_boat, bool use_virt_boat)
+                              bool look_for_boat, bool use_virt_boat)
 {
   struct player *pplayer = unit_owner(punit);
   struct pf_parameter parameter;
@@ -601,7 +601,7 @@ void find_best_city_placement(struct unit *punit, struct cityresult *best,
      * Building a new boat is like a war against a weaker enemy --
      * good for the economy. (c) Bush family */
     if (settler_map_iterate(&parameter, punit, best, pplayer,
-			    unit_type(ferry)->build_cost)) {
+                            unit_type(ferry)->build_cost)) {
       best->overseas = TRUE;
       best->virt_boat = (ferry->id == 0);
     }

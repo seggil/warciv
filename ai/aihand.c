@@ -169,7 +169,7 @@ static void ai_manage_taxes(struct player *pplayer)
       if (cmr.found_a_valid
           && pcity->food_surplus > 0
           && pcity->size >= g->rapture_size
-	  && city_can_grow_to(pcity, pcity->size + 1)) {
+          && city_can_grow_to(pcity, pcity->size + 1)) {
         pcity->server.ai.celebrate = TRUE;
         can_celebrate++;
       } else {
@@ -271,7 +271,7 @@ void ai_best_government(struct player *pplayer)
       check_player_government_rates(pplayer);
       city_list_iterate(pplayer->cities, acity) {
         acity->server.ai.celebrate = FALSE;
-	/* This isn't strictly necessary since it's done in aaw. */
+        /* This isn't strictly necessary since it's done in aaw. */
         generic_city_refresh(acity, TRUE, NULL);
         auto_arrange_workers(acity);
       } city_list_iterate_end;

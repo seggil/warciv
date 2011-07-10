@@ -16,7 +16,7 @@
 /* max size of a short */
 #define MAX_NUM_ID 32767
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 

@@ -154,7 +154,7 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
   my_snprintf(buffer, sizeof(buffer), "%s's %s[%d] (%d,%d)->(%d,%d){%d,%d} ",
               unit_owner(punit)->name, unit_type(punit)->name,
               punit->id, punit->tile->x, punit->tile->y,
-	      gx, gy,
+              gx, gy,
               punit->ai.bodyguard, punit->ai.ferryboat);
 
   va_start(ap, msg);
@@ -204,7 +204,7 @@ void BODYGUARD_LOG(int level, struct unit *punit, const char *msg)
               "%s's bodyguard %s[%d] (%d,%d){%s:%d@%d,%d} ",
               unit_owner(punit)->name, unit_type(punit)->name,
               punit->id, punit->tile->x, punit->tile->y,
-	      s, id, ptile->x, ptile->y);
+              s, id, ptile->x, ptile->y);
   cat_snprintf(buffer, sizeof(buffer), "%s", msg);
   if (punit->debug) {
     notify_conn(game.est_connections, "%s", buffer);

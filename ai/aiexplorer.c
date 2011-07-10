@@ -56,17 +56,17 @@ static int likely_ocean(struct tile *ptile, struct player *pplayer)
   adjc_dir_iterate(ptile, ptile1, dir) {
     if (map_is_known(ptile1, pplayer)) {
       if (is_cardinal_dir(dir)) {
-	/* If a tile is cardinally adjacent, we can tell if the
-	 * central tile is ocean or not by the appearance of
-	 * the adjacent tile. So, given that we can tell,
-	 * it's fair to look at the actual tile. */
+        /* If a tile is cardinally adjacent, we can tell if the
+         * central tile is ocean or not by the appearance of
+         * the adjacent tile. So, given that we can tell,
+         * it's fair to look at the actual tile. */
         return (is_ocean(map_get_terrain(ptile)) ? 100 : 0);
       } else {
-	/* We're diagonal to the tile in question. So we can't
-	 * be sure what the central tile is, but the central
-	 * tile is likely to be the same as the nearby tiles.
-	 * If all 4 are water, return 90; if all 4 are land,
-	 * return 10. */
+        /* We're diagonal to the tile in question. So we can't
+         * be sure what the central tile is, but the central
+         * tile is likely to be the same as the nearby tiles.
+         * If all 4 are water, return 90; if all 4 are land,
+         * return 10. */
         sum += (is_ocean(map_get_terrain(ptile1)) ? 10 : -10);
       }
     }
@@ -104,7 +104,7 @@ Is there a chance that a trireme would be lost, given information that
 the player actually has.
 ***************************************************************/
 static bool is_likely_trireme_loss(struct player *pplayer,
-				   struct tile *ptile)
+                                   struct tile *ptile)
 {
   /*
    * If we are in a city or next to land, we have no chance of losing
@@ -214,9 +214,9 @@ static int explorer_desirable(struct tile *ptile, struct player *pplayer,
       desirable += (ocean * ocean_score + (100 - ocean) * land_score);
     } else {
       if(is_tiles_adjacent(ptile, ptile1)) {
-	/* we don't value staying offshore from land,
-	 * only adjacent. Otherwise destroyers do the wrong thing. */
-	desirable += (ocean * known_ocean_score
+        /* we don't value staying offshore from land,
+         * only adjacent. Otherwise destroyers do the wrong thing. */
+        desirable += (ocean * known_ocean_score
                       + (100 - ocean) * known_land_score);
       }
     }
@@ -322,7 +322,7 @@ bool ai_manage_explorer(struct unit *punit)
      * of two goodnesses is bigger after taking the natural log of both sides.
      */
     if (log_desirable + pos.total_MC * logDF
-	> log_most_desirable + best_MC * logDF) {
+        > log_most_desirable + best_MC * logDF) {
 
       log_most_desirable = log_desirable;
       best_tile = pos.tile;
@@ -351,25 +351,25 @@ bool ai_manage_explorer(struct unit *punit)
     if (punit->moves_left > 0) {
       /* We can still move on... */
       if (punit->moves_left < init_moves) {
-	/* At least we moved (and maybe even got to where we wanted).
+        /* At least we moved (and maybe even got to where we wanted).
          * Let's do more exploring.
          * (Checking only whether our position changed is unsafe: can allow
          * yoyoing on a RR) */
-	return ai_manage_explorer(punit);
+        return ai_manage_explorer(punit);
       } else {
-	/* Something went wrong. What to do but return?
-	 * Answer: if we're a trireme we could get to this point,
-	 * but only with a non-full complement of movement points,
-	 * in which case the goto code is simply requesting a
-	 * one turn delay (the next tile we would occupy is not safe).
-	 * In that case, we should just wait. */
+        /* Something went wrong. What to do but return?
+         * Answer: if we're a trireme we could get to this point,
+         * but only with a non-full complement of movement points,
+         * in which case the goto code is simply requesting a
+         * one turn delay (the next tile we would occupy is not safe).
+         * In that case, we should just wait. */
         if (unit_flag(punit, F_TRIREME)
             && (punit->moves_left != unit_move_rate(punit))) {
           /* we're a trireme with non-full complement of movement points,
            * so wait until next turn. */
           return TRUE;
         }
-	return FALSE;
+        return FALSE;
       }
     }
     return TRUE;

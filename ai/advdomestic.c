@@ -46,7 +46,7 @@
  * stimulated.
  ***************************************************************************/
 static void ai_choose_help_wonder(struct city *pcity,
-				  struct ai_choice *choice)
+                                  struct ai_choice *choice)
 {
   struct player *pplayer = city_owner(pcity);
   /* Continent where the city is --- we won't be aiding any wonder
@@ -75,7 +75,7 @@ static void ai_choose_help_wonder(struct city *pcity,
     if (acity->is_building_unit
         && unit_type_flag(acity->currently_building, F_HELP_WONDER)
         && (acity->shield_stock
-	    >= unit_build_shield_cost(acity->currently_building))
+        >= unit_build_shield_cost(acity->currently_building))
         && map_get_continent(acity->tile) == continent) {
       caravans++;
     }
@@ -101,7 +101,7 @@ static void ai_choose_help_wonder(struct city *pcity,
         && map_get_continent(acity->tile) == continent
         && acity != pcity
         && (build_points_left(acity)
-	    > unit_build_shield_cost(unit_type) * caravans)) {
+        > unit_build_shield_cost(unit_type) * caravans)) {
 
       /* Desire for the wonder we are going to help - as much as we want to
        * build it we want to help building it as well. */
@@ -141,7 +141,7 @@ static void ai_choose_help_wonder(struct city *pcity,
   If want is 0, this advisor doesn't want anything.
 ***************************************************************************/
 void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
-				   struct ai_choice *choice)
+                                   struct ai_choice *choice)
 {
   /* Government of the player */
   struct government *gov = get_gov_pplayer(pplayer);
@@ -198,7 +198,7 @@ void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
     } else if (want < -choice->want) {
       /* We need boats to colonize! */
       CITY_LOG(LOG_DEBUG, pcity, "desires founders with passion %d and asks"
-	       " for a boat", want);
+               " for a boat", want);
       choice->want = 0 - want;
       choice->type = CT_NONMIL;
       choice->choice = unit_type; /* default */

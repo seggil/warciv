@@ -14,7 +14,7 @@
 #define FC__AICITY_H
 
 #include "fc_types.h"
-#include "unit.h"		/* enum unit_move_type */
+#include "unit.h"               /* enum unit_move_type */
 #include "city.h"
 #include "aidata.h"
 

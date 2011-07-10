@@ -108,7 +108,7 @@ static int greed(int missing_love)
      * We do not want integer overflows */
     return -((missing_love * MAX_AI_LOVE) / 1000) *
            ((missing_love * MAX_AI_LOVE) / 1000) /
-	   50;
+           50;
   }
 }
 
@@ -167,9 +167,9 @@ static bool ai_players_can_agree_on_ceasefire(struct player* player1,
   return (ai1->diplomacy.target != player2 &&
           (player1 == ai1->diplomacy.alliance_leader ||
            !pplayers_at_war(player2, ai1->diplomacy.alliance_leader)) &&
-	  player1->ai.love[player2->player_no] > - (MAX_AI_LOVE * 4 / 10)  &&
-	  (ai1->diplomacy.target == NULL ||
-	   !pplayers_allied(ai1->diplomacy.target, player2)));
+          player1->ai.love[player2->player_no] > - (MAX_AI_LOVE * 4 / 10)  &&
+          (ai1->diplomacy.target == NULL ||
+           !pplayers_allied(ai1->diplomacy.target, player2)));
 }
 
 /**********************************************************************
@@ -273,9 +273,9 @@ static int ai_goldequiv_clause(struct player *pplayer,
      * we don't care, though. */
     if (ai->diplomacy.acceptable_reputation > aplayer->reputation
         && ai->diplomacy.strategy != WIN_CAPITAL
-	&& (pclause->type != CLAUSE_CEASEFIRE
-	    || ai->diplomacy.acceptable_reputation_for_ceasefire >
-	       aplayer->reputation)) {
+        && (pclause->type != CLAUSE_CEASEFIRE
+            || ai->diplomacy.acceptable_reputation_for_ceasefire >
+               aplayer->reputation)) {
       notify(aplayer, _("*%s (AI)* Begone scoundrel, we all know that"
              " you cannot be trusted!"), pplayer->name);
       worth = -BIG_NUMBER;
@@ -347,7 +347,7 @@ static int ai_goldequiv_clause(struct player *pplayer,
     } else {
       if (pplayer->ai.control && aplayer->ai.control &&
          ai_players_can_agree_on_ceasefire(pplayer, aplayer)) {
-	 worth = 0;
+         worth = 0;
       } else {
         worth = greed(pplayer->ai.love[aplayer->player_no]
                       - ai->diplomacy.req_love_for_ceasefire);
@@ -431,12 +431,12 @@ static int ai_goldequiv_clause(struct player *pplayer,
       if (pplayers_allied(pplayer, aplayer)) {
         if (!shared_vision_is_safe(pplayer, aplayer)) {
           notify(aplayer, _("*%s (AI)* Sorry, sharing vision with you "
-	                    "is not safe."),
+                            "is not safe."),
                  pplayer->name);
-	  worth = -BIG_NUMBER;
-	} else {
+          worth = -BIG_NUMBER;
+        } else {
           worth = 0;
-	}
+        }
       } else {
         /* so out of the question */
         worth = -BIG_NUMBER;
@@ -487,7 +487,7 @@ void ai_treaty_evaluate(struct player *pplayer, struct player *aplayer,
       has_treaty = TRUE;
     }
     if (pclause->type == CLAUSE_CITY && pclause->from == pplayer) {
-	given_cities++;
+        given_cities++;
     }
     if (pclause->type != CLAUSE_GOLD && pclause->type != CLAUSE_MAP
         && pclause->type != CLAUSE_SEAMAP && pclause->type != CLAUSE_VISION
@@ -646,7 +646,7 @@ static int ai_war_desire(struct player *pplayer, struct player *aplayer,
    * allies, but we might trigger a wider chain reaction. */
   players_iterate(eplayer) {
     bool cancel_excuse =
-	pplayer->diplstates[eplayer->player_no].has_reason_to_cancel != 0;
+        pplayer->diplstates[eplayer->player_no].has_reason_to_cancel != 0;
     enum diplstate_type ds = pplayer_get_diplstate(pplayer, eplayer)->type;
 
     if (eplayer == pplayer || !eplayer->is_alive) {
@@ -697,7 +697,7 @@ static void ai_diplomacy_suggest(struct player *pplayer,
 
   handle_diplomacy_init_meeting_req(pplayer, aplayer->player_no);
   handle_diplomacy_create_clause_req(pplayer, aplayer->player_no,
-				     pplayer->player_no, what, value);
+                                     pplayer->player_no, what, value);
 }
 
 /**********************************************************************
@@ -762,7 +762,7 @@ void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai)
     pplayer->ai.love[aplayer->player_no] -=
       MIN(player_in_territory(pplayer, aplayer) * (MAX_AI_LOVE / 100),
           pplayers_allied(aplayer, pplayer) ?
-	    ai->diplomacy.love_incr - 1 : (MAX_AI_LOVE / 2));
+            ai->diplomacy.love_incr - 1 : (MAX_AI_LOVE / 2));
 
     /* Increase the love if aplayer has got a building that makes
      * us love him more. Typically it's Eiffel Tower */
@@ -831,7 +831,7 @@ void ai_diplomacy_calculate(struct player *pplayer, struct ai_data *ai)
         || ds == DS_NO_CONTACT
         || players_on_same_team(pplayer, aplayer)
         || (pplayer != ai->diplomacy.alliance_leader &&
-	    aplayer != ai->diplomacy.alliance_leader &&
+            aplayer != ai->diplomacy.alliance_leader &&
             adip->is_allied_with_ally)
         || (pplayer_get_diplstate(aplayer, ai->diplomacy.alliance_leader)->type
             == DS_CEASEFIRE)) {
@@ -897,7 +897,7 @@ static void ai_share(struct player *pplayer, struct player *aplayer)
   /* Only share techs with team mates */
   if (players_on_same_team(pplayer, aplayer)) {
     for (index = A_FIRST;
-	 index < game.ruleset_control.num_tech_types; index++) {
+         index < game.ruleset_control.num_tech_types; index++) {
       if ((get_invention(pplayer, index) != TECH_KNOWN)
           && (get_invention(aplayer, index) == TECH_KNOWN)) {
        ai_diplomacy_suggest(aplayer, pplayer, CLAUSE_ADVANCE, index);
@@ -998,15 +998,15 @@ void ai_diplomacy_actions(struct player *pplayer)
         notify(aplayer, _("*%s (AI)* Your attempt to conquer space for "
                "yourself alone betray your true intentions, and I "
                "will have no more of our alliance!"), pplayer->name);
-	handle_diplomacy_cancel_pact(pplayer, aplayer->player_no,
-				     CLAUSE_ALLIANCE);
+        handle_diplomacy_cancel_pact(pplayer, aplayer->player_no,
+                                     CLAUSE_ALLIANCE);
         if (gives_shared_vision(pplayer, aplayer)) {
           remove_shared_vision(pplayer, aplayer);
         }
         /* Never forgive this */
         pplayer->ai.love[aplayer->player_no] = -(BIG_NUMBER);
       } else if (ship->state == SSHIP_STARTED
-		 && adip->warned_about_space == 0) {
+                 && adip->warned_about_space == 0) {
         adip->warned_about_space = 10 + myrand(6);
         notify(aplayer, _("*%s (AI)* Your attempt to unilaterally "
                "dominate outer space is highly offensive."), pplayer->name);
@@ -1059,10 +1059,10 @@ void ai_diplomacy_actions(struct player *pplayer)
         && adip->at_war_with_ally
         && !adip->is_allied_with_ally
         && !pplayers_at_war(pplayer, aplayer)
-	&& (pplayer_get_diplstate(pplayer, aplayer)->type != DS_CEASEFIRE ||
-	    myrand(5) < 1)) {
+        && (pplayer_get_diplstate(pplayer, aplayer)->type != DS_CEASEFIRE ||
+            myrand(5) < 1)) {
       notify(aplayer, _("*%s (AI)* Your aggression against my allies was "
-			"your last mistake!"), pplayer->name);
+                        "your last mistake!"), pplayer->name);
       ai_go_to_war(pplayer, ai, aplayer);
     }
   } players_iterate_end;
@@ -1084,9 +1084,9 @@ void ai_diplomacy_actions(struct player *pplayer)
         remove_shared_vision(pplayer, aplayer);
       } else if (!shared_vision_is_safe(pplayer, aplayer)) {
         notify(aplayer, _("*%s (AI)* Sorry, sharing vision with you "
-	                    "is no longer safe."),
-	       pplayer->name);
-	remove_shared_vision(pplayer, aplayer);
+                          "is no longer safe."),
+               pplayer->name);
+        remove_shared_vision(pplayer, aplayer);
       }
     }
 
@@ -1167,9 +1167,9 @@ void ai_diplomacy_actions(struct player *pplayer)
                  "more!"), pplayer->name, target->name);
           PLAYER_LOG(LOG_DIPL2, pplayer, ai, "breaking useless alliance with "
                      "%s", aplayer->name);
-	  /* to peace */
-	  handle_diplomacy_cancel_pact(pplayer, aplayer->player_no,
-				       CLAUSE_ALLIANCE);
+          /* to peace */
+          handle_diplomacy_cancel_pact(pplayer, aplayer->player_no,
+                                       CLAUSE_ALLIANCE);
           pplayer->ai.love[aplayer->player_no] =
                                  MIN(pplayer->ai.love[aplayer->player_no], 0);
           if (gives_shared_vision(pplayer, aplayer)) {

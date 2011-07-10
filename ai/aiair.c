@@ -45,14 +45,14 @@
  *       IMO should be less restrictive than general H_MAP, H_FOG
  *************************************************************************/
 static bool find_nearest_airbase(struct tile *ptile, struct unit *punit,
-				 struct tile **airbase_tile)
+                                 struct tile **airbase_tile)
 {
   struct player *pplayer = unit_owner(punit);
   int moves_left = punit->moves_left / SINGLE_MOVE;
 
   iterate_outward(ptile, moves_left, tile1) {
     if (is_airunit_refuel_point(tile1, pplayer, punit->type, FALSE)
-	&& (air_can_move_between (moves_left, ptile, tile1, pplayer) >= 0)) {
+        && (air_can_move_between (moves_left, ptile, tile1, pplayer) >= 0)) {
       *airbase_tile = tile1;
       return TRUE;
     }
@@ -66,7 +66,7 @@ static bool find_nearest_airbase(struct tile *ptile, struct unit *punit,
  * Used by bombers only.
  **********************************************************************/
 static bool ai_should_we_air_attack_tile(struct unit *punit,
-					 struct tile *ptile)
+                                         struct tile *ptile)
 {
   struct city *acity = map_get_city(ptile);
 
@@ -89,7 +89,7 @@ static bool ai_should_we_air_attack_tile(struct unit *punit,
  * Assumes that the victim is within one day's flight
  **********************************************************************/
 static int ai_evaluate_tile_for_air_attack(struct unit *punit,
-					   struct tile *dst_tile)
+                                           struct tile *dst_tile)
 {
   struct unit *pdefender = get_defender(punit, dst_tile);
   /* unit costs in shields */
@@ -138,15 +138,15 @@ static int ai_evaluate_tile_for_air_attack(struct unit *punit,
                                find_city_by_id(punit->homecity),
                                profit, sortie_time, balanced_cost);
     freelog(LOG_DEBUG,
-	    "%s at (%d, %d) is a worthy target with profit %d",
-	    unit_type(pdefender)->name, dst_tile->x, dst_tile->y,
-	    profit);
+            "%s at (%d, %d) is a worthy target with profit %d",
+            unit_type(pdefender)->name, dst_tile->x, dst_tile->y,
+            profit);
   } else {
     freelog(LOG_DEBUG,
-	    "%s(%d, %d): %s at (%d, %d) is unworthy with profit %d",
-	    unit_type(punit)->name, punit->tile->x, punit->tile->y,
-	    unit_type(pdefender)->name, dst_tile->x, dst_tile->y,
-	    profit);
+            "%s(%d, %d): %s at (%d, %d) is unworthy with profit %d",
+            unit_type(punit)->name, punit->tile->x, punit->tile->y,
+            unit_type(pdefender)->name, dst_tile->x, dst_tile->y,
+            profit);
     profit = 0;
   }
 
@@ -197,13 +197,13 @@ static int find_something_to_bomb(struct unit *punit, struct tile *ptile)
 
     if (is_enemy_unit_tile(tile1, pplayer)
         && ai_should_we_air_attack_tile(punit, tile1)
-	&& (air_can_move_between (max_dist, ptile, tile1, pplayer) >= 0)){
+        && (air_can_move_between (max_dist, ptile, tile1, pplayer) >= 0)){
       int new_best = ai_evaluate_tile_for_air_attack(punit, tile1);
       if (new_best > best) {
-	punit->goto_tile = tile1;
-	best = new_best;
-	freelog(LOG_DEBUG, "%s wants to attack tile (%d, %d)",
-		unit_type(punit)->name, tile1->x, tile1->y);
+        punit->goto_tile = tile1;
+        best = new_best;
+        freelog(LOG_DEBUG, "%s wants to attack tile (%d, %d)",
+                unit_type(punit)->name, tile1->x, tile1->y);
       }
     }
 
@@ -217,7 +217,7 @@ static int find_something_to_bomb(struct unit *punit, struct tile *ptile)
  * base for air operations by (air)unit punit.
  **********************************************************************/
 static bool ai_find_strategic_airbase(struct unit *punit,
-				      struct tile **airbase_tile)
+                                      struct tile **airbase_tile)
 {
   struct refuel *airbase;
   struct pqueue *airbase_iterator;
@@ -243,18 +243,18 @@ static bool ai_find_strategic_airbase(struct unit *punit,
     }
 
     if ((target_worth
-	 = find_something_to_bomb(punit, get_refuel_tile(airbase))) > 0) {
+         = find_something_to_bomb(punit, get_refuel_tile(airbase))) > 0) {
       struct city *base_city
         = map_get_city(get_refuel_tile(airbase));
 
       if (base_city && base_city->server.ai.grave_danger != 0) {
         /* Fly there immediately!! */
-	*airbase_tile = get_refuel_tile(airbase);
+        *airbase_tile = get_refuel_tile(airbase);
         found = TRUE;
         break;
       } else if (target_worth > best_worth) {
         /* It's either a first find or it's better than the previous */
-	*airbase_tile = get_refuel_tile(airbase);
+        *airbase_tile = get_refuel_tile(airbase);
         turns_to_dest = get_turns_to_refuel(airbase);
         best_worth = target_worth;
         found = TRUE;
@@ -294,29 +294,29 @@ void ai_manage_airunit(struct player *pplayer, struct unit *punit)
   CHECK_UNIT(punit);
 
   if (!is_airunit_refuel_point(punit->tile,
-			       pplayer, punit->type, FALSE)) {
+                               pplayer, punit->type, FALSE)) {
     /* We are out in the open, what shall we do? */
     struct tile *refuel_tile;
 
     if (punit->activity == ACTIVITY_GOTO
       /* We are on a GOTO.  Check if it will get us anywhere */
-	&& is_airunit_refuel_point(punit->goto_tile,
-				   pplayer, punit->type, FALSE)
-	&& air_can_move_between (punit->moves_left/SINGLE_MOVE,
+        && is_airunit_refuel_point(punit->goto_tile,
+                                   pplayer, punit->type, FALSE)
+        && air_can_move_between (punit->moves_left/SINGLE_MOVE,
                                  punit->tile, punit->goto_tile,
-				 pplayer) >= 0) {
+                                 pplayer) >= 0) {
       /* It's an ok GOTO, just go there */
       ai_unit_goto(punit, punit->goto_tile);
     } else if (find_nearest_airbase(punit->tile, punit,
-			     &refuel_tile)) {
+                             &refuel_tile)) {
       /* Go refuelling */
       punit->goto_tile = refuel_tile;
       freelog(LOG_DEBUG, "Sent %s to refuel", unit_type(punit)->name);
       ai_unit_goto(punit, punit->goto_tile);
     } else {
       if (punit->fuel == 1) {
-	freelog(LOG_DEBUG, "Oops, %s is fallin outta sky",
-		unit_type(punit)->name);
+        freelog(LOG_DEBUG, "Oops, %s is fallin outta sky",
+                unit_type(punit)->name);
       }
       return;
     }
@@ -339,7 +339,7 @@ void ai_manage_airunit(struct player *pplayer, struct unit *punit)
       handle_unit_activity_request(punit, ACTIVITY_IDLE);
       if (is_tiles_adjacent(punit->tile, punit->goto_tile)) {
         (void) handle_unit_move_request(punit, punit->goto_tile,
-					TRUE, FALSE);
+                                        TRUE, FALSE);
       }
     } else if (ai_find_strategic_airbase(punit, &dst_tile)) {
       freelog(LOG_DEBUG, "%s will fly to (%i, %i) (%s) to fight there",
@@ -371,7 +371,7 @@ void ai_manage_airunit(struct player *pplayer, struct unit *punit)
  * that's what it should be like, I believe -- GB
  ******************************************************************/
 bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity,
-			    struct ai_choice *choice)
+                            struct ai_choice *choice)
 {
   bool want_something = FALSE;
 
@@ -394,20 +394,20 @@ bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity,
     if (get_unit_type(u_type)->move_type != AIR_MOVING) continue;
     if (can_build_unit(pcity, u_type)) {
       struct unit *virtual_unit =
-	create_unit_virtual(pplayer, pcity, u_type,
+        create_unit_virtual(pplayer, pcity, u_type,
                             do_make_unit_veteran(pcity, u_type));
       int profit = find_something_to_bomb(virtual_unit, pcity->tile);
       if (profit > choice->want){
-	/* Update choice */
-	choice->want = profit;
-	choice->choice = u_type;
-	choice->type = CT_ATTACKER;
-	want_something = TRUE;
-	freelog(LOG_DEBUG, "%s wants to build %s (want=%d)",
-		pcity->name, get_unit_type(u_type)->name, profit);
+        /* Update choice */
+        choice->want = profit;
+        choice->choice = u_type;
+        choice->type = CT_ATTACKER;
+        want_something = TRUE;
+        freelog(LOG_DEBUG, "%s wants to build %s (want=%d)",
+                pcity->name, get_unit_type(u_type)->name, profit);
       } else {
       freelog(LOG_DEBUG, "%s doesn't want to build %s (want=%d)",
-		pcity->name, get_unit_type(u_type)->name, profit);
+                pcity->name, get_unit_type(u_type)->name, profit);
       }
       destroy_unit_virtual(virtual_unit);
     }

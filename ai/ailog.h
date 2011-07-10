@@ -15,7 +15,7 @@
 
 #include "fc_types.h"
 
-#include "gotohand.h"		/* enum goto_result */
+#include "gotohand.h"           /* enum goto_result */
 
 struct ai_data;
 

@@ -37,7 +37,7 @@ bool ai_spaceship_autoplace(struct player *pplayer, struct player_spaceship *shi
   bool retval = FALSE;
 
   while (ship->modules > (ship->habitation + ship->life_support
-		       + ship->solar_panels)) {
+                       + ship->solar_panels)) {
 
     type =
       (ship->habitation==0)   ? SSHIP_PLACE_HABITATION :
@@ -94,44 +94,44 @@ bool ai_spaceship_autoplace(struct player *pplayer, struct player_spaceship *shi
     }
 
     if (ship->habitation >= 1
-	&& !ship->structure[modules_info[0].required]) {
+        && !ship->structure[modules_info[0].required]) {
       req = modules_info[0].required;
     } else if (ship->life_support >= 1
-	       && !ship->structure[modules_info[1].required]) {
+               && !ship->structure[modules_info[1].required]) {
       req = modules_info[1].required;
     } else if (ship->solar_panels >= 1
-	       && !ship->structure[modules_info[2].required]) {
+               && !ship->structure[modules_info[2].required]) {
       req = modules_info[2].required;
     } else {
       int i;
       for(i=0; i<NUM_SS_COMPONENTS; i++) {
-	if ((i%2==0 && ship->fuel > (i/2))
-	    || (i%2==1 && ship->propulsion > (i/2))) {
-	  if (!ship->structure[components_info[i].required]) {
-	    req = components_info[i].required;
-	    break;
-	  }
-	}
+        if ((i%2==0 && ship->fuel > (i/2))
+            || (i%2==1 && ship->propulsion > (i/2))) {
+          if (!ship->structure[components_info[i].required]) {
+            req = components_info[i].required;
+            break;
+          }
+        }
       }
     }
     if (req == -1) {
       for(i=0; i<NUM_SS_MODULES; i++) {
-	if ((i%3==0 && ship->habitation > (i/3))
-	    || (i%3==1 && ship->life_support > (i/3))
-	    || (i%3==2 && ship->solar_panels > (i/3))) {
-	  if (!ship->structure[modules_info[i].required]) {
-	    req = modules_info[i].required;
-	    break;
-	  }
-	}
+        if ((i%3==0 && ship->habitation > (i/3))
+            || (i%3==1 && ship->life_support > (i/3))
+            || (i%3==2 && ship->solar_panels > (i/3))) {
+          if (!ship->structure[modules_info[i].required]) {
+            req = modules_info[i].required;
+            break;
+          }
+        }
       }
     }
     if (req == -1) {
       for(i=0; i<NUM_SS_STRUCTURALS; i++) {
-	if (!ship->structure[i]) {
-	  req = i;
-	  break;
-	}
+        if (!ship->structure[i]) {
+          req = i;
+          break;
+        }
       }
     }
     /* sanity: */
