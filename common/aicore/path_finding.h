@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2003 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 /*
  * Functions in this file help to find a path from A to B.
  *
- * 
- * 
+ *
+ *
  * DEFINITIONS:
  *   step: one movement step which brings us from one tile to an
  *   adjacent one
@@ -159,13 +159,13 @@
  * for.  In this case we use pf_next_get_* to get information about the
  * "next closest tile".
  *
- * A) the caller knows the map position of the goal and wants to know the 
+ * A) the caller knows the map position of the goal and wants to know the
  * path:
- * 
+ *
  * struct pf_parameter parameter;
  * struct pf_map *pf_map;
  * struct pf_path path;
- * 
+ *
  * // fill parameter (see below)
  *
  * pf_map = pf_create_map(&parameter);
@@ -224,7 +224,7 @@
  * not guaranteed to get the one with the least steps in it.  If you care,
  * specifying EC to be 1 will do the job.
  * 3. To prevent AI from thinking that it can pass through "chokepoints"
- * controlled by enemy cities, you can specify tile behaviour of each occupied 
+ * controlled by enemy cities, you can specify tile behaviour of each occupied
  * enemy city to be TB_DONT_LEAVE.
  */
 
@@ -235,7 +235,7 @@
 
 /* The factor which is used to multiple total_EC in the total_CC
  * calculation. See definition of total_CC above.
- * The number is chosen to be much larger than 0 and much smaller 
+ * The number is chosen to be much larger than 0 and much smaller
  * than MAX_INT (and a power of 2 for easy multiplication). */
 #define PF_TURN_FACTOR  65536
 
@@ -385,9 +385,9 @@ struct pf_map;
  * everything up. */
 struct pf_map *pf_create_map(const struct pf_parameter *const parameter);
 
-/* Tries to find the best path in the given map to the position (x, y). 
- * If NULL is returned no path could be found.  The pf_last_position of such 
- * path would be the same (almost) as the result of the call to 
+/* Tries to find the best path in the given map to the position (x, y).
+ * If NULL is returned no path could be found.  The pf_last_position of such
+ * path would be the same (almost) as the result of the call to
  * pf_get_position(pf_map, x, y, &pos) */
 struct pf_path *pf_get_path(struct pf_map *pf_map, struct tile *ptile);
 
@@ -397,15 +397,15 @@ struct pf_path *pf_get_path(struct pf_map *pf_map, struct tile *ptile);
 bool pf_get_position(struct pf_map *pf_map, struct tile *ptile,
 		     struct pf_position *pos);
 
-/* Iterates the path-finding algorithm one step further, to the next 
- * nearest position.  This full info on this position and the best path to 
- * it can be obtained using pf_next_get_position and pf_next_get_path, 
- * correspondingly.  Returns FALSE if no further positions are available in 
- * this map.  If pf_get_path/position(pf_map, x, y, .) has been called 
+/* Iterates the path-finding algorithm one step further, to the next
+ * nearest position.  This full info on this position and the best path to
+ * it can be obtained using pf_next_get_position and pf_next_get_path,
+ * correspondingly.  Returns FALSE if no further positions are available in
+ * this map.  If pf_get_path/position(pf_map, x, y, .) has been called
  * before the call to pf_next, the iteration  will resume from (x, y) */
 bool pf_next(struct pf_map *pf_map);
 
-/* Return the full info on the position reached in the last call to 
+/* Return the full info on the position reached in the last call to
  * pf_next. */
 void pf_next_get_position(const struct pf_map *pf_map,
 			  struct pf_position *pos);
