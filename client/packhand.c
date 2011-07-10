@@ -169,7 +169,7 @@ static struct unit *unpackage_short_unit(struct packet_unit_short_info *packet)
 }
 
 /**************************************************************************
-...
+..
 **************************************************************************/
 void handle_server_join_reply(bool you_can_join, char *message,
                               char *capability, char *challenge_file,
@@ -1630,7 +1630,7 @@ void handle_game_info(struct packet_game_info *pinfo)
     improvement_status_init(game.improvements,
 			    ARRAY_SIZE(game.improvements));
 
-    aconnection.player = ((pinfo->player_idx >= 0 
+    aconnection.player = ((pinfo->player_idx >= 0
 			   && pinfo->player_idx
 			      < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS)
 			  ? get_player(pinfo->player_idx) : NULL);

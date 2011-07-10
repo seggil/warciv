@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ int client_cooling_sprite(void);
 
 void center_on_something(void);
 
-/* 
+/*
  * A compound id (cid) can hold all objects a city can build:
  * improvements (with wonders) and units. This is achieved by
  * seperation the value set: a cid < B_LAST denotes a improvement
@@ -63,10 +63,10 @@ void cid_decode(cid cid, bool *is_unit, int *id);
 bool cid_is_unit(cid cid);
 int cid_id(cid cid);
 
-/* 
+/*
  * A worklist id (wid) can hold all objects which can be part of a
  * city worklist: improvements (with wonders), units and global
- * worklists. This is achieved by seperation the value set: 
+ * worklists. This is achieved by seperation the value set:
  *  - (wid < B_LAST) denotes a improvement (including wonders)
  *  - (B_LAST <= wid < B_LAST + U_LAST) denotes a unit with the
  *  unit_type_id of (wid - B_LAST)
@@ -108,7 +108,7 @@ int collect_cids5(cid * dest_cids, struct city *pcity);
 
 /* the number of units in city */
 int num_present_units_in_city(struct city* pcity);
-int num_supported_units_in_city(struct city* pcity);	
+int num_supported_units_in_city(struct city* pcity);
 
 void handle_event(char *message, struct tile *ptile,
 		  enum event_type event, int conn_id);

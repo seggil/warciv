@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ struct server {
 struct server_list *create_server_list(char *errbuf, int n_errbuf);
 void delete_server_list(struct server_list *server_list);
 int begin_lanserver_scan(void);
-struct server_list *get_lan_server_list(void); 
+struct server_list *get_lan_server_list(void);
 void finish_lanserver_scan(void);
 
 typedef void (*server_list_created_callback_t)(struct server_list *new_server_list,

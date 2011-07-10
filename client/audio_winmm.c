@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 #include <config.h>
 #endif
 
-/************************************************************************* 
+/*************************************************************************
  This two includes are misordered, but it does not compile otherwise
 *************************************************************************/
 #include <windows.h>
@@ -58,7 +58,7 @@ static bool my_play(const char *const tag, const char *const fullpath,
 }
 
 /**************************************************************************
- 
+
 **************************************************************************/
 static bool my_init(void)
 {

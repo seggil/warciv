@@ -1,15 +1,15 @@
-/********************************************************************** 
+/**********************************************************************
 Freeciv - Copyright (C) 2003 - The Freeciv Project
    This program is free software; you can redistribute it and / or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2, or (at your option)
    any later version.
 
-   This program is distributed in the hope that it will be useful, 
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-***********************************************************************/ 
+***********************************************************************/
 #ifndef FC__CONNECTDLG_COMMON_H
 #define FC__CONNECTDLG_COMMON_H
 
@@ -33,15 +33,15 @@ void send_save_game(char *filename);
 extern char player_name[MAX_LEN_NAME];
 extern char *current_filename;
 
-enum skill_levels { 
-  NOVICE, 
-  EASY, 
-  NORMAL, 
-  HARD, 
+enum skill_levels {
+  NOVICE,
+  EASY,
+  NORMAL,
+  HARD,
   EXPERIMENTAL,
   NUM_SKILL_LEVELS
 };
 
 extern const char *skill_level_names[NUM_SKILL_LEVELS];
 
-#endif  /* FC__CONNECTDLG_COMMON_H */ 
+#endif  /* FC__CONNECTDLG_COMMON_H */

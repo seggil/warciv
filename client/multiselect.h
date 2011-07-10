@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #include "unit.h"
 #include "unittype.h"
 
-/********************************************************************** 
+/**********************************************************************
   This file contains:
   - filter and selection modes functions.
   - automatic processus (common interface to get events from the game).
@@ -62,7 +62,7 @@
     }                                                                      \
   }
 
-/********************************************************************** 
+/**********************************************************************
   Filters and selection modes. This is a common code for multi-selection
   and delayed goto code. This allow the user to select units as safe as
   possible with simple options.
@@ -288,7 +288,7 @@ const char *airlift_queue_get_menu_name(int aq, Unit_Type_id utype);
 Unit_Type_id airlift_queue_get_unit_type(int aq);
 void airlift_queue_init_all(void);
 void airlift_queue_move(int dest, int src);
-void airlift_queue_set_menu_name(int aq, Unit_Type_id utype, 
+void airlift_queue_set_menu_name(int aq, Unit_Type_id utype,
                                  const char *namemenu);
 void airlift_queue_set_unit_type(int aq, Unit_Type_id utype);
 void airlift_queue_show(int aq);

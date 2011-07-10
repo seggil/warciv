@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ struct city_report_spec {
   int space;			/* number of leading spaces (see below) */
   const char *title1;		/* already translated or NULL */
   const char *title2;		/* already translated or NULL */
-  const char *explanation;	/* already translated */ 
+  const char *explanation;	/* already translated */
   const char *(*func)(const struct city *);
   const char *tagname;		/* for save_options */
 };
@@ -41,7 +41,7 @@ extern struct city_report_spec city_report_specs[];
    you can avoid explicit space between columns if they are bracketted,
    but the problem is that with a configurable report you don't know
    what's going to be next to what.
-   
+
    Here specify width, and leading space, although different clients
    may interpret these differently (gui-gtk and gui-mui ignore space
    field, handling columns without additional spacing).

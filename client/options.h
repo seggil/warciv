@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -74,9 +74,9 @@ struct client_option {
       char *const pvalue;
       const size_t size;
       const char *def;
-      /* 
+      /*
        * A function to return a static NULL-terminated list of possible
-       * string values, or NULL for none. 
+       * string values, or NULL for none.
        */
       const char **(*const val_accessor)(void);
     } string;
@@ -87,21 +87,21 @@ struct client_option {
     struct {
       int *const pvalue;
       const int def;
-      /* 
-       * A function to return static string values, or NULL for none. 
+      /*
+       * A function to return static string values, or NULL for none.
        */
       const char *(*const str_accessor)(int);
     } enum_list;
     struct {
       filter *const pvalue;
       const filter def;
-      /* 
+      /*
        * A function which toggle a bit of the filter. It must return TRUE
        * if other bits are also changed.
        */
       bool (*const change)(filter *, filter);
-      /* 
-       * A function to return static string values, or NULL for none. 
+      /*
+       * A function to return static string values, or NULL for none.
        */
       const char *(*const str_accessor)(filter);
       filter temp;
@@ -130,7 +130,7 @@ extern const int num_options;
 extern char default_user_name[512];
 extern char default_password[512];
 extern char default_server_host[512];
-extern int default_server_port; 
+extern int default_server_port;
 extern char default_metaserver[512];
 extern char default_tileset_name[512];
 extern char default_sound_set_name[512];
@@ -268,7 +268,7 @@ const char *get_sound_tag_for_event(enum event_type event);
 bool is_city_event(enum event_type event);
 const char *get_option_category_name(enum client_option_category category);
 
-void save_global_worklist(struct section_file *file, const char *path, 
+void save_global_worklist(struct section_file *file, const char *path,
 			  int wlinx, struct worklist *pwl);
 void load_global_worklist(struct section_file *file, const char *path,
 			  int wlinx, struct worklist *pwl);
