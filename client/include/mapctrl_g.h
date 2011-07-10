@@ -13,7 +13,7 @@
 #ifndef FC__MAPCTRL_G_H
 #define FC__MAPCTRL_G_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 

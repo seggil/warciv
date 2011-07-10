@@ -14,7 +14,7 @@
 #define FC__REPODLGS_G_H
 
 #include "packets.h"
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "repodlgs_common.h"
 

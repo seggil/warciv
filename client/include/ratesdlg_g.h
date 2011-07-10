@@ -15,4 +15,4 @@
 
 void popup_rates_dialog(void);
 
-#endif				/* FC__RATESDLG_G_H */
+#endif                          /* FC__RATESDLG_G_H */
