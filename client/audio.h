@@ -18,12 +18,12 @@
 #define AUDIO_VOLUME
 #endif
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
-#include "options.h"		/* struct client_option */
+#include "options.h"            /* struct client_option */
 
-#define MAX_AUDIO_NAME_LEN		20
-#define MAX_AUDIO_DESCR_LEN		200
+#define MAX_AUDIO_NAME_LEN              20
+#define MAX_AUDIO_DESCR_LEN             200
 
 struct audio_plugin {
   char name[MAX_AUDIO_NAME_LEN];
@@ -66,4 +66,4 @@ void audio_set_volume(int volume);
 void audio_change_volume(struct client_option *option);
 #endif /* AUDIO_VOLUME */
 
-#endif				/* FC__AUDIO_H */
+#endif                          /* FC__AUDIO_H */

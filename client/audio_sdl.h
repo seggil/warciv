@@ -15,4 +15,4 @@
 
 void audio_sdl_init(void);
 
-#endif				/* FC__AUDIO_SDL_H */
+#endif                          /* FC__AUDIO_SDL_H */

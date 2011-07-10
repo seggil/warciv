@@ -16,7 +16,7 @@
 #endif
 
 #ifdef WIN32_NATIVE
-#include <windows.h>	/* LoadLibrary() */
+#include <windows.h>    /* LoadLibrary() */
 #endif
 
 #ifdef SDL
@@ -50,11 +50,11 @@
 #include "cityrepdata.h"
 #include "climisc.h"
 #include "clinet.h"
-#include "cma_core.h"		/* kludge */
+#include "cma_core.h"           /* kludge */
 #include "connectdlg_common.h"  /* client_kill_server() */
 #include "control.h" 
 #include "goto.h"
-#include "helpdata.h"		/* boot_help_texts() */
+#include "helpdata.h"           /* boot_help_texts() */
 #include "multiselect.h"
 #include "options.h"
 #include "packhand.h"
@@ -130,7 +130,7 @@ static char *put_conv(const char *src, size_t *length)
   large enough or the source was bad.
 **************************************************************************/
 static bool get_conv(char *dst, size_t ndst,
-		     const char *src, size_t nsrc)
+                     const char *src, size_t nsrc)
 {
   char *out = data_to_internal_string_malloc(src);
   bool ret = TRUE;
@@ -186,13 +186,13 @@ static void my_init_adns(void)
   adns_init();
   if (adns_is_available()) {
     add_net_input_callback(adns_get_socket_fd(),
-			   INPUT_READ,
-			   my_adns_input_ready_cb,
-			   NULL,
-			   NULL);
+                           INPUT_READ,
+                           my_adns_input_ready_cb,
+                           NULL,
+                           NULL);
     add_timer_callback(5000,
-		       my_adns_timer_cb,
-		       NULL);
+                       my_adns_timer_cb,
+                       NULL);
   }
 }
 
@@ -462,7 +462,7 @@ void handle_packet_input(void *packet, int type)
 {
   if (!client_handle_packet(type, packet)) {
     freelog(LOG_ERROR, "Received unknown packet (type %d) from server!",
-	    type);
+            type);
   }
 }
 
@@ -480,7 +480,7 @@ void user_ended_turn(void)
 void send_turn_done(void)
 {
   freelog(LOG_DEBUG, "send_turn_done() turn_done_button_state=%d",
-	  get_turn_done_button_state());
+          get_turn_done_button_state());
 
   if (!get_turn_done_button_state()) {
     /*
@@ -512,7 +512,7 @@ void send_turn_done(void)
 void send_goto_unit(struct unit *punit, struct tile *dest_tile)
 {
   dsend_packet_unit_goto(&aconnection, punit->id,
-			 dest_tile->x, dest_tile->y);
+                         dest_tile->x, dest_tile->y);
 }
 
 /**************************************************************************
@@ -574,9 +574,9 @@ void set_client_state(enum client_states newstate)
      */
     if (pplayer) {
       city_list_iterate(pplayer->cities, pcity) {
-	if (cma_is_city_under_agent(pcity, NULL)) {
-	  cma_release_city(pcity);
-	}
+        if (cma_is_city_under_agent(pcity, NULL)) {
+          cma_release_city(pcity);
+        }
       } city_list_iterate_end;
     }
     popdown_all_city_dialogs();
@@ -593,10 +593,10 @@ void set_client_state(enum client_states newstate)
        select dialog.)
     */
     if (client_state == CLIENT_PRE_GAME_STATE
-	&& (newstate == CLIENT_SELECT_RACE_STATE
-	    || newstate == CLIENT_GAME_RUNNING_STATE)) {
+        && (newstate == CLIENT_SELECT_RACE_STATE
+            || newstate == CLIENT_GAME_RUNNING_STATE)) {
       translate_data_names();
-      audio_stop();		/* stop intro sound loop */
+      audio_stop();             /* stop intro sound loop */
     }
 
     client_state = newstate;
@@ -608,19 +608,19 @@ void set_client_state(enum client_states newstate)
       create_event(NULL, E_GAME_START, _("Game started."));
       precalc_tech_data();
       if (pplayer) {
-	update_research(pplayer);
+        update_research(pplayer);
       }
       role_unit_precalcs();
       clear_notify_window();
-      boot_help_texts();	/* reboot */
+      boot_help_texts();        /* reboot */
       can_slide = FALSE;
       update_unit_focus();
       can_slide = TRUE;
       set_client_page(PAGE_GAME);
       if (!client_is_observer()
-	  && pplayer
-	  && game.info.turn == 0) {
-	set_default_user_tech_goal();
+          && pplayer
+          && game.info.turn == 0) {
+        set_default_user_tech_goal();
       }
       init_menus();
 
@@ -637,13 +637,13 @@ void set_client_state(enum client_states newstate)
       set_unit_focus(NULL);
       clear_notify_window();
       if (oldstate != CLIENT_BOOT_STATE) {
-	client_game_free();
+        client_game_free();
       }
       client_game_init();
       if (!aconnection.established) {
-	set_client_page(PAGE_MAIN);
+        set_client_page(PAGE_MAIN);
       } else {
-	set_client_page(PAGE_START);
+        set_client_page(PAGE_START);
       }
     }
   }
@@ -652,12 +652,12 @@ void set_client_state(enum client_states newstate)
     gui_server_connect();
     if (auto_connect) {
       if (connect_error) {
-	freelog(LOG_NORMAL,
-		_("There was an error while auto connecting; aborting."));
-	exit(EXIT_FAILURE);
+        freelog(LOG_NORMAL,
+                _("There was an error while auto connecting; aborting."));
+        exit(EXIT_FAILURE);
       } else {
-	server_autoconnect();
-	auto_connect = FALSE;	/* don't try this again */
+        server_autoconnect();
+        auto_connect = FALSE;   /* don't try this again */
       }
     }
   }
@@ -719,7 +719,7 @@ void send_attribute_block_request()
 void wait_till_request_got_processed(int request_id)
 {
   input_from_server_till_request_got_processed(aconnection.sock,
-					       request_id);
+                                               request_id);
 }
 
 /**************************************************************************
@@ -746,16 +746,16 @@ void real_timer_callback(void)
 
     players_iterate(pplayer) {
       if (pplayer->is_alive && pplayer->is_connected) {
-	if (pplayer->turn_done) {
-	  is_waiting++;
-	} else {
-	  is_moving++;
-	}
+        if (pplayer->turn_done) {
+          is_waiting++;
+        } else {
+          is_moving++;
+        }
       }
     } players_iterate_end;
 
     if (is_moving == 1 && is_waiting > 0) {
-      update_turn_done_button(FALSE);	/* stress the slow player! */
+      update_turn_done_button(FALSE);   /* stress the slow player! */
     }
   }
 
@@ -777,7 +777,7 @@ void real_timer_callback(void)
 bool can_client_issue_orders(void)
 {
   return (!client_is_observer()
-	  && get_client_state() == CLIENT_GAME_RUNNING_STATE);
+          && get_client_state() == CLIENT_GAME_RUNNING_STATE);
 }
 
 /**************************************************************************
@@ -787,7 +787,7 @@ bool can_client_issue_orders(void)
 bool can_meet_with_player(struct player *pplayer)
 {
   return (get_player_ptr()
-	  && could_meet_with_player(get_player_ptr(), pplayer)
+          && could_meet_with_player(get_player_ptr(), pplayer)
           && can_client_issue_orders());
 }
 
@@ -813,7 +813,7 @@ bool can_intel_with_player(struct player *pplayer)
 bool can_client_change_view(void)
 {
   return (get_client_state() == CLIENT_GAME_RUNNING_STATE
-	  || get_client_state() == CLIENT_GAME_OVER_STATE);
+          || get_client_state() == CLIENT_GAME_OVER_STATE);
 }
 
 /**************************************************************************

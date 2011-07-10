@@ -35,15 +35,15 @@
   unit_list_iterate(multi_select_get_units_focus(), punit) {               \
     _punit = punit;                                                        \
     if ((_cond                                                             \
-	 && !unit_satisfies_filter(punit, multi_select_inclusive_filter,   \
-				   multi_select_exclusive_filter))         \
-	|| punit->focus_status == FOCUS_DONE) {                            \
+         && !unit_satisfies_filter(punit, multi_select_inclusive_filter,   \
+                                   multi_select_exclusive_filter))         \
+        || punit->focus_status == FOCUS_DONE) {                            \
       continue;                                                            \
     }
 #define multi_select_iterate_end                                           \
     if (unit_satisfies_filter(_punit, multi_select_inclusive_filter,       \
-			      multi_select_exclusive_filter)               \
-	&&_punit->focus_status == FOCUS_AVAIL) {                           \
+                              multi_select_exclusive_filter)               \
+        &&_punit->focus_status == FOCUS_AVAIL) {                           \
       _punit_next_focus = _punit;                                          \
     }                                                                      \
   } unit_list_iterate_end;                                                 \
@@ -95,7 +95,7 @@ enum filter_value {
   FILTER_FULL_MOVES   = 1 << 8,
   FILTER_FULL_HP      = 1 << 9,
   FILTER_MILITARY     = 1 << 10,
-  FILTER_OFF	      = 1 << 11
+  FILTER_OFF          = 1 << 11
 };
 
 /* Selections mode */
@@ -137,8 +137,8 @@ bool unit_satisfies_filter(struct unit *punit,
 #define MULTI_SELECT_NUM 10
 
 struct multi_select {
-  struct unit_list *ulist;	/* The list of units */
-  struct unit *punit_focus;	/* The units which is/was in focus */
+  struct unit_list *ulist;      /* The list of units */
+  struct unit *punit_focus;     /* The units which is/was in focus */
 };
 
 extern filter multi_select_inclusive_filter;
@@ -214,16 +214,16 @@ struct delayed_goto {
  * - multiselect.c: delayed_goto_get_auto_name()
  */
 enum automatic_execution {
-  AUTO_NEW_YEAR		= 1 << 0, /* in handle_new_year() (packhand.c) */
-  AUTO_PRESS_TURN_DONE	= 1 << 1, /* in send_turn_done() (civclient.c) */
-  AUTO_NO_UNIT_SELECTED	= 1 << 2, /* in advance_unit_focus() (control.c) */
-  AUTO_50_TIMEOUT	= 1 << 3, /* in auto_timers_update() (multiselect.c) */
-  AUTO_80_TIMEOUT	= 1 << 4, /* in auto_timers_update() (multiselect.c) */
-  AUTO_90_TIMEOUT	= 1 << 5, /* in auto_timers_update() (multiselect.c) */
-  AUTO_95_TIMEOUT	= 1 << 6, /* in auto_timers_update() (multiselect.c) */
-  AUTO_5_SECONDS	= 1 << 7, /* in auto_timers_update() (multiselect.c) */
-  AUTO_WAR_DIPLSTATE	= 1 << 8, /* in handle_player_info() (packhand.c) */
-  AUTO_OFF		= 1 << 9, /* no signal */
+  AUTO_NEW_YEAR         = 1 << 0, /* in handle_new_year() (packhand.c) */
+  AUTO_PRESS_TURN_DONE  = 1 << 1, /* in send_turn_done() (civclient.c) */
+  AUTO_NO_UNIT_SELECTED = 1 << 2, /* in advance_unit_focus() (control.c) */
+  AUTO_50_TIMEOUT       = 1 << 3, /* in auto_timers_update() (multiselect.c) */
+  AUTO_80_TIMEOUT       = 1 << 4, /* in auto_timers_update() (multiselect.c) */
+  AUTO_90_TIMEOUT       = 1 << 5, /* in auto_timers_update() (multiselect.c) */
+  AUTO_95_TIMEOUT       = 1 << 6, /* in auto_timers_update() (multiselect.c) */
+  AUTO_5_SECONDS        = 1 << 7, /* in auto_timers_update() (multiselect.c) */
+  AUTO_WAR_DIPLSTATE    = 1 << 8, /* in handle_player_info() (packhand.c) */
+  AUTO_OFF              = 1 << 9, /* no signal */
 };
 
 /* For timeout events */
@@ -245,7 +245,7 @@ extern struct delayed_goto delayed_goto_list[DELAYED_GOTO_NUM];
 
 void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile);
 bool delayed_goto_auto_filter_change(filter *pfilter,
-				     enum automatic_execution value);
+                                     enum automatic_execution value);
 void delayed_goto_auto_timers_init(void);
 void delayed_goto_auto_timers_update(void);
 void delayed_goto_cat(int dest, int src);
@@ -272,9 +272,9 @@ void add_pause_delayed_goto(void);
 #define AIRLIFT_QUEUE_NUM 7
 
 struct airlift_queue {
-  struct tile_list *tlist;		/* The airlift sources */
-  char namemenu[U_LAST +1 ][256];	/* acces name for unit type menus */
-  Unit_Type_id utype;			/* The selected unit type */
+  struct tile_list *tlist;              /* The airlift sources */
+  char namemenu[U_LAST +1 ][256];       /* acces name for unit type menus */
+  Unit_Type_id utype;                   /* The selected unit type */
 };
 
 extern int airlift_queue_need_city_for;

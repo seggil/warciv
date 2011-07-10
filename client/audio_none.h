@@ -15,4 +15,4 @@
 
 void audio_none_init(void);
 
-#endif				/* FC__AUDIO_NONE_H */
+#endif                          /* FC__AUDIO_NONE_H */

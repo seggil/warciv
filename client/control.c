@@ -124,7 +124,7 @@ void control_queues_init(void)
 ...
 **************************************************************************/
 void set_hover_state(struct unit *punit, enum cursor_hover_state state,
-		     enum unit_activity activity)
+                     enum unit_activity activity)
 {
   assert(punit != NULL || state == HOVER_NONE);
   assert(state == HOVER_CONNECT || activity == ACTIVITY_LAST);
@@ -252,8 +252,8 @@ void update_unit_focus(void)
 {
   if (!punit_focus
       || (punit_focus->activity != ACTIVITY_IDLE
-	  && !unit_has_orders(punit_focus)
-	  && punit_focus->activity != ACTIVITY_GOTO)
+          && !unit_has_orders(punit_focus)
+          && punit_focus->activity != ACTIVITY_GOTO)
       || punit_focus->done_moving
       || punit_focus->moves_left == 0
       || punit_focus->air_patrol_tile
@@ -262,7 +262,7 @@ void update_unit_focus(void)
     if (punit_focus && moveandattack_state == 1) {
       /* Ignore focus change for move and attack mode */
       if (punit_focus->ai.control) {
-	return;
+        return;
       }
     }
     advance_unit_focus();
@@ -400,7 +400,7 @@ struct unit *find_visible_unit(struct tile *ptile)
   if (punit_attacking && same_pos(punit_attacking->tile, ptile)) {
     unit_list_iterate(ptile->units, punit) {
       if (punit == punit_attacking) {
-	return punit;
+        return punit;
       }
     } unit_list_iterate_end;
   }
@@ -409,7 +409,7 @@ struct unit *find_visible_unit(struct tile *ptile)
   if (punit_defending && same_pos(punit_defending->tile, ptile)) {
     unit_list_iterate(ptile->units, punit) {
       if (punit == punit_defending) {
-	return punit;
+        return punit;
       }
     } unit_list_iterate_end;
   }
@@ -428,12 +428,12 @@ struct unit *find_visible_unit(struct tile *ptile)
     unit_list_iterate(ptile->units, punit) {
       if (is_unit_in_multi_select(0, punit)) {
         if (punit->focus_status != FOCUS_DONE
-	    && unit_satisfies_filter(punit, multi_select_inclusive_filter,
-				            multi_select_exclusive_filter)) {
-	  return punit;
-	} else if (multi_select_blink_all) {
-	  return panyowned = punit;
-	}
+            && unit_satisfies_filter(punit, multi_select_inclusive_filter,
+                                            multi_select_exclusive_filter)) {
+          return punit;
+        } else if (multi_select_blink_all) {
+          return panyowned = punit;
+        }
       }
     } unit_list_iterate_end;
     if (panyowned) {
@@ -456,16 +456,16 @@ struct unit *find_visible_unit(struct tile *ptile)
     if (unit_owner(punit) == get_player_ptr()) {
       if (punit->transported_by == -1) {
         if (get_transporter_capacity(punit) > 0) {
-	  return punit;
+          return punit;
         } else if (!panyowned) {
-	  panyowned = punit;
+          panyowned = punit;
         }
       }
     } else if (!ptptother && punit->transported_by == -1) {
       if (get_transporter_capacity(punit) > 0) {
-	ptptother = punit;
+        ptptother = punit;
       } else if (!panyother) {
-	panyother = punit;
+        panyother = punit;
       }
     }
   } unit_list_iterate_end;
@@ -487,12 +487,12 @@ void blink_active_unit(void)
       refresh_tile_mapcanvas(punit_focus->tile, MUT_NORMAL);
     } else {
       unit_list_iterate(multi_select_get_units_focus(), punit) {
-	if (multi_select_blink_all
-	    || punit == punit_focus
-	    || unit_satisfies_filter(punit, multi_select_inclusive_filter,
-					    multi_select_exclusive_filter)) {
-	  refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
-	}
+        if (multi_select_blink_all
+            || punit == punit_focus
+            || unit_satisfies_filter(punit, multi_select_inclusive_filter,
+                                            multi_select_exclusive_filter)) {
+          refresh_tile_mapcanvas(punit->tile, MUT_NORMAL);
+        }
       } unit_list_iterate_end;
     }
   }
@@ -527,13 +527,13 @@ void update_unit_pix_label(struct unit *punit)
      * time. */
     set_unit_icon(-1, punit);
 
-    i = 0;			/* index into unit_below_canvas */
+    i = 0;                      /* index into unit_below_canvas */
     unit_list_iterate(punit->tile->units, aunit) {
       if (aunit != punit) {
-	if (i < num_units_below) {
-	  set_unit_icon(i, aunit);
-	}
-	i++;
+        if (i < num_units_below) {
+          set_unit_icon(i, aunit);
+        }
+        i++;
       }
     } unit_list_iterate_end;
 
@@ -542,7 +542,7 @@ void update_unit_pix_label(struct unit *punit)
     } else {
       set_unit_icons_more_arrow(FALSE);
       for(; i < num_units_below; i++) {
-	set_unit_icon(i, NULL);
+        set_unit_icon(i, NULL);
       }
     }
   } else {
@@ -611,26 +611,26 @@ void process_caravan_arrival(struct unit *punit)
     punit = player_find_unit_by_id(get_player_ptr(), id);
 
     if (punit && (unit_can_help_build_wonder_here(punit)
-		  || unit_can_est_traderoute_here(punit))
-	&& (!get_player_ptr()->ai.control || ai_popup_windows)) {
+                  || unit_can_est_traderoute_here(punit))
+        && (!get_player_ptr()->ai.control || ai_popup_windows)) {
       struct city *pcity_dest = map_get_city(punit->tile);
       struct city *pcity_homecity = find_city_by_id(punit->homecity);
 
       if (default_caravan_action == DCA_POPUP_DIALOG
-	  && pcity_dest && pcity_homecity) {
-	popup_caravan_dialog(punit, pcity_homecity, pcity_dest);
-	return;
+          && pcity_dest && pcity_homecity) {
+        popup_caravan_dialog(punit, pcity_homecity, pcity_dest);
+        return;
       } else {
         switch (default_caravan_action) {
-	  case DCA_POPUP_DIALOG:
-	  case DCA_KEEP_MOVING:
-	    break;
-	  case DCA_ESTABLISH_TRADEROUTE:
-	    dsend_packet_unit_establish_trade(&aconnection, punit->id);
-	    break;
-	  case DCA_HELP_BUILD_WONDER:
-	    dsend_packet_unit_help_build_wonder(&aconnection, punit->id);
-	    break;
+          case DCA_POPUP_DIALOG:
+          case DCA_KEEP_MOVING:
+            break;
+          case DCA_ESTABLISH_TRADEROUTE:
+            dsend_packet_unit_establish_trade(&aconnection, punit->id);
+            break;
+          case DCA_HELP_BUILD_WONDER:
+            dsend_packet_unit_help_build_wonder(&aconnection, punit->id);
+            break;
         }
       }
     }
@@ -692,14 +692,14 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       continue;
 
     dipl_unit_ok = punit != NULL
-	&& is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
-					punit->tile)
-	&& diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
+        && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
+                                        punit->tile)
+        && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
                                   punit->tile);
     dipl_city_ok = pcity != NULL
-	       && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
-					       pcity->tile)
-	       && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
+               && is_diplomat_action_available(pdiplomat, DIPLOMAT_ANY_ACTION,
+                                               pcity->tile)
+               && diplomat_can_do_action(pdiplomat, DIPLOMAT_ANY_ACTION,
                                   pcity->tile);
 
     if (dipl_unit_ok) {
@@ -713,17 +713,17 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       }
 
       switch (default_diplomat_unit_action) {
-	case DDUA_POPUP_DIALOG:
-	  popup_diplomat_dialog(pdiplomat, punit->tile);
-	  break;
-	case DDUA_BRIBE:
-	  request_diplomat_action(DIPLOMAT_BRIBE, diplomat_id, victim_id, 0);
-	  break;
-	case DDUA_SABOTAGE:
-	  request_diplomat_action(SPY_SABOTAGE_UNIT, diplomat_id, victim_id, 0);
-	  break;
-	case DDUA_KEEP_MOVING:
-	  break;
+        case DDUA_POPUP_DIALOG:
+          popup_diplomat_dialog(pdiplomat, punit->tile);
+          break;
+        case DDUA_BRIBE:
+          request_diplomat_action(DIPLOMAT_BRIBE, diplomat_id, victim_id, 0);
+          break;
+        case DDUA_SABOTAGE:
+          request_diplomat_action(SPY_SABOTAGE_UNIT, diplomat_id, victim_id, 0);
+          break;
+        case DDUA_KEEP_MOVING:
+          break;
       }
       return;
     }
@@ -740,35 +740,35 @@ void process_diplomat_arrival(struct unit *pdiplomat, int victim_id)
       }
 
       switch (default_diplomat_city_action) {
-	case DDCA_POPUP_DIALOG:
-	  popup_diplomat_dialog(pdiplomat, pcity->tile);
-	  break;
-	case DDCA_EMBASSY:
-	  request_diplomat_action(DIPLOMAT_EMBASSY, diplomat_id, victim_id, 0);
-	  break;
-	case DDCA_INVESTIGATE:
-	  request_diplomat_action(DIPLOMAT_INVESTIGATE, diplomat_id,
-				  victim_id, 0);
-	  break;
-	case DDCA_SABOTAGE:
-	  request_diplomat_action(DIPLOMAT_SABOTAGE, diplomat_id,
-				  victim_id, B_LAST + 1);
-	  break;
-	case DDCA_STEAL_TECH:
-	  request_diplomat_action(DIPLOMAT_STEAL, diplomat_id,
-				  victim_id, game.ruleset_control.num_tech_types);
-	  break;
-	case DDCA_INCITE_REVOLT:
-	  request_diplomat_action(DIPLOMAT_INCITE, diplomat_id, victim_id, 0);
-	  break;
-	case DDCA_POISON:
-	  request_diplomat_action(SPY_POISON, diplomat_id, victim_id, 0);
-	  break;
-	default:
+        case DDCA_POPUP_DIALOG:
+          popup_diplomat_dialog(pdiplomat, pcity->tile);
+          break;
+        case DDCA_EMBASSY:
+          request_diplomat_action(DIPLOMAT_EMBASSY, diplomat_id, victim_id, 0);
+          break;
+        case DDCA_INVESTIGATE:
+          request_diplomat_action(DIPLOMAT_INVESTIGATE, diplomat_id,
+                                  victim_id, 0);
+          break;
+        case DDCA_SABOTAGE:
+          request_diplomat_action(DIPLOMAT_SABOTAGE, diplomat_id,
+                                  victim_id, B_LAST + 1);
+          break;
+        case DDCA_STEAL_TECH:
+          request_diplomat_action(DIPLOMAT_STEAL, diplomat_id,
+                                  victim_id, game.ruleset_control.num_tech_types);
+          break;
+        case DDCA_INCITE_REVOLT:
+          request_diplomat_action(DIPLOMAT_INCITE, diplomat_id, victim_id, 0);
+          break;
+        case DDCA_POISON:
+          request_diplomat_action(SPY_POISON, diplomat_id, victim_id, 0);
+          break;
+        default:
           /* For anything else, assume we want to
            * just move into the city. */
           request_diplomat_action(DIPLOMAT_MOVE, diplomat_id, victim_id, 0);
-	  break;
+          break;
       }
       return;
     }
@@ -878,7 +878,7 @@ void request_auto_airlift_source_selection(void)
   Return TRUE if there are any units doing the activity on the tile.
 **************************************************************************/
 static bool is_activity_on_tile(struct tile *ptile,
-				enum unit_activity activity)
+                                enum unit_activity activity)
 {
   unit_list_iterate(ptile->units, punit) {
     if (punit->activity == ACTIVITY_MINE) {
@@ -911,27 +911,27 @@ bool can_unit_do_connect(struct unit *punit, enum unit_activity activity)
   switch (activity) {
     case ACTIVITY_ROAD:
       return terrain_control.may_road
-	&& unit_flag(punit, F_SETTLERS)
-	&& (tile_has_special(punit->tile, S_ROAD)
-	    || (ttype->road_time != 0
-		&& (!tile_has_special(punit->tile, S_RIVER)
-		    || player_knows_techs_with_flag(pplayer, TF_BRIDGE))));
+        && unit_flag(punit, F_SETTLERS)
+        && (tile_has_special(punit->tile, S_ROAD)
+            || (ttype->road_time != 0
+                && (!tile_has_special(punit->tile, S_RIVER)
+                    || player_knows_techs_with_flag(pplayer, TF_BRIDGE))));
     case ACTIVITY_RAILROAD:
       /* There is no check for existing road/rail; the connect is allowed
        * regardless. It is assumed that if you know the TF_RAILROAD flag
        * you must also know the TF_BRIDGE flag. */
       return (terrain_control.may_road
-	      && unit_flag(punit, F_SETTLERS)
-	      && player_knows_techs_with_flag(pplayer, TF_RAILROAD));
+              && unit_flag(punit, F_SETTLERS)
+              && player_knows_techs_with_flag(pplayer, TF_RAILROAD));
     case ACTIVITY_IRRIGATE:
       /* Special case for irrigation: only irrigate to make S_IRRIGATION,
        * never to transform tiles. */
       return (terrain_control.may_irrigate
-	      && unit_flag(punit, F_SETTLERS)
-	      && (tile_has_special(punit->tile, S_IRRIGATION)
-		  || (terrain == ttype->irrigation_result
-		      && is_water_adjacent_to_tile(punit->tile)
-		      && !is_activity_on_tile(punit->tile, ACTIVITY_MINE))));
+              && unit_flag(punit, F_SETTLERS)
+              && (tile_has_special(punit->tile, S_IRRIGATION)
+                  || (terrain == ttype->irrigation_result
+                      && is_water_adjacent_to_tile(punit->tile)
+                      && !is_activity_on_tile(punit->tile, ACTIVITY_MINE))));
     default:
       break;
   }
@@ -1004,12 +1004,12 @@ void request_unit_unload_all(struct unit *punit)
       request_unit_unload(pcargo);
 
       if (pcargo->activity == ACTIVITY_SENTRY) {
-	request_new_unit_activity(pcargo, ACTIVITY_IDLE);
+        request_new_unit_activity(pcargo, ACTIVITY_IDLE);
       }
 
       if (pcargo->owner == get_player_idx()
-	  && (!plast || !unit_flag(plast,F_MARINES))) {
-	plast = pcargo;
+          && (!plast || !unit_flag(plast,F_MARINES))) {
+        plast = pcargo;
       }
     }
   } unit_list_iterate_end;
@@ -1042,9 +1042,10 @@ void request_unit_return(struct unit *punit)
     enum unit_activity activity = ACTIVITY_LAST;
     int turns = pf_last_position(path)->turn;
 
-    if (punit->hp + turns * get_player_bonus(get_player_ptr(),
-					     EFT_UNIT_RECOVER)
-	< unit_type(punit)->hp) {
+    if (punit->hp
+        + turns * get_player_bonus(get_player_ptr(),
+                                   EFT_UNIT_RECOVER)< unit_type(punit)->hp)
+    {
       activity = ACTIVITY_SENTRY;
     }
     send_goto_path(punit, path, activity);
@@ -1069,10 +1070,10 @@ void request_unit_wakeup(struct unit *punit)
             or building to aim for (spies only).
 **************************************************************************/
 void request_diplomat_action(enum diplomat_actions action, int dipl_id,
-			     int target_id, int value)
+                             int target_id, int value)
 {
   dsend_packet_unit_diplomat_action(&aconnection, dipl_id,
-				    action, target_id, value);
+                                    action, target_id, value);
 }
 
 /**************************************************************************
@@ -1129,7 +1130,7 @@ void request_move_unit_direction(struct unit *punit, int dir)
 
   if (punit->moves_left > 0) {
     dsend_packet_unit_move(&aconnection, punit->id,
-			   dest_tile->x, dest_tile->y);
+                           dest_tile->x, dest_tile->y);
     attack_after_move(punit);
   } else {
     /* Initiate a "goto" with direction keys for exhausted units. */
@@ -1151,15 +1152,15 @@ void request_new_unit_activity(struct unit *punit, enum unit_activity act)
   }
 
   dsend_packet_unit_change_activity(&aconnection, punit->id, act,
-				    S_NO_SPECIAL);
+                                    S_NO_SPECIAL);
 }
 
 /**************************************************************************
 ...
 **************************************************************************/
 void request_new_unit_activity_targeted(struct unit *punit,
-					enum unit_activity act,
-					enum tile_special_type tgt)
+                                        enum unit_activity act,
+                                        enum tile_special_type tgt)
 {
   dsend_packet_unit_change_activity(&aconnection, punit->id, act, tgt);
 }
@@ -1214,7 +1215,7 @@ void request_unit_auto(struct unit *punit)
     dsend_packet_unit_auto(&aconnection, punit->id);
   } else {
     append_output_window(_("Game: Only settler units and military units"
-			   " in cities can be put in auto-mode."));
+                           " in cities can be put in auto-mode."));
   }
 }
 
@@ -1237,7 +1238,7 @@ void request_unit_load(struct unit *pcargo, struct unit *ptrans)
     /* Sentry the unit.  Don't request_unit_sentry since this can give a
      * recursive loop. */
     dsend_packet_unit_change_activity(&aconnection, pcargo->id,
-				      ACTIVITY_SENTRY, S_NO_SPECIAL);
+                                      ACTIVITY_SENTRY, S_NO_SPECIAL);
   }
 }
 
@@ -1258,7 +1259,7 @@ void request_unit_unload(struct unit *pcargo)
 
     /* Activate the unit. */
     dsend_packet_unit_change_activity(&aconnection, pcargo->id,
-				      ACTIVITY_IDLE, S_NO_SPECIAL);
+                                      ACTIVITY_IDLE, S_NO_SPECIAL);
   }
 }
 
@@ -1277,7 +1278,7 @@ void request_unit_caravan_action(struct unit *punit, enum packet_type action)
     dsend_packet_unit_help_build_wonder(&aconnection, punit->id);
   } else {
     freelog(LOG_ERROR, "Bad action (%d) in request_unit_caravan_action",
-	    action);
+            action);
   }
 }
 
@@ -1329,7 +1330,7 @@ void request_unit_patrol(void)
   if (is_air_unit(punit) || is_heli_unit(punit)) {
     /* Same string as in do_unit_patrol_to. */
     append_output_window(_("Game: Sorry, airunit patrol "
-			   "not yet implemented."));
+                           "not yet implemented."));
     return;
   }
 
@@ -1417,7 +1418,7 @@ void request_unit_pillage(struct unit *punit)
   if (punit->activity != ACTIVITY_PILLAGE &&
       can_unit_do_activity(punit, ACTIVITY_PILLAGE)) {
     if ((game.ruleset_game.pillage_select)
-	&& ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
+        && ((pspresent & (~(psworking | would))) != S_NO_SPECIAL)) {
       punit->is_new = FALSE;
       popup_pillage_dialog(punit, (pspresent & (~psworking)));
     } else {
@@ -1733,7 +1734,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
       && punit->activity != ACTIVITY_SENTRY
       && punit->transported_by == -1) {
     audio_play_sound(unit_type(punit)->sound_move,
-		     unit_type(punit)->sound_move_alt);
+                     unit_type(punit)->sound_move_alt);
   }
 
   unit_list_unlink(ptile->units, punit);
@@ -1751,7 +1752,7 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
     /* We have to refresh the tile before moving.  This will draw
      * the tile without the unit (because it was unlinked above). */
     if (unit_type_flag(punit->type, F_CITIES)
-	&& punit->client.colored) {
+        && punit->client.colored) {
       /* For settlers with an overlay, redraw the entire area of the
        * overlay. */
       int width = get_citydlg_canvas_width();
@@ -1760,8 +1761,8 @@ void do_move_unit(struct unit *punit, struct unit *target_unit)
 
       tile_to_canvas_pos(&canvas_x, &canvas_y, ptile);
       update_map_canvas(canvas_x - (width - NORMAL_TILE_WIDTH) / 2,
-			canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
-			width, height, MUT_NORMAL);
+                        canvas_y - (height - NORMAL_TILE_HEIGHT) / 2,
+                        width, height, MUT_NORMAL);
       overview_update_tile(ptile);
     }
 
@@ -1847,7 +1848,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
       do_airlift(ptile);
     } else {
       append_output_window(
-	  _("Warclient: You need to select a tile with a city"));
+          _("Warclient: You need to select a tile with a city"));
     }
     airlift_queue_need_city_for = -1;
     hover_state = HOVER_NONE;
@@ -1856,7 +1857,7 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
     return;
   } else if (ptile && hover_state == HOVER_DELAYED_GOTO) {
     if (delayed_goto_need_tile_for >= 0
-	&& delayed_goto_need_tile_for < DELAYED_GOTO_NUM) {
+        && delayed_goto_need_tile_for < DELAYED_GOTO_NUM) {
       request_execute_delayed_goto(ptile, delayed_goto_need_tile_for);
       delayed_goto_need_tile_for = -1;
     } else {
@@ -1881,64 +1882,64 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   } else if (punit && hover_state != HOVER_NONE) {
     switch (hover_state) {
       case HOVER_GOTO:
-	if (multi_select_size(0) > 1) {
-	  multi_select_iterate(FALSE, punit) {
-	    send_goto_unit(punit, ptile);
-	    attack_after_move(punit);
-	  } multi_select_iterate_end;
-	} else {
-	  do_unit_goto(ptile);
-	}
-	break;
+        if (multi_select_size(0) > 1) {
+          multi_select_iterate(FALSE, punit) {
+            send_goto_unit(punit, ptile);
+            attack_after_move(punit);
+          } multi_select_iterate_end;
+        } else {
+          do_unit_goto(ptile);
+        }
+        break;
       case HOVER_NUKE:
-	if (SINGLE_MOVE * real_map_distance(punit->tile, ptile)
-	    > punit->moves_left) {
-	  append_output_window(_("Game: Too far for this unit."));
-	} else {
-	  send_goto_unit(punit, ptile);
-	  /* note that this will be executed by the server after the goto */
-	  if (!pcity) {
-	    do_unit_nuke(punit);
-	  }
-	}
-	break;
+        if (SINGLE_MOVE * real_map_distance(punit->tile, ptile)
+            > punit->moves_left) {
+          append_output_window(_("Game: Too far for this unit."));
+        } else {
+          send_goto_unit(punit, ptile);
+          /* note that this will be executed by the server after the goto */
+          if (!pcity) {
+            do_unit_nuke(punit);
+          }
+        }
+        break;
       case HOVER_PARADROP:
-	multi_select_iterate(FALSE, punit) {
-	  do_unit_paradrop_to(punit, ptile);
-	} multi_select_iterate_end;
-	break;
+        multi_select_iterate(FALSE, punit) {
+          do_unit_paradrop_to(punit, ptile);
+        } multi_select_iterate_end;
+        break;
       case HOVER_CONNECT: /* lie to don't crash !!! */
-	exit_goto_state();
-	lie_unit_focus_init();
-	multi_select_iterate(TRUE, punit) {
-	  hover_state = HOVER_CONNECT;
-	  hover_unit = punit->id;
-	  connect_activity = ca;
-	  put_unit_focus(punit);
-	  enter_goto_state(punit);
-	  do_unit_connect(punit, ptile, connect_activity);
-	} multi_select_iterate_end;
-	put_last_unit_focus();
-	break;
+        exit_goto_state();
+        lie_unit_focus_init();
+        multi_select_iterate(TRUE, punit) {
+          hover_state = HOVER_CONNECT;
+          hover_unit = punit->id;
+          connect_activity = ca;
+          put_unit_focus(punit);
+          enter_goto_state(punit);
+          do_unit_connect(punit, ptile, connect_activity);
+        } multi_select_iterate_end;
+        put_last_unit_focus();
+        break;
       case HOVER_PATROL: /* lie to don't crash !!! */
-	exit_goto_state();
-	lie_unit_focus_init();
-	multi_select_iterate(TRUE, punit) {
-	  hover_state = HOVER_PATROL;
-	  hover_unit = punit->id;
-	  put_unit_focus(punit);
-	  enter_goto_state(punit);
-	  do_unit_patrol_to(punit, ptile);
-	} multi_select_iterate_end;
-	put_last_unit_focus();
-	break;
+        exit_goto_state();
+        lie_unit_focus_init();
+        multi_select_iterate(TRUE, punit) {
+          hover_state = HOVER_PATROL;
+          hover_unit = punit->id;
+          put_unit_focus(punit);
+          enter_goto_state(punit);
+          do_unit_patrol_to(punit, ptile);
+        } multi_select_iterate_end;
+        put_last_unit_focus();
+        break;
       case HOVER_AIR_PATROL:
-	multi_select_iterate(FALSE, punit) {
-	  do_unit_air_patrol(punit, ptile);
-	} multi_select_iterate_end;
+        multi_select_iterate(FALSE, punit) {
+          do_unit_air_patrol(punit, ptile);
+        } multi_select_iterate_end;
         break;
       default:
-	break;
+        break;
     }
     set_hover_state(NULL, HOVER_NONE, ACTIVITY_LAST);
     update_unit_info_label(punit);
@@ -1954,19 +1955,19 @@ void do_map_click(struct tile *ptile, enum quickselect_type qtype)
   }
   /* Otherwise use popups. */
   else if (pcity
-	   && (client_is_global_observer()
-	       || can_player_see_city_internals(get_player_ptr(), pcity))) {
+           && (client_is_global_observer()
+               || can_player_see_city_internals(get_player_ptr(), pcity))) {
     popup_city_dialog(pcity, FALSE);
   } else if (unit_list_size(ptile->units) == 0 && !pcity
            && punit_focus) {
     maybe_goto = keyboardless_goto;
   } else if (unit_list_size(ptile->units) == 1
-	     && !unit_list_get(ptile->units, 0)->occupy) {
+             && !unit_list_get(ptile->units, 0)->occupy) {
     struct unit *punit = unit_list_get(ptile->units, 0);
     if (get_player_idx() == punit->owner) {
       if (can_unit_do_activity(punit, ACTIVITY_IDLE)) {
         maybe_goto = keyboardless_goto;
-	set_unit_focus_and_select(punit);
+        set_unit_focus_and_select(punit);
       }
     } else if (pcity) {
       /* Don't hide the unit in the city. */
@@ -2031,39 +2032,39 @@ static struct unit *quickselect(struct tile *ptile,
     if (qtype == SELECT_SEA) {
       if (get_transporter_capacity(punit)) {
         /* Transporter. */
-	if (punit->moves_left > 0) {
-	  return punit;
-	} else if (!panytransporter) {
-	  panytransporter = punit;
-	}
+        if (punit->moves_left > 0) {
+          return punit;
+        } else if (!panytransporter) {
+          panytransporter = punit;
+        }
       } else if (is_sailing_unit(punit)) {
         /* Any sea, pref. moves left. */
-	if (punit->moves_left > 0) {
-	  if (!panymovesea) {
-	    panymovesea = punit;
-	  }
-	} else if (!panysea) {
-	    panysea = punit;
-	}
+        if (punit->moves_left > 0) {
+          if (!panymovesea) {
+            panymovesea = punit;
+          }
+        } else if (!panysea) {
+            panysea = punit;
+        }
       }
     } else if (qtype == SELECT_LAND) {
       if (is_ground_unit(punit))  {
-	if (punit->moves_left > 0) {
-	  if (is_military_unit(punit)) {
-	    return punit;
-	  } else if (!panymoveland) {
-	      panymoveland = punit;
-	  }
-	} else if (!panyland) {
-	  panyland = punit;
-	}
+        if (punit->moves_left > 0) {
+          if (is_military_unit(punit)) {
+            return punit;
+          } else if (!panymoveland) {
+              panymoveland = punit;
+          }
+        } else if (!panyland) {
+          panyland = punit;
+        }
       }
       else if (is_sailing_unit(punit)) {
-	if (punit->moves_left > 0) {
-	  panymovesea = punit;
-	} else {
-	  panysea = punit;
-	}
+        if (punit->moves_left > 0) {
+          panymovesea = punit;
+        } else {
+          panysea = punit;
+        }
       }
     }
     if (punit->moves_left > 0 && !panymoveunit) {
@@ -2141,10 +2142,10 @@ void do_unit_goto(struct tile *ptile)
       draw_line(ptile);
       dest_tile = get_line_dest();
       if (ptile == dest_tile) {
-	send_goto_route(punit);
-	attack_after_move(punit);
+        send_goto_route(punit);
+        attack_after_move(punit);
       } else {
-	append_output_window(_("Game: Didn't find a route to the "
+        append_output_window(_("Game: Didn't find a route to the "
                                "destination!"));
       }
     }
@@ -2198,11 +2199,11 @@ void do_unit_patrol_to(struct unit *punit, struct tile *ptile)
   "Connect" to the given location.
 **************************************************************************/
 void do_unit_connect(struct unit *punit, struct tile *ptile,
-		     enum unit_activity activity)
+                     enum unit_activity activity)
 {
   if (is_air_unit(punit) || is_heli_unit(punit)) {
     append_output_window(_("Game: Sorry, airunit connect "
-			   "not yet implemented."));
+                           "not yet implemented."));
   } else {
     struct tile *dest_tile;
     punit->is_new = FALSE;
@@ -2212,7 +2213,7 @@ void do_unit_connect(struct unit *punit, struct tile *ptile,
       send_connect_route(punit, activity);
     } else {
       append_output_window(_("Game: Didn't find a route to "
-			     "the destination!"));
+                             "the destination!"));
     }
   }
 
@@ -2363,14 +2364,14 @@ void key_unit_connect(enum unit_activity activity)
 **************************************************************************/
 void key_unit_diplomat_actions(void)
 {
-  struct city *pcity;		/* need pcity->id */
+  struct city *pcity;           /* need pcity->id */
 
   multi_select_iterate(TRUE, punit) {
     if (punit
-	&& is_diplomat_unit(punit)
-	&& (pcity = map_get_city(punit->tile))
-	&& !diplomat_dialog_is_open()    /* confusing otherwise? */
-	&& diplomat_can_do_action(punit, DIPLOMAT_ANY_ACTION, punit->tile)) {
+        && is_diplomat_unit(punit)
+        && (pcity = map_get_city(punit->tile))
+        && !diplomat_dialog_is_open()    /* confusing otherwise? */
+        && diplomat_can_do_action(punit, DIPLOMAT_ANY_ACTION, punit->tile)) {
       process_diplomat_arrival(punit, pcity->id);
     }
   } multi_select_iterate_end;
@@ -2459,9 +2460,9 @@ void key_unit_unload_all(void)
   plast = NULL;
   unit_list_iterate(multi_select_get_units_focus(), punit) {
     if ((cond && !unit_satisfies_filter(punit,
-					multi_select_inclusive_filter,
-					multi_select_exclusive_filter))
-	|| punit->focus_status == FOCUS_DONE) {
+                                        multi_select_inclusive_filter,
+                                        multi_select_exclusive_filter))
+        || punit->focus_status == FOCUS_DONE) {
       continue;
     }
 
@@ -2730,11 +2731,11 @@ void key_unit_road(void)
   multi_select_iterate(TRUE, punit) {
     if (punit) {
       if(can_unit_do_activity(punit, ACTIVITY_ROAD)) {
-	punit->is_new = FALSE;
-	request_new_unit_activity(punit, ACTIVITY_ROAD);
+        punit->is_new = FALSE;
+        request_new_unit_activity(punit, ACTIVITY_ROAD);
       } else if(can_unit_do_activity(punit, ACTIVITY_RAILROAD)) {
-	punit->is_new = FALSE;
-	request_new_unit_activity(punit, ACTIVITY_RAILROAD);
+        punit->is_new = FALSE;
+        request_new_unit_activity(punit, ACTIVITY_RAILROAD);
       }
     }
   } multi_select_iterate_end;
@@ -2974,7 +2975,7 @@ void key_add_trade_city(void)
   if (tiles_hilited_cities) {
     city_list_iterate(get_player_ptr()->cities, pcity) {
       if (is_city_hilited(pcity)) {
-	add_tile_in_trade_planning(pcity->tile, FALSE);
+        add_tile_in_trade_planning(pcity->tile, FALSE);
       }
     } city_list_iterate_end;
     update_auto_caravan_menu();

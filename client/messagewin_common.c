@@ -110,7 +110,7 @@ void clear_notify_window(void)
 ...
 **************************************************************************/
 void add_notify_window(char *message, struct tile *ptile,
-		       enum event_type event)
+                       enum event_type event)
 {
   const size_t min_msg_len = 50;
   const char *game_prefix1 = "Game: ";

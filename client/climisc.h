@@ -13,7 +13,7 @@
 #ifndef FC__CLIMISC_H
 #define FC__CLIMISC_H
 
-#include "shared.h"		/* MAX_LEN_NAME */
+#include "shared.h"             /* MAX_LEN_NAME */
 
 #include "fc_types.h"
 #include "events.h"
@@ -40,7 +40,7 @@ void client_change_all(cid x, cid y);
 const char *get_embassy_status(struct player *me, struct player *them);
 const char *get_vision_status(struct player *me, struct player *them);
 void client_diplomacy_clause_string(char *buf, int bufsiz,
-				    struct Clause *pclause);
+                                    struct Clause *pclause);
 char *get_tile_info(struct tile *ptile);
 
 int client_research_sprite(void);
@@ -96,11 +96,11 @@ struct item {
 };
 
 void name_and_sort_items(int *pcids, int num_cids, struct item *items,
-			 bool show_cost, struct city *pcity);
+                         bool show_cost, struct city *pcity);
 int collect_cids1(cid * dest_cids, struct city **selected_cities,
-		 int num_selected_cities, bool append_units,
-		 bool append_wonders, bool change_prod,
-		 bool (*test_func) (struct city *, int));
+                 int num_selected_cities, bool append_units,
+                 bool append_wonders, bool change_prod,
+                 bool (*test_func) (struct city *, int));
 int collect_cids2(cid * dest_cids);
 int collect_cids3(cid * dest_cids);
 int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech);
@@ -111,9 +111,9 @@ int num_present_units_in_city(struct city* pcity);
 int num_supported_units_in_city(struct city* pcity);
 
 void handle_event(char *message, struct tile *ptile,
-		  enum event_type event, int conn_id);
+                  enum event_type event, int conn_id);
 void create_event(struct tile *ptile, enum event_type event,
-		  const char *format, ...)
+                  const char *format, ...)
      fc__attribute((__format__ (__printf__, 3, 4)));
 void write_chatline_content(const char *txt);
 

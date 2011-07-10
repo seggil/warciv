@@ -14,7 +14,7 @@
 #ifndef FC__MAPVIEW_COMMON_H
 #define FC__MAPVIEW_COMMON_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 #include "map.h"
@@ -34,12 +34,12 @@ enum draw_elements {
   DRAW_DECORATION = 1 << 1  /* Draw goto path, chat links, etc... */
 };
 
-struct canvas_store;		/* opaque type, real type is gui-dep */
+struct canvas_store;            /* opaque type, real type is gui-dep */
 
 struct mapview_canvas {
   int gui_x0, gui_y0;
-  int width, height;		/* Size in pixels. */
-  int tile_width, tile_height;	/* Size in tiles. Rounded up. */
+  int width, height;            /* Size in pixels. */
+  int tile_width, tile_height;  /* Size in tiles. Rounded up. */
   int store_width, store_height;
   bool can_do_cached_drawing; /* TRUE if cached drawing is possible. */
   struct canvas *store, *tmp_store;
@@ -49,7 +49,7 @@ struct mapview_canvas {
 struct overview_s {
   /* The following fields are controlled by mapview_common.c. */
   int map_x0, map_y0;
-  int width, height;		/* Size in pixels. */
+  int width, height;            /* Size in pixels. */
   struct canvas *store;
 };
 
@@ -81,56 +81,56 @@ extern bool can_slide;
  * iso-view iteration is at
  * http://bugs.freeciv.org/Ticket/Attachment/51374/37363/isogrid.png.
  */
-#define gui_rect_iterate(gui_x0, gui_y0, width, height, ptile)	            \
-{									    \
-  int _gui_x0 = (gui_x0), _gui_y0 = (gui_y0);				    \
-  int _width = (width), _height = (height);				    \
-									    \
-  if (_width < 0) {							    \
-    _gui_x0 += _width;							    \
-    _width = -_width;							    \
-  }									    \
-  if (_height < 0) {							    \
-    _gui_y0 += _height;							    \
-    _height = -_height;							    \
-  }									    \
-  if (_width > 0 && _height > 0) {					    \
+#define gui_rect_iterate(gui_x0, gui_y0, width, height, ptile)              \
+{                                                                           \
+  int _gui_x0 = (gui_x0), _gui_y0 = (gui_y0);                               \
+  int _width = (width), _height = (height);                                 \
+                                                                            \
+  if (_width < 0) {                                                         \
+    _gui_x0 += _width;                                                      \
+    _width = -_width;                                                       \
+  }                                                                         \
+  if (_height < 0) {                                                        \
+    _gui_y0 += _height;                                                     \
+    _height = -_height;                                                     \
+  }                                                                         \
+  if (_width > 0 && _height > 0) {                                          \
     int W = (is_isometric ? (NORMAL_TILE_WIDTH / 2) : NORMAL_TILE_WIDTH);   \
     int H = (is_isometric ? (NORMAL_TILE_HEIGHT / 2) : NORMAL_TILE_HEIGHT); \
-    int GRI_x0 = DIVIDE(_gui_x0, W), GRI_y0 = DIVIDE(_gui_y0, H);	    \
-    int GRI_x1 = DIVIDE(_gui_x0 + _width + W - 1, W);			    \
-    int GRI_y1 = DIVIDE(_gui_y0 + _height + H - 1, H);			    \
-    int GRI_itr, GRI_x_itr, GRI_y_itr, _map_x, _map_y;			    \
-    int count;								    \
-    struct tile *ptile;							    \
-									    \
-    if (is_isometric) {							    \
-      /* Tiles to the left/above overlap with us. */			    \
-      GRI_x0--;								    \
-      GRI_y0--;								    \
-    }									    \
-    count = (GRI_x1 - GRI_x0) * (GRI_y1 - GRI_y0);			    \
-    for (GRI_itr = 0; GRI_itr < count; GRI_itr++) {			    \
-      GRI_x_itr = GRI_x0 + (GRI_itr % (GRI_x1 - GRI_x0));		    \
-      GRI_y_itr = GRI_y0 + (GRI_itr / (GRI_x1 - GRI_x0));		    \
-      if (is_isometric) {						    \
-	if ((GRI_x_itr + GRI_y_itr) % 2 != 0) {				    \
-	  continue;							    \
-	}								    \
-	_map_x = (GRI_x_itr + GRI_y_itr) / 2;				    \
-	_map_y = (GRI_y_itr - GRI_x_itr) / 2;				    \
-      } else {								    \
-	_map_x = GRI_x_itr;						    \
-	_map_y = GRI_y_itr;						    \
-      }									    \
-      ptile = map_pos_to_tile(_map_x, _map_y);				    \
-      if (!ptile) {							    \
-	continue;							    \
+    int GRI_x0 = DIVIDE(_gui_x0, W), GRI_y0 = DIVIDE(_gui_y0, H);           \
+    int GRI_x1 = DIVIDE(_gui_x0 + _width + W - 1, W);                       \
+    int GRI_y1 = DIVIDE(_gui_y0 + _height + H - 1, H);                      \
+    int GRI_itr, GRI_x_itr, GRI_y_itr, _map_x, _map_y;                      \
+    int count;                                                              \
+    struct tile *ptile;                                                     \
+                                                                            \
+    if (is_isometric) {                                                     \
+      /* Tiles to the left/above overlap with us. */                        \
+      GRI_x0--;                                                             \
+      GRI_y0--;                                                             \
+    }                                                                       \
+    count = (GRI_x1 - GRI_x0) * (GRI_y1 - GRI_y0);                          \
+    for (GRI_itr = 0; GRI_itr < count; GRI_itr++) {                         \
+      GRI_x_itr = GRI_x0 + (GRI_itr % (GRI_x1 - GRI_x0));                   \
+      GRI_y_itr = GRI_y0 + (GRI_itr / (GRI_x1 - GRI_x0));                   \
+      if (is_isometric) {                                                   \
+        if ((GRI_x_itr + GRI_y_itr) % 2 != 0) {                             \
+          continue;                                                         \
+        }                                                                   \
+        _map_x = (GRI_x_itr + GRI_y_itr) / 2;                               \
+        _map_y = (GRI_y_itr - GRI_x_itr) / 2;                               \
+      } else {                                                              \
+        _map_x = GRI_x_itr;                                                 \
+        _map_y = GRI_y_itr;                                                 \
+      }                                                                     \
+      ptile = map_pos_to_tile(_map_x, _map_y);                              \
+      if (!ptile) {                                                         \
+        continue;                                                           \
       }
 
-#define gui_rect_iterate_end						    \
-    }									    \
-  }									    \
+#define gui_rect_iterate_end                                                \
+    }                                                                       \
+  }                                                                         \
 }
 
 enum color_std get_grid_color(struct tile *ptile, enum direction8 dir);
@@ -141,8 +141,8 @@ struct tile *canvas_pos_to_tile(int canvas_x, int canvas_y);
 struct tile *canvas_pos_to_nearest_tile(int canvas_x, int canvas_y);
 
 void get_mapview_scroll_window(int *xmin, int *ymin,
-			       int *xmax, int *ymax,
-			       int *xsize, int *ysize);
+                               int *xmax, int *ymax,
+                               int *xsize, int *ysize);
 void get_mapview_scroll_step(int *xstep, int *ystep);
 void get_mapview_scroll_pos(int *scroll_x, int *scroll_y);
 void set_mapview_scroll_pos(int scroll_x, int scroll_y);
@@ -155,36 +155,36 @@ bool tile_visible_mapcanvas(struct tile *ptile);
 bool tile_visible_and_not_on_border_mapcanvas(struct tile *ptile);
 
 void put_unit(struct unit *punit,
-	      struct canvas *pcanvas, int canvas_x, int canvas_y);
+              struct canvas *pcanvas, int canvas_x, int canvas_y);
 void put_city(struct city *pcity,
-	      struct canvas *pcanvas, int canvas_x, int canvas_y);
+              struct canvas *pcanvas, int canvas_x, int canvas_y);
 void put_terrain(struct tile *ptile,
-		 struct canvas *pcanvas, int canvas_x, int canvas_y);
+                 struct canvas *pcanvas, int canvas_x, int canvas_y);
 
 void put_city_tile_output(struct city *pcity, int city_x, int city_y,
-			  struct canvas *pcanvas,
-			  int canvas_x, int canvas_y);
+                          struct canvas *pcanvas,
+                          int canvas_x, int canvas_y);
 void put_unit_city_overlays(struct unit *punit,
-			    struct canvas *pcanvas,
-			    int canvas_x, int canvas_y);
+                            struct canvas *pcanvas,
+                            int canvas_x, int canvas_y);
 void toggle_city_color(struct city *pcity);
 void toggle_unit_color(struct unit *punit);
 void put_red_frame_tile(struct canvas *pcanvas,
-			int canvas_x, int canvas_y);
+                        int canvas_x, int canvas_y);
 
 void put_nuke_mushroom_pixmaps(struct tile *ptile);
 
 void put_one_tile(struct canvas *pcanvas, struct tile *ptile,
-		  int canvas_x, int canvas_y, bool citymode);
+                  int canvas_x, int canvas_y, bool citymode);
 void put_one_tile_iso(struct canvas *pcanvas, struct tile *ptile,
-		      int canvas_x, int canvas_y, bool citymode);
+                      int canvas_x, int canvas_y, bool citymode);
 void tile_draw_grid(struct canvas *pcanvas, struct tile *ptile,
-		    int canvas_x, int canvas_y, bool citymode);
+                    int canvas_x, int canvas_y, bool citymode);
 
 void draw_map_canvas(int canvas_x, int canvas_y,
-		     int width, int height, enum draw_elements elements);
+                     int width, int height, enum draw_elements elements);
 void update_map_canvas(int canvas_x, int canvas_y,
-		       int width, int height, enum map_update_type type);
+                       int width, int height, enum map_update_type type);
 void update_map_canvas_visible(enum map_update_type type);
 void refresh_tile_mapcanvas(struct tile *ptile, enum map_update_type type);
 void update_city_description(struct city *pcity);
@@ -192,38 +192,38 @@ void update_city_description(struct city *pcity);
 void flush_dirty_overview(void);
 
 void show_city_descriptions(int canvas_x, int canvas_y,
-			    int width, int height);
+                            int width, int height);
 bool show_unit_orders(struct unit *punit);
 
 void draw_segment(struct tile *ptile, enum direction8 dir);
 void undraw_segment(struct tile *ptile, enum direction8 dir);
 
 void decrease_unit_hp_smooth(struct unit *punit0, int hp0,
-			     struct unit *punit1, int hp1);
+                             struct unit *punit1, int hp1);
 void move_unit_map_canvas(struct unit *punit,
-			  struct tile *ptile, int dx, int dy);
+                          struct tile *ptile, int dx, int dy);
 
 struct city *find_city_or_settler_near_tile(struct tile *ptile,
-					    struct unit **punit);
+                                            struct unit **punit);
 struct city *find_city_near_tile(struct tile *ptile);
 
 void get_city_mapview_production(struct city *pcity,
                                  char *buf, size_t buf_len);
 void get_city_mapview_name_and_growth(struct city *pcity,
-				      char *name_buffer,
-				      size_t name_buffer_len,
-				      char *growth_buffer,
-				      size_t growth_buffer_len,
-				      enum color_std *grwoth_color);
+                                      char *name_buffer,
+                                      size_t name_buffer_len,
+                                      char *growth_buffer,
+                                      size_t growth_buffer_len,
+                                      enum color_std *grwoth_color);
 void get_city_mapview_traderoutes(struct city *pcity,
-				      char *traderoutes_buffer,
-				      size_t traderoutes_len,
-				      enum color_std *traderoutes_color);
+                                      char *traderoutes_buffer,
+                                      size_t traderoutes_len,
+                                      enum color_std *traderoutes_color);
 
 void map_to_overview_pos(int *overview_x, int *overview_y,
-			 int map_x, int map_y);
+                         int map_x, int map_y);
 void overview_to_map_pos(int *map_x, int *map_y,
-			 int overview_x, int overview_y);
+                         int overview_x, int overview_y);
 
 void refresh_overview_canvas(void);
 void overview_update_tile(struct tile *ptile);

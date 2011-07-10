@@ -40,34 +40,34 @@
  * An individual add(_line) string has to fit into GROW_TMP_SIZE. One buffer
  * of GROW_TMP_SIZE size will be allocated for the entire client.
  */
-#define GROW_TMP_SIZE	(1024)
+#define GROW_TMP_SIZE   (1024)
 
 /*
  * Initial size of the buffer for each function.  It may later be
  * grown as needed.
  */
-#define START_SIZE	10
+#define START_SIZE      10
 
 static void real_add_line(char **buffer, size_t * buffer_size,
-			  const char *format, ...)
+                          const char *format, ...)
 fc__attribute((__format__(__printf__, 3, 4)));
 static void real_add(char **buffer, size_t * buffer_size,
-		     const char *format, ...)
+                     const char *format, ...)
 fc__attribute((__format__(__printf__, 3, 4)));
 
 #define add_line(...) real_add_line(&out,&out_size, __VA_ARGS__)
 #define add(...) real_add(&out,&out_size, __VA_ARGS__)
 
-#define INIT			\
-  static char *out = NULL;	\
-  static size_t out_size = 0;	\
-  if (!out) {			\
-    out_size = START_SIZE;	\
-    out = fc_malloc(out_size);	\
-  }				\
+#define INIT                    \
+  static char *out = NULL;      \
+  static size_t out_size = 0;   \
+  if (!out) {                   \
+    out_size = START_SIZE;      \
+    out = fc_malloc(out_size);  \
+  }                             \
   out[0] = '\0';
 
-#define RETURN	return out;
+#define RETURN  return out;
 
 /****************************************************************************
   AI names are prefixed with "AI, ".
@@ -90,7 +90,7 @@ static inline const char *get_proper_username(struct player *plr)
   required.
 ****************************************************************************/
 static void grow_printf(char **buffer, size_t *buffer_size,
-			const char *format, va_list ap)
+                        const char *format, va_list ap)
 {
   size_t new_len;
   static char buf[GROW_TMP_SIZE];
@@ -107,7 +107,7 @@ static void grow_printf(char **buffer, size_t *buffer_size,
     size_t new_size = MAX(new_len, *buffer_size * 2);
 
     freelog(LOG_VERBOSE, "expand from %lu to %lu to add '%s'",
-	    (unsigned long)*buffer_size, (unsigned long)new_size, buf);
+            (unsigned long)*buffer_size, (unsigned long)new_size, buf);
 
     *buffer_size = new_size;
     *buffer = fc_realloc(*buffer, *buffer_size);
@@ -119,7 +119,7 @@ static void grow_printf(char **buffer, size_t *buffer_size,
   Add a full line of text to the buffer.
 ****************************************************************************/
 static void real_add_line(char **buffer, size_t * buffer_size,
-			  const char *format, ...)
+                          const char *format, ...)
 {
   va_list args;
 
@@ -136,7 +136,7 @@ static void real_add_line(char **buffer, size_t * buffer_size,
   Add the text to the buffer.
 ****************************************************************************/
 static void real_add(char **buffer, size_t * buffer_size, const char *format,
-		     ...)
+                     ...)
 {
   va_list args;
 
@@ -157,7 +157,7 @@ static const char *map_get_tile_fpt_text(const struct tile *ptile)
   int x, before_penalty;
 
   struct government *gov = client_is_global_observer()
-			       ? NULL : get_gov_pplayer(get_player_ptr());
+                               ? NULL : get_gov_pplayer(get_player_ptr());
 
   x = get_food_tile(ptile);
   before_penalty = gov ? gov->food_before_penalty : 0;
@@ -244,31 +244,31 @@ const char *popup_info_text(struct tile *ptile)
     if (client_is_global_observer() && owner) {
       /* TRANS: "Territory of Username (Polish)" */
       add_line(_("Territory of %s%s (%s)"),
-	       get_name_prefix(owner), get_proper_username(owner),
-	       get_nation_name_plural(owner->nation));
+               get_name_prefix(owner), get_proper_username(owner),
+               get_nation_name_plural(owner->nation));
     } else if (!client_is_global_observer() && owner == get_player_ptr()) {
       add_line(_("Our Territory"));
     } else if (!client_is_global_observer() && owner) {
       struct player_diplstate *ds =
-	  &get_player_ptr()->diplstates[owner->player_no];
+          &get_player_ptr()->diplstates[owner->player_no];
       if (ds[owner->player_no].type == DS_CEASEFIRE) {
-	int turns = ds[owner->player_no].turns_left;
+        int turns = ds[owner->player_no].turns_left;
 
-	/* TRANS: "Territory of Username (Polish) (5 turn ceasefire)" */
-	add_line(PL_("Territory of %s%s (%s) (%d turn ceasefire)",
-		     "Territory of %s%s (%s) (%d turn ceasefire)",
-		     turns),
-		 get_name_prefix(owner),
-		 get_proper_username(owner),
-		 get_player_nation_name(owner), turns);
+        /* TRANS: "Territory of Username (Polish) (5 turn ceasefire)" */
+        add_line(PL_("Territory of %s%s (%s) (%d turn ceasefire)",
+                     "Territory of %s%s (%s) (%d turn ceasefire)",
+                     turns),
+                 get_name_prefix(owner),
+                 get_proper_username(owner),
+                 get_player_nation_name(owner), turns);
       } else {
-	/* TRANS: "Territory of friendly Username (Polish)".  See the
-	 * ?nation adjectives. */
-	add_line(_("Territory of %s %s%s (%s)"),
-		 diplo_nation_plural_adjectives[ds[owner->player_no].type],
-		 get_name_prefix(owner),
-		 get_proper_username(owner),
-		 get_player_nation_name(owner));
+        /* TRANS: "Territory of friendly Username (Polish)".  See the
+         * ?nation adjectives. */
+        add_line(_("Territory of %s %s%s (%s)"),
+                 diplo_nation_plural_adjectives[ds[owner->player_no].type],
+                 get_name_prefix(owner),
+                 get_proper_username(owner),
+                 get_player_nation_name(owner));
       }
     } else {
       add_line(_("Unclaimed territory"));
@@ -282,34 +282,34 @@ const char *popup_info_text(struct tile *ptile)
     if (client_is_global_observer()) {
       /* TRANS: "City: Warsaw | Username (Polish)" */
       add_line(_("City: %s | %s%s (%s)"),
-	       pcity->name,
-	       get_name_prefix(owner),
-	       get_proper_username(owner),
-	       get_player_nation_name(owner));
+               pcity->name,
+               get_name_prefix(owner),
+               get_proper_username(owner),
+               get_player_nation_name(owner));
     } else if (owner == get_player_ptr()) {
       /* TRANS: "City: Warsaw (Polish)" */
       add_line(_("City: %s (%s)"), pcity->name, get_player_nation_name(owner));
     } else {
       struct player_diplstate *ds =
-	  &get_player_ptr()->diplstates[owner->player_no];
+          &get_player_ptr()->diplstates[owner->player_no];
       if (ds->type == DS_CEASEFIRE) {
-	int turns = ds[owner->player_no].turns_left;
+        int turns = ds[owner->player_no].turns_left;
 
-	/* TRANS:  "City: Warsaw | Username (5 turn ceasefire, Polish)" */
-	add_line(PL_("City: %s | %s%s (%d turn ceasefire, %s)",
-		     "City: %s | %s%s (%d turn ceasefire, %s)",
-				       turns),
-		 pcity->name,
-		 get_name_prefix(owner),
-		 get_proper_username(owner),
-		 turns, get_player_nation_name(owner));
+        /* TRANS:  "City: Warsaw | Username (5 turn ceasefire, Polish)" */
+        add_line(PL_("City: %s | %s%s (%d turn ceasefire, %s)",
+                     "City: %s | %s%s (%d turn ceasefire, %s)",
+                                       turns),
+                 pcity->name,
+                 get_name_prefix(owner),
+                 get_proper_username(owner),
+                 turns, get_player_nation_name(owner));
       } else {
-	/* TRANS: "City: Warsaw | Username (friendly, Polish)" */
-	add_line(_("City: %s | %s%s (%s, %s)"), pcity->name,
-		 get_name_prefix(owner),
-		 get_proper_username(owner),
-		 diplo_city_adjectives[ds->type],
-		 get_player_nation_name(owner));
+        /* TRANS: "City: Warsaw | Username (friendly, Polish)" */
+        add_line(_("City: %s | %s%s (%s, %s)"), pcity->name,
+                 get_name_prefix(owner),
+                 get_proper_username(owner),
+                 diplo_city_adjectives[ds->type],
+                 get_player_nation_name(owner));
       }
     }
     if (city_got_citywalls(pcity)) {
@@ -321,17 +321,17 @@ const char *popup_info_text(struct tile *ptile)
       struct city *hcity = find_city_by_id(pfocus_unit->homecity);
 
       if (unit_flag(pfocus_unit, F_TRADE_ROUTE)
-	  && can_cities_trade(hcity, pcity)
-	  && can_establish_trade_route(hcity, pcity)) {
-	/* TRANS: "Trade from Warsaw: 5" */
-	add_line(_("Trade from %s: %d"),
-		 hcity->name, trade_between_cities(hcity, pcity));
+          && can_cities_trade(hcity, pcity)
+          && can_establish_trade_route(hcity, pcity)) {
+        /* TRANS: "Trade from Warsaw: 5" */
+        add_line(_("Trade from %s: %d"),
+                 hcity->name, trade_between_cities(hcity, pcity));
       }
     }
   }
   if (get_tile_infrastructure_set(ptile)) {
     add_line(_("Infrastructure: %s"),
-	     map_get_infrastructure_text(ptile->special));
+             map_get_infrastructure_text(ptile->special));
   }
   activity_text = concat_tile_activity_text(ptile);
   if (strlen(activity_text) > 0) {
@@ -348,45 +348,45 @@ const char *popup_info_text(struct tile *ptile)
 
       pcity = find_city_by_id(punit->homecity);
       if (pcity) {
-	my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
+        my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
       }
       /* TRANS: "Unit: Musketeers | Username (Polish/Warsaw)" */
       add_line(_("Unit: %s | %s%s (%s%s)"), ptype->name,
-	       get_name_prefix(owner),
-	       get_proper_username(owner),
-	       get_player_nation_name(owner), tmp);
+               get_name_prefix(owner),
+               get_proper_username(owner),
+               get_player_nation_name(owner), tmp);
     } else if (owner == get_player_ptr()) {
       struct city *pcity;
       char tmp[64] = {0};
 
       pcity = find_city_by_id(punit->homecity);
       if (pcity) {
-	my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
+        my_snprintf(tmp, sizeof(tmp), "/%s", pcity->name);
       }
       /* TRANS: "Unit: Musketeers (Polish/Warsaw)" */
       add_line(_("Unit: %s (%s%s)"), ptype->name,
-	       get_player_nation_name(owner), tmp);
+               get_player_nation_name(owner), tmp);
     } else {
       struct player_diplstate *ds =
-	  &get_player_ptr()->diplstates[owner->player_no];
+          &get_player_ptr()->diplstates[owner->player_no];
       if (ds->type == DS_CEASEFIRE) {
-	int turns = ds[owner->player_no].turns_left;
+        int turns = ds[owner->player_no].turns_left;
 
-	/* TRANS:  "Unit: Musketeers | Username (5 turn ceasefire, Polish)" */
-	add_line(PL_("Unit: %s | %s%s (%d turn ceasefire, %s)",
-		     "Unit: %s | %s%s (%d turn ceasefire, %s)",
-				       turns),
-		 ptype->name,
-		 get_name_prefix(owner),
-		 get_proper_username(owner),
-		 turns, get_player_nation_name(owner));
+        /* TRANS:  "Unit: Musketeers | Username (5 turn ceasefire, Polish)" */
+        add_line(PL_("Unit: %s | %s%s (%d turn ceasefire, %s)",
+                     "Unit: %s | %s%s (%d turn ceasefire, %s)",
+                                       turns),
+                 ptype->name,
+                 get_name_prefix(owner),
+                 get_proper_username(owner),
+                 turns, get_player_nation_name(owner));
       } else {
-	/* TRANS: "Unit: Musketeers | Username (friendly, Polish)" */
-	add_line(_("Unit: %s | %s%s (%s, %s)"), ptype->name,
-		 get_name_prefix(owner),
-		 get_proper_username(owner),
-		 diplo_city_adjectives[ds->type],
-		 get_player_nation_name(owner));
+        /* TRANS: "Unit: Musketeers | Username (friendly, Polish)" */
+        add_line(_("Unit: %s | %s%s (%s, %s)"), ptype->name,
+                 get_name_prefix(owner),
+                 get_proper_username(owner),
+                 diplo_city_adjectives[ds->type],
+                 get_player_nation_name(owner));
       }
     }
 
@@ -395,26 +395,26 @@ const char *popup_info_text(struct tile *ptile)
       bool found = FALSE;
 
       unit_list_iterate(ptile->units, tile_unit) {
-	if (tile_unit->owner != pfocus_unit->owner) {
-	  int att = unit_win_chance(pfocus_unit, tile_unit) * 100;
-	  int def = (1.0 - unit_win_chance(tile_unit, pfocus_unit)) * 100;
+        if (tile_unit->owner != pfocus_unit->owner) {
+          int att = unit_win_chance(pfocus_unit, tile_unit) * 100;
+          int def = (1.0 - unit_win_chance(tile_unit, pfocus_unit)) * 100;
 
-	  found = TRUE;
+          found = TRUE;
 
-	  /* Presumably the best attacker and defender will be used. */
-	  att_chance = MIN(att, att_chance);
-	  def_chance = MIN(def, def_chance);
-	}
+          /* Presumably the best attacker and defender will be used. */
+          att_chance = MIN(att, att_chance);
+          def_chance = MIN(def, def_chance);
+        }
       } unit_list_iterate_end;
 
       if (found) {
-	/* TRANS: "Chance to win: A:95% D:46%" */
-	add_line(_("Chance to win: A:%d%% D:%d%%"), att_chance, def_chance);
+        /* TRANS: "Chance to win: A:95% D:46%" */
+        add_line(_("Chance to win: A:%d%% D:%d%%"), att_chance, def_chance);
       }
     }
 
     my_snprintf(vet, sizeof(vet), " (%s)",
-		_(unit_type(punit)->veteran[punit->veteran].name));
+                _(unit_type(punit)->veteran[punit->veteran].name));
 
     /* TRANS: A is attack power, D is defense power, FP is firepower,
      * HP is hitpoints (current and max). */
@@ -456,14 +456,14 @@ const char *concat_tile_activity_text(struct tile *ptile)
   for (i = 0; i < ACTIVITY_LAST; i++) {
     if (is_build_or_clean_activity(i) && activity_units[i] > 0) {
       if (num_activities > 0) {
-	add("/");
+        add("/");
       }
       remains = map_activity_time(i, ptile) - activity_total[i];
       if (remains > 0) {
-	turns = 1 + (remains + activity_units[i] - 1) / activity_units[i];
+        turns = 1 + (remains + activity_units[i] - 1) / activity_units[i];
       } else {
-	/* activity will be finished this turn */
-	turns = 1;
+        /* activity will be finished this turn */
+        turns = 1;
       }
       add("%s(%d)", get_activity_text(i), turns);
       num_activities++;
@@ -556,8 +556,8 @@ const char *science_dialog_text(void)
   }
   if (ours > 0) {
     add(PL_("Progress: %d turn/advance, %d pts/turn",
-	    "Progress: %d turns/advance, %d pts/turn",
-	    turns_to_advance), turns_to_advance, ours);
+            "Progress: %d turns/advance, %d pts/turn",
+            turns_to_advance), turns_to_advance, ours);
   } else {
     add(_("Progress: Never"));
   }
@@ -579,13 +579,13 @@ const char *get_info_label_text(void)
 
   if (pplayer) {
     add_line(_("Population: %s"),
-	       population_to_text(civ_population(pplayer)));
+               population_to_text(civ_population(pplayer)));
   }
   add_line(_("Year: %s - T%d"), textyear(game.info.year), game.info.turn);
   if (pplayer) {
     add_line(_("Gold: %d"), pplayer->economic.gold);
     add_line(_("Tax: %d Lux: %d Sci: %d"), pplayer->economic.tax,
-	     pplayer->economic.luxury, pplayer->economic.science);
+             pplayer->economic.luxury, pplayer->economic.science);
   }
   RETURN;
 }
@@ -603,7 +603,7 @@ const char *get_unit_info_label_text1(struct unit *punit)
     struct unit_type *ptype = unit_type(punit);
 
     int i = multi_select_count_all ? multi_select_size(0) -1
-				   : multi_select_satisfies_filter(0) - 1;
+                                   : multi_select_satisfies_filter(0) - 1;
     if (i <= 0) {
       add("%s", ptype->name);
     } else {
@@ -626,7 +626,7 @@ const char *get_unit_info_label_text2(struct unit *punit)
    * GUI widgets may be confused and try to resize themselves. */
   if (punit) {
     struct city *pcity =
-	player_find_city_by_id(get_player_ptr(), punit->homecity);
+        player_find_city_by_id(get_player_ptr(), punit->homecity);
     int infrastructure = get_tile_infrastructure_set(punit->tile);
 
     add_line("%s", unit_activity_text(punit));
@@ -664,7 +664,7 @@ const char *get_bulb_tooltip(void)
   struct player *pplayer = get_player_ptr();
 
   add(_("Shows your progress in researching "
-	"the current technology.\n%s: %d/%d."),
+        "the current technology.\n%s: %d/%d."),
       get_tech_name(pplayer, pplayer->research.researching),
       pplayer->research.bulbs_researched, total_bulbs_required(pplayer));
   RETURN;
@@ -728,19 +728,19 @@ const char *get_spaceship_descr(struct player_spaceship *pship)
 
   /* TRANS: spaceship text; should have constant width. */
   add_line(_("Support:         %5d %%"),
-	   (int) (pship->support_rate * 100.0));
+           (int) (pship->support_rate * 100.0));
 
   /* TRANS: spaceship text; should have constant width. */
   add_line(_("Energy:          %5d %%"), (int) (pship->energy_rate * 100.0));
 
   /* TRANS: spaceship text; should have constant width. */
   add_line(PL_("Mass:            %5d ton",
-	       "Mass:            %5d tons", pship->mass), pship->mass);
+               "Mass:            %5d tons", pship->mass), pship->mass);
 
   if (pship->propulsion > 0) {
     /* TRANS: spaceship text; should have constant width. */
     add_line(_("Travel time:     %5.1f years"),
-	     (float) (0.1 * ((int) (pship->travel_time * 10.0))));
+             (float) (0.1 * ((int) (pship->travel_time * 10.0))));
   } else {
     /* TRANS: spaceship text; should have constant width. */
     add_line("%s", _("Travel time:        N/A     "));
@@ -748,14 +748,14 @@ const char *get_spaceship_descr(struct player_spaceship *pship)
 
   /* TRANS: spaceship text; should have constant width. */
   add_line(_("Success prob.:   %5d %%"),
-	   (int) (pship->success_rate * 100.0));
+           (int) (pship->success_rate * 100.0));
 
   /* TRANS: spaceship text; should have constant width. */
   add_line(_("Year of arrival: %8s"),
-	   (pship->state ==
-	    SSHIP_LAUNCHED) ? textyear((int) (pship->launch_year +
-					      (int) pship->
-					      travel_time)) : "-   ");
+           (pship->state ==
+            SSHIP_LAUNCHED) ? textyear((int) (pship->launch_year +
+                                              (int) pship->
+                                              travel_time)) : "-   ");
 
   RETURN;
 }
@@ -792,13 +792,13 @@ const char *format_duration(int duration)
   }
   if (duration < 60) {
     add(Q_("?seconds:%02ds"), duration);
-  } else if (duration < 3600) {	/* < 60 minutes */
+  } else if (duration < 3600) { /* < 60 minutes */
     add(Q_("?mins/secs:%02dm %02ds"), duration / 60, duration % 60);
-  } else if (duration < 360000) {	/* < 100 hours */
+  } else if (duration < 360000) {       /* < 100 hours */
     add(Q_("?hrs/mns:%02dh %02dm"), duration / 3600, (duration / 60) % 60);
-  } else if (duration < 8640000) {	/* < 100 days */
+  } else if (duration < 8640000) {      /* < 100 days */
     add(Q_("?dys/hrs:%02dd %02dh"), duration / 86400,
-	(duration / 3600) % 24);
+        (duration / 3600) % 24);
   } else {
     add("%s", Q_("?duration:overflow"));
   }
@@ -818,9 +818,9 @@ const char *get_ping_time_text(struct player *pplayer)
 
   conn_list_iterate(game.est_connections, oconn) {
     if (oconn->player == pplayer
-	&& !oconn->observer
-	/* Certainly not needed, but safer */
-	&& 0 == strcmp(oconn->username, pplayer->username)) {
+        && !oconn->observer
+        /* Certainly not needed, but safer */
+        && 0 == strcmp(oconn->username, pplayer->username)) {
       pconn = oconn;
     }
   } conn_list_iterate_end;
@@ -829,7 +829,7 @@ const char *get_ping_time_text(struct player *pplayer)
     ping_time_in_ms = 1000 * pconn->ping_time;
 
     add(_("%6d.%02d ms"), (int) ping_time_in_ms,
-	((int) (ping_time_in_ms * 100.0)) % 100);
+        ((int) (ping_time_in_ms * 100.0)) % 100);
   }
 
   RETURN;
@@ -850,14 +850,14 @@ const char *get_report_title(const char *report_name)
 
   /* TRANS: "Republic of the Polish" */
   add_line(_("%s of the %s"),
-	   get_government_name(pplayer->government),
-	   get_nation_name_plural(pplayer->nation));
+           get_government_name(pplayer->government),
+           get_nation_name_plural(pplayer->nation));
 
   add_line("%s %s: %s",
-	   get_ruler_title(pplayer->government,
-			   pplayer->is_male,
-			   pplayer->nation),
-	   pplayer->name, textyear(game.info.year));
+           get_ruler_title(pplayer->government,
+                           pplayer->is_male,
+                           pplayer->nation),
+           pplayer->name, textyear(game.info.year));
   RETURN;
 }
 

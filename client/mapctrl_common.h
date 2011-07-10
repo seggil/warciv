@@ -14,8 +14,8 @@
 #ifndef FC__MAPCTRL_COMMON_H
 #define FC__MAPCTRL_COMMON_H
 
-#include "map.h"		/* enum direction8 */
-#include "shared.h"		/* bool type */
+#include "map.h"                /* enum direction8 */
+#include "shared.h"             /* bool type */
 
 #include "control.h"            /* quickselect_type */
 
@@ -65,7 +65,7 @@ void update_line(int canvas_x, int canvas_y);
 void overview_update_line(int overview_x, int overview_y);
 
 bool get_chance_to_win(int *att_chance, int *def_chance,
-		       struct tile *ptile);
+                       struct tile *ptile);
 
 void fill_tile_unit_list(struct tile *ptile, struct unit **unit_list);
 

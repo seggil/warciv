@@ -13,9 +13,9 @@
 #ifndef FC__CHATLINE_COMMON_H
 #define FC__CHATLINE_COMMON_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
-#include "fc_types.h"		/* struct city, tile and unit */
+#include "fc_types.h"           /* struct city, tile and unit */
 
 void send_chat(const char *message);
 

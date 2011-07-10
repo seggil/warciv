@@ -49,7 +49,7 @@ void execute_trade_orders(struct unit *punit);
 bool trade_free_unit(struct unit *punit);
 
 void delayed_trade_routes_add(int city, int trade[OLD_NUM_TRADEROUTES],
-			      int trade_value[OLD_NUM_TRADEROUTES]);
+                              int trade_value[OLD_NUM_TRADEROUTES]);
 void delayed_trade_routes_build(void);
 
 #endif /* FC__TRADE_H */

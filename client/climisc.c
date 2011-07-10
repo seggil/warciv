@@ -204,7 +204,7 @@ void client_remove_unit(struct unit *punit)
       advance_unit_focus();
       if (!get_unit_in_focus()) {
         /* It was the last unit */
-	delayed_goto_event(AUTO_NO_UNIT_SELECTED, NULL);
+        delayed_goto_event(AUTO_NO_UNIT_SELECTED, NULL);
       }
     } else {
       game_remove_unit(punit);
@@ -225,7 +225,7 @@ void client_remove_unit(struct unit *punit)
   pcity = map_get_city(ptile);
   if (pcity) {
     if (client_is_global_observer()
-	|| can_player_see_units_in_city(get_player_ptr(), pcity)) {
+        || can_player_see_units_in_city(get_player_ptr(), pcity)) {
       pcity->client.occupied = (unit_list_size(pcity->tile->units) > 0);
     }
 
@@ -519,7 +519,7 @@ void center_on_something(void)
     center_tile_mapcanvas(punit->tile);
   } else {
     struct tile *ctile = native_pos_to_tile(map.info.xsize / 2,
-					    map.info.ysize / 2);
+                                            map.info.ysize / 2);
 
     /* Just any known tile will do; search near the middle first. */
     /* Iterate outward from the center tile.  We have to give a radius that
@@ -888,22 +888,22 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
     if (pplayer) {
       can_build = can_player_build_improvement(pplayer, id);
       can_eventually_build =
-	  can_player_eventually_build_improvement(pplayer, id);
+          can_player_eventually_build_improvement(pplayer, id);
     } else {
       can_build = FALSE;
       players_iterate(pplayer) {
-	if (can_player_build_improvement(pplayer, id)) {
-	  can_build = TRUE;
-	  break;
-	}
+        if (can_player_build_improvement(pplayer, id)) {
+          can_build = TRUE;
+          break;
+        }
       } players_iterate_end;
 
       can_eventually_build = FALSE;
       players_iterate(pplayer) {
-	if (can_player_eventually_build_improvement(pplayer, id)) {
-	  can_eventually_build = TRUE;
-	  break;
-	}
+        if (can_player_eventually_build_improvement(pplayer, id)) {
+          can_eventually_build = TRUE;
+          break;
+        }
       } players_iterate_end;
     }
 
@@ -931,18 +931,18 @@ int collect_cids4(cid * dest_cids, struct city *pcity, bool advanced_tech)
     } else {
       can_build = FALSE;
       players_iterate(pplayer) {
-	if (can_player_build_unit(pplayer, id)) {
-	  can_build = TRUE;
-	  break;
-	}
+        if (can_player_build_unit(pplayer, id)) {
+          can_build = TRUE;
+          break;
+        }
       } players_iterate_end;
 
       can_eventually_build = FALSE;
       players_iterate(pplayer) {
-	if (can_player_eventually_build_unit(pplayer, id)) {
-	  can_eventually_build = TRUE;
-	  break;
-	}
+        if (can_player_eventually_build_unit(pplayer, id)) {
+          can_eventually_build = TRUE;
+          break;
+        }
       } players_iterate_end;
     }
 
@@ -1456,7 +1456,7 @@ void city_autonaming_free(void)
   an_continent_counter_table = NULL;
 
   hash_kv_iterate(an_city_autoname_data_table, void *, key,
-		  struct autoname_data *, ad) {
+                  struct autoname_data *, ad) {
     int id = PTR_TO_INT(key);
     freelog(LOG_DEBUG, "caf   freeing ad %p (for city id=%d)", ad, id);
     free(ad);
@@ -2170,7 +2170,7 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
 
   if (!tiles_hilited_cities) {
     append_output_window(_("Warclient: You must select cities "
-			   "to set a rally points."));
+                           "to set a rally points."));
     return;
   }
 
@@ -2194,10 +2194,10 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
 
     if (server_has_extglobalinfo) {
       if (ptile) {
-	dsend_packet_city_set_rally_point(&aconnection, pcity->id,
-					  TILE_XY(ptile));
+        dsend_packet_city_set_rally_point(&aconnection, pcity->id,
+                                          TILE_XY(ptile));
       } else {
-	dsend_packet_city_clear_rally_point(&aconnection, pcity->id);
+        dsend_packet_city_clear_rally_point(&aconnection, pcity->id);
       }
     } else {
       pcity->rally_point = ptile;
@@ -2207,12 +2207,12 @@ void set_rally_point_for_selected_cities(struct tile *ptile)
   if (!first) {
     if (ptile) {
       my_snprintf(message, sizeof(message),
-		  _("Warclient: Set rally point %s for: %s."),
-		  get_tile_info(ptile), buf);
+                  _("Warclient: Set rally point %s for: %s."),
+                  get_tile_info(ptile), buf);
       append_output_window(message);
     } else {
       my_snprintf(message, sizeof(message),
-		  _("Warclient: Remove rally points for: %s."), buf);
+                  _("Warclient: Remove rally points for: %s."), buf);
       append_output_window(message);
     }
   }
@@ -2267,19 +2267,19 @@ void do_unit_air_patrol(struct unit *punit, struct tile *ptile)
       /* Note, it is a static buffer, we cannot use one both. */
       sz_strlcpy(tile_info, get_tile_info(ptile));
       my_snprintf(buf, sizeof(buf),
-		  _("Warclient: %s %d patrolling %s "
-		    "instead of %s."),
-		  unit_name(punit->type), punit->id,
-		  tile_info, get_tile_info(punit->air_patrol_tile));
+                  _("Warclient: %s %d patrolling %s "
+                    "instead of %s."),
+                  unit_name(punit->type), punit->id,
+                  tile_info, get_tile_info(punit->air_patrol_tile));
     } else {
       my_snprintf(buf, sizeof(buf), _("Warclient: %s %d patrolling %s."),
-		  unit_name(punit->type), punit->id, get_tile_info(ptile));
+                  unit_name(punit->type), punit->id, get_tile_info(ptile));
     }
   } else if (punit->air_patrol_tile) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: %s %d stopped patrolling %s."),
-		unit_name(punit->type), punit->id,
-		get_tile_info(punit->air_patrol_tile));
+                _("Warclient: %s %d stopped patrolling %s."),
+                unit_name(punit->type), punit->id,
+                get_tile_info(punit->air_patrol_tile));
   }
   append_output_window(buf);
 

@@ -16,7 +16,7 @@
 #endif
 
 #include <string.h>
-#include <unistd.h>		/* close */
+#include <unistd.h>             /* close */
 
 #include <esd.h>
 
@@ -61,7 +61,7 @@ static void my_shutdown(void)
   for (i = 0; i < MAX_SAMPLES; i++) {
     if (samples[i].id != -1) {
       freelog(LOG_DEBUG, "Freeing sample <%d> in slot %d", samples[i].id,
-	      i);
+              i);
       esd_sample_free(sock, samples[i].id);
     }
   }
@@ -97,7 +97,7 @@ static void my_wait(void)
   Play sound sample
 **************************************************************************/
 static bool my_play(const char *const tag, const char *const fullpath,
-		    bool repeat)
+                    bool repeat)
 {
   static char program_name[] = "civclient";
   static int i;
@@ -119,7 +119,7 @@ static bool my_play(const char *const tag, const char *const fullpath,
     music_id = esd_file_cache(sock, program_name, fullpath);
     if (music_id < 0) {
       freelog(LOG_ERROR, _("Error while caching sample <%d>: "
-			   "confirm value != music_id\n"), music_id);
+                           "confirm value != music_id\n"), music_id);
     }
 
     esd_sample_loop(sock, music_id);
@@ -127,10 +127,10 @@ static bool my_play(const char *const tag, const char *const fullpath,
     /* see if we can cache on this one */
     for (i = 0; i < MAX_SAMPLES; i++) {
       if (samples[i].tag && (strcmp(samples[i].tag, tag) == 0)) {
-	freelog(LOG_DEBUG, "Playing file %s from cache (slot %d)", fullpath,
-		i);
-	esd_sample_play(sock, samples[i].id);
-	return TRUE;
+        freelog(LOG_DEBUG, "Playing file %s from cache (slot %d)", fullpath,
+                i);
+        esd_sample_play(sock, samples[i].id);
+        return TRUE;
       }
     }
 
@@ -141,13 +141,13 @@ static bool my_play(const char *const tag, const char *const fullpath,
     }
 
     freelog(LOG_DEBUG, "Playing file %s in slot %d", fullpath,
-	    last_sample);
+            last_sample);
     samples[last_sample].id = esd_file_cache(sock, program_name, fullpath);
     samples[last_sample].tag = tag;
     if (samples[last_sample].id < 0) {
       freelog(LOG_ERROR, _("Error while caching sample <%d>: "
-			   "confirm value != samples[].id\n"),
-	      samples[last_sample].id);
+                           "confirm value != samples[].id\n"),
+              samples[last_sample].id);
     }
 
     esd_sample_play(sock, samples[last_sample].id);

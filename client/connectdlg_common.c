@@ -26,11 +26,11 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>		/* fchmod */
+#include <sys/types.h>          /* fchmod */
 #endif
 
 #ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>		/* fchmod */
+#include <sys/stat.h>           /* fchmod */
 #endif
 
 #ifdef HAVE_SYS_WAIT_H
@@ -164,7 +164,7 @@ void client_kill_server(bool force)
       TerminateProcess(server_process, 0);
       CloseHandle(server_process);
       if (loghandle != INVALID_HANDLE_VALUE) {
-	CloseHandle(loghandle);
+        CloseHandle(loghandle);
       }
       server_process = INVALID_HANDLE_VALUE;
       loghandle = INVALID_HANDLE_VALUE;
@@ -287,7 +287,7 @@ bool client_start_server(void)
     loghandle = CreateFile(logfile, GENERIC_WRITE,
                            FILE_SHARE_READ | FILE_SHARE_WRITE,
                            NULL,
-			   OPEN_ALWAYS, 0, NULL);
+                           OPEN_ALWAYS, 0, NULL);
   }
 
   ZeroMemory(&si, sizeof(si));
@@ -303,28 +303,28 @@ bool client_start_server(void)
 
   if (logfile) {
     my_snprintf(logcmdline, sizeof(logcmdline), " --debug 3 --log %s",
-		logfile);
+                logfile);
   }
   if (scriptfile) {
     my_snprintf(scriptcmdline, sizeof(scriptcmdline),  " --read %s",
-		scriptfile);
+                scriptfile);
   }
 
   my_snprintf(options, sizeof(options), "-p %d -q 1 -e%s%s",
-	      internal_server_port, logcmdline, scriptcmdline);
+              internal_server_port, logcmdline, scriptcmdline);
   my_snprintf(cmdline1, sizeof(cmdline1), "./ser %s", options);
   my_snprintf(cmdline2, sizeof(cmdline2), "./server/civserver %s", options);
   my_snprintf(cmdline3, sizeof(cmdline3), "civserver %s", options);
 
   if (!CreateProcess(NULL, cmdline1, NULL, NULL, TRUE,
-		     DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
-		     NULL, NULL, &si, &pi)
+                     DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
+                     NULL, NULL, &si, &pi)
       && !CreateProcess(NULL, cmdline2, NULL, NULL, TRUE,
-			DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
-			NULL, NULL, &si, &pi)
+                        DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
+                        NULL, NULL, &si, &pi)
       && !CreateProcess(NULL, cmdline3, NULL, NULL, TRUE,
-			DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
-			NULL, NULL, &si, &pi)) {
+                        DETACHED_PROCESS | NORMAL_PRIORITY_CLASS,
+                        NULL, NULL, &si, &pi)) {
     append_output_window(_("Couldn't start the server."));
     append_output_window(_("You'll have to start one manually. Sorry..."));
     return FALSE;
@@ -397,9 +397,9 @@ void client_send_initial_commands(void)
    * is safe enough.  Note that if you load a savegame the topology will be
    * set but then overwritten during the load. */
   my_snprintf(buf, sizeof(buf), "/set topology %d",
-	      (TF_WRAPX
-	       | ((is_isometric && hex_height == 0) ? TF_ISO : 0)
-	       | ((hex_width != 0 || hex_height != 0) ? TF_HEX : 0)));
+              (TF_WRAPX
+               | ((is_isometric && hex_height == 0) ? TF_ISO : 0)
+               | ((hex_width != 0 || hex_height != 0) ? TF_HEX : 0)));
   send_chat(buf);
 }
 
@@ -450,12 +450,12 @@ void send_client_wants_hack(const char *filename)
       struct section_file file;
 
       if (!is_filename_safe(filename)) {
-	return;
+        return;
       }
 
       /* get the full filename path */
       interpret_tilde(challenge_fullname, sizeof(challenge_fullname),
-	  "~/.freeciv/");
+          "~/.freeciv/");
       make_dir(challenge_fullname);
 
       sz_strlcat(challenge_fullname, filename);
@@ -466,8 +466,8 @@ void send_client_wants_hack(const char *filename)
       section_file_init(&file);
       secfile_insert_str(&file, req.token, "challenge.token");
       if (!section_file_save(&file, challenge_fullname, 0)) {
-	freelog(LOG_ERROR, "Couldn't write token to temporary file: %s",
-	    challenge_fullname);
+        freelog(LOG_ERROR, "Couldn't write token to temporary file: %s",
+            challenge_fullname);
       }
       section_file_free(&file);
 
@@ -486,8 +486,8 @@ void handle_single_want_hack_reply(bool you_have_hack)
     /* remove challenge file */
     if (challenge_fullname[0] != '\0') {
       if (remove(challenge_fullname) == -1) {
-	freelog(LOG_ERROR, "Couldn't remove temporary file: %s",
-	    challenge_fullname);
+        freelog(LOG_ERROR, "Couldn't remove temporary file: %s",
+            challenge_fullname);
       }
       challenge_fullname[0] = '\0';
     }
@@ -518,7 +518,7 @@ void send_start_saved_game(void)
   send_chat("/set timeout 0");
   send_chat("/set autotoggle 1");
   my_snprintf(buf, sizeof(buf), "/take \"%s\" \"%s\"",
-      	      default_user_name, player_name);
+              default_user_name, player_name);
   send_chat(buf);
   send_chat("/start");
 }

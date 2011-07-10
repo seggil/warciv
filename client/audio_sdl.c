@@ -39,7 +39,7 @@ static struct sample samples[MIX_CHANNELS];
   Play sound
 **************************************************************************/
 static bool my_play(const char *const tag, const char *const fullpath,
-		    bool repeat)
+                    bool repeat)
 {
   int i, j;
   Mix_Chunk *wave = NULL;
@@ -59,7 +59,7 @@ static bool my_play(const char *const tag, const char *const fullpath,
       freelog(LOG_FATAL, "Can't open file '%s'", fullpath);
     }
 
-    Mix_PlayMusic(mus, -1);	/* -1 means loop forever */
+    Mix_PlayMusic(mus, -1);     /* -1 means loop forever */
     freelog(LOG_VERBOSE, "Playing file %s on music channel", fullpath);
     /* in case we did a my_stop() recently; add volume controls later */
     Mix_VolumeMusic(MIX_MAX_VOLUME);
@@ -69,12 +69,12 @@ static bool my_play(const char *const tag, const char *const fullpath,
     /* see if we can cache on this one */
     for (j = 0; j < MIX_CHANNELS; j++) {
       if (samples[j].tag && (strcmp(samples[j].tag, tag) == 0)) {
-	freelog(LOG_DEBUG, "Playing file %s from cache (slot %d)", fullpath,
-		j);
-	i = Mix_PlayChannel(-1, samples[j].wave, 0);
-	return TRUE;
+        freelog(LOG_DEBUG, "Playing file %s from cache (slot %d)", fullpath,
+                j);
+        i = Mix_PlayChannel(-1, samples[j].wave, 0);
+        return TRUE;
       }
-    }				/* guess not */
+    }                           /* guess not */
 
     /* load wave */
     wave = Mix_LoadWAV(fullpath);

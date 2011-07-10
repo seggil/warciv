@@ -132,19 +132,19 @@ void do_unit_nuke(struct unit *punit);
 void do_unit_paradrop_to(struct unit *punit, struct tile *ptile);
 void do_unit_patrol_to(struct unit *punit, struct tile *ptile);
 void do_unit_connect(struct unit *punit, struct tile *ptile,
-		     enum unit_activity activity);
+                     enum unit_activity activity);
 void do_map_click(struct tile *ptile, enum quickselect_type qtype);
 void attack_after_move(struct unit *punit);
 
 void set_hover_state(struct unit *punit, enum cursor_hover_state state,
-		     enum unit_activity activity);
+                     enum unit_activity activity);
 void request_active_unit(struct unit *punit);
 void request_center_focus_unit(void);
 void request_move_unit_direction(struct unit *punit, int dir);
 void request_new_unit_activity(struct unit *punit, enum unit_activity act);
 void request_new_unit_activity_targeted(struct unit *punit,
-					enum unit_activity act,
-					enum tile_special_type tgt);
+                                        enum unit_activity act,
+                                        enum tile_special_type tgt);
 void request_unit_load(struct unit *pcargo, struct unit *ptransporter);
 void request_unit_unload(struct unit *pcargo);
 void request_unit_auto(struct unit *punit);
@@ -171,7 +171,7 @@ void request_unit_wakeup(struct unit *punit);
 void request_unit_delayed_goto(void);
 void request_unit_clear_delayed_orders(void);
 void request_diplomat_action(enum diplomat_actions action, int dipl_id,
-			     int target_id, int value);
+                             int target_id, int value);
 
 void request_toggle_map_grid(void);
 void request_toggle_map_borders(void);

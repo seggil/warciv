@@ -16,7 +16,7 @@
 #endif
 
 #include <assert.h>
-#include <stdlib.h>		/* qsort */
+#include <stdlib.h>             /* qsort */
 
 #include "combat.h"
 #include "fcintl.h"
@@ -128,12 +128,12 @@ static void define_tiles_within_rectangle(void)
       /*  For diamond shaped tiles, every other row is indented.
        */
       if ((yy % 2 ^ xx % 2) != 0) {
-	continue;
+        continue;
       }
 
       ptile = canvas_pos_to_tile(x, y);
       if (!ptile) {
-	continue;
+        continue;
       }
 
       /*  "Half-tile" indentation must match, or we'll process
@@ -142,24 +142,24 @@ static void define_tiles_within_rectangle(void)
       tile_to_canvas_pos(&x2, &y2, ptile);
 
       if ((yy % 2) != 0 && ((rec_corner_x % W) ^ abs(x2 % W)) != 0) {
-	continue;
+        continue;
       }
 
       /* Select units */
       if (multi_select_map_selection) {
-	unit_list_iterate(ptile->units, punit) {
-	  if (punit->owner == get_player_idx()) {
-	    if (first) {
-	      multi_select_clear(0);
-	      set_unit_focus(punit);
-	      first = FALSE;
-	    } else {
-	      multi_select_add_unit(punit);
-	    }
-	  }
-	} unit_list_iterate_end;
-	update_menus();
-	update_unit_info_label(get_unit_in_focus());
+        unit_list_iterate(ptile->units, punit) {
+          if (punit->owner == get_player_idx()) {
+            if (first) {
+              multi_select_clear(0);
+              set_unit_focus(punit);
+              first = FALSE;
+            } else {
+              multi_select_add_unit(punit);
+            }
+          }
+        } unit_list_iterate_end;
+        update_menus();
+        update_unit_info_label(get_unit_in_focus());
       }
 
       /*  Tile passed all tests; process it.
@@ -405,21 +405,21 @@ void key_cities_overlay(int canvas_x, int canvas_y)
 
     if (client_is_global_observer()) {
       cities_iterate(pcity) {
-	if (pcity->client.colored) {
-	  if (++num >= 2) {
-	    /* No need more */
-	    break;
-	  }
-	}
+        if (pcity->client.colored) {
+          if (++num >= 2) {
+            /* No need more */
+            break;
+          }
+        }
       } cities_iterate_end;
     } else {
       city_list_iterate(get_player_ptr()->cities, pcity) {
-	if (pcity->client.colored) {
-	  if (++num >= 2) {
-	    /* No need more */
-	    break;
-	  }
-	}
+        if (pcity->client.colored) {
+          if (++num >= 2) {
+            /* No need more */
+            break;
+          }
+        }
       } city_list_iterate_end;
     }
 
@@ -427,15 +427,15 @@ void key_cities_overlay(int canvas_x, int canvas_y)
 
     if (client_is_global_observer()) {
       cities_iterate(pcity) {
-	if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
-	  toggle_city_color(pcity);
-	}
+        if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
+          toggle_city_color(pcity);
+        }
       } cities_iterate_end;
     } else {
       city_list_iterate(get_player_ptr()->cities, pcity) {
-	if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
-	  toggle_city_color(pcity);
-	}
+        if ((toggle_on ? !pcity->client.colored : pcity->client.colored)) {
+          toggle_city_color(pcity);
+        }
       } city_list_iterate_end;
     }
   }
@@ -526,7 +526,7 @@ static void clipboard_send_production_packet(struct city *pcity)
   }
 
   dsend_packet_city_change(&aconnection, pcity->id, clipboard,
-			   clipboard_is_unit);
+                           clipboard_is_unit);
 }
 
 /**************************************************************************
@@ -618,7 +618,7 @@ void scroll_mapview(enum direction8 gui_dir)
   write) a different xxx_button_pressed function.
 **************************************************************************/
 void action_button_pressed(int canvas_x, int canvas_y,
-			   enum quickselect_type qtype)
+                           enum quickselect_type qtype)
 {
   struct tile *ptile = canvas_pos_to_tile(canvas_x, canvas_y);
 
@@ -655,20 +655,20 @@ void adjust_workers_button_pressed(int canvas_x, int canvas_y)
 
     if (pcity && !cma_is_city_under_agent(pcity, NULL)) {
       if (!map_to_city_map(&city_x, &city_y, pcity, ptile)) {
-	assert(0);
+        assert(0);
       }
 
       worker = get_worker_city(pcity, city_x, city_y);
       if (worker == C_TILE_WORKER) {
-	dsend_packet_city_make_specialist(&aconnection, pcity->id,
-					  city_x, city_y);
+        dsend_packet_city_make_specialist(&aconnection, pcity->id,
+                                          city_x, city_y);
       } else if (worker == C_TILE_EMPTY) {
-	dsend_packet_city_make_worker(&aconnection, pcity->id,
-				      city_x, city_y);
+        dsend_packet_city_make_worker(&aconnection, pcity->id,
+                                      city_x, city_y);
       } else {
-	/* If worker == C_TILE_UNAVAILABLE then we can't use this tile.  No
-	 * packet is sent and city_workers_display is not updated. */
-	return;
+        /* If worker == C_TILE_UNAVAILABLE then we can't use this tile.  No
+         * packet is sent and city_workers_display is not updated. */
+        return;
       }
 
       /* When the city info packet is received, update the workers on the
@@ -705,25 +705,25 @@ void update_turn_done_button_state()
     is_turn_done_state_valid = TRUE;
     set_turn_done_button_state(turn_done_state);
     freelog(LOG_DEBUG, "setting turn done button state init %d",
-	    turn_done_state);
+            turn_done_state);
   }
 
   new_state = (can_client_issue_orders()
-	       && !get_player_ptr()->turn_done && !agents_busy()
-	       && !turn_done_sent);
+               && !get_player_ptr()->turn_done && !agents_busy()
+               && !turn_done_sent);
   if (new_state == turn_done_state) {
     return;
   }
 
   freelog(LOG_DEBUG, "setting turn done button state from %d to %d",
-	  turn_done_state, new_state);
+          turn_done_state, new_state);
   turn_done_state = new_state;
 
   set_turn_done_button_state(turn_done_state);
 
   if (turn_done_state) {
     if (waiting_for_end_turn
-	|| (get_player_ptr()->ai.control && !ai_manual_turn_done)) {
+        || (get_player_ptr()->ai.control && !ai_manual_turn_done)) {
       send_turn_done();
     } else {
       update_turn_done_button(TRUE);

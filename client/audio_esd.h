@@ -15,4 +15,4 @@
 
 void audio_esd_init(void);
 
-#endif				/* FC__AUDIO_ESD_H */
+#endif                          /* FC__AUDIO_ESD_H */

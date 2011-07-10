@@ -49,7 +49,7 @@ static void my_wait(void)
   Play sound sample
 **************************************************************************/
 static bool my_play(const char *const tag, const char *const fullpath,
-		    bool repeat)
+                    bool repeat)
 {
   if (strcmp(tag, "e_turn_bell") == 0) {
     sound_bell();

@@ -18,8 +18,8 @@
 #include <assert.h>
 
 #include "fcintl.h"
-#include "mem.h"		/* free */
-#include "support.h"		/* my_snprintf */
+#include "mem.h"                /* free */
+#include "support.h"            /* my_snprintf */
 
 #include "game.h"
 #include "government.h"
@@ -27,7 +27,7 @@
 
 #include "repodlgs_g.h"
 
-#include "civclient.h"		/* can_client_issue_orders */
+#include "civclient.h"          /* can_client_issue_orders */
 #include "clinet.h"
 #include "control.h"
 #include "repodlgs_common.h"
@@ -44,8 +44,8 @@ int num_options_categories;
   entries. The array must be able to hold at least B_LAST entries.
 *****************************************************************/
 void get_economy_report_data(struct improvement_entry *entries,
-			     int *num_entries_used, int *total_cost,
-			     int *total_income)
+                             int *num_entries_used, int *total_cost,
+                             int *total_income)
 {
   *num_entries_used = 0;
   *total_cost = 0;
@@ -54,15 +54,15 @@ void get_economy_report_data(struct improvement_entry *entries,
     if (!is_wonder(impr_id)) {
       int count = 0, cost = 0;
       city_list_iterate(get_player_ptr()->cities, pcity) {
-	if (city_got_building(pcity, impr_id)) {
-	  count++;
-	  cost += improvement_upkeep(pcity, impr_id);
-	}
+        if (city_got_building(pcity, impr_id)) {
+          count++;
+          cost += improvement_upkeep(pcity, impr_id);
+        }
       }
       city_list_iterate_end;
 
       if (count == 0) {
-	continue;
+        continue;
       }
 
       entries[*num_entries_used].type = impr_id;
@@ -95,7 +95,7 @@ void get_economy_report_data(struct improvement_entry *entries,
   the array is added to num_entries_used.
 ******************************************************************/
 void get_economy_report_units_data(struct unit_entry *entries,
-				   int *num_entries_used, int *total_cost)
+                                   int *num_entries_used, int *total_cost)
 {
   int count, cost, partial_cost;
   struct unit_type *unittype;
@@ -114,10 +114,10 @@ void get_economy_report_units_data(struct unit_entry *entries,
     city_list_iterate(get_player_ptr()->cities, pcity) {
       unit_list_iterate(pcity->units_supported, punit) {
 
-	if (punit->type == utype) {
-	  count++;
-	  partial_cost += punit->upkeep_gold;
-	}
+        if (punit->type == utype) {
+          count++;
+          partial_cost += punit->upkeep_gold;
+        }
 
       } unit_list_iterate_end;
     } city_list_iterate_end;
@@ -313,7 +313,7 @@ void handle_options_settable(struct packet_options_settable *packet)
   what was sold.
 ****************************************************************************/
 void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
-			   char *message, size_t message_sz)
+                           char *message, size_t message_sz)
 {
   int count = 0, gold = 0;
 
@@ -324,9 +324,9 @@ void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
 
   city_list_iterate(get_player_ptr()->cities, pcity) {
     if (!pcity->did_sell && city_got_building(pcity, impr)
-	&& (!obsolete_only
-	    || improvement_obsolete(get_player_ptr(), impr)
-	    || is_building_replaced(pcity, impr))) {
+        && (!obsolete_only
+            || improvement_obsolete(get_player_ptr(), impr)
+            || is_building_replaced(pcity, impr))) {
       count++;
       gold += impr_sell_gold(impr);
       city_sell_improvement(pcity, impr);
@@ -335,10 +335,10 @@ void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
 
   if (count > 0) {
     my_snprintf(message, message_sz, _("Sold %d %s for %d gold."),
-		count, get_improvement_name(impr), gold);
+                count, get_improvement_name(impr), gold);
   } else {
     my_snprintf(message, message_sz, _("No %s could be sold."),
-		get_improvement_name(impr));
+                get_improvement_name(impr));
   }
 }
 
@@ -350,7 +350,7 @@ void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
   what was sold.
 ****************************************************************************/
 void disband_all_units(Unit_Type_id type, bool in_cities_only,
-		       char *message, size_t message_sz)
+                       char *message, size_t message_sz)
 {
   int count = 0;
 
@@ -362,7 +362,7 @@ void disband_all_units(Unit_Type_id type, bool in_cities_only,
 
   if (unit_type_flag(type, F_UNDISBANDABLE)) {
     my_snprintf(message, message_sz, _("%s cannot be disbanded."),
-		unit_name(type));
+                unit_name(type));
     return;
   }
 
@@ -373,19 +373,19 @@ void disband_all_units(Unit_Type_id type, bool in_cities_only,
       struct city *incity = map_get_city(punit->tile);
 
       if (punit->type == type
-	  && (!in_cities_only
-	      || (incity && city_owner(incity) == get_player_ptr()))) {
-	count++;
-	request_unit_disband(punit);
+          && (!in_cities_only
+              || (incity && city_owner(incity) == get_player_ptr()))) {
+        count++;
+        request_unit_disband(punit);
       }
     } unit_list_iterate_end;
   } city_list_iterate_end;
 
   if (count > 0) {
     my_snprintf(message, message_sz, _("Disbanded %d %s."),
-		count, unit_name(type));
+                count, unit_name(type));
   } else {
     my_snprintf(message, message_sz, _("No %s could be disbanded."),
-		unit_name(type));
+                unit_name(type));
   }
 }

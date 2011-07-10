@@ -51,16 +51,16 @@ void mapview_redraw_callback(struct client_option *poption);
 void split_message_window_callback(struct client_option *poption);
 
 static const char *category_name[COC_NUM] = {
-  N_("Graphics"),		/* COC_GRAPHICS */
-  N_("Interface"),		/* COC_INTERFACE */
-  N_("Sound"),			/* COC_SOUND */
-  N_("Chat"),			/* COC_CHAT */
-  N_("Messages"),		/* COC_MESSAGE */
-  N_("Network"),		/* COC_NETWORK */
-  N_("Gameplay"),		/* COC_GAMEPLAY */
-  N_("Multi-selection"),	/* COC_MULTI_SELECTION */
-  N_("Delayed goto"),		/* COC_DELAYED_GOTO */
-  N_("Trade routes")		/* COC_TRADE */
+  N_("Graphics"),               /* COC_GRAPHICS */
+  N_("Interface"),              /* COC_INTERFACE */
+  N_("Sound"),                  /* COC_SOUND */
+  N_("Chat"),                   /* COC_CHAT */
+  N_("Messages"),               /* COC_MESSAGE */
+  N_("Network"),                /* COC_NETWORK */
+  N_("Gameplay"),               /* COC_GAMEPLAY */
+  N_("Multi-selection"),        /* COC_MULTI_SELECTION */
+  N_("Delayed goto"),           /* COC_DELAYED_GOTO */
+  N_("Trade routes")            /* COC_TRADE */
 };
 
 /** Defaults for options normally on command line **/
@@ -126,7 +126,7 @@ char chat_log_directory[MAX_LEN_PATH];
 enum player_colors_modes player_colors_mode;
 #ifndef ASYNC_TRADE_PLANNING
 int trade_time_limit;
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
 bool trade_mode_best_values;
 bool trade_mode_allow_free_other;
 bool trade_mode_internal_first;
@@ -146,7 +146,7 @@ bool update_city_text_in_refresh_tile = TRUE;
   Caravan action names accessor.
 ***********************************************************************/
 static const char *get_caravan_action_name(
-		       enum default_caravan_unit_actions action)
+                       enum default_caravan_unit_actions action)
 {
   switch (action) {
   case DCA_POPUP_DIALOG:
@@ -166,7 +166,7 @@ static const char *get_caravan_action_name(
   Diplomat action upon unit names accessor.
 ***********************************************************************/
 static const char *get_diplomat_action_upon_unit_name(
-		       enum default_diplomat_unit_actions action)
+                       enum default_diplomat_unit_actions action)
 {
   switch (action) {
   case DDUA_POPUP_DIALOG:
@@ -186,7 +186,7 @@ static const char *get_diplomat_action_upon_unit_name(
   Diplomat action upon city names accessor.
 ***********************************************************************/
 static const char *get_diplomat_action_upon_city_name(
-		       enum default_diplomat_city_actions action)
+                       enum default_diplomat_city_actions action)
 {
   switch (action) {
   case DDCA_POPUP_DIALOG:
@@ -305,336 +305,336 @@ static const char *get_filter_value_name(enum filter_value value)
 }
 
 #define GEN_INT_OPTION(oname, odesc, ohelp, ocat, odef, omin, omax, ocb) \
-{									 \
-  .name = #oname,							 \
-  .description = odesc,							 \
-  .help_text = ohelp,							 \
-  .category = ocat,							 \
-  .type = COT_INTEGER,							 \
-  {									 \
-    .integer = {							 \
-      .pvalue = &oname,							 \
-      .def = odef,							 \
-      .min = omin,							 \
-      .max = omax							 \
-    }									 \
-  },									 \
-  .change_callback = ocb,						 \
+{                                                                        \
+  .name = #oname,                                                        \
+  .description = odesc,                                                  \
+  .help_text = ohelp,                                                    \
+  .category = ocat,                                                      \
+  .type = COT_INTEGER,                                                   \
+  {                                                                      \
+    .integer = {                                                         \
+      .pvalue = &oname,                                                  \
+      .def = odef,                                                       \
+      .min = omin,                                                       \
+      .max = omax                                                        \
+    }                                                                    \
+  },                                                                     \
+  .change_callback = ocb,                                                \
 }
 
 #define GEN_BOOL_OPTION(oname, odesc, ohelp, ocat, odef, ocb) \
-{ .name = #oname,					      \
-  .description = odesc,					      \
-  .help_text = ohelp,					      \
-  .category = ocat,					      \
-  .type = COT_BOOLEAN,					      \
-  {							      \
-    .boolean = {					      \
-      .pvalue = &oname,					      \
-      .def = odef,					      \
-    }							      \
-  },							      \
-  .change_callback = ocb,				      \
+{ .name = #oname,                                             \
+  .description = odesc,                                       \
+  .help_text = ohelp,                                         \
+  .category = ocat,                                           \
+  .type = COT_BOOLEAN,                                        \
+  {                                                           \
+    .boolean = {                                              \
+      .pvalue = &oname,                                       \
+      .def = odef,                                            \
+    }                                                         \
+  },                                                          \
+  .change_callback = ocb,                                     \
 }
 
 #define GEN_STR_OPTION(oname, odesc, ohelp, ocat, odef, ocb) \
-{ .name = #oname,					     \
-  .description = odesc,					     \
-  .help_text = ohelp,					     \
-  .category = ocat,					     \
-  .type = COT_STRING,					     \
-  {							     \
-    .string = {						     \
-      .pvalue = oname,					     \
-      .size = sizeof(oname),				     \
-      .def = odef,					     \
-      .val_accessor = NULL				     \
-    }							     \
-  },							     \
-  .change_callback = ocb,				     \
+{ .name = #oname,                                            \
+  .description = odesc,                                      \
+  .help_text = ohelp,                                        \
+  .category = ocat,                                          \
+  .type = COT_STRING,                                        \
+  {                                                          \
+    .string = {                                              \
+      .pvalue = oname,                                       \
+      .size = sizeof(oname),                                 \
+      .def = odef,                                           \
+      .val_accessor = NULL                                   \
+    }                                                        \
+  },                                                         \
+  .change_callback = ocb,                                    \
 }
 
 #define GEN_PWD_OPTION(oname, odesc, ohelp, ocat, odef, ocb) \
-{ .name = #oname,					     \
-  .description = odesc,					     \
-  .help_text = ohelp,					     \
-  .category = ocat,					     \
-  .type = COT_PASSWORD,					     \
-  {							     \
-    .string = {						     \
-      .pvalue = oname,					     \
-      .size = sizeof(oname),				     \
-      .def = odef,					     \
-      .val_accessor = NULL				     \
-    }							     \
-  },							     \
-  .change_callback = ocb,				     \
+{ .name = #oname,                                            \
+  .description = odesc,                                      \
+  .help_text = ohelp,                                        \
+  .category = ocat,                                          \
+  .type = COT_PASSWORD,                                      \
+  {                                                          \
+    .string = {                                              \
+      .pvalue = oname,                                       \
+      .size = sizeof(oname),                                 \
+      .def = odef,                                           \
+      .val_accessor = NULL                                   \
+    }                                                        \
+  },                                                         \
+  .change_callback = ocb,                                    \
 }
 
-#define GEN_STR_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb)	\
-{ .name = #oname,							\
-  .description = odesc,							\
-  .help_text = ohelp,							\
-  .category = ocat,							\
-  .type = COT_STRING,							\
-  {									\
-    .string = {								\
-      .pvalue = oname,							\
-      .size = sizeof(oname),						\
-      .def = odef,							\
-      .val_accessor = oacc						\
-    }									\
-  },									\
-  .change_callback = ocb,						\
+#define GEN_STR_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb) \
+{ .name = #oname,                                                       \
+  .description = odesc,                                                 \
+  .help_text = ohelp,                                                   \
+  .category = ocat,                                                     \
+  .type = COT_STRING,                                                   \
+  {                                                                     \
+    .string = {                                                         \
+      .pvalue = oname,                                                  \
+      .size = sizeof(oname),                                            \
+      .def = odef,                                                      \
+      .val_accessor = oacc                                              \
+    }                                                                   \
+  },                                                                    \
+  .change_callback = ocb,                                               \
 }
 
 #define GEN_STR_VEC_OPTION(oname, odesc, ohelp, ocat, odef, ocb) \
-{ .name = #oname,						 \
-  .description = odesc,						 \
-  .help_text = ohelp,						 \
-  .category = ocat,						 \
-  .type = COT_STRING_VEC,					 \
-  {								 \
-    .string_vec = {						 \
-      .pvector = &oname,						 \
-      .def = odef,						 \
-    }								 \
-  },								 \
-  .change_callback = ocb,					 \
+{ .name = #oname,                                                \
+  .description = odesc,                                          \
+  .help_text = ohelp,                                            \
+  .category = ocat,                                              \
+  .type = COT_STRING_VEC,                                        \
+  {                                                              \
+    .string_vec = {                                              \
+      .pvector = &oname,                                         \
+      .def = odef,                                               \
+    }                                                            \
+  },                                                             \
+  .change_callback = ocb,                                        \
 }
 
 #define GEN_ENUM_LIST_OPTION(oname, odesc, ohelp, ocat, odef, oacc, ocb) \
-{ .name = #oname,							 \
-  .description = odesc,							 \
-  .help_text = ohelp,							 \
-  .category = ocat,							 \
-  .type = COT_ENUM_LIST,						 \
-  {									 \
-    .enum_list = {							 \
-      .pvalue = (int *)(void *) &oname,					 \
-      .def = odef,							 \
-      .str_accessor = (const char *(*)(int)) oacc			 \
-    }									 \
-  },									 \
-  .change_callback = ocb,						 \
+{ .name = #oname,                                                        \
+  .description = odesc,                                                  \
+  .help_text = ohelp,                                                    \
+  .category = ocat,                                                      \
+  .type = COT_ENUM_LIST,                                                 \
+  {                                                                      \
+    .enum_list = {                                                       \
+      .pvalue = (int *)(void *) &oname,                                  \
+      .def = odef,                                                       \
+      .str_accessor = (const char *(*)(int)) oacc                        \
+    }                                                                    \
+  },                                                                     \
+  .change_callback = ocb,                                                \
 }
 
 #define GEN_FILTER_OPTION(oname, odesc, ohelp, ocat, odef, ochange, oacc, ocb) \
-{ .name = #oname,							       \
-  .description = odesc,							       \
-  .help_text = ohelp,							       \
-  .category = ocat,							       \
-  .type = COT_FILTER,							       \
-  {									       \
-    .filter = {								       \
-      .pvalue = &oname,							       \
-      .def = odef,							       \
-      .change = (bool(*)(filter *, filter)) ochange,			       \
-      .str_accessor = (const char *(*)(filter)) oacc			       \
-    }									       \
-  },									       \
-  .change_callback = ocb,						       \
+{ .name = #oname,                                                              \
+  .description = odesc,                                                        \
+  .help_text = ohelp,                                                          \
+  .category = ocat,                                                            \
+  .type = COT_FILTER,                                                          \
+  {                                                                            \
+    .filter = {                                                                \
+      .pvalue = &oname,                                                        \
+      .def = odef,                                                             \
+      .change = (bool(*)(filter *, filter)) ochange,                           \
+      .str_accessor = (const char *(*)(filter)) oacc                           \
+    }                                                                          \
+  },                                                                           \
+  .change_callback = ocb,                                                      \
 }
 
 #define GEN_VOLUME_OPTION(oname, odesc, ohelp, ocat, odef, omin, omax, ocb) \
-{									    \
-  .name = #oname,							    \
-  .description = odesc,							    \
-  .help_text = ohelp,							    \
-  .category = ocat,							    \
-  .type = COT_VOLUME,							    \
-  {									    \
-    .integer = {							    \
-      .pvalue = &oname,							    \
-      .def = odef,							    \
-      .min = omin,							    \
-      .max = omax							    \
-    }									    \
-  },									    \
-  .change_callback = ocb,						    \
+{                                                                           \
+  .name = #oname,                                                           \
+  .description = odesc,                                                     \
+  .help_text = ohelp,                                                       \
+  .category = ocat,                                                         \
+  .type = COT_VOLUME,                                                       \
+  {                                                                         \
+    .integer = {                                                            \
+      .pvalue = &oname,                                                     \
+      .def = odef,                                                          \
+      .min = omin,                                                          \
+      .max = omax                                                           \
+    }                                                                       \
+  },                                                                        \
+  .change_callback = ocb,                                                   \
 }
 
 static struct client_option client_options[] = {
   GEN_STR_LIST_OPTION(default_tileset_name, N_("Tileset"),
-		      N_("By changing this option you change the active "
-			 "tileset. This is the same as using the -t "
-			 "command-line parameter."),
-		      COC_GRAPHICS, "",
-		      get_tileset_list, tilespec_reread_callback),
+                      N_("By changing this option you change the active "
+                         "tileset. This is the same as using the -t "
+                         "command-line parameter."),
+                      COC_GRAPHICS, "",
+                      get_tileset_list, tilespec_reread_callback),
   GEN_BOOL_OPTION(solid_color_behind_units,
-		  N_("Solid unit background color"),
-		  N_("Setting this option will cause units on the map "
-		     "view to be drawn with a solid background color "
-		     "instead of the flag backdrop."),
-		  COC_GRAPHICS, FALSE, mapview_redraw_callback),
+                  N_("Solid unit background color"),
+                  N_("Setting this option will cause units on the map "
+                     "view to be drawn with a solid background color "
+                     "instead of the flag backdrop."),
+                  COC_GRAPHICS, FALSE, mapview_redraw_callback),
   GEN_BOOL_OPTION(solid_unit_icon_bg,
-		  N_("Solid unit icon background color in city dialog"),
-		  N_("If this is enabled then a better method is used "
-		     "for drawing fog-of-war.  It is not any slower but "
-		     "will consume about twice as much memory."),
-		  COC_GRAPHICS, FALSE, mapview_redraw_callback),
+                  N_("Solid unit icon background color in city dialog"),
+                  N_("If this is enabled then a better method is used "
+                     "for drawing fog-of-war.  It is not any slower but "
+                     "will consume about twice as much memory."),
+                  COC_GRAPHICS, FALSE, mapview_redraw_callback),
   GEN_INT_OPTION(smooth_move_unit_msec,
-		 N_("Unit movement animation time (milliseconds)"),
-		 N_("This option controls how long unit \"animation\" takes "
-		    "when a unit moves on the map view.  Set it to 0 to "
-		    "disable animation entirely."),
-		 COC_GRAPHICS, 30, 0, 1000, NULL),
+                 N_("Unit movement animation time (milliseconds)"),
+                 N_("This option controls how long unit \"animation\" takes "
+                    "when a unit moves on the map view.  Set it to 0 to "
+                    "disable animation entirely."),
+                 COC_GRAPHICS, 30, 0, 1000, NULL),
   GEN_INT_OPTION(smooth_center_slide_msec,
-		 N_("Mapview recentering time (milliseconds)"),
-		 N_("When the map view is recentered, it will slide "
-		    "smoothly over the map to its new position.  This "
-		    "option controls how long this slide lasts.  Set it to "
-		    "0 to disable mapview sliding entirely."),
-		 COC_GRAPHICS, 200, 0, 1000, NULL),
+                 N_("Mapview recentering time (milliseconds)"),
+                 N_("When the map view is recentered, it will slide "
+                    "smoothly over the map to its new position.  This "
+                    "option controls how long this slide lasts.  Set it to "
+                    "0 to disable mapview sliding entirely."),
+                 COC_GRAPHICS, 200, 0, 1000, NULL),
   GEN_BOOL_OPTION(do_combat_animation, N_("Show combat animation"),
-		  N_("Disabling this option will turn off combat animation "
-		     "between units on the mapview."),
-		  COC_GRAPHICS, TRUE, NULL),
+                  N_("Disabling this option will turn off combat animation "
+                     "between units on the mapview."),
+                  COC_GRAPHICS, TRUE, NULL),
   GEN_BOOL_OPTION(concise_city_production, N_("Concise City Production"),
-		  N_("Set this option to make the city production (as shown "
-		     "in the city dialog) to be more compact."),
-		  COC_GRAPHICS, FALSE, NULL),
+                  N_("Set this option to make the city production (as shown "
+                     "in the city dialog) to be more compact."),
+                  COC_GRAPHICS, FALSE, NULL),
   GEN_BOOL_OPTION(show_task_icons, N_("Show worklist task icons"),
-		  N_("Disabling this will turn off the unit and building "
-		     "icons in the worklist dialog and the production "
-		     "tab of the city dialog."),
-		  COC_GRAPHICS, TRUE, NULL),
+                  N_("Disabling this will turn off the unit and building "
+                     "icons in the worklist dialog and the production "
+                     "tab of the city dialog."),
+                  COC_GRAPHICS, TRUE, NULL),
   GEN_BOOL_OPTION(do_not_recenter_overview,
                   N_("Do not recenter the overview for wrapped maps"),
-		  N_("When enabled, the overview map is not centred on "
-		     "the position you are watching. This is usefull in very "
-		     "large maps to remember absolute positions."),
-		  COC_GRAPHICS, FALSE, NULL),
+                  N_("When enabled, the overview map is not centred on "
+                     "the position you are watching. This is usefull in very "
+                     "large maps to remember absolute positions."),
+                  COC_GRAPHICS, FALSE, NULL),
   GEN_BOOL_OPTION(map_scrollbars, N_("Show Map Scrollbars"),
-		  N_("Disable this option to hide the scrollbars on the "
-		     "map view."),
-		  COC_GRAPHICS, TRUE, map_scrollbars_callback),
+                  N_("Disable this option to hide the scrollbars on the "
+                     "map view."),
+                  COC_GRAPHICS, TRUE, map_scrollbars_callback),
   GEN_BOOL_OPTION(fullscreen_mode, N_("Fullscreen Mode"),
-		  N_("If enabled, the main windows will take the whole "
-		     "screen."),
-		  COC_GRAPHICS, FALSE, fullscreen_mode_callback),
+                  N_("If enabled, the main windows will take the whole "
+                     "screen."),
+                  COC_GRAPHICS, FALSE, fullscreen_mode_callback),
   GEN_BOOL_OPTION(better_fog,
-		  N_("Better fog-of-war drawing"),
-		  N_("If this is enabled then a better method is used "
-		     "for drawing fog-of-war.  It is not any slower but "
-		     "will consume about twice as much memory."),
-		  COC_GRAPHICS, TRUE, mapview_redraw_callback),
+                  N_("Better fog-of-war drawing"),
+                  N_("If this is enabled then a better method is used "
+                     "for drawing fog-of-war.  It is not any slower but "
+                     "will consume about twice as much memory."),
+                  COC_GRAPHICS, TRUE, mapview_redraw_callback),
   GEN_BOOL_OPTION(use_voteinfo_bar, N_("Enable vote bar"),
                   N_("If this option is turned on, the vote bar will be "
-		     "displayed to show vote information."),
-		  COC_GRAPHICS, TRUE, NULL),
+                     "displayed to show vote information."),
+                  COC_GRAPHICS, TRUE, NULL),
   GEN_BOOL_OPTION(show_new_vote_in_front, N_("Set new votes at front"),
                   N_("If this option is enabled, then the new votes will go "
-		     "to the front of the vote list"),
-		  COC_GRAPHICS, FALSE, NULL),
+                     "to the front of the vote list"),
+                  COC_GRAPHICS, FALSE, NULL),
   GEN_BOOL_OPTION(always_show_votebar, N_("Always display the vote bar"),
                   N_("If this option is turned on, the vote bar will never be "
-		     "hiden, notably when there won't be any running vote."),
-		  COC_GRAPHICS, FALSE, NULL),
+                     "hiden, notably when there won't be any running vote."),
+                  COC_GRAPHICS, FALSE, NULL),
   GEN_BOOL_OPTION(do_not_show_votebar_if_not_player,
-		  N_("Do not show vote bar if not a player"),
+                  N_("Do not show vote bar if not a player"),
                   N_("If this option is enabled, the client won't show the "
-		     "vote bar if you are not a player."),
-		  COC_GRAPHICS, FALSE, NULL),
+                     "vote bar if you are not a player."),
+                  COC_GRAPHICS, FALSE, NULL),
   GEN_ENUM_LIST_OPTION(player_colors_mode, N_("Player colors display mode"),
-		       N_("This setting controls how the player colors are "
-			  "attributed to every player. Also, it controls "
-			  "how tiles, cities, and units are drawn in the map "
-			  "overview window"),
-		       COC_GRAPHICS, PCM_CLASSIC,
-		       player_colors_mode_get_name,
-		       player_colors_mode_option_callback),
+                       N_("This setting controls how the player colors are "
+                          "attributed to every player. Also, it controls "
+                          "how tiles, cities, and units are drawn in the map "
+                          "overview window"),
+                       COC_GRAPHICS, PCM_CLASSIC,
+                       player_colors_mode_get_name,
+                       player_colors_mode_option_callback),
 
   GEN_BOOL_OPTION(ai_popup_windows, N_("Popup dialogs in AI Mode"),
-		  N_("Disable this option if you do not want to "
-		     "to get windows popups when watching an AI player."),
-		  COC_INTERFACE, FALSE, NULL),
+                  N_("Disable this option if you do not want to "
+                     "to get windows popups when watching an AI player."),
+                  COC_INTERFACE, FALSE, NULL),
   GEN_BOOL_OPTION(ai_manual_turn_done, N_("Manual Turn Done in AI Mode"),
-		  N_("Disable this option if you do not want to "
-		     "press the Turn Done button manually when watching "
-		     "an AI player."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Disable this option if you do not want to "
+                     "press the Turn Done button manually when watching "
+                     "an AI player."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(auto_center_on_unit, N_("Auto Center on Units"),
-		  N_("Set this option to have the active unit centered "
-		     "automatically when the unit focus changes."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Set this option to have the active unit centered "
+                     "automatically when the unit focus changes."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(auto_center_on_combat, N_("Auto Center on Combat"),
-		  N_("Set this option to have any combat be centered "
-		     "automatically.  Disabled this will speed up the time "
-		     "between turns but may cause you to miss combat "
-		     "entirely."),
-		  COC_INTERFACE, FALSE, NULL),
+                  N_("Set this option to have any combat be centered "
+                     "automatically.  Disabled this will speed up the time "
+                     "between turns but may cause you to miss combat "
+                     "entirely."),
+                  COC_INTERFACE, FALSE, NULL),
   GEN_BOOL_OPTION(auto_center_each_turn, N_("Auto Center on New Turn"),
                   N_("Set this option to have the client automatically "
                      "recenter the map on a suitable location at the "
                      "start of each turn."),
                   COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(wakeup_focus, N_("Focus on Awakened Units"),
-		  N_("Set this option to have newly awoken units be "
-		     "focused automatically."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Set this option to have newly awoken units be "
+                     "focused automatically."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(goto_into_unknown, N_("Allow goto into the unknown"),
-		  N_("Setting this option will make the game consider "
-		     "moving into unknown tiles.  If not, then goto routes "
-		     "will detour around or be blocked by unknown tiles."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Setting this option will make the game consider "
+                     "moving into unknown tiles.  If not, then goto routes "
+                     "will detour around or be blocked by unknown tiles."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(center_when_popup_city, N_("Center map when Popup city"),
-		  N_("Setting this option makes the mapview center on a "
-		     "city when its city dialog is popped up."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Setting this option makes the mapview center on a "
+                     "city when its city dialog is popped up."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(auto_turn_done, N_("End Turn when done moving"),
-		  N_("Setting this option makes your turn end automatically "
-		     "when all your units are done moving."),
-		  COC_INTERFACE, FALSE, NULL),
+                  N_("Setting this option makes your turn end automatically "
+                     "when all your units are done moving."),
+                  COC_INTERFACE, FALSE, NULL),
   GEN_BOOL_OPTION(ask_city_name, N_("Prompt for city names"),
-		  N_("Disabling this option will make the names of newly "
-		     "founded cities chosen automatically by the server."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Disabling this option will make the names of newly "
+                     "founded cities chosen automatically by the server."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(popup_new_cities, N_("Pop up city dialog for new cities"),
-		  N_("Setting this option will pop up a newly-founded "
-		     "city's city dialog automatically."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Setting this option will pop up a newly-founded "
+                     "city's city dialog automatically."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(show_split_message_window,
-		  N_("Split chat and message window"),
-		  N_("When this option is turned to on, the chat and "
+                  N_("Split chat and message window"),
+                  N_("When this option is turned to on, the chat and "
                      "the message window will be splited in the main "
                      "booknote mark."),
-		  COC_INTERFACE, TRUE, split_message_window_callback),
+                  COC_INTERFACE, TRUE, split_message_window_callback),
   GEN_BOOL_OPTION(use_digits_short_cuts,
                   N_("Use the shorts cuts 1-9 for Warclient features"),
-		  N_("If this option is turned off, the keys 1-9 will "
-		     "be used to moves your units instead of Warclient "
-		     "shortcuts. This option is useful for laptops."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("If this option is turned off, the keys 1-9 will "
+                     "be used to moves your units instead of Warclient "
+                     "shortcuts. This option is useful for laptops."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(warn_before_add_to_city,
                   N_("Warn before adding a settler to a city"),
-		  N_("If this option is turned on, you will get a confirmation "
-		     "window popup before adding settlers in a city."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("If this option is turned on, you will get a confirmation "
+                     "window popup before adding settlers in a city."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(meta_accelerators, N_("Use Alt/Meta for accelerators"),
-		  N_("Use Alt/Meta for accelerators"),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("Use Alt/Meta for accelerators"),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(keyboardless_goto, N_("Keyboardless goto"),
-		  N_("If this option is set then a goto may be initiated "
-		     "by left-clicking and then holding down the mouse "
-		     "button while dragging the mouse onto a different "
-		     "tile."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("If this option is set then a goto may be initiated "
+                     "by left-clicking and then holding down the mouse "
+                     "button while dragging the mouse onto a different "
+                     "tile."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(dialogs_on_top, N_("Keep dialogs on top"),
-		  N_("If this option is set then dialog windows will always "
-		     "remain in front of the main Freeciv window. "
-		     "Disabling this has no effect in fullscreen mode."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("If this option is set then dialog windows will always "
+                     "remain in front of the main Freeciv window. "
+                     "Disabling this has no effect in fullscreen mode."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(enable_tabs, N_("Enable status report tabs"),
-		  N_("If this option is enabled then report dialogs will "
-		     "be shown as separate tabs rather than in popup "
-		     "dialogs."),
-		  COC_INTERFACE, TRUE, NULL),
+                  N_("If this option is enabled then report dialogs will "
+                     "be shown as separate tabs rather than in popup "
+                     "dialogs."),
+                  COC_INTERFACE, TRUE, NULL),
   GEN_BOOL_OPTION(prevent_duplicate_notify_tabs,
-		  N_("No tabs duplications"),
+                  N_("No tabs duplications"),
                   N_("If this option is turned on, new notify tabs will "
-		     "replace those of the same name."),
-		  COC_INTERFACE, FALSE, NULL),
+                     "replace those of the same name."),
+                  COC_INTERFACE, FALSE, NULL),
   GEN_BOOL_OPTION(small_display_layout,
                   N_("Arrange widgets for small displays"),
                   N_("If this option is enabled, widgets in the main "
@@ -647,69 +647,69 @@ static struct client_option client_options[] = {
                      "effect."), COC_INTERFACE, TRUE, NULL),
 
   GEN_STR_LIST_OPTION(default_sound_set_name, N_("Default name of sound set"),
-		      N_("This is the soundset that will be used.  Changing "
-			 "this is the same as using the -S command-line "
-			 "parameter."),
-		      COC_SOUND, "stdsounds",
-		      get_soundset_list, audio_change_soundset),
+                      N_("This is the soundset that will be used.  Changing "
+                         "this is the same as using the -S command-line "
+                         "parameter."),
+                      COC_SOUND, "stdsounds",
+                      get_soundset_list, audio_change_soundset),
   GEN_STR_LIST_OPTION(default_sound_plugin_name, N_("Default sound plugin"),
-		      N_("If you have a problem with sound, try changing the "
-			 "sound plugin.  The new plugin won't take effect "
-			 "until you restart Freeciv.  Changing this is the "
-			 "same as using the -P command-line option."),
-		      COC_SOUND, "",
-		      get_soundplugin_list, audio_change_plugin),
+                      N_("If you have a problem with sound, try changing the "
+                         "sound plugin.  The new plugin won't take effect "
+                         "until you restart Freeciv.  Changing this is the "
+                         "same as using the -P command-line option."),
+                      COC_SOUND, "",
+                      get_soundplugin_list, audio_change_plugin),
   GEN_BOOL_OPTION(sound_bell_at_new_turn, N_("Sound bell at new turn"),
-		  N_("Set this option to have a \"bell\" event be generated "
-		     "at the start of a new turn.  You can control the "
-		     "behavior of the \"bell\" event by editing the message "
-		     "options."),
-		  COC_SOUND, FALSE, NULL),
+                  N_("Set this option to have a \"bell\" event be generated "
+                     "at the start of a new turn.  You can control the "
+                     "behavior of the \"bell\" event by editing the message "
+                     "options."),
+                  COC_SOUND, FALSE, NULL),
 #ifdef AUDIO_VOLUME
   GEN_VOLUME_OPTION(sound_volume, N_("Volume"),
-		    N_("This parameter controls the volume of the sounds. "
-		       "Note that this option is currently only supported "
-		       "by the SDL plugin."),
-		    COC_SOUND, AUDIO_VOLUME_MAX, AUDIO_VOLUME_MIN,
-		    AUDIO_VOLUME_MAX, audio_change_volume),
+                    N_("This parameter controls the volume of the sounds. "
+                       "Note that this option is currently only supported "
+                       "by the SDL plugin."),
+                    COC_SOUND, AUDIO_VOLUME_MAX, AUDIO_VOLUME_MIN,
+                    AUDIO_VOLUME_MAX, audio_change_volume),
 #endif /* AUDIO_VOLUME */
 
   GEN_STR_OPTION(chat_time_format, N_("Time format for chat messages"),
-		 N_("All chat window messages will be prefixed by this "
+                 N_("All chat window messages will be prefixed by this "
                     "string, followed by a space. The string may contain "
                     "escape sequences understood by the C library function "
                     "strftime(3) or the unix command date(1)."),
-		 COC_CHAT, "[%H:%M:%S]", NULL),
+                 COC_CHAT, "[%H:%M:%S]", NULL),
   GEN_BOOL_OPTION(enable_chat_logging, N_("Log all chat output to a file"),
-		  N_("If this option is enabled, a log file will be always "
-		    "generated."),
-		  COC_CHAT, FALSE, NULL),
+                  N_("If this option is enabled, a log file will be always "
+                    "generated."),
+                  COC_CHAT, FALSE, NULL),
   GEN_STR_OPTION(chat_log_directory,
                  N_("Directory where chat logs are to be saved"),
-		 N_("This option affect where the log file will be placed."),
-		 COC_CHAT, "~/.warciv/chatlogs", NULL),
+                 N_("This option affect where the log file will be placed."),
+                 COC_CHAT, "~/.warciv/chatlogs", NULL),
   GEN_BOOL_OPTION(disable_chatline_scroll_on_window_resize,
-		  N_("Disable chatline scrolling"),
+                  N_("Disable chatline scrolling"),
                   N_("If this option is turned to on, the chatline won't "
-		     "be scrolled to the bottom when the window is resized."),
-		  COC_CHAT, FALSE, NULL),
+                     "be scrolled to the bottom when the window is resized."),
+                  COC_CHAT, FALSE, NULL),
   GEN_BOOL_OPTION(chatline_autocomplementation,
-		  N_("Use tabulation key for player or user name "
-		     "autocomplementation"),
+                  N_("Use tabulation key for player or user name "
+                     "autocomplementation"),
                   N_("If this option is turned to on, the tabulation key "
-		     "will be use on chat line to complete the word you "
-		     "are typing with the name of a player or a user."),
-		  COC_CHAT, TRUE, NULL),
+                     "will be use on chat line to complete the word you "
+                     "are typing with the name of a player or a user."),
+                  COC_CHAT, TRUE, NULL),
 
   GEN_STR_OPTION(default_user_name, N_("Default player's login name"),
-		 N_("This is the default login username that will be used "
-		    "in the connection dialogs or with the -a command-line "
-		    "parameter."),
-		 COC_NETWORK, NULL, NULL),
+                 N_("This is the default login username that will be used "
+                    "in the connection dialogs or with the -a command-line "
+                    "parameter."),
+                 COC_NETWORK, NULL, NULL),
   GEN_PWD_OPTION(default_password, N_("Default password"),
-		 N_("This password will be automaticly used for any "
-		    "connections to a server."),
-		 COC_NETWORK, "", NULL),
+                 N_("This password will be automaticly used for any "
+                    "connections to a server."),
+                 COC_NETWORK, "", NULL),
   GEN_STR_OPTION(default_server_host, N_("Default server"),
                  N_("This is the server hostname that will be used in "
                     "the connection dialogs or with the -a command-line "
@@ -721,221 +721,221 @@ static struct client_option client_options[] = {
                     "parameter when none is explicitly given."),
                  COC_NETWORK, DEFAULT_SOCK_PORT, 0, 9999, NULL),
   GEN_STR_OPTION(default_metaserver, N_("Default metaserver"),
-		 N_("The metaserver is a host that the client contacts to "
-		    "find out about games on the internet.  Don't change "
-		    "this from its default value unless you know what "
-		    "you're doing."),
-		 COC_NETWORK, DEFAULT_METALIST_ADDR, NULL),
+                 N_("The metaserver is a host that the client contacts to "
+                    "find out about games on the internet.  Don't change "
+                    "this from its default value unless you know what "
+                    "you're doing."),
+                 COC_NETWORK, DEFAULT_METALIST_ADDR, NULL),
   GEN_BOOL_OPTION(save_options_on_exit, N_("Save options on exit"),
-		  N_("If this option is enabled, the client options will be "
-		     "saved when the client disconnects form the server."),
-		  COC_NETWORK, TRUE, NULL),
+                  N_("If this option is enabled, the client options will be "
+                     "saved when the client disconnects form the server."),
+                  COC_NETWORK, TRUE, NULL),
 
   GEN_STR_VEC_OPTION(default_user_nation, N_("Default player's nation(s)"),
-		     N_("A list of nations names whose the first existant "
-			"nation will be proposed to you by default."),
-		     COC_GAMEPLAY, NULL, NULL),
+                     N_("A list of nations names whose the first existant "
+                        "nation will be proposed to you by default."),
+                     COC_GAMEPLAY, NULL, NULL),
   GEN_STR_VEC_OPTION(default_user_tech_goal,
-		     N_("Default player's technology goal(s)"),
-		     N_("The first existant technology will be used as first "
-			"technology goal when the game will start."),
-		     COC_GAMEPLAY, NULL, NULL),
+                     N_("Default player's technology goal(s)"),
+                     N_("The first existant technology will be used as first "
+                        "technology goal when the game will start."),
+                     COC_GAMEPLAY, NULL, NULL),
   GEN_BOOL_OPTION(random_leader, N_("Select random leader name"),
-		  N_("If this option is disabled, your login name will be used "
-		     "as default to select your leader name."),
-		  COC_GAMEPLAY, FALSE, NULL),
+                  N_("If this option is disabled, your login name will be used "
+                     "as default to select your leader name."),
+                  COC_GAMEPLAY, FALSE, NULL),
   GEN_STR_VEC_OPTION(city_name_formats, N_("City name formats"),
-		     N_("Here set your different city name formats for "
-			"auto-naming. The format may contain this following "
-			"escape sequences:\n"
-			" %c: the continent number.\n"
-			" %C: the continent number as a string.\n"
-			" %n: the city numero on this continent.\n"
-			" %n: the city numero on this continent as a string.\n"
-			" %g: a global numero.\n"
-			" %G: a global numero as a string."),
-		 COC_GAMEPLAY, default_city_name_formats, NULL),
+                     N_("Here set your different city name formats for "
+                        "auto-naming. The format may contain this following "
+                        "escape sequences:\n"
+                        " %c: the continent number.\n"
+                        " %C: the continent number as a string.\n"
+                        " %n: the city numero on this continent.\n"
+                        " %n: the city numero on this continent as a string.\n"
+                        " %g: a global numero.\n"
+                        " %G: a global numero as a string."),
+                 COC_GAMEPLAY, default_city_name_formats, NULL),
   GEN_BOOL_OPTION(autowakeup_state, N_("Autowakeup sentried units"),
-		  N_("If disable, sentried units cannot wake up. "
-		     "All sentried units are considered as sleeping."),
-		  COC_GAMEPLAY, TRUE, NULL),
+                  N_("If disable, sentried units cannot wake up. "
+                     "All sentried units are considered as sleeping."),
+                  COC_GAMEPLAY, TRUE, NULL),
   GEN_BOOL_OPTION(moveandattack_state, N_("Move and attack mode"),
-		  N_("When this option is enabled, the units will try to "
-		     "autoattack after every move. Note that will cancel "
-		     "the path for the next turn."),
-		  COC_GAMEPLAY, FALSE, NULL),
+                  N_("When this option is enabled, the units will try to "
+                     "autoattack after every move. Note that will cancel "
+                     "the path for the next turn."),
+                  COC_GAMEPLAY, FALSE, NULL),
   GEN_ENUM_LIST_OPTION(default_caravan_action,
-		       N_("Caravan action upon arrival"),
-		       N_("The caravans will execute this order when they "
-			  "will arrive to a destination city."),
-		       COC_GAMEPLAY, DCA_POPUP_DIALOG,
-		       get_caravan_action_name, NULL),
+                       N_("Caravan action upon arrival"),
+                       N_("The caravans will execute this order when they "
+                          "will arrive to a destination city."),
+                       COC_GAMEPLAY, DCA_POPUP_DIALOG,
+                       get_caravan_action_name, NULL),
   GEN_ENUM_LIST_OPTION(default_diplomat_unit_action,
-		       N_("Diplomat action upon unit arrival"),
-		       N_("Diplomats execute this order when they "
-			  "arrive at another player's unit."),
-		       COC_GAMEPLAY, DDUA_POPUP_DIALOG,
-		       get_diplomat_action_upon_unit_name, NULL),
+                       N_("Diplomat action upon unit arrival"),
+                       N_("Diplomats execute this order when they "
+                          "arrive at another player's unit."),
+                       COC_GAMEPLAY, DDUA_POPUP_DIALOG,
+                       get_diplomat_action_upon_unit_name, NULL),
   GEN_ENUM_LIST_OPTION(default_diplomat_city_action,
-		       N_("Diplomat action upon city arrival"),
-		       N_("Diplomat execute this order when they "
-			  "arrive at another player's city."),
-		       COC_GAMEPLAY, DDCA_POPUP_DIALOG,
-		       get_diplomat_action_upon_city_name, NULL),
+                       N_("Diplomat action upon city arrival"),
+                       N_("Diplomat execute this order when they "
+                          "arrive at another player's city."),
+                       COC_GAMEPLAY, DDCA_POPUP_DIALOG,
+                       get_diplomat_action_upon_city_name, NULL),
   GEN_BOOL_OPTION(default_diplomat_ignore_allies,
-		  N_("Diplomat ignores allies"),
-		  N_("If this option is set, diplomats and spies "
-		     "will ignore all allied units and cities, i.e. "
-		     "they will pass over them instead of performing "
-		     "an action."),
-		  COC_GAMEPLAY, TRUE, NULL),
+                  N_("Diplomat ignores allies"),
+                  N_("If this option is set, diplomats and spies "
+                     "will ignore all allied units and cities, i.e. "
+                     "they will pass over them instead of performing "
+                     "an action."),
+                  COC_GAMEPLAY, TRUE, NULL),
   GEN_ENUM_LIST_OPTION(default_action_type, N_("New unit default action"),
-		       N_("The new created units will do this activity "
-			  "automaticely."),
-		       COC_GAMEPLAY, ACTION_IDLE,
-		       get_new_unit_action_name, NULL),
+                       N_("The new created units will do this activity "
+                          "automaticely."),
+                       COC_GAMEPLAY, ACTION_IDLE,
+                       get_new_unit_action_name, NULL),
   GEN_BOOL_OPTION(default_action_locked, N_("Lock the new unit default action"),
-		  N_("If this setting is disabled, the new unit default action "
-		     "will be canceled every turn"),
-		  COC_GAMEPLAY, FALSE, NULL),
+                  N_("If this setting is disabled, the new unit default action "
+                     "will be canceled every turn"),
+                  COC_GAMEPLAY, FALSE, NULL),
   GEN_BOOL_OPTION(default_action_military_only,
-		  N_("New unit default action for military units only"),
-		  N_("If enabled, units not able to attack won't do the "
-		     "default action."),
-		  COC_GAMEPLAY, TRUE, NULL),
+                  N_("New unit default action for military units only"),
+                  N_("If enabled, units not able to attack won't do the "
+                     "default action."),
+                  COC_GAMEPLAY, TRUE, NULL),
 
   GEN_ENUM_LIST_OPTION(multi_select_place, N_("Multi-selection place mode"),
-		       N_("This option affects where the units "
-			  "will be selected."),
-		       COC_MULTI_SELECTION, PLACE_ON_CONTINENT,
-		       get_place_mode_name, NULL),
+                       N_("This option affects where the units "
+                          "will be selected."),
+                       COC_MULTI_SELECTION, PLACE_ON_CONTINENT,
+                       get_place_mode_name, NULL),
   GEN_ENUM_LIST_OPTION(multi_select_utype, N_("Multi-selection unit type mode"),
-		       N_("This option affects what kinds of units "
-			  "will be selected."),
-		       COC_MULTI_SELECTION, UTYPE_SAME_TYPE,
-		       get_utype_mode_name, NULL),
+                       N_("This option affects what kinds of units "
+                          "will be selected."),
+                       COC_MULTI_SELECTION, UTYPE_SAME_TYPE,
+                       get_utype_mode_name, NULL),
   GEN_BOOL_OPTION(multi_select_count_all,
-		  N_("Count all units in the selection"),
-		  N_("If this option is enabled, the unit count "
-		     "(in the unit label) will include excluded units "
-		     "(by filters)."),
-		  COC_MULTI_SELECTION, FALSE, NULL),
+                  N_("Count all units in the selection"),
+                  N_("If this option is enabled, the unit count "
+                     "(in the unit label) will include excluded units "
+                     "(by filters)."),
+                  COC_MULTI_SELECTION, FALSE, NULL),
   GEN_BOOL_OPTION(multi_select_blink_all,
-		  N_("Blink all units in the selection"),
-		  N_("If this option is enabled, all selected units "
-		     "will blink, including excluded units (by filters)."),
-		  COC_MULTI_SELECTION, FALSE, NULL),
+                  N_("Blink all units in the selection"),
+                  N_("If this option is enabled, all selected units "
+                     "will blink, including excluded units (by filters)."),
+                  COC_MULTI_SELECTION, FALSE, NULL),
   GEN_BOOL_OPTION(multi_select_blink, N_("Blink units in the selection"),
-		  N_("If this option is disabled, only the first unit "
-		     "will blink."),
-		  COC_MULTI_SELECTION, TRUE, NULL),
+                  N_("If this option is disabled, only the first unit "
+                     "will blink."),
+                  COC_MULTI_SELECTION, TRUE, NULL),
   GEN_BOOL_OPTION(multi_select_map_selection,
-		  N_("Allow multi-selection at map"),
-		  N_("If this option is enabled, you will be able "
-		     "to select units with the yellow rectangle "
-		     "(Dragging right click)."),
-		  COC_MULTI_SELECTION, FALSE, NULL),
+                  N_("Allow multi-selection at map"),
+                  N_("If this option is enabled, you will be able "
+                     "to select units with the yellow rectangle "
+                     "(Dragging right click)."),
+                  COC_MULTI_SELECTION, FALSE, NULL),
   GEN_BOOL_OPTION(multi_select_double_click, N_("Double-click multiselect"),
-		  N_("If this option is set then double clicking on a unit "
+                  N_("If this option is set then double clicking on a unit "
                      "will add all visible units of the same type to the "
                      "unit multiselection."),
-		  COC_MULTI_SELECTION, TRUE, NULL),
+                  COC_MULTI_SELECTION, TRUE, NULL),
   GEN_BOOL_OPTION(multi_select_spread_airport_cities,
-		  N_("Spread only in cities with airport"),
-		  N_("If this option is enabled, spreading units command "
-		     "will spread selected units only in the cities which "
-		     "have an airport."),
-		  COC_MULTI_SELECTION, FALSE, NULL),
+                  N_("Spread only in cities with airport"),
+                  N_("If this option is enabled, spreading units command "
+                     "will spread selected units only in the cities which "
+                     "have an airport."),
+                  COC_MULTI_SELECTION, FALSE, NULL),
   GEN_BOOL_OPTION(multi_select_spread_allied_cities,
-		  N_("Allow spreading into allied cities"),
-		  N_("If this option is enabled, spreading units command "
-		     "will spread selected units in allies cities or in "
-		     "your own ciries indifferently"),
-		  COC_MULTI_SELECTION, FALSE, NULL),
+                  N_("Allow spreading into allied cities"),
+                  N_("If this option is enabled, spreading units command "
+                     "will spread selected units in allies cities or in "
+                     "your own ciries indifferently"),
+                  COC_MULTI_SELECTION, FALSE, NULL),
   GEN_FILTER_OPTION(multi_select_inclusive_filter,
-		    N_("Multi-selection inclusive filter"),
-		    N_("This condition filter will be used to determinate "
-		       "the unit which will be included to the selection."
-		       "The units must satisfy all condition of this filter."),
-		    COC_MULTI_SELECTION, FILTER_ABLE_TO_MOVE | FILTER_IDLE,
-		    filter_change, get_filter_value_name, NULL),
+                    N_("Multi-selection inclusive filter"),
+                    N_("This condition filter will be used to determinate "
+                       "the unit which will be included to the selection."
+                       "The units must satisfy all condition of this filter."),
+                    COC_MULTI_SELECTION, FILTER_ABLE_TO_MOVE | FILTER_IDLE,
+                    filter_change, get_filter_value_name, NULL),
   GEN_FILTER_OPTION(multi_select_exclusive_filter,
-		    N_("Multi-selection exclusive filter"),
-		    N_("This condition filter will be used to determinate "
-		       "the unit which will be excluded from the selection."
-		       "The units have to don't satisfy any of this condition "
-		       "of this filter."),
-		    COC_MULTI_SELECTION,
-		    FILTER_FORTIFIED | FILTER_SENTRIED | FILTER_AUTO,
-		    filter_change, get_filter_value_name, NULL),
+                    N_("Multi-selection exclusive filter"),
+                    N_("This condition filter will be used to determinate "
+                       "the unit which will be excluded from the selection."
+                       "The units have to don't satisfy any of this condition "
+                       "of this filter."),
+                    COC_MULTI_SELECTION,
+                    FILTER_FORTIFIED | FILTER_SENTRIED | FILTER_AUTO,
+                    filter_change, get_filter_value_name, NULL),
 
   GEN_INT_OPTION(delayed_goto_unit_limit, N_("Delayed goto unit limit"),
-		 N_("This number represents the maximal orders number that a "
-		    "delayed goto queue can exexute at once. 0 means "
-		    "unlimited units."),
-		 COC_DELAYED_GOTO, 0, 0, 1000, NULL),
+                 N_("This number represents the maximal orders number that a "
+                    "delayed goto queue can exexute at once. 0 means "
+                    "unlimited units."),
+                 COC_DELAYED_GOTO, 0, 0, 1000, NULL),
   GEN_ENUM_LIST_OPTION(delayed_goto_place, N_("Delayed goto place mode"),
-		       N_("This option affects where the units "
-			  "will be selected."),
-		       COC_DELAYED_GOTO, PLACE_ON_TILE,
-		       get_place_mode_name, NULL),
+                       N_("This option affects where the units "
+                          "will be selected."),
+                       COC_DELAYED_GOTO, PLACE_ON_TILE,
+                       get_place_mode_name, NULL),
   GEN_ENUM_LIST_OPTION(delayed_goto_utype, N_("Delayed goto unit type mode"),
-		       N_("This option affects what kinds of units will be "
-			  "selected."),
-		       COC_DELAYED_GOTO, UTYPE_SAME_TYPE,
-		       get_utype_mode_name, NULL),
+                       N_("This option affects what kinds of units will be "
+                          "selected."),
+                       COC_DELAYED_GOTO, UTYPE_SAME_TYPE,
+                       get_utype_mode_name, NULL),
   GEN_FILTER_OPTION(delayed_goto_inclusive_filter,
-		    N_("Delayed goto inclusive filter"),
-		    N_("This condition filter will be used to determinate "
-		       "the unit which will be included to the selection."
-		       "The units must satisfy all condition of this filter."),
-		    COC_DELAYED_GOTO, FILTER_ALL,
-		    filter_change, get_filter_value_name, NULL),
+                    N_("Delayed goto inclusive filter"),
+                    N_("This condition filter will be used to determinate "
+                       "the unit which will be included to the selection."
+                       "The units must satisfy all condition of this filter."),
+                    COC_DELAYED_GOTO, FILTER_ALL,
+                    filter_change, get_filter_value_name, NULL),
   GEN_FILTER_OPTION(delayed_goto_exclusive_filter,
-		    N_("Delayed goto exclusive filter"),
-		    N_("This condition filter will be used to determinate "
-		       "the unit which will be excluded from the selection."
-		       "The units have to don't satisfy any of this condition "
-		       "of this filter."),
-		    COC_DELAYED_GOTO, FILTER_OFF,
-		    filter_change, get_filter_value_name, NULL),
+                    N_("Delayed goto exclusive filter"),
+                    N_("This condition filter will be used to determinate "
+                       "the unit which will be excluded from the selection."
+                       "The units have to don't satisfy any of this condition "
+                       "of this filter."),
+                    COC_DELAYED_GOTO, FILTER_OFF,
+                    filter_change, get_filter_value_name, NULL),
   GEN_FILTER_OPTION(delayed_goto_list[0].automatic_execution,
-		    N_("Delayed goto automatic execution"),
-		    N_("The delayed goto queue will be executed automatically "
-		       "when one of the set event will occur."),
-		    COC_DELAYED_GOTO, AUTO_WAR_DIPLSTATE,
-		    delayed_goto_auto_filter_change,
-		    delayed_goto_get_auto_name, NULL),
+                    N_("Delayed goto automatic execution"),
+                    N_("The delayed goto queue will be executed automatically "
+                       "when one of the set event will occur."),
+                    COC_DELAYED_GOTO, AUTO_WAR_DIPLSTATE,
+                    delayed_goto_auto_filter_change,
+                    delayed_goto_get_auto_name, NULL),
 
 #ifndef ASYNC_TRADE_PLANNING
   GEN_INT_OPTION(trade_time_limit,
-		 N_("Time limit for trade planning calculation (seconds)"),
-		 N_("This option controls how long the trade planning "
-		    "can be calculated. If you set to 0, it will be "
-		    "unlimited."),
-		 COC_TRADE, 10, 0, 60, NULL),
-#endif	/* ASYNC_TRADE_PLANNING */
+                 N_("Time limit for trade planning calculation (seconds)"),
+                 N_("This option controls how long the trade planning "
+                    "can be calculated. If you set to 0, it will be "
+                    "unlimited."),
+                 COC_TRADE, 10, 0, 60, NULL),
+#endif  /* ASYNC_TRADE_PLANNING */
   GEN_BOOL_OPTION(trade_mode_best_values, N_("Best value trade route mode"),
-		  N_("If you set this option on, auto-trade will check the "
-		     "best trade route by value you can establish. If you "
+                  N_("If you set this option on, auto-trade will check the "
+                     "best trade route by value you can establish. If you "
                      "turn it off, it will check the faster trade route."),
-		  COC_TRADE, FALSE, NULL),
+                  COC_TRADE, FALSE, NULL),
   GEN_BOOL_OPTION(trade_mode_allow_free_other,
                   N_("Allow free other caravans mode"),
-		  N_("If you set this option on, auto-trade can free an "
-		     "other caravan, if the new caravan is faster."),
-		  COC_TRADE, TRUE, NULL),
+                  N_("If you set this option on, auto-trade can free an "
+                     "other caravan, if the new caravan is faster."),
+                  COC_TRADE, TRUE, NULL),
   GEN_BOOL_OPTION(trade_mode_internal_first, N_("Internal trade first mode"),
-		  N_("If you set this option on, auto-trade won't check "
-		     "external trade routes while there are planned "
+                  N_("If you set this option on, auto-trade won't check "
+                     "external trade routes while there are planned "
                       "internal trade routes."),
-		  COC_TRADE, TRUE, NULL),
+                  COC_TRADE, TRUE, NULL),
   GEN_BOOL_OPTION(trade_mode_homecity_first,
                   N_("Homecity trade first mode"),
-		  N_("If you set this option on, auto-trade will check "
-		     "the trade routes you can establish from the caravan "
+                  N_("If you set this option on, auto-trade will check "
+                     "the trade routes you can establish from the caravan "
                      "homecity."),
-		  COC_TRADE, TRUE, NULL),
+                  COC_TRADE, TRUE, NULL),
   GEN_BOOL_OPTION(disable_custom_dns, N_("Use system DNS functions"),
                   N_("Warclient uses custom domain name lookup code "
                      "for speed and efficiency. On some systems though, "
@@ -1035,7 +1035,7 @@ static struct {
   GEN_EV(N_("City: Celebrating"),                     E_CITY_LOVE),
   GEN_EV(N_("City: Civil Disorder"),                  E_CITY_DISORDER),
   GEN_EV(N_("City: Famine"),                          E_CITY_FAMINE),
-  GEN_EV(N_("City: Famine Feared"),       	      E_CITY_FAMINE_FEARED),
+  GEN_EV(N_("City: Famine Feared"),                   E_CITY_FAMINE_FEARED),
   GEN_EV(N_("City: Growth"),                          E_CITY_GROWTH),
   GEN_EV(N_("City: May Soon Grow"),                   E_CITY_MAY_SOON_GROW),
   GEN_EV(N_("City: Needs Aqueduct"),                  E_CITY_AQUEDUCT),
@@ -1051,7 +1051,7 @@ static struct {
   GEN_EV(N_("Civ: Civil War"),                        E_CIVIL_WAR),
   GEN_EV(N_("Civ: Collapse to Anarchy"),              E_ANARCHY),
   GEN_EV(N_("Civ: First Contact"),                    E_FIRST_CONTACT),
-  GEN_EV(N_("Civ: Learned New Government"),	      E_NEW_GOVERNMENT),
+  GEN_EV(N_("Civ: Learned New Government"),           E_NEW_GOVERNMENT),
   GEN_EV(N_("Civ: Low Funds"),                        E_LOW_ON_FUNDS),
   GEN_EV(N_("Civ: Pollution"),                        E_POLLUTION),
   GEN_EV(N_("Civ: Revolt Ended"),                     E_REVOLT_DONE),
@@ -1132,8 +1132,8 @@ static struct {
 static int event_to_index[E_LAST];
 
 static void save_cma_preset(struct section_file *file, char *name,
-			    const struct cm_parameter *const pparam,
-			    int inx);
+                            const struct cm_parameter *const pparam,
+                            int inx);
 static void load_cma_preset(struct section_file *file, int inx);
 
 /**************************************************************************
@@ -1215,9 +1215,9 @@ void init_messages_where(void)
       events[i].tag_name[j] = my_tolower(events[i].tag_name[j]);
     }
     freelog(LOG_DEBUG,
-	    "event[%d]=%d: name='%s' / '%s'\n\tdescr_orig='%s'\n\tdescr='%s'",
-	    i, events[i].event, events[i].enum_name, events[i].tag_name,
-	    events[i].descr_orig, events[i].descr);
+            "event[%d]=%d: name='%s' / '%s'\n\tdescr_orig='%s'\n\tdescr='%s'",
+            i, events[i].event, events[i].enum_name, events[i].tag_name,
+            events[i].descr_orig, events[i].descr);
   }
 
   for (i = 0; i < E_LAST; i++)  {
@@ -1248,20 +1248,20 @@ void client_options_init(void)
     case COT_PASSWORD:
       /* HACK: fix default username */
       if (o->string.pvalue == default_user_name) {
-	o->string.def = user_username();
+        o->string.def = user_username();
       }
       /* HACK: fix default tileset */
       if (o->string.pvalue == default_tileset_name) {
-	o->string.def = get_default_tilespec_name();
+        o->string.def = get_default_tilespec_name();
       }
       mystrlcpy(o->string.pvalue, o->string.def, o->string.size);
       continue;
     case COT_STRING_VEC:
       *o->string_vec.pvector = string_vector_new();
       if (o->string_vec.def) {
-	/* Fill with default values. */
-	string_vector_store(*o->string_vec.pvector, o->string_vec.def, -1);
-	string_vector_remove_empty(*o->string_vec.pvector);
+        /* Fill with default values. */
+        string_vector_store(*o->string_vec.pvector, o->string_vec.def, -1);
+        string_vector_remove_empty(*o->string_vec.pvector);
       }
       continue;
     case COT_ENUM_LIST:
@@ -1290,8 +1290,8 @@ void client_options_free(void)
     switch (o->type) {
     case COT_STRING_VEC:
       if (NULL != *o->string_vec.pvector) {
-	string_vector_destroy(*o->string_vec.pvector);
-	*o->string_vec.pvector = NULL;
+        string_vector_destroy(*o->string_vec.pvector);
+        *o->string_vec.pvector = NULL;
       }
       break;
     case COT_BOOLEAN:
@@ -1333,7 +1333,7 @@ int revert_str_accessor(const char *(*str_accessor)(int), const char *str)
   Returns 0 on error.
 *****************************************************************/
 filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
-				  const char *str)
+                                  const char *str)
 {
   if (!str_accessor || !str) {
     return 0;
@@ -1393,7 +1393,7 @@ const char *option_file_name(void)
   This loads a boolean option from the rc file.
 *****************************************************************/
 bool load_option_bool(struct section_file *file,
-		      struct client_option *o, bool def)
+                      struct client_option *o, bool def)
 {
   assert(file != NULL);
   assert(o != NULL && o->type == COT_BOOLEAN);
@@ -1405,7 +1405,7 @@ bool load_option_bool(struct section_file *file,
   This loads a integer option from the rc file.
 *****************************************************************/
 int load_option_int(struct section_file *file,
-		    struct client_option *o, int def)
+                    struct client_option *o, int def)
 {
   int value;
 
@@ -1416,8 +1416,8 @@ int load_option_int(struct section_file *file,
 
   if (value < o->integer.min || value > o->integer.max) {
     freelog(LOG_ERROR,
-	    "The value %d for option '%s' is out of scale [%d, %d].",
-	    value, o->name, o->integer.min, o->integer.max);
+            "The value %d for option '%s' is out of scale [%d, %d].",
+            value, o->name, o->integer.min, o->integer.max);
     return def;
   }
 
@@ -1428,7 +1428,7 @@ int load_option_int(struct section_file *file,
   This loads a string option from the rc file.
 *****************************************************************/
 const char *load_option_string(struct section_file *file,
-			       struct client_option *o, const char *def)
+                               struct client_option *o, const char *def)
 {
   assert(file != NULL);
   assert(o != NULL && (o->type == COT_STRING || o->type == COT_PASSWORD));
@@ -1441,9 +1441,9 @@ const char *load_option_string(struct section_file *file,
   stored in vector.
 *****************************************************************/
 void load_option_string_vec(struct section_file *file,
-			    struct client_option *o,
-			    const char *const *def,
-			    struct string_vector *vector)
+                            struct client_option *o,
+                            const char *const *def,
+                            struct string_vector *vector)
 {
   char **vec;
   int size;
@@ -1471,7 +1471,7 @@ void load_option_string_vec(struct section_file *file,
   This loads an enum option (saved as a string) from the rc file.
 *****************************************************************/
 int load_option_enum_list(struct section_file *file,
-			  struct client_option *o, int def)
+                          struct client_option *o, int def)
 {
   int value;
 
@@ -1479,8 +1479,8 @@ int load_option_enum_list(struct section_file *file,
   assert(o != NULL && o->type == COT_ENUM_LIST);
 
   value = revert_str_accessor(o->enum_list.str_accessor,
-			      secfile_lookup_str_default(file, NULL,
-							 "client.%s", o->name));
+                              secfile_lookup_str_default(file, NULL,
+                                                         "client.%s", o->name));
   if (value == -1) {
     /* Failed, see comment in revert_str_accessor(). */
     return def;
@@ -1493,7 +1493,7 @@ int load_option_enum_list(struct section_file *file,
   This loads a filter (saved as many strings) option from the rc file.
 *****************************************************************/
 filter load_option_filter(struct section_file *file,
-			  struct client_option *o, filter def)
+                          struct client_option *o, filter def)
 {
   char **vec;
   int i, size;
@@ -1515,7 +1515,7 @@ filter load_option_filter(struct section_file *file,
       ok = TRUE;
     } else {
       freelog(LOG_NORMAL, _("The value '%s' is not supported for option '%s'."),
-	      vec[i], o->name);
+              vec[i], o->name);
     }
   }
 
@@ -1556,14 +1556,14 @@ void load_general_options(void)
     case COT_STRING:
     case COT_PASSWORD:
       mystrlcpy(o->string.pvalue, load_option_string(&sf, o, o->string.def),
-		o->string.size);
+                o->string.size);
       break;
     case COT_STRING_VEC:
       load_option_string_vec(&sf, o, o->string_vec.def, *o->string_vec.pvector);
       break;
     case COT_ENUM_LIST:
       *o->enum_list.pvalue =
-	  load_option_enum_list(&sf, o, o->enum_list.def);
+          load_option_enum_list(&sf, o, o->enum_list.def);
       break;
     case COT_FILTER:
       *o->filter.pvalue = load_option_filter(&sf, o, o->filter.def);
@@ -1572,17 +1572,17 @@ void load_general_options(void)
   } client_options_iterate_end;
   for (v = view_options; v->name; v++) {
     *(v->p_value) =
-	secfile_lookup_bool_default(&sf, *(v->p_value), "client.%s", v->name);
+        secfile_lookup_bool_default(&sf, *(v->p_value), "client.%s", v->name);
   }
   for (i = 0; i < E_LAST; i++) {
     messages_where[i] =
       secfile_lookup_int_default(&sf, messages_where[i],
-				 "client.message_where_%02d", i);
+                                 "client.message_where_%02d", i);
   }
   for (i = 1; i < num_city_report_spec(); i++) {
     bool *ip = city_report_spec_show_ptr(i);
     *ip = secfile_lookup_bool_default(&sf, *ip, "client.city_report_%s",
-				      city_report_spec_tagname(i));
+                                      city_report_spec_tagname(i));
   }
 
   for(i = 1; i < num_player_dlg_columns; i++) {
@@ -1660,38 +1660,38 @@ void save_options(void)
       break;
     case COT_STRING_VEC:
       if (string_vector_size(*o->string_vec.pvector) > 0) {
-	secfile_insert_str_vec(&sf, string_vector_data(*o->string_vec.pvector),
-			       string_vector_size(*o->string_vec.pvector),
-			       "client.%s", o->name);
+        secfile_insert_str_vec(&sf, string_vector_data(*o->string_vec.pvector),
+                               string_vector_size(*o->string_vec.pvector),
+                               "client.%s", o->name);
       } else {
-	/* Insert an empty string that will be removed at next load
-	 * to overwrite the default. */
-	secfile_insert_str(&sf, "", "client.%s", o->name);
+        /* Insert an empty string that will be removed at next load
+         * to overwrite the default. */
+        secfile_insert_str(&sf, "", "client.%s", o->name);
       }
       break;
     case COT_ENUM_LIST:
       secfile_insert_str(&sf, o->enum_list.str_accessor(*o->enum_list.pvalue),
-			 "client.%s", o->name);
+                         "client.%s", o->name);
       break;
     case COT_FILTER:
       {
 #define MAX_VALUES 64
-	const char *values[MAX_VALUES];
-	size_t size = 0, vec;
-	filter f = *o->filter.pvalue;
+        const char *values[MAX_VALUES];
+        size_t size = 0, vec;
+        filter f = *o->filter.pvalue;
 
-	for (f = *o->filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
-	     f >>= 1, vec++) {
-	  if (f & 1) {
-	    values[size++] = o->filter.str_accessor(1 << vec);
-	  }
-	}
-	if (f != 0) {
-	  freelog(LOG_ERROR, "The filter '%s' required more values number.",
-		  o->name);
-	} else {
-	  secfile_insert_str_vec(&sf, values, size, "client.%s", o->name);
-	}
+        for (f = *o->filter.pvalue, vec = 0; f != 0 && size < MAX_VALUES;
+             f >>= 1, vec++) {
+          if (f & 1) {
+            values[size++] = o->filter.str_accessor(1 << vec);
+          }
+        }
+        if (f != 0) {
+          freelog(LOG_ERROR, "The filter '%s' required more values number.",
+                  o->name);
+        } else {
+          secfile_insert_str_vec(&sf, values, size, "client.%s", o->name);
+        }
       }
       break;
     }
@@ -1703,14 +1703,14 @@ void save_options(void)
 
   for (i = 0; i < E_LAST; i++) {
     secfile_insert_int_comment(&sf, messages_where[i],
-			       get_message_text(i),
-			       "client.message_where_%02d", i);
+                               get_message_text(i),
+                               "client.message_where_%02d", i);
   }
 
   for (i = 1; i < num_city_report_spec(); i++) {
     secfile_insert_bool(&sf, *(city_report_spec_show_ptr(i)),
-		       "client.city_report_%s",
-		       city_report_spec_tagname(i));
+                       "client.city_report_%s",
+                       city_report_spec_tagname(i));
   }
 
   for (i = 1; i < num_player_dlg_columns; i++) {
@@ -1726,12 +1726,12 @@ void save_options(void)
 
   /* insert cma presets */
   secfile_insert_int_comment(&sf, cmafec_preset_num(),
-			     _("If you add a preset by "
-			       "hand, also update \"number_of_presets\""),
-			     "cma.number_of_presets");
+                             _("If you add a preset by "
+                               "hand, also update \"number_of_presets\""),
+                             "cma.number_of_presets");
   for (i = 0; i < cmafec_preset_num(); i++) {
     save_cma_preset(&sf, cmafec_preset_get_descr(i),
-		    cmafec_preset_get_parameter(i), i);
+                    cmafec_preset_get_parameter(i), i);
   }
 
   secfile_save_chatline_colors (&sf);
@@ -1739,10 +1739,10 @@ void save_options(void)
   /* save to disk */
   if (!section_file_save(&sf, name, 0)) {
     my_snprintf(output_buffer, sizeof(output_buffer),
-		_("Save failed, cannot write to file %s"), name);
+                _("Save failed, cannot write to file %s"), name);
   } else {
     my_snprintf(output_buffer, sizeof(output_buffer),
-		_("Saved settings to file %s"), name);
+                _("Saved settings to file %s"), name);
   }
 
   append_output_window(output_buffer);
@@ -1759,12 +1759,12 @@ static void load_cma_preset(struct section_file *file, int inx)
   int i;
 
   name = secfile_lookup_str_default(file, "preset",
-				    "cma.preset%d.name", inx);
+                                    "cma.preset%d.name", inx);
   for (i = 0; i < CM_NUM_STATS; i++) {
     parameter.minimal_surplus[i] =
-	secfile_lookup_int_default(file, 0, "cma.preset%d.minsurp%d", inx, i);
+        secfile_lookup_int_default(file, 0, "cma.preset%d.minsurp%d", inx, i);
     parameter.factor[i] =
-	secfile_lookup_int_default(file, 0, "cma.preset%d.factor%d", inx, i);
+        secfile_lookup_int_default(file, 0, "cma.preset%d.factor%d", inx, i);
   }
   parameter.require_happy =
       secfile_lookup_bool_default(file, FALSE, "cma.preset%d.reqhappy", inx);
@@ -1780,22 +1780,22 @@ static void load_cma_preset(struct section_file *file, int inx)
  Does heavy lifting for inserting a preset.
 *****************************************************************/
 static void save_cma_preset(struct section_file *file, char *name,
-			    const struct cm_parameter *const pparam,
-			    int inx)
+                            const struct cm_parameter *const pparam,
+                            int inx)
 {
   int i;
 
   secfile_insert_str(file, name, "cma.preset%d.name", inx);
   for (i = 0; i < CM_NUM_STATS; i++) {
     secfile_insert_int(file, pparam->minimal_surplus[i],
-		       "cma.preset%d.minsurp%d", inx, i);
+                       "cma.preset%d.minsurp%d", inx, i);
     secfile_insert_int(file, pparam->factor[i],
-		       "cma.preset%d.factor%d", inx, i);
+                       "cma.preset%d.factor%d", inx, i);
   }
   secfile_insert_bool(file, pparam->require_happy,
-		      "cma.preset%d.reqhappy", inx);
+                      "cma.preset%d.reqhappy", inx);
   secfile_insert_int(file, pparam->happy_factor,
-		     "cma.preset%d.happyfactor", inx);
+                     "cma.preset%d.happyfactor", inx);
 }
 
 /****************************************************************
@@ -1820,7 +1820,7 @@ const char *get_sound_tag_for_event(enum event_type event)
   Loads global worklist from rc file.
 *****************************************************************/
 void load_global_worklist(struct section_file *file, const char *path,
-			  int wlinx, struct worklist *pwl)
+                          int wlinx, struct worklist *pwl)
 {
   char prefix[64];
   int i;
@@ -1842,7 +1842,7 @@ void load_global_worklist(struct section_file *file, const char *path,
   Saves global worklist to rc file.
 *****************************************************************/
 void save_global_worklist(struct section_file *file, const char *path,
-			  int wlinx, struct worklist *pwl)
+                          int wlinx, struct worklist *pwl)
 {
   char prefix[64];
   int i;
@@ -1868,8 +1868,8 @@ bool check_global_worklist(struct worklist *pwl)
 
   for (i = 0; i < MAX_LEN_WORKLIST && pwl->wlefs[i] != WEF_END; i++) {
     if (pwl->wlefs[i] >= WEF_LAST
-	|| (pwl->wlefs[i] == WEF_UNIT && !unit_type_exists(pwl->wlids[i]))
-	|| (pwl->wlefs[i] == WEF_IMPR && !improvement_exists(pwl->wlids[i]))) {
+        || (pwl->wlefs[i] == WEF_UNIT && !unit_type_exists(pwl->wlids[i]))
+        || (pwl->wlefs[i] == WEF_IMPR && !improvement_exists(pwl->wlids[i]))) {
       return FALSE;
     }
   }

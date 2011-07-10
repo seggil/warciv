@@ -21,21 +21,21 @@
 #define SERVER_LAN_VERSION 1
 
 /* In autoconnect mode, try to connect to once a second */
-#define AUTOCONNECT_INTERVAL		500
+#define AUTOCONNECT_INTERVAL            500
 
 /* In autoconnect mode, try to connect 100 times */
-#define MAX_AUTOCONNECT_ATTEMPTS	100
+#define MAX_AUTOCONNECT_ATTEMPTS        100
 
 struct connection;
 
 int connect_to_server(const char *username, const char *hostname, int port,
-		      char *errbuf, int errbufsize);
+                      char *errbuf, int errbufsize);
 int get_server_address(const char *hostname, int port, char *errbuf,
-		       int errbufsize);
+                       int errbufsize);
 int try_to_connect(const char *username, char *errbuf, int errbufsize);
 void input_from_server(int fd);
 void input_from_server_till_request_got_processed(int fd,
-						  int expected_request_id);
+                                                  int expected_request_id);
 void disconnect_from_server(void);
 
 extern struct connection aconnection;

@@ -263,7 +263,7 @@ int insert_city_link(char *buf, size_t buflen, struct city *pcity)
 
   link_escape_city_name(safename, sizeof(safename), pcity->name);
   return my_snprintf(buf, buflen,
-		     CITY_LINK_PREFIX "%d\"%s\"", pcity->id, safename);
+                     CITY_LINK_PREFIX "%d\"%s\"", pcity->id, safename);
 }
 
 /**************************************************************************

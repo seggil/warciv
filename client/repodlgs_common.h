@@ -32,8 +32,8 @@ struct unit_entry
 };
 
 void get_economy_report_data(struct improvement_entry *entries,
-			     int *num_entries_used, int *total_cost,
-			     int *total_income);
+                             int *num_entries_used, int *total_cost,
+                             int *total_income);
 /* This function returns an array with the gold upkeeped units.
  * FIXME: Many clients doesn't yet use this function and show also only the
  * buildings in the economy reports 
@@ -41,7 +41,7 @@ void get_economy_report_data(struct improvement_entry *entries,
  * char* arrays like some other common functions but that means updating all
  * client simultaneously and I simply can't */
 void get_economy_report_units_data(struct unit_entry *entries,
-				   int *num_entries_used, int *total_cost);
+                                   int *num_entries_used, int *total_cost);
 
 void report_dialogs_freeze(void);
 void report_dialogs_thaw(void);
@@ -74,8 +74,8 @@ void settable_options_init(void);
 void settable_options_free(void);
 
 void sell_all_improvements(Impr_Type_id impr, bool obsolete_only,
-			   char *message, size_t message_sz);
+                           char *message, size_t message_sz);
 void disband_all_units(Unit_Type_id type, bool in_cities_only,
-		       char *message, size_t message_sz);
+                       char *message, size_t message_sz);
 
 #endif /* FC__REPODLGS_COMMON_H */

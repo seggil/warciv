@@ -47,8 +47,8 @@
 
 #include "audio.h"
 
-#define MAX_NUM_PLUGINS		4
-#define SNDSPEC_SUFFIX		".soundspec"
+#define MAX_NUM_PLUGINS         4
+#define SNDSPEC_SUFFIX          ".soundspec"
 
 /* keep it open throughout */
 static struct section_file tagstruct, *tagfile = NULL;
@@ -120,8 +120,8 @@ bool audio_select_plugin(const char *const name)
 
   if (i >= num_plugins_used) {
     freelog(LOG_ERROR,
-	    "Plugin '%s' isn't available. Available are %s", name,
-	    audio_get_all_plugin_names());
+            "Plugin '%s' isn't available. Available are %s", name,
+            audio_get_all_plugin_names());
     return FALSE;
   }
 
@@ -144,7 +144,7 @@ bool audio_select_plugin(const char *const name)
 
   selected_plugin = plugin;
   freelog(LOG_NORMAL, _("Plugin '%s' is now selected"),
-	  selected_plugin->name);
+          selected_plugin->name);
   return TRUE;
 }
 
@@ -180,7 +180,7 @@ void audio_init()
 **************************************************************************/
 static char *soundspec_fullname(char *soundset_name, size_t size)
 {
-  const char *soundset_default = "stdsounds";	/* Do not i18n! */
+  const char *soundset_default = "stdsounds";   /* Do not i18n! */
   char fname[strlen(soundset_name) + strlen(SNDSPEC_SUFFIX) + 1];
   char *dname;
 
@@ -198,7 +198,7 @@ static char *soundspec_fullname(char *soundset_name, size_t size)
   }
 
   freelog(LOG_ERROR, "Couldn't find soundset \"%s\" trying \"%s\".",
-	  soundset_name, soundset_default);
+          soundset_name, soundset_default);
   mystrlcpy(soundset_name, soundset_default, size);
   return soundspec_fullname(soundset_name, size);
 }
@@ -240,7 +240,7 @@ static void audio_set_soundset(char *spec_name, size_t size)
     freelog(LOG_ERROR, "Cannot find sound spec-file \"%s\".", spec_name);
     freelog(LOG_NORMAL, _("To get sound you need to download a sound set!"));
     freelog(LOG_NORMAL, _("Get sound sets from <%s>."),
-	    "ftp://ftp.freeciv.org/freeciv/contrib/audio/soundsets");
+            "ftp://ftp.freeciv.org/freeciv/contrib/audio/soundsets");
     freelog(LOG_NORMAL, _("Will continue with disabled sounds."));
     *spec_name = '\0';
     tagfile = NULL;
@@ -271,7 +271,7 @@ static void audio_set_soundset(char *spec_name, size_t size)
 
   if (!has_capabilities(file_capstr, us_capstr)) {
     freelog(LOG_NORMAL, _("sound spec-file claims required option(s)"
-			 " which we don't support:"));
+                         " which we don't support:"));
     freelog(LOG_NORMAL, _("file: \"%s\""), filename);
     freelog(LOG_NORMAL, _("file options: %s"), file_capstr);
     freelog(LOG_NORMAL, _("supported options: %s"), us_capstr);
@@ -302,9 +302,9 @@ void audio_real_init(void)
   }
 
   audio_set_plugin(default_sound_plugin_name,
-		   sizeof(default_sound_plugin_name));
+                   sizeof(default_sound_plugin_name));
   audio_set_soundset(default_sound_set_name,
-		     sizeof(default_sound_set_name));
+                     sizeof(default_sound_set_name));
 #ifdef AUDIO_VOLUME
   audio_set_volume(sound_volume);
 #endif /* AUDIO_VOLUME */
@@ -343,11 +343,11 @@ static bool audio_play_tag(const char *tag, bool repeat)
     soundfile = secfile_lookup_str_default(tagfile, "-", "files.%s", tag);
     if (strcmp(soundfile, "-") == 0) {
       freelog(LOG_VERBOSE, "No sound file for tag %s (file %s)", tag,
-	      soundfile);
+              soundfile);
     } else {
       fullpath = datafilename(soundfile);
       if (!fullpath) {
-	freelog(LOG_ERROR, _("Cannot find audio file %s"), soundfile);
+        freelog(LOG_ERROR, _("Cannot find audio file %s"), soundfile);
       }
     }
   }
@@ -369,7 +369,7 @@ void audio_play_sound(const char *const tag, char *const alt_tag)
   /* try playing primary tag first, if not go to alternative tag */
   if (!audio_play_tag(tag, FALSE) && !audio_play_tag(alt_tag, FALSE)) {
     freelog(LOG_VERBOSE, "Neither of tags %s or %s found", tag,
-	    pretty_alt_tag);
+            pretty_alt_tag);
   }
 }
 
@@ -387,7 +387,7 @@ void audio_play_music(const char *const tag, char *const alt_tag)
   /* try playing primary tag first, if not go to alternative tag */
   if (!audio_play_tag(tag, TRUE) && !audio_play_tag(alt_tag, TRUE)) {
     freelog(LOG_VERBOSE, "Neither of tags %s or %s found", tag,
-	    pretty_alt_tag);
+            pretty_alt_tag);
   }
 }
 
@@ -466,7 +466,7 @@ void audio_set_volume(int volume)
       / (AUDIO_VOLUME_MAX - AUDIO_VOLUME_MIN);
 
   assert(volume >= selected_plugin->min_volume
-	 && volume <= selected_plugin->max_volume);
+         && volume <= selected_plugin->max_volume);
 
   /* Really set the volume now */
   selected_plugin->set_volume(volume);

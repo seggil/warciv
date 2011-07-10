@@ -13,7 +13,7 @@
 #ifndef FC__CLIENT_ATTRIBUTE_H
 #define FC__CLIENT_ATTRIBUTE_H
 
-#include <stddef.h>		/* size_t */
+#include <stddef.h>             /* size_t */
 
 /*
  * If 4 byte wide signed int is used this gives 20 object types with
@@ -51,17 +51,17 @@ void attribute_free(void);
 void attribute_flush(void);
 void attribute_restore(void);
 void attribute_set(int key, int id, int x, int y, size_t data_length,
-		   const void *const data);
+                   const void *const data);
 size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
-		  void *data);
+                  void *data);
 
 /*
  * Special methods for units.
  */
 void attr_unit_set(enum attr_unit what, int unit_id, size_t data_length,
-		   const void *const data);
+                   const void *const data);
 size_t attr_unit_get(enum attr_unit what, int unit_id, size_t max_data_length,
-		   void *data);
+                   void *data);
 void attr_unit_set_int(enum attr_unit what, int unit_id, int data);
 size_t attr_unit_get_int(enum attr_unit what, int unit_id, int *data);
 
@@ -70,9 +70,9 @@ size_t attr_unit_get_int(enum attr_unit what, int unit_id, int *data);
  * Special methods for cities.
  */
 void attr_city_set(enum attr_city what, int city_id, size_t data_length,
-		   const void *const data);
+                   const void *const data);
 size_t attr_city_get(enum attr_city what, int city_id, size_t max_data_length,
-		   void *data);
+                   void *data);
 void attr_city_set_int(enum attr_city what, int city_id, int data);
 size_t attr_city_get_int(enum attr_city what, int city_id, int *data);
 
@@ -80,15 +80,15 @@ size_t attr_city_get_int(enum attr_city what, int city_id, int *data);
  * Special methods for players.
  */
 void attr_player_set(enum attr_player what, int player_id, size_t data_length,
-		     const void *const data);
+                     const void *const data);
 size_t attr_player_get(enum attr_player what, int player_id,
-		    size_t max_data_length, void *data);
+                    size_t max_data_length, void *data);
 
 /*
  * Special methods for tiles.
  */
 void attr_tile_set(enum attr_tile what, int x, int y, size_t data_length,
-		   const void *const data);
+                   const void *const data);
 size_t attr_tile_get(enum attr_tile what, int x, int y, size_t max_data_length,
-		  void *data);
+                  void *data);
 #endif

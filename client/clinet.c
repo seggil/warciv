@@ -80,8 +80,8 @@
 #include "climisc.h"
 #include "connectdlg_common.h"
 #include "connectdlg_g.h"
-#include "dialogs_g.h"		/* popdown_races_dialog() */
-#include "gui_main_g.h"		/* add_net_input(), remove_net_input() */
+#include "dialogs_g.h"          /* popdown_races_dialog() */
+#include "gui_main_g.h"         /* add_net_input(), remove_net_input() */
 #include "menu_g.h"
 #include "messagewin_g.h"
 #include "options.h"
@@ -112,8 +112,8 @@ struct async_slist_ctx {
   int input_id;
   int req_id;
   int nlsa_id;
-  int buflen;			/* amount of data in buf */
-  char buf[65536];		/* metaserver response buffer */
+  int buflen;                   /* amount of data in buf */
+  char buf[65536];              /* metaserver response buffer */
   char urlpath[MAX_LEN_ADDR];
   char metaname[MAX_LEN_ADDR];
   int metaport;
@@ -180,7 +180,7 @@ static void client_close_socket_callback(struct connection *pc)
   return 0; on failure, put an error message in ERRBUF and return -1.
 **************************************************************************/
 int connect_to_server(const char *username, const char *hostname, int port,
-		      char *errbuf, int errbufsize)
+                      char *errbuf, int errbufsize)
 {
   if (get_server_address(hostname, port, errbuf, errbufsize) != 0) {
     return -1;
@@ -201,7 +201,7 @@ int connect_to_server(const char *username, const char *hostname, int port,
      or put an error message in ERRBUF and return -1 on failure
 **************************************************************************/
 int get_server_address(const char *hostname, int port, char *errbuf,
-		       int errbufsize)
+                       int errbufsize)
 {
   if (port == 0)
     port = DEFAULT_SOCK_PORT;
@@ -222,8 +222,8 @@ int get_server_address(const char *hostname, int port, char *errbuf,
   Try to connect to a server (get_server_address() must be called first!):
    - try to create a TCP socket and connect it to `server_addr'
    - if successful:
-	  - start monitoring the socket for packets from the server
-	  - send a "login request" packet to the server
+          - start monitoring the socket for packets from the server
+          - send a "login request" packet to the server
       and - return 0
    - if unable to create the connection, close the socket, put an error
      message in ERRBUF and return the Unix error code (ie., errno, which
@@ -316,7 +316,7 @@ static int read_from_connection(struct connection *pc, bool block)
   for (;;) {
     fd_set readfs, writefs, exceptfs;
     bool have_data_for_server = (pc->used && pc->send_buffer
-				&& pc->send_buffer->ndata > 0);
+                                && pc->send_buffer->ndata > 0);
     int n;
     struct timeval tv;
 
@@ -333,10 +333,10 @@ static int read_from_connection(struct connection *pc, bool block)
       MY_FD_ZERO(&writefs);
       FD_SET(pc->sock, &writefs);
       n = select(pc->sock + 1, &readfs, &writefs, &exceptfs,
-		 block ? NULL : &tv);
+                 block ? NULL : &tv);
     } else {
       n = select(pc->sock + 1, &readfs, NULL, &exceptfs,
-		 block ? NULL : &tv);
+                 block ? NULL : &tv);
     }
 
     /* the socket is neither readable, writeable nor got an
@@ -349,14 +349,14 @@ static int read_from_connection(struct connection *pc, bool block)
       long err_no = mysocketerrno();
 
       if (is_interrupted_errno(err_no)) {
-	/* EINTR can happen sometimes, especially when compiling with -pg.
-	 * Generally we just want to run select again. */
-	freelog(LOG_DEBUG, "select() returned EINTR");
-	continue;
+        /* EINTR can happen sometimes, especially when compiling with -pg.
+         * Generally we just want to run select again. */
+        freelog(LOG_DEBUG, "select() returned EINTR");
+        continue;
       }
 
       freelog(LOG_NORMAL, "error in select() return=%d errno=%lu (%s)",
-	      n, err_no, mystrsocketerror(err_no));
+              n, err_no, mystrsocketerror(err_no));
       return -1;
     }
 
@@ -394,15 +394,15 @@ void input_from_server(int fd)
     while (TRUE) {
       bool result;
       void *packet = get_packet_from_connection(&aconnection,
-						&type, &result);
+                                                &type, &result);
 
       if (result) {
-	assert(packet != NULL);
-	handle_packet_input(packet, type);
-	free(packet);
+        assert(packet != NULL);
+        handle_packet_input(packet, type);
+        free(packet);
       } else {
-	assert(packet == NULL);
-	break;
+        assert(packet == NULL);
+        break;
       }
     }
   } else {
@@ -417,42 +417,42 @@ void input_from_server(int fd)
  received.
 **************************************************************************/
 void input_from_server_till_request_got_processed(int fd,
-						  int expected_request_id)
+                                                  int expected_request_id)
 {
   assert(expected_request_id);
   assert(fd == aconnection.sock);
 
   freelog(LOG_DEBUG,
-	  "input_from_server_till_request_got_processed("
-	  "expected_request_id=%d)", expected_request_id);
+          "input_from_server_till_request_got_processed("
+          "expected_request_id=%d)", expected_request_id);
 
   while (TRUE) {
     if (read_from_connection(&aconnection, TRUE) >= 0) {
       enum packet_type type;
 
       while (TRUE) {
-	bool result;
-	void *packet = get_packet_from_connection(&aconnection,
-						  &type, &result);
-	if (!result) {
-	  assert(packet == NULL);
-	  break;
-	}
+        bool result;
+        void *packet = get_packet_from_connection(&aconnection,
+                                                  &type, &result);
+        if (!result) {
+          assert(packet == NULL);
+          break;
+        }
 
-	assert(packet != NULL);
-	handle_packet_input(packet, type);
-	free(packet);
+        assert(packet != NULL);
+        handle_packet_input(packet, type);
+        free(packet);
 
-	if (type == PACKET_PROCESSING_FINISHED) {
-	  freelog(LOG_DEBUG, "ifstrgp: expect=%d, seen=%d",
-		  expected_request_id,
-		  aconnection.client.last_processed_request_id_seen);
-	  if (aconnection.client.last_processed_request_id_seen >=
-	      expected_request_id) {
-	    freelog(LOG_DEBUG, "ifstrgp: got it; returning");
-	    return;
-	  }
-	}
+        if (type == PACKET_PROCESSING_FINISHED) {
+          freelog(LOG_DEBUG, "ifstrgp: expect=%d, seen=%d",
+                  expected_request_id,
+                  aconnection.client.last_processed_request_id_seen);
+          if (aconnection.client.last_processed_request_id_seen >=
+              expected_request_id) {
+            freelog(LOG_DEBUG, "ifstrgp: got it; returning");
+            return;
+          }
+        }
       }
     } else {
       client_close_socket_callback(&aconnection);
@@ -487,16 +487,16 @@ static char *win_uname()
     if (osvi.dwMajorVersion == 4) {
       switch (osvi.dwMinorVersion) {
       case 0:
-	osname = "Win95";
-	break;
+        osname = "Win95";
+        break;
       case 10:
-	osname = "Win98";
-	break;
+        osname = "Win98";
+        break;
       case 90:
-	osname = "WinME";
-	break;
+        osname = "WinME";
+        break;
       default:
-	break;
+        break;
       }
     }
     break;
@@ -507,26 +507,26 @@ static char *win_uname()
     if (osvi.dwMajorVersion == 5) {
       switch (osvi.dwMinorVersion) {
       case 0:
-	osname = "Win2000";
-	break;
+        osname = "Win2000";
+        break;
       case 1:
-	osname = "WinXP";
-	break;
+        osname = "WinXP";
+        break;
       case 2:
-	osname = "WinServer2003";
-	break;
+        osname = "WinServer2003";
+        break;
       default:
-	break;
+        break;
       }
     }
 
     if (osvi.dwMajorVersion == 6) {
       switch (osvi.dwMinorVersion) {
       case 0:
-	osname = "WinVista";
-	break;
+        osname = "WinVista";
+        break;
       default:
-	break;
+        break;
       }
     }
     break;
@@ -540,15 +540,15 @@ static char *win_uname()
   switch (sysinfo.wProcessorArchitecture) {
     case PROCESSOR_ARCHITECTURE_INTEL:
       {
-	unsigned int ptype;
-	if (sysinfo.wProcessorLevel < 3) /* Shouldn't happen. */
-	  ptype = 3;
-	else if (sysinfo.wProcessorLevel > 9) /* P4 */
-	  ptype = 6;
-	else
-	  ptype = sysinfo.wProcessorLevel;
+        unsigned int ptype;
+        if (sysinfo.wProcessorLevel < 3) /* Shouldn't happen. */
+          ptype = 3;
+        else if (sysinfo.wProcessorLevel > 9) /* P4 */
+          ptype = 6;
+        else
+          ptype = sysinfo.wProcessorLevel;
 
-	my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
+        my_snprintf(cpuname, sizeof(cpuname), "i%d86", ptype);
       }
       break;
 
@@ -577,8 +577,8 @@ static char *win_uname()
       break;
   }
   my_snprintf(uname_buf, sizeof(uname_buf),
-	      "%s %ld.%ld [%s]", osname, osvi.dwMajorVersion,
-	      osvi.dwMinorVersion, cpuname);
+              "%s %ld.%ld [%s]", osname, osvi.dwMajorVersion,
+              osvi.dwMinorVersion, cpuname);
   return uname_buf;
 }
 #endif
@@ -605,7 +605,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
   for (i = 0; i < nservers; i++) {
     char *host, *port, *version, *state, *message, *nplayers, *patches;
     struct server *pserver =
-	(struct server *) fc_malloc(sizeof(struct server));
+        (struct server *) fc_malloc(sizeof(struct server));
 
     host = secfile_lookup_str_default(file, "", "server%d.host", i);
     pserver->host = mystrdup(host);
@@ -630,7 +630,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
 
     if (pserver->nplayers > 0) {
       pserver->players =
-	fc_malloc(pserver->nplayers * sizeof(*pserver->players));
+        fc_malloc(pserver->nplayers * sizeof(*pserver->players));
     } else {
       pserver->players = NULL;
     }
@@ -643,7 +643,7 @@ static struct server_list *parse_metaserver_data(fz_FILE *f)
       pserver->players[j].name = mystrdup(name);
 
       user = secfile_lookup_str_default(file, "",
-					"server%d.player%d.user", i, j);
+                                        "server%d.player%d.user", i, j);
       pserver->players[j].user = mystrdup(user);
 
       type = secfile_lookup_str_default(file, "",
@@ -703,7 +703,7 @@ static int generate_server_list_http_request(char *buf, int buflen,
 #ifdef HAVE_UNAME
   uname(&un);
   my_snprintf(machine_string,sizeof(machine_string),
-	      "%s %s [%s]", un.sysname, un.release, un.machine);
+              "%s %s [%s]", un.sysname, un.release, un.machine);
 #else /* ! HAVE_UNAME */
   /* Fill in here if you are making a binary without sys/utsname.h and know
      the OS name, release number, and machine architechture */
@@ -738,8 +738,8 @@ static int generate_server_list_http_request(char *buf, int buflen,
   ...
 **************************************************************************/
 static struct server_list *parse_metaserver_http_data(fz_FILE * f,
-						      char *errbuf,
-						      int n_errbuf)
+                                                      char *errbuf,
+                                                      int n_errbuf)
 {
   char str[1024];
 
@@ -907,17 +907,17 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   if (flags & INPUT_ERROR) {
     async_slist_error(ctx, _("Error while waiting for "
                              "metaserver response."));
-    return FALSE;		/* remove input callback */
+    return FALSE;               /* remove input callback */
   }
 
   if ((flags & INPUT_CLOSED) && !(flags & INPUT_READ)) {
-    if (ctx->buflen > 0) {	/* we received some data before, it might be all */
+    if (ctx->buflen > 0) {      /* we received some data before, it might be all */
       goto FINISHED_READING_DATA;
-    } else {			/* this is definitely an error */
+    } else {                    /* this is definitely an error */
       async_slist_error(ctx, _("Metaserver closed the connection "
                                "while we were waiting for a response."));
     }
-    return FALSE;		/* remove input callback */
+    return FALSE;               /* remove input callback */
   }
 
   freelog(LOG_DEBUG, "mrc reading response...");
@@ -951,7 +951,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
   ctx->buflen += count;
   freelog(LOG_DEBUG, "mrc count=%d (buflen=%d)", count, ctx->buflen);
 
-  if (nb == -1) {		/* read error */
+  if (nb == -1) {               /* read error */
     if (my_socket_would_block(err_no)) {
       freelog(LOG_DEBUG, "mrc socket read would block");
       return TRUE;
@@ -961,7 +961,7 @@ static bool metaserver_read_cb(int sock, int flags, void *data)
     return FALSE;
   }
 
-  if (rem == 0) {		/* buffer capacity exceeded */
+  if (rem == 0) {               /* buffer capacity exceeded */
     async_slist_error(ctx, _("Metaserver response exceeds "
                              "buffer capacity."));
     return FALSE;
@@ -975,7 +975,7 @@ FINISHED_READING_DATA:
     ctx->buf[ctx->buflen] = '\0';
     process_metaserver_response(ctx);
     destroy_async_slist_ctx(ctx);
-    return FALSE;		/* we are done reading */
+    return FALSE;               /* we are done reading */
   }
 
   freelog(LOG_DEBUG, "mrc waiting for more data...");
@@ -1322,7 +1322,7 @@ struct server_list *create_server_list(char *errbuf, int n_errbuf)
   }
 
   generate_server_list_http_request(str, sizeof(str), urlpath,
-				    metaname, metaport);
+                                    metaname, metaport);
   f = my_querysocket(s, str, strlen(str));
 
   return parse_metaserver_http_data(f, errbuf, n_errbuf);
@@ -1550,7 +1550,7 @@ struct server_list *get_lan_server_list(void)
 
     if (!mystrcasecmp("none", servername)) {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
-			   sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
+                           sizeof(fromend.sockaddr_in.sin_addr), AF_INET);
       sz_strlcpy(servername, inet_ntoa(fromend.sockaddr_in.sin_addr));
     }
 
@@ -1558,7 +1558,7 @@ struct server_list *get_lan_server_list(void)
     server_list_iterate(lan_servers, aserver) {
       if (!mystrcasecmp(aserver->host, servername)
           && !mystrcasecmp(aserver->port, port)) {
-	goto again;
+        goto again;
       }
     } server_list_iterate_end;
 
@@ -1600,5 +1600,5 @@ void finish_lanserver_scan(void)
 bool is_warserver(void)
 {
   return (aconnection.established
-	  && has_capability("extroutes", aconnection.capability));
+          && has_capability("extroutes", aconnection.capability));
 }

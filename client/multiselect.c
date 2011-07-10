@@ -66,10 +66,10 @@ bool filter_change(filter *pfilter, enum filter_value value)
     } else {
       if (*pfilter & FILTER_ALL) {
         *pfilter &= ~FILTER_ALL;
-	ret = TRUE;
+        ret = TRUE;
       } else if (*pfilter & FILTER_OFF) {
         *pfilter &= ~FILTER_OFF;
-	ret = TRUE;
+        ret = TRUE;
       }
       *pfilter |= value;
     }
@@ -101,7 +101,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
           || (inclusive_filter & FILTER_SENTRIED
               && punit->activity != ACTIVITY_SENTRY)
           || (inclusive_filter & FILTER_AUTO
-	      && !punit->ai.control && !punit->air_patrol_tile && !punit->ptr)
+              && !punit->ai.control && !punit->air_patrol_tile && !punit->ptr)
           || (inclusive_filter & FILTER_VETERAN && punit->veteran == 0)
           || (inclusive_filter & FILTER_IDLE
               && punit->activity != ACTIVITY_IDLE)
@@ -122,7 +122,7 @@ bool unit_satisfies_filter(struct unit *punit, filter inclusive_filter,
           || (exclusive_filter & FILTER_SENTRIED
               && punit->activity == ACTIVITY_SENTRY)
           || (exclusive_filter & FILTER_AUTO
-	      && (punit->ai.control || punit->air_patrol_tile || punit->ptr))
+              && (punit->ai.control || punit->air_patrol_tile || punit->ptr))
           || (exclusive_filter & FILTER_VETERAN && punit->veteran > 0)
           || (exclusive_filter & FILTER_IDLE
               && punit->activity == ACTIVITY_IDLE)
@@ -371,7 +371,7 @@ void multi_select_copy(int dest, int src)
       update_unit_info_label(get_unit_in_focus());
     }
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Multi-selection %d selected."), src);
+                _("Warclient: Multi-selection %d selected."), src);
   } else {
     int size = multi_select_size(dest);
     my_snprintf(buf, sizeof(buf),
@@ -539,13 +539,13 @@ struct scity *find_weakest_city(struct scity_list *psclist)
       continue;
     }
     if (!wscity
-	|| pscity->rdv < wscity->rdv
-	|| (pscity->rdv == wscity->rdv
-	    && (pscity->tdv < wscity->tdv
-		|| (pscity->tdv == wscity->tdv
-		    && (pscity->rav < wscity->rav
-			|| (pscity->rav == wscity->rav
-			    && pscity->tav < wscity->rav)))))) {
+        || pscity->rdv < wscity->rdv
+        || (pscity->rdv == wscity->rdv
+            && (pscity->tdv < wscity->tdv
+                || (pscity->tdv == wscity->tdv
+                    && (pscity->rav < wscity->rav
+                        || (pscity->rav == wscity->rav
+                            && pscity->tav < wscity->rav)))))) {
       wscity = pscity;
     }
   } scity_list_iterate_end;
@@ -561,12 +561,12 @@ struct unit *find_best_unit(struct unit_list *pulist)
 
   unit_list_iterate(pulist, punit) {
     if (!bunit
-	|| unit_type(punit)->defense_strength
-	   > unit_type(bunit)->defense_strength
-	|| (unit_type(punit)->defense_strength
-	    == unit_type(bunit)->defense_strength
-	    && unit_type(punit)->attack_strength
-	       > unit_type(bunit)->attack_strength))
+        || unit_type(punit)->defense_strength
+           > unit_type(bunit)->defense_strength
+        || (unit_type(punit)->defense_strength
+            == unit_type(bunit)->defense_strength
+            && unit_type(punit)->attack_strength
+               > unit_type(bunit)->attack_strength))
       bunit = punit;
   } unit_list_iterate_end;
   return bunit;
@@ -589,14 +589,14 @@ void multi_select_spread(void)
   sclist = scity_list_new();
   players_iterate(pplayer) {
     if ((!multi_select_spread_allied_cities && pplayer != get_player_ptr())
-	|| !pplayers_allied(get_player_ptr(), pplayer)) {
+        || !pplayers_allied(get_player_ptr(), pplayer)) {
       continue;
     }
 
     city_list_iterate(pplayer->cities, pcity) {
       if (pcity->tile->continent != cid
-	  || (multi_select_spread_airport_cities
-	      && get_city_bonus(pcity, EFT_AIRLIFT) == 0)) {
+          || (multi_select_spread_airport_cities
+              && get_city_bonus(pcity, EFT_AIRLIFT) == 0)) {
         continue;
       }
       pscity = fc_malloc(sizeof(struct scity));
@@ -650,9 +650,9 @@ void multi_select_spread(void)
       pscity->rdv += type->defense_strength;
       pscity->rav += type->attack_strength;
       scity_list_iterate(sclist, pscity) {
-	if (!unit_list_find(pscity->ulist, punit->id)) {
-	  continue;
-	}
+        if (!unit_list_find(pscity->ulist, punit->id)) {
+          continue;
+        }
         unit_list_unlink(pscity->ulist, punit);
         pscity->tdv -= type->defense_strength;
         pscity->tav -= type->attack_strength;
@@ -766,7 +766,7 @@ enum place_value delayed_goto_place;
 enum utype_value delayed_goto_utype;
 
 enum delayed_goto_type delayed_goto_state;
-int delayed_goto_unit_limit;	/* 0 = unlimited */
+int delayed_goto_unit_limit;    /* 0 = unlimited */
 int delayed_goto_need_tile_for = -1;
 
 /* 0 is the current delayed queue, 1-3 are the extra queues */
@@ -801,7 +801,7 @@ void delayed_goto_add_unit(int dg, int id, int type, struct tile *ptile)
   Returns TRUE if other bits than the value are changed.
 ***********************************************************************/
 bool delayed_goto_auto_filter_change(filter *pfilter,
-				     enum automatic_execution value)
+                                     enum automatic_execution value)
 {
   bool ret = FALSE;
 
@@ -815,7 +815,7 @@ bool delayed_goto_auto_filter_change(filter *pfilter,
     } else {
       if (*pfilter & AUTO_OFF) {
         *pfilter = 0;
-	ret = TRUE;
+        ret = TRUE;
       }
       *pfilter |= value;
     }
@@ -840,7 +840,7 @@ void delayed_goto_auto_timers_init(void)
     if (game.info.timeout > 0) {
       if (auto_timer_values[i] >= 0) {
         auto_timers[i].seconds = (game.info.timeout
-				  * (100 - auto_timer_values[i])) / 100;
+                                  * (100 - auto_timer_values[i])) / 100;
       } else {
         auto_timers[i].seconds = -auto_timer_values[i];
       }
@@ -996,9 +996,9 @@ void delayed_goto_event(enum automatic_execution event, struct player *pplayer)
   for (i = 0; i < DELAYED_GOTO_NUM; i++) {
     if (delayed_goto_list[i].automatic_execution & event) {
       if (pplayer) {
-	request_player_execute_delayed_goto(pplayer, i);
+        request_player_execute_delayed_goto(pplayer, i);
       } else {
-	request_execute_delayed_goto(NULL, i);
+        request_execute_delayed_goto(NULL, i);
       }
     }
   }
@@ -1113,7 +1113,7 @@ struct player *get_tile_player(struct tile *ptile)
   ...
 ***********************************************************************/
 static bool unit_can_do_delayed_action(struct unit *punit,
-				       enum delayed_goto_type dgtype)
+                                       enum delayed_goto_type dgtype)
 {
   switch (dgtype) {
   case DGT_NORMAL:
@@ -1147,8 +1147,8 @@ void add_unit_to_delayed_goto(struct tile *ptile)
   if (delayed_goto_place == PLACE_SINGLE_UNIT) {
     multi_select_iterate(FALSE, punit) {
       if (unit_can_do_delayed_action(punit, delayed_goto_state)) {
-	delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
-	count++;
+        delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
+        count++;
       }
     } multi_select_iterate_end;
   } else {
@@ -1172,7 +1172,7 @@ void add_unit_to_delayed_goto(struct tile *ptile)
               && punit->type != punit_focus->type)
           || !unit_satisfies_filter(punit, delayed_goto_inclusive_filter,
                                     delayed_goto_exclusive_filter)
-	  || !unit_can_do_delayed_action(punit, delayed_goto_state)) {
+          || !unit_can_do_delayed_action(punit, delayed_goto_state)) {
         continue;
       }
       delayed_goto_add_unit(0, punit->id, delayed_goto_state, ptile);
@@ -1308,34 +1308,34 @@ void request_execute_delayed_goto(struct tile *ptile, int dg)
       switch (dgd->type) {
       case DGT_NORMAL:
         /* Normal move */
-	send_goto_unit(punit, dgd->ptile);
+        send_goto_unit(punit, dgd->ptile);
         punit->is_new = FALSE;
-	break;
+        break;
       case DGT_NUKE:
-	if (unit_flag(punit, F_NUCLEAR)) {
+        if (unit_flag(punit, F_NUCLEAR)) {
           /* Move nuke */
-	  send_goto_unit(punit, dgd->ptile);
-	  if (calculate_move_cost(punit, dgd->ptile) > punit->moves_left) {
-	    /* Cannot reach */
-	    request_new_unit_activity(punit, ACTIVITY_IDLE);
-	    /* FIXME: Should we stop the execution of the whole queue? */
-	  } else {
-	    /* Boom! */
-	    do_unit_nuke(punit);
-	  }
-	  punit->is_new = FALSE;
-	}
-	break;
+          send_goto_unit(punit, dgd->ptile);
+          if (calculate_move_cost(punit, dgd->ptile) > punit->moves_left) {
+            /* Cannot reach */
+            request_new_unit_activity(punit, ACTIVITY_IDLE);
+            /* FIXME: Should we stop the execution of the whole queue? */
+          } else {
+            /* Boom! */
+            do_unit_nuke(punit);
+          }
+          punit->is_new = FALSE;
+        }
+        break;
       case DGT_PARADROP:
-	if (unit_flag(punit, F_PARATROOPERS)) {
+        if (unit_flag(punit, F_PARATROOPERS)) {
           /* Paradrop */
-	  do_unit_paradrop_to(punit, dgd->ptile);
-	  punit->is_new = FALSE;
-	}
-	break;
+          do_unit_paradrop_to(punit, dgd->ptile);
+          punit->is_new = FALSE;
+        }
+        break;
       default:
-	freelog(LOG_ERROR, "Unkown delayed goto type varient (%d).", dgd->type);
-	break;
+        freelog(LOG_ERROR, "Unkown delayed goto type varient (%d).", dgd->type);
+        break;
       }
     }
     delayed_goto_data_list_unlink(delayed_goto_list[dg].dglist, dgd);
@@ -1757,12 +1757,12 @@ void add_city_to_specific_auto_airlift_queue(int aq, struct city *pcity)
   tile_list_prepend(airlift_queues[aq].tlist, pcity->tile);
   if (aq == 0) {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Adding city %s to auto airlift queue."),
-		get_tile_info(pcity->tile));
+                _("Warclient: Adding city %s to auto airlift queue."),
+                get_tile_info(pcity->tile));
   } else {
     my_snprintf(buf, sizeof(buf),
-		_("Warclient: Adding city %s to auto airlift queue %d."),
-		get_tile_info(pcity->tile), aq + DELAYED_GOTO_NUM - 1);
+                _("Warclient: Adding city %s to auto airlift queue %d."),
+                get_tile_info(pcity->tile), aq + DELAYED_GOTO_NUM - 1);
   }
 
   append_output_window(buf);

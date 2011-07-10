@@ -31,7 +31,7 @@
 
 #include "attribute.h"
 
-#define ATTRIBUTE_LOG_LEVEL	LOG_DEBUG
+#define ATTRIBUTE_LOG_LEVEL     LOG_DEBUG
 
 static struct hash_table *attribute_hash = NULL;
 
@@ -50,7 +50,7 @@ enum attribute_serial {
  Hash function for attribute_hash.
 *****************************************************************************/
 static unsigned int attr_hash_val_fn(const void *key,
-				     unsigned int num_buckets)
+                                     unsigned int num_buckets)
 {
   const struct attr_key *pkey = (const struct attr_key *) key;
 
@@ -101,7 +101,7 @@ void attribute_free()
  deserialization time.
 *****************************************************************************/
 static enum attribute_serial serialize_hash( struct hash_table *hash,
-					void **pdata, int *pdata_length )
+                                        void **pdata, int *pdata_length )
 {
   /*
    * Layout of version 2:
@@ -205,7 +205,7 @@ static enum attribute_serial serialize_hash( struct hash_table *hash,
   Check everything!
 *****************************************************************************/
 static enum attribute_serial unserialize_hash( struct hash_table *hash,
-					void *data, size_t data_length )
+                                        void *data, size_t data_length )
 {
   int entries, i, dummy;
   struct data_in din;
@@ -340,7 +340,7 @@ void attribute_flush(void)
   }
 
   serialize_hash(attribute_hash, &(pplayer->attribute_block.data),
-		 &(pplayer->attribute_block.length));
+                 &(pplayer->attribute_block.length));
   send_attribute_block(pplayer, &aconnection);
 }
 
@@ -378,14 +378,14 @@ void attribute_restore(void)
  attribute is removed.
 *****************************************************************************/
 void attribute_set(int key, int id, int x, int y, size_t data_length,
-		   const void *const data)
+                   const void *const data)
 {
   struct attr_key *pkey;
   void *pvalue = NULL;
 
   freelog(ATTRIBUTE_LOG_LEVEL, "attribute_set(key=%d, id=%d, x=%d, y=%d, "
-	  "data_length=%d, data=%p)", key, id, x, y,
-	  (unsigned int) data_length, data);
+          "data_length=%d, data=%p)", key, id, x, y,
+          (unsigned int) data_length, data);
 
   assert(attribute_hash != NULL);
 
@@ -428,7 +428,7 @@ void attribute_set(int key, int id, int x, int y, size_t data_length,
    size = attribute_get(key, id, x, y, 0, NULL)
 *****************************************************************************/
 size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
-		  void *data)
+                  void *data)
 {
 
   struct attr_key pkey;
@@ -437,8 +437,8 @@ size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
   struct data_in din;
 
   freelog(ATTRIBUTE_LOG_LEVEL, "attribute_get(key=%d, id=%d, x=%d, y=%d, "
-	  "max_data_length=%d, data=%p)", key, id, x, y,
-	  (unsigned int) max_data_length, data);
+          "max_data_length=%d, data=%p)", key, id, x, y,
+          (unsigned int) max_data_length, data);
 
   assert(attribute_hash != NULL);
 
@@ -469,7 +469,7 @@ size_t attribute_get(int key, int id, int x, int y, size_t max_data_length,
 ...
 *****************************************************************************/
 void attr_unit_set(enum attr_unit what, int unit_id, size_t data_length,
-		   const void *const data)
+                   const void *const data)
 {
   attribute_set(what, unit_id, -1, -2, data_length, data);
 }
@@ -478,7 +478,7 @@ void attr_unit_set(enum attr_unit what, int unit_id, size_t data_length,
 ...
 *****************************************************************************/
 size_t attr_unit_get(enum attr_unit what, int unit_id, size_t max_data_length,
-		  void *data)
+                  void *data)
 {
   return attribute_get(what, unit_id, -1, -2, max_data_length, data);
 }
@@ -503,7 +503,7 @@ size_t attr_unit_get_int(enum attr_unit what, int unit_id, int *data)
 ...
 *****************************************************************************/
 void attr_city_set(enum attr_city what, int city_id, size_t data_length,
-		   const void *const data)
+                   const void *const data)
 {
   attribute_set(what, city_id, -1, -1, data_length, data);
 }
@@ -512,7 +512,7 @@ void attr_city_set(enum attr_city what, int city_id, size_t data_length,
 ...
 *****************************************************************************/
 size_t attr_city_get(enum attr_city what, int city_id, size_t max_data_length,
-		  void *data)
+                  void *data)
 {
   return attribute_get(what, city_id, -1, -1, max_data_length, data);
 }
@@ -537,7 +537,7 @@ size_t attr_city_get_int(enum attr_city what, int city_id, int *data)
 ...
 *****************************************************************************/
 void attr_player_set(enum attr_player what, int player_id, size_t data_length,
-		     const void *const data)
+                     const void *const data)
 {
   attribute_set(what, player_id, -1, -1, data_length, data);
 }
@@ -546,7 +546,7 @@ void attr_player_set(enum attr_player what, int player_id, size_t data_length,
 ...
 *****************************************************************************/
 size_t attr_player_get(enum attr_player what, int player_id,
-		    size_t max_data_length, void *data)
+                    size_t max_data_length, void *data)
 {
   return attribute_get(what, player_id, -1, -1, max_data_length, data);
 }
@@ -555,7 +555,7 @@ size_t attr_player_get(enum attr_player what, int player_id,
 ...
 *****************************************************************************/
 void attr_tile_set(enum attr_tile what, int x, int y, size_t data_length,
-		   const void *const data)
+                   const void *const data)
 {
   attribute_set(what, -1, x, y, data_length, data);
 }
@@ -564,7 +564,7 @@ void attr_tile_set(enum attr_tile what, int x, int y, size_t data_length,
 ...
 *****************************************************************************/
 size_t attr_tile_get(enum attr_tile what, int x, int y, size_t max_data_length,
-		  void *data)
+                     void *data)
 {
   return attribute_get(what, -1, x, y, max_data_length, data);
 }

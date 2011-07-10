@@ -26,13 +26,13 @@
 #include "mapview_g.h"
 
 #include "citydlg_common.h"
-#include "civclient.h"		/* for can_client_issue_orders() */
+#include "civclient.h"          /* for can_client_issue_orders() */
 #include "climap.h"
 #include "clinet.h"
 #include "control.h"
 #include "mapview_common.h"
-#include "options.h"		/* for concise_city_production */
-#include "tilespec.h"		/* for is_isometric */
+#include "options.h"            /* for concise_city_production */
+#include "tilespec.h"           /* for is_isometric */
 
 static int citydlg_width, citydlg_height;
 
@@ -63,7 +63,7 @@ void generate_citydlg_dimensions(void)
     int canvas_x, canvas_y;
 
     map_to_gui_vector(&canvas_x, &canvas_y,
-		      city_x - CITY_MAP_RADIUS, city_y - CITY_MAP_RADIUS);
+                      city_x - CITY_MAP_RADIUS, city_y - CITY_MAP_RADIUS);
 
     min_x = MIN(canvas_x, min_x);
     max_x = MAX(canvas_x, max_x);
@@ -133,28 +133,28 @@ bool canvas_to_city_pos(int *city_x, int *city_y, int canvas_x, int canvas_y)
   *city_y += CITY_MAP_RADIUS;
 
   freelog(LOG_DEBUG, "canvas_to_city_pos(pos=(%d,%d))=(%d,%d)",
-	  orig_canvas_x, orig_canvas_y, *city_x, *city_y);
+          orig_canvas_x, orig_canvas_y, *city_x, *city_y);
 
   return is_valid_city_coords(*city_x, *city_y);
 }
 
 /* Iterate over all known tiles in the city.  This iteration follows the
  * painter's algorithm and can be used for drawing. */
-#define citydlg_known_iterate(pcity, city_x, city_y,			    \
-			      ptile, canvas_x, canvas_y)		    \
+#define citydlg_known_iterate(pcity, city_x, city_y,                        \
+                              ptile, canvas_x, canvas_y)                    \
 {                                                                           \
-  int _itr;								    \
+  int _itr;                                                                 \
                                                                             \
-  /* We must go in order to preserve the painter's algorithm. */	    \
+  /* We must go in order to preserve the painter's algorithm. */            \
   for (_itr = 0; _itr < CITY_MAP_SIZE * CITY_MAP_SIZE; _itr++) {            \
-    int city_x = _itr / CITY_MAP_SIZE, city_y = _itr % CITY_MAP_SIZE;	    \
-    int canvas_x, canvas_y;						    \
-    struct tile *ptile;							    \
+    int city_x = _itr / CITY_MAP_SIZE, city_y = _itr % CITY_MAP_SIZE;       \
+    int canvas_x, canvas_y;                                                 \
+    struct tile *ptile;                                                     \
                                                                             \
-    if (is_valid_city_coords(city_x, city_y)				    \
-	&& (ptile = city_map_to_map(pcity, city_x, city_y))		    \
-	&& tile_get_known(ptile)					    \
-	&& city_to_canvas_pos(&canvas_x, &canvas_y, city_x, city_y)) {	    \
+    if (is_valid_city_coords(city_x, city_y)                                \
+        && (ptile = city_map_to_map(pcity, city_x, city_y))                 \
+        && tile_get_known(ptile)                                            \
+        && city_to_canvas_pos(&canvas_x, &canvas_y, city_x, city_y)) {      \
 
 #define citydlg_known_iterate_end                                           \
     }                                                                       \
@@ -166,15 +166,15 @@ bool canvas_to_city_pos(int *city_x, int *city_y, int canvas_x, int canvas_y)
   and orthogonal views.
 ****************************************************************************/
 void city_dialog_redraw_map(struct city *pcity,
-			    struct canvas *pcanvas)
+                            struct canvas *pcanvas)
 {
   /* First make it all black. */
   canvas_put_rectangle(pcanvas, COLOR_STD_BLACK, 0, 0,
-		       get_citydlg_canvas_width(),
-		       get_citydlg_canvas_height());
+                       get_citydlg_canvas_width(),
+                       get_citydlg_canvas_height());
 
   citydlg_known_iterate(pcity, city_x, city_y,
-			ptile, canvas_x, canvas_y) {
+                        ptile, canvas_x, canvas_y) {
     if (is_isometric) {
       put_one_tile_iso(pcanvas, ptile, canvas_x, canvas_y, TRUE);
     } else {
@@ -185,10 +185,10 @@ void city_dialog_redraw_map(struct city *pcity,
   /* We have to put the output afterwards or it will be covered
    * in iso-view. */
   citydlg_known_iterate(pcity, city_x, city_y,
-			ptile, canvas_x, canvas_y) {
+                        ptile, canvas_x, canvas_y) {
     if (pcity->city_map[city_x][city_y] == C_TILE_WORKER) {
       put_city_tile_output(pcity, city_x, city_y,
-			   pcanvas, canvas_x, canvas_y);
+                           pcanvas, canvas_x, canvas_y);
     }
   } citydlg_known_iterate_end;
 
@@ -197,7 +197,7 @@ void city_dialog_redraw_map(struct city *pcity,
    * put_one_tile to fix this, but maybe it wouldn't be a good idea because
    * the lines would get obscured. */
   citydlg_known_iterate(pcity, city_x, city_y,
-			ptile, canvas_x, canvas_y) {
+                        ptile, canvas_x, canvas_y) {
     if (pcity->city_map[city_x][city_y] == C_TILE_UNAVAILABLE) {
       put_red_frame_tile(pcanvas, canvas_x, canvas_y);
     }
@@ -211,7 +211,7 @@ void city_dialog_redraw_map(struct city *pcity,
   filler string is returned.
 **************************************************************************/
 void get_city_dialog_production(struct city *pcity,
-				char *buffer, size_t buffer_len)
+                                char *buffer, size_t buffer_len)
 {
   int turns, cost, stock;
 
@@ -229,7 +229,7 @@ void get_city_dialog_production(struct city *pcity,
   }
 
   turns = city_turns_to_build(pcity, pcity->currently_building,
-			      pcity->is_building_unit, TRUE);
+                              pcity->is_building_unit, TRUE);
   stock = pcity->shield_stock;
 
   if (pcity->is_building_unit) {
@@ -240,20 +240,20 @@ void get_city_dialog_production(struct city *pcity,
 
   if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
     my_snprintf(buffer, buffer_len, _("%3d gold per turn"),
-		MAX(0, pcity->shield_surplus));
+                MAX(0, pcity->shield_surplus));
   } else {
     char time[50];
 
     if (turns < 999) {
       if (concise_city_production) {
-	my_snprintf(time, sizeof(time), "%3d", turns);
+        my_snprintf(time, sizeof(time), "%3d", turns);
       } else {
-	my_snprintf(time, sizeof(time),
-		    PL_("%3d turn", "%3d turns", turns), turns);
+        my_snprintf(time, sizeof(time),
+                    PL_("%3d turn", "%3d turns", turns), turns);
       }
     } else {
       my_snprintf(time, sizeof(time), "%s",
-		  concise_city_production ? "-" : _("never"));
+                  concise_city_production ? "-" : _("never"));
     }
 
     if (concise_city_production) {
@@ -276,12 +276,12 @@ void get_city_dialog_production(struct city *pcity,
  less flexibility.
 **************************************************************************/
 void get_city_dialog_production_full(char *buffer, size_t buffer_len,
-				     int id, bool is_unit,
-				     struct city *pcity)
+                                     int id, bool is_unit,
+                                     struct city *pcity)
 {
   if (!is_unit && building_has_effect(id, EFT_PROD_TO_GOLD)) {
     my_snprintf(buffer, buffer_len, _("%s (XX) %d/turn"),
-		get_impr_name_ex(pcity, id), MAX(0, pcity->shield_surplus));
+                get_impr_name_ex(pcity, id), MAX(0, pcity->shield_surplus));
   } else {
     int turns = city_turns_to_build(pcity, id, is_unit, TRUE);
     const char *name;
@@ -297,8 +297,8 @@ void get_city_dialog_production_full(char *buffer, size_t buffer_len,
 
     if (turns < 999) {
       my_snprintf(buffer, buffer_len,
-		  PL_("%s (%d) %d turn", "%s (%d) %d turns", turns),
-		  name, cost, turns);
+                  PL_("%s (%d) %d turn", "%s (%d) %d turns", turns),
+                  name, cost, turns);
     } else {
       my_snprintf(buffer, buffer_len, "%s (%d) never", name, cost);
     }
@@ -311,7 +311,7 @@ void get_city_dialog_production_full(char *buffer, size_t buffer_len,
  column_size bytes.
 **************************************************************************/
 void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
-				    bool is_unit, struct city *pcity)
+                                    bool is_unit, struct city *pcity)
 {
   if (is_unit) {
     struct unit_type *ptype = get_unit_type(id);
@@ -321,12 +321,12 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
     /* from unit.h get_unit_name() */
     if (ptype->fuel > 0) {
       my_snprintf(buf[1], column_size, "%d/%d/%d(%d)",
-		  ptype->attack_strength, ptype->defense_strength,
-		  ptype->move_rate / 3,
-		  (ptype->move_rate / 3) * ptype->fuel);
+                  ptype->attack_strength, ptype->defense_strength,
+                  ptype->move_rate / 3,
+                  (ptype->move_rate / 3) * ptype->fuel);
     } else {
       my_snprintf(buf[1], column_size, "%d/%d/%d", ptype->attack_strength,
-		  ptype->defense_strength, ptype->move_rate / 3);
+                  ptype->defense_strength, ptype->move_rate / 3);
     }
     my_snprintf(buf[2], column_size, "%d", unit_build_shield_cost(id));
   } else {
@@ -340,24 +340,24 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
 
       /* from city.c get_impr_name_ex() */
       if (pcity && is_building_replaced(pcity, id)) {
-	my_snprintf(buf[1], column_size, "*");
+        my_snprintf(buf[1], column_size, "*");
       } else {
-	const char *state = "";
+        const char *state = "";
 
-	if (is_wonder(id)) {
-	  state = _("Wonder");
-	  if (game.info.global_wonders[id] != 0) {
-	    state = _("Built");
-	  }
-	  if (wonder_obsolete(id)) {
-	    state = _("Obsolete");
-	  }
-	}
-	my_snprintf(buf[1], column_size, "%s", state);
+        if (is_wonder(id)) {
+          state = _("Wonder");
+          if (game.info.global_wonders[id] != 0) {
+            state = _("Built");
+          }
+          if (wonder_obsolete(id)) {
+            state = _("Obsolete");
+          }
+        }
+        my_snprintf(buf[1], column_size, "%s", state);
       }
 
       my_snprintf(buf[2], column_size, "%d",
-		  impr_build_shield_cost(id));
+                  impr_build_shield_cost(id));
     }
   }
 
@@ -365,13 +365,13 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
   if (pcity) {
     if (!is_unit && building_has_effect(id, EFT_PROD_TO_GOLD)) {
       my_snprintf(buf[3], column_size, _("%d/turn"),
-		  MAX(0, pcity->shield_surplus));
+                  MAX(0, pcity->shield_surplus));
     } else {
       int turns = city_turns_to_build(pcity, id, is_unit, FALSE);
       if (turns < 999) {
-	my_snprintf(buf[3], column_size, "%d", turns);
+        my_snprintf(buf[3], column_size, "%d", turns);
       } else {
-	my_snprintf(buf[3], column_size, "%s", _("never"));
+        my_snprintf(buf[3], column_size, "%s", _("never"));
       }
     }
   } else {
@@ -386,7 +386,7 @@ void get_city_dialog_production_row(char *buf[], size_t column_size, int id,
   citizens (use MAX_CITY_SIZE to be on the safe side).
 **************************************************************************/
 void get_city_citizen_types(struct city *pcity, int index,
-			    struct citizen_type *citizens)
+                            struct citizen_type *citizens)
 {
   int i = 0, n;
   assert(index >= 0 && index < 5);
@@ -473,7 +473,7 @@ void activate_all_units(struct tile *ptile)
 int city_change_production(struct city *pcity, bool is_unit, int build_id)
 {
   return dsend_packet_city_change(&aconnection, pcity->id, build_id,
-				  is_unit);
+                                  is_unit);
 }
 
 /**************************************************************************
@@ -499,7 +499,7 @@ int city_set_worklist(struct city *pcity, struct worklist *pworklist)
   Note that the queue DOES include the current production.
 **************************************************************************/
 bool city_queue_insert(struct city *pcity, int position,
-		       bool item_is_unit, int item_id)
+                       bool item_is_unit, int item_id)
 {
   if (position == 0) {
     int old_id;
@@ -522,7 +522,7 @@ bool city_queue_insert(struct city *pcity, int position,
     city_set_worklist(pcity, &pcity->worklist);
     city_change_production(pcity, item_is_unit, item_id);
   } else if (position >= 1
-	     && position <= worklist_length(&pcity->worklist)) {
+             && position <= worklist_length(&pcity->worklist)) {
     /* Insert into middle. */
     if (item_is_unit && !can_eventually_build_unit(pcity, item_id)) {
       return FALSE;
@@ -531,7 +531,7 @@ bool city_queue_insert(struct city *pcity, int position,
       return FALSE;
     }
     if (!worklist_insert(&pcity->worklist, item_id, item_is_unit,
-			 position - 1)) {
+                         position - 1)) {
       return FALSE;
     }
     city_set_worklist(pcity, &pcity->worklist);
@@ -619,8 +619,8 @@ bool city_set_queue(struct city *pcity, struct worklist *pqueue)
 bool city_can_buy(const struct city *pcity)
 {
   return (can_client_issue_orders()
-	  && !pcity->did_buy
-	  && city_buy_cost(pcity) > 0);
+          && !pcity->did_buy
+          && city_buy_cost(pcity) > 0);
 }
 
 /**************************************************************************
@@ -643,10 +643,10 @@ int city_buy_production(struct city *pcity)
   Change a specialist in the given city.  Return the request ID.
 **************************************************************************/
 int city_change_specialist(struct city *pcity, Specialist_type_id from,
-			   Specialist_type_id to)
+                           Specialist_type_id to)
 {
   return dsend_packet_city_change_specialist(&aconnection, pcity->id, from,
-					     to);
+                                             to);
 }
 
 /**************************************************************************
@@ -659,10 +659,10 @@ int city_toggle_worker(struct city *pcity, int city_x, int city_y)
 
   if (pcity->city_map[city_x][city_y] == C_TILE_WORKER) {
     return dsend_packet_city_make_specialist(&aconnection, pcity->id, city_x,
-					     city_y);
+                                             city_y);
   } else if (pcity->city_map[city_x][city_y] == C_TILE_EMPTY) {
     return dsend_packet_city_make_worker(&aconnection, pcity->id, city_x,
-					 city_y);
+                                         city_y);
   } else {
     return 0;
   }
@@ -686,7 +686,7 @@ void refresh_city_dialog_maps(struct tile *ptile)
 
   city_map_checked_iterate(ptile, cx, cy, itr_tile) {
     if ((pcity = map_get_city(itr_tile))
-	&& (global_observer || pcity->owner == get_player_idx())) {
+        && (global_observer || pcity->owner == get_player_idx())) {
       refresh_city_dialog(pcity, UPDATE_MAP);
     }
   } city_map_checked_iterate_end;

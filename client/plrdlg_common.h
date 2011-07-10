@@ -13,7 +13,7 @@
 #ifndef FC__PLRDLG_COMMON_H
 #define FC__PLRDLG_COMMON_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 
@@ -41,11 +41,11 @@ struct player_dlg_column {
   bool show;
   enum player_dlg_column_type type;
   enum conn_flag flag;
-  const char *title;				/* already translated */
-  const char *(*string_func)(struct player *);	/* if type = COL_*TEXT */
-  int (*int_func)(struct player *);		/* if type = COL_INT */
-  bool (*bool_func)(struct player *);		/* if type = COL_BOOLEAN */
-  const char *tagname;				/* for save_options */
+  const char *title;                            /* already translated */
+  const char *(*string_func)(struct player *);  /* if type = COL_*TEXT */
+  int (*int_func)(struct player *);             /* if type = COL_INT */
+  bool (*bool_func)(struct player *);           /* if type = COL_BOOLEAN */
+  const char *tagname;                          /* for save_options */
 };
 
 extern struct player_dlg_column player_dlg_columns[];

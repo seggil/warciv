@@ -104,35 +104,35 @@ static void insert_generated_table(const char* name, char* outbuf)
     int i;
 
     strcat(outbuf, _("Terrain     Road   Irrigation     Mining         "
-		      "Transform\n"));
+                      "Transform\n"));
     strcat(outbuf, "---------------------------------------------------"
-	   "------------\n");
+           "------------\n");
     for (i = T_FIRST; i < T_COUNT; i++) {
       struct tile_type *ptype = get_tile_type(i);
 
       if (*(ptype->terrain_name) != '\0') {
-	outbuf = strchr(outbuf, '\0');
-	sprintf(outbuf,
-		"%-10s %3d    %3d %-10s %3d %-10s %3d %-10s\n",
-		ptype->terrain_name,
-		ptype->road_time,
-		ptype->irrigation_time,
-		((ptype->irrigation_result == i
-		  || ptype->irrigation_result == T_NONE) ? ""
-		 : get_tile_type(ptype->irrigation_result)->terrain_name),
-		ptype->mining_time,
-		((ptype->mining_result == i
-		  || ptype->mining_result == T_NONE) ? ""
-		 : get_tile_type(ptype->mining_result)->terrain_name),
-		ptype->transform_time,
-		((ptype->transform_result == i
-		 || ptype->transform_result == T_NONE) ? ""
-		 : get_tile_type(ptype->transform_result)->terrain_name));
+        outbuf = strchr(outbuf, '\0');
+        sprintf(outbuf,
+                "%-10s %3d    %3d %-10s %3d %-10s %3d %-10s\n",
+                ptype->terrain_name,
+                ptype->road_time,
+                ptype->irrigation_time,
+                ((ptype->irrigation_result == i
+                  || ptype->irrigation_result == T_NONE) ? ""
+                 : get_tile_type(ptype->irrigation_result)->terrain_name),
+                ptype->mining_time,
+                ((ptype->mining_result == i
+                  || ptype->mining_result == T_NONE) ? ""
+                 : get_tile_type(ptype->mining_result)->terrain_name),
+                ptype->transform_time,
+                ((ptype->transform_result == i
+                 || ptype->transform_result == T_NONE) ? ""
+                 : get_tile_type(ptype->transform_result)->terrain_name));
       }
     }
     strcat(outbuf, "\n");
     strcat(outbuf, _("(Railroads and fortresses require 3 turns, "
-		     "regardless of terrain.)"));
+                     "regardless of terrain.)"));
   }
   return;
 }
@@ -156,7 +156,7 @@ static struct help_item *new_help_item(int type)
  (sort topics with more leading spaces after those with fewer)
 *****************************************************************/
 static int help_item_compar(const struct help_item * const *ppa,
-			    const struct help_item * const *ppb)
+                            const struct help_item * const *ppb)
 {
   char *ta, *tb;
   for (ta = (*ppa)->topic, tb = (*ppb)->topic;
@@ -221,109 +221,109 @@ void boot_help_texts(void)
     if (gen_str) {
       enum help_page_type current_type = HELP_ANY;
       if (!booted) {
-	continue; /* on initial boot data tables are empty */
+        continue; /* on initial boot data tables are empty */
       }
       for(i=2; help_type_names[i]; i++) {
-	if(strcmp(gen_str, help_type_names[i])==0) {
-	  current_type = i;
-	  break;
-	}
+        if(strcmp(gen_str, help_type_names[i])==0) {
+          current_type = i;
+          break;
+        }
       }
       if (current_type == HELP_ANY) {
-	freelog(LOG_ERROR, "bad help-generate category \"%s\"", gen_str);
-	continue;
+        freelog(LOG_ERROR, "bad help-generate category \"%s\"", gen_str);
+        continue;
       }
       {
-	/* Note these should really fill in pitem->text from auto-gen
-	   data instead of doing it later on the fly, but I don't want
-	   to change that now.  --dwp
-	*/
-	char name[2048];
-	struct help_list *category_nodes = help_list_new();
+        /* Note these should really fill in pitem->text from auto-gen
+           data instead of doing it later on the fly, but I don't want
+           to change that now.  --dwp
+        */
+        char name[2048];
+        struct help_list *category_nodes = help_list_new();
 
-	if (current_type == HELP_UNIT) {
-	  unit_type_iterate(i) {
-	    if (unit_type_exists(i)) {
-	      pitem = new_help_item(current_type);
-	      my_snprintf(name, sizeof(name), " %s", unit_name(i));
-	      pitem->topic = mystrdup(name);
-	      pitem->text = mystrdup("");
-	      help_list_append(category_nodes, pitem);
-	    }
-	  } unit_type_iterate_end;
-	} else if (current_type == HELP_TECH) {
-	  tech_type_iterate(i) {
-	    if (i != A_NONE && tech_exists(i)) {
-	      pitem = new_help_item(current_type);
-	      my_snprintf(name, sizeof(name), " %s",
-			  get_tech_name(get_player_ptr(), i));
-	      pitem->topic = mystrdup(name);
-	      pitem->text = mystrdup("");
-	      help_list_append(category_nodes, pitem);
-	    }
-	  } tech_type_iterate_end;
-	} else if (current_type == HELP_TERRAIN) {
-	  for (i = T_FIRST; i < T_COUNT; i++) {
-	    struct tile_type *ptype = get_tile_type(i);
+        if (current_type == HELP_UNIT) {
+          unit_type_iterate(i) {
+            if (unit_type_exists(i)) {
+              pitem = new_help_item(current_type);
+              my_snprintf(name, sizeof(name), " %s", unit_name(i));
+              pitem->topic = mystrdup(name);
+              pitem->text = mystrdup("");
+              help_list_append(category_nodes, pitem);
+            }
+          } unit_type_iterate_end;
+        } else if (current_type == HELP_TECH) {
+          tech_type_iterate(i) {
+            if (i != A_NONE && tech_exists(i)) {
+              pitem = new_help_item(current_type);
+              my_snprintf(name, sizeof(name), " %s",
+                          get_tech_name(get_player_ptr(), i));
+              pitem->topic = mystrdup(name);
+              pitem->text = mystrdup("");
+              help_list_append(category_nodes, pitem);
+            }
+          } tech_type_iterate_end;
+        } else if (current_type == HELP_TERRAIN) {
+          for (i = T_FIRST; i < T_COUNT; i++) {
+            struct tile_type *ptype = get_tile_type(i);
 
-	    if (*(ptype->terrain_name) != '\0') {
-	      pitem = new_help_item(current_type);
-	      my_snprintf(name, sizeof(name), " %s",
-			  ptype->terrain_name);
-	      pitem->topic = mystrdup(name);
-	      pitem->text = mystrdup("");
-	      help_list_append(category_nodes, pitem);
-	    }
-	  }
-	  /* Add special Civ2-style river help text if it's supplied. */
-	  if (terrain_control.river_help_text) {
-	    pitem = new_help_item(HELP_TEXT);
-	    /* TRANS: preserve single space at beginning */
-	    pitem->topic = mystrdup(_(" Rivers"));
-	    strcpy(long_buffer, _(terrain_control.river_help_text));
-	    wordwrap_string(long_buffer, 68);
-	    pitem->text = mystrdup(long_buffer);
-	    help_list_append(category_nodes, pitem);
-	  }
-	} else if (current_type == HELP_GOVERNMENT) {
-	  government_iterate(gov) {
-	    pitem = new_help_item(current_type);
-	    my_snprintf(name, sizeof(name), " %s", gov->name);
-	    pitem->topic = mystrdup(name);
-	    pitem->text = mystrdup("");
-	    help_list_append(category_nodes, pitem);
-	  } government_iterate_end;
-	} else if (current_type == HELP_IMPROVEMENT) {
-	  impr_type_iterate(i) {
-	    if (improvement_exists(i) && !is_wonder(i)) {
-	      pitem = new_help_item(current_type);
-	      my_snprintf(name, sizeof(name), " %s",
-			  improvement_types[i].name);
-	      pitem->topic = mystrdup(name);
-	      pitem->text = mystrdup("");
-	      help_list_append(category_nodes, pitem);
-	    }
-	  } impr_type_iterate_end;
-	} else if (current_type == HELP_WONDER) {
-	  impr_type_iterate(i) {
-	    if (improvement_exists(i) && is_wonder(i)) {
-	      pitem = new_help_item(current_type);
-	      my_snprintf(name, sizeof(name), " %s",
-			  improvement_types[i].name);
-	      pitem->topic = mystrdup(name);
-	      pitem->text = mystrdup("");
-	      help_list_append(category_nodes, pitem);
-	    }
-	  } impr_type_iterate_end;
-	} else {
-	  die("Bad current_type %d", current_type);
-	}
-	help_list_sort(category_nodes, help_item_compar);
-	help_list_iterate(category_nodes, ptmp) {
-	  help_list_append(help_nodes, ptmp);
-	} help_list_iterate_end;
-	help_list_free(category_nodes);
-	continue;
+            if (*(ptype->terrain_name) != '\0') {
+              pitem = new_help_item(current_type);
+              my_snprintf(name, sizeof(name), " %s",
+                          ptype->terrain_name);
+              pitem->topic = mystrdup(name);
+              pitem->text = mystrdup("");
+              help_list_append(category_nodes, pitem);
+            }
+          }
+          /* Add special Civ2-style river help text if it's supplied. */
+          if (terrain_control.river_help_text) {
+            pitem = new_help_item(HELP_TEXT);
+            /* TRANS: preserve single space at beginning */
+            pitem->topic = mystrdup(_(" Rivers"));
+            strcpy(long_buffer, _(terrain_control.river_help_text));
+            wordwrap_string(long_buffer, 68);
+            pitem->text = mystrdup(long_buffer);
+            help_list_append(category_nodes, pitem);
+          }
+        } else if (current_type == HELP_GOVERNMENT) {
+          government_iterate(gov) {
+            pitem = new_help_item(current_type);
+            my_snprintf(name, sizeof(name), " %s", gov->name);
+            pitem->topic = mystrdup(name);
+            pitem->text = mystrdup("");
+            help_list_append(category_nodes, pitem);
+          } government_iterate_end;
+        } else if (current_type == HELP_IMPROVEMENT) {
+          impr_type_iterate(i) {
+            if (improvement_exists(i) && !is_wonder(i)) {
+              pitem = new_help_item(current_type);
+              my_snprintf(name, sizeof(name), " %s",
+                          improvement_types[i].name);
+              pitem->topic = mystrdup(name);
+              pitem->text = mystrdup("");
+              help_list_append(category_nodes, pitem);
+            }
+          } impr_type_iterate_end;
+        } else if (current_type == HELP_WONDER) {
+          impr_type_iterate(i) {
+            if (improvement_exists(i) && is_wonder(i)) {
+              pitem = new_help_item(current_type);
+              my_snprintf(name, sizeof(name), " %s",
+                          improvement_types[i].name);
+              pitem->topic = mystrdup(name);
+              pitem->text = mystrdup("");
+              help_list_append(category_nodes, pitem);
+            }
+          } impr_type_iterate_end;
+        } else {
+          die("Bad current_type %d", current_type);
+        }
+        help_list_sort(category_nodes, help_item_compar);
+        help_list_iterate(category_nodes, ptmp) {
+          help_list_append(help_nodes, ptmp);
+        } help_list_iterate_end;
+        help_list_free(category_nodes);
+        continue;
       }
     }
 
@@ -338,12 +338,12 @@ void boot_help_texts(void)
     for (i=0; i<npara; i++) {
       char *para = paras[i];
       if(strncmp(para, "$", 1)==0) {
-	insert_generated_table(para+1, long_buffer+strlen(long_buffer));
+        insert_generated_table(para+1, long_buffer+strlen(long_buffer));
       } else {
-	strcat(long_buffer, _(para));
+        strcat(long_buffer, _(para));
       }
       if (i!=npara-1) {
-	strcat(long_buffer, "\n\n");
+        strcat(long_buffer, "\n\n");
       }
     }
     free(paras);
@@ -435,13 +435,13 @@ get_help_item_spec(const char *name, enum help_page_type htype, int *pos)
     vitem.text = vtext;
     if(htype==HELP_ANY || htype==HELP_TEXT) {
       my_snprintf(vtext, sizeof(vtext),
-		  _("Sorry, no help topic for %s.\n"), vitem.topic);
+                  _("Sorry, no help topic for %s.\n"), vitem.topic);
       vitem.type = HELP_TEXT;
     } else {
       my_snprintf(vtext, sizeof(vtext),
-		  _("Sorry, no help topic for %s.\n"
-		    "This page was auto-generated.\n\n"),
-		  vitem.topic);
+                  _("Sorry, no help topic for %s.\n"
+                    "This page was auto-generated.\n\n"),
+                  vitem.topic);
       vitem.type = htype;
     }
     pitem = &vitem;
@@ -507,7 +507,7 @@ const struct help_item *help_iter_next(void)
   user_text, if non-NULL, will be appended to the text.
 **************************************************************************/
 char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
-			const char *user_text)
+                        const char *user_text)
 {
   struct impr_type *imp = &improvement_types[which];
 
@@ -516,15 +516,15 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
 
   if (imp->helptext && imp->helptext[0] != '\0') {
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		"%s\n\n", _(imp->helptext));
+                "%s\n\n", _(imp->helptext));
   }
 
   if (tech_exists(improvement_types[which].obsolete_by)) {
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		_("* The discovery of %s will make %s obsolete.\n"),
-		get_tech_name(get_player_ptr(),
-			improvement_types[which].obsolete_by),
-		improvement_types[which].name);
+                _("* The discovery of %s will make %s obsolete.\n"),
+                get_tech_name(get_player_ptr(),
+                        improvement_types[which].obsolete_by),
+                improvement_types[which].name);
   }
 
   if (building_has_effect(which, EFT_ENABLE_NUKE)
@@ -538,9 +538,9 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
     assert(t < game.ruleset_control.num_tech_types);
 
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		_("* Allows all players with knowledge of %s "
-		  "to build %s units.\n"),
-		get_tech_name(get_player_ptr(), t), get_unit_type(u)->name);
+                _("* Allows all players with knowledge of %s "
+                  "to build %s units.\n"),
+                get_tech_name(get_player_ptr(), t), get_unit_type(u)->name);
     my_snprintf(buf + strlen(buf), bufsz - strlen(buf), "  ");
   }
 
@@ -551,31 +551,31 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
       char req_buf[1024] = "";
       int i;
 
-#define req_append(s)							    \
-      (req_buf[0] != '\0'						    \
-       ? my_snprintf(req_buf + strlen(req_buf),				    \
-		     sizeof(req_buf) - strlen(req_buf),			    \
-		     ", %s", (s))					    \
+#define req_append(s)                                    \
+      (req_buf[0] != '\0'                                \
+       ? my_snprintf(req_buf + strlen(req_buf),          \
+                     sizeof(req_buf) - strlen(req_buf),  \
+                     ", %s", (s))                        \
        : sz_strlcpy(req_buf, (s)))
 
       if (b->tech_req != A_NONE) {
-	req_append(get_tech_name(get_player_ptr(), b->tech_req));
+        req_append(get_tech_name(get_player_ptr(), b->tech_req));
       }
 
       for (i = 0; b->terr_gate[i] != T_NONE; i++) {
-	req_append(get_terrain_name(b->terr_gate[i]));
+        req_append(get_terrain_name(b->terr_gate[i]));
       }
       for (i = 0; b->spec_gate[i] != S_NO_SPECIAL; i++) {
-	req_append(get_special_name(b->spec_gate[i]));
+        req_append(get_special_name(b->spec_gate[i]));
       }
 #undef req_append
 
       if (req_buf[0] != '\0') {
-	my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		    _("* Allows %s (with %s).\n"), b->name, req_buf);
+        my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
+                    _("* Allows %s (with %s).\n"), b->name, req_buf);
       } else {
-	my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		    _("* Allows %s.\n"), b->name);
+        my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
+                    _("* Allows %s.\n"), b->name);
       }
     }
   } impr_type_iterate_end;
@@ -585,12 +585,12 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
 
     if (unit_type_exists(utype) && u->impr_requirement == which) {
       if (u->tech_requirement != A_LAST) {
-	my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		    _("* Allows %s (with %s).\n"), u->name,
-		    get_tech_name(get_player_ptr(), u->tech_requirement));
+        my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
+                    _("* Allows %s (with %s).\n"), u->name,
+                    get_tech_name(get_player_ptr(), u->tech_requirement));
       } else {
-	my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
-		    _("* Allows %s.\n"), u->name);
+        my_snprintf(buf + strlen(buf), bufsz - strlen(buf),
+                    _("* Allows %s.\n"), u->name);
       }
     }
   } unit_type_iterate_end;
@@ -603,15 +603,15 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
   return buf;
 }
 
-#define techs_with_flag_iterate(flag, tech_id)				    \
-{									    \
-  Tech_Type_id tech_id = 0;						    \
-									    \
+#define techs_with_flag_iterate(flag, tech_id)  \
+{                                               \
+  Tech_Type_id tech_id = 0;                     \
+                                                \
   while ((tech_id = find_tech_by_flag(tech_id, (flag))) != A_LAST) {
 
-#define techs_with_flag_iterate_end		\
-    tech_id++;					\
-  }						\
+#define techs_with_flag_iterate_end             \
+    tech_id++;                                  \
+  }                                             \
 }
 
 /****************************************************************************
@@ -619,7 +619,7 @@ char *helptext_building(char *buf, size_t bufsz, Impr_Type_id which,
   number of techs found.
 ****************************************************************************/
 static int techs_with_flag_string(enum tech_flag_id flag,
-				  char *buf, size_t bufsz)
+                                  char *buf, size_t bufsz)
 {
   int count = 0;
 
@@ -657,67 +657,67 @@ void helptext_unit(char *buf, int i, const char *user_text)
   buf[0] = '\0';
   if (unit_type_flag(i, F_NOBUILD)) {
     sprintf(buf + strlen(buf),
-	    _("* May not be built in cities.\n"));
+            _("* May not be built in cities.\n"));
   }
   if (unit_type_flag(i, F_NOHOME)) {
     sprintf(buf + strlen(buf), _("* Never has a home city.\n"));
   }
   if (unit_type_flag(i, F_GAMELOSS)) {
     sprintf(buf + strlen(buf),
-	    _("* Losing this unit will lose you the game!\n"));
+            _("* Losing this unit will lose you the game!\n"));
   }
   if (unit_type_flag(i, F_UNIQUE)) {
     sprintf(buf + strlen(buf),
-	    _("* Each player may only have one of this type of unit.\n"));
+            _("* Each player may only have one of this type of unit.\n"));
   }
   if (utype->pop_cost > 0) {
     sprintf(buf + strlen(buf), _("* Requires %d population to build.\n"),
-	    utype->pop_cost);
+            utype->pop_cost);
   }
   if (utype->transport_capacity>0) {
     if (unit_type_flag(i, F_CARRIER)) {
       sprintf(buf + strlen(buf),
-	      PL_("* Can carry and refuel %d air unit.\n",
-		  "* Can carry and refuel %d air units.\n",
-		  utype->transport_capacity), utype->transport_capacity);
+              PL_("* Can carry and refuel %d air unit.\n",
+                  "* Can carry and refuel %d air units.\n",
+                  utype->transport_capacity), utype->transport_capacity);
     } else if (unit_type_flag(i, F_MISSILE_CARRIER)) {
       sprintf(buf + strlen(buf),
-	      PL_("* Can carry and refuel %d missile unit.\n",
-		  "* Can carry and refuel %d missile units.\n",
-		  utype->transport_capacity), utype->transport_capacity);
+              PL_("* Can carry and refuel %d missile unit.\n",
+                  "* Can carry and refuel %d missile units.\n",
+                  utype->transport_capacity), utype->transport_capacity);
     } else {
       sprintf(buf + strlen(buf),
-	      PL_("* Can carry %d ground unit across water.\n",
-		  "* Can carry %d ground units across water.\n",
-		  utype->transport_capacity), utype->transport_capacity);
+              PL_("* Can carry %d ground unit across water.\n",
+                  "* Can carry %d ground units across water.\n",
+                  utype->transport_capacity), utype->transport_capacity);
     }
   }
   if (unit_type_flag(i, F_TRADE_ROUTE)) {
     /* TRANS: "Manhattan" distance is the distance along gridlines, with
      * no diagonals allowed. */
     sprintf(buf + strlen(buf), _("* Can establish trade routes (must travel "
-				 "to target city and must be at least %d "
-				 "tiles [in Manhattan distance] from this "
-				 "unit's home city).\n"), game.traderoute_info.trademindist);
+                                 "to target city and must be at least %d "
+                                 "tiles [in Manhattan distance] from this "
+                                 "unit's home city).\n"), game.traderoute_info.trademindist);
   }
   if (unit_type_flag(i, F_HELP_WONDER)) {
     sprintf(buf + strlen(buf),
-	    _("* Can help build wonders (adds %d production).\n"),
-	    utype->build_cost);
+            _("* Can help build wonders (adds %d production).\n"),
+            utype->build_cost);
   }
   if (unit_type_flag(i, F_UNDISBANDABLE)) {
     sprintf(buf + strlen(buf), _("* May not be disbanded.\n"));
   } else {
     sprintf(buf + strlen(buf), _("* May be disbanded in a city to "
-				 "recover 50%% of the production cost.\n"));
+                                 "recover 50%% of the production cost.\n"));
   }
   if (unit_type_flag(i, F_CITIES)) {
     sprintf(buf + strlen(buf), _("* Can build new cities.\n"));
   }
   if (unit_type_flag(i, F_ADD_TO_CITY)) {
     sprintf(buf + strlen(buf), _("* Can add on %d population to "
-				 "cities of no more than size %d.\n"),
-	    unit_pop_value(i), game.ruleset_control.add_to_size_limit - unit_pop_value(i));
+                                 "cities of no more than size %d.\n"),
+            unit_pop_value(i), game.ruleset_control.add_to_size_limit - unit_pop_value(i));
   }
   if (unit_type_flag(i, F_SETTLERS)) {
     char buf2[1024];
@@ -734,12 +734,12 @@ void helptext_unit(char *buf, int i, const char *user_text)
       break;
     case 1:
       sprintf(buf + strlen(buf),
-	      _("* Can build farmland (if %s is known).\n"), buf2);
+              _("* Can build farmland (if %s is known).\n"), buf2);
       break;
     default:
       sprintf(buf + strlen(buf),
-	      _("* Can build farmland (if any of the following are "
-		"known: %s).\n"), buf2);
+              _("* Can build farmland (if any of the following are "
+                "known: %s).\n"), buf2);
       break;
     }
 
@@ -750,19 +750,19 @@ void helptext_unit(char *buf, int i, const char *user_text)
       break;
     case 1:
       sprintf(buf + strlen(buf),
-	      _("* Can build fortresses (if %s is known).\n"), buf2);
+              _("* Can build fortresses (if %s is known).\n"), buf2);
       break;
     default:
       sprintf(buf + strlen(buf),
-	      _("* Can build fortresses (if any of the following are "
-		"known: %s).\n"), buf2);
+              _("* Can build fortresses (if any of the following are "
+                "known: %s).\n"), buf2);
       break;
     }
 
     /* Pollution, fallout. */
     sprintf(buf + strlen(buf), _("* Can clean pollution from tiles.\n"));
     sprintf(buf + strlen(buf),
-	    _("* Can clean nuclear fallout from tiles.\n"));
+            _("* Can clean nuclear fallout from tiles.\n"));
   }
   if (unit_type_flag(i, F_TRANSFORM)) {
     sprintf(buf + strlen(buf), _("* Can transform tiles.\n"));
@@ -772,23 +772,23 @@ void helptext_unit(char *buf, int i, const char *user_text)
   }
   if (is_ground_unittype(i) && !unit_type_flag(i, F_SETTLERS)) {
     sprintf(buf + strlen(buf),
-	    _("* May fortify, granting a 50%% defensive bonus.\n"));
+            _("* May fortify, granting a 50%% defensive bonus.\n"));
   }
   if (is_ground_unittype(i)) {
     sprintf(buf + strlen(buf),
-	    _("* May pillage to destroy infrastructure from tiles.\n"));
+            _("* May pillage to destroy infrastructure from tiles.\n"));
   }
   if (unit_type_flag(i, F_DIPLOMAT)) {
     if (unit_type_flag(i, F_SPY)) {
       sprintf(buf + strlen(buf), _("* Can perform diplomatic actions,"
-				   " plus special spy abilities.\n"));
+                                   " plus special spy abilities.\n"));
     } else {
       sprintf(buf + strlen(buf), _("* Can perform diplomatic actions.\n"));
     }
   }
   if (unit_type_flag(i, F_SUPERSPY)) {
     sprintf(buf + strlen(buf), _("* Will never lose a "
-				 "diplomat-versus-diplomat fight.\n"));
+                                 "diplomat-versus-diplomat fight.\n"));
   }
   if (unit_type_flag(i, F_UNBRIBABLE)) {
     sprintf(buf + strlen(buf), _("* May not be bribed.\n"));
@@ -798,56 +798,56 @@ void helptext_unit(char *buf, int i, const char *user_text)
   }
   if (unit_type_flag(i, F_PARTIAL_INVIS)) {
     sprintf(buf + strlen(buf), _("* Is invisible except when next to an"
-				 " enemy unit or city.\n"));
+                                 " enemy unit or city.\n"));
   }
   if (unit_type_flag(i, F_NO_LAND_ATTACK)) {
     sprintf(buf + strlen(buf), _("* Can only attack units on ocean squares"
-				 " (no land attacks).\n"));
+                                 " (no land attacks).\n"));
   }
   if (unit_type_flag(i, F_MARINES)) {
     sprintf(buf + strlen(buf),
-	    _("* Can attack from aboard sea units: against"
-	      " enemy cities and onto land squares.\n"));
+            _("* Can attack from aboard sea units: against"
+              " enemy cities and onto land squares.\n"));
   }
   if (unit_type_flag(i, F_PARATROOPERS)) {
     sprintf(buf + strlen(buf),
-	    _("* Can be paradropped from a friendly city"
-	      " (Range: %d).\n"), utype->paratroopers_range);
+            _("* Can be paradropped from a friendly city"
+              " (Range: %d).\n"), utype->paratroopers_range);
   }
   if (unit_type_flag(i, F_PIKEMEN)) {
     sprintf(buf + strlen(buf), _("* Gets double defense against units"
-				 " specified as 'mounted'.\n"));
+                                 " specified as 'mounted'.\n"));
   }
   if (unit_type_flag(i, F_HORSE)) {
     sprintf(buf + strlen(buf),
-	    _("* Counts as 'mounted' against certain defenders.\n"));
+            _("* Counts as 'mounted' against certain defenders.\n"));
   }
   if (unit_type_flag(i, F_MISSILE)) {
     sprintf(buf + strlen(buf),
-	    _("* A missile unit: gets used up in making an attack.\n"));
+            _("* A missile unit: gets used up in making an attack.\n"));
   } else if(unit_type_flag(i, F_ONEATTACK)) {
     sprintf(buf + strlen(buf),
-	    _("* Making an attack ends this unit's turn.\n"));
+            _("* Making an attack ends this unit's turn.\n"));
   } else if(unit_type_flag(i, F_ONEATTACK_MOVE)) {
     sprintf(buf + strlen(buf),
-	    _("* This unit can only attack once per turn.\n"));
+            _("* This unit can only attack once per turn.\n"));
   }
   if (unit_type_flag(i, F_NUCLEAR)) {
     sprintf(buf + strlen(buf),
-	    _("* This unit's attack causes a nuclear explosion!\n"));
+            _("* This unit's attack causes a nuclear explosion!\n"));
   }
   if (unit_type_flag(i, F_CITYBUSTER)) {
     sprintf(buf + strlen(buf),
-	    _("* Gets double firepower when attacking cities.\n"));
+            _("* Gets double firepower when attacking cities.\n"));
   }
   if (unit_type_flag(i, F_IGWALL)) {
     sprintf(buf + strlen(buf), _("* Ignores the effects of city walls.\n"));
   }
   if (unit_type_flag(i, F_BOMBARDER)) {
     sprintf(buf + strlen(buf),
-	    _("* Does bombard attacks (%d per turn).  These attacks will "
-	      "only damage (never kill) the defender but has no risk to "
-	      "the attacker.\n"), utype->bombard_rate);
+            _("* Does bombard attacks (%d per turn).  These attacks will "
+              "only damage (never kill) the defender but has no risk to "
+              "the attacker.\n"), utype->bombard_rate);
   }
   if (unit_type_flag(i, F_AEGIS)) {
     if (is_warserver()) {
@@ -861,46 +861,46 @@ void helptext_unit(char *buf, int i, const char *user_text)
   }
   if (unit_type_flag(i, F_IGTER)) {
     sprintf(buf + strlen(buf),
-	    _("* Ignores terrain effects (treats all squares as roads).\n"));
+            _("* Ignores terrain effects (treats all squares as roads).\n"));
   }
   if (unit_type_flag(i, F_IGTIRED)) {
     sprintf(buf + strlen(buf),
-	    _("* Attacks with full strength even if less than "
-	      "one movement left.\n"));
+            _("* Attacks with full strength even if less than "
+              "one movement left.\n"));
   }
   if (unit_type_flag(i, F_IGZOC)) {
     sprintf(buf + strlen(buf), _("* Ignores zones of control.\n"));
   }
   if (unit_type_flag(i, F_NONMIL)) {
     sprintf(buf + strlen(buf), _("* A non-military unit"
-				 " (cannot attack; no martial law).\n"));
+                                 " (cannot attack; no martial law).\n"));
   }
   if (unit_type_flag(i, F_FIELDUNIT)) {
     sprintf(buf + strlen(buf), _("* A field unit: one unhappiness applies"
-				 " even when non-aggressive.\n"));
+                                 " even when non-aggressive.\n"));
   }
   if (unit_type_flag(i, F_NO_VETERAN)) {
     sprintf(buf + strlen(buf),
-	    _("* Will never achieve veteran status.\n"));
+            _("* Will never achieve veteran status.\n"));
   } else {
     sprintf(buf + strlen(buf),
-	    _("* May become veteran through training or combat.\n"));
+            _("* May become veteran through training or combat.\n"));
   }
   if (unit_type_flag(i, F_TRIREME)) {
     Tech_Type_id tech1 = find_tech_by_flag(0, TF_REDUCE_TRIREME_LOSS1);
     Tech_Type_id tech2 = find_tech_by_flag(0, TF_REDUCE_TRIREME_LOSS2);
     sprintf(buf + strlen(buf),
-	    _("* Must end turn in a city or next to land,"
-	      " or has a 50%% risk of being lost at sea.\n"));
+            _("* Must end turn in a city or next to land,"
+              " or has a 50%% risk of being lost at sea.\n"));
     if (tech1 != A_LAST) {
       sprintf(buf + strlen(buf),
-	      _("* The discovery of %s reduces the risk to 25%%.\n"),
-	      get_tech_name(get_player_ptr(), tech1));
+              _("* The discovery of %s reduces the risk to 25%%.\n"),
+              get_tech_name(get_player_ptr(), tech1));
     }
     if (tech2 != A_LAST) {
       sprintf(buf + strlen(buf),
-	      _("* %s reduces the risk to 12%%.\n"),
-	      get_tech_name(get_player_ptr(), tech2));
+              _("* %s reduces the risk to 12%%.\n"),
+              get_tech_name(get_player_ptr(), tech2));
     }
   }
   if (utype->fuel > 0) {
@@ -918,7 +918,7 @@ void helptext_unit(char *buf, int i, const char *user_text)
       Unit_Type_id id = get_role_unit(F_CARRIER, j);
 
       mystrlcpy(allowed_units[num_allowed_units],
-		unit_name(id), sizeof(allowed_units[num_allowed_units]));
+                unit_name(id), sizeof(allowed_units[num_allowed_units]));
       num_allowed_units++;
       assert(num_allowed_units < ARRAY_SIZE(allowed_units));
     }
@@ -927,14 +927,14 @@ void helptext_unit(char *buf, int i, const char *user_text)
       n = num_role_units(F_MISSILE_CARRIER);
 
       for (j = 0; j < n; j++) {
-	Unit_Type_id id = get_role_unit(F_MISSILE_CARRIER, j);
+        Unit_Type_id id = get_role_unit(F_MISSILE_CARRIER, j);
 
-	if (get_unit_type(id)->transport_capacity > 0) {
-	  mystrlcpy(allowed_units[num_allowed_units],
-		    unit_name(id), sizeof(allowed_units[num_allowed_units]));
-	  num_allowed_units++;
-	  assert(num_allowed_units < ARRAY_SIZE(allowed_units));
-	}
+        if (get_unit_type(id)->transport_capacity > 0) {
+          mystrlcpy(allowed_units[num_allowed_units],
+                    unit_name(id), sizeof(allowed_units[num_allowed_units]));
+          num_allowed_units++;
+          assert(num_allowed_units < ARRAY_SIZE(allowed_units));
+        }
       }
     }
 
@@ -946,25 +946,25 @@ void helptext_unit(char *buf, int i, const char *user_text)
       strcat(astr.str, allowed_units[j]);
 
       if (j == num_allowed_units - 2) {
-	deli_str = _(" or ");
+        deli_str = _(" or ");
       } else if (j < num_allowed_units - 1) {
-	deli_str = Q_("?or:, ");
+        deli_str = Q_("?or:, ");
       }
 
       if (deli_str) {
-	astr_minsize(&astr, astr.n + strlen(deli_str));
-	strcat(astr.str, deli_str);
+        astr_minsize(&astr, astr.n + strlen(deli_str));
+        strcat(astr.str, deli_str);
       }
     }
 
     assert(num_allowed_units > 0);
 
     sprintf(buf + strlen(buf),
-	    PL_("* Unit has to be in a city, or on a %s"
-		" after %d turn.\n",
-		"* Unit has to be in a city, or on a %s"
-		" after %d turns.\n", utype->fuel),
-	    astr.str, utype->fuel);
+            PL_("* Unit has to be in a city, or on a %s"
+                " after %d turn.\n",
+                "* Unit has to be in a city, or on a %s"
+                " after %d turns.\n", utype->fuel),
+            astr.str, utype->fuel);
     astr_free(&astr);
   }
   if (strlen(buf) > 0) {
@@ -988,25 +988,25 @@ void helptext_tech(char *buf, int i, const char *user_text)
   if (get_player_ptr() && get_invention(get_player_ptr(), i) != TECH_KNOWN) {
     if (get_invention(get_player_ptr(), i) == TECH_REACHABLE) {
       sprintf(buf + strlen(buf),
-	      _("If we would now start with %s we would need %d bulbs."),
-	      get_tech_name(get_player_ptr(), i),
-	      base_total_bulbs_required(get_player_ptr(), i));
+              _("If we would now start with %s we would need %d bulbs."),
+              get_tech_name(get_player_ptr(), i),
+              base_total_bulbs_required(get_player_ptr(), i));
     } else if (tech_is_available(get_player_ptr(), i)) {
       sprintf(buf + strlen(buf),
-	      _("To reach %s we need to obtain %d other "
-		"technologies first. The whole project "
-		"will require %d bulbs to complete."),
-	      get_tech_name(get_player_ptr(), i),
-	      num_unknown_techs_for_goal(get_player_ptr(), i) - 1,
-	      total_bulbs_required_for_goal(get_player_ptr(), i));
+              _("To reach %s we need to obtain %d other "
+                "technologies first. The whole project "
+                "will require %d bulbs to complete."),
+              get_tech_name(get_player_ptr(), i),
+              num_unknown_techs_for_goal(get_player_ptr(), i) - 1,
+              total_bulbs_required_for_goal(get_player_ptr(), i));
     } else {
       sprintf(buf + strlen(buf),
-	      _("You cannot research this technology."));
+              _("You cannot research this technology."));
     }
     if (!techs_have_fixed_costs() && tech_is_available(get_player_ptr(), i)) {
       sprintf(buf + strlen(buf),
-	      _(" This number may vary depending on what "
-		"other players will research.\n"));
+              _(" This number may vary depending on what "
+                "other players will research.\n"));
     } else {
       sprintf(buf + strlen(buf), "\n");
     }
@@ -1015,25 +1015,25 @@ void helptext_tech(char *buf, int i, const char *user_text)
   government_iterate(g) {
     if (g->required_tech == i) {
       sprintf(buf + strlen(buf), _("* Allows changing government to %s.\n"),
-	      g->name);
+              g->name);
     }
   } government_iterate_end;
   if (tech_flag(i, TF_BONUS_TECH)) {
     sprintf(buf + strlen(buf), _("* The first player to research %s gets "
-				 "an immediate advance.\n"),
-	    get_tech_name(get_player_ptr(), i));
+                                 "an immediate advance.\n"),
+            get_tech_name(get_player_ptr(), i));
   }
   if (tech_flag(i, TF_BOAT_FAST))
     sprintf(buf + strlen(buf), _("* Gives sea units one extra move.\n"));
   if (tech_flag(i, TF_REDUCE_TRIREME_LOSS1))
     sprintf(buf + strlen(buf), _("* Reduces the chance of losing boats "
-				 "on the high seas to 25%%.\n"));
+                                 "on the high seas to 25%%.\n"));
   if (tech_flag(i, TF_REDUCE_TRIREME_LOSS2))
     sprintf(buf + strlen(buf), _("* Reduces the chance of losing boats "
-				 "on the high seas to 12%%.\n"));
+                                 "on the high seas to 12%%.\n"));
   if (tech_flag(i, TF_POPULATION_POLLUTION_INC))
     sprintf(buf + strlen(buf), _("* Increases the pollution generated by "
-				 "the population.\n"));
+                                 "the population.\n"));
   if (game.ruleset_control.rtech_cathedral_plus == i)
     sprintf(buf + strlen(buf), _("* Improves the effect of Cathedrals.\n"));
   if (game.ruleset_control.rtech_cathedral_minus == i)
@@ -1046,14 +1046,14 @@ void helptext_tech(char *buf, int i, const char *user_text)
   if (tech_flag(i, TF_BRIDGE)) {
     const char *units_str = get_units_with_flag_string(F_SETTLERS);
     sprintf(buf + strlen(buf), _("* Allows %s to build roads on river "
-				 "squares.\n"), units_str);
+                                 "squares.\n"), units_str);
     free((void *) units_str);
   }
 
   if (tech_flag(i, TF_FORTRESS)) {
     const char *units_str = get_units_with_flag_string(F_SETTLERS);
     sprintf(buf + strlen(buf), _("* Allows %s to build fortresses.\n"),
-	    units_str);
+            units_str);
     free((void *) units_str);
   }
 
@@ -1061,7 +1061,7 @@ void helptext_tech(char *buf, int i, const char *user_text)
     const char *units_str = get_units_with_flag_string(F_AIRBASE);
     if (units_str) {
       sprintf(buf + strlen(buf), _("* Allows %s to build airbases.\n"),
-	      units_str);
+              units_str);
       free((void *) units_str);
     }
   }
@@ -1069,15 +1069,15 @@ void helptext_tech(char *buf, int i, const char *user_text)
   if (tech_flag(i, TF_RAILROAD)) {
     const char *units_str = get_units_with_flag_string(F_SETTLERS);
     sprintf(buf + strlen(buf),
-	    _("* Allows %s to upgrade roads to railroads.\n"), units_str);
+            _("* Allows %s to upgrade roads to railroads.\n"), units_str);
     free((void *) units_str);
   }
 
   if (tech_flag(i, TF_FARMLAND)) {
     const char *units_str = get_units_with_flag_string(F_SETTLERS);
     sprintf(buf + strlen(buf),
-	    _("* Allows %s to upgrade irrigation to farmland.\n"),
-	    units_str);
+            _("* Allows %s to upgrade irrigation to farmland.\n"),
+            units_str);
     free((void *) units_str);
   }
   if (advances[i].helptext && advances[i].helptext[0] != '\0') {
@@ -1103,28 +1103,28 @@ void helptext_terrain(char *buf, int i, const char *user_text)
 
   if (terrain_has_flag(i, TER_NO_POLLUTION)) {
     sprintf(buf + strlen(buf),
-	    _("* Pollution cannot be generated on this terrain."));
+            _("* Pollution cannot be generated on this terrain."));
     strcat(buf, "\n");
   }
   if (terrain_has_flag(i, TER_NO_CITIES)) {
     sprintf(buf + strlen(buf),
-	    _("* You cannot build cities on this terrain."));
+            _("* You cannot build cities on this terrain."));
     strcat(buf, "\n");
   }
   if (terrain_has_flag(i, TER_UNSAFE_COAST)
       && !is_ocean(i)) {
     sprintf(buf + strlen(buf),
-	    _("* The coastline of this terrain is unsafe."));
+            _("* The coastline of this terrain is unsafe."));
     strcat(buf, "\n");
   }
   if (terrain_has_flag(i, TER_UNSAFE)) {
     sprintf(buf + strlen(buf),
-	    _("* This terrain is unsafe for units to travel on."));
+            _("* This terrain is unsafe for units to travel on."));
     strcat(buf, "\n");
   }
   if (terrain_has_flag(i, TER_OCEANIC)) {
     sprintf(buf + strlen(buf),
-	    _("* Land units cannot travel on oceanic terrains."));
+            _("* Land units cannot travel on oceanic terrains."));
     strcat(buf, "\n");
   }
 
@@ -1171,22 +1171,22 @@ char *helptext_unit_upkeep_str(int i)
     buf[0] = '\0';
     if (utype->shield_cost > 0) {
       sprintf(buf+strlen(buf), _("%s%d shield"),
-	      (any > 0 ? ", " : ""), utype->shield_cost);
+              (any > 0 ? ", " : ""), utype->shield_cost);
       any++;
     }
     if (utype->food_cost > 0) {
       sprintf(buf+strlen(buf), _("%s%d food"),
-	      (any > 0 ? ", " : ""), utype->food_cost);
+              (any > 0 ? ", " : ""), utype->food_cost);
       any++;
     }
     if (utype->happy_cost > 0) {
       sprintf(buf+strlen(buf), _("%s%d unhappy"),
-	      (any > 0 ? ", " : ""), utype->happy_cost);
+              (any > 0 ? ", " : ""), utype->happy_cost);
       any++;
     }
     if (utype->gold_cost > 0) {
       sprintf(buf+strlen(buf), _("%s%d gold"),
-	      (any > 0 ? ", " : ""), utype->gold_cost);
+              (any > 0 ? ", " : ""), utype->gold_cost);
       any++;
     }
   } else {

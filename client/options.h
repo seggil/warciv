@@ -15,11 +15,11 @@
 
 #include "events.h"
 #include "registry.h"
-#include "shared.h"		/* bool type */
-#include "traderoute.h"		/* ASYNC_TRADE_PLANNING */
-#include "worklist.h"		/* MAX_NUM_WORKLISTS */
+#include "shared.h"             /* bool type */
+#include "traderoute.h"         /* ASYNC_TRADE_PLANNING */
+#include "worklist.h"           /* MAX_NUM_WORKLISTS */
 
-#include "multiselect.h"	/* filter type */
+#include "multiselect.h"        /* filter type */
 
 enum client_option_category {
   COC_GRAPHICS,
@@ -186,7 +186,7 @@ extern char chat_log_directory[MAX_LEN_PATH];
 enum player_colors_modes player_colors_mode;
 #ifndef ASYNC_TRADE_PLANNING
 extern int trade_time_limit;
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
 extern bool trade_mode_best_values;
 extern bool trade_mode_allow_free_other;
 extern bool trade_mode_internal_first;
@@ -231,13 +231,13 @@ extern view_option view_options[];
 
 /* for specifying which event messages go where: */
 #define NUM_MW 3
-#define MW_OUTPUT    1		/* add to the output window */
-#define MW_MESSAGES  2		/* add to the messages window */
-#define MW_POPUP     4		/* popup an individual window */
+#define MW_OUTPUT    1          /* add to the output window */
+#define MW_MESSAGES  2          /* add to the messages window */
+#define MW_POPUP     4          /* popup an individual window */
 
-extern unsigned int messages_where[];	/* OR-ed MW_ values [E_LAST] */
-extern int sorted_events[];	        /* [E_LAST], sorted by the
-					   translated message text */
+extern unsigned int messages_where[];   /* OR-ed MW_ values [E_LAST] */
+extern int sorted_events[];             /* [E_LAST], sorted by the
+                                           translated message text */
 const char *get_message_text(enum event_type event);
 unsigned int get_default_messages_where(enum event_type type);
 void init_messages_where(void);
@@ -250,31 +250,31 @@ void save_options(void);
 
 void load_general_options(void);
 bool load_option_bool(struct section_file *file,
-		      struct client_option *o, bool def);
+                      struct client_option *o, bool def);
 int load_option_int(struct section_file *file,
-		    struct client_option *o, int def);
+                    struct client_option *o, int def);
 const char *load_option_string(struct section_file *file,
-			       struct client_option *o, const char *def);
+                               struct client_option *o, const char *def);
 void load_option_string_vec(struct section_file *file,
-			    struct client_option *o,
-			    const char *const *def,
-			    struct string_vector *vector);
+                            struct client_option *o,
+                            const char *const *def,
+                            struct string_vector *vector);
 int load_option_enum_list(struct section_file *file,
-			  struct client_option *o, int def);
+                          struct client_option *o, int def);
 filter load_option_filter(struct section_file *file,
-			  struct client_option *o, filter def);
+                          struct client_option *o, filter def);
 
 const char *get_sound_tag_for_event(enum event_type event);
 bool is_city_event(enum event_type event);
 const char *get_option_category_name(enum client_option_category category);
 
 void save_global_worklist(struct section_file *file, const char *path,
-			  int wlinx, struct worklist *pwl);
+                          int wlinx, struct worklist *pwl);
 void load_global_worklist(struct section_file *file, const char *path,
-			  int wlinx, struct worklist *pwl);
+                          int wlinx, struct worklist *pwl);
 bool check_global_worklist(struct worklist *pwl);
 
 int revert_str_accessor(const char *(*str_accessor)(int), const char *str);
 filter filter_revert_str_accessor(const char *(*str_accessor)(filter),
-				  const char *str);
+                                  const char *str);
 #endif  /* FC__OPTIONS_H */

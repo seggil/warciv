@@ -13,9 +13,9 @@
 #ifndef FC__CIVCLIENT_H
 #define FC__CIVCLIENT_H
 
-#include "game.h"		/* enum client_states */
-#include "packets.h"		/* enum report_type */
-#include "shared.h"		/* MAX_LEN_NAME */
+#include "game.h"               /* enum client_states */
+#include "packets.h"            /* enum report_type */
+#include "shared.h"             /* MAX_LEN_NAME */
 #include "version.h"
 
 /*

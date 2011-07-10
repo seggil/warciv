@@ -56,7 +56,7 @@ static const char *cr_entry_hstate_concise(const struct city *pcity)
 {
   static char buf[4];
   my_snprintf(buf, sizeof(buf), "%s", (city_celebrating(pcity) ? "*" :
-				       (city_unhappy(pcity) ? "X" : " ")));
+                                       (city_unhappy(pcity) ? "X" : " ")));
   return buf;
 }
 
@@ -64,9 +64,9 @@ static const char *cr_entry_hstate_verbose(const struct city *pcity)
 {
   static char buf[16];
   my_snprintf(buf, sizeof(buf), "%s",
-	      (city_celebrating(pcity) ? Q_("?city_state:Rapture") :
-	       (city_unhappy(pcity) ? Q_("?city_state:Disorder") :
-		Q_("?city_state:Peace"))));
+              (city_celebrating(pcity) ? Q_("?city_state:Rapture") :
+               (city_unhappy(pcity) ? Q_("?city_state:Disorder") :
+                Q_("?city_state:Peace"))));
   return buf;
 }
 
@@ -74,8 +74,8 @@ static const char *cr_entry_workers(const struct city *pcity)
 {
   static char buf[32];
   my_snprintf(buf, sizeof(buf), "%d/%d/%d/%d", pcity->people_happy[4],
-	      pcity->people_content[4], pcity->people_unhappy[4],
-	      pcity->people_angry[4]);
+              pcity->people_content[4], pcity->people_unhappy[4],
+              pcity->people_angry[4]);
   return buf;
 }
 
@@ -155,10 +155,10 @@ static const char *cr_entry_attack(const struct city *pcity)
   for (i = 0; i < 3; i++) {
     if (attack_best[i] >= 0) {
       my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		  "%s%d", (i > 0) ? "/" : "", attack_best[i]);
+                  "%s%d", (i > 0) ? "/" : "", attack_best[i]);
     } else {
       my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		  "%s-", (i > 0) ? "/" : "");
+                  "%s-", (i > 0) ? "/" : "");
     }
   }
 
@@ -187,10 +187,10 @@ static const char *cr_entry_defense(const struct city *pcity)
   for (i = 0; i < 3; i++) {
     if (defense_best[i] >= 0) {
       my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		  "%s%d", (i > 0) ? "/" : "", defense_best[i]);
+                  "%s%d", (i > 0) ? "/" : "", defense_best[i]);
     } else {
       my_snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
-		  "%s-", (i > 0) ? "/" : "");
+                  "%s-", (i > 0) ? "/" : "");
     }
   }
 
@@ -229,9 +229,9 @@ static const char *cr_entry_resources(const struct city *pcity)
 {
   static char buf[32];
   my_snprintf(buf, sizeof(buf), "%d/%d/%d",
-	      pcity->food_surplus,
-	      pcity->shield_surplus,
-	      pcity->trade_prod);
+              pcity->food_surplus,
+              pcity->shield_surplus,
+              pcity->trade_prod);
   return buf;
 }
 
@@ -239,7 +239,7 @@ static const char *cr_entry_foodplus(const struct city *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-	      pcity->food_surplus);
+              pcity->food_surplus);
   return buf;
 }
 
@@ -247,7 +247,7 @@ static const char *cr_entry_prodplus(const struct city *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-	      pcity->shield_surplus);
+              pcity->shield_surplus);
   return buf;
 }
 
@@ -255,7 +255,7 @@ static const char *cr_entry_tradeplus(const struct city *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-	      pcity->trade_prod);
+              pcity->trade_prod);
   return buf;
 }
 
@@ -266,10 +266,10 @@ static const char *cr_entry_output(const struct city *pcity)
 
   goldie = city_gold_surplus(pcity, pcity->tax_total);
   my_snprintf(buf, sizeof(buf), "%s%d/%d/%d",
-	      (goldie < 0) ? "-" : (goldie > 0) ? "+" : "",
-	      (goldie < 0) ? (-goldie) : goldie,
-	      pcity->luxury_total,
-	      pcity->science_total);
+              (goldie < 0) ? "-" : (goldie > 0) ? "+" : "",
+              (goldie < 0) ? (-goldie) : goldie,
+              pcity->luxury_total,
+              pcity->science_total);
   return buf;
 }
 
@@ -289,7 +289,7 @@ static const char *cr_entry_luxury(const struct city *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-	      pcity->luxury_total);
+              pcity->luxury_total);
   return buf;
 }
 
@@ -297,7 +297,7 @@ static const char *cr_entry_science(const struct city *pcity)
 {
   static char buf[8];
   my_snprintf(buf, sizeof(buf), "%3d",
-	      pcity->science_total);
+              pcity->science_total);
   return buf;
 }
 
@@ -305,8 +305,8 @@ static const char *cr_entry_food(const struct city *pcity)
 {
   static char buf[32];
   my_snprintf(buf, sizeof(buf), "%d/%d",
-	      pcity->food_stock,
-	      city_granary_size(pcity->size) );
+              pcity->food_stock,
+              city_granary_size(pcity->size) );
   return buf;
 }
 
@@ -347,11 +347,11 @@ static const char *cr_entry_building(const struct city *pcity)
 
   if (get_current_construction_bonus(pcity, EFT_PROD_TO_GOLD) > 0) {
     my_snprintf(buf, sizeof(buf), "%s (%d/X/X/X)%s",
-		get_impr_name_ex(pcity, pcity->currently_building),
-		MAX(0, pcity->shield_surplus), from_worklist);
+                get_impr_name_ex(pcity, pcity->currently_building),
+                MAX(0, pcity->shield_surplus), from_worklist);
   } else {
     int turns = city_turns_to_build(pcity, pcity->currently_building,
-				    pcity->is_building_unit, TRUE);
+                                    pcity->is_building_unit, TRUE);
     char time[32];
     const char *name;
     int cost;
@@ -371,8 +371,8 @@ static const char *cr_entry_building(const struct city *pcity)
     }
 
     my_snprintf(buf, sizeof(buf), "%s (%d/%d/%s/%d)%s", name,
-		pcity->shield_stock, cost, time, city_buy_cost(pcity),
-		from_worklist);
+                pcity->shield_stock, cost, time, city_buy_cost(pcity),
+                from_worklist);
   }
 
   return buf;
@@ -477,7 +477,7 @@ struct city_report_spec city_report_specs[] = {
   { FALSE,  3, 1, NULL, N_("?corruption:Cor"),        N_("Corruption"),
                                       FUNC_TAG(corruption) },
   { FALSE,  3, 1, NULL, N_("?waste:Was"), N_("Waste"), FUNC_TAG(waste) },
-  { TRUE,  15, 1, NULL, N_("CMA"),	      N_("City Management Agent"),
+  { TRUE,  15, 1, NULL, N_("CMA"),            N_("City Management Agent"),
                                       FUNC_TAG(cma) },
   { TRUE,   0, 1, N_("Currently Building"), N_("(Stock,Target,Turns,Buy)"),
                                             N_("Currently Building"),

@@ -13,7 +13,7 @@
 #ifndef FC__CITYREPDATA_H
 #define FC__CITYREPDATA_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #include "fc_types.h"
 
@@ -21,14 +21,14 @@
 #define NUM_CREPORT_COLS 33
 
 struct city_report_spec {
-  bool show;			/* modify this to customize */
-  int width;			/* 0 means variable; rightmost only */
-  int space;			/* number of leading spaces (see below) */
-  const char *title1;		/* already translated or NULL */
-  const char *title2;		/* already translated or NULL */
-  const char *explanation;	/* already translated */
+  bool show;                    /* modify this to customize */
+  int width;                    /* 0 means variable; rightmost only */
+  int space;                    /* number of leading spaces (see below) */
+  const char *title1;           /* already translated or NULL */
+  const char *title2;           /* already translated or NULL */
+  const char *explanation;      /* already translated */
   const char *(*func)(const struct city *);
-  const char *tagname;		/* for save_options */
+  const char *tagname;          /* for save_options */
 };
 
 extern struct city_report_spec city_report_specs[];

@@ -20,30 +20,30 @@
 
 #include "fc_types.h"
 
-#include "citydlg_common.h"	/* enum citizen_type */
+#include "citydlg_common.h"     /* enum citizen_type */
 #include "colors_g.h"
 #include "options.h"
 
-struct Sprite;			/* opaque; gui-dep */
+struct Sprite;                  /* opaque; gui-dep */
 
 struct drawn_sprite {
   enum {
-    DRAWN_SPRITE,	/* Draw a sprite. */
-    DRAWN_GRID,		/* Draw the map grid now. */
+    DRAWN_SPRITE,       /* Draw a sprite. */
+    DRAWN_GRID,         /* Draw the map grid now. */
     DRAWN_BG            /* Draw a solid BG. */
   } type;
 
   union {
     struct {
       enum {
-	/* Only applicable in iso-view.  "Full" sprites overlap into the top
-	 * half-tile of UNIT_TILE_HEIGHT. */
-	DRAW_NORMAL,
-	DRAW_FULL
+        /* Only applicable in iso-view.  "Full" sprites overlap into the top
+         * half-tile of UNIT_TILE_HEIGHT. */
+        DRAW_NORMAL,
+        DRAW_FULL
       } style;
-      bool foggable;	/* Set to FALSE for sprites that are never fogged. */
+      bool foggable;    /* Set to FALSE for sprites that are never fogged. */
       struct Sprite *sprite;
-      int offset_x, offset_y;	/* offset from tile origin */
+      int offset_x, offset_y;   /* offset from tile origin */
     } sprite;
 
     struct {
@@ -81,8 +81,8 @@ void tilespec_free_city_tiles(int count);
 /* Gfx support */
 
 int fill_sprite_array(struct drawn_sprite *sprs, struct tile *ptile,
-		      struct unit *punit, struct city *pcity,
-		      bool citymode);
+                      struct unit *punit, struct city *pcity,
+                      bool citymode);
 
 void player_colors_init(void);
 void player_colors_mode_changed(void);
@@ -97,9 +97,9 @@ struct unit *get_drawable_unit(struct tile *ptile, bool citymode);
 
 
 /* This the way directional indices are now encoded: */
-#define MAX_INDEX_CARDINAL 		64
+#define MAX_INDEX_CARDINAL              64
 #define MAX_INDEX_HALF                  16
-#define MAX_INDEX_VALID			256
+#define MAX_INDEX_VALID                 256
 
 #define NUM_TILES_PROGRESS 8
 #define NUM_TILES_CITIZEN CITIZEN_LAST
@@ -210,7 +210,7 @@ struct named_sprites {
       *fortifying,
       *fortress,
       *airbase,
-      *go_to,			/* goto is a C keyword :-) */
+      *go_to,                   /* goto is a C keyword :-) */
       *irrigate,
       *mine,
       *pillage,
@@ -240,7 +240,7 @@ struct named_sprites {
       *disorder,
       *happy,
       *size[NUM_TILES_DIGITS],
-      *size_tens[NUM_TILES_DIGITS],		/* first unused */
+      *size_tens[NUM_TILES_DIGITS],             /* first unused */
       *tile_foodnum[NUM_TILES_DIGITS],
       *tile_shieldnum[NUM_TILES_DIGITS],
       *tile_tradenum[NUM_TILES_DIGITS],
@@ -268,8 +268,8 @@ struct named_sprites {
       *fog,
       *spec_river[MAX_INDEX_CARDINAL],
       *darkness[MAX_INDEX_CARDINAL],         /* first unused */
-      *river_outlet[4];		/* indexed by enum direction4 */
-  } tx;				/* terrain extra */
+      *river_outlet[4];         /* indexed by enum direction4 */
+  } tx;                         /* terrain extra */
 
   struct terrain_drawing_data *terrain[MAX_NUM_TERRAINS];
 };
@@ -278,8 +278,8 @@ extern struct named_sprites sprites;
 extern int fogstyle;
 
 struct Sprite *get_citizen_sprite(struct citizen_type type,
-				  int citizen_index,
-				  const struct city *pcity);
+                                  int citizen_index,
+                                  const struct city *pcity);
 
 /* full pathnames: */
 extern char *main_intro_filename;

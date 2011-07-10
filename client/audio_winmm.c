@@ -48,7 +48,7 @@ static void my_wait()
   Play sound sample
 **************************************************************************/
 static bool my_play(const char *const tag, const char *const fullpath,
-		    bool repeat)
+                    bool repeat)
 {
   if (!fullpath) {
     return FALSE;

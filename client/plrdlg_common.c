@@ -137,7 +137,7 @@ static bool col_ai(struct player *plr)
 static const char *col_embassy(struct player *player)
 {
   return client_is_global_observer()
-	     ? "-" : get_embassy_status(get_player_ptr(), player);
+             ? "-" : get_embassy_status(get_player_ptr(), player);
 }
 
 /******************************************************************
@@ -154,7 +154,7 @@ static const char *col_diplstate(struct player *player)
     pds = pplayer_get_diplstate(get_player_ptr(), player);
     if (pds->type == DS_CEASEFIRE) {
       my_snprintf(buf, sizeof(buf), "%s (%d)",
-		  diplstate_text(pds->type), pds->turns_left);
+                  diplstate_text(pds->type), pds->turns_left);
       return buf;
     } else {
       return diplstate_text(pds->type);
@@ -182,7 +182,7 @@ static const char *col_love(struct player *player)
 static const char *col_vision(struct player *player)
 {
   return client_is_global_observer()
-	     ? "-" : get_vision_status(get_player_ptr(), player);
+             ? "-" : get_vision_status(get_player_ptr(), player);
 }
 
 /******************************************************************
@@ -234,9 +234,9 @@ static const char *col_research(struct player *player)
 
   if (player->research.researching != A_NOINFO) {
     my_snprintf(buf, sizeof(buf), "%s(%d/%d)",
-		get_tech_name(player, player->research.researching),
-		player->research.bulbs_researched,
-		player->research.researching_cost);
+                get_tech_name(player, player->research.researching),
+                player->research.bulbs_researched,
+                player->research.researching_cost);
   } else {
     my_snprintf(buf, sizeof(buf), _("(Unknown)"));
   }
@@ -263,8 +263,8 @@ static const char *col_science_goal(struct player *player)
     int steps = num_unknown_techs_for_goal(player, player->ai.tech_goal);
 
     my_snprintf(buf, sizeof(buf), "%s (%d %s)",
-		get_tech_name(player, player->ai.tech_goal),
-		steps, PL_("step", "steps", steps));
+                get_tech_name(player, player->ai.tech_goal),
+                steps, PL_("step", "steps", steps));
   } else {
     sz_strlcpy(buf, "-");
   }
@@ -318,8 +318,8 @@ static const char *col_rates(struct player *player)
   if (player->economic.tax + player->economic.luxury
       + player->economic.science == 100) {
     my_snprintf(buf, sizeof(buf), "T:%d L:%d S:%d",
-		player->economic.tax, player->economic.luxury,
-		player->economic.science);
+                player->economic.tax, player->economic.luxury,
+                player->economic.science);
   } else {
     sz_strlcpy(buf, "-");
   }
@@ -343,9 +343,9 @@ static const char *col_state(struct player *plr)
   if (plr->is_alive) {
     if (plr->is_connected) {
       if (plr->turn_done) {
-	return _("done");
+        return _("done");
       } else {
-	return _("moving");
+        return _("moving");
       }
     } else {
       return "";
