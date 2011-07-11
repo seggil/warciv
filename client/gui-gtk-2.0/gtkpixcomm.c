@@ -41,10 +41,10 @@
 #include "gtkpixcomm.h"
 
 
-static void	gtk_pixcomm_class_init (GtkPixcommClass *klass);
-static void	gtk_pixcomm_init       (GtkPixcomm *pixcomm);
+static void     gtk_pixcomm_class_init (GtkPixcommClass *klass);
+static void     gtk_pixcomm_init       (GtkPixcomm *pixcomm);
 static gboolean gtk_pixcomm_expose     (GtkWidget *widget, GdkEventExpose *ev);
-static void	gtk_pixcomm_destroy    (GtkObject *object);
+static void     gtk_pixcomm_destroy    (GtkObject *object);
 #if 0
 static void build_insensitive_pixbuf (GtkPixcomm *pixcomm);
 #endif
@@ -78,18 +78,18 @@ gtk_pixcomm_get_type(void)
   if (!pixcomm_type) {
     static const GTypeInfo pixcomm_info = {
       sizeof(GtkPixcommClass),
-      NULL,		/* base_init */
-      NULL,		/* base_finalize */
+      NULL,             /* base_init */
+      NULL,             /* base_finalize */
       (GClassInitFunc) gtk_pixcomm_class_init,
-      NULL,		/* class_finalize */
-      NULL,		/* class_data */
+      NULL,             /* class_finalize */
+      NULL,             /* class_data */
       sizeof(GtkPixcomm),
-      0,		/* n_preallocs */
+      0,                /* n_preallocs */
       (GInstanceInitFunc) gtk_pixcomm_init
     };
 
     pixcomm_type = g_type_register_static(GTK_TYPE_MISC, "GtkPixcomm",
-					  &pixcomm_info, 0);
+                                          &pixcomm_info, 0);
   }
 
   return pixcomm_type;
@@ -179,8 +179,8 @@ gtk_pixcomm_fill(GtkPixcomm *p, GdkColor *color)
 
   g_array_set_size(p->actions, 0);
 
-  v.type	= OP_FILL;
-  v.color	= color;
+  v.type        = OP_FILL;
+  v.color       = color;
   g_array_append_val(p->actions, v);
   refresh(p);
 }
@@ -193,10 +193,10 @@ gtk_pixcomm_copyto(GtkPixcomm *p, SPRITE *src, gint x, gint y)
   g_return_if_fail(GTK_IS_PIXCOMM(p));
   g_return_if_fail(src != NULL);
 
-  v.type	= OP_COPY;
-  v.src		= src;
-  v.x		= x;
-  v.y		= y;
+  v.type        = OP_COPY;
+  v.src         = src;
+  v.x           = x;
+  v.y           = y;
   g_array_append_val(p->actions, v);
   refresh(p);
 }
@@ -227,13 +227,13 @@ gtk_pixcomm_expose(GtkWidget *widget, GdkEventExpose *ev)
     }
 
     x = floor(widget->allocation.x + misc->xpad
-	+ ((widget->allocation.width - widget->requisition.width) *
-	  xalign)
-	+ 0.5);
+        + ((widget->allocation.width - widget->requisition.width) *
+          xalign)
+        + 0.5);
     y = floor(widget->allocation.y + misc->ypad
-	+ ((widget->allocation.height - widget->requisition.height) *
-	  misc->yalign)
-	+ 0.5);
+        + ((widget->allocation.height - widget->requisition.height) *
+          misc->yalign)
+        + 0.5);
 
     /* draw! */
     for (i = 0; i < p->actions->len; i++) {
@@ -251,20 +251,20 @@ gtk_pixcomm_expose(GtkWidget *widget, GdkEventExpose *ev)
           gdk_gc_set_clip_origin(civ_gc, x + rop->x, y + rop->y);
 
           gdk_draw_drawable(widget->window, civ_gc,
-	      rop->src->pixmap,
-	      0, 0,
-	      x + rop->x, y + rop->y,
-	      rop->src->width, rop->src->height);
+              rop->src->pixmap,
+              0, 0,
+              x + rop->x, y + rop->y,
+              rop->src->width, rop->src->height);
 
           gdk_gc_set_clip_origin(civ_gc, 0, 0);
           gdk_gc_set_clip_mask(civ_gc, NULL);
         } else {
           gdk_draw_drawable(widget->window, civ_gc,
-	      rop->src->pixmap,
-	      0, 0,
-	      x + rop->x, y + rop->y,
-	      rop->src->width, rop->src->height);
-	}
+              rop->src->pixmap,
+              0, 0,
+              x + rop->x, y + rop->y,
+              rop->src->width, rop->src->height);
+        }
         break;
 
       default:

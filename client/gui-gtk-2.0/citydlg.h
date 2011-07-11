@@ -17,4 +17,4 @@
 
 void reset_city_dialogs(void);
 
-#endif				/* FC__CITYDLG_H */
+#endif                          /* FC__CITYDLG_H */

@@ -70,7 +70,7 @@ static gboolean popit_button_release(GtkWidget *w, GdkEventButton *event)
   stay always within the map if possible.
 **************************************************************************/
 static void popupinfo_positioning_callback(GtkWidget *w, GtkAllocation *alloc,
-					   gpointer data)
+                                           gpointer data)
 {
   struct tmousepos *mousepos = data;
   gint x, y;
@@ -130,12 +130,12 @@ static void popit(GdkEventButton *event, struct tile *ptile)
 
     if (punit) {
       if (punit->goto_tile) {
-	*cross_head = punit->goto_tile;
-	cross_head++;
+        *cross_head = punit->goto_tile;
+        cross_head++;
       }
       if (punit->air_patrol_tile) {
-	*cross_head = punit->air_patrol_tile;
-	cross_head++;
+        *cross_head = punit->air_patrol_tile;
+        cross_head++;
       }
     }
     if (ptile->city && ptile->city->rally_point) {
@@ -150,19 +150,19 @@ static void popit(GdkEventButton *event, struct tile *ptile)
       put_cross_overlay_tile(cross_list[i]);
     }
     g_signal_connect(p, "destroy",
-		     G_CALLBACK(popupinfo_popdown_callback),
-		     GINT_TO_POINTER(is_orders));
+                     G_CALLBACK(popupinfo_popdown_callback),
+                     GINT_TO_POINTER(is_orders));
 
     mousepos.x = event->x;
     mousepos.y = event->y;
 
     g_signal_connect(p, "size-allocate",
-		     G_CALLBACK(popupinfo_positioning_callback),
-		     &mousepos);
+                     G_CALLBACK(popupinfo_positioning_callback),
+                     &mousepos);
 
     gtk_widget_show_all(p);
     gdk_pointer_grab(p->window, TRUE, GDK_BUTTON_RELEASE_MASK,
-		     NULL, NULL, event->time);
+                     NULL, NULL, event->time);
     gtk_grab_add(p);
 
     g_signal_connect_after(p, "button_release_event",
@@ -190,7 +190,7 @@ void popupinfo_popdown_callback(GtkWidget *w, gpointer data)
 static void name_new_city_callback(GtkWidget * w, gpointer data)
 {
   dsend_packet_unit_build_city(&aconnection, GPOINTER_TO_INT(data),
-			       input_dialog_get_input(w));
+                               input_dialog_get_input(w));
   input_dialog_destroy(w);
 }
 
@@ -202,11 +202,11 @@ static void name_new_city_callback(GtkWidget * w, gpointer data)
 void popup_newcity_dialog(struct unit *punit, char *suggestname)
 {
   input_dialog_create(GTK_WINDOW(toplevel), /*"shellnewcityname" */
-		     _("Build New City"),
-		     _("What should we call our new city?"), suggestname,
-		     G_CALLBACK(name_new_city_callback),
+                     _("Build New City"),
+                     _("What should we call our new city?"), suggestname,
+                     G_CALLBACK(name_new_city_callback),
                      GINT_TO_POINTER(punit->id),
-		     G_CALLBACK(name_new_city_callback),
+                     G_CALLBACK(name_new_city_callback),
                      GINT_TO_POINTER(0));
 }
 
@@ -279,29 +279,29 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       if(pcity) {
       action_button_pressed(ev->x, ev->y, SELECT_SEA);
       } else {
-	struct unit *punit = find_visible_unit(ptile);
-	if (punit && punit->owner == get_player_idx()) {
-	  set_unit_focus(punit);
+        struct unit *punit = find_visible_unit(ptile);
+        if (punit && punit->owner == get_player_idx()) {
+          set_unit_focus(punit);
     }
       }
     }
     /* <SHIFT> + LMB: select unit(s if double click). */
     else if (ptile && (ev->state & GDK_SHIFT_MASK)) {
       if (ev->type == GDK_2BUTTON_PRESS) {
-	multi_select_add_units(ptile->units);
+        multi_select_add_units(ptile->units);
       } else {
-	struct unit *punit = find_visible_unit(ptile);
+        struct unit *punit = find_visible_unit(ptile);
 
-	if (punit && punit->owner == get_player_idx()) {
-	  multi_select_add_or_remove_unit(punit);
-	} else {
-	  unit_list_iterate(ptile->units, punit) {
-	    if (punit->owner == get_player_idx()) {
-	      multi_select_add_or_remove_unit(punit);
-	      break;
-	    }
-	  } unit_list_iterate_end;
-	}
+        if (punit && punit->owner == get_player_idx()) {
+          multi_select_add_or_remove_unit(punit);
+        } else {
+          unit_list_iterate(ptile->units, punit) {
+            if (punit->owner == get_player_idx()) {
+              multi_select_add_or_remove_unit(punit);
+              break;
+            }
+          } unit_list_iterate_end;
+        }
       }
       update_unit_info_label(get_unit_in_focus());
       update_menus();
@@ -320,30 +320,30 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
              && multi_select_double_click) {
       struct unit *punit = find_visible_unit(ptile), *nfu = NULL;
       if (punit && punit->owner == get_player_idx()) {
-	multi_select_clear(0);
-	set_unit_focus(punit);
-	gui_rect_iterate(mapview_canvas.gui_x0, mapview_canvas.gui_y0,
-			 mapview_canvas.store_width,
-			 mapview_canvas.store_height, ptile) {
-	  unit_list_iterate(ptile->units, tunit) {
-	    if (tunit->owner == get_player_idx() && tunit->type == punit->type) {
-	      multi_select_add_unit(tunit);
-	    }
-	    if (unit_satisfies_filter(tunit, multi_select_inclusive_filter,
-				      multi_select_exclusive_filter))
-	    nfu = tunit;
-	  } unit_list_iterate_end;
-	} gui_rect_iterate_end;
-	if (!multi_select_satisfies_filter(0)) {
-	  multi_select_clear(0);
-	} else if (multi_select_size(0) > 1
-		   && !unit_satisfies_filter(punit,
-					     multi_select_inclusive_filter,
-					     multi_select_exclusive_filter)) {
-	  set_unit_focus(nfu);
-	}
-	update_unit_info_label(get_unit_in_focus());
-	update_menus();
+        multi_select_clear(0);
+        set_unit_focus(punit);
+        gui_rect_iterate(mapview_canvas.gui_x0, mapview_canvas.gui_y0,
+                         mapview_canvas.store_width,
+                         mapview_canvas.store_height, ptile) {
+          unit_list_iterate(ptile->units, tunit) {
+            if (tunit->owner == get_player_idx() && tunit->type == punit->type) {
+              multi_select_add_unit(tunit);
+            }
+            if (unit_satisfies_filter(tunit, multi_select_inclusive_filter,
+                                      multi_select_exclusive_filter))
+            nfu = tunit;
+          } unit_list_iterate_end;
+        } gui_rect_iterate_end;
+        if (!multi_select_satisfies_filter(0)) {
+          multi_select_clear(0);
+        } else if (multi_select_size(0) > 1
+                   && !unit_satisfies_filter(punit,
+                                             multi_select_inclusive_filter,
+                                             multi_select_exclusive_filter)) {
+          set_unit_focus(nfu);
+        }
+        update_unit_info_label(get_unit_in_focus());
+        update_menus();
       }
     }
     /* Plain LMB click for city triple click for units. */
@@ -351,19 +351,19 @@ gboolean butt_down_mapcanvas(GtkWidget *w, GdkEventButton *ev, gpointer data)
       struct unit *punit;
 
       if (hover_state == HOVER_NONE
-	  && ptile
-	  && !pcity
-	  && unit_list_size(ptile->units) > 1
-	  && (punit = find_visible_unit(ptile))
-	  && is_unit_in_multi_select(0, punit)
-	  && punit != get_unit_in_focus()
-	  && punit->owner == get_player_idx()
-	  && (ev->type == GDK_BUTTON_PRESS)) {
+          && ptile
+          && !pcity
+          && unit_list_size(ptile->units) > 1
+          && (punit = find_visible_unit(ptile))
+          && is_unit_in_multi_select(0, punit)
+          && punit != get_unit_in_focus()
+          && punit->owner == get_player_idx()
+          && (ev->type == GDK_BUTTON_PRESS)) {
         set_unit_focus(punit);
       } else {
         if (hover_state != HOVER_NONE) {
           press_waited = 2;
-	}
+        }
         action_button_pressed(ev->x, ev->y, SELECT_POPUP);
       }
     }
@@ -448,8 +448,8 @@ void create_line_at_mouse_pos(void)
   } else {
     gdk_window_get_pointer(overview_canvas->window, &x, &y, 0);
     if (x >= 0 && y >= 0
-	&& x < OVERVIEW_TILE_WIDTH * map.info.xsize
-	&& y < OVERVIEW_TILE_HEIGHT * map.info.ysize) {
+        && x < OVERVIEW_TILE_WIDTH * map.info.xsize
+        && y < OVERVIEW_TILE_HEIGHT * map.info.ysize) {
       overview_update_line(x, y);
     }
   }

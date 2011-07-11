@@ -58,11 +58,11 @@ static struct cma_dialog *get_cma_dialog(struct city *pcity);
 static void update_cma_preset_list(struct cma_dialog *pdialog);
 
 static gboolean cma_preset_key_pressed_callback(GtkWidget *w, GdkEventKey *ev,
-						gpointer data);
+                                                gpointer data);
 static void cma_del_preset_callback(GtkWidget *w, gpointer data);
 static void cma_preset_remove(struct cma_dialog *pdialog, int preset_index);
 static void cma_preset_remove_response(GtkWidget *w, gint response,
-				       gpointer data);
+                                       gpointer data);
 
 static void cma_add_preset_callback(GtkWidget *w, gpointer data);
 static void cma_preset_add_callback_yes(GtkWidget *w, gpointer data);
@@ -71,11 +71,11 @@ static void cma_preset_add_callback_destroy(GtkWidget *w, gpointer data);
 
 static void cma_active_callback(GtkWidget *w, gpointer data);
 static void cma_activate_preset_callback(GtkTreeView *view, GtkTreePath *path,
-				         GtkTreeViewColumn *col, gpointer data);
+                                         GtkTreeViewColumn *col, gpointer data);
 
 static void hscale_changed(GtkAdjustment *get, gpointer data);
 static void set_hscales(const struct cm_parameter *const parameter,
-			struct cma_dialog *pdialog);
+                        struct cma_dialog *pdialog);
 
 /**************************************************************************
 ...
@@ -130,13 +130,13 @@ struct cma_dialog *get_cma_dialog(struct city *pcity)
 ...
 **************************************************************************/
 static gboolean button_press_callback(GtkTreeView *view, GdkEventButton *ev,
-				      gpointer data)
+                                      gpointer data)
 {
   GtkTreePath *path;
   GtkTreeViewColumn *column;
 
   if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(view),
-	ev->x, ev->y, &path, &column, NULL, NULL)) {
+        ev->x, ev->y, &path, &column, NULL, NULL)) {
     if (ev->type == GDK_BUTTON_PRESS) {
       cma_activate_preset_callback(view, path, column, data);
     } else if (ev->type == GDK_2BUTTON_PRESS) {
@@ -165,7 +165,7 @@ static void help_callback(GtkWidget *w, gpointer data)
 ...
 **************************************************************************/
 static void cell_data_func(GtkTreeViewColumn *col, GtkCellRenderer *cell,
-			   GtkTreeModel *model, GtkTreeIter *it, gpointer data)
+                           GtkTreeModel *model, GtkTreeIter *it, gpointer data)
 {
   struct cma_dialog *pdialog = (struct cma_dialog *) data;
   const char *s1, *s2;
@@ -184,10 +184,10 @@ static void cell_data_func(GtkTreeViewColumn *col, GtkCellRenderer *cell,
 
   if (!strcmp(s1, s2) && i1 == i2) {
     g_object_set(G_OBJECT(cell), "style", PANGO_STYLE_ITALIC,
-		 "weight", PANGO_WEIGHT_BOLD, NULL);
+                 "weight", PANGO_WEIGHT_BOLD, NULL);
   } else {
     g_object_set(G_OBJECT(cell), "style", PANGO_STYLE_NORMAL,
-		 "weight", PANGO_WEIGHT_NORMAL, NULL);
+                 "weight", PANGO_WEIGHT_NORMAL, NULL);
   }
 }
 
@@ -212,7 +212,7 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
   pdialog->shell = gtk_vbox_new(FALSE, 8);
   gtk_container_set_border_width(GTK_CONTAINER(pdialog->shell), 8);
   g_signal_connect(pdialog->shell, "destroy",
-		   G_CALLBACK(cma_dialog_destroy_callback), pdialog);
+                   G_CALLBACK(cma_dialog_destroy_callback), pdialog);
 
   pdialog->tips = gtk_tooltips_new();
   g_object_ref(pdialog->tips);
@@ -226,9 +226,9 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				 GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+                                 GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 
   store = gtk_list_store_new(1, G_TYPE_STRING);
   pdialog->store = store;
@@ -240,14 +240,14 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
   pdialog->selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(view));
 
   g_signal_connect(pdialog->preset_list, "button_press_event",
-      		   G_CALLBACK(button_press_callback), pdialog);
+                   G_CALLBACK(button_press_callback), pdialog);
 
   gtk_tooltips_set_tip(pdialog->tips, view,
-		       _("For information on:\n"
-		         "CMA and presets\n"
-			 "including sample presets,\n"
-		         "see README.cma."),
-		       "");
+                       _("For information on:\n"
+                         "CMA and presets\n"
+                         "including sample presets,\n"
+                         "see README.cma."),
+                       "");
 
   rend = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(NULL, rend,
@@ -267,9 +267,9 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
   gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
   g_signal_connect(view, "row_activated",
-		   G_CALLBACK(cma_activate_preset_callback), pdialog);
+                   G_CALLBACK(cma_activate_preset_callback), pdialog);
   g_signal_connect(view, "key-press-event",
-		   G_CALLBACK(cma_preset_key_pressed_callback), pdialog);
+                   G_CALLBACK(cma_preset_key_pressed_callback), pdialog);
 
   hbox = gtk_hbutton_box_new();
   gtk_button_box_set_layout(GTK_BUTTON_BOX(hbox), GTK_BUTTONBOX_EDGE);
@@ -278,12 +278,12 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
   pdialog->add_preset_command = gtk_button_new_from_stock(GTK_STOCK_NEW);
   gtk_container_add(GTK_CONTAINER(hbox), pdialog->add_preset_command);
   g_signal_connect(pdialog->add_preset_command, "clicked",
-		   G_CALLBACK(cma_add_preset_callback), pdialog);
+                   G_CALLBACK(cma_add_preset_callback), pdialog);
 
   pdialog->del_preset_command = gtk_button_new_from_stock(GTK_STOCK_DELETE);
   gtk_container_add(GTK_CONTAINER(hbox), pdialog->del_preset_command);
   g_signal_connect(pdialog->del_preset_command, "clicked",
-		   G_CALLBACK(cma_del_preset_callback), pdialog);
+                   G_CALLBACK(cma_del_preset_callback), pdialog);
 
   /* the right-hand side */
 
@@ -319,7 +319,7 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
     pdialog->minimal_surplus[i] =
-	GTK_ADJUSTMENT(gtk_adjustment_new(-20, -20, 20, 1, 1, 0));
+        GTK_ADJUSTMENT(gtk_adjustment_new(-20, -20, 20, 1, 1, 0));
 
     hscale = gtk_hscale_new(GTK_ADJUSTMENT(pdialog->minimal_surplus[i]));
     gtk_table_attach_defaults(GTK_TABLE(table), hscale, 1, 2, i + 1, i + 2);
@@ -327,11 +327,11 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
     gtk_scale_set_value_pos(GTK_SCALE(hscale), GTK_POS_LEFT);
 
     g_signal_connect(pdialog->minimal_surplus[i],
-		     "value_changed",
-		     G_CALLBACK(hscale_changed), pdialog);
+                     "value_changed",
+                     G_CALLBACK(hscale_changed), pdialog);
 
     pdialog->factor[i] =
-	GTK_ADJUSTMENT(gtk_adjustment_new(1, 0, 25, 1, 1, 0));
+        GTK_ADJUSTMENT(gtk_adjustment_new(1, 0, 25, 1, 1, 0));
 
     hscale = gtk_hscale_new(GTK_ADJUSTMENT(pdialog->factor[i]));
     gtk_table_attach_defaults(GTK_TABLE(table), hscale, 2, 3, i + 1, i + 2);
@@ -339,41 +339,41 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
     gtk_scale_set_value_pos(GTK_SCALE(hscale), GTK_POS_LEFT);
 
     g_signal_connect(pdialog->factor[i], "value_changed",
-		     G_CALLBACK(hscale_changed), pdialog);
+                     G_CALLBACK(hscale_changed), pdialog);
   }
 
   /* Happy Surplus and Factor */
 
   label = gtk_label_new(_("Celebrate"));
   gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1,
-			    CM_NUM_STATS + 1, CM_NUM_STATS + 2);
+                            CM_NUM_STATS + 1, CM_NUM_STATS + 2);
   gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_table_attach_defaults(GTK_TABLE(table), hbox, 1, 2,
-			    CM_NUM_STATS + 1, CM_NUM_STATS + 2);
+                            CM_NUM_STATS + 1, CM_NUM_STATS + 2);
 
   pdialog->happy_button = gtk_check_button_new();
   gtk_box_pack_start(GTK_BOX(hbox), pdialog->happy_button, FALSE, FALSE,
-		     20);
+                     20);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pdialog->happy_button),
-			       FALSE);
+                               FALSE);
 
   g_signal_connect(pdialog->happy_button, "toggled",
-		   G_CALLBACK(hscale_changed), pdialog);
+                   G_CALLBACK(hscale_changed), pdialog);
 
   pdialog->factor[CM_NUM_STATS] =
       GTK_ADJUSTMENT(gtk_adjustment_new(0, 0, 50, 1, 1, 0));
 
   hscale = gtk_hscale_new(GTK_ADJUSTMENT(pdialog->factor[CM_NUM_STATS]));
   gtk_table_attach_defaults(GTK_TABLE(table), hscale, 2, 3,
-			    CM_NUM_STATS + 1, CM_NUM_STATS + 2);
+                            CM_NUM_STATS + 1, CM_NUM_STATS + 2);
   gtk_scale_set_digits(GTK_SCALE(hscale), 0);
   gtk_scale_set_value_pos(GTK_SCALE(hscale), GTK_POS_LEFT);
 
   g_signal_connect(pdialog->factor[CM_NUM_STATS],
-		   "value_changed",
-		   G_CALLBACK(hscale_changed), pdialog);
+                   "value_changed",
+                   G_CALLBACK(hscale_changed), pdialog);
 
   /* buttons */
 
@@ -383,7 +383,7 @@ struct cma_dialog *create_cma_dialog(struct city *pcity)
 
   button = gtk_button_new_from_stock(GTK_STOCK_HELP);
   g_signal_connect(button, "clicked",
-		   G_CALLBACK(help_callback), NULL);
+                   G_CALLBACK(help_callback), NULL);
   gtk_container_add(GTK_CONTAINER(hbox), button);
 
   pdialog->active_command = gtk_toggle_button_new();
@@ -432,7 +432,7 @@ void refresh_cma_dialog(struct city *pcity, enum cma_refresh refresh)
   /* fill in result label */
   cm_copy_result_from_city(pcity, &result);
   gtk_label_set_text(GTK_LABEL(pdialog->result_label),
-		     cmafec_get_result_descr(pcity, &result, &param));
+                     cmafec_get_result_descr(pcity, &result, &param));
 
   /* if called from a hscale, we _don't_ want to do this */
   if (refresh != DONT_REFRESH_HSCALES) {
@@ -453,14 +453,14 @@ void refresh_cma_dialog(struct city *pcity, enum cma_refresh refresh)
 
   if (controlled) {
     gtk_image_set_from_stock(GTK_IMAGE(pdialog->active_image),
-	GTK_STOCK_YES, GTK_ICON_SIZE_DND);
+        GTK_STOCK_YES, GTK_ICON_SIZE_DND);
     gtk_label_set_text_with_mnemonic(GTK_LABEL(pdialog->active_label),
-	_("CMA Enabl_ed"));
+        _("CMA Enabl_ed"));
   } else {
     gtk_image_set_from_stock(GTK_IMAGE(pdialog->active_image),
-	GTK_STOCK_NO, GTK_ICON_SIZE_DND);
+        GTK_STOCK_NO, GTK_ICON_SIZE_DND);
     gtk_label_set_text_with_mnemonic(GTK_LABEL(pdialog->active_label),
-	_("CMA Disabl_ed"));
+        _("CMA Disabl_ed"));
   }
   gtk_widget_set_sensitive(pdialog->result_label, controlled);
 }
@@ -495,7 +495,7 @@ static void update_cma_preset_list(struct cma_dialog *pdialog)
  callback for selecting a preset from the preset view
 *****************************************************************/
 static void cma_activate_preset_callback(GtkTreeView *view, GtkTreePath *path,
-				         GtkTreeViewColumn *col, gpointer data)
+                                         GtkTreeViewColumn *col, gpointer data)
 {
   struct cma_dialog *pdialog = (struct cma_dialog *) data;
   int preset_index;
@@ -532,16 +532,16 @@ static void cma_add_preset_callback(GtkWidget *w, gpointer data)
   }
 
   pdialog->name_shell = input_dialog_create(GTK_WINDOW(parent),
-				    _("Name new preset"),
-				    _("What should we name the preset?"),
-				    default_name,
-				    G_CALLBACK(cma_preset_add_callback_yes),
-				    pdialog,
-				    G_CALLBACK(cma_preset_add_callback_no),
-				    pdialog);
+                                    _("Name new preset"),
+                                    _("What should we name the preset?"),
+                                    default_name,
+                                    G_CALLBACK(cma_preset_add_callback_yes),
+                                    pdialog,
+                                    G_CALLBACK(cma_preset_add_callback_no),
+                                    pdialog);
 
   g_signal_connect(pdialog->name_shell, "destroy",
-		   G_CALLBACK(cma_preset_add_callback_destroy), data);
+                   G_CALLBACK(cma_preset_add_callback_destroy), data);
 }
 
 /****************************************************************
@@ -587,7 +587,7 @@ static void cma_preset_add_callback_yes(GtkWidget *w, gpointer data)
   Key pressed in preset list
 *****************************************************************/
 static gboolean cma_preset_key_pressed_callback(GtkWidget *w, GdkEventKey *ev,
-						gpointer data)
+                                                gpointer data)
 {
   struct cma_dialog *pdialog = (struct cma_dialog *) data;
   int index;
@@ -637,10 +637,10 @@ static void cma_preset_remove(struct cma_dialog *pdialog, int preset_index)
 
   pdialog->id = preset_index;
   shl = gtk_message_dialog_new(NULL,
-			       GTK_DIALOG_DESTROY_WITH_PARENT,
-			       GTK_MESSAGE_QUESTION,
-			       GTK_BUTTONS_YES_NO,
-			       _("Remove this preset?"));
+                               GTK_DIALOG_DESTROY_WITH_PARENT,
+                               GTK_MESSAGE_QUESTION,
+                               GTK_BUTTONS_YES_NO,
+                               _("Remove this preset?"));
   setup_dialog(shl, parent);
   pdialog->preset_remove_shell = shl;
 
@@ -648,7 +648,7 @@ static void cma_preset_remove(struct cma_dialog *pdialog, int preset_index)
   gtk_window_set_position(GTK_WINDOW(shl), GTK_WIN_POS_CENTER_ON_PARENT);
 
   g_signal_connect(shl, "response",
-		   G_CALLBACK(cma_preset_remove_response), pdialog);
+                   G_CALLBACK(cma_preset_remove_response), pdialog);
 
   gtk_window_present(GTK_WINDOW(shl));
 }
@@ -657,7 +657,7 @@ static void cma_preset_remove(struct cma_dialog *pdialog, int preset_index)
  callback for the remove_preset popup
 *****************************************************************/
 static void cma_preset_remove_response(GtkWidget *w, gint response,
-				       gpointer data)
+                                       gpointer data)
 {
   struct cma_dialog *pdialog = (struct cma_dialog *) data;
 
@@ -697,20 +697,20 @@ static void cma_active_callback(GtkWidget *w, gpointer data)
  notice that we don't want to call update_result here.
 *****************************************************************/
 static void set_hscales(const struct cm_parameter *const parameter,
-			struct cma_dialog *pdialog)
+                        struct cma_dialog *pdialog)
 {
   int i;
 
   allow_refreshes = 0;
   for (i = 0; i < CM_NUM_STATS; i++) {
     gtk_adjustment_set_value(pdialog->minimal_surplus[i],
-			     parameter->minimal_surplus[i]);
+                             parameter->minimal_surplus[i]);
     gtk_adjustment_set_value(pdialog->factor[i], parameter->factor[i]);
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(pdialog->happy_button),
-			       parameter->require_happy);
+                               parameter->require_happy);
   gtk_adjustment_set_value(pdialog->factor[CM_NUM_STATS],
-			   parameter->happy_factor);
+                           parameter->happy_factor);
   allow_refreshes = 1;
 }
 

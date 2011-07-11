@@ -1683,7 +1683,7 @@ static void callback_delayed_goto_delayed_goto(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_delayed_goto_delayed_nuke(GtkAction *action,
-					       gpointer user_data)
+                                               gpointer user_data)
 {
   struct unit *punit = get_unit_in_focus();
 
@@ -1700,7 +1700,7 @@ static void callback_delayed_goto_delayed_nuke(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_delayed_goto_delayed_paradrop(GtkAction *action,
-						   gpointer user_data)
+                                                   gpointer user_data)
 {
   struct unit *punit = get_unit_in_focus();
 
@@ -2301,7 +2301,7 @@ static void update_delayed_goto_automatic_filter_menu(int dg)
   for (i = 1; (str = delayed_goto_get_auto_name(i)); i <<= 1) {
     my_snprintf(buf, sizeof(buf), "DELAYED_GOTO%d_AUTO%d", dg, i);
     menu_toggle_set_active(toggle_action_group_delayed_goto_automatic[dg],
-			   buf, filter & i);
+                           buf, filter & i);
   }
 }
 
@@ -2321,10 +2321,10 @@ static void callback_menu_delayed_goto_automatic(GtkToggleAction *action,
     my_snprintf(buf, sizeof(buf), "DELAYED_GOTO%d_AUTO%d", dg, i);
     if (0 == strcmp(buf, gtk_action_get_name(GTK_ACTION(action)))) {
       if (BOOL(delayed_goto_list[dg].automatic_execution & i)
-	  ^ gtk_toggle_action_get_active(action)
-	  && delayed_goto_auto_filter_change(
-		 &delayed_goto_list[dg].automatic_execution, i)) {
-	update_delayed_goto_automatic_filter_menu(dg);
+          ^ gtk_toggle_action_get_active(action)
+          && delayed_goto_auto_filter_change(
+                 &delayed_goto_list[dg].automatic_execution, i)) {
+        update_delayed_goto_automatic_filter_menu(dg);
       }
     }
   }
@@ -2334,7 +2334,7 @@ static void callback_menu_delayed_goto_automatic(GtkToggleAction *action,
   ...
 *****************************************************************/
 static const char *load_menu_delayed_goto_automatic(const char *actionname,
-						    int dg)
+                                                    int dg)
 {
   GtkToggleActionEntry toggle_entries_delayed_goto_automatic[64];
   char buf[256], name[64][256], label[64][256];
@@ -2348,7 +2348,7 @@ static const char *load_menu_delayed_goto_automatic(const char *actionname,
   for (i = 1, j = 0; (str = delayed_goto_get_auto_name(i)); i <<= 1, j++) {
     my_snprintf(name[j], sizeof(name[j]), "DELAYED_GOTO%d_AUTO%d", dg, i);
     cat_snprintf(retbuf, sizeof(retbuf),
-		 "<menuitem action=\"%s\" />\n", name[j]);
+                 "<menuitem action=\"%s\" />\n", name[j]);
     sz_strlcpy(label[j], str);
     toggle_entries_delayed_goto_automatic[j].name = name[j];
     toggle_entries_delayed_goto_automatic[j].stock_id = NULL;
@@ -2747,7 +2747,7 @@ static const char *load_menu_delayed_goto(void)
                "</menu>\n"
                "</menu>\n",
                load_menu_delayed_goto_automatic("DELAYED_GOTO_DG1_AUTOMATIC",
-						1));
+                                                1));
 
   cat_snprintf(buf, sizeof(buf),
                "<menu action=\"DELAYED_GOTO_DG2\">\n"
@@ -2761,7 +2761,7 @@ static const char *load_menu_delayed_goto(void)
                "</menu>\n"
                "</menu>\n",
                load_menu_delayed_goto_automatic("DELAYED_GOTO_DG2_AUTOMATIC",
-						2));
+                                                2));
 
   cat_snprintf(buf, sizeof(buf),
                "<menu action=\"DELAYED_GOTO_DG3\">\n"
@@ -2776,7 +2776,7 @@ static const char *load_menu_delayed_goto(void)
                "</menu>\n"
                "</menu>\n",
                load_menu_delayed_goto_automatic("DELAYED_GOTO_DG3_AUTOMATIC",
-						3));
+                                                3));
 
   freelog(LOG_MENU, "Strlen of buf = %d; Size of load_menu_delayed_goto %d",
           (int) strlen(buf), (int) sizeof(buf));
@@ -3634,7 +3634,7 @@ static const char *load_menu_airlift(void)
   ...
 *****************************************************************/
 static void callback_auto_caravan_add_trade_city(GtkAction *action,
-						 gpointer user_data)
+                                                 gpointer user_data)
 {
   key_add_trade_city();
 }
@@ -3643,7 +3643,7 @@ static void callback_auto_caravan_add_trade_city(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_clear_trade_cities(GtkAction *action,
-						    gpointer user_data)
+                                                    gpointer user_data)
 {
   clear_trade_city_list();
 }
@@ -3652,7 +3652,7 @@ static void callback_auto_caravan_clear_trade_cities(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_clear_trade_planning(GtkAction *action,
-						       gpointer user_data)
+                                                       gpointer user_data)
 {
   clear_trade_planning(TRUE);
 }
@@ -3662,7 +3662,7 @@ static void callback_auto_caravan_clear_trade_planning(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_calculate_trade_planning(GtkAction *action,
-							   gpointer user_data)
+                                                           gpointer user_data)
 {
   if (are_trade_cities_built()) {
     do_trade_planning_calculation();
@@ -3675,7 +3675,7 @@ static void callback_auto_caravan_calculate_trade_planning(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_estimate_trade(GtkAction *action,
-						 gpointer user_data)
+                                                 gpointer user_data)
 {
   show_trade_estimation();
 }
@@ -3684,7 +3684,7 @@ static void callback_auto_caravan_estimate_trade(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_show_free_slots(GtkAction *action,
-						  gpointer user_data)
+                                                  gpointer user_data)
 {
   show_free_slots_in_trade_planning(NULL);
 }
@@ -3693,7 +3693,7 @@ static void callback_auto_caravan_show_free_slots(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_show_trade_cities(GtkAction *action,
-						    gpointer user_data)
+                                                    gpointer user_data)
 {
   show_cities_in_trade_planning();
 }
@@ -3702,7 +3702,7 @@ static void callback_auto_caravan_show_trade_cities(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_trade_with(GtkAction *action,
-					     gpointer user_data)
+                                             gpointer user_data)
 {
   key_auto_caravan_goto();
 }
@@ -3711,7 +3711,7 @@ static void callback_auto_caravan_trade_with(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_auto_caravan_do_auto_caravan(GtkAction *action,
-						  gpointer user_data)
+                                                  gpointer user_data)
 {
   key_auto_caravan();
 }
@@ -3820,7 +3820,7 @@ static void callback_multi_selection_ms_clear(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_multi_selection_spread(GtkAction *action,
-					    gpointer user_data)
+                                            gpointer user_data)
 {
   if (tiles_hilited_cities) {
     key_select_rally_point();
@@ -4193,7 +4193,7 @@ static void callback_multi_selection_ms9_clear(GtkAction *action,
   ...
 *****************************************************************/
 static void callback_multi_selection_spread_airport(GtkToggleAction *action,
-						    gpointer user_data)
+                                                    gpointer user_data)
 {
   multi_select_spread_airport_cities = gtk_toggle_action_get_active(action);
 }
@@ -4202,7 +4202,7 @@ static void callback_multi_selection_spread_airport(GtkToggleAction *action,
   ...
 *****************************************************************/
 static void callback_multi_selection_spread_ally(GtkToggleAction *action,
-						 gpointer user_data)
+                                                 gpointer user_data)
 {
   multi_select_spread_allied_cities = gtk_toggle_action_get_active(action);
 }
@@ -5984,10 +5984,10 @@ void update_menus(void)
     /* Update governements available. */
     government_iterate(g) {
       if (g->index != game.ruleset_control.government_when_anarchy) {
-	 my_snprintf(buf, sizeof(buf), "GOVERNMENT_TYPE_%d", g->index);
-	 menu_set_sensitive(action_group_government_type, buf,
-			    can_change_to_government(get_player_ptr(),
-						     g->index));
+         my_snprintf(buf, sizeof(buf), "GOVERNMENT_TYPE_%d", g->index);
+         menu_set_sensitive(action_group_government_type, buf,
+                            can_change_to_government(get_player_ptr(),
+                                                     g->index));
       }
     } government_iterate_end;
 
@@ -5997,18 +5997,18 @@ void update_menus(void)
   }
 
   menu_set_sensitive(action_group_report, "REPORT_SPACESHIP",
-		     !client_is_global_observer()
-		     && (get_player_ptr()->spaceship.state != SSHIP_NONE));
+                     !client_is_global_observer()
+                     && (get_player_ptr()->spaceship.state != SSHIP_NONE));
 
   menu_toggle_set_sensitive(toggle_action_group_view,
-			    "VIEW_SHOW_CITY_GROWTH_TURNS",
-			    draw_city_names);
+                            "VIEW_SHOW_CITY_GROWTH_TURNS",
+                            draw_city_names);
   menu_toggle_set_sensitive(toggle_action_group_view,
-			    "VIEW_SHOW_COASTLINE",
-			    !draw_terrain);
+                            "VIEW_SHOW_COASTLINE",
+                            !draw_terrain);
   menu_toggle_set_sensitive(toggle_action_group_view,
-			    "VIEW_SHOW_FOCUS_UNIT",
-			    !draw_units);
+                            "VIEW_SHOW_FOCUS_UNIT",
+                            !draw_units);
 
   /*      This should be done in a future version for all warclient menu items */
   /*     menu_set_sensitive(action_group_miscellaneous,  */
@@ -6036,247 +6036,247 @@ void update_menus(void)
     /* Enable the button for adding to a city in all cases, so we
        get an eventual error message from the server if we try. */
     menu_set_sensitive(action_group_order,
-		       "ORDER_BUILD_CITY",
-		       can_unit_add_or_build_city(punit) ||
-		       unit_can_help_build_wonder_here(punit));
+                       "ORDER_BUILD_CITY",
+                       can_unit_add_or_build_city(punit) ||
+                       unit_can_help_build_wonder_here(punit));
     menu_set_sensitive(action_group_order,
-		       "ORDER_ROAD",
-		       (can_unit_do_activity(punit, ACTIVITY_ROAD) ||
-			can_unit_do_activity(punit, ACTIVITY_RAILROAD) ||
-			unit_can_est_traderoute_here(punit)));
+                       "ORDER_ROAD",
+                       (can_unit_do_activity(punit, ACTIVITY_ROAD) ||
+                        can_unit_do_activity(punit, ACTIVITY_RAILROAD) ||
+                        unit_can_est_traderoute_here(punit)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_IRRIGATE",
-		       can_unit_do_activity(punit, ACTIVITY_IRRIGATE));
+                       "ORDER_IRRIGATE",
+                       can_unit_do_activity(punit, ACTIVITY_IRRIGATE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_MINE",
-		       can_unit_do_activity(punit, ACTIVITY_MINE));
+                       "ORDER_MINE",
+                       can_unit_do_activity(punit, ACTIVITY_MINE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_TRANSFORM",
-		       can_unit_do_activity(punit, ACTIVITY_TRANSFORM));
+                       "ORDER_TRANSFORM",
+                       can_unit_do_activity(punit, ACTIVITY_TRANSFORM));
     menu_set_sensitive(action_group_order,
-		       "ORDER_FORTRESS",
-		       (can_unit_do_activity(punit, ACTIVITY_FORTRESS) ||
-			can_unit_do_activity(punit, ACTIVITY_FORTIFYING)));
+                       "ORDER_FORTRESS",
+                       (can_unit_do_activity(punit, ACTIVITY_FORTRESS) ||
+                        can_unit_do_activity(punit, ACTIVITY_FORTIFYING)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_AIRBASE",
-		       can_unit_do_activity(punit, ACTIVITY_AIRBASE));
+                       "ORDER_AIRBASE",
+                       can_unit_do_activity(punit, ACTIVITY_AIRBASE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_POLLUTION",
-		       (can_unit_do_activity(punit, ACTIVITY_POLLUTION) ||
-			can_unit_paradrop(punit)));
+                       "ORDER_POLLUTION",
+                       (can_unit_do_activity(punit, ACTIVITY_POLLUTION) ||
+                        can_unit_paradrop(punit)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_FALLOUT",
-		       can_unit_do_activity(punit, ACTIVITY_FALLOUT));
+                       "ORDER_FALLOUT",
+                       can_unit_do_activity(punit, ACTIVITY_FALLOUT));
     menu_set_sensitive(action_group_order,
-		       "ORDER_SENTRY",
-		       can_unit_do_activity(punit, ACTIVITY_SENTRY));
+                       "ORDER_SENTRY",
+                       can_unit_do_activity(punit, ACTIVITY_SENTRY));
     menu_set_sensitive(action_group_order,
-		       "ORDER_PILLAGE",
-		       can_unit_do_activity(punit, ACTIVITY_PILLAGE));
+                       "ORDER_PILLAGE",
+                       can_unit_do_activity(punit, ACTIVITY_PILLAGE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_DISBAND",
-		       !unit_flag(punit, F_UNDISBANDABLE));
+                       "ORDER_DISBAND",
+                       !unit_flag(punit, F_UNDISBANDABLE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_HOMECITY",
-		       can_unit_change_homecity(punit));
+                       "ORDER_HOMECITY",
+                       can_unit_change_homecity(punit));
     menu_set_sensitive(action_group_order,
-		       "ORDER_UNLOAD_TRANSPORTER",
-		       get_transporter_occupancy(punit) > 0);
+                       "ORDER_UNLOAD_TRANSPORTER",
+                       get_transporter_occupancy(punit) > 0);
     menu_set_sensitive(action_group_order,
-		       "ORDER_LOAD",
-		       can_unit_load(punit,
-				     find_transporter_for_unit(punit,
-							       punit->tile)));
+                       "ORDER_LOAD",
+                       can_unit_load(punit,
+                                     find_transporter_for_unit(punit,
+                                                               punit->tile)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_UNLOAD",
-		       (can_unit_unload(punit,
-					find_unit_by_id(punit->transported_by))
-			&& can_unit_exist_at_tile(punit, punit->tile)));
+                       "ORDER_UNLOAD",
+                       (can_unit_unload(punit,
+                                        find_unit_by_id(punit->transported_by))
+                        && can_unit_exist_at_tile(punit, punit->tile)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_WAKEUP_OTHERS",
-		       is_unit_activity_on_tile(ACTIVITY_SENTRY,
-						punit->tile));
+                       "ORDER_WAKEUP_OTHERS",
+                       is_unit_activity_on_tile(ACTIVITY_SENTRY,
+                                                punit->tile));
     menu_set_sensitive(action_group_order,
-		       "ORDER_AUTO_SETTLER",
-		       can_unit_do_auto(punit));
+                       "ORDER_AUTO_SETTLER",
+                       can_unit_do_auto(punit));
     menu_set_sensitive(action_group_order,
-		       "ORDER_AUTO_EXPLORE",
-		       can_unit_do_activity(punit, ACTIVITY_EXPLORE));
+                       "ORDER_AUTO_EXPLORE",
+                       can_unit_do_activity(punit, ACTIVITY_EXPLORE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_CONNECT_ROAD",
-		       can_unit_do_connect(punit, ACTIVITY_ROAD));
+                       "ORDER_CONNECT_ROAD",
+                       can_unit_do_connect(punit, ACTIVITY_ROAD));
     menu_set_sensitive(action_group_order,
-		       "ORDER_CONNECT_RAIL",
-		       can_unit_do_connect(punit, ACTIVITY_RAILROAD));
+                       "ORDER_CONNECT_RAIL",
+                       can_unit_do_connect(punit, ACTIVITY_RAILROAD));
     menu_set_sensitive(action_group_order,
-		       "ORDER_CONNECT_IRRIGATE",
-		       can_unit_do_connect(punit, ACTIVITY_IRRIGATE));
+                       "ORDER_CONNECT_IRRIGATE",
+                       can_unit_do_connect(punit, ACTIVITY_IRRIGATE));
     menu_set_sensitive(action_group_order,
-		       "ORDER_RETURN",
-		       !(is_air_unit(punit) || is_heli_unit(punit)));
+                       "ORDER_RETURN",
+                       !(is_air_unit(punit) || is_heli_unit(punit)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_DIPLOMAT_DLG",
-		       (is_diplomat_unit(punit) &&
-			diplomat_can_do_action(punit,
-					       DIPLOMAT_ANY_ACTION,
-					       punit->tile)));
+                       "ORDER_DIPLOMAT_DLG",
+                       (is_diplomat_unit(punit) &&
+                        diplomat_can_do_action(punit,
+                                               DIPLOMAT_ANY_ACTION,
+                                               punit->tile)));
     menu_set_sensitive(action_group_order,
-		       "ORDER_NUKE",
-		       unit_flag(punit, F_NUCLEAR));
+                       "ORDER_NUKE",
+                       unit_flag(punit, F_NUCLEAR));
     if (unit_flag(punit, F_HELP_WONDER)) {
       menu_rename(action_group_order,
-		  "ORDER_BUILD_CITY",
-		  _("Help _Build Wonder"));
+                  "ORDER_BUILD_CITY",
+                  _("Help _Build Wonder"));
     } else if (unit_flag(punit, F_CITIES)) {
       if (map_get_city(punit->tile)) {
-	menu_rename(action_group_order,
-		    "ORDER_BUILD_CITY", _("Add to City (_B)"));
+        menu_rename(action_group_order,
+                    "ORDER_BUILD_CITY", _("Add to City (_B)"));
       } else {
-	menu_rename(action_group_order,
-		    "ORDER_BUILD_CITY", _("_Build City"));
+        menu_rename(action_group_order,
+                    "ORDER_BUILD_CITY", _("_Build City"));
       }
     } else {
       menu_rename(action_group_order,
-		  "ORDER_BUILD_CITY", _("_Build City"));
+                  "ORDER_BUILD_CITY", _("_Build City"));
     }
 
     if (unit_flag(punit, F_TRADE_ROUTE)) {
       menu_rename(action_group_order,
-		  "ORDER_ROAD",
-		  _("Make Trade _Route"));
+                  "ORDER_ROAD",
+                  _("Make Trade _Route"));
     } else if (unit_flag(punit, F_SETTLERS)) {
       if (map_has_special(punit->tile, S_ROAD)) {
-	roadtext = _("Build _Railroad");
-	road_activity=ACTIVITY_RAILROAD;
+        roadtext = _("Build _Railroad");
+        road_activity=ACTIVITY_RAILROAD;
       } else {
-	roadtext = _("Build _Road");
-	road_activity=ACTIVITY_ROAD;
+        roadtext = _("Build _Road");
+        road_activity=ACTIVITY_ROAD;
       }
       menu_rename(action_group_order,
-		  "ORDER_ROAD", roadtext);
+                  "ORDER_ROAD", roadtext);
     } else {
       menu_rename(action_group_order,
-		  "ORDER_ROAD", _("Build _Road"));
+                  "ORDER_ROAD", _("Build _Road"));
     }
 
     ttype = punit->tile->terrain;
     tinfo = get_tile_type(ttype);
     if (tinfo->irrigation_result != T_NONE
-	&& tinfo->irrigation_result != ttype) {
+        && tinfo->irrigation_result != ttype) {
       my_snprintf(irrtext, sizeof(irrtext), irrfmt,
-		  get_tile_change_menu_text(punit->tile,
-					    ACTIVITY_IRRIGATE));
+                  get_tile_change_menu_text(punit->tile,
+                                            ACTIVITY_IRRIGATE));
     } else if (map_has_special(punit->tile, S_IRRIGATION)
-	       && player_knows_techs_with_flag(get_player_ptr(),
-					       TF_FARMLAND)) {
+               && player_knows_techs_with_flag(get_player_ptr(),
+                                               TF_FARMLAND)) {
       sz_strlcpy(irrtext, _("Bu_ild Farmland"));
     }
     if (tinfo->mining_result != T_NONE
-	&& tinfo->mining_result != ttype) {
+        && tinfo->mining_result != ttype) {
       my_snprintf(mintext, sizeof(mintext), minfmt,
-		  get_tile_change_menu_text(punit->tile, ACTIVITY_MINE));
+                  get_tile_change_menu_text(punit->tile, ACTIVITY_MINE));
     }
     if (tinfo->transform_result != T_NONE
-	&& tinfo->transform_result != ttype) {
+        && tinfo->transform_result != ttype) {
       my_snprintf(transtext, sizeof(transtext), transfmt,
-		  get_tile_change_menu_text(punit->tile,
-					    ACTIVITY_TRANSFORM));
+                  get_tile_change_menu_text(punit->tile,
+                                            ACTIVITY_TRANSFORM));
     }
     menu_rename(action_group_order,
-		"ORDER_IRRIGATE", irrtext);
+                "ORDER_IRRIGATE", irrtext);
     menu_rename(action_group_order,
-		"ORDER_MINE", mintext);
+                "ORDER_MINE", mintext);
     menu_rename(action_group_order,
-		"ORDER_TRANSFORM", transtext);
+                "ORDER_TRANSFORM", transtext);
 
     if (can_unit_do_activity(punit, ACTIVITY_FORTIFYING)) {
       menu_rename(action_group_order,
-		  "ORDER_FORTRESS", _("_Fortify"));
+                  "ORDER_FORTRESS", _("_Fortify"));
       menu_set_sensitive(action_group_order,
-			 "ORDER_SLEEP", FALSE);
+                         "ORDER_SLEEP", FALSE);
     } else {
       menu_set_sensitive(action_group_order,
-			 "ORDER_SLEEP", TRUE);
+                         "ORDER_SLEEP", TRUE);
       if (can_unit_do_activity(punit, ACTIVITY_FORTRESS)) {
-	menu_rename(action_group_order,
-		    "ORDER_FORTRESS", _("Build _Fortress"));
+        menu_rename(action_group_order,
+                    "ORDER_FORTRESS", _("Build _Fortress"));
       }
     }
 
     if (unit_flag(punit, F_PARATROOPERS)) {
       menu_rename(action_group_order,
-		  "ORDER_POLLUTION", _("_Paradrop"));
+                  "ORDER_POLLUTION", _("_Paradrop"));
     } else {
       menu_rename(action_group_order,
-		  "ORDER_POLLUTION", _("Clean _Pollution"));
+                  "ORDER_POLLUTION", _("Clean _Pollution"));
     }
 
     if (!unit_flag(punit, F_SETTLERS)) {
       menu_rename(action_group_order,
-		  "ORDER_AUTO_SETTLER", _("_Auto Attack"));
+                  "ORDER_AUTO_SETTLER", _("_Auto Attack"));
     } else {
       menu_rename(action_group_order,
-		  "ORDER_AUTO_SETTLER", _("_Auto Settler"));
+                  "ORDER_AUTO_SETTLER", _("_Auto Settler"));
     }
 
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_GOTO", TRUE);
+                       "DELAYED_GOTO_DELAYED_GOTO", TRUE);
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_NUKE",
-		       unit_flag(punit, F_NUCLEAR));
+                       "DELAYED_GOTO_DELAYED_NUKE",
+                       unit_flag(punit, F_NUCLEAR));
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_PARADROP",
-		       unit_flag(punit, F_PARATROOPERS));
+                       "DELAYED_GOTO_DELAYED_PARADROP",
+                       unit_flag(punit, F_PARATROOPERS));
 
     cond = can_unit_do_air_patrol(punit);
     menu_set_sensitive(action_group_miscellaneous,
-		       "MISCELLANEOUS_AIR_PATROL", cond
-		       && !can_unit_do_activity(punit, ACTIVITY_AIRBASE));
+                       "MISCELLANEOUS_AIR_PATROL", cond
+                       && !can_unit_do_activity(punit, ACTIVITY_AIRBASE));
     menu_set_sensitive(action_group_miscellaneous,
-		       "MISCELLANEOUS_AIR_PATROL_DEST", cond);
+                       "MISCELLANEOUS_AIR_PATROL_DEST", cond);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_MS_SELECT", TRUE);
+                       "MULTI_SELECTION_MS_SELECT", TRUE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_MS_ACTIVE_ALL", TRUE);
+                       "MULTI_SELECTION_MS_ACTIVE_ALL", TRUE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_MS_CLEAR", TRUE);
+                       "MULTI_SELECTION_MS_CLEAR", TRUE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_SPREAD", TRUE);
+                       "MULTI_SELECTION_SPREAD", TRUE);
 
     cond = unit_flag(punit, F_TRADE_ROUTE);
     menu_set_sensitive(action_group_auto_caravan,
-		       "AUTO_CARAVAN_TRADE_WITH", cond);
+                       "AUTO_CARAVAN_TRADE_WITH", cond);
     menu_set_sensitive(action_group_auto_caravan,
-		       "AUTO_CARAVAN_DO_AUTO_CARAVAN", cond);
+                       "AUTO_CARAVAN_DO_AUTO_CARAVAN", cond);
 
     menu_set_sensitive(action_group_order,
-		       "ORDER", TRUE);
+                       "ORDER", TRUE);
   } else {
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_GOTO", FALSE);
+                       "DELAYED_GOTO_DELAYED_GOTO", FALSE);
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_NUKE", FALSE);
+                       "DELAYED_GOTO_DELAYED_NUKE", FALSE);
     menu_set_sensitive(action_group_delayed_goto,
-		       "DELAYED_GOTO_DELAYED_PARADROP", FALSE);
+                       "DELAYED_GOTO_DELAYED_PARADROP", FALSE);
 
     menu_set_sensitive(action_group_miscellaneous,
-		       "MISCELLANEOUS_AIR_PATROL", FALSE);
+                       "MISCELLANEOUS_AIR_PATROL", FALSE);
     menu_set_sensitive(action_group_miscellaneous,
-		       "MISCELLANEOUS_AIR_PATROL_DEST", FALSE);
+                       "MISCELLANEOUS_AIR_PATROL_DEST", FALSE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_MS_SELECT",
-		       FALSE);
+                       "MULTI_SELECTION_MS_SELECT",
+                       FALSE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_MS_ACTIVE_ALL", FALSE);
+                       "MULTI_SELECTION_MS_ACTIVE_ALL", FALSE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_MS_CLEAR", FALSE);
+                       "MULTI_SELECTION_MS_CLEAR", FALSE);
     menu_set_sensitive(action_group_multi_selection,
-		       "MULTI_SELECTION_SPREAD", FALSE);
+                       "MULTI_SELECTION_SPREAD", FALSE);
 
     menu_set_sensitive(action_group_auto_caravan,
-		       "AUTO_CARAVAN_DO_AUTO_CARAVAN", FALSE);
+                       "AUTO_CARAVAN_DO_AUTO_CARAVAN", FALSE);
     menu_set_sensitive(action_group_auto_caravan,
-		       "AUTO_CARAVAN_TRADE_WITH", FALSE);
+                       "AUTO_CARAVAN_TRADE_WITH", FALSE);
 
     menu_set_sensitive(action_group_order, "ORDER", FALSE);
   }
@@ -6391,13 +6391,13 @@ void update_auto_caravan_menu(void)
                      "AUTO_CARAVAN_SHOW_FREE_SLOTS", cond);
   menu_set_sensitive(action_group_auto_caravan,
                      "AUTO_CARAVAN_ESTIMATE_TRADE",
-		     is_trade_route_in_route());
+                     is_trade_route_in_route());
   menu_rename(action_group_auto_caravan,
-	      "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING",
-	      are_trade_cities_built() ? _("Calculate trade _planning")
-				       : _("_Precalculate trade planning"));
+              "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING",
+              are_trade_cities_built() ? _("Calculate trade _planning")
+                                       : _("_Precalculate trade planning"));
   menu_set_sensitive(action_group_auto_caravan,
-		     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING", cond);
+                     "AUTO_CARAVAN_CALCULATE_TRADE_PLANNING", cond);
 }
 
 /****************************************************************
@@ -6597,10 +6597,10 @@ void init_menus(void)
 
   menu_toggle_set_active(toggle_action_group_multi_selection,
                          "MULTI_SELECTION_SPREAD_AIRPORT",
-			 multi_select_spread_airport_cities);
+                         multi_select_spread_airport_cities);
   menu_toggle_set_active(toggle_action_group_multi_selection,
                          "MULTI_SELECTION_SPREAD_ALLY",
-			 multi_select_spread_allied_cities);
+                         multi_select_spread_allied_cities);
 
   update_multi_selection_inclusive_filter_menu();
   update_multi_selection_exclusive_filter_menu();
@@ -6869,7 +6869,7 @@ void enable_airlift_unit_type_menu(Unit_Type_id type)
   }
   for(i = 0; i < AIRLIFT_QUEUE_NUM; i++) {
     menu_set_visible(radio_action_group_airlift_unit[i],
-		     airlift_queue_get_menu_name(i, type), TRUE);
+                     airlift_queue_get_menu_name(i, type), TRUE);
   }
 }
 
@@ -6890,8 +6890,8 @@ void update_airlift_unit_types(void)
     }
     for(j = 0; j < AIRLIFT_QUEUE_NUM; j++) {
       menu_set_visible(radio_action_group_airlift_unit[j],
-		       airlift_queue_get_menu_name(j, i),
-		       can_player_unit_type(i));
+                       airlift_queue_get_menu_name(j, i),
+                       can_player_unit_type(i));
     }
   }
 }

@@ -23,9 +23,9 @@ struct Sprite
   GdkPixmap *pixmap;
   GdkPixmap *fogged;
   GdkBitmap *mask;
-  int	     has_mask;
-  int	     width;
-  int	     height;
+  int        has_mask;
+  int        width;
+  int        height;
 
   GdkPixbuf *pixbuf;
 };
@@ -45,15 +45,15 @@ extern GdkCursor * dest_cursor;
 extern GdkCursor * trade_cursor;
 
 void gtk_draw_shadowed_string(GdkDrawable *drawable,
-			      GdkGC *black_gc,
-			      GdkGC *white_gc,
-			      gint x, gint y, PangoLayout *layout);
+                              GdkGC *black_gc,
+                              GdkGC *white_gc,
+                              gint x, gint y, PangoLayout *layout);
 
 SPRITE *ctor_sprite_mask(GdkPixmap *mypixmap, GdkPixmap *mask,
-			 int width, int height);
+                         int width, int height);
 SPRITE* sprite_scale(SPRITE *src, int new_w, int new_h);
 void sprite_get_bounding_box(SPRITE * sprite, int *start_x,
-			     int *start_y, int *end_x, int *end_y);
+                             int *start_y, int *end_x, int *end_y);
 SPRITE *crop_blankspace(SPRITE *s);
 
 GdkPixbuf *gdk_pixbuf_new_from_sprite(SPRITE *src);

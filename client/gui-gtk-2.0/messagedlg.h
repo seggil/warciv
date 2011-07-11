@@ -20,4 +20,4 @@ void reload_message_options(GtkWidget *widget, struct section_file *sf);
 
 GtkWidget *create_messages_configuration(void);
 
-#endif				/* FC__MESSAGEDLG_H */
+#endif                          /* FC__MESSAGEDLG_H */

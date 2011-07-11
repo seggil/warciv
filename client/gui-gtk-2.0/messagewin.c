@@ -47,9 +47,9 @@ static void create_meswin_dialog(void);
 static void meswin_selection_callback(GtkTreeSelection *selection,
                                       gpointer data);
 static void meswin_row_activated_callback(GtkTreeView *view,
-					  GtkTreePath *path,
-					  GtkTreeViewColumn *col,
-					  gpointer data);
+                                          GtkTreePath *path,
+                                          GtkTreeViewColumn *col,
+                                          gpointer data);
 static void meswin_response_callback(struct gui_dialog *dlg, int response);
 
 static GtkWidget *split_message_window = NULL;
@@ -59,7 +59,7 @@ enum {
   CMD_GOTO = 1, CMD_POPCITY
 };
 
-#define N_MSG_VIEW 24	       /* max before scrolling happens */
+#define N_MSG_VIEW 24          /* max before scrolling happens */
 
 /****************************************************************
 popup the dialog 10% inside the main-window
@@ -138,9 +138,9 @@ static void meswin_not_visited_item(gint n)
 ...
 *****************************************************************/
 static void meswin_cell_data_func(GtkTreeViewColumn *col,
-				  GtkCellRenderer *cell,
-				  GtkTreeModel *model, GtkTreeIter *it,
-				  gpointer data)
+                                  GtkCellRenderer *cell,
+                                  GtkTreeModel *model, GtkTreeIter *it,
+                                  gpointer data)
 {
   gboolean b;
 
@@ -148,10 +148,10 @@ static void meswin_cell_data_func(GtkTreeViewColumn *col,
 
   if (b) {
     g_object_set(G_OBJECT(cell), "style", PANGO_STYLE_ITALIC,
-		 "weight", PANGO_WEIGHT_NORMAL, NULL);
+                 "weight", PANGO_WEIGHT_NORMAL, NULL);
   } else {
     g_object_set(G_OBJECT(cell), "style", PANGO_STYLE_NORMAL,
-		 "weight", PANGO_WEIGHT_BOLD, NULL);
+                 "weight", PANGO_WEIGHT_BOLD, NULL);
   }
 }
 
@@ -182,7 +182,7 @@ static void create_meswin_dialog(void)
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
                           GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
   gtk_box_pack_start(GTK_BOX(meswin_shell->vbox), sw, TRUE, TRUE, 0);
@@ -194,16 +194,16 @@ static void create_meswin_dialog(void)
 
   renderer = gtk_cell_renderer_text_new();
   col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
-  	"text", 0, NULL);
+        "text", 0, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
   gtk_tree_view_column_set_cell_data_func(col, renderer,
-	meswin_cell_data_func, NULL, NULL);
+        meswin_cell_data_func, NULL, NULL);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
   g_signal_connect(meswin_selection, "changed",
-		   G_CALLBACK(meswin_selection_callback), NULL);
+                   G_CALLBACK(meswin_selection_callback), NULL);
   g_signal_connect(view, "row_activated",
-		   G_CALLBACK(meswin_row_activated_callback), NULL);
+                   G_CALLBACK(meswin_row_activated_callback), NULL);
 
   cmd = gui_dialog_add_stockbutton(meswin_shell, GTK_STOCK_JUMP_TO,
       _("Goto _location"), CMD_GOTO);
@@ -272,7 +272,7 @@ void real_update_meswin_dialog(void)
 ...
 **************************************************************************/
 static void meswin_selection_callback(GtkTreeSelection *selection,
-				      gpointer data)
+                                      gpointer data)
 {
   gint row = gtk_tree_selection_get_row(selection);
 
@@ -280,9 +280,9 @@ static void meswin_selection_callback(GtkTreeSelection *selection,
     struct message *message = get_message(row);
 
     gui_dialog_set_response_sensitive(meswin_shell, CMD_GOTO,
-	message->location_ok);
+        message->location_ok);
     gui_dialog_set_response_sensitive(meswin_shell, CMD_POPCITY,
-	message->city_ok);
+        message->city_ok);
   }
 }
 
@@ -290,9 +290,9 @@ static void meswin_selection_callback(GtkTreeSelection *selection,
 ...
 **************************************************************************/
 static void meswin_row_activated_callback(GtkTreeView *view,
-					  GtkTreePath *path,
-					  GtkTreeViewColumn *col,
-					  gpointer data)
+                                          GtkTreePath *path,
+                                          GtkTreeViewColumn *col,
+                                          gpointer data)
 {
   gint row = gtk_tree_path_get_indices(path)[0];
   struct message *message = get_message(row);
@@ -317,7 +317,7 @@ static void meswin_response_callback(struct gui_dialog *dlg, int response)
       gint row = gtk_tree_selection_get_row(meswin_selection);
 
       if (row == -1) {
-	return;
+        return;
       }
 
       meswin_goto(row);
@@ -329,7 +329,7 @@ static void meswin_response_callback(struct gui_dialog *dlg, int response)
       gint row = gtk_tree_selection_get_row(meswin_selection);
 
       if (row == -1) {
-	return;
+        return;
       }
       meswin_popup_city(row);
       meswin_visited_item(row);
@@ -397,9 +397,9 @@ GtkWidget *get_split_message_window(void)
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_ALWAYS,
-  				 GTK_POLICY_ALWAYS);
+                                 GTK_POLICY_ALWAYS);
 
   if (!meswin_store)
     create_meswin_store();
@@ -410,8 +410,7 @@ GtkWidget *get_split_message_window(void)
   split_message_view = view;
 
   renderer = gtk_cell_renderer_text_new();
-  col = gtk_tree_view_column_new_with_attributes(NULL, renderer,
-  	"text", 0, NULL);
+  col = gtk_tree_view_column_new_with_attributes(NULL, renderer, "text", 0, NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
   gtk_container_add(GTK_CONTAINER(sw), view);
 

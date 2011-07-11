@@ -171,8 +171,8 @@ static gboolean show_info_button_release(GtkWidget *w, GdkEventButton *ev,
 static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev,
                                 gpointer data);
 static gboolean player_colors_mode_label_click(GtkWidget *w,
-					       GdkEventButton *ev,
-					       gpointer data);
+                                               GdkEventButton *ev,
+                                               gpointer data);
 
 static void end_turn_callback(GtkWidget *w, gpointer data);
 static gboolean get_net_input(GIOChannel *source, GIOCondition cond,
@@ -2122,19 +2122,19 @@ static gboolean show_info_popup(GtkWidget *w, GdkEventButton *ev, gpointer data)
     struct player *pplayer = get_player_ptr();
 
     my_snprintf(buf, sizeof(buf),
-		_("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
-		  "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
-		population_to_text(civ_population(pplayer)),
-		textyear(game.info.year), game.info.turn,
-		pplayer->economic.gold,
-		player_get_expected_income(pplayer),
-		pplayer->economic.tax,
-		pplayer->economic.luxury,
-		pplayer->economic.science,
-		get_tech_name(pplayer, pplayer->research.researching),
-		pplayer->research.bulbs_researched,
-		total_bulbs_required(pplayer),
-		get_government_name(pplayer->government));
+                _("%s People\nYear: %s Turn: %d\nGold: %d\nNet Income: %d\n"
+                  "Tax:%d Lux:%d Sci:%d\nResearching %s: %d/%d\nGovernment: %s"),
+                population_to_text(civ_population(pplayer)),
+                textyear(game.info.year), game.info.turn,
+                pplayer->economic.gold,
+                player_get_expected_income(pplayer),
+                pplayer->economic.tax,
+                pplayer->economic.luxury,
+                pplayer->economic.science,
+                get_tech_name(pplayer, pplayer->research.researching),
+                pplayer->research.bulbs_researched,
+                total_bulbs_required(pplayer),
+                get_government_name(pplayer->government));
 
     p = gtk_window_new(GTK_WINDOW_POPUP);
     gtk_widget_set_app_paintable(p, TRUE);
@@ -2604,8 +2604,8 @@ struct voteinfo_bar *create_voteinfo_bar(void)
   Handle a mouse click on the player colors mode label.
 **************************************************************************/
 static gboolean player_colors_mode_label_click(GtkWidget *w,
-					       GdkEventButton *ev,
-					       gpointer data)
+                                               GdkEventButton *ev,
+                                               gpointer data)
 {
   key_cycle_player_colors_modes();
 

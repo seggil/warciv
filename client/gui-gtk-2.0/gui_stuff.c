@@ -311,7 +311,7 @@ static void gui_dialog_destroy_handler(GtkWidget *w, struct gui_dialog *dlg)
   needs to know when a deletion took place.
 **************************************************************************/
 static gint gui_dialog_delete_handler(GtkWidget *widget,
-				      GdkEventAny *ev, gpointer data)
+                                      GdkEventAny *ev, gpointer data)
 {
   struct gui_dialog *dlg = data;
 
@@ -326,12 +326,12 @@ static gint gui_dialog_delete_handler(GtkWidget *widget,
   Allow the user to close a dialog using Escape or CTRL+W.
 **************************************************************************/
 static gboolean gui_dialog_key_press_handler(GtkWidget *w, GdkEventKey *ev,
-					     gpointer data)
+                                             gpointer data)
 {
   struct gui_dialog *dlg = data;
 
   if (ev->keyval == GDK_Escape
-	|| ((ev->state & GDK_CONTROL_MASK) && ev->keyval == GDK_w)) {
+        || ((ev->state & GDK_CONTROL_MASK) && ev->keyval == GDK_w)) {
     /* emit response signal. */
     gui_dialog_response(dlg, GTK_RESPONSE_DELETE_EVENT);
   }
@@ -344,9 +344,9 @@ static gboolean gui_dialog_key_press_handler(GtkWidget *w, GdkEventKey *ev,
   Resets tab colour on tab activation.
 **************************************************************************/
 static void gui_dialog_switch_page_handler(GtkNotebook *notebook,
-					   GtkNotebookPage *page,
-					   guint num,
-					   struct gui_dialog *dlg)
+                                           GtkNotebookPage *page,
+                                           guint num,
+                                           struct gui_dialog *dlg)
 {
   gint n;
 
@@ -546,7 +546,7 @@ static void action_widget_activated(GtkWidget *button, GtkWidget *vbox)
   Places a button into a dialog, taking care of setting up signals, etc.
 **************************************************************************/
 static void gui_dialog_pack_button(struct gui_dialog *dlg, GtkWidget *button,
-				   int response)
+                                   int response)
 {
   gint signal_id;
 
@@ -559,7 +559,7 @@ static void gui_dialog_pack_button(struct gui_dialog *dlg, GtkWidget *button,
     GClosure *closure;
 
     closure = g_cclosure_new_object(G_CALLBACK(action_widget_activated),
-	G_OBJECT(dlg->vbox));
+        G_OBJECT(dlg->vbox));
     g_signal_connect_closure_by_id(button, signal_id, 0, closure, FALSE);
   }
 
@@ -570,8 +570,8 @@ static void gui_dialog_pack_button(struct gui_dialog *dlg, GtkWidget *button,
   Adds a button to a dialog, allowing the choice of a special stock item.
 **************************************************************************/
 GtkWidget *gui_dialog_add_stockbutton(struct gui_dialog *dlg,
-				      const char *stock,
-				      const char *text, int response)
+                                      const char *stock,
+                                      const char *text, int response)
 {
   GtkWidget *button;
 
@@ -586,7 +586,7 @@ GtkWidget *gui_dialog_add_stockbutton(struct gui_dialog *dlg,
   Adds a button to a dialog.
 **************************************************************************/
 GtkWidget *gui_dialog_add_button(struct gui_dialog *dlg,
-				 const char *text, int response)
+                                 const char *text, int response)
 {
   GtkWidget *button;
 
@@ -610,7 +610,7 @@ void gui_dialog_set_default_response(struct gui_dialog *dlg, int response)
   for (list = children; list; list = g_list_next(list)) {
     GtkWidget *button = list->data;
     gpointer data = g_object_get_data(G_OBJECT(button),
-	"gui-dialog-response-data");
+        "gui-dialog-response-data");
 
     if (response == GPOINTER_TO_INT(data)) {
       gtk_widget_grab_default(button);
@@ -624,7 +624,7 @@ void gui_dialog_set_default_response(struct gui_dialog *dlg, int response)
   Change the sensitivity of a dialog button.
 **************************************************************************/
 void gui_dialog_set_response_sensitive(struct gui_dialog *dlg,
-				       int response, bool setting)
+                                       int response, bool setting)
 {
   GList *children;
   GList *list;
@@ -634,7 +634,7 @@ void gui_dialog_set_response_sensitive(struct gui_dialog *dlg,
   for (list = children; list; list = g_list_next(list)) {
     GtkWidget *button = list->data;
     gpointer data = g_object_get_data(G_OBJECT(button),
-	"gui-dialog-response-data");
+        "gui-dialog-response-data");
 
     if (response == GPOINTER_TO_INT(data)) {
       gtk_widget_set_sensitive(button, setting);
@@ -669,13 +669,13 @@ void gui_dialog_show_all(struct gui_dialog *dlg)
     for (list = children; list; list = g_list_next(list)) {
       GtkWidget *button = list->data;
       gpointer data = g_object_get_data(G_OBJECT(button),
-	  "gui-dialog-response-data");
+          "gui-dialog-response-data");
       int response = GPOINTER_TO_INT(data);
 
       if (response != GTK_RESPONSE_CLOSE && response != GTK_RESPONSE_CANCEL) {
-	num_visible++;
+        num_visible++;
       } else {
-	gtk_widget_hide(button);
+        gtk_widget_hide(button);
       }
     }
     g_list_free(children);
@@ -704,10 +704,10 @@ void gui_dialog_present(struct gui_dialog *dlg)
       n = gtk_notebook_page_num(notebook, dlg->vbox);
 
       if (current != n) {
-	GtkWidget *label = dlg->v.tab.label;
+        GtkWidget *label = dlg->v.tab.label;
 
-	gtk_widget_modify_fg(label, GTK_STATE_ACTIVE,
-	    colors_standard[COLOR_STD_RED]);
+        gtk_widget_modify_fg(label, GTK_STATE_ACTIVE,
+            colors_standard[COLOR_STD_RED]);
       }
     }
     break;
@@ -752,10 +752,10 @@ void gui_dialog_alert(struct gui_dialog *dlg)
       n = gtk_notebook_page_num(notebook, dlg->vbox);
 
       if (current != n) {
-	GtkWidget *label = dlg->v.tab.label;
+        GtkWidget *label = dlg->v.tab.label;
 
-	gtk_widget_modify_fg(label, GTK_STATE_ACTIVE,
-	    colors_standard[COLOR_STD_RACE9]);
+        gtk_widget_modify_fg(label, GTK_STATE_ACTIVE,
+            colors_standard[COLOR_STD_RACE9]);
       }
     }
     break;

@@ -82,10 +82,10 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
       struct city *pdestcity = get_selected_city();
 
       if (pdestcity) {
-		  multi_select_iterate(TRUE,punit)
-		  {
+                  multi_select_iterate(TRUE,punit)
+                  {
           request_unit_airlift(punit, pdestcity);
-		  } multi_select_iterate_end;
+                  } multi_select_iterate_end;
     }
     break;
   }
@@ -94,10 +94,10 @@ static void goto_cmd_callback(GtkWidget *dlg, gint arg)
       struct city *pdestcity = get_selected_city();
 
       if (pdestcity) {
-		  multi_select_iterate(FALSE,punit)
-		  {
+                  multi_select_iterate(FALSE,punit)
+                  {
           send_goto_unit(punit, pdestcity->tile);
-		  } multi_select_iterate_end;
+                  } multi_select_iterate_end;
       }
     }
     break;
@@ -133,13 +133,13 @@ static void create_goto_dialog(void)
   gtk_window_set_position(GTK_WINDOW(dshell), GTK_WIN_POS_MOUSE);
   gtk_dialog_set_default_response(GTK_DIALOG(dshell), CMD_GOTO);
   g_signal_connect(dshell, "destroy",
-		   G_CALLBACK(gtk_widget_destroyed), &dshell);
+                   G_CALLBACK(gtk_widget_destroyed), &dshell);
   g_signal_connect(dshell, "response",
                    G_CALLBACK(goto_cmd_callback), NULL);
 
   label = gtk_frame_new(_("Select destination"));
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dshell)->vbox),
-	label, TRUE, TRUE, 0);
+        label, TRUE, TRUE, 0);
 
   vbox = gtk_vbox_new(FALSE, 6);
   gtk_container_add(GTK_CONTAINER(label), vbox);

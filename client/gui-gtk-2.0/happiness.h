@@ -20,4 +20,4 @@ GtkWidget *get_top_happiness_display(struct city *pcity);
 void close_happiness_dialog(struct city *pcity);
 void refresh_happiness_dialog(struct city *pcity);
 
-#endif				/* FC__HAPPINESS_H */
+#endif                          /* FC__HAPPINESS_H */

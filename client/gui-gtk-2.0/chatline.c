@@ -430,11 +430,11 @@ visibility_notify_event(GtkWidget          *text_view,
 void set_message_buffer_view_link_handlers(GtkTextView *view)
 {
   g_signal_connect(view, "event-after",
-		   G_CALLBACK(event_after), NULL);
+                   G_CALLBACK(event_after), NULL);
   g_signal_connect(view, "motion-notify-event",
-		   G_CALLBACK(motion_notify_event), NULL);
+                   G_CALLBACK(motion_notify_event), NULL);
   g_signal_connect(view, "visibility-notify-event",
-		   G_CALLBACK(visibility_notify_event), NULL);
+                   G_CALLBACK(visibility_notify_event), NULL);
 
 }
 
@@ -573,7 +573,7 @@ static int parse_city_link(const char *str, GtkTextBuffer *buf,
   struct city *pcity;
 
   if (strncmp(p, CITY_NAME_LINK_PREFIX "\"",
-	      sizeof(CITY_NAME_LINK_PREFIX)) != 0) {
+              sizeof(CITY_NAME_LINK_PREFIX)) != 0) {
     return 0;
   }
 
@@ -823,7 +823,7 @@ void real_append_output_window(const char *astring, int conn_id)
   if (!g_utf8_validate(astring, -1, &end_utf8)
       && (!end_utf8 || end_utf8 <= astring)) {
     freelog(LOG_VERBOSE,
-	    "Got a non-valid utf8 string to print in the chatline.");
+            "Got a non-valid utf8 string to print in the chatline.");
     return;
   }
 
@@ -853,9 +853,9 @@ void real_append_output_window(const char *astring, int conn_id)
 
     if (jump_target[0]) {
       if (!ptagpat->tag_name[0]
-	  || 0 != (ptagpat->flags & TPF_INSENSITIVE
-		   ? mystrcasecmp(ptagpat->tag_name, jump_target)
-		   : strcmp(ptagpat->tag_name, jump_target))) {
+          || 0 != (ptagpat->flags & TPF_INSENSITIVE
+                   ? mystrcasecmp(ptagpat->tag_name, jump_target)
+                   : strcmp(ptagpat->tag_name, jump_target))) {
         continue;
       }
       jump_target = "";
@@ -1048,34 +1048,34 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
 
   MK_TAG_PATTERN("game start", "All players are ready",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#00FF00", "#115511");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#00FF00", "#115511");
   MK_TAG_PATTERN("game start2", "Game: All players are ready",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#00FF00", "#115511");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#00FF00", "#115511");
 
   MK_TAG_PATTERN("", "Server: Lost connection: ",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START,
-		 "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START,
+                 "", "", "");
   MK_TAG_PATTERN("", " (player ",
-		 TPF_IS_CONTROL_ONLY | TPF_REQUIRE_PREVIOUS_MATCH,
-		 "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_REQUIRE_PREVIOUS_MATCH,
+                 "", "", "");
   MK_TAG_PATTERN("connection lost", " observer)", TPF_REQUIRE_PREVIOUS_MATCH
                  | TPF_NEGATE | TPF_STOP_IF_MATCHED,
-		 "", "#FFFFFF", "#000000");
+                 "", "#FFFFFF", "#000000");
 
   MK_TAG_PATTERN("server prompt", "(server prompt):",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#FF0000", "#BEBEBE");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#FF0000", "#BEBEBE");
   MK_TAG_PATTERN("game message", "Game:",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#8B0000", "");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#8B0000", "");
   MK_TAG_PATTERN("server message", "Server:",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#8B0000", "");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#8B0000", "");
   MK_TAG_PATTERN("option message", "Option:",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#8B0000", "");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#8B0000", "");
   MK_TAG_PATTERN("Warclient message", "Warclient:",
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
                  "", "#0000FF", "");
@@ -1085,73 +1085,73 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
   MK_TAG_PATTERN("chat message", "<", TPF_MATCH_AT_START, "", "#00008B", "");
   MK_TAG_PATTERN("private message", "*", TPF_MATCH_AT_START,
-		 "", "#A020F0", "");
+                 "", "#A020F0", "");
   MK_TAG_PATTERN("private message 2", "[", TPF_MATCH_AT_START,
-		 "", "#A020F0", "");
+                 "", "#A020F0", "");
   MK_TAG_PATTERN("private message sent", "->*", TPF_MATCH_AT_START,
-		 "", "#A020F0", "");
+                 "", "#A020F0", "");
   MK_TAG_PATTERN("private message sent 2", "->[", TPF_MATCH_AT_START,
                  "", "#A020F0", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_NEGATE, "", "", "");
+                 | TPF_NEGATE, "", "", "");
   MK_TAG_PATTERN("ally message", "to allies: ",
-		 TPF_REQUIRE_PREVIOUS_MATCH,
-		 "", "#551166", "");
+                 TPF_REQUIRE_PREVIOUS_MATCH,
+                 "", "#551166", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
                  | TPF_NEGATE, "", "", "");
   MK_TAG_PATTERN("global observer message", "to global observers: ",
-		 TPF_REQUIRE_PREVIOUS_MATCH,
-		 "", "#551166", "");
+                 TPF_REQUIRE_PREVIOUS_MATCH,
+                 "", "#551166", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
                  | TPF_NEGATE, "", "", "");
   MK_TAG_PATTERN("observer only message", "to observers: ",
-		 TPF_REQUIRE_PREVIOUS_MATCH,
-		 "", "#551166", "");
+                 TPF_REQUIRE_PREVIOUS_MATCH,
+                 "", "#551166", "");
 
   MK_TAG_PATTERN("player emote", "^ ", TPF_MATCH_AT_START, "", "#006D6E", "");
   MK_TAG_PATTERN("server emote", "+ ", TPF_MATCH_AT_START, "", "#8C0015", "");
 
 
   MK_TAG_PATTERN("", "/show: ", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START | TPF_NEGATE,
-		 "end of show stuff", "", "");
+                 | TPF_MATCH_AT_START | TPF_NEGATE,
+                 "end of show stuff", "", "");
   MK_TAG_PATTERN("", "/show: All",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Vital",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Rare",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: +",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Try",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: Option",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("", "/show: ------------",
-		 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 TPF_IS_CONTROL_ONLY | TPF_MATCH_AT_START
+                 | TPF_STOP_IF_MATCHED, "", "", "");
 
   MK_TAG_PATTERN("", "/show", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "", "", "");
+                 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("changed options", "=",
-		 TPF_NEGATE | TPF_REQUIRE_PREVIOUS_MATCH
-		 | TPF_STOP_IF_MATCHED, "", "#FF0000", "");
+                 TPF_NEGATE | TPF_REQUIRE_PREVIOUS_MATCH
+                 | TPF_STOP_IF_MATCHED, "", "#FF0000", "");
   MK_TAG_PATTERN("end of show stuff", "", TPF_IS_CONTROL_ONLY,
-		 "", "", "");
+                 "", "", "");
 
 
   MK_TAG_PATTERN("new vote", "New vote",
-		 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
-		 "", "#FFFFFF", "#AA0000");
+                 TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
+                 "", "#FFFFFF", "#AA0000");
 
   MK_TAG_PATTERN("new poll", "New poll ",
                  TPF_MATCH_AT_START | TPF_STOP_IF_MATCHED,
@@ -1163,94 +1163,94 @@ static struct tag_pattern_list *create_default_tag_patterns(void)
 
 
   MK_TAG_PATTERN("", "Vote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
-		 | TPF_MATCH_AT_START, "vote stuff end", "", "");
+                 | TPF_MATCH_AT_START, "vote stuff end", "", "");
   MK_TAG_PATTERN("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
-		 "", "#006400", "#AAFFAA");
+                 "", "#006400", "#AAFFAA");
   MK_TAG_PATTERN("vote failed", " failed ", TPF_STOP_IF_MATCHED,
-		 "", "#8B0000", "#FFAAAA");
+                 "", "#8B0000", "#FFAAAA");
   MK_TAG_PATTERN("voted yes", "voted yes", TPF_STOP_IF_MATCHED,
-		 "", "#000000", "#C8FFD5");
+                 "", "#000000", "#C8FFD5");
   MK_TAG_PATTERN("voted no", "voted no", TPF_STOP_IF_MATCHED,
-		 "", "#000000", "#FFD2D2");
+                 "", "#000000", "#FFD2D2");
   MK_TAG_PATTERN("abstained", "chose to abstain", TPF_STOP_IF_MATCHED,
-		 "", "#000000", "#E8E8E8");
+                 "", "#000000", "#E8E8E8");
   MK_TAG_PATTERN("vote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
 
 
   MK_TAG_PATTERN("", "Teamvote ", TPF_IS_CONTROL_ONLY | TPF_NEGATE
-		 | TPF_MATCH_AT_START, "teamvote stuff end", "", "");
+                 | TPF_MATCH_AT_START, "teamvote stuff end", "", "");
   MK_TAG_PATTERN("vote passed", " is passed ", TPF_STOP_IF_MATCHED,
-		 "", "#006400", "#AAFFAA");
+                 "", "#006400", "#AAFFAA");
   MK_TAG_PATTERN("vote failed", " failed ", TPF_STOP_IF_MATCHED,
-		 "", "#8B0000", "#FFAAAA");
+                 "", "#8B0000", "#FFAAAA");
   MK_TAG_PATTERN("voted yes", "voted yes", TPF_STOP_IF_MATCHED,
-		 "", "#000000", "#C8FFD5");
+                 "", "#000000", "#C8FFD5");
   MK_TAG_PATTERN("voted no", "voted no", TPF_STOP_IF_MATCHED,
-		 "", "#000000", "#FFD2D2");
+                 "", "#000000", "#FFD2D2");
   MK_TAG_PATTERN("abstained", "chose to abstain", TPF_STOP_IF_MATCHED,
-		 "", "#000000", "#E8E8E8");
+                 "", "#000000", "#E8E8E8");
   MK_TAG_PATTERN("teamvote stuff end", "", TPF_IS_CONTROL_ONLY, "", "", "");
 
 
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "", "", "");
+                 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("not ready", "not ready",
-		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
-		 "", "#FF0000", "");
+                 TPF_REQUIRE_PREVIOUS_MATCH | TPF_APPLY_TO_MATCH,
+                 "", "#FF0000", "");
 
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "", "", "");
+                 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("no nation", ", Human)", TPF_REQUIRE_PREVIOUS_MATCH,
-		 "", "#FF0000", "");
+                 "", "#FF0000", "");
   MK_TAG_PATTERN("", "/list:", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "", "", "");
+                 | TPF_MATCH_AT_START, "", "", "");
   MK_TAG_PATTERN("", ", Human, team ",
-		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_IS_CONTROL_ONLY,
-		 "", "", "");
+                 TPF_REQUIRE_PREVIOUS_MATCH | TPF_IS_CONTROL_ONLY,
+                 "", "", "");
   MK_TAG_PATTERN("no nation", " ready)",
-		 TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
-		 "", "#FF0000", "");
+                 TPF_REQUIRE_PREVIOUS_MATCH | TPF_NEGATE,
+                 "", "#FF0000", "");
 
 
   my_snprintf(buf, sizeof(buf), "<%s>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "<(%s)>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "<[%s]>", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "%s to allies:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "(%s) to allies:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "(%s) to global observers:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
   my_snprintf(buf, sizeof(buf), "(%s) to observers:", default_user_name);
   MK_TAG_PATTERN("", buf, TPF_IS_CONTROL_ONLY | TPF_STOP_IF_MATCHED
-		 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
+                 | TPF_MATCH_AT_START | TPF_INSENSITIVE, "", "", "");
 
   MK_TAG_PATTERN("", "<", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "name hilight", "", "");
+                 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", "*", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "name hilight", "", "");
+                 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", "[", TPF_IS_CONTROL_ONLY
-		 | TPF_MATCH_AT_START, "name hilight", "", "");
+                 | TPF_MATCH_AT_START, "name hilight", "", "");
   MK_TAG_PATTERN("", " to allies:", TPF_IS_CONTROL_ONLY,
-		 "name hilight", "", "");
+                 "name hilight", "", "");
   MK_TAG_PATTERN("", " to global observers:", TPF_IS_CONTROL_ONLY,
-		 "name hilight", "", "");
+                 "name hilight", "", "");
   MK_TAG_PATTERN("", " to observers:", TPF_IS_CONTROL_ONLY,
-		 "name hilight", "", "");
+                 "name hilight", "", "");
   MK_TAG_PATTERN("", "", TPF_IS_CONTROL_ONLY
-		 | TPF_STOP_IF_MATCHED, "", "", "");
+                 | TPF_STOP_IF_MATCHED, "", "", "");
   MK_TAG_PATTERN("name hilight", default_user_name, TPF_APPLY_TO_MATCH
-		 | TPF_REQUIRE_PREVIOUS_MATCH | TPF_INSENSITIVE,
-		 "", "#000000", "#FFFF00");
+                 | TPF_REQUIRE_PREVIOUS_MATCH | TPF_INSENSITIVE,
+                 "", "#000000", "#FFFF00");
 
   return tpl;
 }
@@ -1322,8 +1322,8 @@ static bool match_tag_pattern(struct tag_pattern *ptagpat,
 
   for (curpos = text;; curpos = p + patlen) {
     if (!(p = (ptagpat->flags & TPF_INSENSITIVE
-	       ? utf8_strcasestr(curpos, ptagpat->pattern)
-	       : strstr(curpos, ptagpat->pattern)))) {
+               ? utf8_strcasestr(curpos, ptagpat->pattern)
+               : strstr(curpos, ptagpat->pattern)))) {
       break;
     }
     if ((ptagpat->flags & TPF_MATCH_AT_START) && p != text) {
@@ -1648,7 +1648,7 @@ static GtkWidget *create_help_dialog(GtkWidget *parent)
   /* create the window */
   dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(dialog),
-		       _("Chatline Color Configuration Help"));
+                       _("Chatline Color Configuration Help"));
   gtk_window_set_default_size(GTK_WINDOW(dialog), 300, 500);
   gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
   gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -1780,7 +1780,7 @@ void apply_chatline_config(GtkWidget *widget)
   tag_pattern_list_free_data(tagpats);
   tag_pattern_list_iterate(tmptagpats, ptagpat) {
     if (g_hash_table_lookup_extended(tags_to_delete, ptagpat->tag_name,
-				     &key, &value)) {
+                                     &key, &value)) {
       /* key is freed by the hash table */
       g_hash_table_remove(tags_to_delete, key);
     }
@@ -1899,7 +1899,7 @@ static void destroy_callback(GtkWidget *w, gpointer user_data)
   ...
 **************************************************************************/
 static void toggle_pattern_flag(int flag, GtkTreeModel *model,
-				gchar *path_str, int column)
+                                gchar *path_str, int column)
 {
   GtkTreeIter  iter;
   GtkTreePath *path;
@@ -1910,7 +1910,7 @@ static void toggle_pattern_flag(int flag, GtkTreeModel *model,
   path = gtk_tree_path_new_from_string(path_str);
   gtk_tree_model_get_iter(model, &iter, path);
   gtk_tree_model_get(model, &iter, column, &flagval,
-		     COLUMN_TAG_PATTERN, &ptagpat, -1);
+                     COLUMN_TAG_PATTERN, &ptagpat, -1);
 
   i = gtk_tree_path_get_indices(path)[0];
 
@@ -1953,7 +1953,7 @@ static void notify_user_error(GtkWidget *msglabel, char *msg)
   ...
 **************************************************************************/
 static void cell_edited(GtkCellRendererText *cell, const gchar *path_string,
-			const gchar *new_text, gpointer data)
+                        const gchar *new_text, gpointer data)
 {
   GtkTreeModel *model = data;
   GtkTreePath *path = gtk_tree_path_new_from_string(path_string);
@@ -2022,30 +2022,30 @@ static void add_columns(GtkTreeView *treeview, GtkTreeModel *model)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-#define MK_STR_COLUMN(col_idx, title, editable, resizable, minwidth)	     \
-  renderer = gtk_cell_renderer_text_new();				     \
-  g_object_set(renderer, "editable", editable, NULL);			     \
+#define MK_STR_COLUMN(col_idx, title, editable, resizable, minwidth)         \
+  renderer = gtk_cell_renderer_text_new();                                   \
+  g_object_set(renderer, "editable", editable, NULL);                        \
   g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(col_idx)); \
-  if (editable) {							     \
+  if (editable) {                                                            \
     g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited), model);    \
-  }									     \
-  column = gtk_tree_view_column_new_with_attributes(title, renderer,	     \
-						    "text", col_idx,	     \
-						    NULL);		     \
-  gtk_tree_view_column_set_resizable(column, resizable);		     \
-  gtk_tree_view_column_set_min_width(column, minwidth);			     \
+  }                                                                          \
+  column = gtk_tree_view_column_new_with_attributes(title, renderer,         \
+                                                    "text", col_idx,         \
+                                                    NULL);                   \
+  gtk_tree_view_column_set_resizable(column, resizable);                     \
+  gtk_tree_view_column_set_min_width(column, minwidth);                      \
   gtk_tree_view_append_column(treeview, column);
 
-#define MK_FLAG_COLUMN(col_idx, title, flag)				\
-  renderer = gtk_cell_renderer_toggle_new();				\
-  g_object_set_data(G_OBJECT(renderer), "model", model);		\
-  g_object_set_data(G_OBJECT(renderer), "flag", GINT_TO_POINTER(flag));	\
-  g_signal_connect(renderer, "toggled",					\
-		   G_CALLBACK(flag_toggled),				\
-		   GINT_TO_POINTER(col_idx));				\
-  column = gtk_tree_view_column_new_with_attributes(title, renderer,	\
-						    "active", col_idx,	\
-						    NULL);		\
+#define MK_FLAG_COLUMN(col_idx, title, flag)                            \
+  renderer = gtk_cell_renderer_toggle_new();                            \
+  g_object_set_data(G_OBJECT(renderer), "model", model);                \
+  g_object_set_data(G_OBJECT(renderer), "flag", GINT_TO_POINTER(flag)); \
+  g_signal_connect(renderer, "toggled",                                 \
+                   G_CALLBACK(flag_toggled),                            \
+                   GINT_TO_POINTER(col_idx));                           \
+  column = gtk_tree_view_column_new_with_attributes(title, renderer,    \
+                                                    "active", col_idx,  \
+                                                    NULL);              \
   gtk_tree_view_append_column(treeview, column);
 
   MK_STR_COLUMN(COLUMN_TAG_NAME, "Name", FALSE, TRUE, 70);
@@ -2057,8 +2057,8 @@ static void add_columns(GtkTreeView *treeview, GtkTreeModel *model)
   g_object_set_data(G_OBJECT(renderer), "column",
                      GINT_TO_POINTER(COLUMN_FOREGROUND));
   column = gtk_tree_view_column_new_with_attributes("Foreground", renderer,
-						    "color", COLUMN_FOREGROUND,
-						    NULL);
+                                                    "color", COLUMN_FOREGROUND,
+                                                    NULL);
   g_object_set(G_OBJECT(renderer), "xsize", 24, "ysize", 16, NULL);
   gtk_tree_view_column_set_resizable(column, FALSE);
   gtk_tree_view_column_set_min_width(column, 40);
@@ -2068,10 +2068,10 @@ static void add_columns(GtkTreeView *treeview, GtkTreeModel *model)
   /* Use custom renderer for foreground color */
   renderer = my_cell_renderer_color_new();
   g_object_set_data(G_OBJECT(renderer), "column",
-		    GINT_TO_POINTER(COLUMN_BACKGROUND));
+                    GINT_TO_POINTER(COLUMN_BACKGROUND));
   column = gtk_tree_view_column_new_with_attributes("Background", renderer,
-						    "color", COLUMN_BACKGROUND,
-						    NULL);
+                                                    "color", COLUMN_BACKGROUND,
+                                                    NULL);
   g_object_set(G_OBJECT(renderer), "xsize", 24, "ysize", 16, NULL);
   gtk_tree_view_column_set_resizable(column, FALSE);
   gtk_tree_view_column_set_min_width(column, 40);
@@ -2099,23 +2099,23 @@ static void put_tag_pattern_into_store(GtkListStore *store,
                                         struct tag_pattern *ptagpat)
 {
   gtk_list_store_set(store, iter,
-		     COLUMN_TAG_NAME, ptagpat->tag_name,
-		     COLUMN_PATTERN, ptagpat->pattern,
-		     COLUMN_FOREGROUND, ptagpat->foreground_color,
-		     COLUMN_BACKGROUND, ptagpat->background_color,
+                     COLUMN_TAG_NAME, ptagpat->tag_name,
+                     COLUMN_PATTERN, ptagpat->pattern,
+                     COLUMN_FOREGROUND, ptagpat->foreground_color,
+                     COLUMN_BACKGROUND, ptagpat->background_color,
                      COLUMN_AT_START, ptagpat->flags & TPF_MATCH_AT_START,
                      COLUMN_NEGATE, ptagpat->flags & TPF_NEGATE,
                      COLUMN_PREVIOUS, ptagpat->flags & TPF_REQUIRE_PREVIOUS_MATCH,
                      COLUMN_APPLY, ptagpat->flags & TPF_APPLY_TO_MATCH,
                      COLUMN_STOP, ptagpat->flags & TPF_STOP_IF_MATCHED,
                      COLUMN_IGNORE, ptagpat->flags & TPF_IGNORE_IF_MATCHED,
-		     COLUMN_INSENSITIVE, ptagpat->flags & TPF_INSENSITIVE,
+                     COLUMN_INSENSITIVE, ptagpat->flags & TPF_INSENSITIVE,
                      COLUMN_INACTIVE, ptagpat->flags & TPF_INACTIVE,
                      COLUMN_SWITCH_NEXT, ptagpat->flags & TPF_SWITCH_NEXT,
                      COLUMN_JUMP_TARGET, ptagpat->jump_target,
                      COLUMN_SOUND_TAG, ptagpat->sound_tag,
-		     COLUMN_TAG_PATTERN, ptagpat,
-		     -1);
+                     COLUMN_TAG_PATTERN, ptagpat,
+                     -1);
 }
 
 /**************************************************************************
@@ -2141,7 +2141,7 @@ static GtkTreeModel *create_model(void)
                              G_TYPE_BOOLEAN, /* switch next */
                              G_TYPE_STRING, /* jump target */
                              G_TYPE_STRING, /* sound tag */
-			     G_TYPE_POINTER); /* the tag pattern struct */
+                             G_TYPE_POINTER); /* the tag pattern struct */
 
   return GTK_TREE_MODEL(model);
 }
@@ -2475,8 +2475,8 @@ static void delete_callback(GtkWidget *w, gpointer user_data)
   ...
 **************************************************************************/
 static gboolean treeview_button_press_callback(GtkWidget *treeview,
-					       GdkEventButton *event,
-					       gpointer error_label)
+                                               GdkEventButton *event,
+                                               gpointer error_label)
 {
   GtkTreeModel *model;
   GtkTreeSelection *selection;
@@ -2509,7 +2509,7 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
 
   if (tag_pattern_is_control_only(ptagpat)) {
     notify_user_error(error_label,
-		      _("This type of pattern may not have colors."));
+                      _("This type of pattern may not have colors."));
     return FALSE;
   }
 
@@ -2529,7 +2529,7 @@ static gboolean treeview_button_press_callback(GtkWidget *treeview,
 
   dialog = create_my_color_selection_dialog("Select Color");
   colorsel = GTK_COLOR_SELECTION(g_object_get_data(G_OBJECT(dialog),
-						   "colorsel"));
+                                                   "colorsel"));
 
   color.red = 0;
   color.green = 0;
@@ -2612,10 +2612,10 @@ GtkWidget *create_chatline_config(void)
   /* create the scrolled window which will hold the treeview */
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				 GTK_POLICY_AUTOMATIC,
-				 GTK_POLICY_AUTOMATIC);
+                                 GTK_POLICY_AUTOMATIC,
+                                 GTK_POLICY_AUTOMATIC);
 
   hbox = gtk_hbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(top_vbox),
@@ -2641,7 +2641,7 @@ GtkWidget *create_chatline_config(void)
 
   add_columns(GTK_TREE_VIEW(treeview), model);
   g_signal_connect(G_OBJECT(treeview), "button-press-event",
-		   G_CALLBACK(treeview_button_press_callback), label);
+                   G_CALLBACK(treeview_button_press_callback), label);
 
   gtk_container_add(GTK_CONTAINER(sw), treeview);
 
@@ -2655,7 +2655,7 @@ GtkWidget *create_chatline_config(void)
   entry = gtk_entry_new();
   gtk_widget_set_size_request(entry, 100, -1);
   g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(add_callback),
-		   vbox);
+                   vbox);
   g_object_set_data(G_OBJECT(vbox), "entry", entry);
   gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 
@@ -2771,7 +2771,7 @@ static const char *get_player_or_user_name(int id)
   size_t size = conn_list_size(game.all_connections);
 
   return id >= size ? get_player(id - size)->name
-		    : conn_list_get(game.all_connections, id)->username;
+                    : conn_list_get(game.all_connections, id)->username;
 }
 
 /**************************************************************************
@@ -2785,15 +2785,15 @@ static const char *get_player_or_user_name(int id)
   Returns the number of the matches names.
 **************************************************************************/
 static int check_player_or_user_name(const char *prefix, const char **matches,
-				     int max_matches)
+                                     int max_matches)
 {
   int matches_id[max_matches * 2], ind, num;
 
   switch (match_prefix_full(get_player_or_user_name,
-			    game.info.nplayers
-			    + conn_list_size(game.all_connections),
-			    MAX_LEN_NAME, mystrncasecmp, prefix, &ind,
-			    matches_id, max_matches * 2, &num)) {
+                            game.info.nplayers
+                            + conn_list_size(game.all_connections),
+                            MAX_LEN_NAME, mystrncasecmp, prefix, &ind,
+                            matches_id, max_matches * 2, &num)) {
   case M_PRE_EXACT:
   case M_PRE_ONLY:
     matches[0] = get_player_or_user_name(ind);
@@ -2805,15 +2805,15 @@ static int check_player_or_user_name(const char *prefix, const char **matches,
       int i, j, c = 0;
 
       for (i = 0; i < num && c < max_matches; i++) {
-	name = get_player_or_user_name(matches_id[i]);
-	for (j = 0; j < c; j++) {
-	  if (0 == mystrncasecmp(name, matches[j], MAX_LEN_NAME)) {
-	    break;
-	  }
-	}
-	if (j >= c) {
-	  matches[c++] = name;
-	}
+        name = get_player_or_user_name(matches_id[i]);
+        for (j = 0; j < c; j++) {
+          if (0 == mystrncasecmp(name, matches[j], MAX_LEN_NAME)) {
+            break;
+          }
+        }
+        if (j >= c) {
+          matches[c++] = name;
+        }
       }
       return c;
     }
@@ -2838,8 +2838,8 @@ static int check_player_or_user_name(const char *prefix, const char **matches,
   Returns the lenght of the common prefix (in bytes).
 **************************************************************************/
 static size_t get_common_prefix(const char *const *prefixes,
-				size_t num_prefixes,
-				char *buf, size_t buf_len)
+                                size_t num_prefixes,
+                                char *buf, size_t buf_len)
 {
   const char *p;
   char *q;
@@ -2848,10 +2848,10 @@ static size_t get_common_prefix(const char *const *prefixes,
   mystrlcpy(buf, prefixes[0], buf_len);
   for (i = 1; i < num_prefixes; i++) {
     for (p = prefixes[i], q = buf; *p != '\0' && *q != '\0';
-	 p = g_utf8_next_char(p), q = g_utf8_next_char(q)) {
+         p = g_utf8_next_char(p), q = g_utf8_next_char(q)) {
       if (g_utf8_get_char(p) != g_utf8_get_char(q)) {
-	*q = '\0';
-	break;
+        *q = '\0';
+        break;
       }
     }
   }

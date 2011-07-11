@@ -75,8 +75,8 @@ static void filesel_response_callback(GtkWidget *w, gint id, gpointer data)
     bool is_save = (bool)data;
 
     filename = g_filename_to_utf8(
-	gtk_file_selection_get_filename(GTK_FILE_SELECTION(w)),
-	-1, NULL, NULL, NULL);
+        gtk_file_selection_get_filename(GTK_FILE_SELECTION(w)),
+        -1, NULL, NULL, NULL);
 
     if (is_save) {
       send_save_game(filename);
@@ -107,7 +107,7 @@ GtkWidget *create_file_selection(const char *title, bool is_save)
   gtk_window_set_position(GTK_WINDOW(filesel), GTK_WIN_POS_MOUSE);
 
   g_signal_connect(filesel, "response",
-		   G_CALLBACK(filesel_response_callback), (gpointer)is_save);
+                   G_CALLBACK(filesel_response_callback), (gpointer)is_save);
 
   /* Display that dialog */
   gtk_window_present(GTK_WINDOW(filesel));
@@ -142,23 +142,23 @@ static int try_to_autoconnect(gpointer data)
   }
 
   switch (try_to_connect(default_user_name, errbuf, sizeof(errbuf))) {
-  case 0:			/* Success! */
-    return FALSE;		/*  Tells GTK not to call this
-				   function again */
+  case 0:                       /* Success! */
+    return FALSE;               /*  Tells GTK not to call this
+                                   function again */
 #ifdef WIN32_NATIVE
-  case WSAECONNREFUSED:		/* Server not available (yet) */
+  case WSAECONNREFUSED:         /* Server not available (yet) */
 #else
-  case ECONNREFUSED:		/* Server not available (yet) */
+  case ECONNREFUSED:            /* Server not available (yet) */
 #endif
     if (!warning_shown) {
       freelog(LOG_NORMAL, _("Connection to server refused. "
-			    "Please start the server."));
+                            "Please start the server."));
       append_output_window(_("Connection to server refused. "
-			     "Please start the server."));
+                             "Please start the server."));
       warning_shown = 1;
     }
-    return TRUE;		/*  Tells GTK to keep calling this function */
-  default:			/* All other errors are fatal */
+    return TRUE;                /*  Tells GTK to keep calling this function */
+  default:                      /* All other errors are fatal */
     freelog(LOG_FATAL, _("Error contacting server \"%s\" at port %d "
                          "as \"%s\":\n %s\n"),
             server_host, server_port, default_user_name, errbuf);

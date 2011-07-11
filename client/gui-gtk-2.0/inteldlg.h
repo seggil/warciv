@@ -17,4 +17,4 @@
 
 /* nothing to add */
 
-#endif				/* FC__INTELDLG_H */
+#endif          /* FC__INTELDLG_H */

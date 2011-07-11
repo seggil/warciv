@@ -36,8 +36,8 @@
 /* semi-arbitrary number that controls the width of the happiness widget */
 #define HAPPINESS_PIX_WIDTH 23
 
-#define	PIXCOMM_WIDTH	(HAPPINESS_PIX_WIDTH * SMALL_TILE_WIDTH)
-#define	PIXCOMM_HEIGHT	(SMALL_TILE_HEIGHT)
+#define PIXCOMM_WIDTH   (HAPPINESS_PIX_WIDTH * SMALL_TILE_WIDTH)
+#define PIXCOMM_HEIGHT  (SMALL_TILE_HEIGHT)
 
 #define NUM_HAPPINESS_MODIFIERS 5
 
@@ -64,17 +64,17 @@ static struct dialog_list *dialog_list = NULL;
 
 static struct happiness_dialog *get_happiness_dialog(struct city *pcity);
 static struct happiness_dialog *create_happiness_dialog(struct city
-							*pcity);
+                                                        *pcity);
 static void happiness_dialog_update_cities(struct happiness_dialog
-					   *pdialog);
+                                           *pdialog);
 static void happiness_dialog_update_luxury(struct happiness_dialog
-					   *pdialog);
+                                           *pdialog);
 static void happiness_dialog_update_buildings(struct happiness_dialog
-					      *pdialog);
+                                              *pdialog);
 static void happiness_dialog_update_units(struct happiness_dialog
-					  *pdialog);
+                                          *pdialog);
 static void happiness_dialog_update_wonders(struct happiness_dialog
-					    *pdialog);
+                                            *pdialog);
 
 /****************************************************************
 ...
@@ -110,7 +110,7 @@ static struct happiness_dialog *create_happiness_dialog(struct city *pcity)
 
   pdialog->cityname_label = gtk_frame_new(_("Happiness"));
   gtk_box_pack_start(GTK_BOX(pdialog->shell),
-		     pdialog->cityname_label, TRUE, TRUE, 0);
+                     pdialog->cityname_label, TRUE, TRUE, 0);
 
   vbox = gtk_vbox_new(FALSE, 18);
   gtk_container_add(GTK_CONTAINER(pdialog->cityname_label), vbox);
@@ -164,7 +164,7 @@ static void refresh_pixcomm(GtkPixcomm *dst, struct city *pcity, int index)
 
   for (i = 0; i < num_citizens; i++) {
     gtk_pixcomm_copyto(dst, get_citizen_sprite(citizens[i], i, pcity),
-		       i * offset, 0);
+                       i * offset, 0);
   }
 
   gtk_pixcomm_thaw(dst);
@@ -208,7 +208,7 @@ void close_happiness_dialog(struct city *pcity)
 ...
 **************************************************************************/
 static void happiness_dialog_update_cities(struct happiness_dialog
-					   *pdialog)
+                                           *pdialog)
 {
   char buf[512], *bptr = buf;
   int nleft = sizeof(buf);
@@ -234,8 +234,8 @@ static void happiness_dialog_update_cities(struct happiness_dialog
   }
 
   my_snprintf(bptr, nleft,
-	      _("Cities: %d total, %d over threshold of %d cities.\n"),
-	      cities, excess, basis);
+              _("Cities: %d total, %d over threshold of %d cities.\n"),
+              cities, excess, basis);
   bptr = end_of_strn(bptr, &nleft);
 
   my_snprintf(bptr, nleft, _("%d content before penalty with "), content);
@@ -250,14 +250,14 @@ static void happiness_dialog_update_cities(struct happiness_dialog
 ...
 **************************************************************************/
 static void happiness_dialog_update_luxury(struct happiness_dialog
-					   *pdialog)
+                                           *pdialog)
 {
   char buf[512], *bptr = buf;
   int nleft = sizeof(buf);
   struct city *pcity = pdialog->pcity;
 
   my_snprintf(bptr, nleft, _("Luxury: %d total."),
-	      pcity->luxury_total);
+              pcity->luxury_total);
 
   gtk_label_set_text(GTK_LABEL(pdialog->hlabels[LUXURIES]), buf);
 }
@@ -266,10 +266,10 @@ static void happiness_dialog_update_luxury(struct happiness_dialog
 ...
 **************************************************************************/
 static void happiness_dialog_update_buildings(struct happiness_dialog
-					      *pdialog)
+                                              *pdialog)
 {
   gtk_label_set_text(GTK_LABEL(pdialog->hlabels[BUILDINGS]),
-		     get_happiness_buildings(pdialog->pcity));
+                     get_happiness_buildings(pdialog->pcity));
 }
 
 /**************************************************************************
@@ -295,18 +295,18 @@ static void happiness_dialog_update_units(struct happiness_dialog *pdialog)
       my_snprintf(bptr, nleft, _("no maximum, "));
     else
       my_snprintf(bptr, nleft, PL_("%d unit maximum, ",
-				   "%d units maximum, ", mlmax), mlmax);
+                                   "%d units maximum, ", mlmax), mlmax);
     bptr = end_of_strn(bptr, &nleft);
 
     my_snprintf(bptr, nleft, _("%d per unit). "), g->martial_law_per);
   }
   else if (uhcfac > 0) {
     my_snprintf(bptr, nleft,
-		_("Military units in the field may cause unhappiness. "));
+                _("Military units in the field may cause unhappiness. "));
   }
   else {
     my_snprintf(bptr, nleft,
-		_("Military units have no happiness effect. "));
+                _("Military units have no happiness effect. "));
 
   }
 
@@ -317,10 +317,10 @@ static void happiness_dialog_update_units(struct happiness_dialog *pdialog)
 ...
 **************************************************************************/
 static void happiness_dialog_update_wonders(struct happiness_dialog
-					    *pdialog)
+                                            *pdialog)
 {
   gtk_label_set_text(GTK_LABEL(pdialog->hlabels[WONDERS]),
-		     get_happiness_wonders(pdialog->pcity));
+                     get_happiness_wonders(pdialog->pcity));
 }
 
 /**************************************************************************

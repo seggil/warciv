@@ -44,7 +44,7 @@ struct cma_dialog {
   GtkTooltips *tips;
   GtkTreeSelection *selection;
   GtkListStore *store;
-  int id;			/* needed to pass a preset_index */
+  int id;                       /* needed to pass a preset_index */
 };
 
 struct cma_dialog *create_cma_dialog(struct city *pcity);

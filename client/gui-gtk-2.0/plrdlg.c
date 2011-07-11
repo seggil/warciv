@@ -133,21 +133,21 @@ static void update_players_menu(void)
       switch (pplayer_get_diplstate(get_player_ptr(), get_player(plrno))->type) {
       case DS_WAR:
       case DS_NO_CONTACT:
-	gtk_widget_set_sensitive(players_war_command, FALSE);
-	break;
+        gtk_widget_set_sensitive(players_war_command, FALSE);
+        break;
       default:
-	gtk_widget_set_sensitive(players_war_command,
-				 can_client_issue_orders()
-				 && get_player_idx() != plrno);
+        gtk_widget_set_sensitive(players_war_command,
+                                 can_client_issue_orders()
+                                 && get_player_idx() != plrno);
       }
     } else {
       gtk_widget_set_sensitive(players_war_command, FALSE);
     }
 
     gtk_widget_set_sensitive(players_vision_command,
-			     can_client_issue_orders()
-			     && !client_is_global_observer()
-			     && gives_shared_vision(get_player_ptr(), plr));
+                             can_client_issue_orders()
+                             && !client_is_global_observer()
+                             && gives_shared_vision(get_player_ptr(), plr));
 
     gtk_widget_set_sensitive(players_meet_command, can_meet_with_player(plr));
     gtk_widget_set_sensitive(players_int_command, can_intel_with_player(plr));
@@ -193,15 +193,15 @@ static gboolean button_press_callback(GtkTreeView *view, GdkEventButton *ev)
       gtk_tree_path_free(path);
 
       gtk_tree_model_get(GTK_TREE_MODEL(store), &it,
-	  ncolumns - 1, &id, -1);
+          ncolumns - 1, &id, -1);
       plr = get_player(id);
 
       if (ev->button == 1) {
-	if (can_intel_with_player(plr)) {
-	  popup_intel_dialog(plr);
-	}
+        if (can_intel_with_player(plr)) {
+          popup_intel_dialog(plr);
+        }
       } else {
-	dsend_packet_diplomacy_init_meeting_req(&aconnection, id);
+        dsend_packet_diplomacy_init_meeting_req(&aconnection, id);
       }
     }
   }
@@ -349,10 +349,10 @@ void create_players_dialog(void)
       g_object_set(renderer, "style-set", TRUE, "weight-set", TRUE, NULL);
 
       col = gtk_tree_view_column_new_with_attributes(pcol->title, renderer,
-	  "text", i,
-	  "style", num_player_dlg_columns,
-	  "weight", num_player_dlg_columns + 1,
-	  NULL);
+          "text", i,
+          "style", num_player_dlg_columns,
+          "weight", num_player_dlg_columns + 1,
+          NULL);
       gtk_tree_view_column_set_sort_column_id(col, i);
 
       g_object_set(renderer, "xalign", align, NULL);
@@ -370,16 +370,16 @@ void create_players_dialog(void)
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-		                 GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+                                 GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
   gtk_container_add(GTK_CONTAINER(sw), players_list);
 
   menubar = gtk_menu_bar_new();
   gtk_box_pack_start(GTK_BOX(players_dialog_shell->vbox), menubar,
-		     FALSE, FALSE, 0);
+                     FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(players_dialog_shell->vbox), sw,
-		     TRUE, TRUE, 5);
+                     TRUE, TRUE, 5);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Player"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar), item);
@@ -439,7 +439,7 @@ void create_players_dialog(void)
   for (i = 0; i < NUM_SKILL_LEVELS; i++) {
     item = gtk_menu_item_new_with_label(_(skill_level_names[i]));
     g_signal_connect(item, "activate",
-	G_CALLBACK(players_ai_skill_callback), GUINT_TO_POINTER(i));
+        G_CALLBACK(players_ai_skill_callback), GUINT_TO_POINTER(i));
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   }
   gtk_widget_show_all(menu);
@@ -508,24 +508,24 @@ static void build_row(GtkTreeIter *it, int i)
     switch (pcol->type) {
       case COL_TEXT:
       case COL_RIGHT_TEXT:
-	gtk_list_store_set(store, it, k, (gchar *) pcol->string_func(plr), -1);
-	break;
+        gtk_list_store_set(store, it, k, (gchar *) pcol->string_func(plr), -1);
+        break;
       case COL_INT:
-	gtk_list_store_set(store, it, k, (gint) pcol->int_func(plr), -1);
+        gtk_list_store_set(store, it, k, (gint) pcol->int_func(plr), -1);
         break;
       case COL_FLAG:
         pixbuf = get_flag(get_nation_by_plr(plr));
         /* The cell renderer makes a deep copy of the pixbuf. */
         gtk_list_store_set(store, it, k, pixbuf, -1);
         g_object_unref(pixbuf);
-	break;
+        break;
       case COL_COLOR:
         gtk_list_store_set(store, it, k,
-			   colors_standard[get_player_color(plr)], -1);
-	break;
+                           colors_standard[get_player_color(plr)], -1);
+        break;
       case COL_BOOLEAN:
         gtk_list_store_set(store, it, k, (gboolean) pcol->bool_func(plr), -1);
-	break;
+        break;
     }
   }
 
@@ -540,14 +540,14 @@ static void build_row(GtkTreeIter *it, int i)
     if (plr != me) {
       switch (pplayer_get_diplstate(me, plr)->type) {
       case DS_WAR:
-	style = PANGO_STYLE_ITALIC;
-	break;
+        style = PANGO_STYLE_ITALIC;
+        break;
       case DS_ALLIANCE:
       case DS_TEAM:
-	weight = PANGO_WEIGHT_BOLD;
-	break;
+        weight = PANGO_WEIGHT_BOLD;
+        break;
       default:
-	break;
+        break;
       }
     } else {
       /* Make our own row look the same as the
@@ -584,32 +584,32 @@ void update_players_dialog(void)
       bool more;
 
       do {
-	it_next = it;
-	more = gtk_tree_model_iter_next(model, &it_next);
+        it_next = it;
+        more = gtk_tree_model_iter_next(model, &it_next);
 
-	gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
+        gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
 
-	/*
-	 * The nation already had a row in the player report. In that
-	 * case we just update the row.
-	 */
-	if (is_valid_player_id(plrno)) {
-	  exists[plrno] = TRUE;
+        /*
+         * The nation already had a row in the player report. In that
+         * case we just update the row.
+         */
+        if (is_valid_player_id(plrno)) {
+          exists[plrno] = TRUE;
 
-	  build_row(&it, plrno);
-	} else {
-	  gtk_list_store_remove(store, &it);
-	}
-	it = it_next;
+          build_row(&it, plrno);
+        } else {
+          gtk_list_store_remove(store, &it);
+        }
+        it = it_next;
       } while (more);
     }
 
     players_iterate(pplayer) {
       if (!exists[pplayer->player_no]) {
 
-	gtk_list_store_append(store, &it);
+        gtk_list_store_append(store, &it);
 
-	build_row(&it, pplayer->player_no);
+        build_row(&it, pplayer->player_no);
       }
     } players_iterate_end;
 
@@ -652,7 +652,7 @@ void players_war_callback(GtkMenuItem *item, gpointer data)
 
     /* can be any pact clause */
     dsend_packet_diplomacy_cancel_pact(&aconnection, plrno,
-				       CLAUSE_CEASEFIRE);
+                                       CLAUSE_CEASEFIRE);
   }
 }
 
@@ -765,8 +765,8 @@ static void players_ai_skill_callback(GtkMenuItem *item, gpointer data)
     gtk_tree_model_get(model, &it, ncolumns - 1, &plrno, -1);
 
     my_snprintf(buf, sizeof(buf), "/%s %s",
-	skill_level_names[GPOINTER_TO_UINT(data)],
-	get_player(plrno)->name);
+        skill_level_names[GPOINTER_TO_UINT(data)],
+        get_player(plrno)->name);
     send_chat(buf);
   }
 }
@@ -784,7 +784,7 @@ static void update_views(void)
 
     col = gtk_tree_view_get_column(GTK_TREE_VIEW(players_list), i);
     gtk_tree_view_column_set_visible(col,
-				     column_can_be_visible(pcol) && pcol->show);
+                                     column_can_be_visible(pcol) && pcol->show);
   }
 };
 

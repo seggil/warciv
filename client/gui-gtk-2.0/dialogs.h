@@ -21,9 +21,9 @@ struct tile;
 
 void popup_revolution_dialog(int government);
 void message_dialog_button_set_sensitive(GtkWidget *shl, int button,
-					 gboolean state);
+                                         gboolean state);
 GtkWidget *popup_message_dialog(GtkWindow *parent, const gchar *dialogname,
-				const gchar *text, ...);
+                                const gchar *text, ...);
 
 gboolean taxrates_callback(GtkWidget *w, GdkEventButton *ev, gpointer data);
 

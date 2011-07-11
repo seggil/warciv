@@ -106,8 +106,8 @@ void update_turn_done_button(bool do_restore)
 void update_timeout_label(void)
 {
   gtk_label_set_text(GTK_LABEL(client_is_global_observer() ? go_timeout_label
-							   : timeout_label),
-		     get_timeout_label_text());
+                                                           : timeout_label),
+                     get_timeout_label_text());
 }
 
 /**************************************************************************
@@ -130,19 +130,19 @@ void update_info_label(void)
     set_indicator_icons(-1, sol, flake, -1);
 
     gtk_tooltips_set_tip(main_tips, go_sun_ebox, get_global_warming_tooltip(),
-			 "");
+                         "");
     gtk_tooltips_set_tip(main_tips, go_flake_ebox, get_nuclear_winter_tooltip(),
-			 "");
+                         "");
 
     gtk_widget_show(main_frame_civ_name);
   } else if (pplayer) {
     label = gtk_frame_get_label_widget(GTK_FRAME(main_frame_civ_name));
     if (label) {
       gtk_label_set_text(GTK_LABEL(label),
-			 get_nation_name(pplayer->nation));
+                         get_nation_name(pplayer->nation));
     } else {
       gtk_frame_set_label(GTK_FRAME(main_frame_civ_name),
-			  get_nation_name(pplayer->nation));
+                          get_nation_name(pplayer->nation));
     }
 
     gtk_label_set_text(GTK_LABEL(main_label_info), get_info_label_text());
@@ -150,43 +150,43 @@ void update_info_label(void)
     sol = client_warming_sprite();
     flake = client_cooling_sprite();
     set_indicator_icons(client_research_sprite(), sol, flake,
-			pplayer ? pplayer->government : 0);
+                        pplayer ? pplayer->government : 0);
 
     d = 0;
     for (; d < pplayer->economic.luxury /10; d++) {
       struct Sprite *sprite = sprites.tax_luxury;
 
       gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
-				sprite->pixmap, sprite->mask);
+                                sprite->pixmap, sprite->mask);
     }
 
     for (; d < (pplayer->economic.science
-		+ pplayer->economic.luxury) / 10; d++) {
+                + pplayer->economic.luxury) / 10; d++) {
       struct Sprite *sprite = sprites.tax_science;
 
       gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
-				sprite->pixmap, sprite->mask);
+                                sprite->pixmap, sprite->mask);
     }
 
     for (; d < 10; d++) {
       struct Sprite *sprite = sprites.tax_gold;
 
       gtk_image_set_from_pixmap(GTK_IMAGE(econ_label[d]),
-				sprite->pixmap, sprite->mask);
+                                sprite->pixmap, sprite->mask);
     }
 
     /* update tooltips. */
     gtk_tooltips_set_tip(main_tips, econ_ebox,
-			 _("Shows your current luxury/science/tax rates;"
-			   "click to toggle them."), "");
+                         _("Shows your current luxury/science/tax rates;"
+                           "click to toggle them."), "");
 
     gtk_tooltips_set_tip(main_tips, bulb_ebox, get_bulb_tooltip(), "");
     gtk_tooltips_set_tip(main_tips, sun_ebox, get_global_warming_tooltip(),
-			 "");
+                         "");
     gtk_tooltips_set_tip(main_tips, flake_ebox, get_nuclear_winter_tooltip(),
-			 "");
+                         "");
     gtk_tooltips_set_tip(main_tips, government_ebox, get_government_tooltip(),
-			 "");
+                         "");
 
     gtk_widget_show(main_frame_civ_name);
   } else {
@@ -224,17 +224,17 @@ void update_hover_cursor(void)
     break;
   case HOVER_DELAYED_GOTO:
     if (cond || (delayed_goto_need_tile_for >= 0
-		 && delayed_goto_need_tile_for < DELAYED_GOTO_NUM)) {
+                 && delayed_goto_need_tile_for < DELAYED_GOTO_NUM)) {
       switch (delayed_goto_state) {
       case DGT_NUKE:
-	cursor = nuke_cursor;
-	break;
+        cursor = nuke_cursor;
+        break;
       case DGT_PARADROP:
-	cursor = drop_cursor;
-	break;
+        cursor = drop_cursor;
+        break;
       default:
-	cursor = goto_cursor;
-	break;
+        cursor = goto_cursor;
+        break;
       }
     }
     break;
@@ -321,17 +321,17 @@ void set_indicator_icons(int bulb, int sol, int flake, int gov)
   if (!global_observer) {
     bulb = CLIP(0, bulb, NUM_TILES_PROGRESS - 1);
     gtk_image_set_from_pixmap(GTK_IMAGE(bulb_label),
-			      sprites.bulb[bulb]->pixmap, NULL);
+                              sprites.bulb[bulb]->pixmap, NULL);
   }
 
   sol = CLIP(0, sol, NUM_TILES_PROGRESS - 1);
   gtk_image_set_from_pixmap(GTK_IMAGE(global_observer ? go_sun_label
-						      : sun_label),
+                                                      : sun_label),
                             sprites.warming[sol]->pixmap, NULL);
 
   flake = CLIP(0, flake, NUM_TILES_PROGRESS - 1);
   gtk_image_set_from_pixmap(GTK_IMAGE(global_observer ? go_flake_label
-						      : go_flake_label),
+                                                      : go_flake_label),
                             sprites.cooling[flake]->pixmap, NULL);
 
   if (!global_observer) {
@@ -345,7 +345,7 @@ void set_indicator_icons(int bulb, int sol, int flake, int gov)
       gov_sprite = get_government(gov)->sprite;
     }
     gtk_image_set_from_pixmap(GTK_IMAGE(government_label),
-			      gov_sprite->pixmap, NULL);
+                              gov_sprite->pixmap, NULL);
   }
 }
 
@@ -878,8 +878,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       }
 
       if (draw_city_growth
-	  && (client_is_global_observer()
-	      || pcity->owner == get_player_idx())) {
+          && (client_is_global_observer()
+              || pcity->owner == get_player_idx())) {
         /* We need to know the size of the growth text before
            drawing anything. */
         pango_layout_set_font_description(layout, city_productions_font);
@@ -893,8 +893,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
         rect2.width = 0;
       }
       if (draw_city_traderoutes
-	  && (client_is_global_observer()
-	      || pcity->owner == get_player_idx())) {
+          && (client_is_global_observer()
+              || pcity->owner == get_player_idx())) {
         /* We need to know the size of the trade routes text before
            drawing anything. */
         pango_layout_set_font_description (layout, city_productions_font);
@@ -923,8 +923,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
                                canvas_y + PANGO_ASCENT(rect), layout);
 
       if (draw_city_growth
-	  && (client_is_global_observer()
-	      || pcity->owner == get_player_idx())) {
+          && (client_is_global_observer()
+              || pcity->owner == get_player_idx())) {
         pango_layout_set_font_description(layout, city_productions_font);
         pango_layout_set_text(layout, buffer2, -1);
         gdk_gc_set_foreground(civ_gc, colors_standard[color]);
@@ -940,8 +940,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
       }
 
       if (draw_city_traderoutes
-	  && (client_is_global_observer()
-	      || pcity->owner == get_player_idx())) {
+          && (client_is_global_observer()
+              || pcity->owner == get_player_idx())) {
         pango_layout_set_font_description (layout, city_productions_font);
         pango_layout_set_text (layout, buffer3, -1);
         gdk_gc_set_foreground (civ_gc, colors_standard[color2]);
@@ -963,8 +963,8 @@ void show_city_desc(struct canvas *pcanvas, int canvas_x, int canvas_y,
     }
 
     if (draw_city_productions
-	&& (client_is_global_observer()
-	    || pcity->owner == get_player_idx())) {
+        && (client_is_global_observer()
+            || pcity->owner == get_player_idx())) {
       get_city_mapview_production(pcity, buffer, sizeof(buffer));
 
       pango_layout_set_font_description(layout, city_productions_font);
@@ -1547,5 +1547,5 @@ void update_player_colors_mode_label(void)
     return;
   }
   gtk_label_set_text(GTK_LABEL(player_colors_mode_label),
-		     _(player_colors_mode_get_name(player_colors_mode)));
+                     _(player_colors_mode_get_name(player_colors_mode)));
 }

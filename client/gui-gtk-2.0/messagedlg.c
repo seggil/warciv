@@ -78,7 +78,7 @@ static void refresh_message_option(GtkTreeModel *model, GtkTreeIter *iter)
   gtk_tree_model_get(model, iter, COL_EVENT, &event, -1);
   for (i = COL_OUT; i <= COL_POP; i++) {
     gtk_list_store_set(GTK_LIST_STORE(model), iter,
-		       i, messages_where[event] & (1 << i), -1);
+                       i, messages_where[event] & (1 << i), -1);
   }
 }
 
@@ -130,13 +130,13 @@ void reset_message_options(GtkWidget *widget)
   ...
 **************************************************************************/
 static void reload_message_option(GtkTreeModel *model, GtkTreeIter *iter,
-				  struct section_file *sf)
+                                  struct section_file *sf)
 {
   int i, event, value;
 
   gtk_tree_model_get(model, iter, COL_EVENT, &event, -1);
   value = secfile_lookup_int_default(sf, -1, "client.message_where_%02d",
-				     event);
+                                     event);
   if (value != -1) {
     for (i = COL_OUT; i <= COL_POP; i++) {
       gtk_list_store_set(GTK_LIST_STORE(model), iter, i, value & (1 << i), -1);
@@ -163,7 +163,7 @@ void reload_message_options(GtkWidget *widget, struct section_file *sf)
 ...
 **************************************************************************/
 static void item_toggled(GtkCellRendererToggle *cell,
-			 gchar *spath, gpointer data)
+                         gchar *spath, gpointer data)
 {
   GtkTreeModel *model = GTK_TREE_MODEL(data);
   GtkTreePath *path;
@@ -194,7 +194,7 @@ static gboolean search_iter(GtkTreeModel *model, GtkTreeIter *iter, int event)
     do {
       gtk_tree_model_get(model, iter, COL_EVENT, &i, -1);
       if (i == event) {
-	return TRUE;
+        return TRUE;
       }
     } while (gtk_tree_model_iter_next(model, iter));
   }
@@ -205,7 +205,7 @@ static gboolean search_iter(GtkTreeModel *model, GtkTreeIter *iter, int event)
   ...
 *************************************************************************/
 static void refresh_message_option_callback(GtkMenuItem *menuitem,
-					    gpointer data)
+                                            gpointer data)
 {
   GtkTreeModel *model = g_object_get_data(G_OBJECT(menuitem), "model");
   GtkTreeIter iter;
@@ -262,7 +262,7 @@ static void apply_message_option_callback(GtkMenuItem *menuitem, gpointer data)
   ...
 **************************************************************************/
 static gboolean button_press_callback(GtkWidget *view,
-				      GdkEventButton *event, gpointer data)
+                                      GdkEventButton *event, gpointer data)
 {
   GtkWidget *menu, *item;
   GtkTreeModel *model;
@@ -276,7 +276,7 @@ static gboolean button_press_callback(GtkWidget *view,
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
   if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(view), event->x, event->y,
-				     &path, NULL, NULL, NULL)) {
+                                     &path, NULL, NULL, NULL)) {
     return FALSE;
   }
 
@@ -293,7 +293,7 @@ static gboolean button_press_callback(GtkWidget *view,
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(refresh_message_option_callback),
-		   GINT_TO_POINTER(ev));
+                   GINT_TO_POINTER(ev));
 
   item = gtk_image_menu_item_new_with_label(_("Reset this message option"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
@@ -302,7 +302,7 @@ static gboolean button_press_callback(GtkWidget *view,
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(reset_message_option_callback),
-		   GINT_TO_POINTER(ev));
+                   GINT_TO_POINTER(ev));
 
   item = gtk_image_menu_item_new_with_label(_("Reload this message option"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
@@ -311,17 +311,17 @@ static gboolean button_press_callback(GtkWidget *view,
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(reload_message_option_callback),
-		   GINT_TO_POINTER(ev));
+                   GINT_TO_POINTER(ev));
 
   item = gtk_image_menu_item_new_with_label(_("Apply the changes for "
-					      "this message option"));
+                                              "this message option"));
   gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item),
       gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   g_object_set_data(G_OBJECT(item), "model", model);
   g_signal_connect(item, "activate",
                    G_CALLBACK(apply_message_option_callback),
-		   GINT_TO_POINTER(ev));
+                   GINT_TO_POINTER(ev));
 
   gtk_widget_show_all(menu);
   gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, 0);
@@ -344,19 +344,19 @@ GtkWidget *create_messages_configuration(void)
 
   explanation = gtk_label_new(NULL);
   gtk_label_set_markup(GTK_LABEL(explanation),
-		       _("Where to display messages?\n"
-			 "\t<b>Out</b>put window ;\n"
-			 "\t<b>Mes</b>sages window ;\n"
-			 "\t<b>Pop</b>up individual window"));
+                       _("Where to display messages?\n"
+                         "\t<b>Out</b>put window ;\n"
+                         "\t<b>Mes</b>sages window ;\n"
+                         "\t<b>Pop</b>up individual window"));
   gtk_widget_set_name(explanation, "comment label");
   gtk_box_pack_start(GTK_BOX(vbox), explanation, FALSE, FALSE, 0);
 
   model = gtk_list_store_new(COL_NUM,
-			     G_TYPE_BOOLEAN,	/* COL_OUT */
-			     G_TYPE_BOOLEAN,	/* COL_MES */
-			     G_TYPE_BOOLEAN,	/* COL_POP */
-			     G_TYPE_STRING,	/* COL_NAME */
-			     G_TYPE_INT);	/* COL_EVENT */
+                             G_TYPE_BOOLEAN,    /* COL_OUT */
+                             G_TYPE_BOOLEAN,    /* COL_MES */
+                             G_TYPE_BOOLEAN,    /* COL_POP */
+                             G_TYPE_STRING,     /* COL_NAME */
+                             G_TYPE_INT);       /* COL_EVENT */
   g_object_set_data(G_OBJECT(vbox), "model", model);
 
   for (i = 0; i < E_LAST; i++)  {
@@ -376,11 +376,11 @@ GtkWidget *create_messages_configuration(void)
   view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
   g_object_unref(model);
   g_signal_connect(G_OBJECT(view), "button-press-event",
-		   G_CALLBACK(button_press_callback), NULL);
+                   G_CALLBACK(button_press_callback), NULL);
 
   renderer = gtk_cell_renderer_text_new();
   col = gtk_tree_view_column_new_with_attributes(_("Event"), renderer,
-						 "text", COL_NAME, NULL);
+                                                 "text", COL_NAME, NULL);
   gtk_tree_view_column_set_expand(col, TRUE);
   gtk_tree_view_insert_column(GTK_TREE_VIEW(view), col, -1);
 
@@ -388,30 +388,30 @@ GtkWidget *create_messages_configuration(void)
   g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(COL_OUT));
   g_signal_connect(renderer, "toggled", G_CALLBACK(item_toggled), model);
   col = gtk_tree_view_column_new_with_attributes(_("Out"), renderer,
-						 "active", COL_OUT, NULL);
+                                                 "active", COL_OUT, NULL);
   gtk_tree_view_insert_column(GTK_TREE_VIEW(view), col, -1);
 
   renderer = gtk_cell_renderer_toggle_new();
   g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(COL_MES));
   g_signal_connect(renderer, "toggled", G_CALLBACK(item_toggled), model);
   col = gtk_tree_view_column_new_with_attributes(_("Mes"), renderer,
-						 "active", COL_MES, NULL);
+                                                 "active", COL_MES, NULL);
   gtk_tree_view_insert_column(GTK_TREE_VIEW(view), col, -1);
 
   renderer = gtk_cell_renderer_toggle_new();
   g_object_set_data(G_OBJECT(renderer), "column", GINT_TO_POINTER(COL_POP));
   g_signal_connect(renderer, "toggled", G_CALLBACK(item_toggled), model);
   col = gtk_tree_view_column_new_with_attributes(_("Pop"), renderer, "active",
-						 COL_POP, NULL);
+                                                 COL_POP, NULL);
   gtk_tree_view_insert_column(GTK_TREE_VIEW(view), col, -1);
 
   sw = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				 GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+                                 GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_box_pack_end(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
   gtk_tree_view_focus(GTK_TREE_VIEW(view));

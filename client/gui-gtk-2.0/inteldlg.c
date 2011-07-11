@@ -29,7 +29,7 @@
 #include "support.h"
 
 #include "civclient.h"
-#include "clinet.h"	/* aconnection, server_has_extglobalinfo */
+#include "clinet.h"     /* aconnection, server_has_extglobalinfo */
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
@@ -193,13 +193,13 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
       label = gtk_label_new(_(table_text[i]));
       gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
       gtk_table_attach(GTK_TABLE(table), label,
-	  0, 1, i, i+1, GTK_FILL, GTK_FILL|GTK_EXPAND, 0, 0);
+          0, 1, i, i+1, GTK_FILL, GTK_FILL|GTK_EXPAND, 0, 0);
 
       label = gtk_label_new(NULL);
       pdialog->table_labels[i] = label;
       gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
       gtk_table_attach(GTK_TABLE(table), label,
-	  1, 2, i, i+1, GTK_FILL, GTK_FILL|GTK_EXPAND, 0, 0);
+          1, 2, i, i+1, GTK_FILL, GTK_FILL|GTK_EXPAND, 0, 0);
     } else {
       pdialog->table_labels[i] = NULL;
       gtk_table_set_row_spacing(GTK_TABLE(table), i, 12);
@@ -223,11 +223,11 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
 
   sw = gtk_scrolled_window_new(NULL,NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-	GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   alignment = gtk_alignment_new(0.0, 0.0, 1.0, 1.0);
   gtk_container_set_border_width(GTK_CONTAINER(alignment), 6);
@@ -258,11 +258,11 @@ static struct intel_dialog *create_intel_dialog(struct player *p)
 
   sw = gtk_scrolled_window_new(NULL,NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-				      GTK_SHADOW_ETCHED_IN);
+                                      GTK_SHADOW_ETCHED_IN);
   gtk_container_add(GTK_CONTAINER(sw), view);
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-	GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+        GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   alignment = gtk_alignment_new(0.0, 0.0, 1.0, 1.0);
   gtk_container_set_border_width(GTK_CONTAINER(alignment), 6);
@@ -293,7 +293,7 @@ void update_intel_dialog(struct player *p)
 
     /* window title. */
     my_snprintf(buf, sizeof(buf),
-	_("Foreign Intelligence: %s Empire"), get_nation_name(p->nation));
+        _("Foreign Intelligence: %s Empire"), get_nation_name(p->nation));
     gtk_window_set_title(GTK_WINDOW(pdialog->shell), buf);
 
     /* diplomacy tab. */
@@ -317,11 +317,11 @@ void update_intel_dialog(struct player *p)
       GValue v = { 0, };
 
       if (other == p) {
-	continue;
+        continue;
       }
       state = pplayer_get_diplstate(p, other);
       gtk_tree_store_append(pdialog->diplstates, &it,
-			    &diplstates[state->type]);
+                            &diplstates[state->type]);
       g_value_init(&v, G_TYPE_STRING);
       g_value_set_static_string(&v, other->name);
       gtk_tree_store_set_value(pdialog->diplstates, &it, 0, &v);
@@ -333,79 +333,79 @@ void update_intel_dialog(struct player *p)
 
     for(i = A_FIRST; i<game.ruleset_control.num_tech_types; i++)
       if (get_invention(p, i) == TECH_KNOWN) {
-	GtkTreeIter it;
+        GtkTreeIter it;
 
-	gtk_list_store_append(pdialog->techs, &it);
+        gtk_list_store_append(pdialog->techs, &it);
 
-	gtk_list_store_set(pdialog->techs, &it,
-			   0, get_player_ptr()
-			    && get_invention(get_player_ptr(), i) != TECH_KNOWN,
-			   1, get_tech_name(p, i),
-			   -1);
+        gtk_list_store_set(pdialog->techs, &it,
+                           0, get_player_ptr()
+                            && get_invention(get_player_ptr(), i) != TECH_KNOWN,
+                           1, get_tech_name(p, i),
+                           -1);
       }
 
     /* table labels. */
     for (i = 0; i < ARRAY_SIZE(pdialog->table_labels); i++) {
       if (pdialog->table_labels[i]) {
-	struct city *pcity;
+        struct city *pcity;
 
-	switch (i) {
-	  case LABEL_RULER:
-	    my_snprintf(buf, sizeof(buf), "%s %s",
-		get_ruler_title(p->government, p->is_male, p->nation), p->name);
-	    break;
-	  case LABEL_GOVERNMENT:
-	    sz_strlcpy(buf, get_government_name(p->government));
-	    break;
-	  case LABEL_CAPITAL:
-	    pcity = find_palace(p);
-	    sz_strlcpy(buf, (!pcity) ? _("(Unknown)") : pcity->name);
-	    break;
-	  case LABEL_GOLD:
-	    my_snprintf(buf, sizeof(buf), "%d", p->economic.gold);
-	    if (client_is_global_observer()) {
-	      cat_snprintf(buf, sizeof(buf), " (%+d)",
-			   player_get_expected_income(p));
-	    }
-	    break;
-	  case LABEL_TAX:
-	    my_snprintf(buf, sizeof(buf), "%d%%", p->economic.tax);
-	    break;
-	  case LABEL_SCIENCE:
-	    my_snprintf(buf, sizeof(buf), "%d%%", p->economic.science);
-	    break;
-	  case LABEL_LUXURY:
-	    my_snprintf(buf, sizeof(buf), "%d%%", p->economic.luxury);
-	    break;
-	  case LABEL_RESEARCHING:
-	    if (p->research.researching != A_NOINFO) {
-	      my_snprintf(buf, sizeof(buf), "%s(%d/%d)",
-		  get_tech_name(p, p->research.researching),
-		  p->research.bulbs_researched,  p->research.researching_cost);
-	    } else {
-	      my_snprintf(buf, sizeof(buf), _("(Unknown)"));
-	    }
-	    if (client_is_global_observer()) {
-	      cat_snprintf(buf, sizeof(buf), " (%+d)",
-			   player_get_expected_bulbs(p));
-	    }
-	    if (p->ai.tech_goal != A_UNSET
-		&& p->ai.tech_goal != p->research.researching) {
-	      int steps = num_unknown_techs_for_goal(p, p->ai.tech_goal);
-	      cat_snprintf(buf, sizeof(buf),
-			   "\n%s", get_tech_name(p, p->ai.tech_goal));
-	      cat_snprintf(buf, sizeof(buf),
-			   PL_("(%d step)", "(%d steps)", steps), steps);
-	    }
-	    break;
-	  default:
-	    buf[0] = '\0';
-	    break;
-	}
+        switch (i) {
+          case LABEL_RULER:
+            my_snprintf(buf, sizeof(buf), "%s %s",
+                get_ruler_title(p->government, p->is_male, p->nation), p->name);
+            break;
+          case LABEL_GOVERNMENT:
+            sz_strlcpy(buf, get_government_name(p->government));
+            break;
+          case LABEL_CAPITAL:
+            pcity = find_palace(p);
+            sz_strlcpy(buf, (!pcity) ? _("(Unknown)") : pcity->name);
+            break;
+          case LABEL_GOLD:
+            my_snprintf(buf, sizeof(buf), "%d", p->economic.gold);
+            if (client_is_global_observer()) {
+              cat_snprintf(buf, sizeof(buf), " (%+d)",
+                           player_get_expected_income(p));
+            }
+            break;
+          case LABEL_TAX:
+            my_snprintf(buf, sizeof(buf), "%d%%", p->economic.tax);
+            break;
+          case LABEL_SCIENCE:
+            my_snprintf(buf, sizeof(buf), "%d%%", p->economic.science);
+            break;
+          case LABEL_LUXURY:
+            my_snprintf(buf, sizeof(buf), "%d%%", p->economic.luxury);
+            break;
+          case LABEL_RESEARCHING:
+            if (p->research.researching != A_NOINFO) {
+              my_snprintf(buf, sizeof(buf), "%s(%d/%d)",
+                  get_tech_name(p, p->research.researching),
+                  p->research.bulbs_researched,  p->research.researching_cost);
+            } else {
+              my_snprintf(buf, sizeof(buf), _("(Unknown)"));
+            }
+            if (client_is_global_observer()) {
+              cat_snprintf(buf, sizeof(buf), " (%+d)",
+                           player_get_expected_bulbs(p));
+            }
+            if (p->ai.tech_goal != A_UNSET
+                && p->ai.tech_goal != p->research.researching) {
+              int steps = num_unknown_techs_for_goal(p, p->ai.tech_goal);
+              cat_snprintf(buf, sizeof(buf),
+                           "\n%s", get_tech_name(p, p->ai.tech_goal));
+              cat_snprintf(buf, sizeof(buf),
+                           PL_("(%d step)", "(%d steps)", steps), steps);
+            }
+            break;
+          default:
+            buf[0] = '\0';
+            break;
+        }
 
-	if (buf[0] != '\0') {
-	  gtk_label_set_text(GTK_LABEL(pdialog->table_labels[i]), buf);
-	}
+        if (buf[0] != '\0') {
+          gtk_label_set_text(GTK_LABEL(pdialog->table_labels[i]), buf);
+        }
       }
     }
   }

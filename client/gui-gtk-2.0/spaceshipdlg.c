@@ -69,7 +69,7 @@ static struct dialog_list *dialog_list = NULL;
 
 static struct spaceship_dialog *get_spaceship_dialog(struct player *pplayer);
 static struct spaceship_dialog *create_spaceship_dialog(struct player
-							*pplayer);
+                                                        *pplayer);
 
 static void spaceship_dialog_update_image(struct spaceship_dialog *pdialog);
 static void spaceship_dialog_update_info(struct spaceship_dialog *pdialog);
@@ -110,10 +110,10 @@ void refresh_spaceship_dialog(struct player *pplayer)
      && pship->state == SSHIP_STARTED
      && pship->success_rate > 0.0) {
     gui_dialog_set_response_sensitive(pdialog->shell,
-	GTK_RESPONSE_ACCEPT, TRUE);
+        GTK_RESPONSE_ACCEPT, TRUE);
   } else {
     gui_dialog_set_response_sensitive(pdialog->shell,
-	GTK_RESPONSE_ACCEPT, FALSE);
+        GTK_RESPONSE_ACCEPT, FALSE);
   }
 
   spaceship_dialog_update_info(pdialog);
@@ -150,8 +150,8 @@ void popdown_spaceship_dialog(struct player *pplayer)
 ...
 *****************************************************************/
 static gboolean spaceship_image_canvas_expose(GtkWidget *widget,
-					      GdkEventExpose *ev,
-					      gpointer data)
+                                              GdkEventExpose *ev,
+                                              gpointer data)
 {
   struct spaceship_dialog *pdialog;
 
@@ -210,7 +210,7 @@ struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
       GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
   g_signal_connect(pdialog->shell->vbox, "destroy",
-		   G_CALLBACK(spaceship_destroy_callback), pdialog);
+                   G_CALLBACK(spaceship_destroy_callback), pdialog);
   gui_dialog_response_set_callback(pdialog->shell, spaceship_response);
 
   hbox=gtk_hbox_new(FALSE, 5);
@@ -222,15 +222,15 @@ struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
   pdialog->image_canvas=gtk_drawing_area_new();
   GTK_WIDGET_SET_FLAGS(pdialog->image_canvas, GTK_CAN_FOCUS);
   gtk_widget_set_size_request(pdialog->image_canvas,
-			      sprites.spaceship.habitation->width*7,
-			      sprites.spaceship.habitation->height*7);
+                              sprites.spaceship.habitation->width*7,
+                              sprites.spaceship.habitation->height*7);
 
   gtk_widget_set_events(pdialog->image_canvas, GDK_EXPOSURE_MASK);
   gtk_container_add(GTK_CONTAINER(frame), pdialog->image_canvas);
   gtk_widget_realize(pdialog->image_canvas);
 
   g_signal_connect(pdialog->image_canvas, "expose_event",
-		   G_CALLBACK(spaceship_image_canvas_expose), pdialog);
+                   G_CALLBACK(spaceship_image_canvas_expose), pdialog);
 
   pdialog->info_label = gtk_label_new(get_spaceship_descr(NULL));
 
@@ -257,7 +257,7 @@ struct spaceship_dialog *create_spaceship_dialog(struct player *pplayer)
 void spaceship_dialog_update_info(struct spaceship_dialog *pdialog)
 {
   gtk_label_set_text(GTK_LABEL(pdialog->info_label),
-		     get_spaceship_descr(&pdialog->pplayer->spaceship));
+                     get_spaceship_descr(&pdialog->pplayer->spaceship));
 }
 
 /****************************************************************
@@ -273,28 +273,28 @@ void spaceship_dialog_update_image(struct spaceship_dialog *pdialog)
 
   gdk_gc_set_foreground(fill_bg_gc, colors_standard[COLOR_STD_BLACK]);
   gdk_draw_rectangle(pdialog->image_canvas->window, fill_bg_gc, TRUE,
-		0, 0, sprite->width * 7, sprite->height * 7);
+                0, 0, sprite->width * 7, sprite->height * 7);
 
   for (i=0; i < NUM_SS_MODULES; i++) {
     j = i/3;
     k = i%3;
     if ((k==0 && j >= ship->habitation)
-	|| (k==1 && j >= ship->life_support)
-	|| (k==2 && j >= ship->solar_panels)) {
+        || (k==1 && j >= ship->life_support)
+        || (k==2 && j >= ship->solar_panels)) {
       continue;
     }
     x = modules_info[i].x * sprite->width  / 4 - sprite->width / 2;
     y = modules_info[i].y * sprite->height / 4 - sprite->height / 2;
 
     sprite = (k==0 ? sprites.spaceship.habitation :
-	      k==1 ? sprites.spaceship.life_support :
-	             sprites.spaceship.solar_panels);
+              k==1 ? sprites.spaceship.life_support :
+                     sprites.spaceship.solar_panels);
     gdk_gc_set_clip_origin(civ_gc, x, y);
     gdk_gc_set_clip_mask(civ_gc, sprite->mask);
     gdk_draw_drawable(pdialog->image_canvas->window, civ_gc, sprite->pixmap,
-	      0, 0,
-	      x, y,
-	      sprite->width, sprite->height);
+              0, 0,
+              x, y,
+              sprite->width, sprite->height);
     gdk_gc_set_clip_mask(civ_gc,NULL);
   }
 
@@ -302,7 +302,7 @@ void spaceship_dialog_update_image(struct spaceship_dialog *pdialog)
     j = i/2;
     k = i%2;
     if ((k==0 && j >= ship->fuel)
-	|| (k==1 && j >= ship->propulsion)) {
+        || (k==1 && j >= ship->propulsion)) {
       continue;
     }
     x = components_info[i].x * sprite->width  / 4 - sprite->width / 2;
@@ -313,9 +313,9 @@ void spaceship_dialog_update_image(struct spaceship_dialog *pdialog)
     gdk_gc_set_clip_origin(civ_gc, x, y);
     gdk_gc_set_clip_mask(civ_gc, sprite->mask);
     gdk_draw_drawable(pdialog->image_canvas->window, civ_gc, sprite->pixmap,
-	      0, 0,
-	      x, y,
-	      sprite->width, sprite->height);
+              0, 0,
+              x, y,
+              sprite->width, sprite->height);
     gdk_gc_set_clip_mask(civ_gc,NULL);
   }
 
@@ -330,9 +330,9 @@ void spaceship_dialog_update_image(struct spaceship_dialog *pdialog)
     gdk_gc_set_clip_origin(civ_gc, x, y);
     gdk_gc_set_clip_mask(civ_gc, sprite->mask);
     gdk_draw_drawable(pdialog->image_canvas->window, civ_gc, sprite->pixmap,
-	      0, 0,
-	      x, y,
-	      sprite->width, sprite->height);
+              0, 0,
+              x, y,
+              sprite->width, sprite->height);
     gdk_gc_set_clip_mask(civ_gc,NULL);
   }
 }

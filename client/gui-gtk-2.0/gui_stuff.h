@@ -32,7 +32,7 @@ typedef struct
   GtkTreeIter it;
 } ITree;
 
-#define TREE_ITER_PTR(x)	(&(x).it)
+#define TREE_ITER_PTR(x)        (&(x).it)
 
 void itree_begin(GtkTreeModel *model, ITree *it);
 gboolean itree_end(ITree *it);

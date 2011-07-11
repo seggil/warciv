@@ -73,8 +73,8 @@ static void rates_changed_callback(GtkAdjustment *adj);
 ...
 **************************************************************************/
 static void rates_set_values(int tax, int no_tax_scroll,
-			     int lux, int no_lux_scroll,
-			     int sci, int no_sci_scroll)
+                             int lux, int no_lux_scroll,
+                             int sci, int no_sci_scroll)
 {
   char buf[64];
   int tax_lock, lux_lock, sci_lock;
@@ -93,24 +93,24 @@ static void rates_set_values(int tax, int no_tax_scroll,
   if (tax + sci + lux != 100) {
     if ((tax != rates_tax_value)) {
       if (!lux_lock) {
-	lux = MIN(MAX(100 - tax - sci, 0), maxrate);
+        lux = MIN(MAX(100 - tax - sci, 0), maxrate);
       }
       if (!sci_lock) {
-	sci = MIN(MAX(100 - tax - lux, 0), maxrate);
+        sci = MIN(MAX(100 - tax - lux, 0), maxrate);
       }
     } else if ((lux != rates_lux_value)) {
       if (!tax_lock) {
-	tax = MIN(MAX(100 - lux - sci, 0), maxrate);
+        tax = MIN(MAX(100 - lux - sci, 0), maxrate);
       }
       if (!sci_lock) {
-	sci = MIN(MAX(100 - lux - tax, 0), maxrate);
+        sci = MIN(MAX(100 - lux - tax, 0), maxrate);
       }
     } else if ((sci != rates_sci_value)) {
       if (!lux_lock) {
-	lux = MIN(MAX(100 - tax - sci, 0), maxrate);
+        lux = MIN(MAX(100 - tax - sci, 0), maxrate);
       }
       if (!tax_lock) {
-	tax = MIN(MAX(100 - lux - sci, 0), maxrate);
+        tax = MIN(MAX(100 - lux - sci, 0), maxrate);
       }
     }
 
@@ -133,11 +133,11 @@ static void rates_set_values(int tax, int no_tax_scroll,
   if (tax != rates_tax_value) {
     my_snprintf(buf, sizeof(buf), "%3d%%", tax);
     if (strcmp(buf, GTK_LABEL(rates_tax_label)->label) != 0)
-	gtk_label_set_text(GTK_LABEL(rates_tax_label), buf);
+        gtk_label_set_text(GTK_LABEL(rates_tax_label), buf);
     if (!no_tax_scroll) {
-	g_signal_handler_block(rates_tax_adj, rates_tax_sig);
-	gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_tax_adj), tax/10 );
-	g_signal_handler_unblock(rates_tax_adj, rates_tax_sig);
+        g_signal_handler_block(rates_tax_adj, rates_tax_sig);
+        gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_tax_adj), tax/10 );
+        g_signal_handler_unblock(rates_tax_adj, rates_tax_sig);
     }
     rates_tax_value=tax;
   }
@@ -145,11 +145,11 @@ static void rates_set_values(int tax, int no_tax_scroll,
   if (lux != rates_lux_value) {
     my_snprintf(buf, sizeof(buf), "%3d%%", lux);
     if (strcmp(buf, GTK_LABEL(rates_lux_label)->label) != 0)
-	gtk_label_set_text(GTK_LABEL(rates_lux_label), buf);
+        gtk_label_set_text(GTK_LABEL(rates_lux_label), buf);
     if (!no_lux_scroll) {
-	g_signal_handler_block(rates_lux_adj, rates_lux_sig);
-	gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_lux_adj), lux/10 );
-	g_signal_handler_unblock(rates_lux_adj, rates_lux_sig);
+        g_signal_handler_block(rates_lux_adj, rates_lux_sig);
+        gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_lux_adj), lux/10 );
+        g_signal_handler_unblock(rates_lux_adj, rates_lux_sig);
     }
     rates_lux_value=lux;
   }
@@ -157,11 +157,11 @@ static void rates_set_values(int tax, int no_tax_scroll,
   if (sci != rates_sci_value) {
     my_snprintf(buf, sizeof(buf), "%3d%%", sci);
     if (strcmp(buf, GTK_LABEL(rates_sci_label)->label) != 0)
-	gtk_label_set_text(GTK_LABEL(rates_sci_label),buf);
+        gtk_label_set_text(GTK_LABEL(rates_sci_label),buf);
     if (!no_sci_scroll) {
-	g_signal_handler_block(rates_sci_adj, rates_sci_sig);
-	gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_sci_adj), sci/10 );
-	g_signal_handler_unblock(rates_sci_adj, rates_sci_sig);
+        g_signal_handler_block(rates_sci_adj, rates_sci_sig);
+        gtk_adjustment_set_value(GTK_ADJUSTMENT(rates_sci_adj), sci/10 );
+        g_signal_handler_unblock(rates_sci_adj, rates_sci_sig);
     }
     rates_sci_value=sci;
   }
@@ -204,7 +204,7 @@ static void rates_command_callback(GtkWidget *w, gint response_id)
 {
   if (response_id == GTK_RESPONSE_OK) {
     dsend_packet_player_rates(&aconnection, rates_tax_value, rates_lux_value,
-			      rates_sci_value);
+                              rates_sci_value);
   }
   gtk_widget_destroy(rates_dialog_shell);
 }
@@ -231,10 +231,10 @@ static GtkWidget *create_rates_dialog(void)
   GtkWidget *scale;
 
   shell = gtk_dialog_new_with_buttons(_("Select tax, luxury and science rates"),
-				      NULL, 0,
-				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				      GTK_STOCK_OK, GTK_RESPONSE_OK,
-				      NULL);
+                                      NULL, 0,
+                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                      GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                      NULL);
   setup_dialog(shell, toplevel);
   gtk_dialog_set_default_response(GTK_DIALOG(shell), GTK_RESPONSE_OK);
   gtk_window_set_position(GTK_WINDOW(shell), GTK_WIN_POS_MOUSE);
@@ -304,9 +304,9 @@ static GtkWidget *create_rates_dialog(void)
 
 
   g_signal_connect(shell, "response",
-		   G_CALLBACK(rates_command_callback), NULL);
+                   G_CALLBACK(rates_command_callback), NULL);
   g_signal_connect(shell, "destroy",
-		   G_CALLBACK(rates_destroy_callback), NULL);
+                   G_CALLBACK(rates_destroy_callback), NULL);
 
   gtk_widget_show_all( GTK_DIALOG( shell )->vbox );
   gtk_widget_show_all( GTK_DIALOG( shell )->action_area );
@@ -317,19 +317,19 @@ static GtkWidget *create_rates_dialog(void)
 
   rates_tax_sig =
     g_signal_connect_after(rates_tax_adj, "value_changed",
-			   G_CALLBACK(rates_changed_callback), NULL);
+                           G_CALLBACK(rates_changed_callback), NULL);
 
   rates_lux_sig =
     g_signal_connect_after(rates_lux_adj, "value_changed",
-			   G_CALLBACK(rates_changed_callback), NULL);
+                           G_CALLBACK(rates_changed_callback), NULL);
 
   rates_sci_sig =
     g_signal_connect_after(rates_sci_adj, "value_changed",
-			   G_CALLBACK(rates_changed_callback), NULL);
+                           G_CALLBACK(rates_changed_callback), NULL);
 
   rates_set_values(pplayer->economic.tax, 0,
-        	   pplayer->economic.luxury, 0,
-        	   pplayer->economic.science, 0);
+                   pplayer->economic.luxury, 0,
+                   pplayer->economic.science, 0);
   return shell;
 }
 
@@ -496,7 +496,7 @@ static void apply_extra_option_callback(GtkMenuItem *menuitem, gpointer data)
   Called when a button is pressed.
 *************************************************************************/
 static gboolean extra_option_callback(GtkWidget *widget, GdkEventButton *event,
-				      gpointer data)
+                                      gpointer data)
 {
   /* Only right button please! */
   if (event->button != 3) {
@@ -551,12 +551,12 @@ static gboolean extra_option_callback(GtkWidget *widget, GdkEventButton *event,
   Create a new extra option structure.
 *************************************************************************/
 static void extra_option_new(GtkWidget *widget, GtkWidget *parent_box,
-			     const char *name,
-			     void (*apply_callback)(GtkWidget *),
-			     void (*refresh_callback)(GtkWidget *),
-			     void (*reset_callback)(GtkWidget *),
-			     void (*reload_callback)(GtkWidget *,
-						     struct section_file *))
+                             const char *name,
+                             void (*apply_callback)(GtkWidget *),
+                             void (*refresh_callback)(GtkWidget *),
+                             void (*reset_callback)(GtkWidget *),
+                             void (*reload_callback)(GtkWidget *,
+                                                     struct section_file *))
 {
   struct extra_option *o = fc_malloc(sizeof(struct extra_option));
   GtkWidget *ebox, *frame;
@@ -582,7 +582,7 @@ static void extra_option_new(GtkWidget *widget, GtkWidget *parent_box,
   gtk_container_add(GTK_CONTAINER(ebox), frame);
   gtk_container_add(GTK_CONTAINER(frame), widget);
   g_signal_connect(ebox, "button_press_event",
-		   G_CALLBACK(extra_option_callback), o);
+                   G_CALLBACK(extra_option_callback), o);
 
   extra_option_list_append(extra_options, o);
 }
@@ -601,8 +601,8 @@ static void extra_option_destroy(struct extra_option *o)
   ...
 *****************************************************************/
 static void cell_edited(GtkCellRendererText *cell,
-			const gchar *spath,
-			const gchar *text, gpointer data)
+                        const gchar *spath,
+                        const gchar *text, gpointer data)
 {
   struct client_option *o = (struct client_option *) data;
   GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(o->gui_data));
@@ -636,8 +636,8 @@ static void append_callback(GtkMenuItem *menuitem, gpointer data)
   gtk_list_store_append(store, &iter);
   path = gtk_tree_model_get_path(model, &iter);
   gtk_tree_view_set_cursor(GTK_TREE_VIEW(o->gui_data), path,
-			   gtk_tree_view_get_column(GTK_TREE_VIEW(o->gui_data),
-						    0), TRUE);
+                           gtk_tree_view_get_column(GTK_TREE_VIEW(o->gui_data),
+                                                    0), TRUE);
   gtk_tree_path_free(path);
 }
 
@@ -661,8 +661,8 @@ static void insert_callback(GtkMenuItem *menuitem, gpointer data)
   gtk_list_store_insert_before(store, &niter, &iter);
   path = gtk_tree_model_get_path(model, &niter);
   gtk_tree_view_set_cursor(GTK_TREE_VIEW(o->gui_data), path,
-			   gtk_tree_view_get_column(GTK_TREE_VIEW(o->gui_data),
-						    0), TRUE);
+                           gtk_tree_view_get_column(GTK_TREE_VIEW(o->gui_data),
+                                                    0), TRUE);
   gtk_tree_path_free(path);
 }
 
@@ -699,8 +699,8 @@ static void edit_callback(GtkMenuItem *menuitem, gpointer data)
   }
 
   gtk_tree_view_set_cursor(GTK_TREE_VIEW(o->gui_data), path,
-			   gtk_tree_view_get_column(GTK_TREE_VIEW(o->gui_data),
-						    0), TRUE);
+                           gtk_tree_view_get_column(GTK_TREE_VIEW(o->gui_data),
+                                                    0), TRUE);
   gtk_tree_path_free(path);
 }
 
@@ -754,7 +754,7 @@ static void move_down_callback(GtkMenuItem *menuitem, gpointer data)
   ...
 *************************************************************************/
 static gboolean tree_view_callback(GtkWidget *view, GdkEventButton *event,
-				   gpointer data)
+                                   gpointer data)
 {
   GtkWidget *menu, *item;
   GtkTreeModel *model;
@@ -768,8 +768,8 @@ static gboolean tree_view_callback(GtkWidget *view, GdkEventButton *event,
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
 
   if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(view),
-				    (gint) event->x, (gint) event->y,
-				    &path, NULL, NULL, NULL)) {
+                                    (gint) event->x, (gint) event->y,
+                                    &path, NULL, NULL, NULL)) {
     gtk_tree_view_set_cursor(GTK_TREE_VIEW(view), path, NULL, FALSE);
   } else {
     path = NULL;
@@ -835,8 +835,8 @@ static void set_combo_to(GtkComboBox *combo, const char *untranslated)
     do {
       gtk_tree_model_get(model, &iter, LC_TEXT_ORIGIN, &str, -1);
       if (0 == strcmp(untranslated, str)) {
-	gtk_combo_box_set_active_iter(combo, &iter);
-	return;
+        gtk_combo_box_set_active_iter(combo, &iter);
+        return;
       }
     } while (gtk_tree_model_iter_next(model, &iter));
   }
@@ -857,9 +857,9 @@ static void update_filter(struct client_option *o)
     filter value;
 
     value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget),
-					      "filter_value"));
+                                              "filter_value"));
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-				 o->filter.temp & value);
+                                 o->filter.temp & value);
   }
 }
 
@@ -909,7 +909,7 @@ static bool string_vec_changed(struct client_option *o)
     if (!string_empty(str)) {
       /* Not empty */
       if (n && 0 != strcmp(str, n)) {
-	return TRUE;
+        return TRUE;
       }
     } else if (!string_empty(n)) {
       return TRUE;
@@ -960,22 +960,22 @@ static void apply_option_change(struct client_option *o)
     {
       bool new_value = GTK_TOGGLE_BUTTON(o->gui_data)->active;
       if (*o->boolean.pvalue != new_value) {
-	*o->boolean.pvalue = new_value;
-	if (o->change_callback) {
-	  (o->change_callback)(o);
-	}
+        *o->boolean.pvalue = new_value;
+        if (o->change_callback) {
+          (o->change_callback)(o);
+        }
       }
     }
     break;
   case COT_INTEGER:
     {
       int new_value =
-	  gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(o->gui_data));
+          gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(o->gui_data));
       if (*o->integer.pvalue != new_value) {
-	*o->integer.pvalue = new_value;
-	if (o->change_callback) {
-	  (o->change_callback)(o);
-	}
+        *o->integer.pvalue = new_value;
+        if (o->change_callback) {
+          (o->change_callback)(o);
+        }
       }
     }
     break;
@@ -983,13 +983,13 @@ static void apply_option_change(struct client_option *o)
   case COT_PASSWORD:
     {
       const char *new_value = o->string.val_accessor
-	  ? gtk_entry_get_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child))
-	  : gtk_entry_get_text(GTK_ENTRY(o->gui_data));
+          ? gtk_entry_get_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child))
+          : gtk_entry_get_text(GTK_ENTRY(o->gui_data));
       if (strcmp(o->string.pvalue, new_value)) {
-	mystrlcpy(o->string.pvalue, new_value, o->string.size);
-	if (o->change_callback) {
-	  (o->change_callback)(o);
-	}
+        mystrlcpy(o->string.pvalue, new_value, o->string.size);
+        if (o->change_callback) {
+          (o->change_callback)(o);
+        }
       }
     }
     break;
@@ -997,7 +997,7 @@ static void apply_option_change(struct client_option *o)
     if (string_vec_changed(o)) {
       string_vec_store(o);
       if (o->change_callback) {
-	(o->change_callback)(o);
+        (o->change_callback)(o);
       }
     }
     break;
@@ -1007,17 +1007,17 @@ static void apply_option_change(struct client_option *o)
       int new_value;
 
       if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(o->gui_data), &iter)) {
-	break;
+        break;
       }
 
       gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(o->gui_data)),
-			 &iter, LC_INDEX, &new_value, -1);
+                         &iter, LC_INDEX, &new_value, -1);
 
       if (*o->enum_list.pvalue != new_value) {
-	*o->enum_list.pvalue = new_value;
-	if (o->change_callback) {
-	  (o->change_callback)(o);
-	}
+        *o->enum_list.pvalue = new_value;
+        if (o->change_callback) {
+          (o->change_callback)(o);
+        }
       }
     }
     break;
@@ -1025,7 +1025,7 @@ static void apply_option_change(struct client_option *o)
     if (*o->filter.pvalue != o->filter.temp) {
       *o->filter.pvalue = o->filter.temp;
       if (o->change_callback) {
-	(o->change_callback)(o);
+        (o->change_callback)(o);
       }
     }
     break;
@@ -1033,15 +1033,15 @@ static void apply_option_change(struct client_option *o)
     {
       int new_value =
 #ifdef GTK_SCALE_BUTTON
-	  gtk_scale_button_get_value(GTK_SCALE_BUTTON(o->gui_data));
+          gtk_scale_button_get_value(GTK_SCALE_BUTTON(o->gui_data));
 #else
-	  gtk_range_get_value(GTK_RANGE(o->gui_data));
+          gtk_range_get_value(GTK_RANGE(o->gui_data));
 #endif /* GTK_SCALE_BUTTON */
       if (*o->integer.pvalue != new_value) {
-	*o->integer.pvalue = new_value;
-	if (o->change_callback) {
-	  (o->change_callback)(o);
-	}
+        *o->integer.pvalue = new_value;
+        if (o->change_callback) {
+          (o->change_callback)(o);
+        }
       }
     }
     break;
@@ -1070,17 +1070,17 @@ static void refresh_option(struct client_option *o)
   switch (o->type) {
   case COT_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
-				 *o->boolean.pvalue);
+                                 *o->boolean.pvalue);
     break;
   case COT_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
-			      *o->integer.pvalue);
+                              *o->integer.pvalue);
     break;
   case COT_STRING:
   case COT_PASSWORD:
     if (o->string.val_accessor) {
       gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
-			 o->string.pvalue);
+                         o->string.pvalue);
     } else {
       gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->string.pvalue);
     }
@@ -1088,19 +1088,19 @@ static void refresh_option(struct client_option *o)
   case COT_STRING_VEC:
     {
       GtkListStore *store = GTK_LIST_STORE(gtk_tree_view_get_model(
-					   GTK_TREE_VIEW(o->gui_data)));
+                                           GTK_TREE_VIEW(o->gui_data)));
       GtkTreeIter iter;
 
       gtk_list_store_clear(store);
       string_vector_iterate(*o->string_vec.pvector, str) {
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, str, -1);
+        gtk_list_store_append(store, &iter);
+        gtk_list_store_set(store, &iter, 0, str, -1);
       } string_vector_iterate_end;
     }
     break;
   case COT_ENUM_LIST:
     set_combo_to(GTK_COMBO_BOX(o->gui_data),
-		 o->enum_list.str_accessor(*o->enum_list.pvalue));
+                 o->enum_list.str_accessor(*o->enum_list.pvalue));
     break;
   case COT_FILTER:
     o->filter.temp = *o->filter.pvalue;
@@ -1109,7 +1109,7 @@ static void refresh_option(struct client_option *o)
   case COT_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
-			       *o->integer.pvalue);
+                               *o->integer.pvalue);
 #else
     gtk_range_set_value(GTK_RANGE(o->gui_data), *o->integer.pvalue);
 #endif /* GTK_SCALE_BUTTON */
@@ -1139,17 +1139,17 @@ static void reset_option(struct client_option *o)
   switch (o->type) {
   case COT_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
-				 o->boolean.def);
+                                 o->boolean.def);
     break;
   case COT_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
-			      o->integer.def);
+                              o->integer.def);
     break;
   case COT_STRING:
   case COT_PASSWORD:
     if (o->string.val_accessor) {
       gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
-			 o->string.def);
+                         o->string.def);
     } else {
       gtk_entry_set_text(GTK_ENTRY(o->gui_data), o->string.def);
     }
@@ -1157,20 +1157,20 @@ static void reset_option(struct client_option *o)
   case COT_STRING_VEC:
     {
       GtkListStore *store = GTK_LIST_STORE(gtk_tree_view_get_model(
-					   GTK_TREE_VIEW(o->gui_data)));
+                                           GTK_TREE_VIEW(o->gui_data)));
       GtkTreeIter iter;
       const char *const *p;
 
       gtk_list_store_clear(store);
       for (p = o->string_vec.def; p && *p; p++) {
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, *p, -1);
+        gtk_list_store_append(store, &iter);
+        gtk_list_store_set(store, &iter, 0, *p, -1);
       }
     }
     break;
   case COT_ENUM_LIST:
     set_combo_to(GTK_COMBO_BOX(o->gui_data),
-		 o->enum_list.str_accessor(o->enum_list.def));
+                 o->enum_list.str_accessor(o->enum_list.def));
     break;
   case COT_FILTER:
     o->filter.temp = o->filter.def;
@@ -1179,7 +1179,7 @@ static void reset_option(struct client_option *o)
   case COT_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
-			       o->integer.def);
+                               o->integer.def);
 #else
     gtk_range_set_value(GTK_RANGE(o->gui_data), o->integer.def);
 #endif /* GTK_SCALE_BUTTON */
@@ -1209,20 +1209,20 @@ static void reload_option(struct section_file *sf, struct client_option *o)
   switch (o->type) {
   case COT_BOOLEAN:
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(o->gui_data),
-				 load_option_bool(sf, o, *o->boolean.pvalue));
+                                 load_option_bool(sf, o, *o->boolean.pvalue));
     break;
   case COT_INTEGER:
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(o->gui_data),
-			      load_option_int(sf, o, *o->integer.pvalue));
+                              load_option_int(sf, o, *o->integer.pvalue));
     break;
   case COT_STRING:
   case COT_PASSWORD:
     if (o->string.val_accessor) {
       gtk_entry_set_text(GTK_ENTRY(GTK_BIN(o->gui_data)->child),
-			 load_option_string(sf, o, o->string.pvalue));
+                         load_option_string(sf, o, o->string.pvalue));
     } else {
       gtk_entry_set_text(GTK_ENTRY(o->gui_data),
-			 load_option_string(sf, o, o->string.pvalue));
+                         load_option_string(sf, o, o->string.pvalue));
     }
     break;
   case COT_STRING_VEC:
@@ -1235,20 +1235,20 @@ static void reload_option(struct section_file *sf, struct client_option *o)
       const char *def[MAX(size, 1)];
 
       if (!gtk_tree_model_get_iter_first(model, &iter)) {
-	load_option_string_vec(sf, o, NULL, vector);
+        load_option_string_vec(sf, o, NULL, vector);
       } else {
-	i = 0;
-	do {
-	  gtk_tree_model_get(model, &iter, 0, &def[i], -1);
-	  i++;
-	} while (gtk_tree_model_iter_next(model, &iter));
-	load_option_string_vec(sf, o, def, vector);
+        i = 0;
+        do {
+          gtk_tree_model_get(model, &iter, 0, &def[i], -1);
+          i++;
+        } while (gtk_tree_model_iter_next(model, &iter));
+        load_option_string_vec(sf, o, def, vector);
       }
 
       gtk_list_store_clear(store);
       string_vector_iterate(vector, str) {
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, str, -1);
+        gtk_list_store_append(store, &iter);
+        gtk_list_store_set(store, &iter, 0, str, -1);
       } string_vector_iterate_end;
 
       string_vector_destroy(vector);
@@ -1256,8 +1256,8 @@ static void reload_option(struct section_file *sf, struct client_option *o)
     break;
   case COT_ENUM_LIST:
     set_combo_to(GTK_COMBO_BOX(o->gui_data),
-		 o->enum_list.str_accessor(load_option_enum_list(
-		 sf, o, *o->enum_list.pvalue)));
+                 o->enum_list.str_accessor(load_option_enum_list(
+                 sf, o, *o->enum_list.pvalue)));
     break;
   case COT_FILTER:
     o->filter.temp = load_option_filter(sf, o, *o->filter.pvalue);
@@ -1266,10 +1266,10 @@ static void reload_option(struct section_file *sf, struct client_option *o)
   case COT_VOLUME:
 #ifdef GTK_SCALE_BUTTON
     gtk_scale_button_set_value(GTK_SCALE_BUTTON(o->gui_data),
-			       load_option_int(sf, o, *o->integer.pvalue));
+                               load_option_int(sf, o, *o->integer.pvalue));
 #else
     gtk_range_set_value(GTK_RANGE(o->gui_data),
-			load_option_int(sf, o, *o->integer.pvalue));
+                        load_option_int(sf, o, *o->integer.pvalue));
 #endif /* GTK_SCALE_BUTTON */
     break;
   }
@@ -1342,7 +1342,7 @@ static void apply_option_callback(GtkMenuItem *menuitem, gpointer data)
   Called when a button is pressed.
 *************************************************************************/
 static gboolean option_callback(GtkWidget *widget, GdkEventButton *event,
-				gpointer data)
+                                gpointer data)
 {
   /* Only right button please! */
   if (event->button != 3) {
@@ -1392,7 +1392,7 @@ static gboolean option_callback(GtkWidget *widget, GdkEventButton *event,
   ...
 *************************************************************************/
 static void filter_changed_callback(GtkToggleButton *togglebutton,
-				    gpointer data)
+                                    gpointer data)
 {
   struct client_option *o = (struct client_option *) data;
   filter value;
@@ -1400,7 +1400,7 @@ static void filter_changed_callback(GtkToggleButton *togglebutton,
   assert(o->type == COT_FILTER);
 
   value = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(togglebutton),
-					    "filter_value"));
+                                            "filter_value"));
   if (((o->filter.temp & value) != 0)
       ^ GTK_TOGGLE_BUTTON(togglebutton)->active
       && o->filter.change(&o->filter.temp, value)) {
@@ -1477,32 +1477,32 @@ static void create_option_dialog(void)
   tips = gtk_tooltips_new();
   option_dialog_shell =
       gtk_dialog_new_with_buttons(_("Set local options"), NULL, 0,
-				  GTK_STOCK_REFRESH, RESPONSE_REFRESH,
-				  _("Reset"), RESPONSE_RESET,
-				  _("Reload"), RESPONSE_RELOAD,
-				  GTK_STOCK_SAVE, RESPONSE_SAVE,
-				  GTK_STOCK_APPLY, RESPONSE_APPLY,
-				  GTK_STOCK_CANCEL, RESPONSE_CANCEL,
-				  GTK_STOCK_OK, RESPONSE_OK, NULL);
+                                  GTK_STOCK_REFRESH, RESPONSE_REFRESH,
+                                  _("Reset"), RESPONSE_RESET,
+                                  _("Reload"), RESPONSE_RELOAD,
+                                  GTK_STOCK_SAVE, RESPONSE_SAVE,
+                                  GTK_STOCK_APPLY, RESPONSE_APPLY,
+                                  GTK_STOCK_CANCEL, RESPONSE_CANCEL,
+                                  GTK_STOCK_OK, RESPONSE_OK, NULL);
   gtk_widget_set_size_request(option_dialog_shell, -1, 600);
   setup_dialog(option_dialog_shell, toplevel);
   g_signal_connect(option_dialog_shell, "response",
-		   G_CALLBACK(option_dialog_callback), NULL);
+                   G_CALLBACK(option_dialog_callback), NULL);
   g_signal_connect(option_dialog_shell, "destroy",
-		   G_CALLBACK(option_dialog_destroy), NULL);
+                   G_CALLBACK(option_dialog_destroy), NULL);
 
   notebook = gtk_notebook_new();
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(option_dialog_shell)->vbox),
-		     notebook, TRUE, TRUE, 2);
+                     notebook, TRUE, TRUE, 2);
 
   /* Build the pages */
   for (i = 0; i < COC_NUM; i++) {
     sw = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				   GTK_POLICY_AUTOMATIC,
-				   GTK_POLICY_AUTOMATIC);
+                                   GTK_POLICY_AUTOMATIC,
+                                   GTK_POLICY_AUTOMATIC);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), sw,
-			     gtk_label_new(get_option_category_name(i)));
+                             gtk_label_new(get_option_category_name(i)));
     vbox[i] = gtk_vbox_new(FALSE, 2);
     gtk_container_set_border_width(GTK_CONTAINER(vbox[i]), 6);
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox[i]);
@@ -1514,7 +1514,7 @@ static void create_option_dialog(void)
     ebox = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(vbox[o->category]), ebox, FALSE, FALSE, 0);
     g_signal_connect(ebox, "button_press_event",
-		     G_CALLBACK(option_callback), o);
+                     G_CALLBACK(option_callback), o);
     if (even[o->category]) {
       gtk_widget_set_style(ebox, style);
     }
@@ -1524,15 +1524,15 @@ static void create_option_dialog(void)
     gtk_container_add(GTK_CONTAINER(ebox), hbox);
 
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(_(o->description)),
-		       FALSE, FALSE, 5);
+                       FALSE, FALSE, 5);
 
     if (o->type == COT_STRING_VEC) {
       /* Add extra help text for editing. */
       const char *string_vec_help =
-	_("You can add, remove, edit or move strings with clicking "
-	  "with the right button on the entry box. You can click left "
-	  "to start to edit and drag strings with the left button to "
-	  "move them.");
+        _("You can add, remove, edit or move strings with clicking "
+          "with the right button on the entry box. You can click left "
+          "to start to edit and drag strings with the left button to "
+          "move them.");
       const char *help_text = _(o->help_text); /* Translate now! */
       char buf[strlen(string_vec_help) + strlen(help_text) + 16];
 
@@ -1549,118 +1549,118 @@ static void create_option_dialog(void)
       break;
     case COT_INTEGER:
       o->gui_data = gtk_spin_button_new_with_range(o->integer.min,
-					      o->integer.max,
-					      MAX((o->integer.max
-						   - o->integer.min) / 50,
-						  1));
+                                              o->integer.max,
+                                              MAX((o->integer.max
+                                                   - o->integer.min) / 50,
+                                                  1));
       break;
     case COT_STRING:
     case COT_PASSWORD:
       if (o->string.val_accessor) {
-	const char **val;
+        const char **val;
 
-	o->gui_data = gtk_combo_box_entry_new_text();
-	for (val = o->string.val_accessor(); *val; val++) {
-	  gtk_combo_box_append_text(GTK_COMBO_BOX(o->gui_data), *val);
-	}
+        o->gui_data = gtk_combo_box_entry_new_text();
+        for (val = o->string.val_accessor(); *val; val++) {
+          gtk_combo_box_append_text(GTK_COMBO_BOX(o->gui_data), *val);
+        }
       } else {
-	o->gui_data = gtk_entry_new();
-	if (o->type == COT_PASSWORD) {
-	  gtk_entry_set_visibility(GTK_ENTRY(o->gui_data), FALSE);
-	}
-	gtk_widget_set_size_request(o->gui_data, 300, -1);
+        o->gui_data = gtk_entry_new();
+        if (o->type == COT_PASSWORD) {
+          gtk_entry_set_visibility(GTK_ENTRY(o->gui_data), FALSE);
+        }
+        gtk_widget_set_size_request(o->gui_data, 300, -1);
       }
       break;
     case COT_STRING_VEC:
       {
-	GtkListStore *model = gtk_list_store_new(1, G_TYPE_STRING);
-	GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+        GtkListStore *model = gtk_list_store_new(1, G_TYPE_STRING);
+        GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
 
-	o->gui_data = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
-	g_object_unref(model);
+        o->gui_data = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
+        g_object_unref(model);
 
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(o->gui_data), FALSE);
-	gtk_tree_view_set_reorderable(GTK_TREE_VIEW(o->gui_data), TRUE);
-	g_object_set(renderer, "editable", TRUE, NULL);
-	g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited), o);
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(o->gui_data),
-						    -1, NULL, renderer,
-						    "text", 0, NULL);
-	gtk_widget_set_size_request(o->gui_data, 300, -1);
+        gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(o->gui_data), FALSE);
+        gtk_tree_view_set_reorderable(GTK_TREE_VIEW(o->gui_data), TRUE);
+        g_object_set(renderer, "editable", TRUE, NULL);
+        g_signal_connect(renderer, "edited", G_CALLBACK(cell_edited), o);
+        gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(o->gui_data),
+                                                    -1, NULL, renderer,
+                                                    "text", 0, NULL);
+        gtk_widget_set_size_request(o->gui_data, 300, -1);
 
-	g_signal_connect(G_OBJECT(o->gui_data), "button-press-event",
-			 G_CALLBACK(tree_view_callback), o);
+        g_signal_connect(G_OBJECT(o->gui_data), "button-press-event",
+                         G_CALLBACK(tree_view_callback), o);
       }
       break;
     case COT_ENUM_LIST:
       {
-	int i;
-	const char *str;
-	/* Use a double string list for translation */
-	GtkListStore *model = gtk_list_store_new(LC_NUM, G_TYPE_INT,
-						 G_TYPE_STRING, G_TYPE_STRING);
-	GtkCellRenderer *renderer;
-	GtkTreeIter iter;
+        int i;
+        const char *str;
+        /* Use a double string list for translation */
+        GtkListStore *model = gtk_list_store_new(LC_NUM, G_TYPE_INT,
+                                                 G_TYPE_STRING, G_TYPE_STRING);
+        GtkCellRenderer *renderer;
+        GtkTreeIter iter;
 
-	o->gui_data = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
-	g_object_unref(model);
-	renderer = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(o->gui_data),
-				   renderer, FALSE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(o->gui_data),
-				       renderer, "text",
-				       LC_TEXT_TRANSLATED, NULL);
-	for (i = 0; (str = o->enum_list.str_accessor(i)); i++) {
-	  gtk_list_store_append(model, &iter);
-	  gtk_list_store_set(model, &iter,
-			     LC_INDEX, i,
-			     LC_TEXT_ORIGIN, str,
-			     LC_TEXT_TRANSLATED, _(str), -1);
-	}
+        o->gui_data = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
+        g_object_unref(model);
+        renderer = gtk_cell_renderer_text_new();
+        gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(o->gui_data),
+                                   renderer, FALSE);
+        gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(o->gui_data),
+                                       renderer, "text",
+                                       LC_TEXT_TRANSLATED, NULL);
+        for (i = 0; (str = o->enum_list.str_accessor(i)); i++) {
+          gtk_list_store_append(model, &iter);
+          gtk_list_store_set(model, &iter,
+                             LC_INDEX, i,
+                             LC_TEXT_ORIGIN, str,
+                             LC_TEXT_TRANSLATED, _(str), -1);
+        }
       }
       break;
     case COT_FILTER:
       {
-	GtkWidget *fbox, *cb;
-	filter i;
-	const char *str;
+        GtkWidget *fbox, *cb;
+        filter i;
+        const char *str;
 
-	o->gui_data = gtk_frame_new(NULL);
-	fbox = gtk_vbox_new(FALSE,0);
-	gtk_container_add(GTK_CONTAINER(o->gui_data), fbox);
+        o->gui_data = gtk_frame_new(NULL);
+        fbox = gtk_vbox_new(FALSE,0);
+        gtk_container_add(GTK_CONTAINER(o->gui_data), fbox);
 
-	for (i = 1; (str = o->filter.str_accessor(i)); i <<= 1) {
-	  cb = gtk_check_button_new_with_label(_(str));
-	  g_object_set_data(G_OBJECT(cb), "filter_value", GINT_TO_POINTER(i));
-	  g_signal_connect(cb, "toggled",
-			   G_CALLBACK(filter_changed_callback), o);
-	  gtk_box_pack_start(GTK_BOX(fbox), cb, FALSE, FALSE, 0);
-	}
+        for (i = 1; (str = o->filter.str_accessor(i)); i <<= 1) {
+          cb = gtk_check_button_new_with_label(_(str));
+          g_object_set_data(G_OBJECT(cb), "filter_value", GINT_TO_POINTER(i));
+          g_signal_connect(cb, "toggled",
+                           G_CALLBACK(filter_changed_callback), o);
+          gtk_box_pack_start(GTK_BOX(fbox), cb, FALSE, FALSE, 0);
+        }
       }
       break;
     case COT_VOLUME:
       {
 #ifdef GTK_SCALE_BUTTON
-	GtkObject *adjustment;
+        GtkObject *adjustment;
 
-	o->gui_data = gtk_volume_button_new();
-	adjustment = gtk_adjustment_new(*o->integer.pvalue,
-					o->integer.min,
-					o->integer.max,
-					MAX((o->integer.max
-					     - o->integer.min) / 50, 1),
-					 0, 1);
-	gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(o->gui_data),
-					GTK_ADJUSTMENT(adjustment));
-	gtk_object_destroy(adjustment);
+        o->gui_data = gtk_volume_button_new();
+        adjustment = gtk_adjustment_new(*o->integer.pvalue,
+                                        o->integer.min,
+                                        o->integer.max,
+                                        MAX((o->integer.max
+                                             - o->integer.min) / 50, 1),
+                                         0, 1);
+        gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(o->gui_data),
+                                        GTK_ADJUSTMENT(adjustment));
+        gtk_object_destroy(adjustment);
 #else
-	o->gui_data = gtk_hscale_new_with_range(o->integer.min,
-						o->integer.max,
-						MAX((o->integer.max
-						     - o->integer.min) / 50,
-						    1));
-	gtk_widget_set_size_request(GTK_WIDGET(o->gui_data),
-				    o->integer.max - o->integer.min, -1);
+        o->gui_data = gtk_hscale_new_with_range(o->integer.min,
+                                                o->integer.max,
+                                                MAX((o->integer.max
+                                                     - o->integer.min) / 50,
+                                                    1));
+        gtk_widget_set_size_request(GTK_WIDGET(o->gui_data),
+                                    o->integer.max - o->integer.min, -1);
 #endif /* GTK_SCALE_BUTTON */
       }
       break;
@@ -1676,18 +1676,18 @@ static void create_option_dialog(void)
   extra_options = extra_option_list_new();
 
   extra_option_new(create_chatline_config(), vbox[COC_CHAT],
-		   _("Chat colors configuration"),
-		   apply_chatline_config, refresh_chatline_config,
-		   reset_chatline_config, reload_chatline_config);
+                   _("Chat colors configuration"),
+                   apply_chatline_config, refresh_chatline_config,
+                   reset_chatline_config, reload_chatline_config);
   extra_option_new(create_messages_configuration(), vbox[COC_MESSAGE],
-		   _("Message options"),
-		   apply_message_options, refresh_message_options,
-		   reset_message_options, reload_message_options);
+                   _("Message options"),
+                   apply_message_options, refresh_message_options,
+                   reset_message_options, reload_message_options);
   if (get_client_state() >= CLIENT_SELECT_RACE_STATE) {
     extra_option_new(create_worklists_report(), vbox[COC_GAMEPLAY],
-		     _("Global Worklists"),
-		     apply_global_worklists, refresh_global_worklists,
-		     reset_global_worklists, reload_global_worklists);
+                     _("Global Worklists"),
+                     apply_global_worklists, refresh_global_worklists,
+                     reset_global_worklists, reload_global_worklists);
   }
 
   gtk_widget_show_all(GTK_DIALOG(option_dialog_shell)->vbox);

@@ -31,7 +31,7 @@ GdkPixmap *get_thumb_pixmap(int onoff);
 gboolean overview_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data);
 gboolean map_canvas_expose(GtkWidget *w, GdkEventExpose *ev, gpointer data);
 gboolean map_canvas_configure(GtkWidget *w, GdkEventConfigure *ev,
-			      gpointer data);
+                              gpointer data);
 
 void put_unit_gpixmap(struct unit *punit, GtkPixcomm *p);
 
