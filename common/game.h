@@ -13,7 +13,7 @@
 #ifndef FC__GAME_H
 #define FC__GAME_H
 
-#include <time.h>	/* time_t */
+#include <time.h>       /* time_t */
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
@@ -21,9 +21,9 @@
 
 #include "shared.h"
 
-#include "connection.h"		/* struct conn_list */
+#include "connection.h"         /* struct conn_list */
 #include "fc_types.h"
-#include "improvement.h"	/* Impr_Status */
+#include "improvement.h"        /* Impr_Status */
 #include "packets.h"
 #include "player.h"
 
@@ -118,10 +118,10 @@ struct civ_game {
     char *startmessage;
 
     int warminglevel; /* If globalwarming is higher than this number there is
-		       * a chance of a warming event. */
+                       * a chance of a warming event. */
 
     int coolinglevel; /* If nuclearwinter is higher than this number there is
-		       * a chance of a cooling event. */
+                       * a chance of a cooling event. */
 
     char save_name[MAX_LEN_NAME];
     int save_nturns;
@@ -137,8 +137,8 @@ struct civ_game {
     bool fixedlength;
     bool auto_ai_toggle;
     bool fogofwar;
-    bool fogofwar_old;	/* As the fog_of_war bit get changed by setting
-			 * the server we need to remember the old setting */
+    bool fogofwar_old;  /* As the fog_of_war bit get changed by setting
+                         * the server we need to remember the old setting */
 
     bool ruleset_loaded;
     int nav; /* AI convenience: tech_req for first non-trireme ferryboat */
@@ -404,8 +404,8 @@ extern bool is_server;
 #define GAME_MIN_AIFILL              0
 #define GAME_MAX_AIFILL              GAME_MAX_MAX_PLAYERS
 
-#define GAME_DEFAULT_RESEARCHCOST	   20
-#define GAME_MIN_RESEARCHCOST	       4
+#define GAME_DEFAULT_RESEARCHCOST          20
+#define GAME_MIN_RESEARCHCOST          4
 #define GAME_MAX_RESEARCHCOST        100
 
 #define GAME_DEFAULT_DIPLCOST        100
@@ -559,7 +559,7 @@ extern bool is_server;
 #define GAME_MAX_BARBARIANRATE       6
 
 #define GAME_DEFAULT_ONSETBARBARIAN  (GAME_START_YEAR+ \
-				      ((GAME_DEFAULT_END_YEAR-(GAME_START_YEAR))/3))
+                                      ((GAME_DEFAULT_END_YEAR-(GAME_START_YEAR))/3))
 #define GAME_MIN_ONSETBARBARIAN      GAME_START_YEAR
 #define GAME_MAX_ONSETBARBARIAN      GAME_MAX_END_YEAR
 
@@ -607,14 +607,14 @@ extern bool is_server;
 
 #define GAME_START_YEAR -4000
 
-#define specialist_type_iterate(sp)					    \
-{									    \
-  int sp;                                                                   \
-                                                                            \
+#define specialist_type_iterate(sp)    \
+{                                      \
+  int sp;                              \
+                                       \
   for (sp = 0; sp < SP_COUNT; sp++) {
 
-#define specialist_type_iterate_end                                         \
-  }                                                                         \
+#define specialist_type_iterate_end    \
+  }                                    \
 }
 
 #endif  /* FC__GAME_H */

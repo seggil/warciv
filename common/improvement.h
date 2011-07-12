@@ -15,13 +15,13 @@
 
 /* City Improvements, including Wonders.  (Alternatively "Buildings".) */
 
-#include "shared.h"		/* MAX_LEN_NAME */
+#include "shared.h"             /* MAX_LEN_NAME */
 
 #include "effects.h"
 #include "fc_types.h"
-#include "tech.h"		/* Tech_Type_id */
-#include "terrain.h"		/* Terrain_type_id etc */
-#include "unittype.h"		/* Unit_Class_id, Unit_Type_id */
+#include "tech.h"               /* Tech_Type_id */
+#include "terrain.h"            /* Terrain_type_id etc */
+#include "unittype.h"           /* Unit_Class_id, Unit_Type_id */
 
 /* B_LAST is a value which is guaranteed to be larger than all
  * actual Impr_Type_id values.  It is used as a flag value;
@@ -59,23 +59,23 @@ enum impr_range {
 /* Type of improvement. (Read from buildings.ruleset file.) */
 struct impr_type {
   const char *name; /* Translated string - doesn't need freeing. */
-  char name_orig[MAX_LEN_NAME];		/* untranslated */
-  char graphic_str[MAX_LEN_NAME];	/* city icon of improv. */
-  char graphic_alt[MAX_LEN_NAME];	/* city icon of improv. */
-  Tech_Type_id tech_req;		/* A_LAST = never; A_NONE = always */
-  Impr_Type_id bldg_req;		/* B_LAST = none required */
-  Terrain_type_id *terr_gate;	/* list; T_NONE terminated */
-  enum tile_special_type *spec_gate;	/* list; S_NO_SPECIAL terminated */
+  char name_orig[MAX_LEN_NAME];         /* untranslated */
+  char graphic_str[MAX_LEN_NAME];       /* city icon of improv. */
+  char graphic_alt[MAX_LEN_NAME];       /* city icon of improv. */
+  Tech_Type_id tech_req;                /* A_LAST = never; A_NONE = always */
+  Impr_Type_id bldg_req;                /* B_LAST = none required */
+  Terrain_type_id *terr_gate;   /* list; T_NONE terminated */
+  enum tile_special_type *spec_gate;    /* list; S_NO_SPECIAL terminated */
   enum impr_range equiv_range;
-  Impr_Type_id *equiv_dupl;		/* list; B_LAST terminated */
-  Impr_Type_id *equiv_repl;		/* list; B_LAST terminated */
-  Tech_Type_id obsolete_by;		/* A_LAST = never obsolete */
-  Impr_Type_id replaced_by;		/* B_LAST = never replaced */
+  Impr_Type_id *equiv_dupl;             /* list; B_LAST terminated */
+  Impr_Type_id *equiv_repl;             /* list; B_LAST terminated */
+  Tech_Type_id obsolete_by;             /* A_LAST = never obsolete */
+  Impr_Type_id replaced_by;             /* B_LAST = never replaced */
   bool is_wonder;
-  int build_cost;			/* Use wrappers to access this. */
+  int build_cost;                       /* Use wrappers to access this. */
   int upkeep;
-  int sabotage;		/* Base chance of diplomat sabotage succeeding. */
-  struct Sprite *sprite;		/* icon of the improvement */
+  int sabotage;         /* Base chance of diplomat sabotage succeeding. */
+  struct Sprite *sprite;                /* icon of the improvement */
   char *helptext;
   char soundtag[MAX_LEN_NAME];
   char soundtag_alt[MAX_LEN_NAME];
@@ -113,7 +113,7 @@ void improvement_status_init(Impr_Status * improvements, size_t elements);
 bool can_player_build_improvement_direct(struct player *p, Impr_Type_id id);
 bool can_player_build_improvement(struct player *p, Impr_Type_id id);
 bool can_player_eventually_build_improvement(struct player *p,
-					     Impr_Type_id id);
+                                             Impr_Type_id id);
 
 /* city related improvement functions */
 void mark_improvement(struct city *pcity,Impr_Type_id id,Impr_Status status);

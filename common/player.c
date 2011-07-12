@@ -84,7 +84,7 @@ bool player_has_embassy(struct player *pplayer, struct player *pplayer2)
 bool player_owns_city(struct player *pplayer, struct city *pcity)
 {
   if (!pcity || !pplayer)
-    return FALSE;			/* better safe than sorry */
+    return FALSE;                       /* better safe than sorry */
   return (pcity->owner==pplayer->player_no);
 }
 
@@ -154,7 +154,7 @@ void player_init(struct player *plr)
         * game.ruleset_control.num_impr_types * sizeof(Impr_Status));
     for (i = 1; i <= map.num_continents; i++) {
       improvement_status_init(&plr->island_improv[i
-				  * game.ruleset_control.num_impr_types],
+                                  * game.ruleset_control.num_impr_types],
                               game.ruleset_control.num_impr_types);
     }
   }
@@ -226,12 +226,12 @@ static const char *pname_accessor(int i) {
 Find player by its name prefix
 ***************************************************************/
 struct player *find_player_by_name_prefix(const char *name,
-					  enum m_pre_result *result)
+                                          enum m_pre_result *result)
 {
   int ind;
 
   *result = match_prefix(pname_accessor, game.info.nplayers, MAX_LEN_NAME - 1,
-			 mystrncasecmp, name, &ind);
+                         mystrncasecmp, name, &ind);
 
   if (*result < M_PRE_AMBIGUOUS) {
     return get_player(ind);
@@ -264,7 +264,7 @@ struct player *find_player_by_user(const char *name)
   (e) the unit isn't in a transporter, or we can see the transporter
 ****************************************************************************/
 bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
-			    struct tile *ptile)
+                            struct tile *ptile)
 {
   struct city *pcity;
 
@@ -302,7 +302,7 @@ bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
     }
     unit_list_iterate(ptile1->units, punit2) {
       if (pplayers_allied(unit_owner(punit2), pplayer)) {
-	return TRUE;
+        return TRUE;
       }
     } unit_list_iterate_end;
   } adjc_iterate_end;
@@ -341,10 +341,10 @@ bool can_player_see_unit(struct player *pplayer, struct unit *punit)
   all, since the full city packet has no "occupied" flag.
 ****************************************************************************/
 bool can_player_see_units_in_city(struct player *pplayer,
-				  struct city *pcity)
+                                  struct city *pcity)
 {
   return (can_player_see_city_internals(pplayer, pcity)
-	  || pplayers_allied(pplayer, city_owner(pcity)));
+          || pplayers_allied(pplayer, city_owner(pcity)));
 }
 
 /****************************************************************************
@@ -353,7 +353,7 @@ bool can_player_see_units_in_city(struct player *pplayer,
   a dialog for it.
 ****************************************************************************/
 bool can_player_see_city_internals(struct player *pplayer,
-				   struct city *pcity)
+                                   struct city *pcity)
 {
   return (pplayer == city_owner(pcity));
 }
@@ -364,7 +364,7 @@ bool can_player_see_city_internals(struct player *pplayer,
  Now always uses fast idex_lookup_city.
 ***************************************************************/
 struct city *player_find_city_by_id(const struct player *pplayer,
-				    int city_id)
+                                    int city_id)
 {
   struct city *pcity = idex_lookup_city(city_id);
 
@@ -385,7 +385,7 @@ struct city *player_find_city_by_id(const struct player *pplayer,
  Uses fast idex_lookup_city.
 ***************************************************************/
 struct unit *player_find_unit_by_id(const struct player *pplayer,
-				    int unit_id)
+                                    int unit_id)
 {
   struct unit *punit = idex_lookup_unit(unit_id);
 
@@ -467,7 +467,7 @@ int player_get_expected_bulbs(struct player *pplayer)
  given flag.
 **************************************************************************/
 bool player_knows_techs_with_flag(struct player *pplayer,
-				 enum tech_flag_id flag)
+                                 enum tech_flag_id flag)
 {
   return num_known_tech_with_flag(pplayer, flag) > 0;
 }
@@ -537,7 +537,7 @@ struct city *find_palace(struct player *pplayer)
 ...
 **************************************************************************/
 bool player_knows_improvement_tech(struct player *pplayer,
-				   Impr_Type_id id)
+                                   Impr_Type_id id)
 {
   int t;
   if (!improvement_exists(id)) return FALSE;
@@ -667,7 +667,7 @@ const char *diplstate_text(const enum diplstate_type type)
 returns diplomatic state type between two players
 ***************************************************************/
 const struct player_diplstate *pplayer_get_diplstate(const struct player *pplayer,
-						     const struct player *pplayer2)
+                                                     const struct player *pplayer2)
 {
   return &(pplayer->diplstates[pplayer2->player_no]);
 }
@@ -804,11 +804,11 @@ bool gives_shared_vision(struct player *me, struct player *them)
   Return TRUE iff the two diplstates are equal.
 **************************************************************************/
 bool are_diplstates_equal(const struct player_diplstate *pds1,
-			  const struct player_diplstate *pds2)
+                          const struct player_diplstate *pds2)
 {
   return (pds1->type == pds2->type && pds1->turns_left == pds2->turns_left
-	  && pds1->has_reason_to_cancel == pds2->has_reason_to_cancel
-	  && pds1->contact_turns_left == pds2->contact_turns_left);
+          && pds1->has_reason_to_cancel == pds2->has_reason_to_cancel
+          && pds1->contact_turns_left == pds2->contact_turns_left);
 }
 
 /***************************************************************************
@@ -848,9 +848,9 @@ int player_in_territory(struct player *pplayer, struct player *pplayer2)
 bool is_valid_username(const char *name)
 {
   return (strlen(name) > 0
-	  && !my_isdigit(name[0])
-	  && is_ascii_name(name)
-	  && mystrcasecmp(name, ANON_USER_NAME) != 0);
+          && !my_isdigit(name[0])
+          && is_ascii_name(name)
+          && mystrcasecmp(name, ANON_USER_NAME) != 0);
 }
 
 /****************************************************************************

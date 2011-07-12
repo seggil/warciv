@@ -13,7 +13,7 @@
 #ifndef FC__DATAIO_H
 #define FC__DATAIO_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 struct worklist;
 struct player_diplstate;
@@ -21,15 +21,15 @@ struct player_diplstate;
 struct data_in {
   const void *src;
   size_t src_size, current;
-  bool too_short;		/* set to 1 if try to read past end */
-  bool bad_string;		/* set to 1 if received too-long string */
-  bool bad_bit_string;		/* set to 1 if received bad bit-string */
+  bool too_short;               /* set to 1 if try to read past end */
+  bool bad_string;              /* set to 1 if received too-long string */
+  bool bad_bit_string;          /* set to 1 if received bad bit-string */
 };
 
 struct data_out {
   void *dest;
   size_t dest_size, used, current;
-  bool too_short;		/* set to 1 if try to read past end */
+  bool too_short;               /* set to 1 if try to read past end */
 };
 
 /* network string conversion */
@@ -37,12 +37,12 @@ typedef char *(*DIO_PUT_CONV_FUN) (const char *src, size_t *length);
 void dio_set_put_conv_callback(DIO_PUT_CONV_FUN fun);
 
 typedef bool(*DIO_GET_CONV_FUN) (char *dst, size_t ndst,
-				 const char *src, size_t nsrc);
+                                 const char *src, size_t nsrc);
 void dio_set_get_conv_callback(DIO_GET_CONV_FUN fun);
 
 /* General functions */
 void dio_output_init(struct data_out *dout, void *destination,
-		     size_t dest_size);
+                     size_t dest_size);
 void dio_output_rewind(struct data_out *dout);
 size_t dio_output_used(struct data_out *dout);
 
@@ -66,7 +66,7 @@ void dio_get_bool32(struct data_in *din, bool *dest);
 void dio_get_memory(struct data_in *din, void *dest, size_t dest_size);
 void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size);
 void dio_get_bit_string(struct data_in *din, char *dest,
-			size_t max_dest_size);
+                        size_t max_dest_size);
 void dio_get_tech_list(struct data_in *din, int *dest);
 void dio_get_worklist(struct data_in *din, struct worklist *pwl);
 void dio_get_diplstate(struct data_in *din, struct player_diplstate *pds);
@@ -97,7 +97,7 @@ void dio_put_city_map(struct data_out *dout, const char *value);
 void dio_put_tech_list(struct data_out *dout, const int *value);
 void dio_put_worklist(struct data_out *dout, const struct worklist *pwl);
 void dio_put_diplstate(struct data_out *dout,
-		       const struct player_diplstate *pds);
+                       const struct player_diplstate *pds);
 
 void dio_put_uint8_vec8(struct data_out *dout, int *values, int stop_value);
 void dio_put_uint16_vec8(struct data_out *dout, int *values, int stop_value);

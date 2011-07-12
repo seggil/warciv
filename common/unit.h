@@ -13,10 +13,10 @@
 #ifndef FC__UNIT_H
 #define FC__UNIT_H
 
-#include "mem.h"		/* unit_list_iterate_safe */
+#include "mem.h"                /* unit_list_iterate_safe */
 
 #include "fc_types.h"
-#include "terrain.h"		/* enum tile_special_type */
+#include "terrain.h"            /* enum tile_special_type */
 #include "unittype.h"
 
 struct unit_order;
@@ -49,7 +49,7 @@ enum diplomat_actions {
   DIPLOMAT_STEAL, DIPLOMAT_INCITE, SPY_POISON,
   DIPLOMAT_INVESTIGATE, SPY_SABOTAGE_UNIT,
   SPY_GET_SABOTAGE_LIST,
-  DIPLOMAT_MOVE,	/* move onto city square - only for allied cities */
+  DIPLOMAT_MOVE,        /* move onto city square - only for allied cities */
   DIPLOMAT_ANY_ACTION   /* leave this one last */
 };
 
@@ -77,22 +77,22 @@ enum unit_move_result {
 };
 
 enum add_build_city_result {
-  AB_BUILD_OK,			/* Unit OK to build city */
-  AB_ADD_OK,			/* Unit OK to add to city */
-  AB_NOT_BUILD_LOC,		/* City is not allowed to be built at
-				   this location */
-  AB_NOT_ADDABLE_UNIT,		/* Unit is not one that can be added
-				   to cities */
-  AB_NOT_BUILD_UNIT,		/* Unit is not one that can build
-				   cities */
-  AB_NO_MOVES_BUILD,		/* Unit does not have moves left to
-				   build a city */
-  AB_NO_MOVES_ADD,		/* Unit does not have moves left to
-				   add to city */
-  AB_NOT_OWNER,			/* Owner of unit is not owner of
-				   city */
-  AB_TOO_BIG,			/* City is too big to be added to */
-  AB_NO_SPACE			/* Adding takes city past limit */
+  AB_BUILD_OK,                  /* Unit OK to build city */
+  AB_ADD_OK,                    /* Unit OK to add to city */
+  AB_NOT_BUILD_LOC,             /* City is not allowed to be built at
+                                   this location */
+  AB_NOT_ADDABLE_UNIT,          /* Unit is not one that can be added
+                                   to cities */
+  AB_NOT_BUILD_UNIT,            /* Unit is not one that can build
+                                   cities */
+  AB_NO_MOVES_BUILD,            /* Unit does not have moves left to
+                                   build a city */
+  AB_NO_MOVES_ADD,              /* Unit does not have moves left to
+                                   add to city */
+  AB_NOT_OWNER,                 /* Owner of unit is not owner of
+                                   city */
+  AB_TOO_BIG,                   /* City is too big to be added to */
+  AB_NO_SPACE                   /* Adding takes city past limit */
 };
 
 enum unit_upgrade_result {
@@ -175,8 +175,8 @@ struct unit {
   bool is_sleeping;
   struct {
     int length, index;
-    bool repeat;	/* The path is to be repeated on completion. */
-    bool vigilant;	/* Orders should be cleared if an enemy is met. */
+    bool repeat;        /* The path is to be repeated on completion. */
+    bool vigilant;      /* Orders should be cleared if an enemy is met. */
     struct unit_order *list;
   } orders;
 };
@@ -220,11 +220,11 @@ void unit_list_sort_ord_map(struct unit_list *This);
 void unit_list_sort_ord_city(struct unit_list *This);
 
 bool diplomat_can_do_action(struct unit *pdiplomat,
-			    enum diplomat_actions action,
-			    const struct tile *ptile);
+                            enum diplomat_actions action,
+                            const struct tile *ptile);
 bool is_diplomat_action_available(struct unit *pdiplomat,
-				  enum diplomat_actions action,
-				  const struct tile *ptile);
+                                  enum diplomat_actions action,
+                                  const struct tile *ptile);
 
 int unit_move_rate(struct unit *punit);
 bool unit_can_help_build_wonder(struct unit *punit, struct city *pcity);
@@ -244,24 +244,24 @@ const char *get_activity_text(enum unit_activity activity);
 bool can_unit_continue_current_activity(struct unit *punit);
 bool can_unit_do_activity(struct unit *punit, enum unit_activity activity);
 bool can_unit_do_activity_targeted(struct unit *punit,
-				   enum unit_activity activity,
-				   enum tile_special_type target);
+                                   enum unit_activity activity,
+                                   enum tile_special_type target);
 bool can_unit_do_activity_targeted_at(struct unit *punit,
-				      enum unit_activity activity,
-				      enum tile_special_type target,
-				      const struct tile *ptile);
+                                      enum unit_activity activity,
+                                      enum tile_special_type target,
+                                      const struct tile *ptile);
 void set_unit_activity(struct unit *punit, enum unit_activity new_activity);
 void set_unit_activity_targeted(struct unit *punit,
-				enum unit_activity new_activity,
-				enum tile_special_type new_target);
+                                enum unit_activity new_activity,
+                                enum tile_special_type new_target);
 int get_activity_rate(struct unit *punit);
 int get_activity_rate_this_turn(struct unit *punit);
 int get_turns_for_activity_at(struct unit *punit,
-			      enum unit_activity activity,
-			      const struct tile *ptile);
+                              enum unit_activity activity,
+                              const struct tile *ptile);
 bool can_unit_do_auto(struct unit *punit);
 bool is_unit_activity_on_tile(enum unit_activity activity,
-			      const struct tile *ptile);
+                              const struct tile *ptile);
 enum tile_special_type get_unit_tile_pillage_set(const struct tile *ptile);
 bool is_attack_unit(struct unit *punit);
 bool is_military_unit(struct unit *punit);           /* !set !dip !cara */
@@ -282,50 +282,50 @@ enum add_build_city_result test_unit_add_or_build_city(struct unit *punit);
 
 const char *unit_activity_text(struct unit *punit);
 int ground_unit_transporter_capacity(const struct tile *ptile,
-				     struct player *pplayer);
+                                     struct player *pplayer);
 int get_transporter_capacity(struct unit *punit);
 bool is_ground_units_transport(struct unit *punit);
 bool is_air_units_transport(struct unit *punit);
 int missile_carrier_capacity(const struct tile *ptile,
-			     struct player *pplayer,
-			     bool count_units_with_extra_fuel);
+                             struct player *pplayer,
+                             bool count_units_with_extra_fuel);
 int airunit_carrier_capacity(const struct tile *ptile,
-			     struct player *pplayer,
-			     bool count_units_with_extra_fuel);
+                             struct player *pplayer,
+                             bool count_units_with_extra_fuel);
 
 struct player *unit_owner(struct unit *punit);
 
 struct unit *is_allied_unit_tile(const struct tile *ptile,
-				 struct player *pplayer);
+                                 struct player *pplayer);
 struct unit *is_enemy_unit_tile(const struct tile *ptile,
-				struct player *pplayer);
+                                struct player *pplayer);
 struct unit *is_non_allied_unit_tile(const struct tile *ptile,
-				     struct player *pplayer);
+                                     struct player *pplayer);
 struct unit *is_non_attack_unit_tile(const struct tile *ptile,
-				     struct player *pplayer);
+                                     struct player *pplayer);
 
 int unit_loss_pct(struct player *pplayer, const struct tile *ptile,
-		  struct unit *punit);
+                  struct unit *punit);
 int base_trireme_loss_pct(struct player *pplayer, struct unit *punit);
 int base_unsafe_terrain_loss_pct(struct player *pplayer,
-				 struct unit *punit);
+                                 struct unit *punit);
 
 bool is_my_zoc(struct player *unit_owner, const struct tile *ptile);
 bool unit_being_aggressive(struct unit *punit);
 bool can_step_taken_wrt_to_zoc(Unit_Type_id type, struct player *unit_owner,
-			       const struct tile *src_tile,
-			       const struct tile *dst_tile);
+                               const struct tile *src_tile,
+                               const struct tile *dst_tile);
 bool can_unit_exist_at_tile(struct unit *punit, const struct tile *ptile);
 bool can_unit_survive_at_tile(struct unit *punit, const struct tile *ptile);
 bool can_unit_move_to_tile(struct unit *punit, const struct tile *ptile,
-			   bool igzoc);
+                           bool igzoc);
 bool can_unit_do_air_patrol(struct unit *punit);
 enum unit_move_result test_unit_move_to_tile(Unit_Type_id type,
-					     struct player *unit_owner,
-					     enum unit_activity activity,
-					     const struct tile *src_tile,
-					     const struct tile *dst_tile,
-					     bool igzoc);
+                                             struct player *unit_owner,
+                                             enum unit_activity activity,
+                                             const struct tile *src_tile,
+                                             const struct tile *dst_tile,
+                                             bool igzoc);
 bool unit_type_really_ignores_zoc(Unit_Type_id type);
 bool zoc_ok_move(struct unit *punit, const struct tile *ptile);
 
@@ -338,10 +338,10 @@ void free_unit_orders(struct unit *punit);
 
 int get_transporter_occupancy(struct unit *ptrans);
 struct unit *find_transporter_for_unit(struct unit *pcargo,
-				       const struct tile *ptile);
+                                       const struct tile *ptile);
 
 enum unit_upgrade_result test_unit_upgrade(struct unit *punit, bool is_free);
 enum unit_upgrade_result get_unit_upgrade_info(char *buf, size_t bufsz,
-					       struct unit *punit);
+                                               struct unit *punit);
 
 #endif  /* FC__UNIT_H */

@@ -7,19 +7,19 @@
  ****************************************************************************/
 
 struct packet_processing_started {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_processing_finished {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_freeze_hint {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_thaw_hint {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_server_join_req {
@@ -49,7 +49,7 @@ struct packet_authentication_reply {
 };
 
 struct packet_server_shutdown {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_nation_unavailable {
@@ -57,7 +57,7 @@ struct packet_nation_unavailable {
 };
 
 struct packet_select_races {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_nation_select_req {
@@ -68,7 +68,7 @@ struct packet_nation_select_req {
 };
 
 struct packet_nation_select_ok {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_game_state {
@@ -347,7 +347,7 @@ struct packet_player_info {
 };
 
 struct packet_player_turn_done {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_player_rates {
@@ -369,7 +369,7 @@ struct packet_player_tech_goal {
 };
 
 struct packet_player_attribute_block {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_player_attribute_chunk {
@@ -650,19 +650,19 @@ struct packet_conn_ping_info {
 };
 
 struct packet_conn_ping {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_conn_pong {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_before_new_year {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_start_turn {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_new_year {
@@ -671,15 +671,15 @@ struct packet_new_year {
 };
 
 struct packet_freeze_client {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_thaw_client {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_spaceship_launch {
-  char __dummy;			/* to avoid malloc(0); */
+  char __dummy;                 /* to avoid malloc(0); */
 };
 
 struct packet_spaceship_place {

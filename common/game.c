@@ -154,9 +154,9 @@ void game_remove_unit(struct unit *punit)
 
   freelog(LOG_DEBUG, "game_remove_unit %d", punit->id);
   freelog(LOG_DEBUG, "removing unit %d, %s %s (%d %d) hcity %d",
-	  punit->id, get_nation_name(unit_owner(punit)->nation),
-	  unit_name(punit->type), punit->tile->x, punit->tile->y,
-	  punit->homecity);
+          punit->id, get_nation_name(unit_owner(punit)->nation),
+          unit_name(punit->type), punit->tile->x, punit->tile->y,
+          punit->homecity);
 
   pcity = player_find_city_by_id(unit_owner(punit), punit->homecity);
   if (pcity) {
@@ -165,8 +165,8 @@ void game_remove_unit(struct unit *punit)
 
   if (pcity) {
     freelog(LOG_DEBUG, "home city %s, %s, (%d %d)", pcity->name,
-	    get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
-	    pcity->tile->y);
+            get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
+            pcity->tile->y);
   }
 
   unit_list_unlink(punit->tile->units, punit);
@@ -187,8 +187,8 @@ void game_remove_city(struct city *pcity)
 {
   freelog(LOG_DEBUG, "game_remove_city %d", pcity->id);
   freelog(LOG_DEBUG, "removing city %s, %s, (%d %d)", pcity->name,
-	   get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
-	  pcity->tile->y);
+           get_nation_name(city_owner(pcity)->nation), pcity->tile->x,
+          pcity->tile->y);
 
   check_removed_city(pcity);
   city_map_checked_iterate(pcity->tile, x, y, map_tile) {
@@ -493,19 +493,19 @@ int game_next_year(int year)
       Tech_Type_id t = improvement_types[impr].tech_req;
 
       if (!improvement_exists(impr)) {
-	continue;
+        continue;
       }
       if (building_has_effect(impr, EFT_SS_STRUCTURAL)
-	  && tech_exists(t) && game.info.global_advances[t] != 0) {
-	space_parts[0] = 1;
+          && tech_exists(t) && game.info.global_advances[t] != 0) {
+        space_parts[0] = 1;
       }
       if (building_has_effect(impr, EFT_SS_COMPONENT)
-	  && tech_exists(t) && game.info.global_advances[t] != 0) {
-	space_parts[1] = 1;
+          && tech_exists(t) && game.info.global_advances[t] != 0) {
+        space_parts[1] = 1;
       }
       if (building_has_effect(impr, EFT_SS_MODULE)
-	  && tech_exists(t) && game.info.global_advances[t] != 0) {
-	space_parts[2] = 1;
+          && tech_exists(t) && game.info.global_advances[t] != 0) {
+        space_parts[2] = 1;
       }
     } impr_type_iterate_end;
   }
@@ -679,12 +679,12 @@ void translate_data_names(void)
     struct tile_type *tthis = get_tile_type(i);
 
     tthis->terrain_name = ((strcmp(tthis->terrain_name_orig, "") != 0)
-			   ? Q_(tthis->terrain_name_orig) : "");
+                           ? Q_(tthis->terrain_name_orig) : "");
 
     tthis->special_1_name = ((strcmp(tthis->special_1_name_orig, "") != 0)
-			     ? Q_(tthis->special_1_name_orig) : "");
+                             ? Q_(tthis->special_1_name_orig) : "");
     tthis->special_2_name = ((strcmp(tthis->special_2_name_orig, "") != 0)
-			     ? Q_(tthis->special_2_name_orig) : "");
+                             ? Q_(tthis->special_2_name_orig) : "");
   } terrain_type_iterate_end;
 
   government_iterate(tthis) {
@@ -792,7 +792,7 @@ enum game_types game_get_type_from_string(const char *s)
   for (i = 0; i < GT_NUM_TYPES; i++) {
 #ifdef ENABLE_NLS
     if (0 == mystrcasecmp(s, game_type_strings[i])
-	|| 0 == mystrcasecmp(s, _(game_type_strings[i]))) {
+        || 0 == mystrcasecmp(s, _(game_type_strings[i]))) {
 #else
     if (0 == mystrcasecmp(s, game_type_strings[i])) {
 #endif /* ENABLE_NLS */

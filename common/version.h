@@ -14,7 +14,7 @@
 #define FC__VERSION_H
 
 #ifdef HAVE_CONFIG_H
-#ifndef FC_CONFIG_H		/* this should be defined in config.h */
+#ifndef FC_CONFIG_H             /* this should be defined in config.h */
 #error Files including versions.h should also include config.h directly
 #endif
 #endif
@@ -22,35 +22,35 @@
 /* The following is for the benefit (?) of non-configure make methods. */
 /* !! These must be the same as their counterparts in configure.in. !! */
 #ifndef MAJOR_VERSION
-#define MAJOR_VERSION		2
+#define MAJOR_VERSION           2
 #endif
 #ifndef MINOR_VERSION
-#define MINOR_VERSION		0
+#define MINOR_VERSION           0
 #endif
 #ifndef PATCH_VERSION
-#define PATCH_VERSION		10
+#define PATCH_VERSION           10
 #endif
 #ifndef WARCLIENT_VERSION
-#define WARCLIENT_VERSION	5
+#define WARCLIENT_VERSION       5
 #endif
 #ifndef VERSION_LABEL
-#define VERSION_LABEL		""
+#define VERSION_LABEL           ""
 #endif
 #ifndef IS_DEVEL_VERSION
-#define IS_DEVEL_VERSION	0
+#define IS_DEVEL_VERSION        0
 #endif
 #ifndef IS_BETA_VERSION
-#define IS_BETA_VERSION		0
+#define IS_BETA_VERSION         0
 #endif
 
 /* This is only used if IS_BETA_VERSION is true. */
 #ifndef NEXT_STABLE_VERSION
-#define NEXT_STABLE_VERSION	"2.0.3"
+#define NEXT_STABLE_VERSION     "2.0.3"
 #endif
 /* This is only used in version.c, and only if IS_BETA_VERSION is true.
    The month[] array is defined in version.c (index: 1==Jan, 2==Feb, ...). */
 #ifndef NEXT_RELEASE_MONTH
-#define NEXT_RELEASE_MONTH	(month[7])
+#define NEXT_RELEASE_MONTH      (month[7])
 #endif
 
 #define VER_STRINGIFY1(x) #x
@@ -64,8 +64,8 @@
 /* NB: You should almost always use the function
  * warclient_name_version() instead of this macro. */
 #define WARCLIENT_VERSION_STRING VER_STRINGIFY(MINOR_VERSION) "." \
-				 VER_STRINGIFY(PATCH_VERSION) "." \
-				 VER_STRINGIFY(WARCLIENT_VERSION)
+                                 VER_STRINGIFY(PATCH_VERSION) "." \
+                                 VER_STRINGIFY(WARCLIENT_VERSION)
 
 /* version informational strings */
 const char *freeciv_name_version(void);

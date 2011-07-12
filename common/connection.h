@@ -13,7 +13,7 @@
 #ifndef FC__CONNECTION_H
 #define FC__CONNECTION_H
 
-#include <time.h>	/* time_t */
+#include <time.h>       /* time_t */
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -29,7 +29,7 @@
   Includes cmdlevel stuff, which is connection-based.
 ***************************************************************************/
 
-#include "shared.h"		/* MAX_LEN_ADDR, bool type */
+#include "shared.h"             /* MAX_LEN_ADDR, bool type */
 
 #include "fc_types.h"
 
@@ -110,7 +110,7 @@ struct connection;
     TYPED_LIST_ITERATE(struct connection, connlist, pconn)
 #define conn_list_iterate_end  LIST_ITERATE_END
 
-#define global_observers_iterate(pconn)		   \
+#define global_observers_iterate(pconn)            \
     conn_list_iterate(game.est_connections, pconn) \
       if (conn_is_global_observer(pconn)) {
 #define global_observers_iterate_end } conn_list_iterate_end
@@ -166,12 +166,12 @@ bool conn_pattern_match(struct conn_pattern *cp, struct connection *pconn);
   at the other end of a network connection.
 ***********************************************************/
 struct connection {
-  int id;			/* used for server/client communication */
+  int id;                       /* used for server/client communication */
   int sock;
   bool used;
-  bool established;		/* have negotiated initial packets */
-  struct player *player;	/* NULL for connections not yet associated
-				   with a specific player */
+  bool established;             /* have negotiated initial packets */
+  struct player *player;        /* NULL for connections not yet associated
+                                   with a specific player */
   /*
    * connection is "observer", not controller; may be observing
    * specific player, or all (implementation incomplete).
@@ -214,7 +214,7 @@ struct connection {
    * circular dependency this is impossible.
    */
   void (*incoming_packet_notify) (struct connection * pc,
-				  int packet_type, int size);
+                                  int packet_type, int size);
 
   /*
    * Called before a packet is sent. The packet_type argument should
@@ -222,8 +222,8 @@ struct connection {
    * this is impossible.
    */
   void (*outgoing_packet_notify) (struct connection * pc,
-				  int packet_type, int size,
-				  int request_id);
+                                  int packet_type, int size,
+                                  int request_id);
   struct {
     struct hash_table **sent;
     struct hash_table **received;
@@ -245,7 +245,7 @@ struct connection {
     /* Specific client datas. */
     struct {
       void (*notify_of_writable_data) (struct connection *pc,
-				       bool data_available_and_socket_full);
+                                       bool data_available_and_socket_full);
 
       /*
        * Increases for every packet send to the server.

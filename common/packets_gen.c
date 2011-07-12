@@ -450,7 +450,7 @@ void *get_packet_from_connection_helper(struct connection *pc,
 
   default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
-	    type, conn_description(pc));
+            type, conn_description(pc));
     remove_packet_from_buffer(pc->buffer);
     return NULL;
   };
@@ -901,8 +901,8 @@ struct packet_processing_started *receive_packet_processing_started(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -921,8 +921,8 @@ int send_packet_processing_started(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -971,8 +971,8 @@ struct packet_processing_finished *receive_packet_processing_finished(struct con
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -991,8 +991,8 @@ int send_packet_processing_finished(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1041,8 +1041,8 @@ struct packet_freeze_hint *receive_packet_freeze_hint(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1061,8 +1061,8 @@ int send_packet_freeze_hint(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1118,8 +1118,8 @@ struct packet_thaw_hint *receive_packet_thaw_hint(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1138,8 +1138,8 @@ int send_packet_thaw_hint(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1225,8 +1225,8 @@ struct packet_server_join_req *receive_packet_server_join_req(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1245,8 +1245,8 @@ int send_packet_server_join_req(struct connection *pc, const struct packet_serve
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1327,8 +1327,8 @@ struct packet_server_join_reply *receive_packet_server_join_reply(struct connect
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1347,8 +1347,8 @@ int send_packet_server_join_reply(struct connection *pc, const struct packet_ser
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1490,8 +1490,8 @@ struct packet_authentication_req *receive_packet_authentication_req(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1510,8 +1510,8 @@ int send_packet_authentication_req(struct connection *pc, const struct packet_au
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1648,8 +1648,8 @@ struct packet_authentication_reply *receive_packet_authentication_reply(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1668,8 +1668,8 @@ int send_packet_authentication_reply(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1718,8 +1718,8 @@ struct packet_server_shutdown *receive_packet_server_shutdown(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1738,8 +1738,8 @@ int send_packet_server_shutdown(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1878,8 +1878,8 @@ struct packet_nation_unavailable *receive_packet_nation_unavailable(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1898,8 +1898,8 @@ int send_packet_nation_unavailable(struct connection *pc, const struct packet_na
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1955,8 +1955,8 @@ struct packet_select_races *receive_packet_select_races(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1975,8 +1975,8 @@ int send_packet_select_races(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -2146,8 +2146,8 @@ struct packet_nation_select_req *receive_packet_nation_select_req(struct connect
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -2166,8 +2166,8 @@ int send_packet_nation_select_req(struct connection *pc, const struct packet_nat
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -2228,8 +2228,8 @@ struct packet_nation_select_ok *receive_packet_nation_select_ok(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -2248,8 +2248,8 @@ int send_packet_nation_select_ok(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -2390,8 +2390,8 @@ struct packet_game_state *receive_packet_game_state(struct connection *pc, enum 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -2410,8 +2410,8 @@ int send_packet_game_state(struct connection *pc, const struct packet_game_state
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -3198,8 +3198,8 @@ struct packet_endgame_report *receive_packet_endgame_report(struct connection *p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -3218,8 +3218,8 @@ int send_packet_endgame_report(struct connection *pc, const struct packet_endgam
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -3470,8 +3470,8 @@ struct packet_tile_info *receive_packet_tile_info(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -3490,8 +3490,8 @@ int send_packet_tile_info(struct connection *pc, const struct packet_tile_info *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -4132,8 +4132,8 @@ struct packet_game_info *receive_packet_game_info(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -4152,8 +4152,8 @@ int send_packet_game_info(struct connection *pc, const struct packet_game_info *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -4315,8 +4315,8 @@ struct packet_map_info *receive_packet_map_info(struct connection *pc, enum pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -4335,8 +4335,8 @@ int send_packet_map_info(struct connection *pc, const struct packet_map_info *pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -4490,8 +4490,8 @@ struct packet_nuke_tile_info *receive_packet_nuke_tile_info(struct connection *p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -4510,8 +4510,8 @@ int send_packet_nuke_tile_info(struct connection *pc, const struct packet_nuke_t
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -4742,8 +4742,8 @@ struct packet_chat_msg *receive_packet_chat_msg(struct connection *pc, enum pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -4762,8 +4762,8 @@ int send_packet_chat_msg(struct connection *pc, const struct packet_chat_msg *pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -4923,8 +4923,8 @@ struct packet_chat_msg_req *receive_packet_chat_msg_req(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -4943,8 +4943,8 @@ int send_packet_chat_msg_req(struct connection *pc, const struct packet_chat_msg
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -5085,8 +5085,8 @@ struct packet_city_remove *receive_packet_city_remove(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -5105,8 +5105,8 @@ int send_packet_city_remove(struct connection *pc, const struct packet_city_remo
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -7027,8 +7027,8 @@ struct packet_city_info *receive_packet_city_info(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -7048,8 +7048,8 @@ int send_packet_city_info(struct connection *pc, const struct packet_city_info *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -7317,8 +7317,8 @@ struct packet_city_short_info *receive_packet_city_short_info(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -7337,8 +7337,8 @@ int send_packet_city_short_info(struct connection *pc, const struct packet_city_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -7492,8 +7492,8 @@ struct packet_city_sell *receive_packet_city_sell(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -7512,8 +7512,8 @@ int send_packet_city_sell(struct connection *pc, const struct packet_city_sell *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -7655,8 +7655,8 @@ struct packet_city_buy *receive_packet_city_buy(struct connection *pc, enum pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -7675,8 +7675,8 @@ int send_packet_city_buy(struct connection *pc, const struct packet_city_buy *pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -7838,8 +7838,8 @@ struct packet_city_change *receive_packet_city_change(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -7858,8 +7858,8 @@ int send_packet_city_change(struct connection *pc, const struct packet_city_chan
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -8012,8 +8012,8 @@ struct packet_city_worklist *receive_packet_city_worklist(struct connection *pc,
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -8032,8 +8032,8 @@ int send_packet_city_worklist(struct connection *pc, const struct packet_city_wo
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -8205,8 +8205,8 @@ struct packet_city_make_specialist *receive_packet_city_make_specialist(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -8225,8 +8225,8 @@ int send_packet_city_make_specialist(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -8399,8 +8399,8 @@ struct packet_city_make_worker *receive_packet_city_make_worker(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -8419,8 +8419,8 @@ int send_packet_city_make_worker(struct connection *pc, const struct packet_city
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -8593,8 +8593,8 @@ struct packet_city_change_specialist *receive_packet_city_change_specialist(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -8613,8 +8613,8 @@ int send_packet_city_change_specialist(struct connection *pc, const struct packe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -8767,8 +8767,8 @@ struct packet_city_rename *receive_packet_city_rename(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -8787,8 +8787,8 @@ int send_packet_city_rename(struct connection *pc, const struct packet_city_rena
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -8945,8 +8945,8 @@ struct packet_city_options_req *receive_packet_city_options_req(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -8965,8 +8965,8 @@ int send_packet_city_options_req(struct connection *pc, const struct packet_city
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -9108,8 +9108,8 @@ struct packet_city_refresh *receive_packet_city_refresh(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -9128,8 +9128,8 @@ int send_packet_city_refresh(struct connection *pc, const struct packet_city_ref
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -9270,8 +9270,8 @@ struct packet_city_incite_inq *receive_packet_city_incite_inq(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -9290,8 +9290,8 @@ int send_packet_city_incite_inq(struct connection *pc, const struct packet_city_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -9447,8 +9447,8 @@ struct packet_city_incite_info *receive_packet_city_incite_info(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -9467,8 +9467,8 @@ int send_packet_city_incite_info(struct connection *pc, const struct packet_city
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -9610,8 +9610,8 @@ struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req(
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -9630,8 +9630,8 @@ int send_packet_city_name_suggestion_req(struct connection *pc, const struct pac
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -9782,8 +9782,8 @@ struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_inf
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -9802,8 +9802,8 @@ int send_packet_city_name_suggestion_info(struct connection *pc, const struct pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -9987,8 +9987,8 @@ struct packet_city_sabotage_list *receive_packet_city_sabotage_list(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -10007,8 +10007,8 @@ int send_packet_city_sabotage_list(struct connection *pc, const struct packet_ci
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -10147,8 +10147,8 @@ struct packet_player_remove *receive_packet_player_remove(struct connection *pc,
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -10167,8 +10167,8 @@ int send_packet_player_remove(struct connection *pc, const struct packet_player_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -12489,8 +12489,8 @@ struct packet_player_info *receive_packet_player_info(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -12512,8 +12512,8 @@ int send_packet_player_info(struct connection *pc, const struct packet_player_in
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -12565,8 +12565,8 @@ struct packet_player_turn_done *receive_packet_player_turn_done(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -12585,8 +12585,8 @@ int send_packet_player_turn_done(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -12748,8 +12748,8 @@ struct packet_player_rates *receive_packet_player_rates(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -12768,8 +12768,8 @@ int send_packet_player_rates(struct connection *pc, const struct packet_player_r
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -12912,8 +12912,8 @@ struct packet_player_change_government *receive_packet_player_change_government(
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -12932,8 +12932,8 @@ int send_packet_player_change_government(struct connection *pc, const struct pac
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -13074,8 +13074,8 @@ struct packet_player_research *receive_packet_player_research(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -13094,8 +13094,8 @@ int send_packet_player_research(struct connection *pc, const struct packet_playe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -13236,8 +13236,8 @@ struct packet_player_tech_goal *receive_packet_player_tech_goal(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -13256,8 +13256,8 @@ int send_packet_player_tech_goal(struct connection *pc, const struct packet_play
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -13315,8 +13315,8 @@ struct packet_player_attribute_block *receive_packet_player_attribute_block(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -13335,8 +13335,8 @@ int send_packet_player_attribute_block(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -13529,8 +13529,8 @@ struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -13546,8 +13546,8 @@ int send_packet_player_attribute_chunk(struct connection *pc, const struct packe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -13676,8 +13676,8 @@ struct packet_unit_remove *receive_packet_unit_remove(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -13696,8 +13696,8 @@ int send_packet_unit_remove(struct connection *pc, const struct packet_unit_remo
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -15034,8 +15034,8 @@ struct packet_unit_info *receive_packet_unit_info(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -15055,8 +15055,8 @@ int send_packet_unit_info(struct connection *pc, const struct packet_unit_info *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -15392,8 +15392,8 @@ struct packet_unit_short_info *receive_packet_unit_short_info(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -15412,8 +15412,8 @@ int send_packet_unit_short_info(struct connection *pc, const struct packet_unit_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -15603,8 +15603,8 @@ struct packet_unit_combat_info *receive_packet_unit_combat_info(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -15623,8 +15623,8 @@ int send_packet_unit_combat_info(struct connection *pc, const struct packet_unit
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -15793,8 +15793,8 @@ struct packet_unit_move *receive_packet_unit_move(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -15813,8 +15813,8 @@ int send_packet_unit_move(struct connection *pc, const struct packet_unit_move *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -15967,8 +15967,8 @@ struct packet_unit_build_city *receive_packet_unit_build_city(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -15987,8 +15987,8 @@ int send_packet_unit_build_city(struct connection *pc, const struct packet_unit_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -16130,8 +16130,8 @@ struct packet_unit_disband *receive_packet_unit_disband(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -16150,8 +16150,8 @@ int send_packet_unit_disband(struct connection *pc, const struct packet_unit_dis
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -16307,8 +16307,8 @@ struct packet_unit_change_homecity *receive_packet_unit_change_homecity(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -16327,8 +16327,8 @@ int send_packet_unit_change_homecity(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -16470,8 +16470,8 @@ struct packet_unit_establish_trade *receive_packet_unit_establish_trade(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -16490,8 +16490,8 @@ int send_packet_unit_establish_trade(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -16632,8 +16632,8 @@ struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -16652,8 +16652,8 @@ int send_packet_unit_help_build_wonder(struct connection *pc, const struct packe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -16824,8 +16824,8 @@ struct packet_unit_goto *receive_packet_unit_goto(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -16844,8 +16844,8 @@ int send_packet_unit_goto(struct connection *pc, const struct packet_unit_goto *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -17180,8 +17180,8 @@ struct packet_unit_orders *receive_packet_unit_orders(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -17200,8 +17200,8 @@ int send_packet_unit_orders(struct connection *pc, const struct packet_unit_orde
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -17333,8 +17333,8 @@ struct packet_unit_auto *receive_packet_unit_auto(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -17353,8 +17353,8 @@ int send_packet_unit_auto(struct connection *pc, const struct packet_unit_auto *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -17510,8 +17510,8 @@ struct packet_unit_load *receive_packet_unit_load(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -17530,8 +17530,8 @@ int send_packet_unit_load(struct connection *pc, const struct packet_unit_load *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -17688,8 +17688,8 @@ struct packet_unit_unload *receive_packet_unit_unload(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -17708,8 +17708,8 @@ int send_packet_unit_unload(struct connection *pc, const struct packet_unit_unlo
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -17851,8 +17851,8 @@ struct packet_unit_upgrade *receive_packet_unit_upgrade(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -17871,8 +17871,8 @@ int send_packet_unit_upgrade(struct connection *pc, const struct packet_unit_upg
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -18013,8 +18013,8 @@ struct packet_unit_nuke *receive_packet_unit_nuke(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -18033,8 +18033,8 @@ int send_packet_unit_nuke(struct connection *pc, const struct packet_unit_nuke *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -18205,8 +18205,8 @@ struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -18225,8 +18225,8 @@ int send_packet_unit_paradrop_to(struct connection *pc, const struct packet_unit
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -18384,8 +18384,8 @@ struct packet_unit_airlift *receive_packet_unit_airlift(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -18404,8 +18404,8 @@ int send_packet_unit_airlift(struct connection *pc, const struct packet_unit_air
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -18547,8 +18547,8 @@ struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq(struct connection *p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -18567,8 +18567,8 @@ int send_packet_unit_bribe_inq(struct connection *pc, const struct packet_unit_b
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -18724,8 +18724,8 @@ struct packet_unit_bribe_info *receive_packet_unit_bribe_info(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -18744,8 +18744,8 @@ int send_packet_unit_bribe_info(struct connection *pc, const struct packet_unit_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -18887,8 +18887,8 @@ struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade(struct connect
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -18907,8 +18907,8 @@ int send_packet_unit_type_upgrade(struct connection *pc, const struct packet_uni
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -19094,8 +19094,8 @@ struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -19114,8 +19114,8 @@ int send_packet_unit_diplomat_action(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -19274,8 +19274,8 @@ struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dia
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -19294,8 +19294,8 @@ int send_packet_unit_diplomat_popup_dialog(struct connection *pc, const struct p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -19484,8 +19484,8 @@ struct packet_unit_change_activity *receive_packet_unit_change_activity(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -19504,8 +19504,8 @@ int send_packet_unit_change_activity(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -19648,8 +19648,8 @@ struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -19668,8 +19668,8 @@ int send_packet_diplomacy_init_meeting_req(struct connection *pc, const struct p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -19825,8 +19825,8 @@ struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -19845,8 +19845,8 @@ int send_packet_diplomacy_init_meeting(struct connection *pc, const struct packe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -20005,8 +20005,8 @@ struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meet
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -20025,8 +20025,8 @@ int send_packet_diplomacy_cancel_meeting_req(struct connection *pc, const struct
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -20182,8 +20182,8 @@ struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting(
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -20202,8 +20202,8 @@ int send_packet_diplomacy_cancel_meeting(struct connection *pc, const struct pac
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -20407,8 +20407,8 @@ struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_claus
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -20427,8 +20427,8 @@ int send_packet_diplomacy_create_clause_req(struct connection *pc, const struct 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -20617,8 +20617,8 @@ struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause(st
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -20637,8 +20637,8 @@ int send_packet_diplomacy_create_clause(struct connection *pc, const struct pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -20846,8 +20846,8 @@ struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_claus
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -20866,8 +20866,8 @@ int send_packet_diplomacy_remove_clause_req(struct connection *pc, const struct 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -21056,8 +21056,8 @@ struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause(st
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -21076,8 +21076,8 @@ int send_packet_diplomacy_remove_clause(struct connection *pc, const struct pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -21240,8 +21240,8 @@ struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treat
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -21260,8 +21260,8 @@ int send_packet_diplomacy_accept_treaty_req(struct connection *pc, const struct 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -21414,8 +21414,8 @@ struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty(st
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -21434,8 +21434,8 @@ int send_packet_diplomacy_accept_treaty(struct connection *pc, const struct pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -21611,8 +21611,8 @@ struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact(struct
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -21631,8 +21631,8 @@ int send_packet_diplomacy_cancel_pact(struct connection *pc, const struct packet
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -21784,8 +21784,8 @@ struct packet_page_msg *receive_packet_page_msg(struct connection *pc, enum pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -21804,8 +21804,8 @@ int send_packet_page_msg(struct connection *pc, const struct packet_page_msg *pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -21944,8 +21944,8 @@ struct packet_report_req *receive_packet_report_req(struct connection *pc, enum 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -21964,8 +21964,8 @@ int send_packet_report_req(struct connection *pc, const struct packet_report_req
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -22197,8 +22197,8 @@ struct packet_conn_info *receive_packet_conn_info(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -22217,8 +22217,8 @@ int send_packet_conn_info(struct connection *pc, const struct packet_conn_info *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -22631,8 +22631,8 @@ struct packet_conn_ping_info *receive_packet_conn_ping_info(struct connection *p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -22652,8 +22652,8 @@ int send_packet_conn_ping_info(struct connection *pc, const struct packet_conn_p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -22710,8 +22710,8 @@ struct packet_conn_ping *receive_packet_conn_ping(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -22730,8 +22730,8 @@ int send_packet_conn_ping(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -22780,8 +22780,8 @@ struct packet_conn_pong *receive_packet_conn_pong(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -22800,8 +22800,8 @@ int send_packet_conn_pong(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -22850,8 +22850,8 @@ struct packet_before_new_year *receive_packet_before_new_year(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -22870,8 +22870,8 @@ int send_packet_before_new_year(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -22927,8 +22927,8 @@ struct packet_start_turn *receive_packet_start_turn(struct connection *pc, enum 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -22947,8 +22947,8 @@ int send_packet_start_turn(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -23102,8 +23102,8 @@ struct packet_new_year *receive_packet_new_year(struct connection *pc, enum pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -23122,8 +23122,8 @@ int send_packet_new_year(struct connection *pc, const struct packet_new_year *pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -23179,8 +23179,8 @@ struct packet_freeze_client *receive_packet_freeze_client(struct connection *pc,
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -23199,8 +23199,8 @@ int send_packet_freeze_client(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -23256,8 +23256,8 @@ struct packet_thaw_client *receive_packet_thaw_client(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -23276,8 +23276,8 @@ int send_packet_thaw_client(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -23333,8 +23333,8 @@ struct packet_spaceship_launch *receive_packet_spaceship_launch(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -23353,8 +23353,8 @@ int send_packet_spaceship_launch(struct connection *pc)
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -23501,8 +23501,8 @@ struct packet_spaceship_place *receive_packet_spaceship_place(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -23521,8 +23521,8 @@ int send_packet_spaceship_place(struct connection *pc, const struct packet_space
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -23927,8 +23927,8 @@ struct packet_spaceship_info *receive_packet_spaceship_info(struct connection *p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -23947,8 +23947,8 @@ int send_packet_spaceship_info(struct connection *pc, const struct packet_spaces
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -24633,8 +24633,8 @@ struct packet_ruleset_unit *receive_packet_ruleset_unit(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -24653,8 +24653,8 @@ int send_packet_ruleset_unit(struct connection *pc, const struct packet_ruleset_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -25325,8 +25325,8 @@ struct packet_ruleset_game *receive_packet_ruleset_game(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -25345,8 +25345,8 @@ int send_packet_ruleset_game(struct connection *pc, const struct packet_ruleset_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -25535,8 +25535,8 @@ struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -25555,8 +25555,8 @@ int send_packet_ruleset_government_ruler_title(struct connection *pc, const stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -25836,8 +25836,8 @@ struct packet_ruleset_tech *receive_packet_ruleset_tech(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -25856,8 +25856,8 @@ int send_packet_ruleset_tech(struct connection *pc, const struct packet_ruleset_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -26636,8 +26636,8 @@ struct packet_ruleset_government *receive_packet_ruleset_government(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -26656,8 +26656,8 @@ int send_packet_ruleset_government(struct connection *pc, const struct packet_ru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -27070,8 +27070,8 @@ struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control(st
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -27090,8 +27090,8 @@ int send_packet_ruleset_terrain_control(struct connection *pc, const struct pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -27422,8 +27422,8 @@ struct packet_ruleset_nation *receive_packet_ruleset_nation(struct connection *p
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -27442,8 +27442,8 @@ int send_packet_ruleset_nation(struct connection *pc, const struct packet_rulese
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -27662,8 +27662,8 @@ struct packet_ruleset_city *receive_packet_ruleset_city(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -27682,8 +27682,8 @@ int send_packet_ruleset_city(struct connection *pc, const struct packet_ruleset_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -28248,8 +28248,8 @@ struct packet_ruleset_building *receive_packet_ruleset_building(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -28268,8 +28268,8 @@ int send_packet_ruleset_building(struct connection *pc, const struct packet_rule
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -28908,8 +28908,8 @@ struct packet_ruleset_terrain *receive_packet_ruleset_terrain(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -28928,8 +28928,8 @@ int send_packet_ruleset_terrain(struct connection *pc, const struct packet_rules
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -29423,8 +29423,8 @@ struct packet_ruleset_control *receive_packet_ruleset_control(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -29443,8 +29443,8 @@ int send_packet_ruleset_control(struct connection *pc, const struct packet_rules
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -29676,8 +29676,8 @@ struct packet_single_want_hack_req *receive_packet_single_want_hack_req(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -29697,8 +29697,8 @@ int send_packet_single_want_hack_req(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -29822,8 +29822,8 @@ struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -29842,8 +29842,8 @@ int send_packet_single_want_hack_reply(struct connection *pc, const struct packe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -30240,8 +30240,8 @@ struct packet_game_load *receive_packet_game_load(struct connection *pc, enum pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -30260,8 +30260,8 @@ int send_packet_game_load(struct connection *pc, const struct packet_game_load *
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -30455,8 +30455,8 @@ struct packet_options_settable_control *receive_packet_options_settable_control(
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -30475,8 +30475,8 @@ int send_packet_options_settable_control(struct connection *pc, const struct pac
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -30748,8 +30748,8 @@ struct packet_options_settable *receive_packet_options_settable(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -30768,8 +30768,8 @@ int send_packet_options_settable(struct connection *pc, const struct packet_opti
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -31041,8 +31041,8 @@ struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group(struct con
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -31061,8 +31061,8 @@ int send_packet_ruleset_cache_group(struct connection *pc, const struct packet_r
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -31297,8 +31297,8 @@ struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -31317,8 +31317,8 @@ int send_packet_ruleset_cache_effect(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -31660,8 +31660,8 @@ struct packet_traderoute_info *receive_packet_traderoute_info(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -31681,8 +31681,8 @@ int send_packet_traderoute_info(struct connection *pc, const struct packet_trade
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -32075,8 +32075,8 @@ struct packet_extgame_info *receive_packet_extgame_info(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -32096,8 +32096,8 @@ int send_packet_extgame_info(struct connection *pc, const struct packet_extgame_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -32286,8 +32286,8 @@ struct packet_vote_new *receive_packet_vote_new(struct connection *pc, enum pack
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -32306,8 +32306,8 @@ int send_packet_vote_new(struct connection *pc, const struct packet_vote_new *pa
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -32499,8 +32499,8 @@ struct packet_vote_update *receive_packet_vote_update(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -32519,8 +32519,8 @@ int send_packet_vote_update(struct connection *pc, const struct packet_vote_upda
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -32652,8 +32652,8 @@ struct packet_vote_remove *receive_packet_vote_remove(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -32672,8 +32672,8 @@ int send_packet_vote_remove(struct connection *pc, const struct packet_vote_remo
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -32811,8 +32811,8 @@ struct packet_vote_resolve *receive_packet_vote_resolve(struct connection *pc, e
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -32831,8 +32831,8 @@ int send_packet_vote_resolve(struct connection *pc, const struct packet_vote_res
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -32979,8 +32979,8 @@ struct packet_vote_submit *receive_packet_vote_submit(struct connection *pc, enu
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -32999,8 +32999,8 @@ int send_packet_vote_submit(struct connection *pc, const struct packet_vote_subm
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -33147,8 +33147,8 @@ struct packet_trade_route_plan *receive_packet_trade_route_plan(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -33167,8 +33167,8 @@ int send_packet_trade_route_plan(struct connection *pc, const struct packet_trad
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -33325,8 +33325,8 @@ struct packet_trade_route_remove *receive_packet_trade_route_remove(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -33342,8 +33342,8 @@ int send_packet_trade_route_remove(struct connection *pc, const struct packet_tr
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -33512,8 +33512,8 @@ struct packet_unit_trade_route *receive_packet_unit_trade_route(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -33532,8 +33532,8 @@ int send_packet_unit_trade_route(struct connection *pc, const struct packet_unit
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -33721,8 +33721,8 @@ struct packet_trade_route_info *receive_packet_trade_route_info(struct connectio
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -33741,8 +33741,8 @@ int send_packet_trade_route_info(struct connection *pc, const struct packet_trad
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -33904,8 +33904,8 @@ struct packet_city_set_rally_point *receive_packet_city_set_rally_point(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -33924,8 +33924,8 @@ int send_packet_city_set_rally_point(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -34068,8 +34068,8 @@ struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point(stru
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -34088,8 +34088,8 @@ int send_packet_city_clear_rally_point(struct connection *pc, const struct packe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -34260,8 +34260,8 @@ struct packet_unit_air_patrol *receive_packet_unit_air_patrol(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -34280,8 +34280,8 @@ int send_packet_unit_air_patrol(struct connection *pc, const struct packet_unit_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -34424,8 +34424,8 @@ struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop(struct c
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -34444,8 +34444,8 @@ int send_packet_unit_air_patrol_stop(struct connection *pc, const struct packet_
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -34701,8 +34701,8 @@ struct packet_city_manager_param *receive_packet_city_manager_param(struct conne
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -34718,8 +34718,8 @@ int send_packet_city_manager_param(struct connection *pc, const struct packet_ci
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -34848,8 +34848,8 @@ struct packet_city_no_manager_param *receive_packet_city_no_manager_param(struct
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -34865,8 +34865,8 @@ int send_packet_city_no_manager_param(struct connection *pc, const struct packet
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -35004,8 +35004,8 @@ struct packet_player_info_req *receive_packet_player_info_req(struct connection 
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -35024,8 +35024,8 @@ int send_packet_player_info_req(struct connection *pc, const struct packet_playe
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);

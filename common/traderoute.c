@@ -212,7 +212,7 @@ void game_trade_route_remove(struct trade_route *ptr)
   Check if a trade route exist between 2 cities.
 ****************************************************************************/
 struct trade_route *game_trade_route_find(const struct city *pcity1,
-					  const struct city *pcity2)
+                                          const struct city *pcity2)
 {
   if (!pcity1 || !pcity2) {
     return NULL;
@@ -365,43 +365,43 @@ enum trade_plan_state {
   TPC_RUNNING,
   TPC_INTERRUPTED
 };
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
 
 struct trade_city {
-  struct city *pcity;			/* The pointed city */
-  int free_slots;			/* Number of free slots */
-  int trade_routes_num;			/* Number of city it can trade with */
-  struct trade_route **trade_routes;	/* A list of possible trade routes */
+  struct city *pcity;                   /* The pointed city */
+  int free_slots;                       /* Number of free slots */
+  int trade_routes_num;                 /* Number of city it can trade with */
+  struct trade_route **trade_routes;    /* A list of possible trade routes */
   int *distance;
 };
 
 struct trade_configuration {
-  int trade_routes_num;	/* The total number of trade routes found */
-  int free_slots;	/* The total number of free slots */
-  int turns;		/* The total number of required turns for a caravan */
-  int moves;		/* The total number of required moves for a caravan */
+  int trade_routes_num; /* The total number of trade routes found */
+  int free_slots;       /* The total number of free slots */
+  int turns;            /* The total number of required turns for a caravan */
+  int moves;            /* The total number of required moves for a caravan */
 };
 
 struct trade_planning_calculation {
-  struct trade_city *tcities;		/* The cities data */
-  size_t size;				/* The number of the cities data */
-  struct trade_route **ctlist;		/* The current trade routes */
-  struct trade_configuration ctconf;	/* The current configuration */
-  struct trade_route **btlist;		/* The best trade routes */
-  struct trade_configuration btconf;	/* The best configuration */
+  struct trade_city *tcities;           /* The cities data */
+  size_t size;                          /* The number of the cities data */
+  struct trade_route **ctlist;          /* The current trade routes */
+  struct trade_configuration ctconf;    /* The current configuration */
+  struct trade_route **btlist;          /* The best trade routes */
+  struct trade_configuration btconf;    /* The best configuration */
 #ifdef ASYNC_TRADE_PLANNING
-  enum trade_plan_state state;		/* The state of the calculation */
-  struct ucontext start_point;		/* The launch point of the program */
-  struct ucontext interrupted_point;	/* The point it has been interrupted */
-  int operations_counter;		/* The number of operations */
+  enum trade_plan_state state;          /* The state of the calculation */
+  struct ucontext start_point;          /* The launch point of the program */
+  struct ucontext interrupted_point;    /* The point it has been interrupted */
+  int operations_counter;               /* The number of operations */
 #else
-  time_t max_time;			/* The maximum time to calculate */
-#endif	/* ASYNC_TRADE_PLANNING */
-  bool destroying;			/* TRUE if going to be destroyed */
+  time_t max_time;                      /* The maximum time to calculate */
+#endif  /* ASYNC_TRADE_PLANNING */
+  bool destroying;                      /* TRUE if going to be destroyed */
   /* Callbacks */
   void (*destroy_callback)(const struct trade_planning_calculation *, void *);
   void (*apply_callback)(const struct trade_planning_calculation *, void *);
-  void *data;				/* User data */
+  void *data;                           /* User data */
 };
 
 #define SPECLIST_TAG tp_calc
@@ -411,15 +411,15 @@ struct trade_planning_calculation {
 /* The list of all calculations */
 static struct tp_calc_list *tp_calculations = NULL;
 
-#define tp_calc_list_iterate(pcalc)				\
-  if (tp_calculations) {					\
-    TYPED_LIST_ITERATE(struct trade_planning_calculation,	\
-		       tp_calculations, pcalc)
+#define tp_calc_list_iterate(pcalc)                             \
+  if (tp_calculations) {                                        \
+    TYPED_LIST_ITERATE(struct trade_planning_calculation,       \
+                       tp_calculations, pcalc)
 #define tp_calc_list_iterate_end LIST_ITERATE_END }
 
 /* The calculation is will interputed every time that the CPU
  * will make MAX_OPERATIONS operations */
-#define MAX_OPERATIONS	1000000L
+#define MAX_OPERATIONS  1000000L
 
 void recursive_calculate_trade_planning(
     struct trade_planning_calculation *pcalc, int start_city, int start_trade);
@@ -458,14 +458,14 @@ static bool cities_will_have_trade(struct city *pcity1, struct city *pcity2)
 
   ptlist: The source tiles.
   size: the number of elements of the integer array (should be
-	equal to tile_list_size(ptlist)).
+        equal to tile_list_size(ptlist)).
   free_slots: an editable integer array. This will set how many free slots there
-	      is for each tile index.
+              is for each tile index.
 
   Returns the total number of free slots or -1 on failure.
 ****************************************************************************/
 int trade_planning_precalculation(const struct tile_list *ptlist,
-				  size_t size, int *free_slots)
+                                  size_t size, int *free_slots)
 {
   struct precalc_city {
     struct tile *ptile;
@@ -498,23 +498,23 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
     /* Check for earlier cities in the list */
     for (j = 0, pc2 = cities; j < i; j++, pc2++) {
       if (pc1->free_slots > 0 && pc2->free_slots > 0) {
-	if (pc1->pcity && pc2->pcity) {
-	  if (can_cities_trade(pc1->pcity, pc2->pcity)
-	      && !cities_will_have_trade(pc1->pcity, pc2->pcity)) {
-	    pc1->trade_routes[j] = TRUE;
-	    pc1->trade_routes_num++;
-	    pc2->trade_routes[i] = TRUE;
-	    pc2->trade_routes_num++;
-	  }
-	} else {
-	  if (map_distance(pc1->ptile, pc2->ptile)
-	      >= game.traderoute_info.trademindist) {
-	    pc1->trade_routes[j] = TRUE;
-	    pc1->trade_routes_num++;
-	    pc2->trade_routes[i] = TRUE;
-	    pc2->trade_routes_num++;
-	  }
-	}
+        if (pc1->pcity && pc2->pcity) {
+          if (can_cities_trade(pc1->pcity, pc2->pcity)
+              && !cities_will_have_trade(pc1->pcity, pc2->pcity)) {
+            pc1->trade_routes[j] = TRUE;
+            pc1->trade_routes_num++;
+            pc2->trade_routes[i] = TRUE;
+            pc2->trade_routes_num++;
+          }
+        } else {
+          if (map_distance(pc1->ptile, pc2->ptile)
+              >= game.traderoute_info.trademindist) {
+            pc1->trade_routes[j] = TRUE;
+            pc1->trade_routes_num++;
+            pc2->trade_routes[i] = TRUE;
+            pc2->trade_routes_num++;
+          }
+        }
       }
     }
 
@@ -534,7 +534,7 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
             || pc1->free_slots - pc1->trade_routes_num
                > pc2->free_slots - pc2->trade_routes_num) {
           j = i;
-	  pc2 = pc1;
+          pc2 = pc1;
         }
       }
     }
@@ -542,27 +542,27 @@ int trade_planning_precalculation(const struct tile_list *ptlist,
       /* Give it all its trade routes */
       for (i = 0, pc1 = cities; i < size; i++, pc1++) {
         if (pc2->trade_routes[i] && pc1->free_slots > 0) {
-	  pc1->free_slots--;
-	  pc1->trade_routes_num--;
-	  pc1->trade_routes[j] = FALSE;
-	  pc2->free_slots--;
-	  pc2->trade_routes_num--;
-	  pc2->trade_routes[i] = FALSE;
+          pc1->free_slots--;
+          pc1->trade_routes_num--;
+          pc1->trade_routes[j] = FALSE;
+          pc2->free_slots--;
+          pc2->trade_routes_num--;
+          pc2->trade_routes[i] = FALSE;
 
           /*
            * If the city doesn't have free slots anymore,
            * clear its possible trade routes
            */
           if (pc1->free_slots == 0) {
-	    struct precalc_city *pc3;
+            struct precalc_city *pc3;
             int k;
 
             for (k = 0, pc3 = cities; k < size; k++, pc3++) {
               if (pc1->trade_routes[k]) {
                 pc1->trade_routes[k] = FALSE;
-		pc1->trade_routes_num--;
+                pc1->trade_routes_num--;
                 pc3->trade_routes[i] = FALSE;
-		pc3->trade_routes_num--;
+                pc3->trade_routes_num--;
               }
             }
             assert(pc1->trade_routes_num == 0);
@@ -654,7 +654,7 @@ void recursive_calculate_trade_planning(
     if (pcalc->max_time && time(NULL) > pcalc->max_time) {
       break;
     }
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
 
     if (tcity1->free_slots <= 0 || tcity1->trade_routes_num <= 0) {
       continue;
@@ -665,14 +665,14 @@ void recursive_calculate_trade_planning(
 
 #ifdef ASYNC_TRADE_PLANNING
       if (++pcalc->operations_counter >= MAX_OPERATIONS) {
-	pcalc->state = TPC_INTERRUPTED;
-	swapcontext(&pcalc->interrupted_point, &pcalc->start_point);
+        pcalc->state = TPC_INTERRUPTED;
+        swapcontext(&pcalc->interrupted_point, &pcalc->start_point);
       }
 #else
       if (pcalc->max_time && time(NULL) > pcalc->max_time) {
-	break;
+        break;
       }
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
 
       if (tcity2->free_slots <= 0 || !tcity1->trade_routes[j]) {
         continue;
@@ -711,7 +711,7 @@ void recursive_calculate_trade_planning(
               || (pcalc->ctconf.turns == pcalc->btconf.turns
                   && pcalc->ctconf.moves < pcalc->btconf.moves)))) {
     memcpy(pcalc->btlist, pcalc->ctlist,
-	   pcalc->ctconf.trade_routes_num * sizeof(struct trade_route *));
+           pcalc->ctconf.trade_routes_num * sizeof(struct trade_route *));
     pcalc->btconf = pcalc->ctconf;
   }
 
@@ -722,8 +722,8 @@ void recursive_calculate_trade_planning(
   if (start_city == 0 && start_trade == 1) {
     swapcontext(&pcalc->interrupted_point, &pcalc->start_point);
   }
-#endif	/* WIN32_NATIVE */
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* WIN32_NATIVE */
+#endif  /* ASYNC_TRADE_PLANNING */
 }
 
 /****************************************************************************
@@ -732,13 +732,13 @@ void recursive_calculate_trade_planning(
   for that. However, the calcaultion could be finished before the end of this
   function (by simplification). In a such case, this function returns NULL.
 
-  pplayer:	    The player we are calculating for.
+  pplayer:          The player we are calculating for.
   pclist:           The list of the cities.
   time_limit:       The maximum time of the calculation (only if we don't
-							 use a theard)
+                                                         use a theard)
   destroy_callback: Called just before the calculation is going to be destroyed.
   apply_callback:   Called when an application is requested.
-  data:		    A user data passed as second argument of the callbacks.
+  data:             A user data passed as second argument of the callbacks.
 ****************************************************************************/
 struct trade_planning_calculation *trade_planning_calculation_new(
     struct player *pplayer, const struct city_list *pclist,
@@ -769,24 +769,24 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   pcalc->size = city_list_size(pclist);
   pcalc->tcities = fc_malloc(pcalc->size * sizeof(struct trade_city));
   pcalc->ctlist = fc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
-			    * sizeof(struct trade_route *) / 2);
+                            * sizeof(struct trade_route *) / 2);
   pcalc->btlist = fc_malloc(pcalc->size * game.traderoute_info.maxtraderoutes
-			    * sizeof(struct trade_route *) / 2);
+                            * sizeof(struct trade_route *) / 2);
 #ifdef ASYNC_TRADE_PLANNING
   pcalc->state = TPC_INTERRUPTED;
 #ifdef WIN32_NATIVE
   pcalc->interrupted_point.uc_stack.ss_flags = 0;
-#endif	/* WIN32_NATIVE */
+#endif  /* WIN32_NATIVE */
   pcalc->interrupted_point.uc_link = &pcalc->start_point;
   pcalc->interrupted_point.uc_stack.ss_sp = fc_malloc(SIGSTKSZ);
   pcalc->interrupted_point.uc_stack.ss_size = SIGSTKSZ;
   getcontext(&pcalc->interrupted_point);
   makecontext(&pcalc->interrupted_point,
-	      (void (*)(void)) recursive_calculate_trade_planning,
-	      3, pcalc, 0, 1);
+              (void (*)(void)) recursive_calculate_trade_planning,
+              3, pcalc, 0, 1);
 #else
   pcalc->max_time = time_limit > 0 ? time(NULL) + time_limit : 0;
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
   pcalc->destroying = FALSE;
   pcalc->destroy_callback = destroy_callback;
   pcalc->apply_callback = apply_callback;
@@ -806,10 +806,10 @@ struct trade_planning_calculation *trade_planning_calculation_new(
     tcity1 = &pcalc->tcities[i];
     tcity1->pcity = pcity;
     tcity1->free_slots = game.traderoute_info.maxtraderoutes
-			 - get_real_trade_route_number(pcity);
+                         - get_real_trade_route_number(pcity);
     tcity1->trade_routes_num = 0;
     tcity1->trade_routes =
-	fc_malloc(pcalc->size * sizeof(struct trade_route *));
+        fc_malloc(pcalc->size * sizeof(struct trade_route *));
     tcity1->distance = fc_malloc(pcalc->size * sizeof(int));
 
     map = NULL;
@@ -822,19 +822,19 @@ struct trade_planning_calculation *trade_planning_calculation_new(
         struct trade_route *ptr = trade_route_new(tcity1->pcity, tcity2->pcity,
                                                   NULL, TR_PLANNED);
         int distance = real_map_distance(tcity1->pcity->tile,
-					 tcity2->pcity->tile);
+                                         tcity2->pcity->tile);
 
-	if (pparameter && !map) {
-	  pparameter->start_tile = pcity->tile;
-	  map = pf_create_map(pparameter);
-	}
-	if (map && pf_get_position(map, tcity2->pcity->tile, &pos)) {
-	  ptr->move_cost = pos.total_MC;
-	  ptr->move_turns = COST_TO_TURNS(ptr);
-	} else {
-	  ptr->move_cost = FC_INFINITY;
-	  ptr->move_turns = FC_INFINITY;
-	}
+        if (pparameter && !map) {
+          pparameter->start_tile = pcity->tile;
+          map = pf_create_map(pparameter);
+        }
+        if (map && pf_get_position(map, tcity2->pcity->tile, &pos)) {
+          ptr->move_cost = pos.total_MC;
+          ptr->move_turns = COST_TO_TURNS(ptr);
+        } else {
+          ptr->move_cost = FC_INFINITY;
+          ptr->move_turns = FC_INFINITY;
+        }
         tcity1->trade_routes[j] = ptr;
         tcity2->trade_routes[i] = ptr;
         tcity1->distance[j] = distance;
@@ -867,7 +867,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
             || tcity1->free_slots - tcity1->trade_routes_num
                > tcity2->free_slots - tcity2->trade_routes_num) {
           j = i;
-	  tcity2 = tcity1;
+          tcity2 = tcity1;
         }
       }
     }
@@ -884,12 +884,12 @@ struct trade_planning_calculation *trade_planning_calculation_new(
            * clear its possible trade routes
            */
           if (tcity1->free_slots == 0) {
-	    struct trade_city *tcity3;
+            struct trade_city *tcity3;
             struct trade_route *ptr;
             int k;
 
             for (k = 0; k < pcalc->size; k++) {
-	      tcity3 = &pcalc->tcities[k];
+              tcity3 = &pcalc->tcities[k];
               if ((ptr = tcity1->trade_routes[k])) {
                 tcity1->trade_routes[k] = NULL;
                 tcity1->trade_routes_num--;
@@ -909,7 +909,7 @@ struct trade_planning_calculation *trade_planning_calculation_new(
   /* Set the current configuration as best configuration */
   if (pcalc->ctconf.trade_routes_num > 0) {
     memcpy(pcalc->btlist, pcalc->ctlist,
-	   pcalc->ctconf.trade_routes_num * sizeof(struct trade_route *));
+           pcalc->ctconf.trade_routes_num * sizeof(struct trade_route *));
   }
   pcalc->btconf = pcalc->ctconf;
 
@@ -1010,7 +1010,7 @@ bool trade_planning_calculation_resume(struct trade_planning_calculation *pcalc)
 #else
   recursive_calculate_trade_planning(pcalc, 0, 1);
   trade_planning_calculation_destroy(pcalc, TRUE);
-#endif	/* ASYNC_TRADE_PLANNING */
+#endif  /* ASYNC_TRADE_PLANNING */
   return FALSE;
 }
 
@@ -1055,7 +1055,7 @@ void trade_planning_calculation_get_advancement(
 
   *trade_routes_num = pcalc->btconf.trade_routes_num;
   *max_trade_routes_num = pcalc->btconf.trade_routes_num
-			  + pcalc->btconf.free_slots / 2;
+                          + pcalc->btconf.free_slots / 2;
   *total_moves = pcalc->btconf.moves;
 }
 
@@ -1188,8 +1188,8 @@ void check_removed_city(const struct city *pcity)
   tp_calc_list_iterate(pcalc) {
     for (i = 0; i < pcalc->size; i++) {
       if (pcalc->tcities[i].pcity == pcity) {
-	trade_planning_calculation_destroy(pcalc, FALSE);
-	break;
+        trade_planning_calculation_destroy(pcalc, FALSE);
+        break;
       }
     }
   } tp_calc_list_iterate_end;

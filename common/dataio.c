@@ -72,9 +72,9 @@ void dio_set_put_conv_callback(DIO_PUT_CONV_FUN fun)
  bad.
 **************************************************************************/
 static bool get_conv(char *dst, size_t dst_len, const char *src,
-		     size_t src_len)
+                     size_t src_len)
 {
-  size_t len = src_len;		/* length to copy, not including null */
+  size_t len = src_len;         /* length to copy, not including null */
   bool ret = TRUE;
 
   if (dst_len > 0 && len >= dst_len) {
@@ -134,7 +134,7 @@ static bool enough_data(struct data_in *din, size_t size)
   buffer size.
 **************************************************************************/
 void dio_output_init(struct data_out *dout, void *destination,
-		     size_t dest_size)
+                     size_t dest_size)
 {
   dout->dest = destination;
   dout->dest_size = dest_size;
@@ -358,9 +358,9 @@ void dio_put_bit_string(struct data_out *dout, const char *value)
       int bit, data = 0;
 
       for (bit = 0; bit < 8 && i < bits; bit++, i++) {
-	if (value[i] == '1') {
-	  data |= (1 << bit);
-	}
+        if (value[i] == '1') {
+          data |= (1 << bit);
+        }
       }
       dio_put_uint8(dout, data);
     }
@@ -545,7 +545,7 @@ void dio_get_memory(struct data_in *din, void *dest, size_t dest_size)
 void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size)
 {
   char *c;
-  size_t ps_len;		/* length in packet, not including null */
+  size_t ps_len;                /* length in packet, not including null */
   size_t offset, remaining;
 
   assert(max_dest_size > 0 || dest == NULL);
@@ -576,7 +576,7 @@ void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size)
   }
 
   if (!din->too_short) {
-    din->current += (ps_len + 1);	/* past terminator */
+    din->current += (ps_len + 1);       /* past terminator */
   }
 }
 
@@ -584,10 +584,10 @@ void dio_get_string(struct data_in *din, char *dest, size_t max_dest_size)
 ...
 **************************************************************************/
 void dio_get_bit_string(struct data_in *din, char *dest,
-			size_t max_dest_size)
+                        size_t max_dest_size)
 {
-  int npack = 0;		/* number claimed in packet */
-  int i;			/* iterate the bytes */
+  int npack = 0;                /* number claimed in packet */
+  int i;                        /* iterate the bytes */
 
   assert(dest != NULL && max_dest_size > 0);
 
@@ -611,9 +611,9 @@ void dio_get_bit_string(struct data_in *din, char *dest,
     dio_get_uint8(din, &byte_value);
     for (bit = 0; bit < 8 && i < npack; bit++, i++) {
       if (TEST_BIT(byte_value, bit)) {
-	dest[i] = '1';
+        dest[i] = '1';
       } else {
-	dest[i] = '0';
+        dest[i] = '0';
       }
     }
   }
@@ -730,7 +730,7 @@ void dio_get_diplstate(struct data_in *din, struct player_diplstate *pds)
   Serialize a player diplomatic state.
 **************************************************************************/
 void dio_put_diplstate(struct data_out *dout,
-		       const struct player_diplstate *pds)
+                       const struct player_diplstate *pds)
 {
   dio_put_uint8(dout, pds->type);
   dio_put_uint16(dout, pds->turns_left);

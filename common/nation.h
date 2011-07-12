@@ -13,10 +13,10 @@
 #ifndef FC__NATION_H
 #define FC__NATION_H
 
-#include "shared.h"		/* MAX_LEN_NAME */
+#include "shared.h"             /* MAX_LEN_NAME */
 
 #include "fc_types.h"
-#include "terrain.h"		/* T_COUNT */
+#include "terrain.h"            /* T_COUNT */
 
 #define MAX_NUM_TECH_GOALS 10
 
@@ -37,7 +37,7 @@
 typedef int Nation_Type_id;
 typedef int Team_Type_id;
 
-struct Sprite;			/* opaque; client-gui specific */
+struct Sprite;                  /* opaque; client-gui specific */
 
 /*
  * The city_name structure holds information about a default choice for
@@ -74,10 +74,10 @@ struct nation_type {
   int  leader_count;
   struct leader *leaders;
   int city_style;
-  struct city_name *city_names;		/* The default city names. */
+  struct city_name *city_names;         /* The default city names. */
   struct Sprite *flag_sprite;
-  char *class;				/* may be empty */
-  char *legend;				/* may be empty */
+  char *class;                          /* may be empty */
+  char *legend;                         /* may be empty */
 
   /* civilwar_nations is a NO_NATION_SELECTED-terminated list of index of
    * the nations that can fork from this one.  parent_nations is the inverse

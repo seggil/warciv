@@ -19,7 +19,7 @@
 
 #include "game.h"
 #include "map.h"
-#include "mem.h"		/* free */
+#include "mem.h"                /* free */
 #include "rand.h"
 #include "shared.h"
 #include "support.h"
@@ -144,23 +144,23 @@ void tile_types_free(void)
   This iterator behaves like adjc_iterate or cardinal_adjc_iterate depending
   on the value of card_only.
 ****************************************************************************/
-#define variable_adjc_iterate(center_tile, itr_tile, card_only)		    \
-{									    \
-  enum direction8 *_dirlist;						    \
-  int _total;								    \
-  									    \
-  if (card_only) {							    \
-    _dirlist = map.cardinal_dirs;					    \
-    _total = map.num_cardinal_dirs;					    \
-  } else {								    \
-    _dirlist = map.valid_dirs;						    \
-    _total = map.num_valid_dirs;					    \
-  }									    \
-  									    \
+#define variable_adjc_iterate(center_tile, itr_tile, card_only)             \
+{                                                                           \
+  enum direction8 *_dirlist;                                                \
+  int _total;                                                               \
+                                                                            \
+  if (card_only) {                                                          \
+    _dirlist = map.cardinal_dirs;                                           \
+    _total = map.num_cardinal_dirs;                                         \
+  } else {                                                                  \
+    _dirlist = map.valid_dirs;                                              \
+    _total = map.num_valid_dirs;                                            \
+  }                                                                         \
+                                                                            \
   adjc_dirlist_iterate(center_tile, itr_tile, _dir, _dirlist, _total) {
 
-#define variable_adjc_iterate_end		                            \
-  } adjc_dirlist_iterate_end;						    \
+#define variable_adjc_iterate_end                                           \
+  } adjc_dirlist_iterate_end;                                               \
 }
 
 
@@ -182,8 +182,8 @@ bool is_terrain_near_tile(const struct tile *ptile, Terrain_type_id t)
   Return the number of adjacent tiles that have the given terrain.
 ****************************************************************************/
 int count_terrain_near_tile(const struct tile *ptile,
-			    bool cardinal_only, bool percentage,
-			    Terrain_type_id t)
+                            bool cardinal_only, bool percentage,
+                            Terrain_type_id t)
 {
   int count = 0, total = 0;
 
@@ -218,8 +218,8 @@ bool is_special_near_tile(const struct tile *ptile, enum tile_special_type spe)
   Returns the number of adjacent tiles that have the given map special.
 ****************************************************************************/
 int count_special_near_tile(const struct tile *ptile,
-			    bool cardinal_only, bool percentage,
-			    enum tile_special_type spe)
+                            bool cardinal_only, bool percentage,
+                            enum tile_special_type spe)
 {
   int count = 0, total = 0;
 
@@ -240,7 +240,7 @@ int count_special_near_tile(const struct tile *ptile,
   Returns TRUE iff any adjacent tile contains terrain with the given flag.
 ****************************************************************************/
 bool is_terrain_flag_near_tile(const struct tile *ptile,
-			       enum terrain_flag_id flag)
+                               enum terrain_flag_id flag)
 {
   adjc_iterate(ptile, adjc_tile) {
     if (terrain_has_flag(map_get_terrain(adjc_tile), flag)) {
@@ -255,8 +255,8 @@ bool is_terrain_flag_near_tile(const struct tile *ptile,
   Return the number of adjacent tiles that have terrain with the given flag.
 ****************************************************************************/
 int count_terrain_flag_near_tile(const struct tile *ptile,
-				 bool cardinal_only, bool percentage,
-				 enum terrain_flag_id flag)
+                                 bool cardinal_only, bool percentage,
+                                 enum terrain_flag_id flag)
 {
   int count = 0, total = 0;
 

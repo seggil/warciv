@@ -35,13 +35,13 @@
 #endif
 
 #include "fcintl.h"
-#include "game.h"		/* game.all_connections */
+#include "game.h"               /* game.all_connections */
 #include "hash.h"
 #include "log.h"
 #include "mem.h"
 #include "netintf.h"
 #include "packets.h"
-#include "support.h"		/* mystr(n)casecmp */
+#include "support.h"            /* mystr(n)casecmp */
 #include "timing.h"
 #include "wildcards.h"
 
@@ -137,7 +137,7 @@ void call_close_socket_callback(struct connection *pc, enum exit_state state)
 ...
 **************************************************************************/
 static bool buffer_ensure_free_extra_space(struct socket_packet_buffer *buf,
-					   int extra_space)
+                                           int extra_space)
 {
   if (buf->nsize - buf->ndata >= extra_space) {
     /* There is enough free space already. */
@@ -317,7 +317,7 @@ int flush_connection_send_buffer_all(struct connection *pc)
   fails. In that case FALSE will be returned.
 **************************************************************************/
 static bool add_connection_data(struct connection *pc,
-				const unsigned char *data, int len)
+                                const unsigned char *data, int len)
 {
   struct socket_packet_buffer *buf;
 
@@ -470,8 +470,8 @@ struct connection *find_conn_by_user_prefix(const char *user_name,
   int ind;
 
   *result = match_prefix(connection_accessor,
-			 conn_list_size(game.all_connections),
-			 MAX_LEN_NAME-1, mystrncasecmp, user_name, &ind);
+                         conn_list_size(game.all_connections),
+                         MAX_LEN_NAME-1, mystrncasecmp, user_name, &ind);
 
   if (*result < M_PRE_AMBIGUOUS) {
     return conn_list_get(game.all_connections, ind);
@@ -589,10 +589,10 @@ const char *conn_description(const struct connection *pconn)
   if (pconn->player) {
     if (pconn->observer) {
       cat_snprintf(buffer, sizeof(buffer), _(" (player %s observer)"),
-		   pconn->player->name);
+                   pconn->player->name);
     } else {
       cat_snprintf(buffer, sizeof(buffer), _(" (player %s)"),
-		   pconn->player->name);
+                   pconn->player->name);
     }
   } else if (pconn->observer) {
     sz_strlcat(buffer, _(" (global observer)"));
@@ -610,8 +610,8 @@ int get_next_request_id(int old_request_id)
 
   if ((result & 0xffff) == 0) {
     freelog(LOG_NORMAL,
-	    "INFORMATION: request_id has wrapped around; "
-	    "setting from %d to 2", result);
+            "INFORMATION: request_id has wrapped around; "
+            "setting from %d to 2", result);
     result = 2;
   }
   assert(result);
@@ -658,8 +658,8 @@ static void free_packet_hashes(struct connection *pc)
   if (pc->phs.sent) {
     for (i = 0; i < PACKET_LAST; i++) {
       if (pc->phs.sent[i] != NULL) {
-	hash_free(pc->phs.sent[i]);
-	pc->phs.sent[i] = NULL;
+        hash_free(pc->phs.sent[i]);
+        pc->phs.sent[i] = NULL;
       }
     }
     free(pc->phs.sent);
@@ -669,8 +669,8 @@ static void free_packet_hashes(struct connection *pc)
   if (pc->phs.received) {
     for (i = 0; i < PACKET_LAST; i++) {
       if (pc->phs.received[i] != NULL) {
-	hash_free(pc->phs.received[i]);
-	pc->phs.received[i] = NULL;
+        hash_free(pc->phs.received[i]);
+        pc->phs.received[i] = NULL;
       }
     }
     free(pc->phs.received);
@@ -769,17 +769,17 @@ void conn_clear_packet_cache(struct connection *pc)
     if (pc->phs.sent != NULL && pc->phs.sent[i] != NULL) {
       struct hash_table *hash = pc->phs.sent[i];
       while (hash_num_entries(hash) > 0) {
-	const void *key = hash_key_by_number(hash, 0);
-	hash_delete_entry(hash, key);
-	free((void *) key);
+        const void *key = hash_key_by_number(hash, 0);
+        hash_delete_entry(hash, key);
+        free((void *) key);
       }
     }
     if (pc->phs.received != NULL && pc->phs.received[i] != NULL) {
       struct hash_table *hash = pc->phs.received[i];
       while (hash_num_entries(hash) > 0) {
-	const void *key = hash_key_by_number(hash, 0);
-	hash_delete_entry(hash, key);
-	free((void *) key);
+        const void *key = hash_key_by_number(hash, 0);
+        hash_delete_entry(hash, key);
+        free((void *) key);
       }
     }
   }

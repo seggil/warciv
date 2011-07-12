@@ -16,12 +16,12 @@
 struct connection;
 struct data_in;
 
-#include "connection.h"		/* struct connection, MAX_LEN_* */
+#include "connection.h"         /* struct connection, MAX_LEN_* */
 #include "diptreaty.h"
 #include "events.h"
 #include "improvement.h"
 #include "player.h"
-#include "shared.h"		/* MAX_LEN_NAME, MAX_LEN_ADDR */
+#include "shared.h"             /* MAX_LEN_NAME, MAX_LEN_ADDR */
 #include "spaceship.h"
 #include "unittype.h"
 #include "worklist.h"
@@ -29,7 +29,7 @@ struct data_in;
 
 #define MAX_LEN_USERNAME        10        /* see below */
 #define MAX_LEN_MSG             1536
-#define MAX_LEN_ROUTE		2000	  /* MAX_LEN_PACKET/2 - header */
+#define MAX_LEN_ROUTE           2000      /* MAX_LEN_PACKET/2 - header */
 
 /* The size of opaque (void *) data sent in the network packet.  To avoid
  * fragmentation issues, this SHOULD NOT be larger than the standard
@@ -77,25 +77,25 @@ void *get_packet_from_connection(struct connection *pc, enum packet_type *ptype,
 void remove_packet_from_buffer(struct socket_packet_buffer *buffer);
 
 void send_attribute_block(const struct player *pplayer,
-			  struct connection *pconn);
+                          struct connection *pconn);
 void generic_handle_player_attribute_chunk(struct player *pplayer,
-					   const struct
-					   packet_player_attribute_chunk
-					   *chunk,
+                                           const struct
+                                           packet_player_attribute_chunk
+                                           *chunk,
                                            struct connection *pconn);
 const char *get_packet_name(enum packet_type type);
 
 void pre_send_packet_chat_msg(struct connection *pc,
-			      struct packet_chat_msg *packet);
+                              struct packet_chat_msg *packet);
 void post_receive_packet_chat_msg(struct connection *pc,
-				  struct packet_chat_msg *packet);
+                                  struct packet_chat_msg *packet);
 void pre_send_packet_player_attribute_chunk(struct connection *pc,
-					    struct packet_player_attribute_chunk
-					    *packet);
+                                            struct packet_player_attribute_chunk
+                                            *packet);
 void post_receive_packet_game_state(struct connection *pc,
-				    struct packet_game_state *packet);
+                                    struct packet_game_state *packet);
 void post_send_packet_game_state(struct connection *pc,
-				 const struct packet_game_state *packet);
+                                 const struct packet_game_state *packet);
 
 #define SEND_PACKET_START(type) \
   unsigned char buffer[MAX_LEN_PACKET]; \

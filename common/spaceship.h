@@ -13,7 +13,7 @@
 #ifndef FC__SPACESHIP_H
 #define FC__SPACESHIP_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 /**********************************************************************
 First, some ascii art showing the spaceship and relevant parts,
@@ -73,7 +73,7 @@ the one which must be there for P2 and P3).
 **********************************************************************/
 
 enum spaceship_state {SSHIP_NONE, SSHIP_STARTED,
-		      SSHIP_LAUNCHED, SSHIP_ARRIVED};
+                      SSHIP_LAUNCHED, SSHIP_ARRIVED};
 
 #define NUM_SS_STRUCTURALS 32
 #define NUM_SS_COMPONENTS 16
@@ -105,8 +105,8 @@ struct player_spaceship {
 };
 
 struct sship_part_info {
-  int x, y;			/* position of tile centre */
-  int required;			/* required for struct connection */
+  int x, y;                     /* position of tile centre */
+  int required;                 /* required for struct connection */
 };
 
 extern const struct sship_part_info structurals_info[NUM_SS_STRUCTURALS];

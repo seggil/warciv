@@ -30,21 +30,21 @@ bool diplomacy_possible(struct player *pplayer, struct player *aplayer)
 {
   if (game.info.diplomacy == 4
       || (game.ext_info.maxallies
-	  && !pplayers_allied(pplayer, aplayer)
+          && !pplayers_allied(pplayer, aplayer)
           && (player_allies_count(pplayer) >= game.ext_info.maxallies
               || player_allies_count(aplayer) >= game.ext_info.maxallies))) {
     return FALSE;
   }
 
   return  (game.info.diplomacy == 0      /* Unlimited diplomacy */
-	   || (game.info.diplomacy == 1  /* Human diplomacy only */
-	       && !pplayer->ai.control
-	       && !aplayer->ai.control)
-	   || (game.info.diplomacy == 2  /* AI diplomacy only */
-	       && pplayer->ai.control
-	       && aplayer->ai.control)
-	   || (game.info.diplomacy == 3  /* Team diplomacy only */
-	       && players_on_same_team(pplayer, aplayer)));
+           || (game.info.diplomacy == 1  /* Human diplomacy only */
+               && !pplayer->ai.control
+               && !aplayer->ai.control)
+           || (game.info.diplomacy == 2  /* AI diplomacy only */
+               && pplayer->ai.control
+               && aplayer->ai.control)
+           || (game.info.diplomacy == 3  /* Team diplomacy only */
+               && players_on_same_team(pplayer, aplayer)));
 }
 
 /**************************************************************************
@@ -108,11 +108,11 @@ void treaty_free(struct Treaty *ptreaty)
 ...
 *****************************************************************/
 bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
-		  enum clause_type type, int val)
+                  enum clause_type type, int val)
 {
   clause_list_iterate(ptreaty->clauses, pclause) {
     if (pclause->type == type && pclause->from == pfrom
-	&& pclause->value == val) {
+        && pclause->value == val) {
       clause_list_unlink(ptreaty->clauses, pclause);
       free(pclause);
 
@@ -131,7 +131,7 @@ bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
 ...
 *****************************************************************/
 bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
-		enum clause_type type, int val)
+                enum clause_type type, int val)
 {
   struct Clause *pclause;
   enum diplstate_type ds =

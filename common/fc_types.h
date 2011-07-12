@@ -14,7 +14,7 @@
 #ifndef FC__FC_TYPES_H
 #define FC__FC_TYPES_H
 
-#include "shared.h"	/* bool type */
+#include "shared.h"     /* bool type */
 
 /* This file serves to reduce the cross-inclusion of header files which
  * occurs when a type which is defined in one file is needed for a fuction
@@ -42,7 +42,7 @@ struct unit;
 /*
  * Number of traderoutes a city can have in standard Freeciv.
  */
-#define OLD_NUM_TRADEROUTES	4
+#define OLD_NUM_TRADEROUTES     4
 
 /* Server setting types.  Changing these will break network compatability. */
 enum sset_type {

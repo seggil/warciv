@@ -16,7 +16,7 @@
 #endif
 
 #include <assert.h>
-#include <string.h>		/* strlen */
+#include <string.h>             /* strlen */
 
 #include "city.h"
 #include "fcintl.h"
@@ -81,8 +81,8 @@ static const char *tile_special_type_names[] =
 enum tile_special_type get_tile_infrastructure_set(const struct tile *ptile)
 {
   return (ptile->special
-	  & (S_ROAD | S_RAILROAD | S_IRRIGATION | S_FARMLAND | S_MINE
-	     | S_FORTRESS | S_AIRBASE));
+          & (S_ROAD | S_RAILROAD | S_IRRIGATION | S_FARMLAND | S_MINE
+             | S_FORTRESS | S_AIRBASE));
 }
 
 /***************************************************************
@@ -238,7 +238,7 @@ static void generate_map_indices(void)
   nat_center_x = map.info.xsize / 2;
   nat_center_y = map.info.ysize / 2;
   NATIVE_TO_MAP_POS(&map_center_x, &map_center_y,
-		    nat_center_x, nat_center_y);
+                    nat_center_x, nat_center_y);
 
   /* If we wrap in a particular direction (X or Y) we only need to explore a
    * half of a map-width in that direction before we hit the wrap point.  If
@@ -261,11 +261,11 @@ static void generate_map_indices(void)
   nat_min_y = (topo_has_flag(TF_WRAPY) ? 0 : (nat_center_y - map.info.ysize + 1));
 
   nat_max_x = (topo_has_flag(TF_WRAPX)
-	       ? (map.info.xsize - 1)
-	       : (nat_center_x + map.info.xsize - 1));
+               ? (map.info.xsize - 1)
+               : (nat_center_x + map.info.xsize - 1));
   nat_max_y = (topo_has_flag(TF_WRAPY)
-	       ? (map.info.ysize - 1)
-	       : (nat_center_y + map.info.ysize - 1));
+               ? (map.info.ysize - 1)
+               : (nat_center_y + map.info.ysize - 1));
   tiles = (nat_max_x - nat_min_x + 1) * (nat_max_y - nat_min_y + 1);
 
   array = fc_realloc(array, tiles * sizeof(*array));
@@ -296,7 +296,7 @@ static void generate_map_indices(void)
 #if 0
   for (i = 0; i < tiles; i++) {
     freelog(LOG_DEBUG, "%5d : (%3d,%3d) : %d",
-	    i, array[i].dx, array[i].dy, array[i].dist);
+            i, array[i].dx, array[i].dy, array[i].dist);
   }
 #endif
 
@@ -347,7 +347,7 @@ void map_init_topology(bool set_sizes)
   }
   assert(map.num_valid_dirs > 0 && map.num_valid_dirs <= 8);
   assert(map.num_cardinal_dirs > 0
-	 && map.num_cardinal_dirs <= map.num_valid_dirs);
+         && map.num_cardinal_dirs <= map.num_valid_dirs);
 }
 
 /***************************************************************
@@ -360,16 +360,16 @@ static void tile_init(struct tile *ptile)
   ptile->continent = 0;
   ptile->city = NULL;
   ptile->units = unit_list_new();
-  ptile->worked = NULL;			/* Pointer to city working tile. */
-  ptile->owner = NULL;			/* Tile not claimed by any nation. */
+  ptile->worked = NULL;                 /* Pointer to city working tile. */
+  ptile->owner = NULL;                  /* Tile not claimed by any nation. */
   ptile->spec_sprite = NULL;
 
   if (is_server) {
     ptile->server.known = 0;
-    ptile->server.assigned = 0;		/* Bitvector. */
+    ptile->server.assigned = 0;         /* Bitvector. */
   } else {
     ptile->client.known = TILE_UNKNOWN;
-    ptile->client.hilite = HILITE_NONE;	/* Area Selection in client. */
+    ptile->client.hilite = HILITE_NONE; /* Area Selection in client. */
   }
 }
 
@@ -403,7 +403,7 @@ static inline struct tile *base_native_pos_to_tile(int nat_x, int nat_y)
   /* If the position is out of range in a non-wrapping direction, it is
    * unreal. */
   if (!((topo_has_flag(TF_WRAPX) || (nat_x >= 0 && nat_x < map.info.xsize))
-	&& (topo_has_flag(TF_WRAPY) || (nat_y >= 0 && nat_y < map.info.ysize)))) {
+        && (topo_has_flag(TF_WRAPY) || (nat_y >= 0 && nat_y < map.info.ysize)))) {
     return NULL;
   }
 
@@ -500,7 +500,7 @@ static void tile_free(struct tile *ptile)
 void map_allocate(void)
 {
   freelog(LOG_DEBUG, "map_allocate (was %p) (%d,%d)",
-	  map.tiles, map.info.xsize, map.info.ysize);
+          map.tiles, map.info.xsize, map.info.ysize);
 
   assert(map.tiles == NULL);
   map.tiles = fc_malloc(map.info.xsize * map.info.ysize * sizeof(struct tile));
@@ -606,24 +606,24 @@ int map_vector_to_real_distance(int dx, int dy)
     if (topo_has_flag(TF_ISO)) {
       /* Iso-hex: you can't move NE or SW. */
       if ((dx < 0 && dy > 0)
-	  || (dx > 0 && dy < 0)) {
-	/* Diagonal moves in this direction aren't allowed, so it will take
-	 * the full number of moves. */
-	return abs(dx) + abs(dy);
+          || (dx > 0 && dy < 0)) {
+        /* Diagonal moves in this direction aren't allowed, so it will take
+         * the full number of moves. */
+        return abs(dx) + abs(dy);
       } else {
-	/* Diagonal moves in this direction *are* allowed. */
-	return MAX(abs(dx), abs(dy));
+        /* Diagonal moves in this direction *are* allowed. */
+        return MAX(abs(dx), abs(dy));
       }
     } else {
       /* Hex: you can't move SE or NW. */
       if ((dx > 0 && dy > 0)
-	  || (dx < 0 && dy < 0)) {
-	/* Diagonal moves in this direction aren't allowed, so it will take
-	 * the full number of moves. */
-	return abs(dx) + abs(dy);
+          || (dx < 0 && dy < 0)) {
+        /* Diagonal moves in this direction aren't allowed, so it will take
+         * the full number of moves. */
+        return abs(dx) + abs(dy);
       } else {
-	/* Diagonal moves in this direction *are* allowed. */
-	return MAX(abs(dx), abs(dy));
+        /* Diagonal moves in this direction *are* allowed. */
+        return MAX(abs(dx), abs(dy));
       }
     }
   } else {
@@ -860,8 +860,8 @@ bool is_water_adjacent_to_tile(const struct tile *ptile)
 
   cardinal_adjc_iterate(ptile, tile1) {
     if (is_ocean(tile1->terrain)
-	|| tile_has_special(tile1, S_RIVER)
-	|| tile_has_special(tile1, S_IRRIGATION))
+        || tile_has_special(tile1, S_RIVER)
+        || tile_has_special(tile1, S_IRRIGATION))
       return TRUE;
   } cardinal_adjc_iterate_end;
 
@@ -1053,8 +1053,8 @@ void change_terrain(struct tile *ptile, Terrain_type_id type)
   if (is_ocean(type)) {
     clear_infrastructure(ptile);
     clear_dirtiness(ptile);
-    map_clear_special(ptile, S_RIVER);	/* FIXME: When rest of code can handle
-					   rivers in oceans, don't clear this! */
+    map_clear_special(ptile, S_RIVER);  /* FIXME: When rest of code can handle
+                                           rivers in oceans, don't clear this! */
   }
 
   reset_move_costs(ptile);
@@ -1120,7 +1120,7 @@ bool can_channel_land(const struct tile *ptile)
   tests are not done (for unit-independent results).
 ***************************************************************/
 static int tile_move_cost_ptrs(struct unit *punit,
-			       const struct tile *t1, const struct tile *t2)
+                               const struct tile *t1, const struct tile *t2)
 {
   bool cardinal_move;
 
@@ -1150,13 +1150,13 @@ static int tile_move_cost_ptrs(struct unit *punit,
       break;
     case RMV_FAST_STRICT:
       if (cardinal_move)
-	return MOVE_COST_RIVER;
+        return MOVE_COST_RIVER;
       break;
     case RMV_FAST_RELAXED:
       if (cardinal_move)
-	return MOVE_COST_RIVER;
+        return MOVE_COST_RIVER;
       else
-	return 2 * MOVE_COST_RIVER;
+        return 2 * MOVE_COST_RIVER;
     case RMV_FAST_ALWAYS:
       return MOVE_COST_RIVER;
     default:
@@ -1183,10 +1183,10 @@ static int tile_move_cost_ptrs(struct unit *punit,
     - one of the tiles is ocean and the other is a city or is unknown
 ***************************************************************/
 static int tile_move_cost_ai(struct tile *tile0, struct tile *tile1,
-			     int maxcost)
+                             int maxcost)
 {
   assert(!is_server
-	 || (tile0->terrain != T_UNKNOWN && tile1->terrain != T_UNKNOWN));
+         || (tile0->terrain != T_UNKNOWN && tile1->terrain != T_UNKNOWN));
 
   if (is_ocean(tile0->terrain) && is_ocean(tile1->terrain)) {
     return MOVE_COST_FOR_VALID_SEA_STEP;
@@ -1218,11 +1218,11 @@ static void debug_log_move_costs(const char *str, struct tile *tile0)
      move_cost[]==-3 ,.. --dwp
   */
   freelog(LOG_DEBUG, "%s (%d, %d) [%x%x%x%x%x%x%x%x]", str,
-	  tile0->x, tile0->y,
-	  tile0->move_cost[0], tile0->move_cost[1],
-	  tile0->move_cost[2], tile0->move_cost[3],
-	  tile0->move_cost[4], tile0->move_cost[5],
-	  tile0->move_cost[6], tile0->move_cost[7]);
+          tile0->x, tile0->y,
+          tile0->move_cost[0], tile0->move_cost[1],
+          tile0->move_cost[2], tile0->move_cost[3],
+          tile0->move_cost[4], tile0->move_cost[5],
+          tile0->move_cost[6], tile0->move_cost[7]);
 }
 
 /***************************************************************
@@ -1243,7 +1243,7 @@ void reset_move_costs(struct tile *ptile)
     ptile->move_cost[dir] = tile_move_cost_ai(ptile, tile1, maxcost);
     /* reverse: not at all obfuscated now --dwp */
     tile1->move_cost[DIR_REVERSE(dir)] =
-	tile_move_cost_ai(tile1, ptile, maxcost);
+        tile_move_cost_ai(tile1, ptile, maxcost);
   } adjc_dir_iterate_end;
   debug_log_move_costs("Reset move costs for", ptile);
 }
@@ -1353,7 +1353,7 @@ bool map_has_special(const struct tile *ptile, enum tile_special_type special)
  Returns TRUE iff the given tile has the given special.
 ***************************************************************/
 bool tile_has_special(const struct tile *ptile,
-		      enum tile_special_type special)
+                      enum tile_special_type special)
 {
   return contains_special(ptile->special, special);
 }
@@ -1362,7 +1362,7 @@ bool tile_has_special(const struct tile *ptile,
  Returns TRUE iff the given special is found in the given set.
 ***************************************************************/
 bool contains_special(enum tile_special_type set,
-		      enum tile_special_type to_test_for)
+                      enum tile_special_type to_test_for)
 {
   enum tile_special_type masked = set & to_test_for;
 
@@ -1509,7 +1509,7 @@ int map_num_tiles(void)
   instead.
 ****************************************************************************/
 void base_map_distance_vector(int *dx, int *dy,
-			      int x0, int y0, int x1, int y1)
+                              int x0, int y0, int x1, int y1)
 {
   if (topo_has_flag(TF_WRAPX) || topo_has_flag(TF_WRAPY)) {
     /* Wrapping is done in native coordinates. */
@@ -1558,11 +1558,11 @@ void base_map_distance_vector(int *dx, int *dy,
     -map.info.ysize   <  dy <  map.info.ysize
 ****************************************************************************/
 void map_distance_vector(int *dx, int *dy,
-			 const struct tile *tile0,
-			 const struct tile *tile1)
+                         const struct tile *tile0,
+                         const struct tile *tile1)
 {
   base_map_distance_vector(dx, dy,
-			   tile0->x, tile0->y, tile1->x, tile1->y);
+                           tile0->x, tile0->y, tile1->x, tile1->y);
 }
 
 /**************************************************************************
@@ -1597,7 +1597,7 @@ struct tile *rand_neighbour(const struct tile *ptile)
     dirs[choice] = dirs[n - 1];
   }
 
-  assert(0);			/* Are we on a 1x1 map with no wrapping??? */
+  assert(0);                    /* Are we on a 1x1 map with no wrapping??? */
   return NULL;
 }
 
@@ -1619,8 +1619,8 @@ struct tile *rand_map_pos(void)
   effects.
 **************************************************************************/
 struct tile *rand_map_pos_filtered(void *data,
-				   bool (*filter)(const struct tile *ptile,
-						  const void *data))
+                                   bool (*filter)(const struct tile *ptile,
+                                                  const void *data))
 {
   struct tile *ptile;
   int tries = 0;
@@ -1639,8 +1639,8 @@ struct tile *rand_map_pos_filtered(void *data,
 
     whole_map_iterate(ptile) {
       if (filter(ptile, data)) {
-	positions[count] = ptile->index;
-	count++;
+        positions[count] = ptile->index;
+        count++;
       }
     } whole_map_iterate_end;
 
@@ -1796,8 +1796,8 @@ end_y) can be reached from (start_x, start_y) in one step. Return
 false otherwise (value of dir is unchanged in this case).
 **************************************************************************/
 bool base_get_direction_for_step(const struct tile *start_tile,
-				 const struct tile *end_tile,
-				 enum direction8 *dir)
+                                 const struct tile *end_tile,
+                                 enum direction8 *dir)
 {
   adjc_dir_iterate(start_tile, test_tile, test_dir) {
     if (same_pos(end_tile, test_tile)) {
@@ -1814,7 +1814,7 @@ Return the direction which is needed for a step on the map from
 (start_x, start_y) to (end_x, end_y).
 **************************************************************************/
 int get_direction_for_step(const struct tile *start_tile,
-			   const struct tile *end_tile)
+                           const struct tile *end_tile)
 {
   enum direction8 dir;
 
@@ -1831,7 +1831,7 @@ int get_direction_for_step(const struct tile *start_tile,
   (end_x,end_y) is a cardinal one.
 **************************************************************************/
 bool is_move_cardinal(const struct tile *start_tile,
-		      const struct tile *end_tile)
+                      const struct tile *end_tile)
 {
   return is_cardinal_dir(get_direction_for_step(start_tile, end_tile));
 }
@@ -1851,8 +1851,8 @@ bool is_singular_tile(const struct tile *ptile, int dist)
     dist *= MAP_IS_ISOMETRIC ? 2 : 1;
 
     return ((!topo_has_flag(TF_WRAPX)
-	     && (ntl_x < dist || ntl_x >= NATURAL_WIDTH - dist))
-	    || (!topo_has_flag(TF_WRAPY)
-		&& (ntl_y < dist || ntl_y >= NATURAL_HEIGHT - dist)));
+             && (ntl_x < dist || ntl_x >= NATURAL_WIDTH - dist))
+            || (!topo_has_flag(TF_WRAPY)
+                && (ntl_y < dist || ntl_y >= NATURAL_HEIGHT - dist)));
   } do_in_natural_pos_end;
 }

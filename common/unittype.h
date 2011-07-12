@@ -17,7 +17,7 @@
 
 #include "fc_types.h"
 
-struct Sprite;			/* opaque; client-gui specific */
+struct Sprite;                  /* opaque; client-gui specific */
 
 typedef int Unit_Type_id;
 /*
@@ -63,7 +63,7 @@ enum unit_class_id {
   UCL_MISSILE,
   UCL_NUCLEAR,
   UCL_SEA,
-  UCL_LAST	/* keep this last */
+  UCL_LAST      /* keep this last */
 };
 
 typedef enum unit_class_id Unit_Class_id;
@@ -106,7 +106,7 @@ enum unit_flag_id {
   F_NO_LAND_ATTACK,   /* Cannot attack vs land squares (Submarine) */
   F_ADD_TO_CITY,      /* unit can add to city population */
   F_FANATIC,          /* Only Fundamentalist government can build
-			 these units */
+                         these units */
   F_GAMELOSS,         /* Losing this unit means losing the game */
   F_UNIQUE,           /* A player can only have one unit of this type */
   F_UNBRIBABLE,       /* Cannot be bribed */
@@ -144,7 +144,7 @@ enum unit_role_id {
   L_DEFEND_GOOD,        /* primary purpose is defense (AI) */
   L_ATTACK_FAST,        /* quick attacking unit (Horse..Armor) (unused)*/
   L_ATTACK_STRONG,      /* powerful attacking unit (Catapult..) (unused) */
-  L_FERRYBOAT,	        /* is useful for ferrying (AI) */
+  L_FERRYBOAT,          /* is useful for ferrying (AI) */
   L_BARBARIAN,          /* barbarians unit, land only */
   L_BARBARIAN_TECH,     /* barbarians unit, global tech required */
   L_BARBARIAN_BOAT,     /* barbarian boat */
@@ -153,10 +153,10 @@ enum unit_role_id {
   L_BARBARIAN_LEADER,   /* barbarian leader */
   L_BARBARIAN_SEA,      /* sea raider unit */
   L_BARBARIAN_SEA_TECH, /* sea raider unit, global tech required */
-  L_CITIES,		/* can found cities */
-  L_SETTLERS,		/* can improve terrain */
-  L_GAMELOSS,		/* loss results in loss of game */
-  L_DIPLOMAT,		/* can do diplomat actions */
+  L_CITIES,             /* can found cities */
+  L_SETTLERS,           /* can improve terrain */
+  L_GAMELOSS,           /* loss results in loss of game */
+  L_DIPLOMAT,           /* can do diplomat actions */
   L_LAST
 };
 #define L_MAX 64
@@ -166,17 +166,17 @@ BV_DEFINE(bv_roles, L_MAX);
 
 struct veteran_type {
     /* client */
-    char name[MAX_LEN_NAME];			/* level/rank name */
+    char name[MAX_LEN_NAME];          /* level/rank name */
 
     /* server */
-    double power_fact;				/* combat/work speed/diplomatic
-  						   power factor */
+    double power_fact;                /* combat/work speed/diplomatic
+                                         power factor */
     int move_bonus;
 };
 
 struct unit_type {
   const char *name; /* Translated string - doesn't need freeing. */
-  char name_orig[MAX_LEN_NAME];	      /* untranslated */
+  char name_orig[MAX_LEN_NAME];       /* untranslated */
   char graphic_str[MAX_LEN_NAME];
   char graphic_alt[MAX_LEN_NAME];
   char sound_move[MAX_LEN_NAME];
@@ -185,13 +185,13 @@ struct unit_type {
   char sound_fight_alt[MAX_LEN_NAME];
   struct Sprite *sprite;
   enum unit_move_type move_type;
-  int build_cost;			/* Use wrappers to access this. */
+  int build_cost;                     /* Use wrappers to access this. */
   int pop_cost;  /* number of workers the unit contains (e.g., settlers, engineers)*/
   int attack_strength;
   int defense_strength;
   int move_rate;
   int tech_requirement;
-  int impr_requirement;		/* should be Impr_Type_id */
+  int impr_requirement;               /* should be Impr_Type_id */
   int vision_range;
   int transport_capacity;
   int hp;
@@ -202,10 +202,10 @@ struct unit_type {
   bv_flags flags;
   bv_roles roles;
 
-  int happy_cost;  /* unhappy people in home city */
-  int shield_cost; /* normal upkeep cost */
-  int food_cost;   /* settler food cost */
-  int gold_cost;   /* gold upkeep */
+  int happy_cost;       /* unhappy people in home city */
+  int shield_cost;      /* normal upkeep cost */
+  int food_cost;        /* settler food cost */
+  int gold_cost;        /* gold upkeep */
 
   int paratroopers_range; /* only valid for F_PARATROOPERS */
   int paratroopers_mr_req;
@@ -255,7 +255,7 @@ int utype_gold_cost(struct unit_type *ut, struct government *g);
 
 int can_upgrade_unittype(struct player *pplayer, Unit_Type_id id);
 int unit_upgrade_price(const struct player * const pplayer,
-		       const Unit_Type_id from, const Unit_Type_id to);
+                       const Unit_Type_id from, const Unit_Type_id to);
 
 Unit_Type_id find_unit_type_by_name(const char *name);
 Unit_Type_id find_unit_type_by_name_orig(const char *name_orig);

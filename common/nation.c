@@ -50,7 +50,7 @@ static bool bounds_check_nation_id(Nation_Type_id nid, int loglevel,
   }
   if (nid < 0 || nid >= game.ruleset_control.nation_count) {
     freelog(loglevel, "Bad nation id %d (count %d) in %s",
-	    nid, game.ruleset_control.nation_count, func_name);
+            nid, game.ruleset_control.nation_count, func_name);
     return FALSE;
   }
   return TRUE;
@@ -65,7 +65,7 @@ Nation_Type_id find_nation_by_name(const char *name)
 
   for(i=0; i<game.ruleset_control.nation_count; i++)
      if(mystrcasecmp(name, get_nation_name (i)) == 0)
-	return i;
+        return i;
 
   return NO_NATION_SELECTED;
 }
@@ -79,7 +79,7 @@ Nation_Type_id find_nation_by_name_orig(const char *name)
 
   for(i=0; i<game.ruleset_control.nation_count; i++)
      if(mystrcasecmp(name, get_nation_name_orig (i)) == 0)
-	return i;
+        return i;
 
   return NO_NATION_SELECTED;
 }
@@ -155,7 +155,7 @@ bool check_nation_leader_name(Nation_Type_id nation, const char *name)
   int i;
 
   if (!bounds_check_nation_id(nation, LOG_ERROR, "check_nation_leader_name")) {
-    return TRUE;			/* ? */
+    return TRUE;                        /* ? */
   }
   for (i = 0; i < nations[nation].leader_count; i++) {
     if (strcmp(name, nations[nation].leaders[i].name) == 0) {
@@ -310,7 +310,7 @@ Team_Type_id team_find_by_name(const char *team_name)
 
   team_iterate(pteam) {
     if (mystrcasecmp(team_name,
-		     game.ruleset_control.team_name[pteam->id]) == 0) {
+                     game.ruleset_control.team_name[pteam->id]) == 0) {
       return pteam->id;
     }
   } team_iterate_end;

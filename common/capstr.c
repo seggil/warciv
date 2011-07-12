@@ -15,9 +15,9 @@
 #include <config.h>
 #endif
 
-#include <stdlib.h>		/* getenv() */
+#include <stdlib.h>             /* getenv() */
 
-#include "connection.h"		/* MAX_LEN_CAPSTR */
+#include "connection.h"         /* MAX_LEN_CAPSTR */
 #include "support.h"
 
 #ifdef SVNREV
@@ -114,7 +114,7 @@ const char * const our_capability = our_capability_internal;
 #define CAPABILITY_BASE "+2.0"
 #define CAPABILITY_EXTRA "conn_ping_info username_info new_hack " \
                    "ReportFreezeFix AttrSerialFix extroutes extgameinfo " \
-		   "exttechleakage voteinfo extglobalinfo"
+                   "exttechleakage voteinfo extglobalinfo"
 
 
 void init_our_capability(void)

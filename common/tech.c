@@ -16,16 +16,16 @@
 #endif
 
 #include <assert.h>
-#include <stdlib.h>		/* exit */
+#include <stdlib.h>             /* exit */
 #include <string.h>
 #include <math.h>
 
 #include "fcintl.h"
 #include "game.h"
 #include "log.h"
-#include "mem.h"		/* free */
+#include "mem.h"                /* free */
 #include "player.h"
-#include "shared.h"		/* ARRAY_SIZE */
+#include "shared.h"             /* ARRAY_SIZE */
 #include "support.h"
 
 #include "tech.h"
@@ -50,7 +50,7 @@ static const char *flag_names[] = {
 ...
 **************************************************************************/
 enum tech_state get_invention(const struct player *pplayer,
-			      Tech_Type_id tech)
+                              Tech_Type_id tech)
 {
   assert(tech >= 0);
 
@@ -61,7 +61,7 @@ enum tech_state get_invention(const struct player *pplayer,
 ...
 **************************************************************************/
 void set_invention(struct player *pplayer, Tech_Type_id tech,
-		   enum tech_state value)
+                   enum tech_state value)
 {
   if (pplayer->research.inventions[tech].state == value) {
     return;
@@ -80,7 +80,7 @@ void set_invention(struct player *pplayer, Tech_Type_id tech,
   goal. The goal itself isn't a requirement of itself.
 **************************************************************************/
 bool is_tech_a_req_for_goal(struct player *pplayer, Tech_Type_id tech,
-			    Tech_Type_id goal)
+                            Tech_Type_id goal)
 {
   if (tech == goal) {
     return FALSE;
@@ -94,8 +94,8 @@ bool is_tech_a_req_for_goal(struct player *pplayer, Tech_Type_id tech,
   pplayer->research.inventions[goal].required_techs. Works recursive.
 **************************************************************************/
 static void build_required_techs_helper(struct player *pplayer,
-					Tech_Type_id tech,
-					Tech_Type_id goal)
+                                        Tech_Type_id tech,
+                                        Tech_Type_id goal)
 {
   /* The is_tech_a_req_for_goal condition is true if the tech is
    * already marked */
@@ -112,7 +112,7 @@ static void build_required_techs_helper(struct player *pplayer,
   if (advances[tech].req[0] == goal || advances[tech].req[1] == goal) {
     /* TRANS: Obscure ruleset error */
     freelog(LOG_FATAL, _("tech \"%s\": requires itself"),
-	    get_tech_name(pplayer, goal));
+            get_tech_name(pplayer, goal));
     assert(0);
     exit(EXIT_FAILURE);
   }
@@ -159,7 +159,7 @@ static void build_required_techs(struct player *pplayer, Tech_Type_id goal)
 
     pplayer->research.inventions[goal].num_required_techs++;
     pplayer->research.inventions[goal].bulbs_required +=
-	base_total_bulbs_required(pplayer, i);
+        base_total_bulbs_required(pplayer, i);
   } tech_type_iterate_end;
 
   /* Undo the changes made above */
@@ -208,14 +208,14 @@ void update_research(struct player *pplayer)
       set_invention(pplayer, i, TECH_UNKNOWN);
     } else {
       if (get_invention(pplayer, i) == TECH_REACHABLE) {
-	set_invention(pplayer, i, TECH_UNKNOWN);
+        set_invention(pplayer, i, TECH_UNKNOWN);
       }
 
       if (get_invention(pplayer, i) == TECH_UNKNOWN
-	  && get_invention(pplayer, advances[i].req[0]) == TECH_KNOWN
-	  && get_invention(pplayer, advances[i].req[1]) == TECH_KNOWN) {
-	set_invention(pplayer, i, TECH_REACHABLE);
-	researchable++;
+          && get_invention(pplayer, advances[i].req[0]) == TECH_KNOWN
+          && get_invention(pplayer, advances[i].req[1]) == TECH_KNOWN) {
+        set_invention(pplayer, i, TECH_REACHABLE);
+        researchable++;
       }
     }
     build_required_techs(pplayer, i);
@@ -232,7 +232,7 @@ void update_research(struct player *pplayer)
 
     tech_type_iterate(i) {
       if (get_invention(pplayer, i) == TECH_KNOWN && tech_flag(i, flag)) {
-	pplayer->research.num_known_tech_with_flag[flag]++;
+        pplayer->research.num_known_tech_with_flag[flag]++;
       }
     } tech_type_iterate_end;
   }
@@ -242,7 +242,7 @@ void update_research(struct player *pplayer)
 ...don't use this function directly, call get_next_tech instead.
 **************************************************************************/
 static Tech_Type_id get_next_tech_rec(struct player *pplayer,
-				      Tech_Type_id goal)
+                                      Tech_Type_id goal)
 {
   Tech_Type_id sub_goal;
 
@@ -427,11 +427,11 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
     break;
   case 2:
     cost = (advances[tech].preset_cost * game.info.researchcost) /
-	GAME_DEFAULT_RESEARCHCOST;
+        GAME_DEFAULT_RESEARCHCOST;
     break;
   default:
     die("Invalid tech_cost_style %d %d",
-	game.ruleset_game.tech_cost_style, tech_cost_style);
+        game.ruleset_game.tech_cost_style, tech_cost_style);
     cost = 0;
   }
 
@@ -451,16 +451,16 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
       int players = 0, players_with_tech_and_embassy = 0;
 
       players_iterate(other) {
-	players++;
-	if (get_invention(other, tech) == TECH_KNOWN
-	    && player_has_embassy(pplayer, other)) {
-	  players_with_tech_and_embassy++;
-	}
+        players++;
+        if (get_invention(other, tech) == TECH_KNOWN
+            && player_has_embassy(pplayer, other)) {
+          players_with_tech_and_embassy++;
+        }
       } players_iterate_end;
 
       if (players_with_tech_and_embassy) {
         cost = (cost * (100 * players - players_with_tech_and_embassy
-			* game.ext_info.techleakagerate)) / (100 * players);
+                        * game.ext_info.techleakagerate)) / (100 * players);
       }
     }
     break;
@@ -470,15 +470,15 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
       int players = 0, players_with_tech = 0;
 
       players_iterate(other) {
-	players++;
-	if (get_invention(other, tech) == TECH_KNOWN) {
-	  players_with_tech++;
-	}
+        players++;
+        if (get_invention(other, tech) == TECH_KNOWN) {
+          players_with_tech++;
+        }
       } players_iterate_end;
 
       if (players) {
         cost = (cost * (100 * players - players_with_tech
-			* game.ext_info.techleakagerate)) / (100 * players);
+                        * game.ext_info.techleakagerate)) / (100 * players);
       }
     }
     break;
@@ -488,18 +488,18 @@ int base_total_bulbs_required(struct player *pplayer, Tech_Type_id tech)
       int players = 0, players_with_tech = 0;
 
       players_iterate(other) {
-	if (is_barbarian(other)) {
-	  continue;
-	}
-	players++;
-	if (get_invention(other, tech) == TECH_KNOWN) {
-	  players_with_tech++;
-	}
+        if (is_barbarian(other)) {
+          continue;
+        }
+        players++;
+        if (get_invention(other, tech) == TECH_KNOWN) {
+          players_with_tech++;
+        }
       } players_iterate_end;
 
       if (players) {
         cost = (cost * (100 * players - players_with_tech
-			* game.ext_info.techleakagerate)) / (100 * players);
+                        * game.ext_info.techleakagerate)) / (100 * players);
       }
     }
     break;
@@ -543,7 +543,7 @@ int num_unknown_techs_for_goal(struct player *pplayer, Tech_Type_id goal)
  technology itself.
 **************************************************************************/
 int total_bulbs_required_for_goal(struct player *pplayer,
-				  Tech_Type_id goal)
+                                  Tech_Type_id goal)
 {
   return pplayer->research.inventions[goal].bulbs_required;
 }
@@ -622,7 +622,7 @@ const char *get_tech_name(struct player *pplayer, Tech_Type_id tech)
       char buffer[1024];
 
       my_snprintf(buffer, sizeof(buffer), _("Future Tech. %d"),
-		  pplayer->future_tech + 1);
+                  pplayer->future_tech + 1);
       string_vector_set(future, pplayer->future_tech, buffer);
     }
     return string_vector_get(future, pplayer->future_tech);
@@ -644,8 +644,8 @@ const char *get_tech_name(struct player *pplayer, Tech_Type_id tech)
 bool techs_have_fixed_costs()
 {
   return ((game.ruleset_game.tech_cost_style == 1
-	   || game.ruleset_game.tech_cost_style == 2)
-	  && game.ruleset_game.tech_leakage == 0);
+           || game.ruleset_game.tech_cost_style == 2)
+          && game.ruleset_game.tech_leakage == 0);
 }
 
 /***************************************************************

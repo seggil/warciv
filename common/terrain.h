@@ -101,7 +101,7 @@ struct tile_type *get_tile_type(Terrain_type_id type);
 Terrain_type_id get_terrain_by_name(const char * name);
 const char *get_terrain_name(Terrain_type_id type);
 enum terrain_flag_id terrain_flag_from_str(const char *s);
-#define terrain_has_flag(terr, flag)		\
+#define terrain_has_flag(terr, flag)            \
   BV_ISSET(get_tile_type(terr)->flags, flag)
 Terrain_type_id get_flag_terrain(enum terrain_flag_id flag);
 void tile_types_free(void);
@@ -109,38 +109,38 @@ void tile_types_free(void);
 /* Functions to operate on a general terrain type. */
 bool is_terrain_near_tile(const struct tile *ptile, Terrain_type_id t);
 int count_terrain_near_tile(const struct tile *ptile,
-			    bool cardinal_only, bool percentage,
-			    Terrain_type_id t);
+                            bool cardinal_only, bool percentage,
+                            Terrain_type_id t);
 
 /* Functions to operate on a terrain special. */
 bool is_special_near_tile(const struct tile *ptile,
-			  enum tile_special_type spe);
+                          enum tile_special_type spe);
 int count_special_near_tile(const struct tile *ptile,
-			    bool cardinal_only, bool percentage,
-			    enum tile_special_type spe);
+                            bool cardinal_only, bool percentage,
+                            enum tile_special_type spe);
 
 /* Functions to operate on a terrain flag. */
 bool is_terrain_flag_near_tile(const struct tile *ptile,
-			       enum terrain_flag_id flag);
+                               enum terrain_flag_id flag);
 int count_terrain_flag_near_tile(const struct tile *ptile,
-				 bool cardinal_only, bool percentage,
-				 enum terrain_flag_id flag);
+                                 bool cardinal_only, bool percentage,
+                                 enum terrain_flag_id flag);
 
 /* Terrain-specific functions. */
 #define is_ocean(x) (terrain_has_flag((x), TER_OCEANIC))
 #define is_ocean_near_tile(ptile) \
   is_terrain_flag_near_tile(ptile, TER_OCEANIC)
-#define count_ocean_near_tile(ptile, cardinal_only, percentage)		\
+#define count_ocean_near_tile(ptile, cardinal_only, percentage)         \
   count_terrain_flag_near_tile(ptile, cardinal_only, percentage, TER_OCEANIC)
 
 /* This iterator iterates over all terrain types. */
-#define terrain_type_iterate(id)                                            \
-{                                                                           \
-  Terrain_type_id id;                                                \
+#define terrain_type_iterate(id)             \
+{                                            \
+  Terrain_type_id id;                        \
   for (id = T_FIRST; id < T_COUNT; id++) {
 
-#define terrain_type_iterate_end                                            \
-  }                                                                         \
+#define terrain_type_iterate_end             \
+  }                                          \
 }
 
 #endif  /* FC__TERRAIN_H */

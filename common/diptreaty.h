@@ -13,13 +13,13 @@
 #ifndef FC__DIPTREATY_H
 #define FC__DIPTREATY_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 enum clause_type { CLAUSE_ADVANCE, CLAUSE_GOLD, CLAUSE_MAP,
-		   CLAUSE_SEAMAP, CLAUSE_CITY,
-		   CLAUSE_CEASEFIRE, CLAUSE_PEACE, CLAUSE_ALLIANCE,
-		   CLAUSE_VISION, CLAUSE_UNUSED, CLAUSE_EMBASSY,
-		   CLAUSE_LAST };
+                   CLAUSE_SEAMAP, CLAUSE_CITY,
+                   CLAUSE_CEASEFIRE, CLAUSE_PEACE, CLAUSE_ALLIANCE,
+                   CLAUSE_VISION, CLAUSE_UNUSED, CLAUSE_EMBASSY,
+                   CLAUSE_LAST };
 
 #define is_pact_clause(x)                                                   \
   ((x == CLAUSE_CEASEFIRE) || (x == CLAUSE_PEACE) || (x == CLAUSE_ALLIANCE))
@@ -51,9 +51,9 @@ bool could_intel_with_player(struct player *pplayer, struct player *aplayer);
 
 struct Treaty *treaty_new(struct player *plr0, struct player *plr1);
 bool add_clause(struct Treaty *ptreaty, struct player *pfrom,
-	        enum clause_type type, int val);
+                enum clause_type type, int val);
 bool remove_clause(struct Treaty *ptreaty, struct player *pfrom,
-		   enum clause_type type, int val);
+                   enum clause_type type, int val);
 void treaty_free(struct Treaty *ptreaty);
 
 #endif /* FC__DIPTREATY_H */

@@ -86,7 +86,7 @@ bool worklist_peek(const struct worklist *pwl, int *id, bool *is_unit)
   return FALSE.
 ****************************************************************/
 bool worklist_peek_ith(const struct worklist *pwl, int *id, bool *is_unit,
-		      int idx)
+                      int idx)
 {
   int i;
 
@@ -133,9 +133,9 @@ void worklist_remove(struct worklist *pwl, int idx)
   /* Slide everything up one spot. */
   if (idx < MAX_LEN_WORKLIST-1) {
     memmove(&pwl->wlefs[idx], &pwl->wlefs[idx+1],
-	    sizeof(enum worklist_elem_flag) * (MAX_LEN_WORKLIST-1-idx));
+            sizeof(enum worklist_elem_flag) * (MAX_LEN_WORKLIST-1-idx));
     memmove(&pwl->wlids[idx], &pwl->wlids[idx+1],
-	    sizeof(int) * (MAX_LEN_WORKLIST-1-idx));
+            sizeof(int) * (MAX_LEN_WORKLIST-1-idx));
   }
 
   pwl->wlefs[MAX_LEN_WORKLIST-1] = WEF_END;
@@ -186,9 +186,9 @@ bool worklist_insert(struct worklist *pwl, int id, bool is_unit, int idx)
    * Don't copy WEF_END (the terminator) because that might end up outside of
    * the list. */
   memmove(&pwl->wlefs[idx + 1], &pwl->wlefs[idx],
-	  sizeof(pwl->wlefs[0]) * (len - idx));
+          sizeof(pwl->wlefs[0]) * (len - idx));
   memmove(&pwl->wlids[idx + 1], &pwl->wlids[idx],
-	  sizeof(pwl->wlids[0]) * (len - idx));
+          sizeof(pwl->wlids[0]) * (len - idx));
 
   pwl->wlefs[idx] = (is_unit ? WEF_UNIT : WEF_IMPR);
   pwl->wlids[idx] = id;
@@ -207,7 +207,7 @@ bool worklist_insert(struct worklist *pwl, int id, bool is_unit, int idx)
   Return TRUE iff the two worklists are equal.
 **************************************************************************/
 bool are_worklists_equal(const struct worklist *wlist1,
-			 const struct worklist *wlist2)
+                         const struct worklist *wlist2)
 {
   int i, len = worklist_length(wlist1);
 
@@ -220,7 +220,7 @@ bool are_worklists_equal(const struct worklist *wlist1,
 
   for (i = 0; i < len; i++) {
     if (wlist1->wlefs[i] != wlist2->wlefs[i] ||
-	wlist1->wlids[i] != wlist2->wlids[i]) {
+        wlist1->wlids[i] != wlist2->wlids[i]) {
       return FALSE;
     }
   }

@@ -28,8 +28,8 @@
  * meaning. The value is only used for comparison. The value must be
  * <0.
  */
-#define MOVE_COST_FOR_VALID_SEA_STEP	(-3)
-#define MOVE_COST_FOR_VALID_AIR_STEP	(-3)
+#define MOVE_COST_FOR_VALID_SEA_STEP    (-3)
+#define MOVE_COST_FOR_VALID_AIR_STEP    (-3)
 
 /* For client Area Selection */
 enum tile_hilite {
@@ -42,32 +42,32 @@ enum tile_hilite {
                        ((ptile) ? (ptile)->y : -1)
 
 struct tile {
-  const int x, y;		/* Cartesian (map) coordinates of the tile. */
-  const int nat_x, nat_y;	/* Native coordinates of the tile. */
-  const int index;		/* Index coordinate of the tile. */
+  const int x, y;               /* Cartesian (map) coordinates of the tile. */
+  const int nat_x, nat_y;       /* Native coordinates of the tile. */
+  const int index;              /* Index coordinate of the tile. */
   Terrain_type_id terrain;
   enum tile_special_type special;
   struct city *city;
   struct unit_list *units;
   Continent_id continent;
-  signed char move_cost[DIR8_COUNT];	/* don't know if this helps! */
-  struct city *worked;		/* city working tile, or NULL if none */
-  struct player *owner;		/* Player owning this tile, or NULL. */
-  char *spec_sprite;		/* Maybe for scenarios? Not sure... -- Pepeto */
+  signed char move_cost[DIR8_COUNT];    /* don't know if this helps! */
+  struct city *worked;          /* city working tile, or NULL if none */
+  struct player *owner;         /* Player owning this tile, or NULL. */
+  char *spec_sprite;            /* Maybe for scenarios? Not sure... -- Pepeto */
 
   union {
     /* Client specific datas. */
     struct {
       enum known_type known;
-      enum tile_hilite hilite;	/* Area Selection in client. */
+      enum tile_hilite hilite;  /* Area Selection in client. */
     } client;
 
     /* Server specific datas. */
     struct {
-      unsigned int known;	/* A bitvector on the server side, an
-				 * enum known_type on the client side.
-				 * Player_no is index */
-      int assigned;		/* these can save a lot of CPU usage -- Syela */
+      unsigned int known;       /* A bitvector on the server side, an
+                                 * enum known_type on the client side.
+                                 * Player_no is index */
+      int assigned;             /* these can save a lot of CPU usage -- Syela */
     } server;
   };
 };
@@ -94,7 +94,7 @@ expand with government bonuses??
 *****************************************************************/
 struct tile_type {
   const char *terrain_name; /* Translated string - doesn't need freeing. */
-  char terrain_name_orig[MAX_LEN_NAME];	/* untranslated copy */
+  char terrain_name_orig[MAX_LEN_NAME]; /* untranslated copy */
   char graphic_str[MAX_LEN_NAME];
   char graphic_alt[MAX_LEN_NAME];
 
@@ -186,13 +186,13 @@ struct civ_map {
     int num_start_positions;
     bool have_specials;
     bool have_huts;
-    bool have_rivers_overlay;	/* only applies if !have_specials */
+    bool have_rivers_overlay;   /* only applies if !have_specials */
     int num_oceans;               /* not updated at the client */
 
     struct start_position {
       struct tile *tile;
       Nation_Type_id nation; /* May be NO_NATION_SELECTED. */
-    } *start_positions;	/* allocated at runtime */
+    } *start_positions; /* allocated at runtime */
   } server;
 };
 
@@ -228,10 +228,10 @@ int sq_map_distance(const struct tile *tile0,const  struct tile *tile1);
 
 bool same_pos(const struct tile *tile0, const struct tile *tile1);
 bool base_get_direction_for_step(const struct tile *src_tile,
-				 const struct tile *dst_tile,
-				 enum direction8 *dir);
+                                 const struct tile *dst_tile,
+                                 enum direction8 *dir);
 int get_direction_for_step(const struct tile *src_tile,
-			   const struct tile *dst_tile);
+                           const struct tile *dst_tile);
 
 void map_set_continent(struct tile *ptile, Continent_id val);
 Continent_id map_get_continent(const struct tile *ptile);
@@ -246,7 +246,7 @@ void reset_move_costs(struct tile *ptile);
 #ifdef DEBUG
 #define CHECK_MAP_POS(x,y) assert(is_normal_map_pos((x),(y)))
 #define CHECK_NATIVE_POS(x, y) assert((x) >= 0 && (x) < map.info.xsize \
-				      && (y) >= 0 && (y) < map.info.ysize)
+                                      && (y) >= 0 && (y) < map.info.ysize)
 #define CHECK_INDEX(index) assert((index) >= 0 && (index) < MAX_MAP_INDEX)
 #else
 #define CHECK_MAP_POS(x,y) ((void)0)
@@ -255,7 +255,7 @@ void reset_move_costs(struct tile *ptile);
 #endif
 
 #define native_pos_to_index(nat_x, nat_y)                                   \
-  (CHECK_NATIVE_POS((nat_x), (nat_y)),					    \
+  (CHECK_NATIVE_POS((nat_x), (nat_y)),                                      \
    (nat_x) + (nat_y) * map.info.xsize)
 #define index_to_native_pos(pnat_x, pnat_y, index)                          \
   (*(pnat_x) = (index) % map.info.xsize,                                         \
@@ -263,25 +263,25 @@ void reset_move_costs(struct tile *ptile);
 
 /* Obscure math.  See explanation in doc/HACKING. */
 #define NATIVE_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                     \
-  (MAP_IS_ISOMETRIC							    \
+  (MAP_IS_ISOMETRIC                                                         \
    ? (*(pmap_x) = ((nat_y) + ((nat_y) & 1)) / 2 + (nat_x),                  \
       *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                          \
    : (*(pmap_x) = (nat_x), *(pmap_y) = (nat_y)))
 
 #define MAP_TO_NATIVE_POS(pnat_x, pnat_y, map_x, map_y)                     \
-  (MAP_IS_ISOMETRIC							    \
+  (MAP_IS_ISOMETRIC                                                         \
    ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                            \
       *(pnat_x) = (2 * (map_x) - *(pnat_y) - (*(pnat_y) & 1)) / 2)          \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
 
 #define NATURAL_TO_MAP_POS(pmap_x, pmap_y, nat_x, nat_y)                    \
-  (MAP_IS_ISOMETRIC							    \
+  (MAP_IS_ISOMETRIC                                                         \
    ? (*(pmap_x) = ((nat_y) + (nat_x)) / 2,                                  \
       *(pmap_y) = (nat_y) - *(pmap_x) + map.info.xsize)                          \
    : (*(pmap_x) = (nat_x), *(pmap_y) = (nat_y)))
 
 #define MAP_TO_NATURAL_POS(pnat_x, pnat_y, map_x, map_y)                    \
-  (MAP_IS_ISOMETRIC							    \
+  (MAP_IS_ISOMETRIC                                                         \
    ? (*(pnat_y) = (map_x) + (map_y) - map.info.xsize,                            \
       *(pnat_x) = 2 * (map_x) - *(pnat_y))                                  \
    : (*(pnat_x) = (map_x), *(pnat_y) = (map_y)))
@@ -294,7 +294,7 @@ void reset_move_costs(struct tile *ptile);
 #define do_in_native_pos(nat_x, nat_y, map_x, map_y)                        \
 {                                                                           \
   int _nat_x, _nat_y;                                                       \
-  MAP_TO_NATIVE_POS(&_nat_x, &_nat_y, map_x, map_y);			    \
+  MAP_TO_NATIVE_POS(&_nat_x, &_nat_y, map_x, map_y);                        \
   {                                                                         \
     const int nat_x = _nat_x, nat_y = _nat_y;
 
@@ -309,7 +309,7 @@ void reset_move_costs(struct tile *ptile);
 #define do_in_natural_pos(ntl_x, ntl_y, map_x, map_y)                        \
 {                                                                           \
   int _ntl_x, _ntl_y;                                                       \
-  MAP_TO_NATURAL_POS(&_ntl_x, &_ntl_y, map_x, map_y);			    \
+  MAP_TO_NATURAL_POS(&_ntl_x, &_ntl_y, map_x, map_y);                       \
   {                                                                         \
     const int ntl_x = _ntl_x, ntl_y = _ntl_y;
 
@@ -338,8 +338,8 @@ static inline int map_pos_to_index(int map_x, int map_y);
    index_to_native_pos(pmap_x, pmap_y, index),  \
    NATIVE_TO_MAP_POS(pmap_x, pmap_y, *(pmap_x), *(pmap_y)))
 
-#define DIRSTEP(dest_x, dest_y, dir)	\
-(    (dest_x) = DIR_DX[(dir)],      	\
+#define DIRSTEP(dest_x, dest_y, dir)    \
+(    (dest_x) = DIR_DX[(dir)],          \
      (dest_y) = DIR_DY[(dir)])
 
 /*
@@ -372,36 +372,36 @@ bool is_normal_map_pos(int x, int y);
 
 /* implemented in server/maphand.c and client/climisc.c */
 enum known_type map_get_known(const struct tile *ptile,
-			      struct player *pplayer);
+                              struct player *pplayer);
 
 /* special testing */
 bool map_has_special(const struct tile *ptile,
-		     enum tile_special_type to_test_for);
+                     enum tile_special_type to_test_for);
 bool tile_has_special(const struct tile *ptile,
-		      enum tile_special_type to_test_for);
+                      enum tile_special_type to_test_for);
 bool contains_special(enum tile_special_type all,
-		      enum tile_special_type to_test_for);
+                      enum tile_special_type to_test_for);
 
 
 bool is_singular_tile(const struct tile *ptile, int dist);
 bool normalize_map_pos(int *x, int *y);
 struct tile *nearest_real_tile(int x, int y);
 void base_map_distance_vector(int *dx, int *dy,
-			      int x0, int y0, int x1, int y1);
+                              int x0, int y0, int x1, int y1);
 void map_distance_vector(int *dx, int *dy, const struct tile *ptile0,
-			 const struct tile *ptile1);
+                         const struct tile *ptile1);
 int map_num_tiles(void);
 
 struct tile *rand_neighbour(const struct tile *ptile);
 struct tile *rand_map_pos(void);
 struct tile *rand_map_pos_filtered(void *data,
-				   bool (*filter)(const struct tile *ptile,
-						  const void *data));
+                                   bool (*filter)(const struct tile *ptile,
+                                                  const void *data));
 
 bool is_water_adjacent_to_tile(const struct tile *ptile);
 bool is_tiles_adjacent(const struct tile *ptile0, const struct tile *ptile1);
 bool is_move_cardinal(const struct tile *src_tile,
-		      const struct tile *dst_tile);
+                      const struct tile *dst_tile);
 int map_move_cost(struct unit *punit, const struct tile *ptile);
 enum tile_special_type get_special_by_name(const char * name);
 const char *get_special_name(enum tile_special_type type);
@@ -446,31 +446,31 @@ extern struct terrain_misc terrain_control;
  *
  * See also iterate_outward() */
 #define iterate_outward_dxy(start_tile, max_dist, tile_itr, dx_itr, dy_itr) \
-{									    \
-  const struct tile *_start_tile = (start_tile);			    \
-  struct tile *tile_itr;						    \
-  int _max_dist = (max_dist), _x_itr, _y_itr, dx_itr, dy_itr, _index;	    \
-  bool _is_border = is_border_tile(_start_tile, _max_dist);		    \
-									    \
+{                                                                           \
+  const struct tile *_start_tile = (start_tile);                            \
+  struct tile *tile_itr;                                                    \
+  int _max_dist = (max_dist), _x_itr, _y_itr, dx_itr, dy_itr, _index;       \
+  bool _is_border = is_border_tile(_start_tile, _max_dist);                 \
+                                                                            \
   for (_index = 0; _index < map.num_iterate_outwards_indices; _index++) {   \
-    if (map.iterate_outwards_indices[_index].dist > _max_dist) {	    \
-      break;								    \
-    }									    \
-    dx_itr = map.iterate_outwards_indices[_index].dx;			    \
-    dy_itr = map.iterate_outwards_indices[_index].dy;			    \
-    _x_itr = dx_itr + _start_tile->x;					    \
-    _y_itr = dy_itr + _start_tile->y;					    \
-    if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {		    \
-      continue;								    \
-    }									    \
+    if (map.iterate_outwards_indices[_index].dist > _max_dist) {            \
+      break;                                                                \
+    }                                                                       \
+    dx_itr = map.iterate_outwards_indices[_index].dx;                       \
+    dy_itr = map.iterate_outwards_indices[_index].dy;                       \
+    _x_itr = dx_itr + _start_tile->x;                                       \
+    _y_itr = dy_itr + _start_tile->y;                                       \
+    if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
+      continue;                                                             \
+    }                                                                       \
     tile_itr = map.tiles + map_pos_to_index(_x_itr, _y_itr);
 
-#define iterate_outward_dxy_end						    \
+#define iterate_outward_dxy_end                                             \
   }                                                                         \
 }
 
 /* See iterate_outward_dxy() */
-#define iterate_outward(start_tile, max_dist, itr_tile)			    \
+#define iterate_outward(start_tile, max_dist, itr_tile)                     \
   iterate_outward_dxy(start_tile, max_dist, itr_tile, _dx_itr, _dy_itr)
 
 #define iterate_outward_end iterate_outward_dxy_end
@@ -493,7 +493,7 @@ extern struct terrain_misc terrain_control;
  * Positions returned will have adjusted x, and positions with illegal
  * y will be automatically discarded.
  */
-#define square_iterate(center_tile, radius, tile_itr)			    \
+#define square_iterate(center_tile, radius, tile_itr)                       \
   square_dxy_iterate(center_tile, radius, tile_itr, _dummy_x, dummy_y)
 
 #define square_iterate_end  square_dxy_iterate_end
@@ -503,11 +503,11 @@ extern struct terrain_misc terrain_control;
  * radius.  Positions returned will have adjusted (x, y); unreal
  * positions will be automatically discarded.
  */
-#define circle_iterate(center_tile, sq_radius, tile_itr)		    \
+#define circle_iterate(center_tile, sq_radius, tile_itr)                    \
 {                                                                           \
-  int _sq_radius = (sq_radius);						    \
-  int _cr_radius = (int)sqrt((double)_sq_radius);			    \
-  square_dxy_iterate(center_tile, _cr_radius, tile_itr, _dx, _dy) {	    \
+  int _sq_radius = (sq_radius);                                             \
+  int _cr_radius = (int)sqrt((double)_sq_radius);                           \
+  square_dxy_iterate(center_tile, _cr_radius, tile_itr, _dx, _dy) {         \
     if (map_vector_to_sq_distance(_dx, _dy) <= _sq_radius) {
 
 #define circle_iterate_end                                                  \
@@ -517,31 +517,31 @@ extern struct terrain_misc terrain_control;
 
 /* Iterate through all map positions adjacent to the given center map
  * position, with normalization.  The order of positions is unspecified. */
-#define adjc_iterate(center_tile, itr_tile)				    \
-{									    \
+#define adjc_iterate(center_tile, itr_tile)                                 \
+{                                                                           \
   /* Written as a wrapper to adjc_dir_iterate since it's the cleanest and   \
-   * most efficient. */							    \
+   * most efficient. */                                                     \
   adjc_dir_iterate(center_tile, itr_tile, ADJC_ITERATE_dir_itr) {
 
 #define adjc_iterate_end                                                    \
   } adjc_dir_iterate_end;                                                   \
 }
 
-#define adjc_dir_iterate(center_tile, itr_tile, dir_itr)		    \
-  adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,			    \
-		       map.valid_dirs, map.num_valid_dirs)
+#define adjc_dir_iterate(center_tile, itr_tile, dir_itr)                    \
+  adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,                      \
+                       map.valid_dirs, map.num_valid_dirs)
 
 #define adjc_dir_iterate_end adjc_dirlist_iterate_end
 
-#define cardinal_adjc_iterate(center_tile, itr_tile)			    \
-  adjc_dirlist_iterate(center_tile, itr_tile, _dir_itr,			    \
-		       map.cardinal_dirs, map.num_cardinal_dirs)
+#define cardinal_adjc_iterate(center_tile, itr_tile)                        \
+  adjc_dirlist_iterate(center_tile, itr_tile, _dir_itr,                     \
+                       map.cardinal_dirs, map.num_cardinal_dirs)
 
 #define cardinal_adjc_iterate_end adjc_dirlist_iterate_end
 
-#define cardinal_adjc_dir_iterate(center_tile, itr_tile, dir_itr)	    \
-  adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,			    \
-		       map.cardinal_dirs, map.num_cardinal_dirs)
+#define cardinal_adjc_dir_iterate(center_tile, itr_tile, dir_itr)           \
+  adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,                      \
+                       map.cardinal_dirs, map.num_cardinal_dirs)
 
 #define cardinal_adjc_dir_iterate_end adjc_dirlist_iterate_end
 
@@ -552,35 +552,35 @@ extern struct terrain_misc terrain_control;
  *
  * This macro should not be used directly.  Instead, use adjc_dir_iterate
  * or cartesian_adjacent_iterate. */
-#define adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,		    \
-			     dirlist, dircount)				    \
-{									    \
-  const struct tile *_center_tile = (center_tile);			    \
-  struct tile *itr_tile;						    \
-  int _dir_index, _x_itr, _y_itr;					    \
-  enum direction8 dir_itr;						    \
-  bool _is_border = is_border_tile(_center_tile, 1);			    \
-									    \
-  for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {		    \
-    dir_itr = dirlist[_dir_index];					    \
-    DIRSTEP(_x_itr, _y_itr, dir_itr);					    \
-    _x_itr += _center_tile->x;						    \
-    _y_itr += _center_tile->y;						    \
-    if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {		    \
-      continue;								    \
-    }									    \
+#define adjc_dirlist_iterate(center_tile, itr_tile, dir_itr,                \
+                             dirlist, dircount)                             \
+{                                                                           \
+  const struct tile *_center_tile = (center_tile);                          \
+  struct tile *itr_tile;                                                    \
+  int _dir_index, _x_itr, _y_itr;                                           \
+  enum direction8 dir_itr;                                                  \
+  bool _is_border = is_border_tile(_center_tile, 1);                        \
+                                                                            \
+  for (_dir_index = 0; _dir_index < (dircount); _dir_index++) {             \
+    dir_itr = dirlist[_dir_index];                                          \
+    DIRSTEP(_x_itr, _y_itr, dir_itr);                                       \
+    _x_itr += _center_tile->x;                                              \
+    _y_itr += _center_tile->y;                                              \
+    if (_is_border && !normalize_map_pos(&_x_itr, &_y_itr)) {               \
+      continue;                                                             \
+    }                                                                       \
     itr_tile = map.tiles + map_pos_to_index(_x_itr, _y_itr);
 
-#define adjc_dirlist_iterate_end					    \
-    }									    \
+#define adjc_dirlist_iterate_end                                            \
+    }                                                                       \
 }
 
 /* Iterate over all positions on the globe. */
-#define whole_map_iterate(ptile)					    \
+#define whole_map_iterate(ptile)                                            \
 {                                                                           \
-  int _index; /* We use index positions for cache efficiency. */	    \
-  for (_index = 0; _index < MAX_MAP_INDEX; _index++) {			    \
-    struct tile *ptile = map.tiles + _index;				    \
+  int _index; /* We use index positions for cache efficiency. */            \
+  for (_index = 0; _index < MAX_MAP_INDEX; _index++) {                      \
+    struct tile *ptile = map.tiles + _index;                                \
 
 #define whole_map_iterate_end                                               \
   }                                                                         \
@@ -590,8 +590,8 @@ BV_DEFINE(dir_vector, 8);
 
 struct unit_order {
   enum unit_orders order;
-  enum direction8 dir;		/* Only valid for ORDER_MOVE. */
-  enum unit_activity activity;	/* Only valid for ORDER_ACTIVITY. */
+  enum direction8 dir;          /* Only valid for ORDER_MOVE. */
+  enum unit_activity activity;  /* Only valid for ORDER_ACTIVITY. */
 };
 
 /* return the reverse of the direction */
@@ -607,7 +607,7 @@ extern const int DIR_DX[DIR8_COUNT];
 extern const int DIR_DY[DIR8_COUNT];
 
 /* Used for network transmission; do not change. */
-#define MAP_TILE_OWNER_NULL	 MAX_UINT8
+#define MAP_TILE_OWNER_NULL      MAX_UINT8
 
 #define MAP_DEFAULT_HUTS         0
 #define MAP_MIN_HUTS             0
@@ -708,9 +708,9 @@ static inline bool is_border_tile(const struct tile *ptile, int dist)
   int ydist = (MAP_IS_ISOMETRIC ? (2 * dist) : dist);
 
   return (ptile->nat_x < xdist
-	  || ptile->nat_y < ydist
-	  || ptile->nat_x >= map.info.xsize - xdist
-	  || ptile->nat_y >= map.info.ysize - ydist);
+          || ptile->nat_y < ydist
+          || ptile->nat_x >= map.info.xsize - xdist
+          || ptile->nat_y >= map.info.ysize - ydist);
 }
 
 /* An arbitrary somewhat integer value.  Activity times are multiplied by

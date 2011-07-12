@@ -90,7 +90,7 @@ enum government_flag_id government_flag_from_str(const char *s)
   Returns TRUE iff the given government has the given flag.
 ****************************************************************************/
 bool government_has_flag(const struct government *gov,
-			 enum government_flag_id flag)
+                         enum government_flag_id flag)
 {
   assert(flag>=G_FIRST_FLAG && flag<G_LAST_FLAG);
   return TEST_BIT(gov->flags, flag);
@@ -132,8 +132,8 @@ struct government *find_government_by_name_orig(const char *name)
 bool government_exists(int gov)
 {
   return game.ruleset_control.government_count > 0 && gov >= 0
-	 && gov < game.ruleset_control.government_count
-	 && governments[gov].index == gov;
+         && gov < game.ruleset_control.government_count
+         && governments[gov].index == gov;
 }
 
 /****************************************************************************
@@ -187,8 +187,8 @@ const char *get_ruler_title(int gov, bool male, int nation)
     return male ? best_match->male_title : best_match->female_title;
   } else {
     freelog(LOG_ERROR,
-	    "get_ruler_title: found no title for government %d (%s) nation %d",
-	    gov, g->name, nation);
+            "get_ruler_title: found no title for government %d (%s) nation %d",
+            gov, g->name, nation);
     return male ? "Mr." : "Ms.";
   }
 }
@@ -250,7 +250,7 @@ bool can_change_to_government(struct player *pplayer, int government)
     return FALSE;
   } else {
     return (get_invention(pplayer, req) == TECH_KNOWN
-	    || get_player_bonus(pplayer, EFT_ANY_GOVERNMENT) > 0);
+            || get_player_bonus(pplayer, EFT_ANY_GOVERNMENT) > 0);
   }
 }
 

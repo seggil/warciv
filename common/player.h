@@ -15,7 +15,7 @@
 
 #include "connection.h"
 #include "fc_types.h"
-#include "improvement.h"	/* Impr_Status */
+#include "improvement.h"        /* Impr_Status */
 #include "nation.h"
 #include "shared.h"
 #include "spaceship.h"
@@ -76,10 +76,10 @@ struct player_research {
   int researching;
   int researching_cost;
   int changed_from;       /* if the player changed techs, which one
-			     changed from */
+                             changed from */
   int bulbs_researched_before;  /* if the player changed techs, how
-				   many points they had before the
-				   change */
+                                   many points they had before the
+                                   change */
   struct {
     /* One of TECH_UNKNOWN, TECH_KNOWN or TECH_REACHABLE. */
     enum tech_state state;
@@ -112,7 +112,7 @@ struct player_score {
   int techout;
   int landarea;
   int settledarea;
-  int population; 	/* in thousand of citizen */
+  int population;       /* in thousand of citizen */
   int cities;
   int units;
   int pollution;
@@ -137,12 +137,12 @@ struct player_ai {
   int tech_goal;
   int prev_gold;
   int maxbuycost;
-  int est_upkeep; /* estimated upkeep of buildings in cities */
+  int est_upkeep;               /* estimated upkeep of buildings in cities */
   int tech_want[A_LAST+1];
-  int handicap;			/* sum of enum handicap_type */
-  int skill_level;		/* 0-10 value for save/load/display */
-  int fuzzy;			/* chance in 1000 to mis-decide */
-  int expand;			/* percentage factor to value new cities */
+  int handicap;                 /* sum of enum handicap_type */
+  int skill_level;              /* 0-10 value for save/load/display */
+  int fuzzy;                    /* chance in 1000 to mis-decide */
+  int expand;                   /* percentage factor to value new cities */
   int science_cost;             /* Cost in bulbs to get new tech, relative
                                    to non-AI players (100: Equal cost) */
   int warmth; /* threat of global warming */
@@ -164,15 +164,15 @@ enum diplstate_type {
   DS_ALLIANCE,
   DS_NO_CONTACT,
   DS_TEAM,
-  DS_LAST	/* leave this last */
+  DS_LAST       /* leave this last */
 };
 
 struct player_diplstate {
-  enum diplstate_type type;	/* this player's disposition towards other */
+  enum diplstate_type type;     /* this player's disposition towards other */
   /* the following are for "pacts" */
-  int turns_left;		/* until pact (e.g., cease-fire) ends */
-  int has_reason_to_cancel;	/* 0: no, 1: this turn, 2: this or next turn */
-  int contact_turns_left;	/* until contact ends */
+  int turns_left;               /* until pact (e.g., cease-fire) ends */
+  int has_reason_to_cancel;     /* 0: no, 1: this turn, 2: this or next turn */
+  int contact_turns_left;       /* until contact ends */
 };
 
 /***************************************************************************
@@ -183,7 +183,7 @@ struct player_diplstate {
 struct attribute_block_s {
   void *data;
   int length;
-#define MAX_ATTRIBUTE_BLOCK     (256*1024)	/* largest attribute block */
+#define MAX_ATTRIBUTE_BLOCK     (256*1024)      /* largest attribute block */
 };
 
 struct player {
@@ -220,7 +220,7 @@ struct player {
   int future_tech;
   struct player_ai ai;
   bool was_created;                    /* if the player was /created */
-  bool is_connected;		       /* observers don't count */
+  bool is_connected;                   /* observers don't count */
   bool is_civil_war_split;             /* if player was created by a civil war */
   struct connection *current_conn;     /* non-null while handling packet */
   struct conn_list *connections;       /* will replace conn */
@@ -229,7 +229,7 @@ struct player {
   unsigned int really_gives_vision; /* takes into account that p3 may see what p1 has via p2 */
   Impr_Status improvements[B_LAST]; /* improvements with equiv_range==Player */
   Impr_Status *island_improv; /* improvements with equiv_range==Island, dimensioned to
-			 	 [map.num_continents][game.ruleset_control.num_impr_types] */
+                                 [map.num_continents][game.ruleset_control.num_impr_types] */
 
   struct attribute_block_s attribute_block;
   struct attribute_block_s attribute_block_buffer;
@@ -292,32 +292,32 @@ const char *result_name_orig(enum player_results res);
 void player_init(struct player *plr);
 struct player *find_player_by_name(const char *name);
 struct player *find_player_by_name_prefix(const char *name,
-					  enum m_pre_result *result);
+                                          enum m_pre_result *result);
 struct player *find_player_by_user(const char *name);
 void player_set_unit_focus_status(struct player *pplayer);
 bool player_has_embassy(struct player *pplayer, struct player *pplayer2);
 
 bool can_player_see_unit(struct player *pplayer, struct unit *punit);
 bool can_player_see_unit_at(struct player *pplayer, struct unit *punit,
-			    struct tile *ptile);
+                            struct tile *ptile);
 
 bool can_player_see_units_in_city(struct player *pplayer,
-				  struct city *pcity);
+                                  struct city *pcity);
 bool can_player_see_city_internals(struct player *pplayer,
-				   struct city *pcity);
+                                   struct city *pcity);
 
 bool player_owns_city(struct player *pplayer, struct city *pcity);
 
 struct city *player_find_city_by_id(const struct player *pplayer,
-				    int city_id);
+                                    int city_id);
 struct unit *player_find_unit_by_id(const struct player *pplayer,
-				    int unit_id);
+                                    int unit_id);
 
 bool player_in_city_radius(struct player *pplayer, struct tile *ptile);
 bool player_knows_improvement_tech(struct player *pplayer,
-				   Impr_Type_id id);
+                                   Impr_Type_id id);
 bool player_knows_techs_with_flag(struct player *pplayer,
-				 enum tech_flag_id flag);
+                                 enum tech_flag_id flag);
 int num_known_tech_with_flag(struct player *pplayer, enum tech_flag_id flag);
 int player_get_expected_income(struct player *pplayer);
 int player_get_expected_bulbs(struct player *pplayer);
@@ -334,20 +334,20 @@ const char *diplstate_text(const enum diplstate_type type);
 const char *love_text(const int love);
 
 const struct player_diplstate *pplayer_get_diplstate(const struct player
-						     *pplayer,
-						     const struct player
-						     *pplayer2);
+                                                     *pplayer,
+                                                     const struct player
+                                                     *pplayer2);
 bool are_diplstates_equal(const struct player_diplstate *pds1,
-			  const struct player_diplstate *pds2);
+                          const struct player_diplstate *pds2);
 bool pplayer_can_ally(struct player *p1, struct player *p2);
 bool pplayers_at_war(const struct player *pplayer,
-		    const struct player *pplayer2);
+                    const struct player *pplayer2);
 bool pplayers_allied(const struct player *pplayer,
-		    const struct player *pplayer2);
+                    const struct player *pplayer2);
 bool pplayers_in_peace(const struct player *pplayer,
                     const struct player *pplayer2);
 bool pplayers_non_attack(const struct player *pplayer,
-			const struct player *pplayer2);
+                        const struct player *pplayer2);
 bool players_on_same_team(const struct player *pplayer1,
                           const struct player *pplayer2);
 bool players_on_different_teams(const struct player *pplayer1,

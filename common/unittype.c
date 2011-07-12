@@ -91,8 +91,8 @@ struct unit_type *get_unit_type(Unit_Type_id id)
 {
   if (!(id >= 0 && id < U_LAST && id < game.ruleset_control.num_unit_types)) {
     freelog(LOG_ERROR, "Fatal error occured, unit type id is out of range - "
-	               "%i, game.ruleset_control.num_unit_types=%i, U_LAST=%i",
-	    id, game.ruleset_control.num_unit_types, U_LAST);
+                       "%i, game.ruleset_control.num_unit_types=%i, U_LAST=%i",
+            id, game.ruleset_control.num_unit_types, U_LAST);
     assert(false);
   }
   return &unit_types[id];
@@ -265,13 +265,13 @@ const char *get_unit_name(Unit_Type_id id)
   ptype =get_unit_type(id);
   if (ptype->fuel > 0) {
     my_snprintf(buffer, sizeof(buffer),
-		"%s [%d/%d/%d(%d)]", ptype->name, ptype->attack_strength,
-		ptype->defense_strength,
-		ptype->move_rate/3,(ptype->move_rate/3)*ptype->fuel);
+                "%s [%d/%d/%d(%d)]", ptype->name, ptype->attack_strength,
+                ptype->defense_strength,
+                ptype->move_rate/3,(ptype->move_rate/3)*ptype->fuel);
   } else {
     my_snprintf(buffer, sizeof(buffer),
-		"%s [%d/%d/%d]", ptype->name, ptype->attack_strength,
-		ptype->defense_strength, ptype->move_rate/3);
+                "%s [%d/%d/%d]", ptype->name, ptype->attack_strength,
+                ptype->defense_strength, ptype->move_rate/3);
   }
   return buffer;
 }
@@ -320,19 +320,19 @@ const char *get_units_with_flag_string(int flag)
       strcat(astr.str, unitname);
 
       if (count == 1) {
-	const char *and_str = _(" and ");
+        const char *and_str = _(" and ");
 
         astr_minsize(&astr, astr.n + strlen(and_str));
         strcat(astr.str, and_str);
       } else {
         if (count != 0) {
-	  const char *and_comma = Q_("?and:, ");
+          const char *and_comma = Q_("?and:, ");
 
-	  astr_minsize(&astr, astr.n + strlen(and_comma));
-	  strcat(astr.str, and_comma);
+          astr_minsize(&astr, astr.n + strlen(and_comma));
+          strcat(astr.str, and_comma);
         } else {
-	  return astr.str;
-	}
+          return astr.str;
+        }
       }
     }
   }
@@ -362,7 +362,7 @@ int can_upgrade_unittype(struct player *pplayer, Unit_Type_id id)
   belongs to.
 **************************************************************************/
 int unit_upgrade_price(const struct player *const pplayer,
-		       const Unit_Type_id from, const Unit_Type_id to)
+                       const Unit_Type_id from, const Unit_Type_id to)
 {
   return unit_buy_gold_cost(to, unit_disband_shields(from));
 }
@@ -528,7 +528,7 @@ bool can_player_build_unit(struct player *p, Unit_Type_id id)
     return FALSE;
   while(unit_type_exists((id = unit_types[id].obsoleted_by)))
     if (can_player_build_unit_direct(p, id))
-	return FALSE;
+        return FALSE;
   return TRUE;
 }
 
@@ -547,7 +547,7 @@ bool can_player_eventually_build_unit(struct player *p, Unit_Type_id id)
   }
   while (unit_type_exists((id = unit_types[id].obsoleted_by))) {
     if (can_player_build_unit_direct(p, id)) {
-	return FALSE;
+        return FALSE;
     }
   }
   return TRUE;
@@ -584,7 +584,7 @@ static void precalc_one(int i, bool (*func_has)(Unit_Type_id, int))
     j = 0;
     unit_type_iterate(u) {
       if(unit_type_exists(u) && func_has(u, i)) {
-	with_role[i][j++] = u;
+        with_role[i][j++] = u;
       }
     } unit_type_iterate_end;
     assert(j==n_with_role[i]);

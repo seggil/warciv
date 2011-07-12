@@ -17,32 +17,32 @@
 
 #include "fc_types.h"
 
-struct Sprite;			/* opaque; client-gui specific */
+struct Sprite;                  /* opaque; client-gui specific */
 
-#define G_MAGIC (127)		/* magic constant, used as flag value */
+#define G_MAGIC (127)           /* magic constant, used as flag value */
 
 /* special values for free_* fields -- SKi */
 #define G_CITY_SIZE_FREE          G_MAGIC
 
 enum government_flag_id {
-  G_BUILD_VETERAN_DIPLOMAT=0,	/* and Spies (in general: all F_DIPLOMAT) */
+  G_BUILD_VETERAN_DIPLOMAT=0,   /* and Spies (in general: all F_DIPLOMAT) */
   G_REVOLUTION_WHEN_UNHAPPY,
-  G_HAS_SENATE,			/* not implemented */
+  G_HAS_SENATE,                 /* not implemented */
   G_UNBRIBABLE,
   G_INSPIRES_PARTISANS,
   G_RAPTURE_CITY_GROWTH,        /* allows city to grow by celebrating */
   G_FANATIC_TROOPS,             /* for building troops with F_FANATIC flag */
   G_NO_UNHAPPY_CITIZENS,        /* no unhappy citizen, needed by
-				   fundamentism */
+                                   fundamentism */
   G_CONVERT_TITHES_TO_MONEY,    /* tithes to money, needed by fundamentalism */
   G_REDUCED_RESEARCH,           /* penalty for research, needed by
-				   fundamentalism */
+                                   fundamentalism */
   G_LAST_FLAG
 };
 #define G_FIRST_FLAG G_BUILD_VETERAN_DIPLOMAT
 
 enum government_hint_id {
-  G_IS_NICE=0,			/* spaceship auto-placement, among others */
+  G_IS_NICE=0,                  /* spaceship auto-placement, among others */
   G_FAVORS_GROWTH,
   G_LAST_HINT
 };
@@ -69,31 +69,31 @@ struct ruler_title
  * -- SKi */
 struct government
 {
-  int   index;			/* index into governments[] array */
+  int   index;                  /* index into governments[] array */
   const char *name; /* Translated string - doesn't need freeing. */
   char  name_orig[MAX_LEN_NAME]; /* untranslated copy */
   char  graphic_str[MAX_LEN_NAME];
   char  graphic_alt[MAX_LEN_NAME];
-  int   required_tech;		/* tech required to change to this gov */
+  int   required_tech;          /* tech required to change to this gov */
 
   struct ruler_title *ruler_titles;
   int   num_ruler_titles;
 
-  int   max_rate;		/* max individual Tax/Lux/Sci rate  */
+  int   max_rate;               /* max individual Tax/Lux/Sci rate  */
   int   civil_war;              /* chance (from 100) of civil war in
-				   right conditions */
-  int   martial_law_max;	/* maximum number of units which can
-				   enforce martial law */
+                                   right conditions */
+  int   martial_law_max;        /* maximum number of units which can
+                                   enforce martial law */
   int   martial_law_per;        /* number of unhappy citizens made
-				   content by each enforcer unit */
-  int   empire_size_mod;	/* (signed) offset to game.info.cityfactor to
-				   give city count when number of naturally
-				   content citizens is decreased */
-  int   empire_size_inc;	/* if non-zero, reduce one content citizen for
-				   every empire_size_inc cities once #cities
-				   exceeds game.info.cityfactor + empire_size_mod */
-  int   rapture_size;		/* minimum city size for rapture; if 255,
-				   rapture is (practically) impossible */
+                                   content by each enforcer unit */
+  int   empire_size_mod;        /* (signed) offset to game.info.cityfactor to
+                                   give city count when number of naturally
+                                   content citizens is decreased */
+  int   empire_size_inc;        /* if non-zero, reduce one content citizen for
+                                   every empire_size_inc cities once #cities
+                                   exceeds game.info.cityfactor + empire_size_mod */
+  int   rapture_size;           /* minimum city size for rapture; if 255,
+                                   rapture is (practically) impossible */
 
   /* unit cost modifiers */
   int   unit_happy_cost_factor;
@@ -178,7 +178,7 @@ struct government *find_government_by_name_orig(const char *name);
 
 enum government_flag_id government_flag_from_str(const char *s);
 bool government_has_flag(const struct government *gov,
-			enum government_flag_id flag);
+                        enum government_flag_id flag);
 
 int get_government_max_rate(int type);
 int get_government_civil_war_prob(int type);
@@ -197,7 +197,7 @@ void governments_free(void);
   int GI_index;                                                             \
                                                                             \
   for (GI_index = 0; GI_index < game.ruleset_control.government_count;      \
-       GI_index++) {							    \
+       GI_index++) {                                                        \
     struct government *gov = get_government(GI_index);                      \
     {
 

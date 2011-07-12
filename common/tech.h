@@ -77,15 +77,15 @@ enum tech_state {
 
 struct advance {
   const char *name; /* Translated string - doesn't need freeing. */
-  char name_orig[MAX_LEN_NAME];	      /* untranslated */
-  char graphic_str[MAX_LEN_NAME];	/* which named sprite to use */
-  char graphic_alt[MAX_LEN_NAME];	/* alternate icon name */
+  char name_orig[MAX_LEN_NAME];       /* untranslated */
+  char graphic_str[MAX_LEN_NAME];       /* which named sprite to use */
+  char graphic_alt[MAX_LEN_NAME];       /* alternate icon name */
   Tech_Type_id req[2];
-  Tech_Type_id root_req;		/* A_NONE means unrestricted */
+  Tech_Type_id root_req;                /* A_NONE means unrestricted */
   unsigned int flags;
   char *helptext;
 
-  struct Sprite *sprite;		/* icon of tech. */
+  struct Sprite *sprite;                /* icon of tech. */
 
   /*
    * Message displayed to the first player to get a bonus tech
@@ -108,9 +108,9 @@ struct advance {
 BV_DEFINE(tech_vector, A_LAST);
 
 enum tech_state get_invention(const struct player *pplayer,
-			      Tech_Type_id tech);
+                              Tech_Type_id tech);
 void set_invention(struct player *pplayer, Tech_Type_id tech,
-		   enum tech_state value);
+                   enum tech_state value);
 void update_research(struct player *pplayer);
 Tech_Type_id get_next_tech(struct player *pplayer, Tech_Type_id goal);
 
@@ -130,7 +130,7 @@ bool techs_have_fixed_costs(void);
 int num_unknown_techs_for_goal(struct player *pplayer, Tech_Type_id goal);
 int total_bulbs_required_for_goal(struct player *pplayer, Tech_Type_id goal);
 bool is_tech_a_req_for_goal(struct player *pplayer, Tech_Type_id tech,
-			   Tech_Type_id goal);
+                           Tech_Type_id goal);
 bool is_future_tech(Tech_Type_id tech);
 const char *get_tech_name(struct player *pplayer, Tech_Type_id tech);
 

@@ -1040,7 +1040,7 @@ class Packet:
         for field in self.key_fields+self.other_fields:
             body=body+"  %s;\n"%field.get_declar()
         if not body:
-            body="  char __dummy;			/* to avoid malloc(0); */\n"
+            body="  char __dummy;                       /* to avoid malloc(0); */\n"
         return intro+body+extro
     # '''
 
@@ -1117,8 +1117,8 @@ class Packet:
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to read data from the closed connection %%s",
-	    conn_description(pc));
+            "WARNING: trying to read data from the closed connection %%s",
+            conn_description(pc));
     return NULL;
   }
   assert(pc->phs.variant != NULL);
@@ -1153,8 +1153,8 @@ class Packet:
 {
   if(!pc->used) {
     freelog(LOG_ERROR,
-	    "WARNING: trying to send data to the closed connection %%s",
-	    conn_description(pc));
+            "WARNING: trying to send data to the closed connection %%s",
+            conn_description(pc));
     return -1;
   }
   assert(pc->phs.variant != NULL);
@@ -1276,7 +1276,7 @@ def get_get_packet_helper(packets):
         body=body+"  case %(type)s:\n    return receive_%(name)s(pc, type);\n\n"%p.__dict__
     extro='''  default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
-	    type, conn_description(pc));
+            type, conn_description(pc));
     remove_packet_from_buffer(pc->buffer);
     return NULL;
   };
@@ -1495,7 +1495,7 @@ static int stats_total_sent;
 struct connection;
 
 bool server_handle_packet(enum packet_type type, void *packet,
-			  struct player *pplayer, struct connection *pconn);
+                          struct player *pplayer, struct connection *pconn);
 
 ''')
 
@@ -1564,7 +1564,7 @@ bool client_handle_packet(enum packet_type type, void *packet);
 #include "hand_gen.h"
 
 bool server_handle_packet(enum packet_type type, void *packet,
-			  struct player *pplayer, struct connection *pconn)
+                          struct player *pplayer, struct connection *pconn)
 {
   switch(type) {
 ''')

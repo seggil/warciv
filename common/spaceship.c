@@ -15,12 +15,12 @@
 #include <config.h>
 #endif
 
-#include "shared.h"		/* TRUE, FALSE */
+#include "shared.h"             /* TRUE, FALSE */
 
 #include "spaceship.h"
 
 const struct sship_part_info structurals_info[NUM_SS_STRUCTURALS] = {
-  {19, 13, -1},		/* -1 means none required */
+  {19, 13, -1},                 /* -1 means none required */
   {19, 15,  0},
   {19, 11,  0},
   {19, 17,  1},

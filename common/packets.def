@@ -142,67 +142,67 @@ Syntax:
 */
 
 # typedefs for numbers
-type UINT8		= uint8(int)
-type UINT16		= uint16(int)
-type UINT32		= uint32(int)
-type SINT8		= sint8(int)
-type SINT16		= sint16(int)
-type SINT32		= sint32(int)
-type BOOL		= bool8(bool)
-type FLOAT		= float10000(float)
+type UINT8              = uint8(int)
+type UINT16             = uint16(int)
+type UINT32             = uint32(int)
+type SINT8              = sint8(int)
+type SINT16             = sint16(int)
+type SINT32             = sint32(int)
+type BOOL               = bool8(bool)
+type FLOAT              = float10000(float)
 
 # typedefs for arrays/structs
-type MEMORY		= memory(unsigned char)
-type STRING		= string(char)
-type BIT_STRING		= bit_string(char)
-type WORKLIST		= worklist(struct worklist)
-type TECH_LIST		= tech_list(int)
+type MEMORY             = memory(unsigned char)
+type STRING             = string(char)
+type BIT_STRING         = bit_string(char)
+type WORKLIST           = worklist(struct worklist)
+type TECH_LIST          = tech_list(int)
 
 # typedefs for enums
-type CLAUSE		= uint8(enum clause_type)
-type ACTIVITY		= uint8(enum unit_activity)
-type EVENT		= sint16(enum event_type)
-type TERRAIN		= sint16(Terrain_type_id)
-type SPECIAL		= uint16(enum tile_special_type)
-type SPECIALIST		= uint8(Specialist_type_id)
-type DIPLOMAT_ACTION	= uint8(enum diplomat_actions)
-type CMDLEVEL		= uint8(enum cmdlevel_id)
-type PLACE_TYPE		= uint8(enum spaceship_place_type)
-type RIVER_MOVE		= uint8(enum special_river_move)
-type REPORT_TYPE	= uint8(enum report_type)
-type AUTH_TYPE		= uint8(enum authentication_type)
-type CITY_MAP		= uint8(enum city_tile_type)
-type IMPR_RANGE		= uint8(enum impr_range)
-type DIRECTION		= uint8(enum direction8)
-type ORDERS		= uint8(enum unit_orders)
-type SSET_TYPE		= uint8(enum sset_type)
+type CLAUSE             = uint8(enum clause_type)
+type ACTIVITY           = uint8(enum unit_activity)
+type EVENT              = sint16(enum event_type)
+type TERRAIN            = sint16(Terrain_type_id)
+type SPECIAL            = uint16(enum tile_special_type)
+type SPECIALIST         = uint8(Specialist_type_id)
+type DIPLOMAT_ACTION    = uint8(enum diplomat_actions)
+type CMDLEVEL           = uint8(enum cmdlevel_id)
+type PLACE_TYPE         = uint8(enum spaceship_place_type)
+type RIVER_MOVE         = uint8(enum special_river_move)
+type REPORT_TYPE        = uint8(enum report_type)
+type AUTH_TYPE          = uint8(enum authentication_type)
+type CITY_MAP           = uint8(enum city_tile_type)
+type IMPR_RANGE         = uint8(enum impr_range)
+type DIRECTION          = uint8(enum direction8)
+type ORDERS             = uint8(enum unit_orders)
+type SSET_TYPE          = uint8(enum sset_type)
 
 # typedefs for effects
-type EFFECT_TYPE	= uint8(enum effect_type)
-type EFFECT_RANGE	= uint8(enum effect_range)
-type EFFECT_REQ_TYPE	= uint8(enum effect_req_type)
+type EFFECT_TYPE        = uint8(enum effect_type)
+type EFFECT_RANGE       = uint8(enum effect_range)
+type EFFECT_REQ_TYPE    = uint8(enum effect_req_type)
 
 # typedefs for IDs
-type PLAYER 		= UINT8
-type CITY   		= UINT16
-type UNIT   		= UINT16
-type TECH     		= UINT8
-type UNIT_TYPE		= uint8(Unit_Type_id)
-type NATION		= uint16(Nation_Type_id)
-type GOVERNMENT		= UINT8
-type CONNECTION		= UINT8
-type TEAM		= UINT8
+type PLAYER             = UINT8
+type CITY               = UINT16
+type UNIT               = UINT16
+type TECH               = UINT8
+type UNIT_TYPE          = uint8(Unit_Type_id)
+type NATION             = uint16(Nation_Type_id)
+type GOVERNMENT         = UINT8
+type CONNECTION         = UINT8
+type TEAM               = UINT8
 type CONTINENT          = sint16(Continent_id)
-type IMPROVEMENT	= uint8(Impr_Type_id)
+type IMPROVEMENT        = uint8(Impr_Type_id)
 
 # other typedefs
-type COORD  		= UINT8
-type XYSIZE  		= UINT16
-type YEAR     		= SINT16
-type HP     		= UINT8
-type PERCENT  		= UINT8
-type GOLD		= UINT32
-type TURN		= SINT16
+type COORD              = UINT8
+type XYSIZE             = UINT16
+type YEAR               = SINT16
+type HP                 = UINT8
+type PERCENT            = UINT8
+type GOLD               = UINT32
+type TURN               = SINT16
 
 /****************************************************
 The remaining lines are the definition of the packets. These are
@@ -647,11 +647,11 @@ PACKET_UNIT_SHORT_INFO=50; is-info,sc,lsend
   UNIT transported_by; /* Only valid if transported is set. */
 
   /* in packet only, not in unit struct */
-  UINT8 packet_use;	/* see enum unit_info_use */
-  CITY info_city_id;	/* for UNIT_INFO_CITY_SUPPORTED
-  			   and UNIT_INFO_CITY_PRESENT uses */
-  UINT16 serial_num;	/* a 16-bit unsigned number, never zero
-			   (not used by UNIT_INFO_IDENTITY) */
+  UINT8 packet_use;     /* see enum unit_info_use */
+  CITY info_city_id;    /* for UNIT_INFO_CITY_SUPPORTED
+                           and UNIT_INFO_CITY_PRESENT uses */
+  UINT16 serial_num;    /* a 16-bit unsigned number, never zero
+                           (not used by UNIT_INFO_IDENTITY) */
 end
 
 PACKET_UNIT_COMBAT_INFO=51; sc,lsend
@@ -1301,15 +1301,15 @@ PACKET_OPTIONS_SETTABLE=113;sc
   STRING extra_help[MAX_LEN_PACKET];
   SSET_TYPE type;
 
-  SINT32 val;					/* value for bool or int */
-  SINT32 default_val;				/* default for bool or int */
-  SINT32 min;					/* min value for int */
-  SINT32 max;					/* max value for int */
+  SINT32 val;                                   /* value for bool or int */
+  SINT32 default_val;                           /* default for bool or int */
+  SINT32 min;                                   /* min value for int */
+  SINT32 max;                                   /* max value for int */
 
-  STRING strval[MAX_LEN_PACKET];		/* space for string */
-  STRING default_strval[MAX_LEN_PACKET];	/* space for string */
+  STRING strval[MAX_LEN_PACKET];                /* space for string */
+  STRING default_strval[MAX_LEN_PACKET];        /* space for string */
 
-  UINT8 category;				/* which category this is in */
+  UINT8 category;                               /* which category this is in */
 end
 
 /************** Effects hash packets **********************/
