@@ -34,7 +34,7 @@ typedef void (*dns_callback_t)(const unsigned char *addr,
                                enum dns_query_type qtype,
                                void *userdata);
 
-#define	DNS_QUERY_TIMEOUT	15	/* Query timeout, seconds */
+#define DNS_QUERY_TIMEOUT       15      /* Query timeout, seconds */
 
 struct dns;
 
