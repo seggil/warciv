@@ -59,7 +59,7 @@ static const char *transliteration_string;
   Pass an internal encoding of NULL to use the local encoding internally.
 ***************************************************************************/
 void init_character_encodings(char *my_internal_encoding,
-			      bool my_use_transliteration)
+                              bool my_use_transliteration)
 {
 #ifdef HAVE_ICONV
   if (my_use_transliteration) {
@@ -90,8 +90,8 @@ void init_character_encodings(char *my_internal_encoding,
 #endif
 #endif
     if (mystrcasecmp(local_encoding, "ANSI_X3.4-1968") == 0
-	|| mystrcasecmp(local_encoding, "ASCII") == 0
-	|| mystrcasecmp(local_encoding, "US-ASCII") == 0) {
+        || mystrcasecmp(local_encoding, "ASCII") == 0
+        || mystrcasecmp(local_encoding, "US-ASCII") == 0) {
       /* HACK: use latin1 instead of ascii in typical cases when the
        * encoding is unconfigured. */
       local_encoding = "ISO-8859-1";
@@ -124,7 +124,7 @@ void init_character_encodings(char *my_internal_encoding,
 #ifdef DEBUG
   /* FIXME: Remove this output when this code has stabilized. */
   fprintf(stderr, "Encodings: Data=%s, Local=%s, Internal=%s\n",
-	     data_encoding, local_encoding, internal_encoding);
+             data_encoding, local_encoding, internal_encoding);
 #endif
 
 #else
@@ -180,9 +180,9 @@ const char *get_internal_encoding(void)
   will be allocated on demand.
 ***************************************************************************/
 static char *convert_string(const char *text,
-			    const char *from,
-			    const char *to,
-			    char *buf, size_t bufsz)
+                            const char *from,
+                            const char *to,
+                            char *buf, size_t bufsz)
 {
 #ifdef HAVE_ICONV
   iconv_t cd = iconv_open(to, from);
@@ -194,8 +194,8 @@ static char *convert_string(const char *text,
 
   if (cd == (iconv_t) (-1)) {
     freelog(LOG_ERROR,
-	    _("Could not convert text from %s to %s: %s"),
-	    from, to, strerror(errno));
+            _("Could not convert text from %s to %s: %s"),
+            from, to, strerror(errno));
     /* The best we can do? */
     if (alloc) {
       return mystrdup(text);
@@ -229,17 +229,17 @@ static char *convert_string(const char *text,
     res = iconv(cd, (ICONV_CONST char **)&mytext, &flen, &myresult, &tlen);
     if (res == (size_t) (-1)) {
       if (errno != E2BIG) {
-	/* Invalid input. */
-	freelog(LOG_ERROR, "Invalid string conversion from %s to %s.",
-		from, to);
-	iconv_close(cd);
-	if (alloc) {
-	  free(buf);
-	  return mystrdup(text); /* The best we can do? */
-	} else {
-	  my_snprintf(buf, bufsz, "%s", text);
-	  return buf;
-	}
+        /* Invalid input. */
+        freelog(LOG_ERROR, "Invalid string conversion from %s to %s.",
+                from, to);
+        iconv_close(cd);
+        if (alloc) {
+          free(buf);
+          return mystrdup(text); /* The best we can do? */
+        } else {
+          my_snprintf(buf, bufsz, "%s", text);
+          return buf;
+        }
       }
     } else {
       /* Success. */
@@ -275,34 +275,34 @@ static char *convert_string(const char *text,
 #define CONV_FUNC_MALLOC(src, dst)                                          \
 char *src ## _to_ ## dst ## _string_malloc(const char *text)                \
 {                                                                           \
-  const char *encoding1 = (dst ## _encoding);				    \
+  const char *encoding1 = (dst ## _encoding);                               \
   char encoding[strlen(encoding1) + strlen(transliteration_string) + 1];    \
-									    \
-  my_snprintf(encoding, sizeof(encoding),				    \
-	      "%s%s", encoding1, transliteration_string);		    \
-  return convert_string(text, (src ## _encoding),			    \
-			(encoding), NULL, 0);				    \
+                                                                            \
+  my_snprintf(encoding, sizeof(encoding),                                   \
+              "%s%s", encoding1, transliteration_string);                   \
+  return convert_string(text, (src ## _encoding),                           \
+                        (encoding), NULL, 0);                               \
 }
 
 #define CONV_FUNC_BUFFER(src, dst)                                          \
 char *src ## _to_ ## dst ## _string_buffer(const char *text,                \
-					   char *buf, size_t bufsz)         \
+                                           char *buf, size_t bufsz)         \
 {                                                                           \
-  const char *encoding1 = (dst ## _encoding);				    \
+  const char *encoding1 = (dst ## _encoding);                               \
   char encoding[strlen(encoding1) + strlen(transliteration_string) + 1];    \
-									    \
-  my_snprintf(encoding, sizeof(encoding),				    \
-	      "%s%s", encoding1, transliteration_string);		    \
-  return convert_string(text, (src ## _encoding),			    \
-                        encoding, buf, bufsz);				    \
+                                                                            \
+  my_snprintf(encoding, sizeof(encoding),                                   \
+              "%s%s", encoding1, transliteration_string);                   \
+  return convert_string(text, (src ## _encoding),                           \
+                        encoding, buf, bufsz);                              \
 }
 
 #define CONV_FUNC_STATIC(src, dst)                                          \
 char *src ## _to_ ## dst ## _string_static(const char *text)                \
 {                                                                           \
   (src ## _to_ ## dst ## _string_buffer)(text,                              \
-					convert_buffer,                     \
-					sizeof(convert_buffer));            \
+                                        convert_buffer,                     \
+                                        sizeof(convert_buffer));            \
   return convert_buffer;                                                    \
 }
 
@@ -366,7 +366,7 @@ size_t get_internal_string_length(const char *text)
   int i = 0;
 
   convert_string(text, internal_encoding, "UCS-4",
-		 (char *)text2, sizeof(text2));
+                 (char *)text2, sizeof(text2));
   for (i = 0; ; i++) {
     if (text2[i] == 0) {
       return i;

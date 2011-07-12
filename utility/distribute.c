@@ -77,12 +77,12 @@ void distribute(int number, int groups, int *ratios, int *result)
     /* Find the largest remaining fraction(s). */
     for (i = 0; i < groups; i++) {
       if (rest[i] > max) {
-	max_count = 1;
-	max_groups[0] = i;
-	max = rest[i];
+        max_count = 1;
+        max_groups[0] = i;
+        max = rest[i];
       } else if (rest[i] == max) {
-	max_groups[max_count] = i;
-	max_count++;
+        max_groups[max_count] = i;
+        max_count++;
       }
     }
 
@@ -98,10 +98,10 @@ void distribute(int number, int groups, int *ratios, int *result)
        * smallest whole number. */
       assert(max_count > 1);
       for (i = 1; i < max_count; i++) {
-	if (result[max_groups[i]] < min) {
-	  min = result[max_groups[i]];
-	  which_min = max_groups[i];
-	}
+        if (result[max_groups[i]] < min) {
+          min = result[max_groups[i]];
+          which_min = max_groups[i];
+        }
       }
       result[which_min]++;
       rest[which_min] = 0;

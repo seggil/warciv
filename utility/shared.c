@@ -40,7 +40,7 @@
 #ifdef WIN32_NATIVE
 #include <winsock2.h>
 #include <windows.h>
-#include <lmcons.h>	/* UNLEN */
+#include <lmcons.h>     /* UNLEN */
 #endif
 
 #include "astring.h"
@@ -111,7 +111,7 @@ char *create_centered_string(const char *s)
       curlen++;
     else {
       if(maxlen<curlen)
-	maxlen=curlen;
+        maxlen=curlen;
       curlen=0;
       nlines++;
     }
@@ -127,7 +127,7 @@ char *create_centered_string(const char *s)
       curlen++;
     else {
       for(i=0; i<(maxlen-curlen)/2; i++)
-	*rn++=' ';
+        *rn++=' ';
       memcpy(rn, cp0, curlen);
       rn+=curlen;
       *rn++='\n';
@@ -161,15 +161,15 @@ char *get_option(const char *option_name, char **argv, int *i, int argc)
       opt++;
     } else {
       if (*i < argc - 1) {
-	(*i)++;
-	opt = argv[*i];
-	if (strlen(opt)==0) {
-	  fc_fprintf(stderr, _("Empty argument for \"%s\".\n"), option_name);
-	  exit(EXIT_FAILURE);
-	}
-      }	else {
-	fc_fprintf(stderr, _("Missing argument for \"%s\".\n"), option_name);
-	exit(EXIT_FAILURE);
+        (*i)++;
+        opt = argv[*i];
+        if (strlen(opt)==0) {
+          fc_fprintf(stderr, _("Empty argument for \"%s\".\n"), option_name);
+          exit(EXIT_FAILURE);
+        }
+      } else {
+        fc_fprintf(stderr, _("Missing argument for \"%s\".\n"), option_name);
+        exit(EXIT_FAILURE);
       }
     }
 
@@ -185,7 +185,7 @@ char *get_option(const char *option_name, char **argv, int *i, int argc)
 bool is_option(const char *option_name,char *option)
 {
   return (strcmp(option_name, option) == 0 ||
-	  strncmp(option_name + 1, option, 2) == 0);
+          strncmp(option_name + 1, option, 2) == 0);
 }
 
 /***************************************************************
@@ -280,13 +280,13 @@ int get_tokens_full(const char *str,
       if ((str[0] == '"' && str[len - 1] == '"')
           || (str[0] == '\'' && str[len - 1] == '\'')) {
         len -= 2;
-        padlength = 1;		/* to set the string past the end quote */
+        padlength = 1;          /* to set the string past the end quote */
         str++;
       }
     }
 
     tokens[token] = fc_malloc(len + 1);
-    (void) mystrlcpy(tokens[token], str, len + 1);	/* adds the '\0' */
+    (void) mystrlcpy(tokens[token], str, len + 1);      /* adds the '\0' */
 
     token++;
 
@@ -368,15 +368,15 @@ const char *big_int_to_text(unsigned int mantissa, unsigned int exponent)
       /* Reached count of digits in group: insert separator and reset count. */
       cnt = 0;
       if (*grp == CHAR_MAX) {
-	/* This test is unlikely to be necessary since we would need at
-	   least 421-bit ints to break the 127 digit barrier, but why not. */
-	break;
+        /* This test is unlikely to be necessary since we would need at
+           least 421-bit ints to break the 127 digit barrier, but why not. */
+        break;
       }
       ptr -= seplen;
       assert(ptr >= buf);
       memcpy(ptr, sep, seplen);
       if (*(grp + 1) != 0) {
-	/* Zero means to repeat the present group-size indefinitely. */
+        /* Zero means to repeat the present group-size indefinitely. */
         grp++;
       }
     }
@@ -433,7 +433,7 @@ bool is_ascii_name(const char *name)
     }
     for (j = 0; illegal_chars[j]; j++) {
       if (name[i] == illegal_chars[j]) {
-	return FALSE;
+        return FALSE;
       }
     }
   }
@@ -530,7 +530,7 @@ void remove_trailing_spaces(char *s)
     while(my_isspace(*t)) {
       *t = '\0';
       if (t == s) {
-	break;
+        break;
       }
       t--;
     }
@@ -583,29 +583,29 @@ int wordwrap_string(char *s, int len)
     /* check if there is already a newline: */
     for(c=s; c<s+len; c++) {
       if (*c == '\n') {
-	slen -= c+1 - s;
-	s = c+1;
-	goto top;
+        slen -= c+1 - s;
+        s = c+1;
+        goto top;
       }
     }
 
     /* find space and break: */
     for(c=s+len; c>s; c--) {
       if (my_isspace(*c)) {
-	*c = '\n';
-	slen -= c+1 - s;
-	s = c+1;
-	goto top;
+        *c = '\n';
+        slen -= c+1 - s;
+        s = c+1;
+        goto top;
       }
     }
 
     /* couldn't find a good break; settle for a bad one... */
     for (c = s + len + 1; *c != '\0'; c++) {
       if (my_isspace(*c)) {
-	*c = '\n';
-	slen -= c+1 - s;
-	s = c+1;
-	goto top;
+        *c = '\n';
+        slen -= c+1 - s;
+        s = c+1;
+        goto top;
       }
     }
   }
@@ -630,7 +630,7 @@ char *end_of_strn(char *str, int *nleft)
 {
   int len = strlen(str);
   *nleft -= len;
-  assert((*nleft)>0);		/* space for the terminating nul */
+  assert((*nleft)>0);           /* space for the terminating nul */
   return str + len;
 }
 
@@ -653,7 +653,7 @@ bool check_strlen(const char *str, size_t len, const char *errmsg)
   Call check_strlen() on str and then strlcpy() it into buffer.
 **********************************************************************/
 size_t loud_strlcpy(char *buffer, const char *str, size_t len,
-		   const char *errmsg)
+                   const char *errmsg)
 {
   (void) check_strlen(str, len, errmsg);
   return mystrlcpy(buffer, str, len);
@@ -725,15 +725,15 @@ char *user_home_dir(void)
   if (!init) {
     char *env = getenv("HOME");
     if (env) {
-      home_dir = mystrdup(env);	        /* never free()d */
+      home_dir = mystrdup(env);         /* never free()d */
       freelog(LOG_VERBOSE, "HOME is %s", home_dir);
     } else {
 #ifdef WIN32_NATIVE
       home_dir = fc_malloc(PATH_MAX);
       if (!getcwd(home_dir, PATH_MAX)) {
-	free(home_dir);
-	home_dir = NULL;
-	freelog(LOG_ERROR, "Could not find home directory (HOME is not set)");
+        free(home_dir);
+        home_dir = NULL;
+        freelog(LOG_ERROR, "Could not find home directory (HOME is not set)");
       }
 #else
       freelog(LOG_ERROR, "Could not find home directory (HOME is not set)");
@@ -775,8 +775,8 @@ const char *user_username(void)
     if (env) {
       sz_strlcpy(username, env);
       if (is_ascii_name(username)) {
-	freelog(LOG_VERBOSE, "USER username is %s", username);
-	return username;
+        freelog(LOG_VERBOSE, "USER username is %s", username);
+        return username;
       }
     }
   }
@@ -790,8 +790,8 @@ const char *user_username(void)
     if (pwent) {
       sz_strlcpy(username, pwent->pw_name);
       if (is_ascii_name(username)) {
-	freelog(LOG_VERBOSE, "getpwuid username is %s", username);
-	return username;
+        freelog(LOG_VERBOSE, "getpwuid username is %s", username);
+        return username;
       }
     }
   }
@@ -806,8 +806,8 @@ const char *user_username(void)
     if (GetUserName(name, &length)) {
       sz_strlcpy(username, name);
       if (is_ascii_name(username)) {
-	freelog(LOG_VERBOSE, "GetUserName username is %s", username);
-	return username;
+        freelog(LOG_VERBOSE, "GetUserName username is %s", username);
+        return username;
       }
     }
   }
@@ -857,16 +857,16 @@ static const char **get_data_dirs(int *num_dirs)
     path = DEFAULT_DATA_PATH;
   } else if (*path == '\0') {
     freelog(LOG_ERROR, _("FREECIV_PATH is set but empty; "
-			 "using default path instead."));
+                         "using default path instead."));
     path = DEFAULT_DATA_PATH;
   }
   assert(path != NULL);
 
-  path2 = mystrdup(path);	/* something we can strtok */
+  path2 = mystrdup(path);       /* something we can strtok */
 
   tok = strtok(path2, PATH_SEPARATOR);
   do {
-    int i;			/* strlen(tok), or -1 as flag */
+    int i;                      /* strlen(tok), or -1 as flag */
 
     tok = (char *) skip_leading_spaces(tok);
     remove_trailing_spaces(tok);
@@ -877,24 +877,24 @@ static const char **get_data_dirs(int *num_dirs)
     i = strlen(tok);
     if (tok[0] == '~') {
       if (i > 1 && tok[1] != '/') {
-	freelog(LOG_ERROR, "For \"%s\" in data path cannot expand '~'"
-		" except as '~/'; ignoring", tok);
-	i = 0;   /* skip this one */
+        freelog(LOG_ERROR, "For \"%s\" in data path cannot expand '~'"
+                " except as '~/'; ignoring", tok);
+        i = 0;   /* skip this one */
       } else {
-	char *home = user_home_dir();
+        char *home = user_home_dir();
 
-	if (!home) {
-	  freelog(LOG_VERBOSE,
-		  "No HOME, skipping data path component %s", tok);
-	  i = 0;
-	} else {
-	  int len = strlen(home) + i;	   /* +1 -1 */
-	  char *tmp = fc_malloc(len);
+        if (!home) {
+          freelog(LOG_VERBOSE,
+                  "No HOME, skipping data path component %s", tok);
+          i = 0;
+        } else {
+          int len = strlen(home) + i;      /* +1 -1 */
+          char *tmp = fc_malloc(len);
 
-	  my_snprintf(tmp, len, "%s%s", home, tok + 1);
-	  tok = tmp;
-	  i = -1;		/* flag to free tok below */
-	}
+          my_snprintf(tmp, len, "%s%s", home, tok + 1);
+          tok = tmp;
+          i = -1;               /* flag to free tok below */
+        }
       }
     }
 
@@ -906,8 +906,8 @@ static const char **get_data_dirs(int *num_dirs)
       dirs[num - 1] = mystrdup(tok);
       freelog(LOG_VERBOSE, "Data path component (%d): %s", num - 1, tok);
       if (i == -1) {
-	free(tok);
-	tok = NULL;
+        free(tok);
+        tok = NULL;
       }
     }
 
@@ -957,11 +957,11 @@ const char **datafilelist(const char* suffix)
     dir = opendir(dirs[dir_num]);
     if (!dir) {
       if (errno == ENOENT) {
-	freelog(LOG_VERBOSE, "Skipping non-existing data directory %s.",
-		dirs[dir_num]);
+        freelog(LOG_VERBOSE, "Skipping non-existing data directory %s.",
+                dirs[dir_num]);
       } else {
-	freelog(LOG_ERROR, _("Could not read data directory %s: %s."),
-		dirs[dir_num], mystrerror(myerrno()));
+        freelog(LOG_ERROR, _("Could not read data directory %s: %s."),
+                dirs[dir_num], mystrerror(myerrno()));
       }
       continue;
     }
@@ -972,23 +972,23 @@ const char **datafilelist(const char* suffix)
 
       /* Make sure the file name matches. */
       if (len > suffix_len
-	  && strcmp(suffix, entry->d_name + len - suffix_len) == 0) {
-	/* Strdup the entry so we can safely write to it. */
-	char *match = mystrdup(entry->d_name);
+          && strcmp(suffix, entry->d_name + len - suffix_len) == 0) {
+        /* Strdup the entry so we can safely write to it. */
+        char *match = mystrdup(entry->d_name);
 
-	/* Make sure the list is big enough; grow exponentially to keep
-	   constant ammortized overhead. */
-	if (num_matches >= list_size) {
-	  list_size = list_size > 0 ? list_size * 2 : 10;
-	  file_list = fc_realloc(file_list, list_size * sizeof(*file_list));
-	}
+        /* Make sure the list is big enough; grow exponentially to keep
+           constant ammortized overhead. */
+        if (num_matches >= list_size) {
+          list_size = list_size > 0 ? list_size * 2 : 10;
+          file_list = fc_realloc(file_list, list_size * sizeof(*file_list));
+        }
 
-	/* Clip the suffix. */
-	match[len - suffix_len] = '\0';
+        /* Clip the suffix. */
+        match[len - suffix_len] = '\0';
 
-	file_list[num_matches++] = mystrdup(match);
+        file_list[num_matches++] = mystrdup(match);
 
-	free(match);
+        free(match);
       }
     }
 
@@ -1041,11 +1041,11 @@ char *datafilename(const char *filename)
   static struct astring realfile = ASTRING_INIT;
 
   if (!filename) {
-    size_t len = 1;		/* in case num_dirs==0 */
+    size_t len = 1;             /* in case num_dirs==0 */
     size_t seplen = strlen(PATH_SEPARATOR);
 
     for (i = 0; i < num_dirs; i++) {
-      len += strlen(dirs[i]) + MAX(1, seplen);	/* separator or '\0' */
+      len += strlen(dirs[i]) + MAX(1, seplen);  /* separator or '\0' */
     }
     astr_minsize(&realfile, len);
     realfile.str[0] = '\0';
@@ -1053,14 +1053,14 @@ char *datafilename(const char *filename)
     for (i = 0; i < num_dirs; i++) {
       (void) mystrlcat(realfile.str, dirs[i], len);
       if (i < num_dirs) {
-	(void) mystrlcat(realfile.str, PATH_SEPARATOR, len);
+        (void) mystrlcat(realfile.str, PATH_SEPARATOR, len);
       }
     }
     return realfile.str;
   }
 
   for (i = 0; i < num_dirs; i++) {
-    struct stat buf;		/* see if we can open the file or directory */
+    struct stat buf;            /* see if we can open the file or directory */
     size_t len = strlen(dirs[i]) + strlen(filename) + 2;
 
     astr_minsize(&realfile, len);
@@ -1071,7 +1071,7 @@ char *datafilename(const char *filename)
   }
 
   freelog(LOG_VERBOSE, "Could not find readable file \"%s\" in data path.",
-	  filename);
+          filename);
 
   return NULL;
 }
@@ -1080,7 +1080,7 @@ char *datafilename(const char *filename)
   Compare modification times.
 **************************************************************************/
 static int compare_file_mtime_ptrs(const struct datafile * const *ppa,
-				   const struct datafile * const *ppb)
+                                   const struct datafile * const *ppb)
 {
   return ((*ppa)->mtime < (*ppb)->mtime);
 }
@@ -1089,7 +1089,7 @@ static int compare_file_mtime_ptrs(const struct datafile * const *ppa,
   Compare names.
 **************************************************************************/
 static int compare_file_name_ptrs(const struct datafile * const *ppa,
-				  const struct datafile * const *ppb)
+                                  const struct datafile * const *ppb)
 {
   return compare_strings((*ppa)->name, (*ppb)->name);
 }
@@ -1127,7 +1127,7 @@ void free_datafile_list(struct datafile_list *pdl)
   substring. The returned list must be freed.
 **************************************************************************/
 struct datafile_list *datafilelist_infix(const char *subpath,
-				         const char *infix, bool nodups)
+                                         const char *infix, bool nodups)
 {
   const char **dirs = get_data_dirs(NULL);
   int num_matches = 0;
@@ -1163,27 +1163,27 @@ struct datafile_list *datafilelist_infix(const char *subpath,
 
       /* Make sure the file name matches. */
       if ((ptr = strstr(filename, infix))) {
-	struct stat buf;
-	char *fullname;
-	int len = strlen(path) + strlen(filename) + 2;
+        struct stat buf;
+        char *fullname;
+        int len = strlen(path) + strlen(filename) + 2;
 
-	fullname = fc_malloc(len);
-	my_snprintf(fullname, len, "%s/%s", path, filename);
+        fullname = fc_malloc(len);
+        my_snprintf(fullname, len, "%s/%s", path, filename);
 
-	if (stat(fullname, &buf) == 0) {
-	  file = fc_malloc(sizeof(struct datafile));
+        if (stat(fullname, &buf) == 0) {
+          file = fc_malloc(sizeof(struct datafile));
 
-	  /* Clip the suffix. */
-	  *ptr = '\0';
+          /* Clip the suffix. */
+          *ptr = '\0';
 
-	  file->name = filename; /* ownership passed */
-	  file->fullname = fullname; /* ownership passed */
-	  file->mtime = buf.st_mtime;
+          file->name = filename; /* ownership passed */
+          file->fullname = fullname; /* ownership passed */
+          file->mtime = buf.st_mtime;
 
-	  datafile_list_append(res, file);
-	  num_matches++;
-	} else {
-	free(fullname);
+          datafile_list_append(res, file);
+          num_matches++;
+        } else {
+        free(fullname);
           free(filename);
       }
       } else {
@@ -1202,11 +1202,11 @@ struct datafile_list *datafilelist_infix(const char *subpath,
 
     datafile_list_iterate(res, pfile) {
       if (compare_strings(name, pfile->name) != 0) {
-	name = pfile->name;
+        name = pfile->name;
       } else {
-	free(pfile->name);
-	free(pfile->fullname);
-	datafile_list_unlink(res, pfile);
+        free(pfile->name);
+        free(pfile->fullname);
+        datafile_list_unlink(res, pfile);
         free(pfile);
       }
     } datafile_list_iterate_end;
@@ -1235,10 +1235,10 @@ char *datafilename_required(const char *filename)
     return dname;
   } else {
     freelog(LOG_ERROR, _("The data path may be set via"
-			 " the environment variable FREECIV_PATH."));
+                         " the environment variable FREECIV_PATH."));
     freelog(LOG_ERROR, _("Current data path is: \"%s\""), datafilename(NULL));
     freelog(LOG_FATAL,
-		 _("The \"%s\" file is required ... aborting!"), filename);
+                 _("The \"%s\" file is required ... aborting!"), filename);
     exit(EXIT_FAILURE);
   }
 }
@@ -1317,8 +1317,8 @@ void init_nls(void)
      This is intended to cater to the common case where:
        1) The user is from North America. ;-)
        2) The user has not set the proper environment variables.
-	  (Most applications are (unfortunately) US-centric
-	  by default, so why bother?)
+          (Most applications are (unfortunately) US-centric
+          by default, so why bother?)
      This would result in the "C" locale being used, with grouping ""
      and thousands_sep "", where we really want "\3" and ",". */
 
@@ -1332,8 +1332,8 @@ void init_nls(void)
     } else {
       size_t len;
       for (len = 0;
-	   lc->grouping[len] != '\0' && lc->grouping[len] != CHAR_MAX; len++) {
-	/* nothing */
+           lc->grouping[len] != '\0' && lc->grouping[len] != CHAR_MAX; len++) {
+        /* nothing */
       }
       len++;
       free(grouping);
@@ -1362,8 +1362,8 @@ void dont_run_as_root(const char *argv0, const char *fallback)
 #else
   if (getuid()==0 || geteuid()==0) {
     fc_fprintf(stderr,
-	       _("%s: Fatal error: you're trying to run me as superuser!\n"),
-	       (argv0 ? argv0 : fallback ? fallback : "freeciv"));
+               _("%s: Fatal error: you're trying to run me as superuser!\n"),
+               (argv0 ? argv0 : fallback ? fallback : "freeciv"));
     fc_fprintf(stderr, _("Use a non-privileged account instead.\n"));
     exit(EXIT_FAILURE);
   }
@@ -1445,7 +1445,7 @@ enum m_pre_result match_prefix_full(m_pre_accessor_fn_t accessor_fn,
         return M_PRE_EXACT;
       }
       if (nmatches==0) {
-        *ind_result = i;	/* first match */
+        *ind_result = i;        /* first match */
       }
       if (matches != NULL && nmatches < max_matches) {
         matches[nmatches] = i;
@@ -1474,7 +1474,7 @@ enum m_pre_result match_prefix_full(m_pre_accessor_fn_t accessor_fn,
  instead. Don't call this function with two different bitvectors.
 ***************************************************************************/
 bool bv_check_mask(const unsigned char *vec1, const unsigned char *vec2,
-		   size_t size1, size_t size2)
+                   size_t size1, size_t size2)
 {
   size_t i;
   assert(size1 == size2);
@@ -1490,7 +1490,7 @@ bool bv_check_mask(const unsigned char *vec1, const unsigned char *vec2,
 }
 
 bool bv_are_equal(const unsigned char *vec1, const unsigned char *vec2,
-		  size_t size1, size_t size2)
+                  size_t size1, size_t size2)
 {
   size_t i;
   assert(size1 == size2);
@@ -1743,7 +1743,7 @@ void string_vector_reserve(struct string_vector *psv, size_t reserve)
   assume it is a NULL terminated vector.
 **************************************************************************/
 void string_vector_store(struct string_vector *psv,
-			 const char *const *vec, size_t size)
+                         const char *const *vec, size_t size)
 {
   if (size == -1) {
     string_vector_remove_all(psv);
@@ -1783,7 +1783,7 @@ void string_vector_append(struct string_vector *psv, const char *string)
   Insert a string at the index of the vector.
 **************************************************************************/
 void string_vector_insert(struct string_vector *psv,
-			  size_t index, const char *string)
+                          size_t index, const char *string)
 {
   if (index <= 0) {
     string_vector_prepend(psv, string);
@@ -1792,7 +1792,7 @@ void string_vector_insert(struct string_vector *psv,
   } else {
     string_vector_reserve(psv, psv->size + 1);
     memmove(psv->vec + index + 1, psv->vec + index,
-	    (psv->size - index - 1) * sizeof(char *));
+            (psv->size - index - 1) * sizeof(char *));
     psv->vec[index] = string_duplicate(string);
   }
 }
@@ -1802,7 +1802,7 @@ void string_vector_insert(struct string_vector *psv,
   Returns TRUE if the element has been really set.
 **************************************************************************/
 bool string_vector_set(struct string_vector *psv,
-		       size_t index, const char *string)
+                       size_t index, const char *string)
 {
   if (string_vector_index_valid(psv, index)) {
     string_free(psv->vec[index]);
@@ -1830,7 +1830,7 @@ bool string_vector_remove(struct string_vector *psv, size_t index)
 
   string_free(psv->vec[index]);
   memmove(psv->vec + index, psv->vec + index + 1,
-	  (psv->size - index - 1) * sizeof(char *));
+          (psv->size - index - 1) * sizeof(char *));
   psv->vec[psv->size - 1] = NULL; /* Do not attempt to free this data. */
   string_vector_reserve(psv, psv->size - 1);
 
@@ -1892,7 +1892,7 @@ void string_vector_remove_empty(struct string_vector *psv)
   Copy a string vector.
 **************************************************************************/
 void string_vector_copy(struct string_vector *dest,
-			const struct string_vector *src)
+                        const struct string_vector *src)
 {
   size_t i;
   char **p;
@@ -2006,7 +2006,7 @@ static bool string_iter_valid(const struct iterator *string_iter)
   Initialize a vector for string iteration.
 **************************************************************************/
 struct iterator *string_iter_init(struct string_iter *iter,
-				  const struct string_vector *psv)
+                                  const struct string_vector *psv)
 {
   iter->vtable.next = string_iter_next;
   iter->vtable.get = string_iter_get;
@@ -2040,7 +2040,7 @@ size_t string_iter_get_index(const struct iterator *string_iter)
   Insert a string before the iterator.
 **************************************************************************/
 void string_iter_insert_before(const struct iterator *string_iter,
-			       const char *string)
+                               const char *string)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 
@@ -2051,7 +2051,7 @@ void string_iter_insert_before(const struct iterator *string_iter,
   Insert a string after the iterator.
 **************************************************************************/
 void string_iter_insert_after(const struct iterator *string_iter,
-			      const char *string)
+                              const char *string)
 {
   struct string_iter *iter = STRING_ITER(string_iter);
 

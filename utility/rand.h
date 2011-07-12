@@ -13,7 +13,7 @@
 #ifndef FC__RAND_H
 #define FC__RAND_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 /* This is duplicated in shared.h to avoid extra includes: */
 #define MAX_UINT32 0xFFFFFFFF
@@ -23,7 +23,7 @@ typedef unsigned int RANDOM_TYPE;
 typedef struct {
   RANDOM_TYPE v[56];
   int j, k, x;
-  bool is_init;			/* initially 0 for static storage */
+  bool is_init;                 /* initially 0 for static storage */
 } RANDOM_STATE;
 
 RANDOM_TYPE myrand(RANDOM_TYPE size);

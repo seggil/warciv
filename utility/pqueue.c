@@ -28,11 +28,11 @@
 #include "pqueue.h"
 
 struct pqueue {
-  int size;			/* number of occupied cells */
-  int avail;			/* total number of cells */
-  int step;			/* additional memory allocation step */
-  pq_data_t *cells;		/* array containing data */
-  int *priorities;		/* backup priorities (in case data is changed) */
+  int size;                     /* number of occupied cells */
+  int avail;                    /* total number of cells */
+  int step;                     /* additional memory allocation step */
+  pq_data_t *cells;             /* array containing data */
+  int *priorities;              /* backup priorities (in case data is changed) */
 };
 
 /**********************************************************************

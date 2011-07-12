@@ -51,7 +51,7 @@
 #include <sys/stat.h>
 
 #ifdef GENERATING_MAC
-#include <events.h>		/* for WaitNextEvent() */
+#include <events.h>             /* for WaitNextEvent() */
 #endif
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -69,7 +69,7 @@
 #include <sys/types.h>
 #endif
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>		/* usleep, fcntl, gethostname */
+#include <unistd.h>             /* usleep, fcntl, gethostname */
 #endif
 #ifdef WIN32_NATIVE
 #include <process.h>
@@ -222,12 +222,12 @@ void myusleep(unsigned long usec)
 #ifdef HAVE_USLEEP
   usleep(usec);
 #else
-#ifdef HAVE_SNOOZE		/* BeOS */
+#ifdef HAVE_SNOOZE              /* BeOS */
   snooze(usec);
 #else
 #ifdef GENERATING_MAC
-  EventRecord the_event;	/* dummy - always be a null event */
-  usec /= 16666;		/* microseconds to 1/60th seconds */
+  EventRecord the_event;        /* dummy - always be a null event */
+  usec /= 16666;                /* microseconds to 1/60th seconds */
   if (usec < 1) usec = 1;
   /* suposed to give other application processor time for the mac */
   WaitNextEvent(0, &the_event, usec, 0L);
@@ -413,9 +413,9 @@ int my_vsnprintf(char *str, size_t n, const char *format, va_list ap)
       buf = malloc(VSNP_BUF_SIZE);
 
       if (!buf) {
-	fprintf(stderr, "Could not allocate %i bytes for vsnprintf() "
-		"replacement.", VSNP_BUF_SIZE);
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "Could not allocate %i bytes for vsnprintf() "
+                "replacement.", VSNP_BUF_SIZE);
+        exit(EXIT_FAILURE);
       }
     }
 #ifdef HAVE_VSNPRINTF
@@ -540,8 +540,8 @@ char *my_read_console(void)
     while ((*bufptr = fgetc(stdin)) != EOF) {
       if (*bufptr == '\n') *bufptr = '\0';
       if (*bufptr == '\0') {
-	bufptr = mybuf;
-	return mybuf;
+        bufptr = mybuf;
+        return mybuf;
       }
       if ((bufptr - mybuf) <= MYBUFSIZE) bufptr++; /* prevent overrun */
     }

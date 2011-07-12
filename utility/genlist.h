@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,17 +13,17 @@
 #ifndef FC__GENLIST_H
 #define FC__GENLIST_H
 
-/********************************************************************** 
+/**********************************************************************
   MODULE: genlist
 
   A "genlist" is a generic doubly-linked list.  That is:
     generic:        stores (void*) pointers to arbitrary user data;
     doubly-linked:  can be efficiently traversed both "forwards"
                     and "backwards".
-		    
+
   The list data structures are allocated dynamically, and list
   elements can be added or removed at arbitrary positions.
-  
+
   Positions in the list are specified starting from 0, up to n-1
   for a list with n elements.  The position -1 can be used to
   refer to the last element (that is, the same as n-1, or n when
@@ -31,19 +31,19 @@
   meaningful.
 
   There are two memory management issues:
-  
+
   - The user-data pointed to by the genlist elements; these are
     entirely the user's responsibility, and the genlist code just
     treats these as opaque data, not doing any allocation or freeing.
-    
+
   - The data structures used internally by the genlist to store
     data for the links etc.  These are allocated by genlist_insert(),
     and freed by genlist_unlink() and genlist_unlink_all().  That is,
     it is the responsibility of the user to call the unlink functions
     as necessary to avoid memory leaks.
 
-  A trap to beware of with iterators is modifying the list while the 
-  iterator is active, in particular removing the next element pointed 
+  A trap to beware of with iterators is modifying the list while the
+  iterator is active, in particular removing the next element pointed
   to by the iterator (see further comments below).
 
   See also the speclist module.
@@ -88,7 +88,7 @@ const genlist_link *genlist_link_get_next(const genlist_link *plink);
     var=(atype *)ITERATOR_PTR(myiter);                     \
     ITERATOR_NEXT(myiter);
 
-/* Balance for above: */ 
+/* Balance for above: */
 #define LIST_ITERATE_END  }}
 
 
@@ -100,8 +100,8 @@ const genlist_link *genlist_link_get_next(const genlist_link *plink);
   for(; ITERATOR_PTR(myiter);) {                           \
     var=(atype *)ITERATOR_PTR(myiter);                     \
     ITERATOR_PREV(myiter);
- 
-/* Balance for above: */ 
+
+/* Balance for above: */
 #define LIST_ITERATE_REV_END  }}
 
 

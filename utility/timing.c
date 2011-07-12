@@ -58,7 +58,7 @@
 
 #include "log.h"
 #include "mem.h"
-#include "shared.h"		/* TRUE, FALSE */
+#include "shared.h"             /* TRUE, FALSE */
 #include "support.h"
 
 #include "timing.h"
@@ -67,11 +67,11 @@
 #ifdef CLOCKS_PER_SECOND
 #define CLOCKS_PER_SEC CLOCKS_PER_SECOND
 #else
-#define CLOCKS_PER_SEC 1000000	/* wild guess!! */
+#define CLOCKS_PER_SEC 1000000  /* wild guess!! */
 #endif
 #endif
 
-#define N_USEC_PER_SEC 1000000L	  /* not 1000! :-) */
+#define N_USEC_PER_SEC 1000000L   /* not 1000! :-) */
 
 enum timer_state {
   TIMER_STARTED,
@@ -86,8 +86,8 @@ struct timer {
 
   /* this is accumulated time for previous timings: */
   double sec;
-  long usec;		/* not always used, in which case zero,
-			   or if used may be negative, but >= -1000000 */
+  long usec;            /* not always used, in which case zero,
+                           or if used may be negative, but >= -1000000 */
 
   /* this is start of current timing, if state==TIMER_STARTED: */
   union {
@@ -183,7 +183,7 @@ struct timer *new_timer_start(enum timer_timetype type, enum timer_use use)
   }
 ***********************************************************************/
 struct timer *renew_timer(struct timer *t, enum timer_timetype type,
-			  enum timer_use use)
+                          enum timer_use use)
 {
   if (!t) {
     t = (struct timer *)fc_malloc(sizeof(struct timer));
@@ -201,7 +201,7 @@ struct timer *renew_timer(struct timer *t, enum timer_timetype type,
   just re-initialise t and return t; see above.
 ***********************************************************************/
 struct timer *renew_timer_start(struct timer *t, enum timer_timetype type,
-				enum timer_use use)
+                                enum timer_use use)
 {
   struct timer *tt = renew_timer(t, type, use);
   start_timer(tt);

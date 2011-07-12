@@ -116,7 +116,7 @@ static struct sbuffer *sbuf_new_size(size_t size)
 
   sb = (struct sbuffer *)fc_malloc(sizeof(*sb));
   sb->size = size;
-  sb->buffer = NULL;		/* so pointer to prev buffer is NULL */
+  sb->buffer = NULL;            /* so pointer to prev buffer is NULL */
 
   /* allocate first buffer: */
   sbuf_expand(sb);
@@ -173,7 +173,7 @@ char *sbuf_strdup(struct sbuffer *sb, const char *str)
     assert(size <= (sb->size - sb->offset));
   }
   ret = ADD_TO_POINTER(sb->buffer, sb->offset);
-  memcpy(ret, str, size);	/* includes null-terminator */
+  memcpy(ret, str, size);       /* includes null-terminator */
   sb->offset += size;
   return ret;
 }

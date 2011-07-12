@@ -13,7 +13,7 @@
 #ifndef FC__ITERATOR_H
 #define FC__ITERATOR_H
 
-#include "shared.h"	/* bool type. */
+#include "shared.h"     /* bool type. */
 
 /***********************************************************************
   Iterator base class. "Derived" iterators must have this struct as

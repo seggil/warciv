@@ -149,15 +149,15 @@ void genlist_unlink(genlist *pgenlist, void *punlink)
 
     if (plink) {
       if (pgenlist->head_link == plink) {
-	 pgenlist->head_link = plink->next;
+         pgenlist->head_link = plink->next;
       } else {
-	 plink->prev->next = plink->next;
+         plink->prev->next = plink->next;
       }
 
       if (pgenlist->tail_link == plink) {
-	 pgenlist->tail_link = plink->prev;
+         pgenlist->tail_link = plink->prev;
       } else {
-	 plink->next->prev = plink->prev;
+         plink->next->prev = plink->prev;
       }
       free(plink);
       pgenlist->nelements--;
@@ -239,7 +239,7 @@ static genlist_link *find_genlist_position(const genlist *pgenlist, int pos)
     }
   } else {                            /* fastest to do backward search */
     for (plink = pgenlist->tail_link, pos = pgenlist->nelements - pos - 1;
-	 pos != 0; pos--) {
+         pos != 0; pos--) {
       plink = plink->prev;
     }
   }

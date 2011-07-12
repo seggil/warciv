@@ -14,8 +14,8 @@
 #ifndef FC__MEM_H
 #define FC__MEM_H
 
-#include <stdlib.h>		/* size_t; actually stddef.h, but stdlib.h
-				   might be more reliable? --dwp */
+#include <stdlib.h>             /* size_t; actually stddef.h, but stdlib.h
+                                   might be more reliable? --dwp */
 
 /* fc_malloc, fc_realloc, fc_calloc:
  * fc_ stands for freeciv; the return value is checked,
@@ -24,14 +24,14 @@
  */
    
 #define fc_malloc(sz)      fc_real_malloc((sz), "malloc", \
-					  __LINE__, __FILE__)
+                                          __LINE__, __FILE__)
 #define fc_realloc(ptr,sz) fc_real_realloc((ptr), (sz), "realloc", \
-					   __LINE__, __FILE__)
+                                           __LINE__, __FILE__)
 #define fc_calloc(n,esz)   fc_real_calloc((n), (esz), "calloc", \
-					   __LINE__, __FILE__)
+                                           __LINE__, __FILE__)
 
 #define mystrdup(str)      real_mystrdup((str), "strdup", \
-					 __LINE__, __FILE__)
+                                         __LINE__, __FILE__)
      
 /***********************************************************************/
 
@@ -39,13 +39,13 @@
  * use the macros above instead.
  */
 void *fc_real_malloc(size_t size,
-		     const char *called_as, int line, const char *file);
+                     const char *called_as, int line, const char *file);
 void *fc_real_realloc(void *ptr, size_t size,
-		      const char *called_as, int line, const char *file);
+                      const char *called_as, int line, const char *file);
 void *fc_real_calloc(size_t nelem, size_t elsize,
-		     const char *called_as, int line, const char *file);
+                     const char *called_as, int line, const char *file);
 
 char *real_mystrdup(const char *str, 
-		    const char *called_as, int line, const char *file);
+                    const char *called_as, int line, const char *file);
 
 #endif /* FC__MEM_H */

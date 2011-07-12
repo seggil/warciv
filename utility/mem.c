@@ -26,7 +26,7 @@
 
 #include "fcintl.h"
 #include "log.h"
-#include "shared.h"		/* TRUE, FALSE */
+#include "shared.h"             /* TRUE, FALSE */
 
 #include "mem.h"
 
@@ -35,7 +35,7 @@
  At the moment this just prints a log message and calls exit(EXIT_FAILURE)
 **********************************************************************/
 static void handle_alloc_failure(size_t size, const char *called_as,
-				 int line, const char *file)
+                                 int line, const char *file)
 {
   die("Out of memory trying to %s %lu bytes at line %d of %s.", called_as,
       (unsigned long) size, line, file);
@@ -46,7 +46,7 @@ static void handle_alloc_failure(size_t size, const char *called_as,
   dangerously large amount of memory.
 ****************************************************************************/
 static void sanity_check_size(size_t size, const char *called_as,
-			      int line, const char *file)
+                              int line, const char *file)
 {
   /* There used to be a sanity check here that would abort if more than
    * 30 megabytes were allocated.  Unfortunately this didn't work because
@@ -56,7 +56,7 @@ static void sanity_check_size(size_t size, const char *called_as,
 
   if (size == 0) {
     freelog(LOG_ERROR, "Warning: %s with size %lu at line %d of %s",
-	    called_as, (unsigned long)size, line, file);
+            called_as, (unsigned long)size, line, file);
   }
 }
 
@@ -66,7 +66,7 @@ static void sanity_check_size(size_t size, const char *called_as,
  No need to check return value.
 **********************************************************************/
 void *fc_real_malloc(size_t size,
-		     const char *called_as, int line, const char *file)
+                     const char *called_as, int line, const char *file)
 {
   void *ptr;
 
@@ -84,7 +84,7 @@ void *fc_real_malloc(size_t size,
  No need to check return value.
 **********************************************************************/
 void *fc_real_realloc(void *ptr, size_t size,
-		      const char *called_as, int line, const char *file)
+                      const char *called_as, int line, const char *file)
 {
   void *new_ptr;
 
@@ -112,9 +112,9 @@ void *fc_real_realloc(void *ptr, size_t size,
  to be a problem.
 **********************************************************************/
 void *fc_real_calloc(size_t nelem, size_t elsize,
-		     const char *called_as, int line, const char *file)
+                     const char *called_as, int line, const char *file)
 {
-  size_t size = nelem*elsize;	/* potential overflow */
+  size_t size = nelem*elsize;   /* potential overflow */
   void *ptr;
 
   ptr = fc_real_malloc(size, called_as, line, file);
@@ -127,7 +127,7 @@ void *fc_real_calloc(size_t nelem, size_t elsize,
  No need to check return value.
 ***************************************************************/
 char *real_mystrdup(const char *str,
-		    const char *called_as, int line, const char *file)
+                    const char *called_as, int line, const char *file)
 {
   char *dest = fc_real_malloc(strlen(str)+1, called_as, line, file);
 

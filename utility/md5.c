@@ -45,7 +45,7 @@
 #endif
 
 #ifdef WORDS_BIGENDIAN
-#define SWAP(n)							\
+#define SWAP(n)                                                 \
     (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
 #else
 #define SWAP(n) (n)
@@ -172,22 +172,22 @@ int md5_stream(FILE * stream, void *resblock)
       sum += n;
 
       if (sum == BLOCKSIZE)
-	break;
+        break;
 
       if (n == 0) {
-	/* Check for the error flag IFF N == 0, so that we don't
-	   exit the loop after a partial read due to e.g., EAGAIN
-	   or EWOULDBLOCK.  */
-	if (ferror(stream))
-	  return 1;
-	goto process_partial_block;
+        /* Check for the error flag IFF N == 0, so that we don't
+           exit the loop after a partial read due to e.g., EAGAIN
+           or EWOULDBLOCK.  */
+        if (ferror(stream))
+          return 1;
+        goto process_partial_block;
       }
 
       /* We've read at least one byte, so ignore errors.  But always
          check for EOF, since feof may be true even though N > 0.
          Otherwise, we could end up calling fread after EOF.  */
       if (feof(stream))
-	goto process_partial_block;
+        goto process_partial_block;
     }
 
     /* Process buffer with BLOCKSIZE bytes.  Note that
@@ -248,7 +248,7 @@ void md5_process_bytes(const void *buffer, size_t len, struct md5_ctx *ctx)
       ctx->buflen &= 63;
       /* The regions in the following copy operation cannot overlap.  */
       memcpy(ctx->buffer, &ctx->buffer[(left_over + add) & ~63],
-	     ctx->buflen);
+             ctx->buflen);
     }
 
     buffer = (const char *) buffer + add;
@@ -267,9 +267,9 @@ void md5_process_bytes(const void *buffer, size_t len, struct md5_ctx *ctx)
 #endif
     if (UNALIGNED_P(buffer))
       while (len > 64) {
-	md5_process_block(memcpy(ctx->buffer, buffer, 64), 64, ctx);
-	buffer = (const char *) buffer + 64;
-	len -= 64;
+        md5_process_block(memcpy(ctx->buffer, buffer, 64), 64, ctx);
+        buffer = (const char *) buffer + 64;
+        len -= 64;
     } else
 #endif
     {
@@ -344,14 +344,14 @@ void md5_process_block(const void *buffer, size_t len, struct md5_ctx *ctx)
        before the computation.  To reduce the work for the next steps
        we store the swapped words in the array CORRECT_WORDS.  */
 
-#define OP(a, b, c, d, s, T)						\
-      do								\
-        {								\
-	  a += FF (b, c, d) + (*cwp++ = SWAP (*words)) + T;		\
-	  ++words;							\
-	  a = rol (a, s);						\
-	  a += b;							\
-        }								\
+#define OP(a, b, c, d, s, T)                                            \
+      do                                                                \
+        {                                                               \
+          a += FF (b, c, d) + (*cwp++ = SWAP (*words)) + T;             \
+          ++words;                                                      \
+          a = rol (a, s);                                               \
+          a += b;                                                       \
+        }                                                               \
       while (0)
 
     /* Before we start, one word to the strange constants.
@@ -383,13 +383,13 @@ void md5_process_block(const void *buffer, size_t len, struct md5_ctx *ctx)
        in CORRECT_WORDS.  Redefine the macro to take an additional first
        argument specifying the function to use.  */
 #undef OP
-#define OP(f, a, b, c, d, k, s, T)					\
-      do								\
-	{								\
-	  a += f (b, c, d) + correct_words[k] + T;			\
-	  a = rol (a, s);						\
-	  a += b;							\
-	}								\
+#define OP(f, a, b, c, d, k, s, T)                                      \
+      do                                                                \
+        {                                                               \
+          a += f (b, c, d) + correct_words[k] + T;                      \
+          a = rol (a, s);                                               \
+          a += b;                                                       \
+        }                                                               \
       while (0)
 
     /* Round 2.  */

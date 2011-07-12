@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2003-2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define FC_DEFAULT_DATA_ENCODING "UTF-8"
 
 void init_character_encodings(char *internal_encoding,
-			      bool use_transliteration);
+                              bool use_transliteration);
 
 const char *get_data_encoding(void);
 const char *get_local_encoding(void);
@@ -32,7 +32,7 @@ char *internal_to_local_string_malloc(const char *text);
 char *local_to_internal_string_malloc(const char *text);
 
 char *local_to_internal_string_buffer(const char *text,
-				      char *buf, size_t bufsz);
+                                      char *buf, size_t bufsz);
 
 #define fc_printf(...) fc_fprintf(stdout, __VA_ARGS__)
 void fc_fprintf(FILE *stream, const char *format, ...)

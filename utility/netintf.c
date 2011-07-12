@@ -46,7 +46,7 @@
 #endif
 #ifdef WIN32_NATIVE
 #include <winsock2.h>
-#include <windows.h>	/* GetTempPath */
+#include <windows.h>    /* GetTempPath */
 #endif
 
 #include "fciconv.h"
@@ -54,7 +54,7 @@
 #include "hash.h"
 #include "log.h"
 #include "mem.h"
-#include "shared.h"		/* TRUE, FALSE */
+#include "shared.h"             /* TRUE, FALSE */
 #include "support.h"
 #include "tadns.h"
 
@@ -104,11 +104,11 @@ static void check_init_lookup_tables(void)
 {
   if (!net_lookup_service_table) {
     net_lookup_service_table = hash_new(hash_fval_int,
-					hash_fcmp_int);
+                                        hash_fcmp_int);
   }
   if (!adns_request_table) {
     adns_request_table = hash_new(hash_fval_int,
-				  hash_fcmp_int);
+                                  hash_fcmp_int);
   }
 }
 
@@ -157,7 +157,7 @@ void adns_init(void)
   dns = dns_new();
   if (dns == NULL) {
     freelog(LOG_ERROR,
-	    _("Failed to initialize asynchronous DNS resolver."));
+            _("Failed to initialize asynchronous DNS resolver."));
   }
 }
 /***************************************************************************
@@ -322,9 +322,9 @@ int adns_lookup_full(const char *query_data,
   Find the hostname for a given address, asynchronously.
 ***************************************************************************/
 int adns_reverse_lookup(union my_sockaddr *sa,
-			adns_result_callback_t cb,
-			void *data,
-			data_free_func_t datafree)
+                        adns_result_callback_t cb,
+                        void *data,
+                        data_free_func_t datafree)
 {
   const unsigned char *addr;
   char buf[64];
@@ -494,8 +494,8 @@ void *cancel_net_lookup_service(int id)
   adns_lookup. NB cb may be called directly.
 ***************************************************************************/
 int net_lookup_service_async(const char *name, int port,
-			     net_lookup_result_callback_t cb,
-			     void *data, data_free_func_t datafree)
+                             net_lookup_result_callback_t cb,
+                             void *data, data_free_func_t datafree)
 {
   struct net_lookup_ctx *ctx;
   int adns_id;
@@ -707,7 +707,7 @@ int my_set_nonblock(int sockfd)
 
 #else /* i.e. ! NONBLOCKING_SOCKETS */
   freelog(LOG_ERROR, _("my_nonblock called but we don't have "
-		       "non blocking sockets on this platform!"));
+                       "non blocking sockets on this platform!"));
 #endif /* NONBLOCKING_SOCKETS */
   return 0;
 }
@@ -717,7 +717,7 @@ int my_set_nonblock(int sockfd)
   parts of addr that do no require name resolution.
 ***************************************************************************/
 bool is_net_service_resolved(const char *name, int port,
-			     union my_sockaddr *addr)
+                             union my_sockaddr *addr)
 {
   struct sockaddr_in *sock = &addr->sockaddr_in;
 
@@ -794,7 +794,7 @@ fz_FILE *my_querysocket(int sock, void *buf, size_t size)
 
     while ((n = my_readsocket(sock, tmp, sizeof(tmp))) > 0) {
       if (fwrite(tmp, 1, n, fp) != n) {
-	die("socket %d: write error", sock);
+        die("socket %d: write error", sock);
       }
     }
     fflush(fp);

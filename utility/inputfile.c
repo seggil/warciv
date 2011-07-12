@@ -54,12 +54,12 @@
 
   value:  a signed integer, or a double-quoted string, or a
           gettext-marked double quoted string.  Strings _may_ contain
-	  raw embedded newlines, and escaped doublequotes, or \.
-	  eg:  '123', '-999', '"foo"', '_("foo")'
+          raw embedded newlines, and escaped doublequotes, or \.
+          eg:  '123', '-999', '"foo"', '_("foo")'
   returned token: string containing number, for numeric, or string
           starting at first doublequote for strings, but ommiting
-	  trailing double-quote.  Note this does _not_ translate
-	  escaped doublequotes etc back to normal.
+          trailing double-quote.  Note this does _not_ translate
+          escaped doublequotes etc back to normal.
 
 ***********************************************************************/
 
@@ -75,7 +75,7 @@
 #include "ioz.h"
 #include "log.h"
 #include "mem.h"
-#include "shared.h"		/* TRUE, FALSE */
+#include "shared.h"             /* TRUE, FALSE */
 #include "support.h"
 
 #include "inputfile.h"
@@ -83,34 +83,34 @@
 #define INF_DEBUG_FOUND     FALSE
 #define INF_DEBUG_NOT_FOUND FALSE
 
-#define INF_MAGIC (0xabdc0132)	/* arbitrary */
+#define INF_MAGIC (0xabdc0132)  /* arbitrary */
 
 struct inputfile {
-  unsigned int magic;		/* memory check */
-  char *filename;		/* filename as passed to fopen */
-  fz_FILE *fp;			/* read from this */
-  bool at_eof;			/* flag for end-of-file */
-  struct astring cur_line;	/* data from current line, or .n==0 if
-				   have not yet read in the current line */
-  struct astring copy_line;	/* original cur_line (sometimes insert nulls
-				   in cur_line for processing) */
-  int cur_line_pos;		/* position in current line */
-  int line_num;			/* line number from file in cur_line */
-  struct astring token;		/* data returned to user */
-  struct astring partial;	/* used in accumulating multi-line strings;
-				   used only in get_token_value, but put
-				   here so it gets freed when file closed */
-  datafilename_fn_t datafn;	/* function like datafilename(); use a
-				   function pointer just to keep this
-				   inputfile module "generic" */
-  bool in_string;		/* set when reading multi-line strings,
-				   to know not to handle *include at start
-				   of line as include mechanism */
-  int string_start_line;	/* when in_string is true, this is the
-				   start line of current string */
+  unsigned int magic;           /* memory check */
+  char *filename;               /* filename as passed to fopen */
+  fz_FILE *fp;                  /* read from this */
+  bool at_eof;                  /* flag for end-of-file */
+  struct astring cur_line;      /* data from current line, or .n==0 if
+                                   have not yet read in the current line */
+  struct astring copy_line;     /* original cur_line (sometimes insert nulls
+                                   in cur_line for processing) */
+  int cur_line_pos;             /* position in current line */
+  int line_num;                 /* line number from file in cur_line */
+  struct astring token;         /* data returned to user */
+  struct astring partial;       /* used in accumulating multi-line strings;
+                                   used only in get_token_value, but put
+                                   here so it gets freed when file closed */
+  datafilename_fn_t datafn;     /* function like datafilename(); use a
+                                   function pointer just to keep this
+                                   inputfile module "generic" */
+  bool in_string;               /* set when reading multi-line strings,
+                                   to know not to handle *include at start
+                                   of line as include mechanism */
+  int string_start_line;        /* when in_string is true, this is the
+                                   start line of current string */
   struct inputfile *included_from; /* NULL for toplevel file, otherwise
-				      points back to files which this one
-				      has been included from */
+                                      points back to files which this one
+                                      has been included from */
 };
 
 /* A function to get a specific token type: */
@@ -217,7 +217,7 @@ static const char *inf_filename(struct inputfile *inf)
   Returns NULL if the file could not be opened.
 ***********************************************************************/
 struct inputfile *inf_from_file(const char *filename,
-				datafilename_fn_t datafn)
+                                datafilename_fn_t datafn)
 {
   struct inputfile *inf;
   fz_FILE *fp;
@@ -269,7 +269,7 @@ static void inf_close_partial(struct inputfile *inf)
 
   if (fz_ferror(inf->fp) != 0) {
     freelog(LOG_ERROR, "Error before closing %s: %s", inf_filename(inf),
-	    fz_strerror(inf->fp));
+            fz_strerror(inf->fp));
     fz_fclose(inf->fp);
     inf->fp = NULL;
   }
@@ -470,26 +470,26 @@ static bool read_a_line(struct inputfile *inf)
       /* fgets failed */
       inf->at_eof = TRUE;
       if (pos != 0) {
-	inf_warn(inf, "missing newline at EOF, or failed read");
-	/* treat as simple EOF, ignoring last line: */
-	pos = 0;
+        inf_warn(inf, "missing newline at EOF, or failed read");
+        /* treat as simple EOF, ignoring last line: */
+        pos = 0;
       }
       line->str[0] = '\0';
       line->n = 0;
       if (inf->in_string) {
-	/* Note: Don't allow multi-line strings to cross "include"
-	   boundaries */
-	inf_log(inf, LOG_ERROR, "Multi-line string went to end-of-file");
+        /* Note: Don't allow multi-line strings to cross "include"
+           boundaries */
+        inf_log(inf, LOG_ERROR, "Multi-line string went to end-of-file");
         return FALSE;
       }
       if (inf->included_from) {
-	/* Pop the include, and get next line from file above instead. */
-	struct inputfile *inc = inf->included_from;
-	inf_close_partial(inf);
-	*inf = *inc;		/* so the user pointer in still valid
-				   (and inf pointers in calling functions) */
-	free(inc);
-	return read_a_line(inf);
+        /* Pop the include, and get next line from file above instead. */
+        struct inputfile *inc = inf->included_from;
+        inf_close_partial(inf);
+        *inf = *inc;            /* so the user pointer in still valid
+                                   (and inf pointers in calling functions) */
+        free(inc);
+        return read_a_line(inf);
       }
       break;
     }
@@ -547,22 +547,22 @@ void inf_log(struct inputfile *inf, int loglevel, const char *message)
     freelog(loglevel, "%s", message);
   }
   freelog(loglevel, "  file \"%s\", line %d, pos %d%s",
-	  inf_filename(inf), inf->line_num, inf->cur_line_pos,
-	  (inf->at_eof ? ", EOF" : ""));
+          inf_filename(inf), inf->line_num, inf->cur_line_pos,
+          (inf->at_eof ? ", EOF" : ""));
   if (inf->cur_line.str && inf->cur_line.n > 0) {
     freelog(loglevel, "  looking at: '%s'",
-	    inf->cur_line.str+inf->cur_line_pos);
+            inf->cur_line.str+inf->cur_line_pos);
   }
   if (inf->copy_line.str && inf->copy_line.n > 0) {
     freelog(loglevel, "  original line: '%s'", inf->copy_line.str);
   }
   if (inf->in_string) {
     freelog(loglevel, "  processing string starting at line %d",
-	    inf->string_start_line);
+            inf->string_start_line);
   }
   while ((inf=inf->included_from)) {    /* local pointer assignment */
     freelog(loglevel, "  included from file \"%s\", line %d",
-	    inf_filename(inf), inf->line_num);
+            inf_filename(inf), inf->line_num);
   }
 }
 
@@ -578,8 +578,8 @@ static void inf_warn(struct inputfile *inf, const char *message)
   ...
 ***********************************************************************/
 static const char *get_token(struct inputfile *inf,
-			     enum inf_token_type type,
-			     bool required)
+                             enum inf_token_type type,
+                             bool required)
 {
   const char *c;
   const char *name;
@@ -728,7 +728,7 @@ static const char *get_token_eol(struct inputfile *inf)
   preceeding whitespace.
 ***********************************************************************/
 static const char *get_token_white_char(struct inputfile *inf,
-					char target)
+                                        char target)
 {
   char *c;
 
@@ -842,20 +842,20 @@ static const char *get_token_value(struct inputfile *inf)
   inf->string_start_line = inf->line_num;
   inf->in_string = TRUE;
 
-  partial = &inf->partial;	/* abbreviation */
+  partial = &inf->partial;      /* abbreviation */
   astr_minsize(partial, 1);
   partial->str[0] = '\0';
 
-  start = c++;			/* start includes the initial \", to
-				   distinguish from a number */
+  start = c++;                  /* start includes the initial \", to
+                                   distinguish from a number */
   for(;;) {
     int pos;
 
     while(*c != '\0' && *c != '\"') {
       /* skip over escaped chars, including backslash-doublequote,
-	 and backslash-backslash: */
+         and backslash-backslash: */
       if (*c == '\\' && *(c+1) != '\0') {
-	c++;
+        c++;
       }
       c++;
     }

@@ -175,21 +175,21 @@ static int getdnsip(struct dns *dns)
   } else {
     for (i = 0, tlen =  sizeof(subkey);
          RegEnumKeyEx(hKey, i, subkey, &tlen, NULL, NULL, NULL, NULL) ==
-	   ERROR_SUCCESS;
+           ERROR_SUCCESS;
          i++, tlen =  sizeof(subkey)) {
       DWORD type, len = sizeof(value);
       if (RegOpenKeyEx(hKey, subkey, 0, KEY_ALL_ACCESS, &hSub)
-	  == ERROR_SUCCESS
+          == ERROR_SUCCESS
           && (RegQueryValueEx(hSub, "DhcpNameServer", 0,
                               &type, value, &len) == ERROR_SUCCESS
               || RegQueryValueEx(hSub, "DhcpNameServer", 0,
                                  &type, value, &len) == ERROR_SUCCESS))
-	{
-	  dns->sa.sin_addr.s_addr = inet_addr(value);
-	  ret = 0;
-	  RegCloseKey(hSub);
-	  break;
-	}
+        {
+          dns->sa.sin_addr.s_addr = inet_addr(value);
+          ret = 0;
+          RegCloseKey(hSub);
+          break;
+        }
     }
     RegCloseKey(hKey);
   }
@@ -236,7 +236,7 @@ struct dns *dns_new(void)
 
   if (my_set_nonblock(dns->sock) == -1) {
     freelog(LOG_ERROR, _("Failed to set non-blocking mode on UDP socket: %s"),
-	    mystrsocketerror(mysocketerrno()));
+            mystrsocketerror(mysocketerrno()));
     goto FAILED;
   }
 
@@ -594,10 +594,10 @@ void dns_poll(struct dns *dns)
       parse_udp(dns);
     } else {
       freelog(LOG_VERBOSE,
-	      _("Ignoring UDP packet since it is smaller "
-		"than the size of a DNS packet header (%lu < %lu)."),
-	      (long unsigned) dns->buflen,
-	      (long unsigned) sizeof(struct header));
+              _("Ignoring UDP packet since it is smaller "
+                "than the size of a DNS packet header (%lu < %lu)."),
+              (long unsigned) dns->buflen,
+              (long unsigned) sizeof(struct header));
     }
   }
 

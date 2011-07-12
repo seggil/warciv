@@ -19,11 +19,11 @@
   (Currently only "required" functionality is supported.)
 ***********************************************************************/
 
-#include <stdio.h>		/* FILE */
+#include <stdio.h>              /* FILE */
 
-#include "shared.h"		/* fc__attribute */
+#include "shared.h"             /* fc__attribute */
 
-struct fz_FILE_s;		  /* opaque */
+struct fz_FILE_s;                 /* opaque */
 typedef struct fz_FILE_s fz_FILE;
 
 /* (possibly) supported methods (depending on config.h) */
@@ -31,7 +31,7 @@ enum fz_method { FZ_PLAIN, FZ_ZLIB, FZ_LAST };
 #define FZ_NOT_USED FZ_LAST
 
 fz_FILE *fz_from_file(const char *filename, const char *in_mode,
-		      enum fz_method method, int compress_level);
+                      enum fz_method method, int compress_level);
 fz_FILE *fz_from_stream(FILE *stream);
 int fz_fclose(fz_FILE *fp);
 char *fz_fgets(char *buffer, int size, fz_FILE *fp);

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
   Allocated/allocatable strings (and things?)
   See comments in astring.c
 ***********************************************************************/
@@ -19,15 +19,15 @@
 #ifndef FC__ASTRING_H
 #define FC__ASTRING_H
 
-#include <stddef.h>		/* size_t */
+#include <stddef.h>             /* size_t */
 
-#include "shared.h"		/* ADD_TO_POINTER */
+#include "shared.h"             /* ADD_TO_POINTER */
 
 struct astring {
-  char *str;			/* the string */
-  size_t len;			/* length of the string */
-  size_t n;			/* size most recently requested */
-  size_t n_alloc;		/* total allocated */
+  char *str;                    /* the string */
+  size_t len;                   /* length of the string */
+  size_t n;                     /* size most recently requested */
+  size_t n_alloc;               /* total allocated */
 };
 
 /* Can assign this in variable declaration to initialize:

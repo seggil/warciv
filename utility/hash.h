@@ -18,7 +18,7 @@
    See comments in hash.c.
 ***************************************************************************/
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 struct hash_table;
 
@@ -54,7 +54,7 @@ int hash_fcmp_keyval(const void *vkey1, const void *vkey2);
 /* General functions: */
 struct hash_table *hash_new(hash_val_fn_t fval, hash_cmp_fn_t fcmp);
 struct hash_table *hash_new_nentries(hash_val_fn_t fval, hash_cmp_fn_t fcmp,
-				     unsigned int nentries);
+                                     unsigned int nentries);
 
 void hash_free(struct hash_table *h);
 
@@ -66,13 +66,13 @@ void *hash_lookup_data(const struct hash_table *h, const void *key);
 
 void *hash_delete_entry(struct hash_table *h, const void *key);
 void *hash_delete_entry_full(struct hash_table *h, const void *key,
-			     void **deleted_key);
+                             void **deleted_key);
 void hash_delete_all_entries(struct hash_table *h);
 
 const void *hash_key_by_number(const struct hash_table *h,
-			       unsigned int entry_number);
+                               unsigned int entry_number);
 const void *hash_value_by_number(const struct hash_table *h,
-				 unsigned int entry_number);
+                                 unsigned int entry_number);
 
 unsigned int hash_num_entries(const struct hash_table *h);
 unsigned int hash_num_buckets(const struct hash_table *h);

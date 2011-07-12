@@ -15,14 +15,14 @@
 
 #include <stdarg.h>
 
-#include "shared.h"		/* bool type and fc__attribute */
+#include "shared.h"             /* bool type and fc__attribute */
 
 #define LOG_FATAL   0
-#define LOG_ERROR   1		/* non-fatal errors */
+#define LOG_ERROR   1           /* non-fatal errors */
 #define LOG_NORMAL  2
-#define LOG_VERBOSE 3		/* not shown by default */
-#define LOG_DEBUG   4		/* suppressed unless DEBUG defined;
-				   may be enabled on file/line basis */
+#define LOG_VERBOSE 3           /* not shown by default */
+#define LOG_DEBUG   4           /* suppressed unless DEBUG defined;
+                                   may be enabled on file/line basis */
 
 /* Some variables local to each file which includes log.h,
    to record whether LOG_DEBUG messages apply for that file
@@ -53,12 +53,12 @@ typedef void (*log_callback_fn)(int, const char*);
 
 int log_parse_level_str(const char *level_str);
 void log_init(const char *filename, int initial_level,
-	      log_callback_fn callback);
+              log_callback_fn callback);
 void log_set_level(int level);
 void log_set_callback(log_callback_fn callback);
 
 void real_freelog(int level, const char *file, int line,
-		  const char *fncname, const char *message, ...)
+                  const char *fncname, const char *message, ...)
                   fc__attribute((__format__ (__printf__, 5, 6)));
 
 void vreal_freelog(int level, const char *message, va_list ap);
@@ -77,8 +77,8 @@ static inline int logdebug_check(const char *file, int line)
     logdebug_this_init = logd_init_counter;
   } 
   return (logdebug_thisfile.tthis && (logdebug_thisfile.max==0 
-				      || (line >= logdebug_thisfile.min 
-					  && line <= logdebug_thisfile.max))); 
+                                      || (line >= logdebug_thisfile.min 
+                                          && line <= logdebug_thisfile.max))); 
 }
 #endif
 

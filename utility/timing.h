@@ -16,16 +16,16 @@
 #ifndef FC__TIMING_H
 #define FC__TIMING_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 enum timer_timetype {
-  TIMER_CPU,			/* time spent by the CPU */
-  TIMER_USER			/* time as seen by the user ("wall clock") */
+  TIMER_CPU,                    /* time spent by the CPU */
+  TIMER_USER                    /* time as seen by the user ("wall clock") */
 };
 
 enum timer_use {
-  TIMER_ACTIVE,			/* use this timer */
-  TIMER_IGNORE			/* ignore this timer */
+  TIMER_ACTIVE,                 /* use this timer */
+  TIMER_IGNORE                  /* ignore this timer */
 };
 /*
  * TIMER_IGNORE is to leave a timer in the code, but not actually
@@ -41,15 +41,15 @@ enum timer_use {
 #define TIMER_DEBUG TIMER_IGNORE
 #endif
 
-struct timer;		/* opaque type; see comments in timing.c */
+struct timer;           /* opaque type; see comments in timing.c */
 
 struct timer *new_timer(enum timer_timetype type, enum timer_use use);
 struct timer *new_timer_start(enum timer_timetype type, enum timer_use use);
 
 struct timer *renew_timer(struct timer *t, enum timer_timetype type,
-			  enum timer_use use);
+                          enum timer_use use);
 struct timer *renew_timer_start(struct timer *t, enum timer_timetype type,
-				enum timer_use use);
+                                enum timer_use use);
 
 void free_timer(struct timer *t);
 bool timer_in_use(struct timer *t);

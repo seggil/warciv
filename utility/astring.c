@@ -46,7 +46,7 @@
 #include <stdarg.h>
 
 #include "mem.h"
-#include "support.h"		/* my_vsnprintf, mystrlcat */
+#include "support.h"            /* my_vsnprintf, mystrlcat */
 
 #include "astring.h"
 

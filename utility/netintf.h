@@ -41,7 +41,7 @@
 #endif
 
 #include "ioz.h"
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 #include "tadns.h"
 
 #ifdef FD_ZERO

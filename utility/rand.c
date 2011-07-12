@@ -38,7 +38,7 @@
 #include <assert.h>
 
 #include "log.h"
-#include "shared.h"		/* TRUE, FALSE */
+#include "shared.h"             /* TRUE, FALSE */
 
 #include "rand.h"
 
@@ -63,11 +63,11 @@ static RANDOM_STATE rand_state;
   0..MAX_UINT32 into (size) blocks, each with (divisor) values, and
   for any remainder, repeat the calculation of new_rand.
   Then:
-	 return_val = new_rand / divisor;
+         return_val = new_rand / divisor;
   Will repeat for new_rand > max, where:
          max = size * divisor - 1
   Then max <= MAX_UINT32 implies
-	 size * divisor <= (MAX_UINT32+1)
+         size * divisor <= (MAX_UINT32+1)
   thus   divisor <= (MAX_UINT32+1)/size
 
   Need to calculate this divisor.  Want divisor as large as possible
@@ -100,7 +100,7 @@ RANDOM_TYPE myrand(RANDOM_TYPE size)
 
   do {
     new_rand = (rand_state.v[rand_state.j]
-		+ rand_state.v[rand_state.k]) & MAX_UINT32;
+                + rand_state.v[rand_state.k]) & MAX_UINT32;
 
     rand_state.x = (rand_state.x +1) % 56;
     rand_state.j = (rand_state.j +1) % 56;
@@ -201,21 +201,21 @@ void test_random1(int n)
 
   for (i = 0; i < n+2; i++) {
     new_value = myrand(2);
-    if (i > 0) {		/* have old */
+    if (i > 0) {                /* have old */
       didchange = (new_value != old_value);
-      if (i > 1) {		/* have olddidchange */
-	if (didchange != olddidchange) {
-	  behaviourchange++;
-	} else {
-	  behavioursame++;
-	}
+      if (i > 1) {              /* have olddidchange */
+        if (didchange != olddidchange) {
+          behaviourchange++;
+        } else {
+          behavioursame++;
+        }
       }
       olddidchange = didchange;
     }
     old_value = new_value;
   }
   freelog(LOG_NORMAL, "test_random1(%d) same: %d, change: %d",
-	  n, behavioursame, behaviourchange);
+          n, behavioursame, behaviourchange);
 
   /* restore state: */
   set_myrand_state(saved_state);

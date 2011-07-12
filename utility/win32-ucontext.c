@@ -42,7 +42,7 @@ int getcontext(ucontext_t *ucp)
 int setcontext(const ucontext_t *ucp)
 {
   int ret;
-	
+
   /* Restore the full machine context (already set) */
   ret = SetThreadContext(GetCurrentThread(), &ucp->uc_mcontext);
 
@@ -54,9 +54,9 @@ int makecontext(ucontext_t *ucp, void (*func)(), int argc, ...)
   int i;
   va_list ap;
   char *sp;
- 
+
   /* Stack grows down */
-  sp = (char *) (size_t) ucp->uc_stack.ss_sp + ucp->uc_stack.ss_size;	
+  sp = (char *) (size_t) ucp->uc_stack.ss_sp + ucp->uc_stack.ss_size;
 
   /* Reserve stack space for the arguments (maximum possible: argc*(8 bytes per argument)) */
   sp -= argc*8;
@@ -72,7 +72,7 @@ int makecontext(ucontext_t *ucp, void (*func)(), int argc, ...)
 
   /* Save/Restore the full machine context */
   ucp->uc_mcontext.ContextFlags = CONTEXT_FULL;
- 
+
   /* Copy the arguments */
   va_start (ap, argc);
   for (i=0; i<argc; i++) {

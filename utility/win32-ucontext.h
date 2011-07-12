@@ -42,11 +42,11 @@ typedef CONTEXT mcontext_t;
 typedef unsigned long __sigset_t;
 
 struct ucontext {
-  unsigned long int	uc_flags;
-  struct ucontext  	*uc_link;
-  stack_t          	uc_stack;
-  mcontext_t       	uc_mcontext;
-  __sigset_t       	uc_sigmask;
+  unsigned long int     uc_flags;
+  struct ucontext       *uc_link;
+  stack_t               uc_stack;
+  mcontext_t            uc_mcontext;
+  __sigset_t            uc_sigmask;
 };
 
 typedef struct ucontext ucontext_t;

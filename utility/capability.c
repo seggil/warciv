@@ -17,20 +17,20 @@
 
 #include <string.h>
 
-#include "shared.h"		/* TRUE, FALSE */
-#include "support.h"		/* my_is* */
+#include "shared.h"             /* TRUE, FALSE */
+#include "support.h"            /* my_is* */
 
 #include "capability.h"
 
-#define	GET_TOKEN(start, end)	\
-  {									\
-    /* skip leading whitespace */					\
-    while (my_isspace(*start)) {					\
-      start++;								\
-    }									\
-    /* skip to end of token */						\
+#define GET_TOKEN(start, end)   \
+  {                                                                     \
+    /* skip leading whitespace */                                       \
+    while (my_isspace(*start)) {                                        \
+      start++;                                                          \
+    }                                                                   \
+    /* skip to end of token */                                          \
     for (end = start; *end != '\0' && !my_isspace(*end) && *end != ','; end++) { \
-      /* nothing */							\
+      /* nothing */                                                     \
     }                                                                   \
   }
 
@@ -39,7 +39,7 @@
  * are allowed to start with a "+", but the capability in cap must not.
  */
 static bool my_has_capability(const char *cap, const char *capstr,
-			     const size_t cap_len)
+                              const size_t cap_len)
 {
   const char *next;
 

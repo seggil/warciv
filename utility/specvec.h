@@ -41,7 +41,7 @@
 */
 
 #include <assert.h>
-#include <string.h>		/* for memcpy */
+#include <string.h>             /* for memcpy */
 
 #include "mem.h"
 
@@ -73,7 +73,7 @@ static inline void SPECVEC_FOO(_vector_init) (SPECVEC_VECTOR *tthis)
 }
 
 static inline void SPECVEC_FOO(_vector_reserve) (SPECVEC_VECTOR *tthis,
-						 int size)
+                                                 int size)
 {
   if (size > tthis->size_alloc) {
     int new_size = MAX(size, tthis->size_alloc * 2);
@@ -90,7 +90,7 @@ static inline size_t SPECVEC_FOO(_vector_size) (const SPECVEC_VECTOR *tthis)
 }
 
 static inline SPECVEC_TYPE *SPECVEC_FOO(_vector_get) (SPECVEC_VECTOR *tthis,
-						      int index)
+                                                      int index)
 {
   if (index == -1 && tthis->size > 0) {
     return tthis->p + tthis->size - 1;
@@ -103,7 +103,7 @@ static inline SPECVEC_TYPE *SPECVEC_FOO(_vector_get) (SPECVEC_VECTOR *tthis,
 
 /* You must _init "*to" before using this function */
 static inline void SPECVEC_FOO(_vector_copy) (SPECVEC_VECTOR *to,
-					      const SPECVEC_VECTOR *from)
+                                              const SPECVEC_VECTOR *from)
 {
   SPECVEC_FOO(_vector_reserve) (to, from->size);
   memcpy(to->p, from->p, from->size * sizeof(*to->p));
@@ -118,7 +118,7 @@ static inline void SPECVEC_FOO(_vector_free) (SPECVEC_VECTOR *tthis)
 }
 
 static inline void SPECVEC_FOO(_vector_append) (SPECVEC_VECTOR *tthis,
-						SPECVEC_TYPE *pfoo)
+                                                SPECVEC_TYPE *pfoo)
 {
   SPECVEC_FOO(_vector_reserve) (tthis, tthis->size + 1);
   tthis->p[tthis->size - 1] = *pfoo;
@@ -127,10 +127,10 @@ static inline void SPECVEC_FOO(_vector_append) (SPECVEC_VECTOR *tthis,
 
 
 #define TYPED_VECTOR_ITERATE(atype, vector, var) {      \
-  int myiter;					        \
+  int myiter;                                           \
   atype *var;                                           \
   for (myiter = 0; myiter < (vector)->size; myiter++) { \
-    var = &(vector)->p[myiter];			        \
+    var = &(vector)->p[myiter];                         \
  
 /* Balance for above: */
 #define VECTOR_ITERATE_END  }}

@@ -52,9 +52,9 @@
 struct fz_FILE_s {
   enum fz_method method;
   union {
-    FILE *plain;		/* FZ_PLAIN */
+    FILE *plain;                /* FZ_PLAIN */
 #ifdef HAVE_LIBZ
-    gzFile zlib;		/* FZ_ZLIB */
+    gzFile zlib;                /* FZ_ZLIB */
 #endif
   } u;
 };
@@ -69,7 +69,7 @@ struct fz_FILE_s {
   Z_MEM_ERROR.  Wishlist: better interface for errors?)
 ***************************************************************/
 fz_FILE *fz_from_file(const char *filename, const char *in_mode,
-		      enum fz_method method, int compress_level)
+                      enum fz_method method, int compress_level)
 {
   fz_FILE *fp;
   char mode[64];
@@ -167,7 +167,7 @@ int fz_fclose(fz_FILE *fp)
   case FZ_ZLIB:
     retval = gzclose(fp->u.zlib);
     if (retval > 0) {
-      retval = 0;		/* only negative Z values are errors */
+      retval = 0;               /* only negative Z values are errors */
     }
     break;
 #endif
@@ -233,8 +233,8 @@ int fz_fprintf(fz_FILE *fp, const char *format, ...)
       int num;
       num = my_vsnprintf(buffer, sizeof(buffer), format, ap);
       if (num == -1) {
-	  freelog(LOG_ERROR, "Too much data: truncated in fz_fprintf (%lu)",
-		  (unsigned long) sizeof(buffer));
+          freelog(LOG_ERROR, "Too much data: truncated in fz_fprintf (%lu)",
+                  (unsigned long) sizeof(buffer));
       }
       retval = gzwrite(fp->u.zlib, buffer, (unsigned int)strlen(buffer));
     }
@@ -262,9 +262,9 @@ int fz_ferror(fz_FILE *fp)
   switch(fp->method) {
 #ifdef HAVE_LIBZ
   case FZ_ZLIB:
-    (void) gzerror(fp->u.zlib, &retval);	/* ignore string result here */
+    (void) gzerror(fp->u.zlib, &retval);        /* ignore string result here */
     if (retval > 0) {
-      retval = 0;		/* only negative Z values are errors */
+      retval = 0;               /* only negative Z values are errors */
     }
     break;
 #endif
@@ -297,9 +297,9 @@ const char *fz_strerror(fz_FILE *fp)
       int errnum;
       const char *estr = gzerror(fp->u.zlib, &errnum);
       if (errnum == Z_ERRNO) {
-	retval = mystrerror(myerrno());
+        retval = mystrerror(myerrno());
       } else {
-	retval = estr;
+        retval = estr;
       }
     }
     break;

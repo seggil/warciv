@@ -20,16 +20,16 @@
 #define FC__INPUTFILE_H
 
 #include "ioz.h"
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
-struct inputfile;		/* opaque */
+struct inputfile;               /* opaque */
 
 typedef char *(*datafilename_fn_t)(const char *filename);
 
 struct inputfile *inf_from_file(const char *filename,
-				datafilename_fn_t datafn);
+                                datafilename_fn_t datafn);
 struct inputfile *inf_from_stream(fz_FILE * stream,
-				  datafilename_fn_t datafn);
+                                  datafilename_fn_t datafn);
 void inf_close(struct inputfile *inf);
 bool inf_at_eof(struct inputfile *inf);
 

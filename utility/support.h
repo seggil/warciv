@@ -21,14 +21,14 @@
 ***********************************************************************/
 
 #include <stdarg.h>
-#include <stdlib.h>		/* size_t */
+#include <stdlib.h>             /* size_t */
 #include <stdio.h>
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-#include "shared.h"		/* bool type and fc__attribute */
+#include "shared.h"             /* bool type and fc__attribute */
 
 int mystrcasecmp(const char *str0, const char *str1);
 int mystrncasecmp(const char *str0, const char *str1, size_t n);

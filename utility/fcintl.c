@@ -19,7 +19,7 @@
 
 #include "fcintl.h"
 
-/********************************************************************** 
+/**********************************************************************
 Some strings are ambiguous for translation.  For example, "Game" is
 something you play (like Freeciv!) or animals that can be hunted.
 To distinguish strings for translation, we qualify them with a prefix
@@ -45,6 +45,6 @@ const char *skip_intl_qualifier_prefix(const char *str)
   } else if ((ptr = strchr(str, ':'))) {
     return (ptr + 1);
   } else {
-    return str;			/* may be something wrong */
+    return str;                 /* may be something wrong */
   }
 }
