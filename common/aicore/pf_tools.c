@@ -27,7 +27,7 @@
 
 
 static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
-					    struct unit *punit);
+                                            struct unit *punit);
 
 /* ===================== Move Cost Callbacks ========================= */
 
@@ -53,8 +53,8 @@ static int seamove(const struct tile *ptile, enum direction8 dir,
   SINGLE_MOVE cost function for AIR_MOVING
 *************************************************************/
 static int single_airmove(const struct tile *ptile, enum direction8 dir,
-			  const struct tile *ptile1,
-			  struct pf_parameter *param)
+                          const struct tile *ptile1,
+                          struct pf_parameter *param)
 {
   return SINGLE_MOVE; /* simple, eh? */
 }
@@ -64,8 +64,8 @@ static int single_airmove(const struct tile *ptile, enum direction8 dir,
   bombardment.
 *************************************************************/
 static int seamove_no_bombard(const struct tile *ptile, enum direction8 dir,
-			      const struct tile *ptile1,
-			      struct pf_parameter *param)
+                              const struct tile *ptile1,
+                              struct pf_parameter *param)
 {
   /* MOVE_COST_FOR_VALID_SEA_STEP means ships can move between */
   if (ptile->move_cost[dir] == MOVE_COST_FOR_VALID_SEA_STEP
@@ -84,13 +84,13 @@ static int seamove_no_bombard(const struct tile *ptile, enum direction8 dir,
   case we can move into the ocean but not into the land.
 ************************************************************/
 static int sea_overlap_move(const struct tile *ptile, enum direction8 dir,
-			    const struct tile *ptile1,
-			    struct pf_parameter *param)
+                            const struct tile *ptile1,
+                            struct pf_parameter *param)
 {
   if (is_ocean(ptile->terrain)) {
     return SINGLE_MOVE;
   } else if (is_allied_city_tile(ptile, param->owner)
-	     && is_ocean(ptile1->terrain)) {
+             && is_ocean(ptile1->terrain)) {
     return SINGLE_MOVE;
   }
 
@@ -102,8 +102,8 @@ static int sea_overlap_move(const struct tile *ptile, enum direction8 dir,
   want to pass through enemy tiles.
 **********************************************************************/
 static int sea_attack_move(const struct tile *src_tile, enum direction8 dir,
-			   const struct tile *dest_tile,
-			   struct pf_parameter *param)
+                           const struct tile *dest_tile,
+                           struct pf_parameter *param)
 {
   if (is_ocean(src_tile->terrain)) {
     if (is_non_allied_unit_tile(src_tile, param->owner)) {
@@ -111,7 +111,7 @@ static int sea_attack_move(const struct tile *src_tile, enum direction8 dir,
     }
     return SINGLE_MOVE;
   } else if (is_allied_city_tile(src_tile, param->owner)
-	     && is_ocean(dest_tile->terrain)) {
+             && is_ocean(dest_tile->terrain)) {
     return SINGLE_MOVE;
   }
 
@@ -122,16 +122,16 @@ static int sea_attack_move(const struct tile *src_tile, enum direction8 dir,
   LAND_MOVE cost function for a unit
 ************************************************************/
 static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
-			    const struct tile *ptile1,
-			    struct pf_parameter *param)
+                            const struct tile *ptile1,
+                            struct pf_parameter *param)
 {
   Terrain_type_id terrain1 = ptile1->terrain;
   int move_cost;
 
   if (is_ocean(terrain1)) {
     if (ground_unit_transporter_capacity(ptile1, param->owner) > 0
-	|| (BV_ISSET(param->unit_flags, F_DIPLOMAT)
-	    && !is_ocean(ptile->terrain)
+        || (BV_ISSET(param->unit_flags, F_DIPLOMAT)
+            && !is_ocean(ptile->terrain)
             && is_non_allied_unit_tile(ptile1, param->owner)
             && (unit_list_size(ptile1->units) == 1
                 || game.ext_info.stackbribing))) {
@@ -159,8 +159,8 @@ static int normal_move_unit(const struct tile *ptile, enum direction8 dir,
   possibilities of attacking.
 *******************************************************************/
 static int land_attack_move(const struct tile *src_tile, enum direction8 dir,
-			    const struct tile *tgt_tile,
-			    struct pf_parameter *param)
+                            const struct tile *tgt_tile,
+                            struct pf_parameter *param)
 {
   int move_cost;
 
@@ -222,8 +222,8 @@ static int land_attack_move(const struct tile *src_tile, enum direction8 dir,
   which will achieve the same without call-back.
 ************************************************************/
 static int land_overlap_move(const struct tile *ptile, enum direction8 dir,
-			     const struct tile *ptile1,
-			     struct pf_parameter *param)
+                             const struct tile *ptile1,
+                             struct pf_parameter *param)
 {
   Terrain_type_id terrain1 = ptile1->terrain;
   int move_cost;
@@ -245,8 +245,8 @@ static int land_overlap_move(const struct tile *ptile, enum direction8 dir,
 ************************************************************/
 #ifdef UNUSED
 static int reverse_move_unit(const struct tile *tile0, enum direction8 dir,
-			     const struct tile *ptile,
-			     struct pf_parameter *param)
+                             const struct tile *ptile,
+                             struct pf_parameter *param)
 {
   int terrain0 = map_get_terrain(tile0);
   int terrain1 = ptile->terrain;
@@ -275,15 +275,15 @@ static int reverse_move_unit(const struct tile *tile0, enum direction8 dir,
   IGTER_MOVE cost function for a unit
 ************************************************************/
 static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
-			   const struct tile *ptile1,
-			   struct pf_parameter *param)
+                           const struct tile *ptile1,
+                           struct pf_parameter *param)
 {
   int move_cost;
 
   if (is_ocean(ptile1->terrain)) {
     if (ground_unit_transporter_capacity(ptile1, param->owner) > 0
-	|| (BV_ISSET(param->unit_flags, F_DIPLOMAT)
-	    && !is_ocean(ptile->terrain)
+        || (BV_ISSET(param->unit_flags, F_DIPLOMAT)
+            && !is_ocean(ptile->terrain)
             && is_non_allied_unit_tile(ptile1, param->owner)
             && (unit_list_size(ptile1->units) == 1
                 || game.ext_info.stackbribing))) {
@@ -311,9 +311,9 @@ static int igter_move_unit(const struct tile *ptile, enum direction8 dir,
 ************************************************************/
 #ifdef UNUSED
 static int reverse_igter_move_unit(const struct tile *tile0,
-				   enum direction8 dir,
-				   const struct tile *ptile,
-				   struct pf_parameter *param)
+                                   enum direction8 dir,
+                                   const struct tile *ptile,
+                                   struct pf_parameter *param)
 {
   int move_cost;
 
@@ -329,7 +329,7 @@ static int reverse_igter_move_unit(const struct tile *tile0,
     move_cost = MOVE_COST_ROAD;
   } else {
     move_cost =
-	(ptile->move_cost[DIR_REVERSE(dir)] != 0 ? MOVE_COST_ROAD : 0);
+        (ptile->move_cost[DIR_REVERSE(dir)] != 0 ? MOVE_COST_ROAD : 0);
   }
   return move_cost;
 }
@@ -343,8 +343,8 @@ static int reverse_igter_move_unit(const struct tile *tile0,
 *********************************************************************/
 #ifdef UNUSED
 static int afraid_of_dark_forest(const struct tile *ptile,
-				 enum known_type known,
-				 struct pf_parameter *param)
+                                 enum known_type known,
+                                 struct pf_parameter *param)
 {
   if (map_get_terrain(ptile) == T_FOREST) {
     /* Willing to spend extra 2 turns to go around a forest tile */
@@ -363,8 +363,8 @@ static int afraid_of_dark_forest(const struct tile *ptile,
   that we don't continue walking over ocean.
 *********************************************************************/
 static enum tile_behavior dont_cross_ocean(const struct tile *ptile,
-					   enum known_type known,
-					   struct pf_parameter *param)
+                                           enum known_type known,
+                                           struct pf_parameter *param)
 {
   if (is_ocean(ptile->terrain)) {
     return TB_DONT_LEAVE;
@@ -393,7 +393,7 @@ enum tile_behavior no_fights_or_unknown(const struct tile *ptile,
   PF callback to prohibit attacking anyone.
 ***********************************************************************/
 enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
-			     struct pf_parameter *param)
+                             struct pf_parameter *param)
 {
   if (is_non_allied_unit_tile(ptile, param->owner)
       || is_non_allied_city_tile(ptile, param->owner)) {
@@ -411,8 +411,8 @@ enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
   FIXME: it cheats.
 ***********************************************************************/
 static bool trireme_is_pos_dangerous(const struct tile *ptile,
-				     enum known_type known,
-				     struct pf_parameter *param)
+                                     enum known_type known,
+                                     struct pf_parameter *param)
 {
   /*hack for warclient*/
   return FALSE;
@@ -426,22 +426,22 @@ static bool trireme_is_pos_dangerous(const struct tile *ptile,
    * way for a trireme to be on a TER_UNSAFE tile. */
   /* Unsafe or unsafe-ocean tiles without cities are dangerous. */
   return ((terrain_has_flag(ptile->terrain, TER_UNSAFE)
-	  || (is_ocean(ptile->terrain) && !is_safe_ocean(ptile)))
-	  && ptile->city == NULL);
+          || (is_ocean(ptile->terrain) && !is_safe_ocean(ptile)))
+          && ptile->city == NULL);
 }
 
 /**********************************************************************
   Position-dangerous callback for all units other than triremes.
 ***********************************************************************/
 static bool is_pos_dangerous(const struct tile *ptile, enum known_type known,
-			     struct pf_parameter *param)
+                             struct pf_parameter *param)
 {
   /*hack for warclient*/
   return FALSE;
 
   /* Unsafe tiles without cities are dangerous. */
   return (terrain_has_flag(ptile->terrain, TER_UNSAFE)
-	  && ptile->city == NULL);
+          && ptile->city == NULL);
 }
 
 /* =====================  Tools for filling parameters =============== */
@@ -450,7 +450,7 @@ static bool is_pos_dangerous(const struct tile *ptile, enum known_type known,
   Fill unit-dependent parameters
 ***********************************************************************/
 void pft_fill_unit_parameter(struct pf_parameter *parameter,
-			     struct unit *punit)
+                             struct unit *punit)
 {
   pft_fill_unit_default_parameter(parameter, punit);
 
@@ -498,7 +498,7 @@ void pft_fill_unit_parameter(struct pf_parameter *parameter,
   ("sea/land bombardment")
 **********************************************************************/
 void pft_fill_unit_overlap_param(struct pf_parameter *parameter,
-				 struct unit *punit)
+                                 struct unit *punit)
 {
   pft_fill_unit_default_parameter(parameter, punit);
 
@@ -558,7 +558,7 @@ void pft_fill_unit_attack_param(struct pf_parameter *parameter,
   Fill general use parameters to defaults
 ***********************************************************************/
 static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
-					    struct unit *punit)
+                                            struct unit *punit)
 {
   parameter->turn_mode = TM_CAPPED;
   if (is_air_unit(punit) || is_heli_unit(punit)) {
@@ -598,29 +598,29 @@ static void pft_fill_unit_default_parameter(struct pf_parameter *parameter,
   If dest_path == NULL, we just copy the src_path and nothing else.
 ***********************************************************************/
 struct pf_path *pft_concat(struct pf_path *dest_path,
-			   const struct pf_path *src_path)
+                           const struct pf_path *src_path)
 {
   if (!dest_path) {
     dest_path = fc_malloc(sizeof(*dest_path));
     dest_path->length = src_path->length;
     dest_path->positions =
-	fc_malloc(sizeof(*dest_path->positions) * dest_path->length);
+        fc_malloc(sizeof(*dest_path->positions) * dest_path->length);
     memcpy(dest_path->positions, src_path->positions,
-	   sizeof(*dest_path->positions) * dest_path->length);
+           sizeof(*dest_path->positions) * dest_path->length);
   } else {
     int old_length = dest_path->length;
 
     assert(pf_last_position(dest_path)->tile == src_path->positions[0].tile);
     assert(pf_last_position(dest_path)->moves_left ==
-	   src_path->positions[0].moves_left);
+           src_path->positions[0].moves_left);
     dest_path->length += src_path->length - 1;
     dest_path->positions =
-	fc_realloc(dest_path->positions,
-		   sizeof(*dest_path->positions) * dest_path->length);
+        fc_realloc(dest_path->positions,
+                   sizeof(*dest_path->positions) * dest_path->length);
     /* Be careful to include the first position of src_path, it contains
      * the direction (it is undefined in the last position of dest_path) */
     memcpy(dest_path->positions + old_length - 1, src_path->positions,
-	   src_path->length * sizeof(*dest_path->positions));
+           src_path->length * sizeof(*dest_path->positions));
   }
   return dest_path;
 }

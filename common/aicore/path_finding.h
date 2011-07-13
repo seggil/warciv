@@ -243,10 +243,10 @@
 
 /* Specifies the way path-finding will treat a tile. */
 enum tile_behavior {
-  TB_IGNORE,			/* This one will be ignored */
-  TB_DONT_LEAVE,		/* Paths can lead _to_ such tile,
-				 * but are not allowed to go _through_ */
-  TB_NORMAL			/* Well, normal */
+  TB_IGNORE,                    /* This one will be ignored */
+  TB_DONT_LEAVE,                /* Paths can lead _to_ such tile,
+                                 * but are not allowed to go _through_ */
+  TB_NORMAL                     /* Well, normal */
 };
 
 /* Specifies how total_MC, turn and moves_left fields in the positions
@@ -273,18 +273,18 @@ enum turn_mode {
 /* Full specification of a position and time to reach it. */
 struct pf_position {
   struct tile *tile;
-  int turn, moves_left;		/* See definitions above */
+  int turn, moves_left;         /* See definitions above */
 
-  int total_MC;			/* Total MC to reach this point */
-  int total_EC;			/* Total EC to reach this point */
+  int total_MC;                 /* Total MC to reach this point */
+  int total_EC;                 /* Total EC to reach this point */
 
-  enum direction8 dir_to_next_pos;	/* Unsed only in struct_path */
-  enum direction8 dir_to_here;	/* Where did we come from */
+  enum direction8 dir_to_next_pos;      /* Unsed only in struct_path */
+  enum direction8 dir_to_here;  /* Where did we come from */
 };
 
 /* Full specification of a path. */
 struct pf_path {
-  int length;    		/* Number of steps in the path */
+  int length;                   /* Number of steps in the path */
   struct pf_position *positions;
 };
 
@@ -296,16 +296,16 @@ struct pf_path {
  *
  * Examples of callbacks can be found in pf_tools.c*/
 struct pf_parameter {
-  struct tile *start_tile;	/* Initial position */
+  struct tile *start_tile;      /* Initial position */
   int moves_left_initially;
-  int move_rate;		/* Move rate of the virtual unit */
+  int move_rate;                /* Move rate of the virtual unit */
 
   struct player *owner;
 
   bv_flags unit_flags;          /* Like F_MARINE and F_TRIREME */
-  bool omniscience;		/* Do we care if the tile is visible? */
+  bool omniscience;             /* Do we care if the tile is visible? */
 
-  enum turn_mode turn_mode;	/* See definitions. */
+  enum turn_mode turn_mode;     /* See definitions. */
 
   /* Callback to get MC of a move from (from_x, from_y) to (to_x,
    * to_y) and in the direction dir. Note that the callback can
@@ -313,21 +313,21 @@ struct pf_parameter {
    * dir. Excessive information (to_x, to_y) is provided to ease the
    * implementation of the callback. */
   int (*get_MC) (const struct tile *from_tile, enum direction8 dir,
-		 const struct tile *to_tile, struct pf_parameter * param);
+                 const struct tile *to_tile, struct pf_parameter * param);
   int unknown_MC; /* Move cost into unknown - very large by default */
 
   /* Callback which determines the behavior of a tile. If NULL
    * TB_NORMAL is assumed. It can be assumed that the implementation
    * of path_finding.h will cache this value. */
   enum tile_behavior (*get_TB) (const struct tile *ptile,
-				enum known_type known,
-				struct pf_parameter * param);
+                                enum known_type known,
+                                struct pf_parameter * param);
 
   /* Callback which can be used to provide extra costs depending on
    * the tile. Can be NULL. It can be assumed that the implementation
    * of path_finding.h will cache this value. */
   int (*get_EC) (const struct tile *ptile, enum known_type known,
-		 struct pf_parameter * param);
+                 struct pf_parameter * param);
 
   /* Although the rules governing ZoC are universal, the amount of
    * information available at server and client is different. To
@@ -364,11 +364,11 @@ struct pf_parameter {
    *   the cost-of-the-path which is the overall measure of goodness of the
    *   path (less is better) and used to order newly discovered locations. */
   int (*get_costs) (const struct tile *from_tile,
-		    enum direction8 dir,
-		    const struct tile *to_tile,
-		    int from_cost, int from_extra,
-		    int *to_cost, int *to_extra,
-		    struct pf_parameter *param);
+                    enum direction8 dir,
+                    const struct tile *to_tile,
+                    int from_cost, int from_extra,
+                    int *to_cost, int *to_extra,
+                    struct pf_parameter *param);
 
   /* User provided data. Can be used to attach arbitrary information
    * to the map. */
@@ -395,7 +395,7 @@ struct pf_path *pf_get_path(struct pf_map *pf_map, struct tile *ptile);
  * about it into pos.  Returns FALSE if position is unreachable.
  * Contents of pos in this case is not defined. */
 bool pf_get_position(struct pf_map *pf_map, struct tile *ptile,
-		     struct pf_position *pos);
+                     struct pf_position *pos);
 
 /* Iterates the path-finding algorithm one step further, to the next
  * nearest position.  This full info on this position and the best path to
@@ -408,7 +408,7 @@ bool pf_next(struct pf_map *pf_map);
 /* Return the full info on the position reached in the last call to
  * pf_next. */
 void pf_next_get_position(const struct pf_map *pf_map,
-			  struct pf_position *pos);
+                          struct pf_position *pos);
 
 /* Return the path to the position reached in the last call to pf_next. */
 struct pf_path * pf_next_get_path(const struct pf_map *pf_map);

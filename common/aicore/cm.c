@@ -75,8 +75,8 @@ struct cm_state;
 static struct cm_state *cm_init_state(struct city *pcity);
 static void cm_free_state(struct cm_state *state);
 static void cm_find_best_solution(struct cm_state *state,
-		     const struct cm_parameter *const parameter,
-		     struct cm_result *result);
+                     const struct cm_parameter *const parameter,
+                     struct cm_result *result);
 
 /****************************************************************************
  defines, structs, globals, forward declarations
@@ -383,7 +383,7 @@ static void tile_type_vector_free_all(struct tile_type_vector *vec)
   equal.
 ****************************************************************************/
 static bool tile_type_equal(const struct cm_tile_type *a,
-			    const struct cm_tile_type *b)
+                            const struct cm_tile_type *b)
 {
   enum cm_stat stat;
 
@@ -407,7 +407,7 @@ static bool tile_type_equal(const struct cm_tile_type *a,
   since we have an unlimited number of them.
 ****************************************************************************/
 static bool tile_type_better(const struct cm_tile_type *a,
-			     const struct cm_tile_type *b)
+                             const struct cm_tile_type *b)
 {
   enum cm_stat stat;
 
@@ -437,8 +437,8 @@ static bool tile_type_better(const struct cm_tile_type *a,
   Equivalence is defined in tile_type_equal().
 ****************************************************************************/
 static int tile_type_vector_find_equivalent(
-				const struct tile_type_vector *vec,
-				const struct cm_tile_type *ptype)
+                                const struct tile_type_vector *vec,
+                                const struct cm_tile_type *ptype)
 {
   int i;
 
@@ -482,7 +482,7 @@ static int tile_type_num_prereqs(const struct cm_tile_type *ptype)
   as a lookup.
 ****************************************************************************/
 static const struct cm_tile_type *tile_type_get(const struct cm_state *state,
-						int type)
+                                                int type)
 {
   /* Sanity check the index. */
   assert(type >= 0);
@@ -537,8 +537,8 @@ static struct cm_fitness worst_fitness(void)
   according to the weights and minimums given in the parameter.
 ****************************************************************************/
 static struct cm_fitness compute_fitness(const int surplus[CM_NUM_STATS],
-					 bool disorder, bool happy,
-					const struct cm_parameter *parameter)
+                                         bool disorder, bool happy,
+                                        const struct cm_parameter *parameter)
 {
   enum cm_stat stat;
   struct cm_fitness fitness;
@@ -600,13 +600,13 @@ static void destroy_partial_solution(struct partial_solution *into)
   solution must already be allocated).
 ****************************************************************************/
 static void copy_partial_solution(struct partial_solution *dst,
-				  const struct partial_solution *src,
-				  const struct cm_state *state)
+                                  const struct partial_solution *src,
+                                  const struct cm_state *state)
 {
   memcpy(dst->worker_counts, src->worker_counts,
-	 sizeof(*dst->worker_counts) * num_types(state));
+         sizeof(*dst->worker_counts) * num_types(state));
   memcpy(dst->prereqs_filled, src->prereqs_filled,
-	 sizeof(*dst->prereqs_filled) * num_types(state));
+         sizeof(*dst->prereqs_filled) * num_types(state));
   memcpy(dst->production, src->production, sizeof(dst->production));
   dst->idle = src->idle;
 }
@@ -688,8 +688,8 @@ static void apply_solution(struct cm_state *state,
   values based on the city's data.
 ****************************************************************************/
 static void get_city_surplus(const struct city *pcity,
-			     int surplus[CM_NUM_STATS],
-			     bool *disorder, bool *happy)
+                             int surplus[CM_NUM_STATS],
+                             bool *disorder, bool *happy)
 {
   surplus[CM_FOOD] = pcity->food_surplus;
   surplus[CM_SHIELD] = pcity->shield_surplus;
@@ -728,8 +728,8 @@ static struct cm_fitness evaluate_solution(struct cm_state *state,
   operation.
 ****************************************************************************/
 static void convert_solution_to_result(struct cm_state *state,
-				       const struct partial_solution *soln,
-				       struct cm_result *result)
+                                       const struct partial_solution *soln,
+                                       struct cm_result *result)
 {
   struct city backup;
   struct cm_fitness fitness;
@@ -750,7 +750,7 @@ static void convert_solution_to_result(struct cm_state *state,
   /* result->found_a_valid should be only true if it matches the
      parameter ; figure out if it does */
   fitness = compute_fitness(result->surplus, result->disorder,
-			    result->happy, &state->parameter);
+                            result->happy, &state->parameter);
   result->found_a_valid = fitness.sufficient;
 }
 
@@ -766,7 +766,7 @@ static void convert_solution_to_result(struct cm_state *state,
   has already been computed.
 ****************************************************************************/
 static int compare_tile_type_by_lattice_order(const struct cm_tile_type *a,
-					      const struct cm_tile_type *b)
+                                              const struct cm_tile_type *b)
 {
   enum cm_stat stat;
 
@@ -855,7 +855,7 @@ static int compare_tile_type_by_stat(const void *va, const void *vb)
   Doesn't touch the other fields.
 ****************************************************************************/
 static void compute_tile_production(const struct city *pcity, int x, int y,
-				    struct cm_tile_type *out)
+                                    struct cm_tile_type *out)
 {
   bool is_celebrating = base_city_celebrating(pcity);
 
@@ -877,8 +877,8 @@ static void compute_tile_production(const struct city *pcity, int x, int y,
   The lattice_depth is not set.
 ****************************************************************************/
 static void tile_type_lattice_add(struct tile_type_vector *lattice,
-				  const struct cm_tile_type *newtype,
-				  int x, int y)
+                                  const struct cm_tile_type *newtype,
+                                  int x, int y)
 {
   struct cm_tile_type *type;
   int i;
@@ -939,7 +939,7 @@ const static struct spec_stat_pair pairs[SP_COUNT] =  {
   tile_type for each specialist type.
 ****************************************************************************/
 static void init_specialist_lattice_nodes(struct tile_type_vector *lattice,
-					  const struct city *pcity)
+                                          const struct city *pcity)
 {
   struct cm_tile_type type;
 
@@ -1066,7 +1066,7 @@ static void top_sort_lattice(struct tile_type_vector *lattice)
   wouldn't save us anything later.
 ****************************************************************************/
 static void clean_lattice(struct tile_type_vector *lattice,
-			  const struct city *pcity)
+                          const struct city *pcity)
 {
   int i, j; /* i is the index we read, j is the index we write */
   struct tile_type_vector tofree;
@@ -1120,10 +1120,10 @@ static void clean_lattice(struct tile_type_vector *lattice,
   much of the domain-specific knowledge.
 ****************************************************************************/
 static double estimate_fitness(const struct cm_state *state,
-			       const int production[CM_NUM_STATS]);
+                               const int production[CM_NUM_STATS]);
 
 static void sort_lattice_by_fitness(const struct cm_state *state,
-				    struct tile_type_vector *lattice)
+                                    struct tile_type_vector *lattice)
 {
   int i;
 
@@ -1134,7 +1134,7 @@ static void sort_lattice_by_fitness(const struct cm_state *state,
 
   /* sort by it */
   qsort(lattice->p, lattice->size, sizeof(*lattice->p),
-	compare_tile_type_by_fitness);
+        compare_tile_type_by_fitness);
 
   /* fix the lattice indices */
   for (i = 0; i < lattice->size; i++) {
@@ -1149,7 +1149,7 @@ static void sort_lattice_by_fitness(const struct cm_state *state,
   Create the lattice.
 ****************************************************************************/
 static void init_tile_lattice(const struct city *pcity,
-			      struct tile_type_vector *lattice)
+                              struct tile_type_vector *lattice)
 {
   struct cm_tile_type type;
 
@@ -1218,8 +1218,8 @@ static int num_types(const struct cm_state *state)
   We do lots of sanity checking, since many bugs can get caught here.
 ****************************************************************************/
 static void add_workers(struct partial_solution *soln,
-			int itype, int number,
-			const struct cm_state *state)
+                        int itype, int number,
+                        const struct cm_state *state)
 {
   enum cm_stat stat;
   const struct cm_tile_type *ptype = tile_type_get(state, itype);
@@ -1271,7 +1271,7 @@ static void add_workers(struct partial_solution *soln,
   Add just one worker to the solution.
 ****************************************************************************/
 static void add_worker(struct partial_solution *soln,
-		       int itype, const struct cm_state *state)
+                       int itype, const struct cm_state *state)
 {
   add_workers(soln, itype, 1, state);
 }
@@ -1280,7 +1280,7 @@ static void add_worker(struct partial_solution *soln,
   Remove just one worker from the solution.
 ****************************************************************************/
 static void remove_worker(struct partial_solution *soln,
-			  int itype, const struct cm_state *state)
+                          int itype, const struct cm_state *state)
 {
   add_workers(soln, itype, -1, state);
 }
@@ -1300,7 +1300,7 @@ static void pop_choice(struct cm_state *state)
   True if all tiles better than this type have been used.
 ****************************************************************************/
 static bool prereqs_filled(const struct partial_solution *soln, int type,
-			   const struct cm_state *state)
+                           const struct cm_state *state)
 {
   const struct cm_tile_type *ptype = tile_type_get(state, type);
   int prereqs = tile_type_num_prereqs(ptype);
@@ -1328,7 +1328,7 @@ static int next_choice(struct cm_state *state, int oldchoice)
     const struct cm_tile_type *ptype = tile_type_get(state, newchoice);
 
     if(!ptype->is_specialist && (state->current.worker_counts[newchoice]
-				 == tile_vector_size(&ptype->tiles))) {
+                                 == tile_vector_size(&ptype->tiles))) {
       /* we've already used all these tiles */
       continue;
     }
@@ -1420,8 +1420,8 @@ static bool take_child_choice(struct cm_state *state)
   tile lattice.
 ****************************************************************************/
 static void complete_solution(struct partial_solution *soln,
-			      const struct cm_state *state,
-			      const struct tile_type_vector *lattice)
+                              const struct cm_state *state,
+                              const struct tile_type_vector *lattice)
 {
   int last_choice = -1;
   int i;
@@ -1448,7 +1448,7 @@ static void complete_solution(struct partial_solution *soln,
     if (ptype->lattice_index < last_choice) {
       /* lex-order: we can't use ptype (some other branch
          will check this combination, or already did) */
-	continue;
+        continue;
     }
     if (!prereqs_filled(soln, ptype->lattice_index, state)) {
       /* don't bother using this tile before all better tiles are used */
@@ -1479,9 +1479,9 @@ static void complete_solution(struct partial_solution *soln,
   This function computes the max-stats produced by a partial solution.
 ****************************************************************************/
 static void compute_max_stats_heuristic(const struct cm_state *state,
-					const struct partial_solution *soln,
-					int production[CM_NUM_STATS],
-					int check_choice)
+                                        const struct partial_solution *soln,
+                                        int production[CM_NUM_STATS],
+                                        int check_choice)
 {
   enum cm_stat stat;
   struct partial_solution solnplus; /* will be soln, plus some tiles */
@@ -1536,8 +1536,8 @@ static bool choice_is_promising(struct cm_state *state, int newchoice)
   for (stat = 0; stat < CM_NUM_STATS; stat++) {
     if (production[stat] < state->min_production[stat]) {
       freelog(LOG_PRUNE_BRANCH, "--- pruning: insufficient %s (%d < %d)",
-	      cm_get_stat_name(stat), production[stat],
-	      state->min_production[stat]);
+              cm_get_stat_name(stat), production[stat],
+              state->min_production[stat]);
       return FALSE;
     }
     if (production[stat] > state->best.production[stat]) {
@@ -1630,7 +1630,7 @@ static void init_min_production(struct cm_state *state)
   The only fields of the state used are the city and parameter.
 ****************************************************************************/
 static double estimate_fitness(const struct cm_state *state,
-			       const int production[CM_NUM_STATS]) {
+                               const int production[CM_NUM_STATS]) {
   const struct city *pcity = state->pcity;
   const struct player *pplayer = get_player(pcity->owner);
   enum cm_stat stat;
@@ -1718,7 +1718,7 @@ struct cm_state *cm_init_state(struct city *pcity)
   struct cm_state *state = fc_malloc(sizeof(*state));
 
   freelog(LOG_CM_STATE, "creating cm_state for %s (size %d)",
-	  pcity->name, pcity->size);
+          pcity->name, pcity->size);
 
   /* copy the arguments */
   state->pcity = pcity;
@@ -1734,8 +1734,8 @@ struct cm_state *cm_init_state(struct city *pcity)
     tile_type_vector_copy(&state->lattice_by_prod[stat], &state->lattice);
     compare_key = stat;
     qsort(state->lattice_by_prod[stat].p, state->lattice_by_prod[stat].size,
-	  sizeof(*state->lattice_by_prod[stat].p),
-	  compare_tile_type_by_stat);
+          sizeof(*state->lattice_by_prod[stat].p),
+          compare_tile_type_by_stat);
   }
 
   /* We have no best solution yet, so its value is the worst possible. */
@@ -1745,7 +1745,7 @@ struct cm_state *cm_init_state(struct city *pcity)
   /* Initialize the current solution and choice stack to empty */
   init_partial_solution(&state->current, numtypes, pcity->size);
   state->choice.stack = fc_malloc(pcity->size
-				  * sizeof(*state->choice.stack));
+                                  * sizeof(*state->choice.stack));
   state->choice.size = 0;
 
   return state;
@@ -1756,7 +1756,7 @@ struct cm_state *cm_init_state(struct city *pcity)
   solving anything.
 ****************************************************************************/
 static void begin_search(struct cm_state *state,
-			 const struct cm_parameter *parameter)
+                         const struct cm_parameter *parameter)
 {
 #ifdef GATHER_TIME_STATS
   start_timer(performance.current->wall_timer);
@@ -1772,7 +1772,7 @@ static void begin_search(struct cm_state *state,
   state->best_value = worst_fitness();
   destroy_partial_solution(&state->current);
   init_partial_solution(&state->current, num_types(state),
-			state->pcity->size);
+                        state->pcity->size);
   state->choice.size = 0;
 }
 
@@ -1816,8 +1816,8 @@ void cm_free_state(struct cm_state *state)
   Run B&B until we find the best solution.
 ****************************************************************************/
 void cm_find_best_solution(struct cm_state *state,
-		      const struct cm_parameter *const parameter,
-		     struct cm_result *result) {
+                      const struct cm_parameter *const parameter,
+                     struct cm_result *result) {
 #ifdef GATHER_TIME_STATS
   performance.current = &performance.opt;
 #endif
@@ -1840,8 +1840,8 @@ void cm_find_best_solution(struct cm_state *state,
   solution.
  ***************************************************************************/
 void cm_query_result(struct city *pcity,
-		     const struct cm_parameter *param,
-		     struct cm_result *result)
+                     const struct cm_parameter *param,
+                     struct cm_result *result)
 {
   struct cm_state *state = cm_init_state(pcity);
 
@@ -1884,7 +1884,7 @@ const char *cm_get_stat_name(enum cm_stat stat)
   Returns true if the two cm_parameters are equal.
 **************************************************************************/
 bool cm_are_parameter_equal(const struct cm_parameter *const p1,
-			    const struct cm_parameter *const p2)
+                            const struct cm_parameter *const p2)
 {
   int i;
 
@@ -1916,7 +1916,7 @@ bool cm_are_parameter_equal(const struct cm_parameter *const p1,
   Copy the parameter from the source to the destination field.
 **************************************************************************/
 void cm_copy_parameter(struct cm_parameter *dest,
-		       const struct cm_parameter *const src)
+                       const struct cm_parameter *const src)
 {
   memcpy(dest, src, sizeof(struct cm_parameter));
 }
@@ -1962,7 +1962,7 @@ void cm_init_emergency_parameter(struct cm_parameter *dest)
   cm_result routines.
 ****************************************************************************/
 int cm_count_worker(const struct city * pcity,
-		    const struct cm_result *result)
+                    const struct cm_result *result)
 {
   int count = 0;
 
@@ -1978,7 +1978,7 @@ int cm_count_worker(const struct city * pcity,
   Count the total number of specialists in the result.
 ****************************************************************************/
 int cm_count_specialist(const struct city *pcity,
-			const struct cm_result *result)
+                        const struct cm_result *result)
 {
   int count = 0;
 
@@ -1993,7 +1993,7 @@ int cm_count_specialist(const struct city *pcity,
   Copy the city's current setup into the cm result structure.
 ****************************************************************************/
 void cm_copy_result_from_city(const struct city *pcity,
-			      struct cm_result *result)
+                              struct cm_result *result)
 {
   /* copy the map of where workers are */
   city_map_iterate(x, y) {
@@ -2019,14 +2019,14 @@ void cm_copy_result_from_city(const struct city *pcity,
 ****************************************************************************/
 #ifdef CM_DEBUG
 static void snprint_production(char *buffer, size_t bufsz,
-			      const int production[CM_NUM_STATS])
+                              const int production[CM_NUM_STATS])
 {
   int nout;
 
   nout = my_snprintf(buffer, bufsz, "[%d %d %d %d %d %d]",
-		     production[CM_FOOD], production[CM_SHIELD],
-		     production[CM_TRADE], production[CM_GOLD],
-		     production[CM_LUXURY], production[CM_SCIENCE]);
+                     production[CM_FOOD], production[CM_SHIELD],
+                     production[CM_TRADE], production[CM_GOLD],
+                     production[CM_LUXURY], production[CM_SCIENCE]);
 
   assert(nout >= 0 && nout <= bufsz);
 }
@@ -2035,21 +2035,21 @@ static void snprint_production(char *buffer, size_t bufsz,
   Print debugging data about a particular tile type.
 ****************************************************************************/
 static void print_tile_type(int loglevel, const struct cm_tile_type *ptype,
-			    const char *prefix)
+                            const char *prefix)
 {
   char prodstr[256];
 
   snprint_production(prodstr, sizeof(prodstr), ptype->production);
   freelog(loglevel, "%s%s fitness %g depth %d, idx %d; %d tiles", prefix,
-	  prodstr, ptype->estimated_fitness, ptype->lattice_depth,
-	  ptype->lattice_index, tile_type_num_tiles(ptype));
+          prodstr, ptype->estimated_fitness, ptype->lattice_depth,
+          ptype->lattice_index, tile_type_num_tiles(ptype));
 }
 
 /****************************************************************************
   Print debugging data about a whole B&B lattice.
 ****************************************************************************/
 static void print_lattice(int loglevel,
-			  const struct tile_type_vector *lattice)
+                          const struct tile_type_vector *lattice)
 {
   freelog(loglevel, "lattice has %u terrain types", (unsigned)lattice->size);
   tile_type_vector_iterate(lattice, ptype) {
@@ -2061,8 +2061,8 @@ static void print_lattice(int loglevel,
   Print debugging data about a partial CM solution.
 ****************************************************************************/
 static void print_partial_solution(int loglevel,
-				   const struct partial_solution *soln,
-				   const struct cm_state *state)
+                                   const struct partial_solution *soln,
+                                   const struct cm_state *state)
 {
   int i;
   int last_type = 0;
@@ -2097,7 +2097,7 @@ static void print_partial_solution(int loglevel,
     const struct cm_tile_type *ptype = tile_type_get(state, i);
 
     if (soln->prereqs_filled[i] == tile_type_num_prereqs(ptype)
-	&& soln->worker_counts[i] < tile_type_num_tiles(ptype)) {
+        && soln->worker_counts[i] < tile_type_num_tiles(ptype)) {
       print_tile_type(loglevel, tile_type_get(state, i), "  ");
     }
   }
@@ -2165,7 +2165,7 @@ void cm_print_city(const struct city *pcity)
   Print debugging inormation about a full CM result.
 ****************************************************************************/
 void cm_print_result(const struct city *pcity,
-		     const struct cm_result *result)
+                     const struct cm_result *result)
 {
   int y, i, worker = cm_count_worker(pcity, result);
   freelog(LOG_NORMAL, "print_result(result=%p)", result);

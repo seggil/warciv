@@ -16,18 +16,18 @@
 #include "path_finding.h"
 
 struct pf_path *pft_concat(struct pf_path *dest_path,
-			   const struct pf_path *src_path);
+                           const struct pf_path *src_path);
 void pft_fill_unit_parameter(struct pf_parameter *parameter,
-			     struct unit *punit);
+                             struct unit *punit);
 void pft_fill_unit_overlap_param(struct pf_parameter *parameter,
-				 struct unit *punit);
+                                 struct unit *punit);
 void pft_fill_unit_attack_param(struct pf_parameter *parameter,
                                 struct unit *punit);
 enum tile_behavior no_fights_or_unknown(const struct tile *ptile,
                                         enum known_type known,
                                         struct pf_parameter *param);
 enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
-			     struct pf_parameter *param);
+                             struct pf_parameter *param);
 
 #define pf_iterator(map, position) {                       \
   struct pf_position position;                             \
@@ -36,4 +36,4 @@ enum tile_behavior no_fights(const struct tile *ptile, enum known_type known,
 
 #define pf_iterator_end }}
 
-#endif				/* FC__PF_TOOLS_H */
+#endif                  /* FC__PF_TOOLS_H */

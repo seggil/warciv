@@ -71,7 +71,7 @@ void citymap_turn_init(struct player *pplayer)
         if (ptile->worked) {
           citymap[ptile->index] = -(ptile->worked->id);
         } else {
-	  citymap[ptile->index]++;
+          citymap[ptile->index]++;
         }
       } map_city_radius_iterate_end;
     } city_list_iterate_end;
