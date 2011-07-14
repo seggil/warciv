@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -37,15 +37,15 @@
 #include "goto.h"
 #include "multiselect.h"
 
-#include "chatline_g.h"
-#include "mapview_g.h"
-#include "menu_g.h"
+#include "include/chatline_g.h"
+#include "include/mapview_g.h"
+#include "include/menu_g.h"
 
-/********************************************************************** 
+/**********************************************************************
   Filters...
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
   Change the value of the filter to/of a given value. Should be the only
   accessor function. It is dangerous to modify a filter manually.
   Returns TRUE if other bits than the value are changed.

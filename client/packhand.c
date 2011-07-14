@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -46,7 +46,7 @@
 #include "clinet.h"             /* aconnection */
 #include "connectdlg_common.h"
 #include "control.h"
-#include "dialogs_g.h"
+#include "include/dialogs_g.h"
 #include "goto.h"               /* client_goto_init() */
 #include "helpdata.h"           /* boot_help_texts() */
 #include "multiselect.h"
@@ -54,23 +54,23 @@
 #include "tilespec.h"
 #include "trade.h"
 
-#include "agents.h"
-#include "cma_core.h"
+#include "agents/agents.h"
+#include "agents/cma_core.h"
 
-#include "chatline_g.h"
-#include "citydlg_g.h"
-#include "cityrep_g.h"
-#include "connectdlg_g.h"
-#include "inteldlg_g.h"
-#include "gui_main_g.h"
-#include "mapctrl_g.h"          /* popup_newcity_dialog() */
-#include "mapview_g.h"
-#include "menu_g.h"
-#include "messagewin_g.h"
-#include "pages_g.h"
-#include "plrdlg_g.h"
-#include "repodlgs_g.h"
-#include "spaceshipdlg_g.h"
+#include "include/chatline_g.h"
+#include "include/citydlg_g.h"
+#include "include/cityrep_g.h"
+#include "include/connectdlg_g.h"
+#include "include/inteldlg_g.h"
+#include "include/gui_main_g.h"
+#include "include/mapctrl_g.h"          /* popup_newcity_dialog() */
+#include "include/mapview_g.h"
+#include "include/menu_g.h"
+#include "include/messagewin_g.h"
+#include "include/pages_g.h"
+#include "include/plrdlg_g.h"
+#include "include/repodlgs_g.h"
+#include "include/spaceshipdlg_g.h"
 
 #include "packhand.h"
 

@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <string.h>
@@ -20,7 +20,7 @@
 #include "support.h"
 
 #include "audio.h"
-#include "gui_main_g.h"
+#include "include/gui_main_g.h"
 
 #include "audio_none.h"
 

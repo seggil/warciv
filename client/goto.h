@@ -15,7 +15,7 @@
 
 #include "map.h"
 
-#include "path_finding.h"
+#include "aicore/path_finding.h"
 
 void init_client_goto(void);
 void free_client_goto(void);

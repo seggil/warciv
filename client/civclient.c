@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #ifdef WIN32_NATIVE
@@ -20,7 +20,7 @@
 #endif
 
 #ifdef SDL
-#include "SDL.h"
+# include "SDL/SDL.h"
 #endif
 
 #include <assert.h>
@@ -52,7 +52,7 @@
 #include "clinet.h"
 #include "cma_core.h"           /* kludge */
 #include "connectdlg_common.h"  /* client_kill_server() */
-#include "control.h" 
+#include "control.h"
 #include "goto.h"
 #include "helpdata.h"           /* boot_help_texts() */
 #include "multiselect.h"
@@ -61,22 +61,22 @@
 #include "tilespec.h"
 #include "trade.h"
 
-#include "agents.h"
+#include "agents/agents.h"
 
-#include "chatline_g.h"
-#include "citydlg_g.h"
-#include "connectdlg_g.h"
-#include "dialogs_g.h"
-#include "diplodlg_g.h"
-#include "graphics_g.h"
-#include "gui_main_g.h"
-#include "mapctrl_g.h"
-#include "mapview_g.h"
-#include "menu_g.h"
-#include "messagewin_g.h"
-#include "pages_g.h"
-#include "plrdlg_g.h"
-#include "repodlgs_g.h"
+#include "include/chatline_g.h"
+#include "include/citydlg_g.h"
+#include "include/connectdlg_g.h"
+#include "include/dialogs_g.h"
+#include "include/diplodlg_g.h"
+#include "include/graphics_g.h"
+#include "include/gui_main_g.h"
+#include "include/mapctrl_g.h"
+#include "include/mapview_g.h"
+#include "include/menu_g.h"
+#include "include/messagewin_g.h"
+#include "include/pages_g.h"
+#include "include/plrdlg_g.h"
+#include "include/repodlgs_g.h"
 
 #include "civclient.h"
 

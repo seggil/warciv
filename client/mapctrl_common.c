@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -23,19 +23,19 @@
 #include "log.h"
 #include "support.h"
 
-#include "agents.h"
+#include "agents/agents.h"
 #include "chatline_common.h"
-#include "cityrep_g.h"
+#include "include/cityrep_g.h"
 #include "civclient.h"
 #include "climisc.h"
 #include "clinet.h"
-#include "cma_core.h"
+#include "agents/cma_core.h"
 #include "control.h"
 #include "fcintl.h"
 #include "goto.h"
-#include "mapctrl_g.h"
-#include "mapview_g.h"
-#include "menu_g.h"
+#include "include/mapctrl_g.h"
+#include "include/mapview_g.h"
+#include "include/menu_g.h"
 #include "multiselect.h"
 #include "options.h"
 #include "tilespec.h"

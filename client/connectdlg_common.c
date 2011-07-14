@@ -11,7 +11,7 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -51,7 +51,7 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
 #include "packhand_gen.h"
 
 #include "chatline_common.h"
-#include "connectdlg_g.h"
+#include "include/connectdlg_g.h"
 #include "connectdlg_common.h"
 #include "tilespec.h"
 

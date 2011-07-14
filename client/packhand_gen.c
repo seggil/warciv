@@ -9,13 +9,13 @@
 
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include "packets.h"
 
 #include "packhand_gen.h"
-    
+
 bool client_handle_packet(enum packet_type type, void *packet)
 {
   switch(type) {

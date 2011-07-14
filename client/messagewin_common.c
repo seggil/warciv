@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -22,11 +22,11 @@
 #include "map.h"
 #include "mem.h"
 
-#include "citydlg_g.h"
+#include "include/citydlg_g.h"
 #include "civclient.h"
 #include "clinet.h"
-#include "mapview_g.h"
-#include "messagewin_g.h"
+#include "include/mapview_g.h"
+#include "include/messagewin_g.h"
 #include "options.h"
 
 #include "messagewin_common.h"

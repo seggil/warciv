@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -25,7 +25,7 @@
 #include "map.h"
 #include "support.h"
 
-#include "cma_fec.h"
+#include "agents/cma_fec.h"
 #include "options.h"
 
 #include "cityrepdata.h"

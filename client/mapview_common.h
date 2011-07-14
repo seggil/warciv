@@ -19,7 +19,7 @@
 #include "fc_types.h"
 #include "map.h"
 
-#include "colors_g.h"
+#include "include/colors_g.h"
 
 #include "tilespec.h"
 

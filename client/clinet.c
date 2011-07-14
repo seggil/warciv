@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -73,9 +73,9 @@
 #include "support.h"
 #include "version.h"
 
-#include "agents.h"
+#include "agents/agents.h"
 #include "attribute.h"
-#include "chatline_g.h"
+#include "include/chatline_g.h"
 #include "civclient.h"
 #include "climisc.h"
 #include "connectdlg_common.h"
@@ -86,9 +86,9 @@
 #include "messagewin_g.h"
 #include "options.h"
 #include "packhand.h"
-#include "pages_g.h"
-#include "plrdlg_g.h"
-#include "repodlgs_g.h"
+#include "include/pages_g.h"
+#include "include/plrdlg_g.h"
+#include "include/repodlgs_g.h"
 
 #include "clinet.h"
 

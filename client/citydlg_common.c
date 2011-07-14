@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -22,8 +22,8 @@
 #include "log.h"
 #include "support.h"
 
-#include "citydlg_g.h"
-#include "mapview_g.h"
+#include "include/citydlg_g.h"
+#include "include/mapview_g.h"
 
 #include "citydlg_common.h"
 #include "civclient.h"          /* for can_client_issue_orders() */

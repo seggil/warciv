@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -31,11 +31,11 @@
 #include "version.h"
 
 #include "audio.h"
-#include "chatline_g.h"
+#include "include/chatline_g.h"
 #include "cityrepdata.h"
 #include "civclient.h"
 #include "clinet.h"
-#include "cma_fec.h"
+#include "agents/cma_fec.h"
 #include "control.h"
 #include "mapview_common.h"
 #include "multiselect.h"

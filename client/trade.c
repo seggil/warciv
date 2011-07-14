@@ -11,7 +11,7 @@
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include "capability.h"
@@ -29,7 +29,7 @@
 #include "chatline_common.h" /* append_output_window()      */
 #include "civclient.h"
 #include "clinet.h"          /* aconnection                 */
-#include "climisc.h" 
+#include "climisc.h"
 #include "control.h"         /* request_new_unit_activity() */
 #include "goto.h"            /* request_orders_cleared()    */
 #include "mapview_common.h"  /* update_map_canvas_visible() */
@@ -37,10 +37,10 @@
 #include "options.h"
 #include "packhand_gen.h"
 
-#include "citydlg_g.h"       /* refresh_city_dialog()       */
-#include "dialogs_g.h"
-#include "mapview_g.h"       /* canvas_put_sprite_full()    */
-#include "menu_g.h"          /* update_auto_caravan_menu()  */
+#include "include/citydlg_g.h"       /* refresh_city_dialog()       */
+#include "include/dialogs_g.h"
+#include "include/mapview_g.h"       /* canvas_put_sprite_full()    */
+#include "include/menu_g.h"          /* update_auto_caravan_menu()  */
 
 #include "trade.h"
 

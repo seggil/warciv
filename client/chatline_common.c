@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -32,7 +32,7 @@
 #include "clinet.h"
 #include "options.h"
 
-#include "chatline_g.h"
+#include "include/chatline_g.h"
 
 #include "chatline_common.h"
 

@@ -18,7 +18,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -42,10 +42,10 @@
 #include "support.h"
 #include "unit.h"
 
-#include "dialogs_g.h"
-#include "graphics_g.h"
-#include "mapview_g.h"          /* for update_map_canvas_visible */
-#include "plrdlg_g.h"
+#include "include/dialogs_g.h"
+#include "include/graphics_g.h"
+#include "include/mapview_g.h"  /* for update_map_canvas_visible */
+#include "include/plrdlg_g.h"
 
 #include "civclient.h"          /* for get_client_state() */
 #include "climap.h"             /* for tile_get_known() */

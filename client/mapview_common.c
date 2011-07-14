@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -25,9 +25,9 @@
 #include "timing.h"
 #include "traderoute.h"
 
-#include "graphics_g.h"
-#include "mapctrl_g.h"
-#include "mapview_g.h"
+#include "include/graphics_g.h"
+#include "include/mapctrl_g.h"
+#include "include/mapview_g.h"
 
 #include "civclient.h"
 #include "climap.h"
@@ -35,14 +35,14 @@
 #include "clinet.h"
 #include "control.h"
 #include "goto.h"
-#include "gui_main_g.h"
+#include "include/gui_main_g.h"
 #include "mapview_common.h"
-#include "pages_g.h"
+#include "include/pages_g.h"
 #include "tilespec.h"
 #include "trade.h"
 
 struct mapview_canvas mapview_canvas;
-struct overview overview;
+struct overview_s overview;
 bool can_slide = TRUE;
 
 /* Arbitrary estimated maximums for width and height of a city description

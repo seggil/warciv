@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -31,7 +31,7 @@
 #include "climisc.h"
 #include "text.h"
 
-#include "plrdlg_g.h"
+#include "include/plrdlg_g.h"
 
 #include "plrdlg_common.h"
 

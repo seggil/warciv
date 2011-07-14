@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -22,13 +22,13 @@
 #include "map.h"
 #include "mem.h"
 #include "packets.h"
-#include "pf_tools.h"
+#include "aicore/pf_tools.h"
 #include "unit.h"
 
 #include "civclient.h"
 #include "clinet.h"
 #include "control.h"
-#include "mapview_g.h"
+#include "include/mapview_g.h"
 
 #include "goto.h"
 

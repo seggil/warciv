@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -25,7 +25,7 @@
 #include "government.h"
 #include "map.h"
 
-#include "repodlgs_g.h"
+#include "include/repodlgs_g.h"
 
 #include "civclient.h"          /* can_client_issue_orders */
 #include "clinet.h"

@@ -11,13 +11,13 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
 This module contains various general - mostly highlevel - functions
 used throughout the client.
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -39,20 +39,20 @@ used throughout the client.
 #include "spaceship.h"
 #include "support.h"
 
-#include "chatline_g.h"
-#include "citydlg_g.h"
-#include "cityrep_g.h"
+#include "include/chatline_g.h"
+#include "include/citydlg_g.h"
+#include "include/cityrep_g.h"
 #include "civclient.h"
 #include "climap.h"
 #include "clinet.h"
 #include "control.h"
-#include "dialogs_g.h"
+#include "include/dialogs_g.h"
 #include "mapctrl_common.h"
-#include "mapview_g.h"
+#include "include/mapview_g.h"
 #include "messagewin_common.h"
 #include "multiselect.h"
 #include "packhand.h"
-#include "pages_g.h"
+#include "include/pages_g.h"
 #include "plrdlg_common.h"
 #include "repodlgs_common.h"
 #include "tilespec.h"
