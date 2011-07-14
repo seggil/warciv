@@ -36,31 +36,31 @@ typedef unsigned char utiny_t;
 
 /* ===================== Internal structures ====================== */
 /*
- * Some comments on implementation: 
+ * Some comments on implementation:
  * 1. cost (aka total_MC) is sum of MCs altered to fit to the turn_mode
  * see adjust_cost
  * 2. dir_to_here is for backtracking along the tree of shortest paths
- * 3. node_known_type, behavior, zoc_number and extra_tile are all cached 
- * values.  
- * It is possible to shove them into a separate array which is allocated 
- * only if a corresponding option in the parameter is set.  A less drastic 
- * measure would be to pack the first three into one byte.  All of there are 
- * time-saving measures and should be tested once we get an established 
+ * 3. node_known_type, behavior, zoc_number and extra_tile are all cached
+ * values.
+ * It is possible to shove them into a separate array which is allocated
+ * only if a corresponding option in the parameter is set.  A less drastic
+ * measure would be to pack the first three into one byte.  All of there are
+ * time-saving measures and should be tested once we get an established
  * user-base.
  */
-struct pf_node {
-  int cost;                     /* total_MC */
-  int extra_cost;               /* total_EC */
+struct path_finding_node {
+  int cost;                     /* total Move Cost */
+  int extra_cost;               /* total Extra Cost */
   utiny_t dir_to_here;          /* direction from which we came */
 
   /* Cached values */
-  int extra_tile;               /* EC */
+  int extra_tile;               /* Extra Cost */
   utiny_t node_known_type;
   utiny_t behavior;
   utiny_t zoc_number;           /* 1 if allied, 2 if my zoc, 0 otherwise */
 };
 
-/* 
+/*
  * All danger-related fields go into here.  For speed we separate it
  * from mainstream node.
  */
@@ -72,12 +72,12 @@ struct danger_node {
     int cost;
     int extra_cost;
   } *danger_segment;            /* Segment leading across the danger area
-                                 * back to the nearest safe node: 
+                                 * back to the nearest safe node:
                                  * need to remeber costs and stuff */
 };
 
 enum pf_node_status {
-  NS_UNINIT = 0,                /* memory is calloced, hence zero 
+  NS_UNINIT = 0,                /* memory is calloced, hence zero
                                  * means uninitialised */
   NS_NEW,                       /* the optimal route isn't found yet */
   NS_WAITING,                   /* the optimal route is found,
@@ -90,23 +90,23 @@ enum pf_node_status {
  * The map structure itself.  (x, y) is the current position of the iteration
  * (aka internal buffer); index is map_pos_to_index(x, y);
  */
-struct pf_map {
+struct path_finding_map {
   struct tile *tile;            /* The current position */
   struct pf_parameter *params;  /* Initial parameters */
-  struct pqueue *queue;         /* Queue of nodes we have reached but not 
-                                 * processed yet (NS_NEW), sorted by their 
+  struct pqueue *queue;         /* Queue of nodes we have reached but not
+                                 * processed yet (NS_NEW), sorted by their
                                  * total_CC*/
-  struct pf_node *lattice;      /* Lattice of nodes */
-  utiny_t *status;              /* Array of node statuses 
+  struct path_finding_node *lattice;      /* Lattice of nodes */
+  utiny_t *status;              /* Array of node statuses
                                  * (enum pf_node_status really) */
   struct pqueue *danger_queue;  /* Dangerous positions go there */
   struct danger_node *d_lattice;        /* Lattice with danger stuff */
 };
 
-static bool danger_iterate_map(struct pf_map *pf_map);
-static struct pf_path* danger_construct_path(const struct pf_map *pf_map,
+static bool danger_iterate_map(struct path_finding_map *pf_map);
+static struct pf_path* danger_construct_path(const struct path_finding_map *pf_map,
                                              struct tile *ptile);
-static struct pf_path *danger_get_path(struct pf_map *pf_map,
+static struct pf_path *danger_get_path(struct path_finding_map *pf_map,
                                        struct tile *ptile);
 
 
@@ -115,10 +115,10 @@ static struct pf_path *danger_get_path(struct pf_map *pf_map,
 /********************************************************************
   Number of turns required to reach node
 ********************************************************************/
-static int get_turn(const struct pf_map *pf_map, int cost)
+static int get_turn(const struct path_finding_map *pf_map, int cost)
 {
   /* Negative cost can happen when a unit initially has more MP than its
-   * move-rate (due to wonders transfer etc).  Although this may be a bug, 
+   * move-rate (due to wonders transfer etc).  Although this may be a bug,
    * we'd better be ready.
    *
    * Note that cost==0 corresponds to the current turn with full MP. */
@@ -128,7 +128,7 @@ static int get_turn(const struct pf_map *pf_map, int cost)
 /********************************************************************
   Moves left after node is reached
 ********************************************************************/
-static int get_moves_left(const struct pf_map *pf_map, int cost)
+static int get_moves_left(const struct path_finding_map *pf_map, int cost)
 {
   /* Cost may be negative; see get_turn(). */
   return (cost < 0 ? pf_map->params->move_rate - cost
@@ -136,9 +136,9 @@ static int get_moves_left(const struct pf_map *pf_map, int cost)
 }
 
 /********************************************************************
-  Adjust MC to reflect the turn mode and the move_rate.
+  Adjust Move Cost to reflect the turn mode and the move_rate.
 ********************************************************************/
-static int adjust_cost(const struct pf_map *pf_map, int cost)
+static int adjust_cost(const struct path_finding_map *pf_map, int cost)
 {
   assert(cost >= 0);
 
@@ -179,10 +179,10 @@ static int adjust_cost(const struct pf_map *pf_map, int cost)
 /* ===================== Path-finding proper =================== */
 
 /******************************************************************
-  Calculates cached values of the target node: 
+  Calculates cached values of the target node:
   node_known_type and zoc
 ******************************************************************/
-static void init_node(struct pf_map *pf_map, struct pf_node * node, 
+static void init_node(struct path_finding_map *pf_map, struct path_finding_node * node,
                       struct tile *ptile)
 {
   struct pf_parameter *params = pf_map->params;
@@ -208,11 +208,11 @@ static void init_node(struct pf_map *pf_map, struct pf_node * node,
   if (params->get_zoc) {
     bool my_zoc = (ptile->city || is_ocean(ptile->terrain)
                    || params->get_zoc(params->owner, ptile));
-    /* ZoC rules cannot prevent us from moving into/attacking an occupied 
-     * tile.  Other rules can, but we don't care about them here. */ 
+    /* ZoC rules cannot prevent us from moving into/attacking an occupied
+     * tile.  Other rules can, but we don't care about them here. */
     bool occupied = (unit_list_size(ptile->units) > 0 || ptile->city);
 
-    /* 2 means can move unrestricted from/into it, 
+    /* 2 means can move unrestricted from/into it,
      * 1 means can move unrestricted into it, but not necessarily from it */
     node->zoc_number = (my_zoc ? 2 : (occupied ? 1 : 0));
   }
@@ -226,20 +226,20 @@ static void init_node(struct pf_map *pf_map, struct pf_node * node,
 /*****************************************************************
   Obtain cost-of-path from pure cost and extra cost
 *****************************************************************/
-static int get_total_CC(struct pf_map *pf_map, int cost, int extra)
+static int get_total_CC(struct path_finding_map *pf_map, int cost, int extra)
 {
   return PF_TURN_FACTOR * cost + extra * pf_map->params->move_rate;
 }
 
 /**************************************************************************
-  Bare-bones PF iterator.  All Freeciv rules logic is hidden in get_costs
-  callback (compare to pf_next function).
+  Bare-bones Path Finding iterator.  All Freeciv rules logic is hidden in
+  get_costs callback (compare to pf_next function).
   Plan: 1. Process previous position
         2. Get new nearest position and return it
 **************************************************************************/
-static bool jumbo_iterate_map(struct pf_map *pf_map)
+static bool jumbo_iterate_map(struct path_finding_map *pf_map)
 {
-  struct pf_node *node = &pf_map->lattice[pf_map->tile->index];
+  struct path_finding_node *node = &pf_map->lattice[pf_map->tile->index];
   mapindex_t index;
 
   pf_map->status[pf_map->tile->index] = NS_PROCESSED;
@@ -248,9 +248,9 @@ static bool jumbo_iterate_map(struct pf_map *pf_map)
   /* The previous position is contained in {x,y} fields of map */
 
   adjc_dir_iterate(pf_map->tile, tile1, dir) {
-    struct pf_node *node1 = &pf_map->lattice[tile1->index];
+    struct path_finding_node *node1 = &pf_map->lattice[tile1->index];
     utiny_t *status = &pf_map->status[tile1->index];
-    int priority;    
+    int priority;
 
 
     if (*status == NS_PROCESSED) {
@@ -262,14 +262,14 @@ static bool jumbo_iterate_map(struct pf_map *pf_map)
       node1->cost = -1;
     }
 
-    /* User-supplied callback get_costs takes care of everything (ZOC, 
+    /* User-supplied callback get_costs takes care of everything (ZOC,
      * known, costs etc).  See explanations in path_finding.h */
-    priority = pf_map->params->get_costs(pf_map->tile, dir, tile1, 
+    priority = pf_map->params->get_costs(pf_map->tile, dir, tile1,
                                          node->cost, node->extra_cost,
-                                         &node1->cost, &node1->extra_cost, 
+                                         &node1->cost, &node1->extra_cost,
                                          pf_map->params);
     if (priority >= 0) {
-      /* We found a better route to xy1, record it 
+      /* We found a better route to xy1, record it
        * (the costs are recorded already) */
       *status = NS_NEW;
       node1->dir_to_here = dir;
@@ -301,10 +301,10 @@ static bool jumbo_iterate_map(struct pf_map *pf_map)
   Plan: 1. Process previous position
         2. Get new nearest position and return it
 *****************************************************************/
-bool pf_next(struct pf_map *pf_map)
+bool pf_next(struct path_finding_map *pf_map)
 {
   mapindex_t index;
-  struct pf_node *node = &pf_map->lattice[pf_map->tile->index];
+  struct path_finding_node *node = &pf_map->lattice[pf_map->tile->index];
 
   if (pf_map->params->is_pos_dangerous) {
     /* It's a lot different if is_pos_dangerous is defined */
@@ -326,7 +326,7 @@ bool pf_next(struct pf_map *pf_map)
 
     adjc_dir_iterate(pf_map->tile, tile1, dir) {
       mapindex_t index1 = tile1->index;
-      struct pf_node *node1 = &pf_map->lattice[index1];
+      struct path_finding_node *node1 = &pf_map->lattice[index1];
       utiny_t *status = &pf_map->status[index1];
       int cost;
       int extra = 0;
@@ -415,11 +415,11 @@ bool pf_next(struct pf_map *pf_map)
 /******************************************************************
   Allocates the memory for the map.  No initialization.
 ******************************************************************/
-static struct pf_map *create_map(bool with_danger)
+static struct path_finding_map *create_map(bool with_danger)
 {
-  struct pf_map *pf_map = fc_calloc(1, sizeof(struct pf_map));
+  struct path_finding_map *pf_map = fc_calloc(1, sizeof(struct path_finding_map));
 
-  pf_map->lattice = fc_malloc(sizeof(struct pf_node) * MAX_MAP_INDEX);
+  pf_map->lattice = fc_malloc(sizeof(struct path_finding_node) * MAX_MAP_INDEX);
   pf_map->queue = pq_create(INITIAL_QUEUE_SIZE);
   pf_map->status = fc_calloc(MAX_MAP_INDEX, sizeof(*(pf_map->status)));
 
@@ -437,9 +437,9 @@ static struct pf_map *create_map(bool with_danger)
   Sets up the map according to the parameters
   Does not do any iterations
 ***************************************************************/
-struct pf_map *pf_create_map(const struct pf_parameter *const parameter)
+struct path_finding_map *pf_create_map(const struct pf_parameter *const parameter)
 {
-  struct pf_map *pf_map = create_map((parameter->is_pos_dangerous != NULL));
+  struct path_finding_map *pf_map = create_map((parameter->is_pos_dangerous != NULL));
 
   /* MC callback must be set */
   assert(parameter->get_MC != NULL);
@@ -453,7 +453,7 @@ struct pf_map *pf_create_map(const struct pf_parameter *const parameter)
 
   /* Initialise starting node */
   init_node(pf_map, &pf_map->lattice[pf_map->tile->index], pf_map->tile);
-  /* This makes calculations of turn/moves_left more convenient, but we 
+  /* This makes calculations of turn/moves_left more convenient, but we
    * need to subtract this value before we return cost to the user.  Note
    * that cost may be negative if moves_left_initially > move_rate
    * (see get_turn()). */
@@ -472,7 +472,7 @@ struct pf_map *pf_create_map(const struct pf_parameter *const parameter)
 /*********************************************************************
   After usage the map must be destroyed.
 *********************************************************************/
-void pf_destroy_map(struct pf_map *pf_map)
+void pf_destroy_map(struct path_finding_map *pf_map)
 {
   free(pf_map->lattice);
   pq_destroy(pf_map->queue);
@@ -503,14 +503,14 @@ void pf_destroy_map(struct pf_map *pf_map)
 /* =================== Lifting info from the map ================ */
 
 /*******************************************************************
-  Fill in the position which must be discovered already. A helper 
+  Fill in the position which must be discovered already. A helper
   for *_get_position functions.
 *******************************************************************/
-static void fill_position(const struct pf_map *pf_map, struct tile *ptile,
-                             struct pf_position *pos)
+static void fill_position(const struct path_finding_map *pf_map, struct tile *ptile,
+                          struct pf_position *pos)
 {
   mapindex_t index = ptile->index;
-  struct pf_node *node = &pf_map->lattice[index];
+  struct path_finding_node *node = &pf_map->lattice[index];
 
   /* Debug period only!  Please remove after PF is settled */
   if (pf_map->status[index] != NS_PROCESSED
@@ -543,19 +543,19 @@ static void fill_position(const struct pf_map *pf_map, struct tile *ptile,
 /*******************************************************************
   Read all info about the current position into pos
 *******************************************************************/
-void pf_next_get_position(const struct pf_map *pf_map,
+void pf_next_get_position(const struct path_finding_map *pf_map,
                           struct pf_position *pos)
 {
   fill_position(pf_map, pf_map->tile, pos);
 }
 
 /*******************************************************************
-  Get info about position at (x, y) and put it in pos.  If (x, y) 
+  Get info about position at (x, y) and put it in pos.  If (x, y)
   has not been reached yet, iterate the map until we reach it.
-  Should _always_ check the return value, forthe position might be 
+  Should _always_ check the return value, forthe position might be
   unreachable.
 *******************************************************************/
-bool pf_get_position(struct pf_map *pf_map, struct tile *ptile,
+bool pf_get_position(struct path_finding_map *pf_map, struct tile *ptile,
                      struct pf_position *pos)
 {
   mapindex_t index = ptile->index;
@@ -579,10 +579,10 @@ bool pf_get_position(struct pf_map *pf_map, struct tile *ptile,
 }
 
 /*******************************************************************
-  Read off the path to the node (x,y), which must already be 
+  Read off the path to the node (x,y), which must already be
   discovered.  A helper for *get_path functions.
 *******************************************************************/
-static struct pf_path* construct_path(const struct pf_map *pf_map, 
+static struct pf_path* construct_path(const struct path_finding_map *pf_map,
                                       struct tile *dest_tile)
 {
   int i;
@@ -605,7 +605,7 @@ static struct pf_path* construct_path(const struct pf_map *pf_map,
   /* 1: Count the number of steps to get here.
    * To do it, backtrack until we hit the starting point */
   for (i = 0; ; i++) {
-    struct pf_node *node = &pf_map->lattice[ptile->index];
+    struct path_finding_node *node = &pf_map->lattice[ptile->index];
 
     if (same_pos(ptile, pf_map->params->start_tile)) {
       /* Ah-ha, reached the starting point! */
@@ -625,7 +625,7 @@ static struct pf_path* construct_path(const struct pf_map *pf_map,
   ptile = dest_tile;
   dir_next = -1;
   for (; i >=0; i--) {
-    struct pf_node *node = &pf_map->lattice[ptile->index];
+    struct path_finding_node *node = &pf_map->lattice[ptile->index];
 
     fill_position(pf_map, ptile, &path->positions[i]);
     /* fill_position doesn't set direction */
@@ -645,7 +645,7 @@ static struct pf_path* construct_path(const struct pf_map *pf_map,
 /************************************************************************
   Get the path to our current position
 ************************************************************************/
-struct pf_path *pf_next_get_path(const struct pf_map *pf_map)
+struct pf_path *pf_next_get_path(const struct path_finding_map *pf_map)
 {
   if (!pf_map->params->is_pos_dangerous) {
     return construct_path(pf_map, pf_map->tile);
@@ -656,10 +656,10 @@ struct pf_path *pf_next_get_path(const struct pf_map *pf_map)
 }
 
 /************************************************************************
-  Get the path to x, y, put it in "path".  If (x, y) has not been reached 
+  Get the path to x, y, put it in "path".  If (x, y) has not been reached
   yet, iterate the map until we reach it or run out of map.
 ************************************************************************/
-struct pf_path *pf_get_path(struct pf_map *pf_map, struct tile *ptile)
+struct pf_path *pf_get_path(struct path_finding_map *pf_map, struct tile *ptile)
 {
   mapindex_t index = ptile->index;
   utiny_t status = pf_map->status[index];
@@ -736,9 +736,9 @@ void pf_destroy_path(struct pf_path *path)
 /************************************************************************
   Calculates cached danger-related values of the target node
 ************************************************************************/
-static void init_danger_node(struct pf_map *pf_map,
+static void init_danger_node(struct path_finding_map *pf_map,
                              struct danger_node *d_node,
-                             struct pf_node *node, struct tile *ptile)
+                             struct path_finding_node *node, struct tile *ptile)
 {
   struct pf_parameter *params = pf_map->params;
 
@@ -756,12 +756,12 @@ static void init_danger_node(struct pf_map *pf_map,
 /***********************************************************************
   Creating path segment going back from d_node1 to a safe tile.
 ***********************************************************************/
-static void create_danger_segment(struct pf_map *pf_map,
+static void create_danger_segment(struct path_finding_map *pf_map,
                                   struct danger_node *d_node1)
 {
   int i;
   struct tile *ptile = pf_map->tile;
-  struct pf_node *node = &pf_map->lattice[ptile->index];
+  struct path_finding_node *node = &pf_map->lattice[ptile->index];
   struct danger_node *d_node = &pf_map->d_lattice[ptile->index];
   int length = 0;
 
@@ -812,7 +812,7 @@ static void create_danger_segment(struct pf_map *pf_map,
 /**********************************************************************
   Adjust cost taking into account possibility of making the move
 **********************************************************************/
-static int danger_adjust_cost(const struct pf_map *pf_map, int cost, 
+static int danger_adjust_cost(const struct path_finding_map *pf_map, int cost,
                               bool to_danger, int moves_left)
 {
 
@@ -828,11 +828,11 @@ static int danger_adjust_cost(const struct pf_map *pf_map, int cost,
       return PF_IMPOSSIBLE_MC;
     }
   } else {
-    /* Default is TM_WORST_TIME.  
+    /* Default is TM_WORST_TIME.
      * It should be specified explicitly though! */
     if (cost > moves_left
         || (to_danger && cost == moves_left)) {
-      /* This move is impossible (at least without waiting) 
+      /* This move is impossible (at least without waiting)
        * or we would end our turn on a dangerous tile */
       return PF_IMPOSSIBLE_MC;
     }
@@ -843,34 +843,34 @@ static int danger_adjust_cost(const struct pf_map *pf_map, int cost,
 
 /*****************************************************************
   Primary method for iterative path-finding in presence of danger
-  Notes: 
-  1. Whenever the path-finding stumbles upon a dangerous 
-  location, it goes into a sub-Dijkstra which processes _only_ 
+  Notes:
+  1. Whenever the path-finding stumbles upon a dangerous
+  location, it goes into a sub-Dijkstra which processes _only_
   dangerous locations, by means of a separate queue.  When this
   sub-Dijkstra reaches a safe location, it records the segment of
   the path going across the dangerous terrain.
-  2. Waiting is realised by inserting the (safe) tile back into 
-  the queue with a lower priority P.  This tile might pop back 
-  sooner than P, because there might be several copies of it in 
-  the queue already.  But that does not seem to present any 
+  2. Waiting is realised by inserting the (safe) tile back into
+  the queue with a lower priority P.  This tile might pop back
+  sooner than P, because there might be several copies of it in
+  the queue already.  But that does not seem to present any
   problems.
   3. For some purposes, NS_WAITING is just another flavour of NS_PROCESSED,
   since the path to a NS_WAITING tile has already been found.
-  4. The code is arranged so that if the turn-mode is TM_WORST_TIME, a 
-  cavalry with non-full MP will get to a safe mountain tile only after 
-  waiting.  This waiting, although realised through NS_WAITING, is 
-  different from waiting before going into the danger area, so it will not 
+  4. The code is arranged so that if the turn-mode is TM_WORST_TIME, a
+  cavalry with non-full MP will get to a safe mountain tile only after
+  waiting.  This waiting, although realised through NS_WAITING, is
+  different from waiting before going into the danger area, so it will not
   be marked as "waiting" on the resulting paths.
-  5. This algorithm cannot guarantee the best safe segments across 
-  dangerous region.  However it will find a safe segment if there 
-  is one.  To gurantee the best (in terms of total_CC) safe segments 
-  across danger, supply get_EC which returns small extra on 
+  5. This algorithm cannot guarantee the best safe segments across
+  dangerous region.  However it will find a safe segment if there
+  is one.  To gurantee the best (in terms of total_CC) safe segments
+  across danger, supply get_EC which returns small extra on
   dangerous tiles.
 ******************************************************************/
-static bool danger_iterate_map(struct pf_map *pf_map)
+static bool danger_iterate_map(struct path_finding_map *pf_map)
 {
   mapindex_t index;
-  struct pf_node *node = &pf_map->lattice[pf_map->tile->index];
+  struct path_finding_node *node = &pf_map->lattice[pf_map->tile->index];
   struct danger_node *d_node = &pf_map->d_lattice[pf_map->tile->index];
 
   /* There is no exit from DONT_LEAVE tiles! */
@@ -883,14 +883,14 @@ static bool danger_iterate_map(struct pf_map *pf_map)
     /* The previous position is contained in {x,y} fields of map */
     adjc_dir_iterate(pf_map->tile, tile1, dir) {
       mapindex_t index1 = tile1->index;
-      struct pf_node *node1 = &pf_map->lattice[index1];
+      struct path_finding_node *node1 = &pf_map->lattice[index1];
       struct danger_node *d_node1 = &pf_map->d_lattice[index1];
       int cost;
       int extra = 0;
 
       /* Dangerous tiles can be updated even after being processed */
-      if ((pf_map->status[index1] == NS_PROCESSED 
-           || pf_map->status[index1] == NS_WAITING) 
+      if ((pf_map->status[index1] == NS_PROCESSED
+           || pf_map->status[index1] == NS_WAITING)
           && !d_node1->is_dangerous) {
         continue;
       }
@@ -1041,7 +1041,7 @@ static bool danger_iterate_map(struct pf_map *pf_map)
   Read off the path to the node (x, y), but with danger
   NB: will only find paths to safe tiles!
 *******************************************************************/
-static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
+static struct pf_path *danger_construct_path(const struct path_finding_map *pf_map,
                                              struct tile *ptile)
 {
   struct pf_path *path = fc_malloc(sizeof(*path));
@@ -1050,7 +1050,7 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
   struct pf_danger_pos *danger_seg = NULL;      /* For danger segments */
   int segment_index = -1;                       /* For danger segments */
   bool waited = FALSE;
-  struct pf_node *node = &pf_map->lattice[ptile->index];
+  struct path_finding_node *node = &pf_map->lattice[ptile->index];
   struct danger_node *d_node = &pf_map->d_lattice[ptile->index];
   int length = 1;
   struct tile *iter_tile = ptile;
@@ -1180,7 +1180,7 @@ static struct pf_path *danger_construct_path(const struct pf_map *pf_map,
 /************************************************************************
   Danger version of pf_get_path.
 ************************************************************************/
-static struct pf_path *danger_get_path(struct pf_map *pf_map,
+static struct pf_path *danger_get_path(struct path_finding_map *pf_map,
                                        struct tile *ptile)
 {
   mapindex_t index = ptile->index;
@@ -1212,7 +1212,7 @@ static struct pf_path *danger_get_path(struct pf_map *pf_map,
 /************************************************************************
   Return current pf_parameter for given pf_map.
 ************************************************************************/
-struct pf_parameter *pf_get_parameter(struct pf_map *map)
+struct pf_parameter *pf_get_parameter(struct path_finding_map *map)
 {
   return map->params;
 }

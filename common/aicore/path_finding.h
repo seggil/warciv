@@ -163,7 +163,7 @@
  * path:
  *
  * struct pf_parameter parameter;
- * struct pf_map *pf_map;
+ * struct path_finding_map *pf_map;
  * struct pf_path path;
  *
  * // fill parameter (see below)
@@ -228,7 +228,7 @@
  * enemy city to be TB_DONT_LEAVE.
  */
 
-/* MC for an impossible step. If this value is returned by get_MC it
+/* Move Cost(MC) for an impossible step. If this value is returned by get_MC it
  * is treated like TB_IGNORE for this step. This won't change the TB
  * for any other step to this tile. */
 #define PF_IMPOSSIBLE_MC -1
@@ -275,11 +275,11 @@ struct pf_position {
   struct tile *tile;
   int turn, moves_left;         /* See definitions above */
 
-  int total_MC;                 /* Total MC to reach this point */
-  int total_EC;                 /* Total EC to reach this point */
+  int total_MC;                 /* Total Move Cost to reach this point */
+  int total_EC;                 /* Total Extra Cost to reach this point */
 
   enum direction8 dir_to_next_pos;      /* Unsed only in struct_path */
-  enum direction8 dir_to_here;  /* Where did we come from */
+  enum direction8 dir_to_here;          /* Where did we come from */
 };
 
 /* Full specification of a path. */
@@ -376,25 +376,25 @@ struct pf_parameter {
 };
 
 /* The map itself.  Opaque type. */
-struct pf_map;
+struct path_finding_map;
 
 /* ==================== Functions =================================== */
 
 /* Returns a map which can be used to query for paths or to iterate
  * over all paths. Does not perform any computations itself, just sets
  * everything up. */
-struct pf_map *pf_create_map(const struct pf_parameter *const parameter);
+struct path_finding_map *pf_create_map(const struct pf_parameter *const parameter);
 
 /* Tries to find the best path in the given map to the position (x, y).
  * If NULL is returned no path could be found.  The pf_last_position of such
  * path would be the same (almost) as the result of the call to
  * pf_get_position(pf_map, x, y, &pos) */
-struct pf_path *pf_get_path(struct pf_map *pf_map, struct tile *ptile);
+struct pf_path *pf_get_path(struct path_finding_map *pf_map, struct tile *ptile);
 
 /* Iterates the map until it reaches (x, y).  Then fills the info
  * about it into pos.  Returns FALSE if position is unreachable.
  * Contents of pos in this case is not defined. */
-bool pf_get_position(struct pf_map *pf_map, struct tile *ptile,
+bool pf_get_position(struct path_finding_map *pf_map, struct tile *ptile,
                      struct pf_position *pos);
 
 /* Iterates the path-finding algorithm one step further, to the next
@@ -403,15 +403,15 @@ bool pf_get_position(struct pf_map *pf_map, struct tile *ptile,
  * correspondingly.  Returns FALSE if no further positions are available in
  * this map.  If pf_get_path/position(pf_map, x, y, .) has been called
  * before the call to pf_next, the iteration  will resume from (x, y) */
-bool pf_next(struct pf_map *pf_map);
+bool pf_next(struct path_finding_map *pf_map);
 
 /* Return the full info on the position reached in the last call to
  * pf_next. */
-void pf_next_get_position(const struct pf_map *pf_map,
+void pf_next_get_position(const struct path_finding_map *pf_map,
                           struct pf_position *pos);
 
 /* Return the path to the position reached in the last call to pf_next. */
-struct pf_path * pf_next_get_path(const struct pf_map *pf_map);
+struct pf_path * pf_next_get_path(const struct path_finding_map *pf_map);
 
 /* Print the path via freelog and the given log-level. For debugging
  * purposes.  Make sure the path is valid (if you got it from pf_get_path). */
@@ -422,12 +422,12 @@ void pf_print_path(int log_level, const struct pf_path *path);
 void pf_destroy_path(struct pf_path *path);
 
 /* After usage the map should be destroyed. */
-void pf_destroy_map(struct pf_map *pf_map);
+void pf_destroy_map(struct path_finding_map *pf_map);
 
 /* Returns the last position of the given path. */
 struct pf_position *pf_last_position(struct pf_path *path);
 
 /* Return the current parameters for the given map. */
-struct pf_parameter *pf_get_parameter(struct pf_map *map);
+struct pf_parameter *pf_get_parameter(struct path_finding_map *map);
 
 #endif
