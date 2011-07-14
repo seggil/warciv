@@ -73,7 +73,7 @@ enum authentication_type {
 
 #include "packets_gen.h"
 
-void *get_packet_from_connection(struct connection *pc, enum packet_type *ptype, bool *presult);
+void *get_packet_from_connection(struct connection *pconn, enum packet_type *ptype, bool *presult);
 void remove_packet_from_buffer(struct socket_packet_buffer *buffer);
 
 void send_attribute_block(const struct player *pplayer,
@@ -106,34 +106,32 @@ void post_send_packet_game_state(struct connection *pc,
   dio_put_uint8(&dout, type);
 
 #define SEND_PACKET_END \
-  { \
     size_t size = dio_output_used(&dout); \
     \
     dio_output_rewind(&dout); \
     dio_put_uint16(&dout, size); \
-    return send_packet_data(pc, buffer, size); \
-  }
+    return send_packet_data(pconn, buffer, size)
 
 #define RECEIVE_PACKET_START(type, result) \
   struct data_in din; \
   struct type *result = fc_malloc(sizeof(*result)); \
   \
-  dio_input_init(&din, pc->buffer->data, 2); \
+  dio_input_init(&din, pconn->buffer->data, 2); \
   { \
     int size; \
   \
     dio_get_uint16(&din, &size); \
-    dio_input_init(&din, pc->buffer->data, MIN(size, pc->buffer->ndata)); \
+    dio_input_init(&din, pconn->buffer->data, MIN(size, pconn->buffer->ndata)); \
   } \
   dio_get_uint16(&din, NULL); \
   dio_get_uint8(&din, NULL);
 
 #define RECEIVE_PACKET_END(result) \
-  check_packet(&din, pc); \
-  remove_packet_from_buffer(pc->buffer); \
+  check_packet(&din, pconn); \
+  remove_packet_from_buffer(pconn->buffer); \
   return result;
 
-int send_packet_data(struct connection *pc, unsigned char *data, int len);
-void check_packet(struct data_in *din, struct connection *pc);
+int send_packet_data(struct connection *pconn, unsigned char *data, int len);
+void check_packet(struct data_in *din, struct connection *pconn);
 
 #endif  /* FC__PACKETS_H */

@@ -8,7 +8,7 @@
 
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "../config.h"
 #endif
 
 #include <assert.h>
@@ -41,412 +41,412 @@ void delta_stats_report(void) {}
 
 void delta_stats_reset(void) {}
 
-void *get_packet_from_connection_helper(struct connection *pc,
+void *get_packet_from_connection_helper(struct connection *pconn,
     enum packet_type type)
 {
   switch(type) {
 
   case PACKET_PROCESSING_STARTED:
-    return receive_packet_processing_started(pc, type);
+    return receive_packet_processing_started(pconn, type);
 
   case PACKET_PROCESSING_FINISHED:
-    return receive_packet_processing_finished(pc, type);
+    return receive_packet_processing_finished(pconn, type);
 
   case PACKET_FREEZE_HINT:
-    return receive_packet_freeze_hint(pc, type);
+    return receive_packet_freeze_hint(pconn, type);
 
   case PACKET_THAW_HINT:
-    return receive_packet_thaw_hint(pc, type);
+    return receive_packet_thaw_hint(pconn, type);
 
   case PACKET_SERVER_JOIN_REQ:
-    return receive_packet_server_join_req(pc, type);
+    return receive_packet_server_join_req(pconn, type);
 
   case PACKET_SERVER_JOIN_REPLY:
-    return receive_packet_server_join_reply(pc, type);
+    return receive_packet_server_join_reply(pconn, type);
 
   case PACKET_AUTHENTICATION_REQ:
-    return receive_packet_authentication_req(pc, type);
+    return receive_packet_authentication_req(pconn, type);
 
   case PACKET_AUTHENTICATION_REPLY:
-    return receive_packet_authentication_reply(pc, type);
+    return receive_packet_authentication_reply(pconn, type);
 
   case PACKET_SERVER_SHUTDOWN:
-    return receive_packet_server_shutdown(pc, type);
+    return receive_packet_server_shutdown(pconn, type);
 
   case PACKET_NATION_UNAVAILABLE:
-    return receive_packet_nation_unavailable(pc, type);
+    return receive_packet_nation_unavailable(pconn, type);
 
   case PACKET_SELECT_RACES:
-    return receive_packet_select_races(pc, type);
+    return receive_packet_select_races(pconn, type);
 
   case PACKET_NATION_SELECT_REQ:
-    return receive_packet_nation_select_req(pc, type);
+    return receive_packet_nation_select_req(pconn, type);
 
   case PACKET_NATION_SELECT_OK:
-    return receive_packet_nation_select_ok(pc, type);
+    return receive_packet_nation_select_ok(pconn, type);
 
   case PACKET_GAME_STATE:
-    return receive_packet_game_state(pc, type);
+    return receive_packet_game_state(pconn, type);
 
   case PACKET_ENDGAME_REPORT:
-    return receive_packet_endgame_report(pc, type);
+    return receive_packet_endgame_report(pconn, type);
 
   case PACKET_TILE_INFO:
-    return receive_packet_tile_info(pc, type);
+    return receive_packet_tile_info(pconn, type);
 
   case PACKET_GAME_INFO:
-    return receive_packet_game_info(pc, type);
+    return receive_packet_game_info(pconn, type);
 
   case PACKET_MAP_INFO:
-    return receive_packet_map_info(pc, type);
+    return receive_packet_map_info(pconn, type);
 
   case PACKET_NUKE_TILE_INFO:
-    return receive_packet_nuke_tile_info(pc, type);
+    return receive_packet_nuke_tile_info(pconn, type);
 
   case PACKET_CHAT_MSG:
-    return receive_packet_chat_msg(pc, type);
+    return receive_packet_chat_msg(pconn, type);
 
   case PACKET_CHAT_MSG_REQ:
-    return receive_packet_chat_msg_req(pc, type);
+    return receive_packet_chat_msg_req(pconn, type);
 
   case PACKET_CITY_REMOVE:
-    return receive_packet_city_remove(pc, type);
+    return receive_packet_city_remove(pconn, type);
 
   case PACKET_CITY_INFO:
-    return receive_packet_city_info(pc, type);
+    return receive_packet_city_info(pconn, type);
 
   case PACKET_CITY_SHORT_INFO:
-    return receive_packet_city_short_info(pc, type);
+    return receive_packet_city_short_info(pconn, type);
 
   case PACKET_CITY_SELL:
-    return receive_packet_city_sell(pc, type);
+    return receive_packet_city_sell(pconn, type);
 
   case PACKET_CITY_BUY:
-    return receive_packet_city_buy(pc, type);
+    return receive_packet_city_buy(pconn, type);
 
   case PACKET_CITY_CHANGE:
-    return receive_packet_city_change(pc, type);
+    return receive_packet_city_change(pconn, type);
 
   case PACKET_CITY_WORKLIST:
-    return receive_packet_city_worklist(pc, type);
+    return receive_packet_city_worklist(pconn, type);
 
   case PACKET_CITY_MAKE_SPECIALIST:
-    return receive_packet_city_make_specialist(pc, type);
+    return receive_packet_city_make_specialist(pconn, type);
 
   case PACKET_CITY_MAKE_WORKER:
-    return receive_packet_city_make_worker(pc, type);
+    return receive_packet_city_make_worker(pconn, type);
 
   case PACKET_CITY_CHANGE_SPECIALIST:
-    return receive_packet_city_change_specialist(pc, type);
+    return receive_packet_city_change_specialist(pconn, type);
 
   case PACKET_CITY_RENAME:
-    return receive_packet_city_rename(pc, type);
+    return receive_packet_city_rename(pconn, type);
 
   case PACKET_CITY_OPTIONS_REQ:
-    return receive_packet_city_options_req(pc, type);
+    return receive_packet_city_options_req(pconn, type);
 
   case PACKET_CITY_REFRESH:
-    return receive_packet_city_refresh(pc, type);
+    return receive_packet_city_refresh(pconn, type);
 
   case PACKET_CITY_INCITE_INQ:
-    return receive_packet_city_incite_inq(pc, type);
+    return receive_packet_city_incite_inq(pconn, type);
 
   case PACKET_CITY_INCITE_INFO:
-    return receive_packet_city_incite_info(pc, type);
+    return receive_packet_city_incite_info(pconn, type);
 
   case PACKET_CITY_NAME_SUGGESTION_REQ:
-    return receive_packet_city_name_suggestion_req(pc, type);
+    return receive_packet_city_name_suggestion_req(pconn, type);
 
   case PACKET_CITY_NAME_SUGGESTION_INFO:
-    return receive_packet_city_name_suggestion_info(pc, type);
+    return receive_packet_city_name_suggestion_info(pconn, type);
 
   case PACKET_CITY_SABOTAGE_LIST:
-    return receive_packet_city_sabotage_list(pc, type);
+    return receive_packet_city_sabotage_list(pconn, type);
 
   case PACKET_PLAYER_REMOVE:
-    return receive_packet_player_remove(pc, type);
+    return receive_packet_player_remove(pconn, type);
 
   case PACKET_PLAYER_INFO:
-    return receive_packet_player_info(pc, type);
+    return receive_packet_player_info(pconn, type);
 
   case PACKET_PLAYER_TURN_DONE:
-    return receive_packet_player_turn_done(pc, type);
+    return receive_packet_player_turn_done(pconn, type);
 
   case PACKET_PLAYER_RATES:
-    return receive_packet_player_rates(pc, type);
+    return receive_packet_player_rates(pconn, type);
 
   case PACKET_PLAYER_CHANGE_GOVERNMENT:
-    return receive_packet_player_change_government(pc, type);
+    return receive_packet_player_change_government(pconn, type);
 
   case PACKET_PLAYER_RESEARCH:
-    return receive_packet_player_research(pc, type);
+    return receive_packet_player_research(pconn, type);
 
   case PACKET_PLAYER_TECH_GOAL:
-    return receive_packet_player_tech_goal(pc, type);
+    return receive_packet_player_tech_goal(pconn, type);
 
   case PACKET_PLAYER_ATTRIBUTE_BLOCK:
-    return receive_packet_player_attribute_block(pc, type);
+    return receive_packet_player_attribute_block(pconn, type);
 
   case PACKET_PLAYER_ATTRIBUTE_CHUNK:
-    return receive_packet_player_attribute_chunk(pc, type);
+    return receive_packet_player_attribute_chunk(pconn, type);
 
   case PACKET_UNIT_REMOVE:
-    return receive_packet_unit_remove(pc, type);
+    return receive_packet_unit_remove(pconn, type);
 
   case PACKET_UNIT_INFO:
-    return receive_packet_unit_info(pc, type);
+    return receive_packet_unit_info(pconn, type);
 
   case PACKET_UNIT_SHORT_INFO:
-    return receive_packet_unit_short_info(pc, type);
+    return receive_packet_unit_short_info(pconn, type);
 
   case PACKET_UNIT_COMBAT_INFO:
-    return receive_packet_unit_combat_info(pc, type);
+    return receive_packet_unit_combat_info(pconn, type);
 
   case PACKET_UNIT_MOVE:
-    return receive_packet_unit_move(pc, type);
+    return receive_packet_unit_move(pconn, type);
 
   case PACKET_UNIT_BUILD_CITY:
-    return receive_packet_unit_build_city(pc, type);
+    return receive_packet_unit_build_city(pconn, type);
 
   case PACKET_UNIT_DISBAND:
-    return receive_packet_unit_disband(pc, type);
+    return receive_packet_unit_disband(pconn, type);
 
   case PACKET_UNIT_CHANGE_HOMECITY:
-    return receive_packet_unit_change_homecity(pc, type);
+    return receive_packet_unit_change_homecity(pconn, type);
 
   case PACKET_UNIT_ESTABLISH_TRADE:
-    return receive_packet_unit_establish_trade(pc, type);
+    return receive_packet_unit_establish_trade(pconn, type);
 
   case PACKET_UNIT_HELP_BUILD_WONDER:
-    return receive_packet_unit_help_build_wonder(pc, type);
+    return receive_packet_unit_help_build_wonder(pconn, type);
 
   case PACKET_UNIT_GOTO:
-    return receive_packet_unit_goto(pc, type);
+    return receive_packet_unit_goto(pconn, type);
 
   case PACKET_UNIT_ORDERS:
-    return receive_packet_unit_orders(pc, type);
+    return receive_packet_unit_orders(pconn, type);
 
   case PACKET_UNIT_AUTO:
-    return receive_packet_unit_auto(pc, type);
+    return receive_packet_unit_auto(pconn, type);
 
   case PACKET_UNIT_LOAD:
-    return receive_packet_unit_load(pc, type);
+    return receive_packet_unit_load(pconn, type);
 
   case PACKET_UNIT_UNLOAD:
-    return receive_packet_unit_unload(pc, type);
+    return receive_packet_unit_unload(pconn, type);
 
   case PACKET_UNIT_UPGRADE:
-    return receive_packet_unit_upgrade(pc, type);
+    return receive_packet_unit_upgrade(pconn, type);
 
   case PACKET_UNIT_NUKE:
-    return receive_packet_unit_nuke(pc, type);
+    return receive_packet_unit_nuke(pconn, type);
 
   case PACKET_UNIT_PARADROP_TO:
-    return receive_packet_unit_paradrop_to(pc, type);
+    return receive_packet_unit_paradrop_to(pconn, type);
 
   case PACKET_UNIT_AIRLIFT:
-    return receive_packet_unit_airlift(pc, type);
+    return receive_packet_unit_airlift(pconn, type);
 
   case PACKET_UNIT_BRIBE_INQ:
-    return receive_packet_unit_bribe_inq(pc, type);
+    return receive_packet_unit_bribe_inq(pconn, type);
 
   case PACKET_UNIT_BRIBE_INFO:
-    return receive_packet_unit_bribe_info(pc, type);
+    return receive_packet_unit_bribe_info(pconn, type);
 
   case PACKET_UNIT_TYPE_UPGRADE:
-    return receive_packet_unit_type_upgrade(pc, type);
+    return receive_packet_unit_type_upgrade(pconn, type);
 
   case PACKET_UNIT_DIPLOMAT_ACTION:
-    return receive_packet_unit_diplomat_action(pc, type);
+    return receive_packet_unit_diplomat_action(pconn, type);
 
   case PACKET_UNIT_DIPLOMAT_POPUP_DIALOG:
-    return receive_packet_unit_diplomat_popup_dialog(pc, type);
+    return receive_packet_unit_diplomat_popup_dialog(pconn, type);
 
   case PACKET_UNIT_CHANGE_ACTIVITY:
-    return receive_packet_unit_change_activity(pc, type);
+    return receive_packet_unit_change_activity(pconn, type);
 
   case PACKET_DIPLOMACY_INIT_MEETING_REQ:
-    return receive_packet_diplomacy_init_meeting_req(pc, type);
+    return receive_packet_diplomacy_init_meeting_req(pconn, type);
 
   case PACKET_DIPLOMACY_INIT_MEETING:
-    return receive_packet_diplomacy_init_meeting(pc, type);
+    return receive_packet_diplomacy_init_meeting(pconn, type);
 
   case PACKET_DIPLOMACY_CANCEL_MEETING_REQ:
-    return receive_packet_diplomacy_cancel_meeting_req(pc, type);
+    return receive_packet_diplomacy_cancel_meeting_req(pconn, type);
 
   case PACKET_DIPLOMACY_CANCEL_MEETING:
-    return receive_packet_diplomacy_cancel_meeting(pc, type);
+    return receive_packet_diplomacy_cancel_meeting(pconn, type);
 
   case PACKET_DIPLOMACY_CREATE_CLAUSE_REQ:
-    return receive_packet_diplomacy_create_clause_req(pc, type);
+    return receive_packet_diplomacy_create_clause_req(pconn, type);
 
   case PACKET_DIPLOMACY_CREATE_CLAUSE:
-    return receive_packet_diplomacy_create_clause(pc, type);
+    return receive_packet_diplomacy_create_clause(pconn, type);
 
   case PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ:
-    return receive_packet_diplomacy_remove_clause_req(pc, type);
+    return receive_packet_diplomacy_remove_clause_req(pconn, type);
 
   case PACKET_DIPLOMACY_REMOVE_CLAUSE:
-    return receive_packet_diplomacy_remove_clause(pc, type);
+    return receive_packet_diplomacy_remove_clause(pconn, type);
 
   case PACKET_DIPLOMACY_ACCEPT_TREATY_REQ:
-    return receive_packet_diplomacy_accept_treaty_req(pc, type);
+    return receive_packet_diplomacy_accept_treaty_req(pconn, type);
 
   case PACKET_DIPLOMACY_ACCEPT_TREATY:
-    return receive_packet_diplomacy_accept_treaty(pc, type);
+    return receive_packet_diplomacy_accept_treaty(pconn, type);
 
   case PACKET_DIPLOMACY_CANCEL_PACT:
-    return receive_packet_diplomacy_cancel_pact(pc, type);
+    return receive_packet_diplomacy_cancel_pact(pconn, type);
 
   case PACKET_PAGE_MSG:
-    return receive_packet_page_msg(pc, type);
+    return receive_packet_page_msg(pconn, type);
 
   case PACKET_REPORT_REQ:
-    return receive_packet_report_req(pc, type);
+    return receive_packet_report_req(pconn, type);
 
   case PACKET_CONN_INFO:
-    return receive_packet_conn_info(pc, type);
+    return receive_packet_conn_info(pconn, type);
 
   case PACKET_CONN_PING_INFO:
-    return receive_packet_conn_ping_info(pc, type);
+    return receive_packet_conn_ping_info(pconn, type);
 
   case PACKET_CONN_PING:
-    return receive_packet_conn_ping(pc, type);
+    return receive_packet_conn_ping(pconn, type);
 
   case PACKET_CONN_PONG:
-    return receive_packet_conn_pong(pc, type);
+    return receive_packet_conn_pong(pconn, type);
 
   case PACKET_BEFORE_NEW_YEAR:
-    return receive_packet_before_new_year(pc, type);
+    return receive_packet_before_new_year(pconn, type);
 
   case PACKET_START_TURN:
-    return receive_packet_start_turn(pc, type);
+    return receive_packet_start_turn(pconn, type);
 
   case PACKET_NEW_YEAR:
-    return receive_packet_new_year(pc, type);
+    return receive_packet_new_year(pconn, type);
 
   case PACKET_FREEZE_CLIENT:
-    return receive_packet_freeze_client(pc, type);
+    return receive_packet_freeze_client(pconn, type);
 
   case PACKET_THAW_CLIENT:
-    return receive_packet_thaw_client(pc, type);
+    return receive_packet_thaw_client(pconn, type);
 
   case PACKET_SPACESHIP_LAUNCH:
-    return receive_packet_spaceship_launch(pc, type);
+    return receive_packet_spaceship_launch(pconn, type);
 
   case PACKET_SPACESHIP_PLACE:
-    return receive_packet_spaceship_place(pc, type);
+    return receive_packet_spaceship_place(pconn, type);
 
   case PACKET_SPACESHIP_INFO:
-    return receive_packet_spaceship_info(pc, type);
+    return receive_packet_spaceship_info(pconn, type);
 
   case PACKET_RULESET_UNIT:
-    return receive_packet_ruleset_unit(pc, type);
+    return receive_packet_ruleset_unit(pconn, type);
 
   case PACKET_RULESET_GAME:
-    return receive_packet_ruleset_game(pc, type);
+    return receive_packet_ruleset_game(pconn, type);
 
   case PACKET_RULESET_GOVERNMENT_RULER_TITLE:
-    return receive_packet_ruleset_government_ruler_title(pc, type);
+    return receive_packet_ruleset_government_ruler_title(pconn, type);
 
   case PACKET_RULESET_TECH:
-    return receive_packet_ruleset_tech(pc, type);
+    return receive_packet_ruleset_tech(pconn, type);
 
   case PACKET_RULESET_GOVERNMENT:
-    return receive_packet_ruleset_government(pc, type);
+    return receive_packet_ruleset_government(pconn, type);
 
   case PACKET_RULESET_TERRAIN_CONTROL:
-    return receive_packet_ruleset_terrain_control(pc, type);
+    return receive_packet_ruleset_terrain_control(pconn, type);
 
   case PACKET_RULESET_NATION:
-    return receive_packet_ruleset_nation(pc, type);
+    return receive_packet_ruleset_nation(pconn, type);
 
   case PACKET_RULESET_CITY:
-    return receive_packet_ruleset_city(pc, type);
+    return receive_packet_ruleset_city(pconn, type);
 
   case PACKET_RULESET_BUILDING:
-    return receive_packet_ruleset_building(pc, type);
+    return receive_packet_ruleset_building(pconn, type);
 
   case PACKET_RULESET_TERRAIN:
-    return receive_packet_ruleset_terrain(pc, type);
+    return receive_packet_ruleset_terrain(pconn, type);
 
   case PACKET_RULESET_CONTROL:
-    return receive_packet_ruleset_control(pc, type);
+    return receive_packet_ruleset_control(pconn, type);
 
   case PACKET_SINGLE_WANT_HACK_REQ:
-    return receive_packet_single_want_hack_req(pc, type);
+    return receive_packet_single_want_hack_req(pconn, type);
 
   case PACKET_SINGLE_WANT_HACK_REPLY:
-    return receive_packet_single_want_hack_reply(pc, type);
+    return receive_packet_single_want_hack_reply(pconn, type);
 
   case PACKET_GAME_LOAD:
-    return receive_packet_game_load(pc, type);
+    return receive_packet_game_load(pconn, type);
 
   case PACKET_OPTIONS_SETTABLE_CONTROL:
-    return receive_packet_options_settable_control(pc, type);
+    return receive_packet_options_settable_control(pconn, type);
 
   case PACKET_OPTIONS_SETTABLE:
-    return receive_packet_options_settable(pc, type);
+    return receive_packet_options_settable(pconn, type);
 
   case PACKET_RULESET_CACHE_GROUP:
-    return receive_packet_ruleset_cache_group(pc, type);
+    return receive_packet_ruleset_cache_group(pconn, type);
 
   case PACKET_RULESET_CACHE_EFFECT:
-    return receive_packet_ruleset_cache_effect(pc, type);
+    return receive_packet_ruleset_cache_effect(pconn, type);
 
   case PACKET_TRADEROUTE_INFO:
-    return receive_packet_traderoute_info(pc, type);
+    return receive_packet_traderoute_info(pconn, type);
 
   case PACKET_EXTGAME_INFO:
-    return receive_packet_extgame_info(pc, type);
+    return receive_packet_extgame_info(pconn, type);
 
   case PACKET_VOTE_NEW:
-    return receive_packet_vote_new(pc, type);
+    return receive_packet_vote_new(pconn, type);
 
   case PACKET_VOTE_UPDATE:
-    return receive_packet_vote_update(pc, type);
+    return receive_packet_vote_update(pconn, type);
 
   case PACKET_VOTE_REMOVE:
-    return receive_packet_vote_remove(pc, type);
+    return receive_packet_vote_remove(pconn, type);
 
   case PACKET_VOTE_RESOLVE:
-    return receive_packet_vote_resolve(pc, type);
+    return receive_packet_vote_resolve(pconn, type);
 
   case PACKET_VOTE_SUBMIT:
-    return receive_packet_vote_submit(pc, type);
+    return receive_packet_vote_submit(pconn, type);
 
   case PACKET_TRADE_ROUTE_PLAN:
-    return receive_packet_trade_route_plan(pc, type);
+    return receive_packet_trade_route_plan(pconn, type);
 
   case PACKET_TRADE_ROUTE_REMOVE:
-    return receive_packet_trade_route_remove(pc, type);
+    return receive_packet_trade_route_remove(pconn, type);
 
   case PACKET_UNIT_TRADE_ROUTE:
-    return receive_packet_unit_trade_route(pc, type);
+    return receive_packet_unit_trade_route(pconn, type);
 
   case PACKET_TRADE_ROUTE_INFO:
-    return receive_packet_trade_route_info(pc, type);
+    return receive_packet_trade_route_info(pconn, type);
 
   case PACKET_CITY_SET_RALLY_POINT:
-    return receive_packet_city_set_rally_point(pc, type);
+    return receive_packet_city_set_rally_point(pconn, type);
 
   case PACKET_CITY_CLEAR_RALLY_POINT:
-    return receive_packet_city_clear_rally_point(pc, type);
+    return receive_packet_city_clear_rally_point(pconn, type);
 
   case PACKET_UNIT_AIR_PATROL:
-    return receive_packet_unit_air_patrol(pc, type);
+    return receive_packet_unit_air_patrol(pconn, type);
 
   case PACKET_UNIT_AIR_PATROL_STOP:
-    return receive_packet_unit_air_patrol_stop(pc, type);
+    return receive_packet_unit_air_patrol_stop(pconn, type);
 
   case PACKET_CITY_MANAGER_PARAM:
-    return receive_packet_city_manager_param(pc, type);
+    return receive_packet_city_manager_param(pconn, type);
 
   case PACKET_CITY_NO_MANAGER_PARAM:
-    return receive_packet_city_no_manager_param(pc, type);
+    return receive_packet_city_no_manager_param(pconn, type);
 
   case PACKET_PLAYER_INFO_REQ:
-    return receive_packet_player_info_req(pc, type);
+    return receive_packet_player_info_req(pconn, type);
 
   default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
@@ -867,24 +867,24 @@ const char *get_packet_name(enum packet_type type)
   }
 }
 
-static struct packet_processing_started *receive_packet_processing_started_100(struct connection *pc, enum packet_type type)
+static struct packet_processing_started *receive_packet_processing_started_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_started, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_processing_started_100(struct connection *pc)
+static int send_packet_processing_started_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_PROCESSING_STARTED);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_processing_started(struct connection *pc)
+static void ensure_valid_variant_packet_processing_started(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PROCESSING_STARTED] != -1) {
+  if(pconn->phs.variant[PACKET_PROCESSING_STARTED] != -1) {
     return;
   }
 
@@ -894,67 +894,66 @@ static void ensure_valid_variant_packet_processing_started(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PROCESSING_STARTED] = variant;
+  pconn->phs.variant[PACKET_PROCESSING_STARTED] = variant;
 }
 
-struct packet_processing_started *receive_packet_processing_started(struct connection *pc, enum packet_type type)
+struct packet_processing_started *receive_packet_processing_started(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
-    freelog(LOG_ERROR,
+  if(!pconn->used) {
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_processing_started at the server.");
   }
-  ensure_valid_variant_packet_processing_started(pc);
+  ensure_valid_variant_packet_processing_started(pconn);
 
-  switch(pc->phs.variant[PACKET_PROCESSING_STARTED]) {
-    case 100: return receive_packet_processing_started_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PROCESSING_STARTED]) {
+    case 100: return receive_packet_processing_started_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_processing_started(struct connection *pc)
+int send_packet_processing_started(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_processing_started from the client.");
   }
-  ensure_valid_variant_packet_processing_started(pc);
+  ensure_valid_variant_packet_processing_started(pconn);
 
-  switch(pc->phs.variant[PACKET_PROCESSING_STARTED]) {
-    case 100: return send_packet_processing_started_100(pc);
+  switch(pconn->phs.variant[PACKET_PROCESSING_STARTED]) {
+    case 100: return send_packet_processing_started_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
-static struct packet_processing_finished *receive_packet_processing_finished_100(struct connection *pc, enum packet_type type)
+static struct packet_processing_finished *receive_packet_processing_finished_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_processing_finished, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_processing_finished_100(struct connection *pc)
+static int send_packet_processing_finished_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_PROCESSING_FINISHED);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_processing_finished(struct connection *pc)
+static void ensure_valid_variant_packet_processing_finished(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PROCESSING_FINISHED] != -1) {
+  if(pconn->phs.variant[PACKET_PROCESSING_FINISHED] != -1) {
     return;
   }
 
@@ -964,67 +963,67 @@ static void ensure_valid_variant_packet_processing_finished(struct connection *p
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PROCESSING_FINISHED] = variant;
+  pconn->phs.variant[PACKET_PROCESSING_FINISHED] = variant;
 }
 
-struct packet_processing_finished *receive_packet_processing_finished(struct connection *pc, enum packet_type type)
+struct packet_processing_finished *receive_packet_processing_finished(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_processing_finished at the server.");
   }
-  ensure_valid_variant_packet_processing_finished(pc);
+  ensure_valid_variant_packet_processing_finished(pconn);
 
-  switch(pc->phs.variant[PACKET_PROCESSING_FINISHED]) {
-    case 100: return receive_packet_processing_finished_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PROCESSING_FINISHED]) {
+    case 100: return receive_packet_processing_finished_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_processing_finished(struct connection *pc)
+int send_packet_processing_finished(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_processing_finished from the client.");
   }
-  ensure_valid_variant_packet_processing_finished(pc);
+  ensure_valid_variant_packet_processing_finished(pconn);
 
-  switch(pc->phs.variant[PACKET_PROCESSING_FINISHED]) {
-    case 100: return send_packet_processing_finished_100(pc);
+  switch(pconn->phs.variant[PACKET_PROCESSING_FINISHED]) {
+    case 100: return send_packet_processing_finished_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
-static struct packet_freeze_hint *receive_packet_freeze_hint_100(struct connection *pc, enum packet_type type)
+static struct packet_freeze_hint *receive_packet_freeze_hint_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_hint, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_freeze_hint_100(struct connection *pc)
+static int send_packet_freeze_hint_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_FREEZE_HINT);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_freeze_hint(struct connection *pc)
+static void ensure_valid_variant_packet_freeze_hint(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_FREEZE_HINT] != -1) {
+  if(pconn->phs.variant[PACKET_FREEZE_HINT] != -1) {
     return;
   }
 
@@ -1034,74 +1033,74 @@ static void ensure_valid_variant_packet_freeze_hint(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_FREEZE_HINT] = variant;
+  pconn->phs.variant[PACKET_FREEZE_HINT] = variant;
 }
 
-struct packet_freeze_hint *receive_packet_freeze_hint(struct connection *pc, enum packet_type type)
+struct packet_freeze_hint *receive_packet_freeze_hint(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_freeze_hint at the server.");
   }
-  ensure_valid_variant_packet_freeze_hint(pc);
+  ensure_valid_variant_packet_freeze_hint(pconn);
 
-  switch(pc->phs.variant[PACKET_FREEZE_HINT]) {
-    case 100: return receive_packet_freeze_hint_100(pc, type);
+  switch(pconn->phs.variant[PACKET_FREEZE_HINT]) {
+    case 100: return receive_packet_freeze_hint_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_freeze_hint(struct connection *pc)
+int send_packet_freeze_hint(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_freeze_hint from the client.");
   }
-  ensure_valid_variant_packet_freeze_hint(pc);
+  ensure_valid_variant_packet_freeze_hint(pconn);
 
-  switch(pc->phs.variant[PACKET_FREEZE_HINT]) {
-    case 100: return send_packet_freeze_hint_100(pc);
+  switch(pconn->phs.variant[PACKET_FREEZE_HINT]) {
+    case 100: return send_packet_freeze_hint_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_freeze_hint(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_freeze_hint(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_freeze_hint(p_conn);
   } conn_list_iterate_end;
 }
 
-static struct packet_thaw_hint *receive_packet_thaw_hint_100(struct connection *pc, enum packet_type type)
+static struct packet_thaw_hint *receive_packet_thaw_hint_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_hint, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_thaw_hint_100(struct connection *pc)
+static int send_packet_thaw_hint_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_THAW_HINT);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_thaw_hint(struct connection *pc)
+static void ensure_valid_variant_packet_thaw_hint(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_THAW_HINT] != -1) {
+  if(pconn->phs.variant[PACKET_THAW_HINT] != -1) {
     return;
   }
 
@@ -1111,57 +1110,57 @@ static void ensure_valid_variant_packet_thaw_hint(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_THAW_HINT] = variant;
+  pconn->phs.variant[PACKET_THAW_HINT] = variant;
 }
 
-struct packet_thaw_hint *receive_packet_thaw_hint(struct connection *pc, enum packet_type type)
+struct packet_thaw_hint *receive_packet_thaw_hint(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_thaw_hint at the server.");
   }
-  ensure_valid_variant_packet_thaw_hint(pc);
+  ensure_valid_variant_packet_thaw_hint(pconn);
 
-  switch(pc->phs.variant[PACKET_THAW_HINT]) {
-    case 100: return receive_packet_thaw_hint_100(pc, type);
+  switch(pconn->phs.variant[PACKET_THAW_HINT]) {
+    case 100: return receive_packet_thaw_hint_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_thaw_hint(struct connection *pc)
+int send_packet_thaw_hint(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_thaw_hint from the client.");
   }
-  ensure_valid_variant_packet_thaw_hint(pc);
+  ensure_valid_variant_packet_thaw_hint(pconn);
 
-  switch(pc->phs.variant[PACKET_THAW_HINT]) {
-    case 100: return send_packet_thaw_hint_100(pc);
+  switch(pconn->phs.variant[PACKET_THAW_HINT]) {
+    case 100: return send_packet_thaw_hint_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_thaw_hint(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_thaw_hint(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_thaw_hint(p_conn);
   } conn_list_iterate_end;
 }
 
-static struct packet_server_join_req *receive_packet_server_join_req_100(struct connection *pc, enum packet_type type)
+static struct packet_server_join_req *receive_packet_server_join_req_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_join_req, real_packet);
   dio_get_string(&din, real_packet->username, sizeof(real_packet->username));
@@ -1169,19 +1168,19 @@ static struct packet_server_join_req *receive_packet_server_join_req_100(struct 
   dio_get_string(&din, real_packet->version_label, sizeof(real_packet->version_label));
   {
     int readin;
-  
+
     dio_get_uint32(&din, &readin);
     real_packet->major_version = readin;
   }
   {
     int readin;
-  
+
     dio_get_uint32(&din, &readin);
     real_packet->minor_version = readin;
   }
   {
     int readin;
-  
+
     dio_get_uint32(&din, &readin);
     real_packet->patch_version = readin;
   }
@@ -1189,7 +1188,7 @@ static struct packet_server_join_req *receive_packet_server_join_req_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_server_join_req_100(struct connection *pc, const struct packet_server_join_req *packet)
+static int send_packet_server_join_req_100(struct connection *pconn, const struct packet_server_join_req *packet)
 {
   const struct packet_server_join_req *real_packet = packet;
   SEND_PACKET_START(PACKET_SERVER_JOIN_REQ);
@@ -1204,11 +1203,11 @@ static int send_packet_server_join_req_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_server_join_req(struct connection *pc)
+static void ensure_valid_variant_packet_server_join_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SERVER_JOIN_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_SERVER_JOIN_REQ] != -1) {
     return;
   }
 
@@ -1218,50 +1217,50 @@ static void ensure_valid_variant_packet_server_join_req(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SERVER_JOIN_REQ] = variant;
+  pconn->phs.variant[PACKET_SERVER_JOIN_REQ] = variant;
 }
 
-struct packet_server_join_req *receive_packet_server_join_req(struct connection *pc, enum packet_type type)
+struct packet_server_join_req *receive_packet_server_join_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_server_join_req at the client.");
   }
-  ensure_valid_variant_packet_server_join_req(pc);
+  ensure_valid_variant_packet_server_join_req(pconn);
 
-  switch(pc->phs.variant[PACKET_SERVER_JOIN_REQ]) {
-    case 100: return receive_packet_server_join_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SERVER_JOIN_REQ]) {
+    case 100: return receive_packet_server_join_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_server_join_req(struct connection *pc, const struct packet_server_join_req *packet)
+int send_packet_server_join_req(struct connection *pconn, const struct packet_server_join_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_server_join_req from the server.");
   }
-  ensure_valid_variant_packet_server_join_req(pc);
+  ensure_valid_variant_packet_server_join_req(pconn);
 
-  switch(pc->phs.variant[PACKET_SERVER_JOIN_REQ]) {
-    case 100: return send_packet_server_join_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_SERVER_JOIN_REQ]) {
+    case 100: return send_packet_server_join_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_server_join_req(struct connection *pc, const char *username, const char *capability, const char *version_label, int major_version, int minor_version, int patch_version)
+int dsend_packet_server_join_req(struct connection *pconn, const char *username, const char *capability, const char *version_label, int major_version, int minor_version, int patch_version)
 {
   struct packet_server_join_req packet, *real_packet = &packet;
 
@@ -1271,11 +1270,11 @@ int dsend_packet_server_join_req(struct connection *pc, const char *username, co
   real_packet->major_version = major_version;
   real_packet->minor_version = minor_version;
   real_packet->patch_version = patch_version;
-  
-  return send_packet_server_join_req(pc, real_packet);
+
+  return send_packet_server_join_req(pconn, real_packet);
 }
 
-static struct packet_server_join_reply *receive_packet_server_join_reply_100(struct connection *pc, enum packet_type type)
+static struct packet_server_join_reply *receive_packet_server_join_reply_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_join_reply, real_packet);
   dio_get_bool8(&din, &real_packet->you_can_join);
@@ -1284,7 +1283,7 @@ static struct packet_server_join_reply *receive_packet_server_join_reply_100(str
   dio_get_string(&din, real_packet->challenge_file, sizeof(real_packet->challenge_file));
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->conn_id = readin;
   }
@@ -1292,7 +1291,7 @@ static struct packet_server_join_reply *receive_packet_server_join_reply_100(str
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_server_join_reply_100(struct connection *pc, const struct packet_server_join_reply *packet)
+static int send_packet_server_join_reply_100(struct connection *pconn, const struct packet_server_join_reply *packet)
 {
   const struct packet_server_join_reply *real_packet = packet;
   SEND_PACKET_START(PACKET_SERVER_JOIN_REPLY);
@@ -1306,11 +1305,11 @@ static int send_packet_server_join_reply_100(struct connection *pc, const struct
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_server_join_reply(struct connection *pc)
+static void ensure_valid_variant_packet_server_join_reply(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SERVER_JOIN_REPLY] != -1) {
+  if(pconn->phs.variant[PACKET_SERVER_JOIN_REPLY] != -1) {
     return;
   }
 
@@ -1320,45 +1319,45 @@ static void ensure_valid_variant_packet_server_join_reply(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SERVER_JOIN_REPLY] = variant;
+  pconn->phs.variant[PACKET_SERVER_JOIN_REPLY] = variant;
 }
 
-struct packet_server_join_reply *receive_packet_server_join_reply(struct connection *pc, enum packet_type type)
+struct packet_server_join_reply *receive_packet_server_join_reply(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_server_join_reply at the server.");
   }
-  ensure_valid_variant_packet_server_join_reply(pc);
+  ensure_valid_variant_packet_server_join_reply(pconn);
 
-  switch(pc->phs.variant[PACKET_SERVER_JOIN_REPLY]) {
-    case 100: return receive_packet_server_join_reply_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SERVER_JOIN_REPLY]) {
+    case 100: return receive_packet_server_join_reply_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_server_join_reply(struct connection *pc, const struct packet_server_join_reply *packet)
+int send_packet_server_join_reply(struct connection *pconn, const struct packet_server_join_reply *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_server_join_reply from the client.");
   }
-  ensure_valid_variant_packet_server_join_reply(pc);
+  ensure_valid_variant_packet_server_join_reply(pconn);
 
-  switch(pc->phs.variant[PACKET_SERVER_JOIN_REPLY]) {
-    case 100: return send_packet_server_join_reply_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_SERVER_JOIN_REPLY]) {
+    case 100: return send_packet_server_join_reply_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -1369,11 +1368,11 @@ int send_packet_server_join_reply(struct connection *pc, const struct packet_ser
 
 BV_DEFINE(packet_authentication_req_100_fields, 2);
 
-static struct packet_authentication_req *receive_packet_authentication_req_100(struct connection *pc, enum packet_type type)
+static struct packet_authentication_req *receive_packet_authentication_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_authentication_req_100_fields fields;
   struct packet_authentication_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_authentication_req *clone;
   RECEIVE_PACKET_START(packet_authentication_req, real_packet);
 
@@ -1394,7 +1393,7 @@ static struct packet_authentication_req *receive_packet_authentication_req_100(s
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -1413,13 +1412,13 @@ static struct packet_authentication_req *receive_packet_authentication_req_100(s
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_authentication_req_100(struct connection *pc, const struct packet_authentication_req *packet)
+static int send_packet_authentication_req_100(struct connection *pconn, const struct packet_authentication_req *packet)
 {
   const struct packet_authentication_req *real_packet = packet;
   packet_authentication_req_100_fields fields;
   struct packet_authentication_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_AUTHENTICATION_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_AUTHENTICATION_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_AUTHENTICATION_REQ);
 
@@ -1469,11 +1468,11 @@ static int send_packet_authentication_req_100(struct connection *pc, const struc
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_authentication_req(struct connection *pc)
+static void ensure_valid_variant_packet_authentication_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_AUTHENTICATION_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_AUTHENTICATION_REQ] != -1) {
     return;
   }
 
@@ -1483,57 +1482,57 @@ static void ensure_valid_variant_packet_authentication_req(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_AUTHENTICATION_REQ] = variant;
+  pconn->phs.variant[PACKET_AUTHENTICATION_REQ] = variant;
 }
 
-struct packet_authentication_req *receive_packet_authentication_req(struct connection *pc, enum packet_type type)
+struct packet_authentication_req *receive_packet_authentication_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_authentication_req at the server.");
   }
-  ensure_valid_variant_packet_authentication_req(pc);
+  ensure_valid_variant_packet_authentication_req(pconn);
 
-  switch(pc->phs.variant[PACKET_AUTHENTICATION_REQ]) {
-    case 100: return receive_packet_authentication_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_AUTHENTICATION_REQ]) {
+    case 100: return receive_packet_authentication_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_authentication_req(struct connection *pc, const struct packet_authentication_req *packet)
+int send_packet_authentication_req(struct connection *pconn, const struct packet_authentication_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_authentication_req from the client.");
   }
-  ensure_valid_variant_packet_authentication_req(pc);
+  ensure_valid_variant_packet_authentication_req(pconn);
 
-  switch(pc->phs.variant[PACKET_AUTHENTICATION_REQ]) {
-    case 100: return send_packet_authentication_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_AUTHENTICATION_REQ]) {
+    case 100: return send_packet_authentication_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_authentication_req(struct connection *pc, enum authentication_type type, const char *message)
+int dsend_packet_authentication_req(struct connection *pconn, enum authentication_type type, const char *message)
 {
   struct packet_authentication_req packet, *real_packet = &packet;
 
   real_packet->type = type;
   sz_strlcpy(real_packet->message, message);
-  
-  return send_packet_authentication_req(pc, real_packet);
+
+  return send_packet_authentication_req(pconn, real_packet);
 }
 
 #define hash_packet_authentication_reply_100 hash_const
@@ -1542,11 +1541,11 @@ int dsend_packet_authentication_req(struct connection *pc, enum authentication_t
 
 BV_DEFINE(packet_authentication_reply_100_fields, 1);
 
-static struct packet_authentication_reply *receive_packet_authentication_reply_100(struct connection *pc, enum packet_type type)
+static struct packet_authentication_reply *receive_packet_authentication_reply_100(struct connection *pconn, enum packet_type type)
 {
   packet_authentication_reply_100_fields fields;
   struct packet_authentication_reply *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_authentication_reply *clone;
   RECEIVE_PACKET_START(packet_authentication_reply, real_packet);
 
@@ -1578,13 +1577,13 @@ static struct packet_authentication_reply *receive_packet_authentication_reply_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_authentication_reply_100(struct connection *pc, const struct packet_authentication_reply *packet)
+static int send_packet_authentication_reply_100(struct connection *pconn, const struct packet_authentication_reply *packet)
 {
   const struct packet_authentication_reply *real_packet = packet;
   packet_authentication_reply_100_fields fields;
   struct packet_authentication_reply *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_AUTHENTICATION_REPLY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_AUTHENTICATION_REPLY];
   int different = 0;
   SEND_PACKET_START(PACKET_AUTHENTICATION_REPLY);
 
@@ -1627,11 +1626,11 @@ static int send_packet_authentication_reply_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_authentication_reply(struct connection *pc)
+static void ensure_valid_variant_packet_authentication_reply(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_AUTHENTICATION_REPLY] != -1) {
+  if(pconn->phs.variant[PACKET_AUTHENTICATION_REPLY] != -1) {
     return;
   }
 
@@ -1641,67 +1640,67 @@ static void ensure_valid_variant_packet_authentication_reply(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_AUTHENTICATION_REPLY] = variant;
+  pconn->phs.variant[PACKET_AUTHENTICATION_REPLY] = variant;
 }
 
-struct packet_authentication_reply *receive_packet_authentication_reply(struct connection *pc, enum packet_type type)
+struct packet_authentication_reply *receive_packet_authentication_reply(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_authentication_reply at the client.");
   }
-  ensure_valid_variant_packet_authentication_reply(pc);
+  ensure_valid_variant_packet_authentication_reply(pconn);
 
-  switch(pc->phs.variant[PACKET_AUTHENTICATION_REPLY]) {
-    case 100: return receive_packet_authentication_reply_100(pc, type);
+  switch(pconn->phs.variant[PACKET_AUTHENTICATION_REPLY]) {
+    case 100: return receive_packet_authentication_reply_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_authentication_reply(struct connection *pc, const struct packet_authentication_reply *packet)
+int send_packet_authentication_reply(struct connection *pconn, const struct packet_authentication_reply *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_authentication_reply from the server.");
   }
-  ensure_valid_variant_packet_authentication_reply(pc);
+  ensure_valid_variant_packet_authentication_reply(pconn);
 
-  switch(pc->phs.variant[PACKET_AUTHENTICATION_REPLY]) {
-    case 100: return send_packet_authentication_reply_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_AUTHENTICATION_REPLY]) {
+    case 100: return send_packet_authentication_reply_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-static struct packet_server_shutdown *receive_packet_server_shutdown_100(struct connection *pc, enum packet_type type)
+static struct packet_server_shutdown *receive_packet_server_shutdown_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_server_shutdown, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_server_shutdown_100(struct connection *pc)
+static int send_packet_server_shutdown_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_SERVER_SHUTDOWN);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_server_shutdown(struct connection *pc)
+static void ensure_valid_variant_packet_server_shutdown(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SERVER_SHUTDOWN] != -1) {
+  if(pconn->phs.variant[PACKET_SERVER_SHUTDOWN] != -1) {
     return;
   }
 
@@ -1711,53 +1710,53 @@ static void ensure_valid_variant_packet_server_shutdown(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SERVER_SHUTDOWN] = variant;
+  pconn->phs.variant[PACKET_SERVER_SHUTDOWN] = variant;
 }
 
-struct packet_server_shutdown *receive_packet_server_shutdown(struct connection *pc, enum packet_type type)
+struct packet_server_shutdown *receive_packet_server_shutdown(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_server_shutdown at the server.");
   }
-  ensure_valid_variant_packet_server_shutdown(pc);
+  ensure_valid_variant_packet_server_shutdown(pconn);
 
-  switch(pc->phs.variant[PACKET_SERVER_SHUTDOWN]) {
-    case 100: return receive_packet_server_shutdown_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SERVER_SHUTDOWN]) {
+    case 100: return receive_packet_server_shutdown_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_server_shutdown(struct connection *pc)
+int send_packet_server_shutdown(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_server_shutdown from the client.");
   }
-  ensure_valid_variant_packet_server_shutdown(pc);
+  ensure_valid_variant_packet_server_shutdown(pconn);
 
-  switch(pc->phs.variant[PACKET_SERVER_SHUTDOWN]) {
-    case 100: return send_packet_server_shutdown_100(pc);
+  switch(pconn->phs.variant[PACKET_SERVER_SHUTDOWN]) {
+    case 100: return send_packet_server_shutdown_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_server_shutdown(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_server_shutdown(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_server_shutdown(p_conn);
   } conn_list_iterate_end;
 }
 
@@ -1767,11 +1766,11 @@ void lsend_packet_server_shutdown(struct conn_list *dest)
 
 BV_DEFINE(packet_nation_unavailable_100_fields, 1);
 
-static struct packet_nation_unavailable *receive_packet_nation_unavailable_100(struct connection *pc, enum packet_type type)
+static struct packet_nation_unavailable *receive_packet_nation_unavailable_100(struct connection *pconn, enum packet_type type)
 {
   packet_nation_unavailable_100_fields fields;
   struct packet_nation_unavailable *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_nation_unavailable *clone;
   RECEIVE_PACKET_START(packet_nation_unavailable, real_packet);
 
@@ -1792,7 +1791,7 @@ static struct packet_nation_unavailable *receive_packet_nation_unavailable_100(s
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation = readin;
     }
@@ -1808,13 +1807,13 @@ static struct packet_nation_unavailable *receive_packet_nation_unavailable_100(s
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_unavailable_100(struct connection *pc, const struct packet_nation_unavailable *packet)
+static int send_packet_nation_unavailable_100(struct connection *pconn, const struct packet_nation_unavailable *packet)
 {
   const struct packet_nation_unavailable *real_packet = packet;
   packet_nation_unavailable_100_fields fields;
   struct packet_nation_unavailable *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_NATION_UNAVAILABLE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_NATION_UNAVAILABLE];
   int different = 0;
   SEND_PACKET_START(PACKET_NATION_UNAVAILABLE);
 
@@ -1857,11 +1856,11 @@ static int send_packet_nation_unavailable_100(struct connection *pc, const struc
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_nation_unavailable(struct connection *pc)
+static void ensure_valid_variant_packet_nation_unavailable(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_NATION_UNAVAILABLE] != -1) {
+  if(pconn->phs.variant[PACKET_NATION_UNAVAILABLE] != -1) {
     return;
   }
 
@@ -1871,74 +1870,74 @@ static void ensure_valid_variant_packet_nation_unavailable(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_NATION_UNAVAILABLE] = variant;
+  pconn->phs.variant[PACKET_NATION_UNAVAILABLE] = variant;
 }
 
-struct packet_nation_unavailable *receive_packet_nation_unavailable(struct connection *pc, enum packet_type type)
+struct packet_nation_unavailable *receive_packet_nation_unavailable(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_nation_unavailable at the server.");
   }
-  ensure_valid_variant_packet_nation_unavailable(pc);
+  ensure_valid_variant_packet_nation_unavailable(pconn);
 
-  switch(pc->phs.variant[PACKET_NATION_UNAVAILABLE]) {
-    case 100: return receive_packet_nation_unavailable_100(pc, type);
+  switch(pconn->phs.variant[PACKET_NATION_UNAVAILABLE]) {
+    case 100: return receive_packet_nation_unavailable_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_nation_unavailable(struct connection *pc, const struct packet_nation_unavailable *packet)
+int send_packet_nation_unavailable(struct connection *pconn, const struct packet_nation_unavailable *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_nation_unavailable from the client.");
   }
-  ensure_valid_variant_packet_nation_unavailable(pc);
+  ensure_valid_variant_packet_nation_unavailable(pconn);
 
-  switch(pc->phs.variant[PACKET_NATION_UNAVAILABLE]) {
-    case 100: return send_packet_nation_unavailable_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_NATION_UNAVAILABLE]) {
+    case 100: return send_packet_nation_unavailable_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_nation_unavailable(struct conn_list *dest, const struct packet_nation_unavailable *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_nation_unavailable(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_nation_unavailable(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-static struct packet_select_races *receive_packet_select_races_100(struct connection *pc, enum packet_type type)
+static struct packet_select_races *receive_packet_select_races_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_select_races, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_select_races_100(struct connection *pc)
+static int send_packet_select_races_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_SELECT_RACES);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_select_races(struct connection *pc)
+static void ensure_valid_variant_packet_select_races(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SELECT_RACES] != -1) {
+  if(pconn->phs.variant[PACKET_SELECT_RACES] != -1) {
     return;
   }
 
@@ -1948,53 +1947,53 @@ static void ensure_valid_variant_packet_select_races(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SELECT_RACES] = variant;
+  pconn->phs.variant[PACKET_SELECT_RACES] = variant;
 }
 
-struct packet_select_races *receive_packet_select_races(struct connection *pc, enum packet_type type)
+struct packet_select_races *receive_packet_select_races(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_select_races at the server.");
   }
-  ensure_valid_variant_packet_select_races(pc);
+  ensure_valid_variant_packet_select_races(pconn);
 
-  switch(pc->phs.variant[PACKET_SELECT_RACES]) {
-    case 100: return receive_packet_select_races_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SELECT_RACES]) {
+    case 100: return receive_packet_select_races_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_select_races(struct connection *pc)
+int send_packet_select_races(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_select_races from the client.");
   }
-  ensure_valid_variant_packet_select_races(pc);
+  ensure_valid_variant_packet_select_races(pconn);
 
-  switch(pc->phs.variant[PACKET_SELECT_RACES]) {
-    case 100: return send_packet_select_races_100(pc);
+  switch(pconn->phs.variant[PACKET_SELECT_RACES]) {
+    case 100: return send_packet_select_races_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_select_races(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_select_races(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_select_races(p_conn);
   } conn_list_iterate_end;
 }
 
@@ -2004,11 +2003,11 @@ void lsend_packet_select_races(struct conn_list *dest)
 
 BV_DEFINE(packet_nation_select_req_100_fields, 4);
 
-static struct packet_nation_select_req *receive_packet_nation_select_req_100(struct connection *pc, enum packet_type type)
+static struct packet_nation_select_req *receive_packet_nation_select_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_nation_select_req_100_fields fields;
   struct packet_nation_select_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_nation_select_req *clone;
   RECEIVE_PACKET_START(packet_nation_select_req, real_packet);
 
@@ -2029,7 +2028,7 @@ static struct packet_nation_select_req *receive_packet_nation_select_req_100(str
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation_no = readin;
     }
@@ -2041,7 +2040,7 @@ static struct packet_nation_select_req *receive_packet_nation_select_req_100(str
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_style = readin;
     }
@@ -2057,13 +2056,13 @@ static struct packet_nation_select_req *receive_packet_nation_select_req_100(str
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_select_req_100(struct connection *pc, const struct packet_nation_select_req *packet)
+static int send_packet_nation_select_req_100(struct connection *pconn, const struct packet_nation_select_req *packet)
 {
   const struct packet_nation_select_req *real_packet = packet;
   packet_nation_select_req_100_fields fields;
   struct packet_nation_select_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_NATION_SELECT_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_NATION_SELECT_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_NATION_SELECT_REQ);
 
@@ -2125,11 +2124,11 @@ static int send_packet_nation_select_req_100(struct connection *pc, const struct
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_nation_select_req(struct connection *pc)
+static void ensure_valid_variant_packet_nation_select_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_NATION_SELECT_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_NATION_SELECT_REQ] != -1) {
     return;
   }
 
@@ -2139,50 +2138,50 @@ static void ensure_valid_variant_packet_nation_select_req(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_NATION_SELECT_REQ] = variant;
+  pconn->phs.variant[PACKET_NATION_SELECT_REQ] = variant;
 }
 
-struct packet_nation_select_req *receive_packet_nation_select_req(struct connection *pc, enum packet_type type)
+struct packet_nation_select_req *receive_packet_nation_select_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_nation_select_req at the client.");
   }
-  ensure_valid_variant_packet_nation_select_req(pc);
+  ensure_valid_variant_packet_nation_select_req(pconn);
 
-  switch(pc->phs.variant[PACKET_NATION_SELECT_REQ]) {
-    case 100: return receive_packet_nation_select_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_NATION_SELECT_REQ]) {
+    case 100: return receive_packet_nation_select_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_nation_select_req(struct connection *pc, const struct packet_nation_select_req *packet)
+int send_packet_nation_select_req(struct connection *pconn, const struct packet_nation_select_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_nation_select_req from the server.");
   }
-  ensure_valid_variant_packet_nation_select_req(pc);
+  ensure_valid_variant_packet_nation_select_req(pconn);
 
-  switch(pc->phs.variant[PACKET_NATION_SELECT_REQ]) {
-    case 100: return send_packet_nation_select_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_NATION_SELECT_REQ]) {
+    case 100: return send_packet_nation_select_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_nation_select_req(struct connection *pc, Nation_Type_id nation_no, bool is_male, const char *name, int city_style)
+int dsend_packet_nation_select_req(struct connection *pconn, Nation_Type_id nation_no, bool is_male, const char *name, int city_style)
 {
   struct packet_nation_select_req packet, *real_packet = &packet;
 
@@ -2190,28 +2189,28 @@ int dsend_packet_nation_select_req(struct connection *pc, Nation_Type_id nation_
   real_packet->is_male = is_male;
   sz_strlcpy(real_packet->name, name);
   real_packet->city_style = city_style;
-  
-  return send_packet_nation_select_req(pc, real_packet);
+
+  return send_packet_nation_select_req(pconn, real_packet);
 }
 
-static struct packet_nation_select_ok *receive_packet_nation_select_ok_100(struct connection *pc, enum packet_type type)
+static struct packet_nation_select_ok *receive_packet_nation_select_ok_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_nation_select_ok, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nation_select_ok_100(struct connection *pc)
+static int send_packet_nation_select_ok_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_NATION_SELECT_OK);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_nation_select_ok(struct connection *pc)
+static void ensure_valid_variant_packet_nation_select_ok(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_NATION_SELECT_OK] != -1) {
+  if(pconn->phs.variant[PACKET_NATION_SELECT_OK] != -1) {
     return;
   }
 
@@ -2221,53 +2220,53 @@ static void ensure_valid_variant_packet_nation_select_ok(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_NATION_SELECT_OK] = variant;
+  pconn->phs.variant[PACKET_NATION_SELECT_OK] = variant;
 }
 
-struct packet_nation_select_ok *receive_packet_nation_select_ok(struct connection *pc, enum packet_type type)
+struct packet_nation_select_ok *receive_packet_nation_select_ok(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_nation_select_ok at the server.");
   }
-  ensure_valid_variant_packet_nation_select_ok(pc);
+  ensure_valid_variant_packet_nation_select_ok(pconn);
 
-  switch(pc->phs.variant[PACKET_NATION_SELECT_OK]) {
-    case 100: return receive_packet_nation_select_ok_100(pc, type);
+  switch(pconn->phs.variant[PACKET_NATION_SELECT_OK]) {
+    case 100: return receive_packet_nation_select_ok_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_nation_select_ok(struct connection *pc)
+int send_packet_nation_select_ok(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_nation_select_ok from the client.");
   }
-  ensure_valid_variant_packet_nation_select_ok(pc);
+  ensure_valid_variant_packet_nation_select_ok(pconn);
 
-  switch(pc->phs.variant[PACKET_NATION_SELECT_OK]) {
-    case 100: return send_packet_nation_select_ok_100(pc);
+  switch(pconn->phs.variant[PACKET_NATION_SELECT_OK]) {
+    case 100: return send_packet_nation_select_ok_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_nation_select_ok(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_nation_select_ok(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_nation_select_ok(p_conn);
   } conn_list_iterate_end;
 }
 
@@ -2277,11 +2276,11 @@ void lsend_packet_nation_select_ok(struct conn_list *dest)
 
 BV_DEFINE(packet_game_state_100_fields, 1);
 
-static struct packet_game_state *receive_packet_game_state_100(struct connection *pc, enum packet_type type)
+static struct packet_game_state *receive_packet_game_state_100(struct connection *pconn, enum packet_type type)
 {
   packet_game_state_100_fields fields;
   struct packet_game_state *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_game_state *clone;
   RECEIVE_PACKET_START(packet_game_state, real_packet);
 
@@ -2302,7 +2301,7 @@ static struct packet_game_state *receive_packet_game_state_100(struct connection
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->value = readin;
     }
@@ -2315,17 +2314,17 @@ static struct packet_game_state *receive_packet_game_state_100(struct connection
   }
   hash_insert(*hash, clone, clone);
 
-  post_receive_packet_game_state(pc, real_packet);
+  post_receive_packet_game_state(pconn, real_packet);
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_game_state_100(struct connection *pc, const struct packet_game_state *packet)
+static int send_packet_game_state_100(struct connection *pconn, const struct packet_game_state *packet)
 {
   const struct packet_game_state *real_packet = packet;
   packet_game_state_100_fields fields;
   struct packet_game_state *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_GAME_STATE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_GAME_STATE];
   int different = 0;
   SEND_PACKET_START(PACKET_GAME_STATE);
 
@@ -2365,15 +2364,15 @@ static int send_packet_game_state_100(struct connection *pc, const struct packet
 
   *clone = *real_packet;
   hash_insert(*hash, clone, clone);
-    post_send_packet_game_state(pc, real_packet);
+    post_send_packet_game_state(pconn, real_packet);
 SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_game_state(struct connection *pc)
+static void ensure_valid_variant_packet_game_state(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_GAME_STATE] != -1) {
+  if(pconn->phs.variant[PACKET_GAME_STATE] != -1) {
     return;
   }
 
@@ -2383,63 +2382,63 @@ static void ensure_valid_variant_packet_game_state(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_GAME_STATE] = variant;
+  pconn->phs.variant[PACKET_GAME_STATE] = variant;
 }
 
-struct packet_game_state *receive_packet_game_state(struct connection *pc, enum packet_type type)
+struct packet_game_state *receive_packet_game_state(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_game_state at the server.");
   }
-  ensure_valid_variant_packet_game_state(pc);
+  ensure_valid_variant_packet_game_state(pconn);
 
-  switch(pc->phs.variant[PACKET_GAME_STATE]) {
-    case 100: return receive_packet_game_state_100(pc, type);
+  switch(pconn->phs.variant[PACKET_GAME_STATE]) {
+    case 100: return receive_packet_game_state_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_game_state(struct connection *pc, const struct packet_game_state *packet)
+int send_packet_game_state(struct connection *pconn, const struct packet_game_state *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_game_state from the client.");
   }
-  ensure_valid_variant_packet_game_state(pc);
+  ensure_valid_variant_packet_game_state(pconn);
 
-  switch(pc->phs.variant[PACKET_GAME_STATE]) {
-    case 100: return send_packet_game_state_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_GAME_STATE]) {
+    case 100: return send_packet_game_state_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_game_state(struct conn_list *dest, const struct packet_game_state *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_game_state(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_game_state(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_game_state(struct connection *pc, int value)
+int dsend_packet_game_state(struct connection *pconn, int value)
 {
   struct packet_game_state packet, *real_packet = &packet;
 
   real_packet->value = value;
-  
-  return send_packet_game_state(pc, real_packet);
+
+  return send_packet_game_state(pconn, real_packet);
 }
 
 void dlsend_packet_game_state(struct conn_list *dest, int value)
@@ -2447,7 +2446,7 @@ void dlsend_packet_game_state(struct conn_list *dest, int value)
   struct packet_game_state packet, *real_packet = &packet;
 
   real_packet->value = value;
-  
+
   lsend_packet_game_state(dest, real_packet);
 }
 
@@ -2457,11 +2456,11 @@ void dlsend_packet_game_state(struct conn_list *dest, int value)
 
 BV_DEFINE(packet_endgame_report_100_fields, 15);
 
-static struct packet_endgame_report *receive_packet_endgame_report_100(struct connection *pc, enum packet_type type)
+static struct packet_endgame_report *receive_packet_endgame_report_100(struct connection *pconn, enum packet_type type)
 {
   packet_endgame_report_100_fields fields;
   struct packet_endgame_report *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_endgame_report *clone;
   RECEIVE_PACKET_START(packet_endgame_report, real_packet);
 
@@ -2482,16 +2481,16 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->nscores = readin;
     }
   }
   if (BV_ISSET(fields, 1)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2499,7 +2498,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id[i] = readin;
     }
@@ -2507,10 +2506,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 2)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2518,7 +2517,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->score[i] = readin;
     }
@@ -2526,10 +2525,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 3)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2537,7 +2536,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->pop[i] = readin;
     }
@@ -2545,10 +2544,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 4)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2556,7 +2555,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->bnp[i] = readin;
     }
@@ -2564,10 +2563,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 5)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2575,7 +2574,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->mfg[i] = readin;
     }
@@ -2583,10 +2582,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 6)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2594,7 +2593,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->cities[i] = readin;
     }
@@ -2602,10 +2601,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 7)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2613,7 +2612,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->techs[i] = readin;
     }
@@ -2621,10 +2620,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 8)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2632,7 +2631,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->mil_service[i] = readin;
     }
@@ -2640,10 +2639,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 9)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2651,7 +2650,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->wonders[i] = readin;
     }
@@ -2659,10 +2658,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 10)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2670,7 +2669,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->research[i] = readin;
     }
@@ -2678,10 +2677,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 11)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2689,7 +2688,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->landarea[i] = readin;
     }
@@ -2697,10 +2696,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 12)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2708,7 +2707,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->settledarea[i] = readin;
     }
@@ -2716,10 +2715,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 13)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2727,7 +2726,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->literacy[i] = readin;
     }
@@ -2735,10 +2734,10 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
     }
   }
   if (BV_ISSET(fields, 14)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nscores > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nscores = MAX_NUM_PLAYERS;
@@ -2746,7 +2745,7 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
       for (i = 0; i < real_packet->nscores; i++) {
         {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->spaceship[i] = readin;
     }
@@ -2764,13 +2763,13 @@ static struct packet_endgame_report *receive_packet_endgame_report_100(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_endgame_report_100(struct connection *pc, const struct packet_endgame_report *packet)
+static int send_packet_endgame_report_100(struct connection *pconn, const struct packet_endgame_report *packet)
 {
   const struct packet_endgame_report *real_packet = packet;
   packet_endgame_report_100_fields fields;
   struct packet_endgame_report *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_ENDGAME_REPORT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_ENDGAME_REPORT];
   int different = 0;
   SEND_PACKET_START(PACKET_ENDGAME_REPORT);
 
@@ -3025,144 +3024,144 @@ static int send_packet_endgame_report_100(struct connection *pc, const struct pa
     dio_put_uint8(&dout, real_packet->nscores);
   }
   if (BV_ISSET(fields, 1)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint8(&dout, real_packet->id[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 2)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->score[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 3)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint32(&dout, real_packet->pop[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 4)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->bnp[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 5)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->mfg[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 6)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->cities[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 7)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->techs[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 8)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->mil_service[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 9)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint8(&dout, real_packet->wonders[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 10)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->research[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 11)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint32(&dout, real_packet->landarea[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 12)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint32(&dout, real_packet->settledarea[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 13)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint16(&dout, real_packet->literacy[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 14)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nscores; i++) {
         dio_put_uint32(&dout, real_packet->spaceship[i]);
       }
-    } 
+    }
   }
 
 
@@ -3177,11 +3176,11 @@ static int send_packet_endgame_report_100(struct connection *pc, const struct pa
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_endgame_report(struct connection *pc)
+static void ensure_valid_variant_packet_endgame_report(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_ENDGAME_REPORT] != -1) {
+  if(pconn->phs.variant[PACKET_ENDGAME_REPORT] != -1) {
     return;
   }
 
@@ -3191,53 +3190,53 @@ static void ensure_valid_variant_packet_endgame_report(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_ENDGAME_REPORT] = variant;
+  pconn->phs.variant[PACKET_ENDGAME_REPORT] = variant;
 }
 
-struct packet_endgame_report *receive_packet_endgame_report(struct connection *pc, enum packet_type type)
+struct packet_endgame_report *receive_packet_endgame_report(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_endgame_report at the server.");
   }
-  ensure_valid_variant_packet_endgame_report(pc);
+  ensure_valid_variant_packet_endgame_report(pconn);
 
-  switch(pc->phs.variant[PACKET_ENDGAME_REPORT]) {
-    case 100: return receive_packet_endgame_report_100(pc, type);
+  switch(pconn->phs.variant[PACKET_ENDGAME_REPORT]) {
+    case 100: return receive_packet_endgame_report_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_endgame_report(struct connection *pc, const struct packet_endgame_report *packet)
+int send_packet_endgame_report(struct connection *pconn, const struct packet_endgame_report *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_endgame_report from the client.");
   }
-  ensure_valid_variant_packet_endgame_report(pc);
+  ensure_valid_variant_packet_endgame_report(pconn);
 
-  switch(pc->phs.variant[PACKET_ENDGAME_REPORT]) {
-    case 100: return send_packet_endgame_report_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_ENDGAME_REPORT]) {
+    case 100: return send_packet_endgame_report_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_endgame_report(struct conn_list *dest, const struct packet_endgame_report *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_endgame_report(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_endgame_report(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -3269,24 +3268,24 @@ static int cmp_packet_tile_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_tile_info_100_fields, 6);
 
-static struct packet_tile_info *receive_packet_tile_info_100(struct connection *pc, enum packet_type type)
+static struct packet_tile_info *receive_packet_tile_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_tile_info_100_fields fields;
   struct packet_tile_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_tile_info *clone;
   RECEIVE_PACKET_START(packet_tile_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->x = readin;
   }
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->y = readin;
   }
@@ -3312,7 +3311,7 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->type = readin;
     }
@@ -3320,7 +3319,7 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->known = readin;
     }
@@ -3328,7 +3327,7 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->special = readin;
     }
@@ -3336,7 +3335,7 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -3344,7 +3343,7 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->continent = readin;
     }
@@ -3363,13 +3362,13 @@ static struct packet_tile_info *receive_packet_tile_info_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_tile_info_100(struct connection *pc, const struct packet_tile_info *packet)
+static int send_packet_tile_info_100(struct connection *pconn, const struct packet_tile_info *packet)
 {
   const struct packet_tile_info *real_packet = packet;
   packet_tile_info_100_fields fields;
   struct packet_tile_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_TILE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_TILE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_TILE_INFO);
 
@@ -3449,11 +3448,11 @@ static int send_packet_tile_info_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_tile_info(struct connection *pc)
+static void ensure_valid_variant_packet_tile_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_TILE_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_TILE_INFO] != -1) {
     return;
   }
 
@@ -3463,53 +3462,53 @@ static void ensure_valid_variant_packet_tile_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_TILE_INFO] = variant;
+  pconn->phs.variant[PACKET_TILE_INFO] = variant;
 }
 
-struct packet_tile_info *receive_packet_tile_info(struct connection *pc, enum packet_type type)
+struct packet_tile_info *receive_packet_tile_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_tile_info at the server.");
   }
-  ensure_valid_variant_packet_tile_info(pc);
+  ensure_valid_variant_packet_tile_info(pconn);
 
-  switch(pc->phs.variant[PACKET_TILE_INFO]) {
-    case 100: return receive_packet_tile_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_TILE_INFO]) {
+    case 100: return receive_packet_tile_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_tile_info(struct connection *pc, const struct packet_tile_info *packet)
+int send_packet_tile_info(struct connection *pconn, const struct packet_tile_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_tile_info from the client.");
   }
-  ensure_valid_variant_packet_tile_info(pc);
+  ensure_valid_variant_packet_tile_info(pconn);
 
-  switch(pc->phs.variant[PACKET_TILE_INFO]) {
-    case 100: return send_packet_tile_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_TILE_INFO]) {
+    case 100: return send_packet_tile_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_tile_info(struct conn_list *dest, const struct packet_tile_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_tile_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_tile_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -3519,11 +3518,11 @@ void lsend_packet_tile_info(struct conn_list *dest, const struct packet_tile_inf
 
 BV_DEFINE(packet_game_info_100_fields, 30);
 
-static struct packet_game_info *receive_packet_game_info_100(struct connection *pc, enum packet_type type)
+static struct packet_game_info *receive_packet_game_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_game_info_100_fields fields;
   struct packet_game_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_game_info *clone;
   RECEIVE_PACKET_START(packet_game_info, real_packet);
 
@@ -3544,7 +3543,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gold = readin;
     }
@@ -3552,7 +3551,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->tech = readin;
     }
@@ -3560,7 +3559,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->researchcost = readin;
     }
@@ -3568,7 +3567,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->skill_level = readin;
     }
@@ -3576,7 +3575,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->seconds_to_turndone = readin;
     }
@@ -3584,7 +3583,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->timeout = readin;
     }
@@ -3592,7 +3591,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->turn = readin;
     }
@@ -3600,7 +3599,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->year = readin;
     }
@@ -3608,7 +3607,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->end_year = readin;
     }
@@ -3616,7 +3615,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->min_players = readin;
     }
@@ -3624,7 +3623,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->max_players = readin;
     }
@@ -3632,7 +3631,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->nplayers = readin;
     }
@@ -3640,7 +3639,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->player_idx = readin;
     }
@@ -3648,7 +3647,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->globalwarming = readin;
     }
@@ -3656,7 +3655,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->heating = readin;
     }
@@ -3664,7 +3663,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->nuclearwinter = readin;
     }
@@ -3672,7 +3671,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->cooling = readin;
     }
@@ -3680,7 +3679,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->cityfactor = readin;
     }
@@ -3688,7 +3687,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->diplcost = readin;
     }
@@ -3696,7 +3695,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->freecost = readin;
     }
@@ -3704,7 +3703,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->conquercost = readin;
     }
@@ -3712,7 +3711,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unhappysize = readin;
     }
@@ -3720,7 +3719,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->angrycitizen = readin;
     }
@@ -3728,7 +3727,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->techpenalty = readin;
     }
@@ -3736,7 +3735,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->foodbox = readin;
     }
@@ -3744,7 +3743,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->civstyle = readin;
     }
@@ -3752,17 +3751,17 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->diplomacy = readin;
     }
   }
   real_packet->spacerace = BV_ISSET(fields, 27);
   if (BV_ISSET(fields, 28)) {
-    
+
     for (;;) {
       int i;
-    
+
       dio_get_uint8(&din, &i);
       if(i == 255) {
         break;
@@ -3772,7 +3771,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
       } else {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->global_advances[i] = readin;
     }
@@ -3780,10 +3779,10 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 29)) {
-    
+
     for (;;) {
       int i;
-    
+
       dio_get_uint8(&din, &i);
       if(i == 255) {
         break;
@@ -3793,7 +3792,7 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
       } else {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->global_wonders[i] = readin;
     }
@@ -3811,13 +3810,13 @@ static struct packet_game_info *receive_packet_game_info_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_game_info_100(struct connection *pc, const struct packet_game_info *packet)
+static int send_packet_game_info_100(struct connection *pconn, const struct packet_game_info *packet)
 {
   const struct packet_game_info *real_packet = packet;
   packet_game_info_100_fields fields;
   struct packet_game_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_GAME_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_GAME_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_GAME_INFO);
 
@@ -4067,7 +4066,7 @@ static int send_packet_game_info_100(struct connection *pc, const struct packet_
   }
   /* field 27 is folded into the header */
   if (BV_ISSET(fields, 28)) {
-  
+
     {
       int i;
 
@@ -4080,10 +4079,10 @@ static int send_packet_game_info_100(struct connection *pc, const struct packet_
         }
       }
       dio_put_uint8(&dout, 255);
-    } 
+    }
   }
   if (BV_ISSET(fields, 29)) {
-  
+
     {
       int i;
 
@@ -4096,7 +4095,7 @@ static int send_packet_game_info_100(struct connection *pc, const struct packet_
         }
       }
       dio_put_uint8(&dout, 255);
-    } 
+    }
   }
 
 
@@ -4111,11 +4110,11 @@ static int send_packet_game_info_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_game_info(struct connection *pc)
+static void ensure_valid_variant_packet_game_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_GAME_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_GAME_INFO] != -1) {
     return;
   }
 
@@ -4125,45 +4124,45 @@ static void ensure_valid_variant_packet_game_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_GAME_INFO] = variant;
+  pconn->phs.variant[PACKET_GAME_INFO] = variant;
 }
 
-struct packet_game_info *receive_packet_game_info(struct connection *pc, enum packet_type type)
+struct packet_game_info *receive_packet_game_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_game_info at the server.");
   }
-  ensure_valid_variant_packet_game_info(pc);
+  ensure_valid_variant_packet_game_info(pconn);
 
-  switch(pc->phs.variant[PACKET_GAME_INFO]) {
-    case 100: return receive_packet_game_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_GAME_INFO]) {
+    case 100: return receive_packet_game_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_game_info(struct connection *pc, const struct packet_game_info *packet)
+int send_packet_game_info(struct connection *pconn, const struct packet_game_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_game_info from the client.");
   }
-  ensure_valid_variant_packet_game_info(pc);
+  ensure_valid_variant_packet_game_info(pconn);
 
-  switch(pc->phs.variant[PACKET_GAME_INFO]) {
-    case 100: return send_packet_game_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_GAME_INFO]) {
+    case 100: return send_packet_game_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -4174,11 +4173,11 @@ int send_packet_game_info(struct connection *pc, const struct packet_game_info *
 
 BV_DEFINE(packet_map_info_100_fields, 3);
 
-static struct packet_map_info *receive_packet_map_info_100(struct connection *pc, enum packet_type type)
+static struct packet_map_info *receive_packet_map_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_map_info_100_fields fields;
   struct packet_map_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_map_info *clone;
   RECEIVE_PACKET_START(packet_map_info, real_packet);
 
@@ -4199,7 +4198,7 @@ static struct packet_map_info *receive_packet_map_info_100(struct connection *pc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->xsize = readin;
     }
@@ -4207,7 +4206,7 @@ static struct packet_map_info *receive_packet_map_info_100(struct connection *pc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->ysize = readin;
     }
@@ -4215,7 +4214,7 @@ static struct packet_map_info *receive_packet_map_info_100(struct connection *pc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->topology_id = readin;
     }
@@ -4231,13 +4230,13 @@ static struct packet_map_info *receive_packet_map_info_100(struct connection *pc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_map_info_100(struct connection *pc, const struct packet_map_info *packet)
+static int send_packet_map_info_100(struct connection *pconn, const struct packet_map_info *packet)
 {
   const struct packet_map_info *real_packet = packet;
   packet_map_info_100_fields fields;
   struct packet_map_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_MAP_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_MAP_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_MAP_INFO);
 
@@ -4294,11 +4293,11 @@ static int send_packet_map_info_100(struct connection *pc, const struct packet_m
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_map_info(struct connection *pc)
+static void ensure_valid_variant_packet_map_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_MAP_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_MAP_INFO] != -1) {
     return;
   }
 
@@ -4308,53 +4307,53 @@ static void ensure_valid_variant_packet_map_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_MAP_INFO] = variant;
+  pconn->phs.variant[PACKET_MAP_INFO] = variant;
 }
 
-struct packet_map_info *receive_packet_map_info(struct connection *pc, enum packet_type type)
+struct packet_map_info *receive_packet_map_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_map_info at the server.");
   }
-  ensure_valid_variant_packet_map_info(pc);
+  ensure_valid_variant_packet_map_info(pconn);
 
-  switch(pc->phs.variant[PACKET_MAP_INFO]) {
-    case 100: return receive_packet_map_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_MAP_INFO]) {
+    case 100: return receive_packet_map_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_map_info(struct connection *pc, const struct packet_map_info *packet)
+int send_packet_map_info(struct connection *pconn, const struct packet_map_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_map_info from the client.");
   }
-  ensure_valid_variant_packet_map_info(pc);
+  ensure_valid_variant_packet_map_info(pconn);
 
-  switch(pc->phs.variant[PACKET_MAP_INFO]) {
-    case 100: return send_packet_map_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_MAP_INFO]) {
+    case 100: return send_packet_map_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_map_info(struct conn_list *dest, const struct packet_map_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_map_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_map_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -4364,11 +4363,11 @@ void lsend_packet_map_info(struct conn_list *dest, const struct packet_map_info 
 
 BV_DEFINE(packet_nuke_tile_info_100_fields, 2);
 
-static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(struct connection *pc, enum packet_type type)
+static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_nuke_tile_info_100_fields fields;
   struct packet_nuke_tile_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_nuke_tile_info *clone;
   RECEIVE_PACKET_START(packet_nuke_tile_info, real_packet);
 
@@ -4389,7 +4388,7 @@ static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -4397,7 +4396,7 @@ static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(struct co
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -4413,13 +4412,13 @@ static struct packet_nuke_tile_info *receive_packet_nuke_tile_info_100(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_nuke_tile_info_100(struct connection *pc, const struct packet_nuke_tile_info *packet)
+static int send_packet_nuke_tile_info_100(struct connection *pconn, const struct packet_nuke_tile_info *packet)
 {
   const struct packet_nuke_tile_info *real_packet = packet;
   packet_nuke_tile_info_100_fields fields;
   struct packet_nuke_tile_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_NUKE_TILE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_NUKE_TILE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_NUKE_TILE_INFO);
 
@@ -4469,11 +4468,11 @@ static int send_packet_nuke_tile_info_100(struct connection *pc, const struct pa
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_nuke_tile_info(struct connection *pc)
+static void ensure_valid_variant_packet_nuke_tile_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_NUKE_TILE_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_NUKE_TILE_INFO] != -1) {
     return;
   }
 
@@ -4483,64 +4482,64 @@ static void ensure_valid_variant_packet_nuke_tile_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_NUKE_TILE_INFO] = variant;
+  pconn->phs.variant[PACKET_NUKE_TILE_INFO] = variant;
 }
 
-struct packet_nuke_tile_info *receive_packet_nuke_tile_info(struct connection *pc, enum packet_type type)
+struct packet_nuke_tile_info *receive_packet_nuke_tile_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_nuke_tile_info at the server.");
   }
-  ensure_valid_variant_packet_nuke_tile_info(pc);
+  ensure_valid_variant_packet_nuke_tile_info(pconn);
 
-  switch(pc->phs.variant[PACKET_NUKE_TILE_INFO]) {
-    case 100: return receive_packet_nuke_tile_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_NUKE_TILE_INFO]) {
+    case 100: return receive_packet_nuke_tile_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_nuke_tile_info(struct connection *pc, const struct packet_nuke_tile_info *packet)
+int send_packet_nuke_tile_info(struct connection *pconn, const struct packet_nuke_tile_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_nuke_tile_info from the client.");
   }
-  ensure_valid_variant_packet_nuke_tile_info(pc);
+  ensure_valid_variant_packet_nuke_tile_info(pconn);
 
-  switch(pc->phs.variant[PACKET_NUKE_TILE_INFO]) {
-    case 100: return send_packet_nuke_tile_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_NUKE_TILE_INFO]) {
+    case 100: return send_packet_nuke_tile_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_nuke_tile_info(struct conn_list *dest, const struct packet_nuke_tile_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_nuke_tile_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_nuke_tile_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_nuke_tile_info(struct connection *pc, int x, int y)
+int dsend_packet_nuke_tile_info(struct connection *pconn, int x, int y)
 {
   struct packet_nuke_tile_info packet, *real_packet = &packet;
 
   real_packet->x = x;
   real_packet->y = y;
-  
-  return send_packet_nuke_tile_info(pc, real_packet);
+
+  return send_packet_nuke_tile_info(pconn, real_packet);
 }
 
 void dlsend_packet_nuke_tile_info(struct conn_list *dest, int x, int y)
@@ -4549,7 +4548,7 @@ void dlsend_packet_nuke_tile_info(struct conn_list *dest, int x, int y)
 
   real_packet->x = x;
   real_packet->y = y;
-  
+
   lsend_packet_nuke_tile_info(dest, real_packet);
 }
 
@@ -4559,11 +4558,11 @@ void dlsend_packet_nuke_tile_info(struct conn_list *dest, int x, int y)
 
 BV_DEFINE(packet_chat_msg_100_fields, 5);
 
-static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc, enum packet_type type)
+static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pconn, enum packet_type type)
 {
   packet_chat_msg_100_fields fields;
   struct packet_chat_msg *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_chat_msg *clone;
   RECEIVE_PACKET_START(packet_chat_msg, real_packet);
 
@@ -4587,7 +4586,7 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -4595,7 +4594,7 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -4603,7 +4602,7 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->event = readin;
     }
@@ -4611,7 +4610,7 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->conn_id = readin;
     }
@@ -4624,17 +4623,17 @@ static struct packet_chat_msg *receive_packet_chat_msg_100(struct connection *pc
   }
   hash_insert(*hash, clone, clone);
 
-  post_receive_packet_chat_msg(pc, real_packet);
+  post_receive_packet_chat_msg(pconn, real_packet);
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_chat_msg_100(struct connection *pc, const struct packet_chat_msg *packet)
+static int send_packet_chat_msg_100(struct connection *pconn, const struct packet_chat_msg *packet)
 {
   const struct packet_chat_msg *real_packet = packet;
   packet_chat_msg_100_fields fields;
   struct packet_chat_msg *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CHAT_MSG];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CHAT_MSG];
   int different = 0;
   SEND_PACKET_START(PACKET_CHAT_MSG);
 
@@ -4642,7 +4641,7 @@ static int send_packet_chat_msg_100(struct connection *pc, const struct packet_c
     struct packet_chat_msg *tmp = fc_malloc(sizeof(*tmp));
 
     *tmp = *packet;
-    pre_send_packet_chat_msg(pc, tmp);
+    pre_send_packet_chat_msg(pconn, tmp);
     real_packet = tmp;
   }
 
@@ -4721,11 +4720,11 @@ static int send_packet_chat_msg_100(struct connection *pc, const struct packet_c
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_chat_msg(struct connection *pc)
+static void ensure_valid_variant_packet_chat_msg(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CHAT_MSG] != -1) {
+  if(pconn->phs.variant[PACKET_CHAT_MSG] != -1) {
     return;
   }
 
@@ -4735,57 +4734,57 @@ static void ensure_valid_variant_packet_chat_msg(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CHAT_MSG] = variant;
+  pconn->phs.variant[PACKET_CHAT_MSG] = variant;
 }
 
-struct packet_chat_msg *receive_packet_chat_msg(struct connection *pc, enum packet_type type)
+struct packet_chat_msg *receive_packet_chat_msg(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_chat_msg at the server.");
   }
-  ensure_valid_variant_packet_chat_msg(pc);
+  ensure_valid_variant_packet_chat_msg(pconn);
 
-  switch(pc->phs.variant[PACKET_CHAT_MSG]) {
-    case 100: return receive_packet_chat_msg_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CHAT_MSG]) {
+    case 100: return receive_packet_chat_msg_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_chat_msg(struct connection *pc, const struct packet_chat_msg *packet)
+int send_packet_chat_msg(struct connection *pconn, const struct packet_chat_msg *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_chat_msg from the client.");
   }
-  ensure_valid_variant_packet_chat_msg(pc);
+  ensure_valid_variant_packet_chat_msg(pconn);
 
-  switch(pc->phs.variant[PACKET_CHAT_MSG]) {
-    case 100: return send_packet_chat_msg_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CHAT_MSG]) {
+    case 100: return send_packet_chat_msg_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_chat_msg(struct conn_list *dest, const struct packet_chat_msg *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_chat_msg(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_chat_msg(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_chat_msg(struct connection *pc, const char *message, int x, int y, enum event_type event, int conn_id)
+int dsend_packet_chat_msg(struct connection *pconn, const char *message, int x, int y, enum event_type event, int conn_id)
 {
   struct packet_chat_msg packet, *real_packet = &packet;
 
@@ -4794,8 +4793,8 @@ int dsend_packet_chat_msg(struct connection *pc, const char *message, int x, int
   real_packet->y = y;
   real_packet->event = event;
   real_packet->conn_id = conn_id;
-  
-  return send_packet_chat_msg(pc, real_packet);
+
+  return send_packet_chat_msg(pconn, real_packet);
 }
 
 void dlsend_packet_chat_msg(struct conn_list *dest, const char *message, int x, int y, enum event_type event, int conn_id)
@@ -4807,7 +4806,7 @@ void dlsend_packet_chat_msg(struct conn_list *dest, const char *message, int x, 
   real_packet->y = y;
   real_packet->event = event;
   real_packet->conn_id = conn_id;
-  
+
   lsend_packet_chat_msg(dest, real_packet);
 }
 
@@ -4817,11 +4816,11 @@ void dlsend_packet_chat_msg(struct conn_list *dest, const char *message, int x, 
 
 BV_DEFINE(packet_chat_msg_req_100_fields, 1);
 
-static struct packet_chat_msg_req *receive_packet_chat_msg_req_100(struct connection *pc, enum packet_type type)
+static struct packet_chat_msg_req *receive_packet_chat_msg_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_chat_msg_req_100_fields fields;
   struct packet_chat_msg_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_chat_msg_req *clone;
   RECEIVE_PACKET_START(packet_chat_msg_req, real_packet);
 
@@ -4853,13 +4852,13 @@ static struct packet_chat_msg_req *receive_packet_chat_msg_req_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_chat_msg_req_100(struct connection *pc, const struct packet_chat_msg_req *packet)
+static int send_packet_chat_msg_req_100(struct connection *pconn, const struct packet_chat_msg_req *packet)
 {
   const struct packet_chat_msg_req *real_packet = packet;
   packet_chat_msg_req_100_fields fields;
   struct packet_chat_msg_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CHAT_MSG_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CHAT_MSG_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_CHAT_MSG_REQ);
 
@@ -4902,11 +4901,11 @@ static int send_packet_chat_msg_req_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_chat_msg_req(struct connection *pc)
+static void ensure_valid_variant_packet_chat_msg_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CHAT_MSG_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_CHAT_MSG_REQ] != -1) {
     return;
   }
 
@@ -4916,56 +4915,56 @@ static void ensure_valid_variant_packet_chat_msg_req(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CHAT_MSG_REQ] = variant;
+  pconn->phs.variant[PACKET_CHAT_MSG_REQ] = variant;
 }
 
-struct packet_chat_msg_req *receive_packet_chat_msg_req(struct connection *pc, enum packet_type type)
+struct packet_chat_msg_req *receive_packet_chat_msg_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_chat_msg_req at the client.");
   }
-  ensure_valid_variant_packet_chat_msg_req(pc);
+  ensure_valid_variant_packet_chat_msg_req(pconn);
 
-  switch(pc->phs.variant[PACKET_CHAT_MSG_REQ]) {
-    case 100: return receive_packet_chat_msg_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CHAT_MSG_REQ]) {
+    case 100: return receive_packet_chat_msg_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_chat_msg_req(struct connection *pc, const struct packet_chat_msg_req *packet)
+int send_packet_chat_msg_req(struct connection *pconn, const struct packet_chat_msg_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_chat_msg_req from the server.");
   }
-  ensure_valid_variant_packet_chat_msg_req(pc);
+  ensure_valid_variant_packet_chat_msg_req(pconn);
 
-  switch(pc->phs.variant[PACKET_CHAT_MSG_REQ]) {
-    case 100: return send_packet_chat_msg_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CHAT_MSG_REQ]) {
+    case 100: return send_packet_chat_msg_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_chat_msg_req(struct connection *pc, const char *message)
+int dsend_packet_chat_msg_req(struct connection *pconn, const char *message)
 {
   struct packet_chat_msg_req packet, *real_packet = &packet;
 
   sz_strlcpy(real_packet->message, message);
-  
-  return send_packet_chat_msg_req(pc, real_packet);
+
+  return send_packet_chat_msg_req(pconn, real_packet);
 }
 
 #define hash_packet_city_remove_100 hash_const
@@ -4974,11 +4973,11 @@ int dsend_packet_chat_msg_req(struct connection *pc, const char *message)
 
 BV_DEFINE(packet_city_remove_100_fields, 1);
 
-static struct packet_city_remove *receive_packet_city_remove_100(struct connection *pc, enum packet_type type)
+static struct packet_city_remove *receive_packet_city_remove_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_remove_100_fields fields;
   struct packet_city_remove *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_remove *clone;
   RECEIVE_PACKET_START(packet_city_remove, real_packet);
 
@@ -4999,7 +4998,7 @@ static struct packet_city_remove *receive_packet_city_remove_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -5015,13 +5014,13 @@ static struct packet_city_remove *receive_packet_city_remove_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_remove_100(struct connection *pc, const struct packet_city_remove *packet)
+static int send_packet_city_remove_100(struct connection *pconn, const struct packet_city_remove *packet)
 {
   const struct packet_city_remove *real_packet = packet;
   packet_city_remove_100_fields fields;
   struct packet_city_remove *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_REMOVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_REMOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_REMOVE);
 
@@ -5064,11 +5063,11 @@ static int send_packet_city_remove_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_remove(struct connection *pc)
+static void ensure_valid_variant_packet_city_remove(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_REMOVE] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_REMOVE] != -1) {
     return;
   }
 
@@ -5078,63 +5077,63 @@ static void ensure_valid_variant_packet_city_remove(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_REMOVE] = variant;
+  pconn->phs.variant[PACKET_CITY_REMOVE] = variant;
 }
 
-struct packet_city_remove *receive_packet_city_remove(struct connection *pc, enum packet_type type)
+struct packet_city_remove *receive_packet_city_remove(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_remove at the server.");
   }
-  ensure_valid_variant_packet_city_remove(pc);
+  ensure_valid_variant_packet_city_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_REMOVE]) {
-    case 100: return receive_packet_city_remove_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_REMOVE]) {
+    case 100: return receive_packet_city_remove_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_remove(struct connection *pc, const struct packet_city_remove *packet)
+int send_packet_city_remove(struct connection *pconn, const struct packet_city_remove *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_city_remove from the client.");
   }
-  ensure_valid_variant_packet_city_remove(pc);
+  ensure_valid_variant_packet_city_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_REMOVE]) {
-    case 100: return send_packet_city_remove_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_REMOVE]) {
+    case 100: return send_packet_city_remove_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_city_remove(struct conn_list *dest, const struct packet_city_remove *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_city_remove(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_city_remove(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_city_remove(struct connection *pc, int city_id)
+int dsend_packet_city_remove(struct connection *pconn, int city_id)
 {
   struct packet_city_remove packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
-  
-  return send_packet_city_remove(pc, real_packet);
+
+  return send_packet_city_remove(pconn, real_packet);
 }
 
 void dlsend_packet_city_remove(struct conn_list *dest, int city_id)
@@ -5142,7 +5141,7 @@ void dlsend_packet_city_remove(struct conn_list *dest, int city_id)
   struct packet_city_remove packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
-  
+
   lsend_packet_city_remove(dest, real_packet);
 }
 
@@ -5169,18 +5168,18 @@ static int cmp_packet_city_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_city_info_100_fields, 47);
 
-static struct packet_city_info *receive_packet_city_info_100(struct connection *pc, enum packet_type type)
+static struct packet_city_info *receive_packet_city_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_info_100_fields fields;
   struct packet_city_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_info *clone;
   RECEIVE_PACKET_START(packet_city_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
@@ -5204,7 +5203,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -5212,7 +5211,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -5220,7 +5219,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -5231,80 +5230,80 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->size = readin;
     }
   }
   if (BV_ISSET(fields, 5)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_happy[i] = readin;
+      real_packet->people_happy[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 6)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_content[i] = readin;
+      real_packet->people_content[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 7)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_unhappy[i] = readin;
+      real_packet->people_unhappy[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 8)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_angry[i] = readin;
+      real_packet->people_angry[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 9)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < SP_COUNT; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->specialists[i] = readin;
     }
@@ -5314,7 +5313,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->food_prod = readin;
     }
@@ -5322,7 +5321,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->shield_prod = readin;
     }
@@ -5330,7 +5329,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->trade_prod = readin;
     }
@@ -5338,7 +5337,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->food_surplus = readin;
     }
@@ -5346,7 +5345,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->shield_surplus = readin;
     }
@@ -5354,7 +5353,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->tile_trade = readin;
     }
@@ -5362,7 +5361,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->food_stock = readin;
     }
@@ -5370,7 +5369,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->shield_stock = readin;
     }
@@ -5378,20 +5377,20 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->corruption = readin;
     }
   }
   if (BV_ISSET(fields, 19)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->trade[i] = readin;
     }
@@ -5399,14 +5398,14 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 20)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade_value[i] = readin;
     }
@@ -5416,7 +5415,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->luxury_total = readin;
     }
@@ -5424,7 +5423,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->tax_total = readin;
     }
@@ -5432,7 +5431,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->science_total = readin;
     }
@@ -5440,7 +5439,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->pollution = readin;
     }
@@ -5448,7 +5447,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->shield_waste = readin;
     }
@@ -5456,7 +5455,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->currently_building = readin;
     }
@@ -5465,7 +5464,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->turn_last_built = readin;
     }
@@ -5473,7 +5472,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 29)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->changed_from_id = readin;
     }
@@ -5482,7 +5481,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 31)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->before_change_shields = readin;
     }
@@ -5490,7 +5489,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 32)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->disbanded_shields = readin;
     }
@@ -5498,7 +5497,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 33)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->caravan_shields = readin;
     }
@@ -5506,7 +5505,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 34)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->last_turns_shield_surplus = readin;
     }
@@ -5518,14 +5517,14 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
     dio_get_bit_string(&din, real_packet->improvements, sizeof(real_packet->improvements));
   }
   if (BV_ISSET(fields, 37)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_map[i] = readin;
     }
@@ -5540,7 +5539,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 43)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rally_point_x = readin;
     }
@@ -5548,7 +5547,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 44)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rally_point_y = readin;
     }
@@ -5556,7 +5555,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 45)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_options = readin;
     }
@@ -5564,7 +5563,7 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   if (BV_ISSET(fields, 46)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->turn_founded = readin;
     }
@@ -5580,13 +5579,13 @@ static struct packet_city_info *receive_packet_city_info_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_info_100(struct connection *pc, const struct packet_city_info *packet)
+static int send_packet_city_info_100(struct connection *pconn, const struct packet_city_info *packet)
 {
   const struct packet_city_info *real_packet = packet;
   packet_city_info_100_fields fields;
   struct packet_city_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_INFO);
 
@@ -5629,7 +5628,7 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_happy[i] != real_packet->ppl_happy[i]) {
+          if (old->people_happy[i] != real_packet->people_happy[i]) {
             differ = TRUE;
             break;
           }
@@ -5645,7 +5644,7 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_content[i] != real_packet->ppl_content[i]) {
+          if (old->people_content[i] != real_packet->people_content[i]) {
             differ = TRUE;
             break;
           }
@@ -5661,7 +5660,7 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_unhappy[i] != real_packet->ppl_unhappy[i]) {
+          if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
             differ = TRUE;
             break;
           }
@@ -5677,7 +5676,7 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_angry[i] != real_packet->ppl_angry[i]) {
+          if (old->people_angry[i] != real_packet->people_angry[i]) {
             differ = TRUE;
             break;
           }
@@ -5910,54 +5909,54 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
     dio_put_uint8(&dout, real_packet->size);
   }
   if (BV_ISSET(fields, 5)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_happy[i]);
+        dio_put_uint8(&dout, real_packet->people_happy[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 6)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_content[i]);
+        dio_put_uint8(&dout, real_packet->people_content[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 7)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_unhappy[i]);
+        dio_put_uint8(&dout, real_packet->people_unhappy[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 8)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_angry[i]);
+        dio_put_uint8(&dout, real_packet->people_angry[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 9)) {
-  
+
     {
       int i;
 
       for (i = 0; i < SP_COUNT; i++) {
         dio_put_uint8(&dout, real_packet->specialists[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 10)) {
     dio_put_uint16(&dout, real_packet->food_prod);
@@ -5987,24 +5986,24 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
     dio_put_uint16(&dout, real_packet->corruption);
   }
   if (BV_ISSET(fields, 19)) {
-  
+
     {
       int i;
 
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         dio_put_uint16(&dout, real_packet->trade[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 20)) {
-  
+
     {
       int i;
 
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         dio_put_uint8(&dout, real_packet->trade_value[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 21)) {
     dio_put_uint16(&dout, real_packet->luxury_total);
@@ -6051,14 +6050,14 @@ static int send_packet_city_info_100(struct connection *pc, const struct packet_
     dio_put_bit_string(&dout, real_packet->improvements);
   }
   if (BV_ISSET(fields, 37)) {
-  
+
     {
       int i;
 
       for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
         dio_put_uint8(&dout, real_packet->city_map[i]);
       }
-    } 
+    }
   }
   /* field 38 is folded into the header */
   /* field 39 is folded into the header */
@@ -6113,18 +6112,18 @@ static int cmp_packet_city_info_101(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_city_info_101_fields, 45);
 
-static struct packet_city_info *receive_packet_city_info_101(struct connection *pc, enum packet_type type)
+static struct packet_city_info *receive_packet_city_info_101(struct connection *pconn, enum packet_type type)
 {
   packet_city_info_101_fields fields;
   struct packet_city_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_info *clone;
   RECEIVE_PACKET_START(packet_city_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
@@ -6148,7 +6147,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -6156,7 +6155,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -6164,7 +6163,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -6175,80 +6174,80 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->size = readin;
     }
   }
   if (BV_ISSET(fields, 5)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_happy[i] = readin;
+      real_packet->people_happy[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 6)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_content[i] = readin;
+      real_packet->people_content[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 7)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_unhappy[i] = readin;
+      real_packet->people_unhappy[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 8)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 5; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
-      real_packet->ppl_angry[i] = readin;
+      real_packet->people_angry[i] = readin;
     }
       }
     }
   }
   if (BV_ISSET(fields, 9)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < SP_COUNT; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->specialists[i] = readin;
     }
@@ -6258,7 +6257,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->food_prod = readin;
     }
@@ -6266,7 +6265,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->shield_prod = readin;
     }
@@ -6274,7 +6273,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->trade_prod = readin;
     }
@@ -6282,7 +6281,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->food_surplus = readin;
     }
@@ -6290,7 +6289,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->shield_surplus = readin;
     }
@@ -6298,7 +6297,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->tile_trade = readin;
     }
@@ -6306,7 +6305,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->food_stock = readin;
     }
@@ -6314,7 +6313,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->shield_stock = readin;
     }
@@ -6322,20 +6321,20 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->corruption = readin;
     }
   }
   if (BV_ISSET(fields, 19)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->trade[i] = readin;
     }
@@ -6343,14 +6342,14 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
     }
   }
   if (BV_ISSET(fields, 20)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade_value[i] = readin;
     }
@@ -6360,7 +6359,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->luxury_total = readin;
     }
@@ -6368,7 +6367,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->tax_total = readin;
     }
@@ -6376,7 +6375,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->science_total = readin;
     }
@@ -6384,7 +6383,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->pollution = readin;
     }
@@ -6392,7 +6391,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->shield_waste = readin;
     }
@@ -6400,7 +6399,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->currently_building = readin;
     }
@@ -6409,7 +6408,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->turn_last_built = readin;
     }
@@ -6417,7 +6416,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 29)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->changed_from_id = readin;
     }
@@ -6426,7 +6425,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 31)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->before_change_shields = readin;
     }
@@ -6434,7 +6433,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 32)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->disbanded_shields = readin;
     }
@@ -6442,7 +6441,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 33)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->caravan_shields = readin;
     }
@@ -6450,7 +6449,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 34)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->last_turns_shield_surplus = readin;
     }
@@ -6462,14 +6461,14 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
     dio_get_bit_string(&din, real_packet->improvements, sizeof(real_packet->improvements));
   }
   if (BV_ISSET(fields, 37)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_map[i] = readin;
     }
@@ -6484,7 +6483,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 43)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_options = readin;
     }
@@ -6492,7 +6491,7 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   if (BV_ISSET(fields, 44)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->turn_founded = readin;
     }
@@ -6508,13 +6507,13 @@ static struct packet_city_info *receive_packet_city_info_101(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_info_101(struct connection *pc, const struct packet_city_info *packet)
+static int send_packet_city_info_101(struct connection *pconn, const struct packet_city_info *packet)
 {
   const struct packet_city_info *real_packet = packet;
   packet_city_info_101_fields fields;
   struct packet_city_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_INFO);
 
@@ -6557,7 +6556,7 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_happy[i] != real_packet->ppl_happy[i]) {
+          if (old->people_happy[i] != real_packet->people_happy[i]) {
             differ = TRUE;
             break;
           }
@@ -6573,7 +6572,7 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_content[i] != real_packet->ppl_content[i]) {
+          if (old->people_content[i] != real_packet->people_content[i]) {
             differ = TRUE;
             break;
           }
@@ -6589,7 +6588,7 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_unhappy[i] != real_packet->ppl_unhappy[i]) {
+          if (old->people_unhappy[i] != real_packet->people_unhappy[i]) {
             differ = TRUE;
             break;
           }
@@ -6605,7 +6604,7 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
       if(!differ) {
         int i;
         for (i = 0; i < 5; i++) {
-          if (old->ppl_angry[i] != real_packet->ppl_angry[i]) {
+          if (old->people_angry[i] != real_packet->people_angry[i]) {
             differ = TRUE;
             break;
           }
@@ -6830,54 +6829,54 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
     dio_put_uint8(&dout, real_packet->size);
   }
   if (BV_ISSET(fields, 5)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_happy[i]);
+        dio_put_uint8(&dout, real_packet->people_happy[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 6)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_content[i]);
+        dio_put_uint8(&dout, real_packet->people_content[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 7)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_unhappy[i]);
+        dio_put_uint8(&dout, real_packet->people_unhappy[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 8)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 5; i++) {
-        dio_put_uint8(&dout, real_packet->ppl_angry[i]);
+        dio_put_uint8(&dout, real_packet->people_angry[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 9)) {
-  
+
     {
       int i;
 
       for (i = 0; i < SP_COUNT; i++) {
         dio_put_uint8(&dout, real_packet->specialists[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 10)) {
     dio_put_uint16(&dout, real_packet->food_prod);
@@ -6907,24 +6906,24 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
     dio_put_uint16(&dout, real_packet->corruption);
   }
   if (BV_ISSET(fields, 19)) {
-  
+
     {
       int i;
 
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         dio_put_uint16(&dout, real_packet->trade[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 20)) {
-  
+
     {
       int i;
 
       for (i = 0; i < OLD_NUM_TRADEROUTES; i++) {
         dio_put_uint8(&dout, real_packet->trade_value[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 21)) {
     dio_put_uint16(&dout, real_packet->luxury_total);
@@ -6971,14 +6970,14 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
     dio_put_bit_string(&dout, real_packet->improvements);
   }
   if (BV_ISSET(fields, 37)) {
-  
+
     {
       int i;
 
       for (i = 0; i < CITY_MAP_SIZE * CITY_MAP_SIZE; i++) {
         dio_put_uint8(&dout, real_packet->city_map[i]);
       }
-    } 
+    }
   }
   /* field 38 is folded into the header */
   /* field 39 is folded into the header */
@@ -7004,71 +7003,71 @@ static int send_packet_city_info_101(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_info(struct connection *pc)
+static void ensure_valid_variant_packet_city_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_INFO] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("extglobalinfo", pc->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if((has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
     variant = 100;
-  } else if(!(has_capability("extglobalinfo", pc->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if(!(has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
     variant = 101;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_INFO] = variant;
+  pconn->phs.variant[PACKET_CITY_INFO] = variant;
 }
 
-struct packet_city_info *receive_packet_city_info(struct connection *pc, enum packet_type type)
+struct packet_city_info *receive_packet_city_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_info at the server.");
   }
-  ensure_valid_variant_packet_city_info(pc);
+  ensure_valid_variant_packet_city_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_INFO]) {
-    case 100: return receive_packet_city_info_100(pc, type);
-    case 101: return receive_packet_city_info_101(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_INFO]) {
+    case 100: return receive_packet_city_info_100(pconn, type);
+    case 101: return receive_packet_city_info_101(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_info(struct connection *pc, const struct packet_city_info *packet)
+int send_packet_city_info(struct connection *pconn, const struct packet_city_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_city_info from the client.");
   }
-  ensure_valid_variant_packet_city_info(pc);
+  ensure_valid_variant_packet_city_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_INFO]) {
-    case 100: return send_packet_city_info_100(pc, packet);
-    case 101: return send_packet_city_info_101(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_INFO]) {
+    case 100: return send_packet_city_info_100(pconn, packet);
+    case 101: return send_packet_city_info_101(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_city_info(struct conn_list *dest, const struct packet_city_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_city_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_city_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -7095,18 +7094,18 @@ static int cmp_packet_city_short_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_city_short_info_100_fields, 11);
 
-static struct packet_city_short_info *receive_packet_city_short_info_100(struct connection *pc, enum packet_type type)
+static struct packet_city_short_info *receive_packet_city_short_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_short_info_100_fields fields;
   struct packet_city_short_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_short_info *clone;
   RECEIVE_PACKET_START(packet_city_short_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
@@ -7130,7 +7129,7 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -7138,7 +7137,7 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -7146,7 +7145,7 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -7157,7 +7156,7 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->size = readin;
     }
@@ -7170,7 +7169,7 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->tile_trade = readin;
     }
@@ -7186,13 +7185,13 @@ static struct packet_city_short_info *receive_packet_city_short_info_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_short_info_100(struct connection *pc, const struct packet_city_short_info *packet)
+static int send_packet_city_short_info_100(struct connection *pconn, const struct packet_city_short_info *packet)
 {
   const struct packet_city_short_info *real_packet = packet;
   packet_city_short_info_100_fields fields;
   struct packet_city_short_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_SHORT_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_SHORT_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_SHORT_INFO);
 
@@ -7296,11 +7295,11 @@ static int send_packet_city_short_info_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_short_info(struct connection *pc)
+static void ensure_valid_variant_packet_city_short_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_SHORT_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_SHORT_INFO] != -1) {
     return;
   }
 
@@ -7310,53 +7309,53 @@ static void ensure_valid_variant_packet_city_short_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_SHORT_INFO] = variant;
+  pconn->phs.variant[PACKET_CITY_SHORT_INFO] = variant;
 }
 
-struct packet_city_short_info *receive_packet_city_short_info(struct connection *pc, enum packet_type type)
+struct packet_city_short_info *receive_packet_city_short_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_short_info at the server.");
   }
-  ensure_valid_variant_packet_city_short_info(pc);
+  ensure_valid_variant_packet_city_short_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SHORT_INFO]) {
-    case 100: return receive_packet_city_short_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_SHORT_INFO]) {
+    case 100: return receive_packet_city_short_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_short_info(struct connection *pc, const struct packet_city_short_info *packet)
+int send_packet_city_short_info(struct connection *pconn, const struct packet_city_short_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_city_short_info from the client.");
   }
-  ensure_valid_variant_packet_city_short_info(pc);
+  ensure_valid_variant_packet_city_short_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SHORT_INFO]) {
-    case 100: return send_packet_city_short_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_SHORT_INFO]) {
+    case 100: return send_packet_city_short_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_city_short_info(struct conn_list *dest, const struct packet_city_short_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_city_short_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_city_short_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -7366,11 +7365,11 @@ void lsend_packet_city_short_info(struct conn_list *dest, const struct packet_ci
 
 BV_DEFINE(packet_city_sell_100_fields, 2);
 
-static struct packet_city_sell *receive_packet_city_sell_100(struct connection *pc, enum packet_type type)
+static struct packet_city_sell *receive_packet_city_sell_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_sell_100_fields fields;
   struct packet_city_sell *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_sell *clone;
   RECEIVE_PACKET_START(packet_city_sell, real_packet);
 
@@ -7391,7 +7390,7 @@ static struct packet_city_sell *receive_packet_city_sell_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -7399,7 +7398,7 @@ static struct packet_city_sell *receive_packet_city_sell_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->build_id = readin;
     }
@@ -7415,13 +7414,13 @@ static struct packet_city_sell *receive_packet_city_sell_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_sell_100(struct connection *pc, const struct packet_city_sell *packet)
+static int send_packet_city_sell_100(struct connection *pconn, const struct packet_city_sell *packet)
 {
   const struct packet_city_sell *real_packet = packet;
   packet_city_sell_100_fields fields;
   struct packet_city_sell *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_SELL];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_SELL];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_SELL);
 
@@ -7471,11 +7470,11 @@ static int send_packet_city_sell_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_sell(struct connection *pc)
+static void ensure_valid_variant_packet_city_sell(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_SELL] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_SELL] != -1) {
     return;
   }
 
@@ -7485,57 +7484,57 @@ static void ensure_valid_variant_packet_city_sell(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_SELL] = variant;
+  pconn->phs.variant[PACKET_CITY_SELL] = variant;
 }
 
-struct packet_city_sell *receive_packet_city_sell(struct connection *pc, enum packet_type type)
+struct packet_city_sell *receive_packet_city_sell(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_sell at the client.");
   }
-  ensure_valid_variant_packet_city_sell(pc);
+  ensure_valid_variant_packet_city_sell(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SELL]) {
-    case 100: return receive_packet_city_sell_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_SELL]) {
+    case 100: return receive_packet_city_sell_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_sell(struct connection *pc, const struct packet_city_sell *packet)
+int send_packet_city_sell(struct connection *pconn, const struct packet_city_sell *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_sell from the server.");
   }
-  ensure_valid_variant_packet_city_sell(pc);
+  ensure_valid_variant_packet_city_sell(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SELL]) {
-    case 100: return send_packet_city_sell_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_SELL]) {
+    case 100: return send_packet_city_sell_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_sell(struct connection *pc, int city_id, int build_id)
+int dsend_packet_city_sell(struct connection *pconn, int city_id, int build_id)
 {
   struct packet_city_sell packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->build_id = build_id;
-  
-  return send_packet_city_sell(pc, real_packet);
+
+  return send_packet_city_sell(pconn, real_packet);
 }
 
 #define hash_packet_city_buy_100 hash_const
@@ -7544,11 +7543,11 @@ int dsend_packet_city_sell(struct connection *pc, int city_id, int build_id)
 
 BV_DEFINE(packet_city_buy_100_fields, 1);
 
-static struct packet_city_buy *receive_packet_city_buy_100(struct connection *pc, enum packet_type type)
+static struct packet_city_buy *receive_packet_city_buy_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_buy_100_fields fields;
   struct packet_city_buy *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_buy *clone;
   RECEIVE_PACKET_START(packet_city_buy, real_packet);
 
@@ -7569,7 +7568,7 @@ static struct packet_city_buy *receive_packet_city_buy_100(struct connection *pc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -7585,13 +7584,13 @@ static struct packet_city_buy *receive_packet_city_buy_100(struct connection *pc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_buy_100(struct connection *pc, const struct packet_city_buy *packet)
+static int send_packet_city_buy_100(struct connection *pconn, const struct packet_city_buy *packet)
 {
   const struct packet_city_buy *real_packet = packet;
   packet_city_buy_100_fields fields;
   struct packet_city_buy *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_BUY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_BUY];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_BUY);
 
@@ -7634,11 +7633,11 @@ static int send_packet_city_buy_100(struct connection *pc, const struct packet_c
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_buy(struct connection *pc)
+static void ensure_valid_variant_packet_city_buy(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_BUY] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_BUY] != -1) {
     return;
   }
 
@@ -7648,56 +7647,56 @@ static void ensure_valid_variant_packet_city_buy(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_BUY] = variant;
+  pconn->phs.variant[PACKET_CITY_BUY] = variant;
 }
 
-struct packet_city_buy *receive_packet_city_buy(struct connection *pc, enum packet_type type)
+struct packet_city_buy *receive_packet_city_buy(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_buy at the client.");
   }
-  ensure_valid_variant_packet_city_buy(pc);
+  ensure_valid_variant_packet_city_buy(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_BUY]) {
-    case 100: return receive_packet_city_buy_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_BUY]) {
+    case 100: return receive_packet_city_buy_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_buy(struct connection *pc, const struct packet_city_buy *packet)
+int send_packet_city_buy(struct connection *pconn, const struct packet_city_buy *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_buy from the server.");
   }
-  ensure_valid_variant_packet_city_buy(pc);
+  ensure_valid_variant_packet_city_buy(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_BUY]) {
-    case 100: return send_packet_city_buy_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_BUY]) {
+    case 100: return send_packet_city_buy_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_buy(struct connection *pc, int city_id)
+int dsend_packet_city_buy(struct connection *pconn, int city_id)
 {
   struct packet_city_buy packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
-  
-  return send_packet_city_buy(pc, real_packet);
+
+  return send_packet_city_buy(pconn, real_packet);
 }
 
 #define hash_packet_city_change_100 hash_const
@@ -7706,11 +7705,11 @@ int dsend_packet_city_buy(struct connection *pc, int city_id)
 
 BV_DEFINE(packet_city_change_100_fields, 3);
 
-static struct packet_city_change *receive_packet_city_change_100(struct connection *pc, enum packet_type type)
+static struct packet_city_change *receive_packet_city_change_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_change_100_fields fields;
   struct packet_city_change *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_change *clone;
   RECEIVE_PACKET_START(packet_city_change, real_packet);
 
@@ -7731,7 +7730,7 @@ static struct packet_city_change *receive_packet_city_change_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -7739,7 +7738,7 @@ static struct packet_city_change *receive_packet_city_change_100(struct connecti
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->build_id = readin;
     }
@@ -7756,13 +7755,13 @@ static struct packet_city_change *receive_packet_city_change_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_100(struct connection *pc, const struct packet_city_change *packet)
+static int send_packet_city_change_100(struct connection *pconn, const struct packet_city_change *packet)
 {
   const struct packet_city_change *real_packet = packet;
   packet_city_change_100_fields fields;
   struct packet_city_change *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_CHANGE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_CHANGE];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_CHANGE);
 
@@ -7817,11 +7816,11 @@ static int send_packet_city_change_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_change(struct connection *pc)
+static void ensure_valid_variant_packet_city_change(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_CHANGE] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_CHANGE] != -1) {
     return;
   }
 
@@ -7831,58 +7830,58 @@ static void ensure_valid_variant_packet_city_change(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_CHANGE] = variant;
+  pconn->phs.variant[PACKET_CITY_CHANGE] = variant;
 }
 
-struct packet_city_change *receive_packet_city_change(struct connection *pc, enum packet_type type)
+struct packet_city_change *receive_packet_city_change(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_change at the client.");
   }
-  ensure_valid_variant_packet_city_change(pc);
+  ensure_valid_variant_packet_city_change(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_CHANGE]) {
-    case 100: return receive_packet_city_change_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_CHANGE]) {
+    case 100: return receive_packet_city_change_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_change(struct connection *pc, const struct packet_city_change *packet)
+int send_packet_city_change(struct connection *pconn, const struct packet_city_change *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_change from the server.");
   }
-  ensure_valid_variant_packet_city_change(pc);
+  ensure_valid_variant_packet_city_change(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_CHANGE]) {
-    case 100: return send_packet_city_change_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_CHANGE]) {
+    case 100: return send_packet_city_change_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_change(struct connection *pc, int city_id, int build_id, bool is_build_id_unit_id)
+int dsend_packet_city_change(struct connection *pconn, int city_id, int build_id, bool is_build_id_unit_id)
 {
   struct packet_city_change packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->build_id = build_id;
   real_packet->is_build_id_unit_id = is_build_id_unit_id;
-  
-  return send_packet_city_change(pc, real_packet);
+
+  return send_packet_city_change(pconn, real_packet);
 }
 
 #define hash_packet_city_worklist_100 hash_const
@@ -7891,11 +7890,11 @@ int dsend_packet_city_change(struct connection *pc, int city_id, int build_id, b
 
 BV_DEFINE(packet_city_worklist_100_fields, 2);
 
-static struct packet_city_worklist *receive_packet_city_worklist_100(struct connection *pc, enum packet_type type)
+static struct packet_city_worklist *receive_packet_city_worklist_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_worklist_100_fields fields;
   struct packet_city_worklist *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_worklist *clone;
   RECEIVE_PACKET_START(packet_city_worklist, real_packet);
 
@@ -7916,7 +7915,7 @@ static struct packet_city_worklist *receive_packet_city_worklist_100(struct conn
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -7935,13 +7934,13 @@ static struct packet_city_worklist *receive_packet_city_worklist_100(struct conn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_worklist_100(struct connection *pc, const struct packet_city_worklist *packet)
+static int send_packet_city_worklist_100(struct connection *pconn, const struct packet_city_worklist *packet)
 {
   const struct packet_city_worklist *real_packet = packet;
   packet_city_worklist_100_fields fields;
   struct packet_city_worklist *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_WORKLIST];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_WORKLIST];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_WORKLIST);
 
@@ -7991,11 +7990,11 @@ static int send_packet_city_worklist_100(struct connection *pc, const struct pac
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_worklist(struct connection *pc)
+static void ensure_valid_variant_packet_city_worklist(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_WORKLIST] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_WORKLIST] != -1) {
     return;
   }
 
@@ -8005,57 +8004,57 @@ static void ensure_valid_variant_packet_city_worklist(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_WORKLIST] = variant;
+  pconn->phs.variant[PACKET_CITY_WORKLIST] = variant;
 }
 
-struct packet_city_worklist *receive_packet_city_worklist(struct connection *pc, enum packet_type type)
+struct packet_city_worklist *receive_packet_city_worklist(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_worklist at the client.");
   }
-  ensure_valid_variant_packet_city_worklist(pc);
+  ensure_valid_variant_packet_city_worklist(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_WORKLIST]) {
-    case 100: return receive_packet_city_worklist_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_WORKLIST]) {
+    case 100: return receive_packet_city_worklist_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_worklist(struct connection *pc, const struct packet_city_worklist *packet)
+int send_packet_city_worklist(struct connection *pconn, const struct packet_city_worklist *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_worklist from the server.");
   }
-  ensure_valid_variant_packet_city_worklist(pc);
+  ensure_valid_variant_packet_city_worklist(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_WORKLIST]) {
-    case 100: return send_packet_city_worklist_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_WORKLIST]) {
+    case 100: return send_packet_city_worklist_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_worklist(struct connection *pc, int city_id, struct worklist *worklist)
+int dsend_packet_city_worklist(struct connection *pconn, int city_id, struct worklist *worklist)
 {
   struct packet_city_worklist packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   copy_worklist(&real_packet->worklist, worklist);
-  
-  return send_packet_city_worklist(pc, real_packet);
+
+  return send_packet_city_worklist(pconn, real_packet);
 }
 
 #define hash_packet_city_make_specialist_100 hash_const
@@ -8064,11 +8063,11 @@ int dsend_packet_city_worklist(struct connection *pc, int city_id, struct workli
 
 BV_DEFINE(packet_city_make_specialist_100_fields, 3);
 
-static struct packet_city_make_specialist *receive_packet_city_make_specialist_100(struct connection *pc, enum packet_type type)
+static struct packet_city_make_specialist *receive_packet_city_make_specialist_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_make_specialist_100_fields fields;
   struct packet_city_make_specialist *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_make_specialist *clone;
   RECEIVE_PACKET_START(packet_city_make_specialist, real_packet);
 
@@ -8089,7 +8088,7 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -8097,7 +8096,7 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->worker_x = readin;
     }
@@ -8105,7 +8104,7 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->worker_y = readin;
     }
@@ -8121,13 +8120,13 @@ static struct packet_city_make_specialist *receive_packet_city_make_specialist_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_specialist_100(struct connection *pc, const struct packet_city_make_specialist *packet)
+static int send_packet_city_make_specialist_100(struct connection *pconn, const struct packet_city_make_specialist *packet)
 {
   const struct packet_city_make_specialist *real_packet = packet;
   packet_city_make_specialist_100_fields fields;
   struct packet_city_make_specialist *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_MAKE_SPECIALIST];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_MAKE_SPECIALIST];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_MAKE_SPECIALIST);
 
@@ -8184,11 +8183,11 @@ static int send_packet_city_make_specialist_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_make_specialist(struct connection *pc)
+static void ensure_valid_variant_packet_city_make_specialist(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_MAKE_SPECIALIST] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST] != -1) {
     return;
   }
 
@@ -8198,58 +8197,58 @@ static void ensure_valid_variant_packet_city_make_specialist(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_MAKE_SPECIALIST] = variant;
+  pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST] = variant;
 }
 
-struct packet_city_make_specialist *receive_packet_city_make_specialist(struct connection *pc, enum packet_type type)
+struct packet_city_make_specialist *receive_packet_city_make_specialist(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_make_specialist at the client.");
   }
-  ensure_valid_variant_packet_city_make_specialist(pc);
+  ensure_valid_variant_packet_city_make_specialist(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_MAKE_SPECIALIST]) {
-    case 100: return receive_packet_city_make_specialist_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST]) {
+    case 100: return receive_packet_city_make_specialist_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_make_specialist(struct connection *pc, const struct packet_city_make_specialist *packet)
+int send_packet_city_make_specialist(struct connection *pconn, const struct packet_city_make_specialist *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_make_specialist from the server.");
   }
-  ensure_valid_variant_packet_city_make_specialist(pc);
+  ensure_valid_variant_packet_city_make_specialist(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_MAKE_SPECIALIST]) {
-    case 100: return send_packet_city_make_specialist_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_MAKE_SPECIALIST]) {
+    case 100: return send_packet_city_make_specialist_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_make_specialist(struct connection *pc, int city_id, int worker_x, int worker_y)
+int dsend_packet_city_make_specialist(struct connection *pconn, int city_id, int worker_x, int worker_y)
 {
   struct packet_city_make_specialist packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->worker_x = worker_x;
   real_packet->worker_y = worker_y;
-  
-  return send_packet_city_make_specialist(pc, real_packet);
+
+  return send_packet_city_make_specialist(pconn, real_packet);
 }
 
 #define hash_packet_city_make_worker_100 hash_const
@@ -8258,11 +8257,11 @@ int dsend_packet_city_make_specialist(struct connection *pc, int city_id, int wo
 
 BV_DEFINE(packet_city_make_worker_100_fields, 3);
 
-static struct packet_city_make_worker *receive_packet_city_make_worker_100(struct connection *pc, enum packet_type type)
+static struct packet_city_make_worker *receive_packet_city_make_worker_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_make_worker_100_fields fields;
   struct packet_city_make_worker *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_make_worker *clone;
   RECEIVE_PACKET_START(packet_city_make_worker, real_packet);
 
@@ -8283,7 +8282,7 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -8291,7 +8290,7 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->worker_x = readin;
     }
@@ -8299,7 +8298,7 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(struc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->worker_y = readin;
     }
@@ -8315,13 +8314,13 @@ static struct packet_city_make_worker *receive_packet_city_make_worker_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_make_worker_100(struct connection *pc, const struct packet_city_make_worker *packet)
+static int send_packet_city_make_worker_100(struct connection *pconn, const struct packet_city_make_worker *packet)
 {
   const struct packet_city_make_worker *real_packet = packet;
   packet_city_make_worker_100_fields fields;
   struct packet_city_make_worker *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_MAKE_WORKER];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_MAKE_WORKER];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_MAKE_WORKER);
 
@@ -8378,11 +8377,11 @@ static int send_packet_city_make_worker_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_make_worker(struct connection *pc)
+static void ensure_valid_variant_packet_city_make_worker(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_MAKE_WORKER] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_MAKE_WORKER] != -1) {
     return;
   }
 
@@ -8392,58 +8391,58 @@ static void ensure_valid_variant_packet_city_make_worker(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_MAKE_WORKER] = variant;
+  pconn->phs.variant[PACKET_CITY_MAKE_WORKER] = variant;
 }
 
-struct packet_city_make_worker *receive_packet_city_make_worker(struct connection *pc, enum packet_type type)
+struct packet_city_make_worker *receive_packet_city_make_worker(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_make_worker at the client.");
   }
-  ensure_valid_variant_packet_city_make_worker(pc);
+  ensure_valid_variant_packet_city_make_worker(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_MAKE_WORKER]) {
-    case 100: return receive_packet_city_make_worker_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_MAKE_WORKER]) {
+    case 100: return receive_packet_city_make_worker_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_make_worker(struct connection *pc, const struct packet_city_make_worker *packet)
+int send_packet_city_make_worker(struct connection *pconn, const struct packet_city_make_worker *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_make_worker from the server.");
   }
-  ensure_valid_variant_packet_city_make_worker(pc);
+  ensure_valid_variant_packet_city_make_worker(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_MAKE_WORKER]) {
-    case 100: return send_packet_city_make_worker_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_MAKE_WORKER]) {
+    case 100: return send_packet_city_make_worker_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_make_worker(struct connection *pc, int city_id, int worker_x, int worker_y)
+int dsend_packet_city_make_worker(struct connection *pconn, int city_id, int worker_x, int worker_y)
 {
   struct packet_city_make_worker packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->worker_x = worker_x;
   real_packet->worker_y = worker_y;
-  
-  return send_packet_city_make_worker(pc, real_packet);
+
+  return send_packet_city_make_worker(pconn, real_packet);
 }
 
 #define hash_packet_city_change_specialist_100 hash_const
@@ -8452,11 +8451,11 @@ int dsend_packet_city_make_worker(struct connection *pc, int city_id, int worker
 
 BV_DEFINE(packet_city_change_specialist_100_fields, 3);
 
-static struct packet_city_change_specialist *receive_packet_city_change_specialist_100(struct connection *pc, enum packet_type type)
+static struct packet_city_change_specialist *receive_packet_city_change_specialist_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_change_specialist_100_fields fields;
   struct packet_city_change_specialist *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_change_specialist *clone;
   RECEIVE_PACKET_START(packet_city_change_specialist, real_packet);
 
@@ -8477,7 +8476,7 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -8485,7 +8484,7 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->from = readin;
     }
@@ -8493,7 +8492,7 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->to = readin;
     }
@@ -8509,13 +8508,13 @@ static struct packet_city_change_specialist *receive_packet_city_change_speciali
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_change_specialist_100(struct connection *pc, const struct packet_city_change_specialist *packet)
+static int send_packet_city_change_specialist_100(struct connection *pconn, const struct packet_city_change_specialist *packet)
 {
   const struct packet_city_change_specialist *real_packet = packet;
   packet_city_change_specialist_100_fields fields;
   struct packet_city_change_specialist *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_CHANGE_SPECIALIST];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_CHANGE_SPECIALIST];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_CHANGE_SPECIALIST);
 
@@ -8572,11 +8571,11 @@ static int send_packet_city_change_specialist_100(struct connection *pc, const s
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_change_specialist(struct connection *pc)
+static void ensure_valid_variant_packet_city_change_specialist(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_CHANGE_SPECIALIST] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST] != -1) {
     return;
   }
 
@@ -8586,58 +8585,58 @@ static void ensure_valid_variant_packet_city_change_specialist(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_CHANGE_SPECIALIST] = variant;
+  pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST] = variant;
 }
 
-struct packet_city_change_specialist *receive_packet_city_change_specialist(struct connection *pc, enum packet_type type)
+struct packet_city_change_specialist *receive_packet_city_change_specialist(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_change_specialist at the client.");
   }
-  ensure_valid_variant_packet_city_change_specialist(pc);
+  ensure_valid_variant_packet_city_change_specialist(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_CHANGE_SPECIALIST]) {
-    case 100: return receive_packet_city_change_specialist_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST]) {
+    case 100: return receive_packet_city_change_specialist_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_change_specialist(struct connection *pc, const struct packet_city_change_specialist *packet)
+int send_packet_city_change_specialist(struct connection *pconn, const struct packet_city_change_specialist *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_change_specialist from the server.");
   }
-  ensure_valid_variant_packet_city_change_specialist(pc);
+  ensure_valid_variant_packet_city_change_specialist(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_CHANGE_SPECIALIST]) {
-    case 100: return send_packet_city_change_specialist_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_CHANGE_SPECIALIST]) {
+    case 100: return send_packet_city_change_specialist_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_change_specialist(struct connection *pc, int city_id, Specialist_type_id from, Specialist_type_id to)
+int dsend_packet_city_change_specialist(struct connection *pconn, int city_id, Specialist_type_id from, Specialist_type_id to)
 {
   struct packet_city_change_specialist packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->from = from;
   real_packet->to = to;
-  
-  return send_packet_city_change_specialist(pc, real_packet);
+
+  return send_packet_city_change_specialist(pconn, real_packet);
 }
 
 #define hash_packet_city_rename_100 hash_const
@@ -8646,11 +8645,11 @@ int dsend_packet_city_change_specialist(struct connection *pc, int city_id, Spec
 
 BV_DEFINE(packet_city_rename_100_fields, 2);
 
-static struct packet_city_rename *receive_packet_city_rename_100(struct connection *pc, enum packet_type type)
+static struct packet_city_rename *receive_packet_city_rename_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_rename_100_fields fields;
   struct packet_city_rename *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_rename *clone;
   RECEIVE_PACKET_START(packet_city_rename, real_packet);
 
@@ -8671,7 +8670,7 @@ static struct packet_city_rename *receive_packet_city_rename_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -8690,13 +8689,13 @@ static struct packet_city_rename *receive_packet_city_rename_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_rename_100(struct connection *pc, const struct packet_city_rename *packet)
+static int send_packet_city_rename_100(struct connection *pconn, const struct packet_city_rename *packet)
 {
   const struct packet_city_rename *real_packet = packet;
   packet_city_rename_100_fields fields;
   struct packet_city_rename *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_RENAME];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_RENAME];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_RENAME);
 
@@ -8746,11 +8745,11 @@ static int send_packet_city_rename_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_rename(struct connection *pc)
+static void ensure_valid_variant_packet_city_rename(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_RENAME] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_RENAME] != -1) {
     return;
   }
 
@@ -8760,57 +8759,57 @@ static void ensure_valid_variant_packet_city_rename(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_RENAME] = variant;
+  pconn->phs.variant[PACKET_CITY_RENAME] = variant;
 }
 
-struct packet_city_rename *receive_packet_city_rename(struct connection *pc, enum packet_type type)
+struct packet_city_rename *receive_packet_city_rename(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_rename at the client.");
   }
-  ensure_valid_variant_packet_city_rename(pc);
+  ensure_valid_variant_packet_city_rename(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_RENAME]) {
-    case 100: return receive_packet_city_rename_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_RENAME]) {
+    case 100: return receive_packet_city_rename_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_rename(struct connection *pc, const struct packet_city_rename *packet)
+int send_packet_city_rename(struct connection *pconn, const struct packet_city_rename *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_rename from the server.");
   }
-  ensure_valid_variant_packet_city_rename(pc);
+  ensure_valid_variant_packet_city_rename(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_RENAME]) {
-    case 100: return send_packet_city_rename_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_RENAME]) {
+    case 100: return send_packet_city_rename_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_rename(struct connection *pc, int city_id, const char *name)
+int dsend_packet_city_rename(struct connection *pconn, int city_id, const char *name)
 {
   struct packet_city_rename packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   sz_strlcpy(real_packet->name, name);
-  
-  return send_packet_city_rename(pc, real_packet);
+
+  return send_packet_city_rename(pconn, real_packet);
 }
 
 #define hash_packet_city_options_req_100 hash_const
@@ -8819,11 +8818,11 @@ int dsend_packet_city_rename(struct connection *pc, int city_id, const char *nam
 
 BV_DEFINE(packet_city_options_req_100_fields, 2);
 
-static struct packet_city_options_req *receive_packet_city_options_req_100(struct connection *pc, enum packet_type type)
+static struct packet_city_options_req *receive_packet_city_options_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_options_req_100_fields fields;
   struct packet_city_options_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_options_req *clone;
   RECEIVE_PACKET_START(packet_city_options_req, real_packet);
 
@@ -8844,7 +8843,7 @@ static struct packet_city_options_req *receive_packet_city_options_req_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -8852,7 +8851,7 @@ static struct packet_city_options_req *receive_packet_city_options_req_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->value = readin;
     }
@@ -8868,13 +8867,13 @@ static struct packet_city_options_req *receive_packet_city_options_req_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_options_req_100(struct connection *pc, const struct packet_city_options_req *packet)
+static int send_packet_city_options_req_100(struct connection *pconn, const struct packet_city_options_req *packet)
 {
   const struct packet_city_options_req *real_packet = packet;
   packet_city_options_req_100_fields fields;
   struct packet_city_options_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_OPTIONS_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_OPTIONS_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_OPTIONS_REQ);
 
@@ -8924,11 +8923,11 @@ static int send_packet_city_options_req_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_options_req(struct connection *pc)
+static void ensure_valid_variant_packet_city_options_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_OPTIONS_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_OPTIONS_REQ] != -1) {
     return;
   }
 
@@ -8938,57 +8937,57 @@ static void ensure_valid_variant_packet_city_options_req(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_OPTIONS_REQ] = variant;
+  pconn->phs.variant[PACKET_CITY_OPTIONS_REQ] = variant;
 }
 
-struct packet_city_options_req *receive_packet_city_options_req(struct connection *pc, enum packet_type type)
+struct packet_city_options_req *receive_packet_city_options_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_options_req at the client.");
   }
-  ensure_valid_variant_packet_city_options_req(pc);
+  ensure_valid_variant_packet_city_options_req(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_OPTIONS_REQ]) {
-    case 100: return receive_packet_city_options_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_OPTIONS_REQ]) {
+    case 100: return receive_packet_city_options_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_options_req(struct connection *pc, const struct packet_city_options_req *packet)
+int send_packet_city_options_req(struct connection *pconn, const struct packet_city_options_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_options_req from the server.");
   }
-  ensure_valid_variant_packet_city_options_req(pc);
+  ensure_valid_variant_packet_city_options_req(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_OPTIONS_REQ]) {
-    case 100: return send_packet_city_options_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_OPTIONS_REQ]) {
+    case 100: return send_packet_city_options_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_options_req(struct connection *pc, int city_id, int value)
+int dsend_packet_city_options_req(struct connection *pconn, int city_id, int value)
 {
   struct packet_city_options_req packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->value = value;
-  
-  return send_packet_city_options_req(pc, real_packet);
+
+  return send_packet_city_options_req(pconn, real_packet);
 }
 
 #define hash_packet_city_refresh_100 hash_const
@@ -8997,11 +8996,11 @@ int dsend_packet_city_options_req(struct connection *pc, int city_id, int value)
 
 BV_DEFINE(packet_city_refresh_100_fields, 1);
 
-static struct packet_city_refresh *receive_packet_city_refresh_100(struct connection *pc, enum packet_type type)
+static struct packet_city_refresh *receive_packet_city_refresh_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_refresh_100_fields fields;
   struct packet_city_refresh *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_refresh *clone;
   RECEIVE_PACKET_START(packet_city_refresh, real_packet);
 
@@ -9022,7 +9021,7 @@ static struct packet_city_refresh *receive_packet_city_refresh_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -9038,13 +9037,13 @@ static struct packet_city_refresh *receive_packet_city_refresh_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_refresh_100(struct connection *pc, const struct packet_city_refresh *packet)
+static int send_packet_city_refresh_100(struct connection *pconn, const struct packet_city_refresh *packet)
 {
   const struct packet_city_refresh *real_packet = packet;
   packet_city_refresh_100_fields fields;
   struct packet_city_refresh *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_REFRESH];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_REFRESH];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_REFRESH);
 
@@ -9087,11 +9086,11 @@ static int send_packet_city_refresh_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_refresh(struct connection *pc)
+static void ensure_valid_variant_packet_city_refresh(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_REFRESH] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_REFRESH] != -1) {
     return;
   }
 
@@ -9101,56 +9100,56 @@ static void ensure_valid_variant_packet_city_refresh(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_REFRESH] = variant;
+  pconn->phs.variant[PACKET_CITY_REFRESH] = variant;
 }
 
-struct packet_city_refresh *receive_packet_city_refresh(struct connection *pc, enum packet_type type)
+struct packet_city_refresh *receive_packet_city_refresh(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_refresh at the client.");
   }
-  ensure_valid_variant_packet_city_refresh(pc);
+  ensure_valid_variant_packet_city_refresh(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_REFRESH]) {
-    case 100: return receive_packet_city_refresh_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_REFRESH]) {
+    case 100: return receive_packet_city_refresh_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_refresh(struct connection *pc, const struct packet_city_refresh *packet)
+int send_packet_city_refresh(struct connection *pconn, const struct packet_city_refresh *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_refresh from the server.");
   }
-  ensure_valid_variant_packet_city_refresh(pc);
+  ensure_valid_variant_packet_city_refresh(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_REFRESH]) {
-    case 100: return send_packet_city_refresh_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_REFRESH]) {
+    case 100: return send_packet_city_refresh_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_refresh(struct connection *pc, int city_id)
+int dsend_packet_city_refresh(struct connection *pconn, int city_id)
 {
   struct packet_city_refresh packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
-  
-  return send_packet_city_refresh(pc, real_packet);
+
+  return send_packet_city_refresh(pconn, real_packet);
 }
 
 #define hash_packet_city_incite_inq_100 hash_const
@@ -9159,11 +9158,11 @@ int dsend_packet_city_refresh(struct connection *pc, int city_id)
 
 BV_DEFINE(packet_city_incite_inq_100_fields, 1);
 
-static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(struct connection *pc, enum packet_type type)
+static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_incite_inq_100_fields fields;
   struct packet_city_incite_inq *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_incite_inq *clone;
   RECEIVE_PACKET_START(packet_city_incite_inq, real_packet);
 
@@ -9184,7 +9183,7 @@ static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -9200,13 +9199,13 @@ static struct packet_city_incite_inq *receive_packet_city_incite_inq_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_inq_100(struct connection *pc, const struct packet_city_incite_inq *packet)
+static int send_packet_city_incite_inq_100(struct connection *pconn, const struct packet_city_incite_inq *packet)
 {
   const struct packet_city_incite_inq *real_packet = packet;
   packet_city_incite_inq_100_fields fields;
   struct packet_city_incite_inq *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_INCITE_INQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_INCITE_INQ];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_INCITE_INQ);
 
@@ -9249,11 +9248,11 @@ static int send_packet_city_incite_inq_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_incite_inq(struct connection *pc)
+static void ensure_valid_variant_packet_city_incite_inq(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_INCITE_INQ] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_INCITE_INQ] != -1) {
     return;
   }
 
@@ -9263,56 +9262,56 @@ static void ensure_valid_variant_packet_city_incite_inq(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_INCITE_INQ] = variant;
+  pconn->phs.variant[PACKET_CITY_INCITE_INQ] = variant;
 }
 
-struct packet_city_incite_inq *receive_packet_city_incite_inq(struct connection *pc, enum packet_type type)
+struct packet_city_incite_inq *receive_packet_city_incite_inq(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_incite_inq at the client.");
   }
-  ensure_valid_variant_packet_city_incite_inq(pc);
+  ensure_valid_variant_packet_city_incite_inq(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_INCITE_INQ]) {
-    case 100: return receive_packet_city_incite_inq_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_INCITE_INQ]) {
+    case 100: return receive_packet_city_incite_inq_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_incite_inq(struct connection *pc, const struct packet_city_incite_inq *packet)
+int send_packet_city_incite_inq(struct connection *pconn, const struct packet_city_incite_inq *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_incite_inq from the server.");
   }
-  ensure_valid_variant_packet_city_incite_inq(pc);
+  ensure_valid_variant_packet_city_incite_inq(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_INCITE_INQ]) {
-    case 100: return send_packet_city_incite_inq_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_INCITE_INQ]) {
+    case 100: return send_packet_city_incite_inq_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_incite_inq(struct connection *pc, int city_id)
+int dsend_packet_city_incite_inq(struct connection *pconn, int city_id)
 {
   struct packet_city_incite_inq packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
-  
-  return send_packet_city_incite_inq(pc, real_packet);
+
+  return send_packet_city_incite_inq(pconn, real_packet);
 }
 
 #define hash_packet_city_incite_info_100 hash_const
@@ -9321,11 +9320,11 @@ int dsend_packet_city_incite_inq(struct connection *pc, int city_id)
 
 BV_DEFINE(packet_city_incite_info_100_fields, 2);
 
-static struct packet_city_incite_info *receive_packet_city_incite_info_100(struct connection *pc, enum packet_type type)
+static struct packet_city_incite_info *receive_packet_city_incite_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_incite_info_100_fields fields;
   struct packet_city_incite_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_incite_info *clone;
   RECEIVE_PACKET_START(packet_city_incite_info, real_packet);
 
@@ -9346,7 +9345,7 @@ static struct packet_city_incite_info *receive_packet_city_incite_info_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -9354,7 +9353,7 @@ static struct packet_city_incite_info *receive_packet_city_incite_info_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->cost = readin;
     }
@@ -9370,13 +9369,13 @@ static struct packet_city_incite_info *receive_packet_city_incite_info_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_incite_info_100(struct connection *pc, const struct packet_city_incite_info *packet)
+static int send_packet_city_incite_info_100(struct connection *pconn, const struct packet_city_incite_info *packet)
 {
   const struct packet_city_incite_info *real_packet = packet;
   packet_city_incite_info_100_fields fields;
   struct packet_city_incite_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_INCITE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_INCITE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_INCITE_INFO);
 
@@ -9426,11 +9425,11 @@ static int send_packet_city_incite_info_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_incite_info(struct connection *pc)
+static void ensure_valid_variant_packet_city_incite_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_INCITE_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_INCITE_INFO] != -1) {
     return;
   }
 
@@ -9440,57 +9439,57 @@ static void ensure_valid_variant_packet_city_incite_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_INCITE_INFO] = variant;
+  pconn->phs.variant[PACKET_CITY_INCITE_INFO] = variant;
 }
 
-struct packet_city_incite_info *receive_packet_city_incite_info(struct connection *pc, enum packet_type type)
+struct packet_city_incite_info *receive_packet_city_incite_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_incite_info at the server.");
   }
-  ensure_valid_variant_packet_city_incite_info(pc);
+  ensure_valid_variant_packet_city_incite_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_INCITE_INFO]) {
-    case 100: return receive_packet_city_incite_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_INCITE_INFO]) {
+    case 100: return receive_packet_city_incite_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_incite_info(struct connection *pc, const struct packet_city_incite_info *packet)
+int send_packet_city_incite_info(struct connection *pconn, const struct packet_city_incite_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_city_incite_info from the client.");
   }
-  ensure_valid_variant_packet_city_incite_info(pc);
+  ensure_valid_variant_packet_city_incite_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_INCITE_INFO]) {
-    case 100: return send_packet_city_incite_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_INCITE_INFO]) {
+    case 100: return send_packet_city_incite_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_incite_info(struct connection *pc, int city_id, int cost)
+int dsend_packet_city_incite_info(struct connection *pconn, int city_id, int cost)
 {
   struct packet_city_incite_info packet, *real_packet = &packet;
 
   real_packet->city_id = city_id;
   real_packet->cost = cost;
-  
-  return send_packet_city_incite_info(pc, real_packet);
+
+  return send_packet_city_incite_info(pconn, real_packet);
 }
 
 #define hash_packet_city_name_suggestion_req_100 hash_const
@@ -9499,11 +9498,11 @@ int dsend_packet_city_incite_info(struct connection *pc, int city_id, int cost)
 
 BV_DEFINE(packet_city_name_suggestion_req_100_fields, 1);
 
-static struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req_100(struct connection *pc, enum packet_type type)
+static struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_name_suggestion_req_100_fields fields;
   struct packet_city_name_suggestion_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_name_suggestion_req *clone;
   RECEIVE_PACKET_START(packet_city_name_suggestion_req, real_packet);
 
@@ -9524,7 +9523,7 @@ static struct packet_city_name_suggestion_req *receive_packet_city_name_suggesti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -9540,13 +9539,13 @@ static struct packet_city_name_suggestion_req *receive_packet_city_name_suggesti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_req_100(struct connection *pc, const struct packet_city_name_suggestion_req *packet)
+static int send_packet_city_name_suggestion_req_100(struct connection *pconn, const struct packet_city_name_suggestion_req *packet)
 {
   const struct packet_city_name_suggestion_req *real_packet = packet;
   packet_city_name_suggestion_req_100_fields fields;
   struct packet_city_name_suggestion_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_NAME_SUGGESTION_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_NAME_SUGGESTION_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_NAME_SUGGESTION_REQ);
 
@@ -9589,11 +9588,11 @@ static int send_packet_city_name_suggestion_req_100(struct connection *pc, const
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_name_suggestion_req(struct connection *pc)
+static void ensure_valid_variant_packet_city_name_suggestion_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ] != -1) {
     return;
   }
 
@@ -9603,56 +9602,56 @@ static void ensure_valid_variant_packet_city_name_suggestion_req(struct connecti
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ] = variant;
+  pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ] = variant;
 }
 
-struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req(struct connection *pc, enum packet_type type)
+struct packet_city_name_suggestion_req *receive_packet_city_name_suggestion_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_name_suggestion_req at the client.");
   }
-  ensure_valid_variant_packet_city_name_suggestion_req(pc);
+  ensure_valid_variant_packet_city_name_suggestion_req(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ]) {
-    case 100: return receive_packet_city_name_suggestion_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ]) {
+    case 100: return receive_packet_city_name_suggestion_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_name_suggestion_req(struct connection *pc, const struct packet_city_name_suggestion_req *packet)
+int send_packet_city_name_suggestion_req(struct connection *pconn, const struct packet_city_name_suggestion_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_name_suggestion_req from the server.");
   }
-  ensure_valid_variant_packet_city_name_suggestion_req(pc);
+  ensure_valid_variant_packet_city_name_suggestion_req(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ]) {
-    case 100: return send_packet_city_name_suggestion_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_REQ]) {
+    case 100: return send_packet_city_name_suggestion_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_name_suggestion_req(struct connection *pc, int unit_id)
+int dsend_packet_city_name_suggestion_req(struct connection *pconn, int unit_id)
 {
   struct packet_city_name_suggestion_req packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_city_name_suggestion_req(pc, real_packet);
+
+  return send_packet_city_name_suggestion_req(pconn, real_packet);
 }
 
 #define hash_packet_city_name_suggestion_info_100 hash_const
@@ -9661,11 +9660,11 @@ int dsend_packet_city_name_suggestion_req(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_city_name_suggestion_info_100_fields, 2);
 
-static struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_info_100(struct connection *pc, enum packet_type type)
+static struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_name_suggestion_info_100_fields fields;
   struct packet_city_name_suggestion_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_name_suggestion_info *clone;
   RECEIVE_PACKET_START(packet_city_name_suggestion_info, real_packet);
 
@@ -9686,7 +9685,7 @@ static struct packet_city_name_suggestion_info *receive_packet_city_name_suggest
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -9705,13 +9704,13 @@ static struct packet_city_name_suggestion_info *receive_packet_city_name_suggest
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_name_suggestion_info_100(struct connection *pc, const struct packet_city_name_suggestion_info *packet)
+static int send_packet_city_name_suggestion_info_100(struct connection *pconn, const struct packet_city_name_suggestion_info *packet)
 {
   const struct packet_city_name_suggestion_info *real_packet = packet;
   packet_city_name_suggestion_info_100_fields fields;
   struct packet_city_name_suggestion_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_NAME_SUGGESTION_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_NAME_SUGGESTION_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_NAME_SUGGESTION_INFO);
 
@@ -9761,11 +9760,11 @@ static int send_packet_city_name_suggestion_info_100(struct connection *pc, cons
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_name_suggestion_info(struct connection *pc)
+static void ensure_valid_variant_packet_city_name_suggestion_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO] != -1) {
     return;
   }
 
@@ -9775,64 +9774,64 @@ static void ensure_valid_variant_packet_city_name_suggestion_info(struct connect
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO] = variant;
+  pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO] = variant;
 }
 
-struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_info(struct connection *pc, enum packet_type type)
+struct packet_city_name_suggestion_info *receive_packet_city_name_suggestion_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_name_suggestion_info at the server.");
   }
-  ensure_valid_variant_packet_city_name_suggestion_info(pc);
+  ensure_valid_variant_packet_city_name_suggestion_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO]) {
-    case 100: return receive_packet_city_name_suggestion_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO]) {
+    case 100: return receive_packet_city_name_suggestion_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_name_suggestion_info(struct connection *pc, const struct packet_city_name_suggestion_info *packet)
+int send_packet_city_name_suggestion_info(struct connection *pconn, const struct packet_city_name_suggestion_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_city_name_suggestion_info from the client.");
   }
-  ensure_valid_variant_packet_city_name_suggestion_info(pc);
+  ensure_valid_variant_packet_city_name_suggestion_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO]) {
-    case 100: return send_packet_city_name_suggestion_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_NAME_SUGGESTION_INFO]) {
+    case 100: return send_packet_city_name_suggestion_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_city_name_suggestion_info(struct conn_list *dest, const struct packet_city_name_suggestion_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_city_name_suggestion_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_city_name_suggestion_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_city_name_suggestion_info(struct connection *pc, int unit_id, const char *name)
+int dsend_packet_city_name_suggestion_info(struct connection *pconn, int unit_id, const char *name)
 {
   struct packet_city_name_suggestion_info packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   sz_strlcpy(real_packet->name, name);
-  
-  return send_packet_city_name_suggestion_info(pc, real_packet);
+
+  return send_packet_city_name_suggestion_info(pconn, real_packet);
 }
 
 void dlsend_packet_city_name_suggestion_info(struct conn_list *dest, int unit_id, const char *name)
@@ -9841,7 +9840,7 @@ void dlsend_packet_city_name_suggestion_info(struct conn_list *dest, int unit_id
 
   real_packet->unit_id = unit_id;
   sz_strlcpy(real_packet->name, name);
-  
+
   lsend_packet_city_name_suggestion_info(dest, real_packet);
 }
 
@@ -9851,11 +9850,11 @@ void dlsend_packet_city_name_suggestion_info(struct conn_list *dest, int unit_id
 
 BV_DEFINE(packet_city_sabotage_list_100_fields, 3);
 
-static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(struct connection *pc, enum packet_type type)
+static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_sabotage_list_100_fields fields;
   struct packet_city_sabotage_list *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_sabotage_list *clone;
   RECEIVE_PACKET_START(packet_city_sabotage_list, real_packet);
 
@@ -9876,7 +9875,7 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(s
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->diplomat_id = readin;
     }
@@ -9884,7 +9883,7 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(s
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -9903,13 +9902,13 @@ static struct packet_city_sabotage_list *receive_packet_city_sabotage_list_100(s
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_sabotage_list_100(struct connection *pc, const struct packet_city_sabotage_list *packet)
+static int send_packet_city_sabotage_list_100(struct connection *pconn, const struct packet_city_sabotage_list *packet)
 {
   const struct packet_city_sabotage_list *real_packet = packet;
   packet_city_sabotage_list_100_fields fields;
   struct packet_city_sabotage_list *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_SABOTAGE_LIST];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_SABOTAGE_LIST];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_SABOTAGE_LIST);
 
@@ -9966,11 +9965,11 @@ static int send_packet_city_sabotage_list_100(struct connection *pc, const struc
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_sabotage_list(struct connection *pc)
+static void ensure_valid_variant_packet_city_sabotage_list(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_SABOTAGE_LIST] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST] != -1) {
     return;
   }
 
@@ -9980,53 +9979,53 @@ static void ensure_valid_variant_packet_city_sabotage_list(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_SABOTAGE_LIST] = variant;
+  pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST] = variant;
 }
 
-struct packet_city_sabotage_list *receive_packet_city_sabotage_list(struct connection *pc, enum packet_type type)
+struct packet_city_sabotage_list *receive_packet_city_sabotage_list(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_sabotage_list at the server.");
   }
-  ensure_valid_variant_packet_city_sabotage_list(pc);
+  ensure_valid_variant_packet_city_sabotage_list(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SABOTAGE_LIST]) {
-    case 100: return receive_packet_city_sabotage_list_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST]) {
+    case 100: return receive_packet_city_sabotage_list_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_sabotage_list(struct connection *pc, const struct packet_city_sabotage_list *packet)
+int send_packet_city_sabotage_list(struct connection *pconn, const struct packet_city_sabotage_list *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_city_sabotage_list from the client.");
   }
-  ensure_valid_variant_packet_city_sabotage_list(pc);
+  ensure_valid_variant_packet_city_sabotage_list(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SABOTAGE_LIST]) {
-    case 100: return send_packet_city_sabotage_list_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_SABOTAGE_LIST]) {
+    case 100: return send_packet_city_sabotage_list_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_city_sabotage_list(struct conn_list *dest, const struct packet_city_sabotage_list *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_city_sabotage_list(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_city_sabotage_list(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -10036,11 +10035,11 @@ void lsend_packet_city_sabotage_list(struct conn_list *dest, const struct packet
 
 BV_DEFINE(packet_player_remove_100_fields, 1);
 
-static struct packet_player_remove *receive_packet_player_remove_100(struct connection *pc, enum packet_type type)
+static struct packet_player_remove *receive_packet_player_remove_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_remove_100_fields fields;
   struct packet_player_remove *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_remove *clone;
   RECEIVE_PACKET_START(packet_player_remove, real_packet);
 
@@ -10061,7 +10060,7 @@ static struct packet_player_remove *receive_packet_player_remove_100(struct conn
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->player_id = readin;
     }
@@ -10077,13 +10076,13 @@ static struct packet_player_remove *receive_packet_player_remove_100(struct conn
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_remove_100(struct connection *pc, const struct packet_player_remove *packet)
+static int send_packet_player_remove_100(struct connection *pconn, const struct packet_player_remove *packet)
 {
   const struct packet_player_remove *real_packet = packet;
   packet_player_remove_100_fields fields;
   struct packet_player_remove *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_REMOVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_REMOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_REMOVE);
 
@@ -10126,11 +10125,11 @@ static int send_packet_player_remove_100(struct connection *pc, const struct pac
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_remove(struct connection *pc)
+static void ensure_valid_variant_packet_player_remove(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_REMOVE] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_REMOVE] != -1) {
     return;
   }
 
@@ -10140,63 +10139,63 @@ static void ensure_valid_variant_packet_player_remove(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_REMOVE] = variant;
+  pconn->phs.variant[PACKET_PLAYER_REMOVE] = variant;
 }
 
-struct packet_player_remove *receive_packet_player_remove(struct connection *pc, enum packet_type type)
+struct packet_player_remove *receive_packet_player_remove(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_remove at the server.");
   }
-  ensure_valid_variant_packet_player_remove(pc);
+  ensure_valid_variant_packet_player_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_REMOVE]) {
-    case 100: return receive_packet_player_remove_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_REMOVE]) {
+    case 100: return receive_packet_player_remove_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_remove(struct connection *pc, const struct packet_player_remove *packet)
+int send_packet_player_remove(struct connection *pconn, const struct packet_player_remove *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_player_remove from the client.");
   }
-  ensure_valid_variant_packet_player_remove(pc);
+  ensure_valid_variant_packet_player_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_REMOVE]) {
-    case 100: return send_packet_player_remove_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_REMOVE]) {
+    case 100: return send_packet_player_remove_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_player_remove(struct conn_list *dest, const struct packet_player_remove *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_player_remove(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_player_remove(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_player_remove(struct connection *pc, int player_id)
+int dsend_packet_player_remove(struct connection *pconn, int player_id)
 {
   struct packet_player_remove packet, *real_packet = &packet;
 
   real_packet->player_id = player_id;
-  
-  return send_packet_player_remove(pc, real_packet);
+
+  return send_packet_player_remove(pconn, real_packet);
 }
 
 void dlsend_packet_player_remove(struct conn_list *dest, int player_id)
@@ -10204,7 +10203,7 @@ void dlsend_packet_player_remove(struct conn_list *dest, int player_id)
   struct packet_player_remove packet, *real_packet = &packet;
 
   real_packet->player_id = player_id;
-  
+
   lsend_packet_player_remove(dest, real_packet);
 }
 
@@ -10231,18 +10230,18 @@ static int cmp_packet_player_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_100_fields, 32);
 
-static struct packet_player_info *receive_packet_player_info_100(struct connection *pc, enum packet_type type)
+static struct packet_player_info *receive_packet_player_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_info_100_fields fields;
   struct packet_player_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->playerno = readin;
   }
@@ -10273,7 +10272,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government = readin;
     }
@@ -10281,7 +10280,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->target_government = readin;
     }
@@ -10289,7 +10288,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->embassy = readin;
     }
@@ -10297,7 +10296,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_style = readin;
     }
@@ -10305,7 +10304,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation = readin;
     }
@@ -10313,7 +10312,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->team = readin;
     }
@@ -10322,7 +10321,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->nturns_idle = readin;
     }
@@ -10331,16 +10330,16 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->reputation = readin;
     }
   }
   if (BV_ISSET(fields, 13)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_get_diplstate(&din, &real_packet->diplstates[i]);
       }
@@ -10349,7 +10348,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gold = readin;
     }
@@ -10357,7 +10356,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tax = readin;
     }
@@ -10365,7 +10364,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->science = readin;
     }
@@ -10373,7 +10372,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->luxury = readin;
     }
@@ -10381,7 +10380,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->bulbs_last_turn = readin;
     }
@@ -10389,7 +10388,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->bulbs_researched = readin;
     }
@@ -10397,7 +10396,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->techs_researched = readin;
     }
@@ -10405,7 +10404,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->researching = readin;
     }
@@ -10413,7 +10412,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->researching_cost = readin;
     }
@@ -10421,7 +10420,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->future_tech = readin;
     }
@@ -10429,7 +10428,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_goal = readin;
     }
@@ -10438,7 +10437,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->revolution_finishes = readin;
     }
@@ -10447,7 +10446,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->barbarian_type = readin;
     }
@@ -10455,7 +10454,7 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   if (BV_ISSET(fields, 29)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gives_shared_vision = readin;
     }
@@ -10464,14 +10463,14 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 31)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
     }
@@ -10489,13 +10488,13 @@ static struct packet_player_info *receive_packet_player_info_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_100(struct connection *pc, const struct packet_player_info *packet)
+static int send_packet_player_info_100(struct connection *pconn, const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_100_fields fields;
   struct packet_player_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
@@ -10705,14 +10704,14 @@ static int send_packet_player_info_100(struct connection *pc, const struct packe
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 13)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_diplstate(&dout, &real_packet->diplstates[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 14)) {
     dio_put_uint32(&dout, real_packet->gold);
@@ -10762,14 +10761,14 @@ static int send_packet_player_info_100(struct connection *pc, const struct packe
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 31)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_sint16(&dout, real_packet->love[i]);
       }
-    } 
+    }
   }
 
 
@@ -10807,18 +10806,18 @@ static int cmp_packet_player_info_101(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_101_fields, 31);
 
-static struct packet_player_info *receive_packet_player_info_101(struct connection *pc, enum packet_type type)
+static struct packet_player_info *receive_packet_player_info_101(struct connection *pconn, enum packet_type type)
 {
   packet_player_info_101_fields fields;
   struct packet_player_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->playerno = readin;
   }
@@ -10849,7 +10848,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government = readin;
     }
@@ -10857,7 +10856,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->target_government = readin;
     }
@@ -10865,7 +10864,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->embassy = readin;
     }
@@ -10873,7 +10872,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_style = readin;
     }
@@ -10881,7 +10880,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation = readin;
     }
@@ -10889,7 +10888,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->team = readin;
     }
@@ -10898,7 +10897,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->nturns_idle = readin;
     }
@@ -10907,16 +10906,16 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->reputation = readin;
     }
   }
   if (BV_ISSET(fields, 13)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_get_diplstate(&din, &real_packet->diplstates[i]);
       }
@@ -10925,7 +10924,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gold = readin;
     }
@@ -10933,7 +10932,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tax = readin;
     }
@@ -10941,7 +10940,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->science = readin;
     }
@@ -10949,7 +10948,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->luxury = readin;
     }
@@ -10957,7 +10956,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->bulbs_last_turn = readin;
     }
@@ -10965,7 +10964,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->bulbs_researched = readin;
     }
@@ -10973,7 +10972,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->techs_researched = readin;
     }
@@ -10981,7 +10980,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->researching = readin;
     }
@@ -10989,7 +10988,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->future_tech = readin;
     }
@@ -10997,7 +10996,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_goal = readin;
     }
@@ -11006,7 +11005,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->revolution_finishes = readin;
     }
@@ -11015,7 +11014,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->barbarian_type = readin;
     }
@@ -11023,7 +11022,7 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gives_shared_vision = readin;
     }
@@ -11032,14 +11031,14 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 30)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
     }
@@ -11057,13 +11056,13 @@ static struct packet_player_info *receive_packet_player_info_101(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_101(struct connection *pc, const struct packet_player_info *packet)
+static int send_packet_player_info_101(struct connection *pconn, const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_101_fields fields;
   struct packet_player_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
@@ -11269,14 +11268,14 @@ static int send_packet_player_info_101(struct connection *pc, const struct packe
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 13)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_diplstate(&dout, &real_packet->diplstates[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 14)) {
     dio_put_uint32(&dout, real_packet->gold);
@@ -11323,14 +11322,14 @@ static int send_packet_player_info_101(struct connection *pc, const struct packe
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 30)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_sint16(&dout, real_packet->love[i]);
       }
-    } 
+    }
   }
 
 
@@ -11368,18 +11367,18 @@ static int cmp_packet_player_info_102(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_102_fields, 31);
 
-static struct packet_player_info *receive_packet_player_info_102(struct connection *pc, enum packet_type type)
+static struct packet_player_info *receive_packet_player_info_102(struct connection *pconn, enum packet_type type)
 {
   packet_player_info_102_fields fields;
   struct packet_player_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->playerno = readin;
   }
@@ -11407,7 +11406,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government = readin;
     }
@@ -11415,7 +11414,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->target_government = readin;
     }
@@ -11423,7 +11422,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->embassy = readin;
     }
@@ -11431,7 +11430,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_style = readin;
     }
@@ -11439,7 +11438,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation = readin;
     }
@@ -11447,7 +11446,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->team = readin;
     }
@@ -11456,7 +11455,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->nturns_idle = readin;
     }
@@ -11465,16 +11464,16 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->reputation = readin;
     }
   }
   if (BV_ISSET(fields, 12)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_get_diplstate(&din, &real_packet->diplstates[i]);
       }
@@ -11483,7 +11482,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gold = readin;
     }
@@ -11491,7 +11490,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tax = readin;
     }
@@ -11499,7 +11498,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->science = readin;
     }
@@ -11507,7 +11506,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->luxury = readin;
     }
@@ -11515,7 +11514,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->bulbs_last_turn = readin;
     }
@@ -11523,7 +11522,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->bulbs_researched = readin;
     }
@@ -11531,7 +11530,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->techs_researched = readin;
     }
@@ -11539,7 +11538,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->researching = readin;
     }
@@ -11547,7 +11546,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->researching_cost = readin;
     }
@@ -11555,7 +11554,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->future_tech = readin;
     }
@@ -11563,7 +11562,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_goal = readin;
     }
@@ -11572,7 +11571,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->revolution_finishes = readin;
     }
@@ -11581,7 +11580,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->barbarian_type = readin;
     }
@@ -11589,7 +11588,7 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gives_shared_vision = readin;
     }
@@ -11598,14 +11597,14 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 30)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
     }
@@ -11623,13 +11622,13 @@ static struct packet_player_info *receive_packet_player_info_102(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_102(struct connection *pc, const struct packet_player_info *packet)
+static int send_packet_player_info_102(struct connection *pconn, const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_102_fields fields;
   struct packet_player_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
@@ -11832,14 +11831,14 @@ static int send_packet_player_info_102(struct connection *pc, const struct packe
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 12)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_diplstate(&dout, &real_packet->diplstates[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 13)) {
     dio_put_uint32(&dout, real_packet->gold);
@@ -11889,14 +11888,14 @@ static int send_packet_player_info_102(struct connection *pc, const struct packe
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 30)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_sint16(&dout, real_packet->love[i]);
       }
-    } 
+    }
   }
 
 
@@ -11934,18 +11933,18 @@ static int cmp_packet_player_info_103(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_player_info_103_fields, 30);
 
-static struct packet_player_info *receive_packet_player_info_103(struct connection *pc, enum packet_type type)
+static struct packet_player_info *receive_packet_player_info_103(struct connection *pconn, enum packet_type type)
 {
   packet_player_info_103_fields fields;
   struct packet_player_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info *clone;
   RECEIVE_PACKET_START(packet_player_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->playerno = readin;
   }
@@ -11973,7 +11972,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government = readin;
     }
@@ -11981,7 +11980,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->target_government = readin;
     }
@@ -11989,7 +11988,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->embassy = readin;
     }
@@ -11997,7 +11996,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_style = readin;
     }
@@ -12005,7 +12004,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation = readin;
     }
@@ -12013,7 +12012,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->team = readin;
     }
@@ -12022,7 +12021,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->nturns_idle = readin;
     }
@@ -12031,16 +12030,16 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->reputation = readin;
     }
   }
   if (BV_ISSET(fields, 12)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_get_diplstate(&din, &real_packet->diplstates[i]);
       }
@@ -12049,7 +12048,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gold = readin;
     }
@@ -12057,7 +12056,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tax = readin;
     }
@@ -12065,7 +12064,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->science = readin;
     }
@@ -12073,7 +12072,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->luxury = readin;
     }
@@ -12081,7 +12080,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->bulbs_last_turn = readin;
     }
@@ -12089,7 +12088,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->bulbs_researched = readin;
     }
@@ -12097,7 +12096,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->techs_researched = readin;
     }
@@ -12105,7 +12104,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->researching = readin;
     }
@@ -12113,7 +12112,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->future_tech = readin;
     }
@@ -12121,7 +12120,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_goal = readin;
     }
@@ -12130,7 +12129,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->revolution_finishes = readin;
     }
@@ -12139,7 +12138,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->barbarian_type = readin;
     }
@@ -12147,7 +12146,7 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->gives_shared_vision = readin;
     }
@@ -12156,14 +12155,14 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
     dio_get_bit_string(&din, real_packet->inventions, sizeof(real_packet->inventions));
   }
   if (BV_ISSET(fields, 29)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->love[i] = readin;
     }
@@ -12181,13 +12180,13 @@ static struct packet_player_info *receive_packet_player_info_103(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_103(struct connection *pc, const struct packet_player_info *packet)
+static int send_packet_player_info_103(struct connection *pconn, const struct packet_player_info *packet)
 {
   const struct packet_player_info *real_packet = packet;
   packet_player_info_103_fields fields;
   struct packet_player_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_INFO);
 
@@ -12386,14 +12385,14 @@ static int send_packet_player_info_103(struct connection *pc, const struct packe
     dio_put_uint32(&dout, real_packet->reputation);
   }
   if (BV_ISSET(fields, 12)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_diplstate(&dout, &real_packet->diplstates[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 13)) {
     dio_put_uint32(&dout, real_packet->gold);
@@ -12440,14 +12439,14 @@ static int send_packet_player_info_103(struct connection *pc, const struct packe
     dio_put_bit_string(&dout, real_packet->inventions);
   }
   if (BV_ISSET(fields, 29)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
         dio_put_sint16(&dout, real_packet->love[i]);
       }
-    } 
+    }
   }
 
 
@@ -12462,93 +12461,93 @@ static int send_packet_player_info_103(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_info(struct connection *pc)
+static void ensure_valid_variant_packet_player_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_INFO] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("username_info", pc->capability) && has_capability("username_info", our_capability)) && (has_capability("exttechleakage", pc->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if((has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability)) && (has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
     variant = 100;
-  } else if((has_capability("username_info", pc->capability) && has_capability("username_info", our_capability)) && !(has_capability("exttechleakage", pc->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if((has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability)) && !(has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
     variant = 101;
-  } else if((has_capability("exttechleakage", pc->capability) && has_capability("exttechleakage", our_capability)) && !(has_capability("username_info", pc->capability) && has_capability("username_info", our_capability))) {
+  } else if((has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability)) && !(has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability))) {
     variant = 102;
-  } else if(!(has_capability("username_info", pc->capability) && has_capability("username_info", our_capability)) && !(has_capability("exttechleakage", pc->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if(!(has_capability("username_info", pconn->capability) && has_capability("username_info", our_capability)) && !(has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
     variant = 103;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_INFO] = variant;
+  pconn->phs.variant[PACKET_PLAYER_INFO] = variant;
 }
 
-struct packet_player_info *receive_packet_player_info(struct connection *pc, enum packet_type type)
+struct packet_player_info *receive_packet_player_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_info at the server.");
   }
-  ensure_valid_variant_packet_player_info(pc);
+  ensure_valid_variant_packet_player_info(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_INFO]) {
-    case 100: return receive_packet_player_info_100(pc, type);
-    case 101: return receive_packet_player_info_101(pc, type);
-    case 102: return receive_packet_player_info_102(pc, type);
-    case 103: return receive_packet_player_info_103(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_INFO]) {
+    case 100: return receive_packet_player_info_100(pconn, type);
+    case 101: return receive_packet_player_info_101(pconn, type);
+    case 102: return receive_packet_player_info_102(pconn, type);
+    case 103: return receive_packet_player_info_103(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_info(struct connection *pc, const struct packet_player_info *packet)
+int send_packet_player_info(struct connection *pconn, const struct packet_player_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_player_info from the client.");
   }
-  ensure_valid_variant_packet_player_info(pc);
+  ensure_valid_variant_packet_player_info(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_INFO]) {
-    case 100: return send_packet_player_info_100(pc, packet);
-    case 101: return send_packet_player_info_101(pc, packet);
-    case 102: return send_packet_player_info_102(pc, packet);
-    case 103: return send_packet_player_info_103(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_INFO]) {
+    case 100: return send_packet_player_info_100(pconn, packet);
+    case 101: return send_packet_player_info_101(pconn, packet);
+    case 102: return send_packet_player_info_102(pconn, packet);
+    case 103: return send_packet_player_info_103(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-static struct packet_player_turn_done *receive_packet_player_turn_done_100(struct connection *pc, enum packet_type type)
+static struct packet_player_turn_done *receive_packet_player_turn_done_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_player_turn_done, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_turn_done_100(struct connection *pc)
+static int send_packet_player_turn_done_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_PLAYER_TURN_DONE);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_turn_done(struct connection *pc)
+static void ensure_valid_variant_packet_player_turn_done(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_TURN_DONE] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_TURN_DONE] != -1) {
     return;
   }
 
@@ -12558,45 +12557,45 @@ static void ensure_valid_variant_packet_player_turn_done(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_TURN_DONE] = variant;
+  pconn->phs.variant[PACKET_PLAYER_TURN_DONE] = variant;
 }
 
-struct packet_player_turn_done *receive_packet_player_turn_done(struct connection *pc, enum packet_type type)
+struct packet_player_turn_done *receive_packet_player_turn_done(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_turn_done at the client.");
   }
-  ensure_valid_variant_packet_player_turn_done(pc);
+  ensure_valid_variant_packet_player_turn_done(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_TURN_DONE]) {
-    case 100: return receive_packet_player_turn_done_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_TURN_DONE]) {
+    case 100: return receive_packet_player_turn_done_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_turn_done(struct connection *pc)
+int send_packet_player_turn_done(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_turn_done from the server.");
   }
-  ensure_valid_variant_packet_player_turn_done(pc);
+  ensure_valid_variant_packet_player_turn_done(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_TURN_DONE]) {
-    case 100: return send_packet_player_turn_done_100(pc);
+  switch(pconn->phs.variant[PACKET_PLAYER_TURN_DONE]) {
+    case 100: return send_packet_player_turn_done_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
@@ -12607,11 +12606,11 @@ int send_packet_player_turn_done(struct connection *pc)
 
 BV_DEFINE(packet_player_rates_100_fields, 3);
 
-static struct packet_player_rates *receive_packet_player_rates_100(struct connection *pc, enum packet_type type)
+static struct packet_player_rates *receive_packet_player_rates_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_rates_100_fields fields;
   struct packet_player_rates *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_rates *clone;
   RECEIVE_PACKET_START(packet_player_rates, real_packet);
 
@@ -12632,7 +12631,7 @@ static struct packet_player_rates *receive_packet_player_rates_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tax = readin;
     }
@@ -12640,7 +12639,7 @@ static struct packet_player_rates *receive_packet_player_rates_100(struct connec
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->luxury = readin;
     }
@@ -12648,7 +12647,7 @@ static struct packet_player_rates *receive_packet_player_rates_100(struct connec
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->science = readin;
     }
@@ -12664,13 +12663,13 @@ static struct packet_player_rates *receive_packet_player_rates_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_rates_100(struct connection *pc, const struct packet_player_rates *packet)
+static int send_packet_player_rates_100(struct connection *pconn, const struct packet_player_rates *packet)
 {
   const struct packet_player_rates *real_packet = packet;
   packet_player_rates_100_fields fields;
   struct packet_player_rates *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_RATES];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_RATES];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_RATES);
 
@@ -12727,11 +12726,11 @@ static int send_packet_player_rates_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_rates(struct connection *pc)
+static void ensure_valid_variant_packet_player_rates(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_RATES] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_RATES] != -1) {
     return;
   }
 
@@ -12741,58 +12740,58 @@ static void ensure_valid_variant_packet_player_rates(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_RATES] = variant;
+  pconn->phs.variant[PACKET_PLAYER_RATES] = variant;
 }
 
-struct packet_player_rates *receive_packet_player_rates(struct connection *pc, enum packet_type type)
+struct packet_player_rates *receive_packet_player_rates(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_rates at the client.");
   }
-  ensure_valid_variant_packet_player_rates(pc);
+  ensure_valid_variant_packet_player_rates(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_RATES]) {
-    case 100: return receive_packet_player_rates_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_RATES]) {
+    case 100: return receive_packet_player_rates_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_rates(struct connection *pc, const struct packet_player_rates *packet)
+int send_packet_player_rates(struct connection *pconn, const struct packet_player_rates *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_rates from the server.");
   }
-  ensure_valid_variant_packet_player_rates(pc);
+  ensure_valid_variant_packet_player_rates(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_RATES]) {
-    case 100: return send_packet_player_rates_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_RATES]) {
+    case 100: return send_packet_player_rates_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_player_rates(struct connection *pc, int tax, int luxury, int science)
+int dsend_packet_player_rates(struct connection *pconn, int tax, int luxury, int science)
 {
   struct packet_player_rates packet, *real_packet = &packet;
 
   real_packet->tax = tax;
   real_packet->luxury = luxury;
   real_packet->science = science;
-  
-  return send_packet_player_rates(pc, real_packet);
+
+  return send_packet_player_rates(pconn, real_packet);
 }
 
 #define hash_packet_player_change_government_100 hash_const
@@ -12801,11 +12800,11 @@ int dsend_packet_player_rates(struct connection *pc, int tax, int luxury, int sc
 
 BV_DEFINE(packet_player_change_government_100_fields, 1);
 
-static struct packet_player_change_government *receive_packet_player_change_government_100(struct connection *pc, enum packet_type type)
+static struct packet_player_change_government *receive_packet_player_change_government_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_change_government_100_fields fields;
   struct packet_player_change_government *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_change_government *clone;
   RECEIVE_PACKET_START(packet_player_change_government, real_packet);
 
@@ -12826,7 +12825,7 @@ static struct packet_player_change_government *receive_packet_player_change_gove
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government = readin;
     }
@@ -12842,13 +12841,13 @@ static struct packet_player_change_government *receive_packet_player_change_gove
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_change_government_100(struct connection *pc, const struct packet_player_change_government *packet)
+static int send_packet_player_change_government_100(struct connection *pconn, const struct packet_player_change_government *packet)
 {
   const struct packet_player_change_government *real_packet = packet;
   packet_player_change_government_100_fields fields;
   struct packet_player_change_government *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_CHANGE_GOVERNMENT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_CHANGE_GOVERNMENT];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_CHANGE_GOVERNMENT);
 
@@ -12891,11 +12890,11 @@ static int send_packet_player_change_government_100(struct connection *pc, const
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_change_government(struct connection *pc)
+static void ensure_valid_variant_packet_player_change_government(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT] != -1) {
     return;
   }
 
@@ -12905,56 +12904,56 @@ static void ensure_valid_variant_packet_player_change_government(struct connecti
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT] = variant;
+  pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT] = variant;
 }
 
-struct packet_player_change_government *receive_packet_player_change_government(struct connection *pc, enum packet_type type)
+struct packet_player_change_government *receive_packet_player_change_government(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_change_government at the client.");
   }
-  ensure_valid_variant_packet_player_change_government(pc);
+  ensure_valid_variant_packet_player_change_government(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT]) {
-    case 100: return receive_packet_player_change_government_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT]) {
+    case 100: return receive_packet_player_change_government_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_change_government(struct connection *pc, const struct packet_player_change_government *packet)
+int send_packet_player_change_government(struct connection *pconn, const struct packet_player_change_government *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_change_government from the server.");
   }
-  ensure_valid_variant_packet_player_change_government(pc);
+  ensure_valid_variant_packet_player_change_government(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT]) {
-    case 100: return send_packet_player_change_government_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_CHANGE_GOVERNMENT]) {
+    case 100: return send_packet_player_change_government_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_player_change_government(struct connection *pc, int government)
+int dsend_packet_player_change_government(struct connection *pconn, int government)
 {
   struct packet_player_change_government packet, *real_packet = &packet;
 
   real_packet->government = government;
-  
-  return send_packet_player_change_government(pc, real_packet);
+
+  return send_packet_player_change_government(pconn, real_packet);
 }
 
 #define hash_packet_player_research_100 hash_const
@@ -12963,11 +12962,11 @@ int dsend_packet_player_change_government(struct connection *pc, int government)
 
 BV_DEFINE(packet_player_research_100_fields, 1);
 
-static struct packet_player_research *receive_packet_player_research_100(struct connection *pc, enum packet_type type)
+static struct packet_player_research *receive_packet_player_research_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_research_100_fields fields;
   struct packet_player_research *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_research *clone;
   RECEIVE_PACKET_START(packet_player_research, real_packet);
 
@@ -12988,7 +12987,7 @@ static struct packet_player_research *receive_packet_player_research_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech = readin;
     }
@@ -13004,13 +13003,13 @@ static struct packet_player_research *receive_packet_player_research_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_research_100(struct connection *pc, const struct packet_player_research *packet)
+static int send_packet_player_research_100(struct connection *pconn, const struct packet_player_research *packet)
 {
   const struct packet_player_research *real_packet = packet;
   packet_player_research_100_fields fields;
   struct packet_player_research *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_RESEARCH];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_RESEARCH];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_RESEARCH);
 
@@ -13053,11 +13052,11 @@ static int send_packet_player_research_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_research(struct connection *pc)
+static void ensure_valid_variant_packet_player_research(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_RESEARCH] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_RESEARCH] != -1) {
     return;
   }
 
@@ -13067,56 +13066,56 @@ static void ensure_valid_variant_packet_player_research(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_RESEARCH] = variant;
+  pconn->phs.variant[PACKET_PLAYER_RESEARCH] = variant;
 }
 
-struct packet_player_research *receive_packet_player_research(struct connection *pc, enum packet_type type)
+struct packet_player_research *receive_packet_player_research(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_research at the client.");
   }
-  ensure_valid_variant_packet_player_research(pc);
+  ensure_valid_variant_packet_player_research(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_RESEARCH]) {
-    case 100: return receive_packet_player_research_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_RESEARCH]) {
+    case 100: return receive_packet_player_research_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_research(struct connection *pc, const struct packet_player_research *packet)
+int send_packet_player_research(struct connection *pconn, const struct packet_player_research *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_research from the server.");
   }
-  ensure_valid_variant_packet_player_research(pc);
+  ensure_valid_variant_packet_player_research(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_RESEARCH]) {
-    case 100: return send_packet_player_research_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_RESEARCH]) {
+    case 100: return send_packet_player_research_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_player_research(struct connection *pc, int tech)
+int dsend_packet_player_research(struct connection *pconn, int tech)
 {
   struct packet_player_research packet, *real_packet = &packet;
 
   real_packet->tech = tech;
-  
-  return send_packet_player_research(pc, real_packet);
+
+  return send_packet_player_research(pconn, real_packet);
 }
 
 #define hash_packet_player_tech_goal_100 hash_const
@@ -13125,11 +13124,11 @@ int dsend_packet_player_research(struct connection *pc, int tech)
 
 BV_DEFINE(packet_player_tech_goal_100_fields, 1);
 
-static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(struct connection *pc, enum packet_type type)
+static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_tech_goal_100_fields fields;
   struct packet_player_tech_goal *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_tech_goal *clone;
   RECEIVE_PACKET_START(packet_player_tech_goal, real_packet);
 
@@ -13150,7 +13149,7 @@ static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech = readin;
     }
@@ -13166,13 +13165,13 @@ static struct packet_player_tech_goal *receive_packet_player_tech_goal_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_tech_goal_100(struct connection *pc, const struct packet_player_tech_goal *packet)
+static int send_packet_player_tech_goal_100(struct connection *pconn, const struct packet_player_tech_goal *packet)
 {
   const struct packet_player_tech_goal *real_packet = packet;
   packet_player_tech_goal_100_fields fields;
   struct packet_player_tech_goal *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_TECH_GOAL];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_TECH_GOAL];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_TECH_GOAL);
 
@@ -13215,11 +13214,11 @@ static int send_packet_player_tech_goal_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_tech_goal(struct connection *pc)
+static void ensure_valid_variant_packet_player_tech_goal(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_TECH_GOAL] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_TECH_GOAL] != -1) {
     return;
   }
 
@@ -13229,76 +13228,76 @@ static void ensure_valid_variant_packet_player_tech_goal(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_TECH_GOAL] = variant;
+  pconn->phs.variant[PACKET_PLAYER_TECH_GOAL] = variant;
 }
 
-struct packet_player_tech_goal *receive_packet_player_tech_goal(struct connection *pc, enum packet_type type)
+struct packet_player_tech_goal *receive_packet_player_tech_goal(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_tech_goal at the client.");
   }
-  ensure_valid_variant_packet_player_tech_goal(pc);
+  ensure_valid_variant_packet_player_tech_goal(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_TECH_GOAL]) {
-    case 100: return receive_packet_player_tech_goal_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_TECH_GOAL]) {
+    case 100: return receive_packet_player_tech_goal_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_tech_goal(struct connection *pc, const struct packet_player_tech_goal *packet)
+int send_packet_player_tech_goal(struct connection *pconn, const struct packet_player_tech_goal *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_tech_goal from the server.");
   }
-  ensure_valid_variant_packet_player_tech_goal(pc);
+  ensure_valid_variant_packet_player_tech_goal(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_TECH_GOAL]) {
-    case 100: return send_packet_player_tech_goal_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_TECH_GOAL]) {
+    case 100: return send_packet_player_tech_goal_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_player_tech_goal(struct connection *pc, int tech)
+int dsend_packet_player_tech_goal(struct connection *pconn, int tech)
 {
   struct packet_player_tech_goal packet, *real_packet = &packet;
 
   real_packet->tech = tech;
-  
-  return send_packet_player_tech_goal(pc, real_packet);
+
+  return send_packet_player_tech_goal(pconn, real_packet);
 }
 
-static struct packet_player_attribute_block *receive_packet_player_attribute_block_100(struct connection *pc, enum packet_type type)
+static struct packet_player_attribute_block *receive_packet_player_attribute_block_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_player_attribute_block, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_attribute_block_100(struct connection *pc)
+static int send_packet_player_attribute_block_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_PLAYER_ATTRIBUTE_BLOCK);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_attribute_block(struct connection *pc)
+static void ensure_valid_variant_packet_player_attribute_block(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK] != -1) {
     return;
   }
 
@@ -13308,45 +13307,45 @@ static void ensure_valid_variant_packet_player_attribute_block(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK] = variant;
+  pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK] = variant;
 }
 
-struct packet_player_attribute_block *receive_packet_player_attribute_block(struct connection *pc, enum packet_type type)
+struct packet_player_attribute_block *receive_packet_player_attribute_block(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_attribute_block at the client.");
   }
-  ensure_valid_variant_packet_player_attribute_block(pc);
+  ensure_valid_variant_packet_player_attribute_block(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK]) {
-    case 100: return receive_packet_player_attribute_block_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK]) {
+    case 100: return receive_packet_player_attribute_block_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_attribute_block(struct connection *pc)
+int send_packet_player_attribute_block(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_attribute_block from the server.");
   }
-  ensure_valid_variant_packet_player_attribute_block(pc);
+  ensure_valid_variant_packet_player_attribute_block(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK]) {
-    case 100: return send_packet_player_attribute_block_100(pc);
+  switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_BLOCK]) {
+    case 100: return send_packet_player_attribute_block_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
@@ -13357,11 +13356,11 @@ int send_packet_player_attribute_block(struct connection *pc)
 
 BV_DEFINE(packet_player_attribute_chunk_100_fields, 4);
 
-static struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk_100(struct connection *pc, enum packet_type type)
+static struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_attribute_chunk_100_fields fields;
   struct packet_player_attribute_chunk *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_attribute_chunk *clone;
   RECEIVE_PACKET_START(packet_player_attribute_chunk, real_packet);
 
@@ -13382,7 +13381,7 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->offset = readin;
     }
@@ -13390,7 +13389,7 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->total_length = readin;
     }
@@ -13398,13 +13397,13 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->chunk_length = readin;
     }
   }
   if (BV_ISSET(fields, 3)) {
-    
+
       if(real_packet->chunk_length > ATTRIBUTE_CHUNK_SIZE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->chunk_length = ATTRIBUTE_CHUNK_SIZE;
@@ -13422,13 +13421,13 @@ static struct packet_player_attribute_chunk *receive_packet_player_attribute_chu
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_attribute_chunk_100(struct connection *pc, const struct packet_player_attribute_chunk *packet)
+static int send_packet_player_attribute_chunk_100(struct connection *pconn, const struct packet_player_attribute_chunk *packet)
 {
   const struct packet_player_attribute_chunk *real_packet = packet;
   packet_player_attribute_chunk_100_fields fields;
   struct packet_player_attribute_chunk *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_ATTRIBUTE_CHUNK];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_ATTRIBUTE_CHUNK];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_ATTRIBUTE_CHUNK);
 
@@ -13436,7 +13435,7 @@ static int send_packet_player_attribute_chunk_100(struct connection *pc, const s
     struct packet_player_attribute_chunk *tmp = fc_malloc(sizeof(*tmp));
 
     *tmp = *packet;
-    pre_send_packet_player_attribute_chunk(pc, tmp);
+    pre_send_packet_player_attribute_chunk(pconn, tmp);
     real_packet = tmp;
   }
 
@@ -13508,11 +13507,11 @@ static int send_packet_player_attribute_chunk_100(struct connection *pc, const s
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_attribute_chunk(struct connection *pc)
+static void ensure_valid_variant_packet_player_attribute_chunk(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK] != -1) {
     return;
   }
 
@@ -13522,39 +13521,39 @@ static void ensure_valid_variant_packet_player_attribute_chunk(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK] = variant;
+  pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK] = variant;
 }
 
-struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk(struct connection *pc, enum packet_type type)
+struct packet_player_attribute_chunk *receive_packet_player_attribute_chunk(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_player_attribute_chunk(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_player_attribute_chunk(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK]) {
-    case 100: return receive_packet_player_attribute_chunk_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK]) {
+    case 100: return receive_packet_player_attribute_chunk_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_attribute_chunk(struct connection *pc, const struct packet_player_attribute_chunk *packet)
+int send_packet_player_attribute_chunk(struct connection *pconn, const struct packet_player_attribute_chunk *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_player_attribute_chunk(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_player_attribute_chunk(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK]) {
-    case 100: return send_packet_player_attribute_chunk_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_ATTRIBUTE_CHUNK]) {
+    case 100: return send_packet_player_attribute_chunk_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -13565,11 +13564,11 @@ int send_packet_player_attribute_chunk(struct connection *pc, const struct packe
 
 BV_DEFINE(packet_unit_remove_100_fields, 1);
 
-static struct packet_unit_remove *receive_packet_unit_remove_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_remove *receive_packet_unit_remove_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_remove_100_fields fields;
   struct packet_unit_remove *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_remove *clone;
   RECEIVE_PACKET_START(packet_unit_remove, real_packet);
 
@@ -13590,7 +13589,7 @@ static struct packet_unit_remove *receive_packet_unit_remove_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -13606,13 +13605,13 @@ static struct packet_unit_remove *receive_packet_unit_remove_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_remove_100(struct connection *pc, const struct packet_unit_remove *packet)
+static int send_packet_unit_remove_100(struct connection *pconn, const struct packet_unit_remove *packet)
 {
   const struct packet_unit_remove *real_packet = packet;
   packet_unit_remove_100_fields fields;
   struct packet_unit_remove *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_REMOVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_REMOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_REMOVE);
 
@@ -13655,11 +13654,11 @@ static int send_packet_unit_remove_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_remove(struct connection *pc)
+static void ensure_valid_variant_packet_unit_remove(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_REMOVE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_REMOVE] != -1) {
     return;
   }
 
@@ -13669,63 +13668,63 @@ static void ensure_valid_variant_packet_unit_remove(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_REMOVE] = variant;
+  pconn->phs.variant[PACKET_UNIT_REMOVE] = variant;
 }
 
-struct packet_unit_remove *receive_packet_unit_remove(struct connection *pc, enum packet_type type)
+struct packet_unit_remove *receive_packet_unit_remove(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_remove at the server.");
   }
-  ensure_valid_variant_packet_unit_remove(pc);
+  ensure_valid_variant_packet_unit_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_REMOVE]) {
-    case 100: return receive_packet_unit_remove_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_REMOVE]) {
+    case 100: return receive_packet_unit_remove_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_remove(struct connection *pc, const struct packet_unit_remove *packet)
+int send_packet_unit_remove(struct connection *pconn, const struct packet_unit_remove *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_remove from the client.");
   }
-  ensure_valid_variant_packet_unit_remove(pc);
+  ensure_valid_variant_packet_unit_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_REMOVE]) {
-    case 100: return send_packet_unit_remove_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_REMOVE]) {
+    case 100: return send_packet_unit_remove_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_unit_remove(struct conn_list *dest, const struct packet_unit_remove *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_unit_remove(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_unit_remove(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_unit_remove(struct connection *pc, int unit_id)
+int dsend_packet_unit_remove(struct connection *pconn, int unit_id)
 {
   struct packet_unit_remove packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_remove(pc, real_packet);
+
+  return send_packet_unit_remove(pconn, real_packet);
 }
 
 void dlsend_packet_unit_remove(struct conn_list *dest, int unit_id)
@@ -13733,7 +13732,7 @@ void dlsend_packet_unit_remove(struct conn_list *dest, int unit_id)
   struct packet_unit_remove packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
+
   lsend_packet_unit_remove(dest, real_packet);
 }
 
@@ -13760,18 +13759,18 @@ static int cmp_packet_unit_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_unit_info_100_fields, 35);
 
-static struct packet_unit_info *receive_packet_unit_info_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_info *receive_packet_unit_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_info_100_fields fields;
   struct packet_unit_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_info *clone;
   RECEIVE_PACKET_START(packet_unit_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
@@ -13795,7 +13794,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -13803,7 +13802,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -13811,7 +13810,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -13819,7 +13818,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->homecity = readin;
     }
@@ -13827,7 +13826,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->veteran = readin;
     }
@@ -13840,7 +13839,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -13848,7 +13847,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->transported_by = readin;
     }
@@ -13856,7 +13855,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->movesleft = readin;
     }
@@ -13864,7 +13863,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->hp = readin;
     }
@@ -13872,7 +13871,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fuel = readin;
     }
@@ -13880,7 +13879,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity_count = readin;
     }
@@ -13888,7 +13887,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unhappiness = readin;
     }
@@ -13896,7 +13895,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep = readin;
     }
@@ -13904,7 +13903,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep_food = readin;
     }
@@ -13912,7 +13911,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep_gold = readin;
     }
@@ -13920,7 +13919,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->occupy = readin;
     }
@@ -13928,7 +13927,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->goto_dest_x = readin;
     }
@@ -13936,7 +13935,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->goto_dest_y = readin;
     }
@@ -13944,7 +13943,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->air_patrol_x = readin;
     }
@@ -13952,7 +13951,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->air_patrol_y = readin;
     }
@@ -13960,7 +13959,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity = readin;
     }
@@ -13968,7 +13967,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->activity_target = readin;
     }
@@ -13977,7 +13976,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->orders_length = readin;
     }
@@ -13985,7 +13984,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   if (BV_ISSET(fields, 29)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->orders_index = readin;
     }
@@ -13993,10 +13992,10 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   real_packet->orders_repeat = BV_ISSET(fields, 30);
   real_packet->orders_vigilant = BV_ISSET(fields, 31);
   if (BV_ISSET(fields, 32)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->orders_length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->orders_length = MAX_LEN_ROUTE;
@@ -14004,7 +14003,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
       for (i = 0; i < real_packet->orders_length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders[i] = readin;
     }
@@ -14012,10 +14011,10 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 33)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->orders_length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->orders_length = MAX_LEN_ROUTE;
@@ -14023,7 +14022,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
       for (i = 0; i < real_packet->orders_length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders_dirs[i] = readin;
     }
@@ -14031,10 +14030,10 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 34)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->orders_length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->orders_length = MAX_LEN_ROUTE;
@@ -14042,7 +14041,7 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
       for (i = 0; i < real_packet->orders_length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders_activities[i] = readin;
     }
@@ -14060,13 +14059,13 @@ static struct packet_unit_info *receive_packet_unit_info_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_info_100(struct connection *pc, const struct packet_unit_info *packet)
+static int send_packet_unit_info_100(struct connection *pconn, const struct packet_unit_info *packet)
 {
   const struct packet_unit_info *real_packet = packet;
   packet_unit_info_100_fields fields;
   struct packet_unit_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_INFO);
 
@@ -14347,34 +14346,34 @@ static int send_packet_unit_info_100(struct connection *pc, const struct packet_
   /* field 30 is folded into the header */
   /* field 31 is folded into the header */
   if (BV_ISSET(fields, 32)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->orders_length; i++) {
         dio_put_uint8(&dout, real_packet->orders[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 33)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->orders_length; i++) {
         dio_put_uint8(&dout, real_packet->orders_dirs[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 34)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->orders_length; i++) {
         dio_put_uint8(&dout, real_packet->orders_activities[i]);
       }
-    } 
+    }
   }
 
 
@@ -14412,18 +14411,18 @@ static int cmp_packet_unit_info_101(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_unit_info_101_fields, 33);
 
-static struct packet_unit_info *receive_packet_unit_info_101(struct connection *pc, enum packet_type type)
+static struct packet_unit_info *receive_packet_unit_info_101(struct connection *pconn, enum packet_type type)
 {
   packet_unit_info_101_fields fields;
   struct packet_unit_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_info *clone;
   RECEIVE_PACKET_START(packet_unit_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
@@ -14447,7 +14446,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -14455,7 +14454,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -14463,7 +14462,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -14471,7 +14470,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->homecity = readin;
     }
@@ -14479,7 +14478,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->veteran = readin;
     }
@@ -14492,7 +14491,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -14500,7 +14499,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->transported_by = readin;
     }
@@ -14508,7 +14507,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->movesleft = readin;
     }
@@ -14516,7 +14515,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->hp = readin;
     }
@@ -14524,7 +14523,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fuel = readin;
     }
@@ -14532,7 +14531,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity_count = readin;
     }
@@ -14540,7 +14539,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unhappiness = readin;
     }
@@ -14548,7 +14547,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep = readin;
     }
@@ -14556,7 +14555,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep_food = readin;
     }
@@ -14564,7 +14563,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep_gold = readin;
     }
@@ -14572,7 +14571,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->occupy = readin;
     }
@@ -14580,7 +14579,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->goto_dest_x = readin;
     }
@@ -14588,7 +14587,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->goto_dest_y = readin;
     }
@@ -14596,7 +14595,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity = readin;
     }
@@ -14604,7 +14603,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->activity_target = readin;
     }
@@ -14613,7 +14612,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->orders_length = readin;
     }
@@ -14621,7 +14620,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->orders_index = readin;
     }
@@ -14629,10 +14628,10 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   real_packet->orders_repeat = BV_ISSET(fields, 28);
   real_packet->orders_vigilant = BV_ISSET(fields, 29);
   if (BV_ISSET(fields, 30)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->orders_length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->orders_length = MAX_LEN_ROUTE;
@@ -14640,7 +14639,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
       for (i = 0; i < real_packet->orders_length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders[i] = readin;
     }
@@ -14648,10 +14647,10 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
     }
   }
   if (BV_ISSET(fields, 31)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->orders_length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->orders_length = MAX_LEN_ROUTE;
@@ -14659,7 +14658,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
       for (i = 0; i < real_packet->orders_length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders_dirs[i] = readin;
     }
@@ -14667,10 +14666,10 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
     }
   }
   if (BV_ISSET(fields, 32)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->orders_length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->orders_length = MAX_LEN_ROUTE;
@@ -14678,7 +14677,7 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
       for (i = 0; i < real_packet->orders_length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders_activities[i] = readin;
     }
@@ -14696,13 +14695,13 @@ static struct packet_unit_info *receive_packet_unit_info_101(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_info_101(struct connection *pc, const struct packet_unit_info *packet)
+static int send_packet_unit_info_101(struct connection *pconn, const struct packet_unit_info *packet)
 {
   const struct packet_unit_info *real_packet = packet;
   packet_unit_info_101_fields fields;
   struct packet_unit_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_INFO);
 
@@ -14969,34 +14968,34 @@ static int send_packet_unit_info_101(struct connection *pc, const struct packet_
   /* field 28 is folded into the header */
   /* field 29 is folded into the header */
   if (BV_ISSET(fields, 30)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->orders_length; i++) {
         dio_put_uint8(&dout, real_packet->orders[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 31)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->orders_length; i++) {
         dio_put_uint8(&dout, real_packet->orders_dirs[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 32)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->orders_length; i++) {
         dio_put_uint8(&dout, real_packet->orders_activities[i]);
       }
-    } 
+    }
   }
 
 
@@ -15011,71 +15010,71 @@ static int send_packet_unit_info_101(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_info(struct connection *pc)
+static void ensure_valid_variant_packet_unit_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_INFO] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("extglobalinfo", pc->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if((has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
     variant = 100;
-  } else if(!(has_capability("extglobalinfo", pc->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if(!(has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
     variant = 101;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_INFO] = variant;
+  pconn->phs.variant[PACKET_UNIT_INFO] = variant;
 }
 
-struct packet_unit_info *receive_packet_unit_info(struct connection *pc, enum packet_type type)
+struct packet_unit_info *receive_packet_unit_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_info at the server.");
   }
-  ensure_valid_variant_packet_unit_info(pc);
+  ensure_valid_variant_packet_unit_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_INFO]) {
-    case 100: return receive_packet_unit_info_100(pc, type);
-    case 101: return receive_packet_unit_info_101(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_INFO]) {
+    case 100: return receive_packet_unit_info_100(pconn, type);
+    case 101: return receive_packet_unit_info_101(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_info(struct connection *pc, const struct packet_unit_info *packet)
+int send_packet_unit_info(struct connection *pconn, const struct packet_unit_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_info from the client.");
   }
-  ensure_valid_variant_packet_unit_info(pc);
+  ensure_valid_variant_packet_unit_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_INFO]) {
-    case 100: return send_packet_unit_info_100(pc, packet);
-    case 101: return send_packet_unit_info_101(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_INFO]) {
+    case 100: return send_packet_unit_info_100(pconn, packet);
+    case 101: return send_packet_unit_info_101(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_unit_info(struct conn_list *dest, const struct packet_unit_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_unit_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_unit_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -15102,18 +15101,18 @@ static int cmp_packet_unit_short_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_unit_short_info_100_fields, 14);
 
-static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_short_info_100_fields fields;
   struct packet_unit_short_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_short_info *clone;
   RECEIVE_PACKET_START(packet_unit_short_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint16(&din, &readin);
     real_packet->id = readin;
   }
@@ -15137,7 +15136,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->owner = readin;
     }
@@ -15145,7 +15144,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -15153,7 +15152,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -15161,7 +15160,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -15169,7 +15168,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->veteran = readin;
     }
@@ -15180,7 +15179,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->hp = readin;
     }
@@ -15188,7 +15187,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity = readin;
     }
@@ -15196,7 +15195,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->transported_by = readin;
     }
@@ -15204,7 +15203,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->packet_use = readin;
     }
@@ -15212,7 +15211,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->info_city_id = readin;
     }
@@ -15220,7 +15219,7 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->serial_num = readin;
     }
@@ -15236,13 +15235,13 @@ static struct packet_unit_short_info *receive_packet_unit_short_info_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_short_info_100(struct connection *pc, const struct packet_unit_short_info *packet)
+static int send_packet_unit_short_info_100(struct connection *pconn, const struct packet_unit_short_info *packet)
 {
   const struct packet_unit_short_info *real_packet = packet;
   packet_unit_short_info_100_fields fields;
   struct packet_unit_short_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_SHORT_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_SHORT_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_SHORT_INFO);
 
@@ -15371,11 +15370,11 @@ static int send_packet_unit_short_info_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_short_info(struct connection *pc)
+static void ensure_valid_variant_packet_unit_short_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_SHORT_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_SHORT_INFO] != -1) {
     return;
   }
 
@@ -15385,53 +15384,53 @@ static void ensure_valid_variant_packet_unit_short_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_SHORT_INFO] = variant;
+  pconn->phs.variant[PACKET_UNIT_SHORT_INFO] = variant;
 }
 
-struct packet_unit_short_info *receive_packet_unit_short_info(struct connection *pc, enum packet_type type)
+struct packet_unit_short_info *receive_packet_unit_short_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_short_info at the server.");
   }
-  ensure_valid_variant_packet_unit_short_info(pc);
+  ensure_valid_variant_packet_unit_short_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_SHORT_INFO]) {
-    case 100: return receive_packet_unit_short_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_SHORT_INFO]) {
+    case 100: return receive_packet_unit_short_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_short_info(struct connection *pc, const struct packet_unit_short_info *packet)
+int send_packet_unit_short_info(struct connection *pconn, const struct packet_unit_short_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_short_info from the client.");
   }
-  ensure_valid_variant_packet_unit_short_info(pc);
+  ensure_valid_variant_packet_unit_short_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_SHORT_INFO]) {
-    case 100: return send_packet_unit_short_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_SHORT_INFO]) {
+    case 100: return send_packet_unit_short_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_unit_short_info(struct conn_list *dest, const struct packet_unit_short_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_unit_short_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_unit_short_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -15441,11 +15440,11 @@ void lsend_packet_unit_short_info(struct conn_list *dest, const struct packet_un
 
 BV_DEFINE(packet_unit_combat_info_100_fields, 5);
 
-static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_combat_info_100_fields fields;
   struct packet_unit_combat_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_combat_info *clone;
   RECEIVE_PACKET_START(packet_unit_combat_info, real_packet);
 
@@ -15466,7 +15465,7 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->attacker_unit_id = readin;
     }
@@ -15474,7 +15473,7 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->defender_unit_id = readin;
     }
@@ -15482,7 +15481,7 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->attacker_hp = readin;
     }
@@ -15490,7 +15489,7 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struc
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->defender_hp = readin;
     }
@@ -15507,13 +15506,13 @@ static struct packet_unit_combat_info *receive_packet_unit_combat_info_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_combat_info_100(struct connection *pc, const struct packet_unit_combat_info *packet)
+static int send_packet_unit_combat_info_100(struct connection *pconn, const struct packet_unit_combat_info *packet)
 {
   const struct packet_unit_combat_info *real_packet = packet;
   packet_unit_combat_info_100_fields fields;
   struct packet_unit_combat_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_COMBAT_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_COMBAT_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_COMBAT_INFO);
 
@@ -15582,11 +15581,11 @@ static int send_packet_unit_combat_info_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_combat_info(struct connection *pc)
+static void ensure_valid_variant_packet_unit_combat_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_COMBAT_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_COMBAT_INFO] != -1) {
     return;
   }
 
@@ -15596,53 +15595,53 @@ static void ensure_valid_variant_packet_unit_combat_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_COMBAT_INFO] = variant;
+  pconn->phs.variant[PACKET_UNIT_COMBAT_INFO] = variant;
 }
 
-struct packet_unit_combat_info *receive_packet_unit_combat_info(struct connection *pc, enum packet_type type)
+struct packet_unit_combat_info *receive_packet_unit_combat_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_combat_info at the server.");
   }
-  ensure_valid_variant_packet_unit_combat_info(pc);
+  ensure_valid_variant_packet_unit_combat_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_COMBAT_INFO]) {
-    case 100: return receive_packet_unit_combat_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_COMBAT_INFO]) {
+    case 100: return receive_packet_unit_combat_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_combat_info(struct connection *pc, const struct packet_unit_combat_info *packet)
+int send_packet_unit_combat_info(struct connection *pconn, const struct packet_unit_combat_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_combat_info from the client.");
   }
-  ensure_valid_variant_packet_unit_combat_info(pc);
+  ensure_valid_variant_packet_unit_combat_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_COMBAT_INFO]) {
-    case 100: return send_packet_unit_combat_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_COMBAT_INFO]) {
+    case 100: return send_packet_unit_combat_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_unit_combat_info(struct conn_list *dest, const struct packet_unit_combat_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_unit_combat_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_unit_combat_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -15652,11 +15651,11 @@ void lsend_packet_unit_combat_info(struct conn_list *dest, const struct packet_u
 
 BV_DEFINE(packet_unit_move_100_fields, 3);
 
-static struct packet_unit_move *receive_packet_unit_move_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_move *receive_packet_unit_move_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_move_100_fields fields;
   struct packet_unit_move *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_move *clone;
   RECEIVE_PACKET_START(packet_unit_move, real_packet);
 
@@ -15677,7 +15676,7 @@ static struct packet_unit_move *receive_packet_unit_move_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -15685,7 +15684,7 @@ static struct packet_unit_move *receive_packet_unit_move_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -15693,7 +15692,7 @@ static struct packet_unit_move *receive_packet_unit_move_100(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -15709,13 +15708,13 @@ static struct packet_unit_move *receive_packet_unit_move_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_move_100(struct connection *pc, const struct packet_unit_move *packet)
+static int send_packet_unit_move_100(struct connection *pconn, const struct packet_unit_move *packet)
 {
   const struct packet_unit_move *real_packet = packet;
   packet_unit_move_100_fields fields;
   struct packet_unit_move *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_MOVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_MOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_MOVE);
 
@@ -15772,11 +15771,11 @@ static int send_packet_unit_move_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_move(struct connection *pc)
+static void ensure_valid_variant_packet_unit_move(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_MOVE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_MOVE] != -1) {
     return;
   }
 
@@ -15786,58 +15785,58 @@ static void ensure_valid_variant_packet_unit_move(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_MOVE] = variant;
+  pconn->phs.variant[PACKET_UNIT_MOVE] = variant;
 }
 
-struct packet_unit_move *receive_packet_unit_move(struct connection *pc, enum packet_type type)
+struct packet_unit_move *receive_packet_unit_move(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_move at the client.");
   }
-  ensure_valid_variant_packet_unit_move(pc);
+  ensure_valid_variant_packet_unit_move(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_MOVE]) {
-    case 100: return receive_packet_unit_move_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_MOVE]) {
+    case 100: return receive_packet_unit_move_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_move(struct connection *pc, const struct packet_unit_move *packet)
+int send_packet_unit_move(struct connection *pconn, const struct packet_unit_move *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_move from the server.");
   }
-  ensure_valid_variant_packet_unit_move(pc);
+  ensure_valid_variant_packet_unit_move(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_MOVE]) {
-    case 100: return send_packet_unit_move_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_MOVE]) {
+    case 100: return send_packet_unit_move_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_move(struct connection *pc, int unit_id, int x, int y)
+int dsend_packet_unit_move(struct connection *pconn, int unit_id, int x, int y)
 {
   struct packet_unit_move packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->x = x;
   real_packet->y = y;
-  
-  return send_packet_unit_move(pc, real_packet);
+
+  return send_packet_unit_move(pconn, real_packet);
 }
 
 #define hash_packet_unit_build_city_100 hash_const
@@ -15846,11 +15845,11 @@ int dsend_packet_unit_move(struct connection *pc, int unit_id, int x, int y)
 
 BV_DEFINE(packet_unit_build_city_100_fields, 2);
 
-static struct packet_unit_build_city *receive_packet_unit_build_city_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_build_city *receive_packet_unit_build_city_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_build_city_100_fields fields;
   struct packet_unit_build_city *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_build_city *clone;
   RECEIVE_PACKET_START(packet_unit_build_city, real_packet);
 
@@ -15871,7 +15870,7 @@ static struct packet_unit_build_city *receive_packet_unit_build_city_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -15890,13 +15889,13 @@ static struct packet_unit_build_city *receive_packet_unit_build_city_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_build_city_100(struct connection *pc, const struct packet_unit_build_city *packet)
+static int send_packet_unit_build_city_100(struct connection *pconn, const struct packet_unit_build_city *packet)
 {
   const struct packet_unit_build_city *real_packet = packet;
   packet_unit_build_city_100_fields fields;
   struct packet_unit_build_city *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_BUILD_CITY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_BUILD_CITY];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_BUILD_CITY);
 
@@ -15946,11 +15945,11 @@ static int send_packet_unit_build_city_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_build_city(struct connection *pc)
+static void ensure_valid_variant_packet_unit_build_city(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_BUILD_CITY] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_BUILD_CITY] != -1) {
     return;
   }
 
@@ -15960,57 +15959,57 @@ static void ensure_valid_variant_packet_unit_build_city(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_BUILD_CITY] = variant;
+  pconn->phs.variant[PACKET_UNIT_BUILD_CITY] = variant;
 }
 
-struct packet_unit_build_city *receive_packet_unit_build_city(struct connection *pc, enum packet_type type)
+struct packet_unit_build_city *receive_packet_unit_build_city(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_build_city at the client.");
   }
-  ensure_valid_variant_packet_unit_build_city(pc);
+  ensure_valid_variant_packet_unit_build_city(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_BUILD_CITY]) {
-    case 100: return receive_packet_unit_build_city_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_BUILD_CITY]) {
+    case 100: return receive_packet_unit_build_city_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_build_city(struct connection *pc, const struct packet_unit_build_city *packet)
+int send_packet_unit_build_city(struct connection *pconn, const struct packet_unit_build_city *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_build_city from the server.");
   }
-  ensure_valid_variant_packet_unit_build_city(pc);
+  ensure_valid_variant_packet_unit_build_city(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_BUILD_CITY]) {
-    case 100: return send_packet_unit_build_city_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_BUILD_CITY]) {
+    case 100: return send_packet_unit_build_city_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_build_city(struct connection *pc, int unit_id, const char *name)
+int dsend_packet_unit_build_city(struct connection *pconn, int unit_id, const char *name)
 {
   struct packet_unit_build_city packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   sz_strlcpy(real_packet->name, name);
-  
-  return send_packet_unit_build_city(pc, real_packet);
+
+  return send_packet_unit_build_city(pconn, real_packet);
 }
 
 #define hash_packet_unit_disband_100 hash_const
@@ -16019,11 +16018,11 @@ int dsend_packet_unit_build_city(struct connection *pc, int unit_id, const char 
 
 BV_DEFINE(packet_unit_disband_100_fields, 1);
 
-static struct packet_unit_disband *receive_packet_unit_disband_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_disband *receive_packet_unit_disband_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_disband_100_fields fields;
   struct packet_unit_disband *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_disband *clone;
   RECEIVE_PACKET_START(packet_unit_disband, real_packet);
 
@@ -16044,7 +16043,7 @@ static struct packet_unit_disband *receive_packet_unit_disband_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -16060,13 +16059,13 @@ static struct packet_unit_disband *receive_packet_unit_disband_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_disband_100(struct connection *pc, const struct packet_unit_disband *packet)
+static int send_packet_unit_disband_100(struct connection *pconn, const struct packet_unit_disband *packet)
 {
   const struct packet_unit_disband *real_packet = packet;
   packet_unit_disband_100_fields fields;
   struct packet_unit_disband *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_DISBAND];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_DISBAND];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_DISBAND);
 
@@ -16109,11 +16108,11 @@ static int send_packet_unit_disband_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_disband(struct connection *pc)
+static void ensure_valid_variant_packet_unit_disband(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_DISBAND] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_DISBAND] != -1) {
     return;
   }
 
@@ -16123,56 +16122,56 @@ static void ensure_valid_variant_packet_unit_disband(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_DISBAND] = variant;
+  pconn->phs.variant[PACKET_UNIT_DISBAND] = variant;
 }
 
-struct packet_unit_disband *receive_packet_unit_disband(struct connection *pc, enum packet_type type)
+struct packet_unit_disband *receive_packet_unit_disband(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_disband at the client.");
   }
-  ensure_valid_variant_packet_unit_disband(pc);
+  ensure_valid_variant_packet_unit_disband(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_DISBAND]) {
-    case 100: return receive_packet_unit_disband_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_DISBAND]) {
+    case 100: return receive_packet_unit_disband_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_disband(struct connection *pc, const struct packet_unit_disband *packet)
+int send_packet_unit_disband(struct connection *pconn, const struct packet_unit_disband *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_disband from the server.");
   }
-  ensure_valid_variant_packet_unit_disband(pc);
+  ensure_valid_variant_packet_unit_disband(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_DISBAND]) {
-    case 100: return send_packet_unit_disband_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_DISBAND]) {
+    case 100: return send_packet_unit_disband_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_disband(struct connection *pc, int unit_id)
+int dsend_packet_unit_disband(struct connection *pconn, int unit_id)
 {
   struct packet_unit_disband packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_disband(pc, real_packet);
+
+  return send_packet_unit_disband(pconn, real_packet);
 }
 
 #define hash_packet_unit_change_homecity_100 hash_const
@@ -16181,11 +16180,11 @@ int dsend_packet_unit_disband(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_change_homecity_100_fields, 2);
 
-static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_change_homecity_100_fields fields;
   struct packet_unit_change_homecity *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_change_homecity *clone;
   RECEIVE_PACKET_START(packet_unit_change_homecity, real_packet);
 
@@ -16206,7 +16205,7 @@ static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -16214,7 +16213,7 @@ static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_1
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -16230,13 +16229,13 @@ static struct packet_unit_change_homecity *receive_packet_unit_change_homecity_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_homecity_100(struct connection *pc, const struct packet_unit_change_homecity *packet)
+static int send_packet_unit_change_homecity_100(struct connection *pconn, const struct packet_unit_change_homecity *packet)
 {
   const struct packet_unit_change_homecity *real_packet = packet;
   packet_unit_change_homecity_100_fields fields;
   struct packet_unit_change_homecity *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_CHANGE_HOMECITY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_CHANGE_HOMECITY];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_CHANGE_HOMECITY);
 
@@ -16286,11 +16285,11 @@ static int send_packet_unit_change_homecity_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_change_homecity(struct connection *pc)
+static void ensure_valid_variant_packet_unit_change_homecity(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_CHANGE_HOMECITY] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY] != -1) {
     return;
   }
 
@@ -16300,57 +16299,57 @@ static void ensure_valid_variant_packet_unit_change_homecity(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_CHANGE_HOMECITY] = variant;
+  pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY] = variant;
 }
 
-struct packet_unit_change_homecity *receive_packet_unit_change_homecity(struct connection *pc, enum packet_type type)
+struct packet_unit_change_homecity *receive_packet_unit_change_homecity(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_change_homecity at the client.");
   }
-  ensure_valid_variant_packet_unit_change_homecity(pc);
+  ensure_valid_variant_packet_unit_change_homecity(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_CHANGE_HOMECITY]) {
-    case 100: return receive_packet_unit_change_homecity_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY]) {
+    case 100: return receive_packet_unit_change_homecity_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_change_homecity(struct connection *pc, const struct packet_unit_change_homecity *packet)
+int send_packet_unit_change_homecity(struct connection *pconn, const struct packet_unit_change_homecity *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_change_homecity from the server.");
   }
-  ensure_valid_variant_packet_unit_change_homecity(pc);
+  ensure_valid_variant_packet_unit_change_homecity(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_CHANGE_HOMECITY]) {
-    case 100: return send_packet_unit_change_homecity_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_CHANGE_HOMECITY]) {
+    case 100: return send_packet_unit_change_homecity_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_change_homecity(struct connection *pc, int unit_id, int city_id)
+int dsend_packet_unit_change_homecity(struct connection *pconn, int unit_id, int city_id)
 {
   struct packet_unit_change_homecity packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->city_id = city_id;
-  
-  return send_packet_unit_change_homecity(pc, real_packet);
+
+  return send_packet_unit_change_homecity(pconn, real_packet);
 }
 
 #define hash_packet_unit_establish_trade_100 hash_const
@@ -16359,11 +16358,11 @@ int dsend_packet_unit_change_homecity(struct connection *pc, int unit_id, int ci
 
 BV_DEFINE(packet_unit_establish_trade_100_fields, 1);
 
-static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_establish_trade_100_fields fields;
   struct packet_unit_establish_trade *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_establish_trade *clone;
   RECEIVE_PACKET_START(packet_unit_establish_trade, real_packet);
 
@@ -16384,7 +16383,7 @@ static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -16400,13 +16399,13 @@ static struct packet_unit_establish_trade *receive_packet_unit_establish_trade_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_establish_trade_100(struct connection *pc, const struct packet_unit_establish_trade *packet)
+static int send_packet_unit_establish_trade_100(struct connection *pconn, const struct packet_unit_establish_trade *packet)
 {
   const struct packet_unit_establish_trade *real_packet = packet;
   packet_unit_establish_trade_100_fields fields;
   struct packet_unit_establish_trade *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_ESTABLISH_TRADE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_ESTABLISH_TRADE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_ESTABLISH_TRADE);
 
@@ -16449,11 +16448,11 @@ static int send_packet_unit_establish_trade_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_establish_trade(struct connection *pc)
+static void ensure_valid_variant_packet_unit_establish_trade(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_ESTABLISH_TRADE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE] != -1) {
     return;
   }
 
@@ -16463,56 +16462,56 @@ static void ensure_valid_variant_packet_unit_establish_trade(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_ESTABLISH_TRADE] = variant;
+  pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE] = variant;
 }
 
-struct packet_unit_establish_trade *receive_packet_unit_establish_trade(struct connection *pc, enum packet_type type)
+struct packet_unit_establish_trade *receive_packet_unit_establish_trade(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_establish_trade at the client.");
   }
-  ensure_valid_variant_packet_unit_establish_trade(pc);
+  ensure_valid_variant_packet_unit_establish_trade(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_ESTABLISH_TRADE]) {
-    case 100: return receive_packet_unit_establish_trade_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE]) {
+    case 100: return receive_packet_unit_establish_trade_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_establish_trade(struct connection *pc, const struct packet_unit_establish_trade *packet)
+int send_packet_unit_establish_trade(struct connection *pconn, const struct packet_unit_establish_trade *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_establish_trade from the server.");
   }
-  ensure_valid_variant_packet_unit_establish_trade(pc);
+  ensure_valid_variant_packet_unit_establish_trade(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_ESTABLISH_TRADE]) {
-    case 100: return send_packet_unit_establish_trade_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_ESTABLISH_TRADE]) {
+    case 100: return send_packet_unit_establish_trade_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_establish_trade(struct connection *pc, int unit_id)
+int dsend_packet_unit_establish_trade(struct connection *pconn, int unit_id)
 {
   struct packet_unit_establish_trade packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_establish_trade(pc, real_packet);
+
+  return send_packet_unit_establish_trade(pconn, real_packet);
 }
 
 #define hash_packet_unit_help_build_wonder_100 hash_const
@@ -16521,11 +16520,11 @@ int dsend_packet_unit_establish_trade(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_help_build_wonder_100_fields, 1);
 
-static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_help_build_wonder_100_fields fields;
   struct packet_unit_help_build_wonder *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_help_build_wonder *clone;
   RECEIVE_PACKET_START(packet_unit_help_build_wonder, real_packet);
 
@@ -16546,7 +16545,7 @@ static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wond
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -16562,13 +16561,13 @@ static struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wond
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_help_build_wonder_100(struct connection *pc, const struct packet_unit_help_build_wonder *packet)
+static int send_packet_unit_help_build_wonder_100(struct connection *pconn, const struct packet_unit_help_build_wonder *packet)
 {
   const struct packet_unit_help_build_wonder *real_packet = packet;
   packet_unit_help_build_wonder_100_fields fields;
   struct packet_unit_help_build_wonder *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_HELP_BUILD_WONDER];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_HELP_BUILD_WONDER];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_HELP_BUILD_WONDER);
 
@@ -16611,11 +16610,11 @@ static int send_packet_unit_help_build_wonder_100(struct connection *pc, const s
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_help_build_wonder(struct connection *pc)
+static void ensure_valid_variant_packet_unit_help_build_wonder(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER] != -1) {
     return;
   }
 
@@ -16625,56 +16624,56 @@ static void ensure_valid_variant_packet_unit_help_build_wonder(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER] = variant;
+  pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER] = variant;
 }
 
-struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder(struct connection *pc, enum packet_type type)
+struct packet_unit_help_build_wonder *receive_packet_unit_help_build_wonder(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_help_build_wonder at the client.");
   }
-  ensure_valid_variant_packet_unit_help_build_wonder(pc);
+  ensure_valid_variant_packet_unit_help_build_wonder(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER]) {
-    case 100: return receive_packet_unit_help_build_wonder_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER]) {
+    case 100: return receive_packet_unit_help_build_wonder_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_help_build_wonder(struct connection *pc, const struct packet_unit_help_build_wonder *packet)
+int send_packet_unit_help_build_wonder(struct connection *pconn, const struct packet_unit_help_build_wonder *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_help_build_wonder from the server.");
   }
-  ensure_valid_variant_packet_unit_help_build_wonder(pc);
+  ensure_valid_variant_packet_unit_help_build_wonder(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER]) {
-    case 100: return send_packet_unit_help_build_wonder_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_HELP_BUILD_WONDER]) {
+    case 100: return send_packet_unit_help_build_wonder_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_help_build_wonder(struct connection *pc, int unit_id)
+int dsend_packet_unit_help_build_wonder(struct connection *pconn, int unit_id)
 {
   struct packet_unit_help_build_wonder packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_help_build_wonder(pc, real_packet);
+
+  return send_packet_unit_help_build_wonder(pconn, real_packet);
 }
 
 #define hash_packet_unit_goto_100 hash_const
@@ -16683,11 +16682,11 @@ int dsend_packet_unit_help_build_wonder(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_goto_100_fields, 3);
 
-static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_goto_100_fields fields;
   struct packet_unit_goto *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_goto *clone;
   RECEIVE_PACKET_START(packet_unit_goto, real_packet);
 
@@ -16708,7 +16707,7 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -16716,7 +16715,7 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -16724,7 +16723,7 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -16740,13 +16739,13 @@ static struct packet_unit_goto *receive_packet_unit_goto_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_goto_100(struct connection *pc, const struct packet_unit_goto *packet)
+static int send_packet_unit_goto_100(struct connection *pconn, const struct packet_unit_goto *packet)
 {
   const struct packet_unit_goto *real_packet = packet;
   packet_unit_goto_100_fields fields;
   struct packet_unit_goto *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_GOTO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_GOTO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_GOTO);
 
@@ -16803,11 +16802,11 @@ static int send_packet_unit_goto_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_goto(struct connection *pc)
+static void ensure_valid_variant_packet_unit_goto(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_GOTO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_GOTO] != -1) {
     return;
   }
 
@@ -16817,58 +16816,58 @@ static void ensure_valid_variant_packet_unit_goto(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_GOTO] = variant;
+  pconn->phs.variant[PACKET_UNIT_GOTO] = variant;
 }
 
-struct packet_unit_goto *receive_packet_unit_goto(struct connection *pc, enum packet_type type)
+struct packet_unit_goto *receive_packet_unit_goto(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_goto at the client.");
   }
-  ensure_valid_variant_packet_unit_goto(pc);
+  ensure_valid_variant_packet_unit_goto(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_GOTO]) {
-    case 100: return receive_packet_unit_goto_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_GOTO]) {
+    case 100: return receive_packet_unit_goto_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_goto(struct connection *pc, const struct packet_unit_goto *packet)
+int send_packet_unit_goto(struct connection *pconn, const struct packet_unit_goto *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_goto from the server.");
   }
-  ensure_valid_variant_packet_unit_goto(pc);
+  ensure_valid_variant_packet_unit_goto(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_GOTO]) {
-    case 100: return send_packet_unit_goto_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_GOTO]) {
+    case 100: return send_packet_unit_goto_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_goto(struct connection *pc, int unit_id, int x, int y)
+int dsend_packet_unit_goto(struct connection *pconn, int unit_id, int x, int y)
 {
   struct packet_unit_goto packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->x = x;
   real_packet->y = y;
-  
-  return send_packet_unit_goto(pc, real_packet);
+
+  return send_packet_unit_goto(pconn, real_packet);
 }
 
 #define hash_packet_unit_orders_100 hash_const
@@ -16877,11 +16876,11 @@ int dsend_packet_unit_goto(struct connection *pc, int unit_id, int x, int y)
 
 BV_DEFINE(packet_unit_orders_100_fields, 9);
 
-static struct packet_unit_orders *receive_packet_unit_orders_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_orders *receive_packet_unit_orders_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_orders_100_fields fields;
   struct packet_unit_orders *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_orders *clone;
   RECEIVE_PACKET_START(packet_unit_orders, real_packet);
 
@@ -16902,7 +16901,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -16910,7 +16909,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->length = readin;
     }
@@ -16918,10 +16917,10 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
   real_packet->repeat = BV_ISSET(fields, 2);
   real_packet->vigilant = BV_ISSET(fields, 3);
   if (BV_ISSET(fields, 4)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->length = MAX_LEN_ROUTE;
@@ -16929,7 +16928,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
       for (i = 0; i < real_packet->length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->orders[i] = readin;
     }
@@ -16937,10 +16936,10 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
     }
   }
   if (BV_ISSET(fields, 5)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->length = MAX_LEN_ROUTE;
@@ -16948,7 +16947,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
       for (i = 0; i < real_packet->length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->dir[i] = readin;
     }
@@ -16956,10 +16955,10 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
     }
   }
   if (BV_ISSET(fields, 6)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->length > MAX_LEN_ROUTE) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->length = MAX_LEN_ROUTE;
@@ -16967,7 +16966,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
       for (i = 0; i < real_packet->length; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity[i] = readin;
     }
@@ -16977,7 +16976,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->dest_x = readin;
     }
@@ -16985,7 +16984,7 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->dest_y = readin;
     }
@@ -17001,13 +17000,13 @@ static struct packet_unit_orders *receive_packet_unit_orders_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_orders_100(struct connection *pc, const struct packet_unit_orders *packet)
+static int send_packet_unit_orders_100(struct connection *pconn, const struct packet_unit_orders *packet)
 {
   const struct packet_unit_orders *real_packet = packet;
   packet_unit_orders_100_fields fields;
   struct packet_unit_orders *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_ORDERS];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_ORDERS];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_ORDERS);
 
@@ -17111,34 +17110,34 @@ static int send_packet_unit_orders_100(struct connection *pc, const struct packe
   /* field 2 is folded into the header */
   /* field 3 is folded into the header */
   if (BV_ISSET(fields, 4)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->length; i++) {
         dio_put_uint8(&dout, real_packet->orders[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 5)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->length; i++) {
         dio_put_uint8(&dout, real_packet->dir[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 6)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->length; i++) {
         dio_put_uint8(&dout, real_packet->activity[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 7)) {
     dio_put_uint8(&dout, real_packet->dest_x);
@@ -17159,11 +17158,11 @@ static int send_packet_unit_orders_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_orders(struct connection *pc)
+static void ensure_valid_variant_packet_unit_orders(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_ORDERS] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_ORDERS] != -1) {
     return;
   }
 
@@ -17173,45 +17172,45 @@ static void ensure_valid_variant_packet_unit_orders(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_ORDERS] = variant;
+  pconn->phs.variant[PACKET_UNIT_ORDERS] = variant;
 }
 
-struct packet_unit_orders *receive_packet_unit_orders(struct connection *pc, enum packet_type type)
+struct packet_unit_orders *receive_packet_unit_orders(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_orders at the client.");
   }
-  ensure_valid_variant_packet_unit_orders(pc);
+  ensure_valid_variant_packet_unit_orders(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_ORDERS]) {
-    case 100: return receive_packet_unit_orders_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_ORDERS]) {
+    case 100: return receive_packet_unit_orders_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_orders(struct connection *pc, const struct packet_unit_orders *packet)
+int send_packet_unit_orders(struct connection *pconn, const struct packet_unit_orders *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_orders from the server.");
   }
-  ensure_valid_variant_packet_unit_orders(pc);
+  ensure_valid_variant_packet_unit_orders(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_ORDERS]) {
-    case 100: return send_packet_unit_orders_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_ORDERS]) {
+    case 100: return send_packet_unit_orders_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -17222,11 +17221,11 @@ int send_packet_unit_orders(struct connection *pc, const struct packet_unit_orde
 
 BV_DEFINE(packet_unit_auto_100_fields, 1);
 
-static struct packet_unit_auto *receive_packet_unit_auto_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_auto *receive_packet_unit_auto_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_auto_100_fields fields;
   struct packet_unit_auto *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_auto *clone;
   RECEIVE_PACKET_START(packet_unit_auto, real_packet);
 
@@ -17247,7 +17246,7 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -17263,13 +17262,13 @@ static struct packet_unit_auto *receive_packet_unit_auto_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_auto_100(struct connection *pc, const struct packet_unit_auto *packet)
+static int send_packet_unit_auto_100(struct connection *pconn, const struct packet_unit_auto *packet)
 {
   const struct packet_unit_auto *real_packet = packet;
   packet_unit_auto_100_fields fields;
   struct packet_unit_auto *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_AUTO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AUTO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_AUTO);
 
@@ -17312,11 +17311,11 @@ static int send_packet_unit_auto_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_auto(struct connection *pc)
+static void ensure_valid_variant_packet_unit_auto(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_AUTO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_AUTO] != -1) {
     return;
   }
 
@@ -17326,56 +17325,56 @@ static void ensure_valid_variant_packet_unit_auto(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_AUTO] = variant;
+  pconn->phs.variant[PACKET_UNIT_AUTO] = variant;
 }
 
-struct packet_unit_auto *receive_packet_unit_auto(struct connection *pc, enum packet_type type)
+struct packet_unit_auto *receive_packet_unit_auto(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_auto at the client.");
   }
-  ensure_valid_variant_packet_unit_auto(pc);
+  ensure_valid_variant_packet_unit_auto(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AUTO]) {
-    case 100: return receive_packet_unit_auto_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_AUTO]) {
+    case 100: return receive_packet_unit_auto_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_auto(struct connection *pc, const struct packet_unit_auto *packet)
+int send_packet_unit_auto(struct connection *pconn, const struct packet_unit_auto *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_auto from the server.");
   }
-  ensure_valid_variant_packet_unit_auto(pc);
+  ensure_valid_variant_packet_unit_auto(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AUTO]) {
-    case 100: return send_packet_unit_auto_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_AUTO]) {
+    case 100: return send_packet_unit_auto_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_auto(struct connection *pc, int unit_id)
+int dsend_packet_unit_auto(struct connection *pconn, int unit_id)
 {
   struct packet_unit_auto packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_auto(pc, real_packet);
+
+  return send_packet_unit_auto(pconn, real_packet);
 }
 
 #define hash_packet_unit_load_100 hash_const
@@ -17384,11 +17383,11 @@ int dsend_packet_unit_auto(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_load_100_fields, 2);
 
-static struct packet_unit_load *receive_packet_unit_load_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_load *receive_packet_unit_load_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_load_100_fields fields;
   struct packet_unit_load *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_load *clone;
   RECEIVE_PACKET_START(packet_unit_load, real_packet);
 
@@ -17409,7 +17408,7 @@ static struct packet_unit_load *receive_packet_unit_load_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->cargo_id = readin;
     }
@@ -17417,7 +17416,7 @@ static struct packet_unit_load *receive_packet_unit_load_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->transporter_id = readin;
     }
@@ -17433,13 +17432,13 @@ static struct packet_unit_load *receive_packet_unit_load_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_load_100(struct connection *pc, const struct packet_unit_load *packet)
+static int send_packet_unit_load_100(struct connection *pconn, const struct packet_unit_load *packet)
 {
   const struct packet_unit_load *real_packet = packet;
   packet_unit_load_100_fields fields;
   struct packet_unit_load *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_LOAD];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_LOAD];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_LOAD);
 
@@ -17489,11 +17488,11 @@ static int send_packet_unit_load_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_load(struct connection *pc)
+static void ensure_valid_variant_packet_unit_load(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_LOAD] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_LOAD] != -1) {
     return;
   }
 
@@ -17503,57 +17502,57 @@ static void ensure_valid_variant_packet_unit_load(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_LOAD] = variant;
+  pconn->phs.variant[PACKET_UNIT_LOAD] = variant;
 }
 
-struct packet_unit_load *receive_packet_unit_load(struct connection *pc, enum packet_type type)
+struct packet_unit_load *receive_packet_unit_load(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_load at the client.");
   }
-  ensure_valid_variant_packet_unit_load(pc);
+  ensure_valid_variant_packet_unit_load(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_LOAD]) {
-    case 100: return receive_packet_unit_load_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_LOAD]) {
+    case 100: return receive_packet_unit_load_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_load(struct connection *pc, const struct packet_unit_load *packet)
+int send_packet_unit_load(struct connection *pconn, const struct packet_unit_load *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_load from the server.");
   }
-  ensure_valid_variant_packet_unit_load(pc);
+  ensure_valid_variant_packet_unit_load(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_LOAD]) {
-    case 100: return send_packet_unit_load_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_LOAD]) {
+    case 100: return send_packet_unit_load_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_load(struct connection *pc, int cargo_id, int transporter_id)
+int dsend_packet_unit_load(struct connection *pconn, int cargo_id, int transporter_id)
 {
   struct packet_unit_load packet, *real_packet = &packet;
 
   real_packet->cargo_id = cargo_id;
   real_packet->transporter_id = transporter_id;
-  
-  return send_packet_unit_load(pc, real_packet);
+
+  return send_packet_unit_load(pconn, real_packet);
 }
 
 #define hash_packet_unit_unload_100 hash_const
@@ -17562,11 +17561,11 @@ int dsend_packet_unit_load(struct connection *pc, int cargo_id, int transporter_
 
 BV_DEFINE(packet_unit_unload_100_fields, 2);
 
-static struct packet_unit_unload *receive_packet_unit_unload_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_unload *receive_packet_unit_unload_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_unload_100_fields fields;
   struct packet_unit_unload *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_unload *clone;
   RECEIVE_PACKET_START(packet_unit_unload, real_packet);
 
@@ -17587,7 +17586,7 @@ static struct packet_unit_unload *receive_packet_unit_unload_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->cargo_id = readin;
     }
@@ -17595,7 +17594,7 @@ static struct packet_unit_unload *receive_packet_unit_unload_100(struct connecti
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->transporter_id = readin;
     }
@@ -17611,13 +17610,13 @@ static struct packet_unit_unload *receive_packet_unit_unload_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_unload_100(struct connection *pc, const struct packet_unit_unload *packet)
+static int send_packet_unit_unload_100(struct connection *pconn, const struct packet_unit_unload *packet)
 {
   const struct packet_unit_unload *real_packet = packet;
   packet_unit_unload_100_fields fields;
   struct packet_unit_unload *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_UNLOAD];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_UNLOAD];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_UNLOAD);
 
@@ -17667,11 +17666,11 @@ static int send_packet_unit_unload_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_unload(struct connection *pc)
+static void ensure_valid_variant_packet_unit_unload(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_UNLOAD] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_UNLOAD] != -1) {
     return;
   }
 
@@ -17681,57 +17680,57 @@ static void ensure_valid_variant_packet_unit_unload(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_UNLOAD] = variant;
+  pconn->phs.variant[PACKET_UNIT_UNLOAD] = variant;
 }
 
-struct packet_unit_unload *receive_packet_unit_unload(struct connection *pc, enum packet_type type)
+struct packet_unit_unload *receive_packet_unit_unload(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_unload at the client.");
   }
-  ensure_valid_variant_packet_unit_unload(pc);
+  ensure_valid_variant_packet_unit_unload(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_UNLOAD]) {
-    case 100: return receive_packet_unit_unload_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_UNLOAD]) {
+    case 100: return receive_packet_unit_unload_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_unload(struct connection *pc, const struct packet_unit_unload *packet)
+int send_packet_unit_unload(struct connection *pconn, const struct packet_unit_unload *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_unload from the server.");
   }
-  ensure_valid_variant_packet_unit_unload(pc);
+  ensure_valid_variant_packet_unit_unload(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_UNLOAD]) {
-    case 100: return send_packet_unit_unload_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_UNLOAD]) {
+    case 100: return send_packet_unit_unload_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_unload(struct connection *pc, int cargo_id, int transporter_id)
+int dsend_packet_unit_unload(struct connection *pconn, int cargo_id, int transporter_id)
 {
   struct packet_unit_unload packet, *real_packet = &packet;
 
   real_packet->cargo_id = cargo_id;
   real_packet->transporter_id = transporter_id;
-  
-  return send_packet_unit_unload(pc, real_packet);
+
+  return send_packet_unit_unload(pconn, real_packet);
 }
 
 #define hash_packet_unit_upgrade_100 hash_const
@@ -17740,11 +17739,11 @@ int dsend_packet_unit_unload(struct connection *pc, int cargo_id, int transporte
 
 BV_DEFINE(packet_unit_upgrade_100_fields, 1);
 
-static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_upgrade_100_fields fields;
   struct packet_unit_upgrade *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_upgrade *clone;
   RECEIVE_PACKET_START(packet_unit_upgrade, real_packet);
 
@@ -17765,7 +17764,7 @@ static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -17781,13 +17780,13 @@ static struct packet_unit_upgrade *receive_packet_unit_upgrade_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_upgrade_100(struct connection *pc, const struct packet_unit_upgrade *packet)
+static int send_packet_unit_upgrade_100(struct connection *pconn, const struct packet_unit_upgrade *packet)
 {
   const struct packet_unit_upgrade *real_packet = packet;
   packet_unit_upgrade_100_fields fields;
   struct packet_unit_upgrade *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_UPGRADE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_UPGRADE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_UPGRADE);
 
@@ -17830,11 +17829,11 @@ static int send_packet_unit_upgrade_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_upgrade(struct connection *pc)
+static void ensure_valid_variant_packet_unit_upgrade(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_UPGRADE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_UPGRADE] != -1) {
     return;
   }
 
@@ -17844,56 +17843,56 @@ static void ensure_valid_variant_packet_unit_upgrade(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_UPGRADE] = variant;
+  pconn->phs.variant[PACKET_UNIT_UPGRADE] = variant;
 }
 
-struct packet_unit_upgrade *receive_packet_unit_upgrade(struct connection *pc, enum packet_type type)
+struct packet_unit_upgrade *receive_packet_unit_upgrade(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_upgrade at the client.");
   }
-  ensure_valid_variant_packet_unit_upgrade(pc);
+  ensure_valid_variant_packet_unit_upgrade(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_UPGRADE]) {
-    case 100: return receive_packet_unit_upgrade_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_UPGRADE]) {
+    case 100: return receive_packet_unit_upgrade_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_upgrade(struct connection *pc, const struct packet_unit_upgrade *packet)
+int send_packet_unit_upgrade(struct connection *pconn, const struct packet_unit_upgrade *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_upgrade from the server.");
   }
-  ensure_valid_variant_packet_unit_upgrade(pc);
+  ensure_valid_variant_packet_unit_upgrade(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_UPGRADE]) {
-    case 100: return send_packet_unit_upgrade_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_UPGRADE]) {
+    case 100: return send_packet_unit_upgrade_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_upgrade(struct connection *pc, int unit_id)
+int dsend_packet_unit_upgrade(struct connection *pconn, int unit_id)
 {
   struct packet_unit_upgrade packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_upgrade(pc, real_packet);
+
+  return send_packet_unit_upgrade(pconn, real_packet);
 }
 
 #define hash_packet_unit_nuke_100 hash_const
@@ -17902,11 +17901,11 @@ int dsend_packet_unit_upgrade(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_nuke_100_fields, 1);
 
-static struct packet_unit_nuke *receive_packet_unit_nuke_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_nuke *receive_packet_unit_nuke_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_nuke_100_fields fields;
   struct packet_unit_nuke *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_nuke *clone;
   RECEIVE_PACKET_START(packet_unit_nuke, real_packet);
 
@@ -17927,7 +17926,7 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(struct connection *
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -17943,13 +17942,13 @@ static struct packet_unit_nuke *receive_packet_unit_nuke_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_nuke_100(struct connection *pc, const struct packet_unit_nuke *packet)
+static int send_packet_unit_nuke_100(struct connection *pconn, const struct packet_unit_nuke *packet)
 {
   const struct packet_unit_nuke *real_packet = packet;
   packet_unit_nuke_100_fields fields;
   struct packet_unit_nuke *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_NUKE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_NUKE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_NUKE);
 
@@ -17992,11 +17991,11 @@ static int send_packet_unit_nuke_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_nuke(struct connection *pc)
+static void ensure_valid_variant_packet_unit_nuke(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_NUKE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_NUKE] != -1) {
     return;
   }
 
@@ -18006,56 +18005,56 @@ static void ensure_valid_variant_packet_unit_nuke(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_NUKE] = variant;
+  pconn->phs.variant[PACKET_UNIT_NUKE] = variant;
 }
 
-struct packet_unit_nuke *receive_packet_unit_nuke(struct connection *pc, enum packet_type type)
+struct packet_unit_nuke *receive_packet_unit_nuke(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_nuke at the client.");
   }
-  ensure_valid_variant_packet_unit_nuke(pc);
+  ensure_valid_variant_packet_unit_nuke(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_NUKE]) {
-    case 100: return receive_packet_unit_nuke_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_NUKE]) {
+    case 100: return receive_packet_unit_nuke_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_nuke(struct connection *pc, const struct packet_unit_nuke *packet)
+int send_packet_unit_nuke(struct connection *pconn, const struct packet_unit_nuke *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_nuke from the server.");
   }
-  ensure_valid_variant_packet_unit_nuke(pc);
+  ensure_valid_variant_packet_unit_nuke(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_NUKE]) {
-    case 100: return send_packet_unit_nuke_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_NUKE]) {
+    case 100: return send_packet_unit_nuke_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_nuke(struct connection *pc, int unit_id)
+int dsend_packet_unit_nuke(struct connection *pconn, int unit_id)
 {
   struct packet_unit_nuke packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_nuke(pc, real_packet);
+
+  return send_packet_unit_nuke(pconn, real_packet);
 }
 
 #define hash_packet_unit_paradrop_to_100 hash_const
@@ -18064,11 +18063,11 @@ int dsend_packet_unit_nuke(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_paradrop_to_100_fields, 3);
 
-static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_paradrop_to_100_fields fields;
   struct packet_unit_paradrop_to *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_paradrop_to *clone;
   RECEIVE_PACKET_START(packet_unit_paradrop_to, real_packet);
 
@@ -18089,7 +18088,7 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -18097,7 +18096,7 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -18105,7 +18104,7 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -18121,13 +18120,13 @@ static struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_paradrop_to_100(struct connection *pc, const struct packet_unit_paradrop_to *packet)
+static int send_packet_unit_paradrop_to_100(struct connection *pconn, const struct packet_unit_paradrop_to *packet)
 {
   const struct packet_unit_paradrop_to *real_packet = packet;
   packet_unit_paradrop_to_100_fields fields;
   struct packet_unit_paradrop_to *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_PARADROP_TO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_PARADROP_TO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_PARADROP_TO);
 
@@ -18184,11 +18183,11 @@ static int send_packet_unit_paradrop_to_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_paradrop_to(struct connection *pc)
+static void ensure_valid_variant_packet_unit_paradrop_to(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_PARADROP_TO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_PARADROP_TO] != -1) {
     return;
   }
 
@@ -18198,58 +18197,58 @@ static void ensure_valid_variant_packet_unit_paradrop_to(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_PARADROP_TO] = variant;
+  pconn->phs.variant[PACKET_UNIT_PARADROP_TO] = variant;
 }
 
-struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to(struct connection *pc, enum packet_type type)
+struct packet_unit_paradrop_to *receive_packet_unit_paradrop_to(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_paradrop_to at the client.");
   }
-  ensure_valid_variant_packet_unit_paradrop_to(pc);
+  ensure_valid_variant_packet_unit_paradrop_to(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_PARADROP_TO]) {
-    case 100: return receive_packet_unit_paradrop_to_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_PARADROP_TO]) {
+    case 100: return receive_packet_unit_paradrop_to_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_paradrop_to(struct connection *pc, const struct packet_unit_paradrop_to *packet)
+int send_packet_unit_paradrop_to(struct connection *pconn, const struct packet_unit_paradrop_to *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_paradrop_to from the server.");
   }
-  ensure_valid_variant_packet_unit_paradrop_to(pc);
+  ensure_valid_variant_packet_unit_paradrop_to(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_PARADROP_TO]) {
-    case 100: return send_packet_unit_paradrop_to_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_PARADROP_TO]) {
+    case 100: return send_packet_unit_paradrop_to_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_paradrop_to(struct connection *pc, int unit_id, int x, int y)
+int dsend_packet_unit_paradrop_to(struct connection *pconn, int unit_id, int x, int y)
 {
   struct packet_unit_paradrop_to packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->x = x;
   real_packet->y = y;
-  
-  return send_packet_unit_paradrop_to(pc, real_packet);
+
+  return send_packet_unit_paradrop_to(pconn, real_packet);
 }
 
 #define hash_packet_unit_airlift_100 hash_const
@@ -18258,11 +18257,11 @@ int dsend_packet_unit_paradrop_to(struct connection *pc, int unit_id, int x, int
 
 BV_DEFINE(packet_unit_airlift_100_fields, 2);
 
-static struct packet_unit_airlift *receive_packet_unit_airlift_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_airlift *receive_packet_unit_airlift_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_airlift_100_fields fields;
   struct packet_unit_airlift *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_airlift *clone;
   RECEIVE_PACKET_START(packet_unit_airlift, real_packet);
 
@@ -18283,7 +18282,7 @@ static struct packet_unit_airlift *receive_packet_unit_airlift_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -18291,7 +18290,7 @@ static struct packet_unit_airlift *receive_packet_unit_airlift_100(struct connec
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city_id = readin;
     }
@@ -18307,13 +18306,13 @@ static struct packet_unit_airlift *receive_packet_unit_airlift_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_airlift_100(struct connection *pc, const struct packet_unit_airlift *packet)
+static int send_packet_unit_airlift_100(struct connection *pconn, const struct packet_unit_airlift *packet)
 {
   const struct packet_unit_airlift *real_packet = packet;
   packet_unit_airlift_100_fields fields;
   struct packet_unit_airlift *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_AIRLIFT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AIRLIFT];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_AIRLIFT);
 
@@ -18363,11 +18362,11 @@ static int send_packet_unit_airlift_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_airlift(struct connection *pc)
+static void ensure_valid_variant_packet_unit_airlift(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_AIRLIFT] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_AIRLIFT] != -1) {
     return;
   }
 
@@ -18377,57 +18376,57 @@ static void ensure_valid_variant_packet_unit_airlift(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_AIRLIFT] = variant;
+  pconn->phs.variant[PACKET_UNIT_AIRLIFT] = variant;
 }
 
-struct packet_unit_airlift *receive_packet_unit_airlift(struct connection *pc, enum packet_type type)
+struct packet_unit_airlift *receive_packet_unit_airlift(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_airlift at the client.");
   }
-  ensure_valid_variant_packet_unit_airlift(pc);
+  ensure_valid_variant_packet_unit_airlift(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AIRLIFT]) {
-    case 100: return receive_packet_unit_airlift_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_AIRLIFT]) {
+    case 100: return receive_packet_unit_airlift_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_airlift(struct connection *pc, const struct packet_unit_airlift *packet)
+int send_packet_unit_airlift(struct connection *pconn, const struct packet_unit_airlift *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_airlift from the server.");
   }
-  ensure_valid_variant_packet_unit_airlift(pc);
+  ensure_valid_variant_packet_unit_airlift(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AIRLIFT]) {
-    case 100: return send_packet_unit_airlift_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_AIRLIFT]) {
+    case 100: return send_packet_unit_airlift_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_airlift(struct connection *pc, int unit_id, int city_id)
+int dsend_packet_unit_airlift(struct connection *pconn, int unit_id, int city_id)
 {
   struct packet_unit_airlift packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->city_id = city_id;
-  
-  return send_packet_unit_airlift(pc, real_packet);
+
+  return send_packet_unit_airlift(pconn, real_packet);
 }
 
 #define hash_packet_unit_bribe_inq_100 hash_const
@@ -18436,11 +18435,11 @@ int dsend_packet_unit_airlift(struct connection *pc, int unit_id, int city_id)
 
 BV_DEFINE(packet_unit_bribe_inq_100_fields, 1);
 
-static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_bribe_inq_100_fields fields;
   struct packet_unit_bribe_inq *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_bribe_inq *clone;
   RECEIVE_PACKET_START(packet_unit_bribe_inq, real_packet);
 
@@ -18461,7 +18460,7 @@ static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -18477,13 +18476,13 @@ static struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq_100(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_bribe_inq_100(struct connection *pc, const struct packet_unit_bribe_inq *packet)
+static int send_packet_unit_bribe_inq_100(struct connection *pconn, const struct packet_unit_bribe_inq *packet)
 {
   const struct packet_unit_bribe_inq *real_packet = packet;
   packet_unit_bribe_inq_100_fields fields;
   struct packet_unit_bribe_inq *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_BRIBE_INQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_BRIBE_INQ];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_BRIBE_INQ);
 
@@ -18526,11 +18525,11 @@ static int send_packet_unit_bribe_inq_100(struct connection *pc, const struct pa
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_bribe_inq(struct connection *pc)
+static void ensure_valid_variant_packet_unit_bribe_inq(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_BRIBE_INQ] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_BRIBE_INQ] != -1) {
     return;
   }
 
@@ -18540,56 +18539,56 @@ static void ensure_valid_variant_packet_unit_bribe_inq(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_BRIBE_INQ] = variant;
+  pconn->phs.variant[PACKET_UNIT_BRIBE_INQ] = variant;
 }
 
-struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq(struct connection *pc, enum packet_type type)
+struct packet_unit_bribe_inq *receive_packet_unit_bribe_inq(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_bribe_inq at the client.");
   }
-  ensure_valid_variant_packet_unit_bribe_inq(pc);
+  ensure_valid_variant_packet_unit_bribe_inq(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_BRIBE_INQ]) {
-    case 100: return receive_packet_unit_bribe_inq_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INQ]) {
+    case 100: return receive_packet_unit_bribe_inq_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_bribe_inq(struct connection *pc, const struct packet_unit_bribe_inq *packet)
+int send_packet_unit_bribe_inq(struct connection *pconn, const struct packet_unit_bribe_inq *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_bribe_inq from the server.");
   }
-  ensure_valid_variant_packet_unit_bribe_inq(pc);
+  ensure_valid_variant_packet_unit_bribe_inq(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_BRIBE_INQ]) {
-    case 100: return send_packet_unit_bribe_inq_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INQ]) {
+    case 100: return send_packet_unit_bribe_inq_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_bribe_inq(struct connection *pc, int unit_id)
+int dsend_packet_unit_bribe_inq(struct connection *pconn, int unit_id)
 {
   struct packet_unit_bribe_inq packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
-  
-  return send_packet_unit_bribe_inq(pc, real_packet);
+
+  return send_packet_unit_bribe_inq(pconn, real_packet);
 }
 
 #define hash_packet_unit_bribe_info_100 hash_const
@@ -18598,11 +18597,11 @@ int dsend_packet_unit_bribe_inq(struct connection *pc, int unit_id)
 
 BV_DEFINE(packet_unit_bribe_info_100_fields, 2);
 
-static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_bribe_info_100_fields fields;
   struct packet_unit_bribe_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_bribe_info *clone;
   RECEIVE_PACKET_START(packet_unit_bribe_info, real_packet);
 
@@ -18623,7 +18622,7 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -18631,7 +18630,7 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->cost = readin;
     }
@@ -18647,13 +18646,13 @@ static struct packet_unit_bribe_info *receive_packet_unit_bribe_info_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_bribe_info_100(struct connection *pc, const struct packet_unit_bribe_info *packet)
+static int send_packet_unit_bribe_info_100(struct connection *pconn, const struct packet_unit_bribe_info *packet)
 {
   const struct packet_unit_bribe_info *real_packet = packet;
   packet_unit_bribe_info_100_fields fields;
   struct packet_unit_bribe_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_BRIBE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_BRIBE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_BRIBE_INFO);
 
@@ -18703,11 +18702,11 @@ static int send_packet_unit_bribe_info_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_bribe_info(struct connection *pc)
+static void ensure_valid_variant_packet_unit_bribe_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_BRIBE_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_BRIBE_INFO] != -1) {
     return;
   }
 
@@ -18717,57 +18716,57 @@ static void ensure_valid_variant_packet_unit_bribe_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_BRIBE_INFO] = variant;
+  pconn->phs.variant[PACKET_UNIT_BRIBE_INFO] = variant;
 }
 
-struct packet_unit_bribe_info *receive_packet_unit_bribe_info(struct connection *pc, enum packet_type type)
+struct packet_unit_bribe_info *receive_packet_unit_bribe_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_bribe_info at the server.");
   }
-  ensure_valid_variant_packet_unit_bribe_info(pc);
+  ensure_valid_variant_packet_unit_bribe_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_BRIBE_INFO]) {
-    case 100: return receive_packet_unit_bribe_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INFO]) {
+    case 100: return receive_packet_unit_bribe_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_bribe_info(struct connection *pc, const struct packet_unit_bribe_info *packet)
+int send_packet_unit_bribe_info(struct connection *pconn, const struct packet_unit_bribe_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_bribe_info from the client.");
   }
-  ensure_valid_variant_packet_unit_bribe_info(pc);
+  ensure_valid_variant_packet_unit_bribe_info(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_BRIBE_INFO]) {
-    case 100: return send_packet_unit_bribe_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_BRIBE_INFO]) {
+    case 100: return send_packet_unit_bribe_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_bribe_info(struct connection *pc, int unit_id, int cost)
+int dsend_packet_unit_bribe_info(struct connection *pconn, int unit_id, int cost)
 {
   struct packet_unit_bribe_info packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->cost = cost;
-  
-  return send_packet_unit_bribe_info(pc, real_packet);
+
+  return send_packet_unit_bribe_info(pconn, real_packet);
 }
 
 #define hash_packet_unit_type_upgrade_100 hash_const
@@ -18776,11 +18775,11 @@ int dsend_packet_unit_bribe_info(struct connection *pc, int unit_id, int cost)
 
 BV_DEFINE(packet_unit_type_upgrade_100_fields, 1);
 
-static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_type_upgrade_100_fields fields;
   struct packet_unit_type_upgrade *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_type_upgrade *clone;
   RECEIVE_PACKET_START(packet_unit_type_upgrade, real_packet);
 
@@ -18801,7 +18800,7 @@ static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(str
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -18817,13 +18816,13 @@ static struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade_100(str
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_type_upgrade_100(struct connection *pc, const struct packet_unit_type_upgrade *packet)
+static int send_packet_unit_type_upgrade_100(struct connection *pconn, const struct packet_unit_type_upgrade *packet)
 {
   const struct packet_unit_type_upgrade *real_packet = packet;
   packet_unit_type_upgrade_100_fields fields;
   struct packet_unit_type_upgrade *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_TYPE_UPGRADE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_TYPE_UPGRADE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_TYPE_UPGRADE);
 
@@ -18866,11 +18865,11 @@ static int send_packet_unit_type_upgrade_100(struct connection *pc, const struct
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_type_upgrade(struct connection *pc)
+static void ensure_valid_variant_packet_unit_type_upgrade(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_TYPE_UPGRADE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE] != -1) {
     return;
   }
 
@@ -18880,56 +18879,56 @@ static void ensure_valid_variant_packet_unit_type_upgrade(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_TYPE_UPGRADE] = variant;
+  pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE] = variant;
 }
 
-struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade(struct connection *pc, enum packet_type type)
+struct packet_unit_type_upgrade *receive_packet_unit_type_upgrade(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_type_upgrade at the client.");
   }
-  ensure_valid_variant_packet_unit_type_upgrade(pc);
+  ensure_valid_variant_packet_unit_type_upgrade(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_TYPE_UPGRADE]) {
-    case 100: return receive_packet_unit_type_upgrade_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE]) {
+    case 100: return receive_packet_unit_type_upgrade_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_type_upgrade(struct connection *pc, const struct packet_unit_type_upgrade *packet)
+int send_packet_unit_type_upgrade(struct connection *pconn, const struct packet_unit_type_upgrade *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_type_upgrade from the server.");
   }
-  ensure_valid_variant_packet_unit_type_upgrade(pc);
+  ensure_valid_variant_packet_unit_type_upgrade(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_TYPE_UPGRADE]) {
-    case 100: return send_packet_unit_type_upgrade_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_TYPE_UPGRADE]) {
+    case 100: return send_packet_unit_type_upgrade_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_type_upgrade(struct connection *pc, Unit_Type_id type)
+int dsend_packet_unit_type_upgrade(struct connection *pconn, Unit_Type_id type)
 {
   struct packet_unit_type_upgrade packet, *real_packet = &packet;
 
   real_packet->type = type;
-  
-  return send_packet_unit_type_upgrade(pc, real_packet);
+
+  return send_packet_unit_type_upgrade(pconn, real_packet);
 }
 
 #define hash_packet_unit_diplomat_action_100 hash_const
@@ -18938,11 +18937,11 @@ int dsend_packet_unit_type_upgrade(struct connection *pc, Unit_Type_id type)
 
 BV_DEFINE(packet_unit_diplomat_action_100_fields, 4);
 
-static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_diplomat_action_100_fields fields;
   struct packet_unit_diplomat_action *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_diplomat_action *clone;
   RECEIVE_PACKET_START(packet_unit_diplomat_action, real_packet);
 
@@ -18963,7 +18962,7 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->diplomat_id = readin;
     }
@@ -18971,7 +18970,7 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->action_type = readin;
     }
@@ -18979,7 +18978,7 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->target_id = readin;
     }
@@ -18987,7 +18986,7 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->value = readin;
     }
@@ -19003,13 +19002,13 @@ static struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_action_100(struct connection *pc, const struct packet_unit_diplomat_action *packet)
+static int send_packet_unit_diplomat_action_100(struct connection *pconn, const struct packet_unit_diplomat_action *packet)
 {
   const struct packet_unit_diplomat_action *real_packet = packet;
   packet_unit_diplomat_action_100_fields fields;
   struct packet_unit_diplomat_action *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_DIPLOMAT_ACTION];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_DIPLOMAT_ACTION];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_DIPLOMAT_ACTION);
 
@@ -19073,11 +19072,11 @@ static int send_packet_unit_diplomat_action_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_diplomat_action(struct connection *pc)
+static void ensure_valid_variant_packet_unit_diplomat_action(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION] != -1) {
     return;
   }
 
@@ -19087,50 +19086,50 @@ static void ensure_valid_variant_packet_unit_diplomat_action(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION] = variant;
+  pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION] = variant;
 }
 
-struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action(struct connection *pc, enum packet_type type)
+struct packet_unit_diplomat_action *receive_packet_unit_diplomat_action(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_diplomat_action at the client.");
   }
-  ensure_valid_variant_packet_unit_diplomat_action(pc);
+  ensure_valid_variant_packet_unit_diplomat_action(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION]) {
-    case 100: return receive_packet_unit_diplomat_action_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION]) {
+    case 100: return receive_packet_unit_diplomat_action_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_diplomat_action(struct connection *pc, const struct packet_unit_diplomat_action *packet)
+int send_packet_unit_diplomat_action(struct connection *pconn, const struct packet_unit_diplomat_action *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_diplomat_action from the server.");
   }
-  ensure_valid_variant_packet_unit_diplomat_action(pc);
+  ensure_valid_variant_packet_unit_diplomat_action(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION]) {
-    case 100: return send_packet_unit_diplomat_action_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_ACTION]) {
+    case 100: return send_packet_unit_diplomat_action_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_diplomat_action(struct connection *pc, int diplomat_id, enum diplomat_actions action_type, int target_id, int value)
+int dsend_packet_unit_diplomat_action(struct connection *pconn, int diplomat_id, enum diplomat_actions action_type, int target_id, int value)
 {
   struct packet_unit_diplomat_action packet, *real_packet = &packet;
 
@@ -19138,8 +19137,8 @@ int dsend_packet_unit_diplomat_action(struct connection *pc, int diplomat_id, en
   real_packet->action_type = action_type;
   real_packet->target_id = target_id;
   real_packet->value = value;
-  
-  return send_packet_unit_diplomat_action(pc, real_packet);
+
+  return send_packet_unit_diplomat_action(pconn, real_packet);
 }
 
 #define hash_packet_unit_diplomat_popup_dialog_100 hash_const
@@ -19148,11 +19147,11 @@ int dsend_packet_unit_diplomat_action(struct connection *pc, int diplomat_id, en
 
 BV_DEFINE(packet_unit_diplomat_popup_dialog_100_fields, 2);
 
-static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dialog_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dialog_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_diplomat_popup_dialog_100_fields fields;
   struct packet_unit_diplomat_popup_dialog *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_diplomat_popup_dialog *clone;
   RECEIVE_PACKET_START(packet_unit_diplomat_popup_dialog, real_packet);
 
@@ -19173,7 +19172,7 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->diplomat_id = readin;
     }
@@ -19181,7 +19180,7 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->target_id = readin;
     }
@@ -19197,13 +19196,13 @@ static struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_po
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_diplomat_popup_dialog_100(struct connection *pc, const struct packet_unit_diplomat_popup_dialog *packet)
+static int send_packet_unit_diplomat_popup_dialog_100(struct connection *pconn, const struct packet_unit_diplomat_popup_dialog *packet)
 {
   const struct packet_unit_diplomat_popup_dialog *real_packet = packet;
   packet_unit_diplomat_popup_dialog_100_fields fields;
   struct packet_unit_diplomat_popup_dialog *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_DIPLOMAT_POPUP_DIALOG);
 
@@ -19253,11 +19252,11 @@ static int send_packet_unit_diplomat_popup_dialog_100(struct connection *pc, con
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_diplomat_popup_dialog(struct connection *pc)
+static void ensure_valid_variant_packet_unit_diplomat_popup_dialog(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG] != -1) {
     return;
   }
 
@@ -19267,64 +19266,64 @@ static void ensure_valid_variant_packet_unit_diplomat_popup_dialog(struct connec
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG] = variant;
+  pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG] = variant;
 }
 
-struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dialog(struct connection *pc, enum packet_type type)
+struct packet_unit_diplomat_popup_dialog *receive_packet_unit_diplomat_popup_dialog(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_diplomat_popup_dialog at the server.");
   }
-  ensure_valid_variant_packet_unit_diplomat_popup_dialog(pc);
+  ensure_valid_variant_packet_unit_diplomat_popup_dialog(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG]) {
-    case 100: return receive_packet_unit_diplomat_popup_dialog_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG]) {
+    case 100: return receive_packet_unit_diplomat_popup_dialog_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_diplomat_popup_dialog(struct connection *pc, const struct packet_unit_diplomat_popup_dialog *packet)
+int send_packet_unit_diplomat_popup_dialog(struct connection *pconn, const struct packet_unit_diplomat_popup_dialog *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_diplomat_popup_dialog from the client.");
   }
-  ensure_valid_variant_packet_unit_diplomat_popup_dialog(pc);
+  ensure_valid_variant_packet_unit_diplomat_popup_dialog(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG]) {
-    case 100: return send_packet_unit_diplomat_popup_dialog_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_DIPLOMAT_POPUP_DIALOG]) {
+    case 100: return send_packet_unit_diplomat_popup_dialog_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_unit_diplomat_popup_dialog(struct conn_list *dest, const struct packet_unit_diplomat_popup_dialog *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_unit_diplomat_popup_dialog(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_unit_diplomat_popup_dialog(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_unit_diplomat_popup_dialog(struct connection *pc, int diplomat_id, int target_id)
+int dsend_packet_unit_diplomat_popup_dialog(struct connection *pconn, int diplomat_id, int target_id)
 {
   struct packet_unit_diplomat_popup_dialog packet, *real_packet = &packet;
 
   real_packet->diplomat_id = diplomat_id;
   real_packet->target_id = target_id;
-  
-  return send_packet_unit_diplomat_popup_dialog(pc, real_packet);
+
+  return send_packet_unit_diplomat_popup_dialog(pconn, real_packet);
 }
 
 void dlsend_packet_unit_diplomat_popup_dialog(struct conn_list *dest, int diplomat_id, int target_id)
@@ -19333,7 +19332,7 @@ void dlsend_packet_unit_diplomat_popup_dialog(struct conn_list *dest, int diplom
 
   real_packet->diplomat_id = diplomat_id;
   real_packet->target_id = target_id;
-  
+
   lsend_packet_unit_diplomat_popup_dialog(dest, real_packet);
 }
 
@@ -19343,11 +19342,11 @@ void dlsend_packet_unit_diplomat_popup_dialog(struct conn_list *dest, int diplom
 
 BV_DEFINE(packet_unit_change_activity_100_fields, 3);
 
-static struct packet_unit_change_activity *receive_packet_unit_change_activity_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_change_activity *receive_packet_unit_change_activity_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_change_activity_100_fields fields;
   struct packet_unit_change_activity *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_change_activity *clone;
   RECEIVE_PACKET_START(packet_unit_change_activity, real_packet);
 
@@ -19368,7 +19367,7 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -19376,7 +19375,7 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->activity = readin;
     }
@@ -19384,7 +19383,7 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->activity_target = readin;
     }
@@ -19400,13 +19399,13 @@ static struct packet_unit_change_activity *receive_packet_unit_change_activity_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_change_activity_100(struct connection *pc, const struct packet_unit_change_activity *packet)
+static int send_packet_unit_change_activity_100(struct connection *pconn, const struct packet_unit_change_activity *packet)
 {
   const struct packet_unit_change_activity *real_packet = packet;
   packet_unit_change_activity_100_fields fields;
   struct packet_unit_change_activity *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_CHANGE_ACTIVITY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_CHANGE_ACTIVITY];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_CHANGE_ACTIVITY);
 
@@ -19463,11 +19462,11 @@ static int send_packet_unit_change_activity_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_change_activity(struct connection *pc)
+static void ensure_valid_variant_packet_unit_change_activity(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY] != -1) {
     return;
   }
 
@@ -19477,58 +19476,58 @@ static void ensure_valid_variant_packet_unit_change_activity(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY] = variant;
+  pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY] = variant;
 }
 
-struct packet_unit_change_activity *receive_packet_unit_change_activity(struct connection *pc, enum packet_type type)
+struct packet_unit_change_activity *receive_packet_unit_change_activity(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_change_activity at the client.");
   }
-  ensure_valid_variant_packet_unit_change_activity(pc);
+  ensure_valid_variant_packet_unit_change_activity(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY]) {
-    case 100: return receive_packet_unit_change_activity_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY]) {
+    case 100: return receive_packet_unit_change_activity_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_change_activity(struct connection *pc, const struct packet_unit_change_activity *packet)
+int send_packet_unit_change_activity(struct connection *pconn, const struct packet_unit_change_activity *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_change_activity from the server.");
   }
-  ensure_valid_variant_packet_unit_change_activity(pc);
+  ensure_valid_variant_packet_unit_change_activity(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY]) {
-    case 100: return send_packet_unit_change_activity_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_CHANGE_ACTIVITY]) {
+    case 100: return send_packet_unit_change_activity_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_change_activity(struct connection *pc, int unit_id, enum unit_activity activity, enum tile_special_type activity_target)
+int dsend_packet_unit_change_activity(struct connection *pconn, int unit_id, enum unit_activity activity, enum tile_special_type activity_target)
 {
   struct packet_unit_change_activity packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->activity = activity;
   real_packet->activity_target = activity_target;
-  
-  return send_packet_unit_change_activity(pc, real_packet);
+
+  return send_packet_unit_change_activity(pconn, real_packet);
 }
 
 #define hash_packet_diplomacy_init_meeting_req_100 hash_const
@@ -19537,11 +19536,11 @@ int dsend_packet_unit_change_activity(struct connection *pc, int unit_id, enum u
 
 BV_DEFINE(packet_diplomacy_init_meeting_req_100_fields, 1);
 
-static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_init_meeting_req_100_fields fields;
   struct packet_diplomacy_init_meeting_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_init_meeting_req *clone;
   RECEIVE_PACKET_START(packet_diplomacy_init_meeting_req, real_packet);
 
@@ -19562,7 +19561,7 @@ static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_m
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -19578,13 +19577,13 @@ static struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_m
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_req_100(struct connection *pc, const struct packet_diplomacy_init_meeting_req *packet)
+static int send_packet_diplomacy_init_meeting_req_100(struct connection *pconn, const struct packet_diplomacy_init_meeting_req *packet)
 {
   const struct packet_diplomacy_init_meeting_req *real_packet = packet;
   packet_diplomacy_init_meeting_req_100_fields fields;
   struct packet_diplomacy_init_meeting_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_INIT_MEETING_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_INIT_MEETING_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_INIT_MEETING_REQ);
 
@@ -19627,11 +19626,11 @@ static int send_packet_diplomacy_init_meeting_req_100(struct connection *pc, con
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_init_meeting_req(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_init_meeting_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ] != -1) {
     return;
   }
 
@@ -19641,56 +19640,56 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting_req(struct connec
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ] = variant;
 }
 
-struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_init_meeting_req *receive_packet_diplomacy_init_meeting_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_init_meeting_req at the client.");
   }
-  ensure_valid_variant_packet_diplomacy_init_meeting_req(pc);
+  ensure_valid_variant_packet_diplomacy_init_meeting_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ]) {
-    case 100: return receive_packet_diplomacy_init_meeting_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ]) {
+    case 100: return receive_packet_diplomacy_init_meeting_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_init_meeting_req(struct connection *pc, const struct packet_diplomacy_init_meeting_req *packet)
+int send_packet_diplomacy_init_meeting_req(struct connection *pconn, const struct packet_diplomacy_init_meeting_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_init_meeting_req from the server.");
   }
-  ensure_valid_variant_packet_diplomacy_init_meeting_req(pc);
+  ensure_valid_variant_packet_diplomacy_init_meeting_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ]) {
-    case 100: return send_packet_diplomacy_init_meeting_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING_REQ]) {
+    case 100: return send_packet_diplomacy_init_meeting_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_diplomacy_init_meeting_req(struct connection *pc, int counterpart)
+int dsend_packet_diplomacy_init_meeting_req(struct connection *pconn, int counterpart)
 {
   struct packet_diplomacy_init_meeting_req packet, *real_packet = &packet;
 
   real_packet->counterpart = counterpart;
-  
-  return send_packet_diplomacy_init_meeting_req(pc, real_packet);
+
+  return send_packet_diplomacy_init_meeting_req(pconn, real_packet);
 }
 
 #define hash_packet_diplomacy_init_meeting_100 hash_const
@@ -19699,11 +19698,11 @@ int dsend_packet_diplomacy_init_meeting_req(struct connection *pc, int counterpa
 
 BV_DEFINE(packet_diplomacy_init_meeting_100_fields, 2);
 
-static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_init_meeting_100_fields fields;
   struct packet_diplomacy_init_meeting *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_init_meeting *clone;
   RECEIVE_PACKET_START(packet_diplomacy_init_meeting, real_packet);
 
@@ -19724,7 +19723,7 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -19732,7 +19731,7 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->initiated_from = readin;
     }
@@ -19748,13 +19747,13 @@ static struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_init_meeting_100(struct connection *pc, const struct packet_diplomacy_init_meeting *packet)
+static int send_packet_diplomacy_init_meeting_100(struct connection *pconn, const struct packet_diplomacy_init_meeting *packet)
 {
   const struct packet_diplomacy_init_meeting *real_packet = packet;
   packet_diplomacy_init_meeting_100_fields fields;
   struct packet_diplomacy_init_meeting *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_INIT_MEETING];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_INIT_MEETING];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_INIT_MEETING);
 
@@ -19804,11 +19803,11 @@ static int send_packet_diplomacy_init_meeting_100(struct connection *pc, const s
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_init_meeting(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_init_meeting(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING] != -1) {
     return;
   }
 
@@ -19818,64 +19817,64 @@ static void ensure_valid_variant_packet_diplomacy_init_meeting(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING] = variant;
 }
 
-struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_init_meeting *receive_packet_diplomacy_init_meeting(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_init_meeting at the server.");
   }
-  ensure_valid_variant_packet_diplomacy_init_meeting(pc);
+  ensure_valid_variant_packet_diplomacy_init_meeting(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING]) {
-    case 100: return receive_packet_diplomacy_init_meeting_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING]) {
+    case 100: return receive_packet_diplomacy_init_meeting_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_init_meeting(struct connection *pc, const struct packet_diplomacy_init_meeting *packet)
+int send_packet_diplomacy_init_meeting(struct connection *pconn, const struct packet_diplomacy_init_meeting *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_init_meeting from the client.");
   }
-  ensure_valid_variant_packet_diplomacy_init_meeting(pc);
+  ensure_valid_variant_packet_diplomacy_init_meeting(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_INIT_MEETING]) {
-    case 100: return send_packet_diplomacy_init_meeting_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_INIT_MEETING]) {
+    case 100: return send_packet_diplomacy_init_meeting_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_diplomacy_init_meeting(struct conn_list *dest, const struct packet_diplomacy_init_meeting *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_diplomacy_init_meeting(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_diplomacy_init_meeting(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_init_meeting(struct connection *pc, int counterpart, int initiated_from)
+int dsend_packet_diplomacy_init_meeting(struct connection *pconn, int counterpart, int initiated_from)
 {
   struct packet_diplomacy_init_meeting packet, *real_packet = &packet;
 
   real_packet->counterpart = counterpart;
   real_packet->initiated_from = initiated_from;
-  
-  return send_packet_diplomacy_init_meeting(pc, real_packet);
+
+  return send_packet_diplomacy_init_meeting(pconn, real_packet);
 }
 
 void dlsend_packet_diplomacy_init_meeting(struct conn_list *dest, int counterpart, int initiated_from)
@@ -19884,7 +19883,7 @@ void dlsend_packet_diplomacy_init_meeting(struct conn_list *dest, int counterpar
 
   real_packet->counterpart = counterpart;
   real_packet->initiated_from = initiated_from;
-  
+
   lsend_packet_diplomacy_init_meeting(dest, real_packet);
 }
 
@@ -19894,11 +19893,11 @@ void dlsend_packet_diplomacy_init_meeting(struct conn_list *dest, int counterpar
 
 BV_DEFINE(packet_diplomacy_cancel_meeting_req_100_fields, 1);
 
-static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meeting_req_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meeting_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_cancel_meeting_req_100_fields fields;
   struct packet_diplomacy_cancel_meeting_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_cancel_meeting_req *clone;
   RECEIVE_PACKET_START(packet_diplomacy_cancel_meeting_req, real_packet);
 
@@ -19919,7 +19918,7 @@ static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_canc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -19935,13 +19934,13 @@ static struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_canc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_meeting_req_100(struct connection *pc, const struct packet_diplomacy_cancel_meeting_req *packet)
+static int send_packet_diplomacy_cancel_meeting_req_100(struct connection *pconn, const struct packet_diplomacy_cancel_meeting_req *packet)
 {
   const struct packet_diplomacy_cancel_meeting_req *real_packet = packet;
   packet_diplomacy_cancel_meeting_req_100_fields fields;
   struct packet_diplomacy_cancel_meeting_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_CANCEL_MEETING_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CANCEL_MEETING_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_MEETING_REQ);
 
@@ -19984,11 +19983,11 @@ static int send_packet_diplomacy_cancel_meeting_req_100(struct connection *pc, c
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ] != -1) {
     return;
   }
 
@@ -19998,56 +19997,56 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting_req(struct conn
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ] = variant;
 }
 
-struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meeting_req(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_cancel_meeting_req *receive_packet_diplomacy_cancel_meeting_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_cancel_meeting_req at the client.");
   }
-  ensure_valid_variant_packet_diplomacy_cancel_meeting_req(pc);
+  ensure_valid_variant_packet_diplomacy_cancel_meeting_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ]) {
-    case 100: return receive_packet_diplomacy_cancel_meeting_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ]) {
+    case 100: return receive_packet_diplomacy_cancel_meeting_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_cancel_meeting_req(struct connection *pc, const struct packet_diplomacy_cancel_meeting_req *packet)
+int send_packet_diplomacy_cancel_meeting_req(struct connection *pconn, const struct packet_diplomacy_cancel_meeting_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_cancel_meeting_req from the server.");
   }
-  ensure_valid_variant_packet_diplomacy_cancel_meeting_req(pc);
+  ensure_valid_variant_packet_diplomacy_cancel_meeting_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ]) {
-    case 100: return send_packet_diplomacy_cancel_meeting_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING_REQ]) {
+    case 100: return send_packet_diplomacy_cancel_meeting_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_diplomacy_cancel_meeting_req(struct connection *pc, int counterpart)
+int dsend_packet_diplomacy_cancel_meeting_req(struct connection *pconn, int counterpart)
 {
   struct packet_diplomacy_cancel_meeting_req packet, *real_packet = &packet;
 
   real_packet->counterpart = counterpart;
-  
-  return send_packet_diplomacy_cancel_meeting_req(pc, real_packet);
+
+  return send_packet_diplomacy_cancel_meeting_req(pconn, real_packet);
 }
 
 #define hash_packet_diplomacy_cancel_meeting_100 hash_const
@@ -20056,11 +20055,11 @@ int dsend_packet_diplomacy_cancel_meeting_req(struct connection *pc, int counter
 
 BV_DEFINE(packet_diplomacy_cancel_meeting_100_fields, 2);
 
-static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_cancel_meeting_100_fields fields;
   struct packet_diplomacy_cancel_meeting *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_cancel_meeting *clone;
   RECEIVE_PACKET_START(packet_diplomacy_cancel_meeting, real_packet);
 
@@ -20081,7 +20080,7 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -20089,7 +20088,7 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->initiated_from = readin;
     }
@@ -20105,13 +20104,13 @@ static struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_m
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_meeting_100(struct connection *pc, const struct packet_diplomacy_cancel_meeting *packet)
+static int send_packet_diplomacy_cancel_meeting_100(struct connection *pconn, const struct packet_diplomacy_cancel_meeting *packet)
 {
   const struct packet_diplomacy_cancel_meeting *real_packet = packet;
   packet_diplomacy_cancel_meeting_100_fields fields;
   struct packet_diplomacy_cancel_meeting *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_CANCEL_MEETING];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CANCEL_MEETING];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_MEETING);
 
@@ -20161,11 +20160,11 @@ static int send_packet_diplomacy_cancel_meeting_100(struct connection *pc, const
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_cancel_meeting(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_cancel_meeting(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING] != -1) {
     return;
   }
 
@@ -20175,64 +20174,64 @@ static void ensure_valid_variant_packet_diplomacy_cancel_meeting(struct connecti
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING] = variant;
 }
 
-struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_cancel_meeting *receive_packet_diplomacy_cancel_meeting(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_cancel_meeting at the server.");
   }
-  ensure_valid_variant_packet_diplomacy_cancel_meeting(pc);
+  ensure_valid_variant_packet_diplomacy_cancel_meeting(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING]) {
-    case 100: return receive_packet_diplomacy_cancel_meeting_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING]) {
+    case 100: return receive_packet_diplomacy_cancel_meeting_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_cancel_meeting(struct connection *pc, const struct packet_diplomacy_cancel_meeting *packet)
+int send_packet_diplomacy_cancel_meeting(struct connection *pconn, const struct packet_diplomacy_cancel_meeting *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_cancel_meeting from the client.");
   }
-  ensure_valid_variant_packet_diplomacy_cancel_meeting(pc);
+  ensure_valid_variant_packet_diplomacy_cancel_meeting(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING]) {
-    case 100: return send_packet_diplomacy_cancel_meeting_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_MEETING]) {
+    case 100: return send_packet_diplomacy_cancel_meeting_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_diplomacy_cancel_meeting(struct conn_list *dest, const struct packet_diplomacy_cancel_meeting *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_diplomacy_cancel_meeting(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_diplomacy_cancel_meeting(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_cancel_meeting(struct connection *pc, int counterpart, int initiated_from)
+int dsend_packet_diplomacy_cancel_meeting(struct connection *pconn, int counterpart, int initiated_from)
 {
   struct packet_diplomacy_cancel_meeting packet, *real_packet = &packet;
 
   real_packet->counterpart = counterpart;
   real_packet->initiated_from = initiated_from;
-  
-  return send_packet_diplomacy_cancel_meeting(pc, real_packet);
+
+  return send_packet_diplomacy_cancel_meeting(pconn, real_packet);
 }
 
 void dlsend_packet_diplomacy_cancel_meeting(struct conn_list *dest, int counterpart, int initiated_from)
@@ -20241,7 +20240,7 @@ void dlsend_packet_diplomacy_cancel_meeting(struct conn_list *dest, int counterp
 
   real_packet->counterpart = counterpart;
   real_packet->initiated_from = initiated_from;
-  
+
   lsend_packet_diplomacy_cancel_meeting(dest, real_packet);
 }
 
@@ -20251,11 +20250,11 @@ void dlsend_packet_diplomacy_cancel_meeting(struct conn_list *dest, int counterp
 
 BV_DEFINE(packet_diplomacy_create_clause_req_100_fields, 4);
 
-static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_clause_req_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_clause_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_create_clause_req_100_fields fields;
   struct packet_diplomacy_create_clause_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_create_clause_req *clone;
   RECEIVE_PACKET_START(packet_diplomacy_create_clause_req, real_packet);
 
@@ -20276,7 +20275,7 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -20284,7 +20283,7 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->giver = readin;
     }
@@ -20292,7 +20291,7 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -20300,7 +20299,7 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->value = readin;
     }
@@ -20316,13 +20315,13 @@ static struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_creat
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_create_clause_req_100(struct connection *pc, const struct packet_diplomacy_create_clause_req *packet)
+static int send_packet_diplomacy_create_clause_req_100(struct connection *pconn, const struct packet_diplomacy_create_clause_req *packet)
 {
   const struct packet_diplomacy_create_clause_req *real_packet = packet;
   packet_diplomacy_create_clause_req_100_fields fields;
   struct packet_diplomacy_create_clause_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_CREATE_CLAUSE_REQ);
 
@@ -20386,11 +20385,11 @@ static int send_packet_diplomacy_create_clause_req_100(struct connection *pc, co
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_create_clause_req(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_create_clause_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ] != -1) {
     return;
   }
 
@@ -20400,50 +20399,50 @@ static void ensure_valid_variant_packet_diplomacy_create_clause_req(struct conne
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ] = variant;
 }
 
-struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_clause_req(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_create_clause_req *receive_packet_diplomacy_create_clause_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_create_clause_req at the client.");
   }
-  ensure_valid_variant_packet_diplomacy_create_clause_req(pc);
+  ensure_valid_variant_packet_diplomacy_create_clause_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ]) {
-    case 100: return receive_packet_diplomacy_create_clause_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ]) {
+    case 100: return receive_packet_diplomacy_create_clause_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_create_clause_req(struct connection *pc, const struct packet_diplomacy_create_clause_req *packet)
+int send_packet_diplomacy_create_clause_req(struct connection *pconn, const struct packet_diplomacy_create_clause_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_create_clause_req from the server.");
   }
-  ensure_valid_variant_packet_diplomacy_create_clause_req(pc);
+  ensure_valid_variant_packet_diplomacy_create_clause_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ]) {
-    case 100: return send_packet_diplomacy_create_clause_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE_REQ]) {
+    case 100: return send_packet_diplomacy_create_clause_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_diplomacy_create_clause_req(struct connection *pc, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_create_clause_req(struct connection *pconn, int counterpart, int giver, enum clause_type type, int value)
 {
   struct packet_diplomacy_create_clause_req packet, *real_packet = &packet;
 
@@ -20451,8 +20450,8 @@ int dsend_packet_diplomacy_create_clause_req(struct connection *pc, int counterp
   real_packet->giver = giver;
   real_packet->type = type;
   real_packet->value = value;
-  
-  return send_packet_diplomacy_create_clause_req(pc, real_packet);
+
+  return send_packet_diplomacy_create_clause_req(pconn, real_packet);
 }
 
 #define hash_packet_diplomacy_create_clause_100 hash_const
@@ -20461,11 +20460,11 @@ int dsend_packet_diplomacy_create_clause_req(struct connection *pc, int counterp
 
 BV_DEFINE(packet_diplomacy_create_clause_100_fields, 4);
 
-static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_create_clause_100_fields fields;
   struct packet_diplomacy_create_clause *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_create_clause *clone;
   RECEIVE_PACKET_START(packet_diplomacy_create_clause, real_packet);
 
@@ -20486,7 +20485,7 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -20494,7 +20493,7 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->giver = readin;
     }
@@ -20502,7 +20501,7 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -20510,7 +20509,7 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->value = readin;
     }
@@ -20526,13 +20525,13 @@ static struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_cl
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_create_clause_100(struct connection *pc, const struct packet_diplomacy_create_clause *packet)
+static int send_packet_diplomacy_create_clause_100(struct connection *pconn, const struct packet_diplomacy_create_clause *packet)
 {
   const struct packet_diplomacy_create_clause *real_packet = packet;
   packet_diplomacy_create_clause_100_fields fields;
   struct packet_diplomacy_create_clause *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_CREATE_CLAUSE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CREATE_CLAUSE];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_CREATE_CLAUSE);
 
@@ -20596,11 +20595,11 @@ static int send_packet_diplomacy_create_clause_100(struct connection *pc, const 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_create_clause(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_create_clause(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE] != -1) {
     return;
   }
 
@@ -20610,57 +20609,57 @@ static void ensure_valid_variant_packet_diplomacy_create_clause(struct connectio
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE] = variant;
 }
 
-struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_create_clause *receive_packet_diplomacy_create_clause(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_create_clause at the server.");
   }
-  ensure_valid_variant_packet_diplomacy_create_clause(pc);
+  ensure_valid_variant_packet_diplomacy_create_clause(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE]) {
-    case 100: return receive_packet_diplomacy_create_clause_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE]) {
+    case 100: return receive_packet_diplomacy_create_clause_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_create_clause(struct connection *pc, const struct packet_diplomacy_create_clause *packet)
+int send_packet_diplomacy_create_clause(struct connection *pconn, const struct packet_diplomacy_create_clause *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_create_clause from the client.");
   }
-  ensure_valid_variant_packet_diplomacy_create_clause(pc);
+  ensure_valid_variant_packet_diplomacy_create_clause(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE]) {
-    case 100: return send_packet_diplomacy_create_clause_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CREATE_CLAUSE]) {
+    case 100: return send_packet_diplomacy_create_clause_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_diplomacy_create_clause(struct conn_list *dest, const struct packet_diplomacy_create_clause *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_diplomacy_create_clause(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_diplomacy_create_clause(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_create_clause(struct connection *pc, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_create_clause(struct connection *pconn, int counterpart, int giver, enum clause_type type, int value)
 {
   struct packet_diplomacy_create_clause packet, *real_packet = &packet;
 
@@ -20668,8 +20667,8 @@ int dsend_packet_diplomacy_create_clause(struct connection *pc, int counterpart,
   real_packet->giver = giver;
   real_packet->type = type;
   real_packet->value = value;
-  
-  return send_packet_diplomacy_create_clause(pc, real_packet);
+
+  return send_packet_diplomacy_create_clause(pconn, real_packet);
 }
 
 void dlsend_packet_diplomacy_create_clause(struct conn_list *dest, int counterpart, int giver, enum clause_type type, int value)
@@ -20680,7 +20679,7 @@ void dlsend_packet_diplomacy_create_clause(struct conn_list *dest, int counterpa
   real_packet->giver = giver;
   real_packet->type = type;
   real_packet->value = value;
-  
+
   lsend_packet_diplomacy_create_clause(dest, real_packet);
 }
 
@@ -20690,11 +20689,11 @@ void dlsend_packet_diplomacy_create_clause(struct conn_list *dest, int counterpa
 
 BV_DEFINE(packet_diplomacy_remove_clause_req_100_fields, 4);
 
-static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_clause_req_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_clause_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_remove_clause_req_100_fields fields;
   struct packet_diplomacy_remove_clause_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_remove_clause_req *clone;
   RECEIVE_PACKET_START(packet_diplomacy_remove_clause_req, real_packet);
 
@@ -20715,7 +20714,7 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -20723,7 +20722,7 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->giver = readin;
     }
@@ -20731,7 +20730,7 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -20739,7 +20738,7 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->value = readin;
     }
@@ -20755,13 +20754,13 @@ static struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remov
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_remove_clause_req_100(struct connection *pc, const struct packet_diplomacy_remove_clause_req *packet)
+static int send_packet_diplomacy_remove_clause_req_100(struct connection *pconn, const struct packet_diplomacy_remove_clause_req *packet)
 {
   const struct packet_diplomacy_remove_clause_req *real_packet = packet;
   packet_diplomacy_remove_clause_req_100_fields fields;
   struct packet_diplomacy_remove_clause_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ);
 
@@ -20825,11 +20824,11 @@ static int send_packet_diplomacy_remove_clause_req_100(struct connection *pc, co
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_remove_clause_req(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_remove_clause_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ] != -1) {
     return;
   }
 
@@ -20839,50 +20838,50 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause_req(struct conne
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ] = variant;
 }
 
-struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_clause_req(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_remove_clause_req *receive_packet_diplomacy_remove_clause_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_remove_clause_req at the client.");
   }
-  ensure_valid_variant_packet_diplomacy_remove_clause_req(pc);
+  ensure_valid_variant_packet_diplomacy_remove_clause_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ]) {
-    case 100: return receive_packet_diplomacy_remove_clause_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ]) {
+    case 100: return receive_packet_diplomacy_remove_clause_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_remove_clause_req(struct connection *pc, const struct packet_diplomacy_remove_clause_req *packet)
+int send_packet_diplomacy_remove_clause_req(struct connection *pconn, const struct packet_diplomacy_remove_clause_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_remove_clause_req from the server.");
   }
-  ensure_valid_variant_packet_diplomacy_remove_clause_req(pc);
+  ensure_valid_variant_packet_diplomacy_remove_clause_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ]) {
-    case 100: return send_packet_diplomacy_remove_clause_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE_REQ]) {
+    case 100: return send_packet_diplomacy_remove_clause_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_diplomacy_remove_clause_req(struct connection *pc, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_remove_clause_req(struct connection *pconn, int counterpart, int giver, enum clause_type type, int value)
 {
   struct packet_diplomacy_remove_clause_req packet, *real_packet = &packet;
 
@@ -20890,8 +20889,8 @@ int dsend_packet_diplomacy_remove_clause_req(struct connection *pc, int counterp
   real_packet->giver = giver;
   real_packet->type = type;
   real_packet->value = value;
-  
-  return send_packet_diplomacy_remove_clause_req(pc, real_packet);
+
+  return send_packet_diplomacy_remove_clause_req(pconn, real_packet);
 }
 
 #define hash_packet_diplomacy_remove_clause_100 hash_const
@@ -20900,11 +20899,11 @@ int dsend_packet_diplomacy_remove_clause_req(struct connection *pc, int counterp
 
 BV_DEFINE(packet_diplomacy_remove_clause_100_fields, 4);
 
-static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_remove_clause_100_fields fields;
   struct packet_diplomacy_remove_clause *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_remove_clause *clone;
   RECEIVE_PACKET_START(packet_diplomacy_remove_clause, real_packet);
 
@@ -20925,7 +20924,7 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -20933,7 +20932,7 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->giver = readin;
     }
@@ -20941,7 +20940,7 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -20949,7 +20948,7 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->value = readin;
     }
@@ -20965,13 +20964,13 @@ static struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_cl
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_remove_clause_100(struct connection *pc, const struct packet_diplomacy_remove_clause *packet)
+static int send_packet_diplomacy_remove_clause_100(struct connection *pconn, const struct packet_diplomacy_remove_clause *packet)
 {
   const struct packet_diplomacy_remove_clause *real_packet = packet;
   packet_diplomacy_remove_clause_100_fields fields;
   struct packet_diplomacy_remove_clause *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_REMOVE_CLAUSE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_REMOVE_CLAUSE];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_REMOVE_CLAUSE);
 
@@ -21035,11 +21034,11 @@ static int send_packet_diplomacy_remove_clause_100(struct connection *pc, const 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_remove_clause(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_remove_clause(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE] != -1) {
     return;
   }
 
@@ -21049,57 +21048,57 @@ static void ensure_valid_variant_packet_diplomacy_remove_clause(struct connectio
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE] = variant;
 }
 
-struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_remove_clause *receive_packet_diplomacy_remove_clause(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_remove_clause at the server.");
   }
-  ensure_valid_variant_packet_diplomacy_remove_clause(pc);
+  ensure_valid_variant_packet_diplomacy_remove_clause(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE]) {
-    case 100: return receive_packet_diplomacy_remove_clause_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE]) {
+    case 100: return receive_packet_diplomacy_remove_clause_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_remove_clause(struct connection *pc, const struct packet_diplomacy_remove_clause *packet)
+int send_packet_diplomacy_remove_clause(struct connection *pconn, const struct packet_diplomacy_remove_clause *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_remove_clause from the client.");
   }
-  ensure_valid_variant_packet_diplomacy_remove_clause(pc);
+  ensure_valid_variant_packet_diplomacy_remove_clause(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE]) {
-    case 100: return send_packet_diplomacy_remove_clause_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_REMOVE_CLAUSE]) {
+    case 100: return send_packet_diplomacy_remove_clause_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_diplomacy_remove_clause(struct conn_list *dest, const struct packet_diplomacy_remove_clause *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_diplomacy_remove_clause(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_diplomacy_remove_clause(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_remove_clause(struct connection *pc, int counterpart, int giver, enum clause_type type, int value)
+int dsend_packet_diplomacy_remove_clause(struct connection *pconn, int counterpart, int giver, enum clause_type type, int value)
 {
   struct packet_diplomacy_remove_clause packet, *real_packet = &packet;
 
@@ -21107,8 +21106,8 @@ int dsend_packet_diplomacy_remove_clause(struct connection *pc, int counterpart,
   real_packet->giver = giver;
   real_packet->type = type;
   real_packet->value = value;
-  
-  return send_packet_diplomacy_remove_clause(pc, real_packet);
+
+  return send_packet_diplomacy_remove_clause(pconn, real_packet);
 }
 
 void dlsend_packet_diplomacy_remove_clause(struct conn_list *dest, int counterpart, int giver, enum clause_type type, int value)
@@ -21119,7 +21118,7 @@ void dlsend_packet_diplomacy_remove_clause(struct conn_list *dest, int counterpa
   real_packet->giver = giver;
   real_packet->type = type;
   real_packet->value = value;
-  
+
   lsend_packet_diplomacy_remove_clause(dest, real_packet);
 }
 
@@ -21129,11 +21128,11 @@ void dlsend_packet_diplomacy_remove_clause(struct conn_list *dest, int counterpa
 
 BV_DEFINE(packet_diplomacy_accept_treaty_req_100_fields, 1);
 
-static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treaty_req_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treaty_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_accept_treaty_req_100_fields fields;
   struct packet_diplomacy_accept_treaty_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_accept_treaty_req *clone;
   RECEIVE_PACKET_START(packet_diplomacy_accept_treaty_req, real_packet);
 
@@ -21154,7 +21153,7 @@ static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accep
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -21170,13 +21169,13 @@ static struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accep
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_accept_treaty_req_100(struct connection *pc, const struct packet_diplomacy_accept_treaty_req *packet)
+static int send_packet_diplomacy_accept_treaty_req_100(struct connection *pconn, const struct packet_diplomacy_accept_treaty_req *packet)
 {
   const struct packet_diplomacy_accept_treaty_req *real_packet = packet;
   packet_diplomacy_accept_treaty_req_100_fields fields;
   struct packet_diplomacy_accept_treaty_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_ACCEPT_TREATY_REQ);
 
@@ -21219,11 +21218,11 @@ static int send_packet_diplomacy_accept_treaty_req_100(struct connection *pc, co
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ] != -1) {
     return;
   }
 
@@ -21233,56 +21232,56 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty_req(struct conne
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ] = variant;
 }
 
-struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treaty_req(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_accept_treaty_req *receive_packet_diplomacy_accept_treaty_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_accept_treaty_req at the client.");
   }
-  ensure_valid_variant_packet_diplomacy_accept_treaty_req(pc);
+  ensure_valid_variant_packet_diplomacy_accept_treaty_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ]) {
-    case 100: return receive_packet_diplomacy_accept_treaty_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ]) {
+    case 100: return receive_packet_diplomacy_accept_treaty_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_accept_treaty_req(struct connection *pc, const struct packet_diplomacy_accept_treaty_req *packet)
+int send_packet_diplomacy_accept_treaty_req(struct connection *pconn, const struct packet_diplomacy_accept_treaty_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_accept_treaty_req from the server.");
   }
-  ensure_valid_variant_packet_diplomacy_accept_treaty_req(pc);
+  ensure_valid_variant_packet_diplomacy_accept_treaty_req(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ]) {
-    case 100: return send_packet_diplomacy_accept_treaty_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY_REQ]) {
+    case 100: return send_packet_diplomacy_accept_treaty_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_diplomacy_accept_treaty_req(struct connection *pc, int counterpart)
+int dsend_packet_diplomacy_accept_treaty_req(struct connection *pconn, int counterpart)
 {
   struct packet_diplomacy_accept_treaty_req packet, *real_packet = &packet;
 
   real_packet->counterpart = counterpart;
-  
-  return send_packet_diplomacy_accept_treaty_req(pc, real_packet);
+
+  return send_packet_diplomacy_accept_treaty_req(pconn, real_packet);
 }
 
 #define hash_packet_diplomacy_accept_treaty_100 hash_const
@@ -21291,11 +21290,11 @@ int dsend_packet_diplomacy_accept_treaty_req(struct connection *pc, int counterp
 
 BV_DEFINE(packet_diplomacy_accept_treaty_100_fields, 3);
 
-static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_accept_treaty_100_fields fields;
   struct packet_diplomacy_accept_treaty *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_accept_treaty *clone;
   RECEIVE_PACKET_START(packet_diplomacy_accept_treaty, real_packet);
 
@@ -21316,7 +21315,7 @@ static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_tr
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->counterpart = readin;
     }
@@ -21334,13 +21333,13 @@ static struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_tr
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_accept_treaty_100(struct connection *pc, const struct packet_diplomacy_accept_treaty *packet)
+static int send_packet_diplomacy_accept_treaty_100(struct connection *pconn, const struct packet_diplomacy_accept_treaty *packet)
 {
   const struct packet_diplomacy_accept_treaty *real_packet = packet;
   packet_diplomacy_accept_treaty_100_fields fields;
   struct packet_diplomacy_accept_treaty *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_ACCEPT_TREATY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_ACCEPT_TREATY];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_ACCEPT_TREATY);
 
@@ -21393,11 +21392,11 @@ static int send_packet_diplomacy_accept_treaty_100(struct connection *pc, const 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_accept_treaty(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_accept_treaty(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY] != -1) {
     return;
   }
 
@@ -21407,65 +21406,65 @@ static void ensure_valid_variant_packet_diplomacy_accept_treaty(struct connectio
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY] = variant;
 }
 
-struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_accept_treaty *receive_packet_diplomacy_accept_treaty(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_accept_treaty at the server.");
   }
-  ensure_valid_variant_packet_diplomacy_accept_treaty(pc);
+  ensure_valid_variant_packet_diplomacy_accept_treaty(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY]) {
-    case 100: return receive_packet_diplomacy_accept_treaty_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY]) {
+    case 100: return receive_packet_diplomacy_accept_treaty_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_accept_treaty(struct connection *pc, const struct packet_diplomacy_accept_treaty *packet)
+int send_packet_diplomacy_accept_treaty(struct connection *pconn, const struct packet_diplomacy_accept_treaty *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_accept_treaty from the client.");
   }
-  ensure_valid_variant_packet_diplomacy_accept_treaty(pc);
+  ensure_valid_variant_packet_diplomacy_accept_treaty(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY]) {
-    case 100: return send_packet_diplomacy_accept_treaty_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_ACCEPT_TREATY]) {
+    case 100: return send_packet_diplomacy_accept_treaty_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_diplomacy_accept_treaty(struct conn_list *dest, const struct packet_diplomacy_accept_treaty *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_diplomacy_accept_treaty(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_diplomacy_accept_treaty(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-int dsend_packet_diplomacy_accept_treaty(struct connection *pc, int counterpart, bool I_accepted, bool other_accepted)
+int dsend_packet_diplomacy_accept_treaty(struct connection *pconn, int counterpart, bool I_accepted, bool other_accepted)
 {
   struct packet_diplomacy_accept_treaty packet, *real_packet = &packet;
 
   real_packet->counterpart = counterpart;
   real_packet->I_accepted = I_accepted;
   real_packet->other_accepted = other_accepted;
-  
-  return send_packet_diplomacy_accept_treaty(pc, real_packet);
+
+  return send_packet_diplomacy_accept_treaty(pconn, real_packet);
 }
 
 void dlsend_packet_diplomacy_accept_treaty(struct conn_list *dest, int counterpart, bool I_accepted, bool other_accepted)
@@ -21475,7 +21474,7 @@ void dlsend_packet_diplomacy_accept_treaty(struct conn_list *dest, int counterpa
   real_packet->counterpart = counterpart;
   real_packet->I_accepted = I_accepted;
   real_packet->other_accepted = other_accepted;
-  
+
   lsend_packet_diplomacy_accept_treaty(dest, real_packet);
 }
 
@@ -21485,11 +21484,11 @@ void dlsend_packet_diplomacy_accept_treaty(struct conn_list *dest, int counterpa
 
 BV_DEFINE(packet_diplomacy_cancel_pact_100_fields, 2);
 
-static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact_100(struct connection *pc, enum packet_type type)
+static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact_100(struct connection *pconn, enum packet_type type)
 {
   packet_diplomacy_cancel_pact_100_fields fields;
   struct packet_diplomacy_cancel_pact *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_diplomacy_cancel_pact *clone;
   RECEIVE_PACKET_START(packet_diplomacy_cancel_pact, real_packet);
 
@@ -21510,7 +21509,7 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->other_player_id = readin;
     }
@@ -21518,7 +21517,7 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->clause = readin;
     }
@@ -21534,13 +21533,13 @@ static struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_diplomacy_cancel_pact_100(struct connection *pc, const struct packet_diplomacy_cancel_pact *packet)
+static int send_packet_diplomacy_cancel_pact_100(struct connection *pconn, const struct packet_diplomacy_cancel_pact *packet)
 {
   const struct packet_diplomacy_cancel_pact *real_packet = packet;
   packet_diplomacy_cancel_pact_100_fields fields;
   struct packet_diplomacy_cancel_pact *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_DIPLOMACY_CANCEL_PACT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_DIPLOMACY_CANCEL_PACT];
   int different = 0;
   SEND_PACKET_START(PACKET_DIPLOMACY_CANCEL_PACT);
 
@@ -21590,11 +21589,11 @@ static int send_packet_diplomacy_cancel_pact_100(struct connection *pc, const st
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_diplomacy_cancel_pact(struct connection *pc)
+static void ensure_valid_variant_packet_diplomacy_cancel_pact(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT] != -1) {
+  if(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT] != -1) {
     return;
   }
 
@@ -21604,57 +21603,57 @@ static void ensure_valid_variant_packet_diplomacy_cancel_pact(struct connection 
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT] = variant;
+  pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT] = variant;
 }
 
-struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact(struct connection *pc, enum packet_type type)
+struct packet_diplomacy_cancel_pact *receive_packet_diplomacy_cancel_pact(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_diplomacy_cancel_pact at the client.");
   }
-  ensure_valid_variant_packet_diplomacy_cancel_pact(pc);
+  ensure_valid_variant_packet_diplomacy_cancel_pact(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT]) {
-    case 100: return receive_packet_diplomacy_cancel_pact_100(pc, type);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT]) {
+    case 100: return receive_packet_diplomacy_cancel_pact_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_diplomacy_cancel_pact(struct connection *pc, const struct packet_diplomacy_cancel_pact *packet)
+int send_packet_diplomacy_cancel_pact(struct connection *pconn, const struct packet_diplomacy_cancel_pact *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_diplomacy_cancel_pact from the server.");
   }
-  ensure_valid_variant_packet_diplomacy_cancel_pact(pc);
+  ensure_valid_variant_packet_diplomacy_cancel_pact(pconn);
 
-  switch(pc->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT]) {
-    case 100: return send_packet_diplomacy_cancel_pact_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_DIPLOMACY_CANCEL_PACT]) {
+    case 100: return send_packet_diplomacy_cancel_pact_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_diplomacy_cancel_pact(struct connection *pc, int other_player_id, enum clause_type clause)
+int dsend_packet_diplomacy_cancel_pact(struct connection *pconn, int other_player_id, enum clause_type clause)
 {
   struct packet_diplomacy_cancel_pact packet, *real_packet = &packet;
 
   real_packet->other_player_id = other_player_id;
   real_packet->clause = clause;
-  
-  return send_packet_diplomacy_cancel_pact(pc, real_packet);
+
+  return send_packet_diplomacy_cancel_pact(pconn, real_packet);
 }
 
 #define hash_packet_page_msg_100 hash_const
@@ -21663,11 +21662,11 @@ int dsend_packet_diplomacy_cancel_pact(struct connection *pc, int other_player_i
 
 BV_DEFINE(packet_page_msg_100_fields, 2);
 
-static struct packet_page_msg *receive_packet_page_msg_100(struct connection *pc, enum packet_type type)
+static struct packet_page_msg *receive_packet_page_msg_100(struct connection *pconn, enum packet_type type)
 {
   packet_page_msg_100_fields fields;
   struct packet_page_msg *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_page_msg *clone;
   RECEIVE_PACKET_START(packet_page_msg, real_packet);
 
@@ -21691,7 +21690,7 @@ static struct packet_page_msg *receive_packet_page_msg_100(struct connection *pc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->event = readin;
     }
@@ -21707,13 +21706,13 @@ static struct packet_page_msg *receive_packet_page_msg_100(struct connection *pc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_page_msg_100(struct connection *pc, const struct packet_page_msg *packet)
+static int send_packet_page_msg_100(struct connection *pconn, const struct packet_page_msg *packet)
 {
   const struct packet_page_msg *real_packet = packet;
   packet_page_msg_100_fields fields;
   struct packet_page_msg *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PAGE_MSG];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PAGE_MSG];
   int different = 0;
   SEND_PACKET_START(PACKET_PAGE_MSG);
 
@@ -21763,11 +21762,11 @@ static int send_packet_page_msg_100(struct connection *pc, const struct packet_p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_page_msg(struct connection *pc)
+static void ensure_valid_variant_packet_page_msg(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PAGE_MSG] != -1) {
+  if(pconn->phs.variant[PACKET_PAGE_MSG] != -1) {
     return;
   }
 
@@ -21777,53 +21776,53 @@ static void ensure_valid_variant_packet_page_msg(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PAGE_MSG] = variant;
+  pconn->phs.variant[PACKET_PAGE_MSG] = variant;
 }
 
-struct packet_page_msg *receive_packet_page_msg(struct connection *pc, enum packet_type type)
+struct packet_page_msg *receive_packet_page_msg(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_page_msg at the server.");
   }
-  ensure_valid_variant_packet_page_msg(pc);
+  ensure_valid_variant_packet_page_msg(pconn);
 
-  switch(pc->phs.variant[PACKET_PAGE_MSG]) {
-    case 100: return receive_packet_page_msg_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PAGE_MSG]) {
+    case 100: return receive_packet_page_msg_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_page_msg(struct connection *pc, const struct packet_page_msg *packet)
+int send_packet_page_msg(struct connection *pconn, const struct packet_page_msg *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_page_msg from the client.");
   }
-  ensure_valid_variant_packet_page_msg(pc);
+  ensure_valid_variant_packet_page_msg(pconn);
 
-  switch(pc->phs.variant[PACKET_PAGE_MSG]) {
-    case 100: return send_packet_page_msg_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PAGE_MSG]) {
+    case 100: return send_packet_page_msg_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_page_msg(struct conn_list *dest, const struct packet_page_msg *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_page_msg(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_page_msg(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -21833,11 +21832,11 @@ void lsend_packet_page_msg(struct conn_list *dest, const struct packet_page_msg 
 
 BV_DEFINE(packet_report_req_100_fields, 1);
 
-static struct packet_report_req *receive_packet_report_req_100(struct connection *pc, enum packet_type type)
+static struct packet_report_req *receive_packet_report_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_report_req_100_fields fields;
   struct packet_report_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_report_req *clone;
   RECEIVE_PACKET_START(packet_report_req, real_packet);
 
@@ -21858,7 +21857,7 @@ static struct packet_report_req *receive_packet_report_req_100(struct connection
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -21874,13 +21873,13 @@ static struct packet_report_req *receive_packet_report_req_100(struct connection
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_report_req_100(struct connection *pc, const struct packet_report_req *packet)
+static int send_packet_report_req_100(struct connection *pconn, const struct packet_report_req *packet)
 {
   const struct packet_report_req *real_packet = packet;
   packet_report_req_100_fields fields;
   struct packet_report_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_REPORT_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_REPORT_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_REPORT_REQ);
 
@@ -21923,11 +21922,11 @@ static int send_packet_report_req_100(struct connection *pc, const struct packet
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_report_req(struct connection *pc)
+static void ensure_valid_variant_packet_report_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_REPORT_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_REPORT_REQ] != -1) {
     return;
   }
 
@@ -21937,56 +21936,56 @@ static void ensure_valid_variant_packet_report_req(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_REPORT_REQ] = variant;
+  pconn->phs.variant[PACKET_REPORT_REQ] = variant;
 }
 
-struct packet_report_req *receive_packet_report_req(struct connection *pc, enum packet_type type)
+struct packet_report_req *receive_packet_report_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_report_req at the client.");
   }
-  ensure_valid_variant_packet_report_req(pc);
+  ensure_valid_variant_packet_report_req(pconn);
 
-  switch(pc->phs.variant[PACKET_REPORT_REQ]) {
-    case 100: return receive_packet_report_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_REPORT_REQ]) {
+    case 100: return receive_packet_report_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_report_req(struct connection *pc, const struct packet_report_req *packet)
+int send_packet_report_req(struct connection *pconn, const struct packet_report_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_report_req from the server.");
   }
-  ensure_valid_variant_packet_report_req(pc);
+  ensure_valid_variant_packet_report_req(pconn);
 
-  switch(pc->phs.variant[PACKET_REPORT_REQ]) {
-    case 100: return send_packet_report_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_REPORT_REQ]) {
+    case 100: return send_packet_report_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_report_req(struct connection *pc, enum report_type type)
+int dsend_packet_report_req(struct connection *pconn, enum report_type type)
 {
   struct packet_report_req packet, *real_packet = &packet;
 
   real_packet->type = type;
-  
-  return send_packet_report_req(pc, real_packet);
+
+  return send_packet_report_req(pconn, real_packet);
 }
 
 static unsigned int hash_packet_conn_info_100(const void *vkey, unsigned int num_buckets)
@@ -22012,18 +22011,18 @@ static int cmp_packet_conn_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_conn_info_100_fields, 8);
 
-static struct packet_conn_info *receive_packet_conn_info_100(struct connection *pc, enum packet_type type)
+static struct packet_conn_info *receive_packet_conn_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_conn_info_100_fields fields;
   struct packet_conn_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_conn_info *clone;
   RECEIVE_PACKET_START(packet_conn_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->id = readin;
   }
@@ -22050,7 +22049,7 @@ static struct packet_conn_info *receive_packet_conn_info_100(struct connection *
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->player_num = readin;
     }
@@ -22058,7 +22057,7 @@ static struct packet_conn_info *receive_packet_conn_info_100(struct connection *
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->access_level = readin;
     }
@@ -22083,13 +22082,13 @@ static struct packet_conn_info *receive_packet_conn_info_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_info_100(struct connection *pc, const struct packet_conn_info *packet)
+static int send_packet_conn_info_100(struct connection *pconn, const struct packet_conn_info *packet)
 {
   const struct packet_conn_info *real_packet = packet;
   packet_conn_info_100_fields fields;
   struct packet_conn_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CONN_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CONN_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CONN_INFO);
 
@@ -22176,11 +22175,11 @@ static int send_packet_conn_info_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_conn_info(struct connection *pc)
+static void ensure_valid_variant_packet_conn_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CONN_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_CONN_INFO] != -1) {
     return;
   }
 
@@ -22190,53 +22189,53 @@ static void ensure_valid_variant_packet_conn_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CONN_INFO] = variant;
+  pconn->phs.variant[PACKET_CONN_INFO] = variant;
 }
 
-struct packet_conn_info *receive_packet_conn_info(struct connection *pc, enum packet_type type)
+struct packet_conn_info *receive_packet_conn_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_conn_info at the server.");
   }
-  ensure_valid_variant_packet_conn_info(pc);
+  ensure_valid_variant_packet_conn_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_INFO]) {
-    case 100: return receive_packet_conn_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CONN_INFO]) {
+    case 100: return receive_packet_conn_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_conn_info(struct connection *pc, const struct packet_conn_info *packet)
+int send_packet_conn_info(struct connection *pconn, const struct packet_conn_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_conn_info from the client.");
   }
-  ensure_valid_variant_packet_conn_info(pc);
+  ensure_valid_variant_packet_conn_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_INFO]) {
-    case 100: return send_packet_conn_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CONN_INFO]) {
+    case 100: return send_packet_conn_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_conn_info(struct conn_list *dest, const struct packet_conn_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_conn_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_conn_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -22246,11 +22245,11 @@ void lsend_packet_conn_info(struct conn_list *dest, const struct packet_conn_inf
 
 BV_DEFINE(packet_conn_ping_info_100_fields, 3);
 
-static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct connection *pc, enum packet_type type)
+static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_conn_ping_info_100_fields fields;
   struct packet_conn_ping_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_conn_ping_info *clone;
   RECEIVE_PACKET_START(packet_conn_ping_info, real_packet);
 
@@ -22271,16 +22270,16 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->connections = readin;
     }
   }
   if (BV_ISSET(fields, 1)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->connections > MAX_NUM_CONNECTIONS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->connections = MAX_NUM_CONNECTIONS;
@@ -22288,7 +22287,7 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct co
       for (i = 0; i < real_packet->connections; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->conn_id[i] = readin;
     }
@@ -22296,17 +22295,17 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct co
     }
   }
   if (BV_ISSET(fields, 2)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->connections > MAX_NUM_CONNECTIONS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->connections = MAX_NUM_CONNECTIONS;
       }
       for (i = 0; i < real_packet->connections; i++) {
         int tmp;
-    
+
         dio_get_uint32(&din, &tmp);
         real_packet->ping_time[i] = (float)(tmp) / 1000000.0;
       }
@@ -22323,13 +22322,13 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_100(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_ping_info_100(struct connection *pc, const struct packet_conn_ping_info *packet)
+static int send_packet_conn_ping_info_100(struct connection *pconn, const struct packet_conn_ping_info *packet)
 {
   const struct packet_conn_ping_info *real_packet = packet;
   packet_conn_ping_info_100_fields fields;
   struct packet_conn_ping_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CONN_PING_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CONN_PING_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CONN_PING_INFO);
 
@@ -22392,24 +22391,24 @@ static int send_packet_conn_ping_info_100(struct connection *pc, const struct pa
     dio_put_uint8(&dout, real_packet->connections);
   }
   if (BV_ISSET(fields, 1)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->connections; i++) {
         dio_put_uint8(&dout, real_packet->conn_id[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 2)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->connections; i++) {
           dio_put_uint32(&dout, (int)(real_packet->ping_time[i] * 1000000));
       }
-    } 
+    }
   }
 
 
@@ -22430,11 +22429,11 @@ static int send_packet_conn_ping_info_100(struct connection *pc, const struct pa
 
 BV_DEFINE(packet_conn_ping_info_101_fields, 3);
 
-static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct connection *pc, enum packet_type type)
+static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct connection *pconn, enum packet_type type)
 {
   packet_conn_ping_info_101_fields fields;
   struct packet_conn_ping_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_conn_ping_info *clone;
   RECEIVE_PACKET_START(packet_conn_ping_info, real_packet);
 
@@ -22455,16 +22454,16 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->old_connections = readin;
     }
   }
   if (BV_ISSET(fields, 1)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->connections > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->connections = MAX_NUM_PLAYERS;
@@ -22472,7 +22471,7 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct co
       for (i = 0; i < real_packet->connections; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->old_conn_id[i] = readin;
     }
@@ -22480,17 +22479,17 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct co
     }
   }
   if (BV_ISSET(fields, 2)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->connections > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->connections = MAX_NUM_PLAYERS;
       }
       for (i = 0; i < real_packet->connections; i++) {
         int tmp;
-    
+
         dio_get_uint32(&din, &tmp);
         real_packet->old_ping_time[i] = (float)(tmp) / 1000000.0;
       }
@@ -22507,13 +22506,13 @@ static struct packet_conn_ping_info *receive_packet_conn_ping_info_101(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_ping_info_101(struct connection *pc, const struct packet_conn_ping_info *packet)
+static int send_packet_conn_ping_info_101(struct connection *pconn, const struct packet_conn_ping_info *packet)
 {
   const struct packet_conn_ping_info *real_packet = packet;
   packet_conn_ping_info_101_fields fields;
   struct packet_conn_ping_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CONN_PING_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CONN_PING_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_CONN_PING_INFO);
 
@@ -22576,24 +22575,24 @@ static int send_packet_conn_ping_info_101(struct connection *pc, const struct pa
     dio_put_uint8(&dout, real_packet->old_connections);
   }
   if (BV_ISSET(fields, 1)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->connections; i++) {
         dio_put_uint8(&dout, real_packet->old_conn_id[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 2)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->connections; i++) {
           dio_put_uint32(&dout, (int)(real_packet->old_ping_time[i] * 1000000));
       }
-    } 
+    }
   }
 
 
@@ -22608,92 +22607,92 @@ static int send_packet_conn_ping_info_101(struct connection *pc, const struct pa
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_conn_ping_info(struct connection *pc)
+static void ensure_valid_variant_packet_conn_ping_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CONN_PING_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_CONN_PING_INFO] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("conn_ping_info", pc->capability) && has_capability("conn_ping_info", our_capability))) {
+  } else if((has_capability("conn_ping_info", pconn->capability) && has_capability("conn_ping_info", our_capability))) {
     variant = 100;
-  } else if(!(has_capability("conn_ping_info", pc->capability) && has_capability("conn_ping_info", our_capability))) {
+  } else if(!(has_capability("conn_ping_info", pconn->capability) && has_capability("conn_ping_info", our_capability))) {
     variant = 101;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CONN_PING_INFO] = variant;
+  pconn->phs.variant[PACKET_CONN_PING_INFO] = variant;
 }
 
-struct packet_conn_ping_info *receive_packet_conn_ping_info(struct connection *pc, enum packet_type type)
+struct packet_conn_ping_info *receive_packet_conn_ping_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_conn_ping_info at the server.");
   }
-  ensure_valid_variant_packet_conn_ping_info(pc);
+  ensure_valid_variant_packet_conn_ping_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_PING_INFO]) {
-    case 100: return receive_packet_conn_ping_info_100(pc, type);
-    case 101: return receive_packet_conn_ping_info_101(pc, type);
+  switch(pconn->phs.variant[PACKET_CONN_PING_INFO]) {
+    case 100: return receive_packet_conn_ping_info_100(pconn, type);
+    case 101: return receive_packet_conn_ping_info_101(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_conn_ping_info(struct connection *pc, const struct packet_conn_ping_info *packet)
+int send_packet_conn_ping_info(struct connection *pconn, const struct packet_conn_ping_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_conn_ping_info from the client.");
   }
-  ensure_valid_variant_packet_conn_ping_info(pc);
+  ensure_valid_variant_packet_conn_ping_info(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_PING_INFO]) {
-    case 100: return send_packet_conn_ping_info_100(pc, packet);
-    case 101: return send_packet_conn_ping_info_101(pc, packet);
+  switch(pconn->phs.variant[PACKET_CONN_PING_INFO]) {
+    case 100: return send_packet_conn_ping_info_100(pconn, packet);
+    case 101: return send_packet_conn_ping_info_101(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_conn_ping_info(struct conn_list *dest, const struct packet_conn_ping_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_conn_ping_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_conn_ping_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-static struct packet_conn_ping *receive_packet_conn_ping_100(struct connection *pc, enum packet_type type)
+static struct packet_conn_ping *receive_packet_conn_ping_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_conn_ping, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_ping_100(struct connection *pc)
+static int send_packet_conn_ping_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_CONN_PING);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_conn_ping(struct connection *pc)
+static void ensure_valid_variant_packet_conn_ping(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CONN_PING] != -1) {
+  if(pconn->phs.variant[PACKET_CONN_PING] != -1) {
     return;
   }
 
@@ -22703,67 +22702,67 @@ static void ensure_valid_variant_packet_conn_ping(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CONN_PING] = variant;
+  pconn->phs.variant[PACKET_CONN_PING] = variant;
 }
 
-struct packet_conn_ping *receive_packet_conn_ping(struct connection *pc, enum packet_type type)
+struct packet_conn_ping *receive_packet_conn_ping(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_conn_ping at the server.");
   }
-  ensure_valid_variant_packet_conn_ping(pc);
+  ensure_valid_variant_packet_conn_ping(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_PING]) {
-    case 100: return receive_packet_conn_ping_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CONN_PING]) {
+    case 100: return receive_packet_conn_ping_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_conn_ping(struct connection *pc)
+int send_packet_conn_ping(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_conn_ping from the client.");
   }
-  ensure_valid_variant_packet_conn_ping(pc);
+  ensure_valid_variant_packet_conn_ping(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_PING]) {
-    case 100: return send_packet_conn_ping_100(pc);
+  switch(pconn->phs.variant[PACKET_CONN_PING]) {
+    case 100: return send_packet_conn_ping_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
-static struct packet_conn_pong *receive_packet_conn_pong_100(struct connection *pc, enum packet_type type)
+static struct packet_conn_pong *receive_packet_conn_pong_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_conn_pong, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_conn_pong_100(struct connection *pc)
+static int send_packet_conn_pong_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_CONN_PONG);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_conn_pong(struct connection *pc)
+static void ensure_valid_variant_packet_conn_pong(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CONN_PONG] != -1) {
+  if(pconn->phs.variant[PACKET_CONN_PONG] != -1) {
     return;
   }
 
@@ -22773,67 +22772,67 @@ static void ensure_valid_variant_packet_conn_pong(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CONN_PONG] = variant;
+  pconn->phs.variant[PACKET_CONN_PONG] = variant;
 }
 
-struct packet_conn_pong *receive_packet_conn_pong(struct connection *pc, enum packet_type type)
+struct packet_conn_pong *receive_packet_conn_pong(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_conn_pong at the client.");
   }
-  ensure_valid_variant_packet_conn_pong(pc);
+  ensure_valid_variant_packet_conn_pong(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_PONG]) {
-    case 100: return receive_packet_conn_pong_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CONN_PONG]) {
+    case 100: return receive_packet_conn_pong_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_conn_pong(struct connection *pc)
+int send_packet_conn_pong(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_conn_pong from the server.");
   }
-  ensure_valid_variant_packet_conn_pong(pc);
+  ensure_valid_variant_packet_conn_pong(pconn);
 
-  switch(pc->phs.variant[PACKET_CONN_PONG]) {
-    case 100: return send_packet_conn_pong_100(pc);
+  switch(pconn->phs.variant[PACKET_CONN_PONG]) {
+    case 100: return send_packet_conn_pong_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
-static struct packet_before_new_year *receive_packet_before_new_year_100(struct connection *pc, enum packet_type type)
+static struct packet_before_new_year *receive_packet_before_new_year_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_before_new_year, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_before_new_year_100(struct connection *pc)
+static int send_packet_before_new_year_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_BEFORE_NEW_YEAR);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_before_new_year(struct connection *pc)
+static void ensure_valid_variant_packet_before_new_year(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_BEFORE_NEW_YEAR] != -1) {
+  if(pconn->phs.variant[PACKET_BEFORE_NEW_YEAR] != -1) {
     return;
   }
 
@@ -22843,74 +22842,74 @@ static void ensure_valid_variant_packet_before_new_year(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_BEFORE_NEW_YEAR] = variant;
+  pconn->phs.variant[PACKET_BEFORE_NEW_YEAR] = variant;
 }
 
-struct packet_before_new_year *receive_packet_before_new_year(struct connection *pc, enum packet_type type)
+struct packet_before_new_year *receive_packet_before_new_year(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_before_new_year at the server.");
   }
-  ensure_valid_variant_packet_before_new_year(pc);
+  ensure_valid_variant_packet_before_new_year(pconn);
 
-  switch(pc->phs.variant[PACKET_BEFORE_NEW_YEAR]) {
-    case 100: return receive_packet_before_new_year_100(pc, type);
+  switch(pconn->phs.variant[PACKET_BEFORE_NEW_YEAR]) {
+    case 100: return receive_packet_before_new_year_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_before_new_year(struct connection *pc)
+int send_packet_before_new_year(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_before_new_year from the client.");
   }
-  ensure_valid_variant_packet_before_new_year(pc);
+  ensure_valid_variant_packet_before_new_year(pconn);
 
-  switch(pc->phs.variant[PACKET_BEFORE_NEW_YEAR]) {
-    case 100: return send_packet_before_new_year_100(pc);
+  switch(pconn->phs.variant[PACKET_BEFORE_NEW_YEAR]) {
+    case 100: return send_packet_before_new_year_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_before_new_year(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_before_new_year(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_before_new_year(p_conn);
   } conn_list_iterate_end;
 }
 
-static struct packet_start_turn *receive_packet_start_turn_100(struct connection *pc, enum packet_type type)
+static struct packet_start_turn *receive_packet_start_turn_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_start_turn, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_start_turn_100(struct connection *pc)
+static int send_packet_start_turn_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_START_TURN);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_start_turn(struct connection *pc)
+static void ensure_valid_variant_packet_start_turn(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_START_TURN] != -1) {
+  if(pconn->phs.variant[PACKET_START_TURN] != -1) {
     return;
   }
 
@@ -22920,53 +22919,53 @@ static void ensure_valid_variant_packet_start_turn(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_START_TURN] = variant;
+  pconn->phs.variant[PACKET_START_TURN] = variant;
 }
 
-struct packet_start_turn *receive_packet_start_turn(struct connection *pc, enum packet_type type)
+struct packet_start_turn *receive_packet_start_turn(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_start_turn at the server.");
   }
-  ensure_valid_variant_packet_start_turn(pc);
+  ensure_valid_variant_packet_start_turn(pconn);
 
-  switch(pc->phs.variant[PACKET_START_TURN]) {
-    case 100: return receive_packet_start_turn_100(pc, type);
+  switch(pconn->phs.variant[PACKET_START_TURN]) {
+    case 100: return receive_packet_start_turn_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_start_turn(struct connection *pc)
+int send_packet_start_turn(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_start_turn from the client.");
   }
-  ensure_valid_variant_packet_start_turn(pc);
+  ensure_valid_variant_packet_start_turn(pconn);
 
-  switch(pc->phs.variant[PACKET_START_TURN]) {
-    case 100: return send_packet_start_turn_100(pc);
+  switch(pconn->phs.variant[PACKET_START_TURN]) {
+    case 100: return send_packet_start_turn_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_start_turn(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_start_turn(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_start_turn(p_conn);
   } conn_list_iterate_end;
 }
 
@@ -22976,11 +22975,11 @@ void lsend_packet_start_turn(struct conn_list *dest)
 
 BV_DEFINE(packet_new_year_100_fields, 2);
 
-static struct packet_new_year *receive_packet_new_year_100(struct connection *pc, enum packet_type type)
+static struct packet_new_year *receive_packet_new_year_100(struct connection *pconn, enum packet_type type)
 {
   packet_new_year_100_fields fields;
   struct packet_new_year *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_new_year *clone;
   RECEIVE_PACKET_START(packet_new_year, real_packet);
 
@@ -23001,7 +23000,7 @@ static struct packet_new_year *receive_packet_new_year_100(struct connection *pc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->year = readin;
     }
@@ -23009,7 +23008,7 @@ static struct packet_new_year *receive_packet_new_year_100(struct connection *pc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->turn = readin;
     }
@@ -23025,13 +23024,13 @@ static struct packet_new_year *receive_packet_new_year_100(struct connection *pc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_new_year_100(struct connection *pc, const struct packet_new_year *packet)
+static int send_packet_new_year_100(struct connection *pconn, const struct packet_new_year *packet)
 {
   const struct packet_new_year *real_packet = packet;
   packet_new_year_100_fields fields;
   struct packet_new_year *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_NEW_YEAR];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_NEW_YEAR];
   int different = 0;
   SEND_PACKET_START(PACKET_NEW_YEAR);
 
@@ -23081,11 +23080,11 @@ static int send_packet_new_year_100(struct connection *pc, const struct packet_n
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_new_year(struct connection *pc)
+static void ensure_valid_variant_packet_new_year(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_NEW_YEAR] != -1) {
+  if(pconn->phs.variant[PACKET_NEW_YEAR] != -1) {
     return;
   }
 
@@ -23095,74 +23094,74 @@ static void ensure_valid_variant_packet_new_year(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_NEW_YEAR] = variant;
+  pconn->phs.variant[PACKET_NEW_YEAR] = variant;
 }
 
-struct packet_new_year *receive_packet_new_year(struct connection *pc, enum packet_type type)
+struct packet_new_year *receive_packet_new_year(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_new_year at the server.");
   }
-  ensure_valid_variant_packet_new_year(pc);
+  ensure_valid_variant_packet_new_year(pconn);
 
-  switch(pc->phs.variant[PACKET_NEW_YEAR]) {
-    case 100: return receive_packet_new_year_100(pc, type);
+  switch(pconn->phs.variant[PACKET_NEW_YEAR]) {
+    case 100: return receive_packet_new_year_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_new_year(struct connection *pc, const struct packet_new_year *packet)
+int send_packet_new_year(struct connection *pconn, const struct packet_new_year *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_new_year from the client.");
   }
-  ensure_valid_variant_packet_new_year(pc);
+  ensure_valid_variant_packet_new_year(pconn);
 
-  switch(pc->phs.variant[PACKET_NEW_YEAR]) {
-    case 100: return send_packet_new_year_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_NEW_YEAR]) {
+    case 100: return send_packet_new_year_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_new_year(struct conn_list *dest, const struct packet_new_year *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_new_year(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_new_year(p_conn, packet);
   } conn_list_iterate_end;
 }
 
-static struct packet_freeze_client *receive_packet_freeze_client_100(struct connection *pc, enum packet_type type)
+static struct packet_freeze_client *receive_packet_freeze_client_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_freeze_client, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_freeze_client_100(struct connection *pc)
+static int send_packet_freeze_client_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_FREEZE_CLIENT);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_freeze_client(struct connection *pc)
+static void ensure_valid_variant_packet_freeze_client(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_FREEZE_CLIENT] != -1) {
+  if(pconn->phs.variant[PACKET_FREEZE_CLIENT] != -1) {
     return;
   }
 
@@ -23172,74 +23171,74 @@ static void ensure_valid_variant_packet_freeze_client(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_FREEZE_CLIENT] = variant;
+  pconn->phs.variant[PACKET_FREEZE_CLIENT] = variant;
 }
 
-struct packet_freeze_client *receive_packet_freeze_client(struct connection *pc, enum packet_type type)
+struct packet_freeze_client *receive_packet_freeze_client(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_freeze_client at the server.");
   }
-  ensure_valid_variant_packet_freeze_client(pc);
+  ensure_valid_variant_packet_freeze_client(pconn);
 
-  switch(pc->phs.variant[PACKET_FREEZE_CLIENT]) {
-    case 100: return receive_packet_freeze_client_100(pc, type);
+  switch(pconn->phs.variant[PACKET_FREEZE_CLIENT]) {
+    case 100: return receive_packet_freeze_client_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_freeze_client(struct connection *pc)
+int send_packet_freeze_client(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_freeze_client from the client.");
   }
-  ensure_valid_variant_packet_freeze_client(pc);
+  ensure_valid_variant_packet_freeze_client(pconn);
 
-  switch(pc->phs.variant[PACKET_FREEZE_CLIENT]) {
-    case 100: return send_packet_freeze_client_100(pc);
+  switch(pconn->phs.variant[PACKET_FREEZE_CLIENT]) {
+    case 100: return send_packet_freeze_client_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_freeze_client(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_freeze_client(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_freeze_client(p_conn);
   } conn_list_iterate_end;
 }
 
-static struct packet_thaw_client *receive_packet_thaw_client_100(struct connection *pc, enum packet_type type)
+static struct packet_thaw_client *receive_packet_thaw_client_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_thaw_client, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_thaw_client_100(struct connection *pc)
+static int send_packet_thaw_client_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_THAW_CLIENT);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_thaw_client(struct connection *pc)
+static void ensure_valid_variant_packet_thaw_client(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_THAW_CLIENT] != -1) {
+  if(pconn->phs.variant[PACKET_THAW_CLIENT] != -1) {
     return;
   }
 
@@ -23249,74 +23248,74 @@ static void ensure_valid_variant_packet_thaw_client(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_THAW_CLIENT] = variant;
+  pconn->phs.variant[PACKET_THAW_CLIENT] = variant;
 }
 
-struct packet_thaw_client *receive_packet_thaw_client(struct connection *pc, enum packet_type type)
+struct packet_thaw_client *receive_packet_thaw_client(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_thaw_client at the server.");
   }
-  ensure_valid_variant_packet_thaw_client(pc);
+  ensure_valid_variant_packet_thaw_client(pconn);
 
-  switch(pc->phs.variant[PACKET_THAW_CLIENT]) {
-    case 100: return receive_packet_thaw_client_100(pc, type);
+  switch(pconn->phs.variant[PACKET_THAW_CLIENT]) {
+    case 100: return receive_packet_thaw_client_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_thaw_client(struct connection *pc)
+int send_packet_thaw_client(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_thaw_client from the client.");
   }
-  ensure_valid_variant_packet_thaw_client(pc);
+  ensure_valid_variant_packet_thaw_client(pconn);
 
-  switch(pc->phs.variant[PACKET_THAW_CLIENT]) {
-    case 100: return send_packet_thaw_client_100(pc);
+  switch(pconn->phs.variant[PACKET_THAW_CLIENT]) {
+    case 100: return send_packet_thaw_client_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_thaw_client(struct conn_list *dest)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_thaw_client(pconn);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_thaw_client(p_conn);
   } conn_list_iterate_end;
 }
 
-static struct packet_spaceship_launch *receive_packet_spaceship_launch_100(struct connection *pc, enum packet_type type)
+static struct packet_spaceship_launch *receive_packet_spaceship_launch_100(struct connection *pconn, enum packet_type type)
 {
   RECEIVE_PACKET_START(packet_spaceship_launch, real_packet);
 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_launch_100(struct connection *pc)
+static int send_packet_spaceship_launch_100(struct connection *pconn)
 {
   SEND_PACKET_START(PACKET_SPACESHIP_LAUNCH);
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_spaceship_launch(struct connection *pc)
+static void ensure_valid_variant_packet_spaceship_launch(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SPACESHIP_LAUNCH] != -1) {
+  if(pconn->phs.variant[PACKET_SPACESHIP_LAUNCH] != -1) {
     return;
   }
 
@@ -23326,45 +23325,45 @@ static void ensure_valid_variant_packet_spaceship_launch(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SPACESHIP_LAUNCH] = variant;
+  pconn->phs.variant[PACKET_SPACESHIP_LAUNCH] = variant;
 }
 
-struct packet_spaceship_launch *receive_packet_spaceship_launch(struct connection *pc, enum packet_type type)
+struct packet_spaceship_launch *receive_packet_spaceship_launch(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_spaceship_launch at the client.");
   }
-  ensure_valid_variant_packet_spaceship_launch(pc);
+  ensure_valid_variant_packet_spaceship_launch(pconn);
 
-  switch(pc->phs.variant[PACKET_SPACESHIP_LAUNCH]) {
-    case 100: return receive_packet_spaceship_launch_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SPACESHIP_LAUNCH]) {
+    case 100: return receive_packet_spaceship_launch_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_spaceship_launch(struct connection *pc)
+int send_packet_spaceship_launch(struct connection *pconn)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_spaceship_launch from the server.");
   }
-  ensure_valid_variant_packet_spaceship_launch(pc);
+  ensure_valid_variant_packet_spaceship_launch(pconn);
 
-  switch(pc->phs.variant[PACKET_SPACESHIP_LAUNCH]) {
-    case 100: return send_packet_spaceship_launch_100(pc);
+  switch(pconn->phs.variant[PACKET_SPACESHIP_LAUNCH]) {
+    case 100: return send_packet_spaceship_launch_100(pconn);
     default: die("unknown variant"); return -1;
   }
 }
@@ -23375,11 +23374,11 @@ int send_packet_spaceship_launch(struct connection *pc)
 
 BV_DEFINE(packet_spaceship_place_100_fields, 2);
 
-static struct packet_spaceship_place *receive_packet_spaceship_place_100(struct connection *pc, enum packet_type type)
+static struct packet_spaceship_place *receive_packet_spaceship_place_100(struct connection *pconn, enum packet_type type)
 {
   packet_spaceship_place_100_fields fields;
   struct packet_spaceship_place *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_spaceship_place *clone;
   RECEIVE_PACKET_START(packet_spaceship_place, real_packet);
 
@@ -23400,7 +23399,7 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -23408,7 +23407,7 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num = readin;
     }
@@ -23424,13 +23423,13 @@ static struct packet_spaceship_place *receive_packet_spaceship_place_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_place_100(struct connection *pc, const struct packet_spaceship_place *packet)
+static int send_packet_spaceship_place_100(struct connection *pconn, const struct packet_spaceship_place *packet)
 {
   const struct packet_spaceship_place *real_packet = packet;
   packet_spaceship_place_100_fields fields;
   struct packet_spaceship_place *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_SPACESHIP_PLACE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_SPACESHIP_PLACE];
   int different = 0;
   SEND_PACKET_START(PACKET_SPACESHIP_PLACE);
 
@@ -23480,11 +23479,11 @@ static int send_packet_spaceship_place_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_spaceship_place(struct connection *pc)
+static void ensure_valid_variant_packet_spaceship_place(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SPACESHIP_PLACE] != -1) {
+  if(pconn->phs.variant[PACKET_SPACESHIP_PLACE] != -1) {
     return;
   }
 
@@ -23494,57 +23493,57 @@ static void ensure_valid_variant_packet_spaceship_place(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SPACESHIP_PLACE] = variant;
+  pconn->phs.variant[PACKET_SPACESHIP_PLACE] = variant;
 }
 
-struct packet_spaceship_place *receive_packet_spaceship_place(struct connection *pc, enum packet_type type)
+struct packet_spaceship_place *receive_packet_spaceship_place(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_spaceship_place at the client.");
   }
-  ensure_valid_variant_packet_spaceship_place(pc);
+  ensure_valid_variant_packet_spaceship_place(pconn);
 
-  switch(pc->phs.variant[PACKET_SPACESHIP_PLACE]) {
-    case 100: return receive_packet_spaceship_place_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SPACESHIP_PLACE]) {
+    case 100: return receive_packet_spaceship_place_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_spaceship_place(struct connection *pc, const struct packet_spaceship_place *packet)
+int send_packet_spaceship_place(struct connection *pconn, const struct packet_spaceship_place *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_spaceship_place from the server.");
   }
-  ensure_valid_variant_packet_spaceship_place(pc);
+  ensure_valid_variant_packet_spaceship_place(pconn);
 
-  switch(pc->phs.variant[PACKET_SPACESHIP_PLACE]) {
-    case 100: return send_packet_spaceship_place_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_SPACESHIP_PLACE]) {
+    case 100: return send_packet_spaceship_place_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_spaceship_place(struct connection *pc, enum spaceship_place_type type, int num)
+int dsend_packet_spaceship_place(struct connection *pconn, enum spaceship_place_type type, int num)
 {
   struct packet_spaceship_place packet, *real_packet = &packet;
 
   real_packet->type = type;
   real_packet->num = num;
-  
-  return send_packet_spaceship_place(pc, real_packet);
+
+  return send_packet_spaceship_place(pconn, real_packet);
 }
 
 static unsigned int hash_packet_spaceship_info_100(const void *vkey, unsigned int num_buckets)
@@ -23570,18 +23569,18 @@ static int cmp_packet_spaceship_info_100(const void *vkey1, const void *vkey2)
 
 BV_DEFINE(packet_spaceship_info_100_fields, 17);
 
-static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct connection *pc, enum packet_type type)
+static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_spaceship_info_100_fields fields;
   struct packet_spaceship_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_spaceship_info *clone;
   RECEIVE_PACKET_START(packet_spaceship_info, real_packet);
 
   DIO_BV_GET(&din, fields);
   {
     int readin;
-  
+
     dio_get_uint8(&din, &readin);
     real_packet->player_num = readin;
   }
@@ -23605,7 +23604,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->sship_state = readin;
     }
@@ -23613,7 +23612,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->structurals = readin;
     }
@@ -23621,7 +23620,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->components = readin;
     }
@@ -23629,7 +23628,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->modules = readin;
     }
@@ -23637,7 +23636,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fuel = readin;
     }
@@ -23645,7 +23644,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->propulsion = readin;
     }
@@ -23653,7 +23652,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->habitation = readin;
     }
@@ -23661,7 +23660,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->life_support = readin;
     }
@@ -23669,7 +23668,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->solar_panels = readin;
     }
@@ -23677,7 +23676,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->launch_year = readin;
     }
@@ -23685,7 +23684,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->population = readin;
     }
@@ -23693,7 +23692,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->mass = readin;
     }
@@ -23704,7 +23703,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 13)) {
     {
       int tmp;
-      
+
       dio_get_uint32(&din, &tmp);
       real_packet->support_rate = (float)(tmp) / 10000.0;
     }
@@ -23712,7 +23711,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 14)) {
     {
       int tmp;
-      
+
       dio_get_uint32(&din, &tmp);
       real_packet->energy_rate = (float)(tmp) / 10000.0;
     }
@@ -23720,7 +23719,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 15)) {
     {
       int tmp;
-      
+
       dio_get_uint32(&din, &tmp);
       real_packet->success_rate = (float)(tmp) / 10000.0;
     }
@@ -23728,7 +23727,7 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   if (BV_ISSET(fields, 16)) {
     {
       int tmp;
-      
+
       dio_get_uint32(&din, &tmp);
       real_packet->travel_time = (float)(tmp) / 10000.0;
     }
@@ -23744,13 +23743,13 @@ static struct packet_spaceship_info *receive_packet_spaceship_info_100(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_spaceship_info_100(struct connection *pc, const struct packet_spaceship_info *packet)
+static int send_packet_spaceship_info_100(struct connection *pconn, const struct packet_spaceship_info *packet)
 {
   const struct packet_spaceship_info *real_packet = packet;
   packet_spaceship_info_100_fields fields;
   struct packet_spaceship_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_SPACESHIP_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_SPACESHIP_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_SPACESHIP_INFO);
 
@@ -23906,11 +23905,11 @@ static int send_packet_spaceship_info_100(struct connection *pc, const struct pa
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_spaceship_info(struct connection *pc)
+static void ensure_valid_variant_packet_spaceship_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SPACESHIP_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_SPACESHIP_INFO] != -1) {
     return;
   }
 
@@ -23920,53 +23919,53 @@ static void ensure_valid_variant_packet_spaceship_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SPACESHIP_INFO] = variant;
+  pconn->phs.variant[PACKET_SPACESHIP_INFO] = variant;
 }
 
-struct packet_spaceship_info *receive_packet_spaceship_info(struct connection *pc, enum packet_type type)
+struct packet_spaceship_info *receive_packet_spaceship_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_spaceship_info at the server.");
   }
-  ensure_valid_variant_packet_spaceship_info(pc);
+  ensure_valid_variant_packet_spaceship_info(pconn);
 
-  switch(pc->phs.variant[PACKET_SPACESHIP_INFO]) {
-    case 100: return receive_packet_spaceship_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SPACESHIP_INFO]) {
+    case 100: return receive_packet_spaceship_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_spaceship_info(struct connection *pc, const struct packet_spaceship_info *packet)
+int send_packet_spaceship_info(struct connection *pconn, const struct packet_spaceship_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_spaceship_info from the client.");
   }
-  ensure_valid_variant_packet_spaceship_info(pc);
+  ensure_valid_variant_packet_spaceship_info(pconn);
 
-  switch(pc->phs.variant[PACKET_SPACESHIP_INFO]) {
-    case 100: return send_packet_spaceship_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_SPACESHIP_INFO]) {
+    case 100: return send_packet_spaceship_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_spaceship_info(struct conn_list *dest, const struct packet_spaceship_info *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_spaceship_info(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_spaceship_info(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -23976,11 +23975,11 @@ void lsend_packet_spaceship_info(struct conn_list *dest, const struct packet_spa
 
 BV_DEFINE(packet_ruleset_unit_100_fields, 36);
 
-static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_unit_100_fields fields;
   struct packet_ruleset_unit *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_unit *clone;
   RECEIVE_PACKET_START(packet_ruleset_unit, real_packet);
 
@@ -24001,7 +24000,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
@@ -24030,7 +24029,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->move_type = readin;
     }
@@ -24038,7 +24037,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->build_cost = readin;
     }
@@ -24046,7 +24045,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->pop_cost = readin;
     }
@@ -24054,7 +24053,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->attack_strength = readin;
     }
@@ -24062,7 +24061,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->defense_strength = readin;
     }
@@ -24070,7 +24069,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->move_rate = readin;
     }
@@ -24078,7 +24077,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_requirement = readin;
     }
@@ -24086,7 +24085,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->impr_requirement = readin;
     }
@@ -24094,7 +24093,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->vision_range = readin;
     }
@@ -24102,7 +24101,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->transport_capacity = readin;
     }
@@ -24110,7 +24109,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->hp = readin;
     }
@@ -24118,7 +24117,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->firepower = readin;
     }
@@ -24126,7 +24125,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_sint8(&din, &readin);
       real_packet->obsoleted_by = readin;
     }
@@ -24134,7 +24133,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fuel = readin;
     }
@@ -24142,7 +24141,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->happy_cost = readin;
     }
@@ -24150,7 +24149,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->shield_cost = readin;
     }
@@ -24158,7 +24157,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->food_cost = readin;
     }
@@ -24166,7 +24165,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->gold_cost = readin;
     }
@@ -24174,7 +24173,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->paratroopers_range = readin;
     }
@@ -24182,7 +24181,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->paratroopers_mr_req = readin;
     }
@@ -24190,43 +24189,43 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->paratroopers_mr_sub = readin;
     }
   }
   if (BV_ISSET(fields, 29)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         dio_get_string(&din, real_packet->veteran_name[i], sizeof(real_packet->veteran_name[i]));
       }
     }
   }
   if (BV_ISSET(fields, 30)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         int tmp;
-    
+
         dio_get_uint32(&din, &tmp);
         real_packet->power_fact[i] = (float)(tmp) / 10000.0;
       }
     }
   }
   if (BV_ISSET(fields, 31)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->move_bonus[i] = readin;
     }
@@ -24236,7 +24235,7 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   if (BV_ISSET(fields, 32)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->bombard_rate = readin;
     }
@@ -24261,13 +24260,13 @@ static struct packet_ruleset_unit *receive_packet_ruleset_unit_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_unit_100(struct connection *pc, const struct packet_ruleset_unit *packet)
+static int send_packet_ruleset_unit_100(struct connection *pconn, const struct packet_ruleset_unit *packet)
 {
   const struct packet_ruleset_unit *real_packet = packet;
   packet_ruleset_unit_100_fields fields;
   struct packet_ruleset_unit *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_UNIT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_UNIT];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_UNIT);
 
@@ -24558,34 +24557,34 @@ static int send_packet_ruleset_unit_100(struct connection *pc, const struct pack
     dio_put_uint8(&dout, real_packet->paratroopers_mr_sub);
   }
   if (BV_ISSET(fields, 29)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         dio_put_string(&dout, real_packet->veteran_name[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 30)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_VET_LEVELS; i++) {
           dio_put_uint32(&dout, (int)(real_packet->power_fact[i] * 10000));
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 31)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         dio_put_uint8(&dout, real_packet->move_bonus[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 32)) {
     dio_put_uint8(&dout, real_packet->bombard_rate);
@@ -24612,11 +24611,11 @@ static int send_packet_ruleset_unit_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_unit(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_unit(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_UNIT] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_UNIT] != -1) {
     return;
   }
 
@@ -24626,53 +24625,53 @@ static void ensure_valid_variant_packet_ruleset_unit(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_UNIT] = variant;
+  pconn->phs.variant[PACKET_RULESET_UNIT] = variant;
 }
 
-struct packet_ruleset_unit *receive_packet_ruleset_unit(struct connection *pc, enum packet_type type)
+struct packet_ruleset_unit *receive_packet_ruleset_unit(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_unit at the server.");
   }
-  ensure_valid_variant_packet_ruleset_unit(pc);
+  ensure_valid_variant_packet_ruleset_unit(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_UNIT]) {
-    case 100: return receive_packet_ruleset_unit_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_UNIT]) {
+    case 100: return receive_packet_ruleset_unit_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_unit(struct connection *pc, const struct packet_ruleset_unit *packet)
+int send_packet_ruleset_unit(struct connection *pconn, const struct packet_ruleset_unit *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_unit from the client.");
   }
-  ensure_valid_variant_packet_ruleset_unit(pc);
+  ensure_valid_variant_packet_ruleset_unit(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_UNIT]) {
-    case 100: return send_packet_ruleset_unit_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_UNIT]) {
+    case 100: return send_packet_ruleset_unit_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_unit(struct conn_list *dest, const struct packet_ruleset_unit *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_unit(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_unit(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -24682,11 +24681,11 @@ void lsend_packet_ruleset_unit(struct conn_list *dest, const struct packet_rules
 
 BV_DEFINE(packet_ruleset_game_100_fields, 26);
 
-static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_game_100_fields fields;
   struct packet_ruleset_game *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_game *clone;
   RECEIVE_PACKET_START(packet_ruleset_game, real_packet);
 
@@ -24705,24 +24704,24 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   }
 
   if (BV_ISSET(fields, 0)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < SP_COUNT; i++) {
         dio_get_string(&din, real_packet->specialist_name[i], sizeof(real_packet->specialist_name[i]));
       }
     }
   }
   if (BV_ISSET(fields, 1)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < SP_COUNT; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->specialist_min_size[i] = readin;
     }
@@ -24730,14 +24729,14 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
     }
   }
   if (BV_ISSET(fields, 2)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < SP_COUNT; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->specialist_bonus[i] = readin;
     }
@@ -24748,7 +24747,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->forced_science = readin;
     }
@@ -24756,7 +24755,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->forced_luxury = readin;
     }
@@ -24764,7 +24763,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->forced_gold = readin;
     }
@@ -24772,7 +24771,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->min_city_center_food = readin;
     }
@@ -24780,7 +24779,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->min_city_center_shield = readin;
     }
@@ -24788,7 +24787,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->min_city_center_trade = readin;
     }
@@ -24796,7 +24795,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->min_dist_bw_cities = readin;
     }
@@ -24804,7 +24803,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->init_vis_radius_sq = readin;
     }
@@ -24812,7 +24811,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->hut_overflight = readin;
     }
@@ -24821,20 +24820,20 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->nuke_contamination = readin;
     }
   }
   if (BV_ISSET(fields, 15)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_GRANARY_INIS; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->granary_food_ini[i] = readin;
     }
@@ -24844,7 +24843,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->granary_num_inis = readin;
     }
@@ -24852,7 +24851,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->granary_food_inc = readin;
     }
@@ -24860,7 +24859,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_cost_style = readin;
     }
@@ -24868,7 +24867,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->tech_cost_double_year = readin;
     }
@@ -24876,7 +24875,7 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_leakage = readin;
     }
@@ -24886,14 +24885,14 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   }
   real_packet->killstack = BV_ISSET(fields, 22);
   if (BV_ISSET(fields, 23)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trireme_loss_chance[i] = readin;
     }
@@ -24901,14 +24900,14 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
     }
   }
   if (BV_ISSET(fields, 24)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->work_veteran_chance[i] = readin;
     }
@@ -24916,14 +24915,14 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
     }
   }
   if (BV_ISSET(fields, 25)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->veteran_chance[i] = readin;
     }
@@ -24941,13 +24940,13 @@ static struct packet_ruleset_game *receive_packet_ruleset_game_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_game_100(struct connection *pc, const struct packet_ruleset_game *packet)
+static int send_packet_ruleset_game_100(struct connection *pconn, const struct packet_ruleset_game *packet)
 {
   const struct packet_ruleset_game *real_packet = packet;
   packet_ruleset_game_100_fields fields;
   struct packet_ruleset_game *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_GAME];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_GAME];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_GAME);
 
@@ -25171,34 +25170,34 @@ static int send_packet_ruleset_game_100(struct connection *pc, const struct pack
   DIO_BV_PUT(&dout, fields);
 
   if (BV_ISSET(fields, 0)) {
-  
+
     {
       int i;
 
       for (i = 0; i < SP_COUNT; i++) {
         dio_put_string(&dout, real_packet->specialist_name[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 1)) {
-  
+
     {
       int i;
 
       for (i = 0; i < SP_COUNT; i++) {
         dio_put_uint8(&dout, real_packet->specialist_min_size[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 2)) {
-  
+
     {
       int i;
 
       for (i = 0; i < SP_COUNT; i++) {
         dio_put_uint8(&dout, real_packet->specialist_bonus[i]);
       }
-    } 
+    }
   }
   /* field 3 is folded into the header */
   if (BV_ISSET(fields, 4)) {
@@ -25233,14 +25232,14 @@ static int send_packet_ruleset_game_100(struct connection *pc, const struct pack
     dio_put_uint8(&dout, real_packet->nuke_contamination);
   }
   if (BV_ISSET(fields, 15)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_GRANARY_INIS; i++) {
         dio_put_uint8(&dout, real_packet->granary_food_ini[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 16)) {
     dio_put_uint8(&dout, real_packet->granary_num_inis);
@@ -25262,34 +25261,34 @@ static int send_packet_ruleset_game_100(struct connection *pc, const struct pack
   }
   /* field 22 is folded into the header */
   if (BV_ISSET(fields, 23)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         dio_put_uint8(&dout, real_packet->trireme_loss_chance[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 24)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         dio_put_uint8(&dout, real_packet->work_veteran_chance[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 25)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_VET_LEVELS; i++) {
         dio_put_uint8(&dout, real_packet->veteran_chance[i]);
       }
-    } 
+    }
   }
 
 
@@ -25304,11 +25303,11 @@ static int send_packet_ruleset_game_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_game(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_game(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_GAME] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_GAME] != -1) {
     return;
   }
 
@@ -25318,53 +25317,53 @@ static void ensure_valid_variant_packet_ruleset_game(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_GAME] = variant;
+  pconn->phs.variant[PACKET_RULESET_GAME] = variant;
 }
 
-struct packet_ruleset_game *receive_packet_ruleset_game(struct connection *pc, enum packet_type type)
+struct packet_ruleset_game *receive_packet_ruleset_game(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_game at the server.");
   }
-  ensure_valid_variant_packet_ruleset_game(pc);
+  ensure_valid_variant_packet_ruleset_game(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_GAME]) {
-    case 100: return receive_packet_ruleset_game_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_GAME]) {
+    case 100: return receive_packet_ruleset_game_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_game(struct connection *pc, const struct packet_ruleset_game *packet)
+int send_packet_ruleset_game(struct connection *pconn, const struct packet_ruleset_game *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_game from the client.");
   }
-  ensure_valid_variant_packet_ruleset_game(pc);
+  ensure_valid_variant_packet_ruleset_game(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_GAME]) {
-    case 100: return send_packet_ruleset_game_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_GAME]) {
+    case 100: return send_packet_ruleset_game_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_game(struct conn_list *dest, const struct packet_ruleset_game *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_game(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_game(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -25374,11 +25373,11 @@ void lsend_packet_ruleset_game(struct conn_list *dest, const struct packet_rules
 
 BV_DEFINE(packet_ruleset_government_ruler_title_100_fields, 5);
 
-static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_ruler_title_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_ruler_title_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_government_ruler_title_100_fields fields;
   struct packet_ruleset_government_ruler_title *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_government_ruler_title *clone;
   RECEIVE_PACKET_START(packet_ruleset_government_ruler_title, real_packet);
 
@@ -25399,7 +25398,7 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->gov = readin;
     }
@@ -25407,7 +25406,7 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
@@ -25415,7 +25414,7 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nation = readin;
     }
@@ -25437,13 +25436,13 @@ static struct packet_ruleset_government_ruler_title *receive_packet_ruleset_gove
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_government_ruler_title_100(struct connection *pc, const struct packet_ruleset_government_ruler_title *packet)
+static int send_packet_ruleset_government_ruler_title_100(struct connection *pconn, const struct packet_ruleset_government_ruler_title *packet)
 {
   const struct packet_ruleset_government_ruler_title *real_packet = packet;
   packet_ruleset_government_ruler_title_100_fields fields;
   struct packet_ruleset_government_ruler_title *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_GOVERNMENT_RULER_TITLE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_GOVERNMENT_RULER_TITLE];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_GOVERNMENT_RULER_TITLE);
 
@@ -25514,11 +25513,11 @@ static int send_packet_ruleset_government_ruler_title_100(struct connection *pc,
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_government_ruler_title(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_government_ruler_title(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE] != -1) {
     return;
   }
 
@@ -25528,53 +25527,53 @@ static void ensure_valid_variant_packet_ruleset_government_ruler_title(struct co
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE] = variant;
+  pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE] = variant;
 }
 
-struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_ruler_title(struct connection *pc, enum packet_type type)
+struct packet_ruleset_government_ruler_title *receive_packet_ruleset_government_ruler_title(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_government_ruler_title at the server.");
   }
-  ensure_valid_variant_packet_ruleset_government_ruler_title(pc);
+  ensure_valid_variant_packet_ruleset_government_ruler_title(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE]) {
-    case 100: return receive_packet_ruleset_government_ruler_title_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE]) {
+    case 100: return receive_packet_ruleset_government_ruler_title_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_government_ruler_title(struct connection *pc, const struct packet_ruleset_government_ruler_title *packet)
+int send_packet_ruleset_government_ruler_title(struct connection *pconn, const struct packet_ruleset_government_ruler_title *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_government_ruler_title from the client.");
   }
-  ensure_valid_variant_packet_ruleset_government_ruler_title(pc);
+  ensure_valid_variant_packet_ruleset_government_ruler_title(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE]) {
-    case 100: return send_packet_ruleset_government_ruler_title_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_GOVERNMENT_RULER_TITLE]) {
+    case 100: return send_packet_ruleset_government_ruler_title_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_government_ruler_title(struct conn_list *dest, const struct packet_ruleset_government_ruler_title *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_government_ruler_title(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_government_ruler_title(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -25584,11 +25583,11 @@ void lsend_packet_ruleset_government_ruler_title(struct conn_list *dest, const s
 
 BV_DEFINE(packet_ruleset_tech_100_fields, 10);
 
-static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_tech_100_fields fields;
   struct packet_ruleset_tech *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_tech *clone;
   RECEIVE_PACKET_START(packet_ruleset_tech, real_packet);
 
@@ -25609,20 +25608,20 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
   }
   if (BV_ISSET(fields, 1)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < 2; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->req[i] = readin;
     }
@@ -25632,7 +25631,7 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->root_req = readin;
     }
@@ -25640,7 +25639,7 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->flags = readin;
     }
@@ -25648,7 +25647,7 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->preset_cost = readin;
     }
@@ -25656,7 +25655,7 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->num_reqs = readin;
     }
@@ -25684,13 +25683,13 @@ static struct packet_ruleset_tech *receive_packet_ruleset_tech_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_tech_100(struct connection *pc, const struct packet_ruleset_tech *packet)
+static int send_packet_ruleset_tech_100(struct connection *pconn, const struct packet_ruleset_tech *packet)
 {
   const struct packet_ruleset_tech *real_packet = packet;
   packet_ruleset_tech_100_fields fields;
   struct packet_ruleset_tech *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_TECH];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_TECH];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_TECH);
 
@@ -25769,14 +25768,14 @@ static int send_packet_ruleset_tech_100(struct connection *pc, const struct pack
     dio_put_uint8(&dout, real_packet->id);
   }
   if (BV_ISSET(fields, 1)) {
-  
+
     {
       int i;
 
       for (i = 0; i < 2; i++) {
         dio_put_uint8(&dout, real_packet->req[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 2)) {
     dio_put_uint8(&dout, real_packet->root_req);
@@ -25815,11 +25814,11 @@ static int send_packet_ruleset_tech_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_tech(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_tech(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_TECH] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_TECH] != -1) {
     return;
   }
 
@@ -25829,53 +25828,53 @@ static void ensure_valid_variant_packet_ruleset_tech(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_TECH] = variant;
+  pconn->phs.variant[PACKET_RULESET_TECH] = variant;
 }
 
-struct packet_ruleset_tech *receive_packet_ruleset_tech(struct connection *pc, enum packet_type type)
+struct packet_ruleset_tech *receive_packet_ruleset_tech(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_tech at the server.");
   }
-  ensure_valid_variant_packet_ruleset_tech(pc);
+  ensure_valid_variant_packet_ruleset_tech(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_TECH]) {
-    case 100: return receive_packet_ruleset_tech_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_TECH]) {
+    case 100: return receive_packet_ruleset_tech_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_tech(struct connection *pc, const struct packet_ruleset_tech *packet)
+int send_packet_ruleset_tech(struct connection *pconn, const struct packet_ruleset_tech *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_tech from the client.");
   }
-  ensure_valid_variant_packet_ruleset_tech(pc);
+  ensure_valid_variant_packet_ruleset_tech(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_TECH]) {
-    case 100: return send_packet_ruleset_tech_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_TECH]) {
+    case 100: return send_packet_ruleset_tech_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_tech(struct conn_list *dest, const struct packet_ruleset_tech *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_tech(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_tech(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -25885,11 +25884,11 @@ void lsend_packet_ruleset_tech(struct conn_list *dest, const struct packet_rules
 
 BV_DEFINE(packet_ruleset_government_100_fields, 45);
 
-static struct packet_ruleset_government *receive_packet_ruleset_government_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_government *receive_packet_ruleset_government_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_government_100_fields fields;
   struct packet_ruleset_government *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_government *clone;
   RECEIVE_PACKET_START(packet_ruleset_government, real_packet);
 
@@ -25910,7 +25909,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
@@ -25918,7 +25917,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->required_tech = readin;
     }
@@ -25926,7 +25925,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->max_rate = readin;
     }
@@ -25934,7 +25933,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->civil_war = readin;
     }
@@ -25942,7 +25941,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->martial_law_max = readin;
     }
@@ -25950,7 +25949,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->martial_law_per = readin;
     }
@@ -25958,7 +25957,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_sint8(&din, &readin);
       real_packet->empire_size_mod = readin;
     }
@@ -25966,7 +25965,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->empire_size_inc = readin;
     }
@@ -25974,7 +25973,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rapture_size = readin;
     }
@@ -25982,7 +25981,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unit_happy_cost_factor = readin;
     }
@@ -25990,7 +25989,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unit_shield_cost_factor = readin;
     }
@@ -25998,7 +25997,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unit_food_cost_factor = readin;
     }
@@ -26006,7 +26005,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->unit_gold_cost_factor = readin;
     }
@@ -26014,7 +26013,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->free_happy = readin;
     }
@@ -26022,7 +26021,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->free_shield = readin;
     }
@@ -26030,7 +26029,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->free_food = readin;
     }
@@ -26038,7 +26037,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->free_gold = readin;
     }
@@ -26046,7 +26045,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade_before_penalty = readin;
     }
@@ -26054,7 +26053,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->shields_before_penalty = readin;
     }
@@ -26062,7 +26061,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->food_before_penalty = readin;
     }
@@ -26070,7 +26069,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->celeb_trade_before_penalty = readin;
     }
@@ -26078,7 +26077,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->celeb_shields_before_penalty = readin;
     }
@@ -26086,7 +26085,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->celeb_food_before_penalty = readin;
     }
@@ -26094,7 +26093,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade_bonus = readin;
     }
@@ -26102,7 +26101,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->shield_bonus = readin;
     }
@@ -26110,7 +26109,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->food_bonus = readin;
     }
@@ -26118,7 +26117,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->celeb_trade_bonus = readin;
     }
@@ -26126,7 +26125,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->celeb_shield_bonus = readin;
     }
@@ -26134,7 +26133,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->celeb_food_bonus = readin;
     }
@@ -26142,7 +26141,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 29)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->corruption_level = readin;
     }
@@ -26150,7 +26149,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 30)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fixed_corruption_distance = readin;
     }
@@ -26158,7 +26157,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 31)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->corruption_distance_factor = readin;
     }
@@ -26166,7 +26165,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 32)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->extra_corruption_distance = readin;
     }
@@ -26174,7 +26173,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 33)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->corruption_max_distance_cap = readin;
     }
@@ -26182,7 +26181,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 34)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->waste_level = readin;
     }
@@ -26190,7 +26189,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 35)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fixed_waste_distance = readin;
     }
@@ -26198,7 +26197,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 36)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->waste_distance_factor = readin;
     }
@@ -26206,7 +26205,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 37)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->extra_waste_distance = readin;
     }
@@ -26214,7 +26213,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 38)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->waste_max_distance_cap = readin;
     }
@@ -26222,7 +26221,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 39)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->flags = readin;
     }
@@ -26230,7 +26229,7 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   if (BV_ISSET(fields, 40)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num_ruler_titles = readin;
     }
@@ -26258,13 +26257,13 @@ static struct packet_ruleset_government *receive_packet_ruleset_government_100(s
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_government_100(struct connection *pc, const struct packet_ruleset_government *packet)
+static int send_packet_ruleset_government_100(struct connection *pconn, const struct packet_ruleset_government *packet)
 {
   const struct packet_ruleset_government *real_packet = packet;
   packet_ruleset_government_100_fields fields;
   struct packet_ruleset_government *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_GOVERNMENT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_GOVERNMENT];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_GOVERNMENT);
 
@@ -26615,11 +26614,11 @@ static int send_packet_ruleset_government_100(struct connection *pc, const struc
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_government(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_government(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_GOVERNMENT] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_GOVERNMENT] != -1) {
     return;
   }
 
@@ -26629,53 +26628,53 @@ static void ensure_valid_variant_packet_ruleset_government(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_GOVERNMENT] = variant;
+  pconn->phs.variant[PACKET_RULESET_GOVERNMENT] = variant;
 }
 
-struct packet_ruleset_government *receive_packet_ruleset_government(struct connection *pc, enum packet_type type)
+struct packet_ruleset_government *receive_packet_ruleset_government(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_government at the server.");
   }
-  ensure_valid_variant_packet_ruleset_government(pc);
+  ensure_valid_variant_packet_ruleset_government(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_GOVERNMENT]) {
-    case 100: return receive_packet_ruleset_government_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_GOVERNMENT]) {
+    case 100: return receive_packet_ruleset_government_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_government(struct connection *pc, const struct packet_ruleset_government *packet)
+int send_packet_ruleset_government(struct connection *pconn, const struct packet_ruleset_government *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_government from the client.");
   }
-  ensure_valid_variant_packet_ruleset_government(pc);
+  ensure_valid_variant_packet_ruleset_government(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_GOVERNMENT]) {
-    case 100: return send_packet_ruleset_government_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_GOVERNMENT]) {
+    case 100: return send_packet_ruleset_government_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_government(struct conn_list *dest, const struct packet_ruleset_government *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_government(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_government(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -26685,11 +26684,11 @@ void lsend_packet_ruleset_government(struct conn_list *dest, const struct packet
 
 BV_DEFINE(packet_ruleset_terrain_control_100_fields, 22);
 
-static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_terrain_control_100_fields fields;
   struct packet_ruleset_terrain_control *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_terrain_control *clone;
   RECEIVE_PACKET_START(packet_ruleset_terrain_control, real_packet);
 
@@ -26714,7 +26713,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->ocean_reclaim_requirement_pct = readin;
     }
@@ -26722,7 +26721,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->land_channel_requirement_pct = readin;
     }
@@ -26730,7 +26729,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->river_move_mode = readin;
     }
@@ -26738,7 +26737,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->river_defense_bonus = readin;
     }
@@ -26746,7 +26745,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->river_trade_incr = readin;
     }
@@ -26757,7 +26756,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->fortress_defense_bonus = readin;
     }
@@ -26765,7 +26764,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->road_superhighway_trade_bonus = readin;
     }
@@ -26773,7 +26772,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->rail_food_bonus = readin;
     }
@@ -26781,7 +26780,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->rail_shield_bonus = readin;
     }
@@ -26789,7 +26788,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->rail_trade_bonus = readin;
     }
@@ -26797,7 +26796,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->farmland_supermarket_food_bonus = readin;
     }
@@ -26805,7 +26804,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->pollution_food_penalty = readin;
     }
@@ -26813,7 +26812,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->pollution_shield_penalty = readin;
     }
@@ -26821,7 +26820,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->pollution_trade_penalty = readin;
     }
@@ -26829,7 +26828,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->fallout_food_penalty = readin;
     }
@@ -26837,7 +26836,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->fallout_shield_penalty = readin;
     }
@@ -26845,7 +26844,7 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   if (BV_ISSET(fields, 21)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->fallout_trade_penalty = readin;
     }
@@ -26861,13 +26860,13 @@ static struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_con
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_terrain_control_100(struct connection *pc, const struct packet_ruleset_terrain_control *packet)
+static int send_packet_ruleset_terrain_control_100(struct connection *pconn, const struct packet_ruleset_terrain_control *packet)
 {
   const struct packet_ruleset_terrain_control *real_packet = packet;
   packet_ruleset_terrain_control_100_fields fields;
   struct packet_ruleset_terrain_control *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_TERRAIN_CONTROL];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_TERRAIN_CONTROL];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_TERRAIN_CONTROL);
 
@@ -27049,11 +27048,11 @@ static int send_packet_ruleset_terrain_control_100(struct connection *pc, const 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_terrain_control(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_terrain_control(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_TERRAIN_CONTROL] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL] != -1) {
     return;
   }
 
@@ -27063,53 +27062,53 @@ static void ensure_valid_variant_packet_ruleset_terrain_control(struct connectio
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_TERRAIN_CONTROL] = variant;
+  pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL] = variant;
 }
 
-struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control(struct connection *pc, enum packet_type type)
+struct packet_ruleset_terrain_control *receive_packet_ruleset_terrain_control(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_terrain_control at the server.");
   }
-  ensure_valid_variant_packet_ruleset_terrain_control(pc);
+  ensure_valid_variant_packet_ruleset_terrain_control(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_TERRAIN_CONTROL]) {
-    case 100: return receive_packet_ruleset_terrain_control_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL]) {
+    case 100: return receive_packet_ruleset_terrain_control_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_terrain_control(struct connection *pc, const struct packet_ruleset_terrain_control *packet)
+int send_packet_ruleset_terrain_control(struct connection *pconn, const struct packet_ruleset_terrain_control *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_terrain_control from the client.");
   }
-  ensure_valid_variant_packet_ruleset_terrain_control(pc);
+  ensure_valid_variant_packet_ruleset_terrain_control(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_TERRAIN_CONTROL]) {
-    case 100: return send_packet_ruleset_terrain_control_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_TERRAIN_CONTROL]) {
+    case 100: return send_packet_ruleset_terrain_control_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_terrain_control(struct conn_list *dest, const struct packet_ruleset_terrain_control *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_terrain_control(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_terrain_control(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -27119,11 +27118,11 @@ void lsend_packet_ruleset_terrain_control(struct conn_list *dest, const struct p
 
 BV_DEFINE(packet_ruleset_nation_100_fields, 12);
 
-static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_nation_100_fields fields;
   struct packet_ruleset_nation *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_nation *clone;
   RECEIVE_PACKET_START(packet_ruleset_nation, real_packet);
 
@@ -27144,7 +27143,7 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -27170,7 +27169,7 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->city_style = readin;
     }
@@ -27181,16 +27180,16 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->leader_count = readin;
     }
   }
   if (BV_ISSET(fields, 10)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->leader_count > MAX_NUM_LEADERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->leader_count = MAX_NUM_LEADERS;
@@ -27201,10 +27200,10 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
     }
   }
   if (BV_ISSET(fields, 11)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->leader_count > MAX_NUM_LEADERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->leader_count = MAX_NUM_LEADERS;
@@ -27225,13 +27224,13 @@ static struct packet_ruleset_nation *receive_packet_ruleset_nation_100(struct co
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_nation_100(struct connection *pc, const struct packet_ruleset_nation *packet)
+static int send_packet_ruleset_nation_100(struct connection *pconn, const struct packet_ruleset_nation *packet)
 {
   const struct packet_ruleset_nation *real_packet = packet;
   packet_ruleset_nation_100_fields fields;
   struct packet_ruleset_nation *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_NATION];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_NATION];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_NATION);
 
@@ -27369,24 +27368,24 @@ static int send_packet_ruleset_nation_100(struct connection *pc, const struct pa
     dio_put_uint8(&dout, real_packet->leader_count);
   }
   if (BV_ISSET(fields, 10)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->leader_count; i++) {
         dio_put_string(&dout, real_packet->leader_name[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 11)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->leader_count; i++) {
         dio_put_bool8(&dout, real_packet->leader_sex[i]);
       }
-    } 
+    }
   }
 
 
@@ -27401,11 +27400,11 @@ static int send_packet_ruleset_nation_100(struct connection *pc, const struct pa
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_nation(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_nation(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_NATION] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_NATION] != -1) {
     return;
   }
 
@@ -27415,53 +27414,53 @@ static void ensure_valid_variant_packet_ruleset_nation(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_NATION] = variant;
+  pconn->phs.variant[PACKET_RULESET_NATION] = variant;
 }
 
-struct packet_ruleset_nation *receive_packet_ruleset_nation(struct connection *pc, enum packet_type type)
+struct packet_ruleset_nation *receive_packet_ruleset_nation(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_nation at the server.");
   }
-  ensure_valid_variant_packet_ruleset_nation(pc);
+  ensure_valid_variant_packet_ruleset_nation(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_NATION]) {
-    case 100: return receive_packet_ruleset_nation_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_NATION]) {
+    case 100: return receive_packet_ruleset_nation_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_nation(struct connection *pc, const struct packet_ruleset_nation *packet)
+int send_packet_ruleset_nation(struct connection *pconn, const struct packet_ruleset_nation *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_nation from the client.");
   }
-  ensure_valid_variant_packet_ruleset_nation(pc);
+  ensure_valid_variant_packet_ruleset_nation(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_NATION]) {
-    case 100: return send_packet_ruleset_nation_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_NATION]) {
+    case 100: return send_packet_ruleset_nation_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_nation(struct conn_list *dest, const struct packet_ruleset_nation *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_nation(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_nation(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -27471,11 +27470,11 @@ void lsend_packet_ruleset_nation(struct conn_list *dest, const struct packet_rul
 
 BV_DEFINE(packet_ruleset_city_100_fields, 8);
 
-static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_city_100_fields fields;
   struct packet_ruleset_city *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_city *clone;
   RECEIVE_PACKET_START(packet_ruleset_city, real_packet);
 
@@ -27496,7 +27495,7 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->style_id = readin;
     }
@@ -27504,7 +27503,7 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connec
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->techreq = readin;
     }
@@ -27527,7 +27526,7 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connec
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_sint8(&din, &readin);
       real_packet->replaced_by = readin;
     }
@@ -27543,13 +27542,13 @@ static struct packet_ruleset_city *receive_packet_ruleset_city_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_city_100(struct connection *pc, const struct packet_ruleset_city *packet)
+static int send_packet_ruleset_city_100(struct connection *pconn, const struct packet_ruleset_city *packet)
 {
   const struct packet_ruleset_city *real_packet = packet;
   packet_ruleset_city_100_fields fields;
   struct packet_ruleset_city *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_CITY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_CITY];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_CITY);
 
@@ -27641,11 +27640,11 @@ static int send_packet_ruleset_city_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_city(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_city(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_CITY] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_CITY] != -1) {
     return;
   }
 
@@ -27655,53 +27654,53 @@ static void ensure_valid_variant_packet_ruleset_city(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_CITY] = variant;
+  pconn->phs.variant[PACKET_RULESET_CITY] = variant;
 }
 
-struct packet_ruleset_city *receive_packet_ruleset_city(struct connection *pc, enum packet_type type)
+struct packet_ruleset_city *receive_packet_ruleset_city(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_city at the server.");
   }
-  ensure_valid_variant_packet_ruleset_city(pc);
+  ensure_valid_variant_packet_ruleset_city(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CITY]) {
-    case 100: return receive_packet_ruleset_city_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_CITY]) {
+    case 100: return receive_packet_ruleset_city_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_city(struct connection *pc, const struct packet_ruleset_city *packet)
+int send_packet_ruleset_city(struct connection *pconn, const struct packet_ruleset_city *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_city from the client.");
   }
-  ensure_valid_variant_packet_ruleset_city(pc);
+  ensure_valid_variant_packet_ruleset_city(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CITY]) {
-    case 100: return send_packet_ruleset_city_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_CITY]) {
+    case 100: return send_packet_ruleset_city_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_city(struct conn_list *dest, const struct packet_ruleset_city *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_city(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_city(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -27711,11 +27710,11 @@ void lsend_packet_ruleset_city(struct conn_list *dest, const struct packet_rules
 
 BV_DEFINE(packet_ruleset_building_100_fields, 24);
 
-static struct packet_ruleset_building *receive_packet_ruleset_building_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_building *receive_packet_ruleset_building_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_building_100_fields fields;
   struct packet_ruleset_building *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_building *clone;
   RECEIVE_PACKET_START(packet_ruleset_building, real_packet);
 
@@ -27736,7 +27735,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
@@ -27753,7 +27752,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->tech_req = readin;
     }
@@ -27761,7 +27760,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->obsolete_by = readin;
     }
@@ -27769,7 +27768,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->bldg_req = readin;
     }
@@ -27777,7 +27776,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->replaced_by = readin;
     }
@@ -27786,7 +27785,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->equiv_range = readin;
     }
@@ -27794,7 +27793,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->build_cost = readin;
     }
@@ -27802,7 +27801,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->upkeep = readin;
     }
@@ -27810,7 +27809,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->sabotage = readin;
     }
@@ -27827,16 +27826,16 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->terr_gate_count = readin;
     }
   }
   if (BV_ISSET(fields, 17)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->terr_gate_count > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->terr_gate_count = 255;
@@ -27844,7 +27843,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
       for (i = 0; i < real_packet->terr_gate_count; i++) {
         {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->terr_gate[i] = readin;
     }
@@ -27854,16 +27853,16 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->spec_gate_count = readin;
     }
   }
   if (BV_ISSET(fields, 19)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->spec_gate_count > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->spec_gate_count = 255;
@@ -27871,7 +27870,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
       for (i = 0; i < real_packet->spec_gate_count; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->spec_gate[i] = readin;
     }
@@ -27881,16 +27880,16 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 20)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->equiv_dupl_count = readin;
     }
   }
   if (BV_ISSET(fields, 21)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->equiv_dupl_count > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->equiv_dupl_count = 255;
@@ -27898,7 +27897,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
       for (i = 0; i < real_packet->equiv_dupl_count; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->equiv_dupl[i] = readin;
     }
@@ -27908,16 +27907,16 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->equiv_repl_count = readin;
     }
   }
   if (BV_ISSET(fields, 23)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->equiv_repl_count > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->equiv_repl_count = 255;
@@ -27925,7 +27924,7 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
       for (i = 0; i < real_packet->equiv_repl_count; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->equiv_repl[i] = readin;
     }
@@ -27943,13 +27942,13 @@ static struct packet_ruleset_building *receive_packet_ruleset_building_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_building_100(struct connection *pc, const struct packet_ruleset_building *packet)
+static int send_packet_ruleset_building_100(struct connection *pconn, const struct packet_ruleset_building *packet)
 {
   const struct packet_ruleset_building *real_packet = packet;
   packet_ruleset_building_100_fields fields;
   struct packet_ruleset_building *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_BUILDING];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_BUILDING];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_BUILDING);
 
@@ -28166,53 +28165,53 @@ static int send_packet_ruleset_building_100(struct connection *pc, const struct 
     dio_put_uint8(&dout, real_packet->terr_gate_count);
   }
   if (BV_ISSET(fields, 17)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->terr_gate_count; i++) {
         dio_put_sint16(&dout, real_packet->terr_gate[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 18)) {
     dio_put_uint8(&dout, real_packet->spec_gate_count);
   }
   if (BV_ISSET(fields, 19)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->spec_gate_count; i++) {
         dio_put_uint16(&dout, real_packet->spec_gate[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 20)) {
     dio_put_uint8(&dout, real_packet->equiv_dupl_count);
   }
   if (BV_ISSET(fields, 21)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->equiv_dupl_count; i++) {
         dio_put_uint8(&dout, real_packet->equiv_dupl[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 22)) {
     dio_put_uint8(&dout, real_packet->equiv_repl_count);
   }
   if (BV_ISSET(fields, 23)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->equiv_repl_count; i++) {
         dio_put_uint8(&dout, real_packet->equiv_repl[i]);
       }
-    } 
+    }
   }
 
 
@@ -28227,11 +28226,11 @@ static int send_packet_ruleset_building_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_building(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_building(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_BUILDING] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_BUILDING] != -1) {
     return;
   }
 
@@ -28241,53 +28240,53 @@ static void ensure_valid_variant_packet_ruleset_building(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_BUILDING] = variant;
+  pconn->phs.variant[PACKET_RULESET_BUILDING] = variant;
 }
 
-struct packet_ruleset_building *receive_packet_ruleset_building(struct connection *pc, enum packet_type type)
+struct packet_ruleset_building *receive_packet_ruleset_building(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_building at the server.");
   }
-  ensure_valid_variant_packet_ruleset_building(pc);
+  ensure_valid_variant_packet_ruleset_building(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_BUILDING]) {
-    case 100: return receive_packet_ruleset_building_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_BUILDING]) {
+    case 100: return receive_packet_ruleset_building_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_building(struct connection *pc, const struct packet_ruleset_building *packet)
+int send_packet_ruleset_building(struct connection *pconn, const struct packet_ruleset_building *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_building from the client.");
   }
-  ensure_valid_variant_packet_ruleset_building(pc);
+  ensure_valid_variant_packet_ruleset_building(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_BUILDING]) {
-    case 100: return send_packet_ruleset_building_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_BUILDING]) {
+    case 100: return send_packet_ruleset_building_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_building(struct conn_list *dest, const struct packet_ruleset_building *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_building(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_building(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -28297,11 +28296,11 @@ void lsend_packet_ruleset_building(struct conn_list *dest, const struct packet_r
 
 BV_DEFINE(packet_ruleset_terrain_100_fields, 38);
 
-static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_terrain_100_fields fields;
   struct packet_ruleset_terrain *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_terrain *clone;
   RECEIVE_PACKET_START(packet_ruleset_terrain, real_packet);
 
@@ -28322,7 +28321,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -28342,7 +28341,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->movement_cost = readin;
     }
@@ -28350,7 +28349,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->defense_bonus = readin;
     }
@@ -28358,7 +28357,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->food = readin;
     }
@@ -28366,7 +28365,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->shield = readin;
     }
@@ -28374,7 +28373,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade = readin;
     }
@@ -28385,7 +28384,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->food_special_1 = readin;
     }
@@ -28393,7 +28392,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->shield_special_1 = readin;
     }
@@ -28401,7 +28400,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade_special_1 = readin;
     }
@@ -28418,7 +28417,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->food_special_2 = readin;
     }
@@ -28426,7 +28425,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->shield_special_2 = readin;
     }
@@ -28434,7 +28433,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->trade_special_2 = readin;
     }
@@ -28448,7 +28447,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 22)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->road_trade_incr = readin;
     }
@@ -28456,7 +28455,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->road_time = readin;
     }
@@ -28464,7 +28463,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 24)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->irrigation_result = readin;
     }
@@ -28472,7 +28471,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 25)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->irrigation_food_incr = readin;
     }
@@ -28480,7 +28479,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 26)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->irrigation_time = readin;
     }
@@ -28488,7 +28487,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 27)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->mining_result = readin;
     }
@@ -28496,7 +28495,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 28)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->mining_shield_incr = readin;
     }
@@ -28504,7 +28503,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 29)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->mining_time = readin;
     }
@@ -28512,7 +28511,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 30)) {
     {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->transform_result = readin;
     }
@@ -28520,7 +28519,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 31)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->transform_time = readin;
     }
@@ -28528,7 +28527,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 32)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rail_time = readin;
     }
@@ -28536,7 +28535,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 33)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->airbase_time = readin;
     }
@@ -28544,7 +28543,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 34)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fortress_time = readin;
     }
@@ -28552,7 +28551,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 35)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->clean_pollution_time = readin;
     }
@@ -28560,7 +28559,7 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   if (BV_ISSET(fields, 36)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->clean_fallout_time = readin;
     }
@@ -28579,13 +28578,13 @@ static struct packet_ruleset_terrain *receive_packet_ruleset_terrain_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_terrain_100(struct connection *pc, const struct packet_ruleset_terrain *packet)
+static int send_packet_ruleset_terrain_100(struct connection *pconn, const struct packet_ruleset_terrain *packet)
 {
   const struct packet_ruleset_terrain *real_packet = packet;
   packet_ruleset_terrain_100_fields fields;
   struct packet_ruleset_terrain *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_TERRAIN];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_TERRAIN];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_TERRAIN);
 
@@ -28887,11 +28886,11 @@ static int send_packet_ruleset_terrain_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_terrain(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_terrain(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_TERRAIN] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_TERRAIN] != -1) {
     return;
   }
 
@@ -28901,53 +28900,53 @@ static void ensure_valid_variant_packet_ruleset_terrain(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_TERRAIN] = variant;
+  pconn->phs.variant[PACKET_RULESET_TERRAIN] = variant;
 }
 
-struct packet_ruleset_terrain *receive_packet_ruleset_terrain(struct connection *pc, enum packet_type type)
+struct packet_ruleset_terrain *receive_packet_ruleset_terrain(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_terrain at the server.");
   }
-  ensure_valid_variant_packet_ruleset_terrain(pc);
+  ensure_valid_variant_packet_ruleset_terrain(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_TERRAIN]) {
-    case 100: return receive_packet_ruleset_terrain_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_TERRAIN]) {
+    case 100: return receive_packet_ruleset_terrain_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_terrain(struct connection *pc, const struct packet_ruleset_terrain *packet)
+int send_packet_ruleset_terrain(struct connection *pconn, const struct packet_ruleset_terrain *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_terrain from the client.");
   }
-  ensure_valid_variant_packet_ruleset_terrain(pc);
+  ensure_valid_variant_packet_ruleset_terrain(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_TERRAIN]) {
-    case 100: return send_packet_ruleset_terrain_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_TERRAIN]) {
+    case 100: return send_packet_ruleset_terrain_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_terrain(struct conn_list *dest, const struct packet_ruleset_terrain *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_terrain(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_terrain(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -28957,11 +28956,11 @@ void lsend_packet_ruleset_terrain(struct conn_list *dest, const struct packet_ru
 
 BV_DEFINE(packet_ruleset_control_100_fields, 24);
 
-static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_control_100_fields fields;
   struct packet_ruleset_control *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_control *clone;
   RECEIVE_PACKET_START(packet_ruleset_control, real_packet);
 
@@ -28982,7 +28981,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->aqueduct_size = readin;
     }
@@ -28990,7 +28989,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->add_to_size_limit = readin;
     }
@@ -28998,7 +28997,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->notradesize = readin;
     }
@@ -29006,7 +29005,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->fulltradesize = readin;
     }
@@ -29014,7 +29013,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num_unit_types = readin;
     }
@@ -29022,7 +29021,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num_impr_types = readin;
     }
@@ -29030,7 +29029,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num_tech_types = readin;
     }
@@ -29038,7 +29037,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rtech_cathedral_plus = readin;
     }
@@ -29046,7 +29045,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rtech_cathedral_minus = readin;
     }
@@ -29054,7 +29053,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 9)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rtech_colosseum_plus = readin;
     }
@@ -29062,7 +29061,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 10)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->rtech_temple_plus = readin;
     }
@@ -29073,7 +29072,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government_when_anarchy = readin;
     }
@@ -29081,7 +29080,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->default_government = readin;
     }
@@ -29089,7 +29088,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 14)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->government_count = readin;
     }
@@ -29097,7 +29096,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 15)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->nation_count = readin;
     }
@@ -29105,7 +29104,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 16)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->playable_nation_count = readin;
     }
@@ -29113,7 +29112,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 17)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->style_count = readin;
     }
@@ -29121,7 +29120,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 18)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->terrain_count = readin;
     }
@@ -29129,7 +29128,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 19)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->borders = readin;
     }
@@ -29137,10 +29136,10 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   real_packet->happyborders = BV_ISSET(fields, 20);
   real_packet->slow_invasions = BV_ISSET(fields, 21);
   if (BV_ISSET(fields, 22)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < MAX_NUM_TEAMS; i++) {
         dio_get_string(&din, real_packet->team_name[i], sizeof(real_packet->team_name[i]));
       }
@@ -29149,7 +29148,7 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   if (BV_ISSET(fields, 23)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->default_building = readin;
     }
@@ -29165,13 +29164,13 @@ static struct packet_ruleset_control *receive_packet_ruleset_control_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_control_100(struct connection *pc, const struct packet_ruleset_control *packet)
+static int send_packet_ruleset_control_100(struct connection *pconn, const struct packet_ruleset_control *packet)
 {
   const struct packet_ruleset_control *real_packet = packet;
   packet_ruleset_control_100_fields fields;
   struct packet_ruleset_control *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_CONTROL];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_CONTROL];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_CONTROL);
 
@@ -29377,14 +29376,14 @@ static int send_packet_ruleset_control_100(struct connection *pc, const struct p
   /* field 20 is folded into the header */
   /* field 21 is folded into the header */
   if (BV_ISSET(fields, 22)) {
-  
+
     {
       int i;
 
       for (i = 0; i < MAX_NUM_TEAMS; i++) {
         dio_put_string(&dout, real_packet->team_name[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 23)) {
     dio_put_uint8(&dout, real_packet->default_building);
@@ -29402,11 +29401,11 @@ static int send_packet_ruleset_control_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_control(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_control(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_CONTROL] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_CONTROL] != -1) {
     return;
   }
 
@@ -29416,53 +29415,53 @@ static void ensure_valid_variant_packet_ruleset_control(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_CONTROL] = variant;
+  pconn->phs.variant[PACKET_RULESET_CONTROL] = variant;
 }
 
-struct packet_ruleset_control *receive_packet_ruleset_control(struct connection *pc, enum packet_type type)
+struct packet_ruleset_control *receive_packet_ruleset_control(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_control at the server.");
   }
-  ensure_valid_variant_packet_ruleset_control(pc);
+  ensure_valid_variant_packet_ruleset_control(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CONTROL]) {
-    case 100: return receive_packet_ruleset_control_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_CONTROL]) {
+    case 100: return receive_packet_ruleset_control_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_control(struct connection *pc, const struct packet_ruleset_control *packet)
+int send_packet_ruleset_control(struct connection *pconn, const struct packet_ruleset_control *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_control from the client.");
   }
-  ensure_valid_variant_packet_ruleset_control(pc);
+  ensure_valid_variant_packet_ruleset_control(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CONTROL]) {
-    case 100: return send_packet_ruleset_control_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_CONTROL]) {
+    case 100: return send_packet_ruleset_control_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_control(struct conn_list *dest, const struct packet_ruleset_control *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_control(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_control(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -29472,11 +29471,11 @@ void lsend_packet_ruleset_control(struct conn_list *dest, const struct packet_ru
 
 BV_DEFINE(packet_single_want_hack_req_100_fields, 1);
 
-static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_100(struct connection *pc, enum packet_type type)
+static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_single_want_hack_req_100_fields fields;
   struct packet_single_want_hack_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_single_want_hack_req *clone;
   RECEIVE_PACKET_START(packet_single_want_hack_req, real_packet);
 
@@ -29508,13 +29507,13 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_req_100(struct connection *pc, const struct packet_single_want_hack_req *packet)
+static int send_packet_single_want_hack_req_100(struct connection *pconn, const struct packet_single_want_hack_req *packet)
 {
   const struct packet_single_want_hack_req *real_packet = packet;
   packet_single_want_hack_req_100_fields fields;
   struct packet_single_want_hack_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_SINGLE_WANT_HACK_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_SINGLE_WANT_HACK_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REQ);
 
@@ -29563,11 +29562,11 @@ static int send_packet_single_want_hack_req_100(struct connection *pc, const str
 
 BV_DEFINE(packet_single_want_hack_req_101_fields, 1);
 
-static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_101(struct connection *pc, enum packet_type type)
+static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_101(struct connection *pconn, enum packet_type type)
 {
   packet_single_want_hack_req_101_fields fields;
   struct packet_single_want_hack_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_single_want_hack_req *clone;
   RECEIVE_PACKET_START(packet_single_want_hack_req, real_packet);
 
@@ -29588,7 +29587,7 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->old_token = readin;
     }
@@ -29604,13 +29603,13 @@ static struct packet_single_want_hack_req *receive_packet_single_want_hack_req_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_req_101(struct connection *pc, const struct packet_single_want_hack_req *packet)
+static int send_packet_single_want_hack_req_101(struct connection *pconn, const struct packet_single_want_hack_req *packet)
 {
   const struct packet_single_want_hack_req *real_packet = packet;
   packet_single_want_hack_req_101_fields fields;
   struct packet_single_want_hack_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_SINGLE_WANT_HACK_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_SINGLE_WANT_HACK_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REQ);
 
@@ -29653,63 +29652,63 @@ static int send_packet_single_want_hack_req_101(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_single_want_hack_req(struct connection *pc)
+static void ensure_valid_variant_packet_single_want_hack_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SINGLE_WANT_HACK_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("new_hack", pc->capability) && has_capability("new_hack", our_capability))) {
+  } else if((has_capability("new_hack", pconn->capability) && has_capability("new_hack", our_capability))) {
     variant = 100;
-  } else if(!(has_capability("new_hack", pc->capability) && has_capability("new_hack", our_capability))) {
+  } else if(!(has_capability("new_hack", pconn->capability) && has_capability("new_hack", our_capability))) {
     variant = 101;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SINGLE_WANT_HACK_REQ] = variant;
+  pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ] = variant;
 }
 
-struct packet_single_want_hack_req *receive_packet_single_want_hack_req(struct connection *pc, enum packet_type type)
+struct packet_single_want_hack_req *receive_packet_single_want_hack_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_single_want_hack_req at the client.");
   }
-  ensure_valid_variant_packet_single_want_hack_req(pc);
+  ensure_valid_variant_packet_single_want_hack_req(pconn);
 
-  switch(pc->phs.variant[PACKET_SINGLE_WANT_HACK_REQ]) {
-    case 100: return receive_packet_single_want_hack_req_100(pc, type);
-    case 101: return receive_packet_single_want_hack_req_101(pc, type);
+  switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ]) {
+    case 100: return receive_packet_single_want_hack_req_100(pconn, type);
+    case 101: return receive_packet_single_want_hack_req_101(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_single_want_hack_req(struct connection *pc, const struct packet_single_want_hack_req *packet)
+int send_packet_single_want_hack_req(struct connection *pconn, const struct packet_single_want_hack_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_single_want_hack_req from the server.");
   }
-  ensure_valid_variant_packet_single_want_hack_req(pc);
+  ensure_valid_variant_packet_single_want_hack_req(pconn);
 
-  switch(pc->phs.variant[PACKET_SINGLE_WANT_HACK_REQ]) {
-    case 100: return send_packet_single_want_hack_req_100(pc, packet);
-    case 101: return send_packet_single_want_hack_req_101(pc, packet);
+  switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REQ]) {
+    case 100: return send_packet_single_want_hack_req_100(pconn, packet);
+    case 101: return send_packet_single_want_hack_req_101(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -29720,11 +29719,11 @@ int send_packet_single_want_hack_req(struct connection *pc, const struct packet_
 
 BV_DEFINE(packet_single_want_hack_reply_100_fields, 1);
 
-static struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply_100(struct connection *pc, enum packet_type type)
+static struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply_100(struct connection *pconn, enum packet_type type)
 {
   packet_single_want_hack_reply_100_fields fields;
   struct packet_single_want_hack_reply *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_single_want_hack_reply *clone;
   RECEIVE_PACKET_START(packet_single_want_hack_reply, real_packet);
 
@@ -29754,13 +29753,13 @@ static struct packet_single_want_hack_reply *receive_packet_single_want_hack_rep
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_single_want_hack_reply_100(struct connection *pc, const struct packet_single_want_hack_reply *packet)
+static int send_packet_single_want_hack_reply_100(struct connection *pconn, const struct packet_single_want_hack_reply *packet)
 {
   const struct packet_single_want_hack_reply *real_packet = packet;
   packet_single_want_hack_reply_100_fields fields;
   struct packet_single_want_hack_reply *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_SINGLE_WANT_HACK_REPLY];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_SINGLE_WANT_HACK_REPLY];
   int different = 0;
   SEND_PACKET_START(PACKET_SINGLE_WANT_HACK_REPLY);
 
@@ -29801,11 +29800,11 @@ static int send_packet_single_want_hack_reply_100(struct connection *pc, const s
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_single_want_hack_reply(struct connection *pc)
+static void ensure_valid_variant_packet_single_want_hack_reply(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY] != -1) {
+  if(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY] != -1) {
     return;
   }
 
@@ -29815,56 +29814,56 @@ static void ensure_valid_variant_packet_single_want_hack_reply(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY] = variant;
+  pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY] = variant;
 }
 
-struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply(struct connection *pc, enum packet_type type)
+struct packet_single_want_hack_reply *receive_packet_single_want_hack_reply(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_single_want_hack_reply at the server.");
   }
-  ensure_valid_variant_packet_single_want_hack_reply(pc);
+  ensure_valid_variant_packet_single_want_hack_reply(pconn);
 
-  switch(pc->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY]) {
-    case 100: return receive_packet_single_want_hack_reply_100(pc, type);
+  switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY]) {
+    case 100: return receive_packet_single_want_hack_reply_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_single_want_hack_reply(struct connection *pc, const struct packet_single_want_hack_reply *packet)
+int send_packet_single_want_hack_reply(struct connection *pconn, const struct packet_single_want_hack_reply *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_single_want_hack_reply from the client.");
   }
-  ensure_valid_variant_packet_single_want_hack_reply(pc);
+  ensure_valid_variant_packet_single_want_hack_reply(pconn);
 
-  switch(pc->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY]) {
-    case 100: return send_packet_single_want_hack_reply_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_SINGLE_WANT_HACK_REPLY]) {
+    case 100: return send_packet_single_want_hack_reply_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_single_want_hack_reply(struct connection *pc, bool you_have_hack)
+int dsend_packet_single_want_hack_reply(struct connection *pconn, bool you_have_hack)
 {
   struct packet_single_want_hack_reply packet, *real_packet = &packet;
 
   real_packet->you_have_hack = you_have_hack;
-  
-  return send_packet_single_want_hack_reply(pc, real_packet);
+
+  return send_packet_single_want_hack_reply(pconn, real_packet);
 }
 
 #define hash_packet_game_load_100 hash_const
@@ -29873,11 +29872,11 @@ int dsend_packet_single_want_hack_reply(struct connection *pc, bool you_have_hac
 
 BV_DEFINE(packet_game_load_100_fields, 9);
 
-static struct packet_game_load *receive_packet_game_load_100(struct connection *pc, enum packet_type type)
+static struct packet_game_load *receive_packet_game_load_100(struct connection *pconn, enum packet_type type)
 {
   packet_game_load_100_fields fields;
   struct packet_game_load *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_game_load *clone;
   RECEIVE_PACKET_START(packet_game_load, real_packet);
 
@@ -29899,7 +29898,7 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->nplayers = readin;
     }
@@ -29908,10 +29907,10 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     dio_get_string(&din, real_packet->load_filename, sizeof(real_packet->load_filename));
   }
   if (BV_ISSET(fields, 3)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nplayers > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nplayers = MAX_NUM_PLAYERS;
@@ -29922,10 +29921,10 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 4)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nplayers > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nplayers = MAX_NUM_PLAYERS;
@@ -29936,10 +29935,10 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 5)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nplayers > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nplayers = MAX_NUM_PLAYERS;
@@ -29950,10 +29949,10 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 6)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nplayers > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nplayers = MAX_NUM_PLAYERS;
@@ -29964,10 +29963,10 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 7)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nplayers > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nplayers = MAX_NUM_PLAYERS;
@@ -29978,10 +29977,10 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
     }
   }
   if (BV_ISSET(fields, 8)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->nplayers > MAX_NUM_PLAYERS) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->nplayers = MAX_NUM_PLAYERS;
@@ -30002,13 +30001,13 @@ static struct packet_game_load *receive_packet_game_load_100(struct connection *
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_game_load_100(struct connection *pc, const struct packet_game_load *packet)
+static int send_packet_game_load_100(struct connection *pconn, const struct packet_game_load *packet)
 {
   const struct packet_game_load *real_packet = packet;
   packet_game_load_100_fields fields;
   struct packet_game_load *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_GAME_LOAD];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_GAME_LOAD];
   int different = 0;
   SEND_PACKET_START(PACKET_GAME_LOAD);
 
@@ -30147,64 +30146,64 @@ static int send_packet_game_load_100(struct connection *pc, const struct packet_
     dio_put_string(&dout, real_packet->load_filename);
   }
   if (BV_ISSET(fields, 3)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nplayers; i++) {
         dio_put_string(&dout, real_packet->name[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 4)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nplayers; i++) {
         dio_put_string(&dout, real_packet->username[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 5)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nplayers; i++) {
         dio_put_string(&dout, real_packet->nation_name[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 6)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nplayers; i++) {
         dio_put_string(&dout, real_packet->nation_flag[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 7)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nplayers; i++) {
         dio_put_bool8(&dout, real_packet->is_alive[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 8)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->nplayers; i++) {
         dio_put_bool8(&dout, real_packet->is_ai[i]);
       }
-    } 
+    }
   }
 
 
@@ -30219,11 +30218,11 @@ static int send_packet_game_load_100(struct connection *pc, const struct packet_
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_game_load(struct connection *pc)
+static void ensure_valid_variant_packet_game_load(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_GAME_LOAD] != -1) {
+  if(pconn->phs.variant[PACKET_GAME_LOAD] != -1) {
     return;
   }
 
@@ -30233,53 +30232,53 @@ static void ensure_valid_variant_packet_game_load(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_GAME_LOAD] = variant;
+  pconn->phs.variant[PACKET_GAME_LOAD] = variant;
 }
 
-struct packet_game_load *receive_packet_game_load(struct connection *pc, enum packet_type type)
+struct packet_game_load *receive_packet_game_load(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_game_load at the server.");
   }
-  ensure_valid_variant_packet_game_load(pc);
+  ensure_valid_variant_packet_game_load(pconn);
 
-  switch(pc->phs.variant[PACKET_GAME_LOAD]) {
-    case 100: return receive_packet_game_load_100(pc, type);
+  switch(pconn->phs.variant[PACKET_GAME_LOAD]) {
+    case 100: return receive_packet_game_load_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_game_load(struct connection *pc, const struct packet_game_load *packet)
+int send_packet_game_load(struct connection *pconn, const struct packet_game_load *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_game_load from the client.");
   }
-  ensure_valid_variant_packet_game_load(pc);
+  ensure_valid_variant_packet_game_load(pconn);
 
-  switch(pc->phs.variant[PACKET_GAME_LOAD]) {
-    case 100: return send_packet_game_load_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_GAME_LOAD]) {
+    case 100: return send_packet_game_load_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_game_load(struct conn_list *dest, const struct packet_game_load *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_game_load(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_game_load(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -30289,11 +30288,11 @@ void lsend_packet_game_load(struct conn_list *dest, const struct packet_game_loa
 
 BV_DEFINE(packet_options_settable_control_100_fields, 3);
 
-static struct packet_options_settable_control *receive_packet_options_settable_control_100(struct connection *pc, enum packet_type type)
+static struct packet_options_settable_control *receive_packet_options_settable_control_100(struct connection *pconn, enum packet_type type)
 {
   packet_options_settable_control_100_fields fields;
   struct packet_options_settable_control *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_options_settable_control *clone;
   RECEIVE_PACKET_START(packet_options_settable_control, real_packet);
 
@@ -30314,7 +30313,7 @@ static struct packet_options_settable_control *receive_packet_options_settable_c
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->nids = readin;
     }
@@ -30322,16 +30321,16 @@ static struct packet_options_settable_control *receive_packet_options_settable_c
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->ncategories = readin;
     }
   }
   if (BV_ISSET(fields, 2)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->ncategories > 256) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->ncategories = 256;
@@ -30352,13 +30351,13 @@ static struct packet_options_settable_control *receive_packet_options_settable_c
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_options_settable_control_100(struct connection *pc, const struct packet_options_settable_control *packet)
+static int send_packet_options_settable_control_100(struct connection *pconn, const struct packet_options_settable_control *packet)
 {
   const struct packet_options_settable_control *real_packet = packet;
   packet_options_settable_control_100_fields fields;
   struct packet_options_settable_control *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_OPTIONS_SETTABLE_CONTROL];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_OPTIONS_SETTABLE_CONTROL];
   int different = 0;
   SEND_PACKET_START(PACKET_OPTIONS_SETTABLE_CONTROL);
 
@@ -30412,14 +30411,14 @@ static int send_packet_options_settable_control_100(struct connection *pc, const
     dio_put_uint8(&dout, real_packet->ncategories);
   }
   if (BV_ISSET(fields, 2)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->ncategories; i++) {
         dio_put_string(&dout, real_packet->category_names[i]);
       }
-    } 
+    }
   }
 
 
@@ -30434,11 +30433,11 @@ static int send_packet_options_settable_control_100(struct connection *pc, const
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_options_settable_control(struct connection *pc)
+static void ensure_valid_variant_packet_options_settable_control(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL] != -1) {
+  if(pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL] != -1) {
     return;
   }
 
@@ -30448,45 +30447,45 @@ static void ensure_valid_variant_packet_options_settable_control(struct connecti
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL] = variant;
+  pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL] = variant;
 }
 
-struct packet_options_settable_control *receive_packet_options_settable_control(struct connection *pc, enum packet_type type)
+struct packet_options_settable_control *receive_packet_options_settable_control(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_options_settable_control at the server.");
   }
-  ensure_valid_variant_packet_options_settable_control(pc);
+  ensure_valid_variant_packet_options_settable_control(pconn);
 
-  switch(pc->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL]) {
-    case 100: return receive_packet_options_settable_control_100(pc, type);
+  switch(pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL]) {
+    case 100: return receive_packet_options_settable_control_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_options_settable_control(struct connection *pc, const struct packet_options_settable_control *packet)
+int send_packet_options_settable_control(struct connection *pconn, const struct packet_options_settable_control *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_options_settable_control from the client.");
   }
-  ensure_valid_variant_packet_options_settable_control(pc);
+  ensure_valid_variant_packet_options_settable_control(pconn);
 
-  switch(pc->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL]) {
-    case 100: return send_packet_options_settable_control_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_OPTIONS_SETTABLE_CONTROL]) {
+    case 100: return send_packet_options_settable_control_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -30497,11 +30496,11 @@ int send_packet_options_settable_control(struct connection *pc, const struct pac
 
 BV_DEFINE(packet_options_settable_100_fields, 12);
 
-static struct packet_options_settable *receive_packet_options_settable_100(struct connection *pc, enum packet_type type)
+static struct packet_options_settable *receive_packet_options_settable_100(struct connection *pconn, enum packet_type type)
 {
   packet_options_settable_100_fields fields;
   struct packet_options_settable *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_options_settable *clone;
   RECEIVE_PACKET_START(packet_options_settable, real_packet);
 
@@ -30522,7 +30521,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -30539,7 +30538,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->type = readin;
     }
@@ -30547,7 +30546,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->val = readin;
     }
@@ -30555,7 +30554,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->default_val = readin;
     }
@@ -30563,7 +30562,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->min = readin;
     }
@@ -30571,7 +30570,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->max = readin;
     }
@@ -30585,7 +30584,7 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   if (BV_ISSET(fields, 11)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->category = readin;
     }
@@ -30601,13 +30600,13 @@ static struct packet_options_settable *receive_packet_options_settable_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_options_settable_100(struct connection *pc, const struct packet_options_settable *packet)
+static int send_packet_options_settable_100(struct connection *pconn, const struct packet_options_settable *packet)
 {
   const struct packet_options_settable *real_packet = packet;
   packet_options_settable_100_fields fields;
   struct packet_options_settable *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_OPTIONS_SETTABLE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_OPTIONS_SETTABLE];
   int different = 0;
   SEND_PACKET_START(PACKET_OPTIONS_SETTABLE);
 
@@ -30727,11 +30726,11 @@ static int send_packet_options_settable_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_options_settable(struct connection *pc)
+static void ensure_valid_variant_packet_options_settable(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_OPTIONS_SETTABLE] != -1) {
+  if(pconn->phs.variant[PACKET_OPTIONS_SETTABLE] != -1) {
     return;
   }
 
@@ -30741,45 +30740,45 @@ static void ensure_valid_variant_packet_options_settable(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_OPTIONS_SETTABLE] = variant;
+  pconn->phs.variant[PACKET_OPTIONS_SETTABLE] = variant;
 }
 
-struct packet_options_settable *receive_packet_options_settable(struct connection *pc, enum packet_type type)
+struct packet_options_settable *receive_packet_options_settable(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_options_settable at the server.");
   }
-  ensure_valid_variant_packet_options_settable(pc);
+  ensure_valid_variant_packet_options_settable(pconn);
 
-  switch(pc->phs.variant[PACKET_OPTIONS_SETTABLE]) {
-    case 100: return receive_packet_options_settable_100(pc, type);
+  switch(pconn->phs.variant[PACKET_OPTIONS_SETTABLE]) {
+    case 100: return receive_packet_options_settable_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_options_settable(struct connection *pc, const struct packet_options_settable *packet)
+int send_packet_options_settable(struct connection *pconn, const struct packet_options_settable *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_options_settable from the client.");
   }
-  ensure_valid_variant_packet_options_settable(pc);
+  ensure_valid_variant_packet_options_settable(pconn);
 
-  switch(pc->phs.variant[PACKET_OPTIONS_SETTABLE]) {
-    case 100: return send_packet_options_settable_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_OPTIONS_SETTABLE]) {
+    case 100: return send_packet_options_settable_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -30790,11 +30789,11 @@ int send_packet_options_settable(struct connection *pc, const struct packet_opti
 
 BV_DEFINE(packet_ruleset_cache_group_100_fields, 5);
 
-static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_cache_group_100_fields fields;
   struct packet_ruleset_cache_group *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_cache_group *clone;
   RECEIVE_PACKET_START(packet_ruleset_cache_group, real_packet);
 
@@ -30818,16 +30817,16 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num_elements = readin;
     }
   }
   if (BV_ISSET(fields, 2)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->num_elements > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->num_elements = 255;
@@ -30835,7 +30834,7 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
       for (i = 0; i < real_packet->num_elements; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->source_buildings[i] = readin;
     }
@@ -30843,10 +30842,10 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
     }
   }
   if (BV_ISSET(fields, 3)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->num_elements > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->num_elements = 255;
@@ -30854,7 +30853,7 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
       for (i = 0; i < real_packet->num_elements; i++) {
         {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->ranges[i] = readin;
     }
@@ -30862,10 +30861,10 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
     }
   }
   if (BV_ISSET(fields, 4)) {
-    
+
     {
       int i;
-    
+
       if(real_packet->num_elements > 255) {
         freelog(LOG_ERROR, "packets_gen.c: WARNING: truncation array");
         real_packet->num_elements = 255;
@@ -30886,13 +30885,13 @@ static struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group_100
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_cache_group_100(struct connection *pc, const struct packet_ruleset_cache_group *packet)
+static int send_packet_ruleset_cache_group_100(struct connection *pconn, const struct packet_ruleset_cache_group *packet)
 {
   const struct packet_ruleset_cache_group *real_packet = packet;
   packet_ruleset_cache_group_100_fields fields;
   struct packet_ruleset_cache_group *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_CACHE_GROUP];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_CACHE_GROUP];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_CACHE_GROUP);
 
@@ -30978,34 +30977,34 @@ static int send_packet_ruleset_cache_group_100(struct connection *pc, const stru
     dio_put_uint8(&dout, real_packet->num_elements);
   }
   if (BV_ISSET(fields, 2)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->num_elements; i++) {
         dio_put_uint8(&dout, real_packet->source_buildings[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 3)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->num_elements; i++) {
         dio_put_uint8(&dout, real_packet->ranges[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 4)) {
-  
+
     {
       int i;
 
       for (i = 0; i < real_packet->num_elements; i++) {
         dio_put_bool8(&dout, real_packet->survives[i]);
       }
-    } 
+    }
   }
 
 
@@ -31020,11 +31019,11 @@ static int send_packet_ruleset_cache_group_100(struct connection *pc, const stru
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_cache_group(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_cache_group(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_CACHE_GROUP] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_CACHE_GROUP] != -1) {
     return;
   }
 
@@ -31034,53 +31033,53 @@ static void ensure_valid_variant_packet_ruleset_cache_group(struct connection *p
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_CACHE_GROUP] = variant;
+  pconn->phs.variant[PACKET_RULESET_CACHE_GROUP] = variant;
 }
 
-struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group(struct connection *pc, enum packet_type type)
+struct packet_ruleset_cache_group *receive_packet_ruleset_cache_group(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_cache_group at the server.");
   }
-  ensure_valid_variant_packet_ruleset_cache_group(pc);
+  ensure_valid_variant_packet_ruleset_cache_group(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CACHE_GROUP]) {
-    case 100: return receive_packet_ruleset_cache_group_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_CACHE_GROUP]) {
+    case 100: return receive_packet_ruleset_cache_group_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_cache_group(struct connection *pc, const struct packet_ruleset_cache_group *packet)
+int send_packet_ruleset_cache_group(struct connection *pconn, const struct packet_ruleset_cache_group *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_cache_group from the client.");
   }
-  ensure_valid_variant_packet_ruleset_cache_group(pc);
+  ensure_valid_variant_packet_ruleset_cache_group(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CACHE_GROUP]) {
-    case 100: return send_packet_ruleset_cache_group_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_CACHE_GROUP]) {
+    case 100: return send_packet_ruleset_cache_group_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_cache_group(struct conn_list *dest, const struct packet_ruleset_cache_group *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_cache_group(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_cache_group(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -31090,11 +31089,11 @@ void lsend_packet_ruleset_cache_group(struct conn_list *dest, const struct packe
 
 BV_DEFINE(packet_ruleset_cache_effect_100_fields, 8);
 
-static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_100(struct connection *pc, enum packet_type type)
+static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_100(struct connection *pconn, enum packet_type type)
 {
   packet_ruleset_cache_effect_100_fields fields;
   struct packet_ruleset_cache_effect *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_ruleset_cache_effect *clone;
   RECEIVE_PACKET_START(packet_ruleset_cache_effect, real_packet);
 
@@ -31115,7 +31114,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
@@ -31123,7 +31122,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->effect_type = readin;
     }
@@ -31131,7 +31130,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->range = readin;
     }
@@ -31140,7 +31139,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->eff_value = readin;
     }
@@ -31148,7 +31147,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 5)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->req_type = readin;
     }
@@ -31156,7 +31155,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->req_value = readin;
     }
@@ -31164,7 +31163,7 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   if (BV_ISSET(fields, 7)) {
     {
       int readin;
-    
+
       dio_get_sint32(&din, &readin);
       real_packet->group_id = readin;
     }
@@ -31180,13 +31179,13 @@ static struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_ruleset_cache_effect_100(struct connection *pc, const struct packet_ruleset_cache_effect *packet)
+static int send_packet_ruleset_cache_effect_100(struct connection *pconn, const struct packet_ruleset_cache_effect *packet)
 {
   const struct packet_ruleset_cache_effect *real_packet = packet;
   packet_ruleset_cache_effect_100_fields fields;
   struct packet_ruleset_cache_effect *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_RULESET_CACHE_EFFECT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_RULESET_CACHE_EFFECT];
   int different = 0;
   SEND_PACKET_START(PACKET_RULESET_CACHE_EFFECT);
 
@@ -31276,11 +31275,11 @@ static int send_packet_ruleset_cache_effect_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_ruleset_cache_effect(struct connection *pc)
+static void ensure_valid_variant_packet_ruleset_cache_effect(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_RULESET_CACHE_EFFECT] != -1) {
+  if(pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT] != -1) {
     return;
   }
 
@@ -31290,53 +31289,53 @@ static void ensure_valid_variant_packet_ruleset_cache_effect(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_RULESET_CACHE_EFFECT] = variant;
+  pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT] = variant;
 }
 
-struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect(struct connection *pc, enum packet_type type)
+struct packet_ruleset_cache_effect *receive_packet_ruleset_cache_effect(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_ruleset_cache_effect at the server.");
   }
-  ensure_valid_variant_packet_ruleset_cache_effect(pc);
+  ensure_valid_variant_packet_ruleset_cache_effect(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CACHE_EFFECT]) {
-    case 100: return receive_packet_ruleset_cache_effect_100(pc, type);
+  switch(pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT]) {
+    case 100: return receive_packet_ruleset_cache_effect_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_ruleset_cache_effect(struct connection *pc, const struct packet_ruleset_cache_effect *packet)
+int send_packet_ruleset_cache_effect(struct connection *pconn, const struct packet_ruleset_cache_effect *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_ruleset_cache_effect from the client.");
   }
-  ensure_valid_variant_packet_ruleset_cache_effect(pc);
+  ensure_valid_variant_packet_ruleset_cache_effect(pconn);
 
-  switch(pc->phs.variant[PACKET_RULESET_CACHE_EFFECT]) {
-    case 100: return send_packet_ruleset_cache_effect_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_RULESET_CACHE_EFFECT]) {
+    case 100: return send_packet_ruleset_cache_effect_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
 void lsend_packet_ruleset_cache_effect(struct conn_list *dest, const struct packet_ruleset_cache_effect *packet)
 {
-  conn_list_iterate(dest, pconn) {
-    send_packet_ruleset_cache_effect(pconn, packet);
+  conn_list_iterate(dest, p_conn) {
+    send_packet_ruleset_cache_effect(p_conn, packet);
   } conn_list_iterate_end;
 }
 
@@ -31346,11 +31345,11 @@ void lsend_packet_ruleset_cache_effect(struct conn_list *dest, const struct pack
 
 BV_DEFINE(packet_traderoute_info_100_fields, 5);
 
-static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct connection *pc, enum packet_type type)
+static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_traderoute_info_100_fields fields;
   struct packet_traderoute_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_traderoute_info *clone;
   RECEIVE_PACKET_START(packet_traderoute_info, real_packet);
 
@@ -31371,7 +31370,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->trademindist = readin;
     }
@@ -31379,7 +31378,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->traderevenuepct = readin;
     }
@@ -31387,7 +31386,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->traderevenuestyle = readin;
     }
@@ -31395,7 +31394,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->caravanbonusstyle = readin;
     }
@@ -31403,7 +31402,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->maxtraderoutes = readin;
     }
@@ -31419,13 +31418,13 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_traderoute_info_100(struct connection *pc, const struct packet_traderoute_info *packet)
+static int send_packet_traderoute_info_100(struct connection *pconn, const struct packet_traderoute_info *packet)
 {
   const struct packet_traderoute_info *real_packet = packet;
   packet_traderoute_info_100_fields fields;
   struct packet_traderoute_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_TRADEROUTE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADEROUTE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_TRADEROUTE_INFO);
 
@@ -31502,11 +31501,11 @@ static int send_packet_traderoute_info_100(struct connection *pc, const struct p
 
 BV_DEFINE(packet_traderoute_info_101_fields, 4);
 
-static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct connection *pc, enum packet_type type)
+static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct connection *pconn, enum packet_type type)
 {
   packet_traderoute_info_101_fields fields;
   struct packet_traderoute_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_traderoute_info *clone;
   RECEIVE_PACKET_START(packet_traderoute_info, real_packet);
 
@@ -31527,7 +31526,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->trademindist = readin;
     }
@@ -31535,7 +31534,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->traderevenuepct = readin;
     }
@@ -31543,7 +31542,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct 
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->traderevenuestyle = readin;
     }
@@ -31551,7 +31550,7 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct 
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->caravanbonusstyle = readin;
     }
@@ -31567,13 +31566,13 @@ static struct packet_traderoute_info *receive_packet_traderoute_info_101(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_traderoute_info_101(struct connection *pc, const struct packet_traderoute_info *packet)
+static int send_packet_traderoute_info_101(struct connection *pconn, const struct packet_traderoute_info *packet)
 {
   const struct packet_traderoute_info *real_packet = packet;
   packet_traderoute_info_101_fields fields;
   struct packet_traderoute_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_TRADEROUTE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADEROUTE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_TRADEROUTE_INFO);
 
@@ -31637,63 +31636,63 @@ static int send_packet_traderoute_info_101(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_traderoute_info(struct connection *pc)
+static void ensure_valid_variant_packet_traderoute_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_TRADEROUTE_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_TRADEROUTE_INFO] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("extglobalinfo", pc->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if((has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
     variant = 100;
-  } else if(!(has_capability("extglobalinfo", pc->capability) && has_capability("extglobalinfo", our_capability))) {
+  } else if(!(has_capability("extglobalinfo", pconn->capability) && has_capability("extglobalinfo", our_capability))) {
     variant = 101;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_TRADEROUTE_INFO] = variant;
+  pconn->phs.variant[PACKET_TRADEROUTE_INFO] = variant;
 }
 
-struct packet_traderoute_info *receive_packet_traderoute_info(struct connection *pc, enum packet_type type)
+struct packet_traderoute_info *receive_packet_traderoute_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_traderoute_info at the server.");
   }
-  ensure_valid_variant_packet_traderoute_info(pc);
+  ensure_valid_variant_packet_traderoute_info(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADEROUTE_INFO]) {
-    case 100: return receive_packet_traderoute_info_100(pc, type);
-    case 101: return receive_packet_traderoute_info_101(pc, type);
+  switch(pconn->phs.variant[PACKET_TRADEROUTE_INFO]) {
+    case 100: return receive_packet_traderoute_info_100(pconn, type);
+    case 101: return receive_packet_traderoute_info_101(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_traderoute_info(struct connection *pc, const struct packet_traderoute_info *packet)
+int send_packet_traderoute_info(struct connection *pconn, const struct packet_traderoute_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_traderoute_info from the client.");
   }
-  ensure_valid_variant_packet_traderoute_info(pc);
+  ensure_valid_variant_packet_traderoute_info(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADEROUTE_INFO]) {
-    case 100: return send_packet_traderoute_info_100(pc, packet);
-    case 101: return send_packet_traderoute_info_101(pc, packet);
+  switch(pconn->phs.variant[PACKET_TRADEROUTE_INFO]) {
+    case 100: return send_packet_traderoute_info_100(pconn, packet);
+    case 101: return send_packet_traderoute_info_101(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -31704,11 +31703,11 @@ int send_packet_traderoute_info(struct connection *pc, const struct packet_trade
 
 BV_DEFINE(packet_extgame_info_100_fields, 14);
 
-static struct packet_extgame_info *receive_packet_extgame_info_100(struct connection *pc, enum packet_type type)
+static struct packet_extgame_info *receive_packet_extgame_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_extgame_info_100_fields fields;
   struct packet_extgame_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_extgame_info *clone;
   RECEIVE_PACKET_START(packet_extgame_info, real_packet);
 
@@ -31737,7 +31736,7 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(struct connec
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->airliftingstyle = readin;
     }
@@ -31748,7 +31747,7 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(struct connec
   if (BV_ISSET(fields, 12)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->maxallies = readin;
     }
@@ -31756,7 +31755,7 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(struct connec
   if (BV_ISSET(fields, 13)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->techleakagerate = readin;
     }
@@ -31772,13 +31771,13 @@ static struct packet_extgame_info *receive_packet_extgame_info_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_extgame_info_100(struct connection *pc, const struct packet_extgame_info *packet)
+static int send_packet_extgame_info_100(struct connection *pconn, const struct packet_extgame_info *packet)
 {
   const struct packet_extgame_info *real_packet = packet;
   packet_extgame_info_100_fields fields;
   struct packet_extgame_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_EXTGAME_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_EXTGAME_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_EXTGAME_INFO);
 
@@ -31896,11 +31895,11 @@ static int send_packet_extgame_info_100(struct connection *pc, const struct pack
 
 BV_DEFINE(packet_extgame_info_101_fields, 12);
 
-static struct packet_extgame_info *receive_packet_extgame_info_101(struct connection *pc, enum packet_type type)
+static struct packet_extgame_info *receive_packet_extgame_info_101(struct connection *pconn, enum packet_type type)
 {
   packet_extgame_info_101_fields fields;
   struct packet_extgame_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_extgame_info *clone;
   RECEIVE_PACKET_START(packet_extgame_info, real_packet);
 
@@ -31929,7 +31928,7 @@ static struct packet_extgame_info *receive_packet_extgame_info_101(struct connec
   if (BV_ISSET(fields, 8)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->airliftingstyle = readin;
     }
@@ -31948,13 +31947,13 @@ static struct packet_extgame_info *receive_packet_extgame_info_101(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_extgame_info_101(struct connection *pc, const struct packet_extgame_info *packet)
+static int send_packet_extgame_info_101(struct connection *pconn, const struct packet_extgame_info *packet)
 {
   const struct packet_extgame_info *real_packet = packet;
   packet_extgame_info_101_fields fields;
   struct packet_extgame_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_EXTGAME_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_EXTGAME_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_EXTGAME_INFO);
 
@@ -32052,63 +32051,63 @@ static int send_packet_extgame_info_101(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_extgame_info(struct connection *pc)
+static void ensure_valid_variant_packet_extgame_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_EXTGAME_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_EXTGAME_INFO] != -1) {
     return;
   }
 
   if(FALSE) {
-  } else if((has_capability("exttechleakage", pc->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if((has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
     variant = 100;
-  } else if(!(has_capability("exttechleakage", pc->capability) && has_capability("exttechleakage", our_capability))) {
+  } else if(!(has_capability("exttechleakage", pconn->capability) && has_capability("exttechleakage", our_capability))) {
     variant = 101;
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_EXTGAME_INFO] = variant;
+  pconn->phs.variant[PACKET_EXTGAME_INFO] = variant;
 }
 
-struct packet_extgame_info *receive_packet_extgame_info(struct connection *pc, enum packet_type type)
+struct packet_extgame_info *receive_packet_extgame_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_extgame_info at the server.");
   }
-  ensure_valid_variant_packet_extgame_info(pc);
+  ensure_valid_variant_packet_extgame_info(pconn);
 
-  switch(pc->phs.variant[PACKET_EXTGAME_INFO]) {
-    case 100: return receive_packet_extgame_info_100(pc, type);
-    case 101: return receive_packet_extgame_info_101(pc, type);
+  switch(pconn->phs.variant[PACKET_EXTGAME_INFO]) {
+    case 100: return receive_packet_extgame_info_100(pconn, type);
+    case 101: return receive_packet_extgame_info_101(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_extgame_info(struct connection *pc, const struct packet_extgame_info *packet)
+int send_packet_extgame_info(struct connection *pconn, const struct packet_extgame_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_extgame_info from the client.");
   }
-  ensure_valid_variant_packet_extgame_info(pc);
+  ensure_valid_variant_packet_extgame_info(pconn);
 
-  switch(pc->phs.variant[PACKET_EXTGAME_INFO]) {
-    case 100: return send_packet_extgame_info_100(pc, packet);
-    case 101: return send_packet_extgame_info_101(pc, packet);
+  switch(pconn->phs.variant[PACKET_EXTGAME_INFO]) {
+    case 100: return send_packet_extgame_info_100(pconn, packet);
+    case 101: return send_packet_extgame_info_101(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -32119,11 +32118,11 @@ int send_packet_extgame_info(struct connection *pc, const struct packet_extgame_
 
 BV_DEFINE(packet_vote_new_100_fields, 6);
 
-static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pc, enum packet_type type)
+static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pconn, enum packet_type type)
 {
   packet_vote_new_100_fields fields;
   struct packet_vote_new *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_vote_new *clone;
   RECEIVE_PACKET_START(packet_vote_new, real_packet);
 
@@ -32144,7 +32143,7 @@ static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->vote_no = readin;
     }
@@ -32158,7 +32157,7 @@ static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pc
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->percent_required = readin;
     }
@@ -32166,7 +32165,7 @@ static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pc
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->flags = readin;
     }
@@ -32183,13 +32182,13 @@ static struct packet_vote_new *receive_packet_vote_new_100(struct connection *pc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_new_100(struct connection *pc, const struct packet_vote_new *packet)
+static int send_packet_vote_new_100(struct connection *pconn, const struct packet_vote_new *packet)
 {
   const struct packet_vote_new *real_packet = packet;
   packet_vote_new_100_fields fields;
   struct packet_vote_new *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_VOTE_NEW];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_NEW];
   int different = 0;
   SEND_PACKET_START(PACKET_VOTE_NEW);
 
@@ -32265,11 +32264,11 @@ static int send_packet_vote_new_100(struct connection *pc, const struct packet_v
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_vote_new(struct connection *pc)
+static void ensure_valid_variant_packet_vote_new(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_VOTE_NEW] != -1) {
+  if(pconn->phs.variant[PACKET_VOTE_NEW] != -1) {
     return;
   }
 
@@ -32279,45 +32278,45 @@ static void ensure_valid_variant_packet_vote_new(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_VOTE_NEW] = variant;
+  pconn->phs.variant[PACKET_VOTE_NEW] = variant;
 }
 
-struct packet_vote_new *receive_packet_vote_new(struct connection *pc, enum packet_type type)
+struct packet_vote_new *receive_packet_vote_new(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_vote_new at the server.");
   }
-  ensure_valid_variant_packet_vote_new(pc);
+  ensure_valid_variant_packet_vote_new(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_NEW]) {
-    case 100: return receive_packet_vote_new_100(pc, type);
+  switch(pconn->phs.variant[PACKET_VOTE_NEW]) {
+    case 100: return receive_packet_vote_new_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_vote_new(struct connection *pc, const struct packet_vote_new *packet)
+int send_packet_vote_new(struct connection *pconn, const struct packet_vote_new *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_vote_new from the client.");
   }
-  ensure_valid_variant_packet_vote_new(pc);
+  ensure_valid_variant_packet_vote_new(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_NEW]) {
-    case 100: return send_packet_vote_new_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_VOTE_NEW]) {
+    case 100: return send_packet_vote_new_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -32328,11 +32327,11 @@ int send_packet_vote_new(struct connection *pc, const struct packet_vote_new *pa
 
 BV_DEFINE(packet_vote_update_100_fields, 5);
 
-static struct packet_vote_update *receive_packet_vote_update_100(struct connection *pc, enum packet_type type)
+static struct packet_vote_update *receive_packet_vote_update_100(struct connection *pconn, enum packet_type type)
 {
   packet_vote_update_100_fields fields;
   struct packet_vote_update *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_vote_update *clone;
   RECEIVE_PACKET_START(packet_vote_update, real_packet);
 
@@ -32353,7 +32352,7 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->vote_no = readin;
     }
@@ -32361,7 +32360,7 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->yes = readin;
     }
@@ -32369,7 +32368,7 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->no = readin;
     }
@@ -32377,7 +32376,7 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->abstain = readin;
     }
@@ -32385,7 +32384,7 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
   if (BV_ISSET(fields, 4)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->num_voters = readin;
     }
@@ -32401,13 +32400,13 @@ static struct packet_vote_update *receive_packet_vote_update_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_update_100(struct connection *pc, const struct packet_vote_update *packet)
+static int send_packet_vote_update_100(struct connection *pconn, const struct packet_vote_update *packet)
 {
   const struct packet_vote_update *real_packet = packet;
   packet_vote_update_100_fields fields;
   struct packet_vote_update *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_VOTE_UPDATE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_UPDATE];
   int different = 0;
   SEND_PACKET_START(PACKET_VOTE_UPDATE);
 
@@ -32478,11 +32477,11 @@ static int send_packet_vote_update_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_vote_update(struct connection *pc)
+static void ensure_valid_variant_packet_vote_update(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_VOTE_UPDATE] != -1) {
+  if(pconn->phs.variant[PACKET_VOTE_UPDATE] != -1) {
     return;
   }
 
@@ -32492,45 +32491,45 @@ static void ensure_valid_variant_packet_vote_update(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_VOTE_UPDATE] = variant;
+  pconn->phs.variant[PACKET_VOTE_UPDATE] = variant;
 }
 
-struct packet_vote_update *receive_packet_vote_update(struct connection *pc, enum packet_type type)
+struct packet_vote_update *receive_packet_vote_update(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_vote_update at the server.");
   }
-  ensure_valid_variant_packet_vote_update(pc);
+  ensure_valid_variant_packet_vote_update(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_UPDATE]) {
-    case 100: return receive_packet_vote_update_100(pc, type);
+  switch(pconn->phs.variant[PACKET_VOTE_UPDATE]) {
+    case 100: return receive_packet_vote_update_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_vote_update(struct connection *pc, const struct packet_vote_update *packet)
+int send_packet_vote_update(struct connection *pconn, const struct packet_vote_update *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_vote_update from the client.");
   }
-  ensure_valid_variant_packet_vote_update(pc);
+  ensure_valid_variant_packet_vote_update(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_UPDATE]) {
-    case 100: return send_packet_vote_update_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_VOTE_UPDATE]) {
+    case 100: return send_packet_vote_update_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -32541,11 +32540,11 @@ int send_packet_vote_update(struct connection *pc, const struct packet_vote_upda
 
 BV_DEFINE(packet_vote_remove_100_fields, 1);
 
-static struct packet_vote_remove *receive_packet_vote_remove_100(struct connection *pc, enum packet_type type)
+static struct packet_vote_remove *receive_packet_vote_remove_100(struct connection *pconn, enum packet_type type)
 {
   packet_vote_remove_100_fields fields;
   struct packet_vote_remove *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_vote_remove *clone;
   RECEIVE_PACKET_START(packet_vote_remove, real_packet);
 
@@ -32566,7 +32565,7 @@ static struct packet_vote_remove *receive_packet_vote_remove_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->vote_no = readin;
     }
@@ -32582,13 +32581,13 @@ static struct packet_vote_remove *receive_packet_vote_remove_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_remove_100(struct connection *pc, const struct packet_vote_remove *packet)
+static int send_packet_vote_remove_100(struct connection *pconn, const struct packet_vote_remove *packet)
 {
   const struct packet_vote_remove *real_packet = packet;
   packet_vote_remove_100_fields fields;
   struct packet_vote_remove *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_VOTE_REMOVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_REMOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_VOTE_REMOVE);
 
@@ -32631,11 +32630,11 @@ static int send_packet_vote_remove_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_vote_remove(struct connection *pc)
+static void ensure_valid_variant_packet_vote_remove(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_VOTE_REMOVE] != -1) {
+  if(pconn->phs.variant[PACKET_VOTE_REMOVE] != -1) {
     return;
   }
 
@@ -32645,45 +32644,45 @@ static void ensure_valid_variant_packet_vote_remove(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_VOTE_REMOVE] = variant;
+  pconn->phs.variant[PACKET_VOTE_REMOVE] = variant;
 }
 
-struct packet_vote_remove *receive_packet_vote_remove(struct connection *pc, enum packet_type type)
+struct packet_vote_remove *receive_packet_vote_remove(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_vote_remove at the server.");
   }
-  ensure_valid_variant_packet_vote_remove(pc);
+  ensure_valid_variant_packet_vote_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_REMOVE]) {
-    case 100: return receive_packet_vote_remove_100(pc, type);
+  switch(pconn->phs.variant[PACKET_VOTE_REMOVE]) {
+    case 100: return receive_packet_vote_remove_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_vote_remove(struct connection *pc, const struct packet_vote_remove *packet)
+int send_packet_vote_remove(struct connection *pconn, const struct packet_vote_remove *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_vote_remove from the client.");
   }
-  ensure_valid_variant_packet_vote_remove(pc);
+  ensure_valid_variant_packet_vote_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_REMOVE]) {
-    case 100: return send_packet_vote_remove_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_VOTE_REMOVE]) {
+    case 100: return send_packet_vote_remove_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -32694,11 +32693,11 @@ int send_packet_vote_remove(struct connection *pc, const struct packet_vote_remo
 
 BV_DEFINE(packet_vote_resolve_100_fields, 2);
 
-static struct packet_vote_resolve *receive_packet_vote_resolve_100(struct connection *pc, enum packet_type type)
+static struct packet_vote_resolve *receive_packet_vote_resolve_100(struct connection *pconn, enum packet_type type)
 {
   packet_vote_resolve_100_fields fields;
   struct packet_vote_resolve *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_vote_resolve *clone;
   RECEIVE_PACKET_START(packet_vote_resolve, real_packet);
 
@@ -32719,7 +32718,7 @@ static struct packet_vote_resolve *receive_packet_vote_resolve_100(struct connec
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->vote_no = readin;
     }
@@ -32736,13 +32735,13 @@ static struct packet_vote_resolve *receive_packet_vote_resolve_100(struct connec
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_resolve_100(struct connection *pc, const struct packet_vote_resolve *packet)
+static int send_packet_vote_resolve_100(struct connection *pconn, const struct packet_vote_resolve *packet)
 {
   const struct packet_vote_resolve *real_packet = packet;
   packet_vote_resolve_100_fields fields;
   struct packet_vote_resolve *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_VOTE_RESOLVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_RESOLVE];
   int different = 0;
   SEND_PACKET_START(PACKET_VOTE_RESOLVE);
 
@@ -32790,11 +32789,11 @@ static int send_packet_vote_resolve_100(struct connection *pc, const struct pack
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_vote_resolve(struct connection *pc)
+static void ensure_valid_variant_packet_vote_resolve(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_VOTE_RESOLVE] != -1) {
+  if(pconn->phs.variant[PACKET_VOTE_RESOLVE] != -1) {
     return;
   }
 
@@ -32804,45 +32803,45 @@ static void ensure_valid_variant_packet_vote_resolve(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_VOTE_RESOLVE] = variant;
+  pconn->phs.variant[PACKET_VOTE_RESOLVE] = variant;
 }
 
-struct packet_vote_resolve *receive_packet_vote_resolve(struct connection *pc, enum packet_type type)
+struct packet_vote_resolve *receive_packet_vote_resolve(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_vote_resolve at the server.");
   }
-  ensure_valid_variant_packet_vote_resolve(pc);
+  ensure_valid_variant_packet_vote_resolve(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_RESOLVE]) {
-    case 100: return receive_packet_vote_resolve_100(pc, type);
+  switch(pconn->phs.variant[PACKET_VOTE_RESOLVE]) {
+    case 100: return receive_packet_vote_resolve_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_vote_resolve(struct connection *pc, const struct packet_vote_resolve *packet)
+int send_packet_vote_resolve(struct connection *pconn, const struct packet_vote_resolve *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_vote_resolve from the client.");
   }
-  ensure_valid_variant_packet_vote_resolve(pc);
+  ensure_valid_variant_packet_vote_resolve(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_RESOLVE]) {
-    case 100: return send_packet_vote_resolve_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_VOTE_RESOLVE]) {
+    case 100: return send_packet_vote_resolve_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -32853,11 +32852,11 @@ int send_packet_vote_resolve(struct connection *pc, const struct packet_vote_res
 
 BV_DEFINE(packet_vote_submit_100_fields, 2);
 
-static struct packet_vote_submit *receive_packet_vote_submit_100(struct connection *pc, enum packet_type type)
+static struct packet_vote_submit *receive_packet_vote_submit_100(struct connection *pconn, enum packet_type type)
 {
   packet_vote_submit_100_fields fields;
   struct packet_vote_submit *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_vote_submit *clone;
   RECEIVE_PACKET_START(packet_vote_submit, real_packet);
 
@@ -32878,7 +32877,7 @@ static struct packet_vote_submit *receive_packet_vote_submit_100(struct connecti
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint32(&din, &readin);
       real_packet->vote_no = readin;
     }
@@ -32886,7 +32885,7 @@ static struct packet_vote_submit *receive_packet_vote_submit_100(struct connecti
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_sint8(&din, &readin);
       real_packet->value = readin;
     }
@@ -32902,13 +32901,13 @@ static struct packet_vote_submit *receive_packet_vote_submit_100(struct connecti
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_vote_submit_100(struct connection *pc, const struct packet_vote_submit *packet)
+static int send_packet_vote_submit_100(struct connection *pconn, const struct packet_vote_submit *packet)
 {
   const struct packet_vote_submit *real_packet = packet;
   packet_vote_submit_100_fields fields;
   struct packet_vote_submit *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = FALSE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_VOTE_SUBMIT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_VOTE_SUBMIT];
   int different = 0;
   SEND_PACKET_START(PACKET_VOTE_SUBMIT);
 
@@ -32958,11 +32957,11 @@ static int send_packet_vote_submit_100(struct connection *pc, const struct packe
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_vote_submit(struct connection *pc)
+static void ensure_valid_variant_packet_vote_submit(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_VOTE_SUBMIT] != -1) {
+  if(pconn->phs.variant[PACKET_VOTE_SUBMIT] != -1) {
     return;
   }
 
@@ -32972,45 +32971,45 @@ static void ensure_valid_variant_packet_vote_submit(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_VOTE_SUBMIT] = variant;
+  pconn->phs.variant[PACKET_VOTE_SUBMIT] = variant;
 }
 
-struct packet_vote_submit *receive_packet_vote_submit(struct connection *pc, enum packet_type type)
+struct packet_vote_submit *receive_packet_vote_submit(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_vote_submit at the client.");
   }
-  ensure_valid_variant_packet_vote_submit(pc);
+  ensure_valid_variant_packet_vote_submit(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_SUBMIT]) {
-    case 100: return receive_packet_vote_submit_100(pc, type);
+  switch(pconn->phs.variant[PACKET_VOTE_SUBMIT]) {
+    case 100: return receive_packet_vote_submit_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_vote_submit(struct connection *pc, const struct packet_vote_submit *packet)
+int send_packet_vote_submit(struct connection *pconn, const struct packet_vote_submit *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_vote_submit from the server.");
   }
-  ensure_valid_variant_packet_vote_submit(pc);
+  ensure_valid_variant_packet_vote_submit(pconn);
 
-  switch(pc->phs.variant[PACKET_VOTE_SUBMIT]) {
-    case 100: return send_packet_vote_submit_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_VOTE_SUBMIT]) {
+    case 100: return send_packet_vote_submit_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -33021,11 +33020,11 @@ int send_packet_vote_submit(struct connection *pc, const struct packet_vote_subm
 
 BV_DEFINE(packet_trade_route_plan_100_fields, 2);
 
-static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(struct connection *pc, enum packet_type type)
+static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(struct connection *pconn, enum packet_type type)
 {
   packet_trade_route_plan_100_fields fields;
   struct packet_trade_route_plan *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_trade_route_plan *clone;
   RECEIVE_PACKET_START(packet_trade_route_plan, real_packet);
 
@@ -33046,7 +33045,7 @@ static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city1 = readin;
     }
@@ -33054,7 +33053,7 @@ static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city2 = readin;
     }
@@ -33070,13 +33069,13 @@ static struct packet_trade_route_plan *receive_packet_trade_route_plan_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_plan_100(struct connection *pc, const struct packet_trade_route_plan *packet)
+static int send_packet_trade_route_plan_100(struct connection *pconn, const struct packet_trade_route_plan *packet)
 {
   const struct packet_trade_route_plan *real_packet = packet;
   packet_trade_route_plan_100_fields fields;
   struct packet_trade_route_plan *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_TRADE_ROUTE_PLAN];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADE_ROUTE_PLAN];
   int different = 0;
   SEND_PACKET_START(PACKET_TRADE_ROUTE_PLAN);
 
@@ -33126,11 +33125,11 @@ static int send_packet_trade_route_plan_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_trade_route_plan(struct connection *pc)
+static void ensure_valid_variant_packet_trade_route_plan(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_TRADE_ROUTE_PLAN] != -1) {
+  if(pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN] != -1) {
     return;
   }
 
@@ -33140,57 +33139,57 @@ static void ensure_valid_variant_packet_trade_route_plan(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_TRADE_ROUTE_PLAN] = variant;
+  pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN] = variant;
 }
 
-struct packet_trade_route_plan *receive_packet_trade_route_plan(struct connection *pc, enum packet_type type)
+struct packet_trade_route_plan *receive_packet_trade_route_plan(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_trade_route_plan at the client.");
   }
-  ensure_valid_variant_packet_trade_route_plan(pc);
+  ensure_valid_variant_packet_trade_route_plan(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADE_ROUTE_PLAN]) {
-    case 100: return receive_packet_trade_route_plan_100(pc, type);
+  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN]) {
+    case 100: return receive_packet_trade_route_plan_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_trade_route_plan(struct connection *pc, const struct packet_trade_route_plan *packet)
+int send_packet_trade_route_plan(struct connection *pconn, const struct packet_trade_route_plan *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_trade_route_plan from the server.");
   }
-  ensure_valid_variant_packet_trade_route_plan(pc);
+  ensure_valid_variant_packet_trade_route_plan(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADE_ROUTE_PLAN]) {
-    case 100: return send_packet_trade_route_plan_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_PLAN]) {
+    case 100: return send_packet_trade_route_plan_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_trade_route_plan(struct connection *pc, int city1, int city2)
+int dsend_packet_trade_route_plan(struct connection *pconn, int city1, int city2)
 {
   struct packet_trade_route_plan packet, *real_packet = &packet;
 
   real_packet->city1 = city1;
   real_packet->city2 = city2;
-  
-  return send_packet_trade_route_plan(pc, real_packet);
+
+  return send_packet_trade_route_plan(pconn, real_packet);
 }
 
 #define hash_packet_trade_route_remove_100 hash_const
@@ -33199,11 +33198,11 @@ int dsend_packet_trade_route_plan(struct connection *pc, int city1, int city2)
 
 BV_DEFINE(packet_trade_route_remove_100_fields, 2);
 
-static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(struct connection *pc, enum packet_type type)
+static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(struct connection *pconn, enum packet_type type)
 {
   packet_trade_route_remove_100_fields fields;
   struct packet_trade_route_remove *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_trade_route_remove *clone;
   RECEIVE_PACKET_START(packet_trade_route_remove, real_packet);
 
@@ -33224,7 +33223,7 @@ static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(s
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city1 = readin;
     }
@@ -33232,7 +33231,7 @@ static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(s
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city2 = readin;
     }
@@ -33248,13 +33247,13 @@ static struct packet_trade_route_remove *receive_packet_trade_route_remove_100(s
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_remove_100(struct connection *pc, const struct packet_trade_route_remove *packet)
+static int send_packet_trade_route_remove_100(struct connection *pconn, const struct packet_trade_route_remove *packet)
 {
   const struct packet_trade_route_remove *real_packet = packet;
   packet_trade_route_remove_100_fields fields;
   struct packet_trade_route_remove *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_TRADE_ROUTE_REMOVE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADE_ROUTE_REMOVE];
   int different = 0;
   SEND_PACKET_START(PACKET_TRADE_ROUTE_REMOVE);
 
@@ -33304,11 +33303,11 @@ static int send_packet_trade_route_remove_100(struct connection *pc, const struc
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_trade_route_remove(struct connection *pc)
+static void ensure_valid_variant_packet_trade_route_remove(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_TRADE_ROUTE_REMOVE] != -1) {
+  if(pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE] != -1) {
     return;
   }
 
@@ -33318,51 +33317,51 @@ static void ensure_valid_variant_packet_trade_route_remove(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_TRADE_ROUTE_REMOVE] = variant;
+  pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE] = variant;
 }
 
-struct packet_trade_route_remove *receive_packet_trade_route_remove(struct connection *pc, enum packet_type type)
+struct packet_trade_route_remove *receive_packet_trade_route_remove(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_trade_route_remove(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_trade_route_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADE_ROUTE_REMOVE]) {
-    case 100: return receive_packet_trade_route_remove_100(pc, type);
+  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE]) {
+    case 100: return receive_packet_trade_route_remove_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_trade_route_remove(struct connection *pc, const struct packet_trade_route_remove *packet)
+int send_packet_trade_route_remove(struct connection *pconn, const struct packet_trade_route_remove *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_trade_route_remove(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_trade_route_remove(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADE_ROUTE_REMOVE]) {
-    case 100: return send_packet_trade_route_remove_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_REMOVE]) {
+    case 100: return send_packet_trade_route_remove_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_trade_route_remove(struct connection *pc, int city1, int city2)
+int dsend_packet_trade_route_remove(struct connection *pconn, int city1, int city2)
 {
   struct packet_trade_route_remove packet, *real_packet = &packet;
 
   real_packet->city1 = city1;
   real_packet->city2 = city2;
-  
-  return send_packet_trade_route_remove(pc, real_packet);
+
+  return send_packet_trade_route_remove(pconn, real_packet);
 }
 
 #define hash_packet_unit_trade_route_100 hash_const
@@ -33371,11 +33370,11 @@ int dsend_packet_trade_route_remove(struct connection *pc, int city1, int city2)
 
 BV_DEFINE(packet_unit_trade_route_100_fields, 3);
 
-static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_trade_route_100_fields fields;
   struct packet_unit_trade_route *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_trade_route *clone;
   RECEIVE_PACKET_START(packet_unit_trade_route, real_packet);
 
@@ -33396,7 +33395,7 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -33404,7 +33403,7 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city1 = readin;
     }
@@ -33412,7 +33411,7 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city2 = readin;
     }
@@ -33428,13 +33427,13 @@ static struct packet_unit_trade_route *receive_packet_unit_trade_route_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_trade_route_100(struct connection *pc, const struct packet_unit_trade_route *packet)
+static int send_packet_unit_trade_route_100(struct connection *pconn, const struct packet_unit_trade_route *packet)
 {
   const struct packet_unit_trade_route *real_packet = packet;
   packet_unit_trade_route_100_fields fields;
   struct packet_unit_trade_route *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_TRADE_ROUTE];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_TRADE_ROUTE];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_TRADE_ROUTE);
 
@@ -33491,11 +33490,11 @@ static int send_packet_unit_trade_route_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_trade_route(struct connection *pc)
+static void ensure_valid_variant_packet_unit_trade_route(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_TRADE_ROUTE] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE] != -1) {
     return;
   }
 
@@ -33505,58 +33504,58 @@ static void ensure_valid_variant_packet_unit_trade_route(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_TRADE_ROUTE] = variant;
+  pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE] = variant;
 }
 
-struct packet_unit_trade_route *receive_packet_unit_trade_route(struct connection *pc, enum packet_type type)
+struct packet_unit_trade_route *receive_packet_unit_trade_route(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_trade_route at the client.");
   }
-  ensure_valid_variant_packet_unit_trade_route(pc);
+  ensure_valid_variant_packet_unit_trade_route(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_TRADE_ROUTE]) {
-    case 100: return receive_packet_unit_trade_route_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE]) {
+    case 100: return receive_packet_unit_trade_route_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_trade_route(struct connection *pc, const struct packet_unit_trade_route *packet)
+int send_packet_unit_trade_route(struct connection *pconn, const struct packet_unit_trade_route *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_trade_route from the server.");
   }
-  ensure_valid_variant_packet_unit_trade_route(pc);
+  ensure_valid_variant_packet_unit_trade_route(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_TRADE_ROUTE]) {
-    case 100: return send_packet_unit_trade_route_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_TRADE_ROUTE]) {
+    case 100: return send_packet_unit_trade_route_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_trade_route(struct connection *pc, int unit_id, int city1, int city2)
+int dsend_packet_unit_trade_route(struct connection *pconn, int unit_id, int city1, int city2)
 {
   struct packet_unit_trade_route packet, *real_packet = &packet;
 
   real_packet->unit_id = unit_id;
   real_packet->city1 = city1;
   real_packet->city2 = city2;
-  
-  return send_packet_unit_trade_route(pc, real_packet);
+
+  return send_packet_unit_trade_route(pconn, real_packet);
 }
 
 #define hash_packet_trade_route_info_100 hash_const
@@ -33565,11 +33564,11 @@ int dsend_packet_unit_trade_route(struct connection *pc, int unit_id, int city1,
 
 BV_DEFINE(packet_trade_route_info_100_fields, 4);
 
-static struct packet_trade_route_info *receive_packet_trade_route_info_100(struct connection *pc, enum packet_type type)
+static struct packet_trade_route_info *receive_packet_trade_route_info_100(struct connection *pconn, enum packet_type type)
 {
   packet_trade_route_info_100_fields fields;
   struct packet_trade_route_info *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_trade_route_info *clone;
   RECEIVE_PACKET_START(packet_trade_route_info, real_packet);
 
@@ -33590,7 +33589,7 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(struc
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city1 = readin;
     }
@@ -33598,7 +33597,7 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(struc
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->city2 = readin;
     }
@@ -33606,7 +33605,7 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(struc
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->unit_id = readin;
     }
@@ -33614,7 +33613,7 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(struc
   if (BV_ISSET(fields, 3)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->status = readin;
     }
@@ -33630,13 +33629,13 @@ static struct packet_trade_route_info *receive_packet_trade_route_info_100(struc
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_trade_route_info_100(struct connection *pc, const struct packet_trade_route_info *packet)
+static int send_packet_trade_route_info_100(struct connection *pconn, const struct packet_trade_route_info *packet)
 {
   const struct packet_trade_route_info *real_packet = packet;
   packet_trade_route_info_100_fields fields;
   struct packet_trade_route_info *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_TRADE_ROUTE_INFO];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_TRADE_ROUTE_INFO];
   int different = 0;
   SEND_PACKET_START(PACKET_TRADE_ROUTE_INFO);
 
@@ -33700,11 +33699,11 @@ static int send_packet_trade_route_info_100(struct connection *pc, const struct 
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_trade_route_info(struct connection *pc)
+static void ensure_valid_variant_packet_trade_route_info(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_TRADE_ROUTE_INFO] != -1) {
+  if(pconn->phs.variant[PACKET_TRADE_ROUTE_INFO] != -1) {
     return;
   }
 
@@ -33714,45 +33713,45 @@ static void ensure_valid_variant_packet_trade_route_info(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_TRADE_ROUTE_INFO] = variant;
+  pconn->phs.variant[PACKET_TRADE_ROUTE_INFO] = variant;
 }
 
-struct packet_trade_route_info *receive_packet_trade_route_info(struct connection *pc, enum packet_type type)
+struct packet_trade_route_info *receive_packet_trade_route_info(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Receiving packet_trade_route_info at the server.");
   }
-  ensure_valid_variant_packet_trade_route_info(pc);
+  ensure_valid_variant_packet_trade_route_info(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADE_ROUTE_INFO]) {
-    case 100: return receive_packet_trade_route_info_100(pc, type);
+  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_INFO]) {
+    case 100: return receive_packet_trade_route_info_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_trade_route_info(struct connection *pc, const struct packet_trade_route_info *packet)
+int send_packet_trade_route_info(struct connection *pconn, const struct packet_trade_route_info *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Sending packet_trade_route_info from the client.");
   }
-  ensure_valid_variant_packet_trade_route_info(pc);
+  ensure_valid_variant_packet_trade_route_info(pconn);
 
-  switch(pc->phs.variant[PACKET_TRADE_ROUTE_INFO]) {
-    case 100: return send_packet_trade_route_info_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_TRADE_ROUTE_INFO]) {
+    case 100: return send_packet_trade_route_info_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -33763,11 +33762,11 @@ int send_packet_trade_route_info(struct connection *pc, const struct packet_trad
 
 BV_DEFINE(packet_city_set_rally_point_100_fields, 3);
 
-static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_100(struct connection *pc, enum packet_type type)
+static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_set_rally_point_100_fields fields;
   struct packet_city_set_rally_point *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_set_rally_point *clone;
   RECEIVE_PACKET_START(packet_city_set_rally_point, real_packet);
 
@@ -33788,7 +33787,7 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -33796,7 +33795,7 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -33804,7 +33803,7 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -33820,13 +33819,13 @@ static struct packet_city_set_rally_point *receive_packet_city_set_rally_point_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_set_rally_point_100(struct connection *pc, const struct packet_city_set_rally_point *packet)
+static int send_packet_city_set_rally_point_100(struct connection *pconn, const struct packet_city_set_rally_point *packet)
 {
   const struct packet_city_set_rally_point *real_packet = packet;
   packet_city_set_rally_point_100_fields fields;
   struct packet_city_set_rally_point *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_SET_RALLY_POINT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_SET_RALLY_POINT];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_SET_RALLY_POINT);
 
@@ -33883,11 +33882,11 @@ static int send_packet_city_set_rally_point_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_set_rally_point(struct connection *pc)
+static void ensure_valid_variant_packet_city_set_rally_point(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_SET_RALLY_POINT] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT] != -1) {
     return;
   }
 
@@ -33897,58 +33896,58 @@ static void ensure_valid_variant_packet_city_set_rally_point(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_SET_RALLY_POINT] = variant;
+  pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT] = variant;
 }
 
-struct packet_city_set_rally_point *receive_packet_city_set_rally_point(struct connection *pc, enum packet_type type)
+struct packet_city_set_rally_point *receive_packet_city_set_rally_point(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_set_rally_point at the client.");
   }
-  ensure_valid_variant_packet_city_set_rally_point(pc);
+  ensure_valid_variant_packet_city_set_rally_point(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SET_RALLY_POINT]) {
-    case 100: return receive_packet_city_set_rally_point_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT]) {
+    case 100: return receive_packet_city_set_rally_point_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_set_rally_point(struct connection *pc, const struct packet_city_set_rally_point *packet)
+int send_packet_city_set_rally_point(struct connection *pconn, const struct packet_city_set_rally_point *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_set_rally_point from the server.");
   }
-  ensure_valid_variant_packet_city_set_rally_point(pc);
+  ensure_valid_variant_packet_city_set_rally_point(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_SET_RALLY_POINT]) {
-    case 100: return send_packet_city_set_rally_point_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_SET_RALLY_POINT]) {
+    case 100: return send_packet_city_set_rally_point_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_set_rally_point(struct connection *pc, int id, int x, int y)
+int dsend_packet_city_set_rally_point(struct connection *pconn, int id, int x, int y)
 {
   struct packet_city_set_rally_point packet, *real_packet = &packet;
 
   real_packet->id = id;
   real_packet->x = x;
   real_packet->y = y;
-  
-  return send_packet_city_set_rally_point(pc, real_packet);
+
+  return send_packet_city_set_rally_point(pconn, real_packet);
 }
 
 #define hash_packet_city_clear_rally_point_100 hash_const
@@ -33957,11 +33956,11 @@ int dsend_packet_city_set_rally_point(struct connection *pc, int id, int x, int 
 
 BV_DEFINE(packet_city_clear_rally_point_100_fields, 1);
 
-static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point_100(struct connection *pc, enum packet_type type)
+static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_clear_rally_point_100_fields fields;
   struct packet_city_clear_rally_point *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_clear_rally_point *clone;
   RECEIVE_PACKET_START(packet_city_clear_rally_point, real_packet);
 
@@ -33982,7 +33981,7 @@ static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_poi
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -33998,13 +33997,13 @@ static struct packet_city_clear_rally_point *receive_packet_city_clear_rally_poi
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_clear_rally_point_100(struct connection *pc, const struct packet_city_clear_rally_point *packet)
+static int send_packet_city_clear_rally_point_100(struct connection *pconn, const struct packet_city_clear_rally_point *packet)
 {
   const struct packet_city_clear_rally_point *real_packet = packet;
   packet_city_clear_rally_point_100_fields fields;
   struct packet_city_clear_rally_point *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_CLEAR_RALLY_POINT];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_CLEAR_RALLY_POINT];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_CLEAR_RALLY_POINT);
 
@@ -34047,11 +34046,11 @@ static int send_packet_city_clear_rally_point_100(struct connection *pc, const s
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_clear_rally_point(struct connection *pc)
+static void ensure_valid_variant_packet_city_clear_rally_point(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT] != -1) {
     return;
   }
 
@@ -34061,56 +34060,56 @@ static void ensure_valid_variant_packet_city_clear_rally_point(struct connection
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT] = variant;
+  pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT] = variant;
 }
 
-struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point(struct connection *pc, enum packet_type type)
+struct packet_city_clear_rally_point *receive_packet_city_clear_rally_point(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_city_clear_rally_point at the client.");
   }
-  ensure_valid_variant_packet_city_clear_rally_point(pc);
+  ensure_valid_variant_packet_city_clear_rally_point(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT]) {
-    case 100: return receive_packet_city_clear_rally_point_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT]) {
+    case 100: return receive_packet_city_clear_rally_point_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_clear_rally_point(struct connection *pc, const struct packet_city_clear_rally_point *packet)
+int send_packet_city_clear_rally_point(struct connection *pconn, const struct packet_city_clear_rally_point *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_city_clear_rally_point from the server.");
   }
-  ensure_valid_variant_packet_city_clear_rally_point(pc);
+  ensure_valid_variant_packet_city_clear_rally_point(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT]) {
-    case 100: return send_packet_city_clear_rally_point_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_CLEAR_RALLY_POINT]) {
+    case 100: return send_packet_city_clear_rally_point_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_clear_rally_point(struct connection *pc, int id)
+int dsend_packet_city_clear_rally_point(struct connection *pconn, int id)
 {
   struct packet_city_clear_rally_point packet, *real_packet = &packet;
 
   real_packet->id = id;
-  
-  return send_packet_city_clear_rally_point(pc, real_packet);
+
+  return send_packet_city_clear_rally_point(pconn, real_packet);
 }
 
 #define hash_packet_unit_air_patrol_100 hash_const
@@ -34119,11 +34118,11 @@ int dsend_packet_city_clear_rally_point(struct connection *pc, int id)
 
 BV_DEFINE(packet_unit_air_patrol_100_fields, 3);
 
-static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_air_patrol_100_fields fields;
   struct packet_unit_air_patrol *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_air_patrol *clone;
   RECEIVE_PACKET_START(packet_unit_air_patrol, real_packet);
 
@@ -34144,7 +34143,7 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -34152,7 +34151,7 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct 
   if (BV_ISSET(fields, 1)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->x = readin;
     }
@@ -34160,7 +34159,7 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct 
   if (BV_ISSET(fields, 2)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->y = readin;
     }
@@ -34176,13 +34175,13 @@ static struct packet_unit_air_patrol *receive_packet_unit_air_patrol_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_air_patrol_100(struct connection *pc, const struct packet_unit_air_patrol *packet)
+static int send_packet_unit_air_patrol_100(struct connection *pconn, const struct packet_unit_air_patrol *packet)
 {
   const struct packet_unit_air_patrol *real_packet = packet;
   packet_unit_air_patrol_100_fields fields;
   struct packet_unit_air_patrol *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_AIR_PATROL];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AIR_PATROL];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_AIR_PATROL);
 
@@ -34239,11 +34238,11 @@ static int send_packet_unit_air_patrol_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_air_patrol(struct connection *pc)
+static void ensure_valid_variant_packet_unit_air_patrol(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_AIR_PATROL] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_AIR_PATROL] != -1) {
     return;
   }
 
@@ -34253,58 +34252,58 @@ static void ensure_valid_variant_packet_unit_air_patrol(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_AIR_PATROL] = variant;
+  pconn->phs.variant[PACKET_UNIT_AIR_PATROL] = variant;
 }
 
-struct packet_unit_air_patrol *receive_packet_unit_air_patrol(struct connection *pc, enum packet_type type)
+struct packet_unit_air_patrol *receive_packet_unit_air_patrol(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_air_patrol at the client.");
   }
-  ensure_valid_variant_packet_unit_air_patrol(pc);
+  ensure_valid_variant_packet_unit_air_patrol(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AIR_PATROL]) {
-    case 100: return receive_packet_unit_air_patrol_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL]) {
+    case 100: return receive_packet_unit_air_patrol_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_air_patrol(struct connection *pc, const struct packet_unit_air_patrol *packet)
+int send_packet_unit_air_patrol(struct connection *pconn, const struct packet_unit_air_patrol *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_air_patrol from the server.");
   }
-  ensure_valid_variant_packet_unit_air_patrol(pc);
+  ensure_valid_variant_packet_unit_air_patrol(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AIR_PATROL]) {
-    case 100: return send_packet_unit_air_patrol_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL]) {
+    case 100: return send_packet_unit_air_patrol_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_air_patrol(struct connection *pc, int id, int x, int y)
+int dsend_packet_unit_air_patrol(struct connection *pconn, int id, int x, int y)
 {
   struct packet_unit_air_patrol packet, *real_packet = &packet;
 
   real_packet->id = id;
   real_packet->x = x;
   real_packet->y = y;
-  
-  return send_packet_unit_air_patrol(pc, real_packet);
+
+  return send_packet_unit_air_patrol(pconn, real_packet);
 }
 
 #define hash_packet_unit_air_patrol_stop_100 hash_const
@@ -34313,11 +34312,11 @@ int dsend_packet_unit_air_patrol(struct connection *pc, int id, int x, int y)
 
 BV_DEFINE(packet_unit_air_patrol_stop_100_fields, 1);
 
-static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_100(struct connection *pc, enum packet_type type)
+static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_100(struct connection *pconn, enum packet_type type)
 {
   packet_unit_air_patrol_stop_100_fields fields;
   struct packet_unit_air_patrol_stop *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_unit_air_patrol_stop *clone;
   RECEIVE_PACKET_START(packet_unit_air_patrol_stop, real_packet);
 
@@ -34338,7 +34337,7 @@ static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_1
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -34354,13 +34353,13 @@ static struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop_1
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_unit_air_patrol_stop_100(struct connection *pc, const struct packet_unit_air_patrol_stop *packet)
+static int send_packet_unit_air_patrol_stop_100(struct connection *pconn, const struct packet_unit_air_patrol_stop *packet)
 {
   const struct packet_unit_air_patrol_stop *real_packet = packet;
   packet_unit_air_patrol_stop_100_fields fields;
   struct packet_unit_air_patrol_stop *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_UNIT_AIR_PATROL_STOP];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_UNIT_AIR_PATROL_STOP];
   int different = 0;
   SEND_PACKET_START(PACKET_UNIT_AIR_PATROL_STOP);
 
@@ -34403,11 +34402,11 @@ static int send_packet_unit_air_patrol_stop_100(struct connection *pc, const str
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_unit_air_patrol_stop(struct connection *pc)
+static void ensure_valid_variant_packet_unit_air_patrol_stop(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_UNIT_AIR_PATROL_STOP] != -1) {
+  if(pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP] != -1) {
     return;
   }
 
@@ -34417,56 +34416,56 @@ static void ensure_valid_variant_packet_unit_air_patrol_stop(struct connection *
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_UNIT_AIR_PATROL_STOP] = variant;
+  pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP] = variant;
 }
 
-struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop(struct connection *pc, enum packet_type type)
+struct packet_unit_air_patrol_stop *receive_packet_unit_air_patrol_stop(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_unit_air_patrol_stop at the client.");
   }
-  ensure_valid_variant_packet_unit_air_patrol_stop(pc);
+  ensure_valid_variant_packet_unit_air_patrol_stop(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AIR_PATROL_STOP]) {
-    case 100: return receive_packet_unit_air_patrol_stop_100(pc, type);
+  switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP]) {
+    case 100: return receive_packet_unit_air_patrol_stop_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_unit_air_patrol_stop(struct connection *pc, const struct packet_unit_air_patrol_stop *packet)
+int send_packet_unit_air_patrol_stop(struct connection *pconn, const struct packet_unit_air_patrol_stop *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_unit_air_patrol_stop from the server.");
   }
-  ensure_valid_variant_packet_unit_air_patrol_stop(pc);
+  ensure_valid_variant_packet_unit_air_patrol_stop(pconn);
 
-  switch(pc->phs.variant[PACKET_UNIT_AIR_PATROL_STOP]) {
-    case 100: return send_packet_unit_air_patrol_stop_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_UNIT_AIR_PATROL_STOP]) {
+    case 100: return send_packet_unit_air_patrol_stop_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_unit_air_patrol_stop(struct connection *pc, int id)
+int dsend_packet_unit_air_patrol_stop(struct connection *pconn, int id)
 {
   struct packet_unit_air_patrol_stop packet, *real_packet = &packet;
 
   real_packet->id = id;
-  
-  return send_packet_unit_air_patrol_stop(pc, real_packet);
+
+  return send_packet_unit_air_patrol_stop(pconn, real_packet);
 }
 
 #define hash_packet_city_manager_param_100 hash_const
@@ -34475,11 +34474,11 @@ int dsend_packet_unit_air_patrol_stop(struct connection *pc, int id)
 
 BV_DEFINE(packet_city_manager_param_100_fields, 7);
 
-static struct packet_city_manager_param *receive_packet_city_manager_param_100(struct connection *pc, enum packet_type type)
+static struct packet_city_manager_param *receive_packet_city_manager_param_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_manager_param_100_fields fields;
   struct packet_city_manager_param *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_manager_param *clone;
   RECEIVE_PACKET_START(packet_city_manager_param, real_packet);
 
@@ -34500,20 +34499,20 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(s
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
   }
   if (BV_ISSET(fields, 1)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < CM_NUM_STATS; i++) {
         {
       int readin;
-    
+
       dio_get_sint16(&din, &readin);
       real_packet->minimal_surplus[i] = readin;
     }
@@ -34524,14 +34523,14 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(s
   real_packet->allow_disorder = BV_ISSET(fields, 3);
   real_packet->allow_specialists = BV_ISSET(fields, 4);
   if (BV_ISSET(fields, 5)) {
-    
+
     {
       int i;
-    
+
       for (i = 0; i < CM_NUM_STATS; i++) {
         {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->factor[i] = readin;
     }
@@ -34541,7 +34540,7 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(s
   if (BV_ISSET(fields, 6)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->happy_factor = readin;
     }
@@ -34557,13 +34556,13 @@ static struct packet_city_manager_param *receive_packet_city_manager_param_100(s
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_manager_param_100(struct connection *pc, const struct packet_city_manager_param *packet)
+static int send_packet_city_manager_param_100(struct connection *pconn, const struct packet_city_manager_param *packet)
 {
   const struct packet_city_manager_param *real_packet = packet;
   packet_city_manager_param_100_fields fields;
   struct packet_city_manager_param *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_MANAGER_PARAM];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_MANAGER_PARAM];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_MANAGER_PARAM);
 
@@ -34642,27 +34641,27 @@ static int send_packet_city_manager_param_100(struct connection *pc, const struc
     dio_put_uint16(&dout, real_packet->id);
   }
   if (BV_ISSET(fields, 1)) {
-  
+
     {
       int i;
 
       for (i = 0; i < CM_NUM_STATS; i++) {
         dio_put_sint16(&dout, real_packet->minimal_surplus[i]);
       }
-    } 
+    }
   }
   /* field 2 is folded into the header */
   /* field 3 is folded into the header */
   /* field 4 is folded into the header */
   if (BV_ISSET(fields, 5)) {
-  
+
     {
       int i;
 
       for (i = 0; i < CM_NUM_STATS; i++) {
         dio_put_uint16(&dout, real_packet->factor[i]);
       }
-    } 
+    }
   }
   if (BV_ISSET(fields, 6)) {
     dio_put_uint16(&dout, real_packet->happy_factor);
@@ -34680,11 +34679,11 @@ static int send_packet_city_manager_param_100(struct connection *pc, const struc
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_manager_param(struct connection *pc)
+static void ensure_valid_variant_packet_city_manager_param(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_MANAGER_PARAM] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_MANAGER_PARAM] != -1) {
     return;
   }
 
@@ -34694,39 +34693,39 @@ static void ensure_valid_variant_packet_city_manager_param(struct connection *pc
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_MANAGER_PARAM] = variant;
+  pconn->phs.variant[PACKET_CITY_MANAGER_PARAM] = variant;
 }
 
-struct packet_city_manager_param *receive_packet_city_manager_param(struct connection *pc, enum packet_type type)
+struct packet_city_manager_param *receive_packet_city_manager_param(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_city_manager_param(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_city_manager_param(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_MANAGER_PARAM]) {
-    case 100: return receive_packet_city_manager_param_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_MANAGER_PARAM]) {
+    case 100: return receive_packet_city_manager_param_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_manager_param(struct connection *pc, const struct packet_city_manager_param *packet)
+int send_packet_city_manager_param(struct connection *pconn, const struct packet_city_manager_param *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_city_manager_param(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_city_manager_param(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_MANAGER_PARAM]) {
-    case 100: return send_packet_city_manager_param_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_MANAGER_PARAM]) {
+    case 100: return send_packet_city_manager_param_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
@@ -34737,11 +34736,11 @@ int send_packet_city_manager_param(struct connection *pc, const struct packet_ci
 
 BV_DEFINE(packet_city_no_manager_param_100_fields, 1);
 
-static struct packet_city_no_manager_param *receive_packet_city_no_manager_param_100(struct connection *pc, enum packet_type type)
+static struct packet_city_no_manager_param *receive_packet_city_no_manager_param_100(struct connection *pconn, enum packet_type type)
 {
   packet_city_no_manager_param_100_fields fields;
   struct packet_city_no_manager_param *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_city_no_manager_param *clone;
   RECEIVE_PACKET_START(packet_city_no_manager_param, real_packet);
 
@@ -34762,7 +34761,7 @@ static struct packet_city_no_manager_param *receive_packet_city_no_manager_param
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint16(&din, &readin);
       real_packet->id = readin;
     }
@@ -34778,13 +34777,13 @@ static struct packet_city_no_manager_param *receive_packet_city_no_manager_param
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_city_no_manager_param_100(struct connection *pc, const struct packet_city_no_manager_param *packet)
+static int send_packet_city_no_manager_param_100(struct connection *pconn, const struct packet_city_no_manager_param *packet)
 {
   const struct packet_city_no_manager_param *real_packet = packet;
   packet_city_no_manager_param_100_fields fields;
   struct packet_city_no_manager_param *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_CITY_NO_MANAGER_PARAM];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_CITY_NO_MANAGER_PARAM];
   int different = 0;
   SEND_PACKET_START(PACKET_CITY_NO_MANAGER_PARAM);
 
@@ -34827,11 +34826,11 @@ static int send_packet_city_no_manager_param_100(struct connection *pc, const st
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_city_no_manager_param(struct connection *pc)
+static void ensure_valid_variant_packet_city_no_manager_param(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_CITY_NO_MANAGER_PARAM] != -1) {
+  if(pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM] != -1) {
     return;
   }
 
@@ -34841,50 +34840,50 @@ static void ensure_valid_variant_packet_city_no_manager_param(struct connection 
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_CITY_NO_MANAGER_PARAM] = variant;
+  pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM] = variant;
 }
 
-struct packet_city_no_manager_param *receive_packet_city_no_manager_param(struct connection *pc, enum packet_type type)
+struct packet_city_no_manager_param *receive_packet_city_no_manager_param(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_city_no_manager_param(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_city_no_manager_param(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_NO_MANAGER_PARAM]) {
-    case 100: return receive_packet_city_no_manager_param_100(pc, type);
+  switch(pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM]) {
+    case 100: return receive_packet_city_no_manager_param_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_city_no_manager_param(struct connection *pc, const struct packet_city_no_manager_param *packet)
+int send_packet_city_no_manager_param(struct connection *pconn, const struct packet_city_no_manager_param *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
-  ensure_valid_variant_packet_city_no_manager_param(pc);
+  assert(pconn->phs.variant != NULL);
+  ensure_valid_variant_packet_city_no_manager_param(pconn);
 
-  switch(pc->phs.variant[PACKET_CITY_NO_MANAGER_PARAM]) {
-    case 100: return send_packet_city_no_manager_param_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_CITY_NO_MANAGER_PARAM]) {
+    case 100: return send_packet_city_no_manager_param_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_city_no_manager_param(struct connection *pc, int id)
+int dsend_packet_city_no_manager_param(struct connection *pconn, int id)
 {
   struct packet_city_no_manager_param packet, *real_packet = &packet;
 
   real_packet->id = id;
-  
-  return send_packet_city_no_manager_param(pc, real_packet);
+
+  return send_packet_city_no_manager_param(pconn, real_packet);
 }
 
 #define hash_packet_player_info_req_100 hash_const
@@ -34893,11 +34892,11 @@ int dsend_packet_city_no_manager_param(struct connection *pc, int id)
 
 BV_DEFINE(packet_player_info_req_100_fields, 1);
 
-static struct packet_player_info_req *receive_packet_player_info_req_100(struct connection *pc, enum packet_type type)
+static struct packet_player_info_req *receive_packet_player_info_req_100(struct connection *pconn, enum packet_type type)
 {
   packet_player_info_req_100_fields fields;
   struct packet_player_info_req *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct packet_player_info_req *clone;
   RECEIVE_PACKET_START(packet_player_info_req, real_packet);
 
@@ -34918,7 +34917,7 @@ static struct packet_player_info_req *receive_packet_player_info_req_100(struct 
   if (BV_ISSET(fields, 0)) {
     {
       int readin;
-    
+
       dio_get_uint8(&din, &readin);
       real_packet->id = readin;
     }
@@ -34934,13 +34933,13 @@ static struct packet_player_info_req *receive_packet_player_info_req_100(struct 
   RECEIVE_PACKET_END(real_packet);
 }
 
-static int send_packet_player_info_req_100(struct connection *pc, const struct packet_player_info_req *packet)
+static int send_packet_player_info_req_100(struct connection *pconn, const struct packet_player_info_req *packet)
 {
   const struct packet_player_info_req *real_packet = packet;
   packet_player_info_req_100_fields fields;
   struct packet_player_info_req *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = TRUE;
-  struct hash_table **hash = &pc->phs.sent[PACKET_PLAYER_INFO_REQ];
+  struct hash_table **hash = &pconn->phs.sent[PACKET_PLAYER_INFO_REQ];
   int different = 0;
   SEND_PACKET_START(PACKET_PLAYER_INFO_REQ);
 
@@ -34983,11 +34982,11 @@ static int send_packet_player_info_req_100(struct connection *pc, const struct p
   SEND_PACKET_END;
 }
 
-static void ensure_valid_variant_packet_player_info_req(struct connection *pc)
+static void ensure_valid_variant_packet_player_info_req(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[PACKET_PLAYER_INFO_REQ] != -1) {
+  if(pconn->phs.variant[PACKET_PLAYER_INFO_REQ] != -1) {
     return;
   }
 
@@ -34997,55 +34996,55 @@ static void ensure_valid_variant_packet_player_info_req(struct connection *pc)
   } else {
     die("unknown variant");
   }
-  pc->phs.variant[PACKET_PLAYER_INFO_REQ] = variant;
+  pconn->phs.variant[PACKET_PLAYER_INFO_REQ] = variant;
 }
 
-struct packet_player_info_req *receive_packet_player_info_req(struct connection *pc, enum packet_type type)
+struct packet_player_info_req *receive_packet_player_info_req(struct connection *pconn, enum packet_type type)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(!is_server) {
     freelog(LOG_ERROR, "Receiving packet_player_info_req at the client.");
   }
-  ensure_valid_variant_packet_player_info_req(pc);
+  ensure_valid_variant_packet_player_info_req(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_INFO_REQ]) {
-    case 100: return receive_packet_player_info_req_100(pc, type);
+  switch(pconn->phs.variant[PACKET_PLAYER_INFO_REQ]) {
+    case 100: return receive_packet_player_info_req_100(pconn, type);
     default: die("unknown variant"); return NULL;
   }
 }
 
-int send_packet_player_info_req(struct connection *pc, const struct packet_player_info_req *packet)
+int send_packet_player_info_req(struct connection *pconn, const struct packet_player_info_req *packet)
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %s",
-            conn_description(pc));
+            conn_description(pconn));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
+  assert(pconn->phs.variant != NULL);
   if(is_server) {
     freelog(LOG_ERROR, "Sending packet_player_info_req from the server.");
   }
-  ensure_valid_variant_packet_player_info_req(pc);
+  ensure_valid_variant_packet_player_info_req(pconn);
 
-  switch(pc->phs.variant[PACKET_PLAYER_INFO_REQ]) {
-    case 100: return send_packet_player_info_req_100(pc, packet);
+  switch(pconn->phs.variant[PACKET_PLAYER_INFO_REQ]) {
+    case 100: return send_packet_player_info_req_100(pconn, packet);
     default: die("unknown variant"); return -1;
   }
 }
 
-int dsend_packet_player_info_req(struct connection *pc, int id)
+int dsend_packet_player_info_req(struct connection *pconn, int id)
 {
   struct packet_player_info_req packet, *real_packet = &packet;
 
   real_packet->id = id;
-  
-  return send_packet_player_info_req(pc, real_packet);
+
+  return send_packet_player_info_req(pconn, real_packet);
 }
 

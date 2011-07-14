@@ -522,7 +522,7 @@ class Variant:
         self.negcaps=negcaps
         if self.poscaps or self.negcaps:
             def f(cap):
-                return '(has_capability("%s", pc->capability) && has_capability("%s", our_capability))'%(cap,cap)
+                return '(has_capability("%s", pconn->capability) && has_capability("%s", our_capability))'%(cap,cap)
             t=(map(lambda x,f=f: f(x),self.poscaps)+
                map(lambda x,f=f: '!'+f(x),self.negcaps))
             self.condition=string.join(t," && ")
@@ -556,8 +556,8 @@ class Variant:
             self.extra_send_args=', const struct %(packet_name)s *packet'%self.__dict__+self.extra_send_args
             self.extra_send_args2=', packet'+self.extra_send_args2
 
-        self.receive_prototype='static struct %(packet_name)s *receive_%(name)s(struct connection *pc, enum packet_type type)'%self.__dict__
-        self.send_prototype='static int send_%(name)s(struct connection *pc%(extra_send_args)s)'%self.__dict__
+        self.receive_prototype='static struct %(packet_name)s *receive_%(name)s(struct connection *pconn, enum packet_type type)'%self.__dict__
+        self.send_prototype='static int send_%(name)s(struct connection *pconn%(extra_send_args)s)'%self.__dict__
 
     # See Field.get_dict
     def get_dict(self,vars):
@@ -692,7 +692,7 @@ static char *stats_%(name)s_names[] = {%(names)s};
     struct %(packet_name)s *tmp = fc_malloc(sizeof(*tmp));
 
     *tmp = *packet;
-    pre_send_%(packet_name)s(pc, tmp);
+    pre_send_%(packet_name)s(pconn, tmp);
     real_packet = tmp;
   }
 '''
@@ -720,7 +720,7 @@ static char *stats_%(name)s_names[] = {%(names)s};
                 delta_header='''  %(name)s_fields fields;
   struct %(packet_name)s *old, *clone;
   bool differ, old_from_hash, force_send_of_unchanged = %(force_send)s;
-  struct hash_table **hash = &pc->phs.sent[%(type)s];
+  struct hash_table **hash = &pconn->phs.sent[%(type)s];
   int different = 0;
 '''
             else:
@@ -734,7 +734,7 @@ static char *stats_%(name)s_names[] = {%(names)s};
             delta_header=""
 
         if self.want_post_send:
-            post="  post_send_%(packet_name)s(pc, real_packet);\n"
+            post="  post_send_%(packet_name)s(pconn, real_packet);\n"
         else:
             post=""
 
@@ -816,7 +816,7 @@ static char *stats_%(name)s_names[] = {%(names)s};
         if self.delta:
             delta_header='''  %(name)s_fields fields;
   struct %(packet_name)s *old;
-  struct hash_table **hash = &pc->phs.received[type];
+  struct hash_table **hash = &pconn->phs.received[type];
   struct %(packet_name)s *clone;
 '''
             delta_body1="\n  DIO_BV_GET(&din, fields);\n"
@@ -840,7 +840,7 @@ static char *stats_%(name)s_names[] = {%(names)s};
             freelog=""
 
         if self.want_post_recv:
-            post="  post_receive_%(packet_name)s(pc, real_packet);\n"
+            post="  post_receive_%(packet_name)s(pconn, real_packet);\n"
         else:
             post=""
 
@@ -997,12 +997,12 @@ class Packet:
             self.extra_send_args=', const struct %(name)s *packet'%self.__dict__+self.extra_send_args
             self.extra_send_args2=', packet'+self.extra_send_args2
 
-        self.receive_prototype='struct %(name)s *receive_%(name)s(struct connection *pc, enum packet_type type)'%self.__dict__
-        self.send_prototype='int send_%(name)s(struct connection *pc%(extra_send_args)s)'%self.__dict__
+        self.receive_prototype='struct %(name)s *receive_%(name)s(struct connection *pconn, enum packet_type type)'%self.__dict__
+        self.send_prototype='int send_%(name)s(struct connection *pconn%(extra_send_args)s)'%self.__dict__
         if self.want_lsend:
             self.lsend_prototype='void lsend_%(name)s(struct conn_list *dest%(extra_send_args)s)'%self.__dict__
         if self.want_dsend:
-            self.dsend_prototype='int dsend_%(name)s(struct connection *pc%(extra_send_args3)s)'%self.__dict__
+            self.dsend_prototype='int dsend_%(name)s(struct connection *pconn%(extra_send_args3)s)'%self.__dict__
             if self.want_lsend:
                 self.dlsend_prototype='void dlsend_%(name)s(struct conn_list *dest%(extra_send_args3)s)'%self.__dict__
 
@@ -1033,7 +1033,8 @@ class Packet:
 
     # Returns a code fragement which contains the struct for this packet.
     def get_struct(self):
-        intro="struct %(name)s {\n"%self.__dict__
+        intro="struct %(name)s {"%self.__dict__
+        intro=intro+" /* %(type_number)s */\n"%self.__dict__
         extro="};\n\n"
 
         body=""
@@ -1066,11 +1067,11 @@ class Packet:
     # Returns a code fragment which is the implementation of the
     # ensure_valid_variant function
     def get_ensure_valid_variant(self):
-        result='''static void ensure_valid_variant_%(name)s(struct connection *pc)
+        result='''static void ensure_valid_variant_%(name)s(struct connection *pconn)
 {
   int variant = -1;
 
-  if(pc->phs.variant[%(type)s] != -1) {
+  if(pconn->phs.variant[%(type)s] != -1) {
     return;
   }
 
@@ -1082,13 +1083,13 @@ class Packet:
             no=v.no
             result=result+'  } else if(%(cond)s) {\n    variant = %(no)s;\n'%self.get_dict(vars())
         if generate_variant_freelogs and len(self.variants)>1:
-            log='  freelog(LOG_NORMAL, "%(name)s: using variant=%%d cap=%%s", variant, pc->capability);\n'%self.get_dict(vars())
+            log='  freelog(LOG_NORMAL, "%(name)s: using variant=%%d cap=%%s", variant, pconn->capability);\n'%self.get_dict(vars())
         else:
             log=""
         result=result+'''  } else {
     die("unknown variant");
   }
-%(log)s  pc->phs.variant[%(type)s] = variant;
+%(log)s  pconn->phs.variant[%(type)s] = variant;
 }
 
 '''%self.get_dict(vars())
@@ -1115,21 +1116,21 @@ class Packet:
 
         result='''%(receive_prototype)s
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %%s",
             conn_description(pc));
     return NULL;
   }
-  assert(pc->phs.variant != NULL);
-%(restrict)s  ensure_valid_variant_%(name)s(pc);
+  assert(pconn->phs.variant != NULL);
+%(restrict)s  ensure_valid_variant_%(name)s(pconn);
 
-  switch(pc->phs.variant[%(type)s]) {
+  switch(pconn->phs.variant[%(type)s]) {
 '''%self.get_dict(vars())
         for v in self.variants:
             name2=v.name
             no=v.no
-            result=result+'    case %(no)s: return receive_%(name2)s(pc, type);\n'%self.get_dict(vars())
+            result=result+'    case %(no)s: return receive_%(name2)s(pconn, type);\n'%self.get_dict(vars())
         result=result+'    default: die("unknown variant"); return NULL;\n  }\n}\n\n'
         return result
 
@@ -1151,21 +1152,21 @@ class Packet:
 
         result='''%(send_prototype)s
 {
-  if(!pc->used) {
+  if(!pconn->used) {
     freelog(LOG_ERROR,
             "WARNING: trying to send data to the closed connection %%s",
             conn_description(pc));
     return -1;
   }
-  assert(pc->phs.variant != NULL);
-%(restrict)s  ensure_valid_variant_%(name)s(pc);
+  assert(pconn->phs.variant != NULL);
+%(restrict)s  ensure_valid_variant_%(name)s(pconn);
 
-  switch(pc->phs.variant[%(type)s]) {
+  switch(pconn->phs.variant[%(type)s]) {
 '''%self.get_dict(vars())
         if not self.no_packet:
-            args="pc, packet"
+            args="pconn, packet"
         else:
-            args="pc"
+            args="pconn"
         for v in self.variants:
             name2=v.name
             no=v.no
@@ -1191,8 +1192,8 @@ class Packet:
         if not self.want_lsend: return ""
         return '''%(lsend_prototype)s
 {
-  conn_list_iterate(dest, pconn) {
-    send_%(name)s(pconn%(extra_send_args2)s);
+  conn_list_iterate(dest, p_conn) {
+    send_%(name)s(p_conn%(extra_send_args2)s);
   } conn_list_iterate_end;
 }
 
@@ -1266,14 +1267,14 @@ void delta_stats_reset(void) {
 # switch case construct which calls the appropriate packet specific
 # receive function.
 def get_get_packet_helper(packets):
-    intro='''void *get_packet_from_connection_helper(struct connection *pc,\n    enum packet_type type)
+    intro='''void *get_packet_from_connection_helper(struct connection *pconn,\n    enum packet_type type)
 {
   switch(type) {
 
 '''
     body=""
     for p in packets:
-        body=body+"  case %(type)s:\n    return receive_%(name)s(pc, type);\n\n"%p.__dict__
+        body=body+"  case %(type)s:\n    return receive_%(name)s(pconn, type);\n\n"%p.__dict__
     extro='''  default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
             type, conn_description(pc));
@@ -1399,7 +1400,7 @@ def main():
     output_h.write('''
 void delta_stats_report(void);
 void delta_stats_reset(void);
-void *get_packet_from_connection_helper(struct connection *pc, enum packet_type type);
+void *get_packet_from_connection_helper(struct connection *pconn, enum packet_type type);
 ''')
     output_h.close()
 
@@ -1513,7 +1514,7 @@ bool server_handle_packet(enum packet_type type, void *packet,
                 f.write('void handle_%s(struct player *pplayer, struct %s *packet);\n'%(a,p.name))
             else:
                 if p.handle_per_conn:
-                    f.write('void handle_%s(struct connection *pc%s);\n'%(a,b))
+                    f.write('void handle_%s(struct connection *pconn%s);\n'%(a,b))
                 else:
                     f.write('void handle_%s(struct player *pplayer%s);\n'%(a,b))
     f.write('''
