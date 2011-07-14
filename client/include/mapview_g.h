@@ -17,7 +17,7 @@
 
 #include "fc_types.h"
 
-#include "mapview_common.h"
+#include "../mapview_common.h"
 
 struct Sprite;
 

@@ -15,7 +15,7 @@
 
 #include "fc_types.h"
 
-#include "citydlg_common.h"
+#include "../citydlg_common.h"
 
 enum city_update {
   UPDATE_NOTHING         = 0,

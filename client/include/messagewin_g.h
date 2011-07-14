@@ -15,7 +15,7 @@
 
 #include "packets.h"
 
-#include "messagewin_common.h"
+#include "../messagewin_common.h"
 
 void popup_meswin_dialog(void);
 bool is_meswin_open(void);

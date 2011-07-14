@@ -17,7 +17,7 @@
 
 #include "fc_types.h"
 
-#include "mapctrl_common.h"
+#include "../mapctrl_common.h"
 
 void popup_newcity_dialog(struct unit *punit, char *suggestname);
 

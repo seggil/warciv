@@ -16,7 +16,7 @@
 #include "packets.h"
 #include "shared.h"             /* bool type */
 
-#include "repodlgs_common.h"
+#include "../repodlgs_common.h"
 
 void update_report_dialogs(void);
 
