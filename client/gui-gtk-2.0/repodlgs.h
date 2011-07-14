@@ -13,7 +13,7 @@
 #ifndef FC__REPODLGS_H
 #define FC__REPODLGS_H
 
-#include "repodlgs_g.h"
+#include "../include/repodlgs_g.h"
 
 void raise_science_dialog(void);
 void popdown_science_dialog(void);

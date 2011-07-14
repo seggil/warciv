@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -29,8 +29,8 @@
 #include "shared.h"
 #include "support.h"
 
-#include "civclient.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../clinet.h"
 #include "colors.h"
 #include "dialogs.h"
 #include "graphics.h"
@@ -40,12 +40,12 @@
 #include "inputdlg.h"
 #include "mapctrl.h"
 #include "mapview.h"
-#include "options.h"
+#include "../options.h"
 #include "repodlgs.h"
 #include "spaceship.h"
-#include "tilespec.h"
-#include "climisc.h"
-#include "text.h"
+#include "../tilespec.h"
+#include "../climisc.h"
+#include "../text.h"
 
 #include "spaceshipdlg.h"
 

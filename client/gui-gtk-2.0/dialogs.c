@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -38,17 +38,17 @@
 #include "packets.h"
 #include "player.h"
 
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "connectdlg_common.h"
-#include "control.h"
-#include "goto.h"
-#include "multiselect.h"
-#include "options.h"
-#include "packhand.h"
-#include "tilespec.h"
-#include "trade.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
+#include "../connectdlg_common.h"
+#include "../control.h"
+#include "../goto.h"
+#include "../multiselect.h"
+#include "../options.h"
+#include "../packhand.h"
+#include "../tilespec.h"
+#include "../trade.h"
 
 #include "chatline.h"
 #include "citydlg.h"

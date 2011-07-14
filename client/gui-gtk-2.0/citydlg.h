@@ -13,7 +13,7 @@
 #ifndef FC__CITYDLG_H
 #define FC__CITYDLG_H
 
-#include "citydlg_g.h"
+#include "../include/citydlg_g.h"
 
 void reset_city_dialogs(void);
 

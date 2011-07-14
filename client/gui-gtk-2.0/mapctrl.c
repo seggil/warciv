@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -28,22 +28,22 @@
 
 #include "chatline.h"
 #include "citydlg.h"
-#include "civclient.h"
-#include "climap.h"
-#include "clinet.h"
-#include "climisc.h"
+#include "../civclient.h"
+#include "../climap.h"
+#include "../clinet.h"
+#include "../climisc.h"
 #include "colors.h"
-#include "control.h"
+#include "../control.h"
 #include "dialogs.h"
 #include "graphics.h"
 #include "gui_main.h"
 #include "inputdlg.h"
 #include "mapview.h"
 #include "menu.h"
-#include "multiselect.h"
-#include "tilespec.h"
-#include "cma_core.h"
-#include "text.h"
+#include "../multiselect.h"
+#include "../tilespec.h"
+#include "../agents/cma_core.h"
+#include "../text.h"
 
 #include "mapctrl.h"
 

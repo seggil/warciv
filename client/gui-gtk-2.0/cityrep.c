@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -33,22 +33,22 @@
 #include "worklist.h"
 
 #include "chatline.h"
-#include "citydlg_common.h"
-#include "cityrepdata.h"
-#include "civclient.h"
-#include "clinet.h"
+#include "../citydlg_common.h"
+#include "../cityrepdata.h"
+#include "../civclient.h"
+#include "../clinet.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
 #include "mapctrl.h"    /* is_city_hilited() */
-#include "mapview_common.h"
+#include "../mapview_common.h"
 #include "menu.h"
 #include "optiondlg.h"
-#include "options.h"
+#include "../options.h"
 #include "repodlgs.h"
-#include "climisc.h"
+#include "../climisc.h"
 
-#include "cma_fec.h"
+#include "../agents/cma_fec.h"
 
 #include "citydlg.h"
 #include "cityrep.h"
@@ -358,9 +358,9 @@ static void impr_or_unit_iterate(GtkTreeModel *model, GtkTreePath *path,
  end of the worklist.
 *****************************************************************/
 static void worklist_last_impr_or_unit_iterate(GtkTreeModel *model,
-                                                 GtkTreePath *path,
-                                                 GtkTreeIter *it,
-                                                 gpointer data)
+                                               GtkTreePath *path,
+                                               GtkTreeIter *it,
+                                               gpointer data)
 {
   cid cid = GPOINTER_TO_INT(data);
   gint id;
@@ -382,9 +382,9 @@ static void worklist_last_impr_or_unit_iterate(GtkTreeModel *model,
  Then changes the production to the requested item.
 *****************************************************************/
 static void worklist_first_impr_or_unit_iterate(GtkTreeModel *model,
-                                                 GtkTreePath *path,
-                                                 GtkTreeIter *it,
-                                                 gpointer data)
+                                                GtkTreePath *path,
+                                                GtkTreeIter *it,
+                                                gpointer data)
 {
   cid cid = GPOINTER_TO_INT(data);
   gint id;
@@ -404,9 +404,9 @@ static void worklist_first_impr_or_unit_iterate(GtkTreeModel *model,
  first place after the current production of the worklist.
 *****************************************************************/
 static void worklist_next_impr_or_unit_iterate(GtkTreeModel *model,
-                                                 GtkTreePath *path,
-                                                 GtkTreeIter *it,
-                                                 gpointer data)
+                                               GtkTreePath *path,
+                                               GtkTreeIter *it,
+                                               gpointer data)
 {
   struct city *pcity;
   gint id;

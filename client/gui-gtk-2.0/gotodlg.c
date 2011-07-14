@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -31,15 +31,15 @@
 #include "support.h"
 #include "unit.h"
 
-#include "clinet.h"
-#include "civclient.h"
-#include "control.h"
+#include "../clinet.h"
+#include "../civclient.h"
+#include "../control.h"
 #include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
-#include "multiselect.h"
-#include "options.h"
+#include "../multiselect.h"
+#include "../options.h"
 
 #include "gotodlg.h"
 

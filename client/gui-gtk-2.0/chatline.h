@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#include "chatline_g.h"
+#include "../include/chatline_g.h"
 #include "map.h"
 
 #define MAX_CHATLINE_HISTORY 20

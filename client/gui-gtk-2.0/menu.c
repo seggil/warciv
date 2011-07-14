@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <gtk/gtk.h>
@@ -26,13 +26,13 @@
 #include "unittype.h"
 #include "traderoute.h"
 
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "connectdlg_common.h"
-#include "multiselect.h"
-#include "options.h"
-#include "trade.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
+#include "../connectdlg_common.h"
+#include "../multiselect.h"
+#include "../options.h"
+#include "../trade.h"
 
 #include "chatline.h"
 #include "cityrep.h"
@@ -48,12 +48,12 @@
 #include "style.h"
 #include "wldlg.h"
 
-#include "finddlg_g.h"
-#include "gotodlg_g.h"
-#include "helpdlg_g.h"
-#include "mapview_g.h"
-#include "ratesdlg_g.h"
-#include "spaceshipdlg_g.h"
+#include "../include/finddlg_g.h"
+#include "../include/gotodlg_g.h"
+#include "../include/helpdlg_g.h"
+#include "../include/mapview_g.h"
+#include "../include/ratesdlg_g.h"
+#include "../include/spaceshipdlg_g.h"
 
 #include "menu.h"
 

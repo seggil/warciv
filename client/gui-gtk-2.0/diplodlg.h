@@ -15,6 +15,6 @@
 
 #include <gtk/gtk.h>
 
-#include "diplodlg_g.h"
+#include "../include/diplodlg_g.h"
 
 #endif  /* FC__DIPLODLG_H */

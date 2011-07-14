@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #ifdef WIN32_NATIVE
@@ -32,17 +32,17 @@
 #include "support.h"
 #include "version.h"
 
-#include "civclient.h"
+#include "../civclient.h"
 #include "chatline.h"
-#include "clinet.h"
+#include "../clinet.h"
 #include "colors.h"
-#include "connectdlg_common.h"
+#include "../connectdlg_common.h"
 #include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
-#include "options.h"
-#include "packhand.h"
-#include "tilespec.h"
+#include "../options.h"
+#include "../packhand.h"
+#include "../tilespec.h"
 
 #include "connectdlg.h"
 

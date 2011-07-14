@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -33,24 +33,24 @@
 #include "version.h"
 
 #include "chatline.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
 #include "colors.h"
 #include "connectdlg.h"
-#include "connectdlg_common.h"
+#include "../connectdlg_common.h"
 #include "dialogs.h"
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "optiondlg.h"
-#include "packhand.h"
+#include "../packhand.h"
 #include "pages.h"
 #include "style.h"
 
 
 GtkWidget *start_message_area;
-GtkListStore *conn_model;       
+GtkListStore *conn_model;
 
 static GtkWidget *start_options_table;
 

@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <gtk/gtk.h>
@@ -22,5 +22,5 @@ Fallback resources
 **************************************************************************/
 
 const gchar *fallback_resources =
-#include <Freeciv.h>
+#include "Freeciv.h"
 ;

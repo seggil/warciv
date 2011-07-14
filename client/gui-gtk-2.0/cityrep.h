@@ -13,7 +13,7 @@
 #ifndef FC__CITYREP_H
 #define FC__CITYREP_H
 
-#include "cityrep_g.h"
+#include "../include/cityrep_g.h"
 
 void raise_city_report_dialog(void);
 void popdown_city_report_dialog(void);

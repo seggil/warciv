@@ -20,7 +20,7 @@
 #include "improvement.h"
 #include "unittype.h"
 
-#include "climisc.h"
+#include "../climisc.h"
 
 /* the global worklist view. */
 void apply_global_worklists(GtkWidget *widget);

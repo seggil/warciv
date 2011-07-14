@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -31,23 +31,23 @@
 #include "shared.h"
 #include "support.h"
 
-#include "chatline_common.h"
+#include "../chatline_common.h"
 #include "cityrep.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "control.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
+#include "../control.h"
 #include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "helpdlg.h"
-#include "mapview_common.h"
-#include "options.h"
-#include "packhand_gen.h"
-#include "control.h"
-#include "text.h"
+#include "../mapview_common.h"
+#include "../options.h"
+#include "../packhand_gen.h"
+#include "../control.h"
+#include "../text.h"
 
-#include "repodlgs_common.h"
+#include "../repodlgs_common.h"
 #include "repodlgs.h"
 
 /******************************************************************/

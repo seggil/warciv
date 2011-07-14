@@ -15,8 +15,8 @@
 
 #include <gtk/gtk.h>
 
-#include "graphics_g.h"
-#include "mapview_common.h"
+#include "../include/graphics_g.h"
+#include "../mapview_common.h"
 
 struct Sprite
 {

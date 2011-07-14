@@ -13,7 +13,7 @@
 #ifndef FC__HELPDLG_H
 #define FC__HELPDLG_H
 
-#include "helpdlg_g.h"
+#include "../include/helpdlg_g.h"
 
 /* nothing else */
 

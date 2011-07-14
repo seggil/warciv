@@ -15,6 +15,6 @@
 
 #include <gtk/gtk.h>
 
-#include "spaceshipdlg_g.h"
+#include "../include/spaceshipdlg_g.h"
 
 #endif  /* FC__SPACESHIPDLG_H */

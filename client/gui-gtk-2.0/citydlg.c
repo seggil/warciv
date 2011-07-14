@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -35,15 +35,15 @@
 #include "traderoute.h"
 
 #include "cityrep.h"
-#include "civclient.h"
+#include "../civclient.h"
 #include "cma_fe.h"
-#include "cma_fec.h" 
+#include "../agents/cma_fec.h"
 #include "colors.h"
-#include "control.h"
-#include "climap.h"
-#include "clinet.h"
+#include "../control.h"
+#include "../climap.h"
+#include "../clinet.h"
 #include "dialogs.h"
-#include "goto.h"
+#include "../goto.h"
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
@@ -51,15 +51,15 @@
 #include "helpdlg.h"
 #include "inputdlg.h"
 #include "mapview.h"
-#include "multiselect.h"
-#include "options.h"
+#include "../multiselect.h"
+#include "../options.h"
 #include "repodlgs.h"
-#include "tilespec.h"
+#include "../tilespec.h"
 #include "wldlg.h"
 #include "log.h"
-#include "text.h"
-#include "trade.h"
-#include "cityicon.ico"
+#include "../text.h"
+#include "../trade.h"
+#include "../include/cityicon.ico"
 
 #include "citydlg.h"
 

@@ -13,7 +13,7 @@
 #ifndef FC__FINDDLG_H
 #define FC__FINDDLG_H
 
-#include "finddlg_g.h"
+# include "../include/finddlg_g.h"
 
 /* nothing to add */
 

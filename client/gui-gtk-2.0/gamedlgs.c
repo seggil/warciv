@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -36,18 +36,18 @@
 
 #include "chatline.h"
 #include "cityrep.h"
-#include "civclient.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../clinet.h"
 #include "dialogs.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
-#include "mapview_common.h"
-#include "menu_g.h"
+#include "../mapview_common.h"
+#include "../include/menu_g.h"
 #include "messagedlg.h"
 #include "messagewin.h"
-#include "options.h"
-#include "plrdlg_g.h"
+#include "../options.h"
+#include "../include/plrdlg_g.h"
 #include "wldlg.h"
 
 #include "ratesdlg.h"

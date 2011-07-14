@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -30,12 +30,12 @@
 #include "player.h"
 #include "chatline.h"
 #include "citydlg.h"
-#include "clinet.h"
+#include "../clinet.h"
 #include "colors.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
-#include "options.h"
+#include "../options.h"
 
 #include "messagewin.h"
 

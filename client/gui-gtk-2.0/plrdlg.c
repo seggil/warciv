@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -33,19 +33,19 @@
 #include "support.h"
 
 #include "chatline.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "connectdlg_common.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
+#include "../connectdlg_common.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "inteldlg.h"
 #include "spaceshipdlg.h"
-#include "tilespec.h"
+#include "../tilespec.h"
 #include "colors.h"
 #include "graphics.h"
-#include "options.h"
-#include "text.h"
+#include "../options.h"
+#include "../text.h"
 
 #include "my_cell_renderer_color.h"
 #include "plrdlg.h"

@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -35,12 +35,12 @@
 #include "map.h"
 #include "version.h"
 
-#include "climisc.h"
-#include "clinet.h"
-#include "civclient.h"
-#include "helpdata.h"
-#include "options.h"
-#include "tilespec.h"
+#include "../climisc.h"
+#include "../clinet.h"
+#include "../civclient.h"
+#include "../helpdata.h"
+#include "../options.h"
+#include "../tilespec.h"
 
 #include "colors.h"
 #include "gtkpixcomm.h"

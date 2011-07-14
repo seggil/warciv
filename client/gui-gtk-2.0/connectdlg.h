@@ -17,7 +17,7 @@
 
 #include "shared.h"
 
-#include "connectdlg_g.h"
+#include "../include/connectdlg_g.h"
 
 GtkWidget *create_file_selection(const char *title, bool is_save);
 

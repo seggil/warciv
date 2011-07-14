@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -36,20 +36,20 @@
 #include "map.h"
 #include "player.h"
 
-#include "civclient.h"
-#include "climap.h"
-#include "climisc.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../climap.h"
+#include "../climisc.h"
+#include "../clinet.h"
 #include "colors.h"
-#include "control.h" /* get_unit_in_focus() */
+#include "../control.h" /* get_unit_in_focus() */
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapctrl.h"
-#include "multiselect.h"
-#include "options.h"
-#include "tilespec.h"
-#include "text.h"
+#include "../multiselect.h"
+#include "../options.h"
+#include "../tilespec.h"
+#include "../text.h"
 #include "wldlg.h"
 
 #include "citydlg.h" /* For reset_city_dialogs() */

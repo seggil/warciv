@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdarg.h>
@@ -28,7 +28,7 @@
 #include "support.h"
 
 #include "colors.h"
-#include "options.h"
+#include "../options.h"
 #include "gui_main.h"
 
 #include "gui_stuff.h"

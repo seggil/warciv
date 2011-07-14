@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -33,12 +33,12 @@
 #include "packets.h"
 #include "worklist.h"
 
-#include "citydlg_common.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
-#include "options.h"
-#include "tilespec.h"
+#include "../citydlg_common.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
+#include "../options.h"
+#include "../tilespec.h"
 
 #include "citydlg.h"
 #include "gui_main.h"

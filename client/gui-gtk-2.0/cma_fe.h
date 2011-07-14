@@ -16,7 +16,7 @@
 
 #include <gtk/gtk.h>
 
-#include "cma_core.h"
+#include "../agents/cma_core.h"
 
 struct city;
 

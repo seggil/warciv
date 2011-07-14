@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <gtk/gtk.h>
@@ -24,8 +24,8 @@
 #include "mem.h"
 #include "support.h"
 
-#include "text.h"
-#include "tilespec.h"
+#include "../text.h"
+#include "../tilespec.h"
 
 #include "graphics.h"
 #include "gui_main.h"

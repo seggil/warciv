@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -28,12 +28,12 @@
 #include "shared.h"
 #include "support.h"
 
-#include "civclient.h"
-#include "clinet.h"     /* aconnection, server_has_extglobalinfo */
+#include "../civclient.h"
+#include "../clinet.h"  /* aconnection, server_has_extglobalinfo */
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
-#include "options.h"
+#include "../options.h"
 
 #include "inteldlg.h"
 

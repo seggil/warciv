@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -45,33 +45,33 @@
 #include "version.h"
 
 #include "chatline.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
 #include "colors.h"
 #include "connectdlg.h"
-#include "control.h"
+#include "../control.h"
 #include "dialogs.h"
 #include "gotodlg.h"
 #include "graphics.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
-#include "helpdata.h"                   /* boot_help_texts() */
+#include "../helpdata.h"                   /* boot_help_texts() */
 #include "mapctrl.h"
 #include "mapview.h"
 #include "menu.h"
 #include "messagewin.h"
-#include "multiselect.h"
+#include "../multiselect.h"
 #include "netintf.h"
 #include "optiondlg.h"
-#include "options.h"
+#include "../options.h"
 #include "pages.h"
 #include "spaceshipdlg.h"
 #include "resources.h"
-#include "tilespec.h"
+#include "../tilespec.h"
 
 
-#include "freeciv.ico"
+#include "../include/freeciv.ico"
 
 const char *client_string = "gui-gtk-2.0";
 

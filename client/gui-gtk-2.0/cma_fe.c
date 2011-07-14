@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -25,11 +25,11 @@
 #include "mem.h"
 #include "support.h"
 
-#include "chatline_g.h"
-#include "citydlg_g.h"
-#include "civclient.h"
-#include "cma_fec.h"
-#include "messagewin_g.h"
+#include "../include/chatline_g.h"
+#include "../include/citydlg_g.h"
+#include "../civclient.h"
+#include "../agents/cma_fec.h"
+#include "../include/messagewin_g.h"
 
 #include "cityrep.h"
 #include "dialogs.h"

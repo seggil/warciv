@@ -13,7 +13,7 @@
 #ifndef FC__GOTODLG_H
 #define FC__GOTODLG_H
 
-#include "gotodlg_g.h"
+#include "../include/gotodlg_g.h"
 
 void popup_goto_dialog_action(void);
 

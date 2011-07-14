@@ -13,7 +13,7 @@
 #ifndef FC__PLRDLG_H
 #define FC__PLRDLG_H
 
-#include "plrdlg_g.h"
+#include "../include/plrdlg_g.h"
 
 void raise_players_dialog(void);
 void popdown_players_dialog(void);

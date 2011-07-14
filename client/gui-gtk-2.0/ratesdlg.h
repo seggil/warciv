@@ -13,7 +13,7 @@
 #ifndef FC__RATESDLG_H
 #define FC__RATESDLG_H
 
-#include "ratesdlg_g.h"
+#include "../include/ratesdlg_g.h"
 
 /* nothing to add */
 

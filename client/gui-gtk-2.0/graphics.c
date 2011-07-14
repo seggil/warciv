@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -31,29 +31,29 @@
 #include "unit.h"
 #include "version.h"
 
-#include "climisc.h"
+#include "../climisc.h"
 #include "colors.h"
 #include "gui_main.h"
-#include "mapview_g.h"
-#include "options.h"
-#include "tilespec.h"
+#include "../include/mapview_g.h"
+#include "../options.h"
+#include "../tilespec.h"
 
 #include "graphics.h"
 
-#include "goto_cursor.xbm"
-#include "goto_cursor_mask.xbm"
-#include "drop_cursor.xbm"
-#include "drop_cursor_mask.xbm"
-#include "nuke_cursor.xbm"
-#include "nuke_cursor_mask.xbm"
-#include "patrol_cursor.xbm"
-#include "patrol_cursor_mask.xbm"
-#include "source_cursor.xbm"
-#include "source_cursor_mask.xbm"
-#include "dest_cursor.xbm"
-#include "dest_cursor_mask.xbm"
-#include "trade_cursor.xbm"
-#include "trade_cursor_mask.xbm"
+#include "../include/goto_cursor.xbm"
+#include "../include/goto_cursor_mask.xbm"
+#include "../include/drop_cursor.xbm"
+#include "../include/drop_cursor_mask.xbm"
+#include "../include/nuke_cursor.xbm"
+#include "../include/nuke_cursor_mask.xbm"
+#include "../include/patrol_cursor.xbm"
+#include "../include/patrol_cursor_mask.xbm"
+#include "../include/source_cursor.xbm"
+#include "../include/source_cursor_mask.xbm"
+#include "../include/dest_cursor.xbm"
+#include "../include/dest_cursor_mask.xbm"
+#include "../include/trade_cursor.xbm"
+#include "../include/trade_cursor_mask.xbm"
 
 SPRITE *intro_gfx_sprite;
 SPRITE *radar_gfx_sprite;

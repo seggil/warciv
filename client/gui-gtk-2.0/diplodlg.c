@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -31,14 +31,14 @@
 #include "support.h"
 
 #include "chatline.h"
-#include "civclient.h"
-#include "climisc.h"
-#include "clinet.h"
+#include "../civclient.h"
+#include "../climisc.h"
+#include "../clinet.h"
 #include "diptreaty.h"
 #include "gui_main.h"
 #include "gui_stuff.h"
 #include "mapview.h"
-#include "options.h"
+#include "../options.h"
 
 #include "diplodlg.h"
 

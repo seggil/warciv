@@ -17,9 +17,9 @@
 
 #include "gtkpixcomm.h"
 
-#include "citydlg_common.h"
-#include "mapview_g.h"
-#include "mapview_common.h"
+#include "../citydlg_common.h"
+#include "../include/mapview_g.h"
+#include "../mapview_common.h"
 
 #include "graphics.h"
 

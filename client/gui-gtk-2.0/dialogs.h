@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#include "dialogs_g.h"
+#include "../include/dialogs_g.h"
 
 struct tile;
 

@@ -13,7 +13,7 @@
 #ifndef FC__MESSAGEWIN_H
 #define FC__MESSAGEWIN_H
 
-#include "messagewin_g.h"
+#include "../include/messagewin_g.h"
 
 void raise_meswin_dialog(void);
 void popdown_meswin_dialog(void);

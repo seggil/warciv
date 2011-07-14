@@ -13,7 +13,7 @@
 #ifndef FC__INTELDLG_H
 #define FC__INTELDLG_H
 
-#include "inteldlg_g.h"
+#include "../include/inteldlg_g.h"
 
 /* nothing to add */
 

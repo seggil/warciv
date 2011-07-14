@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#include "mapctrl_g.h"
+#include "../include/mapctrl_g.h"
 
 struct unit;
 
