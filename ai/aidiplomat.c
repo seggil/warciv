@@ -56,7 +56,7 @@
 
 static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
                                   struct city **ctarget, int *move_dist,
-                                  struct pf_map *map);
+                                  struct path_finding_map *map);
 
 /******************************************************************************
   Number of improvements that can be sabotaged in pcity.
@@ -153,7 +153,7 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
 
   /* Do we have a good reason for building diplomats? */
   {
-    struct pf_map *map;
+    struct path_finding_map *map;
     struct pf_parameter parameter;
     struct unit_type *ut = get_unit_type(u);
     struct city *acity;
@@ -316,7 +316,7 @@ static void ai_diplomat_city(struct unit *punit, struct city *ctarget)
 **************************************************************************/
 static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
                                   struct city **ctarget, int *move_dist,
-                                  struct pf_map *map)
+                                  struct path_finding_map *map)
 {
   bool has_embassy;
   int incite_cost = 0; /* incite cost */
@@ -371,7 +371,7 @@ static void find_city_to_diplomat(struct player *pplayer, struct unit *punit,
 **************************************************************************/
 static struct city *ai_diplomat_defend(struct player *pplayer,
                                        struct unit *punit,
-                                       Unit_Type_id utype, struct pf_map *map)
+                                       Unit_Type_id utype, struct path_finding_map *map)
 {
   int best_dist = 30; /* any city closer than this is better than none */
   int best_urgency = 0;
@@ -433,8 +433,8 @@ static struct city *ai_diplomat_defend(struct player *pplayer,
   the ordeal, FALSE if not or we expended all our movement.
   Will try to bribe a ship on the coast as well as land stuff.
 **************************************************************************/
-static bool ai_diplomat_bribe_nearby(struct player *pplayer,
-                                     struct unit *punit, struct pf_map *map)
+static bool ai_diplomat_bribe_nearby(struct player *pplayer, 
+                                     struct unit *punit, struct path_finding_map *map)
 {
   int gold_avail = pplayer->economic.gold - pplayer->ai.est_upkeep;
   struct ai_data *ai = ai_data_get(pplayer);
@@ -543,7 +543,7 @@ void ai_manage_diplomat(struct player *pplayer, struct unit *punit)
 {
   struct city *pcity, *ctarget = NULL;
   struct pf_parameter parameter;
-  struct pf_map *map;
+  struct path_finding_map *map;
   struct pf_position pos;
 
   CHECK_UNIT(punit);

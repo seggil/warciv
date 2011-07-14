@@ -364,7 +364,7 @@ static void ai_hunter_try_launch(struct player *pplayer,
 {
   int target_sanity = target->id;
   struct pf_parameter parameter;
-  struct pf_map *map;
+  struct path_finding_map *map;
 
   unit_list_iterate(punit->tile->units, missile) {
     struct unit *sucker = NULL;

@@ -1335,8 +1335,8 @@ void military_advisor_choose_build(struct player *pplayer, struct city *pcity,
   } /* ok, don't need to defend */
 
   if (pcity->shield_surplus <= 0
-      || pcity->ppl_unhappy[4] > pcity->ppl_unhappy[2]) {
-    /* Things we consider below are not life-saving so we don't want to
+      || pcity->people_unhappy[4] > pcity->people_unhappy[2]) {
+    /* Things we consider below are not life-saving so we don't want to 
      * build them if our populace doesn't feel like it */
     return;
   }

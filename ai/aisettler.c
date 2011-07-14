@@ -465,7 +465,7 @@ static bool settler_map_iterate(struct pf_parameter *parameter,
   struct cityresult result;
   int best_turn = 0; /* Which turn we found the best fit */
   struct ai_data *ai = ai_data_get(pplayer);
-  struct pf_map *map;
+  struct path_finding_map *map;
   bool found = FALSE; /* The return value */
 
   map = pf_create_map(parameter);

@@ -304,7 +304,7 @@ int aiferry_find_boat(struct unit *punit, int cap, struct pf_path **path)
   int best_turns = FC_INFINITY;
   int best_id = 0;
   struct pf_parameter param;
-  struct pf_map *search_map;
+  struct path_finding_map *search_map;
 
 
   UNIT_LOG(LOGLEVEL_FINDFERRY, punit, "asked find_ferry for a boat");
@@ -570,7 +570,7 @@ bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,
 static bool aiferry_findcargo(struct unit *pferry)
 {
   /* Path-finding stuff */
-  struct pf_map *map;
+  struct path_finding_map *map;
   struct pf_parameter parameter;
   int passengers = ai_data_get(unit_owner(pferry))->stats.passengers;
 
@@ -631,7 +631,7 @@ static bool aiferry_findcargo(struct unit *pferry)
 static bool aiferry_find_interested_city(struct unit *pferry)
 {
   /* Path-finding stuff */
-  struct pf_map *map;
+  struct path_finding_map *map;
   struct pf_parameter parameter;
   /* Early termination condition */
   int turns_horizon = FC_INFINITY;

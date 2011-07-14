@@ -266,7 +266,7 @@ bool ai_manage_explorer(struct unit *punit)
   int best_MC = FC_INFINITY;
 
   /* Path-finding stuff */
-  struct pf_map *map;
+  struct path_finding_map *map;
   struct pf_parameter parameter;
 
 #define DIST_FACTOR   0.6

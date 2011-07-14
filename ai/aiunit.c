@@ -665,7 +665,7 @@ static int ai_rampage_want(struct unit *punit, struct tile *ptile)
 static struct pf_path *find_rampage_target(struct unit *punit,
                                            int thresh_adj, int thresh_move)
 {
-  struct pf_map *tgt_map;
+  struct path_finding_map *tgt_map;
   struct pf_path *path = NULL;
   struct pf_parameter parameter;
   /* Coordinates of the best target (initialize to silence compiler) */

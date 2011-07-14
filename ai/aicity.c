@@ -87,9 +87,9 @@ int ai_eval_calc_city(struct city *pcity, struct ai_data *ai)
            + pcity->luxury_total * ai->luxury_priority
            + pcity->tax_total * ai->gold_priority
            + pcity->science_total * ai->science_priority
-           + pcity->ppl_happy[4] * ai->happy_priority
-           - pcity->ppl_unhappy[4] * ai->unhappy_priority
-           - pcity->ppl_angry[4] * ai->angry_priority
+           + pcity->people_happy[4] * ai->happy_priority
+           - pcity->people_unhappy[4] * ai->unhappy_priority
+           - pcity->people_angry[4] * ai->angry_priority
            - pcity->pollution * ai->pollution_priority);
 
   if (pcity->food_surplus < 0 || pcity->shield_surplus < 0) {
@@ -278,39 +278,39 @@ static void adjust_building_want_by_effects(struct city *pcity,
             /* TODO */
             break;
           case EFT_NO_UNHAPPY:
-            v += (pcity->specialists[SP_ELVIS] + pcity->ppl_unhappy[4]) * 20;
+            v += (pcity->specialists[SP_ELVIS] + pcity->people_unhappy[4]) * 20;
             break;
           case EFT_FORCE_CONTENT:
             if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
-              v += (pcity->ppl_unhappy[4] + pcity->specialists[SP_ELVIS]) * 20;
+              v += (pcity->people_unhappy[4] + pcity->specialists[SP_ELVIS]) * 20;
               v += 5 * c;
             }
             break;
           case EFT_MAKE_CONTENT_MIL_PER:
           case EFT_MAKE_CONTENT:
             if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
-              v += MIN(pcity->ppl_unhappy[4] + pcity->specialists[SP_ELVIS],
+              v += MIN(pcity->people_unhappy[4] + pcity->specialists[SP_ELVIS],
                        amount) * 20;
               v += MIN(amount, 5) * c;
             }
             break;
           case EFT_MAKE_CONTENT_MIL:
             if (!government_has_flag(gov, G_NO_UNHAPPY_CITIZENS)) {
-              v += pcity->ppl_unhappy[4] * amount
-                   * MAX(unit_list_size(pcity->units_supported)
-                   - gov->free_happy, 0) * 2;
+              v += pcity->people_unhappy[4] * amount
+                * MAX(unit_list_size(pcity->units_supported)
+                    - gov->free_happy, 0) * 2;
               v += c * MAX(amount + 2 - gov->free_happy, 1);
             }
             break;
           case EFT_TECH_PARASITE:
             v += (total_bulbs_required(pplayer) * (100 - game.info.freecost)
-                 * (nplayers - amount)) / (nplayers * amount * 100);
+                * (nplayers - amount)) / (nplayers * amount * 100);
             break;
           case EFT_GROWTH_FOOD:
             v += c * 4 + (amount / 7) * pcity->food_surplus;
             break;
           case EFT_AIRLIFT:
-            /* FIXME: We need some smart algorithm here. The below is
+            /* FIXME: We need some smart algorithm here. The below is 
              * totally braindead. */
             v += c + MIN(ai->stats.units.land, 13);
             break;
@@ -1058,7 +1058,7 @@ static void resolve_city_emergency(struct player *pplayer, struct city *pcity)
   freelog(LOG_EMERGENCY,
           "Emergency in %s (%s, angry%d, unhap%d food%d, prod%d)",
           pcity->name, city_unhappy(pcity) ? "unhappy" : "content",
-          pcity->ppl_angry[4], pcity->ppl_unhappy[4],
+          pcity->people_angry[4], pcity->people_unhappy[4],
           pcity->food_surplus, pcity->shield_surplus);
 
   map_city_radius_iterate(pcity->tile, ptile) {
