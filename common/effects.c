@@ -11,7 +11,7 @@
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "../config.h"
 #endif
 
 #include <assert.h>
@@ -33,7 +33,7 @@
 #include "packets.h"
 #include "player.h"
 #include "tech.h"
- 
+
 /* Names of effect ranges.
  * (These must correspond to enum effect_range_id in effects.h.)
  * do not change these unless you know what you're doing! */

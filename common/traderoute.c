@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "../config.h"
 #endif
 
 #include <assert.h>
@@ -33,7 +33,7 @@
 
 #include "city.h"
 #include "game.h"
-#include "pf_tools.h"
+#include "aicore/pf_tools.h"
 
 #include "traderoute.h"
 

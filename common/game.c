@@ -12,14 +12,14 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "../config.h"
 #endif
 
 #include <assert.h>
 
 #include "capstr.h"
 #include "city.h"
-#include "cm.h"
+#include "aicore/cm.h"
 #include "connection.h"
 #include "fcintl.h"
 #include "government.h"

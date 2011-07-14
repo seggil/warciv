@@ -1412,7 +1412,7 @@ void *get_packet_from_connection_helper(struct connection *pc, enum packet_type 
 
     output_c.write('''
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../<config.h"
 #endif
 
 #include <assert.h>

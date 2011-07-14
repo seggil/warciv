@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -31,7 +31,7 @@
 #include "packets.h"
 #include "traderoute.h"
 
-#include "cm.h"
+#include "aicore/cm.h"
 
 #include "city.h"
 
