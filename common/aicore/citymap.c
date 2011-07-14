@@ -12,34 +12,34 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../../config.h"
 #endif
 
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#include "city.h"
-#include "game.h"
+#include "../city.h"
+#include "../game.h"
 #ifdef DEBUG
-#include "log.h"
+# include "log.h"
 #endif
-#include "map.h"
+#include "../map.h"
 #include "mem.h"
 #include "support.h"
-#include "unit.h"
-#include "unittype.h"
+#include "../unit.h"
+#include "../unittype.h"
 
 #include "citymap.h"
 
 /* CITYMAP - reserve space for cities
  *
  * The citymap is a large int double array that corresponds to
- * the freeciv main map. For each tile, it stores three different 
+ * the freeciv main map. For each tile, it stores three different
  * and exclusive values in a single int: A positive int tells you
- * how many cities can use this tile (a crowdedness inidicator). A 
- * value of zero indicates that the tile is presently unused and 
- * available. A negative value means that this tile is occupied 
+ * how many cities can use this tile (a crowdedness inidicator). A
+ * value of zero indicates that the tile is presently unused and
+ * available. A negative value means that this tile is occupied
  * and reserved by some city or unit: in this case the value gives
  * the negative of the ID of the city or unit that has reserved the
  * tile.

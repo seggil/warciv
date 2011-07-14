@@ -26,7 +26,7 @@
  * the weighted sum over the surplus of each type.
  */
 
-#include "city.h"               /* CITY_MAP_SIZE */
+#include "../city.h"            /* CITY_MAP_SIZE */
 #include "shared.h"             /* bool type */
 
 /* A result which can examined. */
