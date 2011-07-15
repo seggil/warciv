@@ -4,6 +4,8 @@
 
 %define version_full @VERSION@
 %define name @PACKAGE@
+%define pkgdatadir %{_datadir}/@PACKAGE@
+#-@VERSION_WITHOUT_LABEL@
 
 # Macros from rpm-4.0.4
 %define def_with() %{expand:%%{!?_with_%{1}: %%{!?_without_%{1}: %%global _with_%{1} --with-%{1}}}}
@@ -17,7 +19,7 @@ Release:	1
 License:	GPL
 Group:		Games/Strategy
 Url:		http://www.freeciv.org
-Source:		%{name}-%{version_full}.tar.gz
+Source:		%{name}-%{version_full}.tar.bz2
 
 Requires: %name-client = %version-%release
 Requires: %name-server = %version-%release
@@ -26,27 +28,18 @@ Requires: %name-server = %version-%release
 %define clients_list %{?_with_gtk2:gtk2}
 
 BuildRoot:	%{_tmppath}/%{name}-%{version_full}-buildroot
-Packager:	Freeciv Team <rt@freeciv.org>
-
-%package common
-Summary: Turn-based strategy game, inspired by the commercial Civilization series - common files
-Group: Games/Strategy
+#Packager:	Freeciv Team <rt@freeciv.org>
 
 %package server
 Summary: Turn-based strategy game, inspired by the commercial Civilization series - server
 Group: Games/Strategy
-Requires: %name-common = %version-%release
+#Requires: %name-common = %version-%release
 
 %package client
 Summary: Turn-based strategy game, inspired by the commercial Civilization series - common client files
 Group: Games/Strategy
-Requires: %name-client-gui = %version-%release
+#Requires: %name-client-gui = %version-%release
 
-%package client-gtk2
-Summary: Turn-based strategy game, inspired by the commercial Civilization series - GTK2 client
-Group: Games/Strategy
-Provides: %name-client-gui = %version-%release
-Requires: %name-common = %version-%release
 
 %description
 Freeciv is a free turn-based multiplayer strategy game, in which each
@@ -61,22 +54,6 @@ Warclient is modpack Freeciv that enhances the client''s control
 of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
 See http://freeciv.freeforums.org/.
-
-%description common
-Freeciv is a free turn-based multiplayer strategy game, in which each
-player becomes the leader of a civilization, fighting to obtain the
-ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since
-one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and
-enthusiasts, and is easily one of the most fun and addictive network
-games out there!
-Warclient is modpack Freeciv that enhances the client''s control
-of units and cities.  This makes control faster, which is good for
-multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
-
-This package contains files common for client ans server.
 
 %description server
 Freeciv is a free turn-based multiplayer strategy game, in which each
@@ -108,74 +85,29 @@ of units and cities.  This makes control faster, which is good for
 multiplayer war games. Pepclient feature are added and enhances that.
 See http://freeciv.freeforums.org/.
 
-This package contains Freeciv client common files.
-
-%description client-gtk2
-Freeciv is a free turn-based multiplayer strategy game, in which each
-player becomes the leader of a civilization, fighting to obtain the
-ultimate goal: To become the greatest civilization.
-Players of Civilization II by Microprose should feel at home, since
-one aim of Freeciv is to have compatible rules.
-Freeciv is maintained by an international team of coders and
-enthusiasts, and is easily one of the most fun and addictive network
-games out there!
-Warclient is modpack Freeciv that enhances the client''s control
-of units and cities.  This makes control faster, which is good for
-multiplayer war games. Pepclient feature are added and enhances that.
-See http://freeciv.freeforums.org/.
-
-This package contains Freeciv client with Gtk2 interface (default
-Freeciv GUI).
+This package contains Freeciv client.
 
 %prep
 %setup -q -n %{name}-%{version_full}
+
 %build
 # First build server.
-	%__mkdir_p build-server
-	pushd build-server
-	../configure %{?_enable_debug:--enable-debug=yes} \
-		--enable-client=no \
-		--prefix=/usr	\
-		--mandir=%{_mandir} \
-		--bindir=%{_gamesbindir} \
-		--datadir=%{_gamesdatadir}
+  ./configure %{?_enable_debug:--enable-debug=yes} \
+	--enable-client \
+	--enable-server  \
+	--prefix=/usr	\
+	--mandir=%{_mandir} \
+	--bindir=%{_bindir} \
+	--datadir=%{_datadir}
 	make
-        popd
 
-# Then clients.
-for client in %clients_list; do
-	%__mkdir_p build-$client
-	pushd build-$client
-	../configure %{?_enable_debug:--enable-debug=yes} \
-		--disable-server \
-		--enable-client=$client \
-		--mandir=%{_mandir} \
-		--prefix=/usr/	\
-		--bindir=%{_gamesbindir} \
-		--datadir=%{_gamesdatadir}
-	make
-	popd
-done
+%install
+  make install bindir=$RPM_BUILD_ROOT%{_bindir} \
+	       datadir=$RPM_BUILD_ROOT%{_datadir} \
+	       localedir=$RPM_BUILD_ROOT%{_datadir}/locale \
+	       mandir=$RPM_BUILD_ROOT%{_mandir} \
+	       prefix=$RPM_BUILD_ROOT/usr
 
-# Install clients.
-for client in %clients_list; do
-	make install bindir=$RPM_BUILD_ROOT%{_gamesbindir} \
-		     datadir=$RPM_BUILD_ROOT%{_gamesdatadir} \
-		     localedir=$RPM_BUILD_ROOT%{_datadir}/locale \
-		     mandir=$RPM_BUILD_ROOT%{_mandir} \
-		     prefix=$RPM_BUILD_ROOT/usr \
-		     -C build-$client
-	%__mv $RPM_BUILD_ROOT%{_gamesbindir}/civclient \
-		$RPM_BUILD_ROOT%{_gamesbindir}/civclient-$client
-done
-
-# Install server.
-	make install bindir=$RPM_BUILD_ROOT%{_gamesbindir} \
-		     datadir=$RPM_BUILD_ROOT%{_gamesdatadir} \
-		     localedir=$RPM_BUILD_ROOT%{_datadir}/locale \
-		     mandir=$RPM_BUILD_ROOT%{_mandir} \
-		     prefix=$RPM_BUILD_ROOT/usr \
-		     -C build-server
 %find_lang %{name}
 
 %clean
@@ -193,82 +125,69 @@ rm -fr %buildroot
 %postun client
 %clean_menus
 
-%post client-gtk2
-/usr/sbin/update-alternatives --install \
-				%{_gamesbindir}/civclient \
-				%name-client \
-				%{_gamesbindir}/civclient-gtk2 30
-
-%preun client-gtk2
-[ $1 = 0 ] || exit 0
-/usr/sbin/update-alternatives --remove \
-				%name-client \
-				%{_gamesbindir}/civclient-gtk2
-
-%files common -f %name.lang
-%defattr(644, root, root, 0755)
-%doc COPYING NEWS doc/BUGS doc/HOWTOPLAY doc/PEOPLE doc/README
-
 %files server
 %defattr(755, root, games, 0755)
-%{_gamesbindir}/civserver
+%{_bindir}/civserver
+%dir %{pkgdatadir}/contrib
+%{pkgdatadir}/contrib/*
+#%dir %{pkgdatadir}/contrib/daemon
+#%{pkgdatadir}/contrib/daemon/*
 %defattr(644, root, root, 0755)
 %doc COPYING NEWS
-%doc doc/BUGS doc/HACKING doc/PEOPLE doc/README
+%doc doc/BUGS doc/HACKING doc/README
 %doc doc/README.AI doc/README.agents doc/README.attributes doc/README.cma
 %doc doc/README.delta doc/README.effects
 #README.graphics and README.sound are included in client package
 %doc doc/README.scorelog doc/TODO
-%{_gamesdatadir}/%{name}/1.14style
-%{_gamesdatadir}/%{name}/civ1
-%{_gamesdatadir}/%{name}/civ1.serv
-%{_gamesdatadir}/%{name}/civ2
-%{_gamesdatadir}/%{name}/civ2.serv
-%{_gamesdatadir}/%{name}/default
-%{_gamesdatadir}/%{name}/duel
-%{_gamesdatadir}/%{name}/exemple-actions.txt
-%{_gamesdatadir}/%{name}/exemple-welcome.txt
-%{_gamesdatadir}/%{name}/experimental
-%{_gamesdatadir}/%{name}/Freeciv.in
-%{_gamesdatadir}/%{name}/freeciv.rc
-%{_gamesdatadir}/%{name}/freeciv.rc-2.0
-%{_gamesdatadir}/%{name}/graphics
-%{_gamesdatadir}/%{name}/history
-%{_gamesdatadir}/%{name}/history.serv
-%{_gamesdatadir}/%{name}/maps
-%{_gamesdatadir}/%{name}/nation
-%{_gamesdatadir}/%{name}/nowonder+1.2
-%{_gamesdatadir}/%{name}/nowonder+1.2.serv
-%{_gamesdatadir}/%{name}/scenario
-%{_gamesdatadir}/%{name}/stdsounds
-%{_gamesdatadir}/%{name}/stdsounds.soundspec
-%{_gamesdatadir}/%{name}/tournament
-%{_gamesdatadir}/%{name}/tournament.serv
-%{_gamesdatadir}/%{name}/warruleset-1.2
-%{_gamesdatadir}/%{name}/warruleset-1.2.serv
-%{_gamesdatadir}/%{name}/warruleset-1.3
-%{_gamesdatadir}/%{name}/warruleset-1.3.serv
-%{_gamesdatadir}/%{name}/warserver.serv
-%{_mandir}/man6/civserver.6
+%{pkgdatadir}/auth.sql
+%{pkgdatadir}/fcdb.sql
+%{pkgdatadir}/example-actions.txt
+%{pkgdatadir}/example-welcome.txt
+%{pkgdatadir}/1.14style
+%{pkgdatadir}/civ1
+%{pkgdatadir}/civ1.serv
+%{pkgdatadir}/civ2
+%{pkgdatadir}/civ2.serv
+%{pkgdatadir}/default
+%{pkgdatadir}/duel
+%{pkgdatadir}/experimental
+#%{pkgdatadir}/Freeciv.in
+#%{pkgdatadir}/freeciv.rc
+#%{pkgdatadir}/freeciv.rc-2.0
+#%{pkgdatadir}/graphics
+%{pkgdatadir}/history
+%{pkgdatadir}/history.serv
+%{pkgdatadir}/maps
+%{pkgdatadir}/nation
+%{pkgdatadir}/nowonder+-1.2
+%{pkgdatadir}/nowonder-1.2
+%{pkgdatadir}/scenario
+%{pkgdatadir}/stdsounds
+%{pkgdatadir}/stdsounds.soundspec
+%{pkgdatadir}/tournament
+%{pkgdatadir}/tournament.serv
+%{pkgdatadir}/warruleset-1.2
+%{pkgdatadir}/warruleset-1.2.serv
+%{pkgdatadir}/warruleset-1.3
+%{pkgdatadir}/warruleset-1.3.serv
+%{pkgdatadir}/warserver.serv
+%{_mandir}/man6/civserver.6.gz
 
 %files client
 %defattr(644,root,root,0755)
 %doc COPYING NEWS
 %doc doc/README.graphics doc/README.sound doc/HOWTOPLAY
-%{_gamesdatadir}/%{name}/fonts
-%{_gamesdatadir}/%{name}/flags
-%{_gamesdatadir}/%{name}/isotrident
-%{_gamesdatadir}/%{name}/misc
-%{_gamesdatadir}/%{name}/trident
-%{_gamesdatadir}/%{name}/isophex
-%{_gamesdatadir}/%{name}/helpdata.txt
-%{_gamesdatadir}/%{name}/*.tilespec
-%{_mandir}/man6/civclient.6
+%{pkgdatadir}/flags
+%{pkgdatadir}/isotrident
+%{pkgdatadir}/misc
+%{pkgdatadir}/trident
+%{pkgdatadir}/isophex
+%{pkgdatadir}/helpdata.txt
+%{pkgdatadir}/*.tilespec
+%{_mandir}/man6/civclient.6.gz
 /usr/share/applications/freeciv.desktop
-%defattr(755, root, games, 0755)
+/usr/share/locale
+%{pkgdatadir}/freeciv.rc-2.0
+%{_bindir}/civclient
+%{_bindir}/civmanual
 
-%if_with gtk2
-%files client-gtk2
-%{_gamesdatadir}/%{name}/freeciv.rc-2.0
-%{_gamesbindir}/civclient-gtk2
-%endif #gtk2
