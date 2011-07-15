@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ static int con_dump(enum rfc_status rfc_status, const char *message, ...)
 {
   static char buf[MAX_LEN_CONSOLE_LINE];
   va_list args;
-  
+
   va_start(args, message);
   my_vsnprintf(buf, sizeof(buf), message, args);
   va_end(args);
@@ -119,7 +119,7 @@ void con_write(enum rfc_status rfc_status, const char *message, ...)
 {
   static char buf[MAX_LEN_CONSOLE_LINE];
   va_list args;
-  
+
   va_start(args, message);
   my_vsnprintf(buf, sizeof(buf), message, args);
   va_end(args);
@@ -157,7 +157,7 @@ void con_puts(enum rfc_status rfc_status, const char *str)
 }
 
 /************************************************************************
-Ensure timely update. 
+Ensure timely update.
 ************************************************************************/
 void con_flush(void)
 {
@@ -170,7 +170,7 @@ Set style.
 void con_set_style(bool i)
 {
   console_rfcstyle = i;
-  if (console_rfcstyle) 
+  if (console_rfcstyle)
     con_puts(C_OK, _("Ok. RFC-style set."));
   else
     con_puts(C_OK, _("Ok. Standard style set."));
@@ -216,7 +216,7 @@ void con_prompt_off(void)
 }
 
 /************************************************************************
-User pressed enter: will need a new prompt 
+User pressed enter: will need a new prompt
 ************************************************************************/
 void con_prompt_enter(void)
 {

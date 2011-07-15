@@ -91,12 +91,12 @@ static char when_char(int when)
   return (when >= 0 && when < sizeof(list)) ? list[when] : '?';
 }
 
-/* 
+/*
  * Writes the map_char_expr expression for each position on the map.
  * map_char_expr is provided with the variables x,y to evaluate the
  * position. The 'type' argument is used for formatting by printf; for
  * instance it should be "%c" for characters.  The data is printed in a
- * native orientation to make it easier to read.  
+ * native orientation to make it easier to read.
  */
 #define WRITE_MAP_DATA(type, map_char_expr)		\
 {							\
@@ -457,9 +457,9 @@ void calc_civ_score(struct player *pplayer)
       pplayer->score.techs++;
     }
   } tech_type_iterate_end;
-  
+
   if(game.ext_info.futuretechsscore)pplayer->score.techs += pplayer->future_tech * 5 / 2;
-  
+
   unit_list_iterate(pplayer->units, punit) {
     if (is_military_unit(punit)) {
       pplayer->score.units++;
@@ -569,7 +569,7 @@ void save_ppm(void)
 
   for (i = 0; i < game.info.nplayers; i++) {
     struct player *pplayer = get_player(i);
-    fprintf(fp, "# playerno:%d:color:#%02x%02x%02x:name:\"%s\"\n", 
+    fprintf(fp, "# playerno:%d:color:#%02x%02x%02x:name:\"%s\"\n",
             pplayer->player_no, col[i][0], col[i][1], col[i][2],
             pplayer->name);
   }
@@ -652,7 +652,7 @@ static void dump_groupings(void)
   int i;
 
   freelog(LOG_DEBUG, "BEGIN GROUPING DUMP num_groupings=%d",
-          num_groupings); 
+          num_groupings);
   for (i = 0, p = groupings; i < num_groupings; i++, p++) {
     dump_grouping(p, i);
   }
@@ -709,7 +709,7 @@ static int grouping_compare(const void *va, const void *vb)
     return -1;
   if (a->result != PR_DRAW && b->result == PR_DRAW)
     return 1;
-  
+
   dscore = a->score - b->score;
   if (fabs(dscore) < MINIMUM_SCORE_DIFFERENCE) {
     if (a->num_alive > 0 && b->num_alive <= 0)
@@ -782,7 +782,7 @@ static bool game_can_be_rated(void)
 
   freelog(LOG_DEBUG, "game_can_be_rated num_rated_users=%d game.info.turn=%d",
           num_rated_users, game.info.turn);
-  
+
   if ((game.server.fcdb.type == GT_SOLO && num_rated_users < 1)
       || (game.server.fcdb.type != GT_SOLO && num_rated_users < 2)) {
     notify_conn(NULL, _("Game: The game cannot be rated because there "
@@ -1069,7 +1069,7 @@ static void update_ratings(void)
       sum += gRD[j] * (sj - E);
       inv_d2 += gRD[j] * gRD[j] * E * (1.0 - E);
     }
-    
+
     inv_d2 = q2 * inv_d2;
 
     new_r = r + (q / (1.0 / RD2 + inv_d2)) * sum;
@@ -1178,7 +1178,7 @@ static void calculate_fractional_ranking(void *base,
     }
     i = j;
   } while (i < nmemb);
-  
+
 }
 /**************************************************************************
   NB: Modifies global grouping array.
@@ -1408,7 +1408,7 @@ void score_evaluate_players(void)
   freelog(LOG_DEBUG, "Groupings after assign, update and propagate:");
   dump_groupings();
 #endif
-  
+
   if (!game.server.rated || !srvarg.fcdb.enabled || !srvarg.auth.enabled) {
     return;
   }

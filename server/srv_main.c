@@ -134,7 +134,7 @@ struct server_arguments srvarg;
 enum server_states server_state = PRE_GAME_STATE;
 bool nocity_send = FALSE;
 
-/* this global is checked deep down the netcode. 
+/* this global is checked deep down the netcode.
    packets handling functions can set it to none-zero, to
    force end-of-tick asap
 */
@@ -184,7 +184,7 @@ void init_game_seed(void)
        server options can handle unsigned ints yet. - Cedric */
     game.server.seed = time(NULL) & (MAX_UINT32 >> 1);
   }
- 
+
   if (!myrand_is_init()) {
     mysrand(game.server.seed);
   }
@@ -265,9 +265,9 @@ static bool is_game_over(void)
 
   /* quit if we are past the year limit */
   if (game.info.year > game.info.end_year) {
-    notify_conn_ex(game.est_connections, NULL, E_GAME_END, 
+    notify_conn_ex(game.est_connections, NULL, E_GAME_END,
 		   _("Game ended in a draw as end year exceeded"));
-    gamelog(GAMELOG_JUDGE, GL_DRAW, 
+    gamelog(GAMELOG_JUDGE, GL_DRAW,
             "Game ended in a draw as end year exceeded");
 
     game.server.fcdb.outcome = GOC_DRAWN_BY_ENDYEAR;
@@ -295,7 +295,7 @@ static bool is_game_over(void)
   /* the game does not quit if we are playing solo */
   if (game.info.nplayers == (barbs + 1)) {
     return FALSE;
-  } 
+  }
 
   /* count the living */
   players_iterate(pplayer) {
@@ -340,7 +340,7 @@ static bool is_game_over(void)
 
     return TRUE;
   } else if (alive == 0) {
-    notify_conn_ex(game.est_connections, NULL, E_GAME_END, 
+    notify_conn_ex(game.est_connections, NULL, E_GAME_END,
 		   _("Game ended in a draw"));
     gamelog(GAMELOG_JUDGE, GL_DRAW);
 
@@ -369,7 +369,7 @@ static bool is_game_over(void)
     }
   } players_iterate_end;
   if (all_allied) {
-    notify_conn_ex(game.est_connections, NULL, E_GAME_END, 
+    notify_conn_ex(game.est_connections, NULL, E_GAME_END,
 		   _("Game ended in allied victory"));
     gamelog(GAMELOG_JUDGE, GL_ALLIEDWIN);
 
@@ -526,9 +526,9 @@ static void update_diplomatics(void)
   	}
         }
     } players_iterate_end;
-    player1->reputation = 
-      MIN((get_player_bonus(player1, EFT_REGEN_REPUTATION) * 
-           GAME_MAX_REPUTATION / 1000) + 
+    player1->reputation =
+      MIN((get_player_bonus(player1, EFT_REGEN_REPUTATION) *
+           GAME_MAX_REPUTATION / 1000) +
 	  player1->reputation + GAME_REPUTATION_INCR,
           GAME_MAX_REPUTATION);
   } players_iterate_end;
@@ -652,8 +652,8 @@ static void begin_phase(bool is_new_phase)
 static void end_phase(void)
 {
   freelog(LOG_DEBUG, "Endphase");
- 
-  /* 
+
+  /*
    * This empties the client Messages window; put this before
    * everything else below, since otherwise any messages from the
    * following parts get wiped out before the user gets a chance to
@@ -831,10 +831,10 @@ void save_game(char *orig_filename)
     my_snprintf(filename, sizeof(filename),
 	"%s%+05dm", game.server.save_name, game.info.year);
   }
-  
+
   timer_cpu = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
   timer_user = new_timer_start(TIMER_USER, TIMER_ACTIVE);
-    
+
   section_file_init(&file);
   game_save(&file);
 
@@ -880,7 +880,7 @@ void save_game_auto(void)
   char filename[512];
 
   assert(strlen(game.server.save_name)<256);
-  
+
   my_snprintf(filename, sizeof(filename),
 	      "%s%+05d.sav", game.server.save_name, game.info.year);
   save_game(filename);
@@ -923,7 +923,7 @@ void server_quit(void)
 void handle_report_req(struct connection *pconn, enum report_type type)
 {
   struct conn_list *dest = pconn->self;
-  
+
   if (server_state != RUN_GAME_STATE && server_state != GAME_OVER_STATE
       && type != REPORT_SERVER_OPTIONS1 && type != REPORT_SERVER_OPTIONS2) {
     freelog(LOG_ERROR, "Got a report request %d before game start", type);
@@ -1015,7 +1015,7 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
   if (!packet)
     return TRUE;
 
-  /* 
+  /*
    * Old pre-delta clients (before 2003-11-28) send a
    * PACKET_LOGIN_REQUEST (type 0) to the server. We catch this and
    * reply with an old reject packet. Since there is no struct for
@@ -1045,7 +1045,7 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
       dio_output_rewind(&dout);
       dio_put_uint16(&dout, size);
 
-      /* 
+      /*
        * Use send_connection_data instead of send_packet_data to avoid
        * compression.
        */
@@ -1079,7 +1079,7 @@ bool handle_packet_input(struct connection *pconn, void *packet, int type)
   }
 
   conn_reset_idle_time(pconn);
-  
+
   /* valid packets from established connections but non-players */
   if (type == PACKET_CHAT_MSG_REQ) {
     handle_chat_msg_req(pconn,
@@ -1299,8 +1299,8 @@ void handle_nation_select_req(struct player *pplayer,
     freelog(LOG_ERROR, _("Trying to alloc nation outside "
 			 "of SELECT_RACES_STATE!"));
     return;
-  }  
-  
+  }
+
   /* check sanity of the packet sent by client */
   if (nation_no < 0 || nation_no >= game.ruleset_control.nation_count ||
       city_style < 0 || city_style >= game.ruleset_control.style_count ||
@@ -1351,8 +1351,8 @@ void send_select_nation(struct player *pplayer)
 /**************************************************************************
   If all players have chosen the same nation class, return
   this class, otherwise return NULL.
-**************************************************************************/  
-static char* find_common_class(void) 
+**************************************************************************/
+static char* find_common_class(void)
 {
   char* class = NULL;
   struct nation_type* nation;
@@ -1360,7 +1360,7 @@ static char* find_common_class(void)
   players_iterate(pplayer) {
     if (pplayer->nation == NO_NATION_SELECTED) {
       /* still undecided */
-      continue;  
+      continue;
     }
     nation = get_nation_by_idx(pplayer->nation);
     assert(nation->class != NULL);
@@ -1423,7 +1423,7 @@ generate_ai_players() - Selects a nation for players created with
    than the number of players currently connected.  If so, we create the
    appropriate number of players (game.server.aifill - game.info.nplayers) from
    scratch, choosing a random nation and appropriate name for each.
-   
+
    When we choose a nation randomly we try to consider only nations
    that are in the same class as nations choosen by other players.
    (I.e., if human player decides to play English, AI won't use Mordorians.)
@@ -1447,7 +1447,7 @@ static void generate_ai_players(void)
   common_class = find_common_class();
   for (i=0; i<game.info.nplayers; i++) {
     pplayer = &game.players[i];
-    
+
     if (pplayer->nation != NO_NATION_SELECTED) {
       continue;
     }
@@ -1472,14 +1472,14 @@ static void generate_ai_players(void)
       freelog(LOG_NORMAL,
 	      _("Ran out of nations.  AI controlled player %s not created."),
 	      pplayer->name);
-      server_remove_player(pplayer); 
+      server_remove_player(pplayer);
       /*
        * Below decrement loop index 'i' so that the loop is redone with
        * the current index (if 'i' is still less than new game.info.nplayers).
        * This is because subsequent players in list will have been shifted
        * down one spot by the remove, and may need handling.
        */
-      i--;  
+      i--;
       continue;
     } else {
       mark_nation_as_used(nation);
@@ -1490,7 +1490,7 @@ static void generate_ai_players(void)
 
     announce_ai_player(pplayer);
   }
-  
+
   /* We do this again, because user could type:
    * >create Hammurabi
    * >set aifill 5
@@ -1524,7 +1524,7 @@ static void generate_ai_players(void)
 
     old_nplayers = game.info.nplayers;
     pplayer = get_player(old_nplayers);
-     
+
     sz_strlcpy(pplayer->name, player_name);
     sz_strlcpy(pplayer->username, ANON_USER_NAME);
 
@@ -1542,7 +1542,7 @@ static void generate_ai_players(void)
 		player_name);
       break;			/* don't loop forever */
     }
-      
+
     pplayer->nation = nation;
     pplayer->city_style = get_nation_city_style(nation);
     pplayer->ai.control = TRUE;
@@ -1571,13 +1571,13 @@ static bool good_name(char *ptry, char *buf) {
 
 /*************************************************************************
  pick_ai_player_name() - Returns a random ruler name picked from given nation
-     ruler names, given that nation's number. If that player name is already 
+     ruler names, given that nation's number. If that player name is already
      taken, iterates through all leader names to find unused one. If it fails
      it iterates through "Player 1", "Player 2", ... until an unused name
      is found.
  newname should point to a buffer of size at least MAX_LEN_NAME.
 *************************************************************************/
-void pick_ai_player_name(Nation_Type_id nation, char *newname) 
+void pick_ai_player_name(Nation_Type_id nation, char *newname)
 {
    int i, names_count;
    struct leader *leaders;
@@ -1592,13 +1592,13 @@ void pick_ai_player_name(Nation_Type_id nation, char *newname)
        return;
      }
    }
-   
+
    for(i=0; i<names_count; i++) {
      if (good_name(leaders[i].name, newname)) {
        return;
      }
    }
-   
+
    for(i=1; /**/; i++) {
      char tempname[50];
      my_snprintf(tempname, sizeof(tempname), _("Player %d"), i);
@@ -1672,9 +1672,9 @@ static void main_loop(void)
 
   eot_timer = new_timer_start(TIMER_CPU, TIMER_ACTIVE);
 
-  /* 
+  /*
    * This will freeze the reports and agents at the client.
-   * 
+   *
    * Do this before the body so that the PACKET_THAW_CLIENT packet is
    * balanced.
    */
@@ -1692,7 +1692,7 @@ static void main_loop(void)
 
     force_end_of_sniff = FALSE;
 
-    /* 
+    /*
      * This will thaw the reports and agents at the client.
      */
     thaw_clients();
@@ -1711,7 +1711,7 @@ static void main_loop(void)
       save_game_auto();
     }
     save_counter++;
-    
+
     freelog(LOG_DEBUG, "sniffingpackets");
     while (sniff_packets() == 1) {
       /* nothing */
@@ -1719,12 +1719,12 @@ static void main_loop(void)
 
     /* After sniff, re-zero the timer: (read-out above on next loop) */
     clear_timer_start(eot_timer);
-    
+
     conn_list_do_buffer(game.game_connections);
 
     sanity_check();
 
-    /* 
+    /*
      * This will freeze the reports and agents at the client.
      */
     freeze_clients();
@@ -1743,7 +1743,7 @@ static void main_loop(void)
 
   clear_all_votes(); /* Prevent some problems about commands. */
 
-  /* 
+  /*
    * This will thaw the reports and agents at the client.
    */
   thaw_clients();
@@ -2210,7 +2210,7 @@ void unregister_background_function(int id)
       bc = p;
       break;
     }
-  } bgfc_list_iterate_end;  
+  } bgfc_list_iterate_end;
 
   if (bc != NULL) {
     bgfc_list_unlink(background_functions, bc);

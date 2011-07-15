@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #define MAX_AI_CITIES 15
 
 /* The Trade Weighting has to about as large as the Shield Weighting,
-   otherwise the AI will build Barracks to create veterans in cities 
+   otherwise the AI will build Barracks to create veterans in cities
    with only 1 shields production.
     8 is too low
    18 is too high
@@ -47,7 +47,7 @@ int city_luxury_bonus(struct city *pcity);
 int city_science_bonus(struct city *pcity);
 int city_tax_bonus(struct city *pcity);
 
-void transfer_city_units(struct player *pplayer, struct player *pvictim, 
+void transfer_city_units(struct player *pplayer, struct player *pvictim,
 			 struct unit_list *units, struct city *pcity,
 			 struct city *exclude_city,
 			 int kill_outside, bool verbose);

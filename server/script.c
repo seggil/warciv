@@ -233,7 +233,7 @@ static int push_w_conn(lua_State *L, struct connection *pconn)
 
   Return types are assigned by dereferncing va_list elements. Valid return
   types are:
-    
+
     'i' - int
     'd' - double
     's' - char *

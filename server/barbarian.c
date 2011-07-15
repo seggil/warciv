@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 2003 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 /**********************************************************************
   Functions for creating barbarians in huts, land and sea
   Started by Jerzy Klek <jekl@altavista.net>
-  with more ideas from Falk Hueffner 
+  with more ideas from Falk Hueffner
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -78,8 +78,8 @@ static bool is_sea_barbarian(struct player *pplayer)
 }
 
 /**************************************************************************
-  Creates the land/sea barbarian player and inits some stuff. If 
-  barbarian player already exists, return player pointer. If barbarians 
+  Creates the land/sea barbarian player and inits some stuff. If
+  barbarian player already exists, return player pointer. If barbarians
   are dead, revive them with a new leader :-)
 
   Dead barbarians forget the map and lose the money.
@@ -186,13 +186,13 @@ static bool is_free_sea(struct tile *ptile, struct player *who)
 }
 
 /**************************************************************************
-  Unleash barbarians means give barbarian player some units and move them 
+  Unleash barbarians means give barbarian player some units and move them
   out of the hut, unless there's no place to go.
 
   Barbarian unit deployment algorithm: If enough free land around, deploy
-  on land, if not enough land but some sea free, load some of them on 
-  boats, otherwise (not much land and no sea) kill enemy unit and stay in 
-  a village. The return value indicates if the explorer survived entering 
+  on land, if not enough land but some sea free, load some of them on
+  boats, otherwise (not much land and no sea) kill enemy unit and stay in
+  a village. The return value indicates if the explorer survived entering
   the vilage.
 **************************************************************************/
 bool unleash_barbarians(struct tile *ptile)
@@ -212,7 +212,7 @@ bool unleash_barbarians(struct tile *ptile)
   }
 
   unit_cnt = 3 + myrand(4);
-  if ( game.server.barbarianrate > 4 ) unit_cnt += 2 + myrand(game.server.barbarianrate); 
+  if ( game.server.barbarianrate > 4 ) unit_cnt += 2 + myrand(game.server.barbarianrate);
 
   barbarians = create_barbarian_player(TRUE);
   me = barbarians->player_no;
@@ -237,7 +237,7 @@ bool unleash_barbarians(struct tile *ptile)
 	    utile = rand_neighbour(ptile);
 	  } while (!is_free_land(utile, barbarians));
         } while (!handle_unit_move_request(punit2, utile, TRUE, FALSE));
-        freelog(LOG_DEBUG, "Moved barbarian unit from %d %d to %d, %d", 
+        freelog(LOG_DEBUG, "Moved barbarian unit from %d %d to %d, %d",
                 ptile->x, ptile->y, utile->x, utile->y);
       }
     } unit_list_iterate_end;
@@ -319,20 +319,20 @@ static struct tile *find_empty_tile_nearby(struct tile *ptile)
 
 /**************************************************************************
   The barbarians are summoned at a randomly chosen place if:
-  1. It's not closer than MIN_UNREST_DIST and not further than 
-     MAX_UNREST_DIST from the nearest city. City owner is called 'victim' 
+  1. It's not closer than MIN_UNREST_DIST and not further than
+     MAX_UNREST_DIST from the nearest city. City owner is called 'victim'
      here.
   2. The place or a neighbouring tile must be empty to deploy the units.
   3. If it's the sea it shouldn't be far from the land. (questionable)
   4. Place must be known to the victim
   5. The uprising chance depends also on the victim empire size, its
      government (civil_war_chance) and barbarian difficulty level.
-  6. The number of land units also depends slightly on victim's empire 
+  6. The number of land units also depends slightly on victim's empire
      size and barbarian difficulty level.
-  Q: The empire size is used so there are no uprisings in the beginning 
-     of the game (year is not good as it can be customized), but it seems 
-     a bit unjust if someone is always small. So maybe it should rather 
-     be an average number of cities (all cities/player num)? Depending 
+  Q: The empire size is used so there are no uprisings in the beginning
+     of the game (year is not good as it can be customized), but it seems
+     a bit unjust if someone is always small. So maybe it should rather
+     be an average number of cities (all cities/player num)? Depending
      on the victim government type is also questionable.
 **************************************************************************/
 static void try_summon_barbarians(void)
@@ -365,7 +365,7 @@ static void try_summon_barbarians(void)
   if ( game.server.barbarianrate > 4 ) superbarb = 3;
 
   dist = real_map_distance(ptile, pc->tile);
-  freelog(LOG_DEBUG,"Closest city to %d %d is %s at %d %d which is %d far", 
+  freelog(LOG_DEBUG,"Closest city to %d %d is %s at %d %d which is %d far",
           ptile->x, ptile->y, pc->name, pc->tile->x, pc->tile->y, dist);
   if (dist > MAX_UNREST_DIST || dist < MIN_UNREST_DIST) {
     return;
@@ -453,7 +453,7 @@ static void try_summon_barbarians(void)
 }
 
 /**************************************************************************
-  Summon barbarians out of the blue. Try more times for more difficult 
+  Summon barbarians out of the blue. Try more times for more difficult
   levels - which means there can be more than one uprising in one year!
 **************************************************************************/
 void summon_barbarians(void)

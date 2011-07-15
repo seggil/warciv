@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void notify_conn_ex(struct conn_list *dest, struct tile *ptile,
 void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
 		     enum event_type event, const char *format,
 		     va_list vargs);
-void notify_conn(struct conn_list *dest, const char *format, ...) 
+void notify_conn(struct conn_list *dest, const char *format, ...)
                  fc__attribute((__format__ (__printf__, 2, 3)));
 void notify_player_ex(const struct player *pplayer, struct tile *ptile,
 		      enum event_type event, const char *format, ...)

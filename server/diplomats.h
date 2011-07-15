@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,17 +24,17 @@ void diplomat_investigate(struct player *pplayer, struct unit *pdiplomat,
 			  struct city *pcity);
 void spy_get_sabotage_list(struct player *pplayer, struct unit *pdiplomat,
 			   struct city *pcity);
-void spy_poison(struct player *pplayer, struct unit *pdiplomat, 
+void spy_poison(struct player *pplayer, struct unit *pdiplomat,
 		struct city *pcity);
 void spy_sabotage_unit(struct player *pplayer, struct unit *pdiplomat,
 		       struct unit *pvictim);
-void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat, 
+void diplomat_bribe(struct player *pplayer, struct unit *pdiplomat,
 		    struct tile *ptile);
-void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat, 
+void diplomat_get_tech(struct player *pplayer, struct unit *pdiplomat,
 		       struct city  *pcity, int technology);
-void diplomat_incite(struct player *pplayer, struct unit *pdiplomat, 
+void diplomat_incite(struct player *pplayer, struct unit *pdiplomat,
 		     struct city *pcity);
-void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat, 
+void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
 		       struct city *pcity, Impr_Type_id improvement);
 
 int count_diplomats_on_tile(struct tile *ptile);

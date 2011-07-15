@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ void spaceship_calc_derived(struct player_spaceship *ship)
   assert(ship->structurals <= NUM_SS_STRUCTURALS);
   assert(ship->components <= NUM_SS_COMPONENTS);
   assert(ship->modules <= NUM_SS_MODULES);
-  
+
   ship->mass = 0;
   ship->support_rate = ship->energy_rate =
     ship->success_rate = ship->travel_time = 0.0;
@@ -124,7 +124,7 @@ void send_spaceship_info(struct player *src, struct conn_list *dest)
     if (!src || pplayer == src) {
       struct packet_spaceship_info info;
       struct player_spaceship *ship = &pplayer->spaceship;
-	  
+
       info.player_num = pplayer->player_no;
       info.sship_state = ship->state;
       info.structurals = ship->structurals;
@@ -142,12 +142,12 @@ void send_spaceship_info(struct player *src, struct conn_list *dest)
       info.energy_rate = ship->energy_rate;
       info.success_rate = ship->success_rate;
       info.travel_time = ship->travel_time;
-      
+
       for(j=0; j<NUM_SS_STRUCTURALS; j++) {
 	info.structure[j] = ship->structure[j] ? '1' : '0';
       }
       info.structure[j] = '\0';
-	  
+
       lsend_packet_spaceship_info(dest, &info);
     }
   } players_iterate_end;
@@ -197,7 +197,7 @@ void handle_spaceship_place(struct player *pplayer,
 			    enum spaceship_place_type type, int num)
 {
   struct player_spaceship *ship = &pplayer->spaceship;
-  
+
   if (ship->state == SSHIP_NONE) {
     notify_player(pplayer, _("Game: Spaceship action received,"
 			     " but you don't have a spaceship!"));
@@ -352,7 +352,7 @@ void check_spaceship_arrivals(void)
 
   shuffled_players_iterate(pplayer) {
     struct player_spaceship *ship = &pplayer->spaceship;
-    
+
     if (ship->state == SSHIP_LAUNCHED) {
       arrival = ship->launch_year + ship->travel_time;
       if (game.info.year >= (int)arrival

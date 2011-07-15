@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ static void pull_unit_from_transporter(struct unit *punit,
 				       struct unit *ptrans);
 
 /**************************************************************************
-  returns a unit type with a given role, use -1 if you don't want a tech 
+  returns a unit type with a given role, use -1 if you don't want a tech
   role. Always try tech role and only if not available, return role unit.
 **************************************************************************/
 int find_a_unit_type(int role, int role_tech)
@@ -183,7 +183,7 @@ void unit_versus_unit(struct unit *attacker, struct unit *defender,
   }
 
   if (attackpower == 0) {
-      attacker->hp=0; 
+      attacker->hp=0;
   } else if (defensepower == 0) {
       defender->hp=0;
   }
@@ -198,7 +198,7 @@ void unit_versus_unit(struct unit *attacker, struct unit *defender,
   if (defender->hp<0) defender->hp = 0;
 
   if (attacker->hp > 0)
-    maybe_make_veteran(attacker); 
+    maybe_make_veteran(attacker);
   else if (defender->hp > 0)
     maybe_make_veteran(defender);
 }
@@ -332,8 +332,8 @@ void player_restore_units(struct player *pplayer)
       /* This should usually only happen for heli units,
 	 but if any other units get 0 hp somehow, catch
 	 them too.  --dwp  */
-      notify_player_ex(pplayer, punit->tile, E_UNIT_LOST, 
-          _("Game: Your %s has run out of hit points."), 
+      notify_player_ex(pplayer, punit->tile, E_UNIT_LOST,
+          _("Game: Your %s has run out of hit points."),
           unit_name(punit->type));
       gamelog(GAMELOG_UNITLOSS, punit, NULL, "out of hp");
       pplayer->score.units_lost++;
@@ -433,13 +433,13 @@ void player_restore_units(struct player *pplayer)
   unit_list_iterate_safe(pplayer->units, punit) {
     if (is_air_unit(punit) && punit->fuel <= 0
         && unit_type(punit)->fuel > 0) {
-      notify_player_ex(pplayer, punit->tile, E_UNIT_LOST, 
+      notify_player_ex(pplayer, punit->tile, E_UNIT_LOST,
 		       _("Game: Your %s has run out of fuel."),
 		       unit_name(punit->type));
       gamelog(GAMELOG_UNITLOSS, punit, NULL, "fuel");
       pplayer->score.units_lost++;
       wipe_unit(punit);
-    } 
+    }
   } unit_list_iterate_safe_end;
 }
 
@@ -483,7 +483,7 @@ static void unit_restore_hitpoints(struct player *pplayer, struct unit *punit)
   punit->moved = FALSE;
   punit->paradropped = FALSE;
 }
-  
+
 /***************************************************************************
   Move points are trivial, only modifiers to the base value is if it's
   sea units and the player has certain wonders/techs. Then add veteran
@@ -539,7 +539,7 @@ static int hp_gain_coord(struct unit *punit)
 
   if(punit->activity==ACTIVITY_FORTIFIED)
     hp++;
-  
+
   return hp;
 }
 
@@ -589,11 +589,11 @@ static bool maybe_settler_become_veteran(struct unit *punit)
     punit->veteran++;
     return TRUE;
   }
-  return FALSE;  
+  return FALSE;
 }
 
 /**************************************************************************
-  progress settlers in their current tasks, 
+  progress settlers in their current tasks,
   and units that is pillaging.
   also move units that is on a goto.
   restore unit move points (information needed for settler tasks)
@@ -607,7 +607,7 @@ static void update_unit_activity(struct unit *punit)
   enum ocean_land_change solvency = OLC_NONE;
   struct tile *ptile = punit->tile;
   bool check_adjacent_units = FALSE;
-  
+
   if (activity != ACTIVITY_IDLE && activity != ACTIVITY_FORTIFIED
       && activity != ACTIVITY_GOTO && activity != ACTIVITY_EXPLORE) {
     /*  We don't need the activity_count for the above */
@@ -619,7 +619,7 @@ static void update_unit_activity(struct unit *punit)
       notify_player_ex(pplayer, punit->tile, E_UNIT_BECAME_VET,
 	_("Game: Your %s became more experienced!"), unit_name(punit->type));
     }
-    
+
   }
 
   unit_restore_movepoints(pplayer, punit);
@@ -632,7 +632,7 @@ static void update_unit_activity(struct unit *punit)
       return;
     }
 
-    assert(punit->activity == ACTIVITY_EXPLORE); 
+    assert(punit->activity == ACTIVITY_EXPLORE);
     if (!more_to_explore) {
       handle_unit_activity_request(punit, ACTIVITY_IDLE);
     }
@@ -675,7 +675,7 @@ static void update_unit_activity(struct unit *punit)
 	}
       }
     }
-    else if (total_activity_targeted(punit->tile, ACTIVITY_PILLAGE, 
+    else if (total_activity_targeted(punit->tile, ACTIVITY_PILLAGE,
                                      punit->activity_target) >= 1) {
       enum tile_special_type what_pillaged = punit->activity_target;
 
@@ -688,7 +688,7 @@ static void update_unit_activity(struct unit *punit)
 	}
       } unit_list_iterate_end;
       update_tile_knowledge(punit->tile);
-      
+
       /* If a watchtower has been pillaged, reduce sight to normal */
       if (what_pillaged == S_FORTRESS) {
 	freelog(LOG_VERBOSE, "Watchtower(2) pillaged!");
@@ -708,7 +708,7 @@ static void update_unit_activity(struct unit *punit)
         }
 	unit_list_iterate_end;
       }
-    }  
+    }
   }
 
   if (activity == ACTIVITY_POLLUTION) {
@@ -758,7 +758,7 @@ static void update_unit_activity(struct unit *punit)
       unit_activity_done = TRUE;
     }
   }
-  
+
   if (activity == ACTIVITY_IRRIGATE) {
     if (total_activity (punit->tile, ACTIVITY_IRRIGATE) >=
         map_build_irrigation_time(punit->tile)) {
@@ -785,7 +785,7 @@ static void update_unit_activity(struct unit *punit)
       unit_activity_done = TRUE;
     }
   }
-  
+
   if (activity == ACTIVITY_MINE) {
     if (total_activity (punit->tile, ACTIVITY_MINE) >=
         map_build_mine_time(punit->tile)) {
@@ -1180,7 +1180,7 @@ void make_partisans(struct city *pcity)
 
   if (!government_has_flag(get_gov_pcity(pcity), G_INSPIRES_PARTISANS))
     return;
-  
+
   pplayer = city_owner(pcity);
   for(i=0; i<MAX_NUM_TECH_LIST; i++) {
     int tech = game.ruleset_control.rtech_partisan_req[i];
@@ -1188,19 +1188,19 @@ void make_partisans(struct city *pcity)
     if (get_invention(pplayer, tech) != TECH_KNOWN) return;
     /* Was A_COMMUNISM and A_GUNPOWDER */
   }
-  
+
   partisans = myrand(1 + pcity->size/2) + 1;
-  if (partisans > 8) 
+  if (partisans > 8)
     partisans = 8;
-  
+
   place_partisans(pcity,partisans);
 }
 
 /**************************************************************************
 Are there dangerous enemies at or adjacent to (x, y)?
 
-N.B. This function should only be used by (cheating) AI, as it iterates 
-through all units stacked on the tiles, an info not normally available 
+N.B. This function should only be used by (cheating) AI, as it iterates
+through all units stacked on the tiles, an info not normally available
 to the human player.
 **************************************************************************/
 bool enemies_at(struct unit *punit, struct tile *ptile)
@@ -1228,7 +1228,7 @@ bool enemies_at(struct unit *punit, struct tile *ptile)
       continue;
     }
     unit_list_iterate(ptile1->units, enemy) {
-      if (pplayers_at_war(unit_owner(enemy), unit_owner(punit)) 
+      if (pplayers_at_war(unit_owner(enemy), unit_owner(punit))
           && can_unit_attack_unit_at_tile(enemy, punit, ptile)
           && can_unit_attack_all_at_tile(enemy, ptile)) {
 	a += unit_att_rating(enemy);
@@ -1310,7 +1310,7 @@ static void throw_units_from_illegal_cities(struct player *pplayer,
     if (ptile->city && !pplayers_allied(city_owner(ptile->city), pplayer)) {
       bounce_unit(punit, verbose);
     }
-  } unit_list_iterate_safe_end;    
+  } unit_list_iterate_safe_end;
 }
 
 /**************************************************************************
@@ -1335,14 +1335,14 @@ static void resolve_stack_conflicts(struct player *pplayer,
           bounce_unit(aunit, verbose);
         }
       } unit_list_iterate_safe_end;
-    }    
+    }
   } unit_list_iterate_safe_end;
 }
-				
+
 /**************************************************************************
-  When in civil war or an alliance breaks there will potentially be units 
-  from both sides coexisting on the same squares.  This routine resolves 
-  this by first bouncing off non-allied units from their cities, then by 
+  When in civil war or an alliance breaks there will potentially be units
+  from both sides coexisting on the same squares.  This routine resolves
+  this by first bouncing off non-allied units from their cities, then by
   bouncing both players' units in now illegal multiowner stacks.  To avoid
   drowning due to removal of transports, we bounce everyone (including
   third parties' units) from ocean tiles.
@@ -1355,7 +1355,7 @@ void resolve_unit_stacks(struct player *pplayer, struct player *aplayer,
 {
   throw_units_from_illegal_cities(pplayer, verbose);
   throw_units_from_illegal_cities(aplayer, verbose);
-  
+
   resolve_stack_conflicts(pplayer, aplayer, verbose);
   resolve_stack_conflicts(aplayer, pplayer, verbose);
 }
@@ -1478,24 +1478,24 @@ void upgrade_unit(struct unit *punit, Unit_Type_id to_unit, bool is_free)
   conn_list_do_unbuffer(pplayer->connections);
 }
 
-/************************************************************************* 
+/*************************************************************************
   Wrapper of the below
 *************************************************************************/
-struct unit *create_unit(struct player *pplayer, struct tile *ptile, 
-                         Unit_Type_id type, int veteran_level, 
+struct unit *create_unit(struct player *pplayer, struct tile *ptile,
+                         Unit_Type_id type, int veteran_level,
                          int homecity_id, int moves_left)
 {
-  return create_unit_full(pplayer, ptile, type, veteran_level, homecity_id, 
+  return create_unit_full(pplayer, ptile, type, veteran_level, homecity_id,
                           moves_left, -1, NULL);
 }
 
 /**************************************************************************
-  Creates a unit, and set it's initial values, and put it into the right 
+  Creates a unit, and set it's initial values, and put it into the right
   lists.
   If moves_left is less than zero, unit will get max moves.
 **************************************************************************/
 struct unit *create_unit_full(struct player *pplayer, struct tile *ptile,
-			      Unit_Type_id type, int veteran_level, 
+			      Unit_Type_id type, int veteran_level,
                               int homecity_id, int moves_left, int hp_left,
 			      struct unit *ptrans)
 {
@@ -1659,7 +1659,7 @@ static void server_remove_unit(struct unit *punit, bool ignore_gameloss)
 }
 
 /**************************************************************************
-  Remove the unit, and passengers if it is a carrying any. Remove the 
+  Remove the unit, and passengers if it is a carrying any. Remove the
   _minimum_ number, eg there could be another boat on the square.
 **************************************************************************/
 void wipe_unit_spec_safe(struct unit *punit,
@@ -1686,7 +1686,7 @@ void wipe_unit_spec_safe(struct unit *punit,
 	  set_unit_activity(pcargo, ACTIVITY_IDLE);
 	}
 	send_unit_info(NULL, pcargo);
-      } 
+      }
     } unit_list_iterate_end;
   }
 
@@ -1788,7 +1788,7 @@ void kill_unit(struct unit *pkiller, struct unit *punit)
   char *loc_str = get_location_str_in(pplayer, punit->tile);
   int num_killed[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   int ransom, unitcount = 0;
-  
+
   /* barbarian leader ransom hack */
   if( is_barbarian(pplayer) && unit_has_role(punit->type, L_BARBARIAN_LEADER)
       && (unit_list_size(punit->tile->units) == 1)
@@ -2033,10 +2033,10 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
 
 /* maybe the wrong position for that, but this is the lowlevel function
  * where we check if we have to increase timeout, or remove_turn_done */
-  
+
   conn_list_iterate(dest, pconn) {
     struct player *pplayer = pconn->player;
-    
+
     if (conn_is_global_observer(pconn)
 	|| (pplayer && pplayer->player_no == punit->owner)) {
       if (!info_packaged) {
@@ -2079,7 +2079,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
       }
     }
   } conn_list_iterate_end;
-  
+
   if (game.info.timeout != 0 && new_information_for_enemy){
     increase_timeout_because_unit_moved();
   }
@@ -2087,7 +2087,7 @@ void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
 }
 
 /**************************************************************************
-  send the unit to the players who need the info 
+  send the unit to the players who need the info
   dest = NULL means all connections (game.game_connections)
 **************************************************************************/
 void send_unit_info(struct player *dest, struct unit *punit)
@@ -2142,10 +2142,10 @@ static void sentry_transported_idle_units(struct unit *ptrans)
 }
 
 /**************************************************************************
-  Nuke a square: 1) remove all units on the square, and 2) halve the 
+  Nuke a square: 1) remove all units on the square, and 2) halve the
   size of the city on the square.
 
-  If it isn't a city square or an ocean square then with 50% chance add 
+  If it isn't a city square or an ocean square then with 50% chance add
   some fallout, then notify the client about the changes.
 **************************************************************************/
 static void do_nuke_tile(struct player *pplayer, struct tile *ptile)
@@ -2277,7 +2277,7 @@ bool do_airlift(struct unit *punit, struct city *city2)
 }
 
 /**************************************************************************
-  Returns whether the drop was made or not. Note that it also returns 1 
+  Returns whether the drop was made or not. Note that it also returns 1
   in the case where the drop was succesful, but the unit was killed by
   barbarians in a hut.
 **************************************************************************/
@@ -2311,7 +2311,7 @@ bool do_paradrop(struct unit *punit, struct tile *ptile)
       && is_ground_unit(punit)) {
     notify_player_ex(pplayer, ptile, E_NOEVENT,
                      _("Game: This unit cannot paradrop into ocean."));
-    return FALSE;    
+    return FALSE;
   }
 
   if (map_is_known_and_seen(ptile, pplayer)
@@ -2320,7 +2320,7 @@ bool do_paradrop(struct unit *punit, struct tile *ptile)
       || is_non_attack_unit_tile(ptile, pplayer))) {
     notify_player_ex(pplayer, ptile, E_NOEVENT,
                      _("Game: Cannot attack unless you declare war first."));
-    return FALSE;    
+    return FALSE;
   }
 
   {
@@ -2388,7 +2388,7 @@ static void hut_get_tech(struct unit *punit)
   struct player *pplayer = unit_owner(punit);
   Tech_Type_id new_tech;
   const char *tech_name;
-  
+
   new_tech = give_random_free_tech(pplayer);
 
   tech_name = get_tech_name(pplayer, new_tech);
@@ -2407,7 +2407,7 @@ static void hut_get_tech(struct unit *punit)
 static void hut_get_mercenaries(struct unit *punit)
 {
   struct player *pplayer = unit_owner(punit);
-  
+
   notify_player_ex(pplayer, punit->tile, E_HUT_MERC,
 		   _("Game: A band of friendly mercenaries joins your cause."));
   (void) create_unit(pplayer, punit->tile,
@@ -2485,7 +2485,7 @@ static bool unit_enter_hut(struct unit *punit)
   struct player *pplayer = unit_owner(punit);
   bool ok = TRUE;
   int hut_chance = myrand(12);
-  
+
   if (game.ruleset_game.hut_overflight==OVERFLIGHT_NOTHING && is_air_unit(punit)) {
     return ok;
   }
@@ -2499,9 +2499,9 @@ static bool unit_enter_hut(struct unit *punit)
 		       " they scatter in terror."));
     return ok;
   }
-  
+
   /* AI with H_LIMITEDHUTS only gets 25 gold (or barbs if unlucky) */
-  if (pplayer->ai.control && ai_handicap(pplayer, H_LIMITEDHUTS) 
+  if (pplayer->ai.control && ai_handicap(pplayer, H_LIMITEDHUTS)
       && hut_chance != 10) {
     hut_chance = 0;
   }
@@ -2597,7 +2597,7 @@ static bool wakeup_neighbor_sentries(struct unit *punit)
 	range = get_watchtower_vision(penemy);
       else
 	range = unit_type(penemy)->vision_range;
-      
+
       if (!pplayers_allied(unit_owner(punit), unit_owner(penemy))
 	  && range >= real_map_distance(punit->tile, ptile)
 	  && can_player_see_unit(unit_owner(penemy), punit)
@@ -2624,7 +2624,7 @@ static bool wakeup_neighbor_sentries(struct unit *punit)
 	  && unit_has_orders(ppatrol)
 	  && ppatrol->orders.vigilant) {
 	if (maybe_cancel_patrol_due_to_enemy(ppatrol)) {
-	  notify_player_ex(unit_owner(ppatrol), ppatrol->tile, E_UNIT_ORDERS, 
+	  notify_player_ex(unit_owner(ppatrol), ppatrol->tile, E_UNIT_ORDERS,
 			   _("Game: Your %s cancelled patrol order because it "
 			     "encountered a foreign unit."),
 			   unit_name(ppatrol->type));
@@ -2701,12 +2701,12 @@ static void handle_unit_move_consequences(struct unit *punit,
 	  (map_has_special(dst_tile, S_FORTRESS)
 	   && is_friendly_city_near(unit_owner(punit), dst_tile))
 	  ||
-          (map_has_special(src_tile, S_FORTRESS) 
+          (map_has_special(src_tile, S_FORTRESS)
 	   && is_friendly_city_near(unit_owner(punit), src_tile))) {
         refresh_homecity = TRUE;
       }
     }
-    
+
     if (refresh_homecity) {
       city_refresh(homecity);
       send_city_info(pplayer, homecity);
@@ -2760,13 +2760,13 @@ bool kills_citizen_after_attack(struct unit *punit)
 }
 
 /**************************************************************************
-  Moves a unit. No checks whatsoever! This is meant as a practical 
-  function for other functions, like do_airline, which do the checking 
+  Moves a unit. No checks whatsoever! This is meant as a practical
+  function for other functions, like do_airline, which do the checking
   themselves.
 
-  If you move a unit you should always use this function, as it also sets 
-  the transported_by unit field correctly. take_from_land is only relevant 
-  if you have set transport_units. Note that the src and dest need not be 
+  If you move a unit you should always use this function, as it also sets
+  the transported_by unit field correctly. take_from_land is only relevant
+  if you have set transport_units. Note that the src and dest need not be
   adjacent.
 
   Returns TRUE iff unit still alive.
@@ -2779,7 +2779,7 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
   struct unit *ptransporter = NULL;
   /* This is to check whether unit survived auto attack. */
   bool bunitsurvived = TRUE;
-    
+
   conn_list_do_buffer(pplayer->connections);
 
   /* Transporting units. We first make a list of the units to be moved and
@@ -2846,7 +2846,7 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
    * Transporter info should be send first becouse this allow us get right
    * update_menu effect in client side.
    */
-  
+
   /*
    * Send updated information to anyone watching that transporter was unload
    * cargo.
@@ -2854,12 +2854,12 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
   if (ptransporter) {
     send_unit_info(NULL, ptransporter);
   }
-  
+
   /* Send updated information to anyone watching.  If the unit moves
    * in or out of a city we update the 'occupied' field.  Note there may
    * be cities at both src and dest under some rulesets. */
   send_unit_info_to_onlookers(NULL, punit, psrctile, FALSE);
-    
+
   /* Special checks for ground units in the ocean. */
   if (!can_unit_survive_at_tile(punit, pdesttile)) {
     ptransporter = find_transporter_for_unit(punit, pdesttile);
@@ -2877,7 +2877,7 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
      * Transporter info should be send first becouse this allow us get right
      * update_menu effect in client side.
      */
-    
+
     /*
      * Send updated information to anyone watching that transporter has cargo.
      */
@@ -2892,7 +2892,7 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
      */
     send_unit_info_to_onlookers(NULL, punit, punit->tile, TRUE);
   }
-  
+
   if ((pcity = map_get_city(psrctile))) {
     refresh_dumb_city(pcity);
   }
@@ -2900,8 +2900,8 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
     refresh_dumb_city(pcity);
   }
 
-  /* The hidden units might not have been previously revealed 
-   * because when we did the unfogging, the unit was still 
+  /* The hidden units might not have been previously revealed
+   * because when we did the unfogging, the unit was still
    * at (src_x, src_y) */
   reveal_hidden_units(pplayer, pdesttile);
 
@@ -2958,12 +2958,12 @@ bool move_unit(struct unit *punit, struct tile *pdesttile, int move_cost)
 /**************************************************************************
   Maybe cancel the goto if there is an enemy in the way
 **************************************************************************/
-static bool maybe_cancel_goto_due_to_enemy(struct unit *punit, 
+static bool maybe_cancel_goto_due_to_enemy(struct unit *punit,
                                            struct tile *ptile)
 {
   struct player *pplayer = unit_owner(punit);
-  
-  if (is_non_allied_unit_tile(ptile, pplayer) 
+
+  if (is_non_allied_unit_tile(ptile, pplayer)
       || is_non_allied_city_tile(ptile, pplayer)) {
     return TRUE;
   }
@@ -2988,7 +2988,7 @@ static bool maybe_cancel_patrol_due_to_enemy(struct unit *punit)
     range = get_watchtower_vision(punit);
   else
     range = unit_type(punit)->vision_range;
-  
+
   square_iterate(punit->tile, range, ptile) {
     struct unit *penemy =
 	is_non_allied_unit_tile(ptile, pplayer);
@@ -3056,7 +3056,7 @@ bool execute_orders(struct unit *punit)
   }
 
   freelog(LOG_DEBUG, "Executing orders for %s %d",
-	  unit_name(punit->type), punit->id);   
+	  unit_name(punit->type), punit->id);
 
   /* Any time the orders are canceled we should give the player a message. */
 

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
    - if have movement and enough hp remaining, should consider
      attacking multiple times if multiple targets (hard, because you
      have to calculate warmap for each choice -> lots of cpu !!!)
-     
+
    - create gui-client for diplomacy for players
      (in work by other persons)
 
@@ -74,14 +74,14 @@ static struct unit *search_best_target(struct player *pplayer,
       punit->moves_left :
       punit->moves_left/2;
 
-  /* attack the next to city */ 
+  /* attack the next to city */
   range = range < SINGLE_MOVE ? SINGLE_MOVE : range;
-  
+
   freelog(LOG_VERBOSE, "doing autoattack for %s (%d/%d),"
 	  " range %d(%d)",
 	  unit_name(punit->type), punit->tile->x, punit->tile->y,
 	  range, punit->moves_left);
-  
+
   square_iterate(punit->tile, range / SINGLE_MOVE, ptile) {
     if (same_pos(punit->tile, ptile)) {
       continue;
@@ -164,7 +164,7 @@ static struct unit *search_best_target(struct player *pplayer,
   if(!best_enemy) return NULL;
 
   enemy = best_enemy;
-  
+
   freelog(LOG_VERBOSE, "chosen target=%s (%d/%d)",
 	  get_unit_name(enemy->type), enemy->tile->x, enemy->tile->y);
 
@@ -205,7 +205,7 @@ bool auto_attack_with_unit(struct player *pplayer,
     		   _("Game: Auto-Attack: %s attacking %s's %s"),
     		   unit_name(punit->type),
 		   unit_owner(enemy)->name, unit_name(enemy->type));
-  
+
   set_unit_activity(punit, ACTIVITY_GOTO);
   punit->goto_tile = enemy->tile;
 

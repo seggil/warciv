@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #endif
 
 #include <assert.h>
-#include <stdio.h> /* for remove() */ 
+#include <stdio.h> /* for remove() */
 
 #include "capability.h"
 #include "fcintl.h"
@@ -104,7 +104,7 @@ static void place_starting_unit(struct tile *ptile, struct player *pplayer,
 
   assert(!is_non_allied_unit_tile(ptile, pplayer));
 
-  /* For scenarios or dispersion, huts may coincide with player starts (in 
+  /* For scenarios or dispersion, huts may coincide with player starts (in
    * other cases, huts are avoided as start positions).  Remove any such hut,
    * and make sure to tell the client, since we may have already sent this
    * tile (with the hut) earlier: */
@@ -151,7 +151,7 @@ static void place_starting_unit(struct tile *ptile, struct player *pplayer,
   case 'A':
     role = L_ATTACK_STRONG;
     break;
-  default: 
+  default:
     assert(FALSE);
     return;
   }
@@ -354,7 +354,7 @@ void find_pos_by_brute_force(int *positions, int a)
 
   if (depth == (game.info.nplayers - 1)) {
     /* Enough players. */
-    repeat++;    
+    repeat++;
     if (score < best_score) {
       for (p = 0; p < game.info.nplayers; p++ ) {
 	best_team_pos[p] = positions[p];
@@ -421,7 +421,7 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
     } players_iterate_end
     assert(!error);
   }
-  freelog(LOG_VERBOSE, "exit");    
+  freelog(LOG_VERBOSE, "exit");
 }
 
 /****************************************************************************
@@ -437,7 +437,7 @@ void calculate_team_mapping(void)
   freelog(LOG_VERBOSE, "Team TEAM_NONE has %d members",
 	  mapping[0].member_count);
   mappings = 1;
-  
+
   team_iterate(pteam) {
     mapping[mappings].team_id = pteam->id;
     mapping[mappings].member_count = pteam->member_count;
@@ -640,7 +640,7 @@ void send_year_to_clients(int year)
 {
   struct packet_new_year apacket;
   int i;
-  
+
   for(i=0; i<game.info.nplayers; i++) {
     struct player *pplayer = &game.players[i];
     pplayer->turn_done = FALSE;
@@ -754,7 +754,7 @@ int update_timeout(void)
 }
 
 /**************************************************************************
-  adjusts game.server.turn_start when enemy moves an unit, we see it and the 
+  adjusts game.server.turn_start when enemy moves an unit, we see it and the
   remaining timeout is smaller than the option
   It's possible to use a simular function to do that per player.
 **************************************************************************/
@@ -766,18 +766,18 @@ void increase_timeout_because_unit_moved(void)
     if (seconds_to_turndone < game.server.timeoutaddenemymove){
       game.server.turn_start = time(NULL) - game.info.timeout + game.server.timeoutaddenemymove;
       send_game_info(NULL);
-    }	
+    }
   }
 }
 
-/************************************************************************** 
+/**************************************************************************
   generate challenge filename for this connection, cannot fail.
 **************************************************************************/
 static void gen_challenge_filename(struct connection *pc)
 {
 }
 
-/************************************************************************** 
+/**************************************************************************
   get challenge filename for this connection.
 **************************************************************************/
 static const char *get_challenge_filename(struct connection *pc)
@@ -790,7 +790,7 @@ static const char *get_challenge_filename(struct connection *pc)
   return filename;
 }
 
-/************************************************************************** 
+/**************************************************************************
   get challenge full filename for this connection.
 **************************************************************************/
 static const char *get_challenge_fullname(struct connection *pc)
@@ -803,7 +803,7 @@ static const char *get_challenge_fullname(struct connection *pc)
   return fullname;
 }
 
-/************************************************************************** 
+/**************************************************************************
   find a file that we can write too, and return it's name.
 **************************************************************************/
 const char *new_challenge_filename(struct connection *pc)
@@ -817,7 +817,7 @@ const char *new_challenge_filename(struct connection *pc)
 }
 
 
-/************************************************************************** 
+/**************************************************************************
 opens a file specified by the packet and compares the packet values with
 the file values. Sends an answer to the client once it's done.
 **************************************************************************/

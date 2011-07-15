@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -279,11 +279,11 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
     /* enter marketplace */
     revenue = (revenue + 2) / 3;
   }
-  
+
   conn_list_do_buffer(pplayer->connections);
   notify_player_ex(pplayer, pcity2->tile, E_NOEVENT,
 		   _("Game: Your %s from %s has arrived in %s,"
-		     " and revenues amount to %d in gold and research."), 
+		     " and revenues amount to %d in gold and research."),
 		   unit_name(punit->type), pcity1->name,
 		   pcity2->name, revenue);
   wipe_unit(punit);
@@ -293,7 +293,7 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
 
   /* Inform everyone about tech changes */
   send_player_info(pplayer, NULL);
-  
+
   if (can_establish) {
     /* Refresh the cities. */
     city_refresh(pcity1);
@@ -478,12 +478,12 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
   } else {
     pcity1 = player_find_city_by_id(pplayer, city1);
     pcity2 = find_city_by_id(city2); /* No need to be owned */
-  
+
     if (!pcity1 || !pcity2) {
       freelog(LOG_ERROR, "handle_unit_trade_route: Got a bad city id");
       return;
     }
-  
+
     if ((ptr = game_trade_route_find(pcity1, pcity2))) {
       switch (ptr->status) {
         case TR_PLANNED: /* Is ok */

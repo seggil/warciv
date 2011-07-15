@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ static bool no_input = FALSE;
 /* Avoid compiler warning about defined, but unused function
  * by defining it only when needed */
 #if defined(HAVE_LIBREADLINE) || \
-    (!defined(SOCKET_ZERO_ISNT_STDIN) && !defined(HAVE_LIBREADLINE))  
+    (!defined(SOCKET_ZERO_ISNT_STDIN) && !defined(HAVE_LIBREADLINE))
 /*****************************************************************************
   This happens if you type an EOF character with nothing on the current line.
 *****************************************************************************/
@@ -208,7 +208,7 @@ static void close_connection(struct connection *pconn)
   if (pconn->server.ping_timers != NULL) {
     while (timer_list_size(pconn->server.ping_timers) > 0) {
       struct timer *timer = timer_list_get(pconn->server.ping_timers, 0);
-      
+
       timer_list_unlink(pconn->server.ping_timers, timer);
       free_timer(timer);
     }
@@ -364,7 +364,7 @@ void force_flush_packets(void)
       return;
     }
 
-    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
+    for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
       pconn = &connections[i];
       if (!pconn->used || pconn->server.is_closing
           || pconn->send_buffer == NULL
@@ -386,7 +386,7 @@ void force_flush_packets(void)
       }
 
       pconn->write_wait_time += secs_waited;
-      
+
       if (game.server.tcpwritetimeout > 0
           && pconn->write_wait_time >= game.server.tcpwritetimeout) {
         freelog(LOG_NORMAL, _("Cutting connection %s due to write lag "
@@ -1036,7 +1036,7 @@ static const char *makeup_connection_name(int *id)
     }
   }
 }
-  
+
 /********************************************************************
   ...
 ********************************************************************/
@@ -1207,8 +1207,8 @@ static int server_accept_connection(int sockfd)
       }
     }
   }
-  
-  freelog(LOG_VERBOSE, "connection (%s) from %s (%s)", 
+
+  freelog(LOG_VERBOSE, "connection (%s) from %s (%s)",
           pconn->username, pconn->addr, !from && pconn->server.adns_id > 0
           ? "hostname lookup in progress" : pconn->server.ipaddr);
 
@@ -1236,8 +1236,8 @@ int server_open_socket(void)
     die("socket failed: %s", mystrsocketerror(mysocketerrno()));
   }
 
-  opt=1; 
-  if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
+  opt=1;
+  if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
 		(char *)&opt, sizeof(opt)) == -1) {
     freelog(LOG_ERROR, "SO_REUSEADDR failed: %s",
             mystrsocketerror(mysocketerrno()));
@@ -1313,7 +1313,7 @@ void init_connections(void)
   game.game_connections = conn_list_new();
   on_connect_user_actions = user_action_list_new();
 
-  for (i = 0; i < MAX_NUM_CONNECTIONS; i++) { 
+  for (i = 0; i < MAX_NUM_CONNECTIONS; i++) {
     pconn = &connections[i];
     pconn->used = FALSE;
     pconn->self = conn_list_new();
@@ -1464,7 +1464,7 @@ static void get_lanserver_announcement(void)
        * Generally we just want to run select again. */
       continue;
     }
-    
+
     freelog(LOG_ERROR, "select failed: %s",
             mystrsocketerror(err_no));
     return;
@@ -1520,14 +1520,14 @@ static void send_lanserver_response(void)
 
   /* Set the Time-to-Live field for the packet.  */
   ttl = SERVER_LAN_TTL;
-  if (setsockopt(socksend, IPPROTO_IP, IP_MULTICAST_TTL, 
+  if (setsockopt(socksend, IPPROTO_IP, IP_MULTICAST_TTL,
                  (const char*)&ttl, sizeof(ttl))) {
     freelog(LOG_ERROR, "setsockopt failed: %s",
             mystrsocketerror(mysocketerrno()));
     return;
   }
 
-  if (setsockopt(socksend, SOL_SOCKET, SO_BROADCAST, 
+  if (setsockopt(socksend, SOL_SOCKET, SO_BROADCAST,
                  (const char*)&setting, sizeof(setting))) {
     freelog(LOG_ERROR, "setsockopt failed: %s",
             mystrsocketerror(mysocketerrno()));

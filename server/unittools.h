@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,14 +69,14 @@ void package_short_unit(struct unit *punit,
 			enum unit_info_use packet_use, int info_city_id,
 			bool new_serial_num);
 void send_unit_info(struct player *dest, struct unit *punit);
-void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit, 
+void send_unit_info_to_onlookers(struct conn_list *dest, struct unit *punit,
 				 struct tile *ptile, bool remove_unseen);
 void send_all_known_units(struct conn_list *dest);
 void unit_goes_out_of_sight(struct player *pplayer, struct unit *punit);
 
 /* doing a unit activity */
 void do_nuclear_explosion(struct player *pplayer, struct tile *ptile);
-bool try_move_unit(struct unit *punit, struct tile *ptile); 
+bool try_move_unit(struct unit *punit, struct tile *ptile);
 bool do_airlift(struct unit *punit, struct city *city2);
 bool do_paradrop(struct unit *punit, struct tile *ptile);
 void load_unit_onto_transporter(struct unit *punit, struct unit *ptrans);

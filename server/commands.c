@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996-2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -407,7 +407,7 @@ const struct command commands[] = {
   },
   {"incrementaltimeout", ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
-   N_("incrementaltimeout <turn> <turninc> <value> <valuemult>"), 
+   N_("incrementaltimeout <turn> <turninc> <value> <valuemult>"),
    N_("See \"help incrementaltimeout\"."),
    N_("Every <turn> turns, add <value> to timeout timer, then add <turninc> "
       "to <turn> and multiply <value> by <valuemult>.  Use this command in "
@@ -416,7 +416,7 @@ const struct command commands[] = {
   },
   {"ignore", ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> and [] only */
-   N_("ignore [type=]<pattern>"), 
+   N_("ignore [type=]<pattern>"),
    N_("Block all messages from users matching the pattern."),
    N_("The given pattern will be added to your ignore "
       "list; you will not receive any messages from this users matching "
@@ -426,7 +426,7 @@ const struct command commands[] = {
   },
   {"unignore", ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
-   N_("unignore <range>"), 
+   N_("unignore <range>"),
    N_("Remove ignore list entries."),
    N_("The ignore list entries in the given range will be removed; "
       "you will be able to receive messages from the respective users. "
@@ -625,9 +625,9 @@ const struct command commands[] = {
    N_("loadmap\n"
       "loadmap <mapfile-name>"),
    N_("Load map from file."),
-   N_("Load a map from <mapfile-name>. Only mapdata+startpos are loaded, use only " 
+   N_("Load a map from <mapfile-name>. Only mapdata+startpos are loaded, use only "
       "in pregame, rulesets and options have to be set seperatly.\n"
-      "You can get a list of the available maps with /list maps.\n" 
+      "You can get a list of the available maps with /list maps.\n"
       "<mapfile-name> can be the name of the mapfile or the number in the \n"
       "list of maps."),
    ECHO_ALL, VCF_NONE, 50

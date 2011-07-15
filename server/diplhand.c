@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -210,7 +210,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 		pother->name, player_allies_count(pother), game.ext_info.maxallies);
 	      return;
             }
-	  } 
+	  }
           if (!pplayer_can_ally(pplayer, pother)) {
 	    notify_player(pplayer,
 			  _("Game: You are at war with one of %s's "
@@ -321,7 +321,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
 	    notify_player(pplayer, _("Game: %s has already %d/%d alliances."),
 	      pother->name, player_allies_count(pother), game.ext_info.maxallies);
 	    goto cleanup;
-	  } 
+	  }
           if (!pplayer_can_ally(pother, pplayer)) {
 	    notify_player(pplayer,
 			  _("Game: %s is at war with one of your "
@@ -363,7 +363,7 @@ void handle_diplomacy_accept_treaty_req(struct player *pplayer,
     clause_list_iterate(ptreaty->clauses, pclause) {
       struct player *pgiver = pclause->from;
       struct player *pdest = (pplayer == pgiver) ? pother : pplayer;
-      enum diplstate_type old_diplstate = 
+      enum diplstate_type old_diplstate =
         pgiver->diplstates[pdest->player_no].type;
 
       switch (pclause->type) {
@@ -568,7 +568,7 @@ void handle_diplomacy_remove_clause_req(struct player *pplayer,
   if (pgiver != pplayer && pgiver != pother) {
     return;
   }
-  
+
   ptreaty = find_treaty(pplayer, pother);
 
   if (ptreaty && remove_clause(ptreaty, pgiver, type, value)) {
@@ -614,7 +614,7 @@ void handle_diplomacy_create_clause_req(struct player *pplayer,
   ptreaty = find_treaty(pplayer, pother);
 
   if (ptreaty && add_clause(ptreaty, pgiver, type, value)) {
-    /* 
+    /*
      * If we are trading cities, then it is possible that the
      * dest is unaware of it's existence.  We have 2 choices,
      * forbid it, or lighten that area.  If we assume that
@@ -656,13 +656,13 @@ static void really_diplomacy_cancel_meeting(struct player *pplayer,
     dlsend_packet_diplomacy_cancel_meeting(pother->connections,
 					   pplayer->player_no,
 					   pplayer->player_no);
-    notify_player(pother, _("Game: %s canceled the meeting!"), 
+    notify_player(pother, _("Game: %s canceled the meeting!"),
 		  pplayer->name);
     /* Need to send to pplayer too, for multi-connects: */
     dlsend_packet_diplomacy_cancel_meeting(pplayer->connections,
 					   pother->player_no,
 					   pplayer->player_no);
-    notify_player(pplayer, _("Game: Meeting with %s canceled."), 
+    notify_player(pplayer, _("Game: Meeting with %s canceled."),
 		  pother->name);
     treaty_list_unlink(treaties, ptreaty);
     treaty_free(ptreaty);
@@ -743,7 +743,7 @@ void send_diplomatic_meetings(struct connection *dest)
     if (pother == pplayer) {
       continue;
     }
-    
+
     ptreaty = find_treaty(pplayer, pother);
 
     if (!ptreaty) {

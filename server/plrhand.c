@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -223,7 +223,7 @@ void kill_player(struct player *pplayer) {
       remove_shared_vision(pplayer, aplayer);
     }
   } players_iterate_end;
-    
+
   cancel_all_meetings(pplayer);
 
   /* Show entire map for players who are *not* in a team. */
@@ -232,7 +232,7 @@ void kill_player(struct player *pplayer) {
   }
 
   if (is_barbarian(pplayer)) {
-    gamelog(GAMELOG_GENO, pplayer, 
+    gamelog(GAMELOG_GENO, pplayer,
                           "The feared barbarian leader %s is no more");
     return;
   } else {
@@ -276,9 +276,9 @@ void kill_player(struct player *pplayer) {
 }
 
 /**************************************************************************
-  Player has a new technology (from somewhere). was_discovery is passed 
-  on to upgrade_city_rails. Logging & notification is not done here as 
-  it depends on how the tech came. If next_tech is other than A_NONE, this 
+  Player has a new technology (from somewhere). was_discovery is passed
+  on to upgrade_city_rails. Logging & notification is not done here as
+  it depends on how the tech came. If next_tech is other than A_NONE, this
   is the next tech to research.
 **************************************************************************/
 void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
@@ -304,7 +304,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
     freelog(LOG_ERROR, "Report this bug at %s.\n"
             "Here is some info you should attach:", BUG_URL);
     players_iterate(eplayer) {
-      freelog(LOG_ERROR, 
+      freelog(LOG_ERROR,
               "Player %s(team %d): researching %s;\n bulbs_researched %d; "
 	      "techs_researched: %d; bulbs_last_turn: %d; Researched %s? %s",
 	      eplayer->name,
@@ -342,7 +342,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
 	  improvement_types[id].obsolete_by == tech_found &&
 	  (pcity = find_city_by_id(game.info.global_wonders[id]))) {
 	notify_player_ex(city_owner(pcity), NULL, E_WONDER_OBSOLETE,
-	                 _("Game: Discovery of %s OBSOLETES %s in %s!"), 
+	                 _("Game: Discovery of %s OBSOLETES %s in %s!"),
 	                 get_tech_name(city_owner(pcity), tech_found),
 			 get_improvement_name(id),
 	                 pcity->name);
@@ -406,8 +406,8 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
         /* Continue researching future tech. */
         plr->research.researching = A_FUTURE;
       }
-      
-      if (plr->research.researching != A_UNSET 
+
+      if (plr->research.researching != A_UNSET
           && (!is_future_tech(plr->research.researching)
 	      || !is_future_tech(tech_found))) {
 	notify_player_ex(plr, NULL, E_TECH_LEARNED,
@@ -467,7 +467,7 @@ void found_new_tech(struct player *plr, int tech_found, bool was_discovery,
    * Inform player about his new tech.
    */
   send_player_info(plr, plr);
-  
+
   /*
    * Update all cities if the new tech affects happiness.
    */
@@ -522,26 +522,26 @@ static void tech_researched(struct player* plr)
 
   if (!is_future_tech(tech)) {
     notify_embassies(plr, NULL,
-		     _("Game: The %s have researched %s."), 
+		     _("Game: The %s have researched %s."),
 		     get_nation_name_plural(plr->nation),
 		     get_tech_name(plr, tech));
 
   } else {
     notify_embassies(plr, NULL,
-		     _("Game: The %s have researched Future Tech. %d."), 
+		     _("Game: The %s have researched Future Tech. %d."),
 		     get_nation_name_plural(plr->nation),
 		     plr->future_tech);
-  
+
   }
   gamelog(GAMELOG_TECH, plr, NULL, tech);
 
   /* Deduct tech cost */
-  plr->research.bulbs_researched = 
+  plr->research.bulbs_researched =
       MAX(plr->research.bulbs_researched - total_bulbs_required(plr), 0);
 
   /* do all the updates needed after finding new tech */
   found_new_tech(plr, tech, TRUE, TRUE, A_NONE);
-  
+
   /* update resarch for all players */
   if(!is_future_tech(tech) && game.ruleset_game.tech_leakage) {
     shuffled_players_iterate(pplayer) {
@@ -562,7 +562,7 @@ void update_tech(struct player *plr, int bulbs)
   /* count our research contribution this turn */
   plr->research.bulbs_last_turn += bulbs;
   plr->research.bulbs_researched += bulbs;
-  
+
   excessive_bulbs =
       (plr->research.bulbs_researched - total_bulbs_required(plr));
 
@@ -608,19 +608,19 @@ Tech_Type_id choose_goal_tech(struct player *plr)
 static Tech_Type_id pick_random_tech(struct player *plr)
 {
   int researchable, chosen;
-  
+
   researchable = 0;
   tech_type_iterate(i) {
     if (get_invention(plr, i) == TECH_REACHABLE) {
       researchable++;
     }
   } tech_type_iterate_end;
-  
+
   if (researchable == 0) {
     return A_FUTURE;
   }
   chosen = myrand(researchable) + 1;
-  
+
   tech_type_iterate(i) {
     if (get_invention(plr, i) == TECH_REACHABLE) {
       chosen--;
@@ -640,7 +640,7 @@ static Tech_Type_id pick_random_tech(struct player *plr)
 Tech_Type_id give_random_free_tech(struct player* pplayer)
 {
   Tech_Type_id tech;
-  
+
   tech = pick_random_tech(pplayer);
   do_free_cost(pplayer);
   found_new_tech(pplayer, tech, FALSE, TRUE, A_NONE);
@@ -658,7 +658,7 @@ void choose_random_tech(struct player *plr)
                        "when research target is A_UNSET. Please report this "
 		       "bug at <bugs@freeeciv.org>.");
   }
-  
+
   do {
     Tech_Type_id tech = pick_random_tech(plr);
     choose_tech(plr, tech);
@@ -674,11 +674,11 @@ void choose_tech(struct player *plr, int tech)
     return;
   }
 
-  if (tech != A_FUTURE && get_invention(plr, tech) != TECH_REACHABLE) { 
+  if (tech != A_FUTURE && get_invention(plr, tech) != TECH_REACHABLE) {
     /* can't research this */
     return;
   }
-  
+
   if (!plr->got_tech && plr->research.changed_from == -1) {
     plr->research.bulbs_researched_before = plr->research.bulbs_researched;
     plr->research.changed_from = plr->research.researching;
@@ -734,7 +734,7 @@ void init_tech(struct player *plr)
     choose_random_tech(plr);
   }
 }
-  
+
 /**************************************************************************
   Gives initial techs to the player
 **************************************************************************/
@@ -770,7 +770,7 @@ void give_initial_techs(struct player* plr)
 Tech_Type_id give_random_initial_tech(struct player* pplayer)
 {
   Tech_Type_id tech;
-  
+
   tech = pick_random_tech(pplayer);
   found_new_tech(pplayer, tech, FALSE, TRUE, A_NONE);
   return TRUE;
@@ -854,7 +854,7 @@ void handle_player_rates(struct player *pplayer,
 		  _("Game: Cannot change rates before game start."));
     return;
   }
-	
+
   if (tax + luxury + science != 100) {
     return;
   }
@@ -899,7 +899,7 @@ void handle_player_research(struct player *pplayer, int tech)
   if (tech != A_FUTURE && !tech_exists(tech)) {
     return;
   }
-  
+
   if (tech != A_FUTURE && get_invention(pplayer, tech) != TECH_REACHABLE) {
     return;
   }
@@ -916,7 +916,7 @@ void handle_player_tech_goal(struct player *pplayer, int tech)
   if (tech != A_FUTURE && !tech_exists(tech)) {
     return;
   }
-  
+
   if (tech != A_FUTURE && !tech_is_available(pplayer, tech)) {
     return;
   }
@@ -960,8 +960,8 @@ static void finish_revolution(struct player *pplayer)
 	  pplayer->name, get_government_name(government),
 	  pplayer->revolution_finishes, game.info.turn);
   notify_player_ex(pplayer, NULL, E_REVOLT_DONE,
-		   _("Game: %s now governs the %s as a %s."), 
-		   pplayer->name, 
+		   _("Game: %s now governs the %s as a %s."),
+		   pplayer->name,
 		   get_nation_name_plural(pplayer->nation),
 		   get_government_name(government));
 
@@ -1139,19 +1139,19 @@ void check_player_government_rates(struct player *pplayer)
   if (pplayer->economic.tax != old_econ.tax) {
     changed = TRUE;
     notify_player(pplayer,
-		  _("Game: Tax rate exceeded the max rate for %s; adjusted."), 
+		  _("Game: Tax rate exceeded the max rate for %s; adjusted."),
 		  get_government_name(pplayer->government));
   }
   if (pplayer->economic.science != old_econ.science) {
     changed = TRUE;
     notify_player(pplayer,
-		  _("Game: Science rate exceeded the max rate for %s; adjusted."), 
+		  _("Game: Science rate exceeded the max rate for %s; adjusted."),
 		  get_government_name(pplayer->government));
   }
   if (pplayer->economic.luxury != old_econ.luxury) {
     changed = TRUE;
     notify_player(pplayer,
-		  _("Game: Luxury rate exceeded the max rate for %s; adjusted."), 
+		  _("Game: Luxury rate exceeded the max rate for %s; adjusted."),
 		  get_government_name(pplayer->government));
   }
 
@@ -1174,7 +1174,7 @@ void update_players_after_alliance_breakup(struct player* pplayer,
    send_player_info(pplayer, NULL);
    send_player_info(pplayer2, NULL);
    remove_allied_visibility(pplayer, pplayer2);
-   remove_allied_visibility(pplayer2, pplayer);    
+   remove_allied_visibility(pplayer2, pplayer);
    resolve_unit_stacks(pplayer, pplayer2, TRUE);
 }
 
@@ -1270,7 +1270,7 @@ repeat_break_treaty:
     update_players_after_alliance_breakup(pplayer, pplayer2);
   }
 
-  /* We want to go all the way to war, whatever the cost! 
+  /* We want to go all the way to war, whatever the cost!
    * This is only used by the AI. */
   if (clause == CLAUSE_LAST && new_type != DS_WAR) {
     repeat = TRUE;
@@ -1323,9 +1323,9 @@ repeat_break_treaty:
   }
 
 
-  /* 
+  /*
    * Refresh all cities which have a unit of the other side within
-   * city range. 
+   * city range.
    */
   check_city_workers(pplayer);
   check_city_workers(pplayer2);
@@ -1361,7 +1361,7 @@ repeat_break_treaty:
         handle_diplomacy_cancel_pact(pplayer, other->player_no,
                                      CLAUSE_ALLIANCE);
       } else {
-        /* We are in the same team as the agressor; we cannot break 
+        /* We are in the same team as the agressor; we cannot break
          * alliance with him. We trust our team mate and break alliance
          * with the attacked player */
         notify_player_ex(other, NULL, E_TREATY_BROKEN,
@@ -1396,7 +1396,7 @@ void vnotify_conn_ex(struct conn_list *dest, struct tile *ptile,
   }
 
   struct packet_chat_msg genmsg;
-  
+
   my_vsnprintf(genmsg.message, sizeof(genmsg.message), format, vargs);
   genmsg.event = event;
   genmsg.conn_id = -1;
@@ -1433,7 +1433,7 @@ void notify_conn_ex(struct conn_list *dest, struct tile *ptile,
 /**************************************************************************
   See vnotify_conn_ex - this is varargs, and cannot specify (x,y), event.
 **************************************************************************/
-void notify_conn(struct conn_list *dest, const char *format, ...) 
+void notify_conn(struct conn_list *dest, const char *format, ...)
 {
   va_list args;
 
@@ -1453,7 +1453,7 @@ void notify_conn(struct conn_list *dest, const char *format, ...)
   explicitly game.est_connections or game.game_connections as dest.
 **************************************************************************/
 void notify_player_ex(const struct player *pplayer, struct tile *ptile,
-		      enum event_type event, const char *format, ...) 
+		      enum event_type event, const char *format, ...)
 {
   struct conn_list *dest;
   va_list args;
@@ -1463,7 +1463,7 @@ void notify_player_ex(const struct player *pplayer, struct tile *ptile,
   } else {
     dest = game.game_connections;
   }
-  
+
   va_start(args, format);
   vnotify_conn_ex(dest, ptile, event, format, args);
   va_end(args);
@@ -1472,7 +1472,7 @@ void notify_player_ex(const struct player *pplayer, struct tile *ptile,
 /**************************************************************************
   Just like notify_player_ex, but no (x,y) nor event type.
 **************************************************************************/
-void notify_player(const struct player *pplayer, const char *format, ...) 
+void notify_player(const struct player *pplayer, const char *format, ...)
 {
   struct conn_list *dest;
   va_list args;
@@ -1482,7 +1482,7 @@ void notify_player(const struct player *pplayer, const char *format, ...)
   } else {
     dest = game.game_connections;
   }
-  
+
   va_start(args, format);
   vnotify_conn_ex(dest, NULL, E_NOEVENT, format, args);
   va_end(args);
@@ -1493,7 +1493,7 @@ void notify_player(const struct player *pplayer, const char *format, ...)
   but excluding pplayer and specified player.
 **************************************************************************/
 void notify_embassies(struct player *pplayer, struct player *exclude,
-		      const char *format, ...) 
+		      const char *format, ...)
 {
   struct packet_chat_msg genmsg;
   va_list args;
@@ -1583,7 +1583,7 @@ void send_player_info_c(struct player *src, struct conn_list *dest)
   Send information about player src, or all players if src is NULL,
   to specified players dest (that is, to dest->connections).
   As convenience to old code, dest may be NULL meaning send to
-  game.game_connections.  
+  game.game_connections.
 **************************************************************************/
 void send_player_info(struct player *src, struct player *dest)
 {
@@ -1664,7 +1664,7 @@ static void package_player_info(struct player *plr,
     for(i = 0; i < MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS; i++) {
       packet->diplstates[i].type       = plr->diplstates[i].type;
       packet->diplstates[i].turns_left = plr->diplstates[i].turns_left;
-      packet->diplstates[i].contact_turns_left = 
+      packet->diplstates[i].contact_turns_left =
          plr->diplstates[i].contact_turns_left;
       packet->diplstates[i].has_reason_to_cancel = plr->diplstates[i].has_reason_to_cancel;
     }
@@ -1693,7 +1693,7 @@ static void package_player_info(struct player *plr,
 
       packet->diplstates[p_no].type       = plr->diplstates[p_no].type;
       packet->diplstates[p_no].turns_left = plr->diplstates[p_no].turns_left;
-      packet->diplstates[p_no].contact_turns_left = 
+      packet->diplstates[p_no].contact_turns_left =
          plr->diplstates[p_no].contact_turns_left;
       packet->diplstates[p_no].has_reason_to_cancel =
 	plr->diplstates[p_no].has_reason_to_cancel;
@@ -1701,7 +1701,7 @@ static void package_player_info(struct player *plr,
   }
 
   /* Make absolutely sure - in case you lose your embassy! */
-  if (info_level >= INFO_EMBASSY 
+  if (info_level >= INFO_EMBASSY
       || (receiver
 	  && pplayer_get_diplstate(plr, receiver)->type == DS_TEAM)) {
     packet->bulbs_last_turn = plr->research.bulbs_last_turn;
@@ -1753,7 +1753,7 @@ static void package_player_info(struct player *plr,
     packet->researching_cost = 0;
   }
 
-  /* 
+  /*
    * This may be an odd time to check these values but we can be sure
    * to have a consistent state here.
    */
@@ -1795,7 +1795,7 @@ struct conn_list *player_reply_dest(struct player *pplayer)
 	  pplayer->connections);
 }
 
-/********************************************************************** 
+/**********************************************************************
 The initmap option is used because we don't want to initialize the map
 before the x and y sizes have been determined
 ***********************************************************************/
@@ -1808,7 +1808,7 @@ void server_player_init(struct player *pplayer, bool initmap)
   ai_data_init(pplayer);
 }
 
-/********************************************************************** 
+/**********************************************************************
  This function does _not_ close any connections attached to this player.
  cut_connection is used for that.
 ***********************************************************************/
@@ -1825,7 +1825,7 @@ void server_remove_player(struct player *pplayer)
 
   notify_conn(game.est_connections,
 	      _("Game: %s has been removed from the game."), pplayer->name);
-  
+
   dlsend_packet_player_remove(game.game_connections, pplayer->player_no);
 
   /* Note it is ok to remove the _current_ item in a list_iterate. */
@@ -1936,7 +1936,7 @@ void shuffle_players(void)
   for(i=0; i<game.info.nplayers-1; i++) {
     /* for each run: shuffled[ <i ] is already shuffled [Kero+dwp] */
     pos = i + myrand(game.info.nplayers-i);
-    tmp_plr = shuffled_plr[i]; 
+    tmp_plr = shuffled_plr[i];
     shuffled_plr[i] = shuffled_plr[pos];
     shuffled_plr[pos] = tmp_plr;
   }
@@ -1977,7 +1977,7 @@ void set_shuffled_players(int *shuffled_players)
 struct player *shuffled_player(int i)
 {
   assert(i>=0 && i<game.info.nplayers);
-  
+
   if (shuffled_nplayers == 0) {
     return &game.players[i];
   }
@@ -2002,9 +2002,9 @@ struct player *shuffled_player(int i)
 static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
 {
   int *nations_used, i, num_nations_avail = game.ruleset_control.playable_nation_count, pick;
-  int looking_for, pref_nations_avail = 0; 
+  int looking_for, pref_nations_avail = 0;
 
-  /* Values of nations_used: 
+  /* Values of nations_used:
    * 0: not available
    * 1: available
    * 2: preferred choice */
@@ -2023,10 +2023,10 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
     if (other_player->nation < game.ruleset_control.playable_nation_count) {
       if (nations_used[other_player->nation] == 2) {
 	pref_nations_avail--;
-      } 
+      }
       nations_used[other_player->nation] = 0; /* Unavailable */
       num_nations_avail--;
-    } 
+    }
   } players_iterate_end;
 
   assert(num_nations_avail > 0);
@@ -2040,10 +2040,10 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
     looking_for = 2; /* Use a preferred nation only. */
   }
 
-  for (i = 0; i < game.ruleset_control.playable_nation_count; i++){ 
+  for (i = 0; i < game.ruleset_control.playable_nation_count; i++){
     if (nations_used[i] == looking_for) {
       pick--;
-      
+
       if (pick < 0) {
 	break;
       }
@@ -2058,7 +2058,7 @@ static Nation_Type_id pick_available_nation(Nation_Type_id *choices)
 This function creates a new player and copies all of it's science
 research etc.  Players are both thrown into anarchy and gold is
 split between both players.
-                               - Kris Bubendorfer 
+                               - Kris Bubendorfer
 ***********************************************************************/
 static struct player *split_player(struct player *pplayer)
 {
@@ -2100,7 +2100,7 @@ static struct player *split_player(struct player *pplayer)
     other_player->diplstates[cplayer->player_no].has_reason_to_cancel = 0;
     other_player->diplstates[cplayer->player_no].turns_left = 0;
     other_player->diplstates[cplayer->player_no].contact_turns_left = 0;
-    
+
     /* Send so that other_player sees updated diplomatic info;
      * pplayer will be sent later anyway
      */
@@ -2114,7 +2114,7 @@ static struct player *split_player(struct player *pplayer)
   game.info.max_players = game.info.nplayers;
 
   /* Split the resources */
-  
+
   cplayer->economic.gold = pplayer->economic.gold;
   cplayer->economic.gold /= 2;
   pplayer->economic.gold -= cplayer->economic.gold;
@@ -2144,7 +2144,7 @@ static struct player *split_player(struct player *pplayer)
   tech_type_iterate(i) {
     cplayer->ai.tech_want[i] = pplayer->ai.tech_want[i];
   } tech_type_iterate_end;
-  
+
   /* change the original player */
   if (pplayer->government != game.ruleset_control.government_when_anarchy) {
     pplayer->government = game.ruleset_control.government_when_anarchy;
@@ -2179,14 +2179,14 @@ static struct player *split_player(struct player *pplayer)
   }
 
   gamelog(GAMELOG_PLAYER, cplayer);
-  
+
   return cplayer;
 }
 
-/********************************************************************** 
+/**********************************************************************
 civil_war_triggered:
  * The capture of a capital is not a sure fire way to throw
-and empire into civil war.  Some governments are more susceptible 
+and empire into civil war.  Some governments are more susceptible
 than others, here are the base probabilities:
 Anarchy   	90%
 Despotism 	80%
@@ -2195,9 +2195,9 @@ Fundamentalism  60% (Only in civ2 ruleset)
 Communism 	50%
 Republic  	40%
 Democracy 	30%
- * In addition each city in revolt adds 5%, each city in rapture 
-subtracts 5% from the probability of a civil war.  
- * If you have at least 1 turns notice of the impending loss of 
+ * In addition each city in revolt adds 5%, each city in rapture
+subtracts 5% from the probability of a civil war.
+ * If you have at least 1 turns notice of the impending loss of
 your capital, you can hike luxuries up to the hightest value,
 and by this reduce the chance of a civil war.  In fact by
 hiking the luxuries to 100% under Democracy, it is easy to
@@ -2206,7 +2206,7 @@ civil war.  Likewise, 3 revolting cities under despotism
 guarantees a civil war.
  * This routine calculates these probabilities and returns true
 if a civil war is triggered.
-                                   - Kris Bubendorfer 
+                                   - Kris Bubendorfer
 ***********************************************************************/
 bool civil_war_triggered(struct player *pplayer)
 {
@@ -2216,7 +2216,7 @@ bool civil_war_triggered(struct player *pplayer)
   int prob = get_government_civil_war_prob(pplayer->government);
 
   /* Now compute the contribution of the cities. */
-  
+
   city_list_iterate(pplayer->cities, pcity)
     if (city_unhappy(pcity)) {
       prob += 5;
@@ -2228,35 +2228,35 @@ bool civil_war_triggered(struct player *pplayer)
 
   freelog(LOG_VERBOSE, "Civil war chance for %s: prob %d, dice %d",
 	  pplayer->name, prob, dice);
-  
+
   return(dice < prob);
 }
 
 /**********************************************************************
 Capturing a nation's capital is a devastating blow.  This function
 creates a new AI player, and randomly splits the original players
-city list into two.  Of course this results in a real mix up of 
+city list into two.  Of course this results in a real mix up of
 teritory - but since when have civil wars ever been tidy, or civil.
 
 Embassies:  All embassies with other players are lost.  Other players
             retain their embassies with pplayer.
  * Units:      Units inside cities are assigned to the new owner
-            of the city.  Units outside are transferred along 
+            of the city.  Units outside are transferred along
             with the ownership of their supporting city.
             If the units are in a unit stack with non rebel units,
             then whichever units are nearest an allied city
-            are teleported to that city.  If the stack is a 
-            transport at sea, then all rebel units on the 
+            are teleported to that city.  If the stack is a
+            transport at sea, then all rebel units on the
             transport are teleported to their nearest allied city.
 
 Cities:     Are split randomly into 2.  This results in a real
-            mix up of teritory - but since when have civil wars 
+            mix up of teritory - but since when have civil wars
             ever been tidy, or for any matter civil?
  *
 One caveat, since the spliting of cities is random, you can
 conceive that this could result in either the original player
 or the rebel getting 0 cities.  To prevent this, the hack below
-ensures that each side gets roughly half, which ones is still 
+ensures that each side gets roughly half, which ones is still
 determined randomly.
                                    - Kris Bubendorfer
 ***********************************************************************/
@@ -2280,13 +2280,13 @@ void civil_war(struct player *pplayer)
 
   /* So that clients get the correct game.info.nplayers: */
   send_game_info(NULL);
-  
+
   /* Before units, cities, so clients know name of new nation
    * (for debugging etc).
    */
   send_player_info(cplayer,  NULL);
-  send_player_info(pplayer,  NULL); 
-  
+  send_player_info(pplayer,  NULL);
+
   /* Now split the empire */
 
   freelog(LOG_VERBOSE,
@@ -2336,7 +2336,7 @@ void civil_war(struct player *pplayer)
 		  "rebel provinces."),
 		pplayer->name, cplayer->name,
 		city_list_size(cplayer->cities));
-}  
+}
 
 /**************************************************************************
  The client has send as a chunk of the attribute block.

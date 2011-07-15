@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ static void page_conn_etype(struct conn_list *dest, const char *caption,
 			    const char *headline, const char *lines,
 			    enum event_type event);
 enum historian_type {
-        HISTORIAN_RICHEST=0, 
+        HISTORIAN_RICHEST=0,
         HISTORIAN_ADVANCED=1,
         HISTORIAN_MILITARY=2,
         HISTORIAN_HAPPIEST=3,
@@ -187,7 +187,7 @@ static void historian_generic(enum historian_type which_news)
       case HISTORIAN_MILITARY:
 	size[j].value = pplayer->score.units;
 	break;
-      case HISTORIAN_HAPPIEST: 
+      case HISTORIAN_HAPPIEST:
 	size[j].value =
 	    (((pplayer->score.happy - pplayer->score.unhappy) * 1000) /
 	     (1 + total_player_citizens(pplayer)));
@@ -268,7 +268,7 @@ void report_top_five_cities(struct conn_list *dest)
     int wonders;
 
     if (!size[i].city) {
-	/* 
+	/*
 	 * pcity may be NULL if there are less then NUM_BEST_CITIES in
 	 * the whole game.
 	 */
@@ -716,7 +716,7 @@ bool is_valid_demography(const char *demography, const char **error_string)
 
 /*************************************************************************
   Send demographics report; what gets reported depends on value of
-  demographics server option.  
+  demographics server option.
 *************************************************************************/
 void report_demographics(struct connection *pconn)
 {
@@ -896,7 +896,7 @@ static void log_civ_score(void)
   static char *player_name_ptrs[MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS];
   static int last_turn = -1;
 
-  /* 
+  /*
    * Add new tags only at end of this list. Maintaining the order of
    * old tags is critical.
    */
@@ -978,7 +978,7 @@ static void log_civ_score(void)
 	goto log_civ_score_disable;
       }
       fprintf(fp, "%s%s\n", scorelog_magic, VERSION_STRING);
-      fprintf(fp, 
+      fprintf(fp,
 	      "\n"
 	      "# For a specification of the format of this see doc/README.scorelog or \n"
 	      "# <http://www.freeciv.org/lxr/source/doc/README.scorelog?v=cvs>.\n"
@@ -1183,19 +1183,19 @@ void report_final_scores(struct conn_list *dest)
   for (i = 0; i < j; i++) {
     packet.id[i] = size[i].player->player_no;
     packet.score[i] = size[i].value;
-    packet.pop[i] = get_pop(size[i].player) * 1000; 
-    packet.bnp[i] = get_economics(size[i].player); 
-    packet.mfg[i] = get_production(size[i].player); 
-    packet.cities[i] = get_cities(size[i].player); 
-    packet.techs[i] = get_techs(size[i].player) - 1; 
-    packet.mil_service[i] = get_mil_service(size[i].player); 
-    packet.wonders[i] = get_wonders(size[i].player); 
-    packet.research[i] = get_research(size[i].player); 
-    packet.landarea[i] = get_landarea(size[i].player); 
-    packet.settledarea[i] = get_settledarea(size[i].player); 
-    packet.literacy[i] = get_literacy(size[i].player); 
-    packet.spaceship[i] = get_spaceship(size[i].player); 
-  }  
+    packet.pop[i] = get_pop(size[i].player) * 1000;
+    packet.bnp[i] = get_economics(size[i].player);
+    packet.mfg[i] = get_production(size[i].player);
+    packet.cities[i] = get_cities(size[i].player);
+    packet.techs[i] = get_techs(size[i].player) - 1;
+    packet.mil_service[i] = get_mil_service(size[i].player);
+    packet.wonders[i] = get_wonders(size[i].player);
+    packet.research[i] = get_research(size[i].player);
+    packet.landarea[i] = get_landarea(size[i].player);
+    packet.settledarea[i] = get_settledarea(size[i].player);
+    packet.literacy[i] = get_literacy(size[i].player);
+    packet.spaceship[i] = get_spaceship(size[i].player);
+  }
 
   lsend_packet_endgame_report(dest, &packet);
 
@@ -1215,7 +1215,7 @@ void report_final_scores(struct conn_list *dest)
                  pplayer->score.units_lost);
   } players_iterate_end;
   page_conn(dest, _("Unit Statistics:"), head_line, buffer);
-}	
+}
 
 /**************************************************************************
   Assumes groupings have been assigned, filled and results propagated.
@@ -1335,7 +1335,7 @@ void report_game_rankings(struct conn_list *dest)
 /**************************************************************************
 This function pops up a non-modal message dialog on the player's desktop
 **************************************************************************/
-void page_conn(struct conn_list *dest, const char *caption, 
+void page_conn(struct conn_list *dest, const char *caption,
 	       const char *headline, const char *lines)
 {
   page_conn_etype(dest, caption, headline, lines, E_REPORT);
@@ -1366,6 +1366,6 @@ static void page_conn_etype(struct conn_list *dest, const char *caption,
     freelog(LOG_ERROR, "Message truncated in page_conn_etype()!");
   }
   genmsg.event = event;
-  
+
   lsend_packet_page_msg(dest, &genmsg);
 }

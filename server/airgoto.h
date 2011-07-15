@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ unsigned int get_turns_to_refuel(struct refuel *pRefuel);
 
 struct pqueue *refuel_iterate_init(struct player *pplayer, struct tile *ptile,
 				   struct tile *dst_tile,
-                                   bool cities_only, int moves_left, 
+                                   bool cities_only, int moves_left,
                                    int moves_per_turn, int max_moves);
 struct refuel *refuel_iterate_next(struct pqueue *rp_list);
 void refuel_iterate_end(struct pqueue *rp_list);

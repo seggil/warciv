@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -64,8 +64,8 @@ static struct player_refuel_list {
   int moves_per_turn;
 } refuels;
 
-static void make_list_of_refuel_points(struct player *pplayer, 
-                                       bool cities_only, 
+static void make_list_of_refuel_points(struct player *pplayer,
+                                       bool cities_only,
                                        int moves_per_turn, int max_moves);
 
 
@@ -95,8 +95,8 @@ unsigned int get_turns_to_refuel(struct refuel *point)
  * If the last argument start is TRUE, the point will be written at
  * the head of the list.
  *****************************************************************/
-static void add_refuel_point(struct tile *ptile, 
-                             enum refuel_type type, int turns, 
+static void add_refuel_point(struct tile *ptile,
+                             enum refuel_type type, int turns,
                              int moves_left, bool start)
 {
   int pos;
@@ -110,14 +110,14 @@ static void add_refuel_point(struct tile *ptile,
 
   if (pos +1 > refuels.alloc_size) {
     refuels.alloc_size += ALLOC_STEP;
-    /* If refuels.alloc_size was zero (on the first call), 
+    /* If refuels.alloc_size was zero (on the first call),
      * then refuels.points is NULL and realloc will actually malloc */
-    refuels.points = fc_realloc(refuels.points, 
+    refuels.points = fc_realloc(refuels.points,
                                 refuels.alloc_size * sizeof(struct refuel));
     /* This memory, because refuels is static, is never freed.
-     * It is just reused. */  
+     * It is just reused. */
   }
-  
+
   /* Fill the new point in */
   refuels.points[pos].tile = ptile;
   refuels.points[pos].type = type;
@@ -148,9 +148,9 @@ as it is now, but as it is only used in the players turn that does not
 matter.
 Can probably do some caching...
 *************************************************************************/
-static void make_list_of_refuel_points(struct player *pplayer, 
-                                       bool cities_only, 
-                                       int moves_per_turn, 
+static void make_list_of_refuel_points(struct player *pplayer,
+                                       bool cities_only,
+                                       int moves_per_turn,
                                        int max_moves)
 {
   refuels.list_size = 1;
@@ -161,19 +161,19 @@ static void make_list_of_refuel_points(struct player *pplayer,
   whole_map_iterate(ptile) {
     if (is_allied_city_tile(ptile, pplayer)
 	&& !is_non_allied_unit_tile(ptile, pplayer) ) {
-      add_refuel_point(ptile, FUEL_CITY, 
+      add_refuel_point(ptile, FUEL_CITY,
                        MAP_MAX_HEIGHT + MAP_MAX_WIDTH, 0, FALSE);
     } else if (tile_has_special(ptile, S_AIRBASE)
                && !is_non_allied_unit_tile(ptile, pplayer)
                && !cities_only) {
-      add_refuel_point(ptile, FUEL_AIRBASE, 
+      add_refuel_point(ptile, FUEL_AIRBASE,
                        MAP_MAX_HEIGHT + MAP_MAX_WIDTH, 0, FALSE);
     }
   } whole_map_iterate_end;
 }
 
 /*************************************************************************
- * Priority function for refuel points --- on the basis of their 
+ * Priority function for refuel points --- on the basis of their
  * turn-distance from the starting point
  ************************************************************************/
 static int queue_priority_function(const void *value)
@@ -200,22 +200,22 @@ static int queue_priority_function(const void *value)
 struct pqueue *refuel_iterate_init(struct player *pplayer,
 				   struct tile *ptile,
                                    struct tile *dest_tile,
-                                   bool cities_only, int moves_left, 
+                                   bool cities_only, int moves_left,
                                    int moves_per_turn, int max_fuel)
 {
-  struct refuel *tmp;   
+  struct refuel *tmp;
   struct pqueue *rp_queue = pq_create(MAP_MAX_WIDTH);
   unsigned short index;
 
-  /* List of all refuel points of the player!  
+  /* List of all refuel points of the player!
    * TODO: Should cache the results */
-  make_list_of_refuel_points(pplayer, cities_only, 
+  make_list_of_refuel_points(pplayer, cities_only,
                              moves_per_turn, moves_per_turn * max_fuel);
   /* Add the starting point: we keep it for later backtracking */
   add_refuel_point(ptile, FUEL_START, 0, moves_left, TRUE);
 
   if (!same_pos(ptile, dest_tile)) {
-    add_refuel_point(dest_tile, FUEL_GOAL, 
+    add_refuel_point(dest_tile, FUEL_GOAL,
                      MAP_MAX_HEIGHT + MAP_MAX_WIDTH, 0, FALSE);
   }
 
@@ -228,7 +228,7 @@ struct pqueue *refuel_iterate_init(struct player *pplayer,
   tmp = get_refuel_by_index(index);
 
   if (tmp && same_pos(ptile, tmp->tile)) {
-    /* We should get the starting point twice 
+    /* We should get the starting point twice
      * in case we start on less than full fuel */
     pq_remove(rp_queue, NULL);
     refuel_iterate_process(rp_queue, tmp);
@@ -238,7 +238,7 @@ struct pqueue *refuel_iterate_init(struct player *pplayer,
 }
 
 /*************************************************************************
- * Get the next refuel point (wrt the turn-distance from the starting 
+ * Get the next refuel point (wrt the turn-distance from the starting
  * point).  Sort out the points that are already processed.
  ************************************************************************/
 struct refuel *refuel_iterate_next(struct pqueue *rp_list)
@@ -266,43 +266,43 @@ struct refuel *refuel_iterate_next(struct pqueue *rp_list)
 
 /*************************************************************************
  * Process next refuel point: find all points we can reach from pfrom,
- * see if the new path is better than already existing one, add new 
+ * see if the new path is better than already existing one, add new
  * reachable points to the priority queue.
  ************************************************************************/
 void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom)
 {
   int k;
-  int max_moves 
+  int max_moves
     = (pfrom->type == FUEL_START ? pfrom->moves_left : refuels.max_moves);
 
   /* Iteration starts from 1, since 0 is occupied by the start point */
   for (k = 1; k < refuels.list_size; k++) {
     struct refuel *pto = get_refuel_by_index(k);
-    int moves_left 
-      = air_can_move_between(max_moves, 
-                             pfrom->tile, pto->tile, 
+    int moves_left
+      = air_can_move_between(max_moves,
+                             pfrom->tile, pto->tile,
                              refuels.pplayer);
     if (moves_left != -1) {
       int moves_used = max_moves - moves_left;
       /* Turns used on this flight (for units with fuel > 1) */
-      int turns_used 
-        = 1 + ((moves_used == 0 ? 0 : moves_used - 1) 
+      int turns_used
+        = 1 + ((moves_used == 0 ? 0 : moves_used - 1)
                / refuels.moves_per_turn);
       /* Total turns to get from the start to the pto refuelling point */
       int total_turns = pfrom->turns + turns_used;
 
       freelog(LOG_DEBUG, "Considering: (%i,%i)->(%i,%i), in (%d %d)",
-              pfrom->tile->x, pfrom->tile->y, pto->tile->x, pto->tile->y, 
+              pfrom->tile->x, pfrom->tile->y, pto->tile->x, pto->tile->y,
               total_turns, moves_left);
-      freelog(LOG_DEBUG, "\t\t compared to (%d %d)", 
+      freelog(LOG_DEBUG, "\t\t compared to (%d %d)",
               pto->turns, pto->moves_left);
 
-      if ( (pto->turns > total_turns) 
-           || ((pto->turns == total_turns) 
+      if ( (pto->turns > total_turns)
+           || ((pto->turns == total_turns)
                && (moves_left > pto->moves_left)) ) {
         /* Found a new refuelling point or at least a new route */
         if (pto->listed == RLS_ALREADY_NOT) {
-          freelog(LOG_ERROR, "Found a shorter route to a node: (%i,%i)", 
+          freelog(LOG_ERROR, "Found a shorter route to a node: (%i,%i)",
                   pto->tile->x, pto->tile->y);
           assert(FALSE);
         }
@@ -310,13 +310,13 @@ void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom)
         pto->coming_from = pfrom;
         pto->moves_left = moves_left;
         pto->turns = total_turns;
-        
+
         /* Insert it into the queue.  No problem if it's already there */
 	pq_insert(rp_list, k, queue_priority_function(pto));
         pto->listed = RLS_YES;
-        
-        freelog(LOG_DEBUG, "Recorded (%i,%i) from (%i,%i) in (%d %d)", 
-                pto->tile->x, pto->tile->y, pfrom->tile->x, pfrom->tile->y, 
+
+        freelog(LOG_DEBUG, "Recorded (%i,%i) from (%i,%i) in (%d %d)",
+                pto->tile->x, pto->tile->y, pfrom->tile->x, pfrom->tile->y,
                 total_turns, moves_left);
       }
     }
@@ -328,7 +328,7 @@ void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom)
  ************************************************************************/
 void refuel_iterate_end(struct pqueue *rp_list)
 {
-  /* No need to free memory allocated for the refuels list 
+  /* No need to free memory allocated for the refuels list
    * -- it will be reused */
 
   /* Just destroy the queue */
@@ -343,12 +343,12 @@ void refuel_iterate_end(struct pqueue *rp_list)
 /************************************************************************
  * We need to find a route that our airplane can use without crashing. The
  * first waypoint of this route is returned inside the arguments dest_x and
- * dest_y. This can be the point where we start, fx when a plane with few 
+ * dest_y. This can be the point where we start, fx when a plane with few
  * moves left need to stay in a city to refuel.
  *
  * This is achieved by a simple use of refuel_iterate and then backtracking.
  *
- * The path chosen will be such that upon arrival the unit will have maximal 
+ * The path chosen will be such that upon arrival the unit will have maximal
  * moves left (among the paths that get to dest in minimal number of moves).
  *
  * Possible changes:
@@ -359,20 +359,20 @@ void refuel_iterate_end(struct pqueue *rp_list)
  * attack a unit will not make the attack on it's last fuel point etc. etc.
  ***********************************************************************/
 bool find_air_first_destination(struct unit *punit, struct tile **dest_tile)
-{ 
+{
   unsigned int fullmoves = unit_move_rate(punit) / SINGLE_MOVE;
   unsigned int fullfuel = unit_type(punit)->fuel;
-  unsigned int moves_and_fuel_left 
+  unsigned int moves_and_fuel_left
     = punit->moves_left / SINGLE_MOVE + fullmoves * (punit->fuel - 1);
-  struct pqueue *my_list 
-    = refuel_iterate_init(unit_owner(punit), punit->tile, 
-                          *dest_tile, FALSE, 
+  struct pqueue *my_list
+    = refuel_iterate_init(unit_owner(punit), punit->tile,
+                          *dest_tile, FALSE,
                           moves_and_fuel_left, fullmoves, fullfuel);
   struct refuel *next_point;
   bool reached_goal = FALSE;
 
   while((next_point = refuel_iterate_next(my_list)) != NULL) {
-    freelog(LOG_DEBUG, "Next point (%d, %d), priority %d", 
+    freelog(LOG_DEBUG, "Next point (%d, %d), priority %d",
             next_point->tile->x, next_point->tile->y,
             queue_priority_function(next_point));
     if (next_point -> type == FUEL_GOAL) {

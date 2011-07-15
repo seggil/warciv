@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996-2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -102,10 +102,10 @@ struct settings_s {
      is compatible with all (or as many) clients as possible. */
   const char *required_capability;
 
-  /* 
+  /*
    * About the *_validate functions: If the function is non-NULL, it
    * is called with the new value, and returns whether the change is
-   * legal. The char * is an error message in the case of reject. 
+   * legal. The char * is an error message in the case of reject.
    */
 
   /*** bool part ***/

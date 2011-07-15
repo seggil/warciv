@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ struct bg_map_know_and_see_all_context {
   Number this tile and nearby tiles (recursively) with the specified
   continent number nr, using a flood-fill algorithm.
 
-  is_land tells us whether we are assigning continent numbers or ocean 
+  is_land tells us whether we are assigning continent numbers or ocean
   numbers.
 
   if skip_unsafe is specified then "unsafe" terrains are skipped.  This
@@ -70,7 +70,7 @@ void assign_continent_flood(struct tile *ptile, bool is_land,
   if (map_get_continent(ptile) != 0) {
     return;
   }
-  
+
   if (skip_unsafe && terrain_has_flag(map_get_terrain(ptile), TER_UNSAFE)) {
     /* FIXME: This should check a specialized flag, not the TER_UNSAFE
      * flag which may not even be present. */
@@ -82,7 +82,7 @@ void assign_continent_flood(struct tile *ptile, bool is_land,
   }
 
   map_set_continent(ptile, nr);
-  
+
   /* count the tile */
   if (nr < 0) {
     ocean_sizes[-nr]++;
@@ -105,7 +105,7 @@ static void recalculate_lake_surrounders(void)
   for (i = 1; i <= map.server.num_oceans; i++) {
     lake_surrounders[i] = 0;
   }
-  
+
   whole_map_iterate(ptile) {
     Continent_id cont = map_get_continent(ptile);
     if (!is_ocean(map_get_terrain(ptile))) {
@@ -138,13 +138,13 @@ static void recalculate_lake_surrounders(void)
 void assign_continent_numbers(bool skip_unsafe)
 {
   int i;
-  
+
   /* reset ocean/continent counters */
   for (i = 0; i < MAP_NCONT; i++) {
     ocean_sizes[i] = 0;
     continent_sizes[i] = 0;
   }
-  
+
   /* Initialize */
   map.num_continents = 0;
   map.server.num_oceans = 0;
@@ -178,7 +178,7 @@ void assign_continent_numbers(bool skip_unsafe)
 
   recalculate_lake_surrounders();
 
-  freelog(LOG_VERBOSE, "Map has %d continents and %d oceans", 
+  freelog(LOG_VERBOSE, "Map has %d continents and %d oceans",
 	  map.num_continents, map.server.num_oceans);
 }
 
@@ -315,7 +315,7 @@ void upgrade_city_rails(struct player *pplayer, bool discovery)
 		    "      Workers spontaneously gather and upgrade all "
 		    "cities with railroads."));
   }
-  
+
   city_list_iterate(pplayer->cities, pcity) {
     map_set_special(pcity->tile, S_RAILROAD);
     update_tile_knowledge(pcity->tile);
@@ -399,7 +399,7 @@ void give_citymap_from_player_to_player(struct city *pcity,
 /**************************************************************************
   Send all tiles known to specified clients.
   If dest is NULL means game.game_connections.
-  
+
   Note for multiple connections this may change "sent" multiple times
   for single player.  This is ok, because "sent" data is just optimised
   calculations, so it will be correct before this, for each connection
@@ -646,7 +646,7 @@ static void really_unfog_area(struct player *pplayer, struct tile *ptile)
 
   map_set_known(ptile, pplayer);
 
-  /* send info about the tile itself 
+  /* send info about the tile itself
    * It has to be sent first because the client needs correct
    * continent number before it can handle following packets
    */
@@ -658,7 +658,7 @@ static void really_unfog_area(struct player *pplayer, struct tile *ptile)
     send_unit_info(pplayer, punit);
   } unit_list_iterate_end;
 
-  /* discover cities */ 
+  /* discover cities */
   reality_check_city(pplayer, ptile);
   if ((pcity = map_get_city(ptile))) {
     send_city_info(pplayer, pcity);
@@ -720,12 +720,12 @@ static void really_fog_area(struct player *pplayer, struct tile *ptile)
 {
   freelog(LOG_DEBUG, "Fogging %i,%i. Previous fog: %i.",
 	  TILE_XY(ptile), map_get_seen(ptile, pplayer));
- 
+
   assert(map_get_seen(ptile, pplayer) == 0);
 
   unit_list_iterate(ptile->units, punit)
     unit_goes_out_of_sight(pplayer,punit);
-  unit_list_iterate_end;  
+  unit_list_iterate_end;
 
   update_player_tile_last_seen(pplayer, ptile);
   send_tile_info_always(pplayer, pplayer->connections, ptile);
@@ -1210,7 +1210,7 @@ static void player_tile_init(struct tile *ptile, struct player *pplayer)
   plrtile->last_updated = GAME_START_YEAR;
   plrtile->own_seen = plrtile->seen;
 }
- 
+
 /***************************************************************
 ...
 ***************************************************************/
@@ -1302,7 +1302,7 @@ static void really_give_tile_info_from_player_to_player(struct player *pfrom,
       dest_tile->special = from_tile->special;
       dest_tile->last_updated = from_tile->last_updated;
       send_tile_info_always(pdest, pdest->connections, ptile);
-	
+
       /* update and send city knowledge */
       /* remove outdated cities */
       if (dest_tile->city) {
@@ -1616,7 +1616,7 @@ enum ocean_land_change check_terrain_ocean_land_change(struct tile *ptile,
 
     /* New continent numbers for all tiles to all players */
     send_all_known_tiles(NULL);
-    
+
     map_update_borders_landmass_change(ptile);
   }
 
@@ -1636,7 +1636,7 @@ static struct city *map_get_adjc_city(struct tile *ptile)
   }
 
   adjc_iterate(ptile, tile1) {
-    if (tile1->city && 
+    if (tile1->city &&
          (!closest || tile1->city->turn_founded < closest->turn_founded)) {
       closest = tile1->city;
     }
@@ -1660,13 +1660,13 @@ static bool is_claimed_ocean(struct tile *ptile, Continent_id *contp)
   Continent_id cont = map_get_continent(ptile);
   Continent_id cont2, other;
   int ocean_tiles;
-  
+
   if (get_ocean_size(-cont) <= MAXIMUM_CLAIMED_OCEAN_SIZE &&
       lake_surrounders[-cont] > 0) {
     *contp = lake_surrounders[-cont];
     return TRUE;
   }
-  
+
   other = 0;
   ocean_tiles = 0;
   adjc_iterate(ptile, tile2) {
@@ -1722,7 +1722,7 @@ static struct city *map_get_closest_city(struct tile *ptile)
                 (!closest || closest->turn_founded > pcity->turn_founded))) {
             closest = pcity;
             cldistsq = distsq;
-          } 
+          }
         }
       } cities_iterate_end;
     }
@@ -1753,7 +1753,7 @@ static void tile_update_owner(struct tile *ptile)
 static void map_update_borders_recalculate_position(struct tile *ptile)
 {
   struct city_list *cities_to_refresh = city_list_new();
-  
+
   if (game.ruleset_control.borders > 0) {
     iterate_outward(ptile, game.ruleset_control.borders, tile1) {
       struct city *pccity = map_get_closest_city(tile1);
@@ -1771,18 +1771,18 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
 	  unit_list_iterate(tile1->units, unit) {
 	    struct city *homecity = find_city_by_id(unit->homecity);
 	    bool already_listed = FALSE;
-	    
+
 	    if (!homecity) {
 	      continue;
 	    }
-	    
+
 	    city_list_iterate(cities_to_refresh, city2) {
 	      if (city2 == homecity) {
 	        already_listed = TRUE;
 		break;
 	      }
 	    } city_list_iterate_end;
-	    
+
 	    if (!already_listed) {
 	      city_list_prepend(cities_to_refresh, homecity);
 	    }
@@ -1792,8 +1792,8 @@ static void map_update_borders_recalculate_position(struct tile *ptile)
       }
     } iterate_outward_end;
   }
- 
-  /* Update happiness in all homecities we have collected */ 
+
+  /* Update happiness in all homecities we have collected */
   if (game.ruleset_control.happyborders > 0) {
     city_list_iterate(cities_to_refresh, to_refresh) {
       city_refresh(to_refresh);
@@ -1899,7 +1899,7 @@ int get_continent_size(Continent_id id)
   Return size in tiles of the given ocean. You should use positive ocean
   number.
 *************************************************************************/
-int get_ocean_size(Continent_id id) 
+int get_ocean_size(Continent_id id)
 {
   assert(id > 0);
   return ocean_sizes[id];

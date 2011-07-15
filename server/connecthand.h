@@ -25,7 +25,7 @@ enum action_type {
   ACTION_GIVE_CTRL,
   ACTION_GIVE_ADMIN,
   ACTION_GIVE_HACK,
-  
+
   NUM_ACTION_TYPES,
 };
 
@@ -33,7 +33,7 @@ struct conn_pattern;
 
 struct user_action {
   struct conn_pattern *conpat;
-  enum action_type action;	
+  enum action_type action;
 };
 
 struct user_action *user_action_new(const char *pattern, int type,
@@ -76,7 +76,7 @@ void lost_connection_to_client(struct connection *pconn);
 void send_conn_info(struct conn_list *src, struct conn_list *dest);
 void send_conn_info_remove(struct conn_list *src, struct conn_list *dest);
 
-bool attach_connection_to_player(struct connection *pconn, 
+bool attach_connection_to_player(struct connection *pconn,
                                  struct player *pplayer);
 bool unattach_connection_from_player(struct connection *pconn);
 void clear_all_on_connect_user_actions(void);

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ void gamelog_set_level(int level)
 }
 
 /**************************************************************************
- Place the toplevel xml tags for each line. Also add the year and turn 
+ Place the toplevel xml tags for each line. Also add the year and turn
  attributes to the tag. "element" is the name of the tag.
 **************************************************************************/
 static void gamelog_put_prefix(char *buf, int len, const char *element)
@@ -100,7 +100,7 @@ static void gamelog_put_prefix(char *buf, int len, const char *element)
 
   my_snprintf(buf2, sizeof(buf2), "<%s y=\"%d\" t=\"%d\">%s</%s>", element,
               game.info.year, game.info.turn, buf, element);
-  
+
   mystrlcpy(buf, buf2, len);
 }
 
@@ -201,7 +201,7 @@ void gamelog(int level, ...)
 
   fs = fopen(gamelog_filename, "a");
   if (!fs) {
-    freelog(LOG_FATAL, _("Couldn't open gamelogfile \"%s\" for appending."), 
+    freelog(LOG_FATAL, _("Couldn't open gamelogfile \"%s\" for appending."),
 	    gamelog_filename);
     exit(EXIT_FAILURE);
   }
@@ -245,7 +245,7 @@ void gamelog(int level, ...)
 
     my_snprintf(buf, sizeof(buf), "<n1>%d</n1><n2>%d</n2>"
                 "<name>%s</name><x>%d</x><y>%d</y>"
-                "<m>%s (%s) (%d,%d) %s by %s</m>", 
+                "<m>%s (%s) (%d,%d) %s by %s</m>",
                 pplayer->player_no, pplayer2->player_no,
                 pcity->name, pcity->tile->x, pcity->tile->y,
                 pcity->name, get_nation_name_plural(pplayer->nation),
@@ -315,13 +315,13 @@ void gamelog(int level, ...)
                   "<n1>%d</n1><n2>%d</n2><city>%s</city><type>%s</type>",
                   pplayer->player_no, pplayer2->player_no, pcity->name,
                   treaty_clause_strings[num]);
-      cat_snprintf(buf, sizeof(buf), msg, 
+      cat_snprintf(buf, sizeof(buf), msg,
                   pcity->name, get_nation_name_plural(pplayer2->nation),
                   get_nation_name_plural(pplayer->nation));
     } else {
       my_snprintf(buf, sizeof(buf),
                   "<n1>%d</n1><n2>%d</n2><type>%s</type>",
-                  pplayer->player_no, pplayer2->player_no, 
+                  pplayer->player_no, pplayer2->player_no,
                   treaty_clause_strings[num]);
       cat_snprintf(buf, sizeof(buf), msg,
                   get_nation_name_plural(pplayer->nation),
@@ -427,13 +427,13 @@ void gamelog(int level, ...)
                 "<w>%d</w><name>%s</name><m>%s build %s in %s</m>",
                 city_owner(pcity)->player_no, pcity->name,
                 pcity->is_building_unit ? 1 : 0,
-                (!pcity->is_building_unit 
+                (!pcity->is_building_unit
                  && is_wonder(pcity->currently_building)) ? 1 : 0,
-                pcity->is_building_unit ? 
+                pcity->is_building_unit ?
                   unit_types[pcity->currently_building].name :
                   get_impr_name_ex(pcity, pcity->currently_building),
                 get_nation_name_plural(city_owner(pcity)->nation),
-                pcity->is_building_unit ? 
+                pcity->is_building_unit ?
                   unit_types[pcity->currently_building].name :
                   get_impr_name_ex(pcity, pcity->currently_building),
                 pcity->name);
@@ -452,9 +452,9 @@ void gamelog(int level, ...)
   case GAMELOG_RATECHANGE:
     pplayer = va_arg(args, struct player *);
 
-    my_snprintf(buf, sizeof(buf), 
+    my_snprintf(buf, sizeof(buf),
                 "<n>%d</n><tax>%d</tax><lux>%d</lux><sci>%d</sci>",
-                pplayer->player_no, pplayer->economic.tax, 
+                pplayer->player_no, pplayer->economic.tax,
                 pplayer->economic.luxury, pplayer->economic.science);
     gamelog_put_prefix(buf, sizeof(buf), "rates");
     break;
@@ -478,7 +478,7 @@ void gamelog(int level, ...)
                   "<pop>%d</pop><food>%d</food><prod>%d</prod>"
                   "<trade>%d</trade><settlers>%d</settlers><units>%d</units>",
                   pplayer->player_no, city_list_size(pplayer->cities),
-                  total_player_citizens(pplayer), food, shields, trade, 
+                  total_player_citizens(pplayer), food, shields, trade,
                   settlers, unit_list_size(pplayer->units));
     }
     gamelog_put_prefix(buf, sizeof(buf), "info");
@@ -490,7 +490,7 @@ void gamelog(int level, ...)
                 "<ai>%s</ai><nat>%s</nat><l>%s</l>",
                 pplayer->player_no, pplayer->username,
                 pplayer->is_connected ? 1 : 0,
-                pplayer->ai.control ? 
+                pplayer->ai.control ?
                   name_of_skill_level(pplayer->ai.skill_level) : "",
                 get_nation_name_plural(pplayer->nation), pplayer->name);
     gamelog_put_prefix(buf, sizeof(buf), "player");
@@ -511,7 +511,7 @@ void gamelog(int level, ...)
     my_snprintf(buf, sizeof(buf),
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 "<gamelog version=\"2.0\">");
-    break; 
+    break;
   case GAMELOG_END:
     my_snprintf(buf, sizeof(buf), "</gamelog>");
     break;

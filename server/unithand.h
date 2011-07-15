@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 bool handle_unit_move_request(struct unit *punit, struct tile *ptile,
 			     bool igzoc, bool move_diplomat_city);
-void handle_unit_activity_request(struct unit *punit, 
+void handle_unit_activity_request(struct unit *punit,
 				  enum unit_activity new_activity);
 
 #endif  /* FC__UNITHAND_H */

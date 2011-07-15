@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ static void form_chat_name(struct connection *pconn, char *buffer, size_t len)
     my_snprintf(buffer, len, "[%s]", pconn->username);
   }
 }
-				
+
 /**************************************************************************
   Complain to sender that name was ambiguous.
   'player_conn' is 0 for player names, 1 for connection names,
@@ -122,9 +122,9 @@ static void chat_msg_to_conn(struct connection *sender,
 {
   char sender_name[MAX_LEN_CHAT_NAME], dest_name[MAX_LEN_CHAT_NAME];
   char message[MAX_LEN_MSG];
-  
+
   msg = skip_leading_spaces(msg);
-  
+
   form_chat_name(sender, sender_name, sizeof(sender_name));
   form_chat_name(dest, dest_name, sizeof(dest_name));
 
@@ -144,7 +144,7 @@ static void chat_msg_to_conn(struct connection *sender,
     dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
     return;
   }
-  
+
   my_snprintf(message, sizeof(message), "->*%s* %s", dest_name, msg);
   dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
 
@@ -166,7 +166,7 @@ static void chat_msg_to_player_multi(struct connection *sender,
   struct connection *dest;
 
   msg = skip_leading_spaces(msg);
-  
+
   form_chat_name(sender, sender_name, sizeof(sender_name));
 
   dest = find_conn_by_user(pdest->username);
@@ -180,7 +180,7 @@ static void chat_msg_to_player_multi(struct connection *sender,
     dsend_packet_chat_msg(sender, message, -1, -1, E_NOEVENT, sender->id);
     return;
   }
-  
+
   if (chat_is_restricted(sender) && conn_controls_player(dest)) {
     char dest_name[MAX_LEN_CHAT_NAME];
     form_chat_name(dest, dest_name, sizeof(dest_name));
@@ -374,7 +374,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
      notice intended private messages with (eg) mis-spelt name.
 
      Approach:
-     
+
      If there is no ':', or ':' is first on line,
           message is global (send to all players)
      else if the ':' is double, try matching part before "::" against
@@ -389,7 +389,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
           then treat as global message,
      else complain (might be a typo-ed intended private message)
   */
-  
+
   cp = strchr(message, ':');
 
   if (cp && (cp != &message[0])) {
@@ -509,7 +509,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
       if (!(p = strchr(s, LINK_PREFIX))) {
         break;
       }
-      
+
       /* Simple chat link detection.
        * NB this follows the format used in client/gui-gtk-2.0/chatline.c.
        * If that changes, then this will break! */

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -437,7 +437,7 @@ struct vote *vote_new(struct connection *caller,
 
 /**************************************************************************
   Check if we satisfy the criteria for resolving a vote, and resolve it
-  if these critera are indeed met. Updates yes and no variables in voting 
+  if these critera are indeed met. Updates yes and no variables in voting
   struct as well.
 **************************************************************************/
 static void check_vote(struct vote *pvote)
@@ -760,7 +760,7 @@ int describe_vote(struct vote *pvote, char *buf, int buflen)
 
   /* NB We don't handle votes with multiple
    * flags here. */
-  
+
   if (pvote->flags & VCF_UNANIMOUS) {
     ret = my_snprintf(buf, buflen,
         /* TRANS: Describing a new vote that requires unanimous

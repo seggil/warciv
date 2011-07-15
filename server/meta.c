@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -211,7 +211,7 @@ void set_user_meta_message_string(const char *string)
     /* Remove user meta message. We will use automatic messages instead */
     game.server.meta_info.user_message[0] = '\0';
     game.server.meta_info.user_message_set = FALSE;
-    set_meta_message_string(default_meta_message_string());    
+    set_meta_message_string(default_meta_message_string());
   }
 }
 
@@ -287,7 +287,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
   } else {
     astr_append_printf(&content, "&version=%s",
                        my_url_encode(VERSION_STRING));
-    astr_append_printf(&content, "&patches=%s", 
+    astr_append_printf(&content, "&patches=%s",
                        my_url_encode(get_meta_patches_string()));
     astr_append_printf(&content, "&capability=%s",
                        my_url_encode(our_capability));
@@ -362,7 +362,7 @@ static char *generate_metaserver_post(enum meta_flag flag, int *pbuflen)
           type = "Detached";
           my_snprintf(buf, sizeof(buf), "*detached %d", pconn->id);
         }
-          
+
         astr_append_printf(&content, "&plu[]=%s",
                            my_url_encode(pconn->username));
         astr_append_printf(&content, "&plt[]=%s", type);
@@ -500,7 +500,7 @@ static bool send_to_metaserver(enum meta_flag flag)
 }
 
 /*************************************************************************
- 
+
 *************************************************************************/
 void server_close_meta(void)
 {
@@ -541,19 +541,19 @@ void server_open_meta(void)
     cancel_net_lookup_service(metaname_lookup_id);
     metaname_lookup_id = 0;
   }
- 
+
   if (metaserver_path) {
     free(metaserver_path);
     metaserver_path = NULL;
   }
-  
+
   if (!(path = my_lookup_httpd(metaname, &metaport, srvarg.metaserver_addr))) {
     freelog(LOG_ERROR, _("Metaserver: bad http server url: %s."),
             srvarg.metaserver_addr);
     metaserver_failed();
     return;
   }
-  
+
   metaserver_path = mystrdup(path);
 
   id = net_lookup_service_async(metaname, metaport,
@@ -599,7 +599,7 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
   double last_send_time = 0.0;
 
   /* if we're bidding farewell, ignore all timers */
-  if (flag == META_GOODBYE) { 
+  if (flag == META_GOODBYE) {
     if (last_send_timer) {
       free_timer(last_send_timer);
       last_send_timer = NULL;
@@ -620,7 +620,7 @@ bool send_server_info_to_metaserver(enum meta_flag flag)
     return FALSE;
   }
 
-  /* if we're asking for a refresh, only do so if 
+  /* if we're asking for a refresh, only do so if
    * we've exceeded the refresh interval */
   if (flag == META_REFRESH && !want_update && last_send_time != 0.0
       && last_send_time < METASERVER_REFRESH_INTERVAL) {

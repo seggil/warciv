@@ -95,7 +95,7 @@ static const int auth_fail_wait[] = { 1, 1, 2, 3 };
  The auth db statuses are:
 
  1: an error occurred, possibly we couldn't access the database file.
- 2: we were able to successfully insert an entry. or we found the entry 
+ 2: we were able to successfully insert an entry. or we found the entry
     we were searching for
  3: the user we were searching for was not found.
 ***************************************************/
@@ -187,7 +187,7 @@ bool authenticate_user(struct connection *pconn, char *username)
       get_unique_guest_name(username);
 
       if (strncmp(tmpname, username, MAX_LEN_NAME) != 0) {
-        notify_conn(pconn->self, 
+        notify_conn(pconn->self,
                     _("Warning: the guest name '%s' has been "
                       "taken, renaming to user '%s'."), tmpname, username);
       }
@@ -200,7 +200,7 @@ bool authenticate_user(struct connection *pconn, char *username)
       return FALSE;
     }
   } else {
-    /* we are not a guest, we need an extra check as to whether a 
+    /* we are not a guest, we need an extra check as to whether a
      * connection can be established: the client must authenticate itself */
     char buffer[MAX_LEN_MSG];
 
@@ -214,16 +214,16 @@ bool authenticate_user(struct connection *pconn, char *username)
         sz_strlcpy(pconn->username, tmpname);
 
         freelog(LOG_ERROR, "Error reading database; connection -> guest");
-        notify_conn(pconn->self, 
+        notify_conn(pconn->self,
                     _("There was an error reading the user "
-                      "database, logging in as guest connection '%s'."), 
+                      "database, logging in as guest connection '%s'."),
                     pconn->username);
         establish_new_connection(pconn);
       } else {
         reject_new_connection(_("There was an error reading the user database "
-                                "and guest logins are not allowed. Sorry"), 
+                                "and guest logins are not allowed. Sorry"),
                               pconn);
-        freelog(LOG_NORMAL, 
+        freelog(LOG_NORMAL,
                 _("%s was rejected: Database error and guests not allowed."),
                 pconn->username);
         return FALSE;
@@ -342,7 +342,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
     create_salt(pconn);
 
     if (!save_user(pconn)) {
-      notify_conn(pconn->self, 
+      notify_conn(pconn->self,
           _("Warning: There was an error in saving to the database. "
             "Continuing, but your stats will not be saved."));
       freelog(LOG_ERROR, "Error writing to database for: %s",
@@ -350,7 +350,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
     }
 
     establish_new_connection(pconn);
-  } else if (pconn->server.status == AS_REQUESTING_OLD_PASS) { 
+  } else if (pconn->server.status == AS_REQUESTING_OLD_PASS) {
     if (check_password(pconn, password, strlen(password))) {
       establish_new_connection(pconn);
     } else {
@@ -360,7 +360,7 @@ bool handle_authentication_reply(struct connection *pconn, char *password)
           + auth_fail_wait[pconn->server.auth_tries];
     }
   } else {
-    freelog(LOG_VERBOSE, "%s is sending unrequested auth packets", 
+    freelog(LOG_VERBOSE, "%s is sending unrequested auth packets",
             pconn->username);
     return FALSE;
   }
@@ -442,7 +442,7 @@ void get_unique_guest_name(char *name)
   /* first see if the given name is suitable */
   if (is_guest_name(name) && !find_conn_by_user(name)) {
     return;
-  } 
+  }
 
   /* next try bare guest name */
   mystrlcpy(name, GUEST_NAME, MAX_LEN_NAME);
@@ -463,22 +463,22 @@ void get_unique_guest_name(char *name)
 }
 
 /**************************************************************************
- Verifies that a password is valid. Does some [very] rudimentary safety 
+ Verifies that a password is valid. Does some [very] rudimentary safety
  checks. TODO: do we want to frown on non-printing characters?
- Fill the msg (length MAX_LEN_MSG) with any worthwhile information that 
- the client ought to know. 
+ Fill the msg (length MAX_LEN_MSG) with any worthwhile information that
+ the client ought to know.
 **************************************************************************/
 static bool is_good_password(const char *password, char *msg)
 {
   int i, num_caps = 0, num_nums = 0;
-   
+
   /* check password length */
   if (strlen(password) < MIN_PASSWORD_LEN) {
     my_snprintf(msg, MAX_LEN_MSG, _("Your password is too short, the "
         "minimum length is %d. Try again."), MIN_PASSWORD_LEN);
     return FALSE;
   }
- 
+
   my_snprintf(msg, MAX_LEN_MSG, _("The password must have at least %d "
       "capital letters, %d numbers, and be at minimum %d [printable] "
       "characters long. Try again."),
@@ -524,10 +524,10 @@ static bool has_salt(const struct connection *pconn)
 #endif /* HAVE_MYQL */
 
 /**************************************************************************
-  Check if the password with length len matches that given in 
+  Check if the password with length len matches that given in
   pconn->server.password.
 ***************************************************************************/
-static bool check_password(struct connection *pconn, 
+static bool check_password(struct connection *pconn,
                            const char *password, int passlen)
 {
 #ifdef HAVE_MYSQL
@@ -546,7 +546,7 @@ static bool check_password(struct connection *pconn,
   password_ok = (0 == strncmp(checksum, pconn->server.password,
                               DIGEST_HEX_BYTES));
 
-  /* we don't really need the stuff below here to 
+  /* we don't really need the stuff below here to
    * verify password, this is just logging */
   mysql_init(&mysql);
 
@@ -624,7 +624,7 @@ static enum authdb_status load_user(struct connection *pconn)
   MYSQL_RES *res;
   MYSQL_ROW row;
   char escaped_name[MAX_LEN_NAME * 2 + 1];
-  
+
   mysql_init(&mysql);
 
   /* attempt to connect to the server */
@@ -634,8 +634,8 @@ static enum authdb_status load_user(struct connection *pconn)
     freelog(LOG_ERROR, "Can't connect to server! (%s)",
             mysql_error(&mysql));
     return AUTH_DB_ERROR;
-  } 
-  
+  }
+
   mysql_real_escape_string(sock, escaped_name, pconn->username,
                            strlen(pconn->username));
 
@@ -655,19 +655,19 @@ static enum authdb_status load_user(struct connection *pconn)
     freelog(LOG_ERROR, "db_load query failed for user: %s (%s)",
             pconn->username, mysql_error(sock));
     return AUTH_DB_ERROR;
-  } 
-  
+  }
+
   res = mysql_store_result(sock);
   num_rows = mysql_num_rows(res);
-  
+
   /* if num_rows = 0, then we could find no such user */
   if (num_rows < 1) {
     mysql_free_result(res);
     mysql_close(sock);
-    
+
     return AUTH_DB_NOT_FOUND;
   }
-  
+
   /* if there are more than one row that matches this name,
    * it's an error continue anyway though */
   if (num_rows > 1) {
@@ -700,7 +700,7 @@ static enum authdb_status load_user(struct connection *pconn)
 }
 
 /**************************************************************************
- Saves pconn fields to the database. If the username already exists, 
+ Saves pconn fields to the database. If the username already exists,
  replace the data.
 **************************************************************************/
 static bool save_user(struct connection *pconn)
@@ -832,7 +832,7 @@ static bool fcdb_connect(MYSQL *mysql)
     mysql_close(mysql);
     return FALSE;
   }
-  
+
   return TRUE;
 }
 
@@ -865,7 +865,7 @@ static const char *fcdb_escape(MYSQL *sock, const char *str)
     p = tmp;
     return NULL;
   }
-  
+
   len = strlen(str);
   if (2 * len + 1 >= sizeof(tmp) - (unsigned)(p - tmp)) {
     fcdb_error("Buffer overflow in call to fcdb_escape! "
@@ -938,7 +938,7 @@ static bool fcdb_insert_player(MYSQL *sock, struct player *pplayer)
         pplayer->fcdb.player_id);
     fcdb_execute_or_return(sock, buf, FALSE);
   }
-  
+
   if (pplayer->team != TEAM_NONE) {
     my_snprintf(buf, sizeof(buf), "UPDATE players "
         "SET team_id = ("
@@ -1500,7 +1500,7 @@ static bool reload_termap()
   my_snprintf(buf, sizeof(buf), "SELECT map FROM terrain_maps "
               "WHERE game_id = %d", game.server.fcdb.id);
   fcdb_execute_or_return(sock, buf, FALSE);
-  
+
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) == 1) {
     bool succeeded = FALSE;
@@ -1610,7 +1610,7 @@ bool fcdb_record_game_start(void)
 
   /* Record any non default settings. */
   for (op = settings; op->name; op++) {
-    
+
     /* Skip if at the default value. */
     if ((op->type == SSET_BOOL
          && *op->bool_value == op->bool_default_value)
@@ -1620,7 +1620,7 @@ bool fcdb_record_game_start(void)
             && 0 == strcmp(op->string_value, op->string_default_value))) {
       continue;
     }
-    
+
     switch (op->type) {
     case SSET_BOOL:
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
@@ -1636,7 +1636,7 @@ bool fcdb_record_game_start(void)
       my_snprintf(buf, sizeof(buf), "INSERT INTO non_default_settings"
           "(game_id, name, value) VALUES (%d, '%s', '%s')",
           game.server.fcdb.id, op->name, fcdb_escape(sock, op->string_value));
-      fcdb_reset_escape_buffer(); 
+      fcdb_reset_escape_buffer();
       break;
     default:
       assert(0);
@@ -1731,7 +1731,7 @@ bool fcdb_end_of_turn_update(void)
   if (!fcdb_insert_turn_map(sock, turn_id)) {
     return FALSE;
   }
-  
+
   /* Update the game record with that last turn we know about. */
   my_snprintf(buf, sizeof(buf), "UPDATE games "
       "SET last_turn_id = %d, last_update = NOW() WHERE id = %d",
@@ -1800,7 +1800,7 @@ bool fcdb_end_of_turn_update(void)
 
         pplayer->score.scientists, pplayer->score.elvis,
         pplayer->score.cities, pplayer->score.settledarea,
-        
+
         pplayer->score.landarea, pplayer->score.pollution,
         pplayer->score.units,
         unit_list_size(pplayer->units) - pplayer->score.units,
@@ -1814,7 +1814,7 @@ bool fcdb_end_of_turn_update(void)
     fcdb_reset_escape_buffer();
     fcdb_execute_or_return(sock, buf, FALSE);
     player_status_id = mysql_insert_id(sock);
-    
+
     /* Record controlling user if any. */
     if (pplayer->is_connected
         && 0 != strcmp(pplayer->username, ANON_USER_NAME)) {
@@ -1854,7 +1854,7 @@ bool fcdb_end_of_turn_update(void)
     }
 
   } players_iterate_end;
-  
+
   fcdb_commit(sock);
   fcdb_close(sock);
 #endif
@@ -2077,7 +2077,7 @@ bool fcdb_load_player_ratings(int game_type, bool check_turns_played)
       pplayer->fcdb.rated_user_name[0] = '\0';
     }
   } players_iterate_end;
-  
+
   fcdb_close(sock);
   return TRUE;
 
@@ -2130,12 +2130,12 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
   fcdb_connect_or_return(sock, NULL);
 
   fus = fc_calloc(1, sizeof(struct fcdb_user_stats));
-  
+
   if (username == NULL || username[0] == '\0') {
     /* Don't bother searching for an empty user name,
      * just say that we don't know any like that. ;) */
     fcdb_close(sock);
-    return fus;    
+    return fus;
   }
 
   if (!get_user_id(sock, username, &fus->id)) {
@@ -2180,7 +2180,7 @@ struct fcdb_user_stats *fcdb_user_stats_new(const char *username,
     }
 
     mysql_free_result(res);
-    
+
     if (num_rows != 1) {
       fcdb_close(sock);
       return fus;
@@ -2477,7 +2477,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
   fcdb_execute_or_return(sock, buf, NULL);
 
   fgi = fc_calloc(1, sizeof(struct fcdb_game_info));
-  
+
   res = mysql_store_result(sock);
   if (mysql_num_rows(res) != 1) {
     mysql_free_result(res);
@@ -2534,7 +2534,7 @@ struct fcdb_game_info *fcdb_game_info_new(int id)
     res = NULL;
   }
 
-  
+
   /* Fetch information about players. */
 
   my_snprintf(buf, sizeof(buf),

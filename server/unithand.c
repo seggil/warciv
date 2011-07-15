@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -124,9 +124,9 @@ void handle_unit_type_upgrade(struct player *pplayer, Unit_Type_id type)
     return;
   }
 
-  /* 
+  /*
    * Try to upgrade units. The order we upgrade in is arbitrary (if
-   * the player really cared they should have done it manually). 
+   * the player really cared they should have done it manually).
    */
   conn_list_do_buffer(pplayer->connections);
   unit_list_iterate(pplayer->units, punit) {
@@ -163,7 +163,7 @@ void handle_unit_upgrade(struct player *pplayer, int unit_id)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   char buf[512];
-  
+
   if (!punit) {
     return;
   }
@@ -175,7 +175,7 @@ void handle_unit_upgrade(struct player *pplayer, int unit_id)
 
     upgrade_unit(punit, to_unit, FALSE);
     send_player_info(pplayer, pplayer);
-    notify_player(pplayer, _("Game: %s upgraded to %s for %d gold."), 
+    notify_player(pplayer, _("Game: %s upgraded to %s for %d gold."),
 		  unit_name(from_unit), unit_name(to_unit), cost);
   } else {
     notify_player(pplayer, _("Game: %s"), buf);
@@ -590,12 +590,12 @@ void handle_unit_move(struct player *pplayer, int unit_id, int x, int y)
  Make sure everyone who can see combat does.
 **************************************************************************/
 static void see_combat(struct unit *pattacker, struct unit *pdefender)
-{  
+{
   struct packet_unit_short_info unit_att_short_packet, unit_def_short_packet;
 
-  /* 
+  /*
    * Special case for attacking/defending:
-   * 
+   *
    * Normally the player doesn't get the information about the units inside a
    * city. However for attacking/defending the player has to know the unit of
    * the other side.  After the combat a remove_unit packet will be sent
@@ -629,7 +629,7 @@ static void see_combat(struct unit *pattacker, struct unit *pdefender)
 /**************************************************************************
  Send combat info to players.
 **************************************************************************/
-static void send_combat(struct unit *pattacker, struct unit *pdefender, 
+static void send_combat(struct unit *pattacker, struct unit *pdefender,
 			int veteran, int bombard)
 {
   struct packet_unit_combat_info combat;
@@ -645,7 +645,7 @@ static void send_combat(struct unit *pattacker, struct unit *pdefender,
 	|| map_is_known_and_seen(pdefender->tile, other_player)) {
       lsend_packet_unit_combat_info(other_player->connections, &combat);
 
-      /* 
+      /*
        * Remove the client knowledge of the units.  This corresponds to the
        * send_packet_unit_short_info calls up above.
        */
@@ -698,14 +698,14 @@ static bool unit_bombard(struct unit *punit, struct tile *ptile)
       unit_versus_unit(punit, pdefender, TRUE);
 
       send_combat(punit, pdefender, 0, 1);
-  
+
       send_unit_info(NULL, pdefender);
     }
 
   } unit_list_iterate_safe_end;
 
   punit->moves_left = 0;
-  
+
   if (pcity
       && pcity->size > 1
       && get_city_bonus(pcity, EFT_UNIT_NO_LOSE_POP) == 0
@@ -739,12 +739,12 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
   struct player *pplayer = unit_owner(punit);
   struct unit *plooser, *pwinner;
   struct city *pcity;
-  int moves_used, def_moves_used; 
+  int moves_used, def_moves_used;
   struct tile *def_tile = pdefender->tile;
   int old_unit_vet, old_defender_vet, vet;
 
   freelog(LOG_DEBUG, "Start attack: %s's %s against %s's %s.",
-	  pplayer->name, unit_type(punit)->name, 
+	  pplayer->name, unit_type(punit)->name,
 	  unit_owner(pdefender)->name,
 	  unit_type(pdefender)->name);
 
@@ -769,7 +769,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 			 " your SDI defense."), pcity->name);
       wipe_unit(punit);
       return;
-    } 
+    }
 
     dlsend_packet_nuke_tile_info(game.game_connections, def_tile->x,
 				 def_tile->y);
@@ -790,14 +790,14 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
   /* Adjust attackers moves_left _after_ unit_versus_unit() so that
    * the movement attack modifier is correct! --dwp
    *
-   * For greater Civ2 compatibility (and game balance issues), we recompute 
-   * the new total MP based on the HP the unit has left after being damaged, 
-   * and subtract the MPs that had been used before the combat (plus the 
+   * For greater Civ2 compatibility (and game balance issues), we recompute
+   * the new total MP based on the HP the unit has left after being damaged,
+   * and subtract the MPs that had been used before the combat (plus the
    * points used in the attack itself, for the attacker). -GJW, Glip
    */
   punit->moves_left = unit_move_rate(punit) - moves_used - SINGLE_MOVE;
   pdefender->moves_left = unit_move_rate(pdefender) - def_moves_used;
-  
+
   if (punit->moves_left < 0) {
     punit->moves_left = 0;
   }
@@ -827,7 +827,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 	old_defender_vet)) ? 0 : 1;
 
   send_combat(punit, pdefender, vet, 0);
-  
+
   if (punit == plooser) {
     /* The attacker lost */
     freelog(LOG_DEBUG, "Attacker lost: %s's %s against %s's %s.",
@@ -853,7 +853,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 					   pwinner->tile),
 		       unit_owner(plooser)->name, unit_name(plooser->type));
     }
-    
+
     notify_player_ex(unit_owner(plooser),
 		     def_tile, E_UNIT_LOST_ATT,
 		     _("Game: Your attacking %s failed "
@@ -901,7 +901,7 @@ static void handle_unit_attack_request(struct unit *punit, struct unit *pdefende
 
   /* If attacker wins, and occupychance > 0, it might move in.  Don't move in
    * if there are enemy units in the tile (a fortress, city or air base with
-   * multiple defenders and unstacked combat). Note that this could mean 
+   * multiple defenders and unstacked combat). Note that this could mean
    * capturing (or destroying) a city. */
 
   if (pwinner == punit && myrand(100) < game.server.occupychance &&
@@ -979,7 +979,7 @@ static bool can_unit_move_to_tile_with_notify(struct unit *punit,
 /**************************************************************************
   Will try to move to/attack the tile dest_x,dest_y.  Returns true if this
   could be done, false if it couldn't for some reason.
-  
+
   'igzoc' means ignore ZOC rules - not necessary for igzoc units etc, but
   done in some special cases (moving barbarians out of initial hut).
   Should normally be FALSE.
@@ -1020,10 +1020,10 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
     return base_handle_unit_establish_trade(pplayer, punit->id, pcity);
   }
 
-  /* Diplomats. Pop up a diplomat action dialog in the client.  
-   * If the AI has used a goto to send a diplomat to a target do not 
-   * pop up a dialog in the client.  
-   * For allied cities, keep moving if move_diplomat_city tells us to, 
+  /* Diplomats. Pop up a diplomat action dialog in the client.
+   * If the AI has used a goto to send a diplomat to a target do not
+   * pop up a dialog in the client.
+   * For allied cities, keep moving if move_diplomat_city tells us to,
    * or if the unit is on goto and the city is not the final destination. */
   if (is_diplomat_unit(punit)) {
     struct unit *target = is_non_allied_unit_tile(pdesttile, pplayer);
@@ -1033,11 +1033,11 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
       if (is_diplomat_action_available(punit, DIPLOMAT_ANY_ACTION,
 				       pdesttile)) {
 	int target_id = 0;
-        
+
         if (pplayer->ai.control) {
           return FALSE;
         }
-        
+
         /* If we didn't send_unit_info the client would sometimes
          * think that the diplomat didn't have any moves left and so
          * don't pop up the box.  (We are in the middle of the unit
@@ -1045,8 +1045,8 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
          * have been restored, but we only send the unit info at the
          * end of the function.) */
         send_unit_info(pplayer, punit);
-        
-        /* if is_diplomat_action_available() then there must be 
+
+        /* if is_diplomat_action_available() then there must be
          * a city or a unit */
         if (pcity) {
           target_id = pcity->id;
@@ -1071,7 +1071,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
 
   /*** Phase 3: Is it attack? ***/
 
-  if (is_non_allied_unit_tile(pdesttile, pplayer) 
+  if (is_non_allied_unit_tile(pdesttile, pplayer)
       || is_non_allied_city_tile(pdesttile, pplayer)) {
     struct unit *victim;
 
@@ -1132,7 +1132,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
                          _("Game: You can't attack there."));
         return FALSE;
       }
-      
+
       handle_unit_attack_request(punit, victim);
       return TRUE;
     } else {
@@ -1147,7 +1147,7 @@ bool handle_unit_move_request(struct unit *punit, struct tile *pdesttile,
       }
 
       /* If there is an enemy city it is empty.
-       * If not it would have been caught in the attack case. 
+       * If not it would have been caught in the attack case.
        * FIXME: Move this check into test_unit_move_tile */
       if (!COULD_OCCUPY(punit)) {
         notify_player_ex(pplayer, punit->tile, E_NOEVENT,
@@ -1202,7 +1202,7 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
     return;
   }
   pcity_dest = map_get_city(punit->tile);
-  
+
   if (!pcity_dest || !unit_can_help_build_wonder(punit, pcity_dest)) {
     return;
   }
@@ -1221,7 +1221,7 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
 		   text, /* Must match arguments below. */
 		   unit_name(punit->type),
 		   get_improvement_type(pcity_dest->currently_building)->name,
-		   pcity_dest->name, 
+		   pcity_dest->name,
 		   abs(build_points_left(pcity_dest)));
 
   wipe_unit(punit);
@@ -1234,19 +1234,19 @@ void handle_unit_help_build_wonder(struct player *pplayer, int unit_id)
 ...
 **************************************************************************/
 static bool base_handle_unit_establish_trade(struct player *pplayer,
-					     int unit_id, 
+					     int unit_id,
 					     struct city *pcity_dest)
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
-  struct city *pcity_homecity; 
-  
+  struct city *pcity_homecity;
+
   if (!punit || !unit_flag(punit, F_TRADE_ROUTE)) {
     return FALSE;
   }
 
   /* if no destination city is passed in,
    *  check whether the unit is already in the city */
-  if (!pcity_dest) { 
+  if (!pcity_dest) {
     pcity_dest = punit->tile->city;
   }
 
@@ -1263,7 +1263,7 @@ static bool base_handle_unit_establish_trade(struct player *pplayer,
 		     unit_name(punit->type));
     return FALSE;
   }
-    
+
   if (!can_cities_trade(pcity_homecity, pcity_dest)) {
     notify_player_ex(pplayer, pcity_dest->tile, E_NOEVENT,
 		     _("Sorry, your %s cannot establish"
@@ -1272,7 +1272,7 @@ static bool base_handle_unit_establish_trade(struct player *pplayer,
 		     pcity_dest->name);
     return FALSE;
   }
-  
+
   unit_establish_trade_route(punit, pcity_homecity, pcity_dest);
   return TRUE;
 }
@@ -1312,7 +1312,7 @@ static void handle_unit_activity_dependencies(struct unit *punit,
   switch (punit->activity) {
   case ACTIVITY_IDLE:
     switch (old_activity) {
-    case ACTIVITY_PILLAGE: 
+    case ACTIVITY_PILLAGE:
       {
         enum tile_special_type prereq =
 	  map_get_infrastructure_prerequisite(old_target);
@@ -1331,7 +1331,7 @@ static void handle_unit_activity_dependencies(struct unit *punit,
       /* Restore unit's control status */
       punit->ai.control = FALSE;
       break;
-    default: 
+    default:
       ; /* do nothing */
     }
     break;
@@ -1349,7 +1349,7 @@ static void handle_unit_activity_dependencies(struct unit *punit,
 /**************************************************************************
 ...
 **************************************************************************/
-void handle_unit_activity_request(struct unit *punit, 
+void handle_unit_activity_request(struct unit *punit,
 				  enum unit_activity new_activity)
 {
   if (can_unit_do_activity(punit, new_activity)) {
@@ -1384,7 +1384,7 @@ static void handle_unit_activity_request_targeted(struct unit *punit,
     }
     free_unit_orders(punit);
     set_unit_activity_targeted(punit, new_activity, new_target);
-    send_unit_info(NULL, punit);    
+    send_unit_info(NULL, punit);
     handle_unit_activity_dependencies(punit, old_activity, old_target);
   }
 }
@@ -1465,7 +1465,7 @@ void handle_unit_paradrop_to(struct player *pplayer, int unit_id, int x,
 {
   struct unit *punit = player_find_unit_by_id(pplayer, unit_id);
   struct tile *ptile = map_pos_to_tile(x, y);
-  
+
   if (!punit || !ptile) {
     return;
   }

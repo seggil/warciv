@@ -86,7 +86,7 @@ bool can_control_a_player(struct connection *pconn, bool message)
   if (!strlen(srvarg.required_cap)) {
     return TRUE;
   }
- 
+
   ntokens = get_tokens(srvarg.required_cap, cap, 256, TOKEN_DELIMITERS);
 
   for (i = 0; i < ntokens; i++) {
@@ -100,7 +100,7 @@ bool can_control_a_player(struct connection *pconn, bool message)
     }
     free(cap[i]);
   }
-  
+
   return ret;
 }
 
@@ -198,7 +198,7 @@ static void grant_access_level(struct connection *pconn)
       return;
   }
 
-  if (pconn->server.access_level > ALLOW_OBSERVER 
+  if (pconn->server.access_level > ALLOW_OBSERVER
       && !can_control_a_player(pconn, FALSE)) {
     pconn->server.granted_access_level = ALLOW_OBSERVER;
     pconn->server.access_level = ALLOW_OBSERVER;
@@ -301,7 +301,7 @@ bool receive_username(struct connection *pconn, const char *username)
   sz_strlcpy(pconn->username, username);
 
   if (is_banned(pconn, CPT_USERNAME)) {
-    /* Do not close this connection here, it will be 
+    /* Do not close this connection here, it will be
      * closed by sniff_packets (command_ok = FALSE). */
     return FALSE;
   }
@@ -315,7 +315,7 @@ bool receive_username(struct connection *pconn, const char *username)
   This is used when a new player joins a server, before the game
   has started.  If pconn is NULL, is an AI, else a client.
 
-  N.B. this only attachs a connection to a player if 
+  N.B. this only attachs a connection to a player if
        pconn->name == player->username
 **************************************************************************/
 void establish_new_connection(struct connection *pconn)
@@ -392,7 +392,7 @@ void establish_new_connection(struct connection *pconn)
     free(buf);
   }
 
-  /* FIXME: this (getting messages about others logging on) should be a 
+  /* FIXME: this (getting messages about others logging on) should be a
    * message option for the client with event */
 
   /* notify the console and other established connections that you're here */
@@ -411,7 +411,7 @@ void establish_new_connection(struct connection *pconn)
 
     if (server_state == SELECT_RACES_STATE) {
       send_packet_freeze_hint(pconn);
-      send_rulesets(dest);		
+      send_rulesets(dest);
       send_player_info(NULL, NULL);
       send_packet_thaw_hint(pconn);
       if (pplayer->nation == NO_NATION_SELECTED) {
@@ -544,12 +544,12 @@ void reject_new_connection(const char *msg, struct connection *pconn)
  Returns FALSE if the clients gets rejected and the connection should be
  closed. Returns TRUE if the client get accepted.
 **************************************************************************/
-bool handle_login_request(struct connection *pconn, 
+bool handle_login_request(struct connection *pconn,
                           struct packet_server_join_req *req)
 {
   char msg[MAX_LEN_MSG];
   int kick_time_remaining;
-  
+
   freelog(LOG_NORMAL, _("Connection request from %s from %s%s"),
 	  req->username, pconn->addr, pconn->server.adns_id > 0 ?
 	  _(" (hostname lookup in progress)") : "");
@@ -575,7 +575,7 @@ bool handle_login_request(struct connection *pconn,
   freelog(LOG_VERBOSE, "Client caps: %s", req->capability);
   freelog(LOG_VERBOSE, "Server caps: %s", our_capability);
   sz_strlcpy(pconn->capability, req->capability);
-  
+
   /* Make sure the server has every capability the client needs */
   if (!has_capabilities(our_capability, req->capability)) {
     my_snprintf(msg, sizeof(msg),
@@ -613,15 +613,15 @@ bool handle_login_request(struct connection *pconn,
     freelog(LOG_NORMAL, _("%s was rejected: Invalid name [%s]."),
             req->username, pconn->addr);
     return FALSE;
-  } 
+  }
 
   /* don't allow duplicate logins */
   conn_list_iterate(game.all_connections, aconn) {
     if (aconn == pconn) {
       continue;
     }
-    if (mystrcasecmp(req->username, aconn->username) == 0) { 
-      my_snprintf(msg, sizeof(msg), _("'%s' already connected."), 
+    if (mystrcasecmp(req->username, aconn->username) == 0) {
+      my_snprintf(msg, sizeof(msg), _("'%s' already connected."),
                   req->username);
       reject_new_connection(msg, pconn);
       freelog(LOG_NORMAL, _("%s was rejected: Duplicate login name [%s]."),
@@ -661,7 +661,7 @@ bool server_assign_random_nation(struct player *pplayer)
 /**************************************************************************
   ...
 **************************************************************************/
-void server_assign_nation(struct player *pplayer,                          
+void server_assign_nation(struct player *pplayer,
                           Nation_Type_id nation_no,
                           const char *name,
                           bool is_male,
@@ -753,7 +753,7 @@ void lost_connection_to_client(struct connection *pconn)
 
   if (game.server.is_new_game && !pplayer->is_connected	/* eg multiple controllers */
       && !pplayer->ai.control    /* eg created AI player */
-      && (server_state == PRE_GAME_STATE 
+      && (server_state == PRE_GAME_STATE
 	  || (server_state == SELECT_RACES_STATE
               && select_random_nation(NULL) == NO_NATION_SELECTED))) {
     server_remove_player(pplayer);
@@ -805,7 +805,7 @@ static void send_conn_info_arg(struct conn_list *src,
   if (!src || !dest) {
     return;
   }
-  
+
   conn_list_iterate(src, psrc) {
     package_conn_info(psrc, &packet);
     if (remove) {
@@ -837,7 +837,7 @@ void send_conn_info_remove(struct conn_list *src, struct conn_list *dest)
   Setup pconn as a client connected to pplayer:
   Updates pconn->player, pplayer->connections, pplayer->is_connected.
 
-  If pplayer is NULL, take the next available player that is not already 
+  If pplayer is NULL, take the next available player that is not already
   associated.
   Note "observer" connections do not count for is_connected. You must set
        pconn->obserber to TRUE before attaching!
@@ -847,10 +847,10 @@ bool attach_connection_to_player(struct connection *pconn,
 {
   /* if pplayer is NULL, attach to first non-connected player slot */
   if (!pplayer) {
-    if (game.info.nplayers >= game.info.max_players 
+    if (game.info.nplayers >= game.info.max_players
  	|| game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
  	|| !can_control_a_player(pconn, TRUE)) {
-      return FALSE; 
+      return FALSE;
     } else {
       pplayer = &game.players[game.info.nplayers];
       game.info.nplayers++;
@@ -880,7 +880,7 @@ bool attach_connection_to_player(struct connection *pconn,
 
   return TRUE;
 }
-  
+
 /**************************************************************************
   Remove pconn as a client connected to pplayer:
   Update pplayer->connections, pplayer->is_connected.
@@ -899,7 +899,7 @@ bool unattach_connection_from_player(struct connection *pconn)
   pconn->player->is_connected = FALSE;
   pconn->observer = FALSE;
 
-  /* If any other (non-observing) conn is attached to 
+  /* If any other (non-observing) conn is attached to
    * this player, the player is still connected. */
   conn_list_iterate(pconn->player->connections, aconn) {
     if (!aconn->observer) {
@@ -996,7 +996,7 @@ struct user_action *user_action_new(const char *pattern, int type,
   pua = fc_malloc(sizeof(struct user_action));
   pua->conpat = conn_pattern_new(pattern, type);
   pua->action = action;
-  
+
   return pua;
 }
 

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996-2004 - The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -223,12 +223,12 @@ static bool rated_callback(bool value, const char **error)
       NULL, FALSE, NULL,                                                \
       NULL, 0, NULL, 0, 0,                                              \
       NULL, NULL, NULL, VCF_NONE, 0, -1, -1},
-      
+
 struct settings_s settings[] = {
 
   /* These should be grouped by sclass */
-  
-  /* Map size parameters: adjustable if we don't yet have a map */  
+
+  /* Map size parameters: adjustable if we don't yet have a map */
   GEN_INT("size", map.server.size, SSET_MAP_SIZE,
 	  SSET_GEOLOGY, SSET_VITAL, SSET_TO_CLIENT,
           N_("Map size (in thousands of tiles)"),
@@ -335,10 +335,10 @@ struct settings_s settings[] = {
 	   SSET_MAP_GEN, SSET_GEOLOGY, SSET_SITUATIONAL, SSET_TO_CLIENT,
 	   N_("Whether the poles are separate continents"),
 	   N_("0 = continents may attach to poles; 1 = poles will "
-	      "usually be separate"), NULL, 
+	      "usually be separate"), NULL,
 	   MAP_DEFAULT_SEPARATE_POLES)
 
-  GEN_BOOL("alltemperate", map.server.alltemperate, 
+  GEN_BOOL("alltemperate", map.server.alltemperate,
            SSET_MAP_GEN, SSET_GEOLOGY, SSET_RARE, SSET_TO_CLIENT,
 	   N_("All the map is temperate"),
 	   N_("0 = normal Earth-like planet; 1 = all-temperate planet "),
@@ -358,10 +358,10 @@ struct settings_s settings[] = {
 	     "tropical and temperate zones.\n\n"
 	     "30 means a cold planet with small tropical zones.\n\n"
 	     "0 means a very cold planet with large polar zones and no "
-	     "tropics"), 
+	     "tropics"),
           NULL,
   	  MAP_MIN_TEMPERATURE, MAP_MAX_TEMPERATURE, MAP_DEFAULT_TEMPERATURE)
- 
+
   GEN_INT("landmass", map.server.landpercent,
 	  SSET_MAP_GEN, SSET_GEOLOGY, SSET_SITUATIONAL, SSET_TO_CLIENT,
 	  N_("Percentage of the map that is land"),
@@ -378,10 +378,10 @@ struct settings_s settings[] = {
 
   GEN_INT("wetness", map.server.wetness,
  	  SSET_MAP_GEN, SSET_GEOLOGY, SSET_SITUATIONAL, SSET_TO_CLIENT,
- 	  N_("Amount of water on lands"), 
+ 	  N_("Amount of water on lands"),
 	  N_("Small values mean lots of dry, desert-like land; "
 	     "higher values give a wetter map with more swamps, "
-	     "jungles, and rivers."), NULL, 
+	     "jungles, and rivers."), NULL,
  	  MAP_MIN_WETNESS, MAP_MAX_WETNESS, MAP_DEFAULT_WETNESS)
 
   GEN_INT("mapseed", map.server.seed,
@@ -390,7 +390,7 @@ struct settings_s settings[] = {
 	  N_("The same seed will always produce the same map; "
 	     "for zero (the default) a seed will be chosen based on "
 	     "the time to give a random map. This setting is usually "
-	     "only of interest while debugging the game."), NULL, 
+	     "only of interest while debugging the game."), NULL,
 	  MAP_MIN_SEED, MAP_MAX_SEED, MAP_DEFAULT_SEED)
 
   /* Map additional stuff: huts and specials.  gameseed also goes here
@@ -403,12 +403,12 @@ struct settings_s settings[] = {
 	  N_("Game random seed"),
 	  N_("For zero (the default) a seed will be chosen based "
 	     "on the time. This setting is usually "
-	     "only of interest while debugging the game"), NULL, 
+	     "only of interest while debugging the game"), NULL,
 	  GAME_MIN_SEED, GAME_MAX_SEED, GAME_DEFAULT_SEED)
 
   GEN_INT("specials", map.server.riches,
 	  SSET_MAP_ADD, SSET_GEOLOGY, SSET_VITAL, SSET_TO_CLIENT,
-	  N_("Amount of \"special\" resource squares"), 
+	  N_("Amount of \"special\" resource squares"),
 	  N_("Special resources improve the basic terrain type they "
 	     "are on. The server variable's scale is parts per "
 	     "thousand."), NULL,
@@ -451,7 +451,7 @@ struct settings_s settings[] = {
 	  N_("If there are fewer than this many players when the "
 	     "game starts, extra AI players will be created to "
 	     "increase the total number of players to the value of "
-	     "this option."), NULL, 
+	     "this option."), NULL,
 	  GAME_MIN_AIFILL, GAME_MAX_AIFILL, GAME_DEFAULT_AIFILL)
 
   /* Game initialization parameters (only affect the first start of the game,
@@ -484,14 +484,14 @@ struct settings_s settings[] = {
 
   GEN_INT("gold", game.info.gold,
 	  SSET_GAME_INIT, SSET_ECONOMICS, SSET_VITAL, SSET_TO_CLIENT,
-	  N_("Starting gold per player"), 
+	  N_("Starting gold per player"),
 	  N_("At the beginning of the game, each player is given this "
 	     "much gold."), NULL,
 	  GAME_MIN_GOLD, GAME_MAX_GOLD, GAME_DEFAULT_GOLD)
 
   GEN_INT("techlevel", game.info.tech,
 	  SSET_GAME_INIT, SSET_SCIENCE, SSET_VITAL, SSET_TO_CLIENT,
-	  N_("Number of initial techs per player"), 
+	  N_("Number of initial techs per player"),
 	  N_("At the beginning of the game, each player is given this "
 	     "many technologies. The technologies chosen are random for "
 	     "each player."), NULL,
@@ -503,7 +503,7 @@ struct settings_s settings[] = {
 	  N_("This affects how quickly players can research new "
 	     "technology. Doubling its value will make all technologies "
 	     "take twice as long to research."), NULL,
-	  GAME_MIN_RESEARCHCOST, GAME_MAX_RESEARCHCOST, 
+	  GAME_MIN_RESEARCHCOST, GAME_MAX_RESEARCHCOST,
 	  GAME_DEFAULT_RESEARCHCOST)
 
   GEN_INT("techpenalty", game.info.techpenalty,
@@ -522,7 +522,7 @@ struct settings_s settings[] = {
 	  N_("For each technology you gain from a diplomatic treaty, you "
 	     "lost research points equal to this percentage of the cost to "
 	     "research a new technology. You can end up with negative "
-	     "research points if this is non-zero."), NULL, 
+	     "research points if this is non-zero."), NULL,
 	  GAME_MIN_DIPLCOST, GAME_MAX_DIPLCOST, GAME_DEFAULT_DIPLCOST)
 
   GEN_INT("conquercost", game.info.conquercost,
@@ -543,8 +543,8 @@ struct settings_s settings[] = {
 	     "or from Great Library effects), you lose research points "
 	     "equal to this percentage of the cost to research a new "
 	     "technology. You can end up with negative research points if "
-	     "this is non-zero."), 
-	  NULL, 
+	     "this is non-zero."),
+	  NULL,
 	  GAME_MIN_FREECOST, GAME_MAX_FREECOST, GAME_DEFAULT_FREECOST)
 
   GEN_INT("foodbox", game.info.foodbox,
@@ -562,8 +562,8 @@ struct settings_s settings[] = {
 	  N_("If a city would expand, but it can't because it needs "
 	     "an Aqueduct (or Sewer System), it loses this percentage "
 	     "of its foodbox (or half that amount if it has a "
-	     "Granary)."), NULL, 
-	  GAME_MIN_AQUEDUCTLOSS, GAME_MAX_AQUEDUCTLOSS, 
+	     "Granary)."), NULL,
+	  GAME_MIN_AQUEDUCTLOSS, GAME_MAX_AQUEDUCTLOSS,
 	  GAME_DEFAULT_AQUEDUCTLOSS)
 
   /* Notradesize and fulltradesize used to have callbacks to prevent them
@@ -579,8 +579,8 @@ struct settings_s settings[] = {
 	     "The penalty is 100% (no trade at all) for sizes up to "
 	     "notradesize, and decreases gradually to 0% (no penalty "
 	     "except the normal corruption) for size=fulltradesize. "
-	     "See also notradesize."), NULL, 
-	  GAME_MIN_FULLTRADESIZE, GAME_MAX_FULLTRADESIZE, 
+	     "See also notradesize."), NULL,
+	  GAME_MIN_FULLTRADESIZE, GAME_MAX_FULLTRADESIZE,
 	  GAME_DEFAULT_FULLTRADESIZE)
 
   GEN_INT("notradesize", game.ruleset_control.notradesize,
@@ -608,7 +608,7 @@ struct settings_s settings[] = {
 	  N_("Introduces angry citizens like in civilization II. Angry "
 	     "citizens have to become unhappy before any other class "
 	     "of citizens may be considered. See also unhappysize, "
-	     "cityfactor and governments."), NULL, 
+	     "cityfactor and governments."), NULL,
 	  0, 1, GAME_DEFAULT_ANGRYCITIZEN)
 
   GEN_INT("cityfactor", game.info.cityfactor,
@@ -618,7 +618,7 @@ struct settings_s settings[] = {
 	     "cityfactor, one extra citizen is unhappy before other "
 	     "adjustments; see also unhappysize. This assumes a "
 	     "Democracy; for other governments the effect occurs at "
-	     "smaller numbers of cities."), NULL, 
+	     "smaller numbers of cities."), NULL,
 	  GAME_MIN_CITYFACTOR, GAME_MAX_CITYFACTOR, GAME_DEFAULT_CITYFACTOR)
 
   GEN_INT("citymindist", game.server.citymindist,
@@ -647,7 +647,7 @@ struct settings_s settings[] = {
 	  SSET_RULES, SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Chance for conquered building destruction"),
 	  N_("When a player conquers a city, each city improvement has this "
-	     "percentage chance to be destroyed."), NULL, 
+	     "percentage chance to be destroyed."), NULL,
 	  GAME_MIN_RAZECHANCE, GAME_MAX_RAZECHANCE, GAME_DEFAULT_RAZECHANCE)
 
   GEN_INT("civstyle", game.info.civstyle,
@@ -665,8 +665,8 @@ struct settings_s settings[] = {
 	     "will always move into the tile they attacked if they win "
 	     "the combat (and no enemy units remain in the tile). If "
 	     "set to a value between 0 and 100, this will be used as "
-	     "the percent chance of \"occupying\" territory."), NULL, 
-	  GAME_MIN_OCCUPYCHANCE, GAME_MAX_OCCUPYCHANCE, 
+	     "the percent chance of \"occupying\" territory."), NULL,
+	  GAME_MIN_OCCUPYCHANCE, GAME_MAX_OCCUPYCHANCE,
 	  GAME_DEFAULT_OCCUPYCHANCE)
 
   GEN_INT("killcitizen", game.server.killcitizen,
@@ -689,9 +689,9 @@ struct settings_s settings[] = {
 	     "If 2 or larger, the vision range of a unit inside a "
 	     "fortress is set to this value, if the necessary invention "
 	     "has been made. This invention is determined by the flag "
-	     "'Watchtower' in the techs ruleset. See also wtowerevision."), 
-	  NULL, 
-	  GAME_MIN_WATCHTOWER_VISION, GAME_MAX_WATCHTOWER_VISION, 
+	     "'Watchtower' in the techs ruleset. See also wtowerevision."),
+	  NULL,
+	  GAME_MIN_WATCHTOWER_VISION, GAME_MAX_WATCHTOWER_VISION,
 	  GAME_DEFAULT_WATCHTOWER_VISION)
 
   GEN_INT("wtowerevision", game.server.watchtower_extra_vision,
@@ -703,8 +703,8 @@ struct settings_s settings[] = {
 	     "and the invention determined by the flag 'Watchtower' "
 	     "in the techs ruleset has been made. Always the larger "
 	     "value of wtowervision and wtowerevision will be used. "
-	     "Also see wtowervision."), NULL, 
-	  GAME_MIN_WATCHTOWER_EXTRA_VISION, GAME_MAX_WATCHTOWER_EXTRA_VISION, 
+	     "Also see wtowervision."), NULL,
+	  GAME_MIN_WATCHTOWER_EXTRA_VISION, GAME_MAX_WATCHTOWER_EXTRA_VISION,
 	  GAME_DEFAULT_WATCHTOWER_EXTRA_VISION)
 
   GEN_INT("borders", game.ruleset_control.borders,
@@ -757,9 +757,9 @@ struct settings_s settings[] = {
 	     "default city name of another nations unless it is a default "
 	     "for their nation also."),
 	  NULL,
-	  GAME_MIN_ALLOWED_CITY_NAMES, GAME_MAX_ALLOWED_CITY_NAMES, 
+	  GAME_MIN_ALLOWED_CITY_NAMES, GAME_MAX_ALLOWED_CITY_NAMES,
 	  GAME_DEFAULT_ALLOWED_CITY_NAMES)
-  
+
   /* Flexible rules: these can be changed after the game has started.
    *
    * The distinction between "rules" and "flexible rules" is not always
@@ -782,15 +782,15 @@ struct settings_s settings[] = {
 	     "3 = frequent barbarian uprising \n"
 	     "4 = raging hordes, lots of barbarians\n"
 	     "5 = super-barbarians\n"
-	     "6 = very numerous and powerful barbarians"), NULL, 
-	  GAME_MIN_BARBARIANRATE, GAME_MAX_BARBARIANRATE, 
+	     "6 = very numerous and powerful barbarians"), NULL,
+	  GAME_MIN_BARBARIANRATE, GAME_MAX_BARBARIANRATE,
 	  GAME_DEFAULT_BARBARIANRATE)
 
   GEN_INT("onsetbarbs", game.server.onsetbarbarian,
 	  SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_VITAL, SSET_TO_CLIENT,
 	  N_("Barbarian onset year"),
 	  N_("Barbarians will not appear before this year."), NULL,
-	  GAME_MIN_ONSETBARBARIAN, GAME_MAX_ONSETBARBARIAN, 
+	  GAME_MIN_ONSETBARBARIAN, GAME_MAX_ONSETBARBARIAN,
 	  GAME_DEFAULT_ONSETBARBARIAN)
 
   GEN_INT("revolen", game.server.revolution_length,
@@ -799,8 +799,8 @@ struct settings_s settings[] = {
 	  N_("When changing governments, a period of anarchy lasting this "
 	     "many turns will occur. "
              "Setting this value to 0 will give a random "
-             "length of 1-6 turns."), NULL, 
-	  GAME_MIN_REVOLUTION_LENGTH, GAME_MAX_REVOLUTION_LENGTH, 
+             "length of 1-6 turns."), NULL,
+	  GAME_MIN_REVOLUTION_LENGTH, GAME_MAX_REVOLUTION_LENGTH,
 	  GAME_DEFAULT_REVOLUTION_LENGTH)
 
   GEN_BOOL("fogofwar", game.server.fogofwar,
@@ -809,7 +809,7 @@ struct settings_s settings[] = {
 	   N_("If this is set to 1, only those units and cities within "
 	      "the vision range of your own units and cities will be "
 	      "revealed to you. You will not see new cities or terrain "
-	      "changes in tiles not observed."), NULL, 
+	      "changes in tiles not observed."), NULL,
 	   GAME_DEFAULT_FOGOFWAR)
 
   GEN_INT("diplincitechance", game.server.diplincitechance,
@@ -867,7 +867,7 @@ struct settings_s settings[] = {
 	   SSET_RULES_FLEXIBLE, SSET_SCIENCE, SSET_VITAL, SSET_TO_CLIENT,
 	   N_("Whether to allow space race"),
 	   N_("If this option is set to 1, players can build spaceships."),
-	   NULL, 
+	   NULL,
 	   GAME_DEFAULT_SPACERACE)
 
   GEN_INT("civilwarsize", game.server.civilwarsize,
@@ -876,8 +876,8 @@ struct settings_s settings[] = {
 	  N_("A civil war is triggered if a player has at least this "
 	     "many cities and the player's capital is captured. If "
 	     "this option is set to the maximum value, civil wars are "
-	     "turned off altogether."), NULL, 
-	  GAME_MIN_CIVILWARSIZE, GAME_MAX_CIVILWARSIZE, 
+	     "turned off altogether."), NULL,
+	  GAME_MIN_CIVILWARSIZE, GAME_MAX_CIVILWARSIZE,
 	  GAME_DEFAULT_CIVILWARSIZE)
 
   GEN_INT("contactturns", game.server.contactturns,
@@ -888,7 +888,7 @@ struct settings_s settings[] = {
 	     "an embassy. If set to zero then players cannot meet unless "
 	     "they have an embassy."),
 	  NULL,
-	  GAME_MIN_CONTACTTURNS, GAME_MAX_CONTACTTURNS, 
+	  GAME_MIN_CONTACTTURNS, GAME_MAX_CONTACTTURNS,
 	  GAME_DEFAULT_CONTACTTURNS)
 
   GEN_BOOL("savepalace", game.server.savepalace,
@@ -926,7 +926,7 @@ struct settings_s settings[] = {
 
   GEN_INT("endyear", game.info.end_year,
 	  SSET_META, SSET_SOCIOLOGY, SSET_VITAL, SSET_TO_CLIENT,
-	  N_("Year the game ends"), 
+	  N_("Year the game ends"),
 	  N_("The game will end at the end of the given year."), NULL,
 	  GAME_MIN_END_YEAR, GAME_MAX_END_YEAR, GAME_DEFAULT_END_YEAR)
 
@@ -948,7 +948,7 @@ struct settings_s settings[] = {
 	  N_("Any time a unit moves when in sight of an enemy player, "
 	     "the remaining timeout is set to this value if it was lower."),
 	  NULL, 0, GAME_MAX_TIMEOUT, GAME_DEFAULT_TIMEOUTADDEMOVE)
-  
+
   GEN_INT("tcpwritetimeout", game.server.tcpwritetimeout,
 	  SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Maximum seconds to wait to write network data"),
@@ -968,14 +968,14 @@ struct settings_s settings[] = {
 	  N_("The server will wait for up to the value of this "
 	     "parameter in seconds, for all client connection network "
 	     "buffers to unblock. Zero means the server will not "
-	     "wait at all."), NULL, 
+	     "wait at all."), NULL,
 	  GAME_MIN_NETWAIT, GAME_MAX_NETWAIT, GAME_DEFAULT_NETWAIT)
 
   GEN_INT("pingtime", game.server.pingtime,
 	  SSET_META, SSET_NETWORK, SSET_RARE, SSET_TO_CLIENT,
 	  N_("Seconds between PINGs"),
 	  N_("The civserver will poll the clients with a PING request "
-	     "each time this period elapses."), NULL, 
+	     "each time this period elapses."), NULL,
 	  GAME_MIN_PINGTIME, GAME_MAX_PINGTIME, GAME_DEFAULT_PINGTIME)
 
   GEN_INT("pingtimeout", game.server.pingtimeout,
@@ -983,7 +983,7 @@ struct settings_s settings[] = {
           SSET_TO_CLIENT,
 	  N_("Time to cut a client"),
 	  N_("If a client doesn't reply to a PING in this time the "
-	     "client is disconnected."), NULL, 
+	     "client is disconnected."), NULL,
 	  GAME_MIN_PINGTIMEOUT, GAME_MAX_PINGTIMEOUT, GAME_DEFAULT_PINGTIMEOUT)
 
   GEN_BOOL("turnblock", game.server.turnblock,
@@ -991,7 +991,7 @@ struct settings_s settings[] = {
 	   N_("Turn-blocking game play mode"),
 	   N_("If this is set to 1 the game.info.turn is not advanced "
 	      "until all players have finished their turn, including "
-	      "disconnected players."), NULL, 
+	      "disconnected players."), NULL,
 	   GAME_DEFAULT_TURNBLOCK)
 
   GEN_BOOL("fixedlength", game.server.fixedlength,
@@ -1031,7 +1031,7 @@ struct settings_s settings[] = {
 	  SSET_META, SSET_INTERNAL, SSET_VITAL, SSET_SERVER_ONLY,
 	  N_("Turns per auto-save"),
 	  N_("The game will be automatically saved per this number of "
-	     "turns. Zero means never auto-save."), NULL, 
+	     "turns. Zero means never auto-save."), NULL,
 	  0, 200, 10)
 
   /* Could undef entire option if !HAVE_LIBZ, but this way users get to see
@@ -1055,9 +1055,9 @@ struct settings_s settings[] = {
 	  N_("If non-zero, saved games will be compressed using zlib "
 	     "(gzip format). Larger values will give better "
 	     "compression but take longer. If the maximum is zero "
-	     "this server was not compiled to use zlib."), NULL, 
+	     "this server was not compiled to use zlib."), NULL,
 
-	  GAME_NO_COMPRESS_LEVEL, GAME_NO_COMPRESS_LEVEL, 
+	  GAME_NO_COMPRESS_LEVEL, GAME_NO_COMPRESS_LEVEL,
 	  GAME_NO_COMPRESS_LEVEL)
 #endif
 
@@ -1113,7 +1113,7 @@ struct settings_s settings[] = {
               "is not allowed."), NULL,
            GAME_DEFAULT_CITYTRADING)
 
-  GEN_INT("airliftingstyle", game.ext_info.airliftingstyle, 
+  GEN_INT("airliftingstyle", game.ext_info.airliftingstyle,
           SSET_RULES_FLEXIBLE, SSET_MILITARY, SSET_RARE, SSET_TO_CLIENT,
           N_("Airlifting style"),
           N_("0 - standard Freeciv, only 1 unit per turn to destination\n"
@@ -1585,7 +1585,7 @@ void settings_reset(void)
 enum cmdlevel_id sset_access_level(int idx)
 {
   struct settings_s *pset;
-  
+
   if (!(0 <= idx && idx < SETTINGS_NUM)) {
     return ALLOW_NEVER;
   }

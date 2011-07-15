@@ -319,8 +319,8 @@ void stdinhand_turn(void)
 
   conn_list_iterate(game.est_connections, pconn) {
     if (pconn->server.observe_requested
-	&& !conn_get_player(pconn) 
-	&& !conn_is_global_observer(pconn)) {
+        && !conn_get_player(pconn)
+        && !conn_is_global_observer(pconn)) {
       /* HACK: The inverts queries will be sent
        * later at the end of the turn. */
       send_packet_freeze_client(pconn);
@@ -363,7 +363,7 @@ void stdinhand_free(void)
 }
 
 /**************************************************************************
-  Whether the caller can use the specified command. caller == NULL means 
+  Whether the caller can use the specified command. caller == NULL means
   console.
 **************************************************************************/
 static bool may_use(struct connection *caller, enum command_id cmd)
@@ -892,7 +892,7 @@ bool conn_is_kicked(const struct connection *pconn, int *time_remaining)
 
   ki_addr = hash_lookup_data(kick_table_by_addr, pconn->server.ipaddr);
   ki_user = hash_lookup_data(kick_table_by_user, pconn->username);
-  
+
   if (!ki_addr && !ki_user) {
     return FALSE;
   }
@@ -929,7 +929,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
   struct hash_table *unique_ipaddr_table;
   int num_unique_connections;
   const int MIN_UNIQUE_CONNS = 3;
-  
+
   pconn = find_conn_by_user_prefix(name, &match_result);
   if (!pconn) {
     cmd_reply_no_such_conn(CMD_KICK, caller, name, match_result);
@@ -948,7 +948,7 @@ static bool kick_command(struct connection *caller, char *name, bool check)
       hash_insert(unique_ipaddr_table, pc->server.ipaddr, NULL);
     } conn_list_iterate_end;
 
-    num_unique_connections = hash_num_entries(unique_ipaddr_table); 
+    num_unique_connections = hash_num_entries(unique_ipaddr_table);
     hash_free(unique_ipaddr_table);
 
     if (num_unique_connections < MIN_UNIQUE_CONNS) {
@@ -1103,7 +1103,7 @@ static bool do_meta_set_command(struct connection *caller,
   }
 
   /* In order to avoid untranslatable sentence fragments in
-   * the following code, we avoid using a %s format for the 
+   * the following code, we avoid using a %s format for the
    * meta* thing that is being modified. */
 
   if (cmd_id == CMD_METAMESSAGE) {
@@ -1152,7 +1152,7 @@ static bool metaserver_command(struct connection *caller, char *arg,
 }
 
 /**************************************************************************
- Returns the serverid 
+ Returns the serverid
 **************************************************************************/
 static bool show_serverid(struct connection *caller, char *arg)
 {
@@ -1712,7 +1712,7 @@ static bool set_cmdlevel(struct connection *caller,
      * and thus this if clause is needed.
      * (Imagine a ctrl level access player that wants to change
      * access level of a hack level access player)
-     * At the moment it can be used only by hack access level 
+     * At the moment it can be used only by hack access level
      * and thus this clause is never used.
      */
     cmd_reply(CMD_CMDLEVEL, caller, C_FAIL,
@@ -2636,7 +2636,7 @@ static bool wall(char *str, bool check)
 Send a report with server options to specified connections.
 "which" should be one of:
 1: initial options only
-2: ongoing options only 
+2: ongoing options only
 (which=0 means all options; this is now obsolete and no longer used.)
 ******************************************************************/
 void report_server_options(struct conn_list *dest, int which)
@@ -2884,7 +2884,7 @@ static bool set_away(struct connection *caller, char *name, bool check)
     notify_conn(game.est_connections, _("%s returned to game."),
                 caller->player->name);
     caller->player->ai.control = FALSE;
-    /* We have to do it, because the client doesn't display 
+    /* We have to do it, because the client doesn't display
      * dialogs for meetings in AI mode. */
     cancel_all_meetings(caller->player);
   }
@@ -3314,7 +3314,7 @@ static bool poll_command(struct connection *caller,
               _("You need to supply a question for the poll!"));
     return FALSE;
   }
-  
+
   /* Do nothing more, the vote system will display the message
    * and show who made the poll. */
 
@@ -3967,7 +3967,7 @@ FAILED:
 }
 
 /**************************************************************************
- Observe another player. If we were already attached, detach 
+ Observe another player. If we were already attached, detach
  (see detach_command()). The console and those with ALLOW_HACK can
  use the two-argument command and force others to observe.
 **************************************************************************/
@@ -4219,12 +4219,12 @@ static void process_observe_requests(void)
 }
 
 /**************************************************************************
-  Take over a player. If a connection already has control of that player, 
-  disallow it. 
+  Take over a player. If a connection already has control of that player,
+  disallow it.
 
   If there are two arguments, treat the first as the connection name and the
   second as the player name (only hack and the console can do this).
-  Otherwise, there should be one argument, that being the player that the 
+  Otherwise, there should be one argument, that being the player that the
   caller wants to take.
 **************************************************************************/
 static bool take_command(struct connection *caller, char *str, bool check)
@@ -4297,7 +4297,7 @@ static bool take_command(struct connection *caller, char *str, bool check)
     goto CLEANUP;
   }
 
-  /* if we're taking another player with a user attached, 
+  /* if we're taking another player with a user attached,
    * forcibly detach the user from the player. */
   conn_list_iterate(pplayer->connections, aconn) {
     if (!aconn->observer) {
@@ -4377,7 +4377,7 @@ CLEANUP:
 }
 
 /**************************************************************************
-  Detach from a player. if that player wasn't /created and you were 
+  Detach from a player. if that player wasn't /created and you were
   controlling the player, remove it (and then detach any observers as well).
 **************************************************************************/
 static bool detach_command(struct connection *caller, char *str, bool check)
@@ -4412,7 +4412,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     pconn = caller;
   }
 
-  /* if pconn and caller are not the same, only continue 
+  /* if pconn and caller are not the same, only continue
    * if we're console, or we have ALLOW_HACK */
   if (pconn != caller && caller && caller->server.access_level != ALLOW_HACK) {
     cmd_reply(CMD_DETACH, caller, C_FAIL,
@@ -4469,8 +4469,8 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   send_conn_info(pconn->self, game.est_connections);
 
   if (pplayer) {
-    /* only remove the player if the game is new and in pregame, 
-     * the player wasn't /created, and no one is controlling it 
+    /* only remove the player if the game is new and in pregame,
+     * the player wasn't /created, and no one is controlling it
      * and we were observing but no one else was... */
     if (!pplayer->is_connected && !pplayer->was_created
 	&& is_newgame && !one_obs_among_many) {
@@ -4551,7 +4551,7 @@ static bool attach_command(struct connection *caller, char *name, bool check)
     pconn = caller;
   }
 
-  /* If pconn and caller are not the same, only continue 
+  /* If pconn and caller are not the same, only continue
    * if we're console, or we have ALLOW_HACK */
   if (pconn != caller && caller && caller->server.access_level != ALLOW_HACK) {
     cmd_reply(CMD_ATTACH, caller, C_FAIL,
@@ -4942,7 +4942,7 @@ static bool examine_command(struct connection *caller,
 
   if (fgi->num_teams > 0) {
     int colmaxlen = 6;
-    
+
     /* Pre-calculate the maximum required width
      * of the 'Name' column. */
     for (i = 0; i < fgi->num_teams; i++) {
@@ -5580,7 +5580,7 @@ bool load_command(struct connection * caller, char *filename, bool check)
   struct section_file file;
   char arg[strlen(filename) + 1];
 
-  /* We make a local copy because the parameter might be a pointer to 
+  /* We make a local copy because the parameter might be a pointer to
    * srvarg.load_filename, which we edit down below. */
   sz_strlcpy(arg, filename);
 
@@ -5630,7 +5630,7 @@ bool load_command(struct connection * caller, char *filename, bool check)
   /* Everything seemed to load ok; spread the good news. */
   send_load_game_info(TRUE);
 
-  /* attach connections to players. currently, this applies only 
+  /* attach connections to players. currently, this applies only
    * to connections that have the correct username. */
   conn_list_iterate(game.est_connections, pconn) {
     if (pconn->player) {
@@ -8009,7 +8009,7 @@ static const char *const help_general_args[] = {
   Unified indices for help arguments:
     CMD_NUM           -  Server commands
     HELP_GENERAL_NUM  -  General help arguments, above
-    SETTINGS_NUM      -  Server options 
+    SETTINGS_NUM      -  Server options
 **************************************************************************/
 #define HELP_ARG_NUM (CMD_NUM + HELP_GENERAL_NUM + SETTINGS_NUM)
 
@@ -8334,7 +8334,7 @@ enum LIST_ARGS {
   LIST_CAPABILITIES,
   LIST_IDLE,
   LIST_IGNORE,
-  LIST_MAPS, 
+  LIST_MAPS,
   LIST_MUTES,
   LIST_PLAYERS,
   LIST_RULESETS,
