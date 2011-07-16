@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
    Copyright (C) 2004 - Marcelo J. Burda
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "height_map.h"
 #include "temperature_map.h"
 #include "mapgen_topology.h"
-#include "utilities.h" 
+#include "utilities.h"
 
 static int *temperature_map;
 
@@ -44,7 +44,7 @@ bool tmap_is(const struct tile *ptile, temperature_type tt)
 /*****************************************************************
  return true if at last one tile has tt temperature type
 ****************************************************************/
-bool is_temperature_type_near(const struct tile *ptile, temperature_type tt) 
+bool is_temperature_type_near(const struct tile *ptile, temperature_type tt)
 {
   adjc_iterate(ptile, tile1) {
     if (BOOL_VAL(tmap(tile1) & (tt))) {
@@ -54,7 +54,7 @@ bool is_temperature_type_near(const struct tile *ptile, temperature_type tt)
   return FALSE;
 }
 
-/**************************************************************************** 
+/****************************************************************************
    Free the tmap
  ****************************************************************************/
 void destroy_tmap(void)
@@ -82,31 +82,31 @@ void create_tmap(bool real)
 
   temperature_map = fc_malloc(sizeof(int) * MAX_MAP_INDEX);
   whole_map_iterate(ptile) {
-  
+
      /* the base temperature is equal to base map_colatitude */
     int t = map_colatitude(ptile);
     if (!real) {
       tmap(ptile) = t;
     } else {
       /* height land can be 30% collest */
-      float height = - 0.3 * MAX(0, hmap(ptile) - hmap_shore_level) 
-	  / (hmap_max_level - hmap_shore_level); 
+      float height = - 0.3 * MAX(0, hmap(ptile) - hmap_shore_level)
+          / (hmap_max_level - hmap_shore_level);
       /* near ocean temperature can be 15 % more "temperate" */
-      float temperate = 0.15 * (map.server.temperature / 100 - t / MAX_COLATITUDE) * 
-	  2 * MIN (50 ,count_ocean_near_tile(ptile, FALSE, TRUE)) /
-	  100;
-      
+      float temperate = 0.15 * (map.server.temperature / 100 - t / MAX_COLATITUDE) *
+          2 * MIN (50 ,count_ocean_near_tile(ptile, FALSE, TRUE)) /
+          100;
+
       tmap(ptile) =  t * (1.0 + temperate) * (1.0 + height);
     }
   } whole_map_iterate_end;
   /* adjust to get well sizes frequencies */
   /* Notice: if colatitude is load from a scenario never call adjust has
              scenario maybe has a odd colatitude ditribution and adjust will
-	     brack it */
+             brack it */
   if (!map.server.alltemperate) {
     adjust_int_map(temperature_map, MAX_COLATITUDE);
   }
-  /* now simplify to 4 base values */ 
+  /* now simplify to 4 base values */
   for (i = 0; i < MAX_MAP_INDEX; i++) {
     int t = temperature_map[i];
 
@@ -119,5 +119,5 @@ void create_tmap(bool real)
     } else {
       temperature_map[i] = TT_FROZEN;
     }
-  } 
+  }
 }

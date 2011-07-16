@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 #ifndef FC__MAPGEN_TOPOLOGY_H
 #define FC__MAPGEN_TOPOLOGY_H
 
-/* this is the maximal colatitude at equators returned by 
+/* this is the maximal colatitude at equators returned by
    map_colatitude */
 
 #define MAX_COLATITUDE 1000
@@ -21,16 +21,16 @@
 /* An estimate of the linear (1-dimensional) size of the map. */
 #define SQSIZE MAX(1, sqrt(map.info.xsize * map.info.ysize / 1000))
 
-/* size safe Unit of colatitude */ 
+/* size safe Unit of colatitude */
 #define L_UNIT (MAX_COLATITUDE / (30 * SQSIZE) )
 
-/* define the 5 region of a Earth like map 
+/* define the 5 region of a Earth like map
    =========================================================
-    0-COLD_LV                cold region: 
-    COLD_LV-TREOPICAL_LV     temperate wet region: 
+    0-COLD_LV                cold region:
+    COLD_LV-TREOPICAL_LV     temperate wet region:
     TROPICAL_LV-MAX_COLATITUDE     tropical wet region:
 
-   and a dry region, this last one can ovelap others 
+   and a dry region, this last one can ovelap others
    DRY_MIN_LEVEL- DRY_MAX_LEVEL
  */
 #define COLD_LEVEL \

@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
    Copyright (C) 2004 - Marcelo J. Burda,
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@ double req_size;
   Returns the colatitude of this map position.  This is a value in the
   range of 0 to MAX_COLATITUDE (inclusive).
   This function is wanted to concentrate the topology information
-  all generator code has to use  colatitude and others topology safe 
+  all generator code has to use  colatitude and others topology safe
   functions instead (x,y) coordinate to place terrains
   colatitude is 0 at poles and MAX_COLATITUDE at equator
 ****************************************************************************/
 int map_colatitude(const struct tile *ptile)
 {
   double x, y;
-  
+
   if (map.server.alltemperate) {
     /* An all-temperate map has "average" temperature everywhere.
      *
@@ -48,7 +48,7 @@ int map_colatitude(const struct tile *ptile)
 
   do_in_natural_pos(ntl_x, ntl_y, ptile->x, ptile->y) {
     if (!topo_has_flag(TF_WRAPX) && !topo_has_flag(TF_WRAPY)) {
-      /* A FLAT (unwrapped) map 
+      /* A FLAT (unwrapped) map
        *
        * We assume this is a partial planetary map.  A polar zone is placed
        * at the top and the equator is at the bottom.  The user can specify
@@ -60,7 +60,7 @@ int map_colatitude(const struct tile *ptile)
 
     /* we fold the map to get the base symetries
      *
-     * ...... 
+     * ......
      * :c__c:
      * :____:
      * :____:
@@ -71,7 +71,7 @@ int map_colatitude(const struct tile *ptile)
      * So we fold the map over in both directions and determine
      * x and y vars in the range [0.0, 1.0].
      *
-     * ...>x 
+     * ...>x
      * :C_
      * :__
      * V
@@ -80,13 +80,13 @@ int map_colatitude(const struct tile *ptile)
      * And now this is what we have - just one-quarter of the map.
      */
     x = ((ntl_x > (NATURAL_WIDTH / 2 - 1)
-	 ? NATURAL_WIDTH - 1.0 - (double)ntl_x
-	 : (double)ntl_x)
-	 / (NATURAL_WIDTH / 2 - 1));
+         ? NATURAL_WIDTH - 1.0 - (double)ntl_x
+         : (double)ntl_x)
+         / (NATURAL_WIDTH / 2 - 1));
     y = ((ntl_y > (NATURAL_HEIGHT / 2 - 1)
-	  ? NATURAL_HEIGHT - 1.0 - (double)ntl_y
-	  : (double)ntl_y)
-	 / (NATURAL_HEIGHT / 2 - 1));
+          ? NATURAL_HEIGHT - 1.0 - (double)ntl_y
+          : (double)ntl_y)
+         / (NATURAL_HEIGHT / 2 - 1));
   } do_in_natural_pos_end;
 
   if (topo_has_flag(TF_WRAPX) && !topo_has_flag(TF_WRAPY)) {
@@ -94,7 +94,7 @@ int map_colatitude(const struct tile *ptile)
      * This is equivalent to a Mercator projection. */
     return MAX_COLATITUDE * y;
   }
-  
+
   if (!topo_has_flag(TF_WRAPX) && topo_has_flag(TF_WRAPY)) {
     /* In a Uranus-like topology the polar zones are at east and west.
      * This isn't really the way Uranus is; it's the way Earth would look
@@ -126,14 +126,14 @@ int map_colatitude(const struct tile *ptile)
    *
    * ....
    * :\ N
-   * : \ 
+   * : \
    * :S \
    *
    * Now flip it along the X direction to get this:
    *
    * ....
    * :N /
-   * : / 
+   * : /
    * :/ S
    */
   x = 1.0 - x;
@@ -143,7 +143,7 @@ int map_colatitude(const struct tile *ptile)
    *
    * .....
    * :P /
-   * : / 
+   * : /
    * :/
    *
    * where P is the polar regions and / is the equator. */
@@ -157,9 +157,9 @@ int map_colatitude(const struct tile *ptile)
    *
    * This is explained more fully at
    * http://bugs.freeciv.org/Ticket/Display.html?id=8624. */
-  return MAX_COLATITUDE * (1.5 * (x * x * y + x * y * y) 
-		     - 0.5 * (x * x * x + y * y * y) 
-		     + 1.5 * (x * x + y * y));
+  return MAX_COLATITUDE * (1.5 * (x * x * y + x * y * y)
+                     - 0.5 * (x * x * x + y * y * y)
+                     + 1.5 * (x * x + y * y));
 }
 
 /****************************************************************************
@@ -183,7 +183,7 @@ static void set_sizes(double size, int Xratio, int Yratio)
   const int even = 2;
 
   /* In iso-maps we need to double the map.ysize factor, since xsize is
-   * in native coordinates which are compressed 2x in the X direction. */ 
+   * in native coordinates which are compressed 2x in the X direction. */
   const int iso = MAP_IS_ISOMETRIC ? 2 : 1;
 
   /* We have:
@@ -199,13 +199,13 @@ static void set_sizes(double size, int Xratio, int Yratio)
    *
    *   1000 * size = i_size * i_size * xratio * yratio * even * even * iso
    *   i_size = sqrt(1000 * size / (xratio * yratio * even * even * iso))
-   * 
+   *
    * Make sure to round off i_size to preserve exact wanted ratios,
    * that may be importante for some topologies.
    */
   const int i_size
     = sqrt((float)(1000 * size)
-	   / (float)(Xratio * Yratio * iso * even * even)) + 0.49;
+           / (float)(Xratio * Yratio * iso * even * even)) + 0.49;
 
   /* Now build xsize and ysize value as described above. */
   map.info.xsize = Xratio * i_size * even;
@@ -222,16 +222,16 @@ static void set_sizes(double size, int Xratio, int Yratio)
   /* If the ratio is too big for some topology the simplest way to avoid
    * this error is to set the maximum size smaller for all topologies! */
   if (map.server.size > size + 0.9) {
-    /* Warning when size is set uselessly big */ 
+    /* Warning when size is set uselessly big */
     freelog(LOG_ERROR,
-	    "Requested size of %d is too big for this topology.",
-	    map.server.size);
+            "Requested size of %d is too big for this topology.",
+            map.server.size);
   }
   map.server.size = (float)(map.info.xsize * map.info.ysize) / 1000.0 + 0.5;
   freelog(LOG_VERBOSE,
-	  "Creating a map of size %d x %d = %d tiles (%d requested).",
-	  map.info.xsize, map.info.ysize,
-	  map.info.xsize * map.info.ysize, (int)(req_size * 1000));
+          "Creating a map of size %d x %d = %d tiles (%d requested).",
+          map.info.xsize, map.info.ysize,
+          map.info.xsize * map.info.ysize, (int)(req_size * 1000));
 }
 
 /*
@@ -241,11 +241,11 @@ static void set_sizes(double size, int Xratio, int Yratio)
  * Small ratios work better than large ones; 3:2 is not the same as 6:4
  */
 #define AUTO_RATIO_FLAT           {1, 1}
-#define AUTO_RATIO_CLASSIC        {3, 2} 
-#define AUTO_RATIO_URANUS         {2, 3} 
+#define AUTO_RATIO_CLASSIC        {3, 2}
+#define AUTO_RATIO_URANUS         {2, 3}
 #define AUTO_RATIO_TORUS          {1, 1}
 
-/*************************************************************************** 
+/***************************************************************************
   This function sets sizes in a topology-specific way then calls
   map_init_topology.
 ***************************************************************************/
@@ -265,7 +265,7 @@ void generator_init_topology(bool autosize)
 
     if (map.server.autosize) {
       req_size = (double)(game.info.nplayers * map.server.autosize)
-	  / (10 * map.server.landpercent);
+          / (10 * map.server.landpercent);
       if (req_size < 0.6) {
         req_size = 0.6;
       }
@@ -284,63 +284,63 @@ void generator_init_topology(bool autosize)
     int old_landmass = map.server.landpercent;
 
     req_size = (double)(map.info.xsize * map.info.ysize)
-	/ (100 * game.info.nplayers);
+        / (100 * game.info.nplayers);
     while (map.server.landpercent > MAP_MIN_LANDMASS
-	   && abs(map.server.autosize - req_size * map.server.landpercent)
-    	      > abs(map.server.autosize
-			- (double) req_size * (map.server.landpercent - 1))) {
-    	map.server.landpercent--;
-    } 
+           && abs(map.server.autosize - req_size * map.server.landpercent)
+              > abs(map.server.autosize
+                        - (double) req_size * (map.server.landpercent - 1))) {
+        map.server.landpercent--;
+    }
     while(map.server.landpercent < MAP_MAX_LANDMASS
-	  && abs(map.server.autosize - req_size * map.server.landpercent)
-    	     > abs(map.server.autosize
-		       - (double) req_size * (map.server.landpercent + 1))) {
-    	map.server.landpercent++;
+          && abs(map.server.autosize - req_size * map.server.landpercent)
+             > abs(map.server.autosize
+                       - (double) req_size * (map.server.landpercent + 1))) {
+        map.server.landpercent++;
     }
     if (map.server.landpercent != old_landmass) {
       freelog(LOG_VERBOSE, "landmass ajdusted from %d to %d",
-	      old_landmass, map.server.landpercent);
+              old_landmass, map.server.landpercent);
       /* TRANS: don't translate "landmass" */
       notify_conn(NULL, _("landmass has been adjusted from %d to %d"),
-		  old_landmass, map.server.landpercent);
+                  old_landmass, map.server.landpercent);
     }
   }
 
   /* initialize the ICE_BASE_LEVEL */
 
   /*
-   * this is the base value for the isle poles 
-   */ 
+   * this is the base value for the isle poles
+   */
   ice_base_colatitude =  COLD_LEVEL /  3 ;
 
   /*
-   *if maps has strip like poles we get smaller poles 
+   *if maps has strip like poles we get smaller poles
    * (less playables than island poles)
-   *  5% for little maps; 2% for big ones, if map.temperature == 50 
+   *  5% for little maps; 2% for big ones, if map.temperature == 50
    * exept if separate poles is set
    */
   if (!topo_has_flag(TF_WRAPX) || !topo_has_flag(TF_WRAPY)) {
     if (map.server.separatepoles) {
       /* with separatepoles option strip poles are useless */
       ice_base_colatitude =
-	  (MAX(0, 100 * COLD_LEVEL / 3 - 1 *  MAX_COLATITUDE) 
-	   + 1 *  MAX_COLATITUDE * SQSIZE) / (100 * SQSIZE);
-      /* correction for single pole 
-       * TODO uncomment it when generator 5 was well tuned 
-       *      sometime it can put too many land near pole 
+          (MAX(0, 100 * COLD_LEVEL / 3 - 1 *  MAX_COLATITUDE)
+           + 1 *  MAX_COLATITUDE * SQSIZE) / (100 * SQSIZE);
+      /* correction for single pole
+       * TODO uncomment it when generator 5 was well tuned
+       *      sometime it can put too many land near pole
 
       if (topo_has_flag(TF_WRAPX) == topo_has_flag(TF_WRAPY)) {
-	ice_base_colatitude /= 2;
+        ice_base_colatitude /= 2;
       }
 
       */
     } else {
       /* any way strip poles are not so playable has isle poles */
       ice_base_colatitude =
-	  (MAX(0, 100 * COLD_LEVEL / 3 - 2 *  MAX_COLATITUDE) 
-	   + 2 *  MAX_COLATITUDE * SQSIZE) / (100 * SQSIZE);
-    }	
-  }	
- 
+          (MAX(0, 100 * COLD_LEVEL / 3 - 2 *  MAX_COLATITUDE)
+           + 2 *  MAX_COLATITUDE * SQSIZE) / (100 * SQSIZE);
+    }
+  }
+
   map_init_topology(TRUE);
 }

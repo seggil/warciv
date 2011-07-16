@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
    Copyright (C) 1996 - 2004  The Freeciv Project
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "height_map.h"
 #include "mapgen_topology.h"
-#include "utilities.h" 
+#include "utilities.h"
 
 int *height_map = NULL;
 int hmap_shore_level = 0, hmap_mountain_level = 0;
@@ -36,8 +36,8 @@ void normalize_hmap_poles(void)
       hmap(ptile) = 0;
     } else if (map_colatitude(ptile) < 2 * ICE_BASE_LEVEL) {
       hmap(ptile) *= map_colatitude(ptile) / (2.5 * ICE_BASE_LEVEL);
-    } else if (map.server.separatepoles 
-	       && map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
+    } else if (map.server.separatepoles
+               && map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
       hmap(ptile) *= 0.1;
     } else if (map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
       hmap(ptile) *= map_colatitude(ptile) / (2.5 * ICE_BASE_LEVEL);
@@ -56,8 +56,8 @@ void renormalize_hmap_poles(void)
       /* Nothing. */
     } else if (map_colatitude(ptile) < 2 * ICE_BASE_LEVEL) {
       hmap(ptile) *= (2.5 * ICE_BASE_LEVEL) / map_colatitude(ptile);
-    } else if (map.server.separatepoles 
-	       && map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
+    } else if (map.server.separatepoles
+               && map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
       hmap(ptile) *= 10;
     } else if (map_colatitude(ptile) <= 2.5 * ICE_BASE_LEVEL) {
       hmap(ptile) *= (2.5 * ICE_BASE_LEVEL) /  map_colatitude(ptile);
@@ -66,7 +66,7 @@ void renormalize_hmap_poles(void)
 }
 
 /**********************************************************************
- Create uncorrelated rand map and do some call to smoth to correlate 
+ Create uncorrelated rand map and do some call to smoth to correlate
  it a little and creante randoms shapes
  **********************************************************************/
 void make_random_hmap(int smooth)
@@ -91,12 +91,12 @@ void make_random_hmap(int smooth)
 static void gen5rec(int step, int x0, int y0, int x1, int y1)
 {
   int val[2][2];
-  int x1wrap = x1; /* to wrap correctly */ 
-  int y1wrap = y1; 
+  int x1wrap = x1; /* to wrap correctly */
+  int y1wrap = y1;
 
   /* All x and y values are native. */
 
-  if (((y1 - y0 <= 0) || (x1 - x0 <= 0)) 
+  if (((y1 - y0 <= 0) || (x1 - x0 <= 0))
       || ((y1 - y0 == 1) && (x1 - x0 == 1))) {
     return;
   }
@@ -115,29 +115,29 @@ static void gen5rec(int step, int x0, int y0, int x1, int y1)
 
   /* set midpoints of sides to avg of side's vertices plus a random factor */
   /* unset points are zero, don't reset if set */
-#define set_midpoints(X, Y, V)						\
-  {									\
-    struct tile *ptile = native_pos_to_tile((X), (Y));			\
-    if (!near_singularity(ptile)					\
-	&& map_colatitude(ptile) >  ICE_BASE_LEVEL/2			\
-	&& hmap(ptile) == 0) {						\
-      hmap(ptile) = (V);						\
-    }									\
+#define set_midpoints(X, Y, V)                                          \
+  {                                                                     \
+    struct tile *ptile = native_pos_to_tile((X), (Y));                  \
+    if (!near_singularity(ptile)                                        \
+        && map_colatitude(ptile) >  ICE_BASE_LEVEL/2                    \
+        && hmap(ptile) == 0) {                                          \
+      hmap(ptile) = (V);                                                \
+    }                                                                   \
   }
 
   set_midpoints((x0 + x1) / 2, y0,
-		(val[0][0] + val[1][0]) / 2 + myrand(step) - step / 2);
+                (val[0][0] + val[1][0]) / 2 + myrand(step) - step / 2);
   set_midpoints((x0 + x1) / 2,  y1wrap,
-		(val[0][1] + val[1][1]) / 2 + myrand(step) - step / 2);
+                (val[0][1] + val[1][1]) / 2 + myrand(step) - step / 2);
   set_midpoints(x0, (y0 + y1)/2,
-		(val[0][0] + val[0][1]) / 2 + myrand(step) - step / 2);  
+                (val[0][0] + val[0][1]) / 2 + myrand(step) - step / 2);
   set_midpoints(x1wrap,  (y0 + y1) / 2,
-		(val[1][0] + val[1][1]) / 2 + myrand(step) - step / 2);  
+                (val[1][0] + val[1][1]) / 2 + myrand(step) - step / 2);
 
   /* set middle to average of midpoints plus a random factor, if not set */
   set_midpoints((x0 + x1) / 2, (y0 + y1) / 2,
-		((val[0][0] + val[0][1] + val[1][0] + val[1][1]) / 4
-		 + myrand(step) - step / 2));
+                ((val[0][0] + val[0][1] + val[1][0] + val[1][1]) / 4
+                 + myrand(step) - step / 2));
 
 #undef set_midpoints
 
@@ -151,10 +151,10 @@ static void gen5rec(int step, int x0, int y0, int x1, int y1)
 /**************************************************************************
 Generator 5 makes earthlike worlds with one or more large continents and
 a scattering of smaller islands. It does so by dividing the world into
-blocks and on each block raising or lowering the corners, then the 
-midpoints and middle and so on recursively.  Fiddling with 'xdiv' and 
-'ydiv' will change the size of the initial blocks and, if the map does not 
-wrap in at least one direction, fiddling with 'avoidedge' will change the 
+blocks and on each block raising or lowering the corners, then the
+midpoints and middle and so on recursively.  Fiddling with 'xdiv' and
+'ydiv' will change the size of the initial blocks and, if the map does not
+wrap in at least one direction, fiddling with 'avoidedge' will change the
 liklihood of continents butting up to non-wrapped edges.
 
   All X and Y values used in this function are in native coordinates.
@@ -167,11 +167,11 @@ void make_pseudofractal1_hmap(int extra_div)
   const bool xnowrap = !topo_has_flag(TF_WRAPX);
   const bool ynowrap = !topo_has_flag(TF_WRAPY);
 
-  /* 
+  /*
    * How many blocks should the x and y directions be divided into
-   * initially. 
+   * initially.
    */
-  const int xdiv = 5 + extra_div;		
+  const int xdiv = 5 + extra_div;
   const int ydiv = 5 + extra_div;
 
   int xdiv2 = xdiv + (xnowrap ? 1 : 0);
@@ -181,9 +181,9 @@ void make_pseudofractal1_hmap(int extra_div)
   int ymax = map.info.ysize - (ynowrap ? 1 : 0);
   int xn, yn;
   /* just need something > log(max(xsize, ysize)) for the recursion */
-  int step = map.info.xsize + map.info.ysize; 
+  int step = map.info.xsize + map.info.ysize;
   /* edges are avoided more strongly as this increases */
-  int avoidedge = (100 - map.server.landpercent) * step / 100 + step / 3; 
+  int avoidedge = (100 - map.server.landpercent) * step / 100 + step / 3;
 
   height_map = fc_malloc(sizeof(int) * MAX_MAP_INDEX);
 
@@ -194,18 +194,18 @@ void make_pseudofractal1_hmap(int extra_div)
   for (xn = 0; xn < xdiv2; xn++) {
     for (yn = 0; yn < ydiv2; yn++) {
       do_in_map_pos(ptile, (xn * xmax / xdiv), (yn * ymax / ydiv)) {
-	/* set initial points */
-	hmap(ptile) = myrand(2 * step) - (2 * step) / 2;
+        /* set initial points */
+        hmap(ptile) = myrand(2 * step) - (2 * step) / 2;
 
-	if (near_singularity(ptile)) {
-	  /* avoid edges (topological singularities) */
-	  hmap(ptile) -= avoidedge;
-	}
+        if (near_singularity(ptile)) {
+          /* avoid edges (topological singularities) */
+          hmap(ptile) -= avoidedge;
+        }
 
-	if (map_colatitude(ptile) <= ICE_BASE_LEVEL / 2 ) {
-	  /* separate poles and avoid too much land at poles */
-	  hmap(ptile) -= myrand(avoidedge);
-	}
+        if (map_colatitude(ptile) <= ICE_BASE_LEVEL / 2 ) {
+          /* separate poles and avoid too much land at poles */
+          hmap(ptile) -= myrand(avoidedge);
+        }
       } do_in_map_pos_end;
     }
   }
@@ -213,8 +213,8 @@ void make_pseudofractal1_hmap(int extra_div)
   /* calculate recursively on each block */
   for (xn = 0; xn < xdiv; xn++) {
     for (yn = 0; yn < ydiv; yn++) {
-      gen5rec(step, xn * xmax / xdiv, yn * ymax / ydiv, 
-	      (xn + 1) * xmax / xdiv, (yn + 1) * ymax / ydiv);
+      gen5rec(step, xn * xmax / xdiv, yn * ymax / ydiv,
+              (xn + 1) * xmax / xdiv, (yn + 1) * ymax / ydiv);
     }
   }
 

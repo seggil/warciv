@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
    Copyright (C) 2004 - Marcelo J. Burda,
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ static bool *placed_map;
 
 /**************************************************************************
  return TRUE if initialized
-*************************************************************************/ 
+*************************************************************************/
 bool placed_map_is_initialized(void)
 {
   return placed_map != NULL;
@@ -36,21 +36,21 @@ bool placed_map_is_initialized(void)
 /****************************************************************************
   Create a clean pmap
 ****************************************************************************/
-void create_placed_map(void)                               
-{                                                          
-  assert(!placed_map_is_initialized());                              
-  placed_map = fc_malloc (sizeof(bool) * MAX_MAP_INDEX);   
-  INITIALIZE_ARRAY(placed_map, MAX_MAP_INDEX, FALSE );     
+void create_placed_map(void)
+{
+  assert(!placed_map_is_initialized());
+  placed_map = fc_malloc (sizeof(bool) * MAX_MAP_INDEX);
+  INITIALIZE_ARRAY(placed_map, MAX_MAP_INDEX, FALSE );
 }
 
-/**************************************************************************** 
+/****************************************************************************
   Free the pmap
 ****************************************************************************/
-void destroy_placed_map(void)   
-{                              
-  assert(placed_map_is_initialized()); 
-  free(placed_map);            
-  placed_map = NULL;           
+void destroy_placed_map(void)
+{
+  assert(placed_map_is_initialized());
+  free(placed_map);
+  placed_map = NULL;
 }
 
 
@@ -74,10 +74,10 @@ void map_unset_placed(struct tile *ptile)
   pmap(ptile) = FALSE;
 }
 
-/**************************************************************************** 
+/****************************************************************************
   set all oceanics tiles in placed_map
 ****************************************************************************/
-void set_all_ocean_tiles_placed(void) 
+void set_all_ocean_tiles_placed(void)
 {
   whole_map_iterate(ptile) {
     if (is_ocean(map_get_terrain(ptile))) {
@@ -87,7 +87,7 @@ void set_all_ocean_tiles_placed(void)
 }
 
 /****************************************************************************
-  Set all nearby tiles as placed on pmap. 
+  Set all nearby tiles as placed on pmap.
 ****************************************************************************/
 void set_placed_near_pos(struct tile *ptile, int dist)
 {
@@ -97,7 +97,7 @@ void set_placed_near_pos(struct tile *ptile, int dist)
 }
 
 /**************************************************************************
-  Change the values of the integer map, so that they contain ranking of each 
+  Change the values of the integer map, so that they contain ranking of each
   tile scaled to [0 .. int_map_max].
   The lowest 20% of tiles will have values lower than 0.2 * int_map_max.
 
@@ -105,8 +105,8 @@ void set_placed_near_pos(struct tile *ptile, int dist)
   TRUE will be considered.
 **************************************************************************/
 void adjust_int_map_filtered(int *int_map, int int_map_max, void *data,
-			     bool (*filter)(const struct tile *ptile,
-					    const void *data))
+                             bool (*filter)(const struct tile *ptile,
+                                            const void *data))
 {
   int minval = 0, maxval = 0, total = 0;
   bool first = TRUE;
@@ -135,7 +135,7 @@ void adjust_int_map_filtered(int *int_map, int int_map_max, void *data,
     INITIALIZE_ARRAY(frequencies, size, 0);
 
     /* Translate value so the minimum value is 0
-       and count the number of occurencies of all values to initialize the 
+       and count the number of occurencies of all values to initialize the
        frequencies[] */
     whole_map_iterate_filtered(ptile, data, filter) {
       int_map[ptile->index] -= minval;
@@ -144,7 +144,7 @@ void adjust_int_map_filtered(int *int_map, int int_map_max, void *data,
 
     /* create the linearize function as "incremental" frequencies */
     for(i =  0; i < size; i++) {
-      count += frequencies[i]; 
+      count += frequencies[i];
       frequencies[i] = (count * int_map_max) / total;
     }
 
@@ -163,7 +163,7 @@ bool is_normal_nat_pos(int x, int y)
 
 /****************************************************************************
  * Apply a Gaussian difusion filtre on the map
- * the size of the map is MAX_MAP_INDEX and the map is indexed by 
+ * the size of the map is MAX_MAP_INDEX and the map is indexed by
  * native_pos_to_index function
  * if zeroes_at_edges is set, any unreal position on difusion has 0 value
  * if zeroes_at_edges in unset the unreal position are not counted.
@@ -186,11 +186,11 @@ bool is_normal_nat_pos(int x, int y)
       int  N = 0, D = 0;
 
       iterate_axe(tile1, i, ptile, 2, axe) {
-	D += weight[i + 2];
-	N += weight[i + 2] * source_map[tile1->index];
+        D += weight[i + 2];
+        N += weight[i + 2] * source_map[tile1->index];
       } iterate_axe_end;
       if(zeroes_at_edges) {
-	D = total_weight;
+        D = total_weight;
       }
       target_map[ptile->index] = N / D;
     } whole_map_iterate_end;
@@ -198,7 +198,7 @@ bool is_normal_nat_pos(int x, int y)
     if (MAP_IS_ISOMETRIC) {
       weight[0] = weight[4] = 0.5;
       weight[1] = weight[3] = 0.7;
-      total_weight = 3.4;  
+      total_weight = 3.4;
     }
 
     axe = !axe;

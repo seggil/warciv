@@ -1,5 +1,5 @@
-/********************************************************************** 
- Freeciv - Copyright (C) 1996 - 2004 The Freeciv Project Team 
+/**********************************************************************
+ Freeciv - Copyright (C) 1996 - 2004 The Freeciv Project Team
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2, or (at your option)
@@ -49,8 +49,8 @@ static int get_tile_value(struct tile *ptile)
 
   /* Give one point for each food / shield / trade produced. */
   value = (get_food_tile(ptile)
-	   + get_shields_tile(ptile)
-	   + get_trade_tile(ptile));
+           + get_shields_tile(ptile)
+           + get_trade_tile(ptile));
 
   old_terrain = ptile->terrain;
   old_special = ptile->special;
@@ -58,16 +58,16 @@ static int get_tile_value(struct tile *ptile)
   map_set_special(ptile, S_ROAD);
   map_irrigate_tile(ptile);
   irrig_bonus = (get_food_tile(ptile)
-		 + get_shields_tile(ptile)
-		 + get_trade_tile(ptile)) - value;
+                 + get_shields_tile(ptile)
+                 + get_trade_tile(ptile)) - value;
 
   ptile->terrain = old_terrain;
   ptile->special = old_special;
   map_set_special(ptile, S_ROAD);
   map_mine_tile(ptile);
   mine_bonus = (get_food_tile(ptile)
-		+ get_shields_tile(ptile)
-		+ get_trade_tile(ptile)) - value;
+                + get_shields_tile(ptile)
+                + get_trade_tile(ptile)) - value;
 
   ptile->terrain = old_terrain;
   ptile->special = old_special;
@@ -78,7 +78,7 @@ static int get_tile_value(struct tile *ptile)
 }
 
 struct start_filter_data {
-  int count;			/* Number of existing start positions. */
+  int count;                    /* Number of existing start positions. */
   int min_value;
   int *value;
 };
@@ -102,10 +102,10 @@ static bool is_valid_start_pos(const struct tile *ptile, const void *dataptr)
   struct islands_data_type *island;
   int cont_size, cont = map_get_continent(ptile);
 
-  /* Only start on certain terrain types. */  
+  /* Only start on certain terrain types. */
   if (pdata->value[ptile->index] < pdata->min_value) {
       return FALSE;
-  } 
+  }
 
   assert(cont > 0);
   if (islands[islands_index[cont]].starters == 0) {
@@ -132,9 +132,9 @@ static bool is_valid_start_pos(const struct tile *ptile, const void *dataptr)
     struct tile *tile1 = map.server.start_positions[i].tile;
 
     if ((map_get_continent(ptile) == map_get_continent(tile1)
-	 && (real_map_distance(ptile, tile1) * 1000 / pdata->min_value
-	     <= (sqrt(cont_size / island->total))))
-	|| (real_map_distance(ptile, tile1) * 1000 / pdata->min_value < 5)) {
+         && (real_map_distance(ptile, tile1) * 1000 / pdata->min_value
+             <= (sqrt(cont_size / island->total))))
+        || (real_map_distance(ptile, tile1) * 1000 / pdata->min_value < 5)) {
       return FALSE;
     }
   }
@@ -160,7 +160,7 @@ static void initialize_isle_data(void)
 
   islands = fc_malloc((map.num_continents + 1) * sizeof(*islands));
   islands_index = fc_malloc((map.num_continents + 1)
-			    * sizeof(*islands_index));
+                            * sizeof(*islands_index));
 
   /* islands[0] is unused. */
   for (nr = 1; nr <= map.num_continents; nr++) {
@@ -188,7 +188,7 @@ static bool filter_starters(const struct tile *ptile, const void *data)
   MT_2or3: 2 players per isle (maybe one isle with 3)
   MT_ALL: all players in asingle isle
   MT_VARIABLE: at least 2 player per isle
-  
+
   Returns true on success
 **************************************************************************/
 bool create_start_positions(enum start_mode mode)
@@ -200,7 +200,7 @@ bool create_start_positions(enum start_mode mode)
   int min_goodies_per_player = 2000;
   int total_goodies = 0;
   /* this is factor is used to maximize land used in extreme little maps */
-  float efactor =  game.info.nplayers / map.server.size / 4; 
+  float efactor =  game.info.nplayers / map.server.size / 4;
   bool failure = FALSE;
   bool is_tmap = temperature_is_initialized();
 
@@ -235,9 +235,9 @@ bool create_start_positions(enum start_mode mode)
 
     map_city_radius_iterate(ptile, ptile1) {
       if (this_tile_value > tile_value_aux[ptile1->index]) {
-	lcount++;
+        lcount++;
       } else if (this_tile_value < tile_value_aux[ptile1->index]) {
-	bcount++;
+        bcount++;
       }
     } map_city_radius_iterate_end;
     if (lcount <= bcount) {
@@ -262,11 +262,11 @@ bool create_start_positions(enum start_mode mode)
 
   /* evaluate the best places on the map */
   adjust_int_map_filtered(tile_value, 1000, NULL, filter_starters);
- 
+
   /* Sort the islands so the best ones come first.  Note that islands[0] is
    * unused so we just skip it. */
   qsort(islands + 1, map.num_continents,
-	sizeof(*islands), compare_islands);
+        sizeof(*islands), compare_islands);
 
   /* If we can't place starters according to the first choice, change the
    * choice. */
@@ -278,20 +278,20 @@ bool create_start_positions(enum start_mode mode)
     mode = MT_VARIABLE;
   }
 
-  if (mode == MT_ALL 
+  if (mode == MT_ALL
       && (islands[1].goodies < game.info.nplayers * min_goodies_per_player
-	  || islands[1].goodies < total_goodies * (0.5 + 0.8 * efactor)
-	  / (1 + efactor))) {
+          || islands[1].goodies < total_goodies * (0.5 + 0.8 * efactor)
+          / (1 + efactor))) {
     mode = MT_VARIABLE;
   }
 
   /* the variable way is the last posibility */
   if (mode == MT_VARIABLE) {
-    min_goodies_per_player = total_goodies * (0.65 + 0.8 * efactor) 
+    min_goodies_per_player = total_goodies * (0.65 + 0.8 * efactor)
       / (1 + efactor)  / game.info.nplayers;
   }
 
-  { 
+  {
     int nr, to_place = game.info.nplayers, first = 1;
 
     /* inizialize islands_index */
@@ -299,24 +299,24 @@ bool create_start_positions(enum start_mode mode)
       islands_index[islands[nr].id] = nr;
     }
 
-    /* searh for best first island for fairness */    
+    /* searh for best first island for fairness */
     if ((mode == MT_SINGLE) || (mode == MT_2or3)) {
       float var_goodies, best = HUGE_VAL;
       int num_islands
-	= (mode == MT_SINGLE) ? game.info.nplayers : (game.info.nplayers / 2);
+        = (mode == MT_SINGLE) ? game.info.nplayers : (game.info.nplayers / 2);
 
       for (nr = 1; nr <= 1 + map.num_continents - num_islands; nr++) {
-	if (islands[nr + num_islands - 1].goodies < min_goodies_per_player) {
-	  break;
-	}
-	var_goodies
-	    = (islands[nr].goodies - islands[nr + num_islands - 1].goodies)
-	    / (islands[nr + num_islands - 1].goodies);
+        if (islands[nr + num_islands - 1].goodies < min_goodies_per_player) {
+          break;
+        }
+        var_goodies
+            = (islands[nr].goodies - islands[nr + num_islands - 1].goodies)
+            / (islands[nr + num_islands - 1].goodies);
 
-	if (var_goodies < best * 0.9) {
-	  best = var_goodies;
-	  first = nr;
-	}
+        if (var_goodies < best * 0.9) {
+          best = var_goodies;
+          first = nr;
+        }
       }
     }
 
@@ -328,19 +328,19 @@ bool create_start_positions(enum start_mode mode)
     }
     for (nr = 1; nr <= map.num_continents; nr++) {
       if (mode == MT_SINGLE && to_place > 0 && nr >= first) {
-	islands[nr].starters = 1;
-	islands[nr].total = 1;
-	to_place--;
+        islands[nr].starters = 1;
+        islands[nr].total = 1;
+        to_place--;
       }
       if (mode == MT_2or3 && to_place > 0 && nr >= first) {
-	islands[nr].starters = 2 + (nr == 1 ? (game.info.nplayers % 2) : 0);
-	to_place -= islands[nr].total = islands[nr].starters;
+        islands[nr].starters = 2 + (nr == 1 ? (game.info.nplayers % 2) : 0);
+        to_place -= islands[nr].total = islands[nr].starters;
       }
 
       if (mode == MT_VARIABLE && to_place > 0) {
-	islands[nr].starters = MAX(1, islands[nr].goodies 
-				   / min_goodies_per_player);
-	to_place -= islands[nr].total = islands[nr].starters;
+        islands[nr].starters = MAX(1, islands[nr].goodies
+                                   / min_goodies_per_player);
+        to_place -= islands[nr].total = islands[nr].starters;
       }
     }
   }
@@ -359,29 +359,29 @@ bool create_start_positions(enum start_mode mode)
 
   /* now search for the best place and set start_positions */
   map.server.start_positions = fc_realloc(map.server.start_positions,
-					  game.info.nplayers
-					  * sizeof(*map.server.start_positions));
+                                          game.info.nplayers
+                                          * sizeof(*map.server.start_positions));
   while (data.count < game.info.nplayers) {
     if ((ptile = rand_map_pos_filtered(&data, is_valid_start_pos))) {
       islands[islands_index[(int) map_get_continent(ptile)]].starters--;
       map.server.start_positions[data.count].tile = ptile;
       map.server.start_positions[data.count].nation = NO_NATION_SELECTED;
       freelog(LOG_DEBUG,
-	      "Adding %d,%d as starting position %d, %d goodies on islands.",
-	      TILE_XY(ptile), data.count,
-	      islands[islands_index[(int) map_get_continent(ptile)]].goodies);
+              "Adding %d,%d as starting position %d, %d goodies on islands.",
+              TILE_XY(ptile), data.count,
+              islands[islands_index[(int) map_get_continent(ptile)]].goodies);
       data.count++;
 
     } else {
       data.min_value *= 0.9;
       if (data.min_value <= 10) {
-	freelog(LOG_ERROR,
-	        _("The server appears to have gotten into an infinite loop "
-	          "in the allocation of starting positions.\n"
-	          "Maybe the numbers of players/ia is too much for this map.\n"
-	          "Please report this bug at %s."), WEBSITE_URL);
-	failure = TRUE;
-	break;
+        freelog(LOG_ERROR,
+                _("The server appears to have gotten into an infinite loop "
+                  "in the allocation of starting positions.\n"
+                  "Maybe the numbers of players/ia is too much for this map.\n"
+                  "Please report this bug at %s."), WEBSITE_URL);
+        failure = TRUE;
+        break;
       }
     }
   }
