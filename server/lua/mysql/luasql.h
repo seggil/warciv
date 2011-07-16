@@ -17,7 +17,7 @@
 #define LUASQL_CURSOR "Each driver must have a cursor metatable"
 
 typedef struct {
-	short  closed;
+    short  closed;
 } pseudo_data;
 
 LUASQL_API int luasql_faildirect (lua_State *L, const char *err);
