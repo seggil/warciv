@@ -120,16 +120,16 @@ static void check_map(void)
     if (is_ocean(map_get_terrain(ptile))) {
       assert(cont < 0);
       adjc_iterate(ptile, tile1) {
-	if (is_ocean(map_get_terrain(tile1))) {
-	  assert(map_get_continent(tile1) == cont);
-	}
+        if (is_ocean(map_get_terrain(tile1))) {
+          assert(map_get_continent(tile1) == cont);
+        }
       } adjc_iterate_end;
     } else {
       assert(cont > 0);
       adjc_iterate(ptile, tile1) {
-	if (!is_ocean(map_get_terrain(tile1))) {
-	  assert(map_get_continent(tile1) == cont);
-	}
+        if (!is_ocean(map_get_terrain(tile1))) {
+          assert(map_get_continent(tile1) == cont);
+        }
       } adjc_iterate_end;
     }
 
@@ -142,10 +142,10 @@ static void check_map(void)
 
       /* Check diplomatic status of stacked units. */
       unit_list_iterate(ptile->units, punit2) {
-	assert(pplayers_allied(unit_owner(punit), unit_owner(punit2)));
+        assert(pplayers_allied(unit_owner(punit), unit_owner(punit2)));
       } unit_list_iterate_end;
       if (pcity) {
-	assert(pplayers_allied(unit_owner(punit), city_owner(pcity)));
+        assert(pplayers_allied(unit_owner(punit), city_owner(pcity)));
       }
     } unit_list_iterate_end;
   } whole_map_iterate_end;
@@ -161,7 +161,7 @@ void real_sanity_check_city(struct city *pcity, const char *file, int line)
 
   assert(pcity->size >= 1);
   assert(!terrain_has_flag(map_get_terrain(pcity->tile),
-			   TER_NO_CITIES));
+                           TER_NO_CITIES));
 
   unit_list_iterate(pcity->units_supported, punit) {
     assert(punit->homecity == pcity->id);
@@ -178,61 +178,61 @@ void real_sanity_check_city(struct city *pcity, const char *file, int line)
 
       switch (get_worker_city(pcity, x, y)) {
       case C_TILE_EMPTY:
-	if (ptile->worked) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "empty but worked by %s!",
-		  pcity->name, TILE_XY(ptile),
-		  (ptile)->worked->name);
-	}
-	if (is_enemy_unit_tile(ptile, pplayer)) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "empty but occupied by an enemy unit!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	if (game.ruleset_control.borders > 0
-	    && owner && owner->player_no != pcity->owner) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "empty but in enemy territory!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	if (!city_can_work_tile(pcity, x, y)) {
-	  /* Complete check. */
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "empty but is unavailable!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	break;
+        if (ptile->worked) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "empty but worked by %s!",
+                  pcity->name, TILE_XY(ptile),
+                  (ptile)->worked->name);
+        }
+        if (is_enemy_unit_tile(ptile, pplayer)) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "empty but occupied by an enemy unit!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        if (game.ruleset_control.borders > 0
+            && owner && owner->player_no != pcity->owner) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "empty but in enemy territory!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        if (!city_can_work_tile(pcity, x, y)) {
+          /* Complete check. */
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "empty but is unavailable!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        break;
       case C_TILE_WORKER:
-	if ((ptile)->worked != pcity) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "worked but main map disagrees!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	if (is_enemy_unit_tile(ptile, pplayer)) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "worked but occupied by an enemy unit!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	if (game.ruleset_control.borders > 0
-	    && owner && owner->player_no != pcity->owner) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "worked but in enemy territory!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	if (!city_can_work_tile(pcity, x, y)) {
-	  /* Complete check. */
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "worked but is unavailable!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	break;
+        if ((ptile)->worked != pcity) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "worked but main map disagrees!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        if (is_enemy_unit_tile(ptile, pplayer)) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "worked but occupied by an enemy unit!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        if (game.ruleset_control.borders > 0
+            && owner && owner->player_no != pcity->owner) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "worked but in enemy territory!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        if (!city_can_work_tile(pcity, x, y)) {
+          /* Complete check. */
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "worked but is unavailable!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        break;
       case C_TILE_UNAVAILABLE:
-	if (city_can_work_tile(pcity, x, y)) {
-	  freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
-		  "unavailable but seems to be available!",
-		  pcity->name, TILE_XY(ptile));
-	}
-	break;
+        if (city_can_work_tile(pcity, x, y)) {
+          freelog(LOG_ERROR, "Tile at %s->%d,%d marked as "
+                  "unavailable but seems to be available!",
+                  pcity->name, TILE_XY(ptile));
+        }
+        break;
       }
     } else {
       assert(get_worker_city(pcity, x, y) == C_TILE_UNAVAILABLE);
@@ -275,11 +275,11 @@ static void check_cities(void)
       assert(is_valid);
 
       if (pcity->city_map[city_x][city_y] != C_TILE_WORKER) {
-	freelog(LOG_ERROR, "%d,%d is listed as being worked by %s "
-		"on the map, but %s lists the tile %d,%d as having "
-		"status %d\n",
-		TILE_XY(ptile), pcity->name, pcity->name, city_x, city_y,
-		pcity->city_map[city_x][city_y]);
+        freelog(LOG_ERROR, "%d,%d is listed as being worked by %s "
+                "on the map, but %s lists the tile %d,%d as having "
+                "status %d\n",
+                TILE_XY(ptile), pcity->name, pcity->name, city_x, city_y,
+                pcity->city_map[city_x][city_y]);
       }
     }
   } whole_map_iterate_end;
@@ -298,22 +298,22 @@ static void check_units(void) {
       assert(unit_owner(punit) == pplayer);
 
       if (punit->homecity != 0) {
-	pcity = player_find_city_by_id(pplayer, punit->homecity);
-	assert(pcity != NULL);
-	assert(city_owner(pcity) == pplayer);
+        pcity = player_find_city_by_id(pplayer, punit->homecity);
+        assert(pcity != NULL);
+        assert(city_owner(pcity) == pplayer);
       }
 
       if (!can_unit_continue_current_activity(punit)) {
-	freelog(LOG_ERROR, "%s at %d,%d (%s) has activity %s, "
-		"which it can't continue!",
-		unit_type(punit)->name,
-		TILE_XY(ptile), map_get_tile_info_text(ptile),
-		get_activity_text(punit->activity));
+        freelog(LOG_ERROR, "%s at %d,%d (%s) has activity %s, "
+                "which it can't continue!",
+                unit_type(punit)->name,
+                TILE_XY(ptile), map_get_tile_info_text(ptile),
+                get_activity_text(punit->activity));
       }
 
       pcity = map_get_city(ptile);
       if (pcity) {
-	assert(pplayers_allied(city_owner(pcity), pplayer));
+        assert(pplayers_allied(city_owner(pcity), pplayer));
       }
 
       assert(punit->moves_left >= 0);
@@ -323,33 +323,33 @@ static void check_units(void) {
         transporter = find_unit_by_id(punit->transported_by);
         assert(transporter != NULL);
 
-	/* Make sure the transporter is on the tile. */
-	unit_list_iterate(punit->tile->units, tile_unit) {
-	  if (tile_unit == transporter) {
-	    transporter2 = tile_unit;
-	  }
-	} unit_list_iterate_end;
-	assert(transporter2 != NULL);
+        /* Make sure the transporter is on the tile. */
+        unit_list_iterate(punit->tile->units, tile_unit) {
+          if (tile_unit == transporter) {
+            transporter2 = tile_unit;
+          }
+        } unit_list_iterate_end;
+        assert(transporter2 != NULL);
 
         /* Also in the list of owner? */
         assert(player_find_unit_by_id(get_player(transporter->owner),
-				      punit->transported_by) != NULL);
+                                      punit->transported_by) != NULL);
         assert(same_pos(ptile, transporter->tile));
 
         /* Transporter capacity will be checked when transporter itself
-	 * is checked */
+         * is checked */
       }
 
       /* Check for ground units in the ocean. */
       if (!pcity
-	  && is_ocean(map_get_terrain(ptile))
-	  && is_ground_unit(punit)) {
+          && is_ocean(map_get_terrain(ptile))
+          && is_ground_unit(punit)) {
         assert(punit->transported_by != -1);
         assert(!is_ground_unit(transporter));
         assert(is_ground_units_transport(transporter));
       } else if (!pcity
                  && !is_ocean(map_get_terrain(ptile))
-	         && is_sailing_unit(punit)) {
+                 && is_sailing_unit(punit)) {
         assert(punit->transported_by != -1);
         assert(!is_sailing_unit(transporter));
         assert(FALSE); /* assert(is_sailing_units_transport(transporter)); */
@@ -357,7 +357,7 @@ static void check_units(void) {
 
       /* Check for over-full transports. */
       assert(get_transporter_occupancy(punit)
-	     <= get_transporter_capacity(punit));
+             <= get_transporter_capacity(punit));
     } unit_list_iterate_end;
   } players_iterate_end;
 }
@@ -380,17 +380,17 @@ static void check_players(void)
 
     city_list_iterate(pplayer->cities, pcity) {
       if (is_capital(pcity)) {
-	found_palace++;
+        found_palace++;
       }
       assert(found_palace <= 1);
     } city_list_iterate_end;
 
     players_iterate(pplayer2) {
       assert(pplayer->diplstates[pplayer2->player_no].type
-	     == pplayer2->diplstates[pplayer->player_no].type);
+             == pplayer2->diplstates[pplayer->player_no].type);
       if (pplayer->diplstates[pplayer2->player_no].type == DS_CEASEFIRE) {
-	assert(pplayer->diplstates[pplayer2->player_no].turns_left
-	       == pplayer2->diplstates[pplayer->player_no].turns_left);
+        assert(pplayer->diplstates[pplayer2->player_no].turns_left
+               == pplayer2->diplstates[pplayer->player_no].turns_left);
       }
     } players_iterate_end;
 

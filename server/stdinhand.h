@@ -13,7 +13,7 @@
 #ifndef FC__STDINHAND_H
 #define FC__STDINHAND_H
 
-#include "connection.h"		/* enum cmdlevel_id */
+#include "connection.h"         /* enum cmdlevel_id */
 #include "fc_types.h"
 
 #define SERVER_COMMAND_PREFIX '/'
@@ -45,7 +45,7 @@ bool unloadmap_command(struct connection *caller, bool check);
 bool require_command(struct connection *caller, char *arg, bool check);
 
 void toggle_ai_player_direct(struct connection *caller,
-			     struct player *pplayer);
+                             struct player *pplayer);
 bool is_allowed_to_attach(const struct player *pplayer,
                           const struct connection *caller, bool will_obs,
                           char *msgbuf, int msgbuf_len);

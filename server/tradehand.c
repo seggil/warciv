@@ -136,16 +136,16 @@ void server_remove_trade_route(struct trade_route *ptr)
     } else if (status == TR_ESTABLISHED) {
       /* Send full city infos */
       if (!pci1_computed) {
-	package_city(pcity1, &pci1, FALSE);
-	pci1_computed = TRUE;
+        package_city(pcity1, &pci1, FALSE);
+        pci1_computed = TRUE;
       }
       send_packet_city_info(pconn, &pci1);
       if (pcity1->owner == pcity2->owner) {
-	if (!pci2_computed) {
-	  package_city(pcity2, &pci2, FALSE);
-	  pci2_computed = TRUE;
-	}
-	send_packet_city_info(pconn, &pci2);
+        if (!pci2_computed) {
+          package_city(pcity2, &pci2, FALSE);
+          pci2_computed = TRUE;
+        }
+        send_packet_city_info(pconn, &pci2);
       }
     }
   } conn_list_iterate_end;
@@ -153,14 +153,14 @@ void server_remove_trade_route(struct trade_route *ptr)
   if (pcity1->owner != pcity2->owner && status == TR_ESTABLISHED) {
     conn_list_iterate(city_owner(pcity2)->connections, pconn) {
       if (connection_supports_server_trade(pconn)) {
-	send_packet_trade_route_remove(pconn, &packet);
+        send_packet_trade_route_remove(pconn, &packet);
       } else {
-	/* Send full city infos */
-	if (!pci2_computed) {
-	  package_city(pcity2, &pci2, FALSE);
-	  pci2_computed = TRUE;
-	}
-	send_packet_city_info(pconn, &pci2);
+        /* Send full city infos */
+        if (!pci2_computed) {
+          package_city(pcity2, &pci2, FALSE);
+          pci2_computed = TRUE;
+        }
+        send_packet_city_info(pconn, &pci2);
       }
     } conn_list_iterate_end;
   }
@@ -222,12 +222,12 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
                        >= game.traderoute_info.maxtraderoutes
       && get_city_min_trade_route(pcity1, &out_of_home) >= trade) {
     notify_player_ex(pplayer, pcity2->tile, E_NOEVENT,
-		     _("Game: Sorry, your %s cannot establish"
-		       " a trade route here!"), unit_name(punit->type));
+                     _("Game: Sorry, your %s cannot establish"
+                       " a trade route here!"), unit_name(punit->type));
     notify_player_ex(pplayer, pcity2->tile, E_NOEVENT,
-		     _("Game: The city of %s already has %d "
-		       "better trade routes!"), pcity1->name,
-		     game.traderoute_info.maxtraderoutes);
+                     _("Game: The city of %s already has %d "
+                       "better trade routes!"), pcity1->name,
+                     game.traderoute_info.maxtraderoutes);
     out_of_home = NULL;
     can_establish = FALSE;
   }
@@ -236,12 +236,12 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
                        >= game.traderoute_info.maxtraderoutes
       && get_city_min_trade_route(pcity2, &out_of_dest) >= trade) {
     notify_player_ex(pplayer, pcity2->tile, E_NOEVENT,
-		     _("Game: Sorry, your %s cannot establish"
-		       " a trade route here!"), unit_name(punit->type));
+                     _("Game: Sorry, your %s cannot establish"
+                       " a trade route here!"), unit_name(punit->type));
     notify_player_ex(pplayer, pcity2->tile, E_NOEVENT,
-		     _("Game: The city of %s already has %d "
-		       "better trade routes!"), pcity2->name,
-		     game.traderoute_info.maxtraderoutes);
+                     _("Game: The city of %s already has %d "
+                       "better trade routes!"), pcity2->name,
+                     game.traderoute_info.maxtraderoutes);
     out_of_dest = NULL;
     can_establish = FALSE;
   }
@@ -252,11 +252,11 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
                         out_of_home->pcity2 : out_of_home->pcity1;
     server_remove_trade_route(out_of_home);
     notify_player_ex(city_owner(pcity_out_of_home),
-		     pcity_out_of_home->tile, E_NOEVENT,
-		     _("Game: Sorry, %s has canceled the trade route "
-		       "from %s to your city %s."),
-		     city_owner(pcity1)->name,
-		     pcity1->name, pcity_out_of_home->name);
+                     pcity_out_of_home->tile, E_NOEVENT,
+                     _("Game: Sorry, %s has canceled the trade route "
+                       "from %s to your city %s."),
+                     city_owner(pcity1)->name,
+                     pcity1->name, pcity_out_of_home->name);
   }
 
   /* And the same for the dest city. */
@@ -265,11 +265,11 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
                         out_of_dest->pcity2 : out_of_dest->pcity1;
     server_remove_trade_route(out_of_dest);
     notify_player_ex(city_owner(pcity_out_of_dest),
-		     pcity_out_of_dest->tile, E_NOEVENT,
-		     _("Game: Sorry, %s has canceled the trade route "
-		       "from %s to your city %s."),
-		     city_owner(pcity2)->name, pcity2->name,
-		     pcity_out_of_dest->name);
+                     pcity_out_of_dest->tile, E_NOEVENT,
+                     _("Game: Sorry, %s has canceled the trade route "
+                       "from %s to your city %s."),
+                     city_owner(pcity2)->name, pcity2->name,
+                     pcity_out_of_dest->name);
   }
 
   revenue = get_caravan_enter_city_trade_bonus(pcity1, pcity2);
@@ -282,10 +282,10 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
 
   conn_list_do_buffer(pplayer->connections);
   notify_player_ex(pplayer, pcity2->tile, E_NOEVENT,
-		   _("Game: Your %s from %s has arrived in %s,"
-		     " and revenues amount to %d in gold and research."),
-		   unit_name(punit->type), pcity1->name,
-		   pcity2->name, revenue);
+                   _("Game: Your %s from %s has arrived in %s,"
+                     " and revenues amount to %d in gold and research."),
+                   unit_name(punit->type), pcity1->name,
+                   pcity2->name, revenue);
   wipe_unit(punit);
   punit = NULL;
   pplayer->economic.gold += revenue;
@@ -325,30 +325,30 @@ void unit_establish_trade_route(struct unit *punit, struct city *pcity1,
     if (out_of_home) {
       if (city_owner(pcity2) != city_owner(pcity_out_of_home)) {
         send_city_info(city_owner(pcity2), pcity_out_of_home);
-	send_city_info(city_owner(pcity_out_of_home), pcity2);
+        send_city_info(city_owner(pcity_out_of_home), pcity2);
       }
       if (pplayer != city_owner(pcity_out_of_home)) {
         send_city_info(pplayer, pcity_out_of_home);
-	send_city_info(city_owner(pcity_out_of_home), pcity1);
+        send_city_info(city_owner(pcity_out_of_home), pcity1);
       }
       if (out_of_dest && city_owner(pcity_out_of_home) !=
-					city_owner(pcity_out_of_dest)) {
-	send_city_info(city_owner(pcity_out_of_home), pcity_out_of_dest);
+                                        city_owner(pcity_out_of_dest)) {
+        send_city_info(city_owner(pcity_out_of_home), pcity_out_of_dest);
       }
     }
 
     if (pcity_out_of_dest) {
       if (city_owner(pcity2) != city_owner(pcity_out_of_dest)) {
         send_city_info(city_owner(pcity2), pcity_out_of_dest);
-	send_city_info(city_owner(pcity_out_of_dest), pcity2);
+        send_city_info(city_owner(pcity_out_of_dest), pcity2);
       }
       if (pplayer != city_owner(pcity_out_of_dest)) {
-	send_city_info(pplayer, pcity_out_of_dest);
-	send_city_info(city_owner(pcity_out_of_dest), pcity1);
+        send_city_info(pplayer, pcity_out_of_dest);
+        send_city_info(city_owner(pcity_out_of_dest), pcity1);
       }
       if (out_of_home && city_owner(pcity_out_of_home) !=
-					city_owner(pcity_out_of_dest)) {
-	send_city_info(city_owner(pcity_out_of_dest), pcity_out_of_home);
+                                        city_owner(pcity_out_of_dest)) {
+        send_city_info(city_owner(pcity_out_of_dest), pcity_out_of_home);
       }
     }
   }
@@ -384,8 +384,8 @@ void handle_trade_route_plan(struct player *pplayer, int city1, int city2)
   if (!(pcity1 = player_find_city_by_id(pplayer, city1))) {
     if ((pcity1 = find_city_by_id(city1))) {
       notify_player_ex(pplayer, pcity1->tile, E_NOEVENT,
-		       _("Game: You cannot plan a trade route from %s, "
-			 "it's not a own city."), pcity1->name);
+                       _("Game: You cannot plan a trade route from %s, "
+                         "it's not a own city."), pcity1->name);
     } else {
       freelog(LOG_ERROR, "handle_trade_route_plan: Got a bad city id");
     }
@@ -399,8 +399,8 @@ void handle_trade_route_plan(struct player *pplayer, int city1, int city2)
   if (!can_cities_trade(pcity1, pcity2)
       || !can_establish_trade_route(pcity1, pcity2)) {
     notify_player_ex(pplayer, pcity1->tile, E_NOEVENT,
-		     _("Game: You cannot establish a route between %s and %s."),
-		     pcity1->name, pcity2->name);
+                     _("Game: You cannot establish a route between %s and %s."),
+                     pcity1->name, pcity2->name);
     return;
   }
 
@@ -439,8 +439,8 @@ void handle_trade_route_remove(struct player *pplayer, int city1, int city2)
   }
   if (ptr->status == TR_ESTABLISHED) {
     notify_player_ex(pplayer, pcity1->tile, E_NOEVENT,
-		     _("Game: You cannot cancel an established trade route "
-		       "(%s - %s)."), pcity1->name, pcity2->name);
+                     _("Game: You cannot cancel an established trade route "
+                       "(%s - %s)."), pcity1->name, pcity2->name);
     return;
   }
   server_remove_trade_route(ptr);
@@ -461,8 +461,8 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
   }
   if (!unit_flag(punit, F_TRADE_ROUTE)) {
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-		     _("This unit (%s) cannot establish trade routes"),
-		     unit_name(punit->type));
+                     _("This unit (%s) cannot establish trade routes"),
+                     unit_name(punit->type));
     return;
   }
 
@@ -471,8 +471,8 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
     if (!(ptr = get_next_trade_route_to_establish(punit, FALSE, FALSE,
                                                   TRUE, TRUE))) {
       notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-		       _("Game: Didn't find any planned trade "
-			 "route to establish"));
+                       _("Game: Didn't find any planned trade "
+                         "route to establish"));
       return;
     }
   } else {
@@ -491,27 +491,27 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
         case TR_IN_ROUTE:
         case TR_PL_AND_IR:
           notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-			   _("Game: The trade route between %s and %s is already "
-			     "going to be established"),
-			   pcity1->name, pcity2->name);
+                           _("Game: The trade route between %s and %s is already "
+                             "going to be established"),
+                           pcity1->name, pcity2->name);
           return;
         case TR_ESTABLISHED:
           notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-			   _("Game: The trade route between %s and %s "
-			     "is already established"),
-			   pcity1->name, pcity2->name);
+                           _("Game: The trade route between %s and %s "
+                             "is already established"),
+                           pcity1->name, pcity2->name);
           return;
         default:
         freelog(LOG_ERROR, "Unkown trade route status varient (%d)",
-		ptr->status);
+                ptr->status);
       }
     } else {
       /* Make a new trade route */
       if (!can_cities_trade(pcity1, pcity2)
           || !can_establish_trade_route(pcity1, pcity2)) {
         notify_player_ex(pplayer, pcity1->tile, E_NOEVENT,
-			 _("Game: You cannot establish a route "
-			   "between %s and %s."), pcity1->name, pcity2->name);
+                         _("Game: You cannot establish a route "
+                           "between %s and %s."), pcity1->name, pcity2->name);
         return;
       }
       ptr = game_trade_route_add(pcity1, pcity2);
@@ -538,9 +538,9 @@ void handle_unit_trade_route(struct player *pplayer, int unit_id,
     punit->orders.length = 0;
     ptr->punit = NULL;
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-		     _("Game: This unit cannot established the trade route "
-		       "between %s and %s"),
-		     ptr->pcity1->name, ptr->pcity2->name);
+                     _("Game: This unit cannot established the trade route "
+                       "between %s and %s"),
+                     ptr->pcity1->name, ptr->pcity2->name);
     return;
   }
   punit->orders.index = 0;
@@ -568,17 +568,17 @@ void reset_trade_route_planning(struct player *pplayer)
   city_list_iterate(pplayer->cities, pcity) {
     trade_route_list_iterate(pcity->trade_routes, ptr) {
       if (ptr->status == TR_ESTABLISHED) {
-	continue;
+        continue;
       } else if (server_state == RUN_GAME_STATE) {
-	server_remove_trade_route(ptr);
+        server_remove_trade_route(ptr);
       } else {
-	/* Do no notifications */
-	if (ptr->punit) {
-	  free_unit_orders(ptr->punit);
-	  set_unit_activity(ptr->punit, ACTIVITY_IDLE);
-	  ptr->punit->ptr = NULL;
-	}
-	game_trade_route_remove(ptr);
+        /* Do no notifications */
+        if (ptr->punit) {
+          free_unit_orders(ptr->punit);
+          set_unit_activity(ptr->punit, ACTIVITY_IDLE);
+          ptr->punit->ptr = NULL;
+        }
+        game_trade_route_remove(ptr);
       }
     } trade_route_list_iterate_end;
   } city_list_iterate_end;

@@ -97,11 +97,11 @@ static struct player *create_barbarian_player(bool land)
         barbarians->is_alive = TRUE;
         barbarians->is_dying = FALSE;
         pick_ai_player_name(game.ruleset_control.nation_count - 1, barbarians->name);
-	sz_strlcpy(barbarians->username, ANON_USER_NAME);
+        sz_strlcpy(barbarians->username, ANON_USER_NAME);
         /* I need to make them to forget the map, I think */
-	whole_map_iterate(ptile) {
-	  map_clear_known(ptile, barbarians);
-	} whole_map_iterate_end;
+        whole_map_iterate(ptile) {
+          map_clear_known(ptile, barbarians);
+        } whole_map_iterate_end;
       }
       barbarians->economic.gold += 100;  /* New leader, new money */
       return barbarians;
@@ -173,7 +173,7 @@ static struct player *create_barbarian_player(bool land)
 static bool is_free_land(struct tile *ptile, struct player *who)
 {
   return (!is_ocean(map_get_terrain(ptile))
-	  && !is_non_allied_unit_tile((ptile), who));
+          && !is_non_allied_unit_tile((ptile), who));
 }
 
 /**************************************************************************
@@ -182,7 +182,7 @@ static bool is_free_land(struct tile *ptile, struct player *who)
 static bool is_free_sea(struct tile *ptile, struct player *who)
 {
   return (is_ocean(map_get_terrain(ptile))
-	  && !is_non_allied_unit_tile((ptile), who));
+          && !is_non_allied_unit_tile((ptile), who));
 }
 
 /**************************************************************************
@@ -232,10 +232,10 @@ bool unleash_barbarians(struct tile *ptile)
     unit_list_iterate((ptile)->units, punit2) {
       if (punit2->owner == me) {
         send_unit_info(NULL, punit2);
-	do {
-	  do {
-	    utile = rand_neighbour(ptile);
-	  } while (!is_free_land(utile, barbarians));
+        do {
+          do {
+            utile = rand_neighbour(ptile);
+          } while (!is_free_land(utile, barbarians));
         } while (!handle_unit_move_request(punit2, utile, TRUE, FALSE));
         freelog(LOG_DEBUG, "Moved barbarian unit from %d %d to %d, %d",
                 ptile->x, ptile->y, utile->x, utile->y);
@@ -251,20 +251,20 @@ bool unleash_barbarians(struct tile *ptile)
         if (punit2->owner == me) {
           send_unit_info(NULL, punit2);
           while(TRUE) {
-	    utile = rand_neighbour(ptile);
-	    if (can_unit_move_to_tile(punit2, utile, TRUE)) {
-	      break;
-            }
-	    if (btile && can_unit_move_to_tile(punit2, btile, TRUE)) {
-	      utile = btile;
+            utile = rand_neighbour(ptile);
+            if (can_unit_move_to_tile(punit2, utile, TRUE)) {
               break;
-	    }
-	    if (is_free_sea(utile, barbarians)) {
+            }
+            if (btile && can_unit_move_to_tile(punit2, btile, TRUE)) {
+              utile = btile;
+              break;
+            }
+            if (is_free_sea(utile, barbarians)) {
               boat = find_a_unit_type(L_BARBARIAN_BOAT, -1);
-	      (void) create_unit(barbarians, utile, boat, 0, 0, -1);
-	      btile = utile;
-	      break;
-	    }
+              (void) create_unit(barbarians, utile, boat, 0, 0, -1);
+              btile = utile;
+              break;
+            }
           }
           (void) handle_unit_move_request(punit2, utile, TRUE, FALSE);
         }
@@ -374,7 +374,7 @@ static void try_summon_barbarians(void)
   /* I think Sea Raiders can come out of unknown sea territory */
   if (!(utile = find_empty_tile_nearby(ptile))
       || (!map_is_known(utile, victim)
-	  && !is_ocean(map_get_terrain(utile)))
+          && !is_ocean(map_get_terrain(utile)))
       || !is_near_land(utile)) {
     return;
   }
@@ -406,7 +406,7 @@ static void try_summon_barbarians(void)
       freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
     }
     (void) create_unit(barbarians, utile,
-		       get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0, -1);
+                       get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0, -1);
   } else {                   /* sea raiders - their units will be veteran */
     struct unit *ptrans;
     int n_boats = 1;
@@ -423,12 +423,12 @@ static void try_summon_barbarians(void)
     for (i = 0; i < cap-1; i++) {
       unit = find_a_unit_type(L_BARBARIAN_SEA,L_BARBARIAN_SEA_TECH);
       (void) create_unit_full(barbarians, utile, unit, 0, 0, -1, -1,
-			      ptrans);
+                              ptrans);
       freelog(LOG_DEBUG, "Created barbarian unit %s", unit_types[unit].name);
     }
     (void) create_unit_full(barbarians, utile,
-			    get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0,
-			    -1, -1, ptrans);
+                            get_role_unit(L_BARBARIAN_LEADER, 0), 0, 0,
+                            -1, -1, ptrans);
   }
   }
 
@@ -444,11 +444,11 @@ static void try_summon_barbarians(void)
   /* There should probably be a different message about Sea Raiders */
   if (is_land_barbarian(barbarians)) {
     notify_player_ex(victim, utile, E_UPRISING,
-		     _("Native unrest near %s led by %s."), pc->name,
-		     barbarians->name);
+                     _("Native unrest near %s led by %s."), pc->name,
+                     barbarians->name);
   } else if (map_is_known_and_seen(utile, victim)) {
     notify_player_ex(victim, utile, E_UPRISING,
-		     _("Sea raiders seen near %s!"), pc->name);
+                     _("Sea raiders seen near %s!"), pc->name);
   }
 }
 

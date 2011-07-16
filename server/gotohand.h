@@ -13,7 +13,7 @@
 #ifndef FC__GOTOHAND_H
 #define FC__GOTOHAND_H
 
-#include "map.h"		/* MAP_MAX_ */
+#include "map.h"                /* MAP_MAX_ */
 
 /*
  * The below GOTO result values are ordered by priority, e.g. if unit
@@ -31,14 +31,14 @@ enum goto_result {
 
 bool is_dist_finite(int dist);
 enum goto_result do_unit_goto(struct unit *punit,
-			      enum goto_move_restriction restriction,
-			      bool trigger_special_ability);
+                              enum goto_move_restriction restriction,
+                              bool trigger_special_ability);
 void generate_warmap(struct city *pcity, struct unit *punit);
 void really_generate_warmap(struct city *pcity, struct unit *punit,
-			    enum unit_move_type move_type);
+                            enum unit_move_type move_type);
 int calculate_move_cost(struct unit *punit, struct tile *dst_tile);
 int air_can_move_between(int moves, struct tile *src_tile,
-			 struct tile *dst_tile, struct player *pplayer);
+                         struct tile *dst_tile, struct player *pplayer);
 
 /* all other functions are internal */
 

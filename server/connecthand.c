@@ -124,7 +124,7 @@ int user_action_as_str(struct user_action *pua, char *buf, int buflen)
 
   conn_pattern_as_str(pua->conpat, buf2, sizeof(buf2));
   return my_snprintf(buf, buflen, "<%s %s>",
-		     user_action_type_strs[pua->action], buf2);
+                     user_action_type_strs[pua->action], buf2);
 }
 
 /**************************************************************************
@@ -137,7 +137,7 @@ static enum action_type find_action_for_connection(struct connection *pconn)
     char buf[128];
     user_action_as_str(pua, buf, sizeof(buf));
     freelog(LOG_DEBUG, "testing action %s against %s",
-	    buf, conn_description(pconn));
+            buf, conn_description(pconn));
 #endif /* DEBUG */
 
     if (conn_pattern_match(pua->conpat, pconn)) {
@@ -146,7 +146,7 @@ static enum action_type find_action_for_connection(struct connection *pconn)
     }
   } user_action_list_iterate_end;
 
-  return NUM_ACTION_TYPES;	/* i.e. nothing applicable found */
+  return NUM_ACTION_TYPES;      /* i.e. nothing applicable found */
 }
 
 /**************************************************************************
@@ -188,7 +188,7 @@ static void grant_access_level(struct connection *pconn)
     default:
       if (user_action_list_size(on_connect_user_actions) > 0) {
         freelog(LOG_NORMAL,
-		_("Warning: There was no match in the "
+                _("Warning: There was no match in the "
                   "action list for connection %d (%s from %s). It will "
                   "have access level 'none'."),
                 pconn->id, pconn->username, pconn->server.ipaddr);
@@ -205,8 +205,8 @@ static void grant_access_level(struct connection *pconn)
   }
 
   freelog(LOG_VERBOSE, "Giving access '%s' to connection %d (%s from %s).",
-	  cmdlevel_name(pconn->server.granted_access_level),
-	  pconn->id, pconn->username, pconn->addr);
+          cmdlevel_name(pconn->server.granted_access_level),
+          pconn->id, pconn->username, pconn->addr);
 }
 
 /**************************************************************************
@@ -230,10 +230,10 @@ static bool is_banned(struct connection *pconn, enum conn_pattern_type type)
 static bool conn_can_be_established(struct connection *pconn)
 {
   return pconn != NULL
-	 && pconn->server.ipaddr != '\0'
-	 && pconn->addr != '\0'
-	 && pconn->server.adns_id == -1
-	 && pconn->server.received_username;
+         && pconn->server.ipaddr != '\0'
+         && pconn->addr != '\0'
+         && pconn->server.adns_id == -1
+         && pconn->server.received_username;
 }
 
 /**************************************************************************
@@ -282,7 +282,7 @@ bool receive_hostname(struct connection *pconn, const char *addr)
 
   if (is_banned(pconn, CPT_HOSTNAME)) {
     freelog(LOG_NORMAL,
-	    _("The hostname %s is banned from this server"), pconn->addr);
+            _("The hostname %s is banned from this server"), pconn->addr);
     server_break_connection(pconn, ES_BANNED);
     return FALSE;
   }
@@ -364,11 +364,11 @@ void establish_new_connection(struct connection *pconn)
     /* The default. */
     if (my_gethostname(hostname, sizeof(hostname)) == 0) {
       notify_conn(dest, _("Welcome to the %s %s Server running at %s port %d."),
-		  freeciv_name_version(), warclient_name_version(),
+                  freeciv_name_version(), warclient_name_version(),
                   hostname, srvarg.port);
     } else {
       notify_conn(dest, _("Welcome to the %s %s Server at port %d."),
-		  freeciv_name_version(), warclient_name_version(),
+                  freeciv_name_version(), warclient_name_version(),
                   srvarg.port);
     }
   } else {
@@ -376,7 +376,7 @@ void establish_new_connection(struct connection *pconn)
        space for all the expansions, at worst it will result
        in a truncated message. */
     int maxlen = strlen(welcome_message)
-	+ 64 * strchrcount(welcome_message, '%') + 1;
+        + 64 * strchrcount(welcome_message, '%') + 1;
     char *buf = fc_malloc(maxlen), *line, *p;
     generate_welcome_message(buf, maxlen, welcome_message);
 
@@ -385,7 +385,7 @@ void establish_new_connection(struct connection *pconn)
        not easily). */
     for (line = buf; line;) {
       if ((p = strchr(line, '\n')))
-	*p++ = '\0';
+        *p++ = '\0';
       notify_conn(dest, "%s", line);
       line = p;
     }
@@ -429,8 +429,8 @@ void establish_new_connection(struct connection *pconn)
       send_packet_thaw_hint(pconn);
       send_packet_start_turn(pconn);
       if (server_state == GAME_OVER_STATE) {
-	report_final_scores(pconn->self);
-	report_game_rankings(pconn->self);
+        report_final_scores(pconn->self);
+        report_game_rankings(pconn->self);
       }
     }
 
@@ -447,7 +447,7 @@ void establish_new_connection(struct connection *pconn)
     if (!attach_connection_to_player(pconn, NULL)) {
       notify_conn(dest, _("Server: Couldn't attach your connection to new player."));
       freelog(LOG_VERBOSE, "%s is not attached to a player",
-	      pconn->username);
+              pconn->username);
     } else {
       sz_strlcpy(pconn->player->name, pconn->username);
     }
@@ -461,7 +461,7 @@ void establish_new_connection(struct connection *pconn)
                 pconn->username);
   } else if (strcmp(pconn->player->name, ANON_PLAYER_NAME) == 0) {
     notify_conn(dest, _("Server: You are logged in as '%s' connected to an "
-			"anonymous player."), pconn->username);
+                        "anonymous player."), pconn->username);
   } else {
     notify_conn(dest, _("Server: You are logged in as '%s' connected to %s."),
                 pconn->username, pconn->player->name);
@@ -471,9 +471,9 @@ void establish_new_connection(struct connection *pconn)
   if (server_state == RUN_GAME_STATE && game.server.turnblock) {
     players_iterate(cplayer) {
       if (cplayer->is_alive && !cplayer->ai.control
-	  && !cplayer->turn_done && cplayer != pconn->player) {
-	/* Skip current player */
-	notify_conn(dest, _("Game: Turn-blocking game play: "
+          && !cplayer->turn_done && cplayer != pconn->player) {
+        /* Skip current player */
+        notify_conn(dest, _("Game: Turn-blocking game play: "
                             "waiting on %s to finish turn..."),
                     cplayer->name);
       }
@@ -536,7 +536,7 @@ void reject_new_connection(const char *msg, struct connection *pconn)
   packet.conn_id = -1;
   send_packet_server_join_reply(pconn, &packet);
   freelog(LOG_NORMAL, _("Client %s rejected: %s"),
-	  conn_description(pconn), msg);
+          conn_description(pconn), msg);
   flush_connection_send_buffer_all(pconn);
 }
 
@@ -551,8 +551,8 @@ bool handle_login_request(struct connection *pconn,
   int kick_time_remaining;
 
   freelog(LOG_NORMAL, _("Connection request from %s from %s%s"),
-	  req->username, pconn->addr, pconn->server.adns_id > 0 ?
-	  _(" (hostname lookup in progress)") : "");
+          req->username, pconn->addr, pconn->server.adns_id > 0 ?
+          _(" (hostname lookup in progress)") : "");
 
   remove_leading_trailing_spaces(req->username);
   if (!receive_username(pconn, req->username)) {
@@ -579,12 +579,12 @@ bool handle_login_request(struct connection *pconn,
   /* Make sure the server has every capability the client needs */
   if (!has_capabilities(our_capability, req->capability)) {
     my_snprintf(msg, sizeof(msg),
-		_
-		("The client is missing a capability that this server needs.\n"
+                _
+                ("The client is missing a capability that this server needs.\n"
                    "Server version: %d.%d.%d%s Client version: %d.%d.%d%s."
-		 "  Upgrading may help!"), MAJOR_VERSION, MINOR_VERSION,
-		PATCH_VERSION, VERSION_LABEL, req->major_version,
-		req->minor_version, req->patch_version, req->version_label);
+                 "  Upgrading may help!"), MAJOR_VERSION, MINOR_VERSION,
+                PATCH_VERSION, VERSION_LABEL, req->major_version,
+                req->minor_version, req->patch_version, req->version_label);
     reject_new_connection(msg, pconn);
     freelog(LOG_NORMAL, _("%s was rejected: Mismatched capabilities."),
             req->username);
@@ -594,12 +594,12 @@ bool handle_login_request(struct connection *pconn,
   /* Make sure the client has every capability the server needs */
   if (!has_capabilities(req->capability, our_capability)) {
     my_snprintf(msg, sizeof(msg),
-		_
-		("The server is missing a capability that the client needs.\n"
+                _
+                ("The server is missing a capability that the client needs.\n"
                    "Server version: %d.%d.%d%s Client version: %d.%d.%d%s."
-		 "  Upgrading may help!"), MAJOR_VERSION, MINOR_VERSION,
-		PATCH_VERSION, VERSION_LABEL, req->major_version,
-		req->minor_version, req->patch_version, req->version_label);
+                 "  Upgrading may help!"), MAJOR_VERSION, MINOR_VERSION,
+                PATCH_VERSION, VERSION_LABEL, req->major_version,
+                req->minor_version, req->patch_version, req->version_label);
     reject_new_connection(msg, pconn);
     freelog(LOG_NORMAL, _("%s was rejected: Mismatched capabilities."),
             req->username);
@@ -684,7 +684,7 @@ void server_assign_nation(struct player *pplayer,
     if (other_player->nation == NO_NATION_SELECTED) {
       send_select_nation(other_player);
     } else {
-      nation_used_count++;	/* count used nations */
+      nation_used_count++;      /* count used nations */
     }
   } players_iterate_end;
 
@@ -692,11 +692,11 @@ void server_assign_nation(struct player *pplayer,
   if (nation_used_count == game.ruleset_control.playable_nation_count) {   /* barb */
     players_iterate(other_player) {
       if (other_player->nation == NO_NATION_SELECTED) {
-	freelog(LOG_NORMAL, _("No nations left: Removing player %s."),
-		other_player->name);
-	notify_player(other_player,
-		      _("Game: Sorry, there are no nations left."));
-	server_remove_player(other_player);
+        freelog(LOG_NORMAL, _("No nations left: Removing player %s."),
+                other_player->name);
+        notify_player(other_player,
+                      _("Game: Sorry, there are no nations left."));
+        server_remove_player(other_player);
       }
     } players_iterate_end;
   }
@@ -751,10 +751,10 @@ void lost_connection_to_client(struct connection *pconn)
     send_player_info(pplayer, NULL);
   }
 
-  if (game.server.is_new_game && !pplayer->is_connected	/* eg multiple controllers */
+  if (game.server.is_new_game && !pplayer->is_connected /* eg multiple controllers */
       && !pplayer->ai.control    /* eg created AI player */
       && (server_state == PRE_GAME_STATE
-	  || (server_state == SELECT_RACES_STATE
+          || (server_state == SELECT_RACES_STATE
               && select_random_nation(NULL) == NO_NATION_SELECTED))) {
     server_remove_player(pplayer);
   } else {
@@ -848,8 +848,8 @@ bool attach_connection_to_player(struct connection *pconn,
   /* if pplayer is NULL, attach to first non-connected player slot */
   if (!pplayer) {
     if (game.info.nplayers >= game.info.max_players
- 	|| game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
- 	|| !can_control_a_player(pconn, TRUE)) {
+        || game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS
+        || !can_control_a_player(pconn, TRUE)) {
       return FALSE;
     } else {
       pplayer = &game.players[game.info.nplayers];
@@ -922,7 +922,7 @@ bool unattach_connection_from_player(struct connection *pconn)
   appropriate values. Returns the number of characters written.
 **************************************************************************/
 static int generate_welcome_message(char *buf, int buf_len,
-				    char *welcome_msg)
+                                    char *welcome_msg)
 {
   char *in = welcome_msg, *out = buf;
   int rem = buf_len, len;
@@ -938,38 +938,38 @@ static int generate_welcome_message(char *buf, int buf_len,
       in++;
       switch (*in) {
       case 'h':
-	if (my_gethostname(hostname, sizeof(hostname)) == 0) {
-	  mystrlcpy(out, hostname, rem);
-	  len = strlen(hostname);
-	} else {
-	  len = 0;
-	}
-	break;
+        if (my_gethostname(hostname, sizeof(hostname)) == 0) {
+          mystrlcpy(out, hostname, rem);
+          len = strlen(hostname);
+        } else {
+          len = 0;
+        }
+        break;
       case 'p':
-	len = my_snprintf(out, rem, "%d", srvarg.port);
-	break;
+        len = my_snprintf(out, rem, "%d", srvarg.port);
+        break;
       case 'v':
-	len = my_snprintf(out, rem, "%s %s", freeciv_name_version(),
+        len = my_snprintf(out, rem, "%s %s", freeciv_name_version(),
                           warclient_name_version());
-	break;
+        break;
       case 'd':
-	len = strftime(out, rem, "%x", nowtm);
-	break;
+        len = strftime(out, rem, "%x", nowtm);
+        break;
       case 't':
-	len = strftime(out, rem, "%X", nowtm);
-	break;
+        len = strftime(out, rem, "%X", nowtm);
+        break;
       case '%':
-	*out = '%';
-	len = 1;
-	break;
+        *out = '%';
+        len = 1;
+        break;
       default:
-	len = 0;
-	break;
+        len = 0;
+        break;
       }
       out += len;
       rem -= len;
       if (*in == '\0')
-	break;
+        break;
       in++;
     } else {
       *out++ = *in++;

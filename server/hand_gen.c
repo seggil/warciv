@@ -17,7 +17,7 @@
 #include "hand_gen.h"
     
 bool server_handle_packet(enum packet_type type, void *packet,
-			  struct player *pplayer, struct connection *pconn)
+                          struct player *pplayer, struct connection *pconn)
 {
   switch(type) {
   case PACKET_NATION_SELECT_REQ:

@@ -123,7 +123,7 @@ struct settings_s {
   char *string_value;
   const char *string_default_value;
   bool (*string_validate)(const char * value, const char **reject_message);
-  size_t string_value_size;	/* max size we can write into string_value */
+  size_t string_value_size;     /* max size we can write into string_value */
 
   /* Just like commands, settings have vote parameters. */
   int vote_flags;

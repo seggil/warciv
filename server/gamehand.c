@@ -97,7 +97,7 @@ static void init_game_id(void)
   Place a starting unit for the player.
 ****************************************************************************/
 static void place_starting_unit(struct tile *ptile, struct player *pplayer,
-				char crole)
+                                char crole)
 {
   Unit_Type_id utype;
   enum unit_role_id role;
@@ -112,7 +112,7 @@ static void place_starting_unit(struct tile *ptile, struct player *pplayer,
     map_clear_special(ptile, S_HUT);
     update_tile_knowledge(ptile);
     freelog(LOG_VERBOSE, "Removed hut on start position for %s",
-	    pplayer->name);
+            pplayer->name);
   }
 
   /* Expose visible area. */
@@ -219,8 +219,8 @@ int calculate_score(int *start_pos)
   for (x = 0; x < game.info.nplayers; x++ ) {
     for (y = x + 1; y < game.info.nplayers; y++ ) {
       if (start_pos[x] == start_pos[y]) {
-	score += calculate_team_distance(map.server.start_positions[x].tile,
-					 map.server.start_positions[y].tile);
+        score += calculate_team_distance(map.server.start_positions[x].tile,
+                                         map.server.start_positions[y].tile);
       }
     }
   }
@@ -251,39 +251,39 @@ void shuffle_start_positions_by_iter(int *start_pos)
   int score, best_local_score = 0, best_local_x = 0, best_local_y = 0;
 
   while (found
-	 && (repeat < game.info.nplayers
-	     /* Limit # of iterations. */
-	     * game.server.iterplacementcoefficient)) {
+         && (repeat < game.info.nplayers
+             /* Limit # of iterations. */
+             * game.server.iterplacementcoefficient)) {
     repeat++;
     if (repeat % (game.info.nplayers * game.server.iterplacementcoefficient / 8)
-	== 0) {
+        == 0) {
       notify_conn(NULL,
-		  _("Iterative team placement in progress, %d%% complete."),
-		  repeat * 100 / (game.info.nplayers
-				  * game.server.iterplacementcoefficient));
+                  _("Iterative team placement in progress, %d%% complete."),
+                  repeat * 100 / (game.info.nplayers
+                                  * game.server.iterplacementcoefficient));
     }
     found = 0;
     best_local_score = 99999999;
     for (x = 0; x < game.info.nplayers; x++ ) {
       for (y = x + 1; y < game.info.nplayers; y++ ) {
-	if (start_pos[x] == start_pos[y]) {
-	  /* Same teams, no reason to swap. */
-	  continue;
-	}
-	if (tabtabu[x][y] > 0) {
-	  tabtabu[x][y]--;
-	}
-	swap_int(&start_pos[x], &start_pos[y]);
-	/* Calculate how much this swap is worth. */
-	score = calculate_score(start_pos);
-	swap_int(&start_pos[x], &start_pos[y]);
-	if (!tabtabu[x][y] && score < best_local_score) {
-	  /* Exchange starting positions. */
-	  best_local_score = score;
-	  best_local_x = x; /* Candidate for exchange. */
-	  best_local_y = y;
-	  found = 1;
-	}
+        if (start_pos[x] == start_pos[y]) {
+          /* Same teams, no reason to swap. */
+          continue;
+        }
+        if (tabtabu[x][y] > 0) {
+          tabtabu[x][y]--;
+        }
+        swap_int(&start_pos[x], &start_pos[y]);
+        /* Calculate how much this swap is worth. */
+        score = calculate_score(start_pos);
+        swap_int(&start_pos[x], &start_pos[y]);
+        if (!tabtabu[x][y] && score < best_local_score) {
+          /* Exchange starting positions. */
+          best_local_score = score;
+          best_local_x = x; /* Candidate for exchange. */
+          best_local_y = y;
+          found = 1;
+        }
       }
     }
     if (found && best_local_score < best_score) {
@@ -293,11 +293,11 @@ void shuffle_start_positions_by_iter(int *start_pos)
       start_pos[best_local_y] = tmp;
       best_score = best_local_score;
       freelog(LOG_VERBOSE, "Exchanging (%d, %d) with score %d.",
-	      best_local_x, best_local_y, best_score);
+              best_local_x, best_local_y, best_score);
       tabtabu[best_local_x][best_local_y] += game.info.nplayers;
       for (i = 0; i < game.info.nplayers; i++ ) {
-	/* Remember new best solution. */
-	best_team_pos[i] = start_pos[i];
+        /* Remember new best solution. */
+        best_team_pos[i] = start_pos[i];
       }
     } else if (found) {
       /* Other solution found which is worse than the best one. */
@@ -328,7 +328,7 @@ int calculate_delta_score(int *start_pos, int depth)
     if(start_pos[x] == start_pos[depth]) {
       /* Then they are on the same team. */
       score += calculate_team_distance(map.server.start_positions[x].tile,
-				       map.server.start_positions[depth].tile);
+                                       map.server.start_positions[depth].tile);
     }
   }
   return score;
@@ -357,7 +357,7 @@ void find_pos_by_brute_force(int *positions, int a)
     repeat++;
     if (score < best_score) {
       for (p = 0; p < game.info.nplayers; p++ ) {
-	best_team_pos[p] = positions[p];
+        best_team_pos[p] = positions[p];
       }
       best_score = score;
       freelog(LOG_VERBOSE, "New best score %d.", best_score);
@@ -370,9 +370,9 @@ void find_pos_by_brute_force(int *positions, int a)
     if (score < best_score) {
       /* Choose next team for [depth+1] position. */
       for (i = 0; i < mappings; i++ ) {
-	if (mapping[i].member_count > 0) {
-	  find_pos_by_brute_force(positions, i);
-	}
+        if (mapping[i].member_count > 0) {
+          find_pos_by_brute_force(positions, i);
+        }
       }
     }
     depth--;
@@ -407,16 +407,16 @@ void assign_players_to_positions(int *best_team_pos, int *best_start_pos)
     assert(best_team_pos[i] >= 0 && best_team_pos[i] < MAX_NUM_TEAMS+1);
     team_id = mapping[best_team_pos[i]].team_id;
     freelog(LOG_VERBOSE, "Assigning position %d to team index %d, team_id %d.",
-	    i, best_team_pos[i], mapping[best_team_pos[i]].team_id);
+            i, best_team_pos[i], mapping[best_team_pos[i]].team_id);
     error = TRUE;
     players_iterate(pplayer) {
       if (pplayer->team == team_id && pplayer->team_placement_flag == FALSE) {
-	freelog(LOG_VERBOSE, "Assigning position %d to player %d",
-		i, pplayer->player_no);
-	pplayer->team_placement_flag = TRUE;
-	best_start_pos[pplayer->player_no] = i;
-	error = FALSE;
-	break;
+        freelog(LOG_VERBOSE, "Assigning position %d to player %d",
+                i, pplayer->player_no);
+        pplayer->team_placement_flag = TRUE;
+        best_start_pos[pplayer->player_no] = i;
+        error = FALSE;
+        break;
       }
     } players_iterate_end
     assert(!error);
@@ -435,14 +435,14 @@ void calculate_team_mapping(void)
   mapping[0].team_id = TEAM_NONE;
   mapping[0].member_count = team_count_members(TEAM_NONE);
   freelog(LOG_VERBOSE, "Team TEAM_NONE has %d members",
-	  mapping[0].member_count);
+          mapping[0].member_count);
   mappings = 1;
 
   team_iterate(pteam) {
     mapping[mappings].team_id = pteam->id;
     mapping[mappings].member_count = pteam->member_count;
     freelog(LOG_VERBOSE, "Team %d has %d members",
-	    pteam->id, pteam->member_count);
+            pteam->id, pteam->member_count);
     mappings++;
   } team_iterate_end
   freelog(LOG_VERBOSE, "Total mappings %d",mappings);
@@ -536,9 +536,9 @@ void init_new_game(void)
 
     pos_used[i] = FALSE;
     freelog(LOG_VERBOSE, "%3d : (%2d,%2d) : %d : %s",
-	    i, map.server.start_positions[i].tile->x,
-	    map.server.start_positions[i].tile->y,
-	    n, (n >= 0 ? get_nation_name(n) : ""));
+            i, map.server.start_positions[i].tile->x,
+            map.server.start_positions[i].tile->y,
+            n, (n >= 0 ? get_nation_name(n) : ""));
   }
   players_iterate(pplayer) {
     start_pos[pplayer->player_no] = NO_START_POS;
@@ -550,11 +550,11 @@ void init_new_game(void)
     for (i = 0; i < map.server.num_start_positions; i++) {
       assert(pplayer->nation != NO_NATION_SELECTED);
       if (pplayer->nation == map.server.start_positions[i].nation) {
-	freelog(LOG_VERBOSE, "Start_pos %d matches player %d (%s).",
-		i, pplayer->player_no, get_nation_name(pplayer->nation));
-	start_pos[pplayer->player_no] = i;
-	pos_used[i] = TRUE;
-	num_used++;
+        freelog(LOG_VERBOSE, "Start_pos %d matches player %d (%s).",
+                i, pplayer->player_no, get_nation_name(pplayer->nation));
+        start_pos[pplayer->player_no] = i;
+        pos_used[i] = TRUE;
+        num_used++;
       }
     }
   } players_iterate_end;
@@ -566,18 +566,18 @@ void init_new_game(void)
       int which = myrand(map.server.num_start_positions - num_used);
 
       for (i = 0; i < map.server.num_start_positions; i++) {
-	if (!pos_used[i]) {
-	  if (which == 0) {
-	    freelog(LOG_VERBOSE,
-		    "Randomly assigning player %d (%s) to pos %d.",
-		    pplayer->player_no, get_nation_name(pplayer->nation), i);
-	    start_pos[pplayer->player_no] = i;
-	    pos_used[i] = TRUE;
-	    num_used++;
-	    break;
-	  }
-	  which--;
-	}
+        if (!pos_used[i]) {
+          if (which == 0) {
+            freelog(LOG_VERBOSE,
+                    "Randomly assigning player %d (%s) to pos %d.",
+                    pplayer->player_no, get_nation_name(pplayer->nation), i);
+            start_pos[pplayer->player_no] = i;
+            pos_used[i] = TRUE;
+            num_used++;
+            break;
+          }
+          which--;
+        }
       }
     }
     assert(start_pos[pplayer->player_no] != NO_START_POS);
@@ -607,12 +607,12 @@ void init_new_game(void)
 
     for (i = 1; i < strlen(game.server.start_units); i++) {
       do {
-	x = p.tile->x + myrand(2 * game.server.dispersion + 1) - game.server.dispersion;
-	y = p.tile->y + myrand(2 * game.server.dispersion + 1) - game.server.dispersion;
+        x = p.tile->x + myrand(2 * game.server.dispersion + 1) - game.server.dispersion;
+        y = p.tile->y + myrand(2 * game.server.dispersion + 1) - game.server.dispersion;
       } while (!((ptile = map_pos_to_tile(x, y))
-		 && map_get_continent(p.tile) == map_get_continent(ptile)
-		 && !is_ocean(map_get_terrain(ptile))
-		 && !is_non_allied_unit_tile(ptile, pplayer)));
+                 && map_get_continent(p.tile) == map_get_continent(ptile)
+                 && !is_ocean(map_get_terrain(ptile))
+                 && !is_non_allied_unit_tile(ptile, pplayer)));
 
 
       /* Create the unit of an appropriate type. */
@@ -653,7 +653,7 @@ void send_year_to_clients(int year)
 
   /* Hmm, clients could add this themselves based on above packet? */
   notify_conn_ex(game.game_connections, NULL, E_NEXT_YEAR, _("Year: %s"),
-		 textyear(year));
+                 textyear(year));
 }
 
 
@@ -727,16 +727,16 @@ int update_timeout(void)
 
     if (game.info.timeout > GAME_MAX_TIMEOUT) {
       notify_conn_ex(game.game_connections, NULL, E_NOEVENT,
-		     _("The turn timeout has exceeded its maximum value, "
-		       "fixing at its maximum"));
+                     _("The turn timeout has exceeded its maximum value, "
+                       "fixing at its maximum"));
       freelog(LOG_DEBUG, "game.info.timeout exceeded maximum value");
       game.info.timeout = GAME_MAX_TIMEOUT;
       game.server.timeoutint = 0;
       game.server.timeoutinc = 0;
     } else if (game.info.timeout < 0) {
       notify_conn_ex(game.game_connections, NULL, E_NOEVENT,
-		     _("The turn timeout is smaller than zero, "
-		       "fixing at zero."));
+                     _("The turn timeout is smaller than zero, "
+                       "fixing at zero."));
       freelog(LOG_DEBUG, "game.info.timeout less than zero");
       game.info.timeout = 0;
     }
@@ -745,10 +745,10 @@ int update_timeout(void)
   }
 
   freelog(LOG_DEBUG, "timeout=%d, inc=%d incmult=%d\n   "
-	  "int=%d, intinc=%d, turns till next=%d",
-	  game.info.timeout, game.server.timeoutinc, game.server.timeoutincmult,
-	  game.server.timeoutint, game.server.timeoutintinc,
-	  game.server.timeoutint - game.server.timeoutcounter);
+          "int=%d, intinc=%d, turns till next=%d",
+          game.info.timeout, game.server.timeoutinc, game.server.timeoutincmult,
+          game.server.timeoutint, game.server.timeoutintinc,
+          game.server.timeoutint - game.server.timeoutcounter);
 
   return game.info.timeout;
 }
@@ -822,8 +822,7 @@ opens a file specified by the packet and compares the packet values with
 the file values. Sends an answer to the client once it's done.
 **************************************************************************/
 void handle_single_want_hack_req(struct connection *pc,
-    				 const struct packet_single_want_hack_req
-				 *packet)
+                                 const struct packet_single_want_hack_req *packet)
 {
   struct section_file file;
   char *token = NULL;

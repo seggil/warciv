@@ -15,7 +15,7 @@
 
 #include "city.h"
 #include "events.h"
-#include "nation.h"		/* for struct city_name */
+#include "nation.h"             /* for struct city_name */
 #include "packets.h"
 
 #define FOOD_WEIGHTING 10
@@ -48,45 +48,45 @@ int city_science_bonus(struct city *pcity);
 int city_tax_bonus(struct city *pcity);
 
 void transfer_city_units(struct player *pplayer, struct player *pvictim,
-			 struct unit_list *units, struct city *pcity,
-			 struct city *exclude_city,
-			 int kill_outside, bool verbose);
+                         struct unit_list *units, struct city *pcity,
+                         struct city *exclude_city,
+                         int kill_outside, bool verbose);
 void transfer_city(struct player *ptaker, struct city *pcity,
-		   int kill_outside, bool transfer_unit_verbose,
-		   bool resolve_stack, bool raze);
+                   int kill_outside, bool transfer_unit_verbose,
+                   bool resolve_stack, bool raze);
 struct city *find_closest_owned_city(struct player *pplayer,
-				     struct tile *ptile,
-				     bool sea_required,
-				     struct city *pexclcity);
+                                     struct tile *ptile,
+                                     bool sea_required,
+                                     struct city *pexclcity);
 void handle_unit_enter_city(struct unit *punit, struct city *pcity);
 
 void send_city_info(struct player *dest, struct city *pcity);
 void send_city_info_at_tile(struct player *pviewer, struct conn_list *dest,
-			    struct city *pcity, struct tile *ptile);
+                            struct city *pcity, struct tile *ptile);
 void send_all_known_cities(struct conn_list *dest);
 void send_all_known_trade_routes(struct conn_list *dest);
 void send_player_cities(struct player *pplayer);
 void package_city(struct city *pcity, struct packet_city_info *packet,
-		  bool dipl_invest);
+                  bool dipl_invest);
 
 void reality_check_city(struct player *pplayer, struct tile *ptile);
 bool update_dumb_city(struct player *pplayer, struct city *pcity);
 void refresh_dumb_city(struct city *pcity);
 
 void create_city(struct player *pplayer, struct tile *ptile,
-		 const char *name);
+                 const char *name);
 void remove_city(struct city *pcity);
 
 void establish_trade_route(struct city *pc1, struct city *pc2);
 
 void do_sell_building(struct player *pplayer, struct city *pcity,
-		      Impr_Type_id id);
+                      Impr_Type_id id);
 void building_lost(struct city *pcity, Impr_Type_id id);
 void change_build_target(struct player *pplayer, struct city *pcity,
-			 int target, bool is_unit, enum event_type event);
+                         int target, bool is_unit, enum event_type event);
 
 bool is_allowed_city_name(struct player *pplayer, const char *city_name,
-			  char *error_buf, size_t bufsz);
+                          char *error_buf, size_t bufsz);
 char *city_name_suggestion(struct player *pplayer, struct tile *ptile);
 
 
@@ -100,11 +100,11 @@ void check_city_workers(struct player *pplayer);
 void city_landlocked_sell_coastal_improvements(struct tile *ptile);
 
 void send_city_manager_param(struct conn_list *clist,
-			     struct packet_city_manager_param *packet,
-			     struct player *pplayer,
-			     bool include_player);
+                             struct packet_city_manager_param *packet,
+                             struct player *pplayer,
+                             bool include_player);
 void send_city_manager_info(struct conn_list *clist, struct city *pcity,
-			    bool include_player);
+                            bool include_player);
 void send_all_known_city_manager_infos(struct conn_list *clist);
 void clear_city_manager_param(struct city *pcity);
 void reset_city_manager_params(struct player *pplayer);

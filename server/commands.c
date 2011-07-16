@@ -27,7 +27,7 @@
 
 /* Commands must match the values in enum command_id. */
 const struct command commands[] = {
-  {"start",	ALLOW_BASIC, ALLOW_BASIC,
+  {"start",     ALLOW_BASIC, ALLOW_BASIC,
    "start",
    N_("Start the game, or restart after loading a savegame."),
    N_("This command starts the game.  When starting a new game, "
@@ -42,7 +42,7 @@ const struct command commands[] = {
    ECHO_NONE, VCF_NONE, 0
   },
 
-  {"help",	ALLOW_OBSERVER, ALLOW_OBSERVER,
+  {"help",      ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("help\n"
       "help commands\n"
@@ -60,7 +60,7 @@ const struct command commands[] = {
    ECHO_NONE, VCF_NONE, 0
   },
 
-  {"list",	ALLOW_OBSERVER, ALLOW_OBSERVER,
+  {"list",      ALLOW_OBSERVER, ALLOW_OBSERVER,
    "list\n"
    "list actionlist\n"
    "list allow\n"
@@ -85,12 +85,12 @@ const struct command commands[] = {
       "defaults to 'players' if absent."),
    ECHO_NONE, VCF_NONE, 0
   },
-  {"quit",	ALLOW_HACK, ALLOW_HACK,
+  {"quit",      ALLOW_HACK, ALLOW_HACK,
    "quit",
    N_("Quit the game and shutdown the server."), NULL,
    ECHO_ALL, VCF_NONE, 0
   },
-  {"cut",	ALLOW_CTRL, ALLOW_CTRL,
+  {"cut",       ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("cut <connection-name>"),
    N_("Cut a client's connection to server."),
@@ -109,7 +109,7 @@ const struct command commands[] = {
    ECHO_NONE, VCF_NONE, 0
   },
 
-  {"explain",	ALLOW_OBSERVER, ALLOW_OBSERVER,
+  {"explain",   ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("explain\n"
       "explain <option-name>"),
@@ -120,7 +120,7 @@ const struct command commands[] = {
       "it gives help for a particular option (like 'help <option-name>')."),
    ECHO_NONE, VCF_NONE, 0
   },
-  {"show",	ALLOW_OBSERVER, ALLOW_OBSERVER,
+  {"show",      ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("show\n"
       "show all\n"
@@ -140,21 +140,21 @@ const struct command commands[] = {
       "directory name."),
    ECHO_NONE, VCF_NONE, 0
   },
-  {"score",	ALLOW_CTRL, ALLOW_NEVER,
+  {"score",     ALLOW_CTRL, ALLOW_NEVER,
    "score",
    N_("Show current scores."),
    N_("For each connected client, pops up a window showing the current "
       "player scores."),
    ECHO_ALL, VCF_NOPASSALONE, 25
   },
-  {"wall",	ALLOW_ADMIN, ALLOW_ADMIN,
+  {"wall",      ALLOW_ADMIN, ALLOW_ADMIN,
    N_("wall <message>"),
    N_("Send message to all connections."),
    N_("For each connected client, pops up a window showing the message "
       "entered."),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"vote",	ALLOW_BASIC,	ALLOW_BASIC,
+  {"vote",      ALLOW_BASIC,    ALLOW_BASIC,
    /* TRANS: translate text between [] only */
    N_("vote yes|no|abstain [vote number]"),
    N_("Cast a vote."),
@@ -170,7 +170,7 @@ const struct command commands[] = {
       "if not enough votes were cast one way or the other."),
    ECHO_NONE, VCF_NONE, 0
   },
-  {"poll",	ALLOW_CTRL,	ALLOW_CTRL,
+  {"poll",      ALLOW_CTRL,     ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("poll <your yes/no poll question>\n"),
    N_("Start a poll.\n"),
@@ -178,7 +178,7 @@ const struct command commands[] = {
       "question you type in after the command."),
    ECHO_ADMINS, VCF_ALWAYSVOTE, 50
   },
-  {"emote",	ALLOW_OBSERVER,	ALLOW_OBSERVER,
+  {"emote",     ALLOW_OBSERVER, ALLOW_OBSERVER,
    /* TRANS: translate text between <> only */
    N_("emote <an action>\n"),
    N_("Display a message describing your action.\n"),
@@ -187,7 +187,7 @@ const struct command commands[] = {
       "the command name."),
    ECHO_NONE, VCF_NONE, 0
   },
-  {"cancelvote",	ALLOW_BASIC,	ALLOW_BASIC,
+  {"cancelvote",        ALLOW_BASIC,    ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("cancelvote\n"
       "cancelvote <vote number>\n"
@@ -198,14 +198,14 @@ const struct command commands[] = {
       "votes with the \'all\' argument."),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"debug",	ALLOW_HACK, ALLOW_HACK,
+  {"debug",     ALLOW_HACK, ALLOW_HACK,
    N_("debug [ player <player> | city <x> <y> | units <x> <y> | unit <id> ]"),
    N_("Turn on or off AI debugging of given entity."),
    N_("Print AI debug information about given entity and turn continous "
       "debugging output for this entity on or off."),
    ECHO_ALL, VCF_NONE, 0
   },
-  {"set",	ALLOW_CTRL, ALLOW_BASIC,
+  {"set",       ALLOW_CTRL, ALLOW_BASIC,
    N_("set <option-name> <value>"),
    N_("Set server option."), NULL,
    ECHO_ALL,
@@ -213,7 +213,7 @@ const struct command commands[] = {
     * override these vote parameters. */
    VCF_NONE, 50
   },
-  {"team",	ALLOW_NEVER, ALLOW_BASIC,
+  {"team",      ALLOW_NEVER, ALLOW_BASIC,
    N_("team <player> [team]"),
    N_("Change, add or remove a player's team affiliation."),
    N_("Sets a player as member of a team. If no team specified, the "
@@ -253,7 +253,7 @@ const struct command commands[] = {
    N_("Set metaserver patches line."), NULL,
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"metaconnection",	ALLOW_ADMIN, ALLOW_ADMIN,
+  {"metaconnection",    ALLOW_ADMIN, ALLOW_ADMIN,
    "metaconnection u|up\n"
    "metaconnection d|down\n"
    "metaconnection ?",
@@ -269,7 +269,7 @@ const struct command commands[] = {
    N_("Set address (URL) for metaserver to report to."), NULL,
     ECHO_ADMINS, VCF_NONE, 0
   },
-  {"aitoggle",	ALLOW_CTRL, ALLOW_CTRL,
+  {"aitoggle",  ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("aitoggle <player-name>"),
    N_("Toggle AI status of player."), NULL,
@@ -314,7 +314,7 @@ const struct command commands[] = {
       "if you are not already player and if you are allowed to take a player."),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"create",	ALLOW_NEVER, ALLOW_CTRL,
+  {"create",    ALLOW_NEVER, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("create <player-name>"),
    N_("Create an AI player with a given name."),
@@ -322,14 +322,14 @@ const struct command commands[] = {
       "been started."),
    ECHO_ALL, VCF_NONE, 50
   },
-  {"away",	ALLOW_BASIC, ALLOW_BASIC,
+  {"away",      ALLOW_BASIC, ALLOW_BASIC,
    N_("away\n"
       "away"),
    N_("Set yourself in away mode. The AI will watch your back."),
    N_("The AI will govern your nation but do minimal changes."),
    ECHO_NONE, VCF_NONE, 0
   },
-  {"novice",	ALLOW_CTRL, ALLOW_BASIC,
+  {"novice",    ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("novice\n"
       "novice <player-name>"),
@@ -339,7 +339,7 @@ const struct command commands[] = {
       "argument, sets the skill level for that player only."),
    ECHO_NONE, VCF_NONE, 33
   },
-  {"easy",	ALLOW_CTRL, ALLOW_BASIC,
+  {"easy",      ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("easy\n"
       "easy <player-name>"),
@@ -349,7 +349,7 @@ const struct command commands[] = {
       "argument, sets the skill level for that player only."),
    ECHO_NONE, VCF_NONE, 33
   },
-  {"normal",	ALLOW_CTRL, ALLOW_BASIC,
+  {"normal",    ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("normal\n"
       "normal <player-name>"),
@@ -359,7 +359,7 @@ const struct command commands[] = {
       "argument, sets the skill level for that player only."),
    ECHO_NONE, VCF_NONE, 33
   },
-  {"hard",	ALLOW_CTRL, ALLOW_BASIC,
+  {"hard",      ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("hard\n"
       "hard <player-name>"),
@@ -369,7 +369,7 @@ const struct command commands[] = {
       "argument, sets the skill level for that player only."),
    ECHO_NONE, VCF_NONE, 33
   },
-  {"experimental",	ALLOW_CTRL, ALLOW_BASIC,
+  {"experimental",      ALLOW_CTRL, ALLOW_BASIC,
    /* TRANS: translate text between <> only */
    N_("experimental\n"
       "experimental <player-name>"),
@@ -381,7 +381,7 @@ const struct command commands[] = {
       "has no effect."),
    ECHO_NONE, VCF_NONE, 33
   },
-  {"cmdlevel",	ALLOW_ADMIN, ALLOW_ADMIN, /* confusing at ALLOW_CTRL */
+  {"cmdlevel",  ALLOW_ADMIN, ALLOW_ADMIN, /* confusing at ALLOW_CTRL */
    /* TRANS: translate text between <> only */
    N_("cmdlevel\n"
       "cmdlevel <level>\n"
@@ -524,7 +524,7 @@ const struct command commands[] = {
    ECHO_ADMINS
   },
 
-  {"authdb",	ALLOW_HACK, ALLOW_HACK,
+  {"authdb",    ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("authdb\n"
       "authdb on\n"
@@ -565,7 +565,7 @@ const struct command commands[] = {
     ECHO_NONE
   },
 #endif /* HAVE_MYSQL */
-  {"endgame",	ALLOW_CTRL, ALLOW_NEVER,
+  {"endgame",   ALLOW_CTRL, ALLOW_NEVER,
    /* TRANS: translate text between <> only */
    N_("endgame <player1 player2 player3 ...>"),
    N_("End the game.  If players are listed, these win the game."),
@@ -581,7 +581,7 @@ const struct command commands[] = {
       "a draw. That is, the game counts as a tie for all players."),
    ECHO_ALL, VCF_NONE, 66
   },
-  {"remove",	ALLOW_CTRL, ALLOW_CTRL,
+  {"remove",    ALLOW_CTRL, ALLOW_CTRL,
    /* TRANS: translate text between <> only */
    N_("remove <player-name>"),
    N_("Fully remove player from game."),
@@ -589,7 +589,7 @@ const struct command commands[] = {
       "all cities and units etc. Works even in the middle of game. Use with care!"),
    ECHO_ALL, VCF_NODISSENT, 75
   },
-  {"switch",	ALLOW_CTRL, ALLOW_NONE,
+  {"switch",    ALLOW_CTRL, ALLOW_NONE,
    /* TRANS: translate text between <> only */
    N_("switch <first player> <second player>"),
    N_("Switch player positions."),
@@ -598,7 +598,7 @@ const struct command commands[] = {
       "units to the second player's start position and vice-versa."),
    ECHO_ADMINS, VCF_TEAMONLY | VCF_NOPASSALONE | VCF_NODISSENT, 50
   },
-  {"save",	ALLOW_ADMIN, ALLOW_ADMIN,
+  {"save",      ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> only */
    N_("save\n"
       "save <file-name>"),
@@ -650,26 +650,26 @@ const struct command commands[] = {
       "can be the name of the mapfile or the number in the list of scenarios."),
    ECHO_ALL, VCF_NONE, 50
   },
-  {"read",	ALLOW_HACK, ALLOW_HACK,
+  {"read",      ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("read <file-name>"),
    N_("Process server commands from file."), NULL,
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"write",	ALLOW_HACK, ALLOW_HACK,
+  {"write",     ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("write <file-name>"),
    N_("Write current settings as server commands to file."), NULL,
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"reset",	ALLOW_NEVER, ALLOW_CTRL,
+  {"reset",     ALLOW_NEVER, ALLOW_CTRL,
    N_("reset"),
    N_("Reset all server settings."),
    N_("Reset all settings and re-read the server start script, "
       "if there was one given with the --read server argument. "),
    ECHO_ALL, VCF_NONE, 50
   },
-  {"wmessage",	ALLOW_HACK, ALLOW_HACK,
+  {"wmessage",  ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("wmessage\n"
       "wmessage default\n"
@@ -691,7 +691,7 @@ const struct command commands[] = {
       "  \"Welcome to the %v Server running at %h port %p.\""),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"wfile",	ALLOW_HACK, ALLOW_HACK,
+  {"wfile",     ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("wfile <file-name>"),
    N_("Set the welcome message to the contents of a file."),
@@ -706,7 +706,7 @@ const struct command commands[] = {
    N_("Turn DNS hostname lookup on or off."), NULL,
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"loadactionlist",	ALLOW_HACK, ALLOW_HACK,
+  {"loadactionlist",    ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("loadactionlist <filename>"),
    N_("Load actions from a file."),
@@ -714,7 +714,7 @@ const struct command commands[] = {
       "action list applied to connecting users."),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"saveactionlist",	ALLOW_HACK, ALLOW_HACK,
+  {"saveactionlist",    ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("saveactionlist <filename>"),
    N_("Save actions to a file."),
@@ -722,7 +722,7 @@ const struct command commands[] = {
       "to the given file."),
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"clearactionlist",	ALLOW_HACK, ALLOW_HACK,
+  {"clearactionlist",   ALLOW_HACK, ALLOW_HACK,
    /* TRANS: translate text between <> only */
    N_("clearactionlist"),
    N_("Clear actions."),
@@ -769,7 +769,7 @@ const struct command commands[] = {
        "server and not allowed to reconnect for 30 minutes."),
     ECHO_ADMINS, VCF_NOPASSALONE, 50
   },
-  {"ban",	ALLOW_ADMIN, ALLOW_ADMIN,
+  {"ban",       ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> and [] only */
    N_("ban [type=]<pattern>"),
    N_("Ban a client connection."),
@@ -778,7 +778,7 @@ const struct command commands[] = {
       "valid type and pattern values."),
    ECHO_ALL, VCF_NONE, 0
   },
-  {"unban",	ALLOW_ADMIN, ALLOW_ADMIN,
+  {"unban",     ALLOW_ADMIN, ALLOW_ADMIN,
    /* TRANS: translate text between <> and [] only */
    N_("unban [type=]<pattern>"),
    N_("Unban a client connection."),
@@ -832,12 +832,12 @@ const struct command commands[] = {
    ECHO_ADMINS, VCF_NONE, 50
   },
 
-  {"rfcstyle",	ALLOW_HACK, ALLOW_HACK,
+  {"rfcstyle",  ALLOW_HACK, ALLOW_HACK,
    "rfcstyle",
    N_("Switch server output between 'RFC-style' and normal style."), NULL,
    ECHO_ADMINS, VCF_NONE, 0
   },
-  {"serverid",	ALLOW_BASIC, ALLOW_BASIC,
+  {"serverid",  ALLOW_BASIC, ALLOW_BASIC,
    "serverid",
    N_("Simply returns the id of the server."), NULL,
    ECHO_ADMINS, VCF_NONE, 0

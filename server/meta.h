@@ -13,7 +13,7 @@
 #ifndef FC__META_H
 #define FC__META_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 #define DEFAULT_META_SERVER_NO_SEND  TRUE
 #define DEFAULT_META_SERVER_ADDR     "http://meta.freeciv.org/metaserver.phtml"

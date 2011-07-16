@@ -14,7 +14,7 @@
 #ifndef FC__GAMELOG_H
 #define FC__GAMELOG_H
 
-#include "shared.h"		/* fc__attribute */
+#include "shared.h"             /* fc__attribute */
 
 enum {
   GAMELOG_BEGIN,
@@ -35,7 +35,7 @@ enum {
   GAMELOG_TREATY,
   GAMELOG_DIPLSTATE,
   GAMELOG_STATUS,
-  GAMELOG_FULL,		/* placeholder */
+  GAMELOG_FULL,         /* placeholder */
   GAMELOG_INFO,
   GAMELOG_UNITLOSS,
   GAMELOG_UNITGAMELOSS,

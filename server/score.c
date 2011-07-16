@@ -98,22 +98,22 @@ static char when_char(int when)
  * instance it should be "%c" for characters.  The data is printed in a
  * native orientation to make it easier to read.
  */
-#define WRITE_MAP_DATA(type, map_char_expr)		\
-{							\
-  int nat_x, nat_y;					\
-  for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {	\
-    printf("%d", nat_x % 10);				\
-  }							\
-  putchar('\n');					\
-  for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {	\
-    printf("%d ", nat_y % 10);				\
-    for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {	\
-      int x, y;						\
-      NATIVE_TO_MAP_POS(&x, &y, nat_x,nat_y);		\
-      printf(type, map_char_expr);			\
-    }							\
-    printf(" %d\n", nat_y % 10);			\
-  }							\
+#define WRITE_MAP_DATA(type, map_char_expr)             \
+{                                                       \
+  int nat_x, nat_y;                                     \
+  for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {    \
+    printf("%d", nat_x % 10);                           \
+  }                                                     \
+  putchar('\n');                                        \
+  for (nat_y = 0; nat_y < map.info.ysize; nat_y++) {    \
+    printf("%d ", nat_y % 10);                          \
+    for (nat_x = 0; nat_x < map.info.xsize; nat_x++) {  \
+      int x, y;                                         \
+      NATIVE_TO_MAP_POS(&x, &y, nat_x,nat_y);           \
+      printf(type, map_char_expr);                      \
+    }                                                   \
+    printf(" %d\n", nat_y % 10);                        \
+  }                                                     \
 }
 
 /**************************************************************************
@@ -133,13 +133,13 @@ static void print_landarea_map(struct claim_map *pcmap, int turn)
     for (p = 0; p < game.info.nplayers; p++) {
       printf(".know (%d)\n  ", p);
       WRITE_MAP_DATA("%c",
-		     TEST_BIT(pcmap->claims[map_pos_to_index(x, y)].know,
-			      p) ? 'X' : '-');
+                     TEST_BIT(pcmap->claims[map_pos_to_index(x, y)].know,
+                              p) ? 'X' : '-');
       printf(".cities (%d)\n  ", p);
       WRITE_MAP_DATA("%c",
-		     TEST_BIT(pcmap->
-			      claims[map_pos_to_index(x, y)].cities,
-			      p) ? 'O' : '-');
+                     TEST_BIT(pcmap->
+                              claims[map_pos_to_index(x, y)].cities,
+                              p) ? 'O' : '-');
     }
   }
 
@@ -147,9 +147,9 @@ static void print_landarea_map(struct claim_map *pcmap, int turn)
 
   printf(".whom\n  ");
   WRITE_MAP_DATA((pcmap->claims[map_pos_to_index(x, y)].whom ==
-		  32) ? "%c" : "%X",
-		 (pcmap->claims[map_pos_to_index(x, y)].whom ==
-		  32) ? '-' : pcmap->claims[map_pos_to_index(x, y)].whom);
+                  32) ? "%c" : "%X",
+                 (pcmap->claims[map_pos_to_index(x, y)].whom ==
+                  32) ? '-' : pcmap->claims[map_pos_to_index(x, y)].whom);
 
   printf(".when\n  ");
   WRITE_MAP_DATA("%c", when_char(pcmap->claims[map_pos_to_index(x, y)].when));
@@ -184,7 +184,7 @@ static void build_landarea_map_new(struct claim_map *pcmap)
   players_iterate(pplayer) {
     city_list_iterate(pplayer->cities, pcity) {
       map_city_radius_iterate(pcity->tile, tile1) {
-	pcmap->claims[tile1->index].cities |= (1u << pcity->owner);
+        pcmap->claims[tile1->index].cities |= (1u << pcity->owner);
       } map_city_radius_iterate_end;
     } city_list_iterate_end;
   } players_iterate_end;
@@ -238,7 +238,7 @@ static void build_landarea_map_turn_0(struct claim_map *pcmap)
       nextedge++;
       pcmap->player_landarea[owner]++;
       if (TEST_BIT(pclaim->cities, owner)) {
-	pcmap->player_owndarea[owner]++;
+        pcmap->player_owndarea[owner]++;
       }
       pclaim->know = ptile->server.known;
     } else {
@@ -277,34 +277,34 @@ static void build_landarea_map_expand(struct claim_map *pcmap)
       int owner = pcmap->claims[i].whom;
 
       if (owner != no_owner) {
-	adjc_iterate(ptile, tile1) {
-	  int j = tile1->index;
-	  struct claim_cell *pclaim = &pcmap->claims[j];
+        adjc_iterate(ptile, tile1) {
+          int j = tile1->index;
+          struct claim_cell *pclaim = &pcmap->claims[j];
 
-	  if (TEST_BIT(pclaim->know, owner)) {
-	    if (pclaim->when == 0) {
-	      pclaim->when = turn + 1;
-	      pclaim->whom = owner;
-	      *nextedge = tile1;
-	      nextedge++;
-	      pcmap->player_landarea[owner]++;
-	      if (TEST_BIT(pclaim->cities, owner)) {
-		pcmap->player_owndarea[owner]++;
-	      }
-	      accum++;
-	    } else if (pclaim->when == turn + 1
-		       && pclaim->whom != no_owner
-		       && pclaim->whom != owner) {
-	      other = pclaim->whom;
-	      if (TEST_BIT(pclaim->cities, other)) {
-		pcmap->player_owndarea[other]--;
-	      }
-	      pcmap->player_landarea[other]--;
-	      pclaim->whom = no_owner;
-	      accum--;
-	    }
-	  }
-	} adjc_iterate_end;
+          if (TEST_BIT(pclaim->know, owner)) {
+            if (pclaim->when == 0) {
+              pclaim->when = turn + 1;
+              pclaim->whom = owner;
+              *nextedge = tile1;
+              nextedge++;
+              pcmap->player_landarea[owner]++;
+              if (TEST_BIT(pclaim->cities, owner)) {
+                pcmap->player_owndarea[owner]++;
+              }
+              accum++;
+            } else if (pclaim->when == turn + 1
+                       && pclaim->whom != no_owner
+                       && pclaim->whom != owner) {
+              other = pclaim->whom;
+              if (TEST_BIT(pclaim->cities, other)) {
+                pcmap->player_owndarea[other]--;
+              }
+              pcmap->player_landarea[other]--;
+              pclaim->whom = no_owner;
+              accum--;
+            }
+          }
+        } adjc_iterate_end;
       }
     }
 
@@ -355,9 +355,9 @@ static void free_landarea_map(struct claim_map *pcmap)
   Returns the given player's land and settled areas from a claim map.
 **************************************************************************/
 static void get_player_landarea(struct claim_map *pcmap,
-				struct player *pplayer,
-				int *return_landarea,
-				int *return_settledarea)
+                                struct player *pplayer,
+                                int *return_landarea,
+                                int *return_settledarea)
 {
   if (pcmap && pplayer) {
 #if LAND_AREA_DEBUG >= 1
@@ -365,14 +365,14 @@ static void get_player_landarea(struct claim_map *pcmap,
 #endif
     if (return_landarea && pcmap->player_landarea) {
       *return_landarea =
-	USER_AREA_MULT * pcmap->player_landarea[pplayer->player_no];
+        USER_AREA_MULT * pcmap->player_landarea[pplayer->player_no];
 #if LAND_AREA_DEBUG >= 1
       printf(" l=%d", *return_landarea / USER_AREA_MULT);
 #endif
     }
     if (return_settledarea && pcmap->player_owndarea) {
       *return_settledarea =
-	USER_AREA_MULT * pcmap->player_owndarea[pplayer->player_no];
+        USER_AREA_MULT * pcmap->player_owndarea[pplayer->player_no];
 #if LAND_AREA_DEBUG >= 1
       printf(" s=%d", *return_settledarea / USER_AREA_MULT);
 #endif
@@ -468,8 +468,8 @@ void calc_civ_score(struct player *pplayer)
 
   impr_type_iterate(i) {
     if (is_wonder(i)
-	&& (pcity = find_city_by_id(game.info.global_wonders[i]))
-	&& player_owns_city(pplayer, pcity)) {
+        && (pcity = find_city_by_id(game.info.global_wonders[i]))
+        && player_owns_city(pplayer, pcity)) {
       pplayer->score.wonders++;
     }
   } impr_type_iterate_end;
@@ -478,7 +478,7 @@ void calc_civ_score(struct player *pplayer)
    * This gives 100 points per 10,000 citizens. */
   if (pplayer->spaceship.state == SSHIP_ARRIVED) {
     pplayer->score.spaceship += (int)(100 * pplayer->spaceship.habitation
-				      * pplayer->spaceship.success_rate);
+                                      * pplayer->spaceship.success_rate);
   }
 }
 
@@ -490,9 +490,9 @@ int get_civ_score(const struct player *pplayer)
   /* We used to count pplayer->score.happy here too, but this is too easily
    * manipulated by players at the endyear. */
   return (total_player_citizens(pplayer)
-	  + pplayer->score.techs * 2
-	  + pplayer->score.wonders * 5
-	  + pplayer->score.spaceship);
+          + pplayer->score.techs * 2
+          + pplayer->score.wonders * 5
+          + pplayer->score.spaceship);
 }
 
 /**************************************************************************
@@ -501,12 +501,12 @@ int get_civ_score(const struct player *pplayer)
 int total_player_citizens(const struct player *pplayer)
 {
   return (pplayer->score.happy
-	  + pplayer->score.content
-	  + pplayer->score.unhappy
-	  + pplayer->score.angry
-	  + pplayer->score.scientists
-	  + pplayer->score.elvis
-	  + pplayer->score.taxmen);
+          + pplayer->score.content
+          + pplayer->score.unhappy
+          + pplayer->score.angry
+          + pplayer->score.scientists
+          + pplayer->score.elvis
+          + pplayer->score.taxmen);
 }
 
 /**************************************************************************

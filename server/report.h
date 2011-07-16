@@ -13,13 +13,13 @@
 #ifndef FC__REPORT_H
 #define FC__REPORT_H
 
-#include "shared.h"		/* bool type */
+#include "shared.h"             /* bool type */
 
 struct connection;
 struct conn_list;
 
 void page_conn(struct conn_list *dest, const char *caption, const char *headline,
-	       const char *lines);
+               const char *lines);
 
 void make_history_report(void);
 void report_wonders_of_the_world(struct conn_list *dest);

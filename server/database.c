@@ -231,7 +231,7 @@ bool authenticate_user(struct connection *pconn, char *username)
       break;
     case AUTH_DB_SUCCESS:
       freelog(LOG_VERBOSE, "AUTH_DB_SUCCESS: "
-	      "About to send authentification packet to %s", pconn->username);
+              "About to send authentification packet to %s", pconn->username);
       /* we found a user */
       my_snprintf(buffer, sizeof(buffer), _("Enter password for %s:"),
                   pconn->username);
@@ -244,7 +244,7 @@ bool authenticate_user(struct connection *pconn, char *username)
       /* we couldn't find the user, he is new */
       if (srvarg.auth.allow_newusers) {
         freelog(LOG_VERBOSE, "AUTH_DB_NOT_FOUND: "
-		"About to send authentification packet to %s", pconn->username);
+                "About to send authentification packet to %s", pconn->username);
         sz_strlcpy(buffer, _("Enter a new password (and remember it)."));
         dsend_packet_authentication_req(pconn, AUTH_NEWUSER_FIRST, buffer);
         pconn->server.auth_settime = time(NULL);
@@ -1908,7 +1908,7 @@ bool fcdb_record_game_end(void)
         "SET score = %f, rank = %f, result = '%s'"
         "WHERE game_id = %d AND STRCMP(name, '%s') = 0",
         pteam->server.score, pteam->server.rank,
-	result_name_orig(pteam->server.result), game.server.fcdb.id,
+        result_name_orig(pteam->server.result), game.server.fcdb.id,
         fcdb_escape(sock, get_team_name(pteam->id)));
     fcdb_reset_escape_buffer();
     fcdb_execute_or_return(sock, buf, FALSE);

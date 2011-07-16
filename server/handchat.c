@@ -62,18 +62,18 @@ static void form_chat_name(struct connection *pconn, char *buffer, size_t len)
   2 for attempt to send to an anonymous player.
 **************************************************************************/
 static void complain_ambiguous(struct connection *pconn, const char *name,
-			       int player_conn)
+                               int player_conn)
 {
   char message[MAX_LEN_MSG];
 
   switch(player_conn) {
   case 0:
     my_snprintf(message, sizeof(message),
-		_("Game: %s is an ambiguous player name-prefix."), name);
+                _("Game: %s is an ambiguous player name-prefix."), name);
     break;
   case 1:
     my_snprintf(message, sizeof(message),
-		_("Game: %s is an ambiguous connection name-prefix."), name);
+                _("Game: %s is an ambiguous connection name-prefix."), name);
     break;
   case 2:
     my_snprintf(message, sizeof(message),
@@ -117,7 +117,7 @@ static bool chat_is_restricted(const struct connection *pconn)
   Send private message to single connection.
 **************************************************************************/
 static void chat_msg_to_conn(struct connection *sender,
-			     struct connection *dest,
+                             struct connection *dest,
                              const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], dest_name[MAX_LEN_CHAT_NAME];
@@ -159,7 +159,7 @@ static void chat_msg_to_conn(struct connection *sender,
   Send private message to multi-connected player.
 **************************************************************************/
 static void chat_msg_to_player_multi(struct connection *sender,
-				     struct player *pdest,
+                                     struct player *pdest,
                                      const char *msg)
 {
   char sender_name[MAX_LEN_CHAT_NAME], message[MAX_LEN_MSG];
@@ -281,8 +281,8 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   if(!srvarg.allow_multi_line_chat) {
     for (cp = message; *cp != '\0' && cp < end; cp++) {
       if (*cp == '\n' || *cp == '\r') {
-	*cp='\0';
-	break;
+        *cp='\0';
+        break;
       }
     }
   }
@@ -314,7 +314,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     /* this won't work if we aren't attached to a player */
     if (!pconn->player && !pconn->observer) {
       my_snprintf(chat, sizeof(chat),
-		  _("Server: You are not attached to a player."));
+                  _("Server: You are not attached to a player."));
       dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
       return;
     }
@@ -332,8 +332,8 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     } else {
       /* Case global observers */
       my_snprintf(chat, sizeof(chat),
-		  _("%s to global observers: %s"), sender_name,
-		  skip_leading_spaces(message));
+                  _("%s to global observers: %s"), sender_name,
+                  skip_leading_spaces(message));
     }
     con_puts(C_COMMENT, chat);
 
@@ -341,14 +341,14 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
      * chat_msg_to_player_multi(). */
     conn_list_iterate(game.est_connections, dest) {
       if (conn_is_ignored(pconn, dest)) {
-	continue;
+        continue;
       }
 
       if (game.server.spectatorchat == 1
-	  && server_state == RUN_GAME_STATE
-	  && !conn_controls_player(pconn)
-	  && conn_controls_player(dest)) {
-	continue;
+          && server_state == RUN_GAME_STATE
+          && !conn_controls_player(pconn)
+          && conn_controls_player(dest)) {
+        continue;
       }
 
       if (chat_is_restricted(pconn) && conn_controls_player(dest)) {
@@ -379,10 +379,10 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
           message is global (send to all players)
      else if the ':' is double, try matching part before "::" against
           connection names: for single match send to that connection,
-	  for multiple matches complain, else goto heuristics below.
+          for multiple matches complain, else goto heuristics below.
      else try matching part before (single) ':' against player names:
           for single match send to that player, for multiple matches
-	  complain
+          complain
      else try matching against connection names: for single match send
           to that connection, for multiple matches complain
      else if some heuristics apply (a space anywhere before first ':')
@@ -400,69 +400,69 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     char *cpblank, *quotes = NULL;
 
     if ((message[0] == '\'' || message[0] == '"')
-	&& ((quotes = strchr(message + 1, message[0])))) {
+        && ((quotes = strchr(message + 1, message[0])))) {
       if (*(quotes + 1) != ':') {
-	quotes = NULL;
+        quotes = NULL;
         (void) mystrlcpy(name, message,
-		         MIN(sizeof(name), cp - message + 1));
+                         MIN(sizeof(name), cp - message + 1));
       } else {
-	cp = quotes + 1;
+        cp = quotes + 1;
         (void) mystrlcpy(name, message + 1,
-		         MIN(sizeof(name), quotes - message));
+                         MIN(sizeof(name), quotes - message));
       }
     } else {
       (void) mystrlcpy(name, message,
-		       MIN(sizeof(name), cp - message + 1));
+                       MIN(sizeof(name), cp - message + 1));
     }
 
     double_colon = (*(cp+1) == ':');
     if (double_colon) {
       conn_dest = find_conn_by_user_prefix(name, &match_result_conn);
       if (match_result_conn == M_PRE_AMBIGUOUS) {
-	complain_ambiguous(pconn, name, 1);
-	return;
+        complain_ambiguous(pconn, name, 1);
+        return;
       }
       if (conn_dest && match_result_conn < M_PRE_AMBIGUOUS) {
-	chat_msg_to_conn(pconn, conn_dest, cp+2);
-	return;
+        chat_msg_to_conn(pconn, conn_dest, cp+2);
+        return;
       }
     } else {
       /* single colon */
       pdest = find_player_by_name_prefix(name, &match_result_player);
       if (match_result_player == M_PRE_AMBIGUOUS) {
-	complain_ambiguous(pconn, name, 0);
-	return;
+        complain_ambiguous(pconn, name, 0);
+        return;
       }
       if (pdest && strcmp(pdest->name, ANON_PLAYER_NAME) == 0) {
         complain_ambiguous(pconn, name, 2);
         return;
       }
       if (pdest && match_result_player < M_PRE_AMBIGUOUS) {
-	int nconn = conn_list_size(pdest->connections);
-	if (nconn==1) {
-	  chat_msg_to_conn(pconn, conn_list_get(pdest->connections, 0), cp+1);
-	  return;
-	} else if (nconn>1) {
-	  chat_msg_to_player_multi(pconn, pdest, cp+1);
-	  return;
-	}
-	/* else try for connection name match before complaining */
+        int nconn = conn_list_size(pdest->connections);
+        if (nconn==1) {
+          chat_msg_to_conn(pconn, conn_list_get(pdest->connections, 0), cp+1);
+          return;
+        } else if (nconn>1) {
+          chat_msg_to_player_multi(pconn, pdest, cp+1);
+          return;
+        }
+        /* else try for connection name match before complaining */
       }
       conn_dest = find_conn_by_user_prefix(name, &match_result_conn);
       if (match_result_conn == M_PRE_AMBIGUOUS) {
-	complain_ambiguous(pconn, name, 1);
-	return;
+        complain_ambiguous(pconn, name, 1);
+        return;
       }
       if (conn_dest && match_result_conn < M_PRE_AMBIGUOUS) {
-	chat_msg_to_conn(pconn, conn_dest, cp+1);
-	return;
+        chat_msg_to_conn(pconn, conn_dest, cp+1);
+        return;
       }
       if (pdest && match_result_player < M_PRE_AMBIGUOUS) {
-	/* Would have done something above if connected */
-	my_snprintf(chat, sizeof(chat),
-		    _("Game: %s is not connected."), pdest->name);
-	dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
-	return;
+        /* Would have done something above if connected */
+        my_snprintf(chat, sizeof(chat),
+                    _("Game: %s is not connected."), pdest->name);
+        dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
+        return;
       }
     }
     /* Didn't match; check heuristics to see if this is likely
@@ -471,12 +471,12 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
     cpblank=strchr(quotes ? quotes : message, ' ');
     if (!cpblank || (cp < cpblank)) {
       if (double_colon) {
-	my_snprintf(chat, sizeof(chat),
-		    _("Game: There is no connection by the name %s."), name);
+        my_snprintf(chat, sizeof(chat),
+                    _("Game: There is no connection by the name %s."), name);
       } else {
-	my_snprintf(chat, sizeof(chat),
-		    _("Game: There is no player nor connection by the name %s."),
-		    name);
+        my_snprintf(chat, sizeof(chat),
+                    _("Game: There is no player nor connection by the name %s."),
+                    name);
       }
       dsend_packet_chat_msg(pconn, chat, -1, -1, E_NOEVENT, -1);
       return;
@@ -515,10 +515,10 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
        * If that changes, then this will break! */
       p++;
       if (*p == TILE_LINK_LETTER
-	  || *p == CITY_NAME_LINK_LETTER
-	  || *p == CITY_ID_LINK_LETTER
-	  || *p == CITY_LINK_LETTER
-	  || *p == UNIT_LINK_LETTER) {
+          || *p == CITY_NAME_LINK_LETTER
+          || *p == CITY_ID_LINK_LETTER
+          || *p == CITY_LINK_LETTER
+          || *p == UNIT_LINK_LETTER) {
         my_snprintf(chat, sizeof(chat),
             _("Server: Public messages containing chat links are "
               "not allowed."));
@@ -531,7 +531,7 @@ void handle_chat_msg_req(struct connection *pconn, char *message)
   /* global message: */
   form_chat_name(pconn, sender_name, sizeof(sender_name));
   my_snprintf(chat, sizeof(chat),
-	      "<%s> %s", sender_name, message);
+              "<%s> %s", sender_name, message);
   con_puts(C_COMMENT, chat);
   conn_list_iterate(game.est_connections, dest) {
     if (conn_is_ignored(pconn, dest)) {

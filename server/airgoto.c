@@ -160,7 +160,7 @@ static void make_list_of_refuel_points(struct player *pplayer,
 
   whole_map_iterate(ptile) {
     if (is_allied_city_tile(ptile, pplayer)
-	&& !is_non_allied_unit_tile(ptile, pplayer) ) {
+        && !is_non_allied_unit_tile(ptile, pplayer) ) {
       add_refuel_point(ptile, FUEL_CITY,
                        MAP_MAX_HEIGHT + MAP_MAX_WIDTH, 0, FALSE);
     } else if (tile_has_special(ptile, S_AIRBASE)
@@ -198,7 +198,7 @@ static int queue_priority_function(const void *value)
  * max_fuel -- max fuel
  ************************************************************************/
 struct pqueue *refuel_iterate_init(struct player *pplayer,
-				   struct tile *ptile,
+                                   struct tile *ptile,
                                    struct tile *dest_tile,
                                    bool cities_only, int moves_left,
                                    int moves_per_turn, int max_fuel)
@@ -312,7 +312,7 @@ void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom)
         pto->turns = total_turns;
 
         /* Insert it into the queue.  No problem if it's already there */
-	pq_insert(rp_list, k, queue_priority_function(pto));
+        pq_insert(rp_list, k, queue_priority_function(pto));
         pto->listed = RLS_YES;
 
         freelog(LOG_DEBUG, "Recorded (%i,%i) from (%i,%i) in (%d %d)",
@@ -388,7 +388,7 @@ bool find_air_first_destination(struct unit *punit, struct tile **dest_tile)
     while (backtrack->coming_from->type != FUEL_START) {
       backtrack = backtrack->coming_from;
       freelog(LOG_DEBUG, "(%i,%i) ->",
-	      backtrack->tile->x, backtrack->tile->y);
+              backtrack->tile->x, backtrack->tile->y);
     }
     freelog(LOG_DEBUG, "Found a route!");
     *dest_tile = backtrack->tile;

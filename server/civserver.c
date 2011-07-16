@@ -131,13 +131,13 @@ int main(int argc, char *argv[])
       sz_strlcpy(srvarg.metaserver_addr, argv[inx]);
       srvarg.metaserver_no_send = FALSE;      /* --Metaserver implies --meta */
     } else if ((option = get_option("--xHost", argv, &inx, argc))) {
-	    sz_strlcpy(srvarg.metasendhost, argv[inx]); /* -- hostname to send to metaserver */
+            sz_strlcpy(srvarg.metasendhost, argv[inx]); /* -- hostname to send to metaserver */
     } else if (is_option("--no-dns-lookup", argv[inx])) {
       srvarg.no_dns_lookup = TRUE;
     } else if ((option = get_option("--port", argv, &inx, argc))) {
       if (sscanf(option, "%d", &srvarg.port) != 1) {
-	showhelp = TRUE;
-	break;
+        showhelp = TRUE;
+        break;
       }
     } else if ((option = get_option("--bind", argv, &inx, argc))) {
       srvarg.bind_addr = option;
@@ -145,17 +145,17 @@ int main(int argc, char *argv[])
       srvarg.script_filename = option;
     else if ((option = get_option("--quitidle", argv, &inx, argc))) {
       if (sscanf(option, "%d", &srvarg.quitidle) != 1) {
-	showhelp = TRUE;
-	break;
+        showhelp = TRUE;
+        break;
       }
     } else if (is_option("--exit-on-end", argv[inx])) {
       srvarg.exit_on_end = TRUE;
     } else if ((option = get_option("--debug", argv, &inx, argc))) {
       srvarg.loglevel = log_parse_level_str(option);
       if (srvarg.loglevel == -1) {
-	srvarg.loglevel = LOG_NORMAL;
-	showhelp = TRUE;
-	break;
+        srvarg.loglevel = LOG_NORMAL;
+        showhelp = TRUE;
+        break;
       }
 #ifdef HAVE_MYSQL
     } else if (is_option("--auth", argv[inx])) {
@@ -191,57 +191,57 @@ int main(int argc, char *argv[])
   con_write(C_VERSION, _("This is the server for %s %s"),
             freeciv_name_version(), warclient_name_version());
   con_write(C_COMMENT, _("You can learn a lot about Freeciv at %s"),
-	    WEBSITE_URL);
+            WEBSITE_URL);
 
   if (showhelp) {
     fc_fprintf(stderr,
-	       _("Usage: %s [option ...]\nValid options are:\n"), argv[0]);
+               _("Usage: %s [option ...]\nValid options are:\n"), argv[0]);
 #ifdef HAVE_MYSQL
     fc_fprintf(stderr, _("  -a  --auth\t\tEnable server authentication.\n"));
     fc_fprintf(stderr, _("  -G  --Guests\t\tAllow guests to "
-			 "login if auth is enabled.\n"));
+                         "login if auth is enabled.\n"));
     fc_fprintf(stderr, _("  -N  --Newusers\tAllow new users to "
-			 "login if auth is enabled.\n"));
+                         "login if auth is enabled.\n"));
 #endif
     fc_fprintf(stderr, _("  -b  --bind ADDR\tListen for clients on ADDR\n"));
 #ifdef DEBUG
     fc_fprintf(stderr, _("  -d, --debug NUM\tSet debug log level (0 to 4,"
-		      " or 4:file1,min,max:...)\n"));
+                      " or 4:file1,min,max:...)\n"));
 #else
     fc_fprintf(stderr,
-	       _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
+               _("  -d, --debug NUM\tSet debug log level (0 to 3)\n"));
 #endif
     fc_fprintf(stderr, _("  -f, --file FILE\tLoad saved game FILE\n"));
     fc_fprintf(stderr,
-	       _("  -g, --gamelog FILE\tUse FILE as game logfile\n"));
+               _("  -g, --gamelog FILE\tUse FILE as game logfile\n"));
     fc_fprintf(stderr,
-	       _("  -h, --help\t\tPrint a summary of the options\n"));
+               _("  -h, --help\t\tPrint a summary of the options\n"));
     fc_fprintf(stderr, _("  -H, --Hack-off\tDisable hack challenge\n"));
     fc_fprintf(stderr, _("  -l, --log FILE\tUse FILE as logfile\n"));
     fc_fprintf(stderr, _("  -m, --meta\t\tNotify metaserver and "
-			 "send server's info\n"));
+                         "send server's info\n"));
     fc_fprintf(stderr, _("  -M, --Metaserver ADDR\tSet ADDR "
-			 "as metaserver address\n"));
+                         "as metaserver address\n"));
     fc_fprintf(stderr, _("  -x, --xHost <fqdn hostname>\tSend this hostname "
-		    "to Metaserver\n"));
+                    "to Metaserver\n"));
     fc_fprintf(stderr, _("  -n, --no-dns-lookup\tDo not lookup "
-			 "the hostname of new connections\n"));
+                         "the hostname of new connections\n"));
 
     fc_fprintf(stderr, _("  -p, --port PORT\tListen for clients on "
-			 "port PORT\n"));
+                         "port PORT\n"));
     fc_fprintf(stderr, _("  -q, --quitidle TIME\tQuit if no players "
-			 "for TIME seconds\n"));
+                         "for TIME seconds\n"));
     fc_fprintf(stderr, _("  -e, --exit-on-end\t"
-		      "When a game ends, exit instead of restarting\n"));
+                      "When a game ends, exit instead of restarting\n"));
     fc_fprintf(stderr,
-	       _("  -s, --saves DIR\tSave games to directory DIR\n"));
+               _("  -s, --saves DIR\tSave games to directory DIR\n"));
     fc_fprintf(stderr,
-	       _("  -S, --Serverid ID\tSets the server id to ID\n"));
+               _("  -S, --Serverid ID\tSets the server id to ID\n"));
     fc_fprintf(stderr,
-	     _("  -P, --Ppm\t\tSave ppms of the map when saving the game.\n"));
+             _("  -P, --Ppm\t\tSave ppms of the map when saving the game.\n"));
     fc_fprintf(stderr, _("  -r, --read FILE\tRead startup script FILE\n"));
     fc_fprintf(stderr, _("  -R, --Require CAP\tThe users will need this "
-		      "capability(ies) to be able to play.\n"));
+                      "capability(ies) to be able to play.\n"));
     fc_fprintf(stderr, _("  -v, --version\t\tPrint the version number\n"));
     fc_fprintf(stderr, _("Report bugs at %s.\n"), BUG_URL);
     exit(EXIT_SUCCESS);
@@ -341,8 +341,8 @@ static void Mac_options(int argc)
     while(!done)/*loop*/
     {
       ModalDialog(0L, &the_item);/*don't feed 0 where a upp is expected?*/
-      	/*old book sugests using OL(NIL) as the first argument, but
-      	It doesn't include anything about UPPs either, so...*/
+        /*old book sugests using OL(NIL) as the first argument, but
+        It doesn't include anything about UPPs either, so...*/
       switch (the_item)
       {
         case 1:

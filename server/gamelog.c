@@ -34,7 +34,7 @@
 #include "gamelog.h"
 #include "stdinhand.h"
 
-int gamelog_level;		/* also accessed from stdinhand.c */
+int gamelog_level;              /* also accessed from stdinhand.c */
 static char *gamelog_filename;
 
 /* Stuff for gamelog_status() */
@@ -202,7 +202,7 @@ void gamelog(int level, ...)
   fs = fopen(gamelog_filename, "a");
   if (!fs) {
     freelog(LOG_FATAL, _("Couldn't open gamelogfile \"%s\" for appending."),
-	    gamelog_filename);
+            gamelog_filename);
     exit(EXIT_FAILURE);
   }
 
@@ -553,7 +553,7 @@ void gamelog(int level, ...)
         }
       } players_iterate_end;
       my_snprintf(msg, sizeof(msg),
-		  "Team victory to %s", get_team_name(pteam->id));
+                  "Team victory to %s", get_team_name(pteam->id));
       break;
     default:
       break;
@@ -608,7 +608,7 @@ void gamelog(int level, ...)
 static int secompare1(const void *a, const void *b)
 {
   return (((const struct player_score_entry *)b)->value -
-	  ((const struct player_score_entry *)a)->value);
+          ((const struct player_score_entry *)a)->value);
 }
 
 /**************************************************************************
@@ -654,7 +654,7 @@ static void gamelog_status(char *buffer, int len) {
 
   for (i = 0; i < count; i++) {
     cat_snprintf(buffer, len, "<plr><no>%d</no><r>%d</r><s>%d</s></plr>",
-		 game.players[rank[i].idx].player_no,
+                 game.players[rank[i].idx].player_no,
                  rank[i].value, size[rank[i].idx].value);
   }
 }

@@ -127,7 +127,7 @@ static int socklan;
 
 static int server_accept_connection(int sockfd);
 static void start_processing_request(struct connection *pconn,
-				     int request_id);
+                                     int request_id);
 static void finish_processing_request(struct connection *pconn);
 static void ping_connection(struct connection *pconn);
 static void send_ping_times_to_all(void);
@@ -151,7 +151,7 @@ static void handle_stdin_close(void)
    * perhaps we want to do this even when SOCKET_ZERO_ISNT_STDIN? */
 #ifndef SOCKET_ZERO_ISNT_STDIN
   freelog(LOG_NORMAL,
-	  _("Server cannot read standard input. Ignoring input."));
+          _("Server cannot read standard input. Ignoring input."));
   no_input = TRUE;
 #endif /* SOCKET_ZERO_ISNT_STDIN */
 }
@@ -181,14 +181,14 @@ static void handle_readline_input_callback(char *line)
     return;
 
   if (!line) {
-    handle_stdin_close();	/* maybe print an 'are you sure?' message? */
+    handle_stdin_close();       /* maybe print an 'are you sure?' message? */
     return;
   }
 
   if (line[0] != '\0')
     add_history(line);
 
-  con_prompt_enter();		/* just got an 'Enter' hit */
+  con_prompt_enter();           /* just got an 'Enter' hit */
   line_internal = local_to_internal_string_malloc(line);
   handle_stdin_input(NULL, line_internal, FALSE);
   free(line_internal);
@@ -423,14 +423,14 @@ static void really_close_connections(void)
       && conn_list_size(game.all_connections) <= 0) {
     if (game.server.is_new_game) { /* Not for loaded games. */
       if (map_is_loaded()) {
-	/* Unload the map if loaded. */
-	unloadmap_command(NULL, FALSE);
+        /* Unload the map if loaded. */
+        unloadmap_command(NULL, FALSE);
       }
 
       /* Remove (created) players. */
       while (game.info.nplayers > 0) {
-	team_remove_player(get_player(0));
-	server_remove_player(get_player(0));
+        team_remove_player(get_player(0));
+        server_remove_player(get_player(0));
       }
     }
 
@@ -797,7 +797,7 @@ int sniff_packets(void)
       send_server_info_to_metaserver(META_REFRESH);
 
       if (game.info.timeout != 0
-	  && time(NULL) > game.server.turn_start + game.info.timeout
+          && time(NULL) > game.server.turn_start + game.info.timeout
           && server_state == RUN_GAME_STATE) {
         con_prompt_off();
         return 0;
@@ -1025,12 +1025,12 @@ static const char *makeup_connection_name(int *id)
 
   for(;;) {
     if (i == (unsigned short) -1)
-      i++;			/* don't use 0 */
+      i++;                      /* don't use 0 */
     my_snprintf(name, sizeof(name), "c%u", (unsigned int)++i);
     if (!find_player_by_name(name)
-	&& !find_player_by_user(name)
-	&& !find_conn_by_id(i)
-	&& !find_conn_by_user(name)) {
+        && !find_player_by_user(name)
+        && !find_conn_by_id(i)
+        && !find_conn_by_user(name)) {
       *id = i;
       return name;
     }
@@ -1109,7 +1109,7 @@ static int server_accept_connection(int sockfd)
       && (conn_list_size(game.all_connections)
           > game.server.maxconnections)) {
     freelog(LOG_NORMAL, _("Maximum number of connections "
-			  "for this server exceeded."));
+                          "for this server exceeded."));
     my_closesocket(new_sock);
     return -1;
   }
@@ -1120,12 +1120,12 @@ static int server_accept_connection(int sockfd)
 
     conn_list_iterate(game.all_connections, pconn) {
       if (strcmp(ipaddr, pconn->server.ipaddr) == 0) {
-	if (++count >= game.server.maxhostconnections) {
-	  freelog(LOG_NORMAL, _("Maximum number of connections "
-			        "for host %s exceeded."), ipaddr);
-	  my_closesocket(new_sock);
-	  return -1;
-	}
+        if (++count >= game.server.maxhostconnections) {
+          freelog(LOG_NORMAL, _("Maximum number of connections "
+                                "for host %s exceeded."), ipaddr);
+          my_closesocket(new_sock);
+          return -1;
+        }
       }
     } conn_list_iterate_end;
   }
@@ -1195,8 +1195,8 @@ static int server_accept_connection(int sockfd)
         pconn->server.adns_id = -1;
       }
       if (!pconn->used) {
-	/* Have been banned (not an error) */
-	return 0;
+        /* Have been banned (not an error) */
+        return 0;
       }
     } else {
       from = gethostbyaddr((char *) &fromend.sockaddr_in.sin_addr,
@@ -1238,14 +1238,14 @@ int server_open_socket(void)
 
   opt=1;
   if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-		(char *)&opt, sizeof(opt)) == -1) {
+                (char *)&opt, sizeof(opt)) == -1) {
     freelog(LOG_ERROR, "SO_REUSEADDR failed: %s",
             mystrsocketerror(mysocketerrno()));
   }
 
   if (!net_lookup_service(srvarg.bind_addr, srvarg.port, &src)) {
     freelog(LOG_ERROR, _("Server: bad address: [%s:%d]."),
-	    srvarg.bind_addr, srvarg.port);
+            srvarg.bind_addr, srvarg.port);
     exit(EXIT_FAILURE);
   }
 
@@ -1336,7 +1336,7 @@ void init_connections(void)
 ...
 **************************************************************************/
 static void start_processing_request(struct connection *pconn,
-				     int request_id)
+                                     int request_id)
 {
   if (pconn == NULL || !pconn->used || pconn->server.is_closing) {
     return;
@@ -1346,7 +1346,7 @@ static void start_processing_request(struct connection *pconn,
   assert(pconn->server.currently_processed_request_id == 0);
 
   freelog(LOG_DEBUG, "start processing packet %d from connection %d",
-	  request_id, pconn->id);
+          request_id, pconn->id);
   send_packet_processing_started(pconn);
   pconn->server.currently_processed_request_id = request_id;
 }
@@ -1361,7 +1361,7 @@ static void finish_processing_request(struct connection *pconn)
     return;
   }
   freelog(LOG_DEBUG, "finish processing packet %d from connection %d",
-	  pconn->server.currently_processed_request_id, pconn->id);
+          pconn->server.currently_processed_request_id, pconn->id);
   send_packet_processing_finished(pconn);
   pconn->server.currently_processed_request_id = 0;
 }
@@ -1372,10 +1372,10 @@ static void finish_processing_request(struct connection *pconn)
 static void ping_connection(struct connection *pconn)
 {
   freelog(LOG_DEBUG, "sending ping to %s (open=%d)",
-	  conn_description(pconn),
-	  timer_list_size(pconn->server.ping_timers));
+          conn_description(pconn),
+          timer_list_size(pconn->server.ping_timers));
   timer_list_append(pconn->server.ping_timers,
-			 new_timer_start(TIMER_USER, TIMER_ACTIVE));
+                         new_timer_start(TIMER_USER, TIMER_ACTIVE));
   send_packet_conn_ping(pconn);
 }
 
@@ -1388,7 +1388,7 @@ void handle_conn_pong(struct connection *pconn)
 
   if (timer_list_size(pconn->server.ping_timers) == 0) {
     freelog(LOG_NORMAL, "got unexpected pong from %s",
-	    conn_description(pconn));
+            conn_description(pconn));
     return;
   }
 
@@ -1396,8 +1396,8 @@ void handle_conn_pong(struct connection *pconn)
   timer_list_unlink(pconn->server.ping_timers, timer);
   pconn->ping_time = read_timer_seconds_free(timer);
   freelog(LOG_DEBUG, "got pong from %s (open=%d); ping time = %fs",
-	  conn_description(pconn),
-	  timer_list_size(pconn->server.ping_timers), pconn->ping_time);
+          conn_description(pconn),
+          timer_list_size(pconn->server.ping_timers), pconn->ping_time);
 }
 
 /**************************************************************************

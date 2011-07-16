@@ -59,7 +59,7 @@ void nuclear_winter(int effect);
 void give_map_from_player_to_player(struct player *pfrom, struct player *pdest);
 void give_seamap_from_player_to_player(struct player *pfrom, struct player *pdest);
 void give_citymap_from_player_to_player(struct city *pcity,
-					struct player *pfrom, struct player *pdest);
+                                        struct player *pfrom, struct player *pdest);
 void send_all_known_tiles(struct conn_list *dest);
 void send_tile_info(struct conn_list *dest, struct tile *ptile);
 void reveal_hidden_units(struct player *pplayer, struct tile *ptile);
@@ -87,7 +87,7 @@ void show_map_to_all(void);
 void player_map_allocate(struct player *pplayer);
 void player_map_free(struct player *pplayer);
 struct player_tile *map_get_player_tile(const struct tile *ptile,
-					struct player *pplayer);
+                                        struct player *pplayer);
 bool update_player_tile_knowledge(struct player *pplayer,struct tile *ptile);
 void update_tile_knowledge(struct tile *ptile);
 void update_player_tile_last_seen(struct player *pplayer, struct tile *ptile);

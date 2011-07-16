@@ -15,6 +15,6 @@
 
 void auto_attack(void);
 bool auto_attack_with_unit(struct player *pplayer,
-				  struct unit *punit);
+                                  struct unit *punit);
 
 #endif  /* FC__AUTOATTACK_H */

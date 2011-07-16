@@ -18,7 +18,7 @@
 struct connection;
 
 bool server_handle_packet(enum packet_type type, void *packet,
-			  struct player *pplayer, struct connection *pconn);
+                          struct player *pplayer, struct connection *pconn);
 
 void handle_nation_select_req(struct player *pplayer, Nation_Type_id nation_no, bool is_male, char *name, int city_style);
 void handle_chat_msg_req(struct connection *pconn, char *message);

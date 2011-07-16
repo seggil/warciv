@@ -26,7 +26,7 @@ struct server_arguments {
   bool metaserver_no_send;
   char metaserver_addr[256];
   char metasendhost[256];
-  	/* the name which should be send to metaserver as host=<> parameter*/
+        /* the name which should be send to metaserver as host=<> parameter*/
   unsigned short int metaserver_port;
   /* how long to wait before retrying to connect to the
      metaserver, if a connection attempt fails */

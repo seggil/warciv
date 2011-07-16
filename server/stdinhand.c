@@ -2039,7 +2039,7 @@ static char **create_team_names(int n)
   if (sfilename && section_file_load_nodup(&sfile, sfilename)) {
     RANDOM_STATE old_rand_state;
     suggestions = secfile_lookup_str_vec(&sfile, &dim,
-					 "%d_teams.suggestions", n);
+                                         "%d_teams.suggestions", n);
 
     if (!suggestions) {
       freelog(LOG_VERBOSE, "No suggestions for %d teams", n);
@@ -2058,7 +2058,7 @@ static char **create_team_names(int n)
     return team_names;
   } else {
     freelog(LOG_VERBOSE, "Cannot open default team names file: \"%s\"",
-	    DEFAULT_TEAM_NAMES_FILE);
+            DEFAULT_TEAM_NAMES_FILE);
   }
 
 default_team_names:
@@ -2963,8 +2963,8 @@ static bool show_command(struct connection *caller, char *str, bool check)
     if (cmd == -4) {
       /* Ruleset */
       cmd_reply(CMD_SHOW, caller, C_COMMENT,
-		_("Current ruleset directory is \"%s\""),
-		game.server.rulesetdir);
+                _("Current ruleset directory is \"%s\""),
+                game.server.rulesetdir);
       return TRUE;
     }
   } else {
@@ -4037,17 +4037,17 @@ static bool observe_command(struct connection *caller, char *str, bool check)
   if (pplayer) {
     /* observing your own player (during pregame) makes no sense. */
     if (pconn->player == pplayer && !pconn->observer
-	&& is_newgame && !pplayer->was_created) {
+        && is_newgame && !pplayer->was_created) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-		_("%s already controls %s. Using 'observe' would remove %s"),
-		pconn->username, pplayer->name, pplayer->name);
+                _("%s already controls %s. Using 'observe' would remove %s"),
+                pconn->username, pplayer->name, pplayer->name);
       goto CLEANUP;
     }
     /* attempting to observe a player you're already observing should fail. */
     if (pconn->player == pplayer && pconn->observer) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-		_("%s is already observing %s."),
-		pconn->username, pplayer->name);
+                _("%s is already observing %s."),
+                pconn->username, pplayer->name);
       goto CLEANUP;
     }
 
@@ -4056,15 +4056,15 @@ static bool observe_command(struct connection *caller, char *str, bool check)
 
     if (!has_capability("extglobalinfo", pconn->capability)) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-		_("Sorry, you need the capability 'extglobalinfo' "
-		  "to observe globally in this game."));
+                _("Sorry, you need the capability 'extglobalinfo' "
+                  "to observe globally in this game."));
       goto CLEANUP;
     }
 
     if (conn_is_global_observer(pconn)) {
       cmd_reply(CMD_OBSERVE, caller, C_FAIL,
-		_("%s already is a global observer."),
-		pconn->username);
+                _("%s already is a global observer."),
+                pconn->username);
       goto CLEANUP;
     }
   }
@@ -4445,7 +4445,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
   if (pplayer) {
     unattach_connection_from_player(pconn);
     cmd_reply(CMD_DETACH, caller, C_COMMENT,
-	      _("%s detaching from %s."), pconn->username, pplayer->name);
+              _("%s detaching from %s."), pconn->username, pplayer->name);
     notify_conn(NULL, _("Server: %s has detached from player %s."),
                 pconn->username, pplayer->name);
   } else {
@@ -4454,7 +4454,7 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     conn_list_unlink(game.game_connections, pconn);
     restore_access_level(pconn);
     cmd_reply(CMD_DETACH, caller, C_COMMENT,
-	      _("%s detaching from global observer."), pconn->username);
+              _("%s detaching from global observer."), pconn->username);
     notify_conn(NULL, _("Server: %s has detached from global observer."),
                 pconn->username);
   }
@@ -4473,16 +4473,16 @@ static bool detach_command(struct connection *caller, char *str, bool check)
      * the player wasn't /created, and no one is controlling it
      * and we were observing but no one else was... */
     if (!pplayer->is_connected && !pplayer->was_created
-	&& is_newgame && !one_obs_among_many) {
+        && is_newgame && !one_obs_among_many) {
       /* detach any observers */
       conn_list_iterate(pplayer->connections, aconn) {
-	if (aconn->observer) {
-	  unattach_connection_from_player(aconn);
-	  send_conn_info(aconn->self, game.est_connections);
-	  notify_conn(aconn->self, _("Server: You are no longer "
+        if (aconn->observer) {
+          unattach_connection_from_player(aconn);
+          send_conn_info(aconn->self, game.est_connections);
+          notify_conn(aconn->self, _("Server: You are no longer "
                                      "observing player %s."),
                       pplayer->name);
-	}
+        }
       } conn_list_iterate_end;
       /* actually do the removal */
       game_remove_player(pplayer);
@@ -4496,11 +4496,11 @@ static bool detach_command(struct connection *caller, char *str, bool check)
     if (!pplayer->is_connected) {
       /* aitoggle the player if no longer connected. */
       if (game.server.auto_ai_toggle && !pplayer->ai.control) {
-	toggle_ai_player_direct(NULL, pplayer);
+        toggle_ai_player_direct(NULL, pplayer);
       }
       /* reset username if in pregame. */
       if (is_newgame) {
-	sz_strlcpy(pplayer->username, ANON_USER_NAME);
+        sz_strlcpy(pplayer->username, ANON_USER_NAME);
       }
     }
 
@@ -4565,7 +4565,7 @@ static bool attach_command(struct connection *caller, char *name, bool check)
       cmd_reply(CMD_ATTACH, caller, C_FAIL, _("You are already a player"));
     } else {
       cmd_reply(CMD_ATTACH, caller, C_FAIL,
-		_("%s is already a player"), pconn->username);
+                _("%s is already a player"), pconn->username);
     }
     goto CLEANUP;
   }
@@ -4574,14 +4574,14 @@ static bool attach_command(struct connection *caller, char *name, bool check)
   if (game.info.nplayers >= game.info.max_players
       || game.info.nplayers >= MAX_NUM_PLAYERS + MAX_NUM_BARBARIANS) {
     cmd_reply(CMD_ATTACH, caller, C_FAIL,
-	      _("Can't add more players, server is full."));
+              _("Can't add more players, server is full."));
     goto CLEANUP;
   }
 
   if (!can_control_a_player(pconn, pconn == caller)) {
     if (pconn != caller) {
       cmd_reply(CMD_ATTACH, caller, C_FAIL,
-		_("%s is not allowed to control a player"), pconn->username);
+                _("%s is not allowed to control a player"), pconn->username);
     }
     goto CLEANUP;
   }
@@ -4600,7 +4600,7 @@ static bool attach_command(struct connection *caller, char *name, bool check)
     notify_conn(NULL, _("Server: %s now controls a player."), pconn->username);
   } else {
     cmd_reply(CMD_ATTACH, caller, C_FAIL,
-	      _("Failed to create a new player"));
+              _("Failed to create a new player"));
   }
 
   send_conn_info(pconn->self, game.est_connections);
@@ -6088,7 +6088,7 @@ static bool set_rulesetdir(struct connection *caller, char *str, bool check)
   if ((str == NULL) || (strlen(str) == 0)) {
     cmd_reply(CMD_RULESETDIR, caller, C_SYNTAX,
               _("You must give a ruleset name or number. "
-		"Use /show ruleset to see the current ruleset."));
+                "Use /show ruleset to see the current ruleset."));
     return FALSE;
   } else if (caller && caller->server.access_level != ALLOW_HACK
              && (strchr(filename, '/') || filename[0] == '.')) {
@@ -7207,8 +7207,8 @@ static bool ban_command(struct connection *caller, char *pattern,
   conn_list_iterate(game.all_connections, pconn) {
     if (conn_pattern_match(pua->conpat, pconn)) {
       if (conn_controls_player(pconn)) {
-	/* Unassign the username. */
-	sz_strlcpy(pconn->player->username, ANON_USER_NAME);
+        /* Unassign the username. */
+        sz_strlcpy(pconn->player->username, ANON_USER_NAME);
       }
 
       server_break_connection(pconn, ES_BANNED);
@@ -7627,7 +7627,7 @@ static struct user_action_list *load_action_list_v1(const char *filename)
   ver = get_action_list_file_version(line);
   if (ver != ACTION_LIST_FILE_VERSION) {
     freelog(LOG_ERROR, "Unrecognized action list file version: "
-		       "got %d, but expected %d.",
+                       "got %d, but expected %d.",
             ver, ACTION_LIST_FILE_VERSION);
     return NULL;
   }
@@ -7644,8 +7644,8 @@ static struct user_action_list *load_action_list_v1(const char *filename)
     }
     if (!(p = strchr(line, ' '))) {
       freelog(LOG_ERROR, "Syntax error on line %d of "
-			 "action list file %s: action part of rule not "
-			 "found.", lc, filename);
+                         "action list file %s: action part of rule not "
+                         "found.", lc, filename);
       continue;
     }
     *p++ = 0;
@@ -7653,7 +7653,7 @@ static struct user_action_list *load_action_list_v1(const char *filename)
     type = CPT_HOSTNAME;
     if (!parse_conn_pattern(p, pat, sizeof(pat), &type, err, sizeof(err))) {
       freelog(LOG_ERROR, "Syntax error on line %d of "
-			 "action list file %s: %s.", lc, filename, p);
+                         "action list file %s: %s.", lc, filename, p);
       continue;
     }
 
@@ -7671,7 +7671,7 @@ static struct user_action_list *load_action_list_v1(const char *filename)
     }
     if (action < 0 || action >= NUM_ACTION_TYPES) {
       freelog(LOG_ERROR, "Syntax error on line %d of "
-			 "action list file %s: unrecognized action \"%s\".",
+                         "action list file %s: unrecognized action \"%s\".",
               lc, filename, line);
       continue;
     }
@@ -7712,7 +7712,7 @@ static struct user_action_list *load_action_list(const char *filename)
   }
 
   freelog(LOG_ERROR, "Unrecognized action list file version for "
-		     "file %s: %d", filename, version);
+                     "file %s: %d", filename, version);
 
   return NULL;
 }
@@ -8132,7 +8132,7 @@ static void show_idle(struct connection *caller)
 
     format_time_duration(idle, timebuf, sizeof(timebuf));
     cmd_reply(CMD_LIST, caller, C_COMMENT, "%s: idle for %s",
-	      pconn->username, timebuf);
+              pconn->username, timebuf);
   }
 
   if (first) {
@@ -8526,13 +8526,13 @@ void show_players(struct connection *caller)
   if (n > 0) {
     cmd_reply(CMD_LIST, caller, C_COMMENT, horiz_line);
     cmd_reply(CMD_LIST, caller, C_COMMENT,
-	      PL_("%d global observer:", "%d global observers:", n), n);
+              PL_("%d global observer:", "%d global observers:", n), n);
     global_observers_iterate(pconn) {
       cmd_reply(CMD_LIST, caller, C_COMMENT,
-		_("  %s from %s (%s access), bufsize=%dkb"),
-		pconn->username, pconn->addr,
-		cmdlevel_name(pconn->server.access_level),
-		(pconn->send_buffer->nsize >> 10));
+                _("  %s from %s (%s access), bufsize=%dkb"),
+                pconn->username, pconn->addr,
+                cmdlevel_name(pconn->server.access_level),
+                (pconn->send_buffer->nsize >> 10));
     } global_observers_iterate_end;
   }
 
@@ -8687,7 +8687,7 @@ static void show_votes(struct connection *caller)
 
   if (count == 0) {
     cmd_reply(CMD_VOTE, caller, C_COMMENT,
-	      _("There are no votes going on."));
+              _("There are no votes going on."));
   }
 }
 

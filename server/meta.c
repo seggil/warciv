@@ -456,7 +456,7 @@ static bool send_to_metaserver(enum meta_flag flag)
 
   if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     freelog(LOG_ERROR, "Metaserver: can't open stream socket: %s",
-	    mystrsocketerror(mysocketerrno()));
+            mystrsocketerror(mysocketerrno()));
     metaserver_failed();
     return FALSE;
   }

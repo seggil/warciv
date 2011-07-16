@@ -59,7 +59,7 @@
 FIXME: Calculate the attractiveness of attacking.
 **************************************************************************/
 static struct unit *search_best_target(struct player *pplayer,
-				       struct unit *punit)
+                                       struct unit *punit)
 {
   struct unit_list *targets;
   struct unit *enemy, *best_enemy = NULL;
@@ -78,9 +78,9 @@ static struct unit *search_best_target(struct player *pplayer,
   range = range < SINGLE_MOVE ? SINGLE_MOVE : range;
 
   freelog(LOG_VERBOSE, "doing autoattack for %s (%d/%d),"
-	  " range %d(%d)",
-	  unit_name(punit->type), punit->tile->x, punit->tile->y,
-	  range, punit->moves_left);
+          " range %d(%d)",
+          unit_name(punit->type), punit->tile->x, punit->tile->y,
+          range, punit->moves_left);
 
   square_iterate(punit->tile, range / SINGLE_MOVE, ptile) {
     if (same_pos(punit->tile, ptile)) {
@@ -102,7 +102,7 @@ static struct unit *search_best_target(struct player *pplayer,
     }
 
     freelog(LOG_VERBOSE,  "found enemy unit/stack at %d,%d",
-	    ptile->x, ptile->y);
+            ptile->x, ptile->y);
     enemy = get_defender(punit, ptile);
     if (!enemy) {
       continue;
@@ -110,7 +110,7 @@ static struct unit *search_best_target(struct player *pplayer,
     freelog(LOG_VERBOSE,  "defender is %s", unit_name(enemy->type));
 
 /*    if (!is_city_option_set(pcity, CITYO_ATT_LAND
-			    + unit_type(enemy)->move_type - 1)) {
+                            + unit_type(enemy)->move_type - 1)) {
       freelog(LOG_DEBUG, "wrong target type");
       continue;
     }*/
@@ -131,7 +131,7 @@ static struct unit *search_best_target(struct player *pplayer,
      * H_TARGETS handicap, but currently AI never uses auto-attack.
      */
     if (ai_handicap(pplayer, H_TARGETS)
-	&& !can_player_see_unit(pplayer, enemy)) {
+        && !can_player_see_unit(pplayer, enemy)) {
       freelog(LOG_VERBOSE, "can't see %s at (%d,%d)", unit_name(enemy->type),
               ptile->x, ptile->y);
       continue;
@@ -144,8 +144,8 @@ static struct unit *search_best_target(struct player *pplayer,
      */
     if (!can_unit_attack_all_at_tile(punit, ptile) && !unit_flag(punit,F_DIPLOMAT)) {
       freelog(LOG_VERBOSE, "%s at (%d,%d) cannot attack at (%d,%d)",
-	      unit_name(punit->type), punit->tile->x, punit->tile->y,
-	      ptile->x, ptile->y);
+              unit_name(punit->type), punit->tile->x, punit->tile->y,
+              ptile->x, ptile->y);
       continue;
     }
 
@@ -153,7 +153,7 @@ static struct unit *search_best_target(struct player *pplayer,
      *  perhaps there is a better algorithm in the ai-package -- fisch
      */
     score = (unit_type(enemy)->defense_strength + (enemy->hp / 2)
-	     + (get_transporter_capacity(enemy) > 0 ? 1 : 0));
+             + (get_transporter_capacity(enemy) > 0 ? 1 : 0));
 
     if(!best_enemy || score >= best_score) {
       best_score = score;
@@ -166,15 +166,15 @@ static struct unit *search_best_target(struct player *pplayer,
   enemy = best_enemy;
 
   freelog(LOG_VERBOSE, "chosen target=%s (%d/%d)",
-	  get_unit_name(enemy->type), enemy->tile->x, enemy->tile->y);
+          get_unit_name(enemy->type), enemy->tile->x, enemy->tile->y);
 
   if(unit_win_chance(punit,enemy) < 0.5
    && !unit_flag(punit,F_DIPLOMAT)) {
     notify_player_ex(pplayer, punit->tile, E_NOEVENT,
-		     _("Game: Auto-Attack: %s found a too "
-		       "tough enemy (%s)"),
-		     unit_name(punit->type),
-		     unit_name(enemy->type));
+                     _("Game: Auto-Attack: %s found a too "
+                       "tough enemy (%s)"),
+                     unit_name(punit->type),
+                     unit_name(enemy->type));
     return NULL;
   }
 
@@ -185,7 +185,7 @@ static struct unit *search_best_target(struct player *pplayer,
   Returns TRUE if the unit survived.
 **************************************************************************/
 bool auto_attack_with_unit(struct player *pplayer,
-				  struct unit *punit)
+                                  struct unit *punit)
 {
   int id = punit->id;
   struct unit *enemy;
@@ -202,9 +202,9 @@ bool auto_attack_with_unit(struct player *pplayer,
   freelog(LOG_VERBOSE, "launching attack");
 
   notify_player_ex(pplayer, enemy->tile, E_NOEVENT,
-    		   _("Game: Auto-Attack: %s attacking %s's %s"),
-    		   unit_name(punit->type),
-		   unit_owner(enemy)->name, unit_name(enemy->type));
+                   _("Game: Auto-Attack: %s attacking %s's %s"),
+                   unit_name(punit->type),
+                   unit_owner(enemy)->name, unit_name(enemy->type));
 
   set_unit_activity(punit, ACTIVITY_GOTO);
   punit->goto_tile = enemy->tile;
@@ -276,6 +276,6 @@ void auto_attack(void)
   } shuffled_players_iterate_end;
   if (timer_in_use(t)) {
     freelog(LOG_VERBOSE, "autoattack consumed %g milliseconds.",
-	    1000.0*read_timer_seconds(t));
+            1000.0*read_timer_seconds(t));
   }
 }
