@@ -1146,52 +1146,55 @@ enum known_type map_get_known(const struct tile *ptile,
 }
 
 /****************************************************************************
-  Convert a integer in string. The string will be completed with spaces.
+  Convert an integer into string.
+  The string will be prefix with spaces.
+  string is _[\s]* for n == 0 others [A-Za-z]*[\s]*
 ****************************************************************************/
-static bool int_to_string(int integer, size_t min_size,
-                          char *buf, size_t buf_len)
+static const char *int_to_string(int n, int min_size)
 {
-  static const char chars[] = {
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-  };
-  static const size_t chars_num = sizeof(chars);
-  size_t size = 1, i;
-  int n = integer;
+  int size;
+  int i, j;
+  int n2;
+  double reste;
+  static char buf[16];
+  static char alphab[52] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+    'U', 'V', 'W', 'X', 'Y', 'Z',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+    'u', 'v', 'w', 'x', 'y', 'z' };
 
-  if (0 > integer || min_size >= buf_len || NULL == buf) {
-    return FALSE;
+  /* Calcul the length of string produce by "n" */
+  reste = (double)n;
+  if ( n == 0) {
+    size = 1;
   }
-
-  /* Calculate the length of string produce by 'n'. */
-  while (chars_num <= n) {
-    n /= chars_num;
-    size++;
-  }
-
-  if (size >= buf_len) {
-    return FALSE;       /* Buffer not enough big. */
-  }
-
-  if (size < min_size) {
-    /* Complete with spaces */
-    for (i = 0; i < min_size - size; i++) {
-      buf[i] = ' ';
+  else {
+    reste = reste / 52.0;
+    for (size = 1; reste > 1.0 ; size++) {
+      reste = reste / 52.0;
     }
-  } else {
-    i = 0;
+  }
+  assert(size < sizeof(buf));
+
+  for (i = 0; i < min_size - size; i++) {
+    buf[i] = ' ';   /* Complete with spaces */
   }
 
-  /* Append chars. */
-  n = integer;
-  do {
-    buf[i++] = chars[n % chars_num];
-    n /= chars_num;
-  } while (0 < n);
+  if ( n == 0 ) {   // for "n" equal zero, special case
+    buf[i++]='_';
+    buf[i] = '\0';
+  }
+  else {
+    n2 = n-1;
+    for ( j = 0; j < size; j++) {
+      buf[i++] = alphab[n2%52];
+      n2 = n2/52;
+    }
+  }
 
-  return TRUE;
+   return buf;
 }
 
 /**************************************************************************
@@ -1209,7 +1212,7 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
 
   assert(buflen > 0);
 
-  freelog(LOG_DEBUG, "%s an_make_city_name format=\"%s\" ad=%p", __LINE__,
+  freelog(LOG_DEBUG, "%s an_make_city_name format=\"%s\" ad=%p", __FUNCTION__,
           format, ad);
 
   if (!format) {
@@ -1226,18 +1229,18 @@ static int an_make_city_name(const char *format, char *buf, int buflen,
                 pcontinent_counter);
   }
 
-  freelog(LOG_DEBUG, "%s   *pcontinent_counter = %d", __FILE__,
+  freelog(LOG_DEBUG, "%s   *pcontinent_counter = %d", __FUNCTION__,
           *pcontinent_counter);
 
   if (ad->global_city_number <= 0) {
     ad->global_city_number = ++an_global_city_number_counter;
-    freelog(LOG_DEBUG, "%s   assigned new global_city_number (%d)", __FILE__,
+    freelog(LOG_DEBUG, "%s   assigned new global_city_number (%d)", __FUNCTION__,
             ad->global_city_number);
   }
   if (ad->continent_city_number <= 0) {
     ad->continent_city_number = ++(*pcontinent_counter);
     freelog(LOG_DEBUG, "%s   assigned new continent_city_number (%d)",
-            __FILE__, ad->continent_city_number);
+            __FUNCTION__, ad->continent_city_number);
   }
 
   while (rem > 1 && *in != '\0' && *in != ';') {
