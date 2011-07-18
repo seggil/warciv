@@ -143,7 +143,7 @@ bool audio_select_plugin(const char *const name)
   }
 
   selected_plugin = plugin;
-  freelog(LOG_NORMAL, _("Plugin '%s' is now selected"),
+  freelog(LOG_DEBUG, _("Plugin '%s' is now selected"),
           selected_plugin->name);
   return TRUE;
 }
