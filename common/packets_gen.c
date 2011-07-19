@@ -450,8 +450,8 @@ void *get_packet_from_connection_helper(struct connection *pconn,
 
   default:
     freelog(LOG_ERROR, "unknown packet type %d received from %s",
-            type, conn_description(pc));
-    remove_packet_from_buffer(pc->buffer);
+            type, conn_description(pconn));
+    remove_packet_from_buffer(pconn->buffer);
     return NULL;
   };
 }
@@ -900,6 +900,7 @@ static void ensure_valid_variant_packet_processing_started(struct connection *pc
 struct packet_processing_started *receive_packet_processing_started(struct connection *pconn, enum packet_type type)
 {
   if(!pconn->used) {
+    freelog(LOG_ERROR,
             "WARNING: trying to read data from the closed connection %s",
             conn_description(pconn));
     return NULL;
