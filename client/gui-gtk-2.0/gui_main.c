@@ -936,7 +936,7 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
 
     case GDK_n: /* shared by MENU_VIEW_SHOW_CITY_NAMES */
       if (tiles_hilited_cities && (ev->state & GDK_CONTROL_MASK)) {
-        printf( "keyboard_handler(), GDK_n\n");
+        freelog(LOG_DEBUG,_( "keyboard_handler(), GDK_n\n"));
         normalize_names_in_selected_cities();
         return TRUE;
       } else {
