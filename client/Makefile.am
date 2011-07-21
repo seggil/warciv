@@ -44,7 +44,11 @@ SUBDIRS = $(GUI_SUBDIR) $(CLI_INCLUDE) agents
 
 bin_PROGRAMS = civclient
 
-AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/include -I$(top_srcdir)/common -I$(top_srcdir)/common/aicore -I../intl -I$(srcdir)/agents @SOUND_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/utility -I$(srcdir)/include \
+    -I$(top_srcdir)/common \
+    -I$(top_srcdir)/common/aicore \
+    -I../intl \
+    -I$(srcdir)/agents @SOUND_CFLAGS@
 
 ## Above, note -I../intl instead of -I$(top_srdir/intl) is deliberate.
 
@@ -103,13 +107,15 @@ civclient_SOURCES = $(ESD_FILES) $(SDL_FILES) $(ALSA_FILES) $(WINMM_FILES) \
 	trade.h
 
 civclient_LDFLAGS = @CLIENT_LDFLAGS@
-fc_civclient_libs =	../utility/libcivutility.a	\
+wc_civclient_libs =	../utility/libcivutility.a	\
 			../common/libcivcommon.a	\
 			../common/aicore/libaicore.a	\
 			agents/libagents.a		\
 		 	@gui_sources@/libguiclient.a
-civclient_DEPENDENCIES = $(fc_civclient_libs)
-civclient_LDADD        = $(fc_civclient_libs) $(fc_civclient_libs) \
-	@INTLLIBS@ @CLIENT_LIBS@ @SOUND_LIBS@ $(CLIENTICON)
+civclient_DEPENDENCIES = $(wc_civclient_libs)
+civclient_LDADD        = $(wc_civclient_libs) \
+	@INTLLIBS@ @CLIENT_LIBS@ \
+	@SOUND_LIBS@ $(CLIENTICON)
 desktopfiledir = $(prefix)/share/applications
-desktopfile_DATA = freeciv.desktop
+desktopfile_DATA = warciv.desktop
+

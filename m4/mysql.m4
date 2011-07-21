@@ -2,7 +2,7 @@
 #
 # Called without any parameters.
 
-AC_DEFUN([FC_CHECK_MYSQL],
+AC_DEFUN([WC_CHECK_MYSQL],
 [
   dnl  no=compile mysql database support,  yes=compile in mysql database support,  *=error
   AC_ARG_ENABLE(mysql, 
@@ -31,11 +31,11 @@ AC_DEFUN([FC_CHECK_MYSQL],
                    [AC_MSG_WARN([couldn't find mysql libs in normal locations]);
                     mysql=false])
 
-      fc_preauth_LDFLAGS=$LDFLAGS
-      fc_mysql_lib_loc="-L/usr/lib/mysql -L/usr/local/lib/mysql \
+      wc_preauth_LDFLAGS=$LDFLAGS
+      wc_mysql_lib_loc="-L/usr/lib/mysql -L/usr/local/lib/mysql \
                         -L$HOME/lib -L$HOME/lib/mysql"
 
-      for __ldpath in $fc_mysql_lib_loc; do
+      for __ldpath in $wc_mysql_lib_loc; do
         unset ac_cv_lib_mysqlclient_mysql_query
         LDFLAGS="$LDFLAGS $__ldpath"
         mysql=true
@@ -49,7 +49,7 @@ AC_DEFUN([FC_CHECK_MYSQL],
         if test x$mysql = xtrue; then
           break
         else
-          LDFLAGS=$fc_preauth_LDFLAGS
+          LDFLAGS=$wc_preauth_LDFLAGS
         fi
       done
       MYSQL_CFLAGS="$MYSQL_CFLAGS"

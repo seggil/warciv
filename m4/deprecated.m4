@@ -1,4 +1,4 @@
-AC_DEFUN([FC_DEPRECATED], [
+AC_DEFUN([WC_DEPRECATED], [
 AC_ARG_ENABLE(deprecate-gtk,
 [  --enable-deprecate-gtk[[=no/yes]] turn off deprecate GTK [[default=no]]],
 [case "${enableval}" in   

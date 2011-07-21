@@ -40,8 +40,8 @@ EXTRA_DIST=	autogen.sh \
 		bootstrap/ser.in        \
 		bootstrap/fc_svnrev_gen.h.in    \
 		bootstrap/generate_svnrev.sh    \
-		bootstrap/freeciv.desktop.in    \
-		bootstrap/freeciv.spec.in       \
+		bootstrap/warciv.desktop.in    \
+		bootstrap/warciv.spec.in       \
 		bootstrap/undep.sh.in           \
 		debian/changelog        \
 		debian/compat           \
@@ -84,7 +84,7 @@ EXTRA_DIST=	autogen.sh \
 		m4/win32-client.m4      \
 		m4/x.m4                 \
 		vms/config.h_vms        \
-		vms/freeciv_h.vms       \
+		vms/warciv_h.vms       \
 		vms/imlib_config.h_vms  \
 		vms/readme.vms          \
 		vms/vms_build.com

@@ -2,7 +2,7 @@
 
 noinst_HEADERS = \
 	cityicon.ico	\
-	freeciv.ico	\
+	warciv.ico	\
 	drop_cursor.xbm	\
 	drop_cursor_mask.xbm	\
 	goto_cursor.xbm	\

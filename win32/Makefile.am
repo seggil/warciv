@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+RC_COMPILER = @RC_COMPILER@
+
 dist_noinst_DATA = \
 		client.ico \
 		server.ico \
@@ -14,9 +16,9 @@ nodist_noinst_DATA = \
 CLEANFILES = $(nodist_noinst_DATA)
 
 clienticon.o: clienticon.rc
-	windres -i clienticon.rc -o clienticon.o
+	$(RC_COMPILER) -i $(srcdir)/clienticon.rc -o $(builddir)/clienticon.o
 
 servericon.o: servericon.rc
-	windres -i servericon.rc -o servericon.o
+	$(RC_COMPILER) -i $(srcdir)/servericon.rc -o $(builddir)/servericon.o
 endif
 
