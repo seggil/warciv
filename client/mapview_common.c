@@ -2383,24 +2383,201 @@ static void redraw_overview(void)
     canvas_copy(dest, src, x, y, 0, 0, ix, iy);
   }
 
-  {
-    int i;
-    int x[4], y[4];
-
-    get_mapview_corners(x, y);
-
-    for (i = 0; i < 4; i++) {
-      int src_x = x[i];
-      int src_y = y[i];
-      int dest_x = x[(i + 1) % 4];
-      int dest_y = y[(i + 1) % 4];
-
-      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, src_x, src_y,
-                      dest_x - src_x, dest_y - src_y);
-    }
-  }
+  if (overview.width > mapview_canvas.tile_width * OVERVIEW_TILE_SIZE)
+    redraw_viewrect(dest);
+  else
+    redraw_viewrect_small(dest);
 
   overview_dirty = FALSE;
+}
+
+static void redraw_viewrect_small(struct canvas *dest)
+{
+  int x[4], y[4];
+  int x0;
+
+  x0 = (mapview_canvas.tile_width - overview.width/OVERVIEW_TILE_SIZE) / 2;
+  x0 *= OVERVIEW_TILE_SIZE;
+  get_mapview_corners(x, y);
+
+  if ( x[1] < overview.width) { /* AD */
+    if (y[2] < overview.height) { /* A */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1 */
+                      x[0], y[0],
+                     x[1] - x[0], 0);
+#if 0
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2 */
+                  x[1], y[1],
+    	      0, y[2] - y[1]);
+#endif
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3 */
+                  x[3], y[3],
+              x[2] - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4 */
+                  x[0]+x0, y[0],
+              0, y[3] - y[0]);
+    } else { /* D */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1 */
+                      x[0], y[0],
+              x[1] - x[0], 0);
+#if 0
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2B */
+                  x[1], y[1],
+              0, overview.height - y[1]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2T */
+                  x[1], 0,
+              0, y[2] - overview.height);
+#endif
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3 */
+                      x[3], y[3] - overview.height,
+                  x[2] - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4B */
+                  x[0]+x0, y[0],
+              0, overview.height - y[0]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4T */
+                  x[0]+x0, 0,
+              0, y[3] - overview.height);
+    }
+  } else { /* BC */
+    if (y[2] < overview.height) { /* B */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1R */
+                      x[0], y[0],
+              overview.width - x[0], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1L */
+                      0, y[0],
+              x[1] - overview.width, 0);
+#if 0
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2 */
+                      x[1]-overview.width, y[1],
+                  0, y[2] - y[1]);
+#endif
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3R */
+                      x[3], y[3],
+                  overview.width - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3L */
+                      0, y[3],
+                  x[2] - overview.width, 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4 */
+                      x[0]+x0, y[0],
+                  0, y[3] - y[0]);
+    } else { /* C */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1R */
+                      x[0], y[0],
+              overview.width - x[0], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1L */
+                      0, y[0],
+              x[1] - overview.width, 0);
+#if 0
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2B */
+                      x[1] - overview.width, y[1],
+              0, overview.height - y[1]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2T */
+                      x[1] - overview.width, 0,
+              0, y[2] - overview.width);
+#endif
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3R */
+                      x[3], y[3] - overview.height,
+                  overview.width - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3R */
+                      0, y[3] - overview.height,
+                  x[2] - overview.width, 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4B */
+                      x[0]+x0, y[0],
+              x[3] - x[0], overview.height - y[0]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4T */
+                      x[0]+x0, 0,
+              0, y[3] - overview.height);
+    }
+  }
+}
+
+static void redraw_viewrect(struct canvas *dest)
+{
+  int x[4], y[4];
+
+  get_mapview_corners(x, y);
+
+  if ( x[1] < overview.width) { /* AD */
+    if (y[2] < overview.height) { /* A */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1 */
+                      x[0], y[0],
+              x[1] - x[0], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2 */
+                  x[1], y[1],
+              0, y[2] - y[1]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3 */
+                  x[3], y[3],
+              x[2] - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4 */
+                  x[0], y[0],
+              0, y[3] - y[0]);
+    } else { /* D */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1 */
+                      x[0], y[0],
+              x[1] - x[0], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2B */
+                  x[1], y[1],
+              0, overview.height - y[1]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2T */
+                  x[1], 0,
+              0, y[2] - overview.height);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3 */
+                      x[3], y[3] - overview.height,
+                  x[2] - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4B */
+                  x[0], y[0],
+              0, overview.height - y[0]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4T */
+                  x[0], 0,
+              0, y[3] - overview.height);
+    }
+  } else { /* BC */
+    if (y[2] < overview.height) { /* B */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1R */
+                      x[0], y[0],
+              overview.width - x[0], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1L */
+                      0, y[0],
+              x[1] - overview.width, 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2 */
+                      x[1]-overview.width, y[1],
+                  0, y[2] - y[1]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3R */
+                      x[3], y[3],
+                      overview.width - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3L */
+                      0, y[3],
+                  x[2] - overview.width, 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4 */
+                      x[0], y[0],
+                  0, y[3] - y[0]);
+    } else { /* C */
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1R */
+                      x[0], y[0],
+              overview.width - x[0], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L1L */
+                      0, y[0],
+              x[1] - overview.width, 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2B */
+                      x[1] - overview.width, y[1],
+              0, overview.height - y[1]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L2T */
+                      x[1] - overview.width, 0,
+              0, y[2] - overview.width);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3R */
+                      x[3], y[3] - overview.height,
+                  overview.width - x[3], 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L3R */
+                      0, y[3] - overview.height,
+                  x[2] - overview.width, 0);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4B */
+                      x[0], y[0],
+              x[3] - x[0], overview.height - y[0]);
+      canvas_put_line(dest, COLOR_STD_WHITE, LINE_NORMAL, /* L4T */
+                      x[0], 0,
+              0, y[3] - overview.height);
+    }
+  }
 }
 
 /****************************************************************************
