@@ -451,9 +451,39 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
     return TRUE;
   }
 
+  if ((ev->state & GDK_SHIFT_MASK)) {
+    switch (ev->keyval) {
+    case GDK_Left:
+      scroll_mapview(DIR8_WEST);
+      return TRUE;
+
+    case GDK_Right:
+      scroll_mapview(DIR8_EAST);
+      return TRUE;
+
+    case GDK_Up:
+      scroll_mapview(DIR8_NORTH);
+      return TRUE;
+
+    case GDK_Down:
+      scroll_mapview(DIR8_SOUTH);
+      return TRUE;
+
+    // need more logic for observer
+    //case GDK_Home:
+
+    //player only command
+    //case GDK_Return:
+    //case GDK_KP_Enter:
+
+    default:
+      break;
+    }
+  }
+
   if (!client_is_observer()) {
     if (use_digits_short_cuts) {
-      /* If this option is enabled, the keys GDK_1-GDK_9 are used 
+      /* If this option is enabled, the keys GDK_1-GDK_9 are used
        * for Warclient features instead of units moves. This is
        * useful for laptop users. */
       guint keyval;
@@ -845,21 +875,11 @@ static gboolean keyboard_handler(GtkWidget *w, GdkEventKey *ev,
 
     if ((ev->state & GDK_SHIFT_MASK)) {
       switch (ev->keyval) {
-      case GDK_Left:
-        scroll_mapview(DIR8_WEST);
-        return TRUE;
-
-      case GDK_Right:
-        scroll_mapview(DIR8_EAST);
-        return TRUE;
-
-      case GDK_Up:
-        scroll_mapview(DIR8_NORTH);
-        return TRUE;
-
-      case GDK_Down:
-        scroll_mapview(DIR8_SOUTH);
-        return TRUE;
+      // gilles observer too
+      //case GDK_Left:
+      //case GDK_Right:
+      //case GDK_Up:
+      //case GDK_Down:
 
       case GDK_Home:
         key_center_capital();
