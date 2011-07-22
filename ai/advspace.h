@@ -10,16 +10,16 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__ADVSPACE_H
-#define FC__ADVSPACE_H
+#ifndef WC_AI_ADVSPACE_H
+#define WC_AI_ADVSPACE_H
 
 #include "shared.h"
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct player_spaceship;
 
 bool ai_spaceship_autoplace(struct player *pplayer,
                             struct player_spaceship *ship);
 
-#endif  /* FC__ADVSPACE_H */
+#endif  /* WC_AI_ADVSPACE_H */

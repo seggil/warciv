@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AILOG_H
-#define FC__AILOG_H
+#ifndef WC_AI_AILOG_H
+#define WC_AI_AILOG_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "gotohand.h"           /* enum goto_result */
 
@@ -39,4 +39,4 @@ void UNIT_LOG(int level, struct unit *punit, const char *msg, ...)
      fc__attribute((__format__ (__printf__, 3, 4)));
 void BODYGUARD_LOG(int level, struct unit *punit, const char *msg);
 
-#endif  /* FC__AILOG_H */
+#endif  /* WC_AI_AILOG_H */

@@ -12,14 +12,14 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
 #include <stdlib.h>             /* qsort */
 
 #include "combat.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "support.h"
 
@@ -31,7 +31,7 @@
 #include "clinet.h"
 #include "agents/cma_core.h"
 #include "control.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "goto.h"
 #include "include/mapctrl_g.h"
 #include "include/mapview_g.h"

@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIEXPLORER_H
-#define FC__AIEXPLORER_H
+#ifndef WC_AI_AIEXPLORER_H
+#define WC_AI_AIEXPLORER_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 /*
  * Handle eXplore mode of a unit (explorers are always in eXplore mode
@@ -32,4 +32,4 @@ bool ai_manage_explorer(struct unit *punit);
  * which will build them.
  */
 
-#endif /* FC__AIEXPLORER_H */
+#endif /* WC_AI_AIEXPLORER_H */

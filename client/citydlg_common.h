@@ -11,15 +11,15 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CITYDLG_COMMON_H
-#define FC__CITYDLG_COMMON_H
+#ifndef WC_CLIENT_CITYDLG_COMMON_H
+#define WC_CLIENT_CITYDLG_COMMON_H
 
 #include <stddef.h>             /* size_t */
 
 #include "shared.h"             /* bool type */
 
 #include "city.h"               /* Specialist_type_id */
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct canvas;
 
@@ -76,4 +76,4 @@ int city_rename(struct city *pcity, const char *name);
 
 void refresh_city_dialog_maps(struct tile *ptile);
 
-#endif /* FC__CITYDLG_COMMON_H */
+#endif /* WC_CLIENT_CITYDLG_COMMON_H */

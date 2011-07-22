@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -20,7 +20,7 @@
 
 #include "diptreaty.h"
 #include "events.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "government.h"
 #include "log.h"
 #include "mem.h"

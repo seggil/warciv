@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-/********************************************************************** 
+/**********************************************************************
   Common network interface.
 **********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -49,8 +49,8 @@
 #include <windows.h>    /* GetTempPath */
 #endif
 
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "hash.h"
 #include "log.h"
 #include "mem.h"

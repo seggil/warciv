@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CITYTURN_H
-#define FC__CITYTURN_H
+#ifndef WC_SERVER_CITYTURN_H
+#define WC_SERVER_CITYTURN_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct conn_list;
 struct cm_result;
@@ -38,4 +38,4 @@ void remove_obsolete_buildings(struct player *pplayer);
 void advisor_choose_build(struct player *pplayer, struct city *pcity);
 
 void nullify_prechange_production(struct city *pcity);
-#endif  /* FC__CITYTURN_H */
+#endif  /* WC_SERVER_CITYTURN_H */

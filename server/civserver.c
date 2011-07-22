@@ -12,29 +12,29 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef WIN32_NATIVE
-#include <signal.h>
-#include <unistd.h>
+#  include <signal.h>
+#  include <unistd.h>
 #endif
 
 #ifdef GENERATING_MAC  /* mac header(s) */
-#include <Controls.h>
-#include <Dialogs.h>
+#  include <Controls.h>
+#  include <Dialogs.h>
 #endif
 
 #ifdef WIN32_NATIVE
-#include <winsock2.h>
-#include <windows.h>
+#  include <winsock2.h>
+#  include <windows.h>
 #endif
 
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "shared.h"
 #include "support.h"

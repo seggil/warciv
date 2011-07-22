@@ -17,7 +17,7 @@ used throughout the client.
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -29,7 +29,7 @@ used throughout the client.
 
 #include "city.h"
 #include "diptreaty.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "hash.h"
 #include "log.h"

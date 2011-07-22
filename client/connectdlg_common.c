@@ -11,7 +11,7 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -38,7 +38,7 @@ Freeciv - Copyright (C) 2004 - The Freeciv Project
 #endif
 
 #include "capability.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 #include "netintf.h"

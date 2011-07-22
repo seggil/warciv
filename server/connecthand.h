@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONNECTHAND_H
-#define FC__CONNECTHAND_H
+#ifndef WC_SERVER_CONNECTHAND_H
+#define WC_SERVER_CONNECTHAND_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 enum action_type {
   ACTION_BAN = 0,
@@ -92,4 +92,4 @@ bool server_assign_random_nation(struct player *pplayer);
 void conn_reset_idle_time(struct connection *pconn);
 void check_idle_connections(void);
 
-#endif /* FC__CONNECTHAND_H */
+#endif /* WC_SERVER_CONNECTHAND_H */

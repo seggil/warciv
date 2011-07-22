@@ -10,15 +10,15 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIDATA_H
-#define FC__AIDATA_H
+#ifndef WC_AI_AIDATA_H
+#define WC_AI_AIDATA_H
 
 /* max size of a short */
 #define MAX_NUM_ID 32767
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 /*
  * This file and aidata.c contains global data structures for the AI
@@ -159,4 +159,4 @@ void ai_data_analyze_rulesets(struct player *pplayer);
 
 struct ai_data *ai_data_get(struct player *pplayer);
 
-#endif
+#endif  /* WC_AI_AIDATA_H */

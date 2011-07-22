@@ -12,21 +12,21 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
 #include <time.h>
 
 #ifdef HAVE_UCONTEXT_H
-#include <ucontext.h>
+#  include <ucontext.h>
 #else
-#ifdef WIN32_NATIVE
-#include "win32-ucontext.h"
-#endif /* WIN32_NATIVE */
+#  ifdef WIN32_NATIVE
+#    include "win32-ucontext.h"
+#  endif /* WIN32_NATIVE */
 #endif /* HAVE_UCONTEXT_H */
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 #include "support.h"

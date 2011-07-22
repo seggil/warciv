@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SETTLERS_H
-#define FC__SETTLERS_H
+#ifndef WC_SERVER_SETTLERS_H
+#define WC_SERVER_SETTLERS_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "map.h"
 
 void auto_settlers_init(void);
@@ -39,4 +39,4 @@ struct unit *other_passengers(struct unit *punit);
 extern signed int *minimap;
 #define MINIMAP(ptile) minimap[(ptile)->index]
 
-#endif   /* FC__SETTLERS_H */
+#endif   /* WC_SERVER_SETTLERS_H */

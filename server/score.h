@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SCORE_H
-#define FC__SCORE_H
+#ifndef WC_SERVER_SCORE_H
+#define WC_SERVER_SCORE_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 
 /* In the terminology of the Glicko rating system,
@@ -123,4 +123,4 @@ const struct grouping *score_get_groupings(int *num_groupings);
 int player_get_rated_username(const struct player *pplayer,
                               char *outbuf, int maxlen);
 
-#endif /* FC__SCORE_H */
+#endif /* WC_SERVER_SCORE_H */

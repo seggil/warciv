@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CM_H
-#define FC__CM_H
+#ifndef WC_COMMON_AICORE_CM_H
+#define WC_COMMON_AICORE_CM_H
 
 /*
  * The purpose of this module is to manage the citizens of a city. The
@@ -80,4 +80,4 @@ int cm_count_specialist(const struct city *pcity,
                         const struct cm_result *result);
 void cm_copy_result_from_city(const struct city *pcity,
                               struct cm_result *result);
-#endif
+#endif  /* WC_COMMON_AICORE_CM_H */

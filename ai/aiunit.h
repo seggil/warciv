@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIUNIT_H
-#define FC__AIUNIT_H
+#ifndef WC_AI_AIUNIT_H
+#define WC_AI_AIUNIT_H
 
 #include "combat.h"
-#include "fc_types.h"
+#include "wc_types.h"
 #include "unittype.h"
 
 /*
@@ -96,4 +96,4 @@ void update_simple_ai_types(void);
  }                                                                            \
 }
 
-#endif  /* FC__AIUNIT_H */
+#endif  /* WC_AI_AIUNIT_H */

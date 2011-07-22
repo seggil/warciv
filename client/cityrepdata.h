@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYREPDATA_H
-#define FC__CITYREPDATA_H
+#ifndef WC_CLIENT_CITYREPDATA_H
+#define WC_CLIENT_CITYREPDATA_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 /* Number of city report columns: have to set this manually now... */
 #define NUM_CREPORT_COLS 33
@@ -62,4 +62,4 @@ void init_city_report_data(void);
 
 int cityrepfield_compare(const char *field1, const char *field2);
 
-#endif  /* FC__CITYREPDATA_H */
+#endif  /* WC_CLIENT_CITYREPDATA_H */

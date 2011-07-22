@@ -10,13 +10,13 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__EFFECTS_H
-#define FC__EFFECTS_H
+#ifndef WC_COMMON_EFFECTS_H
+#define WC_COMMON_EFFECTS_H
 
 #include "shared.h"             /* bool */
 
 #include "connection.h"
-#include "fc_types.h"
+#include "wc_types.h"
 #include "tech.h"
 #include "terrain.h"
 
@@ -282,5 +282,4 @@ Impr_Type_id ai_find_source_building(struct player *pplayer,
                                      enum effect_type effect_type);
 Impr_Type_id get_building_for_effect(enum effect_type effect_type);
 
-#endif  /* FC__EFFECTS_H */
-
+#endif  /* WC_COMMON_EFFECTS_H */

@@ -11,12 +11,8 @@ libcivutility_a_SOURCES = \
 		astring.h       \
 		capability.c	\
 		capability.h	\
-		fciconv.c	\
-		fciconv.h	\
 		distribute.c	\
 		distribute.h	\
-		fcintl.c	\
-		fcintl.h	\
 		genlist.c	\
 		genlist.h	\
 		hash.c		\
@@ -52,6 +48,10 @@ libcivutility_a_SOURCES = \
 		timing.h	\
 		md5.c           \
 		md5.h           \
+		wc_iconv.c      \
+		wc_iconv.h      \
+		wc_intl.c       \
+		wc_intl.h       \
 		wildcards.c     \
 		wildcards.h	\
 		win32-ucontext.c \

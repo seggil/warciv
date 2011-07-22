@@ -8,7 +8,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -19,35 +19,42 @@
 #include <time.h>
 
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef WIN32_NATIVE
-#include <winsock2.h>
-#include <limits.h>
-#include <stdint.h>
-#include <ws2tcpip.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_LIMITS_H
-#include <limits.h>
+# include <arpa/inet.h>
 #endif
 
-#include "fciconv.h"
-#include "fcintl.h"
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
+#ifdef WIN32_NATIVE
+# include <winsock2.h>
+# include <limits.h>
+# include <stdint.h>
+# include <ws2tcpip.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
+#ifdef HAVE_LIMITS_H
+# include <limits.h>
+#endif
+
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "hash.h"
 #include "log.h"
 #include "mem.h"

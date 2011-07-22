@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AITOOLS_H
-#define FC__AITOOLS_H
+#ifndef WC_AI_AITOOLS_H
+#define WC_AI_AITOOLS_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "unit.h"               /* enum ai_unit_task */
 #include "unittype.h"           /* Unit_Type_id */
 
@@ -68,4 +68,4 @@ bool ai_wants_no_science(struct player *pplayer);
 
 bool is_player_dangerous(struct player *pplayer, struct player *aplayer);
 
-#endif  /* FC__AITOOLS_H */
+#endif  /* WC_AI_AITOOLS_H */

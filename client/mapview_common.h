@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__MAPVIEW_COMMON_H
-#define FC__MAPVIEW_COMMON_H
+#ifndef WC_CLIENT_MAPVIEW_COMMON_H
+#define WC_CLIENT_MAPVIEW_COMMON_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "map.h"
 
 #include "include/colors_g.h"
@@ -235,4 +235,4 @@ void init_mapcanvas_and_overview(void);
 void draw_traderoutes(void);
 void update_trade_route_line(struct trade_route *ptr);
 
-#endif /* FC__MAPVIEW_COMMON_H */
+#endif /* WC_CLIENT_MAPVIEW_COMMON_H */

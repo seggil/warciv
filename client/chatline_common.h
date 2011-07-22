@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CHATLINE_COMMON_H
-#define FC__CHATLINE_COMMON_H
+#ifndef WC_CLIENT_CHATLINE_COMMON_H
+#define WC_CLIENT_CHATLINE_COMMON_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"           /* struct city, tile and unit */
+#include "wc_types.h"           /* struct city, tile and unit */
 
 void send_chat(const char *message);
 
@@ -33,4 +33,4 @@ int insert_city_link(char *buf, size_t buflen, struct city *pcity);
 int insert_tile_link(char *buf, size_t buflen, struct tile *ptile);
 int insert_unit_link(char *buf, size_t buflen, struct unit *punit);
 
-#endif  /* FC__CHATLINE_COMMON_H */
+#endif  /* WC_CLIENT_CHATLINE_COMMON_H */

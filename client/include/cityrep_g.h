@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYREP_G_H
-#define FC__CITYREP_G_H
+#ifndef WC_CLINET_INCLUDE_CITYREP_G_H
+#define WC_CLINET_INCLUDE_CITYREP_G_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void popup_city_report_dialog(bool make_modal);
 void city_report_dialog_update(void);
@@ -25,4 +25,4 @@ void city_report_dialog_update_city(struct city *pcity);
 void hilite_cities_from_canvas(void);
 void toggle_city_hilite(struct city *pcity, bool on_off);
 
-#endif  /* FC__CITYREP_G_H */
+#endif  /* WC_CLINET_INCLUDE_CITYREP_G_H */

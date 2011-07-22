@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SANITYCHECK_H
-#define FC__SANITYCHECK_H
+#ifndef WC_SERVER_SANITYCHECK_H
+#define WC_SERVER_SANITYCHECK_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #if ((IS_BETA_VERSION || IS_DEVEL_VERSION) && !defined NDEBUG) \
   || defined DEBUG
@@ -35,4 +35,4 @@ void sanity_check(void);
 #endif /* SANITY_CHECKING */
 
 
-#endif  /* FC__SANITYCHECK_H */
+#endif  /* WC_SERVER_SANITYCHECK_H */

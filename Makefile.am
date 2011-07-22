@@ -28,6 +28,7 @@ else
 DATASUBDIRS =
 endif
 
+ACLOCAL_AMFLAGS= "-I m4"
 
 SUBDIRS= $(DATASUBDIRS) intl utility common tests win32 $(SERVERSUBDIRS) $(CLIENTSUBDIRS) \
          po doc $(MANUALSUBDIRS) contrib
@@ -38,7 +39,7 @@ EXTRA_DIST=	autogen.sh \
 		diff_ignore             \
 		bootstrap/civ.in        \
 		bootstrap/ser.in        \
-		bootstrap/fc_svnrev_gen.h.in    \
+		bootstrap/wc_svnrev_gen.h.in    \
 		bootstrap/generate_svnrev.sh    \
 		bootstrap/warciv.desktop.in    \
 		bootstrap/warciv.spec.in       \

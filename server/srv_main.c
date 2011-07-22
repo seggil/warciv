@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -23,25 +23,31 @@
 #include <time.h>
 
 #ifdef HAVE_NETDB_H
-#include <netdb.h>
+#  include <netdb.h>
 #endif
+
 #ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+#  include <sys/ioctl.h>
 #endif
+
 #ifdef HAVE_SYS_TERMIO_H
-#include <sys/termio.h>
+#  include <sys/termio.h>
 #endif
+
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#  include <sys/types.h>
 #endif
+
 #ifdef HAVE_TERMIOS_H
-#include <termios.h>
+#  include <termios.h>
 #endif
+
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
+
 #ifdef WIN32_NATIVE
-#include <winsock2.h>
+#  include <winsock2.h>
 #endif
 
 #include "capability.h"
@@ -50,8 +56,8 @@
 #include "dataio.h"
 #include "effects.h"
 #include "events.h"
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "log.h"
 #include "map.h"

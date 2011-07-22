@@ -15,10 +15,10 @@
   Reading and using the tilespec files, which describe
   the files and contents of tilesets.
 ***********************************************************************/
-#ifndef FC__TILESPEC_H
-#define FC__TILESPEC_H
+#ifndef WC_CLIENT_TILESPEC_H
+#define WC_CLIENT_TILESPEC_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "citydlg_common.h"     /* enum citizen_type */
 #include "include/colors_g.h"
@@ -341,4 +341,4 @@ void unload_sprite(const char *tag_name);
 bool sprite_exists(const char *tag_name);
 void finish_loading_sprites(void);
 
-#endif  /* FC__TILESPEC_H */
+#endif  /* WC_CLIENT_TILESPEC_H */

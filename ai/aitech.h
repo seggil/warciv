@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AITECH_H
-#define FC__AITECH_H
+#ifndef WC_AI_AITECH_H
+#define WC_AI_AITECH_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void ai_manage_tech(struct player *pplayer);
 void ai_next_tech_goal(struct player *pplayer);
 
-#endif  /* FC__AITECH_H */
+#endif  /* WC_AI_AITECH_H */

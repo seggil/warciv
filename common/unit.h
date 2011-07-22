@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__UNIT_H
-#define FC__UNIT_H
+#ifndef WC_COMMON_UNIT_H
+#define WC_COMMON_UNIT_H
 
 #include "mem.h"                /* unit_list_iterate_safe */
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "terrain.h"            /* enum tile_special_type */
 #include "unittype.h"
 
@@ -344,4 +344,4 @@ enum unit_upgrade_result test_unit_upgrade(struct unit *punit, bool is_free);
 enum unit_upgrade_result get_unit_upgrade_info(char *buf, size_t bufsz,
                                                struct unit *punit);
 
-#endif  /* FC__UNIT_H */
+#endif  /* WC_COMMON_UNIT_H */

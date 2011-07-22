@@ -18,7 +18,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -28,7 +28,7 @@
 
 #include "astring.h"
 #include "capability.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h" /* for fill_xxx */
 #include "government.h"
 #include "hash.h"

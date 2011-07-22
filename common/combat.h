@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__COMBAT_H
-#define FC__COMBAT_H
+#ifndef WC_COMMON_COMBAT_H
+#define WC_COMMON_COMBAT_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "unittype.h"
 
 /*
@@ -57,4 +57,4 @@ struct unit *get_defender(struct unit *attacker, const struct tile *ptile);
 struct unit *get_attacker(struct unit *defender, const struct tile *ptile);
 
 bool is_stack_vulnerable(const struct tile *ptile);
-#endif /* FC__COMBAT_H */
+#endif /* WC_COMMON_COMBAT_H */

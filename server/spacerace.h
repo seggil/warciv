@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SPACERACE_H
-#define FC__SPACERACE_H
+#ifndef WC_SERVER_SPACERACE_H
+#define WC_SERVER_SPACERACE_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "packets.h"
 
 struct player_spaceship;
@@ -28,4 +28,4 @@ void handle_spaceship_launch(struct player *pplayer);
 void handle_spaceship_place(struct player *pplayer,
                             enum spaceship_place_type type, int num);
 
-#endif /* FC__SPACERACE_H */
+#endif /* WC_SERVER_SPACERACE_H */

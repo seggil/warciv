@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 

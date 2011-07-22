@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,10 +11,10 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__NETINTF_H
-#define FC__NETINTF_H
+#ifndef WC_UTILITY_NETINTF_H
+#define WC_UTILITY_NETINTF_H
 
-/********************************************************************** 
+/**********************************************************************
   Common network interface.
 ***********************************************************************/
 
@@ -56,9 +56,9 @@ union my_sockaddr {
 };
 
 int my_readsocket(int sock, void *buf, size_t size);
-int my_writesocket(int sock, const void *buf, size_t size); 
+int my_writesocket(int sock, const void *buf, size_t size);
 void my_closesocket(int sock);
-void my_init_network(void);         
+void my_init_network(void);
 void my_shutdown_network(void);
 bool my_socket_would_block(long err_no);
 bool my_socket_operation_in_progess(long err_no);
@@ -66,7 +66,7 @@ int my_set_nonblock(int sockfd);
 
 bool is_net_service_resolved(const char *name, int port,
                              union my_sockaddr *addr);
-bool net_lookup_service(const char *name, int port, 
+bool net_lookup_service(const char *name, int port,
                         union my_sockaddr *addr);
 fz_FILE *my_querysocket(int sock, void *buf, size_t size);
 int find_next_free_port(int starting_port);
@@ -122,4 +122,4 @@ int net_lookup_service_async(const char *name,
                              data_free_func_t datafree);
 void *cancel_net_lookup_service(int id);
 
-#endif  /* FC__NETINTF_H */
+#endif  /* WC_UTILITY_NETINTF_H */

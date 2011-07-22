@@ -10,16 +10,17 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CONNECTION_H
-#define FC__CONNECTION_H
+#ifndef WC_COMMON_CONNECTION_H
+#define WC_COMMON_CONNECTION_H
 
 #include <time.h>       /* time_t */
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#  include <sys/types.h>
 #endif
+
 #ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
+#  include <sys/time.h>
 #endif
 
 #define USE_COMPRESSION
@@ -31,7 +32,7 @@
 
 #include "shared.h"             /* MAX_LEN_ADDR, bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct hash_table;
 struct timer_list;
@@ -387,4 +388,4 @@ enum cmdlevel_id conn_get_access(const struct connection *pconn);
 bool conn_is_valid(const struct connection *pconn);
 
 
-#endif  /* FC__CONNECTION_H */
+#endif  /* WC_COMMON_CONNECTION_H */

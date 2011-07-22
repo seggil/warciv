@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <stdarg.h>
@@ -20,11 +20,11 @@
 #include <string.h>
 
 #ifdef HAVE_LIBREADLINE
-#include <readline/readline.h>
+#  include <readline/readline.h>
 #endif
 
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "support.h"
 

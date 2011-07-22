@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -21,7 +21,7 @@
 #include "city.h"
 #include "aicore/cm.h"
 #include "connection.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "government.h"
 #include "idex.h"
 #include "log.h"

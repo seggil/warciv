@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AISUPPORT_H
-#define FC__AISUPPORT_H
+#ifndef WC_COMMON_AICORE_AISUPPORT_H
+#define WC_COMMON_AICORE_AISUPPORT_H
 
-#include "../fc_types.h"
+#include "../wc_types.h"
 
 struct player *player_leading_spacerace(void);
 int player_distance_to_player(struct player *pplayer, struct player *target);

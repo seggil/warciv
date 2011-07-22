@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYMAP_H
-#define FC__CITYMAP_H
+#ifndef WC_COMMON_AICORE_CITYMAP_H
+#define WC_COMMON_AICORE_CITYMAP_H
 
-#include "fcintl.h"
+#include "wc_intl.h"
 
 void citymap_turn_init(struct player *pplayer);
 void citymap_reserve_city_spot(struct tile *ptile, int id);

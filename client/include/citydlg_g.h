@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYDLG_G_H
-#define FC__CITYDLG_G_H
+#ifndef WC_CLIENT_INCLUDE_CITYDLG_G_H
+#define WC_CLIENT_INCLUDE_CITYDLG_G_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "../citydlg_common.h"
 
@@ -44,4 +44,4 @@ void refresh_all_city_dialogs(enum city_update update);
 void refresh_unit_city_dialogs(struct unit *punit);
 bool city_dialog_is_open(struct city *pcity);
 
-#endif  /* FC__CITYDLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_CITYDLG_G_H */

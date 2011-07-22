@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #ifdef WIN32_NATIVE
@@ -26,7 +26,7 @@
 
 #include <gtk/gtk.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "packets.h"
 #include "support.h"

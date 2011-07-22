@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -23,17 +23,17 @@
 #include <time.h>
 
 #ifdef HAVE_LIBREADLINE
-#include <readline/readline.h>
-#ifdef HAVE_NEWLIBREADLINE
-#define completion_matches(x,y) rl_completion_matches(x,y)
-#define filename_completion_function rl_filename_completion_function
-#endif
+#  include <readline/readline.h>
+#  ifdef HAVE_NEWLIBREADLINE
+#    define completion_matches(x,y) rl_completion_matches(x,y)
+#    define filename_completion_function rl_filename_completion_function
+#  endif
 #endif
 
 #include "astring.h"
 #include "capability.h"
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "hash.h"
 #include "log.h"
 #include "mem.h"

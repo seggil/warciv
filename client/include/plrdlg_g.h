@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PLRDLG_G_H
-#define FC__PLRDLG_G_H
+#ifndef WC_CLIENT_INCLUDE_PLRDLG_G_H
+#define WC_CLIENT_INCLUDE_PLRDLG_G_H
 
 #include "../plrdlg_common.h"
 
 void popup_players_dialog(void);
 void update_players_dialog(void);
 
-#endif  /* FC__PLRDLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_PLRDLG_G_H */

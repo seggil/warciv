@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__DISTRIBUTE_H
-#define FC__DISTRIBUTE_H
+#ifndef WC_UTILITY_DISTRIBUTE_H
+#define WC_UTILITY_DISTRIBUTE_H
 
 void distribute(int number, int groups, int *ratios, int *result);
 

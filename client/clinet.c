@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -22,47 +22,58 @@
 #include <string.h>
 
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
+#  include <arpa/inet.h>
 #endif
+
 #ifdef HAVE_NETDB_H
-#include <netdb.h>
+#  include <netdb.h>
 #endif
+
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+#  include <netinet/in.h>
 #endif
+
 #ifdef HAVE_PWD_H
-#include <pwd.h>
+#  include <pwd.h>
 #endif
+
 #ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
+#  include <sys/select.h>
 #endif
+
 #ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+#  include <sys/socket.h>
 #endif
+
 #ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
+#  include <sys/time.h>
 #endif
+
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#  include <sys/types.h>
 #endif
+
 #ifdef HAVE_SYS_UIO_H
-#include <sys/uio.h>
+#  include <sys/uio.h>
 #endif
+
 #ifdef HAVE_SYS_UTSNAME_H
-#include <sys/utsname.h>
+#  include <sys/utsname.h>
 #endif
+
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
+
 #ifdef WIN32_NATIVE
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
 #endif
 
 #include "capability.h"
 #include "capstr.h"
 #include "dataio.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "hash.h"
 #include "log.h"

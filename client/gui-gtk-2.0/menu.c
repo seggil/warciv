@@ -12,12 +12,12 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <gtk/gtk.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "support.h"
 
@@ -590,7 +590,7 @@ static const char *load_menu_game(void)
      NULL, _("Local _Options"),
      G_CALLBACK(callback_game_options)},
     {"GAME_STYLE", GTK_STOCK_SELECT_FONT, _("_Font Size"),
-     NULL, _("_Font Size"), 
+     NULL, _("_Font Size"),
      G_CALLBACK(callback_game_style)},
     {"GAME_SAVE_SETTINGS", GTK_STOCK_SAVE_AS, _("Sa_ve Settings"),
      NULL, _("Sa_ve Settings"),

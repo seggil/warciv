@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__BARBARIAN_H
-#define FC__BARBARIAN_H
+#ifndef WC_SERVER_BARBARIAN_H
+#define WC_SERVER_BARBARIAN_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #define MIN_UNREST_DIST   5
 #define MAX_UNREST_DIST   8
@@ -31,4 +31,4 @@ bool unleash_barbarians(struct tile *ptile);
 void summon_barbarians(void);
 bool is_land_barbarian(struct player *pplayer);
 
-#endif  /* FC__BARBARIAN_H */
+#endif  /* WC_SERVER_BARBARIAN_H */

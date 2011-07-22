@@ -20,7 +20,7 @@
 #include <string.h>
 
 #include "distribute.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "support.h"
 

@@ -11,14 +11,14 @@
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 #include "support.h"

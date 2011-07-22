@@ -87,7 +87,7 @@
    - Don't have hash table as only access to user-data.
    - Allocate user-data using sbuffer.
 
-   
+
 ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -98,8 +98,8 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 #include "shared.h" /* ARRAY_SIZE */

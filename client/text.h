@@ -11,10 +11,10 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__TEXT_H
-#define FC__TEXT_H
+#ifndef WC_CLIENT_TEXT_H
+#define WC_CLIENT_TEXT_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct player_spaceship;
 
@@ -42,4 +42,4 @@ const char *get_happiness_buildings(const struct city *pcity);
 const char *get_happiness_wonders(const struct city *pcity);
 const char *get_ping_time_text(struct player *pplayer);
 
-#endif /* FC__TEXT_H */
+#endif /* WC_CLIENT_TEXT_H */

@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #ifdef WIN32_NATIVE
@@ -28,8 +28,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "mem.h"
 #include "netintf.h"

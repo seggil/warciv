@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIDIPLOMAT_H
-#define FC__AIDIPLOMAT_H
+#ifndef WC_AI_AIDIPLOMAT_H
+#define WC_AI_AIDIPLOMAT_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "city.h"               /* struct ai_choice */
 
 void ai_manage_diplomat(struct player *pplayer, struct unit *punit);
@@ -26,4 +26,4 @@ void ai_choose_diplomat_offensive(struct player *pplayer,
                                   struct city *pcity,
                                   struct ai_choice *choice);
 
-#endif  /* FC__AIDIPLOMAT_H */
+#endif  /* WC_AI_AIDIPLOMAT_H */

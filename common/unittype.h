@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__UNITTYPE_H
-#define FC__UNITTYPE_H
+#ifndef WC_COMMON_UNITTYPE_H
+#define WC_COMMON_UNITTYPE_H
 
 #include "shared.h"
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct Sprite;                  /* opaque; client-gui specific */
 
@@ -287,4 +287,4 @@ void unit_types_free(void);
   }                                                                           \
 }
 
-#endif  /* FC__UNITTYPE_H */
+#endif  /* WC_COMMON_UNITTYPE_H */

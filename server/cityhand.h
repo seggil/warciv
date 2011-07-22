@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITYHAND_H
-#define FC__CITYHAND_H
+#ifndef WC_AI_CITYHAND_H
+#define WC_AI_CITYHAND_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "hand_gen.h"
 
@@ -24,4 +24,4 @@ void really_handle_city_sell(struct player *pplayer, struct city *pcity,
                              Impr_Type_id id);
 void really_handle_city_buy(struct player *pplayer, struct city *pcity);
 
-#endif  /* FC__CITYHAND_H */
+#endif  /* WC_AI_CITYHAND_H */

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 noinst_LIBRARIES = libguiclient.a
-#    -I$(srcdir)/.. \
+#    -I$(srcdir)/..
 AM_CPPFLAGS = \
     -I. \
     -I$(srcdir)/../include \

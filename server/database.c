@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <stdio.h>
@@ -21,11 +21,11 @@
 #include <string.h>
 
 #ifdef HAVE_MYSQL
-#include <mysql/mysql.h>
+#  include <mysql/mysql.h>
 #endif
 
 #ifdef HAVE_LIBZ
-#include <zlib.h>
+#  include <zlib.h>
 #endif
 
 #include "lua.h"
@@ -33,10 +33,10 @@
 #include "lualib.h"
 
 #ifdef HAVE_MYSQL
-#include "lua/mysql/ls_mysql.h"
+#  include "lua/mysql/ls_mysql.h"
 #endif
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "hash.h"
 #include "log.h"
 #include "md5.h"

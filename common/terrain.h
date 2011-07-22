@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__TERRAIN_H
-#define FC__TERRAIN_H
+#ifndef WC_COMMON_TERRAIN_H
+#define WC_COMMON_TERRAIN_H
 
 #include "shared.h"
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 enum special_river_move {
   RMV_NORMAL=0, RMV_FAST_STRICT=1, RMV_FAST_RELAXED=2, RMV_FAST_ALWAYS=3
@@ -143,4 +143,4 @@ int count_terrain_flag_near_tile(const struct tile *ptile,
   }                                          \
 }
 
-#endif  /* FC__TERRAIN_H */
+#endif  /* WC_COMMON_TERRAIN_H */

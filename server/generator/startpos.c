@@ -11,11 +11,11 @@
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../../config.h"
 #endif
 
 #include "log.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 
 #include "city.h"
 #include "game.h"

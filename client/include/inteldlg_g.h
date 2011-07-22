@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__INTELDLG_G_H
-#define FC__INTELDLG_G_H
+#ifndef WC_CLIENT_INCLUDE_INTELDLG_G_H
+#define WC_CLIENT_INCLUDE_INTELDLG_G_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void popup_intel_dialog(struct player *p);
 void update_intel_dialog(struct player *p);
 
-#endif                          /* FC__INTELDLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_INTELDLG_G_H */

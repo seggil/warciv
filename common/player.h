@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PLAYER_H
-#define FC__PLAYER_H
+#ifndef WC_COMMON_PLAYER_H
+#define WC_COMMON_PLAYER_H
 
 #include "connection.h"
-#include "fc_types.h"
+#include "wc_types.h"
 #include "improvement.h"        /* Impr_Status */
 #include "nation.h"
 #include "shared.h"
@@ -414,4 +414,4 @@ do {\
 } while (FALSE)
 
 
-#endif  /* FC__PLAYER_H */
+#endif  /* WC_COMMON_PLAYER_H */

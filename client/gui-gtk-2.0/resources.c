@@ -22,5 +22,5 @@ Fallback resources
 **************************************************************************/
 
 const gchar *fallback_resources =
-#include "Freeciv.h"
+#include "Warciv.h"
 ;

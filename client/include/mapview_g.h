@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MAPVIEW_G_H
-#define FC__MAPVIEW_G_H
+#ifndef WC_CLINER_INCLUDE_MAPVIEW_G_H
+#define WC_CLINER_INCLUDE_MAPVIEW_G_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "../mapview_common.h"
 
@@ -90,4 +90,4 @@ void draw_selection_rectangle(int canvas_x, int canvas_y, int w, int h);
 void redraw_distance_tool(void);
 void tileset_changed(void);
 
-#endif  /* FC__MAPVIEW_G_H */
+#endif  /* WC_CLINER_INCLUDE_MAPVIEW_G_H */

@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include "../city.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "../game.h"
 #include "../government.h"
 #include "hash.h"

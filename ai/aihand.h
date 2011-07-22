@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIHAND_H
-#define FC__AIHAND_H
+#ifndef WC_AI_AIHAND_H
+#define WC_AI_AIHAND_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "city.h"               /* enum choice_type */
 
 void ai_do_first_activities(struct player *pplayer);
@@ -23,4 +23,4 @@ bool is_unit_choice_type(enum choice_type type);
 
 void ai_best_government(struct player *pplayer);
 
-#endif  /* FC__AIHAND_H */
+#endif  /* WC_AI_AIHAND_H */

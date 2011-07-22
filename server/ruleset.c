@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -22,7 +22,7 @@
 
 #include "capability.h"
 #include "city.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "government.h"
 #include "log.h"

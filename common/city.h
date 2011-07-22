@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CITY_H
-#define FC__CITY_H
+#ifndef WC_COMMON_CITY_H
+#define WC_COMMON_CITY_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "improvement.h"
 #include "packets.h"
 #include "unit.h"               /* struct unit_list */
@@ -540,4 +540,4 @@ static inline bool is_city_center(int city_x, int city_y)
   return CITY_MAP_RADIUS == city_x && CITY_MAP_RADIUS == city_y;
 }
 
-#endif  /* FC__CITY_H */
+#endif  /* WC_COMMON_CITY_H */

@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIAIR_H
-#define FC__AIAIR_H
+#ifndef WC_AI_AIAIR_H
+#define WC_AI_AIAIR_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct ai_choice;
 
@@ -25,4 +25,4 @@ bool ai_choose_attacker_air(struct player *pplayer, struct city *pcity,
 
 int ai_evaluate_tile_for_attack(struct unit *punit, struct tile *dst_tile);
 
-#endif /* FC__AIAIR_H */
+#endif /* WC_AI_AIAIR_H */

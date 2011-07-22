@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__ADVMILITARY_H
-#define FC__ADVMILITARY_H
+#ifndef WC_AI_ADVMILITARY_H
+#define WC_AI_ADVMILITARY_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "unittype.h"
 
 struct ai_choice;
@@ -30,4 +30,4 @@ int assess_defense(struct city *pcity);
 int ai_unit_defence_desirability(Unit_Type_id i);
 int ai_unit_attack_desirability(Unit_Type_id i);
 
-#endif  /* FC__ADVMILITARY_H */
+#endif  /* WC_AI_ADVMILITARY_H */

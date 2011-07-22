@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <assert.h>
@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "mem.h"
 #include "shared.h"
 #include "support.h"

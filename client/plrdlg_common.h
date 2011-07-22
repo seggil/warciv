@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__PLRDLG_COMMON_H
-#define FC__PLRDLG_COMMON_H
+#ifndef WC_CLIENT_PLRDLG_COMMON_H
+#define WC_CLIENT_PLRDLG_COMMON_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void plrdlg_freeze(void);
 void plrdlg_thaw(void);
@@ -57,4 +57,4 @@ int player_dlg_default_sort_column(void);
 const char *player_addr_hack(struct player *pplayer);
 bool column_can_be_visible(struct player_dlg_column *pcol);
 
-#endif  /* FC__PLRDLG_COMMON_H */
+#endif  /* WC_CLIENT_PLRDLG_COMMON_H */

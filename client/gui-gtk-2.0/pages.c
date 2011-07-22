@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 
 #include "dataio.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "log.h"
 #include "mem.h"

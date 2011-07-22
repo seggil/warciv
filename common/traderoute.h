@@ -11,8 +11,8 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__TRADE_ROUTE_H
-#define FC__TRADE_ROUTE_H
+#ifndef WC_COMMON_TRADE_ROUTE_H
+#define WC_COMMON_TRADE_ROUTE_H
 
 #include "map.h"        /* struct tile_list */
 
@@ -118,4 +118,4 @@ struct trade_route *get_next_trade_route_to_establish(struct unit *punit,
                                                       bool internal_first,
                                                       bool homecity_first);
 
-#endif /* FC__TRADE_ROUTE_H */
+#endif /* WC_COMMON_TRADE_ROUTE_H */

@@ -10,19 +10,19 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GAME_H
-#define FC__GAME_H
+#ifndef WC_COMMON_GAME_H
+#define WC_COMMON_GAME_H
 
 #include <time.h>       /* time_t */
 
 #ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
+#  include <sys/time.h>
 #endif
 
 #include "shared.h"
 
 #include "connection.h"         /* struct conn_list */
-#include "fc_types.h"
+#include "wc_types.h"
 #include "improvement.h"        /* Impr_Status */
 #include "packets.h"
 #include "player.h"
@@ -617,4 +617,4 @@ extern bool is_server;
   }                                    \
 }
 
-#endif  /* FC__GAME_H */
+#endif  /* WC_COMMON_GAME_H */

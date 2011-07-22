@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AICITY_H
-#define FC__AICITY_H
+#ifndef WC_AI_AICITY_H
+#define WC_AI_AICITY_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "unit.h"               /* enum unit_move_type */
 #include "city.h"
 #include "aidata.h"
@@ -26,4 +26,4 @@ void ai_manage_buildings(struct player *pplayer);
 Unit_Type_id ai_choose_defender_versus(struct city *pcity, Unit_Type_id v);
 int ai_eval_calc_city(struct city *pcity, struct ai_data *ai);
 
-#endif  /* FC__AICITY_H */
+#endif  /* WC_AI_AICITY_H */

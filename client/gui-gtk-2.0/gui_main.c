@@ -12,13 +12,14 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <assert.h>
 #ifdef HAVE_LOCALE_H
-#include <locale.h>
+#  include <locale.h>
 #endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,15 +27,15 @@
 #include <time.h>
 
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "dataio.h"
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "government.h"
 #include "log.h"

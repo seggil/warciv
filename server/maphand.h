@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MAPHAND_H
-#define FC__MAPHAND_H
+#ifndef WC_SERVER_MAPHAND_H
+#define WC_SERVER_MAPHAND_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "map.h"
 #include "packets.h"
 #include "terrain.h"
@@ -111,4 +111,4 @@ int get_ocean_size(Continent_id id);
 void assign_continent_flood(struct tile *ptile, bool is_land,
                             int nr, bool skip_unsafe);
 
-#endif  /* FC__MAPHAND_H */
+#endif  /* WC_SERVER_MAPHAND_H */

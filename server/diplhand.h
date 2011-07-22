@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DIPLHAND_H
-#define FC__DIPLHAND_H
+#ifndef WC_SERVER_DIPLHAND_H
+#define WC_SERVER_DIPLHAND_H
 
 #define REPUTATION_LOSS_NUKE (GAME_MAX_REPUTATION * 0.03)
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "hand_gen.h"
 
@@ -35,4 +35,4 @@ void send_diplomatic_meetings(struct connection *dest);
 void cancel_all_meetings(struct player *pplayer);
 void cancel_diplomacy(struct player *pplayer);
 
-#endif  /* FC__DIPLHAND_H */
+#endif  /* WC_SERVER_DIPLHAND_H */

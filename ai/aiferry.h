@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIFERRY_H
-#define FC__AIFERRY_H
+#ifndef WC_AI_AIFERRY_H
+#define WC_AI_AIFERRY_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct pf_path;
 
@@ -48,4 +48,4 @@ bool aiferry_gobyboat(struct player *pplayer, struct unit *punit,
  */
 void ai_manage_ferryboat(struct player *pplayer, struct unit *punit);
 
-#endif /* FC__AIFERRY_H */
+#endif /* WC_AI_AIFERRY_H */

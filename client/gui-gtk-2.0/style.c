@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <gtk/gtk.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "support.h"
 
 #include "../chatline_common.h"

@@ -12,13 +12,13 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
 #include <string.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "map.h"
 #include "mem.h"
 

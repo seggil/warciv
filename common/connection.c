@@ -21,20 +21,23 @@
 #include <time.h>
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_SELECT_H
-/* For some platforms this must be below sys/types.h. */
-#include <sys/select.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef WIN32_NATIVE
-#include <winsock2.h>
+#  include <sys/types.h>
 #endif
 
-#include "fcintl.h"
+#ifdef HAVE_SYS_SELECT_H
+   /* For some platforms this must be below sys/types.h. */
+#  include <sys/select.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
+#ifdef WIN32_NATIVE
+#  include <winsock2.h>
+#endif
+
+#include "wc_intl.h"
 #include "game.h"               /* game.all_connections */
 #include "hash.h"
 #include "log.h"

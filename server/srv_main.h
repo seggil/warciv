@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SRV_MAIN_H
-#define FC__SRV_MAIN_H
+#ifndef WC_SERVER_SRV_MAIN_H
+#define WC_SERVER_SRV_MAIN_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "game.h"
 #include "packets.h"
 
@@ -128,4 +128,4 @@ int register_background_function(background_func bf,
 void unregister_background_function(int id);
 void execute_background_functions(void);
 
-#endif /* FC__SRV_MAIN_H */
+#endif /* WC_SERVER_SRV_MAIN_H */

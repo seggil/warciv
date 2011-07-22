@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__CLIMISC_H
-#define FC__CLIMISC_H
+#ifndef WC_CLIENT_CLIMISC_H
+#define WC_CLIENT_CLIMISC_H
 
 #include "shared.h"             /* MAX_LEN_NAME */
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "events.h"
 
 struct Clause;
@@ -208,4 +208,4 @@ void voteinfo_queue_next(void);
 
 extern struct voteinfo_list *voteinfo_queue;
 
-#endif /* FC__CLIMISC_H */
+#endif /* WC_CLIENT_CLIMISC_H */

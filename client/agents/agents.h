@@ -11,12 +11,12 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__CLIENT_AGENTS_AGENTS_H
-#define FC__CLIENT_AGENTS_AGENTS_H
+#ifndef WC_CLIENT_AGENTS_AGENTS_H
+#define WC_CLIENT_AGENTS_AGENTS_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 /*
  * Besides callback for convenience client/agents/agents also
@@ -79,4 +79,4 @@ void cause_a_unit_changed_for_agent(const char *name_of_calling_agent,
                                     struct unit *punit);
 void wait_for_requests(const char *agent_name, int first_request_id,
                        int last_request_id);
-#endif
+#endif  /* WC_CLIENT_AGENTS_AGENTS_H */

@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__VERSION_H
-#define FC__VERSION_H
+#ifndef WC_COMMON_VERSION_H
+#define WC_COMMON_VERSION_H
 
 #ifdef HAVE_CONFIG_H
-#ifndef FC_CONFIG_H             /* this should be defined in config.h */
+#ifndef WC_CONFIG_H             /* this should be defined in config.h */
 #error Files including versions.h should also include config.h directly
 #endif
 #endif
@@ -78,4 +78,4 @@ const char *freeciv_motto(void);
 /* If returns NULL, not a beta version. */
 const char *beta_message(void);
 
-#endif  /* FC__VERSION_H */
+#endif  /* WC_COMMON_VERSION_H */

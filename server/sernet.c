@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -24,48 +24,59 @@
 #include <time.h>
 
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-#ifdef HAVE_NETDB_H
-#include <netdb.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#ifdef HAVE_PWD_H
-#include <pwd.h>
-#endif
-#ifdef HAVE_LIBREADLINE
-#include <readline/history.h>
-#include <readline/readline.h>
-#endif
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_UIO_H
-#include <sys/uio.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef WIN32_NATIVE
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <arpa/inet.h>
 #endif
 
-#include "fciconv.h"
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+
+#ifdef HAVE_PWD_H
+#  include <pwd.h>
+#endif
+
+#ifdef HAVE_LIBREADLINE
+#  include <readline/history.h>
+#  include <readline/readline.h>
+#endif
+
+#ifdef HAVE_SYS_SELECT_H
+#  include <sys/select.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+
+#ifdef HAVE_SYS_UIO_H
+#  include <sys/uio.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
+
+#ifdef WIN32_NATIVE
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#endif
+
+#include "wc_iconv.h"
 
 #include "capability.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "hash.h"
 #include "log.h"
 #include "mem.h"

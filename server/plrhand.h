@@ -18,7 +18,7 @@
 #include "shared.h"             /* fc__attribute */
 
 #include "events.h"
-#include "fc_types.h"
+#include "wc_types.h"
 #include "packets.h"
 
 #include "hand_gen.h"

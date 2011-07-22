@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__TECH_H
-#define FC__TECH_H
+#ifndef WC_COMMON_TECH_H
+#define WC_COMMON_TECH_H
 
 #include "shared.h"
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "nation.h" /* Nation_Type_id */
 
 typedef int Tech_Type_id;
@@ -152,4 +152,4 @@ extern struct advance advances[];
   }                                                                         \
 }
 
-#endif  /* FC__TECH_H */
+#endif  /* WC_COMMON_TECH_H */

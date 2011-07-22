@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__ADVDOMESTIC_H
-#define FC__ADVDOMESTIC_H
+#ifndef WC_AI_ADVDOMESTIC_H
+#define WC_AI_ADVDOMESTIC_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct ai_choice;
 
@@ -22,4 +22,4 @@ void ai_eval_threat_done(struct player *pplayer);
 void domestic_advisor_choose_build(struct player *pplayer, struct city *pcity,
                                    struct ai_choice *choice);
 
-#endif  /* FC__ADVDOMESTIC_H */
+#endif  /* WC_AI_ADVDOMESTIC_H */

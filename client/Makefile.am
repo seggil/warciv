@@ -113,7 +113,7 @@ wc_civclient_libs =	../utility/libcivutility.a	\
 			agents/libagents.a		\
 		 	@gui_sources@/libguiclient.a
 civclient_DEPENDENCIES = $(wc_civclient_libs)
-civclient_LDADD        = $(wc_civclient_libs) \
+civclient_LDADD        = $(wc_civclient_libs) $(wc_civclient_libs) \
 	@INTLLIBS@ @CLIENT_LIBS@ \
 	@SOUND_LIBS@ $(CLIENTICON)
 desktopfiledir = $(prefix)/share/applications

@@ -15,16 +15,16 @@
 *
 * This module contains freeciv-specific memory management functions
 *
-**********************************************************************/ 
+**********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "log.h"
 #include "shared.h"             /* TRUE, FALSE */
 

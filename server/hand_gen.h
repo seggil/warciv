@@ -12,7 +12,7 @@
 
 #include "shared.h"
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "packets.h"
 
 struct connection;

@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIHUNT_H
-#define FC__AIHUNT_H
+#ifndef WC_AI_AIHUNT_H
+#define WC_AI_AIHUNT_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct ai_choice;
 

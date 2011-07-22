@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__UNITTOOLS_H
-#define FC__UNITTOOLS_H
+#ifndef WC_SERVER_UNITTOOLS_H
+#define WC_SERVER_UNITTOOLS_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "packets.h"            /* enum unit_info_use */
 #include "unit.h"
 
@@ -86,4 +86,4 @@ bool execute_orders(struct unit *punit);
 
 void reset_air_patrol(struct player *pplayer);
 
-#endif  /* FC__UNITTOOLS_H */
+#endif  /* WC_SERVER_UNITTOOLS_H */

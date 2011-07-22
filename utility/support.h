@@ -11,10 +11,10 @@
    GNU General Public License for more details.
 ***********************************************************************/
 
-#ifndef FC__SUPPORT_H
-#define FC__SUPPORT_H
+#ifndef WC_UTILITY_SUPPORT_H
+#define WC_UTILITY_SUPPORT_H
 
-/********************************************************************** 
+/**********************************************************************
   Replacements for functions which are not available on all platforms.
   Where the functions are available natively, these are just wrappers.
   See also mem.h, netintf.h, rand.h, and see support.c for more comments.
@@ -25,7 +25,7 @@
 #include <stdio.h>
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+# include <sys/types.h>
 #endif
 
 #include "shared.h"             /* bool type and fc__attribute */
@@ -73,4 +73,4 @@ char my_tolower(char c);
 
 FILE *my_tmpfile (void);
 
-#endif  /* FC__SUPPORT_H */
+#endif  /* WC_UTILITY_SUPPORT_H */

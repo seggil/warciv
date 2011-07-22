@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GENLIST_H
-#define FC__GENLIST_H
+#ifndef WC_UTILITY_GENLIST_H
+#define WC_UTILITY_GENLIST_H
 
 /**********************************************************************
   MODULE: genlist
@@ -105,4 +105,4 @@ const genlist_link *genlist_link_get_next(const genlist_link *plink);
 #define LIST_ITERATE_REV_END  }}
 
 
-#endif  /* FC__GENLIST_H */
+#endif  /* WC_UTILITY_GENLIST_H */

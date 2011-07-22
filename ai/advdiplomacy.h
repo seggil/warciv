@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__ADVDIPLOMACY_H
-#define FC__ADVDIPLOMACY_H
+#ifndef WC_AI_ADVDIPLOMACY_H
+#define WC_AI_ADVDIPLOMACY_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct ai_choice;
 struct Treaty;

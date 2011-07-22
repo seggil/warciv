@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__NATION_H
-#define FC__NATION_H
+#ifndef WC_COMMON_NATION_H
+#define WC_COMMON_NATION_H
 
 #include "shared.h"             /* MAX_LEN_NAME */
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "terrain.h"            /* T_COUNT */
 
 #define MAX_NUM_TECH_GOALS 10
@@ -159,4 +159,4 @@ int team_count(void);
   }                                                                           \
 }
 
-#endif  /* FC__NATION_H */
+#endif  /* WC_COMMON_NATION_H */

@@ -10,13 +10,13 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__MAP_H
-#define FC__MAP_H
+#ifndef WC_COMMON_MAP_H
+#define WC_COMMON_MAP_H
 
 #include <assert.h>
 #include <math.h>
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 #include "packets.h"
 #include "player.h"
@@ -718,4 +718,4 @@ static inline bool is_border_tile(const struct tile *ptile, int dist)
  * help to avoid rounding errors; however it should probably be removed. */
 #define ACTIVITY_FACTOR 10
 
-#endif  /* FC__MAP_H */
+#endif  /* WC_COMMON_MAP_H */

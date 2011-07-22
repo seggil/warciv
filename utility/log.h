@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__LOG_H
-#define FC__LOG_H
+#ifndef WC_UTILITY_LOG_H
+#define WC_UTILITY_LOG_H
 
 #include <stdarg.h>
 
@@ -72,13 +72,13 @@ void vreal_freelog(int level, const char *message, va_list ap);
  */
 static inline int logdebug_check(const char *file, int line)
 {
-  if (logdebug_this_init < logd_init_counter) {  
+  if (logdebug_this_init < logd_init_counter) {
     logdebug_thisfile = logdebug_update(file);
     logdebug_this_init = logd_init_counter;
-  } 
-  return (logdebug_thisfile.tthis && (logdebug_thisfile.max==0 
-                                      || (line >= logdebug_thisfile.min 
-                                          && line <= logdebug_thisfile.max))); 
+  }
+  return (logdebug_thisfile.tthis && (logdebug_thisfile.max==0
+                                      || (line >= logdebug_thisfile.min
+                                          && line <= logdebug_thisfile.max)));
 }
 #endif
 
@@ -98,7 +98,7 @@ static inline int logdebug_check(const char *file, int line)
     if ((level) != LOG_DEBUG) {                                             \
       real_freelog((level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__);                                   \
     }                                                                       \
-  } while(FALSE) 
+  } while(FALSE)
 #endif  /* DEBUG */
 
-#endif  /* FC__LOG_H */
+#endif  /* WC_UTILITY_LOG_H */

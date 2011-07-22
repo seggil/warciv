@@ -10,13 +10,13 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SPACESHIPDLG_G_H
-#define FC__SPACESHIPDLG_G_H
+#ifndef WC_CLIENT_INCLUDE_SPACESHIPDLG_G_H
+#define WC_CLIENT_INCLUDE_SPACESHIPDLG_G_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void popup_spaceship_dialog(struct player *pplayer);
 void popdown_spaceship_dialog(struct player *pplayer);
 void refresh_spaceship_dialog(struct player *pplayer);
 
-#endif  /* FC__SPACESHIPDLG_G_H */
+#endif  /* WC_CLIENT_INCLUDE_SPACESHIPDLG_G_H */

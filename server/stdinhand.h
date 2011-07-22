@@ -10,11 +10,11 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__STDINHAND_H
-#define FC__STDINHAND_H
+#ifndef WC_SERVER_STDINHAND_H
+#define WC_SERVER_STDINHAND_H
 
 #include "connection.h"         /* enum cmdlevel_id */
-#include "fc_types.h"
+#include "wc_types.h"
 
 #define SERVER_COMMAND_PREFIX '/'
   /* the character to mark chatlines as server commands */
@@ -79,4 +79,4 @@ char **freeciv_completion(char *text, int start, int end);
 #endif
 #endif
 
-#endif /* FC__STDINHAND_H */
+#endif /* WC_SERVER_STDINHAND_H */

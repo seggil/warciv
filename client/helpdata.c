@@ -17,7 +17,7 @@
 *****************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include "astring.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "genlist.h"
 #include "log.h"
 #include "mem.h"

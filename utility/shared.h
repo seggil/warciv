@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -10,17 +10,17 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__SHARED_H
-#define FC__SHARED_H
+#ifndef WC_UTILITY_SHARED_H
+#define WC_UTILITY_SHARED_H
 
 #include <stdlib.h>             /* size_t */
 #include <string.h>             /* memset */
 #include <time.h>               /* time_t */
 
 #ifdef HAVE_CONFIG_H
-#ifndef FC_CONFIG_H            /* this should be defined in config.h */
-#error Files including fcintl.h should also include config.h directly
-#endif
+#  ifndef WC_CONFIG_H            /* this should be defined in config.h */
+#    error Files including fcintl.h should also include config.h directly
+#  endif
 #endif
 
 #if __BEOS__
@@ -243,7 +243,7 @@ struct datafile {
 #define datafile_list_iterate(list, pnode) \
   TYPED_LIST_ITERATE(struct datafile, list, pnode)
 #define datafile_list_iterate_end LIST_ITERATE_END
-              
+
 /* A list of strings (i.e. 'char *'). */
 #define SPECLIST_TAG string
 #define SPECLIST_TYPE char
@@ -374,4 +374,4 @@ void string_iter_remove(struct iterator *string_iter);
 
 #define string_iter_iterate_end generic_iter_iterate_end
 
-#endif  /* FC__SHARED_H */
+#endif  /* WC_UTILITY_SHARED_H */

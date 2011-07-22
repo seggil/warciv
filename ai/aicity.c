@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include <config.h>
 #endif
 
 #include <assert.h>
@@ -22,7 +22,7 @@
 #include "combat.h"
 #include "effects.h"
 #include "events.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "government.h"
 #include "log.h"
@@ -310,7 +310,7 @@ static void adjust_building_want_by_effects(struct city *pcity,
             v += c * 4 + (amount / 7) * pcity->food_surplus;
             break;
           case EFT_AIRLIFT:
-            /* FIXME: We need some smart algorithm here. The below is 
+            /* FIXME: We need some smart algorithm here. The below is
              * totally braindead. */
             v += c + MIN(ai->stats.units.land, 13);
             break;

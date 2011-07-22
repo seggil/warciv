@@ -10,15 +10,15 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__IMPROVEMENT_H
-#define FC__IMPROVEMENT_H
+#ifndef WC_COMMON_IMPROVEMENT_H
+#define WC_COMMON_IMPROVEMENT_H
 
 /* City Improvements, including Wonders.  (Alternatively "Buildings".) */
 
 #include "shared.h"             /* MAX_LEN_NAME */
 
 #include "effects.h"
-#include "fc_types.h"
+#include "wc_types.h"
 #include "tech.h"               /* Tech_Type_id */
 #include "terrain.h"            /* Terrain_type_id etc */
 #include "unittype.h"           /* Unit_Class_id, Unit_Type_id */
@@ -133,4 +133,4 @@ void improvements_update_redundant(struct player *pplayer, struct city *pcity,
   }                                                                           \
 }
 
-#endif  /* FC__IMPROVEMENT_H */
+#endif  /* WC_COMMON_IMPROVEMENT_H */

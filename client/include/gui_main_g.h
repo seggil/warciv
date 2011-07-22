@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GUI_MAIN_G_H
-#define FC__GUI_MAIN_G_H
+#ifndef WC_CLIENT_INCLUDE_GUI_MAIN_G_H
+#define WC_CLIENT_INCLUDE_GUI_MAIN_G_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void ui_init(void);
 void ui_main(int argc, char *argv[]);
@@ -46,4 +46,4 @@ void update_info_table(void);
 
 extern const char *client_string;
 
-#endif  /* FC__GUI_MAIN_G_H */
+#endif  /* WC_CLIENT_INCLUDE_GUI_MAIN_G_H */

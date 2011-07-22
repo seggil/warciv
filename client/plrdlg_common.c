@@ -12,12 +12,12 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <assert.h>
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "support.h"
 
 #include "city.h"

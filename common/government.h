@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__GOVERNMENT_H
-#define FC__GOVERNMENT_H
+#ifndef WC_COMMON_GOVERNMENT_H
+#define WC_COMMON_GOVERNMENT_H
 
 #include "shared.h"
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct Sprite;                  /* opaque; client-gui specific */
 
@@ -206,4 +206,4 @@ void governments_free(void);
   }                                                                         \
 }
 
-#endif  /* FC__GOVERNMENT_H */
+#endif  /* WC_COMMON_GOVERNMENT_H */

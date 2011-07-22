@@ -1,9 +1,9 @@
 # Try to configure the GTK+-2.0 client (gui-gtk-2.0)
 
-# FC_GTK_CLIENT
+# WC_GTK_CLIENT
 # Test for GTK+-2.0 libraries needed for gui-gtk-2.0
 
-AC_DEFUN([FC_GTK2_CLIENT],
+AC_DEFUN([WC_GTK2_CLIENT],
 [
   if test "$client" = "gtk-2.0" || test "$client" = yes ; then
     AM_PATH_GTK_2_0(2.2.1,
@@ -18,7 +18,7 @@ AC_DEFUN([FC_GTK2_CLIENT],
         fi
       ],
       [
-        FC_NO_CLIENT([gtk-2.0], [GTK+-2.0 libraries not found])
+        WC_NO_CLIENT([gtk-2.0], [GTK+-2.0 libraries not found])
       ])
   fi
 ])

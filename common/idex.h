@@ -10,15 +10,15 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__IDEX_H
-#define FC__IDEX_H
+#ifndef WC_COMMON_IDEX_H
+#define WC_COMMON_IDEX_H
 
 /**************************************************************************
    idex = ident index: a lookup table for quick mapping of unit and city
    id values to unit and city pointers.
 ***************************************************************************/
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 void idex_init(void);
 void idex_free(void);
@@ -35,4 +35,4 @@ struct city *idex_lookup_city(int id);
 struct city *idex_lookup_city_by_name(const char *name);
 struct unit *idex_lookup_unit(int id);
 
-#endif  /* FC__IDEX_H */
+#endif  /* WC_COMMON_IDEX_H */

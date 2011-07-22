@@ -1,5 +1,5 @@
 
-dnl FC_CHECK_READLINE_RUNTIME(EXTRA-LIBS, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
+dnl WC_CHECK_READLINE_RUNTIME(EXTRA-LIBS, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
 dnl
 dnl This tests whether readline works at runtime.  Here, "works"
 dnl means "doesn't dump core", as some versions do if linked
@@ -7,7 +7,7 @@ dnl against wrong ncurses library.  Compiles with LIBS modified
 dnl to included -lreadline and parameter EXTRA-LIBS.
 dnl Should already have checked that header and library exist.
 dnl
-AC_DEFUN([FC_CHECK_READLINE_RUNTIME],
+AC_DEFUN([WC_CHECK_READLINE_RUNTIME],
 [AC_MSG_CHECKING(whether readline works at runtime)
 templibs="$LIBS"
 LIBS="-lreadline $1 $LIBS"
@@ -57,7 +57,7 @@ int main(void) {
 LIBS="$templibs"
 ])
 
-AC_DEFUN([FC_HAS_READLINE],
+AC_DEFUN([WC_HAS_READLINE],
 [
     dnl Readline library and header files.
     if test "$WITH_READLINE" = "yes" || test "$WITH_READLINE" = "maybe"; then
@@ -120,7 +120,7 @@ make readline library pass the test.)
            fi
 
            if test "$have_new_readline_lib" = "1"; then
-               FC_CHECK_READLINE_RUNTIME($HAVE_TERMCAP,
+               WC_CHECK_READLINE_RUNTIME($HAVE_TERMCAP,
                          have_new_readline_lib=1, have_new_readline_lib=0)
                if test "$have_new_readline_lib" = "1"; then
                    SERVER_LIBS="-lreadline $SERVER_LIBS $HAVE_TERMCAP"
@@ -137,7 +137,7 @@ Configuring server without readline support.)
                fi
            else
                if test "$have_readline_lib" = "1"; then
-                   FC_CHECK_READLINE_RUNTIME($HAVE_TERMCAP,
+                   WC_CHECK_READLINE_RUNTIME($HAVE_TERMCAP,
                        have_readline_lib=1, have_readline_lib=0)
                    if test "$have_readline_lib" = "1"; then
                        SERVER_LIBS="-lreadline $SERVER_LIBS $HAVE_TERMCAP"

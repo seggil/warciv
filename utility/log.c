@@ -12,15 +12,15 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "fciconv.h"
-#include "fcintl.h"
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "mem.h"
 #include "shared.h"
 #include "support.h"

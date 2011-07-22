@@ -10,10 +10,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__DIPLOMATS_H
-#define FC__DIPLOMATS_H
+#ifndef WC_SERVER_DIPLOMATS_H
+#define WC_SERVER_DIPLOMATS_H
 
-#include "fc_types.h"
+#include "wc_types.h"
 #include "unit.h"               /* Unit_Type_id, enum unit_activity */
 
 #include "gotohand.h"           /* enum goto_move_restriction */
@@ -40,4 +40,4 @@ void diplomat_sabotage(struct player *pplayer, struct unit *pdiplomat,
 int count_diplomats_on_tile(struct tile *ptile);
 int unit_bribe_cost(struct unit *punit);
 
-#endif  /* FC__DIPLOMATS_H */
+#endif  /* WC_SERVER_DIPLOMATS_H */

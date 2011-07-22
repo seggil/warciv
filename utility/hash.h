@@ -1,4 +1,4 @@
-/********************************************************************** 
+/**********************************************************************
  Freeciv - Copyright (C) 1996 - A Kjeldberg, L Gregersen, P Unold
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -10,8 +10,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__HASH_H
-#define FC__HASH_H
+#ifndef WC_UTILITY_HASH_H
+#define WC_UTILITY_HASH_H
 
 /**************************************************************************
    An improved general-purpose hash table implementation.
@@ -127,4 +127,4 @@ void *hash_iter_get_value(const struct iterator *hash_iter);
   } while (FALSE)
 
 
-#endif  /* FC__HASH_H */
+#endif  /* WC_UTILITY_HASH_H */

@@ -12,17 +12,17 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "shared.h"
 #include "support.h"
 
 #include "version.h"
 
 #ifdef SVNREV
-#include "fc_svnrev_gen.h"
+#  include "fc_svnrev_gen.h"
 #endif /* SVNREV */
 
 

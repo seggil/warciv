@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+#  include "../../config.h"
 #endif
 
 #include <stdio.h>
@@ -22,7 +22,7 @@
 #include <gtk/gtk.h>
 
 #include "events.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "map.h"
 #include "mem.h"

@@ -12,7 +12,7 @@
 ***********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
+#  include "../config.h"
 #endif
 
 #include <stdio.h>
@@ -22,22 +22,25 @@
 #include <limits.h>
 
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#  include <sys/types.h>
 #endif
+
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+#  include <netinet/in.h>
 #endif
+
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
+#  include <arpa/inet.h>
 #endif
+
 #ifdef WIN32_NATIVE
-#include <winsock2.h>
+#  include <winsock2.h>
 #endif
 
 #include "capability.h"
 #include "dataio.h"
 #include "events.h"
-#include "fcintl.h"
+#include "wc_intl.h"
 #include "game.h"
 #include "hash.h"
 #include "log.h"

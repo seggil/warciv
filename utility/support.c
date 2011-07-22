@@ -38,7 +38,7 @@
 **********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+# include "../config.h"
 #endif
 
 #include <assert.h>
@@ -51,34 +51,41 @@
 #include <sys/stat.h>
 
 #ifdef GENERATING_MAC
-#include <events.h>             /* for WaitNextEvent() */
-#endif
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>             /* usleep, fcntl, gethostname */
-#endif
-#ifdef WIN32_NATIVE
-#include <process.h>
-#include <winsock2.h>
-#include <windows.h>
+# include <events.h>             /* for WaitNextEvent() */
 #endif
 
-#include "fciconv.h"
-#include "fcintl.h"
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_SYS_SELECT_H
+# include <sys/select.h>
+#endif
+
+#ifdef HAVE_SYS_TIME_H
+# include <sys/time.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>             /* usleep, fcntl, gethostname */
+#endif
+
+#ifdef WIN32_NATIVE
+# include <process.h>
+# include <winsock2.h>
+# include <windows.h>
+#endif
+
+#include "wc_iconv.h"
+#include "wc_intl.h"
 #include "mem.h"
 #include "netintf.h"
 

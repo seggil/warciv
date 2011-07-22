@@ -10,12 +10,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 ***********************************************************************/
-#ifndef FC__AIRGOTO_H
-#define FC__AIRGOTO_H
+#ifndef WC_SERVER_AIRGOTO_H
+#define WC_SERVER_AIRGOTO_H
 
 #include "shared.h"             /* bool type */
 
-#include "fc_types.h"
+#include "wc_types.h"
 
 struct refuel;
 
@@ -32,4 +32,4 @@ void refuel_iterate_process(struct pqueue *rp_list, struct refuel *pfrom);
 
 bool find_air_first_destination(struct unit *punit, struct tile **dst_tile);
 
-#endif  /* FC__AIRGOTO_H */
+#endif  /* WC_SERVER_AIRGOTO_H */
